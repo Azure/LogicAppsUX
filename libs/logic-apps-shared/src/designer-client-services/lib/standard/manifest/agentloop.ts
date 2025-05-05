@@ -43,10 +43,11 @@ export default {
       properties: {
         deploymentId: {
           type: 'string',
-          title: 'Deployment Model',
-          description: 'The deployment model connection',
+          title: 'Deployment Model Name',
+          description: 'The deployment name of the model you want to use.',
           'x-ms-connection-required': true,
           'x-ms-visibility': 'important',
+          'x-ms-editor': 'combobox',
         },
         agentModelType: {
           title: 'Agent model type',
@@ -165,11 +166,45 @@ export default {
                 },
               },
             },
+            deploymentModelProperties: {
+              type: 'object',
+              properties: {
+                name: {
+                  title: 'Model name',
+                  description: 'Name of the model which you want to use for the agent',
+                  type: 'string',
+                  default: 'gpt-4.1',
+                },
+                format: {
+                  title: 'Model format',
+                  description: 'Format of the model you are using',
+                  type: 'string',
+                  default: 'OpenAI',
+                },
+                version: {
+                  title: 'Model version',
+                  description: 'Version of the model you are using',
+                  type: 'string',
+                  default: '2025-04-14',
+                },
+              },
+            },
           },
         },
       },
-      required: ['deploymentId', 'messages', 'agentModelType'],
+      required: ['deploymentId', 'messages', 'agentModelType', 'deploymentModelProperties'],
     },
+    outputs: {
+      type: 'object',
+      properties: {
+        lastAssistantMessage: {
+          type: 'object',
+          title: 'Last Assitant Message',
+          description: 'This is the final message returned by the model',
+        },
+      },
+    },
+    isOutputsOptional: false,
     channels: {
       type: 'object',
       properties: {

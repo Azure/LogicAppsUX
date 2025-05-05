@@ -83,6 +83,7 @@ interface APIManagementConnectionModel {
 export interface AgentConnectionModel {
   authentication: Record<string, any>;
   endpoint: string;
+  resourceId: string;
   type?: string;
   displayName?: string;
 }
@@ -368,7 +369,10 @@ export class StandardConnectionService extends BaseConnectionService implements 
     let identityDetailsForApiHubAuth: { principalId: string; tenantId: string };
 
     if (isHybridLogicApp(baseUrl) && identity?.principalId && identity?.tenantId) {
-      identityDetailsForApiHubAuth = { principalId: identity?.principalId, tenantId: identity?.tenantId };
+      identityDetailsForApiHubAuth = {
+        principalId: identity?.principalId,
+        tenantId: identity?.tenantId,
+      };
     } else {
       identityDetailsForApiHubAuth = this._getIdentityDetailsForApiHubAuth(identity as ManagedIdentity, tenantId as string, identityId);
     }
@@ -475,7 +479,10 @@ export class StandardConnectionService extends BaseConnectionService implements 
       (equals(managedIdentity.type, ResourceIdentityType.SYSTEM_ASSIGNED) ||
         equals(managedIdentity.type, ResourceIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED))
     ) {
-      return { principalId: managedIdentity.principalId as string, tenantId: managedIdentity.tenantId as string };
+      return {
+        principalId: managedIdentity.principalId as string,
+        tenantId: managedIdentity.tenantId as string,
+      };
     }
     const identityKeys = Object.keys(managedIdentity.userAssignedIdentities ?? {});
     const selectedIdentity = identityKeys.find((identityKey) => equals(identityKey, identityIdForConnection)) ?? identityKeys[0];
@@ -571,10 +578,6 @@ export class StandardConnectionService extends BaseConnectionService implements 
           connectionsData.connectionKey,
           connectionsData.connectionData as AgentConnectionModel
         );
-
-        // if (connector.properties.testConnectionUrl) {
-        //   await this._testServiceProviderConnection(connector.properties.testConnectionUrl, rawConnection);
-        // }
         break;
       }
       default: {
@@ -606,7 +609,9 @@ export class StandardConnectionService extends BaseConnectionService implements 
     try {
       const { httpClient, baseUrl, apiVersion } = this._options;
       let uri = `${baseUrl.replace('/runtime/webhooks/workflow/api/management', '')}${requestUrl}`;
-      let queryParameters: Record<string, string> = { 'api-version': apiVersion };
+      let queryParameters: Record<string, string> = {
+        'api-version': apiVersion,
+      };
       let headers: Record<string, string> = {};
 
       if (isHybridLogicApp(uri)) {
@@ -672,7 +677,14 @@ function convertAgentConnectionDataToConnection(connectionKey: string, connectio
     properties: {
       api: { id: `/${agentConnectorId}` } as any,
       createdTime: '',
-      connectionParameters: {},
+      connectionParameters: {
+        cognitiveServiceAccountId: {
+          type: 'string',
+          metadata: {
+            value: connectionData.resourceId,
+          },
+        },
+      },
       displayName: displayName as string,
       statuses: [{ status: 'Connected' }],
       overallStatus: 'Connected',
@@ -724,7 +736,10 @@ function convertToAgentConnectionsData(
   connectorId: string,
   connectionInfo: ConnectionCreationInfo,
   connectionParameterMetadata: ConnectionParametersMetadata
-): { connectionAndSettings: ConnectionAndAppSetting<AgentConnectionModel>; rawConnection: ServiceProviderConnectionModel } {
+): {
+  connectionAndSettings: ConnectionAndAppSetting<AgentConnectionModel>;
+  rawConnection: ServiceProviderConnectionModel;
+} {
   const { connectionParametersSet: connectionParametersSetValues } = connectionInfo;
   const { parameterValues, rawParameterValues, settings, displayName } = createLocalConnectionsData(
     connectionKey,
@@ -738,9 +753,10 @@ function convertToAgentConnectionsData(
       displayName,
       authentication: {
         type: connectionParametersSetValues?.name,
-        key: parameterValues?.['openAIKey'],
+        key: equals(connectionParametersSetValues?.name ?? '', 'ManagedServiceIdentity', true) ? undefined : parameterValues?.['openAIKey'],
       },
       endpoint: parameterValues?.['openAIEndpoint'],
+      resourceId: parameterValues?.['cognitiveServiceAccountId'],
       type: 'model',
     },
     settings,
@@ -757,7 +773,10 @@ function convertToServiceProviderConnectionsData(
   connectorId: string,
   connectionInfo: ConnectionCreationInfo,
   connectionParameterMetadata: ConnectionParametersMetadata
-): { connectionAndSettings: ConnectionAndAppSetting<ServiceProviderConnectionModel>; rawConnection: ServiceProviderConnectionModel } {
+): {
+  connectionAndSettings: ConnectionAndAppSetting<ServiceProviderConnectionModel>;
+  rawConnection: ServiceProviderConnectionModel;
+} {
   const { additionalParameterValues, connectionParametersSet: connectionParametersSetValues } = connectionInfo;
   const { parameterValues, rawParameterValues, settings, displayName } = createLocalConnectionsData(
     connectionKey,
@@ -813,7 +832,10 @@ function convertToFunctionsConnectionsData(
   const { parameterValues, settings, displayName } = createLocalConnectionsData(connectionKey, connectionInfo, connectionParameterMetadata);
   return {
     connectionKey,
-    connectionData: { ...(parameterValues as FunctionsConnectionModel), displayName },
+    connectionData: {
+      ...(parameterValues as FunctionsConnectionModel),
+      displayName,
+    },
     settings,
     pathLocation: [functionsLocation],
   };

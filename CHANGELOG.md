@@ -1,4 +1,58 @@
 # Logic Apps Designer
+## [5.100.0](https://github.com/Azure/LogicAppsUX/compare/v5.99.0...v5.100.0) (2025-05-04)
+
+
+### Bug Fixes
+
+* **designer:** Add create new for OpenAI resource and update strings ([#7168](https://github.com/Azure/LogicAppsUX/issues/7168)) ([8162f3a](https://github.com/Azure/LogicAppsUX/commit/8162f3a747a94611ad1da3adcc809555dc67c3f7))
+
+## [5.99.0](https://github.com/Azure/LogicAppsUX/compare/v5.98.0...v5.99.0) (2025-05-03)
+
+
+### Bug Fixes
+
+* **desginer:** Remove cognitive resource id from app-setting ([#7166](https://github.com/Azure/LogicAppsUX/issues/7166)) ([129772a](https://github.com/Azure/LogicAppsUX/commit/129772ad0b844ee9578b13d1383326bb5cf52577))
+
+## [5.98.0](https://github.com/Azure/LogicAppsUX/compare/v5.97.0...v5.98.0) (2025-05-03)
+
+
+### Features
+
+* **designer:** Search Enhancements ([#7147](https://github.com/Azure/LogicAppsUX/issues/7147)) ([008b99c](https://github.com/Azure/LogicAppsUX/commit/008b99cc10d504548c1dd3330e55f7fd0c7f48ef))
+* **Templates:** Support Multi-button structure for footer ([#7156](https://github.com/Azure/LogicAppsUX/issues/7156)) ([0e84995](https://github.com/Azure/LogicAppsUX/commit/0e849952a79e7eae157919ceefea098d5988f3a9))
+
+
+### Bug Fixes
+
+* **designer:** Add MSI support for Agent connections ([#7164](https://github.com/Azure/LogicAppsUX/issues/7164)) ([681f0a3](https://github.com/Azure/LogicAppsUX/commit/681f0a30f25bc2d12b6ef95be232f5f3bcf42c45))
+* **designer:** Add skip batch to HttpRequestOptions ([#7153](https://github.com/Azure/LogicAppsUX/issues/7153)) ([7c6e4f7](https://github.com/Azure/LogicAppsUX/commit/7c6e4f7c6c797acfb09374fc5b8a755ad21a5ad0))
+* **designer:** Browse Action Spotlight to Local Storage ([#7159](https://github.com/Azure/LogicAppsUX/issues/7159)) ([13fa312](https://github.com/Azure/LogicAppsUX/commit/13fa312ef4d1cc454cad4ed816d962ee62f6f1ef))
+* **designer:** Set properties per Model and add a subscription filter ([#7157](https://github.com/Azure/LogicAppsUX/issues/7157)) ([ba3c32b](https://github.com/Azure/LogicAppsUX/commit/ba3c32bc437399b0356214cd728aa01f0893210a))
+
+## [5.97.0](https://github.com/Azure/LogicAppsUX/compare/v5.96.0...v5.97.0) (2025-05-02)
+
+
+### Bug Fixes
+
+* **designer:** Dropdown items for deployment names ([#7154](https://github.com/Azure/LogicAppsUX/issues/7154)) ([c66ec52](https://github.com/Azure/LogicAppsUX/commit/c66ec52c5e3b3e659c77d93756e739b4dd8446c4))
+* **Designer:** Fixed standalone oauth for testing ([#7152](https://github.com/Azure/LogicAppsUX/issues/7152)) ([0fdc2c0](https://github.com/Azure/LogicAppsUX/commit/0fdc2c0472bc4ee448ad5ab874fced7fcf7d717e))
+
+## [5.96.0](https://github.com/Azure/LogicAppsUX/compare/v5.95.0...v5.96.0) (2025-05-02)
+
+
+### Features
+
+* **Templates:** Add Error Labeling for tabs ([#7098](https://github.com/Azure/LogicAppsUX/issues/7098)) ([61e66e7](https://github.com/Azure/LogicAppsUX/commit/61e66e7c9c06e89cdcedf275e6a73a5a77725a21))
+* **templates:** Adding loading of user templates in the gallery ([#7141](https://github.com/Azure/LogicAppsUX/issues/7141)) ([97b8999](https://github.com/Azure/LogicAppsUX/commit/97b899917f43d03c7b33568e9f7137d96a0231ad))
+
+
+### Bug Fixes
+
+* **designer:** Add cognitive account dropdown and auto-fill the values for Agentic connections ([#7148](https://github.com/Azure/LogicAppsUX/issues/7148)) ([92b2b7f](https://github.com/Azure/LogicAppsUX/commit/92b2b7f499681a168c88463230a35012a55d29c2))
+* **designer:** Refactor and remove unsupported types from Agent parameter creation ([#7142](https://github.com/Azure/LogicAppsUX/issues/7142)) ([7eaec25](https://github.com/Azure/LogicAppsUX/commit/7eaec25028ef00119f08a002fee6117ae47ed954))
+* **designer:** Remove Pin on Deleting Node ([#7140](https://github.com/Azure/LogicAppsUX/issues/7140)) ([c45a9e3](https://github.com/Azure/LogicAppsUX/commit/c45a9e3f7d1cafb75a555aa1a07a9e51a303c125))
+* **Templates:** Refactored `filteredTemplateNames` out of state / into selector  ([#7143](https://github.com/Azure/LogicAppsUX/issues/7143)) ([8459d6c](https://github.com/Azure/LogicAppsUX/commit/8459d6cd37dbbc65757cbb9300e466c329b98528))
+
 ## [5.95.0](https://github.com/Azure/LogicAppsUX/compare/v5.94.0...v5.95.0) (2025-05-01)
 
 

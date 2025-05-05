@@ -23,6 +23,7 @@ export const SpotlightCategoryType = {
   AICapabilities: 'AICapabilities',
   BuiltIns: 'BuiltIns',
   Favorites: 'Favorites',
+  KnowledgeBase: 'KnowledgeBase',
 } as const;
 export type SpotlightCategoryType = (typeof SpotlightCategoryType)[keyof typeof SpotlightCategoryType];
 
@@ -33,6 +34,7 @@ export interface SpotlightSectionProps {
   isLoading: boolean;
   isOpen: boolean;
   operationsCountOverride?: number;
+  noOperationDescription?: string;
   onConnectorSelected: (connectorId: string, origin?: string) => void;
   onOperationSelected: (operationId: string, apiId?: string, origin?: string) => void;
   onSectionBodyRender?: (isExpanded: boolean) => JSX.Element;
@@ -46,6 +48,7 @@ export const SpotlightSection = ({
   isOpen,
   title,
   operationsCountOverride,
+  noOperationDescription,
   onConnectorSelected,
   onOperationSelected,
   onSectionBodyRender,
@@ -75,6 +78,28 @@ export const SpotlightSection = ({
     [operationsCountOverride, filteredOperationsData]
   );
 
+  if (operationsCount === 0) {
+    if (!noOperationDescription) {
+      return null;
+    }
+
+    return (
+      <AccordionItem
+        value={index}
+        className="msla-recommendation-panel-spotlight-section-container"
+        style={{ backgroundColor: tokens.colorNeutralBackground2 }}
+      >
+        <AccordionHeader className="msla-recommendation-panel-spotlight-section-header-button">
+          <Text weight="semibold" size={300}>
+            {title}
+          </Text>
+        </AccordionHeader>
+        <AccordionPanel style={{ padding: '12px 16px' }}>
+          <Text size={200}>{noOperationDescription}</Text>
+        </AccordionPanel>
+      </AccordionItem>
+    );
+  }
   const seeLessText = intl.formatMessage({
     defaultMessage: 'See less',
     id: 'tqr4hK',

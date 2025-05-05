@@ -71,7 +71,16 @@ import type {
   PanelTabProps,
   InitializeVariableProps,
 } from '@microsoft/designer-ui';
-import { EditorService, equals, getPropertyValue, getRecordEntry, isRecordNotEmpty, SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
+import {
+  clone,
+  EditorService,
+  equals,
+  getPropertyValue,
+  getRecordEntry,
+  guid,
+  isRecordNotEmpty,
+  SUBGRAPH_TYPES,
+} from '@microsoft/logic-apps-shared';
 import type { OperationInfo } from '@microsoft/logic-apps-shared';
 import type React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -79,6 +88,8 @@ import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import { ConnectionInline } from './connectionInline';
 import { ConnectionsSubMenu } from './connectionsSubMenu';
+import { isAgentConnector } from '../../../../../common/utilities/Utils';
+import { useCognitiveServiceAccountDeploymentsForNode } from '../../../connectionsPanel/createConnection/custom/useCognitiveService';
 
 // TODO: Add a readonly per settings section/group
 export interface ParametersTabProps extends PanelTabProps {
@@ -228,6 +239,9 @@ const ParameterSection = ({
   const isTrigger = useSelector((state: RootState) => isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata));
   const operationInfo = useOperationInfo(nodeId);
   const dependencies = useDependencies(nodeId);
+
+  // Specific for agentic scenarios
+  const { data: deploymentsForCognitiveServiceAccount } = useCognitiveServiceAccountDeploymentsForNode(nodeId, operationInfo?.connectorId);
   const { variables, upstreamNodeIds, operationDefinition, connectionReference, idReplacements, workflowParameters, nodesMetadata } =
     useSelector((state: RootState) => {
       return {
@@ -258,7 +272,9 @@ const ParameterSection = ({
   const onValueChange = useCallback(
     (id: string, newState: ChangeState, skipStateSave?: boolean) => {
       const { value, viewModel } = newState;
-      const parameter = nodeInputs.parameterGroups[group.id].parameters.find((param: any) => param.id === id);
+      const parameterGroup = nodeInputs.parameterGroups[group.id];
+      const parameter = parameterGroup.parameters.find((param: any) => param.id === id);
+      const updatedDependencies = clone(dependencies);
 
       const propertiesToUpdate: Partial<ParameterInfo> = {
         value,
@@ -328,6 +344,73 @@ const ParameterSection = ({
         dispatch(addOrUpdateCustomCode({ nodeId, fileData, fileExtension, fileName }));
       }
 
+      if (isAgentConnectorAndDeploymentId(operationInfo.connectorId ?? '', parameter?.parameterKey ?? '')) {
+        const deploymentInfo =
+          value.length > 0
+            ? deploymentsForCognitiveServiceAccount?.find((deployment: any) => deployment.name === value[0]?.value)
+            : undefined;
+
+        if (!updatedDependencies.inputs) {
+          updatedDependencies.inputs = {};
+        }
+
+        const getDependentInputParameter = (key: string, apiValue?: any) => {
+          const parameterAgentDeploymentName = parameterGroup.parameters.find((param) => equals(key, param.parameterKey, true));
+
+          const value = apiValue ?? parameterAgentDeploymentName?.schema?.default;
+
+          if (value) {
+            return {
+              definition: parameterAgentDeploymentName?.schema,
+              dependencyType: 'AgentSchema' as any,
+              dependentParameters: {
+                [id]: {
+                  isValid: true,
+                },
+              },
+              parameter: {
+                key: key,
+                type: parameterAgentDeploymentName?.type ?? '',
+                name: parameterAgentDeploymentName?.parameterName ?? '',
+                value: [
+                  {
+                    value: value,
+                    type: 'literal',
+                    id: guid(),
+                  },
+                ],
+              },
+            };
+          }
+
+          return undefined;
+        };
+
+        const agentDeploymentKeys = [
+          {
+            key: 'inputs.$.agentModelSettings.deploymentModelProperties.name',
+            default: deploymentInfo?.properties?.model?.name,
+          },
+
+          {
+            key: 'inputs.$.agentModelSettings.deploymentModelProperties.format',
+            default: deploymentInfo?.properties?.model?.format,
+          },
+
+          {
+            key: 'inputs.$.agentModelSettings.deploymentModelProperties.version',
+            default: deploymentInfo?.properties?.model?.version,
+          },
+        ];
+
+        for (const entry of agentDeploymentKeys) {
+          const info = getDependentInputParameter(entry.key, entry.default);
+          if (info) {
+            updatedDependencies.inputs[entry.key] = info;
+          }
+        }
+      }
+
       dispatch(
         updateParameterAndDependencies({
           nodeId,
@@ -338,7 +421,7 @@ const ParameterSection = ({
           operationInfo,
           connectionReference,
           nodeInputs,
-          dependencies,
+          dependencies: updatedDependencies,
           operationDefinition,
           skipStateSave,
         })
@@ -352,6 +435,7 @@ const ParameterSection = ({
       dispatch,
       isTrigger,
       operationInfo,
+      deploymentsForCognitiveServiceAccount,
       connectionReference,
       dependencies,
       operationDefinition,
@@ -604,7 +688,13 @@ const ParameterSection = ({
         editorViewModel: remappedEditorViewModel,
         conditionalVisibility,
       };
-      const { editor, editorOptions } = getEditorAndOptions(operationInfo, param, upstreamNodeIds ?? [], variables);
+      const { editor, editorOptions } = getEditorAndOptions(
+        operationInfo,
+        param,
+        upstreamNodeIds ?? [],
+        variables,
+        deploymentsForCognitiveServiceAccount ?? []
+      );
 
       const { value: remappedValues } = isRecordNotEmpty(idReplacements) ? remapValueSegmentsWithNewIds(value, idReplacements) : { value };
       const isCodeEditor = editor?.toLowerCase() === constants.EDITOR.CODE;
@@ -693,11 +783,16 @@ const getSubMenu = (parameter: ParameterInfo) => {
   return null;
 };
 
+const isAgentConnectorAndDeploymentId = (id: string, key: string): boolean => {
+  return isAgentConnector(id) && equals(key, 'inputs.$.deploymentId', true);
+};
+
 export const getEditorAndOptions = (
   operationInfo: OperationInfo,
   parameter: ParameterInfo,
   upstreamNodeIds: string[],
-  variables: Record<string, VariableDeclaration[]>
+  variables: Record<string, VariableDeclaration[]>,
+  deploymentsForCognitiveServiceAccount: any[] = []
 ): { editor?: string; editorOptions?: any } => {
   const customEditor = EditorService()?.getEditor({
     operationInfo,
@@ -723,6 +818,20 @@ export const getEditorAndOptions = (
           .map((variable) => ({
             value: variable.name,
             displayName: variable.name,
+          })),
+      },
+    };
+  }
+
+  if (equals(editor, 'combobox') && isAgentConnectorAndDeploymentId(operationInfo.connectorId ?? '', parameter.parameterKey)) {
+    return {
+      editor,
+      editorOptions: {
+        options: deploymentsForCognitiveServiceAccount
+          .filter((deployment: any) => constants.SUPPORTED_AGENT_MODELS.includes((deployment.properties?.model?.name ?? '').toLowerCase()))
+          .map((deployment: any) => ({
+            value: deployment.name,
+            displayName: `${deployment.name} ${deployment.properties?.model?.name ? `(${deployment.properties?.model?.name})` : ''}`,
           })),
       },
     };

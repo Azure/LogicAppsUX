@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<script type="text/javascript">
+			var urlParams = {};
+			var match;
+			var pl = /\+/g; // Regex for replacing addition symbol with a space
+			var search = /([^&=]+)=?([^&]*)/g;
+			var decode = s => decodeURIComponent(s.replace(pl, ' '));
+			var query = window.location.search.substring(1);
+
+			while ((match = search.exec(query))) {
+				urlParams[decode(match[1])] = decode(match[2]);
+			}
+
+			var popupId = urlParams['pid'];
+
+			if (popupId) {
+				var oauthValue = JSON.stringify(urlParams);
+				window.opener.postMessage(oauthValue, origin);
+			}
+		</script>
+	</head>
+
+	<body></body>
+
+</html>
