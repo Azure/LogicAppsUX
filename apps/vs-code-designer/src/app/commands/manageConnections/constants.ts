@@ -1,7 +1,6 @@
-import { ConnectionsData } from "@microsoft/logic-apps-shared";
-import { IActionContext } from "@microsoft/vscode-azext-utils";
-import type { AzureConnectorDetails, ExtensionCommand } from "@microsoft/vscode-extension-logic-apps";
-
+import type { ConnectionsData, ConnectionType } from '@microsoft/logic-apps-shared';
+import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import type { AzureConnectorDetails, ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 
 export type InitializeConnection = {
   // danielle move this to be shared by vscode-react
@@ -10,7 +9,7 @@ export type InitializeConnection = {
 
 type OauthLogin = {
   url: string;
-}
+};
 
 type InitializeFrame = {
   project: string;
@@ -18,16 +17,17 @@ type InitializeFrame = {
   baseUrl: string;
   workflowRuntimeBaseUrl: string;
   connections: ConnectionsData;
-  azureDetails: AzureConnectorDetails,
+  azureDetails: AzureConnectorDetails;
   apiHubServiceDetails: Record<string, any>;
   oauthRedirectUrl: string;
   panelId: string;
 };
 
 export interface CreateConnectionPanel {
-  connectionId: string,
-  connectionsData: ConnectionsData,
-  azureDetails: AzureConnectorDetails,
+  connectionId: string;
+  connectionType: ConnectionType;
+  connectionsData: ConnectionsData;
+  azureDetails: AzureConnectorDetails;
   apiHubServiceDetails: Record<string, any>;
   oauthRedirectUrl: string;
   panelId: string;
@@ -38,7 +38,7 @@ export interface CreateConnectionPanel {
 export type MessageToCommandVsix = {
   command: typeof ExtensionCommand.openOauthLoginPopup;
   data: OauthLogin;
-}
+};
 
 export type MessageToCommandWebview =
   | {
@@ -52,9 +52,8 @@ export type MessageToCommandWebview =
   | {
       command: typeof ExtensionCommand.loadConnection;
       data: InitializeConnection;
-    } | {
+    }
+  | {
       command: typeof ExtensionCommand.openOauthLoginPopup;
       data: OauthLogin;
     };
-
-

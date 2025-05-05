@@ -3,5 +3,5 @@ import type { Uri } from 'vscode';
 import ConnectionsExt from './connectionExt';
 
 export const openConnectionView = async (context: IActionContext, uri: Uri) => {
-  ConnectionsExt.openConnectionsPanel(context, uri.toString());
+  new ConnectionsExt().openConnectionsPanel(context, uri.toString());
 };

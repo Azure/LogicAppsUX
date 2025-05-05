@@ -19,7 +19,9 @@ export default class ConnectionsExt {
   private codefulFilePath: string;
 
   public async openConnectionsPanel(context: IActionContext, entryUri: string) {
-    const connectionId = entryUri.split('/').pop() || '';
+    const entryUriSplit = entryUri.split('/');
+    const connectionId = entryUriSplit[entryUriSplit.length - 1] || '';
+    const connectionType = entryUriSplit[entryUriSplit.length - 2] || '';
 
     this.codefulFilePath = vscode.window.activeTextEditor.document.uri.fsPath;
 
@@ -47,6 +49,7 @@ export default class ConnectionsExt {
     await startDesignTimeApi(projectPath);
     this.createOrShow({
       connectionId,
+      connectionType,
       connectionsData: connections,
       azureDetails,
       apiHubServiceDetails,
