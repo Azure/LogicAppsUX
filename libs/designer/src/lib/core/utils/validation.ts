@@ -198,6 +198,7 @@ export function validateType(
         return;
       }
       if (!isValidJSONObjectFormat(parameterValue)) {
+        console.log('here');
         return intl.formatMessage({
           defaultMessage: 'Enter a valid JSON.',
           id: '3n6GJG',
@@ -466,10 +467,7 @@ const validateFloatingActionMenuOutputsEditor = (editorViewModel: FloatingAction
 };
 
 function shouldValidateJSON(expressions: ValueSegment[]): boolean {
-  const firstSegmentValue = expressions[0]?.token?.value;
-  return firstSegmentValue
-    ? firstSegmentValue.startsWith('@@') || firstSegmentValue.startsWith('@{') || !firstSegmentValue.startsWith('@')
-    : true;
+  return !expressions[0]?.token;
 }
 
 export function parameterHasOnlyTokenBinding(parameterValue: ValueSegment[]): boolean {
