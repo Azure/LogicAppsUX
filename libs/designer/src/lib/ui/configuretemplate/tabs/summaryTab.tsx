@@ -4,11 +4,12 @@ import constants from '../../../common/constants';
 import { selectWizardTab } from '../../../core/state/templates/tabSlice';
 import { TemplateReviewList } from '../review/TemplateReviewList';
 import type { TemplateWizardTabProps } from './model';
+import { getSaveMenuButtons } from '../../../core/configuretemplate/utils/helper';
 
 export const summaryTab = (
   resources: Record<string, string>,
   dispatch: AppDispatch,
-  { disabled, tabStatusIcon }: TemplateWizardTabProps
+  { disabled, tabStatusIcon, onSave, status }: TemplateWizardTabProps
 ): TemplateTabProps => ({
   id: constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.SUMMARY,
   title: resources.SummaryTabLabel,
@@ -29,7 +30,7 @@ export const summaryTab = (
         text: resources.SaveButtonText,
         appreance: 'primary',
         onClick: () => {},
-        //TODO
+        menuItems: getSaveMenuButtons(resources, status ?? 'Development', (status) => onSave?.(status)),
       },
     ],
   },

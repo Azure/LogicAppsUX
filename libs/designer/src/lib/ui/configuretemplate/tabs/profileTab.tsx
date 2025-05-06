@@ -5,12 +5,13 @@ import { selectWizardTab } from '../../../core/state/templates/tabSlice';
 import { TemplateManifestForm } from '../templateprofile/manifestform';
 import type { TemplateWizardTabProps } from './model';
 import type { IntlShape } from 'react-intl';
+import { getSaveMenuButtons } from '../../../core/configuretemplate/utils/helper';
 
 export const profileTab = (
   intl: IntlShape,
   resources: Record<string, string>,
   dispatch: AppDispatch,
-  { disabled, tabStatusIcon, onSave, disableSave }: TemplateWizardTabProps & { onSave: () => void; disableSave: boolean }
+  { disabled, tabStatusIcon, onSave, status }: TemplateWizardTabProps
 ): TemplateTabProps => ({
   id: constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.PROFILE,
   title: resources.ProfileTabLabel,
@@ -38,14 +39,10 @@ export const profileTab = (
       },
       {
         type: 'button',
-        text: intl.formatMessage({
-          defaultMessage: 'Save',
-          id: 'GGmFte',
-          description: 'The description for saving the profile tab content to the service provider',
-        }),
+        text: resources.SaveButtonText,
         appreance: 'primary',
-        onClick: onSave,
-        disabled: disableSave,
+        onClick: () => {},
+        menuItems: getSaveMenuButtons(resources, status ?? 'Development', (status) => onSave?.(status)),
       },
     ],
   },

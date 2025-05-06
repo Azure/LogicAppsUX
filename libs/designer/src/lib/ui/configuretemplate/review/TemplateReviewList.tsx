@@ -115,9 +115,9 @@ const useStatusAndPlanItems = (resources: Record<string, string>) => {
     },
     {
       label: resources.Status,
-      value: equals(status, resources.ProductionEnvironment)
+      value: equals(status, 'Production')
         ? resources.ProductionEnvironment
-        : equals(status, resources.TestingEnvironment)
+        : equals(status, 'Testing')
           ? resources.TestingEnvironment
           : resources.DevelopmentEnvironment,
       type: 'text',

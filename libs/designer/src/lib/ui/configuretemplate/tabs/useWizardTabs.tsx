@@ -71,7 +71,7 @@ export const useConfigureTemplateWizardTabs = ({
   }, [dispatch, selectedTabId]);
 
   const onTemplateSave = useCallback(
-    async (publishState: string) => {
+    async (publishState: Template.TemplateEnvironment) => {
       const manifestToUpdate: Template.TemplateManifest = {
         ...(templateManifest as Template.TemplateManifest),
         details: {
@@ -86,9 +86,6 @@ export const useConfigureTemplateWizardTabs = ({
     },
     [queryClient, templateManifest, workflows]
   );
-
-  const onProfileSave = useCallback(async () => onTemplateSave(state as string), [onTemplateSave, state]);
-  const disableProfileSave = false;
 
   return [
     workflowsTab(resources, dispatch, onSaveWorkflows, {
@@ -106,12 +103,14 @@ export const useConfigureTemplateWizardTabs = ({
     profileTab(intl, resources, dispatch, {
       tabStatusIcon: templateManifestHasError ? 'error' : runValidation ? 'success' : enableWizard ? 'in-progress' : undefined,
       disabled: !enableWizard || isWizardUpdating,
-      onSave: onProfileSave,
-      disableSave: disableProfileSave,
+      status: state,
+      onSave: onTemplateSave,
     }),
     summaryTab(resources, dispatch, {
       tabStatusIcon: undefined,
       disabled: !enableWizard || isWizardUpdating,
+      status: state,
+      onSave: onTemplateSave,
     }),
   ];
 };
