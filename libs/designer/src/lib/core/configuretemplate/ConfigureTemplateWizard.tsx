@@ -7,6 +7,7 @@ import { selectWizardTab } from '../state/templates/tabSlice';
 import { setLayerHostSelector } from '@fluentui/react';
 import { TemplateInfoToast } from '../../ui/configuretemplate/toasters';
 import { useIntl } from 'react-intl';
+import type { Template } from '@microsoft/logic-apps-shared';
 
 export const ConfigureTemplateWizard = () => {
   useEffect(() => setLayerHostSelector('#msla-layer-host'), []);
@@ -56,18 +57,48 @@ export const ConfigureTemplateWizard = () => {
     }
   };
 
-  const onPublish = () => {
+  const onSaveTemplate = (prevStatus: Template.TemplateEnvironment, newStatus: Template.TemplateEnvironment) => {
+    const isNewStatusPublished = newStatus === 'Production' || newStatus === 'Testing';
     setToasterData({
-      title: intl.formatMessage({
-        defaultMessage: 'Your template has been published in production!',
-        id: '6TFn8v',
-        description: 'Title for the toaster after publishing template.',
-      }),
-      content: intl.formatMessage({
-        defaultMessage: 'Head on over to the gallery page to see your template in action.',
-        id: 'ILcDyX',
-        description: 'Content for the toaster for after publishing template.',
-      }),
+      title: isNewStatusPublished
+        ? intl.formatMessage(
+            {
+              defaultMessage: 'Your template has been published to {newStatus}!',
+              id: 'K/enCE',
+              description: 'Title for the toaster after publishing template.',
+            },
+            {
+              newStatus,
+            }
+          )
+        : prevStatus === 'Development'
+          ? intl.formatMessage({
+              defaultMessage: 'Your template has been saved.',
+              id: '+gBLFF',
+              description: 'Title for the toaster after saving template.',
+            })
+          : intl.formatMessage({
+              defaultMessage: 'Your template has been unpublished.',
+              id: 'BYsNzz',
+              description: 'Title for the toaster after unpublishing template.',
+            }),
+      content: isNewStatusPublished
+        ? intl.formatMessage({
+            defaultMessage: 'Head on over to the gallery page to see your template in action.',
+            id: 'ILcDyX',
+            description: 'Content for the toaster for after publishing template.',
+          })
+        : prevStatus === 'Development'
+          ? intl.formatMessage({
+              defaultMessage: 'Your template in action is in development mode.',
+              id: 'rlfK4u',
+              description: 'Content for the toaster for after saving template.',
+            })
+          : intl.formatMessage({
+              defaultMessage: 'Gallery page will no longer contain this template in action.',
+              id: 'aoyT7n',
+              description: 'Content for the toaster for after unpublishing template.',
+            }),
       show: true,
     });
   };
@@ -76,7 +107,7 @@ export const ConfigureTemplateWizard = () => {
     dispatch(selectWizardTab(tabId));
   };
 
-  const panelTabs: TemplateTabProps[] = useConfigureTemplateWizardTabs({ onSaveWorkflows, onPublish });
+  const panelTabs: TemplateTabProps[] = useConfigureTemplateWizardTabs({ onSaveWorkflows, onSaveTemplate });
   const selectedTabProps = selectedTabId ? panelTabs?.find((tab) => tab.id === selectedTabId) : panelTabs[0];
 
   return (

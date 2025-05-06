@@ -42,7 +42,7 @@ export const profileTab = (
         text: resources.SaveButtonText,
         appreance: 'primary',
         onClick: () => {},
-        menuItems: getSaveMenuButtons(resources, status ?? 'Development', (status) => onSave?.(status)),
+        menuItems: getSaveMenuButtons(resources, status ?? 'Development', (newStatus) => onSave?.(newStatus)),
       },
     ],
   },
