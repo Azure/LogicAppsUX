@@ -179,7 +179,7 @@ export async function updateConnectionKeys(context: IFunctionWizardContext): Pro
           parametersData
         );
 
-        await saveConnectionReferences(this.context, logicAppPath, connectionsAndSettingsToUpdate);
+        await saveConnectionReferences(context, logicAppPath, connectionsAndSettingsToUpdate);
       }
     } catch (error) {
       const errorMessage = localize(
