@@ -80,6 +80,7 @@ export const useConfigureTemplateWizardTabs = ({
           Type: Object.keys(workflows).length > 1 ? 'Accelerator' : 'Workflow',
         } as any,
       };
+      dispatch(setRunValidation(true));
       const templateId = templateManifest?.id as string;
       // TODO - error handling, in case of error, onSaveTemplate should be handled accordingly
       await TemplateResourceService().updateTemplate(templateId, manifestToUpdate, newPublishState);
