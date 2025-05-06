@@ -10,6 +10,7 @@ import { useTemplatesStrings } from '../../templates/templatesStrings';
 import { useResourceStrings } from '../resources';
 import { setRunValidation } from '../../../core/state/templates/tabSlice';
 import {
+  updateEnvironment,
   validateParameterDetails,
   validateTemplateManifest,
   validateWorkflowManifestsData,
@@ -80,12 +81,14 @@ export const useConfigureTemplateWizardTabs = ({
         } as any,
       };
       const templateId = templateManifest?.id as string;
+      // TODO - error handling, in case of error, onSaveTemplate should be handled accordingly
       await TemplateResourceService().updateTemplate(templateId, manifestToUpdate, newPublishState);
 
       queryClient.removeQueries(['template', templateId.toLowerCase()]);
       onSaveTemplate(currentStatus ?? 'Development', newPublishState);
+      dispatch(updateEnvironment(newPublishState));
     },
-    [queryClient, templateManifest, workflows, onSaveTemplate, currentStatus]
+    [queryClient, templateManifest, workflows, onSaveTemplate, currentStatus, dispatch]
   );
 
   return [
