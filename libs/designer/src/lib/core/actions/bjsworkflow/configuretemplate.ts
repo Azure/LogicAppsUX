@@ -643,3 +643,54 @@ export const getWorkflowsWithDefinitions = async (
 
   return allWorkflowsData;
 };
+
+export const getDownloadTemplateContents = async (
+  state: TemplateState
+  // templateManifest: Template.TemplateManifest,
+  // workflowDatas: { manifest: Template.WorkflowManifest, workflowDefinition: any }[]
+) => {
+  const theTemplateManifest = { ...state.manifest } as Template.TemplateManifest;
+
+  const workflowFolderContents = [];
+  // const workflowManifests: Record<string, any> = {};
+  for (const [workflowId, workflowData] of Object.entries(state.workflows)) {
+    theTemplateManifest.workflows[workflowId] = { name: workflowId };
+
+    // Clean up workflowManifest
+    const workflowManifest = { ...workflowData.manifest };
+    delete workflowManifest.metadata;
+    workflowManifest.id = workflowId;
+    workflowManifest.artifacts = [
+      {
+        type: 'workflow',
+        file: 'workflow.json',
+      },
+    ];
+
+    // Pushing to workflowFolderContents
+    workflowFolderContents.push({
+      type: 'folder',
+      name: workflowId,
+      contents: [
+        {
+          type: 'file',
+          name: 'manifest.json',
+          data: JSON.stringify(workflowManifest, null, 2),
+        },
+        {
+          type: 'file',
+          name: 'workflow.json',
+          data: JSON.stringify(workflowData.workflowDefinition, null, 2),
+        },
+      ],
+    });
+
+    // workflowManifests[workflowId] = workflowManifest;
+  }
+
+  return {
+    type: 'folder',
+    name: '',
+    contents: workflowFolderContents,
+  };
+};
