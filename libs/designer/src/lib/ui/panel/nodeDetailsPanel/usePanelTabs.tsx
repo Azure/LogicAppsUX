@@ -2,7 +2,12 @@ import { useAgenticWorkflow } from '../../../core/state/designerView/designerVie
 import constants from '../../../common/constants';
 import type { RootState } from '../../../core';
 import { useNodeMetadata, useOperationInfo } from '../../../core';
-import { usePanelTabHideKeys, useUnitTest, useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
+import {
+  usePanelTabHideKeys,
+  useUnitTest,
+  useMonitoringView,
+  useSupportedChannels,
+} from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { useParameterValidationErrors } from '../../../core/state/operation/operationSelector';
 import { useIsNodePinnedToOperationPanel } from '../../../core/state/panel/panelSelectors';
 import { useSettingValidationErrors } from '../../../core/state/setting/settingSelector';
@@ -31,12 +36,11 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
   const isMonitoringView = useMonitoringView();
   const isUnitTestView = useUnitTest();
   const panelTabHideKeys = usePanelTabHideKeys();
-
   const isPinnedNode = useIsNodePinnedToOperationPanel(nodeId);
   const isTriggerNode = useSelector((state: RootState) => isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata));
   const operationInfo = useOperationInfo(nodeId);
   const nodeMetaData = useNodeMetadata(nodeId);
-  const supportedChannels = useSelector((state: RootState) => state.operations.supportedChannels[nodeId] ?? []);
+  const supportedChannels = useSupportedChannels(nodeId);
   const isAgenticWorkflow = useAgenticWorkflow();
   const hasSchema = useHasSchema(operationInfo?.connectorId, operationInfo?.operationId);
   const runHistory = useRetryHistory(nodeId);
