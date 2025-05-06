@@ -198,7 +198,6 @@ export function validateType(
         return;
       }
       if (!isValidJSONObjectFormat(parameterValue)) {
-        console.log('here');
         return intl.formatMessage({
           defaultMessage: 'Enter a valid JSON.',
           id: '3n6GJG',
