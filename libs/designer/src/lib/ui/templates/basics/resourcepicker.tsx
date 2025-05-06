@@ -187,24 +187,18 @@ const ResourceField = ({
       return;
     }
     const resource = resources.find((resource) => equals(resource.name, defaultKey))?.displayName;
-    console.log(
-      '##>> ResourcePicker - useEffect',
-      JSON.stringify({
-        selectedResource,
-        resource,
-        defaultKey,
-        resources,
-        isLoading,
-      })
-    );
+    console.log('##>> ResourcePicker - useEffect', {
+      resource,
+      defaultKey,
+      resources,
+      isLoading,
+    });
     if (!resource && !!defaultKey) {
       onSelect('');
     }
 
-    if (resource !== selectedResource) {
-      setSelectedResource(resource);
-    }
-  }, [resources, defaultKey, onSelect, isLoading, selectedResource]);
+    setSelectedResource(resource);
+  }, [resources, defaultKey, onSelect, isLoading]);
 
   return (
     <div style={{ marginBottom: '12px' }}>
