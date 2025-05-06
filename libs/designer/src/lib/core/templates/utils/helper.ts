@@ -230,13 +230,6 @@ export const validateParameterDetail = (data: { type: string; displayName?: stri
       description: 'Error message when the workflow parameter display name is empty.',
     });
   }
-  if (isUndefinedOrEmptyString(data?.description)) {
-    errorMessages = `${errorMessages ?? ''}${intl.formatMessage({
-      defaultMessage: 'Description is required. ',
-      id: '/5PrlZ',
-      description: 'Error message when the workflow parameter description is empty.',
-    })}`;
-  }
   if (!isUndefinedOrEmptyString(data?.default)) {
     const DefaultValueValidationError = validateParameterValueWithSwaggerType(data?.type, data?.default, false, intl);
     if (DefaultValueValidationError) {
