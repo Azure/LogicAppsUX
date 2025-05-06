@@ -27,10 +27,12 @@ import type { MessageItem } from 'vscode';
  * Overrides default Azurite location to new default location.
  * User can specify location.
  */
-export async function activateAzurite(context: IActionContext): Promise<void> {
+export async function activateAzurite(context: IActionContext, projectPath?: string): Promise<void> {
   if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
-    const workspaceFolder = await getWorkspaceFolder(context, undefined, true);
-    const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
+    if (!projectPath) {
+      const workspaceFolder = await getWorkspaceFolder(context, undefined, true);
+      projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
+    }
 
     if (projectPath) {
       const globalAzuriteLocationSetting: string = getWorkspaceSetting<string>(azuriteLocationSetting, projectPath, azuriteExtensionPrefix);
