@@ -5,18 +5,19 @@ import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import type { RootState, AppDispatch } from '../../../../../core/store';
-import { Link, MessageBar } from '@fluentui/react';
-import type { SupportedChannels } from '@microsoft/logic-apps-shared';
+import { Link, MessageBar, MessageBarType } from '@fluentui/react';
 import { deinitializeNodes, initializeNodeOperationInputsData } from '../../../../../core/state/operation/operationMetadataSlice';
 import { getAllNodeData } from '../../../../../core/configuretemplate/utils/helper';
 import { initializeOperationDetails } from '../../../../../core/templates/utils/parametershelper';
 import { setIsWorkflowParametersDirty } from '../../../../../core/state/workflowparameters/workflowparametersSlice';
+import { useSupportedChannels } from '../../../../../core/state/designerOptions/designerOptionsSelectors';
+import { equals } from '@microsoft/logic-apps-shared';
 
 export const ChannelsTab: React.FC<PanelTabProps> = (props) => {
   const { nodeId: selectedNodeId } = props;
   const dispatch = useDispatch<AppDispatch>();
-  const supportedChannels = useSelector((state: RootState) => state.operations.supportedChannels[selectedNodeId]);
-  const [channel, _setChannel] = useState<SupportedChannels | undefined>(supportedChannels.length > 0 ? supportedChannels[0] : undefined);
+  const supportedChannels = useSupportedChannels(selectedNodeId);
+  const channel = useMemo(() => (supportedChannels.length > 0 ? supportedChannels[0] : undefined), [supportedChannels]);
   const [isLoading, setIsLoading] = useState(false);
   const inputNodeId = useMemo(
     () => `${selectedNodeId}${constants.CHANNELS.INPUT}${channel?.input?.type}`,
@@ -29,6 +30,19 @@ export const ChannelsTab: React.FC<PanelTabProps> = (props) => {
 
   const inputChannelParameters = useSelector((state: RootState) => state.operations.inputParameters[inputNodeId]);
 
+  const agentIdWhereChannelIsEnabled = useSelector((state: RootState) => {
+    const keys = Object.keys(state.operations.inputParameters);
+    const inputChannelSuffix = `${constants.CHANNELS.INPUT}${channel?.input?.type}`;
+    const channelEnabled = keys.find((key) => key.endsWith(inputChannelSuffix)) ?? '';
+
+    return channelEnabled.split(inputChannelSuffix)[0];
+  });
+
+  const channelEnabledForDifferentAgent = useMemo(
+    () => !!agentIdWhereChannelIsEnabled && !equals(agentIdWhereChannelIsEnabled, selectedNodeId),
+    [agentIdWhereChannelIsEnabled, selectedNodeId]
+  );
+
   const outputChannelParameters = useSelector((state: RootState) => state.operations.inputParameters[outputNodeId]);
 
   const intl = useIntl();
@@ -40,6 +54,15 @@ export const ChannelsTab: React.FC<PanelTabProps> = (props) => {
         id: 'PPvsfZ',
         description: 'Channel not supported message',
       }),
+      CHANNEL_ALREADY_ENABLED: intl.formatMessage(
+        {
+          defaultMessage:
+            'You can only enable channels for one of the agents in your workflow. Channels are already enabled for the agent - {agentId}. Please disable the channels there to enable it for this agent.',
+          id: 'sAXmUk',
+          description: 'Channel already enabled message',
+        },
+        { agentId: agentIdWhereChannelIsEnabled }
+      ),
       INPUT_TITLE: intl.formatMessage({
         defaultMessage: 'Allow only input channels',
         id: 'oxvDB0',
@@ -57,8 +80,9 @@ export const ChannelsTab: React.FC<PanelTabProps> = (props) => {
         description: 'Input and output channel configuration.',
       }),
       INPUT_DESCRIPTION: intl.formatMessage({
-        defaultMessage: 'Send messages to the agent while the workflow is running. This will pause the workflow until the agent responds.',
-        id: 'Kr/FEL',
+        defaultMessage:
+          'Send messages to the agent while the workflow is running. This will pause the workflow until the agent processes the input.',
+        id: 'Gup8o6',
         description: 'Input channel info config.',
       }),
       CHANNEL_DESCRIPTION: intl.formatMessage({
@@ -84,7 +108,7 @@ export const ChannelsTab: React.FC<PanelTabProps> = (props) => {
         description: 'Learn more about channels.',
       }),
     }),
-    [intl]
+    [intl, agentIdWhereChannelIsEnabled]
   );
 
   const disableOperation = useCallback(
@@ -196,11 +220,20 @@ export const ChannelsTab: React.FC<PanelTabProps> = (props) => {
   return (
     <>
       {supportedChannels.length === 0 || !channel ? (
-        <MessageBar key={'warning'} className="msla-initialize-variable-warning">
+        <MessageBar key={'warning-no-channel'} className="msla-initialize-variable-warning">
           <MessageBarBody>{stringResources.NO_CHANNEL_SUPPORTED_MSG}</MessageBarBody>
         </MessageBar>
       ) : (
-        <div className="msla-channel-settings-container">
+        <div className="msla-channel-settings-container" style={{ marginBottom: '15px', fontStyle: 'italic', fontSize: 10 }}>
+          {channelEnabledForDifferentAgent ? (
+            <MessageBar
+              key={'warning-existing-channel'}
+              className="msla-initialize-variable-warning"
+              messageBarType={MessageBarType.warning}
+            >
+              <MessageBarBody>{stringResources.CHANNEL_ALREADY_ENABLED}</MessageBarBody>
+            </MessageBar>
+          ) : null}
           <div className="msla-channel-title-description">
             {stringResources.CHANNEL_DESCRIPTION}{' '}
             <Link href={'https://aka.ms/agent-channels'} target="_blank" style={{ fontSize: 12, fontStyle: 'italic' }}>
@@ -212,7 +245,7 @@ export const ChannelsTab: React.FC<PanelTabProps> = (props) => {
               value={inputChannelParameters && outputChannelParameters ? 'input-ouput' : inputChannelParameters ? 'input' : 'none'}
               className={'msla-channel-settings-radio-group'}
               required={true}
-              disabled={isLoading}
+              disabled={isLoading || channelEnabledForDifferentAgent}
               onChange={(_e: any, option: RadioGroupOnChangeData) => onOptionChange(option.value)}
             >
               <Radio
