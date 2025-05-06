@@ -15,6 +15,7 @@ import type { ICreateFunctionOptions, IFunctionWizardContext, ProjectLanguage } 
 import { ProcessPackageStep } from './CodeProjectBase/ProcessPackageStep';
 import { SelectFolderForNewWorkspaceStep } from '../createNewProject/createProjectSteps/SelectFolderForNewWorkspaceStep';
 import { ExtractPackageStep } from './CodeProjectBase/ExtractPackageStep';
+import { WorkspaceSettingsStep } from './CodeProjectBase/WorkspaceSettingsStep';
 
 const openFolder = true;
 
@@ -57,6 +58,7 @@ export async function cloudToLocalCommand(
       new WorkspaceNameStep(),
       new LogicAppNameStep(),
       new NewCodeProjectTypeStep(options.templateId, options.functionSettings, true),
+      new WorkspaceSettingsStep(),
       new ExtractPackageStep(),
       new OpenBehaviorStep(),
     ],
