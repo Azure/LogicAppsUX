@@ -26,15 +26,15 @@ export const ResourcePicker = ({ viewMode = 'default', onSelectApp }: ResourcePi
   const { subscriptionId, resourceGroup, location, workflowAppName, logicAppName, isConsumption } = useSelector(
     (state: RootState) => state.workflow
   );
-  const { data: subscriptions, isFetching: isLoadingSubscriptions } = useSubscriptions();
-  const { data: resourceGroups, isFetching: isLoadingResourceGroups } = useResourceGroups(subscriptionId ?? '');
-  const { data: locations, isFetching: isLoadingLocations } = useLocations(subscriptionId ?? '');
-  const { data: logicApps, isFetching: isLoadingLogicApps } = useLogicApps(
+  const { data: subscriptions, isLoading } = useSubscriptions();
+  const { data: resourceGroups, isLoading: isResourceGroupLoading } = useResourceGroups(subscriptionId ?? '');
+  const { data: locations, isLoading: islocationLoading } = useLocations(subscriptionId ?? '');
+  const { data: logicApps, isLoading: isLogicAppsLoading } = useLogicApps(
     subscriptionId ?? '',
     resourceGroup ?? '',
     isDefaultMode && !isConsumption
   );
-  const { data: allLogicApps, isFetching: isAllLogicAppsLoading } = useAllLogicApps(
+  const { data: allLogicApps, isLoading: isAllLogicAppsLoading } = useAllLogicApps(
     subscriptionId ?? '',
     resourceGroup ?? '',
     !isDefaultMode
@@ -90,7 +90,7 @@ export const ResourcePicker = ({ viewMode = 'default', onSelectApp }: ResourcePi
         label={resourceStrings.SUBSCRIPTION}
         onSelect={(value) => dispatch(setSubscription(value))}
         defaultKey={subscriptionId}
-        isLoading={isLoadingSubscriptions}
+        isLoading={isLoading}
         resources={subscriptions ?? []}
         errorMessage={subscriptionId ? '' : intlText.VALIDATION_ERROR}
       />
@@ -99,7 +99,7 @@ export const ResourcePicker = ({ viewMode = 'default', onSelectApp }: ResourcePi
         label={resourceStrings.RESOURCE_GROUP}
         onSelect={(value) => dispatch(setResourceGroup(value))}
         defaultKey={resourceGroup}
-        isLoading={isLoadingResourceGroups}
+        isLoading={isResourceGroupLoading}
         resources={resourceGroups ?? []}
         errorMessage={resourceGroup ? '' : intlText.VALIDATION_ERROR}
       />
@@ -109,7 +109,7 @@ export const ResourcePicker = ({ viewMode = 'default', onSelectApp }: ResourcePi
           label={resourceStrings.LOCATION}
           onSelect={(value) => dispatch(setLocation(value))}
           defaultKey={location}
-          isLoading={isLoadingLocations}
+          isLoading={islocationLoading}
           resources={locations ?? []}
           errorMessage={location ? '' : intlText.VALIDATION_ERROR}
         />
@@ -120,7 +120,7 @@ export const ResourcePicker = ({ viewMode = 'default', onSelectApp }: ResourcePi
           label={resourceStrings.LOGIC_APP}
           onSelect={onLogicAppSelect}
           defaultKey={workflowAppName ?? ''}
-          isLoading={isLoadingLogicApps}
+          isLoading={isLogicAppsLoading}
           resources={(logicApps ?? []).map((app) => ({
             id: app.id,
             name: app.name,
@@ -183,22 +183,17 @@ const ResourceField = ({
 
   const [selectedResource, setSelectedResource] = useState<string | undefined>('');
   useEffect(() => {
-    if (isLoading || (resources ?? []).length === 0) {
-      return;
-    }
-    const resource = resources.find((resource) => equals(resource.name, defaultKey))?.displayName;
-    console.log('##>> ResourcePicker - useEffect', {
-      resource,
-      defaultKey,
-      resources,
-      isLoading,
-    });
-    if (!resource && !!defaultKey) {
-      onSelect('');
-    }
+    if (!isLoading) {
+      const resource = resources.find((resource) => equals(resource.name, defaultKey))?.displayName;
+      if (!resource && !!defaultKey) {
+        onSelect('');
+      }
 
-    setSelectedResource(resource);
-  }, [resources, defaultKey, onSelect, isLoading]);
+      if (resource !== selectedResource) {
+        setSelectedResource(resource);
+      }
+    }
+  }, [resources, defaultKey, onSelect, isLoading, selectedResource]);
 
   return (
     <div style={{ marginBottom: '12px' }}>
