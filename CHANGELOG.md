@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [5.94.10](https://github.com/Azure/LogicAppsUX/compare/v5.94.9...v5.94.10) (2025-05-06)
+
+
+### Bug Fixes
+
+* **designer:** Disable channels for the second agent (or other agents if it is enabled for 1) ([#7182](https://github.com/Azure/LogicAppsUX/issues/7182)) ([b79e613](https://github.com/Azure/LogicAppsUX/commit/b79e61301b3a1b3f46eb510dd9c0c130a87b3631))
+
 ### [5.94.9](https://github.com/Azure/LogicAppsUX/compare/v5.94.8...v5.94.9) (2025-05-05)
 
 
