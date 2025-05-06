@@ -1,4 +1,21 @@
 # Logic Apps Designer
+## [5.101.0](https://github.com/Azure/LogicAppsUX/compare/v5.100.0...v5.101.0) (2025-05-06)
+
+
+### Features
+
+* **designer:** Update 'maximumTokenCount' and 'messageCountLimit' settings as required ([#7176](https://github.com/Azure/LogicAppsUX/issues/7176)) ([498eeb6](https://github.com/Azure/LogicAppsUX/commit/498eeb6858a832049fc24653c51e8eee26ca4d45))
+
+
+### Bug Fixes
+
+* **designer:** Disable channels for the second agent (or other agents if it is enabled for 1) ([#7181](https://github.com/Azure/LogicAppsUX/issues/7181)) ([015a750](https://github.com/Azure/LogicAppsUX/commit/015a750a94b7c50f4d8689d66c1366bc40be958d))
+* **designer:** Fix browse styles ([#7145](https://github.com/Azure/LogicAppsUX/issues/7145)) ([d4e4cd4](https://github.com/Azure/LogicAppsUX/commit/d4e4cd4a917ebf76c317f0def7ad706eeb6c855a))
+* **Designer:** Non-latin characters in action name breaking designer ([#7177](https://github.com/Azure/LogicAppsUX/issues/7177)) ([fe512bb](https://github.com/Azure/LogicAppsUX/commit/fe512bbe7facc49c389daf4ccde60cf1a1971f22)), closes [#6957](https://github.com/Azure/LogicAppsUX/issues/6957)
+* **designer:** Prevent error for undefined cognitiveServiceAccountId ([#7170](https://github.com/Azure/LogicAppsUX/issues/7170)) ([2182dce](https://github.com/Azure/LogicAppsUX/commit/2182dce6db19095aa499680c3b7cbbb4d153bc4a))
+* **designer:** Update Agent Tool Filtering ([#7173](https://github.com/Azure/LogicAppsUX/issues/7173)) ([2f36e9e](https://github.com/Azure/LogicAppsUX/commit/2f36e9eb5f74fd05b160f801047d719cb5358b2f))
+* **designer:** Update expression JSON validation ([#7180](https://github.com/Azure/LogicAppsUX/issues/7180)) ([a36f319](https://github.com/Azure/LogicAppsUX/commit/a36f3195b9a825612ef0119fe2fbb01c4e9e26ae))
+
 ## [5.100.0](https://github.com/Azure/LogicAppsUX/compare/v5.99.0...v5.100.0) (2025-05-04)
 
 
