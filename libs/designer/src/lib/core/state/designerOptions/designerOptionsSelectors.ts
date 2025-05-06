@@ -1,5 +1,11 @@
 import type { RootState } from '../../store';
 import { useSelector } from 'react-redux';
+import { useAgenticWorkflow } from '../designerView/designerViewSelectors';
+import { useOperationInfo } from '../selectors/actionMetadataSelector';
+import { useEffect, useState } from 'react';
+import { equals } from '@microsoft/logic-apps-shared';
+import { getSupportedChannels } from '../../utils/agent';
+import constants from '../../../common/constants';
 
 export const useReadOnly = () => {
   return useSelector((state: RootState) => state.designerOptions.readOnly);
@@ -58,4 +64,23 @@ export const useAreDesignerOptionsInitialized = () => {
 
 export const useAreServicesInitialized = () => {
   return useSelector((state: RootState) => state.designerOptions?.servicesInitialized ?? false);
+};
+
+export const useSupportedChannels = (nodeId: string) => {
+  const isAgenticWorkflow = useAgenticWorkflow();
+  const operationInfo = useOperationInfo(nodeId);
+  const [supportedChannels, setSupportedChannels] = useState<any[]>([]);
+
+  useEffect(() => {
+    const refreshChannels = async () => {
+      if (equals(operationInfo.type ?? '', constants.NODE.TYPE.AGENT) && isAgenticWorkflow) {
+        const channels = await getSupportedChannels(nodeId, operationInfo);
+        setSupportedChannels(channels);
+      }
+    };
+
+    refreshChannels();
+  }, [isAgenticWorkflow, nodeId, operationInfo]);
+
+  return supportedChannels;
 };
