@@ -57,15 +57,16 @@ export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionW
     return workflowCsFullPath;
   }
 
+  // this will change when we support extension bundles
   private async updateHostJson(context: IFunctionWizardContext, hostFileName: string): Promise<void> {
     const hostJsonPath: string = path.join(context.projectPath, hostFileName);
     let hostJson: IHostJsonV2 = await this.getHostJson(context, hostJsonPath);
     let hostJsonUpdated = false;
 
-    hostJson.extensionBundle = undefined;
     hostJsonUpdated = true;
 
     if (
+      // keeping for later
       nonNullProp(context, 'workflowProjectType') === WorkflowProjectType.Bundle &&
       (hostJson.extensionBundle === undefined ||
         hostJson.extensionBundle.id !== extensionBundleId ||
@@ -76,6 +77,8 @@ export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionW
       };
       hostJsonUpdated = true;
     }
+
+    hostJson.extensionBundle = undefined;
 
     if (hostJsonUpdated) {
       await writeFormattedJson(hostJsonPath, hostJson);
