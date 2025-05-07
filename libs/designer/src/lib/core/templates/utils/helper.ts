@@ -230,13 +230,6 @@ export const validateParameterDetail = (data: { type: string; displayName?: stri
       description: 'Error message when the workflow parameter display name is empty.',
     });
   }
-  if (isUndefinedOrEmptyString(data?.description)) {
-    errorMessages = `${errorMessages ?? ''}${intl.formatMessage({
-      defaultMessage: 'Description is required. ',
-      id: '/5PrlZ',
-      description: 'Error message when the workflow parameter description is empty.',
-    })}`;
-  }
   if (!isUndefinedOrEmptyString(data?.default)) {
     const DefaultValueValidationError = validateParameterValueWithSwaggerType(data?.type, data?.default, false, intl);
     if (DefaultValueValidationError) {
@@ -358,19 +351,19 @@ export const validateTemplateManifestValue = (manifest: Template.TemplateManifes
     });
   }
 
+  if (!manifest.featuredConnectors?.length) {
+    errors['featuredConnectors'] = intl.formatMessage({
+      defaultMessage: 'At least one featured connector is required.',
+      id: 'l9sKzI',
+      description: 'Error shown when the feature connector field is missing',
+    });
+  }
+
   if (isUndefinedOrEmptyString(manifest.details?.By)) {
     errors['details.By'] = intl.formatMessage({
       defaultMessage: 'By field is required.',
       id: 'JSWwJH',
       description: 'Error shown when the author (By) field is missing',
-    });
-  }
-
-  if (isUndefinedOrEmptyString(manifest.details?.Category)) {
-    errors['details.Category'] = intl.formatMessage({
-      defaultMessage: 'At least one category is required.',
-      id: '5GmlRf',
-      description: 'Error shown when the Category field is missing',
     });
   }
 
