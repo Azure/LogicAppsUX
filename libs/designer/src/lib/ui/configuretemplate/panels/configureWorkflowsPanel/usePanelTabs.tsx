@@ -11,9 +11,10 @@ import {
   initializeAndSaveWorkflowsData,
   saveWorkflowsData,
 } from '../../../../core/actions/bjsworkflow/configuretemplate';
-import { getResourceNameFromId, equals } from '@microsoft/logic-apps-shared';
+import { getResourceNameFromId, equals, type Template } from '@microsoft/logic-apps-shared';
 import { validateWorkflowData } from '../../../../core/templates/utils/helper';
 import { useCallback } from 'react';
+import { useResourceStrings } from '../../resources';
 
 export const useConfigureWorkflowPanelTabs = ({
   onSave,
@@ -22,14 +23,16 @@ export const useConfigureWorkflowPanelTabs = ({
 }): TemplateTabProps[] => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
-  const { isWizardUpdating, workflowsInTemplate, workflowState, runValidation } = useSelector((state: RootState) => ({
+  const { isWizardUpdating, workflowsInTemplate, workflowState, runValidation, currentStatus } = useSelector((state: RootState) => ({
     workflowsInTemplate: state.template.workflows,
     isWizardUpdating: state.tab.isWizardUpdating,
     workflowState: state.workflow,
     runValidation: state.tab.runValidation,
+    currentStatus: state.template.status,
   }));
 
   const hasError = false; // Placeholder for actual error state
+  const resources = useResourceStrings();
 
   const [selectedWorkflowsList, setSelectedWorkflowsList] =
     useFunctionalState<Record<string, Partial<WorkflowTemplateData>>>(workflowsInTemplate);
@@ -87,7 +90,9 @@ export const useConfigureWorkflowPanelTabs = ({
 
   const onSaveCompleted = useCallback(() => onSave?.(Object.keys(selectedWorkflowsList()).length > 1), [onSave, selectedWorkflowsList]);
 
-  const onSaveChanges = () => {
+  const onSaveChanges = (newPublishState: Template.TemplateEnvironment) => {
+    // TODO: use newPublishState for saving logic
+    console.log('newPublishState is : ', newPublishState);
     const selectedWorkflowIds = Object.values(selectedWorkflowsList()).map((workflow) =>
       workflow.manifest?.metadata?.workflowSourceId?.toLowerCase()
     );
@@ -99,6 +104,7 @@ export const useConfigureWorkflowPanelTabs = ({
         ? originalWorkflowIds.some((resourceId) => !selectedWorkflowIds.includes(resourceId))
         : true;
 
+    // TODO: change below logic to API call then modify state
     if (hasWorkflowListChanged) {
       dispatch(initializeAndSaveWorkflowsData({ workflows: selectedWorkflowsList(), onSaveCompleted }));
     } else {
@@ -119,13 +125,14 @@ export const useConfigureWorkflowPanelTabs = ({
       isSaving: isWizardUpdating,
       isPrimaryButtonDisabled: isNoWorkflowsSelected,
     }),
-    customizeWorkflowsTab(intl, dispatch, {
+    customizeWorkflowsTab(intl, resources, dispatch, {
       hasError,
       selectedWorkflowsList: selectedWorkflowsList(),
       updateWorkflowDataField,
       isSaving: isWizardUpdating,
       disabled: isNoWorkflowsSelected,
       isPrimaryButtonDisabled: missingNameOrDisplayName,
+      status: currentStatus,
       onSave: onSaveChanges,
     }),
   ];

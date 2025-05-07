@@ -60,6 +60,7 @@ export const TemplatesPanelFooter = ({ buttonContents }: TemplatePanelFooterProp
                       menuButton={triggerProps}
                       primaryActionButton={triggerProps}
                       appearance={appreance}
+                      disabled={disabled}
                     >
                       {text}
                     </SplitButton>
