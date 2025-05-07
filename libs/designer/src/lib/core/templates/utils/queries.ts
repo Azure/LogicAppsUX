@@ -18,7 +18,7 @@ export const useConnectorInfo = (
   enabled = true
 ): UseQueryResult<ConnectorInfo | undefined, unknown> => {
   return useQuery(
-    ['apiInfo', { connectorId }],
+    ['templateQueries', 'apiInfo', { connectorId }],
     async () => {
       if (!connectorId) {
         return null;
@@ -55,7 +55,7 @@ export const useConnectorInfo = (
 
 export const useSubscriptions = (): UseQueryResult<Resource[], unknown> => {
   return useQuery(
-    ['subscriptions'],
+    ['templateQueries', 'subscriptions'],
     async () => {
       return ResourceService().listSubscriptions();
     },
@@ -70,7 +70,7 @@ export const useSubscriptions = (): UseQueryResult<Resource[], unknown> => {
 
 export const useResourceGroups = (subscriptionId: string): UseQueryResult<Resource[], unknown> => {
   return useQuery(
-    ['resourcegroups', subscriptionId],
+    ['templateQueries', 'resourcegroups', subscriptionId],
     async () => {
       return ResourceService().listResourceGroups(subscriptionId);
     },
@@ -86,7 +86,7 @@ export const useResourceGroups = (subscriptionId: string): UseQueryResult<Resour
 
 export const useLocations = (subscriptionId: string): UseQueryResult<Resource[], unknown> => {
   return useQuery(
-    ['locations', subscriptionId],
+    ['templateQueries', 'locations', subscriptionId],
     async () => {
       return ResourceService().listLocations(subscriptionId);
     },
@@ -106,7 +106,7 @@ export const useLogicApps = (
   enabled: boolean
 ): UseQueryResult<LogicAppResource[], unknown> => {
   return useQuery(
-    ['logicapps', subscriptionId, resourceGroup],
+    ['templateQueries', 'logicapps', subscriptionId, resourceGroup],
     async () => {
       return ResourceService().listLogicApps(subscriptionId, resourceGroup);
     },
@@ -122,7 +122,10 @@ export const useLogicApps = (
 
 export const getCustomTemplates = async (subscriptionId: string, resourceGroup: string) => {
   const queryClient = getReactQueryClient();
-  return queryClient.fetchQuery(['customtemplates', subscriptionId.toLowerCase(), resourceGroup.toLowerCase()], async () => {
-    return (await TemplateService()?.getCustomTemplates?.(subscriptionId, resourceGroup)) ?? [];
-  });
+  return queryClient.fetchQuery(
+    ['templateQueries', 'customtemplates', subscriptionId.toLowerCase(), resourceGroup.toLowerCase()],
+    async () => {
+      return (await TemplateService()?.getCustomTemplates?.(subscriptionId, resourceGroup)) ?? [];
+    }
+  );
 };

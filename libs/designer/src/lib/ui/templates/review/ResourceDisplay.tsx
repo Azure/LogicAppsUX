@@ -1,10 +1,10 @@
 import { mergeClasses, Text } from '@fluentui/react-components';
 import { Spinner, SpinnerSize } from '@fluentui/react';
-import { useSubscriptions } from '../../../core/state/connection/connectionSelector';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { useTemplatesStrings } from '../templatesStrings';
 import type { RootState } from '../../../core/state/templates/store';
+import { useSubscriptions } from '../../../core/templates/utils/queries';
 
 export type ResourceDisplayProps = {
   invertBolds?: boolean;
