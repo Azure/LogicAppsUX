@@ -34,7 +34,12 @@ export const OperationSearchGroup = ({
     <div style={{ position: 'relative' }}>
       <div className={'msla-recommendation-panel-operation-search-group-header'}>
         <OperationGroupHeaderNew connector={operationApi} />
-        <Button className="msla-op-search-group-see-more" appearance="transparent" onClick={() => onConnectorClick(id)}>
+        <Button
+          className="msla-op-search-group-see-more"
+          style={{ padding: 0, justifyContent: 'flex-end' }}
+          appearance="transparent"
+          onClick={() => onConnectorClick(id)}
+        >
           {seeMoreText}
         </Button>
       </div>
