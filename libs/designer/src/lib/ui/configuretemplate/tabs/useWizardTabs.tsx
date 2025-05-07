@@ -20,6 +20,7 @@ import type { Template } from '@microsoft/logic-apps-shared';
 import { TemplateResourceService } from '@microsoft/logic-apps-shared';
 import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useCallback } from 'react';
+import { getDownloadableTemplate } from '../../../core/actions/bjsworkflow/configuretemplate';
 
 export const useConfigureTemplateWizardTabs = ({
   onSaveWorkflows,
@@ -92,6 +93,14 @@ export const useConfigureTemplateWizardTabs = ({
     [queryClient, templateManifest, workflows, onSaveTemplate, currentStatus, dispatch]
   );
 
+  const downloadTemplate = () => {
+    const downloadableTemplate = getDownloadableTemplate(templateManifest as Template.TemplateManifest, workflows);
+    console.log('downloadableTemplate: ', downloadableTemplate);
+    // TODO 1: _#workflowName# is not added in parameter / connection ids
+    // TODO 2: download downloadableTemplate as the structure. Zip is required.
+    // Downloading logic can be checked out in 'libs\designer\src\lib\core\utils\documentation.ts' downloadDocumentAsFile
+  };
+
   return [
     workflowsTab(resources, dispatch, onSaveWorkflows, {
       tabStatusIcon: hasAnyWorkflowErrors ? 'error' : runValidation ? 'success' : 'in-progress',
@@ -116,6 +125,7 @@ export const useConfigureTemplateWizardTabs = ({
       disabled: !enableWizard || isWizardUpdating,
       status: currentStatus,
       onSave: handleSaveTemplate,
+      onDownloadTemplate: downloadTemplate,
     }),
   ];
 };

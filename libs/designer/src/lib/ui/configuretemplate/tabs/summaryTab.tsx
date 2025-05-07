@@ -9,7 +9,15 @@ import { getSaveMenuButtons } from '../../../core/configuretemplate/utils/helper
 export const summaryTab = (
   resources: Record<string, string>,
   dispatch: AppDispatch,
-  { disabled, tabStatusIcon, onSave, status }: TemplateWizardTabProps
+  {
+    disabled,
+    tabStatusIcon,
+    onSave,
+    status,
+    onDownloadTemplate,
+  }: TemplateWizardTabProps & {
+    onDownloadTemplate: () => void;
+  }
 ): TemplateTabProps => ({
   id: constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.SUMMARY,
   title: resources.SummaryTabLabel,
@@ -31,6 +39,15 @@ export const summaryTab = (
         appreance: 'primary',
         onClick: () => {},
         menuItems: getSaveMenuButtons(resources, status ?? 'Development', (newStatus) => onSave?.(newStatus)),
+      },
+      {
+        type: 'divider',
+      },
+      {
+        type: 'button',
+        text: resources.DownloadTemplateButton,
+        appreance: 'subtle',
+        onClick: onDownloadTemplate,
       },
     ],
   },
