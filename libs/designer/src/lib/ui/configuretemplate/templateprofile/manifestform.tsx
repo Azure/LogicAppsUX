@@ -29,7 +29,7 @@ export const TemplateManifestForm = () => {
   const categorySectionItems = useCategorySectionItems(resources, handleUpdateManifest);
 
   return (
-    <div className="msla-templates-wizard-tab-content" style={{ width: '70%' }}>
+    <div className="msla-templates-wizard-tab-content" style={{ width: '70%', marginTop: '8px' }}>
       <TemplatesSection title={resources.General} titleHtmlFor={'generalSectionLabel'} items={generalSectionItems} />
       <TemplatesSection title={resources.ContactInfo} titleHtmlFor={'contactInfoSectionLabel'} items={contactInfoSectionItems} />
       <TemplatesSection title={resources.DESCRIPTION} titleHtmlFor={'descriptionSectionLabel'} items={descriptionSectionItems} />
@@ -154,7 +154,6 @@ const useCategorySectionItems = (
   handleUpdateManifest: (manifest: Partial<Template.TemplateManifest>) => void
 ) => {
   const { details, tags, featuredConnectors } = useSelector((state: RootState) => state.template.manifest as Template.TemplateManifest);
-  const errors = useSelector((state: RootState) => state.template.errors);
   const categories = useMemo(
     () =>
       getLogicAppsCategories().map((category) => ({
@@ -181,19 +180,18 @@ const useCategorySectionItems = (
       label: resources.FeaturedConnectors,
       value: featuredConnectors || [],
       type: 'custom',
+      required: true,
       onRenderItem: () => <FeaturedConnectors />,
     },
     {
       label: resources.Category,
       value: categoryValue,
       type: 'dropdown',
-      required: true,
       multiselect: true,
       options: categories,
       selectedOptions: selectedCategories,
       onOptionSelect: (selectedOptions) =>
         handleUpdateManifest({ details: { ...(details ?? {}), Category: selectedOptions.join(',') } as any }),
-      errorMessage: errors?.manifest?.['details.Category'],
     },
     {
       label: resources.Tags,

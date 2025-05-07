@@ -14,10 +14,9 @@ import { resetTemplatesState } from '../global';
 import { deleteWorkflowData, loadCustomTemplate } from '../../actions/bjsworkflow/configuretemplate';
 import { getSupportedSkus } from '../../configuretemplate/utils/helper';
 
-export type TemplateEnvironment = 'Production' | 'Testing' | 'Development';
 export interface TemplateState extends TemplatePayload {
   templateName?: string;
-  status?: TemplateEnvironment;
+  status?: Template.TemplateEnvironment;
 }
 
 const initialState: TemplateState = {
@@ -207,7 +206,7 @@ export const templateSlice = createSlice({
         (state.manifest as Template.TemplateManifest).skus = getSupportedSkus(action.payload.connections);
       }
     },
-    updateEnvironment: (state, action: PayloadAction<TemplateEnvironment>) => {
+    updateEnvironment: (state, action: PayloadAction<Template.TemplateEnvironment>) => {
       state.status = action.payload;
     },
   },
@@ -282,7 +281,7 @@ export const templateSlice = createSlice({
     builder.addCase(loadCustomTemplate.fulfilled, (state, action: PayloadAction<{ status: string }>) => {
       if (action.payload) {
         const { status } = action.payload;
-        state.status = status as TemplateEnvironment;
+        state.status = status as Template.TemplateEnvironment;
       }
     });
 

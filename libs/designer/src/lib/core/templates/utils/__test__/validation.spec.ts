@@ -108,15 +108,15 @@ describe('Template Validation Tests', () => {
           id: 'h4OHMi',
           description: 'Error shown when the template summary is missing or empty',
         }),
+        featuredConnectors: intl.formatMessage({
+          defaultMessage: 'At least one featured connector is required.',
+          id: 'l9sKzI',
+          description: 'Error shown when the feature connector field is missing',
+        }),
         'details.By': intl.formatMessage({
           defaultMessage: 'By field is required.',
           id: 'JSWwJH',
           description: 'Error shown when the author (By) field is missing',
-        }),
-        'details.Category': intl.formatMessage({
-          defaultMessage: 'At least one category is required.',
-          id: '5GmlRf',
-          description: 'Error shown when the Category field is missing',
         }),
       });
     });
