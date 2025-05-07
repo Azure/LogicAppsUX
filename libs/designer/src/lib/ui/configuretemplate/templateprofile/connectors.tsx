@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useCallback, useMemo } from 'react';
 import type { OptionOnSelectData, SelectionEvents } from '@fluentui/react-components';
-import { Dropdown, Option } from '@fluentui/react-components';
+import { Dropdown, Field, Option } from '@fluentui/react-components';
 import { equals } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
@@ -25,10 +25,11 @@ export const FeaturedConnectors = () => {
   };
   const dispatch = useDispatch<AppDispatch>();
 
-  const { operationInfos, featuredConnectors } = useSelector((state: RootState) => {
+  const { operationInfos, featuredConnectors, errors } = useSelector((state: RootState) => {
     return {
       operationInfos: state.operation.operationInfo,
       featuredConnectors: state.template.manifest?.featuredConnectors ?? [],
+      errors: state.template.errors,
     };
   });
   const { data: allConnectors, isLoading } = useAllConnectors(operationInfos);
@@ -45,26 +46,28 @@ export const FeaturedConnectors = () => {
   );
 
   return (
-    <Dropdown
-      style={{ width: '100%' }}
-      multiselect={true}
-      onOptionSelect={onOptionSelect}
-      disabled={isLoading}
-      defaultValue={selectedConnectors?.map((connector) => connector.displayName).join(', ')}
-      defaultSelectedOptions={selectedConnectors?.map((connector) => connector.id)}
-      placeholder={isLoading ? texts.LOADING : ''}
-    >
-      {!isLoading && !allConnectors?.length ? (
-        <Option key={'no-items'} value={'#noitem#'} disabled>
-          {texts.NO_ITEMS}
-        </Option>
-      ) : (
-        allConnectors?.map((resource) => (
-          <Option key={resource.id} value={resource.id}>
-            {resource.displayName}
+    <Field required={true} validationMessage={errors?.manifest?.['featuredConnectors']}>
+      <Dropdown
+        style={{ width: '100%' }}
+        multiselect={true}
+        onOptionSelect={onOptionSelect}
+        disabled={isLoading}
+        defaultValue={selectedConnectors?.map((connector) => connector.displayName).join(', ')}
+        defaultSelectedOptions={selectedConnectors?.map((connector) => connector.id)}
+        placeholder={isLoading ? texts.LOADING : ''}
+      >
+        {!isLoading && !allConnectors?.length ? (
+          <Option key={'no-items'} value={'#noitem#'} disabled>
+            {texts.NO_ITEMS}
           </Option>
-        ))
-      )}
-    </Dropdown>
+        ) : (
+          allConnectors?.map((resource) => (
+            <Option key={resource.id} value={resource.id}>
+              {resource.displayName}
+            </Option>
+          ))
+        )}
+      </Dropdown>
+    </Field>
   );
 };
