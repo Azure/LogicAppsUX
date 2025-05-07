@@ -96,7 +96,8 @@ export const useConfigureTemplateWizardTabs = ({
   const downloadTemplate = () => {
     const downloadableTemplate = getDownloadableTemplate(templateManifest as Template.TemplateManifest, workflows);
     console.log('downloadableTemplate: ', downloadableTemplate);
-    //TODO: download downloadableTemplate as the structure. Zip is required.
+    // TODO 1: _#workflowName# is not added in parameter / connection ids
+    // TODO 2: download downloadableTemplate as the structure. Zip is required.
     // Downloading logic can be checked out in 'libs\designer\src\lib\core\utils\documentation.ts' downloadDocumentAsFile
   };
 
