@@ -6,28 +6,30 @@ import * as fse from 'fs-extra';
 
 export class ExtractPackageStep extends AzureWizardPromptStep<IFunctionWizardContext> {
   /**
-   * Unzips package contents to package path and removes unnecessary files
+   * Unzips package contents to logic app path and removes unnecessary files. Then creates a README.md file.
    * @param context - Project wizard context containing user selections and settings
    */
   public async prompt(context: IFunctionWizardContext): Promise<void> {
+    const logicAppPath = path.join(context.customWorkspaceFolderPath, context.logicAppName || 'LogicApp');
+
     try {
       const data: Buffer | Buffer[] = fse.readFileSync(context.packagePath);
-      await unzipLogicAppArtifacts(data, context.projectPath);
+      await unzipLogicAppArtifacts(data, logicAppPath);
 
-      const projectFiles = fse.readdirSync(context.projectPath);
+      const projectFiles = fse.readdirSync(logicAppPath);
       const filesToExclude = [];
-      const excludedFiles = ['.vscode', 'obj', 'bin', 'local.settings.json', 'host.json'];
+      const excludedFiles = ['.vscode', 'obj', 'bin', 'local.settings.json', 'host.json', '.funcignore'];
       const excludedExt = ['.csproj'];
 
       projectFiles.forEach((fileName) => {
         if (excludedExt.includes(path.extname(fileName))) {
-          filesToExclude.push(path.join(context.projectPath, fileName));
+          filesToExclude.push(path.join(logicAppPath, fileName));
         }
       });
 
       excludedFiles.forEach((excludedFile) => {
-        if (fse.existsSync(path.join(context.projectPath, excludedFile))) {
-          filesToExclude.push(path.join(context.projectPath, excludedFile));
+        if (fse.existsSync(path.join(logicAppPath, excludedFile))) {
+          filesToExclude.push(path.join(logicAppPath, excludedFile));
         }
       });
 
@@ -39,10 +41,10 @@ export class ExtractPackageStep extends AzureWizardPromptStep<IFunctionWizardCon
       // Create README.md file
       const readMePath = path.join(__dirname, 'assets', 'readmes', 'importReadMe.md');
       const readMeContent = fse.readFileSync(readMePath, 'utf8');
-      fse.writeFileSync(path.join(context.projectPath, 'README.md'), readMeContent);
+      fse.writeFileSync(path.join(logicAppPath, 'README.md'), readMeContent);
     } catch (error) {
       context.telemetry.properties.error = error.message;
-      console.error(`Failed to extract contents of package to ${context.projectPath}`, error);
+      console.error(`Failed to extract contents of package to ${logicAppPath}`, error);
     }
   }
 
