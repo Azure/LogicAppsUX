@@ -391,6 +391,20 @@ export const buildGraphFromActions = (
   const edges: WorkflowEdge[] = [];
   let allActions: Operations = {};
   let nodesMetadata: NodesMetadata = {};
+
+  const rootIds = Object.keys(actions);
+  // Iterate through actions, if the action has a transtion pointing to another action, remove that action from the rootIds
+  for (const action of Object.values(actions)) {
+    if (action?.transitions) {
+      const transitionKeys = Object.keys(action.transitions);
+      for (const target of transitionKeys) {
+        if (rootIds.includes(target)) {
+          rootIds.splice(rootIds.indexOf(target), 1);
+        }
+      }
+    }
+  }
+
   for (let [actionName, _action] of Object.entries(actions)) {
     if (pasteScopeParams) {
       actionName = pasteScopeParams.renamedNodes[actionName] ?? actionName;
@@ -466,7 +480,7 @@ export const buildGraphFromActions = (
 
     allActions[actionName] = { ...action };
 
-    const isRoot = Object.keys(action.runAfter ?? {}).length === 0 && parentNodeId;
+    const isRoot = rootIds.includes(actionName);
     nodesMetadata[actionName] = {
       graphId,
       ...(parentNodeId ? { parentNodeId: parentNodeId } : {}),
