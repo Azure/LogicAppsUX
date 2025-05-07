@@ -269,6 +269,11 @@ export const useResourceStrings = () => {
       id: 'TEYRnv',
       description: 'The description for button text of saving the template rolling back to development status',
     }),
+    DownloadTemplateButton: intl.formatMessage({
+      defaultMessage: 'Download template',
+      id: '2CGfiU',
+      description: 'The description for button text of downloading the template',
+    }),
     // Aria labels
     WorkflowsListTableLabel: intl.formatMessage({
       defaultMessage: 'Workflows list tabel',
