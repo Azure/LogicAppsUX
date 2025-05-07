@@ -52,12 +52,12 @@ export async function extractConnectionDetails(connections: any): Promise<any> {
 }
 
 export async function extractConnectionSettings(context: IFunctionWizardContext): Promise<Record<string, any>> {
-  const projectPath = context.projectPath;
-  const localSettingsPath = path.join(projectPath, 'local.settings.json');
+  const logicAppPath = path.join(context.customWorkspaceFolderPath, context.logicAppName || 'LogicApp');
+  const localSettingsPath = path.join(logicAppPath, 'local.settings.json');
 
-  if (projectPath) {
+  if (logicAppPath) {
     try {
-      const connectionsJson = await getConnectionsJson(projectPath);
+      const connectionsJson = await getConnectionsJson(logicAppPath);
       const localSettings = JSON.parse(fs.readFileSync(localSettingsPath, 'utf8'));
       if (isEmptyString(connectionsJson)) {
         return;
@@ -98,20 +98,20 @@ export async function getParametersArtifactData(projectRoot: string): Promise<st
 }
 
 export async function changeAuthTypeToRaw(context: IFunctionWizardContext, parameterizeConnectionsSetting: any): Promise<any> {
-  const projectPath = context.projectPath;
-  const connectionsPath = path.join(projectPath, 'connections.json');
-  const parametersPath = path.join(projectPath, 'parameters.json');
+  const logicAppPath = path.join(context.customWorkspaceFolderPath, context.logicAppName || 'LogicApp');
+  const connectionsPath = path.join(logicAppPath, 'connections.json');
+  const parametersPath = path.join(logicAppPath, 'parameters.json');
   let connectionsData: ConnectionsData = {};
   let parametersJson: ParametersData = {};
 
-  if (projectPath) {
+  if (logicAppPath) {
     try {
-      const connectionsJson = await getConnectionsJson(projectPath);
+      const connectionsJson = await getConnectionsJson(logicAppPath);
       if (isEmptyString(connectionsJson)) {
         return;
       }
       connectionsData = JSON.parse(connectionsJson);
-      parametersJson = await getParametersJson(projectPath);
+      parametersJson = await getParametersJson(logicAppPath);
       if (parameterizeConnectionsSetting) {
         for (const referenceKey of Object.keys(connectionsData.managedApiConnections)) {
           parametersJson[`${referenceKey}-Authentication`].value = {
@@ -156,30 +156,30 @@ export async function changeAuthTypeToRaw(context: IFunctionWizardContext, param
 
 export async function updateConnectionKeys(context: IFunctionWizardContext): Promise<void> {
   let azureDetails: AzureConnectorDetails;
-  const projectPath = context.projectPath;
+  const logicAppPath = path.join(context.customWorkspaceFolderPath, context.logicAppName || 'LogicApp');
 
-  if (projectPath) {
-    azureDetails = await getAzureConnectorDetailsForLocalProject(context, projectPath);
+  if (logicAppPath) {
+    azureDetails = await getAzureConnectorDetailsForLocalProject(context, logicAppPath);
     try {
-      const connectionsJson = await getConnectionsJson(projectPath);
+      const connectionsJson = await getConnectionsJson(logicAppPath);
       if (isEmptyString(connectionsJson)) {
         ext.outputChannel.appendLog(localize('noConnectionKeysFound', 'No connection keys found for validation'));
         return;
       }
-      const parametersData = getParametersJson(projectPath);
+      const parametersData = getParametersJson(logicAppPath);
       const connectionsData: ConnectionsData = JSON.parse(connectionsJson);
 
       if (connectionsData.managedApiConnections && Object.keys(connectionsData.managedApiConnections).length) {
         const connectionsAndSettingsToUpdate = await getConnectionsAndSettingsToUpdate(
           context,
-          projectPath,
+          logicAppPath,
           connectionsData.managedApiConnections,
           azureDetails.tenantId,
           azureDetails.workflowManagementBaseUrl,
           parametersData
         );
 
-        await saveConnectionReferences(this.context, projectPath, connectionsAndSettingsToUpdate);
+        await saveConnectionReferences(context, logicAppPath, connectionsAndSettingsToUpdate);
       }
     } catch (error) {
       const errorMessage = localize(
@@ -198,18 +198,18 @@ export async function parameterizeConnectionsDuringImport(
   context: IFunctionWizardContext,
   localSettingsValues: Record<string, string>
 ): Promise<void> {
-  const projectPath = context.projectPath;
-  const parametersFilePath = path.join(projectPath, parametersFileName);
+  const logicAppPath = path.join(context.customWorkspaceFolderPath, context.logicAppName || 'LogicApp');
+  const parametersFilePath = path.join(logicAppPath, parametersFileName);
   const parametersFileExists = fs.existsSync(parametersFilePath);
 
-  if (projectPath) {
+  if (logicAppPath) {
     try {
-      const connectionsJson = await getConnectionsJson(projectPath);
+      const connectionsJson = await getConnectionsJson(logicAppPath);
       if (isEmptyString(connectionsJson)) {
         return;
       }
       const connectionsData = JSON.parse(connectionsJson);
-      const parametersJson = await getParametersJson(projectPath);
+      const parametersJson = await getParametersJson(logicAppPath);
 
       if (areAllConnectionsParameterized(connectionsData)) {
         window.showInformationMessage(localize('connectionsAlreadyParameterized', 'Connections are already parameterized.'));
@@ -234,14 +234,14 @@ export async function parameterizeConnectionsDuringImport(
 
       if (parametersJson && Object.keys(parametersJson).length) {
         await writeFormattedJson(parametersFilePath, parametersJson);
-        if (!parametersFileExists && (await isCSharpProject(context, projectPath))) {
-          await addNewFileInCSharpProject(context, parametersFileName, projectPath);
+        if (!parametersFileExists && (await isCSharpProject(context, logicAppPath))) {
+          await addNewFileInCSharpProject(context, parametersFileName, logicAppPath);
         }
       } else if (parametersFileExists) {
         await writeFormattedJson(parametersFilePath, parametersJson);
       }
 
-      await saveConnectionReferences(context, projectPath, { connections: connectionsData, settings: localSettingsValues });
+      await saveConnectionReferences(context, logicAppPath, { connections: connectionsData, settings: localSettingsValues });
     } catch (error) {
       const errorMessage = localize(
         'errorParameterizeConnections',
@@ -256,7 +256,8 @@ export async function parameterizeConnectionsDuringImport(
 }
 
 export async function cleanLocalSettings(context: IFunctionWizardContext): Promise<void> {
-  const localSettingsPath = path.join(context.projectPath, 'local.settings.json');
+  const logicAppPath = path.join(context.customWorkspaceFolderPath, context.logicAppName || 'LogicApp');
+  const localSettingsPath = path.join(logicAppPath, 'local.settings.json');
   const localSettings = JSON.parse(fs.readFileSync(localSettingsPath, 'utf8'));
 
   if (localSettings.Values) {
