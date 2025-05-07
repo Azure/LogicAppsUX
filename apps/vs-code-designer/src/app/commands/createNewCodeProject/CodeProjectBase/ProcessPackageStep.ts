@@ -49,7 +49,8 @@ export class ProcessPackageStep extends AzureWizardExecuteStep<IProjectWizardCon
    * @returns A Promise that resolves to void.
    */
   public async execute(context: IProjectWizardContext): Promise<void> {
-    const localSettingsPath = path.join(context.projectPath, 'local.settings.json');
+    const logicAppPath = path.join(context.customWorkspaceFolderPath, context.logicAppName || 'LogicApp');
+    const localSettingsPath = path.join(logicAppPath, 'local.settings.json');
     const parameterizeConnectionsSetting = getGlobalSetting(parameterizeConnectionsInProjectLoadSetting);
 
     let appSettings: ILocalSettingsJson = {};
@@ -57,7 +58,7 @@ export class ProcessPackageStep extends AzureWizardExecuteStep<IProjectWizardCon
     let connectionsData: any = {};
 
     try {
-      const connectionsString = await getConnectionsJson(context.projectPath);
+      const connectionsString = await getConnectionsJson(logicAppPath);
 
       // merge the app settings from local.settings.json and the settings from the zip file
       appSettings = await getLocalSettingsJson(context, localSettingsPath, false);
@@ -91,8 +92,8 @@ export class ProcessPackageStep extends AzureWizardExecuteStep<IProjectWizardCon
       }
 
       // OpenFolder will restart the extension host so we will cache README to open on next activation
-      const readMePath = path.join(context.projectPath, 'README.md');
-      const postExtractCache: ICachedTextDocument = { projectPath: context.projectPath, textDocumentPath: readMePath };
+      const readMePath = path.join(logicAppPath, 'README.md');
+      const postExtractCache: ICachedTextDocument = { projectPath: logicAppPath, textDocumentPath: readMePath };
       ext.context.globalState.update(cacheKey, postExtractCache);
       // Delete cached information if the extension host was not restarted after 5 seconds
       setTimeout(() => {
