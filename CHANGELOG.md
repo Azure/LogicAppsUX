@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [5.94.12](https://github.com/Azure/LogicAppsUX/compare/v5.94.11...v5.94.12) (2025-05-07)
+
+
+### Bug Fixes
+
+* **vscode:** Fix for Create Workspace from Package to properly create a workspace on deployment ([#7197](https://github.com/Azure/LogicAppsUX/issues/7197)) ([bcf7c46](https://github.com/Azure/LogicAppsUX/commit/bcf7c46c91b7c28a2ae165c96005efa981d7a66a)), closes [#7191](https://github.com/Azure/LogicAppsUX/issues/7191)
+
 ### [5.94.11](https://github.com/Azure/LogicAppsUX/compare/v5.94.10...v5.94.11) (2025-05-07)
 
 
