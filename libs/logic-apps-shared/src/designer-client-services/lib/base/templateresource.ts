@@ -61,6 +61,23 @@ export class BaseTemplateResourceService implements ITemplateResourceService {
     }
   }
 
+  public async updateState(resourceId: string, state: string) {
+    try {
+      const { baseUrl, apiVersion, httpClient } = this.options;
+      const uri = `${baseUrl}${resourceId}`;
+
+      await httpClient.patch({
+        uri,
+        queryParameters: { 'api-version': apiVersion },
+        content: {
+          properties: { state },
+        },
+      });
+    } catch (error) {
+      throw new Error(error as any);
+    }
+  }
+
   public async updateTemplate(resourceId: string, manifest: Template.TemplateManifest, state?: string) {
     try {
       const { baseUrl, apiVersion, httpClient } = this.options;
