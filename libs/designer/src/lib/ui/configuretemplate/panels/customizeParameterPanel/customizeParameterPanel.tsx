@@ -8,7 +8,7 @@ import { Panel, PanelType } from '@fluentui/react';
 import { CustomizeParameter } from '../../../configuretemplate/parameters/customizeParameter';
 import { validateParameterDetails } from '../../../../core/state/templates/templateSlice';
 import { useFunctionalState } from '@react-hookz/web';
-import { isUndefinedOrEmptyString, type Template } from '@microsoft/logic-apps-shared';
+import { equals, isUndefinedOrEmptyString, type Template } from '@microsoft/logic-apps-shared';
 import { useParameterDefinition } from '../../../../core/configuretemplate/configuretemplateselectors';
 import { updateWorkflowParameter } from '../../../../core/actions/bjsworkflow/configuretemplate';
 import { getSaveMenuButtons } from '../../../../core/configuretemplate/utils/helper';
@@ -79,20 +79,19 @@ export const CustomizeParameterPanel = () => {
             description: 'Button text for saving changes for parameter in the customize parameter panel',
           }),
           appreance: 'primary',
-          onClick: () => {
-            dispatch(updateWorkflowParameter({ parameterId: parameterId as string, definition: selectedParameterDefinition() }));
-            if (runValidation) {
-              dispatch(validateParameterDetails());
-            }
-          },
+          onClick: () => {},
           disabled: !isDirty || !isUndefinedOrEmptyString(parameterError),
           menuItems: getSaveMenuButtons(resources, currentStatus ?? 'Development', (newStatus) => {
-            // TODO: use this status to perform accordingly
-            console.log('---newStatus :', newStatus);
             if (runValidation) {
               dispatch(validateParameterDetails());
             }
-            dispatch(updateWorkflowParameter({ parameterId: parameterId as string, definition: selectedParameterDefinition() }));
+            dispatch(
+              updateWorkflowParameter({
+                parameterId: parameterId as string,
+                definition: selectedParameterDefinition(),
+                changedStatus: equals(currentStatus, newStatus) ? undefined : newStatus,
+              })
+            );
           }),
         },
         {
