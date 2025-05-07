@@ -644,8 +644,7 @@ export const getWorkflowsWithDefinitions = async (
   return allWorkflowsData;
 };
 
-export const getDownloadTemplateContents = (
-  // state: TemplateState
+export const getDownloadableTemplate = (
   templateManifest: Template.TemplateManifest,
   workflowDatas: Record<string, { manifest: Template.WorkflowManifest; workflowDefinition: any }>
 ) => {
@@ -660,15 +659,12 @@ export const getDownloadTemplateContents = (
   const workflowFolderContents = [];
   const workflowDatasCopy = [...Object.entries(workflowDatas)];
 
-  console.log('ELAINA - ', theTemplateManifest, workflowDatasCopy, Object.entries(workflowDatas));
-
   for (const [workflowId, workflowData] of workflowDatasCopy) {
     theTemplateManifest.workflows[workflowId] = { name: workflowId };
 
     // Clean up workflowManifest
     const workflowManifest = { ...workflowData.manifest };
     delete workflowManifest.metadata;
-    // workflowManifest.id = workflowId;
     workflowManifest.artifacts = [
       {
         type: 'workflow',
@@ -693,8 +689,6 @@ export const getDownloadTemplateContents = (
         },
       ],
     });
-
-    // workflowManifests[workflowId] = workflowManifest;
   }
 
   return {

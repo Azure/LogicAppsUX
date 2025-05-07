@@ -20,7 +20,7 @@ import type { Template } from '@microsoft/logic-apps-shared';
 import { TemplateResourceService } from '@microsoft/logic-apps-shared';
 import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useCallback } from 'react';
-import { getDownloadTemplateContents } from '../../../core/actions/bjsworkflow/configuretemplate';
+import { getDownloadableTemplate } from '../../../core/actions/bjsworkflow/configuretemplate';
 
 export const useConfigureTemplateWizardTabs = ({
   onSaveWorkflows,
@@ -94,8 +94,10 @@ export const useConfigureTemplateWizardTabs = ({
   );
 
   const downloadTemplate = () => {
-    const hello = getDownloadTemplateContents(templateManifest as Template.TemplateManifest, workflows);
-    console.log('=hello ', hello);
+    const downloadableTemplate = getDownloadableTemplate(templateManifest as Template.TemplateManifest, workflows);
+    console.log('downloadableTemplate: ', downloadableTemplate);
+    //TODO: download downloadableTemplate as the structure. Zip is required.
+    // Downloading logic can be checked out in 'libs\designer\src\lib\core\utils\documentation.ts' downloadDocumentAsFile
   };
 
   return [
