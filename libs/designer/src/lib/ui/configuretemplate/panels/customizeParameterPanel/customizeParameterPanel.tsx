@@ -8,9 +8,11 @@ import { Panel, PanelType } from '@fluentui/react';
 import { CustomizeParameter } from '../../../configuretemplate/parameters/customizeParameter';
 import { validateParameterDetails } from '../../../../core/state/templates/templateSlice';
 import { useFunctionalState } from '@react-hookz/web';
-import type { Template } from '@microsoft/logic-apps-shared';
+import { isUndefinedOrEmptyString, type Template } from '@microsoft/logic-apps-shared';
 import { useParameterDefinition } from '../../../../core/configuretemplate/configuretemplateselectors';
 import { updateWorkflowParameter } from '../../../../core/actions/bjsworkflow/configuretemplate';
+import { getSaveMenuButtons } from '../../../../core/configuretemplate/utils/helper';
+import { useResourceStrings } from '../../resources';
 
 const layerProps = {
   hostId: 'msla-layer-host',
@@ -20,23 +22,25 @@ const layerProps = {
 export const CustomizeParameterPanel = () => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
-  const { parameterId, runValidation, isOpen, currentPanelView, parameterErrors } = useSelector((state: RootState) => ({
+  const { parameterId, runValidation, isOpen, currentPanelView, parameterErrors, currentStatus } = useSelector((state: RootState) => ({
     parameterId: state.panel.selectedTabId,
     runValidation: state.tab.runValidation,
     isOpen: state.panel.isOpen,
     currentPanelView: state.panel.currentPanelView,
     parameterErrors: state.template.errors.parameters,
+    currentStatus: state.template.status,
   }));
 
   const parameterDefinition = useParameterDefinition(parameterId as string);
 
-  const resources = {
+  const intlText = {
     customizeParamtersTitle: intl.formatMessage({
       defaultMessage: 'Customize parameter',
       id: 'CqN0oM',
       description: 'Panel header title for customizing parameters',
     }),
   };
+  const resources = useResourceStrings();
   const [selectedParameterDefinition, setSelectedParameterDefinition] =
     useFunctionalState<Template.ParameterDefinition>(parameterDefinition);
   const [isDirty, setIsDirty] = useState(false);
@@ -51,16 +55,18 @@ export const CustomizeParameterPanel = () => {
 
   const onRenderHeaderContent = useCallback(
     () => (
-      <TemplatesPanelHeader title={resources.customizeParamtersTitle}>
+      <TemplatesPanelHeader title={intlText.customizeParamtersTitle}>
         <div />
       </TemplatesPanelHeader>
     ),
-    [resources.customizeParamtersTitle]
+    [intlText.customizeParamtersTitle]
   );
 
   const dismissPanel = useCallback(() => {
     dispatch(closePanel());
   }, [dispatch]);
+
+  const parameterError = parameterErrors?.[parameterId as string];
 
   const footerContent: TemplatePanelFooterProps = useMemo(() => {
     return {
@@ -79,7 +85,15 @@ export const CustomizeParameterPanel = () => {
               dispatch(validateParameterDetails());
             }
           },
-          disabled: !isDirty,
+          disabled: !isDirty || !isUndefinedOrEmptyString(parameterError),
+          menuItems: getSaveMenuButtons(resources, currentStatus ?? 'Development', (newStatus) => {
+            // TODO: use this status to perform accordingly
+            console.log('---newStatus :', newStatus);
+            if (runValidation) {
+              dispatch(validateParameterDetails());
+            }
+            dispatch(updateWorkflowParameter({ parameterId: parameterId as string, definition: selectedParameterDefinition() }));
+          }),
         },
         {
           type: 'button',
@@ -94,7 +108,7 @@ export const CustomizeParameterPanel = () => {
         },
       ],
     };
-  }, [dispatch, intl, isDirty, parameterId, runValidation, selectedParameterDefinition]);
+  }, [dispatch, intl, isDirty, parameterId, runValidation, parameterError, currentStatus, resources, selectedParameterDefinition]);
 
   const onRenderFooterContent = useCallback(() => <TemplatesPanelFooter {...footerContent} />, [footerContent]);
 
@@ -113,7 +127,7 @@ export const CustomizeParameterPanel = () => {
       isFooterAtBottom={true}
     >
       <CustomizeParameter
-        parameterError={parameterErrors?.[parameterId as string]}
+        parameterError={parameterError}
         parameterDefinition={selectedParameterDefinition()}
         setParameterDefinition={updateParameterDefinition}
       />
