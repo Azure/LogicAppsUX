@@ -225,7 +225,7 @@ export const getSaveMenuButtons = (
   currentStatus: Template.TemplateEnvironment,
   onSave: (status: Template.TemplateEnvironment) => void
 ): { text: string; onClick: () => void }[] => {
-  const isPublishedState = currentStatus === 'Testing' || currentStatus === 'Production';
+  const isPublishedState = equals(currentStatus, 'Testing') || equals(currentStatus, 'Production');
   const saveDevelopmentButton = {
     text: isPublishedState ? resourceStrings.SaveUnpublishButton : resourceStrings.SaveButtonText,
     onClick: () => onSave('Development'),

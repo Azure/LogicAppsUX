@@ -7,7 +7,7 @@ import { selectWizardTab } from '../state/templates/tabSlice';
 import { setLayerHostSelector } from '@fluentui/react';
 import { TemplateInfoToast } from '../../ui/configuretemplate/toasters';
 import { useIntl } from 'react-intl';
-import type { Template } from '@microsoft/logic-apps-shared';
+import { equals, type Template } from '@microsoft/logic-apps-shared';
 
 export const ConfigureTemplateWizard = () => {
   useEffect(() => setLayerHostSelector('#msla-layer-host'), []);
@@ -58,7 +58,7 @@ export const ConfigureTemplateWizard = () => {
   };
 
   const onSaveTemplate = (prevStatus: Template.TemplateEnvironment, newStatus: Template.TemplateEnvironment) => {
-    const isNewStatusPublished = newStatus === 'Production' || newStatus === 'Testing';
+    const isNewStatusPublished = equals(newStatus, 'Production') || equals(newStatus, 'Testing');
     setToasterData({
       title: isNewStatusPublished
         ? intl.formatMessage(
@@ -71,7 +71,7 @@ export const ConfigureTemplateWizard = () => {
               newStatus,
             }
           )
-        : prevStatus === 'Development'
+        : equals(prevStatus, 'Development')
           ? intl.formatMessage({
               defaultMessage: 'Your template has been saved.',
               id: '+gBLFF',
@@ -88,7 +88,7 @@ export const ConfigureTemplateWizard = () => {
             id: 'ILcDyX',
             description: 'Content for the toaster for after publishing template.',
           })
-        : prevStatus === 'Development'
+        : equals(prevStatus, 'Development')
           ? intl.formatMessage({
               defaultMessage: 'Your template in action is in development mode.',
               id: 'rlfK4u',
