@@ -55,6 +55,7 @@ export const TemplatesPanelFooter = ({ buttonContents }: TemplatePanelFooterProp
               <Menu key={index} positioning="below-end">
                 <MenuTrigger disableButtonEnhancement>
                   {(triggerProps: MenuButtonProps) => (
+                    // TODO: change back to button, we are not using splitbutton capability
                     <SplitButton
                       style={index < buttonContents.length ? templateFooterItemStyle : {}}
                       menuButton={triggerProps}
