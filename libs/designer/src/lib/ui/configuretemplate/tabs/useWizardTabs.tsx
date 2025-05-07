@@ -20,6 +20,7 @@ import type { Template } from '@microsoft/logic-apps-shared';
 import { TemplateResourceService } from '@microsoft/logic-apps-shared';
 import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useCallback } from 'react';
+// import { getDownloadTemplateContents } from '../../../core/actions/bjsworkflow/configuretemplate';
 
 export const useConfigureTemplateWizardTabs = ({
   onSaveWorkflows,
@@ -71,8 +72,11 @@ export const useConfigureTemplateWizardTabs = ({
       dispatch(validateWorkflowManifestsData());
       dispatch(validateTemplateManifest());
       dispatch(validateParameterDetails());
+
+      // const hello = getDownloadTemplateContents(templateManifest as Template.TemplateManifest, workflows);
+      // console.log("=hello ", hello);
     }
-  }, [dispatch, selectedTabId]);
+  }, [dispatch, selectedTabId, templateManifest, workflows]);
 
   const onTemplateSave = useCallback(
     async (publishState: string) => {
