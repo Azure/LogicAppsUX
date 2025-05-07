@@ -1,7 +1,7 @@
 {
   "name": "vscode-azurelogicapps",
   "displayName": "Azure Logic Apps (Standard)",
-  "version": "5.94.10",
+  "version": "5.94.11",
   "aiKey": "setInGitHubBuild",
   "repository": "https://github.com/Azure/LogicAppsUX",
   "main": "main.js",
@@ -1001,18 +1001,26 @@
         "label": "Debug Logic App",
         "configurationAttributes": {
           "launch": {
-            "required": ["funcRuntime"],
+            "required": [
+              "funcRuntime"
+            ],
             "properties": {
               "funcRuntime": {
                 "type": "string",
                 "description": "The runtime to use for the Azure Functions host process.",
-                "enum": ["coreclr", "clr"],
+                "enum": [
+                  "coreclr",
+                  "clr"
+                ],
                 "default": "coreclr"
               },
               "customCodeRuntime": {
                 "type": "string",
                 "description": "The runtime to use for the .NET custom code host process.",
-                "enum": ["coreclr", "clr"]
+                "enum": [
+                  "coreclr",
+                  "clr"
+                ]
               }
             }
           }

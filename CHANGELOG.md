@@ -1,4 +1,16 @@
 # Logic Apps Designer
+### [5.94.11](https://github.com/Azure/LogicAppsUX/compare/v5.94.10...v5.94.11) (2025-05-07)
+
+
+### Features
+
+* **vscode:** New debug config provider for logic app project with custom code ([#7190](https://github.com/Azure/LogicAppsUX/issues/7190)) ([9a52331](https://github.com/Azure/LogicAppsUX/commit/9a52331b4e49736a3363e1c4fe9a9983c5b6dc87)), closes [#7131](https://github.com/Azure/LogicAppsUX/issues/7131)
+
+
+### Bug Fixes
+
+* **Templates:** Fixed query issue in Templates ([#7193](https://github.com/Azure/LogicAppsUX/issues/7193)) ([eae568d](https://github.com/Azure/LogicAppsUX/commit/eae568d96eee3acd01055efcb97a049dd1d4d6c5))
+
 ### [5.94.10](https://github.com/Azure/LogicAppsUX/compare/v5.94.9...v5.94.10) (2025-05-06)
 
 
