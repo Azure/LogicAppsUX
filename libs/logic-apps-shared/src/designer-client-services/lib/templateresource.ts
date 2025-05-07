@@ -10,6 +10,7 @@ export interface ITemplateResourceService {
   getTemplate: (id: string) => Promise<ArmResource<any>>;
   getTemplateWorkflows: (id: string) => Promise<ArmResource<any>[]>;
   updateTemplate: (id: string, manifest: Template.TemplateManifest, state?: string) => Promise<void>;
+  updateState: (id: string, state: string) => Promise<void>;
   addWorkflow: (id: string, workflowName: string, data: WorkflowData) => Promise<void>;
   updateWorkflow: (id: string, workflowName: string, manifest: Partial<Template.WorkflowManifest>) => Promise<void>;
   deleteWorkflow: (id: string, workflowName: string) => Promise<void>;

@@ -83,7 +83,6 @@ export const useConfigureTemplateWizardTabs = ({
       };
       dispatch(setRunValidation(true));
       const templateId = templateManifest?.id as string;
-      // TODO - error handling, in case of error, onSaveTemplate should be handled accordingly
       await TemplateResourceService().updateTemplate(templateId, manifestToUpdate, newPublishState);
 
       queryClient.removeQueries(['template', templateId.toLowerCase()]);

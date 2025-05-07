@@ -7,13 +7,15 @@ import { useIntl } from 'react-intl';
 import { Panel, PanelType } from '@fluentui/react';
 import { useConfigureWorkflowPanelTabs } from './usePanelTabs';
 import type { WorkflowTemplateData } from '../../../../core';
+import type { Template } from '@microsoft/logic-apps-shared';
 
 export interface ConfigureWorkflowsTabProps {
   hasError?: boolean;
   disabled?: boolean;
   isPrimaryButtonDisabled: boolean;
   isSaving: boolean;
-  onSave?: () => void;
+  onSave?: (status: Template.TemplateEnvironment) => void;
+  status?: Template.TemplateEnvironment;
   selectedWorkflowsList: Record<string, Partial<WorkflowTemplateData>>;
 }
 
