@@ -643,3 +643,64 @@ export const getWorkflowsWithDefinitions = async (
 
   return allWorkflowsData;
 };
+
+export const getDownloadableTemplate = (
+  templateManifest: Template.TemplateManifest,
+  workflowDatas: Record<string, { manifest: Template.WorkflowManifest; workflowDefinition: any }>
+) => {
+  const templateName = getResourceNameFromId(templateManifest.id);
+
+  const theTemplateManifest = {
+    ...templateManifest,
+    id: templateName,
+    workflows: { ...templateManifest.workflows },
+  } as Template.TemplateManifest;
+
+  const workflowFolderContents = [];
+  const workflowDatasCopy = [...Object.entries(workflowDatas)];
+
+  for (const [workflowId, workflowData] of workflowDatasCopy) {
+    theTemplateManifest.workflows[workflowId] = { name: workflowId };
+
+    // Clean up workflowManifest
+    const workflowManifest = { ...workflowData.manifest };
+    delete workflowManifest.metadata;
+    workflowManifest.artifacts = [
+      {
+        type: 'workflow',
+        file: 'workflow.json',
+      },
+    ];
+
+    // Pushing to workflowFolderContents
+    workflowFolderContents.push({
+      type: 'folder',
+      name: workflowId,
+      contents: [
+        {
+          type: 'file',
+          name: 'manifest.json',
+          data: JSON.stringify(workflowManifest, null, 2),
+        },
+        {
+          type: 'file',
+          name: 'workflow.json',
+          data: JSON.stringify(workflowData.workflowDefinition, null, 2),
+        },
+      ],
+    });
+  }
+
+  return {
+    type: 'folder',
+    name: templateName,
+    contents: [
+      {
+        type: 'file',
+        name: 'manifest.json',
+        data: JSON.stringify(theTemplateManifest, null, 2),
+      },
+      ...workflowFolderContents,
+    ],
+  };
+};
