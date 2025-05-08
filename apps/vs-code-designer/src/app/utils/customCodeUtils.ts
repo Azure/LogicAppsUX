@@ -17,7 +17,7 @@ export interface CustomCodeFunctionsProjectMetadata {
   namespace: string;
 }
 
-export async function getCustomCodeFunctionsProjects(context: IActionContext): Promise<string[]> {
+export async function getAllCustomCodeFunctionsProjects(context: IActionContext): Promise<string[]> {
   const workspaceRoot: string | undefined = await getWorkspaceRoot(context);
 
   if (isNullOrUndefined(workspaceRoot)) {

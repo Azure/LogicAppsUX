@@ -18,6 +18,7 @@ import {
   StandardCustomCodeService,
   ResourceIdentityType,
   BaseTenantService,
+  BaseCognitiveServiceService,
 } from '@microsoft/logic-apps-shared';
 import type { ContentType } from '@microsoft/logic-apps-shared';
 import {
@@ -146,6 +147,12 @@ const runService = new StandardRunService({
   isDev: true,
 });
 
+const cognitiveServiceService = new BaseCognitiveServiceService({
+  apiVersion: '2023-10-01-preview',
+  baseUrl: '/url',
+  httpClient,
+});
+
 const customCodeService = new StandardCustomCodeService({
   apiVersion: '2018-11-01',
   baseUrl: '/url',
@@ -206,6 +213,7 @@ export const LocalDesigner = () => {
       connectionParameterEditorService,
       customCodeService,
       uiInteractionsService,
+      cognitiveServiceService,
     },
     readOnly: isReadOnly,
     isMonitoringView,

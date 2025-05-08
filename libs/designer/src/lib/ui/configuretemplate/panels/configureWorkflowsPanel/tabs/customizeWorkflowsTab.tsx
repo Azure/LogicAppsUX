@@ -7,9 +7,11 @@ import type { IntlShape } from 'react-intl';
 import type { WorkflowTemplateData } from '../../../../../core';
 import { CustomizeWorkflows } from '../../../workflows/customizeWorkflows';
 import { Spinner } from '@fluentui/react-components';
+import { getSaveMenuButtons } from '../../../../../core/configuretemplate/utils/helper';
 
 export const customizeWorkflowsTab = (
   intl: IntlShape,
+  resources: Record<string, string>,
   dispatch: AppDispatch,
   {
     isSaving,
@@ -20,6 +22,7 @@ export const customizeWorkflowsTab = (
     updateWorkflowDataField,
     onSave,
     duplicateIds,
+    status,
   }: ConfigureWorkflowsTabProps & {
     duplicateIds: string[];
     updateWorkflowDataField: (workflowId: string, workflowData: Partial<WorkflowTemplateData>) => void;
@@ -42,28 +45,35 @@ export const customizeWorkflowsTab = (
     />
   ),
   footerContent: {
-    primaryButtonText: isSaving ? (
-      <Spinner size="tiny" />
-    ) : (
-      intl.formatMessage({
-        defaultMessage: 'Save changes',
-        id: '3jqHdn',
-        description: 'Button text for saving changes in the configure workflows panel',
-      })
-    ),
-    primaryButtonOnClick: () => {
-      onSave?.();
-      // dispatch(closePanel());
-    },
-    primaryButtonDisabled: isPrimaryButtonDisabled || isSaving,
-    secondaryButtonText: intl.formatMessage({
-      defaultMessage: 'Cancel',
-      id: '75zXUl',
-      description: 'Button text for closing the panel',
-    }),
-    secondaryButtonOnClick: () => {
-      dispatch(closePanel());
-    },
-    secondaryButtonDisabled: isSaving,
+    buttonContents: [
+      {
+        type: 'button',
+        text: isSaving ? (
+          <Spinner size="tiny" />
+        ) : (
+          intl.formatMessage({
+            defaultMessage: 'Save changes',
+            id: '3jqHdn',
+            description: 'Button text for saving changes in the configure workflows panel',
+          })
+        ),
+        onClick: () => {},
+        appreance: 'primary',
+        disabled: isPrimaryButtonDisabled || isSaving,
+        menuItems: getSaveMenuButtons(resources, status ?? 'Development', (newStatus) => onSave?.(newStatus)),
+      },
+      {
+        type: 'button',
+        text: intl.formatMessage({
+          defaultMessage: 'Cancel',
+          id: '75zXUl',
+          description: 'Button text for closing the panel',
+        }),
+        onClick: () => {
+          dispatch(closePanel());
+        },
+        disabled: isSaving,
+      },
+    ],
   },
 });

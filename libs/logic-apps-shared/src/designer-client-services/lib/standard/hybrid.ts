@@ -14,3 +14,5 @@ export const getHybridAppBaseRelativeUrl = (appId: string | undefined): string =
 
   return `${appId}/providers/Microsoft.App/logicApps/${appId.split('/').pop()}`;
 };
+
+export const hybridApiVersion = '2024-02-02-preview';

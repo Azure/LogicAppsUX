@@ -7,6 +7,7 @@ import { useIntl } from 'react-intl';
 import { Panel, PanelType } from '@fluentui/react';
 import { useConfigureWorkflowPanelTabs } from './usePanelTabs';
 import type { WorkflowTemplateData } from '../../../../core';
+import type { Template } from '@microsoft/logic-apps-shared';
 
 export interface ConfigureWorkflowsTabProps {
   onTabClick?: () => void;
@@ -14,7 +15,8 @@ export interface ConfigureWorkflowsTabProps {
   disabled?: boolean;
   isPrimaryButtonDisabled: boolean;
   isSaving: boolean;
-  onSave?: () => void;
+  onSave?: (status: Template.TemplateEnvironment) => void;
+  status?: Template.TemplateEnvironment;
   selectedWorkflowsList: Record<string, Partial<WorkflowTemplateData>>;
 }
 
@@ -68,7 +70,7 @@ export const ConfigureWorkflowsPanel = ({ onSave }: { onSave?: (isMultiWorkflow:
 
   const selectedTabProps = selectedTabId ? panelTabs?.find((tab) => tab.id === selectedTabId) : panelTabs[0];
   const onRenderFooterContent = useCallback(
-    () => (selectedTabProps?.footerContent ? <TemplatesPanelFooter showPrimaryButton={true} {...selectedTabProps?.footerContent} /> : null),
+    () => (selectedTabProps?.footerContent ? <TemplatesPanelFooter {...selectedTabProps?.footerContent} /> : null),
     [selectedTabProps?.footerContent]
   );
 

@@ -1,7 +1,7 @@
 {
   "name": "vscode-azurelogicapps",
   "displayName": "Azure Logic Apps (Standard)",
-  "version": "5.94.0",
+  "version": "5.102.0",
   "aiKey": "setInGitHubBuild",
   "repository": "https://github.com/Azure/LogicAppsUX",
   "main": "main.js",
@@ -991,6 +991,38 @@
             "type": "string",
             "description": "Default drive letter to mount the smb for hybrid logic apps",
             "default": "X:"
+          }
+        }
+      }
+    ],
+    "debuggers": [
+      {
+        "type": "logicapp",
+        "label": "Debug Logic App",
+        "configurationAttributes": {
+          "launch": {
+            "required": [
+              "funcRuntime"
+            ],
+            "properties": {
+              "funcRuntime": {
+                "type": "string",
+                "description": "The runtime to use for the Azure Functions host process.",
+                "enum": [
+                  "coreclr",
+                  "clr"
+                ],
+                "default": "coreclr"
+              },
+              "customCodeRuntime": {
+                "type": "string",
+                "description": "The runtime to use for the .NET custom code host process.",
+                "enum": [
+                  "coreclr",
+                  "clr"
+                ]
+              }
+            }
           }
         }
       }

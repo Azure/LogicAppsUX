@@ -13,7 +13,7 @@ interface SerializationOptions {
   separator?: string;
 }
 
-interface DropdownEditorProps {
+export interface DropdownEditorProps {
   initialValue: ValueSegment[];
   options: DropdownItem[];
   // Appearance

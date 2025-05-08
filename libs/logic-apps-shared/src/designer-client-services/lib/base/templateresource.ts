@@ -1,5 +1,6 @@
-import { getPropertyValue, getResourceNameFromId, type ArmResource, type Template } from '../../../index';
+import { getResourceNameFromId, type ArmResource, type Template } from '../../../index';
 import { getAzureResourceRecursive } from '../common/azure';
+import { getTemplateManifestFromResourceManifest } from '../helpers';
 import type { IHttpClient } from '../httpClient';
 import type { ITemplateResourceService, WorkflowData } from '../templateresource';
 
@@ -19,21 +20,7 @@ export class BaseTemplateResourceService implements ITemplateResourceService {
       const response = await httpClient.get<ArmResource<any>>({ uri, queryParameters: { 'api-version': apiVersion } });
       const manifest = response?.properties?.manifest;
       if (manifest) {
-        manifest.skus = manifest.supportedSkus?.split(',').map((sku: string) => sku.trim().toLowerCase());
-        manifest.tags = manifest.keywords;
-
-        if (manifest.details) {
-          manifest.details = {
-            By: getPropertyValue(manifest.details, 'by'),
-            Type: getPropertyValue(manifest.details, 'type'),
-            Category: getPropertyValue(manifest.details, 'category'),
-            Trigger: getPropertyValue(manifest.details, 'trigger'),
-          };
-        }
-
-        delete manifest.supportedSkus;
-        delete manifest.keywords;
-        response.properties.manifest = manifest;
+        response.properties.manifest = getTemplateManifestFromResourceManifest(manifest);
       }
 
       return response;
@@ -70,6 +57,23 @@ export class BaseTemplateResourceService implements ITemplateResourceService {
         return [];
       }
       // Handle other errors
+      throw new Error(error as any);
+    }
+  }
+
+  public async updateState(resourceId: string, state: string) {
+    try {
+      const { baseUrl, apiVersion, httpClient } = this.options;
+      const uri = `${baseUrl}${resourceId}`;
+
+      await httpClient.patch({
+        uri,
+        queryParameters: { 'api-version': apiVersion },
+        content: {
+          properties: { state },
+        },
+      });
+    } catch (error) {
       throw new Error(error as any);
     }
   }

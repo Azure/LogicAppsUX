@@ -244,6 +244,36 @@ export const useResourceStrings = () => {
       id: 'sMjDlb',
       description: 'Text to show no parameters present in the template.',
     }),
+    MissingRequiredFields: intl.formatMessage({
+      defaultMessage: 'Missing required fields: ',
+      id: 'uXecuj',
+      description: 'Text to show missing required fields in the template.',
+    }),
+    SaveButtonText: intl.formatMessage({
+      defaultMessage: 'Save',
+      id: 'DTIrLI',
+      description: 'The description for button text of saving the template',
+    }),
+    SavePublishForTestingButton: intl.formatMessage({
+      defaultMessage: 'Save + publish for testing',
+      id: 'hrs5f4',
+      description: 'The description for button text of saving the template as testing status',
+    }),
+    SavePublishForProdButton: intl.formatMessage({
+      defaultMessage: 'Save + publish for production',
+      id: '0UjRS5',
+      description: 'The description for button text of saving the template as production status',
+    }),
+    SaveUnpublishButton: intl.formatMessage({
+      defaultMessage: 'Save + unpublish template',
+      id: 'TEYRnv',
+      description: 'The description for button text of saving the template rolling back to development status',
+    }),
+    DownloadTemplateButton: intl.formatMessage({
+      defaultMessage: 'Download template',
+      id: '2CGfiU',
+      description: 'The description for button text of downloading the template',
+    }),
     // Aria labels
     WorkflowsListTableLabel: intl.formatMessage({
       defaultMessage: 'Workflows list tabel',
@@ -286,15 +316,15 @@ export const useResourceStrings = () => {
       id: '6ELsbA',
       description: 'The tab label for the monitoring profile tab on the configure template wizard',
     }),
-    SettingsTabLabel: intl.formatMessage({
-      defaultMessage: 'Settings',
-      id: '+IsazR',
-      description: 'The tab label for the settings tab on the configure template wizard',
+    PublishTabLabel: intl.formatMessage({
+      defaultMessage: 'Publish',
+      id: 'hA5Aif',
+      description: 'The tab label for the publish tab on the configure template wizard',
     }),
-    ReviewTabLabel: intl.formatMessage({
-      defaultMessage: 'Review',
-      id: 'uQtott',
-      description: 'The tab label for the review tab on the configure template wizard',
+    SummaryTabLabel: intl.formatMessage({
+      defaultMessage: 'Summary',
+      id: 'cCmFCI',
+      description: 'The tab label for the summary tab on the configure template wizard',
     }),
   };
 };

@@ -5,21 +5,29 @@ import { workflowsTab } from './workflowsTab';
 import { connectionsTab } from './connectionsTab';
 import { parametersTab } from './parametersTab';
 import { profileTab } from './profileTab';
-import { publishTab } from './publishTab';
-import { reviewTab } from './reviewTab';
+import { summaryTab } from './summaryTab';
 import { useTemplatesStrings } from '../../templates/templatesStrings';
 import { useResourceStrings } from '../resources';
+import { setRunValidation } from '../../../core/state/templates/tabSlice';
+import {
+  updateEnvironment,
+  validateParameterDetails,
+  validateTemplateManifest,
+  validateWorkflowManifestsData,
+} from '../../../core/state/templates/templateSlice';
+import constants from '../../../common/constants';
 import type { Template } from '@microsoft/logic-apps-shared';
 import { TemplateResourceService } from '@microsoft/logic-apps-shared';
 import { useQueryClient } from '@tanstack/react-query';
-import { useCallback } from 'react';
+import { useEffect, useCallback } from 'react';
+import { getDownloadableTemplate } from '../../../core/actions/bjsworkflow/configuretemplate';
 
 export const useConfigureTemplateWizardTabs = ({
   onSaveWorkflows,
-  onPublish,
+  onSaveTemplate,
 }: {
   onSaveWorkflows: (isMultiWorkflow: boolean) => void;
-  onPublish: () => void;
+  onSaveTemplate: (prevStatus: Template.TemplateEnvironment, newStatus: Template.TemplateEnvironment) => void;
 }) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
@@ -30,20 +38,22 @@ export const useConfigureTemplateWizardTabs = ({
     enableWizard,
     isWizardUpdating,
     templateManifest,
-    state,
+    currentStatus,
     workflows,
     parametersHasError,
     templateManifestHasError,
     runValidation,
+    selectedTabId,
   } = useSelector((state: RootState) => ({
     enableWizard: state.tab.enableWizard,
     isWizardUpdating: state.tab.isWizardUpdating,
     runValidation: state.tab.runValidation,
     templateManifest: state.template.manifest,
-    state: state.template.status,
+    currentStatus: state.template.status,
     workflows: state.template.workflows,
     parametersHasError: Object.values(state.template.errors.parameters).some((value) => value !== undefined),
     templateManifestHasError: Object.values(state.template.errors.manifest).some((value) => value !== undefined),
+    selectedTabId: state.tab.selectedTabId,
   }));
 
   const hasAnyWorkflowErrors = Object.values(workflows).some(
@@ -53,8 +63,17 @@ export const useConfigureTemplateWizardTabs = ({
       (errors?.manifest && Object.values(errors?.manifest ?? {}).some((value) => value !== undefined))
   );
 
-  const onTemplateSave = useCallback(
-    async (publishState: string) => {
+  useEffect(() => {
+    if (selectedTabId === constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.SUMMARY) {
+      dispatch(setRunValidation(true));
+      dispatch(validateWorkflowManifestsData());
+      dispatch(validateTemplateManifest());
+      dispatch(validateParameterDetails());
+    }
+  }, [dispatch, selectedTabId]);
+
+  const handleSaveTemplate = useCallback(
+    async (newPublishState: Template.TemplateEnvironment) => {
       const manifestToUpdate: Template.TemplateManifest = {
         ...(templateManifest as Template.TemplateManifest),
         details: {
@@ -62,16 +81,24 @@ export const useConfigureTemplateWizardTabs = ({
           Type: Object.keys(workflows).length > 1 ? 'Accelerator' : 'Workflow',
         } as any,
       };
+      dispatch(setRunValidation(true));
       const templateId = templateManifest?.id as string;
-      await TemplateResourceService().updateTemplate(templateId, manifestToUpdate, publishState);
+      await TemplateResourceService().updateTemplate(templateId, manifestToUpdate, newPublishState);
 
       queryClient.removeQueries(['template', templateId.toLowerCase()]);
+      onSaveTemplate(currentStatus ?? 'Development', newPublishState);
+      dispatch(updateEnvironment(newPublishState));
     },
-    [queryClient, templateManifest, workflows]
+    [queryClient, templateManifest, workflows, onSaveTemplate, currentStatus, dispatch]
   );
 
-  const onProfileSave = useCallback(async () => onTemplateSave(state as string), [onTemplateSave, state]);
-  const disableProfileSave = false;
+  const downloadTemplate = () => {
+    const downloadableTemplate = getDownloadableTemplate(templateManifest as Template.TemplateManifest, workflows);
+    console.log('downloadableTemplate: ', downloadableTemplate);
+    // TODO 1: _#workflowName# is not added in parameter / connection ids
+    // TODO 2: download downloadableTemplate as the structure. Zip is required.
+    // Downloading logic can be checked out in 'libs\designer\src\lib\core\utils\documentation.ts' downloadDocumentAsFile
+  };
 
   return [
     workflowsTab(resources, dispatch, onSaveWorkflows, {
@@ -89,16 +116,15 @@ export const useConfigureTemplateWizardTabs = ({
     profileTab(intl, resources, dispatch, {
       tabStatusIcon: templateManifestHasError ? 'error' : runValidation ? 'success' : enableWizard ? 'in-progress' : undefined,
       disabled: !enableWizard || isWizardUpdating,
-      onSave: onProfileSave,
-      disableSave: disableProfileSave,
+      status: currentStatus,
+      onSave: handleSaveTemplate,
     }),
-    reviewTab(resources, dispatch, {
+    summaryTab(resources, dispatch, {
       tabStatusIcon: undefined,
       disabled: !enableWizard || isWizardUpdating,
-    }),
-    publishTab(intl, resources, dispatch, onPublish, {
-      tabStatusIcon: undefined,
-      disabled: !enableWizard || isWizardUpdating,
+      status: currentStatus,
+      onSave: handleSaveTemplate,
+      onDownloadTemplate: downloadTemplate,
     }),
   ];
 };

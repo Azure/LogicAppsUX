@@ -47,6 +47,7 @@ import {
   guid,
   isArmResourceId,
   optional,
+  BaseCognitiveServiceService,
 } from '@microsoft/logic-apps-shared';
 import type { ContentType, IHostService, IWorkflowService } from '@microsoft/logic-apps-shared';
 import type { AllCustomCodeFiles, CustomCodeFileNameMapping, Workflow } from '@microsoft/logic-apps-designer';
@@ -70,6 +71,7 @@ import type { QueryClient } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHostingPlan } from '../../state/workflowLoadingSelectors';
 import CodeViewEditor from './CodeView';
+import { CustomConnectionParameterEditorService } from './Services/customConnectionParameterEditorService';
 
 const apiVersion = '2020-06-01';
 const httpClient = new HttpClient();
@@ -558,7 +560,6 @@ const DesignerEditor = () => {
                   }}
                   switchViews={handleSwitchView}
                   saveWorkflowFromCode={saveWorkflowFromCode}
-                  setWorkflow={setWorkflow}
                 />
                 {designerView ? <Designer /> : <CodeViewEditor ref={codeEditorRef} workflowKind={workflow?.kind} />}
                 <CombineInitializeVariableDialog />
@@ -921,6 +922,14 @@ const getDesignerServices = (
     httpClient,
   });
 
+  const cognitiveServiceService = new BaseCognitiveServiceService({
+    apiVersion: '2023-10-01-preview',
+    baseUrl: armUrl,
+    httpClient,
+  });
+
+  const connectionParameterEditorService = new CustomConnectionParameterEditorService();
+
   return {
     appService,
     connectionService,
@@ -938,6 +947,8 @@ const getDesignerServices = (
     hostService,
     chatbotService,
     customCodeService,
+    cognitiveServiceService,
+    connectionParameterEditorService,
     userPreferenceService: new BaseUserPreferenceService(),
     experimentationService: new BaseExperimentationService(),
   };

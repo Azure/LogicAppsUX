@@ -49,7 +49,7 @@ export const TemplateConnectionsList = () => {
 
   if (Object.keys(connections).length === 0) {
     return (
-      <div style={{ overflowX: 'auto', paddingTop: '12px' }}>
+      <div className="msla-templates-wizard-tab-content" style={{ overflowX: 'auto', paddingTop: '12px' }}>
         <Text>{resourceStrings.NoConnectionInTemplate}</Text>
       </div>
     );

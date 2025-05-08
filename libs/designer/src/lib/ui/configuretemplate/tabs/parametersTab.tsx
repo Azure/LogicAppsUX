@@ -16,13 +16,22 @@ export const parametersTab = (
   disabled,
   content: <TemplateParametersList />,
   footerContent: {
-    primaryButtonText: resources.PreviousButtonText,
-    primaryButtonOnClick: () => {
-      dispatch(selectWizardTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.CONNECTIONS));
-    },
-    secondaryButtonText: resources.NextButtonText,
-    secondaryButtonOnClick: () => {
-      dispatch(selectWizardTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.PROFILE));
-    },
+    buttonContents: [
+      {
+        type: 'button',
+        text: resources.PreviousButtonText,
+        onClick: () => {
+          dispatch(selectWizardTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.CONNECTIONS));
+        },
+      },
+      {
+        type: 'button',
+        text: resources.NextButtonText,
+        appreance: 'primary',
+        onClick: () => {
+          dispatch(selectWizardTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.PROFILE));
+        },
+      },
+    ],
   },
 });

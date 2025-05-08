@@ -15,8 +15,8 @@ export const getQuickViewTabs = (
   intl: IntlShape,
   dispatch: AppDispatch,
   workflowId: string,
-  showCreate: boolean,
-  { templateId, workflowAppName, isMultiWorkflow }: Template.TemplateContext,
+  clearDetailsOnClose: boolean,
+  { templateId, workflowAppName, isMultiWorkflow, showCreate, showCloseButton }: Template.TemplateContext,
   onCloseButtonClick?: () => void
 ) => {
   return [
@@ -24,11 +24,13 @@ export const getQuickViewTabs = (
       intl,
       dispatch,
       workflowId,
-      showCreate,
+      clearDetailsOnClose,
       {
         templateId,
         workflowAppName,
         isMultiWorkflow,
+        showCreate,
+        showCloseButton,
       },
       onCloseButtonClick
     ),
@@ -36,12 +38,14 @@ export const getQuickViewTabs = (
       intl,
       dispatch,
       workflowId,
-      showCreate,
+      clearDetailsOnClose,
       undefined,
       {
         templateId,
         workflowAppName,
         isMultiWorkflow,
+        showCreate,
+        showCloseButton,
       },
       onCloseButtonClick
     ),
@@ -221,25 +225,22 @@ export const validateParameterDetail = (data: { type: string; displayName?: stri
   let errorMessages: string | undefined = undefined;
   if (isUndefinedOrEmptyString(data?.displayName)) {
     errorMessages = intl.formatMessage({
-      defaultMessage: 'Display name is required.',
-      id: 'jtOu0/',
+      defaultMessage: 'Display name is required. ',
+      id: 'kvFOza',
       description: 'Error message when the workflow parameter display name is empty.',
     });
-  }
-  if (isUndefinedOrEmptyString(data?.description)) {
-    errorMessages = `${errorMessages ?? ''}${intl.formatMessage({
-      defaultMessage: 'Description is required.',
-      id: 'QDhqY3',
-      description: 'Error message when the workflow parameter description is empty.',
-    })}`;
   }
   if (!isUndefinedOrEmptyString(data?.default)) {
     const DefaultValueValidationError = validateParameterValueWithSwaggerType(data?.type, data?.default, false, intl);
     if (DefaultValueValidationError) {
-      errorMessages = `${errorMessages ?? ''}${DefaultValueValidationError}`;
+      errorMessages = `${errorMessages ?? ''}${intl.formatMessage({
+        defaultMessage: 'For default value: ',
+        id: '6WOs0A',
+        description: 'Error message when the workflow parameter description is empty.',
+      })}${DefaultValueValidationError}`;
     }
   }
-  return errorMessages;
+  return errorMessages ? errorMessages.trim() : undefined;
 };
 
 export const validateConnectionsValue = (
@@ -302,16 +303,16 @@ export const validateWorkflowData = (workflowData: Partial<WorkflowTemplateData>
 
   manifestErrors['images.light'] = isUndefinedOrEmptyString(workflowManifest?.images?.light)
     ? intl.formatMessage({
-        defaultMessage: 'Workflow light image is required.',
-        id: '1Cds91',
+        defaultMessage: 'The light image version of the workflow is required.',
+        id: 'JhJ8qX',
         description: 'Error message when the workflow light image is empty',
       })
     : undefined;
 
   manifestErrors['images.dark'] = isUndefinedOrEmptyString(workflowManifest?.images?.dark)
     ? intl.formatMessage({
-        defaultMessage: 'Workflow dark image is required.',
-        id: 'k194gz',
+        defaultMessage: 'The dark image version of the workflow is required.',
+        id: '7xiCnC',
         description: 'Error message when the workflow dark image is empty',
       })
     : undefined;
@@ -339,19 +340,19 @@ export const validateTemplateManifestValue = (manifest: Template.TemplateManifes
     });
   }
 
+  if (!manifest.featuredConnectors?.length) {
+    errors['featuredConnectors'] = intl.formatMessage({
+      defaultMessage: 'At least one featured connector is required.',
+      id: 'l9sKzI',
+      description: 'Error shown when the feature connector field is missing',
+    });
+  }
+
   if (isUndefinedOrEmptyString(manifest.details?.By)) {
     errors['details.By'] = intl.formatMessage({
       defaultMessage: 'By field is required.',
       id: 'JSWwJH',
       description: 'Error shown when the author (By) field is missing',
-    });
-  }
-
-  if (isUndefinedOrEmptyString(manifest.details?.Category)) {
-    errors['details.Category'] = intl.formatMessage({
-      defaultMessage: 'At least one category is required.',
-      id: '5GmlRf',
-      description: 'Error shown when the Category field is missing',
     });
   }
 

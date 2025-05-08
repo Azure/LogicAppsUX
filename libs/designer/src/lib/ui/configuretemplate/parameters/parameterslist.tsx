@@ -1,5 +1,8 @@
 import {
   Button,
+  MessageBar,
+  MessageBarBody,
+  MessageBarTitle,
   Table,
   TableBody,
   TableCell,
@@ -31,11 +34,18 @@ export const TemplateParametersList = () => {
     }),
   };
 
-  const { parameterDefinitions, currentPanelView, workflowsInTemplate } = useSelector((state: RootState) => ({
+  const { parameterDefinitions, currentPanelView, workflowsInTemplate, parameterErrors } = useSelector((state: RootState) => ({
     parameterDefinitions: state.template.parameterDefinitions,
     currentPanelView: state.panel.currentPanelView,
     workflowsInTemplate: state.template.workflows,
+    parameterErrors: state.template.errors.parameters,
   }));
+
+  const parameterErrorIds = useMemo(() => {
+    return Object.entries(parameterErrors)
+      .filter(([_id, error]) => error)
+      .map(([id]) => id);
+  }, [parameterErrors]);
 
   const isAccelerator = Object.keys(workflowsInTemplate).length > 1;
   const resourceStrings = useResourceStrings();
@@ -84,7 +94,7 @@ export const TemplateParametersList = () => {
 
   if (Object.keys(parameterDefinitions).length === 0) {
     return (
-      <div style={{ overflowX: 'auto', paddingTop: '12px' }}>
+      <div className="msla-templates-wizard-tab-content" style={{ overflowX: 'auto', paddingTop: '12px' }}>
         <Text>{resourceStrings.NoParameterInTemplate}</Text>
       </div>
     );
@@ -93,6 +103,14 @@ export const TemplateParametersList = () => {
   return (
     <div className="msla-templates-wizard-tab-content" style={{ overflowX: 'auto', paddingTop: '12px' }}>
       {currentPanelView === TemplatePanelView.CustomizeParameter && <CustomizeParameterPanel />}
+      {parameterErrorIds.length ? (
+        <MessageBar intent="error" className="msla-templates-error-message-bar">
+          <MessageBarBody>
+            <MessageBarTitle>{resourceStrings.MissingRequiredFields}</MessageBarTitle>
+            <Text>{parameterErrorIds.join(', ')}</Text>
+          </MessageBarBody>
+        </MessageBar>
+      ) : null}
 
       <Table aria-label={intlText.AriaLabel} size="small" style={{ width: '80%' }}>
         <TableHeader>

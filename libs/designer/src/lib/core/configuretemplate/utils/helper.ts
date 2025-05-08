@@ -9,7 +9,7 @@ import type { NodeOperationInputsData } from '../../state/operation/operationMet
 import type { ConnectionReferences } from '../../../common/models/workflow';
 import type { Token, ValueSegment } from '@microsoft/designer-ui';
 import { isExpressionToken, isParameterToken, isTokenValueSegment } from '../../utils/parameters/segment';
-import { isArmResourceId, isFunction, isParameterExpression, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
+import { equals, isArmResourceId, isFunction, isParameterExpression, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 
 export const delimiter = '::::::';
 export const getTemplateConnectionsFromConnectionsData = (
@@ -214,4 +214,37 @@ export const getSupportedSkus = (connections: Record<string, Template.Connection
   }
 
   return supportedSkus;
+};
+
+export const getDefinitionFromWorkflowManifest = (manifest: Template.WorkflowManifest): LogicAppsV2.WorkflowDefinition => {
+  return (manifest?.artifacts?.find((artifact) => equals(artifact.type, 'workflow')) as any)?.file as LogicAppsV2.WorkflowDefinition;
+};
+
+export const getSaveMenuButtons = (
+  resourceStrings: Record<string, string>,
+  currentStatus: Template.TemplateEnvironment,
+  onSave: (status: Template.TemplateEnvironment) => void
+): { text: string; onClick: () => void }[] => {
+  const isPublishedState = equals(currentStatus, 'Testing') || equals(currentStatus, 'Production');
+  const saveDevelopmentButton = {
+    text: isPublishedState ? resourceStrings.SaveUnpublishButton : resourceStrings.SaveButtonText,
+    onClick: () => onSave('Development'),
+  };
+  const baseItems = isPublishedState ? [] : [saveDevelopmentButton];
+  baseItems.push(
+    ...[
+      {
+        text: resourceStrings.SavePublishForTestingButton,
+        onClick: () => onSave('Testing'),
+      },
+      {
+        text: resourceStrings.SavePublishForProdButton,
+        onClick: () => onSave('Production'),
+      },
+    ]
+  );
+  if (isPublishedState) {
+    baseItems.push(saveDevelopmentButton);
+  }
+  return baseItems;
 };
