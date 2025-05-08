@@ -186,6 +186,7 @@ export const extensionCommand = {
   createUnitTest: 'azureLogicAppsStandard.createUnitTest',
   saveBlankUnitTest: 'azureLogicAppsStandard.saveBlankUnitTest',
   vscodeOpenFolder: 'vscode.openFolder',
+  debugLogicApp: 'azureLogicAppsStandard.debugLogicApp',
 } as const;
 export type extensionCommand = (typeof extensionCommand)[keyof typeof extensionCommand];
 

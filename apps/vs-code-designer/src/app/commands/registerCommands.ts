@@ -64,6 +64,7 @@ import { registerCommand, registerCommandWithTreeNodeUnwrapping, unwrapTreeNodeC
 import type { AzExtTreeItem, IActionContext, AzExtParentTreeItem } from '@microsoft/vscode-azext-utils';
 import type { Uri } from 'vscode';
 import { pickCustomCodeNetHostProcess } from './pickCustomCodeNetHostProcess';
+import { debugLogicApp } from './debugLogicApp';
 
 export function registerCommands(): void {
   registerCommandWithTreeNodeUnwrapping(extensionCommand.openDesigner, openDesigner);
@@ -147,4 +148,5 @@ export function registerCommands(): void {
   // Custom code commands
   registerCommandWithTreeNodeUnwrapping(extensionCommand.buildCustomCodeFunctionsProject, buildCustomCodeFunctionsProject);
   registerCommand(extensionCommand.createCustomCodeFunction, createCustomCodeFunctionFromCommand);
+  registerCommand(extensionCommand.debugLogicApp, debugLogicApp);
 }

@@ -1,4 +1,45 @@
 # Logic Apps Designer
+### [5.94.12](https://github.com/Azure/LogicAppsUX/compare/v5.94.11...v5.94.12) (2025-05-07)
+
+
+### Bug Fixes
+
+* **vscode:** Fix for Create Workspace from Package to properly create a workspace on deployment ([#7197](https://github.com/Azure/LogicAppsUX/issues/7197)) ([bcf7c46](https://github.com/Azure/LogicAppsUX/commit/bcf7c46c91b7c28a2ae165c96005efa981d7a66a)), closes [#7191](https://github.com/Azure/LogicAppsUX/issues/7191)
+
+### [5.94.11](https://github.com/Azure/LogicAppsUX/compare/v5.94.10...v5.94.11) (2025-05-07)
+
+
+### Features
+
+* **vscode:** New debug config provider for logic app project with custom code ([#7190](https://github.com/Azure/LogicAppsUX/issues/7190)) ([9a52331](https://github.com/Azure/LogicAppsUX/commit/9a52331b4e49736a3363e1c4fe9a9983c5b6dc87)), closes [#7131](https://github.com/Azure/LogicAppsUX/issues/7131)
+
+
+### Bug Fixes
+
+* **Templates:** Fixed query issue in Templates ([#7193](https://github.com/Azure/LogicAppsUX/issues/7193)) ([eae568d](https://github.com/Azure/LogicAppsUX/commit/eae568d96eee3acd01055efcb97a049dd1d4d6c5))
+
+### [5.94.10](https://github.com/Azure/LogicAppsUX/compare/v5.94.9...v5.94.10) (2025-05-06)
+
+
+### Bug Fixes
+
+* **designer:** Disable channels for the second agent (or other agents if it is enabled for 1) ([#7182](https://github.com/Azure/LogicAppsUX/issues/7182)) ([b79e613](https://github.com/Azure/LogicAppsUX/commit/b79e61301b3a1b3f46eb510dd9c0c130a87b3631))
+
+### [5.94.9](https://github.com/Azure/LogicAppsUX/compare/v5.94.8...v5.94.9) (2025-05-05)
+
+
+### Bug Fixes
+
+* **Designer:** Non-latin characters in action name breaking designer ([#7178](https://github.com/Azure/LogicAppsUX/issues/7178)) ([17093e6](https://github.com/Azure/LogicAppsUX/commit/17093e689b8da8aa3e8c20cea6934a4854ecde3f)), closes [#6957](https://github.com/Azure/LogicAppsUX/issues/6957)
+
+### [5.94.8](https://github.com/Azure/LogicAppsUX/compare/v5.94.7...v5.94.8) (2025-05-05)
+
+
+### Bug Fixes
+
+* **designer:** Prevent error for undefined cognitiveServiceAccountId ([#7171](https://github.com/Azure/LogicAppsUX/issues/7171)) ([491f0e7](https://github.com/Azure/LogicAppsUX/commit/491f0e76ac93e6aad5f889a18cf8fe7d832b670b))
+* **designer:** Update Agent Tool Filtering ([#7174](https://github.com/Azure/LogicAppsUX/issues/7174)) ([aa868db](https://github.com/Azure/LogicAppsUX/commit/aa868dbb062e01cd1ea8603a3f2b8e5c70565847))
+
 ### [5.94.7](https://github.com/Azure/LogicAppsUX/compare/v5.94.6...v5.94.7) (2025-05-04)
 
 
