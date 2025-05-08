@@ -1,4 +1,23 @@
 # Logic Apps Designer
+## [5.102.0](https://github.com/Azure/LogicAppsUX/compare/v5.101.0...v5.102.0) (2025-05-08)
+
+
+### Features
+
+* **designer:** Add built-in tag in search view ([#7195](https://github.com/Azure/LogicAppsUX/issues/7195)) ([36699ad](https://github.com/Azure/LogicAppsUX/commit/36699ad1df8e3a72fff8f198f75834bc9d88fb80))
+* **designer:** Adding Support for NextPage when fetching LegacyDynamicContent ([#7183](https://github.com/Azure/LogicAppsUX/issues/7183)) ([3812790](https://github.com/Azure/LogicAppsUX/commit/3812790320d1b9360c2e531a7159652188ca4d13))
+* **designer:** Revert - Update 'maximumTokenCount' and 'messageCountLimit' settings as required ([#7205](https://github.com/Azure/LogicAppsUX/issues/7205)) ([11a94b0](https://github.com/Azure/LogicAppsUX/commit/11a94b08581255b4f1e714c283b4270bc7e64a85)), closes [#7176](https://github.com/Azure/LogicAppsUX/issues/7176)
+* **Templates:** Download template button with downloadable content ([#7201](https://github.com/Azure/LogicAppsUX/issues/7201)) ([af38f7a](https://github.com/Azure/LogicAppsUX/commit/af38f7ad9be8680dda63bcd2f4b223f9949e7433))
+* **Templates:** Split button for publish for workflow & parameter tabs ([#7203](https://github.com/Azure/LogicAppsUX/issues/7203)) ([addf57f](https://github.com/Azure/LogicAppsUX/commit/addf57f5fa881b4582c6336565dd59b36195e949))
+* **Templates:** Summary Tab + Publish & Unpublish Button with Logic handling ([#7189](https://github.com/Azure/LogicAppsUX/issues/7189)) ([3e3e501](https://github.com/Azure/LogicAppsUX/commit/3e3e501fdc5dad55ee001109f92c095c3bf3535f))
+
+
+### Bug Fixes
+
+* **designer:** Update error category to button  ([#7204](https://github.com/Azure/LogicAppsUX/issues/7204)) ([03e7766](https://github.com/Azure/LogicAppsUX/commit/03e77667c5de5c041ea05fef327963b0bd32e3d2))
+* **Templates:** Fixed query issue in Templates ([#7192](https://github.com/Azure/LogicAppsUX/issues/7192)) ([ba1c3d6](https://github.com/Azure/LogicAppsUX/commit/ba1c3d63dfb37845053f59bd2d19a1edc3935056))
+* **vscode:** Fix for Create Workspace from Package to properly create a workspace on deployment ([#7191](https://github.com/Azure/LogicAppsUX/issues/7191)) ([43cb99a](https://github.com/Azure/LogicAppsUX/commit/43cb99acbfd0e04215959faf2a26060eac42fc4e))
+
 ## [5.101.0](https://github.com/Azure/LogicAppsUX/compare/v5.100.0...v5.101.0) (2025-05-06)
 
 
