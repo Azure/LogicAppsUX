@@ -109,6 +109,7 @@ export class BaseTemplateResourceService implements ITemplateResourceService {
       const uri = `${baseUrl}${resourceId}/workflows/${workflowName}`;
       const manifest: any = { ...data.manifest, details: data.manifest?.description, allowedKinds: data.manifest?.kinds };
 
+      delete manifest.id;
       delete manifest.kinds;
       delete manifest.description;
 

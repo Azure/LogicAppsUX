@@ -27,7 +27,7 @@ export const TemplateContent = ({ tabs = [], selectedTab, selectTab, className }
       {tabs.length > 1 && (
         <>
           <TabList selectedValue={selectedTabId} onTabSelect={onTabSelected} className={tabClass}>
-            {tabs.map(({ id, title, disabled = false, tabStatusIcon }) => (
+            {tabs.map(({ id, title, onTabClick = () => {}, disabled = false, tabStatusIcon }) => (
               <Tab
                 disabled={disabled}
                 key={id}
@@ -37,6 +37,7 @@ export const TemplateContent = ({ tabs = [], selectedTab, selectTab, className }
                 value={id}
                 role={'tab'}
                 icon={TabStatusIcon(tabStatusIcon)}
+                onClick={onTabClick}
               >
                 {title}
               </Tab>

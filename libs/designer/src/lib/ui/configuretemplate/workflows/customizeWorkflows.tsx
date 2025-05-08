@@ -1,30 +1,57 @@
 import { TemplatesSection, type TemplatesSectionItem } from '@microsoft/designer-ui';
 import type { WorkflowTemplateData } from '../../../core';
-import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, Text } from '@fluentui/react-components';
-import { getResourceNameFromId, type Template } from '@microsoft/logic-apps-shared';
+import {
+  Accordion,
+  AccordionHeader,
+  AccordionItem,
+  AccordionPanel,
+  MessageBar,
+  MessageBarBody,
+  MessageBarTitle,
+  Text,
+} from '@fluentui/react-components';
+import type { Template } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import { useResourceStrings } from '../resources';
 import { useTemplatesStrings } from '../../templates/templatesStrings';
 import { WorkflowKind } from '../../../core/state/workflow/workflowInterfaces';
+import { useIntl } from 'react-intl';
 
 export const CustomizeWorkflows = ({
   selectedWorkflowsList,
   updateWorkflowDataField,
+  duplicateIds,
 }: {
   selectedWorkflowsList: Record<string, Partial<WorkflowTemplateData>>;
   updateWorkflowDataField: (workflowId: string, workflowData: Partial<WorkflowTemplateData>) => void;
+  duplicateIds: string[];
 }) => {
+  const intl = useIntl();
   const workflowEntries = Object.entries(selectedWorkflowsList);
 
   return (
     <div className="msla-templates-tab msla-panel-no-description-tab">
+      {duplicateIds.length ? (
+        <MessageBar intent="error" className="msla-templates-error-message-bar">
+          <MessageBarBody>
+            <MessageBarTitle>
+              {intl.formatMessage({
+                defaultMessage: 'Workflow names must be unique. Duplicate workflow ids: ',
+                id: 'v95bFR',
+                description: 'Error message title for duplicate workflow ids',
+              })}
+            </MessageBarTitle>
+            <Text>{duplicateIds.join(', ')}</Text>
+          </MessageBarBody>
+        </MessageBar>
+      ) : null}
       {workflowEntries.length ? (
         workflowEntries.length > 1 ? (
           <Accordion multiple={true} defaultOpenItems={Object.keys(selectedWorkflowsList)}>
             {Object.entries(selectedWorkflowsList).map(([workflowId, workflowData]) => (
               <AccordionItem value={workflowId} key={workflowId}>
                 <AccordionHeader>
-                  <Text style={{ fontWeight: 'bold' }}>{getResourceNameFromId(workflowId)}</Text>
+                  <Text style={{ fontWeight: 'bold' }}>{workflowData.id}</Text>
                 </AccordionHeader>
                 <AccordionPanel>
                   <CustomizeWorkflowSection
@@ -83,12 +110,12 @@ const CustomizeWorkflowSection = ({
     const baseItems: TemplatesSectionItem[] = [
       {
         label: resourceStrings.WORKFLOW_NAME,
-        value: workflow.workflowName || '',
+        value: workflow.id || '',
         hint: resourceStrings.WORKFLOW_NAME_DESCRIPTION,
-        type: 'textfield',
+        type: workflow.isManageWorkflow ? 'text' : 'textfield',
         required: true,
         onChange: (value: string) => {
-          updateWorkflowDataField(workflowId, { workflowName: value });
+          updateWorkflowDataField(workflowId, { id: value });
         },
         errorMessage: workflow.errors?.workflow,
       },
