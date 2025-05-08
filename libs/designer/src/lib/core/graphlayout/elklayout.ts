@@ -19,12 +19,10 @@ const defaultLayoutOptions: Record<string, string> = {
   'elk.algorithm': 'org.eclipse.elk.layered',
   'elk.direction': 'DOWN',
   'elk.alignment': 'TOP',
-  'elk.layered.layering.strategy': 'INTERACTIVE',
   'elk.edge.type': 'DIRECTED',
-  'elk.layered.unnecessaryBendpoints': 'false',
   'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
-  'elk.layered.nodePlacement.strategy': 'BRANDES_KOEPF',
-  'elk.layered.nodePlacement.bk.fixedAlignment': 'BALANCED',
+  'elk.layered.nodePlacement.strategy': 'NETWORK_SIMPLEX',
+
   // Spacing values
   'elk.spacing.edgeNode': '40',
   'elk.spacing.edgeEdge': '40',
@@ -33,9 +31,9 @@ const defaultLayoutOptions: Record<string, string> = {
   'elk.padding': '[top=0,left=16,bottom=16,right=16]',
   // This option allows the first layer children of a graph to be laid out in order of appearance in manifest. This is useful for subgraph ordering, like in Switch nodes.
   // 'elk.layered.crossingMinimization.semiInteractive': 'true',
-  'elk.layered.cycleBreaking.strategy': 'DEPTH_FIRST',
+  'elk.layered.cycleBreaking.strategy': 'MODEL_ORDER', // DEPTH_FIRST
   'elk.edgeRouting': 'SPLINES',
-  // 'elk.layered.edgeRouting.splines.mode': 'CONSERVATIVE_SOFT',
+  'elk.layered.edgeRouting.splines.mode': 'CONSERVATIVE_SOFT',
   'elk.layered.crossingMinimization.forceNodeModelOrder': 'false',
   'elk.layered.considerModelOrder.strategy': 'NODES_AND_EDGES',
   // Ports

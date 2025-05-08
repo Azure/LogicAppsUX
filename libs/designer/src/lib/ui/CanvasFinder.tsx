@@ -54,7 +54,8 @@ export const CanvasFinder = () => {
     const yRawPos = focusNode?.internals.positionAbsolute?.y ?? 0;
 
     const xTarget = xRawPos + (focusNode?.measured?.width ?? DEFAULT_NODE_SIZE.width) / 2; // Center X on node midpoint
-    const yTarget = yRawPos + DEFAULT_NODE_SIZE.height / 2; // Center Y on node midpoint
+    const clampedHeight = Math.min(windowDimensions.height * 0.4, focusNode?.measured?.height ?? DEFAULT_NODE_SIZE.height);
+    const yTarget = yRawPos + clampedHeight / 2; // Center Y on node midpoint
 
     setCenter(xTarget, yTarget, {
       zoom: getZoom(),

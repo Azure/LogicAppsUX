@@ -6,13 +6,14 @@ import { useCardKeyboardInteraction } from '../hooks';
 import { Gripper } from '../images/dynamicsvgs/gripper';
 import type { CardProps } from '../index';
 import { css, Icon } from '@fluentui/react';
-import { Spinner, Tooltip, useRestoreFocusTarget } from '@fluentui/react-components';
+import { Badge, Spinner, Tooltip, useRestoreFocusTarget } from '@fluentui/react-components';
 import { replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
 export interface ScopeCardProps extends CardProps {
   collapsed?: boolean;
   handleCollapse?: () => void;
+  transitionRepetitionCount?: number;
 }
 
 export const ScopeCard: React.FC<ScopeCardProps> = ({
@@ -38,6 +39,7 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
   setFocus,
   nodeIndex,
   showStatusPill,
+  transitionRepetitionCount = 0,
 }) => {
   const focusRef = useRef<HTMLDivElement | null>(null);
   const restoreFocusTargetAttribute = useRestoreFocusTarget();
@@ -116,6 +118,16 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
                 <div className={css('gripper-section', draggable && 'draggable')}>{draggable ? <Gripper /> : null}</div>
                 <div className="panel-card-content-icon-section">{cardIcon}</div>
                 <div className="msla-scope-title">{title}</div>
+                {transitionRepetitionCount > 1 ? (
+                  <Badge
+                    appearance="filled"
+                    size="small"
+                    shape="rounded"
+                    // style={{ position: 'absolute', top: '11px', right: '26px', zIndex: 10 }}
+                  >
+                    #{transitionRepetitionCount}
+                  </Badge>
+                ) : null}
               </div>
               {errorMessage ? <ErrorBanner errorLevel={errorLevel} errorMessage={errorMessage} /> : null}
             </button>

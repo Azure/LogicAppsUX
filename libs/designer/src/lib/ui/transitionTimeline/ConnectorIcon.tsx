@@ -3,6 +3,10 @@ import { useOperationVisuals } from '../../core/state/operation/operationSelecto
 export const ConnectorIcon = ({ nodeId, size = '32px', borderRadius = '4px' }: any) => {
   const { iconUri } = useOperationVisuals(nodeId);
 
+  if (!iconUri) {
+    return null;
+  }
+
   return (
     <img
       title={nodeId}

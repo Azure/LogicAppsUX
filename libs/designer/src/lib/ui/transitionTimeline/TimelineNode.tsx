@@ -1,9 +1,9 @@
 import { Badge, Text } from '@fluentui/react-components';
 import { idDisplayCase } from '@microsoft/logic-apps-shared';
 import { useEffect, useMemo, useRef } from 'react';
-import { useTransitionRepetitionArray } from '../../core/state/workflow/workflowSelectors';
+import { useActionTransitionRepetitionCount } from '../../core/state/workflow/workflowSelectors';
 import type { TransitionRepetition } from './hooks';
-import { ConnectorIcon } from './connectorIcon';
+import { ConnectorIcon } from './ConnectorIcon';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const TimelineNode = ({
@@ -24,16 +24,7 @@ const TimelineNode = ({
 
   const ref = useRef<HTMLDivElement>(null);
 
-  const transitionRepetitions = useTransitionRepetitionArray();
-  const actionRepetitionCount = useMemo(() => {
-    let c = 1;
-    for (let i = 0; i < index; i++) {
-      if ((transitionRepetitions?.[i] ?? []).includes(firstNodeId)) {
-        c++;
-      }
-    }
-    return c;
-  }, [firstNodeId, index, transitionRepetitions]);
+  const actionRepetitionCount = useActionTransitionRepetitionCount(firstNodeId, index);
 
   const actionCount = useMemo(() => {
     return Object.keys(data?.properties?.actions ?? {}).length;

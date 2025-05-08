@@ -88,11 +88,21 @@ export const Designer = (props: DesignerProps) => {
   const isVSCode = useIsVSCode();
   const isReadOnly = useReadOnly();
   const dispatch = useDispatch<AppDispatch>();
+
+  const [lastChangesString, setLastChangesString] = useState<string>('');
+
   const onNodesChange = useCallback(
     (changes: NodeChange[]) => {
-      dispatch(updateNodeSizes(changes));
+      if (!changes || changes.length === 0) {
+        return;
+      }
+      const newChangesString = JSON.stringify(changes);
+      if (newChangesString !== lastChangesString) {
+        setLastChangesString(newChangesString);
+        dispatch(updateNodeSizes(changes));
+      }
     },
-    [dispatch]
+    [dispatch, lastChangesString]
   );
 
   const designerContainerRef = useRef<HTMLDivElement>(null);
