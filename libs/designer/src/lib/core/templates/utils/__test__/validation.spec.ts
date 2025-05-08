@@ -46,42 +46,15 @@ describe('Template Validation Tests', () => {
           description: 'Error shown when the State type list is missing or empty',
         }),
         'images.light': intl.formatMessage({
-          defaultMessage: 'Workflow light image is required.',
+          defaultMessage: 'The light image version of the workflow is required.',
           id: '1Cds91',
           description: 'Error message when the workflow light image is empty',
         }),
         'images.dark': intl.formatMessage({
-          defaultMessage: 'Workflow dark image is required.',
+          defaultMessage: 'The dark image version of the workflow is required.',
           id: 'k194gz',
           description: 'Error message when the workflow dark image is empty',
         }),
-        manifest: {
-          title: intl.formatMessage({
-            defaultMessage: 'Workflow display name (title) is required.',
-            id: 'WnHWrD',
-            description: 'Error message when the workflow display name field which is title is empty',
-          }),
-          summary: intl.formatMessage({
-            defaultMessage: 'Workflow summary is required.',
-            id: 'erGyZT',
-            description: 'Error message when the workflow description is empty',
-          }),
-          kinds: intl.formatMessage({
-            defaultMessage: 'At least one state type is required.',
-            id: '3+Xsk7',
-            description: 'Error shown when the State type list is missing or empty',
-          }),
-          'images.light': intl.formatMessage({
-            defaultMessage: 'The light image version of the workflow is required.',
-            id: 'JhJ8qX',
-            description: 'Error message when the workflow light image is empty',
-          }),
-          'images.dark': intl.formatMessage({
-            defaultMessage: 'The dark image version of the workflow is required.',
-            id: '7xiCnC',
-            description: 'Error message when the workflow dark image is empty',
-          }),
-        },
       });
     });
 
@@ -95,34 +68,15 @@ describe('Template Validation Tests', () => {
           description: 'Error shown when the State type list is missing or empty',
         }),
         'images.light': intl.formatMessage({
-          defaultMessage: 'Workflow light image is required.',
+          defaultMessage: 'The light image version of the workflow is required.',
           id: '1Cds91',
           description: 'Error message when the workflow light image is empty',
         }),
         'images.dark': intl.formatMessage({
-          defaultMessage: 'Workflow dark image is required.',
+          defaultMessage: 'The dark image version of the workflow is required.',
           id: 'k194gz',
           description: 'Error message when the workflow dark image is empty',
         }),
-        manifest: {
-          title: undefined,
-          summary: undefined,
-          kinds: intl.formatMessage({
-            defaultMessage: 'At least one state type is required.',
-            id: '3+Xsk7',
-            description: 'Error shown when the State type list is missing or empty',
-          }),
-          'images.light': intl.formatMessage({
-            defaultMessage: 'The light image version of the workflow is required.',
-            id: 'JhJ8qX',
-            description: 'Error message when the workflow light image is empty',
-          }),
-          'images.dark': intl.formatMessage({
-            defaultMessage: 'The dark image version of the workflow is required.',
-            id: '7xiCnC',
-            description: 'Error message when the workflow dark image is empty',
-          }),
-        },
       });
     });
   });
