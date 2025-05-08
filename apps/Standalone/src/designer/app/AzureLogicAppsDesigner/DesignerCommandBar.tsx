@@ -10,7 +10,6 @@ import {
   RUN_AFTER_COLORS,
   ChatbotService,
   WorkflowService,
-  isNullOrUndefined,
 } from '@microsoft/logic-apps-shared';
 import type { AppDispatch, CustomCodeFileNameMapping, RootState, Workflow } from '@microsoft/logic-apps-designer';
 import {
@@ -78,7 +77,6 @@ export const DesignerCommandBar = ({
   saveWorkflowFromCode,
   toggleMonitoringView,
   selectRun,
-  setWorkflow,
 }: {
   id: string;
   location: string;
@@ -98,7 +96,6 @@ export const DesignerCommandBar = ({
   saveWorkflowFromCode: (clearDirtyState: () => void) => void;
   toggleMonitoringView: () => void;
   selectRun?: (runId: string) => void;
-  setWorkflow: React.Dispatch<React.SetStateAction<Workflow>>;
 }) => {
   const dispatch = useDispatch<AppDispatch>();
   const isCopilotReady = useNodesInitialized();
@@ -137,17 +134,7 @@ export const DesignerCommandBar = ({
     const customCodeFilesWithData = getCustomCodeFilesWithData(designerState.customCode);
 
     if (!hasParametersErrors) {
-      const clearDirtyState = () => {
-        dispatch(resetDesignerDirtyState(undefined));
-        const savedSerialized = serializedWorkflow as Workflow;
-        if (!isNullOrUndefined(savedSerialized)) {
-          setWorkflow((prevState) => ({
-            ...prevState,
-            definition: savedSerialized.definition,
-          }));
-        }
-      };
-      await saveWorkflow(serializedWorkflow, customCodeFilesWithData, clearDirtyState);
+      await saveWorkflow(serializedWorkflow, customCodeFilesWithData, () => dispatch(resetDesignerDirtyState(undefined)));
       if (Object.keys(serializedWorkflow?.definition?.triggers ?? {}).length > 0) {
         updateCallbackUrl(designerState, dispatch);
       }
