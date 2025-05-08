@@ -374,7 +374,10 @@ const DesignerEditor = () => {
       parametersToUpdate,
       settingsToUpdate,
       customCodeToUpdate,
-      clearDirtyState
+      clearDirtyState,
+      {
+        skipValidation: true,
+      }
     );
   };
 
