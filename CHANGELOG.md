@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [5.94.13](https://github.com/Azure/LogicAppsUX/compare/v5.94.12...v5.94.13) (2025-05-08)
+
+
+### Bug Fixes
+
+* **designer:** Revert of Reset id replacements when reset designer dirty state ([#7209](https://github.com/Azure/LogicAppsUX/issues/7209)) ([5c41161](https://github.com/Azure/LogicAppsUX/commit/5c411613e13d24f618c9808eface7e739cd72c27)), closes [#7105](https://github.com/Azure/LogicAppsUX/issues/7105)
+
 ### [5.94.12](https://github.com/Azure/LogicAppsUX/compare/v5.94.11...v5.94.12) (2025-05-07)
 
 
