@@ -643,15 +643,22 @@ export const toSimpleQueryBuilderViewModel = (
   try {
     let stringValue = input;
     let operator: string = stringValue.substring(stringValue.indexOf('@') + 1, stringValue.indexOf('('));
+    let operationLiteral: ValueSegment;
+    let endingLiteral: ValueSegment;
     const negatory = operator === 'not';
 
     if (negatory) {
       stringValue = stringValue.replace('@not(', '@');
-      operator = `not${stringValue.substring(stringValue.indexOf('@') + 1, stringValue.indexOf('('))}`;
-    }
 
-    const operationLiteral = createLiteralValueSegment(`@${operator}(`);
-    const endingLiteral = createLiteralValueSegment(')');
+      const negatedOperator = stringValue.substring(stringValue.indexOf('@') + 1, stringValue.indexOf('('));
+
+      operationLiteral = createLiteralValueSegment(`@not(${negatedOperator}(`);
+      endingLiteral = createLiteralValueSegment('))');
+      operator = `not${negatedOperator}`;
+    } else {
+      operationLiteral = createLiteralValueSegment(`@${operator}(`);
+      endingLiteral = createLiteralValueSegment(')');
+    }
 
     if (!Object.values(RowDropdownOptions).includes(operator as RowDropdownOptions)) {
       return advancedModeResult;
