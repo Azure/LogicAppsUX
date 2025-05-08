@@ -51,6 +51,7 @@ import type { TemplateState } from '../../state/templates/templateSlice';
 import {
   updateAllWorkflowsData,
   updateConnectionAndParameterDefinitions,
+  updateEnvironment,
   updateTemplateParameterDefinition,
 } from '../../state/templates/templateSlice';
 import { loadTemplate, type WorkflowTemplateData } from './templates';
@@ -183,38 +184,53 @@ export const loadCustomTemplate = createAsyncThunk(
 export const updateWorkflowParameter = createAsyncThunk(
   'updateWorkflowParameter',
   async (
-    { parameterId, definition }: { parameterId: string; definition: Template.ParameterDefinition },
+    {
+      parameterId,
+      definition,
+      changedStatus,
+    }: { parameterId: string; definition: Template.ParameterDefinition; changedStatus: Template.TemplateEnvironment | undefined },
     { getState, dispatch }
   ): Promise<void> => {
-    dispatch(
-      updateTemplateParameterDefinition({
-        parameterId: parameterId as string,
-        data: definition,
-      })
-    );
-
+    const service = TemplateResourceService();
     const {
       template: { manifest, parameterDefinitions },
     } = getState() as RootState;
-    const parameter = parameterDefinitions[parameterId];
-    const allParameters = Object.values(parameterDefinitions);
-    const associatedWorkflows = parameter?.associatedWorkflows as string[];
-    const promises: Promise<void>[] = [];
-    const service = TemplateResourceService();
 
-    for (const workflowId of associatedWorkflows) {
-      const parametersInWorkflow = getParametersForWorkflow(allParameters, workflowId).map((parameter) => {
-        const updatedParameter = { ...parameter };
-        delete updatedParameter.associatedWorkflows;
-        delete updatedParameter.associatedOperationParameter;
-        return updatedParameter;
-      });
-      promises.push(service.updateWorkflow(manifest?.id as string, workflowId, { parameters: parametersInWorkflow }));
+    try {
+      if (changedStatus) {
+        await service.updateState(manifest?.id as string, changedStatus);
+        dispatch(updateEnvironment(changedStatus));
+      }
+      const parameter = parameterDefinitions[parameterId];
+      const allParameters = Object.values(parameterDefinitions);
+      const associatedWorkflows = parameter?.associatedWorkflows as string[];
+      const promises: Promise<void>[] = [];
+
+      for (const workflowId of associatedWorkflows) {
+        const parametersInWorkflow = getParametersForWorkflow(allParameters, workflowId).map((parameter) => {
+          const updatedParameter = { ...parameter };
+          delete updatedParameter.associatedWorkflows;
+          delete updatedParameter.associatedOperationParameter;
+          return updatedParameter;
+        });
+        promises.push(service.updateWorkflow(manifest?.id as string, workflowId, { parameters: parametersInWorkflow }));
+      }
+
+      await Promise.all(promises);
+
+      dispatch(
+        updateTemplateParameterDefinition({
+          parameterId: parameterId as string,
+          data: definition,
+        })
+      );
+
+      const queryClient = getReactQueryClient();
+      queryClient.removeQueries(['templateworkflows', manifest?.id.toLowerCase()]);
+    } catch (e) {
+      //TODO: error handling, roll-back (parameters & status)
+      console.log('---error', e);
     }
-
-    await Promise.all(promises);
-    const queryClient = getReactQueryClient();
-    queryClient.removeQueries(['templateworkflows', manifest?.id.toLowerCase()]);
   }
 );
 
@@ -642,4 +658,65 @@ export const getWorkflowsWithDefinitions = async (
   }, {});
 
   return allWorkflowsData;
+};
+
+export const getDownloadableTemplate = (
+  templateManifest: Template.TemplateManifest,
+  workflowDatas: Record<string, { manifest: Template.WorkflowManifest; workflowDefinition: any }>
+) => {
+  const templateName = getResourceNameFromId(templateManifest.id);
+
+  const theTemplateManifest = {
+    ...templateManifest,
+    id: templateName,
+    workflows: { ...templateManifest.workflows },
+  } as Template.TemplateManifest;
+
+  const workflowFolderContents = [];
+  const workflowDatasCopy = [...Object.entries(workflowDatas)];
+
+  for (const [workflowId, workflowData] of workflowDatasCopy) {
+    theTemplateManifest.workflows[workflowId] = { name: workflowId };
+
+    // Clean up workflowManifest
+    const workflowManifest = { ...workflowData.manifest };
+    delete workflowManifest.metadata;
+    workflowManifest.artifacts = [
+      {
+        type: 'workflow',
+        file: 'workflow.json',
+      },
+    ];
+
+    // Pushing to workflowFolderContents
+    workflowFolderContents.push({
+      type: 'folder',
+      name: workflowId,
+      contents: [
+        {
+          type: 'file',
+          name: 'manifest.json',
+          data: JSON.stringify(workflowManifest, null, 2),
+        },
+        {
+          type: 'file',
+          name: 'workflow.json',
+          data: JSON.stringify(workflowData.workflowDefinition, null, 2),
+        },
+      ],
+    });
+  }
+
+  return {
+    type: 'folder',
+    name: templateName,
+    contents: [
+      {
+        type: 'file',
+        name: 'manifest.json',
+        data: JSON.stringify(theTemplateManifest, null, 2),
+      },
+      ...workflowFolderContents,
+    ],
+  };
 };
