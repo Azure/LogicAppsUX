@@ -175,6 +175,21 @@ export class ConsumptionRunService implements IRunService {
     }
   }
 
+  async getStateTransitions(runId: string): Promise<any> {
+    const { apiVersion, baseUrl, httpClient } = this.options;
+    const onlyRunId = runId.split('/')?.at(-1);
+    const uri = `${baseUrl}/runs/${onlyRunId}/stateTransitions?api-version=${apiVersion}&$expand=properties/actions,workflow/properties`;
+
+    try {
+      const response = await httpClient.get<Run>({
+        uri,
+      });
+      return response;
+    } catch (e: any) {
+      throw new Error(e.message);
+    }
+  }
+
   /**
    * Gets an array of scope repetition records for a node with the specified status.
    * @param {{ actionId: string, runId: string }} action - An object with nodeId and the runId of the workflow
