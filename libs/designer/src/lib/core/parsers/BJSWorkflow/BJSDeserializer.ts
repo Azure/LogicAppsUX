@@ -480,7 +480,11 @@ export const buildGraphFromActions = (
 
     allActions[actionName] = { ...action };
 
-    const isRoot = rootIds.includes(actionName);
+    let isRoot = rootIds.includes(actionName);
+    if (graphId === 'root') {
+      isRoot = false;
+    }
+
     nodesMetadata[actionName] = {
       graphId,
       ...(parentNodeId ? { parentNodeId: parentNodeId } : {}),
