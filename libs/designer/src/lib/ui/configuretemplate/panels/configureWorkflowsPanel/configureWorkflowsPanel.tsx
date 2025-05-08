@@ -10,6 +10,7 @@ import type { WorkflowTemplateData } from '../../../../core';
 import type { Template } from '@microsoft/logic-apps-shared';
 
 export interface ConfigureWorkflowsTabProps {
+  onTabClick?: () => void;
   hasError?: boolean;
   disabled?: boolean;
   isPrimaryButtonDisabled: boolean;

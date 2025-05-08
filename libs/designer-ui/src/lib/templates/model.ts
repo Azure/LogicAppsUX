@@ -6,6 +6,7 @@ export type TemplateTabStatusType = 'error' | 'success' | 'in-progress' | undefi
 export interface TemplateTabProps {
   id: string;
   title: string;
+  onTabClick?: () => void;
   description?: string | ReactNode;
   tabStatusIcon?: TemplateTabStatusType;
   disabled?: boolean;
