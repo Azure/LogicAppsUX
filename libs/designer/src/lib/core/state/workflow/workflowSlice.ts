@@ -367,6 +367,12 @@ export const workflowSlice = createSlice({
         const change = getRecordEntry(dimensionChangesById, node?.id ?? '');
         if (change && node && isWorkflowNode(node)) {
           const c = change as NodeDimensionChange;
+          if ((c.dimensions?.height ?? 0) === 0 || (c.dimensions?.width ?? 0) === 0) {
+            continue; // Skip if the dimensions are 0
+          }
+          if (node.height === c.dimensions?.height && node.width === c.dimensions?.width) {
+            continue; // Skip if the dimensions have not changed
+          }
           node.height = c.dimensions?.height ?? 0;
           node.width = c.dimensions?.width ?? 0;
         }
@@ -386,6 +392,14 @@ export const workflowSlice = createSlice({
     },
     collapseGraphsToShowNode: (state: WorkflowState, action: PayloadAction<string>) => {
       state.collapsedGraphIds = getParentsUncollapseFromGraphState(state, action.payload);
+    },
+    setCollapsedGraphId: (state: WorkflowState, action: PayloadAction<{ id: string; isCollapsed: boolean }>) => {
+      const { id, isCollapsed } = action.payload;
+      if (isCollapsed && state.collapsedGraphIds?.[id] !== true) {
+        state.collapsedGraphIds[id] = true;
+      } else if (!isCollapsed && state.collapsedGraphIds?.[id] === true) {
+        delete state.collapsedGraphIds[id];
+      }
     },
     toggleCollapsedGraphId: (state: WorkflowState, action: PayloadAction<{ id: string; includeNested?: boolean }>) => {
       const expanding = getRecordEntry(state.collapsedGraphIds, action.payload.id) === true;
@@ -849,6 +863,7 @@ export const {
   deleteSwitchCase,
   updateNodeSizes,
   setNodeDescription,
+  setCollapsedGraphId,
   toggleCollapsedGraphId,
   addSwitchCase,
   addAgentTool,

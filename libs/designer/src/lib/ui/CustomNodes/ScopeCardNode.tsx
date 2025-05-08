@@ -27,10 +27,14 @@ import {
   useNodeDescription,
   useShouldNodeFocus,
   useRunIndex,
+  useActionTransitionRepetitionCount,
+  useTransitionRepetitionIndex,
+  useIsActionInSelectedTransition,
 } from '../../core/state/workflow/workflowSelectors';
 import {
   setFocusElement,
   setRepetitionRunData,
+  setRunIndex,
   setSubgraphRunData,
   toggleCollapsedGraphId,
   updateAgenticGraph,
@@ -101,7 +105,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     false
   );
 
-  const { isFetching: isScopeRepetitionFetching, data: scopeRepetitionRunData } = useAgentRepetition(
+  const { isFetching: isAgentRepetitionFetching, data: agentRepetitionRunData } = useAgentRepetition(
     !!isMonitoringView,
     isAgent,
     scopeId,
@@ -111,7 +115,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     runIndex
   );
 
-  const { isFetching: isActionsRepetitionFetching, data: agentActionsRepetitionData } = useAgentActionsRepetition(
+  const { isFetching: isAgentActionsRepetitionFetching, data: agentActionsRepetitionData } = useAgentActionsRepetition(
     !!isMonitoringView,
     isAgent,
     scopeId,
@@ -121,30 +125,61 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     runIndex
   );
 
+  const isTransitionSelected = useIsActionInSelectedTransition(scopeId);
+
+  const transitionIndex = useTransitionRepetitionIndex();
   useEffect(() => {
-    if (!isNullOrUndefined(agentActionsRepetitionData)) {
-      const updatePayload = { nodeId: scopeId, runData: agentActionsRepetitionData } as any;
-      dispatch(setSubgraphRunData(updatePayload));
+    if (isTransitionSelected) {
+      dispatch(setRunIndex({ page: 0, nodeId: scopeId }));
     }
-  }, [dispatch, scopeRepetitionRunData, scopeId, agentActionsRepetitionData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [transitionIndex]);
 
   useEffect(() => {
-    if (!isNullOrUndefined(scopeRepetitionRunData)) {
-      const updatePayload = { nodeId: scopeId, scopeRepetitionRunData: scopeRepetitionRunData.properties } as any;
-      dispatch(updateAgenticGraph(updatePayload));
-      dispatch(updateAgenticMetadata(updatePayload));
+    if (isMonitoringView && !isTransitionSelected) {
+      return;
     }
-  }, [dispatch, scopeRepetitionRunData, scopeId, selfRunData?.correlation?.actionTrackingId]);
+    if (isNullOrUndefined(agentActionsRepetitionData)) {
+      return;
+    }
+    const updatePayload = { nodeId: scopeId, runData: agentActionsRepetitionData } as any;
+    dispatch(setSubgraphRunData(updatePayload));
+  }, [dispatch, agentRepetitionRunData, scopeId, agentActionsRepetitionData, isMonitoringView, isTransitionSelected]);
 
   useEffect(() => {
-    if (!isNullOrUndefined(repetitionRunData)) {
-      if (selfRunData?.correlation?.actionTrackingId === repetitionRunData?.properties?.correlation?.actionTrackingId) {
-        // if the correlation id is the same, we don't need to update the repetition run data
-        return;
-      }
-      dispatch(setRepetitionRunData({ nodeId: scopeId, runData: repetitionRunData.properties as LogicAppsV2.WorkflowRunAction }));
+    if (isMonitoringView && !isTransitionSelected) {
+      return;
     }
-  }, [dispatch, repetitionRunData, scopeId, selfRunData?.correlation?.actionTrackingId]);
+    if (isNullOrUndefined(agentRepetitionRunData)) {
+      return;
+    }
+    // if (scopeRepetitionName === agentRepetitionRunData?.name) {
+    // 	// if the correlation id is the same, we don't need to update the repetition run data
+    // 	return;
+    // }
+    const [_, existingMetadata] = Object.entries(nodesMetaData).find(([id, _]) => id === scopeId) ?? ['', {}];
+    if (existingMetadata?.runData?.inputsLink?.uri === agentRepetitionRunData?.properties?.inputsLink?.uri) {
+      // if the inputsLink uri is the same, we don't need to update the repetition run data
+      return;
+    }
+    const updatePayload = { nodeId: scopeId, scopeRepetitionRunData: agentRepetitionRunData.properties } as any;
+    dispatch(updateAgenticGraph(updatePayload));
+    dispatch(updateAgenticMetadata(updatePayload));
+  }, [dispatch, agentRepetitionRunData, scopeId, scopeRepetitionName, nodesMetaData, isMonitoringView, isTransitionSelected]);
+
+  useEffect(() => {
+    if (isMonitoringView && !isTransitionSelected) {
+      return;
+    }
+    if (isNullOrUndefined(repetitionRunData)) {
+      return;
+    }
+    if (selfRunData?.correlation?.actionTrackingId === repetitionRunData?.properties?.correlation?.actionTrackingId) {
+      // if the correlation id is the same, we don't need to update the repetition run data
+      return;
+    }
+    dispatch(setRepetitionRunData({ nodeId: scopeId, runData: repetitionRunData.properties as LogicAppsV2.WorkflowRunAction }));
+  }, [dispatch, isMonitoringView, isTransitionSelected, repetitionRunData, scopeId, selfRunData?.correlation?.actionTrackingId]);
 
   const { dependencies, loopSources } = useTokenDependencies(scopeId);
   const [{ isDragging }, drag, dragPreview] = useDrag(
@@ -193,6 +228,15 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     [dispatch, scopeId]
   );
 
+  // useEffect(() => {
+  // 	if (!isMonitoringView) {
+  // 		return;
+  // 	}
+  // 	if (isTransitionSelected === graphCollapsed) {
+  // 		dispatch(setCollapsedGraphId({ id: scopeId, isCollapsed: !isTransitionSelected }));
+  // 	}
+  // }, [isTransitionSelected, graphCollapsed, dispatch, scopeId, isMonitoringView]);
+
   const deleteClick = useCallback(() => {
     dispatch(setShowDeleteModalNodeId(scopeId));
   }, [dispatch, scopeId]);
@@ -232,8 +276,12 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
 
   const isLoading = useMemo(
     () =>
-      isRepetitionFetching || isScopeRepetitionFetching || isActionsRepetitionFetching || opQuery.isLoading || (!brandColor && !iconUri),
-    [brandColor, iconUri, opQuery.isLoading, isRepetitionFetching, isScopeRepetitionFetching, isActionsRepetitionFetching]
+      isRepetitionFetching ||
+      isAgentRepetitionFetching ||
+      isAgentActionsRepetitionFetching ||
+      opQuery.isLoading ||
+      (!brandColor && !iconUri),
+    [brandColor, iconUri, opQuery.isLoading, isRepetitionFetching, isAgentRepetitionFetching, isAgentActionsRepetitionFetching]
   );
 
   const comment = useMemo(
@@ -337,6 +385,9 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
 
   const nodeIndex = useNodeIndex(id);
 
+  const transitionRepetitionIndex = useTransitionRepetitionIndex();
+  const transitionRepetitionCount = useActionTransitionRepetitionCount(scopeId, transitionRepetitionIndex);
+
   if (!node) {
     return null;
   }
@@ -360,6 +411,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
           <ScopeCard
             active={isCardActive}
             showStatusPill={!isAgent && isMonitoringView && isCardActive}
+            transitionRepetitionCount={transitionRepetitionCount}
             brandColor={brandColor}
             icon={iconUri}
             isLoading={isLoading}
