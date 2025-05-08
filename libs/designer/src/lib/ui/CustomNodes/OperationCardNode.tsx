@@ -46,6 +46,7 @@ import {
   useIsWithinAgenticLoop,
   useSubgraphRunData,
   useRunIndex,
+  useIsActionInSelectedTransition,
 } from '../../core/state/workflow/workflowSelectors';
 import { setRepetitionRunData } from '../../core/state/workflow/workflowSlice';
 import { getRepetitionName } from '../common/LoopsPager/helper';
@@ -118,20 +119,27 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     }
   }, [dispatch, repetitionRunData, id, selfRunData?.correlation?.actionTrackingId]);
 
+  const isGraphTransitionSelected = useIsActionInSelectedTransition(parentNodeId ?? '');
+
   useEffect(() => {
-    if (isWithinAgenticLoop && !isNullOrUndefined(toolRunIndex)) {
-      const subgraphRunData = parentSubgraphRunData?.[id]?.actionResults?.[toolRunIndex];
-      if (subgraphRunData) {
-        dispatch(
-          setRepetitionRunData({
-            nodeId: id,
-            runData: subgraphRunData as LogicAppsV2.WorkflowRunAction,
-            isWithinAgentic: isWithinAgenticLoop,
-          })
-        );
-      }
+    if (!isWithinAgenticLoop || isNullOrUndefined(toolRunIndex)) {
+      return;
     }
-  }, [isWithinAgenticLoop, id, dispatch, toolRunIndex, parentSubgraphRunData]);
+    if (!isGraphTransitionSelected) {
+      return;
+    }
+
+    const subgraphRunData = parentSubgraphRunData?.[id]?.actionResults?.[toolRunIndex];
+    if (subgraphRunData) {
+      dispatch(
+        setRepetitionRunData({
+          nodeId: id,
+          runData: subgraphRunData as LogicAppsV2.WorkflowRunAction,
+          isWithinAgentic: isWithinAgenticLoop,
+        })
+      );
+    }
+  }, [isWithinAgenticLoop, id, dispatch, toolRunIndex, parentSubgraphRunData, isGraphTransitionSelected, parentNodeId]);
 
   const { dependencies, loopSources } = useTokenDependencies(id);
 

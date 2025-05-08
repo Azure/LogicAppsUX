@@ -12,6 +12,7 @@ import Queue from 'yocto-queue';
 import type {} from 'reselect';
 import type {} from '@tanstack/react-query';
 import { collapseFlowTree } from './helper';
+import { useActionTransitionRepetitionOffset } from '../../../ui/transitionTimeline/hooks';
 
 export const getWorkflowState = (state: RootState): WorkflowState => state.workflow;
 
@@ -167,6 +168,29 @@ export const useTransitionRepetitionIndex = () =>
 export const useTransitionRepetitionArray = () =>
   useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.transitionRepetitionArray));
 
+export const useActionTransitionRepetitionCount = (actionId: string, index: number) =>
+  useSelector(
+    createSelector(getWorkflowState, (state: WorkflowState) => {
+      const transitionRepetitionArray = state.transitionRepetitionArray;
+      // For each transition repetition up to the current one, add the count of action IDs that match the actionId
+      let count = 0;
+      for (let i = 0; i <= index; i++) {
+        if (transitionRepetitionArray[i]) {
+          count += transitionRepetitionArray[i].filter((id) => id === actionId).length;
+        }
+      }
+      return count;
+    })
+  );
+
+export const useIsActionInSelectedTransition = (actionId: string) =>
+  useSelector(
+    createSelector(getWorkflowState, (state: WorkflowState) => {
+      const selectedTransitionActions = state.transitionRepetitionArray[state.transitionRepetitionIndex];
+      return selectedTransitionActions ? selectedTransitionActions.includes(actionId) : false;
+    })
+  );
+
 export const useIsEverythingExpanded = () =>
   useSelector(
     createSelector(getWorkflowState, (data) => {
@@ -246,7 +270,7 @@ const reduceCollapsed =
   };
 
 export const useIsGraphCollapsed = (graphId: string): boolean =>
-  useSelector(createSelector(getWorkflowState, (state: WorkflowState): boolean => state.collapsedGraphIds?.[graphId]));
+  useSelector(createSelector(getWorkflowState, (state: WorkflowState): boolean => state.collapsedGraphIds?.[graphId] ?? false));
 
 export const useIsActionCollapsed = (actionId: string): boolean =>
   useSelector(createSelector(getWorkflowState, (state: WorkflowState): boolean => state.collapsedActionIds?.[actionId]));
@@ -489,6 +513,7 @@ export const useNodesMetadata = (): NodesMetadata =>
   useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.nodesMetadata));
 
 export const useParentRunIndex = (id: string | undefined): number | undefined => {
+  const offset = useActionTransitionRepetitionOffset(id ?? '');
   return useSelector(
     createSelector(getWorkflowState, (state: WorkflowState) => {
       if (!id) {
@@ -501,17 +526,18 @@ export const useParentRunIndex = (id: string | undefined): number | undefined =>
           operationType
         );
       });
-      return parents.length ? getRecordEntry(state.nodesMetadata, parents[0])?.runIndex : undefined;
+      return parents.length ? (getRecordEntry(state.nodesMetadata, parents[0])?.runIndex ?? 0) + offset : undefined;
     })
   );
 };
 export const useRunIndex = (id: string | undefined): number | undefined => {
+  const offset = useActionTransitionRepetitionOffset(id ?? '');
   return useSelector(
     createSelector(getWorkflowState, (state: WorkflowState) => {
       if (!id) {
         return undefined;
       }
-      return getRecordEntry(state.nodesMetadata, id)?.runIndex;
+      return (getRecordEntry(state.nodesMetadata, id)?.runIndex ?? 0) + offset;
     })
   );
 };

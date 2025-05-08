@@ -195,6 +195,21 @@ export class StandardRunService implements IRunService {
     }
   }
 
+  async getStateTransitions(runId: string): Promise<any> {
+    const { apiVersion, baseUrl, httpClient, workflowName } = this.options;
+    const onlyRunId = runId.split('/')?.at(-1);
+    const uri = `${baseUrl}/workflows/${workflowName}/runs/${onlyRunId}/stateTransitions?api-version=${apiVersion}&$expand=properties/actions,workflow/properties`;
+
+    try {
+      const response = await httpClient.get<Run>({
+        uri,
+      });
+      return response;
+    } catch (e: any) {
+      throw new Error(e.message);
+    }
+  }
+
   /**
    * Retrieves the repetition details of a specific agent action run.
    *

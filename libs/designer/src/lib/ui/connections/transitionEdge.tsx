@@ -186,7 +186,7 @@ const TransitionEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({ id, source, t
 
   const getPointOnPath = useCallback(
     (percent: number) => {
-      if (pathReady && pathRef.current) {
+      if (pathReady && !!pathRef.current) {
         const totalLength = pathRef.current.getTotalLength();
         return pathRef.current.getPointAtLength(totalLength * percent);
       }
@@ -217,6 +217,10 @@ const TransitionEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({ id, source, t
     setMarkerAngle(angle - 90);
   }, [getPointOnPath, pathReady, pathRef]);
 
+  if (!id) {
+    return null;
+  }
+
   return (
     <>
       <defs>
@@ -244,16 +248,21 @@ const TransitionEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({ id, source, t
         markerEnd={`url(#${markerId})`}
       />
 
+      {/* KEEP: This is for edge id testing */}
+      {/* <text x={midpoint.x} y={midpoint.y} fontSize="10" fill="black">
+				= {id}
+			</text> */}
+
       {/* KEEP: This is for spline development testing */}
       {/* {splinePoints.map((point, index) => (
 				<>
-					<text x={point.x} y={point.y} fontSize="10" fill="black">{index}</text>
+					<text x={point.x} y={point.y} fontSize="10" fill="black">{index} - {id}</text>
 					<circle
 						key={index}
 						cx={point.x}
 						cy={point.y}
 						r={2}
-						className={css('react-flow__edge-path', 'transition', highlighted ? 'highlighted' : '')}
+						className={css('react-flow__edge-path', 'transition', colorClass)}
 						style={{
 							stroke: 'var(--colorNeutralStroke2)',
 							fill: 'var(--colorNeutralStroke2)',

@@ -1,4 +1,4 @@
-import { Text, Button, Card, Divider, Slider } from '@fluentui/react-components';
+import { Text, Button, Card, Divider, Slider, Spinner } from '@fluentui/react-components';
 
 import {
   bundleIcon,
@@ -7,10 +7,11 @@ import {
   ChevronDownRegular,
   ChevronDownFilled,
   TimelineRegular,
+  BorderNoneRegular,
 } from '@fluentui/react-icons';
 import { useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import TimelineNode from './timelineNode';
+import TimelineNode from './TimelineNode';
 import { openPanel, setFocusNode, setSelectedNodeId } from '../../core';
 import './styles.less';
 import { useThrottledEffect } from '@microsoft/logic-apps-shared';
@@ -31,9 +32,12 @@ const TransitionTimeline = () => {
   const dispatch = useDispatch();
 
   const runInstance = useRunInstance();
-  const repetitionData = useTransitionRepetitions();
+  const { data: repetitionData, isFetching: isFetchingRepetitions } = useTransitionRepetitions();
 
   const repetitions = useMemo(() => {
+    if ((repetitionData ?? []).length === 0) {
+      return [];
+    }
     const output: {
       actionIds: string[] | undefined;
       repetitionIndex: number;
@@ -62,13 +66,12 @@ const TransitionTimeline = () => {
     });
     // Add all repetitions
     output.push(
-      ...repetitionData.map((repetition) => ({
+      ...(repetitionData ?? []).map((repetition) => ({
         actionIds: Object.keys(repetition.properties.actions),
         repetitionIndex: Number(repetition.name),
         data: repetition,
       }))
     );
-    console.log('#> TransitionTimeline -> repetitions', output);
     return output;
   }, [repetitionData, runInstance?.properties?.trigger]);
 
@@ -78,15 +81,22 @@ const TransitionTimeline = () => {
 
   const [expanded, setExpanded] = useState(false);
 
-  const [transitionIndex, setTransitionIndex] = useState(0);
+  const [transitionIndex, setTransitionIndex] = useState(-1);
+
+  useEffect(() => {
+    if ((repetitions ?? []).length > 0 && !isFetchingRepetitions) {
+      setTransitionIndex(0);
+    }
+  }, [repetitions, isFetchingRepetitions]);
 
   useThrottledEffect(
     () => {
+      dispatch(clearAllRepetitionRunData());
+
       const selectedRepetition = repetitions[transitionIndex];
       const firstNodeId = selectedRepetition?.actionIds?.[0];
-      if (firstNodeId) {
-        dispatch(clearAllRepetitionRunData());
 
+      if (firstNodeId) {
         for (const a of Object.entries(selectedRepetition?.data?.properties?.actions ?? {})) {
           const [actionId, action] = a;
           dispatch(
@@ -108,6 +118,8 @@ const TransitionTimeline = () => {
     200
   );
 
+  const noRepetitions = useMemo(() => (repetitions ?? []).length === 0, [repetitions]);
+
   return (
     <div style={{ position: 'absolute' }}>
       <Card
@@ -124,53 +136,75 @@ const TransitionTimeline = () => {
             ...(expanded ? { minWidth: '200px' } : {}),
           }}
         >
-          <TimelineRegular style={{ color: '#1f85ff', width: '32px', height: '32px', transform: 'rotate(180deg)' }} />
+          <TimelineRegular style={{ color: '#1f85ff', width: '32px', height: '32px' }} />
           {expanded && <Text weight={'semibold'}>{'TransitionTimeline'}</Text>}
         </div>
         <Divider />
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            gap: '8px',
-            maxHeight: '390px',
-          }}
-        >
+        {isFetchingRepetitions ? (
+          <Spinner />
+        ) : noRepetitions ? (
           <div
             style={{
               display: 'flex',
-              flexDirection: 'column',
-              gap: '6px',
-              margin: '-8px',
-              padding: '16px 8px',
-              overflowY: 'auto',
-              scrollbarWidth: 'none',
-              ...(expanded ? { scrollbarColor: 'grey transparent' } : { scrollbarWidth: 'none' }),
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: '8px',
+              ...(expanded ? { minWidth: '200px' } : {}),
             }}
           >
-            {repetitions.map((repetition, index) => (
-              <TimelineNode
-                key={repetition.repetitionIndex}
-                index={index}
-                selected={index === transitionIndex}
-                onSelect={() => setTransitionIndex(index)}
-                expanded={expanded}
-                data={repetition.data}
-              />
-            ))}
+            <BorderNoneRegular style={{ color: '#80808080', width: '32px', height: '32px' }} />
+            {expanded && (
+              <Text weight={'semibold'} style={{ color: '#80808080' }}>
+                {'No transitions'}
+              </Text>
+            )}
           </div>
-          {expanded && (
-            <Slider
-              vertical
-              step={1}
-              value={transitionIndex}
-              min={0}
-              max={repetitions.length - 1}
-              onChange={(e, data) => setTransitionIndex(data.value as number)}
-              style={{ transform: 'rotate(180deg)' }}
-            />
-          )}
-        </div>
+        ) : (
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              gap: '8px',
+              maxHeight: '390px',
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '6px',
+                margin: '-8px',
+                padding: '16px 8px',
+                overflowY: 'auto',
+                scrollbarWidth: 'none',
+                flexGrow: 1,
+                ...(expanded ? { scrollbarColor: 'grey transparent' } : { scrollbarWidth: 'none' }),
+              }}
+            >
+              {repetitions.map((repetition, index) => (
+                <TimelineNode
+                  key={repetition.repetitionIndex}
+                  index={index}
+                  selected={index === transitionIndex}
+                  onSelect={() => setTransitionIndex(index)}
+                  expanded={expanded}
+                  data={repetition.data!}
+                />
+              ))}
+            </div>
+            {expanded && (
+              <Slider
+                vertical
+                step={1}
+                value={transitionIndex}
+                min={0}
+                max={repetitions.length - 1}
+                onChange={(e, data) => setTransitionIndex(data.value as number)}
+                style={{ transform: 'rotate(180deg)' }}
+              />
+            )}
+          </div>
+        )}
         <Divider />
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <Button
@@ -188,7 +222,7 @@ const TransitionTimeline = () => {
             icon={<ChevronDownIcon />}
             shape="circular"
             style={{ padding: '6px', justifyContent: 'flex-start' }}
-            disabled={transitionIndex === repetitions.length - 1}
+            disabled={noRepetitions || transitionIndex === repetitions.length - 1}
             onClick={() => setTransitionIndex(transitionIndex + 1)}
           >
             {expanded ? 'Next Transition' : ''}
