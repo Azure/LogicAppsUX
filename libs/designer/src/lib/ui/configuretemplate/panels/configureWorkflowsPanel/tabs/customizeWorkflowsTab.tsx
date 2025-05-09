@@ -14,15 +14,17 @@ export const customizeWorkflowsTab = (
   resources: Record<string, string>,
   dispatch: AppDispatch,
   {
-    hasError,
     isSaving,
     isPrimaryButtonDisabled,
+    onTabClick,
     disabled,
     selectedWorkflowsList,
     updateWorkflowDataField,
     onSave,
+    duplicateIds,
     status,
   }: ConfigureWorkflowsTabProps & {
+    duplicateIds: string[];
     updateWorkflowDataField: (workflowId: string, workflowData: Partial<WorkflowTemplateData>) => void;
   }
 ): TemplateTabProps => ({
@@ -32,9 +34,16 @@ export const customizeWorkflowsTab = (
     id: 'qnio+9',
     description: 'The tab label for the monitoring customize workflows tab on the configure template wizard',
   }),
+  onTabClick: onTabClick,
   disabled: disabled,
-  tabStatusIcon: hasError ? 'error' : undefined,
-  content: <CustomizeWorkflows selectedWorkflowsList={selectedWorkflowsList} updateWorkflowDataField={updateWorkflowDataField} />,
+  tabStatusIcon: undefined,
+  content: (
+    <CustomizeWorkflows
+      selectedWorkflowsList={selectedWorkflowsList}
+      updateWorkflowDataField={updateWorkflowDataField}
+      duplicateIds={duplicateIds}
+    />
+  ),
   footerContent: {
     buttonContents: [
       {
