@@ -57,24 +57,31 @@ export const SearchView: FC<SearchViewProps> = ({
 
   const filterAgenticLoops = useCallback(
     (operation: DiscoveryOperation<DiscoveryResultTypes>): boolean => {
-      if ((!isAgenticWorkflow || !isRoot) && operation.type === 'Agent') {
+      const { type, id } = operation;
+
+      // Exclude agent operations unless it's the root of an agentic workflow
+      if ((!isAgenticWorkflow || !isRoot) && type === 'Agent') {
         return false;
       }
-      if (!isRoot && operation.id === constants.NODE.TYPE.INITIALIZE_VARIABLE) {
+
+      // Exclude variable initialization if not at the root
+      if (!isRoot && id === constants.NODE.TYPE.INITIALIZE_VARIABLE) {
         return false;
       }
-      if (
-        isWithinAgenticLoop ||
-        (isAgentTool &&
-          // can't filter on all control because of terminate
-          (operation.id === constants.NODE.TYPE.SWITCH ||
-            operation.id === constants.NODE.TYPE.SCOPE ||
-            operation.id === constants.NODE.TYPE.IF ||
-            operation.id === constants.NODE.TYPE.UNTIL ||
-            operation.id === constants.NODE.TYPE.FOREACH))
-      ) {
+
+      // Exclude certain scope flow nodes within agentic loops or tools
+      const isControlFlowNode = [
+        constants.NODE.TYPE.SWITCH,
+        constants.NODE.TYPE.SCOPE,
+        constants.NODE.TYPE.IF,
+        constants.NODE.TYPE.UNTIL,
+        constants.NODE.TYPE.FOREACH,
+      ].includes(id);
+
+      if ((isWithinAgenticLoop || isAgentTool) && isControlFlowNode) {
         return false;
       }
+
       return true;
     },
     [isAgentTool, isAgenticWorkflow, isRoot, isWithinAgenticLoop]
