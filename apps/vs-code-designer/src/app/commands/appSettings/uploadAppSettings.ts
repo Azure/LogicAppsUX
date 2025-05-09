@@ -84,7 +84,9 @@ export async function uploadAppSettings(
     );
 
     ext.outputChannel.appendLog(localize('uploadedSettings', 'Successfully uploaded settings.'), { resourceName: client.fullName });
-    await node?.refresh(context);
+    if (node?.refresh) {
+      await node.refresh(context);
+    }
   } else {
     throw new Error(localize('noSettings', 'No settings found in "{0}".', localSettingsFileName));
   }
