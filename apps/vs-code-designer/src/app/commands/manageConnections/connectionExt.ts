@@ -18,10 +18,9 @@ export default class ConnectionsExt {
   public connectionId: string;
   private codefulFilePath: string;
 
-  public async openConnectionsPanel(context: IActionContext, entryUri: string) {
-    const entryUriSplit = entryUri.split('/');
-    const connectionId = entryUriSplit[entryUriSplit.length - 1] || '';
-    const connectionType = entryUriSplit[entryUriSplit.length - 2] || '';
+  public async openConnectionsPanel(context: IActionContext, args: any[]) {
+    const connectionType = args[0];
+    const connectionId = args[1];
 
     this.codefulFilePath = vscode.window.activeTextEditor.document.uri.fsPath;
 

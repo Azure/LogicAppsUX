@@ -65,9 +65,34 @@ export async function activate(context: vscode.ExtensionContext) {
   });
 
   const hoverMiddleware: HoverMiddleware = {
-    provideHover: (document, position, token, next) => {
+    provideHover: async (document, position, token, next) => {
       console.log(`Hover requested at ${position.line}:${position.character}`);
-      return next(document, position, token);
+
+      const response = await next(document, position, token);
+      if (response) {
+        console.log(`Hover response: ${JSON.stringify(response)}`);
+      } else {
+        // log error
+      }
+
+      response.contents = response.contents.map((content) => {
+        if (content instanceof vscode.MarkdownString) {
+          const args = [{ connectorId: 'eventhub' }];
+          const stageCommandUri = vscode.Uri.parse(
+            `command:azureLogicAppsStandard.openConnectionView?${encodeURIComponent(JSON.stringify(args))}`
+          );
+          const contentsAdded = new vscode.MarkdownString(`[Stage file](${stageCommandUri})`);
+          contentsAdded.isTrusted = true;
+
+          return contentsAdded;
+        }
+        const alteredContent = new vscode.MarkdownString(typeof content === 'string' ? content : content.value);
+
+        alteredContent.isTrusted = true;
+        return alteredContent;
+      });
+
+      return response;
     },
   };
 
@@ -82,22 +107,22 @@ export async function activate(context: vscode.ExtensionContext) {
     },
   };
 
-  // const clientOptions: LanguageClientOptions = {
-  //   documentSelector: [{ scheme: 'file', language: 'csharp' }],
-  //   synchronize: {
-  //     fileEvents: fileSystemWatcher,
-  //   },
-  //   middleware: { ...hoverMiddleware, ...generalMiddleware },
-  // };
+  const clientOptions: LanguageClientOptions = {
+    documentSelector: [{ scheme: 'file', language: 'csharp' }],
+    synchronize: {
+      fileEvents: fileSystemWatcher,
+    },
+    middleware: { ...hoverMiddleware, ...generalMiddleware },
+  };
 
-  // // Create the language client and start the client.
-  // client = new LanguageClient('languageServerExample', 'Language Server Example', serverOptions, clientOptions);
+  // Create the language client and start the client.
+  client = new LanguageClient('languageServerExample', 'Language Server Example', serverOptions, clientOptions);
 
-  // client.onDidChangeState((e) => {
-  //   console.log(`Client state changed: ${e.newState}`);
-  // });
+  client.onDidChangeState((e) => {
+    console.log(`Client state changed: ${e.newState}`);
+  });
 
-  // client.start();
+  client.start();
 
   // Data Mapper context
   vscode.commands.executeCommand(
