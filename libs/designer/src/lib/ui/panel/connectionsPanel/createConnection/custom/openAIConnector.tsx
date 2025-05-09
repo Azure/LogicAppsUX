@@ -3,7 +3,7 @@ import {
   isUndefinedOrEmptyString,
   LogEntryLevel,
   LoggerService,
-  type Resource,
+  type Subscription,
 } from '@microsoft/logic-apps-shared';
 import { type ConnectionParameterProps, UniversalConnectionParameter } from '../formInputs/universalConnectionParameter';
 import { ConnectionParameterRow } from '../connectionParameterRow';
@@ -12,10 +12,10 @@ import { useCallback, useMemo, useState } from 'react';
 import { ComboBox, type IComboBoxOption, Spinner } from '@fluentui/react';
 import { useAllCognitiveServiceAccounts } from './useCognitiveService';
 import { useStyles } from './styles';
-import { useSubscriptions } from '../../../../../core/templates/utils/queries';
 import { Link, tokens } from '@fluentui/react-components';
 import { NavigateIcon } from '@microsoft/designer-ui';
 import { ArrowClockwise16Filled, ArrowClockwise16Regular, bundleIcon } from '@fluentui/react-icons';
+import { useSubscriptions } from '../../../../../core/state/connection/connectionSelector';
 
 const RefreshIcon = bundleIcon(ArrowClockwise16Regular, ArrowClockwise16Filled);
 
@@ -145,7 +145,7 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
             className={styles.subscriptionCombobox}
             options={(subscriptions ?? [])
               .sort((a, b) => a.displayName.localeCompare(b.displayName))
-              .map((subscription: Resource) => {
+              .map((subscription: Subscription) => {
                 const id = subscription.id.split('/subscriptions/')[1];
                 return {
                   key: id,
