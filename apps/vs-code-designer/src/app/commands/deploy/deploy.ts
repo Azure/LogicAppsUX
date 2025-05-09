@@ -208,14 +208,12 @@ async function deploy(
     } finally {
       if (deployProjectPathForWorkflowApp !== undefined && !isHybridLogicApp) {
         await cleanAndRemoveDeployFolder(deployProjectPathForWorkflowApp);
-        await uploadAppSettings(context, node.appSettingsTreeItem, workspaceFolder, settingsToExclude);
+        await node.loadAllChildren(context);
+        await uploadAppSettings(context, node.resourceTree.appSettingsTreeItem, workspaceFolder, settingsToExclude);
       }
     }
   });
 
-  if (!isHybridLogicApp) {
-    await node.loadAllChildren(context);
-  }
   await notifyDeployComplete(node, isHybridLogicApp);
 }
 
