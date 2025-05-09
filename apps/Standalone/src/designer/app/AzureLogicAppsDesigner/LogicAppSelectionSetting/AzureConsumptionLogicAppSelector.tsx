@@ -22,7 +22,7 @@ const resourceIdValidation =
   /^\/subscriptions\/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\/resourceGroups\/[a-zA-Z0-9](?:[a-zA-Z0-9-_]*[a-zA-Z0-9])?\/providers\/[a-zA-Z0-9-_.]+\/[a-zA-Z0-9-_./]+$/;
 
 export const AzureConsumptionLogicAppSelector = () => {
-  const { data: appList, isLoading: isAppsLoading } = useFetchConsumptionApps();
+  const { data: appList, isLoading: isAppsLoading } = useFetchConsumptionApps(environment.subscriptionIds);
   const dispatch = useDispatch<AppDispatch>();
 
   const appId = useAppId();

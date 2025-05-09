@@ -389,7 +389,9 @@ export function TokenPicker({
                   setExpression={setExpression}
                   getValueSegmentFromToken={getValueSegmentFromToken}
                   tokenClickedCallback={tokenClickedCallback}
-                  noDynamicContent={!isDynamicContentAvailable(filteredTokenGroup ?? [])}
+                  noDynamicContent={
+                    !isDynamicContentAvailable((selectedMode === TokenPickerMode.TOKEN ? filteredTokenGroup : tokenGroup) ?? [])
+                  }
                   expressionEditorCurrentHeight={expressionEditorCurrentHeight}
                 />
                 {isExpression ? (

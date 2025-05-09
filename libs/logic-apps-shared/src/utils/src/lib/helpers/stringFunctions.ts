@@ -139,6 +139,10 @@ export const escapeString = (input: string, requireSingleQuotesWrap?: boolean): 
   });
 };
 
+export const escapeBackslash = (s: string): string => {
+  return s.replace(/\\/g, '\\\\').replace(/\n/g, '\\n');
+};
+
 /**
  * Converts a string to PascalCase.
  * Assumes the input string has been cleaned of invalid characters.

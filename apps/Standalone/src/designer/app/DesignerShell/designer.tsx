@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { loadToken } from '../../../environments/environment';
+import { loadSubscriptionIds, loadToken } from '../../../environments/environment';
 import { SettingsBox } from '../../components/settings_box';
 import { useHostingPlan, useIsLocal, useQueryCachePersist, useResourcePath } from '../../state/workflowLoadingSelectors';
 import LogicAppsDesignerStandard from '../AzureLogicAppsDesigner/laDesigner';
@@ -10,6 +10,7 @@ import { useQuery } from '@tanstack/react-query';
 
 const LoadWhenArmTokenIsLoaded = ({ children }: { children: ReactNode }) => {
   const { isLoading } = useQuery(['armToken'], loadToken);
+  useQuery(['subcriptionIds'], loadSubscriptionIds);
   return isLoading ? null : <>{children}</>;
 };
 export const DesignerWrapper = () => {

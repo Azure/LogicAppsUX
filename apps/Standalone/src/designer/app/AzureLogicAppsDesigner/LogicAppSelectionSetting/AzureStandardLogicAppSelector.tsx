@@ -28,7 +28,7 @@ export const AzureStandardLogicAppSelector = () => {
   const runId = useRunId();
   const isMonitoringView = useIsMonitoringView();
   const hostingPlan = useHostingPlan();
-  const standardList = useFetchStandardApps();
+  const standardList = useFetchStandardApps(environment.subscriptionIds);
   const hybridList = useFetchHybridApps();
   const { data: appList, isLoading: isAppsLoading } = hostingPlan === 'hybrid' ? hybridList : standardList;
   const validApp = appId ? resourceIdValidation.test(appId) : false;

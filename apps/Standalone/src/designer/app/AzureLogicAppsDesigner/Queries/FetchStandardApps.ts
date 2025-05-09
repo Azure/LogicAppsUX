@@ -1,18 +1,30 @@
+import { useQuery } from '@tanstack/react-query';
 import { environment } from '../../../../environments/environment';
 import type { Data as FetchLogicAppsData } from '../Models/LogicAppAppTypes';
 import { fetchAppsByQuery } from '../Utilities/resourceUtilities';
-import { useQuery } from '@tanstack/react-query';
 
-export const useFetchStandardApps = () => {
+const buildStandardQuery = (subscriptionId?: string) => `
+  resources
+  | where ${subscriptionId ? `subscriptionId == '${subscriptionId}' and` : ''}
+    type == 'microsoft.web/sites' and kind contains 'workflowapp'
+  | extend plan = 'Standard'
+`;
+
+export const useFetchStandardApps = (subscriptionIds?: string[]) => {
   return useQuery<FetchLogicAppsData[]>(
-    ['listAllLogicApps', 'standard'],
+    ['listAllLogicApps', 'standard', subscriptionIds ?? 'all'],
     async () => {
       if (!environment.armToken) {
         return [];
       }
-      const query = `resources | where type == "microsoft.web/sites" and kind contains "workflowapp"`;
-      const data = await fetchAppsByQuery(query);
-      return data.map((item: any) => ({
+
+      const queries = subscriptionIds?.length
+        ? subscriptionIds.map((id) => fetchAppsByQuery(buildStandardQuery(id)))
+        : [fetchAppsByQuery(buildStandardQuery())];
+
+      const results = await Promise.all(queries);
+
+      return results.flat().map((item: any) => ({
         id: item[0],
         name: item[1],
         location: item[5],
@@ -22,6 +34,7 @@ export const useFetchStandardApps = () => {
       }));
     },
     {
+      enabled: !!environment.armToken,
       refetchOnMount: false,
       refetchOnReconnect: false,
       refetchOnWindowFocus: false,
