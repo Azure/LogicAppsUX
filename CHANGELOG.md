@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [5.94.14](https://github.com/Azure/LogicAppsUX/compare/v5.94.13...v5.94.14) (2025-05-09)
+
+
+### Bug Fixes
+
+* **designer:** Use the correct service for List Subscriptions ([#7212](https://github.com/Azure/LogicAppsUX/issues/7212)) ([3594c7a](https://github.com/Azure/LogicAppsUX/commit/3594c7ad4bf31fcf5920bbdc8fd295514f6c92dd))
+
 ### [5.94.13](https://github.com/Azure/LogicAppsUX/compare/v5.94.12...v5.94.13) (2025-05-08)
 
 
