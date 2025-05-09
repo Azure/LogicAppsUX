@@ -57,6 +57,7 @@ import * as path from 'path';
 import type { Uri, MessageItem, WorkspaceFolder } from 'vscode';
 import { deployHybridLogicApp } from './hybridLogicApp';
 import { createContainerClient } from '../../utils/azureClients';
+import { uploadAppSettings } from '../appSettings/uploadAppSettings';
 
 export async function deployProductionSlot(
   context: IActionContext,
@@ -207,6 +208,7 @@ async function deploy(
     } finally {
       if (deployProjectPathForWorkflowApp !== undefined && !isHybridLogicApp) {
         await cleanAndRemoveDeployFolder(deployProjectPathForWorkflowApp);
+        await uploadAppSettings(context, node.appSettingsTreeItem, workspaceFolder, settingsToExclude);
       }
     }
   });
@@ -214,7 +216,7 @@ async function deploy(
   if (!isHybridLogicApp) {
     await node.loadAllChildren(context);
   }
-  await notifyDeployComplete(node, context.workspaceFolder, isHybridLogicApp, settingsToExclude);
+  await notifyDeployComplete(node, isHybridLogicApp);
 }
 
 /**

@@ -19,7 +19,6 @@ import * as vscode from 'vscode';
  * Uploads local settings file to the portal.
  * @param {IActionContext} context - Command context.
  * @param {AppSettingsTreeItem} node - App settings node structure.
- * @param {[]} _nodes - App settings node structure.
  * @param {vscode.WorkspaceFolder} workspacePath - Workspace folder path.
  * @param {(RegExp | string)[]} exclude - Array of settings to exclude from uploading.
  * @returns {Promise<string>} Workspace file path.
@@ -27,7 +26,6 @@ import * as vscode from 'vscode';
 export async function uploadAppSettings(
   context: IActionContext,
   node?: AppSettingsTreeItem,
-  _nodes?: [],
   workspacePath?: vscode.WorkspaceFolder,
   exclude?: (RegExp | string)[]
 ): Promise<void> {
