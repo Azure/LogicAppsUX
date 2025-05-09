@@ -4,8 +4,8 @@ import { useIntl } from 'react-intl';
 import { useWorkflowsInApp } from '../../../core/configuretemplate/utils/queries';
 import { ResourcePicker } from '../../templates';
 import { useSelector } from 'react-redux';
-import { useCallback } from 'react';
-import { equals, type LogicAppResource } from '@microsoft/logic-apps-shared';
+import { useCallback, useMemo } from 'react';
+import { equals, getResourceNameFromId, type LogicAppResource } from '@microsoft/logic-apps-shared';
 import {
   TableBody,
   TableCell,
@@ -24,6 +24,7 @@ import {
 } from '@fluentui/react-components';
 import { useResourceStrings } from '../resources';
 import type { WorkflowTemplateData } from '../../../core';
+import { useTemplatesStrings } from '../../templates/templatesStrings';
 
 export const SelectWorkflows = ({
   selectedWorkflowsList,
@@ -56,7 +57,18 @@ export const SelectWorkflows = ({
     [onWorkflowsSelected]
   );
 
-  const resourceStrings = useResourceStrings();
+  const differentIdThanResourceRecord = useMemo(() => {
+    const selectedDifferentNameWorkflowsList: Record<string, string | undefined> = {};
+    for (const workflow of Object.values(selectedWorkflowsList)) {
+      const workflowSourceId = workflow.manifest?.metadata?.workflowSourceId;
+      if (workflowSourceId && getResourceNameFromId(workflowSourceId) !== workflow.id) {
+        selectedDifferentNameWorkflowsList[workflowSourceId] = workflow.id;
+      }
+    }
+    return selectedDifferentNameWorkflowsList;
+  }, [selectedWorkflowsList]);
+
+  const resourceStrings = { ...useTemplatesStrings().resourceStrings, ...useResourceStrings() };
 
   const intlText = {
     SOURCE: intl.formatMessage({
@@ -104,6 +116,7 @@ export const SelectWorkflows = ({
   const items =
     workflows?.map((workflow) => ({
       id: workflow.id,
+      workflowName: differentIdThanResourceRecord[workflow.id],
       name: workflow.name,
       trigger: workflow.triggerType,
     })) ?? [];
@@ -171,6 +184,9 @@ export const SelectWorkflows = ({
                 checkboxIndicator={{ 'aria-label': resourceStrings.SelectAllWorkflowsLabel }}
               />
               <TableHeaderCell>{intlText.WORKFLOW_NAME}</TableHeaderCell>
+              {Object.keys(differentIdThanResourceRecord).length ? (
+                <TableHeaderCell>{resourceStrings.WORKFLOW_NAME}</TableHeaderCell>
+              ) : null}
               <TableHeaderCell>{resourceStrings.Trigger}</TableHeaderCell>
             </TableRow>
           </TableHeader>
@@ -209,6 +225,11 @@ export const SelectWorkflows = ({
                     <TableCell>
                       <TableCellLayout>{item.name}</TableCellLayout>
                     </TableCell>
+                    {Object.keys(differentIdThanResourceRecord).length ? (
+                      <TableCell>
+                        <TableCellLayout>{item.workflowName ?? resourceStrings.Placeholder}</TableCellLayout>
+                      </TableCell>
+                    ) : null}
                     <TableCell>
                       <TableCellLayout>{item.trigger}</TableCellLayout>
                     </TableCell>
