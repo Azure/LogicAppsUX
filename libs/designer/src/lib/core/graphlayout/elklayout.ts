@@ -21,7 +21,7 @@ const defaultLayoutOptions: Record<string, string> = {
   'elk.alignment': 'TOP',
   'elk.edge.type': 'DIRECTED',
   'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
-  'elk.layered.nodePlacement.strategy': 'NETWORK_SIMPLEX',
+  'elk.layered.nodePlacement.strategy': 'BRANDES_KOEPF', // BRANDES_KOEPF / NETWORK_SIMPLEX
 
   // Spacing values
   'elk.spacing.edgeNode': '40',
@@ -33,7 +33,7 @@ const defaultLayoutOptions: Record<string, string> = {
   // 'elk.layered.crossingMinimization.semiInteractive': 'true',
   'elk.layered.cycleBreaking.strategy': 'MODEL_ORDER', // DEPTH_FIRST
   'elk.edgeRouting': 'SPLINES',
-  'elk.layered.edgeRouting.splines.mode': 'CONSERVATIVE_SOFT',
+  'elk.layered.edgeRouting.splines.mode': 'CONSERVATIVE_SOFT', // CONSERVATIVE_SOFT
   'elk.layered.crossingMinimization.forceNodeModelOrder': 'false',
   'elk.layered.considerModelOrder.strategy': 'NODES_AND_EDGES',
   // Ports
