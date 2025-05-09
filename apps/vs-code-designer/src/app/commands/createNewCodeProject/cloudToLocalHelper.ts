@@ -14,7 +14,7 @@ import { areAllConnectionsParameterized, parameterizeConnection } from '../../ut
 import * as path from 'path';
 import * as fs from 'fs';
 import { isCSharpProject } from '../initProjectForVSCode/detectProjectLanguage';
-import { parametersFileName } from '../../../constants';
+import { azureWebJobsStorageKey, parametersFileName } from '../../../constants';
 import { addNewFileInCSharpProject } from '../../utils/codeless/updateBuildFile';
 import { writeFormattedJson } from '../../utils/fs';
 import { window } from 'vscode';
@@ -265,8 +265,8 @@ export async function cleanLocalSettings(context: IFunctionWizardContext): Promi
       if (key.startsWith('WEBSITE_') || key === 'ScmType' || key.startsWith('FUNCTIONS_RUNTIME')) {
         delete localSettings.Values[key];
         context.telemetry.properties.removedSetting = `Removing ${key} from local settings`;
-      } else if (key === 'AzureWebJobsStorage') {
-        localSettings.Values['AzureWebJobsStorage'] = 'UseDevelopmentStorage=true';
+      } else if (key === azureWebJobsStorageKey) {
+        localSettings.Values[azureWebJobsStorageKey] = 'UseDevelopmentStorage=true';
         context.telemetry.properties.removedSetting = 'Changed AzureWebJobsStorage to UseDevelopmentStorage=true';
       }
     });

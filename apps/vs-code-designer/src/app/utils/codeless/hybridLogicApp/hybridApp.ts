@@ -6,6 +6,7 @@ import path from 'path';
 import {
   appKindSetting,
   azurePublicBaseUrl,
+  azureWebJobsStorageKey,
   extensionVersionKey,
   hybridAppApiVersion,
   localSettingsFileName,
@@ -31,7 +32,7 @@ interface createHybridAppOptions {
 }
 
 const getAppSettingsFromLocal = async (context): Promise<EnvironmentVar[]> => {
-  const appSettingsToskip = ['AzureWebJobsStorage', 'ProjectDirectoryPath', 'FUNCTIONS_WORKER_RUNTIME'];
+  const appSettingsToskip = [azureWebJobsStorageKey, 'ProjectDirectoryPath', 'FUNCTIONS_WORKER_RUNTIME'];
   const workspaceFolder = await getWorkspaceFolder(context);
   const projectPath: string | undefined = await tryGetLogicAppProjectRoot(context, workspaceFolder, true /* suppressPrompt */);
   const settings = await getLocalSettingsJson(context, path.join(projectPath, localSettingsFileName));
