@@ -166,7 +166,7 @@ const TransitionEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({ id, source, t
       }
     }
     if (selected) {
-      return 'selected';
+      return 'highlighted';
     }
     return '';
   }, [dimmed, isNextTransition, isPreviousTransition, readOnly, selected]);
