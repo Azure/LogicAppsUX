@@ -3501,13 +3501,13 @@ describe('core/utils/parameters/helper', () => {
       expect(isRowFormat).toEqual(true);
       expect(itemValue?.length).toEqual(5);
       expect(itemValue?.[0].type).toEqual('literal');
-      expect(itemValue?.[0].value).toEqual('@notcontains(');
+      expect(itemValue?.[0].value).toEqual('@not(contains(');
       expect(itemValue?.[1].type).toEqual('token');
       expect(itemValue?.[1].token?.value).toEqual("length(split(item(), '|')?[0])");
       expect(itemValue?.[2].value).toEqual(',');
       expect(itemValue?.[3].token?.value).toEqual("length(split(item(), '|')?[0])");
       expect(itemValue?.[4].type).toEqual('literal');
-      expect(itemValue?.[4].value).toEqual(')');
+      expect(itemValue?.[4].value).toEqual('))');
     });
   });
 });
