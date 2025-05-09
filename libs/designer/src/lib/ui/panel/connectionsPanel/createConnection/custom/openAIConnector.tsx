@@ -12,10 +12,10 @@ import { useCallback, useMemo, useState } from 'react';
 import { ComboBox, type IComboBoxOption, Spinner } from '@fluentui/react';
 import { useAllCognitiveServiceAccounts } from './useCognitiveService';
 import { useStyles } from './styles';
-import { useSubscriptions } from '../../../../../core/templates/utils/queries';
 import { Link, tokens } from '@fluentui/react-components';
 import { NavigateIcon } from '@microsoft/designer-ui';
 import { ArrowClockwise16Filled, ArrowClockwise16Regular, bundleIcon } from '@fluentui/react-icons';
+import { useSubscriptions } from '../../../../../core/state/connection/connectionSelector';
 
 const RefreshIcon = bundleIcon(ArrowClockwise16Regular, ArrowClockwise16Filled);
 
