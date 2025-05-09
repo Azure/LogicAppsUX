@@ -73,10 +73,12 @@ const transitionHeight = 12;
 const TransitionEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({ id, source, target, style = {} }) => {
   const readOnly = useReadOnly();
   const operationData = useActionMetadata(source) as LogicAppsV2.ActionDefinition;
-  const nodeMetadata = useNodeMetadata(source);
+  const sourceMetadata = useNodeMetadata(source);
+  const targetMetadata = useNodeMetadata(target);
   const sourceId = containsIdTag(source) ? removeIdTag(source) : source;
   const targetId = containsIdTag(target) ? removeIdTag(target) : target;
-  const graphId = (containsIdTag(source) ? removeIdTag(source) : undefined) ?? nodeMetadata?.graphId ?? '';
+  const graphId = (containsIdTag(source) ? removeIdTag(source) : undefined) ?? sourceMetadata?.graphId ?? '';
+  const parentNodeId = targetMetadata?.parentNodeId ?? '';
 
   const isInfiniteLoop = useIsInfiniteLoop(source, target);
 
@@ -133,6 +135,11 @@ const TransitionEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({ id, source, t
 
   const transitionRepetitionIndex = useTransitionRepetitionIndex();
   const transitionRepetitionArray = useTransitionRepetitionArray();
+
+  const insideNodeInCurrentTransition = useMemo(() => {
+    return (transitionRepetitionArray?.[transitionRepetitionIndex] ?? []).includes(parentNodeId);
+  }, [parentNodeId, transitionRepetitionArray, transitionRepetitionIndex]);
+
   const isNextTransition = useMemo(
     () =>
       (transitionRepetitionArray?.[transitionRepetitionIndex + 1] ?? []).includes(targetId) &&
@@ -150,8 +157,11 @@ const TransitionEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({ id, source, t
     if (!readOnly) {
       return false;
     }
+    if (insideNodeInCurrentTransition) {
+      return false;
+    }
     return !isNextTransition && !isPreviousTransition;
-  }, [isNextTransition, isPreviousTransition, readOnly]);
+  }, [isNextTransition, isPreviousTransition, readOnly, insideNodeInCurrentTransition]);
 
   const colorClass = useMemo(() => {
     if (dimmed) {
