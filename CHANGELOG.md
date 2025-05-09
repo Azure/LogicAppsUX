@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [5.94.15](https://github.com/Azure/LogicAppsUX/compare/v5.94.14...v5.94.15) (2025-05-09)
+
+
+### Bug Fixes
+
+* **designer:** Fixing Search not showing operations in Agentic Loops ([#7220](https://github.com/Azure/LogicAppsUX/issues/7220)) ([9b70169](https://github.com/Azure/LogicAppsUX/commit/9b70169a3749b7bdc641b9118539e023b5f85c4b)), closes [#7105](https://github.com/Azure/LogicAppsUX/issues/7105)
+
 ### [5.94.14](https://github.com/Azure/LogicAppsUX/compare/v5.94.13...v5.94.14) (2025-05-09)
 
 
