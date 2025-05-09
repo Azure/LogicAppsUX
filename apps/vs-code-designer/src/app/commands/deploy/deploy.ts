@@ -17,6 +17,7 @@ import {
   showDeployConfirmationSetting,
   logicAppFilter,
   parameterizeConnectionsInProjectLoadSetting,
+  azureWebJobsStorageKey,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
@@ -84,7 +85,7 @@ async function deploy(
   addLocalFuncTelemetry(actionContext);
 
   let deployProjectPathForWorkflowApp: string | undefined;
-  const settingsToExclude: string[] = [webhookRedirectHostUri];
+  const settingsToExclude: string[] = [webhookRedirectHostUri, azureWebJobsStorageKey];
   const deployPaths = await getDeployFsPath(actionContext, target);
   const context: IDeployContext = Object.assign(actionContext, deployPaths, { defaultAppSetting: 'defaultFunctionAppToDeploy' });
   const { originalDeployFsPath, effectiveDeployFsPath, workspaceFolder } = deployPaths;

@@ -357,7 +357,6 @@ export const DirectoryKind = {
 } as const;
 
 // App settings
-export const AzureWebJobsStorage = 'AzureWebJobsStorage';
 export const WEBSITE_CONTENTAZUREFILECONNECTIONSTRING = 'WEBSITE_CONTENTAZUREFILECONNECTIONSTRING';
 export const COMMON_ERRORS = {
   OPERATION_CANCELLED: 'Operation cancelled',
