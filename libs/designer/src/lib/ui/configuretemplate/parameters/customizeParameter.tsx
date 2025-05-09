@@ -4,12 +4,14 @@ import { useMemo } from 'react';
 import { getResourceNameFromId, type Template } from '@microsoft/logic-apps-shared';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../../core/state/templates/store';
-import { Text } from '@fluentui/react-components';
+import { MessageBar } from '@fluentui/react-components';
 
 export const CustomizeParameter = ({
+  parameterError,
   parameterDefinition,
   setParameterDefinition,
 }: {
+  parameterError: string | undefined;
   parameterDefinition: Template.ParameterDefinition;
   setParameterDefinition: (parameterDefinition: Template.ParameterDefinition) => void;
 }) => {
@@ -20,7 +22,7 @@ export const CustomizeParameter = ({
   }));
 
   const detailsSectionItems: TemplatesSectionItem[] = useMemo(() => {
-    return [
+    const baseItems: TemplatesSectionItem[] = [
       {
         label: resourceStrings.ParameterName,
         value: parameterDefinition.name || '',
@@ -77,16 +79,24 @@ export const CustomizeParameter = ({
         },
       },
     ];
-  }, [resourceStrings, parameterDefinition, setParameterDefinition]);
+    if (isAccelerator && parameterDefinition.associatedWorkflows) {
+      baseItems.push({
+        label: resourceStrings.AssociatedWorkflows,
+        value: formatAssociatedWorklows(parameterDefinition.associatedWorkflows) || '',
+        type: 'text',
+      });
+    }
+    return baseItems;
+  }, [resourceStrings, parameterDefinition, setParameterDefinition, isAccelerator]);
 
   return (
     <div>
-      <TemplatesSection title={resourceStrings.Details} titleHtmlFor={'detailsSectionLabel'} items={detailsSectionItems} />
-      {isAccelerator && parameterDefinition.associatedWorkflows && (
-        <TemplatesSection title={resourceStrings.AssociatedWorkflows} titleHtmlFor={'associatedSectionLabel'}>
-          <Text>{formatAssociatedWorklows(parameterDefinition.associatedWorkflows)}</Text>
-        </TemplatesSection>
+      {parameterError && (
+        <MessageBar intent="error" style={{ marginBottom: '8px' }}>
+          {parameterError}
+        </MessageBar>
       )}
+      <TemplatesSection title={resourceStrings.Details} titleHtmlFor={'detailsSectionLabel'} items={detailsSectionItems} />
     </div>
   );
 };

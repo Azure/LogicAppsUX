@@ -5,12 +5,14 @@ import { deleteWorkflowData, initializeWorkflowsData, loadCustomTemplate } from 
 
 export interface TabState {
   selectedTabId: string | undefined;
+  runValidation: boolean;
   enableWizard: boolean;
   isWizardUpdating: boolean;
 }
 
 const initialState: TabState = {
   selectedTabId: undefined,
+  runValidation: false,
   enableWizard: false,
   isWizardUpdating: false,
 };
@@ -21,6 +23,9 @@ export const tabSlice = createSlice({
   reducers: {
     selectWizardTab: (state, action: PayloadAction<string>) => {
       state.selectedTabId = action.payload;
+    },
+    setRunValidation: (state, action: PayloadAction<boolean>) => {
+      state.runValidation = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -54,5 +59,5 @@ export const tabSlice = createSlice({
   },
 });
 
-export const { selectWizardTab } = tabSlice.actions;
+export const { selectWizardTab, setRunValidation } = tabSlice.actions;
 export default tabSlice.reducer;

@@ -6,9 +6,9 @@ import { WorkflowStateTypeStep } from '../../createCodeless/createCodelessSteps/
 import { WorkflowProjectCreateStep } from '../../createNewProject/createProjectSteps/WorkflowProjectCreateStep';
 import { WorkflowCodeTypeStep } from '../../createWorkflow/WorkflowCodeTypeStep';
 import { addInitVSCodeSteps } from '../../initProjectForVSCode/InitVSCodeLanguageStep';
-import { InvokeFunctionProjectSetup } from '../createCodeProjectSteps/createFunction/InvokeFunctionProjectSetup';
-import { setMethodName } from '../createCodeProjectSteps/createFunction/setMethodName';
-import { setNamespace } from '../createCodeProjectSteps/createFunction/setNamepSpace';
+import { FunctionAppFilesStep } from '../createCodeProjectSteps/createFunction/FunctionAppFilesStep';
+import { FunctionAppNameStep } from '../createCodeProjectSteps/createFunction/FunctionAppNameStep';
+import { FunctionAppNamespaceStep } from '../createCodeProjectSteps/createFunction/FunctionAppNamespaceStep';
 import { CodeProjectWorkflowStateTypeStep } from '../createCodeProjectSteps/createLogicApp/CodeProjectWorkflowStateTypeStep';
 import { WorkflowCodeProjectCreateStep } from './WorkflowCodeProjectCreateStep';
 import type { AzureWizardExecuteStep, IWizardOptions } from '@microsoft/vscode-azext-utils';
@@ -87,9 +87,7 @@ export class NewCodeProjectTypeStep extends AzureWizardPromptStep<IProjectWizard
   private async setPaths(context: IProjectWizardContext, workspacePath: string): Promise<void> {
     await fs.ensureDir(workspacePath);
 
-    const logicAppFolderName = context.logicAppName;
-
-    const logicAppFolderPath = path.join(workspacePath, logicAppFolderName);
+    const logicAppFolderPath = path.join(workspacePath, context.logicAppName);
     await fs.ensureDir(logicAppFolderPath);
     context.logicAppFolderPath = logicAppFolderPath;
 
@@ -107,20 +105,21 @@ export class NewCodeProjectTypeStep extends AzureWizardPromptStep<IProjectWizard
     executeSteps: AzureWizardExecuteStep<IProjectWizardContext>[],
     promptSteps: AzureWizardPromptStep<IProjectWizardContext>[]
   ): Promise<void> {
-    const projectPath = nonNullProp(context, 'logicAppFolderPath');
-    executeSteps.push(new WorkflowCodeProjectCreateStep(projectPath));
-    await addInitVSCodeSteps(context, executeSteps, true);
+    promptSteps.push(new FunctionAppNameStep(), new FunctionAppNamespaceStep(), new FunctionAppFilesStep());
 
-    promptSteps.push(
-      new setMethodName(),
-      new setNamespace(),
-      new InvokeFunctionProjectSetup(),
-      await CodeProjectWorkflowStateTypeStep.create(context, {
-        isProjectWizard: true,
-        templateId: this.templateId,
-        triggerSettings: this.functionSettings,
-      })
-    );
+    if (context.shouldCreateLogicAppProject) {
+      const projectPath = nonNullProp(context, 'logicAppFolderPath');
+      executeSteps.push(new WorkflowCodeProjectCreateStep(projectPath));
+      await addInitVSCodeSteps(context, executeSteps, true);
+
+      promptSteps.push(
+        await CodeProjectWorkflowStateTypeStep.create(context, {
+          isProjectWizard: true,
+          templateId: this.templateId,
+          triggerSettings: this.functionSettings,
+        })
+      );
+    }
   }
 
   /**
@@ -138,11 +137,13 @@ export class NewCodeProjectTypeStep extends AzureWizardPromptStep<IProjectWizard
     await addInitVSCodeSteps(context, executeSteps, false);
 
     if (!this.skipWorkflowStateTypeStep) {
-      promptSteps.push(await WorkflowCodeTypeStep.create(context, {
-        isProjectWizard: true,
-        templateId: this.templateId,
-        triggerSettings: this.functionSettings,
-      }));
+      promptSteps.push(
+        await WorkflowCodeTypeStep.create(context, {
+          isProjectWizard: true,
+          templateId: this.templateId,
+          triggerSettings: this.functionSettings,
+        })
+      );
       promptSteps.push(
         await WorkflowStateTypeStep.create(context, {
           isProjectWizard: true,

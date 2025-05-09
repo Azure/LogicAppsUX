@@ -5,6 +5,7 @@ import { getResourceNameFromId, type Template } from '@microsoft/logic-apps-shar
 import { useMemo } from 'react';
 import { useResourceStrings } from '../resources';
 import { useTemplatesStrings } from '../../templates/templatesStrings';
+import { WorkflowKind } from '../../../core/state/workflow/workflowInterfaces';
 
 export const CustomizeWorkflows = ({
   selectedWorkflowsList,
@@ -19,7 +20,7 @@ export const CustomizeWorkflows = ({
     <div className="msla-templates-tab msla-panel-no-description-tab">
       {workflowEntries.length ? (
         workflowEntries.length > 1 ? (
-          <Accordion multiple={true}>
+          <Accordion multiple={true} defaultOpenItems={Object.keys(selectedWorkflowsList)}>
             {Object.entries(selectedWorkflowsList).map(([workflowId, workflowData]) => (
               <AccordionItem value={workflowId} key={workflowId}>
                 <AccordionHeader>
@@ -61,20 +62,39 @@ const CustomizeWorkflowSection = ({
   updateWorkflowDataField: (workflowId: string, workflowData: Partial<WorkflowTemplateData>) => void;
 }) => {
   const customResourceStrings = useResourceStrings();
-  const { resourceStrings } = useTemplatesStrings();
+  const { resourceStrings, stateTypes } = useTemplatesStrings();
+
+  const defaultKindOptions = useMemo(
+    () => [
+      { id: WorkflowKind.STATEFUL, value: WorkflowKind.STATEFUL, label: stateTypes.STATEFUL },
+      { id: WorkflowKind.STATELESS, value: WorkflowKind.STATELESS, label: stateTypes.STATELESS },
+    ],
+    [stateTypes]
+  );
+
+  const selectedKinds = workflow.manifest?.kinds || [];
+
+  const kindValue = defaultKindOptions
+    .filter((kind) => selectedKinds.includes(kind.value))
+    .map((kind) => kind.label)
+    .join(', ');
 
   const generalSectionItems: TemplatesSectionItem[] = useMemo(() => {
-    return [
+    const baseItems: TemplatesSectionItem[] = [
       {
         label: resourceStrings.WORKFLOW_NAME,
         value: workflow.workflowName || '',
+        hint: resourceStrings.WORKFLOW_NAME_DESCRIPTION,
         type: 'textfield',
         required: true,
         onChange: (value: string) => {
           updateWorkflowDataField(workflowId, { workflowName: value });
         },
+        errorMessage: workflow.errors?.workflow,
       },
-      {
+    ];
+    if (isMultiWorkflowTemplate) {
+      baseItems.push({
         label: customResourceStrings.WorkflowDisplayName,
         value: workflow.manifest?.title || '',
         type: 'textfield',
@@ -88,10 +108,42 @@ const CustomizeWorkflowSection = ({
             } as Template.WorkflowManifest,
           });
         },
+        errorMessage: workflow.errors?.manifest?.title,
+      });
+    }
+    baseItems.push({
+      label: customResourceStrings.State,
+      value: kindValue,
+      type: 'dropdown',
+      multiselect: true,
+      options: defaultKindOptions,
+      selectedOptions: workflow.manifest?.kinds || [],
+      onOptionSelect: (selectedOptions) => {
+        updateWorkflowDataField(workflowId, {
+          ...workflow,
+          manifest: {
+            ...workflow.manifest,
+            kinds: selectedOptions,
+          } as Template.WorkflowManifest,
+        });
       },
-      //TODO: add state type
-    ];
-  }, [workflowId, updateWorkflowDataField, workflow, customResourceStrings, resourceStrings]);
+    });
+    baseItems.push({
+      label: customResourceStrings.Trigger,
+      value: workflow.triggerType,
+      type: 'text',
+    });
+    return baseItems;
+  }, [
+    workflowId,
+    updateWorkflowDataField,
+    workflow,
+    customResourceStrings,
+    defaultKindOptions,
+    kindValue,
+    resourceStrings,
+    isMultiWorkflowTemplate,
+  ]);
 
   const descriptionSectionItems: TemplatesSectionItem[] = useMemo(() => {
     const baseItems: TemplatesSectionItem[] = isMultiWorkflowTemplate
@@ -99,7 +151,7 @@ const CustomizeWorkflowSection = ({
           {
             label: customResourceStrings.Summary,
             value: workflow.manifest?.summary || '',
-            type: 'textfield',
+            type: 'textarea',
             onChange: (value: string) => {
               updateWorkflowDataField(workflowId, {
                 ...workflow,
@@ -109,13 +161,14 @@ const CustomizeWorkflowSection = ({
                 } as Template.WorkflowManifest,
               });
             },
+            errorMessage: workflow.errors?.manifest?.summary,
           },
         ]
       : [];
     baseItems.push({
       label: resourceStrings.DESCRIPTION,
       value: workflow.manifest?.description || '',
-      type: 'textfield',
+      type: 'textarea',
       onChange: (value: string) => {
         updateWorkflowDataField(workflowId, {
           ...workflow,
@@ -129,7 +182,7 @@ const CustomizeWorkflowSection = ({
     baseItems.push({
       label: customResourceStrings.Prerequisites,
       value: workflow.manifest?.prerequisites || '',
-      type: 'textfield',
+      type: 'textarea',
       onChange: (value: string) => {
         updateWorkflowDataField(workflowId, {
           ...workflow,
@@ -143,6 +196,47 @@ const CustomizeWorkflowSection = ({
     return baseItems;
   }, [workflowId, updateWorkflowDataField, workflow, isMultiWorkflowTemplate, resourceStrings, customResourceStrings]);
 
+  const imageSectionItems: TemplatesSectionItem[] = useMemo(() => {
+    return [
+      {
+        label: customResourceStrings.LightModeImage,
+        value: workflow.manifest?.images?.light || '',
+        type: 'textfield',
+        onChange: (value: string) => {
+          updateWorkflowDataField(workflowId, {
+            ...workflow,
+            manifest: {
+              ...workflow.manifest,
+              images: {
+                ...workflow.manifest?.images,
+                light: value,
+              },
+            } as Template.WorkflowManifest,
+          });
+        },
+        errorMessage: workflow.errors?.manifest?.['images.light'],
+      },
+      {
+        label: customResourceStrings.DarkModeImage,
+        value: workflow.manifest?.images?.dark || '',
+        type: 'textfield',
+        onChange: (value: string) => {
+          updateWorkflowDataField(workflowId, {
+            ...workflow,
+            manifest: {
+              ...workflow.manifest,
+              images: {
+                ...workflow.manifest?.images,
+                dark: value,
+              },
+            } as Template.WorkflowManifest,
+          });
+        },
+        errorMessage: workflow.errors?.manifest?.['images.dark'],
+      },
+    ];
+  }, [workflowId, updateWorkflowDataField, workflow, customResourceStrings]);
+
   return (
     <div>
       <TemplatesSection
@@ -151,6 +245,7 @@ const CustomizeWorkflowSection = ({
         items={generalSectionItems}
       />
       <TemplatesSection title={resourceStrings.DESCRIPTION} titleHtmlFor={'descriptionSectionLabel'} items={descriptionSectionItems} />
+      <TemplatesSection title={customResourceStrings.WorkflowImages} titleHtmlFor={'imagesSectionLabel'} items={imageSectionItems} />
     </div>
   );
 };

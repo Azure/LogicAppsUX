@@ -2,7 +2,6 @@ import type { ProjectLanguage } from './language';
 import type { IProjectWizardContext, ProjectVersion } from './project';
 import type { IWorkflowTemplate } from './templates';
 import type { ISubscriptionContext } from '@microsoft/vscode-azext-utils';
-import type { WorkspaceFolder } from 'vscode';
 
 export const FuncVersion = {
   v1: '~1',
@@ -35,11 +34,6 @@ export interface IFunctionWizardContext extends Partial<ISubscriptionContext>, I
   functionTemplate?: IWorkflowTemplate;
   functionName?: string;
   isCodeless?: boolean;
-}
-
-export interface IPreDebugValidateResult {
-  workspace: WorkspaceFolder;
-  shouldContinue: boolean;
 }
 
 /**

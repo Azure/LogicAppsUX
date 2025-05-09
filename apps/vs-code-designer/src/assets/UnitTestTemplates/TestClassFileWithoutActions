@@ -39,7 +39,7 @@ namespace <%= LogicAppName %>.Tests
             // PREPARE Mock
             // Generate mock action and trigger data.
             var mockData = this.GetTestMockDefinition();
-            mockData.TriggerMock.Outputs["your-property-name"] = "your-property-value";
+            // mockData.TriggerMock.Outputs["your-property-name"] = "your-property-value";
 
             // ACT
             // Create an instance of UnitTestExecutor, and run the workflow with the mock data.
@@ -58,7 +58,7 @@ namespace <%= LogicAppName %>.Tests
         /// This method shows how to set up mock data, execute the workflow, and assert the outcome.
         /// </summary>
         [TestMethod]
-        public async Task <%= WorkflowName %>_<%= UnitTestName %>_ExecuteWorkflow_FAILED_Sample3()
+        public async Task <%= WorkflowName %>_<%= UnitTestName %>_ExecuteWorkflow_FAILED_Sample2()
         {
             // PREPARE
             // Generate mock action and trigger data.

@@ -90,6 +90,7 @@ const updateConnectionsDataWithNewConnections = (
     newConnectionsObj[replaceWorkflowIdentifier(referenceKey, replaceWith)] = {
       api,
       connection,
+      connectionId: isOpenApiSchemaVersion(JSON.parse(stringifiedDefinition)) ? undefined : connection.id,
       connectionProperties,
       connectionRuntimeUrl,
     };

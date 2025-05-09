@@ -50,14 +50,14 @@ export const SimpleQueryBuilder = ({ getTokenPicker, itemValue, readonly, onChan
 
   const advancedButtonLabel = intl.formatMessage({
     defaultMessage: 'Edit in advanced mode',
-    id: 'MfAdfx',
-    description: 'Button Label when clicked to swith to advanced editor',
+    id: '4SQKyc',
+    description: 'Button label when selecting to switch to basic editor',
   });
 
   const basicButtonLabel = intl.formatMessage({
     defaultMessage: 'Edit in basic mode',
-    id: '9x8hg8',
-    description: 'Button Label when clicked to swith to basic editor',
+    id: 'TQd85R',
+    description: 'Button label to show when selecting switch to advanced editor',
   });
 
   const invalidRowFormat = intl.formatMessage({
