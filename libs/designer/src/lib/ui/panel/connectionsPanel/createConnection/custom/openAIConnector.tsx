@@ -3,7 +3,7 @@ import {
   isUndefinedOrEmptyString,
   LogEntryLevel,
   LoggerService,
-  type Resource,
+  type Subscription,
 } from '@microsoft/logic-apps-shared';
 import { type ConnectionParameterProps, UniversalConnectionParameter } from '../formInputs/universalConnectionParameter';
 import { ConnectionParameterRow } from '../connectionParameterRow';
@@ -145,7 +145,7 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
             className={styles.subscriptionCombobox}
             options={(subscriptions ?? [])
               .sort((a, b) => a.displayName.localeCompare(b.displayName))
-              .map((subscription: Resource) => {
+              .map((subscription: Subscription) => {
                 const id = subscription.id.split('/subscriptions/')[1];
                 return {
                   key: id,
