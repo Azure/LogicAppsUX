@@ -89,6 +89,9 @@ export class LogicAppResourceTree implements ResolvedAppResourceBase {
       this.data = this.site.rawSite;
       this._subscription = subscription;
       this.contextValuesToAdd = [this.site.isSlot ? LogicAppResourceTree.slotContextValue : LogicAppResourceTree.productionContextValue];
+      this.appSettingsTreeItem = new AppSettingsTreeItem(this as unknown as SlotTreeItem, this.site, {
+        contextValuesToAdd: ['azLogicApps'],
+      });
 
       const valuesToMask = [
         this.site.siteName,
