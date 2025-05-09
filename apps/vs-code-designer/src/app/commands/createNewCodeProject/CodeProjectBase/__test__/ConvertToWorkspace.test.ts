@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, test, afterEach } from 'vitest';
-import { ConvertToWorkspace } from '../ConvertToWorkspace';
+import { convertToWorkspace } from '../ConvertToWorkspace';
 import * as vscode from 'vscode';
 import * as workspaceUtils from '../../../../utils/workspace';
 import * as verifyProject from '../../../../utils/verifyIsProject';
@@ -29,7 +29,7 @@ vi.mock('../../../../utils/verifyIsProject', () => ({
   tryGetLogicAppProjectRoot: vi.fn(),
 }));
 
-describe('ConvertToWorkspace', () => {
+describe('convertToWorkspace', () => {
   const testWorkspaceName = 'TestWorkspace';
   const testWorkspaceFolder: vscode.WorkspaceFolder = {
     name: testWorkspaceName,
@@ -61,7 +61,7 @@ describe('ConvertToWorkspace', () => {
   it('should return undefined when workspace folder is not found', async () => {
     vi.spyOn(workspaceUtils, 'getWorkspaceFolder').mockResolvedValue(undefined);
 
-    const result = await ConvertToWorkspace(context);
+    const result = await convertToWorkspace(context);
     expect(result).toBeUndefined();
   });
 
@@ -69,7 +69,7 @@ describe('ConvertToWorkspace', () => {
     vi.spyOn(workspaceUtils, 'getWorkspaceFolder').mockResolvedValue(testWorkspaceFolder);
     vi.spyOn(verifyProject, 'isLogicAppProjectInRoot').mockResolvedValue(false);
 
-    const result = await ConvertToWorkspace(context);
+    const result = await convertToWorkspace(context);
     expect(result).toBeUndefined();
   });
 
@@ -81,7 +81,7 @@ describe('ConvertToWorkspace', () => {
     const showInfoSpy = vi.spyOn(vscode.window, 'showInformationMessage').mockResolvedValue(DialogResponses.yes);
     const executeCommandSpy = vi.spyOn(vscode.commands, 'executeCommand').mockResolvedValue(undefined);
 
-    const result = await ConvertToWorkspace(context);
+    const result = await convertToWorkspace(context);
 
     expect(showInfoSpy).not.toHaveBeenCalled();
     expect(executeCommandSpy).not.toHaveBeenCalled();
@@ -98,7 +98,7 @@ describe('ConvertToWorkspace', () => {
     const showInfoSpy = vi.spyOn(vscode.window, 'showInformationMessage').mockResolvedValue(DialogResponses.yes);
     vi.spyOn(azextUtils, 'AzureWizard').mockImplementation(() => mockAzureWizard);
 
-    const result = await ConvertToWorkspace(context);
+    const result = await convertToWorkspace(context);
 
     expect(showInfoSpy).toHaveBeenCalledWith(
       localize(
@@ -149,7 +149,7 @@ describe('ConvertToWorkspace', () => {
     const showInfoSpy = vi.spyOn(vscode.window, 'showInformationMessage').mockResolvedValue(DialogResponses.yes);
     const executeCommandSpy = vi.spyOn(vscode.commands, 'executeCommand').mockResolvedValue(undefined);
 
-    const result = await ConvertToWorkspace(context);
+    const result = await convertToWorkspace(context);
 
     expect(isLogicAppProjectInRootSpy).toHaveBeenCalledWith(testLogicAppChildFolder);
     expect(showInfoSpy).toHaveBeenCalledWith(
@@ -191,7 +191,7 @@ describe('ConvertToWorkspace', () => {
     const showInfoSpy = vi.spyOn(vscode.window, 'showInformationMessage').mockResolvedValue(DialogResponses.yes);
     const executeCommandSpy = vi.spyOn(vscode.commands, 'executeCommand').mockResolvedValue(undefined);
 
-    const result = await ConvertToWorkspace(context);
+    const result = await convertToWorkspace(context);
 
     expect(isLogicAppProjectInRootSpy).toHaveBeenCalledWith(testLogicAppWorkspaceFolder);
     expect(showInfoSpy).toHaveBeenCalledWith(

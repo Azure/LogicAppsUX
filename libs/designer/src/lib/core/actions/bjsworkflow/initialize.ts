@@ -44,6 +44,7 @@ import {
   getParametersSortedByVisibility,
   loadParameterValuesArrayFromDefault,
   ParameterGroupKeys,
+  shouldEncodeParameterValueForOperationBasedOnMetadata,
   toParameterInfoMap,
   updateParameterWithValues,
 } from '../../utils/parameters/helper';
@@ -190,7 +191,8 @@ export const getInputParametersFromManifest = (
     }
   }
 
-  const allParametersAsArray = toParameterInfoMap(primaryInputParametersInArray, stepDefinition);
+  const shouldEncodeBasedOnMetadata = shouldEncodeParameterValueForOperationBasedOnMetadata(operationInfo);
+  const allParametersAsArray = toParameterInfoMap(primaryInputParametersInArray, stepDefinition, shouldEncodeBasedOnMetadata);
   const dynamicInput = primaryInputParametersInArray.find((parameter) => parameter.dynamicSchema);
 
   const defaultParameterGroup = {
@@ -203,7 +205,7 @@ export const getInputParametersFromManifest = (
     [ParameterGroupKeys.DEFAULT]: defaultParameterGroup,
   };
 
-  addRecurrenceParametersInGroup(parameterGroups, manifest.properties.recurrence, stepDefinition);
+  addRecurrenceParametersInGroup(parameterGroups, manifest.properties.recurrence, stepDefinition, shouldEncodeBasedOnMetadata);
 
   defaultParameterGroup.parameters = getParametersSortedByVisibility(defaultParameterGroup.parameters);
 

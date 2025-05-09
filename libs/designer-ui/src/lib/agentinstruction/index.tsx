@@ -30,24 +30,24 @@ export const AgentInstructionEditor = ({
   }, [initialValue]);
   const description = intl.formatMessage({
     defaultMessage:
-      'Add instructions so the agent understands its role and tasks. It can be helpful to include information about workflow structure, restrictions, tools, and interaction in certain scenarios.',
-    description: 'Agent Instruction Editor description',
-    id: 'gzwIqh',
+      'Add instructions so the agent understands its role and tasks. Include helpful information about workflow structure, restrictions, tools, and interactions in specific scenarios.',
+    description: 'Description for agent instruction editor',
+    id: 'hRLAFg',
   });
   const descriptionLink = intl.formatMessage({
     defaultMessage: 'Tips for writing agent instructions',
-    description: 'Agent Instruction Editor description link',
-    id: 'cC7hlj',
+    description: 'Description link for agent instruction editor',
+    id: 'Vp5rnF',
   });
   const systemPlaceholder = intl.formatMessage({
-    defaultMessage: 'Enter instructions for the agent',
-    description: 'Agent System placeholder',
-    id: '1MXRVZ',
+    defaultMessage: 'Enter the instructions for the agent.',
+    description: 'Agent system placeholder',
+    id: 'dlLxEo',
   });
   const userPlaceholder = intl.formatMessage({
     defaultMessage: 'Enter instructions for the user',
-    description: 'Agent User placeholder',
-    id: 'Jzbnc/',
+    description: 'Agent user placeholder',
+    id: 'SPaCir',
   });
   const userItemLabel = intl.formatMessage({
     defaultMessage: 'User Instructions',

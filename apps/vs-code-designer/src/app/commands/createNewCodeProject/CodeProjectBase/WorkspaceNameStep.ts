@@ -11,7 +11,7 @@ import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-ap
 import * as path from 'path';
 import { workspaceNameValidation } from '../../../../constants';
 
-export class SetWorkspaceName extends AzureWizardPromptStep<IProjectWizardContext> {
+export class WorkspaceNameStep extends AzureWizardPromptStep<IProjectWizardContext> {
   public hideStepCount = true;
 
   public async prompt(context: IProjectWizardContext): Promise<void> {

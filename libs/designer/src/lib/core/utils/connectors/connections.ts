@@ -40,7 +40,7 @@ export function getConnectionReference(state: ConnectionsStoreState, nodeId: str
   return getRecordEntry(connectionReferences, getRecordEntry(connectionsMapping, nodeId) ?? '') ?? mockConnectionReference;
 }
 
-const mockConnectionReference: ConnectionReference = {
+export const mockConnectionReference: ConnectionReference = {
   api: { id: 'apiId' },
   connection: { id: 'connectionId' },
 };

@@ -34,7 +34,7 @@ test.describe(
       expect(await page.getByText('Add an action', { exact: true }).isVisible()).toBeTruthy();
       expect(await page.getByText('Add a parallel branch', { exact: true }).isVisible()).toBeTruthy();
       await page.keyboard.press('Escape');
-      await page.getByLabel('fit view').click({ force: true });
+      await page.getByLabel('Zoom view to fit').click({ force: true });
 
       // Click the last edge button
       await page.getByLabel('Insert a new step after Response').click();

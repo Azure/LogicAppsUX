@@ -1,4 +1,4 @@
-import { getIntl, type ValueSegment } from '@microsoft/logic-apps-shared';
+import { getIntl, isUndefinedOrEmptyString, type ValueSegment } from '@microsoft/logic-apps-shared';
 import { convertSegmentsToString } from '../editor/base/utils/parsesegments';
 import { convertStringToSegments } from '../editor/base/utils/editorToSegment';
 import { createLiteralValueSegment } from '../editor/base/utils/helper';
@@ -57,9 +57,9 @@ export const parseAgentInstruction = (
   } catch {
     const intl = getIntl();
     const errorMessage = intl.formatMessage({
-      defaultMessage: 'Error parsing agent instructions',
-      description: 'Error message for agent instructions parsing failure',
-      id: '+/yy+P',
+      defaultMessage: 'Error occurred while parsing agent instructions.',
+      description: 'Error message for the agent instructions parsing failure.',
+      id: '4ggAK+',
     });
     setErrorMessage(errorMessage);
   }
@@ -79,13 +79,14 @@ export const serializeAgentInstructions = (
 
   // Convert system message
   const systemMessageString = convertSegmentsToString(agentLevel === AGENT_INSTRUCTION_TYPES.SYSTEM ? value : systemMessage, nodeMap);
-  if (systemMessageString) {
-    agentInstructions.push({ role: AGENT_INSTRUCTION_TYPES.SYSTEM, content: systemMessageString });
-  }
+  agentInstructions.push({
+    role: AGENT_INSTRUCTION_TYPES.SYSTEM,
+    content: systemMessageString ?? '',
+  });
 
   // Convert user messages
   const userMessageString = convertSegmentsToString(
-    agentLevel === AGENT_INSTRUCTION_TYPES.USER ? viewModel?.uncastedValue : userMessage,
+    agentLevel === AGENT_INSTRUCTION_TYPES.USER ? (viewModel?.uncastedValue ?? []) : userMessage,
     nodeMap
   );
 
@@ -93,14 +94,22 @@ export const serializeAgentInstructions = (
     const parsedUserMessages = JSON.parse(userMessageString);
     if (Array.isArray(parsedUserMessages)) {
       parsedUserMessages.forEach((message: string) => {
-        if (message) {
-          agentInstructions.push({ role: AGENT_INSTRUCTION_TYPES.USER, content: message });
+        if (!isUndefinedOrEmptyString(message)) {
+          agentInstructions.push({
+            role: AGENT_INSTRUCTION_TYPES.USER,
+            content: message,
+          });
         }
       });
     }
   } catch {
     // If something goes wrong with the parsing (ex if user adds it incorrectly from collapsed view), we'll just add the raw string
-    agentInstructions.push({ role: AGENT_INSTRUCTION_TYPES.USER, content: userMessageString });
+    if (!isUndefinedOrEmptyString(userMessageString)) {
+      agentInstructions.push({
+        role: AGENT_INSTRUCTION_TYPES.USER,
+        content: userMessageString,
+      });
+    }
   }
 
   return convertStringToSegments(JSON.stringify(agentInstructions, null, 4), nodeMap, {

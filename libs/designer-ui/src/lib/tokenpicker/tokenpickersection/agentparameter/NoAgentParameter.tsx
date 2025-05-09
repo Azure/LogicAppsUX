@@ -8,21 +8,21 @@ export const NoAgentParameters = ({ usingSearch, clearSearch }: { usingSearch: b
   const intl = useIntl();
 
   const noAgentParametersTitle = intl.formatMessage({
-    defaultMessage: 'No agent parameters to display',
-    id: 'tjzxSa',
+    defaultMessage: 'No agent parameters are available to display.',
+    id: 'doABYk',
     description: 'Title for no agent parameters found',
   });
 
   const searchPlaceHolderText = intl.formatMessage({
-    defaultMessage: 'No agent parameters match your search filter',
-    id: 'ZuvTLD',
+    defaultMessage: 'No agent parameters match your search filter.',
+    id: 'Y6Qvqu',
     description: 'Title for no agent parameters found to match search',
   });
 
   const createMoreMessage = intl.formatMessage({
-    defaultMessage: 'Use the button below to create a new agent parameter',
-    id: 'JBiI6s',
-    description: 'Message displayed to create more agent parameters',
+    defaultMessage: 'To create an agent parameter, select the button below',
+    id: 'in/o/y',
+    description: 'Message shown to create more agent parameters',
   });
 
   const clearSearchButtonLabel = intl.formatMessage({

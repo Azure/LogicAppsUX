@@ -32,7 +32,7 @@ export async function verifyVSCodeConfigOnActivate(
       const projectPath: string | undefined = await tryGetLogicAppProjectRoot(context, folder);
 
       if (projectPath) {
-        ext.logicAppWorkspace = projectPath;
+        ext.defaultLogicAppPath = projectPath;
         context.telemetry.suppressIfSuccessful = false;
 
         const language: ProjectLanguage | string = getWorkspaceSetting(projectLanguageSetting, projectPath);

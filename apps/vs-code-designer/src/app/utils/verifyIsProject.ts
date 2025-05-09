@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { extensionBundleId, hostFileName, extensionCommand, workflowFileName } from '../../constants';
+import { extensionBundleId, hostFileName, extensionCommand, workflowFileName, codefulWorkflowFileName } from '../../constants';
 import { localize } from '../../localize';
 import { getWorkspaceSetting, updateWorkspaceSetting } from './vsCodeConfig/settings';
 import { isNullOrUndefined, isString } from '@microsoft/logic-apps-shared';
@@ -25,39 +25,77 @@ export async function isLogicAppProject(folderPath: string): Promise<boolean> {
   const subpaths: string[] = await fse.readdir(folderPath);
 
   // Helper function to validate a workflow JSON file
-  async function isValidWorkflowFolder(workflowJsonPath: string): Promise<boolean> {
+  async function isValidCodefulWorkflowFolder(workflowCsPath: string): Promise<boolean> {
+    if (!(await fse.pathExists(workflowCsPath))) {
+      return false;
+    }
+    const filesInSubpath = await fse.readdir(path.dirname(workflowCsPath));
+    if (filesInSubpath.includes(codefulWorkflowFileName)) {
+      return true;
+    }
+    return false;
+  }
+
+  // Helper function to validate a workflow JSON file
+  async function isValidCodelessWorkflowFolder(workflowJsonPath: string): Promise<boolean> {
     if (!(await fse.pathExists(workflowJsonPath))) {
       return false;
     }
     try {
       const filesInSubpath = await fse.readdir(path.dirname(workflowJsonPath));
+      let isJsonWorkflow = false;
       if (filesInSubpath.includes(workflowFileName)) {
         const workflowJsonData = await fse.readFile(workflowJsonPath, 'utf-8');
         const workflowJson = JSON.parse(workflowJsonData);
         const schema = workflowJson?.definition?.$schema;
-        return schema && schema.includes('Microsoft.Logic') && schema.includes('workflowdefinition.json');
+        isJsonWorkflow = schema && schema.includes('Microsoft.Logic') && schema.includes('workflowdefinition.json');
+      }
+      const workflowCsPaths = subpaths.map((subpath) => path.join(folderPath, subpath, codefulWorkflowFileName));
+      const validWorkflowCsPaths = await Promise.all(
+        workflowCsPaths.map(async (workflowCsPath) => {
+          if (await fse.pathExists(workflowCsPath)) {
+            return true;
+          }
+          return false;
+        })
+      );
+
+      if (validWorkflowCsPaths.some(Boolean) || isJsonWorkflow) {
+        return true;
       }
     } catch {
       return false;
     }
+
     return false;
   }
 
   const validWorkflowChecks = await Promise.all(
     subpaths.map(async (subpath) => {
       const workflowJsonPath = path.join(folderPath, subpath, workflowFileName);
-      return isValidWorkflowFolder(workflowJsonPath);
+
+      return isValidCodelessWorkflowFolder(workflowJsonPath);
     })
   );
 
-  if (!validWorkflowChecks.some((valid) => valid)) {
+  const validCodefulWorkflowChecks = await Promise.all(
+    subpaths.map(async (subpath) => {
+      const workflowCsPath = path.join(folderPath, subpath, codefulWorkflowFileName);
+
+      return isValidCodefulWorkflowFolder(workflowCsPath);
+    })
+  );
+
+  const hasValidCodefulWorkflow = validCodefulWorkflowChecks.some((valid) => valid);
+
+  if (!(validWorkflowChecks.some((valid) => valid) || hasValidCodefulWorkflow)) {
     return false;
   }
 
   try {
     const hostJsonData = await fse.readFile(hostFilePath, 'utf-8');
     const hostJson = JSON.parse(hostJsonData);
-    return hostJson?.extensionBundle?.id === extensionBundleId;
+    return hostJson?.extensionBundle?.id === extensionBundleId || hasValidCodefulWorkflow;
   } catch {
     return false;
   }
@@ -96,8 +134,43 @@ export async function isLogicAppProjectInRoot(workspaceFolder: WorkspaceFolder |
 
 /**
  * Checks root folder and subFolders one level down
+ * If any logic app projects are found return the paths.
+ * @param workspaceFolder - The workspace folder to check.
+ * @returns A promise that resolves to an array of logic app project roots.
+ */
+export async function tryGetAllLogicAppProjectRoots(workspaceFolder: WorkspaceFolder | string | undefined): Promise<string[]> {
+  if (isNullOrUndefined(workspaceFolder)) {
+    return [];
+  }
+
+  const folderPath = isString(workspaceFolder) ? workspaceFolder : workspaceFolder.uri.fsPath;
+  if (!(await fse.pathExists(folderPath))) {
+    return [];
+  }
+
+  if (await isLogicAppProject(folderPath)) {
+    return [folderPath];
+  }
+
+  const logicAppProjectRoots: string[] = [];
+  const subpaths: string[] = await fse.readdir(folderPath);
+  await Promise.all(
+    subpaths.map(async (s) => {
+      const subpath = path.join(folderPath, s);
+      if (await isLogicAppProject(subpath)) {
+        logicAppProjectRoots.push(subpath);
+      }
+    })
+  );
+
+  return logicAppProjectRoots;
+}
+
+/**
+ * Checks root folder and subFolders one level down
  * If a single logic app project is found, return that path.
  * If multiple projects are found, prompt to pick the project.
+ * TODO - this is checking every root folder and subfolders of non-logic app projects in the workspace, can we optimize this?
  */
 export async function tryGetLogicAppProjectRoot(
   context: IActionContext,

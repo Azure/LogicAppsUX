@@ -13,17 +13,32 @@ import { useEffect, useMemo } from 'react';
 import { useResourceStrings } from './resources';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../core/state/templates/store';
+import { useTemplatesStrings } from '../templates/templatesStrings';
 
 export const TemplateInfoToast = ({ title, content, show }: { title: string; content: string; show: boolean }) => {
   const toastId = useId('template-info-toast');
   const toasterId = useId('template-info-toaster');
 
-  const { workflows, environment, isPublished } = useSelector((state: RootState) => state.template);
+  const customStrings = useResourceStrings();
+  const { resourceStrings } = useTemplatesStrings();
+  const { workflows, status } = useSelector((state: RootState) => state.template);
   const type = useMemo(() => {
     const workflowKeys = Object.keys(workflows);
-    return workflowKeys.length === 1 ? 'Workflow' : workflowKeys.length > 1 ? 'Accelerator' : '----';
-  }, [workflows]);
-  const statusText = useMemo(() => `${isPublished ? 'Published' : 'Unpublished'}, ${environment}`, [environment, isPublished]);
+    return workflowKeys.length === 1
+      ? resourceStrings.WORKFLOW
+      : workflowKeys.length > 1
+        ? resourceStrings.ACCELERATOR
+        : customStrings.Placeholder;
+  }, [workflows, customStrings, resourceStrings]);
+  const statusText = useMemo(
+    () =>
+      status === 'Production'
+        ? customStrings.ProductionEnvironment
+        : status === 'Testing'
+          ? customStrings.TestingEnvironment
+          : customStrings.DevelopmentEnvironment,
+    [customStrings, status]
+  );
 
   const { dispatchToast, updateToast } = useToastController(toasterId);
   const toastDetails = useMemo(
@@ -37,18 +52,18 @@ export const TemplateInfoToast = ({ title, content, show }: { title: string; con
   );
 
   useEffect(
-    () => dispatchToast(<InfoToastContent type={type} status={statusText} lastSaved="----" />, toastDetails),
-    [dispatchToast, statusText, toastDetails, toastId, type]
+    () => dispatchToast(<InfoToastContent type={type} status={statusText} lastSaved={customStrings.Placeholder} />, toastDetails),
+    [dispatchToast, statusText, toastDetails, toastId, type, customStrings.Placeholder]
   );
 
   useEffect(() => {
     if (!show) {
       updateToast({
-        content: <InfoToastContent type={type} status={statusText} lastSaved="----" />,
+        content: <InfoToastContent type={type} status={statusText} lastSaved={customStrings.Placeholder} />,
         ...toastDetails,
       });
     }
-  }, [show, statusText, toastDetails, toastId, type, updateToast]);
+  }, [show, statusText, toastDetails, toastId, type, updateToast, customStrings.Placeholder]);
 
   useEffect(() => {
     if (show) {

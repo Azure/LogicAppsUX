@@ -31,23 +31,27 @@ import {
 type DataMapperPanelDictionary = { [key: string]: DataMapperPanel }; // key == dataMapName
 type LogicAppMap = Map<string, Site>;
 type SubscriptionMap = Map<string, LogicAppMap>;
+type DesignTimeInstance = {
+  process?: cp.ChildProcess;
+  childFuncPid?: string;
+  port?: number;
+};
 
 // biome-ignore lint/style/noNamespace:
 export namespace ext {
   export let context: ExtensionContext;
-  export let designTimePort: number;
-  export let designChildProcess: cp.ChildProcess | undefined;
-  export let designChildFuncProcessId: string | undefined;
+  export const designTimeInstances: Map<string, DesignTimeInstance> = new Map();
   export let workflowDotNetProcess: cp.ChildProcess | undefined;
   export let workflowNodeProcess: cp.ChildProcess | undefined;
-  export let logicAppWorkspace: string;
+  export let defaultLogicAppPath: string;
   export let outputChannel: IAzExtOutputChannel;
   export let workflowRuntimePort: number;
   export let extensionVersion: string;
   export let bundleFolderRoot: string | undefined;
   export const prefix = 'azureLogicAppsStandard';
-  export let currentBundleVersion: string;
-  export let pinnedBundleVersion: boolean;
+  export const currentBundleVersion: Map<string, string> = new Map();
+  export const pinnedBundleVersion: Map<string, boolean> = new Map();
+  export let defaultBundleVersion: string;
   export let latestBundleVersion: string;
 
   // Services

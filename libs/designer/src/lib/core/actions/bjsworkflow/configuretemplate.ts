@@ -14,6 +14,7 @@ import {
   clone,
   DevLogger,
   getResourceNameFromId,
+  getTriggerFromDefinition,
   InitConnectionService,
   InitLoggerService,
   InitOperationManifestService,
@@ -90,10 +91,7 @@ export const initializeConfigureTemplateServices = createAsyncThunk(
 
 export const loadCustomTemplate = createAsyncThunk(
   'loadCustomTemplate',
-  async (
-    { templateId }: { templateId: string },
-    { dispatch }
-  ): Promise<{ isPublished: boolean; environment: string; enableWizard: boolean }> => {
+  async ({ templateId }: { templateId: string }, { dispatch }): Promise<{ status: string; enableWizard: boolean }> => {
     const templateName = getResourceNameFromId(templateId);
     const templateResource = await getTemplate(templateId);
     const manifest = await getTemplateManifest(templateId);
@@ -118,8 +116,7 @@ export const loadCustomTemplate = createAsyncThunk(
     dispatch(updateAllWorkflowsData(allWorkflowsData));
 
     return {
-      isPublished: templateResource.properties?.provisioningState === 'Succeeded',
-      environment: templateResource.properties?.environment ?? 'Development',
+      status: templateResource.properties?.status ?? 'Development',
       enableWizard: allWorkflowsData && Object.keys(allWorkflowsData).length > 0,
     };
   }
@@ -226,6 +223,7 @@ export const getTemplateConnections = async (
       [workflowId]: {
         id: workflowId,
         workflowDefinition: definition,
+        triggerType: getTriggerFromDefinition(definition?.triggers ?? {}),
         connectionKeys: Object.keys(connections),
       },
     };
@@ -262,6 +260,7 @@ export const getTemplateConnections = async (
     workflowsData[workflowId] = {
       ...(workflowsData[workflowId] ?? {}),
       workflowDefinition: definition,
+      triggerType: getTriggerFromDefinition(definition?.triggers ?? {}),
       kind: workflowData.kind,
       connectionKeys,
     };
@@ -462,6 +461,7 @@ export const getWorkflowsWithDefinitions = async (
     workflows[workflowId] = {
       ...(workflows[workflowId] ?? {}),
       workflowDefinition: definition,
+      triggerType: getTriggerFromDefinition(definition?.triggers ?? {}),
     };
     return workflows;
   }
@@ -478,6 +478,7 @@ export const getWorkflowsWithDefinitions = async (
         id,
         kind,
         workflowDefinition,
+        triggerType: getTriggerFromDefinition(workflowDefinition?.triggers ?? {}),
       };
     }
     return result;

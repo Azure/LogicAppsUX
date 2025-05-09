@@ -43,8 +43,8 @@ export const SimpleDictionaryItem: React.FC<SimpleDictionaryItemProps> = ({
   const intl = useIntl();
 
   const dictionaryItemDelete = intl.formatMessage({
-    defaultMessage: 'Click to delete item',
-    id: 'Ur+wph',
+    defaultMessage: 'Select to delete item',
+    id: 'jfQPGz',
     description: 'Label for delete button',
   });
 

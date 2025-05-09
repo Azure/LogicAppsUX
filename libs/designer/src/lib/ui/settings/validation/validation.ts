@@ -166,44 +166,58 @@ export const validateNodeSettings = (
         }
         if (retryPolicy?.isSupported && retryPolicy.value) {
           const { count, type, interval, minimumInterval, maximumInterval } = retryPolicy.value;
-          if (type === constants.RETRY_POLICY_TYPE.EXPONENTIAL || type === constants.RETRY_POLICY_TYPE.FIXED) {
-            const retryCount = Number(count);
-            // Invalid retry count
-            validationErrors = validationErrors.filter((error) => error.key !== ValidationErrorKeys.RETRY_COUNT_INVALID);
-            if (
-              (!isTemplateExpression(count?.toString() ?? '') && Number.isNaN(retryCount)) ||
+
+          const retryCount = Number(count);
+          // Invalid retry count
+          validationErrors = validationErrors.filter((error) => error.key !== ValidationErrorKeys.RETRY_COUNT_INVALID);
+          if (
+            (type === constants.RETRY_POLICY_TYPE.EXPONENTIAL || type === constants.RETRY_POLICY_TYPE.FIXED) &&
+            ((!isTemplateExpression(count?.toString() ?? '') && Number.isNaN(retryCount)) ||
               retryCount < constants.RETRY_POLICY_LIMITS.MIN_COUNT ||
-              retryCount > constants.RETRY_POLICY_LIMITS.MAX_COUNT
-            ) {
-              validationErrors.push({
-                key: ValidationErrorKeys.RETRY_COUNT_INVALID,
-                errorType: ValidationErrorType.ERROR,
-                message: retryCountInvalidText,
-              });
-            }
-            // Invalid retry interval
-            validationErrors = validationErrors.filter((error) => error.key !== ValidationErrorKeys.RETRY_INTERVAL_INVALID);
-            if (!isTemplateExpression(interval?.toString() ?? '') && !isISO8601(retryPolicy?.value?.interval ?? '')) {
-              validationErrors.push({
-                key: ValidationErrorKeys.RETRY_INTERVAL_INVALID,
-                errorType: ValidationErrorType.ERROR,
-                message: retryIntervalInvalidText,
-              });
-            }
-            if (minimumInterval && !isTemplateExpression(minimumInterval.toString()) && !isISO8601(minimumInterval)) {
-              validationErrors.push({
-                key: ValidationErrorKeys.RETRY_INTERVAL_INVALID,
-                errorType: ValidationErrorType.ERROR,
-                message: retryMinIntervalInvalidText,
-              });
-            }
-            if (maximumInterval && !isTemplateExpression(maximumInterval.toString()) && !isISO8601(maximumInterval)) {
-              validationErrors.push({
-                key: ValidationErrorKeys.RETRY_INTERVAL_INVALID,
-                errorType: ValidationErrorType.ERROR,
-                message: retryMaxIntervalInvalidText,
-              });
-            }
+              retryCount > constants.RETRY_POLICY_LIMITS.MAX_COUNT)
+          ) {
+            validationErrors.push({
+              key: ValidationErrorKeys.RETRY_COUNT_INVALID,
+              errorType: ValidationErrorType.ERROR,
+              message: retryCountInvalidText,
+            });
+          }
+          // Invalid retry interval
+          validationErrors = validationErrors.filter((error) => error.key !== ValidationErrorKeys.RETRY_INTERVAL_INVALID);
+          if (
+            (type === constants.RETRY_POLICY_TYPE.EXPONENTIAL || type === constants.RETRY_POLICY_TYPE.FIXED) &&
+            !isTemplateExpression(interval?.toString() ?? '') &&
+            !isISO8601(retryPolicy?.value?.interval ?? '')
+          ) {
+            validationErrors.push({
+              key: ValidationErrorKeys.RETRY_INTERVAL_INVALID,
+              errorType: ValidationErrorType.ERROR,
+              message: retryIntervalInvalidText,
+            });
+          }
+          if (
+            (type === constants.RETRY_POLICY_TYPE.EXPONENTIAL || type === constants.RETRY_POLICY_TYPE.FIXED) &&
+            minimumInterval &&
+            !isTemplateExpression(minimumInterval.toString()) &&
+            !isISO8601(minimumInterval)
+          ) {
+            validationErrors.push({
+              key: ValidationErrorKeys.RETRY_INTERVAL_INVALID,
+              errorType: ValidationErrorType.ERROR,
+              message: retryMinIntervalInvalidText,
+            });
+          }
+          if (
+            (type === constants.RETRY_POLICY_TYPE.EXPONENTIAL || type === constants.RETRY_POLICY_TYPE.FIXED) &&
+            maximumInterval &&
+            !isTemplateExpression(maximumInterval.toString()) &&
+            !isISO8601(maximumInterval)
+          ) {
+            validationErrors.push({
+              key: ValidationErrorKeys.RETRY_INTERVAL_INVALID,
+              errorType: ValidationErrorType.ERROR,
+              message: retryMaxIntervalInvalidText,
+            });
           }
         }
         // Invalid timeout value

@@ -5,6 +5,7 @@ import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { ConnectorIconWithName } from '../../templates/connections/connector';
 import { useTemplatesStrings } from '../../templates/templatesStrings';
+import { useResourceStrings } from '../resources';
 
 export const TemplateConnectionsList = () => {
   const intl = useIntl();
@@ -26,6 +27,8 @@ export const TemplateConnectionsList = () => {
     }),
   };
   const { connectorKinds } = useTemplatesStrings();
+  const resourceStrings = useResourceStrings();
+
   const { connections } = useSelector((state: RootState) => ({
     connections: state.template.connections,
   }));
@@ -44,8 +47,16 @@ export const TemplateConnectionsList = () => {
     { columnKey: 'kind', label: resources.KindLabel },
   ];
 
+  if (Object.keys(connections).length === 0) {
+    return (
+      <div style={{ overflowX: 'auto', paddingTop: '12px' }}>
+        <Text>{resourceStrings.NoConnectionInTemplate}</Text>
+      </div>
+    );
+  }
+
   return (
-    <div style={{ overflowX: 'auto', paddingTop: '12px' }}>
+    <div className="msla-templates-wizard-tab-content" style={{ overflowX: 'auto', paddingTop: '12px' }}>
       <Table aria-label={resources.AriaLabel} size="small" style={{ width: '80%' }}>
         <TableHeader>
           <TableRow>

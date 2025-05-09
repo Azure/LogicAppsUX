@@ -17,6 +17,7 @@ export const launchFileName = 'launch.json';
 export const settingsFileName = 'settings.json';
 export const extensionsFileName = 'extensions.json';
 export const workflowFileName = 'workflow.json';
+export const codefulWorkflowFileName = 'workflow.cs';
 export const funcIgnoreFileName = '.funcignore';
 export const unitTestsFileName = '.unit-test.json';
 export const powershellRequirementsFileName = 'requirements.psd1';
@@ -35,6 +36,7 @@ export const schemasDirectory = 'Schemas';
 // Folder names
 export const designTimeDirectoryName = 'workflow-designtime';
 export const testsDirectoryName = 'Tests';
+export const testMockOutputsDirectory = 'MockOutputs';
 export const testResultsDirectoryName = '.testResults';
 export const vscodeFolderName = '.vscode';
 
@@ -73,6 +75,7 @@ export const workflowTenantIdKey = 'WORKFLOWS_TENANT_ID';
 export const workflowManagementBaseURIKey = 'WORKFLOWS_MANAGEMENT_BASE_URI';
 export const workflowAppApiVersion = '2018-11-01';
 export const azureWebJobsStorageKey = 'AzureWebJobsStorage';
+export const functionsInprocNet8Enabled = 'FUNCTIONS_INPROC_NET8_ENABLED';
 export const azureWebJobsSecretStorageTypeKey = 'AzureWebJobsSecretStorageType';
 export const workflowappRuntime = 'node|18';
 export const viewOutput = localize('viewOutput', 'View Output');
@@ -89,6 +92,12 @@ export const WorkflowType = {
   agentic: 'Agentic-Codeless',
 } as const;
 export type WorkflowType = (typeof WorkflowType)[keyof typeof WorkflowType];
+
+export const workflowCodeType = {
+  codeful: 'Codeful',
+  codeless: 'Codeless',
+} as const;
+export type workflowCodeType = (typeof workflowCodeType)[keyof typeof workflowCodeType];
 
 export const WorkflowKind = {
   stateful: 'Stateful',
@@ -111,7 +120,11 @@ export const extensionCommand = {
   createNewProject: 'azureLogicAppsStandard.createNewProject',
   createNewWorkspace: 'azureLogicAppsStandard.createNewWorkspace',
   cloudToLocal: 'azureLogicAppsStandard.cloudToLocal',
+  buildCustomCodeFunctionsProject: 'azureLogicAppsStandard.buildCustomCodeFunctionsProject',
+  customCodeSetFunctionsFolders: 'azureLogicAppsStandard.customCode.setFunctionsFolders',
+  createCustomCodeFunction: 'azureLogicAppsStandard.createCustomCodeFunction',
   createNewDataMap: 'azureLogicAppsStandard.dataMap.createNewDataMap',
+  createWorkflow: 'azureLogicAppsStandard.createWorkflow',
   createCodeless: 'azureLogicAppsStandard.createCodeless',
   createLogicApp: 'azureLogicAppsStandard.createLogicApp',
   createLogicAppAdvanced: 'azureLogicAppsStandard.createLogicAppAdvanced',
@@ -124,6 +137,7 @@ export const extensionCommand = {
   stopLogicApp: 'azureLogicAppsStandard.stopLogicApp',
   restartLogicApp: 'azureLogicAppsStandard.restartLogicApp',
   pickProcess: 'azureLogicAppsStandard.pickProcess',
+  pickCustomCodeNetHostProcess: 'azureLogicAppsStandard.pickCustomCodeNetHostProcess',
   getDebugSymbolDll: 'azureLogicAppsStandard.getDebugSymbolDll',
   deleteLogicApp: 'azureLogicAppsStandard.deleteLogicApp',
   switchToDotnetProject: 'azureLogicAppsStandard.switchToDotnetProject',
@@ -179,9 +193,6 @@ export const extensionCommand = {
   dataMapSaveMapXslt: 'azureLogicAppsStandard.dataMap.saveMapXslt',
   createUnitTest: 'azureLogicAppsStandard.createUnitTest',
   saveBlankUnitTest: 'azureLogicAppsStandard.saveBlankUnitTest',
-  editUnitTest: 'azureLogicAppsStandard.editUnitTest',
-  openUnitTestResults: 'azureLogicAppsStandard.openUnitTestResults',
-  runUnitTest: 'azureLogicAppsStandard.runUnitTest',
   vscodeOpenFolder: 'vscode.openFolder',
 } as const;
 export type extensionCommand = (typeof extensionCommand)[keyof typeof extensionCommand];
@@ -299,6 +310,7 @@ export type DependencyDefaultPath = (typeof DependencyDefaultPath)[keyof typeof 
 // .NET
 export const DotnetVersion = {
   net6: 'net6.0',
+  net8: 'net8.0',
   net3: 'netcoreapp3.1',
   net2: 'netcoreapp2.1',
   net48: 'net48',
@@ -366,4 +378,5 @@ export const sqlConnectionStringSecretName = 'sqlconnectionstring';
 //Regex validations
 export const workflowNameValidation = /^[a-z][a-z0-9]*(?:[_-][a-z0-9]+)*$/i;
 export const logicAppNameValidation = /^[a-z][a-z0-9]*(?:[_-][a-z0-9]+)*$/i;
+export const dataMapNameValidation = /^[a-z][a-z0-9]*(?:[_-][a-z0-9]+)*$/i;
 export const workspaceNameValidation = /^[a-z][a-z0-9]*(?:[_-][a-z0-9]+)*$/i;

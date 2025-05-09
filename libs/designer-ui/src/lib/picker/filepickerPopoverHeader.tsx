@@ -100,8 +100,8 @@ const FilePickerPopoverOverflowMenu: React.FC<{ items: FilePickerBreadcrumb[] }>
 
   const moreTooltipMessage = intl.formatMessage({
     defaultMessage: 'More…',
-    id: 'TDfQzn',
-    description: 'Tooltip text for the "..." menu that the user can click to reveal more items',
+    id: 'dIYzFU',
+    description: 'Tooltip text for the "..." menu that you select to show more items',
   });
 
   const moreItemsSingularMessage = intl.formatMessage(

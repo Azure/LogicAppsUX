@@ -6,11 +6,14 @@ import { useIsGraphEmpty } from '../core/state/workflow/workflowSelectors';
 import { clearFocusCollapsedNode, clearFocusNode } from '../core/state/workflow/workflowSlice';
 import { DEFAULT_NODE_SIZE } from '../core/utils/graph';
 import type { RootState, AppDispatch } from '../core';
+import { useWindowDimensions } from '@microsoft/logic-apps-shared';
+import { getTargetPositionForWorkflow } from '../core/utils/designerLayoutHelpers';
 
 export const CanvasFinder = () => {
   const focusNodeId = useSelector((state: RootState) => state.workflow.focusedCanvasNodeId);
   const isEmpty = useIsGraphEmpty();
   const { setCenter, getZoom } = useReactFlow();
+  const windowDimensions = useWindowDimensions();
   const dispatch = useDispatch<AppDispatch>();
 
   const [firstLoad, setFirstLoad] = useState(true);
@@ -35,11 +38,11 @@ export const CanvasFinder = () => {
         return;
       }
 
-      const xTarget = (firstNode?.position?.x ?? 0) + (firstNode?.width ?? DEFAULT_NODE_SIZE.width) / 2; // Center X on node midpoint
-      setCenter(xTarget, 150, { zoom: 1 });
+      const [xTarget, yTarget] = getTargetPositionForWorkflow(firstNode, windowDimensions, DEFAULT_NODE_SIZE);
+      setCenter(xTarget, yTarget, { zoom: 1 });
       setFirstLoad(false);
     }
-  }, [setCenter, isEmpty, firstLoad, firstNode]);
+  }, [setCenter, isEmpty, firstLoad, firstNode, windowDimensions]);
 
   // Center the canvas on the focused node when set
   const setCanvasCenterToFocus = useCallback(() => {

@@ -23,6 +23,7 @@ import {
   getDependentParameters,
   getParametersSortedByVisibility,
   loadParameterValuesFromDefault,
+  shouldEncodeParameterValueForOperationBasedOnMetadata,
   toParameterInfoMap,
   updateParameterWithValues,
 } from '../parameters/helper';
@@ -200,8 +201,9 @@ export const getInputParametersFromSwagger = (
     loadParameterValuesFromDefault(inputParametersByKey);
   }
 
+  const shouldEncodeBasedOnMetadata = shouldEncodeParameterValueForOperationBasedOnMetadata(operationInfo);
   const inputParametersAsArray = unmap(inputParametersByKey);
-  const allParametersAsArray = toParameterInfoMap(inputParametersAsArray, stepDefinition);
+  const allParametersAsArray = toParameterInfoMap(inputParametersAsArray, stepDefinition, shouldEncodeBasedOnMetadata);
 
   const defaultParameterGroup = {
     id: ParameterGroupKeys.DEFAULT,
@@ -212,7 +214,7 @@ export const getInputParametersFromSwagger = (
   const parameterGroups = { [ParameterGroupKeys.DEFAULT]: defaultParameterGroup };
 
   if (isTrigger && !isWebhookOperation && !(includeNotificationParameters && swagger.getRelatedNotificationOperationId(operationId))) {
-    addRecurrenceParametersInGroup(parameterGroups, { type: RecurrenceType.Basic }, stepDefinition);
+    addRecurrenceParametersInGroup(parameterGroups, { type: RecurrenceType.Basic }, stepDefinition, shouldEncodeBasedOnMetadata);
   }
 
   const dynamicInput = inputParametersAsArray.find((parameter) => parameter.dynamicSchema);

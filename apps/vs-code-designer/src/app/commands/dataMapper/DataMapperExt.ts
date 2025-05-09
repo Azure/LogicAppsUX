@@ -9,23 +9,33 @@ import * as path from 'path';
 import { Uri, ViewColumn, window } from 'vscode';
 import { parse } from 'yaml';
 import { localize } from '../../../localize';
+import { dataMapNameValidation } from '../../../constants';
 
 export default class DataMapperExt {
   public static async openDataMapperPanel(context: IActionContext, dataMapName?: string, mapDefinitionData?: MapDefinitionData) {
-    await startBackendRuntime(ext.logicAppWorkspace, context);
+    await startBackendRuntime(ext.defaultLogicAppPath, context);
     const name =
       dataMapName ??
       (await context.ui.showInputBox({
         placeHolder: localize('dataMapName', 'Data Map name'),
         prompt: localize('dataMapNamePrompt', 'Enter a name for your Data Map'),
-        validateInput: (value: string): string | undefined => {
-          if (!value || value.length === 0) {
-            return localize('projectNameEmpty', 'Data Map name cannot be empty');
-          }
-          return undefined;
-        },
+        validateInput: async (input: string): Promise<string | undefined> => await DataMapperExt.validateDataMapName(input),
       }));
     DataMapperExt.createOrShow(name, mapDefinitionData);
+  }
+
+  private static async validateDataMapName(name: string | undefined): Promise<string | undefined> {
+    if (!name || name.length === 0) {
+      return localize('dataMapNameEmpty', 'Data Map name cannot be empty');
+    }
+
+    if (!dataMapNameValidation.test(name)) {
+      return localize(
+        'dataMapNameInvalidMessage',
+        'Data Map name must start with a letter and can only contain letters, digits, "_" and "-".'
+      );
+    }
+    return undefined;
   }
 
   public static createOrShow(dataMapName: string, mapDefinitionData?: MapDefinitionData) {

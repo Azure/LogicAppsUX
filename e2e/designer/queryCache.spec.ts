@@ -10,7 +10,10 @@ test.describe(
     test('QueryCache should be persisted locally using local storage', async ({ page }) => {
       await page.goto('/');
 
-      await page.evaluate(() => localStorage.clear());
+      await page.evaluate(() => {
+        localStorage.clear();
+        localStorage.setItem('control-expand-collapse-button', 'true');
+      });
 
       await GoToMockWorkflow(page, 'Panel');
       expect(await page.getByText('manual', { exact: true }).isVisible()).toBeTruthy();
@@ -20,7 +23,10 @@ test.describe(
 
       // Refresh page
       await page.reload();
-      await page.evaluate(() => localStorage.clear());
+      await page.evaluate(() => {
+        localStorage.clear();
+        localStorage.setItem('control-expand-collapse-button', 'true');
+      });
 
       // Enable query caching
       await page.getByRole('heading', { name: '▼ Context Settings' }).click();

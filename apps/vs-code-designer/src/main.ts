@@ -11,7 +11,7 @@ import { registerCommands } from './app/commands/registerCommands';
 import { getResourceGroupsApi } from './app/resourcesExtension/getExtensionApi';
 import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTreeItemWithProjects';
 import { downloadExtensionBundle } from './app/utils/bundleFeed';
-import { stopDesignTimeApi } from './app/utils/codeless/startDesignTimeApi';
+import { stopAllDesignTimeApis } from './app/utils/codeless/startDesignTimeApi';
 import { UriHandler } from './app/utils/codeless/urihandler';
 import { getExtensionVersion } from './app/utils/extension';
 import { registerFuncHostTaskEvents } from './app/utils/funcCoreTools/funcHostTask';
@@ -31,8 +31,9 @@ import {
 } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
-import { ConvertToWorkspace } from './app/commands/createNewCodeProject/CodeProjectBase/ConvertToWorkspace';
+import { convertToWorkspace } from './app/commands/createNewCodeProject/CodeProjectBase/ConvertToWorkspace';
 import TelemetryReporter from '@vscode/extension-telemetry';
+import { getCustomCodeFunctionsProjects } from './app/utils/customCodeUtils';
 import { createVSCodeAzureSubscriptionProvider } from './app/utils/services/VSCodeAzureSubscriptionProvider';
 import { logSubscriptions } from './app/utils/telemetry';
 
@@ -67,6 +68,12 @@ export async function activate(context: vscode.ExtensionContext) {
   registerAppServiceExtensionVariables(ext);
 
   await callWithTelemetryAndErrorHandling(extensionCommand.activate, async (activateContext: IActionContext) => {
+    vscode.commands.executeCommand(
+      'setContext',
+      extensionCommand.customCodeSetFunctionsFolders,
+      await getCustomCodeFunctionsProjects(activateContext)
+    );
+
     activateContext.telemetry.properties.isActivationEvent = 'true';
     activateContext.telemetry.measurements.mainFileLoad = (perfStats.loadEndTime - perfStats.loadStartTime) / 1000;
 
@@ -75,7 +82,7 @@ export async function activate(context: vscode.ExtensionContext) {
     await logSubscriptions(activateContext);
 
     if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
-      await ConvertToWorkspace(activateContext);
+      await convertToWorkspace(activateContext);
     }
 
     try {
@@ -85,13 +92,14 @@ export async function activate(context: vscode.ExtensionContext) {
       const errorMessage = `Error downloading and extracting the Logic Apps Standard extension bundle: ${error.message}`;
       activateContext.telemetry.properties.errorMessage = errorMessage;
     }
-    promptParameterizeConnections(activateContext, true);
-    verifyLocalConnectionKeys(activateContext, true);
+
+    promptParameterizeConnections(activateContext);
+    verifyLocalConnectionKeys(activateContext);
     await startOnboarding(activateContext);
     //await prepareTestExplorer(context, activateContext);
 
     ext.extensionVersion = getExtensionVersion();
-    ext.currentBundleVersion = activateContext.telemetry.properties.latestBundleVersion;
+    ext.defaultBundleVersion = activateContext.telemetry.properties.latestBundleVersion;
     ext.latestBundleVersion = activateContext.telemetry.properties.latestBundleVersion;
 
     ext.rgApi = await getResourceGroupsApi();
@@ -129,7 +137,7 @@ export async function activate(context: vscode.ExtensionContext) {
 }
 
 export function deactivate(): Promise<any> {
-  stopDesignTimeApi();
+  stopAllDesignTimeApis();
   ext.unitTestController?.dispose();
   ext.telemetryReporter.dispose();
   return undefined;

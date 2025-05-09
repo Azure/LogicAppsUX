@@ -8,6 +8,7 @@ import { useFunctionalState } from '@react-hookz/web';
 import type { WorkflowTemplateData } from '../../../../core';
 import { getWorkflowsWithDefinitions, initializeWorkflowsData } from '../../../../core/actions/bjsworkflow/configuretemplate';
 import { getResourceNameFromId } from '@microsoft/logic-apps-shared';
+import { validateWorkflowData } from '../../../../core/templates/utils/helper';
 
 export const useConfigureWorkflowPanelTabs = ({
   onSave,
@@ -16,10 +17,11 @@ export const useConfigureWorkflowPanelTabs = ({
 }): TemplateTabProps[] => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
-  const { isWizardUpdating, workflowsInTemplate, workflowState } = useSelector((state: RootState) => ({
+  const { isWizardUpdating, workflowsInTemplate, workflowState, runValidation } = useSelector((state: RootState) => ({
     workflowsInTemplate: state.template.workflows,
     isWizardUpdating: state.tab.isWizardUpdating,
     workflowState: state.workflow,
+    runValidation: state.tab.runValidation,
   }));
 
   const hasError = false; // Placeholder for actual error state
@@ -34,6 +36,9 @@ export const useConfigureWorkflowPanelTabs = ({
         newSelectedWorkflows[normalizedWorkflowId] = prevSelectedWorkflows[normalizedWorkflowId] ?? {
           id: normalizedWorkflowId,
           workflowName: getResourceNameFromId(normalizedWorkflowId),
+          manifest: {
+            kinds: ['stateful', 'stateless'],
+          },
         };
       }
       return newSelectedWorkflows;
@@ -41,13 +46,26 @@ export const useConfigureWorkflowPanelTabs = ({
   };
 
   const updateWorkflowDataField = (workflowId: string, workflowData: Partial<WorkflowTemplateData>) => {
-    setSelectedWorkflowsList((prevSelectedWorkflows) => ({
-      ...prevSelectedWorkflows,
-      [workflowId]: {
+    setSelectedWorkflowsList((prevSelectedWorkflows) => {
+      const updatedWorkflowData = {
         ...prevSelectedWorkflows[workflowId],
         ...workflowData,
-      },
-    }));
+      };
+      const { workflow: workflowNameError, manifest: updatedManifestError } = validateWorkflowData(
+        updatedWorkflowData,
+        Object.keys(prevSelectedWorkflows).length > 1
+      );
+      return {
+        ...prevSelectedWorkflows,
+        [workflowId]: {
+          ...updatedWorkflowData,
+          errors: {
+            workflow: workflowNameError,
+            manifest: runValidation ? updatedManifestError : updatedWorkflowData?.errors?.manifest,
+          },
+        },
+      };
+    });
   };
 
   const onNextButtonClick = async () => {
@@ -61,7 +79,7 @@ export const useConfigureWorkflowPanelTabs = ({
 
   const isNoWorkflowsSelected = Object.keys(selectedWorkflowsList()).length === 0;
   const missingNameOrDisplayName = Object.values(selectedWorkflowsList()).some(
-    (workflow) => !workflow?.workflowName || !workflow?.manifest?.title
+    (workflow) => !workflow?.workflowName || (Object.keys(selectedWorkflowsList()).length > 1 && !workflow?.manifest?.title)
   );
 
   return [

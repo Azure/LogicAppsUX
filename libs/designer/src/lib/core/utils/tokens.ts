@@ -241,9 +241,9 @@ export const getOutputTokenSections = (
     tokenGroups.push({
       id: TOKEN_PICKER_OUTPUT_SECTIONS.AGENT_PARAMETERS,
       label: intl.formatMessage({
-        description: 'Heading section for Agent Parameter tokens',
-        defaultMessage: 'Agent Parameters',
-        id: '8/IRht',
+        defaultMessage: 'Agent parameters',
+        id: 'JWKCiG',
+        description: 'Heading section for agent parameter tokens',
       }),
       tokens: agentParameterTokens,
     });

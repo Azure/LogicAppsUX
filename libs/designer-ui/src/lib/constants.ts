@@ -484,6 +484,10 @@ export default {
     },
     VARIABLE_EDITOR_MAX_VARIABLES: 20,
   },
+  TEACHING_POPOVER_ID: {
+    expandCollapseButton: 'control-expand-collapse-button',
+    agentToolPanel: 'agent-tool-default-panel',
+  },
 };
 
 export const FxBrandColor = '#AD008C';

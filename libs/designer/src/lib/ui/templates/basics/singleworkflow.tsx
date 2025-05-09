@@ -37,11 +37,6 @@ export const SingleWorkflowBasics = ({ workflowId }: { workflowId: string }) => 
 
   const intlText = useMemo(
     () => ({
-      WORKFLOW_NAME_DESCRIPTION: intl.formatMessage({
-        defaultMessage: 'Avoid spaces and the following symbols in your workflow name: \\ / : * ? " < > | @, #, $, %, &',
-        id: 'ZbeL1D',
-        description: 'Description for workflow name field and the expected format of the name.',
-      }),
       STATE_TYPE: intl.formatMessage({
         defaultMessage: 'State type',
         id: 'W1rlxU',
@@ -99,7 +94,7 @@ export const SingleWorkflowBasics = ({ workflowId }: { workflowId: string }) => 
         title={resources.WORKFLOW_NAME}
         isTitleRequired={true}
         titleHtmlFor={'workflowNameLabel'}
-        description={intlText.WORKFLOW_NAME_DESCRIPTION}
+        description={resources.WORKFLOW_NAME_DESCRIPTION}
         items={[
           {
             id: 'msla-templates-workflowName',

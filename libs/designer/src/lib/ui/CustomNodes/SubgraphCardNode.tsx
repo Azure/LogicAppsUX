@@ -86,6 +86,11 @@ const SubgraphCardNode = ({ targetPosition = Position.Top, sourcePosition = Posi
         id: 'Tmr/9e',
         description: 'Text to explain that there are invalid parameters for this node',
       }),
+      NO_ACTIONS: intl.formatMessage({
+        defaultMessage: 'No actions',
+        id: 'CN+Jfd',
+        description: 'Text to explain that there are no actions',
+      }),
     }),
     [actionCount, intl]
   );
@@ -205,7 +210,7 @@ const SubgraphCardNode = ({ targetPosition = Position.Top, sourcePosition = Posi
       ) : null}
       {showEmptyGraphComponents ? (
         readOnly ? (
-          <p className="no-actions-text">No Actions</p>
+          <p className="no-actions-text">{stringResources.NO_ACTIONS}</p>
         ) : (
           <div className={'edge-drop-zone-container'}>
             <DropZone graphId={subgraphId} parentId={id} isLeaf={isLeaf} tabIndex={nodeIndex} />

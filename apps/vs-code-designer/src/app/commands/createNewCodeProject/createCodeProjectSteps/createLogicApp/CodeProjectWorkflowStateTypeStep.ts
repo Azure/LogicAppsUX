@@ -27,7 +27,7 @@ export class CodeProjectWorkflowStateTypeStep extends AzureWizardPromptStep<IFun
   private readonly isProjectWizard: boolean;
 
   /**
-   * Creates a new instance of the odeProject class.
+   * Creates a new instance of the CodeProjectWorkflowStateTypeStep class.
    * @param triggerSettings The settings for the trigger.
    * @param isProjectWizard A flag indicating whether this is a project wizard.
    */
@@ -38,10 +38,10 @@ export class CodeProjectWorkflowStateTypeStep extends AzureWizardPromptStep<IFun
   }
 
   /**
-   * Creates a new instance of the odeProject class with the specified options.
+   * Creates a new instance of the CodeProjectWorkflowStateTypeStep class with the specified options.
    * @param _context The function wizard context.
    * @param options The options for the step.
-   * @returns A new instance of the odeProject class.
+   * @returns A new instance of the CodeProjectWorkflowStateTypeStep class.
    */
   public static async create(
     _context: IFunctionWizardContext,

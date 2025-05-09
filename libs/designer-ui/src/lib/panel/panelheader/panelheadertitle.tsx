@@ -3,7 +3,7 @@ import { handleOnEscapeDown } from './panelheader';
 import type { ITextField, ITextFieldStyles } from '@fluentui/react/lib/TextField';
 import { TextField } from '@fluentui/react/lib/TextField';
 import { css } from '@fluentui/react/lib/Utilities';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 const titleTextFieldStyle: Partial<ITextFieldStyles> = {
@@ -18,7 +18,7 @@ const titleTextFieldStyle: Partial<ITextFieldStyles> = {
   },
 };
 
-export type TitleChangeHandler = (originalValue: string, newValue: string) => { valid: boolean; oldValue?: string };
+export type TitleChangeHandler = (originalValue: string, newValue: string) => { valid: boolean; oldValue?: string; message: string };
 export interface PanelHeaderTitleProps {
   readOnlyMode?: boolean;
   renameTitleDisabled?: boolean;
@@ -44,23 +44,20 @@ export const PanelHeaderTitle = ({
   const [validValue, setValidValue] = useState(titleValue);
   const [errorMessage, setErrorMessage] = useState('');
 
-  const onTitleChange = (_: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string): void => {
-    const result = onChange(newValue || '');
-    if (result.valid) {
-      setErrorMessage('');
-    } else {
-      setErrorMessage(
-        intl.formatMessage({
-          defaultMessage: 'The name already exists or is invalid. Update the name before you continue.',
-          id: '0xLWzG',
-          description: 'Text for invalid operation title name',
-        })
-      );
-      setValidValue(result.oldValue);
-    }
+  const onTitleChange = useCallback(
+    (_: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string): void => {
+      const result = onChange(newValue || '');
+      if (result.valid) {
+        setErrorMessage('');
+      } else {
+        setErrorMessage(result.message);
+        setValidValue(result.oldValue);
+      }
 
-    setNewTitleValue(newValue || '');
-  };
+      setNewTitleValue(newValue || '');
+    },
+    [onChange]
+  );
 
   const onTitleBlur = (): void => {
     if (errorMessage) {

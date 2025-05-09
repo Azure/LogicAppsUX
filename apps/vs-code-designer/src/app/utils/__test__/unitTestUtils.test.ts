@@ -1,12 +1,13 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import axios from 'axios';
-import * as fse from 'fs-extra';
 import * as childProcess from 'child_process';
+import * as fse from 'fs-extra';
 import * as util from 'util';
 import path from 'path';
-import * as localizeModule from '../../../../localize';
-import { ext } from '../../../../extensionVariables';
-import type { IAzureConnectorsContext } from '../../../commands/workflows/azureConnectorWizard';
+import * as localizeModule from '../../../localize';
+import * as vscodeConfigSettings from '../../utils/vsCodeConfig/settings';
+import * as cpUtils from '../../utils/funcCoreTools/cpUtils';
+import { ext } from '../../../extensionVariables';
 import {
   extractAndValidateRunId,
   validateRunId,
@@ -15,17 +16,19 @@ import {
   generateCSharpClasses,
   generateClassCode,
   logTelemetry,
-  processAndWriteMockableOperations,
+  getOperationMockClassContent,
   buildClassDefinition,
   mapJsonTypeToCSharp,
   createCsprojFile,
   updateCsprojFile,
-  createCsFile,
+  createTestCsFile,
   createTestExecutorFile,
   createTestSettingsConfigFile,
-  updateSolutionWithProject,
+  updateTestsSln,
   validateWorkflowPath,
-} from '../../unitTests';
+  validateUnitTestName,
+} from '../unitTests';
+import type { IActionContext } from '@microsoft/vscode-azext-utils';
 
 // ============================================================================
 // Global Constants and Test Hooks
@@ -41,7 +44,10 @@ const fakeLogicAppName = 'MyLogicApp';
 
 // Global beforeEach hook to set up common values
 beforeEach(() => {
-  ext.designTimePort = 1234; // ensure designTimePort is defined for tests
+  ext.designTimeInstances.set(projectPath, {
+    port: 1234,
+    process: {} as childProcess.ChildProcess,
+  });
   ext.outputChannel = { appendLog: vi.fn() } as any;
 });
 
@@ -96,6 +102,52 @@ describe('validateRunId', () => {
   it('should throw an error for an empty runId', async () => {
     const runId = '';
     await expect(validateRunId(runId)).rejects.toThrowError('Invalid runId format.');
+  });
+});
+
+describe('validateUnitTestName', () => {
+  const testProjectPath = path.join('test', 'project', 'LogicApp1');
+  const testWorkflowName = 'workflow1';
+  let localizeSpy: any;
+
+  beforeEach(() => {
+    localizeSpy = vi
+      .spyOn(localizeModule, 'localize')
+      .mockImplementation((key: string, defaultMessage: string, ...args: any[]) => defaultMessage);
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('should return an error if unit test name is empty', async () => {
+    const result = await validateUnitTestName(testProjectPath, testWorkflowName, '');
+    expect(result).toBe('The unit test name cannot be empty.');
+  });
+
+  it('should return an error if unit test name contains invalid characters', async () => {
+    const result = await validateUnitTestName(testProjectPath, testWorkflowName, 'Invalid@Name');
+    expect(result).toBe('Unit test name must start with a letter and can only contain letters, digits, "_" and "-".');
+  });
+
+  it('should return an error if another folder with the same name exists in the test project', async () => {
+    vi.spyOn(fse, 'existsSync').mockReturnValue(true);
+    vi.spyOn(fse, 'readdir').mockResolvedValue(['TestActionMock.cs']);
+    const result = await validateUnitTestName(testProjectPath, testWorkflowName, 'test1');
+    expect(result).toBe('Another folder with this name already exists in the test project.');
+  });
+
+  it('should return an error if another unit test with the same name exists in the test project', async () => {
+    vi.spyOn(fse, 'existsSync').mockReturnValue(true);
+    vi.spyOn(fse, 'readdir').mockResolvedValue(['test1.cs']);
+    const result = await validateUnitTestName(testProjectPath, testWorkflowName, 'test1');
+    expect(result).toBe('A unit test with this name already exists in the test project.');
+  });
+
+  it('should return undefined if the unit test name is valid', async () => {
+    vi.spyOn(fse, 'existsSync').mockReturnValue(false);
+    const result = await validateUnitTestName(testProjectPath, testWorkflowName, 'Valid_Test');
+    expect(result).toBeUndefined();
   });
 });
 
@@ -323,13 +375,13 @@ describe('generateClassCode', () => {
 
 describe('logTelemetry function', () => {
   it('should add properties to context.telemetry.properties', () => {
-    const context = { telemetry: { properties: {} } } as unknown as IAzureConnectorsContext;
+    const context = { telemetry: { properties: {} } } as unknown as IActionContext;
     logTelemetry(context, { key1: 'value1', key2: 'value2' });
     expect(context.telemetry.properties).toEqual({ key1: 'value1', key2: 'value2' });
   });
 
   it('should merge properties when called multiple times', () => {
-    const context = { telemetry: { properties: { key1: 'initialValue' } } } as unknown as IAzureConnectorsContext;
+    const context = { telemetry: { properties: { key1: 'initialValue' } } } as unknown as IActionContext;
     logTelemetry(context, { key2: 'value2' });
     expect(context.telemetry.properties).toEqual({ key1: 'initialValue', key2: 'value2' });
     logTelemetry(context, { key1: 'updatedValue', key3: 'value3' });
@@ -337,14 +389,10 @@ describe('logTelemetry function', () => {
   });
 });
 
-describe('processAndWriteMockableOperations with no actions', () => {
-  let writeFileSpy: any;
-  let ensureDirSpy: any;
+describe('getOperationMockClassContent with no actions', () => {
   let readFileSpy: any;
 
   beforeEach(() => {
-    writeFileSpy = vi.spyOn(fse, 'writeFile').mockResolvedValue();
-    ensureDirSpy = vi.spyOn(fse, 'ensureDir').mockResolvedValue();
     readFileSpy = vi.spyOn(fse, 'readFile').mockResolvedValue(
       JSON.stringify({
         definition: {
@@ -363,7 +411,10 @@ describe('processAndWriteMockableOperations with no actions', () => {
       })
     );
     ext.outputChannel = { appendLog: vi.fn() } as any;
-    ext.designTimePort = 1234;
+    ext.designTimeInstances.set(projectPath, {
+      port: 1234,
+      process: {} as childProcess.ChildProcess,
+    });
     vi.spyOn(axios, 'get').mockResolvedValue({ data: ['Request'] });
   });
 
@@ -371,7 +422,7 @@ describe('processAndWriteMockableOperations with no actions', () => {
     vi.restoreAllMocks();
   });
 
-  it('should gracefully handle workflows with no actions by not creating any files', async () => {
+  it('should gracefully handle workflows with no actions', async () => {
     const operationInfo = {
       When_a_HTTP_request_is_received: { type: 'Request', operationId: 'When_a_HTTP_request_is_received' },
     };
@@ -382,27 +433,24 @@ describe('processAndWriteMockableOperations with no actions', () => {
         },
       },
     };
-    const { foundActionMocks, foundTriggerMocks } = await processAndWriteMockableOperations(
+    const { mockClassContent, foundActionMocks, foundTriggerMocks } = await getOperationMockClassContent(
       operationInfo,
       outputParameters,
-      projectPath,
       projectPath,
       'workflowName',
       fakeLogicAppName
     );
+    expect(Object.keys(mockClassContent).length).toEqual(1);
+    expect(mockClassContent['WhenAHTTPRequestIsReceivedTriggerOutput']).toContain('public class WhenAHTTPRequestIsReceivedTriggerOutput');
     expect(Object.keys(foundActionMocks).length).toEqual(0);
     expect(Object.keys(foundTriggerMocks).length).toEqual(1);
   });
 });
 
-describe('processAndWriteMockableOperations', () => {
-  let writeFileSpy: any;
-  let ensureDirSpy: any;
+describe('getOperationMockClassContent', () => {
   let readFileSpy: any;
 
   beforeEach(() => {
-    writeFileSpy = vi.spyOn(fse, 'writeFile').mockResolvedValue();
-    ensureDirSpy = vi.spyOn(fse, 'ensureDir').mockResolvedValue();
     readFileSpy = vi.spyOn(fse, 'readFile').mockResolvedValue(
       JSON.stringify({
         definition: {
@@ -457,7 +505,10 @@ describe('processAndWriteMockableOperations', () => {
     );
     ext.outputChannel = { appendLog: vi.fn() } as any;
     // Set designTimePort and stub axios.get so isMockable works without error
-    ext.designTimePort = 1234;
+    ext.designTimeInstances.set(projectPath, {
+      port: 1234,
+      process: {} as childProcess.ChildProcess,
+    });
     vi.spyOn(axios, 'get').mockResolvedValue({ data: ['Http'] });
   });
 
@@ -465,7 +516,39 @@ describe('processAndWriteMockableOperations', () => {
     vi.restoreAllMocks();
   });
 
-  it('should create a C# file in the "MockOutputs" folder with standardized naming for an action', async () => {
+  it('should throw an error when no trigger exists in the workflow is provided', async () => {
+    readFileSpy = vi.spyOn(fse, 'readFile').mockResolvedValue(
+      JSON.stringify({
+        definition: {
+          $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
+          actions: {
+            Complete_the_message_in_a_queue: {
+              type: 'ApiConnection',
+              inputs: {
+                host: {
+                  connection: {
+                    referenceName: 'servicebus',
+                  },
+                },
+                method: 'delete',
+                path: "/@{encodeURIComponent(encodeURIComponent('test'))}/messages/complete",
+                queries: {
+                  lockToken: "@triggerBody()?['LockToken']",
+                  queueType: 'Main',
+                  sessionId: '',
+                },
+              },
+              runAfter: {},
+            },
+          },
+          contentVersion: '1.0.0.0',
+          outputs: {},
+          triggers: {},
+        },
+        kind: 'Stateful',
+      })
+    );
+
     const operationInfo = {
       ReadAResourceGroup: { type: 'Http', operationId: 'ReadAResourceGroup' },
     };
@@ -476,18 +559,49 @@ describe('processAndWriteMockableOperations', () => {
         },
       },
     };
-    await processAndWriteMockableOperations(operationInfo, outputParameters, projectPath, projectPath, 'workflowName', fakeLogicAppName);
-    const expectedMockOutputsFolder = path.join(projectPath, 'MockOutputs');
-    expect(ensureDirSpy).toHaveBeenCalledWith(expectedMockOutputsFolder);
-    const expectedFileName = 'ReadAResourceGroupActionOutput.cs';
-    const expectedFilePath = path.join(expectedMockOutputsFolder, expectedFileName);
-    expect(writeFileSpy).toHaveBeenCalledWith(expectedFilePath, expect.any(String), 'utf-8');
+
+    expect(
+      getOperationMockClassContent(operationInfo, outputParameters, projectPath, 'workflowName', fakeLogicAppName)
+    ).rejects.toThrowError();
   });
 
-  it('should not create duplicate C# classes for identical operations', async () => {
+  it('should return mock action/trigger class contents for each operation in the workflow', async () => {
+    const operationInfo = {
+      ReadAResourceGroup: { type: 'Http', operationId: 'ReadAResourceGroup' },
+      WhenAHTTPRequestIsReceived: { type: 'HttpWebhook', operationId: 'WhenAHTTPRequestIsReceived' },
+    };
+    const outputParameters = {
+      ReadAResourceGroup: {
+        outputs: {
+          'outputs.$.dummy': { type: 'string', description: 'dummy description' },
+        },
+      },
+      WhenAHTTPRequestIsReceived: {
+        outputs: {
+          'outputs.$.dummy': { type: 'string', description: 'dummy trigger description' },
+        },
+      },
+    };
+    const { mockClassContent, foundActionMocks, foundTriggerMocks } = await getOperationMockClassContent(
+      operationInfo,
+      outputParameters,
+      projectPath,
+      'workflowName',
+      fakeLogicAppName
+    );
+    expect(mockClassContent).toHaveProperty('ReadAResourceGroupActionOutput');
+    expect(mockClassContent).toHaveProperty('WhenAHTTPRequestIsReceivedTriggerOutput');
+    expect(mockClassContent['ReadAResourceGroupActionOutput']).toContain('public class ReadAResourceGroupActionOutput');
+    expect(mockClassContent['WhenAHTTPRequestIsReceivedTriggerOutput']).toContain('public class WhenAHTTPRequestIsReceivedTriggerOutput');
+    expect(Object.keys(foundActionMocks).length).toEqual(1);
+    expect(Object.keys(foundTriggerMocks).length).toEqual(1);
+  });
+
+  it('should return a single copy of mock class contents for identical operations', async () => {
     const operationInfo = {
       ReadAResourceGroup: { type: 'Http', operationId: 'ReadAResourceGroup' },
       ReadAResourceGroupDuplicate: { type: 'Http', operationId: 'ReadAResourceGroup' },
+      WhenAHTTPRequestIsReceived: { type: 'HttpWebhook', operationId: 'WhenAHTTPRequestIsReceived' },
     };
     const outputParameters = {
       ReadAResourceGroup: {
@@ -500,27 +614,22 @@ describe('processAndWriteMockableOperations', () => {
           'outputs.$.dummy': { type: 'string', description: 'duplicate dummy description' },
         },
       },
-    };
-    await processAndWriteMockableOperations(operationInfo, outputParameters, projectPath, projectPath, 'workflowName', fakeLogicAppName);
-    expect(writeFileSpy.mock.calls.length).toBe(1);
-  });
-
-  it('should apply standardized naming conventions for trigger operations', async () => {
-    const operationInfo = {
-      WhenAHTTPRequestIsReceived: { type: 'HttpWebhook', operationId: 'WhenAHTTPRequestIsReceived' },
-    };
-    const outputParameters = {
       WhenAHTTPRequestIsReceived: {
         outputs: {
           'outputs.$.dummy': { type: 'string', description: 'dummy trigger description' },
         },
       },
     };
-    await processAndWriteMockableOperations(operationInfo, outputParameters, projectPath, projectPath, 'workflowName', fakeLogicAppName);
-    const expectedMockOutputsFolder = path.join(projectPath, 'MockOutputs');
-    const expectedFileName = 'WhenAHTTPRequestIsReceivedTriggerOutput.cs';
-    const expectedFilePath = path.join(expectedMockOutputsFolder, expectedFileName);
-    expect(writeFileSpy).toHaveBeenCalledWith(expectedFilePath, expect.any(String), 'utf-8');
+    const { mockClassContent, foundActionMocks, foundTriggerMocks } = await getOperationMockClassContent(
+      operationInfo,
+      outputParameters,
+      projectPath,
+      'workflowName',
+      fakeLogicAppName
+    );
+    expect(Object.keys(mockClassContent).length).toEqual(2);
+    expect(Object.keys(foundActionMocks).length).toEqual(1);
+    expect(Object.keys(foundTriggerMocks).length).toEqual(1);
   });
 });
 
@@ -756,7 +865,7 @@ describe('updateCsprojFile', () => {
   });
 });
 
-describe('createCsFile', () => {
+describe('createTestCsFile', () => {
   const unitTestFolderPath: string = 'unitTestFolderPath';
   const unitTestName: string = 'TestBlankClass';
   const workflowName: string = 'MyWorkflow';
@@ -862,7 +971,7 @@ namespace <%= LogicAppName %>.Tests
             var triggerMock = new <%= TriggerMockClassName %>(outputs: triggerMockOutput);
 
             // Generate mock action data.
-            // OPTION 1 : defining a callback class
+            // OPTION 1 : defining a callback function
             var actionMock = new <%= ActionMockClassName %>(name: "<%= ActionMockName %>", onGetActionMock: <%= ActionMockClassName %>OutputCallback);
             // OPTION 2: defining inline using a lambda
             /*var actionMock = new <%= ActionMockClassName %>(name: "<%= ActionMockName %>", onGetActionMock: (testExecutionContext) =>
@@ -925,7 +1034,7 @@ namespace <%= LogicAppName %>.Tests
     const cleanedWorkflowName = workflowName.replace(/-/g, '_');
     const cleanedLogicAppName = logicAppName.replace(/-/g, '_');
 
-    await createCsFile(
+    await createTestCsFile(
       unitTestFolderPath,
       unitTestName,
       cleanedUnitTestName,
@@ -1003,7 +1112,7 @@ namespace <%= LogicAppName %>.Tests
             // Generate mock action and trigger data.
             var mockData = this.GetTestMockDefinition();
             var sampleActionMock = mockData.ActionMocks["<%= ActionMockName %>"];
-            sampleActionMock.Outputs["your-property-name"] = "your-property-value";
+            // sampleActionMock.Outputs["your-property-name"] = "your-property-value";
 
             // ACT
             // Create an instance of UnitTestExecutor, and run the workflow with the mock data.
@@ -1027,7 +1136,7 @@ namespace <%= LogicAppName %>.Tests
             // PREPARE
             // Generate mock action and trigger data.
             var mockData = this.GetTestMockDefinition();
-            // OPTION 1 : defining a callback class
+            // OPTION 1 : defining a callback function
             mockData.ActionMocks["<%= ActionMockName %>"] = new <%= ActionMockClassName %>(name: "<%= ActionMockName %>", onGetActionMock: <%= ActionMockClassName %>OutputCallback);
             // OPTION 2: defining inline using a lambda
             mockData.ActionMocks["<%= ActionMockName %>"] = new <%= ActionMockClassName %>(name: "<%= ActionMockName %>", onGetActionMock: (testExecutionContext) =>
@@ -1117,7 +1226,7 @@ namespace <%= LogicAppName %>.Tests
     const cleanedWorkflowName = workflowName.replace(/-/g, '_');
     const cleanedLogicAppName = logicAppName.replace(/-/g, '_');
 
-    await createCsFile(
+    await createTestCsFile(
       unitTestFolderPath,
       unitTestName,
       cleanedUnitTestName,
@@ -1223,7 +1332,7 @@ namespace <%= LogicAppName %>.Tests
     const cleanedWorkflowName = workflowName.replace(/-/g, '_');
     const cleanedLogicAppName = logicAppName.replace(/-/g, '_');
 
-    await createCsFile(
+    await createTestCsFile(
       unitTestFolderPath,
       unitTestName,
       cleanedUnitTestName,
@@ -1300,7 +1409,7 @@ namespace <%= LogicAppName %>.Tests
             // PREPARE Mock
             // Generate mock action and trigger data.
             var mockData = this.GetTestMockDefinition();
-            mockData.TriggerMock.Outputs["your-property-name"] = "your-property-value";
+            // mockData.TriggerMock.Outputs["your-property-name"] = "your-property-value";
 
             // ACT
             // Create an instance of UnitTestExecutor, and run the workflow with the mock data.
@@ -1360,7 +1469,7 @@ namespace <%= LogicAppName %>.Tests
     const cleanedWorkflowName = workflowName.replace(/-/g, '_');
     const cleanedLogicAppName = logicAppName.replace(/-/g, '_');
 
-    await createCsFile(
+    await createTestCsFile(
       unitTestFolderPath,
       unitTestName,
       cleanedUnitTestName,
@@ -1417,7 +1526,7 @@ using System.IO;
 namespace <%= LogicAppName %>.Tests
 {
     public class TestExecutor
-    {                
+    {
         /// <summary>
         /// The root directory.
         /// </summary>
@@ -1555,13 +1664,15 @@ describe('createTestSettingsConfig', () => {
 });
 
 describe('updateSolutionWithProject', () => {
+  const testDotnetBinaryPath = path.join('test', 'path', 'to', 'dotnet');
   let pathExistsSpy: any;
-  let execSpy: any;
+  let executeCommandSpy: any;
 
   beforeEach(() => {
     vi.spyOn(ext.outputChannel, 'appendLog').mockImplementation(() => {});
     vi.spyOn(util, 'promisify').mockImplementation((fn) => fn);
-    execSpy = vi.spyOn(childProcess, 'exec').mockResolvedValue(new childProcess.ChildProcess());
+    vi.spyOn(vscodeConfigSettings, 'getGlobalSetting').mockReturnValue(testDotnetBinaryPath);
+    executeCommandSpy = vi.spyOn(cpUtils, 'executeCommand').mockResolvedValue('');
   });
 
   afterEach(() => {
@@ -1574,12 +1685,13 @@ describe('updateSolutionWithProject', () => {
     const testsDirectory = path.join(projectPath, 'Tests');
     const logicAppCsprojPath = path.join(testsDirectory, `${fakeLogicAppName}.csproj`);
 
-    await updateSolutionWithProject(testsDirectory, logicAppCsprojPath);
+    await updateTestsSln(testsDirectory, logicAppCsprojPath);
 
-    expect(execSpy).toHaveBeenCalledTimes(1);
-    expect(execSpy).toHaveBeenCalledWith(
-      `dotnet sln "${path.join(testsDirectory, 'Tests.sln')}" add "${fakeLogicAppName}.csproj"`,
-      expect.anything()
+    expect(executeCommandSpy).toHaveBeenCalledTimes(1);
+    expect(executeCommandSpy).toHaveBeenCalledWith(
+      ext.outputChannel,
+      testsDirectory,
+      `${testDotnetBinaryPath} sln "${path.join(testsDirectory, 'Tests.sln')}" add "${fakeLogicAppName}.csproj"`
     );
   });
 
@@ -1589,13 +1701,14 @@ describe('updateSolutionWithProject', () => {
     const testsDirectory = path.join(projectPath, 'Tests');
     const logicAppCsprojPath = path.join(testsDirectory, `${fakeLogicAppName}.csproj`);
 
-    await updateSolutionWithProject(testsDirectory, logicAppCsprojPath);
+    await updateTestsSln(testsDirectory, logicAppCsprojPath);
 
-    expect(execSpy).toHaveBeenCalledTimes(2);
-    expect(execSpy).toHaveBeenCalledWith('dotnet new sln -n Tests', expect.anything());
-    expect(execSpy).toHaveBeenCalledWith(
-      `dotnet sln "${path.join(testsDirectory, 'Tests.sln')}" add "${fakeLogicAppName}.csproj"`,
-      expect.anything()
+    expect(executeCommandSpy).toHaveBeenCalledTimes(2);
+    expect(executeCommandSpy).toHaveBeenCalledWith(ext.outputChannel, testsDirectory, `${testDotnetBinaryPath} new sln -n Tests`);
+    expect(executeCommandSpy).toHaveBeenCalledWith(
+      ext.outputChannel,
+      testsDirectory,
+      `${testDotnetBinaryPath} sln "${path.join(testsDirectory, 'Tests.sln')}" add "${fakeLogicAppName}.csproj"`
     );
   });
 });

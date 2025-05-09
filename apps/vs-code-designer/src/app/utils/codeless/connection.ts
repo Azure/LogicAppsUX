@@ -368,6 +368,14 @@ export async function saveCustomCodeStandard(filePath: string, allCustomCodeFile
   }
 }
 
+export async function createConnectionsJson(context: IActionContext, projectPath: string): Promise<void> {
+  const connectionsFilePath = path.join(projectPath, connectionsFileName);
+  const connectionsFileExists = fse.pathExistsSync(connectionsFilePath);
+  if (!connectionsFileExists) {
+    await writeFormattedJson(connectionsFilePath, {});
+  }
+}
+
 export async function saveConnectionReferences(
   context: IActionContext,
   projectPath: string,

@@ -19,10 +19,10 @@ test(
     await page.getByRole('tab', { name: 'Settings' }).click();
     await page.getByRole('tab', { name: 'Parameters' }).click();
     await page.getByRole('tab', { name: 'Settings' }).click();
-    await page.getByRole('button', { name: 'Expanded Run After, Click to Collapse' }).click();
-    await page.getByRole('button', { name: 'Collapsed Run After, Click to Expand' }).click();
-    await page.getByRole('button', { name: 'Expanded Tracking, Click to Collapse' }).click();
-    await page.getByRole('button', { name: 'Collapsed Tracking, Click to Expand' }).click();
+    await page.getByRole('button', { name: 'Expanded Run After, Select to collapse' }).click();
+    await page.getByRole('button', { name: 'Collapsed Run After, Select to expand' }).click();
+    await page.getByRole('button', { name: 'Expanded Tracking, Select to collapse' }).click();
+    await page.getByRole('button', { name: 'Collapsed Tracking, Select to expand' }).click();
     await page.getByRole('button', { name: 'Expand Initialize variable' }).click();
     await page.getByRole('button', { name: 'Collapse Initialize variable' }).click();
     expect(true).toBeTruthy();
