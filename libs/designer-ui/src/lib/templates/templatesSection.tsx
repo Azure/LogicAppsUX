@@ -14,6 +14,7 @@ import {
 } from '@fluentui/react-components';
 import { Open16Regular } from '@fluentui/react-icons';
 import type { BaseFieldItem, TemplatesSectionItem, TemplatesSectionProps } from './templatesSectionModel';
+import { css } from '@fluentui/utilities';
 
 export const TemplatesSection = ({
   title,
@@ -22,6 +23,7 @@ export const TemplatesSection = ({
   description,
   descriptionLink,
   items,
+  cssOverrides = {},
   children = null,
 }: TemplatesSectionProps) => {
   const onRenderItem = (item: TemplatesSectionItem) => {
@@ -63,7 +65,7 @@ export const TemplatesSection = ({
         </Text>
       ) : null}
 
-      <div className="msla-templates-section-items">
+      <div className={css('msla-templates-section-items', cssOverrides?.['sectionItems'])}>
         {items
           ? items.map((item, index) => {
               return (

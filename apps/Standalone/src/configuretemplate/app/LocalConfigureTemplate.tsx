@@ -1,9 +1,11 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import {
   ConfigureTemplateDataProvider,
   ConfigureTemplateWizard,
   resetStateOnResourceChange,
   templateStore,
+  TemplateInfoToast,
+  type TemplateInfoToasterProps,
 } from '@microsoft/logic-apps-designer';
 import { TemplatesDesignerProvider } from '@microsoft/logic-apps-designer';
 import { useSelector } from 'react-redux';
@@ -20,7 +22,7 @@ import { ArmParser } from '../../designer/app/AzureLogicAppsDesigner/Utilities/A
 import { useCurrentTenantId } from '../../designer/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts';
 
 const testTemplateId =
-  '/subscriptions/f34b22a3-2202-4fb1-b040-1332bd928c84/resourceGroups/TestACSRG/providers/Microsoft.Logic/templates/elainacustom';
+  '/subscriptions/f34b22a3-2202-4fb1-b040-1332bd928c84/resourceGroups/TestACSRG/providers/Microsoft.Logic/templates/priticustomnew';
 export const LocalConfigureTemplate = () => {
   const { theme, resourcePath } = useSelector((state: RootState) => ({
     theme: state.configureTemplateLoader.theme,
@@ -31,6 +33,8 @@ export const LocalConfigureTemplate = () => {
   const defaultSubscriptionId = armParser?.subscriptionId ?? 'f34b22a3-2202-4fb1-b040-1332bd928c84';
   const defaultResourceGroup = armParser?.resourceGroup ?? 'TestACSRG';
   const defaultLocation = 'brazilsouth';
+  const [toasterData, setToasterData] = useState({ title: '', content: '', show: false });
+  const [hideToaster, setHideToaster] = useState(false);
 
   // Need to fetch template resource to get location.
   const services = useMemo(
@@ -52,6 +56,11 @@ export const LocalConfigureTemplate = () => {
     }
   }, [tenantId]);
 
+  const onRenderToaster = useCallback((data: TemplateInfoToasterProps, hideToaster: boolean) => {
+    setHideToaster(hideToaster);
+    setToasterData(data);
+  }, []);
+
   return (
     <TemplatesDesignerProvider locale="en-US" theme={theme}>
       <ConfigureTemplateDataProvider
@@ -64,12 +73,13 @@ export const LocalConfigureTemplate = () => {
         templateId={resourcePath ?? testTemplateId}
         services={services}
       >
+        {hideToaster ? null : <TemplateInfoToast {...toasterData} />}
         <div
           style={{
             margin: '20px',
           }}
         >
-          <ConfigureTemplateWizard />
+          <ConfigureTemplateWizard onRenderToaster={onRenderToaster} />
         </div>
       </ConfigureTemplateDataProvider>
     </TemplatesDesignerProvider>
