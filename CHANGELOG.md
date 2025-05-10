@@ -1,4 +1,19 @@
 # Logic Apps Designer
+## [5.103.0](https://github.com/Azure/LogicAppsUX/compare/v5.102.0...v5.103.0) (2025-05-09)
+
+
+### Features
+
+* **Templates:** Workflow Selection with User Input Resource Id & Duplicate Validation and handling ([#7129](https://github.com/Azure/LogicAppsUX/issues/7129)) ([604dffa](https://github.com/Azure/LogicAppsUX/commit/604dffa7bfb7157bc7463fb48b93ccdfcca4cd68))
+
+
+### Bug Fixes
+
+* **designer:** Fixed issue with \ in Dictionary editor serialization ([#7202](https://github.com/Azure/LogicAppsUX/issues/7202)) ([840e4d8](https://github.com/Azure/LogicAppsUX/commit/840e4d845c77a9d34d4c8208d57d8e7377cf9dc9))
+* **designer:** Revert of Reset id replacements when reset designer dirty state ([#7208](https://github.com/Azure/LogicAppsUX/issues/7208)) ([39c0895](https://github.com/Azure/LogicAppsUX/commit/39c08952adde8f98dd07d8e9229086a39e5e864c)), closes [#7105](https://github.com/Azure/LogicAppsUX/issues/7105)
+* **designer:** simple query builder  `[@not](https://github.com/not)(contains(` being deserialized as as `[@notcontains](https://github.com/notcontains)(` ([#7210](https://github.com/Azure/LogicAppsUX/issues/7210)) ([9f4d6b3](https://github.com/Azure/LogicAppsUX/commit/9f4d6b35f078e35f66254a98f189682a5162df6a))
+* **designer:** Use the correct service for List Subscriptions ([#7213](https://github.com/Azure/LogicAppsUX/issues/7213)) ([59d7f25](https://github.com/Azure/LogicAppsUX/commit/59d7f256623d2ec7b51311a5a21209b9be3fe65b))
+
 ## [5.102.0](https://github.com/Azure/LogicAppsUX/compare/v5.101.0...v5.102.0) (2025-05-08)
 
 
