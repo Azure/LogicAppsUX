@@ -90,6 +90,7 @@ interface BaseTemplatesSectionProps {
     text: string;
     href: string;
   };
+  cssOverrides?: Record<string, string>;
 }
 
 interface ContentBasedProps extends BaseTemplatesSectionProps {
