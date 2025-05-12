@@ -1,0 +1,240 @@
+Write-Output "Starting Logic App deployment"
+
+$subscriptionId = "<%= subscriptionId %>"
+$resourceGroup = "<%= resourceGroup %>"
+$logicAppName = "<%= logicAppName %>"
+# TODO: should deploy all workflows in logic app
+$workflowName = "workflow1"
+$TARGET = "$env:HOME\site\wwwroot"
+$currentDir = $PSScriptRoot
+$tempDeployPath = Join-Path $TARGET ".temp_deploy"
+
+# ============================================
+# 1. Get access token
+# ============================================
+Write-Output "Getting access token"
+
+$identityEndpoint = $env:IDENTITY_ENDPOINT
+$identityHeader = $env:IDENTITY_HEADER
+$clientId = "<%= uamiClientId %>"
+$resource = "https://management.azure.com/"
+
+$uriBuilder = New-Object System.UriBuilder($identityEndpoint)
+$uriBuilder.Query = "api-version=2019-08-01&resource=$resource&client_id=$clientId"
+$tokenUrl = $uriBuilder.Uri.AbsoluteUri
+
+$response = Invoke-RestMethod -Method GET `
+    -Uri $tokenUrl `
+    -Headers @{ "X-IDENTITY-HEADER" = $identityHeader }
+$accessToken = $response.access_token
+if (-not $accessToken) {
+    Write-Error "ERROR: Failed to authenticate with user-assigned managed identity."
+    exit 1
+}
+
+# ============================================
+# 2. Update connection ACLs
+# ============================================
+Write-Output "Updating access policies for existing connections"
+
+# Get managed API connections from connections.json
+$connectionsJsonPath = Join-Path $currentDir "connections.json"
+$connectionsJson = Get-Content -Path $connectionsJsonPath -Raw
+$connections = $connectionsJson | ConvertFrom-Json
+
+foreach ($connectionName in $connections.managedApiConnections.PSObject.Properties.Name) {
+    Write-Output "-Updating connection '$connectionName'"
+
+    $headers = @{ Authorization = "Bearer $accessToken" }
+
+    # Get logic app system-assigned identity info
+    $logicAppUri = "https://management.azure.com/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/Microsoft.Web/sites/${logicAppName}?api-version=2022-03-01"
+    $logicAppInfo = Invoke-RestMethod -Method GET `
+        -Uri $logicAppUri `
+        -Headers $headers
+    $principalId = $logicAppInfo.identity.principalId
+    $tenantId = $logicAppInfo.identity.tenantId
+
+    # Get connection info
+    $connectionUri = "https://management.azure.com/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/Microsoft.Web/connections/${connectionName}?api-version=2016-06-01"
+    $connectionInfo = Invoke-RestMethod -Method GET `
+        -Uri $connectionUri `
+        -Headers $headers `
+        -ContentType "application/json"
+
+    # Set access policy
+    $accessPolicyName = "$logicAppName-$principalId"
+    $accessPolicyUri = "https://management.azure.com/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/Microsoft.Web/connections/$connectionName/accessPolicies/${accessPolicyName}?api-version=2018-07-01-preview"
+    $headers = @{
+        Authorization = "Bearer $accessToken"
+        "Content-Type" = "application/json"
+    }
+    $body = @{
+        name = $accessPolicyName
+        type = "Microsoft.Web/connections/accessPolicy"
+        location = $connectionInfo.location
+        properties = @{
+            principal = @{
+                type = "ActiveDirectory"
+                identity = @{
+                    objectId = $principalId
+                    tenantId = $tenantId
+                }
+            }
+        }
+    } | ConvertTo-Json -Depth 5 -Compress
+    $response = Invoke-RestMethod -Method PUT `
+        -Uri $accessPolicyUri `
+        -Headers $headers `
+        -Body $body
+    if (-not $response) {
+        Write-Error "ERROR: Failed to update connection access policy for connection '$connectionName'."
+        exit 1
+    }   
+}
+
+# ============================================
+# 3. Update app settings
+# ============================================
+Write-Output "Updating app settings"
+
+# Get existing app settings
+$listUri = "https://management.azure.com/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/Microsoft.Web/sites/$logicAppName/config/appsettings/list?api-version=2022-03-01"
+$headers = @{
+    Authorization = "Bearer $accessToken"
+    "Content-Type" = "application/json"
+}
+
+$currentAppSettingsResponse = Invoke-RestMethod -Method POST `
+    -uri $listUri `
+    -Headers $headers
+if (-not $currentAppSettingsResponse -or -not $currentAppSettingsResponse.properties) {
+    Write-Error "ERROR: App settings response is null or missing 'properties'."
+    exit 1
+}
+
+$currentSettings = @{}
+$currentAppSettingsResponse.properties.PSObject.Properties | ForEach-Object {
+    $currentSettings[$_.Name] = $_.Value
+}
+
+# Combine with new settings
+$appSettingsJsonPath = Join-Path $currentDir "settings.json"
+$appSettingsJson = Get-Content -Path $appSettingsJsonPath -Raw
+$appSettings = $appSettingsJson | ConvertFrom-Json
+
+$appSettings.Values.PSObject.Properties | ForEach-Object {
+    $currentSettings[$_.Name] = $_.Value
+}
+
+# Update app settings
+$putUri  = "https://management.azure.com/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/Microsoft.Web/sites/$logicAppName/config/appsettings?api-version=2022-03-01"
+$body = @{
+    properties = $currentSettings
+} | ConvertTo-Json -Compress
+$updateAppSettingsResponse = Invoke-RestMethod -Method PUT `
+    -uri $putUri `
+    -Headers $headers `
+    -Body $body
+if (-not $updateAppSettingsResponse) {
+    Write-Error "ERROR: Failed to update app settings."
+    exit 1
+}
+
+# ============================================
+# 4. Copy files to wwwroot
+# ============================================
+
+# Clean temp files from previous deployment if needed
+if (Test-Path $tempDeployPath) {
+    Remove-Item -Path $tempDeployPath -Recurse -Force
+}
+
+# Update authentication in connections.json or parameters.json (if connections parameterized)
+Write-Output "Preparing files for deployment"
+
+$authValue = @{ type = "ManagedServiceIdentity" }
+$parametersJsonPath = Join-Path $currentDir "parameters.json"
+$connectionsJsonPath = Join-Path $currentDir "connections.json"
+if (-not (Test-Path $connectionsJsonPath)) {
+    Write-Error "ERROR: connections.json file not found in the current directory."
+    exit 1
+}
+$connectionsJson = Get-Content -Path $connectionsJsonPath -Raw
+$connections = $connectionsJson | ConvertFrom-Json
+if (Test-Path $parametersJsonPath) {
+    $parametersJson = Get-Content -Path $parametersJsonPath -Raw
+    $parameters = $parametersJson | ConvertFrom-Json
+    foreach ($connectionName in $connections.managedApiConnections.PSObject.Properties.Name) {
+        $parameters."$connectionName-Authentication".value = $authValue
+    }
+} else {
+    foreach ($connectionName in $connections.managedApiConnections.PSObject.Properties.Name) {
+        $connections."$connectionName".authentication = $authValue
+    }
+}
+
+# Validate deployment files and copy to temp folder
+Write-Output "Validating and preparing files for deployment"
+
+New-Item -ItemType Directory -Path $tempDeployPath
+
+if ($parameters) {
+    # If connections parameterized, copy updated parameters.json and unmodified connections.json
+    $parametersJson = $parameters | ConvertTo-Json -Depth 5
+    $parametersTargetPath = Join-Path $tempDeployPath "parameters.json"
+    $parametersJson | Out-File -FilePath $parametersTargetPath
+    Copy-Item $connectionsJsonPath -Destination $tempDeployPath -Force
+} else {
+    # If connections not parameterized, copy updated connections.json and empty parameters.json
+    $connectionsJson = $connections | ConvertTo-Json -Depth 5
+    $connectionsTargetPath = Join-Path $tempDeployPath "connections.json"
+    $connectionsJson | Out-File -FilePath $connectionsTargetPath
+    $parametersJson = {} | ConvertTo-Json
+    $parametersTargetPath = Join-Path $tempDeployPath "parameters.json"
+    $parametersJson | Out-File -FilePath $parametersTargetPath
+}
+
+$hostJsonPath = Join-Path $currentDir "host.json"
+if (Test-Path $hostJsonPath) {
+    Copy-Item $hostJsonPath -Destination $tempDeployPath -Force
+} else {
+    Write-Error "ERROR: host.json file not found in the current directory."
+    exit 1
+}
+
+$workflowFilePath = Join-Path $currentDir "$workflowName\workflow.json"
+$workflowTempTargetDirPath = Join-Path $tempDeployPath $workflowName
+if (Test-Path $workflowFilePath) {
+    New-Item -ItemType Directory -Path $workflowTempTargetDirPath -Force | Out-Null
+    Copy-Item $workflowFilePath -Destination $workflowTempTargetDirPath -Force
+} else {
+    Write-Error "ERROR: workflow.json file not found in the current directory."
+    exit 1
+}
+
+# Remove old files if they exist
+Write-Output "Cleaning up old deployment files"
+
+$oldFiles = @(
+    "$TARGET\host.json",
+    "$TARGET\connections.json",
+    "$TARGET\parameters.json"
+    "$TARGET\$workflowName\workflow.json"
+)
+
+foreach ($file in $oldFiles) {
+    if (Test-Path $file) {
+        Remove-Item $file -Force
+    }
+}
+
+# Copy files to wwwroot
+Copy-Item -Path "${tempDeployPath}\*" -Destination $TARGET -Recurse -Force
+
+# Clean up temp deployment files
+Write-Output "Cleaning up temp files"
+Remove-Item -Path $tempDeployPath -Recurse -Force
+
+Write-Output "Logic App deployment completed successfully."
+exit 0
