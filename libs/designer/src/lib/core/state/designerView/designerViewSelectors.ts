@@ -22,6 +22,9 @@ export const useEdgeContextMenuData = () => {
   return useSelector((state: RootState) => state.designerView.edgeContextMenuData);
 };
 
-export const useAgenticWorkflow = () => {
-  return useSelector((state: RootState) => equals(state.workflow.workflowKind, 'agentic', false));
+export const useIsAgenticWorkflow = () => {
+  return useSelector(
+    (state: RootState) =>
+      equals(state.workflow.workflowKind, 'agentic', false) || equals(state.workflow.workflowKind, 'stateMachine', false)
+  );
 };

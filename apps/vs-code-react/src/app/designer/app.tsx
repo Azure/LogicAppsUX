@@ -150,7 +150,8 @@ export const DesignerApp = () => {
     if (isMonitoringView) {
       refetch();
       const queryClient = getReactQueryClient();
-      queryClient.removeQueries([runsQueriesKeys.useChatHistory]);
+      queryClient.removeQueries([runsQueriesKeys.useActionChatHistory]);
+      queryClient.removeQueries([runsQueriesKeys.useRunChatHistory]);
       queryClient.removeQueries([runsQueriesKeys.useAgentActionsRepetition]);
       queryClient.removeQueries([runsQueriesKeys.useAgentRepetition]);
       queryClient.removeQueries([runsQueriesKeys.useNodeRepetition]);

@@ -24,6 +24,7 @@ export const WorkflowKind = {
   STATEFUL: 'stateful',
   STATELESS: 'stateless',
   AGENTIC: 'agentic',
+  STATE_MACHINE: 'stateMachine',
 } as const;
 export type WorkflowKind = (typeof WorkflowKind)[keyof typeof WorkflowKind] | undefined;
 

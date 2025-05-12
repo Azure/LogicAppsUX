@@ -195,6 +195,17 @@ export const getWorkflowTemplatePickItems = (language: string, isProjectWizard: 
     categories: [TemplateCategory.Core],
   };
 
+  const stateMachine: IWorkflowTemplate = {
+    id: WorkflowType.stateMachine,
+    name: localize('StateMachine', 'State machine workflow'),
+    defaultFunctionName: 'StateMachine',
+    language: language,
+    isHttpTrigger: true,
+    isTimerTrigger: false,
+    userPromptedSettings: [],
+    categories: [TemplateCategory.Core],
+  };
+
   const picks: IAzureQuickPickItem<IWorkflowTemplate | TemplatePromptResult>[] = [
     {
       label: stateful.name,
@@ -207,6 +218,10 @@ export const getWorkflowTemplatePickItems = (language: string, isProjectWizard: 
     {
       label: agentic.name,
       data: agentic,
+    },
+    {
+      label: stateMachine.name,
+      data: stateMachine,
     },
   ];
 

@@ -2,7 +2,7 @@
 
 .msla-trace-inputs-outputs {
   background-color: #fff;
-  border: @defaultBorder;
+  // border: @defaultBorder;
   margin-bottom: 20px;
 
   &:last-child {
@@ -21,99 +21,99 @@
       font-weight: 600;
       margin: 0;
       padding: 1em;
-      text-transform: uppercase;
+      // text-transform: uppercase;
       line-height: inherit;
     }
   }
 
-  .msla-trace-values {
-    padding: 1em;
-    border-top: @defaultBorder;
+}
 
-    .msla-trace-download-link {
-      padding: 0.75em 1.25em 0;
+.msla-trace-values {
+	padding: 8px 24px;
 
-      a {
-        &:link {
-          text-decoration: none;
-        }
+	.msla-trace-download-link {
+		padding: 0.75em 1.25em 0;
 
-        &:hover {
-          text-decoration: underline;
-        }
-      }
-    }
+		a {
+			&:link {
+				text-decoration: none;
+			}
 
-    .msla-trace-value-label {
-      display: block;
+			&:hover {
+				text-decoration: underline;
+			}
+		}
+	}
 
-      .msla-trace-value-display-name {
-        font-weight: 600;
-        padding: 0.75em 1.25em 0;
-      }
+	.msla-trace-value-label {
+		display: block;
 
-      .msla-trace-value-text {
-        background-color: rgba(191, 68, 68, 0.05);
-        margin: 0.5em 1.25em;
-        max-height: 12em;
-        overflow: auto;
-        padding: 0.75em 1.25em;
-        white-space: pre-wrap;
+		.msla-trace-value-display-name {
+			font-weight: 600;
+			// padding: 0.75em 1.25em 0;
+		}
 
-        a {
-          &:link {
-            color: rgb(0, 0, 238);
-          }
-        }
-        &.msla-trace-value-html-table {
-          table {
-            border-collapse: collapse;
+		.msla-trace-value-text {
+			background-color: rgba(191, 68, 68, 0.05);
+			margin: 0.5em 1.25em;
+			max-height: 12em;
+			overflow: auto;
+			padding: 0.75em 1.25em;
+			white-space: pre-wrap;
 
-            td,
-            th {
-              padding: 0.25em 0.5em;
-            }
+			a {
+				&:link {
+					color: rgb(0, 0, 238);
+				}
+			}
+			&.msla-trace-value-html-table {
+				table {
+					border-collapse: collapse;
 
-            th {
-              text-align: left;
-            }
-          }
-        }
+					td,
+					th {
+						padding: 0.25em 0.5em;
+					}
 
-        &.msla-trace-value-key-value-pairs {
-          border: 1px solid rgba(191, 68, 68, 0.05);
-          padding: 0;
+					th {
+						text-align: left;
+					}
+				}
+			}
 
-          /* Workaround for Fabric CSS bug */
-          [class^='ms-DetailsList'][data-automationid='DetailsList'] {
-            overflow-x: visible;
-          }
-        }
+			&.msla-trace-value-key-value-pairs {
+				border: 1px solid rgba(191, 68, 68, 0.05);
+				padding: 0;
 
-        .monaco-editor.vs {
-          background-color: inherit;
-          font-family: @font-family;
-        }
-      }
-    }
+				/* Workaround for Fabric CSS bug */
+				[class^='ms-DetailsList'][data-automationid='DetailsList'] {
+					overflow-x: visible;
+				}
+			}
 
-    .msla-button.msla-input-parameters-show-more {
-      margin-left: 10px;
-    }
+			.monaco-editor.vs {
+				background-color: inherit;
+				font-family: @font-family;
+			}
+		}
+	}
 
-    .msla-trace-inputs-outputs-secured {
-      padding: 5px;
-      margin: 5px 5px 0 5px;
-      color: #ab0101;
-      font-size: 14px;
-      font-weight: 500;
+	.msla-button.msla-input-parameters-show-more {
+		margin-left: 10px;
+	}
 
-      .msla-trace-secured-text {
-        padding: 5px;
-        background-color: rgba(204, 204, 204, 0.23);
-      }
-    }
-  }
+	.msla-trace-inputs-outputs-secured {
+		padding: 5px;
+		margin: 5px 5px 0 5px;
+		color: #ab0101;
+		font-size: 14px;
+		font-weight: 500;
+
+		.msla-trace-secured-text {
+			padding: 5px;
+			background-color: rgba(204, 204, 204, 0.23);
+		}
+	}
 }
 
 .msla-card-body.msla-has-errors {
