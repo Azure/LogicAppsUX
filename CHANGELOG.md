@@ -1,4 +1,19 @@
 # Logic Apps Designer
+## [5.104.0](https://github.com/Azure/LogicAppsUX/compare/v5.103.0...v5.104.0) (2025-05-12)
+
+
+### Features
+
+* **templates:** Minor css and interface changes in template wizard for integration ([#7221](https://github.com/Azure/LogicAppsUX/issues/7221)) ([4a3abe0](https://github.com/Azure/LogicAppsUX/commit/4a3abe0b98b569efbbe9ea850a3b9babfa823ee5))
+* **vscode:** Upload settings automatically after deployment ([#7215](https://github.com/Azure/LogicAppsUX/issues/7215)) ([338a927](https://github.com/Azure/LogicAppsUX/commit/338a92768dbf759fe0679f0239c6feacdd475f34))
+
+
+### Bug Fixes
+
+* **designer:** Create Exception of whitespace check on # ([#7217](https://github.com/Azure/LogicAppsUX/issues/7217)) ([1872131](https://github.com/Azure/LogicAppsUX/commit/1872131cad043a7955937e68dfce1a403d9856fc))
+* **designer:** Fixing Search not showing operations in Agentic Loops ([#7219](https://github.com/Azure/LogicAppsUX/issues/7219)) ([da9cf4a](https://github.com/Azure/LogicAppsUX/commit/da9cf4aea38b36306658ac285829bf74a0cac9cb))
+* **designer:** Update chat scrollbar styles ([#7218](https://github.com/Azure/LogicAppsUX/issues/7218)) ([7773250](https://github.com/Azure/LogicAppsUX/commit/777325063f19d98a39d7bb480d922d8c21fff5f1))
+
 ## [5.103.0](https://github.com/Azure/LogicAppsUX/compare/v5.102.0...v5.103.0) (2025-05-09)
 
 
