@@ -507,18 +507,23 @@ export class StandardConnectionService extends BaseConnectionService implements 
       /* shouldTestConnection */ false
     );
     const oAuthService = OAuthService();
-    let oAuthPopupInstance: IOAuthPopup | undefined;
 
     try {
-      const consentUrl = await oAuthService.fetchConsentUrlForConnection(connectionId);
-      oAuthPopupInstance = oAuthService.openLoginPopup({ consentUrl });
+      const consentLinkData = await oAuthService.fetchConsentLinkDataForConnection(connectionId);
+      const { link: consentUrl, status } = consentLinkData;
 
-      const loginResponse = await oAuthPopupInstance.loginPromise;
-      if (loginResponse.error) {
-        throw new Error(atob(loginResponse.error));
-      }
-      if (loginResponse.code) {
-        await oAuthService.confirmConsentCodeForConnection(connectionId, loginResponse.code);
+      if (status !== 'Authenticated') {
+        const oAuthPopupInstance: IOAuthPopup = oAuthService.openLoginPopup({ consentUrl });
+
+        const loginResponse = await oAuthPopupInstance.loginPromise;
+        if (loginResponse.error) {
+          throw new Error(atob(loginResponse.error));
+        }
+        if (loginResponse.code) {
+          await oAuthService.confirmConsentCodeForConnection(connectionId, loginResponse.code);
+        }
+      } else {
+        alert('Connection is already authenticated');
       }
 
       await this._createConnectionAclIfNeeded(connection);

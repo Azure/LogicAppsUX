@@ -173,7 +173,15 @@ export class StandaloneOAuthService implements IOAuthService {
     });
   }
 
-  public async fetchConsentUrlForConnection(connectionName: string) {
+  public async fetchConsentUrlForConnection(connectionName: string): Promise<string> {
+    const data = await this.fetchConsentLinkDataForConnection(connectionName);
+    if (data?.link) {
+      return data.link;
+    }
+    throw new Error('Error fetching consent URL');
+  }
+
+  public async fetchConsentLinkDataForConnection(connectionName: string): Promise<ConsentLink> {
     const { baseUrl, httpClient, apiVersion, tenantId, objectId } = this.options;
     const hostName = baseUrl.split('/subscriptions')[0];
     const uri = `${hostName}${this.getConnectionRequestPath(connectionName)}/listConsentLinks`;
@@ -198,8 +206,8 @@ export class StandaloneOAuthService implements IOAuthService {
         },
       });
 
-      if (response?.value[0]?.link) {
-        return response.value[0].link;
+      if (response?.value[0]) {
+        return response.value[0];
       }
       // TODO: Add error handling
       throw new Error('Error fetching consent URL');

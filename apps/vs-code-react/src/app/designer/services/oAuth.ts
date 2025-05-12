@@ -161,6 +161,13 @@ export class BaseOAuthService implements IOAuthService {
   }
 
   public async fetchConsentUrlForConnection(connectionName: string) {
+    const data = await this.fetchConsentLinkDataForConnection(connectionName);
+    if (data?.link) {
+      return data.link;
+    }
+  }
+
+  public async fetchConsentLinkDataForConnection(connectionName: string) {
     const { baseUrl, httpClient, apiVersion } = this.options;
     const hostName = baseUrl.split('/subscriptions')[0];
     const uri = `${hostName}${this.getConnectionRequestPath(connectionName)}/listConsentLinks`;
@@ -187,8 +194,8 @@ export class BaseOAuthService implements IOAuthService {
         },
       });
 
-      if (response?.value[0]?.link) {
-        return response.value[0].link;
+      if (response?.value[0]) {
+        return response.value[0];
       }
       // TODO: Add error handling
       throw new Error('Error fetching consent URL');

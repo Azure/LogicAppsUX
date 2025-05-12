@@ -35,6 +35,7 @@ export interface ConsentLink {
   link: string;
   displayName?: string;
   status?: string;
+  firstPartyLoginUri?: string;
 }
 
 export interface LogicAppConsentResponse {

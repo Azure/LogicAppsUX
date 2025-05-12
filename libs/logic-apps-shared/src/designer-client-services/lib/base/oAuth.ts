@@ -1,5 +1,6 @@
 import { ArgumentException } from '../../../utils/src';
 import type { IOAuthPopup, LoginResult, IOAuthService, IOAuthServiceOptions, OAuthPopupOptions } from '../oAuth';
+import type { ConsentLink } from './connection';
 
 export class OAuthPopup implements IOAuthPopup {
   public loginPromise: Promise<LoginResult>;
@@ -67,6 +68,10 @@ export class BaseOAuthService implements IOAuthService {
 
   public fetchConsentUrlForConnection(_connectionId: string) {
     return new Promise<string>(() => 'null');
+  }
+
+  public fetchConsentLinkDataForConnection(_connectionId: string) {
+    return new Promise<ConsentLink>(() => ({ link: '' }));
   }
 
   public openLoginPopup(options: OAuthPopupOptions): IOAuthPopup {

@@ -1,4 +1,5 @@
 import { AssertionException, AssertionErrorCode } from '../../utils/src';
+import type { ConsentLink } from './base/connection';
 import type { IHttpClient } from './httpClient';
 
 export interface LoginResult {
@@ -12,6 +13,7 @@ export interface IOAuthService {
   openLoginPopup(options: OAuthPopupOptions): IOAuthPopup;
 
   fetchConsentUrlForConnection: (connectionId: string) => Promise<string>;
+  fetchConsentLinkDataForConnection: (connectionId: string) => Promise<ConsentLink>;
   confirmConsentCodeForConnection: (connectionId: string, code: string) => Promise<any>;
 }
 
