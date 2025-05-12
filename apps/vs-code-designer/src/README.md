@@ -4,7 +4,7 @@ In Visual Studio Code, you can use the Azure Logic Apps (Standard) extension to 
 
 > Sign up today for your free Azure account and receive 12 months of free popular services, $200 free credit and 25+ always free services 👉 [Start Free](https://azure.microsoft.com/free/open-source).
 
-## Azure Logic Apps - Create unit tests from Standard workflows (Preview)
+## Azure Logic Apps - Create unit tests from Standard workflows
 
 Starting with version 5.58.8, the Azure Logic Apps (Standard) extension for Visual Studio Code provides the capability to create unit test from a workflow run or a workflow saved definition, that can be edited and executed locally. For more information, see [Create unit tests from Standard workflows in Azure Logic Apps with Visual Studio Code (Preview)](https://go.microsoft.com/fwlink/?linkid=2316916).
 
