@@ -12,7 +12,7 @@ import { equals, LOCAL_STORAGE_KEYS, type Connector, type DiscoveryOpArray } fro
 import { getOperationCardDataFromOperation, getOperationGroupCardDataFromConnector } from './helpers';
 import { useIntl } from 'react-intl';
 import { SpotlightCategoryType, SpotlightSection } from '@microsoft/designer-ui';
-import { useAgenticWorkflow } from '../../../core/state/designerView/designerViewSelectors';
+import { useIsAgenticWorkflow } from '../../../core/state/designerView/designerViewSelectors';
 export interface ActionSpotlightProps {
   onConnectorSelected: (connectorId: string, origin?: string) => void;
   onOperationSelected: (operationId: string, apiId?: string) => void;
@@ -41,7 +41,7 @@ export const ActionSpotlight = (props: ActionSpotlightProps) => {
   const isWithinAgenticLoop = useIsWithinAgenticLoop(parentGraphId);
 
   const isAgentTool = useIsAgentTool();
-  const isAgenticWorkflow = useAgenticWorkflow();
+  const isAgenticWorkflow = useIsAgenticWorkflow();
 
   const favoriteOperationIds = useDiscoveryPanelFavoriteOperations();
   const {

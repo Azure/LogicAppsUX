@@ -2,7 +2,7 @@ import { PanelLocation, PanelResizer, PanelSize, type ConversationItem } from '@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { defaultChatbotPanelWidth, ChatbotUI } from '@microsoft/logic-apps-chatbot';
-import { runsQueriesKeys, useAgentChatInvokeUri, useCancelRun, useChatHistory } from '../../../core/queries/runs';
+import { runsQueriesKeys, useAgentChatInvokeUri, useCancelRun, useRunChatHistory } from '../../../core/queries/runs';
 import { useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import {
   useAgentLastOperations,
@@ -60,7 +60,7 @@ export const AgentChat = ({
     refetch: refetchChatHistory,
     isFetching: isChatHistoryFetching,
     data: chatHistoryData,
-  } = useChatHistory(!!isMonitoringView, agentOperations, runInstance?.id);
+  } = useRunChatHistory(!!isMonitoringView, runInstance?.id);
   const { data: chatInvokeUri } = useAgentChatInvokeUri(!!isMonitoringView, true, agentChatSuffixUri);
   const [overrideWidth, setOverrideWidth] = useState<string | undefined>(chatbotWidth);
   const dispatch = useDispatch<AppDispatch>();
@@ -73,7 +73,7 @@ export const AgentChat = ({
   const { mutateAsync: refreshChat } = useMutation(async () => {
     const queryClient = getReactQueryClient();
     await queryClient.resetQueries([runsQueriesKeys.useRunInstance]);
-    await queryClient.resetQueries([runsQueriesKeys.useChatHistory]);
+    await queryClient.resetQueries([runsQueriesKeys.useRunChatHistory]);
     await queryClient.resetQueries([runsQueriesKeys.useAgentActionsRepetition]);
     await queryClient.resetQueries([runsQueriesKeys.useAgentRepetition]);
     await queryClient.resetQueries([runsQueriesKeys.useNodeRepetition]);
@@ -82,7 +82,7 @@ export const AgentChat = ({
     await queryClient.refetchQueries([runsQueriesKeys.useAgentRepetition]);
     await queryClient.refetchQueries([runsQueriesKeys.useAgentActionsRepetition]);
     await queryClient.refetchQueries([runsQueriesKeys.useNodeRepetition]);
-    await queryClient.refetchQueries([runsQueriesKeys.useChatHistory]);
+    await queryClient.refetchQueries([runsQueriesKeys.useRunChatHistory]);
   });
 
   const showStopButton = useMemo(() => {
@@ -161,11 +161,16 @@ export const AgentChat = ({
   }, [textInput, chatInvokeUri, refetchChatHistory]);
 
   useEffect(() => {
+    console.log('#> AgentChat chatHistoryData', chatHistoryData);
     if (!isNullOrUndefined(chatHistoryData)) {
       const newConversations = parseChatHistory(chatHistoryData, toolResultCallback, toolContentCallback, agentCallback);
       setConversation([...newConversations]);
     }
   }, [setConversation, chatHistoryData, dispatch, toolResultCallback, toolContentCallback, agentCallback]);
+
+  useEffect(() => {
+    console.log('#> AgentChat conversation', conversation);
+  }, [conversation]);
 
   const intlText = useMemo(() => {
     return {

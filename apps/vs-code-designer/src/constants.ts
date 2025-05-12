@@ -89,6 +89,7 @@ export const WorkflowType = {
   stateful: 'Stateful-Codeless',
   stateless: 'Stateless-Codeless',
   agentic: 'Agentic-Codeless',
+  stateMachine: 'StateMachine-Codeless',
 } as const;
 export type WorkflowType = (typeof WorkflowType)[keyof typeof WorkflowType];
 
@@ -96,6 +97,7 @@ export const WorkflowKind = {
   stateful: 'Stateful',
   stateless: 'Stateless',
   agentic: 'Agentic',
+  stateMachine: 'StateMachine',
 } as const;
 export type WorkflowKind = (typeof WorkflowKind)[keyof typeof WorkflowKind];
 

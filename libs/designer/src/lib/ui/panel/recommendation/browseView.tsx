@@ -5,7 +5,7 @@ import { BrowseGrid, isBuiltInConnector, isCustomConnector, RuntimeFilterTagList
 import { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { useDiscoveryPanelRelationshipIds } from '../../../core/state/panel/panelSelectors';
-import { useAgenticWorkflow } from '../../../core/state/designerView/designerViewSelectors';
+import { useIsAgenticWorkflow } from '../../../core/state/designerView/designerViewSelectors';
 
 const defaultFilterConnector = (connector: Connector, runtimeFilter: string): boolean => {
   if (runtimeFilter === 'inapp' && !isBuiltInConnector(connector)) {
@@ -63,7 +63,7 @@ export interface BrowseViewProps {
 
 export const BrowseView = (props: BrowseViewProps) => {
   const { filters, isLoadingOperations, displayRuntimeInfo, setFilters } = props;
-  const isAgenticWorkflow = useAgenticWorkflow();
+  const isAgenticWorkflow = useIsAgenticWorkflow();
   const isRoot = useDiscoveryPanelRelationshipIds().graphId === 'root';
 
   const dispatch = useDispatch();

@@ -2,7 +2,7 @@ import { openPanel, useNodesInitialized } from '../core';
 import { useLayout } from '../core/graphlayout';
 import { usePreloadOperationsQuery, usePreloadConnectorsQuery } from '../core/queries/browse';
 import { useMonitoringView, useReadOnly, useHostOptions, useIsVSCode } from '../core/state/designerOptions/designerOptionsSelectors';
-import { useAgenticWorkflow, useClampPan } from '../core/state/designerView/designerViewSelectors';
+import { useIsAgenticWorkflow, useClampPan } from '../core/state/designerView/designerViewSelectors';
 import { clearPanel } from '../core/state/panel/panelSlice';
 import { useIsGraphEmpty } from '../core/state/workflow/workflowSelectors';
 import { buildEdgeIdsBySource, updateNodeSizes } from '../core/state/workflow/workflowSlice';
@@ -172,7 +172,7 @@ export const Designer = (props: DesignerProps) => {
   );
 
   const isMonitoringView = useMonitoringView();
-  const isAgenticWorkflow = useAgenticWorkflow();
+  const isAgenticWorkflow = useIsAgenticWorkflow();
 
   const DND_OPTIONS: any = {
     backends: [

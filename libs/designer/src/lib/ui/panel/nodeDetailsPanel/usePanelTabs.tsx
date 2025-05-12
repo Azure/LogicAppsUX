@@ -1,4 +1,4 @@
-import { useAgenticWorkflow } from '../../../core/state/designerView/designerViewSelectors';
+import { useIsAgenticWorkflow } from '../../../core/state/designerView/designerViewSelectors';
 import constants from '../../../common/constants';
 import type { RootState } from '../../../core';
 import { useNodeMetadata, useOperationInfo } from '../../../core';
@@ -42,7 +42,7 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
   const operationInfo = useOperationInfo(nodeId);
   const nodeMetaData = useNodeMetadata(nodeId);
   const supportedChannels = useSupportedChannels(nodeId);
-  const isAgenticWorkflow = useAgenticWorkflow();
+  const isAgenticWorkflow = useIsAgenticWorkflow();
   const hasSchema = useHasSchema(operationInfo?.connectorId, operationInfo?.operationId);
   const runHistory = useRetryHistory(nodeId);
   const isScopeNode = operationInfo?.type.toLowerCase() === constants.NODE.TYPE.SCOPE;

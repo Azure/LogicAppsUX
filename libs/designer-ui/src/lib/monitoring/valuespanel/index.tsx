@@ -1,10 +1,15 @@
-import { getBrandColorWithOpacity } from '../../card/utils';
+import { Button, Divider } from '@fluentui/react-components';
 import Constants from '../../constants';
 import { ValueDownload } from './valuedownload';
 import { ValueLink } from './valuelink';
 import { ValueList } from './valuelist';
 import type { BoundParameters } from '@microsoft/logic-apps-shared';
-import type React from 'react';
+import React from 'react';
+
+import { bundleIcon, ChevronDown24Filled, ChevronDown24Regular, ChevronRight24Filled, ChevronRight24Regular } from '@fluentui/react-icons';
+
+const ExpandIcon = bundleIcon(ChevronRight24Filled, ChevronRight24Regular);
+const CollapseIcon = bundleIcon(ChevronDown24Filled, ChevronDown24Regular);
 
 export interface ValuesPanelProps {
   brandColor?: string;
@@ -36,22 +41,43 @@ export const ValuesPanel: React.FC<ValuesPanelProps> = ({
   isDownload,
 }) => {
   const borderStyle = {
-    borderColor: getBrandColorWithOpacity(brandColor, 0.7),
+    borderRadius: '8px',
+    background: brandColor,
+    minHeight: '100%',
+    minWidth: '6px',
+  };
+
+  const [expanded, setExpanded] = React.useState(true);
+  const handleToggleExpand = (): void => {
+    setExpanded(!expanded);
   };
 
   return (
-    <section className="msla-trace-inputs-outputs">
-      <div className="msla-trace-inputs-outputs-header">
-        <div className="msla-trace-inputs-outputs-header-text" id={labelledBy} style={borderStyle}>
+    <div className={'msla-editor-initialize-variable'}>
+      <div className={'msla-variable-editor-heading'}>
+        <div style={borderStyle} />
+        <Button
+          appearance="subtle"
+          className="msla-variable-editor-heading-button"
+          onClick={handleToggleExpand}
+          icon={expanded ? <CollapseIcon /> : <ExpandIcon />}
+          aria-expanded={expanded}
+          style={{ justifyContent: 'flex-start', flexGrow: 1 }}
+        >
           {headerText}
-        </div>
+        </Button>
         {linkText ? <ValueLink linkText={linkText} visible={showLink} onLinkClick={onLinkClick} /> : null}
       </div>
-      {isDownload && link ? (
-        <ValueDownload href={link} />
-      ) : (
-        <ValueList labelledBy={labelledBy} noValuesText={noValuesText} showMore={showMore} values={values} onMoreClick={onMoreClick} />
-      )}
-    </section>
+      {expanded ? (
+        <>
+          {isDownload && link ? (
+            <ValueDownload href={link} />
+          ) : (
+            <ValueList labelledBy={labelledBy} noValuesText={noValuesText} showMore={showMore} values={values} onMoreClick={onMoreClick} />
+          )}
+          <Divider />
+        </>
+      ) : null}
+    </div>
   );
 };

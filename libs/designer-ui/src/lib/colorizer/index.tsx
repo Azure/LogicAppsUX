@@ -1,10 +1,23 @@
-import { IconButton, css, useTheme } from '@fluentui/react';
+import { css, useTheme } from '@fluentui/react';
 import type { UTCDateTimeProps } from '../monitoring/values/types';
 import { type Language, themes, Highlight } from 'prism-react-renderer';
 import { useMemo, useRef, useCallback } from 'react';
 import { useIntl } from 'react-intl';
 import { useCopyToClipboard } from 'react-use';
+import {
+  CalendarClockFilled,
+  CalendarClockRegular,
+  ScanTextFilled,
+  ScanTextRegular,
+  CopyFilled,
+  CopyRegular,
+  bundleIcon,
+} from '@fluentui/react-icons';
+import { Button, Tooltip } from '@fluentui/react-components';
 
+const ClockIcon = bundleIcon(CalendarClockFilled, CalendarClockRegular);
+const SelectAllIcon = bundleIcon(ScanTextFilled, ScanTextRegular);
+const CopyIcon = bundleIcon(CopyFilled, CopyRegular);
 export interface ColorizerProps {
   ariaLabel: string;
   code: string;
@@ -83,15 +96,21 @@ export const Colorizer: React.FC<ColorizerProps> = ({ ariaLabel, code, utcProps,
     >
       <div className="buttons">
         {utcProps ? (
-          <IconButton
-            ariaLabel={utcProps?.showUTC ? toggleLocalLabel : toggleUTCLabel}
-            iconProps={{ iconName: 'DateTime' }}
-            onClick={() => utcProps?.toggleUTC((prevState) => !prevState)}
-            title={utcProps?.showUTC ? toggleLocalLabel : toggleUTCLabel}
-          />
+          <Tooltip content={utcProps?.showUTC ? toggleLocalLabel : toggleUTCLabel} relationship="label">
+            <Button
+              aria-label={utcProps?.showUTC ? toggleLocalLabel : toggleUTCLabel}
+              icon={<ClockIcon />}
+              appearance={'subtle'}
+              onClick={() => utcProps?.toggleUTC((prevState) => !prevState)}
+            />
+          </Tooltip>
         ) : null}
-        <IconButton ariaLabel={selectAria} iconProps={{ iconName: 'SelectAll' }} onClick={selectText} title={selectAria} />
-        <IconButton ariaLabel={copyAria} iconProps={{ iconName: 'Copy' }} onClick={copyText} title={copyAria} />
+        <Tooltip content={selectAria} relationship="label">
+          <Button aria-label={selectAria} icon={<SelectAllIcon />} appearance={'subtle'} onClick={selectText} />
+        </Tooltip>
+        <Tooltip content={copyAria} relationship="label">
+          <Button aria-label={copyAria} icon={<CopyIcon />} appearance={'subtle'} onClick={copyText} />
+        </Tooltip>
       </div>
       <Highlight code={code} language={language} theme={theme}>
         {({ className, style, tokens, getLineProps, getTokenProps }) => (
