@@ -5,11 +5,13 @@ import { TemplateContent, TemplatesPanelFooter, type TemplateTabProps } from '@m
 import { useConfigureTemplateWizardTabs } from '../../ui/configuretemplate/tabs/useWizardTabs';
 import { selectWizardTab } from '../state/templates/tabSlice';
 import { setLayerHostSelector } from '@fluentui/react';
-import { TemplateInfoToast } from '../../ui/configuretemplate/toasters';
+import type { TemplateInfoToasterProps } from '../../ui/configuretemplate/toasters';
 import { useIntl } from 'react-intl';
 import { equals, type Template } from '@microsoft/logic-apps-shared';
 
-export const ConfigureTemplateWizard = () => {
+export const ConfigureTemplateWizard = ({
+  onRenderToaster,
+}: { onRenderToaster: (data: TemplateInfoToasterProps, hideToaster: boolean) => void }) => {
   useEffect(() => setLayerHostSelector('#msla-layer-host'), []);
   const dispatch = useDispatch<AppDispatch>();
   const { selectedTabId, isPanelOpen } = useSelector((state: RootState) => ({
@@ -24,6 +26,12 @@ export const ConfigureTemplateWizard = () => {
       setToasterData({ title: '', content: '', show: false });
     }
   }, [selectedTabId]);
+
+  useEffect(() => {
+    if (toasterData) {
+      onRenderToaster(toasterData, isPanelOpen);
+    }
+  }, [isPanelOpen, onRenderToaster, toasterData]);
 
   const onSaveWorkflows = (isMultiWorkflow: boolean) => {
     if (isMultiWorkflow) {
@@ -112,7 +120,6 @@ export const ConfigureTemplateWizard = () => {
 
   return (
     <div>
-      {!isPanelOpen && <TemplateInfoToast {...toasterData} />}
       <TemplateContent className="msla-template-quickview-tabs" tabs={panelTabs} selectedTab={selectedTabId} selectTab={handleSelectTab} />
       <div className="msla-template-overview-footer">
         {selectedTabProps?.footerContent ? <TemplatesPanelFooter {...selectedTabProps?.footerContent} /> : null}

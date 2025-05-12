@@ -61,35 +61,21 @@ export class BaseTemplateResourceService implements ITemplateResourceService {
     }
   }
 
-  public async updateState(resourceId: string, state: string) {
+  public async updateTemplate(resourceId: string, manifest?: Template.TemplateManifest, state?: string) {
     try {
       const { baseUrl, apiVersion, httpClient } = this.options;
       const uri = `${baseUrl}${resourceId}`;
+      const manifestToUpdate: any = manifest ? { ...manifest } : undefined;
 
-      await httpClient.patch({
-        uri,
-        queryParameters: { 'api-version': apiVersion },
-        content: {
-          properties: { state },
-        },
-      });
-    } catch (error) {
-      throw new Error(error as any);
-    }
-  }
+      if (manifest) {
+        manifestToUpdate.supportedSkus = manifest.skus.join(',');
+        manifestToUpdate.keywords = (manifest.tags ?? []).map((tag: string) => tag.trim());
 
-  public async updateTemplate(resourceId: string, manifest: Template.TemplateManifest, state?: string) {
-    try {
-      const { baseUrl, apiVersion, httpClient } = this.options;
-      const uri = `${baseUrl}${resourceId}`;
-      const manifestToUpdate: any = { ...manifest };
-      manifestToUpdate.supportedSkus = manifest.skus.join(',');
-      manifestToUpdate.keywords = (manifest.tags ?? []).map((tag: string) => tag.trim());
-
-      delete manifestToUpdate.id;
-      delete manifestToUpdate.workflows;
-      delete manifestToUpdate.skus;
-      delete manifestToUpdate.tags;
+        delete manifestToUpdate.id;
+        delete manifestToUpdate.workflows;
+        delete manifestToUpdate.skus;
+        delete manifestToUpdate.tags;
+      }
 
       await httpClient.patch({
         uri,

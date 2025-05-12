@@ -103,6 +103,7 @@ export {
 export type { AppDispatch as TemplatesAppDispatch, RootState as TemplatesRootState } from './state/templates/store';
 export type { TemplateServiceOptions } from './templates/TemplatesDesignerContext';
 export { ConfigureTemplateWizard } from './configuretemplate/ConfigureTemplateWizard';
+export type { ConfigureTemplateServiceOptions } from './actions/bjsworkflow/configuretemplate';
 export { validateParameterValues, validateConnections } from './state/templates/templateSlice';
 export { setLocation, setSubscription, setResourceGroup } from './state/templates/workflowSlice';
 export { getConsumptionWorkflowPayloadForCreate } from './templates/utils/createhelper';

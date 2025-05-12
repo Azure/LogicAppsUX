@@ -199,7 +199,7 @@ export const updateWorkflowParameter = createAsyncThunk(
 
     try {
       if (changedStatus) {
-        await service.updateState(manifest?.id as string, changedStatus);
+        await service.updateTemplate(manifest?.id as string, /* manifest */ undefined, changedStatus);
         dispatch(updateEnvironment(changedStatus));
       }
       const parameter = parameterDefinitions[parameterId];
