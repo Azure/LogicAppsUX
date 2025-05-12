@@ -8,6 +8,7 @@ import {
   ToastBody,
   type ToastPosition,
   type ToastPoliteness,
+  type ToastOffset,
 } from '@fluentui/react-components';
 import { useEffect, useMemo } from 'react';
 import { useResourceStrings } from './resources';
@@ -15,7 +16,14 @@ import { useSelector } from 'react-redux';
 import type { RootState } from '../../core/state/templates/store';
 import { useTemplatesStrings } from '../templates/templatesStrings';
 
-export const TemplateInfoToast = ({ title, content, show }: { title: string; content: string; show: boolean }) => {
+export interface TemplateInfoToasterProps {
+  title: string;
+  content: string;
+  show: boolean;
+  offset?: ToastOffset;
+}
+
+export const TemplateInfoToast = ({ title, content, show, offset }: TemplateInfoToasterProps) => {
   const toastId = useId('template-info-toast');
   const toasterId = useId('template-info-toaster');
 
@@ -81,7 +89,7 @@ export const TemplateInfoToast = ({ title, content, show }: { title: string; con
     }
   }, [content, show, title, toastDetails, updateToast]);
 
-  return <Toaster toasterId={toasterId} />;
+  return <Toaster toasterId={toasterId} offset={offset ? offset : { horizontal: 30, vertical: -10 }} />;
 };
 
 const InfoToastContent = ({ type, status, lastSaved }: { type: string; status: string; lastSaved: string }) => {
