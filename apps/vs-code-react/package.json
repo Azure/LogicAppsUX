@@ -1,6 +1,6 @@
 {
   "name": "vscode-react",
-  "version": "5.103.0",
+  "version": "5.104.0",
   "dependencies": {
     "@fluentui/azure-themes": "8.5.70",
     "@fluentui/react": "8.110.2",
