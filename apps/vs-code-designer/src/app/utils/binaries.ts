@@ -34,7 +34,7 @@ import * as semver from 'semver';
 import * as vscode from 'vscode';
 
 import AdmZip = require('adm-zip');
-import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
+import { isNullOrUndefined, isString } from '@microsoft/logic-apps-shared';
 import { setFunctionsCommand } from './funcCoreTools/funcVersion';
 import { startAllDesignTimeApis } from './codeless/startDesignTimeApi';
 
@@ -131,9 +131,18 @@ const getFunctionCoreToolVersionFromGithub = async (context: IActionContext, maj
     if (checkMajorVersion(latestVersion, majorVersion)) {
       return latestVersion;
     }
+    throw new Error(
+      localize(
+        'latestVersionNotFound',
+        'Latest version of Azure Functions Core Tools not found for major version {0}. Latest version is {1}.',
+        majorVersion,
+        latestVersion
+      )
+    );
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : isString(error) ? error : 'Unknown error';
     context.telemetry.properties.latestVersionSource = 'fallback';
-    context.telemetry.properties.errorLatestFunctionCoretoolsVersion = `Error getting latest function core tools version from github: ${error}`;
+    context.telemetry.properties.errorLatestFunctionCoretoolsVersion = `Error getting latest function core tools version from github: ${errorMessage}`;
     return DependencyVersion.funcCoreTools;
   }
 };
