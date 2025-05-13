@@ -103,6 +103,7 @@
   "type": "module",
   "dependencies": {
     "dotenv": "^16.4.5",
+    "file-saver": "2.0.4",
     "find-process": "^1.4.7",
     "fs-extra": "^11.2.0",
     "ts-node": "^10.9.2"

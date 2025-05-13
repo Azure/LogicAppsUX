@@ -1,8 +1,8 @@
-import { Button, Divider, Menu, MenuItem, MenuList, MenuPopover, MenuTrigger, MenuButton } from '@fluentui/react-components';
+import { Button, Divider, Menu, MenuItem, MenuList, MenuPopover, MenuTrigger, MenuButton, Link } from '@fluentui/react-components';
 import type { ReactNode } from 'react';
 
 interface TemplateFooterItemProps {
-  type: 'button' | 'divider';
+  type: 'button' | 'divider' | 'link';
 }
 
 interface TemplateFooterButtonProps extends TemplateFooterItemProps {
@@ -19,12 +19,19 @@ interface TemplateFooterButtonProps extends TemplateFooterItemProps {
   }[];
 }
 
+interface TemplateFooterLinkProps {
+  type: 'link';
+  text: string | ReactNode;
+  onClick: () => void | Promise<void>;
+  disabled?: boolean;
+}
+
 interface DividerProps extends TemplateFooterItemProps {
   type: 'divider';
 }
 
 export interface TemplatePanelFooterProps {
-  buttonContents?: (TemplateFooterButtonProps | DividerProps)[];
+  buttonContents?: (TemplateFooterButtonProps | DividerProps | TemplateFooterLinkProps)[];
 }
 
 const templateFooterItemStyle = {
@@ -100,6 +107,14 @@ export const TemplatesPanelFooter = ({ buttonContents }: TemplatePanelFooterProp
                 paddingLeft: '8px',
               }}
             />
+          );
+        }
+        if (buttonContent?.type === 'link') {
+          const { text, onClick, disabled } = buttonContent;
+          return (
+            <Link style={{ paddingLeft: 20 }} key={index} disabled={disabled} onClick={onClick}>
+              {text}
+            </Link>
           );
         }
         return null;

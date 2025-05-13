@@ -20,7 +20,9 @@ import type { Template } from '@microsoft/logic-apps-shared';
 import { TemplateResourceService } from '@microsoft/logic-apps-shared';
 import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useCallback } from 'react';
-import { getDownloadableTemplate } from '../../../core/actions/bjsworkflow/configuretemplate';
+import JSZip from 'jszip';
+import { saveAs } from 'file-saver';
+import { getDownloadableTemplate } from '../../../core/configuretemplate/utils/helper';
 
 export const useConfigureTemplateWizardTabs = ({
   onSaveWorkflows,
@@ -44,6 +46,8 @@ export const useConfigureTemplateWizardTabs = ({
     templateManifestHasError,
     runValidation,
     selectedTabId,
+    connections,
+    parameterDefinitions,
   } = useSelector((state: RootState) => ({
     enableWizard: state.tab.enableWizard,
     isWizardUpdating: state.tab.isWizardUpdating,
@@ -54,6 +58,8 @@ export const useConfigureTemplateWizardTabs = ({
     parametersHasError: Object.values(state.template.errors.parameters).some((value) => value !== undefined),
     templateManifestHasError: Object.values(state.template.errors.manifest).some((value) => value !== undefined),
     selectedTabId: state.tab.selectedTabId,
+    connections: state.template.connections,
+    parameterDefinitions: state.template.parameterDefinitions,
   }));
 
   const hasAnyWorkflowErrors = Object.values(workflows).some(
@@ -86,13 +92,22 @@ export const useConfigureTemplateWizardTabs = ({
     [queryClient, templateManifest, onSaveTemplate, currentState, dispatch]
   );
 
-  const downloadTemplate = () => {
-    const downloadableTemplate = getDownloadableTemplate(templateManifest as Template.TemplateManifest, workflows);
-    console.log('downloadableTemplate: ', downloadableTemplate);
-    // TODO 1: _#workflowName# is not added in parameter / connection ids
-    // TODO 2: download downloadableTemplate as the structure. Zip is required.
-    // Downloading logic can be checked out in 'libs\designer\src\lib\core\utils\documentation.ts' downloadDocumentAsFile
-  };
+  const downloadTemplate = useCallback(async () => {
+    // TODO: _#workflowName# is not added in parameter / connection ids
+
+    const folderStructure: Template.FolderStructure = await getDownloadableTemplate(
+      templateManifest as Template.TemplateManifest,
+      workflows,
+      connections,
+      parameterDefinitions
+    );
+    const zip = new JSZip();
+    zipFolder(zip, folderStructure);
+
+    zip.generateAsync({ type: 'blob' }).then((content) => {
+      saveAs(content, 'LogicAppsTemplate.zip');
+    });
+  }, [connections, parameterDefinitions, templateManifest, workflows]);
 
   return [
     workflowsTab(resources, dispatch, onSaveWorkflows, {
@@ -121,4 +136,24 @@ export const useConfigureTemplateWizardTabs = ({
       onDownloadTemplate: downloadTemplate,
     }),
   ];
+};
+
+const zipFolder = (zip: JSZip, folder: Template.FolderStructure) => {
+  const folderZip = zip.folder(folder.name);
+
+  if (folderZip) {
+    for (const content of folder.contents) {
+      if (content.type === 'file') {
+        if (content.name.endsWith('.json')) {
+          folderZip.file(content.name, content.data);
+        }
+        // TODO: FIgure out how to handle image files
+        // } else {
+        //   zip.file(content.name, content.data, { base64: true });
+        // }
+      } else {
+        zipFolder(folderZip, content as Template.FolderStructure);
+      }
+    }
+  }
 };

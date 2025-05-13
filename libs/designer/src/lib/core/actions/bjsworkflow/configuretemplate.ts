@@ -45,6 +45,7 @@ import {
   delimiter,
   getConnectionMappingInDefinition,
   getDefinitionFromWorkflowManifest,
+  getManifestAndDefinitionFromWorkflowData,
   getOperationDataInDefinitions,
   getParameterReferencesFromValue,
   getParametersForWorkflow,
@@ -374,29 +375,9 @@ const saveWorkflowsInTemplateInternal = async (
     }
 
     for (const workflowId of Object.keys(workflows)) {
-      const { id, workflowDefinition, manifest, connectionKeys } = workflows[workflowId];
-      const connectionsInWorkflow = (connectionKeys ?? []).reduce((result: Record<string, Template.Connection>, key) => {
-        if (connections[key]) {
-          result[key] = connections[key];
-        }
-        return result;
-      }, {});
-      const parametersInWorkflow = Object.keys(parameterDefinitions).reduce((result: Template.Parameter[], key) => {
-        const { associatedWorkflows } = parameterDefinitions[key];
-        if (associatedWorkflows?.includes(id ?? '')) {
-          const parameter = { ...parameterDefinitions[key] };
-          delete parameter.associatedWorkflows;
-          delete parameter.associatedOperationParameter;
-          result.push(parameter as Template.Parameter);
-        }
-        return result;
-      }, []);
-      promises.push(
-        service.addWorkflow(templateId, id ?? '', {
-          manifest: { ...manifest, connections: connectionsInWorkflow, parameters: parametersInWorkflow } as Template.WorkflowManifest,
-          workflow: workflowDefinition,
-        })
-      );
+      const { id } = workflows[workflowId];
+      const workflowData = getManifestAndDefinitionFromWorkflowData(workflows[workflowId], connections, parameterDefinitions);
+      promises.push(service.addWorkflow(templateId, id ?? '', workflowData));
     }
 
     await Promise.all(promises);
@@ -826,67 +807,6 @@ export const getWorkflowsWithDefinitions = async (
   }, {});
 
   return allWorkflowsData;
-};
-
-export const getDownloadableTemplate = (
-  templateManifest: Template.TemplateManifest,
-  workflowDatas: Record<string, { manifest: Template.WorkflowManifest; workflowDefinition: any }>
-) => {
-  const templateName = getResourceNameFromId(templateManifest.id);
-
-  const theTemplateManifest = {
-    ...templateManifest,
-    id: templateName,
-    workflows: { ...templateManifest.workflows },
-  } as Template.TemplateManifest;
-
-  const workflowFolderContents = [];
-  const workflowDatasCopy = [...Object.entries(workflowDatas)];
-
-  for (const [workflowId, workflowData] of workflowDatasCopy) {
-    theTemplateManifest.workflows[workflowId] = { name: workflowId };
-
-    // Clean up workflowManifest
-    const workflowManifest = { ...workflowData.manifest };
-    delete workflowManifest.metadata;
-    workflowManifest.artifacts = [
-      {
-        type: 'workflow',
-        file: 'workflow.json',
-      },
-    ];
-
-    // Pushing to workflowFolderContents
-    workflowFolderContents.push({
-      type: 'folder',
-      name: workflowId,
-      contents: [
-        {
-          type: 'file',
-          name: 'manifest.json',
-          data: JSON.stringify(workflowManifest, null, 2),
-        },
-        {
-          type: 'file',
-          name: 'workflow.json',
-          data: JSON.stringify(workflowData.workflowDefinition, null, 2),
-        },
-      ],
-    });
-  }
-
-  return {
-    type: 'folder',
-    name: templateName,
-    contents: [
-      {
-        type: 'file',
-        name: 'manifest.json',
-        data: JSON.stringify(theTemplateManifest, null, 2),
-      },
-      ...workflowFolderContents,
-    ],
-  };
 };
 
 const getUpdatedTemplateManifest = (
