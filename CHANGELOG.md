@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [5.94.16](https://github.com/Azure/LogicAppsUX/compare/v5.94.15...v5.94.16) (2025-05-13)
+
+
+### Bug Fixes
+
+* **vscode:** Add fallback for function core tools installation  ([#7229](https://github.com/Azure/LogicAppsUX/issues/7229)) ([5f7be83](https://github.com/Azure/LogicAppsUX/commit/5f7be8399605e3f0ff07e81df3de88c68b1c0728)), closes [#7228](https://github.com/Azure/LogicAppsUX/issues/7228)
+
 ### [5.94.15](https://github.com/Azure/LogicAppsUX/compare/v5.94.14...v5.94.15) (2025-05-09)
 
 
