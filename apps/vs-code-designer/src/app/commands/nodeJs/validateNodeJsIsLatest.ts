@@ -27,10 +27,13 @@ export async function validateNodeJsIsLatest(majorVersion?: string): Promise<voi
       context.telemetry.properties.binaryCommand = `${getNodeJsCommand()}`;
     } else if (showNodeJsWarning) {
       context.telemetry.properties.binaryCommand = `${getNodeJsCommand()}`;
-      const localVersion: string | null = await getLocalNodeJsVersion();
+      const localVersion: string | null = await getLocalNodeJsVersion(context);
       context.telemetry.properties.localVersion = localVersion;
       const newestVersion: string | undefined = await getLatestNodeJsVersion(context, majorVersion);
-      if (semver.major(newestVersion) === semver.major(localVersion) && semver.gt(newestVersion, localVersion)) {
+
+      if (localVersion === null) {
+        await installNodeJs(context, majorVersion);
+      } else if (semver.major(newestVersion) === semver.major(localVersion) && semver.gt(newestVersion, localVersion)) {
         context.telemetry.properties.outOfDateDotNet = 'true';
         const message: string = localize(
           'outdatedNodeJsRuntime',

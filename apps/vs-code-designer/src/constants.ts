@@ -274,7 +274,7 @@ export const defaultDataMapperVersion = 1;
 // Fallback Dependency Versions
 export const DependencyVersion = {
   dotnet6: '6.0.413',
-  funcCoreTools: '4.0.5455',
+  funcCoreTools: '4.0.7030',
   nodeJs: '18.17.1',
 } as const;
 export type DependencyVersion = (typeof DependencyVersion)[keyof typeof DependencyVersion];
