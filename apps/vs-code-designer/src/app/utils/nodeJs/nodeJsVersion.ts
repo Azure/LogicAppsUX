@@ -2,6 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { Platform, autoRuntimeDependenciesPathSettingKey, nodeJsBinaryPathSettingKey, nodeJsDependencyName } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { executeCommand } from '../funcCoreTools/cpUtils';
@@ -9,12 +10,13 @@ import { getGlobalSetting, updateGlobalSetting } from '../vsCodeConfig/settings'
 import * as fs from 'fs';
 import * as path from 'path';
 import * as semver from 'semver';
+import { isString } from '@microsoft/logic-apps-shared';
 
 /**
  * Executes nodejs version command and gets it from cli.
  * @returns {Promise<string | null>} Functions core tools version.
  */
-export async function getLocalNodeJsVersion(): Promise<string | null> {
+export async function getLocalNodeJsVersion(context: IActionContext): Promise<string | null> {
   try {
     const output: string = await executeCommand(undefined, undefined, `${getNodeJsCommand()}`, '--version');
     const version: string | null = semver.clean(output);
@@ -23,6 +25,8 @@ export async function getLocalNodeJsVersion(): Promise<string | null> {
     }
     return null;
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : isString(error) ? error : 'Unknown error';
+    context.telemetry.properties.error = errorMessage;
     return null;
   }
 }

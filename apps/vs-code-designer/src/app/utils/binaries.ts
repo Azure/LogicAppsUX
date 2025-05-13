@@ -36,7 +36,7 @@ import * as vscode from 'vscode';
 import AdmZip = require('adm-zip');
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { setFunctionsCommand } from './funcCoreTools/funcVersion';
-import { startDesignTimeApi } from './codeless/startDesignTimeApi';
+import { startAllDesignTimeApis } from './codeless/startDesignTimeApi';
 
 /**
  * Download and Extracts dependency zip.
@@ -100,7 +100,7 @@ export async function downloadAndExtractDependency(
         vscode.window.showInformationMessage(localize('successInstall', `Successfully installed ${dependencyName}`));
         if (dependencyName === funcDependencyName) {
           await setFunctionsCommand();
-          await startDesignTimeApi(ext.logicAppWorkspace);
+          await startAllDesignTimeApis();
         }
       }
       // remove the temp folder.
@@ -120,45 +120,50 @@ export async function downloadAndExtractDependency(
   });
 }
 
+const getFunctionCoreToolVersionFromGithub = async (context: IActionContext, majorVersion: string): Promise<string> => {
+  try {
+    const response: IGitHubReleaseInfo = await readJsonFromUrl(
+      'https://api.github.com/repos/Azure/azure-functions-core-tools/releases/latest'
+    );
+    const latestVersion = semver.valid(semver.coerce(response.tag_name));
+    context.telemetry.properties.latestVersionSource = 'github';
+    context.telemetry.properties.latestGithubVersion = response.tag_name;
+    if (checkMajorVersion(latestVersion, majorVersion)) {
+      return latestVersion;
+    }
+  } catch (error) {
+    context.telemetry.properties.latestVersionSource = 'fallback';
+    context.telemetry.properties.errorLatestFunctionCoretoolsVersion = `Error getting latest function core tools version from github: ${error}`;
+    return DependencyVersion.funcCoreTools;
+  }
+};
+
 export async function getLatestFunctionCoreToolsVersion(context: IActionContext, majorVersion?: string): Promise<string> {
   context.telemetry.properties.funcCoreTools = majorVersion;
 
   // Use npm to find newest func core tools version
   const hasNodeJs = await isNodeJsInstalled();
-  let latestVersion: string | null;
-  if (majorVersion && hasNodeJs) {
-    context.telemetry.properties.latestVersionSource = 'node';
-    const npmCommand = getNpmCommand();
-    try {
-      latestVersion = (await executeCommand(undefined, undefined, `${npmCommand}`, 'view', funcPackageName, 'version'))?.trim();
-      if (checkMajorVersion(latestVersion, majorVersion)) {
-        return latestVersion;
-      }
-    } catch (error) {
-      context.telemetry.properties.getLatestFunctionCoreToolsVersion = 'fallback';
-      context.telemetry.properties.errorLatestFunctionCoretoolsVersion = `Error executing npm command to get latest function core tools version: ${error}`;
-      return DependencyVersion.funcCoreTools;
-    }
-  } else if (majorVersion) {
-    // fallback to github api to look for latest version
-    return await readJsonFromUrl('https://api.github.com/repos/Azure/azure-functions-core-tools/releases/latest')
-      .then((response: IGitHubReleaseInfo) => {
-        latestVersion = semver.valid(semver.coerce(response.tag_name));
-        context.telemetry.properties.latestVersionSource = 'github';
-        context.telemetry.properties.latestGithubVersion = response.tag_name;
+
+  if (majorVersion) {
+    if (hasNodeJs) {
+      context.telemetry.properties.latestVersionSource = 'node';
+      try {
+        const npmCommand = getNpmCommand();
+        const latestVersion = (await executeCommand(undefined, undefined, `${npmCommand}`, 'view', funcPackageName, 'version'))?.trim();
         if (checkMajorVersion(latestVersion, majorVersion)) {
           return latestVersion;
         }
-      })
-      .catch((error) => {
-        context.telemetry.properties.getLatestFunctionCoreToolsVersion = 'fallback';
-        context.telemetry.properties.errorLatestFunctionCoretoolsVersion = `Error getting latest Function Core tools version: ${error}`;
-        return DependencyVersion.funcCoreTools;
-      });
+      } catch (error) {
+        context.telemetry.properties.errorLatestFunctionCoretoolsVersion = `Error executing npm command to get latest function core tools version: ${error}`;
+        // Fallback to GitHub
+        return await getFunctionCoreToolVersionFromGithub(context, majorVersion);
+      }
+    } else {
+      return await getFunctionCoreToolVersionFromGithub(context, majorVersion);
+    }
   }
-
   // Fall back to hardcoded version
-  context.telemetry.properties.getLatestFunctionCoreToolsVersion = 'fallback';
+  context.telemetry.properties.latestVersionSource = 'fallback';
   return DependencyVersion.funcCoreTools;
 }
 
