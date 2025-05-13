@@ -1,4 +1,3 @@
-import type { AnyAction, ThunkDispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import type {
   IConnectionService,
@@ -270,7 +269,7 @@ export const initializeAndSaveWorkflowsData = createAsyncThunk(
     { getState, dispatch }
   ): Promise<void> => {
     const { manifest, status: oldState } = (getState() as RootState).template;
-    const { connections, mapping, workflowsWithDefinitions } = await getTemplateConnections(getState() as RootState, dispatch, workflows);
+    const { connections, mapping, workflowsWithDefinitions } = await getTemplateConnections(getState() as RootState, workflows);
     const operationsData = await getOperationDataInDefinitions(
       workflowsWithDefinitions as Record<string, WorkflowTemplateData>,
       connections
@@ -516,11 +515,7 @@ export const deleteWorkflowData = createAsyncThunk(
   }
 );
 
-export const getTemplateConnections = async (
-  state: RootState,
-  dispatch: ThunkDispatch<unknown, unknown, AnyAction>,
-  workflows: Record<string, Partial<WorkflowTemplateData>>
-) => {
+export const getTemplateConnections = async (state: RootState, workflows: Record<string, Partial<WorkflowTemplateData>>) => {
   const {
     workflow: { subscriptionId, resourceGroup, isConsumption, logicAppName },
   } = state;

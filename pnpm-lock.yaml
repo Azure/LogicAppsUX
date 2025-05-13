@@ -305,7 +305,7 @@ importers:
         version: 4.36.1(@tanstack/react-query@4.36.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0))
       axios:
         specifier: ^1.7.7
-        version: 1.7.7
+        version: 1.7.7(debug@4.3.4)
       axios-retry:
         specifier: ^3.5.0
         version: 3.9.1
@@ -469,7 +469,7 @@ importers:
         version: 0.5.12
       axios:
         specifier: ^1.7.7
-        version: 1.7.7
+        version: 1.7.7(debug@4.3.4)
       azure-storage:
         specifier: ^2.10.3
         version: 2.10.7
@@ -946,8 +946,8 @@ importers:
         specifier: 0.8.2
         version: 0.8.2
       file-saver:
-        specifier: 2.0.4
-        version: 2.0.4
+        specifier: 2.0.5
+        version: 2.0.5
       fuse.js:
         specifier: 6.6.2
         version: 6.6.2
@@ -1024,6 +1024,9 @@ importers:
       '@formatjs/intl':
         specifier: ^2.10.1
         version: 2.10.1(typescript@4.9.5)
+      '@types/file-saver':
+        specifier: ^2.0.5
+        version: 2.0.7
       '@types/lodash.frompairs':
         specifier: ^4.0.9
         version: 4.0.9
@@ -1177,7 +1180,7 @@ importers:
         version: 0.0.37
       axios:
         specifier: ^1.7.7
-        version: 1.7.7
+        version: 1.7.7(debug@4.3.4)
       react:
         specifier: ^16.4.0 || ^17.0.0 || ^18.0.0
         version: 18.2.0
@@ -1222,7 +1225,7 @@ importers:
         version: 12.3.5(@types/react@18.3.0)(immer@9.0.15)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       axios:
         specifier: ^1.7.7
-        version: 1.7.7
+        version: 1.7.7(debug@4.3.4)
       react:
         specifier: ^16.4.0 || ^17.0.0 || ^18.0.0
         version: 18.3.1
@@ -5143,6 +5146,9 @@ packages:
   '@types/express@4.17.21':
     resolution: {integrity: sha512-ejlPM315qwLpaQlQDTjPdsUFSc6ZsP4AN6AlWnogPjQ7CVi7PYF3YVz+CY3jE2pwYf7E/7HlDAN0rV2GxTG0HQ==}
 
+  '@types/file-saver@2.0.7':
+    resolution: {integrity: sha1-jbsvJL3HSGxUqoVOtBSUC70Fb30=}
+
   '@types/fs-extra@11.0.4':
     resolution: {integrity: sha512-yTbItCNreRooED33qjunPthRcSjERP1r4MqCZc7wv0u2sUkzTFp45tgUfS5+r7FrZPdmCCNflLhVSP/o+SemsQ==}
 
@@ -7613,6 +7619,9 @@ packages:
 
   file-saver@2.0.4:
     resolution: {integrity: sha1-RMQOg1MZyYNqhCIbTiVdS7TLe7U=}
+
+  file-saver@2.0.5:
+    resolution: {integrity: sha1-1hz+LOBZ9BTYmendbUEH7iVnDDg=}
 
   filesize@8.0.7:
     resolution: {integrity: sha512-pjmC+bkIF8XI7fWaH8KxHcZL3DPybs1roSKP4rKDvy20tAWwIObE4+JIseG2byfGKhud5ZnM4YSGKBz7Sh0ndQ==}
@@ -18743,6 +18752,8 @@ snapshots:
       '@types/qs': 6.9.14
       '@types/serve-static': 1.15.6
 
+  '@types/file-saver@2.0.7': {}
+
   '@types/fs-extra@11.0.4':
     dependencies:
       '@types/jsonfile': 6.1.4
@@ -19840,14 +19851,6 @@ snapshots:
     dependencies:
       '@babel/runtime': 7.24.4
       is-retry-allowed: 2.2.0
-
-  axios@1.7.7:
-    dependencies:
-      follow-redirects: 1.15.9(debug@4.3.7)
-      form-data: 4.0.0
-      proxy-from-env: 1.1.0
-    transitivePeerDependencies:
-      - debug
 
   axios@1.7.7(debug@4.3.4):
     dependencies:
@@ -21075,7 +21078,7 @@ snapshots:
   docusaurus-plugin-remote-content@4.0.0(@docusaurus/core@3.6.1(@mdx-js/react@3.1.0(@types/react@18.3.0)(react@18.3.1))(esbuild@0.19.12)(eslint@8.57.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3)):
     dependencies:
       '@docusaurus/core': 3.6.1(@mdx-js/react@3.1.0(@types/react@18.3.0)(react@18.3.1))(esbuild@0.19.12)(eslint@8.57.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3)
-      axios: 1.7.7
+      axios: 1.7.7(debug@4.3.4)
       picocolors: 1.0.0
       pretty-ms: 7.0.1
       rimraf: 5.0.5
@@ -21868,6 +21871,8 @@ snapshots:
       webpack: 5.96.1(esbuild@0.19.12)
 
   file-saver@2.0.4: {}
+
+  file-saver@2.0.5: {}
 
   filesize@8.0.7: {}
 
