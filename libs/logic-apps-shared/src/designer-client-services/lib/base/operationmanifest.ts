@@ -42,6 +42,7 @@ import switchManifest from './manifests/switch';
 import agentloopManifest from '../standard/manifest/agentloop';
 import terminateManifest from './manifests/terminate';
 import untilManifest from './manifests/until';
+import { inlinePythonManifest } from './manifests/inlinecode';
 
 const apimanagement = 'apimanagement';
 const apimanagementtrigger = 'apimanagementtrigger';
@@ -55,6 +56,7 @@ const invokefunction = 'invokefunction';
 const javascriptcode = 'javascriptcode';
 const powershellcode = 'powershellcode';
 const csharpcode = 'csharpscriptcode';
+const pythoncode = 'pythoncode';
 const compose = 'compose';
 const csvtable = 'csvtable';
 const htmltable = 'htmltable';
@@ -174,6 +176,7 @@ export const supportedBaseManifestTypes = [
   javascriptcode,
   powershellcode,
   csharpcode,
+  pythoncode,
   join,
   liquid,
   parsejson,
@@ -589,6 +592,10 @@ const builtInOperationsMetadata: Record<string, OperationInfo> = {
     connectorId: inlineCodeConnectorId,
     operationId: csharpcode,
   },
+  [pythoncode]: {
+    connectorId: inlineCodeConnectorId,
+    operationId: pythoncode,
+  },
   [join]: {
     connectorId: dataOperationConnectorId,
     operationId: join,
@@ -781,6 +788,7 @@ export const supportedBaseManifestObjects = new Map<string, OperationManifest>([
   [agentType, agentloopManifest],
   [terminate, terminateManifest],
   [until, untilManifest],
+  [pythoncode, inlinePythonManifest],
 ]);
 
 export const foreachOperationInfo = {

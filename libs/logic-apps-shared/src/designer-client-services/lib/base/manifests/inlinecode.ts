@@ -128,3 +128,67 @@ export const inlinePowershellManifest = {
     } as any,
   },
 } as OperationManifest;
+
+export const inlinePythonManifest = {
+  properties: {
+    iconUri: 'https://logicappsv2resources.blob.core.windows.net/icons/inline_code.svg',
+    brandColor: '#ba5d00',
+    description: 'Execute Python Code',
+    summary: 'Execute Python Code',
+
+    environmentBadge: coreBadge,
+
+    inputs: {
+      type: 'object',
+      required: ['code'],
+      properties: {
+        code: {
+          title: 'Code',
+          description: 'Executes simple Python code with the ability to reference agent parameters',
+          required: true,
+          'x-ms-editor': 'code',
+          'x-ms-editor-options': {
+            language: 'python',
+            rawValue: true,
+          },
+          default: 'print("hello world")',
+        },
+        sessionId: {
+          type: 'string',
+          title: 'The Session ID',
+          description: 'The ACA session Id',
+        },
+      },
+    },
+    isInputsOptional: false,
+
+    outputs: {
+      type: 'object',
+      required: ['body'],
+      properties: {
+        body: {
+          type: 'string',
+          title: 'Result',
+          description: 'The return value of the Python code execution',
+        },
+      },
+    },
+    isOutputsOptional: false,
+
+    connector: {
+      id: 'connectionProviders/inlineCode',
+      name: 'inlineCode',
+      properties: {
+        description: 'Inline Code',
+        displayName: 'Inline Code',
+      },
+    } as any,
+
+    settings: {
+      secureData: {},
+      trackedProperties: {
+        scopes: [SettingScope.Action],
+      },
+    },
+  },
+} as OperationManifest;

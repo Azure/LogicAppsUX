@@ -78,6 +78,7 @@ export class ConsumptionSearchService extends BaseSearchService {
       ClientOperationsData.parsedocument,
       ClientOperationsData.parsedocumentwithmetadata,
       OperationsData.inlineCodeOperation,
+      OperationsData.inlinePythonCodeOperation,
       OperationsData.flatFileDecodingOperations,
       OperationsData.flatFileEncodingOperations,
       OperationsData.integrationAccountArtifactLookupOperation,

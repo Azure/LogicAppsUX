@@ -20,7 +20,12 @@ import {
 } from '../../../../../core/state/selectors/actionMetadataSelector';
 import type { AgentParameterDeclaration, VariableDeclaration } from '../../../../../core/state/tokens/tokensSlice';
 import { addAgentParameterToNode, updateAgentParameter, updateVariableInfo } from '../../../../../core/state/tokens/tokensSlice';
-import { useGetSwitchOrAgentParentId, useNodeMetadata, useReplacedIds } from '../../../../../core/state/workflow/workflowSelectors';
+import {
+  useGetSwitchOrAgentParentId,
+  useIsWithinAgenticLoop,
+  useNodeMetadata,
+  useReplacedIds,
+} from '../../../../../core/state/workflow/workflowSelectors';
 import type { AppDispatch, RootState } from '../../../../../core/store';
 import { getConnectionReference } from '../../../../../core/utils/connectors/connections';
 import { isRootNodeInGraph } from '../../../../../core/utils/graph';
@@ -256,6 +261,8 @@ const ParameterSection = ({
         nodesMetadata: state.workflow.nodesMetadata,
       };
     });
+  const nodeGraphId = getRecordEntry(nodesMetadata, nodeId)?.graphId;
+  const isWithinAgenticLoop = useIsWithinAgenticLoop(nodeGraphId);
   const rootState = useSelector((state: RootState) => state);
   const displayNameResult = useConnectorName(operationInfo);
   const panelLocation = usePanelLocation();
@@ -748,6 +755,7 @@ const ParameterSection = ({
           ) => getTokenPicker(param, editorId, labelId, tokenPickerMode, editorType, isCodeEditor, tokenClickedCallback),
           subComponent: subComponent,
           subMenu: subMenu,
+          hideTokenPicker: !isWithinAgenticLoop /* only used in python code editor */,
         },
       };
     });

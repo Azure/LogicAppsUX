@@ -481,6 +481,7 @@ export default {
         JAVASCRIPT: 'javascript',
         JSON: 'json',
         POWERSHELL: 'powershell',
+        PYTHON: 'python',
       },
     },
     VARIABLE_EDITOR_MAX_VARIABLES: 20,
