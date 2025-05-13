@@ -11,6 +11,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as semver from 'semver';
 import { isString } from '@microsoft/logic-apps-shared';
+import { binariesExist } from '../binaries';
 
 /**
  * Executes nodejs version command and gets it from cli.
@@ -37,9 +38,9 @@ export async function getLocalNodeJsVersion(context: IActionContext): Promise<st
 export function getNpmCommand(): string {
   const binariesLocation = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
   const nodeJsBinariesPath = path.join(binariesLocation, nodeJsDependencyName);
-  const binariesExist = fs.existsSync(nodeJsBinariesPath);
+  const binaries = binariesExist(nodeJsDependencyName);
   let command = ext.npmCliPath;
-  if (binariesExist) {
+  if (binaries) {
     // windows the executable is at root folder, linux & macos its in the bin
     command = path.join(nodeJsBinariesPath, ext.npmCliPath);
     if (process.platform !== Platform.windows) {

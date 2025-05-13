@@ -141,30 +141,26 @@ const getFunctionCoreToolVersionFromGithub = async (context: IActionContext, maj
 export async function getLatestFunctionCoreToolsVersion(context: IActionContext, majorVersion?: string): Promise<string> {
   context.telemetry.properties.funcCoreTools = majorVersion;
 
+  if (!majorVersion) {
+    context.telemetry.properties.latestVersionSource = 'fallback';
+    return DependencyVersion.funcCoreTools;
+  }
+
   // Use npm to find newest func core tools version
   const hasNodeJs = await isNodeJsInstalled();
-
-  if (majorVersion) {
-    if (hasNodeJs) {
-      context.telemetry.properties.latestVersionSource = 'node';
-      try {
-        const npmCommand = getNpmCommand();
-        const latestVersion = (await executeCommand(undefined, undefined, `${npmCommand}`, 'view', funcPackageName, 'version'))?.trim();
-        if (checkMajorVersion(latestVersion, majorVersion)) {
-          return latestVersion;
-        }
-      } catch (error) {
-        context.telemetry.properties.errorLatestFunctionCoretoolsVersion = `Error executing npm command to get latest function core tools version: ${error}`;
-        // Fallback to GitHub
-        return await getFunctionCoreToolVersionFromGithub(context, majorVersion);
+  if (hasNodeJs) {
+    context.telemetry.properties.latestVersionSource = 'node';
+    try {
+      const npmCommand = getNpmCommand();
+      const latestVersion = (await executeCommand(undefined, undefined, `${npmCommand}`, 'view', funcPackageName, 'version'))?.trim();
+      if (checkMajorVersion(latestVersion, majorVersion)) {
+        return latestVersion;
       }
-    } else {
-      return await getFunctionCoreToolVersionFromGithub(context, majorVersion);
+    } catch (error) {
+      context.telemetry.properties.errorLatestFunctionCoretoolsVersion = `Error executing npm command to get latest function core tools version: ${error}`;
     }
   }
-  // Fall back to hardcoded version
-  context.telemetry.properties.latestVersionSource = 'fallback';
-  return DependencyVersion.funcCoreTools;
+  return await getFunctionCoreToolVersionFromGithub(context, majorVersion);
 }
 
 /**
