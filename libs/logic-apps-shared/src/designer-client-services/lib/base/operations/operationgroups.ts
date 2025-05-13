@@ -14,7 +14,7 @@ export const agentGroup = {
   id: 'connectionProviders/agent',
   name: 'agent',
   properties: {
-    brandColor: '#268BDE',
+    brandColor: '#3352b9',
     description: 'Agent operations',
     displayName: 'Agent',
     capabilities: ['actions', 'triggers'],

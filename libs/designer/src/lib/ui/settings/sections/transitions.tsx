@@ -3,7 +3,7 @@ import type { AppDispatch, RootState } from '../../../core';
 import { useActionMetadata, useRootTriggerId } from '../../../core/state/workflow/workflowSelectors';
 import { removeEdgeFromTransitions, updateTransitions } from '../../../core/state/workflow/workflowSlice';
 import { validateNodeSettings } from '../validation/validation';
-import { getRecordEntry, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
+import { getRecordEntry, RUN_AFTER_STATUS, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { TransitionsActionDetails, type TransitionsActionDetailsProps } from './transitionsConfiguration';
@@ -27,13 +27,24 @@ export const Transitions = ({ nodeId = '', readOnly = false }): JSX.Element | nu
       if (!nodeData?.transitions) {
         return;
       }
-      const statuses = [...(getRecordEntry(nodeData?.transitions ?? {}, targetId)?.when ?? [])];
-      if (checked) {
-        if (!statuses.includes(status)) {
-          statuses.push(status);
+
+      let statuses = [...(getRecordEntry(nodeData?.transitions ?? {}, targetId)?.when ?? [])];
+      statuses = statuses.map((s) => s.toUpperCase());
+      if (status.toUpperCase() === RUN_AFTER_STATUS.HANDOFF) {
+        statuses = [RUN_AFTER_STATUS.HANDOFF];
+      } else {
+        if (checked) {
+          if (!statuses.includes(status.toUpperCase())) {
+            statuses.push(status);
+          }
+        } else if (statuses.includes(status)) {
+          statuses.splice(statuses.indexOf(status), 1);
         }
-      } else if (statuses.includes(status)) {
-        statuses.splice(statuses.indexOf(status), 1);
+
+        // If there is a handoff status, remove it from the list
+        if (statuses.includes(RUN_AFTER_STATUS.HANDOFF)) {
+          statuses.splice(statuses.indexOf(RUN_AFTER_STATUS.HANDOFF), 1);
+        }
       }
 
       const oldTransitionData = nodeData.transitions?.[targetId] ?? {};

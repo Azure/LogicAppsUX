@@ -7,7 +7,7 @@ export default {
   properties: {
     displayName: 'Agent',
     iconUri: 'https://logicapps.azureedge.net/icons/azureopenai/icon.svg',
-    brandColor: '#268bde',
+    brandColor: '#3352b9',
     description: 'Easily integrate cutting-edge artificial intelligence capabilities into your workflows',
     capabilities: ['actions'],
     connectionParameterSets: {

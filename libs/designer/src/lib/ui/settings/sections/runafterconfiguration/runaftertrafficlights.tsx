@@ -31,6 +31,7 @@ export function RunAfterTrafficLights({ statuses = [] }: RunAfterTrafficLightsPr
       <Dot status={RUN_AFTER_STATUS.TIMEDOUT} />
       <Dot status={RUN_AFTER_STATUS.SKIPPED} />
       <Dot status={RUN_AFTER_STATUS.FAILED} />
+      <Dot status={RUN_AFTER_STATUS.HANDOFF} />
     </div>
   );
 }
