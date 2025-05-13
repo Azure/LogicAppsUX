@@ -42,6 +42,7 @@ import switchManifest from './manifests/switch';
 import agentloopManifest from '../standard/manifest/agentloop';
 import terminateManifest from './manifests/terminate';
 import untilManifest from './manifests/until';
+import { composeManifest } from '../consumption/manifests/compose';
 
 const apimanagement = 'apimanagement';
 const apimanagementtrigger = 'apimanagementtrigger';
@@ -56,6 +57,7 @@ const javascriptcode = 'javascriptcode';
 const powershellcode = 'powershellcode';
 const csharpcode = 'csharpscriptcode';
 const compose = 'compose';
+const composenew = 'composenew';
 const csvtable = 'csvtable';
 const htmltable = 'htmltable';
 const join = 'join';
@@ -781,6 +783,7 @@ export const supportedBaseManifestObjects = new Map<string, OperationManifest>([
   [agentType, agentloopManifest],
   [terminate, terminateManifest],
   [until, untilManifest],
+  [composenew, composeManifest],
 ]);
 
 export const foreachOperationInfo = {
