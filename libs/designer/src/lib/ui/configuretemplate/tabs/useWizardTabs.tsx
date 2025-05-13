@@ -38,7 +38,7 @@ export const useConfigureTemplateWizardTabs = ({
     enableWizard,
     isWizardUpdating,
     templateManifest,
-    currentStatus,
+    currentState,
     workflows,
     parametersHasError,
     templateManifestHasError,
@@ -49,7 +49,7 @@ export const useConfigureTemplateWizardTabs = ({
     isWizardUpdating: state.tab.isWizardUpdating,
     runValidation: state.tab.runValidation,
     templateManifest: state.template.manifest,
-    currentStatus: state.template.status,
+    currentState: state.template.status,
     workflows: state.template.workflows,
     parametersHasError: Object.values(state.template.errors.parameters).some((value) => value !== undefined),
     templateManifestHasError: Object.values(state.template.errors.manifest).some((value) => value !== undefined),
@@ -74,22 +74,16 @@ export const useConfigureTemplateWizardTabs = ({
 
   const handleSaveTemplate = useCallback(
     async (newPublishState: Template.TemplateEnvironment) => {
-      const manifestToUpdate: Template.TemplateManifest = {
-        ...(templateManifest as Template.TemplateManifest),
-        details: {
-          ...templateManifest?.details,
-          Type: Object.keys(workflows).length > 1 ? 'Accelerator' : 'Workflow',
-        } as any,
-      };
       dispatch(setRunValidation(true));
       const templateId = templateManifest?.id as string;
-      await TemplateResourceService().updateTemplate(templateId, manifestToUpdate, newPublishState);
+
+      await TemplateResourceService().updateTemplate(templateId, /* manifest */ undefined, newPublishState);
 
       queryClient.removeQueries(['template', templateId.toLowerCase()]);
-      onSaveTemplate(currentStatus ?? 'Development', newPublishState);
+      onSaveTemplate(currentState as Template.TemplateEnvironment, newPublishState);
       dispatch(updateEnvironment(newPublishState));
     },
-    [queryClient, templateManifest, workflows, onSaveTemplate, currentStatus, dispatch]
+    [queryClient, templateManifest, onSaveTemplate, currentState, dispatch]
   );
 
   const downloadTemplate = () => {
@@ -116,13 +110,13 @@ export const useConfigureTemplateWizardTabs = ({
     profileTab(intl, resources, dispatch, {
       tabStatusIcon: templateManifestHasError ? 'error' : runValidation ? 'success' : enableWizard ? 'in-progress' : undefined,
       disabled: !enableWizard || isWizardUpdating,
-      status: currentStatus,
+      status: currentState,
       onSave: handleSaveTemplate,
     }),
     summaryTab(resources, dispatch, {
       tabStatusIcon: undefined,
       disabled: !enableWizard || isWizardUpdating,
-      status: currentStatus,
+      status: currentState,
       onSave: handleSaveTemplate,
       onDownloadTemplate: downloadTemplate,
     }),

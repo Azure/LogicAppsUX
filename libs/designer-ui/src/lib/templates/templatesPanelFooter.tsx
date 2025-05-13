@@ -1,14 +1,4 @@
-import {
-  Button,
-  Divider,
-  Menu,
-  type MenuButtonProps,
-  MenuItem,
-  MenuList,
-  MenuPopover,
-  MenuTrigger,
-  SplitButton,
-} from '@fluentui/react-components';
+import { Button, Divider, Menu, MenuItem, MenuList, MenuPopover, MenuTrigger, MenuButton } from '@fluentui/react-components';
 import type { ReactNode } from 'react';
 
 interface TemplateFooterItemProps {
@@ -54,18 +44,13 @@ export const TemplatesPanelFooter = ({ buttonContents }: TemplatePanelFooterProp
             return (
               <Menu key={index} positioning="below-end">
                 <MenuTrigger disableButtonEnhancement>
-                  {(triggerProps: MenuButtonProps) => (
-                    // TODO: change back to button, we are not using splitbutton capability
-                    <SplitButton
-                      style={index < buttonContents.length ? templateFooterItemStyle : {}}
-                      menuButton={triggerProps}
-                      primaryActionButton={triggerProps}
-                      appearance={appreance}
-                      disabled={disabled}
-                    >
-                      {text}
-                    </SplitButton>
-                  )}
+                  <MenuButton
+                    style={index < buttonContents.length ? templateFooterItemStyle : {}}
+                    appearance={appreance}
+                    disabled={disabled}
+                  >
+                    {text}
+                  </MenuButton>
                 </MenuTrigger>
 
                 <MenuPopover>

@@ -63,8 +63,8 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
         description: 'Button text for opening panel for adding workflows',
       }),
       EDIT: intl.formatMessage({
-        defaultMessage: 'Edit',
-        id: 'p2eSD1',
+        defaultMessage: 'Manage workflows',
+        id: 'FK8YcR',
         description: 'Button text for opening panel for editing workflows',
       }),
       ADD_WORKFLOWS_FOR_TEMPLATE: intl.formatMessage({
@@ -93,7 +93,7 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
       ? {
           key: 'edit',
           text: intlText.EDIT,
-          iconProps: { iconName: 'Edit' },
+          iconProps: { iconName: 'Settings' },
           onClick: handleAddWorkflows,
         }
       : {
