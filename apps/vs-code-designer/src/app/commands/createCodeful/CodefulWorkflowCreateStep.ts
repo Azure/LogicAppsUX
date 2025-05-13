@@ -24,11 +24,12 @@ import {
   appKindSetting,
   logicAppKind,
 } from '../../../constants';
-import { setLocalAppSetting } from '../../utils/appSettings/localSettings';
+import { removeAppKindFromLocalSettings, setLocalAppSetting } from '../../utils/appSettings/localSettings';
 import { validateDotnetInstalled } from '../../utils/dotnet/executeDotnetTemplateCommand';
 import { switchToDotnetProject } from '../workflows/switchToDotnetProject';
 import * as vscode from 'vscode';
 import { createConnectionsJson } from '../../utils/codeless/connection';
+import { createEmptyParametersJson } from '../../utils/codeless/parameter';
 
 export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionWizardContext> {
   private constructor() {
@@ -50,7 +51,8 @@ export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionW
     await fse.ensureDir(functionPath);
     await fse.writeFile(workflowCsFullPath, codelessDefinition);
 
-    await createConnectionsJson(context, context.projectPath);
+    await createConnectionsJson(context.projectPath);
+    await createEmptyParametersJson(context.projectPath);
 
     await this.createSystemArtifacts(context);
 
@@ -102,5 +104,6 @@ export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionW
       localEmulatorConnectionString,
       MismatchBehavior.Overwrite
     );
+    await removeAppKindFromLocalSettings(context.projectPath, context);
   }
 }

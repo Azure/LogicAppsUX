@@ -11,7 +11,7 @@ import { writeFormattedJson } from '../fs';
 import { sendAzureRequest } from '../requestUtils';
 import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
 import { getContainingWorkspace } from '../workspace';
-import { getWorkflowParameters } from './common';
+import { createJsonFileIfDoesNotExist, getWorkflowParameters } from './common';
 import { getAuthorizationToken } from './getAuthorizationToken';
 import { getParametersJson, saveWorkflowParameterRecords } from './parameter';
 import { deleteCustomCode, getCustomCode, getCustomCodeAppFilesToUpdate, uploadCustomCode } from './customcode';
@@ -368,12 +368,8 @@ export async function saveCustomCodeStandard(filePath: string, allCustomCodeFile
   }
 }
 
-export async function createConnectionsJson(context: IActionContext, projectPath: string): Promise<void> {
-  const connectionsFilePath = path.join(projectPath, connectionsFileName);
-  const connectionsFileExists = fse.pathExistsSync(connectionsFilePath);
-  if (!connectionsFileExists) {
-    await writeFormattedJson(connectionsFilePath, {});
-  }
+export async function createConnectionsJson(projectPath: string): Promise<void> {
+  await createJsonFileIfDoesNotExist(projectPath, connectionsFileName);
 }
 
 export async function saveConnectionReferences(
