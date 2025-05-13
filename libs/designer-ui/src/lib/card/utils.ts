@@ -5,7 +5,7 @@ import { hexToRgbA } from '@microsoft/logic-apps-shared';
 export function getCardStyle(brandColor?: string): React.CSSProperties {
   return {
     borderLeft: `4px solid ${brandColor}`,
-    borderRadius: '2px',
+    borderRadius: '4px',
   };
 }
 

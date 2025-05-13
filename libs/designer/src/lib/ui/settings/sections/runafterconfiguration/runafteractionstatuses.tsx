@@ -1,6 +1,6 @@
 import type { onChangeHandler } from './runafteractiondetails';
 import { Text, Checkbox } from '@fluentui/react-components';
-import { Failed, Skipped, Succeeded, TimedOut } from '@microsoft/designer-ui';
+import { Failed, Skipped, Succeeded, TimedOut, Handoff } from '@microsoft/designer-ui';
 import { RUN_AFTER_STATUS } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
@@ -50,6 +50,15 @@ export function RunAfterActionStatuses({ isReadOnly, statuses, onStatusChange }:
         description: 'Failed run',
       }),
       icon: <Failed />,
+    },
+    {
+      id: RUN_AFTER_STATUS.HANDOFF,
+      label: intl.formatMessage({
+        defaultMessage: 'Handoff',
+        id: 'V4IQBj',
+        description: 'Handoff run',
+      }),
+      icon: <Handoff />,
     },
   ];
 

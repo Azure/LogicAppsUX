@@ -67,7 +67,7 @@ export interface LogicAppsEdgeProps {
 const edgeContentHeight = 24;
 const edgeContentWidth = 24;
 
-const transitionWidth = 42;
+const transitionWidth = 48;
 const transitionHeight = 12;
 
 const TransitionEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({ id, source, target, style = {} }) => {
