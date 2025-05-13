@@ -44,9 +44,8 @@ export const summaryTab = (
         type: 'divider',
       },
       {
-        type: 'button',
+        type: 'link',
         text: resources.DownloadTemplateButton,
-        appreance: 'subtle',
         onClick: onDownloadTemplate,
       },
     ],

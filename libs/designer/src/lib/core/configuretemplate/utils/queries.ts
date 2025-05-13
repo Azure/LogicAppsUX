@@ -47,6 +47,14 @@ export const getWorkflowsInTemplate = async (templateId: string): Promise<Record
   });
 };
 
+export const getWorkflowResourcesInTemplate = async (templateId: string): Promise<ArmResource<any>[]> => {
+  const queryClient = getReactQueryClient();
+  return queryClient.fetchQuery(['templateworkflowresources', templateId.toLowerCase()], async () => {
+    const workflows = await TemplateResourceService().getTemplateWorkflows(templateId, /* rawData */ true);
+    return workflows;
+  });
+};
+
 export const getTemplate = async (templateId: string): Promise<ArmResource<any>> => {
   const queryClient = getReactQueryClient();
   return queryClient.fetchQuery(['template', templateId.toLowerCase()], async () => TemplateResourceService().getTemplate(templateId));
@@ -194,4 +202,13 @@ export const getParametersInWorkflowApp = async (
       throw error;
     }
   });
+};
+
+export const resetTemplateWorkflowsQuery = (templateId: string, clearRawData = false) => {
+  const queryClient = getReactQueryClient();
+  queryClient.removeQueries(['templateworkflows', templateId.toLowerCase()]);
+
+  if (clearRawData) {
+    queryClient.removeQueries(['templateworkflowresources', templateId.toLowerCase()]);
+  }
 };
