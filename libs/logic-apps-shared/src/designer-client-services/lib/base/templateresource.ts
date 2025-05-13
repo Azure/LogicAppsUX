@@ -29,29 +29,31 @@ export class BaseTemplateResourceService implements ITemplateResourceService {
     }
   }
 
-  public async getTemplateWorkflows(resourceId: string) {
+  public async getTemplateWorkflows(resourceId: string, rawData = false) {
     try {
       const { baseUrl, apiVersion, httpClient } = this.options;
       const uri = `${baseUrl}${resourceId}/workflows`;
       const response = await getAzureResourceRecursive(httpClient, uri, { 'api-version': apiVersion });
-      return response.map((workflow: ArmResource<any>) => {
-        const manifest = workflow?.properties?.manifest;
-        const workflowId = getResourceNameFromId(workflow.id);
-        if (manifest) {
-          manifest.kinds = manifest.allowedKinds;
-          manifest.description = manifest.details;
+      return rawData
+        ? response
+        : response.map((workflow: ArmResource<any>) => {
+            const manifest = workflow?.properties?.manifest;
+            const workflowId = getResourceNameFromId(workflow.id);
+            if (manifest) {
+              manifest.kinds = manifest.allowedKinds;
+              manifest.description = manifest.details;
 
-          delete manifest.allowedKinds;
-          delete manifest.details;
+              delete manifest.allowedKinds;
+              delete manifest.details;
 
-          manifest.id = workflowId;
-          workflow.properties.manifest = manifest;
-        } else {
-          workflow.properties.manifest = { id: workflowId };
-        }
+              manifest.id = workflowId;
+              workflow.properties.manifest = manifest;
+            } else {
+              workflow.properties.manifest = { id: workflowId };
+            }
 
-        return workflow;
-      });
+            return workflow;
+          });
     } catch (error: any) {
       if (error?.response?.status === 404) {
         return [];
@@ -119,17 +121,23 @@ export class BaseTemplateResourceService implements ITemplateResourceService {
     }
   }
 
-  public async updateWorkflow(resourceId: string, workflowName: string, manifest: Partial<Template.WorkflowManifest>) {
+  public async updateWorkflow(resourceId: string, workflowName: string, manifest: Partial<Template.WorkflowManifest>, rawData = false) {
     try {
       const { baseUrl, apiVersion, httpClient } = this.options;
       const uri = `${baseUrl}${resourceId}/workflows/${workflowName}`;
-      await httpClient.patch({
+      const requestOptions = {
         uri,
         queryParameters: { 'api-version': apiVersion },
         content: {
           properties: { manifest },
         },
-      });
+      };
+
+      if (rawData) {
+        await httpClient.put(requestOptions);
+      } else {
+        await httpClient.patch(requestOptions);
+      }
     } catch (error) {
       throw new Error(error as any);
     }
@@ -156,9 +164,5 @@ export class BaseTemplateResourceService implements ITemplateResourceService {
 
   public async createArtifact(_id: string, _artifact: Template.Artifact) {
     throw new Error('Method not implemented.');
-  }
-
-  public async isWorkflowNameAvailable(_id: string, _name: string) {
-    return true;
   }
 }

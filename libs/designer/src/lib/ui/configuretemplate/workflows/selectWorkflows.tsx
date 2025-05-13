@@ -5,7 +5,7 @@ import { useWorkflowsInApp } from '../../../core/configuretemplate/utils/queries
 import { ResourcePicker } from '../../templates';
 import { useSelector } from 'react-redux';
 import { useCallback, useMemo } from 'react';
-import { equals, getResourceNameFromId, type LogicAppResource } from '@microsoft/logic-apps-shared';
+import { equals, type LogicAppResource } from '@microsoft/logic-apps-shared';
 import {
   TableBody,
   TableCell,
@@ -61,7 +61,7 @@ export const SelectWorkflows = ({
     const selectedDifferentNameWorkflowsList: Record<string, string | undefined> = {};
     for (const workflow of Object.values(selectedWorkflowsList)) {
       const workflowSourceId = workflow.manifest?.metadata?.workflowSourceId;
-      if (workflowSourceId && getResourceNameFromId(workflowSourceId) !== workflow.id) {
+      if (workflowSourceId && workflow.isManageWorkflow) {
         selectedDifferentNameWorkflowsList[workflowSourceId] = workflow.id;
       }
     }
