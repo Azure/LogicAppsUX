@@ -426,8 +426,8 @@ importers:
         specifier: 0.8.1
         version: 0.8.1(tslib@2.4.0)
       '@microsoft/vscode-azext-azureauth':
-        specifier: 3.0.0
-        version: 3.0.0
+        specifier: ^4.1.0
+        version: 4.1.1
       '@microsoft/vscode-azext-azureutils':
         specifier: ^0.3.9
         version: 0.3.9(@azure/ms-rest-azure-env@2.0.0)(tslib@2.4.0)
@@ -4459,8 +4459,8 @@ packages:
   '@microsoft/vscode-azext-azureappservice@0.8.1':
     resolution: {integrity: sha512-rqKRL4KSGQAISBT0WX8n+6T53+qA2a/d4trekVtPeJ7ToE7ZqwunFMTrp2UDmblhjNeup+Irx5fHpsF7uQSHpw==}
 
-  '@microsoft/vscode-azext-azureauth@3.0.0':
-    resolution: {integrity: sha512-Sf091eBD5NdpChUiXlgjOn2vl0RxgLMqm/VgjL5q7vK0nqfqSmbn4rSFH54OUQ8bMk8cWhPkSc1oxbs3ldVwLw==}
+  '@microsoft/vscode-azext-azureauth@4.1.1':
+    resolution: {integrity: sha512-ZHRoNBBwZBg8sqZ7/C+VMQOp7zusJxIpXzLlRpWGjrDI8PSFQk2bZloVdW877YeSLMe2464mjTlWMhEEa07Kaw==}
 
   '@microsoft/vscode-azext-azureutils@0.3.9':
     resolution: {integrity: sha512-lKhxSROhTBpz45f0hqYDHfdrGlNOgzfMGXbNproqwyc5qnEYBhs/qG65hcwhLzVm44lYPpBP1aka7OyDEocPOQ==}
@@ -17911,7 +17911,7 @@ snapshots:
       - tslib
       - utf-8-validate
 
-  '@microsoft/vscode-azext-azureauth@3.0.0':
+  '@microsoft/vscode-azext-azureauth@4.1.1':
     dependencies:
       '@azure/arm-resources-subscriptions': 2.1.0
       '@azure/core-client': 1.9.2
