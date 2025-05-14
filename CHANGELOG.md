@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [5.94.17](https://github.com/Azure/LogicAppsUX/compare/v5.94.16...v5.94.17) (2025-05-14)
+
+
+### Bug Fixes
+
+* **vscode:** Update package and add try catch to auth experience ([#7234](https://github.com/Azure/LogicAppsUX/issues/7234)) ([#7235](https://github.com/Azure/LogicAppsUX/issues/7235)) ([8e5aeec](https://github.com/Azure/LogicAppsUX/commit/8e5aeeccdf22b3cf1ffafd396f5f55d79e32d3d5))
+
 ### [5.94.16](https://github.com/Azure/LogicAppsUX/compare/v5.94.15...v5.94.16) (2025-05-13)
 
 
