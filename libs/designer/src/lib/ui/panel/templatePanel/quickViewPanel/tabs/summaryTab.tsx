@@ -164,13 +164,13 @@ export const summaryTab = (
   footerContent: {
     buttonContents: [
       {
-        type: 'button',
+        type: 'action',
         text: intl.formatMessage({
           defaultMessage: 'Use this template',
           id: '5szzYP',
           description: 'Button text to create workflow from this template',
         }),
-        appreance: 'primary',
+        appearance: 'primary',
         onClick: () => {
           LoggerService().log({
             level: LogEntryLevel.Trace,
@@ -183,7 +183,7 @@ export const summaryTab = (
         hide: !showCreate,
       },
       {
-        type: 'button',
+        type: 'action',
         text: intl.formatMessage({
           defaultMessage: 'Close',
           id: 'FTrMxN',

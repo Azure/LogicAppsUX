@@ -22,22 +22,22 @@ export const selectWorkflowsTab = (
 ): TemplateTabProps => ({
   id: constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.SELECT_WORKFLOWS,
   title: intl.formatMessage({
-    defaultMessage: 'Select workflows',
-    id: 'vWOWFo',
-    description: 'The tab label for the monitoring select workflows tab on the configure template wizard',
+    defaultMessage: 'Choose workflows',
+    id: 'OqpFYV',
+    description: 'The tab label for the monitoring choosing workflows tab on the configure template wizard',
   }),
   disabled: isSaving,
   content: <SelectWorkflows selectedWorkflowsList={selectedWorkflowsList} onWorkflowsSelected={onWorkflowsSelected} />,
   footerContent: {
     buttonContents: [
       {
-        type: 'button',
+        type: 'navigation',
         text: intl.formatMessage({
           defaultMessage: 'Next',
           id: '0UfxUM',
           description: 'Button text for moving to the next tab in the create workflow panel',
         }),
-        appreance: 'primary',
+        appearance: 'primary',
         onClick: () => {
           dispatch(selectPanelTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.CUSTOMIZE_WORKFLOWS));
           onNextButtonClick();
@@ -45,7 +45,7 @@ export const selectWorkflowsTab = (
         disabled: isPrimaryButtonDisabled,
       },
       {
-        type: 'button',
+        type: 'navigation',
         text: intl.formatMessage({
           defaultMessage: 'Cancel',
           id: '75zXUl',

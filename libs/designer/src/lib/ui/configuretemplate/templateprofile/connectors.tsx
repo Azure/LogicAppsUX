@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useCallback, useMemo } from 'react';
 import type { OptionOnSelectData, SelectionEvents } from '@fluentui/react-components';
 import { Dropdown, Field, Option } from '@fluentui/react-components';
-import { equals } from '@microsoft/logic-apps-shared';
+import { equals, getPropertyValue } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
 import { updateTemplateManifest } from '../../../core/state/templates/templateSlice';
@@ -46,7 +46,7 @@ export const FeaturedConnectors = () => {
   );
 
   return (
-    <Field required={true} validationMessage={errors?.manifest?.['featuredConnectors']}>
+    <Field required={true} validationMessage={getPropertyValue(errors?.manifest ?? {}, 'featuredConnectors')}>
       <Dropdown
         style={{ width: '100%' }}
         multiselect={true}

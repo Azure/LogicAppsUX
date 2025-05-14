@@ -18,6 +18,8 @@ import {
   LogEntryLevel,
   LoggerService,
 } from '@microsoft/logic-apps-shared';
+import JSZip from 'jszip';
+import saveAs from 'file-saver';
 
 export const delimiter = '::::::';
 export const getTemplateConnectionsFromConnectionsData = (
@@ -290,12 +292,12 @@ export const getManifestAndDefinitionFromWorkflowData = (
   };
 };
 
-export const getDownloadableTemplate = async (
+export const getZippedTemplateForDownload = async (
   templateManifest: Template.TemplateManifest,
   workflowDatas: Record<string, { manifest: Template.WorkflowManifest; workflowDefinition: any }>,
   connections: Record<string, Template.Connection>,
   parameterDefinitions: Record<string, Partial<Template.ParameterDefinition>>
-): Promise<Template.FolderStructure> => {
+): Promise<void> => {
   const templateName = getResourceNameFromId(templateManifest.id);
 
   const theTemplateManifest = {
@@ -314,7 +316,7 @@ export const getDownloadableTemplate = async (
   }
 
   await Promise.all(promises).then((results) => workflowFolderContents.push(...results));
-  return {
+  const folderStructure: Template.FolderStructure = {
     type: 'folder',
     name: templateName,
     contents: [
@@ -326,6 +328,13 @@ export const getDownloadableTemplate = async (
       ...workflowFolderContents,
     ],
   };
+
+  const zip = new JSZip();
+  zipFolder(zip, folderStructure);
+
+  zip.generateAsync({ type: 'blob' }).then((content) => {
+    saveAs(content, 'LogicAppsTemplate.zip');
+  });
 };
 
 const getWorkflowFolderContent = async (
@@ -346,7 +355,7 @@ const getWorkflowFolderContent = async (
     },
   ];
 
-  const folderContent = {
+  const folderContent: Template.FolderStructure = {
     type: 'folder',
     name,
     contents: [
@@ -363,23 +372,43 @@ const getWorkflowFolderContent = async (
     ],
   };
 
-  if (workflowManifest.images.light) {
-    const lightImage = await fetch(workflowManifest.images.dark, { headers: { 'Access-Control-Allow-Origin': '*' } });
-    folderContent.contents.push({
-      type: 'file',
-      name: workflowManifest.images.light.split('/').slice(-1)[0] as string,
-      data: lightImage.body as any,
-    });
-  }
+  const lightImage = await getImageFileContent(workflowManifest.images.light);
+  const darkImage = await getImageFileContent(workflowManifest.images.dark);
 
-  if (workflowManifest.images.dark) {
-    const darkImage = await fetch(workflowManifest.images.dark, { headers: { 'Access-Control-Allow-Origin': '*' } });
-    folderContent.contents.push({
-      type: 'file',
-      name: workflowManifest.images.light.split('/').slice(-1)[0] as string,
-      data: darkImage.body as any,
-    });
+  if (lightImage) {
+    folderContent.contents.push(lightImage);
+  }
+  if (darkImage) {
+    folderContent.contents.push(darkImage);
   }
 
   return folderContent;
+};
+
+const getImageFileContent = async (imageLink: string): Promise<Template.FileStructure | undefined> => {
+  if (imageLink) {
+    const lightImage = await fetch(imageLink, { headers: { 'Access-Control-Allow-Origin': '*' } });
+    const content = await lightImage.blob();
+    return {
+      type: 'file',
+      name: imageLink.split('/').slice(-1)[0] as string,
+      data: content,
+    };
+  }
+
+  return undefined;
+};
+
+const zipFolder = (zip: JSZip, folder: Template.FolderStructure) => {
+  const folderZip = zip.folder(folder.name);
+
+  if (folderZip) {
+    for (const content of folder.contents) {
+      if (content.type === 'file') {
+        folderZip.file(content.name, content.data);
+      } else {
+        zipFolder(folderZip, content as Template.FolderStructure);
+      }
+    }
+  }
 };
