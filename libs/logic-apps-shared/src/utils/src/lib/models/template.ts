@@ -120,7 +120,7 @@ export interface ViewTemplateDetails {
   connectionsOverride?: Record<string, ConnectionInfo>;
 }
 
-interface FileStructure {
+export interface FileStructure {
   type: 'file';
   name: string;
   data: any;

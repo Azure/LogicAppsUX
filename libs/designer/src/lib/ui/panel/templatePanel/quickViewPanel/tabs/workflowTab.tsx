@@ -43,13 +43,13 @@ export const workflowTab = (
   footerContent: {
     buttonContents: [
       {
-        type: 'button',
+        type: 'action',
         text: intl.formatMessage({
           defaultMessage: 'Use this template',
           id: '5szzYP',
           description: 'Button text to create workflow from this template',
         }),
-        appreance: 'primary',
+        appearance: 'primary',
         onClick: () => {
           LoggerService().log({
             level: LogEntryLevel.Trace,
@@ -63,7 +63,7 @@ export const workflowTab = (
         hide: !showCreate,
       },
       {
-        type: 'button',
+        type: 'action',
         text: intl.formatMessage({
           defaultMessage: 'Close',
           id: 'FTrMxN',
