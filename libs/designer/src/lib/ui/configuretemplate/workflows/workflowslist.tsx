@@ -13,24 +13,23 @@ import {
   type TableColumnDefinition,
   useTableSelection,
   createTableColumn,
-  Button,
   MessageBar,
   MessageBarBody,
   MessageBarTitle,
 } from '@fluentui/react-components';
-import { EmptySearch } from '@microsoft/designer-ui';
 import { useIntl } from 'react-intl';
-import { CommandBar, type ICommandBarItemProps } from '@fluentui/react';
+import { CommandBar, type ICommandBarItemProps, mergeStyles, PrimaryButton } from '@fluentui/react';
 import { useCallback, useMemo } from 'react';
 import { openPanelView, TemplatePanelView } from '../../../core/state/templates/panelSlice';
 import { useFunctionalState } from '@react-hookz/web';
-import { Add12Filled } from '@fluentui/react-icons';
+import { DocumentOnePage24Regular } from '@fluentui/react-icons';
 import { deleteWorkflowData } from '../../../core/actions/bjsworkflow/configuretemplate';
 import { useResourceStrings } from '../resources';
 import { useTemplatesStrings } from '../../templates/templatesStrings';
 import { WorkflowKind } from '../../../core/state/workflow/workflowInterfaces';
 import { equals } from '@microsoft/logic-apps-shared';
 import { ConfigureWorkflowsPanel } from '../panels/configureWorkflowsPanel/configureWorkflowsPanel';
+import { DescriptionWithLink, tableHeaderStyle } from '../common';
 
 export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean) => void }) => {
   const intl = useIntl();
@@ -39,7 +38,6 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
     currentPanelView: state.panel.currentPanelView,
   }));
   const dispatch = useDispatch<AppDispatch>();
-  const workflowsExist = Object.keys(workflows).length > 0;
   const isMultiWorkflow = Object.keys(workflows).length > 1;
 
   const workflowNamesWithErrors = useMemo(() => {
@@ -52,30 +50,20 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
 
   const intlText = useMemo(
     () => ({
-      ADD: intl.formatMessage({
-        defaultMessage: 'Add',
-        id: '+0Kbqd',
-        description: 'command bar button text for opening panel for adding workflows',
-      }),
-      ADD_WORKFLOWS: intl.formatMessage({
-        defaultMessage: 'Add workflows',
-        id: 'Ve6uLm',
-        description: 'Button text for opening panel for adding workflows',
-      }),
       EDIT: intl.formatMessage({
         defaultMessage: 'Manage workflows',
         id: 'FK8YcR',
         description: 'Button text for opening panel for editing workflows',
       }),
-      ADD_WORKFLOWS_FOR_TEMPLATE: intl.formatMessage({
-        defaultMessage: 'Add workflows to this template',
-        id: 'jSyH3j',
-        description: 'Button text for opening panel for adding workflows',
-      }),
       DELETE: intl.formatMessage({
         defaultMessage: 'Delete',
         id: 'Ld62T8',
         description: 'Button text for deleting selected workflows',
+      }),
+      EMPTY_TITLE: intl.formatMessage({
+        defaultMessage: 'Manage workflows for this template',
+        id: 'gA8nWC',
+        description: 'Empty state title for workflows list',
       }),
     }),
     [intl]
@@ -89,19 +77,12 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
   }, [dispatch]);
 
   const commandBarItems: ICommandBarItemProps[] = useMemo(() => {
-    const addEditItem = workflowsExist
-      ? {
-          key: 'edit',
-          text: intlText.EDIT,
-          iconProps: { iconName: 'Settings' },
-          onClick: handleAddWorkflows,
-        }
-      : {
-          key: 'add',
-          text: intlText.ADD,
-          iconProps: { iconName: 'Add' },
-          onClick: handleAddWorkflows,
-        };
+    const addEditItem = {
+      key: 'edit',
+      text: intlText.EDIT,
+      iconProps: { iconName: 'Settings' },
+      onClick: handleAddWorkflows,
+    };
     return [
       addEditItem,
       {
@@ -113,7 +94,7 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
         },
       },
     ];
-  }, [intlText, workflowsExist, handleAddWorkflows, dispatch, selectedWorkflowsList]);
+  }, [intlText, handleAddWorkflows, dispatch, selectedWorkflowsList]);
 
   type WorkflowsTableItem = {
     id: string;
@@ -207,13 +188,20 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
     <div className="msla-templates-wizard-tab-content">
       {currentPanelView === TemplatePanelView.ConfigureWorkflows && <ConfigureWorkflowsPanel onSave={onSave} />}
 
+      <DescriptionWithLink
+        text={customResourceStrings.WorkflowsTabDescription}
+        linkText={customResourceStrings.LearnMore}
+        linkUrl="https://docs.microsoft.com/azure/logic-apps/logic-apps-overview"
+        className={mergeStyles({ marginLeft: '-1px' })}
+      />
+
       <CommandBar
         items={commandBarItems}
         styles={{
           root: {
             borderBottom: `1px solid ${'#333333'}`,
             position: 'relative',
-            padding: '4px 8px',
+            padding: '4px 0',
           },
         }}
       />
@@ -228,7 +216,7 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
       ) : null}
 
       {Object.keys(workflows).length > 0 ? (
-        <Table aria-label={customResourceStrings.WorkflowsListTableLabel} style={{ minWidth: '550px' }}>
+        <Table aria-label={customResourceStrings.WorkflowsListTableLabel} style={{ minWidth: '550px', marginTop: 30, marginLeft: '-5px' }}>
           <TableHeader>
             <TableRow>
               <TableSelectionCell
@@ -237,10 +225,10 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
                 onKeyDown={toggleAllKeydown}
                 checkboxIndicator={{ 'aria-label': customResourceStrings.SelectAllWorkflowsLabel }}
               />
-              <TableHeaderCell>{resourceStrings.WORKFLOW_NAME}</TableHeaderCell>
-              {isMultiWorkflow && <TableHeaderCell>{customResourceStrings.WorkflowDisplayName}</TableHeaderCell>}
-              <TableHeaderCell>{customResourceStrings.State}</TableHeaderCell>
-              <TableHeaderCell>{customResourceStrings.Trigger}</TableHeaderCell>
+              <TableHeaderCell style={tableHeaderStyle}>{resourceStrings.WORKFLOW_NAME}</TableHeaderCell>
+              {isMultiWorkflow && <TableHeaderCell style={tableHeaderStyle}>{customResourceStrings.WorkflowDisplayName}</TableHeaderCell>}
+              <TableHeaderCell style={tableHeaderStyle}>{customResourceStrings.State}</TableHeaderCell>
+              <TableHeaderCell style={tableHeaderStyle}>{customResourceStrings.Trigger}</TableHeaderCell>
             </TableRow>
           </TableHeader>
           {rows.map(({ item, selected, onClick, onKeyDown, appearance }) => (
@@ -268,14 +256,20 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
           ))}
         </Table>
       ) : (
-        <div className="msla-templates-empty-list">
-          <EmptySearch />
-          <Text size={500} weight="semibold" align="start" className="msla-template-empty-list-title">
-            {intlText.ADD_WORKFLOWS_FOR_TEMPLATE}
+        <div style={{ height: '50%' }} className="msla-templates-empty-list">
+          <DocumentOnePage24Regular width={50} height={50} />
+          <Text weight="semibold" size={500} style={{ padding: '20px 0 10px 0' }}>
+            {intlText.EMPTY_TITLE}
           </Text>
-          <Button appearance="primary" icon={<Add12Filled />} onClick={handleAddWorkflows}>
-            {intlText.ADD_WORKFLOWS}
-          </Button>
+          <DescriptionWithLink
+            text={customResourceStrings.WorkflowsTabDescription}
+            linkText={customResourceStrings.LearnMore}
+            linkUrl="https://docs.microsoft.com/azure/logic-apps/logic-apps-overview"
+            className={mergeStyles({ width: '40%' })}
+          />
+          <div style={{ padding: '10px 0' }}>
+            <PrimaryButton onClick={handleAddWorkflows}>{intlText.EDIT}</PrimaryButton>
+          </div>
         </div>
       )}
     </div>

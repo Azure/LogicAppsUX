@@ -6,10 +6,18 @@ import { useIntl } from 'react-intl';
 import { ConnectorIconWithName } from '../../templates/connections/connector';
 import { useTemplatesStrings } from '../../templates/templatesStrings';
 import { useResourceStrings } from '../resources';
+import { DescriptionWithLink } from '../common';
+import { mergeStyles } from '@fluentui/react';
 
 export const TemplateConnectionsList = () => {
   const intl = useIntl();
   const resources = {
+    Description: intl.formatMessage({
+      defaultMessage:
+        'Connections used in your selected workflows. You will be required to create connections for the following services when deploying workflow from this template.',
+      id: 'AGXgup',
+      description: 'The description for the connections tab',
+    }),
     AriaLabel: intl.formatMessage({
       defaultMessage: 'List of connectors needing connections',
       id: 'hQp3t6',
@@ -57,6 +65,12 @@ export const TemplateConnectionsList = () => {
 
   return (
     <div className="msla-templates-wizard-tab-content" style={{ overflowX: 'auto', paddingTop: '12px' }}>
+      <DescriptionWithLink
+        text={resources.Description}
+        linkText={resourceStrings.LearnMore}
+        linkUrl="https://learn.microsoft.com/en-us/azure/logic-apps/logic-apps-connector-overview"
+        className={mergeStyles({ marginLeft: '-10px' })}
+      />
       <Table aria-label={resources.AriaLabel} size="small" style={{ width: '80%' }}>
         <TableHeader>
           <TableRow>

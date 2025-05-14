@@ -72,13 +72,13 @@ export const CustomizeParameterPanel = () => {
     return {
       buttonContents: [
         {
-          type: 'button',
+          type: 'action',
           text: intl.formatMessage({
             defaultMessage: 'Save',
             id: '9klmbJ',
             description: 'Button text for saving changes for parameter in the customize parameter panel',
           }),
-          appreance: 'primary',
+          appearance: 'primary',
           onClick: () => {},
           disabled: !isDirty || !isUndefinedOrEmptyString(parameterError),
           menuItems: getSaveMenuButtons(resources, currentStatus ?? 'Development', (newStatus) => {
@@ -95,7 +95,7 @@ export const CustomizeParameterPanel = () => {
           }),
         },
         {
-          type: 'button',
+          type: 'action',
           text: intl.formatMessage({
             defaultMessage: 'Cancel',
             id: '75zXUl',

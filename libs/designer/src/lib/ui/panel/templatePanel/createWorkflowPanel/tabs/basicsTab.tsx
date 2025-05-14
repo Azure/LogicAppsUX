@@ -30,7 +30,7 @@ export const basicsTab = (
   footerContent: {
     buttonContents: [
       {
-        type: 'button',
+        type: 'navigation',
         text: intl.formatMessage({
           defaultMessage: 'Next',
           id: '0UfxUM',
@@ -39,11 +39,11 @@ export const basicsTab = (
         onClick: () => {
           dispatch(selectPanelTab(nextTabId));
         },
-        appreance: 'primary',
+        appearance: 'primary',
         disabled,
       },
       {
-        type: 'button',
+        type: 'navigation',
         text: intl.formatMessage({
           defaultMessage: 'Close',
           id: 'FTrMxN',

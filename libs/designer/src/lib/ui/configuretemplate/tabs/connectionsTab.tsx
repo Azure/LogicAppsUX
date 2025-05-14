@@ -21,24 +21,19 @@ export const connectionsTab = (
   tabStatusIcon,
   disabled,
   content: <TemplateConnectionsList />,
-  description: intl.formatMessage({
-    defaultMessage: 'Connections for the following connectors would be required during workflow creation from this template.',
-    id: 'sOd/ie',
-    description: 'The description for the connections tab on the configure template wizard',
-  }),
   footerContent: {
     buttonContents: [
       {
-        type: 'button',
+        type: 'navigation',
         text: resources.PreviousButtonText,
         onClick: () => {
           dispatch(selectWizardTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.WORKFLOWS));
         },
       },
       {
-        type: 'button',
+        type: 'navigation',
         text: resources.NextButtonText,
-        appreance: 'primary',
+        appearance: 'primary',
         onClick: () => {
           dispatch(selectWizardTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.PARAMETERS));
         },
