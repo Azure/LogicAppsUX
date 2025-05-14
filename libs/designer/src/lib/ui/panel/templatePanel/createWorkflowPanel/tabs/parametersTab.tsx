@@ -33,19 +33,19 @@ export const parametersTab = (
   footerContent: {
     buttonContents: [
       {
-        type: 'button',
+        type: 'navigation',
         text: intl.formatMessage({
           defaultMessage: 'Next',
           id: '0UfxUM',
           description: 'Button text for moving to the next tab in the create workflow panel',
         }),
-        appreance: 'primary',
+        appearance: 'primary',
         onClick: () => {
           dispatch(selectPanelTab(constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE));
         },
       },
       {
-        type: 'button',
+        type: 'navigation',
         text: previousTabId
           ? intl.formatMessage({
               defaultMessage: 'Previous',

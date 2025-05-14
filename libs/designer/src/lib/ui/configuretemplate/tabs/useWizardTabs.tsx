@@ -20,9 +20,7 @@ import type { Template } from '@microsoft/logic-apps-shared';
 import { TemplateResourceService } from '@microsoft/logic-apps-shared';
 import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useCallback } from 'react';
-import JSZip from 'jszip';
-import { saveAs } from 'file-saver';
-import { getDownloadableTemplate } from '../../../core/configuretemplate/utils/helper';
+import { getZippedTemplateForDownload } from '../../../core/configuretemplate/utils/helper';
 
 export const useConfigureTemplateWizardTabs = ({
   onSaveWorkflows,
@@ -94,19 +92,7 @@ export const useConfigureTemplateWizardTabs = ({
 
   const downloadTemplate = useCallback(async () => {
     // TODO: _#workflowName# is not added in parameter / connection ids
-
-    const folderStructure: Template.FolderStructure = await getDownloadableTemplate(
-      templateManifest as Template.TemplateManifest,
-      workflows,
-      connections,
-      parameterDefinitions
-    );
-    const zip = new JSZip();
-    zipFolder(zip, folderStructure);
-
-    zip.generateAsync({ type: 'blob' }).then((content) => {
-      saveAs(content, 'LogicAppsTemplate.zip');
-    });
+    await getZippedTemplateForDownload(templateManifest as Template.TemplateManifest, workflows, connections, parameterDefinitions);
   }, [connections, parameterDefinitions, templateManifest, workflows]);
 
   return [
@@ -136,24 +122,4 @@ export const useConfigureTemplateWizardTabs = ({
       onDownloadTemplate: downloadTemplate,
     }),
   ];
-};
-
-const zipFolder = (zip: JSZip, folder: Template.FolderStructure) => {
-  const folderZip = zip.folder(folder.name);
-
-  if (folderZip) {
-    for (const content of folder.contents) {
-      if (content.type === 'file') {
-        if (content.name.endsWith('.json')) {
-          folderZip.file(content.name, content.data);
-        }
-        // TODO: FIgure out how to handle image files
-        // } else {
-        //   zip.file(content.name, content.data, { base64: true });
-        // }
-      } else {
-        zipFolder(folderZip, content as Template.FolderStructure);
-      }
-    }
-  }
 };

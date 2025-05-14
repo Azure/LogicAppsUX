@@ -45,7 +45,7 @@ export const connectionsTab = (
   footerContent: {
     buttonContents: [
       {
-        type: 'button',
+        type: 'navigation',
         text: intl.formatMessage({
           defaultMessage: 'Next',
           id: '0UfxUM',
@@ -56,7 +56,7 @@ export const connectionsTab = (
         },
       },
       {
-        type: 'button',
+        type: 'navigation',
         text: previousTabId
           ? intl.formatMessage({
               defaultMessage: 'Previous',

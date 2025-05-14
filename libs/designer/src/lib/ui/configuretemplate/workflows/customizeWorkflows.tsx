@@ -16,6 +16,7 @@ import { useResourceStrings } from '../resources';
 import { useTemplatesStrings } from '../../templates/templatesStrings';
 import { WorkflowKind } from '../../../core/state/workflow/workflowInterfaces';
 import { useIntl } from 'react-intl';
+import { DescriptionWithLink } from '../common';
 
 export const CustomizeWorkflows = ({
   selectedWorkflowsList,
@@ -31,6 +32,13 @@ export const CustomizeWorkflows = ({
 
   return (
     <div className="msla-templates-tab msla-panel-no-description-tab">
+      <DescriptionWithLink
+        text={intl.formatMessage({
+          defaultMessage: `Enter your workflow details. Your changes apply only to this template and won't affect the original workflow. Save your work anytime and pick up where you left off without having to publish. To publish your template, all fields must be completed.`,
+          id: 'v3K85M',
+          description: 'The description for customizing workflows tab',
+        })}
+      />
       {duplicateIds.length ? (
         <MessageBar intent="error" className="msla-templates-error-message-bar">
           <MessageBarBody>

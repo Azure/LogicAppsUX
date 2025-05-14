@@ -30,9 +30,9 @@ export const customizeWorkflowsTab = (
 ): TemplateTabProps => ({
   id: constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.CUSTOMIZE_WORKFLOWS,
   title: intl.formatMessage({
-    defaultMessage: 'Customize workflows',
-    id: 'qnio+9',
-    description: 'The tab label for the monitoring customize workflows tab on the configure template wizard',
+    defaultMessage: 'Set up workflows',
+    id: 'sQmPbe',
+    description: 'The tab label for the monitoring setup workflows tab on the configure template wizard',
   }),
   onTabClick: onTabClick,
   disabled: disabled,
@@ -47,23 +47,23 @@ export const customizeWorkflowsTab = (
   footerContent: {
     buttonContents: [
       {
-        type: 'button',
+        type: 'action',
         text: isSaving ? (
           <Spinner size="tiny" />
         ) : (
           intl.formatMessage({
-            defaultMessage: 'Save changes',
-            id: '3jqHdn',
+            defaultMessage: 'Save',
+            id: 'hqrLAF',
             description: 'Button text for saving changes in the configure workflows panel',
           })
         ),
         onClick: () => {},
-        appreance: 'primary',
+        appearance: 'primary',
         disabled: isPrimaryButtonDisabled || isSaving,
         menuItems: getSaveMenuButtons(resources, status ?? 'Development', (newStatus) => onSave?.(newStatus)),
       },
       {
-        type: 'button',
+        type: 'action',
         text: intl.formatMessage({
           defaultMessage: 'Cancel',
           id: '75zXUl',

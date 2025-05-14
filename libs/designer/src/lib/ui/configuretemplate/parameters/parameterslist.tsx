@@ -21,6 +21,8 @@ import { getResourceNameFromId } from '@microsoft/logic-apps-shared';
 import { openPanelView, TemplatePanelView } from '../../../core/state/templates/panelSlice';
 import { MoreHorizontal16Filled } from '@fluentui/react-icons';
 import { CustomizeParameterPanel } from '../panels/customizeParameterPanel/customizeParameterPanel';
+import { DescriptionWithLink } from '../common';
+import { mergeStyles } from '@fluentui/react';
 
 export const TemplateParametersList = () => {
   const intl = useIntl();
@@ -31,6 +33,12 @@ export const TemplateParametersList = () => {
       defaultMessage: 'List of parameters in the template',
       id: 'u2z3kg',
       description: 'The aria label for the parameters table',
+    }),
+    Description: intl.formatMessage({
+      defaultMessage:
+        'Customize each parameter to tailor this template to your needs. These values help configure how your workflows run. You can save your progress anytime and return later to finish, but all fields must be completed for the template to work.',
+      id: 'nCjxEh',
+      description: 'The description for the parameters tab',
     }),
   };
 
@@ -103,6 +111,13 @@ export const TemplateParametersList = () => {
   return (
     <div className="msla-templates-wizard-tab-content" style={{ overflowX: 'auto', paddingTop: '12px' }}>
       {currentPanelView === TemplatePanelView.CustomizeParameter && <CustomizeParameterPanel />}
+      <DescriptionWithLink
+        text={intlText.Description}
+        linkText={resourceStrings.LearnMore}
+        linkUrl="https://learn.microsoft.com/en-us/azure/logic-apps/logic-apps-templates-parameters"
+        className={mergeStyles({ marginLeft: '-10px' })}
+      />
+
       {parameterErrorIds.length ? (
         <MessageBar intent="error" className="msla-templates-error-message-bar">
           <MessageBarBody>
@@ -112,7 +127,7 @@ export const TemplateParametersList = () => {
         </MessageBar>
       ) : null}
 
-      <Table aria-label={intlText.AriaLabel} size="small" style={{ width: '80%' }}>
+      <Table aria-label={intlText.AriaLabel} size="small" style={{ width: '100%' }}>
         <TableHeader>
           <TableRow>
             {columns.map((column) => (

@@ -62,7 +62,7 @@ export const reviewCreateTab = (
   footerContent: {
     buttonContents: [
       {
-        type: 'button',
+        type: 'action',
         text: isCreating ? (
           <Spinner size={SpinnerSize.xSmall} />
         ) : isCreateView ? (
@@ -79,11 +79,11 @@ export const reviewCreateTab = (
           })
         ),
         onClick: onCreateClick,
-        appreance: 'primary',
+        appearance: 'primary',
         disabled: isPrimaryButtonDisabled || isCreating,
       },
       {
-        type: 'button',
+        type: 'action',
         text: previousTabId
           ? intl.formatMessage({
               defaultMessage: 'Previous',

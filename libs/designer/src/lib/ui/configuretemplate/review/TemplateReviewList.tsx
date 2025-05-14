@@ -10,6 +10,8 @@ import { ConnectorConnectionName } from '../../templates/connections/connector';
 import React, { useMemo } from 'react';
 import { useAllConnectors } from '../../../core/configuretemplate/utils/queries';
 import { WorkflowKind } from '../../../core/state/workflow/workflowInterfaces';
+import { DescriptionWithLink } from '../common';
+import { mergeStyles } from '@fluentui/react';
 
 const SectionDividerItem: TemplatesSectionItem = {
   type: 'divider',
@@ -19,6 +21,11 @@ const SectionDividerItem: TemplatesSectionItem = {
 export const TemplateReviewList = () => {
   const intl = useIntl();
   const intlText = {
+    TabDescription: intl.formatMessage({
+      defaultMessage: `Review all the values you've added to this template. This read-only summary lets you quickly scan your template setup.`,
+      id: 'Cnymq/',
+      description: 'The dscription for review tab',
+    }),
     TemplateDisplayName: intl.formatMessage({
       defaultMessage: 'Template display name',
       id: 'a7d1Dp',
@@ -76,7 +83,8 @@ export const TemplateReviewList = () => {
   };
 
   return (
-    <div className="msla-templates-wizard-tab-content">
+    <div className={mergeStyles('msla-templates-wizard-tab-content', { marginLeft: '-10px' })}>
+      <DescriptionWithLink text={resources.TabDescription} />
       <Accordion multiple={true} defaultOpenItems={Object.keys(sectionItems)}>
         {Object.entries(sectionItems).map(([key, { label, value, emptyText }]) => (
           <React.Fragment key={key}>
@@ -85,7 +93,13 @@ export const TemplateReviewList = () => {
                 <Text style={{ fontWeight: 'bold' }}>{label}</Text>
               </AccordionHeader>
               <AccordionPanel>
-                {value?.length ? <TemplatesSection items={value} /> : emptyText ? <Text>{emptyText}</Text> : null}
+                {value?.length ? (
+                  <TemplatesSection items={value} />
+                ) : emptyText ? (
+                  <div style={{ paddingBottom: 10 }}>
+                    <Text>{emptyText}</Text>
+                  </div>
+                ) : null}
               </AccordionPanel>
             </AccordionItem>
             <Divider />

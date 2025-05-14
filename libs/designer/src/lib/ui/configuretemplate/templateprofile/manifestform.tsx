@@ -10,9 +10,12 @@ import { useIntl } from 'react-intl';
 import { FeaturedConnectors } from './connectors';
 import type { Template } from '@microsoft/logic-apps-shared';
 import { getSupportedSkus } from '../../../core/configuretemplate/utils/helper';
+import { DescriptionWithLink } from '../common';
+import { mergeStyles } from '@fluentui/react';
 
 export const TemplateManifestForm = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const intl = useIntl();
   const runValidation = useSelector((state: RootState) => state.tab.runValidation);
 
   const resources = { ...useTemplatesStrings().resourceStrings, ...useResourceStrings() };
@@ -30,6 +33,17 @@ export const TemplateManifestForm = () => {
 
   return (
     <div className="msla-templates-wizard-tab-content" style={{ width: '70%', marginTop: '8px' }}>
+      <DescriptionWithLink
+        text={intl.formatMessage({
+          defaultMessage:
+            'Add details to help template users evaluate this template. The profile includes the information shown to users and settings that control how the template is filtered and displayed.',
+          id: 'tkkN++',
+          description: 'Description for template profile tab',
+        })}
+        linkText={resources.LearnMore}
+        linkUrl="https://learn.microsoft.com/en-us/azure/logic-apps/logic-apps-templates-manifest"
+        className={mergeStyles({ marginLeft: '-10px' })}
+      />
       <TemplatesSection title={resources.General} titleHtmlFor={'generalSectionLabel'} items={generalSectionItems} />
       <TemplatesSection title={resources.ContactInfo} titleHtmlFor={'contactInfoSectionLabel'} items={contactInfoSectionItems} />
       <TemplatesSection title={resources.DESCRIPTION} titleHtmlFor={'descriptionSectionLabel'} items={descriptionSectionItems} />

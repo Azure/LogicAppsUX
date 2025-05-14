@@ -18,16 +18,16 @@ export const parametersTab = (
   footerContent: {
     buttonContents: [
       {
-        type: 'button',
+        type: 'navigation',
         text: resources.PreviousButtonText,
         onClick: () => {
           dispatch(selectWizardTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.CONNECTIONS));
         },
       },
       {
-        type: 'button',
+        type: 'navigation',
         text: resources.NextButtonText,
-        appreance: 'primary',
+        appearance: 'primary',
         onClick: () => {
           dispatch(selectWizardTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.PROFILE));
         },
