@@ -2,12 +2,15 @@ Write-Output "Starting Logic App deployment"
 
 $subscriptionId = "<%= subscriptionId %>"
 $resourceGroup = "<%= resourceGroup %>"
+$location = "<%= location %>"
 $logicAppName = "<%= logicAppName %>"
-# TODO: should deploy all workflows in logic app
-$workflowName = "workflow1"
+$localLogicAppName = "<%= localLogicAppName %>"
 $TARGET = "$env:HOME\site\wwwroot"
-$currentDir = $PSScriptRoot
 $tempDeployPath = Join-Path $TARGET ".temp_deploy"
+
+$currentDir = Split-Path -Path $PSScriptRoot -Parent
+$currentDir = Join-Path $currentDir $localLogicAppName
+Set-Location -Path $currentDir
 
 # ============================================
 # 1. Get access token
@@ -33,68 +36,7 @@ if (-not $accessToken) {
 }
 
 # ============================================
-# 2. Update connection ACLs
-# ============================================
-Write-Output "Updating access policies for existing connections"
-
-# Get managed API connections from connections.json
-$connectionsJsonPath = Join-Path $currentDir "connections.json"
-$connectionsJson = Get-Content -Path $connectionsJsonPath -Raw
-$connections = $connectionsJson | ConvertFrom-Json
-
-foreach ($connectionName in $connections.managedApiConnections.PSObject.Properties.Name) {
-    Write-Output "-Updating connection '$connectionName'"
-
-    $headers = @{ Authorization = "Bearer $accessToken" }
-
-    # Get logic app system-assigned identity info
-    $logicAppUri = "https://management.azure.com/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/Microsoft.Web/sites/${logicAppName}?api-version=2022-03-01"
-    $logicAppInfo = Invoke-RestMethod -Method GET `
-        -Uri $logicAppUri `
-        -Headers $headers
-    $principalId = $logicAppInfo.identity.principalId
-    $tenantId = $logicAppInfo.identity.tenantId
-
-    # Get connection info
-    $connectionUri = "https://management.azure.com/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/Microsoft.Web/connections/${connectionName}?api-version=2016-06-01"
-    $connectionInfo = Invoke-RestMethod -Method GET `
-        -Uri $connectionUri `
-        -Headers $headers `
-        -ContentType "application/json"
-
-    # Set access policy
-    $accessPolicyName = "$logicAppName-$principalId"
-    $accessPolicyUri = "https://management.azure.com/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/Microsoft.Web/connections/$connectionName/accessPolicies/${accessPolicyName}?api-version=2018-07-01-preview"
-    $headers = @{
-        Authorization = "Bearer $accessToken"
-        "Content-Type" = "application/json"
-    }
-    $body = @{
-        name = $accessPolicyName
-        type = "Microsoft.Web/connections/accessPolicy"
-        location = $connectionInfo.location
-        properties = @{
-            principal = @{
-                type = "ActiveDirectory"
-                identity = @{
-                    objectId = $principalId
-                    tenantId = $tenantId
-                }
-            }
-        }
-    } | ConvertTo-Json -Depth 5 -Compress
-    $response = Invoke-RestMethod -Method PUT `
-        -Uri $accessPolicyUri `
-        -Headers $headers `
-        -Body $body
-    if (-not $response) {
-        Write-Error "ERROR: Failed to update connection access policy for connection '$connectionName'."
-        exit 1
-    }   
-}
-
-# ============================================
-# 3. Update app settings
+# 2. Update app settings
 # ============================================
 Write-Output "Updating app settings"
 
@@ -142,6 +84,71 @@ if (-not $updateAppSettingsResponse) {
 }
 
 # ============================================
+# 3. Update connection ACLs
+# ============================================
+Write-Output "Updating access policies for existing connections"
+
+# Get managed API connections from connections.json
+$connectionsJsonPath = Join-Path $currentDir "connections.json"
+$connectionsJson = Get-Content -Path $connectionsJsonPath -Raw
+$connections = $connectionsJson | ConvertFrom-Json
+
+# Get logic app system-assigned identity info
+$logicAppUri = "https://management.azure.com/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/Microsoft.Web/sites/${logicAppName}?api-version=2022-03-01"
+$logicAppInfo = Invoke-RestMethod -Method GET `
+    -Uri $logicAppUri `
+    -Headers $headers
+$principalId = $logicAppInfo.identity.principalId
+$tenantId = $logicAppInfo.identity.tenantId
+$accessPolicyName = "$logicAppName-$principalId"
+
+$connections.managedApiConnections.PSObject.Properties | ForEach-Object {
+    $connectionName = $_.Name
+    $connection = $_.Value
+
+    Write-Output "-Updating connection '$connectionName'"
+
+    $headers = @{ Authorization = "Bearer $accessToken" }
+
+    # Get connection info
+    $deployedConnectionName = ($connection.connection.id -split "/")[-1]
+    $connectionUri = "https://management.azure.com/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/Microsoft.Web/connections/${deployedConnectionName}?api-version=2016-06-01"
+    $connectionInfo = Invoke-RestMethod -Method GET `
+        -Uri $connectionUri `
+        -Headers $headers `
+        -ContentType "application/json"
+
+    # Set access policy
+    $accessPolicyUri = "https://management.azure.com/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/Microsoft.Web/connections/$deployedConnectionName/accessPolicies/${accessPolicyName}?api-version=2018-07-01-preview"
+    $headers = @{
+        Authorization = "Bearer $accessToken"
+        "Content-Type" = "application/json"
+    }
+    $body = @{
+        name = $accessPolicyName
+        type = "Microsoft.Web/connections/accessPolicy"
+        location = $connectionInfo.location
+        properties = @{
+            principal = @{
+                type = "ActiveDirectory"
+                identity = @{
+                    objectId = $principalId
+                    tenantId = $tenantId
+                }
+            }
+        }
+    } | ConvertTo-Json -Depth 5 -Compress
+    $response = Invoke-RestMethod -Method PUT `
+        -Uri $accessPolicyUri `
+        -Headers $headers `
+        -Body $body
+    if (-not $response) {
+        Write-Error "ERROR: Failed to update connection access policy for connection '$deployedConnectionName'."
+        exit 1
+    }
+}
+
+# ============================================
 # 4. Copy files to wwwroot
 # ============================================
 
@@ -177,17 +184,19 @@ if (Test-Path $parametersJsonPath) {
 # Validate deployment files and copy to temp folder
 Write-Output "Validating and preparing files for deployment"
 
-New-Item -ItemType Directory -Path $tempDeployPath
+New-Item -ItemType Directory -Path $tempDeployPath | Out-Null
 
 if ($parameters) {
     # If connections parameterized, copy updated parameters.json and unmodified connections.json
-    $parametersJson = $parameters | ConvertTo-Json -Depth 5
+    $parametersJson = $parameters | ConvertTo-Json
+    $parametersJson = $parametersJson -replace '\\u0027', "'"
     $parametersTargetPath = Join-Path $tempDeployPath "parameters.json"
     $parametersJson | Out-File -FilePath $parametersTargetPath
     Copy-Item $connectionsJsonPath -Destination $tempDeployPath -Force
 } else {
     # If connections not parameterized, copy updated connections.json and empty parameters.json
-    $connectionsJson = $connections | ConvertTo-Json -Depth 5
+    $connectionsJson = $connections | ConvertTo-Json
+    $connectionsJson = $connectionsJson -replace '\\u0027', "'"
     $connectionsTargetPath = Join-Path $tempDeployPath "connections.json"
     $connectionsJson | Out-File -FilePath $connectionsTargetPath
     $parametersJson = {} | ConvertTo-Json
@@ -203,33 +212,53 @@ if (Test-Path $hostJsonPath) {
     exit 1
 }
 
-$workflowFilePath = Join-Path $currentDir "$workflowName\workflow.json"
-$workflowTempTargetDirPath = Join-Path $tempDeployPath $workflowName
-if (Test-Path $workflowFilePath) {
-    New-Item -ItemType Directory -Path $workflowTempTargetDirPath -Force | Out-Null
-    Copy-Item $workflowFilePath -Destination $workflowTempTargetDirPath -Force
-} else {
-    Write-Error "ERROR: workflow.json file not found in the current directory."
+# Detect and copy all valid workflow.json files
+$workflowDirs = Get-ChildItem -Path $currentDir -Directory | Where-Object {
+    Test-Path (Join-Path $_.FullName "workflow.json")
+}
+if (-not $workflowDirs) {
+    Write-Error "ERROR: No valid workflows found in the current directory."
     exit 1
 }
 
-# Remove old files if they exist
+foreach ($workflowDir in $workflowDirs) {
+    $workflowJsonPath = Join-Path $workflowDir.FullName "workflow.json"
+    $workflowJson = Get-Content -Path $workflowJsonPath -Raw | ConvertFrom-Json
+
+    if ($workflowJson.definition.'$schema' -like "*workflowdefinition.json*") {
+        $workflowName = $workflowDir.Name
+        $workflowTempTargetDirPath = Join-Path $tempDeployPath $workflowName
+        New-Item -ItemType Directory -Path $workflowTempTargetDirPath -Force | Out-Null
+        Copy-Item $workflowJsonPath -Destination $workflowTempTargetDirPath -Force
+        Write-Output "-Found workflow '$workflowName'"
+    }
+}
+
+# Remove old deployment files if they exist
 Write-Output "Cleaning up old deployment files"
 
 $oldFiles = @(
     "$TARGET\host.json",
     "$TARGET\connections.json",
     "$TARGET\parameters.json"
-    "$TARGET\$workflowName\workflow.json"
 )
+
+$existingWorkflowDirs = Get-ChildItem -Path $TARGET -Directory
+foreach ($dir in $existingWorkflowDirs) {
+    $workflowFilePath = Join-Path $dir.FullName "workflow.json"
+    if (Test-Path $workflowFilePath) {
+        $oldFiles += $dir.FullName
+    }
+}
 
 foreach ($file in $oldFiles) {
     if (Test-Path $file) {
-        Remove-Item $file -Force
+        Remove-Item $file -Recurse -Force
     }
 }
 
 # Copy files to wwwroot
+Write-Output "Copying files to wwwroot"
 Copy-Item -Path "${tempDeployPath}\*" -Destination $TARGET -Recurse -Force
 
 # Clean up temp deployment files

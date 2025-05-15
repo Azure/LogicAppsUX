@@ -8,8 +8,6 @@ import { DeploymentScriptType } from '@microsoft/vscode-extension-logic-apps';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 
 export class DeploymentScriptTypeStep extends AzureWizardPromptStep<IProjectWizardContext> {
-  public hideStepCount = true;
-
   /**
    * Prompts the user for a deployment script type.
    * @param context - The project wizard context.

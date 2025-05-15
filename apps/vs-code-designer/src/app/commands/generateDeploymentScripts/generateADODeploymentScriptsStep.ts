@@ -25,8 +25,9 @@ import {
   workflowLocationKey,
   workflowResourceGroupNameKey,
   workflowSubscriptionIdKey,
+  workflowTenantIdKey,
 } from '../../../constants';
-import { createAzureWizard, type IAzureScriptWizard } from './azureScriptWizard';
+import { createAzureDeploymentScriptsWizard, type IAzureDeploymentScriptsContext } from './azureDeploymentScriptsWizard';
 import { unzipLogicAppArtifacts } from '../../utils/taskUtils';
 import { startDesignTimeApi } from '../../utils/codeless/startDesignTimeApi';
 import { getAuthorizationToken, getCloudHost } from '../../utils/codeless/getAuthorizationToken';
@@ -65,14 +66,14 @@ export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IPr
         return;
       }
     }
-    const scriptContext = await GenerateADODeploymentScriptsStep.setupWizardScriptContext(context, context.projectPath);
-    const inputs = await GenerateADODeploymentScriptsStep.gatherAndValidateInputs(scriptContext, context.projectPath);
-    const sourceControlPath = scriptContext.sourceControlPath;
-    await GenerateADODeploymentScriptsStep.callConsumptionApi(scriptContext, inputs);
+    const deploymentScriptsContext = await GenerateADODeploymentScriptsStep.getDeploymentScriptsWizardContext(context, context.projectPath);
+    const inputs = await GenerateADODeploymentScriptsStep.gatherAndValidateInputs(deploymentScriptsContext, context.projectPath);
+    const sourceControlPath = deploymentScriptsContext.deploymentFolderPath;
+    await GenerateADODeploymentScriptsStep.callConsumptionApi(deploymentScriptsContext, inputs);
     const standardArtifactsContent = await GenerateADODeploymentScriptsStep.callStandardApi(inputs, context.projectPath);
     await GenerateADODeploymentScriptsStep.handleApiResponse(standardArtifactsContent, sourceControlPath);
 
-    const deploymentScriptLocation = `workspace/${scriptContext.sourceControlPath}`;
+    const deploymentScriptLocation = `workspace/${deploymentScriptsContext.deploymentFolderPath}`;
     const localizedLogMessage = localize(
       'scriptGenSuccess',
       'Deployment script generation completed successfully. The scripts are added at location: {0}. Warning: One or more workflows in your logic app may contain user-based authentication for managed connectors. You are required to manually authenticate the connection from the Azure portal after the resource is deployed by the DevOps pipeline.',
@@ -80,7 +81,7 @@ export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IPr
     );
     ext.outputChannel.appendLog(localizedLogMessage);
 
-    if (scriptContext.isValidWorkspace) {
+    if (deploymentScriptsContext.isValidWorkspace) {
       FileManagement.addFolderToWorkspace(sourceControlPath);
     } else {
       FileManagement.convertToValidWorkspace(sourceControlPath);
@@ -149,19 +150,21 @@ export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IPr
   }
 
   /**
-   * Initializes the wizard script context based on the action context and folder.
+   * Creates the deployment scripts wizard context.
    * @param context - IActionContext object providing the action context.
    * @param projectPath - The path to the logic app project root.
-   * @returns - Promise<IAzureScriptWizard> with the modified script context.
+   * @returns {Promise<IAzureDeploymentScriptsContext>} - The deployment scripts wizard context.
    */
-  private static async setupWizardScriptContext(context: IActionContext, projectPath: string): Promise<IAzureScriptWizard> {
+  private static async getDeploymentScriptsWizardContext(
+    context: IActionContext,
+    projectPath: string
+  ): Promise<IAzureDeploymentScriptsContext> {
     try {
       const parentDirPath: string = path.normalize(path.dirname(projectPath));
-      const scriptContext = context as IAzureScriptWizard;
-      scriptContext.folderPath = path.normalize(projectPath);
-      scriptContext.customWorkspaceFolderPath = parentDirPath;
-      scriptContext.projectPath = projectPath;
-      return scriptContext;
+      const deploymentScriptsContext = context as IAzureDeploymentScriptsContext;
+      deploymentScriptsContext.customWorkspaceFolderPath = parentDirPath; // TODO - why are we overriding the existing context.customWorkspaceFolderPath?
+      deploymentScriptsContext.projectPath = path.normalize(projectPath);
+      return deploymentScriptsContext;
     } catch (error) {
       const errorMessage = localize('setupWizardScriptContextError', 'Error in setupWizardScriptContext: {0}', error.message ?? error);
       ext.outputChannel.appendLog(errorMessage);
@@ -197,15 +200,16 @@ export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IPr
    * @param inputs - An object containing the subscription ID, resource group, and logic app name.
    * @returns A Promise that resolves when all artifacts are processed.
    */
-  private static async callConsumptionApi(scriptContext: IAzureScriptWizard, inputs: any): Promise<void> {
+  private static async callConsumptionApi(scriptContext: IAzureDeploymentScriptsContext, inputs: any): Promise<void> {
     try {
       ext.outputChannel.appendLog(localize('initCallConsumption', 'Initiating call to Consumption API for deployment artifacts.'));
 
-      const { localSubscriptionId, localResourceGroup, logicAppName } = inputs;
+      const { localTenantId, localSubscriptionId, localResourceGroup, logicAppName } = inputs;
       ext.outputChannel.appendLog(
         localize(
           'operationalContext',
-          'Operational context: Subscription ID: {0}, Resource Group: {1}, Logic App: {2}',
+          'Operational context: Tenant ID: {0}, Subscription ID: {1}, Resource Group: {2}, Logic App: {3}',
+          localTenantId,
           localSubscriptionId,
           localResourceGroup,
           logicAppName
@@ -215,7 +219,7 @@ export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IPr
       // Retrieve managed connections
       ext.outputChannel.appendLog(localize('fetchingManagedConnections', 'Fetching list of managed connections...'));
       const managedConnections: { refEndPoint: string; originalKey: string }[] = await GenerateADODeploymentScriptsStep.getConnectionNames(
-        scriptContext.folderPath
+        scriptContext.projectPath
       );
 
       for (const connectionObj of managedConnections) {
@@ -226,6 +230,7 @@ export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IPr
 
           // The line below has been modified to pass both originalKey and refEndPoint
           const bufferData = await GenerateADODeploymentScriptsStep.callManagedConnectionsApi(
+            localTenantId,
             localSubscriptionId,
             localResourceGroup,
             logicAppName,
@@ -239,7 +244,7 @@ export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IPr
           }
 
           // Specify the unzip path and handle the API response
-          const unzipPath = path.join(scriptContext.sourceControlPath);
+          const unzipPath = path.join(scriptContext.deploymentFolderPath);
           ext.outputChannel.appendLog(
             localize('attemptingUnzipArtifacts', 'Attempting to unzip artifacts for {0} at {1}', connectionObj.originalKey, unzipPath)
           );
@@ -273,8 +278,7 @@ export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IPr
    * Handles the API response and exports the artifacts.
    * @param zipContent - Buffer containing the API response.
    * @param targetDirectory - String indicating the directory to export to.
-   * @param scriptContext - IAzureScriptWizard object for the script context.
-   * @returns - Promise<void> indicating success or failure.
+   * @returns {Promise<void>} - A promise that resolves when the artifacts are unzipped.
    */
   private static async handleApiResponse(zipContent: Buffer | Buffer[], targetDirectory: string): Promise<void> {
     try {
@@ -368,6 +372,7 @@ export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IPr
 
   /**
    * Calls the Managed Connections API to retrieve deployment artifacts for a given Logic App.
+   * @param tenantId - The Azure tenant ID.
    * @param subscriptionId - The Azure subscription ID.
    * @param resourceGroup - The Azure resource group name.
    * @param logicAppName - The name of the Logic App.
@@ -376,6 +381,7 @@ export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IPr
    * @returns A Buffer containing the API response.
    */
   private static async callManagedConnectionsApi(
+    tenantId: string,
     subscriptionId: string,
     resourceGroup: string,
     logicAppName: string,
@@ -384,7 +390,7 @@ export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IPr
   ): Promise<Buffer> {
     try {
       const apiVersion = '2018-07-01-preview';
-      const accessToken = await getAuthorizationToken();
+      const accessToken = await getAuthorizationToken(tenantId);
       const cloudHost = await getCloudHost();
       const baseGraphUri = getBaseGraphApi(cloudHost);
 
@@ -420,16 +426,16 @@ export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IPr
   }
 
   /**
-   * Gathers and validates the input required for API calls.
-   * @param scriptContext - IAzureScriptWizard object for the script context.
+   * Gathers and validates the input required to generate ADO deployment scripts.
+   * @param deploymentScriptsContext - The generate deployment scripts context.
    * @param projectPath - The path to the logic app project root.
    * @returns - Object containing validated inputs.
    */
-  private static async gatherAndValidateInputs(scriptContext: IAzureScriptWizard, projectPath: string) {
+  private static async gatherAndValidateInputs(deploymentScriptsContext: IAzureDeploymentScriptsContext, projectPath: string) {
     let localSettings: ILocalSettingsJson;
 
     try {
-      localSettings = await GenerateADODeploymentScriptsStep.getLocalSettings(scriptContext, projectPath);
+      localSettings = await GenerateADODeploymentScriptsStep.getLocalSettings(deploymentScriptsContext, projectPath);
     } catch (error) {
       const errorMessage = localize('errorFetchLocalSettings', 'Error fetching local settings: {0}', error.message ?? error);
       ext.outputChannel.appendLog(errorMessage);
@@ -437,6 +443,7 @@ export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IPr
     }
 
     const {
+      [workflowTenantIdKey]: defaultTenantId,
       [workflowSubscriptionIdKey]: defaultSubscriptionId,
       [workflowResourceGroupNameKey]: defaultResourceGroup,
       [workflowLocationKey]: defaultLocation,
@@ -445,7 +452,7 @@ export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IPr
     ext.outputChannel.appendLog(
       localize(
         'extractDefaultValues',
-        `Extracted default values: ${JSON.stringify({ defaultSubscriptionId, defaultResourceGroup, defaultLocation })}`
+        `Extracted default values: ${JSON.stringify({ defaultTenantId, defaultSubscriptionId, defaultResourceGroup, defaultLocation })}`
       )
     );
 
@@ -455,7 +462,7 @@ export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IPr
       logicAppName = '',
       storageAccountName = '',
       appServicePlan = '',
-    } = scriptContext;
+    } = deploymentScriptsContext;
 
     ext.outputChannel.appendLog(
       localize(
@@ -466,7 +473,7 @@ export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IPr
 
     try {
       ext.outputChannel.appendLog(localize('AttemptingExecuteAzureWizardSuccess', 'Launching Azure Wizard...'));
-      const wizard = createAzureWizard(scriptContext);
+      const wizard = createAzureDeploymentScriptsWizard(deploymentScriptsContext);
       await wizard.prompt();
       await wizard.execute();
       ext.outputChannel.appendLog(localize('executeAzureWizardSuccess', 'Azure Wizard executed successfully.'));
@@ -477,12 +484,13 @@ export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IPr
     }
 
     return {
-      subscriptionId: scriptContext.subscriptionId || subscriptionId,
-      resourceGroup: scriptContext.resourceGroup.name || resourceGroup.name,
-      logicAppName: scriptContext.logicAppName || logicAppName,
-      storageAccount: scriptContext.storageAccountName || storageAccountName,
-      location: scriptContext.resourceGroup.location || resourceGroup.location,
-      appServicePlan: scriptContext.appServicePlan || appServicePlan,
+      subscriptionId: deploymentScriptsContext.subscriptionId || subscriptionId,
+      resourceGroup: deploymentScriptsContext.resourceGroup.name || resourceGroup.name,
+      logicAppName: deploymentScriptsContext.logicAppName || logicAppName,
+      storageAccount: deploymentScriptsContext.storageAccountName || storageAccountName,
+      location: deploymentScriptsContext.resourceGroup.location || resourceGroup.location,
+      appServicePlan: deploymentScriptsContext.appServicePlan || appServicePlan,
+      localTenantId: defaultTenantId,
       localSubscriptionId: defaultSubscriptionId,
       localResourceGroup: defaultResourceGroup,
     };
@@ -490,11 +498,11 @@ export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IPr
 
   /**
    * Reads local settings from a JSON file.
-   * @param context - IAzureScriptWizard object for the script context.
-   * @param projectPath - The path to the logic app project root.
-   * @returns - Promise<ILocalSettingsJson> containing local settings.
+   * @param {IAzureDeploymentScriptsContext} context - The context object for the Azure deployment scripts.
+   * @param {string} projectPath - The path to the logic app project root.
+   * @returns {Promise<ILocalSettingsJson>} - A promise that resolves to the local settings JSON object.
    */
-  private static async getLocalSettings(context: IAzureScriptWizard, projectPath: string): Promise<ILocalSettingsJson> {
+  private static async getLocalSettings(context: IAzureDeploymentScriptsContext, projectPath: string): Promise<ILocalSettingsJson> {
     const localSettingsFilePath = path.join(projectPath, localSettingsFileName);
     return await getLocalSettingsJson(context, localSettingsFilePath);
   }
