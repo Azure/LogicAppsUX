@@ -406,11 +406,15 @@ export class StandardRunService implements IRunService {
   async getRunChatHistory(runId: string): Promise<any> {
     const { apiVersion, baseUrl, httpClient } = this.options;
     const headers = this.getAccessTokenHeaders();
-    const uri = `${baseUrl}${runId}/chatHistory?api-version=${apiVersion}`;
+    const uri = `${baseUrl}${runId}/chatHistory`;
     try {
       const response = await httpClient.get<any>({
         uri,
         headers: headers as Record<string, any>,
+        queryParameters: {
+          'api-version': apiVersion,
+          $expand: 'properties/actions,workflow/properties',
+        },
       });
       return response.value;
     } catch (e: any) {
@@ -459,12 +463,11 @@ export class StandardRunService implements IRunService {
    * @returns A promise that resolves with the agent chat url.
    * @throws {Error} Throws an error with a message if the HTTP request fails.
    */
-  async getAgentChatInvokeUri(action: { idSuffix: string }): Promise<any> {
+  async getAgentChatInvokeUri(action: { runId: string }): Promise<any> {
     const { apiVersion, baseUrl, httpClient } = this.options;
-    const { idSuffix } = action;
     const headers = this.getAccessTokenHeaders();
 
-    const uri = `${baseUrl}${idSuffix}/listCallBackUrl?api-version=${apiVersion}`;
+    const uri = `${baseUrl}${action.runId}/listInvokeChannelCallbackUrl?api-version=${apiVersion}`;
     try {
       const response = await httpClient.post<any, any>({
         uri,

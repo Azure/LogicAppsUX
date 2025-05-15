@@ -20,7 +20,7 @@ export interface IRunService {
   getRepetition(action: { nodeId: string; runId: string | undefined }, repetitionId: string): Promise<LogicAppsV2.RunRepetition>;
   getRunChatHistory(runId: string): Promise<any>;
   getActionChatHistory(action: { nodeId: string; runId: string | undefined }): Promise<any>;
-  getAgentChatInvokeUri(action: { idSuffix: string }): Promise<any>;
+  getAgentChatInvokeUri(action: { runId: string }): Promise<any>;
   invokeAgentChat(action: { id: string; data: any }): Promise<any>;
   cancelRun(runId: string): Promise<any>;
 }

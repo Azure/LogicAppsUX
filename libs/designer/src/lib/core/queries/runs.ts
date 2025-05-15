@@ -249,22 +249,22 @@ export const useActionChatHistory = (isMonitoringView: boolean, nodeIds: string[
   );
 };
 
-export const useAgentChatInvokeUri = (isMonitoringView: boolean, isAgenticWorkflow: boolean, id: string | undefined) => {
+export const useAgentChatInvokeUri = (isMonitoringView: boolean, isAgenticWorkflow: boolean, runId: string | undefined) => {
   return useQuery(
-    [runsQueriesKeys.useAgentChatInvokeUri, { id }],
+    [runsQueriesKeys.useAgentChatInvokeUri, { runId }],
     async () => {
-      if (isNullOrUndefined(id)) {
+      if (isNullOrUndefined(runId)) {
         return null;
       }
       const uri = await RunService().getAgentChatInvokeUri({
-        idSuffix: id,
+        runId,
       });
       return uri ?? '';
     },
     {
       ...queryOpts,
       retryOnMount: false,
-      enabled: isMonitoringView && isAgenticWorkflow && id !== undefined,
+      enabled: isMonitoringView && isAgenticWorkflow && runId !== undefined,
     }
   );
 };
