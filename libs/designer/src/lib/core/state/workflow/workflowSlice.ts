@@ -662,7 +662,7 @@ export const workflowSlice = createSlice({
         type: 'BUTTON_EDGE',
       });
     },
-    addEdgeToTransitions: (state: WorkflowState, action: PayloadAction<{ sourceId: string; targetId: string }>) => {
+    addEdgeToTransitions: (state: WorkflowState, action: PayloadAction<{ sourceId: string; targetId: string; isHandoff?: boolean }>) => {
       const { sourceId, targetId } = action.payload;
       const sourceOperation = getRecordEntry(state.operations, sourceId);
       const targetOperation = getRecordEntry(state.operations, targetId);
@@ -676,10 +676,12 @@ export const workflowSlice = createSlice({
         targetOperation.transitions = {};
       }
 
+      const defaultStatus = action.payload.isHandoff ? RUN_AFTER_STATUS.HANDOFF : RUN_AFTER_STATUS.SUCCEEDED;
+
       sourceOperation.transitions = {
         ...(sourceOperation.transitions ?? {}),
         [targetId]: {
-          when: [RUN_AFTER_STATUS.SUCCEEDED],
+          when: [defaultStatus],
         },
       };
 
@@ -694,6 +696,12 @@ export const workflowSlice = createSlice({
       for (const id of graphPath.reverse()) {
         graph = graph?.children?.find((x) => x.id === id) ?? null;
       }
+
+      // Don't add the edge if it already exists
+      if ((graph?.edges ?? []).some((x) => x.source === sourceId && x.target === targetId)) {
+        return;
+      }
+
       graph?.edges?.push({
         id: `${sourceId}-${targetId}`,
         source: sourceId,

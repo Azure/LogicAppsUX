@@ -4,7 +4,15 @@ import type { RootState } from '../../store';
 import { createWorkflowEdge, getAllParentsForNode } from '../../utils/graph';
 import type { NodesMetadata, WorkflowState } from './workflowInterfaces';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
-import { labelCase, WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES, getRecordEntry, SUBGRAPH_TYPES, equals } from '@microsoft/logic-apps-shared';
+import {
+  labelCase,
+  WORKFLOW_NODE_TYPES,
+  WORKFLOW_EDGE_TYPES,
+  getRecordEntry,
+  SUBGRAPH_TYPES,
+  equals,
+  RUN_AFTER_STATUS,
+} from '@microsoft/logic-apps-shared';
 import { createSelector } from '@reduxjs/toolkit';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
@@ -112,7 +120,9 @@ export const useIsInfiniteLoop = (id1: string, id2: string) => {
     if (loopPath.length < 1) {
       return false;
     }
-    const noConditions = !Object.entries(transitions).some(([_, t]) => !!t.condition);
+    const noConditions = !Object.entries(transitions).some(
+      ([_, t]) => !!t.condition || t.when.some((w) => w.toUpperCase() !== RUN_AFTER_STATUS.SUCCEEDED)
+    );
     return noConditions;
   }, [loopPath.length, transitions]);
 };

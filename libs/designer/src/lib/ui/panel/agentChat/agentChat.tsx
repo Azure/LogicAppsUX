@@ -147,6 +147,8 @@ export const AgentChat = ({
       });
 
       refetchChatHistory();
+
+      // Refetch run data();
     } catch (e: any) {
       LoggerService().log({
         level: LogEntryLevel.Error,
@@ -161,16 +163,11 @@ export const AgentChat = ({
   }, [textInput, chatInvokeUri, refetchChatHistory]);
 
   useEffect(() => {
-    console.log('#> AgentChat chatHistoryData', chatHistoryData);
     if (!isNullOrUndefined(chatHistoryData)) {
       const newConversations = parseChatHistory(chatHistoryData, toolResultCallback, toolContentCallback, agentCallback);
       setConversation([...newConversations]);
     }
   }, [setConversation, chatHistoryData, dispatch, toolResultCallback, toolContentCallback, agentCallback]);
-
-  useEffect(() => {
-    console.log('#> AgentChat conversation', conversation);
-  }, [conversation]);
 
   const intlText = useMemo(() => {
     return {

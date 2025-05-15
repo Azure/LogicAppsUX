@@ -185,7 +185,11 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const isLeaf = useIsLeafNode(id);
   const label = useNodeDisplayName(id);
 
-  const showLeafComponents = useMemo(() => !readOnly && isLeaf, [readOnly, isLeaf]);
+  const isTerminatingNode = useMemo(() => {
+    return operationInfo?.type === 'Terminate' || operationInfo?.type === 'AgentHandOff';
+  }, [operationInfo]);
+
+  const showLeafComponents = useMemo(() => !readOnly && !isTerminatingNode && isLeaf, [isTerminatingNode, readOnly, isLeaf]);
 
   const { brandColor, iconUri } = useOperationVisuals(id);
 
@@ -324,7 +328,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
 
   return (
     <>
-      <div className="nopan" ref={ref as any}>
+      <div className="nopan" ref={ref as any} style={{ position: 'relative' }}>
         <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
         <Card
           active={isCardActive}

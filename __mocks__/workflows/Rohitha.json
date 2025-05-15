@@ -1,120 +1,288 @@
 {
 	"definition": {
 		"$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+		"actions": {
+			"TriageAgent": {
+				"type": "Agent",
+				"inputs": {
+					"parameters": {
+						"deploymentId": "psrivasModel",
+						"messages": [
+							{
+								"role": "System",
+								"content": "You are a triage agent for ACME Inc who is responsible for deciding which agent should handle a given user message. Invoke the right hand-off tool based on the decision"
+							}
+						],
+						"agentModelType": "AzureOpenAI",
+						"agentModelSettings": {
+							"agentChatCompletionSettings": {
+								"maxTokens": 3000,
+								"frequencyPenalty": 0.1,
+								"presencePenalty": 0.1,
+								"temperature": 0.1,
+								"topP": 0.1
+							},
+							"agentHistoryReductionSettings": {
+								"agentHistoryReductionType": "messageCountReduction",
+								"messageCountLimit": 50
+							}
+						}
+					},
+					"modelConfigurations": {
+						"model1": {
+							"referenceName": "agentConnection1"
+						}
+					}
+				},
+				"tools": {
+					"handoff_from_triage_to_sales_agent": {
+						"actions": {
+							"Handoff_to_SalesAgent": {
+								"type": "Handoff",
+								"inputs": {
+									"agentId": "SalesAgent"
+								},
+								"transitions": {}
+							}
+						},
+						"description": "Hand off to sales agent who can fulfill sales requests such as ordering a product.",
+						"agentParameterSchema": {
+							"type": "object",
+							"properties": {
+								"message": {
+									"type": "string",
+									"description": "The message that would be send to the sales agent.",
+									"required": true
+								}
+							}
+						}
+					},
+					"handoff_from_triage_to_refund_agent": {
+						"actions": {
+							"Handoff_to_RefundAgent": {
+								"type": "Handoff",
+								"inputs": {
+									"agentId": "RefundAgent"
+								},
+								"transitions": {}
+							}
+						},
+						"description": "Hand off to refund agent who can fulfill refund requests.",
+						"agentParameterSchema": {
+							"type": "object",
+							"properties": {
+								"message": {
+									"type": "string",
+									"description": "The message that would be send to the refund agent.",
+									"required": true
+								}
+							}
+						}
+					}
+				},
+				"runAfter": {},
+				"transitions": {
+					"SalesAgent": {
+						"when": [
+							"HANDOFF"
+						]
+					},
+					"RefundAgent": {
+						"when": [
+							"HANDOFF"
+						]
+					}
+				},
+				"limit": {
+					"count": 10,
+					"timeout": "PT1H"
+				}
+			},
+			"SalesAgent": {
+				"type": "Agent",
+				"inputs": {
+					"parameters": {
+						"deploymentId": "psrivasModel",
+						"messages": [
+							{
+								"role": "System",
+								"content": "You are a sales agent for ACME Inc. Perform the given task or answer questions. Once the given task is done, call the hand off tool to hand off the the triage agent."
+							}
+						],
+						"agentModelType": "AzureOpenAI",
+						"agentModelSettings": {
+							"agentChatCompletionSettings": {
+								"maxTokens": 3000,
+								"frequencyPenalty": 0.1,
+								"presencePenalty": 0.1,
+								"temperature": 0.1,
+								"topP": 0.1
+							},
+							"agentHistoryReductionSettings": {
+								"agentHistoryReductionType": "messageCountReduction",
+								"messageCountLimit": 50
+							}
+						}
+					},
+					"modelConfigurations": {
+						"model1": {
+							"referenceName": "agentConnection1"
+						}
+					}
+				},
+				"tools": {
+					"handoff_from_sales_to_triage_agent": {
+						"actions": {},
+						"description": "Hand off to triage agent who can check if there are any further help needed.",
+						"agentParameterSchema": {
+							"type": "object",
+							"properties": {
+								"message": {
+									"type": "string",
+									"description": "The message that would be send to the triage agent.",
+									"required": true
+								}
+							}
+						}
+					},
+					"place_order": {
+						"actions": {
+							"set_order_parameters": {
+								"type": "Compose",
+								"inputs": {
+									"product": "@agentparameters('product')",
+									"quantity": "@agentparameters('quantity')"
+								},
+								"runAfter": {},
+								"transitions": {}
+							},
+							"complete_order": {
+								"type": "Compose",
+								"inputs": {
+									"body": {
+										"result": "Order placed successfully"
+									}
+								},
+								"transitions": {
+									"set_order_parameters": {
+										"when": [
+											"SUCCEEDED"
+										]
+									}
+								}
+							}
+						},
+						"description": "Place the order",
+						"agentParameterSchema": {
+							"type": "object",
+							"properties": {
+								"product": {
+									"type": "string",
+									"description": "The name of the product to order.",
+									"required": true
+								},
+								"quantity": {
+									"type": "number",
+									"description": "The quantity of the product to order.",
+									"required": true
+								}
+							}
+						}
+					}
+				},
+				"runAfter": {},
+				"transitions": {},
+				"limit": {
+					"count": 10,
+					"timeout": "PT1H"
+				}
+			},
+			"RefundAgent": {
+				"type": "Agent",
+				"inputs": {
+					"parameters": {
+						"deploymentId": "psrivasModel",
+						"messages": [
+							{
+								"role": "System",
+								"content": "You are a refund agent for ACME Inc. Perform the given task or answer questions. Once done hand off the control back to the triage agent"
+							}
+						],
+						"agentModelType": "AzureOpenAI",
+						"agentModelSettings": {
+							"agentChatCompletionSettings": {
+								"maxTokens": 3000,
+								"frequencyPenalty": 0.1,
+								"presencePenalty": 0.1,
+								"temperature": 0.1,
+								"topP": 0.1
+							},
+							"agentHistoryReductionSettings": {
+								"agentHistoryReductionType": "messageCountReduction",
+								"messageCountLimit": 50
+							}
+						}
+					},
+					"modelConfigurations": {
+						"model1": {
+							"referenceName": "agentConnection1"
+						}
+					}
+				},
+				"tools": {
+					"handoff_from_refund_to_triage_agent": {
+						"actions": {},
+						"description": "Hand off to triage agent who can check if there are any further help needed.",
+						"agentParameterSchema": {
+							"type": "object",
+							"properties": {
+								"message": {
+									"type": "string",
+									"description": "The message that would be send to the triage agent.",
+									"required": true
+								}
+							}
+						}
+					},
+					"handoff_from_refund_to_sales_agent": {
+						"actions": {},
+						"description": "Hand off to sales agent who can fulfill refund requests.",
+						"agentParameterSchema": {
+							"type": "object",
+							"properties": {
+								"message": {
+									"type": "string",
+									"description": "The message that would be send to the sales agent.",
+									"required": true
+								}
+							}
+						}
+					}
+				},
+				"runAfter": {},
+				"transitions": {},
+				"limit": {
+					"count": 10,
+					"timeout": "PT1H"
+				}
+			}
+		},
+		"contentVersion": "1.0.0.0",
+		"outputs": {},
 		"triggers": {
 			"When_a_HTTP_request_is_received": {
 				"type": "Request",
 				"kind": "Http",
 				"transitions": {
-					"stateA": {
-						"inputs": {
-							"goto": "stateB"
-						}
+					"TriageAgent": {
+						"when": [
+							"SUCCEEDED"
+						]
 					}
 				}
 			}
-		},
-		"actions": {
-			"stateA": {
-				"type": "Compose",
-				"inputs": {
-					"goto": "stateB"
-				},
-				"transitions": {
-					"stateB": {
-						"when": [
-							"succeeded"
-						],
-						"condition": "@equals(outputs()?['goto'], 'stateB')",
-						"inputs": {
-							"goto": "stateC"
-						}
-					},
-					"stateC": {
-						"when": [
-							"succeeded"
-						],
-						"condition": "@equals(outputs()?['goto'], 'stateC')",
-						"inputs": {
-							"goto": "End"
-						}
-					}
-				}
-			},
-			"stateB": {
-				"type": "Compose",
-				"inputs": {
-					"goto": "stateA"
-				},
-				"transitions": {
-					"stateA": {
-						"when": [
-							"succeeded"
-						],
-						"condition": "@equals(outputs()?['goto'], 'stateA')",
-						"inputs": {
-							"goto": "stateC"
-						}
-					},
-					"stateC": {
-						"when": [
-							"succeeded"
-						],
-						"condition": "@equals(outputs()?['goto'], 'stateC')",
-						"inputs": {
-							"goto": "End"
-						}
-					}
-				}
-			},
-			"stateC": {
-				"type": "Compose",
-				"inputs": {
-					"goto": "End"
-				},
-				"transitions": {
-					"stateA": {
-						"when": [
-							"succeeded"
-						],
-						"condition": "@equals(outputs()?['goto'], 'stateA')",
-						"inputs": {
-							"goto": "stateC"
-						}
-					},
-					"stateB": {
-						"when": [
-							"succeeded"
-						],
-						"condition": "@equals(outputs()?['goto'], 'stateB')",
-						"inputs": {
-							"goto": "End"
-						}
-					},
-					"End": {
-						"when": [
-							"succeeded"
-						],
-						"condition": "@equals(outputs()?['goto'], 'End')",
-						"inputs": {
-							"goto": "End"
-						}
-					}
-				}
-			},
-			"End": {
-				"type": "Response",
-				"kind": "Http",
-				"inputs": {
-					"statusCode": 200,
-					"body": ""
-				}
-			}
-		},
-		"contentVersion": "1.0.0.0",
-		"outputs": {}
+		}
 	},
-	"kind": "stateMachine"
+	"connectionReferences": {},
+	"parameters": {}
 }
-
-		

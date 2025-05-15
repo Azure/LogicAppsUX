@@ -12,7 +12,7 @@ import type { Edge, Node } from '@xyflow/react';
 export const spacing = {
   default: '64',
   readOnly: '48',
-  onlyEdge: '16',
+  onlyEdge: '4',
 };
 
 const defaultLayoutOptions: Record<string, string> = {
@@ -31,14 +31,14 @@ const defaultLayoutOptions: Record<string, string> = {
   'elk.padding': '[top=0,left=16,bottom=16,right=16]',
   // This option allows the first layer children of a graph to be laid out in order of appearance in manifest. This is useful for subgraph ordering, like in Switch nodes.
   // 'elk.layered.crossingMinimization.semiInteractive': 'true',
-  'elk.layered.cycleBreaking.strategy': 'MODEL_ORDER', // DEPTH_FIRST
+  'elk.layered.cycleBreaking.strategy': 'DEPTH_FIRST', // DEPTH_FIRST
   'elk.edgeRouting': 'SPLINES',
   'elk.layered.edgeRouting.splines.mode': 'CONSERVATIVE_SOFT', // CONSERVATIVE_SOFT
   'elk.layered.crossingMinimization.forceNodeModelOrder': 'false',
   'elk.layered.considerModelOrder.strategy': 'NODES_AND_EDGES',
   // Ports
   'elk.portAlignment.default': 'CENTER',
-  'elk.spacing.portPort': '40',
+  'elk.spacing.portPort': '48',
 };
 
 const readOnlyOptions: Record<string, string> = {
@@ -178,7 +178,7 @@ const convertWorkflowGraphToElkGraph = (node: WorkflowNode): ElkNode => {
         },
       })) ?? [],
     layoutOptions: {
-      'elk.padding': '[top=0,left=16,bottom=48,right=16]', // allow space for add buttons
+      'elk.padding': '[top=0,left=16,bottom=16,right=16]', // allow space for add buttons
       'elk.position': '(0, 0)', // See 'crossingMinimization.semiInteractive' above
       nodeType: node?.type ?? WORKFLOW_NODE_TYPES.GRAPH_NODE,
       ...(node.edges?.some((edge) => edge.type === WORKFLOW_EDGE_TYPES.ONLY_EDGE) && {

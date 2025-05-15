@@ -34,7 +34,7 @@ import { DndProvider, createTransition, MouseTransition } from 'react-dnd-multi-
 import { useHotkeys } from 'react-hotkeys-hook';
 import { useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
-import { Background, ReactFlow, ReactFlowProvider, BezierEdge } from '@xyflow/react';
+import { Background, ReactFlow, ReactFlowProvider } from '@xyflow/react';
 import type { BackgroundProps, EdgeTypes, NodeChange } from '@xyflow/react';
 import { PerformanceDebugTool } from './common/PerformanceDebug/PerformanceDebug';
 import { CanvasFinder } from './CanvasFinder';
@@ -46,6 +46,7 @@ import { useResizeObserver } from '@react-hookz/web';
 import { AgentChat } from './panel/agentChat/agentChat';
 import { DesignerFlowViewPadding } from '../core/utils/designerLayoutHelpers';
 import TransitionTimeline from './transitionTimeline';
+// import { OnlyEdge } from './connections/onlyEdge';
 
 export interface DesignerProps {
   backgroundProps?: BackgroundProps;
@@ -69,7 +70,7 @@ const nodeTypes: NodeTypesObj = {
 const edgeTypes = {
   BUTTON_EDGE: ButtonEdge,
   HEADING_EDGE: TransitionEdge, // This is functionally the same as a button edge
-  ONLY_EDGE: BezierEdge, // Setting it as default React Flow Edge, can be changed as needed
+  ONLY_EDGE: HiddenEdge, // Setting it as default React Flow Edge, can be changed as needed
   HIDDEN_EDGE: HiddenEdge,
   TRANSITION_EDGE: TransitionEdge,
 } as EdgeTypes;

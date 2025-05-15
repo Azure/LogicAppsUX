@@ -20,8 +20,11 @@ export const deleteNodeFromWorkflow = (
   }
   const { nodeId, isTrigger } = payload;
 
-  const currentRunAfter = (getRecordEntry(state.operations, nodeId) as LogicAppsV2.ActionDefinition)?.runAfter;
-  const multipleParents = Object.keys(currentRunAfter ?? {}).length > 1;
+  const currentTransitions = (getRecordEntry(state.operations, nodeId) as LogicAppsV2.ActionDefinition)?.transitions;
+  const childIds = Object.keys(currentTransitions ?? {});
+  const multipleChildren = childIds.length > 1;
+  const parentIds = (workflowGraph.edges ?? []).filter((edge) => edge.target === nodeId).map((edge) => edge.source);
+  const multipleParents = parentIds.length > 1;
 
   const isRoot = getRecordEntry(nodesMetadata, nodeId)?.isRoot;
   if (isRoot && !isTrigger) {
@@ -35,27 +38,26 @@ export const deleteNodeFromWorkflow = (
   }
 
   // Nodes with multiple parents AND children are not allowed to be deleted
+  if (multipleParents && multipleChildren) {
+    throw new Error('Node cannot be deleted because it has multiple parents and children');
+  }
 
   // Adjust edges
   if (isTrigger) {
     workflowGraph.edges = (workflowGraph.edges ?? []).filter((edge) => edge.source !== nodeId);
   } else if (multipleParents) {
-    const childId = (workflowGraph.edges ?? []).find((edge) => edge.source === nodeId)?.target ?? '';
-    if (childId) {
-      reassignEdgeTargets(state, nodeId, childId, workflowGraph);
-      removeEdge(state, nodeId, childId, workflowGraph);
+    const onlyChildId = childIds?.[0];
+    if (onlyChildId) {
+      reassignEdgeTargets(state, nodeId, onlyChildId, workflowGraph);
+      removeEdge(state, nodeId, onlyChildId, workflowGraph);
     } else {
-      Object.keys(currentRunAfter ?? {}).forEach((_parentId: string) => {
+      parentIds.forEach((_parentId: string) => {
         removeEdge(state, _parentId, nodeId, workflowGraph);
       });
     }
   } else {
-    const parentId = (workflowGraph.edges ?? []).find((edge) => edge.target === nodeId)?.source ?? '';
-    const graphId = workflowGraph.id;
-    const parentMetadata = getRecordEntry(nodesMetadata, parentId);
-    const isAfterTrigger = parentMetadata?.isRoot && graphId === 'root';
-    const shouldAddRunAfters = !isRoot && !isAfterTrigger;
-    reassignEdgeSources(state, nodeId, parentId, workflowGraph, shouldAddRunAfters);
+    const parentId = parentIds[0];
+    reassignEdgeSources(state, nodeId, parentId, workflowGraph);
     removeEdge(state, parentId, nodeId, workflowGraph);
   }
 

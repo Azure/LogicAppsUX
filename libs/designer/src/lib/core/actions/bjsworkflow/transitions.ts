@@ -6,16 +6,18 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 export interface EdgeTransitionPayload {
   sourceId: string;
   targetId: string;
+  isHandoff?: boolean;
 }
 
 export const addEdgeToTransitions = createAsyncThunk(
   'addEdgeToTransitions',
   async (edgePayload: EdgeTransitionPayload, { dispatch, getState }) => {
-    const { sourceId, targetId } = edgePayload;
+    const { sourceId, targetId, isHandoff } = edgePayload;
     dispatch(
       addEdge({
         sourceId,
         targetId,
+        isHandoff,
       })
     );
     updateAllUpstreamNodes(getState() as RootState, dispatch);

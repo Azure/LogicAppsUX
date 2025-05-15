@@ -85,6 +85,10 @@ export const TransitionsActionDetails = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [defaultSelectedTransitionTargetId]);
 
+  const isHandoff = useMemo(() => {
+    return !transition.when.some((status) => status.toUpperCase() !== 'HANDEDOFF');
+  }, [transition.when]);
+
   return (
     <>
       <div className="msla-run-after-edge-header">
@@ -109,9 +113,11 @@ export const TransitionsActionDetails = ({
             statuses={transition.when}
             onStatusChange={onStatusChange}
           />
-          <div style={{ margin: '4px 0px 16px 39px' }}>
-            <TransitionProperties nodeId={sourceId} sourceId={sourceId} targetId={targetId} readOnly={readOnly} />
-          </div>
+          {!isHandoff && (
+            <div style={{ margin: '4px 0px 16px 39px' }}>
+              <TransitionProperties nodeId={sourceId} sourceId={sourceId} targetId={targetId} readOnly={readOnly} />
+            </div>
+          )}
         </>
       )}
       {expanded && <Divider className="msla-run-after-divider" />}

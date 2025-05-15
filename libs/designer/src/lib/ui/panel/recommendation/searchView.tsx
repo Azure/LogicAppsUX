@@ -82,6 +82,11 @@ export const SearchView: FC<SearchViewProps> = ({
         return false;
       }
 
+      // Only show the handoff operation if it's in an agent loop
+      if (type === 'AgentHandOff' && !isWithinAgenticLoop) {
+        return false;
+      }
+
       return true;
     },
     [isAgentTool, isAgenticWorkflow, isRoot, isWithinAgenticLoop]

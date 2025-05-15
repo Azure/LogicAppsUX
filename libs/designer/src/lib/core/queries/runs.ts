@@ -215,7 +215,6 @@ export const useRunChatHistory = (isMonitoringView: boolean, runId: string | und
         return null;
       }
       const messages = await RunService().getRunChatHistory(runId);
-      console.log('#> Chat messages:', messages);
       return [
         {
           nodeId: 'root',

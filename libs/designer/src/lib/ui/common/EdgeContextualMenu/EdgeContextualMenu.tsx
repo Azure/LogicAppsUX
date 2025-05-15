@@ -17,7 +17,7 @@ import { useIntl } from 'react-intl';
 import { useOnViewportChange } from '@xyflow/react';
 
 import { useIsAgenticWorkflow, useEdgeContextMenuData } from '../../../core/state/designerView/designerViewSelectors';
-import { addOperation, useNodeDisplayName, useNodeMetadata, type AppDispatch } from '../../../core';
+import { addOperation, useNodeDisplayName, useNodeMetadata, useOperationInfo, type AppDispatch } from '../../../core';
 import { expandDiscoveryPanel } from '../../../core/state/panel/panelSlice';
 import { retrieveClipboardData } from '../../../core/utils/clipboard';
 import { CustomMenu } from './customMenu';
@@ -31,15 +31,20 @@ import {
   ArrowSplit24Regular,
   ClipboardPasteFilled,
   ClipboardPasteRegular,
+  ArrowExitFilled,
+  ArrowExitRegular,
   bundleIcon,
 } from '@fluentui/react-icons';
 import { pasteOperation, pasteScopeOperation } from '../../../core/actions/bjsworkflow/copypaste';
 import { useUpstreamNodes } from '../../../core/state/tokens/tokenSelectors';
+import { useParentNodeId } from '../../../core/state/workflow/workflowSelectors';
+import { HandoffModal } from '../HandoffModal/HandoffModal';
 
 const AddIcon = bundleIcon(ArrowBetweenDown24Filled, ArrowBetweenDown24Regular);
 const ParallelIcon = bundleIcon(ArrowSplit24Filled, ArrowSplit24Regular);
 const ClipboardIcon = bundleIcon(ClipboardPasteFilled, ClipboardPasteRegular);
 const AgentIcon = bundleIcon(BotAdd24Filled, BotAdd24Regular);
+const HandoffIcon = bundleIcon(ArrowExitFilled, ArrowExitRegular);
 
 export const EdgeContextualMenu = () => {
   const intl = useIntl();
@@ -89,6 +94,11 @@ export const EdgeContextualMenu = () => {
     dispatch(addOperation({ nodeId: `Agent-${customLengthGuid(4)}`, relationshipIds, operation: agentOperation }));
   }, [dispatch, graphId, parentId]);
 
+  const [handoffModalOpen, setHandoffModalOpen] = useState(false);
+  const addHandoffAction = useCallback(() => {
+    setHandoffModalOpen(true);
+  }, []);
+
   const newActionText = intl.formatMessage({
     defaultMessage: 'Add an action',
     id: 'mCzkXX',
@@ -105,6 +115,12 @@ export const EdgeContextualMenu = () => {
     defaultMessage: 'Add an agentic loop',
     id: 'Wq8rLF',
     description: 'Button text for adding an agentic loop',
+  });
+
+  const handoffText = intl.formatMessage({
+    defaultMessage: 'Handoff to another agent',
+    id: '7zhL5A',
+    description: 'Button text for adding a handoff to another agent',
   });
 
   const pasteFromClipboard = intl.formatMessage({
@@ -167,6 +183,15 @@ export const EdgeContextualMenu = () => {
     }
     return parentId;
   }, [nodeMetadata, parentId]);
+
+  const parentNodeId = useParentNodeId(removeIdTag(parentId ?? ''));
+  const parentOperationInfo = useOperationInfo(parentNodeId ?? '');
+  const isParentAgent = useMemo(() => {
+    if (!parentOperationInfo) {
+      return false;
+    }
+    return parentOperationInfo.type === 'Agent';
+  }, [parentOperationInfo]);
 
   const upstreamNodesOfChild = useUpstreamNodes(removeIdTag(childId ?? newParentId ?? ''), graphId, childId);
 
@@ -242,6 +267,11 @@ export const EdgeContextualMenu = () => {
                 {newAgentText}
               </MenuItem>
             )}
+            {isAgenticWorkflow && isParentAgent && (
+              <MenuItem icon={<HandoffIcon />} onClick={addHandoffAction} data-automation-id={automationId('handoff-to-another-agent')}>
+                {handoffText}
+              </MenuItem>
+            )}
             {isPasteEnabled && (
               <CustomMenu
                 item={{
@@ -272,6 +302,14 @@ export const EdgeContextualMenu = () => {
           </MenuList>
         </PopoverSurface>
       </Popover>
+      {/* Handoff dialog */}
+      <HandoffModal
+        isOpen={handoffModalOpen}
+        onDismiss={() => setHandoffModalOpen(false)}
+        agentId={parentNodeId}
+        graphId={graphId}
+        parentId={parentId}
+      />
     </>
   );
 };

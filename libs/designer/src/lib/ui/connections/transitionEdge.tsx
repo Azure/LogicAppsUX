@@ -11,6 +11,7 @@ import { ArrowCap } from './dynamicsvgs/arrowCap';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import {
   containsIdTag,
+  guid,
   removeIdTag,
   RUN_AFTER_STATUS,
   useEdgeIndex,
@@ -181,10 +182,7 @@ const TransitionEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({ id, source, t
     return '';
   }, [dimmed, isNextTransition, isPreviousTransition, readOnly, selected]);
 
-  const markerId = useMemo(() => {
-    // encode markerId as base64 to avoid issues with special characters
-    return btoa(`arrow-end-${id}`);
-  }, [id]);
+  const markerId = useMemo(() => `arrow-end-${guid()}`, []);
 
   const pathRef = useRef<SVGPathElement>(null);
   const [pathReady, setPathReady] = useState(false);

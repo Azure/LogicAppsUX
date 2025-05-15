@@ -41,7 +41,12 @@ const GraphContainerNode = ({ targetPosition = Position.Top, sourcePosition = Po
         }}
       >
         <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
-        <GraphContainer id={id} active={isMonitoringView ? !isNullOrUndefined(runData?.status) : true} selected={selected} />
+        <GraphContainer
+          id={id}
+          active={isMonitoringView ? !isNullOrUndefined(runData?.status) : true}
+          selected={selected}
+          isSubgraph={isSubgraphContainer}
+        />
         <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
       </div>
       {showLeafComponents && (

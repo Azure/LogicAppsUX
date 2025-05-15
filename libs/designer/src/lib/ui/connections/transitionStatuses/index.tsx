@@ -1,6 +1,6 @@
 import { useTheme } from '@fluentui/react';
 import { Divider, Tooltip, Text } from '@fluentui/react-components';
-import { EmptyTrafficLightDot, Failed, Skipped, Succeeded, TimedOut, TrafficLightDot } from '@microsoft/designer-ui';
+import { EmptyTrafficLightDot, Failed, Skipped, Succeeded, TimedOut, Handoff, TrafficLightDot } from '@microsoft/designer-ui';
 import { idDisplayCase, type LogicAppsV2, RUN_AFTER_COLORS, RUN_AFTER_STATUS } from '@microsoft/logic-apps-shared';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
@@ -67,6 +67,11 @@ export function TransitionStatusesIndicator({ transition, targetId }: Transition
       id: 'O+3Y9f',
       description: 'Failed run',
     }),
+    HANDOFF_STATUS: intl.formatMessage({
+      defaultMessage: 'Is handed off',
+      id: 'T/oMYD',
+      description: 'Handoff run',
+    }),
   };
 
   const StatusLabel = ({ text, status }: { text: string; status: RUN_AFTER_STATUS }) => {
@@ -75,6 +80,7 @@ export function TransitionStatusesIndicator({ transition, targetId }: Transition
       [RUN_AFTER_STATUS.SKIPPED]: <Skipped />,
       [RUN_AFTER_STATUS.FAILED]: <Failed />,
       [RUN_AFTER_STATUS.TIMEDOUT]: <TimedOut />,
+      [RUN_AFTER_STATUS.HANDOFF]: <Handoff />,
     };
 
     return (

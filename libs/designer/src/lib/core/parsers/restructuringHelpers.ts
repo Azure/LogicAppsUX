@@ -66,22 +66,10 @@ export const reassignEdgeSources = (state: WorkflowState, oldSourceId: string, n
     return;
   }
 
-  // Remove would-be duplicate edges
-  const targetEdges = graph.edges?.filter((edge) => edge.source === oldSourceId) ?? [];
-  if (targetEdges.length === 0) {
-    return;
-  }
-  targetEdges.forEach((tEdge) => {
-    if (graph.edges?.some((aEdge) => aEdge.source === newSourceId && aEdge.target === tEdge.target)) {
-      removeEdge(state, oldSourceId, tEdge.target, graph);
-      moveEdgeSource(state, tEdge.target, oldSourceId, newSourceId);
-    }
-  });
-
+  moveTransitionSource(state, oldSourceId, newSourceId);
   graph.edges = graph.edges?.map((edge) => {
     if (edge.source === oldSourceId) {
       setEdgeSource(edge, newSourceId);
-      moveEdgeSource(state, edge.target, oldSourceId, newSourceId);
     }
     return edge;
   });
@@ -91,39 +79,51 @@ export const reassignEdgeSources = (state: WorkflowState, oldSourceId: string, n
 //   \|/   =>   \|/
 //               |
 export const reassignEdgeTargets = (state: WorkflowState, oldTargetId: string, newTargetId: string, graph: WorkflowNode) => {
-  moveEdgeTarget(state, oldTargetId, newTargetId);
+  // Remove child edges
+  removeEdge(state, oldTargetId, newTargetId, graph);
+
+  // Remove would-be duplicate edges
+  const parentIds = (graph.edges?.filter((edge) => edge.target === oldTargetId) ?? []).map((edge) => edge.source);
+  parentIds.forEach((parentId) => {
+    if (graph.edges?.some((aEdge) => aEdge.source === parentId && aEdge.target === newTargetId)) {
+      removeEdge(state, parentId, newTargetId, graph);
+    }
+  });
+
+  // Reassign edge target ids to new node id
   graph.edges = graph.edges?.map((edge) => {
     if (edge.target === oldTargetId) {
       setEdgeTarget(edge, newTargetId);
+      moveTransitionTarget(state, edge.source, oldTargetId, newTargetId);
     }
     return edge;
   });
 };
 
-export const moveEdgeTarget = (state: WorkflowState | undefined, oldTargetId: string, newTargetId: string) => {
+export const moveTransitionSource = (state: WorkflowState | undefined, oldSourceId: string, newSourceId: string) => {
   if (!state) {
     return;
   }
-  const targetRunAfter = (getRecordEntry(state.operations, oldTargetId) as any)?.runAfter;
-  if (targetRunAfter) {
-    (getRecordEntry(state.operations, newTargetId) as LogicAppsV2.ActionDefinition).runAfter = targetRunAfter;
-    (getRecordEntry(state.operations, oldTargetId) as any).runAfter = {};
+  const sourceTransition = (getRecordEntry(state.operations, oldSourceId) as any)?.transitions;
+  if (sourceTransition) {
+    (getRecordEntry(state.operations, newSourceId) as LogicAppsV2.ActionDefinition).transitions = sourceTransition;
+    (getRecordEntry(state.operations, oldSourceId) as any).transitions = {};
   }
 };
 
-export const moveEdgeSource = (state: WorkflowState | undefined, nodeId: string, oldSourceId: string, newSourceId: string) => {
+export const moveTransitionTarget = (state: WorkflowState | undefined, nodeId: string, oldTargetId: string, newTargetId: string) => {
   if (!getRecordEntry(state?.operations, nodeId)) {
     return;
   }
-  const targetTransitions = (getRecordEntry(state?.operations, nodeId) as LogicAppsV2.ActionDefinition)?.transitions ?? {};
-  if (!getRecordEntry(targetTransitions, newSourceId)) {
-    targetTransitions[newSourceId] = getRecordEntry(targetTransitions, oldSourceId) ?? defaultTransitionObject;
+  const sourceTransition = (getRecordEntry(state?.operations, nodeId) as LogicAppsV2.ActionDefinition)?.transitions ?? {};
+  if (!getRecordEntry(sourceTransition, newTargetId)) {
+    sourceTransition[newTargetId] = getRecordEntry(sourceTransition, oldTargetId) ?? defaultTransitionObject;
   }
 
-  delete targetTransitions[oldSourceId];
+  delete sourceTransition[oldTargetId];
 
-  if (Object.keys(targetTransitions).length !== 0) {
-    (getRecordEntry(state?.operations, nodeId) as LogicAppsV2.ActionDefinition).transitions = targetTransitions;
+  if (Object.keys(sourceTransition).length !== 0) {
+    (getRecordEntry(state?.operations, nodeId) as LogicAppsV2.ActionDefinition).transitions = sourceTransition;
   } else {
     delete (getRecordEntry(state?.operations, nodeId) as LogicAppsV2.ActionDefinition).transitions;
   }
