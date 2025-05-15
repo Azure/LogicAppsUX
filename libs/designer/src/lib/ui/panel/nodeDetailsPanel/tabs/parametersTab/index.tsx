@@ -269,6 +269,12 @@ const ParameterSection = ({
     [nodeId, rootState.operations.inputParameters]
   );
 
+  const isAzureOpenAi = useMemo(() => {
+    return true;
+  }, []);
+
+  console.log(isAzureOpenAi);
+
   const onValueChange = useCallback(
     (id: string, newState: ChangeState, skipStateSave?: boolean) => {
       const { value, viewModel } = newState;

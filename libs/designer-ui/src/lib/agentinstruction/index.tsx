@@ -86,6 +86,7 @@ export const AgentInstructionEditor = ({
           className={css(className, 'msla-agent-instruction-system-editor editor-custom')}
           placeholder={systemPlaceholder}
           initialValue={systemMessage}
+          tokenPickerButtonProps={{ hideButtonOptions: { hideDynamicContent: true, hideExpression: true } }}
           editorBlur={(newState: ChangeState) => handleValueChange(newState, AGENT_INSTRUCTION_TYPES.SYSTEM)}
         />
         <Label text={userItemLabel} />
