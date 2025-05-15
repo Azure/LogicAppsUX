@@ -10,6 +10,7 @@ import {
   workflowSubscriptionIdKey,
   localSettingsFileName,
   COMMON_ERRORS,
+  workflowTenantIdKey,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
@@ -223,11 +224,12 @@ export async function callConsumptionApi(scriptContext: IAzureScriptWizard, inpu
   try {
     ext.outputChannel.appendLog(localize('initCallConsumption', 'Initiating call to Consumption API for deployment artifacts.'));
 
-    const { localSubscriptionId, localResourceGroup, logicAppName } = inputs;
+    const { localTenantId, localSubscriptionId, localResourceGroup, logicAppName } = inputs;
     ext.outputChannel.appendLog(
       localize(
         'operationalContext',
-        'Operational context: Subscription ID: {0}, Resource Group: {1}, Logic App: {2}',
+        'Operational context: Tenant ID: {0}, Subscription ID: {1}, Resource Group: {2}, Logic App: {3}',
+        localTenantId,
         localSubscriptionId,
         localResourceGroup,
         logicAppName
@@ -246,6 +248,7 @@ export async function callConsumptionApi(scriptContext: IAzureScriptWizard, inpu
 
         // The line below has been modified to pass both originalKey and refEndPoint
         const bufferData = await callManagedConnectionsApi(
+          localTenantId,
           localSubscriptionId,
           localResourceGroup,
           logicAppName,
@@ -386,6 +389,7 @@ async function callStandardResourcesApi(
 
 /**
  * Calls the Managed Connections API to retrieve deployment artifacts for a given Logic App.
+ * @param tenantId - The Azure tenant ID.
  * @param subscriptionId - The Azure subscription ID.
  * @param resourceGroup - The Azure resource group name.
  * @param logicAppName - The name of the Logic App.
@@ -394,6 +398,7 @@ async function callStandardResourcesApi(
  * @returns A Buffer containing the API response.
  */
 async function callManagedConnectionsApi(
+  tenantId: string,
   subscriptionId: string,
   resourceGroup: string,
   logicAppName: string,
@@ -402,7 +407,7 @@ async function callManagedConnectionsApi(
 ): Promise<Buffer> {
   try {
     const apiVersion = '2018-07-01-preview';
-    const accessToken = await getAuthorizationToken();
+    const accessToken = await getAuthorizationToken(tenantId);
     const cloudHost = await getCloudHost();
     const baseGraphUri = getBaseGraphApi(cloudHost);
 
@@ -455,6 +460,7 @@ async function gatherAndValidateInputs(scriptContext: IAzureScriptWizard, folder
   }
 
   const {
+    [workflowTenantIdKey]: defaultTenantId,
     [workflowSubscriptionIdKey]: defaultSubscriptionId,
     [workflowResourceGroupNameKey]: defaultResourceGroup,
     [workflowLocationKey]: defaultLocation,
@@ -463,7 +469,7 @@ async function gatherAndValidateInputs(scriptContext: IAzureScriptWizard, folder
   ext.outputChannel.appendLog(
     localize(
       'extractDefaultValues',
-      `Extracted default values: ${JSON.stringify({ defaultSubscriptionId, defaultResourceGroup, defaultLocation })}`
+      `Extracted default values: ${JSON.stringify({ defaultTenantId, defaultSubscriptionId, defaultResourceGroup, defaultLocation })}`
     )
   );
 
@@ -501,6 +507,7 @@ async function gatherAndValidateInputs(scriptContext: IAzureScriptWizard, folder
     storageAccount: scriptContext.storageAccountName || storageAccountName,
     location: scriptContext.resourceGroup.location || resourceGroup.location,
     appServicePlan: scriptContext.appServicePlan || appServicePlan,
+    localTenantId: defaultTenantId,
     localSubscriptionId: defaultSubscriptionId,
     localResourceGroup: defaultResourceGroup,
   };
