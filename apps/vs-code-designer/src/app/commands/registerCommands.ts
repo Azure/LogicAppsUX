@@ -24,6 +24,7 @@ import { createNewCodeProjectFromCommand } from './createNewCodeProject/createNe
 import { createNewProjectFromCommand } from './createNewProject/createNewProject';
 import { createCustomCodeFunctionFromCommand } from './createCustomCodeFunction/createCustomCodeFunction';
 import { createSlot } from './createSlot';
+import { createWorkflow } from './createWorkflow/createWorkflow';
 import { createNewDataMapCmd, loadDataMapFileCmd } from './dataMapper/dataMapper';
 import { deleteLogicApp } from './deleteLogicApp/deleteLogicApp';
 import { deleteNode } from './deleteNode';
@@ -55,7 +56,7 @@ import { openDesigner } from './workflows/openDesigner/openDesigner';
 import { openOverview } from './workflows/openOverview';
 import { reviewValidation } from './workflows/reviewValidation';
 import { switchDebugMode } from './workflows/switchDebugMode/switchDebugMode';
-import { switchToDotnetProject } from './workflows/switchToDotnetProject';
+import { switchToDotnetProjectCommand } from './workflows/switchToDotnetProject';
 import { useSQLStorage } from './workflows/useSQLStorage';
 import { viewContent } from './workflows/viewContent';
 import { AppSettingsTreeItem, AppSettingTreeItem, registerSiteCommand } from '@microsoft/vscode-azext-azureappservice';
@@ -74,6 +75,7 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.createNewProject, createNewProjectFromCommand);
   registerCommand(extensionCommand.createNewWorkspace, createNewCodeProjectFromCommand);
   registerCommand(extensionCommand.cloudToLocal, cloudToLocalCommand);
+  registerCommand(extensionCommand.createWorkflow, createWorkflow);
   registerCommand(extensionCommand.createCodeless, createCodeless);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.createLogicApp, createLogicApp);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.createLogicAppAdvanced, createLogicAppAdvanced);
@@ -94,7 +96,7 @@ export function registerCommands(): void {
   registerCommandWithTreeNodeUnwrapping(extensionCommand.openOverview, openOverview);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.exportLogicApp, exportLogicApp);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.reviewValidation, reviewValidation);
-  registerCommandWithTreeNodeUnwrapping(extensionCommand.switchToDotnetProject, switchToDotnetProject);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.switchToDotnetProject, switchToDotnetProjectCommand);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.openInPortal, openInPortal);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.browseWebsite, browseWebsite);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.viewProperties, viewProperties);

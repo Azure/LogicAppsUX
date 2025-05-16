@@ -5,12 +5,20 @@
 import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
 import { getContainingWorkspace } from '../../../utils/workspace';
-import { AzureWizardExecuteStep, callWithTelemetryAndErrorHandling, nonNullProp } from '@microsoft/vscode-azext-utils';
+import {
+  AzureWizardExecuteStep,
+  callWithTelemetryAndErrorHandling,
+  DialogResponses,
+  nonNullProp,
+  parseError,
+} from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { IFunctionWizardContext, IWorkflowTemplate } from '@microsoft/vscode-extension-logic-apps';
+import type { IFunctionWizardContext, IHostJsonV2, IWorkflowTemplate } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import { Uri, window, workspace } from 'vscode';
-import type { Progress } from 'vscode';
+import type { MessageItem, Progress } from 'vscode';
+import { parseJson } from '../../../utils/parseJson';
+import { localSettingsFileName } from '../../../../constants';
 
 interface ICachedWorkflow {
   projectPath: string;
@@ -59,6 +67,49 @@ export abstract class WorkflowCreateStepBase<T extends IFunctionWizardContext> e
     }
 
     runPostWorkflowCreateSteps(cachedFunc);
+  }
+
+  protected async getHostJson(context: IFunctionWizardContext, hostJsonPath: string, allowOverwrite = false): Promise<IHostJsonV2> {
+    return this.getJsonFromFile(context, hostJsonPath, { version: '2.0' }, allowOverwrite);
+  }
+
+  public async getJsonFromFile<T extends object>(
+    context: IFunctionWizardContext,
+    filePath: string,
+    defaultValue: T,
+    allowOverwrite = false
+  ): Promise<T> {
+    const emptyStringTest = /[^\s]/;
+    if (await fse.pathExists(filePath)) {
+      const data: string = (await fse.readFile(filePath)).toString();
+      if (emptyStringTest.test(data)) {
+        try {
+          return parseJson(data);
+        } catch (error) {
+          if (allowOverwrite) {
+            const message: string = localize(
+              'failedToParseWithOverwrite',
+              'Failed to parse "{0}": {1}. Overwrite?',
+              localSettingsFileName,
+              parseError(error).message
+            );
+            const overwriteButton: MessageItem = { title: localize('overwrite', 'Overwrite') };
+            // Overwrite is the only button and cancel automatically throws, so no need to check result
+            await context.ui.showWarningMessage(message, { modal: true }, overwriteButton, DialogResponses.cancel);
+          } else {
+            const message: string = localize(
+              'failedToParse',
+              'Failed to parse "{0}": {1}.',
+              localSettingsFileName,
+              parseError(error).message
+            );
+            throw new Error(message);
+          }
+        }
+      }
+    }
+
+    return defaultValue;
   }
 
   public shouldExecute(context: T): boolean {

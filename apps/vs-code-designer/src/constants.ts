@@ -17,6 +17,7 @@ export const launchFileName = 'launch.json';
 export const settingsFileName = 'settings.json';
 export const extensionsFileName = 'extensions.json';
 export const workflowFileName = 'workflow.json';
+export const codefulWorkflowFileName = 'workflow.cs';
 export const funcIgnoreFileName = '.funcignore';
 export const unitTestsFileName = '.unit-test.json';
 export const powershellRequirementsFileName = 'requirements.psd1';
@@ -74,6 +75,7 @@ export const workflowTenantIdKey = 'WORKFLOWS_TENANT_ID';
 export const workflowManagementBaseURIKey = 'WORKFLOWS_MANAGEMENT_BASE_URI';
 export const workflowAppApiVersion = '2018-11-01';
 export const azureWebJobsStorageKey = 'AzureWebJobsStorage';
+export const functionsInprocNet8Enabled = 'FUNCTIONS_INPROC_NET8_ENABLED';
 export const azureWebJobsSecretStorageTypeKey = 'AzureWebJobsSecretStorageType';
 export const workflowappRuntime = 'node|18';
 export const viewOutput = localize('viewOutput', 'View Output');
@@ -90,6 +92,12 @@ export const WorkflowType = {
   agentic: 'Agentic-Codeless',
 } as const;
 export type WorkflowType = (typeof WorkflowType)[keyof typeof WorkflowType];
+
+export const workflowCodeType = {
+  codeful: 'Codeful',
+  codeless: 'Codeless',
+} as const;
+export type workflowCodeType = (typeof workflowCodeType)[keyof typeof workflowCodeType];
 
 export const WorkflowKind = {
   stateful: 'Stateful',
@@ -116,6 +124,7 @@ export const extensionCommand = {
   customCodeSetFunctionsFolders: 'azureLogicAppsStandard.customCode.setFunctionsFolders',
   createCustomCodeFunction: 'azureLogicAppsStandard.createCustomCodeFunction',
   createNewDataMap: 'azureLogicAppsStandard.dataMap.createNewDataMap',
+  createWorkflow: 'azureLogicAppsStandard.createWorkflow',
   createCodeless: 'azureLogicAppsStandard.createCodeless',
   createLogicApp: 'azureLogicAppsStandard.createLogicApp',
   createLogicAppAdvanced: 'azureLogicAppsStandard.createLogicAppAdvanced',
@@ -301,6 +310,7 @@ export type DependencyDefaultPath = (typeof DependencyDefaultPath)[keyof typeof 
 // .NET
 export const DotnetVersion = {
   net6: 'net6.0',
+  net8: 'net8.0',
   net3: 'netcoreapp3.1',
   net2: 'netcoreapp2.1',
   net48: 'net48',
