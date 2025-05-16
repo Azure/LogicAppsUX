@@ -46,6 +46,9 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { DismissRegular } from '@fluentui/react-icons';
 import TenantPicker from './formInputs/tenantPicker';
+import { useOperationInfo } from '../../../../core/state/selectors/actionMetadataSelector';
+import { useRawInputParameters } from '../../../../core/state/operation/operationSelector';
+import { isAgentConnectorAndAgentServiceModel } from '../../nodeDetailsPanel/tabs/parametersTab/helpers';
 
 type ParamType = ConnectionParameter | ConnectionParameterSetParameter;
 
@@ -139,15 +142,24 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   );
 
   const isHiddenAuthKey = useCallback((key: string) => ConnectionService().getAuthSetHideKeys?.()?.includes(key) ?? false, []);
+  const operationInfo = useOperationInfo(nodeIds[0]);
+  const nodeInputs = useRawInputParameters(nodeIds[0]);
+
+  const isAgentServiceConnection = useMemo(() => {
+    return isAgentConnectorAndAgentServiceModel(operationInfo.connectorId, 'default', nodeInputs?.parameterGroups ?? {});
+  }, [nodeInputs?.parameterGroups, operationInfo.connectorId]);
+  console.log('charlie nodeInputs', isAgentServiceConnection);
 
   const connectionParameterSets: ConnectionParameterSets | undefined = useMemo(() => {
     if (!_connectionParameterSets) {
       return undefined;
     }
-    return {
+    const test = {
       ..._connectionParameterSets,
       values: _connectionParameterSets.values.filter((set) => !isHiddenAuthKey(set.name)),
     };
+    console.log('charlie test', test);
+    return test;
   }, [_connectionParameterSets, isHiddenAuthKey]);
 
   const singleAuthParams = useMemo(
