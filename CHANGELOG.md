@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [5.94.18](https://github.com/Azure/LogicAppsUX/compare/v5.94.17...v5.94.18) (2025-05-16)
+
+
+### Bug Fixes
+
+* **designer:** Update string and channels condition ([#7245](https://github.com/Azure/LogicAppsUX/issues/7245)) ([#7246](https://github.com/Azure/LogicAppsUX/issues/7246)) ([5e5ecbf](https://github.com/Azure/LogicAppsUX/commit/5e5ecbfd8e5448c114b96c8e14d0835c16a54e61))
+
 ### [5.94.17](https://github.com/Azure/LogicAppsUX/compare/v5.94.16...v5.94.17) (2025-05-14)
 
 
