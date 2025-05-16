@@ -148,19 +148,21 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   const isAgentServiceConnection = useMemo(() => {
     return isAgentConnectorAndAgentServiceModel(operationInfo.connectorId, 'default', nodeInputs?.parameterGroups ?? {});
   }, [nodeInputs?.parameterGroups, operationInfo.connectorId]);
-  console.log('charlie nodeInputs', isAgentServiceConnection);
 
   const connectionParameterSets: ConnectionParameterSets | undefined = useMemo(() => {
     if (!_connectionParameterSets) {
       return undefined;
     }
-    const test = {
+
+    const filteredValues = _connectionParameterSets.values
+      .filter((set) => !isHiddenAuthKey(set.name))
+      .filter((set) => !isAgentServiceConnection || set.name === 'ManagedServiceIdentity');
+
+    return {
       ..._connectionParameterSets,
-      values: _connectionParameterSets.values.filter((set) => !isHiddenAuthKey(set.name)),
+      values: filteredValues,
     };
-    console.log('charlie test', test);
-    return test;
-  }, [_connectionParameterSets, isHiddenAuthKey]);
+  }, [_connectionParameterSets, isAgentServiceConnection, isHiddenAuthKey]);
 
   const singleAuthParams = useMemo(
     () => ({
