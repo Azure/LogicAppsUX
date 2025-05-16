@@ -52,7 +52,7 @@ export async function generateDeploymentScripts(context: IActionContext, node?: 
     ext.outputChannel.appendLog(localize('initScriptGen', 'Initiating script generation...'));
 
     addLocalFuncTelemetry(context);
-    if (Object.keys(node).length > 0 && (await isLogicAppProject(node.fsPath))) {
+    if (node && Object.keys(node).length > 0 && (await isLogicAppProject(node.fsPath))) {
       projectPath = node.fsPath;
       projectRoot = node;
     } else {
