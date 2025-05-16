@@ -37,23 +37,23 @@ export class HttpClient implements IHttpClient {
       : {
           Authorization: `Bearer ${environment.armToken}`,
         };
-    const response = await axios.patch(getRequestUrl(options), options.content, {
-      headers: {
-        ...this._extraHeaders,
-        ...options.headers,
-        'Content-Type': 'application/json',
-        ...auth,
-      },
-    });
-
-    if (!isSuccessResponse(response.status)) {
-      return Promise.reject(response);
-    }
-
     try {
+      const response = await axios.patch(getRequestUrl(options), options.content, {
+        headers: {
+          ...this._extraHeaders,
+          ...options.headers,
+          'Content-Type': 'application/json',
+          ...auth,
+        },
+      });
+
+      if (!isSuccessResponse(response.status)) {
+        return Promise.reject(response);
+      }
+
       return response.data;
-    } catch {
-      return response as any;
+    } catch (error: any) {
+      throw error?.response?.response?.data ?? error?.response?.data ?? error;
     }
   }
 
@@ -64,23 +64,23 @@ export class HttpClient implements IHttpClient {
       : {
           Authorization: `Bearer ${environment.armToken}`,
         };
-    const response = await axios.post(getRequestUrl(options), options.content, {
-      headers: {
-        ...this._extraHeaders,
-        ...options.headers,
-        'Content-Type': 'application/json',
-        ...auth,
-      },
-    });
-
-    if (!isSuccessResponse(response.status)) {
-      return Promise.reject(response);
-    }
-
     try {
+      const response = await axios.post(getRequestUrl(options), options.content, {
+        headers: {
+          ...this._extraHeaders,
+          ...options.headers,
+          'Content-Type': 'application/json',
+          ...auth,
+        },
+      });
+
+      if (!isSuccessResponse(response.status)) {
+        return Promise.reject(response);
+      }
+
       return response.data;
-    } catch {
-      return response as any;
+    } catch (error: any) {
+      throw error?.response?.data ?? error;
     }
   }
 

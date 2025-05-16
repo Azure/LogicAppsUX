@@ -1,8 +1,5 @@
 import {
   Button,
-  MessageBar,
-  MessageBarBody,
-  MessageBarTitle,
   Table,
   TableBody,
   TableCell,
@@ -21,7 +18,7 @@ import { getResourceNameFromId } from '@microsoft/logic-apps-shared';
 import { openPanelView, TemplatePanelView } from '../../../core/state/templates/panelSlice';
 import { MoreHorizontal16Filled } from '@fluentui/react-icons';
 import { CustomizeParameterPanel } from '../panels/customizeParameterPanel/customizeParameterPanel';
-import { DescriptionWithLink } from '../common';
+import { DescriptionWithLink, ErrorBar } from '../common';
 import { mergeStyles } from '@fluentui/react';
 
 export const TemplateParametersList = () => {
@@ -39,6 +36,11 @@ export const TemplateParametersList = () => {
         'Customize each parameter to tailor this template to your needs. These values help configure how your workflows run. You can save your progress anytime and return later to finish, but all fields must be completed for the template to work.',
       id: 'nCjxEh',
       description: 'The description for the parameters tab',
+    }),
+    ErrorTitle: intl.formatMessage({
+      defaultMessage: 'Validation failed for parameters: ',
+      id: 'MQ0ODD',
+      description: 'The error title for the parameters tab',
     }),
   };
 
@@ -115,16 +117,11 @@ export const TemplateParametersList = () => {
         text={intlText.Description}
         linkText={resourceStrings.LearnMore}
         linkUrl="https://learn.microsoft.com/en-us/azure/logic-apps/logic-apps-templates-parameters"
-        className={mergeStyles({ marginLeft: '-10px' })}
+        className={mergeStyles({ marginLeft: '-10px', width: '70%' })}
       />
 
       {parameterErrorIds.length ? (
-        <MessageBar intent="error" className="msla-templates-error-message-bar">
-          <MessageBarBody>
-            <MessageBarTitle>{resourceStrings.MissingRequiredFields}</MessageBarTitle>
-            <Text>{parameterErrorIds.join(', ')}</Text>
-          </MessageBarBody>
-        </MessageBar>
+        <ErrorBar title={intlText.ErrorTitle} errorMessage={parameterErrorIds.join(', ')} styles={{ marginLeft: '-10px' }} />
       ) : null}
 
       <Table aria-label={intlText.AriaLabel} size="small" style={{ width: '100%' }}>

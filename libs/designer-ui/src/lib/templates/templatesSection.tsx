@@ -40,7 +40,12 @@ export const TemplatesSection = ({
     }
 
     return (
-      <Field validationMessage={item.errorMessage} hint={item.hint} required={item.required}>
+      <Field
+        validationMessage={item.errorMessage}
+        validationState={item.required && item.errorMessage ? 'error' : undefined}
+        hint={item.hint}
+        required={item.required}
+      >
         <CustomFieldInput {...item} />
       </Field>
     );

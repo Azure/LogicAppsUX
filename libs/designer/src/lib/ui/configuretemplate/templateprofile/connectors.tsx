@@ -25,11 +25,12 @@ export const FeaturedConnectors = () => {
   };
   const dispatch = useDispatch<AppDispatch>();
 
-  const { operationInfos, featuredConnectors, errors } = useSelector((state: RootState) => {
+  const { operationInfos, featuredConnectors, errors, apiErrors } = useSelector((state: RootState) => {
     return {
       operationInfos: state.operation.operationInfo,
       featuredConnectors: state.template.manifest?.featuredConnectors ?? [],
       errors: state.template.errors,
+      apiErrors: state.template.apiValidatationErrors?.template,
     };
   });
   const { data: allConnectors, isLoading } = useAllConnectors(operationInfos);
@@ -46,14 +47,14 @@ export const FeaturedConnectors = () => {
   );
 
   return (
-    <Field required={true} validationMessage={getPropertyValue(errors?.manifest ?? {}, 'featuredConnectors')}>
+    <Field required={true} validationMessage={getPropertyValue(apiErrors?.manifest ?? errors?.manifest, 'featuredConnectors')}>
       <Dropdown
         style={{ width: '100%' }}
         multiselect={true}
         onOptionSelect={onOptionSelect}
         disabled={isLoading}
-        defaultValue={selectedConnectors?.map((connector) => connector.displayName).join(', ')}
-        defaultSelectedOptions={selectedConnectors?.map((connector) => connector.id)}
+        value={selectedConnectors?.map((connector) => connector.displayName).join(', ')}
+        selectedOptions={selectedConnectors?.map((connector) => connector.id)}
         placeholder={isLoading ? texts.LOADING : ''}
       >
         {!isLoading && !allConnectors?.length ? (

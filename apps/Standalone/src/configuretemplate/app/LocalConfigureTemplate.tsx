@@ -22,7 +22,7 @@ import { ArmParser } from '../../designer/app/AzureLogicAppsDesigner/Utilities/A
 import { useCurrentTenantId } from '../../designer/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts';
 
 const testTemplateId =
-  '/subscriptions/f34b22a3-2202-4fb1-b040-1332bd928c84/resourceGroups/TestACSRG/providers/Microsoft.Logic/templates/priticustomtest';
+  '/subscriptions/f34b22a3-2202-4fb1-b040-1332bd928c84/resourceGroups/aaaarchiddaTemplates/providers/Microsoft.Logic/templates/template513';
 export const LocalConfigureTemplate = () => {
   const { theme, resourcePath } = useSelector((state: RootState) => ({
     theme: state.configureTemplateLoader.theme,
@@ -35,6 +35,14 @@ export const LocalConfigureTemplate = () => {
   const defaultLocation = 'brazilsouth';
   const [toasterData, setToasterData] = useState({ title: '', content: '', show: false });
   const [hideToaster, setHideToaster] = useState(false);
+  const resourceDetails = useMemo(
+    () => ({
+      subscriptionId: defaultSubscriptionId,
+      resourceGroup: defaultResourceGroup,
+      location: defaultLocation,
+    }),
+    [defaultLocation, defaultResourceGroup, defaultSubscriptionId]
+  );
 
   // Need to fetch template resource to get location.
   const services = useMemo(
@@ -64,11 +72,7 @@ export const LocalConfigureTemplate = () => {
   return (
     <TemplatesDesignerProvider locale="en-US" theme={theme}>
       <ConfigureTemplateDataProvider
-        resourceDetails={{
-          subscriptionId: defaultSubscriptionId,
-          resourceGroup: defaultResourceGroup,
-          location: defaultLocation,
-        }}
+        resourceDetails={resourceDetails}
         onResourceChange={onResourceChange}
         templateId={resourcePath ?? testTemplateId}
         services={services}

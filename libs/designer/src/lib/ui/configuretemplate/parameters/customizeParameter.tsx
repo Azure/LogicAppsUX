@@ -4,8 +4,7 @@ import { useMemo } from 'react';
 import { getResourceNameFromId, type Template } from '@microsoft/logic-apps-shared';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../../core/state/templates/store';
-import { MessageBar } from '@fluentui/react-components';
-import { DescriptionWithLink } from '../common';
+import { DescriptionWithLink, ErrorBar } from '../common';
 import { useIntl } from 'react-intl';
 
 export const CustomizeParameter = ({
@@ -101,11 +100,7 @@ export const CustomizeParameter = ({
           description: 'The description for the customize parameter panel',
         })}
       />
-      {parameterError && (
-        <MessageBar intent="error" style={{ marginBottom: '8px' }}>
-          {parameterError}
-        </MessageBar>
-      )}
+      {parameterError ? <ErrorBar errorMessage={parameterError} /> : null}
       <TemplatesSection title={resourceStrings.Details} titleHtmlFor={'detailsSectionLabel'} items={detailsSectionItems} />
     </div>
   );

@@ -324,6 +324,14 @@ export const validateTemplateManifestValue = (manifest: Template.TemplateManifes
   const intl = getIntl();
   const errors: Record<string, string> = {};
 
+  if (!manifest.skus?.length) {
+    errors['allowedSkus'] = intl.formatMessage({
+      defaultMessage: 'Atleast one sku is required.',
+      id: 'qNIzgF',
+      description: 'Error shown when the template skus are empty',
+    });
+  }
+
   if (isUndefinedOrEmptyString(manifest.title)) {
     errors['title'] = intl.formatMessage({
       defaultMessage: 'Title is required.',

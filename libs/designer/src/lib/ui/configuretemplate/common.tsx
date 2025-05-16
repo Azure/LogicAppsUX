@@ -1,4 +1,4 @@
-import { Text } from '@fluentui/react-components';
+import { Text, MessageBar, MessageBarTitle, MessageBarBody } from '@fluentui/react-components';
 
 export const DescriptionWithLink = ({
   text,
@@ -15,6 +15,17 @@ export const DescriptionWithLink = ({
         </a>
       ) : null}
     </p>
+  );
+};
+
+export const ErrorBar = ({ title, errorMessage, styles }: { title?: string; errorMessage: string; styles?: React.CSSProperties }) => {
+  return (
+    <MessageBar intent="error" className="msla-templates-error-message-bar" style={styles}>
+      <MessageBarBody>
+        {title ? <MessageBarTitle>{title}</MessageBarTitle> : null}
+        <Text>{errorMessage}</Text>
+      </MessageBarBody>
+    </MessageBar>
   );
 };
 
