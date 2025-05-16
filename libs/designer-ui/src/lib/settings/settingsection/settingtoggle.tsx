@@ -42,6 +42,7 @@ export const SettingToggle = ({
         onChange={onToggleInputChange}
         label={label}
         ariaLabel={ariaLabel}
+        aria-label={ariaLabel}
       />
     </>
   );

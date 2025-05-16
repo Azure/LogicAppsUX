@@ -88,6 +88,7 @@ export const CustomValueSlider = ({
             value={sliderValue}
             onChange={onSliderValueChanged}
             onChanged={onSliderValueConfirmed}
+            aria-label={ariaLabel}
           />
         </div>
         <TextField
