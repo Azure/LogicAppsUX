@@ -67,8 +67,24 @@ export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionW
 
     hostJsonUpdated = true;
 
+    // temporary setting to isolate codeful workflows
+
+    // temporary setting to isolate codeful workflows
+    if (hostJson.extensions === undefined) {
+      hostJson.extensions = {};
+    }
+    if (hostJson.extensions.workflow === undefined) {
+      hostJson.extensions.workflow = {};
+    }
+    if (hostJson.extensions.workflow.Settings === undefined) {
+      hostJson.extensions.workflow.Settings = {};
+    }
+    hostJson.extensions.workflow.Settings['Runtime.CodefulWorkflows.Enabled'] = 'true';
+
+    hostJson.extensions.workflow.Settings['Runtime.CodefulWorkflows.Enabled'] = 'true';
+
     if (
-      // keeping for later
+      // keeping for later when codeful supports extension bundles
       nonNullProp(context, 'workflowProjectType') === WorkflowProjectType.Bundle &&
       (hostJson.extensionBundle === undefined ||
         hostJson.extensionBundle.id !== extensionBundleId ||
