@@ -6,7 +6,7 @@ import { useIntl } from 'react-intl';
 import { ConnectorIconWithName } from '../../templates/connections/connector';
 import { useTemplatesStrings } from '../../templates/templatesStrings';
 import { useResourceStrings } from '../resources';
-import { DescriptionWithLink } from '../common';
+import { DescriptionWithLink, ErrorBar } from '../common';
 import { mergeStyles } from '@fluentui/react';
 
 export const TemplateConnectionsList = () => {
@@ -33,12 +33,18 @@ export const TemplateConnectionsList = () => {
       id: 'OF3adl',
       description: 'The label for the kind column',
     }),
+    ErrorTitle: intl.formatMessage({
+      defaultMessage: 'Validation failed for connections: ',
+      id: 'mGNP59',
+      description: 'The error title for the connections tab',
+    }),
   };
   const { connectorKinds } = useTemplatesStrings();
   const resourceStrings = useResourceStrings();
 
-  const { connections } = useSelector((state: RootState) => ({
+  const { connections, error } = useSelector((state: RootState) => ({
     connections: state.template.connections,
+    error: state.template.errors.connections,
   }));
   const items = useMemo(
     () =>
@@ -69,8 +75,9 @@ export const TemplateConnectionsList = () => {
         text={resources.Description}
         linkText={resourceStrings.LearnMore}
         linkUrl="https://learn.microsoft.com/en-us/azure/logic-apps/logic-apps-connector-overview"
-        className={mergeStyles({ marginLeft: '-10px' })}
+        className={mergeStyles({ marginLeft: '-10px', width: '70%' })}
       />
+      {error ? <ErrorBar title={resources.ErrorTitle} errorMessage={error} styles={{ marginLeft: '-10px' }} /> : null}
       <Table aria-label={resources.AriaLabel} size="small" style={{ width: '80%' }}>
         <TableHeader>
           <TableRow>
