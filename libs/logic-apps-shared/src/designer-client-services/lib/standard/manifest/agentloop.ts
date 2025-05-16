@@ -41,6 +41,25 @@ export default {
     inputs: {
       type: 'object',
       properties: {
+        agentModelType: {
+          title: 'Agent model type',
+          description: 'Type of agent model to use',
+          'x-ms-visibility': 'important',
+          'x-ms-editor': 'dropdown',
+          'x-ms-editor-options': {
+            options: [
+              {
+                value: 'AzureOpenAI',
+                displayName: 'Azure OpenAI',
+              },
+              {
+                value: 'AgentService',
+                displayName: 'Agent Service',
+              },
+            ],
+          },
+          type: 'string',
+        },
         deploymentId: {
           type: 'string',
           title: 'Deployment Model Name',
@@ -48,13 +67,6 @@ export default {
           'x-ms-connection-required': true,
           'x-ms-visibility': 'important',
           'x-ms-editor': 'combobox',
-        },
-        agentModelType: {
-          title: 'Agent model type',
-          description: 'Type of agent model to use',
-          default: 'AzureOpenAI',
-          type: 'string',
-          hideInUI: true,
         },
         messages: {
           title: 'Instructions for agent',
@@ -192,7 +204,7 @@ export default {
           },
         },
       },
-      required: ['deploymentId', 'messages', 'agentModelType', 'deploymentModelProperties'],
+      required: ['agentModelType', 'deploymentId', 'messages', 'deploymentModelProperties'],
     },
     outputs: {
       type: 'object',
