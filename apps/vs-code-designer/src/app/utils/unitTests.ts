@@ -371,7 +371,7 @@ export async function createTestCsFile(
 
   let templateContent = await fse.readFile(templatePath, 'utf-8');
 
-  templateContent = templateContent.replace(/namespace <%= LogicAppName %>\.Tests/g, `namespace ${cleanedLogicAppName}.Tests`);
+  templateContent = templateContent.replace(/<%= LogicAppName %>\.Tests/g, `${cleanedLogicAppName}.Tests`);
   templateContent = templateContent.replace(/public class <%= UnitTestName %>/g, `public class ${cleanedUnitTestName}`);
   templateContent = templateContent.replace(/<see cref="<%= UnitTestName %>" \/>/g, `<see cref="${cleanedUnitTestName}" />`);
   templateContent = templateContent.replace(/public <%= UnitTestName %>\(\)/g, `public ${cleanedUnitTestName}()`);
