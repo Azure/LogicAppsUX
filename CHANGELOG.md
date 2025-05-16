@@ -1,5 +1,22 @@
 # Logic Apps Designer
-## [55.104.0](https://github.com/Azure/LogicAppsUX/compare/v5.103.0...v55.104.0) (2025-05-12)
+## [5.105.0](https://github.com/Azure/LogicAppsUX/compare/v5.104.0...v5.105.0) (2025-05-15)
+
+
+### Features
+
+* **templates:** Adding rollback functionality in batch save methods and download template ([#7227](https://github.com/Azure/LogicAppsUX/issues/7227)) ([40f6474](https://github.com/Azure/LogicAppsUX/commit/40f64748eba118ed14a49e19162517a41415ac7a))
+* **templates:** Fit and Finish of custom templates with exporting methods for portal ([#7233](https://github.com/Azure/LogicAppsUX/issues/7233)) ([775002c](https://github.com/Azure/LogicAppsUX/commit/775002c71b9c2e5d7053acf25c67a2a86993b7cb))
+* **vscode:** Unit Test GA ([#7179](https://github.com/Azure/LogicAppsUX/issues/7179)) ([0ffbc6f](https://github.com/Azure/LogicAppsUX/commit/0ffbc6fd0aefc6066fbc1774529447fe19b362ca))
+
+
+### Bug Fixes
+
+* **vscode:** Add fallback for function core tools installation ([#7228](https://github.com/Azure/LogicAppsUX/issues/7228)) ([3df37f7](https://github.com/Azure/LogicAppsUX/commit/3df37f7a9e1cc2f58fcfaf583bbe4411ec4c7bcc))
+* **vscode:** Add tenant ID to get auth token on generate IaC scripts ([#7238](https://github.com/Azure/LogicAppsUX/issues/7238)) ([1039ce8](https://github.com/Azure/LogicAppsUX/commit/1039ce86bae6aeb64ed549a4f27f830abd01d1f5))
+* **vscode:** fix upload settings command registration ([#7222](https://github.com/Azure/LogicAppsUX/issues/7222)) ([78920d1](https://github.com/Azure/LogicAppsUX/commit/78920d1060f53998ea5fec52ce8acea5aacf79a8))
+* **vscode:** Update package and add try catch to auth experience ([#7234](https://github.com/Azure/LogicAppsUX/issues/7234)) ([8832aff](https://github.com/Azure/LogicAppsUX/commit/8832aff4bceb6f7377c7c574d38ad0860f6eb09b))
+
+## [5.104.0](https://github.com/Azure/LogicAppsUX/compare/v5.103.0...v5.104.0) (2025-05-12)
 
 
 ### Features
