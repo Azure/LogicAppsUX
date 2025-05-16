@@ -20,7 +20,7 @@ import { getAuthorizationToken, getCloudHost } from '../../utils/codeless/getAut
 import { areAllConnectionsParameterized } from '../../utils/codeless/parameterizer';
 import { addLocalFuncTelemetry } from '../../utils/funcCoreTools/funcVersion';
 import { unzipLogicAppArtifacts } from '../../utils/taskUtils';
-import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
+import { isLogicAppProject, tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
 import { getWorkspaceFolder } from '../../utils/workspace';
 import { parameterizeConnections } from '../parameterizeConnections';
 import type { IAzureScriptWizard } from './azureScriptWizard';
@@ -52,7 +52,7 @@ export async function generateDeploymentScripts(context: IActionContext, node?: 
     ext.outputChannel.appendLog(localize('initScriptGen', 'Initiating script generation...'));
 
     addLocalFuncTelemetry(context);
-    if (node) {
+    if (node && Object.keys(node).length > 0 && (await isLogicAppProject(node.fsPath))) {
       projectPath = node.fsPath;
       projectRoot = node;
     } else {
