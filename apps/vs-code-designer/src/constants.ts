@@ -246,6 +246,8 @@ export const localEmulatorConnectionString = 'UseDevelopmentStorage=true';
 export const appKindSetting = 'APP_KIND';
 export const sqlStorageConnectionStringKey = 'Workflows.Sql.ConnectionString';
 
+export const functionsInprocNet8Enabled = 'FUNCTIONS_INPROC_NET8_ENABLED';
+export const functionsInprocNet8EnabledValue = '1';
 export const workerRuntimeKey = 'FUNCTIONS_WORKER_RUNTIME';
 export const ProjectDirectoryPath = 'ProjectDirectoryPath';
 export const extensionVersionKey = 'FUNCTIONS_EXTENSION_VERSION';

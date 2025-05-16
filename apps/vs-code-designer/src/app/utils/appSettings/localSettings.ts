@@ -12,6 +12,9 @@ import {
   logicAppKind,
   workerRuntimeKey,
   azureStorageTypeSetting,
+  functionsInprocNet8Enabled,
+  dotnet,
+  functionsInprocNet8EnabledValue,
 } from '../../../constants';
 import { localize } from '../../../localize';
 import { decryptLocalSettings } from '../../commands/appSettings/decryptLocalSettings';
@@ -111,6 +114,18 @@ export async function getLocalSettingsJson(
 
   return getLocalSettingsSchema(isDesignTime);
 }
+
+/**
+ * Set local.settings.json values needed for .NET 8 functions.
+ * @param {IActionContext} context - Command context.
+ * @param {string} projectPath - Project path.
+ */
+export async function setLocalAppSettingsForDotNet8(
+  context: IActionContext,
+  projectPath: string,) {
+    await setLocalAppSetting(context, projectPath, functionsInprocNet8Enabled, functionsInprocNet8EnabledValue, MismatchBehavior.Overwrite);
+    await setLocalAppSetting(context, projectPath, workerRuntimeKey, dotnet, MismatchBehavior.Overwrite);
+  }
 
 /**
  * Set local.settings.json values.

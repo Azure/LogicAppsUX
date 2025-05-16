@@ -157,7 +157,7 @@ async function getExtensionBundleVersionFolders(directoryPath: string): Promise<
  * @param {IActionContext} context - Command context.
  * @returns {Promise<string>} Returns bundle extension zip url.
  */
-export async function downloadExtensionBundle(context: IActionContext): Promise<void> {
+export async function downloadExtensionBundle(context: IActionContext): Promise<string> {
   let envVarVer: string | undefined = process.env.AzureFunctionsJobHost_extensionBundle_version;
   const projectPath: string | undefined = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : null;
   if (projectPath) {
@@ -170,7 +170,7 @@ export async function downloadExtensionBundle(context: IActionContext): Promise<
   if (envVarVer) {
     const extensionBundleUrl = await getExtensionBundleZip(context, envVarVer);
     await downloadAndExtractDependency(context, extensionBundleUrl, defaultExtensionBundlePathValue, extensionBundleId, envVarVer);
-    return;
+    return envVarVer;
   }
 
   // Check for latest version at directory.
@@ -200,6 +200,7 @@ export async function downloadExtensionBundle(context: IActionContext): Promise<
       extensionBundleId,
       latestFeedBundleVersion
     );
+    return latestFeedBundleVersion;
   }
 }
 

@@ -36,6 +36,7 @@ import TelemetryReporter from '@vscode/extension-telemetry';
 import { getAllCustomCodeFunctionsProjects } from './app/utils/customCodeUtils';
 import { createVSCodeAzureSubscriptionProvider } from './app/utils/services/VSCodeAzureSubscriptionProvider';
 import { logSubscriptions } from './app/utils/telemetry';
+import { isLogicAppProject, tryGetAllLogicAppProjectRoots } from './app/utils/verifyIsProject';
 
 const perfStats = {
   loadStartTime: Date.now(),
@@ -144,6 +145,12 @@ export async function activate(context: vscode.ExtensionContext) {
 
     vscode.window.registerUriHandler(new UriHandler());
   });
+}
+
+function addSettingsToExistingApps(context: IActionContext) {
+  if (isLogicAppProject(context.)) {
+  tryGetAllLogicAppProjectRoots
+  
 }
 
 export function deactivate(): Promise<any> {

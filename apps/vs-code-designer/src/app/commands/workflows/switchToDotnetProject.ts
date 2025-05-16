@@ -42,6 +42,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import { validateDotNetIsInstalled } from '../dotnet/validateDotNetInstalled';
 import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
+import { setLocalAppSettingsForDotNet8 } from '../../utils/appSettings/localSettings';
 
 export async function switchToDotnetProject(context: IProjectWizardContext, target: vscode.Uri) {
   const isDotNetInstalled = await validateDotNetIsInstalled(context, target.fsPath);
@@ -135,6 +136,9 @@ export async function switchToDotnetProject(context: IProjectWizardContext, targ
   );
 
   await copyBundleProjectFiles(target);
+
+  await setLocalAppSettingsForDotNet8(context, context.projectPath);
+
   await updateBuildFile(context, target, dotnetVersion);
   if (useBinaries) {
     await createGlobalJsonFile(dotnetLocalVersion, target.fsPath);
