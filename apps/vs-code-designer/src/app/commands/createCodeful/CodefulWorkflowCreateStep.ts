@@ -3,15 +3,23 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { nonNullProp } from '@microsoft/vscode-azext-utils';
-import { WorkflowProjectType, MismatchBehavior, WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
-import type { IFunctionWizardContext, IHostJsonV2 } from '@microsoft/vscode-extension-logic-apps';
-import * as fse from 'fs-extra';
-import * as path from 'path';
-import { WorkflowCreateStepBase } from '../createCodeless/createCodelessSteps/WorkflowCreateStepBase';
-import { getCodefulWorkflowTemplate } from '../../utils/codeless/templates';
-import { writeFormattedJson } from '../../utils/fs';
+import type { IActionContext } from "@microsoft/vscode-azext-utils";
+import { nonNullProp } from "@microsoft/vscode-azext-utils";
+import {
+  WorkflowProjectType,
+  MismatchBehavior,
+  WorkerRuntime,
+} from "@microsoft/vscode-extension-logic-apps";
+import type {
+  IFunctionWizardContext,
+  IHostJsonV2,
+} from "@microsoft/vscode-extension-logic-apps";
+import { writeFileSync } from 'fs';
+import * as fse from "fs-extra";
+import * as path from "path";
+import { WorkflowCreateStepBase } from "../createCodeless/createCodelessSteps/WorkflowCreateStepBase";
+import { getCodefulWorkflowTemplate } from "../../utils/codeless/templates";
+import { writeFormattedJson } from "../../utils/fs";
 import {
   hostFileName,
   extensionBundleId,
@@ -23,36 +31,48 @@ import {
   codefulWorkflowFileName,
   appKindSetting,
   logicAppKind,
-} from '../../../constants';
-import { removeAppKindFromLocalSettings, setLocalAppSetting } from '../../utils/appSettings/localSettings';
-import { validateDotnetInstalled } from '../../utils/dotnet/executeDotnetTemplateCommand';
-import { switchToDotnetProject } from '../workflows/switchToDotnetProject';
-import * as vscode from 'vscode';
-import { createConnectionsJson } from '../../utils/codeless/connection';
-import { createEmptyParametersJson } from '../../utils/codeless/parameter';
+} from "../../../constants";
+import {
+  removeAppKindFromLocalSettings,
+  setLocalAppSetting,
+} from "../../utils/appSettings/localSettings";
+import { validateDotnetInstalled } from "../../utils/dotnet/executeDotnetTemplateCommand";
+import { switchToDotnetProject } from "../workflows/switchToDotnetProject";
+import * as vscode from "vscode";
+import { createConnectionsJson } from "../../utils/codeless/connection";
+import { createEmptyParametersJson } from "../../utils/codeless/parameter";
 
 export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionWizardContext> {
   private constructor() {
     super();
   }
 
-  public static async createStep(context: IActionContext): Promise<CodefulWorkflowCreateStep> {
+  public static async createStep(
+    context: IActionContext
+  ): Promise<CodefulWorkflowCreateStep> {
     await validateDotnetInstalled(context);
     return new CodefulWorkflowCreateStep();
   }
 
   public async executeCore(context: IFunctionWizardContext): Promise<string> {
-    const functionPath: string = path.join(context.projectPath, nonNullProp(context, 'functionName'));
+    const functionPath: string = path.join(
+      context.projectPath,
+      nonNullProp(context, "functionName")
+    );
 
     const codelessDefinition: string = await getCodefulWorkflowTemplate();
 
-    const workflowCsFullPath: string = path.join(functionPath, codefulWorkflowFileName);
+    const workflowCsFullPath: string = path.join(
+      functionPath,
+      codefulWorkflowFileName
+    );
 
     await fse.ensureDir(functionPath);
     await fse.writeFile(workflowCsFullPath, codelessDefinition);
 
     await createConnectionsJson(context.projectPath);
     await createEmptyParametersJson(context.projectPath);
+    addNugetConfig(context.projectPath);
 
     await this.createSystemArtifacts(context);
 
@@ -60,32 +80,20 @@ export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionW
   }
 
   // this will change when we support extension bundles
-  private async updateHostJson(context: IFunctionWizardContext, hostFileName: string): Promise<void> {
+  private async updateHostJson(
+    context: IFunctionWizardContext,
+    hostFileName: string
+  ): Promise<void> {
     const hostJsonPath: string = path.join(context.projectPath, hostFileName);
     let hostJson: IHostJsonV2 = await this.getHostJson(context, hostJsonPath);
     let hostJsonUpdated = false;
 
     hostJsonUpdated = true;
 
-    // temporary setting to isolate codeful workflows
-
-    // temporary setting to isolate codeful workflows
-    if (hostJson.extensions === undefined) {
-      hostJson.extensions = {};
-    }
-    if (hostJson.extensions.workflow === undefined) {
-      hostJson.extensions.workflow = {};
-    }
-    if (hostJson.extensions.workflow.Settings === undefined) {
-      hostJson.extensions.workflow.Settings = {};
-    }
-    hostJson.extensions.workflow.Settings['Runtime.CodefulWorkflows.Enabled'] = 'true';
-
-    hostJson.extensions.workflow.Settings['Runtime.CodefulWorkflows.Enabled'] = 'true';
-
     if (
       // keeping for later when codeful supports extension bundles
-      nonNullProp(context, 'workflowProjectType') === WorkflowProjectType.Bundle &&
+      nonNullProp(context, "workflowProjectType") ===
+        WorkflowProjectType.Bundle &&
       (hostJson.extensionBundle === undefined ||
         hostJson.extensionBundle.id !== extensionBundleId ||
         hostJson.extensionBundle.version !== defaultVersionRange)
@@ -103,16 +111,36 @@ export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionW
     }
   }
 
-  private async createSystemArtifacts(context: IFunctionWizardContext): Promise<void> {
+  private async createSystemArtifacts(
+    context: IFunctionWizardContext
+  ): Promise<void> {
     const target = vscode.Uri.file(context.projectPath);
 
-    await switchToDotnetProject(context, target, '8', true);
+    await switchToDotnetProject(context, target, "8", true);
 
     await this.updateHostJson(context, hostFileName);
 
-    await setLocalAppSetting(context, context.projectPath, workerRuntimeKey, WorkerRuntime.Dotnet, MismatchBehavior.Overwrite);
-    await setLocalAppSetting(context, context.projectPath, functionsInprocNet8Enabled, '1', MismatchBehavior.Overwrite);
-    await setLocalAppSetting(context, context.projectPath, appKindSetting, logicAppKind, MismatchBehavior.Overwrite);
+    await setLocalAppSetting(
+      context,
+      context.projectPath,
+      workerRuntimeKey,
+      WorkerRuntime.Dotnet,
+      MismatchBehavior.Overwrite
+    );
+    await setLocalAppSetting(
+      context,
+      context.projectPath,
+      functionsInprocNet8Enabled,
+      "1",
+      MismatchBehavior.Overwrite
+    );
+    await setLocalAppSetting(
+      context,
+      context.projectPath,
+      appKindSetting,
+      logicAppKind,
+      MismatchBehavior.Overwrite
+    );
     await setLocalAppSetting(
       context,
       context.projectPath,
@@ -123,3 +151,24 @@ export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionW
     await removeAppKindFromLocalSettings(context.projectPath, context);
   }
 }
+
+// temporarily add nuget.config until we publish codeful packages
+const addNugetConfig = (projectPath: string) => {
+  const getNugetConfigTemplate = `<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <packageSources>
+    <add key="nuget.org" value="https://api.nuget.org/v3/index.json" protocolVersion="3" />
+    <add key="LocalPackages" value="C:\\dev\\.packages"/>
+  </packageSources>
+  <packageManagement>
+    <add key="format" value="0" />
+    <add key="disabled" value="False" />
+  </packageManagement>
+</configuration>`;
+    const nugetConfigPath: string = path.join(
+      projectPath,
+      "nuget.config"
+    );
+
+    writeFileSync(nugetConfigPath, getNugetConfigTemplate);
+};
