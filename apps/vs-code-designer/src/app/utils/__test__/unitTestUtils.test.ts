@@ -869,7 +869,7 @@ describe('createTestCsFile', () => {
   const unitTestFolderPath: string = 'unitTestFolderPath';
   const unitTestName: string = 'TestBlankClass';
   const workflowName: string = 'MyWorkflow';
-  const logicAppName: string = 'MyLogicApp';
+  const logicAppName: string = 'My-Logic-App';
   const actionName: string = 'MyAction';
   const actionOutputClassName: string = 'MyActionMockOutput';
   const actionMockClassName: string = 'MyActionMock';
@@ -1058,6 +1058,8 @@ namespace <%= LogicAppName %>.Tests
     expect(writeFileSpyCalledWith[1]).toEqual(
       expect.stringContaining(`var triggerMock = new ${triggerMockClassName}(outputs: triggerMockOutput);`)
     );
+    expect(writeFileSpyCalledWith[1]).toEqual(expect.stringContaining(`using ${cleanedLogicAppName}.Tests.Mocks.${cleanedWorkflowName};`));
+    expect(writeFileSpyCalledWith[1]).toEqual(expect.stringContaining(`namespace ${cleanedLogicAppName}.Tests`));
     expect(writeFileSpyCalledWith[1]).toEqual(expect.stringContaining(`var actionMockOutput = new ${actionOutputClassName}();`));
     expect(writeFileSpyCalledWith[1]).toEqual(
       expect.stringContaining(`var actionMock = new ${actionMockClassName}(name: "${actionName}", outputs: actionMockOutput);`)
@@ -1246,6 +1248,8 @@ namespace <%= LogicAppName %>.Tests
     expect(writeFileSpy).toHaveBeenCalledTimes(1);
     const writeFileSpyCalledWith = writeFileSpy.mock.calls[writeFileSpy.mock.calls.length - 1];
     expect(writeFileSpyCalledWith[0]).toEqual(path.join(unitTestFolderPath, `${unitTestName}.cs`));
+    expect(writeFileSpyCalledWith[1]).toEqual(expect.stringContaining(`using ${cleanedLogicAppName}.Tests.Mocks.${cleanedWorkflowName};`));
+    expect(writeFileSpyCalledWith[1]).toEqual(expect.stringContaining(`namespace ${cleanedLogicAppName}.Tests`));
     expect(writeFileSpyCalledWith[1]).toEqual(
       expect.stringContaining(`sampleActionMock.Outputs["your-property-name"] = "your-property-value";`)
     );
@@ -1352,6 +1356,8 @@ namespace <%= LogicAppName %>.Tests
     expect(writeFileSpy).toHaveBeenCalledTimes(1);
     const writeFileSpyCalledWith = writeFileSpy.mock.calls[writeFileSpy.mock.calls.length - 1];
     expect(writeFileSpyCalledWith[0]).toEqual(path.join(unitTestFolderPath, `${unitTestName}.cs`));
+    expect(writeFileSpyCalledWith[1]).toEqual(expect.stringContaining(`using ${cleanedLogicAppName}.Tests.Mocks.${cleanedWorkflowName};`));
+    expect(writeFileSpyCalledWith[1]).toEqual(expect.stringContaining(`namespace ${cleanedLogicAppName}.Tests`));
     expect(writeFileSpyCalledWith[1]).toEqual(expect.stringContaining(`var triggerMockOutput = new ${triggerOutputClassName}();`));
     expect(writeFileSpyCalledWith[1]).toEqual(
       expect.stringContaining(`var triggerMock = new ${triggerMockClassName}(outputs: triggerMockOutput);`)
@@ -1489,6 +1495,8 @@ namespace <%= LogicAppName %>.Tests
     expect(writeFileSpy).toHaveBeenCalledTimes(1);
     const writeFileSpyCalledWith = writeFileSpy.mock.calls[writeFileSpy.mock.calls.length - 1];
     expect(writeFileSpyCalledWith[0]).toEqual(path.join(unitTestFolderPath, `${unitTestName}.cs`));
+    expect(writeFileSpyCalledWith[1]).toEqual(expect.stringContaining(`using ${cleanedLogicAppName}.Tests.Mocks.${cleanedWorkflowName};`));
+    expect(writeFileSpyCalledWith[1]).toEqual(expect.stringContaining(`namespace ${cleanedLogicAppName}.Tests`));
     expect(writeFileSpyCalledWith[1]).toEqual(
       expect.stringContaining(`mockData.TriggerMock.Outputs["your-property-name"] = "your-property-value";`)
     );
