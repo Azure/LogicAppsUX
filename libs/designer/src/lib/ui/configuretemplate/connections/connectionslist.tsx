@@ -106,7 +106,7 @@ export const TemplateConnectionsList = () => {
                   }
                 />
               </TableCell>
-              <TableCell>{connectorKinds[item.kind as string]}</TableCell>
+              <TableCell>{connectorKinds[(item.kind ?? '').toLowerCase()]}</TableCell>
             </TableRow>
           ))}
         </TableBody>
