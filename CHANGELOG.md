@@ -1,4 +1,32 @@
 # Logic Apps Designer
+### [5.94.18](https://github.com/Azure/LogicAppsUX/compare/v5.94.17...v5.94.18) (2025-05-16)
+
+
+### Bug Fixes
+
+* **designer:** Update string and channels condition ([#7245](https://github.com/Azure/LogicAppsUX/issues/7245)) ([#7246](https://github.com/Azure/LogicAppsUX/issues/7246)) ([5e5ecbf](https://github.com/Azure/LogicAppsUX/commit/5e5ecbfd8e5448c114b96c8e14d0835c16a54e61))
+
+### [5.94.17](https://github.com/Azure/LogicAppsUX/compare/v5.94.16...v5.94.17) (2025-05-14)
+
+
+### Bug Fixes
+
+* **vscode:** Update package and add try catch to auth experience ([#7234](https://github.com/Azure/LogicAppsUX/issues/7234)) ([#7235](https://github.com/Azure/LogicAppsUX/issues/7235)) ([8e5aeec](https://github.com/Azure/LogicAppsUX/commit/8e5aeeccdf22b3cf1ffafd396f5f55d79e32d3d5))
+
+### [5.94.16](https://github.com/Azure/LogicAppsUX/compare/v5.94.15...v5.94.16) (2025-05-13)
+
+
+### Bug Fixes
+
+* **vscode:** Add fallback for function core tools installation  ([#7229](https://github.com/Azure/LogicAppsUX/issues/7229)) ([5f7be83](https://github.com/Azure/LogicAppsUX/commit/5f7be8399605e3f0ff07e81df3de88c68b1c0728)), closes [#7228](https://github.com/Azure/LogicAppsUX/issues/7228)
+
+### [5.94.15](https://github.com/Azure/LogicAppsUX/compare/v5.94.14...v5.94.15) (2025-05-09)
+
+
+### Bug Fixes
+
+* **designer:** Fixing Search not showing operations in Agentic Loops ([#7220](https://github.com/Azure/LogicAppsUX/issues/7220)) ([9b70169](https://github.com/Azure/LogicAppsUX/commit/9b70169a3749b7bdc641b9118539e023b5f85c4b)), closes [#7105](https://github.com/Azure/LogicAppsUX/issues/7105)
+
 ### [5.94.14](https://github.com/Azure/LogicAppsUX/compare/v5.94.13...v5.94.14) (2025-05-09)
 
 
