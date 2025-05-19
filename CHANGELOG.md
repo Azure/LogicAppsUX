@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [5.94.19](https://github.com/Azure/LogicAppsUX/compare/v5.94.18...v5.94.19) (2025-05-19)
+
+
+### Bug Fixes
+
+* **designer:** Reverting part of https://github.com/Azure/LogicAppsUX/pull/7006 ([#7267](https://github.com/Azure/LogicAppsUX/issues/7267)) ([ad2a402](https://github.com/Azure/LogicAppsUX/commit/ad2a40239a2d6267916c34edc5dd28070b6f006c)), closes [#7105](https://github.com/Azure/LogicAppsUX/issues/7105)
+
 ### [5.94.18](https://github.com/Azure/LogicAppsUX/compare/v5.94.17...v5.94.18) (2025-05-16)
 
 
