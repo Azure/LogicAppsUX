@@ -10,7 +10,7 @@ import { ConnectorConnectionName } from '../../templates/connections/connector';
 import React, { useMemo } from 'react';
 import { useAllConnectors } from '../../../core/configuretemplate/utils/queries';
 import { WorkflowKind } from '../../../core/state/workflow/workflowInterfaces';
-import { DescriptionWithLink } from '../common';
+import { DescriptionWithLink, ErrorBar } from '../common';
 import { mergeStyles } from '@fluentui/react';
 
 const SectionDividerItem: TemplatesSectionItem = {
@@ -46,8 +46,29 @@ export const TemplateReviewList = () => {
       id: 'oiME91',
       description: 'The label for the status and plan tab label',
     }),
+    ErrorMessage: intl.formatMessage({
+      defaultMessage: 'Template validation failed. Please check the tabs for more details to fix the errors',
+      id: 'fa8xG1',
+      description: 'The information for the error message',
+    }),
   };
 
+  const hasError = useSelector((state: RootState) => {
+    const { errors, workflows } = state.template;
+    return (
+      errors.general ||
+      errors.connections ||
+      Object.values(errors.parameters).some((parameterErrors) => parameterErrors !== undefined) ||
+      Object.values(errors.manifest ?? {}).some((manifestErrors) => manifestErrors !== undefined) ||
+      Object.values(workflows ?? {}).some(
+        (workflow) =>
+          workflow.errors?.general ||
+          Object.values(workflow.errors?.manifest ?? {}).some((error) => error !== undefined) ||
+          workflow.errors.kind ||
+          workflow.errors.workflow
+      )
+    );
+  });
   const { connectorKinds, stateTypes, resourceStrings: templateResourceStrings } = useTemplatesStrings();
   const resources = { ...templateResourceStrings, ...connectorKinds, ...stateTypes, ...useResourceStrings(), ...intlText };
 
@@ -84,7 +105,8 @@ export const TemplateReviewList = () => {
 
   return (
     <div className={mergeStyles('msla-templates-wizard-tab-content', { marginLeft: '-10px' })}>
-      <DescriptionWithLink text={resources.TabDescription} />
+      <DescriptionWithLink text={resources.TabDescription} className={mergeStyles({ width: '70%' })} />
+      {hasError ? <ErrorBar errorMessage={resources.ErrorMessage} /> : null}
       <Accordion multiple={true} defaultOpenItems={Object.keys(sectionItems)}>
         {Object.entries(sectionItems).map(([key, { label, value, emptyText }]) => (
           <React.Fragment key={key}>

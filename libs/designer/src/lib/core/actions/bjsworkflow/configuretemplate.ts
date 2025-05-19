@@ -1,3 +1,4 @@
+import type { ThunkDispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import type {
   IConnectionService,
@@ -13,7 +14,6 @@ import type {
 import {
   clone,
   DevLogger,
-  getResourceNameFromId,
   getTriggerFromDefinition,
   InitConnectionService,
   InitLoggerService,
@@ -26,6 +26,7 @@ import {
   TemplateResourceService,
   isLegacyDynamicValuesBuiltInExtension,
   equals,
+  getIntl,
 } from '@microsoft/logic-apps-shared';
 import type { RootState } from '../../state/templates/store';
 import {
@@ -52,17 +53,19 @@ import {
   getTemplateConnectionsFromConnectionsData,
 } from '../../configuretemplate/utils/helper';
 import {
+  setApiValidationErrors,
   updateAllWorkflowsData,
   updateConnectionAndParameterDefinitions,
   updateEnvironment,
   updateTemplateParameterDefinition,
 } from '../../state/templates/templateSlice';
-import { loadTemplate, type WorkflowTemplateData } from './templates';
+import type { WorkflowTemplateData } from './templates';
 import { initializeNodeOperationInputsData, type NodeDependencies, type NodeInputs } from '../../state/operation/operationMetadataSlice';
 import type { WorkflowParameter } from '../../../common/models/workflow';
 import { getAllInputParameters } from '../../utils/parameters/helper';
 import { shouldAddDynamicData } from '../../templates/utils/parametershelper';
 import { setInitialData, type WorkflowState } from '../../state/templates/workflowSlice';
+import { parseValidationError, type TemplateValidationError } from '../../configuretemplate/utils/errors';
 
 export interface ConfigureTemplateServiceOptions {
   connectionService: IConnectionService;
@@ -105,10 +108,8 @@ export const initializeConfigureTemplateServices = createAsyncThunk(
 export const loadCustomTemplate = createAsyncThunk(
   'loadCustomTemplate',
   async ({ templateId }: { templateId: string }, { dispatch }): Promise<{ status: string; enableWizard: boolean }> => {
-    const templateName = getResourceNameFromId(templateId);
     const templateResource = await getTemplate(templateId);
     const manifest = await getTemplateManifest(templateId);
-    dispatch(loadTemplate({ templateName, preLoadedManifest: manifest }));
 
     const allWorkflowsManifest = await getWorkflowsInTemplate(templateId);
     let workflowSourceId = '';
@@ -147,13 +148,13 @@ export const loadCustomTemplate = createAsyncThunk(
           connectionKeys: connections ? Object.keys(connections) : [],
           triggerType: getTriggerFromDefinition(workflowDefinition?.triggers ?? {}),
           isManageWorkflow: true,
-          errors: { workflow: undefined },
+          errors: { general: undefined, workflow: undefined },
         };
         return result;
       },
       {}
     );
-    const updatedTemplateManifest = getUpdatedTemplateManifest(manifest, Object.values(allWorkflowsData), allConnectionsData);
+    const updatedTemplateManifest = getUpdatedTemplateManifest(clone(manifest), Object.values(allWorkflowsData), allConnectionsData);
 
     dispatch(updateAllWorkflowsData({ workflows: allWorkflowsData, manifest: updatedTemplateManifest }));
     dispatch(updateConnectionAndParameterDefinitions({ connections: allConnectionsData, parameterDefinitions: allParametersData }));
@@ -208,9 +209,8 @@ export const updateWorkflowParameter = createAsyncThunk(
     const existingWorkflows = await getWorkflowResourcesInTemplate(manifest?.id as string);
 
     try {
-      if (changedStatus) {
-        await service.updateTemplate(manifest?.id as string, /* manifest */ undefined, changedStatus);
-      }
+      // 1. Update the parameter in the template
+      // 2. Update the template state to take in the new changes for validation
 
       for (const workflowId of associatedWorkflows) {
         const parametersInWorkflow = getParametersForWorkflow(allParameters, workflowId).map((parameter) => {
@@ -225,9 +225,11 @@ export const updateWorkflowParameter = createAsyncThunk(
       await Promise.all(promises);
 
       if (changedStatus) {
+        await service.updateTemplate(manifest?.id as string, /* manifest */ undefined, changedStatus);
         dispatch(updateEnvironment(changedStatus));
       }
 
+      dispatch(setApiValidationErrors({ error: undefined, source: 'parameters' }));
       dispatch(
         updateTemplateParameterDefinition({
           parameterId: parameterId as string,
@@ -237,6 +239,7 @@ export const updateWorkflowParameter = createAsyncThunk(
 
       resetTemplateWorkflowsQuery(manifest?.id as string, /* clearRawData */ true);
     } catch (error: any) {
+      dispatch(getTemplateValidationError({ errorResponse: error, source: 'parameters' }));
       LoggerService().log({
         level: LogEntryLevel.Error,
         area: 'ConfigureTemplate.updateWorkflowParameter',
@@ -247,9 +250,9 @@ export const updateWorkflowParameter = createAsyncThunk(
         manifest?.id as string,
         changedStatus as Template.TemplateEnvironment,
         existingWorkflows.filter((workflow) => associatedWorkflows.includes(workflow.name)),
-        /* clearWorkflows */ false
+        /* clearWorkflows */ false,
+        dispatch
       );
-      throw error;
     }
   }
 );
@@ -293,6 +296,7 @@ export const initializeAndSaveWorkflowsData = createAsyncThunk(
     );
 
     await saveWorkflowsInTemplateInternal(
+      dispatch,
       updatedTemplateManifest,
       workflowsWithDefinitions,
       connections,
@@ -331,6 +335,7 @@ export const saveWorkflowsData = createAsyncThunk(
       template: { manifest, connections, parameterDefinitions, status: oldState },
     } = getState() as RootState;
     await saveWorkflowsInTemplateInternal(
+      dispatch,
       manifest as Template.TemplateManifest,
       workflows,
       connections,
@@ -339,6 +344,7 @@ export const saveWorkflowsData = createAsyncThunk(
       publishState,
       /* clearWorkflows */ false
     );
+
     dispatch(updateAllWorkflowsData({ workflows }));
 
     if (oldState !== publishState) {
@@ -350,6 +356,7 @@ export const saveWorkflowsData = createAsyncThunk(
 );
 
 const saveWorkflowsInTemplateInternal = async (
+  dispatch: ThunkDispatch<unknown, unknown, any>,
   templateManifest: Template.TemplateManifest,
   workflows: Record<string, Partial<WorkflowTemplateData>>,
   connections: Record<string, Template.Connection>,
@@ -365,10 +372,9 @@ const saveWorkflowsInTemplateInternal = async (
   const existingWorkflows = await getWorkflowResourcesInTemplate(templateId);
 
   try {
-    if (oldState !== publishState) {
-      await service.updateTemplate(templateId, /* manifest */ undefined, publishState);
-    }
-
+    // 1. Delete all workflows for a clean replace
+    // 2. Add/Update all workflows
+    // 3. Update template state to make sure new changes are present for validation
     if (clearWorkflows) {
       await service.deleteAllWorkflows(templateId);
     }
@@ -380,8 +386,15 @@ const saveWorkflowsInTemplateInternal = async (
     }
 
     await Promise.all(promises);
+
+    if (oldState !== publishState) {
+      await service.updateTemplate(templateId, /* manifest */ undefined, publishState);
+    }
+
     resetTemplateWorkflowsQuery(templateId, /* clearRawData */ true);
+    dispatch(setApiValidationErrors({ error: undefined, source: 'workflows' }));
   } catch (error: any) {
+    dispatch(getTemplateValidationError({ errorResponse: error, source: 'workflows' }));
     LoggerService().log({
       level: LogEntryLevel.Error,
       area: 'ConfigureTemplate.saveWorkflowsInTemplateInternal',
@@ -389,7 +402,7 @@ const saveWorkflowsInTemplateInternal = async (
       message: `Error while saving workflows in template: ${templateId}`,
       args: [`clearWorkflows: ${clearWorkflows}`],
     });
-    await rollbackWorkflows(templateId, oldState, existingWorkflows, clearWorkflows);
+    await rollbackWorkflows(templateId, oldState, existingWorkflows, clearWorkflows, dispatch);
     throw error;
   }
 };
@@ -398,7 +411,8 @@ const rollbackWorkflows = async (
   id: string,
   state: Template.TemplateEnvironment | undefined,
   workflows: ArmResource<any>[],
-  clearWorkflows = true
+  clearWorkflows = true,
+  dispatch: ThunkDispatch<unknown, unknown, any>
 ) => {
   const service = TemplateResourceService();
   const promises: Promise<void>[] = [];
@@ -429,9 +443,34 @@ const rollbackWorkflows = async (
     });
     resetTemplateWorkflowsQuery(id, /* clearRawData */ true);
 
-    throw error;
+    dispatch(getTemplateValidationError(new Error('Something went wrong while saving the data. Please try again.') as any));
   }
 };
+
+export const getTemplateValidationError = createAsyncThunk(
+  'getTemplateValidationError',
+  async ({ errorResponse, source }: { errorResponse: { error: TemplateValidationError }; source: string }, { dispatch }) => {
+    const intl = getIntl();
+    const general = intl.formatMessage({
+      defaultMessage: 'Template validation failed. Please fix the errors before proceeding.',
+      id: 'FeAx9p',
+      description: 'Error message when template validation fails',
+    });
+    let result: any;
+    if (errorResponse?.error) {
+      result = {
+        ...parseValidationError(errorResponse.error),
+        general,
+      };
+    } else {
+      result = (errorResponse as any)?.message
+        ? ({ general: `${general}. Error Details: ${(errorResponse as any).message}` } as any)
+        : { general };
+    }
+
+    dispatch(setApiValidationErrors({ error: result, source }));
+  }
+);
 
 export const deleteWorkflowData = createAsyncThunk(
   'deleteWorkflowData',
