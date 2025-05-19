@@ -100,8 +100,16 @@ export const SingleWorkflowBasics = ({ workflowId }: { workflowId: string }) => 
             id: 'msla-templates-workflowName',
             value: name,
             type: 'textfield',
-            onChange: (newValue: string) => {
+            onChange: async (newValue: string) => {
               dispatch(updateWorkflowName({ id: workflowId, name: newValue }));
+              
+              // Validate on change to show errors immediately
+              const validationError = await validateWorkflowName(newValue, !!isConsumption, {
+                subscriptionId,
+                resourceGroupName,
+                existingWorkflowNames: existingWorkflowNames ?? [],
+              });
+              dispatch(updateWorkflowNameValidationError({ id: workflowId, error: validationError }));
             },
             disabled: !isNameEditable,
             onBlur: async () => {

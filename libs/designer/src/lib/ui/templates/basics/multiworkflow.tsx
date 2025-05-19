@@ -168,9 +168,25 @@ export const MultiWorkflowBasics = () => {
     setWorkflowsList(newList);
   };
 
-  const handleWorkflowNameChange = (item: WorkflowItem, name: string | undefined) => {
+  const handleWorkflowNameChange = async (item: WorkflowItem, name: string | undefined) => {
     updateItemInList({ ...item, name });
     dispatch(updateWorkflowName({ id: item.id, name }));
+    
+    // Validate on change to provide immediate feedback
+    const existingNames = [
+      ...(existingWorkflowNames ?? []),
+      ...getCurrentWorkflowNames(
+        workflowsList().map((w) => ({ id: w.id, name: w.name ?? '' })),
+        item.id
+      ),
+    ];
+    const validationError = await validateWorkflowName(name, /* isConsumption */ false, {
+      subscriptionId: '',
+      resourceGroupName: '',
+      existingWorkflowNames: existingNames,
+    });
+    updateItemInList({ ...item, errors: { ...item.errors, workflow: validationError } });
+    dispatch(updateWorkflowNameValidationError({ id: item.id, error: validationError }));
   };
 
   const handleWorkflowNameBlur = async (item: WorkflowItem) => {

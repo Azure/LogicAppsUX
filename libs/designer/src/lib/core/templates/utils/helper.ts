@@ -258,7 +258,8 @@ export const validateConnectionsValue = (
 };
 
 export const checkWorkflowNameWithRegex = (intl: IntlShape, workflowName: string) => {
-  const regex = /^[A-Za-z][A-Za-z0-9]*(?:[_-][A-Za-z0-9]+)*$/;
+  // Regex to allow letters, numbers, and specified special characters but not spaces
+  const regex = /^[A-Za-z][A-Za-z0-9_\-().]*$/;
   if (!regex.test(workflowName)) {
     return intl.formatMessage({
       defaultMessage: "Name can only contain letters, numbers, and '-', '(', ')', '_' or '.",
