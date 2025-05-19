@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { TagPicker, TagPickerInput, TagPickerControl, type TagPickerProps, TagPickerGroup, Tag } from '@fluentui/react-components';
+import { Field, TagPicker, TagPickerInput, TagPickerControl, type TagPickerProps, TagPickerGroup, Tag } from '@fluentui/react-components';
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
 import { TemplatesSection, type TemplatesSectionItem } from '@microsoft/designer-ui';
 import { useTemplatesStrings } from '../../templates/templatesStrings';
@@ -10,10 +10,18 @@ import { useIntl } from 'react-intl';
 import { FeaturedConnectors } from './connectors';
 import type { Template } from '@microsoft/logic-apps-shared';
 import { getSupportedSkus } from '../../../core/configuretemplate/utils/helper';
+import { DescriptionWithLink, ErrorBar } from '../common';
+import { mergeStyles } from '@fluentui/react';
 
 export const TemplateManifestForm = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const intl = useIntl();
   const runValidation = useSelector((state: RootState) => state.tab.runValidation);
+  const { apiErrors, uiErrors, saveError } = useSelector((state: RootState) => ({
+    apiErrors: state.template.apiValidatationErrors?.template,
+    uiErrors: state.template.errors,
+    saveError: state.template.apiValidatationErrors?.saveGeneral?.template,
+  }));
 
   const resources = { ...useTemplatesStrings().resourceStrings, ...useResourceStrings() };
   const handleUpdateManifest = (manifest: Partial<Template.TemplateManifest>) => {
@@ -27,9 +35,30 @@ export const TemplateManifestForm = () => {
   const contactInfoSectionItems = useContactInfoSectionItems(resources, handleUpdateManifest);
   const descriptionSectionItems = useDescriptionSectionItems(resources, handleUpdateManifest);
   const categorySectionItems = useCategorySectionItems(resources, handleUpdateManifest);
+  const errorTitle = intl.formatMessage({
+    defaultMessage: 'Template validation failed',
+    id: 'tVVCyO',
+    description: 'Error title for template profile tab',
+  });
 
   return (
     <div className="msla-templates-wizard-tab-content" style={{ width: '70%', marginTop: '8px' }}>
+      <DescriptionWithLink
+        text={intl.formatMessage({
+          defaultMessage:
+            'Add details to help template users evaluate this template. The profile includes the information shown to users and settings that control how the template is filtered and displayed.',
+          id: 'tkkN++',
+          description: 'Description for template profile tab',
+        })}
+        linkText={resources.LearnMore}
+        linkUrl="https://learn.microsoft.com/en-us/azure/logic-apps/logic-apps-templates-manifest"
+        className={mergeStyles({ marginLeft: '-10px', width: '70%' })}
+      />
+
+      {saveError ? <ErrorBar errorMessage={saveError} styles={{ marginLeft: '-10px' }} /> : null}
+      {apiErrors?.general || uiErrors.general ? (
+        <ErrorBar title={errorTitle} errorMessage={apiErrors?.general ?? uiErrors.general ?? ''} styles={{ marginLeft: '-10px' }} />
+      ) : null}
       <TemplatesSection title={resources.General} titleHtmlFor={'generalSectionLabel'} items={generalSectionItems} />
       <TemplatesSection title={resources.ContactInfo} titleHtmlFor={'contactInfoSectionLabel'} items={contactInfoSectionItems} />
       <TemplatesSection title={resources.DESCRIPTION} titleHtmlFor={'descriptionSectionLabel'} items={descriptionSectionItems} />
@@ -42,7 +71,7 @@ const useGeneralSectionItems = (
   resources: Record<string, string>,
   handleUpdateManifest: (manifest: Partial<Template.TemplateManifest>) => void
 ) => {
-  const { manifest, workflows, errors, connections } = useSelector((state: RootState) => state.template);
+  const { manifest, workflows, errors, apiValidatationErrors: apiErrors, connections } = useSelector((state: RootState) => state.template);
   const workflowKeys = Object.keys(workflows);
   const isMultiWorkflow = workflowKeys.length > 1;
   const disableSkuSelection = useMemo(() => getSupportedSkus(connections).length === 1, [connections]);
@@ -69,7 +98,7 @@ const useGeneralSectionItems = (
       type: 'textfield',
       required: true,
       onChange: (value: string) => handleUpdateManifest({ title: value }),
-      errorMessage: errors?.manifest?.title,
+      errorMessage: apiErrors?.template?.manifest?.title ?? errors?.manifest?.title,
     },
     {
       label: resources.WorkflowType,
@@ -91,6 +120,7 @@ const useGeneralSectionItems = (
     value: skuValue,
     type: 'dropdown',
     required: true,
+    errorMessage: apiErrors?.template?.manifest?.allowedSkus ?? errors?.manifest?.allowedSkus,
     multiselect: true,
     options: skuTypes,
     disabled: disableSkuSelection,
@@ -105,7 +135,7 @@ const useContactInfoSectionItems = (
   resources: Record<string, string>,
   handleUpdateManifest: (manifest: Partial<Template.TemplateManifest>) => void
 ) => {
-  const { manifest, errors } = useSelector((state: RootState) => state.template);
+  const { manifest, errors, apiValidatationErrors: apiErrors } = useSelector((state: RootState) => state.template);
   const items: TemplatesSectionItem[] = [
     {
       label: resources.BY,
@@ -113,7 +143,7 @@ const useContactInfoSectionItems = (
       type: 'textfield',
       required: true,
       onChange: (value: string) => handleUpdateManifest({ details: { ...(manifest?.details ?? {}), By: value } as any }),
-      errorMessage: errors?.manifest?.['details.By'],
+      errorMessage: apiErrors?.template?.manifest?.['details.By'] ?? errors?.manifest?.['details.By'],
     },
   ];
 
@@ -124,7 +154,7 @@ const useDescriptionSectionItems = (
   resources: Record<string, string>,
   handleUpdateManifest: (manifest: Partial<Template.TemplateManifest>) => void
 ) => {
-  const { manifest, workflows, errors } = useSelector((state: RootState) => state.template);
+  const { manifest, workflows, errors, apiValidatationErrors: apiErrors } = useSelector((state: RootState) => state.template);
   const isMultiWorkflow = Object.keys(workflows).length > 1;
   const items: TemplatesSectionItem[] = [
     {
@@ -133,7 +163,7 @@ const useDescriptionSectionItems = (
       type: 'textarea',
       required: true,
       onChange: (value: string) => handleUpdateManifest({ summary: value }),
-      errorMessage: errors?.manifest?.summary,
+      errorMessage: apiErrors?.template?.manifest?.summary ?? errors?.manifest?.summary,
     },
   ];
 
@@ -143,6 +173,7 @@ const useDescriptionSectionItems = (
       value: manifest?.description || '',
       type: 'textarea',
       onChange: (value: string) => handleUpdateManifest({ description: value }),
+      errorMessage: apiErrors?.template?.manifest?.description ?? errors?.manifest?.description,
     });
   }
 
@@ -153,7 +184,8 @@ const useCategorySectionItems = (
   resources: Record<string, string>,
   handleUpdateManifest: (manifest: Partial<Template.TemplateManifest>) => void
 ) => {
-  const { details, tags, featuredConnectors } = useSelector((state: RootState) => state.template.manifest as Template.TemplateManifest);
+  const { manifest, errors, apiValidatationErrors: apiErrors } = useSelector((state: RootState) => state.template);
+  const { details, tags, featuredConnectors } = manifest as Template.TemplateManifest;
   const categories = useMemo(
     () =>
       getLogicAppsCategories().map((category) => ({
@@ -187,6 +219,7 @@ const useCategorySectionItems = (
       label: resources.Category,
       value: categoryValue,
       type: 'dropdown',
+      errorMessage: apiErrors?.template?.manifest?.['details.Category'] ?? errors?.manifest?.['details.Category'],
       multiselect: true,
       options: categories,
       selectedOptions: selectedCategories,
@@ -197,7 +230,13 @@ const useCategorySectionItems = (
       label: resources.Tags,
       value: tags || [],
       type: 'custom',
-      onRenderItem: () => <TagsInput tags={tags ?? []} handleUpdateManifest={handleUpdateManifest} />,
+      onRenderItem: () => (
+        <TagsInput
+          tags={tags ?? []}
+          errorMessage={apiErrors?.template?.manifest?.keywords ?? errors?.manifest?.keywords}
+          handleUpdateManifest={handleUpdateManifest}
+        />
+      ),
     },
   ];
 
@@ -206,8 +245,9 @@ const useCategorySectionItems = (
 
 const TagsInput = ({
   tags,
+  errorMessage,
   handleUpdateManifest,
-}: { tags: string[]; handleUpdateManifest: (manifest: Partial<Template.TemplateManifest>) => void }) => {
+}: { tags: string[]; errorMessage: string | undefined; handleUpdateManifest: (manifest: Partial<Template.TemplateManifest>) => void }) => {
   const intl = useIntl();
   const texts = {
     Content_AriaLabel: intl.formatMessage({
@@ -243,17 +283,19 @@ const TagsInput = ({
   };
 
   return (
-    <TagPicker noPopover onOptionSelect={onOptionSelect} selectedOptions={selectedOptions}>
-      <TagPickerControl>
-        <TagPickerGroup aria-label={texts.Content_AriaLabel}>
-          {selectedOptions.map((option, index) => (
-            <Tag key={index} shape="rounded" value={option} style={{ backgroundColor: 'azure' }}>
-              {option}
-            </Tag>
-          ))}
-        </TagPickerGroup>
-        <TagPickerInput value={inputValue} onChange={handleChange} onKeyDown={handleKeyDown} aria-label={texts.Add_AriaLabel} />
-      </TagPickerControl>
-    </TagPicker>
+    <Field validationMessage={errorMessage} validationState={errorMessage ? 'error' : undefined}>
+      <TagPicker noPopover onOptionSelect={onOptionSelect} selectedOptions={selectedOptions}>
+        <TagPickerControl>
+          <TagPickerGroup aria-label={texts.Content_AriaLabel}>
+            {selectedOptions.map((option, index) => (
+              <Tag key={index} shape="rounded" value={option} style={{ backgroundColor: 'azure' }}>
+                {option}
+              </Tag>
+            ))}
+          </TagPickerGroup>
+          <TagPickerInput value={inputValue} onChange={handleChange} onKeyDown={handleKeyDown} aria-label={texts.Add_AriaLabel} />
+        </TagPickerControl>
+      </TagPicker>
+    </Field>
   );
 };

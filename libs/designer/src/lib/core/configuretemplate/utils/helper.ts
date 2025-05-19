@@ -1,4 +1,4 @@
-import type { ConnectionsData, Expression, LogicAppsV2, Template } from '@microsoft/logic-apps-shared';
+import type { ConnectionsData, Expression, LogicAppsV2, Template, WorkflowData } from '@microsoft/logic-apps-shared';
 import { Deserialize } from '../../parsers/BJSWorkflow/BJSDeserializer';
 import { getConnectionsMappingForNodes } from '../../actions/bjsworkflow/connections';
 import type { WorkflowTemplateData } from '../../actions/bjsworkflow/templates';
@@ -9,7 +9,17 @@ import type { NodeOperationInputsData } from '../../state/operation/operationMet
 import type { ConnectionReferences } from '../../../common/models/workflow';
 import type { Token, ValueSegment } from '@microsoft/designer-ui';
 import { isExpressionToken, isParameterToken, isTokenValueSegment } from '../../utils/parameters/segment';
-import { equals, isArmResourceId, isFunction, isParameterExpression, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
+import {
+  equals,
+  getResourceNameFromId,
+  isArmResourceId,
+  isFunction,
+  isParameterExpression,
+  LogEntryLevel,
+  LoggerService,
+} from '@microsoft/logic-apps-shared';
+import JSZip from 'jszip';
+import saveAs from 'file-saver';
 
 export const delimiter = '::::::';
 export const getTemplateConnectionsFromConnectionsData = (
@@ -247,4 +257,158 @@ export const getSaveMenuButtons = (
     baseItems.push(saveDevelopmentButton);
   }
   return baseItems;
+};
+
+export const getManifestAndDefinitionFromWorkflowData = (
+  workflow: Partial<WorkflowTemplateData>,
+  connections: Record<string, Template.Connection>,
+  parameterDefinitions: Record<string, Partial<Template.ParameterDefinition>>
+): WorkflowData => {
+  const { id, workflowDefinition, manifest, connectionKeys } = workflow;
+  const connectionsInWorkflow = (connectionKeys ?? []).reduce((result: Record<string, Template.Connection>, key) => {
+    if (connections[key]) {
+      result[key] = connections[key];
+    }
+    return result;
+  }, {});
+  const parametersInWorkflow = Object.keys(parameterDefinitions).reduce((result: Template.Parameter[], key) => {
+    const { associatedWorkflows } = parameterDefinitions[key];
+    if (associatedWorkflows?.includes(id ?? '')) {
+      const parameter = { ...parameterDefinitions[key] };
+      delete parameter.associatedWorkflows;
+      delete parameter.associatedOperationParameter;
+      result.push(parameter as Template.Parameter);
+    }
+    return result;
+  }, []);
+
+  return {
+    manifest: {
+      ...manifest,
+      parameters: parametersInWorkflow,
+      connections: connectionsInWorkflow,
+    } as Template.WorkflowManifest,
+    workflow: workflowDefinition,
+  };
+};
+
+export const getZippedTemplateForDownload = async (
+  templateManifest: Template.TemplateManifest,
+  workflowDatas: Record<string, { manifest: Template.WorkflowManifest; workflowDefinition: any }>,
+  connections: Record<string, Template.Connection>,
+  parameterDefinitions: Record<string, Partial<Template.ParameterDefinition>>
+): Promise<void> => {
+  const templateName = getResourceNameFromId(templateManifest.id);
+
+  const theTemplateManifest = {
+    ...templateManifest,
+    id: templateName,
+    workflows: {},
+  } as Template.TemplateManifest;
+
+  const workflowFolderContents: any[] = [];
+  const workflowDatasCopy = [...Object.entries(workflowDatas)];
+  const promises: Promise<any>[] = [];
+
+  for (const [workflowId, workflowData] of workflowDatasCopy) {
+    theTemplateManifest.workflows[workflowId] = { name: workflowId };
+    promises.push(getWorkflowFolderContent(workflowId, workflowData, connections, parameterDefinitions));
+  }
+
+  await Promise.all(promises).then((results) => workflowFolderContents.push(...results));
+  const folderStructure: Template.FolderStructure = {
+    type: 'folder',
+    name: templateName,
+    contents: [
+      {
+        type: 'file',
+        name: 'manifest.json',
+        data: JSON.stringify(theTemplateManifest, null, 2),
+      },
+      ...workflowFolderContents,
+    ],
+  };
+
+  const zip = new JSZip();
+  zipFolder(zip, folderStructure);
+
+  zip.generateAsync({ type: 'blob' }).then((content) => {
+    saveAs(content, 'LogicAppsTemplate.zip');
+  });
+};
+
+const getWorkflowFolderContent = async (
+  name: string,
+  workflowData: Partial<WorkflowTemplateData>,
+  connections: Record<string, Template.Connection>,
+  parameterDefinitions: Record<string, Partial<Template.ParameterDefinition>>
+) => {
+  const { manifest } = getManifestAndDefinitionFromWorkflowData(workflowData, connections, parameterDefinitions);
+
+  // Clean up workflowManifest
+  const workflowManifest = manifest as Template.WorkflowManifest;
+  delete workflowManifest.metadata;
+  workflowManifest.artifacts = [
+    {
+      type: 'workflow',
+      file: 'workflow.json',
+    },
+  ];
+
+  const folderContent: Template.FolderStructure = {
+    type: 'folder',
+    name,
+    contents: [
+      {
+        type: 'file',
+        name: 'manifest.json',
+        data: JSON.stringify(workflowManifest, null, 2),
+      },
+      {
+        type: 'file',
+        name: 'workflow.json',
+        data: JSON.stringify(workflowData.workflowDefinition, null, 2),
+      },
+    ],
+  };
+
+  const lightImage = await getImageFileContent(workflowManifest.images.light);
+  const darkImage = await getImageFileContent(workflowManifest.images.dark);
+
+  if (lightImage) {
+    folderContent.contents.push(lightImage);
+  }
+  if (darkImage) {
+    folderContent.contents.push(darkImage);
+  }
+
+  return folderContent;
+};
+
+const getImageFileContent = async (imageLink: string): Promise<Template.FileStructure | undefined> => {
+  if (imageLink) {
+    const lightImage = await fetch(imageLink, { headers: { 'Access-Control-Allow-Origin': '*' } });
+    const content = await lightImage.blob();
+    return {
+      type: 'file',
+      name: imageLink.split('/').slice(-1)[0] as string,
+      data: content,
+    };
+  }
+
+  return undefined;
+};
+
+const zipFolder = (zip: JSZip, folder: Template.FolderStructure) => {
+  const folderZip = zip.folder(folder.name);
+
+  if (folderZip) {
+    for (const content of folder.contents) {
+      if (content.type === 'file') {
+        folderZip.file(content.name, content.data);
+      } else {
+        zipFolder(folderZip, content as Template.FolderStructure);
+      }
+    }
+  }
 };

@@ -1,4 +1,50 @@
 # Logic Apps Designer
+## [5.106.0](https://github.com/Azure/LogicAppsUX/compare/v5.105.0...v5.106.0) (2025-05-19)
+
+
+### Features
+
+* **templates:** Adding error handling from save failure and showing them at appropriate sections in the UI ([#7248](https://github.com/Azure/LogicAppsUX/issues/7248)) ([21aca65](https://github.com/Azure/LogicAppsUX/commit/21aca65501e112f06d9bfabe0333d39a41963c42))
+
+
+### Bug Fixes
+
+* **designer:** Update string and channels condition ([#7245](https://github.com/Azure/LogicAppsUX/issues/7245)) ([5dad594](https://github.com/Azure/LogicAppsUX/commit/5dad594b995207144feeadee8939c3e81d6c8e60))
+* **vscode:** Fixed error when generating deployment scripts ([#7243](https://github.com/Azure/LogicAppsUX/issues/7243)) ([3d44c96](https://github.com/Azure/LogicAppsUX/commit/3d44c96645280a5ccd15c914c17e6ad6fa67fdb0))
+* **vscode:** Unit Test Sanitize Logic App name  ([#7256](https://github.com/Azure/LogicAppsUX/issues/7256)) ([d9392d8](https://github.com/Azure/LogicAppsUX/commit/d9392d887b7b6f117920c8ebbf33070bcf58c86a))
+
+## [5.105.0](https://github.com/Azure/LogicAppsUX/compare/v5.104.0...v5.105.0) (2025-05-15)
+
+
+### Features
+
+* **templates:** Adding rollback functionality in batch save methods and download template ([#7227](https://github.com/Azure/LogicAppsUX/issues/7227)) ([40f6474](https://github.com/Azure/LogicAppsUX/commit/40f64748eba118ed14a49e19162517a41415ac7a))
+* **templates:** Fit and Finish of custom templates with exporting methods for portal ([#7233](https://github.com/Azure/LogicAppsUX/issues/7233)) ([775002c](https://github.com/Azure/LogicAppsUX/commit/775002c71b9c2e5d7053acf25c67a2a86993b7cb))
+* **vscode:** Unit Test GA ([#7179](https://github.com/Azure/LogicAppsUX/issues/7179)) ([0ffbc6f](https://github.com/Azure/LogicAppsUX/commit/0ffbc6fd0aefc6066fbc1774529447fe19b362ca))
+
+
+### Bug Fixes
+
+* **vscode:** Add fallback for function core tools installation ([#7228](https://github.com/Azure/LogicAppsUX/issues/7228)) ([3df37f7](https://github.com/Azure/LogicAppsUX/commit/3df37f7a9e1cc2f58fcfaf583bbe4411ec4c7bcc))
+* **vscode:** Add tenant ID to get auth token on generate IaC scripts ([#7238](https://github.com/Azure/LogicAppsUX/issues/7238)) ([1039ce8](https://github.com/Azure/LogicAppsUX/commit/1039ce86bae6aeb64ed549a4f27f830abd01d1f5))
+* **vscode:** fix upload settings command registration ([#7222](https://github.com/Azure/LogicAppsUX/issues/7222)) ([78920d1](https://github.com/Azure/LogicAppsUX/commit/78920d1060f53998ea5fec52ce8acea5aacf79a8))
+* **vscode:** Update package and add try catch to auth experience ([#7234](https://github.com/Azure/LogicAppsUX/issues/7234)) ([8832aff](https://github.com/Azure/LogicAppsUX/commit/8832aff4bceb6f7377c7c574d38ad0860f6eb09b))
+
+## [5.104.0](https://github.com/Azure/LogicAppsUX/compare/v5.103.0...v5.104.0) (2025-05-12)
+
+
+### Features
+
+* **templates:** Minor css and interface changes in template wizard for integration ([#7221](https://github.com/Azure/LogicAppsUX/issues/7221)) ([4a3abe0](https://github.com/Azure/LogicAppsUX/commit/4a3abe0b98b569efbbe9ea850a3b9babfa823ee5))
+* **vscode:** Upload settings automatically after deployment ([#7215](https://github.com/Azure/LogicAppsUX/issues/7215)) ([338a927](https://github.com/Azure/LogicAppsUX/commit/338a92768dbf759fe0679f0239c6feacdd475f34))
+
+
+### Bug Fixes
+
+* **designer:** Create Exception of whitespace check on # ([#7217](https://github.com/Azure/LogicAppsUX/issues/7217)) ([1872131](https://github.com/Azure/LogicAppsUX/commit/1872131cad043a7955937e68dfce1a403d9856fc))
+* **designer:** Fixing Search not showing operations in Agentic Loops ([#7219](https://github.com/Azure/LogicAppsUX/issues/7219)) ([da9cf4a](https://github.com/Azure/LogicAppsUX/commit/da9cf4aea38b36306658ac285829bf74a0cac9cb))
+* **designer:** Update chat scrollbar styles ([#7218](https://github.com/Azure/LogicAppsUX/issues/7218)) ([7773250](https://github.com/Azure/LogicAppsUX/commit/777325063f19d98a39d7bb480d922d8c21fff5f1))
+
 ## [5.103.0](https://github.com/Azure/LogicAppsUX/compare/v5.102.0...v5.103.0) (2025-05-09)
 
 
