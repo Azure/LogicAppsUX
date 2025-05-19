@@ -102,6 +102,7 @@ export const useConfigureWorkflowPanelTabs = ({
         [workflowId]: {
           ...updatedWorkflowData,
           errors: {
+            general: undefined,
             workflow: updatedWorkflowData.id
               ? formattedOtherSelectedIds.includes(updatedWorkflowData.id)
                 ? intl.formatMessage({

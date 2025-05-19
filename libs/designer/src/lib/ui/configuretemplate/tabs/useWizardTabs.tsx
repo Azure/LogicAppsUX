@@ -10,6 +10,7 @@ import { useTemplatesStrings } from '../../templates/templatesStrings';
 import { useResourceStrings } from '../resources';
 import { setRunValidation } from '../../../core/state/templates/tabSlice';
 import {
+  setApiValidationErrors,
   updateEnvironment,
   validateParameterDetails,
   validateTemplateManifest,
@@ -21,6 +22,7 @@ import { TemplateResourceService } from '@microsoft/logic-apps-shared';
 import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useCallback } from 'react';
 import { getZippedTemplateForDownload } from '../../../core/configuretemplate/utils/helper';
+import { getTemplateValidationError } from '../../../core/actions/bjsworkflow/configuretemplate';
 
 export const useConfigureTemplateWizardTabs = ({
   onSaveWorkflows,
@@ -54,7 +56,8 @@ export const useConfigureTemplateWizardTabs = ({
     currentState: state.template.status,
     workflows: state.template.workflows,
     parametersHasError: Object.values(state.template.errors.parameters).some((value) => value !== undefined),
-    templateManifestHasError: Object.values(state.template.errors.manifest).some((value) => value !== undefined),
+    templateManifestHasError:
+      state.template.errors.general || Object.values(state.template.errors.manifest).some((value) => value !== undefined),
     selectedTabId: state.tab.selectedTabId,
     connections: state.template.connections,
     parameterDefinitions: state.template.parameterDefinitions,
@@ -81,11 +84,16 @@ export const useConfigureTemplateWizardTabs = ({
       dispatch(setRunValidation(true));
       const templateId = templateManifest?.id as string;
 
-      await TemplateResourceService().updateTemplate(templateId, /* manifest */ undefined, newPublishState);
+      try {
+        await TemplateResourceService().updateTemplate(templateId, templateManifest, newPublishState);
+        dispatch(setApiValidationErrors({ error: undefined, source: 'template' }));
 
-      queryClient.removeQueries(['template', templateId.toLowerCase()]);
-      onSaveTemplate(currentState as Template.TemplateEnvironment, newPublishState);
-      dispatch(updateEnvironment(newPublishState));
+        queryClient.removeQueries(['template', templateId.toLowerCase()]);
+        onSaveTemplate(currentState as Template.TemplateEnvironment, newPublishState);
+        dispatch(updateEnvironment(newPublishState));
+      } catch (error: any) {
+        dispatch(getTemplateValidationError({ errorResponse: error, source: 'template' }));
+      }
     },
     [queryClient, templateManifest, onSaveTemplate, currentState, dispatch]
   );

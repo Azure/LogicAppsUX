@@ -13,38 +13,37 @@ import {
   type TableColumnDefinition,
   useTableSelection,
   createTableColumn,
-  MessageBar,
-  MessageBarBody,
-  MessageBarTitle,
+  Image,
+  Spinner,
 } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 import { CommandBar, type ICommandBarItemProps, mergeStyles, PrimaryButton } from '@fluentui/react';
 import { useCallback, useMemo } from 'react';
 import { openPanelView, TemplatePanelView } from '../../../core/state/templates/panelSlice';
 import { useFunctionalState } from '@react-hookz/web';
-import { DocumentOnePage24Regular } from '@fluentui/react-icons';
 import { deleteWorkflowData } from '../../../core/actions/bjsworkflow/configuretemplate';
 import { useResourceStrings } from '../resources';
 import { useTemplatesStrings } from '../../templates/templatesStrings';
 import { WorkflowKind } from '../../../core/state/workflow/workflowInterfaces';
 import { equals } from '@microsoft/logic-apps-shared';
 import { ConfigureWorkflowsPanel } from '../panels/configureWorkflowsPanel/configureWorkflowsPanel';
-import { DescriptionWithLink, tableHeaderStyle } from '../common';
+import { DescriptionWithLink, tableHeaderStyle, ErrorBar } from '../common';
+import { workflowsHaveErrors } from '../../../core/configuretemplate/utils/errors';
+import EBookIcon from '../../../common/images/templates/openbook.svg';
 
 export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean) => void }) => {
   const intl = useIntl();
-  const { workflows, currentPanelView } = useSelector((state: RootState) => ({
-    workflows: state.template.workflows,
+  const { workflows, currentPanelView, apiErrors, saveErrors, isLoading } = useSelector((state: RootState) => ({
+    workflows: state.template.workflows ?? {},
+    apiErrors: state.template.apiValidatationErrors?.workflows ?? {},
+    saveErrors: state.template.apiValidatationErrors?.saveGeneral?.workflows,
     currentPanelView: state.panel.currentPanelView,
+    isLoading: state.template.dataIsLoading,
   }));
+  const hasErrors = useMemo(() => saveErrors || workflowsHaveErrors(apiErrors, workflows), [apiErrors, saveErrors, workflows]);
+
   const dispatch = useDispatch<AppDispatch>();
   const isMultiWorkflow = Object.keys(workflows).length > 1;
-
-  const workflowNamesWithErrors = useMemo(() => {
-    return Object.values(workflows)
-      .filter((workflow) => Object.values(workflow.errors?.manifest ?? {}).some((error) => error))
-      .map((workflow) => workflow.workflowName);
-  }, [workflows]);
 
   const [selectedWorkflowsList, setSelectedWorkflowsList] = useFunctionalState<string[]>([]);
 
@@ -64,6 +63,21 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
         defaultMessage: 'Manage workflows for this template',
         id: 'gA8nWC',
         description: 'Empty state title for workflows list',
+      }),
+      ERROR_TITLE: intl.formatMessage({
+        defaultMessage: 'Validation failed for workflows: ',
+        id: '9bQctz',
+        description: 'The error title for the workflows tab',
+      }),
+      ERROR_DESCRIPTION: intl.formatMessage({
+        defaultMessage: 'Please open the panel for details to fix the errors.',
+        id: 'WZSmrm',
+        description: 'The error description for the workflows tab',
+      }),
+      LOADING_TEXT: intl.formatMessage({
+        defaultMessage: 'Loading workflows...',
+        id: 'a7qE4l',
+        description: 'Loading text for workflows',
       }),
     }),
     [intl]
@@ -192,9 +206,12 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
         text={customResourceStrings.WorkflowsTabDescription}
         linkText={customResourceStrings.LearnMore}
         linkUrl="https://docs.microsoft.com/azure/logic-apps/logic-apps-overview"
-        className={mergeStyles({ marginLeft: '-1px' })}
+        className={mergeStyles({ marginLeft: '-1px', width: '70%' })}
       />
 
+      {hasErrors ? (
+        <ErrorBar title={intlText.ERROR_TITLE} errorMessage={intlText.ERROR_DESCRIPTION} styles={{ marginLeft: '-1px' }} />
+      ) : null}
       <CommandBar
         items={commandBarItems}
         styles={{
@@ -206,16 +223,9 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
         }}
       />
 
-      {workflowNamesWithErrors.length ? (
-        <MessageBar intent="error" className="msla-templates-error-message-bar">
-          <MessageBarBody>
-            <MessageBarTitle>{customResourceStrings.MissingRequiredFields}</MessageBarTitle>
-            <Text>{workflowNamesWithErrors.join(', ')}</Text>
-          </MessageBarBody>
-        </MessageBar>
-      ) : null}
-
-      {Object.keys(workflows).length > 0 ? (
+      {isLoading ? (
+        <Spinner size="huge" label={intlText.LOADING_TEXT} style={{ height: '50%' }} />
+      ) : Object.keys(workflows).length > 0 ? (
         <Table aria-label={customResourceStrings.WorkflowsListTableLabel} style={{ minWidth: '550px', marginTop: 30, marginLeft: '-5px' }}>
           <TableHeader>
             <TableRow>
@@ -249,15 +259,15 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
                 <TableCellLayout>{item.trigger}</TableCellLayout>
               </TableCell>
               {/* //TODO: removed until back-end updates us
-              <TableCell>
-                <TableCellLayout>{item.date}</TableCellLayout>
-              </TableCell> */}
+                  <TableCell>
+                    <TableCellLayout>{item.date}</TableCellLayout>
+                  </TableCell> */}
             </TableRow>
           ))}
         </Table>
       ) : (
         <div style={{ height: '50%' }} className="msla-templates-empty-list">
-          <DocumentOnePage24Regular width={50} height={50} />
+          <Image src={EBookIcon} width={'20%'} height={'20%'} />
           <Text weight="semibold" size={500} style={{ padding: '20px 0 10px 0' }}>
             {intlText.EMPTY_TITLE}
           </Text>
@@ -265,7 +275,7 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
             text={customResourceStrings.WorkflowsTabDescription}
             linkText={customResourceStrings.LearnMore}
             linkUrl="https://docs.microsoft.com/azure/logic-apps/logic-apps-overview"
-            className={mergeStyles({ width: '40%' })}
+            className={mergeStyles({ width: '40%', marginTop: 0 })}
           />
           <div style={{ padding: '10px 0' }}>
             <PrimaryButton onClick={handleAddWorkflows}>{intlText.EDIT}</PrimaryButton>
