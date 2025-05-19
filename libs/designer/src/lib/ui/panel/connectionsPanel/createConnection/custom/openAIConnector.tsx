@@ -283,7 +283,7 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
                   selectedKey={isUndefinedOrEmptyString(selectedCognitiveServiceProject) ? null : selectedCognitiveServiceProject}
                   className={styles.openAICombobox}
                   options={(cognitiveServiceProjects ?? []).map((project: any) => {
-                    const projectName = project.name.split('/')[1] ?? project.name;
+                    const projectName = project.name?.split?.('/')[1] ?? project.name;
                     return {
                       key: project.id,
                       text: `${projectName}`,

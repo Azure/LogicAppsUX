@@ -59,6 +59,7 @@ export default {
             ],
           },
           type: 'string',
+          default: 'AzureOpenAI',
         },
         deploymentId: {
           type: 'string',
