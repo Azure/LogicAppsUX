@@ -1,4 +1,18 @@
 # Logic Apps Designer
+## [5.106.0](https://github.com/Azure/LogicAppsUX/compare/v5.105.0...v5.106.0) (2025-05-19)
+
+
+### Features
+
+* **templates:** Adding error handling from save failure and showing them at appropriate sections in the UI ([#7248](https://github.com/Azure/LogicAppsUX/issues/7248)) ([21aca65](https://github.com/Azure/LogicAppsUX/commit/21aca65501e112f06d9bfabe0333d39a41963c42))
+
+
+### Bug Fixes
+
+* **designer:** Update string and channels condition ([#7245](https://github.com/Azure/LogicAppsUX/issues/7245)) ([5dad594](https://github.com/Azure/LogicAppsUX/commit/5dad594b995207144feeadee8939c3e81d6c8e60))
+* **vscode:** Fixed error when generating deployment scripts ([#7243](https://github.com/Azure/LogicAppsUX/issues/7243)) ([3d44c96](https://github.com/Azure/LogicAppsUX/commit/3d44c96645280a5ccd15c914c17e6ad6fa67fdb0))
+* **vscode:** Unit Test Sanitize Logic App name  ([#7256](https://github.com/Azure/LogicAppsUX/issues/7256)) ([d9392d8](https://github.com/Azure/LogicAppsUX/commit/d9392d887b7b6f117920c8ebbf33070bcf58c86a))
+
 ## [5.105.0](https://github.com/Azure/LogicAppsUX/compare/v5.104.0...v5.105.0) (2025-05-15)
 
 
