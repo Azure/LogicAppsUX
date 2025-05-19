@@ -19,6 +19,7 @@ import { Uri, window, workspace } from 'vscode';
 import type { MessageItem, Progress } from 'vscode';
 import { parseJson } from '../../../utils/parseJson';
 import { localSettingsFileName } from '../../../../constants';
+import { workflowCodeTypeForTelemetry } from '../../../utils/codeful/utils';
 
 interface ICachedWorkflow {
   projectPath: string;
@@ -45,28 +46,32 @@ export abstract class WorkflowCreateStepBase<T extends IFunctionWizardContext> e
   public abstract executeCore(context: T): Promise<string>;
 
   public async execute(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
-    const template: IWorkflowTemplate = nonNullProp(context, 'functionTemplate');
+    callWithTelemetryAndErrorHandling('workflowCreate', async (telemetryContext: IActionContext) => {
+      // telemetry
+      telemetryContext.telemetry.properties.workflowCodeType = workflowCodeTypeForTelemetry(context.isCodeless);
+      const template: IWorkflowTemplate = nonNullProp(context, 'functionTemplate');
 
-    context.telemetry.properties.projectLanguage = context.language;
-    context.telemetry.properties.projectRuntime = context.version;
-    context.telemetry.properties.templateId = template.id;
+      context.telemetry.properties.projectLanguage = context.language;
+      context.telemetry.properties.projectRuntime = context.version;
+      context.telemetry.properties.templateId = template.id;
 
-    progress.report({ message: localize('creatingFunction', 'Creating new {0}...', template.name) });
+      progress.report({ message: localize('creatingFunction', 'Creating new {0}...', template.name) });
 
-    const newFilePath = await this.executeCore(context);
+      const newFilePath = await this.executeCore(context);
 
-    const cachedFunc: ICachedWorkflow = { projectPath: context.projectPath, newFilePath, isHttpTrigger: template.isHttpTrigger };
+      const cachedFunc: ICachedWorkflow = { projectPath: context.projectPath, newFilePath, isHttpTrigger: template.isHttpTrigger };
 
-    if (context.openBehavior) {
-      // OpenFolderStep sometimes restarts the extension host, so we will cache this to run on the next extension activation
-      ext.context.globalState.update(cacheKey, cachedFunc);
-      // Delete cached information if the extension host was not restarted after 5 seconds
-      setTimeout(() => {
-        ext.context.globalState.update(cacheKey, undefined);
-      }, 5 * 1000);
-    }
+      if (context.openBehavior) {
+        // OpenFolderStep sometimes restarts the extension host, so we will cache this to run on the next extension activation
+        ext.context.globalState.update(cacheKey, cachedFunc);
+        // Delete cached information if the extension host was not restarted after 5 seconds
+        setTimeout(() => {
+          ext.context.globalState.update(cacheKey, undefined);
+        }, 5 * 1000);
+      }
 
-    runPostWorkflowCreateSteps(cachedFunc);
+      runPostWorkflowCreateSteps(cachedFunc);
+    });
   }
 
   protected async getHostJson(context: IFunctionWizardContext, hostJsonPath: string, allowOverwrite = false): Promise<IHostJsonV2> {
