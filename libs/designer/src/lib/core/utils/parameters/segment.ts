@@ -127,7 +127,7 @@ export class ValueSegmentConvertor {
       const expression = ExpressionParser.parseTemplateExpression(value);
       const segments = this._convertTemplateExpressionToValueSegments(expression);
 
-      // Note: If an non-interpolated expression is turned into a signle TOKEN, we don't surround with double quote. Otherwise,
+      // Note: If an non-interpolated expression is turned into a single TOKEN, we don't surround with double quote. Otherwise,
       // double quotes are added to surround the expression. This is the existing behaviour.
 
       if (segments.length === 1 && isTokenValueSegment(segments[0]) && !isStringInterpolation(expression)) {
