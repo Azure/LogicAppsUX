@@ -49,3 +49,18 @@ export const useCognitiveServiceAccountDeploymentsForNode = (nodeId: string, con
     }
   );
 };
+
+export const useAllCognitiveServiceProjects = (serviceAccountId: string) => {
+  return useQuery(
+    [queryKeys.allCognitiveServiceAccounts, { serviceAccountId }],
+    async () => {
+      const allCognitiveServiceAccounts = await CognitiveServiceService().fetchAllCognitiveServiceProjects(serviceAccountId);
+      return allCognitiveServiceAccounts?.value ?? [];
+    },
+    {
+      ...queryOpts,
+      retryOnMount: true,
+      enabled: !!serviceAccountId,
+    }
+  );
+};

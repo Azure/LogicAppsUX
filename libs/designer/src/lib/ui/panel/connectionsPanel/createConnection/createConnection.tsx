@@ -570,6 +570,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
       identity,
       parameterSet: connectionParameterSets?.values[selectedParamSetIndex],
       setKeyValue: (customKey: string, val: any) => setParameterValues((values) => ({ ...values, [customKey]: val })),
+      isAgentServiceConnection: isAgentServiceConnection,
     };
 
     const customParameterOptions = ConnectionParameterEditorService()?.getConnectionParameterEditor({
