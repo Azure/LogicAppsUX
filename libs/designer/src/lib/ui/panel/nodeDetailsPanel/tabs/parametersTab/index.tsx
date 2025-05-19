@@ -80,6 +80,7 @@ import {
   clone,
   EditorService,
   equals,
+  ExtensionProperties,
   getPropertyValue,
   getRecordEntry,
   guid,
@@ -683,9 +684,11 @@ const ParameterSection = ({
     .map((param) => {
       const { id, label, value, required, showTokens, placeholder, editorViewModel, dynamicData, conditionalVisibility, validationErrors } =
         param;
+
       const remappedEditorViewModel = isRecordNotEmpty(idReplacements)
         ? remapEditorViewModelWithNewIds(editorViewModel, idReplacements)
         : editorViewModel;
+
       const paramSubset = {
         id,
         label,
@@ -695,6 +698,7 @@ const ParameterSection = ({
         editorViewModel: remappedEditorViewModel,
         conditionalVisibility,
       };
+
       const { editor, editorOptions } = getEditorAndOptions(
         operationInfo,
         param,
@@ -704,9 +708,9 @@ const ParameterSection = ({
       );
 
       const { value: remappedValues } = isRecordNotEmpty(idReplacements) ? remapValueSegmentsWithNewIds(value, idReplacements) : { value };
+
       const isCodeEditor = editor?.toLowerCase() === constants.EDITOR.CODE;
-      const subComponent = getSubComponent(param);
-      const subMenu = getSubMenu(param);
+      const { subMenu, subComponent } = getConnectionElements(param);
       return {
         settingType: 'SettingTokenField',
         settingProp: {
@@ -775,20 +779,12 @@ const ParameterSection = ({
   );
 };
 
-const getSubComponent = (parameter: ParameterInfo) => {
-  const hasConnectionInline = getPropertyValue(parameter.schema, 'x-ms-connection-required');
-  if (hasConnectionInline) {
-    return <ConnectionInline />;
-  }
-  return null;
-};
-
-const getSubMenu = (parameter: ParameterInfo) => {
-  const hasConnectionInline = getPropertyValue(parameter.schema, 'x-ms-connection-required');
-  if (hasConnectionInline) {
-    return <ConnectionsSubMenu />;
-  }
-  return null;
+const getConnectionElements = (parameter: ParameterInfo) => {
+  const hasConnectionInline = getPropertyValue(parameter.schema, ExtensionProperties.InlineConncetion);
+  return {
+    subComponent: hasConnectionInline ? <ConnectionInline /> : null,
+    subMenu: hasConnectionInline ? <ConnectionsSubMenu /> : null,
+  };
 };
 
 const isAgentConnectorAndDeploymentId = (id: string, key: string): boolean => {

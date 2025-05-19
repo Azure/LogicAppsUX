@@ -61,9 +61,13 @@ export class BaseCognitiveServiceService implements ICognitiveServiceService {
     const response = await fetchAppsByQuery(
       httpClient,
       uri,
-      'Resources\n\n| where type == "microsoft.cognitiveservices/accounts"\n| where kind in ("OpenAI", "AIServices")\n        \n        \n        \n        \n        \n        | order by [\'name\'] asc',
+      `Resources
+    | where type == "microsoft.cognitiveservices/accounts"
+    | where kind in ("OpenAI", "AIServices")
+    | order by ['name'] asc`,
       [subscriptionId]
     );
+
     return response;
   }
 
@@ -74,5 +78,38 @@ export class BaseCognitiveServiceService implements ICognitiveServiceService {
       'api-version': apiVersion,
     });
     return response;
+  }
+
+  async fetchAllSessionPoolAccounts(subscriptionId: string): Promise<any> {
+    const { httpClient, baseUrl } = this.options;
+
+    const uri = `${baseUrl}/providers/Microsoft.ResourceGraph/resources?api-version=2021-03-01`;
+
+    const response = await fetchAppsByQuery(
+      httpClient,
+      uri,
+      `Resources
+    | where type in~ ('Microsoft.App/sessionPools')
+    | order by ['name'] asc`,
+      [subscriptionId]
+    );
+
+    return response;
+  }
+
+  async fetchSessionPoolAccountById(accountId: string): Promise<any> {
+    const { httpClient, baseUrl } = this.options;
+    const uri = `${baseUrl}${accountId}`;
+    try {
+      const response = await httpClient.get({
+        uri,
+        queryParameters: {
+          'api-version': '2024-10-02-preview',
+        },
+      });
+      return response;
+    } catch (e: any) {
+      return new Error(e?.message ?? e);
+    }
   }
 }

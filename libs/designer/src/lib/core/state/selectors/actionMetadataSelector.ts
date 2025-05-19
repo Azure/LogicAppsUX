@@ -39,7 +39,10 @@ export const useIsInlineConnection = (operationInfo: NodeOperation) => {
     return false;
   }
   const manifest = result.data;
-  return manifest?.properties.connector?.id === '/connectionProviders/agent';
+  return (
+    manifest?.properties.connector?.id === '/connectionProviders/agent' ||
+    manifest?.properties.connector?.id === '/serviceProviders/acasession'
+  );
 };
 
 export const useAllowUserToChangeConnection = (op: NodeOperation) => {

@@ -2,43 +2,42 @@ import { CognitiveServiceService, isUndefinedOrEmptyString, LogEntryLevel, Logge
 import { type ConnectionParameterProps, UniversalConnectionParameter } from '../formInputs/universalConnectionParameter';
 import { ConnectionParameterRow } from '../connectionParameterRow';
 import { useIntl } from 'react-intl';
-import { useCallback, useMemo, useState } from 'react';
-import { ComboBox, type IComboBoxOption, Spinner } from '@fluentui/react';
+import { useCallback, useMemo, useRef, useState } from 'react';
+import type { IComboBox, IComboBoxOption } from '@fluentui/react';
+import { ComboBox, Spinner } from '@fluentui/react';
 import { useStyles } from './styles';
 import { Link, tokens } from '@fluentui/react-components';
 import { NavigateIcon } from '@microsoft/designer-ui';
 import { ArrowClockwise16Filled, ArrowClockwise16Regular, bundleIcon } from '@fluentui/react-icons';
 import { useSubscriptions } from '../../../../../core/state/connection/connectionSelector';
 import { SubscriptionDropdown } from './components/SubscriptionDropdown';
-import { useAllCognitiveServiceAccounts } from './useCognitiveService';
+import { useAllSessionPoolAccounts } from './useCognitiveService';
 
 const RefreshIcon = bundleIcon(ArrowClockwise16Regular, ArrowClockwise16Filled);
 
-export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
+export const ACASessionConnector = (props: ConnectionParameterProps) => {
   const { parameterKey, value, setKeyValue, setValue, parameter } = props;
   const intl = useIntl();
   const styles = useStyles();
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [loadingAccountDetails, setLoadingAccountDetails] = useState<boolean>(false);
   const [selectedSubscriptionId, setSelectedSubscriptionId] = useState('');
-  const {
-    isFetching: isFetchingAccount,
-    data: allCognitiveServiceAccounts,
-    refetch,
-  } = useAllCognitiveServiceAccounts(selectedSubscriptionId);
+  const { isFetching: isFetchingAccount, data: allSessionPoolAccounts, refetch } = useAllSessionPoolAccounts(selectedSubscriptionId);
   const { isFetching: isFetchingSubscription, data: subscriptions } = useSubscriptions();
+  const comboRef = useRef<IComboBox>(null);
+  const [poolInputText, setPoolInputText] = useState<string>('');
 
   const stringResources = useMemo(
     () => ({
-      COGNITIVE_SERVICE_ACCOUNT: intl.formatMessage({
-        defaultMessage: 'Azure OpenAI resource',
-        id: 'u5LIuT',
-        description: 'Select the Azure Cognitive Service Account to use for this connection',
+      ACA_SESSION_POOL: intl.formatMessage({
+        defaultMessage: 'ACA Session Pool',
+        id: 'eUGUbj',
+        description: 'Label for the ACA Session Pool',
       }),
-      SELECT_COGNITIVE_SERVICE_ACCOUNT: intl.formatMessage({
-        defaultMessage: 'Select an Azure OpenAI resource',
-        id: 'BR/bBa',
-        description: 'Select the Azure Cognitive Service Account to use for this connection',
+      SELECT_ACA_SESSION_POOL_ACCOUNT: intl.formatMessage({
+        defaultMessage: 'Select an ACA Session Pool',
+        id: 'lbwcLk',
+        description: 'Select the ACA session pool to use for this connection',
       }),
       LOADING_ACCOUNTS: intl.formatMessage({
         defaultMessage: 'Loading accounts...',
@@ -50,20 +49,20 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
         id: 'WBDuOo',
         description: 'Fetching data text',
       }),
-      SELECT_SUBSCRIPTION: intl.formatMessage({
-        defaultMessage: 'Select the subscription for your OpenAI resource',
-        id: 'jyyxZo',
-        description: 'Message for selecting subscription',
-      }),
       CREATE_NEW: intl.formatMessage({
         defaultMessage: 'Create new',
         id: '+ebtNl',
         description: 'Label to create a new connection',
       }),
       LEARN_MORE_CREATE_NEW: intl.formatMessage({
-        defaultMessage: 'Learn more about creating a new Azure OpenAI resource',
-        id: 'WkqAOm',
+        defaultMessage: 'Learn more about creating a new Azure Container App code interpreter session pool',
+        id: 'ZsDnVT',
         description: 'info text for create',
+      }),
+      SELECT_SUBSCRIPTION: intl.formatMessage({
+        defaultMessage: 'Select the subscription for your ACA session pool',
+        id: 'nJI9m3',
+        description: 'Message for selecting subscription',
       }),
     }),
     [intl]
@@ -72,14 +71,14 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
   const fetchAccount = useCallback(
     async (accountId: string) => {
       try {
-        const accountResponse = await CognitiveServiceService().fetchCognitiveServiceAccountById(accountId);
-        setKeyValue?.('openAIEndpoint', accountResponse?.properties?.endpoint);
+        const accountResponse = await CognitiveServiceService().fetchSessionPoolAccountById(accountId);
+        setKeyValue?.('acasession_poolManagementEndpoint', accountResponse?.properties?.poolManagementEndpoint);
         setErrorMessage('');
       } catch (e: any) {
         LoggerService().log({
           level: LogEntryLevel.Error,
-          area: 'agent-connection-account-key',
-          message: 'Failed to fetch account key for cognitive service',
+          area: 'aca-session-connection-account-endpoint',
+          message: 'Failed to fetch account endpoint for aca session',
           error: e,
         });
         setErrorMessage(e.message ?? 'Failed to fetch account endpoint');
@@ -88,37 +87,25 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
     [setKeyValue]
   );
 
-  const fetchKey = useCallback(
-    async (accountId: string) => {
-      try {
-        const accountResponse = await CognitiveServiceService().fetchCognitiveServiceAccountKeysById(accountId);
-        setKeyValue?.('openAIKey', accountResponse?.key1 ?? '');
-        setErrorMessage('');
-      } catch (e: any) {
-        LoggerService().log({
-          level: LogEntryLevel.Error,
-          area: 'agent-connection-account-key',
-          message: 'Failed to fetch account key for cognitive service',
-          error: e,
-        });
-        setErrorMessage(e.message ?? 'Failed to fetch account key');
-      }
-    },
-    [setKeyValue]
-  );
-
-  const openAIComboboxDisabled = useMemo(
-    () => isFetchingAccount || isFetchingSubscription || !selectedSubscriptionId || (allCognitiveServiceAccounts ?? []).length === 0,
-    [allCognitiveServiceAccounts, isFetchingAccount, isFetchingSubscription, selectedSubscriptionId]
+  const accountComboboxDisabled = useMemo(
+    () => isFetchingAccount || isFetchingSubscription || !selectedSubscriptionId || (allSessionPoolAccounts ?? []).length === 0,
+    [allSessionPoolAccounts, isFetchingAccount, isFetchingSubscription, selectedSubscriptionId]
   );
 
   const onRefreshClick = useCallback(() => {
-    if (!openAIComboboxDisabled) {
+    if (!accountComboboxDisabled) {
       refetch();
     }
-  }, [openAIComboboxDisabled, refetch]);
+  }, [accountComboboxDisabled, refetch]);
 
-  if (parameterKey === 'cognitiveServiceAccountId') {
+  const accountOptions: IComboBoxOption[] = useMemo(() => {
+    return (allSessionPoolAccounts ?? []).map((account: any) => ({
+      key: account.id,
+      text: `${account.name} (/${account.resourceGroup})`,
+    }));
+  }, [allSessionPoolAccounts]);
+
+  if (parameterKey === 'poolManagementEndpoint') {
     return (
       <>
         <SubscriptionDropdown
@@ -130,10 +117,13 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
         />
         <ConnectionParameterRow
           parameterKey={'cognitive-service-resource-id'}
-          displayName={stringResources.COGNITIVE_SERVICE_ACCOUNT}
+          displayName={stringResources.ACA_SESSION_POOL}
           required={true}
           tooltip={
-            <Link href="https://go.microsoft.com/fwlink/?linkid=2189193" target="_blank">
+            <Link
+              href="https://learn.microsoft.com/azure/container-apps/sessions-tutorial-nodejs#create-a-code-interpreter-session-pool"
+              target="_blank"
+            >
               {stringResources.LEARN_MORE_CREATE_NEW}
             </Link>
           }
@@ -141,27 +131,34 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
           <div className={styles.openAIContainer}>
             <div className={styles.comboxbox}>
               <ComboBox
+                autoFocus={false}
+                componentRef={comboRef}
+                allowFreeform
+                autoComplete="on"
                 required={true}
-                disabled={openAIComboboxDisabled}
-                placeholder={isFetchingAccount ? stringResources.LOADING_ACCOUNTS : stringResources.SELECT_COGNITIVE_SERVICE_ACCOUNT}
+                disabled={isFetchingAccount}
+                placeholder={isFetchingAccount ? stringResources.LOADING_ACCOUNTS : stringResources.SELECT_ACA_SESSION_POOL_ACCOUNT}
                 selectedKey={isUndefinedOrEmptyString(value) ? null : value}
                 className={styles.openAICombobox}
-                options={(allCognitiveServiceAccounts ?? []).map((account: any) => {
-                  return {
-                    key: account.id,
-                    text: `${account.name} (/${account.resourceGroup})`,
-                  };
-                })}
+                options={accountOptions}
+                text={poolInputText}
+                errorMessage={errorMessage}
+                onClick={() => {
+                  if (!isFetchingAccount) {
+                    comboRef.current?.focus(true);
+                  }
+                }}
                 onChange={async (_e, option?: IComboBoxOption) => {
                   if (option?.key) {
-                    const value = option?.key as string;
-                    setValue(value);
+                    const selectedId = option.key as string;
+                    setValue(selectedId);
+                    setPoolInputText(option.text);
                     setLoadingAccountDetails(true);
-                    await Promise.all([fetchAccount(value), fetchKey(value)]);
+                    await fetchAccount(selectedId);
                     setLoadingAccountDetails(false);
                   }
                 }}
-                errorMessage={errorMessage}
+                onPendingValueChanged={(_option, _index, text) => setPoolInputText(text ?? '')}
               >
                 {isFetchingAccount ? (
                   <Spinner
@@ -171,7 +168,7 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
                   />
                 ) : null}
               </ComboBox>
-              <Link className={styles.createNewButton} target="_blank" href="https://aka.ms/openAICreate">
+              <Link className={styles.createNewButton} target="_blank" href="https://aka.ms/sessionPoolCreate">
                 {stringResources.CREATE_NEW}
                 <NavigateIcon style={{ position: 'relative', top: '2px', left: '2px' }} />
               </Link>
@@ -180,7 +177,7 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
               style={{
                 marginTop: '4px',
                 marginLeft: '4px',
-                color: openAIComboboxDisabled ? tokens.colorBrandBackground2Pressed : tokens.colorBrandBackground,
+                color: accountComboboxDisabled ? tokens.colorBrandBackground2Pressed : tokens.colorBrandBackground,
               }}
               onClick={onRefreshClick}
             />

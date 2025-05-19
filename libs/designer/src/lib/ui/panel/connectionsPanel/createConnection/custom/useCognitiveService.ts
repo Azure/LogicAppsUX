@@ -13,6 +13,7 @@ const queryOpts = {
 export const queryKeys = {
   allCognitiveServiceAccounts: 'allCognitiveServiceAccounts',
   allCognitiveServiceAccountsDeployments: 'allCognitiveServiceAccountsDeployments',
+  allSessionPoolAccounts: 'allSessionPoolAccounts',
 };
 
 export const useAllCognitiveServiceAccounts = (subscriptionId: string) => {
@@ -46,6 +47,21 @@ export const useCognitiveServiceAccountDeploymentsForNode = (nodeId: string, con
       ...queryOpts,
       retryOnMount: true,
       enabled: isAgentConnector(connectorId) && !!resourceId,
+    }
+  );
+};
+
+export const useAllSessionPoolAccounts = (subscriptionId: string) => {
+  return useQuery(
+    [queryKeys.allSessionPoolAccounts, { subscriptionId }],
+    async () => {
+      const allSessionPoolAccounts = await CognitiveServiceService().fetchAllSessionPoolAccounts(subscriptionId);
+      return allSessionPoolAccounts ?? [];
+    },
+    {
+      ...queryOpts,
+      retryOnMount: true,
+      enabled: !!subscriptionId,
     }
   );
 };

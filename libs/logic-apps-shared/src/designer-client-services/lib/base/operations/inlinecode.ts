@@ -1,7 +1,7 @@
-export const inlineCodeOperation = {
-  name: 'javaScriptCode',
-  id: 'javaScriptCode',
-  type: 'javaScriptCode',
+export const inlinePythonCodeOperation = {
+  name: 'pythonCode',
+  id: 'pythoncode',
+  type: 'pythonCode',
   properties: {
     api: {
       id: 'connectionProviders/inlineCode',
@@ -11,10 +11,10 @@ export const inlineCodeOperation = {
       brandColor: '#ba5d00',
       description: 'Inline Code',
     },
-    summary: 'Execute JavaScript Code',
-    description: 'Execute JavaScript Code',
+    summary: 'Execute Python Code',
+    description: 'Execute Python Code',
     visibility: 'Important',
-    operationType: 'JavaScriptCode',
+    operationType: 'PythonCode',
     brandColor: '#ba5d00',
     iconUri: 'https://logicappsv2resources.blob.core.windows.net/icons/javascript.svg',
   },

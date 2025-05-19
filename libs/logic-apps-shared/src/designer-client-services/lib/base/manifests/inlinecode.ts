@@ -131,17 +131,35 @@ export const inlinePowershellManifest = {
 
 export const inlinePythonManifest = {
   properties: {
-    iconUri: 'https://logicappsv2resources.blob.core.windows.net/icons/inline_code.svg',
-    brandColor: '#ba5d00',
-    description: 'Execute Python Code',
     summary: 'Execute Python Code',
-
-    environmentBadge: coreBadge,
-
+    description: 'Execute Code in a Python Session.',
+    visibility: 'Important',
+    operationType: 'ServiceProvider',
+    brandColor: '#8c6cff',
+    iconUri: 'https://logicapps.azureedge.net/icons/aioperations/icon.svg',
+    api: {
+      id: '/serviceProviders/acasession',
+      type: 'ServiceProvider',
+      name: 'acasession',
+      displayName: 'Azure Container App (ACA) Session',
+      iconUri: 'https://logicapps.azureedge.net/icons/aioperations/icon.svg',
+      brandColor: '#8c6cff',
+      description: 'Azure Container App (ACA) Session',
+      isSecureByDefault: false,
+    },
     inputs: {
       type: 'object',
-      required: ['code'],
+      required: ['connection', 'code'],
       properties: {
+        connection: {
+          type: 'string',
+          title: 'Session Pool',
+          required: true,
+          description: 'The container app session pool name you want to use.',
+          'x-ms-connection-required': true,
+          'x-ms-visibility': 'important',
+          'x-ms-editor': 'combobox',
+        },
         code: {
           title: 'Code',
           description: 'Executes simple Python code with the ability to reference agent parameters',
@@ -176,13 +194,98 @@ export const inlinePythonManifest = {
     isOutputsOptional: false,
 
     connector: {
-      id: 'connectionProviders/inlineCode',
-      name: 'inlineCode',
+      type: 'ServiceProvider',
+      name: 'acasession',
+      id: '/serviceProviders/acasession',
       properties: {
-        description: 'Inline Code',
-        displayName: 'Inline Code',
+        displayName: 'Azure Container App (ACA) Session',
+        iconUri: 'https://logicapps.azureedge.net/icons/aioperations/icon.svg',
+        brandColor: '#8c6cff',
+        description: 'Azure Container App (ACA) Session',
+        capabilities: ['actions'],
+        connectionParameterSets: {
+          uiDefinition: {
+            displayName: 'Connection Type',
+            description: 'Connection Type',
+          },
+          values: [
+            {
+              name: 'ConnectionString',
+              parameters: {
+                poolManagementEndpoint: {
+                  type: 'string',
+                  parameterSource: 'AppConfiguration',
+                  uiDefinition: {
+                    displayName: 'Pool Management Endpoint',
+                    tooltip: 'The Azure Container App (ACA) pool management endpoint',
+                    constraints: {
+                      required: 'true',
+                    },
+                    description: 'The Azure Container App (ACA) pool management endpoint.',
+                  },
+                },
+              },
+              uiDefinition: {
+                displayName: 'Pool management connection',
+                description: 'The Azure Container App (ACA) pool management connection.',
+              },
+            },
+            {
+              name: 'ManagedServiceIdentity',
+              parameters: {
+                poolManagementEndpoint: {
+                  type: 'string',
+                  parameterSource: 'AppConfiguration',
+                  uiDefinition: {
+                    displayName: 'Pool Management Endpoint',
+                    tooltip: 'The Azure Container App (ACA) pool management endpoint',
+                    constraints: {
+                      required: 'true',
+                    },
+                    description: 'The Azure Container App (ACA) pool management endpoint.',
+                  },
+                },
+                Type: {
+                  type: 'string',
+                  parameterSource: 'NotSpecified',
+                  uiDefinition: {
+                    displayName: 'Managed identity',
+                    tooltip: 'Managed identity',
+                    constraints: {
+                      required: 'true',
+                      default: 'ManagedServiceIdentity',
+                      hideInUI: 'true',
+                      propertyPath: ['authProvider'],
+                    },
+                    description: 'Managed identity',
+                  },
+                },
+                Identity: {
+                  type: 'string',
+                  parameterSource: 'NotSpecified',
+                  uiDefinition: {
+                    displayName: 'Managed identity',
+                    tooltip: 'Managed identity',
+                    constraints: {
+                      required: 'false',
+                      hideInUI: 'true',
+                      propertyPath: ['authProvider'],
+                    },
+                    description: 'Managed identity',
+                  },
+                },
+              },
+              uiDefinition: {
+                displayName: 'Managed identity',
+                tooltip: 'Managed identity',
+                description: 'Managed identity',
+              },
+            },
+          ],
+        },
+        isSecureByDefault: false,
       },
-    } as any,
+    },
 
     settings: {
       secureData: {},

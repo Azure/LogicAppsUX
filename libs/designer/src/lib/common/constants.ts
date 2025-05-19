@@ -42,9 +42,6 @@ const SWAGGER = {
   COLLECTION_FORMAT: {
     CSV: 'csv',
   },
-  EXTENSION: {
-    CAPABILITIES: 'x-ms-capabilities',
-  },
 };
 
 const VARIABLE_TYPE = {
