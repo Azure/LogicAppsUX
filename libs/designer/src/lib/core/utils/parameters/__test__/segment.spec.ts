@@ -70,19 +70,17 @@ describe('core/utils/parameters/segment', () => {
       expectOutputTokenSegment(segments[1], 'b', OutputSource.Body, 'bar', 'outputs.$.body.bar', undefined, true);
     });
 
-    it('should have double quote for single non interpolated token.', () => {
+    it('should not have double quote for single non interpolated token.', () => {
       const convertor = new ValueSegmentConvertor();
       const segments = convertor.convertToValueSegments({
         foo: '@triggerBody().foo',
       });
-      expect(segments.length).toEqual(7);
+      expect(segments.length).toEqual(5);
       expectLiteralSegment(segments[0], '{\n  ');
       expectLiteralSegment(segments[1], '"foo"');
       expectLiteralSegment(segments[2], ': ');
-      expectLiteralSegment(segments[3], '"');
-      expectOutputTokenSegment(segments[4], undefined, OutputSource.Body, 'foo', 'outputs.$.body.foo', undefined, true);
-      expectLiteralSegment(segments[5], '"');
-      expectLiteralSegment(segments[6], '\n}');
+      expectOutputTokenSegment(segments[3], undefined, OutputSource.Body, 'foo', 'outputs.$.body.foo', undefined, true);
+      expectLiteralSegment(segments[4], '\n}');
     });
 
     it('should add @ if the string starts with @ when raw mode is enabled.', () => {
@@ -141,17 +139,19 @@ describe('core/utils/parameters/segment', () => {
       expectLiteralSegment(segments[6], '\n}');
     });
 
-    it('should not have double quote for single non interpolated token.', () => {
+    it('should have double quote for single interpolated token.', () => {
       const convertor = new ValueSegmentConvertor();
       const segments = convertor.convertToValueSegments({
-        foo: '@triggerBody().foo',
+        foo: '@{triggerBody().foo}',
       });
-      expect(segments.length).toEqual(5);
+      expect(segments.length).toEqual(7);
       expectLiteralSegment(segments[0], '{\n  ');
       expectLiteralSegment(segments[1], '"foo"');
       expectLiteralSegment(segments[2], ': ');
-      expectOutputTokenSegment(segments[3], undefined, OutputSource.Body, 'foo', 'outputs.$.body.foo', undefined, true);
-      expectLiteralSegment(segments[4], '\n}');
+      expectLiteralSegment(segments[3], '"');
+      expectOutputTokenSegment(segments[4], undefined, OutputSource.Body, 'foo', 'outputs.$.body.foo', undefined, true);
+      expectLiteralSegment(segments[5], '"');
+      expectLiteralSegment(segments[6], '\n}');
     });
 
     it('should escape the string when it is inside double quote.', () => {
