@@ -20,7 +20,7 @@ import { useSubscriptions } from '../../../../../core/state/connection/connectio
 const RefreshIcon = bundleIcon(ArrowClockwise16Regular, ArrowClockwise16Filled);
 
 export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
-  const { parameterKey, value, setKeyValue, setValue, parameter, isAgentServiceConnection } = props;
+  const { parameterKey, setKeyValue, setValue, parameter, isAgentServiceConnection } = props;
   const intl = useIntl();
   const styles = useStyles();
   const [errorMessage, setErrorMessage] = useState<string>('');
@@ -108,7 +108,7 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
     [intl]
   );
 
-  const fetchAccount = useCallback(
+  const setAPIEndpoint = useCallback(
     async (accountId: string) => {
       try {
         const accountResponse = await CognitiveServiceService().fetchCognitiveServiceAccountById(accountId);
@@ -127,7 +127,7 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
     [setKeyValue]
   );
 
-  const fetchKey = useCallback(
+  const setAPIKey = useCallback(
     async (accountId: string) => {
       try {
         const accountResponse = await CognitiveServiceService().fetchCognitiveServiceAccountKeysById(accountId);
@@ -166,6 +166,15 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
       refetchServiceProjects();
     }
   }, [serviceProjectsComboBoxDisabled, refetchServiceProjects]);
+
+  const onSetOpenAIValues = useCallback(
+    async (newValue: string) => {
+      setLoadingAccountDetails(true);
+      await Promise.all([setAPIEndpoint(newValue), setAPIKey(newValue)]);
+      setLoadingAccountDetails(false);
+    },
+    [setAPIEndpoint, setAPIKey]
+  );
 
   if (parameterKey === 'cognitiveServiceAccountId') {
     return (
@@ -227,11 +236,12 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
                 })}
                 onChange={async (_e, option?: IComboBoxOption) => {
                   if (option?.key) {
-                    setCognitiveServiceAccountId(option?.key as string);
-                    setValue(value);
-                    setLoadingAccountDetails(true);
-                    await Promise.all([fetchAccount(value), fetchKey(value)]);
-                    setLoadingAccountDetails(false);
+                    const cognitiveServiceKey = option?.key as string;
+                    setCognitiveServiceAccountId(cognitiveServiceKey);
+                    setValue(cognitiveServiceKey);
+                    if (!isAgentServiceConnection) {
+                      onSetOpenAIValues(cognitiveServiceKey);
+                    }
                   }
                 }}
                 errorMessage={errorMessage}
@@ -281,11 +291,10 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
                   })}
                   onChange={async (_e, option?: IComboBoxOption) => {
                     if (option?.key) {
-                      setSelectedCognitiveServiceProject(option?.key as string);
-                      // setValue(value);
-                      // setLoadingAccountDetails(true);
-                      // await Promise.all([fetchAccount(value), fetchKey(value)]);
-                      // setLoadingAccountDetails(false);
+                      const serviceProjectKey = option?.key as string;
+                      setSelectedCognitiveServiceProject(serviceProjectKey);
+                      setValue(serviceProjectKey);
+                      setKeyValue?.('openAIEndpoint', serviceProjectKey);
                     }
                   }}
                   errorMessage={errorMessage}
