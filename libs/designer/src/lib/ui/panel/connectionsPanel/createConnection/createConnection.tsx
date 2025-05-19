@@ -46,9 +46,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { DismissRegular } from '@fluentui/react-icons';
 import TenantPicker from './formInputs/tenantPicker';
-import { useOperationInfo } from '../../../../core/state/selectors/actionMetadataSelector';
-import { useRawInputParameters } from '../../../../core/state/operation/operationSelector';
-import { isAgentConnectorAndAgentServiceModel } from '../../nodeDetailsPanel/tabs/parametersTab/helpers';
 
 type ParamType = ConnectionParameter | ConnectionParameterSetParameter;
 
@@ -90,6 +87,7 @@ export interface CreateConnectionProps {
   gatewayServiceConfig?: Partial<GatewayServiceConfig>;
   checkOAuthCallback: (parameters: Record<string, ConnectionParameter>) => boolean;
   resourceSelectorProps?: AzureResourcePickerProps;
+  isAgentServiceConnection?: boolean;
 }
 
 export const CreateConnection = (props: CreateConnectionProps) => {
@@ -115,6 +113,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     availableGateways,
     gatewayServiceConfig,
     resourceSelectorProps,
+    isAgentServiceConnection,
   } = props;
 
   const intl = useIntl();
@@ -142,13 +141,6 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   );
 
   const isHiddenAuthKey = useCallback((key: string) => ConnectionService().getAuthSetHideKeys?.()?.includes(key) ?? false, []);
-  const operationInfo = useOperationInfo(nodeIds[0]);
-  const nodeInputs = useRawInputParameters(nodeIds[0]);
-
-  const isAgentServiceConnection = useMemo(() => {
-    return isAgentConnectorAndAgentServiceModel(operationInfo.connectorId, 'default', nodeInputs?.parameterGroups ?? {});
-  }, [nodeInputs?.parameterGroups, operationInfo.connectorId]);
-
   const connectionParameterSets: ConnectionParameterSets | undefined = useMemo(() => {
     if (!_connectionParameterSets) {
       return undefined;
