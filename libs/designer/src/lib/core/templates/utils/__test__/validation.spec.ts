@@ -11,9 +11,13 @@ describe('Template Validation Tests', () => {
       expect(checkWorkflowNameWithRegex(intl, 'workflowName_1')).toBe(undefined);
       expect(checkWorkflowNameWithRegex(intl, 'workflow_Name-1')).toBe(undefined);
       expect(checkWorkflowNameWithRegex(intl, 'workflow0_Name-999')).toBe(undefined);
+      // Test new allowed characters
+      expect(checkWorkflowNameWithRegex(intl, 'workflow(1)')).toBe(undefined);
+      expect(checkWorkflowNameWithRegex(intl, 'workflow.name')).toBe(undefined);
+      expect(checkWorkflowNameWithRegex(intl, 'w(1)_flow-name.test')).toBe(undefined);
     });
 
-    test('Acceptable names for workflow should pass with undefined', async () => {
+    test('Unacceptable names for workflow should return error message', async () => {
       const nameDoesNotMath = intl.formatMessage({
         defaultMessage: "Name can only contain letters, numbers, and '-', '(', ')', '_' or '.",
         id: 'zMKxg9',
@@ -24,6 +28,10 @@ describe('Template Validation Tests', () => {
       expect(checkWorkflowNameWithRegex(intl, '1_workflowName_1')).toBe(nameDoesNotMath);
       expect(checkWorkflowNameWithRegex(intl, 'workflow_Name space')).toBe(nameDoesNotMath);
       expect(checkWorkflowNameWithRegex(intl, 'workflow_%7')).toBe(nameDoesNotMath);
+      // Test additional invalid characters
+      expect(checkWorkflowNameWithRegex(intl, 'workflow&name')).toBe(nameDoesNotMath);
+      expect(checkWorkflowNameWithRegex(intl, 'workflow+name')).toBe(nameDoesNotMath);
+      expect(checkWorkflowNameWithRegex(intl, 'workflow@name')).toBe(nameDoesNotMath);
     });
   });
 
