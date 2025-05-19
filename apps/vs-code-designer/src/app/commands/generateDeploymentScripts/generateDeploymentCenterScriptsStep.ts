@@ -21,6 +21,7 @@ import { getLocalSettingsJson } from '../../utils/appSettings/localSettings';
 import * as path from 'path';
 import * as fse from 'fs-extra';
 import * as vscode from 'vscode';
+import { syncCloudSettings } from '../syncCloudSettings';
 
 export class GenerateDeploymentCenterScriptsStep extends AzureWizardExecuteStep<IProjectWizardContext> {
   public priority = 250;
@@ -85,10 +86,11 @@ export class GenerateDeploymentCenterScriptsStep extends AzureWizardExecuteStep<
     const dotDeploymentPath = path.join(context.customWorkspaceFolderPath, dotDeploymentFileName);
     await fse.writeFile(dotDeploymentPath, dotDeploymentContent);
 
-    // Add deployment folder to workspace
+    // Add deployment folder and cloud.settings.json to workspace
     const deploymentFolderNode = vscode.Uri.file(deploymentDirectoryPath);
     const workspaceFolders = vscode.workspace.workspaceFolders || [];
     vscode.workspace.updateWorkspaceFolders(workspaceFolders.length, undefined, { uri: deploymentFolderNode });
+    await syncCloudSettings(context, vscode.Uri.file(context.projectPath));
 
     ext.outputChannel.appendLog(
       localize(

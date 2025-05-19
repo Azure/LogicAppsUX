@@ -65,6 +65,7 @@ import type { AzExtTreeItem, IActionContext, AzExtParentTreeItem } from '@micros
 import type { Uri } from 'vscode';
 import { pickCustomCodeNetHostProcess } from './pickCustomCodeNetHostProcess';
 import { debugLogicApp } from './debugLogicApp';
+import { syncCloudSettings } from './syncCloudSettings';
 
 export function registerCommands(): void {
   registerCommandWithTreeNodeUnwrapping(extensionCommand.openDesigner, openDesigner);
@@ -129,6 +130,7 @@ export function registerCommands(): void {
   registerCommandWithTreeNodeUnwrapping(extensionCommand.appSettingsRename, renameAppSetting);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.appSettingsToggleSlotSetting, toggleSlotSetting);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.appSettingsUpload, uploadAppSettings);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.syncCloudSettings, syncCloudSettings);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.configureWebhookRedirectEndpoint, configureWebhookRedirectEndpoint);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.useSQLStorage, useSQLStorage);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.connectToGitHub, connectToGitHub);

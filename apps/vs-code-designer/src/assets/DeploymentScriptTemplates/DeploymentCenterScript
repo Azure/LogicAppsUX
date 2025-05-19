@@ -61,7 +61,7 @@ $currentAppSettingsResponse.properties.PSObject.Properties | ForEach-Object {
 }
 
 # Combine with new settings
-$appSettingsJsonPath = Join-Path $currentDir "settings.json"
+$appSettingsJsonPath = Join-Path $currentDir "cloud.settings.json"
 $appSettingsJson = Get-Content -Path $appSettingsJsonPath -Raw
 $appSettings = $appSettingsJson | ConvertFrom-Json
 
