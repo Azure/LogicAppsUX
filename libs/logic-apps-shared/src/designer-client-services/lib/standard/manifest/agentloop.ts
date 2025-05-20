@@ -89,6 +89,15 @@ export default {
                   format: 'int32',
                   minimum: 1,
                   maximum: 8192,
+                  'x-ms-input-dependencies': {
+                    type: 'visibility',
+                    parameters: [
+                      {
+                        name: 'agentModelType',
+                        values: ['AzureOpenAI'],
+                      },
+                    ],
+                  },
                 },
                 frequencyPenalty: {
                   title: 'Frequency penalty',
@@ -97,6 +106,15 @@ export default {
                   format: 'float',
                   minimum: -2.0,
                   maximum: 2.0,
+                  'x-ms-input-dependencies': {
+                    type: 'visibility',
+                    parameters: [
+                      {
+                        name: 'agentModelType',
+                        values: ['AzureOpenAI'],
+                      },
+                    ],
+                  },
                 },
                 presencePenalty: {
                   title: 'Presence penalty',
@@ -105,6 +123,15 @@ export default {
                   minimum: -2.0,
                   format: 'float',
                   maximum: 2.0,
+                  'x-ms-input-dependencies': {
+                    type: 'visibility',
+                    parameters: [
+                      {
+                        name: 'agentModelType',
+                        values: ['AzureOpenAI'],
+                      },
+                    ],
+                  },
                 },
                 temperature: {
                   title: 'Temperature',
@@ -139,7 +166,6 @@ export default {
                       },
                     ],
                   },
-                  conditionalVisibility: true,
                   'x-ms-input-dependencies': {
                     type: 'visibility',
                     parameters: [
