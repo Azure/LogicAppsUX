@@ -4,6 +4,7 @@ import { getConnectionsMappingForNodes } from '../../actions/bjsworkflow/connect
 import type { WorkflowTemplateData } from '../../actions/bjsworkflow/templates';
 import type { OperationDetails } from '../../templates/utils/parametershelper';
 import { initializeOperationDetails } from '../../templates/utils/parametershelper';
+import { replaceAllStringInWorkflowDefinition } from '../../templates/utils/createhelper';
 import { isRootNodeInGraph } from '../../utils/graph';
 import type { NodeOperationInputsData } from '../../state/operation/operationMetadataSlice';
 import type { ConnectionReferences } from '../../../common/models/workflow';
@@ -15,8 +16,10 @@ import {
   isArmResourceId,
   isFunction,
   isParameterExpression,
+  locationPlaceholder,
   LogEntryLevel,
   LoggerService,
+  subscriptionPlaceholder,
 } from '@microsoft/logic-apps-shared';
 import JSZip from 'jszip';
 import saveAs from 'file-saver';
@@ -411,4 +414,126 @@ const zipFolder = (zip: JSZip, folder: Template.FolderStructure) => {
       }
     }
   }
+};
+
+export const getDateTimeString = (timeString: string, defaultValue = ''): string => {
+  if (!timeString) {
+    return defaultValue;
+  }
+  const date = new Date(timeString);
+  return date.toLocaleString();
+};
+
+export const workflowIdentifier = '#workflowname#';
+interface ConnectionsAndWorkflowsData {
+  connections: Record<string, Template.Connection>;
+  mapping: Record<string, string>;
+  workflowsData: Record<string, Partial<WorkflowTemplateData>>;
+}
+
+interface ParametersAndWorkflowsData {
+  parameters: Record<string, Template.ParameterDefinition>;
+  workflowsData: Record<string, Partial<WorkflowTemplateData>>;
+}
+
+export const suffixConnectionsWithIdentifier = (
+  connections: Record<string, Template.Connection>,
+  workflowsData: Record<string, Partial<WorkflowTemplateData>>,
+  mapping: Record<string, string>
+): ConnectionsAndWorkflowsData => {
+  const result: ConnectionsAndWorkflowsData = { connections: {}, workflowsData: { ...workflowsData }, mapping: {} };
+
+  for (const key of Object.keys(workflowsData)) {
+    const data = workflowsData[key];
+    let updatedDefinition = JSON.stringify(data.workflowDefinition);
+
+    for (const connectionKey of Object.keys(connections)) {
+      if (!connectionKey.endsWith(workflowIdentifier)) {
+        const updatedConnectionKey = `${connectionKey}_${workflowIdentifier}`;
+
+        if (!result.connections[updatedConnectionKey]) {
+          result.connections[updatedConnectionKey] = connections[connectionKey];
+        }
+
+        updatedDefinition = replaceAllStringInWorkflowDefinition(updatedDefinition, connectionKey, updatedConnectionKey);
+      }
+    }
+
+    result.workflowsData[key] = {
+      ...data,
+      workflowDefinition: JSON.parse(updatedDefinition),
+      connectionKeys: (data.connectionKeys ?? []).map((connectionKey) =>
+        connectionKey.endsWith(workflowIdentifier) ? connectionKey : `${connectionKey}_${workflowIdentifier}`
+      ),
+    };
+  }
+
+  result.mapping = Object.keys(mapping).reduce((result: Record<string, string>, key) => {
+    const referenceKey = mapping[key];
+    result[key] = referenceKey.endsWith(workflowIdentifier) ? referenceKey : `${referenceKey}_${workflowIdentifier}`;
+    return result;
+  }, {});
+
+  return result;
+};
+
+export const suffixParametersWithIdentifier = (
+  parameters: Record<string, Partial<Template.ParameterDefinition>>,
+  workflowsData: Record<string, Partial<WorkflowTemplateData>>
+): ParametersAndWorkflowsData => {
+  const result: ParametersAndWorkflowsData = { parameters: {}, workflowsData: { ...workflowsData } };
+  for (const key of Object.keys(workflowsData)) {
+    const data = workflowsData[key];
+    let updatedDefinition = JSON.stringify(data.workflowDefinition);
+
+    for (const parameter of Object.values(parameters)) {
+      const parameterName = parameter.name as string;
+
+      if (!parameterName.endsWith(workflowIdentifier)) {
+        const updatedParameterName = `${parameterName}_${workflowIdentifier}`;
+
+        if (!result.parameters[updatedParameterName]) {
+          result.parameters[updatedParameterName] = {
+            ...parameter,
+            name: updatedParameterName,
+          } as Template.ParameterDefinition;
+        }
+
+        updatedDefinition = replaceAllStringInWorkflowDefinition(updatedDefinition, parameterName, updatedParameterName);
+      }
+    }
+
+    result.workflowsData[key] = {
+      ...data,
+      workflowDefinition: JSON.parse(updatedDefinition),
+    };
+  }
+
+  return result;
+};
+
+export const sanitizeConnectorIds = (connections: Record<string, Template.Connection>): Record<string, Template.Connection> => {
+  const sanitizedConnections: Record<string, Template.Connection> = {};
+  for (const key of Object.keys(connections)) {
+    const connection = connections[key];
+    if (equals(connection.kind, 'shared')) {
+      connection.connectorId = sanitizeConnectorId(connection.connectorId);
+    }
+
+    sanitizedConnections[key] = connection;
+  }
+
+  return sanitizedConnections;
+};
+
+export const sanitizeConnectorId = (id: string): string => {
+  if (!isArmResourceId(id)) {
+    return id;
+  }
+
+  const segments = id.split('/');
+  segments[2] = subscriptionPlaceholder;
+  segments[6] = locationPlaceholder;
+
+  return segments.join('/');
 };

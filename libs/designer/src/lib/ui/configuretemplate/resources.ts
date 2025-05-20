@@ -134,6 +134,16 @@ export const useResourceStrings = () => {
       id: 'JBa1qe',
       description: 'The label for the workflow display name',
     }),
+    LastModified: intl.formatMessage({
+      defaultMessage: 'Last modified',
+      id: 'lx0teD',
+      description: 'Last modified label',
+    }),
+    CreatedDate: intl.formatMessage({
+      defaultMessage: 'Created date',
+      id: 'iuh4i3',
+      description: 'Created date label',
+    }),
     State: intl.formatMessage({
       defaultMessage: 'State',
       id: 'IG4XXf',
