@@ -111,7 +111,7 @@ const serviceProviderLocation = 'serviceProviderConnections';
 const functionsLocation = 'functionConnections';
 const apimLocation = 'apiManagementConnections';
 const agentLocation = 'agentConnections';
-const foundryServiceConnectionRegex = /\/Microsoft\.CognitiveServices\/accounts\/[^/]+\/projects\/[^/]+/;
+export const foundryServiceConnectionRegex = /\/Microsoft\.CognitiveServices\/accounts\/[^/]+\/projects\/[^/]+/;
 
 export interface StandardConnectionServiceOptions {
   apiVersion: string;
@@ -573,7 +573,7 @@ export class StandardConnectionService extends BaseConnectionService implements 
         break;
       }
       case ConnectionType.Agent: {
-        const { connectionAndSettings } = convertToAgentConnectionsData(connectionName, connector.id, connectionInfo, parametersMetadata);
+        const { connectionAndSettings } = convertToAgentConnectionsData(connectionName, connectionInfo, parametersMetadata);
         connectionsData = connectionAndSettings;
         connection = convertAgentConnectionDataToConnection(
           connectionsData.connectionKey,
@@ -734,7 +734,6 @@ function convertFunctionsConnectionDataToConnection(connectionKey: string, conne
 
 function convertToAgentConnectionsData(
   connectionKey: string,
-  connectorId: string,
   connectionInfo: ConnectionCreationInfo,
   connectionParameterMetadata: ConnectionParametersMetadata
 ): {
