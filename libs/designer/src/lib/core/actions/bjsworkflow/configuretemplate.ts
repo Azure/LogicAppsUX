@@ -27,6 +27,7 @@ import {
   isLegacyDynamicValuesBuiltInExtension,
   equals,
   getIntl,
+  normalizeConnectorId,
 } from '@microsoft/logic-apps-shared';
 import type { RootState } from '../../state/templates/store';
 import {
@@ -51,6 +52,9 @@ import {
   getParametersForWorkflow,
   getSupportedSkus,
   getTemplateConnectionsFromConnectionsData,
+  sanitizeConnectorIds,
+  suffixConnectionsWithIdentifier,
+  suffixParametersWithIdentifier,
 } from '../../configuretemplate/utils/helper';
 import {
   setApiValidationErrors,
@@ -113,6 +117,7 @@ export const loadCustomTemplate = createAsyncThunk(
 
     const allWorkflowsManifest = await getWorkflowsInTemplate(templateId);
     let workflowSourceId = '';
+    let subscriptionId = '';
     let allParametersData: Record<string, Template.ParameterDefinition> = {};
     let allConnectionsData: Record<string, Template.Connection> = {};
 
@@ -162,9 +167,10 @@ export const loadCustomTemplate = createAsyncThunk(
     if (workflowSourceId) {
       const segments = workflowSourceId.split('/');
       const isConsumption = equals(segments[6], 'microsoft.logic');
+      subscriptionId = segments[2];
       dispatch(
         setInitialData({
-          subscriptionId: segments[2],
+          subscriptionId,
           resourceGroup: segments[4],
           location: templateResource.location as string,
           workflowAppName: isConsumption ? '' : segments[8],
@@ -175,9 +181,20 @@ export const loadCustomTemplate = createAsyncThunk(
       );
     }
 
+    const normalizedConnections = Object.keys(allConnectionsData).reduce((result: Record<string, Template.Connection>, key) => {
+      const connection = { ...allConnectionsData[key] };
+
+      if (equals(connection.kind, 'shared')) {
+        connection.connectorId = normalizeConnectorId(connection.connectorId, subscriptionId, templateResource.location as string);
+      }
+
+      result[key] = connection;
+      return result;
+    }, {});
+
     const operationsData = await getOperationDataInDefinitions(
       allWorkflowsData as Record<string, WorkflowTemplateData>,
-      allConnectionsData
+      normalizedConnections
     );
     dispatch(initializeNodeOperationInputsData(operationsData));
 
@@ -273,9 +290,15 @@ export const initializeAndSaveWorkflowsData = createAsyncThunk(
   ): Promise<void> => {
     const { manifest, status: oldState } = (getState() as RootState).template;
     const { connections, mapping, workflowsWithDefinitions } = await getTemplateConnections(getState() as RootState, workflows);
+    const {
+      connections: updatedConnections,
+      workflowsData: updatedWorkflowsData,
+      mapping: finalMapping,
+    } = suffixConnectionsWithIdentifier(connections, workflowsWithDefinitions, mapping);
+
     const operationsData = await getOperationDataInDefinitions(
-      workflowsWithDefinitions as Record<string, WorkflowTemplateData>,
-      connections
+      updatedWorkflowsData as Record<string, WorkflowTemplateData>,
+      updatedConnections
     );
     const { allInputs, allDependencies } = operationsData.reduce(
       (result: { allInputs: Record<string, NodeInputs>; allDependencies: Record<string, NodeDependencies> }, operationData) => {
@@ -288,26 +311,32 @@ export const initializeAndSaveWorkflowsData = createAsyncThunk(
       { allInputs: {}, allDependencies: {} }
     );
 
-    const parameterDefinitions = await getTemplateParameters(getState() as RootState, allInputs, allDependencies, mapping);
+    const parameterDefinitions = await getTemplateParameters(getState() as RootState, allInputs, allDependencies, finalMapping);
+    const { parameters: finalParameterDefinitions, workflowsData: finalWorkflowsData } = suffixParametersWithIdentifier(
+      parameterDefinitions,
+      updatedWorkflowsData
+    );
+
+    const finalConnections = sanitizeConnectorIds(updatedConnections);
     const updatedTemplateManifest = getUpdatedTemplateManifest(
       manifest as Template.TemplateManifest,
-      Object.values(workflowsWithDefinitions),
-      connections
+      Object.values(finalWorkflowsData),
+      finalConnections
     );
 
     await saveWorkflowsInTemplateInternal(
       dispatch,
       updatedTemplateManifest,
-      workflowsWithDefinitions,
-      connections,
-      parameterDefinitions,
+      finalWorkflowsData,
+      finalConnections,
+      finalParameterDefinitions,
       oldState as Template.TemplateEnvironment,
       publishState,
       /* clearWorkflows */ true
     );
 
-    dispatch(updateAllWorkflowsData({ workflows: workflowsWithDefinitions, manifest: updatedTemplateManifest }));
-    dispatch(updateConnectionAndParameterDefinitions({ connections, parameterDefinitions }));
+    dispatch(updateAllWorkflowsData({ workflows: finalWorkflowsData, manifest: updatedTemplateManifest }));
+    dispatch(updateConnectionAndParameterDefinitions({ connections: finalConnections, parameterDefinitions: finalParameterDefinitions }));
     dispatch(initializeNodeOperationInputsData(operationsData));
     if (oldState !== publishState) {
       dispatch(updateEnvironment(publishState));
