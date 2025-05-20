@@ -20,36 +20,32 @@ export class WorkflowCodeTypeStep extends AzureWizardPromptStep<IFunctionWizardC
   public hideStepCount = true;
 
   private readonly triggerSettings: { [key: string]: string | undefined };
-  private readonly isProjectWizard: boolean;
 
-  private constructor(triggerSettings: { [key: string]: string | undefined } | undefined, isProjectWizard: boolean | undefined) {
+  private constructor(triggerSettings: { [key: string]: string | undefined } | undefined) {
     super();
     this.triggerSettings = triggerSettings || {};
-    this.isProjectWizard = !!isProjectWizard;
   }
 
   public static async create(_context: IFunctionWizardContext, options: IWorkflowStateTypeStepOptions): Promise<WorkflowCodeTypeStep> {
-    return new WorkflowCodeTypeStep(options.triggerSettings, options.isProjectWizard);
+    return new WorkflowCodeTypeStep(options.triggerSettings);
   }
 
   public async prompt(context: IFunctionWizardContext): Promise<void> {
+    const placeHolder: string = localize('selectWorkflowCodeType', 'Select visual or codeful workflow type.');
 
-      const placeHolder: string = this.isProjectWizard
-        ? localize('selectFirstFuncTemplate', "Select a template for your project's first workflow")
-        : localize('selectFuncTemplate', 'Select a template for your workflow');
+    const result: IWorkflowTemplate = (await context.ui.showQuickPick(this.getPicks(context), { placeHolder })).data;
 
-      const result: IWorkflowTemplate = (await context.ui.showQuickPick(this.getPicks(context), { placeHolder }))
-        .data;
+    context.isCodeless = result.id === workflowCodeType.codeless;
 
-      context.isCodeless = result.id === workflowCodeType.codeless;
-      if (!context.isCodeless) {
-        context.functionTemplate = result;
-      }
+    // template is set for codeful as we have all information needed to create resources
+    if (!context.isCodeless) {
+      context.functionTemplate = result;
+    }
   }
 
   public async getSubWizard(context: IFunctionWizardContext): Promise<IWizardOptions<IFunctionWizardContext> | undefined> {
-
     if (!context.isCodeless) {
+      // final step for codeful workflows
       const promptSteps: AzureWizardPromptStep<IFunctionWizardContext>[] = [];
       const executeSteps: AzureWizardExecuteStep<IFunctionWizardContext>[] = [];
       const title: string = localize('createCodeless', 'Create new');
@@ -58,7 +54,7 @@ export class WorkflowCodeTypeStep extends AzureWizardPromptStep<IFunctionWizardC
       executeSteps.push(await CodefulWorkflowCreateStep.createStep(context));
       return { promptSteps, executeSteps, title };
     }
-    return undefined;
+    return undefined; // codeless workflows move onto next step
   }
 
   public shouldPrompt(context: IFunctionWizardContext): boolean {
