@@ -15,6 +15,8 @@ import { useResourceStrings } from './resources';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../core/state/templates/store';
 import { useTemplatesStrings } from '../templates/templatesStrings';
+import { useTemplate } from '../../core/configuretemplate/utils/queries';
+import { getDateTimeString } from '../../core/configuretemplate/utils/helper';
 
 export interface TemplateInfoToasterProps {
   title: string;
@@ -29,7 +31,16 @@ export const TemplateInfoToast = ({ title, content, show, offset }: TemplateInfo
 
   const customStrings = useResourceStrings();
   const { resourceStrings } = useTemplatesStrings();
-  const { workflows, status } = useSelector((state: RootState) => state.template);
+  const { workflows, status, manifest } = useSelector((state: RootState) => state.template);
+  const { data: template, isLoading } = useTemplate(manifest?.id as string);
+  const lastSaved = useMemo(
+    () =>
+      isLoading || !template?.systemData?.lastModifiedAt
+        ? customStrings.Placeholder
+        : getDateTimeString(template?.systemData?.lastModifiedAt),
+    [isLoading, template, customStrings]
+  );
+
   const type = useMemo(() => {
     const workflowKeys = Object.keys(workflows);
     return workflowKeys.length === 1
@@ -60,18 +71,18 @@ export const TemplateInfoToast = ({ title, content, show, offset }: TemplateInfo
   );
 
   useEffect(
-    () => dispatchToast(<InfoToastContent type={type} status={statusText} lastSaved={customStrings.Placeholder} />, toastDetails),
-    [dispatchToast, statusText, toastDetails, toastId, type, customStrings.Placeholder]
+    () => dispatchToast(<InfoToastContent type={type} status={statusText} lastSaved={lastSaved} />, toastDetails),
+    [dispatchToast, statusText, toastDetails, toastId, type, customStrings.Placeholder, lastSaved]
   );
 
   useEffect(() => {
     if (!show) {
       updateToast({
-        content: <InfoToastContent type={type} status={statusText} lastSaved={customStrings.Placeholder} />,
+        content: <InfoToastContent type={type} status={statusText} lastSaved={lastSaved} />,
         ...toastDetails,
       });
     }
-  }, [show, statusText, toastDetails, toastId, type, updateToast, customStrings.Placeholder]);
+  }, [show, statusText, toastDetails, toastId, type, updateToast, customStrings.Placeholder, lastSaved]);
 
   useEffect(() => {
     if (show) {
@@ -94,6 +105,7 @@ export const TemplateInfoToast = ({ title, content, show, offset }: TemplateInfo
 
 const InfoToastContent = ({ type, status, lastSaved }: { type: string; status: string; lastSaved: string }) => {
   const resources = useResourceStrings();
+
   return (
     <Toast>
       <ToastTitle media={null}>{resources.TemplateInformation}</ToastTitle>
