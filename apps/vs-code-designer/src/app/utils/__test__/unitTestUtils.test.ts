@@ -427,9 +427,9 @@ describe('generateClassCode', () => {
     expect(classCode).toContain('public int Property2 { get; set; }');
     expect(classCode).toContain('public DateTime DTProperty { get; set; }');
 
-    expect(classCode).not.toContain('this.StatusCode = HttpStatusCode.OK;');
+    expect(classCode).toContain('this.StatusCode = HttpStatusCode.OK;');
     const setStatusCodeOccurrences = classCode.split('this.StatusCode = HttpStatusCode.OK;').length - 1;
-    expect(setStatusCodeOccurrences).toBe(0);
+    expect(setStatusCodeOccurrences).toBe(1);
     expect(classCode).toContain('this.Property1 = string.Empty;');
     expect(classCode).toContain('this.Property2 = 0;');
     expect(classCode).toContain('this.DTProperty = new DateTime();');
