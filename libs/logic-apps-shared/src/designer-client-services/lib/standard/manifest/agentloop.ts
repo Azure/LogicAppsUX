@@ -53,8 +53,8 @@ export default {
                 displayName: 'Azure OpenAI',
               },
               {
-                value: 'AgentService',
-                displayName: 'Agent Service',
+                value: 'FoundryAgentService',
+                displayName: 'Foundry Agent Service',
               },
             ],
           },

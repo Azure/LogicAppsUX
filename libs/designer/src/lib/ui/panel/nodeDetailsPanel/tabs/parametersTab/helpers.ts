@@ -14,5 +14,5 @@ export const isAgentConnectorAndAgentServiceModel = (
   const agentConnector = isAgentConnector(connectorId ?? '');
   const parameterGroup = parameterGroups[groupId];
   const parameter = parameterGroup?.parameters?.find((param: any) => param.parameterKey === 'inputs.$.agentModelType');
-  return agentConnector && parameter?.value?.[0]?.value === 'AgentService';
+  return agentConnector && parameter?.value?.[0]?.value === 'FoundryAgentService';
 };
