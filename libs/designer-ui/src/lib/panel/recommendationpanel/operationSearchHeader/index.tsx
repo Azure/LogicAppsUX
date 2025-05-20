@@ -34,11 +34,19 @@ export const OperationSearchHeader = ({ searchCallback, searchTerm, filters, set
         },
       ];
 
-  const searchPlaceholderText = intl.formatMessage({
-    defaultMessage: 'Search for an action or connector',
-    id: 'py9dSW',
-    description: 'Placeholder text for Operation/Connector search bar',
-  });
+  const searchPlaceholderText = intl.formatMessage(
+    isTriggerNode
+      ? {
+          defaultMessage: 'Search for a trigger or connector',
+          id: 'CLJuAQ',
+          description: 'Placeholder text for Trigger/Connector search bar',
+        }
+      : {
+          defaultMessage: 'Search for an action or connector',
+          id: 'py9dSW',
+          description: 'Placeholder text for Operation/Connector search bar',
+        }
+  );
 
   return (
     <div className="msla-sub-heading-container">
