@@ -1,4 +1,18 @@
 # Logic Apps Designer
+## [5.107.0](https://github.com/Azure/LogicAppsUX/compare/v5.106.0...v5.107.0) (2025-05-20)
+
+
+### Features
+
+* **templates:** Adding created and last modified column in workflows and toaster ([#7274](https://github.com/Azure/LogicAppsUX/issues/7274)) ([fe03331](https://github.com/Azure/LogicAppsUX/commit/fe03331ac85a4748bde2c40a437da48790ceec98))
+
+
+### Bug Fixes
+
+* **designer:** Enable colorization and auto-indentation in Expression Editor ([#7268](https://github.com/Azure/LogicAppsUX/issues/7268)) ([7836e99](https://github.com/Azure/LogicAppsUX/commit/7836e995f4d33482fc96b09fcc973855e2de33e8))
+* **designer:** Fix trigger search bar placeholder text ([#7263](https://github.com/Azure/LogicAppsUX/issues/7263)) ([d88cb89](https://github.com/Azure/LogicAppsUX/commit/d88cb893d3088bd8fbb4d005f1590682e65a4bd7))
+* **designer:** Reverting part of https://github.com/Azure/LogicAppsUX/pull/7006 ([#7266](https://github.com/Azure/LogicAppsUX/issues/7266)) ([618b065](https://github.com/Azure/LogicAppsUX/commit/618b065447ac95d308e49791a97b539ad0b74784))
+
 ## [5.106.0](https://github.com/Azure/LogicAppsUX/compare/v5.105.0...v5.106.0) (2025-05-19)
 
 
