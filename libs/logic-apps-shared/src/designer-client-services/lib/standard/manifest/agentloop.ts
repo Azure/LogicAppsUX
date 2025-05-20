@@ -122,6 +122,34 @@ export default {
                   minimum: 0,
                   maximum: 1.0,
                 },
+                builtinTools: {
+                  type: 'array',
+                  title: 'Built in tools',
+                  'x-ms-editor': 'dropdown',
+                  'x-ms-editor-options': {
+                    multiSelect: true,
+                    titleSeparator: ',',
+                    serialization: {
+                      valueType: 'array',
+                    },
+                    options: [
+                      {
+                        value: 'code_interpreter',
+                        displayName: 'Code interpreter',
+                      },
+                    ],
+                  },
+                  conditionalVisibility: true,
+                  'x-ms-input-dependencies': {
+                    type: 'visibility',
+                    parameters: [
+                      {
+                        name: 'agentModelType',
+                        values: ['FoundryAgentService'],
+                      },
+                    ],
+                  },
+                },
               },
             },
             agentHistoryReductionSettings: {
