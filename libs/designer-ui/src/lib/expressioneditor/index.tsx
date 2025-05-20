@@ -89,6 +89,7 @@ export function ExpressionEditor({
         data-automation-id="msla-expression-editor"
         height={`${currentHeight}px`}
         readOnly={isReadOnly}
+        tabSize={2}
       />
       <div
         className="msla-expression-editor-expand"

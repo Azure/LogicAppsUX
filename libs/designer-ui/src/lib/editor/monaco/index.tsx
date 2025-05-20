@@ -118,7 +118,7 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
     const initTemplateLanguage = useCallback(async () => {
       const { languages, editor } = await loader.init();
       if (!languages.getLanguages().some((lang: any) => lang.id === Constants.LANGUAGE_NAMES.WORKFLOW)) {
-        registerWorkflowLanguageProviders(languages, editor, { isInverted });
+        registerWorkflowLanguageProviders(languages, editor, { isInverted, isIndentationEnabled: true });
       }
       setCanRender(true);
     }, [isInverted]);
