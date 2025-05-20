@@ -55,6 +55,30 @@ export const getWorkflowResourcesInTemplate = async (templateId: string): Promis
   });
 };
 
+export const useTemplate = (templateId: string, enabled = true): UseQueryResult<ArmResource<any>, unknown> => {
+  return useQuery(['template', templateId?.toLowerCase()], async () => TemplateResourceService().getTemplate(templateId), {
+    cacheTime: 1000 * 60 * 60 * 24,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    enabled: enabled && !!templateId,
+  });
+};
+
+export const useTemplateWorkflows = (templateId: string, enabled = true): UseQueryResult<ArmResource<any>[], unknown> => {
+  return useQuery(
+    ['templateworkflowresources', templateId?.toLowerCase()],
+    async () => TemplateResourceService().getTemplateWorkflows(templateId),
+    {
+      cacheTime: 1000 * 60 * 60 * 24,
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+      enabled: enabled && !!templateId,
+    }
+  );
+};
+
 export const getTemplate = async (templateId: string): Promise<ArmResource<any>> => {
   const queryClient = getReactQueryClient();
   return queryClient.fetchQuery(['template', templateId.toLowerCase()], async () => TemplateResourceService().getTemplate(templateId));

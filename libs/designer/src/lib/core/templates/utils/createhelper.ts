@@ -55,7 +55,7 @@ export const getConsumptionWorkflowPayloadForCreate = (
 
 const workflowIdentifier = '#workflowname#';
 const replaceWorkflowIdentifier = (content: string, replaceWith: string) => content.replaceAll(workflowIdentifier, replaceWith);
-const replaceAllStringInWorkflowDefinition = (workflowDefinition: string, oldString: string, newString: string) => {
+export const replaceAllStringInWorkflowDefinition = (workflowDefinition: string, oldString: string, newString: string) => {
   return workflowDefinition.replaceAll(oldString, newString);
 };
 

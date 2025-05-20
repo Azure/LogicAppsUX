@@ -2,12 +2,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useCallback, useMemo } from 'react';
 import type { OptionOnSelectData, SelectionEvents } from '@fluentui/react-components';
 import { Dropdown, Field, Option } from '@fluentui/react-components';
-import { equals, getPropertyValue } from '@microsoft/logic-apps-shared';
+import { equals, getPropertyValue, normalizeConnectorId } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
 import { updateTemplateManifest } from '../../../core/state/templates/templateSlice';
 import { useAllConnectors } from '../../../core/configuretemplate/utils/queries';
-import { getConnectorKind } from '../../../core/configuretemplate/utils/helper';
+import { getConnectorKind, sanitizeConnectorId } from '../../../core/configuretemplate/utils/helper';
 
 export const FeaturedConnectors = () => {
   const intl = useIntl();
@@ -25,23 +25,27 @@ export const FeaturedConnectors = () => {
   };
   const dispatch = useDispatch<AppDispatch>();
 
-  const { operationInfos, featuredConnectors, errors, apiErrors } = useSelector((state: RootState) => {
+  const { operationInfos, featuredConnectors, errors, apiErrors, subscriptionId, location } = useSelector((state: RootState) => {
     return {
       operationInfos: state.operation.operationInfo,
       featuredConnectors: state.template.manifest?.featuredConnectors ?? [],
       errors: state.template.errors,
       apiErrors: state.template.apiValidatationErrors?.template,
+      subscriptionId: state.workflow.subscriptionId,
+      location: state.workflow.location,
     };
   });
   const { data: allConnectors, isLoading } = useAllConnectors(operationInfos);
   const selectedConnectors = useMemo(() => {
-    return allConnectors?.filter((connector) => featuredConnectors.some((conn) => equals(conn.id, connector.id)));
-  }, [allConnectors, featuredConnectors]);
+    return allConnectors?.filter((connector) =>
+      featuredConnectors.some((conn) => equals(normalizeConnectorId(conn.id, subscriptionId, location), connector.id))
+    );
+  }, [allConnectors, featuredConnectors, location, subscriptionId]);
 
   const onOptionSelect = useCallback(
     (_event: SelectionEvents, data: OptionOnSelectData) => {
-      const featuredConnectors = data.selectedOptions?.map((id) => ({ id, kind: getConnectorKind(id) }));
-      dispatch(updateTemplateManifest({ featuredConnectors }));
+      const selectedFeaturedConnectors = data.selectedOptions?.map((id) => ({ id: sanitizeConnectorId(id), kind: getConnectorKind(id) }));
+      dispatch(updateTemplateManifest({ featuredConnectors: selectedFeaturedConnectors }));
     },
     [dispatch]
   );

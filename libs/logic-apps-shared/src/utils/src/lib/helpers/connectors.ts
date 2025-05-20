@@ -33,9 +33,11 @@ export const getIconUriFromConnector = (connector: Connector | OperationApi | un
   return fallbackConnectorIconUrl(iconUrl);
 };
 
+export const subscriptionPlaceholder = '#subscription#';
+export const locationPlaceholder = '#location#';
 export function normalizeConnectorId(connectorId: string, subscriptionId: string, location: string, lowercase = false) {
   const result = isArmResourceId(connectorId)
-    ? connectorId.replaceAll('#subscription#', subscriptionId).replaceAll('#location#', location)
+    ? connectorId.replaceAll(subscriptionPlaceholder, subscriptionId).replaceAll(locationPlaceholder, location)
     : connectorId;
 
   return lowercase ? result.toLowerCase() : result;
