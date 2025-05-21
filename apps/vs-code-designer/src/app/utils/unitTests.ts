@@ -1186,6 +1186,7 @@ export async function getMockableOperationTypes(): Promise<void> {
     const response = await axios.get(listMockableOperationsUrl);
     response.data.forEach((mockableOperation: string) => mockableOperationTypes.add(mockableOperation.toUpperCase()));
   } catch (apiError: any) {
+    ext.telemetryReporter.sendTelemetryEvent('listMockableOperations', { ...apiError });
     if (axios.isAxiosError(apiError)) {
       ext.outputChannel.appendLog(
         localize(
@@ -1216,12 +1217,13 @@ export async function getMockableHttpOperationTypes(): Promise<void> {
   const baseUrl = `http://localhost:${designTimePort}`;
   const listMockableHttpOperationsUrl = `${baseUrl}/runtime/webhooks/workflow/api/management/listMockableHttpOperations`;
   ext.outputChannel.appendLog(
-    localize('listMockableOperations', `Fetching unit test mockable operations at ${listMockableHttpOperationsUrl}`)
+    localize('listMockableHttpOperations', `Fetching unit test mockable http operations at ${listMockableHttpOperationsUrl}`)
   );
   try {
     const response = await axios.get(listMockableHttpOperationsUrl);
     response.data.forEach((mockableOperation: string) => mockableHttpOperationTypes.add(mockableOperation.toUpperCase()));
   } catch (apiError: any) {
+    ext.telemetryReporter.sendTelemetryEvent('listMockableHttpOperations', { ...apiError });
     if (axios.isAxiosError(apiError)) {
       ext.outputChannel.appendLog(
         localize(

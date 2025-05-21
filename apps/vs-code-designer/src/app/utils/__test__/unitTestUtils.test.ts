@@ -49,6 +49,7 @@ beforeEach(() => {
     process: {} as childProcess.ChildProcess,
   });
   ext.outputChannel = { appendLog: vi.fn() } as any;
+  vi.spyOn(axios, 'get').mockResolvedValue({ data: ['Request', 'Http', 'HttpWebhook'] });
 });
 
 afterEach(() => {
@@ -240,7 +241,63 @@ describe('parseErrorBeforeTelemetry', () => {
   });
 });
 
-describe('generateCSharpClasses - StatusCode Removal', () => {
+describe('generateCSharpClasses - HTTP Action', () => {
+  it('should generate C# class code from a class definition HTTP action', () => {
+    const workflowName = 'TestWorkflow';
+    const mockType = 'Action';
+    const mockClassName = 'MockClass';
+    const classCode = generateCSharpClasses(
+      'NamespaceName',
+      'RootClass',
+      workflowName,
+      mockType,
+      mockClassName,
+      {
+        nestedTypeProperty: 'object',
+        key1: { nestedTypeProperty: 'string', description: 'Key 1 description' },
+      },
+      true
+    );
+
+    expect(classCode).toContain('public class RootClass');
+    expect(classCode).toContain('/// Key 1 description');
+    expect(classCode).toContain('public string Key1 { get; set; }');
+    expect(classCode).toContain('public HttpStatusCode StatusCode {get; set;}');
+
+    expect(classCode).toContain('public RootClass()');
+    expect(classCode).toContain('this.StatusCode = HttpStatusCode.OK;');
+    expect(classCode).toContain('this.Key1 = string.Empty;');
+  });
+});
+
+describe('generateCSharpClasses - non HTTP', () => {
+  it('should generate C# class code from a class definition non HTTP action', () => {
+    const workflowName = 'TestWorkflow';
+    const mockType = 'Action';
+    const mockClassName = 'MockClass';
+    const classCode = generateCSharpClasses(
+      'NamespaceName',
+      'RootClass',
+      workflowName,
+      mockType,
+      mockClassName,
+      {
+        nestedTypeProperty: 'object',
+        key1: { nestedTypeProperty: 'string', description: 'Key 1 description' },
+      },
+      false
+    );
+
+    expect(classCode).toContain('public class RootClass');
+    expect(classCode).toContain('/// Key 1 description');
+    expect(classCode).toContain('public string Key1 { get; set; }');
+    expect(classCode).not.toContain('public HttpStatusCode StatusCode');
+
+    expect(classCode).toContain('public RootClass()');
+    expect(classCode).not.toContain('this.StatusCode = HttpStatusCode.OK;');
+    expect(classCode).toContain('this.Key1 = string.Empty;');
+  });
+
   it('should not have StatusCode property from the generated class definition', () => {
     // Simulate JSON output with a redundant StatusCode property.
     const dataWithStatusCode = {
@@ -279,81 +336,6 @@ describe('generateCSharpClasses - StatusCode Removal', () => {
     expect(classCode).toContain('public string Key1 { get; set; }');
     // And still the base class initialization for StatusCode should be present.
     expect(classCode).not.toContain('this.StatusCode = HttpStatusCode.OK;');
-  });
-
-  it('should have StatusCode property if is HTTP action', () => {
-    // Simulate JSON output with a redundant StatusCode property.
-    const dataWithStatusCode = {
-      nestedTypeProperty: 'object',
-      Body: { nestedTypeProperty: 'object', description: 'Response body' },
-      StatusCode: { nestedTypeProperty: 'integer', description: 'The status code' },
-    };
-
-    const classCode = generateCSharpClasses('TestNamespace', 'TestClass', 'WorkflowName', 'Action', 'MockClass', dataWithStatusCode, true);
-
-    // The generated code should include the constructor setting the base's StatusCode.
-    expect(classCode).toContain('public HttpStatusCode StatusCode {get; set;}');
-    expect(classCode).toContain('this.StatusCode = HttpStatusCode.OK;');
-    // It should not contain a separate integer property for StatusCode in the class body.
-    expect(classCode).not.toContain('public int StatusCode { get; set; }');
-    // Optionally, check that other properties are still generated correctly.
-    expect(classCode).toContain('public JObject Body { get; set; }');
-  });
-});
-
-describe('generateCSharpClasses', () => {
-  it('should generate C# class code from a class definition non HTTP action', () => {
-    const workflowName = 'TestWorkflow';
-    const mockType = 'Action';
-    const mockClassName = 'MockClass';
-    const classCode = generateCSharpClasses(
-      'NamespaceName',
-      'RootClass',
-      workflowName,
-      mockType,
-      mockClassName,
-      {
-        nestedTypeProperty: 'object',
-        key1: { nestedTypeProperty: 'string', description: 'Key 1 description' },
-      },
-      false
-    );
-
-    expect(classCode).toContain('public class RootClass');
-    expect(classCode).toContain('/// Key 1 description');
-    expect(classCode).toContain('public string Key1 { get; set; }');
-    expect(classCode).not.toContain('public HttpStatusCode StatusCode');
-
-    expect(classCode).toContain('public RootClass()');
-    expect(classCode).not.toContain('this.StatusCode = HttpStatusCode.OK;');
-    expect(classCode).toContain('this.Key1 = string.Empty;');
-  });
-
-  it('should generate C# class code from a class definition HTTP action', () => {
-    const workflowName = 'TestWorkflow';
-    const mockType = 'Action';
-    const mockClassName = 'MockClass';
-    const classCode = generateCSharpClasses(
-      'NamespaceName',
-      'RootClass',
-      workflowName,
-      mockType,
-      mockClassName,
-      {
-        nestedTypeProperty: 'object',
-        key1: { nestedTypeProperty: 'string', description: 'Key 1 description' },
-      },
-      true
-    );
-
-    expect(classCode).toContain('public class RootClass');
-    expect(classCode).toContain('/// Key 1 description');
-    expect(classCode).toContain('public string Key1 { get; set; }');
-    expect(classCode).toContain('public HttpStatusCode StatusCode {get; set;}');
-
-    expect(classCode).toContain('public RootClass()');
-    expect(classCode).toContain('this.StatusCode = HttpStatusCode.OK;');
-    expect(classCode).toContain('this.Key1 = string.Empty;');
   });
 });
 
@@ -504,7 +486,6 @@ describe('getOperationMockClassContent with no actions', () => {
       port: 1234,
       process: {} as childProcess.ChildProcess,
     });
-    vi.spyOn(axios, 'get').mockResolvedValue({ data: ['Request'] });
   });
 
   afterEach(() => {
@@ -536,7 +517,7 @@ describe('getOperationMockClassContent with no actions', () => {
   });
 });
 
-describe('getOperationMockClassContent', () => {
+describe('aom getOperationMockClassContent with triggers and actions', () => {
   let readFileSpy: any;
 
   beforeEach(() => {
@@ -655,6 +636,59 @@ describe('getOperationMockClassContent', () => {
   });
 
   it('should return mock action/trigger class contents for each operation in the workflow', async () => {
+    readFileSpy = vi.spyOn(fse, 'readFile').mockResolvedValue(
+      JSON.stringify({
+        definition: {
+          $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
+          actions: {
+            Complete_the_message_in_a_queue: {
+              type: 'ApiConnection',
+              inputs: {
+                host: {
+                  connection: {
+                    referenceName: 'servicebus',
+                  },
+                },
+                method: 'delete',
+                path: "/@{encodeURIComponent(encodeURIComponent('test'))}/messages/complete",
+                queries: {
+                  lockToken: "@triggerBody()?['LockToken']",
+                  queueType: 'Main',
+                  sessionId: '',
+                },
+              },
+              runAfter: {},
+            },
+          },
+          contentVersion: '1.0.0.0',
+          outputs: {},
+          triggers: {
+            WhenAHTTPRequestIsReceived: {
+              type: 'ApiConnection',
+              inputs: {
+                host: {
+                  connection: {
+                    referenceName: 'servicebus',
+                  },
+                },
+                method: 'get',
+                path: "/@{encodeURIComponent(encodeURIComponent('test'))}/messages/head/peek",
+                queries: {
+                  queueType: 'Main',
+                  sessionId: 'None',
+                },
+              },
+              recurrence: {
+                interval: 3,
+                frequency: 'Minute',
+              },
+            },
+          },
+        },
+        kind: 'Stateful',
+      })
+    );
+
     const operationInfo = {
       ReadAResourceGroup: { type: 'Http', operationId: 'ReadAResourceGroup' },
       WhenAHTTPRequestIsReceived: { type: 'HttpWebhook', operationId: 'WhenAHTTPRequestIsReceived' },
