@@ -39,30 +39,25 @@ export async function validateFuncCoreToolsIsLatestBinaries(majorVersion?: strin
     const binaries = binariesExist(funcDependencyName);
     context.telemetry.properties.binariesExist = `${binaries}`;
 
-    if (binaries) {
-      context.telemetry.properties.binaryCommand = `${getFunctionsCommand()}`;
-      const localVersion: string | null = await getLocalFuncCoreToolsVersion();
-      context.telemetry.properties.localVersion = localVersion;
-      const newestVersion: string | undefined = await getLatestFunctionCoreToolsVersion(context, majorVersion);
-      const isLocalVersionMissing = localVersion === null;
+    const localVersion: string | null = binaries ? await getLocalFuncCoreToolsVersion() : null;
+    context.telemetry.properties.localVersion = localVersion ?? 'null';
 
-      const isLocalVersionOutdated = !isLocalVersionMissing && semver.gt(newestVersion, localVersion);
+    const newestVersion: string | undefined = binaries ? await getLatestFunctionCoreToolsVersion(context, majorVersion) : undefined;
+    const isOutdated = binaries && localVersion && newestVersion && semver.gt(newestVersion, localVersion);
 
-      if (isLocalVersionMissing) {
-        context.telemetry.properties.localVersion = 'null';
-        await installFuncCoreToolsBinaries(context, majorVersion);
-        context.telemetry.properties.binaryCommand = `${getFunctionsCommand()}`;
-      } else if (isLocalVersionMissing || isLocalVersionOutdated) {
-        context.telemetry.properties.localVersion = localVersion ?? 'null';
+    const shouldInstall = !binaries || localVersion === null || isOutdated;
+
+    if (shouldInstall) {
+      if (isOutdated) {
         context.telemetry.properties.outOfDateFunc = 'true';
         stopAllDesignTimeApis();
-        await installFuncCoreToolsBinaries(context, majorVersion);
-        await startAllDesignTimeApis();
       }
-    } else {
+
       await installFuncCoreToolsBinaries(context, majorVersion);
-      context.telemetry.properties.binaryCommand = `${getFunctionsCommand()}`;
+      await startAllDesignTimeApis();
     }
+
+    context.telemetry.properties.binaryCommand = getFunctionsCommand();
   });
 }
 
