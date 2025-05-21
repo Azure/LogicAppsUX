@@ -78,10 +78,10 @@ export async function generateDeploymentScripts(context: IActionContext, node?: 
       promptSteps: [new DeploymentScriptTypeStep()],
     });
 
-    ext.outputChannel.appendLog(localize('launchAzureDeploymentScriptsWizard', 'Launching Azure Deployment Scripts Wizard...'));
+    ext.outputChannel.appendLog(localize('launchAzureDeploymentScriptsWizard', 'Launching Azure deployment scripts wizard...'));
     await wizard.prompt();
     await wizard.execute();
-    ext.outputChannel.appendLog(localize('completeAzureDeploymentScriptsWizard', 'Azure Deployment Scripts Wizard executed successfully.'));
+    ext.outputChannel.appendLog(localize('completeAzureDeploymentScriptsWizard', 'Azure deployment scripts wizard executed successfully.'));
   } catch (error) {
     const errorMessage = localize('errorScriptGen', 'Error during deployment script generation: {0}', error.message ?? error);
     ext.outputChannel.appendLog(errorMessage);
@@ -117,7 +117,7 @@ async function getDeploymentScriptsWizardContext(context: IActionContext, projec
       const localSettingsFilePath = path.join(projectPath, localSettingsFileName);
       localSettings = await getLocalSettingsJson(context, localSettingsFilePath);
     } catch (error) {
-      const errorMessage = localize('errorFetchLocalSettings', 'Error reading local settings: {0}', error.message ?? error);
+      const errorMessage = localize('errorReadingLocalSettings', 'Error reading local settings: {0}', error.message ?? error);
       ext.outputChannel.appendLog(errorMessage);
       throw new Error(errorMessage);
     }
