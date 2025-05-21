@@ -46,10 +46,13 @@ export async function validateFuncCoreToolsIsLatestBinaries(majorVersion?: strin
       const newestVersion: string | undefined = await getLatestFunctionCoreToolsVersion(context, majorVersion);
       const isLocalVersionMissing = localVersion === null;
 
-      const isLocalVersionOutdated =
-        !isLocalVersionMissing && semver.major(newestVersion) === semver.major(localVersion) && semver.gt(newestVersion, localVersion);
+      const isLocalVersionOutdated = !isLocalVersionMissing && semver.gt(newestVersion, localVersion);
 
-      if (isLocalVersionMissing || isLocalVersionOutdated) {
+      if (isLocalVersionMissing) {
+        context.telemetry.properties.localVersion = 'null';
+        await installFuncCoreToolsBinaries(context, majorVersion);
+        context.telemetry.properties.binaryCommand = `${getFunctionsCommand()}`;
+      } else if (isLocalVersionMissing || isLocalVersionOutdated) {
         context.telemetry.properties.localVersion = localVersion ?? 'null';
         context.telemetry.properties.outOfDateFunc = 'true';
         stopAllDesignTimeApis();
