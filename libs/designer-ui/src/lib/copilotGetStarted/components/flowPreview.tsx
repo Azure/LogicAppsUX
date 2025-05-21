@@ -227,26 +227,19 @@ type SubOperationsPreviewProps = { subOperations: SubOperations[] } & PreviewCon
 const SubOperationsPreview: React.FC<SubOperationsPreviewProps> = ({ subOperations, ...context }) => {
   return (
     <div className={'msla-operationPreview-blockSubActionsContainer'}>
-      {[...subOperations]
-        .sort((a, b) => {
-          // Handle cases where displayName might be undefined
-          const aName = a.displayName || '';
-          const bName = b.displayName || '';
-          return aName.localeCompare(bName);
-        })
-        .map(({ displayName, iconName, operations }) => {
-          return (
-            <div key={displayName} className={'msla-operationPreview-blockSubActions'}>
-              {(displayName || iconName) && (
-                <div className={'msla-operationPreview-blockSubActionsLabel'}>
-                  {iconName && <FontIcon iconName={iconName} className={'msla-operationPreview-blockSubActionsIcon'} />}
-                  {displayName}
-                </div>
-              )}
-              <OperationsPreview operations={operations} {...context} />
-            </div>
-          );
-        })}
+      {subOperations.map(({ displayName, iconName, operations }) => {
+        return (
+          <div key={displayName} className={'msla-operationPreview-blockSubActions'}>
+            {(displayName || iconName) && (
+              <div className={'msla-operationPreview-blockSubActionsLabel'}>
+                {iconName && <FontIcon iconName={iconName} className={'msla-operationPreview-blockSubActionsIcon'} />}
+                {displayName}
+              </div>
+            )}
+            <OperationsPreview operations={operations} {...context} />
+          </div>
+        );
+      })}
       {
         // HACK: ensure all sub-actions have the same width by inserting invisible elements taken into account while wrapping and growing
         subOperations.length > 2 &&

@@ -132,7 +132,14 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
     setIsLoadingOperationGroup(true);
     searchResultPromise
       .then((filteredOps) => {
-        setAllOperationsForGroup(filteredOps);
+        // Sort the operations alphabetically by displayName
+        const sortedOps = [...filteredOps].sort((a, b) => {
+          // Handle cases where displayName might be undefined
+          const aName = a.properties?.summary || a.name || '';
+          const bName = b.properties?.summary || b.name || '';
+          return aName.localeCompare(bName);
+        });
+        setAllOperationsForGroup(sortedOps);
       })
       .finally(() => {
         setIsLoadingOperationGroup(false);
