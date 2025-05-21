@@ -372,7 +372,7 @@ export async function createTestCsFile(
 
   let templateContent = await fse.readFile(templatePath, 'utf-8');
 
-  templateContent = templateContent.replace(/namespace <%= LogicAppName %>\.Tests/g, `namespace ${cleanedLogicAppName}.Tests`);
+  templateContent = templateContent.replace(/<%= LogicAppName %>\.Tests/g, `${cleanedLogicAppName}.Tests`);
   templateContent = templateContent.replace(/public class <%= UnitTestName %>/g, `public class ${cleanedUnitTestName}`);
   templateContent = templateContent.replace(/<see cref="<%= UnitTestName %>" \/>/g, `<see cref="${cleanedUnitTestName}" />`);
   templateContent = templateContent.replace(/public <%= UnitTestName %>\(\)/g, `public ${cleanedUnitTestName}()`);
@@ -1103,7 +1103,7 @@ export async function getOperationMockClassContent(
  * @returns {string} - The generated C# class definition.
  */
 export function generateCSharpClasses(
-  namespaceName: string,
+  logicAppName: string,
   rootClassName: string,
   workflowName: string,
   mockType: string,
@@ -1127,7 +1127,7 @@ export function generateCSharpClasses(
 
   const sanitizedWorkflowName = workflowName.replace(/-/g, '_');
 
-  const adjustedNamespace = `${namespaceName}.Tests.Mocks.${sanitizedWorkflowName}`;
+  const adjustedNamespace = `${logicAppName}.Tests.Mocks.${sanitizedWorkflowName}`;
 
   const actionTriggerMockClassCode = generateTriggerActionMockClass(mockType, mockClassName, rootClassName);
   // Generate the code for the root class (this also recursively generates nested classes).

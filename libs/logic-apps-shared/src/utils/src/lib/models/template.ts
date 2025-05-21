@@ -119,3 +119,17 @@ export interface ViewTemplateDetails {
   parametersOverride?: Record<string, ContentInfo<any>>;
   connectionsOverride?: Record<string, ConnectionInfo>;
 }
+
+export interface FileStructure {
+  type: 'file';
+  name: string;
+  data: any;
+}
+
+export interface FolderStructure {
+  type: 'folder';
+  name: string;
+  contents: (FolderStructure | FileStructure)[];
+}
+
+export type ZipContent = FileStructure | FolderStructure;

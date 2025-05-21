@@ -10,6 +10,7 @@ import { useTemplatesStrings } from '../../templates/templatesStrings';
 import { useResourceStrings } from '../resources';
 import { setRunValidation } from '../../../core/state/templates/tabSlice';
 import {
+  setApiValidationErrors,
   updateEnvironment,
   validateParameterDetails,
   validateTemplateManifest,
@@ -20,7 +21,8 @@ import type { Template } from '@microsoft/logic-apps-shared';
 import { TemplateResourceService } from '@microsoft/logic-apps-shared';
 import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useCallback } from 'react';
-import { getDownloadableTemplate } from '../../../core/actions/bjsworkflow/configuretemplate';
+import { getZippedTemplateForDownload } from '../../../core/configuretemplate/utils/helper';
+import { getTemplateValidationError } from '../../../core/actions/bjsworkflow/configuretemplate';
 
 export const useConfigureTemplateWizardTabs = ({
   onSaveWorkflows,
@@ -38,22 +40,27 @@ export const useConfigureTemplateWizardTabs = ({
     enableWizard,
     isWizardUpdating,
     templateManifest,
-    currentStatus,
+    currentState,
     workflows,
     parametersHasError,
     templateManifestHasError,
     runValidation,
     selectedTabId,
+    connections,
+    parameterDefinitions,
   } = useSelector((state: RootState) => ({
     enableWizard: state.tab.enableWizard,
     isWizardUpdating: state.tab.isWizardUpdating,
     runValidation: state.tab.runValidation,
     templateManifest: state.template.manifest,
-    currentStatus: state.template.status,
+    currentState: state.template.status,
     workflows: state.template.workflows,
     parametersHasError: Object.values(state.template.errors.parameters).some((value) => value !== undefined),
-    templateManifestHasError: Object.values(state.template.errors.manifest).some((value) => value !== undefined),
+    templateManifestHasError:
+      state.template.errors.general || Object.values(state.template.errors.manifest).some((value) => value !== undefined),
     selectedTabId: state.tab.selectedTabId,
+    connections: state.template.connections,
+    parameterDefinitions: state.template.parameterDefinitions,
   }));
 
   const hasAnyWorkflowErrors = Object.values(workflows).some(
@@ -74,31 +81,27 @@ export const useConfigureTemplateWizardTabs = ({
 
   const handleSaveTemplate = useCallback(
     async (newPublishState: Template.TemplateEnvironment) => {
-      const manifestToUpdate: Template.TemplateManifest = {
-        ...(templateManifest as Template.TemplateManifest),
-        details: {
-          ...templateManifest?.details,
-          Type: Object.keys(workflows).length > 1 ? 'Accelerator' : 'Workflow',
-        } as any,
-      };
       dispatch(setRunValidation(true));
       const templateId = templateManifest?.id as string;
-      await TemplateResourceService().updateTemplate(templateId, manifestToUpdate, newPublishState);
 
-      queryClient.removeQueries(['template', templateId.toLowerCase()]);
-      onSaveTemplate(currentStatus ?? 'Development', newPublishState);
-      dispatch(updateEnvironment(newPublishState));
+      try {
+        await TemplateResourceService().updateTemplate(templateId, templateManifest, newPublishState);
+        dispatch(setApiValidationErrors({ error: undefined, source: 'template' }));
+
+        queryClient.removeQueries(['template', templateId.toLowerCase()]);
+        onSaveTemplate(currentState as Template.TemplateEnvironment, newPublishState);
+        dispatch(updateEnvironment(newPublishState));
+      } catch (error: any) {
+        dispatch(getTemplateValidationError({ errorResponse: error, source: 'template' }));
+      }
     },
-    [queryClient, templateManifest, workflows, onSaveTemplate, currentStatus, dispatch]
+    [queryClient, templateManifest, onSaveTemplate, currentState, dispatch]
   );
 
-  const downloadTemplate = () => {
-    const downloadableTemplate = getDownloadableTemplate(templateManifest as Template.TemplateManifest, workflows);
-    console.log('downloadableTemplate: ', downloadableTemplate);
-    // TODO 1: _#workflowName# is not added in parameter / connection ids
-    // TODO 2: download downloadableTemplate as the structure. Zip is required.
-    // Downloading logic can be checked out in 'libs\designer\src\lib\core\utils\documentation.ts' downloadDocumentAsFile
-  };
+  const downloadTemplate = useCallback(async () => {
+    // TODO: _#workflowName# is not added in parameter / connection ids
+    await getZippedTemplateForDownload(templateManifest as Template.TemplateManifest, workflows, connections, parameterDefinitions);
+  }, [connections, parameterDefinitions, templateManifest, workflows]);
 
   return [
     workflowsTab(resources, dispatch, onSaveWorkflows, {
@@ -116,13 +119,13 @@ export const useConfigureTemplateWizardTabs = ({
     profileTab(intl, resources, dispatch, {
       tabStatusIcon: templateManifestHasError ? 'error' : runValidation ? 'success' : enableWizard ? 'in-progress' : undefined,
       disabled: !enableWizard || isWizardUpdating,
-      status: currentStatus,
+      status: currentState,
       onSave: handleSaveTemplate,
     }),
     summaryTab(resources, dispatch, {
       tabStatusIcon: undefined,
       disabled: !enableWizard || isWizardUpdating,
-      status: currentStatus,
+      status: currentState,
       onSave: handleSaveTemplate,
       onDownloadTemplate: downloadTemplate,
     }),

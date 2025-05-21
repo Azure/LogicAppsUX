@@ -4,7 +4,8 @@ import { useMemo } from 'react';
 import { getResourceNameFromId, type Template } from '@microsoft/logic-apps-shared';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../../core/state/templates/store';
-import { MessageBar } from '@fluentui/react-components';
+import { DescriptionWithLink, ErrorBar } from '../common';
+import { useIntl } from 'react-intl';
 
 export const CustomizeParameter = ({
   parameterError,
@@ -16,6 +17,7 @@ export const CustomizeParameter = ({
   setParameterDefinition: (parameterDefinition: Template.ParameterDefinition) => void;
 }) => {
   const resourceStrings = useResourceStrings();
+  const intl = useIntl();
 
   const { isAccelerator } = useSelector((state: RootState) => ({
     isAccelerator: Object.keys(state.template.workflows).length > 1,
@@ -91,11 +93,14 @@ export const CustomizeParameter = ({
 
   return (
     <div>
-      {parameterError && (
-        <MessageBar intent="error" style={{ marginBottom: '8px' }}>
-          {parameterError}
-        </MessageBar>
-      )}
+      <DescriptionWithLink
+        text={intl.formatMessage({
+          defaultMessage: 'Update this parameter to customize how your workflow runs.',
+          id: 'apfpL7',
+          description: 'The description for the customize parameter panel',
+        })}
+      />
+      {parameterError ? <ErrorBar errorMessage={parameterError} /> : null}
       <TemplatesSection title={resourceStrings.Details} titleHtmlFor={'detailsSectionLabel'} items={detailsSectionItems} />
     </div>
   );

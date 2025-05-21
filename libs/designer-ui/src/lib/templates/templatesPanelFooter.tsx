@@ -1,27 +1,15 @@
-import {
-  Button,
-  Divider,
-  Menu,
-  type MenuButtonProps,
-  MenuItem,
-  MenuList,
-  MenuPopover,
-  MenuTrigger,
-  SplitButton,
-} from '@fluentui/react-components';
+import { Button, Divider, Menu, MenuItem, MenuList, MenuPopover, MenuTrigger, MenuButton } from '@fluentui/react-components';
 import type { ReactNode } from 'react';
 
-interface TemplateFooterItemProps {
-  type: 'button' | 'divider';
-}
-
-interface TemplateFooterButtonProps extends TemplateFooterItemProps {
-  type: 'button';
+interface TemplateFooterButtonProps {
+  type: 'navigation' | 'action';
   text: string | ReactNode;
   onClick: () => void | Promise<void>;
   disabled?: boolean;
-  appreance?: 'primary' | 'subtle';
+  appearance?: 'primary' | 'subtle' | 'transparent';
   hide?: boolean;
+  icon?: JSX.Element;
+  className?: string;
   menuItems?: {
     text: string;
     onClick: () => void;
@@ -29,12 +17,8 @@ interface TemplateFooterButtonProps extends TemplateFooterItemProps {
   }[];
 }
 
-interface DividerProps extends TemplateFooterItemProps {
-  type: 'divider';
-}
-
 export interface TemplatePanelFooterProps {
-  buttonContents?: (TemplateFooterButtonProps | DividerProps)[];
+  buttonContents?: TemplateFooterButtonProps[];
 }
 
 const templateFooterItemStyle = {
@@ -42,83 +26,90 @@ const templateFooterItemStyle = {
 };
 
 export const TemplatesPanelFooter = ({ buttonContents }: TemplatePanelFooterProps) => {
+  const navigationButtons = buttonContents?.filter((button) => button.type === 'navigation');
+  const actionButtons = buttonContents?.filter((button) => button.type === 'action');
+  const showDivider = navigationButtons?.length && actionButtons?.length;
   return (
     <div className="msla-templates-panel-footer">
-      {buttonContents?.map((buttonContent, index) => {
-        if (buttonContent?.type === 'button') {
-          const { text, onClick, disabled, appreance, hide, menuItems } = buttonContent;
-          if (hide) {
-            return null;
-          }
-          if (menuItems && menuItems.length) {
-            return (
-              <Menu key={index} positioning="below-end">
-                <MenuTrigger disableButtonEnhancement>
-                  {(triggerProps: MenuButtonProps) => (
-                    // TODO: change back to button, we are not using splitbutton capability
-                    <SplitButton
-                      style={index < buttonContents.length ? templateFooterItemStyle : {}}
-                      menuButton={triggerProps}
-                      primaryActionButton={triggerProps}
-                      appearance={appreance}
-                      disabled={disabled}
-                    >
-                      {text}
-                    </SplitButton>
-                  )}
-                </MenuTrigger>
-
-                <MenuPopover>
-                  <MenuList>
-                    {menuItems.map((item, index) => {
-                      const { text, onClick, disabled } = item;
-                      return (
-                        <MenuItem
-                          key={index}
-                          onClick={onClick}
-                          disabled={disabled}
-                          data-testid={`template-footer-menu-item-${index}`}
-                          data-automation-id={`template-footer-menu-item-${index}`}
-                        >
-                          {text}
-                        </MenuItem>
-                      );
-                    })}
-                  </MenuList>
-                </MenuPopover>
-              </Menu>
-            );
-          }
-          return (
-            <Button
-              key={index}
-              style={index < buttonContents.length ? templateFooterItemStyle : {}}
-              appearance={appreance}
-              onClick={onClick}
-              disabled={disabled}
-              data-testid={`template-footer-button-${index}`}
-              data-automation-id={`template-footer-button-${index}`}
-            >
-              {text}
-            </Button>
-          );
-        }
-        if (buttonContent?.type === 'divider') {
-          return (
-            <Divider
-              key={index}
-              vertical={true}
-              style={{
-                ...(index < buttonContents.length ? templateFooterItemStyle : {}),
-                display: 'inline-block',
-                height: '100%',
-                paddingLeft: '8px',
-              }}
-            />
-          );
-        }
-        return null;
-      })}
+      {navigationButtons?.map((buttonContent, index) => (
+        <FooterButton key={index} style={index < navigationButtons.length ? templateFooterItemStyle : {}} {...buttonContent} />
+      ))}
+      {showDivider ? (
+        <Divider
+          vertical={true}
+          style={{
+            display: 'inline-block',
+            height: '100%',
+            margin: '0 8px 0 18px',
+            verticalAlign: 'sub',
+          }}
+        />
+      ) : null}
+      {actionButtons?.map((buttonContent, index) => (
+        <FooterButton key={index} style={index < actionButtons.length ? templateFooterItemStyle : {}} {...buttonContent} />
+      ))}
     </div>
+  );
+};
+
+const FooterButton = ({
+  key,
+  style,
+  text,
+  onClick,
+  disabled,
+  appearance,
+  hide,
+  menuItems,
+  icon,
+  className,
+}: TemplateFooterButtonProps & { key: number; style: any | undefined }) => {
+  if (hide) {
+    return null;
+  }
+  if (menuItems && menuItems.length) {
+    return (
+      <Menu key={key} positioning="below-end">
+        <MenuTrigger disableButtonEnhancement>
+          <MenuButton style={style} icon={icon} appearance={appearance} disabled={disabled}>
+            {text}
+          </MenuButton>
+        </MenuTrigger>
+
+        <MenuPopover>
+          <MenuList>
+            {menuItems.map((item, index) => {
+              const { text, onClick, disabled } = item;
+              return (
+                <MenuItem
+                  key={index}
+                  onClick={onClick}
+                  disabled={disabled}
+                  data-testid={`template-footer-menu-item-${index}`}
+                  data-automation-id={`template-footer-menu-item-${index}`}
+                >
+                  {text}
+                </MenuItem>
+              );
+            })}
+          </MenuList>
+        </MenuPopover>
+      </Menu>
+    );
+  }
+  return (
+    <Button
+      key={key}
+      icon={icon}
+      className={className}
+      style={style}
+      appearance={appearance}
+      onClick={onClick}
+      disabled={disabled}
+      data-testid={`template-footer-button-${key}`}
+      data-automation-id={`template-footer-button-${key}`}
+    >
+      {text}
+    </Button>
   );
 };

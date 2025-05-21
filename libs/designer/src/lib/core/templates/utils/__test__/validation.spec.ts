@@ -84,6 +84,11 @@ describe('Template Validation Tests', () => {
   describe('validateTemplateManifestValue', () => {
     test('Missing all data', async () => {
       expect(validateTemplateManifestValue({} as Template.TemplateManifest)).toStrictEqual({
+        allowedSkus: intl.formatMessage({
+          defaultMessage: 'Atleast one sku is required.',
+          id: '2+0g1i',
+          description: 'Error shown when the SKU list is missing or empty',
+        }),
         title: intl.formatMessage({
           defaultMessage: 'Title is required.',
           id: 'oF5+jB',

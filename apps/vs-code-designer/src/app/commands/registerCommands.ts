@@ -129,7 +129,9 @@ export function registerCommands(): void {
   registerCommandWithTreeNodeUnwrapping(extensionCommand.appSettingsEdit, editAppSetting);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.appSettingsRename, renameAppSetting);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.appSettingsToggleSlotSetting, toggleSlotSetting);
-  registerCommandWithTreeNodeUnwrapping(extensionCommand.appSettingsUpload, uploadAppSettings);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.appSettingsUpload, async (context: IActionContext, node?: AppSettingsTreeItem) => {
+    await uploadAppSettings(context, node);
+  });
   registerCommandWithTreeNodeUnwrapping(extensionCommand.syncCloudSettings, syncCloudSettings);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.configureWebhookRedirectEndpoint, configureWebhookRedirectEndpoint);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.useSQLStorage, useSQLStorage);
