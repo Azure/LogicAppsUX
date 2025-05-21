@@ -2,18 +2,45 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { COMMON_ERRORS } from '../../../constants';
+import {
+  COMMON_ERRORS,
+  localSettingsFileName,
+  workflowLocationKey,
+  workflowResourceGroupNameKey,
+  workflowSubscriptionIdKey,
+  workflowTenantIdKey,
+} from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { addLocalFuncTelemetry } from '../../utils/funcCoreTools/funcVersion';
-import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
-import { getWorkspaceFolder } from '../../utils/workspace';
+import { isLogicAppProject, tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
+import { getWorkspaceFolder, isMultiRootWorkspace } from '../../utils/workspace';
 import { AzureWizard, type IActionContext } from '@microsoft/vscode-azext-utils';
-import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
+import type { ILocalSettingsJson, IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
+import { DeploymentScriptTypeStep } from './generateDeploymentScriptsSteps/DeploymentScriptTypeStep';
+import { convertToWorkspace } from '../createNewCodeProject/CodeProjectBase/ConvertToWorkspace';
+import type { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
 import type * as vscode from 'vscode';
-import { DeploymentScriptTypeStep } from './deploymentScriptTypeStep';
-import { GenerateADODeploymentScriptsStep } from './generateADODeploymentScriptsStep';
-import { GenerateDeploymentCenterScriptsStep } from './generateDeploymentCenterScriptsStep';
+import * as path from 'path';
+import { getLocalSettingsJson } from '../../utils/appSettings/localSettings';
+
+export interface IAzureDeploymentScriptsContext extends IProjectWizardContext, IActionContext {
+  credentials: any;
+  subscriptionId: any;
+  resourceGroup: any;
+  enabled: boolean;
+  tenantId: any;
+  environment: any;
+  deploymentFolderPath?: string;
+  storageAccountName: string;
+  workspaceName?: string;
+  logicAppName: string;
+  localLogicAppName?: string;
+  appServicePlan: string;
+  isValidWorkspace: boolean;
+  logicAppNode?: SlotTreeItem;
+  uamiClientId?: string;
+}
 
 /**
  * Generates deployment scripts for a Logic App project.
@@ -26,28 +53,35 @@ export async function generateDeploymentScripts(context: IActionContext, node?: 
 
   try {
     ext.outputChannel.show();
-    ext.outputChannel.appendLog(localize('initScriptGen', 'Initiating script generation...'));
-
+    ext.outputChannel.appendLog(localize('initScriptGen', 'Starting deployment script generation...'));
     addLocalFuncTelemetry(context);
-    if (node) {
+
+    if (!(await convertToWorkspace(context))) {
+      ext.outputChannel.appendLog(localize('exitScriptGen', 'Exiting deployment script generation...'));
+      return;
+    }
+
+    if (node && node.fsPath && (await isLogicAppProject(node.fsPath))) {
       projectPath = node.fsPath;
     } else {
       const workspaceFolder = await getWorkspaceFolder(context);
       projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
     }
+    if (!projectPath) {
+      throw new Error(localize('noProjectSelected', 'No Logic App project found.'));
+    }
 
-    const options = {
-      projectPath,
-    };
-    const wizardContext: Partial<IProjectWizardContext> & IActionContext = Object.assign(context, options);
-    const wizard: AzureWizard<IProjectWizardContext> = new AzureWizard(wizardContext, {
-      title: localize('generateDeploymentScripts', 'Generate Logic App Deployment Scripts'),
+    const wizardContext = await getDeploymentScriptsWizardContext(context, projectPath);
+
+    const wizard: AzureWizard<IAzureDeploymentScriptsContext> = new AzureWizard(wizardContext, {
+      title: localize('generateDeploymentScripts', 'Generate Logic App deployment scripts'),
       promptSteps: [new DeploymentScriptTypeStep()],
-      executeSteps: [new GenerateADODeploymentScriptsStep(), new GenerateDeploymentCenterScriptsStep()],
     });
 
+    ext.outputChannel.appendLog(localize('launchAzureDeploymentScriptsWizard', 'Launching Azure Deployment Scripts Wizard...'));
     await wizard.prompt();
     await wizard.execute();
+    ext.outputChannel.appendLog(localize('completeAzureDeploymentScriptsWizard', 'Azure Deployment Scripts Wizard executed successfully.'));
   } catch (error) {
     const errorMessage = localize('errorScriptGen', 'Error during deployment script generation: {0}', error.message ?? error);
     ext.outputChannel.appendLog(errorMessage);
@@ -61,5 +95,44 @@ export async function generateDeploymentScripts(context: IActionContext, node?: 
     if (!errorMessage.includes(COMMON_ERRORS.OPERATION_CANCELLED)) {
       throw new Error(errorMessage);
     }
+  }
+}
+
+/**
+ * Creates the deployment scripts wizard context.
+ * @param {IActionContext} context - The action context.
+ * @param {string} projectPath - The path to the logic app project root.
+ * @returns {Promise<IAzureDeploymentScriptsContext>} - The deployment scripts wizard context.
+ */
+async function getDeploymentScriptsWizardContext(context: IActionContext, projectPath: string): Promise<IAzureDeploymentScriptsContext> {
+  try {
+    const wizardContext = context as IAzureDeploymentScriptsContext;
+    wizardContext.projectPath = projectPath;
+    wizardContext.customWorkspaceFolderPath = path.normalize(path.dirname(projectPath)); // TODO - why are we overriding the existing context.customWorkspaceFolderPath?
+    wizardContext.projectPath = path.normalize(projectPath);
+    wizardContext.isValidWorkspace = isMultiRootWorkspace();
+
+    let localSettings: ILocalSettingsJson;
+    try {
+      const localSettingsFilePath = path.join(projectPath, localSettingsFileName);
+      localSettings = await getLocalSettingsJson(context, localSettingsFilePath);
+    } catch (error) {
+      const errorMessage = localize('errorFetchLocalSettings', 'Error reading local settings: {0}', error.message ?? error);
+      ext.outputChannel.appendLog(errorMessage);
+      throw new Error(errorMessage);
+    }
+
+    wizardContext.tenantId = localSettings.Values[workflowTenantIdKey];
+    wizardContext.subscriptionId = localSettings.Values[workflowSubscriptionIdKey];
+    wizardContext.resourceGroup = {
+      name: localSettings.Values[workflowResourceGroupNameKey],
+      location: localSettings.Values[workflowLocationKey],
+    };
+
+    return wizardContext;
+  } catch (error) {
+    const errorMessage = localize('setupWizardScriptContextError', 'Error in setupWizardScriptContext: {0}', error.message ?? error);
+    ext.outputChannel.appendLog(errorMessage);
+    throw new Error(errorMessage);
   }
 }
