@@ -10,7 +10,7 @@ export const DescriptionWithLink = ({
     <p className={className}>
       <Text>{text}</Text>
       {linkUrl ? (
-        <Link style={{ paddingLeft: 5 }} href={linkUrl}>
+        <Link style={{ paddingLeft: 5 }} href={linkUrl} target="_blank">
           {linkText}
         </Link>
       ) : null}

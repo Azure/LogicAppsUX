@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 import type { RootState } from '../../../core/state/templates/store';
 import { DescriptionWithLink, ErrorBar } from '../common';
 import { useIntl } from 'react-intl';
+import { formatNameWithIdentifierToDisplay } from '../../../core/configuretemplate/utils/helper';
 
 export const CustomizeParameter = ({
   parameterError,
@@ -27,7 +28,7 @@ export const CustomizeParameter = ({
     const baseItems: TemplatesSectionItem[] = [
       {
         label: resourceStrings.ParameterName,
-        value: parameterDefinition.name || '',
+        value: formatNameWithIdentifierToDisplay(parameterDefinition.name) || '',
         type: 'text',
       },
       {

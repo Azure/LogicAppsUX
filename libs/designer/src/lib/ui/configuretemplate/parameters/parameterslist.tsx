@@ -21,6 +21,7 @@ import { MoreHorizontal16Filled } from '@fluentui/react-icons';
 import { CustomizeParameterPanel } from '../panels/customizeParameterPanel/customizeParameterPanel';
 import { DescriptionWithLink, ErrorBar } from '../common';
 import { mergeStyles } from '@fluentui/react';
+import { formatNameWithIdentifierToDisplay } from '../../../core/configuretemplate/utils/helper';
 
 export const TemplateParametersList = () => {
   const intl = useIntl();
@@ -52,10 +53,10 @@ export const TemplateParametersList = () => {
     parameterErrors: state.template.errors.parameters,
   }));
 
-  const parameterErrorIds = useMemo(() => {
+  const formattedParameterErrorIds = useMemo(() => {
     return Object.entries(parameterErrors)
       .filter(([_id, error]) => error)
-      .map(([id]) => id);
+      .map(([id]) => formatNameWithIdentifierToDisplay(id));
   }, [parameterErrors]);
 
   const isAccelerator = Object.keys(workflowsInTemplate).length > 1;
@@ -121,8 +122,8 @@ export const TemplateParametersList = () => {
         className={mergeStyles({ marginLeft: '-10px', width: '70%' })}
       />
 
-      {parameterErrorIds.length ? (
-        <ErrorBar title={intlText.ErrorTitle} errorMessage={parameterErrorIds.join(', ')} styles={{ marginLeft: '-10px' }} />
+      {formattedParameterErrorIds.length ? (
+        <ErrorBar title={intlText.ErrorTitle} errorMessage={formattedParameterErrorIds.join(', ')} styles={{ marginLeft: '-10px' }} />
       ) : null}
 
       <Table aria-label={intlText.AriaLabel} size="small" style={{ width: '100%' }}>
@@ -157,7 +158,7 @@ export const TemplateParametersList = () => {
                       handleSelectParameter(item.name);
                     }}
                   >
-                    {item.name}
+                    {formatNameWithIdentifierToDisplay(item.name)}
                   </Link>
                 </TableCellLayout>
               </TableCell>
