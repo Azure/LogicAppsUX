@@ -32,20 +32,53 @@ export const useTransitionRepetitions = (): UseQueryResult<TransitionRepetition[
   );
 };
 
+// export const useActionTransitionRepetitionOffset = (actionId: string) => {
+//   const { data: repetitions } = useTransitionRepetitions();
+//   const transitionIndex = useTransitionRepetitionIndex();
+//   return useMemo(() => {
+//     let count = 0;
+//     for (let i = 0; i < transitionIndex - 1; i++) {
+//       const actions = repetitions?.[i]?.properties?.actions ?? {};
+//       for (const entry of Object.entries(actions)) {
+//         const [_actionId, action] = entry;
+//         if (_actionId === actionId) {
+//           count += action?.iterationCount ?? 0;
+//         }
+//       }
+//     }
+//     return count;
+//   }, [actionId, transitionIndex, repetitions]);
+// };
+
 export const useActionTransitionRepetitionOffset = (actionId: string) => {
   const { data: repetitions } = useTransitionRepetitions();
   const transitionIndex = useTransitionRepetitionIndex();
   return useMemo(() => {
-    let count = 0;
+    let lastCount = 0;
     for (let i = 0; i < transitionIndex - 1; i++) {
       const actions = repetitions?.[i]?.properties?.actions ?? {};
       for (const entry of Object.entries(actions)) {
         const [_actionId, action] = entry;
         if (_actionId === actionId) {
-          count += action?.iterationCount ?? 0;
+          lastCount = action?.repetitionCount ?? 0;
         }
       }
     }
-    return count;
+    return lastCount;
+  }, [actionId, transitionIndex, repetitions]);
+};
+
+export const useActionTransitionRepetitionCount = (actionId: string) => {
+  const { data: repetitions } = useTransitionRepetitions();
+  const transitionIndex = useTransitionRepetitionIndex();
+  return useMemo(() => {
+    const actions = repetitions?.[transitionIndex]?.properties?.actions ?? {};
+    for (const entry of Object.entries(actions)) {
+      const [_actionId, action] = entry;
+      if (_actionId === actionId) {
+        return action?.repetitionCount ?? 0;
+      }
+    }
+    return 0;
   }, [actionId, transitionIndex, repetitions]);
 };

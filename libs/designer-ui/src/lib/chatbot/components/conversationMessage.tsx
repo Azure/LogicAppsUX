@@ -10,7 +10,7 @@ import { OperationsNeedingAttentionMessage } from './operationsNeedAttentionMess
 import { useRef } from 'react';
 import Markdown from 'react-markdown';
 import { ToolReply } from './toolReply';
-import { AgentHeader } from './agentHeader';
+// import { AgentHeader } from './agentHeader';
 
 type ConversationMessageProps = {
   item: ConversationItem;
@@ -34,8 +34,8 @@ export const ConversationMessage = ({ item }: ConversationMessageProps) => {
       return <OperationsNeedingAttentionMessage item={item} />;
     case ConversationItemType.Tool:
       return <ToolReply item={item} />;
-    case ConversationItemType.AgentHeader:
-      return <AgentHeader item={item} />;
+    // case ConversationItemType.AgentHeader:
+    //   return <AgentHeader item={item} />;
     default:
       return null;
   }

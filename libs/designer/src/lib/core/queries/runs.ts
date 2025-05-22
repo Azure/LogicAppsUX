@@ -1,15 +1,19 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, type UseQueryOptions } from '@tanstack/react-query';
 import { isNullOrUndefined, type LogicAppsV2, type Run, RunService } from '@microsoft/logic-apps-shared';
 import { getReactQueryClient } from '../ReactQueryProvider';
 import { isRunError } from '@microsoft/designer-ui';
 import constants from '../../common/constants';
 
-const queryOpts = {
+const queryOpts: any = {
   cacheTime: 1000 * 60 * 60 * 24,
   refetchOnMount: false,
   refetchOnWindowFocus: false,
   refetchOnReconnect: false,
-};
+  retry: (_failureCount, error: any) => {
+    console.log('#> error', { error });
+    return error?.status !== 404;
+  },
+} as UseQueryOptions;
 
 export interface ChatHistory {
   nodeId: string;
@@ -28,6 +32,7 @@ export const runsQueriesKeys = {
   useAgentChatInvokeUri: 'useAgentChatInvokeUri',
   useRunInstance: 'useRunInstance',
   useCancelRun: 'useCancelRun',
+  stateTransitions: 'stateTransitions',
 };
 
 export const useRuns = (enabled = false) => {
@@ -82,6 +87,7 @@ export const getRun = (runId: string) => {
     {
       ...queryOpts,
       cacheTime: 1000 * 10,
+      enabled: runId !== undefined,
     }
   );
 };
@@ -117,7 +123,7 @@ export const useNodeRepetition = (
     {
       ...queryOpts,
       retryOnMount: false,
-      enabled: parentRunIndex !== undefined && isMonitoringView && !isWithinAgenticLoop,
+      enabled: nodeId !== undefined && runId !== undefined && parentRunIndex !== undefined && isMonitoringView && !isWithinAgenticLoop,
     }
   );
 };
@@ -143,7 +149,9 @@ export const useScopeFailedRepetitions = (normalizedType: string, nodeId: string
     },
     {
       ...queryOpts,
-      enabled: normalizedType === constants.NODE.TYPE.FOREACH || normalizedType === constants.NODE.TYPE.UNTIL,
+      enabled:
+        (nodeId !== undefined && runId !== undefined && normalizedType === constants.NODE.TYPE.FOREACH) ||
+        normalizedType === constants.NODE.TYPE.UNTIL,
     }
   );
 };
@@ -165,7 +173,7 @@ export const useAgentRepetition = (
     {
       ...queryOpts,
       retryOnMount: false,
-      enabled: isMonitoringView && runIndex !== undefined && isAgent,
+      enabled: isMonitoringView && nodeId !== undefined && runId !== undefined && runIndex !== undefined && isAgent,
     }
   );
 };
@@ -202,7 +210,7 @@ export const useAgentActionsRepetition = (
     {
       ...queryOpts,
       retryOnMount: false,
-      enabled: isMonitoringView && runIndex !== undefined && isParentAgent,
+      enabled: isMonitoringView && nodeId !== undefined && runId !== undefined && runIndex !== undefined && isParentAgent,
     }
   );
 };
@@ -214,11 +222,16 @@ export const useRunChatHistory = (isMonitoringView: boolean, runId: string | und
       if (isNullOrUndefined(runId)) {
         return null;
       }
-      const messages = await RunService().getRunChatHistory(runId);
+      const messages = (await RunService().getRunChatHistory(runId)) ?? [];
+      const sortedMessages = messages.sort((a: any, b: any) => {
+        const dateA = new Date(a.timestamp);
+        const dateB = new Date(b.timestamp);
+        return dateB.getTime() - dateA.getTime();
+      });
       return [
         {
           nodeId: 'root',
-          messages: messages ?? [],
+          messages: sortedMessages,
         },
       ];
     },

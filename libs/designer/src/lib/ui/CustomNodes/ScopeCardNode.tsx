@@ -89,6 +89,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const isAgent = normalizedType === constants.NODE.TYPE.AGENT;
   const runIndex = useRunIndex(scopeId);
   const scopeRepetitionName = useMemo(() => getScopeRepetitionName(runIndex), [runIndex]);
+  const isTransitionSelected = useIsActionInSelectedTransition(scopeId);
 
   const repetitionName = useMemo(
     () => getRepetitionName(parentRunIndex, scopeId, nodesMetaData, operationsInfo),
@@ -109,7 +110,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     !!isMonitoringView,
     isAgent,
     scopeId,
-    runInstance?.id,
+    isTransitionSelected ? runInstance?.id : undefined,
     scopeRepetitionName,
     parentRunData?.status,
     runIndex
@@ -119,13 +120,11 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     !!isMonitoringView,
     isAgent,
     scopeId,
-    runInstance?.id,
+    isTransitionSelected ? runInstance?.id : undefined,
     scopeRepetitionName,
     parentRunData?.status,
     runIndex
   );
-
-  const isTransitionSelected = useIsActionInSelectedTransition(scopeId);
 
   const transitionIndex = useTransitionRepetitionIndex();
   useEffect(() => {

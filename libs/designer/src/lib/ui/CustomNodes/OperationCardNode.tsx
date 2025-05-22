@@ -98,11 +98,12 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const selfRunData = useRunData(id);
   const parentSubgraphRunData = useSubgraphRunData(parentNodeId ?? '');
   const toolRunIndex = useRunIndex(graphId);
+  const isGraphTransitionSelected = useIsActionInSelectedTransition(parentNodeId ?? '');
 
   const { isFetching: isRepetitionFetching, data: repetitionRunData } = useNodeRepetition(
     !!isMonitoringView,
     id,
-    runInstance?.id,
+    isGraphTransitionSelected ? runInstance?.id : undefined,
     repetitionName,
     parentRunData?.status,
     parentRunIndex,
@@ -118,8 +119,6 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
       dispatch(setRepetitionRunData({ nodeId: id, runData: repetitionRunData.properties as LogicAppsV2.WorkflowRunAction }));
     }
   }, [dispatch, repetitionRunData, id, selfRunData?.correlation?.actionTrackingId]);
-
-  const isGraphTransitionSelected = useIsActionInSelectedTransition(parentNodeId ?? '');
 
   useEffect(() => {
     if (!isWithinAgenticLoop || isNullOrUndefined(toolRunIndex)) {

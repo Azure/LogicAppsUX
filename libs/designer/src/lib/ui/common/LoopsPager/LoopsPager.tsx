@@ -7,6 +7,7 @@ import type { PageChangeEventArgs, PageChangeEventHandler } from '@microsoft/des
 import { Pager } from '@microsoft/designer-ui';
 import { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
+import { useActionTransitionRepetitionOffset } from '../../transitionTimeline/hooks';
 
 export interface LoopsPagerProps {
   metadata: any;
@@ -22,6 +23,7 @@ export const LoopsPager = ({ metadata, scopeId, collapsed, focusElement }: Loops
   const normalizedType = useMemo(() => actionMetadata?.type.toLowerCase(), [actionMetadata]);
   const nodeMetadata = useNodeMetadata(scopeId);
   const currentPage = useMemo(() => nodeMetadata?.runIndex ?? 0, [nodeMetadata]);
+  const loopsOffset = useActionTransitionRepetitionOffset(scopeId);
   const loopsCount = useMemo(() => getLoopsCount(metadata?.runData), [metadata?.runData]);
   const { isError, isFetching, data: failedRepetitions } = useScopeFailedRepetitions(normalizedType ?? '', scopeId, runInstance?.id);
 
@@ -77,8 +79,8 @@ export const LoopsPager = ({ metadata, scopeId, collapsed, focusElement }: Loops
       <Pager
         current={currentPage + 1}
         onChange={onPagerChange}
-        max={loopsCount}
-        maxLength={loopsCount.toString().length + 1}
+        max={loopsCount - loopsOffset}
+        maxLength={(loopsCount - loopsOffset).toString().length + 1}
         min={1}
         readonlyPagerInput={false}
         failedIterationProps={failedIterationProps}

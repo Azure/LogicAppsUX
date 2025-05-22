@@ -86,7 +86,7 @@ export const TransitionsActionDetails = ({
   }, [defaultSelectedTransitionTargetId]);
 
   const isHandoff = useMemo(() => {
-    return !transition.when.some((status) => status.toUpperCase() !== 'HANDEDOFF');
+    return !(transition.when ?? []).some((status) => status.toUpperCase() !== 'HANDEDOFF');
   }, [transition.when]);
 
   return (

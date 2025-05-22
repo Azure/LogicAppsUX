@@ -2,7 +2,7 @@ import { PanelLocation, PanelResizer, PanelSize, type ConversationItem } from '@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { defaultChatbotPanelWidth, ChatbotUI } from '@microsoft/logic-apps-chatbot';
-import { runsQueriesKeys, useAgentChatInvokeUri, useCancelRun, useRunChatHistory } from '../../../core/queries/runs';
+import { useAgentChatInvokeUri, useCancelRun, useRunChatHistory } from '../../../core/queries/runs';
 import { useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import {
   useAgentLastOperations,
@@ -25,12 +25,12 @@ import {
 } from '@fluentui/react-components';
 import { ChatFilled } from '@fluentui/react-icons';
 import { useDispatch } from 'react-redux';
-import { changePanelNode, getReactQueryClient, type AppDispatch } from '../../../core';
+import { changePanelNode, type AppDispatch } from '../../../core';
 import { clearFocusElement, setFocusNode, setRunIndex } from '../../../core/state/workflow/workflowSlice';
 import { AgentChatHeader } from './agentChatHeader';
 import { parseChatHistory } from './helper';
-import { useMutation } from '@tanstack/react-query';
 import constants from '../../../common/constants';
+import { useTransitionRepetitions } from '../../transitionTimeline/hooks';
 
 interface AgentChatProps {
   panelLocation?: PanelLocation;
@@ -59,6 +59,8 @@ export const AgentChat = ({
     isFetching: isChatHistoryFetching,
     data: chatHistoryData,
   } = useRunChatHistory(!!isMonitoringView, runInstance?.id);
+
+  const { refetch: refetchStateTransitions } = useTransitionRepetitions();
   const { data: chatInvokeUri } = useAgentChatInvokeUri(!!isMonitoringView, true, runInstance?.id);
   const [overrideWidth, setOverrideWidth] = useState<string | undefined>(chatbotWidth);
   const dispatch = useDispatch<AppDispatch>();
@@ -68,20 +70,10 @@ export const AgentChat = ({
   const rawAgentLastOperations = JSON.stringify(agentLastOperations);
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  const { mutateAsync: refreshChat } = useMutation(async () => {
-    const queryClient = getReactQueryClient();
-    await queryClient.resetQueries([runsQueriesKeys.useRunInstance]);
-    await queryClient.resetQueries([runsQueriesKeys.useRunChatHistory]);
-    await queryClient.resetQueries([runsQueriesKeys.useAgentActionsRepetition]);
-    await queryClient.resetQueries([runsQueriesKeys.useAgentRepetition]);
-    await queryClient.resetQueries([runsQueriesKeys.useNodeRepetition]);
-
-    await queryClient.refetchQueries([runsQueriesKeys.useRunInstance]);
-    await queryClient.refetchQueries([runsQueriesKeys.useAgentRepetition]);
-    await queryClient.refetchQueries([runsQueriesKeys.useAgentActionsRepetition]);
-    await queryClient.refetchQueries([runsQueriesKeys.useNodeRepetition]);
-    await queryClient.refetchQueries([runsQueriesKeys.useRunChatHistory]);
-  });
+  const refreshChat = useCallback(() => {
+    refetchChatHistory();
+    refetchStateTransitions();
+  }, [refetchChatHistory, refetchStateTransitions]);
 
   const showStopButton = useMemo(() => {
     return runInstance?.properties?.status === constants.FLOW_STATUS.RUNNING;
@@ -145,8 +137,7 @@ export const AgentChat = ({
       });
 
       refetchChatHistory();
-
-      // Refetch run data();
+      refetchStateTransitions();
     } catch (e: any) {
       LoggerService().log({
         level: LogEntryLevel.Error,
@@ -158,7 +149,7 @@ export const AgentChat = ({
 
     setIsWaitingForResponse(false);
     setTextInput('');
-  }, [textInput, chatInvokeUri, refetchChatHistory]);
+  }, [textInput, chatInvokeUri, refetchChatHistory, refetchStateTransitions]);
 
   useEffect(() => {
     if (!isNullOrUndefined(chatHistoryData)) {

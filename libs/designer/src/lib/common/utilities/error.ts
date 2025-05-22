@@ -37,6 +37,15 @@ export function getMonitoringError(
 
   const { code, message } = errorRun ? ('error' in errorRun ? errorRun.error : errorRun) : { code: codeRun, message: '' };
 
+  if (code === 'OK') {
+    return {
+      errorLevel: undefined,
+      errorMessage: undefined,
+      code: undefined,
+      message: undefined,
+    };
+  }
+
   let errorLevel: MessageBarType;
   if (statusRun === constants.FLOW_STATUS.SKIPPED) {
     errorLevel = MessageBarType.info;

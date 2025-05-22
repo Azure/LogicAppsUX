@@ -139,6 +139,8 @@ export const DesignerCommandBar = ({
         updateCallbackUrl(designerState, dispatch);
       }
     }
+
+    return;
   });
   const { isLoading: isSavingUnitTest, mutate: saveUnitTestMutate } = useMutation(async () => {
     const designerState = DesignerStore.getState();

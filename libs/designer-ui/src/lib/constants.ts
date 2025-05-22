@@ -139,6 +139,7 @@ export default {
     SUSPENDED: 'Suspended',
     TIMEDOUT: 'TimedOut',
     WAITING: 'Waiting',
+    HANDED_OFF: 'HandedOff',
   },
 
   // Mock status

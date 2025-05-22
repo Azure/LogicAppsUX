@@ -8,6 +8,7 @@ import { Succeeded } from './images/succeeded';
 import { SucceededWithRetries } from './images/succeededwithretries';
 import { TimedOut } from './images/timedout';
 import { Waiting } from './images/waiting';
+import { Handoff } from './images';
 
 type IconOpacity = `${number}%`;
 export interface StatusIconProps {
@@ -43,8 +44,18 @@ export const StatusIcon: React.FC<StatusIconProps> = ({ hasRetries, status, icon
     case Constants.STATUS.WAITING:
       return <Waiting />;
 
+    case Constants.STATUS.HANDED_OFF:
+      return <Handoff />;
+
     // Use 1x1 transparent image for unexpected status.
     default:
-      return <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="" role="presentation" />;
+      return (
+        <img
+          src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+          alt=""
+          title={status}
+          role="presentation"
+        />
+      );
   }
 };

@@ -69,7 +69,7 @@ const parseMessage = (
         id: guid(),
         role: {
           text: isUserMessage ? undefined : role,
-          agentName: labelCase(parentId),
+          agentName: message.authorName,
           onClick: () => toolContentCallback(parentId, iteration),
         },
         hideFooter: true,

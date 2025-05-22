@@ -1,11 +1,10 @@
 import { getSettingLabel, type PanelTabFn, type PanelTabProps } from '@microsoft/designer-ui';
 import constants from '../../../../../common/constants';
-import { MessageBarBody, Radio, RadioGroup, type RadioGroupOnChangeData } from '@fluentui/react-components';
+import { Link, MessageBar, MessageBarBody, Radio, RadioGroup, type RadioGroupOnChangeData } from '@fluentui/react-components';
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import type { RootState, AppDispatch } from '../../../../../core/store';
-import { Link, MessageBar, MessageBarType } from '@fluentui/react';
 import { deinitializeNodes, initializeNodeOperationInputsData } from '../../../../../core/state/operation/operationMetadataSlice';
 import { getAllNodeData } from '../../../../../core/configuretemplate/utils/helper';
 import { initializeOperationDetails } from '../../../../../core/templates/utils/parametershelper';
@@ -226,11 +225,7 @@ export const ChannelsTab: React.FC<PanelTabProps> = (props) => {
       ) : (
         <div className="msla-channel-settings-container" style={{ marginBottom: '15px', fontStyle: 'italic', fontSize: 10 }}>
           {channelEnabledForDifferentAgent ? (
-            <MessageBar
-              key={'warning-existing-channel'}
-              className="msla-initialize-variable-warning"
-              messageBarType={MessageBarType.warning}
-            >
+            <MessageBar key={'warning-existing-channel'} className="msla-initialize-variable-warning" intent="warning">
               <MessageBarBody>{stringResources.CHANNEL_ALREADY_ENABLED}</MessageBarBody>
             </MessageBar>
           ) : null}

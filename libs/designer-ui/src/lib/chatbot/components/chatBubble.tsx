@@ -3,7 +3,6 @@ import { animations } from './animations';
 import { ThumbsReactionButton } from './thumbsReactionButton';
 import { ActionButton, IconButton, css, useTheme } from '@fluentui/react';
 import type { IButtonProps, IButtonStyles } from '@fluentui/react';
-import { Link } from '@fluentui/react-components';
 import { useConst } from '@fluentui/react-hooks';
 import type React from 'react';
 import { useIntl } from 'react-intl';
@@ -145,9 +144,10 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
               {' - '}
             </>
           )}
-          <Link className="msla-bubble-footer-role--button" onClick={role.onClick}>
-            {role.agentName}
-          </Link>
+          {role.agentName}
+          {/* <Link className="msla-bubble-footer-role--button" onClick={role.onClick}> */}
+          {/* {role.agentName} */}
+          {/* </Link> */}
         </div>
       )}
     </div>

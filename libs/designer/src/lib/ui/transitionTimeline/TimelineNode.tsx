@@ -1,9 +1,10 @@
-import { Badge, Text } from '@fluentui/react-components';
-import { idDisplayCase } from '@microsoft/logic-apps-shared';
+import { Badge, Text, Tooltip } from '@fluentui/react-components';
+import { equals, idDisplayCase } from '@microsoft/logic-apps-shared';
 import { useEffect, useMemo, useRef } from 'react';
 import { useActionTransitionRepetitionCount } from '../../core/state/workflow/workflowSelectors';
 import type { TransitionRepetition } from './hooks';
 import { ConnectorIcon } from './ConnectorIcon';
+import { Failed } from '@microsoft/designer-ui';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const TimelineNode = ({
@@ -98,9 +99,16 @@ const TimelineNode = ({
         </Badge>
       )}
       {expanded && (
-        <Text weight={'semibold'} style={{ marginRight: '8px' }}>
+        <Text weight={'semibold'} style={{ flexGrow: 1, marginRight: '8px' }}>
           {nodeText}
         </Text>
+      )}
+      {expanded && equals(Object.values(data.properties?.actions ?? {})?.[0]?.status, 'failed') && (
+        <Tooltip relationship="description" content={Object.values(data.properties?.actions ?? {})?.[0]?.error?.code ?? ''} withArrow>
+          <div className="msla-run-after-label-badge" style={{ zIndex: 1000, marginRight: '8px' }}>
+            <Failed />
+          </div>
+        </Tooltip>
       )}
     </div>
   );
