@@ -1,4 +1,4 @@
-import { Text, MessageBar, MessageBarTitle, MessageBarBody } from '@fluentui/react-components';
+import { Text, MessageBar, MessageBarTitle, MessageBarBody, Link } from '@fluentui/react-components';
 
 export const DescriptionWithLink = ({
   text,
@@ -10,9 +10,9 @@ export const DescriptionWithLink = ({
     <p className={className}>
       <Text>{text}</Text>
       {linkUrl ? (
-        <a style={{ paddingLeft: 5 }} href={linkUrl}>
+        <Link style={{ paddingLeft: 5 }} href={linkUrl}>
           {linkText}
-        </a>
+        </Link>
       ) : null}
     </p>
   );

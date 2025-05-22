@@ -1,5 +1,6 @@
 import {
   Button,
+  Link,
   Table,
   TableBody,
   TableCell,
@@ -62,8 +63,8 @@ export const TemplateParametersList = () => {
 
   const columns = useMemo(() => {
     const baseColumn = [
-      { columnKey: 'displayName', label: resourceStrings.DisplayName },
       { columnKey: 'name', label: resourceStrings.Name },
+      { columnKey: 'displayName', label: resourceStrings.DisplayName },
       { columnKey: 'type', label: resourceStrings.Type },
       { columnKey: 'default', label: resourceStrings.DefaultValue },
       // { columnKey: 'allowedValues', label: resourceStrings.AllowedValues },  //TODO: revisit allowedValues
@@ -138,15 +139,12 @@ export const TemplateParametersList = () => {
           {items.map((item) => (
             <TableRow key={item.name}>
               <TableCell>
-                <TableCellLayout>{item.displayName}</TableCellLayout>
-              </TableCell>
-              <TableCell>
                 <TableCellLayout
                   style={{
                     overflow: 'hidden',
                   }}
                 >
-                  <Text
+                  <Link
                     style={{
                       display: '-webkit-box',
                       WebkitLineClamp: 2,
@@ -154,10 +152,17 @@ export const TemplateParametersList = () => {
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
                     }}
+                    as="button"
+                    onClick={() => {
+                      handleSelectParameter(item.name);
+                    }}
                   >
                     {item.name}
-                  </Text>
+                  </Link>
                 </TableCellLayout>
+              </TableCell>
+              <TableCell>
+                <TableCellLayout>{item.displayName}</TableCellLayout>
               </TableCell>
               <TableCell>
                 <TableCellLayout>{item.type}</TableCellLayout>
