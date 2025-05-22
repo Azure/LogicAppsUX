@@ -56,15 +56,17 @@ export async function syncCloudSettings(context: IActionContext, node: vscode.Ur
   const settingsToSetEmpty: string[] = [];
   const cloudSettingValues = {};
   const connectionsJson = await getConnectionsJson(logicAppProjectPath);
-  const connectionsData: ConnectionsData = JSON.parse(connectionsJson);
-  if (connectionsData.managedApiConnections && Object.keys(connectionsData.managedApiConnections).length) {
-    for (const referenceKey of Object.keys(connectionsData.managedApiConnections)) {
-      settingsToExclude.push(`${referenceKey}-connectionKey`);
+  if (connectionsJson) {
+    const connectionsData: ConnectionsData = JSON.parse(connectionsJson);
+    if (connectionsData.managedApiConnections && Object.keys(connectionsData.managedApiConnections).length) {
+      for (const referenceKey of Object.keys(connectionsData.managedApiConnections)) {
+        settingsToExclude.push(`${referenceKey}-connectionKey`);
+      }
     }
-  }
-  if (connectionsData.serviceProviderConnections && Object.keys(connectionsData.serviceProviderConnections).length) {
-    for (const referenceKey of Object.keys(connectionsData.serviceProviderConnections)) {
-      settingsToSetEmpty.push(`${referenceKey}-connectionKey`);
+    if (connectionsData.serviceProviderConnections && Object.keys(connectionsData.serviceProviderConnections).length) {
+      for (const referenceKey of Object.keys(connectionsData.serviceProviderConnections)) {
+        settingsToSetEmpty.push(`${referenceKey}-connectionKey`);
+      }
     }
   }
 

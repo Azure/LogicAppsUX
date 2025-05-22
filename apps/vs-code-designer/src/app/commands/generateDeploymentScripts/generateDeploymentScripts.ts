@@ -107,7 +107,6 @@ export async function generateDeploymentScripts(context: IActionContext, node?: 
 async function getDeploymentScriptsWizardContext(context: IActionContext, projectPath: string): Promise<IAzureDeploymentScriptsContext> {
   try {
     const wizardContext = context as IAzureDeploymentScriptsContext;
-    wizardContext.projectPath = projectPath;
     wizardContext.customWorkspaceFolderPath = path.normalize(path.dirname(projectPath)); // TODO - why are we overriding the existing context.customWorkspaceFolderPath?
     wizardContext.projectPath = path.normalize(projectPath);
     wizardContext.isValidWorkspace = isMultiRootWorkspace();
@@ -122,12 +121,21 @@ async function getDeploymentScriptsWizardContext(context: IActionContext, projec
       throw new Error(errorMessage);
     }
 
-    wizardContext.tenantId = localSettings.Values[workflowTenantIdKey];
-    wizardContext.subscriptionId = localSettings.Values[workflowSubscriptionIdKey];
-    wizardContext.resourceGroup = {
-      name: localSettings.Values[workflowResourceGroupNameKey],
-      location: localSettings.Values[workflowLocationKey],
-    };
+    const {
+      [workflowTenantIdKey]: defaultTenantId,
+      [workflowSubscriptionIdKey]: defaultSubscriptionId,
+      [workflowResourceGroupNameKey]: defaultResourceGroup,
+      [workflowLocationKey]: defaultLocation,
+    } = localSettings.Values;
+
+    wizardContext.tenantId = defaultTenantId;
+    wizardContext.subscriptionId = defaultSubscriptionId !== '' ? defaultSubscriptionId : undefined;
+    if (defaultResourceGroup && defaultLocation) {
+      wizardContext.resourceGroup = {
+        name: defaultResourceGroup,
+        location: defaultLocation,
+      };
+    }
 
     return wizardContext;
   } catch (error) {

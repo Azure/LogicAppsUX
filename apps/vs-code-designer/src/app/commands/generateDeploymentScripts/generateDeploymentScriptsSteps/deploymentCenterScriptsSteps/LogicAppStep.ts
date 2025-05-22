@@ -1,7 +1,6 @@
 import {
   type AzExtParentTreeItem,
   AzureWizardPromptStep,
-  type IActionContext,
   type IAzureQuickPickItem,
   type ISubscriptionContext,
 } from '@microsoft/vscode-azext-utils';
@@ -42,7 +41,10 @@ export class LogicAppStep extends AzureWizardPromptStep<IAzureDeploymentScriptsC
     return true;
   }
 
-  private static async getLogicAppsPicks(context: IActionContext, subContext: ISubscriptionContext): Promise<IAzureQuickPickItem<Site>[]> {
+  private static async getLogicAppsPicks(
+    context: IAzureDeploymentScriptsContext,
+    subContext: ISubscriptionContext
+  ): Promise<IAzureQuickPickItem<Site>[]> {
     const logicAppsResolver = new LogicAppResolver();
     const sites = await logicAppsResolver.getAppResourceSiteBySubscription(context, subContext);
     const picks: { label: string; data: Site; description?: string }[] = [];
