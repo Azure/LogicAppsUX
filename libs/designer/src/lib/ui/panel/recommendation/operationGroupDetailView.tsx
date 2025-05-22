@@ -60,7 +60,13 @@ export const OperationGroupDetailView = (props: OperationGroupDetailViewProps) =
   );
   const operationGroupActions: OperationActionData[] = groupOperations
     .map((operation) => OperationActionDataFromOperation(operation))
-    .filter(filterItems);
+    .filter(filterItems)
+    .sort((a, b) => {
+      // Sort alphabetically by title
+      const aTitle = a.title || '';
+      const bTitle = b.title || '';
+      return aTitle.localeCompare(bTitle);
+    });
 
   const addOperationAsConnector = useCallback(
     (connector?: Connector, actionData?: OperationActionData[]) => {
