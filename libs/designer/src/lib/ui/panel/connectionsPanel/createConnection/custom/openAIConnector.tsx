@@ -307,6 +307,10 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
                     />
                   ) : null}
                 </ComboBox>
+                <Link className={styles.createNewButton} target="_blank" href="https://aka.ms/openFoundryProjectCreate">
+                  {stringResources.CREATE_NEW}
+                  <NavigateIcon style={{ position: 'relative', top: '2px', left: '2px' }} />
+                </Link>
               </div>
               <RefreshIcon
                 style={{
