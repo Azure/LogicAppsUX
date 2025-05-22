@@ -154,6 +154,11 @@ const CustomizeWorkflowSection = ({
             } as Template.WorkflowManifest,
           });
         },
+        hint: intl.formatMessage({
+          defaultMessage: 'Workflow display name is required for Save.',
+          id: 'IOQVnL',
+          description: 'Hint message for workflow display name is required for save.',
+        }),
         errorMessage: apiErrors?.manifest?.title ?? workflow.errors?.manifest?.title,
       });
     }
@@ -161,6 +166,7 @@ const CustomizeWorkflowSection = ({
       label: customResourceStrings.State,
       value: kindValue,
       type: 'dropdown',
+      required: true,
       multiselect: true,
       options: defaultKindOptions,
       selectedOptions: workflow.manifest?.kinds || [],
@@ -182,6 +188,7 @@ const CustomizeWorkflowSection = ({
     });
     return baseItems;
   }, [
+    intl,
     resourceStrings.WORKFLOW_NAME,
     resourceStrings.WORKFLOW_NAME_DESCRIPTION,
     workflow,
@@ -204,6 +211,7 @@ const CustomizeWorkflowSection = ({
             label: customResourceStrings.Summary,
             value: workflow.manifest?.summary || '',
             type: 'textarea',
+            required: true,
             onChange: (value: string) => {
               updateWorkflowDataField(workflowId, {
                 ...workflow,
@@ -265,6 +273,7 @@ const CustomizeWorkflowSection = ({
         label: customResourceStrings.LightModeImage,
         value: workflow.manifest?.images?.light || '',
         type: 'textfield',
+        required: true,
         onChange: (value: string) => {
           updateWorkflowDataField(workflowId, {
             ...workflow,
@@ -283,6 +292,7 @@ const CustomizeWorkflowSection = ({
         label: customResourceStrings.DarkModeImage,
         value: workflow.manifest?.images?.dark || '',
         type: 'textfield',
+        required: true,
         onChange: (value: string) => {
           updateWorkflowDataField(workflowId, {
             ...workflow,
