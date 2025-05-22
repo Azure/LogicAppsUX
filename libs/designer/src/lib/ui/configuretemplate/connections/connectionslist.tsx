@@ -77,7 +77,7 @@ export const TemplateConnectionsList = () => {
       <DescriptionWithLink
         text={resources.Description}
         linkText={resourceStrings.LearnMore}
-        linkUrl="https://learn.microsoft.com/en-us/azure/logic-apps/logic-apps-connector-overview"
+        linkUrl="https://go.microsoft.com/fwlink/?linkid=2321713"
         className={mergeStyles({ marginLeft: '-10px', width: '70%' })}
       />
       {error ? <ErrorBar title={resources.ErrorTitle} errorMessage={error} styles={{ marginLeft: '-10px' }} /> : null}

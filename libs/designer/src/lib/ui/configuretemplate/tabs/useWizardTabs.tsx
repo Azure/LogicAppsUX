@@ -18,7 +18,7 @@ import {
 } from '../../../core/state/templates/templateSlice';
 import constants from '../../../common/constants';
 import type { Template } from '@microsoft/logic-apps-shared';
-import { TemplateResourceService } from '@microsoft/logic-apps-shared';
+import { isUndefinedOrEmptyString, TemplateResourceService } from '@microsoft/logic-apps-shared';
 import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useCallback } from 'react';
 import { getZippedTemplateForDownload } from '../../../core/configuretemplate/utils/helper';
@@ -99,9 +99,10 @@ export const useConfigureTemplateWizardTabs = ({
   );
 
   const downloadTemplate = useCallback(async () => {
-    // TODO: _#workflowName# is not added in parameter / connection ids
     await getZippedTemplateForDownload(templateManifest as Template.TemplateManifest, workflows, connections, parameterDefinitions);
   }, [connections, parameterDefinitions, templateManifest, workflows]);
+
+  const isDisplayNameEmpty = isUndefinedOrEmptyString(templateManifest?.title);
 
   return [
     workflowsTab(resources, dispatch, onSaveWorkflows, {
@@ -121,6 +122,7 @@ export const useConfigureTemplateWizardTabs = ({
       disabled: !enableWizard || isWizardUpdating,
       status: currentState,
       onSave: handleSaveTemplate,
+      isSaveButtonDisabled: isDisplayNameEmpty,
     }),
     summaryTab(resources, dispatch, {
       tabStatusIcon: undefined,

@@ -69,6 +69,8 @@ export const CustomizeParameterPanel = () => {
   const parameterError = parameterErrors?.[parameterId as string];
 
   const footerContent: TemplatePanelFooterProps = useMemo(() => {
+    const isDisplayNameEmpty = isUndefinedOrEmptyString(selectedParameterDefinition()?.displayName);
+
     return {
       buttonContents: [
         {
@@ -80,7 +82,7 @@ export const CustomizeParameterPanel = () => {
           }),
           appearance: 'primary',
           onClick: () => {},
-          disabled: !isDirty || !isUndefinedOrEmptyString(parameterError),
+          disabled: !isDirty || !isUndefinedOrEmptyString(parameterError) || isDisplayNameEmpty,
           menuItems: getSaveMenuButtons(resources, currentStatus ?? 'Development', (newStatus) => {
             if (runValidation) {
               dispatch(validateParameterDetails());

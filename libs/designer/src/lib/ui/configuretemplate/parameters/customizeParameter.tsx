@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 import type { RootState } from '../../../core/state/templates/store';
 import { DescriptionWithLink, ErrorBar } from '../common';
 import { useIntl } from 'react-intl';
+import { formatNameWithIdentifierToDisplay } from '../../../core/configuretemplate/utils/helper';
 
 export const CustomizeParameter = ({
   parameterError,
@@ -27,7 +28,7 @@ export const CustomizeParameter = ({
     const baseItems: TemplatesSectionItem[] = [
       {
         label: resourceStrings.ParameterName,
-        value: parameterDefinition.name || '',
+        value: formatNameWithIdentifierToDisplay(parameterDefinition.name) || '',
         type: 'text',
       },
       {
@@ -46,6 +47,11 @@ export const CustomizeParameter = ({
             displayName: value,
           });
         },
+        hint: intl.formatMessage({
+          defaultMessage: 'Parameter display name is required for Save.',
+          id: 'RWd2ii',
+          description: 'Hint message for parameter display name is required for save.',
+        }),
       },
       {
         label: resourceStrings.DefaultValue,
@@ -89,7 +95,7 @@ export const CustomizeParameter = ({
       });
     }
     return baseItems;
-  }, [resourceStrings, parameterDefinition, setParameterDefinition, isAccelerator]);
+  }, [intl, resourceStrings, parameterDefinition, setParameterDefinition, isAccelerator]);
 
   return (
     <div>

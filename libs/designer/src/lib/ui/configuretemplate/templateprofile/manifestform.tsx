@@ -51,7 +51,7 @@ export const TemplateManifestForm = () => {
           description: 'Description for template profile tab',
         })}
         linkText={resources.LearnMore}
-        linkUrl="https://learn.microsoft.com/en-us/azure/logic-apps/logic-apps-templates-manifest"
+        linkUrl="https://go.microsoft.com/fwlink/?linkid=2321818"
         className={mergeStyles({ marginLeft: '-10px', width: '70%' })}
       />
 
@@ -71,6 +71,7 @@ const useGeneralSectionItems = (
   resources: Record<string, string>,
   handleUpdateManifest: (manifest: Partial<Template.TemplateManifest>) => void
 ) => {
+  const intl = useIntl();
   const { manifest, workflows, errors, apiValidatationErrors: apiErrors, connections } = useSelector((state: RootState) => state.template);
   const workflowKeys = Object.keys(workflows);
   const isMultiWorkflow = workflowKeys.length > 1;
@@ -98,6 +99,11 @@ const useGeneralSectionItems = (
       type: 'textfield',
       required: true,
       onChange: (value: string) => handleUpdateManifest({ title: value }),
+      hint: intl.formatMessage({
+        defaultMessage: 'Display name is required for Save.',
+        id: 'FoUzpc',
+        description: 'Hint message for display name is required for save.',
+      }),
       errorMessage: apiErrors?.template?.manifest?.title ?? errors?.manifest?.title,
     },
     {
