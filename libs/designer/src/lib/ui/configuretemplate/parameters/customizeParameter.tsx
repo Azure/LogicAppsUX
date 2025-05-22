@@ -47,6 +47,11 @@ export const CustomizeParameter = ({
             displayName: value,
           });
         },
+        hint: intl.formatMessage({
+          defaultMessage: 'Parameter display name is required for Save.',
+          id: 'RWd2ii',
+          description: 'Hint message for parameter display name is required for save.',
+        }),
       },
       {
         label: resourceStrings.DefaultValue,
@@ -90,7 +95,7 @@ export const CustomizeParameter = ({
       });
     }
     return baseItems;
-  }, [resourceStrings, parameterDefinition, setParameterDefinition, isAccelerator]);
+  }, [intl, resourceStrings, parameterDefinition, setParameterDefinition, isAccelerator]);
 
   return (
     <div>
