@@ -1,4 +1,18 @@
 # Logic Apps Designer
+## [5.108.0](https://github.com/Azure/LogicAppsUX/compare/v5.107.0...v5.108.0) (2025-05-22)
+
+
+### Features
+
+* **vscode:** Unit Test Status Code ([#7277](https://github.com/Azure/LogicAppsUX/issues/7277)) ([046be89](https://github.com/Azure/LogicAppsUX/commit/046be89e1c269a6462f014d826ddb4ab78cac606))
+
+
+### Bug Fixes
+
+* **designer:** Fix alphabetical sorting of sub-actions in OperationGroupDetailView component ([#7264](https://github.com/Azure/LogicAppsUX/issues/7264)) ([de44a26](https://github.com/Azure/LogicAppsUX/commit/de44a26b23de04ca74aa17dd44ea90e3a380ed4f))
+* **designer:** Remove expand/collapse teaching popup ([#7278](https://github.com/Azure/LogicAppsUX/issues/7278)) ([9add378](https://github.com/Azure/LogicAppsUX/commit/9add37812b0c0e2444ee16cb9ef5f6bcf7897413))
+* **vscode:** Auto update function core tools for major version difference ([#7279](https://github.com/Azure/LogicAppsUX/issues/7279)) ([6056cdd](https://github.com/Azure/LogicAppsUX/commit/6056cdd33480e53609ed0b4ab8e1f47826ce6699))
+
 ## [5.107.0](https://github.com/Azure/LogicAppsUX/compare/v5.106.0...v5.107.0) (2025-05-20)
 
 
