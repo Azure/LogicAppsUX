@@ -265,6 +265,7 @@ const CustomizeWorkflowSection = ({
         label: customResourceStrings.LightModeImage,
         value: workflow.manifest?.images?.light || '',
         type: 'textfield',
+        description: customResourceStrings.LightModeImageDescription,
         onChange: (value: string) => {
           updateWorkflowDataField(workflowId, {
             ...workflow,
@@ -283,6 +284,7 @@ const CustomizeWorkflowSection = ({
         label: customResourceStrings.DarkModeImage,
         value: workflow.manifest?.images?.dark || '',
         type: 'textfield',
+        description: customResourceStrings.DarkModeImageDescription,
         onChange: (value: string) => {
           updateWorkflowDataField(workflowId, {
             ...workflow,
@@ -300,7 +302,9 @@ const CustomizeWorkflowSection = ({
     ];
   }, [
     customResourceStrings.LightModeImage,
+    customResourceStrings.LightModeImageDescription,
     customResourceStrings.DarkModeImage,
+    customResourceStrings.DarkModeImageDescription,
     workflow,
     apiErrors?.manifest,
     updateWorkflowDataField,
@@ -316,7 +320,12 @@ const CustomizeWorkflowSection = ({
         items={generalSectionItems}
       />
       <TemplatesSection title={resourceStrings.DESCRIPTION} titleHtmlFor={'descriptionSectionLabel'} items={descriptionSectionItems} />
-      <TemplatesSection title={customResourceStrings.WorkflowImages} titleHtmlFor={'imagesSectionLabel'} items={imageSectionItems} />
+      <TemplatesSection
+        title={customResourceStrings.WorkflowImages}
+        description={customResourceStrings.WorkflowImagesDescription}
+        titleHtmlFor={'imagesSectionLabel'}
+        items={imageSectionItems}
+      />
     </div>
   );
 };

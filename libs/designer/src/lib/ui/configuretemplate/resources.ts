@@ -224,15 +224,33 @@ export const useResourceStrings = () => {
       id: 'an1Z0T',
       description: 'Label for the workflow images section',
     }),
+    WorkflowImagesDescription: intl.formatMessage({
+      defaultMessage:
+        'Provide your workflow images in both Azure light and dark themes. Open the workflow in the designer, take screenshots in each theme, and save the images. Then upload them to Azure Blob Storage and share the shared access signature (SAS) link.',
+      id: 'B2TJcx',
+      description: 'Description for the workflow images section',
+    }),
     LightModeImage: intl.formatMessage({
       defaultMessage: 'Light mode image',
       id: '5LLxEp',
       description: 'Light mode image label',
     }),
+    LightModeImageDescription: intl.formatMessage({
+      defaultMessage:
+        'Provide your workflow image in the Azure light theme. Upload the image to Azure Blob Storage and share the shared access signature (SAS) link.',
+      id: 'Za33CQ',
+      description: 'Light mode image description',
+    }),
     DarkModeImage: intl.formatMessage({
       defaultMessage: 'Dark mode image',
       id: 'CdxaGY',
       description: 'Dark mode image label',
+    }),
+    DarkModeImageDescription: intl.formatMessage({
+      defaultMessage:
+        'Provide your workflow image in the Azure dark theme. Upload the image to Azure Blob Storage and share the shared access signature (SAS) link.',
+      id: 'NziQUu',
+      description: 'Dark mode image description',
     }),
     InAppKind: intl.formatMessage({
       defaultMessage: 'In-app',
