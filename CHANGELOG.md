@@ -1,4 +1,11 @@
 # Logic Apps Designer
+## [5.109.0](https://github.com/Azure/LogicAppsUX/compare/v5.108.0...v5.109.0) (2025-05-22)
+
+
+### Features
+
+* **designer:** Add agent foundry service integration connection ([#7254](https://github.com/Azure/LogicAppsUX/issues/7254)) ([5ed04dd](https://github.com/Azure/LogicAppsUX/commit/5ed04dd0d1703f5f1b8ba2a4e215371d58c6b85f))
+
 ## [5.108.0](https://github.com/Azure/LogicAppsUX/compare/v5.107.0...v5.108.0) (2025-05-22)
 
 
