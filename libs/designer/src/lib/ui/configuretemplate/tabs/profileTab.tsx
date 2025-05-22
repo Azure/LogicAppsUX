@@ -11,7 +11,7 @@ export const profileTab = (
   intl: IntlShape,
   resources: Record<string, string>,
   dispatch: AppDispatch,
-  { disabled, tabStatusIcon, onSave, status }: TemplateWizardTabProps
+  { disabled, tabStatusIcon, onSave, status, isSaveButtonDisabled }: TemplateWizardTabProps & { isSaveButtonDisabled: boolean }
 ): TemplateTabProps => ({
   id: constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.PROFILE,
   title: resources.ProfileTabLabel,
@@ -39,6 +39,7 @@ export const profileTab = (
         text: resources.SaveButtonText,
         appearance: 'primary',
         onClick: () => {},
+        disabled: isSaveButtonDisabled,
         menuItems: getSaveMenuButtons(resources, status ?? 'Development', (newStatus) => onSave?.(newStatus)),
       },
     ],
