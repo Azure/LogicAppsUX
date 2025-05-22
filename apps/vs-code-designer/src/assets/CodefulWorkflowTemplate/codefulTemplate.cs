@@ -7,7 +7,7 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Net.Http;
 
-namespace LogicApps.Codeful.Helloworkflow
+namespace LogicApps.Codeful.HelloWorkflow
 {
     public static class WorkflowOrchestrator
     {
@@ -19,7 +19,7 @@ namespace LogicApps.Codeful.Helloworkflow
             var triggerInput = context.GetInput<HTTPHelloInput>();
             log.LogInformation("Starting orchestrator with input: {triggerInput}", JsonSerializer.Serialize(triggerInput));
 
-            var msgResponse = "Hello from orchestrator";
+            var msgResponse = triggerInput.Greeting;
 
             return msgResponse;
         }
@@ -34,7 +34,7 @@ namespace LogicApps.Codeful.Helloworkflow
 
             var workflowInput = new HTTPHelloInput
             {
-                Greeting = "Hello from Codeful " + requestContent
+                Greeting = $"Hello from Codeful workflows. You said '{requestContent}'"
             };
 
             log.LogInformation("Workflow Input = '{workflowInput}'.", JsonSerializer.Serialize(workflowInput));
@@ -43,29 +43,10 @@ namespace LogicApps.Codeful.Helloworkflow
 
             log.LogInformation("Started orchestration with ID = '{instanceId}'.", instanceId);
 
-            DurableOrchestrationStatus status;
-            do
-            {
-                status = await starter.GetStatusAsync(instanceId);
-                await Task.Delay(1000); // Wait for 1 second before checking the status again
-            } while (status.RuntimeStatus == OrchestrationRuntimeStatus.Running || 
-                    status.RuntimeStatus == OrchestrationRuntimeStatus.Pending);
-
-            if (status.RuntimeStatus == OrchestrationRuntimeStatus.Completed)
-            {
-                return new HttpResponseMessage(HttpStatusCode.OK)
-                {
-                    Content = new StringContent(status.Output.ToString(), System.Text.Encoding.UTF8, "application/json")
-                };
-            }
-
-            return new HttpResponseMessage(HttpStatusCode.InternalServerError)
-            {
-                Content = new StringContent("Orchestration did not complete successfully.")
-            };
+            return await starter.WaitForCompletionOrCreateCheckStatusResponseAsync(req, instanceId);
         }
     }
-
+    
     public class HTTPHelloInput
     {
         public string Greeting { get; set; }
