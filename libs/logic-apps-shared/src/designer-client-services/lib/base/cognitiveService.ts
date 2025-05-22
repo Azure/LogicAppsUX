@@ -75,4 +75,21 @@ export class BaseCognitiveServiceService implements ICognitiveServiceService {
     });
     return response;
   }
+
+  async fetchAllCognitiveServiceProjects(serviceAccountId: string): Promise<any> {
+    const { httpClient, baseUrl } = this.options;
+    const uri = `${baseUrl}${serviceAccountId}/projects`;
+
+    try {
+      const response = await httpClient.get({
+        uri,
+        queryParameters: {
+          'api-version': '2025-04-01-preview',
+        },
+      });
+      return response;
+    } catch (e: any) {
+      return new Error(e?.message ?? e);
+    }
+  }
 }
