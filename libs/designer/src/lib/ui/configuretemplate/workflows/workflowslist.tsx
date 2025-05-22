@@ -225,7 +225,7 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
       <DescriptionWithLink
         text={customResourceStrings.WorkflowsTabDescription}
         linkText={customResourceStrings.LearnMore}
-        linkUrl="https://docs.microsoft.com/azure/logic-apps/logic-apps-overview"
+        linkUrl="https://aka.ms/LogicApps/CustomTemplates/Workflows"
         className={mergeStyles({ marginLeft: '-1px', width: '70%' })}
       />
 
@@ -298,7 +298,7 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
           <DescriptionWithLink
             text={customResourceStrings.WorkflowsTabDescription}
             linkText={customResourceStrings.LearnMore}
-            linkUrl="https://docs.microsoft.com/azure/logic-apps/logic-apps-overview"
+            linkUrl="https://aka.ms/LogicApps/CustomTemplates/Workflows"
             className={mergeStyles({ width: '40%', marginTop: 0 })}
           />
           <div style={{ padding: '10px 0' }}>

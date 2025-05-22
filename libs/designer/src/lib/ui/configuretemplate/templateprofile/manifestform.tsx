@@ -51,7 +51,7 @@ export const TemplateManifestForm = () => {
           description: 'Description for template profile tab',
         })}
         linkText={resources.LearnMore}
-        linkUrl="https://learn.microsoft.com/en-us/azure/logic-apps/logic-apps-templates-manifest"
+        linkUrl="https://aka.ms/LogicApps/CustomTemplates/Profile"
         className={mergeStyles({ marginLeft: '-10px', width: '70%' })}
       />
 
