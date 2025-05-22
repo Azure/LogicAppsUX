@@ -11,6 +11,7 @@ describe('WrokflowCodeTypeStep', () => {
       const wizardContext: any = {
         ui: {
           showQuickPick: vi.fn((options: any) => {
+            // mocking the function that returns the workflow choice
             return { data: { id: workflowCodeType.codeful } };
           }),
         },
