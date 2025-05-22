@@ -90,11 +90,21 @@ export const workflowParametersSlice = createSlice({
     },
     addParameter: (state) => {
       const parameterId = guid();
-      state.definitions[parameterId] = {
+      const newParameter = {
         isEditable: true,
         type: UIConstants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.ARRAY,
         name: '',
       };
+      state.definitions[parameterId] = newParameter;
+
+      // Add validation errors for empty name field
+      const nameError = validateParameter(parameterId, { name: '' }, 'name', state.definitions);
+      if (nameError) {
+        state.validationErrors[parameterId] = {
+          name: nameError,
+        };
+      }
+
       state.isDirty = true;
     },
     deleteParameter: (state, action: PayloadAction<string>) => {
