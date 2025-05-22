@@ -90,6 +90,7 @@ import { ConnectionInline } from './connectionInline';
 import { ConnectionsSubMenu } from './connectionsSubMenu';
 import { useCognitiveServiceAccountDeploymentsForNode } from '../../../connectionsPanel/createConnection/custom/useCognitiveService';
 import { isAgentConnectorAndAgentServiceModel, isAgentConnectorAndDeploymentId } from './helpers';
+import { useShouldEnableFoundryServiceConnection } from './hooks';
 
 // TODO: Add a readonly per settings section/group
 export interface ParametersTabProps extends PanelTabProps {
@@ -239,6 +240,7 @@ const ParameterSection = ({
   const isTrigger = useSelector((state: RootState) => isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata));
   const operationInfo = useOperationInfo(nodeId);
   const dependencies = useDependencies(nodeId);
+  const isFoundryServiceConnectionEnabled = useShouldEnableFoundryServiceConnection();
 
   // Specific for agentic scenarios
   const { data: deploymentsForCognitiveServiceAccount } = useCognitiveServiceAccountDeploymentsForNode(nodeId, operationInfo?.connectorId);
@@ -677,6 +679,9 @@ const ParameterSection = ({
 
   const settings: Settings[] = group?.parameters
     .filter((x) => !x.hideInUI && shouldUseParameterInGroup(x, group.parameters))
+    .filter((param) => {
+      return param.parameterName !== 'agentModelType' || isFoundryServiceConnectionEnabled;
+    })
     .map((param) => {
       const { id, label, value, required, showTokens, placeholder, editorViewModel, dynamicData, conditionalVisibility, validationErrors } =
         param;
