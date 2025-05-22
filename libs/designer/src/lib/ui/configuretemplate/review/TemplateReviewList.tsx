@@ -12,6 +12,7 @@ import { useAllConnectors } from '../../../core/configuretemplate/utils/queries'
 import { WorkflowKind } from '../../../core/state/workflow/workflowInterfaces';
 import { DescriptionWithLink, ErrorBar } from '../common';
 import { mergeStyles } from '@fluentui/react';
+import { formatNameWithIdentifierToDisplay } from '../../../core/configuretemplate/utils/helper';
 
 const SectionDividerItem: TemplatesSectionItem = {
   type: 'divider',
@@ -268,7 +269,7 @@ const useParameterSectionItems = (resources: Record<string, string>) => {
     const thisParameterSectionItems: TemplatesSectionItem[] = [
       {
         label: resources.ParameterName,
-        value: parameter.name ?? resources.Placeholder,
+        value: formatNameWithIdentifierToDisplay(parameter.name),
         type: 'text',
       },
       {
