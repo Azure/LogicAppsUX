@@ -15,6 +15,8 @@ import { useIntl } from 'react-intl';
 import { useConnectionsForConnector } from '../../../../../core/queries/connections';
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { Button, Text } from '@fluentui/react-components';
+import { useRawInputParameters } from '../../../../../core/state/operation/operationSelector';
+import { isAgentConnectorAndAgentServiceModel } from './helpers';
 
 interface ConnectionInlineProps {
   setShowSubComponent?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -40,6 +42,10 @@ export const ConnectionInline: React.FC<ConnectionInlineProps> = ({ showSubCompo
     () => connections.find((connection) => connection.id === currentConnectionId),
     [connections, currentConnectionId]
   );
+  const nodeInputs = useRawInputParameters(nodeId);
+  const isAgentServiceConnection = useMemo(() => {
+    return isAgentConnectorAndAgentServiceModel(operationInfo.connectorId, 'default', nodeInputs?.parameterGroups ?? {});
+  }, [nodeInputs?.parameterGroups, operationInfo.connectorId]);
 
   const setConnection = useCallback(() => {
     setShowCreation(true);
@@ -110,6 +116,7 @@ export const ConnectionInline: React.FC<ConnectionInlineProps> = ({ showSubCompo
           setShowCreation(false);
         }
       }}
+      isAgentServiceConnection={isAgentServiceConnection}
     />
   ) : (
     <Button

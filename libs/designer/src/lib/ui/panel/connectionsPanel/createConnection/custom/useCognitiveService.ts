@@ -1,4 +1,4 @@
-import { CognitiveServiceService } from '@microsoft/logic-apps-shared';
+import { CognitiveServiceService, foundryServiceConnectionRegex } from '@microsoft/logic-apps-shared';
 import { useQuery } from '@tanstack/react-query';
 import { isAgentConnector } from '../../../../../common/utilities/Utils';
 import { useSelectedConnection } from '../../../../../core/state/connection/connectionSelector';
@@ -33,11 +33,13 @@ export const useAllCognitiveServiceAccounts = (subscriptionId: string) => {
 export const useCognitiveServiceAccountDeploymentsForNode = (nodeId: string, connectorId?: string) => {
   const selectedConnection = useSelectedConnection(nodeId);
   const resourceId = selectedConnection?.properties?.connectionParameters?.cognitiveServiceAccountId?.metadata?.value;
+  const isFoundryServiceConnection = foundryServiceConnectionRegex.test(resourceId ?? '');
+  const serviceAccountId = isFoundryServiceConnection ? resourceId?.split('/').slice(0, -2).join('/') : resourceId;
   return useQuery(
-    [queryKeys.allCognitiveServiceAccountsDeployments, { resourceId }],
+    [queryKeys.allCognitiveServiceAccountsDeployments, { serviceAccountId }],
     async () => {
-      if (resourceId) {
-        return await CognitiveServiceService().fetchAllCognitiveServiceAccountDeployments(resourceId);
+      if (serviceAccountId) {
+        return await CognitiveServiceService().fetchAllCognitiveServiceAccountDeployments(serviceAccountId);
       }
 
       return [];
@@ -45,7 +47,22 @@ export const useCognitiveServiceAccountDeploymentsForNode = (nodeId: string, con
     {
       ...queryOpts,
       retryOnMount: true,
-      enabled: isAgentConnector(connectorId) && !!resourceId,
+      enabled: isAgentConnector(connectorId) && !!serviceAccountId,
+    }
+  );
+};
+
+export const useAllCognitiveServiceProjects = (serviceAccountId: string) => {
+  return useQuery(
+    [queryKeys.allCognitiveServiceAccounts, { serviceAccountId }],
+    async () => {
+      const allCognitiveServiceAccounts = await CognitiveServiceService().fetchAllCognitiveServiceProjects(serviceAccountId);
+      return allCognitiveServiceAccounts?.value ?? [];
+    },
+    {
+      ...queryOpts,
+      retryOnMount: true,
+      enabled: !!serviceAccountId,
     }
   );
 };
