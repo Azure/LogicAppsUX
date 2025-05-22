@@ -118,7 +118,7 @@ export const TemplateParametersList = () => {
       <DescriptionWithLink
         text={intlText.Description}
         linkText={resourceStrings.LearnMore}
-        linkUrl="https://aka.ms/LogicApps/CustomTemplates/Parameters"
+        linkUrl="https://go.microsoft.com/fwlink/?linkid=2321714"
         className={mergeStyles({ marginLeft: '-10px', width: '70%' })}
       />
 

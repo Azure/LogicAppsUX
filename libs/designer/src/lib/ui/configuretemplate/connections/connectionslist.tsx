@@ -77,7 +77,7 @@ export const TemplateConnectionsList = () => {
       <DescriptionWithLink
         text={resources.Description}
         linkText={resourceStrings.LearnMore}
-        linkUrl="https://aka.ms/LogicApps/CustomTemplates/Connections"
+        linkUrl="https://go.microsoft.com/fwlink/?linkid=2321713"
         className={mergeStyles({ marginLeft: '-10px', width: '70%' })}
       />
       {error ? <ErrorBar title={resources.ErrorTitle} errorMessage={error} styles={{ marginLeft: '-10px' }} /> : null}
