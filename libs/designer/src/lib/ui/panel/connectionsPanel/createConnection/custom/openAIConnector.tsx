@@ -286,15 +286,19 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
                     const projectName = project.name?.split?.('/')[1] ?? project.name;
                     return {
                       key: project.id,
+                      data: projectName,
                       text: `${projectName}`,
                     };
                   })}
                   onChange={async (_e, option?: IComboBoxOption) => {
                     if (option?.key) {
-                      const serviceProjectKey = option?.key as string;
-                      setSelectedCognitiveServiceProject(serviceProjectKey);
-                      setValue(serviceProjectKey);
-                      setKeyValue?.('openAIEndpoint', serviceProjectKey);
+                      const serviceProjectId = option?.key as string;
+                      const serviceProjectName = option?.data as string;
+                      const cognitiveServiceAccountName = cognitiveServiceAccountId.split('/').pop();
+                      const openAIEndpoint = `https://${cognitiveServiceAccountName}.services.ai.azure.com/api/projects/${serviceProjectName}`;
+                      setSelectedCognitiveServiceProject(serviceProjectId);
+                      setValue(serviceProjectId);
+                      setKeyValue?.('openAIEndpoint', openAIEndpoint);
                     }
                   }}
                   errorMessage={errorMessage}
