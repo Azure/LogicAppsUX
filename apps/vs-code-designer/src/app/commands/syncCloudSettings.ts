@@ -53,7 +53,6 @@ export async function syncCloudSettings(context: IActionContext, node: vscode.Ur
   // Exclude managed API connection keys from cloud settings
   // TODO: REMOTEDEBUGGINGVERSION should not be in local.settings.json
   const settingsToExclude: string[] = [webhookRedirectHostUri, azureWebJobsStorageKey, ProjectDirectoryPath, 'REMOTEDEBUGGINGVERSION'];
-  const settingsToSetEmpty: string[] = [];
   const cloudSettingValues = {};
   const connectionsJson = await getConnectionsJson(logicAppProjectPath);
   if (connectionsJson) {
@@ -61,11 +60,6 @@ export async function syncCloudSettings(context: IActionContext, node: vscode.Ur
     if (connectionsData.managedApiConnections && Object.keys(connectionsData.managedApiConnections).length) {
       for (const referenceKey of Object.keys(connectionsData.managedApiConnections)) {
         settingsToExclude.push(`${referenceKey}-connectionKey`);
-      }
-    }
-    if (connectionsData.serviceProviderConnections && Object.keys(connectionsData.serviceProviderConnections).length) {
-      for (const referenceKey of Object.keys(connectionsData.serviceProviderConnections)) {
-        settingsToSetEmpty.push(`${referenceKey}-connectionKey`);
       }
     }
   }
@@ -77,15 +71,12 @@ export async function syncCloudSettings(context: IActionContext, node: vscode.Ur
     );
     if (shouldExcludeSetting) {
       excludedLocalAppSettings.push(settingName);
+    } else if (settingName.match(/_connectionString$/i)) {
+      cloudSettingValues[settingName] = '';
     } else {
       cloudSettingValues[settingName] = localSettings.Values[settingName];
     }
   });
-  if (settingsToSetEmpty.length > 0) {
-    settingsToSetEmpty.forEach((settingName) => {
-      cloudSettingValues[settingName] = '';
-    });
-  }
   if (excludedLocalAppSettings.length > 0) {
     ext.outputChannel.appendLog(
       localize('excludedSettings', 'Excluded the following settings from cloud app settings: {0}', excludedLocalAppSettings.join(', '))
