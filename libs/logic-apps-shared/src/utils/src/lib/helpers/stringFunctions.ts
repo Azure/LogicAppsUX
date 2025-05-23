@@ -115,28 +115,50 @@ export const unescapeString = (input: string): string => {
   });
 };
 
-export const escapeString = (input: string, requireSingleQuotesWrap?: boolean): string => {
-  // Only apply escaping if requireSingleQuotesWrap is true and the input is wrapped in single quotes
-  if (requireSingleQuotesWrap && !/'.*[\n\r\t\v"].*'/.test(input)) {
-    return input;
+export const escapeString = (input: string): string => {
+  let result = '';
+  let inSingleQuotes = false;
+
+  for (const char of input) {
+    if (char === "'") {
+      inSingleQuotes = !inSingleQuotes;
+      result += char;
+      continue;
+    }
+
+    if (inSingleQuotes) {
+      switch (char) {
+        case '\n': {
+          result += '\\n';
+          continue;
+        }
+        case '\r': {
+          result += '\\r';
+          continue;
+        }
+        case '\t': {
+          result += '\\t';
+          continue;
+        }
+        case '\v': {
+          result += '\\v';
+          continue;
+        }
+        case '"': {
+          result += '\\"';
+          continue;
+        }
+        case '\\': {
+          result += '\\\\';
+          continue;
+        }
+      }
+    }
+
+    result += char;
   }
 
-  return input?.replace(/[\n\r\t\v"]/g, (char) => {
-    switch (char) {
-      case '\n':
-        return '\\n';
-      case '\r':
-        return '\\r';
-      case '\t':
-        return '\\t';
-      case '\v':
-        return '\\v';
-      case '"':
-        return requireSingleQuotesWrap ? '\\"' : '"'; // Escape only if requireSingleQuotesWrap is true
-      default:
-        return char;
-    }
-  });
+  return result;
 };
 
 export const escapeBackslash = (s: string): string => {

@@ -171,8 +171,7 @@ export const createVariableEditorSegments = (variables: InitializeVariableProps[
           parts.push(`"value": ${value}`);
         }
       } else {
-        // For literals, quote string or stringify object/array/number
-        const valueStr = isStringType ? JSON.stringify(value) : JSON.stringify(value);
+        const valueStr = JSON.stringify(value);
         parts.push(`"value": ${valueStr}`);
       }
     }

@@ -156,21 +156,21 @@ describe('escapeString', () => {
   });
 
   it('does not escape characters if requireSingleQuotesWrap is true and the string is not wrapped in single quotes', () => {
-    expect(escapeString('Test\nTest', true)).toBe('Test\nTest');
+    expect(escapeString('Test\nTest')).toBe('Test\nTest');
   });
 
   it('escapes characters if requireSingleQuotesWrap is true and the string is wrapped in single quotes', () => {
-    expect(escapeString("'Test\nTest'", true)).toBe("'Test\\nTest'");
+    expect(escapeString("'Test\nTest'")).toBe("'Test\\nTest'");
   });
 
   it('escapes multiple newlines when requireSingleQuotesWrap is true and wrapped in single quotes', () => {
-    expect(escapeString("'Test\nAnotherLine\nTest'", true)).toBe(`'Test
+    expect(escapeString("'Test\nAnotherLine\nTest'")).toBe(`'Test
 AnotherLine
 Test'`);
   });
 
   it('escapes characters even if requireSingleQuotesWrap is false, regardless of surrounding quotes', () => {
-    expect(escapeString("'Test\nTest'", false)).toBe("'Test\\nTest'");
+    expect(escapeString("'Test\nTest'")).toBe("'Test\\nTest'");
   });
 
   it('escapes characters when requireSingleQuotesWrap is undefined, regardless of surrounding quotes', () => {
@@ -178,28 +178,28 @@ Test'`);
   });
 
   it('escapes double quotes only when requireSingleQuotesWrap is true', () => {
-    expect(escapeString(`concat('{', '"ErrorDetail"', ':', '"Exchange get failed with exchange id', '-', '"}')`, true)).toBe(
+    expect(escapeString(`concat('{', '"ErrorDetail"', ':', '"Exchange get failed with exchange id', '-', '"}')`)).toBe(
       `concat('{', '\\"ErrorDetail\\"', ':', '\\"Exchange get failed with exchange id', '-', '\\"}')`
     );
-    expect(escapeString(`concat('{', '"ErrorDetail"', ':', '"Exchange get failed with exchange id', '-', '"}')`, false)).toBe(
+    expect(escapeString(`concat('{', '"ErrorDetail"', ':', '"Exchange get failed with exchange id', '-', '"}')`)).toBe(
       `concat('{', '"ErrorDetail"', ':', '"Exchange get failed with exchange id', '-', '"}')`
     );
   });
 
   it('escapes double quotes and newlines when requireSingleQuotesWrap is true', () => {
-    expect(escapeString('\'Hello\n"World"\'', true)).toBe('\'Hello\\n\\"World\\"\'');
+    expect(escapeString('\'Hello\n"World"\'')).toBe('\'Hello\\n\\"World\\"\'');
   });
 
   it('does not escape double quotes when requireSingleQuotesWrap is false', () => {
-    expect(escapeString('Hello "World"', false)).toBe('Hello "World"');
+    expect(escapeString('Hello "World"')).toBe('Hello "World"');
   });
 
   it('escapes double quotes and other characters when requireSingleQuotesWrap is true and surrounded by single quotes', () => {
-    expect(escapeString('\'Test\n"AnotherTest"\'', true)).toBe('\'Test\\n\\"AnotherTest\\"\'');
+    expect(escapeString('\'Test\n"AnotherTest"\'')).toBe('\'Test\\n\\"AnotherTest\\"\'');
   });
 
   it('does not escape double quotes when requireSingleQuotesWrap is false', () => {
-    expect(escapeString('Test "Hello"', false)).toBe('Test "Hello"');
+    expect(escapeString('Test "Hello"')).toBe('Test "Hello"');
   });
 });
 
