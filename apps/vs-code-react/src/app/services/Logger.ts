@@ -1,5 +1,5 @@
-import type { ILoggerService, LogEntry, TelemetryEvent } from '@microsoft/logic-apps-shared';
-import { guid } from '@microsoft/logic-apps-shared';
+import type { ILoggerService, LogEntry, LogEntryWithoutTimestamp, TelemetryEvent } from '@microsoft/logic-apps-shared';
+import { guid, LogEntryLevel } from '@microsoft/logic-apps-shared';
 import { ExtensionCommand, type MessageToVsix } from '@microsoft/vscode-extension-logic-apps';
 type traceStart = Pick<TelemetryEvent, 'action' | 'actionModifier' | 'name' | 'source'>;
 
@@ -95,5 +95,26 @@ export class LoggerService implements ILoggerService {
         data: { ...eventData?.data, context: this.context, id },
       },
     });
+  };
+
+  public logErrorWithFormatting = (error: Error | string | unknown, area: string, level: number = LogEntryLevel.Error): void => {
+    const logEntry: LogEntryWithoutTimestamp = {
+      level,
+      area,
+      message: '',
+    };
+    if (typeof error === 'string') {
+      this.log({ ...logEntry, message: error });
+    } else if (error instanceof Error) {
+      this.log({ ...logEntry, message: error.message, args: [{ stack: error.stack ?? '', cause: error.cause ?? '' }] });
+    } else {
+      let serializedError: string;
+      try {
+        serializedError = JSON.stringify(error);
+      } catch {
+        serializedError = `Unable to serialize error of type: ${typeof error}`;
+      }
+      this.log({ ...logEntry, message: serializedError });
+    }
   };
 }
