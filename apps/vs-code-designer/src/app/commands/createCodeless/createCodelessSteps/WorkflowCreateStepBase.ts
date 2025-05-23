@@ -5,13 +5,7 @@
 import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
 import { getContainingWorkspace } from '../../../utils/workspace';
-import {
-  AzureWizardExecuteStep,
-  callWithTelemetryAndErrorHandling,
-  DialogResponses,
-  nonNullProp,
-  parseError,
-} from '@microsoft/vscode-azext-utils';
+import { AzureWizardExecuteStep, callWithTelemetryAndErrorHandling, DialogResponses, parseError } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IFunctionWizardContext, IHostJsonV2, IWorkflowTemplate } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
@@ -40,38 +34,47 @@ export function runPostWorkflowCreateStepsFromCache(): void {
   }
 }
 
+export interface WorkflowCreateProgress {
+  message?: string | undefined;
+  increment?: number | undefined;
+}
+
 export abstract class WorkflowCreateStepBase<T extends IFunctionWizardContext> extends AzureWizardExecuteStep<T> {
   public priority = 220;
 
   public abstract executeCore(context: T): Promise<string>;
 
-  public async execute(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
-    callWithTelemetryAndErrorHandling('workflowCreate', async (telemetryContext: IActionContext) => {
-      // telemetry
-      telemetryContext.telemetry.properties.workflowCodeType = workflowCodeTypeForTelemetry(context.isCodeless);
-      const template: IWorkflowTemplate = nonNullProp(context, 'functionTemplate');
+  private addTelemetryProperties(context: T, template: IWorkflowTemplate): void {
+    context.telemetry.properties.workflowCodeType = workflowCodeTypeForTelemetry(context.isCodeless);
+    context.telemetry.properties.projectLanguage = context.language;
+    context.telemetry.properties.projectRuntime = context.version;
+    context.telemetry.properties.templateId = template.id;
+  }
+  public async execute(context: T, progress: Progress<WorkflowCreateProgress>): Promise<void> {
+    const template: IWorkflowTemplate = context.functionTemplate;
 
-      context.telemetry.properties.projectLanguage = context.language;
-      context.telemetry.properties.projectRuntime = context.version;
-      context.telemetry.properties.templateId = template.id;
+    if (!template) {
+      throw new Error(localize('noTemplate', 'No template found.'));
+    }
 
-      progress.report({ message: localize('creatingFunction', 'Creating new {0}...', template.name) });
+    this.addTelemetryProperties(context, template);
 
-      const newFilePath = await this.executeCore(context);
+    progress.report({ message: localize('creatingFunction', 'Creating new {0}...', template.name) });
 
-      const cachedFunc: ICachedWorkflow = { projectPath: context.projectPath, newFilePath, isHttpTrigger: template.isHttpTrigger };
+    const newFilePath = await this.executeCore(context);
 
-      if (context.openBehavior) {
-        // OpenFolderStep sometimes restarts the extension host, so we will cache this to run on the next extension activation
-        ext.context.globalState.update(cacheKey, cachedFunc);
-        // Delete cached information if the extension host was not restarted after 5 seconds
-        setTimeout(() => {
-          ext.context.globalState.update(cacheKey, undefined);
-        }, 5 * 1000);
-      }
+    const cachedFunc: ICachedWorkflow = { projectPath: context.projectPath, newFilePath, isHttpTrigger: template.isHttpTrigger };
 
-      runPostWorkflowCreateSteps(cachedFunc);
-    });
+    if (context.openBehavior) {
+      // OpenFolderStep sometimes restarts the extension host, so we will cache this to run on the next extension activation
+      ext.context.globalState.update(cacheKey, cachedFunc);
+      // Delete cached information if the extension host was not restarted after 5 seconds
+      setTimeout(() => {
+        ext.context.globalState.update(cacheKey, undefined);
+      }, 5 * 1000);
+    }
+
+    runPostWorkflowCreateSteps(cachedFunc);
   }
 
   protected async getHostJson(context: IFunctionWizardContext, hostJsonPath: string, allowOverwrite = false): Promise<IHostJsonV2> {
