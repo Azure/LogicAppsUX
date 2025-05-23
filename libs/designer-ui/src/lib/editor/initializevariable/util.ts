@@ -10,14 +10,52 @@ import {
   normalizeEscapes,
 } from '@microsoft/logic-apps-shared';
 import type { InitializeVariableProps } from '.';
-import { createEmptyLiteralValueSegment, createLiteralValueSegment, isTokenValueSegment } from '../base/utils/helper';
+import {
+  containsTokenSegments,
+  createEmptyLiteralValueSegment,
+  createLiteralValueSegment,
+  isTokenValueSegment,
+} from '../base/utils/helper';
 import { convertSegmentsToString, isEmptySegments } from '../base/utils/parsesegments';
 import type { ValueSegment } from '../models/parameter';
 import { convertStringToSegments } from '../base/utils/editorToSegment';
 import constants, { VARIABLE_TYPE } from '../../constants';
 import { VARIABLE_PROPERTIES, type InitializeVariableErrors } from './variableEditor';
+import type { loadParameterValueFromStringHandler } from '../base';
 
-export const parseVariableEditorSegments = (initialValue: ValueSegment[]): InitializeVariableProps[] | undefined => {
+export const getSmartParsedSegments = (
+  rawValue: string,
+  type: string,
+  nodeMap: Map<string, ValueSegment>,
+  loadParameterValueFromString?: (value: string) => ValueSegment[] | undefined
+): ValueSegment[] => {
+  const fromHandler = loadParameterValueFromString?.(rawValue);
+  const fromConvert = convertStringToSegments(rawValue, nodeMap, {
+    tokensEnabled: true,
+    stringifyNonString: type !== VARIABLE_TYPE.STRING,
+  });
+
+  // 1. Prefer tokenized handler if it has tokens
+  if (containsTokenSegments(fromHandler ?? [])) {
+    return fromHandler!;
+  }
+
+  // 2. Prefer tokenized convert result if handler doesn't return token
+  if (containsTokenSegments(fromConvert)) {
+    return fromConvert!;
+  }
+
+  // 3. Otherwise, fall back to the longer one (typically more structured or complete)
+  if ((fromConvert?.length || 0) > (fromHandler?.length || 0)) {
+    return fromConvert!;
+  }
+  return fromHandler || fromConvert || [createLiteralValueSegment(rawValue)];
+};
+
+export const parseVariableEditorSegments = (
+  initialValue: ValueSegment[],
+  loadParameterValueFromString?: loadParameterValueFromStringHandler
+): InitializeVariableProps[] | undefined => {
   if (isEmptySegments(initialValue)) {
     return [
       { name: [createEmptyLiteralValueSegment()], type: [createEmptyLiteralValueSegment()], value: [createEmptyLiteralValueSegment()] },
@@ -45,10 +83,7 @@ export const parseVariableEditorSegments = (initialValue: ValueSegment[]): Initi
       ? variables.map((variable: { name: string; type: string; value: string }) => ({
           name: [createLiteralValueSegment(variable.name)],
           type: [createLiteralValueSegment(variable.type)],
-          value: convertStringToSegments(variable.value, nodeMap, {
-            tokensEnabled: true,
-            stringifyNonString: variable.type !== VARIABLE_TYPE.STRING,
-          }),
+          value: getSmartParsedSegments(variable.value, variable.type, nodeMap, loadParameterValueFromString),
         }))
       : [];
   } catch (error) {
@@ -107,44 +142,46 @@ export const createVariableEditorSegments = (variables: InitializeVariableProps[
 
   const nodeMap = new Map<string, ValueSegment>();
 
-  const mappedVariables = variables.map((variable) => {
+  const mappedVariableStrings = variables.map((variable) => {
     const name = convertSegmentsToString(variable.name);
     const type = convertSegmentsToString(variable.type);
-
     const isStringType = type === VARIABLE_TYPE.STRING;
+
     const valueSegments = variable.value;
     const isTokenSegment = isTokenValueSegment(valueSegments);
     let value = convertSegmentsToString(valueSegments, nodeMap);
 
     try {
-      if (!isStringType) {
+      if (!isStringType && !isTokenSegment) {
         value = JSON.parse(value);
       }
-    } catch (_error) {
+    } catch {
       // ignore parse errors
     }
 
-    if (value === '') {
-      return `{ "name": "${name}", "type": "${type}" }`;
-    }
-    let valueStr = '';
-    if (isTokenSegment) {
-      if (type === VARIABLE_TYPE.STRING) {
-        valueStr = `"${value}"`;
+    const parts = [`"name": ${JSON.stringify(name)}`, `"type": ${JSON.stringify(type)}`];
+
+    if (value !== '') {
+      if (isTokenSegment) {
+        if (isStringType) {
+          // Clean up multiline token before quoting
+          const cleaned = value.replace(/[\r\n]+/g, '');
+          parts.push(`"value": ${JSON.stringify(cleaned)}`);
+        } else {
+          parts.push(`"value": ${value}`);
+        }
       } else {
-        valueStr = value;
+        // For literals, quote string or stringify object/array/number
+        const valueStr = isStringType ? JSON.stringify(value) : JSON.stringify(value);
+        parts.push(`"value": ${valueStr}`);
       }
-    } else {
-      // Handle whether the value should be quoted (string) or left raw (object/number)
-      valueStr = typeof value === 'string' ? `"${value}"` : JSON.stringify(value);
     }
 
-    return `{ "name": "${name}", "type": "${type}", "value": ${valueStr} }`;
+    return `{ ${parts.join(', ')} }`;
   });
 
-  // Manually create JSON array string
-  const stringifiedVariables = `[${mappedVariables.join(',')}]`;
-  return convertStringToSegments(stringifiedVariables, nodeMap, { tokensEnabled: true });
+  const finalString = `[${mappedVariableStrings.join(',')}]`;
+  return convertStringToSegments(finalString, nodeMap, { tokensEnabled: true });
 };
 
 export const convertVariableEditorSegmentsAsSchema = (variables: InitializeVariableProps[] | undefined): ValueSegment[] => {
