@@ -86,65 +86,70 @@ if (-not $updateAppSettingsResponse) {
 # ============================================
 # 3. Update connection ACLs
 # ============================================
-Write-Output "Updating access policies for existing connections"
 
 # Get managed API connections from connections.json
 $connectionsJsonPath = Join-Path $currentDir "connections.json"
-$connectionsJson = Get-Content -Path $connectionsJsonPath -Raw
-$connections = $connectionsJson | ConvertFrom-Json
+$hasConnections = Test-Path $connectionsJsonPath
 
-# Get logic app system-assigned identity info
-$logicAppUri = "https://management.azure.com/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/Microsoft.Web/sites/${logicAppName}?api-version=2022-03-01"
-$logicAppInfo = Invoke-RestMethod -Method GET `
-    -Uri $logicAppUri `
-    -Headers $headers
-$principalId = $logicAppInfo.identity.principalId
-$tenantId = $logicAppInfo.identity.tenantId
-$accessPolicyName = "$logicAppName-$principalId"
+if ($hasConnections) {
+    Write-Output "Updating access policies for existing connections"
 
-$connections.managedApiConnections.PSObject.Properties | ForEach-Object {
-    $connectionName = $_.Name
-    $connection = $_.Value
+    $connectionsJson = Get-Content -Path $connectionsJsonPath -Raw
+    $connections = $connectionsJson | ConvertFrom-Json
 
-    Write-Output "-Updating connection '$connectionName'"
+    # Get logic app system-assigned identity info
+    $logicAppUri = "https://management.azure.com/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/Microsoft.Web/sites/${logicAppName}?api-version=2022-03-01"
+    $logicAppInfo = Invoke-RestMethod -Method GET `
+        -Uri $logicAppUri `
+        -Headers $headers
+    $principalId = $logicAppInfo.identity.principalId
+    $tenantId = $logicAppInfo.identity.tenantId
+    $accessPolicyName = "$logicAppName-$principalId"
 
-    $headers = @{ Authorization = "Bearer $accessToken" }
+    $connections.managedApiConnections.PSObject.Properties | ForEach-Object {
+        $connectionName = $_.Name
+        $connection = $_.Value
 
-    # Get connection info
-    $deployedConnectionName = ($connection.connection.id -split "/")[-1]
-    $connectionUri = "https://management.azure.com/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/Microsoft.Web/connections/${deployedConnectionName}?api-version=2016-06-01"
-    $connectionInfo = Invoke-RestMethod -Method GET `
-        -Uri $connectionUri `
-        -Headers $headers `
-        -ContentType "application/json"
+        Write-Output "-Updating connection '$connectionName'"
 
-    # Set access policy
-    $accessPolicyUri = "https://management.azure.com/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/Microsoft.Web/connections/$deployedConnectionName/accessPolicies/${accessPolicyName}?api-version=2018-07-01-preview"
-    $headers = @{
-        Authorization = "Bearer $accessToken"
-        "Content-Type" = "application/json"
-    }
-    $body = @{
-        name = $accessPolicyName
-        type = "Microsoft.Web/connections/accessPolicy"
-        location = $connectionInfo.location
-        properties = @{
-            principal = @{
-                type = "ActiveDirectory"
-                identity = @{
-                    objectId = $principalId
-                    tenantId = $tenantId
+        $headers = @{ Authorization = "Bearer $accessToken" }
+
+        # Get connection info
+        $deployedConnectionName = ($connection.connection.id -split "/")[-1]
+        $connectionUri = "https://management.azure.com/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/Microsoft.Web/connections/${deployedConnectionName}?api-version=2016-06-01"
+        $connectionInfo = Invoke-RestMethod -Method GET `
+            -Uri $connectionUri `
+            -Headers $headers `
+            -ContentType "application/json"
+
+        # Set access policy
+        $accessPolicyUri = "https://management.azure.com/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/Microsoft.Web/connections/$deployedConnectionName/accessPolicies/${accessPolicyName}?api-version=2018-07-01-preview"
+        $headers = @{
+            Authorization = "Bearer $accessToken"
+            "Content-Type" = "application/json"
+        }
+        $body = @{
+            name = $accessPolicyName
+            type = "Microsoft.Web/connections/accessPolicy"
+            location = $connectionInfo.location
+            properties = @{
+                principal = @{
+                    type = "ActiveDirectory"
+                    identity = @{
+                        objectId = $principalId
+                        tenantId = $tenantId
+                    }
                 }
             }
+        } | ConvertTo-Json -Depth 6 -Compress
+        $response = Invoke-RestMethod -Method PUT `
+            -Uri $accessPolicyUri `
+            -Headers $headers `
+            -Body $body
+        if (-not $response) {
+            Write-Error "ERROR: Failed to update connection access policy for connection '$deployedConnectionName'."
+            exit 1
         }
-    } | ConvertTo-Json -Depth 5 -Compress
-    $response = Invoke-RestMethod -Method PUT `
-        -Uri $accessPolicyUri `
-        -Headers $headers `
-        -Body $body
-    if (-not $response) {
-        Write-Error "ERROR: Failed to update connection access policy for connection '$deployedConnectionName'."
-        exit 1
     }
 }
 
@@ -157,52 +162,48 @@ if (Test-Path $tempDeployPath) {
     Remove-Item -Path $tempDeployPath -Recurse -Force
 }
 
-# Update authentication in connections.json or parameters.json (if connections parameterized)
-Write-Output "Preparing files for deployment"
-
-$authValue = @{ type = "ManagedServiceIdentity" }
-$parametersJsonPath = Join-Path $currentDir "parameters.json"
-$connectionsJsonPath = Join-Path $currentDir "connections.json"
-if (-not (Test-Path $connectionsJsonPath)) {
-    Write-Error "ERROR: connections.json file not found in the current directory."
-    exit 1
-}
-$connectionsJson = Get-Content -Path $connectionsJsonPath -Raw
-$connections = $connectionsJson | ConvertFrom-Json
-if (Test-Path $parametersJsonPath) {
-    $parametersJson = Get-Content -Path $parametersJsonPath -Raw
-    $parameters = $parametersJson | ConvertFrom-Json
-    foreach ($connectionName in $connections.managedApiConnections.PSObject.Properties.Name) {
-        $parameters."$connectionName-Authentication".value = $authValue
-    }
-} else {
-    foreach ($connectionName in $connections.managedApiConnections.PSObject.Properties.Name) {
-        $connections."$connectionName".authentication = $authValue
-    }
-}
-
 # Validate deployment files and copy to temp folder
 Write-Output "Validating and preparing files for deployment"
 
 New-Item -ItemType Directory -Path $tempDeployPath | Out-Null
 
-if ($parameters) {
-    # If connections parameterized, copy updated parameters.json and unmodified connections.json
-    $parametersJson = $parameters | ConvertTo-Json
-    $parametersJson = $parametersJson -replace '\\u0027', "'"
-    $parametersTargetPath = Join-Path $tempDeployPath "parameters.json"
-    $parametersJson | Out-File -FilePath $parametersTargetPath
-    Copy-Item $connectionsJsonPath -Destination $tempDeployPath -Force
+# Update authentication in connections.json or parameters.json (if connections parameterized)
+$authValue = @{ type = "ManagedServiceIdentity" }
+
+$parametersJsonPath = Join-Path $currentDir "parameters.json"
+$hasParameters = Test-Path $parametersJsonPath
+if ($hasParameters) {
+    $parametersJson = Get-Content -Path $parametersJsonPath -Raw
+    $parameters = $parametersJson | ConvertFrom-Json
 } else {
-    # If connections not parameterized, copy updated connections.json and empty parameters.json
-    $connectionsJson = $connections | ConvertTo-Json
-    $connectionsJson = $connectionsJson -replace '\\u0027', "'"
-    $connectionsTargetPath = Join-Path $tempDeployPath "connections.json"
-    $connectionsJson | Out-File -FilePath $connectionsTargetPath
-    $parametersJson = {} | ConvertTo-Json
-    $parametersTargetPath = Join-Path $tempDeployPath "parameters.json"
-    $parametersJson | Out-File -FilePath $parametersTargetPath
+    $parameters = @{}
 }
+
+if ($hasConnections) {
+    $connectionsJson = Get-Content -Path $connectionsJsonPath -Raw
+    $connections = $connectionsJson | ConvertFrom-Json
+
+    foreach ($connectionName in $connections.managedApiConnections.PSObject.Properties.Name) {
+        if ($parameters.PSObject.Properties.Name -contains "$connectionName-Authentication") {
+            $parameters."$connectionName-Authentication".value = $authValue
+        } else {
+            $connections.managedApiConnections."$connectionName".authentication = $authValue
+        }
+    }
+} else {
+    $connections = @{}
+}
+
+# Copy updated parameters.json and connections.json
+$parametersJson = $parameters | ConvertTo-Json -Depth 6
+$parametersJson = $parametersJson -replace '\\u0027', "'"
+$parametersTargetPath = Join-Path $tempDeployPath "parameters.json"
+$parametersJson | Out-File -FilePath $parametersTargetPath
+
+$connectionsJson = $connections | ConvertTo-Json -Depth 6
+$connectionsJson = $connectionsJson -replace '\\u0027', "'"
+$connectionsTargetPath = Join-Path $tempDeployPath "connections.json"
+$connectionsJson | Out-File -FilePath $connectionsTargetPath
 
 $hostJsonPath = Join-Path $currentDir "host.json"
 if (Test-Path $hostJsonPath) {
