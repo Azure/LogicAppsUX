@@ -6,19 +6,8 @@ import * as path from 'path';
 import { workflowCodeTypeForTelemetry } from '../../../../utils/codeful/utils';
 import { Progress } from 'vscode';
 import { parseJson } from '../../../../utils/parseJson';
-import { readFile } from 'fs';
 
-// Mock fs-extra and parseJson
-vi.mock('fs-extra', () => ({
-  pathExists: vi.fn(),
-  readFile: vi.fn(),
-}));
-
-vi.mock('../../../../utils/parseJson', () => ({
-  parseJson: vi.fn(),
-}));
-
-describe('WorkflowCreateStepBase', () => {
+describe('WorkflowCreateStepBase', async () => {
   class MockWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionWizardContext> {
     public executeCore = vi.fn().mockResolvedValue('testPath');
     public shouldExecute = vi.fn().mockReturnValue(true);
@@ -31,7 +20,7 @@ describe('WorkflowCreateStepBase', () => {
     },
   };
 
-  describe('execute', () => {
+  describe('execute', async () => {
     const mockContextForExecute: Partial<IFunctionWizardContext> = {
       ...mockContext,
       functionTemplate: {
@@ -109,7 +98,7 @@ describe('WorkflowCreateStepBase', () => {
     };
 
     it("returns defaultValue when file doesn't exist", async () => {
-      // Setu[
+      // Setup
       (fse.pathExists as unknown as Mock).mockReturnValue(Promise.resolve(false));
 
       // Execute

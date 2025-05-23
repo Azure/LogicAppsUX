@@ -24,8 +24,9 @@ import {
   codefulWorkflowFileName,
   appKindSetting,
   logicAppKind,
+  functionsInprocNet8EnabledTrue,
 } from '../../../constants';
-import { removeAppKindFromLocalSettings, setLocalAppSetting } from '../../utils/appSettings/localSettings';
+import { setLocalAppSetting } from '../../utils/appSettings/localSettings';
 import { validateDotnetInstalled } from '../../utils/dotnet/executeDotnetTemplateCommand';
 import { switchToDotnetProject } from '../workflows/switchToDotnetProject';
 import * as vscode from 'vscode';
@@ -89,15 +90,15 @@ export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionW
     }
   }
 
-  private async createSystemArtifacts(context: IFunctionWizardContext): Promise<void> {
-    const target = vscode.Uri.file(context.projectPath);
-
-    await switchToDotnetProject(context, target, '8', true);
-
-    await this.updateHostJson(context, hostFileName);
-
+  public async updateAppSettings(context: IFunctionWizardContext): Promise<void> {
     await setLocalAppSetting(context, context.projectPath, workerRuntimeKey, WorkerRuntime.Dotnet, MismatchBehavior.Overwrite);
-    await setLocalAppSetting(context, context.projectPath, functionsInprocNet8Enabled, '1', MismatchBehavior.Overwrite);
+    await setLocalAppSetting(
+      context,
+      context.projectPath,
+      functionsInprocNet8Enabled,
+      functionsInprocNet8EnabledTrue,
+      MismatchBehavior.Overwrite
+    );
     await setLocalAppSetting(context, context.projectPath, appKindSetting, logicAppKind, MismatchBehavior.Overwrite);
     await setLocalAppSetting(
       context,
@@ -106,7 +107,16 @@ export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionW
       localEmulatorConnectionString,
       MismatchBehavior.Overwrite
     );
-    await removeAppKindFromLocalSettings(context.projectPath, context);
+  }
+
+  public async createSystemArtifacts(context: IFunctionWizardContext): Promise<void> {
+    const target = vscode.Uri.file(context.projectPath);
+
+    await switchToDotnetProject(context, target, '8', true);
+
+    await this.updateHostJson(context, hostFileName);
+
+    await this.updateAppSettings(context);
   }
 }
 
