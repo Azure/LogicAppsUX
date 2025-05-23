@@ -29,6 +29,7 @@ import * as vscode from 'vscode';
 import * as fse from 'fs-extra';
 import { ext } from '../../../../extensionVariables';
 import { convertToWorkspace } from '../../createNewCodeProject/CodeProjectBase/ConvertToWorkspace';
+import { syncCloudSettings } from '../../syncCloudSettings';
 
 /**
  * Creates a unit test for a Logic App workflow (codeful only), with telemetry logging and error handling.
@@ -177,6 +178,8 @@ export async function saveBlankUnitTest(context: IActionContext, node: vscode.Ur
     } catch (solutionError) {
       ext.outputChannel.appendLog(`Failed to update solution: ${solutionError}`);
     }
+
+    await syncCloudSettings(context, vscode.Uri.file(projectPath));
   } catch (error) {
     // Handle errors using the helper function
     logTelemetry(context, {
