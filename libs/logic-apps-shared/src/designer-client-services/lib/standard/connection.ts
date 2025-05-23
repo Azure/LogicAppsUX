@@ -164,6 +164,10 @@ export class StandardConnectionService extends BaseConnectionService implements 
       const { apiVersion, baseUrl, httpClient } = this._options;
 
       let response = null;
+      const connectorIdKeyword = connectorId.split('/').at(-1);
+      if (connectorIdKeyword === 'agent') {
+        return agentloopConnector;
+      }
       if (isHybridLogicApp(baseUrl)) {
         response = await httpClient.post<any, null>({
           uri: `${getHybridAppBaseRelativeUrl(baseUrl.split('hostruntime')[0])}/invoke?api-version=${hybridApiVersion}`,
@@ -173,11 +177,6 @@ export class StandardConnectionService extends BaseConnectionService implements 
           },
         });
       } else {
-        const connectorIdKeyword = connectorId.split('/').at(-1);
-        if (connectorIdKeyword === 'agent') {
-          return agentloopConnector;
-        }
-
         response = await httpClient.get<Connector>({
           uri: `${baseUrl}/operationGroups/${connectorIdKeyword}?api-version=${apiVersion}`,
         });
