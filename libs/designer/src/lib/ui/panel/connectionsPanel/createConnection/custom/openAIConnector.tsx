@@ -294,9 +294,8 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
                     if (option?.key) {
                       const serviceProjectId = option?.key as string;
                       const serviceProjectName = option?.data as string;
-                      const cognitiveServiceAccounName = cognitiveServiceAccountId.split('/').splice(-1);
+                      const cognitiveServiceAccounName = cognitiveServiceAccountId.split('/').pop();
                       const openAIEndpoint = `https://${cognitiveServiceAccounName}.services.ai.azure.com/api/projects/${serviceProjectName}`;
-
                       setSelectedCognitiveServiceProject(serviceProjectId);
                       setValue(serviceProjectId);
                       setKeyValue?.('openAIEndpoint', openAIEndpoint);
