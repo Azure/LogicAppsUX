@@ -186,7 +186,7 @@ async function updateBuildFile(context: IActionContext, target: vscode.Uri, dotn
   xmlBuildFile = JSON.parse(xmlBuildFile);
   xmlBuildFile = addNugetPackagesToBuildFile(xmlBuildFile);
   if (isCodeful) {
-    xmlBuildFile = addNugetPackagesToBuildFileByName(xmlBuildFile, 'Microsoft.Azure.WebJobs.Extensions.DurableTask', '3.0.4');
+    xmlBuildFile = addNugetPackagesToBuildFileByName(xmlBuildFile, 'Microsoft.Azure.WebJobs.Extensions.DurableTask', '2.9.0');
     xmlBuildFile = addNugetPackagesToBuildFileByName(xmlBuildFile, 'Microsoft.Azure.Workflows.WebJobs.Extension', '1.126.0.16');
     xmlBuildFile = addNugetPackagesToBuildFileByName(xmlBuildFile, 'Microsoft.Azure.Workflows.Sdk', '1.126.0.16');
   }
