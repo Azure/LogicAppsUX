@@ -39,6 +39,7 @@ import type { WebviewApi } from 'vscode-webview';
 import { CustomEditorService } from './customEditorService';
 import packagejson from '../../../package.json';
 import { LoggerService } from '../services/Logger';
+import { CustomConnectionParameterEditorService } from './services/customConnectionParameterEditorService';
 
 export interface IDesignerServices {
   connectionService: StandardConnectionService;
@@ -55,6 +56,8 @@ export interface IDesignerServices {
   apimService: BaseApiManagementService;
   functionService: BaseFunctionService;
   loggerService: ILoggerService;
+  connectionParameterEditorService: CustomConnectionParameterEditorService;
+  cognitiveServiceService: BaseCognitiveServiceService;
 }
 
 export const getDesignerServices = (
@@ -346,6 +349,8 @@ export const getDesignerServices = (
     designerVersion: packagejson.version,
   });
 
+  const connectionParameterEditorService = new CustomConnectionParameterEditorService();
+
   return {
     connectionService,
     connectorService,
@@ -360,6 +365,7 @@ export const getDesignerServices = (
     editorService,
     apimService,
     loggerService,
+    connectionParameterEditorService,
     cognitiveServiceService,
     functionService,
   };
