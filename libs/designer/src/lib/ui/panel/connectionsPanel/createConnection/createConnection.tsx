@@ -87,6 +87,7 @@ export interface CreateConnectionProps {
   gatewayServiceConfig?: Partial<GatewayServiceConfig>;
   checkOAuthCallback: (parameters: Record<string, ConnectionParameter>) => boolean;
   resourceSelectorProps?: AzureResourcePickerProps;
+  isAgentServiceConnection?: boolean;
 }
 
 export const CreateConnection = (props: CreateConnectionProps) => {
@@ -112,6 +113,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     availableGateways,
     gatewayServiceConfig,
     resourceSelectorProps,
+    isAgentServiceConnection,
   } = props;
 
   const intl = useIntl();
@@ -139,16 +141,20 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   );
 
   const isHiddenAuthKey = useCallback((key: string) => ConnectionService().getAuthSetHideKeys?.()?.includes(key) ?? false, []);
-
   const connectionParameterSets: ConnectionParameterSets | undefined = useMemo(() => {
     if (!_connectionParameterSets) {
       return undefined;
     }
+
+    const filteredValues = _connectionParameterSets.values
+      .filter((set) => !isHiddenAuthKey(set.name))
+      .filter((set) => !isAgentServiceConnection || set.name === 'ManagedServiceIdentity');
+
     return {
       ..._connectionParameterSets,
-      values: _connectionParameterSets.values.filter((set) => !isHiddenAuthKey(set.name)),
+      values: filteredValues,
     };
-  }, [_connectionParameterSets, isHiddenAuthKey]);
+  }, [_connectionParameterSets, isAgentServiceConnection, isHiddenAuthKey]);
 
   const singleAuthParams = useMemo(
     () => ({
@@ -556,6 +562,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
       identity,
       parameterSet: connectionParameterSets?.values[selectedParamSetIndex],
       setKeyValue: (customKey: string, val: any) => setParameterValues((values) => ({ ...values, [customKey]: val })),
+      isAgentServiceConnection: isAgentServiceConnection,
     };
 
     const customParameterOptions = ConnectionParameterEditorService()?.getConnectionParameterEditor({

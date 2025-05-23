@@ -30,18 +30,21 @@ import { ConfigureWorkflowsPanel } from '../panels/configureWorkflowsPanel/confi
 import { DescriptionWithLink, tableHeaderStyle, ErrorBar } from '../common';
 import { workflowsHaveErrors } from '../../../core/configuretemplate/utils/errors';
 import EBookIcon from '../../../common/images/templates/openbook.svg';
+import { useTemplateWorkflows } from '../../../core/configuretemplate/utils/queries';
+import { getDateTimeString } from '../../../core/configuretemplate/utils/helper';
 
 export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean) => void }) => {
   const intl = useIntl();
-  const { workflows, currentPanelView, apiErrors, saveErrors, isLoading } = useSelector((state: RootState) => ({
+  const { workflows, currentPanelView, apiErrors, saveErrors, isLoading, templateId } = useSelector((state: RootState) => ({
     workflows: state.template.workflows ?? {},
     apiErrors: state.template.apiValidatationErrors?.workflows ?? {},
     saveErrors: state.template.apiValidatationErrors?.saveGeneral?.workflows,
     currentPanelView: state.panel.currentPanelView,
     isLoading: state.template.dataIsLoading,
+    templateId: state.template.manifest?.id as string,
   }));
   const hasErrors = useMemo(() => saveErrors || workflowsHaveErrors(apiErrors, workflows), [apiErrors, saveErrors, workflows]);
-
+  const { data: workflowResources, isLoading: workflowResourcesLoading } = useTemplateWorkflows(templateId);
   const dispatch = useDispatch<AppDispatch>();
   const isMultiWorkflow = Object.keys(workflows).length > 1;
 
@@ -116,7 +119,8 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
     displayName: string;
     state: string;
     trigger: string;
-    // date: string; //TODO: removed until back-end updates us
+    dateModified: string;
+    dateCreated: string;
   };
 
   const columns: TableColumnDefinition<WorkflowsTableItem>[] = [
@@ -132,26 +136,42 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
     createTableColumn<WorkflowsTableItem>({
       columnId: 'trigger',
     }),
-    //TODO: removed until back-end updates us
-    // createTableColumn<WorkflowsTableItem>({
-    //   columnId: 'date',
-    // }),
+    createTableColumn<WorkflowsTableItem>({
+      columnId: 'dateModified',
+    }),
+    createTableColumn<WorkflowsTableItem>({
+      columnId: 'dateCreated',
+    }),
   ];
 
-  const items =
-    Object.values(workflows)?.map((workflowData) => ({
-      id: workflowData.id,
-      name: workflowData?.workflowName ?? customResourceStrings.Placeholder,
-      displayName: workflowData?.manifest?.title ?? customResourceStrings.Placeholder,
-      state:
-        workflowData?.manifest?.kinds
-          ?.map((kind) =>
-            equals(kind, WorkflowKind.STATEFUL) ? stateTypes.STATEFUL : equals(kind, WorkflowKind.STATELESS) ? stateTypes.STATELESS : ''
-          )
-          ?.join(', ') ?? customResourceStrings.Placeholder,
-      trigger: workflowData?.triggerType,
-      // date: '-', //TODO: removed until back-end updates us
-    })) ?? [];
+  const items = useMemo(
+    () =>
+      Object.values(workflows)?.map((workflowData) => ({
+        id: workflowData.id,
+        name: workflowData?.workflowName ?? customResourceStrings.Placeholder,
+        displayName: workflowData?.manifest?.title ?? customResourceStrings.Placeholder,
+        state:
+          workflowData?.manifest?.kinds
+            ?.map((kind) =>
+              equals(kind, WorkflowKind.STATEFUL) ? stateTypes.STATEFUL : equals(kind, WorkflowKind.STATELESS) ? stateTypes.STATELESS : ''
+            )
+            ?.join(', ') ?? customResourceStrings.Placeholder,
+        trigger: workflowData?.triggerType,
+        dateModified: workflowResourcesLoading
+          ? customResourceStrings.Placeholder
+          : getDateTimeString(
+              (workflowResources ?? []).find((workflow) => equals(workflow.name, workflowData.id))?.systemData?.lastModifiedAt ?? '',
+              customResourceStrings.Placeholder
+            ),
+        dateCreated: workflowResourcesLoading
+          ? customResourceStrings.Placeholder
+          : getDateTimeString(
+              (workflowResources ?? []).find((workflow) => equals(workflow.name, workflowData.id))?.systemData?.createdAt ?? '',
+              customResourceStrings.Placeholder
+            ),
+      })) ?? [],
+    [customResourceStrings.Placeholder, stateTypes.STATEFUL, stateTypes.STATELESS, workflowResources, workflowResourcesLoading, workflows]
+  );
 
   const {
     getRows,
@@ -205,7 +225,7 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
       <DescriptionWithLink
         text={customResourceStrings.WorkflowsTabDescription}
         linkText={customResourceStrings.LearnMore}
-        linkUrl="https://docs.microsoft.com/azure/logic-apps/logic-apps-overview"
+        linkUrl="https://go.microsoft.com/fwlink/?linkid=2321817"
         className={mergeStyles({ marginLeft: '-1px', width: '70%' })}
       />
 
@@ -239,6 +259,8 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
               {isMultiWorkflow && <TableHeaderCell style={tableHeaderStyle}>{customResourceStrings.WorkflowDisplayName}</TableHeaderCell>}
               <TableHeaderCell style={tableHeaderStyle}>{customResourceStrings.State}</TableHeaderCell>
               <TableHeaderCell style={tableHeaderStyle}>{customResourceStrings.Trigger}</TableHeaderCell>
+              <TableHeaderCell style={tableHeaderStyle}>{customResourceStrings.LastModified}</TableHeaderCell>
+              <TableHeaderCell style={tableHeaderStyle}>{customResourceStrings.CreatedDate}</TableHeaderCell>
             </TableRow>
           </TableHeader>
           {rows.map(({ item, selected, onClick, onKeyDown, appearance }) => (
@@ -258,10 +280,12 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
               <TableCell>
                 <TableCellLayout>{item.trigger}</TableCellLayout>
               </TableCell>
-              {/* //TODO: removed until back-end updates us
-                  <TableCell>
-                    <TableCellLayout>{item.date}</TableCellLayout>
-                  </TableCell> */}
+              <TableCell>
+                <TableCellLayout>{item.dateModified}</TableCellLayout>
+              </TableCell>
+              <TableCell>
+                <TableCellLayout>{item.dateCreated}</TableCellLayout>
+              </TableCell>
             </TableRow>
           ))}
         </Table>
@@ -274,7 +298,7 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
           <DescriptionWithLink
             text={customResourceStrings.WorkflowsTabDescription}
             linkText={customResourceStrings.LearnMore}
-            linkUrl="https://docs.microsoft.com/azure/logic-apps/logic-apps-overview"
+            linkUrl="https://go.microsoft.com/fwlink/?linkid=2321817"
             className={mergeStyles({ width: '40%', marginTop: 0 })}
           />
           <div style={{ padding: '10px 0' }}>

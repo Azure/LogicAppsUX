@@ -938,9 +938,10 @@ export function generateTriggerActionMockClass(mockType: string, mockClassName: 
 /**
  * Recursively builds a single C# class string from a ClassDefinition and any child classes it might have.
  * @param {ClassDefinition} classDef - The definition of the class to generate.
+ * @param {boolean} isMockableHttpType - Determines if the mockable type is http.
  * @returns {string} - The C# code for this class (including any nested classes), as a string.
  */
-export function generateClassCode(classDef: ClassDefinition): string {
+export function generateClassCode(classDef: ClassDefinition, isMockableHttpType: boolean): string {
   const sb: string[] = [];
 
   if (classDef.description) {
@@ -951,6 +952,10 @@ export function generateClassCode(classDef: ClassDefinition): string {
 
   sb.push(`    public class ${classDef.className}${classDef.inheritsFrom ? ` : ${classDef.inheritsFrom}` : ''}`);
   sb.push('    {');
+  if (classDef.inheritsFrom === 'MockOutput' && isMockableHttpType) {
+    sb.push('        public HttpStatusCode StatusCode {get; set;}');
+    sb.push('');
+  }
 
   for (const prop of classDef.properties) {
     if (prop.description) {
@@ -970,7 +975,7 @@ export function generateClassCode(classDef: ClassDefinition): string {
   sb.push('        /// </summary>');
   sb.push(`        public ${classDef.className}()`);
   sb.push('        {');
-  if (classDef.inheritsFrom === 'MockOutput') {
+  if (classDef.inheritsFrom === 'MockOutput' && isMockableHttpType) {
     sb.push('            this.StatusCode = HttpStatusCode.OK;');
   }
 
@@ -998,7 +1003,7 @@ export function generateClassCode(classDef: ClassDefinition): string {
   sb.push('');
 
   for (const child of classDef.children) {
-    sb.push(generateClassCode(child));
+    sb.push(generateClassCode(child, isMockableHttpType));
   }
 
   return sb.join('\n');
@@ -1053,6 +1058,7 @@ export async function getOperationMockClassContent(
 
     // Only proceed if this operation type is mockable (using the new async isMockable)
     if (await isMockable(type)) {
+      const isMockableHttpType = await isMockableHttp(type);
       // Set operationName as className
       const cleanedOperationName = removeInvalidCharacters(operationName);
       let mockOutputClassName = toPascalCase(cleanedOperationName);
@@ -1076,7 +1082,8 @@ export async function getOperationMockClassContent(
         workflowName,
         mockType,
         mockClassName,
-        outputs
+        outputs,
+        isMockableHttpType
       );
       mockClassContent[mockOutputClassName] = classContent;
 
@@ -1094,11 +1101,12 @@ export async function getOperationMockClassContent(
 /**
  * Generates a C# class definition as a string.
  * @param {string} logicAppName - The name of the Logic App, used as the namespace.
- * @param {string} className - The name of the class to generate.
+ * @param {string} rootClassName - The name of the class to generate.
  * @param {string} workflowName - The workflow name the class belongs to.
  * @param {string} mockType - The mockType of the class to generate.
  * @param {string} mockClassName - The mockType of the class to generate.
- * @param {any} outputs - The outputs object containing properties to include in the class.
+ * @param {any} data - The data object containing properties to include in the class.
+ * @param {boolean} isMockableHttpType - Determines if the mockable type is http.
  * @returns {string} - The generated C# class definition.
  */
 export function generateCSharpClasses(
@@ -1107,7 +1115,8 @@ export function generateCSharpClasses(
   workflowName: string,
   mockType: string,
   mockClassName: string,
-  data: any
+  data: any,
+  isMockableHttpType: boolean
 ): string {
   // Build a root class definition (the entire data is assumed to be an object).
   // If data isn't type "object", you might want special handling, but typically
@@ -1139,7 +1148,7 @@ export function generateCSharpClasses(
     'System.Net',
     'System',
   ];
-  const classCode = generateClassCode(rootDef);
+  const classCode = generateClassCode(rootDef, isMockableHttpType);
   // wrap it all in the needed "using" statements + namespace.
   return [
     ...requiredNamespaces.map((ns) => `using ${ns};`),
@@ -1152,13 +1161,11 @@ export function generateCSharpClasses(
   ].join('\n');
 }
 
-// Static sets for mockable operation types
-const mockableActionTypes = new Set<string>(['Http', 'InvokeFunction', 'Function', 'ServiceProvider', 'ApiManagement', 'ApiConnection']);
-
-const mockableTriggerTypes = new Set<string>(['HTTPWEBHOOK', 'REQUEST', 'MANUAL', 'APICONNECTIONWEBHOOK']);
-
 // This set will be populated from the runtime API
 const mockableOperationTypes = new Set<string>();
+
+// This set will be populated from the runtime API
+const mockableHttpOperationTypes = new Set<string>();
 
 /**
  * Retrieves the mockable operation types from the runtime API and populates the set.
@@ -1179,11 +1186,49 @@ export async function getMockableOperationTypes(): Promise<void> {
     const response = await axios.get(listMockableOperationsUrl);
     response.data.forEach((mockableOperation: string) => mockableOperationTypes.add(mockableOperation.toUpperCase()));
   } catch (apiError: any) {
+    ext.telemetryReporter.sendTelemetryEvent('listMockableOperations', { ...apiError });
     if (axios.isAxiosError(apiError)) {
       ext.outputChannel.appendLog(
         localize(
           'errorListMockableOperationsFailed',
           `Request to ${listMockableOperationsUrl} failed with status: {0}, message: {1}, response: {2}`,
+          apiError.response?.status,
+          apiError.response?.statusText,
+          JSON.stringify(apiError.response?.data || {})
+        )
+      );
+    }
+    throw apiError;
+  }
+}
+
+/**
+ * Retrieves the mockable http operation types from the runtime API and populates the set.
+ * Throws an error if the design time port is undefined or if the request fails.
+ */
+export async function getMockableHttpOperationTypes(): Promise<void> {
+  // The listMockableOperations API can be called on any design time instance, get first in map by default
+  const designTimePort = ext.designTimeInstances.values()?.next()?.value?.port;
+  if (!designTimePort) {
+    throw new Error(
+      localize('errorStandardResourcesApi', 'Design time port is undefined. Please retry once Azure Functions Core Tools has started.')
+    );
+  }
+  const baseUrl = `http://localhost:${designTimePort}`;
+  const listMockableHttpOperationsUrl = `${baseUrl}/runtime/webhooks/workflow/api/management/listMockableHttpOperations`;
+  ext.outputChannel.appendLog(
+    localize('listMockableHttpOperations', `Fetching unit test mockable http operations at ${listMockableHttpOperationsUrl}`)
+  );
+  try {
+    const response = await axios.get(listMockableHttpOperationsUrl);
+    response.data.forEach((mockableOperation: string) => mockableHttpOperationTypes.add(mockableOperation.toUpperCase()));
+  } catch (apiError: any) {
+    ext.telemetryReporter.sendTelemetryEvent('listMockableHttpOperations', { ...apiError });
+    if (axios.isAxiosError(apiError)) {
+      ext.outputChannel.appendLog(
+        localize(
+          'errorListMockableOperationsFailed',
+          `Request to ${listMockableHttpOperationsUrl} failed with status: {0}, message: {1}, response: {2}`,
           apiError.response?.status,
           apiError.response?.statusText,
           JSON.stringify(apiError.response?.data || {})
@@ -1212,12 +1257,25 @@ export async function isMockable(type: string): Promise<boolean> {
   if (mockableOperationTypes.has(normalizedType)) {
     return true;
   }
-  // Otherwise, check the static sets (action and trigger types)
-  // TODO: We shouldn't require these checks if listMockableOperations returns all mockable operations, is there an issue with the API?
-  if (Array.from(mockableActionTypes).some((t) => t.toUpperCase() === normalizedType)) {
-    return true;
+  return false;
+}
+
+/**
+ * Determines if a given operation type can be mocked.
+ * This asynchronous function first ensures that runtime mockable operations are fetched,
+ * then checks if the provided type exists (in a case-insensitive manner) in the runtime set,
+ * or in the static action/trigger sets.
+ * @param type - The operation type.
+ * @returns A Promise that resolves to true if the operation is mockable, false otherwise.
+ */
+export async function isMockableHttp(type: string): Promise<boolean> {
+  if (mockableHttpOperationTypes.size === 0) {
+    await getMockableHttpOperationTypes();
   }
-  if (Array.from(mockableTriggerTypes).some((t) => t.toUpperCase() === normalizedType)) {
+  const normalizedType = type.toUpperCase();
+
+  // First, check if the runtime API indicates this type is mockable
+  if (mockableHttpOperationTypes.has(normalizedType)) {
     return true;
   }
   return false;

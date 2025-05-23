@@ -111,6 +111,7 @@ const serviceProviderLocation = 'serviceProviderConnections';
 const functionsLocation = 'functionConnections';
 const apimLocation = 'apiManagementConnections';
 const agentLocation = 'agentConnections';
+export const foundryServiceConnectionRegex = /\/Microsoft\.CognitiveServices\/accounts\/[^/]+\/projects\/[^/]+/;
 
 export interface StandardConnectionServiceOptions {
   apiVersion: string;
@@ -572,7 +573,7 @@ export class StandardConnectionService extends BaseConnectionService implements 
         break;
       }
       case ConnectionType.Agent: {
-        const { connectionAndSettings } = convertToAgentConnectionsData(connectionName, connector.id, connectionInfo, parametersMetadata);
+        const { connectionAndSettings } = convertToAgentConnectionsData(connectionName, connectionInfo, parametersMetadata);
         connectionsData = connectionAndSettings;
         connection = convertAgentConnectionDataToConnection(
           connectionsData.connectionKey,
@@ -733,7 +734,6 @@ function convertFunctionsConnectionDataToConnection(connectionKey: string, conne
 
 function convertToAgentConnectionsData(
   connectionKey: string,
-  connectorId: string,
   connectionInfo: ConnectionCreationInfo,
   connectionParameterMetadata: ConnectionParametersMetadata
 ): {
@@ -747,6 +747,10 @@ function convertToAgentConnectionsData(
     connectionParameterMetadata
   );
 
+  const cognitiveServiceAccountId = parameterValues?.['cognitiveServiceAccountId'];
+  const isFoundryAgentServiceConnection =
+    equals(connectionParametersSetValues?.name ?? '', 'ManagedServiceIdentity', true) &&
+    foundryServiceConnectionRegex.test(cognitiveServiceAccountId);
   const connectionsData: ConnectionAndAppSetting<AgentConnectionModel> = {
     connectionKey,
     connectionData: {
@@ -756,8 +760,8 @@ function convertToAgentConnectionsData(
         key: equals(connectionParametersSetValues?.name ?? '', 'ManagedServiceIdentity', true) ? undefined : parameterValues?.['openAIKey'],
       },
       endpoint: parameterValues?.['openAIEndpoint'],
-      resourceId: parameterValues?.['cognitiveServiceAccountId'],
-      type: 'model',
+      resourceId: cognitiveServiceAccountId,
+      type: isFoundryAgentServiceConnection ? 'FoundryAgentService' : 'model',
     },
     settings,
     pathLocation: [agentLocation],

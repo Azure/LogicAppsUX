@@ -1,4 +1,39 @@
 # Logic Apps Designer
+## [5.109.0](https://github.com/Azure/LogicAppsUX/compare/v5.108.0...v5.109.0) (2025-05-22)
+
+
+### Features
+
+* **designer:** Add agent foundry service integration connection ([#7254](https://github.com/Azure/LogicAppsUX/issues/7254)) ([5ed04dd](https://github.com/Azure/LogicAppsUX/commit/5ed04dd0d1703f5f1b8ba2a4e215371d58c6b85f))
+
+## [5.108.0](https://github.com/Azure/LogicAppsUX/compare/v5.107.0...v5.108.0) (2025-05-22)
+
+
+### Features
+
+* **vscode:** Unit Test Status Code ([#7277](https://github.com/Azure/LogicAppsUX/issues/7277)) ([046be89](https://github.com/Azure/LogicAppsUX/commit/046be89e1c269a6462f014d826ddb4ab78cac606))
+
+
+### Bug Fixes
+
+* **designer:** Fix alphabetical sorting of sub-actions in OperationGroupDetailView component ([#7264](https://github.com/Azure/LogicAppsUX/issues/7264)) ([de44a26](https://github.com/Azure/LogicAppsUX/commit/de44a26b23de04ca74aa17dd44ea90e3a380ed4f))
+* **designer:** Remove expand/collapse teaching popup ([#7278](https://github.com/Azure/LogicAppsUX/issues/7278)) ([9add378](https://github.com/Azure/LogicAppsUX/commit/9add37812b0c0e2444ee16cb9ef5f6bcf7897413))
+* **vscode:** Auto update function core tools for major version difference ([#7279](https://github.com/Azure/LogicAppsUX/issues/7279)) ([6056cdd](https://github.com/Azure/LogicAppsUX/commit/6056cdd33480e53609ed0b4ab8e1f47826ce6699))
+
+## [5.107.0](https://github.com/Azure/LogicAppsUX/compare/v5.106.0...v5.107.0) (2025-05-20)
+
+
+### Features
+
+* **templates:** Adding created and last modified column in workflows and toaster ([#7274](https://github.com/Azure/LogicAppsUX/issues/7274)) ([fe03331](https://github.com/Azure/LogicAppsUX/commit/fe03331ac85a4748bde2c40a437da48790ceec98))
+
+
+### Bug Fixes
+
+* **designer:** Enable colorization and auto-indentation in Expression Editor ([#7268](https://github.com/Azure/LogicAppsUX/issues/7268)) ([7836e99](https://github.com/Azure/LogicAppsUX/commit/7836e995f4d33482fc96b09fcc973855e2de33e8))
+* **designer:** Fix trigger search bar placeholder text ([#7263](https://github.com/Azure/LogicAppsUX/issues/7263)) ([d88cb89](https://github.com/Azure/LogicAppsUX/commit/d88cb893d3088bd8fbb4d005f1590682e65a4bd7))
+* **designer:** Reverting part of https://github.com/Azure/LogicAppsUX/pull/7006 ([#7266](https://github.com/Azure/LogicAppsUX/issues/7266)) ([618b065](https://github.com/Azure/LogicAppsUX/commit/618b065447ac95d308e49791a97b539ad0b74784))
+
 ## [5.106.0](https://github.com/Azure/LogicAppsUX/compare/v5.105.0...v5.106.0) (2025-05-19)
 
 

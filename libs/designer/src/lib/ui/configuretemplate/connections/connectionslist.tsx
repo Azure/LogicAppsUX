@@ -8,6 +8,7 @@ import { useTemplatesStrings } from '../../templates/templatesStrings';
 import { useResourceStrings } from '../resources';
 import { DescriptionWithLink, ErrorBar } from '../common';
 import { mergeStyles } from '@fluentui/react';
+import { normalizeConnectorId } from '@microsoft/logic-apps-shared';
 
 export const TemplateConnectionsList = () => {
   const intl = useIntl();
@@ -42,18 +43,20 @@ export const TemplateConnectionsList = () => {
   const { connectorKinds } = useTemplatesStrings();
   const resourceStrings = useResourceStrings();
 
-  const { connections, error } = useSelector((state: RootState) => ({
+  const { connections, error, subscriptionId, location } = useSelector((state: RootState) => ({
     connections: state.template.connections,
     error: state.template.errors.connections,
+    subscriptionId: state.workflow.subscriptionId,
+    location: state.workflow.location,
   }));
   const items = useMemo(
     () =>
       Object.keys(connections).map((connectionKey) => ({
-        id: connections[connectionKey].connectorId,
+        id: normalizeConnectorId(connections[connectionKey].connectorId, subscriptionId, location),
         kind: connections[connectionKey].kind,
         connectionKey,
       })),
-    [connections]
+    [connections, location, subscriptionId]
   );
 
   const columns = [
@@ -74,7 +77,7 @@ export const TemplateConnectionsList = () => {
       <DescriptionWithLink
         text={resources.Description}
         linkText={resourceStrings.LearnMore}
-        linkUrl="https://learn.microsoft.com/en-us/azure/logic-apps/logic-apps-connector-overview"
+        linkUrl="https://go.microsoft.com/fwlink/?linkid=2321713"
         className={mergeStyles({ marginLeft: '-10px', width: '70%' })}
       />
       {error ? <ErrorBar title={resources.ErrorTitle} errorMessage={error} styles={{ marginLeft: '-10px' }} /> : null}
