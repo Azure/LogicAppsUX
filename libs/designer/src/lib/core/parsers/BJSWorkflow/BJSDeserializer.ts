@@ -380,7 +380,7 @@ const isAgentAction = (action: LogicAppsV2.ActionDefinition): action is LogicApp
 const isUntilAction = (action: LogicAppsV2.ActionDefinition) => action?.type?.toLowerCase() === 'until';
 
 export const buildGraphFromActions = (
-  actions: Record<string, LogicAppsV2.ActionDefinition>,
+  _actions: Record<string, LogicAppsV2.ActionDefinition>,
   graphId: string,
   parentNodeId: string | undefined,
   allActionNames: string[],
@@ -392,9 +392,30 @@ export const buildGraphFromActions = (
   let allActions: Operations = {};
   let nodesMetadata: NodesMetadata = {};
 
+  // Swap out the run-after data for transition data
+  //  Currently in monitoring view, Rohitha is swapping transitions out for run-after data
+  const actions = { ..._actions };
+  for (const [id, action] of Object.entries(actions)) {
+    if (action?.runAfter) {
+      const runAfterKeys = Object.keys(action.runAfter);
+      for (const target of runAfterKeys) {
+        if (actions[target]) {
+          if (!actions[target].transitions) {
+            actions[target].transitions = {};
+          }
+          actions[target].transitions[id] = {
+            ...actions[target].transitions[id],
+            when: action.runAfter[target],
+          };
+        }
+      }
+      delete action.runAfter;
+    }
+  }
+
   const rootIds = Object.keys(actions);
   // Iterate through actions, if the action has a transtion pointing to another action, remove that action from the rootIds
-  for (const action of Object.values(actions)) {
+  for (const [id, action] of Object.entries(actions)) {
     if (action?.transitions) {
       const transitionKeys = Object.keys(action.transitions);
       for (const target of transitionKeys) {
@@ -403,7 +424,12 @@ export const buildGraphFromActions = (
         }
       }
     }
+    if (action?.runAfter) {
+      rootIds.splice(rootIds.indexOf(id), 1);
+    }
   }
+
+  console.log('#> RootIds', JSON.parse(JSON.stringify({ graphId, rootIds, allIds: actions })));
 
   for (let [actionName, _action] of Object.entries(actions)) {
     if (pasteScopeParams) {
@@ -509,20 +535,6 @@ export const buildGraphFromActions = (
       ...nodesMetadata[actionName],
       ...(isRoot && { isRoot: true }),
     };
-    if (!isRoot) {
-      for (let [runAfterAction, runAfterValue] of Object.entries(action.runAfter ?? {})) {
-        // update the run after with the updated ids
-        if (pasteScopeParams && action.runAfter) {
-          // delete existing runAfter action first
-          delete action.runAfter[runAfterAction];
-          // get the new id from the renamed nodes
-          runAfterAction = pasteScopeParams.renamedNodes[runAfterAction] ?? runAfterAction;
-          // add the new id to the runAfter object
-          action.runAfter[runAfterAction] = runAfterValue;
-        }
-        edges.push(createWorkflowEdge(runAfterAction, actionName));
-      }
-    }
 
     // Assign transitions
     if (action.transitions) {

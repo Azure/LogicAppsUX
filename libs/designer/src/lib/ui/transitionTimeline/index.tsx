@@ -266,13 +266,13 @@ const TransitionTimeline = () => {
               left: '0px',
               width: '100%',
               height: '100%',
-              background: '#ffffffc0',
+              background: isInverted ? '#1b1a19c0' : '#ffffffc0',
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
             }}
           >
-            <Spinner label="Loading..." />
+            <Spinner label={expanded ? 'Loading...' : ''} />
           </div>
         ) : null}
         <Divider />
