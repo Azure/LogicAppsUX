@@ -1,5 +1,6 @@
 import {
   Button,
+  Link,
   Table,
   TableBody,
   TableCell,
@@ -20,6 +21,7 @@ import { MoreHorizontal16Filled } from '@fluentui/react-icons';
 import { CustomizeParameterPanel } from '../panels/customizeParameterPanel/customizeParameterPanel';
 import { DescriptionWithLink, ErrorBar } from '../common';
 import { mergeStyles } from '@fluentui/react';
+import { formatNameWithIdentifierToDisplay } from '../../../core/configuretemplate/utils/helper';
 
 export const TemplateParametersList = () => {
   const intl = useIntl();
@@ -51,10 +53,10 @@ export const TemplateParametersList = () => {
     parameterErrors: state.template.errors.parameters,
   }));
 
-  const parameterErrorIds = useMemo(() => {
+  const formattedParameterErrorIds = useMemo(() => {
     return Object.entries(parameterErrors)
       .filter(([_id, error]) => error)
-      .map(([id]) => id);
+      .map(([id]) => formatNameWithIdentifierToDisplay(id));
   }, [parameterErrors]);
 
   const isAccelerator = Object.keys(workflowsInTemplate).length > 1;
@@ -62,8 +64,8 @@ export const TemplateParametersList = () => {
 
   const columns = useMemo(() => {
     const baseColumn = [
-      { columnKey: 'displayName', label: resourceStrings.DisplayName },
       { columnKey: 'name', label: resourceStrings.Name },
+      { columnKey: 'displayName', label: resourceStrings.DisplayName },
       { columnKey: 'type', label: resourceStrings.Type },
       { columnKey: 'default', label: resourceStrings.DefaultValue },
       // { columnKey: 'allowedValues', label: resourceStrings.AllowedValues },  //TODO: revisit allowedValues
@@ -116,12 +118,12 @@ export const TemplateParametersList = () => {
       <DescriptionWithLink
         text={intlText.Description}
         linkText={resourceStrings.LearnMore}
-        linkUrl="https://learn.microsoft.com/en-us/azure/logic-apps/logic-apps-templates-parameters"
+        linkUrl="https://go.microsoft.com/fwlink/?linkid=2321714"
         className={mergeStyles({ marginLeft: '-10px', width: '70%' })}
       />
 
-      {parameterErrorIds.length ? (
-        <ErrorBar title={intlText.ErrorTitle} errorMessage={parameterErrorIds.join(', ')} styles={{ marginLeft: '-10px' }} />
+      {formattedParameterErrorIds.length ? (
+        <ErrorBar title={intlText.ErrorTitle} errorMessage={formattedParameterErrorIds.join(', ')} styles={{ marginLeft: '-10px' }} />
       ) : null}
 
       <Table aria-label={intlText.AriaLabel} size="small" style={{ width: '100%' }}>
@@ -138,15 +140,12 @@ export const TemplateParametersList = () => {
           {items.map((item) => (
             <TableRow key={item.name}>
               <TableCell>
-                <TableCellLayout>{item.displayName}</TableCellLayout>
-              </TableCell>
-              <TableCell>
                 <TableCellLayout
                   style={{
                     overflow: 'hidden',
                   }}
                 >
-                  <Text
+                  <Link
                     style={{
                       display: '-webkit-box',
                       WebkitLineClamp: 2,
@@ -154,10 +153,17 @@ export const TemplateParametersList = () => {
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
                     }}
+                    as="button"
+                    onClick={() => {
+                      handleSelectParameter(item.name);
+                    }}
                   >
-                    {item.name}
-                  </Text>
+                    {formatNameWithIdentifierToDisplay(item.name)}
+                  </Link>
                 </TableCellLayout>
+              </TableCell>
+              <TableCell>
+                <TableCellLayout>{item.displayName}</TableCellLayout>
               </TableCell>
               <TableCell>
                 <TableCellLayout>{item.type}</TableCellLayout>

@@ -5,13 +5,14 @@ import { TemplatesSection, type TemplatesSectionItem } from '@microsoft/designer
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../../core/state/templates/store';
 import { useIntl } from 'react-intl';
-import { equals, getResourceNameFromId } from '@microsoft/logic-apps-shared';
+import { equals, getResourceNameFromId, normalizeConnectorId } from '@microsoft/logic-apps-shared';
 import { ConnectorConnectionName } from '../../templates/connections/connector';
 import React, { useMemo } from 'react';
 import { useAllConnectors } from '../../../core/configuretemplate/utils/queries';
 import { WorkflowKind } from '../../../core/state/workflow/workflowInterfaces';
 import { DescriptionWithLink, ErrorBar } from '../common';
 import { mergeStyles } from '@fluentui/react';
+import { formatNameWithIdentifierToDisplay } from '../../../core/configuretemplate/utils/helper';
 
 const SectionDividerItem: TemplatesSectionItem = {
   type: 'divider',
@@ -228,8 +229,10 @@ const useWorkflowSectionItems = (resources: Record<string, string>) => {
 };
 
 const useConnectionSectionItems = (resources: Record<string, string>) => {
-  const { connections } = useSelector((state: RootState) => ({
+  const { connections, subscriptionId, location } = useSelector((state: RootState) => ({
     connections: state.template.connections,
+    subscriptionId: state.workflow.subscriptionId,
+    location: state.workflow.location,
   }));
 
   const connectionsValues = Object.values(connections);
@@ -239,12 +242,17 @@ const useConnectionSectionItems = (resources: Record<string, string>) => {
       {
         label: resources.ConnectorNameLabel,
         value: connection.connectorId,
-        onRenderItem: () => <ConnectorConnectionName connectorId={connection.connectorId} connectionKey={undefined} />,
+        onRenderItem: () => (
+          <ConnectorConnectionName
+            connectorId={normalizeConnectorId(connection.connectorId, subscriptionId, location)}
+            connectionKey={undefined}
+          />
+        ),
         type: 'custom',
       },
       {
         label: resources.ConnectorTypeLabel,
-        value: resources[connection.kind as string],
+        value: resources[connection.kind?.toLowerCase() as string],
         type: 'text',
       },
     ];
@@ -268,7 +276,7 @@ const useParameterSectionItems = (resources: Record<string, string>) => {
     const thisParameterSectionItems: TemplatesSectionItem[] = [
       {
         label: resources.ParameterName,
-        value: parameter.name ?? resources.Placeholder,
+        value: formatNameWithIdentifierToDisplay(parameter.name),
         type: 'text',
       },
       {
