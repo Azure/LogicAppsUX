@@ -40,6 +40,15 @@ describe('areAllConnectionsParameterized', () => {
           displayName: 'func01',
         },
       },
+      apiManagementConnections: {
+        apiManagement1: {
+          apiId:
+            '/subscriptions/subscription-test-id/resourceGroups/vs-code-debug/providers/Microsoft.ApiManagement/service/vscodeservicename/apis/echo-api',
+          baseUrl: "@parameters('apiManagementOperation-BaseUrl')",
+          subscriptionKey: "@appsetting('apiManagementOperation_SubscriptionKey')",
+          displayName: 'api01',
+        },
+      },
     };
 
     const result = areAllConnectionsParameterized(connectionsData);
