@@ -107,6 +107,14 @@ export class LoggerService implements ILoggerService {
       this.log({ ...logEntry, message: error });
     } else if (error instanceof Error) {
       this.log({ ...logEntry, message: error.message, args: [{ stack: error.stack ?? '', cause: error.cause ?? '' }] });
+    } else {
+      let serializedError: string;
+      try {
+        serializedError = JSON.stringify(error);
+      } catch {
+        serializedError = `Unable to serialize error of type: ${typeof error}`;
+      }
+      this.log({ ...logEntry, message: serializedError });
     }
   };
 }
