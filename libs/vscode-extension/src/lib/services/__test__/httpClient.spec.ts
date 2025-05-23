@@ -103,7 +103,7 @@ describe('HttpClient', () => {
       method: 'POST',
       url: `${baseUrl}/test-post`,
       headers: {
-        Authorization: '',
+        Authorization: 'test-token',
         'Content-Type': 'application/json',
         'x-ms-user-agent': 'LogicAppsDesigner/(host vscode 1.0.0)',
       },
