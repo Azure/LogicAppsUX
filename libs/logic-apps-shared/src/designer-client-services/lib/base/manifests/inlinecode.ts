@@ -149,16 +149,15 @@ export const inlinePythonManifest = {
     },
     inputs: {
       type: 'object',
-      required: ['connection', 'code'],
+      required: ['sessionPool', 'code'],
       properties: {
-        connection: {
+        sessionPool: {
           type: 'string',
           title: 'Session Pool',
           required: true,
           description: 'The container app session pool name you want to use.',
           'x-ms-connection-required': true,
           'x-ms-visibility': 'important',
-          'x-ms-editor': 'combobox',
         },
         code: {
           title: 'Code',
@@ -295,3 +294,5 @@ export const inlinePythonManifest = {
     },
   },
 } as OperationManifest;
+
+

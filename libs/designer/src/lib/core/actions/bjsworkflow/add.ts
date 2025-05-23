@@ -354,7 +354,7 @@ export const trySetDefaultConnectionForNode = async (
     dispatch(updateNodeConnection({ nodeId, connection, connector }));
   } else if (isConnectionRequired) {
     // these connectors use inline connections
-    if (connectorId !== '/connectionProviders/agent' && connectorId !== '/serviceProviders/acasession') {
+    if (connectorId !== Constants.CONNECTION_IDS.AGENT && connectorId !== Constants.CONNECTION_IDS.ACA_SESSION) {
       dispatch(initEmptyConnectionMap(nodeId));
       dispatch(openPanel({ nodeId, panelMode: 'Connection', referencePanelMode: 'Operation' }));
     }

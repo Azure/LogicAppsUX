@@ -40,8 +40,9 @@ export const useIsInlineConnection = (operationInfo: NodeOperation) => {
   }
   const manifest = result.data;
   return (
-    manifest?.properties.connector?.id === '/connectionProviders/agent' ||
-    manifest?.properties.connector?.id === '/serviceProviders/acasession'
+    manifest?.properties.connector?.id === Constants.CONNECTION_IDS.AGENT
+    //  ||
+    // manifest?.properties.connector?.id === Constants.CONNECTION_IDS.ACA_SESSION
   );
 };
 

@@ -2051,6 +2051,7 @@ export const updateDynamicDataInNode = async (
     outputs: {},
   };
   const nodeInputParameters = getRecordEntry(operations.inputParameters, nodeId) ?? { parameterGroups: {} };
+  console.log('nodeInputParameters', nodeInputParameters);
 
   const parameterDynamicValues: UpdateParametersPayload['parameters'] = [];
   for (const parameterKey of Object.keys(nodeDependencies?.inputs ?? {})) {
@@ -2079,6 +2080,8 @@ export const updateDynamicDataInNode = async (
       parameterDynamicValues.push(parameter);
     }
   }
+
+  console.log(connectionReference);
   if (parameterDynamicValues.length > 0) {
     dispatch(updateNodeParameters({ nodeId, parameters: parameterDynamicValues }));
   }
