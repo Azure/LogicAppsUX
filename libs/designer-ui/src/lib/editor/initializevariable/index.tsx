@@ -41,7 +41,7 @@ export const InitializeVariableEditor = ({
   const intl = useIntl();
   const [variables, setVariables] = useState<InitializeVariableProps[] | undefined>(() =>
     isAgentParameter
-      ? parseSchemaAsVariableEditorSegments(initialValue)
+      ? parseSchemaAsVariableEditorSegments(initialValue, props.loadParameterValueFromString)
       : parseVariableEditorSegments(initialValue, props.loadParameterValueFromString)
   );
 
