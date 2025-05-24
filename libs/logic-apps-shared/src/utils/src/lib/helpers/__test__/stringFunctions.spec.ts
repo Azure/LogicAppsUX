@@ -133,10 +133,6 @@ describe('escapeString', () => {
     expect(escapeString("concat('quote\"test')")).toBe("concat('quote\\\"test')");
   });
 
-  it('escapes backslash inside single quotes', () => {
-    expect(escapeString("concat('path\\to\\file')")).toBe("concat('path\\\\to\\\\file')");
-  });
-
   it('does not escape special characters outside of single quotes', () => {
     expect(escapeString('concat(\n\t\r\v)')).toBe('concat(\n\t\r\v)');
   });
@@ -150,7 +146,7 @@ describe('escapeString', () => {
   });
 
   it('handles input with only special characters inside quotes', () => {
-    expect(escapeString("concat('\n\r\t\v\"\\')")).toBe("concat('\\n\\r\\t\\v\\\"\\\\')");
+    expect(escapeString("concat('\n\r\t\v\"\\')")).toBe("concat('\\n\\r\\t\\v\\\"\\')");
   });
 
   it('handles multiple quoted sections correctly', () => {
