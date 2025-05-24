@@ -177,7 +177,7 @@ export function TokenPicker({
   }, [anchorKey, editor, windowDimensions.height]);
 
   const handleInitializeExpression = (s: string, n: NodeKey) => {
-    const escapedString = escapeString(s, /*requireSingleQuotesWrap*/ true);
+    const escapedString = escapeString(s);
     setExpression({ value: escapedString, selectionStart: 0, selectionEnd: 0 });
     setSelectedMode(TokenPickerMode.EXPRESSION);
     setNodeToBeUpdated(n);

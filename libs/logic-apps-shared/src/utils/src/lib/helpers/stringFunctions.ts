@@ -31,34 +31,6 @@ export const unwrapQuotesFromString = (s: string) => {
 
 export const normalizeEscapes = (key: string): string => key.replace(/\n/g, '\\n').replace(/\r/g, '\\r');
 
-export const wrapStringifiedTokenSegments = (jsonString: string): string => {
-  const tokenRegex = /:\s?("@\{.*?\}")|:\s?(@\{.*?\})/gs;
-
-  // First, normalize newlines and carriage returns inside @{...} expressions
-  const normalized = jsonString.replace(/@{[^}]*}/gs, (match) => match.replace(/\n/g, '\\n').replace(/\r/g, '\\r'));
-
-  // Escape backslashes, quotes, and other special characters within the token string
-  return normalized.replace(tokenRegex, (match, quotedToken, unquotedToken) => {
-    const token = quotedToken ?? unquotedToken;
-    if (!token) {
-      return match;
-    }
-
-    const isQuoted = quotedToken !== undefined;
-    const innerToken = isQuoted ? token.slice(1, -1) : token;
-
-    const escaped = innerToken
-      .replace(/\\/g, '\\\\') // Escape backslashes
-      .replace(/"/g, '\\"') // Escape double quotes
-      .replace(/\n/g, '\\n') // Escape newline
-      .replace(/\r/g, '\\r') // Escape carriage return
-      .replace(/\t/g, '\\t') // Escape tab
-      .replace(/\v/g, '\\v'); // Escape vertical tab
-
-    return `: "${escaped}"`;
-  });
-};
-
 // Some staging locations like `East US (stage)` show sometimes as `eastus(stage)` and sometimes as `eastusstage`
 // This function just removes the parentheses so they can be compared as equal
 export const cleanConnectorId = (id: string) => id.replace(/[()]/g, '');
@@ -107,36 +79,52 @@ export const unescapeString = (input: string): string => {
         return '\v';
       case '"':
         return '"';
-      case '\\':
-        return '\\';
       default:
         return char;
     }
   });
 };
 
-export const escapeString = (input: string, requireSingleQuotesWrap?: boolean): string => {
-  // Only apply escaping if requireSingleQuotesWrap is true and the input is wrapped in single quotes
-  if (requireSingleQuotesWrap && !/'.*[\n\r\t\v"].*'/.test(input)) {
-    return input;
+export const escapeString = (input: string): string => {
+  let result = '';
+  let inSingleQuotes = false;
+
+  for (const char of input) {
+    if (char === "'") {
+      inSingleQuotes = !inSingleQuotes;
+      result += char;
+      continue;
+    }
+
+    if (inSingleQuotes) {
+      switch (char) {
+        case '\n': {
+          result += '\\n';
+          continue;
+        }
+        case '\r': {
+          result += '\\r';
+          continue;
+        }
+        case '\t': {
+          result += '\\t';
+          continue;
+        }
+        case '\v': {
+          result += '\\v';
+          continue;
+        }
+        case '"': {
+          result += '\\"';
+          continue;
+        }
+      }
+    }
+
+    result += char;
   }
 
-  return input?.replace(/[\n\r\t\v"]/g, (char) => {
-    switch (char) {
-      case '\n':
-        return '\\n';
-      case '\r':
-        return '\\r';
-      case '\t':
-        return '\\t';
-      case '\v':
-        return '\\v';
-      case '"':
-        return requireSingleQuotesWrap ? '\\"' : '"'; // Escape only if requireSingleQuotesWrap is true
-      default:
-        return char;
-    }
-  });
+  return result;
 };
 
 export const escapeBackslash = (s: string): string => {
