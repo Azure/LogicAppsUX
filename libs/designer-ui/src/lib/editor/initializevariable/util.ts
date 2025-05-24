@@ -6,50 +6,84 @@ import {
   isTemplateExpression,
   LogEntryLevel,
   LoggerService,
-  wrapStringifiedTokenSegments,
-  normalizeEscapes,
+  TokenType,
+  wrapTokenValue,
 } from '@microsoft/logic-apps-shared';
 import type { InitializeVariableProps } from '.';
-import {
-  containsTokenSegments,
-  createEmptyLiteralValueSegment,
-  createLiteralValueSegment,
-  isTokenValueSegment,
-} from '../base/utils/helper';
+import { createEmptyLiteralValueSegment, createLiteralValueSegment, isTokenValueSegment } from '../base/utils/helper';
 import { convertSegmentsToString, isEmptySegments } from '../base/utils/parsesegments';
-import type { ValueSegment } from '../models/parameter';
+import { ValueSegmentType, type ValueSegment } from '../models/parameter';
 import { convertStringToSegments } from '../base/utils/editorToSegment';
 import constants, { VARIABLE_TYPE } from '../../constants';
 import { VARIABLE_PROPERTIES, type InitializeVariableErrors } from './variableEditor';
 import type { loadParameterValueFromStringHandler } from '../base';
 
-export const getSmartParsedSegments = (
+export const getParameterValue = (
   rawValue: string,
   type: string,
   nodeMap: Map<string, ValueSegment>,
   loadParameterValueFromString?: (value: string) => ValueSegment[] | undefined
 ): ValueSegment[] => {
-  const fromHandler = loadParameterValueFromString?.(rawValue);
-  const fromConvert = convertStringToSegments(rawValue, nodeMap, {
-    tokensEnabled: true,
-    stringifyNonString: type !== VARIABLE_TYPE.STRING,
+  const valueSegments = loadParameterValueFromString?.(rawValue);
+  if (!valueSegments) {
+    return convertStringToSegments(rawValue, nodeMap, {
+      tokensEnabled: true,
+      stringifyNonString: type !== VARIABLE_TYPE.STRING,
+    });
+  }
+  return valueSegments.map((segment) => {
+    if (segment.type === ValueSegmentType.TOKEN && segment.token) {
+      const token = segment.token;
+      // if token is not fx, fetch the token from nodeMap
+      if (token.type !== TokenType.FX && segment.value) {
+        const tokenSegment = nodeMap.get(wrapTokenValue(segment.value));
+        return tokenSegment ?? segment;
+      }
+      return segment;
+    }
+    // if literal, return as is
+    return segment;
   });
+};
 
-  // 1. Prefer tokenized handler if it has tokens
-  if (containsTokenSegments(fromHandler ?? [])) {
-    return fromHandler!;
-  }
+const wrapStringifiedTokenSegments = (jsonString: string): string => {
+  const tokenRegex = /:\s?("@\{.*?\}")|:\s?(@\{.*?\})/gs;
 
-  // 2. Prefer tokenized convert result if handler doesn't return token
-  if (containsTokenSegments(fromConvert)) {
-    return fromConvert!;
-  }
+  // First, normalize newlines and carriage returns inside @{...} expressions
+  const normalized = jsonString.replace(/@{[^}]*}/gs, (match) => match.replace(/\n/g, '\\n').replace(/\r/g, '\\r'));
 
-  // 3. Otherwise, fall back to the longer one (typically more structured or complete)
-  if ((fromConvert?.length || 0) > (fromHandler?.length || 0)) {
-    return fromConvert!;
-  }
-  return fromHandler || fromConvert || [createLiteralValueSegment(rawValue)];
+  // Escape backslashes, quotes, and other special characters within the token string
+  return normalized.replace(tokenRegex, (match, quotedToken, unquotedToken) => {
+    const token = quotedToken ?? unquotedToken;
+    if (!token) {
+      return match;
+    }
+
+    const isQuoted = quotedToken !== undefined;
+    const innerToken = isQuoted ? token.slice(1, -1) : token;
+
+    const escaped = innerToken
+      .replace(/\\/g, '\\\\') // Escape backslashes
+      .replace(/"/g, '\\"') // Escape double quotes
+      .replace(/\n/g, '\\n') // Escape newline
+      .replace(/\r/g, '\\r') // Escape carriage return
+      .replace(/\t/g, '\\t') // Escape tab
+      .replace(/\v/g, '\\v'); // Escape vertical tab
+
+    return `: "${escaped}"`;
+  });
+};
+
+// We need to unescape tokens that are wrapped in @{...} as we need the raw value to load valueSegments
+const shouldUnescapeToken = (value: unknown): value is string => typeof value === 'string' && /^@\{[\s\S]*\}$/.test(value);
+const unescapeToken = (token: string): string => {
+  return token
+    .replace(/\\\\/g, '\\') // unescape backslashes
+    .replace(/\\"/g, '"') // unescape double quotes
+    .replace(/\\n/g, '\n') // unescape newline
+    .replace(/\\r/g, '\r') // unescape carriage return
+    .replace(/\\t/g, '\t') // unescape tab
+    .replace(/\\v/g, '\v'); // unescape vertical tab
 };
 
 export const parseVariableEditorSegments = (
@@ -62,29 +96,27 @@ export const parseVariableEditorSegments = (
     ];
   }
 
-  const originalNodeMap = new Map<string, ValueSegment>();
+  const nodeMap = new Map<string, ValueSegment>();
 
   // Convert segments to string and store in the original node map
-  const initialValueString = convertSegmentsToString(initialValue, originalNodeMap);
+  const initialValueString = convertSegmentsToString(initialValue, nodeMap);
 
   // Wrap token segments for safe parsing
   const wrappedValueString = wrapStringifiedTokenSegments(initialValueString);
-
-  // Create a new node map, normalizing escape sequences for keys
-  const nodeMap = new Map<string, ValueSegment>();
-  for (const [key, segment] of originalNodeMap.entries()) {
-    nodeMap.set(normalizeEscapes(key), segment);
-  }
 
   try {
     const variables = JSON.parse(wrappedValueString);
 
     return Array.isArray(variables)
-      ? variables.map((variable: { name: string; type: string; value: string }) => ({
-          name: [createLiteralValueSegment(variable.name)],
-          type: [createLiteralValueSegment(variable.type)],
-          value: getSmartParsedSegments(variable.value, variable.type, nodeMap, loadParameterValueFromString),
-        }))
+      ? variables.map((variable: { name: string; type: string; value: string }) => {
+          const rawValue = shouldUnescapeToken(variable.value) ? unescapeToken(variable.value) : variable.value;
+
+          return {
+            name: [createLiteralValueSegment(variable.name)],
+            type: [createLiteralValueSegment(variable.type)],
+            value: getParameterValue(rawValue, variable.type, nodeMap, loadParameterValueFromString),
+          };
+        })
       : [];
   } catch (error) {
     LoggerService().log({

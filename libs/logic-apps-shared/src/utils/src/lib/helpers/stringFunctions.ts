@@ -31,34 +31,6 @@ export const unwrapQuotesFromString = (s: string) => {
 
 export const normalizeEscapes = (key: string): string => key.replace(/\n/g, '\\n').replace(/\r/g, '\\r');
 
-export const wrapStringifiedTokenSegments = (jsonString: string): string => {
-  const tokenRegex = /:\s?("@\{.*?\}")|:\s?(@\{.*?\})/gs;
-
-  // First, normalize newlines and carriage returns inside @{...} expressions
-  const normalized = jsonString.replace(/@{[^}]*}/gs, (match) => match.replace(/\n/g, '\\n').replace(/\r/g, '\\r'));
-
-  // Escape backslashes, quotes, and other special characters within the token string
-  return normalized.replace(tokenRegex, (match, quotedToken, unquotedToken) => {
-    const token = quotedToken ?? unquotedToken;
-    if (!token) {
-      return match;
-    }
-
-    const isQuoted = quotedToken !== undefined;
-    const innerToken = isQuoted ? token.slice(1, -1) : token;
-
-    const escaped = innerToken
-      .replace(/\\/g, '\\\\') // Escape backslashes
-      .replace(/"/g, '\\"') // Escape double quotes
-      .replace(/\n/g, '\\n') // Escape newline
-      .replace(/\r/g, '\\r') // Escape carriage return
-      .replace(/\t/g, '\\t') // Escape tab
-      .replace(/\v/g, '\\v'); // Escape vertical tab
-
-    return `: "${escaped}"`;
-  });
-};
-
 // Some staging locations like `East US (stage)` show sometimes as `eastus(stage)` and sometimes as `eastusstage`
 // This function just removes the parentheses so they can be compared as equal
 export const cleanConnectorId = (id: string) => id.replace(/[()]/g, '');
@@ -107,8 +79,6 @@ export const unescapeString = (input: string): string => {
         return '\v';
       case '"':
         return '"';
-      case '\\':
-        return '\\';
       default:
         return char;
     }
@@ -146,10 +116,6 @@ export const escapeString = (input: string): string => {
         }
         case '"': {
           result += '\\"';
-          continue;
-        }
-        case '\\': {
-          result += '\\\\';
           continue;
         }
       }
