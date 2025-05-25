@@ -68,7 +68,17 @@ export const PanelContent = ({ nodeId, tabs = [], selectedTab, selectTab }: Pane
           <OverflowMenu tabs={tabs} onTabSelect={selectTab} />
         </TabList>
       </Overflow>
-      <div className="msla-panel-content-container">{tabs.find((tab) => tab.id === selectedTabId)?.content}</div>
+      <div
+        className="msla-panel-content-container"
+        tabIndex={0}
+        aria-label={intl.formatMessage({
+          defaultMessage: 'Scrollable content',
+          id: 'DxykM0',
+          description: 'Accessible label for the scrollable content area in the panel',
+        })}
+      >
+        {tabs.find((tab) => tab.id === selectedTabId)?.content}
+      </div>
     </div>
   );
 };
