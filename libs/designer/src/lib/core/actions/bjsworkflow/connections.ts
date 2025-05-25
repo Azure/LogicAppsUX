@@ -47,6 +47,7 @@ import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { openPanel, setIsCreatingConnection, setIsPanelLoading } from '../../state/panel/panelSlice';
 import type { PanelMode } from '../../state/panel/panelTypes';
+import { getReactQueryClient } from '../../ReactQueryProvider';
 
 export interface ConnectionPayload {
   nodeId: string;
@@ -91,6 +92,12 @@ export const updateNodeConnection = createAsyncThunk(
   'updateNodeConnection',
   async (payload: ConnectionPayload, { dispatch, getState }): Promise<void> => {
     const { nodeId, connector, connection, connectionProperties, authentication } = payload;
+    console.log(payload);
+    const newConnection = await ConnectionService().getConnection(connection.id);
+    console.log(newConnection);
+    const queryClient = getReactQueryClient();
+    const appSettings = queryClient.getQueryData(['appSettings']);
+    console.log(appSettings);
 
     dispatch(updateErrorDetails({ id: nodeId, clear: true }));
 
@@ -136,6 +143,7 @@ const updateNodeConnectionAndProperties = async (
   getState: () => RootState
 ): Promise<void> => {
   const { nodeId } = payload;
+  console.log(payload);
   dispatch(changeConnectionMapping(payload));
 
   const newState = getState() as RootState;
