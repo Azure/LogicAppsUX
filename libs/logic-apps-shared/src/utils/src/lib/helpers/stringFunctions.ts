@@ -98,25 +98,30 @@ export const escapeString = (input: string): string => {
 
     if (inSingleQuotes) {
       switch (char) {
-        case '\n':
+        case '\n': {
           result += '\\n';
-          break;
-        case '\r':
+          continue;
+        }
+        case '\r': {
           result += '\\r';
-          break;
-        case '\t':
+          continue;
+        }
+        case '\t': {
           result += '\\t';
-          break;
-        case '\v':
+          continue;
+        }
+        case '\v': {
           result += '\\v';
-          break;
-        case '"':
+          continue;
+        }
+        case '"': {
           result += '\\"';
-          break;
-        default:
-          result += char;
+          continue;
+        }
       }
     }
+
+    result += char;
   }
 
   return result;
