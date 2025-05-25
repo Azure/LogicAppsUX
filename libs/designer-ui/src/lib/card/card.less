@@ -225,6 +225,14 @@
             text-align: left;
             word-break: break-word;
           }
+          
+          /* Ensure h2 doesn't inherit unwanted default styles */
+          h2.panel-msla-title {
+            font-size: 14px;
+            font-weight: normal;
+            text-transform: none;
+            padding: 0;
+          }
 
           .msla-card-title {
             cursor: pointer;
@@ -337,6 +345,14 @@
       font: 14px/20px normal @semibold-font-family;
       margin: 10px 8px 10px 0;
       word-break: break-word;
+    }
+
+    /* Ensure h2 doesn't inherit unwanted default styles */
+    h2.panel-msla-title {
+      font-size: 14px;
+      font-weight: normal;
+      text-transform: none;
+      padding: 0;
     }
   }
 }
