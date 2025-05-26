@@ -1,4 +1,17 @@
 # Logic Apps Designer
+## [5.110.0](https://github.com/Azure/LogicAppsUX/compare/v5.109.0...v5.110.0) (2025-05-26)
+
+
+### Bug Fixes
+
+* **designer:** Agents in Hybrid not working ([#7303](https://github.com/Azure/LogicAppsUX/issues/7303)) ([99a48e3](https://github.com/Azure/LogicAppsUX/commit/99a48e30f4a573c8388eb6a76234f85d6bb28854))
+* **designer:** Fix Variable Editor Causing Issues on Strings ([#7302](https://github.com/Azure/LogicAppsUX/issues/7302)) ([9670901](https://github.com/Azure/LogicAppsUX/commit/9670901e34c3a37211eb866942c9adadd88c7a18))
+* **designer:** Update open AI endpoint for foundry connections ([#7306](https://github.com/Azure/LogicAppsUX/issues/7306)) ([6c70ac4](https://github.com/Azure/LogicAppsUX/commit/6c70ac47d13c068e23c90c5a27ab1e3448a8414c))
+* **templates:** Adding info bubble support and text for workflow customization wizard ([#7297](https://github.com/Azure/LogicAppsUX/issues/7297)) ([ca2ebda](https://github.com/Azure/LogicAppsUX/commit/ca2ebdac2a4b9adf99223cbc6748f34a4a087aa0))
+* **Templates:** Fixed connection name and type not showing up in review tab ([#7300](https://github.com/Azure/LogicAppsUX/issues/7300)) ([d521674](https://github.com/Azure/LogicAppsUX/commit/d5216740a7c3b262b7d149baaeee6cbbe4d9e31a))
+* **Templates:** UI fixes to enforce consistency & Remove placeholder links ([#7291](https://github.com/Azure/LogicAppsUX/issues/7291)) ([42230c9](https://github.com/Azure/LogicAppsUX/commit/42230c92ab83d22c96d36bffbc6295ab15a12a2a))
+* **vscode:** Initialize custom connection parameter editor service ([#7311](https://github.com/Azure/LogicAppsUX/issues/7311)) ([f34057b](https://github.com/Azure/LogicAppsUX/commit/f34057baaa70e0dae1a465aacb166f4274102ad4))
+
 ## [5.109.0](https://github.com/Azure/LogicAppsUX/compare/v5.108.0...v5.109.0) (2025-05-22)
 
 
