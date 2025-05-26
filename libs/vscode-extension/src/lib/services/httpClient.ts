@@ -44,14 +44,14 @@ export class HttpClient implements IHttpClient {
   }
 
   async post<ReturnType, BodyType>(options: HttpRequestOptions<BodyType>): Promise<ReturnType> {
-    const isArmId = isArmResourceId(options.uri);
+    const authHeader: Record<string, string> = options.includeAuth || !options.noAuth ? { Authorization: `${this._accessToken}` } : {};
     const request = {
       ...options,
       url: this.getRequestUrl(options),
       headers: {
         ...this._extraHeaders,
         ...options.headers,
-        Authorization: `${isArmId ? this._accessToken : ''}`,
+        ...authHeader,
         'Content-Type': 'application/json',
       },
       data: options.content,
