@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [5.94.20](https://github.com/Azure/LogicAppsUX/compare/v5.94.19...v5.94.20) (2025-05-26)
+
+
+### Bug Fixes
+
+* **vscode:** Initialize custom connection parameter editor service  ([#7313](https://github.com/Azure/LogicAppsUX/issues/7313)) ([a535317](https://github.com/Azure/LogicAppsUX/commit/a535317428b0a204f5e2e5a0df5d2e9e439609c5)), closes [#7311](https://github.com/Azure/LogicAppsUX/issues/7311)
+
 ### [5.94.19](https://github.com/Azure/LogicAppsUX/compare/v5.94.18...v5.94.19) (2025-05-19)
 
 
