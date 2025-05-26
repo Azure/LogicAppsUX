@@ -43,6 +43,10 @@
     "test:extension-unit": {
       "outputs": ["coverage/**"]
     },
+    "test:e2e:vscode": {
+      "cache": false,
+      "dependsOn": ["vscode-designer#build:extension"]
+    },
     "vscode:designer:pack": {
       "cache": false,
       "dependsOn": ["vscode-react#build:extension"]

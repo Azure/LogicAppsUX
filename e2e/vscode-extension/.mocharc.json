@@ -1,0 +1,10 @@
+{
+  "diff": true,
+  "extension": ["ts"],
+  "require": "ts-node/register",
+  "reporter": "spec",
+  "timeout": 60000,
+  "ui": "bdd",
+  "watch-files": "tests/**/*.ts",
+  "spec": "tests/**/*.test.ts"
+}
