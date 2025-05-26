@@ -2,7 +2,6 @@
   "diff": true,
   "extension": ["ts"],
   "require": "ts-node/register",
-  "node-option": ["--no-warnings"],
   "reporter": "spec",
   "timeout": 60000,
   "ui": "bdd",

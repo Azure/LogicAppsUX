@@ -3,11 +3,17 @@
     "module": "commonjs",
     "target": "es6",
     "outDir": "out",
-    "lib": ["es6"],
+    "lib": ["es6", "dom"],
     "sourceMap": true,
     "rootDir": ".",
     "strict": true,
     "esModuleInterop": true
+  },
+  "ts-node": {
+    "transpileOnly": true,
+    "compilerOptions": {
+      "module": "CommonJS"
+    }
   },
   "exclude": ["node_modules"]
 }

@@ -59,6 +59,6 @@
     "vscode:designer:pack:step2": "cd ./dist && vsce package",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "test:extension-unit": "vitest run --retry=3",
-    "test:e2e:vscode": "mocha --config ../../e2e/vscode-extension/.mocharc.json"
+    "test:e2e:vscode": "cd ../../e2e/vscode-extension && npx mocha tests/**/*.test.cjs"
   }
 }
