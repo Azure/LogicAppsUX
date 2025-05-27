@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [5.94.21](https://github.com/Azure/LogicAppsUX/compare/v5.94.20...v5.94.21) (2025-05-27)
+
+
+### Bug Fixes
+
+* **designer:** Cherry Pick Initialize Variable ([#7326](https://github.com/Azure/LogicAppsUX/issues/7326)) ([46f51c6](https://github.com/Azure/LogicAppsUX/commit/46f51c66fa20f923ac816bcc754ef02efffa73d4)), closes [#7105](https://github.com/Azure/LogicAppsUX/issues/7105) [#7302](https://github.com/Azure/LogicAppsUX/issues/7302)
+
 ### [5.94.20](https://github.com/Azure/LogicAppsUX/compare/v5.94.19...v5.94.20) (2025-05-26)
 
 
