@@ -175,7 +175,7 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
 
   const {
     getRows,
-    selection: { allRowsSelected, someRowsSelected, toggleAllRows, toggleRow, isRowSelected },
+    selection: { toggleRow, isRowSelected },
   } = useTableFeatures(
     {
       columns,
@@ -208,10 +208,18 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
     };
   });
 
+  const allRowsSelected = useMemo(() => {
+    return !rows?.filter((row) => !row.selected)?.length;
+  }, [rows]);
+
+  const toggleAllRows = useCallback(() => {
+    setSelectedWorkflowsList(allRowsSelected ? [] : Object.values(workflows).map((workflowData) => workflowData.id));
+  }, [setSelectedWorkflowsList, workflows, allRowsSelected]);
+
   const toggleAllKeydown = useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
       if (e.key === ' ') {
-        toggleAllRows(e);
+        toggleAllRows();
         e.preventDefault();
       }
     },
@@ -242,17 +250,14 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
           },
         }}
       />
-
       {isLoading ? (
         <Spinner size="huge" label={intlText.LOADING_TEXT} style={{ height: '50%' }} />
       ) : Object.keys(workflows).length > 0 ? (
         <Table aria-label={customResourceStrings.WorkflowsListTableLabel} style={{ minWidth: '550px', marginTop: 30, marginLeft: '-5px' }}>
           <TableHeader>
-            <TableRow>
+            <TableRow onClick={toggleAllRows} onKeyDown={toggleAllKeydown}>
               <TableSelectionCell
-                checked={allRowsSelected ? true : someRowsSelected ? 'mixed' : false}
-                onClick={toggleAllRows}
-                onKeyDown={toggleAllKeydown}
+                checked={allRowsSelected}
                 checkboxIndicator={{ 'aria-label': customResourceStrings.SelectAllWorkflowsLabel }}
               />
               <TableHeaderCell style={tableHeaderStyle}>{resourceStrings.WORKFLOW_NAME}</TableHeaderCell>
