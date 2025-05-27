@@ -40,7 +40,9 @@ export const InitializeVariableEditor = ({
 }: InitializeVariableEditorProps) => {
   const intl = useIntl();
   const [variables, setVariables] = useState<InitializeVariableProps[] | undefined>(() =>
-    isAgentParameter ? parseSchemaAsVariableEditorSegments(initialValue) : parseVariableEditorSegments(initialValue)
+    isAgentParameter
+      ? parseSchemaAsVariableEditorSegments(initialValue, props.loadParameterValueFromString)
+      : parseVariableEditorSegments(initialValue, props.loadParameterValueFromString)
   );
 
   const stringResources = useMemo(
