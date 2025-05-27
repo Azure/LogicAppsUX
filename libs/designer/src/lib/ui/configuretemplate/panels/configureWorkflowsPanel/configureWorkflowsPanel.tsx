@@ -28,26 +28,12 @@ const layerProps = {
 export const ConfigureWorkflowsPanel = ({ onSave }: { onSave?: (isMultiWorkflow: boolean) => void }) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
-  const { selectedTabId, isOpen, currentPanelView, workflows } = useSelector((state: RootState) => ({
+  const { selectedTabId, isOpen, currentPanelView } = useSelector((state: RootState) => ({
     selectedTabId: state.panel.selectedTabId,
     isOpen: state.panel.isOpen,
     currentPanelView: state.panel.currentPanelView,
     workflows: state.template.workflows,
   }));
-  const workflowsExist = Object.keys(workflows).length > 0;
-
-  const resources = {
-    addWorkflowsTitle: intl.formatMessage({
-      defaultMessage: 'Add workflows from existing logic app',
-      id: 'uxUH6P',
-      description: 'Panel header title for adding or editing workflows',
-    }),
-    addEditWorkflowsTitle: intl.formatMessage({
-      defaultMessage: 'Add or edit workflows in template',
-      id: 'FOhE+h',
-      description: 'Panel header title for adding workflows',
-    }),
-  };
 
   const panelTabs: TemplateTabProps[] = useConfigureWorkflowPanelTabs({ onSave });
 
@@ -57,11 +43,17 @@ export const ConfigureWorkflowsPanel = ({ onSave }: { onSave?: (isMultiWorkflow:
 
   const onRenderHeaderContent = useCallback(
     () => (
-      <TemplatesPanelHeader title={workflowsExist ? resources.addEditWorkflowsTitle : resources.addWorkflowsTitle}>
+      <TemplatesPanelHeader
+        title={intl.formatMessage({
+          defaultMessage: 'Manage workflows in this template',
+          id: 'syFW9c',
+          description: 'Panel header title for managing workflows',
+        })}
+      >
         <div />
       </TemplatesPanelHeader>
     ),
-    [workflowsExist, resources.addWorkflowsTitle, resources.addEditWorkflowsTitle]
+    [intl]
   );
 
   const dismissPanel = useCallback(() => {
