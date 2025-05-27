@@ -18,6 +18,14 @@ const titleTextFieldStyle: Partial<ITextFieldStyles> = {
   },
 };
 
+const headingStyle = {
+  margin: 0,
+  padding: 0,
+  fontSize: '14px',
+  fontWeight: 'normal',
+  lineHeight: '24px',
+};
+
 export type TitleChangeHandler = (originalValue: string, newValue: string) => { valid: boolean; oldValue?: string; message: string };
 export interface PanelHeaderTitleProps {
   readOnlyMode?: boolean;
@@ -77,12 +85,22 @@ export const PanelHeaderTitle = ({
     description: 'Label for the title for panel header card',
   });
 
+  // Using h2 for proper heading semantics when in read-only mode
+  if (readOnly) {
+    return (
+      <h2 id={titleId} style={headingStyle} className="msla-panel-header-title">
+        {newTitleValue}
+      </h2>
+    );
+  }
+
+  // Using TextField for edit mode
   return (
     <TextField
       id={titleId}
-      className={css(!readOnly && 'msla-card-title')}
+      className={css('msla-card-title')}
       componentRef={titleTextFieldRef}
-      readOnly={readOnly}
+      readOnly={false}
       styles={titleTextFieldStyle}
       ariaLabel={panelHeaderCardTitle}
       maxLength={constants.PANEL.MAX_TITLE_LENGTH}

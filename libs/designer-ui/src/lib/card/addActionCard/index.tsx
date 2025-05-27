@@ -121,7 +121,7 @@ export const AddActionCard: React.FC<AddActionCardProps> = ({ addCardType, onCli
                 <div className={'panel-card-content-gripper-section'} />
                 {cardIcon}
                 <div className="panel-card-top-content">
-                  <div className="panel-msla-title">{title}</div>
+                  <h2 className="panel-msla-title">{title}</h2>
                 </div>
               </div>
             </div>

@@ -20,7 +20,7 @@ export const NoActionCard: React.FC = () => {
         tabIndex={0}
       >
         <div className="panel-card--no-action">
-          <div className="panel-msla-title">{triggerTitle}</div>
+          <h2 className="panel-msla-title">{triggerTitle}</h2>
         </div>
       </div>
     </div>

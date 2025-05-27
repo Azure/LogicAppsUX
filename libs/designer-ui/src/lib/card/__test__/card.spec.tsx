@@ -2,7 +2,18 @@ import type { CardProps } from '../index';
 import { Card } from '../index';
 import React from 'react';
 import renderer from 'react-test-renderer';
-import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
+import { describe, vi, beforeEach, it, expect } from 'vitest';
+
+// Mock useIntl hook
+vi.mock('react-intl', async () => {
+  const actual = await vi.importActual('react-intl');
+  return {
+    ...(actual as object),
+    useIntl: () => ({
+      formatMessage: ({ defaultMessage }) => defaultMessage,
+    }),
+  };
+});
 
 describe('lib/card', () => {
   let minimal: CardProps;
