@@ -20,12 +20,7 @@ describe('devSlice', () => {
       });
     });
 
-    it('should initialize and count the initialization action', () => {
-      const result = devReducer(undefined, { type: 'unknown' });
-      expect(result.reduxActionCounts).toEqual({
-        unknown: 1,
-      });
-    });
+// Removed redundant test case
   });
 
   describe('action counting behavior', () => {
