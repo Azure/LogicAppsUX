@@ -93,25 +93,23 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
     dispatch(openPanelView({ panelView: TemplatePanelView.ConfigureWorkflows }));
   }, [dispatch]);
 
-  const commandBarItems: ICommandBarItemProps[] = useMemo(() => {
-    const addEditItem = {
+  const commandBarItems: ICommandBarItemProps[] = [
+    {
       key: 'edit',
       text: intlText.EDIT,
       iconProps: { iconName: 'Settings' },
       onClick: handleAddWorkflows,
-    };
-    return [
-      addEditItem,
-      {
-        key: 'delete',
-        text: intlText.DELETE,
-        iconProps: { iconName: 'Trash' },
-        onClick: () => {
-          dispatch(deleteWorkflowData({ ids: selectedWorkflowsList() }));
-        },
+    },
+    {
+      key: 'delete',
+      text: intlText.DELETE,
+      iconProps: { iconName: 'Trash' },
+      disabled: !selectedWorkflowsList().length,
+      onClick: () => {
+        dispatch(deleteWorkflowData({ ids: selectedWorkflowsList() }));
       },
-    ];
-  }, [intlText, handleAddWorkflows, dispatch, selectedWorkflowsList]);
+    },
+  ];
 
   type WorkflowsTableItem = {
     id: string;
