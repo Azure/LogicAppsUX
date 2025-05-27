@@ -568,15 +568,15 @@ const ParameterSection = ({
     if (!conditionParameter?.id) {
       return;
     }
-    const previousConditionValue = parseSchemaAsVariableEditorSegments(conditionParameter.value) ?? [];
-    previousConditionValue.push({
+    const previousToolValue = parseSchemaAsVariableEditorSegments(conditionParameter.value) ?? [];
+    previousToolValue.push({
       name: [createLiteralValueSegment(name)],
       type: [createLiteralValueSegment(type)],
       description: [createLiteralValueSegment(description)],
       value: [],
     });
 
-    const newConditionValue = convertVariableEditorSegmentsAsSchema(previousConditionValue);
+    const newToolValue = convertVariableEditorSegmentsAsSchema(previousToolValue);
 
     dispatch(
       updateNodeParameters({
@@ -586,7 +586,7 @@ const ParameterSection = ({
             groupId: ParameterGroupKeys.DEFAULT,
             parameterId: conditionParameter.id,
             propertiesToUpdate: {
-              value: newConditionValue,
+              value: newToolValue,
               preservedValue: undefined,
             },
           },

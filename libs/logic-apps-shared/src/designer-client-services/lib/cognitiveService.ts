@@ -7,6 +7,7 @@ export interface ICognitiveServiceService {
   fetchAllCognitiveServiceAccountDeployments(accountId: string): Promise<any>;
   fetchAllSessionPoolAccounts(subscriptionId: string): Promise<any>;
   fetchSessionPoolAccountById(accountId: string): Promise<any>;
+  fetchBuiltInRoleDefinitions(): Promise<any>;
 }
 
 let service: ICognitiveServiceService;

@@ -11,12 +11,12 @@ import { NavigateIcon } from '@microsoft/designer-ui';
 import { ArrowClockwise16Filled, ArrowClockwise16Regular, bundleIcon } from '@fluentui/react-icons';
 import { useSubscriptions } from '../../../../../core/state/connection/connectionSelector';
 import { SubscriptionDropdown } from './components/SubscriptionDropdown';
-import { useAllSessionPoolAccounts } from './useCognitiveService';
+import { useAllBuiltInRoleDefinitions, useAllSessionPoolAccounts } from './useCognitiveService';
 
 const RefreshIcon = bundleIcon(ArrowClockwise16Regular, ArrowClockwise16Filled);
 
 export const ACASessionConnector = (props: ConnectionParameterProps) => {
-  const { parameterKey, value, setKeyValue, setValue, parameter } = props;
+  const { parameterKey, value, setValue, parameter } = props;
   const intl = useIntl();
   const styles = useStyles();
   const [errorMessage, setErrorMessage] = useState<string>('');
@@ -24,6 +24,18 @@ export const ACASessionConnector = (props: ConnectionParameterProps) => {
   const [selectedSubscriptionId, setSelectedSubscriptionId] = useState('');
   const { isFetching: isFetchingAccount, data: allSessionPoolAccounts, refetch } = useAllSessionPoolAccounts(selectedSubscriptionId);
   const { isFetching: isFetchingSubscription, data: subscriptions } = useSubscriptions();
+  const {
+    isFetching: isFetchingBuiltInRoleDefinitions,
+    data: { value: builltInRoleDefinitions },
+  } = useAllBuiltInRoleDefinitions();
+
+  const sessionExecutorRole = useMemo(() => {
+    if (isFetchingBuiltInRoleDefinitions || !Array.isArray(builltInRoleDefinitions)) {
+      return undefined;
+    }
+    return builltInRoleDefinitions?.find((role: any) => role?.properties?.roleName === 'Azure ContainerApps Session Executor')?.name;
+  }, [builltInRoleDefinitions, isFetchingBuiltInRoleDefinitions]);
+
   const comboRef = useRef<IComboBox>(null);
   const [poolInputText, setPoolInputText] = useState<string>('');
 
@@ -68,24 +80,20 @@ export const ACASessionConnector = (props: ConnectionParameterProps) => {
     [intl]
   );
 
-  const fetchAccount = useCallback(
-    async (accountId: string) => {
-      try {
-        const accountResponse = await CognitiveServiceService().fetchSessionPoolAccountById(accountId);
-        setKeyValue?.('acasession_poolManagementEndpoint', accountResponse?.properties?.poolManagementEndpoint);
-        setErrorMessage('');
-      } catch (e: any) {
-        LoggerService().log({
-          level: LogEntryLevel.Error,
-          area: 'aca-session-connection-account-endpoint',
-          message: 'Failed to fetch account endpoint for aca session',
-          error: e,
-        });
-        setErrorMessage(e.message ?? 'Failed to fetch account endpoint');
-      }
-    },
-    [setKeyValue]
-  );
+  const fetchAccount = useCallback(async (accountId: string) => {
+    try {
+      const accountResponse = await CognitiveServiceService().(accountId, sessionExecutorRole);
+      setErrorMessage('');
+    } catch (e: any) {
+      LoggerService().log({
+        level: LogEntryLevel.Error,
+        area: 'aca-session-connection-account-endpoint',
+        message: 'Failed to determine if ACA session has appropriate role permissions',
+        error: e,
+      });
+      setErrorMessage(e.message ?? 'Failed to fetch account endpoint');
+    }
+  }, []);
 
   const accountComboboxDisabled = useMemo(
     () => isFetchingAccount || isFetchingSubscription || !selectedSubscriptionId || (allSessionPoolAccounts ?? []).length === 0,

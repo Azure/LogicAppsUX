@@ -112,4 +112,24 @@ export class BaseCognitiveServiceService implements ICognitiveServiceService {
       return new Error(e?.message ?? e);
     }
   }
+
+  async fetchBuiltInRoleDefinitions(): Promise<any> {
+    const { httpClient, baseUrl } = this.options;
+
+    const uri = `${baseUrl}/providers/Microsoft.Authorization/roleDefinitions`;
+
+    try {
+      const response = await httpClient.get({
+        uri,
+        queryParameters: {
+          'api-version': '2022-05-01-preview',
+          $filter: "type eq 'BuiltInRole'",
+        },
+        includeAuth: true,
+      });
+      return response;
+    } catch (e: any) {
+      return new Error(e?.message ?? e);
+    }
+  }
 }

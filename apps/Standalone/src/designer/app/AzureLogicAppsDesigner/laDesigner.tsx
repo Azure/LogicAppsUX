@@ -624,7 +624,9 @@ const getDesignerServices = (
           },
         }
       : { appName, identity: workflowApp?.identity as any },
-    readConnections: () => Promise.resolve(connectionsData),
+    readConnections: () => {
+      return WorkflowUtility.resolveConnectionsReferences(JSON.stringify(clone(connectionsData ?? {})), undefined, appSettings);
+    },
     writeConnection: addConnection as any,
     connectionCreationClients: {
       FileSystem: new FileSystemConnectionCreationClient({
