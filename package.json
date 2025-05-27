@@ -18,6 +18,7 @@
     "@types/react-test-renderer": "^18.0.7",
     "@typescript-eslint/eslint-plugin": "^8.15.0",
     "@typescript-eslint/parser": "^8.29.1",
+    "@typescript/native-preview": "7.0.0-dev.20250525.1",
     "@vitejs/plugin-react": "^4.2.1",
     "@vitest/coverage-istanbul": "^2.1.2",
     "@vitest/ui": "^2.1.2",
@@ -132,5 +133,6 @@
       "express@<4.20.0": ">=4.20.0",
       "cross-spawn@>=7.0.0 <7.0.5": ">=7.0.5"
     }
-  }
+  },
+  "packageManager": "pnpm@10.11.0+sha512.6540583f41cc5f628eb3d9773ecee802f4f9ef9923cc45b69890fb47991d4b092964694ec3a4f738a420c918a333062c8b925d312f42e4f0c263eb603551f977"
 }
