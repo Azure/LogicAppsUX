@@ -9,7 +9,7 @@ import { describe, it, expect } from 'vitest';
 
 describe('areAllConnectionsParameterized', () => {
   it('should return true when all connections are parameterized', () => {
-    const connectionsDataOne: ConnectionsData = {
+    const apimApiIDNotParamBaseURLIs: ConnectionsData = {
       managedApiConnections: {
         connection1: {
           api: {
@@ -51,11 +51,11 @@ describe('areAllConnectionsParameterized', () => {
       },
     };
 
-    const connectionsDataTwo: ConnectionsData = {
+    const apiIDNotParamRuntimeURLIs: ConnectionsData = {
       managedApiConnections: {
         connection1: {
           api: {
-            id: "/subscriptions/@{appsetting('WORKFLOWS_SUBSCRIPTION_ID')}/providers/Microsoft.Web/locations/@{appsetting('WORKFLOWS_LOCATION_NAME')}/managedApis/connection1",
+            id: '/subscriptions/workflows-subscription-id/providers/Microsoft.Web/locations/workflows-location-name/managedApis/connection1',
           },
           connection: {
             id: "/subscriptions/@{appsetting('WORKFLOWS_SUBSCRIPTION_ID')}/resourceGroups/@{appsetting('WORKFLOWS_RESOURCE_GROUP_NAME')}/providers/Microsoft.Web/connections/connection1",
@@ -93,8 +93,8 @@ describe('areAllConnectionsParameterized', () => {
       },
     };
 
-    expect(areAllConnectionsParameterized(connectionsDataOne)).toBe(true);
-    expect(areAllConnectionsParameterized(connectionsDataTwo)).toBe(true);
+    expect(areAllConnectionsParameterized(apimApiIDNotParamBaseURLIs)).toBe(true);
+    expect(areAllConnectionsParameterized(apiIDNotParamRuntimeURLIs)).toBe(true);
   });
 
   it('should return false when not all connections are parameterized', () => {

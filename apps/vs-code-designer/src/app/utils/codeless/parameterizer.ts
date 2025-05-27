@@ -87,7 +87,7 @@ export function areAllConnectionsParameterized(connectionsData: ConnectionsData)
       const connection = connectionTypeJson[connectionKey];
       if (isConnectionReferenceModel(connection)) {
         if (!hasSettingRef(connection.api.id)) {
-          if (!hasParameterRef(connection.api.id)) {
+          if (!hasParameterRef(connection.connectionRuntimeUrl)) {
             return false;
           }
         }
