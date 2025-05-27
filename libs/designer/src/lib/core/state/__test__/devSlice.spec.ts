@@ -149,11 +149,11 @@ describe('devSlice', () => {
       // The state should be reset but the resetWorkflowState action itself should be counted
       expect(result).toEqual({
         reduxActionCounts: {
-          'resetWorkflowState': 1,
+          [resetWorkflowState().type]: 1,
         },
       });
       expect(result.reduxActionCounts).toEqual({
-        'resetWorkflowState': 1,
+        [resetWorkflowState().type]: 1,
       });
     });
 
