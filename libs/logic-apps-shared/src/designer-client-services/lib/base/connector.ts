@@ -186,48 +186,59 @@ export abstract class BaseConnectorService implements IConnectorService {
     const content = properties ? { request, properties } : { request };
 
     try {
-      // Fetch the initial page of data
       const initialResponse = await this._fetchData(baseUri, queryParameters, content);
 
-      // Collect all the values from the initial and subsequent pages
-      const allValues = await this._getAllPagedValues(initialResponse, request.headers);
+      const paged = initialResponse?.nextLink || initialResponse?.['@odata.nextLink'];
+      if (paged) {
+        const allValues = await this._getAllPagedValues(initialResponse, request.headers);
+        return {
+          ...initialResponse,
+          value: allValues,
+          nextLink: undefined,
+          '@odata.nextLink': undefined,
+        };
+      }
 
-      return { ...initialResponse, value: allValues };
+      return initialResponse;
     } catch (ex: any) {
       throw this._handleError(ex, intl, method, baseUri, parameters['path']);
     }
   }
 
   private async _fetchData(baseUri: string, queryParameters: Record<string, any>, content: any) {
-    const initialResponse = await this.options.httpClient.post({
+    const response = await this.options.httpClient.post({
       uri: baseUri,
       queryParameters,
       content,
     });
 
-    return this._getResponseFromDynamicApi(initialResponse, baseUri);
+    return this._getResponseFromDynamicApi(response, baseUri);
   }
 
   private async _getAllPagedValues(initialResponse: any, headers: Record<string, any>): Promise<any[]> {
-    let pageData = initialResponse;
-    const allValues: any[] = Array.isArray(pageData.value) ? [...pageData.value] : [];
+    const allValues: any[] = Array.isArray(initialResponse.value) ? [...initialResponse.value] : [];
 
-    let nextLink: string | undefined = pageData.nextLink || pageData['@odata.nextLink'];
+    let nextLink: string | undefined = initialResponse.nextLink || initialResponse['@odata.nextLink'];
 
     while (nextLink) {
-      const pagedResponse = await this.options.httpClient.get({
-        uri: nextLink,
-        headers,
-      });
+      try {
+        const pagedBody = await this.options.httpClient.get({
+          uri: nextLink,
+          headers,
+        });
 
-      pageData = this._getResponseFromDynamicApi({ response: { statusCode: 'OK', body: pagedResponse, headers } }, nextLink);
+        // Wrap GET response to match expected structure
+        const pageData = this._getResponseFromDynamicApi({ response: { statusCode: 'OK', body: pagedBody, headers } }, nextLink);
 
-      if (!pageData || !Array.isArray(pageData.value)) {
-        throw new Error(`Invalid response at nextLink: ${nextLink}`);
+        if (!pageData || !Array.isArray(pageData.value)) {
+          throw new Error(`Invalid or missing 'value' array in paged response from: ${nextLink}`);
+        }
+
+        allValues.push(...pageData.value);
+        nextLink = pageData.nextLink || pageData['@odata.nextLink'];
+      } catch (err: any) {
+        throw new Error(`Failed to fetch paged data from ${nextLink}: ${err?.message}`);
       }
-
-      allValues.push(...pageData.value);
-      nextLink = pageData.nextLink || pageData['@odata.nextLink'];
     }
 
     return allValues;
