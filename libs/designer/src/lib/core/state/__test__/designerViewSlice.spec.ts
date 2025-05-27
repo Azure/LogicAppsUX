@@ -21,6 +21,7 @@ describe('designerView slice reducers', () => {
   });
 
   it('should toggle clamp pan', () => {
+    expect(initialState.clampPan).toBe(true); // Assert the default value of clampPan
     const state = reducer(initialState, toggleClampPan());
     expect(state.clampPan).toBe(false);
 
