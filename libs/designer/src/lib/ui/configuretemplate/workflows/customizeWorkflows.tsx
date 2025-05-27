@@ -155,9 +155,14 @@ const CustomizeWorkflowSection = ({
           });
         },
         hint: intl.formatMessage({
-          defaultMessage: 'Workflow display name is required for Save.',
-          id: 'IOQVnL',
-          description: 'Hint message for workflow display name is required for save.',
+          defaultMessage: 'The workflow name can only be renamed once. Use lowercase letters, numbers, and hyphens only.',
+          id: 'r1x9qa',
+          description: 'Hint message to inform workflow name restrictions',
+        }),
+        description: intl.formatMessage({
+          defaultMessage: 'The unique internal system name for this workflow.',
+          id: '7nWRYH',
+          description: 'Hint message for workflow display name explanation',
         }),
         errorMessage: apiErrors?.manifest?.title ?? workflow.errors?.manifest?.title,
       });
