@@ -171,11 +171,12 @@ export abstract class BaseConnectorService implements IConnectorService {
     parameters: Record<string, any>,
     properties?: ManagedIdentityRequestProperties | { workflowReference: { id: string } }
   ): Promise<any> {
+    const { httpClient } = this.options;
     const intl = getIntl();
     const method = parameters['method'];
-    const baseUri = `${dynamicInvokeUrl}/dynamicInvoke`;
-    const queryParameters = { 'api-version': apiVersion };
 
+    const uri = `${dynamicInvokeUrl}/dynamicInvoke`;
+    const queryParameters = { 'api-version': apiVersion };
     const request = {
       method,
       path: parameters['path'],
@@ -186,71 +187,32 @@ export abstract class BaseConnectorService implements IConnectorService {
     const content = properties ? { request, properties } : { request };
 
     try {
-      // Fetch the initial page of data
-      const initialResponse = await this._fetchData(baseUri, queryParameters, content);
-
-      // Collect all the values from the initial and subsequent pages
-      const allValues = await this._getAllPagedValues(initialResponse, request.headers);
-
-      return { ...initialResponse, value: allValues };
-    } catch (ex: any) {
-      throw this._handleError(ex, intl, method, baseUri, parameters['path']);
-    }
-  }
-
-  private async _fetchData(baseUri: string, queryParameters: Record<string, any>, content: any) {
-    const initialResponse = await this.options.httpClient.post({
-      uri: baseUri,
-      queryParameters,
-      content,
-    });
-
-    return this._getResponseFromDynamicApi(initialResponse, baseUri);
-  }
-
-  private async _getAllPagedValues(initialResponse: any, headers: Record<string, any>): Promise<any[]> {
-    let pageData = initialResponse;
-    const allValues: any[] = Array.isArray(pageData.value) ? [...pageData.value] : [];
-
-    let nextLink: string | undefined = pageData.nextLink || pageData['@odata.nextLink'];
-
-    while (nextLink) {
-      const pagedResponse = await this.options.httpClient.get({
-        uri: nextLink,
-        headers,
+      const response = await httpClient.post({
+        uri,
+        queryParameters,
+        content,
       });
-
-      pageData = this._getResponseFromDynamicApi({ response: { statusCode: 'OK', body: pagedResponse, headers } }, nextLink);
-
-      if (!pageData || !Array.isArray(pageData.value)) {
-        throw new Error(`Invalid response at nextLink: ${nextLink}`);
-      }
-
-      allValues.push(...pageData.value);
-      nextLink = pageData.nextLink || pageData['@odata.nextLink'];
-    }
-
-    return allValues;
-  }
-
-  private _handleError(ex: any, intl: IntlShape, method: string, baseUri: string, path: string) {
-    const errorMessage =
-      ex.message ??
-      intl.formatMessage(
+      return this._getResponseFromDynamicApi(response, uri);
+    } catch (ex: any) {
+      throw new ConnectorServiceException(
+        ConnectorServiceErrorCode.API_EXECUTION_FAILED,
+        ex.message ??
+          intl.formatMessage(
+            {
+              defaultMessage: `Error occurred while executing the following API parameters: ''{parameters}''`,
+              id: 'A8l+k7',
+              description:
+                'Error message when execute dynamic api in managed connector. Do not remove the double single quotes around the placeholder text, as it is needed to wrap the placeholder text in single quotes.',
+            },
+            { parameters: parameters['path'] }
+          ),
         {
-          defaultMessage: "Error occurred while executing the following API parameters: ''{parameters}''",
-          id: 'VYqwse',
-          description:
-            'Error message when executing dynamic API in managed connector. Do not remove the double single quotes around the placeholder text.',
+          requestMethod: method,
+          uri,
+          inputPath: parameters['path'],
         },
-        { parameters: path }
+        ex
       );
-
-    return new ConnectorServiceException(
-      ConnectorServiceErrorCode.API_EXECUTION_FAILED,
-      errorMessage,
-      { requestMethod: method, uri: baseUri, inputPath: path },
-      ex
-    );
+    }
   }
 }
