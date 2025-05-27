@@ -1,4 +1,38 @@
 # Logic Apps Designer
+## [5.110.0](https://github.com/Azure/LogicAppsUX/compare/v5.109.0...v5.110.0) (2025-05-26)
+
+
+### Bug Fixes
+
+* **designer:** Agents in Hybrid not working ([#7303](https://github.com/Azure/LogicAppsUX/issues/7303)) ([99a48e3](https://github.com/Azure/LogicAppsUX/commit/99a48e30f4a573c8388eb6a76234f85d6bb28854))
+* **designer:** Fix Variable Editor Causing Issues on Strings ([#7302](https://github.com/Azure/LogicAppsUX/issues/7302)) ([9670901](https://github.com/Azure/LogicAppsUX/commit/9670901e34c3a37211eb866942c9adadd88c7a18))
+* **designer:** Update open AI endpoint for foundry connections ([#7306](https://github.com/Azure/LogicAppsUX/issues/7306)) ([6c70ac4](https://github.com/Azure/LogicAppsUX/commit/6c70ac47d13c068e23c90c5a27ab1e3448a8414c))
+* **templates:** Adding info bubble support and text for workflow customization wizard ([#7297](https://github.com/Azure/LogicAppsUX/issues/7297)) ([ca2ebda](https://github.com/Azure/LogicAppsUX/commit/ca2ebdac2a4b9adf99223cbc6748f34a4a087aa0))
+* **Templates:** Fixed connection name and type not showing up in review tab ([#7300](https://github.com/Azure/LogicAppsUX/issues/7300)) ([d521674](https://github.com/Azure/LogicAppsUX/commit/d5216740a7c3b262b7d149baaeee6cbbe4d9e31a))
+* **Templates:** UI fixes to enforce consistency & Remove placeholder links ([#7291](https://github.com/Azure/LogicAppsUX/issues/7291)) ([42230c9](https://github.com/Azure/LogicAppsUX/commit/42230c92ab83d22c96d36bffbc6295ab15a12a2a))
+* **vscode:** Initialize custom connection parameter editor service ([#7311](https://github.com/Azure/LogicAppsUX/issues/7311)) ([f34057b](https://github.com/Azure/LogicAppsUX/commit/f34057baaa70e0dae1a465aacb166f4274102ad4))
+
+## [5.109.0](https://github.com/Azure/LogicAppsUX/compare/v5.108.0...v5.109.0) (2025-05-22)
+
+
+### Features
+
+* **designer:** Add agent foundry service integration connection ([#7254](https://github.com/Azure/LogicAppsUX/issues/7254)) ([5ed04dd](https://github.com/Azure/LogicAppsUX/commit/5ed04dd0d1703f5f1b8ba2a4e215371d58c6b85f))
+
+## [5.108.0](https://github.com/Azure/LogicAppsUX/compare/v5.107.0...v5.108.0) (2025-05-22)
+
+
+### Features
+
+* **vscode:** Unit Test Status Code ([#7277](https://github.com/Azure/LogicAppsUX/issues/7277)) ([046be89](https://github.com/Azure/LogicAppsUX/commit/046be89e1c269a6462f014d826ddb4ab78cac606))
+
+
+### Bug Fixes
+
+* **designer:** Fix alphabetical sorting of sub-actions in OperationGroupDetailView component ([#7264](https://github.com/Azure/LogicAppsUX/issues/7264)) ([de44a26](https://github.com/Azure/LogicAppsUX/commit/de44a26b23de04ca74aa17dd44ea90e3a380ed4f))
+* **designer:** Remove expand/collapse teaching popup ([#7278](https://github.com/Azure/LogicAppsUX/issues/7278)) ([9add378](https://github.com/Azure/LogicAppsUX/commit/9add37812b0c0e2444ee16cb9ef5f6bcf7897413))
+* **vscode:** Auto update function core tools for major version difference ([#7279](https://github.com/Azure/LogicAppsUX/issues/7279)) ([6056cdd](https://github.com/Azure/LogicAppsUX/commit/6056cdd33480e53609ed0b4ab8e1f47826ce6699))
+
 ## [5.107.0](https://github.com/Azure/LogicAppsUX/compare/v5.106.0...v5.107.0) (2025-05-20)
 
 

@@ -537,3 +537,7 @@ export const sanitizeConnectorId = (id: string): string => {
 
   return segments.join('/');
 };
+
+export const formatNameWithIdentifierToDisplay = (name: string): string => {
+  return name.replace(`_${workflowIdentifier}`, '');
+};
