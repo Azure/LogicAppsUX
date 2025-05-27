@@ -2,7 +2,19 @@ import type { PanelHeaderTitleProps } from '../panelheadertitle';
 import { PanelHeaderTitle } from '../panelheadertitle';
 import * as React from 'react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
-import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
+import { describe, vi, beforeEach, afterEach, it, expect } from 'vitest';
+
+// Mock useIntl hook
+vi.mock('react-intl', async () => {
+  const actual = await vi.importActual('react-intl');
+  return {
+    ...(actual as object),
+    useIntl: () => ({
+      formatMessage: ({ defaultMessage }) => defaultMessage,
+    }),
+  };
+});
+
 describe('ui/panel/panelheadertitle', () => {
   let minimal: PanelHeaderTitleProps, renderer: ReactShallowRenderer.ShallowRenderer;
 

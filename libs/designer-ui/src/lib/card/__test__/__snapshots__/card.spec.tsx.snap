@@ -2,7 +2,7 @@
 
 exports[`lib/card > should render 1`] = `
 <div
-  aria-label="title operation"
+  aria-label="{operationName} operation"
   className="msla-panel-card-container"
   data-automation-id="card-title"
   data-tabster="{"restorer":{"type":1}}"
@@ -54,11 +54,11 @@ exports[`lib/card > should render 1`] = `
         <div
           className="panel-card-top-content"
         >
-          <div
+          <h2
             className="panel-msla-title"
           >
             title
-          </div>
+          </h2>
         </div>
       </div>
     </div>
@@ -68,7 +68,7 @@ exports[`lib/card > should render 1`] = `
 
 exports[`lib/card > should render as cloned 1`] = `
 <div
-  aria-label="title operation"
+  aria-label="{operationName} operation"
   className="msla-panel-card-container msla-card-ghost-image"
   data-automation-id="card-title"
   data-tabster="{"restorer":{"type":1}}"
@@ -120,11 +120,11 @@ exports[`lib/card > should render as cloned 1`] = `
         <div
           className="panel-card-top-content"
         >
-          <div
+          <h2
             className="panel-msla-title"
           >
             title
-          </div>
+          </h2>
         </div>
       </div>
     </div>
@@ -134,7 +134,7 @@ exports[`lib/card > should render as cloned 1`] = `
 
 exports[`lib/card > should render as draggable 1`] = `
 <div
-  aria-label="title operation"
+  aria-label="{operationName} operation"
   className="msla-panel-card-container"
   data-automation-id="card-title"
   data-tabster="{"restorer":{"type":1}}"
@@ -199,11 +199,11 @@ exports[`lib/card > should render as draggable 1`] = `
         <div
           className="panel-card-top-content"
         >
-          <div
+          <h2
             className="panel-msla-title"
           >
             title
-          </div>
+          </h2>
         </div>
       </div>
     </div>
@@ -213,7 +213,7 @@ exports[`lib/card > should render as draggable 1`] = `
 
 exports[`lib/card > should render as inactive 1`] = `
 <div
-  aria-label="title operation"
+  aria-label="{operationName} operation"
   className="msla-panel-card-container msla-card-inactive"
   data-automation-id="card-title"
   data-tabster="{"restorer":{"type":1}}"
@@ -265,11 +265,11 @@ exports[`lib/card > should render as inactive 1`] = `
         <div
           className="panel-card-top-content"
         >
-          <div
+          <h2
             className="panel-msla-title"
           >
             title
-          </div>
+          </h2>
         </div>
       </div>
     </div>
@@ -279,7 +279,7 @@ exports[`lib/card > should render as inactive 1`] = `
 
 exports[`lib/card > should render as pinned 1`] = `
 <div
-  aria-label="title operation"
+  aria-label="{operationName} operation"
   className="msla-panel-card-container"
   data-automation-id="card-title"
   data-tabster="{"restorer":{"type":1}}"
@@ -331,11 +331,11 @@ exports[`lib/card > should render as pinned 1`] = `
         <div
           className="panel-card-top-content"
         >
-          <div
+          <h2
             className="panel-msla-title"
           >
             title
-          </div>
+          </h2>
         </div>
       </div>
     </div>
@@ -345,7 +345,7 @@ exports[`lib/card > should render as pinned 1`] = `
 
 exports[`lib/card > should render as selected 1`] = `
 <div
-  aria-label="title operation"
+  aria-label="{operationName} operation"
   className="msla-panel-card-container msla-panel-card-container-selected"
   data-automation-id="card-title"
   data-tabster="{"restorer":{"type":1}}"
@@ -397,11 +397,11 @@ exports[`lib/card > should render as selected 1`] = `
         <div
           className="panel-card-top-content"
         >
-          <div
+          <h2
             className="panel-msla-title"
           >
             title
-          </div>
+          </h2>
         </div>
       </div>
     </div>
@@ -411,7 +411,7 @@ exports[`lib/card > should render as selected 1`] = `
 
 exports[`lib/card > should render with an icon and a connector name (0) 1`] = `
 <div
-  aria-label="title operation, SharePoint connector"
+  aria-label="{operationName} operation, {connectorName} connector"
   className="msla-panel-card-container"
   data-automation-id="card-title"
   data-tabster="{"restorer":{"type":1}}"
@@ -456,11 +456,11 @@ exports[`lib/card > should render with an icon and a connector name (0) 1`] = `
         <div
           className="panel-card-top-content"
         >
-          <div
+          <h2
             className="panel-msla-title"
           >
             title
-          </div>
+          </h2>
         </div>
       </div>
     </div>
@@ -470,7 +470,7 @@ exports[`lib/card > should render with an icon and a connector name (0) 1`] = `
 
 exports[`lib/card > should render with an icon and an operation name (1) 1`] = `
 <div
-  aria-label="title operation"
+  aria-label="{operationName} operation"
   className="msla-panel-card-container"
   data-automation-id="card-title"
   data-tabster="{"restorer":{"type":1}}"
@@ -515,11 +515,11 @@ exports[`lib/card > should render with an icon and an operation name (1) 1`] = `
         <div
           className="panel-card-top-content"
         >
-          <div
+          <h2
             className="panel-msla-title"
           >
             title
-          </div>
+          </h2>
         </div>
       </div>
     </div>
@@ -529,7 +529,7 @@ exports[`lib/card > should render with an icon and an operation name (1) 1`] = `
 
 exports[`lib/card > should render with an icon and an operation name and connector name (2) 1`] = `
 <div
-  aria-label="title operation, SharePoint connector"
+  aria-label="{operationName} operation, {connectorName} connector"
   className="msla-panel-card-container"
   data-automation-id="card-title"
   data-tabster="{"restorer":{"type":1}}"
@@ -574,11 +574,11 @@ exports[`lib/card > should render with an icon and an operation name and connect
         <div
           className="panel-card-top-content"
         >
-          <div
+          <h2
             className="panel-msla-title"
           >
             title
-          </div>
+          </h2>
         </div>
       </div>
     </div>
