@@ -22,7 +22,7 @@ import { ArmParser } from '../../designer/app/AzureLogicAppsDesigner/Utilities/A
 import { useCurrentTenantId } from '../../designer/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts';
 
 const testTemplateId =
-  '/subscriptions/f34b22a3-2202-4fb1-b040-1332bd928c84/resourceGroups/TestACSRG/providers/Microsoft.Logic/templates/elainacustom2';
+  '/subscriptions/f34b22a3-2202-4fb1-b040-1332bd928c84/resourceGroups/aaaarchiddaTemplates/providers/microsoft.logic/templates/template513';
 export const LocalConfigureTemplate = () => {
   const { theme, resourcePath } = useSelector((state: RootState) => ({
     theme: state.configureTemplateLoader.theme,
@@ -32,7 +32,7 @@ export const LocalConfigureTemplate = () => {
   const armParser = new ArmParser(resourcePath ?? '');
   const defaultSubscriptionId = armParser?.subscriptionId ?? 'f34b22a3-2202-4fb1-b040-1332bd928c84';
   const defaultResourceGroup = armParser?.resourceGroup ?? 'TestACSRG';
-  const defaultLocation = 'brazilsouth';
+  const defaultLocation = 'centralusstage';
   const [toasterData, setToasterData] = useState({ title: '', content: '', show: false });
   const [hideToaster, setHideToaster] = useState(false);
   const resourceDetails = useMemo(
