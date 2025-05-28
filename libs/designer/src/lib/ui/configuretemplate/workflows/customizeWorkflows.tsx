@@ -168,11 +168,6 @@ const CustomizeWorkflowSection = ({
           id: 'IOQVnL',
           description: 'Hint message for workflow display name is required for save.',
         }),
-        description: intl.formatMessage({
-          defaultMessage: 'The unique internal system name for this workflow.',
-          id: '7nWRYH',
-          description: 'Hint message for workflow display name explanation',
-        }),
         errorMessage: apiErrors?.manifest?.title ?? workflow.errors?.manifest?.title,
       });
     }

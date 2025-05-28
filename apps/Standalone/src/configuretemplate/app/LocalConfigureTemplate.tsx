@@ -32,7 +32,7 @@ export const LocalConfigureTemplate = () => {
   const armParser = new ArmParser(resourcePath ?? '');
   const defaultSubscriptionId = armParser?.subscriptionId ?? 'f34b22a3-2202-4fb1-b040-1332bd928c84';
   const defaultResourceGroup = armParser?.resourceGroup ?? 'TestACSRG';
-  const defaultLocation = 'centralusstage';
+  const defaultLocation = 'brazilsouth';
   const [toasterData, setToasterData] = useState({ title: '', content: '', show: false });
   const [hideToaster, setHideToaster] = useState(false);
   const resourceDetails = useMemo(

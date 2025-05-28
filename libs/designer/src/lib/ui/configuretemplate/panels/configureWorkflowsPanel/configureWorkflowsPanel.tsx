@@ -30,7 +30,7 @@ const layerProps = {
 export const ConfigureWorkflowsPanel = ({ onSave }: { onSave?: (isMultiWorkflow: boolean) => void }) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
-  const { selectedTabId, isOpen, currentPanelView } = useSelector((state: RootState) => ({
+  const { workflows, selectedTabId, isOpen, currentPanelView } = useSelector((state: RootState) => ({
     selectedTabId: state.panel.selectedTabId,
     isOpen: state.panel.isOpen,
     currentPanelView: state.panel.currentPanelView,
