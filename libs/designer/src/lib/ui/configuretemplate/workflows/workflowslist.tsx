@@ -15,10 +15,19 @@ import {
   createTableColumn,
   Image,
   Spinner,
+  Dialog,
+  DialogTrigger,
+  DialogSurface,
+  DialogTitle,
+  DialogBody,
+  DialogActions,
+  DialogContent,
+  Button,
+  tokens,
 } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 import { CommandBar, type ICommandBarItemProps, mergeStyles, PrimaryButton } from '@fluentui/react';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { openPanelView, TemplatePanelView } from '../../../core/state/templates/panelSlice';
 import { useFunctionalState } from '@react-hookz/web';
 import { deleteWorkflowData } from '../../../core/actions/bjsworkflow/configuretemplate';
@@ -49,6 +58,7 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
   const isMultiWorkflow = Object.keys(workflows).length > 1;
 
   const [selectedWorkflowsList, setSelectedWorkflowsList] = useFunctionalState<string[]>([]);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
 
   const intlText = useMemo(
     () => ({
@@ -61,6 +71,11 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
         defaultMessage: 'Delete',
         id: 'Ld62T8',
         description: 'Button text for deleting selected workflows',
+      }),
+      DELETE_WORKFLOW: intl.formatMessage({
+        defaultMessage: 'Delete workflow',
+        id: 'hufv85',
+        description: 'Title text for deleting selected workflows',
       }),
       EMPTY_TITLE: intl.formatMessage({
         defaultMessage: 'Manage workflows for this template',
@@ -82,6 +97,16 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
         id: 'a7qE4l',
         description: 'Loading text for workflows',
       }),
+      DELETE_CONFIRM_TEXT: intl.formatMessage({
+        defaultMessage: 'Do you want to delete the workflow(s)? This will remove the workflow(s) from this template.',
+        id: 'gt3JdS',
+        description: 'Body text for informing users this action is deleting selected workflows',
+      }),
+      CLOSE: intl.formatMessage({
+        defaultMessage: 'Cancel',
+        id: '4LQwvg',
+        description: 'Button text for cancelling deleting workflows',
+      }),
     }),
     [intl]
   );
@@ -93,25 +118,23 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
     dispatch(openPanelView({ panelView: TemplatePanelView.ConfigureWorkflows }));
   }, [dispatch]);
 
-  const commandBarItems: ICommandBarItemProps[] = useMemo(() => {
-    const addEditItem = {
+  const commandBarItems: ICommandBarItemProps[] = [
+    {
       key: 'edit',
       text: intlText.EDIT,
       iconProps: { iconName: 'Settings' },
       onClick: handleAddWorkflows,
-    };
-    return [
-      addEditItem,
-      {
-        key: 'delete',
-        text: intlText.DELETE,
-        iconProps: { iconName: 'Trash' },
-        onClick: () => {
-          dispatch(deleteWorkflowData({ ids: selectedWorkflowsList() }));
-        },
+    },
+    {
+      key: 'delete',
+      text: intlText.DELETE,
+      iconProps: { iconName: 'Trash' },
+      disabled: !selectedWorkflowsList().length,
+      onClick: () => {
+        setIsDeleteModalOpen(true);
       },
-    ];
-  }, [intlText, handleAddWorkflows, dispatch, selectedWorkflowsList]);
+    },
+  ];
 
   type WorkflowsTableItem = {
     id: string;
@@ -228,6 +251,46 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
         linkUrl="https://go.microsoft.com/fwlink/?linkid=2321817"
         className={mergeStyles({ marginLeft: '-1px', width: '70%' })}
       />
+
+      <Dialog
+        open={isDeleteModalOpen}
+        onOpenChange={(_, data) => {
+          setIsDeleteModalOpen(data.open);
+        }}
+      >
+        <DialogSurface>
+          <DialogBody>
+            <DialogTitle>{intlText.DELETE_WORKFLOW}</DialogTitle>
+            <DialogContent>{intlText.DELETE_CONFIRM_TEXT}</DialogContent>
+            <DialogActions>
+              <Button
+                appearance="primary"
+                style={{
+                  background: tokens.colorStatusDangerForeground1,
+                }}
+                onClick={() => {
+                  const deletedIds = selectedWorkflowsList();
+                  dispatch(deleteWorkflowData({ ids: deletedIds }));
+                  setSelectedWorkflowsList((prev) => prev.filter((id) => !deletedIds.includes(id)));
+                  setIsDeleteModalOpen(false);
+                }}
+              >
+                {intlText.DELETE}
+              </Button>
+              <DialogTrigger disableButtonEnhancement>
+                <Button
+                  appearance="secondary"
+                  onClick={() => {
+                    setIsDeleteModalOpen(false);
+                  }}
+                >
+                  {intlText.CLOSE}
+                </Button>
+              </DialogTrigger>
+            </DialogActions>
+          </DialogBody>
+        </DialogSurface>
+      </Dialog>
 
       {hasErrors ? (
         <ErrorBar title={intlText.ERROR_TITLE} errorMessage={intlText.ERROR_DESCRIPTION} styles={{ marginLeft: '-1px' }} />
