@@ -117,7 +117,6 @@ export const loadCustomTemplate = createAsyncThunk(
 
     const allWorkflowsManifest = await getWorkflowsInTemplate(templateId);
     let workflowSourceId = '';
-    let subscriptionId = '';
     let allParametersData: Record<string, Template.ParameterDefinition> = {};
     let allConnectionsData: Record<string, Template.Connection> = {};
 
@@ -165,27 +164,18 @@ export const loadCustomTemplate = createAsyncThunk(
     dispatch(updateConnectionAndParameterDefinitions({ connections: allConnectionsData, parameterDefinitions: allParametersData }));
 
     if (workflowSourceId) {
-      const segments = workflowSourceId.split('/');
-      const isConsumption = equals(segments[6], 'microsoft.logic');
-      subscriptionId = segments[2];
-      dispatch(
-        setInitialData({
-          subscriptionId,
-          resourceGroup: segments[4],
-          location: templateResource.location as string,
-          workflowAppName: isConsumption ? '' : segments[8],
-          logicAppName: segments[8],
-          isConsumption,
-          reloadServices: true,
-        } as any)
-      );
+      dispatch(loadResourceDetailsFromWorkflowSource({ workflowSourceId }));
     }
 
     const normalizedConnections = Object.keys(allConnectionsData).reduce((result: Record<string, Template.Connection>, key) => {
       const connection = { ...allConnectionsData[key] };
 
       if (equals(connection.kind, 'shared')) {
-        connection.connectorId = normalizeConnectorId(connection.connectorId, subscriptionId, templateResource.location as string);
+        connection.connectorId = normalizeConnectorId(
+          connection.connectorId,
+          workflowSourceId.split('/')[2],
+          templateResource.location as string
+        );
       }
 
       result[key] = connection;
@@ -202,6 +192,26 @@ export const loadCustomTemplate = createAsyncThunk(
       status: templateResource.properties?.state,
       enableWizard: allWorkflowsData && Object.keys(allWorkflowsData).length > 0,
     };
+  }
+);
+
+export const loadResourceDetailsFromWorkflowSource = createAsyncThunk(
+  'loadResourceDetailsFromWorkflowSource',
+  async ({ workflowSourceId }: { workflowSourceId: string }, { dispatch, getState }): Promise<void> => {
+    const segments = workflowSourceId.split('/');
+    const isConsumption = equals(segments[6], 'microsoft.logic');
+    const subscriptionId = segments[2];
+    dispatch(
+      setInitialData({
+        subscriptionId,
+        resourceGroup: segments[4],
+        location: (getState() as RootState).workflow.location,
+        workflowAppName: isConsumption ? '' : segments[8],
+        logicAppName: segments[8],
+        isConsumption,
+        reloadServices: true,
+      } as any)
+    );
   }
 );
 
@@ -598,7 +608,6 @@ export const getTemplateConnections = async (state: RootState, workflows: Record
       [workflowId]: {
         id: workflowId,
         workflowDefinition: definition,
-        isManageWorkflow: true,
         triggerType: getTriggerFromDefinition(definition?.triggers ?? {}),
         connectionKeys: Object.keys(connections),
       },
@@ -633,7 +642,6 @@ export const getTemplateConnections = async (state: RootState, workflows: Record
     workflowsData[workflowId] = {
       ...(workflowsData[workflowId] ?? {}),
       workflowDefinition: definition,
-      isManageWorkflow: true,
       triggerType: getTriggerFromDefinition(definition?.triggers ?? {}),
       kind: workflowData.kind,
       connectionKeys,
@@ -836,14 +844,15 @@ export const getWorkflowsWithDefinitions = async (
 ) => {
   if (isConsumption) {
     const definition = await getWorkflowDefinitionForConsumption(subscriptionId, resourceGroup, logicAppName as string);
-    const workflowId = Object.values(workflows)[0].id as string;
-    workflows[workflowId] = {
-      ...(workflows[workflowId] ?? {}),
-      workflowDefinition: definition,
-      isManageWorkflow: true,
-      triggerType: getTriggerFromDefinition(definition?.triggers ?? {}),
+    const workflowKey = Object.keys(workflows)[0];
+    return {
+      [workflowKey]: {
+        ...(workflows[workflowKey] ?? {}),
+        id: workflows[workflowKey].id,
+        workflowDefinition: definition,
+        triggerType: getTriggerFromDefinition(definition?.triggers ?? {}),
+      },
     };
-    return workflows;
   }
 
   const allWorkflowKeys = Object.keys(workflows);
