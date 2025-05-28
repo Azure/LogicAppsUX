@@ -21,6 +21,8 @@ export class GenerateDeploymentCenterScriptsStep extends AzureWizardExecuteStep<
    * @returns A Promise that resolves when the scripts are generated.
    */
   public async execute(context: IAzureDeploymentScriptsContext): Promise<void> {
+    context.telemetry.properties.lastStep = 'GenerateDeploymentCenterScriptsStep';
+
     // Read the template files and replace placeholders
     const deploymentScriptTemplateFileName = 'DeploymentCenterScript';
     const deploymentScriptTemplatePath = path.join(
@@ -50,8 +52,6 @@ export class GenerateDeploymentCenterScriptsStep extends AzureWizardExecuteStep<
     // Ensure deployment directory, clear existing files if exist, and create new files
     const deploymentDirectoryPath = path.join(context.customWorkspaceFolderPath, deploymentDirectory);
     await fse.ensureDir(deploymentDirectoryPath);
-    // TODO: May want to clear the deployment directory, leaving for now to avoid overwriting IaC files
-    // await fse.emptyDir(deploymentDirectoryPath);
 
     const deploymentScriptFileName = 'deploy.ps1';
     const deploymentScriptPath = path.join(deploymentDirectoryPath, deploymentScriptFileName);
@@ -65,6 +65,8 @@ export class GenerateDeploymentCenterScriptsStep extends AzureWizardExecuteStep<
     const deploymentFolderNode = vscode.Uri.file(deploymentDirectoryPath);
     const workspaceFolders = vscode.workspace.workspaceFolders || [];
     vscode.workspace.updateWorkspaceFolders(workspaceFolders.length, undefined, { uri: deploymentFolderNode });
+
+    context.telemetry.properties.lastStep = 'syncCloudSettings';
     await syncCloudSettings(context, vscode.Uri.file(context.projectPath));
 
     ext.outputChannel.appendLog(

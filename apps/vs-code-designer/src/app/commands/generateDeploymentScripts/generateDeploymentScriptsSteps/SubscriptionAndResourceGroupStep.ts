@@ -6,7 +6,8 @@ import { ResourceGroupListStep } from '@microsoft/vscode-azext-azureutils';
 export class SubscriptionAndResourceGroupStep extends AzureWizardPromptStep<IAzureDeploymentScriptsContext> {
   public hideStepCount = true;
 
-  public async prompt(_: IAzureDeploymentScriptsContext): Promise<void> {
+  public async prompt(context: IAzureDeploymentScriptsContext): Promise<void> {
+    context.telemetry.properties.lastStep = 'SubscriptionAndResourceGroupStep';
     // No prompt needed for this step
   }
 

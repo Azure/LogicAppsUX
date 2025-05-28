@@ -7,6 +7,7 @@ export class LogicAppUAMIStep extends AzureWizardPromptStep<IAzureDeploymentScri
   public hideStepCount = true;
 
   public async prompt(context: IAzureDeploymentScriptsContext): Promise<void> {
+    context.telemetry.properties.lastStep = 'LogicAppUAMIStep';
     const placeHolder: string = localize(
       'selectLogicAppUserAssignedManagedIdentity',
       'Select the Logic App User-Assigned Managed Identity to use for deployment'
@@ -14,10 +15,7 @@ export class LogicAppUAMIStep extends AzureWizardPromptStep<IAzureDeploymentScri
     const uamis = context.logicAppNode.site.rawSite.identity?.userAssignedIdentities;
     if (!uamis) {
       throw new Error(
-        localize(
-          'noUAMI',
-          'No user assigned managed identity found. The Logic App must have a user assigned managed identity with contributor role on the deployment resource group.'
-        )
+        'No user assigned managed identity found. The Logic App must have a user assigned managed identity with contributor role on the deployment resource group.'
       );
     }
     const uamiPicks: IAzureQuickPickItem<string>[] = Object.entries(uamis).map(([key, value]) => ({

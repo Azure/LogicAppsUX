@@ -17,10 +17,11 @@ export class LogicAppStep extends AzureWizardPromptStep<IAzureDeploymentScriptsC
   public hideStepCount = true;
 
   public async prompt(context: IAzureDeploymentScriptsContext): Promise<void> {
+    context.telemetry.properties.lastStep = 'LogicAppStep';
     const placeHolder: string = localize('selectLogicApp', 'Select Logic App (Standard) in Azure');
     const subscriptionNode = await ext.rgApi.appResourceTree.findTreeItem(`/subscriptions/${context.subscriptionId}`, context);
     if (!subscriptionNode) {
-      throw new Error(localize('noMatchingSubscription', 'Failed to find a subscription matching id "{0}".', context.subscriptionId));
+      throw new Error(`Failed to find a subscription with ID "${context.subscriptionId}".`);
     }
 
     let site = (await context.ui.showQuickPick(LogicAppStep.getLogicAppsPicks(context, subscriptionNode.subscription), { placeHolder }))

@@ -1,7 +1,7 @@
 import { describe, expect, beforeEach, vi, it, Mock } from 'vitest';
 import * as vscode from 'vscode';
 import { generateDeploymentScripts } from '../generateDeploymentScripts';
-import { IActionContext } from '@microsoft/vscode-azext-utils';
+import { IActionContext, UserCancelledError } from '@microsoft/vscode-azext-utils';
 import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
 import { addLocalFuncTelemetry } from '../../../utils/funcCoreTools/funcVersion';
@@ -32,6 +32,11 @@ vi.mock('@microsoft/vscode-azext-utils', () => {
     parseError: vi.fn(() => {
       return { message: 'error' };
     }),
+    UserCancelledError: class UserCancelledError extends Error {
+      constructor() {
+        super(COMMON_ERRORS.OPERATION_CANCELLED);
+      }
+    },
     DialogResponses: vi.fn(),
     AzExtTreeItem: class AzExtTreeItem {},
     AzExtParentTreeItem: class AzExtParentTreeItem {},
@@ -120,7 +125,7 @@ describe('generateDeploymentScripts', () => {
     await expect(generateDeploymentScripts(context, node)).rejects.toThrow('No Logic App project found.');
 
     expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(expect.stringContaining('No Logic App project found.'));
-    expect(context.telemetry.properties.error).toBeDefined();
+    expect(context.telemetry.properties.errorMessage).toBeDefined();
   });
 
   it('should handle errors during prompt steps', async () => {
@@ -133,7 +138,7 @@ describe('generateDeploymentScripts', () => {
     await expect(generateDeploymentScripts(context, node)).rejects.toThrow(errorMessage);
 
     expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(expect.stringContaining(errorMessage));
-    expect(context.telemetry.properties.error).toContain(errorMessage);
+    expect(context.telemetry.properties.errorMessage).toContain(errorMessage);
   });
 
   it('should handle errors during deployment script generation execute step', async () => {
@@ -146,7 +151,7 @@ describe('generateDeploymentScripts', () => {
     await expect(generateDeploymentScripts(context, node)).rejects.toThrow(errorMessage);
 
     expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(expect.stringContaining(errorMessage));
-    expect(context.telemetry.properties.error).toContain(errorMessage);
+    expect(context.telemetry.properties.errorMessage).toContain(errorMessage);
   });
 
   it('should not throw error if operation is cancelled', async () => {
@@ -154,14 +159,14 @@ describe('generateDeploymentScripts', () => {
     (AzureWizard as Mock).mockImplementation(() => {
       return {
         prompt: vi.fn(),
-        execute: vi.fn().mockRejectedValue(new Error(errorMessage)),
+        execute: vi.fn().mockRejectedValue(new UserCancelledError()),
       };
     });
 
     await generateDeploymentScripts(context, node);
 
-    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(expect.stringContaining(errorMessage));
-    expect(context.telemetry.properties.error).toContain(errorMessage);
+    expect(context.telemetry.properties.result).toBe('Canceled');
+    expect(context.telemetry.properties.errorMessage).toBeUndefined();
   });
 
   it('should use workspace folder if node is undefined', async () => {

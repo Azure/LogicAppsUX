@@ -375,3 +375,6 @@ export const workflowNameValidation = /^[a-z][a-z0-9]*(?:[_-][a-z0-9]+)*$/i;
 export const logicAppNameValidation = /^[a-z][a-z0-9]*(?:[_-][a-z0-9]+)*$/i;
 export const dataMapNameValidation = /^[a-z][a-z0-9]*(?:[_-][a-z0-9]+)*$/i;
 export const workspaceNameValidation = /^[a-z][a-z0-9]*(?:[_-][a-z0-9]+)*$/i;
+export const deployedLogicAppNameValidation = /^[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,62}[a-zA-Z0-9])?$/;
+export const deployedStorageAccountNameValidation = /^[a-z0-9]{3,24}$/;
+export const deployedAppServicePlanNameValidation = /^[a-zA-Z0-9-]{1,60}$/;

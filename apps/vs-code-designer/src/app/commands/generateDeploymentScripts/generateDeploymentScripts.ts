@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import {
-  COMMON_ERRORS,
   localSettingsFileName,
   workflowLocationKey,
   workflowResourceGroupNameKey,
@@ -15,8 +14,8 @@ import { localize } from '../../../localize';
 import { addLocalFuncTelemetry } from '../../utils/funcCoreTools/funcVersion';
 import { isLogicAppProject, tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
 import { getWorkspaceFolder, isMultiRootWorkspace } from '../../utils/workspace';
-import { AzureWizard, type IActionContext } from '@microsoft/vscode-azext-utils';
-import type { ILocalSettingsJson, IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
+import { AzureWizard, UserCancelledError, type IActionContext } from '@microsoft/vscode-azext-utils';
+import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import { DeploymentScriptTypeStep } from './generateDeploymentScriptsSteps/DeploymentScriptTypeStep';
 import { convertToWorkspace } from '../createNewCodeProject/CodeProjectBase/ConvertToWorkspace';
 import type { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
@@ -56,11 +55,14 @@ export async function generateDeploymentScripts(context: IActionContext, node?: 
     ext.outputChannel.appendLog(localize('initScriptGen', 'Starting deployment script generation...'));
     addLocalFuncTelemetry(context);
 
+    context.telemetry.properties.lastStep = 'convertToWorkspace';
     if (!(await convertToWorkspace(context))) {
       ext.outputChannel.appendLog(localize('exitScriptGen', 'Exiting deployment script generation...'));
+      context.telemetry.properties.result = 'Canceled';
       return;
     }
 
+    context.telemetry.properties.lastStep = 'isLogicAppProject';
     if (node && node.fsPath && (await isLogicAppProject(node.fsPath))) {
       projectPath = node.fsPath;
     } else {
@@ -68,9 +70,10 @@ export async function generateDeploymentScripts(context: IActionContext, node?: 
       projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
     }
     if (!projectPath) {
-      throw new Error(localize('noProjectSelected', 'No Logic App project found.'));
+      throw new Error('No Logic App project found.');
     }
 
+    context.telemetry.properties.lastStep = 'getDeploymentScriptsWizardContext';
     const wizardContext = await getDeploymentScriptsWizardContext(context, projectPath);
 
     const wizard: AzureWizard<IAzureDeploymentScriptsContext> = new AzureWizard(wizardContext, {
@@ -81,20 +84,30 @@ export async function generateDeploymentScripts(context: IActionContext, node?: 
     ext.outputChannel.appendLog(localize('launchAzureDeploymentScriptsWizard', 'Launching Azure deployment scripts wizard...'));
     await wizard.prompt();
     await wizard.execute();
+
+    context.telemetry.properties.result = 'Succeeded';
     ext.outputChannel.appendLog(localize('completeAzureDeploymentScriptsWizard', 'Azure deployment scripts wizard executed successfully.'));
   } catch (error) {
-    const errorMessage = localize('errorScriptGen', 'Error during deployment script generation: {0}', error.message ?? error);
-    ext.outputChannel.appendLog(errorMessage);
-    context.telemetry.properties.error = errorMessage;
     context.telemetry.properties.pinnedBundleVersion = ext.pinnedBundleVersion.has(projectPath)
       ? ext.pinnedBundleVersion.get(projectPath).toString()
       : 'false';
     context.telemetry.properties.currentWorkflowBundleVersion = ext.currentBundleVersion.has(projectPath)
       ? ext.currentBundleVersion.get(projectPath)
       : ext.defaultBundleVersion;
-    if (!errorMessage.includes(COMMON_ERRORS.OPERATION_CANCELLED)) {
-      throw new Error(errorMessage);
+
+    if (error instanceof UserCancelledError) {
+      context.telemetry.properties.result = 'Canceled';
+      return;
     }
+
+    const errorMessageTemplate = 'Error during deployment script generation: {0}';
+    const errorMessage = errorMessageTemplate.replace('{0}', error.message ?? error);
+    const localizedErrorMessage = localize('deploymentScriptGenError', errorMessageTemplate, error.message ?? error);
+
+    context.telemetry.properties.result = 'Failed';
+    context.telemetry.properties.errorMessage = errorMessage;
+    ext.outputChannel.appendLog(localizedErrorMessage);
+    throw new Error(localizedErrorMessage);
   }
 }
 
@@ -105,42 +118,29 @@ export async function generateDeploymentScripts(context: IActionContext, node?: 
  * @returns {Promise<IAzureDeploymentScriptsContext>} - The deployment scripts wizard context.
  */
 async function getDeploymentScriptsWizardContext(context: IActionContext, projectPath: string): Promise<IAzureDeploymentScriptsContext> {
-  try {
-    const wizardContext = context as IAzureDeploymentScriptsContext;
-    wizardContext.customWorkspaceFolderPath = path.normalize(path.dirname(projectPath)); // TODO - why are we overriding the existing context.customWorkspaceFolderPath?
-    wizardContext.projectPath = path.normalize(projectPath);
-    wizardContext.isValidWorkspace = isMultiRootWorkspace();
+  const wizardContext = context as IAzureDeploymentScriptsContext;
+  wizardContext.customWorkspaceFolderPath = path.normalize(path.dirname(projectPath)); // TODO - why are we overriding the existing context.customWorkspaceFolderPath?
+  wizardContext.projectPath = path.normalize(projectPath);
+  wizardContext.isValidWorkspace = isMultiRootWorkspace();
 
-    let localSettings: ILocalSettingsJson;
-    try {
-      const localSettingsFilePath = path.join(projectPath, localSettingsFileName);
-      localSettings = await getLocalSettingsJson(context, localSettingsFilePath);
-    } catch (error) {
-      const errorMessage = localize('errorReadingLocalSettings', 'Error reading local settings: {0}', error.message ?? error);
-      ext.outputChannel.appendLog(errorMessage);
-      throw new Error(errorMessage);
-    }
+  const localSettingsFilePath = path.join(projectPath, localSettingsFileName);
+  const localSettings = await getLocalSettingsJson(context, localSettingsFilePath);
 
-    const {
-      [workflowTenantIdKey]: defaultTenantId,
-      [workflowSubscriptionIdKey]: defaultSubscriptionId,
-      [workflowResourceGroupNameKey]: defaultResourceGroup,
-      [workflowLocationKey]: defaultLocation,
-    } = localSettings.Values;
+  const {
+    [workflowTenantIdKey]: defaultTenantId,
+    [workflowSubscriptionIdKey]: defaultSubscriptionId,
+    [workflowResourceGroupNameKey]: defaultResourceGroup,
+    [workflowLocationKey]: defaultLocation,
+  } = localSettings.Values;
 
-    wizardContext.tenantId = defaultTenantId;
-    wizardContext.subscriptionId = defaultSubscriptionId !== '' ? defaultSubscriptionId : undefined;
-    if (defaultResourceGroup && defaultLocation) {
-      wizardContext.resourceGroup = {
-        name: defaultResourceGroup,
-        location: defaultLocation,
-      };
-    }
-
-    return wizardContext;
-  } catch (error) {
-    const errorMessage = localize('setupWizardScriptContextError', 'Error in setupWizardScriptContext: {0}', error.message ?? error);
-    ext.outputChannel.appendLog(errorMessage);
-    throw new Error(errorMessage);
+  wizardContext.tenantId = defaultTenantId;
+  wizardContext.subscriptionId = defaultSubscriptionId !== '' ? defaultSubscriptionId : undefined;
+  if (defaultResourceGroup && defaultLocation) {
+    wizardContext.resourceGroup = {
+      name: defaultResourceGroup,
+      location: defaultLocation,
+    };
   }
+
+  return wizardContext;
 }

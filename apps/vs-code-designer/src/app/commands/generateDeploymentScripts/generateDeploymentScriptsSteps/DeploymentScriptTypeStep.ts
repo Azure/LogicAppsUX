@@ -29,6 +29,7 @@ export class DeploymentScriptTypeStep extends AzureWizardPromptStep<IAzureDeploy
    * @param context - The Azure deployment scripts context.
    */
   public async prompt(context: IAzureDeploymentScriptsContext): Promise<void> {
+    context.telemetry.properties.lastStep = 'DeploymentScriptTypeStep';
     const placeHolder = localize('setDeploymentScriptType', 'Deployment script type');
     const picks: IAzureQuickPickItem<DeploymentScriptType>[] = [
       { label: localize('azureDevOpsPipeline', 'Azure DevOps Pipeline'), data: DeploymentScriptType.azureDevOpsPipeline },

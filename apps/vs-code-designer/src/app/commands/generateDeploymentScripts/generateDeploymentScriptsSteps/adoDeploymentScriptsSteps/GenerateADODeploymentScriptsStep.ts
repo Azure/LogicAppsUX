@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { isEmptyString } from '@microsoft/logic-apps-shared';
-import { AzureWizardExecuteStep, DialogResponses } from '@microsoft/vscode-azext-utils';
+import { AzureWizardExecuteStep, DialogResponses, UserCancelledError } from '@microsoft/vscode-azext-utils';
 import type { ConnectionsData } from '@microsoft/vscode-extension-logic-apps';
 import { getBaseGraphApi, OpenBehavior } from '@microsoft/vscode-extension-logic-apps';
 import { getConnectionsJson } from '../../../../utils/codeless/connection';
@@ -32,6 +32,8 @@ export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IAz
    * @returns {Promise<void>} - A Promise that resolves when the scripts are generated.
    */
   public async execute(context: IAzureDeploymentScriptsContext): Promise<void> {
+    context.telemetry.properties.lastStep = 'GenerateADODeploymentScriptsStep';
+
     const deploymentFolderPath = path.join(context.customWorkspaceFolderPath, deploymentDirectory);
     if (!fs.existsSync(deploymentFolderPath)) {
       fs.mkdirSync(deploymentFolderPath);
@@ -43,35 +45,48 @@ export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IAz
       context.openBehavior = OpenBehavior.alreadyOpen;
     }
 
+    context.telemetry.properties.lastStep = 'getConnectionsJson';
     const connectionsJson = await getConnectionsJson(context.projectPath);
     const connectionsData: ConnectionsData = isEmptyString(connectionsJson) ? {} : JSON.parse(connectionsJson);
+
+    context.telemetry.properties.lastStep = 'areAllConnectionsParameterized';
     const isParameterized = await areAllConnectionsParameterized(connectionsData);
+
+    context.telemetry.properties.lastStep = 'getWorkflowFilePaths';
     const workflowFiles = GenerateADODeploymentScriptsStep.getWorkflowFilePaths(context.projectPath);
 
     if (!isParameterized) {
-      const message = localize(
+      context.telemetry.properties.lastStep = 'parameterizeConnectionsPrompt';
+      const parameterizeConnectionsPrompt = localize(
         'parameterizeInDeploymentScripts',
         'Allow parameterization for connections? Declining cancels generation for deployment scripts.'
       );
       const shouldParameterizeConnections = await vscode.window.showInformationMessage(
-        message,
+        parameterizeConnectionsPrompt,
         { modal: true },
         DialogResponses.yes,
         DialogResponses.no
       );
       if (shouldParameterizeConnections === DialogResponses.yes) {
+        context.telemetry.properties.lastStep = 'parameterizeConnections';
         await parameterizeConnections(context);
         context.telemetry.properties.parameterizeConnectionsInDeploymentScripts = 'true';
       } else {
         context.telemetry.properties.parameterizeConnectionsInDeploymentScripts = 'false';
-        ext.outputChannel.appendLog(localize('exitScriptGen', 'Exiting script generation...'));
-        return;
+        throw new UserCancelledError('User declined to parameterize connections in deployment scripts.');
       }
     }
 
-    await GenerateADODeploymentScriptsStep.callConsumptionApi(context);
-    const standardArtifactsContent = await GenerateADODeploymentScriptsStep.callStandardApi(context);
-    await GenerateADODeploymentScriptsStep.handleApiResponse(standardArtifactsContent, context.deploymentFolderPath);
+    context.telemetry.properties.lastStep = 'generateManagedConnectionsDeploymentArtifacts';
+    await GenerateADODeploymentScriptsStep.generateManagedConnectionsDeploymentArtifacts(context);
+
+    context.telemetry.properties.lastStep = 'getLogicAppDeploymentArtifactsBuffer';
+    const logicAppArtifactsBuffer = await GenerateADODeploymentScriptsStep.getLogicAppDeploymentArtifactsBuffer(context);
+    if (!logicAppArtifactsBuffer) {
+      throw new Error('Failed getting Logic App deployment artifacts. No content received from the standard resources API.');
+    }
+    await unzipLogicAppArtifacts(logicAppArtifactsBuffer, context.deploymentFolderPath);
+    ext.outputChannel.appendLog(localize('logicAppDeploymentArtifactsUnzipped', 'Logic app deployment artifacts successfully unzipped.'));
 
     const localizedLogMessage = localize(
       'scriptGenSuccess',
@@ -81,13 +96,17 @@ export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IAz
     ext.outputChannel.appendLog(localizedLogMessage);
 
     if (context.isValidWorkspace) {
+      context.telemetry.properties.lastStep = 'addFolderToWorkspace';
       FileManagement.addFolderToWorkspace(context.deploymentFolderPath);
     } else {
+      context.telemetry.properties.lastStep = 'convertToValidWorkspace';
       FileManagement.convertToValidWorkspace(context.deploymentFolderPath);
     }
 
     const correlationId = uuidv4();
     const currentDateTime = new Date().toISOString();
+
+    context.telemetry.properties.lastStep = 'updateMetadata';
     workflowFiles.forEach((filePath) =>
       GenerateADODeploymentScriptsStep.updateMetadata(filePath, context.projectPath, correlationId, currentDateTime)
     );
@@ -148,32 +167,11 @@ export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IAz
   }
 
   /**
-   * Calls the IaC API to obtain the deployment standard artifacts.
-   * @param {IAzureDeploymentScriptsContext} context - The Azure deployment scripts context.
-   * @returns {Promise<Buffer>} - A Promise that resolves to a Buffer containing the API response.
-   */
-  private static async callStandardApi(context: IAzureDeploymentScriptsContext): Promise<Buffer> {
-    try {
-      return await GenerateADODeploymentScriptsStep.callStandardResourcesApi(
-        context.subscriptionId,
-        context.resourceGroup.name,
-        context.storageAccountName,
-        context.resourceGroup.location,
-        context.logicAppName,
-        context.appServicePlan,
-        context.projectPath
-      );
-    } catch (error) {
-      throw new Error(localize('Error calling Standard Resources API', error));
-    }
-  }
-
-  /**
    * Calls the IaC API to obtain the deployment consumption artifacts for each managed connection.
-   * @param context - The Azure deployment scripts context.
-   * @returns A Promise that resolves when all artifacts are processed.
+   * @param {IAzureDeploymentScriptsContext} context - The Azure deployment scripts context.
+   * @returns {Promise<void>} - A Promise that resolves when all artifacts are processed.
    */
-  private static async callConsumptionApi(context: IAzureDeploymentScriptsContext): Promise<void> {
+  private static async generateManagedConnectionsDeploymentArtifacts(context: IAzureDeploymentScriptsContext): Promise<void> {
     ext.outputChannel.appendLog(localize('initCallConsumption', 'Initiating call to Consumption API for deployment artifacts.'));
 
     ext.outputChannel.appendLog(
@@ -187,164 +185,57 @@ export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IAz
       )
     );
 
-    // Retrieve managed connections
     ext.outputChannel.appendLog(localize('fetchingManagedConnections', 'Fetching managed connections...'));
     const managedConnections: { refEndPoint: string; originalKey: string }[] = await GenerateADODeploymentScriptsStep.getConnectionNames(
       context.projectPath
     );
 
     for (const connectionObj of managedConnections) {
-      try {
-        ext.outputChannel.appendLog(
+      ext.outputChannel.appendLog(
+        localize(
+          'startRetrieveConnectionDeploymentArtifacts',
+          'Retrieving deployment artifacts for managed connection "{0}".',
+          connectionObj.originalKey
+        )
+      );
+
+      const managedConnectionArtifactsBuffer = await GenerateADODeploymentScriptsStep.getManagedConnectionDeploymentArtifactsBuffer(
+        context.tenantId,
+        context.subscriptionId,
+        context.resourceGroup.name,
+        context.logicAppName,
+        connectionObj.originalKey,
+        connectionObj.refEndPoint
+      );
+      if (!managedConnectionArtifactsBuffer) {
+        vscode.window.showErrorMessage(
           localize(
-            'startRetrieveConnectionDeploymentArtifacts',
-            'Retrieving deployment artifacts for managed connection "{0}".',
+            'failedRetrieveConnectionDeploymentArtifacts',
+            'Failed to retrieve deployment artifacts for managed connection "{0}".',
             connectionObj.originalKey
           )
         );
-
-        // The line below has been modified to pass both originalKey and refEndPoint
-        const bufferData = await GenerateADODeploymentScriptsStep.callManagedConnectionsApi(
-          context.tenantId,
-          context.subscriptionId,
-          context.resourceGroup.name,
-          context.logicAppName,
-          connectionObj.originalKey,
-          connectionObj.refEndPoint
-        );
-        if (!bufferData) {
-          vscode.window.showErrorMessage(
-            localize(
-              'failedRetrieveConnectionDeploymentArtifacts',
-              'Failed to retrieve deployment artifacts for managed connection "{0}".',
-              connectionObj.originalKey
-            )
-          );
-          continue;
-        }
-
-        // Specify the unzip path and handle the API response
-        const unzipPath = path.join(context.deploymentFolderPath);
-        ext.outputChannel.appendLog(
-          localize(
-            'startUnzipConnectionDeploymentArtifacts',
-            'Unzipping artifacts for managed connection "{0}" at "{1}".',
-            connectionObj.originalKey,
-            unzipPath
-          )
-        );
-        await GenerateADODeploymentScriptsStep.handleApiResponse(bufferData, unzipPath);
-      } catch (error) {
-        const errorMessage = localize(
-          'failedRetrieveConnectionDeploymentArtifacts',
-          'Failed to retrieve deployment artifacts for managed connection "{0}". Error: "{1}".',
-          connectionObj.originalKey,
-          JSON.stringify(error.message)
-        );
-        ext.outputChannel.appendLog(errorMessage);
-        throw new Error(errorMessage);
+        continue;
       }
-    }
-  }
-
-  /**
-   * Handles the API response and exports the artifacts.
-   * @param zipContent - Buffer containing the API response.
-   * @param targetDirectory - String indicating the directory to export to.
-   * @returns {Promise<void>} - A promise that resolves when the artifacts are unzipped.
-   */
-  private static async handleApiResponse(zipContent: Buffer | Buffer[], targetDirectory: string): Promise<void> {
-    try {
-      if (!zipContent) {
-        vscode.window.showErrorMessage(localize('invalidApiResponseContent', 'Invalid API response content.'));
-        ext.outputChannel.appendLog(localize('invalidApiResponseExiting', 'Invalid API response received. Exiting...'));
-        return;
-      }
-      await unzipLogicAppArtifacts(zipContent, targetDirectory);
-      ext.outputChannel.appendLog(localize('artifactsSuccessfullyUnzipped', 'Artifacts successfully unzipped.'));
-    } catch (error) {
-      const errorMessage = localize('errorHandlingApiResponse', 'Error occurred while handling API response: {0}', error.message ?? error);
-      ext.outputChannel.appendLog(errorMessage);
-      throw new Error(errorMessage);
-    }
-  }
-
-  /**
-   * Performs the API call for standard azure resouces
-   * @param subscriptionId - Subscription ID for Azure services.
-   * @param resourceGroup - Azure resource group name.
-   * @param storageAccount - Azure storage account name.
-   * @param location - Azure location/region.
-   * @param logicAppName - Azure Logic App name.
-   * @param appServicePlan - Azure App Service Plan name.
-   * @returns - Promise<Buffer> containing the API response.
-   */
-  private static async callStandardResourcesApi(
-    subscriptionId: string,
-    resourceGroup: string,
-    storageAccount: string,
-    location: string,
-    logicAppName: string,
-    appServicePlan: string,
-    projectPath: string
-  ): Promise<Buffer> {
-    try {
-      ext.outputChannel.appendLog(localize('initApiWorkflowDesignerPort', 'Initiating API connection through workflow designer port...'));
-      await startDesignTimeApi(projectPath);
-      if (!ext.designTimeInstances.has(projectPath)) {
-        throw new Error(
-          localize('designTimeInstanceNotFound', 'Design time API is undefined. Please retry once Azure Functions Core Tools has started.')
-        );
-      }
-      const designTimeInst = ext.designTimeInstances.get(projectPath);
-      if (designTimeInst.port === undefined) {
-        throw new Error(
-          localize('errorStandardResourcesApi', 'Design time port is undefined. Please retry once Azure Functions Core Tools has started.')
-        );
-      }
-      const apiUrl = `http://localhost:${designTimeInst.port}${managementApiPrefix}/generateDeploymentArtifacts`;
-      ext.outputChannel.appendLog(localize('apiUrl', `Calling API URL: ${apiUrl}`));
-
-      // Construct the request body based on the parameters
-      const deploymentArtifactsInput = {
-        targetSubscriptionName: subscriptionId,
-        targetResourceGroupName: resourceGroup,
-        targetStorageAccountName: storageAccount,
-        targetLocation: location,
-        targetLogicAppName: logicAppName,
-        targetAppServicePlanName: appServicePlan,
-      };
 
       ext.outputChannel.appendLog(
         localize(
-          'operationalContext',
-          `Operational context: Subscription ID: ${subscriptionId}, Resource Group: ${resourceGroup}, Logic App: ${logicAppName}`
+          'startUnzipConnectionDeploymentArtifacts',
+          'Unzipping artifacts for managed connection "{0}" at "{1}".',
+          connectionObj.originalKey,
+          context.deploymentFolderPath
         )
       );
-      ext.outputChannel.appendLog(localize('initiatingStandardResourcesApiCall', 'Initiating Standard Resources API call...'));
 
-      const response = await axios.post(apiUrl, deploymentArtifactsInput, {
-        headers: {
-          Accept: 'application/zip',
-          'Content-Type': 'application/json',
-        },
-        responseType: 'arraybuffer',
-      });
-
-      ext.outputChannel.appendLog(localize('apiCallSuccessful', 'API call successful, processing response...'));
-      return Buffer.from(response.data, 'binary');
-    } catch (error) {
-      const responseData = JSON.parse(new TextDecoder().decode(error.response.data));
-      const { message = '', code = '' } = responseData?.error ?? {};
-      ext.outputChannel.appendLog(
-        localize('failedStandardResourcesApiCall', `Failed to call Standard Resources API: ${code} - ${message}`)
-      );
-      throw new Error(localize('errorStandardResourcesApi', message));
+      if (!managedConnectionArtifactsBuffer) {
+        throw new Error('Failed getting Logic App deployment artifacts. No content received from the standard resources API.');
+      }
+      await unzipLogicAppArtifacts(managedConnectionArtifactsBuffer, context.deploymentFolderPath);
     }
   }
 
   /**
-   * Calls the Managed Connections API to retrieve deployment artifacts for a given Logic App.
+   * Calls the consumption Managed Connections API to retrieve deployment artifacts for a given Logic App.
    * @param tenantId - The Azure tenant ID.
    * @param subscriptionId - The Azure subscription ID.
    * @param resourceGroup - The Azure resource group name.
@@ -353,7 +244,7 @@ export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IAz
    * @param connectionId - The parameter for connection ID endpoint deployed in portal.
    * @returns A Buffer containing the API response.
    */
-  private static async callManagedConnectionsApi(
+  private static async getManagedConnectionDeploymentArtifactsBuffer(
     tenantId: string,
     subscriptionId: string,
     resourceGroup: string,
@@ -367,15 +258,12 @@ export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IAz
       const cloudHost = await getCloudHost();
       const baseGraphUri = getBaseGraphApi(cloudHost);
 
-      // Build the URL for the API call
       const apiUrl = `${baseGraphUri}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/connections/${connectionId}/generateDeploymentArtifacts?api-version=${apiVersion}`;
-      // Define the request body
       const requestBody = {
         TargetLogicAppName: logicAppName,
         ConnectionReferenceName: connectionName,
       };
 
-      // Execute the API call
       const response = await axios.post(apiUrl, requestBody, {
         headers: {
           'Content-Type': 'application/json',
@@ -384,17 +272,64 @@ export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IAz
         responseType: 'arraybuffer',
       });
 
-      // Convert and log the successful response
       const buffer = Buffer.from(response.data, 'binary');
       ext.outputChannel.appendLog(
-        localize('successfulManagedConnection', `Successfully retrieved deployment artifacts for connection: ${connectionName}.`)
+        localize('successfulManagedConnection', `Successfully retrieved deployment artifacts for managed connection "${connectionName}".`)
       );
       return buffer;
     } catch (error) {
       const responseData = JSON.parse(new TextDecoder().decode(error.response.data));
       const { message = '', code = '' } = responseData?.error ?? {};
-      ext.outputChannel.appendLog(localize('errorManagedConnectionsApi', `Failed to call Managed Connections API: ${code} - ${message}`));
-      throw new Error(localize('errorManagedConnectionsApi', message));
+      throw new Error(`Error getting deployment artifacts for managed connection "${connectionName}": ${code} - ${message}`);
+    }
+  }
+
+  /**
+   * Gets deployment artifacts for the Logic App using standard resources API.
+   * @param {IAzureDeploymentScriptsContext} context - The Azure deployment scripts context.
+   * @returns {Promise<Buffer>} - A Promise that resolves to a Buffer containing the Logic App deployment artifacts.
+   */
+  private static async getLogicAppDeploymentArtifactsBuffer(context: IAzureDeploymentScriptsContext): Promise<Buffer> {
+    try {
+      ext.outputChannel.appendLog(localize('initApiWorkflowDesignerPort', 'Initiating API connection through workflow designer port...'));
+      await startDesignTimeApi(context.projectPath);
+      if (!ext.designTimeInstances.has(context.projectPath)) {
+        throw new Error('Design time API is undefined. Please retry once Azure Functions Core Tools has started.');
+      }
+      const designTimeInst = ext.designTimeInstances.get(context.projectPath);
+      if (designTimeInst.port === undefined) {
+        throw new Error('Design time port is undefined. Please retry once Azure Functions Core Tools has started.');
+      }
+      const apiUrl = `http://localhost:${designTimeInst.port}${managementApiPrefix}/generateDeploymentArtifacts`;
+
+      ext.outputChannel.appendLog(
+        localize(
+          'operationalContext',
+          `Operational context: Subscription ID: ${context.subscriptionId}, Resource Group: ${context.resourceGroup.name}, Logic App: ${context.logicAppName}`
+        )
+      );
+
+      const deploymentArtifactsInput = {
+        targetSubscriptionName: context.subscriptionId,
+        targetResourceGroupName: context.resourceGroup.name,
+        targetStorageAccountName: context.storageAccountName,
+        targetLocation: context.resourceGroup.location,
+        targetLogicAppName: context.logicAppName,
+        targetAppServicePlanName: context.appServicePlan,
+      };
+
+      const response = await axios.post(apiUrl, deploymentArtifactsInput, {
+        headers: {
+          Accept: 'application/zip',
+          'Content-Type': 'application/json',
+        },
+        responseType: 'arraybuffer',
+      });
+      return Buffer.from(response.data, 'binary');
+    } catch (error) {
+      const responseData = JSON.parse(new TextDecoder().decode(error.response.data));
+      const { message = '', code = '' } = responseData?.error ?? {};
+      throw new Error(`Error getting deployment artifacts for Logic App: ${code} - ${message}`);
     }
   }
 
