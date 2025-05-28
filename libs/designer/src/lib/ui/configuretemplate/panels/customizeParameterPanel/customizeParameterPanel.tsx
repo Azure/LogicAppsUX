@@ -82,7 +82,7 @@ export const CustomizeParameterPanel = () => {
           }),
           appearance: 'primary',
           onClick: () => {},
-          disabled: !isDirty || !isUndefinedOrEmptyString(parameterError) || isDisplayNameEmpty,
+          disabled: !isDirty || isDisplayNameEmpty,
           menuItems: getSaveMenuButtons(resources, currentStatus ?? 'Development', (newStatus) => {
             if (runValidation) {
               dispatch(validateParameterDetails());
@@ -109,7 +109,7 @@ export const CustomizeParameterPanel = () => {
         },
       ],
     };
-  }, [dispatch, intl, isDirty, parameterId, runValidation, parameterError, currentStatus, resources, selectedParameterDefinition]);
+  }, [dispatch, intl, isDirty, parameterId, runValidation, currentStatus, resources, selectedParameterDefinition]);
 
   const onRenderFooterContent = useCallback(() => <TemplatesPanelFooter {...footerContent} />, [footerContent]);
 
