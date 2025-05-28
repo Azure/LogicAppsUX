@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [5.109.3](https://github.com/Azure/LogicAppsUX/compare/v5.109.2...v5.109.3) (2025-05-28)
+
+
+### Bug Fixes
+
+* **Templates:** Bug bash commits to hotfix branch ([#7362](https://github.com/Azure/LogicAppsUX/issues/7362)) ([4c63337](https://github.com/Azure/LogicAppsUX/commit/4c63337225de0f3f92d62ecfe2b7bf003abc6ebe)), closes [#7349](https://github.com/Azure/LogicAppsUX/issues/7349) [#7301](https://github.com/Azure/LogicAppsUX/issues/7301) [#7297](https://github.com/Azure/LogicAppsUX/issues/7297)
+
 ### [5.109.2](https://github.com/Azure/LogicAppsUX/compare/v5.109.1...v5.109.2) (2025-05-28)
 
 
