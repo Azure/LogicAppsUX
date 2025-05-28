@@ -13,6 +13,8 @@ import { Button, Text } from '@fluentui/react-components';
 import type { CreatedConnectionPayload } from '../../../connectionsPanel/createConnection/createConnectionWrapper';
 import { CreateConnectionInternal } from '../../../connectionsPanel/createConnection/createConnectionInternal';
 import type { AppDispatch, RootState } from '../../../../../core';
+import { useRawInputParameters } from '../../../../../core/state/operation/operationSelector';
+import { isAgentConnectorAndAgentServiceModel } from './helpers';
 
 interface ConnectionInlineProps {
   setShowSubComponent?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -38,6 +40,10 @@ export const ConnectionInline: React.FC<ConnectionInlineProps> = ({ showSubCompo
     () => connections.find((connection) => connection.id === currentConnectionId),
     [connections, currentConnectionId]
   );
+  const nodeInputs = useRawInputParameters(nodeId);
+  const isAgentServiceConnection = useMemo(() => {
+    return isAgentConnectorAndAgentServiceModel(operationInfo.connectorId, 'default', nodeInputs?.parameterGroups ?? {});
+  }, [nodeInputs?.parameterGroups, operationInfo.connectorId]);
 
   const setConnection = useCallback(() => {
     setShowCreateConnection(true);
@@ -108,6 +114,7 @@ export const ConnectionInline: React.FC<ConnectionInlineProps> = ({ showSubCompo
           setShowCreateConnection(false);
         }
       }}
+      isAgentServiceConnection={isAgentServiceConnection}
     />
   ) : (
     <Button

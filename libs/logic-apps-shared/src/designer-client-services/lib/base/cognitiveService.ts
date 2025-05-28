@@ -102,6 +102,7 @@ export class BaseCognitiveServiceService implements ICognitiveServiceService {
   async fetchSessionPoolAccountById(accountId: string): Promise<any> {
     const { httpClient, baseUrl } = this.options;
     const uri = `${baseUrl}${accountId}`;
+
     try {
       const response = await httpClient.get({
         uri,
@@ -114,7 +115,6 @@ export class BaseCognitiveServiceService implements ICognitiveServiceService {
       return new Error(e?.message ?? e);
     }
   }
-
   async fetchBuiltInRoleDefinitions(): Promise<any> {
     const { httpClient, baseUrl } = this.options;
 
@@ -154,7 +154,6 @@ export class BaseCognitiveServiceService implements ICognitiveServiceService {
         queryParameters,
         includeAuth: true,
       });
-      console.log(response);
 
       const assignments = Array.isArray(response?.value) ? response.value : [];
 
@@ -165,6 +164,22 @@ export class BaseCognitiveServiceService implements ICognitiveServiceService {
       });
     } catch (_e: any) {
       return false;
+    }
+  }
+  async fetchAllCognitiveServiceProjects(serviceAccountId: string): Promise<any> {
+    const { httpClient, baseUrl } = this.options;
+    const uri = `${baseUrl}${serviceAccountId}/projects`;
+
+    try {
+      const response = await httpClient.get({
+        uri,
+        queryParameters: {
+          'api-version': '2025-04-01-preview',
+        },
+      });
+      return response;
+    } catch (e: any) {
+      return new Error(e?.message ?? e);
     }
   }
 }

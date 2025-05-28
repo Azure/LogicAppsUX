@@ -41,6 +41,26 @@ export default {
     inputs: {
       type: 'object',
       properties: {
+        agentModelType: {
+          title: 'Agent model type',
+          description: 'Type of agent model to use',
+          'x-ms-visibility': 'important',
+          'x-ms-editor': 'dropdown',
+          'x-ms-editor-options': {
+            options: [
+              {
+                value: 'AzureOpenAI',
+                displayName: 'Azure OpenAI',
+              },
+              {
+                value: 'FoundryAgentService',
+                displayName: 'Foundry Agent Service',
+              },
+            ],
+          },
+          type: 'string',
+          default: 'AzureOpenAI',
+        },
         deploymentId: {
           type: 'string',
           title: 'Deployment Model Name',
@@ -48,13 +68,6 @@ export default {
           'x-ms-connection-required': true,
           'x-ms-visibility': 'important',
           'x-ms-editor': 'combobox',
-        },
-        agentModelType: {
-          title: 'Agent model type',
-          description: 'Type of agent model to use',
-          default: 'AzureOpenAI',
-          type: 'string',
-          hideInUI: true,
         },
         messages: {
           title: 'Instructions for agent',
@@ -76,6 +89,15 @@ export default {
                   format: 'int32',
                   minimum: 1,
                   maximum: 8192,
+                  'x-ms-input-dependencies': {
+                    type: 'visibility',
+                    parameters: [
+                      {
+                        name: 'agentModelType',
+                        values: ['AzureOpenAI'],
+                      },
+                    ],
+                  },
                 },
                 frequencyPenalty: {
                   title: 'Frequency penalty',
@@ -84,6 +106,15 @@ export default {
                   format: 'float',
                   minimum: -2.0,
                   maximum: 2.0,
+                  'x-ms-input-dependencies': {
+                    type: 'visibility',
+                    parameters: [
+                      {
+                        name: 'agentModelType',
+                        values: ['AzureOpenAI'],
+                      },
+                    ],
+                  },
                 },
                 presencePenalty: {
                   title: 'Presence penalty',
@@ -92,6 +123,15 @@ export default {
                   minimum: -2.0,
                   format: 'float',
                   maximum: 2.0,
+                  'x-ms-input-dependencies': {
+                    type: 'visibility',
+                    parameters: [
+                      {
+                        name: 'agentModelType',
+                        values: ['AzureOpenAI'],
+                      },
+                    ],
+                  },
                 },
                 temperature: {
                   title: 'Temperature',
@@ -109,6 +149,33 @@ export default {
                   minimum: 0,
                   maximum: 1.0,
                 },
+                builtinTools: {
+                  type: 'array',
+                  title: 'Built in tools',
+                  'x-ms-editor': 'dropdown',
+                  'x-ms-editor-options': {
+                    multiSelect: true,
+                    titleSeparator: ',',
+                    serialization: {
+                      valueType: 'array',
+                    },
+                    options: [
+                      {
+                        value: 'code_interpreter',
+                        displayName: 'Code interpreter',
+                      },
+                    ],
+                  },
+                  'x-ms-input-dependencies': {
+                    type: 'visibility',
+                    parameters: [
+                      {
+                        name: 'agentModelType',
+                        values: ['FoundryAgentService'],
+                      },
+                    ],
+                  },
+                },
               },
             },
             agentHistoryReductionSettings: {
@@ -116,7 +183,7 @@ export default {
               properties: {
                 agentHistoryReductionType: {
                   type: 'string',
-                  title: 'Agent history reduction type',
+                  title: 'Agent history reduction type (Experimental)',
                   default: 'maximumTokenCountReduction',
                   description: 'Type of agent history reduction to use',
                   'x-ms-editor': 'dropdown',
@@ -192,7 +259,7 @@ export default {
           },
         },
       },
-      required: ['deploymentId', 'messages', 'agentModelType', 'deploymentModelProperties'],
+      required: ['agentModelType', 'deploymentId', 'messages', 'deploymentModelProperties'],
     },
     outputs: {
       type: 'object',

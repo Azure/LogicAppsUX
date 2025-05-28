@@ -1,21 +1,17 @@
+import type { RootState } from '../../../core/state/templates/store';
 import { TemplatesSection, type TemplatesSectionItem } from '@microsoft/designer-ui';
 import type { WorkflowTemplateData } from '../../../core';
-import {
-  Accordion,
-  AccordionHeader,
-  AccordionItem,
-  AccordionPanel,
-  MessageBar,
-  MessageBarBody,
-  MessageBarTitle,
-  Text,
-} from '@fluentui/react-components';
+import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, Text, tokens } from '@fluentui/react-components';
+import { ErrorCircle16Filled } from '@fluentui/react-icons';
 import type { Template } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import { useResourceStrings } from '../resources';
 import { useTemplatesStrings } from '../../templates/templatesStrings';
 import { WorkflowKind } from '../../../core/state/workflow/workflowInterfaces';
 import { useIntl } from 'react-intl';
+import { DescriptionWithLink, ErrorBar } from '../common';
+import { useSelector } from 'react-redux';
+import { workflowsHaveErrors } from '../../../core/configuretemplate/utils/errors';
 
 export const CustomizeWorkflows = ({
   selectedWorkflowsList,
@@ -29,22 +25,33 @@ export const CustomizeWorkflows = ({
   const intl = useIntl();
   const workflowEntries = Object.entries(selectedWorkflowsList);
 
+  const resources = {
+    DuplicateIdsErrorTitle: intl.formatMessage({
+      defaultMessage: 'Workflow names must be unique. Duplicate workflow ids: ',
+      id: 'v95bFR',
+      description: 'Error message title for duplicate workflow ids',
+    }),
+  };
+
+  const { workflows, apiErrors, saveError } = useSelector((state: RootState) => ({
+    workflows: state.template.workflows ?? {},
+    apiErrors: state.template.apiValidatationErrors?.workflows ?? {},
+    saveError: state.template.apiValidatationErrors?.saveGeneral?.workflows,
+  }));
+  const hasErrors = useMemo(() => workflowsHaveErrors(apiErrors, workflows), [apiErrors, workflows]);
+
   return (
     <div className="msla-templates-tab msla-panel-no-description-tab">
-      {duplicateIds.length ? (
-        <MessageBar intent="error" className="msla-templates-error-message-bar">
-          <MessageBarBody>
-            <MessageBarTitle>
-              {intl.formatMessage({
-                defaultMessage: 'Workflow names must be unique. Duplicate workflow ids: ',
-                id: 'v95bFR',
-                description: 'Error message title for duplicate workflow ids',
-              })}
-            </MessageBarTitle>
-            <Text>{duplicateIds.join(', ')}</Text>
-          </MessageBarBody>
-        </MessageBar>
-      ) : null}
+      <DescriptionWithLink
+        text={intl.formatMessage({
+          defaultMessage: `Enter your workflow details. Your changes apply only to this template and won't affect the original workflow. Save your work anytime and pick up where you left off without having to publish. To publish your template, all fields must be completed.`,
+          id: 'v3K85M',
+          description: 'The description for customizing workflows tab',
+        })}
+      />
+      {duplicateIds.length ? <ErrorBar title={resources.DuplicateIdsErrorTitle} errorMessage={duplicateIds.join(', ')} /> : null}
+      {saveError ? <ErrorBar errorMessage={saveError} /> : null}
+
       {workflowEntries.length ? (
         workflowEntries.length > 1 ? (
           <Accordion multiple={true} defaultOpenItems={Object.keys(selectedWorkflowsList)}>
@@ -52,6 +59,7 @@ export const CustomizeWorkflows = ({
               <AccordionItem value={workflowId} key={workflowId}>
                 <AccordionHeader>
                   <Text style={{ fontWeight: 'bold' }}>{workflowData.id}</Text>
+                  {hasErrors ? <ErrorCircle16Filled style={{ paddingLeft: 6, color: tokens.colorPaletteRedForeground1 }} /> : null}
                 </AccordionHeader>
                 <AccordionPanel>
                   <CustomizeWorkflowSection
@@ -88,8 +96,19 @@ const CustomizeWorkflowSection = ({
   workflow: Partial<WorkflowTemplateData>;
   updateWorkflowDataField: (workflowId: string, workflowData: Partial<WorkflowTemplateData>) => void;
 }) => {
+  const intl = useIntl();
   const customResourceStrings = useResourceStrings();
   const { resourceStrings, stateTypes } = useTemplatesStrings();
+  const { errors, apiErrors } = useSelector((state: RootState) => ({
+    errors: state.template.workflows?.[workflowId]?.errors,
+    apiErrors: state.template.apiValidatationErrors?.workflows?.[workflowId],
+  }));
+  const hasErrors = useMemo(() => apiErrors?.general || errors?.general, [apiErrors?.general, errors?.general]);
+  const ValidationErrorTitle = intl.formatMessage({
+    defaultMessage: 'Validation failed : ',
+    id: 'U6V60S',
+    description: 'Error message title for workflow validation errors',
+  });
 
   const defaultKindOptions = useMemo(
     () => [
@@ -135,16 +154,23 @@ const CustomizeWorkflowSection = ({
             } as Template.WorkflowManifest,
           });
         },
-        errorMessage: workflow.errors?.manifest?.title,
+        hint: intl.formatMessage({
+          defaultMessage: 'Workflow display name is required for Save.',
+          id: 'IOQVnL',
+          description: 'Hint message for workflow display name is required for save.',
+        }),
+        errorMessage: apiErrors?.manifest?.title ?? workflow.errors?.manifest?.title,
       });
     }
     baseItems.push({
       label: customResourceStrings.State,
       value: kindValue,
       type: 'dropdown',
+      required: true,
       multiselect: true,
       options: defaultKindOptions,
       selectedOptions: workflow.manifest?.kinds || [],
+      errorMessage: apiErrors?.manifest?.allowedKinds ?? workflow.errors?.kind,
       onOptionSelect: (selectedOptions) => {
         updateWorkflowDataField(workflowId, {
           ...workflow,
@@ -162,14 +188,20 @@ const CustomizeWorkflowSection = ({
     });
     return baseItems;
   }, [
-    workflowId,
-    updateWorkflowDataField,
+    intl,
+    resourceStrings.WORKFLOW_NAME,
+    resourceStrings.WORKFLOW_NAME_DESCRIPTION,
     workflow,
-    customResourceStrings,
-    defaultKindOptions,
-    kindValue,
-    resourceStrings,
     isMultiWorkflowTemplate,
+    customResourceStrings.State,
+    customResourceStrings.Trigger,
+    customResourceStrings.WorkflowDisplayName,
+    kindValue,
+    defaultKindOptions,
+    apiErrors?.manifest?.allowedKinds,
+    apiErrors?.manifest?.title,
+    updateWorkflowDataField,
+    workflowId,
   ]);
 
   const descriptionSectionItems: TemplatesSectionItem[] = useMemo(() => {
@@ -179,6 +211,7 @@ const CustomizeWorkflowSection = ({
             label: customResourceStrings.Summary,
             value: workflow.manifest?.summary || '',
             type: 'textarea',
+            required: true,
             onChange: (value: string) => {
               updateWorkflowDataField(workflowId, {
                 ...workflow,
@@ -188,7 +221,7 @@ const CustomizeWorkflowSection = ({
                 } as Template.WorkflowManifest,
               });
             },
-            errorMessage: workflow.errors?.manifest?.summary,
+            errorMessage: apiErrors?.manifest?.summary ?? workflow.errors?.manifest?.summary,
           },
         ]
       : [];
@@ -196,6 +229,7 @@ const CustomizeWorkflowSection = ({
       label: resourceStrings.DESCRIPTION,
       value: workflow.manifest?.description || '',
       type: 'textarea',
+      errorMessage: apiErrors?.manifest?.details ?? workflow.errors?.manifest?.description,
       onChange: (value: string) => {
         updateWorkflowDataField(workflowId, {
           ...workflow,
@@ -221,7 +255,17 @@ const CustomizeWorkflowSection = ({
       },
     });
     return baseItems;
-  }, [workflowId, updateWorkflowDataField, workflow, isMultiWorkflowTemplate, resourceStrings, customResourceStrings]);
+  }, [
+    isMultiWorkflowTemplate,
+    customResourceStrings.Summary,
+    customResourceStrings.Prerequisites,
+    workflow,
+    apiErrors?.manifest?.summary,
+    apiErrors?.manifest?.details,
+    resourceStrings.DESCRIPTION,
+    updateWorkflowDataField,
+    workflowId,
+  ]);
 
   const imageSectionItems: TemplatesSectionItem[] = useMemo(() => {
     return [
@@ -229,6 +273,8 @@ const CustomizeWorkflowSection = ({
         label: customResourceStrings.LightModeImage,
         value: workflow.manifest?.images?.light || '',
         type: 'textfield',
+        required: true,
+        description: customResourceStrings.LightModeImageDescription,
         onChange: (value: string) => {
           updateWorkflowDataField(workflowId, {
             ...workflow,
@@ -241,12 +287,14 @@ const CustomizeWorkflowSection = ({
             } as Template.WorkflowManifest,
           });
         },
-        errorMessage: workflow.errors?.manifest?.['images.light'],
+        errorMessage: apiErrors?.manifest?.['images.light'] ?? workflow.errors?.manifest?.['images.light'],
       },
       {
         label: customResourceStrings.DarkModeImage,
         value: workflow.manifest?.images?.dark || '',
         type: 'textfield',
+        required: true,
+        description: customResourceStrings.DarkModeImageDescription,
         onChange: (value: string) => {
           updateWorkflowDataField(workflowId, {
             ...workflow,
@@ -259,20 +307,35 @@ const CustomizeWorkflowSection = ({
             } as Template.WorkflowManifest,
           });
         },
-        errorMessage: workflow.errors?.manifest?.['images.dark'],
+        errorMessage: apiErrors?.manifest?.['images.dark'] ?? workflow.errors?.manifest?.['images.dark'],
       },
     ];
-  }, [workflowId, updateWorkflowDataField, workflow, customResourceStrings]);
+  }, [
+    customResourceStrings.LightModeImage,
+    customResourceStrings.LightModeImageDescription,
+    customResourceStrings.DarkModeImage,
+    customResourceStrings.DarkModeImageDescription,
+    workflow,
+    apiErrors?.manifest,
+    updateWorkflowDataField,
+    workflowId,
+  ]);
 
   return (
     <div>
+      {hasErrors ? <ErrorBar title={ValidationErrorTitle} errorMessage={apiErrors?.general ?? errors?.general ?? ''} /> : null}
       <TemplatesSection
         title={isMultiWorkflowTemplate ? '' : customResourceStrings.General}
         titleHtmlFor={'generalSectionLabel'}
         items={generalSectionItems}
       />
       <TemplatesSection title={resourceStrings.DESCRIPTION} titleHtmlFor={'descriptionSectionLabel'} items={descriptionSectionItems} />
-      <TemplatesSection title={customResourceStrings.WorkflowImages} titleHtmlFor={'imagesSectionLabel'} items={imageSectionItems} />
+      <TemplatesSection
+        title={customResourceStrings.WorkflowImages}
+        description={customResourceStrings.WorkflowImagesDescription}
+        titleHtmlFor={'imagesSectionLabel'}
+        items={imageSectionItems}
+      />
     </div>
   );
 };

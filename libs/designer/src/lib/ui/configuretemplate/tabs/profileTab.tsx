@@ -11,7 +11,7 @@ export const profileTab = (
   intl: IntlShape,
   resources: Record<string, string>,
   dispatch: AppDispatch,
-  { disabled, tabStatusIcon, onSave, status }: TemplateWizardTabProps
+  { disabled, tabStatusIcon, onSave, status, isSaveButtonDisabled }: TemplateWizardTabProps & { isSaveButtonDisabled: boolean }
 ): TemplateTabProps => ({
   id: constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.PROFILE,
   title: resources.ProfileTabLabel,
@@ -21,27 +21,25 @@ export const profileTab = (
   footerContent: {
     buttonContents: [
       {
-        type: 'button',
+        type: 'navigation',
         text: resources.PreviousButtonText,
         onClick: () => {
           dispatch(selectWizardTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.PARAMETERS));
         },
       },
       {
-        type: 'button',
+        type: 'navigation',
         text: resources.NextButtonText,
         onClick: () => {
           dispatch(selectWizardTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.SUMMARY));
         },
       },
       {
-        type: 'divider',
-      },
-      {
-        type: 'button',
+        type: 'action',
         text: resources.SaveButtonText,
-        appreance: 'primary',
+        appearance: 'primary',
         onClick: () => {},
+        disabled: isSaveButtonDisabled,
         menuItems: getSaveMenuButtons(resources, status ?? 'Development', (newStatus) => onSave?.(newStatus)),
       },
     ],

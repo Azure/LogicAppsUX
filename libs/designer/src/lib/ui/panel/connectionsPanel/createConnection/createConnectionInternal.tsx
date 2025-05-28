@@ -40,6 +40,7 @@ export const CreateConnectionInternal = (props: {
   nodeIds?: string[];
   assistedConnectionProps?: AssistedConnectionProps;
   connectionMetadata?: ConnectionMetadata;
+  isAgentServiceConnection?: boolean;
 }) => {
   const {
     classes,
@@ -57,6 +58,7 @@ export const CreateConnectionInternal = (props: {
     updateConnectionInState,
     onConnectionCreated,
     onConnectionCancelled,
+    isAgentServiceConnection = false,
   } = props;
   const dispatch = useDispatch<AppDispatch>();
 
@@ -287,6 +289,7 @@ export const CreateConnectionInternal = (props: {
       gatewayServiceConfig={gatewayServiceConfig}
       checkOAuthCallback={needsOAuth}
       resourceSelectorProps={resourceSelectorProps}
+      isAgentServiceConnection={isAgentServiceConnection}
     />
   );
 };

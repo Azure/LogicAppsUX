@@ -5,6 +5,7 @@ export interface ICognitiveServiceService {
   fetchCognitiveServiceAccountById(accountId: string): Promise<any>;
   fetchCognitiveServiceAccountKeysById(accountId: string): Promise<any>;
   fetchAllCognitiveServiceAccountDeployments(accountId: string): Promise<any>;
+  fetchAllCognitiveServiceProjects(serviceAccountId: string): Promise<any>;
   fetchAllSessionPoolAccounts(subscriptionId: string): Promise<any>;
   fetchSessionPoolAccountById(accountId: string): Promise<any>;
   fetchBuiltInRoleDefinitions(): Promise<any>;

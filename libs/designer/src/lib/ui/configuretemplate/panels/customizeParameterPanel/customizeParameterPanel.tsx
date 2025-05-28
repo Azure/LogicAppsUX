@@ -69,18 +69,20 @@ export const CustomizeParameterPanel = () => {
   const parameterError = parameterErrors?.[parameterId as string];
 
   const footerContent: TemplatePanelFooterProps = useMemo(() => {
+    const isDisplayNameEmpty = isUndefinedOrEmptyString(selectedParameterDefinition()?.displayName);
+
     return {
       buttonContents: [
         {
-          type: 'button',
+          type: 'action',
           text: intl.formatMessage({
             defaultMessage: 'Save',
             id: '9klmbJ',
             description: 'Button text for saving changes for parameter in the customize parameter panel',
           }),
-          appreance: 'primary',
+          appearance: 'primary',
           onClick: () => {},
-          disabled: !isDirty || !isUndefinedOrEmptyString(parameterError),
+          disabled: !isDirty || !isUndefinedOrEmptyString(parameterError) || isDisplayNameEmpty,
           menuItems: getSaveMenuButtons(resources, currentStatus ?? 'Development', (newStatus) => {
             if (runValidation) {
               dispatch(validateParameterDetails());
@@ -95,7 +97,7 @@ export const CustomizeParameterPanel = () => {
           }),
         },
         {
-          type: 'button',
+          type: 'action',
           text: intl.formatMessage({
             defaultMessage: 'Cancel',
             id: '75zXUl',

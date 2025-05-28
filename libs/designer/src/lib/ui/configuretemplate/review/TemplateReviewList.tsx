@@ -5,11 +5,14 @@ import { TemplatesSection, type TemplatesSectionItem } from '@microsoft/designer
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../../core/state/templates/store';
 import { useIntl } from 'react-intl';
-import { equals, getResourceNameFromId } from '@microsoft/logic-apps-shared';
+import { equals, getResourceNameFromId, normalizeConnectorId } from '@microsoft/logic-apps-shared';
 import { ConnectorConnectionName } from '../../templates/connections/connector';
 import React, { useMemo } from 'react';
 import { useAllConnectors } from '../../../core/configuretemplate/utils/queries';
 import { WorkflowKind } from '../../../core/state/workflow/workflowInterfaces';
+import { DescriptionWithLink, ErrorBar } from '../common';
+import { mergeStyles } from '@fluentui/react';
+import { formatNameWithIdentifierToDisplay } from '../../../core/configuretemplate/utils/helper';
 
 const SectionDividerItem: TemplatesSectionItem = {
   type: 'divider',
@@ -19,6 +22,11 @@ const SectionDividerItem: TemplatesSectionItem = {
 export const TemplateReviewList = () => {
   const intl = useIntl();
   const intlText = {
+    TabDescription: intl.formatMessage({
+      defaultMessage: `Review all the values you've added to this template. This read-only summary lets you quickly scan your template setup.`,
+      id: 'Cnymq/',
+      description: 'The dscription for review tab',
+    }),
     TemplateDisplayName: intl.formatMessage({
       defaultMessage: 'Template display name',
       id: 'a7d1Dp',
@@ -39,8 +47,29 @@ export const TemplateReviewList = () => {
       id: 'oiME91',
       description: 'The label for the status and plan tab label',
     }),
+    ErrorMessage: intl.formatMessage({
+      defaultMessage: 'Template validation failed. Please check the tabs for more details to fix the errors',
+      id: 'fa8xG1',
+      description: 'The information for the error message',
+    }),
   };
 
+  const hasError = useSelector((state: RootState) => {
+    const { errors, workflows } = state.template;
+    return (
+      errors.general ||
+      errors.connections ||
+      Object.values(errors.parameters).some((parameterErrors) => parameterErrors !== undefined) ||
+      Object.values(errors.manifest ?? {}).some((manifestErrors) => manifestErrors !== undefined) ||
+      Object.values(workflows ?? {}).some(
+        (workflow) =>
+          workflow.errors?.general ||
+          Object.values(workflow.errors?.manifest ?? {}).some((error) => error !== undefined) ||
+          workflow.errors.kind ||
+          workflow.errors.workflow
+      )
+    );
+  });
   const { connectorKinds, stateTypes, resourceStrings: templateResourceStrings } = useTemplatesStrings();
   const resources = { ...templateResourceStrings, ...connectorKinds, ...stateTypes, ...useResourceStrings(), ...intlText };
 
@@ -76,7 +105,9 @@ export const TemplateReviewList = () => {
   };
 
   return (
-    <div className="msla-templates-wizard-tab-content">
+    <div className={mergeStyles('msla-templates-wizard-tab-content', { marginLeft: '-10px' })}>
+      <DescriptionWithLink text={resources.TabDescription} className={mergeStyles({ width: '70%' })} />
+      {hasError ? <ErrorBar errorMessage={resources.ErrorMessage} /> : null}
       <Accordion multiple={true} defaultOpenItems={Object.keys(sectionItems)}>
         {Object.entries(sectionItems).map(([key, { label, value, emptyText }]) => (
           <React.Fragment key={key}>
@@ -85,7 +116,13 @@ export const TemplateReviewList = () => {
                 <Text style={{ fontWeight: 'bold' }}>{label}</Text>
               </AccordionHeader>
               <AccordionPanel>
-                {value?.length ? <TemplatesSection items={value} /> : emptyText ? <Text>{emptyText}</Text> : null}
+                {value?.length ? (
+                  <TemplatesSection items={value} />
+                ) : emptyText ? (
+                  <div style={{ paddingBottom: 10 }}>
+                    <Text>{emptyText}</Text>
+                  </div>
+                ) : null}
               </AccordionPanel>
             </AccordionItem>
             <Divider />
@@ -192,8 +229,10 @@ const useWorkflowSectionItems = (resources: Record<string, string>) => {
 };
 
 const useConnectionSectionItems = (resources: Record<string, string>) => {
-  const { connections } = useSelector((state: RootState) => ({
+  const { connections, subscriptionId, location } = useSelector((state: RootState) => ({
     connections: state.template.connections,
+    subscriptionId: state.workflow.subscriptionId,
+    location: state.workflow.location,
   }));
 
   const connectionsValues = Object.values(connections);
@@ -203,12 +242,17 @@ const useConnectionSectionItems = (resources: Record<string, string>) => {
       {
         label: resources.ConnectorNameLabel,
         value: connection.connectorId,
-        onRenderItem: () => <ConnectorConnectionName connectorId={connection.connectorId} connectionKey={undefined} />,
+        onRenderItem: () => (
+          <ConnectorConnectionName
+            connectorId={normalizeConnectorId(connection.connectorId, subscriptionId, location)}
+            connectionKey={undefined}
+          />
+        ),
         type: 'custom',
       },
       {
         label: resources.ConnectorTypeLabel,
-        value: resources[connection.kind as string],
+        value: resources[connection.kind?.toLowerCase() as string],
         type: 'text',
       },
     ];
@@ -232,7 +276,7 @@ const useParameterSectionItems = (resources: Record<string, string>) => {
     const thisParameterSectionItems: TemplatesSectionItem[] = [
       {
         label: resources.ParameterName,
-        value: parameter.name ?? resources.Placeholder,
+        value: formatNameWithIdentifierToDisplay(parameter.name),
         type: 'text',
       },
       {

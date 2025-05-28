@@ -1,8 +1,6 @@
 import {
   Button,
-  MessageBar,
-  MessageBarBody,
-  MessageBarTitle,
+  Link,
   Table,
   TableBody,
   TableCell,
@@ -21,6 +19,9 @@ import { getResourceNameFromId } from '@microsoft/logic-apps-shared';
 import { openPanelView, TemplatePanelView } from '../../../core/state/templates/panelSlice';
 import { MoreHorizontal16Filled } from '@fluentui/react-icons';
 import { CustomizeParameterPanel } from '../panels/customizeParameterPanel/customizeParameterPanel';
+import { DescriptionWithLink, ErrorBar } from '../common';
+import { mergeStyles } from '@fluentui/react';
+import { formatNameWithIdentifierToDisplay } from '../../../core/configuretemplate/utils/helper';
 
 export const TemplateParametersList = () => {
   const intl = useIntl();
@@ -32,6 +33,17 @@ export const TemplateParametersList = () => {
       id: 'u2z3kg',
       description: 'The aria label for the parameters table',
     }),
+    Description: intl.formatMessage({
+      defaultMessage:
+        'Customize each parameter to tailor this template to your needs. These values help configure how your workflows run. You can save your progress anytime and return later to finish, but all fields must be completed for the template to work.',
+      id: 'nCjxEh',
+      description: 'The description for the parameters tab',
+    }),
+    ErrorTitle: intl.formatMessage({
+      defaultMessage: 'Validation failed for parameters: ',
+      id: 'MQ0ODD',
+      description: 'The error title for the parameters tab',
+    }),
   };
 
   const { parameterDefinitions, currentPanelView, workflowsInTemplate, parameterErrors } = useSelector((state: RootState) => ({
@@ -41,10 +53,10 @@ export const TemplateParametersList = () => {
     parameterErrors: state.template.errors.parameters,
   }));
 
-  const parameterErrorIds = useMemo(() => {
+  const formattedParameterErrorIds = useMemo(() => {
     return Object.entries(parameterErrors)
       .filter(([_id, error]) => error)
-      .map(([id]) => id);
+      .map(([id]) => formatNameWithIdentifierToDisplay(id));
   }, [parameterErrors]);
 
   const isAccelerator = Object.keys(workflowsInTemplate).length > 1;
@@ -52,8 +64,8 @@ export const TemplateParametersList = () => {
 
   const columns = useMemo(() => {
     const baseColumn = [
-      { columnKey: 'displayName', label: resourceStrings.DisplayName },
       { columnKey: 'name', label: resourceStrings.Name },
+      { columnKey: 'displayName', label: resourceStrings.DisplayName },
       { columnKey: 'type', label: resourceStrings.Type },
       { columnKey: 'default', label: resourceStrings.DefaultValue },
       // { columnKey: 'allowedValues', label: resourceStrings.AllowedValues },  //TODO: revisit allowedValues
@@ -103,16 +115,18 @@ export const TemplateParametersList = () => {
   return (
     <div className="msla-templates-wizard-tab-content" style={{ overflowX: 'auto', paddingTop: '12px' }}>
       {currentPanelView === TemplatePanelView.CustomizeParameter && <CustomizeParameterPanel />}
-      {parameterErrorIds.length ? (
-        <MessageBar intent="error" className="msla-templates-error-message-bar">
-          <MessageBarBody>
-            <MessageBarTitle>{resourceStrings.MissingRequiredFields}</MessageBarTitle>
-            <Text>{parameterErrorIds.join(', ')}</Text>
-          </MessageBarBody>
-        </MessageBar>
+      <DescriptionWithLink
+        text={intlText.Description}
+        linkText={resourceStrings.LearnMore}
+        linkUrl="https://go.microsoft.com/fwlink/?linkid=2321714"
+        className={mergeStyles({ marginLeft: '-10px', width: '70%' })}
+      />
+
+      {formattedParameterErrorIds.length ? (
+        <ErrorBar title={intlText.ErrorTitle} errorMessage={formattedParameterErrorIds.join(', ')} styles={{ marginLeft: '-10px' }} />
       ) : null}
 
-      <Table aria-label={intlText.AriaLabel} size="small" style={{ width: '80%' }}>
+      <Table aria-label={intlText.AriaLabel} size="small" style={{ width: '100%' }}>
         <TableHeader>
           <TableRow>
             {columns.map((column) => (
@@ -126,15 +140,12 @@ export const TemplateParametersList = () => {
           {items.map((item) => (
             <TableRow key={item.name}>
               <TableCell>
-                <TableCellLayout>{item.displayName}</TableCellLayout>
-              </TableCell>
-              <TableCell>
                 <TableCellLayout
                   style={{
                     overflow: 'hidden',
                   }}
                 >
-                  <Text
+                  <Link
                     style={{
                       display: '-webkit-box',
                       WebkitLineClamp: 2,
@@ -142,10 +153,17 @@ export const TemplateParametersList = () => {
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
                     }}
+                    as="button"
+                    onClick={() => {
+                      handleSelectParameter(item.name);
+                    }}
                   >
-                    {item.name}
-                  </Text>
+                    {formatNameWithIdentifierToDisplay(item.name)}
+                  </Link>
                 </TableCellLayout>
+              </TableCell>
+              <TableCell>
+                <TableCellLayout>{item.displayName}</TableCellLayout>
               </TableCell>
               <TableCell>
                 <TableCellLayout>{item.type}</TableCellLayout>
