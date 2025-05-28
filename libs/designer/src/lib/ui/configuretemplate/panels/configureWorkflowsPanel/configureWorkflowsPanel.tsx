@@ -8,6 +8,7 @@ import { Panel, PanelType } from '@fluentui/react';
 import { useConfigureWorkflowPanelTabs } from './usePanelTabs';
 import type { WorkflowTemplateData } from '../../../../core';
 import type { Template } from '@microsoft/logic-apps-shared';
+import { loadResourceDetailsFromWorkflowSource } from '../../../../core/actions/bjsworkflow/configuretemplate';
 
 export interface ConfigureWorkflowsTabProps {
   onTabClick?: () => void;
@@ -16,6 +17,7 @@ export interface ConfigureWorkflowsTabProps {
   isPrimaryButtonDisabled: boolean;
   isSaving: boolean;
   onSave?: (status: Template.TemplateEnvironment) => void;
+  onClose?: () => void;
   status?: Template.TemplateEnvironment;
   selectedWorkflowsList: Record<string, Partial<WorkflowTemplateData>>;
 }
@@ -34,8 +36,6 @@ export const ConfigureWorkflowsPanel = ({ onSave }: { onSave?: (isMultiWorkflow:
     currentPanelView: state.panel.currentPanelView,
     workflows: state.template.workflows,
   }));
-
-  const panelTabs: TemplateTabProps[] = useConfigureWorkflowPanelTabs({ onSave });
 
   const handleSelectTab = (tabId: string): void => {
     dispatch(selectPanelTab(tabId));
@@ -57,9 +57,15 @@ export const ConfigureWorkflowsPanel = ({ onSave }: { onSave?: (isMultiWorkflow:
   );
 
   const dismissPanel = useCallback(() => {
-    dispatch(closePanel());
-  }, [dispatch]);
+    const workflowSourceId = Object.values(workflows ?? {})?.[0]?.manifest?.metadata?.workflowSourceId;
+    if (workflowSourceId) {
+      dispatch(loadResourceDetailsFromWorkflowSource({ workflowSourceId }));
+    }
 
+    dispatch(closePanel());
+  }, [dispatch, workflows]);
+
+  const panelTabs: TemplateTabProps[] = useConfigureWorkflowPanelTabs({ onSave, onClose: dismissPanel });
   const selectedTabProps = selectedTabId ? panelTabs?.find((tab) => tab.id === selectedTabId) : panelTabs[0];
   const onRenderFooterContent = useCallback(
     () => (selectedTabProps?.footerContent ? <TemplatesPanelFooter {...selectedTabProps?.footerContent} /> : null),
