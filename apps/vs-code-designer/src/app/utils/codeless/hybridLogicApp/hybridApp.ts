@@ -7,12 +7,17 @@ import {
   appKindSetting,
   azurePublicBaseUrl,
   azureWebJobsStorageKey,
+  clientSecretName,
   extensionVersionKey,
   hybridAppApiVersion,
   localSettingsFileName,
   logicAppKind,
   sqlConnectionStringSecretName,
   sqlStorageConnectionStringKey,
+  workflowAppAADClientId,
+  workflowAppAADClientSecret,
+  workflowAppAADObjectId,
+  workflowAppAADTenantId,
 } from '../../../../constants';
 import { localize } from '../../../../localize';
 import { getWorkspaceFolder } from '../../workspace';
@@ -29,6 +34,12 @@ interface createHybridAppOptions {
   resourceGroup: string;
   siteName: string;
   hybridApp?: ContainerApp;
+  aad?: {
+    clientId?: string;
+    clientSecret?: string;
+    objectId?: string;
+    tenantId?: string;
+  };
 }
 
 const getAppSettingsFromLocal = async (context): Promise<EnvironmentVar[]> => {
@@ -45,7 +56,8 @@ const getAppSettingsFromLocal = async (context): Promise<EnvironmentVar[]> => {
 };
 
 export const createOrUpdateHybridApp = async (context: IActionContext, accessToken: string, options: createHybridAppOptions) => {
-  const { sqlConnectionString, location, connectedEnvironment, storageName, subscriptionId, resourceGroup, siteName, hybridApp } = options;
+  const { sqlConnectionString, location, connectedEnvironment, storageName, subscriptionId, resourceGroup, siteName, hybridApp, aad } =
+    options;
 
   const sqlConnectionappSetting = hybridApp
     ? hybridApp.template.containers[0].env.find((e) => e.name === sqlStorageConnectionStringKey)
@@ -54,8 +66,17 @@ export const createOrUpdateHybridApp = async (context: IActionContext, accessTok
         secretRef: sqlConnectionStringSecretName,
       };
 
+  const clientSecretAppSetting = hybridApp
+    ? hybridApp.template.containers[0].env.find((e) => e.name === workflowAppAADClientSecret)
+    : {
+        name: workflowAppAADClientSecret,
+        secretRef: clientSecretName,
+      };
+
   const defaultAppSettings = [
     sqlConnectionappSetting,
+    clientSecretAppSetting,
+
     {
       name: appKindSetting,
       value: logicAppKind,
@@ -72,13 +93,25 @@ export const createOrUpdateHybridApp = async (context: IActionContext, accessTok
       name: 'AzureWebJobsSecretStorageType',
       value: 'files',
     },
+    {
+      name: workflowAppAADClientId,
+      value: aad?.clientId,
+    },
+    {
+      name: workflowAppAADTenantId,
+      value: aad?.tenantId,
+    },
+    {
+      name: workflowAppAADObjectId,
+      value: aad?.objectId,
+    },
   ];
 
   const appSettings = (await getAppSettingsFromLocal(context)).concat(defaultAppSettings);
   const templatePayload = {
     containers: [
       {
-        image: 'mcr.microsoft.com/azurelogicapps/logicapps-base:latest',
+        image: 'mcr.microsoft.com/azurelogicapps/logicapps-base:validation',
         name: 'logicapps-container',
         env: appSettings,
         resources: {
@@ -129,6 +162,10 @@ export const createOrUpdateHybridApp = async (context: IActionContext, accessTok
               {
                 name: sqlConnectionStringSecretName,
                 value: sqlConnectionString,
+              },
+              {
+                name: clientSecretName,
+                value: aad.clientSecret,
               },
             ],
             activeRevisionsMode: 'Single',

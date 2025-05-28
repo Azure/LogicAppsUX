@@ -16,7 +16,7 @@ import { RemoteWorkflowsTreeItem } from './remoteWorkflowsTree/RemoteWorkflowsTr
 import type { SlotTreeItem } from './slotsTree/SlotTreeItem';
 import { SlotsTreeItem } from './slotsTree/SlotsTreeItem';
 import { ArtifactsTreeItem } from './slotsTree/artifactsTree/ArtifactsTreeItem';
-import type { Site, SiteConfig, SiteSourceControl, StringDictionary } from '@azure/arm-appservice';
+import type { ContainerAppSecret, Site, SiteConfig, SiteSourceControl, StringDictionary } from '@azure/arm-appservice';
 import { isString } from '@microsoft/logic-apps-shared';
 import {
   DeleteLastServicePlanStep,
@@ -52,6 +52,7 @@ export class LogicAppResourceTree implements ResolvedAppResourceBase {
   public readonly instance = LogicAppResourceTree.instance;
 
   public hybridSite: ContainerApp;
+  public hybridSiteSecrets: ContainerAppSecret[];
   public site: ParsedSite;
   public data: Site;
 
@@ -83,7 +84,7 @@ export class LogicAppResourceTree implements ResolvedAppResourceBase {
   tooltip?: string | undefined;
   commandArgs?: unknown[] | undefined;
 
-  public constructor(subscription: ISubscriptionContext, site: Site) {
+  public constructor(subscription: ISubscriptionContext, site: Site, secrets?: ContainerAppSecret[]) {
     if (site.id.includes('Microsoft.Web')) {
       this.site = new ParsedSite(site, subscription);
       this.data = this.site.rawSite;
@@ -114,6 +115,7 @@ export class LogicAppResourceTree implements ResolvedAppResourceBase {
       }
     } else {
       this.hybridSite = site as unknown as ContainerApp;
+      this.hybridSiteSecrets = secrets;
     }
   }
 
