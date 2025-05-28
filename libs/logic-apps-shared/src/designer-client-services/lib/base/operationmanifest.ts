@@ -354,8 +354,8 @@ export function isBuiltInOperation(definition: any): boolean {
     case invokeworkflow:
     case parsedocument:
     case chunktext:
-    case parsedocumentwithmetadata:
     case chunktextwithmetadata:
+    case parsedocumentwithmetadata:
       return true;
 
     default:
