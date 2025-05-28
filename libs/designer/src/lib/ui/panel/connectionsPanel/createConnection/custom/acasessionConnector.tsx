@@ -1,12 +1,12 @@
 import { CognitiveServiceService, isUndefinedOrEmptyString, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import { type ConnectionParameterProps, UniversalConnectionParameter } from '../formInputs/universalConnectionParameter';
 import { ConnectionParameterRow } from '../connectionParameterRow';
-import { useIntl } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import type { IComboBox, IComboBoxOption } from '@fluentui/react';
 import { ComboBox, Spinner } from '@fluentui/react';
 import { useStyles } from './styles';
-import { Link, tokens } from '@fluentui/react-components';
+import { Link, MessageBar, tokens } from '@fluentui/react-components';
 import { NavigateIcon } from '@microsoft/designer-ui';
 import { ArrowClockwise16Filled, ArrowClockwise16Regular, bundleIcon } from '@fluentui/react-icons';
 import { useSubscriptions } from '../../../../../core/state/connection/connectionSelector';
@@ -26,8 +26,9 @@ export const ACASessionConnector = (props: ConnectionParameterProps) => {
   const { isFetching: isFetchingSubscription, data: subscriptions } = useSubscriptions();
   const {
     isFetching: isFetchingBuiltInRoleDefinitions,
-    data: { value: builltInRoleDefinitions },
+    data: { value: builltInRoleDefinitions } = { value: [] },
   } = useAllBuiltInRoleDefinitions();
+  const [hasRolePermission, setHasRolePermission] = useState<boolean | null>(null);
 
   const sessionExecutorRole = useMemo(() => {
     if (isFetchingBuiltInRoleDefinitions || !Array.isArray(builltInRoleDefinitions)) {
@@ -76,24 +77,45 @@ export const ACASessionConnector = (props: ConnectionParameterProps) => {
         id: 'nJI9m3',
         description: 'Message for selecting subscription',
       }),
+      ASSIGN_ROLE_LINK_TEXT: intl.formatMessage({
+        defaultMessage: ' Learn how to assign it',
+        id: 'KwxP38',
+        description: 'Link text to learn how to assign the required role for ACA session pool',
+      }),
     }),
     [intl]
   );
 
-  const fetchAccount = useCallback(async (accountId: string) => {
-    try {
-      const accountResponse = await CognitiveServiceService().(accountId, sessionExecutorRole);
-      setErrorMessage('');
-    } catch (e: any) {
-      LoggerService().log({
-        level: LogEntryLevel.Error,
-        area: 'aca-session-connection-account-endpoint',
-        message: 'Failed to determine if ACA session has appropriate role permissions',
-        error: e,
-      });
-      setErrorMessage(e.message ?? 'Failed to fetch account endpoint');
-    }
-  }, []);
+  const fetchAccount = useCallback(
+    async (accountId: string) => {
+      try {
+        const accountResponse = await CognitiveServiceService().fetchSessionPoolAccountById(accountId);
+        setValue?.(accountResponse?.properties?.poolManagementEndpoint);
+
+        const hasRole = await CognitiveServiceService().hasRolePermission(accountId, sessionExecutorRole);
+        setHasRolePermission(hasRole);
+        setErrorMessage('');
+
+        if (!hasRole) {
+          LoggerService().log({
+            level: LogEntryLevel.Verbose,
+            area: 'aca-session-role-check',
+            message: 'The selected ACA session pool account does not have the required role: Azure ContainerApps Session Executor',
+          });
+        }
+      } catch (e: any) {
+        LoggerService().log({
+          level: LogEntryLevel.Error,
+          area: 'aca-session-connection-account-endpoint',
+          message: 'Failed to determine if ACA session has appropriate role permissions',
+          error: e,
+        });
+        setHasRolePermission(null);
+        setErrorMessage(e.message ?? 'Failed to fetch account endpoint');
+      }
+    },
+    [sessionExecutorRole, setValue]
+  );
 
   const accountComboboxDisabled = useMemo(
     () => isFetchingAccount || isFetchingSubscription || !selectedSubscriptionId || (allSessionPoolAccounts ?? []).length === 0,
@@ -159,8 +181,8 @@ export const ACASessionConnector = (props: ConnectionParameterProps) => {
                 onChange={async (_e, option?: IComboBoxOption) => {
                   if (option?.key) {
                     const selectedId = option.key as string;
-                    setValue(selectedId);
                     setPoolInputText(option.text);
+                    setHasRolePermission(null);
                     setLoadingAccountDetails(true);
                     await fetchAccount(selectedId);
                     setLoadingAccountDetails(false);
@@ -191,6 +213,27 @@ export const ACASessionConnector = (props: ConnectionParameterProps) => {
             />
           </div>
         </ConnectionParameterRow>
+        {hasRolePermission === false && (
+          <MessageBar intent="warning" layout="auto" className={styles.multilineMessageBar}>
+            <span>
+              <FormattedMessage
+                id="tY1yT9"
+                defaultMessage="This ACA Session Pool is missing the <strong>{roleName}</strong> role."
+                values={{
+                  roleName: 'Azure ContainerApps Session Executor',
+                  strong: (chunks) => <strong>{chunks}</strong>,
+                }}
+                description="Message to indicate that the ACA session pool is missing the required role"
+              />
+            </span>
+            <Link
+              href="https://learn.microsoft.com/en-us/azure/role-based-access-control/role-assignments-portal-managed-identity"
+              target="_blank"
+            >
+              {stringResources.ASSIGN_ROLE_LINK_TEXT}
+            </Link>
+          </MessageBar>
+        )}
       </>
     );
   }

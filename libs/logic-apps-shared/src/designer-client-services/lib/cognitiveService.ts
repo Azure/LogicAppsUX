@@ -8,6 +8,7 @@ export interface ICognitiveServiceService {
   fetchAllSessionPoolAccounts(subscriptionId: string): Promise<any>;
   fetchSessionPoolAccountById(accountId: string): Promise<any>;
   fetchBuiltInRoleDefinitions(): Promise<any>;
+  hasRolePermission(accountId: string, roleDefinitionId: string): Promise<boolean>;
 }
 
 let service: ICognitiveServiceService;

@@ -1,5 +1,6 @@
 import type { ICognitiveServiceService } from '../cognitiveService';
 import type { IHttpClient } from '../httpClient';
+import type { ManagedIdentity } from '../../../utils/src';
 import { ArgumentException } from '../../../utils/src';
 import { fetchAppsByQuery, getAzureResourceRecursive } from '../common/azure';
 
@@ -7,6 +8,7 @@ export interface BaseCognitiveServiceServiceOptions {
   baseUrl: string;
   apiVersion: string;
   httpClient: IHttpClient;
+  identity?: ManagedIdentity;
 }
 
 export class BaseCognitiveServiceService implements ICognitiveServiceService {
@@ -130,6 +132,39 @@ export class BaseCognitiveServiceService implements ICognitiveServiceService {
       return response;
     } catch (e: any) {
       return new Error(e?.message ?? e);
+    }
+  }
+
+  async hasRolePermission(accountId: string, roleDefinitionId: string): Promise<boolean> {
+    const { httpClient, identity } = this.options;
+
+    if (!identity?.principalId) {
+      return false;
+    }
+
+    const uri = `${accountId}/providers/Microsoft.Authorization/roleAssignments`;
+    const queryParameters = {
+      'api-version': '2020-04-01-preview',
+      $filter: `atScope() and assignedTo('${identity.principalId}')`,
+    };
+
+    try {
+      const response = await httpClient.get<any>({
+        uri,
+        queryParameters,
+        includeAuth: true,
+      });
+      console.log(response);
+
+      const assignments = Array.isArray(response?.value) ? response.value : [];
+
+      return assignments.some((assignment: any) => {
+        const assignedRoleId = assignment?.properties?.roleDefinitionId;
+        const match = assignedRoleId?.toLowerCase().endsWith(roleDefinitionId.toLowerCase());
+        return Boolean(match);
+      });
+    } catch (_e: any) {
+      return false;
     }
   }
 }

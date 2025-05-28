@@ -854,7 +854,7 @@ const getDesignerServices = (
 
   const workflowService: IWorkflowService = {
     getCallbackUrl: (triggerName: string) => listCallbackUrl(workflowIdWithHostRuntime, triggerName),
-    getAppIdentity: () => workflowApp.identity as any,
+    getAppIdentity: () => workflowApp?.identity,
     isExplicitAuthRequiredForManagedIdentity: () => true,
     isSplitOnSupported: () => !!isStateful,
     resubmitWorkflow: async (runId, actionsToResubmit) => {
@@ -928,6 +928,7 @@ const getDesignerServices = (
     apiVersion: '2023-10-01-preview',
     baseUrl: armUrl,
     httpClient,
+    identity: workflowApp?.identity,
   });
 
   const connectionParameterEditorService = new CustomConnectionParameterEditorService();
