@@ -255,10 +255,12 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
       ) : Object.keys(workflows).length > 0 ? (
         <Table aria-label={customResourceStrings.WorkflowsListTableLabel} style={{ minWidth: '550px', marginTop: 30, marginLeft: '-5px' }}>
           <TableHeader>
-            <TableRow onClick={toggleAllRows} onKeyDown={toggleAllKeydown}>
+            <TableRow>
               <TableSelectionCell
                 checked={allRowsSelected}
                 checkboxIndicator={{ 'aria-label': customResourceStrings.SelectAllWorkflowsLabel }}
+                onClick={toggleAllRows}
+                onKeyDown={toggleAllKeydown}
               />
               <TableHeaderCell style={tableHeaderStyle}>{resourceStrings.WORKFLOW_NAME}</TableHeaderCell>
               {isMultiWorkflow && <TableHeaderCell style={tableHeaderStyle}>{customResourceStrings.WorkflowDisplayName}</TableHeaderCell>}
