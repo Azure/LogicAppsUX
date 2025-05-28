@@ -1,4 +1,15 @@
 # Logic Apps Designer
+### [5.109.2](https://github.com/Azure/LogicAppsUX/compare/v5.109.1...v5.109.2) (2025-05-28)
+
+
+### Bug Fixes
+
+* **designer:** revert-Adding Support for NextPage when fetching Leg… ([#7344](https://github.com/Azure/LogicAppsUX/issues/7344)) ([3b94a19](https://github.com/Azure/LogicAppsUX/commit/3b94a19a6f0af9742bfbea61226c0ea4fd4160c6)), closes [#7183](https://github.com/Azure/LogicAppsUX/issues/7183)
+* **designer:** Update open AI endpoint for foundry connections ([#7307](https://github.com/Azure/LogicAppsUX/issues/7307)) ([7ab3b62](https://github.com/Azure/LogicAppsUX/commit/7ab3b629b65c5285c358ac744af617f93c8f2c65)), closes [#7306](https://github.com/Azure/LogicAppsUX/issues/7306)
+* **Designer:** Variable/Hybrid Cherry picks ([#7325](https://github.com/Azure/LogicAppsUX/issues/7325)) ([06b7cf0](https://github.com/Azure/LogicAppsUX/commit/06b7cf0a8984fc922e9976a06d24d6a8b63be09c)), closes [#7303](https://github.com/Azure/LogicAppsUX/issues/7303) [#7302](https://github.com/Azure/LogicAppsUX/issues/7302)
+* **Templates:** [Cherry-pick] Update release branch  ([#7331](https://github.com/Azure/LogicAppsUX/issues/7331)) ([fd0653a](https://github.com/Azure/LogicAppsUX/commit/fd0653a39399688e1e8ae6692e83d014c448b13e))
+* **Templates:** Fix typo in description ([#7330](https://github.com/Azure/LogicAppsUX/issues/7330)) ([ea06236](https://github.com/Azure/LogicAppsUX/commit/ea06236e0283892aa2229ff23fdb2399c6a6a01a))
+
 ### [5.109.1](https://github.com/Azure/LogicAppsUX/compare/v5.109.0...v5.109.1) (2025-05-23)
 
 
