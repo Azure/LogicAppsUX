@@ -15,6 +15,7 @@ export const selectWorkflowsTab = (
     selectedWorkflowsList,
     onWorkflowsSelected,
     onNextButtonClick,
+    onClose,
   }: ConfigureWorkflowsTabProps & {
     onWorkflowsSelected: (normalizedWorkflowIds: string[]) => void;
     onNextButtonClick: () => Promise<void>;
@@ -52,7 +53,11 @@ export const selectWorkflowsTab = (
           description: 'Button text for closing the panel',
         }),
         onClick: () => {
-          dispatch(closePanel());
+          if (onClose) {
+            onClose();
+          } else {
+            dispatch(closePanel());
+          }
         },
         disabled: isSaving,
       },
