@@ -245,6 +245,13 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
     <div className="msla-templates-wizard-tab-content">
       {currentPanelView === TemplatePanelView.ConfigureWorkflows && <ConfigureWorkflowsPanel onSave={onSave} />}
 
+      <DescriptionWithLink
+        text={customResourceStrings.WorkflowsTabDescription}
+        linkText={customResourceStrings.LearnMore}
+        linkUrl="https://go.microsoft.com/fwlink/?linkid=2321817"
+        className={mergeStyles({ marginLeft: '-1px', width: '70%' })}
+      />
+
       <Dialog
         open={isDeleteModalOpen}
         onOpenChange={(_, data) => {
