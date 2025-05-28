@@ -42,7 +42,6 @@ export const SelectWorkflows = ({
     logicAppName: state.workflow.logicAppName,
     subscriptionId: state.workflow.subscriptionId,
     resourceGroup: state.workflow.resourceGroup,
-    workflowsInTemplate: state.template.workflows,
     selectedTabId: state.tab.selectedTabId,
   }));
   const { data: workflows, isLoading } = useWorkflowsInApp(subscriptionId, resourceGroup, logicAppName ?? '', !!isConsumption);
@@ -132,7 +131,7 @@ export const SelectWorkflows = ({
 
   const {
     getRows,
-    selection: { allRowsSelected, someRowsSelected, toggleAllRows, toggleRow, isRowSelected },
+    selection: { someRowsSelected, toggleRow, isRowSelected },
   } = useTableFeatures(
     {
       columns,
@@ -167,10 +166,18 @@ export const SelectWorkflows = ({
     };
   });
 
+  const allRowsSelected = useMemo(() => {
+    return !rows?.filter((row) => !row.selected)?.length;
+  }, [rows]);
+
+  const toggleAllRows = useCallback(() => {
+    onWorkflowsSelected(allRowsSelected ? [] : (workflows?.map((workflow) => workflow.id) ?? []));
+  }, [onWorkflowsSelected, workflows, allRowsSelected]);
+
   const toggleAllKeydown = useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
       if (e.key === ' ') {
-        toggleAllRows(e);
+        toggleAllRows();
         e.preventDefault();
       }
     },
