@@ -94,7 +94,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ConnectionInline } from './connectionInline';
 import { ConnectionsSubMenu } from './connectionsSubMenu';
 import { useCognitiveServiceAccountDeploymentsForNode } from '../../../connectionsPanel/createConnection/custom/useCognitiveService';
-import { isAcaSessionConnector, isAgentConnectorAndAgentServiceModel, isAgentConnectorAndDeploymentId } from './helpers';
+import { isAgentConnectorAndAgentServiceModel, isAgentConnectorAndDeploymentId } from './helpers';
 import { useShouldEnableFoundryServiceConnection } from './hooks';
 
 // TODO: Add a readonly per settings section/group
@@ -837,17 +837,6 @@ export const getEditorAndOptions = (
     return {
       editor,
       editorOptions: { options },
-    };
-  }
-
-  // Handle ACA Session Connector
-  const isAcaSession = isAcaSessionConnector(parameter.parameterKey, operationInfo?.connectorId);
-  if (isAcaSession) {
-    return {
-      editor,
-      editorOptions: {
-        readOnly: true,
-      },
     };
   }
 

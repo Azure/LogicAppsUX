@@ -7,7 +7,7 @@ import { getConnector, getOperationInfo, getOperationManifest } from '../../quer
 import { changeConnectionMapping, initializeConnectionsMappings } from '../../state/connection/connectionSlice';
 import { changeConnectionMapping as changeTemplateConnectionMapping } from '../../state/templates/workflowSlice';
 import type { NodeOperation } from '../../state/operation/operationMetadataSlice';
-import { updateErrorDetails, updateNodeParameters } from '../../state/operation/operationMetadataSlice';
+import { updateErrorDetails } from '../../state/operation/operationMetadataSlice';
 import type { RootState as TemplateRootState } from '../../state/templates/store';
 import type { RootState } from '../../store';
 import {
@@ -16,7 +16,7 @@ import {
   isConnectionSingleAuthManagedIdentityType,
 } from '../../utils/connectors/connections';
 import { isRootNodeInGraph } from '../../utils/graph';
-import { getGroupAndParameterFromParameterKey, updateDynamicDataInNode } from '../../utils/parameters/helper';
+import { updateDynamicDataInNode } from '../../utils/parameters/helper';
 import type {
   IOperationManifestService,
   Connection,
@@ -47,9 +47,6 @@ import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { openPanel, setIsCreatingConnection, setIsPanelLoading } from '../../state/panel/panelSlice';
 import type { PanelMode } from '../../state/panel/panelTypes';
-import { createLiteralValueSegment } from '../../utils/parameters/segment';
-import { getReactQueryClient } from '../../ReactQueryProvider';
-
 export interface ConnectionPayload {
   nodeId: string;
   connector: Connector;
@@ -108,7 +105,6 @@ export const updateNodeConnection = createAsyncThunk(
         connectionRuntimeUrl: isOpenApiSchemaVersion((getState() as RootState).workflow.originalDefinition)
           ? connection.properties.connectionRuntimeUrl
           : undefined,
-        connectionParameterValues: connection.properties?.['parameterValues'],
       },
       dispatch,
       getState as () => RootState
@@ -139,7 +135,7 @@ const updateNodeConnectionAndProperties = async (
   dispatch: Dispatch,
   getState: () => RootState
 ): Promise<void> => {
-  const { nodeId, connectionParameterValues, connectorId } = payload;
+  const { nodeId } = payload;
   dispatch(changeConnectionMapping(payload));
 
   const newState = getState() as RootState;
@@ -147,47 +143,10 @@ const updateNodeConnectionAndProperties = async (
   const dependencies = getRecordEntry(newState.operations.dependencies, nodeId);
   const newlyAddedOperations = getRecordEntry(newState.workflow.newlyAddedOperations, nodeId);
   const operation = getRecordEntry(newState.workflow.operations, nodeId);
-  const nodeInputs = getRecordEntry(newState.operations.inputParameters, nodeId);
 
   // Shouldn't happen, but required for type checking
   if (!operationInfo || !dependencies) {
     return;
-  }
-
-  let resolvedPoolEndpoint = connectionParameterValues?.['poolManagementEndpoint'];
-  if (connectorId === Constants.CONNECTION_IDS.ACA_SESSION && nodeInputs && resolvedPoolEndpoint) {
-    if (typeof resolvedPoolEndpoint === 'string') {
-      const appSettingRefMatch = resolvedPoolEndpoint.match(/^@appsetting\(['"](.+?)['"]\)$/);
-      if (appSettingRefMatch) {
-        const settingKey = appSettingRefMatch[1];
-        const queryClient = getReactQueryClient();
-        const appSettings: Record<string, string> | undefined = queryClient.getQueryData(['appSettings']);
-        const resolvedValue = appSettings?.[settingKey];
-
-        if (resolvedValue) {
-          resolvedPoolEndpoint = resolvedValue;
-        }
-      }
-    }
-
-    const details = getGroupAndParameterFromParameterKey(nodeInputs, 'inputs.$.sessionPool');
-    if (details) {
-      dispatch(
-        updateNodeParameters({
-          nodeId,
-          parameters: [
-            {
-              groupId: details.groupId,
-              parameterId: details.parameter?.id,
-              propertiesToUpdate: {
-                value: [createLiteralValueSegment(resolvedPoolEndpoint)],
-                preservedValue: undefined,
-              },
-            },
-          ],
-        })
-      );
-    }
   }
 
   return updateDynamicDataInNode(

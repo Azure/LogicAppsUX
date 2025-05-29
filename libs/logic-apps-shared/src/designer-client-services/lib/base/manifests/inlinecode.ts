@@ -149,21 +149,14 @@ export const inlinePythonManifest = {
     },
     inputs: {
       type: 'object',
-      required: ['sessionPool', 'code'],
+      required: ['code'],
       properties: {
-        sessionPool: {
-          type: 'string',
-          title: 'Session Pool',
-          required: true,
-          description: 'The container app session pool name you want to use.',
-          'x-ms-connection-required': true,
-          'x-ms-visibility': 'important',
-        },
         code: {
           title: 'Code',
           description: 'Executes simple Python code with the ability to reference agent parameters',
           required: true,
           'x-ms-editor': 'code',
+          'x-ms-connection-required': true,
           'x-ms-editor-options': {
             language: 'python',
             rawValue: true,
@@ -294,5 +287,3 @@ export const inlinePythonManifest = {
     },
   },
 } as OperationManifest;
-
-

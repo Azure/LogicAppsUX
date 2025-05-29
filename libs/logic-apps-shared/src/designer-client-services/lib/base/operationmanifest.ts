@@ -42,6 +42,7 @@ import switchManifest from './manifests/switch';
 import agentloopManifest from '../standard/manifest/agentloop';
 import terminateManifest from './manifests/terminate';
 import untilManifest from './manifests/until';
+import { inlinePythonManifest } from './manifests/inlinecode';
 
 const apimanagement = 'apimanagement';
 const apimanagementtrigger = 'apimanagementtrigger';
@@ -787,6 +788,7 @@ export const supportedBaseManifestObjects = new Map<string, OperationManifest>([
   [agentType, agentloopManifest],
   [terminate, terminateManifest],
   [until, untilManifest],
+  [pythoncode, inlinePythonManifest],
 ]);
 
 export const foreachOperationInfo = {
