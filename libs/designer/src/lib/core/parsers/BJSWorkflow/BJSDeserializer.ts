@@ -394,7 +394,7 @@ export const buildGraphFromActions = (
 
   // Swap out the run-after data for transition data
   //  Currently in monitoring view, Rohitha is swapping transitions out for run-after data
-  const actions = { ..._actions };
+  const actions = structuredClone(_actions);
   for (const [id, action] of Object.entries(actions)) {
     if (action?.runAfter) {
       const runAfterKeys = Object.keys(action.runAfter);

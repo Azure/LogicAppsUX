@@ -1,288 +1,1222 @@
 {
 	"definition": {
 		"$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
-		"actions": {
-			"TriageAgent": {
-				"type": "Agent",
-				"inputs": {
-					"parameters": {
-						"deploymentId": "psrivasModel",
-						"messages": [
-							{
-								"role": "System",
-								"content": "You are a triage agent for ACME Inc who is responsible for deciding which agent should handle a given user message. Invoke the right hand-off tool based on the decision"
-							}
-						],
-						"agentModelType": "AzureOpenAI",
-						"agentModelSettings": {
-							"agentChatCompletionSettings": {
-								"maxTokens": 3000,
-								"frequencyPenalty": 0.1,
-								"presencePenalty": 0.1,
-								"temperature": 0.1,
-								"topP": 0.1
-							},
-							"agentHistoryReductionSettings": {
-								"agentHistoryReductionType": "messageCountReduction",
-								"messageCountLimit": 50
-							}
-						}
-					},
-					"modelConfigurations": {
-						"model1": {
-							"referenceName": "agentConnection1"
-						}
-					}
-				},
-				"tools": {
-					"handoff_from_triage_to_sales_agent": {
-						"actions": {
-							"Handoff_to_SalesAgent": {
-								"type": "Handoff",
-								"inputs": {
-									"agentId": "SalesAgent"
-								},
-								"transitions": {}
-							}
-						},
-						"description": "Hand off to sales agent who can fulfill sales requests such as ordering a product.",
-						"agentParameterSchema": {
-							"type": "object",
-							"properties": {
-								"message": {
-									"type": "string",
-									"description": "The message that would be send to the sales agent.",
-									"required": true
-								}
-							}
-						}
-					},
-					"handoff_from_triage_to_refund_agent": {
-						"actions": {
-							"Handoff_to_RefundAgent": {
-								"type": "Handoff",
-								"inputs": {
-									"agentId": "RefundAgent"
-								},
-								"transitions": {}
-							}
-						},
-						"description": "Hand off to refund agent who can fulfill refund requests.",
-						"agentParameterSchema": {
-							"type": "object",
-							"properties": {
-								"message": {
-									"type": "string",
-									"description": "The message that would be send to the refund agent.",
-									"required": true
-								}
-							}
-						}
-					}
-				},
-				"runAfter": {},
-				"transitions": {
-					"SalesAgent": {
-						"when": [
-							"HANDOFF"
-						]
-					},
-					"RefundAgent": {
-						"when": [
-							"HANDOFF"
-						]
-					}
-				},
-				"limit": {
-					"count": 10,
-					"timeout": "PT1H"
-				}
-			},
-			"SalesAgent": {
-				"type": "Agent",
-				"inputs": {
-					"parameters": {
-						"deploymentId": "psrivasModel",
-						"messages": [
-							{
-								"role": "System",
-								"content": "You are a sales agent for ACME Inc. Perform the given task or answer questions. Once the given task is done, call the hand off tool to hand off the the triage agent."
-							}
-						],
-						"agentModelType": "AzureOpenAI",
-						"agentModelSettings": {
-							"agentChatCompletionSettings": {
-								"maxTokens": 3000,
-								"frequencyPenalty": 0.1,
-								"presencePenalty": 0.1,
-								"temperature": 0.1,
-								"topP": 0.1
-							},
-							"agentHistoryReductionSettings": {
-								"agentHistoryReductionType": "messageCountReduction",
-								"messageCountLimit": 50
-							}
-						}
-					},
-					"modelConfigurations": {
-						"model1": {
-							"referenceName": "agentConnection1"
-						}
-					}
-				},
-				"tools": {
-					"handoff_from_sales_to_triage_agent": {
-						"actions": {},
-						"description": "Hand off to triage agent who can check if there are any further help needed.",
-						"agentParameterSchema": {
-							"type": "object",
-							"properties": {
-								"message": {
-									"type": "string",
-									"description": "The message that would be send to the triage agent.",
-									"required": true
-								}
-							}
-						}
-					},
-					"place_order": {
-						"actions": {
-							"set_order_parameters": {
-								"type": "Compose",
-								"inputs": {
-									"product": "@agentparameters('product')",
-									"quantity": "@agentparameters('quantity')"
-								},
-								"runAfter": {},
-								"transitions": {}
-							},
-							"complete_order": {
-								"type": "Compose",
-								"inputs": {
-									"body": {
-										"result": "Order placed successfully"
-									}
-								},
-								"transitions": {
-									"set_order_parameters": {
-										"when": [
-											"SUCCEEDED"
-										]
-									}
-								}
-							}
-						},
-						"description": "Place the order",
-						"agentParameterSchema": {
-							"type": "object",
-							"properties": {
-								"product": {
-									"type": "string",
-									"description": "The name of the product to order.",
-									"required": true
-								},
-								"quantity": {
-									"type": "number",
-									"description": "The quantity of the product to order.",
-									"required": true
-								}
-							}
-						}
-					}
-				},
-				"runAfter": {},
-				"transitions": {},
-				"limit": {
-					"count": 10,
-					"timeout": "PT1H"
-				}
-			},
-			"RefundAgent": {
-				"type": "Agent",
-				"inputs": {
-					"parameters": {
-						"deploymentId": "psrivasModel",
-						"messages": [
-							{
-								"role": "System",
-								"content": "You are a refund agent for ACME Inc. Perform the given task or answer questions. Once done hand off the control back to the triage agent"
-							}
-						],
-						"agentModelType": "AzureOpenAI",
-						"agentModelSettings": {
-							"agentChatCompletionSettings": {
-								"maxTokens": 3000,
-								"frequencyPenalty": 0.1,
-								"presencePenalty": 0.1,
-								"temperature": 0.1,
-								"topP": 0.1
-							},
-							"agentHistoryReductionSettings": {
-								"agentHistoryReductionType": "messageCountReduction",
-								"messageCountLimit": 50
-							}
-						}
-					},
-					"modelConfigurations": {
-						"model1": {
-							"referenceName": "agentConnection1"
-						}
-					}
-				},
-				"tools": {
-					"handoff_from_refund_to_triage_agent": {
-						"actions": {},
-						"description": "Hand off to triage agent who can check if there are any further help needed.",
-						"agentParameterSchema": {
-							"type": "object",
-							"properties": {
-								"message": {
-									"type": "string",
-									"description": "The message that would be send to the triage agent.",
-									"required": true
-								}
-							}
-						}
-					},
-					"handoff_from_refund_to_sales_agent": {
-						"actions": {},
-						"description": "Hand off to sales agent who can fulfill refund requests.",
-						"agentParameterSchema": {
-							"type": "object",
-							"properties": {
-								"message": {
-									"type": "string",
-									"description": "The message that would be send to the sales agent.",
-									"required": true
-								}
-							}
-						}
-					}
-				},
-				"runAfter": {},
-				"transitions": {},
-				"limit": {
-					"count": 10,
-					"timeout": "PT1H"
-				}
-			}
-		},
 		"contentVersion": "1.0.0.0",
-		"outputs": {},
-		"triggers": {
-			"When_a_HTTP_request_is_received": {
-				"type": "Request",
-				"kind": "Http",
+		"actions": {
+			"Flight_Booking_Agent": {
+				"type": "Agent",
+				"inputs": {
+					"parameters": {
+						"deploymentId": "gpt-4.1",
+						"messages": [
+							{
+								"role": "system",
+								"content": "You are a specialized assistant for handling flight updates. \nThe primary assistant delegates work to you whenever the user needs help updating their bookings. \nConfirm the updated flight details with the customer and inform them of any additional fees. \nWhen searching, be persistent. Expand your query bounds if the first search returns no results.\nIf you need more information or the customer changes their mind, escalate the task back to the main assistant.\nRemember that a booking isn't completed until after the relevant tool has successfully been used.\n\nCurrent user flight information:\n\nCurrent time: @{variables('current_time')}\nIf the user needs help, and none of your tools are appropriate for it, then\n\"CompleteOrEscalate\" the dialog to the host assistant. Do not waste the user\\'s time. Do not make up invalid tools or functions."
+							}
+						],
+						"agentModelType": "AzureOpenAI",
+						"agentModelSettings": {
+							"agentHistoryReductionSettings": {
+								"agentHistoryReductionType": "maximumTokenCountReduction",
+								"maximumTokenCount": 128000
+							},
+							"deploymentModelProperties": {
+								"name": "gpt-4.1",
+								"format": "OpenAI",
+								"version": "2025-04-14"
+							}
+						}
+					},
+					"modelConfigurations": {
+						"model1": {
+							"referenceName": "agent"
+						}
+					}
+				},
+				"tools": {
+					"lookup_policy": {
+						"actions": {
+							"HTTP_1": {
+								"type": "Http",
+								"inputs": {
+									"uri": "https://storage.googleapis.com/benchmarks-artifacts/travel-db/swiss_faq.md",
+									"method": "GET"
+								},
+								"transitions": {},
+								"runtimeConfiguration": {
+									"contentTransfer": {
+										"transferMode": "Chunked"
+									}
+								}
+							}
+						},
+						"description": "Consult the company policies to check whether certain options are permitted.\n  Use this before making any flight changes performing other 'write' events",
+						"agentParameterSchema": {
+							"type": "object",
+							"properties": {
+								"query": {
+									"type": "string",
+									"description": "look-up query for the company policy"
+								}
+							},
+							"required": [
+								"query"
+							]
+						}
+					},
+					"fetch_user_flight_information": {
+						"actions": {
+							"Compose_2": {
+								"type": "Compose",
+								"inputs": [
+									{
+										"ticket_no": "7240005432906569",
+										"book_ref": "C46E9F",
+										"flight_id": 19250,
+										"flight_no": "LX0112",
+										"departure_airport": "CDG",
+										"arrival_airport": "BSL",
+										"scheduled_departure": "2024-04-30 12:09:03.561731-04:00",
+										"scheduled_arrival": "2024-04-30 13:39:03.561731-04:00",
+										"seat_no": "18E",
+										"fare_conditions": "Economy"
+									}
+								],
+								"transitions": {}
+							}
+						},
+						"description": "Fetch all tickets for the user along with corresponding flight information and seat assignments\n\nReturns:\n        A list of dictionaries where each dictionary contains the ticket details,\n        associated flight details, and the seat assignments for each ticket belonging to the user."
+					},
+					"search_flights": {
+						"actions": {
+							"Compose_1": {
+								"type": "Compose",
+								"inputs": [
+									{
+										"flight_id": 19238,
+										"flight_no": "LX0112",
+										"scheduled_departure": "2024-05-08 12:09:03.561731-04:00",
+										"scheduled_arrival": "2024-05-08 13:39:03.561731-04:00",
+										"departure_airport": "CDG",
+										"arrival_airport": "BSL",
+										"status": "Scheduled",
+										"aircraft_code": "SU9",
+										"actual_departure": null,
+										"actual_arrival": null
+									},
+									{
+										"flight_id": 19242,
+										"flight_no": "LX0112",
+										"scheduled_departure": "2024-05-09 12:09:03.561731-04:00",
+										"scheduled_arrival": "2024-05-09 13:39:03.561731-04:00",
+										"departure_airport": "CDG",
+										"arrival_airport": "BSL",
+										"status": "Scheduled",
+										"aircraft_code": "SU9",
+										"actual_departure": null,
+										"actual_arrival": null
+									},
+									{
+										"flight_id": 19243,
+										"flight_no": "LX0112",
+										"scheduled_departure": "2024-05-11 12:09:03.561731-04:00",
+										"scheduled_arrival": "2024-05-11 13:39:03.561731-04:00",
+										"departure_airport": "CDG",
+										"arrival_airport": "BSL",
+										"status": "Scheduled",
+										"aircraft_code": "SU9",
+										"actual_departure": null,
+										"actual_arrival": null
+									},
+									{
+										"flight_id": 19251,
+										"flight_no": "LX0112",
+										"scheduled_departure": "2024-05-07 12:09:03.561731-04:00",
+										"scheduled_arrival": "2024-05-07 13:39:03.561731-04:00",
+										"departure_airport": "CDG",
+										"arrival_airport": "BSL",
+										"status": "Scheduled",
+										"aircraft_code": "SU9",
+										"actual_departure": null,
+										"actual_arrival": null
+									}
+								],
+								"transitions": {}
+							}
+						},
+						"description": "Search for flights based on departure airport, arrival airport, and departure time range.",
+						"agentParameterSchema": {
+							"type": "object",
+							"properties": {
+								"departure_airport": {
+									"type": "string",
+									"description": "departure airport"
+								},
+								"arrival_airport": {
+									"type": "string",
+									"description": "arrival airport"
+								},
+								"start_time": {
+									"type": "string",
+									"description": "start time"
+								},
+								"end_time": {
+									"type": "string",
+									"description": "end time"
+								}
+							},
+							"required": [
+								"departure_airport",
+								"arrival_airport",
+								"start_time",
+								"end_time"
+							]
+						}
+					},
+					"update_ticket_to_new_flight": {
+						"actions": {
+							"Compose_4": {
+								"type": "Compose",
+								"inputs": "Great, I was able to successfully update your ticket 7240005432906569 to the next available flight LX0112 from Paris to Basel on May 8th at 12:09pm. Your new ticket details have been confirmed.",
+								"transitions": {}
+							}
+						},
+						"description": "Update the user's ticket to a new valid flight",
+						"agentParameterSchema": {
+							"type": "object",
+							"properties": {
+								"ticket_no": {
+									"type": "string",
+									"description": "ticket number"
+								},
+								"new_flight_id": {
+									"type": "integer",
+									"description": "new flight id"
+								}
+							},
+							"required": [
+								"ticket_no",
+								"new_flight_id"
+							]
+						}
+					},
+					"CompleteOrEscalate": {
+						"actions": {
+							"HandOffFromFlightBookingAgent": {
+								"type": "AgentHandOff",
+								"inputs": {
+									"name": "Primary_Agent",
+									"content": {
+										"cancel": "@agentParameters('cancel')",
+										"reason": "@agentParameters('reason')"
+									}
+								},
+								"transitions": {}
+							}
+						},
+						"description": "A tool to mark the current task as completed and/or to escalate control of the dialog to the main assistant,\n    who can re-route the dialog based on the user's needs",
+						"agentParameterSchema": {
+							"type": "object",
+							"properties": {
+								"cancel": {
+									"type": "boolean",
+									"description": "Flag indicating whether to cancel the current task"
+								},
+								"reason": {
+									"type": "string",
+									"description": "reason for the cancellation or escalation"
+								}
+							}
+						}
+					},
+					"cancel_ticket": {
+						"actions": {
+							"Compose_5": {
+								"type": "Compose",
+								"inputs": "Ticket successfully cancelled.",
+								"transitions": {}
+							}
+						},
+						"description": "Cancel the user's ticket and remove it from the database.",
+						"agentParameterSchema": {
+							"type": "object",
+							"properties": {
+								"ticket_no": {
+									"type": "string",
+									"description": "ticket number"
+								}
+							},
+							"required": [
+								"ticket_no"
+							]
+						}
+					}
+				},
+				"runAfter": {},
 				"transitions": {
-					"TriageAgent": {
+					"Primary_Agent": {
+						"when": [
+							"HANDEDOFF"
+						]
+					}
+				},
+				"limit": {
+					"count": 100
+				}
+			},
+			"Hotel_Booking_Agent": {
+				"type": "Agent",
+				"inputs": {
+					"parameters": {
+						"deploymentId": "gpt-4.1",
+						"messages": [
+							{
+								"role": "system",
+								"content": "You are a specialized assistant for handling hotel bookings. \nThe primary assistant delegates work to you whenever the user needs help booking a hotel.\nSearch for available hotels based on the user's preferences and confirm the booking details with the customer. \nWhen searching, be persistent. Expand your query bounds if the first search returns no results.\nIf you need more information or the customer changes their mind, escalate the task back to the main assistant.\nRemember that a booking isn't completed until after the relevant tool has successfully been used.\nCurrent time: @{variables('current_time')}\nIf the user needs help, and none of your tools are appropriate for it, then \"CompleteOrEscalate\" the dialog to the host assistant.'\nDo not waste the user's time. Do not make up invalid tools or functions.\nSome examples for which you should CompleteOrEscalate:\n'what's the weather like this time of year?'\n'nevermind i think I'll book separately'\n'i need to figure out transportation while i'm there'\n'Oh wait i haven't booked my flight yet i'll do that first'\n 'Hotel booking confirmed'"
+							}
+						],
+						"agentModelType": "AzureOpenAI",
+						"agentModelSettings": {
+							"agentHistoryReductionSettings": {
+								"agentHistoryReductionType": "maximumTokenCountReduction",
+								"maximumTokenCount": 128000
+							},
+							"deploymentModelProperties": {
+								"name": "gpt-4.1",
+								"format": "OpenAI",
+								"version": "2025-04-14"
+							}
+						}
+					},
+					"modelConfigurations": {
+						"model1": {
+							"referenceName": "agent"
+						}
+					}
+				},
+				"tools": {
+					"CompleteOrEscalateFromHotelBooking": {
+						"actions": {
+							"HandOffFromHotelBookingAgent": {
+								"type": "AgentHandOff",
+								"inputs": {
+									"name": "Primary_Agent",
+									"content": {
+										"cancel": "@agentParameters('cancel')",
+										"reason": "@agentParameters('reason')"
+									}
+								},
+								"transitions": {}
+							}
+						},
+						"description": "A tool to mark the current task as completed and/or to escalate control of the dialog to the main assistant,\n    who can re-route the dialog based on the user's needs",
+						"agentParameterSchema": {
+							"type": "object",
+							"properties": {
+								"cancel": {
+									"type": "boolean",
+									"description": "Flag indicating whether to cancel the current task"
+								},
+								"reason": {
+									"type": "string",
+									"description": "reason for the cancellation or escalation"
+								}
+							}
+						}
+					},
+					"search_hotels": {
+						"actions": {
+							"Compose_14": {
+								"type": "Compose",
+								"inputs": [
+									{
+										"id": 1,
+										"name": "Hilton Basel",
+										"location": "Basel",
+										"price_tier": "Luxury",
+										"checkin_date": "2024-04-22",
+										"checkout_date": "2024-04-20",
+										"booked": 0
+									},
+									{
+										"id": 3,
+										"name": "Hyatt Regency Basel",
+										"location": "Basel",
+										"price_tier": "Upper Upscale",
+										"checkin_date": "2024-04-02",
+										"checkout_date": "2024-04-20",
+										"booked": 0
+									},
+									{
+										"id": 8,
+										"name": "Holiday Inn Basel",
+										"location": "Basel",
+										"price_tier": "Upper Midscale",
+										"checkin_date": "2024-04-24",
+										"checkout_date": "2024-04-09",
+										"booked": 0
+									}
+								],
+								"transitions": {}
+							}
+						},
+						"description": "Search for hotels based on location, name, price tier, check-in date, and check-out date.\n    Returns:\n        list[dict]: A list of hotel dictionaries matching the search criteria",
+						"agentParameterSchema": {
+							"type": "object",
+							"properties": {
+								"location": {
+									"type": "string",
+									"description": "The location of the hotel. Defaults to None"
+								},
+								"price_tier": {
+									"type": "string",
+									"description": "The price tier of the hotel. Defaults to None. Examples: Midscale, Upper Midscale, Upscale, Luxury"
+								},
+								"checkin_date": {
+									"type": "string",
+									"description": "The check-in date of the hotel. Defaults to None."
+								},
+								"checkout_date": {
+									"type": "string",
+									"description": "The check-out date of the hotel. Defaults to None"
+								}
+							},
+							"required": [
+								"location",
+								"price_tier",
+								"checkin_date",
+								"checkout_date"
+							]
+						}
+					},
+					"book_hotel": {
+						"actions": {
+							"Compose_15": {
+								"type": "Compose",
+								"inputs": "Hotel @{agentParameters('hotel_id')} successfully booked.",
+								"transitions": {}
+							}
+						},
+						"description": "Book a hotel by its ID.\n\nReturns:\n        str: A message indicating whether the hotel was successfully booked or not.",
+						"agentParameterSchema": {
+							"type": "object",
+							"properties": {
+								"hotel_id": {
+									"type": "integer",
+									"description": "The ID of the hotel to book"
+								}
+							},
+							"required": [
+								"hotel_id"
+							]
+						}
+					},
+					"update_hotel": {
+						"actions": {
+							"Compose_16": {
+								"type": "Compose",
+								"inputs": "Hotel @{agentParameters('hotel_id')} successfully updated.",
+								"transitions": {}
+							}
+						},
+						"description": "Update a hotel's check-in and check-out dates by its ID\n\nA message indicating whether the hotel was successfully updated or not",
+						"agentParameterSchema": {
+							"type": "object",
+							"properties": {
+								"hotel_id": {
+									"type": "integer",
+									"description": "The ID of the hotel to update"
+								},
+								"checkin_date": {
+									"type": "string",
+									"description": "The new check-in date of the hotel. Defaults to None"
+								},
+								"checkout_date": {
+									"type": "string",
+									"description": "The new check-out date of the hotel. Defaults to None"
+								}
+							},
+							"required": [
+								"hotel_id",
+								"checkin_date",
+								"checkout_date"
+							]
+						}
+					},
+					"cancel_hotel": {
+						"actions": {
+							"Compose_25": {
+								"type": "Compose",
+								"inputs": "Hotel @{agentParameters('hotel_id')} successfully cancelled.",
+								"transitions": {}
+							}
+						},
+						"description": "Cancel a hotel by its ID\nReturns:\n        str: A message indicating whether the hotel was successfully cancelled or not.",
+						"agentParameterSchema": {
+							"type": "object",
+							"properties": {
+								"hotel_id": {
+									"type": "integer",
+									"description": "The ID of the hotel to cancel"
+								}
+							},
+							"required": [
+								"hotel_id"
+							]
+						}
+					}
+				},
+				"runAfter": {},
+				"transitions": {
+					"Primary_Agent": {
+						"when": [
+							"HANDEDOFF"
+						]
+					}
+				},
+				"limit": {
+					"count": 100
+				}
+			},
+			"Primary_Agent": {
+				"type": "Agent",
+				"inputs": {
+					"parameters": {
+						"deploymentId": "gpt-4.1",
+						"messages": [
+							{
+								"role": "system",
+								"content": "You are a helpful customer support assistant for Swiss Airlines. \nYour primary role is to search for flight information and company policies to answer customer queries. \nIf a customer requests to update or cancel a flight, book a car rental, book a hotel, or get trip recommendations, \ndelegate the task to the appropriate specialized assistant by invoking the corresponding tool. You are not able to make these types of changes yourself.\n\nOnly the specialized assistants are given permission to do this for the user.\nThe user is not aware of the different specialized assistants, so do not mention them; just quietly delegate through function calls.\nProvide detailed information to the customer, and always double-check the database before concluding that information is unavailable.\nWhen searching, be persistent. Expand your query bounds if the first search returns no results.\nIf a search comes up empty, expand your search before giving up.\n\nCurrent time:  @{variables('current_time')}"
+							}
+						],
+						"agentModelType": "AzureOpenAI",
+						"agentModelSettings": {
+							"agentHistoryReductionSettings": {
+								"agentHistoryReductionType": "maximumTokenCountReduction",
+								"maximumTokenCount": 128000
+							},
+							"deploymentModelProperties": {
+								"name": "gpt-4.1",
+								"format": "OpenAI",
+								"version": "2025-04-14"
+							}
+						}
+					},
+					"modelConfigurations": {
+						"model1": {
+							"referenceName": "agent"
+						}
+					}
+				},
+				"tools": {
+					"ToFlightBookingAssistant": {
+						"actions": {
+							"HandOffToFlightAgent": {
+								"type": "AgentHandOff",
+								"inputs": {
+									"name": "Flight_Booking_Agent",
+									"content": "@agentParameters('request')"
+								},
+								"transitions": {}
+							}
+						},
+						"description": "Transfers work to a specialized assistant to handle flight updates and cancellations.",
+						"agentParameterSchema": {
+							"type": "object",
+							"properties": {
+								"request": {
+									"type": "string",
+									"description": "Any necessary followup questions the update flight assistant should clarify before proceeding"
+								}
+							},
+							"required": [
+								"request"
+							]
+						}
+					},
+					"ToBookCarRental": {
+						"actions": {
+							"HandOffToCarRentalAgent": {
+								"type": "AgentHandOff",
+								"inputs": {
+									"name": "Car_Rental_Agent",
+									"content": {
+										"location": "@agentParameters('location')",
+										"start_date": "@agentParameters('start_date')",
+										"end_date": "@agentParameters('end_date')",
+										"request": "@agentParameters('request')"
+									}
+								},
+								"transitions": {}
+							}
+						},
+						"description": "Transfers work to a specialized assistant to handle car rental bookings\n\n\"example\": {\n                \"location\": \"Basel\",\n                \"start_date\": \"2023-07-01\",\n                \"end_date\": \"2023-07-05\",\n                \"request\": \"I need a compact car with automatic transmission.\",\n            }\n",
+						"agentParameterSchema": {
+							"type": "object",
+							"properties": {
+								"location": {
+									"type": "string",
+									"description": "The location where the user wants to rent a car"
+								},
+								"start_date": {
+									"type": "string",
+									"description": "The start date of the car rental"
+								},
+								"end_date": {
+									"type": "string",
+									"description": "The end date of the car rental"
+								},
+								"request": {
+									"type": "string",
+									"description": "Any additional information or requests from the user regarding the car rental"
+								}
+							},
+							"required": [
+								"location",
+								"start_date",
+								"end_date",
+								"request"
+							]
+						}
+					},
+					"ToHotelBookingAssistant": {
+						"actions": {
+							"HandOffToHotelBookingAgent": {
+								"type": "AgentHandOff",
+								"inputs": {
+									"name": "Hotel_Booking_Agent",
+									"content": {
+										"location": "@agentParameters('location')",
+										"start_date": "@agentParameters('checkin_date')",
+										"end_date": "@agentParameters('checkout_date')",
+										"request": "@agentParameters('request')"
+									}
+								},
+								"transitions": {}
+							}
+						},
+						"description": "Transfer work to a specialized assistant to handle hotel bookings\n\"example\": {\n                \"location\": \"Zurich\",\n                \"checkin_date\": \"2023-08-15\",\n                \"checkout_date\": \"2023-08-20\",\n                \"request\": \"I prefer a hotel near the city center with a room that has a view.\",\n            }\n",
+						"agentParameterSchema": {
+							"type": "object",
+							"properties": {
+								"location": {
+									"type": "string",
+									"description": "The location where the user wants to book a hotel"
+								},
+								"checkin_date": {
+									"type": "string",
+									"description": "The check-in date for the hotel"
+								},
+								"checkout_date": {
+									"type": "string",
+									"description": "The check-out date for the hotel"
+								},
+								"request": {
+									"type": "string",
+									"description": "Any additional information or requests from the user regarding the hotel booking"
+								}
+							},
+							"required": [
+								"location",
+								"checkin_date",
+								"checkout_date",
+								"request"
+							]
+						}
+					},
+					"primary_search_flights": {
+						"actions": {
+							"Compose": {
+								"type": "Compose",
+								"inputs": [
+									{
+										"flight_id": 19238,
+										"flight_no": "LX0112",
+										"scheduled_departure": "2024-05-08 12:09:03.561731-04:00",
+										"scheduled_arrival": "2024-05-08 13:39:03.561731-04:00",
+										"departure_airport": "CDG",
+										"arrival_airport": "BSL",
+										"status": "Scheduled",
+										"aircraft_code": "SU9",
+										"actual_departure": null,
+										"actual_arrival": null
+									},
+									{
+										"flight_id": 19242,
+										"flight_no": "LX0112",
+										"scheduled_departure": "2024-05-09 12:09:03.561731-04:00",
+										"scheduled_arrival": "2024-05-09 13:39:03.561731-04:00",
+										"departure_airport": "CDG",
+										"arrival_airport": "BSL",
+										"status": "Scheduled",
+										"aircraft_code": "SU9",
+										"actual_departure": null,
+										"actual_arrival": null
+									},
+									{
+										"flight_id": 19243,
+										"flight_no": "LX0112",
+										"scheduled_departure": "2024-05-11 12:09:03.561731-04:00",
+										"scheduled_arrival": "2024-05-11 13:39:03.561731-04:00",
+										"departure_airport": "CDG",
+										"arrival_airport": "BSL",
+										"status": "Scheduled",
+										"aircraft_code": "SU9",
+										"actual_departure": null,
+										"actual_arrival": null
+									},
+									{
+										"flight_id": 19251,
+										"flight_no": "LX0112",
+										"scheduled_departure": "2024-05-07 12:09:03.561731-04:00",
+										"scheduled_arrival": "2024-05-07 13:39:03.561731-04:00",
+										"departure_airport": "CDG",
+										"arrival_airport": "BSL",
+										"status": "Scheduled",
+										"aircraft_code": "SU9",
+										"actual_departure": null,
+										"actual_arrival": null
+									}
+								],
+								"transitions": {}
+							}
+						},
+						"description": "Search for flights based on departure airport, arrival airport, and departure time range."
+					},
+					"primary_lookup_policy": {
+						"actions": {
+							"HTTP": {
+								"type": "Http",
+								"inputs": {
+									"uri": "https://storage.googleapis.com/benchmarks-artifacts/travel-db/swiss_faq.md",
+									"method": "GET"
+								},
+								"transitions": {},
+								"runtimeConfiguration": {
+									"contentTransfer": {
+										"transferMode": "Chunked"
+									}
+								}
+							}
+						},
+						"description": "Consult the company policies to check whether certain options are permitted.\n  Use this before making any flight changes performing other 'write' events"
+					},
+					"ToBookExcursion": {
+						"actions": {
+							"HandOffToExcersionBookingAgent": {
+								"type": "AgentHandOff",
+								"inputs": {
+									"name": "Excursion_Booking_Agent",
+									"content": {
+										"location": "@agentParameters('location')",
+										"request": "@agentParameters('request')"
+									}
+								},
+								"transitions": {}
+							}
+						},
+						"description": "Transfers work to a specialized assistant to handle trip recommendation and other excursion bookings\n\n\"example\": {\n                \"location\": \"Lucerne\",\n                \"request\": \"The user is interested in outdoor activities and scenic views.\",\n            }\n",
+						"agentParameterSchema": {
+							"type": "object",
+							"properties": {
+								"location": {
+									"type": "string",
+									"description": "The location where the user wants to book a recommended trip"
+								},
+								"request": {
+									"type": "string",
+									"description": "Any additional information or requests from the user regarding the trip recommendation"
+								}
+							},
+							"required": [
+								"location",
+								"request"
+							]
+						}
+					}
+				},
+				"runAfter": {},
+				"transitions": {
+					"Flight_Booking_Agent": {
+						"when": [
+							"HANDEDOFF"
+						]
+					},
+					"Hotel_Booking_Agent": {
+						"when": [
+							"HANDEDOFF"
+						]
+					},
+					"Car_Rental_Agent": {
+						"when": [
+							"HANDEDOFF"
+						]
+					},
+					"Excursion_Booking_Agent": {
+						"when": [
+							"HANDEDOFF"
+						]
+					}
+				},
+				"limit": {
+					"count": 100
+				}
+			},
+			"Car_Rental_Agent": {
+				"type": "Agent",
+				"inputs": {
+					"parameters": {
+						"deploymentId": "gpt-4.1",
+						"messages": [
+							{
+								"role": "system",
+								"content": "You are a specialized assistant for handling car rental bookings.\nThe primary assistant delegates work to you whenever the user needs help booking a car rental.\nSearch for available car rentals based on the user's preferences and confirm the booking details with the customer. \nWhen searching, be persistent. Expand your query bounds if the first search returns no results. \nIf you need more information or the customer changes their mind, escalate the task back to the main assistant.\nRemember that a booking isn't completed until after the relevant tool has successfully been used.\nCurrent time: @{variables('current_time')}\nIf the user needs help, and none of your tools are appropriate for it, then 'CompleteOrEscalate' the dialog to the host assistant. Do not waste the user's time. Do not make up invalid tools or functions.\nSome examples for which you should CompleteOrEscalate:\n'what's the weather like this time of year?'\n'What flights are available?'\n'nevermind i think I'll book separately'\\n\"\n'Oh wait i haven't booked my flight yet i'll do that first'\n'Car rental booking confirmed'\n"
+							}
+						],
+						"agentModelType": "AzureOpenAI",
+						"agentModelSettings": {
+							"agentHistoryReductionSettings": {
+								"agentHistoryReductionType": "maximumTokenCountReduction",
+								"maximumTokenCount": 128000
+							},
+							"deploymentModelProperties": {
+								"name": "gpt-4.1",
+								"format": "OpenAI",
+								"version": "2025-04-14"
+							}
+						}
+					},
+					"modelConfigurations": {
+						"model1": {
+							"referenceName": "agent"
+						}
+					}
+				},
+				"tools": {
+					"CompleteOrEscalateFromCarRental": {
+						"actions": {
+							"HandOffFromCarRentalAgent": {
+								"type": "AgentHandOff",
+								"inputs": {
+									"name": "Primary_Agent",
+									"content": {
+										"cancel": "@agentParameters('cancel')",
+										"reason": "@agentParameters('reason')"
+									}
+								},
+								"transitions": {}
+							}
+						},
+						"description": "A tool to mark the current task as completed and/or to escalate control of the dialog to the main assistant,\n    who can re-route the dialog based on the user's needs",
+						"agentParameterSchema": {
+							"type": "object",
+							"properties": {
+								"cancel": {
+									"type": "boolean",
+									"description": "Flag indicating whether to cancel the current task"
+								},
+								"reason": {
+									"type": "string",
+									"description": "reason for the cancellation or escalation"
+								}
+							}
+						}
+					},
+					"search_car_rentals": {
+						"actions": {
+							"Compose_22": {
+								"type": "Compose",
+								"inputs": [
+									{
+										"id": 1,
+										"name": "Europcar",
+										"location": "Basel",
+										"price_tier": "Economy",
+										"start_date": "2024-04-14",
+										"end_date": "2024-04-11",
+										"booked": 0
+									},
+									{
+										"id": 2,
+										"name": "Avis",
+										"location": "Basel",
+										"price_tier": "Luxury",
+										"start_date": "2024-04-10",
+										"end_date": "2024-04-20",
+										"booked": 0
+									},
+									{
+										"id": 7,
+										"name": "Enterprise",
+										"location": "Basel",
+										"price_tier": "Premium",
+										"start_date": "2024-04-22",
+										"end_date": "2024-04-20",
+										"booked": 0
+									},
+									{
+										"id": 9,
+										"name": "Thrifty",
+										"location": "Basel",
+										"price_tier": "Midsize",
+										"start_date": "2024-04-17",
+										"end_date": "2024-04-26",
+										"booked": 0
+									}
+								],
+								"transitions": {}
+							}
+						},
+						"description": "Search for car rentals based on location, name, price tier, start date, and end date.\n\nReturns:\n        list[dict]: A list of car rental dictionaries matching the search criteria.",
+						"agentParameterSchema": {
+							"type": "object",
+							"properties": {
+								"location ": {
+									"type": "string",
+									"description": "The location of the car rental. Defaults to None"
+								},
+								"name ": {
+									"type": "string",
+									"description": "The name of the car rental company. Defaults to None"
+								},
+								"price_tier ": {
+									"type": "string",
+									"description": "The price tier of the car rental. Defaults to None."
+								},
+								"start_date ": {
+									"type": "string",
+									"description": "The start date of the car rental. Defaults to None"
+								},
+								"end_date ": {
+									"type": "string",
+									"description": "The end date of the car rental. Defaults to None."
+								}
+							},
+							"required": [
+								"location ",
+								"name ",
+								"price_tier ",
+								"start_date ",
+								"end_date "
+							]
+						}
+					},
+					"book_car_rental": {
+						"actions": {
+							"Compose_23": {
+								"type": "Compose",
+								"inputs": "Car rental @{agentParameters('rental_id ')} successfully booked",
+								"transitions": {}
+							}
+						},
+						"description": "Book a car rental by its ID.\nReturns:\n        str: A message indicating whether the car rental was successfully booked or not.",
+						"agentParameterSchema": {
+							"type": "object",
+							"properties": {
+								"rental_id ": {
+									"type": "string",
+									"description": "The ID of the car rental to book"
+								}
+							},
+							"required": [
+								"rental_id "
+							]
+						}
+					},
+					"cancel_car_rental": {
+						"actions": {
+							"Compose_24": {
+								"type": "Compose",
+								"inputs": "Car rental @{agentParameters('rental_id ')} successfully cancelled",
+								"transitions": {}
+							}
+						},
+						"description": "Cancel a car rental by its ID\nReturns:\n        str: A message indicating whether the car rental was successfully cancelled or not.",
+						"agentParameterSchema": {
+							"type": "object",
+							"properties": {
+								"rental_id": {
+									"type": "string",
+									"description": "The ID of the car rental to cancel"
+								}
+							},
+							"required": [
+								"rental_id"
+							]
+						}
+					},
+					"update_car_rental": {
+						"actions": {
+							"Compose_17": {
+								"type": "Compose",
+								"inputs": "Car rental @{agentParameters('rental_id ')} successfully updated",
+								"transitions": {}
+							}
+						},
+						"description": "Update a car rental's start and end dates by its ID",
+						"agentParameterSchema": {
+							"type": "object",
+							"properties": {
+								"rental_id": {
+									"type": "integer",
+									"description": "The ID of the car rental to update"
+								},
+								"start_date": {
+									"type": "string",
+									"description": "The new start date of the car rental. Defaults to None"
+								},
+								"end_date ": {
+									"type": "string",
+									"description": "The new end date of the car rental. Defaults to None"
+								}
+							},
+							"required": [
+								"rental_id",
+								"start_date",
+								"end_date "
+							]
+						}
+					}
+				},
+				"runAfter": {},
+				"transitions": {
+					"Primary_Agent": {
+						"when": [
+							"HANDEDOFF"
+						]
+					}
+				},
+				"limit": {
+					"count": 100
+				}
+			},
+			"Excursion_Booking_Agent": {
+				"type": "Agent",
+				"inputs": {
+					"parameters": {
+						"deploymentId": "gpt-4.1",
+						"messages": [
+							{
+								"role": "system",
+								"content": "You are a specialized assistant for handling trip recommendations. \nThe primary assistant delegates work to you whenever the user needs help booking a recommended trip.\nSearch for available trip recommendations based on the user's preferences and confirm the booking details with the customer.\nIf you need more information or the customer changes their mind, escalate the task back to the main assistant.\nWhen searching, be persistent. Expand your query bounds if the first search returns no results.\nRemember that a booking isn't completed until after the relevant tool has successfully been used.\nCurrent time: @{variables('current_time')}.\nIf the user needs help, and none of your tools are appropriate for it, then \"CompleteOrEscalate\" the dialog to the host assistant. Do not waste the user\\'s time. Do not make up invalid tools or functions.\nSome examples for which you should CompleteOrEscalate:\n'nevermind i think I'll book separately'\n'i need to figure out transportation while i'm there'\n'Oh wait i haven't booked my flight yet i'll do that first'\n'Excursion booking confirmed!'\n"
+							}
+						],
+						"agentModelType": "AzureOpenAI",
+						"agentModelSettings": {
+							"agentHistoryReductionSettings": {
+								"agentHistoryReductionType": "maximumTokenCountReduction",
+								"maximumTokenCount": 128000
+							},
+							"deploymentModelProperties": {
+								"name": "gpt-4.1",
+								"format": "OpenAI",
+								"version": "2025-04-14"
+							}
+						}
+					},
+					"modelConfigurations": {
+						"model1": {
+							"referenceName": "agent"
+						}
+					}
+				},
+				"tools": {
+					"CompleteOrEscalateFromExcersion": {
+						"actions": {
+							"HandOffFromExcersionAgent": {
+								"type": "AgentHandOff",
+								"inputs": {
+									"name": "Primary_Agent",
+									"content": {
+										"cancel": "@agentParameters('cancel')",
+										"reason": "@agentParameters('reason')"
+									}
+								},
+								"transitions": {}
+							}
+						},
+						"description": "A tool to mark the current task as completed and/or to escalate control of the dialog to the main assistant,\n    who can re-route the dialog based on the user's needs",
+						"agentParameterSchema": {
+							"type": "object",
+							"properties": {
+								"cancel": {
+									"type": "boolean",
+									"description": "Flag indicating whether to cancel the current task"
+								},
+								"reason": {
+									"type": "string",
+									"description": "reason for the cancellation or escalation"
+								}
+							}
+						}
+					},
+					"search_trip_recommendations": {
+						"actions": {
+							"Compose_18": {
+								"type": "Compose",
+								"inputs": "[{'text': \"Hmm it doesn't look like my initial search pulled up any vineyard hiking or biking tours for those dates. Let me try expanding the search:\", 'type': 'text'}, {'id': 'toolu_019K14VeBY9LANAZgrqTNNso', 'input': {'keywords': 'outdoors, nature, countryside, bike tour, hike', 'location': 'Basel', 'start_date': '2024-05-01', 'end_date': '2024-05-15'}, 'name': 'search_trip_recommendations', 'type': 'tool_use'}]",
+								"transitions": {}
+							}
+						},
+						"description": "Search for trip recommendations based on location, name, and keywords\n\nReturns:\n        list[dict]: A list of trip recommendation dictionaries matching the search criteria.",
+						"agentParameterSchema": {
+							"type": "object",
+							"properties": {
+								"location": {
+									"type": "string",
+									"description": "The location of the trip recommendation. Defaults to None"
+								},
+								"name": {
+									"type": "string",
+									"description": "The name of the trip recommendation. Defaults to None"
+								},
+								"keywords": {
+									"type": "string",
+									"description": "The keywords associated with the trip recommendation. Defaults to None"
+								}
+							},
+							"required": [
+								"location",
+								"name",
+								"keywords"
+							]
+						}
+					},
+					"book_excursion": {
+						"actions": {
+							"Compose_19": {
+								"type": "Compose",
+								"inputs": "Trip recommendation @{agentParameters('recommendation_id')}successfully booked",
+								"transitions": {}
+							}
+						},
+						"description": "Book a excursion by its recommendation ID\n\nReturns:\n        str: A message indicating whether the trip recommendation was successfully booked or not.",
+						"agentParameterSchema": {
+							"type": "object",
+							"properties": {
+								"recommendation_id": {
+									"type": "string",
+									"description": "The ID of the trip recommendation to book"
+								}
+							},
+							"required": [
+								"recommendation_id"
+							]
+						}
+					},
+					"update_excursion": {
+						"actions": {
+							"Compose_21": {
+								"type": "Compose",
+								"inputs": "Trip recommendation @{agentParameters('recommendation_id')}successfully updated",
+								"transitions": {}
+							}
+						},
+						"description": "Update a trip recommendation's details by its ID",
+						"agentParameterSchema": {
+							"type": "object",
+							"properties": {
+								"recommendation_id": {
+									"type": "integer",
+									"description": "The ID of the trip recommendation to update"
+								},
+								"details": {
+									"type": "string",
+									"description": "The new details of the trip recommendation"
+								}
+							},
+							"required": [
+								"recommendation_id",
+								"details"
+							]
+						}
+					},
+					"cancel_excursion": {
+						"actions": {
+							"Compose_20": {
+								"type": "Compose",
+								"inputs": "Trip recommendation @{agentParameters('recommendation_id')}successfully cancelled",
+								"transitions": {}
+							}
+						},
+						"description": "Cancel a trip recommendation by its ID\nReturns:\n        str: A message indicating whether the trip recommendation was successfully cancelled or not",
+						"agentParameterSchema": {
+							"type": "object",
+							"properties": {
+								"recommendation_id": {
+									"type": "integer",
+									"description": "The ID of the trip recommendation to cancel"
+								}
+							},
+							"required": [
+								"recommendation_id"
+							]
+						}
+					}
+				},
+				"runAfter": {},
+				"transitions": {
+					"Primary_Agent": {
+						"when": [
+							"HANDEDOFF"
+						]
+					}
+				},
+				"limit": {
+					"count": 100
+				}
+			},
+			"Initialize_variables": {
+				"type": "InitializeVariable",
+				"inputs": {
+					"variables": [
+						{
+							"name": "passenger_id",
+							"type": "string",
+							"value": "3442 587242"
+						},
+						{
+							"name": "current_time",
+							"type": "string",
+							"value": "2024-04-30 07:09:03.563"
+						}
+					]
+				},
+				"runAfter": {},
+				"transitions": {
+					"Primary_Agent": {
 						"when": [
 							"SUCCEEDED"
 						]
 					}
 				}
 			}
+		},
+		"outputs": {},
+		"triggers": {
+			"When_a_HTTP_request_is_received": {
+				"type": "Request",
+				"kind": "Http",
+				"transitions": {
+					"Initialize_variables": {
+						"inputs": {
+							"variables": [
+								{
+									"name": "passenger_id",
+									"type": "string",
+									"value": "3442 587242"
+								},
+								{
+									"name": "current_time",
+									"type": "string",
+									"value": "2024-04-30 07:09:03.563"
+								}
+							]
+						}
+					}
+				}
+			}
 		}
 	},
-	"connectionReferences": {},
-	"parameters": {}
+	"kind": "StateMachine"
 }

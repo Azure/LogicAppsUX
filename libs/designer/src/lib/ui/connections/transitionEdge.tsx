@@ -217,8 +217,8 @@ const TransitionEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({ id, source, t
     if (!pathReady || !pathRef.current) {
       return;
     }
-    const lastPoint = getPointOnPath(0.99);
-    const secondLastPoint = getPointOnPath(0.98);
+    const lastPoint = getPointOnPath(0.999);
+    const secondLastPoint = getPointOnPath(0.998);
     const dx = lastPoint.x - secondLastPoint.x;
     const dy = lastPoint.y - secondLastPoint.y;
     const angle = Math.atan2(dy, dx) * (180 / Math.PI);
