@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [5.94.22](https://github.com/Azure/LogicAppsUX/compare/v5.94.21...v5.94.22) (2025-05-29)
+
+
+### Bug Fixes
+
+* **vscode:** Add noAuth to run trigger ([#7375](https://github.com/Azure/LogicAppsUX/issues/7375)) ([#7377](https://github.com/Azure/LogicAppsUX/issues/7377)) ([0aa9aa0](https://github.com/Azure/LogicAppsUX/commit/0aa9aa0ede218253c8709af4af07bc9b30709c3e))
+
 ### [5.94.21](https://github.com/Azure/LogicAppsUX/compare/v5.94.20...v5.94.21) (2025-05-27)
 
 
