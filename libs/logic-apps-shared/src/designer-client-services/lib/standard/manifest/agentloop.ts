@@ -241,18 +241,45 @@ export default {
                   description: 'Name of the model which you want to use for the agent',
                   type: 'string',
                   default: 'gpt-4.1',
+                  'x-ms-input-dependencies': {
+                    type: 'visibility',
+                    parameters: [
+                      {
+                        name: 'agentModelType',
+                        values: ['AzureOpenAI'],
+                      },
+                    ],
+                  },
                 },
                 format: {
                   title: 'Model format',
                   description: 'Format of the model you are using',
                   type: 'string',
                   default: 'OpenAI',
+                  'x-ms-input-dependencies': {
+                    type: 'visibility',
+                    parameters: [
+                      {
+                        name: 'agentModelType',
+                        values: ['AzureOpenAI'],
+                      },
+                    ],
+                  },
                 },
                 version: {
                   title: 'Model version',
                   description: 'Version of the model you are using',
                   type: 'string',
                   default: '2025-04-14',
+                  'x-ms-input-dependencies': {
+                    type: 'visibility',
+                    parameters: [
+                      {
+                        name: 'agentModelType',
+                        values: ['AzureOpenAI'],
+                      },
+                    ],
+                  },
                 },
               },
             },
