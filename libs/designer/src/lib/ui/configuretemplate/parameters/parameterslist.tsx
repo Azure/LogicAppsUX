@@ -1,5 +1,4 @@
 import {
-  Button,
   Link,
   Table,
   TableBody,
@@ -15,9 +14,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useResourceStrings } from '../resources';
 import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { getResourceNameFromId } from '@microsoft/logic-apps-shared';
 import { openPanelView, TemplatePanelView } from '../../../core/state/templates/panelSlice';
-import { MoreHorizontal16Filled } from '@fluentui/react-icons';
+import { Edit16Regular } from '@fluentui/react-icons';
 import { CustomizeParameterPanel } from '../panels/customizeParameterPanel/customizeParameterPanel';
 import { DescriptionWithLink, ErrorBar } from '../common';
 import { mergeStyles } from '@fluentui/react';
@@ -25,7 +23,7 @@ import { formatNameWithIdentifierToDisplay } from '../../../core/configuretempla
 
 const columnTextStyle: React.CSSProperties = {
   display: '-webkit-box',
-  WebkitLineClamp: 2,
+  WebkitLineClamp: 1,
   WebkitBoxOrient: 'vertical',
   overflow: 'hidden',
   textOverflow: 'ellipsis',
@@ -56,10 +54,9 @@ export const TemplateParametersList = () => {
     }),
   };
 
-  const { parameterDefinitions, currentPanelView, workflowsInTemplate, parameterErrors } = useSelector((state: RootState) => ({
+  const { parameterDefinitions, currentPanelView, parameterErrors } = useSelector((state: RootState) => ({
     parameterDefinitions: state.template.parameterDefinitions,
     currentPanelView: state.panel.currentPanelView,
-    workflowsInTemplate: state.template.workflows,
     parameterErrors: state.template.errors.parameters,
   }));
 
@@ -69,7 +66,6 @@ export const TemplateParametersList = () => {
       .map(([id]) => formatNameWithIdentifierToDisplay(id));
   }, [parameterErrors]);
 
-  const isAccelerator = Object.keys(workflowsInTemplate).length > 1;
   const resourceStrings = useResourceStrings();
 
   const columns = useMemo(() => {
@@ -77,18 +73,13 @@ export const TemplateParametersList = () => {
       { columnKey: 'name', label: resourceStrings.Name },
       { columnKey: 'displayName', label: resourceStrings.DisplayName },
       { columnKey: 'type', label: resourceStrings.Type },
-      { columnKey: 'default', label: resourceStrings.DefaultValue },
-      // { columnKey: 'allowedValues', label: resourceStrings.AllowedValues },  //TODO: revisit allowedValues
     ];
     const column2 = [
       { columnKey: 'description', label: resourceStrings.Description },
       { columnKey: 'required', label: resourceStrings.Required },
     ];
-    if (isAccelerator) {
-      return [...baseColumn, { columnKey: 'associatedWorkflows', label: resourceStrings.AssociatedWorkflows }, ...column2];
-    }
     return [...baseColumn, ...column2];
-  }, [isAccelerator, resourceStrings]);
+  }, [resourceStrings]);
 
   const items = useMemo(
     () =>
@@ -96,11 +87,6 @@ export const TemplateParametersList = () => {
         name: parameter?.name ?? resourceStrings.Placeholder,
         displayName: parameter?.displayName ?? resourceStrings.Placeholder,
         type: parameter.type,
-        default: parameter?.default ?? resourceStrings.Placeholder,
-        // allowedValues:
-        //   parameter?.allowedValues?.map((allowedValue) => `${allowedValue.displayName} ${allowedValue.value}`)?.join(', ') ??
-        //   resourceStrings.Placeholder,
-        associatedWorkflows: parameter?.associatedWorkflows?.join(', ') ?? resourceStrings.Placeholder,
         description: parameter?.description ?? resourceStrings.Placeholder,
         required: parameter?.required ?? false,
       })) ?? [],
@@ -178,21 +164,6 @@ export const TemplateParametersList = () => {
               </TableCell>
               <TableCell>
                 <TableCellLayout>
-                  <Text style={columnTextStyle}>{item.default}</Text>
-                </TableCellLayout>
-              </TableCell>
-              {/* <TableCell>
-                <TableCellLayout>{item.allowedValues}</TableCellLayout>
-              </TableCell> */}
-              {isAccelerator && (
-                <TableCell>
-                  <TableCellLayout>
-                    <Text style={columnTextStyle}>{getResourceNameFromId(item.associatedWorkflows)}</Text>
-                  </TableCellLayout>
-                </TableCell>
-              )}
-              <TableCell>
-                <TableCellLayout>
                   <Text style={columnTextStyle}>{item.description}</Text>
                 </TableCellLayout>
               </TableCell>
@@ -201,7 +172,15 @@ export const TemplateParametersList = () => {
               </TableCell>
               <TableCell>
                 <TableCellLayout>
-                  <Button icon={<MoreHorizontal16Filled />} appearance="subtle" onClick={() => handleSelectParameter(item.name)} />
+                  <Link
+                    style={{ ...columnTextStyle, fontWeight: '500' }}
+                    as="button"
+                    onClick={() => {
+                      handleSelectParameter(item.name);
+                    }}
+                  >
+                    <Edit16Regular /> Edit
+                  </Link>
                 </TableCellLayout>
               </TableCell>
             </TableRow>

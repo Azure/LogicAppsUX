@@ -32,11 +32,6 @@ export const CustomizeParameter = ({
         type: 'text',
       },
       {
-        label: resourceStrings.Type,
-        value: parameterDefinition.type || '',
-        type: 'text',
-      },
-      {
         label: resourceStrings.ParameterDisplayName,
         value: parameterDefinition.displayName || '',
         type: 'textfield',
@@ -52,6 +47,11 @@ export const CustomizeParameter = ({
           id: 'RWd2ii',
           description: 'Hint message for parameter display name is required for save.',
         }),
+      },
+      {
+        label: resourceStrings.Type,
+        value: parameterDefinition.type || '',
+        type: 'text',
       },
       {
         label: resourceStrings.DefaultValue,
