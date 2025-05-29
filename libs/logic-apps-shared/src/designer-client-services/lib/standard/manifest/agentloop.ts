@@ -186,6 +186,15 @@ export default {
                   title: 'Agent history reduction type (Experimental)',
                   default: 'maximumTokenCountReduction',
                   description: 'Type of agent history reduction to use',
+                  'x-ms-input-dependencies': {
+                    type: 'visibility',
+                    parameters: [
+                      {
+                        name: 'agentModelType',
+                        values: ['AzureOpenAI'],
+                      },
+                    ],
+                  },
                   'x-ms-editor': 'dropdown',
                   'x-ms-editor-options': {
                     options: [
