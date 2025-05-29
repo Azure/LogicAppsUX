@@ -173,7 +173,7 @@ export const TemplateParametersList = () => {
               <TableCell>
                 <TableCellLayout>
                   <Link
-                    style={{ ...columnTextStyle, fontWeight: '500' }}
+                    style={columnTextStyle}
                     as="button"
                     onClick={() => {
                       handleSelectParameter(item.name);
