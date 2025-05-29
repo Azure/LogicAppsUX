@@ -2,8 +2,6 @@ import { TemplatesSection, type TemplatesSectionItem } from '@microsoft/designer
 import { useResourceStrings } from '../resources';
 import { useMemo } from 'react';
 import { getResourceNameFromId, type Template } from '@microsoft/logic-apps-shared';
-import { useSelector } from 'react-redux';
-import type { RootState } from '../../../core/state/templates/store';
 import { DescriptionWithLink, ErrorBar } from '../common';
 import { useIntl } from 'react-intl';
 import { formatNameWithIdentifierToDisplay } from '../../../core/configuretemplate/utils/helper';
@@ -19,10 +17,6 @@ export const CustomizeParameter = ({
 }) => {
   const resourceStrings = useResourceStrings();
   const intl = useIntl();
-
-  const { isAccelerator } = useSelector((state: RootState) => ({
-    isAccelerator: Object.keys(state.template.workflows).length > 1,
-  }));
 
   const detailsSectionItems: TemplatesSectionItem[] = useMemo(() => {
     const baseItems: TemplatesSectionItem[] = [
@@ -87,7 +81,7 @@ export const CustomizeParameter = ({
         },
       },
     ];
-    if (isAccelerator && parameterDefinition.associatedWorkflows) {
+    if (parameterDefinition.associatedWorkflows) {
       baseItems.push({
         label: resourceStrings.AssociatedWorkflows,
         value: formatAssociatedWorklows(parameterDefinition.associatedWorkflows) || '',
@@ -95,7 +89,7 @@ export const CustomizeParameter = ({
       });
     }
     return baseItems;
-  }, [intl, resourceStrings, parameterDefinition, setParameterDefinition, isAccelerator]);
+  }, [intl, resourceStrings, parameterDefinition, setParameterDefinition]);
 
   return (
     <div>
@@ -107,7 +101,7 @@ export const CustomizeParameter = ({
         })}
       />
       {parameterError ? <ErrorBar errorMessage={parameterError} /> : null}
-      <TemplatesSection title={resourceStrings.Details} titleHtmlFor={'detailsSectionLabel'} items={detailsSectionItems} />
+      <TemplatesSection items={detailsSectionItems} />
     </div>
   );
 };

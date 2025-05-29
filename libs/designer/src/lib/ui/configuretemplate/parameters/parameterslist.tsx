@@ -179,7 +179,7 @@ export const TemplateParametersList = () => {
                       handleSelectParameter(item.name);
                     }}
                   >
-                    <Edit16Regular /> Edit
+                    <Edit16Regular />
                   </Link>
                 </TableCellLayout>
               </TableCell>
