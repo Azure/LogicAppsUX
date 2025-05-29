@@ -23,6 +23,16 @@ import { DescriptionWithLink, ErrorBar } from '../common';
 import { mergeStyles } from '@fluentui/react';
 import { formatNameWithIdentifierToDisplay } from '../../../core/configuretemplate/utils/helper';
 
+const columnTextStyle: React.CSSProperties = {
+  display: '-webkit-box',
+  WebkitLineClamp: 2,
+  WebkitBoxOrient: 'vertical',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  wordBreak: 'break-word',
+  lineBreak: 'anywhere',
+};
+
 export const TemplateParametersList = () => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
@@ -146,13 +156,7 @@ export const TemplateParametersList = () => {
                   }}
                 >
                   <Link
-                    style={{
-                      display: '-webkit-box',
-                      WebkitLineClamp: 2,
-                      WebkitBoxOrient: 'vertical',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                    }}
+                    style={columnTextStyle}
                     as="button"
                     onClick={() => {
                       handleSelectParameter(item.name);
@@ -163,24 +167,34 @@ export const TemplateParametersList = () => {
                 </TableCellLayout>
               </TableCell>
               <TableCell>
-                <TableCellLayout>{item.displayName}</TableCellLayout>
+                <TableCellLayout>
+                  <Text style={columnTextStyle}>{item.displayName}</Text>
+                </TableCellLayout>
               </TableCell>
               <TableCell>
-                <TableCellLayout>{item.type}</TableCellLayout>
+                <TableCellLayout>
+                  <Text style={columnTextStyle}>{item.type}</Text>
+                </TableCellLayout>
               </TableCell>
               <TableCell>
-                <TableCellLayout>{item.default}</TableCellLayout>
+                <TableCellLayout>
+                  <Text style={columnTextStyle}>{item.default}</Text>
+                </TableCellLayout>
               </TableCell>
               {/* <TableCell>
                 <TableCellLayout>{item.allowedValues}</TableCellLayout>
               </TableCell> */}
               {isAccelerator && (
                 <TableCell>
-                  <TableCellLayout>{getResourceNameFromId(item.associatedWorkflows)}</TableCellLayout>
+                  <TableCellLayout>
+                    <Text style={columnTextStyle}>{getResourceNameFromId(item.associatedWorkflows)}</Text>
+                  </TableCellLayout>
                 </TableCell>
               )}
               <TableCell>
-                <TableCellLayout>{item.description}</TableCellLayout>
+                <TableCellLayout>
+                  <Text style={columnTextStyle}>{item.description}</Text>
+                </TableCellLayout>
               </TableCell>
               <TableCell>
                 <TableCellLayout>{item.required ? resourceStrings.RequiredOn : resourceStrings.RequiredOff}</TableCellLayout>
