@@ -232,6 +232,12 @@ export const LayoutProvider = ({ children }: any) => {
   return <LayoutContext.Provider value={[nodes, edges, size]}>{children}</LayoutContext.Provider>;
 };
 
+export const exportForTesting = {
+  convertElkGraphToReactFlow,
+  convertWorkflowGraphToElkGraph,
+  elkLayout,
+};
+
 export const useLayout = (): LayoutContextType => {
   const context = useContext(LayoutContext);
   if (!context) {
