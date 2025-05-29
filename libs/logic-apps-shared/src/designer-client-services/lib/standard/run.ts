@@ -320,7 +320,7 @@ export class StandardRunService implements IRunService {
     }
 
     try {
-      await this.getHttpRequestByMethod(httpClient, method, { uri });
+      await this.getHttpRequestByMethod(httpClient, method, { uri, noAuth: true });
     } catch (e: any) {
       throw new Error(`${e.status} ${e?.data?.error?.message}`);
     }
