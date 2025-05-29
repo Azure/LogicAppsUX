@@ -15,8 +15,8 @@ export const TemplateConnectionsList = () => {
   const resources = {
     Description: intl.formatMessage({
       defaultMessage:
-        'Connections used in your selected workflows. You will be required to create connections for the following services when deploying workflow from this template.',
-      id: 'AGXgup',
+        'These are the connection services this template depends on. When users deploy a workflow using this template, they’ll be prompted to create connections to the services it uses.',
+      id: 'SUaXux',
       description: 'The description for the connections tab',
     }),
     AriaLabel: intl.formatMessage({
