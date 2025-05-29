@@ -5,7 +5,7 @@ import { getRootWorkflowGraphForLayout } from '../state/workflow/workflowSelecto
 import { LogEntryLevel, LoggerService, useThrottledEffect, WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES } from '@microsoft/logic-apps-shared';
 import type { ElkExtendedEdge, ElkNode } from 'elkjs/lib/elk.bundled';
 import ELK from 'elkjs/lib/elk.bundled';
-import { useState } from 'react';
+import { createContext, useState, useContext } from 'react';
 import { useSelector } from 'react-redux';
 import type { Edge, Node } from '@xyflow/react';
 
@@ -42,7 +42,7 @@ const readOnlyOptions: Record<string, string> = {
 };
 
 const elk = new ELK();
-const defaultEdgeType = WORKFLOW_EDGE_TYPES.BUTTON_EDGE;
+const defaultEdgeType = WORKFLOW_EDGE_TYPES.TRANSITION_EDGE;
 const defaultNodeType = WORKFLOW_NODE_TYPES.OPERATION_NODE;
 
 const elkLayout = async (graph: ElkNode, readOnly?: boolean) => {
@@ -189,10 +189,14 @@ const convertWorkflowGraphToElkGraph = (node: WorkflowNode): ElkNode => {
   };
 };
 
-export const useLayout = (): [Node[], Edge[], number[]] => {
-  const [reactFlowNodes, setReactFlowNodes] = useState<Node[]>([]);
-  const [reactFlowEdges, setReactFlowEdges] = useState<Edge[]>([]);
-  const [reactFlowSize, setReactFlowSize] = useState<number[]>([0, 0]);
+type LayoutContextType = [Node[], Edge[], number[]];
+const LayoutContext = createContext<LayoutContextType | undefined>(undefined);
+
+export const LayoutProvider = ({ children }: any) => {
+  const [nodes, setNodes] = useState<Node[]>([]);
+  const [edges, setEdges] = useState<Edge[]>([]);
+  const [size, setSize] = useState<number[]>([0, 0]);
+
   const workflowGraph = useSelector(getRootWorkflowGraphForLayout);
   const readOnly = useReadOnly();
 
@@ -201,13 +205,15 @@ export const useLayout = (): [Node[], Edge[], number[]] => {
       if (!workflowGraph) {
         return;
       }
-      const elkGraph: ElkNode = convertWorkflowGraphToElkGraph(workflowGraph);
+
+      const elkGraph = convertWorkflowGraphToElkGraph(workflowGraph);
+
       elkLayout(elkGraph, readOnly)
         .then((g) => {
           const [n, e, s] = convertElkGraphToReactFlow(g);
-          setReactFlowNodes(n);
-          setReactFlowEdges(e);
-          setReactFlowSize(s);
+          setNodes(n);
+          setEdges(e);
+          setSize(s);
         })
         .catch((err) => {
           const graphAsString = JSON.stringify(elkGraph);
@@ -223,11 +229,13 @@ export const useLayout = (): [Node[], Edge[], number[]] => {
     200
   );
 
-  return [reactFlowNodes, reactFlowEdges, reactFlowSize];
+  return <LayoutContext.Provider value={[nodes, edges, size]}>{children}</LayoutContext.Provider>;
 };
 
-export const exportForTesting = {
-  convertElkGraphToReactFlow,
-  convertWorkflowGraphToElkGraph,
-  elkLayout,
+export const useLayout = (): LayoutContextType => {
+  const context = useContext(LayoutContext);
+  if (!context) {
+    throw new Error('useLayout must be used within a LayoutProvider');
+  }
+  return context;
 };
