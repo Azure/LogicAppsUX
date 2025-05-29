@@ -42,7 +42,7 @@ const readOnlyOptions: Record<string, string> = {
 };
 
 const elk = new ELK();
-const defaultEdgeType = WORKFLOW_EDGE_TYPES.TRANSITION_EDGE;
+const defaultEdgeType = WORKFLOW_EDGE_TYPES.BUTTON_EDGE;
 const defaultNodeType = WORKFLOW_NODE_TYPES.OPERATION_NODE;
 
 const elkLayout = async (graph: ElkNode, readOnly?: boolean) => {
@@ -55,7 +55,7 @@ const elkLayout = async (graph: ElkNode, readOnly?: boolean) => {
   return layout;
 };
 
-const convertElkGraphToReactFlow = (graph: ElkNode): [Node[], Edge[], number[]] => {
+const convertElkGraphToReactFlow = (graph: ElkNode): LayoutContextType => {
   const nodes: Node[] = [];
   const edges: Edge[] = [];
 
