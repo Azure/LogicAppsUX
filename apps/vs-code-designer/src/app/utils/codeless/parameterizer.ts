@@ -74,30 +74,32 @@ export function areAllConnectionsParameterized(connectionsData: ConnectionsData)
   if (!connectionsData || Object.keys(connectionsData).length === 0) {
     return true;
   }
+
   for (const connectionType in connectionsData) {
-    if (connectionType !== 'serviceProviderConnections') {
-      const connectionTypeJson = connectionsData[connectionType];
-      for (const connectionKey in connectionTypeJson) {
-        const connection = connectionTypeJson[connectionKey];
-        if (isConnectionReferenceModel(connection)) {
-          if (
-            !(connection.api.id.includes('@appsetting') || connection.api.id.includes('@{appsetting')) ||
-            !(connection.connectionRuntimeUrl.includes('@parameters') || connection.connectionRuntimeUrl.includes('@{parameters'))
-          ) {
+    if (connectionType === 'serviceProviderConnections') {
+      continue;
+    }
+    const hasSettingRef = (value: string) => value.includes('@appsetting') || value.includes('@{appsetting');
+    const hasParameterRef = (value: string) => value.includes('@parameters') || value.includes('@{parameters');
+
+    const connectionTypeJson = connectionsData[connectionType];
+    for (const connectionKey in connectionTypeJson) {
+      const connection = connectionTypeJson[connectionKey];
+      if (isConnectionReferenceModel(connection)) {
+        if (!hasSettingRef(connection.api.id)) {
+          if (!hasParameterRef(connection.connectionRuntimeUrl)) {
             return false;
           }
-        } else if (isFunctionConnectionModel(connection)) {
-          if (
-            !(connection.function.id.includes('@parameters') || connection.function.id.includes('@{parameters')) ||
-            !(connection.triggerUrl.includes('@parameters') || connection.triggerUrl.includes('@{parameters'))
-          ) {
+        }
+      } else if (isFunctionConnectionModel(connection)) {
+        if (!hasParameterRef(connection.function.id)) {
+          if (!hasParameterRef(connection.triggerUrl)) {
             return false;
           }
-        } else if (isAPIManagementConnectionModel(connection)) {
-          if (
-            !(connection.apiId.includes('@parameters') || !connection.baseUrl.includes('@parameters')) ||
-            !(connection.apiId.includes('@{parameters') || connection.baseUrl.includes('@{parameters'))
-          ) {
+        }
+      } else if (isAPIManagementConnectionModel(connection)) {
+        if (!hasParameterRef(connection.apiId)) {
+          if (!hasParameterRef(connection.baseUrl)) {
             return false;
           }
         }

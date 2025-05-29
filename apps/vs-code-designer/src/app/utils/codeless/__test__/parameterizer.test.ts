@@ -9,7 +9,7 @@ import { describe, it, expect } from 'vitest';
 
 describe('areAllConnectionsParameterized', () => {
   it('should return true when all connections are parameterized', () => {
-    const connectionsData: ConnectionsData = {
+    const apimApiIDNotParamBaseURLIs: ConnectionsData = {
       managedApiConnections: {
         connection1: {
           api: {
@@ -40,10 +40,61 @@ describe('areAllConnectionsParameterized', () => {
           displayName: 'func01',
         },
       },
+      apiManagementConnections: {
+        apiManagement1: {
+          apiId:
+            '/subscriptions/subscription-test-id/resourceGroups/vs-code-debug/providers/Microsoft.ApiManagement/service/vscodeservicename/apis/echo-api',
+          baseUrl: "@parameters('apiManagementOperation-BaseUrl')",
+          subscriptionKey: "@appsetting('apiManagementOperation_SubscriptionKey')",
+          displayName: 'api01',
+        },
+      },
     };
 
-    const result = areAllConnectionsParameterized(connectionsData);
-    expect(result).toBe(true);
+    const apiIDNotParamRuntimeURLIs: ConnectionsData = {
+      managedApiConnections: {
+        connection1: {
+          api: {
+            id: '/subscriptions/workflows-subscription-id/providers/Microsoft.Web/locations/workflows-location-name/managedApis/connection1',
+          },
+          connection: {
+            id: "/subscriptions/@{appsetting('WORKFLOWS_SUBSCRIPTION_ID')}/resourceGroups/@{appsetting('WORKFLOWS_RESOURCE_GROUP_NAME')}/providers/Microsoft.Web/connections/connection1",
+          },
+          connectionRuntimeUrl: "@parameters('connection1-ConnectionRuntimeUrl')",
+          authentication: {
+            type: 'Raw',
+            scheme: 'Key',
+            parameter: "@appsetting('connection1-connectionKey')",
+          },
+        },
+      },
+      functionConnections: {
+        function1: {
+          function: {
+            id: "/subscriptions/@{appsetting('WORKFLOWS_SUBSCRIPTION_ID')}/resourceGroups/@{parameters('azureFunctionOperation-ResourceGroup')}/providers/Microsoft.Web/sites/@{parameters('azureFunctionOperation-SiteName')}/functions/HttpTrigger",
+          },
+          triggerUrl: "@parameters('azureFunctionOperation-TriggerUrl')",
+          authentication: {
+            type: 'QueryString',
+            name: 'Code',
+            value: "@appsetting('azureFunctionOperation_functionAppKey')",
+          },
+          displayName: 'func01',
+        },
+      },
+      apiManagementConnections: {
+        apiManagement1: {
+          apiId:
+            '/subscriptions/@{appsetting(WORKFLOWS_SUBSCRIPTION_ID)}/resourceGroups/@{parameters(azureFunctionOperation-ResourceGroup)}/providers/Microsoft.ApiManagement/service/vscodeservicename/apis/echo-api',
+          baseUrl: "@parameters('apiManagementOperation-BaseUrl')",
+          subscriptionKey: "@appsetting('apiManagementOperation_SubscriptionKey')",
+          displayName: 'api01',
+        },
+      },
+    };
+
+    expect(areAllConnectionsParameterized(apimApiIDNotParamBaseURLIs)).toBe(true);
+    expect(areAllConnectionsParameterized(apiIDNotParamRuntimeURLIs)).toBe(true);
   });
 
   it('should return false when not all connections are parameterized', () => {
