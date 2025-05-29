@@ -266,7 +266,7 @@ export default {
       properties: {
         lastAssistantMessage: {
           type: 'object',
-          title: 'Last Assitant Message',
+          title: 'Last Assistant Message',
           description: 'This is the final message returned by the model',
         },
       },

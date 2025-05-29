@@ -4,7 +4,7 @@ import type {
   IConnectionParameterInfo,
 } from '@microsoft/logic-apps-shared';
 import { TargetPicker } from './TargetPicker';
-import { CustomOpenAIConnector } from '@microsoft/logic-apps-designer';
+import { ACASessionConnector, CustomOpenAIConnector } from '@microsoft/logic-apps-designer';
 
 export class CustomConnectionParameterEditorService implements IConnectionParameterEditorService {
   public areCustomEditorsEnabled = true;
@@ -26,6 +26,12 @@ export class CustomConnectionParameterEditorService implements IConnectionParame
     if (connectorId === 'connectionProviders/agent') {
       return {
         EditorComponent: CustomOpenAIConnector,
+      };
+    }
+
+    if (connectorId === '/serviceProviders/acasession') {
+      return {
+        EditorComponent: ACASessionConnector,
       };
     }
 

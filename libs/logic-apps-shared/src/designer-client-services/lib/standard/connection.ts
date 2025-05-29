@@ -663,6 +663,7 @@ function convertServiceProviderConnectionDataToConnection(
       statuses: [{ status: 'Connected' }],
       overallStatus: 'Connected',
       testLinks: [],
+      ...optional('parameterValues', connectionData.parameterValues),
     },
   };
 }

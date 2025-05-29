@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { Connection } from '@microsoft/logic-apps-shared';
 import { equals, getUniqueName } from '@microsoft/logic-apps-shared';
 import type { CreatedConnectionPayload } from '../../panel/connectionsPanel/createConnection/createConnectionWrapper';
-import { CreateConnectionInternal } from '../../panel/connectionsPanel/createConnection/createConnectionWrapper';
+import { CreateConnectionInternal } from '../../panel/connectionsPanel/createConnection/createConnectionInternal';
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
 import { getAssistedConnectionProps } from '../../../core/utils/connectors/connections';
 import { updateTemplateConnection } from '../../../core/actions/bjsworkflow/connections';
