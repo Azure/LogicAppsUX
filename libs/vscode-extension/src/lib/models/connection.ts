@@ -52,13 +52,6 @@ export interface APIManagementConnectionModel {
   displayName?: string;
 }
 
-export interface ConnectionAndAppSetting {
-  connectionKey: string;
-  connectionData: ServiceProviderConnectionModel | FunctionConnectionModel | APIManagementConnectionModel;
-  settings: Record<string, string>;
-  pathLocation: string[];
-}
-
 export interface AgentConnectionModel {
   authentication: Record<string, any>;
   endpoint: string;

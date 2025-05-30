@@ -42,7 +42,6 @@ export const OverviewApp = () => {
     return new StandardRunService({
       baseUrl: workflowState.baseUrl,
       apiVersion: workflowState.apiVersion,
-      accessToken: workflowState.accessToken,
       workflowName: workflowState.workflowProperties.name,
       httpClient,
     });

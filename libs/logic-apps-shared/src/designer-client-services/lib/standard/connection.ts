@@ -88,7 +88,7 @@ export interface AgentConnectionModel {
   displayName?: string;
 }
 
-interface ConnectionAndAppSetting<T> {
+export interface ConnectionAndAppSetting<T> {
   connectionKey: string;
   connectionData: T;
   settings: Record<string, string>;
@@ -103,7 +103,11 @@ export interface ConnectionsData {
   agentConnections?: Record<string, AgentConnectionModel>;
 }
 
-type LocalConnectionModel = FunctionsConnectionModel | ServiceProviderConnectionModel | APIManagementConnectionModel | AgentConnectionModel;
+export type LocalConnectionModel =
+  | FunctionsConnectionModel
+  | ServiceProviderConnectionModel
+  | APIManagementConnectionModel
+  | AgentConnectionModel;
 type ReadConnectionsFunc = () => Promise<ConnectionsData>;
 type WriteConnectionFunc = (connectionData: ConnectionAndAppSetting<LocalConnectionModel>) => Promise<void>;
 
