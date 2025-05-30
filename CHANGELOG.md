@@ -1,4 +1,16 @@
 # Logic Apps Designer
+### [5.109.4](https://github.com/Azure/LogicAppsUX/compare/v5.109.3...v5.109.4) (2025-05-30)
+
+
+### Features
+
+* **designer:** Add UX support for chunktextwithmetadata in standard ([#7357](https://github.com/Azure/LogicAppsUX/issues/7357)) ([0723e35](https://github.com/Azure/LogicAppsUX/commit/0723e353603f56f1f491ba5736ff4201fa98043c))
+
+
+### Bug Fixes
+
+* **Templates:** Improvements on Custom Templates Release ([#7394](https://github.com/Azure/LogicAppsUX/issues/7394)) ([f2835e0](https://github.com/Azure/LogicAppsUX/commit/f2835e0534ea9b6e364e836b15852022a09f38ec)), closes [#7389](https://github.com/Azure/LogicAppsUX/issues/7389) [#7386](https://github.com/Azure/LogicAppsUX/issues/7386)
+
 ### [5.109.3](https://github.com/Azure/LogicAppsUX/compare/v5.109.2...v5.109.3) (2025-05-28)
 
 
