@@ -39,6 +39,8 @@ import {
   getTemplateManifest,
   getWorkflowResourcesInTemplate,
   getWorkflowsInTemplate,
+  resetAllTemplatesQuery,
+  resetTemplateQuery,
   resetTemplateWorkflowsQuery,
 } from '../../configuretemplate/utils/queries';
 import { getReactQueryClient } from '../../ReactQueryProvider';
@@ -234,6 +236,7 @@ export const updateWorkflowParameter = createAsyncThunk(
     const associatedWorkflows = (parameter?.associatedWorkflows as string[]) ?? [];
     const promises: Promise<void>[] = [];
     const existingWorkflows = await getWorkflowResourcesInTemplate(manifest?.id as string);
+    const existingTemplate = await getTemplate(manifest?.id as string);
 
     try {
       // 1. Update the parameter in the template
@@ -253,6 +256,7 @@ export const updateWorkflowParameter = createAsyncThunk(
 
       if (changedStatus) {
         await service.updateTemplate(manifest?.id as string, /* manifest */ undefined, changedStatus);
+        resetTemplateQuery(manifest?.id as string);
         dispatch(updateEnvironment(changedStatus));
       }
 
@@ -275,6 +279,7 @@ export const updateWorkflowParameter = createAsyncThunk(
       });
       await rollbackWorkflows(
         manifest?.id as string,
+        existingTemplate,
         changedStatus as Template.TemplateEnvironment,
         existingWorkflows.filter((workflow) => associatedWorkflows.includes(workflow.name)),
         /* clearWorkflows */ false,
@@ -333,6 +338,7 @@ export const initializeAndSaveWorkflowsData = createAsyncThunk(
       Object.values(finalWorkflowsData),
       finalConnections
     );
+    updatedTemplateManifest.featuredConnectors = [];
 
     await saveWorkflowsInTemplateInternal(
       dispatch,
@@ -342,6 +348,7 @@ export const initializeAndSaveWorkflowsData = createAsyncThunk(
       finalParameterDefinitions,
       oldState as Template.TemplateEnvironment,
       publishState,
+      /* updateTemplateManifest */ true,
       /* clearWorkflows */ true
     );
 
@@ -381,6 +388,7 @@ export const saveWorkflowsData = createAsyncThunk(
       parameterDefinitions,
       oldState as Template.TemplateEnvironment,
       publishState,
+      /* updateTemplateManifest */ false,
       /* clearWorkflows */ false
     );
 
@@ -402,6 +410,7 @@ const saveWorkflowsInTemplateInternal = async (
   parameterDefinitions: Record<string, Partial<Template.ParameterDefinition>>,
   oldState: Template.TemplateEnvironment,
   publishState: Template.TemplateEnvironment,
+  updateTemplateManifest = false,
   clearWorkflows = true
 ): Promise<void> => {
   const promises: Promise<void>[] = [];
@@ -409,6 +418,7 @@ const saveWorkflowsInTemplateInternal = async (
   const templateId = templateManifest?.id as string;
 
   const existingWorkflows = await getWorkflowResourcesInTemplate(templateId);
+  const existingTemplate = await getTemplate(templateId);
 
   try {
     // 1. Delete all workflows for a clean replace
@@ -426,8 +436,9 @@ const saveWorkflowsInTemplateInternal = async (
 
     await Promise.all(promises);
 
-    if (oldState !== publishState) {
-      await service.updateTemplate(templateId, /* manifest */ undefined, publishState);
+    if (updateTemplateManifest || oldState !== publishState) {
+      await service.updateTemplate(templateId, templateManifest, publishState);
+      resetTemplateQuery(templateId);
     }
 
     resetTemplateWorkflowsQuery(templateId, /* clearRawData */ true);
@@ -441,13 +452,14 @@ const saveWorkflowsInTemplateInternal = async (
       message: `Error while saving workflows in template: ${templateId}`,
       args: [`clearWorkflows: ${clearWorkflows}`],
     });
-    await rollbackWorkflows(templateId, oldState, existingWorkflows, clearWorkflows, dispatch);
+    await rollbackWorkflows(templateId, existingTemplate, oldState, existingWorkflows, clearWorkflows, dispatch);
     throw error;
   }
 };
 
 const rollbackWorkflows = async (
   id: string,
+  template: ArmResource<any>,
   state: Template.TemplateEnvironment | undefined,
   workflows: ArmResource<any>[],
   clearWorkflows = true,
@@ -458,7 +470,7 @@ const rollbackWorkflows = async (
 
   try {
     if (state) {
-      await service.updateTemplate(id, /* manifest */ undefined, state);
+      await service.updateTemplate(id, template.properties?.manifest, state);
     }
 
     if (clearWorkflows) {
@@ -480,7 +492,7 @@ const rollbackWorkflows = async (
       message: `Error while rolling back workflows in template: ${id}`,
       args: [`clearWorkflows: ${clearWorkflows}`],
     });
-    resetTemplateWorkflowsQuery(id, /* clearRawData */ true);
+    resetAllTemplatesQuery(id, /* clearRawData */ true);
 
     dispatch(getTemplateValidationError(new Error('Something went wrong while saving the data. Please try again.') as any));
   }
@@ -583,6 +595,9 @@ export const deleteWorkflowData = createAsyncThunk(
     }
 
     const updatedTemplateManifest = getUpdatedTemplateManifest(manifest as Template.TemplateManifest, finalWorkflows, finalConnections);
+    await TemplateResourceService().updateTemplate(templateId, updatedTemplateManifest, /* state */ undefined);
+    resetTemplateQuery(templateId);
+
     return {
       ids,
       manifest: updatedTemplateManifest,
@@ -601,12 +616,13 @@ export const getTemplateConnections = async (state: RootState, workflows: Record
   if (isConsumption) {
     const definition = await getWorkflowDefinitionForConsumption(subscriptionId, resourceGroup, logicAppName as string);
     const connections = await getConnectionsForConsumption(subscriptionId, resourceGroup, logicAppName as string);
+    const workflowKey = Object.keys(workflows)[0];
     const workflowId = Object.values(workflows)[0].id as string;
     const mapping = await getConnectionMappingInDefinition(definition, workflowId);
 
     const workflowWithDefinition = {
       [workflowId]: {
-        id: workflowId,
+        ...(workflows[workflowKey] ?? {}),
         workflowDefinition: definition,
         triggerType: getTriggerFromDefinition(definition?.triggers ?? {}),
         connectionKeys: Object.keys(connections),
@@ -835,7 +851,13 @@ const getAllParametersForWorkflows = async (
     return {};
   }
 
-  return allParameters;
+  return Object.keys(allParameters).reduce((result: Record<string, Partial<Template.ParameterDefinition>>, parameterKey: string) => {
+    const parameter = { ...allParameters[parameterKey] };
+    delete (parameter as any).defaultValue;
+    delete (parameter as any).metadata;
+    result[parameterKey] = parameter;
+    return result;
+  }, {});
 };
 
 export const getWorkflowsWithDefinitions = async (

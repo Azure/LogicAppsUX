@@ -82,6 +82,11 @@ export const useConfigureWorkflowPanelTabs = ({
                   workflowSourceId: normalizedWorkflowId,
                 },
               },
+              errors: {
+                general: undefined,
+                workflow: undefined,
+                manifest: undefined,
+              },
             } as Partial<WorkflowTemplateData>);
       }
       return newSelectedWorkflows;
