@@ -86,6 +86,8 @@ export const AddActionCard: React.FC<AddActionCardProps> = ({ addCardType, onCli
   const tooltipBody = addCardType === ADD_CARD_TYPE.TRIGGER ? triggerTooltipBody : actionTooltipBody;
   const tooltipId = `placeholder-node-${addCardType}`;
 
+  const ariaLabel = `${title}. ${tooltipHeading}: ${tooltipBody}`;
+
   return (
     <TooltipHost
       id={tooltipId}
@@ -103,8 +105,9 @@ export const AddActionCard: React.FC<AddActionCardProps> = ({ addCardType, onCli
     >
       <div style={{ position: 'relative' }}>
         <div
+          role="button"
           aria-describedby={tooltipId}
-          aria-label={title}
+          aria-label={ariaLabel}
           className={css('msla-panel-card-container', selected && 'msla-panel-card-container-selected')}
           style={getCardStyle(brandColor)}
           data-testid={`card-${title}`}
