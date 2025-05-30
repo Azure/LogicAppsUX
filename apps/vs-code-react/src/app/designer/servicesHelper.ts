@@ -27,8 +27,10 @@ import type {
   ILoggerService,
   IWorkflowService,
   ManagedIdentity,
+  ConnectionAndAppSetting,
+  LocalConnectionModel,
 } from '@microsoft/logic-apps-shared';
-import type { ConnectionAndAppSetting, IDesignerPanelMetadata, MessageToVsix } from '@microsoft/vscode-extension-logic-apps';
+import type { IDesignerPanelMetadata, MessageToVsix } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand, HttpClient } from '@microsoft/vscode-extension-logic-apps';
 import type { QueryClient } from '@tanstack/react-query';
 import type { WebviewApi } from 'vscode-webview';
@@ -92,7 +94,7 @@ export const getDesignerServices = (
     isStateful = panelMetadata.standardApp?.stateful ?? false;
   }
 
-  const addConnectionData = async (connectionAndSetting: ConnectionAndAppSetting): Promise<void> => {
+  const addConnectionData = async (connectionAndSetting: ConnectionAndAppSetting<LocalConnectionModel>): Promise<void> => {
     connectionsData = addConnectionInJson(connectionAndSetting, connectionsData ?? {});
     appSettings = addOrUpdateAppSettings(connectionAndSetting.settings, appSettings ?? {});
     return vscode.postMessage({
@@ -113,14 +115,15 @@ export const getDesignerServices = (
     apiVersion: apiHubDetails.apiVersion ?? apiVersion,
     baseUrl: apiHubDetails.baseUrl ?? baseUrl,
   };
+
   const connectionService = new StandardConnectionService({
     baseUrl,
     apiVersion,
     httpClient,
     apiHubServiceDetails,
     readConnections: () => Promise.resolve(connectionsData),
-    writeConnection: (connectionAndSetting: ConnectionAndAppSetting) => {
-      return addConnectionData(connectionAndSetting);
+    writeConnection: (connectionData: ConnectionAndAppSetting<LocalConnectionModel>) => {
+      return addConnectionData(connectionData);
     },
     connectionCreationClients: {
       FileSystem: {
@@ -367,7 +370,10 @@ export const getDesignerServices = (
   };
 };
 
-const addConnectionInJson = (connectionAndSetting: ConnectionAndAppSetting, connectionsJson: ConnectionsData): ConnectionsData => {
+const addConnectionInJson = (
+  connectionAndSetting: ConnectionAndAppSetting<LocalConnectionModel>,
+  connectionsJson: ConnectionsData
+): ConnectionsData => {
   const { connectionData, connectionKey, pathLocation } = connectionAndSetting;
   const pathToSetConnectionsData: any = clone(connectionsJson);
 
