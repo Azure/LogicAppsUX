@@ -78,6 +78,7 @@ import {
   getPropertyValue,
   getRecordEntry,
   guid,
+  isNullOrUndefined,
   isRecordNotEmpty,
   SUBGRAPH_TYPES,
 } from '@microsoft/logic-apps-shared';
@@ -89,8 +90,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ConnectionInline } from './connectionInline';
 import { ConnectionsSubMenu } from './connectionsSubMenu';
 import { useCognitiveServiceAccountDeploymentsForNode } from '../../../connectionsPanel/createConnection/custom/useCognitiveService';
-import { isAgentConnectorAndAgentServiceModel, isAgentConnectorAndDeploymentId } from './helpers';
+import { isAgentConnectorAndAgentModel, isAgentConnectorAndAgentServiceModel, isAgentConnectorAndDeploymentId } from './helpers';
 import { useShouldEnableFoundryServiceConnection } from './hooks';
+import { removeNodeConnectionData } from '../../../../../core/state/connection/connectionSlice';
 
 // TODO: Add a readonly per settings section/group
 export interface ParametersTabProps extends PanelTabProps {
@@ -348,6 +350,14 @@ const ParameterSection = ({
       if (parameter && isCustomCodeParameter(parameter)) {
         const { fileData, fileExtension, fileName } = viewModel.customCodeData;
         dispatch(addOrUpdateCustomCode({ nodeId, fileData, fileExtension, fileName }));
+      }
+
+      if (isAgentConnectorAndAgentModel(operationInfo.connectorId ?? '', parameter?.parameterKey ?? '')) {
+        const newValue = value.length > 0 ? value[0].value : undefined;
+        const oldValue = parameter?.value && parameter.value.length > 0 ? parameter.value[0].value : undefined;
+        if (!isNullOrUndefined(newValue) && !isNullOrUndefined(oldValue) && newValue !== oldValue) {
+          dispatch(removeNodeConnectionData({ nodeId }));
+        }
       }
 
       if (isAgentConnectorAndDeploymentId(operationInfo.connectorId ?? '', parameter?.parameterKey ?? '')) {
