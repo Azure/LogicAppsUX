@@ -36,6 +36,8 @@ vi.mock('@microsoft/vscode-azext-utils', () => {
       return { message: 'error' };
     }),
     DialogResponses: vi.fn(),
+    AzExtTreeItem: class AzExtTreeItem {},
+    AzExtParentTreeItem: class AzExtParentTreeItem {},
   };
 });
 
