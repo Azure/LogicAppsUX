@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import type { ExportData, ITargetDirectory, IValidationData, ManagedConnections, WorkflowsList } from '../run-service';
-import { AdvancedOptionsTypes } from '../run-service';
+import type { ExportData, ITargetDirectory, IValidationData, ManagedConnections, WorkflowsList } from '../../run-service';
+import { AdvancedOptionsTypes } from '../../run-service';
 import type { OverviewPropertiesProps } from '@microsoft/designer-ui';
 import reducer, {
   initialState,
@@ -626,7 +626,8 @@ describe('workflow slice reducers', () => {
       expect(originalState.accessToken).toBeUndefined();
       expect(newState.accessToken).toBe('test-token');
       expect(newState).not.toBe(originalState);
-      expect(newState.exportData).not.toBe(originalState.exportData);
+      // exportData should be the same reference since it wasn't modified
+      expect(newState.exportData).toBe(originalState.exportData);
     });
 
     it('should preserve unrelated state when updating specific properties', () => {

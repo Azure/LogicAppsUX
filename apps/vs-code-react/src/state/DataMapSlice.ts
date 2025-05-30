@@ -100,4 +100,5 @@ export const {
   changeUseExpandedFunctionCards,
 } = dataMapSlice.actions;
 
+export { initialState };
 export default dataMapSlice.reducer;
