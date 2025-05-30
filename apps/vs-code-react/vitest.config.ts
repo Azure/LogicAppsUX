@@ -7,7 +7,7 @@ export default defineProject({
   test: {
     name: packageJson.name,
     environment: 'jsdom',
-    setupFiles: ['test-setup.ts'],
+    setupFiles: ['./test-setup.ts'],
     coverage: { enabled: true, provider: 'istanbul', include: ['src/app/**/*'], reporter: ['html', 'cobertura'] },
     restoreMocks: true,
     alias: [
