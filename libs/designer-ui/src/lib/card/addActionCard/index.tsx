@@ -86,7 +86,6 @@ export const AddActionCard: React.FC<AddActionCardProps> = ({ addCardType, onCli
   const tooltipBody = addCardType === ADD_CARD_TYPE.TRIGGER ? triggerTooltipBody : actionTooltipBody;
   const tooltipId = `placeholder-node-${addCardType}`;
 
-  // Create a comprehensive aria-label that includes tooltip information for screen readers
   const ariaLabel = `${title}. ${tooltipHeading}: ${tooltipBody}`;
 
   return (
