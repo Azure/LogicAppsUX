@@ -4,8 +4,8 @@ const iconUri =
 const brandColor = '#3352b9';
 
 export const handoffOperation = {
-  name: 'handoff',
-  id: 'handoff',
+  name: 'agenthandoff',
+  id: 'agenthandoff',
   type: 'AgentHandOff',
   properties: {
     api: {
@@ -19,7 +19,7 @@ export const handoffOperation = {
     summary: 'Handoff',
     description: 'Handoff to another agent.',
     visibility: 'Important',
-    operationType: 'Handoff',
+    operationType: 'AgentHandOff',
     brandColor,
     iconUri,
   },

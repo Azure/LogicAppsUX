@@ -429,8 +429,6 @@ export const buildGraphFromActions = (
     }
   }
 
-  console.log('#> RootIds', JSON.parse(JSON.stringify({ graphId, rootIds, allIds: actions })));
-
   for (let [actionName, _action] of Object.entries(actions)) {
     if (pasteScopeParams) {
       actionName = pasteScopeParams.renamedNodes[actionName] ?? actionName;
