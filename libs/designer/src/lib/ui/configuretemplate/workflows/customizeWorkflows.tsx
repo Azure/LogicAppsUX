@@ -199,7 +199,6 @@ const CustomizeWorkflowSection = ({
   }, [
     intl,
     resourceStrings.WORKFLOW_NAME,
-    resourceStrings.WORKFLOW_NAME_DESCRIPTION,
     workflow,
     isMultiWorkflowTemplate,
     customResourceStrings.State,
