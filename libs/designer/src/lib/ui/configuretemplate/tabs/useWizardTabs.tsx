@@ -19,10 +19,10 @@ import {
 import constants from '../../../common/constants';
 import type { Template } from '@microsoft/logic-apps-shared';
 import { isUndefinedOrEmptyString, TemplateResourceService } from '@microsoft/logic-apps-shared';
-import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useCallback } from 'react';
 import { getZippedTemplateForDownload } from '../../../core/configuretemplate/utils/helper';
 import { getTemplateValidationError } from '../../../core/actions/bjsworkflow/configuretemplate';
+import { resetTemplateQuery } from '../../../core/configuretemplate/utils/queries';
 
 export const useConfigureTemplateWizardTabs = ({
   onSaveWorkflows,
@@ -33,7 +33,6 @@ export const useConfigureTemplateWizardTabs = ({
 }) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
-  const queryClient = useQueryClient();
   const resources = { ...useTemplatesStrings().tabLabelStrings, ...useResourceStrings() };
 
   const {
@@ -86,16 +85,15 @@ export const useConfigureTemplateWizardTabs = ({
 
       try {
         await TemplateResourceService().updateTemplate(templateId, templateManifest, newPublishState);
+        resetTemplateQuery(templateId);
         dispatch(setApiValidationErrors({ error: undefined, source: 'template' }));
-
-        queryClient.removeQueries(['template', templateId.toLowerCase()]);
         onSaveTemplate(currentState as Template.TemplateEnvironment, newPublishState);
         dispatch(updateEnvironment(newPublishState));
       } catch (error: any) {
         dispatch(getTemplateValidationError({ errorResponse: error, source: 'template' }));
       }
     },
-    [queryClient, templateManifest, onSaveTemplate, currentState, dispatch]
+    [templateManifest, onSaveTemplate, currentState, dispatch]
   );
 
   const downloadTemplate = useCallback(async () => {
