@@ -236,3 +236,14 @@ export const resetTemplateWorkflowsQuery = (templateId: string, clearRawData = f
     queryClient.removeQueries(['templateworkflowresources', templateId.toLowerCase()]);
   }
 };
+
+export const resetAllTemplatesQuery = (templateId: string, clearRawData = false) => {
+  const queryClient = getReactQueryClient();
+  queryClient.removeQueries(['template', templateId.toLowerCase()]);
+  resetTemplateWorkflowsQuery(templateId, clearRawData);
+};
+
+export const resetTemplateQuery = (templateId: string) => {
+  const queryClient = getReactQueryClient();
+  queryClient.removeQueries(['template', templateId.toLowerCase()]);
+};
