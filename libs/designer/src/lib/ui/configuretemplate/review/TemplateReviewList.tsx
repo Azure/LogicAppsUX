@@ -5,13 +5,14 @@ import { TemplatesSection, type TemplatesSectionItem } from '@microsoft/designer
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../../core/state/templates/store';
 import { useIntl } from 'react-intl';
-import { equals, getResourceNameFromId } from '@microsoft/logic-apps-shared';
+import { equals, getResourceNameFromId, normalizeConnectorId } from '@microsoft/logic-apps-shared';
 import { ConnectorConnectionName } from '../../templates/connections/connector';
 import React, { useMemo } from 'react';
 import { useAllConnectors } from '../../../core/configuretemplate/utils/queries';
 import { WorkflowKind } from '../../../core/state/workflow/workflowInterfaces';
 import { DescriptionWithLink, ErrorBar } from '../common';
 import { mergeStyles } from '@fluentui/react';
+import { formatNameWithIdentifierToDisplay } from '../../../core/configuretemplate/utils/helper';
 
 const SectionDividerItem: TemplatesSectionItem = {
   type: 'divider',
@@ -169,17 +170,13 @@ const useWorkflowSectionItems = (resources: Record<string, string>) => {
   }));
 
   const workflowDatas = Object.values(workflows);
+  const isSingleWorkflow = workflowDatas.length === 1;
   return workflowDatas?.flatMap((workflow, index) => {
     const isLast = index === workflowDatas.length - 1;
     const thisWorkflowSectionItems: TemplatesSectionItem[] = [
       {
         label: resources.WORKFLOW_NAME,
-        value: workflow.workflowName,
-        type: 'text',
-      },
-      {
-        label: resources.WorkflowDisplayName,
-        value: workflow?.manifest?.title,
+        value: workflow.id,
         type: 'text',
       },
       {
@@ -190,11 +187,6 @@ const useWorkflowSectionItems = (resources: Record<string, string>) => {
               equals(kind, WorkflowKind.STATEFUL) ? resources.STATEFUL : equals(kind, WorkflowKind.STATELESS) ? resources.STATELESS : ''
             )
             ?.join(', ') ?? resources.Placeholder,
-        type: 'text',
-      },
-      {
-        label: resources.Summary,
-        value: workflow?.manifest?.summary ?? resources.Placeholder,
         type: 'text',
       },
       {
@@ -219,6 +211,20 @@ const useWorkflowSectionItems = (resources: Record<string, string>) => {
       },
     ];
 
+    if (!isSingleWorkflow) {
+      thisWorkflowSectionItems.splice(1, 0, {
+        label: resources.WorkflowDisplayName,
+        value: workflow?.manifest?.title,
+        type: 'text',
+      });
+
+      thisWorkflowSectionItems.splice(3, 0, {
+        label: resources.Summary,
+        value: workflow?.manifest?.summary ?? resources.Placeholder,
+        type: 'text',
+      });
+    }
+
     if (!isLast) {
       thisWorkflowSectionItems.push(SectionDividerItem);
     }
@@ -228,8 +234,10 @@ const useWorkflowSectionItems = (resources: Record<string, string>) => {
 };
 
 const useConnectionSectionItems = (resources: Record<string, string>) => {
-  const { connections } = useSelector((state: RootState) => ({
+  const { connections, subscriptionId, location } = useSelector((state: RootState) => ({
     connections: state.template.connections,
+    subscriptionId: state.workflow.subscriptionId,
+    location: state.workflow.location,
   }));
 
   const connectionsValues = Object.values(connections);
@@ -239,12 +247,17 @@ const useConnectionSectionItems = (resources: Record<string, string>) => {
       {
         label: resources.ConnectorNameLabel,
         value: connection.connectorId,
-        onRenderItem: () => <ConnectorConnectionName connectorId={connection.connectorId} connectionKey={undefined} />,
+        onRenderItem: () => (
+          <ConnectorConnectionName
+            connectorId={normalizeConnectorId(connection.connectorId, subscriptionId, location)}
+            connectionKey={undefined}
+          />
+        ),
         type: 'custom',
       },
       {
         label: resources.ConnectorTypeLabel,
-        value: resources[connection.kind as string],
+        value: resources[connection.kind?.toLowerCase() as string],
         type: 'text',
       },
     ];
@@ -268,7 +281,7 @@ const useParameterSectionItems = (resources: Record<string, string>) => {
     const thisParameterSectionItems: TemplatesSectionItem[] = [
       {
         label: resources.ParameterName,
-        value: parameter.name ?? resources.Placeholder,
+        value: formatNameWithIdentifierToDisplay(parameter.name),
         type: 'text',
       },
       {
@@ -324,11 +337,17 @@ const useProfileSectionItems = (resources: Record<string, string>) => {
   const selectedConnectors = useMemo(() => {
     return allConnectors?.filter((connector) => templateManifest?.featuredConnectors?.some((conn) => equals(conn.id, connector.id)));
   }, [allConnectors, templateManifest]);
+  const isSingleWorkflow = Object.keys(workflows).length === 1;
 
   const items: TemplatesSectionItem[] = [
     {
       label: resources.TemplateDisplayName,
       value: templateManifest?.title ?? resources.Placeholder,
+      type: 'text',
+    },
+    {
+      label: resources.Summary,
+      value: templateManifest?.summary ?? resources.Placeholder,
       type: 'text',
     },
     {
@@ -343,20 +362,31 @@ const useProfileSectionItems = (resources: Record<string, string>) => {
     },
     {
       label: resources.Category,
-      value: templateManifest?.details?.Category ?? resources.Placeholder,
+      value: templateManifest?.details?.Category ? templateManifest?.details?.Category : resources.Placeholder,
       type: 'text',
     },
     {
       label: resources.FeaturedConnectors,
-      value: selectedConnectors?.map((connector) => connector.displayName).join(', ') ?? resources.Placeholder,
+      value:
+        selectedConnectors && selectedConnectors.length > 0
+          ? selectedConnectors?.map((connector) => connector.displayName).join(', ')
+          : resources.Placeholder,
       type: 'text',
     },
     {
       label: resources.Tags,
-      value: templateManifest?.tags?.join(', ') ?? resources.Placeholder,
+      value: templateManifest?.tags && templateManifest?.tags?.length > 0 ? templateManifest?.tags?.join(', ') : resources.Placeholder,
       type: 'text',
     },
   ];
+
+  if (!isSingleWorkflow) {
+    items.splice(4, 0, {
+      label: resources.Features,
+      value: templateManifest?.description ?? resources.Placeholder,
+      type: 'text',
+    });
+  }
 
   return items;
 };

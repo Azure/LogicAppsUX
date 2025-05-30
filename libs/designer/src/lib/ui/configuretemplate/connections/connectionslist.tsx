@@ -15,8 +15,8 @@ export const TemplateConnectionsList = () => {
   const resources = {
     Description: intl.formatMessage({
       defaultMessage:
-        'Connections used in your selected workflows. You will be required to create connections for the following services when deploying workflow from this template.',
-      id: 'AGXgup',
+        'These are the connection services this template depends on. When users deploy a workflow using this template, they’ll be prompted to create connections to the services it uses.',
+      id: 'SUaXux',
       description: 'The description for the connections tab',
     }),
     AriaLabel: intl.formatMessage({
@@ -77,7 +77,7 @@ export const TemplateConnectionsList = () => {
       <DescriptionWithLink
         text={resources.Description}
         linkText={resourceStrings.LearnMore}
-        linkUrl="https://learn.microsoft.com/en-us/azure/logic-apps/logic-apps-connector-overview"
+        linkUrl="https://go.microsoft.com/fwlink/?linkid=2321713"
         className={mergeStyles({ marginLeft: '-10px', width: '70%' })}
       />
       {error ? <ErrorBar title={resources.ErrorTitle} errorMessage={error} styles={{ marginLeft: '-10px' }} /> : null}
