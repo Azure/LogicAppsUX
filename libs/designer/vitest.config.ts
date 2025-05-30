@@ -10,11 +10,5 @@ export default defineProject({
     setupFiles: ['test-setup.ts'],
     coverage: { enabled: true, provider: 'istanbul', include: ['src/**/*'], reporter: ['html', 'cobertura'] },
     restoreMocks: true,
-    alias: [
-      {
-        find: /^monaco-editor$/,
-        replacement: `${__dirname}/node_modules/monaco-editor/esm/vs/editor/editor.api`,
-      },
-    ],
   },
 });

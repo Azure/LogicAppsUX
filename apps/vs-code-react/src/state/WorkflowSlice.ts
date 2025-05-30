@@ -183,4 +183,5 @@ export const {
   updateSelectedAdvanceOptions,
 } = workflowSlice.actions;
 
+export { initialState };
 export default workflowSlice.reducer;
