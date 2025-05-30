@@ -21,18 +21,14 @@ import {
 import type {
   ApiHubServiceDetails,
   ConnectionCreationInfo,
+  ConnectionsData,
   ContentType,
   IHostService,
   ILoggerService,
   IWorkflowService,
   ManagedIdentity,
 } from '@microsoft/logic-apps-shared';
-import type {
-  ConnectionAndAppSetting,
-  ConnectionsData,
-  IDesignerPanelMetadata,
-  MessageToVsix,
-} from '@microsoft/vscode-extension-logic-apps';
+import type { ConnectionAndAppSetting, IDesignerPanelMetadata, MessageToVsix } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand, HttpClient } from '@microsoft/vscode-extension-logic-apps';
 import type { QueryClient } from '@tanstack/react-query';
 import type { WebviewApi } from 'vscode-webview';
@@ -80,7 +76,7 @@ export const getDesignerServices = (
   let workflowDetails: Record<string, any> = {};
   let appSettings = {};
   let isStateful = false;
-  let connectionsData = { ...connectionData };
+  let connectionsData: ConnectionsData = { ...connectionData };
   let workflowName = '';
 
   const { subscriptionId = 'subscriptionId', resourceGroup, location } = apiHubDetails;
