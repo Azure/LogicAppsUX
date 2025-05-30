@@ -30,6 +30,7 @@ export class HybridAppCreateStep extends AzureWizardExecuteStep<ILogicAppWizardC
         subscriptionId: context.subscriptionId,
         resourceGroup: context.resourceGroup.name,
         siteName: context.newSiteName,
+        aad: context.aad,
       };
 
       context.hybridSite = await createOrUpdateHybridApp(context, accessToken, hybridAppOptions);

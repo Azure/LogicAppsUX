@@ -19,6 +19,7 @@ import type {
   IProjectTreeItem,
 } from '@microsoft/vscode-extension-logic-apps';
 import { ProjectSource } from '@microsoft/vscode-extension-logic-apps';
+import type { ContainerAppSecret } from '@azure/arm-appservice';
 export class SlotTreeItem extends AzExtParentTreeItem implements IProjectTreeItem {
   public logStreamPath = '';
   public configurationsTreeItem: ConfigurationsTreeItem;
@@ -30,6 +31,7 @@ export class SlotTreeItem extends AzExtParentTreeItem implements IProjectTreeIte
   public isHybridLogicApp?: boolean;
   public connectedEnvironment?: ConnectedEnvironment;
   public hybridSite?: ContainerApp;
+  public hybridAppSecrets?: ContainerAppSecret[];
   public fileShare?: FileShare;
   public resourceGroupName?: string;
   public sqlConnectionString?: string;
@@ -69,6 +71,7 @@ export class SlotTreeItem extends AzExtParentTreeItem implements IProjectTreeIte
       this.contextValue = Array.from(new Set(contextValues)).sort().join(';');
       this.site = this.resourceTree.site;
       this.iconPath = getIconPath(slotContextValue);
+      this.hybridAppSecrets = this.resourceTree.hybridSiteSecrets;
     }
   }
 

@@ -246,6 +246,11 @@ export const localEmulatorConnectionString = 'UseDevelopmentStorage=true';
 export const appKindSetting = 'APP_KIND';
 export const sqlStorageConnectionStringKey = 'Workflows.Sql.ConnectionString';
 
+export const WorkflowClientIdKey = 'WORKFLOWAPP_AAD_CLIENTID';
+export const WorkflowClientSecretKey = 'WORKFLOWAPP_AAD_CLIENTSECRET';
+export const WorkflowObjectIdKey = 'WORKFLOWAPP_AAD_OBJECTID';
+export const WorkflowTenantIdKey = 'WORKFLOWAPP_AAD_TENANTID';
+
 export const workerRuntimeKey = 'FUNCTIONS_WORKER_RUNTIME';
 export const ProjectDirectoryPath = 'ProjectDirectoryPath';
 export const extensionVersionKey = 'FUNCTIONS_EXTENSION_VERSION';
@@ -365,6 +370,7 @@ export type COMMON_ERRORS = (typeof COMMON_ERRORS)[keyof typeof COMMON_ERRORS];
 // Environment Variables
 export const azurePublicBaseUrl = 'https://management.azure.com';
 export const sqlConnectionStringSecretName = 'sqlconnectionstring';
+export const clientSecretName = 'clientsecret';
 
 //Regex validations
 export const workflowNameValidation = /^[a-z][a-z0-9]*(?:[_-][a-z0-9]+)*$/i;

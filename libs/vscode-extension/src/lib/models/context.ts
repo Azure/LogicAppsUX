@@ -20,12 +20,19 @@ export interface ILogicAppWizardContext extends IAppServiceWizardContext, ICreat
   storageType?: StorageOptions;
   sqlConnectionString?: string;
   connectedEnvironment?: ConnectedEnvironment;
+  useZipDeploy?: boolean;
   fileShare?: {
     hostName?: string;
     path?: string;
     domain?: string;
     userName?: string;
     password?: string;
+  };
+  aad?: {
+    clientId?: string;
+    clientSecret?: string;
+    objectId?: string;
+    tenantId?: string;
   };
   suppressCreate?: boolean;
   fileShareName?: string;

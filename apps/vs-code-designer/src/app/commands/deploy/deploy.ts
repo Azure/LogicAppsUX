@@ -56,9 +56,10 @@ import {
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import type { Uri, MessageItem, WorkspaceFolder } from 'vscode';
-import { deployHybridLogicApp } from './hybridLogicApp';
+import { deployHybridLogicApp, deployHybridLogicAppV2 } from './hybridLogicApp';
 import { createContainerClient } from '../../utils/azureClients';
 import { uploadAppSettings } from '../appSettings/uploadAppSettings';
+import type { ContainerAppSecret } from '@azure/arm-appcontainers';
 
 export async function deployProductionSlot(
   context: IActionContext,
@@ -198,7 +199,11 @@ async function deploy(
 
     try {
       if (isHybridLogicApp) {
-        await deployHybridLogicApp(context, node);
+        if (canUseZipDeployForHybrid(node)) {
+          await deployHybridLogicAppV2(context, node, effectiveDeployFsPath);
+        } else {
+          await deployHybridLogicApp(context, node);
+        }
       } else {
         await innerDeploy(
           node.site,
@@ -235,12 +240,15 @@ async function getDeployLogicAppNode(context: IActionContext): Promise<SlotTreeI
     return await createLogicApp(context, sub);
   }
 
+  let secrets: ContainerAppSecret[] = [];
+
   if (site.id.includes('Microsoft.App')) {
     // NOTE(anandgmenon): Getting latest metadata for hybrid app as the one loaded from the cache can have outdateed definition and cause deployment to fail.
     const clientContainer = await createContainerClient({ ...context, ...sub.subscription });
     site = (await clientContainer.containerApps.get(site.id.split('/')[4], site.name)) as undefined as Site;
+    secrets = (await clientContainer.containerApps.listSecrets(site.id.split('/')[4], site.name)).value;
   }
-  const resourceTree = new LogicAppResourceTree(sub.subscription, site);
+  const resourceTree = new LogicAppResourceTree(sub.subscription, site, secrets);
 
   return new SlotTreeItem(sub, resourceTree);
 }
@@ -441,3 +449,14 @@ async function checkAADDetailsExistsInAppSettings(node: SlotTreeItem, identityWi
   }
   return false;
 }
+
+const canUseZipDeployForHybrid = (node: SlotTreeItem): boolean => {
+  const requiredEnvVars = [workflowAppAADClientId, workflowAppAADClientSecret, workflowAppAADObjectId, workflowAppAADTenantId];
+
+  if (!node.hybridSite?.template?.containers?.[0]?.env) {
+    return false;
+  }
+
+  const envVars = node.hybridSite.template.containers[0].env.map((env: any) => env.name);
+  return requiredEnvVars.every((varName) => envVars.includes(varName));
+};
