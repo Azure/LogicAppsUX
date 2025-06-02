@@ -25,6 +25,7 @@ interface GalleryTab {
 }
 
 export interface TemplateSearchAndFilterProps {
+  tabFilterKey?: string;
   tabDetails?: GalleryTab[];
   detailFilters: TemplateDetailFilterType;
   showFilters?: boolean;
@@ -33,9 +34,9 @@ export interface TemplateSearchAndFilterProps {
 }
 
 const templateDefaultTabKey = 'all';
-const tabFilterKey = 'publishedBy';
 
 export const TemplateSearchAndFilters = ({
+  tabFilterKey = 'Type',
   tabDetails,
   searchPlaceholder,
   showFilters = true,
@@ -128,7 +129,7 @@ export const TemplateSearchAndFilters = ({
       });
     }
     return basicTabs;
-  }, [intl, tabDetails, availableTemplates, intlText.MY_TEMPLATES, intlText.MICROSOFT_AUTHORED]);
+  }, [intl, tabDetails, tabFilterKey, availableTemplates, intlText.MY_TEMPLATES, intlText.MICROSOFT_AUTHORED]);
 
   const onTabSelected = (e?: SelectTabEvent, data?: SelectTabData): void => {
     if (data) {
