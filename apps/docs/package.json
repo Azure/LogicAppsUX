@@ -2,12 +2,21 @@
   "name": "docs",
   "version": "0.0.0",
   "browserslist": {
-    "production": [">0.5%", "not dead", "not op_mini all"],
-    "development": ["last 3 chrome version", "last 3 firefox version", "last 5 safari version"]
+    "production": [
+      ">0.5%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 3 chrome version",
+      "last 3 firefox version",
+      "last 5 safari version"
+    ]
   },
   "dependencies": {
     "@docusaurus/core": "3.6.1",
     "@docusaurus/preset-classic": "3.6.1",
+    "@docusaurus/theme-mermaid": "^3.6.1",
     "@mdx-js/react": "3.1.0",
     "clsx": "2.1.1",
     "docusaurus-plugin-remote-content": "4.0.0",

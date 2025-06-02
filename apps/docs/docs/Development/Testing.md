@@ -1,87 +1,535 @@
-# Testing
+# Testing Guide
 
-### E2E Testing
+This comprehensive guide covers all aspects of testing in the Logic Apps UX project, from unit tests to end-to-end testing.
 
-For E2E tests, we use [Playwright](https://playwright.dev/) which runs in both Chromium and Firefox. Currently E2E tests are categorized into two types:
+## Testing Philosophy
 
-1. **Mock APIs**: These tests run with mock data and simulate a local standalone environment.
-2. **Real APIs**: These tests interact with actual Azure services, representing an actual workflow.
+We follow a testing pyramid approach:
 
-### Test Types and Execution
+```mermaid
+graph TD
+    A[E2E Tests - Few] --> B[Integration Tests - Some]
+    B --> C[Unit Tests - Many]
+    
+    style A fill:#ff9999
+    style B fill:#ffcc99
+    style C fill:#99ff99
+```
 
-- **Mock APIs**: These tests are triggered automatically on pull request creation or when merging to the `main` branch. They are tagged with `@mock`.
-- **Real APIs**: These tests are run on an hourly basis in the CI environment (GitHub Actions).
+- **Unit Tests**: Fast, focused, numerous
+- **Integration Tests**: Test component interactions
+- **E2E Tests**: Test complete user flows
 
-### Running Tests
+## Unit Testing
 
-From the root of the project:
+### Framework and Tools
+
+We use **Vitest** with **React Testing Library** for unit testing:
+
+- **Vitest**: Fast, Vite-native test runner
+- **React Testing Library**: Testing from user's perspective
+- **MSW**: Mock Service Worker for API mocking
+- **Testing Library User Event**: Realistic user interactions
+
+### Writing Unit Tests
+
+#### Basic Component Test
+
+```typescript
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { WorkflowCard } from './WorkflowCard';
+
+describe('WorkflowCard', () => {
+  it('should display workflow name', () => {
+    render(<WorkflowCard name="My Workflow" status="Running" />);
+    
+    expect(screen.getByText('My Workflow')).toBeInTheDocument();
+    expect(screen.getByText('Running')).toBeInTheDocument();
+  });
+  
+  it('should handle click events', async () => {
+    const user = userEvent.setup();
+    const handleClick = vi.fn();
+    
+    render(<WorkflowCard name="My Workflow" onClick={handleClick} />);
+    
+    await user.click(screen.getByRole('button'));
+    
+    expect(handleClick).toHaveBeenCalledTimes(1);
+  });
+});
+```
+
+#### Testing Hooks
+
+```typescript
+import { renderHook, act } from '@testing-library/react';
+import { useCounter } from './useCounter';
+
+describe('useCounter', () => {
+  it('should increment counter', () => {
+    const { result } = renderHook(() => useCounter());
+    
+    expect(result.current.count).toBe(0);
+    
+    act(() => {
+      result.current.increment();
+    });
+    
+    expect(result.current.count).toBe(1);
+  });
+});
+```
+
+#### Testing Redux State
+
+```typescript
+import { renderWithProviders } from '@/test-utils';
+import { screen } from '@testing-library/react';
+import { DesignerPanel } from './DesignerPanel';
+
+describe('DesignerPanel with Redux', () => {
+  it('should display workflow from store', () => {
+    const preloadedState = {
+      designer: {
+        workflow: {
+          name: 'Test Workflow',
+          id: '123'
+        }
+      }
+    };
+    
+    renderWithProviders(<DesignerPanel />, { preloadedState });
+    
+    expect(screen.getByText('Test Workflow')).toBeInTheDocument();
+  });
+});
+```
+
+### Running Unit Tests
+
+```bash
+# Run all unit tests
+pnpm run test:lib
+
+# Run tests in watch mode
+pnpm vitest --watch
+
+# Run tests with coverage
+pnpm vitest --coverage
+
+# Run specific test file
+pnpm vitest Button.test.tsx
+
+# Run tests matching pattern
+pnpm vitest --grep "should handle click"
+```
+
+### Test Coverage
+
+We aim for:
+- **80%+ coverage** for utilities and hooks
+- **70%+ coverage** for components
+- **Critical paths** must have 100% coverage
+
+View coverage report:
+```bash
+pnpm vitest --coverage --ui
+```
+
+## Integration Testing
+
+### Testing Component Integration
+
+```typescript
+import { render, screen, waitFor } from '@testing-library/react';
+import { rest } from 'msw';
+import { setupServer } from 'msw/node';
+import { WorkflowList } from './WorkflowList';
+
+// Setup MSW server
+const server = setupServer(
+  rest.get('/api/workflows', (req, res, ctx) => {
+    return res(ctx.json([
+      { id: '1', name: 'Workflow 1' },
+      { id: '2', name: 'Workflow 2' }
+    ]));
+  })
+);
+
+beforeAll(() => server.listen());
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
+
+describe('WorkflowList Integration', () => {
+  it('should load and display workflows', async () => {
+    render(<WorkflowList />);
+    
+    // Wait for loading to finish
+    await waitFor(() => {
+      expect(screen.queryByText('Loading...')).not.toBeInTheDocument();
+    });
+    
+    // Check workflows are displayed
+    expect(screen.getByText('Workflow 1')).toBeInTheDocument();
+    expect(screen.getByText('Workflow 2')).toBeInTheDocument();
+  });
+});
+```
+
+## End-to-End Testing
+
+### Playwright Setup
+
+We use [Playwright](https://playwright.dev/) for E2E testing across browsers.
+
+#### Test Categories
+
+1. **Mock API Tests** (`@mock` tag)
+   - Run with mock data
+   - No external dependencies
+   - Fast and reliable
+   - Run on every PR
+
+2. **Real API Tests**
+   - Test against live Azure services
+   - Require authentication
+   - Run hourly in CI
+   - More comprehensive
+
+### Writing E2E Tests
+
+#### Basic E2E Test
+
+```typescript
+import { test, expect } from '@playwright/test';
+
+test.describe('Workflow Designer E2E', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/');
+  });
+  
+  test('should create a simple workflow @mock', async ({ page }) => {
+    // Click create workflow button
+    await page.getByRole('button', { name: 'Create workflow' }).click();
+    
+    // Add HTTP trigger
+    await page.getByTestId('add-trigger').click();
+    await page.getByText('When a HTTP request is received').click();
+    
+    // Configure trigger
+    await page.getByLabel('Method').selectOption('POST');
+    
+    // Add action
+    await page.getByTestId('add-action').click();
+    await page.getByPlaceholder('Search actions').fill('response');
+    await page.getByText('Response').first().click();
+    
+    // Save workflow
+    await page.getByRole('button', { name: 'Save' }).click();
+    
+    // Verify success
+    await expect(page.getByText('Workflow saved')).toBeVisible();
+  });
+});
+```
+
+#### Page Object Model
+
+```typescript
+// pages/DesignerPage.ts
+import { Page } from '@playwright/test';
+
+export class DesignerPage {
+  constructor(private page: Page) {}
+  
+  async goto() {
+    await this.page.goto('/designer');
+  }
+  
+  async addTrigger(triggerName: string) {
+    await this.page.getByTestId('add-trigger').click();
+    await this.page.getByText(triggerName).click();
+  }
+  
+  async addAction(actionName: string) {
+    await this.page.getByTestId('add-action').click();
+    await this.page.getByPlaceholder('Search actions').fill(actionName);
+    await this.page.getByText(actionName).first().click();
+  }
+  
+  async saveWorkflow() {
+    await this.page.getByRole('button', { name: 'Save' }).click();
+  }
+}
+
+// tests/workflow.spec.ts
+import { test, expect } from '@playwright/test';
+import { DesignerPage } from '../pages/DesignerPage';
+
+test('create workflow using page object', async ({ page }) => {
+  const designer = new DesignerPage(page);
+  
+  await designer.goto();
+  await designer.addTrigger('Manual trigger');
+  await designer.addAction('Send an email');
+  await designer.saveWorkflow();
+  
+  await expect(page.getByText('Workflow saved')).toBeVisible();
+});
+```
+
+### Running E2E Tests
 
 #### Mock API Tests
 
-To run the mock API E2E tests, use the following command:
-
 ```bash
+# Run mock API tests
 pnpm run test:e2e --grep @mock
+
+# Run specific test file
+pnpm run test:e2e designer/workflow.spec.ts
+
+# Run in headed mode (see browser)
+pnpm run test:e2e --headed
+
+# Run in debug mode
+pnpm run test:e2e --debug
 ```
 
 #### Real API Tests
 
-To run the real API E2E tests, use:
+First, set up environment variables:
 
 ```bash
+# Create .env file in root
+AZURE_SITE_NAME="your-logic-app-name"
+AZURE_SUBSCRIPTION_ID="your-subscription-id"
+AZURE_RESOURCE_GROUP="your-resource-group"
+AZURE_MANAGEMENT_TOKEN="your-arm-token"
+```
+
+Generate ARM token:
+```bash
+pnpm run generateArmToken
+```
+
+Run tests:
+```bash
+# Run all real API tests
 pnpm run test:e2e
+
+# Run specific real API test
+pnpm run test:e2e --grep "real api test name"
 ```
 
-**Note**: Real API tests require deployment of workflows. To run these tests locally, you need to configure your environment with an `.env` file with the following variables:
+### E2E Test Best Practices
 
-```env
-AZURE_SITE_NAME="Logic App Name"
-AZURE_SUBSCRIPTION_ID="Subscription ID"
-AZURE_RESOURCE_GROUP="Resource Group"
-AZURE_MANAGEMENT_TOKEN="ARM Token"
+1. **Use data-testid** for reliable element selection
+2. **Wait for elements** instead of arbitrary delays
+3. **Clean up** resources after tests
+4. **Use fixtures** for test data
+5. **Parallelize** tests when possible
+
+```typescript
+// Good practices
+test.describe.parallel('Workflow Tests', () => {
+  test('test 1', async ({ page }) => {
+    // Use data-testid
+    await page.getByTestId('workflow-trigger').click();
+    
+    // Wait for elements
+    await expect(page.getByText('Saved')).toBeVisible();
+    
+    // Clean up
+    await page.getByTestId('delete-workflow').click();
+  });
+});
 ```
 
-You can obtain the `AZURE_MANAGEMENT_TOKEN` by running `npm run generateArmToken` and retrieving the token from `apps/Standalone/src/environments/jsonImport/armToken.json`.
+### Debugging E2E Tests
 
-### Running Tests for Specific Files
-
-You can run E2E tests for a specific file by providing the file path:
+#### Using Playwright Inspector
 
 ```bash
-pnpm run test:e2e -- ./path/to/file
+# Run with inspector
+pnpm run test:e2e --debug
+
+# Use page.pause() in tests
+test('debug this test', async ({ page }) => {
+  await page.goto('/');
+  await page.pause(); // Opens inspector here
+  await page.click('button');
+});
 ```
 
-### Generating Tests
-
-To easily generate Playwright tests, you can use the following command:
+#### View Test Reports
 
 ```bash
-pnpm run testgen
-```
-
-This will bring up Playwright's test generator, which allows you to record user actions and generate specific tests. For more information, you can [view the Playwright codegen docs](https://playwright.dev/docs/codegen).
-
-
-### Test Results and Debugging
-
-#### Test Results
-
-When tests complete, Playwright will serve an HTML report showing the results, including where tests have failed.
-
-If you want to view the report after the test run is completed, to view the last HTML report you can use the following command:
-
-```bash
+# After test run
 pnpm exec playwright show-report
+
+# View trace files
+pnpm exec playwright show-trace trace.zip
 ```
 
-#### Debugging
-The default Playwright report is generally sufficient for debugging. However, be aware that sometimes, even after Playwright finishes running, the port (4200) may still be occupied. This can cause subsequent tests to fail because the port is still being listened to.
+#### Common Issues
 
-To resolve this, you will need to kill the process listening on port 4200 (on Windows):
+**Port 4200 still in use**
 ```bash
+# macOS/Linux
+lsof -ti:4200 | xargs kill -9
+
+# Windows
 netstat -ano | findstr :4200
 taskkill /PID <pid> /F
 ```
 
-#### Test Cleanup
-For Real APIs, the tests create a workflow in the specified environment location. These workflows can be cleaned up manually as needed.
+**Tests timing out**
+```typescript
+// Increase timeout for specific test
+test('slow test', async ({ page }) => {
+  test.setTimeout(60000); // 60 seconds
+  // test code
+});
+```
+
+## Test Organization
+
+### File Structure
+
+```
+src/
+├── components/
+│   ├── Button/
+│   │   ├── Button.tsx
+│   │   ├── Button.test.tsx      # Unit tests
+│   │   └── Button.stories.tsx   # Storybook stories
+├── hooks/
+│   ├── useWorkflow.ts
+│   └── useWorkflow.test.ts
+├── utils/
+│   ├── validation.ts
+│   └── validation.test.ts
+e2e/
+├── designer/
+│   ├── workflow.spec.ts
+│   └── fixtures/
+│       └── workflows.json
+├── data-mapper/
+│   └── mapping.spec.ts
+└── pages/
+    └── DesignerPage.ts
+```
+
+### Test Utilities
+
+Create reusable test utilities:
+
+```typescript
+// test-utils/render.tsx
+import { render } from '@testing-library/react';
+import { Provider } from 'react-redux';
+import { IntlProvider } from 'react-intl';
+
+export function renderWithProviders(
+  ui: React.ReactElement,
+  options?: RenderOptions
+) {
+  function Wrapper({ children }: { children: React.ReactNode }) {
+    return (
+      <Provider store={store}>
+        <IntlProvider locale="en">
+          {children}
+        </IntlProvider>
+      </Provider>
+    );
+  }
+  
+  return render(ui, { wrapper: Wrapper, ...options });
+}
+```
+
+## Continuous Integration
+
+### GitHub Actions
+
+Tests run automatically on:
+- Pull request creation
+- Commits to main
+- Scheduled (hourly for real API tests)
+
+### Test Requirements
+
+PRs must pass:
+- ✅ All unit tests
+- ✅ All mock E2E tests
+- ✅ Linting and type checking
+- ✅ Minimum code coverage
+
+## Performance Testing
+
+### Component Performance
+
+```typescript
+import { render } from '@testing-library/react';
+import { measureRender } from '@/test-utils/performance';
+
+test('WorkflowCanvas renders efficiently', async () => {
+  const renderTime = await measureRender(
+    <WorkflowCanvas nodes={largeNodeSet} />
+  );
+  
+  expect(renderTime).toBeLessThan(100); // ms
+});
+```
+
+### Bundle Size Testing
+
+```bash
+# Check bundle size
+pnpm run build:lib -- --metafile
+pnpm exec esbuild-visualizer
+
+# Set size limits in package.json
+"size-limit": [
+  {
+    "path": "dist/index.js",
+    "limit": "500 KB"
+  }
+]
+```
+
+## Accessibility Testing
+
+### Automated A11y Tests
+
+```typescript
+import { render } from '@testing-library/react';
+import { axe, toHaveNoViolations } from 'jest-axe';
+
+expect.extend(toHaveNoViolations);
+
+test('Button is accessible', async () => {
+  const { container } = render(<Button>Click me</Button>);
+  const results = await axe(container);
+  
+  expect(results).toHaveNoViolations();
+});
+```
+
+## Testing Checklist
+
+Before submitting PR:
+
+- [ ] Unit tests written for new code
+- [ ] Integration tests for complex features
+- [ ] E2E tests for user flows
+- [ ] Tests pass locally
+- [ ] Coverage meets requirements
+- [ ] No skipped or commented tests
+- [ ] Test names are descriptive
+- [ ] Mocks are properly cleaned up
+
+Happy testing! 🧪
