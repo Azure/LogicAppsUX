@@ -2,555 +2,350 @@
 sidebar_position: 11
 ---
 
-# Development Troubleshooting
+# Troubleshooting Guide
 
-This guide helps you resolve common issues encountered during Logic Apps UX development.
+This guide helps you resolve common issues when using Logic Apps designer. Find your issue below and follow the step-by-step solutions.
 
-## Quick Fixes
+## 🔍 Quick Solutions
 
-### Most Common Issues
+### Common Issues
 
-| Issue | Quick Fix |
-|-------|-----------|
-| Port 4200 in use | `lsof -ti:4200 \| xargs kill -9` |
-| TypeScript errors | `pnpm run build` |
-| HMR not working | `rm -rf node_modules/.vite` |
-| PNPM install fails | `pnpm store prune` |
-| Tests timing out | Add `test.setTimeout(120000)` |
+| Issue | Solution |
+|-------|----------|
+| **Designer won't load** | Clear browser cache and cookies |
+| **Can't save workflow** | Check internet connection and try again |
+| **Actions missing** | Refresh the page or sign out and back in |
+| **Slow performance** | Close other browser tabs and check connection |
+| **Authentication errors** | Sign out completely and sign back in |
 
-## Environment Setup
+## 📱 Browser Issues
 
-### Node.js Version Issues
+### Designer Not Loading
 
 <details>
-<summary><strong>Error: The engine "node" is incompatible</strong></summary>
+<summary><strong>The Logic Apps designer shows a blank screen or won't load</strong></summary>
 
-**Solution**: Use the correct Node.js version
-```bash
-# Check required version
-cat .nvmrc
+**Try these solutions in order:**
 
-# Install and use
-nvm install 20.19.0
-nvm use 20.19.0
+1. **Refresh the page**
+   - Windows/Linux: `Ctrl + F5`
+   - Mac: `Cmd + Shift + R`
 
-# Set as default
-nvm alias default 20.19.0
-```
+2. **Clear browser cache**
+   - Chrome: Settings → Privacy → Clear browsing data
+   - Edge: Settings → Privacy → Clear browsing data
+   - Firefox: Settings → Privacy → Clear Data
+   - Safari: Develop → Empty Caches
+
+3. **Try incognito/private mode**
+   - This bypasses extensions and cache issues
+   - Chrome: `Ctrl/Cmd + Shift + N`
+   - Edge: `Ctrl/Cmd + Shift + N`
+   - Firefox: `Ctrl/Cmd + Shift + P`
+   - Safari: `Cmd + Shift + N`
+
+4. **Disable browser extensions**
+   - Ad blockers and security extensions can interfere
+   - Try disabling all extensions temporarily
+
+5. **Use a supported browser**
+   - Chrome (recommended)
+   - Microsoft Edge
+   - Firefox
+   - Safari (latest version)
+
+**Still not working?** Try a different browser or device.
 </details>
 
-### PNPM Installation Issues
+### Performance Issues
 
 <details>
-<summary><strong>PNPM command not found</strong></summary>
+<summary><strong>The designer is running slowly or freezing</strong></summary>
 
-**Solution**: Install PNPM globally
-```bash
-# Using npm
-npm install -g pnpm@latest
+**Improve performance:**
 
-# Using Corepack (recommended)
-corepack enable
-corepack prepare pnpm@latest --activate
-```
+1. **Close unnecessary browser tabs**
+   - Each tab uses memory
+   - Keep only essential tabs open
+
+2. **Check your internet connection**
+   - Run a speed test: [fast.com](https://fast.com)
+   - Need at least 10 Mbps for smooth operation
+
+3. **Reduce workflow complexity**
+   - Very large workflows (100+ actions) may load slowly
+   - Consider breaking into smaller workflows
+
+4. **Update your browser**
+   - Outdated browsers can cause performance issues
+   - Check for updates in browser settings
+
+5. **Restart your browser**
+   - Completely close and reopen
+   - This clears temporary memory issues
+
+6. **Check system resources**
+   - Close other applications
+   - Restart your computer if needed
 </details>
 
+## 🔐 Authentication & Access
+
+### Sign-in Problems
+
 <details>
-<summary><strong>PNPM install hangs or fails</strong></summary>
+<summary><strong>Can't sign in or getting authentication errors</strong></summary>
 
-**Solutions**:
+**Solutions:**
 
-1. Clear PNPM store:
-```bash
-pnpm store prune
-```
+1. **Clear all cookies for the site**
+   - This forces a fresh login
+   - Browser settings → Privacy → Cookies → Remove site cookies
 
-2. Use different registry:
-```bash
-pnpm config set registry https://registry.npmjs.org/
-```
+2. **Sign out completely**
+   - Click your profile picture
+   - Select "Sign out"
+   - Close the browser
+   - Open browser and sign in again
 
-3. Clear all and reinstall:
-```bash
-rm -rf node_modules pnpm-lock.yaml
-rm -rf ~/.pnpm-store
-pnpm install
-```
+3. **Check account permissions**
+   - Ensure you have access to the Logic App
+   - Contact your administrator if unsure
+
+4. **Try a different account**
+   - Test if the issue is account-specific
+   - Use a test or alternate account
+
+5. **Reset your password**
+   - Sometimes fixes authentication cache issues
+   - Follow your organization's password reset process
 </details>
 
-## Development Server Issues
-
-### Port Conflicts
+### Connection Errors
 
 <details>
-<summary><strong>Port 4200 already in use</strong></summary>
+<summary><strong>Can't connect to services or APIs</strong></summary>
 
-**macOS/Linux**:
-```bash
-# Find process
-lsof -i :4200
+**Troubleshooting steps:**
 
-# Kill process
-lsof -ti:4200 | xargs kill -9
-```
+1. **Check connection status**
+   - Go to Connections in the left menu
+   - Look for error icons
+   - Click "Fix connection" if available
 
-**Windows**:
-```cmd
-# Find process
-netstat -ano | findstr :4200
+2. **Re-authenticate connections**
+   - Click the connection
+   - Select "Edit"
+   - Sign in again with correct credentials
 
-# Kill process (replace [PID])
-taskkill /PID [PID] /F
-```
+3. **Create a new connection**
+   - Sometimes easier than fixing
+   - Delete the old connection after
 
-**PowerShell**:
-```powershell
-# One-liner to kill process
-Get-Process -Id (Get-NetTCPConnection -LocalPort 4200).OwningProcess | Stop-Process -Force
-```
+4. **Verify API credentials**
+   - Check if API keys have expired
+   - Ensure credentials have required permissions
+   - Test credentials outside Logic Apps first
+
+5. **Network restrictions**
+   - Check if your network blocks certain services
+   - Try from a different network
+   - Contact IT if on corporate network
 </details>
 
-### SSL Certificate Issues
+## 💾 Saving & Publishing
+
+### Can't Save Changes
 
 <details>
-<summary><strong>SSL certificate errors in browser</strong></summary>
+<summary><strong>Getting errors when trying to save the workflow</strong></summary>
 
-**Solution**: Regenerate certificates
-```bash
-# Remove old certificates
-rm -rf node_modules/.vite
+**Common solutions:**
 
-# Start dev server (will regenerate certs)
-pnpm run start
+1. **Check internet connection**
+   - Ensure stable connection
+   - Try saving again after connection restored
 
-# Accept the certificate in your browser
-```
+2. **Copy your work**
+   - Select all actions (Ctrl/Cmd + A)
+   - Copy (Ctrl/Cmd + C)
+   - Refresh page and paste if needed
 
-If using Chrome:
-1. Navigate to chrome://flags/
-2. Enable "Allow invalid certificates for resources loaded from localhost"
+3. **Check for validation errors**
+   - Look for red error indicators
+   - Fix all required fields
+   - Ensure all connections are valid
+
+4. **Session timeout**
+   - You may have been inactive too long
+   - Sign out and back in
+   - Try saving again
+
+5. **Browser storage full**
+   - Clear browser cache and cookies
+   - Free up disk space if needed
+
+**Tip**: Enable auto-save in settings to prevent losing work.
 </details>
 
-### Hot Module Replacement (HMR)
+### Workflow Not Running
 
 <details>
-<summary><strong>Changes not reflecting without refresh</strong></summary>
+<summary><strong>Saved workflow but it's not triggering or running</strong></summary>
 
-**Solutions**:
+**Check these items:**
 
-1. Clear Vite cache:
-```bash
-rm -rf node_modules/.vite
-pnpm run start
-```
+1. **Workflow is enabled**
+   - Check the Enable/Disable toggle
+   - Must be "Enabled" to run
 
-2. Check file watchers (macOS):
-```bash
-# Check current limit
-launchctl limit maxfiles
+2. **Trigger configuration**
+   - Verify trigger settings are correct
+   - Check schedule if using recurrence
+   - Test manual trigger first
 
-# Increase limit
-echo kern.maxfiles=65536 | sudo tee -a /etc/sysctl.conf
-echo kern.maxfilesperproc=65536 | sudo tee -a /etc/sysctl.conf
-sudo sysctl -w kern.maxfiles=65536
-sudo sysctl -w kern.maxfilesperproc=65536
-```
+3. **Run history**
+   - Check if runs are failing
+   - Look at error messages
+   - Common: authentication expired
 
-3. Disable antivirus scanning on project folder
+4. **Consumption limits**
+   - Check if you've hit usage limits
+   - Review your plan's quotas
+   - May need to upgrade plan
 
-4. Check for circular dependencies:
-```bash
-pnpm add -D madge
-npx madge --circular src/
-```
+5. **Regional issues**
+   - Check Azure status page
+   - Try deploying to different region
 </details>
 
-## Build Issues
+## 🛠️ Designer Features
 
-### TypeScript Errors
+### Missing Actions or Connectors
 
 <details>
-<summary><strong>Cannot find module or type definitions</strong></summary>
+<summary><strong>Can't find specific actions or connectors</strong></summary>
 
-**Solutions**:
+**Solutions:**
 
-1. Rebuild project:
-```bash
-pnpm run build
-```
+1. **Use search effectively**
+   - Type connector name in search
+   - Try alternative names (e.g., "Email" for "Outlook")
+   - Clear search and browse categories
 
-2. Clear TypeScript cache:
-```bash
-rm -rf node_modules/.cache/typescript
-```
+2. **Check connector availability**
+   - Some connectors are premium
+   - Verify your plan includes the connector
+   - Standard vs Consumption differences
 
-3. Restart TS server in VS Code:
-   - `Cmd/Ctrl + Shift + P`
-   - "TypeScript: Restart TS Server"
+3. **Refresh the designer**
+   - New connectors may not appear immediately
+   - Hard refresh: Ctrl/Cmd + Shift + R
 
-4. Check tsconfig paths:
-```json
-{
-  "compilerOptions": {
-    "paths": {
-      "@/*": ["./src/*"],
-      "@microsoft/logic-apps-shared": ["./node_modules/@microsoft/logic-apps-shared"]
-    }
-  }
-}
-```
+4. **Region restrictions**
+   - Some connectors are region-specific
+   - Check connector documentation
+   - May need to deploy to different region
+
+5. **Custom connectors**
+   - Ensure properly deployed
+   - Check API definition is valid
+   - Test in API management first
 </details>
 
-### Module Resolution
+### Parameters Not Working
 
 <details>
-<summary><strong>Module not found in monorepo</strong></summary>
+<summary><strong>Workflow parameters not showing or updating</strong></summary>
 
-**Solutions**:
+**Fix parameter issues:**
 
-1. Ensure dependency is in correct workspace:
-```bash
-# Add to specific workspace
-pnpm add @microsoft/logic-apps-shared --filter=designer
+1. **Refresh parameter list**
+   - Click refresh icon in parameters panel
+   - Close and reopen parameters
 
-# Add to root
-pnpm add -w @microsoft/logic-apps-shared
-```
+2. **Check parameter syntax**
+   - No spaces in parameter names
+   - Use camelCase or underscore_case
+   - Avoid special characters
 
-2. Build dependencies:
-```bash
-pnpm run build:lib
-```
+3. **Save workflow first**
+   - Parameters need workflow to be saved
+   - Save, then refresh page
 
-3. Check workspace protocol:
-```json
-// package.json
-{
-  "dependencies": {
-    "@microsoft/logic-apps-shared": "workspace:*"
-  }
-}
-```
+4. **Check parameter usage**
+   - Ensure using correct syntax: `@parameters('name')`
+   - Case-sensitive names
+   - No typos in references
+
+5. **Clear and recreate**
+   - Delete the parameter
+   - Save workflow
+   - Create parameter again
 </details>
 
-### Turbo Build Cache
+## 🔧 VS Code Extension
+
+### Extension Not Working
 
 <details>
-<summary><strong>Build using outdated files</strong></summary>
+<summary><strong>Logic Apps VS Code extension issues</strong></summary>
 
-**Solution**: Clear Turbo cache
-```bash
-# Clear cache
-rm -rf .turbo
+**Troubleshooting steps:**
 
-# Force rebuild
-pnpm turbo run build --force
+1. **Update the extension**
+   - Check Extensions panel for updates
+   - Update VS Code itself too
 
-# Clear specific task cache
-pnpm turbo run build:lib --force
-```
-</details>
+2. **Reload VS Code**
+   - Ctrl/Cmd + Shift + P
+   - Type "Reload Window"
+   - Press Enter
 
-## Testing Issues
+3. **Check extension requirements**
+   - Need Azure Account extension
+   - Need Azure Functions extension
+   - Sign in to Azure
 
-### Unit Test Failures
+4. **Clear extension cache**
+   - Uninstall extension
+   - Restart VS Code
+   - Reinstall extension
 
-<details>
-<summary><strong>Tests fail locally but pass in CI</strong></summary>
-
-**Solutions**:
-
-1. Run in CI mode:
-```bash
-CI=true pnpm run test:lib
-```
-
-2. Clear test cache:
-```bash
-rm -rf node_modules/.vitest
-```
-
-3. Check timezone issues:
-```bash
-TZ=UTC pnpm run test:lib
-```
-
-4. Update snapshots:
-```bash
-pnpm vitest -u
-```
-</details>
-
-### E2E Test Issues
-
-<details>
-<summary><strong>Playwright tests timing out</strong></summary>
-
-**Solutions**:
-
-1. Increase test timeout:
-```typescript
-test('my test', async ({ page }) => {
-  test.setTimeout(120000); // 2 minutes
-  // test code
-});
-```
-
-2. Global timeout in config:
-```typescript
-// playwright.config.ts
-export default defineConfig({
-  timeout: 60000, // 1 minute per test
-  expect: {
-    timeout: 10000, // 10 seconds for assertions
-  },
-});
-```
-
-3. Debug with headed mode:
-```bash
-pnpm run test:e2e --headed --debug
-```
-</details>
-
-<details>
-<summary><strong>Playwright can't find elements</strong></summary>
-
-**Solutions**:
-
-1. Wait for elements properly:
-```typescript
-// Bad
-await page.click('.button');
-
-// Good
-await page.waitForSelector('.button', { state: 'visible' });
-await page.click('.button');
-
-// Better
-await page.locator('.button').click();
-```
-
-2. Use data-testid:
-```typescript
-await page.getByTestId('submit-button').click();
-```
-
-3. Debug selectors:
-```bash
-pnpm run testgen
-```
-</details>
-
-## Runtime Errors
-
-### React Errors
-
-<details>
-<summary><strong>Invalid hook call</strong></summary>
-
-**Common causes**:
-
-1. Multiple React versions:
-```bash
-# Check for duplicates
-pnpm ls react
-
-# Dedupe
-pnpm dedupe
-```
-
-2. Hooks in wrong place:
-```typescript
-// ❌ Bad
-if (condition) {
-  const [state, setState] = useState();
-}
-
-// ✅ Good
-const [state, setState] = useState();
-if (condition) {
-  // use state
-}
-```
-</details>
-
-### Redux Issues
-
-<details>
-<summary><strong>State not updating</strong></summary>
-
-**Debugging steps**:
-
-1. Check Redux DevTools
-2. Verify action dispatched:
-```typescript
-console.log('Dispatching:', action);
-dispatch(action);
-```
-
-3. Check for state mutation:
-```typescript
-// ❌ Bad - mutating
-state.items.push(item);
-
-// ✅ Good - immutable
-return {
-  ...state,
-  items: [...state.items, item]
-};
-```
-
-4. Use Immer for complex updates:
-```typescript
-import { createSlice } from '@reduxjs/toolkit';
-
-const slice = createSlice({
-  name: 'feature',
-  initialState,
-  reducers: {
-    addItem: (state, action) => {
-      // Immer handles immutability
-      state.items.push(action.payload);
-    }
-  }
-});
-```
-</details>
-
-## VS Code Extension
-
-### Extension Development
-
-<details>
-<summary><strong>Extension won't load</strong></summary>
-
-**Solutions**:
-
-1. Build extension first:
-```bash
-pnpm run build:extension
-```
-
-2. Check output panel:
+5. **Check output logs**
    - View → Output
-   - Select "Extension Host" from dropdown
-
-3. Clear extension development host:
-```bash
-# macOS/Linux
-rm -rf ~/.vscode-oss/
-
-# Windows
-rmdir /s "%APPDATA%\Code - OSS"
-```
+   - Select "Azure Logic Apps" from dropdown
+   - Look for error messages
 </details>
 
-### Webview Issues
+## 🆘 Getting More Help
 
-<details>
-<summary><strong>Webview blank or not updating</strong></summary>
+If these solutions don't work:
 
-**Solutions**:
+### 1. Check Service Status
+- Visit [Azure Status](https://status.azure.com)
+- Look for Logic Apps service issues
+- Check your specific region
 
-1. Open Developer Tools:
-   - Help → Toggle Developer Tools
-   - Find webview iframe
-   - Right-click → Reload Frame
+### 2. Gather Information
+Before contacting support, collect:
+- Screenshot of the error
+- Workflow name and resource group
+- Time the issue occurred
+- Browser and version
+- Steps you've already tried
 
-2. Clear webview state:
-```typescript
-// In extension
-context.globalState.update('webviewState', undefined);
-```
+### 3. Contact Support
+- **Azure Portal**: Help + Support section
+- **GitHub**: [Report issues](https://github.com/Azure/LogicAppsUX/issues)
+- **Community**: [Microsoft Q&A](https://docs.microsoft.com/answers/topics/azure-logic-apps.html)
 
-3. Enable resource loading:
-```typescript
-const panel = vscode.window.createWebviewPanel(
-  'logicApps',
-  'Logic Apps',
-  vscode.ViewColumn.One,
-  {
-    enableScripts: true,
-    localResourceRoots: [
-      vscode.Uri.joinPath(context.extensionUri, 'dist')
-    ]
-  }
-);
-```
-</details>
+### 4. Provide Feedback
+Help us improve:
+- Use the feedback button in the designer
+- Include specific details about your issue
+- Suggest improvements
 
-## Performance Issues
+---
 
-### Slow Development Server
-
-<details>
-<summary><strong>Dev server takes long to start</strong></summary>
-
-**Solutions**:
-
-1. Exclude node_modules from antivirus
-2. Use SSD for development
-3. Optimize Vite config:
-```typescript
-// vite.config.ts
-export default defineConfig({
-  server: {
-    fs: {
-      // Allow serving files outside of root
-      strict: false,
-    },
-  },
-  optimizeDeps: {
-    // Pre-bundle heavy dependencies
-    include: ['react', 'react-dom', '@fluentui/react'],
-  },
-});
-```
-</details>
-
-### Memory Issues
-
-<details>
-<summary><strong>JavaScript heap out of memory</strong></summary>
-
-**Solution**: Increase Node memory limit
-```bash
-# Set in .npmrc or .bashrc
-export NODE_OPTIONS="--max-old-space-size=8192"
-
-# Or for specific command
-NODE_OPTIONS="--max-old-space-size=8192" pnpm run build
-```
-</details>
-
-## Getting Additional Help
-
-If these solutions don't resolve your issue:
-
-1. **Search existing issues**: [GitHub Issues](https://github.com/Azure/LogicAppsUX/issues)
-2. **Ask in discussions**: [GitHub Discussions](https://github.com/Azure/LogicAppsUX/discussions)
-3. **Create new issue** with:
-   - Steps to reproduce
-   - Error messages
-   - Environment details
-   - What you've already tried
-
-### Useful Debug Commands
-
-```bash
-# System info
-npx envinfo --system --npmPackages --binaries --browsers
-
-# Check package versions
-pnpm ls
-
-# Verify installation
-pnpm install --frozen-lockfile
-
-# Clean everything
-git clean -xfd
-pnpm install
-```
-
-Remember: Most issues have been encountered before - search first, ask second! 🔍
+💡 **Pro Tip**: Bookmark this page for quick access when you need help!
