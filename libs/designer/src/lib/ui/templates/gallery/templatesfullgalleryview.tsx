@@ -17,10 +17,10 @@ export const TemplatesFullGalleryView = ({ detailFilters, createWorkflowCall, is
     filters: { detailFilters: appliedDetailFilters },
   } = useSelector((state: RootState) => state.manifest);
 
-  const selectedTabId = appliedDetailFilters?.Type?.[0]?.value;
+  const selectedTabId = appliedDetailFilters?.publishedBy?.[0]?.value;
 
   const blankTemplateCard =
-    selectedTabId !== 'Accelerator' ? <TemplateCard blankWorkflowProps={{ isWorkflowEmpty }} templateName="#blank#" /> : undefined;
+    selectedTabId !== 'Custom' ? <TemplateCard blankWorkflowProps={{ isWorkflowEmpty }} templateName="#blank#" /> : undefined;
   const onTemplateSelect = (_templateName: string, isSingleWorkflow: boolean) => {
     if (isSingleWorkflow) {
       dispatch(openPanelView({ panelView: TemplatePanelView.QuickView }));
