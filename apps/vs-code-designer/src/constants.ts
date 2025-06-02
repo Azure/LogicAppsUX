@@ -312,13 +312,28 @@ export const DependencyDefaultPath = {
 export type DependencyDefaultPath = (typeof DependencyDefaultPath)[keyof typeof DependencyDefaultPath];
 // .NET
 export const DotnetVersion = {
-  net6: 'net6.0',
   net8: 'net8.0',
   net3: 'netcoreapp3.1',
   net2: 'netcoreapp2.1',
   net48: 'net48',
 } as const;
 export type DotnetVersion = (typeof DotnetVersion)[keyof typeof DotnetVersion];
+
+// Codeful SDK versions
+export const CodefulSDKs = {
+  DurableTask: 'Microsoft.Azure.WebJobs.Extensions.DurableTask',
+  WorkflowsWebJobs: 'Microsoft.Azure.Workflows.WebJobs.Extension',
+  WorkflowsSDK: 'Microsoft.Azure.Workflows.Sdk',
+};
+export type CodefulSDKs = (typeof CodefulSDKs)[keyof typeof CodefulSDKs];
+
+const codefulSdkVersion = '1.126.0.16';
+
+export const CodefulSdkVersions = {
+  [CodefulSDKs.DurableTask]: '2.9.0',
+  [CodefulSDKs.WorkflowsWebJobs]: codefulSdkVersion,
+  [CodefulSDKs.WorkflowsSDK]: codefulSdkVersion,
+};
 
 export const dotnetExtensionId = 'ms-dotnettools.csharp';
 

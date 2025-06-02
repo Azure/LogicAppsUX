@@ -19,8 +19,8 @@ import { getGlobalSetting, updateGlobalSetting, updateWorkspaceSetting } from '.
 import { findFiles, getWorkspaceLogicAppFolders } from '../workspace';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { AzExtFsExtra } from '@microsoft/vscode-azext-utils';
-import type { IWorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
-import { FuncVersion, ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
+import type { IWorkerRuntime, FuncVersion } from '@microsoft/vscode-extension-logic-apps';
+import { ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as semver from 'semver';
@@ -124,30 +124,13 @@ export async function getTargetFramework(projFile: ProjectFile): Promise<string>
 export async function getTemplateKeyFromProjFile(
   context: IActionContext,
   projectPath: string | undefined,
-  version: FuncVersion,
+  _version: FuncVersion, // will use when we support more than one .NET version
   language: ProjectLanguage
 ): Promise<string> {
   let isIsolated = false;
   let targetFramework: string;
 
-  switch (version) {
-    case FuncVersion.v4: {
-      targetFramework = DotnetVersion.net6;
-      break;
-    }
-    case FuncVersion.v3: {
-      targetFramework = DotnetVersion.net3;
-      break;
-    }
-    case FuncVersion.v2: {
-      targetFramework = DotnetVersion.net2;
-      break;
-    }
-    case FuncVersion.v1: {
-      targetFramework = DotnetVersion.net48;
-      break;
-    }
-  }
+  targetFramework = DotnetVersion.net8; // Default to .NET 8
 
   if (projectPath && (await AzExtFsExtra.pathExists(projectPath))) {
     const projFiles = await getProjFiles(context, language, projectPath);

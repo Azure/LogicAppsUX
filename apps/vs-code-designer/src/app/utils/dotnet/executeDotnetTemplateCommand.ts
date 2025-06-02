@@ -84,7 +84,7 @@ export async function validateDotnetInstalled(context: IActionContext): Promise<
  * @param {string | undefined} workingDirectory - Workspace path.
  * @returns {Promise<string>} .NET version.
  */
-export async function getFramework(context: IActionContext, workingDirectory: string | undefined, isCodeful: boolean = false): Promise<string> {
+export async function getFramework(context: IActionContext, workingDirectory: string | undefined, isCodeful = false): Promise<string> {
   if (!cachedFramework || isCodeful) {
     let versions = '';
     const dotnetBinariesLocation = getDotNetCommand();
@@ -103,11 +103,8 @@ export async function getFramework(context: IActionContext, workingDirectory: st
       // ignore
     }
 
-    // Prioritize "LTS", then "Current", then "Preview"
-    let netVersions: string[] = ['6', '3', '2'];
-    if (isCodeful) {
-      netVersions = ['8', ...netVersions]
-    }
+    // Only support .NET 8
+    const netVersions: string[] = ['8'];
     const semVersions: SemVer[] = netVersions.map((v) => semVerCoerce(v) as SemVer);
 
     let pickedVersion: SemVer | undefined;

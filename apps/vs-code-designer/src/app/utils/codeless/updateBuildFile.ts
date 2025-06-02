@@ -89,7 +89,11 @@ export function addLibToPublishPath(xmlBuildFile: Record<string, any>): Record<s
   return xmlBuildFile;
 }
 
-export function addNugetPackagesToBuildFileByName(xmlBuildFile: Record<string, any>, packageName: string, packageVersion: string): Record<string, any> {
+export function addNugetPackagesToBuildFileByName(
+  xmlBuildFile: Record<string, any>,
+  packageName: string,
+  packageVersion: string
+): Record<string, any> {
   const xmlBuildFileString = JSON.stringify(xmlBuildFile);
   if (xmlBuildFileString.indexOf(packageName) < 0) {
     const itemGroup: Record<string, any> = {
@@ -132,15 +136,14 @@ export function updateFunctionsSDKVersion(xmlBuildFile: Record<string, any>, dot
   for (const item of xmlBuildFile['Project']['ItemGroup']) {
     if ('PackageReference' in item && item['PackageReference']['$']['Include'] === 'Microsoft.NET.Sdk.Functions') {
       let packageVersion = '';
-      switch (dotnetVersion) {
-        case DotnetVersion.net6:
-          packageVersion = '4.1.3';
-          break;
+      switch (
+        dotnetVersion // keeping logic if we add more .NET versions in the future
+      ) {
         case DotnetVersion.net8:
           packageVersion = '4.5.0';
           break;
         default:
-          packageVersion = '3.0.13';
+          packageVersion = '4.5.0';
       }
       item['PackageReference']['$']['Version'] = packageVersion;
       break;
