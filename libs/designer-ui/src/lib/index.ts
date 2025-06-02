@@ -1,5 +1,6 @@
 export * from './about';
 export * from './actionbuttonv2';
+export * from './agentinstruction';
 export * from './announcedmatches';
 export * from './arrayeditor';
 export * from './authentication';
@@ -83,4 +84,3 @@ export * from './unitTesting/conditionExpression';
 export * from './teachingPopup';
 export { FunctionGroupDefinitions as TemplateFunctions } from './workflow/languageservice/templatefunctions';
 export type { FunctionDefinition } from './workflow/languageservice/templatefunctions';
-export { removeUTFExpressions } from './workflow/languageservice/workflowlanguageservice';

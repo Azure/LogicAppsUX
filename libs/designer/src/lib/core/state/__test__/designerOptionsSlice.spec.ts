@@ -11,7 +11,6 @@ describe('designer options slice reducers', () => {
         recurrenceInterval: undefined,
         maxWaitingRuns: undefined,
         forceEnableSplitOn: undefined,
-        hideUTFExpressions: undefined,
         stringOverrides: undefined,
         maxStateHistorySize: 5,
       },

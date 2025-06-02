@@ -107,7 +107,7 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
         id: id,
       },
       AGENT_CONDITION: {
-        color: '#8391BF',
+        color: '#3352B9',
         title: title,
         typeText: intl.formatMessage({
           defaultMessage: 'agent condition',
@@ -193,8 +193,8 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
           onKeyUp={mainKeyboardInteraction.keyUp}
           tabIndex={nodeIndex}
         >
+          {data.iconUri ? <img className="msla-subgraph-title-icon" src={data.iconUri} alt="" /> : null}
           <div className="msla-subgraph-title-text">
-            {data.iconUri ? <img className="msla-subgraph-title-icon" src={data.iconUri} alt="" /> : null}
             <span>{data.title}</span>
           </div>
           {errorMessage ? <ErrorBanner errorLevel={errorLevel} errorMessage={errorMessage} /> : null}

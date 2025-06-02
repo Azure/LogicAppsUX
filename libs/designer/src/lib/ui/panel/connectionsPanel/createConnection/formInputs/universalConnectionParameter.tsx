@@ -1,8 +1,14 @@
 import { ConnectionParameterRow } from '../connectionParameterRow';
+// eslint-disable-next-line import/no-named-as-default
 import GatewayPicker from './gatewayPicker';
 import type { IDropdownOption } from '@fluentui/react';
 import { Checkbox, Dropdown, TextField } from '@fluentui/react';
-import type { ConnectionParameter, ConnectionParameterAllowedValue, ManagedIdentity } from '@microsoft/logic-apps-shared';
+import type {
+  ConnectionParameter,
+  ConnectionParameterAllowedValue,
+  ConnectionParameterSet,
+  ManagedIdentity,
+} from '@microsoft/logic-apps-shared';
 import { ConnectionParameterTypes, equals } from '@microsoft/logic-apps-shared';
 import LegacyManagedIdentityDropdown from './legacyManagedIdentityPicker';
 import constants from '../../../../../common/constants';
@@ -20,6 +26,9 @@ export interface ConnectionParameterProps {
   availableGateways?: any[];
   availableSubscriptions?: any[];
   identity?: ManagedIdentity;
+  setKeyValue?: (key: string, value: any) => void;
+  parameterSet?: ConnectionParameterSet;
+  isAgentServiceConnection?: boolean;
 }
 
 export const UniversalConnectionParameter = (props: ConnectionParameterProps) => {

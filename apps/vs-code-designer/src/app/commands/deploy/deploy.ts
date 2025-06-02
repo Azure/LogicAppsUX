@@ -17,6 +17,7 @@ import {
   showDeployConfirmationSetting,
   logicAppFilter,
   parameterizeConnectionsInProjectLoadSetting,
+  azureWebJobsStorageKey,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
@@ -57,6 +58,7 @@ import * as path from 'path';
 import type { Uri, MessageItem, WorkspaceFolder } from 'vscode';
 import { deployHybridLogicApp } from './hybridLogicApp';
 import { createContainerClient } from '../../utils/azureClients';
+import { uploadAppSettings } from '../appSettings/uploadAppSettings';
 
 export async function deployProductionSlot(
   context: IActionContext,
@@ -83,7 +85,7 @@ async function deploy(
   addLocalFuncTelemetry(actionContext);
 
   let deployProjectPathForWorkflowApp: string | undefined;
-  const settingsToExclude: string[] = [webhookRedirectHostUri];
+  const settingsToExclude: string[] = [webhookRedirectHostUri, azureWebJobsStorageKey];
   const deployPaths = await getDeployFsPath(actionContext, target);
   const context: IDeployContext = Object.assign(actionContext, deployPaths, { defaultAppSetting: 'defaultFunctionAppToDeploy' });
   const { originalDeployFsPath, effectiveDeployFsPath, workspaceFolder } = deployPaths;
@@ -207,14 +209,13 @@ async function deploy(
     } finally {
       if (deployProjectPathForWorkflowApp !== undefined && !isHybridLogicApp) {
         await cleanAndRemoveDeployFolder(deployProjectPathForWorkflowApp);
+        await node.loadAllChildren(context);
+        await uploadAppSettings(context, node.resourceTree.appSettingsTreeItem, workspaceFolder, settingsToExclude);
       }
     }
   });
 
-  if (!isHybridLogicApp) {
-    await node.loadAllChildren(context);
-  }
-  await notifyDeployComplete(node, context.workspaceFolder, isHybridLogicApp, settingsToExclude);
+  await notifyDeployComplete(node, isHybridLogicApp);
 }
 
 /**

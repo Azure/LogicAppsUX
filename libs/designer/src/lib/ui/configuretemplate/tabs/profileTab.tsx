@@ -4,11 +4,14 @@ import constants from '../../../common/constants';
 import { selectWizardTab } from '../../../core/state/templates/tabSlice';
 import { TemplateManifestForm } from '../templateprofile/manifestform';
 import type { TemplateWizardTabProps } from './model';
+import type { IntlShape } from 'react-intl';
+import { getSaveMenuButtons } from '../../../core/configuretemplate/utils/helper';
 
 export const profileTab = (
+  intl: IntlShape,
   resources: Record<string, string>,
   dispatch: AppDispatch,
-  { disabled, tabStatusIcon }: TemplateWizardTabProps
+  { disabled, tabStatusIcon, onSave, status, isSaveButtonDisabled }: TemplateWizardTabProps & { isSaveButtonDisabled: boolean }
 ): TemplateTabProps => ({
   id: constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.PROFILE,
   title: resources.ProfileTabLabel,
@@ -16,13 +19,29 @@ export const profileTab = (
   disabled,
   content: <TemplateManifestForm />,
   footerContent: {
-    primaryButtonText: resources.PreviousButtonText,
-    primaryButtonOnClick: () => {
-      dispatch(selectWizardTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.PARAMETERS));
-    },
-    secondaryButtonText: resources.NextButtonText,
-    secondaryButtonOnClick: () => {
-      dispatch(selectWizardTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.REVIEW));
-    },
+    buttonContents: [
+      {
+        type: 'navigation',
+        text: resources.PreviousButtonText,
+        onClick: () => {
+          dispatch(selectWizardTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.PARAMETERS));
+        },
+      },
+      {
+        type: 'navigation',
+        text: resources.NextButtonText,
+        onClick: () => {
+          dispatch(selectWizardTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.SUMMARY));
+        },
+      },
+      {
+        type: 'action',
+        text: resources.SaveButtonText,
+        appearance: 'primary',
+        onClick: () => {},
+        disabled: isSaveButtonDisabled,
+        menuItems: getSaveMenuButtons(resources, status ?? 'Development', (newStatus) => onSave?.(newStatus)),
+      },
+    ],
   },
 });

@@ -1,7 +1,7 @@
 import { type FileShare, isSuccessResponse } from '@microsoft/vscode-extension-logic-apps';
 import axios from 'axios';
 import { localize } from '../../../../localize';
-import { azurePublicBaseUrl } from '../../../../constants';
+import { azurePublicBaseUrl, hybridAppApiVersion } from '../../../../constants';
 
 export const updateSMBConnectedEnvironment = async (
   accessToken: string,
@@ -10,7 +10,7 @@ export const updateSMBConnectedEnvironment = async (
   siteName: string,
   fileShare: FileShare
 ) => {
-  const url = `${azurePublicBaseUrl}/${connectedEnvironmentId}/storages/${siteName}?api-version=2024-02-02-preview`;
+  const url = `${azurePublicBaseUrl}/${connectedEnvironmentId}/storages/${siteName}?api-version=${hybridAppApiVersion}`;
   let domain: string = null;
   let username: string = null;
   if (fileShare.userName.includes('\\')) {

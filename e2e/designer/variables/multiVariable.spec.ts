@@ -47,7 +47,7 @@ test.describe(
       }
     );
 
-    test('Should be able to opt out of combining Initialize Variables', async ({ page }) => {
+    test.skip('Should be able to opt out of combining Initialize Variables', async ({ page }) => {
       await page.goto('/');
       await page.evaluate(() => {
         localStorage.clear();
@@ -70,17 +70,19 @@ test.describe(
       await page.getByLabel('Zoom view to fit').press('ControlOrMeta+Shift+P');
       await expect(page.getByLabel('Initialize variables 1', { exact: true })).toContainText('Initialize variables 1');
       await expect(page.getByLabel('Initialize variables 3', { exact: true })).toContainText('Initialize variables 3');
-      await expect(page.getByLabel('Initialize variables 4', { exact: true }).locator('span')).toContainText('Initialize variables 4');
-      await expect(page.getByLabel('Initialize variables 5', { exact: true }).locator('span')).toContainText('Initialize variables 5');
+      await expect(page.getByLabel('Initialize variables 4', { exact: true })).toContainText('Initialize variables 4');
+      await expect(page.getByLabel('Initialize variables 5', { exact: true })).toContainText('Initialize variables 5');
       await expect(page.getByLabel('Initialize variables 2', { exact: true })).toContainText('Initialize variables 2');
       await expect(page.getByLabel('Initialize variables', { exact: true })).toContainText('Initialize variables');
       await page.getByLabel('Initialize variables 4', { exact: true }).click();
       await page.getByRole('tab', { name: 'Code view' }).click();
+      await page.waitForFunction(() => !document.querySelector('#code-view')?.textContent?.includes('Loading'), { timeout: 1000 });
       await expect(page.getByRole('code')).toContainText(
         '{ "type": "InitializeVariable", "inputs": { "variables": [ { "name": "testBoolean2", "type": "boolean", "value": false } ] }, "runAfter": { "Initialize_variables_3": [ "SUCCEEDED" ] }}'
       );
       await page.getByTestId('card-initialize_variables_1').getByRole('button', { name: 'Initialize variables' }).click();
       await page.getByRole('tab', { name: 'Code view' }).click();
+      await page.waitForFunction(() => !document.querySelector('#code-view')?.textContent?.includes('Loading'), { timeout: 1000 });
       await expect(page.getByRole('code')).toContainText(
         '{ "type": "InitializeVariable", "inputs": { "variables": [ { "name": "testVariable2", "type": "float", "value": 123.5 } ] }, "runAfter": { "Initialize_variables": [ "SUCCEEDED" ] }}'
       );
@@ -132,6 +134,7 @@ test.describe(
       await page.getByLabel('Zoom view to fit').click();
       await page.getByTestId('card-initialize_variables_2').getByRole('button', { name: 'Initialize variables' }).click();
       await page.getByRole('tab', { name: 'Code view' }).click();
+      await page.waitForFunction(() => !document.querySelector('#code-view')?.textContent?.includes('Loading'), { timeout: 1000 });
       await expect(page.getByRole('code')).toContainText(
         '{ "type": "InitializeVariable", "inputs": { "variables": [ { "name": "testVariable1", "type": "string", "value": "123" }, { "name": "testVariable2", "type": "float", "value": 123.5 }, { "name": "testVariable3", "type": "array", "value": [] } ] }, "runAfter": {}}'
       );

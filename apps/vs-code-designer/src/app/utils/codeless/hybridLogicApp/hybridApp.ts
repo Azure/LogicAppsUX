@@ -6,7 +6,9 @@ import path from 'path';
 import {
   appKindSetting,
   azurePublicBaseUrl,
+  azureWebJobsStorageKey,
   extensionVersionKey,
+  hybridAppApiVersion,
   localSettingsFileName,
   logicAppKind,
   sqlConnectionStringSecretName,
@@ -30,7 +32,7 @@ interface createHybridAppOptions {
 }
 
 const getAppSettingsFromLocal = async (context): Promise<EnvironmentVar[]> => {
-  const appSettingsToskip = ['AzureWebJobsStorage', 'ProjectDirectoryPath', 'FUNCTIONS_WORKER_RUNTIME'];
+  const appSettingsToskip = [azureWebJobsStorageKey, 'ProjectDirectoryPath', 'FUNCTIONS_WORKER_RUNTIME'];
   const workspaceFolder = await getWorkspaceFolder(context);
   const projectPath: string | undefined = await tryGetLogicAppProjectRoot(context, workspaceFolder, true /* suppressPrompt */);
   const settings = await getLocalSettingsJson(context, path.join(projectPath, localSettingsFileName));
@@ -140,7 +142,7 @@ export const createOrUpdateHybridApp = async (context: IActionContext, accessTok
         },
       };
 
-  const url = `${azurePublicBaseUrl}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.App/containerApps/${siteName}?api-version=2024-02-02-preview`;
+  const url = `${azurePublicBaseUrl}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.App/containerApps/${siteName}?api-version=${hybridAppApiVersion}`;
 
   try {
     const method = hybridApp ? HTTP_METHODS.PATCH : HTTP_METHODS.PUT;
@@ -171,7 +173,7 @@ export const createOrUpdateHybridApp = async (context: IActionContext, accessTok
  * @throws An error if there is an issue in getting the connection.
  */
 export const createLogicAppExtension = async (context: ILogicAppWizardContext, accessToken: string) => {
-  const url = `${azurePublicBaseUrl}/subscriptions/${context.subscriptionId}/resourceGroups/${context.resourceGroup.name}/providers/Microsoft.App/containerApps/${context.newSiteName}/providers/Microsoft.App/logicApps/${context.newSiteName}?api-version=2024-02-02-preview`;
+  const url = `${azurePublicBaseUrl}/subscriptions/${context.subscriptionId}/resourceGroups/${context.resourceGroup.name}/providers/Microsoft.App/containerApps/${context.newSiteName}/providers/Microsoft.App/logicApps/${context.newSiteName}?api-version=${hybridAppApiVersion}`;
 
   try {
     const response = await axios.put(

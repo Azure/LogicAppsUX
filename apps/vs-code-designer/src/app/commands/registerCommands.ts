@@ -65,6 +65,7 @@ import { registerCommand, registerCommandWithTreeNodeUnwrapping, unwrapTreeNodeC
 import type { AzExtTreeItem, IActionContext, AzExtParentTreeItem } from '@microsoft/vscode-azext-utils';
 import type { Uri } from 'vscode';
 import { pickCustomCodeNetHostProcess } from './pickCustomCodeNetHostProcess';
+import { debugLogicApp } from './debugLogicApp';
 
 export function registerCommands(): void {
   registerCommandWithTreeNodeUnwrapping(extensionCommand.openDesigner, openDesigner);
@@ -129,7 +130,9 @@ export function registerCommands(): void {
   registerCommandWithTreeNodeUnwrapping(extensionCommand.appSettingsEdit, editAppSetting);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.appSettingsRename, renameAppSetting);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.appSettingsToggleSlotSetting, toggleSlotSetting);
-  registerCommandWithTreeNodeUnwrapping(extensionCommand.appSettingsUpload, uploadAppSettings);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.appSettingsUpload, async (context: IActionContext, node?: AppSettingsTreeItem) => {
+    await uploadAppSettings(context, node);
+  });
   registerCommandWithTreeNodeUnwrapping(extensionCommand.configureWebhookRedirectEndpoint, configureWebhookRedirectEndpoint);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.useSQLStorage, useSQLStorage);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.connectToGitHub, connectToGitHub);
@@ -149,4 +152,5 @@ export function registerCommands(): void {
   // Custom code commands
   registerCommandWithTreeNodeUnwrapping(extensionCommand.buildCustomCodeFunctionsProject, buildCustomCodeFunctionsProject);
   registerCommand(extensionCommand.createCustomCodeFunction, createCustomCodeFunctionFromCommand);
+  registerCommand(extensionCommand.debugLogicApp, debugLogicApp);
 }

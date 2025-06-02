@@ -1,7 +1,10 @@
 export * from './browseResults';
 export * from './interfaces';
-export * from './searchResult';
-
+export * from './operationGroupDetails/searchResult/searchResult';
+export * from './operationGroupDetails/searchResult/helper';
+export * from './spotlightSection';
+export * from './runtimeFilterTagList';
+export * from './favoriteButton';
 export * from './operationGroupDetails';
 export * from './operationSearchCard';
 export * from './operationSearchGroup';

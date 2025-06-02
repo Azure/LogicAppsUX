@@ -46,6 +46,7 @@ export const VARIABLE_TYPE = {
   INTEGER: 'integer',
   OBJECT: 'object',
   STRING: 'string',
+  NUMBER: 'number',
 };
 
 const PANEL_TAB_NAMES = {
@@ -489,6 +490,15 @@ export default {
     agentToolPanel: 'agent-tool-default-panel',
   },
 };
+
+export const RecommendationPanelConstants = {
+  ACTION_SPOTLIGHT: {
+    MAX_AMOUNT_OF_SPOTLIGHT_ITEMS: 4,
+  },
+  SEARCH_VIEW: {
+    MAX_OPERATIONS_IN_SEARCH_GROUP: 8,
+  },
+} as const;
 
 export const FxBrandColor = '#AD008C';
 export const FxIcon =

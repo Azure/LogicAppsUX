@@ -41,18 +41,41 @@ import { buildCustomCodeFunctionsProject } from './buildCustomCodeFunctionsProje
 type OSAgnosticProcess = { command: string | undefined; pid: number | string };
 type ActualUnixPS = unixPsTree.PS & { COMM?: string };
 
+/**
+ * Starts the function host task and waits for it to be ready, then returns the child func.exe process ID.
+ * @param context The action context.
+ * @param debugConfig The debug configuration.
+ * @returns A promise that resolves to the child process ID or undefined if not found.
+ */
 export async function pickFuncProcess(context: IActionContext, debugConfig: vscode.DebugConfiguration): Promise<string | undefined> {
-  await callWithTelemetryAndErrorHandling(autoStartAzuriteSetting, async (actionContext: IActionContext) => {
-    await runWithDurationTelemetry(actionContext, autoStartAzuriteSetting, async () => {
-      await activateAzurite(context);
-    });
-  });
-
   const workspaceFolder: vscode.WorkspaceFolder = getMatchingWorkspaceFolder(debugConfig);
   const projectPath: string | undefined = await tryGetLogicAppProjectRoot(context, workspaceFolder);
   if (!projectPath) {
     throw new Error(localize('noProjectRoot', 'Unable to find the project root.'));
   }
+
+  return await pickFuncProcessInternal(context, debugConfig, workspaceFolder, projectPath);
+}
+
+/**
+ * An internal helper to start the function host task and return the child func.exe process ID.
+ * @param context The action context.
+ * @param debugConfig The debug configuration.
+ * @param workspaceFolder The workspace folder containing the logic app.
+ * @param projectPath The path to the logic app project root.
+ * @returns A promise that resolves to the child process ID or undefined if not found.
+ */
+export async function pickFuncProcessInternal(
+  context: IActionContext,
+  debugConfig: vscode.DebugConfiguration,
+  workspaceFolder: vscode.WorkspaceFolder,
+  projectPath: string
+): Promise<string | undefined> {
+  await callWithTelemetryAndErrorHandling(autoStartAzuriteSetting, async (actionContext: IActionContext) => {
+    await runWithDurationTelemetry(actionContext, autoStartAzuriteSetting, async () => {
+      await activateAzurite(context, projectPath);
+    });
+  });
 
   await callWithTelemetryAndErrorHandling(verifyConnectionKeysSetting, async (actionContext: IActionContext) => {
     await runWithDurationTelemetry(actionContext, verifyConnectionKeysSetting, async () => {

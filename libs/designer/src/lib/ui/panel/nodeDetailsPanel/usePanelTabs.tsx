@@ -1,4 +1,3 @@
-import { useAgenticWorkflow } from '../../../core/state/designerView/designerViewSelectors';
 import constants from '../../../common/constants';
 import type { RootState } from '../../../core';
 import { useNodeMetadata, useOperationInfo } from '../../../core';
@@ -19,7 +18,7 @@ import { scratchTab } from './tabs/scratchTab';
 import { settingsTab } from './tabs/settingsTab';
 import { testingTab } from './tabs/testingTab';
 import type { PanelTabProps } from '@microsoft/designer-ui';
-import { SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
+import { equals, SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
@@ -31,16 +30,14 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
   const isMonitoringView = useMonitoringView();
   const isUnitTestView = useUnitTest();
   const panelTabHideKeys = usePanelTabHideKeys();
-
   const isPinnedNode = useIsNodePinnedToOperationPanel(nodeId);
   const isTriggerNode = useSelector((state: RootState) => isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata));
   const operationInfo = useOperationInfo(nodeId);
   const nodeMetaData = useNodeMetadata(nodeId);
-  const supportedChannels = useSelector((state: RootState) => state.operations.supportedChannels[nodeId] ?? []);
-  const isAgenticWorkflow = useAgenticWorkflow();
   const hasSchema = useHasSchema(operationInfo?.connectorId, operationInfo?.operationId);
   const runHistory = useRetryHistory(nodeId);
   const isScopeNode = operationInfo?.type.toLowerCase() === constants.NODE.TYPE.SCOPE;
+  const isAgentNode = useMemo(() => equals(operationInfo?.type ?? '', constants.NODE.TYPE.AGENT, true), [operationInfo?.type]);
   const parameterValidationErrors = useParameterValidationErrors(nodeId);
   const settingValidationErrors = useSettingValidationErrors(nodeId);
 
@@ -48,8 +45,9 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
     () => ({
       isPanelPinned: isPinnedNode,
       nodeId,
+      isAgenticConditionPanel: nodeMetaData?.subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION,
     }),
-    [isPinnedNode, nodeId]
+    [isPinnedNode, nodeId, nodeMetaData?.subgraphType]
   );
 
   const monitoringTabItem = useMemo(
@@ -88,9 +86,9 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
   const channelsTabItem = useMemo(
     () => ({
       ...channelsTab(intl, tabProps),
-      visible: supportedChannels.length > 0 && isAgenticWorkflow,
+      visible: isAgentNode,
     }),
-    [intl, tabProps, supportedChannels, isAgenticWorkflow]
+    [intl, tabProps, isAgentNode]
   );
 
   const codeViewTabItem = useMemo(() => codeViewTab(intl, tabProps), [intl, tabProps]);

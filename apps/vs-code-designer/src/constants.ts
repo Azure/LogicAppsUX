@@ -74,6 +74,7 @@ export const workflowSubscriptionIdKey = 'WORKFLOWS_SUBSCRIPTION_ID';
 export const workflowTenantIdKey = 'WORKFLOWS_TENANT_ID';
 export const workflowManagementBaseURIKey = 'WORKFLOWS_MANAGEMENT_BASE_URI';
 export const workflowAppApiVersion = '2018-11-01';
+export const hybridAppApiVersion = '2024-02-02-preview';
 export const azureWebJobsStorageKey = 'AzureWebJobsStorage';
 export const functionsInprocNet8Enabled = 'FUNCTIONS_INPROC_NET8_ENABLED';
 export const functionsInprocNet8EnabledTrue = '1';
@@ -195,6 +196,7 @@ export const extensionCommand = {
   createUnitTest: 'azureLogicAppsStandard.createUnitTest',
   saveBlankUnitTest: 'azureLogicAppsStandard.saveBlankUnitTest',
   vscodeOpenFolder: 'vscode.openFolder',
+  debugLogicApp: 'azureLogicAppsStandard.debugLogicApp',
 } as const;
 export type extensionCommand = (typeof extensionCommand)[keyof typeof extensionCommand];
 
@@ -282,7 +284,7 @@ export const defaultDataMapperVersion = 1;
 // Fallback Dependency Versions
 export const DependencyVersion = {
   dotnet6: '6.0.413',
-  funcCoreTools: '4.0.5455',
+  funcCoreTools: '4.0.7030',
   nodeJs: '18.17.1',
 } as const;
 export type DependencyVersion = (typeof DependencyVersion)[keyof typeof DependencyVersion];
@@ -366,7 +368,6 @@ export const DirectoryKind = {
 } as const;
 
 // App settings
-export const AzureWebJobsStorage = 'AzureWebJobsStorage';
 export const WEBSITE_CONTENTAZUREFILECONNECTIONSTRING = 'WEBSITE_CONTENTAZUREFILECONNECTIONSTRING';
 export const COMMON_ERRORS = {
   OPERATION_CANCELLED: 'Operation cancelled',

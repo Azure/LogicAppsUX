@@ -1,9 +1,11 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import {
   ConfigureTemplateDataProvider,
   ConfigureTemplateWizard,
   resetStateOnResourceChange,
   templateStore,
+  TemplateInfoToast,
+  type TemplateInfoToasterProps,
 } from '@microsoft/logic-apps-designer';
 import { TemplatesDesignerProvider } from '@microsoft/logic-apps-designer';
 import { useSelector } from 'react-redux';
@@ -19,7 +21,8 @@ import type { RootState } from '../state/Store';
 import { ArmParser } from '../../designer/app/AzureLogicAppsDesigner/Utilities/ArmParser';
 import { useCurrentTenantId } from '../../designer/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts';
 
-const testTemplateId = '/subscriptions/subid/resourceGroups/rg/providers/Microsoft.Logic/workflows/testworkflow';
+const testTemplateId =
+  '/subscriptions/f34b22a3-2202-4fb1-b040-1332bd928c84/resourceGroups/TestACSRG/providers/microsoft.logic/templates/bonicatemplate';
 export const LocalConfigureTemplate = () => {
   const { theme, resourcePath } = useSelector((state: RootState) => ({
     theme: state.configureTemplateLoader.theme,
@@ -29,7 +32,17 @@ export const LocalConfigureTemplate = () => {
   const armParser = new ArmParser(resourcePath ?? '');
   const defaultSubscriptionId = armParser?.subscriptionId ?? 'f34b22a3-2202-4fb1-b040-1332bd928c84';
   const defaultResourceGroup = armParser?.resourceGroup ?? 'TestACSRG';
-  const defaultLocation = 'westus';
+  const defaultLocation = 'brazilsouth';
+  const [toasterData, setToasterData] = useState({ title: '', content: '', show: false });
+  const [hideToaster, setHideToaster] = useState(false);
+  const resourceDetails = useMemo(
+    () => ({
+      subscriptionId: defaultSubscriptionId,
+      resourceGroup: defaultResourceGroup,
+      location: defaultLocation,
+    }),
+    [defaultLocation, defaultResourceGroup, defaultSubscriptionId]
+  );
 
   // Need to fetch template resource to get location.
   const services = useMemo(
@@ -51,24 +64,26 @@ export const LocalConfigureTemplate = () => {
     }
   }, [tenantId]);
 
+  const onRenderToaster = useCallback((data: TemplateInfoToasterProps, hideToaster: boolean) => {
+    setHideToaster(hideToaster);
+    setToasterData(data);
+  }, []);
+
   return (
     <TemplatesDesignerProvider locale="en-US" theme={theme}>
       <ConfigureTemplateDataProvider
-        resourceDetails={{
-          subscriptionId: defaultSubscriptionId,
-          resourceGroup: defaultResourceGroup,
-          location: defaultLocation,
-        }}
+        resourceDetails={resourceDetails}
         onResourceChange={onResourceChange}
         templateId={resourcePath ?? testTemplateId}
         services={services}
       >
+        {hideToaster ? null : <TemplateInfoToast {...toasterData} />}
         <div
           style={{
             margin: '20px',
           }}
         >
-          <ConfigureTemplateWizard />
+          <ConfigureTemplateWizard onRenderToaster={onRenderToaster} />
         </div>
       </ConfigureTemplateDataProvider>
     </TemplatesDesignerProvider>
@@ -80,7 +95,7 @@ const httpClient = new HttpClient();
 const getServices = (subscriptionId: string, resourceGroup: string, location: string, tenantId: string, isConsumption: boolean): any => {
   const armUrl = 'https://management.azure.com';
   const resourceService = new BaseResourceService({ baseUrl: armUrl, httpClient, apiVersion });
-  const templateResourceService = new BaseTemplateResourceService({ baseUrl: armUrl, httpClient, apiVersion });
+  const templateResourceService = new BaseTemplateResourceService({ baseUrl: armUrl, httpClient, apiVersion: '2025-06-01-preview' });
 
   const { connectionService, operationManifestService } = getResourceBasedServices(
     subscriptionId,

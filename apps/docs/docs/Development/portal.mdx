@@ -97,6 +97,16 @@ This can also be done on the .npmrc of the repo levels if preferred.
 npm set registry http://localhost:4873/
 ```
 
+For Logic Apps Portal repo, you can also set the following at the top of the file in `.../Client/React/.npmrc` (this complements the command above)
+
+```bash 
+# This will resolve the @microsoft packages for to the private registry
+@microsoft:registry=http://localhost:4873/
+//localhost:4873/:_authToken="PUT_YOUR_TOKEN_HERE"
+
+# Leave the rest of the file content below. This will resolve the rest of packages to the global registry
+```
+
 :::note
 
 1-4 are one time setup steps. You can now publish packages to verdaccio and install them from there.
@@ -108,5 +118,6 @@ from the LAUX repo root:
 pnpm turbo run publish:local
 ```
 
-6. Install the package from verdaccio
+6. Install the package from verdaccio 
+
 Just go to the target app and update the versions of the package.json to the current versions published to verdaccio. Then run npm install noramlly.

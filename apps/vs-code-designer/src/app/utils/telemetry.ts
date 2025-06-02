@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { ext } from '../../extensionVariables';
+import { isString } from '@microsoft/logic-apps-shared';
 
 /**
  * Executes function and logs duration in telemetry.
@@ -29,15 +30,22 @@ export async function runWithDurationTelemetry<T>(context: IActionContext, prefi
 
 export const logSubscriptions = async (context: IActionContext) => {
   let azureSubscriptions: any[] = [];
-  if (await ext.subscriptionProvider.isSignedIn()) {
-    const subscriptions = await ext.subscriptionProvider.getSubscriptions();
-    azureSubscriptions = subscriptions.map((subscription) => {
-      return {
-        subscriptionId: subscription.subscriptionId,
-        tenantId: subscription.tenantId,
-        isCustomCloud: subscription.isCustomCloud,
-      };
-    });
+  try {
+    const isSignedIn = await ext.subscriptionProvider.isSignedIn();
+    context.telemetry.properties.isSignedIn = isSignedIn.toString();
+    if (isSignedIn) {
+      const subscriptions = await ext.subscriptionProvider.getSubscriptions();
+      azureSubscriptions = subscriptions.map((subscription) => {
+        return {
+          subscriptionId: subscription.subscriptionId,
+          tenantId: subscription.tenantId,
+          isCustomCloud: subscription.isCustomCloud,
+        };
+      });
+    }
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : isString(error) ? error : 'Unknown error';
+    context.telemetry.properties.logSubscriptionsError = errorMessage;
   }
   context.telemetry.properties.subscriptions = JSON.stringify(azureSubscriptions);
 };
