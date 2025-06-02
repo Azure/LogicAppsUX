@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [5.109.5](https://github.com/Azure/LogicAppsUX/compare/v5.109.4...v5.109.5) (2025-06-02)
+
+
+### Bug Fixes
+
+* **Templates:** Tab navigation broken UI + Template card css overlapping issue ([#7417](https://github.com/Azure/LogicAppsUX/issues/7417)) ([4c02185](https://github.com/Azure/LogicAppsUX/commit/4c0218520820d4993f424c90f1a5832ea5f75a80)), closes [#7413](https://github.com/Azure/LogicAppsUX/issues/7413)
+
 ### [5.109.4](https://github.com/Azure/LogicAppsUX/compare/v5.109.3...v5.109.4) (2025-05-30)
 
 
