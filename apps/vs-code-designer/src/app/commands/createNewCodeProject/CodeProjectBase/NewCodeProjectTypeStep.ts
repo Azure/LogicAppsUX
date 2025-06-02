@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { WorkflowStateTypeStep } from '../../createCodeless/createCodelessSteps/WorkflowStateTypeStep';
 import { WorkflowProjectCreateStep } from '../../createNewProject/createProjectSteps/WorkflowProjectCreateStep';
-import { WorkflowCodeTypeStep } from '../../createWorkflow/WorkflowCodeTypeStep';
+// import { WorkflowCodeTypeStep } from '../../createWorkflow/WorkflowCodeTypeStep';
 import { addInitVSCodeSteps } from '../../initProjectForVSCode/InitVSCodeLanguageStep';
 import { FunctionAppFilesStep } from '../createCodeProjectSteps/createFunction/FunctionAppFilesStep';
 import { FunctionAppNameStep } from '../createCodeProjectSteps/createFunction/FunctionAppNameStep';
@@ -137,13 +137,13 @@ export class NewCodeProjectTypeStep extends AzureWizardPromptStep<IProjectWizard
     await addInitVSCodeSteps(context, executeSteps, false);
 
     if (!this.skipWorkflowStateTypeStep) {
-      promptSteps.push(
-        await WorkflowCodeTypeStep.create(context, {
-          isProjectWizard: true,
-          templateId: this.templateId,
-          triggerSettings: this.functionSettings,
-        })
-      );
+      // promptSteps.push( disabling in main
+      //   await WorkflowCodeTypeStep.create(context, {
+      //     isProjectWizard: true,
+      //     templateId: this.templateId,
+      //     triggerSettings: this.functionSettings,
+      //   })
+      // );
       promptSteps.push(
         await WorkflowStateTypeStep.create(context, {
           isProjectWizard: true,

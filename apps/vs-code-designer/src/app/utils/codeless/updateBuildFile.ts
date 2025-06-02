@@ -143,7 +143,7 @@ export function updateFunctionsSDKVersion(xmlBuildFile: Record<string, any>, dot
           packageVersion = '4.5.0';
           break;
         default:
-          packageVersion = '4.5.0';
+          packageVersion = '4.5.0'; // danielle confirm this is the correct version for .NET 8
       }
       item['PackageReference']['$']['Version'] = packageVersion;
       break;

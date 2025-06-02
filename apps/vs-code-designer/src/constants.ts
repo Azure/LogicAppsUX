@@ -327,10 +327,11 @@ export const CodefulSDKs = {
 };
 export type CodefulSDKs = (typeof CodefulSDKs)[keyof typeof CodefulSDKs];
 
+const durableTaskVersion = '2.9.0';
 const codefulSdkVersion = '1.126.0.16';
 
 export const CodefulSdkVersions = {
-  [CodefulSDKs.DurableTask]: '2.9.0',
+  [CodefulSDKs.DurableTask]: durableTaskVersion,
   [CodefulSDKs.WorkflowsWebJobs]: codefulSdkVersion,
   [CodefulSDKs.WorkflowsSDK]: codefulSdkVersion,
 };
