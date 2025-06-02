@@ -5,106 +5,1087 @@ toc_min_heading_level: 2
 toc_max_heading_level: 5
 ---
 
-# Accessibility
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
-### Common issues
+# Accessibility Guide
 
-- Improper tab navigation
-- Unclear focus states
-- Focus traps / losing focus
-- Non-descriptive screen reader support
+This guide provides comprehensive accessibility (a11y) guidelines for Logic Apps Designer to meet Microsoft's C-grade requirements and achieve B-grade standards.
 
-## Best Practices
+## Quick Start: Meeting Microsoft's Requirements
 
-### Tab navigation
+<details>
+<summary>**C-Grade Requirements (Minimum)**</summary>
 
-- Users should be able to navigate your application and perform all necessary actions through tab navigation
-  - Sub-items accessible by arrow keys
-  - Items offscreen when tabbed to will move the window to bring it on-screen
-- Should be ordered logically, with tabIndex if needed
-  - Remove items with `tabIndex={-1}`
-	- Add items with `tabIndex={0}`
-	- Tab indexes above 0 can be used to manually order elements, but it's not recommended
-- Use header tags for longer blocks of content (h1, h2, h3)
-  - Some screen readers let users jump between sections based off the header tags
-- Focus traps
-  - Some components like rich text fields may "trap" focus, not allowing a tab press to advance focus
-  - If you are creating a "focus trap" make sure the user is able to escape out to continue navigation
-  - Also check when entering / exiting submenus
+- ✅ **Keyboard Navigation**: All interactive elements accessible via keyboard
+- ✅ **Screen Reader Support**: Basic labeling and role definitions
+- ✅ **Focus Management**: Visible focus indicators on all interactive elements
+- ✅ **Color Contrast**: 4.5:1 for normal text, 3:1 for large text
+- ✅ **Error Handling**: Error messages announced to screen readers
+- ✅ **Form Labels**: All inputs have associated labels
 
-### Focus indication
+</details>
 
-- Every element that can receive focus should have an apparent visual indication of focus
-  - Most of the time this is done just by a contrasting border / outline
-  - Test your state colors with a tool like https://webaim.org/resources/contrastchecker/
-  - WCAG focus guidelines https://www.w3.org/WAI/WCAG22/Understanding/focus-appearance.html
+<details>
+<summary>**B-Grade Requirements (Target)**</summary>
 
-### Screen readers
+All C-grade requirements plus:
+- ✅ **Advanced Screen Reader**: Detailed announcements for state changes
+- ✅ **Focus Order**: Logical tab order matching visual layout
+- ✅ **Skip Links**: Navigation shortcuts for repetitive content
+- ✅ **Live Regions**: Dynamic content updates announced
+- ✅ **Touch Targets**: Minimum 44x44 pixel touch targets
+- ✅ **Reduced Motion**: Respect user preferences for animations
+- ✅ **High Contrast**: Support for Windows High Contrast Mode
 
-- Users should be able to navigate your application with only the information read by screen readers
-- Use proper html elements like `<button>`, `<ul>`, `<input>` when you can
-	- Otherwise use the role property to categorize elements properly
-	- https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles
-- Remember to translate all accessibility text
-- Avoid using special characters, ex. "1 to 5" instead of "1-5"
-- What screen readers verbalize
-	- Normally screen readers will verbalize whatever the content of a focused item is
-	- You can overwrite this with the ariaLabel prop, or the alt prop on img elements
-	- There are plenty of other properties that get verbalized like ariaRequired
-		- https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes
-- Screen reader applications
-	- JAWS - Windows application, widely used
-		- https://support.freedomscientific.com/Downloads/JAWS
-	- VoiceOver - Mac application
-		- https://support.apple.com/guide/voiceover/welcome/mac
-	- ChromeVox - Browser extension (usually not recommended)
-		- https://chromewebstore.google.com/detail/screen-reader/kgejglhpjiefppelpmljglcjbhoiplfn
+</details>
 
-### Using prebuilt components
+## Testing Your Accessibility
 
-- If you use a prebuild / library component, don't assume that it will follow accessibility guidelines
-  - Sometimes they just aren't compliant, or we use it in a way that messes with the accessibility
-- Most fluent components are already compliant with WCAG guidelines
+### Automated Testing Tools
 
-### Dialogues / Panels / Surfaces
+<Tabs>
+<TabItem value="axe" label="Axe DevTools">
 
-- When new surfaces are rendered, be sure to test the focus and screen reader interactions
-- Focus should be moved to the first element on the surface
-- Screen readers should announce what happened when a surface opens / closes
-	- ie. Announce that a dialogue opened, read the dialogue title, read the first element focused
-- Decide on if the surface needs to trap focus, or if the user should be able to leave and access other elements
+**Installation**: [Chrome](https://chrome.google.com/webstore/detail/axe-devtools/lhdoppojpmngadmnindnejefpokejbdd) | [Edge](https://microsoftedge.microsoft.com/addons/detail/axe-devtools-web-accessibi/kcenlimkmjjkdfcaleembgmldmnnlfkn)
 
-### Other tips
+**Usage**:
+1. Open DevTools (F12)
+2. Navigate to "axe DevTools" tab
+3. Click "Analyze"
+4. Review issues by impact level
 
-- Focus on conveying relevant information when writing components
-	- There's no need to overload a component with 20 aria props
-	- Most of the time just the content/label and the role is enough
-- Remember to alert screen readers when new important information is available
-	- ie. Dialogues opening, error messages
-	- https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/alert_role
+**Key Features**:
+- Integrates with Azure DevOps
+- Provides code snippets for fixes
+- Tests against WCAG 2.1 AA standards
 
----
+</TabItem>
+<TabItem value="lighthouse" label="Lighthouse">
 
-### Helpful tools
+**Built into Chrome/Edge DevTools**
 
-#### Browser devtools "Lighthouse"
-Helpful way to analyze snapshots of your page
+**Usage**:
+1. Open DevTools (F12)
+2. Navigate to "Lighthouse" tab
+3. Check "Accessibility" category
+4. Click "Analyze page load"
 
-![Lighthouse Image](./img/accessibility/lighthouse.png)
+**Scoring Guide**:
+- 90-100: Grade A (Excellent)
+- 70-89: Grade B (Good)
+- 50-69: Grade C (Needs Improvement)
+- Below 50: Grade D/F (Poor)
 
-#### "taba11y" browser extension
-Helpful to see tab flow all at once, also provides some info on other accessible properties easily
-[Chrome webstore link](https://chromewebstore.google.com/detail/taba11y/aocppmckdocdjkphmofnklcjhdidgmga?hl=en)
+</TabItem>
+<TabItem value="insights" label="Accessibility Insights">
 
-![Taba11y Image](./img/accessibility/taba11y.png)
+**Microsoft's official tool**: [Download](https://accessibilityinsights.io/)
 
----
+**Features**:
+- FastPass: Quick automated checks
+- Assessment: Guided manual testing
+- Tab stops visualization
+- Color contrast analyzer
 
-### Other links
+</TabItem>
+</Tabs>
 
-- [WCAG Standards](https://www.w3.org/WAI/standards-guidelines/wcag/)
+### Manual Testing Checklist
+
+#### Keyboard Navigation Testing
+
+```markdown
+## Keyboard Navigation Checklist
+
+### Basic Navigation
+- [ ] Tab through all interactive elements
+- [ ] Shift+Tab navigates backwards
+- [ ] Enter/Space activates buttons
+- [ ] Arrow keys navigate within components
+- [ ] Escape closes modals/dropdowns
+
+### Focus Management
+- [ ] Focus indicators visible on all elements
+- [ ] Focus order matches visual layout
+- [ ] No keyboard traps
+- [ ] Focus returns to trigger after modal closes
+- [ ] Offscreen elements scroll into view when focused
+
+### Shortcuts
+- [ ] Document all keyboard shortcuts
+- [ ] Shortcuts don't conflict with screen readers
+- [ ] Provide way to view shortcut list
+```
+
+#### Screen Reader Testing
+
+```markdown
+## Screen Reader Testing Guide
+
+### Setup
+1. Enable screen reader:
+   - Windows: NVDA (free) or JAWS
+   - Mac: VoiceOver (Cmd+F5)
+   - Mobile: TalkBack (Android) or VoiceOver (iOS)
+
+2. Learn basic commands:
+   - Navigate: Arrow keys
+   - Read all: Insert+Down (NVDA), Caps Lock+A (JAWS)
+   - Navigate headings: H key
+   - Navigate landmarks: D key
+
+### Testing Checklist
+- [ ] Page title announced on load
+- [ ] All images have alt text
+- [ ] Form inputs have labels
+- [ ] Buttons describe their action
+- [ ] Error messages announced
+- [ ] Loading states announced
+- [ ] Dynamic content updates announced
+```
+
+## Implementation Guidelines
+
+:::info Fluent UI v9
+All examples in this guide use **Microsoft Fluent UI v9** components, which have built-in accessibility features. When possible, always prefer Fluent components over custom implementations.
+:::
+
+### 1. Keyboard Navigation
+
+<details>
+<summary>**Implementation Examples**</summary>
+
+```tsx
+import { Button, Dialog, DialogTrigger, DialogSurface, DialogTitle, DialogBody, DialogActions, DialogContent } from '@fluentui/react-components';
+
+// ❌ Bad: Div with click handler
+<div onClick={handleClick}>Click me</div>
+
+// ✅ Good: Fluent Button (accessibility built-in)
+<Button onClick={handleClick}>Click me</Button>
+
+// ✅ Good: Fluent Button with icons and proper labeling
+<Button 
+  icon={<SaveRegular />} 
+  onClick={handleSave}
+  disabled={isLoading}
+>
+  Save workflow
+</Button>
+
+// ✅ Good: Fluent Dialog with built-in focus management
+function FluentModal({ isOpen, onClose, title, children }) {
+  return (
+    <Dialog open={isOpen} onOpenChange={(_, data) => !data.open && onClose()}>
+      <DialogSurface>
+        <DialogBody>
+          <DialogTitle>{title}</DialogTitle>
+          <DialogContent>
+            {children}
+          </DialogContent>
+          <DialogActions>
+            <DialogTrigger disableButtonEnhancement>
+              <Button appearance="secondary">Cancel</Button>
+            </DialogTrigger>
+            <Button appearance="primary">Confirm</Button>
+          </DialogActions>
+        </DialogBody>
+      </DialogSurface>
+    </Dialog>
+  );
+}
+
+// ✅ Good: Custom keyboard navigation with Fluent
+import { useArrowNavigationGroup } from '@fluentui/react-tabster';
+
+function NavigableList({ items }) {
+  const attrs = useArrowNavigationGroup({ axis: 'vertical' });
+  
+  return (
+    <div {...attrs} role="list">
+      {items.map((item) => (
+        <Button
+          key={item.id}
+          appearance="subtle"
+          role="listitem"
+          style={{ display: 'block', width: '100%' }}
+        >
+          {item.name}
+        </Button>
+      ))}
+    </div>
+  );
+}
+```
+
+</details>
+
+### 2. Screen Reader Support
+
+<details>
+<summary>**ARIA Best Practices with Fluent UI**</summary>
+
+```tsx
+import { 
+  Button, 
+  Spinner, 
+  Field, 
+  Input, 
+  MessageBar, 
+  MessageBarBody,
+  MessageBarTitle,
+  Badge,
+  makeStyles
+} from '@fluentui/react-components';
+
+// ✅ Good: Fluent Button with loading state
+<Button 
+  appearance="primary"
+  disabled={isLoading}
+  icon={isLoading ? <Spinner size="tiny" /> : <SaveRegular />}
+>
+  {isLoading ? 'Saving...' : 'Save workflow'}
+</Button>
+
+// ✅ Good: Fluent MessageBar for live announcements
+<MessageBar 
+  intent="success" 
+  aria-live="polite"
+  aria-atomic="true"
+>
+  <MessageBarBody>
+    <MessageBarTitle>Workflow saved</MessageBarTitle>
+    Your changes have been successfully saved.
+  </MessageBarBody>
+</MessageBar>
+
+// ✅ Good: Fluent Field with validation
+<Field
+  label="Workflow Name"
+  required
+  validationState={errors.name ? "error" : "none"}
+  validationMessage={errors.name}
+>
+  <Input
+    id="workflow-name"
+    value={workflowName}
+    onChange={(e, data) => setWorkflowName(data.value)}
+    aria-invalid={!!errors.name}
+  />
+</Field>
+
+// ✅ Good: Custom navigation with Fluent components
+import { Tree, TreeItem, TreeItemLayout } from '@fluentui/react-components';
+
+function WorkflowActionTree({ actions, currentActionId }) {
+  return (
+    <Tree aria-label="Workflow actions">
+      {actions.map((action) => (
+        <TreeItem 
+          key={action.id}
+          value={action.id}
+          aria-current={currentActionId === action.id ? 'step' : undefined}
+        >
+          <TreeItemLayout>
+            {action.name}
+            <Badge 
+              appearance="filled"
+              color={action.status === 'error' ? 'danger' : 'success'}
+            >
+              {action.status}
+            </Badge>
+          </TreeItemLayout>
+        </TreeItem>
+      ))}
+    </Tree>
+  );
+}
+
+// ✅ Good: Accessible status announcements
+import { useAnnounce } from '@fluentui/react-components';
+
+function WorkflowDesigner() {
+  const { announce } = useAnnounce();
+  
+  const handleActionAdd = (action) => {
+    // Perform the action
+    addAction(action);
+    
+    // Announce to screen readers
+    announce(`${action.name} added to workflow`, { priority: 'polite' });
+  };
+  
+  return (
+    // Component implementation
+  );
+}
+```
+
+</details>
+
+### 3. Focus Management
+
+<details>
+<summary>**Focus Indicators & Management with Fluent UI**</summary>
+
+```tsx
+import { 
+  makeStyles, 
+  tokens,
+  Link,
+  useFocusableGroup,
+  createFocusOutlineStyle
+} from '@fluentui/react-components';
+
+// ✅ Good: Fluent's built-in focus styles
+const useStyles = makeStyles({
+  // Fluent components have focus indicators built-in
+  // But you can customize them:
+  customFocus: {
+    ':focus-visible': {
+      ...createFocusOutlineStyle(),
+    },
+  },
+  
+  // High contrast mode is automatically handled by Fluent
+  highContrastButton: {
+    '@media (prefers-contrast: high)': {
+      borderWidth: '2px',
+    },
+  },
+  
+  // Reduced motion support
+  reducedMotion: {
+    '@media (prefers-reduced-motion: reduce)': {
+      animationDuration: '0.01ms',
+      animationIterationCount: 1,
+      transitionDuration: '0.01ms',
+    },
+  },
+  
+  // Skip link styles
+  skipLink: {
+    position: 'absolute',
+    left: '-9999px',
+    zIndex: 999,
+    
+    ':focus': {
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      backgroundColor: tokens.colorNeutralBackground1,
+      padding: tokens.spacingVerticalS,
+      textDecoration: 'none',
+      boxShadow: tokens.shadow16,
+    },
+  },
+});
+
+// ✅ Good: Skip links with Fluent
+function FluentSkipLinks() {
+  const styles = useStyles();
+  
+  return (
+    <div>
+      <Link href="#main-content" className={styles.skipLink}>
+        Skip to main content
+      </Link>
+      <Link href="#workflow-canvas" className={styles.skipLink}>
+        Skip to workflow canvas
+      </Link>
+      <Link href="#properties-panel" className={styles.skipLink}>
+        Skip to properties panel
+      </Link>
+    </div>
+  );
+}
+
+// ✅ Good: Focus management with Fluent's useFocusableGroup
+function WorkflowToolbar() {
+  const focusAttributes = useFocusableGroup({
+    tabBehavior: 'limited-trap-focus',
+  });
+  
+  return (
+    <div {...focusAttributes} role="toolbar" aria-label="Workflow tools">
+      <Button icon={<AddRegular />}>Add Action</Button>
+      <Button icon={<DeleteRegular />}>Delete</Button>
+      <Button icon={<CopyRegular />}>Copy</Button>
+      <Button icon={<PasteRegular />}>Paste</Button>
+    </div>
+  );
+}
+
+// ✅ Good: Focus restoration with Fluent Dialog
+import { useRestoreFocusTarget } from '@fluentui/react-components';
+
+function WorkflowAction({ action }) {
+  const restoreFocusTargetAttributes = useRestoreFocusTarget();
+  const [dialogOpen, setDialogOpen] = useState(false);
+  
+  return (
+    <>
+      <Button
+        {...restoreFocusTargetAttributes}
+        onClick={() => setDialogOpen(true)}
+      >
+        Edit {action.name}
+      </Button>
+      
+      <Dialog 
+        open={dialogOpen} 
+        onOpenChange={(_, data) => setDialogOpen(data.open)}
+      >
+        <DialogSurface>
+          <DialogBody>
+            <DialogTitle>Edit Action</DialogTitle>
+            <DialogContent>
+              {/* Dialog content */}
+            </DialogContent>
+          </DialogBody>
+        </DialogSurface>
+      </Dialog>
+    </>
+  );
+}
+```
+
+</details>
+
+### 4. Color & Contrast
+
+<details>
+<summary>**Meeting Contrast Requirements with Fluent UI**</summary>
+
+```tsx
+import { 
+  tokens, 
+  webLightTheme, 
+  webDarkTheme,
+  Badge,
+  makeStyles,
+  mergeClasses,
+  Text
+} from '@fluentui/react-components';
+
+// ✅ Good: Fluent themes are WCAG compliant by default
+// All color tokens meet contrast requirements
+
+// Light theme colors (WCAG AA compliant)
+const lightThemeColors = {
+  text: tokens.colorNeutralForeground1, // Meets 4.5:1
+  background: tokens.colorNeutralBackground1,
+  primary: tokens.colorBrandForeground1, // Meets 4.5:1
+  error: tokens.colorPaletteRedForeground1, // Meets 4.5:1
+  warning: tokens.colorPaletteYellowForeground1, // Meets 4.5:1
+  success: tokens.colorPaletteGreenForeground1, // Meets 4.5:1
+};
+
+// ✅ Good: Using Fluent's semantic color tokens
+const useStyles = makeStyles({
+  // These automatically adjust for dark mode and high contrast
+  errorText: {
+    color: tokens.colorPaletteRedForeground1,
+  },
+  successBackground: {
+    backgroundColor: tokens.colorPaletteGreenBackground1,
+    color: tokens.colorPaletteGreenForeground1,
+  },
+  warningBorder: {
+    borderColor: tokens.colorPaletteYellowBorderActive,
+    borderWidth: '2px',
+    borderStyle: 'solid',
+  },
+});
+
+// ✅ Good: Fluent Badge with proper contrast
+function WorkflowStatus({ status }) {
+  const statusConfig = {
+    error: { color: 'danger', icon: <ErrorCircleRegular /> },
+    warning: { color: 'warning', icon: <WarningRegular /> },
+    success: { color: 'success', icon: <CheckmarkCircleRegular /> },
+    info: { color: 'informative', icon: <InfoRegular /> }
+  };
+  
+  const config = statusConfig[status] || statusConfig.info;
+  
+  return (
+    <Badge 
+      appearance="filled"
+      color={config.color}
+      icon={config.icon}
+    >
+      {status}
+    </Badge>
+  );
+}
+
+// ✅ Good: High contrast mode support
+const useHighContrastStyles = makeStyles({
+  card: {
+    backgroundColor: tokens.colorNeutralBackground1,
+    borderWidth: '1px',
+    borderStyle: 'solid',
+    borderColor: tokens.colorNeutralStroke1,
+    
+    '@media (prefers-contrast: high)': {
+      borderWidth: '2px',
+      borderColor: tokens.colorNeutralStrokeAccessible,
+    },
+  },
+});
+
+// ✅ Good: Accessible color combinations
+function AccessibleCard({ title, description, status }) {
+  const styles = useHighContrastStyles();
+  
+  return (
+    <div className={styles.card}>
+      <Text size={500} weight="semibold">
+        {title}
+      </Text>
+      <Text size={300}>
+        {description}
+      </Text>
+      <WorkflowStatus status={status} />
+    </div>
+  );
+}
+
+// ✅ Good: Theme switcher with accessibility in mind
+import { FluentProvider } from '@fluentui/react-components';
+
+function App() {
+  const [isDark, setIsDark] = useState(false);
+  
+  // Fluent themes include proper contrast for both light and dark modes
+  const theme = isDark ? webDarkTheme : webLightTheme;
+  
+  return (
+    <FluentProvider theme={theme}>
+      {/* Your app content */}
+    </FluentProvider>
+  );
+}
+```
+
+</details>
+
+## Common Patterns with Fluent UI
+
+### Accessible Dialogs/Modals
+
+```tsx
+import {
+  Dialog,
+  DialogTrigger,
+  DialogSurface,
+  DialogTitle,
+  DialogBody,
+  DialogActions,
+  DialogContent,
+  Button
+} from '@fluentui/react-components';
+import { Dismiss24Regular } from '@fluentui/react-icons';
+
+// ✅ Good: Fluent Dialog with built-in accessibility
+function FluentAccessibleModal({ trigger, title, children, onConfirm }) {
+  return (
+    <Dialog>
+      <DialogTrigger disableButtonEnhancement>
+        {trigger}
+      </DialogTrigger>
+      <DialogSurface>
+        <DialogBody>
+          <DialogTitle 
+            action={
+              <DialogTrigger action="close">
+                <Button
+                  appearance="subtle"
+                  aria-label="Close dialog"
+                  icon={<Dismiss24Regular />}
+                />
+              </DialogTrigger>
+            }
+          >
+            {title}
+          </DialogTitle>
+          <DialogContent>
+            {children}
+          </DialogContent>
+          <DialogActions>
+            <DialogTrigger disableButtonEnhancement>
+              <Button appearance="secondary">Cancel</Button>
+            </DialogTrigger>
+            <Button appearance="primary" onClick={onConfirm}>
+              Confirm
+            </Button>
+          </DialogActions>
+        </DialogBody>
+      </DialogSurface>
+    </Dialog>
+  );
+}
+```
+
+### Accessible Forms with Fluent
+
+```tsx
+import {
+  Field,
+  Input,
+  Textarea,
+  Checkbox,
+  RadioGroup,
+  Radio,
+  Select,
+  Switch,
+  MessageBar,
+  MessageBarBody,
+  MessageBarTitle,
+  makeStyles
+} from '@fluentui/react-components';
+
+const useStyles = makeStyles({
+  form: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: tokens.spacingVerticalL,
+  },
+  errorSummary: {
+    marginBottom: tokens.spacingVerticalL,
+  },
+});
+
+function FluentAccessibleForm() {
+  const styles = useStyles();
+  const [errors, setErrors] = useState({});
+  const [formData, setFormData] = useState({
+    name: '',
+    description: '',
+    triggerType: 'manual',
+    enabled: true,
+  });
+  
+  const errorSummaryRef = useRef(null);
+  
+  useEffect(() => {
+    if (Object.keys(errors).length > 0) {
+      errorSummaryRef.current?.focus();
+    }
+  }, [errors]);
+  
+  return (
+    <form className={styles.form} aria-label="Create workflow">
+      {Object.keys(errors).length > 0 && (
+        <MessageBar
+          ref={errorSummaryRef}
+          intent="error"
+          tabIndex={-1}
+          className={styles.errorSummary}
+        >
+          <MessageBarBody>
+            <MessageBarTitle>Please fix the following errors:</MessageBarTitle>
+            <ul>
+              {Object.entries(errors).map(([field, error]) => (
+                <li key={field}>
+                  <a href={`#${field}`}>{error}</a>
+                </li>
+              ))}
+            </ul>
+          </MessageBarBody>
+        </MessageBar>
+      )}
+      
+      <Field
+        label="Workflow Name"
+        required
+        validationState={errors.name ? "error" : "none"}
+        validationMessage={errors.name}
+        hint="Enter a unique name for your workflow"
+      >
+        <Input
+          id="name"
+          value={formData.name}
+          onChange={(e, data) => setFormData({ ...formData, name: data.value })}
+        />
+      </Field>
+      
+      <Field
+        label="Description"
+        validationState={errors.description ? "error" : "none"}
+        validationMessage={errors.description}
+      >
+        <Textarea
+          id="description"
+          value={formData.description}
+          onChange={(e, data) => setFormData({ ...formData, description: data.value })}
+          resize="vertical"
+        />
+      </Field>
+      
+      <Field label="Trigger Type" required>
+        <RadioGroup
+          value={formData.triggerType}
+          onChange={(e, data) => setFormData({ ...formData, triggerType: data.value })}
+        >
+          <Radio value="manual" label="Manual" />
+          <Radio value="scheduled" label="Scheduled" />
+          <Radio value="webhook" label="Webhook" />
+        </RadioGroup>
+      </Field>
+      
+      <Field label="Settings">
+        <Switch
+          checked={formData.enabled}
+          onChange={(e, data) => setFormData({ ...formData, enabled: data.checked })}
+          label="Enable workflow"
+        />
+      </Field>
+      
+      <div>
+        <Button appearance="primary" type="submit">
+          Create Workflow
+        </Button>
+      </div>
+    </form>
+  );
+}
+```
+
+### Accessible Data Tables with Fluent
+
+```tsx
+import {
+  Table,
+  TableHeader,
+  TableHeaderCell,
+  TableBody,
+  TableRow,
+  TableCell,
+  TableCellLayout,
+  TableCellActions,
+  Button,
+  Menu,
+  MenuTrigger,
+  MenuList,
+  MenuItem,
+  MenuPopover,
+  Badge,
+  createTableColumn,
+  useTableFeatures,
+  useTableSort
+} from '@fluentui/react-components';
+import { MoreHorizontal20Regular } from '@fluentui/react-icons';
+
+function FluentAccessibleTable({ workflows }) {
+  const columns = [
+    createTableColumn({
+      columnId: 'name',
+      renderHeaderCell: () => 'Name',
+      renderCell: (item) => (
+        <TableCellLayout>
+          {item.name}
+        </TableCellLayout>
+      ),
+    }),
+    createTableColumn({
+      columnId: 'status',
+      renderHeaderCell: () => 'Status',
+      renderCell: (item) => (
+        <TableCellLayout>
+          <Badge
+            appearance="filled"
+            color={item.status === 'active' ? 'success' : 'warning'}
+          >
+            {item.status}
+          </Badge>
+        </TableCellLayout>
+      ),
+    }),
+    createTableColumn({
+      columnId: 'lastRun',
+      renderHeaderCell: () => 'Last Run',
+      renderCell: (item) => (
+        <TableCellLayout>
+          <time dateTime={item.lastRun}>
+            {new Date(item.lastRun).toLocaleString()}
+          </time>
+        </TableCellLayout>
+      ),
+    }),
+    createTableColumn({
+      columnId: 'actions',
+      renderHeaderCell: () => 'Actions',
+      renderCell: (item) => (
+        <TableCellLayout>
+          <TableCellActions>
+            <Button
+              appearance="subtle"
+              icon={<EditRegular />}
+              aria-label={`Edit ${item.name}`}
+            >
+              Edit
+            </Button>
+            <Menu>
+              <MenuTrigger disableButtonEnhancement>
+                <Button
+                  appearance="subtle"
+                  icon={<MoreHorizontal20Regular />}
+                  aria-label={`More actions for ${item.name}`}
+                />
+              </MenuTrigger>
+              <MenuPopover>
+                <MenuList>
+                  <MenuItem>Duplicate</MenuItem>
+                  <MenuItem>Export</MenuItem>
+                  <MenuItem>Delete</MenuItem>
+                </MenuList>
+              </MenuPopover>
+            </Menu>
+          </TableCellActions>
+        </TableCellLayout>
+      ),
+    }),
+  ];
+  
+  const {
+    getRows,
+    sort: { getSortDirection, toggleColumnSort, sort },
+  } = useTableFeatures(
+    {
+      columns,
+      items: workflows,
+    },
+    [
+      useTableSort({
+        defaultSortState: { sortColumn: 'name', sortDirection: 'ascending' },
+      }),
+    ]
+  );
+  
+  const rows = sort(getRows());
+  
+  return (
+    <Table 
+      aria-label="Workflow list"
+      sortable
+    >
+      <TableHeader>
+        <TableRow>
+          {columns.map((column) => (
+            <TableHeaderCell
+              key={column.columnId}
+              sortDirection={getSortDirection(column.columnId)}
+              onClick={() => toggleColumnSort(column.columnId)}
+            >
+              {column.renderHeaderCell()}
+            </TableHeaderCell>
+          ))}
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {rows.map((row) => (
+          <TableRow key={row.rowId}>
+            {columns.map((column) => (
+              <TableCell key={column.columnId}>
+                {column.renderCell(row.item)}
+              </TableCell>
+            ))}
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  );
+}
+
+## Testing Procedures
+
+### Unit Testing Accessibility
+
+```tsx
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { axe, toHaveNoViolations } from 'jest-axe';
+
+expect.extend(toHaveNoViolations);
+
+describe('Button Accessibility', () => {
+  it('should have no accessibility violations', async () => {
+    const { container } = render(
+      <button onClick={() => {}}>Save Workflow</button>
+    );
+    
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
+  });
+  
+  it('should be keyboard accessible', async () => {
+    const handleClick = jest.fn();
+    render(<button onClick={handleClick}>Save</button>);
+    
+    const button = screen.getByRole('button', { name: 'Save' });
+    
+    // Tab to button
+    await userEvent.tab();
+    expect(button).toHaveFocus();
+    
+    // Activate with Enter
+    await userEvent.keyboard('{Enter}');
+    expect(handleClick).toHaveBeenCalledTimes(1);
+    
+    // Activate with Space
+    await userEvent.keyboard(' ');
+    expect(handleClick).toHaveBeenCalledTimes(2);
+  });
+  
+  it('should announce loading state', () => {
+    const { rerender } = render(
+      <button aria-busy="false">Save</button>
+    );
+    
+    const button = screen.getByRole('button', { name: 'Save' });
+    expect(button).toHaveAttribute('aria-busy', 'false');
+    
+    rerender(<button aria-busy="true">Saving...</button>);
+    expect(button).toHaveAttribute('aria-busy', 'true');
+  });
+});
+```
+
+### Integration Testing
+
+```tsx
+describe('Workflow Designer Accessibility', () => {
+  it('should navigate between panels with keyboard', async () => {
+    render(<WorkflowDesigner />);
+    
+    // Tab through main regions
+    await userEvent.tab(); // Skip to main
+    await userEvent.tab(); // Action panel
+    await userEvent.tab(); // Canvas
+    await userEvent.tab(); // Properties panel
+    
+    // Verify focus moves correctly
+    expect(screen.getByRole('region', { name: 'Properties' }))
+      .toContainElement(document.activeElement);
+  });
+  
+  it('should announce action additions', async () => {
+    render(<WorkflowDesigner />);
+    
+    // Add action
+    const addButton = screen.getByRole('button', { name: 'Add action' });
+    await userEvent.click(addButton);
+    
+    // Verify announcement
+    expect(screen.getByRole('status'))
+      .toHaveTextContent('Action added to workflow');
+  });
+});
+```
+
+## Debugging Accessibility Issues
+
+### Browser DevTools
+
+```javascript
+// Console commands for debugging
+
+// Check all images for alt text
+Array.from(document.images).forEach(img => {
+  if (!img.alt) {
+    console.warn('Image missing alt text:', img);
+  }
+});
+
+// Find all elements with click handlers but no keyboard support
+Array.from(document.querySelectorAll('[onclick]')).forEach(el => {
+  if (el.tagName !== 'BUTTON' && el.tagName !== 'A' && !el.hasAttribute('tabindex')) {
+    console.warn('Element with click handler not keyboard accessible:', el);
+  }
+});
+
+// Check focus order
+let focusableElements = document.querySelectorAll(
+  'a[href], button, input, select, textarea, [tabindex]:not([tabindex="-1"])'
+);
+console.table(Array.from(focusableElements).map((el, i) => ({
+  order: i + 1,
+  element: el.tagName,
+  text: el.textContent?.trim() || el.getAttribute('aria-label'),
+  tabIndex: el.tabIndex
+})));
+
+// Test color contrast
+function checkContrast(element) {
+  const styles = window.getComputedStyle(element);
+  const bg = styles.backgroundColor;
+  const fg = styles.color;
+  console.log(`Background: ${bg}, Foreground: ${fg}`);
+  // Use with online contrast checker
+}
+```
+
+### Common Issues & Fixes
+
+| Issue | Impact | Fix |
+|-------|--------|-----|
+| Missing alt text | Screen readers announce "image" | Add descriptive alt text or alt="" for decorative |
+| Click handlers on divs | Not keyboard accessible | Use button element or add keyboard handlers |
+| Missing focus indicators | Users can't see focus | Add :focus-visible styles |
+| Form without labels | Screen readers can't identify inputs | Associate labels with htmlFor/id |
+| Color-only information | Colorblind users miss information | Add text/icons alongside color |
+| Auto-playing media | Distracting, can't be stopped | Add pause controls, avoid autoplay |
+
+## Resources
+
+### Microsoft-Specific
+- [Microsoft Accessibility Conformance Reports](https://www.microsoft.com/en-us/accessibility/conformance-reports)
+- [Inclusive Design at Microsoft](https://www.microsoft.com/design/inclusive/)
+- [Microsoft Accessibility Handbook](https://aka.ms/AccessibilityHandbook)
+
+### Tools & Extensions
+- [Accessibility Insights](https://accessibilityinsights.io/) - Microsoft's testing tools
+- [axe DevTools](https://www.deque.com/axe/devtools/) - Automated testing
+- [WAVE](https://wave.webaim.org/) - Web accessibility evaluation
+- [Stark](https://www.getstark.co/) - Design accessibility toolkit
+- [taba11y](https://chrome.google.com/webstore/detail/taba11y/aocppmckdocdjkphmofnklcjhdidgmga) - Tab order visualization
+
+### Learning Resources
+- [WCAG 2.1 Guidelines](https://www.w3.org/WAI/WCAG21/quickref/)
 - [MDN Accessibility](https://developer.mozilla.org/en-US/docs/Web/Accessibility)
-- [CSUN Web Accessibility Criteria](https://www.csun.edu/universal-design-center/web-accessibility-criteria-0)
-- [Microsoft Accessibility](https://www.microsoft.com/en-us/accessibility)
-- [MS Accessibility sharepoint](https://microsoft.sharepoint.com/teams/accacademy?xsdata=MDV8MDJ8fDY3MDc2NDczNWQ4NzRmNzM5MTI5MDhkY2I3ZWM1ZjY5fDcyZjk4OGJmODZmMTQxYWY5MWFiMmQ3Y2QwMTFkYjQ3fDB8MHw2Mzg1ODc0NzMwMjA2ODY2MzN8VW5rbm93bnxWR1ZoYlhOVFpXTjFjbWwwZVZObGNuWnBZMlY4ZXlKV0lqb2lNQzR3TGpBd01EQWlMQ0pRSWpvaVYybHVNeklpTENKQlRpSTZJazkwYUdWeUlpd2lWMVFpT2pFeGZRPT18MXxMMk5vWVhSekx6RTVPbTFsWlhScGJtZGZUVVJCTkZwRVl6Uk9iVWwwVG1wSk1VMXBNREJQVjFacVRGZEthbGx0U1hSUFIwNW9Xa1JPYlZwVVNtMU9SMUpvUUhSb2NtVmhaQzUyTWk5dFpYTnpZV2RsY3k4eE56SXpNVFV3TlRBeE1EQXp8ODdjM2M2YjM2ZGE4NDk2ZDkxMjkwOGRjYjdlYzVmNjl8ZGQ5YmZkOWY3NjJiNDQ1YzljMjk3YTAyYzVjMzc2OGE%3d&sdata=clAyQjBsdDl3b0k1TTJEZjRqd3dkOC9FRURUQm9EaWNTNUpLbHE3Sy9yRT0%3d&ovuser=72f988bf-86f1-41af-91ab-2d7cd011db47%2crileyevans%40microsoft.com&OR=Teams-HL&CT=1723150545887&clickparams=eyJBcHBOYW1lIjoiVGVhbXMtRGVza3RvcCIsIkFwcFZlcnNpb24iOiI0OS8yNDA4MDIxMjAwMyIsIkhhc0ZlZGVyYXRlZFVzZXIiOmZhbHNlfQ%3d%3d&SafelinksUrl=https%3a%2f%2fmicrosoft.sharepoint.com%2fteams%2faccacademy)
-- [MS - JAWS request](https://microsoft.service-now.com/sp?id=sc_cat_item&sys_id=084d5f85dbc82410b720f33768961956)
+- [WebAIM](https://webaim.org/) - Web accessibility in mind
+- [A11y Project](https://www.a11yproject.com/) - Community-driven accessibility resources
+
+### Screen Readers
+- **Windows**: [NVDA](https://www.nvaccess.org/) (free), [JAWS](https://www.freedomscientific.com/products/software/jaws/) (paid)
+- **macOS**: VoiceOver (built-in, Cmd+F5)
+- **Linux**: [Orca](https://wiki.gnome.org/Projects/Orca)
+- **Mobile**: TalkBack (Android), VoiceOver (iOS)
+
+### Certification & Training
+- [IAAP Certification](https://www.accessibilityassociation.org/s/certification)
+- [Deque University](https://dequeuniversity.com/)
+- [Microsoft Accessibility Training](https://docs.microsoft.com/en-us/learn/paths/accessibility-fundamentals/)
+
+---
+
+<details>
+<summary>**Quick Reference: Keyboard Shortcuts**</summary>
+
+| Action | Windows | macOS |
+|--------|---------|-------|
+| Navigate forward | Tab | Tab |
+| Navigate backward | Shift+Tab | Shift+Tab |
+| Activate button | Enter/Space | Enter/Space |
+| Navigate radio/menu | Arrow keys | Arrow keys |
+| Close modal | Esc | Esc |
+| Navigate headings (SR) | H | H |
+| Navigate landmarks (SR) | D | D |
+| List all links (SR) | Insert+F7 (NVDA) | VO+U (VoiceOver) |
+
+</details>
+
+Remember: **Accessibility is not a feature, it's a fundamental requirement.** Every user deserves equal access to your application.
