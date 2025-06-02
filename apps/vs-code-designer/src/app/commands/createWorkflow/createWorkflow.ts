@@ -26,7 +26,7 @@ export async function createWorkflow(
   logicAppName?: string,
   triggerSettings?: { [key: string]: string | undefined },
   language?: ProjectLanguage,
-  version?: FuncVersion,
+  version?: FuncVersion
 ): Promise<void> {
   addLocalFuncTelemetry(context);
   let workspaceFolder: WorkspaceFolder | undefined;
@@ -69,6 +69,8 @@ export async function createWorkflow(
     workflowProjectType,
     projectTemplateKey,
   });
+
+  wizardContext.isCodeless = true; // default to codeless workflow
 
   const wizard: AzureWizard<IFunctionWizardContext> = new AzureWizard(wizardContext, {
     promptSteps: [

@@ -17,7 +17,6 @@ import { browseWebsite } from './browseWebsite';
 import { buildCustomCodeFunctionsProject } from './buildCustomCodeFunctionsProject';
 import { configureDeploymentSource } from './configureDeploymentSource';
 import { createChildNode } from './createChildNode';
-import { createCodeless } from './createCodeless/createCodeless';
 import { createLogicApp, createLogicAppAdvanced } from './createLogicApp/createLogicApp';
 import { cloudToLocalCommand } from './createNewCodeProject/cloudToLocal';
 import { createNewCodeProjectFromCommand } from './createNewCodeProject/createNewCodeProject';
@@ -77,7 +76,6 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.createNewWorkspace, createNewCodeProjectFromCommand);
   registerCommand(extensionCommand.cloudToLocal, cloudToLocalCommand);
   registerCommand(extensionCommand.createWorkflow, createWorkflow);
-  registerCommand(extensionCommand.createCodeless, createCodeless);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.createLogicApp, createLogicApp);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.createLogicAppAdvanced, createLogicAppAdvanced);
   registerSiteCommand(extensionCommand.deploy, unwrapTreeNodeCommandCallback(deployProductionSlot));
