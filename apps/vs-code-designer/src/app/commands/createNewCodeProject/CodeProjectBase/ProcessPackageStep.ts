@@ -87,8 +87,8 @@ export class ProcessPackageStep extends AzureWizardExecuteStep<IProjectWizardCon
         }
 
         await changeAuthTypeToRaw(context, parameterizeConnectionsSetting);
-        await updateConnectionKeys(context);
         await cleanLocalSettings(context);
+        await updateConnectionKeys(context);
       }
 
       // OpenFolder will restart the extension host so we will cache README to open on next activation
