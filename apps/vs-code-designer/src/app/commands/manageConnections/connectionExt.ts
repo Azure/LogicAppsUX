@@ -19,16 +19,21 @@ export default class ConnectionsExt {
   private codefulFilePath: string;
 
   public async openConnectionsPanel(context: IActionContext, args: any[]) {
-    const connectionType = args[0];
-    const connectionId = args[1];
+    const connectionDetails = args[0];
+
+    const connectorId = connectionDetails?.connectorId;
+    const connectionType = connectionDetails?.connectorType;
 
     this.codefulFilePath = vscode.window.activeTextEditor.document.uri.fsPath;
 
-    const panelName = `${connectionId}-Connections`;
+    const panelName = `${connectorId}-Connections`;
 
     const currentDocumentPath = vscode.window.activeTextEditor?.document.uri.fsPath;
 
-    const connectionsData: string = await getConnectionsFromFile(context, currentDocumentPath);
+    let connectionsData: string = await getConnectionsFromFile(context, currentDocumentPath); // danielle account for no file or bad json
+    if (connectionsData === '') {
+      connectionsData = '{}'; // Default to empty object if no connections found
+    }
     const projectPath = await getLogicAppProjectRoot(context, currentDocumentPath); // danielle need to fix
 
     const callbackUri: vscode.Uri = await (vscode.env as any).asExternalUri(
@@ -47,7 +52,7 @@ export default class ConnectionsExt {
 
     await startDesignTimeApi(projectPath);
     this.createOrShow({
-      connectionId,
+      connectionId: connectorId,
       connectionType,
       connectionsData: connections,
       azureDetails,

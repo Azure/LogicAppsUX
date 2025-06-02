@@ -25,13 +25,14 @@ export default class ConnectionsPanel {
     this.createConnectionsPanel = createConnectionsPanel;
 
     this.baseUrl = `http://localhost:${ext.designTimePort}${managementApiPrefix}`;
-    this.workflowRuntimeBaseUrl = `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}`;
+    this.workflowRuntimeBaseUrl = `http://localhost:${ext.designTimePort}${managementApiPrefix}`;
 
     this._handleWebviewMsg = this._handleWebviewMsg.bind(this);
 
     if (this.createConnectionsPanel.connectionType === ConnectionType.ApiManagement) {
       this.connectionUri = `/subscriptions/${this.createConnectionsPanel.azureDetails.subscriptionId}/providers/Microsoft.Web/locations/${this.createConnectionsPanel.azureDetails.location}}/managedApis/${this.connectionName}`;
     } else {
+      // danielle if service provider
       this.connectionUri = this.connectionName;
     }
 
