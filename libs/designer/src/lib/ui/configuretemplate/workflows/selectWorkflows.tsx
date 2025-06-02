@@ -42,7 +42,6 @@ export const SelectWorkflows = ({
     logicAppName: state.workflow.logicAppName,
     subscriptionId: state.workflow.subscriptionId,
     resourceGroup: state.workflow.resourceGroup,
-    workflowsInTemplate: state.template.workflows,
     selectedTabId: state.tab.selectedTabId,
   }));
   const { data: workflows, isLoading } = useWorkflowsInApp(subscriptionId, resourceGroup, logicAppName ?? '', !!isConsumption);
@@ -80,8 +79,8 @@ export const SelectWorkflows = ({
       description: 'Title for the resource selection section',
     }),
     SOURCE_LABEL: intl.formatMessage({
-      defaultMessage: `Select a subscription, resource group and Logic App instance to find the worrkflows yopu want to convert to templates. Your changes apply only to this template and won't affect the original workflows.`,
-      id: 'WWnU+E',
+      defaultMessage: `Select a subscription, resource group and Logic App instance to find the workflows you want to convert to templates. Your changes apply only to this template and won't affect the original workflows.`,
+      id: 'U82s8v',
       description: 'Label for the logic app resource selection description',
     }),
     WORKFLOWS: intl.formatMessage({
@@ -101,8 +100,8 @@ export const SelectWorkflows = ({
       description: 'Label for workflow Name',
     }),
     INFO_TEXT: intl.formatMessage({
-      defaultMessage: 'Currently, templates only support workflow from the same Logic App instance.',
-      id: 'HN0iZx',
+      defaultMessage: 'Currently, templates only support workflows from the same Logic App instance.',
+      id: 'dKW11v',
       description: 'Info message during workflow selection',
     }),
   };
@@ -132,7 +131,7 @@ export const SelectWorkflows = ({
 
   const {
     getRows,
-    selection: { allRowsSelected, someRowsSelected, toggleAllRows, toggleRow, isRowSelected },
+    selection: { someRowsSelected, toggleRow, isRowSelected },
   } = useTableFeatures(
     {
       columns,
@@ -167,10 +166,18 @@ export const SelectWorkflows = ({
     };
   });
 
+  const allRowsSelected = useMemo(() => {
+    return !rows?.filter((row) => !row.selected)?.length;
+  }, [rows]);
+
+  const toggleAllRows = useCallback(() => {
+    onWorkflowsSelected(allRowsSelected ? [] : (workflows?.map((workflow) => workflow.id) ?? []));
+  }, [onWorkflowsSelected, workflows, allRowsSelected]);
+
   const toggleAllKeydown = useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
       if (e.key === ' ') {
-        toggleAllRows(e);
+        toggleAllRows();
         e.preventDefault();
       }
     },
