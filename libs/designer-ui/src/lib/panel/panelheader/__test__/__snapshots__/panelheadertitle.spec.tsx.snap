@@ -4,7 +4,7 @@ exports[`ui/panel/panelheadertitle > should construct. 1`] = `
 <StyledTextFieldBase
   ariaLabel="Card title"
   borderless={true}
-  className="msla-card-title"
+  className="___v6psc80_0000000 f1lmfglv fibjyge f1abmfm4 f9yszdx f5ogflp f1hqa2wf f1f09k3d finvdd3 fzkkow9 fcdblym fg706s2 fjik90z f1p3nwhy f11589ue f1q5o8ev f1pdflbu f2i1086 f1rlsnju f1stktl2 f1127022 f1dqlhwx fs8x2yy f4ni5mc ft71ddo f1sn8sm0 f1wovo5e fm0h710 f716mnf f1cmzvmm fshheht f1xwbbk2 f1dfuukp f1kusq1g f1mx5yg7 ftp5bbt f1pva6ep f1h1h8la fqqt5n9 f18f6j57 fs8opk2 f16pyme3 f1140goi f1i1e89q fcqgtnh f4liy0n fb087j0 fow4h4b f38uvda fh1ot9r f9fbo96 ffc0zi6 f5047k8"
   componentRef={
     {
       "current": null,
