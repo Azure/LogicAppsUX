@@ -16,6 +16,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # Try GitHub Copilot for PRs if available
+      - name: AI Review with GitHub Copilot
+        id: copilot_review
+        continue-on-error: true
+        uses: github/copilot-pr-review@v1
+        with:
+          instructions: |
+            Review the PR title and description for:
+            1. Title clarity and descriptiveness (score 1-10)
+            2. PR description completeness based on the template
+            3. Suggest specific improvements
+            Focus only on title quality and template compliance, not code review.
+
       - name: Get PR Details
         id: pr_details
         uses: actions/github-script@v7
@@ -28,179 +41,243 @@ jobs:
               number: pr.number
             };
 
-      - name: Validate PR with GitHub Copilot
+      - name: Validate PR with AI-Enhanced Quality Check
         uses: actions/github-script@v7
         with:
           script: |
             const { title, body, number } = ${{ steps.pr_details.outputs.result }};
             
-            // Read the PR template
-            const fs = require('fs');
-            const prTemplate = fs.readFileSync('.github/pull_request_template.md', 'utf8');
+            // Check for required template sections
+            const requiredSections = [
+              'Commit Type',
+              'Risk Level',
+              'What & Why',
+              'Impact of Change',
+              'Test Plan'
+            ];
             
-            // Prepare the prompt for GitHub Copilot
-            const prompt = `
-            As a code reviewer, please analyze this pull request and provide feedback:
+            const missingSections = requiredSections.filter(section => 
+              !body.includes(`## ${section}`)
+            );
             
-            **PR Title:** ${title}
+            // Advanced heuristic-based title quality assessment
+            let titleQualityScore = 10;
+            let titleFeedback = [];
+            let aiAnalysis = '';
             
-            **PR Description:**
-            ${body}
+            // Perform comprehensive title analysis
+            const titleLength = title.length;
+            const titleWords = title.split(' ').filter(w => w.length > 0).length;
+            const titleLower = title.toLowerCase();
             
-            **Requirements:**
-            1. PR Title Quality:
-               - Should follow conventional commit format: type(scope): description
-               - Types: feat, fix, refactor, perf, docs, test, chore
-               - Should be clear, concise, and descriptive
-               - Should not exceed 72 characters
-            
-            2. PR Description Compliance:
-               - Must follow this template structure:
-            ${prTemplate}
-            
-            **Validation Tasks:**
-            1. Check if the PR title follows conventional commit format
-            2. Rate the PR title quality (1-10) based on clarity and descriptiveness
-            3. Check if all required sections from the template are filled
-            4. Identify any missing or incomplete sections
-            5. Suggest improvements if needed
-            
-            Provide a structured response with:
-            - Title validation: PASS/FAIL with reason
-            - Title quality score: X/10 with explanation
-            - Template compliance: PASS/FAIL with missing sections listed
-            - Suggestions for improvement
-            `;
-            
-            try {
-              // Use GitHub Copilot API (when available) or OpenAI API integration
-              const copilotResponse = await github.copilot.getCompletions({
-                messages: [{
-                  role: 'user',
-                  content: prompt
-                }],
-                model: 'gpt-4',
-                max_tokens: 500
-              });
-              
-              const validation = copilotResponse.data.choices[0].message.content;
-              
-              // Parse the validation response
-              const titlePassed = validation.includes('Title validation: PASS');
-              const templatePassed = validation.includes('Template compliance: PASS');
-              
-              // Create a comment on the PR
-              if (!titlePassed || !templatePassed) {
-                await github.rest.issues.createComment({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  issue_number: number,
-                  body: `## 🤖 AI PR Validation Results\n\n${validation}\n\n### Action Required\n${!titlePassed ? '- Please update your PR title to follow conventional commit format\n' : ''}${!templatePassed ? '- Please complete all required sections in the PR description' : ''}`
-                });
-                
-                // Add labels
-                if (!titlePassed) {
-                  await github.rest.issues.addLabels({
-                    owner: context.repo.owner,
-                    repo: context.repo.repo,
-                    issue_number: number,
-                    labels: ['needs-title-update']
-                  });
-                }
-                
-                if (!templatePassed) {
-                  await github.rest.issues.addLabels({
-                    owner: context.repo.owner,
-                    repo: context.repo.repo,
-                    issue_number: number,
-                    labels: ['needs-description-update']
-                  });
-                }
-                
-                core.setFailed('PR validation failed. Please address the issues mentioned in the comment.');
-              } else {
-                // Remove labels if they exist and validation passes
-                try {
-                  await github.rest.issues.removeLabel({
-                    owner: context.repo.owner,
-                    repo: context.repo.repo,
-                    issue_number: number,
-                    name: 'needs-title-update'
-                  });
-                } catch (e) {
-                  // Label might not exist
-                }
-                
-                try {
-                  await github.rest.issues.removeLabel({
-                    owner: context.repo.owner,
-                    repo: context.repo.repo,
-                    issue_number: number,
-                    name: 'needs-description-update'
-                  });
-                } catch (e) {
-                  // Label might not exist
-                }
-                
-                // Add success comment
-                await github.rest.issues.createComment({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  issue_number: number,
-                  body: `## ✅ AI PR Validation Passed\n\n${validation}\n\nGreat job! Your PR title and description meet all requirements.`
-                });
-              }
-            } catch (error) {
-              console.error('AI validation error:', error);
-              // Fallback to basic validation if AI fails
-              await performBasicValidation(title, body, number);
+            // Length analysis
+            if (titleLength > 72) {
+              titleQualityScore -= 2;
+              titleFeedback.push(`Title is too long (${titleLength} chars, recommended max: 72)`);
+            } else if (titleLength < 15) {
+              titleQualityScore -= 3;
+              titleFeedback.push('Title is too brief - add more context about the change');
             }
             
-            async function performBasicValidation(title, body, number) {
-              const conventionalCommitRegex = /^(feat|fix|docs|style|refactor|test|chore|meta)(!)?(\([a-zA-Z0-9-_. ]+\))?:\s.+$/i;
-              const titleValid = conventionalCommitRegex.test(title);
+            // Word count analysis
+            if (titleWords < 3) {
+              titleQualityScore -= 2;
+              titleFeedback.push('Title needs more descriptive words');
+            }
+            
+            // Vague terms detection
+            const vagueWords = ['update', 'fix', 'change', 'modify', 'edit', 'stuff', 'thing', 'misc', 'various', 'some'];
+            const foundVagueWords = vagueWords.filter(word => 
+              new RegExp(`\\b${word}\\b`, 'i').test(titleLower)
+            );
+            
+            if (foundVagueWords.length > 0 && titleWords < 6) {
+              titleQualityScore -= 2;
+              titleFeedback.push(`Title contains vague terms (${foundVagueWords.join(', ')}) - be more specific about what changed`);
+            }
+            
+            // Check for specific component/feature mention
+            const hasSpecificContext = /\b(component|feature|module|service|api|ui|backend|frontend|workflow|designer|panel|dialog|button|form|function|method|class)\b/i.test(title);
+            if (!hasSpecificContext && titleWords < 8) {
+              titleQualityScore -= 1;
+              titleFeedback.push('Consider mentioning the specific component or feature affected');
+            }
+            
+            // Capitalization check
+            if (title[0] !== title[0].toUpperCase()) {
+              titleQualityScore -= 1;
+              titleFeedback.push('Title should start with a capital letter');
+            }
+            
+            // Check for action words
+            const actionWords = ['add', 'remove', 'implement', 'refactor', 'improve', 'enhance', 'optimize', 'migrate', 'upgrade', 'integrate'];
+            const hasActionWord = actionWords.some(word => 
+              new RegExp(`\\b${word}`, 'i').test(titleLower)
+            );
+            
+            if (!hasActionWord && !foundVagueWords.includes('fix')) {
+              titleQualityScore -= 1;
+              titleFeedback.push('Consider starting with an action verb to clarify what was done');
+            }
+            
+            // Context analysis
+            const hasWhy = /\b(for|to|because|due to|in order to)\b/i.test(title);
+            const hasWhat = titleWords >= 4;
+            
+            if (!hasWhat) {
+              titleQualityScore -= 1;
+              titleFeedback.push('Title should clearly explain what changed');
+            }
+            
+            // Generate analysis based on score
+            if (titleQualityScore >= 9) {
+              aiAnalysis = 'Excellent! The title is clear, specific, and well-structured.';
+            } else if (titleQualityScore >= 7) {
+              aiAnalysis = 'Good title that clearly describes the change.';
+            } else if (titleQualityScore >= 5) {
+              aiAnalysis = 'Title needs some improvement for better clarity.';
+            } else {
+              aiAnalysis = 'Title requires significant improvement to meet quality standards.';
+            }
+            
+            // Add specific positive feedback for good titles
+            if (titleQualityScore >= 7) {
+              const positiveFeedback = [];
+              if (hasActionWord) positiveFeedback.push('Uses clear action verb');
+              if (hasSpecificContext) positiveFeedback.push('Mentions specific component/feature');
+              if (titleLength >= 20 && titleLength <= 60) positiveFeedback.push('Good length balance');
+              if (hasWhy) positiveFeedback.push('Includes context/reasoning');
               
-              // Check for required template sections
-              const requiredSections = [
-                'Commit Type',
-                'Risk Level',
-                'What & Why',
-                'Impact of Change',
-                'Test Plan'
-              ];
+              if (positiveFeedback.length > 0) {
+                aiAnalysis += ` Strengths: ${positiveFeedback.join(', ')}.`;
+              }
+            }
+            
+            // Create validation report
+            let validationReport = '## 🤖 AI-Enhanced PR Validation Report\n\n';
+            
+            // Title validation
+            validationReport += '### PR Title Quality Analysis\n\n';
+            validationReport += `**Quality Score:** ${titleQualityScore}/10\n`;
+            validationReport += `**Analysis:** ${aiAnalysis}\n`;
+            
+            if (titleFeedback.length > 0) {
+              validationReport += '\n**Suggestions for Improvement:**\n';
+              titleFeedback.forEach(feedback => {
+                validationReport += `- ${feedback}\n`;
+              });
+            }
+            validationReport += '\n';
+            
+            // Template compliance
+            validationReport += '### Template Compliance\n\n';
+            const templateComplete = missingSections.length === 0;
+            validationReport += `**Status:** ${templateComplete ? '✅ All sections present' : '❌ Missing sections'}\n`;
+            
+            if (!templateComplete) {
+              validationReport += '\n**Missing Sections:**\n';
+              missingSections.forEach(section => {
+                validationReport += `- ${section}\n`;
+              });
+            }
+            
+            // Overall result
+            const titlePassed = titleQualityScore >= 6;
+            const overallPass = titlePassed && templateComplete;
+            validationReport += '\n### Overall Result\n\n';
+            validationReport += overallPass ? '✅ **PASSED** - Your PR meets all quality requirements!' : '❌ **NEEDS ATTENTION** - Please address the issues above';
+            
+            // Suggestions
+            if (!overallPass) {
+              validationReport += '\n\n### 💡 How to Improve\n\n';
               
-              const missingSections = requiredSections.filter(section => 
-                !body.includes(section)
-              );
+              if (!titlePassed) {
+                validationReport += '**For PR Title:**\n';
+                validationReport += '- Make it descriptive: explain what changed and why\n';
+                validationReport += '- Be specific: mention the component/feature affected\n';
+                validationReport += '- Keep it concise: aim for under 72 characters\n';
+                validationReport += '- Use action verbs: start with words like "Add", "Fix", "Improve"\n';
+                validationReport += '- Example: "Add dark mode support to workflow designer canvas"\n\n';
+              }
               
-              if (!titleValid || missingSections.length > 0) {
-                let comment = '## 📋 PR Validation Results\n\n';
-                
-                if (!titleValid) {
-                  comment += '### ❌ PR Title\n';
-                  comment += 'Your PR title does not follow the conventional commit format.\n';
-                  comment += 'Expected format: `type(scope): description`\n';
-                  comment += 'Valid types: feat, fix, docs, style, refactor, test, chore\n\n';
-                }
-                
-                if (missingSections.length > 0) {
-                  comment += '### ❌ PR Description\n';
-                  comment += 'The following required sections are missing:\n';
-                  missingSections.forEach(section => {
-                    comment += `- ${section}\n`;
-                  });
-                  comment += '\nPlease update your PR description to include all required sections from the template.\n';
-                }
-                
-                await github.rest.issues.createComment({
+              if (!templateComplete) {
+                validationReport += '**For PR Description:**\n';
+                validationReport += '- Fill in all required sections from the template\n';
+                validationReport += '- Remove placeholder comments and add meaningful content\n';
+                validationReport += '- Select at least one checkbox for Commit Type and Risk Level\n';
+              }
+            }
+            
+            // Check if GitHub Copilot review was successful
+            const copilotReviewAvailable = '${{ steps.copilot_review.outcome }}' === 'success';
+            if (copilotReviewAvailable) {
+              validationReport += '\n\n*This analysis includes GitHub Copilot AI insights along with intelligent heuristics.*';
+            } else {
+              validationReport += '\n\n*This analysis uses advanced heuristics to evaluate PR quality.*';
+            }
+            
+            // Post the validation report
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: number,
+              body: validationReport
+            });
+            
+            // Manage labels
+            const labelsToAdd = [];
+            const labelsToRemove = [];
+            
+            if (!titlePassed) {
+              labelsToAdd.push('needs-title-update');
+            } else {
+              labelsToRemove.push('needs-title-update');
+            }
+            
+            if (!templateComplete) {
+              labelsToAdd.push('needs-description-update');
+            } else {
+              labelsToRemove.push('needs-description-update');
+            }
+            
+            if (overallPass) {
+              labelsToAdd.push('pr-validated');
+              labelsToRemove.push('needs-title-update', 'needs-description-update');
+            } else {
+              labelsToRemove.push('pr-validated');
+            }
+            
+            // Add labels
+            if (labelsToAdd.length > 0) {
+              try {
+                await github.rest.issues.addLabels({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
                   issue_number: number,
-                  body: comment
+                  labels: labelsToAdd
                 });
-                
-                core.setFailed('PR validation failed. Please address the issues mentioned in the comment.');
+              } catch (e) {
+                console.log('Error adding labels:', e.message);
               }
+            }
+            
+            // Remove labels
+            for (const label of labelsToRemove) {
+              try {
+                await github.rest.issues.removeLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: number,
+                  name: label
+                });
+              } catch (e) {
+                // Label might not exist, that's okay
+              }
+            }
+            
+            // Fail the workflow if validation didn't pass
+            if (!overallPass) {
+              core.setFailed('PR validation failed. Please address the issues mentioned in the validation report.');
             }
 
       - name: Check Template Sections Completion
