@@ -95,13 +95,13 @@ export const useChatbotStyles = makeStyles({
 
   protectedMessageLink: {
     color: tokens.colorNeutralForegroundInverted,
-
-    ':hover': {
-      color: tokens.colorNeutralForegroundInverted,
-    },
-
-    ':focus': {
-      color: `${tokens.colorNeutralForegroundInverted} !important`,
+    selectors: {
+      ':hover': {
+        color: tokens.colorNeutralForegroundInverted,
+      },
+      ':focus': {
+        color: `${tokens.colorNeutralForegroundInverted} !important`,
+      },
     },
   },
 
