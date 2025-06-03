@@ -1,4 +1,4 @@
-import { getRecordEntry, type Template } from '@microsoft/logic-apps-shared';
+import { getRecordEntry, type Template, getPropertyValue } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice, isAnyOf } from '@reduxjs/toolkit';
 import {
@@ -12,11 +12,13 @@ import type { WorkflowTemplateData, TemplatePayload } from '../../actions/bjswor
 import { loadCustomTemplateArtifacts, loadTemplate, validateWorkflowsBasicInfo } from '../../actions/bjsworkflow/templates';
 import { resetTemplatesState } from '../global';
 import { deleteWorkflowData, loadCustomTemplate } from '../../actions/bjsworkflow/configuretemplate';
-import { getSupportedSkus } from '../../configuretemplate/utils/helper';
+import type { ApiValidationError } from '../../configuretemplate/utils/errors';
 
 export interface TemplateState extends TemplatePayload {
   templateName?: string;
+  apiValidatationErrors?: ApiValidationError;
   status?: Template.TemplateEnvironment;
+  dataIsLoading?: boolean;
 }
 
 const initialState: TemplateState = {
@@ -24,12 +26,13 @@ const initialState: TemplateState = {
   workflows: {},
   parameterDefinitions: {},
   connections: {},
+  dataIsLoading: true,
   errors: {
+    general: undefined,
     manifest: {},
     parameters: {},
     connections: undefined,
   },
-  status: 'Production',
 };
 
 export const templateSlice = createSlice({
@@ -147,6 +150,7 @@ export const templateSlice = createSlice({
       state.parameterDefinitions = {};
       state.connections = {};
       state.errors = {
+        general: undefined,
         manifest: {},
         parameters: {},
         connections: undefined,
@@ -173,8 +177,11 @@ export const templateSlice = createSlice({
         state.workflows[id] = { ...(state.workflows[id] ?? {}), ...data };
       }
     },
-    updateAllWorkflowsData: (state, action: PayloadAction<Record<string, Partial<WorkflowTemplateData>>>) => {
-      const workflowsToUpdate = action.payload;
+    updateAllWorkflowsData: (
+      state,
+      action: PayloadAction<{ workflows: Record<string, Partial<WorkflowTemplateData>>; manifest?: Template.TemplateManifest }>
+    ) => {
+      const { workflows: workflowsToUpdate, manifest } = action.payload;
       const workflows: Record<string, WorkflowTemplateData> = {};
 
       for (const id of Object.keys(workflowsToUpdate)) {
@@ -183,13 +190,9 @@ export const templateSlice = createSlice({
       }
 
       // Update the manifest with the trigger type if there is only one workflow, otherwise undefined
-      state.manifest = {
-        ...(state.manifest ?? {}),
-        details: {
-          ...(state.manifest?.details ?? {}),
-          Trigger: Object.keys(workflows).length === 1 ? workflows[Object.keys(workflows)[0]].triggerType : undefined,
-        },
-      } as Template.TemplateManifest;
+      if (manifest) {
+        state.manifest = manifest;
+      }
 
       state.workflows = workflows;
     },
@@ -203,11 +206,28 @@ export const templateSlice = createSlice({
       if (action.payload) {
         state.connections = action.payload.connections;
         state.parameterDefinitions = action.payload.parameterDefinitions as any;
-        (state.manifest as Template.TemplateManifest).skus = getSupportedSkus(action.payload.connections);
       }
     },
     updateEnvironment: (state, action: PayloadAction<Template.TemplateEnvironment>) => {
       state.status = action.payload;
+    },
+    setApiValidationErrors: (state, action: PayloadAction<{ error: ApiValidationError | undefined; source: string }>) => {
+      if (action.payload.error) {
+        const errorObject = { ...action.payload.error };
+        const saveError = (errorObject as any).general;
+        if (saveError) {
+          delete (errorObject as any).general;
+          errorObject.saveGeneral = { ...(state.apiValidatationErrors?.saveGeneral ?? {}), [action.payload.source]: saveError };
+        }
+
+        state.apiValidatationErrors = errorObject;
+      } else if (getPropertyValue(state.apiValidatationErrors?.saveGeneral, action.payload.source)) {
+        state.apiValidatationErrors = {
+          saveGeneral: { ...(state.apiValidatationErrors?.saveGeneral ?? {}), [action.payload.source]: undefined },
+        } as any;
+      } else {
+        state.apiValidatationErrors = undefined;
+      }
     },
   },
   extraReducers: (builder) => {
@@ -246,34 +266,20 @@ export const templateSlice = createSlice({
         state,
         action: PayloadAction<{
           ids: string[];
-          connectionKeys: string[];
-          parameterKeys: string[];
-          parametersToUpdate: Record<string, Partial<Template.ParameterDefinition>>;
+          manifest: Template.TemplateManifest;
+          connections: Record<string, Template.Connection>;
+          parameters: Record<string, Template.ParameterDefinition>;
         }>
       ) => {
         if (action.payload) {
-          const { ids, connectionKeys, parameterKeys, parametersToUpdate } = action.payload;
+          const { ids, manifest, connections, parameters } = action.payload;
           for (const id of ids) {
             delete state.workflows[id];
           }
 
-          // Update the manifest with the trigger type if there is only one workflow, otherwise undefined
-          state.manifest = {
-            ...(state.manifest ?? {}),
-            details: {
-              ...(state.manifest?.details ?? {}),
-              Trigger: Object.keys(state.workflows).length === 1 ? state.workflows[Object.keys(state.workflows)[0]].triggerType : undefined,
-            },
-          } as Template.TemplateManifest;
-
-          for (const key of connectionKeys) {
-            delete state.connections[key];
-          }
-
-          state.parameterDefinitions = { ...state.parameterDefinitions, ...(parametersToUpdate as any) };
-          for (const key of parameterKeys) {
-            delete state.parameterDefinitions[key];
-          }
+          state.manifest = manifest;
+          state.connections = connections;
+          state.parameterDefinitions = parameters;
         }
       }
     );
@@ -282,6 +288,7 @@ export const templateSlice = createSlice({
       if (action.payload) {
         const { status } = action.payload;
         state.status = status as Template.TemplateEnvironment;
+        state.dataIsLoading = false;
       }
     });
 
@@ -305,6 +312,7 @@ export const templateSlice = createSlice({
       state.parameterDefinitions = {};
       state.connections = {};
       state.errors = {
+        general: undefined,
         manifest: {},
         parameters: {},
         connections: undefined,
@@ -334,5 +342,6 @@ export const {
   updateTemplateManifest,
   updateConnectionAndParameterDefinitions,
   updateEnvironment,
+  setApiValidationErrors,
 } = templateSlice.actions;
 export default templateSlice.reducer;

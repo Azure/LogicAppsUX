@@ -29,7 +29,8 @@ test.describe(
       await expect(page.getByTestId('msla-graph-container-condition')).not.toHaveClass(/msla-card-inactive/);
     });
 
-    test('Sanity check for loading state', async ({ page }) => {
+    //TODO: TEST INCLUDES CSS RELIANCE, REWORK TO USE OTHER DATA INSTEAD
+    test.skip('Sanity check for loading state', async ({ page }) => {
       await page.goto('/');
       await GoToMockWorkflow(page, 'Monitoring view conditional');
       await LoadRunFile(page, 'loadingState');

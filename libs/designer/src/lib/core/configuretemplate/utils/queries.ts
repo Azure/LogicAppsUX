@@ -47,6 +47,38 @@ export const getWorkflowsInTemplate = async (templateId: string): Promise<Record
   });
 };
 
+export const getWorkflowResourcesInTemplate = async (templateId: string): Promise<ArmResource<any>[]> => {
+  const queryClient = getReactQueryClient();
+  return queryClient.fetchQuery(['templateworkflowresources', templateId.toLowerCase()], async () => {
+    const workflows = await TemplateResourceService().getTemplateWorkflows(templateId, /* rawData */ true);
+    return workflows;
+  });
+};
+
+export const useTemplate = (templateId: string, enabled = true): UseQueryResult<ArmResource<any>, unknown> => {
+  return useQuery(['template', templateId?.toLowerCase()], async () => TemplateResourceService().getTemplate(templateId), {
+    cacheTime: 1000 * 60 * 60 * 24,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    enabled: enabled && !!templateId,
+  });
+};
+
+export const useTemplateWorkflows = (templateId: string, enabled = true): UseQueryResult<ArmResource<any>[], unknown> => {
+  return useQuery(
+    ['templateworkflowresources', templateId?.toLowerCase()],
+    async () => TemplateResourceService().getTemplateWorkflows(templateId),
+    {
+      cacheTime: 1000 * 60 * 60 * 24,
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+      enabled: enabled && !!templateId,
+    }
+  );
+};
+
 export const getTemplate = async (templateId: string): Promise<ArmResource<any>> => {
   const queryClient = getReactQueryClient();
   return queryClient.fetchQuery(['template', templateId.toLowerCase()], async () => TemplateResourceService().getTemplate(templateId));
@@ -194,4 +226,24 @@ export const getParametersInWorkflowApp = async (
       throw error;
     }
   });
+};
+
+export const resetTemplateWorkflowsQuery = (templateId: string, clearRawData = false) => {
+  const queryClient = getReactQueryClient();
+  queryClient.removeQueries(['templateworkflows', templateId.toLowerCase()]);
+
+  if (clearRawData) {
+    queryClient.removeQueries(['templateworkflowresources', templateId.toLowerCase()]);
+  }
+};
+
+export const resetAllTemplatesQuery = (templateId: string, clearRawData = false) => {
+  const queryClient = getReactQueryClient();
+  queryClient.removeQueries(['template', templateId.toLowerCase()]);
+  resetTemplateWorkflowsQuery(templateId, clearRawData);
+};
+
+export const resetTemplateQuery = (templateId: string) => {
+  const queryClient = getReactQueryClient();
+  queryClient.removeQueries(['template', templateId.toLowerCase()]);
 };

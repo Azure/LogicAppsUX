@@ -1,4 +1,98 @@
 # Logic Apps Designer
+## [5.110.0](https://github.com/Azure/LogicAppsUX/compare/v5.109.0...v5.110.0) (2025-05-26)
+
+
+### Bug Fixes
+
+* **designer:** Agents in Hybrid not working ([#7303](https://github.com/Azure/LogicAppsUX/issues/7303)) ([99a48e3](https://github.com/Azure/LogicAppsUX/commit/99a48e30f4a573c8388eb6a76234f85d6bb28854))
+* **designer:** Fix Variable Editor Causing Issues on Strings ([#7302](https://github.com/Azure/LogicAppsUX/issues/7302)) ([9670901](https://github.com/Azure/LogicAppsUX/commit/9670901e34c3a37211eb866942c9adadd88c7a18))
+* **designer:** Update open AI endpoint for foundry connections ([#7306](https://github.com/Azure/LogicAppsUX/issues/7306)) ([6c70ac4](https://github.com/Azure/LogicAppsUX/commit/6c70ac47d13c068e23c90c5a27ab1e3448a8414c))
+* **templates:** Adding info bubble support and text for workflow customization wizard ([#7297](https://github.com/Azure/LogicAppsUX/issues/7297)) ([ca2ebda](https://github.com/Azure/LogicAppsUX/commit/ca2ebdac2a4b9adf99223cbc6748f34a4a087aa0))
+* **Templates:** Fixed connection name and type not showing up in review tab ([#7300](https://github.com/Azure/LogicAppsUX/issues/7300)) ([d521674](https://github.com/Azure/LogicAppsUX/commit/d5216740a7c3b262b7d149baaeee6cbbe4d9e31a))
+* **Templates:** UI fixes to enforce consistency & Remove placeholder links ([#7291](https://github.com/Azure/LogicAppsUX/issues/7291)) ([42230c9](https://github.com/Azure/LogicAppsUX/commit/42230c92ab83d22c96d36bffbc6295ab15a12a2a))
+* **vscode:** Initialize custom connection parameter editor service ([#7311](https://github.com/Azure/LogicAppsUX/issues/7311)) ([f34057b](https://github.com/Azure/LogicAppsUX/commit/f34057baaa70e0dae1a465aacb166f4274102ad4))
+
+## [5.109.0](https://github.com/Azure/LogicAppsUX/compare/v5.108.0...v5.109.0) (2025-05-22)
+
+
+### Features
+
+* **designer:** Add agent foundry service integration connection ([#7254](https://github.com/Azure/LogicAppsUX/issues/7254)) ([5ed04dd](https://github.com/Azure/LogicAppsUX/commit/5ed04dd0d1703f5f1b8ba2a4e215371d58c6b85f))
+
+## [5.108.0](https://github.com/Azure/LogicAppsUX/compare/v5.107.0...v5.108.0) (2025-05-22)
+
+
+### Features
+
+* **vscode:** Unit Test Status Code ([#7277](https://github.com/Azure/LogicAppsUX/issues/7277)) ([046be89](https://github.com/Azure/LogicAppsUX/commit/046be89e1c269a6462f014d826ddb4ab78cac606))
+
+
+### Bug Fixes
+
+* **designer:** Fix alphabetical sorting of sub-actions in OperationGroupDetailView component ([#7264](https://github.com/Azure/LogicAppsUX/issues/7264)) ([de44a26](https://github.com/Azure/LogicAppsUX/commit/de44a26b23de04ca74aa17dd44ea90e3a380ed4f))
+* **designer:** Remove expand/collapse teaching popup ([#7278](https://github.com/Azure/LogicAppsUX/issues/7278)) ([9add378](https://github.com/Azure/LogicAppsUX/commit/9add37812b0c0e2444ee16cb9ef5f6bcf7897413))
+* **vscode:** Auto update function core tools for major version difference ([#7279](https://github.com/Azure/LogicAppsUX/issues/7279)) ([6056cdd](https://github.com/Azure/LogicAppsUX/commit/6056cdd33480e53609ed0b4ab8e1f47826ce6699))
+
+## [5.107.0](https://github.com/Azure/LogicAppsUX/compare/v5.106.0...v5.107.0) (2025-05-20)
+
+
+### Features
+
+* **templates:** Adding created and last modified column in workflows and toaster ([#7274](https://github.com/Azure/LogicAppsUX/issues/7274)) ([fe03331](https://github.com/Azure/LogicAppsUX/commit/fe03331ac85a4748bde2c40a437da48790ceec98))
+
+
+### Bug Fixes
+
+* **designer:** Enable colorization and auto-indentation in Expression Editor ([#7268](https://github.com/Azure/LogicAppsUX/issues/7268)) ([7836e99](https://github.com/Azure/LogicAppsUX/commit/7836e995f4d33482fc96b09fcc973855e2de33e8))
+* **designer:** Fix trigger search bar placeholder text ([#7263](https://github.com/Azure/LogicAppsUX/issues/7263)) ([d88cb89](https://github.com/Azure/LogicAppsUX/commit/d88cb893d3088bd8fbb4d005f1590682e65a4bd7))
+* **designer:** Reverting part of https://github.com/Azure/LogicAppsUX/pull/7006 ([#7266](https://github.com/Azure/LogicAppsUX/issues/7266)) ([618b065](https://github.com/Azure/LogicAppsUX/commit/618b065447ac95d308e49791a97b539ad0b74784))
+
+## [5.106.0](https://github.com/Azure/LogicAppsUX/compare/v5.105.0...v5.106.0) (2025-05-19)
+
+
+### Features
+
+* **templates:** Adding error handling from save failure and showing them at appropriate sections in the UI ([#7248](https://github.com/Azure/LogicAppsUX/issues/7248)) ([21aca65](https://github.com/Azure/LogicAppsUX/commit/21aca65501e112f06d9bfabe0333d39a41963c42))
+
+
+### Bug Fixes
+
+* **designer:** Update string and channels condition ([#7245](https://github.com/Azure/LogicAppsUX/issues/7245)) ([5dad594](https://github.com/Azure/LogicAppsUX/commit/5dad594b995207144feeadee8939c3e81d6c8e60))
+* **vscode:** Fixed error when generating deployment scripts ([#7243](https://github.com/Azure/LogicAppsUX/issues/7243)) ([3d44c96](https://github.com/Azure/LogicAppsUX/commit/3d44c96645280a5ccd15c914c17e6ad6fa67fdb0))
+* **vscode:** Unit Test Sanitize Logic App name  ([#7256](https://github.com/Azure/LogicAppsUX/issues/7256)) ([d9392d8](https://github.com/Azure/LogicAppsUX/commit/d9392d887b7b6f117920c8ebbf33070bcf58c86a))
+
+## [5.105.0](https://github.com/Azure/LogicAppsUX/compare/v5.104.0...v5.105.0) (2025-05-15)
+
+
+### Features
+
+* **templates:** Adding rollback functionality in batch save methods and download template ([#7227](https://github.com/Azure/LogicAppsUX/issues/7227)) ([40f6474](https://github.com/Azure/LogicAppsUX/commit/40f64748eba118ed14a49e19162517a41415ac7a))
+* **templates:** Fit and Finish of custom templates with exporting methods for portal ([#7233](https://github.com/Azure/LogicAppsUX/issues/7233)) ([775002c](https://github.com/Azure/LogicAppsUX/commit/775002c71b9c2e5d7053acf25c67a2a86993b7cb))
+* **vscode:** Unit Test GA ([#7179](https://github.com/Azure/LogicAppsUX/issues/7179)) ([0ffbc6f](https://github.com/Azure/LogicAppsUX/commit/0ffbc6fd0aefc6066fbc1774529447fe19b362ca))
+
+
+### Bug Fixes
+
+* **vscode:** Add fallback for function core tools installation ([#7228](https://github.com/Azure/LogicAppsUX/issues/7228)) ([3df37f7](https://github.com/Azure/LogicAppsUX/commit/3df37f7a9e1cc2f58fcfaf583bbe4411ec4c7bcc))
+* **vscode:** Add tenant ID to get auth token on generate IaC scripts ([#7238](https://github.com/Azure/LogicAppsUX/issues/7238)) ([1039ce8](https://github.com/Azure/LogicAppsUX/commit/1039ce86bae6aeb64ed549a4f27f830abd01d1f5))
+* **vscode:** fix upload settings command registration ([#7222](https://github.com/Azure/LogicAppsUX/issues/7222)) ([78920d1](https://github.com/Azure/LogicAppsUX/commit/78920d1060f53998ea5fec52ce8acea5aacf79a8))
+* **vscode:** Update package and add try catch to auth experience ([#7234](https://github.com/Azure/LogicAppsUX/issues/7234)) ([8832aff](https://github.com/Azure/LogicAppsUX/commit/8832aff4bceb6f7377c7c574d38ad0860f6eb09b))
+
+## [5.104.0](https://github.com/Azure/LogicAppsUX/compare/v5.103.0...v5.104.0) (2025-05-12)
+
+
+### Features
+
+* **templates:** Minor css and interface changes in template wizard for integration ([#7221](https://github.com/Azure/LogicAppsUX/issues/7221)) ([4a3abe0](https://github.com/Azure/LogicAppsUX/commit/4a3abe0b98b569efbbe9ea850a3b9babfa823ee5))
+* **vscode:** Upload settings automatically after deployment ([#7215](https://github.com/Azure/LogicAppsUX/issues/7215)) ([338a927](https://github.com/Azure/LogicAppsUX/commit/338a92768dbf759fe0679f0239c6feacdd475f34))
+
+
+### Bug Fixes
+
+* **designer:** Create Exception of whitespace check on # ([#7217](https://github.com/Azure/LogicAppsUX/issues/7217)) ([1872131](https://github.com/Azure/LogicAppsUX/commit/1872131cad043a7955937e68dfce1a403d9856fc))
+* **designer:** Fixing Search not showing operations in Agentic Loops ([#7219](https://github.com/Azure/LogicAppsUX/issues/7219)) ([da9cf4a](https://github.com/Azure/LogicAppsUX/commit/da9cf4aea38b36306658ac285829bf74a0cac9cb))
+* **designer:** Update chat scrollbar styles ([#7218](https://github.com/Azure/LogicAppsUX/issues/7218)) ([7773250](https://github.com/Azure/LogicAppsUX/commit/777325063f19d98a39d7bb480d922d8c21fff5f1))
+
 ## [5.103.0](https://github.com/Azure/LogicAppsUX/compare/v5.102.0...v5.103.0) (2025-05-09)
 
 

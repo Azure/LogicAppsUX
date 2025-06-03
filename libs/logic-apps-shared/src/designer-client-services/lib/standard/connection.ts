@@ -88,7 +88,7 @@ export interface AgentConnectionModel {
   displayName?: string;
 }
 
-interface ConnectionAndAppSetting<T> {
+export interface ConnectionAndAppSetting<T> {
   connectionKey: string;
   connectionData: T;
   settings: Record<string, string>;
@@ -103,7 +103,11 @@ export interface ConnectionsData {
   agentConnections?: Record<string, AgentConnectionModel>;
 }
 
-type LocalConnectionModel = FunctionsConnectionModel | ServiceProviderConnectionModel | APIManagementConnectionModel | AgentConnectionModel;
+export type LocalConnectionModel =
+  | FunctionsConnectionModel
+  | ServiceProviderConnectionModel
+  | APIManagementConnectionModel
+  | AgentConnectionModel;
 type ReadConnectionsFunc = () => Promise<ConnectionsData>;
 type WriteConnectionFunc = (connectionData: ConnectionAndAppSetting<LocalConnectionModel>) => Promise<void>;
 
@@ -111,6 +115,7 @@ const serviceProviderLocation = 'serviceProviderConnections';
 const functionsLocation = 'functionConnections';
 const apimLocation = 'apiManagementConnections';
 const agentLocation = 'agentConnections';
+export const foundryServiceConnectionRegex = /\/Microsoft\.CognitiveServices\/accounts\/[^/]+\/projects\/[^/]+/;
 
 export interface StandardConnectionServiceOptions {
   apiVersion: string;
@@ -163,6 +168,10 @@ export class StandardConnectionService extends BaseConnectionService implements 
       const { apiVersion, baseUrl, httpClient } = this._options;
 
       let response = null;
+      const connectorIdKeyword = connectorId.split('/').at(-1);
+      if (connectorIdKeyword === 'agent') {
+        return agentloopConnector;
+      }
       if (isHybridLogicApp(baseUrl)) {
         response = await httpClient.post<any, null>({
           uri: `${getHybridAppBaseRelativeUrl(baseUrl.split('hostruntime')[0])}/invoke?api-version=${hybridApiVersion}`,
@@ -172,11 +181,6 @@ export class StandardConnectionService extends BaseConnectionService implements 
           },
         });
       } else {
-        const connectorIdKeyword = connectorId.split('/').at(-1);
-        if (connectorIdKeyword === 'agent') {
-          return agentloopConnector;
-        }
-
         response = await httpClient.get<Connector>({
           uri: `${baseUrl}/operationGroups/${connectorIdKeyword}?api-version=${apiVersion}`,
         });
@@ -572,7 +576,7 @@ export class StandardConnectionService extends BaseConnectionService implements 
         break;
       }
       case ConnectionType.Agent: {
-        const { connectionAndSettings } = convertToAgentConnectionsData(connectionName, connector.id, connectionInfo, parametersMetadata);
+        const { connectionAndSettings } = convertToAgentConnectionsData(connectionName, connectionInfo, parametersMetadata);
         connectionsData = connectionAndSettings;
         connection = convertAgentConnectionDataToConnection(
           connectionsData.connectionKey,
@@ -733,7 +737,6 @@ function convertFunctionsConnectionDataToConnection(connectionKey: string, conne
 
 function convertToAgentConnectionsData(
   connectionKey: string,
-  connectorId: string,
   connectionInfo: ConnectionCreationInfo,
   connectionParameterMetadata: ConnectionParametersMetadata
 ): {
@@ -747,6 +750,10 @@ function convertToAgentConnectionsData(
     connectionParameterMetadata
   );
 
+  const cognitiveServiceAccountId = parameterValues?.['cognitiveServiceAccountId'];
+  const isFoundryAgentServiceConnection =
+    equals(connectionParametersSetValues?.name ?? '', 'ManagedServiceIdentity', true) &&
+    foundryServiceConnectionRegex.test(cognitiveServiceAccountId);
   const connectionsData: ConnectionAndAppSetting<AgentConnectionModel> = {
     connectionKey,
     connectionData: {
@@ -756,8 +763,8 @@ function convertToAgentConnectionsData(
         key: equals(connectionParametersSetValues?.name ?? '', 'ManagedServiceIdentity', true) ? undefined : parameterValues?.['openAIKey'],
       },
       endpoint: parameterValues?.['openAIEndpoint'],
-      resourceId: parameterValues?.['cognitiveServiceAccountId'],
-      type: 'model',
+      resourceId: cognitiveServiceAccountId,
+      type: isFoundryAgentServiceConnection ? 'FoundryAgentService' : 'model',
     },
     settings,
     pathLocation: [agentLocation],

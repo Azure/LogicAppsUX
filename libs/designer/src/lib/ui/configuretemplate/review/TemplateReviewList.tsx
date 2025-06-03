@@ -5,11 +5,14 @@ import { TemplatesSection, type TemplatesSectionItem } from '@microsoft/designer
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../../core/state/templates/store';
 import { useIntl } from 'react-intl';
-import { equals, getResourceNameFromId } from '@microsoft/logic-apps-shared';
+import { equals, getResourceNameFromId, normalizeConnectorId } from '@microsoft/logic-apps-shared';
 import { ConnectorConnectionName } from '../../templates/connections/connector';
 import React, { useMemo } from 'react';
 import { useAllConnectors } from '../../../core/configuretemplate/utils/queries';
 import { WorkflowKind } from '../../../core/state/workflow/workflowInterfaces';
+import { DescriptionWithLink, ErrorBar } from '../common';
+import { mergeStyles } from '@fluentui/react';
+import { formatNameWithIdentifierToDisplay } from '../../../core/configuretemplate/utils/helper';
 
 const SectionDividerItem: TemplatesSectionItem = {
   type: 'divider',
@@ -19,6 +22,11 @@ const SectionDividerItem: TemplatesSectionItem = {
 export const TemplateReviewList = () => {
   const intl = useIntl();
   const intlText = {
+    TabDescription: intl.formatMessage({
+      defaultMessage: `Review all the values you've added to this template. This read-only summary lets you quickly scan your template setup.`,
+      id: 'Cnymq/',
+      description: 'The dscription for review tab',
+    }),
     TemplateDisplayName: intl.formatMessage({
       defaultMessage: 'Template display name',
       id: 'a7d1Dp',
@@ -39,8 +47,29 @@ export const TemplateReviewList = () => {
       id: 'oiME91',
       description: 'The label for the status and plan tab label',
     }),
+    ErrorMessage: intl.formatMessage({
+      defaultMessage: 'Template validation failed. Please check the tabs for more details to fix the errors',
+      id: 'fa8xG1',
+      description: 'The information for the error message',
+    }),
   };
 
+  const hasError = useSelector((state: RootState) => {
+    const { errors, workflows } = state.template;
+    return (
+      errors.general ||
+      errors.connections ||
+      Object.values(errors.parameters).some((parameterErrors) => parameterErrors !== undefined) ||
+      Object.values(errors.manifest ?? {}).some((manifestErrors) => manifestErrors !== undefined) ||
+      Object.values(workflows ?? {}).some(
+        (workflow) =>
+          workflow.errors?.general ||
+          Object.values(workflow.errors?.manifest ?? {}).some((error) => error !== undefined) ||
+          workflow.errors.kind ||
+          workflow.errors.workflow
+      )
+    );
+  });
   const { connectorKinds, stateTypes, resourceStrings: templateResourceStrings } = useTemplatesStrings();
   const resources = { ...templateResourceStrings, ...connectorKinds, ...stateTypes, ...useResourceStrings(), ...intlText };
 
@@ -76,7 +105,9 @@ export const TemplateReviewList = () => {
   };
 
   return (
-    <div className="msla-templates-wizard-tab-content">
+    <div className={mergeStyles('msla-templates-wizard-tab-content', { marginLeft: '-10px' })}>
+      <DescriptionWithLink text={resources.TabDescription} className={mergeStyles({ width: '70%' })} />
+      {hasError ? <ErrorBar errorMessage={resources.ErrorMessage} /> : null}
       <Accordion multiple={true} defaultOpenItems={Object.keys(sectionItems)}>
         {Object.entries(sectionItems).map(([key, { label, value, emptyText }]) => (
           <React.Fragment key={key}>
@@ -85,7 +116,13 @@ export const TemplateReviewList = () => {
                 <Text style={{ fontWeight: 'bold' }}>{label}</Text>
               </AccordionHeader>
               <AccordionPanel>
-                {value?.length ? <TemplatesSection items={value} /> : emptyText ? <Text>{emptyText}</Text> : null}
+                {value?.length ? (
+                  <TemplatesSection items={value} />
+                ) : emptyText ? (
+                  <div style={{ paddingBottom: 10 }}>
+                    <Text>{emptyText}</Text>
+                  </div>
+                ) : null}
               </AccordionPanel>
             </AccordionItem>
             <Divider />
@@ -133,17 +170,13 @@ const useWorkflowSectionItems = (resources: Record<string, string>) => {
   }));
 
   const workflowDatas = Object.values(workflows);
+  const isSingleWorkflow = workflowDatas.length === 1;
   return workflowDatas?.flatMap((workflow, index) => {
     const isLast = index === workflowDatas.length - 1;
     const thisWorkflowSectionItems: TemplatesSectionItem[] = [
       {
         label: resources.WORKFLOW_NAME,
-        value: workflow.workflowName,
-        type: 'text',
-      },
-      {
-        label: resources.WorkflowDisplayName,
-        value: workflow?.manifest?.title,
+        value: workflow.id,
         type: 'text',
       },
       {
@@ -154,11 +187,6 @@ const useWorkflowSectionItems = (resources: Record<string, string>) => {
               equals(kind, WorkflowKind.STATEFUL) ? resources.STATEFUL : equals(kind, WorkflowKind.STATELESS) ? resources.STATELESS : ''
             )
             ?.join(', ') ?? resources.Placeholder,
-        type: 'text',
-      },
-      {
-        label: resources.Summary,
-        value: workflow?.manifest?.summary ?? resources.Placeholder,
         type: 'text',
       },
       {
@@ -183,6 +211,20 @@ const useWorkflowSectionItems = (resources: Record<string, string>) => {
       },
     ];
 
+    if (!isSingleWorkflow) {
+      thisWorkflowSectionItems.splice(1, 0, {
+        label: resources.WorkflowDisplayName,
+        value: workflow?.manifest?.title,
+        type: 'text',
+      });
+
+      thisWorkflowSectionItems.splice(3, 0, {
+        label: resources.Summary,
+        value: workflow?.manifest?.summary ?? resources.Placeholder,
+        type: 'text',
+      });
+    }
+
     if (!isLast) {
       thisWorkflowSectionItems.push(SectionDividerItem);
     }
@@ -192,8 +234,10 @@ const useWorkflowSectionItems = (resources: Record<string, string>) => {
 };
 
 const useConnectionSectionItems = (resources: Record<string, string>) => {
-  const { connections } = useSelector((state: RootState) => ({
+  const { connections, subscriptionId, location } = useSelector((state: RootState) => ({
     connections: state.template.connections,
+    subscriptionId: state.workflow.subscriptionId,
+    location: state.workflow.location,
   }));
 
   const connectionsValues = Object.values(connections);
@@ -203,12 +247,17 @@ const useConnectionSectionItems = (resources: Record<string, string>) => {
       {
         label: resources.ConnectorNameLabel,
         value: connection.connectorId,
-        onRenderItem: () => <ConnectorConnectionName connectorId={connection.connectorId} connectionKey={undefined} />,
+        onRenderItem: () => (
+          <ConnectorConnectionName
+            connectorId={normalizeConnectorId(connection.connectorId, subscriptionId, location)}
+            connectionKey={undefined}
+          />
+        ),
         type: 'custom',
       },
       {
         label: resources.ConnectorTypeLabel,
-        value: resources[connection.kind as string],
+        value: resources[connection.kind?.toLowerCase() as string],
         type: 'text',
       },
     ];
@@ -232,7 +281,7 @@ const useParameterSectionItems = (resources: Record<string, string>) => {
     const thisParameterSectionItems: TemplatesSectionItem[] = [
       {
         label: resources.ParameterName,
-        value: parameter.name ?? resources.Placeholder,
+        value: formatNameWithIdentifierToDisplay(parameter.name),
         type: 'text',
       },
       {
@@ -288,11 +337,17 @@ const useProfileSectionItems = (resources: Record<string, string>) => {
   const selectedConnectors = useMemo(() => {
     return allConnectors?.filter((connector) => templateManifest?.featuredConnectors?.some((conn) => equals(conn.id, connector.id)));
   }, [allConnectors, templateManifest]);
+  const isSingleWorkflow = Object.keys(workflows).length === 1;
 
   const items: TemplatesSectionItem[] = [
     {
       label: resources.TemplateDisplayName,
       value: templateManifest?.title ?? resources.Placeholder,
+      type: 'text',
+    },
+    {
+      label: resources.Summary,
+      value: templateManifest?.summary ?? resources.Placeholder,
       type: 'text',
     },
     {
@@ -307,20 +362,31 @@ const useProfileSectionItems = (resources: Record<string, string>) => {
     },
     {
       label: resources.Category,
-      value: templateManifest?.details?.Category ?? resources.Placeholder,
+      value: templateManifest?.details?.Category ? templateManifest?.details?.Category : resources.Placeholder,
       type: 'text',
     },
     {
       label: resources.FeaturedConnectors,
-      value: selectedConnectors?.map((connector) => connector.displayName).join(', ') ?? resources.Placeholder,
+      value:
+        selectedConnectors && selectedConnectors.length > 0
+          ? selectedConnectors?.map((connector) => connector.displayName).join(', ')
+          : resources.Placeholder,
       type: 'text',
     },
     {
       label: resources.Tags,
-      value: templateManifest?.tags?.join(', ') ?? resources.Placeholder,
+      value: templateManifest?.tags && templateManifest?.tags?.length > 0 ? templateManifest?.tags?.join(', ') : resources.Placeholder,
       type: 'text',
     },
   ];
+
+  if (!isSingleWorkflow) {
+    items.splice(4, 0, {
+      label: resources.Features,
+      value: templateManifest?.description ?? resources.Placeholder,
+      type: 'text',
+    });
+  }
 
   return items;
 };

@@ -4,6 +4,8 @@ import { memo, useEffect, useRef } from 'react';
 import { useIntl } from 'react-intl';
 import { Text, useRestoreFocusTarget } from '@fluentui/react-components';
 import { replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
+import { useCardStyles, getCardClasses } from '../styles';
+import { useTheme } from '@fluentui/react';
 
 interface CollapsedCardProps {
   id: string;
@@ -24,6 +26,9 @@ export const CollapsedCard: React.FC<CollapsedCardProps> = memo(
     const intl = useIntl();
     const focusRef = useRef<HTMLElement | null>(null);
     const restoreFocusTargetAttribute = useRestoreFocusTarget();
+    const theme = useTheme();
+    const styles = useCardStyles();
+    const classes = getCardClasses(styles, theme.isInverted);
 
     useEffect(() => {
       if (setFocus) {
@@ -67,7 +72,7 @@ export const CollapsedCard: React.FC<CollapsedCardProps> = memo(
         id={`msla-collapsed-card-${operationId}`}
         data-automation-id={`msla-collapsed-card-${operationId}`}
         onContextMenu={onContextMenu}
-        className="msla-collapsed-card"
+        className={classes.collapsedCard}
         aria-label={ariaLabelCollapsed}
         tabIndex={nodeIndex}
       >
@@ -81,7 +86,7 @@ export const CollapsedCard: React.FC<CollapsedCardProps> = memo(
               return (
                 <img
                   key={index}
-                  className="msla-collapsed-card__icon"
+                  className={classes.collapsedCardIcon}
                   src={operationVisual.iconUri}
                   aria-label={`${operationVisual.id} operation icon`}
                   alt=""

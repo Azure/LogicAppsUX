@@ -18,18 +18,22 @@ import { useResourceStrings } from '../../resources';
 
 export const useConfigureWorkflowPanelTabs = ({
   onSave,
+  onClose,
 }: {
   onSave?: (isMultiWorkflow: boolean) => void;
+  onClose?: () => void;
 }): TemplateTabProps[] => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
-  const { isWizardUpdating, workflowsInTemplate, workflowState, runValidation, currentStatus } = useSelector((state: RootState) => ({
-    workflowsInTemplate: state.template.workflows,
-    isWizardUpdating: state.tab.isWizardUpdating,
-    workflowState: state.workflow,
-    runValidation: state.tab.runValidation,
-    currentStatus: state.template.status,
-  }));
+  const { isWizardUpdating, workflowsInTemplate, workflowState, runValidation, currentPublishedState } = useSelector(
+    (state: RootState) => ({
+      workflowsInTemplate: state.template.workflows,
+      isWizardUpdating: state.tab.isWizardUpdating,
+      workflowState: state.workflow,
+      runValidation: state.tab.runValidation,
+      currentPublishedState: state.template.status,
+    })
+  );
 
   const hasError = false; // Placeholder for actual error state
   const resources = useResourceStrings();
@@ -78,6 +82,11 @@ export const useConfigureWorkflowPanelTabs = ({
                   workflowSourceId: normalizedWorkflowId,
                 },
               },
+              errors: {
+                general: undefined,
+                workflow: undefined,
+                manifest: undefined,
+              },
             } as Partial<WorkflowTemplateData>);
       }
       return newSelectedWorkflows;
@@ -100,6 +109,7 @@ export const useConfigureWorkflowPanelTabs = ({
         [workflowId]: {
           ...updatedWorkflowData,
           errors: {
+            general: undefined,
             workflow: updatedWorkflowData.id
               ? formattedOtherSelectedIds.includes(updatedWorkflowData.id)
                 ? intl.formatMessage({
@@ -127,8 +137,6 @@ export const useConfigureWorkflowPanelTabs = ({
   const onSaveCompleted = useCallback(() => onSave?.(Object.keys(selectedWorkflowsList()).length > 1), [onSave, selectedWorkflowsList]);
 
   const onSaveChanges = (newPublishState: Template.TemplateEnvironment) => {
-    // TODO: use newPublishState for saving logic
-    console.log('newPublishState is : ', newPublishState);
     // 1. Update the workflowId with user-input id (For newly selected workflow)
     setSelectedWorkflowsList((prevSelectedWorkflows) => {
       const newSelectedWorkflows: Record<string, Partial<WorkflowTemplateData>> = prevSelectedWorkflows;
@@ -155,9 +163,9 @@ export const useConfigureWorkflowPanelTabs = ({
 
     // TODO: change below logic to API call then modify state
     if (hasWorkflowListChanged) {
-      dispatch(initializeAndSaveWorkflowsData({ workflows: selectedWorkflowsList(), onSaveCompleted }));
+      dispatch(initializeAndSaveWorkflowsData({ workflows: selectedWorkflowsList(), publishState: newPublishState, onSaveCompleted }));
     } else {
-      dispatch(saveWorkflowsData({ workflows: selectedWorkflowsList(), onSaveCompleted }));
+      dispatch(saveWorkflowsData({ workflows: selectedWorkflowsList(), publishState: newPublishState, onSaveCompleted }));
     }
   };
 
@@ -174,6 +182,7 @@ export const useConfigureWorkflowPanelTabs = ({
       selectedWorkflowsList: selectedWorkflowsList(),
       onWorkflowsSelected,
       onNextButtonClick: onCustomizeWorkflowsTabNavigation,
+      onClose,
       isSaving: isWizardUpdating,
       isPrimaryButtonDisabled: isNoWorkflowsSelected,
     }),
@@ -185,8 +194,9 @@ export const useConfigureWorkflowPanelTabs = ({
       isSaving: isWizardUpdating,
       disabled: isNoWorkflowsSelected,
       isPrimaryButtonDisabled: hasInvalidIdOrTitle || duplicateIds.length > 0,
-      status: currentStatus,
+      status: currentPublishedState,
       onSave: onSaveChanges,
+      onClose,
       duplicateIds,
     }),
   ];

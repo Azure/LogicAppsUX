@@ -28,6 +28,7 @@ export interface ConnectionParameterProps {
   identity?: ManagedIdentity;
   setKeyValue?: (key: string, value: any) => void;
   parameterSet?: ConnectionParameterSet;
+  isAgentServiceConnection?: boolean;
 }
 
 export const UniversalConnectionParameter = (props: ConnectionParameterProps) => {

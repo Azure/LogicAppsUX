@@ -78,6 +78,7 @@ import {
   getPropertyValue,
   getRecordEntry,
   guid,
+  isNullOrUndefined,
   isRecordNotEmpty,
   SUBGRAPH_TYPES,
 } from '@microsoft/logic-apps-shared';
@@ -88,8 +89,10 @@ import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import { ConnectionInline } from './connectionInline';
 import { ConnectionsSubMenu } from './connectionsSubMenu';
-import { isAgentConnector } from '../../../../../common/utilities/Utils';
 import { useCognitiveServiceAccountDeploymentsForNode } from '../../../connectionsPanel/createConnection/custom/useCognitiveService';
+import { isAgentConnectorAndAgentModel, isAgentConnectorAndAgentServiceModel, isAgentConnectorAndDeploymentId } from './helpers';
+import { useShouldEnableFoundryServiceConnection } from './hooks';
+import { removeNodeConnectionData } from '../../../../../core/state/connection/connectionSlice';
 
 // TODO: Add a readonly per settings section/group
 export interface ParametersTabProps extends PanelTabProps {
@@ -239,6 +242,7 @@ const ParameterSection = ({
   const isTrigger = useSelector((state: RootState) => isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata));
   const operationInfo = useOperationInfo(nodeId);
   const dependencies = useDependencies(nodeId);
+  const isFoundryServiceConnectionEnabled = useShouldEnableFoundryServiceConnection();
 
   // Specific for agentic scenarios
   const { data: deploymentsForCognitiveServiceAccount } = useCognitiveServiceAccountDeploymentsForNode(nodeId, operationInfo?.connectorId);
@@ -268,6 +272,10 @@ const ParameterSection = ({
     () => rootState.operations.inputParameters[nodeId] ?? { parameterGroups: {} },
     [nodeId, rootState.operations.inputParameters]
   );
+
+  const isAgentServiceConnection = useMemo(() => {
+    return isAgentConnectorAndAgentServiceModel(operationInfo.connectorId, group.id, nodeInputs.parameterGroups);
+  }, [group.id, nodeInputs.parameterGroups, operationInfo.connectorId]);
 
   const onValueChange = useCallback(
     (id: string, newState: ChangeState, skipStateSave?: boolean) => {
@@ -342,6 +350,14 @@ const ParameterSection = ({
       if (parameter && isCustomCodeParameter(parameter)) {
         const { fileData, fileExtension, fileName } = viewModel.customCodeData;
         dispatch(addOrUpdateCustomCode({ nodeId, fileData, fileExtension, fileName }));
+      }
+
+      if (isAgentConnectorAndAgentModel(operationInfo.connectorId ?? '', parameter?.parameterKey ?? '')) {
+        const newValue = value.length > 0 ? value[0].value : undefined;
+        const oldValue = parameter?.value && parameter.value.length > 0 ? parameter.value[0].value : undefined;
+        if (!isNullOrUndefined(newValue) && !isNullOrUndefined(oldValue) && newValue !== oldValue) {
+          dispatch(removeNodeConnectionData({ nodeId }));
+        }
       }
 
       if (isAgentConnectorAndDeploymentId(operationInfo.connectorId ?? '', parameter?.parameterKey ?? '')) {
@@ -673,6 +689,9 @@ const ParameterSection = ({
 
   const settings: Settings[] = group?.parameters
     .filter((x) => !x.hideInUI && shouldUseParameterInGroup(x, group.parameters))
+    .filter((param) => {
+      return param.parameterName !== 'agentModelType' || isFoundryServiceConnectionEnabled;
+    })
     .map((param) => {
       const { id, label, value, required, showTokens, placeholder, editorViewModel, dynamicData, conditionalVisibility, validationErrors } =
         param;
@@ -721,6 +740,7 @@ const ParameterSection = ({
           pickerCallbacks: getPickerCallbacks(param),
           tokenpickerButtonProps: {
             location: panelLocation === PanelLocation.Left ? TokenPickerButtonLocation.Right : TokenPickerButtonLocation.Left,
+            hideButtonOptions: { hideDynamicContent: isAgentServiceConnection, hideExpression: isAgentServiceConnection },
           },
           agentParameterButtonProps: { showAgentParameterButton },
           hostOptions: {
@@ -781,10 +801,6 @@ const getSubMenu = (parameter: ParameterInfo) => {
     return <ConnectionsSubMenu />;
   }
   return null;
-};
-
-const isAgentConnectorAndDeploymentId = (id: string, key: string): boolean => {
-  return isAgentConnector(id) && equals(key, 'inputs.$.deploymentId', true);
 };
 
 export const getEditorAndOptions = (

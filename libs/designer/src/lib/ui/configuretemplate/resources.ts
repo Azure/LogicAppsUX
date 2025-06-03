@@ -30,8 +30,8 @@ export const useResourceStrings = () => {
       description: 'The text for the consumption sku',
     }),
     DevelopmentEnvironment: intl.formatMessage({
-      defaultMessage: 'Development',
-      id: 'DmZRZn',
+      defaultMessage: 'Unpublished',
+      id: 'tT0uiq',
       description: 'The text for the development environment',
     }),
     TestingEnvironment: intl.formatMessage({
@@ -134,6 +134,16 @@ export const useResourceStrings = () => {
       id: 'JBa1qe',
       description: 'The label for the workflow display name',
     }),
+    LastModified: intl.formatMessage({
+      defaultMessage: 'Last modified',
+      id: 'lx0teD',
+      description: 'Last modified label',
+    }),
+    CreatedDate: intl.formatMessage({
+      defaultMessage: 'Created date',
+      id: 'iuh4i3',
+      description: 'Created date label',
+    }),
     State: intl.formatMessage({
       defaultMessage: 'State',
       id: 'IG4XXf',
@@ -214,15 +224,33 @@ export const useResourceStrings = () => {
       id: 'an1Z0T',
       description: 'Label for the workflow images section',
     }),
+    WorkflowImagesDescription: intl.formatMessage({
+      defaultMessage:
+        'Provide your workflow images in both Azure light and dark themes. Open the workflow in the designer, take screenshots in each theme, and save the images. Then upload them to Azure Blob Storage and share the shared access signature (SAS) link.',
+      id: 'B2TJcx',
+      description: 'Description for the workflow images section',
+    }),
     LightModeImage: intl.formatMessage({
       defaultMessage: 'Light mode image',
       id: '5LLxEp',
       description: 'Light mode image label',
     }),
+    LightModeImageDescription: intl.formatMessage({
+      defaultMessage:
+        'Provide your workflow image in the Azure light theme. Upload the image to Azure Blob Storage and share the shared access signature (SAS) link.',
+      id: 'Za33CQ',
+      description: 'Light mode image description',
+    }),
     DarkModeImage: intl.formatMessage({
       defaultMessage: 'Dark mode image',
       id: 'CdxaGY',
       description: 'Dark mode image label',
+    }),
+    DarkModeImageDescription: intl.formatMessage({
+      defaultMessage:
+        'Provide your workflow image in the Azure dark theme. Upload the image to Azure Blob Storage and share the shared access signature (SAS) link.',
+      id: 'NziQUu',
+      description: 'Dark mode image description',
     }),
     InAppKind: intl.formatMessage({
       defaultMessage: 'In-app',
@@ -295,11 +323,16 @@ export const useResourceStrings = () => {
       id: 'oChTO9',
       description: 'Accessibility label for the select workflow row checkbox',
     }),
-    // Tab labels
+    // Tabs
     WorkflowsTabLabel: intl.formatMessage({
       defaultMessage: 'Workflows',
       id: 'R7VvvJ',
       description: 'The tab label for the monitoring workflows tab on the configure template wizard',
+    }),
+    WorkflowsTabDescription: intl.formatMessage({
+      defaultMessage: `Choose one or more workflows from existing apps to build this template. Your workflows won't affect the original workflows. Save your work anytime and pick up where you left off without having to publish. To publish your template, all fields must be completed.`,
+      id: 'OwXjze',
+      description: 'The description for the workflows tab on the configure template wizard',
     }),
     ConnectionsTabLabel: intl.formatMessage({
       defaultMessage: 'Connections',
@@ -325,6 +358,11 @@ export const useResourceStrings = () => {
       defaultMessage: 'Summary',
       id: 'cCmFCI',
       description: 'The tab label for the summary tab on the configure template wizard',
+    }),
+    LearnMore: intl.formatMessage({
+      defaultMessage: 'Learn more',
+      id: '/udwYv',
+      description: 'The text for the learn more link',
     }),
   };
 };

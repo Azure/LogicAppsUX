@@ -5,6 +5,8 @@ import { selectWizardTab } from '../../../core/state/templates/tabSlice';
 import { TemplateReviewList } from '../review/TemplateReviewList';
 import type { TemplateWizardTabProps } from './model';
 import { getSaveMenuButtons } from '../../../core/configuretemplate/utils/helper';
+import { ArrowDownload20Regular } from '@fluentui/react-icons';
+import { mergeStyles } from '@fluentui/react';
 
 export const summaryTab = (
   resources: Record<string, string>,
@@ -27,26 +29,25 @@ export const summaryTab = (
   footerContent: {
     buttonContents: [
       {
-        type: 'button',
+        type: 'navigation',
         text: resources.PreviousButtonText,
         onClick: () => {
           dispatch(selectWizardTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.PROFILE));
         },
       },
       {
-        type: 'button',
+        type: 'action',
         text: resources.SaveButtonText,
-        appreance: 'primary',
+        appearance: 'primary',
         onClick: () => {},
         menuItems: getSaveMenuButtons(resources, status ?? 'Development', (newStatus) => onSave?.(newStatus)),
       },
       {
-        type: 'divider',
-      },
-      {
-        type: 'button',
+        type: 'action',
         text: resources.DownloadTemplateButton,
-        appreance: 'subtle',
+        appearance: 'transparent',
+        className: mergeStyles({ marginLeft: '20px !important', color: '#0088f7 !important' }),
+        icon: <ArrowDownload20Regular />,
         onClick: onDownloadTemplate,
       },
     ],

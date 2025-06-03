@@ -25,6 +25,8 @@ import type { PanelNodeData } from './types';
 import { equals, guid, SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
 import constants from '../constants';
 import { TeachingPopup } from '../teachingPopup';
+import { usePanelStyles, getPanelClasses } from './styles';
+import { useTheme } from '@fluentui/react';
 
 export type PanelContainerProps = {
   noNodeSelected: boolean;
@@ -84,6 +86,9 @@ export const PanelContainer = ({
   ...rest
 }: PanelContainerProps) => {
   const intl = useIntl();
+  const theme = useTheme();
+  const styles = usePanelStyles();
+  const classes = getPanelClasses(styles, theme.isInverted);
   const canResize = !!(isResizeable && setOverrideWidth);
   const isEmptyPanel = noNodeSelected && panelScope === PanelScope.CardLevel;
   const isRight = panelLocation === PanelLocation.Right;
@@ -210,11 +215,15 @@ export const PanelContainer = ({
       const { errorMessage, isError, isLoading, nodeId, onSelectTab, selectedTab, tabs } = contentsNode;
       return (
         <div
-          className={mergeClasses('msla-panel-layout', `msla-panel-border-${type}`, isAlternateSelectedNode && 'msla-panel-layout-pinned')}
+          className={mergeClasses(
+            classes.panelLayout,
+            type === 'pinned' && classes.panelBorderPinned,
+            isAlternateSelectedNode && classes.panelBorderPinned
+          )}
           id={isAlternateSelectedNode ? alternateSelectedNodeContainerId : undefined}
         >
           {renderHeader(contentsNode)}
-          <div className={`${isError ? 'msla-panel-contents--error' : 'msla-panel-contents'}`}>
+          <div className={isError ? classes.panelContentsError : classes.panelContents}>
             {isLoading ? (
               <div className="msla-loading-container">
                 <Spinner size={'large'} />
@@ -246,10 +255,10 @@ export const PanelContainer = ({
   return (
     <Drawer
       aria-label={panelLabel}
-      className="msla-panel-container"
+      className={classes.panelContainer}
       modalType="non-modal"
       mountNode={{
-        className: 'msla-panel-host-container',
+        className: classes.panelHostContainer,
         element: mountNode,
       }}
       open={true}
@@ -266,7 +275,17 @@ export const PanelContainer = ({
         <Button
           appearance="subtle"
           aria-label={panelCollapseTitle}
-          className={mergeClasses('collapse-toggle', isRight ? 'right' : 'left', isCollapsed && 'collapsed', 'empty')}
+          className={mergeClasses(
+            classes.collapseToggle,
+            isRight
+              ? isCollapsed
+                ? classes.collapseToggleRightCollapsed
+                : classes.collapseToggleRight
+              : isCollapsed
+                ? classes.collapseToggleLeftCollapsed
+                : classes.collapseToggleLeft,
+            classes.collapseToggleLeftEmpty
+          )}
           icon={<ChevronDoubleRightFilled />}
           onClick={toggleCollapse}
           data-automation-id="msla-panel-header-collapse-nav"
@@ -276,9 +295,10 @@ export const PanelContainer = ({
         <>
           <div
             className={mergeClasses(
-              'msla-panel-container-nested',
-              `msla-panel-container-nested-${panelLocation.toLowerCase()}`,
-              !isEmptyPanel && alternateSelectedNode && 'msla-panel-container-nested-dual'
+              classes.panelContainerNested,
+              panelLocation === PanelLocation.Left && classes.panelContainerNestedLeft,
+              panelLocation === PanelLocation.Right && classes.panelContainerNestedRight,
+              !isEmptyPanel && alternateSelectedNode && classes.panelContainerNestedDual
             )}
           >
             {isEmptyPanel ? (

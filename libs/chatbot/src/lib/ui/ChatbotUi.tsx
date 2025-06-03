@@ -1,5 +1,5 @@
-import { css, type ITextField, Panel, PanelType, useTheme } from '@fluentui/react';
-import { MessageBar, MessageBarBody } from '@fluentui/react-components';
+import { type ITextField, Panel, PanelType, useTheme } from '@fluentui/react';
+import { MessageBar, MessageBarBody, mergeClasses } from '@fluentui/react-components';
 import { ShieldCheckmarkRegular } from '@fluentui/react-icons';
 import {
   ChatInput,
@@ -12,6 +12,7 @@ import {
 } from '@microsoft/designer-ui';
 import { useEffect, useMemo, useRef } from 'react';
 import { useIntl } from 'react-intl';
+import { useChatbotStyles, useChatbotDarkStyles } from './styles';
 
 export const defaultChatbotPanelWidth = '360px';
 
@@ -76,6 +77,10 @@ export const ChatbotUI = (props: ChatbotUIProps) => {
   const { isInverted } = useTheme();
   const textInputRef = useRef<ITextField>(null);
 
+  // Styles
+  const styles = useChatbotStyles();
+  const darkStyles = useChatbotDarkStyles();
+
   const inputIconButtonStyles = {
     enabled: {
       root: {
@@ -135,9 +140,9 @@ export const ChatbotUI = (props: ChatbotUIProps) => {
   }, [intl]);
 
   return (
-    <div className={'msla-chatbot-container'}>
+    <div className={mergeClasses(styles.container, isInverted && darkStyles.container)}>
       {header}
-      <div className={css('msla-chatbot-content')}>
+      <div className={mergeClasses(styles.content, isInverted && darkStyles.content)}>
         {answerGenerationInProgress && (
           <ProgressCardWithStopButton onStopButtonClick={abort} progressState={progressState} stopButtonLabel={progressStop} />
         )}
@@ -146,9 +151,9 @@ export const ChatbotUI = (props: ChatbotUIProps) => {
           <ConversationMessage key={`${index}-${item.id}`} item={item} />
         ))}
       </div>
-      <div className={'msla-chatbot-footer'}>
-        <div className={'msla-protected-footer'}>
-          <ShieldCheckmarkRegular className="shield-checkmark-regular" /> {protectedMessage}
+      <div className={styles.footer}>
+        <div className={styles.protectedFooter}>
+          <ShieldCheckmarkRegular className={styles.shieldCheckmarkRegular} /> {protectedMessage}
         </div>
         <ChatSuggestionGroup>
           {canSave && <ChatSuggestion text={saveString ?? intlText.saveButton} iconName={'Save'} onClick={() => save?.()} />}
