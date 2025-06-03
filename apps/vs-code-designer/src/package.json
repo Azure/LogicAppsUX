@@ -1120,7 +1120,5 @@
   "icon": "assets/logicapp.png",
   "dependencies": {
     "tslib": "^2.0.0"
-  },
-  "devDependencies": {
   }
 }
