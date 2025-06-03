@@ -1,10 +1,11 @@
 import Workflow from '../images/Workflow.svg';
-import { FontSizes, Link } from '@fluentui/react';
-import { Tooltip } from '@fluentui/react-components';
+import { FontSizes, Link, useTheme } from '@fluentui/react';
+import { Tooltip, mergeClasses } from '@fluentui/react-components';
 import { ShieldCheckmarkRegular } from '@fluentui/react-icons';
 import { IconButton } from '@fluentui/react/lib/Button';
 import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
+import { useChatbotStyles, useChatbotDarkStyles } from './styles';
 
 interface CopilotPanelHeaderProps {
   closeCopilot: () => void;
@@ -12,6 +13,12 @@ interface CopilotPanelHeaderProps {
 
 export const CopilotPanelHeader = ({ closeCopilot }: CopilotPanelHeaderProps): JSX.Element => {
   const intl = useIntl();
+  const { isInverted } = useTheme();
+
+  // Styles
+  const styles = useChatbotStyles();
+  const darkStyles = useChatbotDarkStyles();
+
   const headerTitle = intl.formatMessage({
     defaultMessage: 'Workflow assistant',
     id: '2Gh+Gd',
@@ -39,20 +46,20 @@ export const CopilotPanelHeader = ({ closeCopilot }: CopilotPanelHeaderProps): J
   });
 
   return (
-    <div className={'msla-chatbot-header'}>
-      <div className={'msla-chatbot-header-icon'}>
+    <div className={styles.header}>
+      <div className={styles.headerIcon}>
         <img src={Workflow} alt="Logic Apps" />
       </div>
-      <div className={'msla-chatbot-header-title-container'}>
-        <div className={'msla-chatbot-header-title'}>{headerTitle}</div>
-        <div className={'msla-chatbot-header-subtitle'}>{subtitleText}</div>
+      <div className={styles.headerTitleContainer}>
+        <div className={styles.headerTitle}>{headerTitle}</div>
+        <div className={mergeClasses(styles.headerSubtitle, isInverted && darkStyles.headerSubtitle)}>{subtitleText}</div>
       </div>
       <div>
         <Tooltip content={protectedMessage} relationship="label" positioning="below" withArrow>
-          <div className={'msla-chatbot-header-mode-protected-pill'}>
-            <ShieldCheckmarkRegular className="shield-checkmark-regular" />
+          <div className={styles.headerModeProtectedPill}>
+            <ShieldCheckmarkRegular className={styles.shieldCheckmarkRegular} />
             <Link
-              className="msla-protectedmessage-link"
+              className={styles.protectedMessageLink}
               onClick={() => {
                 window.open('https://aka.ms/azurecopilot/privacystatement', '_blank');
                 LoggerService().log({
@@ -69,7 +76,7 @@ export const CopilotPanelHeader = ({ closeCopilot }: CopilotPanelHeaderProps): J
         </Tooltip>
       </div>
       <IconButton
-        className={'msla-chatbot-collapse-button'}
+        className={styles.collapseButton}
         title={closeButtonTitle}
         styles={{ icon: { fontSize: FontSizes.small } }}
         iconProps={{ iconName: 'Clear' }}
