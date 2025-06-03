@@ -191,6 +191,7 @@ async function updateBuildFile(context: IActionContext, target: vscode.Uri, dotn
     xmlBuildFile = addNugetPackagesToBuildFileByName(xmlBuildFile, CodefulSDKs.DurableTask, CodefulSdkVersions.DurableTask);
     xmlBuildFile = addNugetPackagesToBuildFileByName(xmlBuildFile, CodefulSDKs.WorkflowsWebJobs, CodefulSdkVersions.WorkflowsWebJobs);
     xmlBuildFile = addNugetPackagesToBuildFileByName(xmlBuildFile, CodefulSDKs.WorkflowsSDK, CodefulSdkVersions.WorkflowsSdk);
+    xmlBuildFile['Project']['PropertyGroup']['TargetFramework'] = dotnetVersion;
   }
   xmlBuildFile = suppressJavaScriptBuildWarnings(xmlBuildFile);
   xmlBuildFile = allowLocalSettingsToPublishDirectory(context, xmlBuildFile);
@@ -215,8 +216,6 @@ async function updateBuildFile(context: IActionContext, target: vscode.Uri, dotn
   if (projectArtifacts['lib']) {
     xmlBuildFile = addLibToPublishPath(xmlBuildFile);
   }
-
-  xmlBuildFile['Project']['PropertyGroup']['TargetFramework'] = dotnetVersion;
 
   await writeBuildFileToDisk(context, xmlBuildFile, target.fsPath);
 }

@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { DotnetVersion, localSettingsFileName } from '../../../constants';
+import { DotnetVersion, FunctionsSdkVersion, localSettingsFileName } from '../../../constants';
 import { localize } from '../../../localize';
 import { getProjFiles } from '../dotnet/dotnet';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -140,10 +140,10 @@ export function updateFunctionsSDKVersion(xmlBuildFile: Record<string, any>, dot
         dotnetVersion // keeping logic if we add more .NET versions in the future
       ) {
         case DotnetVersion.net8:
-          packageVersion = '4.5.0';
+          packageVersion = FunctionsSdkVersion;
           break;
         default:
-          packageVersion = '4.5.0'; // danielle confirm this is the correct version for .NET 8
+          packageVersion = FunctionsSdkVersion; // danielle confirm this is the correct version for .NET 8
       }
       item['PackageReference']['$']['Version'] = packageVersion;
       break;

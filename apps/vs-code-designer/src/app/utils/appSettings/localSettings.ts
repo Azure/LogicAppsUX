@@ -185,13 +185,3 @@ export const getLocalSettingsSchema = (isDesignTime: boolean, projectPath?: stri
     },
   };
 };
-
-export async function removeAppKindFromLocalSettings(logicAppPath: string, context: IActionContext): Promise<void> {
-  const localSettingsPath: string = path.join(logicAppPath, localSettingsFileName);
-  const settings: ILocalSettingsJson = await getLocalSettingsJson(context, localSettingsPath);
-
-  if (settings.Values && settings.Values[appKindSetting]) {
-    delete settings.Values[appKindSetting];
-    await writeFormattedJson(localSettingsPath, settings);
-  }
-}

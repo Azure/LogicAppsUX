@@ -8,7 +8,7 @@ import {
   suppressJavaScriptBuildWarnings,
   updateFunctionsSDKVersion,
 } from '../updateBuildFile';
-import { DotnetVersion, localSettingsFileName } from '../../../../constants';
+import { DotnetVersion, FunctionsSdkVersion, localSettingsFileName } from '../../../../constants';
 import path from 'path';
 
 describe('utils/codeless/updateBuildFile', () => {
@@ -74,7 +74,7 @@ describe('utils/codeless/updateBuildFile', () => {
   });
 
   describe('updateFunctionsSDKVersion', () => {
-    it('Should update the package version to 4.1.3 for .NET 6', () => {
+    it('Should update the package version to 4.5.0 for .NET 8', () => {
       const xmlBuildFile = {
         Project: {
           ItemGroup: [
@@ -82,7 +82,7 @@ describe('utils/codeless/updateBuildFile', () => {
               PackageReference: {
                 $: {
                   Include: 'Microsoft.NET.Sdk.Functions',
-                  Version: '3.0.13',
+                  Version: FunctionsSdkVersion,
                 },
               },
             },
@@ -90,35 +90,11 @@ describe('utils/codeless/updateBuildFile', () => {
         },
       };
 
-      const updatedXmlBuildFile = updateFunctionsSDKVersion(xmlBuildFile, DotnetVersion.net6);
+      const updatedXmlBuildFile = updateFunctionsSDKVersion(xmlBuildFile, DotnetVersion.net8);
 
       expect(updatedXmlBuildFile.Project.ItemGroup[0].PackageReference.$).toMatchObject({
         Include: 'Microsoft.NET.Sdk.Functions',
-        Version: '4.1.3',
-      });
-    });
-
-    it('Should update the package version to 3.0.13 for .NET 3', () => {
-      const xmlBuildFile = {
-        Project: {
-          ItemGroup: [
-            {
-              PackageReference: {
-                $: {
-                  Include: 'Microsoft.NET.Sdk.Functions',
-                  Version: '4.1.3',
-                },
-              },
-            },
-          ],
-        },
-      };
-
-      const updatedXmlBuildFile = updateFunctionsSDKVersion(xmlBuildFile, DotnetVersion.net3);
-
-      expect(updatedXmlBuildFile.Project.ItemGroup[0].PackageReference.$).toMatchObject({
-        Include: 'Microsoft.NET.Sdk.Functions',
-        Version: '3.0.13',
+        Version: '4.5.0',
       });
     });
   });

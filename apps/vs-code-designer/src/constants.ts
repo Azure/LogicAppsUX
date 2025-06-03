@@ -336,6 +336,8 @@ export const CodefulSdkVersions = {
   [CodefulSDKs.WorkflowsSDK]: codefulSdkVersion,
 };
 
+export const FunctionsSdkVersion = '4.5.0';
+
 export const dotnetExtensionId = 'ms-dotnettools.csharp';
 
 // Packages Manager

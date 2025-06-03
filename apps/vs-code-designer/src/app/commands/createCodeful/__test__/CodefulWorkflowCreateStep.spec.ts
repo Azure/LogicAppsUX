@@ -23,7 +23,6 @@ describe('CodefulWorkflowCreateStep', async () => {
 
       vi.mock('../../../utils/appSettings/localSettings', () => ({
         setLocalAppSetting: vi.fn().mockReturnValue(Promise.resolve()),
-        removeAppKindFromLocalSettings: vi.fn(),
       }));
 
       testCodefulWorkflowCreateStep.updateAppSettings(mockContext as IFunctionWizardContext);
