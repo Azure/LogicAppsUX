@@ -9,6 +9,37 @@ import { convertToWorkspace } from '../../createNewCodeProject/CodeProjectBase/C
 import { getWorkspaceFolder, isMultiRootWorkspace } from '../../../utils/workspace';
 import { isLogicAppProject, tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
 import { AzureWizard } from '@microsoft/vscode-azext-utils';
+import { COMMON_ERRORS } from '../../../../constants';
+
+vi.mock('@microsoft/vscode-azext-utils', () => ({
+  AzureWizardExecuteStep: vi.fn().mockImplementation(() => {
+    return {};
+  }),
+  AzureWizardPromptStep: vi.fn().mockImplementation(() => {
+    return {};
+  }),
+  AzureWizard: vi.fn().mockImplementation(() => ({
+    prompt: vi.fn(),
+    execute: vi.fn(),
+  })),
+  nonNullProp: vi.fn(),
+  nonNullValue: vi.fn(),
+  callWithTelemetryAndErrorHandling: (_key: string, callback: Function) => {
+    // Simply invoke the callback with a fake telemetry context.
+    return callback({ telemetry: { properties: {} } });
+  },
+  parseError: vi.fn(() => {
+    return { message: 'error' };
+  }),
+  UserCancelledError: class UserCancelledError extends Error {
+    constructor() {
+      super(COMMON_ERRORS.OPERATION_CANCELLED);
+    }
+  },
+  DialogResponses: vi.fn(),
+  AzExtTreeItem: class AzExtTreeItem {},
+  AzExtParentTreeItem: class AzExtParentTreeItem {},
+}));
 
 vi.mock('../../../../localize', () => ({
   localize: vi.fn((key: string, message: string, ...args: string[]) => message.replace(/{(\d+)}/g, (_match, index) => args[index] || '')),
