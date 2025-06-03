@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { GoToMockWorkflow } from './utils/GoToWorkflow';
-//TODO: TEST INCLUDES CSS RELIANCE, REWORK TO USE OTHER DATA INSTEAD
-test.describe.skip(
+
+test.describe(
   'OperationPanel Tests',
   {
     tag: '@mock',
