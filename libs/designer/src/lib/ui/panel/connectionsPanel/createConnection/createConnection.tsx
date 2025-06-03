@@ -24,6 +24,7 @@ import {
   equals,
   isTenantServiceEnabled,
   isEmptyString,
+  customLengthGuid,
 } from '@microsoft/logic-apps-shared';
 import type {
   GatewayServiceConfig,
@@ -86,6 +87,7 @@ export interface CreateConnectionProps {
   gatewayServiceConfig?: Partial<GatewayServiceConfig>;
   checkOAuthCallback: (parameters: Record<string, ConnectionParameter>) => boolean;
   resourceSelectorProps?: AzureResourcePickerProps;
+  isAgentServiceConnection?: boolean;
 }
 
 export const CreateConnection = (props: CreateConnectionProps) => {
@@ -111,6 +113,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     availableGateways,
     gatewayServiceConfig,
     resourceSelectorProps,
+    isAgentServiceConnection,
   } = props;
 
   const intl = useIntl();
@@ -138,16 +141,20 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   );
 
   const isHiddenAuthKey = useCallback((key: string) => ConnectionService().getAuthSetHideKeys?.()?.includes(key) ?? false, []);
-
   const connectionParameterSets: ConnectionParameterSets | undefined = useMemo(() => {
     if (!_connectionParameterSets) {
       return undefined;
     }
+
+    const filteredValues = _connectionParameterSets.values
+      .filter((set) => !isHiddenAuthKey(set.name))
+      .filter((set) => !isAgentServiceConnection || set.name === 'ManagedServiceIdentity');
+
     return {
       ..._connectionParameterSets,
-      values: _connectionParameterSets.values.filter((set) => !isHiddenAuthKey(set.name)),
+      values: filteredValues,
     };
-  }, [_connectionParameterSets, isHiddenAuthKey]);
+  }, [_connectionParameterSets, isAgentServiceConnection, isHiddenAuthKey]);
 
   const singleAuthParams = useMemo(
     () => ({
@@ -257,7 +264,11 @@ export const CreateConnection = (props: CreateConnectionProps) => {
 
   // Parameters record, under a layer of singular capability, if it has none or more than one it's under "general"
   const parametersByCapability = useMemo(() => {
-    const output: { [_: string]: { [_: string]: ConnectionParameter | ConnectionParameterSetParameter } } = {};
+    const output: {
+      [_: string]: {
+        [_: string]: ConnectionParameter | ConnectionParameterSetParameter;
+      };
+    } = {};
     Object.entries(parameters ?? {}).forEach(([key, parameter]) => {
       const capability =
         (parameter.uiDefinition?.constraints?.capability?.length ?? 0) === 1
@@ -325,7 +336,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     [isUsingOAuth, isMultiAuth, capabilityEnabledParameters, legacyManagedIdentitySelected]
   );
 
-  const [connectionDisplayName, setConnectionDisplayName] = useState<string>('');
+  const [connectionDisplayName, setConnectionDisplayName] = useState<string>(`new_conn_${customLengthGuid(5)}`.toLowerCase());
   const validParams = useMemo(() => {
     if (showNameInput && !connectionDisplayName) {
       return false;
@@ -541,7 +552,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
       parameterKey: key,
       parameter,
       value: parameterValues[key],
-      setValue: (val: any) => setParameterValues({ ...parameterValues, [key]: val }),
+      setValue: (val: any) => setParameterValues((values) => ({ ...values, [key]: val })),
       isSubscriptionDropdownDisabled: gatewayServiceConfig?.disableSubscriptionLookup,
       isLoading,
       selectedSubscriptionId,
@@ -549,6 +560,9 @@ export const CreateConnection = (props: CreateConnectionProps) => {
       availableGateways,
       availableSubscriptions,
       identity,
+      parameterSet: connectionParameterSets?.values[selectedParamSetIndex],
+      setKeyValue: (customKey: string, val: any) => setParameterValues((values) => ({ ...values, [customKey]: val })),
+      isAgentServiceConnection: isAgentServiceConnection,
     };
 
     const customParameterOptions = ConnectionParameterEditorService()?.getConnectionParameterEditor({
@@ -711,7 +725,10 @@ export const CreateConnection = (props: CreateConnectionProps) => {
               isLoading={isLoading}
               value={parameterValues[SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_TENANT_ID]}
               setValue={(val: string) =>
-                setParameterValues({ ...parameterValues, [SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_TENANT_ID]: val })
+                setParameterValues({
+                  ...parameterValues,
+                  [SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_TENANT_ID]: val,
+                })
               }
             />
           )}

@@ -1,4 +1,4 @@
-import { isBuiltInConnector, isCustomConnector, isPremiumConnector } from '../connectors';
+import { isBuiltInConnector, isCustomConnector } from '../connectors';
 import Constants from '../constants';
 import type { Connector, OperationApi } from '@microsoft/logic-apps-shared';
 import { equals, getIntl } from '@microsoft/logic-apps-shared';
@@ -411,8 +411,6 @@ export const getConnectorCategoryString = (connector: Connector | OperationApi |
     connectorCategory = allStrings['inapp'];
   } else if (isCustomConnector(connector)) {
     connectorCategory = allStrings['custom'];
-  } else if (isPremiumConnector(connector)) {
-    connectorCategory = allStrings['premium'];
   } else {
     connectorCategory = allStrings['shared'];
   }

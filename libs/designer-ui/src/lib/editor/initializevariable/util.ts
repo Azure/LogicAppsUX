@@ -6,56 +6,131 @@ import {
   isTemplateExpression,
   LogEntryLevel,
   LoggerService,
-  wrapStringifiedTokenSegments,
+  TokenType,
+  wrapTokenValue,
 } from '@microsoft/logic-apps-shared';
 import type { InitializeVariableProps } from '.';
-import { createEmptyLiteralValueSegment, createLiteralValueSegment } from '../base/utils/helper';
+import { createEmptyLiteralValueSegment, createLiteralValueSegment, isTokenValueSegment } from '../base/utils/helper';
 import { convertSegmentsToString, isEmptySegments } from '../base/utils/parsesegments';
-import type { ValueSegment } from '../models/parameter';
+import { ValueSegmentType, type ValueSegment } from '../models/parameter';
 import { convertStringToSegments } from '../base/utils/editorToSegment';
 import constants, { VARIABLE_TYPE } from '../../constants';
 import { VARIABLE_PROPERTIES, type InitializeVariableErrors } from './variableEditor';
+import type { loadParameterValueFromStringHandler } from '../base';
 
-export const parseVariableEditorSegments = (initialValue: ValueSegment[]): InitializeVariableProps[] | undefined => {
+export const getParameterValue = (
+  rawValue: string,
+  type: string,
+  nodeMap: Map<string, ValueSegment>,
+  loadParameterValueFromString?: (value: string) => ValueSegment[] | undefined
+): ValueSegment[] => {
+  const valueSegments = loadParameterValueFromString?.(rawValue);
+
+  if (!valueSegments) {
+    return convertStringToSegments(rawValue, nodeMap, {
+      tokensEnabled: true,
+      stringifyNonString: type !== VARIABLE_TYPE.STRING,
+    });
+  }
+
+  return valueSegments.map((segment) => {
+    if (segment.type === ValueSegmentType.TOKEN && segment.token) {
+      const token = segment.token;
+
+      // If not an FX token, attempt to resolve from nodeMap
+      if (token.type !== TokenType.FX && segment.value) {
+        const resolvedSegment = nodeMap.get(wrapTokenValue(segment.value));
+        return resolvedSegment ?? segment;
+      }
+    }
+
+    return segment;
+  });
+};
+
+export const wrapStringifiedTokenSegments = (jsonString: string): string => {
+  const tokenRegex = /:\s?("@\{.*?\}")|:\s?(@\{.*?\})/gs;
+
+  // Normalize newlines and carriage returns inside tokens
+  const normalized = jsonString.replace(/@{[^}]*}/gs, (match) => match.replace(/\n/g, '\\n').replace(/\r/g, '\\r'));
+
+  return normalized.replace(tokenRegex, (match, quotedToken, unquotedToken) => {
+    const token = quotedToken ?? unquotedToken;
+    if (!token) {
+      return match;
+    }
+
+    const isQuoted = quotedToken !== undefined;
+    const innerToken = isQuoted ? token.slice(1, -1) : token;
+
+    const escaped = innerToken
+      .replace(/\\/g, '\\\\')
+      .replace(/"/g, '\\"')
+      .replace(/\n/g, '\\n')
+      .replace(/\r/g, '\\r')
+      .replace(/\t/g, '\\t')
+      .replace(/\v/g, '\\v');
+
+    return `: "${escaped}"`;
+  });
+};
+
+// Determines if the value is a string-wrapped token
+export const shouldUnescapeToken = (value: unknown): value is string => typeof value === 'string' && /^@\{[\s\S]*\}$/.test(value);
+
+//We need to unescape tokens that are wrapped in @{...} as we need the raw value to load valueSegments
+export const unescapeToken = (token: string): string =>
+  token.replace(/\\\\/g, '\\').replace(/\\"/g, '"').replace(/\\n/g, '\n').replace(/\\r/g, '\r').replace(/\\t/g, '\t').replace(/\\v/g, '\v');
+
+export const parseVariableEditorSegments = (
+  initialValue: ValueSegment[],
+  loadParameterValueFromString?: loadParameterValueFromStringHandler
+): InitializeVariableProps[] | undefined => {
   if (isEmptySegments(initialValue)) {
     return [
-      { name: [createEmptyLiteralValueSegment()], type: [createEmptyLiteralValueSegment()], value: [createEmptyLiteralValueSegment()] },
+      {
+        name: [createEmptyLiteralValueSegment()],
+        type: [createEmptyLiteralValueSegment()],
+        value: [createEmptyLiteralValueSegment()],
+      },
     ];
   }
 
-  const nodeMap: Map<string, ValueSegment> = new Map<string, ValueSegment>();
+  const nodeMap = new Map<string, ValueSegment>();
   const initialValueString = convertSegmentsToString(initialValue, nodeMap);
   const wrappedValueString = wrapStringifiedTokenSegments(initialValueString);
 
   try {
-    const variables = JSON.parse(wrappedValueString);
+    const parsedVariables = JSON.parse(wrappedValueString);
 
-    return Array.isArray(variables)
-      ? variables.map((variable: { name: string; type: string; value: string }) => ({
-          name: [createLiteralValueSegment(variable.name)],
-          type: [createLiteralValueSegment(variable.type)],
-          value: convertStringToSegments(variable.value, nodeMap, {
-            tokensEnabled: true,
-            stringifyNonString: variable.type !== VARIABLE_TYPE.STRING,
-          }),
-        }))
-      : [];
+    if (!Array.isArray(parsedVariables)) {
+      return [];
+    }
+
+    return parsedVariables.map(({ name, type, value }) => {
+      const rawValue = shouldUnescapeToken(value) ? unescapeToken(value) : value;
+
+      return {
+        name: [createLiteralValueSegment(name)],
+        type: [createLiteralValueSegment(type)],
+        value: getParameterValue(rawValue, type, nodeMap, loadParameterValueFromString),
+      };
+    });
   } catch (error) {
     LoggerService().log({
       level: LogEntryLevel.Error,
       area: 'Variable Editor',
       message: 'Failed to parse variable editor segments',
-      args: [
-        {
-          error,
-        },
-      ],
+      args: [{ error }],
     });
     return undefined;
   }
 };
 
-export const parseSchemaAsVariableEditorSegments = (initialValue: ValueSegment[]): InitializeVariableProps[] | undefined => {
+export const parseSchemaAsVariableEditorSegments = (
+  initialValue: ValueSegment[],
+  loadParameterValueFromString?: loadParameterValueFromStringHandler
+): InitializeVariableProps[] | undefined => {
   if (isEmptySegments(initialValue)) {
     return [];
   }
@@ -72,13 +147,11 @@ export const parseSchemaAsVariableEditorSegments = (initialValue: ValueSegment[]
 
     return Object.entries(schema.properties).map(([key, property]: [string, any]) => {
       const { name, type, description } = property;
+      const rawValue = shouldUnescapeToken(description) ? unescapeToken(description) : description;
       return {
         name: [createLiteralValueSegment(name || key)],
         type: [createLiteralValueSegment(type)],
-        description: convertStringToSegments(description, nodeMap, {
-          tokensEnabled: true,
-          stringifyNonString: true,
-        }),
+        description: getParameterValue(rawValue, type, nodeMap, loadParameterValueFromString),
         value: [createEmptyLiteralValueSegment()],
       };
     });
@@ -99,24 +172,46 @@ export const createVariableEditorSegments = (variables: InitializeVariableProps[
   }
 
   const nodeMap = new Map<string, ValueSegment>();
-  const mappedVariables = variables.map((variable) => {
+
+  const mappedVariableStrings = variables.map((variable) => {
     const name = convertSegmentsToString(variable.name);
     const type = convertSegmentsToString(variable.type);
-    let value = convertSegmentsToString(variable.value, nodeMap);
+    const isStringType = type === VARIABLE_TYPE.STRING;
+
+    const valueSegments = variable.value;
+    const isTokenSegment = isTokenValueSegment(valueSegments);
+    let value = convertSegmentsToString(valueSegments, nodeMap);
 
     try {
-      if (type !== VARIABLE_TYPE.STRING) {
+      if (!isStringType && !isTokenSegment) {
         value = JSON.parse(value);
       }
-    } catch (_error) {
-      // do nothing
+    } catch {
+      // ignore parse errors
     }
-    return value !== '' ? { name, type, value } : { name, type };
+
+    const parts = [`"name": ${JSON.stringify(name)}`, `"type": ${JSON.stringify(type)}`];
+
+    if (value !== '') {
+      if (isTokenSegment) {
+        if (isStringType) {
+          // Clean up multiline token before quoting
+          const cleaned = value.replace(/[\r\n]+/g, '');
+          parts.push(`"value": ${JSON.stringify(cleaned)}`);
+        } else {
+          parts.push(`"value": ${value}`);
+        }
+      } else {
+        const valueStr = JSON.stringify(value);
+        parts.push(`"value": ${valueStr}`);
+      }
+    }
+
+    return `{ ${parts.join(', ')} }`;
   });
 
-  const stringifiedVariables = JSON.stringify(mappedVariables);
-
-  return convertStringToSegments(stringifiedVariables, nodeMap, { tokensEnabled: true });
+  const finalString = `[${mappedVariableStrings.join(',')}]`;
+  return convertStringToSegments(finalString, nodeMap, { tokensEnabled: true });
 };
 
 export const convertVariableEditorSegmentsAsSchema = (variables: InitializeVariableProps[] | undefined): ValueSegment[] => {
@@ -146,6 +241,7 @@ export const convertVariableEditorSegmentsAsSchema = (variables: InitializeVaria
   const schema = {
     type: 'object',
     properties,
+    required: Object.keys(properties),
   };
 
   return convertStringToSegments(JSON.stringify(schema), nodeMap, { tokensEnabled: true });

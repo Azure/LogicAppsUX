@@ -2,7 +2,7 @@ import { PanelLocation, PanelResizer, PanelSize, type ConversationItem } from '@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { defaultChatbotPanelWidth, ChatbotUI } from '@microsoft/logic-apps-chatbot';
-import { useAgentChatInvokeUri, useChatHistory } from '../../../core/queries/runs';
+import { runsQueriesKeys, useAgentChatInvokeUri, useCancelRun, useChatHistory } from '../../../core/queries/runs';
 import { useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import {
   useAgentLastOperations,
@@ -12,13 +12,26 @@ import {
   useRunInstance,
 } from '../../../core/state/workflow/workflowSelectors';
 import { isNullOrUndefined, LogEntryLevel, LoggerService, RunService } from '@microsoft/logic-apps-shared';
-import { Button, Drawer, mergeClasses } from '@fluentui/react-components';
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogBody,
+  DialogContent,
+  DialogSurface,
+  DialogTitle,
+  DialogTrigger,
+  Drawer,
+  mergeClasses,
+} from '@fluentui/react-components';
 import { ChatFilled } from '@fluentui/react-icons';
 import { useDispatch } from 'react-redux';
-import { changePanelNode, type AppDispatch } from '../../../core';
+import { changePanelNode, getReactQueryClient, type AppDispatch } from '../../../core';
 import { clearFocusElement, setFocusNode, setRunIndex } from '../../../core/state/workflow/workflowSlice';
 import { AgentChatHeader } from './agentChatHeader';
 import { parseChatHistory } from './helper';
+import { useMutation } from '@tanstack/react-query';
+import constants from '../../../common/constants';
 
 interface AgentChatProps {
   panelLocation?: PanelLocation;
@@ -55,6 +68,41 @@ export const AgentChat = ({
   const panelRef = useRef<HTMLDivElement>(null);
   const focusElement = useFocusElement();
   const rawAgentLastOperations = JSON.stringify(agentLastOperations);
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  const { mutateAsync: refreshChat } = useMutation(async () => {
+    const queryClient = getReactQueryClient();
+    await queryClient.resetQueries([runsQueriesKeys.useRunInstance]);
+    await queryClient.resetQueries([runsQueriesKeys.useChatHistory]);
+    await queryClient.resetQueries([runsQueriesKeys.useAgentActionsRepetition]);
+    await queryClient.resetQueries([runsQueriesKeys.useAgentRepetition]);
+    await queryClient.resetQueries([runsQueriesKeys.useNodeRepetition]);
+
+    await queryClient.refetchQueries([runsQueriesKeys.useRunInstance]);
+    await queryClient.refetchQueries([runsQueriesKeys.useAgentRepetition]);
+    await queryClient.refetchQueries([runsQueriesKeys.useAgentActionsRepetition]);
+    await queryClient.refetchQueries([runsQueriesKeys.useNodeRepetition]);
+    await queryClient.refetchQueries([runsQueriesKeys.useChatHistory]);
+  });
+
+  const showStopButton = useMemo(() => {
+    return runInstance?.properties?.status === constants.FLOW_STATUS.RUNNING;
+  }, [runInstance]);
+
+  const { mutateAsync: cancelRun } = useCancelRun(runInstance?.id ?? '');
+
+  const stopChat = useCallback(() => {
+    setDialogOpen(true);
+  }, []);
+
+  const onCancel = useCallback(async () => {
+    await cancelRun();
+    await refreshChat();
+  }, [cancelRun, refreshChat]);
+
+  const onClosingDialog = useCallback(() => {
+    setDialogOpen(false);
+  }, []);
 
   const toolResultCallback = useCallback(
     (agentName: string, toolName: string, iteration: number, subIteration: number) => {
@@ -132,13 +180,13 @@ export const AgentChat = ({
         description: 'Agent chat panel aria label text',
       }),
       agentChatToggleAriaLabel: intl.formatMessage({
-        defaultMessage: 'Toggle agent chat panel',
-        id: '0Jh+AD',
-        description: 'Toggle agent chat panel aria label text',
+        defaultMessage: 'Toggle the agent chat panel.',
+        id: 'fTpBGQ',
+        description: 'Toggle the agent chat panel aria label text',
       }),
       chatReadOnlyMessage: intl.formatMessage({
-        defaultMessage: 'The chat is currently in read-only mode. Agents are not available for live chat.',
-        id: '/fYAbG',
+        defaultMessage: 'The chat is currently in read-only mode. Agents are unavailable for live chat.',
+        id: '7c50FE',
         description: 'Agent chat read-only message',
       }),
       protectedMessage: intl.formatMessage({
@@ -175,6 +223,26 @@ export const AgentChat = ({
         defaultMessage: 'Copilot chat canceled',
         id: 'JKZpcd',
         description: 'Chatbot card telling user that the AI response is being canceled',
+      }),
+      stopChatTitle: intl.formatMessage({
+        defaultMessage: 'Stop chat',
+        id: '9KwscD',
+        description: 'Stop chat title',
+      }),
+      stopChatMessage: intl.formatMessage({
+        defaultMessage: 'Do you want to stop the agent chat? This will cancel the workflow.',
+        id: '7cPLnJ',
+        description: 'Stop chat message',
+      }),
+      cancelDialog: intl.formatMessage({
+        defaultMessage: 'Cancel',
+        id: 'hHNj31',
+        description: 'Cancel button text',
+      }),
+      okDialog: intl.formatMessage({
+        defaultMessage: 'OK',
+        id: 'wWuzqz',
+        description: 'Ok button text',
       }),
     };
   }, [intl]);
@@ -217,7 +285,15 @@ export const AgentChat = ({
               isOpen: true,
               isBlocking: false,
               onDismiss: () => {},
-              header: <AgentChatHeader title={intlText.agentChatHeader} toggleCollapse={() => setIsCollapsed(true)} />,
+              header: (
+                <AgentChatHeader
+                  showStopButton={showStopButton}
+                  title={intlText.agentChatHeader}
+                  onStopChat={stopChat}
+                  onRefreshChat={refreshChat}
+                  onToggleCollapse={() => setIsCollapsed(true)}
+                />
+              ),
             }}
             inputBox={{
               onSubmit: () => {
@@ -244,6 +320,37 @@ export const AgentChat = ({
             }}
           />
           <PanelResizer updatePanelWidth={setOverrideWidth} panelRef={panelRef} />
+          <Dialog
+            inertTrapFocus={true}
+            open={dialogOpen}
+            aria-labelledby={intlText.stopChatTitle}
+            onOpenChange={onClosingDialog}
+            surfaceMotion={null}
+          >
+            <DialogSurface
+              style={{
+                maxWidth: '80%',
+                width: 'fit-content',
+              }}
+              backdrop={<div style={{ width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.4)' }}> </div>}
+              mountNode={panelRef.current}
+            >
+              <DialogBody>
+                <DialogTitle>{intlText.stopChatTitle}</DialogTitle>
+                <DialogContent>{intlText.stopChatMessage}</DialogContent>
+                <DialogActions fluid>
+                  <DialogTrigger>
+                    <Button appearance="primary" onClick={onCancel}>
+                      {intlText.okDialog}
+                    </Button>
+                  </DialogTrigger>
+                  <DialogTrigger>
+                    <Button onClick={onClosingDialog}>{intlText.cancelDialog}</Button>
+                  </DialogTrigger>
+                </DialogActions>
+              </DialogBody>
+            </DialogSurface>
+          </Dialog>
         </>
       )}
     </Drawer>

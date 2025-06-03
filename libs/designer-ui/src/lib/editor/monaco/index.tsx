@@ -46,25 +46,29 @@ export interface MonacoProps extends MonacoOptions {
   openTokenPicker?(): void;
 }
 
-export interface MonacoOptions {
-  folding?: boolean;
-  fontSize?: number;
-  readOnly?: boolean;
-  lineNumbers?: 'on' | 'off' | 'relative' | 'interval' | ((lineNumber: number) => string);
-  lineNumbersMinChars?: number;
-  lineHeight?: number;
+type SupportedEditorOptions = Pick<
+  editor.IEditorOptions,
+  | 'folding'
+  | 'fontSize'
+  | 'readOnly'
+  | 'lineNumbers'
+  | 'lineNumbersMinChars'
+  | 'lineHeight'
+  | 'scrollBeyondLastLine'
+  | 'wordWrap'
+  | 'wordWrapColumn'
+  | 'scrollbar'
+  | 'overviewRulerLanes'
+  | 'overviewRulerBorder'
+  | 'wrappingIndent'
+  | 'automaticLayout'
+> &
+  Pick<editor.IGlobalEditorOptions, 'tabSize' | 'insertSpaces'>;
+
+export type MonacoOptions = SupportedEditorOptions & {
   minimapEnabled?: boolean;
-  scrollBeyondLastLine?: boolean;
-  hideUTFExpressions?: boolean;
-  wordWrap?: 'off' | 'on' | 'wordWrapColumn' | 'bounded';
-  wordWrapColumn?: number;
   contextMenu?: boolean;
-  scrollbar?: editor.IEditorScrollbarOptions;
-  overviewRulerLanes?: number;
-  overviewRulerBorder?: boolean;
-  wrappingIndent?: 'none' | 'same' | 'indent' | 'deepIndent';
-  automaticLayout?: boolean;
-}
+};
 
 export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps>(
   (
@@ -78,7 +82,6 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
       minimapEnabled = false,
       value,
       scrollBeyondLastLine = false,
-      hideUTFExpressions,
       height,
       width,
       lineNumbersMinChars,
@@ -115,10 +118,10 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
     const initTemplateLanguage = useCallback(async () => {
       const { languages, editor } = await loader.init();
       if (!languages.getLanguages().some((lang: any) => lang.id === Constants.LANGUAGE_NAMES.WORKFLOW)) {
-        registerWorkflowLanguageProviders(languages, editor, hideUTFExpressions);
+        registerWorkflowLanguageProviders(languages, editor, { isInverted, isIndentationEnabled: true });
       }
       setCanRender(true);
-    }, [hideUTFExpressions]);
+    }, [isInverted]);
 
     useEffect(() => {
       if (language === EditorLanguage.templateExpressionLanguage) {
@@ -254,13 +257,21 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
             keepCurrentModel={true}
             className={className}
             options={{
+              bracketPairColorization: {
+                enabled: true,
+                independentColorPoolPerBracketType: true,
+              },
               readOnly: readOnly,
               contextmenu: contextMenu,
               folding: folding,
               minimap: { enabled: minimapEnabled },
               scrollBeyondLastLine: scrollBeyondLastLine,
               lineNumbersMinChars: lineNumbersMinChars,
-              unicodeHighlight: { invisibleCharacters: false, nonBasicASCII: false, ambiguousCharacters: false },
+              unicodeHighlight: {
+                invisibleCharacters: false,
+                nonBasicASCII: false,
+                ambiguousCharacters: false,
+              },
               renderWhitespace: 'none',
               ariaLabel: label,
               wordWrap,

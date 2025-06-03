@@ -139,9 +139,9 @@ export const TokenPickerButton = ({
   });
 
   const agentParameterButtonText = intl.formatMessage({
-    defaultMessage: `Insert agent parameter (you can also add by typing '/' in the editor)`,
-    id: 'OYzNub',
-    description: 'Label for button to open agent parameter token picker',
+    defaultMessage: `Insert the agent parameter. You can also add by typing '/' in the editor.`,
+    id: 'NfFrgQ',
+    description: 'Button label for opening the agent parameter token picker',
   });
 
   return (

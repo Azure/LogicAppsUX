@@ -25,6 +25,7 @@ interface GalleryTab {
 }
 
 export interface TemplateSearchAndFilterProps {
+  tabFilterKey?: string;
   tabDetails?: GalleryTab[];
   detailFilters: TemplateDetailFilterType;
   showFilters?: boolean;
@@ -35,6 +36,7 @@ export interface TemplateSearchAndFilterProps {
 const templateDefaultTabKey = 'all';
 
 export const TemplateSearchAndFilters = ({
+  tabFilterKey = 'Type',
   tabDetails,
   searchPlaceholder,
   showFilters = true,
@@ -44,11 +46,11 @@ export const TemplateSearchAndFilters = ({
   const dispatch = useDispatch<AppDispatch>();
   const { sortKey, detailFilters: appliedDetailFilters } = useSelector((state: RootState) => state?.manifest?.filters);
   const intl = useIntl();
-  const { isConsumption, availableTemplates } = useSelector((state: RootState) => ({
+  const { availableTemplates } = useSelector((state: RootState) => ({
     isConsumption: state.workflow.isConsumption,
     availableTemplates: state.manifest.availableTemplates ?? {},
   }));
-  const selectedTabId = appliedDetailFilters?.Type?.[0]?.value ?? templateDefaultTabKey;
+  const selectedTabId = appliedDetailFilters?.[tabFilterKey]?.[0]?.value ?? templateDefaultTabKey;
 
   const intlText = {
     SEARCH: intl.formatMessage({
@@ -65,6 +67,16 @@ export const TemplateSearchAndFilters = ({
       defaultMessage: 'Sort By',
       id: 'ZOIvqN',
       description: 'Label text for sort by filter',
+    }),
+    MY_TEMPLATES: intl.formatMessage({
+      defaultMessage: 'My Templates',
+      id: 'aWcxdZ',
+      description: 'Label text custom templates tab',
+    }),
+    MICROSOFT_AUTHORED: intl.formatMessage({
+      defaultMessage: 'Microsoft Authored',
+      id: 'VjvWve',
+      description: 'Label text for Microsoft authored templates tab',
     }),
   };
 
@@ -96,7 +108,7 @@ export const TemplateSearchAndFilters = ({
           id: 'YX0jQs',
           description: 'All templates tab',
         }),
-        filterKey: 'Type',
+        filterKey: tabFilterKey,
       },
     ];
 
@@ -104,28 +116,20 @@ export const TemplateSearchAndFilters = ({
       return [...basicTabs, ...tabDetails];
     }
 
-    if (!isConsumption && !!availableTemplates) {
+    if (availableTemplates) {
       basicTabs.push({
-        name: 'Workflow',
-        displayName: intl.formatMessage({
-          defaultMessage: 'Workflows',
-          id: 'fxue5l',
-          description: 'Workflows only templates tab',
-        }),
-        filterKey: 'Type',
+        name: 'Custom',
+        displayName: intlText.MY_TEMPLATES,
+        filterKey: tabFilterKey,
       });
       basicTabs.push({
-        name: 'Accelerator',
-        displayName: intl.formatMessage({
-          defaultMessage: 'Accelerators',
-          id: 'A5/UwX',
-          description: 'Accelerators only templates tab',
-        }),
-        filterKey: 'Type',
+        name: 'Microsoft',
+        displayName: intlText.MICROSOFT_AUTHORED,
+        filterKey: tabFilterKey,
       });
     }
     return basicTabs;
-  }, [intl, tabDetails, isConsumption, availableTemplates]);
+  }, [intl, tabDetails, tabFilterKey, availableTemplates, intlText.MY_TEMPLATES, intlText.MICROSOFT_AUTHORED]);
 
   const onTabSelected = (e?: SelectTabEvent, data?: SelectTabData): void => {
     if (data) {

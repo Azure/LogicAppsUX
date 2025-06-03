@@ -374,9 +374,6 @@ const serializeAllChannels = async (rootState: RootState, operationId: string): 
     serializedInputChannel = {
       'in-channel-1': {
         trigger: serializedInputChannelTrigger,
-        mapping: {
-          message: "@channelTriggerBody()?['prompt']",
-        },
       },
     };
   }
@@ -1000,6 +997,13 @@ const serializeSubGraph = async (
   if (graphDetail?.inputs && graphDetail?.inputsLocation) {
     const inputs = serializeParametersFromManifest(getOperationInputsToSerialize(rootState, graphId), { properties: graphDetail } as any);
     safeSetObjectPropertyValue(result, [...graphInputsLocation, ...graphDetail.inputsLocation], inputs, true);
+    if (inputs?.agentParameterSchema?.required) {
+      safeSetObjectPropertyValue(
+        result,
+        [...graphInputsLocation, 'agentParameterSchema', 'required'],
+        inputs?.agentParameterSchema?.required
+      );
+    }
   }
 
   return result;

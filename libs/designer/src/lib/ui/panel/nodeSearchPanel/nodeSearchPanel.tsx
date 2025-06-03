@@ -1,4 +1,3 @@
-import { useHostOptions } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { useOperationVisuals } from '../../../core/state/operation/operationSelector';
 import { changePanelNode } from '../../../core/state/panel/panelSlice';
 import { useNodeDisplayName, useNodeIds } from '../../../core/state/workflow/workflowSelectors';
@@ -25,7 +24,7 @@ const fuseOptions: Fuse.IFuseOptions<{ id: string; text: string }> = {
   keys: ['text'],
 };
 
-const NodeSearchCard = ({ node, displayRuntimeInfo }: { node: string; displayRuntimeInfo: boolean }) => {
+const NodeSearchCard = ({ node }: { node: string }) => {
   const dispatch = useDispatch();
   const displayName = useNodeDisplayName(node);
   const { brandColor, iconUri } = useOperationVisuals(node);
@@ -39,7 +38,6 @@ const NodeSearchCard = ({ node, displayRuntimeInfo }: { node: string; displayRun
           dispatch(setFocusNode(node));
           dispatch(changePanelNode(node));
         }}
-        displayRuntimeInfo={displayRuntimeInfo}
       />
     </div>
   );
@@ -50,7 +48,6 @@ export type NodeSearchPanelProps = {
 } & CommonPanelProps;
 
 export const NodeSearchPanel = (props: NodeSearchPanelProps) => {
-  const { displayRuntimeInfo } = useHostOptions();
   const allNodeNames = useNodeIds();
   const [searchTerm, setSearchTerm] = useState<string | null>(null);
   const intl = useIntl();
@@ -99,7 +96,7 @@ export const NodeSearchPanel = (props: NodeSearchPanelProps) => {
       </div>
       <div aria-description={'List of operation results'}>
         {searchNodeNames.map((node) => (
-          <NodeSearchCard key={node} node={node} displayRuntimeInfo={displayRuntimeInfo} />
+          <NodeSearchCard key={node} node={node} />
         ))}
       </div>
     </FocusTrapZone>

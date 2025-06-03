@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
-import type { BaseEditorProps } from '../base';
+import type { BaseEditorProps, ChangeState } from '../base';
 import { createEmptyLiteralValueSegment } from '../base/utils/helper';
 import type { ValueSegment } from '../models/parameter';
 import { StringEditor } from '../string';
@@ -40,7 +40,9 @@ export const InitializeVariableEditor = ({
 }: InitializeVariableEditorProps) => {
   const intl = useIntl();
   const [variables, setVariables] = useState<InitializeVariableProps[] | undefined>(() =>
-    isAgentParameter ? parseSchemaAsVariableEditorSegments(initialValue) : parseVariableEditorSegments(initialValue)
+    isAgentParameter
+      ? parseSchemaAsVariableEditorSegments(initialValue, props.loadParameterValueFromString)
+      : parseVariableEditorSegments(initialValue, props.loadParameterValueFromString)
   );
 
   const stringResources = useMemo(
@@ -51,8 +53,8 @@ export const InitializeVariableEditor = ({
         description: 'label to add a variable',
       }),
       ADD_PARAMETER: intl.formatMessage({
-        defaultMessage: 'Add a Parameter',
-        id: 'ysSmGO',
+        defaultMessage: 'Create Parameter',
+        id: 'SC5XB0',
         description: 'label to add a parameter',
       }),
     }),
@@ -69,8 +71,8 @@ export const InitializeVariableEditor = ({
   });
 
   const warningTitleAgentParameter = intl.formatMessage({
-    defaultMessage: 'Unable to Parse Agent Parameter Schema',
-    id: '4vZjpN',
+    defaultMessage: "Can't parse the schema for the agent parameter.",
+    id: 'xd5jz/',
     description: 'Warning title for when unable to parse schema',
   });
 
@@ -81,8 +83,8 @@ export const InitializeVariableEditor = ({
   });
 
   const warningAgentParameterBody = intl.formatMessage({
-    defaultMessage: 'This could mean that the agent parameter schema is set up incorrectly.',
-    id: 'JLd6W7',
+    defaultMessage: 'This error might mean that the agent parameter schema is incorrectly set up.',
+    id: 'mnuwWm',
     description: 'Warning body for when unable to parse schema',
   });
 
@@ -136,6 +138,14 @@ export const InitializeVariableEditor = ({
     [updateVariables]
   );
 
+  const handleStringChange = useCallback(
+    (newState: ChangeState) => {
+      const { value } = newState;
+      onChange?.({ value, viewModel: { hideErrorMessage: true } });
+    },
+    [onChange]
+  );
+
   return variables ? (
     <div className="msla-editor-initialize-variables">
       {isAgentParameter ? (
@@ -160,7 +170,7 @@ export const InitializeVariableEditor = ({
         </div>
       ) : null}
       {variables.map((variable, index) => (
-        <>
+        <div key={index}>
           <VariableEditor
             {...props}
             isAgentParameter={isAgentParameter}
@@ -173,7 +183,7 @@ export const InitializeVariableEditor = ({
             errors={validationErrors?.[index]}
           />
           <Divider />
-        </>
+        </div>
       ))}
       {props.isMultiVariableEnabled && !isAgentParameter ? (
         <div className="msla-initialize-variable-add-variable-button">
@@ -199,8 +209,7 @@ export const InitializeVariableEditor = ({
     </div>
   ) : (
     <>
-      <StringEditor {...props} initialValue={initialValue} />
-      {/** TODO: Error should only be shown if there's no error */}
+      <StringEditor {...props} initialValue={initialValue} onChange={(newState) => handleStringChange(newState)} />
       <MessageBar key={'warning'} intent={'warning'} className="msla-initialize-variable-warning">
         <MessageBarBody>
           <MessageBarTitle>{isAgentParameter ? warningTitleAgentParameter : warningTitleVariable}</MessageBarTitle>

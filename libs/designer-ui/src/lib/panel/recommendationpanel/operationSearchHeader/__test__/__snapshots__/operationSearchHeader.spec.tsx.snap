@@ -1,0 +1,293 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`OperationSearchHeader > renders correctly with isTriggerNode=false 1`] = `
+<div>
+  <div
+    class="msla-sub-heading-container"
+  >
+    <div
+      class="msla-sub-heading"
+    >
+      <span
+        class="fui-Input r1oeeo9n fui-SearchBox msla-search-box ___h0zxl40_mosemr0 f1f5gg8d f1vdfbxk fvcxoqz f1ub3y4t f1l4zc64 f1m52nbi f8vnjqi fz1etlk f1klwx88 f1hc16gm fjuset5 f1xzfw5u"
+      >
+        <span
+          class="fui-Input__contentBefore r1572tok fui-SearchBox__contentBefore"
+        >
+          <svg
+            aria-hidden="true"
+            class="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+            fill="currentColor"
+            height="1em"
+            viewBox="0 0 20 20"
+            width="1em"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M8.5 3a5.5 5.5 0 0 1 4.23 9.02l4.12 4.13a.5.5 0 0 1-.63.76l-.07-.06-4.13-4.12A5.5 5.5 0 1 1 8.5 3Zm0 1a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9Z"
+              fill="currentColor"
+            />
+          </svg>
+        </span>
+        <input
+          aria-label="Search for an action or connector"
+          class="fui-Input__input r12stul0 fui-SearchBox__input ___15fa60g_1d1zij0 fk8j09s fhxju0i f18izjht fcoa6sg"
+          data-automation-id="msla-search-box"
+          maxlength="80"
+          placeholder="Search for an action or connector"
+          type="search"
+          value=""
+        />
+        <span
+          class="fui-Input__contentAfter r1572tok fui-SearchBox__contentAfter ___tg6ooc0_4ylo630 f1uw59to f1ufnopg"
+        >
+          <span
+            aria-label="clear"
+            class="fui-SearchBox__dismiss r1pvzcuu"
+            role="button"
+            tabindex="-1"
+          >
+            <svg
+              aria-hidden="true"
+              class="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+              fill="currentColor"
+              height="1em"
+              viewBox="0 0 20 20"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="m4.09 4.22.06-.07a.5.5 0 0 1 .63-.06l.07.06L10 9.29l5.15-5.14a.5.5 0 0 1 .63-.06l.07.06c.18.17.2.44.06.63l-.06.07L10.71 10l5.14 5.15c.18.17.2.44.06.63l-.06.07a.5.5 0 0 1-.63.06l-.07-.06L10 10.71l-5.15 5.14a.5.5 0 0 1-.63.06l-.07-.06a.5.5 0 0 1-.06-.63l.06-.07L9.29 10 4.15 4.85a.5.5 0 0 1-.06-.63l.06-.07-.06.07Z"
+                fill="currentColor"
+              />
+            </svg>
+          </span>
+        </span>
+      </span>
+      <button
+        aria-expanded="false"
+        aria-haspopup="menu"
+        class="fui-Button r1alrhcs fui-MenuButton ___1j82qye_10z14xp f18ktai2 fwbmr0d f44c6la"
+        id="menur1"
+        role="button"
+        tabindex="0"
+        type="button"
+      >
+        <span
+          class="fui-Button__icon rywnvv2 fui-MenuButton__icon"
+        >
+          <svg
+            aria-hidden="true"
+            class="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+            fill="currentColor"
+            height="1em"
+            viewBox="0 0 20 20"
+            width="1em"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M7.5 13h5a.5.5 0 0 1 .09 1H7.5a.5.5 0 0 1-.09-1h5.09-5Zm-2-4h9a.5.5 0 0 1 .09 1H5.5a.5.5 0 0 1-.09-1h9.09-9Zm-2-4h13a.5.5 0 0 1 .09 1H3.5a.5.5 0 0 1-.09-1H16.5h-13Z"
+              fill="currentColor"
+            />
+          </svg>
+        </span>
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`OperationSearchHeader > renders correctly with isTriggerNode=true 1`] = `
+<div>
+  <div
+    class="msla-sub-heading-container"
+  >
+    <div
+      class="msla-sub-heading"
+    >
+      <span
+        class="fui-Input r1oeeo9n fui-SearchBox msla-search-box ___h0zxl40_mosemr0 f1f5gg8d f1vdfbxk fvcxoqz f1ub3y4t f1l4zc64 f1m52nbi f8vnjqi fz1etlk f1klwx88 f1hc16gm fjuset5 f1xzfw5u"
+      >
+        <span
+          class="fui-Input__contentBefore r1572tok fui-SearchBox__contentBefore"
+        >
+          <svg
+            aria-hidden="true"
+            class="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+            fill="currentColor"
+            height="1em"
+            viewBox="0 0 20 20"
+            width="1em"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M8.5 3a5.5 5.5 0 0 1 4.23 9.02l4.12 4.13a.5.5 0 0 1-.63.76l-.07-.06-4.13-4.12A5.5 5.5 0 1 1 8.5 3Zm0 1a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9Z"
+              fill="currentColor"
+            />
+          </svg>
+        </span>
+        <input
+          aria-label="Search for a trigger or connector"
+          class="fui-Input__input r12stul0 fui-SearchBox__input ___15fa60g_1d1zij0 fk8j09s fhxju0i f18izjht fcoa6sg"
+          data-automation-id="msla-search-box"
+          maxlength="80"
+          placeholder="Search for a trigger or connector"
+          type="search"
+          value=""
+        />
+        <span
+          class="fui-Input__contentAfter r1572tok fui-SearchBox__contentAfter ___tg6ooc0_4ylo630 f1uw59to f1ufnopg"
+        >
+          <span
+            aria-label="clear"
+            class="fui-SearchBox__dismiss r1pvzcuu"
+            role="button"
+            tabindex="-1"
+          >
+            <svg
+              aria-hidden="true"
+              class="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+              fill="currentColor"
+              height="1em"
+              viewBox="0 0 20 20"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="m4.09 4.22.06-.07a.5.5 0 0 1 .63-.06l.07.06L10 9.29l5.15-5.14a.5.5 0 0 1 .63-.06l.07.06c.18.17.2.44.06.63l-.06.07L10.71 10l5.14 5.15c.18.17.2.44.06.63l-.06.07a.5.5 0 0 1-.63.06l-.07-.06L10 10.71l-5.15 5.14a.5.5 0 0 1-.63.06l-.07-.06a.5.5 0 0 1-.06-.63l.06-.07L9.29 10 4.15 4.85a.5.5 0 0 1-.06-.63l.06-.07-.06.07Z"
+                fill="currentColor"
+              />
+            </svg>
+          </span>
+        </span>
+      </span>
+      <button
+        aria-disabled="true"
+        aria-expanded="false"
+        aria-haspopup="menu"
+        class="fui-Button r1alrhcs fui-MenuButton ___3xk2xj0_184e01s f1bg9a2p f1jj8ep1 f15xbau f4ikngz fy0fskl f1s2aq7o fdrzuqr f15x8b5r f1falr9n f12mpcsy f1gwvigk f1jnshp0 f18rmfxp fvgxktp fphbwmw f19vpps7 fv5swzo f1al02dq f1t6o4dc f10ztigi f1ft5sdu f12zbtn2 f1gzf82w fcvwxyo f8w4c43 f1ol4fw6 f1q1lw4e f1dwjv2g f4lkoma fg455y9 f1rvyvqg f1cwzwz f14g86mu f1dcs8yz fjwq6ea f1lr3nhc fn5gmvv f1mbxvi6 f1vmkb5g f53ppgq f1663y11 f18v5270 f80fkiy f1kc2mi9 f1y0svfh fihuait fnxhupq fx507ft fyd6l6x fb3rf2x f18ktai2 fwbmr0d f44c6la"
+        disabled=""
+        id="menur0"
+        role="button"
+        type="button"
+      >
+        <span
+          class="fui-Button__icon rywnvv2 fui-MenuButton__icon"
+        >
+          <svg
+            aria-hidden="true"
+            class="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+            fill="currentColor"
+            height="1em"
+            viewBox="0 0 20 20"
+            width="1em"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M7.5 13h5a.5.5 0 0 1 .09 1H7.5a.5.5 0 0 1-.09-1h5.09-5Zm-2-4h9a.5.5 0 0 1 .09 1H5.5a.5.5 0 0 1-.09-1h9.09-9Zm-2-4h13a.5.5 0 0 1 .09 1H3.5a.5.5 0 0 1-.09-1H16.5h-13Z"
+              fill="currentColor"
+            />
+          </svg>
+        </span>
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`OperationSearchHeader > renders correctly with search term and filters 1`] = `
+<div>
+  <div
+    class="msla-sub-heading-container"
+  >
+    <div
+      class="msla-sub-heading"
+    >
+      <span
+        class="fui-Input r1oeeo9n fui-SearchBox msla-search-box ___h0zxl40_mosemr0 f1f5gg8d f1vdfbxk fvcxoqz f1ub3y4t f1l4zc64 f1m52nbi f8vnjqi fz1etlk f1klwx88 f1hc16gm fjuset5 f1xzfw5u"
+      >
+        <span
+          class="fui-Input__contentBefore r1572tok fui-SearchBox__contentBefore"
+        >
+          <svg
+            aria-hidden="true"
+            class="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+            fill="currentColor"
+            height="1em"
+            viewBox="0 0 20 20"
+            width="1em"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M8.5 3a5.5 5.5 0 0 1 4.23 9.02l4.12 4.13a.5.5 0 0 1-.63.76l-.07-.06-4.13-4.12A5.5 5.5 0 1 1 8.5 3Zm0 1a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9Z"
+              fill="currentColor"
+            />
+          </svg>
+        </span>
+        <input
+          aria-label="Search for an action or connector"
+          class="fui-Input__input r12stul0 fui-SearchBox__input ___15fa60g_1d1zij0 fk8j09s fhxju0i f18izjht fcoa6sg"
+          data-automation-id="msla-search-box"
+          maxlength="80"
+          placeholder="Search for an action or connector"
+          type="search"
+          value="test search"
+        />
+        <span
+          class="fui-Input__contentAfter r1572tok fui-SearchBox__contentAfter ___tg6ooc0_4ylo630 f1uw59to f1ufnopg"
+        >
+          <span
+            aria-label="clear"
+            class="fui-SearchBox__dismiss r1pvzcuu"
+            role="button"
+            tabindex="-1"
+          >
+            <svg
+              aria-hidden="true"
+              class="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+              fill="currentColor"
+              height="1em"
+              viewBox="0 0 20 20"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="m4.09 4.22.06-.07a.5.5 0 0 1 .63-.06l.07.06L10 9.29l5.15-5.14a.5.5 0 0 1 .63-.06l.07.06c.18.17.2.44.06.63l-.06.07L10.71 10l5.14 5.15c.18.17.2.44.06.63l-.06.07a.5.5 0 0 1-.63.06l-.07-.06L10 10.71l-5.15 5.14a.5.5 0 0 1-.63.06l-.07-.06a.5.5 0 0 1-.06-.63l.06-.07L9.29 10 4.15 4.85a.5.5 0 0 1-.06-.63l.06-.07-.06.07Z"
+                fill="currentColor"
+              />
+            </svg>
+          </span>
+        </span>
+      </span>
+      <button
+        aria-expanded="false"
+        aria-haspopup="menu"
+        class="fui-Button r1alrhcs fui-MenuButton ___1j82qye_10z14xp f18ktai2 fwbmr0d f44c6la"
+        id="menur2"
+        role="button"
+        tabindex="0"
+        type="button"
+      >
+        <span
+          class="fui-Button__icon rywnvv2 fui-MenuButton__icon"
+        >
+          <svg
+            aria-hidden="true"
+            class="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+            fill="currentColor"
+            height="1em"
+            viewBox="0 0 20 20"
+            width="1em"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M7.5 13h5a.5.5 0 0 1 .09 1H7.5a.5.5 0 0 1-.09-1h5.09-5Zm-2-4h9a.5.5 0 0 1 .09 1H5.5a.5.5 0 0 1-.09-1h9.09-9Zm-2-4h13a.5.5 0 0 1 .09 1H3.5a.5.5 0 0 1-.09-1H16.5h-13Z"
+              fill="currentColor"
+            />
+          </svg>
+        </span>
+      </button>
+    </div>
+  </div>
+</div>
+`;

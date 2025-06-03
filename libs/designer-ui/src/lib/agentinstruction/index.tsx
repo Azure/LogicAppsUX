@@ -1,7 +1,7 @@
 import { Link, MessageBar, MessageBarBody, MessageBarTitle, Text } from '@fluentui/react-components';
 import type { BaseEditorProps, CastHandler, ChangeHandler, ChangeState, GetTokenPickerHandler } from '../editor/base';
 import { useIntl } from 'react-intl';
-import { LinkSquare12Regular, LinkSquare12Filled, bundleIcon } from '@fluentui/react-icons';
+import { bundleIcon, Open12Regular, Open12Filled } from '@fluentui/react-icons';
 import { StringEditor } from './../editor/string';
 import { useMemo, useState } from 'react';
 import { parseAgentInstruction, AGENT_INSTRUCTION_TYPES, serializeAgentInstructions } from './util';
@@ -9,7 +9,7 @@ import { css } from '@fluentui/utilities';
 import { ArrayEditor, ArrayType } from '../arrayeditor';
 import { Label } from '../label';
 
-const NavigateIcon = bundleIcon(LinkSquare12Regular, LinkSquare12Filled);
+export const NavigateIcon = bundleIcon(Open12Regular, Open12Filled);
 
 interface AgentInstructionEditorProps extends BaseEditorProps {
   serializeValue?: ChangeHandler;
@@ -30,24 +30,24 @@ export const AgentInstructionEditor = ({
   }, [initialValue]);
   const description = intl.formatMessage({
     defaultMessage:
-      'Add instructions so the agent understands its role and tasks. It can be helpful to include information about workflow structure, restrictions, tools, and interaction in certain scenarios.',
-    description: 'Agent Instruction Editor description',
-    id: 'gzwIqh',
+      'Add instructions so the agent understands its role and tasks. Include helpful information about workflow structure, restrictions, tools, and interactions in specific scenarios.',
+    description: 'Description for agent instruction editor',
+    id: 'hRLAFg',
   });
   const descriptionLink = intl.formatMessage({
     defaultMessage: 'Tips for writing agent instructions',
-    description: 'Agent Instruction Editor description link',
-    id: 'cC7hlj',
+    description: 'Description link for agent instruction editor',
+    id: 'Vp5rnF',
   });
   const systemPlaceholder = intl.formatMessage({
-    defaultMessage: 'Enter instructions for the agent',
-    description: 'Agent System placeholder',
-    id: '1MXRVZ',
+    defaultMessage: 'Enter the instructions for the agent.',
+    description: 'Agent system placeholder',
+    id: 'dlLxEo',
   });
   const userPlaceholder = intl.formatMessage({
     defaultMessage: 'Enter instructions for the user',
-    description: 'Agent User placeholder',
-    id: 'Jzbnc/',
+    description: 'Agent user placeholder',
+    id: 'SPaCir',
   });
   const userItemLabel = intl.formatMessage({
     defaultMessage: 'User Instructions',

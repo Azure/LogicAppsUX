@@ -1,4 +1,4 @@
-@import (reference) '../../mixins.less';
+@import (reference) "../../mixins.less";
 
 .msla-subgraph-card {
   position: relative;
@@ -33,8 +33,9 @@
     flex-grow: 1;
     align-self: center;
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
     text-align: left;
     word-break: break-word;
     padding: 4px 8px;
@@ -42,7 +43,13 @@
   }
 
   .msla-subgraph-title-text {
+    display: flex;
     font: 14px/20px normal @semibold-font-family;
+    .msla-subgraph-title-icon {
+      margin-right: 4px;
+      align-self: baseline;
+      margin-top: 3px;
+    }
   }
   .msla-panel-card-error-wrapper {
     width: 100%;

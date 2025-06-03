@@ -171,8 +171,6 @@ import { getInputDependencies } from '../../actions/bjsworkflow/initialize';
 import { getAllVariables } from '../variables';
 import { UncastingUtility } from './uncast';
 
-// import { debounce } from 'lodash';
-
 export const ParameterBrandColor = '#916F6F';
 export const ParameterIcon =
   'data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAzMiAzMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCiA8cGF0aCBkPSJtMCAwaDMydjMyaC0zMnoiIGZpbGw9IiM5MTZmNmYiLz4NCiA8ZyBmaWxsPSIjZmZmIj4NCiAgPHBhdGggZD0ibTE2LjAyMyAxMS41cTAuOTQ1MzEgMCAxLjc3MzQgMC4yODkwNiAwLjgyODEyIDAuMjg5MDYgMS40NDUzIDAuODM1OTQgMC42MTcxOSAwLjU0Njg4IDAuOTY4NzUgMS4zMjgxIDAuMzU5MzggMC43ODEyNSAwLjM1OTM4IDEuNzY1NiAwIDAuNTE1NjItMC4xNDA2MiAxLjA3ODEtMC4xMzI4MSAwLjU1NDY5LTAuNDIxODggMS4wMTU2LTAuMjgxMjUgMC40NTMxMi0wLjcyNjU2IDAuNzUtMC40Mzc1IDAuMjk2ODgtMS4wNDY5IDAuMjk2ODgtMC42NzE4OCAwLTAuOTY4NzUtMC4zNjcxOS0wLjI5Njg4LTAuMzY3MTktMC4zMDQ2OS0xLjAwNzhoLTAuMDMxMjVxLTAuMTc5NjkgMC42MTcxOS0wLjU4NTk0IDEtMC4zOTg0NCAwLjM3NS0xLjA3MDMgMC4zNzUtMC40NjA5NCAwLTAuNzk2ODgtMC4xNzk2OS0wLjMyODEyLTAuMTg3NS0wLjU0Njg4LTAuNDg0MzgtMC4yMTA5NC0wLjMwNDY5LTAuMzEyNS0wLjY4NzUtMC4xMDE1Ni0wLjM5MDYyLTAuMTAxNTYtMC44MDQ2OSAwLTAuNTQ2ODggMC4xNDA2Mi0xLjA5MzggMC4xNDg0NC0wLjU0Njg4IDAuNDQ1MzEtMC45NzY1NiAwLjI5Njg4LTAuNDI5NjkgMC43NS0wLjY5NTMxIDAuNDYwOTQtMC4yNzM0NCAxLjA4NTktMC4yNzM0NCAwLjE3OTY5IDAgMC4zNTkzOCAwLjA0Njg3IDAuMTg3NSAwLjA0Njg3IDAuMzUxNTYgMC4xNDA2MiAwLjE2NDA2IDAuMDkzNzUgMC4yODkwNiAwLjIzNDM4dDAuMTg3NSAwLjMyODEydi0wLjAzOTA1OHEwLjAxNTYzLTAuMTU2MjUgMC4wMjM0NC0wLjMxMjUgMC4wMTU2My0wLjE1NjI1IDAuMDMxMjUtMC4zMTI1aDAuNzI2NTZsLTAuMTg3NSAyLjIzNDRxLTAuMDIzNDQgMC4yNS0wLjA1NDY5IDAuNTA3ODEtMC4wMzEyNTEgMC4yNTc4MS0wLjAzMTI1MSAwLjUwNzgxIDAgMC4xNzE4OCAwLjAxNTYzIDAuMzgyODEgMC4wMjM0NCAwLjIwMzEyIDAuMDkzNzUgMC4zOTA2MiAwLjA3MDMxIDAuMTc5NjkgMC4yMDMxMiAwLjMwNDY5IDAuMTQwNjIgMC4xMTcxOSAwLjM3NSAwLjExNzE5IDAuMjgxMjUgMCAwLjUtMC4xMTcxOSAwLjIxODc1LTAuMTI1IDAuMzc1LTAuMzIwMzEgMC4xNjQwNi0wLjE5NTMxIDAuMjczNDQtMC40NDUzMSAwLjEwOTM4LTAuMjU3ODEgMC4xNzk2OS0wLjUyMzQ0IDAuMDcwMzEtMC4yNzM0NCAwLjA5Mzc1LTAuNTM5MDYgMC4wMzEyNS0wLjI2NTYyIDAuMDMxMjUtMC40ODQzOCAwLTAuODU5MzgtMC4yODEyNS0xLjUzMTJ0LTAuNzg5MDYtMS4xMzI4cS0wLjUtMC40NjA5NC0xLjIwMzEtMC43MDMxMi0wLjY5NTMxLTAuMjQyMTktMS41MjM0LTAuMjQyMTktMC44OTg0NCAwLTEuNjMyOCAwLjMzNTk0LTAuNzI2NTYgMC4zMzU5NC0xLjI1IDAuOTE0MDYtMC41MTU2MiAwLjU3MDMxLTAuNzk2ODggMS4zMzU5dC0wLjI4MTI1IDEuNjMyOHEwIDAuODk4NDQgMC4yNzM0NCAxLjYzMjggMC4yODEyNSAwLjcyNjU2IDAuNzk2ODggMS4yNDIydDEuMjQyMiAwLjc5Njg4cTAuNzM0MzggMC4yODEyNSAxLjYzMjggMC4yODEyNSAwLjYzMjgxIDAgMS4yNS0wLjEwMTU2IDAuNjI1LTAuMTAxNTYgMS4xOTUzLTAuMzc1djAuNzE4NzVxLTAuNTg1OTQgMC4yNS0xLjIyNjYgMC4zNDM3NS0wLjY0MDYzIDAuMDg1OTM4LTEuMjczNCAwLjA4NTkzOC0xLjAzOTEgMC0xLjg5ODQtMC4zMjAzMS0wLjg1OTM4LTAuMzI4MTItMS40ODQ0LTAuOTIxODgtMC42MTcxOS0wLjYwMTU2LTAuOTYwOTQtMS40NTMxLTAuMzQzNzUtMC44NTE1Ni0wLjM0Mzc1LTEuODk4NCAwLTEuMDU0NyAwLjM1MTU2LTEuOTUzMSAwLjM1MTU2LTAuODk4NDQgMC45ODQzOC0xLjU1NDcgMC42MzI4MS0wLjY1NjI1IDEuNTE1Ni0xLjAyMzQgMC44ODI4MS0wLjM3NSAxLjk1MzEtMC4zNzV6bS0wLjYwOTM3IDYuNjc5N3EwLjQ3NjU2IDAgMC43ODEyNS0wLjI2NTYyIDAuMzA0NjktMC4yNzM0NCAwLjQ3NjU2LTAuNjcxODggMC4xNzE4OC0wLjM5ODQ0IDAuMjM0MzgtMC44NTE1NiAwLjA3MDMxLTAuNDUzMTIgMC4wNzAzMS0wLjgyMDMxIDAtMC4yNjU2Mi0wLjA1NDY5LTAuNDkyMTktMC4wNTQ2OS0wLjIyNjU2LTAuMTc5NjktMC4zOTA2Mi0wLjExNzE5LTAuMTY0MDYtMC4zMjAzMS0wLjI1NzgxdC0wLjQ5MjE5LTAuMDkzNzVxLTAuNDUzMTIgMC0wLjc1NzgxIDAuMjM0MzgtMC4zMDQ2OSAwLjIzNDM4LTAuNDkyMTkgMC41ODU5NC0wLjE4NzUgMC4zNTE1Ni0wLjI3MzQ0IDAuNzczNDQtMC4wNzgxMyAwLjQxNDA2LTAuMDc4MTMgMC43ODEyNSAwIDAuMjU3ODEgMC4wNTQ2OSAwLjUyMzQ0IDAuMDU0NjkgMC4yNTc4MSAwLjE3OTY5IDAuNDY4NzUgMC4xMjUgMC4yMTA5NCAwLjMzNTk0IDAuMzQzNzUgMC4yMTA5NCAwLjEzMjgxIDAuNTE1NjIgMC4xMzI4MXptLTcuNDE0MS04LjE3OTdoM3YxaC0ydjEwaDJ2MWgtM3ptMTYgMHYxMmgtM3YtMWgydi0xMGgtMnYtMXoiIHN0cm9rZS13aWR0aD0iLjQiLz4NCiA8L2c+DQo8L3N2Zz4NCg==';
@@ -274,13 +272,14 @@ export function getParametersSortedByVisibility(parameters: ParameterInfo[]): Pa
 export function addRecurrenceParametersInGroup(
   parameterGroups: Record<string, ParameterGroup>,
   recurrence: RecurrenceSetting | undefined,
-  definition: any
+  definition: any,
+  shouldEncodeBasedOnMetadata = true
 ): void {
   if (!recurrence) {
     return;
   }
 
-  const { parameters: recurrenceParameters, rawParameters } = getRecurrenceParameters(recurrence, definition);
+  const { parameters: recurrenceParameters, rawParameters } = getRecurrenceParameters(recurrence, definition, shouldEncodeBasedOnMetadata);
 
   if (recurrenceParameters.length) {
     const intl = getIntl();
@@ -314,7 +313,9 @@ export const getDependentParameters = (
     }
     const operationInput = getParameterFromName(inputs, parameter?.parameter ?? parameter?.parameterReference ?? 'undefined');
     if (operationInput) {
-      result[operationInput.id] = { isValid: parameterValidForDynamicCall(operationInput) };
+      result[operationInput.id] = {
+        isValid: parameterValidForDynamicCall(operationInput),
+      };
     }
     return result;
   }, {});
@@ -325,12 +326,16 @@ export const getDependentParameters = (
  * @arg {InputParameter[]} inputParameters - The input parameters.
  * @arg {any} [stepDefinition] - The step definition.
  */
-export function toParameterInfoMap(inputParameters: InputParameter[], stepDefinition?: any): ParameterInfo[] {
+export function toParameterInfoMap(
+  inputParameters: InputParameter[],
+  stepDefinition?: any,
+  shouldEncodeBasedOnMetadata = true
+): ParameterInfo[] {
   const metadata = stepDefinition && stepDefinition.metadata;
   const result: ParameterInfo[] = [];
   for (const inputParameter of inputParameters) {
     if (!inputParameter.dynamicSchema) {
-      const parameter = createParameterInfo(inputParameter, metadata);
+      const parameter = createParameterInfo(inputParameter, metadata, shouldEncodeBasedOnMetadata);
       result.push(parameter);
     }
   }
@@ -348,9 +353,10 @@ export function toParameterInfoMap(inputParameters: InputParameter[], stepDefini
 export function createParameterInfo(
   parameter: ResolvedParameter,
   metadata?: Record<string, string>,
-  shouldIgnoreDefaultValue = false
+  shouldIgnoreDefaultValue = false,
+  shouldEncodeBasedOnMetadata = true
 ): ParameterInfo {
-  const value = loadParameterValue(parameter);
+  const value = loadParameterValue(parameter, shouldEncodeBasedOnMetadata);
   const { editor, editorOptions, editorViewModel, schema } = getParameterEditorProps(parameter, value, shouldIgnoreDefaultValue, metadata);
   const {
     alternativeKey,
@@ -445,7 +451,10 @@ export function getParameterEditorProps(
     editorViewModel = toTableViewModel(value, editorOptions);
   } else if (editor === constants.EDITOR.AUTHENTICATION) {
     editorViewModel = toAuthenticationViewModel(value);
-    editorOptions = { ...editorOptions, identity: WorkflowService().getAppIdentity?.() };
+    editorOptions = {
+      ...editorOptions,
+      identity: WorkflowService().getAppIdentity?.(),
+    };
   } else if (editor === constants.EDITOR.CONDITION) {
     editorViewModel = editorOptions?.isOldFormat
       ? toSimpleQueryBuilderViewModel(value)
@@ -498,7 +507,10 @@ export function getParameterEditorProps(
     editorViewModel = toFloatingActionMenuOutputsViewModel(value);
   } else if (editor === constants.EDITOR.ARRAY) {
     if (itemSchema) {
-      editorViewModel = { ...toArrayViewModelSchema(itemSchema), uncastedValue: parameterValue };
+      editorViewModel = {
+        ...toArrayViewModelSchema(itemSchema),
+        uncastedValue: parameterValue,
+      };
     } else {
       editor = undefined;
     }
@@ -509,7 +521,10 @@ export function getParameterEditorProps(
       editor = constants.EDITOR.HTML;
     } else if (type === constants.SWAGGER.TYPE.ARRAY && !!itemSchema && !equals(visibility, Visibility.Internal)) {
       editor = constants.EDITOR.ARRAY;
-      editorViewModel = { ...toArrayViewModelSchema(itemSchema), uncastedValue: parameterValue };
+      editorViewModel = {
+        ...toArrayViewModelSchema(itemSchema),
+        uncastedValue: parameterValue,
+      };
       schema = { ...schema, ...{ 'x-ms-editor': editor } };
     } else {
       editorOptions = undefined;
@@ -546,7 +561,13 @@ export const loadParameterValueFromString = (
 export const convertStringToInputParameter = (value: string, options: LoadParamteerValueFromStringOptions): InputParameter => {
   const { removeQuotesFromExpression, trimExpression, convertIfContainsExpression, parameterType } = options ?? {};
   if (typeof value !== 'string') {
-    return { key: guid(), name: value, type: parameterType ?? typeof value, hideInUI: false, value };
+    return {
+      key: guid(),
+      name: value,
+      type: parameterType ?? typeof value,
+      hideInUI: false,
+      value,
+    };
   }
 
   let newValue = trimExpression ? value.trim() : value;
@@ -598,27 +619,46 @@ const parseArrayItemSchema = (itemSchema: any, itemPath = itemSchema?.title?.toL
 // Create SimpleQueryBuilder Editor View Model
 export const toSimpleQueryBuilderViewModel = (
   input: any
-): { isOldFormat: boolean; itemValue: ValueSegment[] | undefined; isRowFormat: boolean } => {
-  const advancedModeResult = { isOldFormat: true, isRowFormat: false, itemValue: undefined };
+): {
+  isOldFormat: boolean;
+  itemValue: ValueSegment[] | undefined;
+  isRowFormat: boolean;
+} => {
+  const advancedModeResult = {
+    isOldFormat: true,
+    isRowFormat: false,
+    itemValue: undefined,
+  };
 
   if (!input || !input.includes('@') || !input.includes(',')) {
     return input?.length === 0
-      ? { isOldFormat: true, isRowFormat: true, itemValue: [createLiteralValueSegment("@equals('','')")] }
+      ? {
+          isOldFormat: true,
+          isRowFormat: true,
+          itemValue: [createLiteralValueSegment("@equals('','')")],
+        }
       : advancedModeResult;
   }
 
   try {
     let stringValue = input;
     let operator: string = stringValue.substring(stringValue.indexOf('@') + 1, stringValue.indexOf('('));
+    let operationLiteral: ValueSegment;
+    let endingLiteral: ValueSegment;
     const negatory = operator === 'not';
 
     if (negatory) {
       stringValue = stringValue.replace('@not(', '@');
-      operator = `not${stringValue.substring(stringValue.indexOf('@') + 1, stringValue.indexOf('('))}`;
-    }
 
-    const operationLiteral = createLiteralValueSegment(`@${operator}(`);
-    const endingLiteral = createLiteralValueSegment(')');
+      const negatedOperator = stringValue.substring(stringValue.indexOf('@') + 1, stringValue.indexOf('('));
+
+      operationLiteral = createLiteralValueSegment(`@not(${negatedOperator}(`);
+      endingLiteral = createLiteralValueSegment('))');
+      operator = `not${negatedOperator}`;
+    } else {
+      operationLiteral = createLiteralValueSegment(`@${operator}(`);
+      endingLiteral = createLiteralValueSegment(')');
+    }
 
     if (!Object.values(RowDropdownOptions).includes(operator as RowDropdownOptions)) {
       return advancedModeResult;
@@ -762,13 +802,21 @@ function toDictionaryViewModel(value: any, editorOptions: any): { items: Diction
     for (const itemKey of keys) {
       items.push({
         id: guid(),
-        key: loadParameterValueFromString(itemKey, { parameterType: editorOptions?.keyType }),
-        value: loadParameterValueFromString(valueToParse[itemKey], { parameterType: editorOptions?.valueType }),
+        key: loadParameterValueFromString(itemKey, {
+          parameterType: editorOptions?.keyType,
+        }),
+        value: loadParameterValueFromString(valueToParse[itemKey], {
+          parameterType: editorOptions?.valueType,
+        }),
       });
     }
 
     if (!keys.length) {
-      items.push({ key: [createLiteralValueSegment('')], value: [createLiteralValueSegment('')], id: guid() });
+      items.push({
+        key: [createLiteralValueSegment('')],
+        value: [createLiteralValueSegment('')],
+        id: guid(),
+      });
     }
   } else {
     items = undefined;
@@ -779,7 +827,11 @@ function toDictionaryViewModel(value: any, editorOptions: any): { items: Diction
 
 // Create Table Editor View Model
 function toTableViewModel(value: any, editorOptions: any): { items: DictionaryEditorItemProps[]; columnMode: ColumnMode } {
-  const placeholderItem = { key: [createLiteralValueSegment('')], value: [createLiteralValueSegment('')], id: guid() };
+  const placeholderItem = {
+    key: [createLiteralValueSegment('')],
+    value: [createLiteralValueSegment('')],
+    id: guid(),
+  };
   if (Array.isArray(value)) {
     const keys = editorOptions.columns.keys;
     const types = editorOptions.columns?.types;
@@ -787,19 +839,29 @@ function toTableViewModel(value: any, editorOptions: any): { items: DictionaryEd
     for (const item of value) {
       items.push({
         id: guid(),
-        key: loadParameterValueFromString(item[keys[0]], { parameterType: types?.[keys[0]] }),
-        value: loadParameterValueFromString(item[keys[1]], { parameterType: types?.[keys[1]] }),
+        key: loadParameterValueFromString(item[keys[0]], {
+          parameterType: types?.[keys[0]],
+        }),
+        value: loadParameterValueFromString(item[keys[1]], {
+          parameterType: types?.[keys[1]],
+        }),
       });
     }
 
-    return { items: value.length ? items : [placeholderItem], columnMode: ColumnMode.Custom };
+    return {
+      items: value.length ? items : [placeholderItem],
+      columnMode: ColumnMode.Custom,
+    };
   }
 
   return { items: [placeholderItem], columnMode: ColumnMode.Automatic };
 }
 
 // Create Authentication Editor View Model
-function toAuthenticationViewModel(value: any): { type: AuthenticationType; authenticationValue: AuthProps } {
+function toAuthenticationViewModel(value: any): {
+  type: AuthenticationType;
+  authenticationValue: AuthProps;
+} {
   const emptyValue = { type: AuthenticationType.NONE, authenticationValue: {} };
 
   if (value && isObject(value)) {
@@ -809,8 +871,12 @@ function toAuthenticationViewModel(value: any): { type: AuthenticationType; auth
           type: value.type,
           authenticationValue: {
             basic: {
-              basicUsername: loadParameterValueFromString(value.username, { parameterType: constants.SWAGGER.TYPE.STRING }),
-              basicPassword: loadParameterValueFromString(value.password, { parameterType: constants.SWAGGER.TYPE.STRING }),
+              basicUsername: loadParameterValueFromString(value.username, {
+                parameterType: constants.SWAGGER.TYPE.STRING,
+              }),
+              basicPassword: loadParameterValueFromString(value.password, {
+                parameterType: constants.SWAGGER.TYPE.STRING,
+              }),
             },
           },
         };
@@ -819,7 +885,9 @@ function toAuthenticationViewModel(value: any): { type: AuthenticationType; auth
           type: value.type,
           authenticationValue: {
             clientCertificate: {
-              clientCertificatePfx: loadParameterValueFromString(value.pfx, { parameterType: constants.SWAGGER.TYPE.STRING }),
+              clientCertificatePfx: loadParameterValueFromString(value.pfx, {
+                parameterType: constants.SWAGGER.TYPE.STRING,
+              }),
               clientCertificatePassword: loadParameterValueFromString(value.password, { parameterType: constants.SWAGGER.TYPE.STRING }),
             },
           },
@@ -830,13 +898,25 @@ function toAuthenticationViewModel(value: any): { type: AuthenticationType; auth
           type: value.type,
           authenticationValue: {
             aadOAuth: {
-              oauthTenant: loadParameterValueFromString(value.tenant, { parameterType: constants.SWAGGER.TYPE.STRING }),
-              oauthAudience: loadParameterValueFromString(value.audience, { parameterType: constants.SWAGGER.TYPE.STRING }),
-              oauthAuthority: loadParameterValueFromString(value.authority, { parameterType: constants.SWAGGER.TYPE.STRING }),
-              oauthClientId: loadParameterValueFromString(value.clientId, { parameterType: constants.SWAGGER.TYPE.STRING }),
+              oauthTenant: loadParameterValueFromString(value.tenant, {
+                parameterType: constants.SWAGGER.TYPE.STRING,
+              }),
+              oauthAudience: loadParameterValueFromString(value.audience, {
+                parameterType: constants.SWAGGER.TYPE.STRING,
+              }),
+              oauthAuthority: loadParameterValueFromString(value.authority, {
+                parameterType: constants.SWAGGER.TYPE.STRING,
+              }),
+              oauthClientId: loadParameterValueFromString(value.clientId, {
+                parameterType: constants.SWAGGER.TYPE.STRING,
+              }),
               oauthType: loadOauthType(value),
-              oauthTypeSecret: loadParameterValueFromString(value.secret, { parameterType: constants.SWAGGER.TYPE.STRING }),
-              oauthTypeCertificatePfx: loadParameterValueFromString(value.pfx, { parameterType: constants.SWAGGER.TYPE.STRING }),
+              oauthTypeSecret: loadParameterValueFromString(value.secret, {
+                parameterType: constants.SWAGGER.TYPE.STRING,
+              }),
+              oauthTypeCertificatePfx: loadParameterValueFromString(value.pfx, {
+                parameterType: constants.SWAGGER.TYPE.STRING,
+              }),
               oauthTypeCertificatePassword: loadParameterValueFromString(value.password, { parameterType: constants.SWAGGER.TYPE.STRING }),
             },
           },
@@ -857,7 +937,9 @@ function toAuthenticationViewModel(value: any): { type: AuthenticationType; auth
           type: value.type,
           authenticationValue: {
             msi: {
-              msiAudience: loadParameterValueFromString(value.audience, { parameterType: constants.SWAGGER.TYPE.STRING }),
+              msiAudience: loadParameterValueFromString(value.audience, {
+                parameterType: constants.SWAGGER.TYPE.STRING,
+              }),
               msiIdentity: value.identity,
             },
           },
@@ -911,7 +993,7 @@ export function shouldIncludeSelfForRepetitionReference(manifest: OperationManif
   return false;
 }
 
-export function loadParameterValue(parameter: InputParameter): ValueSegment[] {
+export function loadParameterValue(parameter: InputParameter, shouldEncodeBasedOnMetadata = true): ValueSegment[] {
   let valueObject: unknown = undefined;
 
   if (parameter.isNotificationUrl) {
@@ -922,13 +1004,12 @@ export function loadParameterValue(parameter: InputParameter): ValueSegment[] {
       valueObject = parameter?.default;
     }
   }
+  const requiresUrlEncoding = shouldEncodeBasedOnMetadata
+    ? parameter.in === ParameterLocations.Path || parameter.encode !== undefined
+    : parameter.in === ParameterLocations.Path;
+  const shouldUncast = !parameter.suppressCasting && (UncastingUtility.isCastableFormat(parameter?.format) || requiresUrlEncoding);
 
-  let valueSegments = convertToValueSegments(
-    valueObject,
-    !parameter.suppressCasting && UncastingUtility.isCastableFormat(parameter?.format),
-    parameter.type,
-    parameter.schema
-  );
+  let valueSegments = convertToValueSegments(valueObject, shouldUncast, parameter.type, parameter.schema);
 
   valueSegments = compressSegments(valueSegments);
 
@@ -1011,7 +1092,10 @@ export function shouldUseParameterInGroup(parameter: ParameterInfo, allParameter
     const dependentParameters = dependencies.parameters.reduce((result: Dependency[], dependentParameter: DependentParameterInfo) => {
       const parameterInfo = allParameters.find((param) => param.parameterName === dependentParameter.name);
       if (parameterInfo) {
-        result.push({ ...dependentParameter, actualValue: parameterValueWithoutCasting(parameterInfo) });
+        result.push({
+          ...dependentParameter,
+          actualValue: parameterValueWithoutCasting(parameterInfo),
+        });
       }
 
       return result;
@@ -1697,7 +1781,9 @@ export function isArrayOrObjectValueCompatibleWithSchema(value: any, schema: any
       };
     }
   } else if (schema.type === constants.SWAGGER.TYPE.OBJECT && schema.properties) {
-    schemaWithEscapedProperties.properties = { ...escapeSchemaProperties(schema.properties) };
+    schemaWithEscapedProperties.properties = {
+      ...escapeSchemaProperties(schema.properties),
+    };
   }
 
   try {
@@ -1800,7 +1886,10 @@ export const updateParameterAndDependencies = createAsyncThunk(
       updatedParameter.value,
       shouldEncodeParameterValueForOperationBasedOnMetadata(operationInfo)
     );
-    const propertiesWithValidations = { ...properties, validationErrors: updatedParameter.validationErrors };
+    const propertiesWithValidations = {
+      ...properties,
+      validationErrors: updatedParameter.validationErrors,
+    };
 
     const parametersToUpdate = [
       {
@@ -1840,6 +1929,28 @@ export const updateParameterAndDependencies = createAsyncThunk(
             },
           });
         }
+
+        if (inputDependencies[key].dependencyType === 'AgentSchema') {
+          const dependentParameter = nodeInputs.parameterGroups[groupId].parameters.find((param) => param.parameterKey === key);
+          if (!dependentParameter) {
+            LoggerService().log({
+              level: LogEntryLevel.Verbose,
+              area: 'UpdateParameterAndDependencies',
+              message: `Dependent parameter was not set. Key - ${key}`,
+            });
+            continue;
+          }
+
+          if (inputDependencies[key].parameter?.value) {
+            payload.parameters.push({
+              groupId,
+              parameterId: dependentParameter.id,
+              propertiesToUpdate: {
+                value: inputDependencies[key].parameter?.value,
+              },
+            });
+          }
+        }
       }
     }
 
@@ -1854,7 +1965,7 @@ export const updateParameterAndDependencies = createAsyncThunk(
       validateUntilAction(dispatch, nodeId, groupId, parameterId, nodeInputs.parameterGroups[groupId].parameters, properties);
     }
     if (operationInfo?.type?.toLowerCase() === constants.NODE.TYPE.INITIALIZE_VARIABLE) {
-      validateInitializeVariable(dispatch, nodeId, groupId, parameterId, nodeInputs.parameterGroups[groupId].parameters, properties);
+      validateInitializeVariable(dispatch, nodeId, groupId, parameterId, updatedParameter, properties);
     }
 
     if (dependenciesToUpdate) {
@@ -1877,7 +1988,12 @@ function updateNodeMetadataOnParameterUpdate(nodeId: string, parameter: Paramete
   const { editor, editorViewModel, value } = parameter;
   if (editor === constants.EDITOR.FILEPICKER && value.length === 1 && isLiteralValueSegment(value[0])) {
     if (!!editorViewModel.displayValue && !equals(editorViewModel.displayValue, value[0].value)) {
-      dispatch(updateActionMetadata({ id: nodeId, actionMetadata: { [value[0].value]: editorViewModel.displayValue } }));
+      dispatch(
+        updateActionMetadata({
+          id: nodeId,
+          actionMetadata: { [value[0].value]: editorViewModel.displayValue },
+        })
+      );
     }
   }
 }
@@ -1930,7 +2046,10 @@ export const updateDynamicDataInNode = async (
   await loadDynamicData(nodeId, isTrigger, operationInfo, connectionReference, dependencies, dispatch, getState, operationDefinition);
 
   const { operations, workflowParameters } = getState();
-  const nodeDependencies = getRecordEntry(operations.dependencies, nodeId) ?? { inputs: {}, outputs: {} };
+  const nodeDependencies = getRecordEntry(operations.dependencies, nodeId) ?? {
+    inputs: {},
+    outputs: {},
+  };
   const nodeInputParameters = getRecordEntry(operations.inputParameters, nodeId) ?? { parameterGroups: {} };
 
   const parameterDynamicValues: UpdateParametersPayload['parameters'] = [];
@@ -2072,7 +2191,10 @@ export const loadDynamicContentForInputsInNode = async (
             newOperationDefinition
           )
         : [];
-      const inputsWithSchema = schemaInputs.map((input) => ({ ...input, schema: input }));
+      const inputsWithSchema = schemaInputs.map((input) => ({
+        ...input,
+        schema: input,
+      }));
       const inputParameters = toParameterInfoMap(inputsWithSchema, operationDefinition);
 
       updateTokenMetadataInParameters(nodeId, inputParameters, getState());
@@ -2112,7 +2234,10 @@ export const loadDynamicContentForInputsInNode = async (
         ...allInputs,
         parameterGroups: {
           ...allInputs.parameterGroups,
-          [ParameterGroupKeys.DEFAULT]: { ...allInputs.parameterGroups[ParameterGroupKeys.DEFAULT], parameters: updatedParameters },
+          [ParameterGroupKeys.DEFAULT]: {
+            ...allInputs.parameterGroups[ParameterGroupKeys.DEFAULT],
+            parameters: updatedParameters,
+          },
         },
       };
 
@@ -2160,7 +2285,12 @@ export const loadDynamicContentForInputsInNode = async (
       dispatch(
         updateErrorDetails({
           id: nodeId,
-          errorInfo: { level: ErrorLevel.DynamicInputs, message: errorMessage, error, code: error.code },
+          errorInfo: {
+            level: ErrorLevel.DynamicInputs,
+            message: errorMessage,
+            error,
+            code: error.code,
+          },
         })
       );
     }
@@ -2290,7 +2420,12 @@ export async function loadDynamicTreeItemsForParameter(
               {
                 parameterId,
                 groupId,
-                propertiesToUpdate: { dynamicData: { status: DynamicLoadStatus.FAILED, error: error as Exception } },
+                propertiesToUpdate: {
+                  dynamicData: {
+                    status: DynamicLoadStatus.FAILED,
+                    error: error as Exception,
+                  },
+                },
               },
             ],
           })
@@ -2332,9 +2467,17 @@ export async function loadDynamicValuesForParameter(
     return;
   }
 
-  let propertiesToUpdate: any = { dynamicData: { status: DynamicLoadStatus.LOADING }, editorOptions: { options: [] } };
+  let propertiesToUpdate: any = {
+    dynamicData: { status: DynamicLoadStatus.LOADING },
+    editorOptions: { options: [] },
+  };
 
-  dispatch(updateNodeParameters({ nodeId, parameters: [{ parameterId, groupId, propertiesToUpdate }] }));
+  dispatch(
+    updateNodeParameters({
+      nodeId,
+      parameters: [{ parameterId, groupId, propertiesToUpdate }],
+    })
+  );
 
   try {
     const dynamicValues = await getDynamicValues(
@@ -2346,14 +2489,27 @@ export async function loadDynamicValuesForParameter(
       workflowParameters
     );
 
-    propertiesToUpdate = { dynamicData: { status: DynamicLoadStatus.SUCCEEDED }, editorOptions: { options: dynamicValues } };
+    propertiesToUpdate = {
+      dynamicData: { status: DynamicLoadStatus.SUCCEEDED },
+      editorOptions: { options: dynamicValues },
+    };
   } catch (error: any) {
     const rootMessage = parseErrorMessage(error);
     const message = error?.response?.data?.error?.message ?? rootMessage;
-    propertiesToUpdate = { dynamicData: { status: DynamicLoadStatus.FAILED, error: { ...error, message } } };
+    propertiesToUpdate = {
+      dynamicData: {
+        status: DynamicLoadStatus.FAILED,
+        error: { ...error, message },
+      },
+    };
   }
 
-  dispatch(updateNodeParameters({ nodeId, parameters: [{ parameterId, groupId, propertiesToUpdate }] }));
+  dispatch(
+    updateNodeParameters({
+      nodeId,
+      parameters: [{ parameterId, groupId, propertiesToUpdate }],
+    })
+  );
 }
 
 export async function fetchDynamicValuesForParameter(
@@ -2386,10 +2542,18 @@ export async function fetchDynamicValuesForParameter(
     return;
   }
 
-  let propertiesToUpdate: any = { dynamicData: { status: DynamicLoadStatus.LOADING }, editorOptions: { options: [] } };
+  let propertiesToUpdate: any = {
+    dynamicData: { status: DynamicLoadStatus.LOADING },
+    editorOptions: { options: [] },
+  };
 
   // Send the initial status update to the store
-  dispatch(updateNodeParameters({ nodeId, parameters: [{ parameterId, groupId, propertiesToUpdate }] }));
+  dispatch(
+    updateNodeParameters({
+      nodeId,
+      parameters: [{ parameterId, groupId, propertiesToUpdate }],
+    })
+  );
 
   try {
     const dynamicValues = await getDynamicValues(
@@ -2401,11 +2565,19 @@ export async function fetchDynamicValuesForParameter(
       workflowParameters
     );
 
-    propertiesToUpdate = { dynamicData: { status: DynamicLoadStatus.SUCCEEDED }, editorOptions: { options: dynamicValues } };
+    propertiesToUpdate = {
+      dynamicData: { status: DynamicLoadStatus.SUCCEEDED },
+      editorOptions: { options: dynamicValues },
+    };
   } catch (error: any) {
     const rootMessage = parseErrorMessage(error);
     const message = error?.response?.data?.error?.message ?? rootMessage;
-    propertiesToUpdate = { dynamicData: { status: DynamicLoadStatus.FAILED, error: { ...error, message } } };
+    propertiesToUpdate = {
+      dynamicData: {
+        status: DynamicLoadStatus.FAILED,
+        error: { ...error, message },
+      },
+    };
   }
 
   return { parameterId, groupId, propertiesToUpdate };
@@ -2466,7 +2638,12 @@ async function tryGetInputDynamicSchema(
     dispatch(
       updateErrorDetails({
         id: nodeId,
-        errorInfo: { level: ErrorLevel.DynamicInputs, message: errorMessage, error, code: error.code },
+        errorInfo: {
+          level: ErrorLevel.DynamicInputs,
+          message: errorMessage,
+          error,
+          code: error.code,
+        },
       })
     );
 
@@ -2564,7 +2741,10 @@ function getStringifiedValueFromEditorViewModel(
       if (editorViewModel?.columnMode === ColumnMode.Custom && editorOptions?.columns) {
         const { keys, types } = editorOptions.columns;
         const value: any = [];
-        const commonProperties = { supressCasting: parameter.suppressCasting, info: parameter.info };
+        const commonProperties = {
+          supressCasting: parameter.suppressCasting,
+          info: parameter.info,
+        };
 
         // We do not parse here, since the type is string for table columns [assumed currently may change later]
         for (const item of editorViewModel.items) {
@@ -2619,15 +2799,18 @@ const getStringifiedValueFromFloatingActionMenuOutputsViewModel = (
   parameter: ParameterInfo,
   editorViewModel: FloatingActionMenuOutputViewModel
 ): string | undefined => {
-  const value: typeof editorViewModel.schema & { additionalProperties?: { outputValueMap?: Record<string, unknown> } } = clone(
-    editorViewModel.schema
-  );
+  const value: typeof editorViewModel.schema & {
+    additionalProperties?: { outputValueMap?: Record<string, unknown> };
+  } = clone(editorViewModel.schema);
   const schemaProperties: typeof editorViewModel.schema.properties = {};
   const outputValueMap: Record<string, unknown> = {};
 
   // commonProperties is inspired from behavior for Table Editor and Condition Editor.
   // This may need to change if for example we need proper parameter.info.format value per added parameter (instead of re-using parameter.info).
-  const commonProperties = { supressCasting: parameter.suppressCasting, info: parameter.info };
+  const commonProperties = {
+    supressCasting: parameter.suppressCasting,
+    info: parameter.info,
+  };
   Object.entries(value.properties).forEach(([key, config]) => {
     if (!config?.['x-ms-dynamically-added']) {
       schemaProperties[key] = config;
@@ -2687,7 +2870,10 @@ export const recurseSerializeCondition = (
   shouldEncodeBasedOnMetadata = true
 ): any => {
   const returnVal: any = {};
-  const commonProperties = { supressCasting: parameter.suppressCasting, info: parameter.info };
+  const commonProperties = {
+    supressCasting: parameter.suppressCasting,
+    info: parameter.info,
+  };
   if (editorViewModel.type === GroupType.ROW) {
     let not = false;
     let { operator } = editorViewModel;
@@ -3220,7 +3406,11 @@ export const updateScopePasteTokenMetadata = (
       const existingTokenInfo = outputTokens?.tokens.find((tokenInfo) => tokenInfo.key === token?.key);
       // if there's an exact token match, we'll use the existing token info
       if (existingTokenInfo) {
-        token = { ...token, ...existingTokenInfo, tokenType: TokenType.OUTPUTS };
+        token = {
+          ...token,
+          ...existingTokenInfo,
+          tokenType: TokenType.OUTPUTS,
+        };
       }
       // otherwise it may be a item output token, so we'll take the icon and brandColor from the outputInfo
       else if (outputTokens && outputTokens.tokens?.length > 0) {
@@ -3609,7 +3799,11 @@ export function parameterValueToString(
     : parameterInfo.editorViewModel;
 
   const remappedParameterInfo = isRecordNotEmpty(idReplacements)
-    ? { ...parameterInfo, value: remappedValue, editorViewModel: remappedEditorViewModel }
+    ? {
+        ...parameterInfo,
+        value: remappedValue,
+        editorViewModel: remappedEditorViewModel,
+      }
     : parameterInfo;
 
   if (didRemap) {
@@ -3760,15 +3954,14 @@ export function parameterValueToJSONString(parameterValue: ValueSegment[], apply
           i < updatedParameterValue.length - 1 && updatedParameterValue[i + 1].type !== ValueSegmentType.TOKEN;
         tokenExpression = `@${stringifiedTokenExpression}`;
         // eslint-disable-next-line no-useless-escape
-        tokenExpression = lastExpressionWasLiteral ? `\"${tokenExpression}` : tokenExpression;
+        tokenExpression = lastExpressionWasLiteral ? `"${tokenExpression}` : tokenExpression;
         // eslint-disable-next-line no-useless-escape
-        tokenExpression = nextExpressionIsLiteral ? `${tokenExpression}\"` : `${tokenExpression}`;
+        tokenExpression = nextExpressionIsLiteral ? `${tokenExpression}"` : `${tokenExpression}`;
       }
 
       parameterValueString += tokenExpression;
     } else {
       numberOfDoubleQuotes += (tokenExpression.replace(/\\"/g, '').match(/"/g) || []).length;
-
       shouldInterpolate = numberOfDoubleQuotes % 2 === 1;
       parameterValueString += expression.value;
     }
@@ -3863,7 +4056,11 @@ export function remapTokenSegmentValue(
       ...segment,
       value: newValue,
       token: arrayDetails
-        ? { ...segment.token, arrayDetails: { ...arrayDetails, loopSource: newId }, value: newValue }
+        ? {
+            ...segment.token,
+            arrayDetails: { ...arrayDetails, loopSource: newId },
+            value: newValue,
+          }
         : { ...segment.token, actionName: newId, value: newValue },
     } as ValueSegment;
   } else if (isFunctionValueSegment(segment)) {
@@ -3875,7 +4072,11 @@ export function remapTokenSegmentValue(
       newSegmentValue = newSegmentValue?.replaceAll(`'${id}'`, `'${getRecordEntry(idReplacements, id)}'`);
     }
 
-    newSegment = { ...segment, value: newSegmentValue, token: { ...segment.token, value: newSegmentValue } } as ValueSegment;
+    newSegment = {
+      ...segment,
+      value: newSegmentValue,
+      token: { ...segment.token, value: newSegmentValue },
+    } as ValueSegment;
   }
 
   return { value: newSegment, didRemap };
@@ -4057,7 +4258,9 @@ export function getEncodeValue(value: string): number {
 }
 
 export function getArrayTypeForOutputs(parsedSwagger: SwaggerParser, operationId: string): string {
-  const outputs = parsedSwagger.getOutputParameters(operationId, { excludeInternalOperations: false });
+  const outputs = parsedSwagger.getOutputParameters(operationId, {
+    excludeInternalOperations: false,
+  });
   const outputKeys = Object.keys(outputs);
 
   let itemKeyOutputParameter: OutputParameter | undefined = undefined;
@@ -4155,7 +4358,7 @@ export function validateInitializeVariable(
   nodeId: string,
   groupId: string,
   parameterId: string,
-  parameters: ParameterInfo[],
+  parameter: ParameterInfo,
   changedParameter: Partial<ParameterInfo>
 ) {
   const intl = getIntl();
@@ -4165,7 +4368,6 @@ export function validateInitializeVariable(
     description: 'Error message to show when multiple variables have errors',
   });
 
-  const parameter = parameters.find((param) => param.parameterName === constants.PARAMETER_NAMES.VARIABLES);
   const variables: InitializeVariableProps[] =
     parameter?.id === parameterId ? (changedParameter?.editorViewModel?.variables ?? []) : (parameter?.editorViewModel?.variables ?? []);
 
@@ -4181,7 +4383,10 @@ export function validateInitializeVariable(
         groupId,
         parameterId: parameter.id,
         validationErrors: errorMessage ? [errorMessage] : undefined,
-        editorViewModel: { ...parameter.editorViewModel, validationErrors: errorMessage ? validationErrors : undefined },
+        editorViewModel: {
+          ...parameter.editorViewModel,
+          validationErrors: errorMessage ? validationErrors : undefined,
+        },
       })
     );
   }

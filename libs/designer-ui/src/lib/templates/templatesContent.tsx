@@ -1,4 +1,4 @@
-import { TabList, Tab, Text } from '@fluentui/react-components';
+import { TabList, Tab, Text, tokens } from '@fluentui/react-components';
 import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
 import type { TemplateTabProps, TemplateTabStatusType } from './model';
 import { CheckmarkCircleFilled, CircleHintHalfVerticalFilled, DismissCircleFilled } from '@fluentui/react-icons';
@@ -27,7 +27,7 @@ export const TemplateContent = ({ tabs = [], selectedTab, selectTab, className }
       {tabs.length > 1 && (
         <>
           <TabList selectedValue={selectedTabId} onTabSelect={onTabSelected} className={tabClass}>
-            {tabs.map(({ id, title, disabled = false, tabStatusIcon }) => (
+            {tabs.map(({ id, title, onTabClick = () => {}, disabled = false, tabStatusIcon }) => (
               <Tab
                 disabled={disabled}
                 key={id}
@@ -37,6 +37,7 @@ export const TemplateContent = ({ tabs = [], selectedTab, selectTab, className }
                 value={id}
                 role={'tab'}
                 icon={TabStatusIcon(tabStatusIcon)}
+                onClick={onTabClick}
               >
                 {title}
               </Tab>
@@ -53,9 +54,9 @@ export const TemplateContent = ({ tabs = [], selectedTab, selectTab, className }
 const TabStatusIcon = (iconName: TemplateTabStatusType) => {
   switch (iconName) {
     case 'error':
-      return <DismissCircleFilled />;
+      return <DismissCircleFilled color={tokens.colorStatusDangerForeground1} />;
     case 'success':
-      return <CheckmarkCircleFilled />;
+      return <CheckmarkCircleFilled color={tokens.colorPaletteGreenBackground3} />;
     case 'in-progress':
       return <CircleHintHalfVerticalFilled />;
     default:

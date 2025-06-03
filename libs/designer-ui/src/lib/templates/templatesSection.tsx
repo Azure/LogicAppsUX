@@ -2,6 +2,7 @@ import {
   Divider,
   Dropdown,
   Field,
+  InfoLabel,
   Input,
   Label,
   Link,
@@ -14,6 +15,7 @@ import {
 } from '@fluentui/react-components';
 import { Open16Regular } from '@fluentui/react-icons';
 import type { BaseFieldItem, TemplatesSectionItem, TemplatesSectionProps } from './templatesSectionModel';
+import { css } from '@fluentui/utilities';
 
 export const TemplatesSection = ({
   title,
@@ -22,6 +24,7 @@ export const TemplatesSection = ({
   description,
   descriptionLink,
   items,
+  cssOverrides = {},
   children = null,
 }: TemplatesSectionProps) => {
   const onRenderItem = (item: TemplatesSectionItem) => {
@@ -38,9 +41,38 @@ export const TemplatesSection = ({
     }
 
     return (
-      <Field validationMessage={item.errorMessage} hint={item.hint} required={item.required}>
+      <Field
+        validationMessage={item.errorMessage}
+        validationState={item.required && item.errorMessage ? 'error' : undefined}
+        hint={item.hint}
+        required={item.required}
+      >
         <CustomFieldInput {...item} />
       </Field>
+    );
+  };
+
+  const onRenderLabel = (item: TemplatesSectionItem) => {
+    if (!item.label) {
+      return null;
+    }
+
+    if (typeof item.label !== 'string') {
+      return <div className="msla-templates-section-item-label">{item.label}</div>;
+    }
+
+    return item.description ? (
+      <InfoLabel
+        info={item.description}
+        className="msla-templates-section-item-label"
+        required={(item as BaseFieldItem)?.required ?? false}
+      >
+        {item.label}
+      </InfoLabel>
+    ) : (
+      <Label className="msla-templates-section-item-label" required={(item as BaseFieldItem)?.required ?? false}>
+        {item.label}
+      </Label>
     );
   };
 
@@ -63,20 +95,12 @@ export const TemplatesSection = ({
         </Text>
       ) : null}
 
-      <div className="msla-templates-section-items">
+      <div className={css('msla-templates-section-items', cssOverrides?.['sectionItems'])}>
         {items
           ? items.map((item, index) => {
               return (
                 <div key={index} className="msla-templates-section-item">
-                  {item.label ? (
-                    typeof item.label === 'string' ? (
-                      <Label className="msla-templates-section-item-label" required={(item as BaseFieldItem)?.required ?? false}>
-                        {item.label}
-                      </Label>
-                    ) : (
-                      <div className="msla-templates-section-item-label">{item.label}</div>
-                    )
-                  ) : null}
+                  {onRenderLabel(item)}
                   <div className="msla-templates-section-item-value">{onRenderItem(item)}</div>
                 </div>
               );

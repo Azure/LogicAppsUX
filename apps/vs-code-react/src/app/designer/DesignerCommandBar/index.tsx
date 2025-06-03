@@ -203,8 +203,8 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
       description: 'Aria describing the way to control the keyboard navigation',
     }),
     CREATE_UNIT_TEST: intl.formatMessage({
-      defaultMessage: 'Create unit test from run (Preview)',
-      id: 'syPKiG',
+      defaultMessage: 'Create unit test from run',
+      id: '4eH9hX',
       description: 'Button text for create unit test',
     }),
     UNIT_TEST_SAVE: intl.formatMessage({
@@ -218,8 +218,8 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
       description: 'Button text for unit test asssertions',
     }),
     UNIT_TEST_CREATE_BLANK: intl.formatMessage({
-      defaultMessage: 'Create unit test (Preview)',
-      id: 'xnhcEo',
+      defaultMessage: 'Create unit test',
+      id: 'SUX3dO',
       description: 'Button test for save blank unit test',
     }),
   };
@@ -242,7 +242,10 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
   const haveAssertionErrors = Object.keys(allAssertionsErrors ?? {}).length > 0;
 
   const isSaveUnitTestDisabled = isSavingUnitTest || haveAssertionErrors;
-  const isSaveBlankUnitTestDisabled = isSavingBlankUnitTest || haveAssertionErrors;
+  const isSaveBlankUnitTestDisabled = useMemo(
+    () => isSavingBlankUnitTest || haveAssertionErrors || designerIsDirty,
+    [isSavingBlankUnitTest, haveAssertionErrors, designerIsDirty]
+  );
   const haveErrors = useMemo(
     () => haveInputErrors || haveWorkflowParameterErrors || haveSettingsErrors || haveConnectionErrors,
     [haveInputErrors, haveWorkflowParameterErrors, haveSettingsErrors, haveConnectionErrors]
@@ -309,7 +312,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
     },
     {
       key: 'SaveBlank',
-      disabled: isDisabled,
+      disabled: isSaveBlankUnitTestDisabled,
       text: Resources.UNIT_TEST_CREATE_BLANK,
       ariaLabel: Resources.UNIT_TEST_CREATE_BLANK,
       icon: isSavingBlankUnitTest ? <Spinner size="extra-small" /> : <SaveBlankUnitTestIcon />,

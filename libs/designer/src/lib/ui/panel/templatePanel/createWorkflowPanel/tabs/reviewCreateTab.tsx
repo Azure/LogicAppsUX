@@ -60,47 +60,56 @@ export const reviewCreateTab = (
   tabStatusIcon: undefined,
   content: <ReviewCreatePanel />,
   footerContent: {
-    primaryButtonText: isCreating ? (
-      <Spinner size={SpinnerSize.xSmall} />
-    ) : isCreateView ? (
-      intl.formatMessage({
-        defaultMessage: 'Create',
-        id: '/qrBuJ',
-        description: 'Button text for creating the workflow',
-      })
-    ) : (
-      intl.formatMessage({
-        defaultMessage: 'Update',
-        id: 'thnhGU',
-        description: 'Button text for updating the workflow',
-      })
-    ),
-    primaryButtonOnClick: onCreateClick,
-    primaryButtonDisabled: isPrimaryButtonDisabled || isCreating,
-    secondaryButtonText: previousTabId
-      ? intl.formatMessage({
-          defaultMessage: 'Previous',
-          id: 'Yua/4o',
-          description: 'Button text for moving to the previous tab in the create workflow panel',
-        })
-      : intl.formatMessage({
-          defaultMessage: 'Close',
-          id: 'FTrMxN',
-          description: 'Button text for closing the panel',
-        }),
-    secondaryButtonOnClick: () => {
-      if (previousTabId) {
-        dispatch(selectPanelTab(previousTabId));
-      } else {
-        dispatch(closePanel());
+    buttonContents: [
+      {
+        type: 'action',
+        text: isCreating ? (
+          <Spinner size={SpinnerSize.xSmall} />
+        ) : isCreateView ? (
+          intl.formatMessage({
+            defaultMessage: 'Create',
+            id: '/qrBuJ',
+            description: 'Button text for creating the workflow',
+          })
+        ) : (
+          intl.formatMessage({
+            defaultMessage: 'Update',
+            id: 'thnhGU',
+            description: 'Button text for updating the workflow',
+          })
+        ),
+        onClick: onCreateClick,
+        appearance: 'primary',
+        disabled: isPrimaryButtonDisabled || isCreating,
+      },
+      {
+        type: 'action',
+        text: previousTabId
+          ? intl.formatMessage({
+              defaultMessage: 'Previous',
+              id: 'Yua/4o',
+              description: 'Button text for moving to the previous tab in the create workflow panel',
+            })
+          : intl.formatMessage({
+              defaultMessage: 'Close',
+              id: 'FTrMxN',
+              description: 'Button text for closing the panel',
+            }),
+        onClick: () => {
+          if (previousTabId) {
+            dispatch(selectPanelTab(previousTabId));
+          } else {
+            dispatch(closePanel());
 
-        if (shouldClearDetails) {
-          dispatch(clearTemplateDetails());
-        }
+            if (shouldClearDetails) {
+              dispatch(clearTemplateDetails());
+            }
 
-        onClosePanel?.();
-      }
-    },
-    secondaryButtonDisabled: (!previousTabId && !showCloseButton) || isCreating,
+            onClosePanel?.();
+          }
+        },
+        disabled: (!previousTabId && !showCloseButton) || isCreating,
+      },
+    ],
   },
 });

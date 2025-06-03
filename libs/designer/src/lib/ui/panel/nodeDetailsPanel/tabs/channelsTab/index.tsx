@@ -1,23 +1,23 @@
-import type { PanelTabFn, PanelTabProps } from '@microsoft/designer-ui';
+import { getSettingLabel, type PanelTabFn, type PanelTabProps } from '@microsoft/designer-ui';
 import constants from '../../../../../common/constants';
-import { MessageBarBody, Switch, type SwitchOnChangeData } from '@fluentui/react-components';
+import { MessageBarBody, Radio, RadioGroup, type RadioGroupOnChangeData } from '@fluentui/react-components';
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import type { RootState, AppDispatch } from '../../../../../core/store';
-import { MessageBar, MessageBarType } from '@fluentui/react';
-import ChannelContent from './ChannelContent';
-import type { SupportedChannels } from '@microsoft/logic-apps-shared';
+import { Link, MessageBar, MessageBarType } from '@fluentui/react';
 import { deinitializeNodes, initializeNodeOperationInputsData } from '../../../../../core/state/operation/operationMetadataSlice';
 import { getAllNodeData } from '../../../../../core/configuretemplate/utils/helper';
 import { initializeOperationDetails } from '../../../../../core/templates/utils/parametershelper';
 import { setIsWorkflowParametersDirty } from '../../../../../core/state/workflowparameters/workflowparametersSlice';
+import { useSupportedChannels } from '../../../../../core/state/designerOptions/designerOptionsSelectors';
+import { equals } from '@microsoft/logic-apps-shared';
 
 export const ChannelsTab: React.FC<PanelTabProps> = (props) => {
   const { nodeId: selectedNodeId } = props;
   const dispatch = useDispatch<AppDispatch>();
-  const supportedChannels = useSelector((state: RootState) => state.operations.supportedChannels[selectedNodeId]);
-  const [channel, _setChannel] = useState<SupportedChannels | undefined>(supportedChannels.length > 0 ? supportedChannels[0] : undefined);
+  const supportedChannels = useSupportedChannels(selectedNodeId);
+  const channel = useMemo(() => (supportedChannels.length > 0 ? supportedChannels[0] : undefined), [supportedChannels]);
   const [isLoading, setIsLoading] = useState(false);
   const inputNodeId = useMemo(
     () => `${selectedNodeId}${constants.CHANNELS.INPUT}${channel?.input?.type}`,
@@ -30,38 +30,86 @@ export const ChannelsTab: React.FC<PanelTabProps> = (props) => {
 
   const inputChannelParameters = useSelector((state: RootState) => state.operations.inputParameters[inputNodeId]);
 
+  const agentIdWhereChannelIsEnabled = useSelector((state: RootState) => {
+    const keys = Object.keys(state.operations.inputParameters);
+    const inputChannelSuffix = `${constants.CHANNELS.INPUT}${channel?.input?.type}`;
+    const channelEnabled = keys.find((key) => key.endsWith(inputChannelSuffix)) ?? '';
+
+    return channelEnabled.split(inputChannelSuffix)[0];
+  });
+
+  const channelEnabledForDifferentAgent = useMemo(
+    () => !!agentIdWhereChannelIsEnabled && !equals(agentIdWhereChannelIsEnabled, selectedNodeId),
+    [agentIdWhereChannelIsEnabled, selectedNodeId]
+  );
+
   const outputChannelParameters = useSelector((state: RootState) => state.operations.inputParameters[outputNodeId]);
 
   const intl = useIntl();
 
   const stringResources = useMemo(
     () => ({
-      ENABLED: intl.formatMessage({
-        defaultMessage: 'Enabled',
-        id: 'rRM1pj',
-        description: 'Channel enabled.',
-      }),
-      DISABLED: intl.formatMessage({
-        defaultMessage: 'Disabled',
-        id: 'OnjMM3',
-        description: 'Channel disabled.',
-      }),
       NO_CHANNEL_SUPPORTED_MSG: intl.formatMessage({
-        defaultMessage: 'No channel supported for this agent.',
-        id: 'di6MC0',
-        description: 'channel not supported message',
+        defaultMessage: 'No supported channels exist for this agent.',
+        id: 'PPvsfZ',
+        description: 'Channel not supported message',
       }),
-      OUTPUT_CHANNEL_MESSAGE: intl.formatMessage({
+      CHANNEL_ALREADY_ENABLED: intl.formatMessage(
+        {
+          defaultMessage:
+            'You can only enable channels for one of the agents in your workflow. Channels are already enabled for the agent - {agentId}. Please disable the channels there to enable it for this agent.',
+          id: 'sAXmUk',
+          description: 'Channel already enabled message',
+        },
+        { agentId: agentIdWhereChannelIsEnabled }
+      ),
+      INPUT_TITLE: intl.formatMessage({
+        defaultMessage: 'Allow only input channels',
+        id: 'oxvDB0',
+        description: 'Channel input.',
+      }),
+      INPUT_OUTPUT_TITLE: intl.formatMessage({
+        defaultMessage: 'Allow both input and output channels',
+        id: 'XsgpXt',
+        description: 'Channel input/output.',
+      }),
+      INPUT_OUTPUT_DESCRIPTION: intl.formatMessage({
         defaultMessage:
-          'Channels will be auto-configured to help you communicate with the agent easily. Disable Output channel if you do not want to receive messages from the agent and only want to send messages to the agent.',
-        id: '7df0xk',
-        description: 'Channel info message.',
+          'Send messages to and get responses from the agent while the workflow is running. The workflow continues to run as the agent responds in real time for a conversational-like interaction.',
+        id: 'l40RIH',
+        description: 'Input and output channel configuration.',
+      }),
+      INPUT_DESCRIPTION: intl.formatMessage({
+        defaultMessage:
+          'Send messages to the agent while the workflow is running. This will pause the workflow until the agent processes the input.',
+        id: 'Gup8o6',
+        description: 'Input channel info config.',
+      }),
+      CHANNEL_DESCRIPTION: intl.formatMessage({
+        defaultMessage:
+          'Channels are where you and the agent can send and receive messages. You can communicate with the agent directly in the chat, or use the URL provided in the response header of your workflow trigger to integrate with a front-end chat interface or chat widget.',
+        id: 'jR/Dwl',
+        description: 'Channel description.',
+      }),
+      NO_CHANNEL_TITLE: intl.formatMessage({
+        defaultMessage: 'Do not allow channels',
+        id: 'Iasy6i',
+        description: 'No channel selected.',
+      }),
+      NO_CHANNEL_DESCRIPTION: intl.formatMessage({
+        defaultMessage:
+          'Disable all channels. The agent will not be able to send or receive messages directly from the user while running.',
+        id: 'ag7IUL',
+        description: 'No channel selected.',
+      }),
+      LEARN_MORE: intl.formatMessage({
+        defaultMessage: 'Learn more',
+        id: 'M2ICLg',
+        description: 'Learn more about channels.',
       }),
     }),
-    [intl]
+    [intl, agentIdWhereChannelIsEnabled]
   );
-
-  const enabled = useMemo(() => !!inputChannelParameters, [inputChannelParameters]);
 
   const disableOperation = useCallback(
     (operationOptions: { input: boolean; output: boolean }) => {
@@ -155,44 +203,72 @@ export const ChannelsTab: React.FC<PanelTabProps> = (props) => {
     [dispatch, channel, inputNodeId, outputNodeId, inputChannelParameters, outputChannelParameters]
   );
 
+  const onOptionChange = useCallback(
+    (option: string) => {
+      if (option === 'none') {
+        disableOperation({ input: true, output: true });
+      } else if (option === 'input') {
+        initializeOperation({ input: true, output: false });
+        disableOperation({ input: false, output: true });
+      } else if (option === 'input-ouput') {
+        initializeOperation({ input: true, output: true });
+      }
+    },
+    [disableOperation, initializeOperation]
+  );
+
   return (
     <>
       {supportedChannels.length === 0 || !channel ? (
-        <MessageBar key={'warning'} className="msla-initialize-variable-warning">
+        <MessageBar key={'warning-no-channel'} className="msla-initialize-variable-warning">
           <MessageBarBody>{stringResources.NO_CHANNEL_SUPPORTED_MSG}</MessageBarBody>
         </MessageBar>
       ) : (
-        <>
-          <Switch
-            checked={enabled}
-            onChange={(_, data: SwitchOnChangeData) => {
-              if (data.checked) {
-                initializeOperation({ input: true, output: true });
-              } else {
-                disableOperation({ input: true, output: true });
-              }
-            }}
-            style={{ display: 'flex', marginBottom: '10px' }}
-            label={enabled ? stringResources.ENABLED : stringResources.DISABLED}
-          />
-          {enabled && (
-            <>
-              <MessageBar messageBarType={MessageBarType.info} isMultiline={true}>
-                {stringResources.OUTPUT_CHANNEL_MESSAGE}
-              </MessageBar>
-              <ChannelContent
-                selectedNodeId={selectedNodeId}
-                // TODO: Add support for multiple channels
-                channelToAdd={channel}
-                inputNodeId={inputNodeId}
-                outputNodeId={outputNodeId}
-                initializeOperation={initializeOperation}
-                disableOperation={disableOperation}
-                isLoading={isLoading}
+        <div className="msla-channel-settings-container" style={{ marginBottom: '15px', fontStyle: 'italic', fontSize: 10 }}>
+          {channelEnabledForDifferentAgent ? (
+            <MessageBar
+              key={'warning-existing-channel'}
+              className="msla-initialize-variable-warning"
+              messageBarType={MessageBarType.warning}
+            >
+              <MessageBarBody>{stringResources.CHANNEL_ALREADY_ENABLED}</MessageBarBody>
+            </MessageBar>
+          ) : null}
+          <div className="msla-channel-title-description">
+            {stringResources.CHANNEL_DESCRIPTION}{' '}
+            <Link href={'https://aka.ms/agent-channels'} target="_blank" style={{ fontSize: 12, fontStyle: 'italic' }}>
+              {stringResources.LEARN_MORE}
+            </Link>
+          </div>
+          <div className="msla-channel-settings">
+            <RadioGroup
+              value={inputChannelParameters && outputChannelParameters ? 'input-ouput' : inputChannelParameters ? 'input' : 'none'}
+              className={'msla-channel-settings-radio-group'}
+              required={true}
+              disabled={isLoading || channelEnabledForDifferentAgent}
+              onChange={(_e: any, option: RadioGroupOnChangeData) => onOptionChange(option.value)}
+            >
+              <Radio
+                className={'msla-channel-settings-radio'}
+                value={'input-ouput'}
+                key={'input-output'}
+                label={getSettingLabel(stringResources.INPUT_OUTPUT_TITLE, undefined, stringResources.INPUT_OUTPUT_DESCRIPTION)}
               />
-            </>
-          )}
-        </>
+              <Radio
+                className={'msla-channel-settings-radio'}
+                value={'input'}
+                key={'input'}
+                label={getSettingLabel(stringResources.INPUT_TITLE, undefined, stringResources.INPUT_DESCRIPTION)}
+              />
+              <Radio
+                className={'msla-channel-settings-radio'}
+                value={'none'}
+                key={'none'}
+                label={getSettingLabel(stringResources.NO_CHANNEL_TITLE, undefined, stringResources.NO_CHANNEL_DESCRIPTION)}
+              />
+            </RadioGroup>
+          </div>
+        </div>
       )}
     </>
   );

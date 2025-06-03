@@ -1,16 +1,18 @@
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import { resetTemplatesState } from '../global';
-import { deleteWorkflowData, initializeWorkflowsData, loadCustomTemplate } from '../../actions/bjsworkflow/configuretemplate';
+import { deleteWorkflowData, initializeAndSaveWorkflowsData, loadCustomTemplate } from '../../actions/bjsworkflow/configuretemplate';
 
 export interface TabState {
   selectedTabId: string | undefined;
+  runValidation: boolean;
   enableWizard: boolean;
   isWizardUpdating: boolean;
 }
 
 const initialState: TabState = {
   selectedTabId: undefined,
+  runValidation: false,
   enableWizard: false,
   isWizardUpdating: false,
 };
@@ -22,6 +24,9 @@ export const tabSlice = createSlice({
     selectWizardTab: (state, action: PayloadAction<string>) => {
       state.selectedTabId = action.payload;
     },
+    setRunValidation: (state, action: PayloadAction<boolean>) => {
+      state.runValidation = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(resetTemplatesState, () => initialState);
@@ -31,12 +36,12 @@ export const tabSlice = createSlice({
       state.enableWizard = action.payload.enableWizard;
     });
 
-    builder.addCase(initializeWorkflowsData.pending, (state) => {
+    builder.addCase(initializeAndSaveWorkflowsData.pending, (state) => {
       state.isWizardUpdating = true;
       state.enableWizard = false;
     });
 
-    builder.addCase(initializeWorkflowsData.fulfilled, (state) => {
+    builder.addCase(initializeAndSaveWorkflowsData.fulfilled, (state) => {
       state.isWizardUpdating = false;
       state.enableWizard = true;
     });
@@ -54,5 +59,5 @@ export const tabSlice = createSlice({
   },
 });
 
-export const { selectWizardTab } = tabSlice.actions;
+export const { selectWizardTab, setRunValidation } = tabSlice.actions;
 export default tabSlice.reducer;

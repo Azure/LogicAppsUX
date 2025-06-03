@@ -51,6 +51,7 @@ export const ExtensionCommand = {
   sendNotification: 'sendNotification',
   isTestDisabledForOS: 'isTestDisabledForOS',
   fileABug: 'fileABug',
+  setIsWorkflowDirty: 'setIsWorkflowDirty',
 } as const;
 export type ExtensionCommand = (typeof ExtensionCommand)[keyof typeof ExtensionCommand];
 

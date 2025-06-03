@@ -13,8 +13,6 @@ import { setCollapsedGraphIds } from '../../../core/state/workflow/workflowSlice
 // import { useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
-import { TeachingPopup } from '../teachingPopup';
-import { useState } from 'react';
 import { useIsEverythingExpanded } from '../../../core/state/workflow/workflowSelectors';
 
 export const expandCollapseControlId = 'control-expand-collapse-button';
@@ -51,39 +49,10 @@ const CollapseExpandControl = () => {
     }
   };
 
-  const [shouldDisplayPopup, setShouldDisplayPopup] = useState(localStorage.getItem(expandCollapseControlId) !== 'true');
-  const handlePopupDismiss = () => {
-    localStorage.setItem(expandCollapseControlId, 'true');
-    setShouldDisplayPopup(false);
-  };
-
-  const targetElement = document.getElementById(expandCollapseControlId);
-  const popoverTitle = intl.formatMessage({
-    id: 'aikD4q',
-    description: 'Title for teaching popover that will be shown to showcase the new feature.',
-    defaultMessage: 'Expand or collapse all actions',
-  });
-  const popoverMessage = intl.formatMessage({
-    id: 'pL1lzf',
-    description: 'Text message for the teaching popover that will be shown to showcase the new feature.',
-    defaultMessage: 'You can now expand or collapse all action groups with one single click.',
-  });
-
   return (
-    <>
-      <ControlButton id={expandCollapseControlId} aria-label={controlLabel} title={controlLabel} onClick={expandCollapseToggleClick}>
-        {designerNodesExpanded ? <ArrowMinimizeVerticalRegular /> : <ArrowMaximizeVerticalRegular />}
-      </ControlButton>
-      {shouldDisplayPopup ? (
-        <TeachingPopup
-          targetElement={targetElement}
-          title={popoverTitle}
-          message={popoverMessage}
-          handlePopupPrimaryOnClick={handlePopupDismiss}
-          withArrow={true}
-        />
-      ) : null}
-    </>
+    <ControlButton id={expandCollapseControlId} aria-label={controlLabel} title={controlLabel} onClick={expandCollapseToggleClick}>
+      {designerNodesExpanded ? <ArrowMinimizeVerticalRegular /> : <ArrowMaximizeVerticalRegular />}
+    </ControlButton>
   );
 };
 

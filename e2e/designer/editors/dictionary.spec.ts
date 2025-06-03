@@ -13,7 +13,7 @@ test.describe(
       await GoToMockWorkflow(page, 'Panel');
       await page.getByLabel('Insert a new step between Initialize ArrayVariable and Parse JSON').click();
       await page.getByText('Add an action').click();
-      await page.getByLabel('HTTP', { exact: true }).click();
+      await page.getByLabel('HTTP', { exact: true }).first().click();
       await page.getByLabel('HTTP', { exact: true }).click();
       await page.getByTestId('msla-setting-token-editor-dictionaryeditor-headers-key-0').click();
       await page.keyboard.type('testkey');
@@ -51,8 +51,8 @@ test.describe(
       await GoToMockWorkflow(page, 'Panel');
       await page.getByLabel('Insert a new step between Initialize ArrayVariable and Parse JSON').click();
       await page.getByText('Add an action').click();
-      await page.getByPlaceholder('Search').fill('select');
-      await page.getByLabel('Select').click();
+      await page.getByPlaceholder('Search for an action or').fill('select');
+      await page.getByLabel('Select', { exact: true }).click();
       await page.getByTestId('msla-setting-token-editor-stringeditor-from').click();
       await page.keyboard.type('[]');
       await page.getByTestId('msla-setting-token-editor-dictionaryeditor-map-key-0').click();

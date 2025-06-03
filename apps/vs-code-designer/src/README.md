@@ -4,6 +4,10 @@ In Visual Studio Code, you can use the Azure Logic Apps (Standard) extension to 
 
 > Sign up today for your free Azure account and receive 12 months of free popular services, $200 free credit and 25+ always free services 👉 [Start Free](https://azure.microsoft.com/free/open-source).
 
+## Azure Logic Apps - Create unit tests from Standard workflows
+
+Starting with version 5.58.8, the Azure Logic Apps (Standard) extension for Visual Studio Code provides the capability to create unit test from a workflow run or a workflow saved definition, that can be edited and executed locally. For more information, see [Create unit tests from Standard workflows in Azure Logic Apps with Visual Studio Code (Preview)](https://go.microsoft.com/fwlink/?linkid=2316916).
+
 ## Azure Logic Apps - Create Standard logic app projects from Azure portal export
 
 Starting with version 5.18.7, the Azure Logic Apps (Standard) extension for Visual Studio Code provides the capability to create Standard logic app projects from a logic app exported from the Azure portal. For more information, see [Export Standard logic apps from Azure portal to Visual Studio Code](https://go.microsoft.com/fwlink/?linkid=2304930).
@@ -16,7 +20,7 @@ Starting with version 4.107.2, the Azure Logic Apps (Standard) extension for Vis
 
 Starting with version 4.57.0, the Azure Logic Apps (Standard) extension for Visual Studio Code will automatically regenerate  the keys required to allow the extension to access Azure Managed Connections. This will allow the same Azure Managed Connection to be used for projects for longer than 7 days without any user intervention. For more information, see [Regeneration Azure Managed Connection ACL for Local Development](https://go.microsoft.com/fwlink/?linkid=2283427).
 
-## Azure Logic Apps - Introducing Azure Logic Apps Rules Engine (preview)
+## Azure Logic Apps - Introducing Azure Logic Apps Rules Engine
 
 Starting with version 4.25.1, the Azure Logic Apps (Standard) extension for Visual Studio Code introduces the Rules Engine, a decision management inference engine. This engine allows customers to build Standard workflows in Azure Logic Apps and integrate readable, declarative, and semantically rich rules that operate on multiple data sources. Currently, the native data sources available for the Rules Engine are XML and .NET objects. For more information, see [Decision management and business logic integration using the Azure Logic Apps Rules Engine (Preview)](https://go.microsoft.com/fwlink/?linkid=2279508).
 

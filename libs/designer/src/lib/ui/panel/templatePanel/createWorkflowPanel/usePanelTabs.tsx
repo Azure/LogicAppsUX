@@ -10,7 +10,7 @@ import type { TemplateTabProps } from '@microsoft/designer-ui';
 import Constants from '../../../../common/constants';
 import { useExistingWorkflowNames } from '../../../../core/queries/template';
 import { validateWorkflowsBasicInfo } from '../../../../core/actions/bjsworkflow/templates';
-import { validateConnections, validateParameters, clearTemplateDetails } from '../../../../core/state/templates/templateSlice';
+import { validateConnections, validateParameterValues, clearTemplateDetails } from '../../../../core/state/templates/templateSlice';
 import { LogEntryLevel, LoggerService, Status, TemplateService } from '@microsoft/logic-apps-shared';
 import { useMutation } from '@tanstack/react-query';
 import type { CreateWorkflowHandler } from '../../../templates';
@@ -76,7 +76,7 @@ export const useCreateWorkflowPanelTabs = ({
       dispatch(validateConnections(connections.mapping));
     } else if (selectedTabId === Constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE) {
       dispatch(validateConnections(connections.mapping));
-      dispatch(validateParameters());
+      dispatch(validateParameterValues());
     }
     if (!isConsumption && selectedTabId && selectedTabId !== Constants.TEMPLATE_PANEL_TAB_NAMES.BASIC) {
       dispatch(validateWorkflowsBasicInfo({ existingWorkflowNames: existingWorkflowNames ?? [] }));

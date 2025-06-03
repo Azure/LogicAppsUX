@@ -15,7 +15,6 @@ export interface ExpressionEditorEvent {
 export interface ExpressionEditorProps {
   initialValue: string;
   editorRef?: MutableRefObject<editor.IStandaloneCodeEditor | null>;
-  hideUTFExpressions?: boolean;
   isDragging: boolean;
   dragDistance?: number;
   currentHeight: number;
@@ -31,7 +30,6 @@ export interface ExpressionEditorProps {
 export function ExpressionEditor({
   initialValue,
   editorRef,
-  hideUTFExpressions,
   isDragging,
   dragDistance,
   currentHeight,
@@ -74,7 +72,6 @@ export function ExpressionEditor({
       <MonacoEditor
         ref={editorRef}
         language={EditorLanguage.templateExpressionLanguage}
-        hideUTFExpressions={hideUTFExpressions}
         lineNumbers="off"
         value={initialValue}
         scrollbar={{ horizontal: 'hidden', vertical: 'hidden' }}
@@ -92,6 +89,7 @@ export function ExpressionEditor({
         data-automation-id="msla-expression-editor"
         height={`${currentHeight}px`}
         readOnly={isReadOnly}
+        tabSize={2}
       />
       <div
         className="msla-expression-editor-expand"

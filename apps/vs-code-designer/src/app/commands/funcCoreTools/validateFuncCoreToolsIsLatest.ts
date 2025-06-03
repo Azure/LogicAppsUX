@@ -6,7 +6,7 @@ import { PackageManager, funcDependencyName } from '../../../constants';
 import { localize } from '../../../localize';
 import { executeOnFunctions } from '../../functionsExtension/executeOnFunctionsExt';
 import { binariesExist, getLatestFunctionCoreToolsVersion, useBinariesDependencies } from '../../utils/binaries';
-import { stopDesignTimeApi } from '../../utils/codeless/startDesignTimeApi';
+import { startAllDesignTimeApis, stopAllDesignTimeApis } from '../../utils/codeless/startDesignTimeApi';
 import { getFunctionsCommand, getLocalFuncCoreToolsVersion, tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
 import { getBrewPackageName } from '../../utils/funcCoreTools/getBrewPackageName';
 import { getFuncPackageManagers } from '../../utils/funcCoreTools/getFuncPackageManagers';
@@ -17,7 +17,7 @@ import { installFuncCoreToolsBinaries } from './installFuncCoreTools';
 import { uninstallFuncCoreTools } from './uninstallFuncCoreTools';
 import { updateFuncCoreTools } from './updateFuncCoreTools';
 import { HTTP_METHODS } from '@microsoft/logic-apps-shared';
-import { callWithTelemetryAndErrorHandling, DialogResponses, openUrl, parseError } from '@microsoft/vscode-azext-utils';
+import { callWithTelemetryAndErrorHandling, DialogResponses, parseError } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { FuncVersion } from '@microsoft/vscode-extension-logic-apps';
 import * as semver from 'semver';
@@ -39,21 +39,25 @@ export async function validateFuncCoreToolsIsLatestBinaries(majorVersion?: strin
     const binaries = binariesExist(funcDependencyName);
     context.telemetry.properties.binariesExist = `${binaries}`;
 
-    if (binaries) {
-      context.telemetry.properties.binaryCommand = `${getFunctionsCommand()}`;
-      const localVersion: string | null = await getLocalFuncCoreToolsVersion();
-      context.telemetry.properties.localVersion = localVersion;
-      const newestVersion: string | undefined = await getLatestFunctionCoreToolsVersion(context, majorVersion);
+    const localVersion: string | null = binaries ? await getLocalFuncCoreToolsVersion() : null;
+    context.telemetry.properties.localVersion = localVersion ?? 'null';
 
-      if (semver.major(newestVersion) === semver.major(localVersion) && semver.gt(newestVersion, localVersion)) {
+    const newestVersion: string | undefined = binaries ? await getLatestFunctionCoreToolsVersion(context, majorVersion) : undefined;
+    const isOutdated = binaries && localVersion && newestVersion && semver.gt(newestVersion, localVersion);
+
+    const shouldInstall = !binaries || localVersion === null || isOutdated;
+
+    if (shouldInstall) {
+      if (isOutdated) {
         context.telemetry.properties.outOfDateFunc = 'true';
-        stopDesignTimeApi();
-        await installFuncCoreToolsBinaries(context, majorVersion);
+        stopAllDesignTimeApis();
       }
-    } else {
+
       await installFuncCoreToolsBinaries(context, majorVersion);
-      context.telemetry.properties.binaryCommand = `${getFunctionsCommand()}`;
+      await startAllDesignTimeApis();
     }
+
+    context.telemetry.properties.binaryCommand = getFunctionsCommand();
   });
 }
 
@@ -65,10 +69,7 @@ export async function validateFuncCoreToolsIsLatestSystem(): Promise<void> {
     const showMultiCoreToolsWarningKey = 'showMultiCoreToolsWarning';
     const showMultiCoreToolsWarning = !!getWorkspaceSetting<boolean>(showMultiCoreToolsWarningKey);
 
-    const showCoreToolsWarningKey = 'showCoreToolsWarning';
-    const showCoreToolsWarning = !!getWorkspaceSetting<boolean>(showCoreToolsWarningKey);
-
-    if (showCoreToolsWarning || showMultiCoreToolsWarning) {
+    if (showMultiCoreToolsWarning) {
       const packageManagers: PackageManager[] = await getFuncPackageManagers(true /* isFuncInstalled */);
       let packageManager: PackageManager;
 
@@ -95,50 +96,27 @@ export async function validateFuncCoreToolsIsLatestSystem(): Promise<void> {
 
         return;
       }
+      const localVersion: string | null = await getLocalFuncCoreToolsVersion();
+      if (!localVersion) {
+        return;
+      }
+      context.telemetry.properties.localVersion = localVersion;
 
-      if (showCoreToolsWarning) {
-        const localVersion: string | null = await getLocalFuncCoreToolsVersion();
-        if (!localVersion) {
-          return;
-        }
-        context.telemetry.properties.localVersion = localVersion;
+      const versionFromSetting: FuncVersion | undefined = tryParseFuncVersion(localVersion);
+      if (versionFromSetting === undefined) {
+        return;
+      }
 
-        const versionFromSetting: FuncVersion | undefined = tryParseFuncVersion(localVersion);
-        if (versionFromSetting === undefined) {
-          return;
-        }
+      const newestVersion: string | undefined = await getNewestFunctionRuntimeVersion(packageManager, versionFromSetting, context);
+      if (!newestVersion) {
+        return;
+      }
 
-        const newestVersion: string | undefined = await getNewestFunctionRuntimeVersion(packageManager, versionFromSetting, context);
-        if (!newestVersion) {
-          return;
-        }
-
-        if (semver.major(newestVersion) === semver.major(localVersion) && semver.gt(newestVersion, localVersion)) {
-          context.telemetry.properties.outOfDateFunc = 'true';
-          const message: string = localize(
-            'outdatedFunctionRuntime',
-            'Update your Azure Functions Core Tools ({0}) to the latest ({1}) for the best experience.',
-            localVersion,
-            newestVersion
-          );
-
-          const update: MessageItem = { title: localize('update', 'Update') };
-          let result: MessageItem;
-
-          do {
-            result =
-              packageManager !== undefined
-                ? await context.ui.showWarningMessage(message, update, DialogResponses.learnMore, DialogResponses.dontWarnAgain)
-                : await context.ui.showWarningMessage(message, DialogResponses.learnMore, DialogResponses.dontWarnAgain);
-            if (result === DialogResponses.learnMore) {
-              await openUrl('https://aka.ms/azFuncOutdated');
-            } else if (result === update) {
-              await updateFuncCoreTools(context, packageManager, versionFromSetting);
-            } else if (result === DialogResponses.dontWarnAgain) {
-              await updateGlobalSetting(showCoreToolsWarningKey, false);
-            }
-          } while (result === DialogResponses.learnMore);
-        }
+      if (semver.major(newestVersion) === semver.major(localVersion) && semver.gt(newestVersion, localVersion)) {
+        context.telemetry.properties.outOfDateFunc = 'true';
+        stopAllDesignTimeApis();
+        await updateFuncCoreTools(context, packageManager, versionFromSetting);
+        await startAllDesignTimeApis();
       }
     }
   });

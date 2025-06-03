@@ -4,6 +4,7 @@ interface BaseTemplatesSectionItem {
   type: 'text' | 'textfield' | 'textarea' | 'dropdown' | 'radiogroup' | 'switch' | 'divider' | 'custom';
   label?: string | React.ReactNode;
   value: any | undefined;
+  description?: string;
 }
 
 interface TextItem extends BaseTemplatesSectionItem {
@@ -90,6 +91,7 @@ interface BaseTemplatesSectionProps {
     text: string;
     href: string;
   };
+  cssOverrides?: Record<string, string>;
 }
 
 interface ContentBasedProps extends BaseTemplatesSectionProps {

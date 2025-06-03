@@ -47,6 +47,7 @@ import {
   guid,
   isArmResourceId,
   optional,
+  BaseCognitiveServiceService,
 } from '@microsoft/logic-apps-shared';
 import type { ContentType, IHostService, IWorkflowService } from '@microsoft/logic-apps-shared';
 import type { AllCustomCodeFiles, CustomCodeFileNameMapping, Workflow } from '@microsoft/logic-apps-designer';
@@ -70,6 +71,7 @@ import type { QueryClient } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHostingPlan } from '../../state/workflowLoadingSelectors';
 import CodeViewEditor from './CodeView';
+import { CustomConnectionParameterEditorService } from './Services/customConnectionParameterEditorService';
 
 const apiVersion = '2020-06-01';
 const httpClient = new HttpClient();
@@ -232,6 +234,84 @@ const DesignerEditor = () => {
     },
     [dispatch]
   );
+
+  const workflowDefinition = useMemo(() => {
+    if (equals(workflow?.kind ?? '', 'Agentic', true)) {
+      if (workflow?.definition) {
+        const { actions, triggers, outputs, parameters } = workflow.definition;
+        if (
+          Object.keys(actions ?? {}).length === 0 &&
+          Object.keys(triggers ?? {}).length === 0 &&
+          Object.keys(outputs ?? {}).length === 0 &&
+          Object.keys(parameters ?? {}).length === 0
+        ) {
+          return {
+            ...workflow.definition,
+            actions: {
+              Default_Agent: {
+                type: 'Agent',
+                limit: {},
+                inputs: {
+                  parameters: {
+                    deploymentId: '',
+                    messages: '',
+                    agentModelType: 'AzureOpenAI',
+                    agentModelSettings: {
+                      agentHistoryReductionSettings: {
+                        agentHistoryReductionType: 'maximumTokenCountReduction',
+                        maximumTokenCount: 128000,
+                      },
+                    },
+                  },
+                  modelConfigurations: {
+                    model1: {
+                      referenceName: '',
+                    },
+                  },
+                },
+                tools: {},
+                runAfter: {},
+              },
+            },
+          };
+        }
+      } else {
+        return {
+          $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
+          contentVersion: '1.0.0.0',
+          actions: {
+            Default_Agent: {
+              type: 'Agent',
+              limit: {},
+              inputs: {
+                parameters: {
+                  deploymentId: '',
+                  messages: '',
+                  agentModelType: 'AzureOpenAI',
+                  agentModelSettings: {
+                    agentHistoryReductionSettings: {
+                      agentHistoryReductionType: 'maximumTokenCountReduction',
+                      maximumTokenCount: 128000,
+                    },
+                  },
+                },
+                modelConfigurations: {
+                  model1: {
+                    referenceName: '',
+                  },
+                },
+              },
+              tools: {},
+              runAfter: {},
+            },
+          },
+          outputs: {},
+          triggers: {},
+        };
+      }
+    }
+    return workflow?.definition;
+  }, [workflow?.definition, workflow?.kind]);
 
   if (isLoading || appLoading || settingsLoading || customCodeLoading) {
     return <></>;
@@ -419,7 +499,7 @@ const DesignerEditor = () => {
         {workflow?.definition ? (
           <BJSWorkflowProvider
             workflow={{
-              definition: workflow?.definition,
+              definition: workflowDefinition,
               connectionReferences,
               parameters,
               kind: workflow?.kind,
@@ -842,6 +922,14 @@ const getDesignerServices = (
     httpClient,
   });
 
+  const cognitiveServiceService = new BaseCognitiveServiceService({
+    apiVersion: '2023-10-01-preview',
+    baseUrl: armUrl,
+    httpClient,
+  });
+
+  const connectionParameterEditorService = new CustomConnectionParameterEditorService();
+
   return {
     appService,
     connectionService,
@@ -859,6 +947,8 @@ const getDesignerServices = (
     hostService,
     chatbotService,
     customCodeService,
+    cognitiveServiceService,
+    connectionParameterEditorService,
     userPreferenceService: new BaseUserPreferenceService(),
     experimentationService: new BaseExperimentationService(),
   };

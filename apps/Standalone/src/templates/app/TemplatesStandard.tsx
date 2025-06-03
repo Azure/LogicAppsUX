@@ -28,6 +28,7 @@ import {
   BaseApiManagementService,
   BaseResourceService,
   equals,
+  BaseTemplateResourceService,
 } from '@microsoft/logic-apps-shared';
 import {
   getConnectionStandard,
@@ -68,7 +69,7 @@ export const TemplatesStandard = () => {
     theme: state.workflowLoader.theme,
     templatesView: state.workflowLoader.templatesView,
   }));
-  const { appId, hostingPlan, useEndpoint, enableResourceSelection } = useSelector((state: RootState) => state.workflowLoader);
+  const { appId, hostingPlan, enableResourceSelection } = useSelector((state: RootState) => state.workflowLoader);
   const [shouldReload, setShouldReload] = useState<boolean | undefined>(undefined);
   const { data: workflowAppData } = useWorkflowApp(appId as string, hostingPlan);
   const canonicalLocation = useMemo(
@@ -79,16 +80,9 @@ export const TemplatesStandard = () => {
   const { data: objectId } = useCurrentObjectId();
   const { data: originalConnectionsData } = useConnectionsData(appId);
   const { data: originalSettingsData } = useAppSettings(appId as string);
-  const [reload, setReload] = useState<boolean | undefined>(undefined);
 
   const [connectionsData, setConnectionsData] = useFunctionalState(originalConnectionsData);
   const [settingsData, setSettingsData] = useFunctionalState(originalSettingsData);
-
-  useEffect(() => {
-    if (useEndpoint !== undefined) {
-      setReload(true);
-    }
-  }, [useEndpoint]);
 
   useEffect(() => {
     if (originalSettingsData) {
@@ -102,6 +96,7 @@ export const TemplatesStandard = () => {
     }
   }, [originalConnectionsData, setConnectionsData]);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const connectionReferences = useMemo(() => WorkflowUtility.convertConnectionsDataToReferences(connectionsData()), [connectionsData()]);
   const isSingleTemplateView = useMemo(() => templatesView !== 'gallery', [templatesView]);
 
@@ -255,11 +250,10 @@ export const TemplatesStandard = () => {
         objectId,
         canonicalLocation,
         settingsData()?.properties ?? {},
-        !!useEndpoint,
         getWorkflowConnectionsData
       ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [connectionsData, settingsData, workflowAppData, tenantId, canonicalLocation, appId, useEndpoint]
+    [connectionsData, settingsData, workflowAppData, tenantId, canonicalLocation, appId]
   );
   const resourceDetails = new ArmParser(appId ?? '');
 
@@ -281,7 +275,6 @@ export const TemplatesStandard = () => {
               objectId,
               location,
               settingsData()?.properties ?? {},
-              !!useEndpoint,
               getWorkflowConnectionsData
             )
           )
@@ -289,15 +282,16 @@ export const TemplatesStandard = () => {
         setShouldReload(false);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     addConnectionDataInternal,
     getConnectionConfiguration,
     getWorkflowConnectionsData,
     objectId,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     settingsData(),
     shouldReload,
     tenantId,
-    useEndpoint,
     workflowAppData,
   ]);
 
@@ -339,7 +333,6 @@ export const TemplatesStandard = () => {
         services={services}
         isConsumption={false}
         isCreateView={true}
-        reload={reload}
         enableResourceSelection={enableResourceSelection}
         onResourceChange={onResourceChange}
         viewTemplate={
@@ -404,7 +397,6 @@ const getServices = (
   objectId: string | undefined,
   location: string,
   appSettings: Record<string, string>,
-  useEndpoint: boolean,
   getConnectionsData: () => ConnectionsData
 ): any => {
   const armUrl = 'https://management.azure.com';
@@ -426,6 +418,7 @@ const getServices = (
   });
   const operationManifestService = new StandardOperationManifestService(defaultServiceParams);
   const resourceService = new BaseResourceService({ baseUrl: armUrl, httpClient, apiVersion });
+  const templateResourceService = new BaseTemplateResourceService({ baseUrl: armUrl, httpClient, apiVersion: '2025-06-01-preview' });
   const { connectionService, oAuthService, connectorService, workflowService, templateService } = getResourceBasedServices(
     siteResourceId,
     workflowApp,
@@ -435,7 +428,6 @@ const getServices = (
     objectId,
     location,
     appSettings,
-    useEndpoint,
     getConnectionsData
   );
 
@@ -449,6 +441,7 @@ const getServices = (
     workflowService,
     connectorService,
     resourceService,
+    templateResourceService,
   };
 };
 
@@ -461,7 +454,6 @@ const getResourceBasedServices = (
   objectId: string | undefined,
   location: string,
   appSettings: Record<string, string>,
-  useEndpoint: boolean,
   getConnectionsData: () => ConnectionsData
 ): any => {
   const armUrl = 'https://management.azure.com';
@@ -578,8 +570,8 @@ const getResourceBasedServices = (
   };
 
   const templateService = new StandardTemplateService({
-    endpoint: 'https://priti-cxf4h5cpcteue4az.b02.azurefd.net/logicapps',
-    useEndpointForTemplates: useEndpoint,
+    endpoint: '/templatesLocalProxy/templates/logicapps',
+    useEndpointForTemplates: true,
     baseUrl: armUrl,
     appId: siteResourceId,
     httpClient,

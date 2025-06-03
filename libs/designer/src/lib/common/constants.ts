@@ -498,8 +498,7 @@ export default {
     CONNECTIONS: 'CONNECTIONS',
     PARAMETERS: 'PARAMETERS',
     PROFILE: 'PROFILE',
-    PUBLISH: 'PUBLISH',
-    REVIEW_AND_PUBLISH: 'REVIEW_AND_PUBLISH',
+    SUMMARY: 'SUMMARY',
     SELECT_WORKFLOWS: 'SELECT_WORKFLOWS',
     CUSTOMIZE_WORKFLOWS: 'CUSTOMIZE_WORKFLOWS',
   },
@@ -973,4 +972,5 @@ export default {
     INPUT: '-inputchannel-',
     OUTPUT: '-outputchannel-',
   },
+  SUPPORTED_AGENT_MODELS: ['gpt-35-turbo', 'gpt-4', 'gpt-4.1', 'gpt-4.1-mini', 'gpt-4.1-nano', 'gpt-4o', 'gpt-4o-mini'],
 };
