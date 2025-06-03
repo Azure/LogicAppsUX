@@ -4,7 +4,7 @@ exports[`CollapsedCard > should render expanding state correctly 1`] = `
 <div>
   <div
     aria-label="Collapsed card with 8 actions"
-    class="___176zxvz_10x2kkm fly5x3f f1l02sjl f10pi13n fxugw4r f1ewtqcl f1erghxr f1ehz9de f1spoy8 fmb70yw ftac7j7 f1w0yd9v fdwcyh7 f1h0xgbp fzkkow9 fcdblym fg706s2 fjik90z fezkupx fjp7mhy fxszt0l ffvjst7 f22iagw f122n59 f4d9j23 f151qoyn f1y2orl0 fape5jp f16qxcmb f17ayqdf f4liy0n fb087j0 fow4h4b f38uvda f15anoe1 fefhyxv fv8asjq f1ks2tm fbudtxs fmbfm2r fg3smf3"
+    class="msla-collapsed-card"
     data-automation-id="msla-collapsed-card-test-id"
     data-tabster="{"restorer":{"type":1}}"
     id="msla-collapsed-card-test-id"
@@ -23,7 +23,7 @@ exports[`CollapsedCard > should render non-expanding state with operation visual
 <div>
   <div
     aria-label="Collapsed card with 6 actions"
-    class="___176zxvz_10x2kkm fly5x3f f1l02sjl f10pi13n fxugw4r f1ewtqcl f1erghxr f1ehz9de f1spoy8 fmb70yw ftac7j7 f1w0yd9v fdwcyh7 f1h0xgbp fzkkow9 fcdblym fg706s2 fjik90z fezkupx fjp7mhy fxszt0l ffvjst7 f22iagw f122n59 f4d9j23 f151qoyn f1y2orl0 fape5jp f16qxcmb f17ayqdf f4liy0n fb087j0 fow4h4b f38uvda f15anoe1 fefhyxv fv8asjq f1ks2tm fbudtxs fmbfm2r fg3smf3"
+    class="msla-collapsed-card"
     data-automation-id="msla-collapsed-card-test-id"
     data-tabster="{"restorer":{"type":1}}"
     id="msla-collapsed-card-test-id"
@@ -34,13 +34,13 @@ exports[`CollapsedCard > should render non-expanding state with operation visual
       <img
         alt=""
         aria-label="op1 operation icon"
-        class="___1iyc22s_0000000 fq4mcun frvgh55 f4gg0ds fwhqktl fstwlwf f1mqlotw"
+        class="msla-collapsed-card__icon"
         src="http://example.com/icon1.png"
       />
       <img
         alt=""
         aria-label="op2 operation icon"
-        class="___1iyc22s_0000000 fq4mcun frvgh55 f4gg0ds fwhqktl fstwlwf f1mqlotw"
+        class="msla-collapsed-card__icon"
         src="http://example.com/icon2.png"
       />
       <span
@@ -58,7 +58,7 @@ exports[`CollapsedCard > should render non-expanding state without action text w
 <div>
   <div
     aria-label="Collapsed card with 3 actions"
-    class="___176zxvz_10x2kkm fly5x3f f1l02sjl f10pi13n fxugw4r f1ewtqcl f1erghxr f1ehz9de f1spoy8 fmb70yw ftac7j7 f1w0yd9v fdwcyh7 f1h0xgbp fzkkow9 fcdblym fg706s2 fjik90z fezkupx fjp7mhy fxszt0l ffvjst7 f22iagw f122n59 f4d9j23 f151qoyn f1y2orl0 fape5jp f16qxcmb f17ayqdf f4liy0n fb087j0 fow4h4b f38uvda f15anoe1 fefhyxv fv8asjq f1ks2tm fbudtxs fmbfm2r fg3smf3"
+    class="msla-collapsed-card"
     data-automation-id="msla-collapsed-card-test-id"
     data-tabster="{"restorer":{"type":1}}"
     id="msla-collapsed-card-test-id"
@@ -69,7 +69,7 @@ exports[`CollapsedCard > should render non-expanding state without action text w
       <img
         alt=""
         aria-label="op1 operation icon"
-        class="___1iyc22s_0000000 fq4mcun frvgh55 f4gg0ds fwhqktl fstwlwf f1mqlotw"
+        class="msla-collapsed-card__icon"
         src="http://example.com/icon1.png"
       />
     </div>

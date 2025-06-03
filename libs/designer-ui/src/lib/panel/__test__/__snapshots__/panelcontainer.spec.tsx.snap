@@ -3,11 +3,11 @@
 exports[`ui/panel/panelContainer > should construct 1`] = `
 <Drawer
   aria-label="Operation details panel"
-  className="___lg5ij00_0000000 f22iagw f1869bpl"
+  className="msla-panel-container"
   modalType="non-modal"
   mountNode={
     {
-      "className": "___1kqfbsn_0000000 f1wirg6b",
+      "className": "msla-panel-host-container",
       "element": undefined,
     }
   }
@@ -24,7 +24,7 @@ exports[`ui/panel/panelContainer > should construct 1`] = `
 >
   <React.Fragment>
     <div
-      className="___gd9kts0_2zn49f0 f1ewtqcl f22iagw fz7g6wx f1063pyq f1immsc2 fly5x3f f5t92pa"
+      className="msla-panel-container-nested msla-panel-container-nested-right"
     >
       <React.Fragment />
     </div>

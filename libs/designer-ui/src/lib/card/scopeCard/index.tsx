@@ -5,11 +5,10 @@ import { ErrorBanner } from '../errorbanner';
 import { useCardKeyboardInteraction } from '../hooks';
 import { Gripper } from '../images/dynamicsvgs/gripper';
 import type { CardProps } from '../index';
-import { css, Icon, useTheme } from '@fluentui/react';
+import { css, Icon } from '@fluentui/react';
 import { Spinner, Tooltip, useRestoreFocusTarget } from '@fluentui/react-components';
 import { replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
-import { useCardStyles, getCardClasses } from '../styles';
 
 export interface ScopeCardProps extends CardProps {
   collapsed?: boolean;
@@ -42,9 +41,6 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
 }) => {
   const focusRef = useRef<HTMLDivElement | null>(null);
   const restoreFocusTargetAttribute = useRestoreFocusTarget();
-  const theme = useTheme();
-  const styles = useCardStyles();
-  const classes = getCardClasses(styles, theme.isInverted);
 
   const handleClick: React.MouseEventHandler<HTMLElement> = () => {
     onClick?.();
@@ -77,9 +73,9 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
 
   const colorVars = { ['--brand-color' as any]: brandColor };
   const cardIcon = isLoading ? (
-    <Spinner className={classes.badgeSpinner} size={'tiny'} appearance="inverted" />
+    <Spinner className="msla-card-header-spinner" size={'tiny'} appearance="inverted" />
   ) : icon ? (
-    <img className={classes.scopeIcon} alt="" role="presentation" src={icon} />
+    <img className="scope-icon" alt="" role="presentation" src={icon} />
   ) : null;
 
   return (
@@ -91,7 +87,7 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
           draggable={draggable}
           style={colorVars}
           onContextMenu={onContextMenu}
-          className={css(classes.scopeCardWrapper, !active && classes.cardInactive)}
+          className={css('msla-scope-v2--header msla-scope-card-wrapper', !active && 'msla-card-inactive')}
         >
           {showStatusPill ? (
             <StatusPill
@@ -102,13 +98,13 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
               endTime={runData?.endTime}
             />
           ) : null}
-          <div className={classes.scopeCardContent}>
+          <div className="msla-scope-card-content">
             <div className={css('msla-selection-box', 'white-outline', selectionMode)} />
             <button
               {...restoreFocusTargetAttribute}
               id={`msla-node-${id}`}
               name={title}
-              className={classes.scopeCardTitleButton}
+              className="msla-scope-card-title-button"
               ref={focusRef as any}
               onClick={handleClick}
               onKeyDown={keyboardInteraction.keyDown}
@@ -116,10 +112,10 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
               tabIndex={nodeIndex}
               aria-label={cardAltText}
             >
-              <div className={classes.scopeCardTitleBox}>
-                <div className={css(classes.scopeGripperSection, draggable && 'draggable')}>{draggable ? <Gripper /> : null}</div>
-                <div className={classes.scopeCardIconSection}>{cardIcon}</div>
-                <div className={classes.scopeTitle}>{title}</div>
+              <div className="msla-scope-card-title-box">
+                <div className={css('gripper-section', draggable && 'draggable')}>{draggable ? <Gripper /> : null}</div>
+                <div className="panel-card-content-icon-section">{cardIcon}</div>
+                <div className="msla-scope-title">{title}</div>
               </div>
               {errorMessage ? <ErrorBanner errorLevel={errorLevel} errorMessage={errorMessage} /> : null}
             </button>
@@ -127,7 +123,7 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
           </div>
           {badges.length > 0 && (
             <div className="msla-card-v2-footer" onClick={handleClick}>
-              <div className={classes.badges}>
+              <div className="msla-badges">
                 {badges.map(({ title, content, darkBackground, iconProps }) => (
                   <Tooltip key={title} relationship={'label'} withArrow={true} content={content}>
                     <div>

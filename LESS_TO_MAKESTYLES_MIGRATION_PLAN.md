@@ -96,70 +96,52 @@ export const designTokens = {
 - ✅ Preserved all original visual styling
 - ✅ Conditional dark theme styles using mergeClasses
 
-#### Task 2.2: Migrate libs/data-mapper-v2 remaining files ✅
+#### Task 2.2: Migrate libs/data-mapper-v2 remaining files ⬜
 **Priority**: High (Already has patterns)
 **Estimated Time**: 1 hour
-**Status**: **COMPLETED** ✅
-**Files**: 1 .less file remaining (was orphaned file)
+**Files**: 1 .less file remaining
 
-**Files Migrated**:
-- ✅ `libs/data-mapper-v2/src/components/schema/style.less` - Deleted (orphaned file, not imported anywhere)
+**Files to Migrate**:
+- [ ] `libs/data-mapper-v2/src/ui/styles.less`
 
 ### Priority Level 2: Core UI Components
 
-#### Task 2.3: Migrate Card Components ✅
+#### Task 2.3: Migrate Card Components ⬜
 **Priority**: Critical
 **Estimated Time**: 4-6 hours
-**Status**: **COMPLETED** ✅
 **Impact**: High - Used throughout application
 
 **Files to Migrate**:
-- [x] `libs/designer-ui/src/lib/card/card.less` - Main styles migrated ✅
-- [x] `libs/designer-ui/src/lib/card/cardv2.less` - Styles integrated into styles.ts ✅
-- [x] `libs/designer-ui/src/lib/card/collapsedCard/collapsedCard.less` - Migrated ✅
-- [x] `libs/designer-ui/src/lib/card/scopeCard/scopeCard.less` - Migrated ✅
-- [ ] Related parameter and function styles (remaining sub-components)
+- [ ] `libs/designer-ui/src/lib/card/card.less`
+- [ ] `libs/designer-ui/src/lib/card/cardv2.less`
+- [ ] `libs/designer-ui/src/lib/card/collapsedCard/collapsedCard.less`
+- [ ] `libs/designer-ui/src/lib/card/scopeCard/scopeCard.less`
+- [ ] Related parameter and function styles
 
 **Implementation**:
-1. [x] Create `libs/designer-ui/src/lib/card/styles.ts` ✅
-2. [x] Migrate base card styles ✅
-3. [x] Migrate card variants (v2, collapsed, scope) ✅
-4. [x] Update Card and CardFooter components ✅
-5. [x] Update CollapsedCard and ScopeCard components ✅
-6. [x] Test card rendering across different themes ✅
-7. [x] Verify responsive behavior ✅
+1. [ ] Create `libs/designer-ui/src/lib/card/styles.ts`
+2. [ ] Migrate base card styles
+3. [ ] Migrate card variants (v2, collapsed, scope)
+4. [ ] Update all card component imports
+5. [ ] Test card rendering across different themes
+6. [ ] Verify responsive behavior
 
-**Progress Notes**:
-- Successfully created comprehensive makeStyles for card components
-- Updated Card, CardFooter, CollapsedCard, and ScopeCard components to use new styles
-- All components now use proper theme support (light/dark mode)
-- Build passes successfully 
-- Unit tests passing (snapshot updates expected for styling changes)
-- Fixed useTheme import from correct Fluent UI v8 package
-
-#### Task 2.4: Migrate Panel Components ✅
+#### Task 2.4: Migrate Panel Components ⬜
 **Priority**: Critical
 **Estimated Time**: 6-8 hours
 **Impact**: High - Core designer functionality
 
 **Files to Migrate**:
-- [x] `libs/designer-ui/src/lib/panel/panel.less`
-- [x] `libs/designer-ui/src/lib/panel/panelheader.less`
-- [x] `libs/designer-ui/src/lib/panel/panelbody.less`
-- [x] `libs/designer-ui/src/lib/panel/panelfooter.less`
+- [ ] `libs/designer-ui/src/lib/panel/panel.less`
+- [ ] `libs/designer-ui/src/lib/panel/panelheader.less`
+- [ ] `libs/designer-ui/src/lib/panel/panelbody.less`
+- [ ] `libs/designer-ui/src/lib/panel/panelfooter.less`
 
 **Implementation**:
-1. [x] Create panel styles with makeStyles
-2. [x] Preserve panel mode functionality
-3. [x] Maintain resizing capabilities
-4. [x] Test panel interactions
-
-**Components Migrated**:
-- [x] PanelContainer - Updated to use makeStyles
-- [x] PanelHeader - Updated to use makeStyles
-- [x] PanelHeaderComment - Updated to use makeStyles
-- [x] PanelHeaderTitle - Updated to use makeStyles
-- [x] Core panel styling foundation established
+1. [ ] Create panel styles with makeStyles
+2. [ ] Preserve panel mode functionality
+3. [ ] Maintain resizing capabilities
+4. [ ] Test panel interactions
 
 #### Task 2.5: Migrate Editor Components ⬜
 **Priority**: High
@@ -421,23 +403,15 @@ export const designTokens = {
 - ✅ Package dependencies verified
 - ✅ Ready for component migrations
 
-### ✅ Phase 2: Component Migration by Priority - **4/8 COMPLETED**
+### 🔄 Phase 2: Component Migration by Priority - **IN PROGRESS**
 - ✅ Task 2.1: libs/chatbot migration **COMPLETED**
-- ✅ Task 2.2: libs/data-mapper-v2 migration **COMPLETED** (orphaned file removed)
-- ✅ Task 2.3: Card Components migration **COMPLETED** ✅
-- ✅ Task 2.4: Panel Components migration **COMPLETED** ✅
-- ✅ Quick wins: 2/2 completed (chatbot ✅, data-mapper-v2 ✅)
-- ✅ Core components: Card components ✅, Panel components ✅
+- 📋 Quick wins: 1/2 completed (chatbot ✅, data-mapper-v2 pending)
+- 📋 Core components prioritized and ready
 
 ### ⏳ Next Steps
 1. ✅ ~~Task 2.1: Migrate libs/chatbot~~ **COMPLETED**
-2. ✅ ~~Task 2.2: Complete data-mapper-v2 migration~~ **COMPLETED**
-3. ✅ ~~Task 2.3: Complete Card Components migration~~ **COMPLETED**
-4. ✅ ~~Task 2.4: Complete Panel Components migration~~ **COMPLETED**
-5. 🔄 Task 2.5: Migrate Editor Components (NEXT PRIORITY)
-6. Task 2.6: Migrate Form Controls
-7. Task 2.7: Migrate Monitoring Components
-8. Task 2.8: Migrate Template Components
+2. Continue with Task 2.2: Complete data-mapper-v2 migration
+3. Move to core components (cards, panels, editors)
 
 ---
 
