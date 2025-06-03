@@ -1,0 +1,287 @@
+name: PR AI Validation
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  validate-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Get PR Details
+        id: pr_details
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            return {
+              title: pr.title,
+              body: pr.body || '',
+              number: pr.number
+            };
+
+      - name: Validate PR with GitHub Copilot
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { title, body, number } = ${{ steps.pr_details.outputs.result }};
+            
+            // Read the PR template
+            const fs = require('fs');
+            const prTemplate = fs.readFileSync('.github/pull_request_template.md', 'utf8');
+            
+            // Prepare the prompt for GitHub Copilot
+            const prompt = `
+            As a code reviewer, please analyze this pull request and provide feedback:
+            
+            **PR Title:** ${title}
+            
+            **PR Description:**
+            ${body}
+            
+            **Requirements:**
+            1. PR Title Quality:
+               - Should follow conventional commit format: type(scope): description
+               - Types: feat, fix, refactor, perf, docs, test, chore
+               - Should be clear, concise, and descriptive
+               - Should not exceed 72 characters
+            
+            2. PR Description Compliance:
+               - Must follow this template structure:
+            ${prTemplate}
+            
+            **Validation Tasks:**
+            1. Check if the PR title follows conventional commit format
+            2. Rate the PR title quality (1-10) based on clarity and descriptiveness
+            3. Check if all required sections from the template are filled
+            4. Identify any missing or incomplete sections
+            5. Suggest improvements if needed
+            
+            Provide a structured response with:
+            - Title validation: PASS/FAIL with reason
+            - Title quality score: X/10 with explanation
+            - Template compliance: PASS/FAIL with missing sections listed
+            - Suggestions for improvement
+            `;
+            
+            try {
+              // Use GitHub Copilot API (when available) or OpenAI API integration
+              const copilotResponse = await github.copilot.getCompletions({
+                messages: [{
+                  role: 'user',
+                  content: prompt
+                }],
+                model: 'gpt-4',
+                max_tokens: 500
+              });
+              
+              const validation = copilotResponse.data.choices[0].message.content;
+              
+              // Parse the validation response
+              const titlePassed = validation.includes('Title validation: PASS');
+              const templatePassed = validation.includes('Template compliance: PASS');
+              
+              // Create a comment on the PR
+              if (!titlePassed || !templatePassed) {
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: number,
+                  body: `## 🤖 AI PR Validation Results\n\n${validation}\n\n### Action Required\n${!titlePassed ? '- Please update your PR title to follow conventional commit format\n' : ''}${!templatePassed ? '- Please complete all required sections in the PR description' : ''}`
+                });
+                
+                // Add labels
+                if (!titlePassed) {
+                  await github.rest.issues.addLabels({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: number,
+                    labels: ['needs-title-update']
+                  });
+                }
+                
+                if (!templatePassed) {
+                  await github.rest.issues.addLabels({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: number,
+                    labels: ['needs-description-update']
+                  });
+                }
+                
+                core.setFailed('PR validation failed. Please address the issues mentioned in the comment.');
+              } else {
+                // Remove labels if they exist and validation passes
+                try {
+                  await github.rest.issues.removeLabel({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: number,
+                    name: 'needs-title-update'
+                  });
+                } catch (e) {
+                  // Label might not exist
+                }
+                
+                try {
+                  await github.rest.issues.removeLabel({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: number,
+                    name: 'needs-description-update'
+                  });
+                } catch (e) {
+                  // Label might not exist
+                }
+                
+                // Add success comment
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: number,
+                  body: `## ✅ AI PR Validation Passed\n\n${validation}\n\nGreat job! Your PR title and description meet all requirements.`
+                });
+              }
+            } catch (error) {
+              console.error('AI validation error:', error);
+              // Fallback to basic validation if AI fails
+              await performBasicValidation(title, body, number);
+            }
+            
+            async function performBasicValidation(title, body, number) {
+              const conventionalCommitRegex = /^(feat|fix|docs|style|refactor|test|chore|meta)(!)?(\([a-zA-Z0-9-_. ]+\))?:\s.+$/i;
+              const titleValid = conventionalCommitRegex.test(title);
+              
+              // Check for required template sections
+              const requiredSections = [
+                'Commit Type',
+                'Risk Level',
+                'What & Why',
+                'Impact of Change',
+                'Test Plan'
+              ];
+              
+              const missingSections = requiredSections.filter(section => 
+                !body.includes(section)
+              );
+              
+              if (!titleValid || missingSections.length > 0) {
+                let comment = '## 📋 PR Validation Results\n\n';
+                
+                if (!titleValid) {
+                  comment += '### ❌ PR Title\n';
+                  comment += 'Your PR title does not follow the conventional commit format.\n';
+                  comment += 'Expected format: `type(scope): description`\n';
+                  comment += 'Valid types: feat, fix, docs, style, refactor, test, chore\n\n';
+                }
+                
+                if (missingSections.length > 0) {
+                  comment += '### ❌ PR Description\n';
+                  comment += 'The following required sections are missing:\n';
+                  missingSections.forEach(section => {
+                    comment += `- ${section}\n`;
+                  });
+                  comment += '\nPlease update your PR description to include all required sections from the template.\n';
+                }
+                
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: number,
+                  body: comment
+                });
+                
+                core.setFailed('PR validation failed. Please address the issues mentioned in the comment.');
+              }
+            }
+
+      - name: Check Template Sections Completion
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = context.payload.pull_request.body || '';
+            const number = context.payload.pull_request.number;
+            
+            // Check if checkboxes are checked
+            const uncheckedItems = [];
+            
+            // Commit Type check
+            const commitTypeRegex = /- \[([ x])\] (feature|fix|refactor|perf|docs|test|chore)/gi;
+            const commitTypeMatches = [...body.matchAll(commitTypeRegex)];
+            const commitTypeChecked = commitTypeMatches.some(match => match[1] === 'x');
+            if (!commitTypeChecked) {
+              uncheckedItems.push('Commit Type');
+            }
+            
+            // Risk Level check
+            const riskLevelRegex = /- \[([ x])\] (Low|Medium|High)/gi;
+            const riskLevelMatches = [...body.matchAll(riskLevelRegex)];
+            const riskLevelChecked = riskLevelMatches.some(match => match[1] === 'x');
+            if (!riskLevelChecked) {
+              uncheckedItems.push('Risk Level');
+            }
+            
+            // Test Plan check
+            const testPlanRegex = /- \[([ x])\] (Unit tests|E2E tests|Manual testing)/gi;
+            const testPlanMatches = [...body.matchAll(testPlanRegex)];
+            const testPlanChecked = testPlanMatches.some(match => match[1] === 'x');
+            if (!testPlanChecked) {
+              uncheckedItems.push('At least one test type');
+            }
+            
+            // Check for empty sections
+            const emptySections = [];
+            
+            // What & Why section
+            const whatWhyMatch = body.match(/## What & Why\s*\n(.*?)(?=\n##|$)/s);
+            if (!whatWhyMatch || whatWhyMatch[1].trim().includes('<!-- Brief context')) {
+              emptySections.push('What & Why');
+            }
+            
+            // Impact sections
+            const impactMatch = body.match(/## Impact of Change\s*\n(.*?)(?=\n##|$)/s);
+            if (!impactMatch || 
+                (impactMatch[1].includes('<!-- User-facing changes') && 
+                 impactMatch[1].includes('<!-- API changes') && 
+                 impactMatch[1].includes('<!-- Performance'))) {
+              emptySections.push('Impact of Change');
+            }
+            
+            if (uncheckedItems.length > 0 || emptySections.length > 0) {
+              let comment = '## ⚠️ PR Template Checklist\n\n';
+              
+              if (uncheckedItems.length > 0) {
+                comment += '### Unchecked Required Items:\n';
+                uncheckedItems.forEach(item => {
+                  comment += `- [ ] ${item}\n`;
+                });
+                comment += '\n';
+              }
+              
+              if (emptySections.length > 0) {
+                comment += '### Empty Required Sections:\n';
+                emptySections.forEach(section => {
+                  comment += `- ${section}\n`;
+                });
+                comment += '\nPlease provide meaningful content for these sections.\n';
+              }
+              
+              comment += '\n💡 **Tip:** Update your PR description to check the appropriate boxes and fill in the required sections.';
+              
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: number,
+                body: comment
+              });
+              
+              core.warning('PR template has incomplete sections.');
+            }
