@@ -36,6 +36,11 @@ jobs:
               
               const result = await response.json();
               
+              // Check if we got a valid response with the expected properties
+              if (!result.hasOwnProperty('passes') || !result.hasOwnProperty('message')) {
+                throw new Error('Invalid API response format');
+              }
+              
               // Post the validation result as a comment
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
@@ -44,8 +49,8 @@ jobs:
                 body: `## 🤖 AI PR Validation Report\n\n${result.message}`
               });
               
-              // Manage labels based on result
-              if (result.passes) {
+              // Manage labels based on the passes property
+              if (result.passes === true) {
                 // Add success label
                 try {
                   await github.rest.issues.addLabels({
