@@ -41,7 +41,6 @@ describe('ui/panel/panelContainer', () => {
     renderer.render(<PanelContainer {...minimal} />);
     const panel = renderer.getRenderOutput();
 
-    expect(panel.props.className).toBe('msla-panel-container');
     expect(panel.props.style).toEqual({ position: 'relative', height: '100%', maxWidth: '100%', width: minimal.overrideWidth });
   });
 });

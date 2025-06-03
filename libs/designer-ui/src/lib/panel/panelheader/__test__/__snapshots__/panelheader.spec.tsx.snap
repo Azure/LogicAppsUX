@@ -2,12 +2,12 @@
 
 exports[`lib/panel/panelHeader/main > should render 1`] = `
 <div
-  className="msla-panel-header"
+  className="___7jdgr90_0000000 ff22u3b f1kcqot9 fpe6lb7 f22iagw"
   id="Node Title"
 >
   <button
     aria-label="Collapse"
-    className="fui-Button r1alrhcs collapse-toggle right ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
+    className="fui-Button r1alrhcs ___v4k0z40_zuvqp20 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la fvjh0tl f8zmjen fd1gkq fjf1xye fii4ji6"
     data-automation-id="msla-panel-header-collapse-nav"
     id="msla-panel-header-collapse-nav"
     onBlur={[Function]}
@@ -51,7 +51,7 @@ exports[`lib/panel/panelHeader/main > should render 1`] = `
     </span>
   </button>
   <div
-    className="msla-panel-card-header"
+    className="___14in8fn_0000000 fqerorx f22iagw f1063pyq f122n59"
   >
     <div
       className="fui-Spinner r82apo5 msla-card-header-spinner"
@@ -66,10 +66,10 @@ exports[`lib/panel/panelHeader/main > should render 1`] = `
       </span>
     </div>
     <div
-      className="msla-panel-card-title-container"
+      className="___ychmu40_0000000 fqerorx fpuzrxt f9qo820"
     >
       <div
-        className="ms-TextField ms-TextField--borderless msla-card-title root-110"
+        className="ms-TextField ms-TextField--borderless ___v6psc80_0000000 f1lmfglv fibjyge f1abmfm4 f9yszdx f5ogflp f1hqa2wf f1f09k3d finvdd3 fzkkow9 fcdblym fg706s2 fjik90z f1p3nwhy f11589ue f1q5o8ev f1pdflbu f2i1086 f1rlsnju f1stktl2 f1127022 f1dqlhwx fs8x2yy f4ni5mc ft71ddo f1sn8sm0 f1wovo5e fm0h710 f716mnf f1cmzvmm fshheht f1xwbbk2 f1dfuukp f1kusq1g f1mx5yg7 ftp5bbt f1pva6ep f1h1h8la fqqt5n9 f18f6j57 fs8opk2 f16pyme3 f1140goi f1i1e89q fcqgtnh f4liy0n fb087j0 fow4h4b f38uvda fh1ot9r f9fbo96 ffc0zi6 f5047k8 root-110"
       >
         <div
           className="ms-TextField-wrapper"
@@ -157,12 +157,12 @@ exports[`lib/panel/panelHeader/main > should render 1`] = `
 exports[`lib/panel/panelHeader/main > should render with panel header buttons 1`] = `
 [
   <div
-    className="msla-panel-header"
+    className="___7jdgr90_0000000 ff22u3b f1kcqot9 fpe6lb7 f22iagw"
     id="Node Title"
   >
     <button
       aria-label="Collapse"
-      className="fui-Button r1alrhcs collapse-toggle right ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
+      className="fui-Button r1alrhcs ___v4k0z40_zuvqp20 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la fvjh0tl f8zmjen fd1gkq fjf1xye fii4ji6"
       data-automation-id="msla-panel-header-collapse-nav"
       id="msla-panel-header-collapse-nav"
       onBlur={[Function]}
@@ -206,7 +206,7 @@ exports[`lib/panel/panelHeader/main > should render with panel header buttons 1`
       </span>
     </button>
     <div
-      className="msla-panel-card-header"
+      className="___14in8fn_0000000 fqerorx f22iagw f1063pyq f122n59"
     >
       <div
         className="fui-Spinner r82apo5 msla-card-header-spinner"
@@ -221,10 +221,10 @@ exports[`lib/panel/panelHeader/main > should render with panel header buttons 1`
         </span>
       </div>
       <div
-        className="msla-panel-card-title-container"
+        className="___ychmu40_0000000 fqerorx fpuzrxt f9qo820"
       >
         <div
-          className="ms-TextField ms-TextField--borderless msla-card-title root-110"
+          className="ms-TextField ms-TextField--borderless ___v6psc80_0000000 f1lmfglv fibjyge f1abmfm4 f9yszdx f5ogflp f1hqa2wf f1f09k3d finvdd3 fzkkow9 fcdblym fg706s2 fjik90z f1p3nwhy f11589ue f1q5o8ev f1pdflbu f2i1086 f1rlsnju f1stktl2 f1127022 f1dqlhwx fs8x2yy f4ni5mc ft71ddo f1sn8sm0 f1wovo5e fm0h710 f716mnf f1cmzvmm fshheht f1xwbbk2 f1dfuukp f1kusq1g f1mx5yg7 ftp5bbt f1pva6ep f1h1h8la fqqt5n9 f18f6j57 fs8opk2 f16pyme3 f1140goi f1i1e89q fcqgtnh f4liy0n fb087j0 fow4h4b f38uvda fh1ot9r f9fbo96 ffc0zi6 f5047k8 root-110"
         >
           <div
             className="ms-TextField-wrapper"
@@ -308,10 +308,10 @@ exports[`lib/panel/panelHeader/main > should render with panel header buttons 1`
     </div>
   </div>,
   <div
-    className="msla-panel-header-buttons"
+    className="___1ld9725_0000000 f1hu3pq6 ftcjrdy f178qm3z f1llv3my"
   >
     <button
-      className="fui-Button r1alrhcs msla-panel-header-buttons__button"
+      className="fui-Button r1alrhcs ___4lw2xs0_18pya9b fjgzulp f1pxv85q"
       onClick={[Function]}
       type="button"
     >
@@ -329,7 +329,7 @@ exports[`lib/panel/panelHeader/main > should render with panel header buttons 1`
       Submit from this action
     </button>
     <button
-      className="fui-Button r1alrhcs msla-panel-header-buttons__button"
+      className="fui-Button r1alrhcs ___4lw2xs0_18pya9b fjgzulp f1pxv85q"
       onClick={[Function]}
       type="button"
     >
@@ -352,12 +352,12 @@ exports[`lib/panel/panelHeader/main > should render with panel header buttons 1`
 
 exports[`lib/panel/panelHeader/main > should render with panel header menu 1`] = `
 <div
-  className="msla-panel-header"
+  className="___7jdgr90_0000000 ff22u3b f1kcqot9 fpe6lb7 f22iagw"
   id="Node Title"
 >
   <button
     aria-label="Collapse"
-    className="fui-Button r1alrhcs collapse-toggle right ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
+    className="fui-Button r1alrhcs ___v4k0z40_zuvqp20 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la fvjh0tl f8zmjen fd1gkq fjf1xye fii4ji6"
     data-automation-id="msla-panel-header-collapse-nav"
     id="msla-panel-header-collapse-nav"
     onBlur={[Function]}
@@ -401,7 +401,7 @@ exports[`lib/panel/panelHeader/main > should render with panel header menu 1`] =
     </span>
   </button>
   <div
-    className="msla-panel-card-header"
+    className="___14in8fn_0000000 fqerorx f22iagw f1063pyq f122n59"
   >
     <div
       className="fui-Spinner r82apo5 msla-card-header-spinner"
@@ -416,10 +416,10 @@ exports[`lib/panel/panelHeader/main > should render with panel header menu 1`] =
       </span>
     </div>
     <div
-      className="msla-panel-card-title-container"
+      className="___ychmu40_0000000 fqerorx fpuzrxt f9qo820"
     >
       <div
-        className="ms-TextField ms-TextField--borderless msla-card-title root-110"
+        className="ms-TextField ms-TextField--borderless ___v6psc80_0000000 f1lmfglv fibjyge f1abmfm4 f9yszdx f5ogflp f1hqa2wf f1f09k3d finvdd3 fzkkow9 fcdblym fg706s2 fjik90z f1p3nwhy f11589ue f1q5o8ev f1pdflbu f2i1086 f1rlsnju f1stktl2 f1127022 f1dqlhwx fs8x2yy f4ni5mc ft71ddo f1sn8sm0 f1wovo5e fm0h710 f716mnf f1cmzvmm fshheht f1xwbbk2 f1dfuukp f1kusq1g f1mx5yg7 ftp5bbt f1pva6ep f1h1h8la fqqt5n9 f18f6j57 fs8opk2 f16pyme3 f1140goi f1i1e89q fcqgtnh f4liy0n fb087j0 fow4h4b f38uvda fh1ot9r f9fbo96 ffc0zi6 f5047k8 root-110"
       >
         <div
           className="ms-TextField-wrapper"
@@ -507,12 +507,12 @@ exports[`lib/panel/panelHeader/main > should render with panel header menu 1`] =
 exports[`lib/panel/panelHeader/main > should render with panel header trigger info message 1`] = `
 [
   <div
-    className="msla-panel-header"
+    className="___7jdgr90_0000000 ff22u3b f1kcqot9 fpe6lb7 f22iagw"
     id="Node Title"
   >
     <button
       aria-label="Collapse"
-      className="fui-Button r1alrhcs collapse-toggle right ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
+      className="fui-Button r1alrhcs ___v4k0z40_zuvqp20 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la fvjh0tl f8zmjen fd1gkq fjf1xye fii4ji6"
       data-automation-id="msla-panel-header-collapse-nav"
       id="msla-panel-header-collapse-nav"
       onBlur={[Function]}
@@ -556,7 +556,7 @@ exports[`lib/panel/panelHeader/main > should render with panel header trigger in
       </span>
     </button>
     <div
-      className="msla-panel-card-header"
+      className="___14in8fn_0000000 fqerorx f22iagw f1063pyq f122n59"
     >
       <div
         className="fui-Spinner r82apo5 msla-card-header-spinner"
@@ -571,10 +571,10 @@ exports[`lib/panel/panelHeader/main > should render with panel header trigger in
         </span>
       </div>
       <div
-        className="msla-panel-card-title-container"
+        className="___ychmu40_0000000 fqerorx fpuzrxt f9qo820"
       >
         <div
-          className="ms-TextField ms-TextField--borderless msla-card-title root-110"
+          className="ms-TextField ms-TextField--borderless ___v6psc80_0000000 f1lmfglv fibjyge f1abmfm4 f9yszdx f5ogflp f1hqa2wf f1f09k3d finvdd3 fzkkow9 fcdblym fg706s2 fjik90z f1p3nwhy f11589ue f1q5o8ev f1pdflbu f2i1086 f1rlsnju f1stktl2 f1127022 f1dqlhwx fs8x2yy f4ni5mc ft71ddo f1sn8sm0 f1wovo5e fm0h710 f716mnf f1cmzvmm fshheht f1xwbbk2 f1dfuukp f1kusq1g f1mx5yg7 ftp5bbt f1pva6ep f1h1h8la fqqt5n9 f18f6j57 fs8opk2 f16pyme3 f1140goi f1i1e89q fcqgtnh f4liy0n fb087j0 fow4h4b f38uvda fh1ot9r f9fbo96 ffc0zi6 f5047k8 root-110"
         >
           <div
             className="ms-TextField-wrapper"
@@ -658,7 +658,7 @@ exports[`lib/panel/panelHeader/main > should render with panel header trigger in
     </div>
   </div>,
   <div
-    className="msla-panel-header-messages"
+    className="___1ld9725_0000000 f1hu3pq6 ftcjrdy f178qm3z f1llv3my"
   >
     <div
       aria-label="Trigger name update message information bar"
@@ -697,10 +697,10 @@ exports[`lib/panel/panelHeader/main > should render with panel header trigger in
     </div>
   </div>,
   <div
-    className="msla-panel-header-buttons"
+    className="___1ld9725_0000000 f1hu3pq6 ftcjrdy f178qm3z f1llv3my"
   >
     <button
-      className="fui-Button r1alrhcs msla-panel-header-buttons__button"
+      className="fui-Button r1alrhcs ___4lw2xs0_18pya9b fjgzulp f1pxv85q"
       onClick={[Function]}
       type="button"
     >
@@ -718,7 +718,7 @@ exports[`lib/panel/panelHeader/main > should render with panel header trigger in
       Submit from this action
     </button>
     <button
-      className="fui-Button r1alrhcs msla-panel-header-buttons__button"
+      className="fui-Button r1alrhcs ___4lw2xs0_18pya9b fjgzulp f1pxv85q"
       onClick={[Function]}
       type="button"
     >

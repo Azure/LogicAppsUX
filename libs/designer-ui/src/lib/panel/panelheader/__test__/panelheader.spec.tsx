@@ -95,16 +95,12 @@ describe('lib/panel/panelHeader/main', () => {
     shallow.render(<PanelHeader {...props} />);
     const panelHeader = shallow.getRenderOutput().props.children[0];
     const comment = shallow.getRenderOutput().props.children[2];
-    expect(panelHeader.props.className).toBe('msla-panel-header');
 
     const [, fragment]: any[] = React.Children.toArray(panelHeader.props.children);
 
     const [cardHeader]: any[] = React.Children.toArray(fragment.props.children);
 
-    expect(cardHeader.props.className).toBe('msla-panel-card-header');
     const [, titleContainer]: any[] = React.Children.toArray(cardHeader.props.children);
-
-    expect(titleContainer.props.className).toBe('msla-panel-card-title-container');
 
     const title = titleContainer.props.children;
     expect(title.props.titleId).toBe('nodeId-title');
