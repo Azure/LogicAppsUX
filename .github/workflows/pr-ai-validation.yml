@@ -17,6 +17,7 @@ jobs:
         with:
           script: |
             const pr_number = context.payload.pull_request.number;
+            const botCommentIdentifier = '## 🤖 AI PR Validation Report';
             
             try {
               // Call the AI validation endpoint
@@ -41,13 +42,37 @@ jobs:
                 throw new Error('Invalid API response format');
               }
               
-              // Post the validation result as a comment
-              await github.rest.issues.createComment({
+              // Find existing bot comment
+              const comments = await github.rest.issues.listComments({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                issue_number: pr_number,
-                body: `## 🤖 AI PR Validation Report\n\n${result.message}`
+                issue_number: pr_number
               });
+              
+              const botComment = comments.data.find(comment => 
+                comment.user.type === 'Bot' && 
+                comment.body.includes(botCommentIdentifier)
+              );
+              
+              const commentBody = `${botCommentIdentifier}\n\n${result.message}\n\n---\n*Last updated: ${new Date().toUTCString()}*`;
+              
+              if (botComment) {
+                // Update existing comment
+                await github.rest.issues.updateComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: botComment.id,
+                  body: commentBody
+                });
+              } else {
+                // Create new comment
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: pr_number,
+                  body: commentBody
+                });
+              }
               
               // Manage labels based on the passes property
               if (result.passes === true) {
@@ -64,7 +89,7 @@ jobs:
                 }
                 
                 // Remove failure labels if they exist
-                const labelsToRemove = ['needs-title-update', 'needs-description-update'];
+                const labelsToRemove = ['needs-pr-update', 'needs-title-update', 'needs-description-update'];
                 for (const label of labelsToRemove) {
                   try {
                     await github.rest.issues.removeLabel({
@@ -78,7 +103,7 @@ jobs:
                   }
                 }
               } else {
-                // Add failure labels
+                // Add failure label
                 try {
                   await github.rest.issues.addLabels({
                     owner: context.repo.owner,
