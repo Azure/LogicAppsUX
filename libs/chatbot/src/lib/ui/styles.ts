@@ -35,7 +35,7 @@ export const useChatbotStyles = makeStyles({
   },
 
   headerIcon: {
-    color: tokens.colorBrandBlue, // Use design token for brand blue
+    color: '#2899f5', // Keep original brand blue
     transform: 'scale(1.5)',
     ...shorthands.margin(0, 0, '5px', '5px'),
   },
