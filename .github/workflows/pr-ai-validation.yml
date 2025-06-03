@@ -5,7 +5,6 @@ on:
     types: [opened, edited, synchronize]
 
 permissions:
-  contents: read
   pull-requests: write
   issues: write
 
@@ -13,334 +12,105 @@ jobs:
   validate-pr:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Get PR Details
-        id: pr_details
+      - name: Validate PR with AI Agent
         uses: actions/github-script@v7
         with:
           script: |
-            const pr = context.payload.pull_request;
-            return {
-              title: pr.title,
-              body: pr.body || '',
-              number: pr.number
-            };
-
-      - name: Validate PR with AI-Enhanced Quality Check
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const { title, body, number } = ${{ steps.pr_details.outputs.result }};
+            const pr_number = context.payload.pull_request.number;
             
-            // Check for required template sections
-            const requiredSections = [
-              'Commit Type',
-              'Risk Level',
-              'What & Why',
-              'Impact of Change',
-              'Test Plan'
-            ];
-            
-            const missingSections = requiredSections.filter(section => 
-              !body.includes(`## ${section}`)
-            );
-            
-            // Advanced heuristic-based title quality assessment
-            let titleQualityScore = 10;
-            let titleFeedback = [];
-            let aiAnalysis = '';
-            
-            // Perform comprehensive title analysis
-            const titleLength = title.length;
-            const titleWords = title.split(' ').filter(w => w.length > 0).length;
-            const titleLower = title.toLowerCase();
-            
-            // Length analysis
-            if (titleLength > 72) {
-              titleQualityScore -= 2;
-              titleFeedback.push(`Title is too long (${titleLength} chars, recommended max: 72)`);
-            } else if (titleLength < 15) {
-              titleQualityScore -= 3;
-              titleFeedback.push('Title is too brief - add more context about the change');
-            }
-            
-            // Word count analysis
-            if (titleWords < 3) {
-              titleQualityScore -= 2;
-              titleFeedback.push('Title needs more descriptive words');
-            }
-            
-            // Vague terms detection
-            const vagueWords = ['update', 'fix', 'change', 'modify', 'edit', 'stuff', 'thing', 'misc', 'various', 'some'];
-            const foundVagueWords = vagueWords.filter(word => 
-              new RegExp(`\\b${word}\\b`, 'i').test(titleLower)
-            );
-            
-            if (foundVagueWords.length > 0 && titleWords < 6) {
-              titleQualityScore -= 2;
-              titleFeedback.push(`Title contains vague terms (${foundVagueWords.join(', ')}) - be more specific about what changed`);
-            }
-            
-            // Check for specific component/feature mention
-            const hasSpecificContext = /\b(component|feature|module|service|api|ui|backend|frontend|workflow|designer|panel|dialog|button|form|function|method|class)\b/i.test(title);
-            if (!hasSpecificContext && titleWords < 8) {
-              titleQualityScore -= 1;
-              titleFeedback.push('Consider mentioning the specific component or feature affected');
-            }
-            
-            // Capitalization check
-            if (title[0] !== title[0].toUpperCase()) {
-              titleQualityScore -= 1;
-              titleFeedback.push('Title should start with a capital letter');
-            }
-            
-            // Check for action words
-            const actionWords = ['add', 'remove', 'implement', 'refactor', 'improve', 'enhance', 'optimize', 'migrate', 'upgrade', 'integrate'];
-            const hasActionWord = actionWords.some(word => 
-              new RegExp(`\\b${word}`, 'i').test(titleLower)
-            );
-            
-            if (!hasActionWord && !foundVagueWords.includes('fix')) {
-              titleQualityScore -= 1;
-              titleFeedback.push('Consider starting with an action verb to clarify what was done');
-            }
-            
-            // Context analysis
-            const hasWhy = /\b(for|to|because|due to|in order to)\b/i.test(title);
-            const hasWhat = titleWords >= 4;
-            
-            if (!hasWhat) {
-              titleQualityScore -= 1;
-              titleFeedback.push('Title should clearly explain what changed');
-            }
-            
-            // Generate analysis based on score
-            if (titleQualityScore >= 9) {
-              aiAnalysis = 'Excellent! The title is clear, specific, and well-structured.';
-            } else if (titleQualityScore >= 7) {
-              aiAnalysis = 'Good title that clearly describes the change.';
-            } else if (titleQualityScore >= 5) {
-              aiAnalysis = 'Title needs some improvement for better clarity.';
-            } else {
-              aiAnalysis = 'Title requires significant improvement to meet quality standards.';
-            }
-            
-            // Add specific positive feedback for good titles
-            if (titleQualityScore >= 7) {
-              const positiveFeedback = [];
-              if (hasActionWord) positiveFeedback.push('Uses clear action verb');
-              if (hasSpecificContext) positiveFeedback.push('Mentions specific component/feature');
-              if (titleLength >= 20 && titleLength <= 60) positiveFeedback.push('Good length balance');
-              if (hasWhy) positiveFeedback.push('Includes context/reasoning');
-              
-              if (positiveFeedback.length > 0) {
-                aiAnalysis += ` Strengths: ${positiveFeedback.join(', ')}.`;
-              }
-            }
-            
-            // Create validation report
-            let validationReport = '## 🤖 AI-Enhanced PR Validation Report\n\n';
-            
-            // Title validation
-            validationReport += '### PR Title Quality Analysis\n\n';
-            validationReport += `**Quality Score:** ${titleQualityScore}/10\n`;
-            validationReport += `**Analysis:** ${aiAnalysis}\n`;
-            
-            if (titleFeedback.length > 0) {
-              validationReport += '\n**Suggestions for Improvement:**\n';
-              titleFeedback.forEach(feedback => {
-                validationReport += `- ${feedback}\n`;
+            try {
+              // Call the AI validation endpoint
+              const response = await fetch('https://good-test-case.azurewebsites.net:443/api/GitHubPRAgent/triggers/When_a_HTTP_request_is_received/invoke?api-version=2022-05-01&sp=%2Ftriggers%2FWhen_a_HTTP_request_is_received%2Frun&sv=1.0&sig=p26YNf7sdC9r1MpT-acz87UNzlpTnTnbfGFbEmDtGHc', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                  pr_id: pr_number
+                })
               });
-            }
-            validationReport += '\n';
-            
-            // Template compliance
-            validationReport += '### Template Compliance\n\n';
-            const templateComplete = missingSections.length === 0;
-            validationReport += `**Status:** ${templateComplete ? '✅ All sections present' : '❌ Missing sections'}\n`;
-            
-            if (!templateComplete) {
-              validationReport += '\n**Missing Sections:**\n';
-              missingSections.forEach(section => {
-                validationReport += `- ${section}\n`;
-              });
-            }
-            
-            // Overall result
-            const titlePassed = titleQualityScore >= 6;
-            const overallPass = titlePassed && templateComplete;
-            validationReport += '\n### Overall Result\n\n';
-            validationReport += overallPass ? '✅ **PASSED** - Your PR meets all quality requirements!' : '❌ **NEEDS ATTENTION** - Please address the issues above';
-            
-            // Suggestions
-            if (!overallPass) {
-              validationReport += '\n\n### 💡 How to Improve\n\n';
               
-              if (!titlePassed) {
-                validationReport += '**For PR Title:**\n';
-                validationReport += '- Make it descriptive: explain what changed and why\n';
-                validationReport += '- Be specific: mention the component/feature affected\n';
-                validationReport += '- Keep it concise: aim for under 72 characters\n';
-                validationReport += '- Use action verbs: start with words like "Add", "Fix", "Improve"\n';
-                validationReport += '- Example: "Add dark mode support to workflow designer canvas"\n\n';
+              if (!response.ok) {
+                throw new Error(`API request failed with status ${response.status}`);
               }
               
-              if (!templateComplete) {
-                validationReport += '**For PR Description:**\n';
-                validationReport += '- Fill in all required sections from the template\n';
-                validationReport += '- Remove placeholder comments and add meaningful content\n';
-                validationReport += '- Select at least one checkbox for Commit Type and Risk Level\n';
-              }
-            }
-            
-            // Add footer note
-            validationReport += '\n\n*This analysis uses AI-inspired heuristics to evaluate PR quality and provide actionable feedback.*';
-            
-            // Post the validation report
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: number,
-              body: validationReport
-            });
-            
-            // Manage labels
-            const labelsToAdd = [];
-            const labelsToRemove = [];
-            
-            if (!titlePassed) {
-              labelsToAdd.push('needs-title-update');
-            } else {
-              labelsToRemove.push('needs-title-update');
-            }
-            
-            if (!templateComplete) {
-              labelsToAdd.push('needs-description-update');
-            } else {
-              labelsToRemove.push('needs-description-update');
-            }
-            
-            if (overallPass) {
-              labelsToAdd.push('pr-validated');
-              labelsToRemove.push('needs-title-update', 'needs-description-update');
-            } else {
-              labelsToRemove.push('pr-validated');
-            }
-            
-            // Add labels
-            if (labelsToAdd.length > 0) {
-              try {
-                await github.rest.issues.addLabels({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  issue_number: number,
-                  labels: labelsToAdd
-                });
-              } catch (e) {
-                console.log('Error adding labels:', e.message);
-              }
-            }
-            
-            // Remove labels
-            for (const label of labelsToRemove) {
-              try {
-                await github.rest.issues.removeLabel({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  issue_number: number,
-                  name: label
-                });
-              } catch (e) {
-                // Label might not exist, that's okay
-              }
-            }
-            
-            // Fail the workflow if validation didn't pass
-            if (!overallPass) {
-              core.setFailed('PR validation failed. Please address the issues mentioned in the validation report.');
-            }
-
-      - name: Check Template Sections Completion
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const body = context.payload.pull_request.body || '';
-            const number = context.payload.pull_request.number;
-            
-            // Check if checkboxes are checked
-            const uncheckedItems = [];
-            
-            // Commit Type check
-            const commitTypeRegex = /- \[([ x])\] (feature|fix|refactor|perf|docs|test|chore)/gi;
-            const commitTypeMatches = [...body.matchAll(commitTypeRegex)];
-            const commitTypeChecked = commitTypeMatches.some(match => match[1] === 'x');
-            if (!commitTypeChecked) {
-              uncheckedItems.push('Commit Type');
-            }
-            
-            // Risk Level check
-            const riskLevelRegex = /- \[([ x])\] (Low|Medium|High)/gi;
-            const riskLevelMatches = [...body.matchAll(riskLevelRegex)];
-            const riskLevelChecked = riskLevelMatches.some(match => match[1] === 'x');
-            if (!riskLevelChecked) {
-              uncheckedItems.push('Risk Level');
-            }
-            
-            // Test Plan check
-            const testPlanRegex = /- \[([ x])\] (Unit tests|E2E tests|Manual testing)/gi;
-            const testPlanMatches = [...body.matchAll(testPlanRegex)];
-            const testPlanChecked = testPlanMatches.some(match => match[1] === 'x');
-            if (!testPlanChecked) {
-              uncheckedItems.push('At least one test type');
-            }
-            
-            // Check for empty sections
-            const emptySections = [];
-            
-            // What & Why section
-            const whatWhyMatch = body.match(/## What & Why\s*\n(.*?)(?=\n##|$)/s);
-            if (!whatWhyMatch || whatWhyMatch[1].trim().includes('<!-- Brief context')) {
-              emptySections.push('What & Why');
-            }
-            
-            // Impact sections
-            const impactMatch = body.match(/## Impact of Change\s*\n(.*?)(?=\n##|$)/s);
-            if (!impactMatch || 
-                (impactMatch[1].includes('<!-- User-facing changes') && 
-                 impactMatch[1].includes('<!-- API changes') && 
-                 impactMatch[1].includes('<!-- Performance'))) {
-              emptySections.push('Impact of Change');
-            }
-            
-            if (uncheckedItems.length > 0 || emptySections.length > 0) {
-              let comment = '## ⚠️ PR Template Checklist\n\n';
+              const result = await response.json();
               
-              if (uncheckedItems.length > 0) {
-                comment += '### Unchecked Required Items:\n';
-                uncheckedItems.forEach(item => {
-                  comment += `- [ ] ${item}\n`;
-                });
-                comment += '\n';
-              }
-              
-              if (emptySections.length > 0) {
-                comment += '### Empty Required Sections:\n';
-                emptySections.forEach(section => {
-                  comment += `- ${section}\n`;
-                });
-                comment += '\nPlease provide meaningful content for these sections.\n';
-              }
-              
-              comment += '\n💡 **Tip:** Update your PR description to check the appropriate boxes and fill in the required sections.';
-              
+              // Post the validation result as a comment
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                issue_number: number,
-                body: comment
+                issue_number: pr_number,
+                body: `## 🤖 AI PR Validation Report\n\n${result.message}`
               });
               
-              core.warning('PR template has incomplete sections.');
+              // Manage labels based on result
+              if (result.passes) {
+                // Add success label
+                try {
+                  await github.rest.issues.addLabels({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: pr_number,
+                    labels: ['pr-validated']
+                  });
+                } catch (e) {
+                  console.log('Error adding pr-validated label:', e.message);
+                }
+                
+                // Remove failure labels if they exist
+                const labelsToRemove = ['needs-title-update', 'needs-description-update'];
+                for (const label of labelsToRemove) {
+                  try {
+                    await github.rest.issues.removeLabel({
+                      owner: context.repo.owner,
+                      repo: context.repo.repo,
+                      issue_number: pr_number,
+                      name: label
+                    });
+                  } catch (e) {
+                    // Label might not exist, that's okay
+                  }
+                }
+              } else {
+                // Add failure labels
+                try {
+                  await github.rest.issues.addLabels({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: pr_number,
+                    labels: ['needs-pr-update']
+                  });
+                } catch (e) {
+                  console.log('Error adding needs-pr-update label:', e.message);
+                }
+                
+                // Remove success label if it exists
+                try {
+                  await github.rest.issues.removeLabel({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: pr_number,
+                    name: 'pr-validated'
+                  });
+                } catch (e) {
+                  // Label might not exist, that's okay
+                }
+                
+                // Fail the workflow
+                core.setFailed('PR validation failed. Please address the issues mentioned in the validation report.');
+              }
+              
+            } catch (error) {
+              console.error('Error during PR validation:', error);
+              
+              // Post an error comment
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: pr_number,
+                body: `## ❌ PR Validation Error\n\nAn error occurred while validating your PR. Please try again later or contact the maintainers.\n\nError: ${error.message}`
+              });
+              
+              core.setFailed(`PR validation error: ${error.message}`);
             }
