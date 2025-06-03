@@ -2,7 +2,7 @@
 
 exports[`ui/panel/panelContent > should construct. 1`] = `
 <div
-  className="msla-node-details-panel"
+  className="___133e6fg_0000000 f22iagw f1vx9l62 f1l02sjl"
   id="msla-node-details-panel-"
 >
   <ForwardRef
@@ -23,7 +23,7 @@ exports[`ui/panel/panelContent > should construct. 1`] = `
     </TabList>
   </ForwardRef>
   <div
-    className="msla-panel-content-container"
+    className="___qjwzfg0_0000000 fz7g6wx f1gay4b8 ffyari3 fyl6gry fo7qwa0 f5zp4f"
   />
 </div>
 `;
