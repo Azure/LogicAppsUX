@@ -231,8 +231,15 @@ export const updateWorkflowParameter = createAsyncThunk(
     const {
       template: { manifest, parameterDefinitions },
     } = getState() as RootState;
-    const parameter = parameterDefinitions[parameterId];
-    const allParameters = Object.values(parameterDefinitions);
+    const modifiedParameterDefinitions = {
+      ...parameterDefinitions,
+      [parameterId]: {
+        ...parameterDefinitions?.[parameterId],
+        ...definition,
+      },
+    };
+    const parameter = modifiedParameterDefinitions[parameterId];
+    const allParameters = Object.values(modifiedParameterDefinitions);
     const associatedWorkflows = (parameter?.associatedWorkflows as string[]) ?? [];
     const promises: Promise<void>[] = [];
     const existingWorkflows = await getWorkflowResourcesInTemplate(manifest?.id as string);
