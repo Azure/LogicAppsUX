@@ -14,7 +14,6 @@ import { FileSharePathStep } from './FileShare/FileSharePathStep';
 import { UserNameStep } from './FileShare/UserNameStep';
 import { PasswordStep } from './FileShare/PasswordStep';
 import { SQLStringNameStep } from '../../../deploy/storageAccountSteps/SQLStringNameStep';
-import { HybridDeploymentStep } from './HybridDeploymentStep';
 
 /**
  * Represents a step in the Logic App creation wizard for selecting a connected environment.
@@ -65,14 +64,7 @@ export class ConnectedEnvironmentStep extends AzureWizardPromptStep<ILogicAppWiz
   public async getSubWizard(wizardContext: ILogicAppWizardContext): Promise<IWizardOptions<ILogicAppWizardContext> | undefined> {
     wizardContext.fileShare = {};
     return {
-      promptSteps: [
-        new SQLStringNameStep(),
-        new HostNameStep(),
-        new FileSharePathStep(),
-        new UserNameStep(),
-        new PasswordStep(),
-        new HybridDeploymentStep(),
-      ],
+      promptSteps: [new SQLStringNameStep(), new HostNameStep(), new FileSharePathStep(), new UserNameStep(), new PasswordStep()],
     };
   }
 }

@@ -18,6 +18,8 @@ import {
   logicAppFilter,
   parameterizeConnectionsInProjectLoadSetting,
   azureWebJobsStorageKey,
+  isZipDeployEnabledSetting,
+  useSmbDeployment,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
@@ -40,7 +42,7 @@ import {
 import { notifyDeployComplete } from './notifyDeployComplete';
 import { updateAppSettingsWithIdentityDetails } from './updateAppSettings';
 import { verifyAppSettings } from './verifyAppSettings';
-import type { SiteConfigResource, StringDictionary, Site } from '@azure/arm-appservice';
+import type { SiteConfigResource, StringDictionary, Site, ContainerAppSecret } from '@azure/arm-appservice';
 import { deploy as innerDeploy, getDeployFsPath, runPreDeployTask, getDeployNode } from '@microsoft/vscode-azext-azureappservice';
 import type { IDeployContext } from '@microsoft/vscode-azext-azureappservice';
 import { ScmType } from '@microsoft/vscode-azext-azureappservice/out/src/ScmType';
@@ -56,10 +58,9 @@ import {
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import type { Uri, MessageItem, WorkspaceFolder } from 'vscode';
-import { deployHybridLogicApp, deployHybridLogicAppV2 } from './hybridLogicApp';
+import { deployHybridLogicApp, zipDeployHybridLogicApp } from './hybridLogicApp';
 import { createContainerClient } from '../../utils/azureClients';
 import { uploadAppSettings } from '../appSettings/uploadAppSettings';
-import type { ContainerAppSecret } from '@azure/arm-appcontainers';
 
 export async function deployProductionSlot(
   context: IActionContext,
@@ -199,8 +200,8 @@ async function deploy(
 
     try {
       if (isHybridLogicApp) {
-        if (canUseZipDeployForHybrid(node)) {
-          await deployHybridLogicAppV2(context, node, effectiveDeployFsPath);
+        if (canUseZipDeployForHybrid(node) && !getWorkspaceSetting<boolean>(useSmbDeployment)) {
+          await zipDeployHybridLogicApp(context, node, effectiveDeployFsPath);
         } else {
           await deployHybridLogicApp(context, node);
         }
@@ -451,12 +452,21 @@ async function checkAADDetailsExistsInAppSettings(node: SlotTreeItem, identityWi
 }
 
 const canUseZipDeployForHybrid = (node: SlotTreeItem): boolean => {
-  const requiredEnvVars = [workflowAppAADClientId, workflowAppAADClientSecret, workflowAppAADObjectId, workflowAppAADTenantId];
+  const requiredEnvVars = [
+    workflowAppAADClientId,
+    workflowAppAADClientSecret,
+    workflowAppAADObjectId,
+    workflowAppAADTenantId,
+    isZipDeployEnabledSetting,
+  ];
 
   if (!node.hybridSite?.template?.containers?.[0]?.env) {
     return false;
   }
 
-  const envVars = node.hybridSite.template.containers[0].env.map((env: any) => env.name);
-  return requiredEnvVars.every((varName) => envVars.includes(varName));
+  const envVars = node.hybridSite?.template?.containers?.[0].env.map((env: any) => env.name);
+  return (
+    requiredEnvVars.every((varName) => envVars.includes(varName)) &&
+    node.hybridSite.template.containers[0].env.some((env: any) => env.name === isZipDeployEnabledSetting && env.value === 'true')
+  );
 };

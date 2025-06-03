@@ -52,7 +52,7 @@ export class LogicAppResourceTree implements ResolvedAppResourceBase {
   public readonly instance = LogicAppResourceTree.instance;
 
   public hybridSite: ContainerApp;
-  public hybridSiteSecrets: ContainerAppSecret[];
+  public hybridSiteSecrets?: ContainerAppSecret[];
   public site: ParsedSite;
   public data: Site;
 

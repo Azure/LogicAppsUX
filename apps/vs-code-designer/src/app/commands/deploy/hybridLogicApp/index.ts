@@ -5,7 +5,7 @@ import { localize } from '../../../../localize';
 import { connectToSMB } from './connectToSMB';
 import { cleanSMB, deleteSMBFolder, unMountSMB } from './cleanResources';
 import { getRandomHexString } from '../../../utils/fs';
-import { createOrUpdateHybridApp } from '../../../utils/codeless/hybridLogicApp/hybridApp';
+import { createOrUpdateHybridApp, patchAppSettings } from '../../../utils/codeless/hybridLogicApp/hybridApp';
 import { updateSMBConnectedEnvironment } from '../../../utils/codeless/hybridLogicApp/connectedEnvironment';
 import path from 'path';
 import { getAuthorizationToken } from '../../../utils/codeless/getAuthorizationToken';
@@ -101,12 +101,12 @@ export const deployHybridLogicApp = async (context: IActionContext, node: SlotTr
   }
 };
 
-export const deployHybridLogicAppV2 = async (context: IActionContext, node: SlotTreeItem, effectiveDeployFsPath: string) => {
+export const zipDeployHybridLogicApp = async (context: IActionContext, node: SlotTreeItem, effectiveDeployFsPath: string) => {
   try {
     await window.withProgress(
       {
         location: ProgressLocation.Notification,
-        title: localize('deployingHybridLogicAppV2', 'Deploying hybrid logic app (v2)'),
+        title: localize('deployingHybridLogicAppV2', 'Deploying hybrid logic app using zip deploy'),
         cancellable: true,
       },
       async (progress) => {
@@ -125,11 +125,11 @@ export const deployHybridLogicAppV2 = async (context: IActionContext, node: Slot
           await waitForIngressFqdn(node, clientContainer);
         }
 
-        progress.report({ increment: 40, message: `Waiting for logic app to be ready: ${node.hybridSite.configuration.ingress.fqdn} ` });
+        progress.report({ increment: 40, message: `Waiting for logic app to be ready: ${node.hybridSite.configuration.ingress.fqdn}` });
 
-        await waitForContainerAppProvisioning(node.hybridSite.configuration.ingress.fqdn);
+        await waitForContainerAppProvisioning(node.hybridSite.configuration.ingress.fqdn, context);
 
-        progress.report({ increment: 40, message: 'Uploading zip to Logic App' });
+        progress.report({ increment: 60, message: 'Uploading ZIP to Logic App' });
         // Step 3: Call the /zipDeploy API
         const zipDeployUrl = `https://${node.hybridSite.configuration.ingress.fqdn}/api/zipDeploy`;
         await axios.put(zipDeployUrl, fs.createReadStream(zipFilePath), {
@@ -141,18 +141,32 @@ export const deployHybridLogicAppV2 = async (context: IActionContext, node: Slot
           maxBodyLength: Number.POSITIVE_INFINITY,
         });
 
-        progress.report({ increment: 40, message: 'Deployment completed successfully' });
+        const hybridAppOptions = {
+          location: node.location,
+          connectedEnvironment: node.connectedEnvironment,
+          subscriptionId: node.subscription.subscriptionId,
+          resourceGroup: node.resourceGroupName ?? node.hybridSite.id.split('/')[4],
+          siteName: node.hybridSite.name,
+          hybridApp: node.hybridSite,
+        };
+
+        progress.report({ increment: 80, message: 'Updating app settings' });
+
+        await patchAppSettings(hybridAppOptions, context, await getAuthorizationToken());
+
+        progress.report({ increment: 100, message: 'Deployment completed successfully' });
 
         // Clean up the zip file after deployment
         fs.unlinkSync(zipFilePath);
       }
     );
   } catch (error) {
+    context.telemetry.properties.errorDeployingHybridLogicAppV2 = error instanceof Error ? error.message : String(error);
     throw new Error(`${localize('errorDeployingHybridLogicAppV2', 'Error deploying hybrid logic app (v2)')} - ${error.message}`);
   }
 };
 
-const waitForContainerAppProvisioning = async (fqdn: string): Promise<void> => {
+const waitForContainerAppProvisioning = async (fqdn: string, context): Promise<void> => {
   const maxRetries = 40; // Maximum number of retries
   const delay = 3000; // Delay between retries in milliseconds (3 seconds)
   const zipDeployUrl = `https://${fqdn}/api/zipDeploy`;
@@ -169,18 +183,18 @@ const waitForContainerAppProvisioning = async (fqdn: string): Promise<void> => {
 
     await new Promise((resolve) => setTimeout(resolve, delay)); // Wait before retrying
   }
-
-  throw new Error('Logic app is not ready to serve traffic after waiting.');
+  const errorMessage = 'Logic app is not ready to serve traffic after waiting.';
+  context.telemetry.properties.logicAppNotProvisionedError = errorMessage;
+  throw new Error(localize('logicAppNotReadyError', errorMessage));
 };
 
 const waitForIngressFqdn = async (node: SlotTreeItem, clientContainer: any, maxRetries = 30, delay = 3000): Promise<void> => {
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     if (node.hybridSite.configuration?.ingress?.fqdn !== null) {
-      return; // FQDN is available
+      return;
     }
 
     try {
-      // Refresh the hybrid site details
       node.hybridSite = await clientContainer.containerApps.get(node.resourceGroupName, node.hybridSite.name);
     } catch (error) {
       console.error(`Error refreshing hybrid site details: ${error.message}`);
@@ -194,29 +208,37 @@ const waitForIngressFqdn = async (node: SlotTreeItem, clientContainer: any, maxR
 };
 
 const createZipFileOnDisk = async (sourceDir: string): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const tempDir = os.tmpdir();
-    const zipFilePath = path.join(tempDir, `logicapp-deploy-${Date.now()}.zip`);
-    const zipFile = new yazl.ZipFile();
+  const tempDir = os.tmpdir();
+  const zipFilePath = path.join(tempDir, `logicapp-deploy-${Date.now()}.zip`);
+  const zipFile = new yazl.ZipFile();
 
-    // Add all files in the directory to the zip
-    const addDirectoryToZip = (dir: string, basePath: string) => {
-      const files = fs.readdirSync(dir);
-      for (const file of files) {
-        const fullPath = path.join(dir, file);
-        const relativePath = path.relative(basePath, fullPath);
+  // List of files and folders to ignore
+  const ignoreList = ['node_modules', '.git', '.env', '.vscode', 'workflow-designtime', 'local.settings.json'];
 
-        if (fs.statSync(fullPath).isDirectory()) {
-          addDirectoryToZip(fullPath, basePath); // Recursively add subdirectories
-        } else {
-          zipFile.addFile(fullPath, relativePath); // Add file to the zip
-        }
+  // Add all files in the directory to the zip
+  const addDirectoryToZip = async (dir: string, basePath: string) => {
+    const files = await fs.promises.readdir(dir);
+    for (const file of files) {
+      const fullPath = path.join(dir, file);
+      const relativePath = path.relative(basePath, fullPath);
+
+      // Skip ignored files and folders
+      if (ignoreList.some((ignore) => relativePath.startsWith(ignore))) {
+        continue;
       }
-    };
 
-    addDirectoryToZip(sourceDir, sourceDir);
+      if ((await fs.promises.stat(fullPath)).isDirectory()) {
+        await addDirectoryToZip(fullPath, basePath); // Recursively add subdirectories
+      } else {
+        zipFile.addFile(fullPath, relativePath, { compress: true }); // Add file to the zip
+      }
+    }
+  };
 
-    // Write the zip file to disk
+  await addDirectoryToZip(sourceDir, sourceDir);
+
+  // Write the zip file to disk
+  return new Promise((resolve, reject) => {
     const output = fs.createWriteStream(zipFilePath);
     zipFile.outputStream.pipe(output);
 
@@ -227,15 +249,20 @@ const createZipFileOnDisk = async (sourceDir: string): Promise<string> => {
 };
 
 const getAccessTokenForZipDeploy = async (node: SlotTreeItem, context: ILogicAppWizardContext): Promise<string> => {
-  // Retrieve environment variables for AAD
-  const tenantId = node.hybridSite.template.containers[0]?.env.find((e) => e.name === workflowAppAADTenantId)?.value;
-  const clientId = node.hybridSite.template.containers[0]?.env.find((e) => e.name === workflowAppAADClientId)?.value;
-  const clientSecretKey = node.hybridSite.template.containers[0]?.env.find((e) => e.name === workflowAppAADClientSecret)?.secretRef;
+  const envVars = node.hybridSite.template?.containers?.[0]?.env || [];
+  const tenantId = envVars.find((e) => e.name === workflowAppAADTenantId)?.value;
+  const clientId = envVars.find((e) => e.name === workflowAppAADClientId)?.value;
+  const clientSecretKey = envVars.find((e) => e.name === workflowAppAADClientSecret)?.secretRef;
   const clientSecret = node.resourceTree?.hybridSiteSecrets?.find((s) => s.name === clientSecretKey)?.value ?? context.aad?.clientSecret;
 
   if (!tenantId || !clientId || !clientSecret) {
+    const errorMessage = 'Missing required environment variables for ZIP deploy: "{0}", "{1}", "{2}"';
+    context.telemetry.properties.getAccessTokenError = errorMessage
+      .replace('{0}', workflowAppAADClientId)
+      .replace('{1}', workflowAppAADTenantId)
+      .replace('{2}', workflowAppAADClientSecret);
     throw new Error(
-      `Missing required environment variables: ${workflowAppAADClientId}, ${workflowAppAADTenantId}, ${workflowAppAADClientSecret}`
+      localize('errorMissingEnvVars', errorMessage, workflowAppAADClientId, workflowAppAADTenantId, workflowAppAADClientSecret)
     );
   }
 
@@ -246,7 +273,9 @@ const getAccessTokenForZipDeploy = async (node: SlotTreeItem, context: ILogicApp
   const tokenResponse = await credential.getToken(`api://${clientId}/.default`);
 
   if (!tokenResponse || !tokenResponse.token) {
-    throw new Error('Failed to retrieve access token for zip deploy API');
+    const errorMessage = 'Failed to retrieve access token for zip deploy API';
+    context.telemetry.properties.getAccessTokenError = errorMessage;
+    throw new Error(localize('errorFetchingAccessToken', errorMessage));
   }
 
   return tokenResponse.token;

@@ -236,6 +236,7 @@ export const funcCoreToolsBinaryPathSettingKey = 'funcCoreToolsBinaryPath';
 export const dependencyTimeoutSettingKey = 'dependencyTimeout';
 export const unitTestExplorer = 'unitTestExplorer';
 export const verifyConnectionKeysSetting = 'verifyConnectionKeys';
+export const useSmbDeployment = 'useSmbDeploymentForHybrid';
 
 // host.json
 export const extensionBundleId = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';
@@ -246,15 +247,11 @@ export const localEmulatorConnectionString = 'UseDevelopmentStorage=true';
 export const appKindSetting = 'APP_KIND';
 export const sqlStorageConnectionStringKey = 'Workflows.Sql.ConnectionString';
 
-export const WorkflowClientIdKey = 'WORKFLOWAPP_AAD_CLIENTID';
-export const WorkflowClientSecretKey = 'WORKFLOWAPP_AAD_CLIENTSECRET';
-export const WorkflowObjectIdKey = 'WORKFLOWAPP_AAD_OBJECTID';
-export const WorkflowTenantIdKey = 'WORKFLOWAPP_AAD_TENANTID';
-
 export const workerRuntimeKey = 'FUNCTIONS_WORKER_RUNTIME';
 export const ProjectDirectoryPath = 'ProjectDirectoryPath';
 export const extensionVersionKey = 'FUNCTIONS_EXTENSION_VERSION';
 export const azureStorageTypeSetting = 'Files';
+export const isZipDeployEnabledSetting = 'IS_ZIP_DEPLOY_ENABLED';
 // Project
 export const defaultVersionRange = '[1.*, 2.0.0)'; // Might need to be changed
 export const funcWatchProblemMatcher = '$func-watch';
