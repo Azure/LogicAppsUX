@@ -25,6 +25,7 @@ describe('ui/panel/panelheadertitle', () => {
     renderer.render(<PanelHeaderTitle {...props} />);
     const title = renderer.getRenderOutput();
 
+    expect(title.props.className).toBe('msla-card-title');
     expect(title.props.id).toBe(props.titleId);
     expect(title.props.readOnly).toBe(props.readOnlyMode);
     expect(title.props.ariaLabel).toBe('Card title');

@@ -8,10 +8,9 @@ import { useCardKeyboardInteraction } from './hooks';
 import { Gripper } from './images/dynamicsvgs/gripper';
 import type { CommentBoxProps } from './types';
 import { getCardStyle } from './utils';
-import { useCardStyles, getCardClasses } from './styles';
 import type { MessageBarType } from '@fluentui/react';
-import { Icon, useTheme } from '@fluentui/react';
-import { Spinner, useRestoreFocusTarget, mergeClasses } from '@fluentui/react-components';
+import { Icon, css } from '@fluentui/react';
+import { Spinner, useRestoreFocusTarget } from '@fluentui/react-components';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
 import type { MouseEventHandler } from 'react';
@@ -97,11 +96,6 @@ export const Card: React.FC<CardProps> = memo(
     isLoadingDynamicData,
     showStatusPill,
   }) => {
-    const styles = useCardStyles();
-    const theme = useTheme();
-    const isDark = theme.isInverted;
-    const classes = getCardClasses(styles, isDark);
-
     const handleClick: React.MouseEventHandler<HTMLElement> = (e) => {
       e.stopPropagation();
       onClick?.();
@@ -163,15 +157,15 @@ export const Card: React.FC<CardProps> = memo(
         isLoading ? (
           <Spinner className="msla-card-header-spinner" size={'tiny'} />
         ) : icon ? (
-          <img className={styles.panelCardIcon} src={icon} alt="" />
+          <img className="panel-card-icon" src={icon} alt="" />
         ) : errorMessage ? (
-          <div className={mergeClasses(styles.panelCardIcon, styles.panelCardIconDefault)}>
+          <div className="panel-card-icon default">
             <Icon iconName="PlugDisconnected" style={{ fontSize: '16px', textAlign: 'center' }} />
           </div>
         ) : (
           <Spinner className="msla-card-header-spinner" size={'tiny'} />
         ),
-      [isLoading, icon, styles.panelCardIcon, styles.panelCardIconDefault, errorMessage]
+      [icon, isLoading, errorMessage]
     );
 
     return (
@@ -185,12 +179,12 @@ export const Card: React.FC<CardProps> = memo(
         role={'button'}
         id={`msla-node-${id}`}
         aria-label={cardAltText}
-        className={mergeClasses(
-          classes.panelCardContainer,
-          selectionMode === 'selected' && styles.mslaPanelCardContainerSelected,
-          !active && styles.mslaCardInactive,
-          cloned && styles.mslaCardGhostImage,
-          isDragging && styles.mslaPanelCardContainerDragging
+        className={css(
+          'msla-panel-card-container',
+          selectionMode === 'selected' && 'msla-panel-card-container-selected',
+          !active && 'msla-card-inactive',
+          cloned && 'msla-card-ghost-image',
+          isDragging && 'dragging'
         )}
         style={getCardStyle(brandColor)}
         data-testid={`card-${title}`}
@@ -212,28 +206,14 @@ export const Card: React.FC<CardProps> = memo(
           />
         ) : null}
         {isUnitTest && isMockSupported ? <MockStatusIcon id={`${title}-status`} nodeMockResults={nodeMockResults} /> : null}
-        <div
-          className={mergeClasses(
-            classes.selectionBox,
-            selectionMode === 'selected' && classes.selectionBoxSelected,
-            selectionMode === 'pinned' && styles.mslaSelectionBoxPinned
-          )}
-        />
-        <div className={classes.panelCardMain}>
-          <div className={classes.panelCardHeader} role="button">
-            <div className={classes.panelCardContentContainer}>
-              <div
-                className={mergeClasses(
-                  styles.panelCardContentGripperSection,
-                  draggable && styles.panelCardContentGripperSectionDraggable,
-                  isDark && styles.panelCardContentGripperSectionDark
-                )}
-              >
-                {draggable ? <Gripper /> : null}
-              </div>
-              <div className={styles.panelCardContentIconSection}>{cardIcon}</div>
-              <div className={styles.panelCardTopContent}>
-                <div className={styles.panelMslaTitle}>{title}</div>
+        <div className={css('msla-selection-box', selectionMode)} />
+        <div className="panel-card-main">
+          <div className="panel-card-header" role="button">
+            <div className="panel-card-content-container">
+              <div className={css('panel-card-content-gripper-section', draggable && 'draggable')}>{draggable ? <Gripper /> : null}</div>
+              <div className="panel-card-content-icon-section">{cardIcon}</div>
+              <div className="panel-card-top-content">
+                <div className="panel-msla-title">{title}</div>
               </div>
             </div>
             {errorMessage ? <ErrorBanner errorLevel={errorLevel} errorMessage={errorMessage} /> : null}
