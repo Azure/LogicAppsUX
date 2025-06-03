@@ -66,6 +66,72 @@ exports[`lib/card > should render 1`] = `
 </div>
 `;
 
+exports[`lib/card > should render 2`] = `
+<div
+  aria-label="title operation"
+  className="___17gnclc_13hrtj9 f5ogflp f1hqa2wf f1f09k3d finvdd3 fzkkow9 fcdblym fg706s2 fjik90z fze50hw f1iuuov4 f1xjygh8 fiynczt f1ewtqcl f1f741tk f1ugzwwg f2i1086 f1rlsnju f1stktl2 f1127022 f45u8dm f4vdj1x f1xqy1su folxr9a f158kwzp f151qoyn f1jtabxj"
+  data-automation-id="card-title"
+  data-tabster="{"restorer":{"type":1}}"
+  data-testid="card-title"
+  id="msla-node-id"
+  onClick={[Function]}
+  onKeyDown={[Function]}
+  onKeyUp={[Function]}
+  role="button"
+  style={
+    {
+      "borderLeft": "4px solid #474747",
+      "borderRadius": "2px",
+    }
+  }
+>
+  <div
+    className="___eczt710_18nciih f1aehjj5 f1euv43f f113wtx2 f1xynx9j fly5x3f f1l02sjl f19g0ac f1ewtqcl f2i1086 f1rlsnju f1stktl2 f1127022"
+  />
+  <div
+    className="___mm47ik0_0000000 f22iagw f1vx9l62 f1q9h2pe"
+  >
+    <div
+      className="___a577pq0_0000000 f1k6fduh"
+      role="button"
+    >
+      <div
+        className="___1nvgmwm_0000000 f1g2tzg5 f22iagw f1063pyq f1nxs5xn f6jr5hl"
+      >
+        <div
+          className="___14plmzm_6jeij70 f13eh0sx f17mccla fd7fpy0 fpqefah"
+        />
+        <div
+          className="___1iekswu_0000000 f22iagw f2zxqi f1phki43 febqm8h f9yszdx"
+        >
+          <div
+            className="fui-Spinner r82apo5 msla-card-header-spinner"
+            role="progressbar"
+          >
+            <span
+              className="fui-Spinner__spinner rvgcg50 ___ruqntd0_k4fqbj0 fjamq6b f64fuq3 f1v3ph3m"
+            >
+              <span
+                className="fui-Spinner__spinnerTail rxov3xa"
+              />
+            </span>
+          </div>
+        </div>
+        <div
+          className="___1mjqdhy_0000000 f7nlbp4 f1g2tzg5 fanxd30 f22iagw f1869bpl"
+        >
+          <div
+            className="___16wqj09_0000000 f7nlbp4 f14t3ns0 f1lgsl2b ffemd8d f1phki43 f1dl2k97 f1tyq0we f1o700av f9ijwd5"
+          >
+            title
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
 exports[`lib/card > should render as cloned 1`] = `
 <div
   aria-label="title operation"
@@ -122,6 +188,72 @@ exports[`lib/card > should render as cloned 1`] = `
         >
           <div
             className="panel-msla-title"
+          >
+            title
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`lib/card > should render as cloned 2`] = `
+<div
+  aria-label="title operation"
+  className="___spexej0_1rq69z0 f5ogflp f1hqa2wf f1f09k3d finvdd3 fzkkow9 fcdblym fg706s2 fjik90z fze50hw f1iuuov4 f1xjygh8 fiynczt f1ewtqcl fm18o8m f1ugzwwg f2i1086 f1rlsnju f1stktl2 f1127022 f45u8dm f4vdj1x f1xqy1su folxr9a f158kwzp f151qoyn f1jtabxj f19dog8a f1aehjj5 f5p0z4x f1qwq7b9"
+  data-automation-id="card-title"
+  data-tabster="{"restorer":{"type":1}}"
+  data-testid="card-title"
+  id="msla-node-id"
+  onClick={[Function]}
+  onKeyDown={[Function]}
+  onKeyUp={[Function]}
+  role="button"
+  style={
+    {
+      "borderLeft": "4px solid #474747",
+      "borderRadius": "2px",
+    }
+  }
+>
+  <div
+    className="___eczt710_18nciih f1aehjj5 f1euv43f f113wtx2 f1xynx9j fly5x3f f1l02sjl f19g0ac f1ewtqcl f2i1086 f1rlsnju f1stktl2 f1127022"
+  />
+  <div
+    className="___mm47ik0_0000000 f22iagw f1vx9l62 f1q9h2pe"
+  >
+    <div
+      className="___a577pq0_0000000 f1k6fduh"
+      role="button"
+    >
+      <div
+        className="___1nvgmwm_0000000 f1g2tzg5 f22iagw f1063pyq f1nxs5xn f6jr5hl"
+      >
+        <div
+          className="___14plmzm_6jeij70 f13eh0sx f17mccla fd7fpy0 fpqefah"
+        />
+        <div
+          className="___1iekswu_0000000 f22iagw f2zxqi f1phki43 febqm8h f9yszdx"
+        >
+          <div
+            className="fui-Spinner r82apo5 msla-card-header-spinner"
+            role="progressbar"
+          >
+            <span
+              className="fui-Spinner__spinner rvgcg50 ___ruqntd0_k4fqbj0 fjamq6b f64fuq3 f1v3ph3m"
+            >
+              <span
+                className="fui-Spinner__spinnerTail rxov3xa"
+              />
+            </span>
+          </div>
+        </div>
+        <div
+          className="___1mjqdhy_0000000 f7nlbp4 f1g2tzg5 fanxd30 f22iagw f1869bpl"
+        >
+          <div
+            className="___16wqj09_0000000 f7nlbp4 f14t3ns0 f1lgsl2b ffemd8d f1phki43 f1dl2k97 f1tyq0we f1o700av f9ijwd5"
           >
             title
           </div>
@@ -211,6 +343,85 @@ exports[`lib/card > should render as draggable 1`] = `
 </div>
 `;
 
+exports[`lib/card > should render as draggable 2`] = `
+<div
+  aria-label="title operation"
+  className="___17gnclc_13hrtj9 f5ogflp f1hqa2wf f1f09k3d finvdd3 fzkkow9 fcdblym fg706s2 fjik90z fze50hw f1iuuov4 f1xjygh8 fiynczt f1ewtqcl f1f741tk f1ugzwwg f2i1086 f1rlsnju f1stktl2 f1127022 f45u8dm f4vdj1x f1xqy1su folxr9a f158kwzp f151qoyn f1jtabxj"
+  data-automation-id="card-title"
+  data-tabster="{"restorer":{"type":1}}"
+  data-testid="card-title"
+  id="msla-node-id"
+  onClick={[Function]}
+  onKeyDown={[Function]}
+  onKeyUp={[Function]}
+  role="button"
+  style={
+    {
+      "borderLeft": "4px solid #474747",
+      "borderRadius": "2px",
+    }
+  }
+>
+  <div
+    className="___eczt710_18nciih f1aehjj5 f1euv43f f113wtx2 f1xynx9j fly5x3f f1l02sjl f19g0ac f1ewtqcl f2i1086 f1rlsnju f1stktl2 f1127022"
+  />
+  <div
+    className="___mm47ik0_0000000 f22iagw f1vx9l62 f1q9h2pe"
+  >
+    <div
+      className="___a577pq0_0000000 f1k6fduh"
+      role="button"
+    >
+      <div
+        className="___1nvgmwm_0000000 f1g2tzg5 f22iagw f1063pyq f1nxs5xn f6jr5hl"
+      >
+        <div
+          className="___1la4iv5_10t4ku6 f13eh0sx f17mccla fd7fpy0 fpqefah fyjss3s"
+        >
+          <svg
+            fill="none"
+            height="12"
+            viewBox="0 0 2 10"
+            width="4"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M0 2V0H2V2H0ZM0 6V4H2V6H0ZM0 10V8H2V10H0Z"
+              fill="#605E5C"
+            />
+          </svg>
+        </div>
+        <div
+          className="___1iekswu_0000000 f22iagw f2zxqi f1phki43 febqm8h f9yszdx"
+        >
+          <div
+            className="fui-Spinner r82apo5 msla-card-header-spinner"
+            role="progressbar"
+          >
+            <span
+              className="fui-Spinner__spinner rvgcg50 ___ruqntd0_k4fqbj0 fjamq6b f64fuq3 f1v3ph3m"
+            >
+              <span
+                className="fui-Spinner__spinnerTail rxov3xa"
+              />
+            </span>
+          </div>
+        </div>
+        <div
+          className="___1mjqdhy_0000000 f7nlbp4 f1g2tzg5 fanxd30 f22iagw f1869bpl"
+        >
+          <div
+            className="___16wqj09_0000000 f7nlbp4 f14t3ns0 f1lgsl2b ffemd8d f1phki43 f1dl2k97 f1tyq0we f1o700av f9ijwd5"
+          >
+            title
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
 exports[`lib/card > should render as inactive 1`] = `
 <div
   aria-label="title operation"
@@ -267,6 +478,72 @@ exports[`lib/card > should render as inactive 1`] = `
         >
           <div
             className="panel-msla-title"
+          >
+            title
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`lib/card > should render as inactive 2`] = `
+<div
+  aria-label="title operation"
+  className="___1ihr608_8l6gqp0 f5ogflp f1hqa2wf f1f09k3d finvdd3 fzkkow9 fcdblym fg706s2 fjik90z fze50hw f1iuuov4 f1xjygh8 fiynczt f1ewtqcl f1f741tk f1ugzwwg f2i1086 f1rlsnju f1stktl2 f1127022 f45u8dm f4vdj1x f1xqy1su folxr9a f158kwzp f151qoyn f1jtabxj fx9csi6"
+  data-automation-id="card-title"
+  data-tabster="{"restorer":{"type":1}}"
+  data-testid="card-title"
+  id="msla-node-id"
+  onClick={[Function]}
+  onKeyDown={[Function]}
+  onKeyUp={[Function]}
+  role="button"
+  style={
+    {
+      "borderLeft": "4px solid #474747",
+      "borderRadius": "2px",
+    }
+  }
+>
+  <div
+    className="___eczt710_18nciih f1aehjj5 f1euv43f f113wtx2 f1xynx9j fly5x3f f1l02sjl f19g0ac f1ewtqcl f2i1086 f1rlsnju f1stktl2 f1127022"
+  />
+  <div
+    className="___mm47ik0_0000000 f22iagw f1vx9l62 f1q9h2pe"
+  >
+    <div
+      className="___a577pq0_0000000 f1k6fduh"
+      role="button"
+    >
+      <div
+        className="___1nvgmwm_0000000 f1g2tzg5 f22iagw f1063pyq f1nxs5xn f6jr5hl"
+      >
+        <div
+          className="___14plmzm_6jeij70 f13eh0sx f17mccla fd7fpy0 fpqefah"
+        />
+        <div
+          className="___1iekswu_0000000 f22iagw f2zxqi f1phki43 febqm8h f9yszdx"
+        >
+          <div
+            className="fui-Spinner r82apo5 msla-card-header-spinner"
+            role="progressbar"
+          >
+            <span
+              className="fui-Spinner__spinner rvgcg50 ___ruqntd0_k4fqbj0 fjamq6b f64fuq3 f1v3ph3m"
+            >
+              <span
+                className="fui-Spinner__spinnerTail rxov3xa"
+              />
+            </span>
+          </div>
+        </div>
+        <div
+          className="___1mjqdhy_0000000 f7nlbp4 f1g2tzg5 fanxd30 f22iagw f1869bpl"
+        >
+          <div
+            className="___16wqj09_0000000 f7nlbp4 f14t3ns0 f1lgsl2b ffemd8d f1phki43 f1dl2k97 f1tyq0we f1o700av f9ijwd5"
           >
             title
           </div>
@@ -343,6 +620,72 @@ exports[`lib/card > should render as pinned 1`] = `
 </div>
 `;
 
+exports[`lib/card > should render as pinned 2`] = `
+<div
+  aria-label="title operation"
+  className="___17gnclc_13hrtj9 f5ogflp f1hqa2wf f1f09k3d finvdd3 fzkkow9 fcdblym fg706s2 fjik90z fze50hw f1iuuov4 f1xjygh8 fiynczt f1ewtqcl f1f741tk f1ugzwwg f2i1086 f1rlsnju f1stktl2 f1127022 f45u8dm f4vdj1x f1xqy1su folxr9a f158kwzp f151qoyn f1jtabxj"
+  data-automation-id="card-title"
+  data-tabster="{"restorer":{"type":1}}"
+  data-testid="card-title"
+  id="msla-node-id"
+  onClick={[Function]}
+  onKeyDown={[Function]}
+  onKeyUp={[Function]}
+  role="button"
+  style={
+    {
+      "borderLeft": "4px solid #474747",
+      "borderRadius": "2px",
+    }
+  }
+>
+  <div
+    className="___15or2yc_cf3ee70 f1aehjj5 f1euv43f f113wtx2 f1xynx9j fly5x3f f1l02sjl f19g0ac f1ewtqcl f2i1086 f1rlsnju f1stktl2 f1127022 ftac7j7 f1w0yd9v fdwcyh7 f1h0xgbp fzkkow9 fcdblym fg706s2 fjik90z fgluyya f1gyn8jr fzuqct0 f19ejwal"
+  />
+  <div
+    className="___mm47ik0_0000000 f22iagw f1vx9l62 f1q9h2pe"
+  >
+    <div
+      className="___a577pq0_0000000 f1k6fduh"
+      role="button"
+    >
+      <div
+        className="___1nvgmwm_0000000 f1g2tzg5 f22iagw f1063pyq f1nxs5xn f6jr5hl"
+      >
+        <div
+          className="___14plmzm_6jeij70 f13eh0sx f17mccla fd7fpy0 fpqefah"
+        />
+        <div
+          className="___1iekswu_0000000 f22iagw f2zxqi f1phki43 febqm8h f9yszdx"
+        >
+          <div
+            className="fui-Spinner r82apo5 msla-card-header-spinner"
+            role="progressbar"
+          >
+            <span
+              className="fui-Spinner__spinner rvgcg50 ___ruqntd0_k4fqbj0 fjamq6b f64fuq3 f1v3ph3m"
+            >
+              <span
+                className="fui-Spinner__spinnerTail rxov3xa"
+              />
+            </span>
+          </div>
+        </div>
+        <div
+          className="___1mjqdhy_0000000 f7nlbp4 f1g2tzg5 fanxd30 f22iagw f1869bpl"
+        >
+          <div
+            className="___16wqj09_0000000 f7nlbp4 f14t3ns0 f1lgsl2b ffemd8d f1phki43 f1dl2k97 f1tyq0we f1o700av f9ijwd5"
+          >
+            title
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
 exports[`lib/card > should render as selected 1`] = `
 <div
   aria-label="title operation"
@@ -399,6 +742,72 @@ exports[`lib/card > should render as selected 1`] = `
         >
           <div
             className="panel-msla-title"
+          >
+            title
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`lib/card > should render as selected 2`] = `
+<div
+  aria-label="title operation"
+  className="___17gnclc_1jy0dns f5ogflp f1hqa2wf f1f09k3d finvdd3 fzkkow9 fcdblym fg706s2 fjik90z fze50hw f1iuuov4 f1xjygh8 fiynczt f1ewtqcl f1f741tk f1ugzwwg f2i1086 f1rlsnju f1stktl2 f1127022 f45u8dm f4vdj1x f1xqy1su folxr9a f158kwzp f151qoyn f1jtabxj"
+  data-automation-id="card-title"
+  data-tabster="{"restorer":{"type":1}}"
+  data-testid="card-title"
+  id="msla-node-id"
+  onClick={[Function]}
+  onKeyDown={[Function]}
+  onKeyUp={[Function]}
+  role="button"
+  style={
+    {
+      "borderLeft": "4px solid #474747",
+      "borderRadius": "2px",
+    }
+  }
+>
+  <div
+    className="___sxz62y0_1odr2zd f1aehjj5 f1euv43f f113wtx2 f1xynx9j fly5x3f f1l02sjl f19g0ac f1ewtqcl f2i1086 f1rlsnju f1stktl2 f1127022 ftac7j7 f1w0yd9v fdwcyh7 f1h0xgbp fzkkow9 fcdblym fg706s2 fjik90z f1q1itr3 fpibhc0 fk1vwrk fd9r535"
+  />
+  <div
+    className="___mm47ik0_0000000 f22iagw f1vx9l62 f1q9h2pe"
+  >
+    <div
+      className="___a577pq0_0000000 f1k6fduh"
+      role="button"
+    >
+      <div
+        className="___1nvgmwm_0000000 f1g2tzg5 f22iagw f1063pyq f1nxs5xn f6jr5hl"
+      >
+        <div
+          className="___14plmzm_6jeij70 f13eh0sx f17mccla fd7fpy0 fpqefah"
+        />
+        <div
+          className="___1iekswu_0000000 f22iagw f2zxqi f1phki43 febqm8h f9yszdx"
+        >
+          <div
+            className="fui-Spinner r82apo5 msla-card-header-spinner"
+            role="progressbar"
+          >
+            <span
+              className="fui-Spinner__spinner rvgcg50 ___ruqntd0_k4fqbj0 fjamq6b f64fuq3 f1v3ph3m"
+            >
+              <span
+                className="fui-Spinner__spinnerTail rxov3xa"
+              />
+            </span>
+          </div>
+        </div>
+        <div
+          className="___1mjqdhy_0000000 f7nlbp4 f1g2tzg5 fanxd30 f22iagw f1869bpl"
+        >
+          <div
+            className="___16wqj09_0000000 f7nlbp4 f14t3ns0 f1lgsl2b ffemd8d f1phki43 f1dl2k97 f1tyq0we f1o700av f9ijwd5"
           >
             title
           </div>
@@ -468,6 +877,65 @@ exports[`lib/card > should render with an icon and a connector name (0) 1`] = `
 </div>
 `;
 
+exports[`lib/card > should render with an icon and a connector name (0) 2`] = `
+<div
+  aria-label="title operation, SharePoint connector"
+  className="___17gnclc_13hrtj9 f5ogflp f1hqa2wf f1f09k3d finvdd3 fzkkow9 fcdblym fg706s2 fjik90z fze50hw f1iuuov4 f1xjygh8 fiynczt f1ewtqcl f1f741tk f1ugzwwg f2i1086 f1rlsnju f1stktl2 f1127022 f45u8dm f4vdj1x f1xqy1su folxr9a f158kwzp f151qoyn f1jtabxj"
+  data-automation-id="card-title"
+  data-tabster="{"restorer":{"type":1}}"
+  data-testid="card-title"
+  id="msla-node-id"
+  onClick={[Function]}
+  onKeyDown={[Function]}
+  onKeyUp={[Function]}
+  role="button"
+  style={
+    {
+      "borderLeft": "4px solid #474747",
+      "borderRadius": "2px",
+    }
+  }
+>
+  <div
+    className="___eczt710_18nciih f1aehjj5 f1euv43f f113wtx2 f1xynx9j fly5x3f f1l02sjl f19g0ac f1ewtqcl f2i1086 f1rlsnju f1stktl2 f1127022"
+  />
+  <div
+    className="___mm47ik0_0000000 f22iagw f1vx9l62 f1q9h2pe"
+  >
+    <div
+      className="___a577pq0_0000000 f1k6fduh"
+      role="button"
+    >
+      <div
+        className="___1nvgmwm_0000000 f1g2tzg5 f22iagw f1063pyq f1nxs5xn f6jr5hl"
+      >
+        <div
+          className="___14plmzm_6jeij70 f13eh0sx f17mccla fd7fpy0 fpqefah"
+        />
+        <div
+          className="___1iekswu_0000000 f22iagw f2zxqi f1phki43 febqm8h f9yszdx"
+        >
+          <img
+            alt=""
+            className="___3l0yoy0_0000000 frvgh55 fq4mcun f2i1086 f1rlsnju f1stktl2 f1127022"
+            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+          />
+        </div>
+        <div
+          className="___1mjqdhy_0000000 f7nlbp4 f1g2tzg5 fanxd30 f22iagw f1869bpl"
+        >
+          <div
+            className="___16wqj09_0000000 f7nlbp4 f14t3ns0 f1lgsl2b ffemd8d f1phki43 f1dl2k97 f1tyq0we f1o700av f9ijwd5"
+          >
+            title
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
 exports[`lib/card > should render with an icon and an operation name (1) 1`] = `
 <div
   aria-label="title operation"
@@ -527,6 +995,65 @@ exports[`lib/card > should render with an icon and an operation name (1) 1`] = `
 </div>
 `;
 
+exports[`lib/card > should render with an icon and an operation name (1) 2`] = `
+<div
+  aria-label="title operation"
+  className="___17gnclc_13hrtj9 f5ogflp f1hqa2wf f1f09k3d finvdd3 fzkkow9 fcdblym fg706s2 fjik90z fze50hw f1iuuov4 f1xjygh8 fiynczt f1ewtqcl f1f741tk f1ugzwwg f2i1086 f1rlsnju f1stktl2 f1127022 f45u8dm f4vdj1x f1xqy1su folxr9a f158kwzp f151qoyn f1jtabxj"
+  data-automation-id="card-title"
+  data-tabster="{"restorer":{"type":1}}"
+  data-testid="card-title"
+  id="msla-node-id"
+  onClick={[Function]}
+  onKeyDown={[Function]}
+  onKeyUp={[Function]}
+  role="button"
+  style={
+    {
+      "borderLeft": "4px solid #474747",
+      "borderRadius": "2px",
+    }
+  }
+>
+  <div
+    className="___eczt710_18nciih f1aehjj5 f1euv43f f113wtx2 f1xynx9j fly5x3f f1l02sjl f19g0ac f1ewtqcl f2i1086 f1rlsnju f1stktl2 f1127022"
+  />
+  <div
+    className="___mm47ik0_0000000 f22iagw f1vx9l62 f1q9h2pe"
+  >
+    <div
+      className="___a577pq0_0000000 f1k6fduh"
+      role="button"
+    >
+      <div
+        className="___1nvgmwm_0000000 f1g2tzg5 f22iagw f1063pyq f1nxs5xn f6jr5hl"
+      >
+        <div
+          className="___14plmzm_6jeij70 f13eh0sx f17mccla fd7fpy0 fpqefah"
+        />
+        <div
+          className="___1iekswu_0000000 f22iagw f2zxqi f1phki43 febqm8h f9yszdx"
+        >
+          <img
+            alt=""
+            className="___3l0yoy0_0000000 frvgh55 fq4mcun f2i1086 f1rlsnju f1stktl2 f1127022"
+            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+          />
+        </div>
+        <div
+          className="___1mjqdhy_0000000 f7nlbp4 f1g2tzg5 fanxd30 f22iagw f1869bpl"
+        >
+          <div
+            className="___16wqj09_0000000 f7nlbp4 f14t3ns0 f1lgsl2b ffemd8d f1phki43 f1dl2k97 f1tyq0we f1o700av f9ijwd5"
+          >
+            title
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
 exports[`lib/card > should render with an icon and an operation name and connector name (2) 1`] = `
 <div
   aria-label="title operation, SharePoint connector"
@@ -576,6 +1103,65 @@ exports[`lib/card > should render with an icon and an operation name and connect
         >
           <div
             className="panel-msla-title"
+          >
+            title
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`lib/card > should render with an icon and an operation name and connector name (2) 2`] = `
+<div
+  aria-label="title operation, SharePoint connector"
+  className="___17gnclc_13hrtj9 f5ogflp f1hqa2wf f1f09k3d finvdd3 fzkkow9 fcdblym fg706s2 fjik90z fze50hw f1iuuov4 f1xjygh8 fiynczt f1ewtqcl f1f741tk f1ugzwwg f2i1086 f1rlsnju f1stktl2 f1127022 f45u8dm f4vdj1x f1xqy1su folxr9a f158kwzp f151qoyn f1jtabxj"
+  data-automation-id="card-title"
+  data-tabster="{"restorer":{"type":1}}"
+  data-testid="card-title"
+  id="msla-node-id"
+  onClick={[Function]}
+  onKeyDown={[Function]}
+  onKeyUp={[Function]}
+  role="button"
+  style={
+    {
+      "borderLeft": "4px solid #474747",
+      "borderRadius": "2px",
+    }
+  }
+>
+  <div
+    className="___eczt710_18nciih f1aehjj5 f1euv43f f113wtx2 f1xynx9j fly5x3f f1l02sjl f19g0ac f1ewtqcl f2i1086 f1rlsnju f1stktl2 f1127022"
+  />
+  <div
+    className="___mm47ik0_0000000 f22iagw f1vx9l62 f1q9h2pe"
+  >
+    <div
+      className="___a577pq0_0000000 f1k6fduh"
+      role="button"
+    >
+      <div
+        className="___1nvgmwm_0000000 f1g2tzg5 f22iagw f1063pyq f1nxs5xn f6jr5hl"
+      >
+        <div
+          className="___14plmzm_6jeij70 f13eh0sx f17mccla fd7fpy0 fpqefah"
+        />
+        <div
+          className="___1iekswu_0000000 f22iagw f2zxqi f1phki43 febqm8h f9yszdx"
+        >
+          <img
+            alt=""
+            className="___3l0yoy0_0000000 frvgh55 fq4mcun f2i1086 f1rlsnju f1stktl2 f1127022"
+            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+          />
+        </div>
+        <div
+          className="___1mjqdhy_0000000 f7nlbp4 f1g2tzg5 fanxd30 f22iagw f1869bpl"
+        >
+          <div
+            className="___16wqj09_0000000 f7nlbp4 f14t3ns0 f1lgsl2b ffemd8d f1phki43 f1dl2k97 f1tyq0we f1o700av f9ijwd5"
           >
             title
           </div>

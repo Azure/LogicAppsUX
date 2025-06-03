@@ -1,8 +1,9 @@
 import constants from '../../constants';
 import { handleOnEscapeDown } from './panelheader';
+import { usePanelStyles, getPanelClasses } from '../styles';
 import type { ITextField, ITextFieldStyles } from '@fluentui/react/lib/TextField';
 import { TextField } from '@fluentui/react/lib/TextField';
-import { css } from '@fluentui/react/lib/Utilities';
+import { useTheme } from '@fluentui/react';
 import React, { useCallback, useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -37,6 +38,9 @@ export const PanelHeaderTitle = ({
   handleTitleUpdate,
 }: PanelHeaderTitleProps): JSX.Element => {
   const intl = useIntl();
+  const theme = useTheme();
+  const styles = usePanelStyles();
+  const classes = getPanelClasses(styles, theme.isInverted);
 
   const titleTextFieldRef = React.createRef<ITextField>();
 
@@ -80,7 +84,7 @@ export const PanelHeaderTitle = ({
   return (
     <TextField
       id={titleId}
-      className={css(!readOnly && 'msla-card-title')}
+      className={readOnly ? undefined : classes.cardTitle}
       componentRef={titleTextFieldRef}
       readOnly={readOnly}
       styles={titleTextFieldStyle}

@@ -19,6 +19,25 @@ exports[`CollapsedCard > should render expanding state correctly 1`] = `
 </div>
 `;
 
+exports[`CollapsedCard > should render expanding state correctly 2`] = `
+<div>
+  <div
+    aria-label="Collapsed card with 8 actions"
+    class="___176zxvz_10x2kkm fly5x3f f1l02sjl f10pi13n fxugw4r f1ewtqcl f1erghxr f1ehz9de f1spoy8 fmb70yw ftac7j7 f1w0yd9v fdwcyh7 f1h0xgbp fzkkow9 fcdblym fg706s2 fjik90z fezkupx fjp7mhy fxszt0l ffvjst7 f22iagw f122n59 f4d9j23 f151qoyn f1y2orl0 fape5jp f16qxcmb f17ayqdf f4liy0n fb087j0 fow4h4b f38uvda f15anoe1 fefhyxv fv8asjq f1ks2tm fbudtxs fmbfm2r fg3smf3"
+    data-automation-id="msla-collapsed-card-test-id"
+    data-tabster="{"restorer":{"type":1}}"
+    id="msla-collapsed-card-test-id"
+  >
+    <span
+      class="fui-Text no-actions-text ___neksqk0_k30lwu0 fk6fouc fkhj508 f1i3iumi figsok6 f17mccla f1w7gpdv f6juhto f1gl81tg f2jf649"
+      data-automation-id="collapsed-text-test-id"
+    >
+      Expanding actions...
+    </span>
+  </div>
+</div>
+`;
+
 exports[`CollapsedCard > should render non-expanding state with operation visuals and action text when actionCount > 0 1`] = `
 <div>
   <div
@@ -54,6 +73,41 @@ exports[`CollapsedCard > should render non-expanding state with operation visual
 </div>
 `;
 
+exports[`CollapsedCard > should render non-expanding state with operation visuals and action text when actionCount > 0 2`] = `
+<div>
+  <div
+    aria-label="Collapsed card with 6 actions"
+    class="___176zxvz_10x2kkm fly5x3f f1l02sjl f10pi13n fxugw4r f1ewtqcl f1erghxr f1ehz9de f1spoy8 fmb70yw ftac7j7 f1w0yd9v fdwcyh7 f1h0xgbp fzkkow9 fcdblym fg706s2 fjik90z fezkupx fjp7mhy fxszt0l ffvjst7 f22iagw f122n59 f4d9j23 f151qoyn f1y2orl0 fape5jp f16qxcmb f17ayqdf f4liy0n fb087j0 fow4h4b f38uvda f15anoe1 fefhyxv fv8asjq f1ks2tm fbudtxs fmbfm2r fg3smf3"
+    data-automation-id="msla-collapsed-card-test-id"
+    data-tabster="{"restorer":{"type":1}}"
+    id="msla-collapsed-card-test-id"
+  >
+    <div
+      style="display: flex; align-items: center;"
+    >
+      <img
+        alt=""
+        aria-label="op1 operation icon"
+        class="___1iyc22s_0000000 fq4mcun frvgh55 f4gg0ds fwhqktl fstwlwf f1mqlotw"
+        src="http://example.com/icon1.png"
+      />
+      <img
+        alt=""
+        aria-label="op2 operation icon"
+        class="___1iyc22s_0000000 fq4mcun frvgh55 f4gg0ds fwhqktl fstwlwf f1mqlotw"
+        src="http://example.com/icon2.png"
+      />
+      <span
+        class="fui-Text ___c56hd20_1xy0w11 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1gl81tg f2jf649"
+        data-automation-id="collapsed-text-test-id"
+      >
+        + 3
+      </span>
+    </div>
+  </div>
+</div>
+`;
+
 exports[`CollapsedCard > should render non-expanding state without action text when actionCount <= 0 1`] = `
 <div>
   <div
@@ -70,6 +124,29 @@ exports[`CollapsedCard > should render non-expanding state without action text w
         alt=""
         aria-label="op1 operation icon"
         class="msla-collapsed-card__icon"
+        src="http://example.com/icon1.png"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`CollapsedCard > should render non-expanding state without action text when actionCount <= 0 2`] = `
+<div>
+  <div
+    aria-label="Collapsed card with 3 actions"
+    class="___176zxvz_10x2kkm fly5x3f f1l02sjl f10pi13n fxugw4r f1ewtqcl f1erghxr f1ehz9de f1spoy8 fmb70yw ftac7j7 f1w0yd9v fdwcyh7 f1h0xgbp fzkkow9 fcdblym fg706s2 fjik90z fezkupx fjp7mhy fxszt0l ffvjst7 f22iagw f122n59 f4d9j23 f151qoyn f1y2orl0 fape5jp f16qxcmb f17ayqdf f4liy0n fb087j0 fow4h4b f38uvda f15anoe1 fefhyxv fv8asjq f1ks2tm fbudtxs fmbfm2r fg3smf3"
+    data-automation-id="msla-collapsed-card-test-id"
+    data-tabster="{"restorer":{"type":1}}"
+    id="msla-collapsed-card-test-id"
+  >
+    <div
+      style="display: flex; align-items: center;"
+    >
+      <img
+        alt=""
+        aria-label="op1 operation icon"
+        class="___1iyc22s_0000000 fq4mcun frvgh55 f4gg0ds fwhqktl fstwlwf f1mqlotw"
         src="http://example.com/icon1.png"
       />
     </div>
