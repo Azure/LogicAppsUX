@@ -246,8 +246,9 @@ async function getDeployLogicAppNode(context: IActionContext): Promise<SlotTreeI
   if (site.id.includes('Microsoft.App')) {
     // NOTE(anandgmenon): Getting latest metadata for hybrid app as the one loaded from the cache can have outdateed definition and cause deployment to fail.
     const clientContainer = await createContainerClient({ ...context, ...sub.subscription });
-    site = (await clientContainer.containerApps.get(site.id.split('/')[4], site.name)) as undefined as Site;
-    secrets = (await clientContainer.containerApps.listSecrets(site.id.split('/')[4], site.name)).value;
+    const resourceGroup = site.id.split('/')?.[4];
+    site = (await clientContainer.containerApps.get(resourceGroup, site.name)) as undefined as Site;
+    secrets = (await clientContainer.containerApps.listSecrets(resourceGroup, site.name)).value;
   }
   const resourceTree = new LogicAppResourceTree(sub.subscription, site, secrets);
 

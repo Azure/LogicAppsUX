@@ -302,7 +302,7 @@ importers:
         version: 4.36.1(@tanstack/react-query@4.36.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0))
       axios:
         specifier: ^1.7.7
-        version: 1.7.7
+        version: 1.7.7(debug@4.3.4)
       axios-retry:
         specifier: ^3.5.0
         version: 3.9.1
@@ -413,6 +413,9 @@ importers:
       '@azure/arm-storage':
         specifier: 17.2.1
         version: 17.2.1
+      '@azure/identity':
+        specifier: ^4.5.0
+        version: 4.5.0
       '@azure/ms-rest-js':
         specifier: ^2.6.4
         version: 2.7.0
@@ -466,7 +469,7 @@ importers:
         version: 0.5.12
       axios:
         specifier: ^1.7.7
-        version: 1.7.7
+        version: 1.7.7(debug@4.3.4)
       azure-storage:
         specifier: ^2.10.3
         version: 2.10.7
@@ -521,6 +524,9 @@ importers:
       yargs-parser:
         specifier: 21.1.1
         version: 21.1.1
+      yazl:
+        specifier: ^3.3.1
+        version: 3.3.1
 
   apps/vs-code-react:
     dependencies:
@@ -808,7 +814,7 @@ importers:
         version: 22.0.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@reduxjs/toolkit':
         specifier: 1.8.5
-        version: 1.8.5(react-redux@8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@4.2.1))(react@18.2.0)
+        version: 1.8.5(react-redux@8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@5.0.1))(react@18.2.0)
       '@tanstack/react-query':
         specifier: 4.36.1
         version: 4.36.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -862,13 +868,13 @@ importers:
         version: 6.3.0(react@18.2.0)(typescript@4.9.5)
       react-redux:
         specifier: 8.0.2
-        version: 8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@4.2.1)
+        version: 8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@5.0.1)
       react-virtualized-tree:
         specifier: ^3.4.1
         version: 3.4.1(react-dom@18.2.0(react@18.2.0))(react-virtualized@9.22.5(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react@18.2.0)
       redux-thunk:
         specifier: 2.4.2
-        version: 2.4.2(redux@4.2.1)
+        version: 2.4.2(redux@5.0.1)
       redux-undo:
         specifier: 1.1.0
         version: 1.1.0
@@ -1168,7 +1174,7 @@ importers:
         version: 0.0.37
       axios:
         specifier: ^1.7.7
-        version: 1.7.7
+        version: 1.7.7(debug@4.3.4)
       react:
         specifier: ^16.4.0 || ^17.0.0 || ^18.0.0
         version: 18.2.0
@@ -1213,7 +1219,7 @@ importers:
         version: 12.3.5(@types/react@18.3.0)(immer@9.0.15)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       axios:
         specifier: ^1.7.7
-        version: 1.7.7
+        version: 1.7.7(debug@4.3.4)
       react:
         specifier: ^16.4.0 || ^17.0.0 || ^18.0.0
         version: 18.3.1
@@ -1351,10 +1357,6 @@ packages:
   '@azure/abort-controller@1.1.0':
     resolution: {integrity: sha512-TrRLIoSQVzfAJX9H1JeFjzAoDGcoK1IYX1UImfceTZpsyYfWr09Ss1aHW1y5TrrR3iq6RZLBwJ3E24uwPhwahw==}
     engines: {node: '>=12.0.0'}
-
-  '@azure/abort-controller@2.1.1':
-    resolution: {integrity: sha512-NhzeNm5zu2fPlwGXPUjzsRCRuPx5demaZyNcyNYJDqpa/Sbxzvo/RYt9IwUaAOnDW5+r7J9UOE6f22TQnb9nhQ==}
-    engines: {node: '>=18.0.0'}
 
   '@azure/abort-controller@2.1.2':
     resolution: {integrity: sha512-nBrLsEWm4J2u5LpAPjxADTlq3trDgVZZXHNKabeXZtpq3d3AbN/KGO82R87rdDz5/lYB024rtEf10/q0urNgsA==}
@@ -12462,6 +12464,9 @@ packages:
   yazl@2.5.1:
     resolution: {integrity: sha512-phENi2PLiHnHb6QBVot+dJnaAZ0xosj7p3fWl+znIjBDlnMI2PsZCJZ306BPTFOaHf5qdDEI8x5qFrSOBN5vrw==}
 
+  yazl@3.3.1:
+    resolution: {integrity: sha512-BbETDVWG+VcMUle37k5Fqp//7SDOK2/1+T7X8TD96M3D9G8jK5VLUdQVdVjGi8im7FGkazX7kk5hkU8X4L5Bng==}
+
   yjs@13.6.14:
     resolution: {integrity: sha512-D+7KcUr0j+vBCUSKXXEWfA+bG4UQBviAwP3gYBhkstkgwy5+8diOPMx0iqLIOxNo/HxaREUimZRxqHGAHCL2BQ==}
     engines: {node: '>=16.0.0', npm: '>=8.0.0'}
@@ -12670,10 +12675,6 @@ snapshots:
     dependencies:
       tslib: 2.4.0
 
-  '@azure/abort-controller@2.1.1':
-    dependencies:
-      tslib: 2.7.0
-
   '@azure/abort-controller@2.1.2':
     dependencies:
       tslib: 2.7.0
@@ -12715,11 +12716,11 @@ snapshots:
   '@azure/arm-operationalinsights@8.0.1':
     dependencies:
       '@azure/abort-controller': 1.1.0
-      '@azure/core-auth': 1.7.1
-      '@azure/core-client': 1.9.1
+      '@azure/core-auth': 1.9.0
+      '@azure/core-client': 1.9.2
       '@azure/core-lro': 2.7.1
       '@azure/core-paging': 1.6.1
-      '@azure/core-rest-pipeline': 1.15.1
+      '@azure/core-rest-pipeline': 1.17.0
       tslib: 2.4.0
     transitivePeerDependencies:
       - supports-color
@@ -12736,21 +12737,21 @@ snapshots:
   '@azure/arm-resources-profile-2020-09-01-hybrid@2.1.0':
     dependencies:
       '@azure/abort-controller': 1.1.0
-      '@azure/core-auth': 1.7.1
-      '@azure/core-client': 1.9.1
+      '@azure/core-auth': 1.9.0
+      '@azure/core-client': 1.9.2
       '@azure/core-lro': 2.7.1
       '@azure/core-paging': 1.6.1
-      '@azure/core-rest-pipeline': 1.15.1
+      '@azure/core-rest-pipeline': 1.17.0
       tslib: 2.4.0
     transitivePeerDependencies:
       - supports-color
 
   '@azure/arm-resources-subscriptions@2.1.0':
     dependencies:
-      '@azure/core-auth': 1.7.1
-      '@azure/core-client': 1.9.1
+      '@azure/core-auth': 1.9.0
+      '@azure/core-client': 1.9.2
       '@azure/core-paging': 1.6.1
-      '@azure/core-rest-pipeline': 1.15.1
+      '@azure/core-rest-pipeline': 1.17.0
       tslib: 2.4.0
     transitivePeerDependencies:
       - supports-color
@@ -12758,11 +12759,11 @@ snapshots:
   '@azure/arm-resources@5.2.0':
     dependencies:
       '@azure/abort-controller': 1.1.0
-      '@azure/core-auth': 1.7.1
-      '@azure/core-client': 1.9.1
+      '@azure/core-auth': 1.9.0
+      '@azure/core-client': 1.9.2
       '@azure/core-lro': 2.7.1
       '@azure/core-paging': 1.6.1
-      '@azure/core-rest-pipeline': 1.15.1
+      '@azure/core-rest-pipeline': 1.17.0
       tslib: 2.4.0
     transitivePeerDependencies:
       - supports-color
@@ -12770,11 +12771,11 @@ snapshots:
   '@azure/arm-storage-profile-2020-09-01-hybrid@2.1.0':
     dependencies:
       '@azure/abort-controller': 1.1.0
-      '@azure/core-auth': 1.7.1
-      '@azure/core-client': 1.9.1
+      '@azure/core-auth': 1.9.0
+      '@azure/core-client': 1.9.2
       '@azure/core-lro': 2.7.1
       '@azure/core-paging': 1.6.1
-      '@azure/core-rest-pipeline': 1.15.1
+      '@azure/core-rest-pipeline': 1.17.0
       tslib: 2.4.0
     transitivePeerDependencies:
       - supports-color
@@ -12794,11 +12795,11 @@ snapshots:
   '@azure/arm-subscriptions@5.1.0':
     dependencies:
       '@azure/abort-controller': 1.1.0
-      '@azure/core-auth': 1.7.1
-      '@azure/core-client': 1.9.1
+      '@azure/core-auth': 1.9.0
+      '@azure/core-client': 1.9.2
       '@azure/core-lro': 2.7.1
       '@azure/core-paging': 1.6.1
-      '@azure/core-rest-pipeline': 1.15.1
+      '@azure/core-rest-pipeline': 1.17.0
       tslib: 2.4.0
     transitivePeerDependencies:
       - supports-color
@@ -12806,7 +12807,7 @@ snapshots:
   '@azure/core-auth@1.7.1':
     dependencies:
       '@azure/abort-controller': 2.1.2
-      '@azure/core-util': 1.8.1
+      '@azure/core-util': 1.11.0
       tslib: 2.7.0
 
   '@azure/core-auth@1.9.0':
@@ -12818,10 +12819,10 @@ snapshots:
   '@azure/core-client@1.9.1':
     dependencies:
       '@azure/abort-controller': 2.1.2
-      '@azure/core-auth': 1.7.1
-      '@azure/core-rest-pipeline': 1.15.1
+      '@azure/core-auth': 1.9.0
+      '@azure/core-rest-pipeline': 1.17.0
       '@azure/core-tracing': 1.2.0
-      '@azure/core-util': 1.8.1
+      '@azure/core-util': 1.11.0
       '@azure/logger': 1.1.1
       tslib: 2.7.0
     transitivePeerDependencies:
@@ -12842,17 +12843,17 @@ snapshots:
   '@azure/core-http-compat@2.1.2':
     dependencies:
       '@azure/abort-controller': 2.1.2
-      '@azure/core-client': 1.9.1
-      '@azure/core-rest-pipeline': 1.15.1
+      '@azure/core-client': 1.9.2
+      '@azure/core-rest-pipeline': 1.17.0
     transitivePeerDependencies:
       - supports-color
 
   '@azure/core-http@3.0.4':
     dependencies:
       '@azure/abort-controller': 1.1.0
-      '@azure/core-auth': 1.7.1
+      '@azure/core-auth': 1.9.0
       '@azure/core-tracing': 1.0.0-preview.13
-      '@azure/core-util': 1.8.1
+      '@azure/core-util': 1.11.0
       '@azure/logger': 1.1.1
       '@types/node-fetch': 2.6.11
       '@types/tunnel': 0.0.3
@@ -12868,8 +12869,8 @@ snapshots:
 
   '@azure/core-lro@2.7.1':
     dependencies:
-      '@azure/abort-controller': 2.1.1
-      '@azure/core-util': 1.8.1
+      '@azure/abort-controller': 2.1.2
+      '@azure/core-util': 1.11.0
       '@azure/logger': 1.1.1
       tslib: 2.7.0
 
@@ -12880,9 +12881,9 @@ snapshots:
   '@azure/core-rest-pipeline@1.15.1':
     dependencies:
       '@azure/abort-controller': 2.1.2
-      '@azure/core-auth': 1.7.1
+      '@azure/core-auth': 1.9.0
       '@azure/core-tracing': 1.2.0
-      '@azure/core-util': 1.8.1
+      '@azure/core-util': 1.11.0
       '@azure/logger': 1.1.1
       http-proxy-agent: 7.0.2
       https-proxy-agent: 7.0.4
@@ -18958,7 +18959,7 @@ snapshots:
       '@typescript-eslint/type-utils': 7.7.0(eslint@8.57.1)(typescript@5.4.5)
       '@typescript-eslint/utils': 7.7.0(eslint@8.57.1)(typescript@5.4.5)
       '@typescript-eslint/visitor-keys': 7.7.0
-      debug: 4.3.4
+      debug: 4.3.7
       eslint: 8.57.1
       graphemer: 1.4.0
       ignore: 5.3.1
@@ -19828,14 +19829,6 @@ snapshots:
     dependencies:
       '@babel/runtime': 7.24.4
       is-retry-allowed: 2.2.0
-
-  axios@1.7.7:
-    dependencies:
-      follow-redirects: 1.15.9(debug@4.3.7)
-      form-data: 4.0.0
-      proxy-from-env: 1.1.0
-    transitivePeerDependencies:
-      - debug
 
   axios@1.7.7(debug@4.3.4):
     dependencies:
@@ -21063,7 +21056,7 @@ snapshots:
   docusaurus-plugin-remote-content@4.0.0(@docusaurus/core@3.6.1(@mdx-js/react@3.1.0(@types/react@18.3.0)(react@18.3.1))(esbuild@0.19.12)(eslint@8.57.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3)):
     dependencies:
       '@docusaurus/core': 3.6.1(@mdx-js/react@3.1.0(@types/react@18.3.0)(react@18.3.1))(esbuild@0.19.12)(eslint@8.57.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3)
-      axios: 1.7.7
+      axios: 1.7.7(debug@4.3.4)
       picocolors: 1.0.0
       pretty-ms: 7.0.1
       rimraf: 5.0.5
@@ -26238,7 +26231,7 @@ snapshots:
     dependencies:
       '@kwsites/file-exists': 1.1.1
       '@kwsites/promise-deferred': 1.1.1
-      debug: 4.3.4
+      debug: 4.3.7
     transitivePeerDependencies:
       - supports-color
 
@@ -27698,6 +27691,10 @@ snapshots:
   yazl@2.5.1:
     dependencies:
       buffer-crc32: 0.2.13
+
+  yazl@3.3.1:
+    dependencies:
+      buffer-crc32: 1.0.0
 
   yjs@13.6.14:
     dependencies:

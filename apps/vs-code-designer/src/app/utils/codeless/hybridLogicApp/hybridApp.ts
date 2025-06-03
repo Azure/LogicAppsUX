@@ -136,7 +136,7 @@ export const createOrUpdateHybridApp = async (context: IActionContext, accessTok
   const templatePayload = {
     containers: [
       {
-        image: 'mcr.microsoft.com/azurelogicapps/logicapps-base:validation', //TODO(anandgmenon): revert before merge
+        image: 'mcr.microsoft.com/azurelogicapps/logicapps-base:latest',
         name: 'logicapps-container',
         env: appSettings,
         resources: {
