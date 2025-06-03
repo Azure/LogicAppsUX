@@ -120,20 +120,20 @@ export const useChatbotStyles = makeStyles({
     ...shorthands.padding(tokens.spacingVerticalL),
 
     // Custom scrollbar styles
-    '::-webkit-scrollbar': {
-      width: '6px',
-      height: '10px',
-      backgroundColor: 'rgb(50, 49, 48)',
-      ...shorthands.borderRadius('3px'),
-    },
-
-    '::-webkit-scrollbar-thumb': {
-      ...shorthands.borderRadius('5px'),
-      backgroundColor: '#b1b1b1',
-    },
-
-    '::-webkit-scrollbar-track': {
-      backgroundColor: '#f1f1f1',
+    selectors: {
+      '::-webkit-scrollbar': {
+        width: '6px',
+        height: '10px',
+        backgroundColor: 'rgb(50, 49, 48)',
+        ...shorthands.borderRadius('3px'),
+      },
+      '::-webkit-scrollbar-thumb': {
+        ...shorthands.borderRadius('5px'),
+        backgroundColor: '#b1b1b1',
+      },
+      '::-webkit-scrollbar-track': {
+        backgroundColor: '#f1f1f1',
+      },
     },
   },
 
