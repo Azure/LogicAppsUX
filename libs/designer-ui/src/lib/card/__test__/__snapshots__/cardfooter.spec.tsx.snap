@@ -7,7 +7,7 @@ exports[`lib/card/cardfooter > should render with a comment icon 1`] = `
   className="msla-card-v2-footer"
 >
   <div
-    className="___816h7o0_1j65fex f1qn862e f22iagw f9c4gz4 fq1loh5 fwiuce9 futqtb8 f15vdbe4 f1o700av f3nvwdx"
+    className="msla-badges"
   >
     <div
       aria-label="test title Description: comment"
@@ -18,7 +18,7 @@ exports[`lib/card/cardfooter > should render with a comment icon 1`] = `
     >
       <i
         aria-hidden={true}
-        className="___1pad1he_1r27ufv f10ra9hq f8wuabp f1y2xyjm fycuoez f1ugzwwg fp4gqsa fuhszl1 f5r6hof f1grzc83 f1wruudl f1b04g9k fjda71j root-111"
+        className="panel-card-v2-badge active root-111"
         data-icon-name="Comment"
         role="button"
       >
@@ -34,7 +34,7 @@ exports[`lib/card/cardfooter > should render with a connection icon 1`] = `
   className="msla-card-v2-footer"
 >
   <div
-    className="___816h7o0_1j65fex f1qn862e f22iagw f9c4gz4 fq1loh5 fwiuce9 futqtb8 f15vdbe4 f1o700av f3nvwdx"
+    className="msla-badges"
   >
     <div
       aria-label="test title Connection name: joechung@microsoft.com"
@@ -45,7 +45,7 @@ exports[`lib/card/cardfooter > should render with a connection icon 1`] = `
     >
       <i
         aria-hidden={true}
-        className="___1pad1he_1r27ufv f10ra9hq f8wuabp f1y2xyjm fycuoez f1ugzwwg fp4gqsa fuhszl1 f5r6hof f1grzc83 f1wruudl f1b04g9k fjda71j root-114"
+        className="panel-card-v2-badge active root-114"
         data-icon-name="Link"
         role="button"
       >
@@ -61,7 +61,7 @@ exports[`lib/card/cardfooter > should render with a lock icon 1`] = `
   className="msla-card-v2-footer"
 >
   <div
-    className="___816h7o0_1j65fex f1qn862e f22iagw f9c4gz4 fq1loh5 fwiuce9 futqtb8 f15vdbe4 f1o700av f3nvwdx"
+    className="msla-badges"
   >
     <div
       aria-label="test title Secure inputs or outputs enabled: This operation has secure inputs or outputs enabled."
@@ -72,7 +72,7 @@ exports[`lib/card/cardfooter > should render with a lock icon 1`] = `
     >
       <i
         aria-hidden={true}
-        className="___1pad1he_1r27ufv f10ra9hq f8wuabp f1y2xyjm fycuoez f1ugzwwg fp4gqsa fuhszl1 f5r6hof f1grzc83 f1wruudl f1b04g9k fjda71j root-114"
+        className="panel-card-v2-badge active root-114"
         data-icon-name="Lock"
         role="button"
       >
@@ -88,7 +88,7 @@ exports[`lib/card/cardfooter > should render with a testing icon 1`] = `
   className="msla-card-v2-footer"
 >
   <div
-    className="___816h7o0_1j65fex f1qn862e f22iagw f9c4gz4 fq1loh5 fwiuce9 futqtb8 f15vdbe4 f1o700av f3nvwdx"
+    className="msla-badges"
   >
     <div
       aria-label="test title Testing: This action has testing configured."
@@ -99,7 +99,7 @@ exports[`lib/card/cardfooter > should render with a testing icon 1`] = `
     >
       <i
         aria-hidden={true}
-        className="___1pad1he_1r27ufv f10ra9hq f8wuabp f1y2xyjm fycuoez f1ugzwwg fp4gqsa fuhszl1 f5r6hof f1grzc83 f1wruudl f1b04g9k fjda71j root-117"
+        className="panel-card-v2-badge active root-117"
         data-icon-name="TestBeaker"
         role="button"
       >
@@ -115,11 +115,11 @@ exports[`lib/card/cardfooter > should render with an inactive connection icon 1`
   className="msla-card-v2-footer"
 >
   <div
-    className="___816h7o0_1j65fex f1qn862e f22iagw f9c4gz4 fq1loh5 fwiuce9 futqtb8 f15vdbe4 f1o700av f3nvwdx"
+    className="msla-badges"
   >
     <i
       aria-label="Connection required"
-      className="___qmt9v00_1c9e3g2 f10ra9hq f8wuabp f1y2xyjm fycuoez f1ugzwwg fp4gqsa fa76jmf root-114"
+      className="panel-card-v2-badge inactive root-114"
       data-icon-name="Link"
       role="img"
       tabIndex={0}

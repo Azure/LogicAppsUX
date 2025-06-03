@@ -3,7 +3,7 @@
 exports[`lib/card > should render 1`] = `
 <div
   aria-label="title operation"
-  className="___17gnclc_13hrtj9 f5ogflp f1hqa2wf f1f09k3d finvdd3 fzkkow9 fcdblym fg706s2 fjik90z fze50hw f1iuuov4 f1xjygh8 fiynczt f1ewtqcl f1f741tk f1ugzwwg f2i1086 f1rlsnju f1stktl2 f1127022 f45u8dm f4vdj1x f1xqy1su folxr9a f158kwzp f151qoyn f1jtabxj"
+  className="msla-panel-card-container"
   data-automation-id="card-title"
   data-tabster="{"restorer":{"type":1}}"
   data-testid="card-title"
@@ -20,23 +20,23 @@ exports[`lib/card > should render 1`] = `
   }
 >
   <div
-    className="___eczt710_18nciih f1aehjj5 f1euv43f f113wtx2 f1xynx9j fly5x3f f1l02sjl f19g0ac f1ewtqcl f2i1086 f1rlsnju f1stktl2 f1127022"
+    className="msla-selection-box"
   />
   <div
-    className="___mm47ik0_0000000 f22iagw f1vx9l62 f1q9h2pe"
+    className="panel-card-main"
   >
     <div
-      className="___a577pq0_0000000 f1k6fduh"
+      className="panel-card-header"
       role="button"
     >
       <div
-        className="___1nvgmwm_0000000 f1g2tzg5 f22iagw f1063pyq f1nxs5xn f6jr5hl"
+        className="panel-card-content-container"
       >
         <div
-          className="___14plmzm_6jeij70 f13eh0sx f17mccla fd7fpy0 fpqefah"
+          className="panel-card-content-gripper-section"
         />
         <div
-          className="___1iekswu_0000000 f22iagw f2zxqi f1phki43 febqm8h f9yszdx"
+          className="panel-card-content-icon-section"
         >
           <div
             className="fui-Spinner r82apo5 msla-card-header-spinner"
@@ -52,10 +52,10 @@ exports[`lib/card > should render 1`] = `
           </div>
         </div>
         <div
-          className="___1mjqdhy_0000000 f7nlbp4 f1g2tzg5 fanxd30 f22iagw f1869bpl"
+          className="panel-card-top-content"
         >
           <div
-            className="___16wqj09_0000000 f7nlbp4 f14t3ns0 f1lgsl2b ffemd8d f1phki43 f1dl2k97 f1tyq0we f1o700av f9ijwd5"
+            className="panel-msla-title"
           >
             title
           </div>
@@ -69,7 +69,7 @@ exports[`lib/card > should render 1`] = `
 exports[`lib/card > should render as cloned 1`] = `
 <div
   aria-label="title operation"
-  className="___spexej0_1rq69z0 f5ogflp f1hqa2wf f1f09k3d finvdd3 fzkkow9 fcdblym fg706s2 fjik90z fze50hw f1iuuov4 f1xjygh8 fiynczt f1ewtqcl fm18o8m f1ugzwwg f2i1086 f1rlsnju f1stktl2 f1127022 f45u8dm f4vdj1x f1xqy1su folxr9a f158kwzp f151qoyn f1jtabxj f19dog8a f1aehjj5 f5p0z4x f1qwq7b9"
+  className="msla-panel-card-container msla-card-ghost-image"
   data-automation-id="card-title"
   data-tabster="{"restorer":{"type":1}}"
   data-testid="card-title"
@@ -86,23 +86,23 @@ exports[`lib/card > should render as cloned 1`] = `
   }
 >
   <div
-    className="___eczt710_18nciih f1aehjj5 f1euv43f f113wtx2 f1xynx9j fly5x3f f1l02sjl f19g0ac f1ewtqcl f2i1086 f1rlsnju f1stktl2 f1127022"
+    className="msla-selection-box"
   />
   <div
-    className="___mm47ik0_0000000 f22iagw f1vx9l62 f1q9h2pe"
+    className="panel-card-main"
   >
     <div
-      className="___a577pq0_0000000 f1k6fduh"
+      className="panel-card-header"
       role="button"
     >
       <div
-        className="___1nvgmwm_0000000 f1g2tzg5 f22iagw f1063pyq f1nxs5xn f6jr5hl"
+        className="panel-card-content-container"
       >
         <div
-          className="___14plmzm_6jeij70 f13eh0sx f17mccla fd7fpy0 fpqefah"
+          className="panel-card-content-gripper-section"
         />
         <div
-          className="___1iekswu_0000000 f22iagw f2zxqi f1phki43 febqm8h f9yszdx"
+          className="panel-card-content-icon-section"
         >
           <div
             className="fui-Spinner r82apo5 msla-card-header-spinner"
@@ -118,10 +118,10 @@ exports[`lib/card > should render as cloned 1`] = `
           </div>
         </div>
         <div
-          className="___1mjqdhy_0000000 f7nlbp4 f1g2tzg5 fanxd30 f22iagw f1869bpl"
+          className="panel-card-top-content"
         >
           <div
-            className="___16wqj09_0000000 f7nlbp4 f14t3ns0 f1lgsl2b ffemd8d f1phki43 f1dl2k97 f1tyq0we f1o700av f9ijwd5"
+            className="panel-msla-title"
           >
             title
           </div>
@@ -135,7 +135,7 @@ exports[`lib/card > should render as cloned 1`] = `
 exports[`lib/card > should render as draggable 1`] = `
 <div
   aria-label="title operation"
-  className="___17gnclc_13hrtj9 f5ogflp f1hqa2wf f1f09k3d finvdd3 fzkkow9 fcdblym fg706s2 fjik90z fze50hw f1iuuov4 f1xjygh8 fiynczt f1ewtqcl f1f741tk f1ugzwwg f2i1086 f1rlsnju f1stktl2 f1127022 f45u8dm f4vdj1x f1xqy1su folxr9a f158kwzp f151qoyn f1jtabxj"
+  className="msla-panel-card-container"
   data-automation-id="card-title"
   data-tabster="{"restorer":{"type":1}}"
   data-testid="card-title"
@@ -152,20 +152,20 @@ exports[`lib/card > should render as draggable 1`] = `
   }
 >
   <div
-    className="___eczt710_18nciih f1aehjj5 f1euv43f f113wtx2 f1xynx9j fly5x3f f1l02sjl f19g0ac f1ewtqcl f2i1086 f1rlsnju f1stktl2 f1127022"
+    className="msla-selection-box"
   />
   <div
-    className="___mm47ik0_0000000 f22iagw f1vx9l62 f1q9h2pe"
+    className="panel-card-main"
   >
     <div
-      className="___a577pq0_0000000 f1k6fduh"
+      className="panel-card-header"
       role="button"
     >
       <div
-        className="___1nvgmwm_0000000 f1g2tzg5 f22iagw f1063pyq f1nxs5xn f6jr5hl"
+        className="panel-card-content-container"
       >
         <div
-          className="___1la4iv5_10t4ku6 f13eh0sx f17mccla fd7fpy0 fpqefah fyjss3s"
+          className="panel-card-content-gripper-section draggable"
         >
           <svg
             fill="none"
@@ -181,7 +181,7 @@ exports[`lib/card > should render as draggable 1`] = `
           </svg>
         </div>
         <div
-          className="___1iekswu_0000000 f22iagw f2zxqi f1phki43 febqm8h f9yszdx"
+          className="panel-card-content-icon-section"
         >
           <div
             className="fui-Spinner r82apo5 msla-card-header-spinner"
@@ -197,10 +197,10 @@ exports[`lib/card > should render as draggable 1`] = `
           </div>
         </div>
         <div
-          className="___1mjqdhy_0000000 f7nlbp4 f1g2tzg5 fanxd30 f22iagw f1869bpl"
+          className="panel-card-top-content"
         >
           <div
-            className="___16wqj09_0000000 f7nlbp4 f14t3ns0 f1lgsl2b ffemd8d f1phki43 f1dl2k97 f1tyq0we f1o700av f9ijwd5"
+            className="panel-msla-title"
           >
             title
           </div>
@@ -214,7 +214,7 @@ exports[`lib/card > should render as draggable 1`] = `
 exports[`lib/card > should render as inactive 1`] = `
 <div
   aria-label="title operation"
-  className="___1ihr608_8l6gqp0 f5ogflp f1hqa2wf f1f09k3d finvdd3 fzkkow9 fcdblym fg706s2 fjik90z fze50hw f1iuuov4 f1xjygh8 fiynczt f1ewtqcl f1f741tk f1ugzwwg f2i1086 f1rlsnju f1stktl2 f1127022 f45u8dm f4vdj1x f1xqy1su folxr9a f158kwzp f151qoyn f1jtabxj fx9csi6"
+  className="msla-panel-card-container msla-card-inactive"
   data-automation-id="card-title"
   data-tabster="{"restorer":{"type":1}}"
   data-testid="card-title"
@@ -231,23 +231,23 @@ exports[`lib/card > should render as inactive 1`] = `
   }
 >
   <div
-    className="___eczt710_18nciih f1aehjj5 f1euv43f f113wtx2 f1xynx9j fly5x3f f1l02sjl f19g0ac f1ewtqcl f2i1086 f1rlsnju f1stktl2 f1127022"
+    className="msla-selection-box"
   />
   <div
-    className="___mm47ik0_0000000 f22iagw f1vx9l62 f1q9h2pe"
+    className="panel-card-main"
   >
     <div
-      className="___a577pq0_0000000 f1k6fduh"
+      className="panel-card-header"
       role="button"
     >
       <div
-        className="___1nvgmwm_0000000 f1g2tzg5 f22iagw f1063pyq f1nxs5xn f6jr5hl"
+        className="panel-card-content-container"
       >
         <div
-          className="___14plmzm_6jeij70 f13eh0sx f17mccla fd7fpy0 fpqefah"
+          className="panel-card-content-gripper-section"
         />
         <div
-          className="___1iekswu_0000000 f22iagw f2zxqi f1phki43 febqm8h f9yszdx"
+          className="panel-card-content-icon-section"
         >
           <div
             className="fui-Spinner r82apo5 msla-card-header-spinner"
@@ -263,10 +263,10 @@ exports[`lib/card > should render as inactive 1`] = `
           </div>
         </div>
         <div
-          className="___1mjqdhy_0000000 f7nlbp4 f1g2tzg5 fanxd30 f22iagw f1869bpl"
+          className="panel-card-top-content"
         >
           <div
-            className="___16wqj09_0000000 f7nlbp4 f14t3ns0 f1lgsl2b ffemd8d f1phki43 f1dl2k97 f1tyq0we f1o700av f9ijwd5"
+            className="panel-msla-title"
           >
             title
           </div>
@@ -280,7 +280,7 @@ exports[`lib/card > should render as inactive 1`] = `
 exports[`lib/card > should render as pinned 1`] = `
 <div
   aria-label="title operation"
-  className="___17gnclc_13hrtj9 f5ogflp f1hqa2wf f1f09k3d finvdd3 fzkkow9 fcdblym fg706s2 fjik90z fze50hw f1iuuov4 f1xjygh8 fiynczt f1ewtqcl f1f741tk f1ugzwwg f2i1086 f1rlsnju f1stktl2 f1127022 f45u8dm f4vdj1x f1xqy1su folxr9a f158kwzp f151qoyn f1jtabxj"
+  className="msla-panel-card-container"
   data-automation-id="card-title"
   data-tabster="{"restorer":{"type":1}}"
   data-testid="card-title"
@@ -297,23 +297,23 @@ exports[`lib/card > should render as pinned 1`] = `
   }
 >
   <div
-    className="___15or2yc_cf3ee70 f1aehjj5 f1euv43f f113wtx2 f1xynx9j fly5x3f f1l02sjl f19g0ac f1ewtqcl f2i1086 f1rlsnju f1stktl2 f1127022 ftac7j7 f1w0yd9v fdwcyh7 f1h0xgbp fzkkow9 fcdblym fg706s2 fjik90z fgluyya f1gyn8jr fzuqct0 f19ejwal"
+    className="msla-selection-box pinned"
   />
   <div
-    className="___mm47ik0_0000000 f22iagw f1vx9l62 f1q9h2pe"
+    className="panel-card-main"
   >
     <div
-      className="___a577pq0_0000000 f1k6fduh"
+      className="panel-card-header"
       role="button"
     >
       <div
-        className="___1nvgmwm_0000000 f1g2tzg5 f22iagw f1063pyq f1nxs5xn f6jr5hl"
+        className="panel-card-content-container"
       >
         <div
-          className="___14plmzm_6jeij70 f13eh0sx f17mccla fd7fpy0 fpqefah"
+          className="panel-card-content-gripper-section"
         />
         <div
-          className="___1iekswu_0000000 f22iagw f2zxqi f1phki43 febqm8h f9yszdx"
+          className="panel-card-content-icon-section"
         >
           <div
             className="fui-Spinner r82apo5 msla-card-header-spinner"
@@ -329,10 +329,10 @@ exports[`lib/card > should render as pinned 1`] = `
           </div>
         </div>
         <div
-          className="___1mjqdhy_0000000 f7nlbp4 f1g2tzg5 fanxd30 f22iagw f1869bpl"
+          className="panel-card-top-content"
         >
           <div
-            className="___16wqj09_0000000 f7nlbp4 f14t3ns0 f1lgsl2b ffemd8d f1phki43 f1dl2k97 f1tyq0we f1o700av f9ijwd5"
+            className="panel-msla-title"
           >
             title
           </div>
@@ -346,7 +346,7 @@ exports[`lib/card > should render as pinned 1`] = `
 exports[`lib/card > should render as selected 1`] = `
 <div
   aria-label="title operation"
-  className="___17gnclc_1jy0dns f5ogflp f1hqa2wf f1f09k3d finvdd3 fzkkow9 fcdblym fg706s2 fjik90z fze50hw f1iuuov4 f1xjygh8 fiynczt f1ewtqcl f1f741tk f1ugzwwg f2i1086 f1rlsnju f1stktl2 f1127022 f45u8dm f4vdj1x f1xqy1su folxr9a f158kwzp f151qoyn f1jtabxj"
+  className="msla-panel-card-container msla-panel-card-container-selected"
   data-automation-id="card-title"
   data-tabster="{"restorer":{"type":1}}"
   data-testid="card-title"
@@ -363,23 +363,23 @@ exports[`lib/card > should render as selected 1`] = `
   }
 >
   <div
-    className="___sxz62y0_1odr2zd f1aehjj5 f1euv43f f113wtx2 f1xynx9j fly5x3f f1l02sjl f19g0ac f1ewtqcl f2i1086 f1rlsnju f1stktl2 f1127022 ftac7j7 f1w0yd9v fdwcyh7 f1h0xgbp fzkkow9 fcdblym fg706s2 fjik90z f1q1itr3 fpibhc0 fk1vwrk fd9r535"
+    className="msla-selection-box selected"
   />
   <div
-    className="___mm47ik0_0000000 f22iagw f1vx9l62 f1q9h2pe"
+    className="panel-card-main"
   >
     <div
-      className="___a577pq0_0000000 f1k6fduh"
+      className="panel-card-header"
       role="button"
     >
       <div
-        className="___1nvgmwm_0000000 f1g2tzg5 f22iagw f1063pyq f1nxs5xn f6jr5hl"
+        className="panel-card-content-container"
       >
         <div
-          className="___14plmzm_6jeij70 f13eh0sx f17mccla fd7fpy0 fpqefah"
+          className="panel-card-content-gripper-section"
         />
         <div
-          className="___1iekswu_0000000 f22iagw f2zxqi f1phki43 febqm8h f9yszdx"
+          className="panel-card-content-icon-section"
         >
           <div
             className="fui-Spinner r82apo5 msla-card-header-spinner"
@@ -395,10 +395,10 @@ exports[`lib/card > should render as selected 1`] = `
           </div>
         </div>
         <div
-          className="___1mjqdhy_0000000 f7nlbp4 f1g2tzg5 fanxd30 f22iagw f1869bpl"
+          className="panel-card-top-content"
         >
           <div
-            className="___16wqj09_0000000 f7nlbp4 f14t3ns0 f1lgsl2b ffemd8d f1phki43 f1dl2k97 f1tyq0we f1o700av f9ijwd5"
+            className="panel-msla-title"
           >
             title
           </div>
@@ -412,7 +412,7 @@ exports[`lib/card > should render as selected 1`] = `
 exports[`lib/card > should render with an icon and a connector name (0) 1`] = `
 <div
   aria-label="title operation, SharePoint connector"
-  className="___17gnclc_13hrtj9 f5ogflp f1hqa2wf f1f09k3d finvdd3 fzkkow9 fcdblym fg706s2 fjik90z fze50hw f1iuuov4 f1xjygh8 fiynczt f1ewtqcl f1f741tk f1ugzwwg f2i1086 f1rlsnju f1stktl2 f1127022 f45u8dm f4vdj1x f1xqy1su folxr9a f158kwzp f151qoyn f1jtabxj"
+  className="msla-panel-card-container"
   data-automation-id="card-title"
   data-tabster="{"restorer":{"type":1}}"
   data-testid="card-title"
@@ -429,35 +429,35 @@ exports[`lib/card > should render with an icon and a connector name (0) 1`] = `
   }
 >
   <div
-    className="___eczt710_18nciih f1aehjj5 f1euv43f f113wtx2 f1xynx9j fly5x3f f1l02sjl f19g0ac f1ewtqcl f2i1086 f1rlsnju f1stktl2 f1127022"
+    className="msla-selection-box"
   />
   <div
-    className="___mm47ik0_0000000 f22iagw f1vx9l62 f1q9h2pe"
+    className="panel-card-main"
   >
     <div
-      className="___a577pq0_0000000 f1k6fduh"
+      className="panel-card-header"
       role="button"
     >
       <div
-        className="___1nvgmwm_0000000 f1g2tzg5 f22iagw f1063pyq f1nxs5xn f6jr5hl"
+        className="panel-card-content-container"
       >
         <div
-          className="___14plmzm_6jeij70 f13eh0sx f17mccla fd7fpy0 fpqefah"
+          className="panel-card-content-gripper-section"
         />
         <div
-          className="___1iekswu_0000000 f22iagw f2zxqi f1phki43 febqm8h f9yszdx"
+          className="panel-card-content-icon-section"
         >
           <img
             alt=""
-            className="___3l0yoy0_0000000 frvgh55 fq4mcun f2i1086 f1rlsnju f1stktl2 f1127022"
+            className="panel-card-icon"
             src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
           />
         </div>
         <div
-          className="___1mjqdhy_0000000 f7nlbp4 f1g2tzg5 fanxd30 f22iagw f1869bpl"
+          className="panel-card-top-content"
         >
           <div
-            className="___16wqj09_0000000 f7nlbp4 f14t3ns0 f1lgsl2b ffemd8d f1phki43 f1dl2k97 f1tyq0we f1o700av f9ijwd5"
+            className="panel-msla-title"
           >
             title
           </div>
@@ -471,7 +471,7 @@ exports[`lib/card > should render with an icon and a connector name (0) 1`] = `
 exports[`lib/card > should render with an icon and an operation name (1) 1`] = `
 <div
   aria-label="title operation"
-  className="___17gnclc_13hrtj9 f5ogflp f1hqa2wf f1f09k3d finvdd3 fzkkow9 fcdblym fg706s2 fjik90z fze50hw f1iuuov4 f1xjygh8 fiynczt f1ewtqcl f1f741tk f1ugzwwg f2i1086 f1rlsnju f1stktl2 f1127022 f45u8dm f4vdj1x f1xqy1su folxr9a f158kwzp f151qoyn f1jtabxj"
+  className="msla-panel-card-container"
   data-automation-id="card-title"
   data-tabster="{"restorer":{"type":1}}"
   data-testid="card-title"
@@ -488,35 +488,35 @@ exports[`lib/card > should render with an icon and an operation name (1) 1`] = `
   }
 >
   <div
-    className="___eczt710_18nciih f1aehjj5 f1euv43f f113wtx2 f1xynx9j fly5x3f f1l02sjl f19g0ac f1ewtqcl f2i1086 f1rlsnju f1stktl2 f1127022"
+    className="msla-selection-box"
   />
   <div
-    className="___mm47ik0_0000000 f22iagw f1vx9l62 f1q9h2pe"
+    className="panel-card-main"
   >
     <div
-      className="___a577pq0_0000000 f1k6fduh"
+      className="panel-card-header"
       role="button"
     >
       <div
-        className="___1nvgmwm_0000000 f1g2tzg5 f22iagw f1063pyq f1nxs5xn f6jr5hl"
+        className="panel-card-content-container"
       >
         <div
-          className="___14plmzm_6jeij70 f13eh0sx f17mccla fd7fpy0 fpqefah"
+          className="panel-card-content-gripper-section"
         />
         <div
-          className="___1iekswu_0000000 f22iagw f2zxqi f1phki43 febqm8h f9yszdx"
+          className="panel-card-content-icon-section"
         >
           <img
             alt=""
-            className="___3l0yoy0_0000000 frvgh55 fq4mcun f2i1086 f1rlsnju f1stktl2 f1127022"
+            className="panel-card-icon"
             src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
           />
         </div>
         <div
-          className="___1mjqdhy_0000000 f7nlbp4 f1g2tzg5 fanxd30 f22iagw f1869bpl"
+          className="panel-card-top-content"
         >
           <div
-            className="___16wqj09_0000000 f7nlbp4 f14t3ns0 f1lgsl2b ffemd8d f1phki43 f1dl2k97 f1tyq0we f1o700av f9ijwd5"
+            className="panel-msla-title"
           >
             title
           </div>
@@ -530,7 +530,7 @@ exports[`lib/card > should render with an icon and an operation name (1) 1`] = `
 exports[`lib/card > should render with an icon and an operation name and connector name (2) 1`] = `
 <div
   aria-label="title operation, SharePoint connector"
-  className="___17gnclc_13hrtj9 f5ogflp f1hqa2wf f1f09k3d finvdd3 fzkkow9 fcdblym fg706s2 fjik90z fze50hw f1iuuov4 f1xjygh8 fiynczt f1ewtqcl f1f741tk f1ugzwwg f2i1086 f1rlsnju f1stktl2 f1127022 f45u8dm f4vdj1x f1xqy1su folxr9a f158kwzp f151qoyn f1jtabxj"
+  className="msla-panel-card-container"
   data-automation-id="card-title"
   data-tabster="{"restorer":{"type":1}}"
   data-testid="card-title"
@@ -547,35 +547,35 @@ exports[`lib/card > should render with an icon and an operation name and connect
   }
 >
   <div
-    className="___eczt710_18nciih f1aehjj5 f1euv43f f113wtx2 f1xynx9j fly5x3f f1l02sjl f19g0ac f1ewtqcl f2i1086 f1rlsnju f1stktl2 f1127022"
+    className="msla-selection-box"
   />
   <div
-    className="___mm47ik0_0000000 f22iagw f1vx9l62 f1q9h2pe"
+    className="panel-card-main"
   >
     <div
-      className="___a577pq0_0000000 f1k6fduh"
+      className="panel-card-header"
       role="button"
     >
       <div
-        className="___1nvgmwm_0000000 f1g2tzg5 f22iagw f1063pyq f1nxs5xn f6jr5hl"
+        className="panel-card-content-container"
       >
         <div
-          className="___14plmzm_6jeij70 f13eh0sx f17mccla fd7fpy0 fpqefah"
+          className="panel-card-content-gripper-section"
         />
         <div
-          className="___1iekswu_0000000 f22iagw f2zxqi f1phki43 febqm8h f9yszdx"
+          className="panel-card-content-icon-section"
         >
           <img
             alt=""
-            className="___3l0yoy0_0000000 frvgh55 fq4mcun f2i1086 f1rlsnju f1stktl2 f1127022"
+            className="panel-card-icon"
             src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
           />
         </div>
         <div
-          className="___1mjqdhy_0000000 f7nlbp4 f1g2tzg5 fanxd30 f22iagw f1869bpl"
+          className="panel-card-top-content"
         >
           <div
-            className="___16wqj09_0000000 f7nlbp4 f14t3ns0 f1lgsl2b ffemd8d f1phki43 f1dl2k97 f1tyq0we f1o700av f9ijwd5"
+            className="panel-msla-title"
           >
             title
           </div>

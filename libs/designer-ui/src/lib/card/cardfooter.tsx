@@ -1,10 +1,9 @@
 /* eslint-disable react/display-name */
 import type { CardProps } from './index';
 import { getHeaderStyle } from './utils';
-import { useCardStyles } from './styles';
 import type { IIconProps } from '@fluentui/react';
-import { Icon, useTheme } from '@fluentui/react';
-import { Spinner, Tooltip, mergeClasses } from '@fluentui/react-components';
+import { Icon } from '@fluentui/react';
+import { Spinner, Tooltip } from '@fluentui/react-components';
 import { memo, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -66,7 +65,6 @@ export const CardFooter: React.FC<CardFooterProps> = memo(
     nodeIndex,
   }) => {
     const intl = useIntl();
-    const styles = useCardStyles();
     const strings = useMemo(
       () => ({
         CONNECTION_NAME_DISPLAY: intl.formatMessage({
@@ -125,7 +123,7 @@ export const CardFooter: React.FC<CardFooterProps> = memo(
             enabled: isLoadingDynamicData,
             active: true,
             content: strings.LOADING_DYNAMIC_DATA,
-            badgeContent: <Spinner className={styles.mslaBadgeSpinner} size={'extra-tiny'} />,
+            badgeContent: <Spinner className="msla-badge-spinner" size={'extra-tiny'} />,
             title: strings.LOADING_DYNAMIC_DATA,
           },
           {
@@ -182,12 +180,8 @@ export const CardFooter: React.FC<CardFooterProps> = memo(
 );
 
 const CardBadgeBar: React.FC<CardBadgeBarProps> = ({ badges, brandColor, tabIndex, cardTitle }) => {
-  const styles = useCardStyles();
-  const theme = useTheme();
-  const isDark = theme.isInverted;
-
   return (
-    <div className={mergeClasses(styles.mslaBadges, isDark && styles.mslaBadgesDark)} style={getHeaderStyle(brandColor)}>
+    <div className="msla-badges" style={getHeaderStyle(brandColor)}>
       {badges.map(({ enabled, active, content, badgeContent, iconProps, title }) => (
         <CardBadge
           key={title}
@@ -206,10 +200,6 @@ const CardBadgeBar: React.FC<CardBadgeBarProps> = ({ badges, brandColor, tabInde
 };
 
 const CardBadge: React.FC<CardBadgeProps> = ({ enabled, active, content, badgeContent, iconProps, title, cardTitle, tabIndex }) => {
-  const styles = useCardStyles();
-  const theme = useTheme();
-  const isDark = theme.isInverted;
-
   if (!enabled || !content) {
     return null;
   }
@@ -218,23 +208,11 @@ const CardBadge: React.FC<CardBadgeProps> = ({ enabled, active, content, badgeCo
     <Tooltip relationship={'label'} withArrow={true} content={`${cardTitle ?? ''} ${title}: ${content}`}>
       {badgeContent ?? (
         <div>
-          <Icon
-            role="button"
-            className={mergeClasses(styles.panelCardV2Badge, styles.panelCardV2BadgeActive, isDark && styles.panelCardV2BadgeActiveDark)}
-            {...iconProps}
-            tabIndex={tabIndex}
-          />
+          <Icon role="button" className={'panel-card-v2-badge active'} {...iconProps} tabIndex={tabIndex} />
         </div>
       )}
     </Tooltip>
   ) : (
-    (badgeContent ?? (
-      <Icon
-        className={mergeClasses(styles.panelCardV2Badge, styles.panelCardV2BadgeInactive)}
-        {...iconProps}
-        aria-label={title}
-        tabIndex={0}
-      />
-    ))
+    (badgeContent ?? <Icon className="panel-card-v2-badge inactive" {...iconProps} aria-label={title} tabIndex={0} />)
   );
 };

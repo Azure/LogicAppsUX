@@ -1,6 +1,5 @@
 import type { PageActionTelemetryData } from '../telemetry/models';
 import type { PanelTab } from './panelUtil';
-import { usePanelStyles, getPanelClasses } from './styles';
 import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
 import {
   TabList,
@@ -18,7 +17,6 @@ import {
   MenuItem,
 } from '@fluentui/react-components';
 import { bundleIcon, MoreHorizontalFilled, MoreHorizontalRegular } from '@fluentui/react-icons';
-import { useTheme } from '@fluentui/react';
 import { useIntl } from 'react-intl';
 
 const MoreHorizontal = bundleIcon(MoreHorizontalFilled, MoreHorizontalRegular);
@@ -32,9 +30,6 @@ export interface PanelContentProps {
 }
 export const PanelContent = ({ nodeId, tabs = [], selectedTab, selectTab }: PanelContentProps): JSX.Element => {
   const intl = useIntl();
-  const theme = useTheme();
-  const styles = usePanelStyles();
-  const classes = getPanelClasses(styles, theme.isInverted);
 
   const selectedTabId = selectedTab ?? tabs[0]?.id;
 
@@ -57,7 +52,7 @@ export const PanelContent = ({ nodeId, tabs = [], selectedTab, selectTab }: Pane
   });
 
   return (
-    <div id={`msla-node-details-panel-${nodeId}`} className={classes.nodeDetailsPanel}>
+    <div id={`msla-node-details-panel-${nodeId}`} className="msla-node-details-panel">
       <Overflow aria-label={overflowLabel}>
         <TabList selectedValue={selectedTabId} onTabSelect={onTabSelected} style={{ margin: '5px 5px 0px 5px' }}>
           {tabs.map(({ id, visible, hasErrors, title }) =>
@@ -73,7 +68,7 @@ export const PanelContent = ({ nodeId, tabs = [], selectedTab, selectTab }: Pane
           <OverflowMenu tabs={tabs} onTabSelect={selectTab} />
         </TabList>
       </Overflow>
-      <div className={classes.panelContentContainer}>{tabs.find((tab) => tab.id === selectedTabId)?.content}</div>
+      <div className="msla-panel-content-container">{tabs.find((tab) => tab.id === selectedTabId)?.content}</div>
     </div>
   );
 };
