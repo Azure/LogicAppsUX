@@ -5,6 +5,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getConnector } from '../../queries/operation';
 import type { NodeOperation } from '../../state/operation/operationMetadataSlice';
 import { getReactQueryClient } from '../../ReactQueryProvider';
+import { workflowIdentifier } from './helper';
 
 export const getTemplateManifest = async (templateId: string): Promise<Template.TemplateManifest> => {
   const templateResource = await getTemplate(templateId);
@@ -86,7 +87,7 @@ export const getTemplate = async (templateId: string): Promise<ArmResource<any>>
 
 export const useAllConnectors = (operationInfos: Record<string, NodeOperation>) => {
   const allConnectorIds = Object.values(operationInfos).reduce((result: string[], operationInfo) => {
-    const normalizedConnectorId = operationInfo.connectorId?.toLowerCase();
+    const normalizedConnectorId = operationInfo.connectorId?.toLowerCase()?.replace(`_${workflowIdentifier}`, '');
     if (normalizedConnectorId && !result.includes(normalizedConnectorId)) {
       result.push(normalizedConnectorId);
     }
