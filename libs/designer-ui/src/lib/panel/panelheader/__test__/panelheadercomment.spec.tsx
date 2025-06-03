@@ -25,12 +25,8 @@ describe('ui/panel/panelheadercomment', () => {
     renderer.render(<PanelHeaderComment {...props} />);
     const commentContainer = renderer.getRenderOutput();
 
-    expect(commentContainer.props.className).toBe('msla-panel-comment-container');
-
     const [icon, comment]: any[] = React.Children.toArray(commentContainer.props.children);
-    expect(icon.props.className).toBe('msla-comment-icon');
 
-    expect(comment.props.className).toBe('msla-card-comment');
     expect(comment.props.ariaLabel).toBe('Description');
     expect(comment.props.multiline).toBeTruthy();
     expect(comment.props.autoAdjustHeight).toBeTruthy();

@@ -2,18 +2,18 @@
 
 exports[`ui/panel/panelheadercomment > should construct. 1`] = `
 <div
-  className="msla-panel-comment-container"
+  className="___1hchtor_ztttil0 f2zxqi fibjyge fq2aazw f9yszdx f1kcqot9 fzr0hk9 fpe6lb7 f1a2l6f3 f1dmdbja"
   hidden={false}
 >
   <CompoundIcon
     aria-label="Comment"
-    className="msla-comment-icon"
+    className="___17sfutb_0000000 f6ogs8q f4ybsrx fjamq6b f64fuq3 f1nbblvp f1sgzk6v f1ov4xf1 f1bg5zqg f8zmjen f17mccla"
   />
   <StyledTextFieldBase
     ariaLabel="Description"
     autoAdjustHeight={true}
     borderless={true}
-    className="msla-card-comment"
+    className="___yzx6220_0000000 fo2rdpl fhlqrtk fjyx7tq f1uyrm7c f1om6ujz f119ceax"
     componentRef={
       {
         "current": null,
