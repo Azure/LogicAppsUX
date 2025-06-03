@@ -16,19 +16,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Try GitHub Copilot for PRs if available
-      - name: AI Review with GitHub Copilot
-        id: copilot_review
-        continue-on-error: true
-        uses: github/copilot-pr-review@v1
-        with:
-          instructions: |
-            Review the PR title and description for:
-            1. Title clarity and descriptiveness (score 1-10)
-            2. PR description completeness based on the template
-            3. Suggest specific improvements
-            Focus only on title quality and template compliance, not code review.
-
       - name: Get PR Details
         id: pr_details
         uses: actions/github-script@v7
@@ -208,13 +195,8 @@ jobs:
               }
             }
             
-            // Check if GitHub Copilot review was successful
-            const copilotReviewAvailable = '${{ steps.copilot_review.outcome }}' === 'success';
-            if (copilotReviewAvailable) {
-              validationReport += '\n\n*This analysis includes GitHub Copilot AI insights along with intelligent heuristics.*';
-            } else {
-              validationReport += '\n\n*This analysis uses advanced heuristics to evaluate PR quality.*';
-            }
+            // Add footer note
+            validationReport += '\n\n*This analysis uses AI-inspired heuristics to evaluate PR quality and provide actionable feedback.*';
             
             // Post the validation report
             await github.rest.issues.createComment({
