@@ -1057,7 +1057,7 @@ export async function getOperationMockClassContent(
     const isTrigger = operationName === triggerName;
 
     // Only proceed if this operation type is mockable (using the new async isMockable)
-    if (await isMockable(type)) {
+    if (isTrigger || (await isMockable(type))) {
       const isMockableHttpType = await isMockableHttp(type);
       // Set operationName as className
       const cleanedOperationName = removeInvalidCharacters(operationName);
