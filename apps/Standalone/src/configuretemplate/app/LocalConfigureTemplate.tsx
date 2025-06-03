@@ -22,7 +22,7 @@ import { ArmParser } from '../../designer/app/AzureLogicAppsDesigner/Utilities/A
 import { useCurrentTenantId } from '../../designer/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts';
 
 const testTemplateId =
-  '/subscriptions/f34b22a3-2202-4fb1-b040-1332bd928c84/resourceGroups/TestACSRG/providers/microsoft.logic/templates/bonicatemplate';
+  '/subscriptions/80d4fe69-c95b-4dd2-a938-9250f1c8ab03/resourceGroups/PritiTestRG/providers/microsoft.logic/templates/bonica-test-template-production';
 export const LocalConfigureTemplate = () => {
   const { theme, resourcePath } = useSelector((state: RootState) => ({
     theme: state.configureTemplateLoader.theme,

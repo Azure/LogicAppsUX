@@ -23,6 +23,7 @@ export interface ManifestState {
     keyword?: string;
     sortKey: string;
     connectors: FilterObject[] | undefined;
+    subscriptions: FilterObject[] | undefined;
     detailFilters: Record<string, FilterObject[]>;
   };
 }
@@ -35,6 +36,7 @@ export const initialManifestState: ManifestState = {
     pageNum: initialPageNum,
     sortKey: 'a-to-z',
     connectors: undefined,
+    subscriptions: undefined,
     detailFilters: {},
   },
 };
@@ -86,6 +88,10 @@ export const manifestSlice = createSlice({
     setConnectorsFilters: (state, action: PayloadAction<FilterObject[] | undefined>) => {
       state.filters.connectors = action.payload;
       state.filters.pageNum = initialPageNum;
+    },
+    setSubscriptionsFilters: (state, action: PayloadAction<FilterObject[] | undefined>) => {
+      state.filters.subscriptions = action.payload;
+      // state.filters.pageNum = initialPageNum;
     },
     setDetailsFilters: (
       state,
