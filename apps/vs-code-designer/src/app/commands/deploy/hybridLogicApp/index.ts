@@ -114,20 +114,21 @@ export const zipDeployHybridLogicApp = async (context: IActionContext, node: Slo
 
         progress.report({ increment: 20, message: 'Zipping content for deployment' });
 
-        // Step 1: Create the zip file on disk
-        const zipFilePath = await createZipFileOnDisk(effectiveDeployFsPath);
-
-        // Step 2: Get the access token
-        const accessToken = await getAccessTokenForZipDeploy(node, context as ILogicAppWizardContext);
+        const zipFilePromise = createZipFileOnDisk(effectiveDeployFsPath);
+        const accessTokenPromise = getAccessTokenForZipDeploy(node, context as ILogicAppWizardContext);
 
         if (!node.hybridSite.configuration?.ingress?.fqdn) {
           const clientContainer = await createContainerClient(context as ILogicAppWizardContext);
           await waitForIngressFqdn(node, clientContainer);
         }
 
-        progress.report({ increment: 40, message: `Waiting for logic app to be ready: ${node.hybridSite.configuration.ingress.fqdn}` });
+        const containerAppProvisioningPromise = waitForContainerAppProvisioning(
+          node.hybridSite.configuration.ingress.fqdn,
+          context,
+          progress
+        );
 
-        await waitForContainerAppProvisioning(node.hybridSite.configuration.ingress.fqdn, context);
+        const [zipFilePath, accessToken] = await Promise.all([zipFilePromise, accessTokenPromise, containerAppProvisioningPromise]);
 
         progress.report({ increment: 60, message: 'Uploading ZIP to Logic App' });
         // Step 3: Call the /zipDeploy API
@@ -166,7 +167,8 @@ export const zipDeployHybridLogicApp = async (context: IActionContext, node: Slo
   }
 };
 
-const waitForContainerAppProvisioning = async (fqdn: string, context): Promise<void> => {
+const waitForContainerAppProvisioning = async (fqdn: string, context, progress): Promise<void> => {
+  progress.report({ increment: 40, message: `Waiting for logic app to be ready: ${fqdn}` });
   const maxRetries = 40; // Maximum number of retries
   const delay = 3000; // Delay between retries in milliseconds (3 seconds)
   const zipDeployUrl = `https://${fqdn}/api/zipDeploy`;
