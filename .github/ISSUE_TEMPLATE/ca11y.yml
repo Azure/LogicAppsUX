@@ -1,26 +1,69 @@
-name: 'Report an accessibility issue'
-description: Create a report to help us improve Logic Apps
-labels: ['a11y']
+name: '♿ Report an accessibility issue'
+description: Create a report to help us improve Logic Apps accessibility
+labels: ['a11y', 'triage']
 body:
-  - type: textarea
-    id: description
+  - type: dropdown
+    id: severity
     attributes:
-      label: Describe the issue
-      description: Provide a clear and concise description of the challenge you are running into. Please tell us what the current behavior is as well as what you expect it to be.
-      placeholder: |
-        1. Go to '...'
-        2. Click on '....'
-        3. Scroll down to '....'
+      label: Severity
+      description: How severe is this accessibility issue?
+      options:
+        - 'P1 - Critical (Completely blocks access)'
+        - 'P2 - High (Major barrier to access)'
+        - 'P3 - Medium (Workaround available but difficult)'
+        - 'P4 - Low (Minor inconvenience)'
     validations:
       required: true
 
   - type: dropdown
-    id: designerType
+    id: a11y_type
     attributes:
-      label: Are you using new designer or old designer
+      label: Type of Accessibility Issue
+      description: What kind of accessibility issue are you experiencing?
       options:
-        - New Designer (With action panels)
-        - Old Designer (With the properties on the actual card)
+        - 'Keyboard Navigation'
+        - 'Screen Reader Compatibility'
+        - 'Color Contrast'
+        - 'Focus Management'
+        - 'ARIA Labels/Roles'
+        - 'Motion/Animation'
+        - 'Text Size/Readability'
+        - 'Other'
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the issue
+      description: Provide a clear and concise description of the challenge you are running into.
+      placeholder: |
+        Current behavior:
+        - What happens now (e.g., "Cannot navigate with keyboard", "Screen reader announces incorrect information")
+        
+        Expected behavior:
+        - What should happen (e.g., "Should be able to tab through all interactive elements")
+        
+        Steps to reproduce:
+        1. Go to '...'
+        2. Using [keyboard/screen reader/etc], try to '...'
+        3. Observe that '...'
+        
+        Assistive technology used (if applicable):
+        - Screen reader: [e.g., NVDA, JAWS, VoiceOver]
+        - Browser extensions: [e.g., axe DevTools]
+    validations:
+      required: true
+
+
+  - type: dropdown
+    id: sku
+    attributes:
+      label: What type of Logic App are you using?
+      options:
+        - Consumption (Portal)
+        - Standard (Portal)
+        - Standard (VSCode)
     validations:
       required: true
 
@@ -36,13 +79,27 @@ body:
         You can drag your video or image files inside of this editor ↓
 
   - type: textarea
-    id: browser
+    id: environment
     attributes:
-      label: Browser
+      label: Environment
+      description: Please provide environment details
       placeholder: |
-        - Browser: [e.g. Chrome, Safari, Firefox]
+        - Browser: [e.g. Chrome 120, Safari 17, Firefox 121, Edge 120]
+        - Operating System: [e.g. Windows 11, macOS 14.2]
+        - Assistive Technology: [e.g., NVDA 2023.3, JAWS 2024, VoiceOver]
+        - VS Code Version: [if applicable]
+        - Extension Version: [if applicable]
     validations:
       required: true
+
+  - type: input
+    id: wcag_criteria
+    attributes:
+      label: WCAG Success Criteria (if known)
+      description: If you know the specific WCAG criteria this violates
+      placeholder: 'e.g., 2.1.1 Keyboard, 4.1.2 Name Role Value'
+    validations:
+      required: false
 
   - type: textarea
     id: additional

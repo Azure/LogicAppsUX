@@ -1,0 +1,105 @@
+name: '✨ Feature Request'
+description: Suggest an idea or enhancement for Logic Apps
+labels: ['enhancement', 'triage']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for suggesting an enhancement!
+
+        This issue tracker is for feature requests for Logic Apps UI (https://github.com/Azure/LogicAppsUX)
+        If you have a question about how to achieve something, please post in the Discussion repo: https://github.com/Azure/LogicApps/discussions
+
+        Before submitting, please check if a similar request already exists:
+         - Open Issues: https://github.com/Azure/LogicAppsUX/issues?q=is%3Aissue+label%3Aenhancement+sort%3Aupdated-desc
+         - Closed Issues: https://github.com/Azure/LogicAppsUX/issues?q=is%3Aissue+label%3Aenhancement+sort%3Aupdated-desc+is%3Aclosed
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How important is this feature to you?
+      options:
+        - 'P1 - Critical (Blocking my scenarios)'
+        - 'P2 - High (Would significantly improve my workflow)'
+        - 'P3 - Medium (Nice to have)'
+        - 'P4 - Low (Future consideration)'
+    validations:
+      required: true
+
+  - type: dropdown
+    id: feature_area
+    attributes:
+      label: Feature Area
+      description: Which area does this feature request relate to?
+      options:
+        - 'Designer Canvas'
+        - 'Operation/Action Configuration'
+        - 'Templates'
+        - 'Data Mapper'
+        - 'Monitoring/Run History'
+        - 'Performance'
+        - 'Accessibility'
+        - 'VS Code Extension'
+        - 'Other'
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem_statement
+    attributes:
+      label: Problem Statement
+      description: Describe the problem or limitation you're facing
+      placeholder: |
+        Currently, when I try to do X, I have to Y which is time-consuming/error-prone/etc.
+        
+        Example scenario:
+        - I need to...
+        - But currently I have to...
+        - This causes...
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed_solution
+    attributes:
+      label: Proposed Solution
+      description: Describe how you'd like this to work
+      placeholder: |
+        I would like to be able to...
+        
+        The feature would work by...
+        
+        This would benefit users by...
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Have you considered any alternative solutions or workarounds?
+      placeholder: |
+        I've tried...
+        
+        I've also considered...
+    validations:
+      required: false
+
+  - type: dropdown
+    id: sku
+    attributes:
+      label: Which Logic App type(s) should this apply to?
+      multiple: true
+      options:
+        - Consumption
+        - Standard
+        - Both
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional context
+      description: Add any other context, mockups, or examples about the feature request here.
