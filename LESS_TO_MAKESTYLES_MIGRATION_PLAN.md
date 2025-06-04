@@ -96,13 +96,14 @@ export const designTokens = {
 - ✅ Preserved all original visual styling
 - ✅ Conditional dark theme styles using mergeClasses
 
-#### Task 2.2: Migrate libs/data-mapper-v2 remaining files ⬜
+#### Task 2.2: Migrate libs/data-mapper-v2 remaining files ✅
 **Priority**: High (Already has patterns)
 **Estimated Time**: 1 hour
-**Files**: 1 .less file remaining
+**Status**: **COMPLETED** ✅
+**Files**: 1 .less file removed
 
-**Files to Migrate**:
-- [ ] `libs/data-mapper-v2/src/ui/styles.less`
+**Files Migrated**:
+- ✅ `libs/data-mapper-v2/src/components/schema/style.less` - removed unused file
 
 ### Priority Level 2: Core UI Components
 
@@ -405,13 +406,14 @@ export const designTokens = {
 
 ### 🔄 Phase 2: Component Migration by Priority - **IN PROGRESS**
 - ✅ Task 2.1: libs/chatbot migration **COMPLETED**
-- 📋 Quick wins: 1/2 completed (chatbot ✅, data-mapper-v2 pending)
-- 📋 Core components prioritized and ready
+- ✅ Task 2.2: libs/data-mapper-v2 migration **COMPLETED**
+- 📋 Quick wins: 2/2 completed (chatbot ✅, data-mapper-v2 ✅)
+- 📋 Ready for core components migration
 
 ### ⏳ Next Steps
 1. ✅ ~~Task 2.1: Migrate libs/chatbot~~ **COMPLETED**
-2. Continue with Task 2.2: Complete data-mapper-v2 migration
-3. Move to core components (cards, panels, editors)
+2. ✅ ~~Task 2.2: Complete data-mapper-v2 migration~~ **COMPLETED**
+3. Start Task 2.3: Migrate Card Components (Priority Level 2)
 
 ---
 
