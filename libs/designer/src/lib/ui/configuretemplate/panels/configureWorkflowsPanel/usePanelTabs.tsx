@@ -18,8 +18,10 @@ import { useResourceStrings } from '../../resources';
 
 export const useConfigureWorkflowPanelTabs = ({
   onSave,
+  onClose,
 }: {
   onSave?: (isMultiWorkflow: boolean) => void;
+  onClose?: () => void;
 }): TemplateTabProps[] => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
@@ -79,6 +81,11 @@ export const useConfigureWorkflowPanelTabs = ({
                 metadata: {
                   workflowSourceId: normalizedWorkflowId,
                 },
+              },
+              errors: {
+                general: undefined,
+                workflow: undefined,
+                manifest: undefined,
               },
             } as Partial<WorkflowTemplateData>);
       }
@@ -175,6 +182,7 @@ export const useConfigureWorkflowPanelTabs = ({
       selectedWorkflowsList: selectedWorkflowsList(),
       onWorkflowsSelected,
       onNextButtonClick: onCustomizeWorkflowsTabNavigation,
+      onClose,
       isSaving: isWizardUpdating,
       isPrimaryButtonDisabled: isNoWorkflowsSelected,
     }),
@@ -188,6 +196,7 @@ export const useConfigureWorkflowPanelTabs = ({
       isPrimaryButtonDisabled: hasInvalidIdOrTitle || duplicateIds.length > 0,
       status: currentPublishedState,
       onSave: onSaveChanges,
+      onClose,
       duplicateIds,
     }),
   ];

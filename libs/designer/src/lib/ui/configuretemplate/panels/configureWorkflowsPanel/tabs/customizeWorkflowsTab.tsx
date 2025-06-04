@@ -23,6 +23,7 @@ export const customizeWorkflowsTab = (
     onSave,
     duplicateIds,
     status,
+    onClose,
   }: ConfigureWorkflowsTabProps & {
     duplicateIds: string[];
     updateWorkflowDataField: (workflowId: string, workflowData: Partial<WorkflowTemplateData>) => void;
@@ -70,7 +71,11 @@ export const customizeWorkflowsTab = (
           description: 'Button text for closing the panel',
         }),
         onClick: () => {
-          dispatch(closePanel());
+          if (onClose) {
+            onClose();
+          } else {
+            dispatch(closePanel());
+          }
         },
         disabled: isSaving,
       },
