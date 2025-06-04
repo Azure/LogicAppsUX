@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [5.109.7](https://github.com/Azure/LogicAppsUX/compare/v5.109.6...v5.109.7) (2025-06-04)
+
+
+### Bug Fixes
+
+* **templates:** Featured connectors and parameter definition fix cherry pick ([#7437](https://github.com/Azure/LogicAppsUX/issues/7437)) ([58b42cc](https://github.com/Azure/LogicAppsUX/commit/58b42cc7e5532797190955eb397b31a5c10903d8)), closes [#7427](https://github.com/Azure/LogicAppsUX/issues/7427) [#7432](https://github.com/Azure/LogicAppsUX/issues/7432)
+
 ### [5.109.6](https://github.com/Azure/LogicAppsUX/compare/v5.109.5...v5.109.6) (2025-06-04)
 
 
