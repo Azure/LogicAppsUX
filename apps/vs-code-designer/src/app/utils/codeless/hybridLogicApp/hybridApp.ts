@@ -7,12 +7,17 @@ import {
   appKindSetting,
   azurePublicBaseUrl,
   azureWebJobsStorageKey,
+  clientSecretName,
   extensionVersionKey,
   hybridAppApiVersion,
   localSettingsFileName,
   logicAppKind,
   sqlConnectionStringSecretName,
   sqlStorageConnectionStringKey,
+  workflowAppAADClientId,
+  workflowAppAADClientSecret,
+  workflowAppAADObjectId,
+  workflowAppAADTenantId,
 } from '../../../../constants';
 import { localize } from '../../../../localize';
 import { getWorkspaceFolder } from '../../workspace';
@@ -21,14 +26,20 @@ import type { ConnectedEnvironment, ContainerApp, EnvironmentVar } from '@azure/
 import { HTTP_METHODS } from '@microsoft/logic-apps-shared';
 
 interface createHybridAppOptions {
-  sqlConnectionString: string;
+  sqlConnectionString?: string;
   location: string;
   connectedEnvironment: ConnectedEnvironment;
-  storageName: string;
+  storageName?: string;
   subscriptionId: string;
   resourceGroup: string;
   siteName: string;
   hybridApp?: ContainerApp;
+  aad?: {
+    clientId?: string;
+    clientSecret?: string;
+    objectId?: string;
+    tenantId?: string;
+  };
 }
 
 const getAppSettingsFromLocal = async (context): Promise<EnvironmentVar[]> => {
@@ -44,8 +55,43 @@ const getAppSettingsFromLocal = async (context): Promise<EnvironmentVar[]> => {
     .filter((p) => !appSettingsToskip.includes(p.name));
 };
 
-export const createOrUpdateHybridApp = async (context: IActionContext, accessToken: string, options: createHybridAppOptions) => {
-  const { sqlConnectionString, location, connectedEnvironment, storageName, subscriptionId, resourceGroup, siteName, hybridApp } = options;
+const getAadAppSettings = (aad: createHybridAppOptions['aad'], hybridApp): EnvironmentVar[] => {
+  if (!aad && !hybridApp) {
+    // NOTE(anandgmenon): new app using SMB based deployment
+    return [];
+  }
+  if (aad) {
+    // NOTE(anandgmenon): new app using AAD based deployment
+    return [
+      {
+        name: workflowAppAADClientId,
+        value: aad.clientId || '',
+      },
+      {
+        name: workflowAppAADClientSecret,
+        secretRef: clientSecretName,
+      },
+      {
+        name: workflowAppAADObjectId,
+        value: aad.objectId || '',
+      },
+      {
+        name: workflowAppAADTenantId,
+        value: aad.tenantId || '',
+      },
+    ];
+  }
+
+  // NOTE(anandgmenon): existing app using AAD based deployment
+  const aadSettings = hybridApp?.template?.containers?.[0]?.env.filter((e) =>
+    [workflowAppAADClientId, workflowAppAADClientSecret, workflowAppAADObjectId, workflowAppAADTenantId].includes(e.name)
+  );
+
+  return aadSettings;
+};
+
+const getAppSettings = async (options: createHybridAppOptions, context): Promise<EnvironmentVar[]> => {
+  const { hybridApp, aad } = options;
 
   const sqlConnectionappSetting = hybridApp
     ? hybridApp.template.containers[0].env.find((e) => e.name === sqlStorageConnectionStringKey)
@@ -72,9 +118,21 @@ export const createOrUpdateHybridApp = async (context: IActionContext, accessTok
       name: 'AzureWebJobsSecretStorageType',
       value: 'files',
     },
+    {
+      name: 'IS_ZIP_DEPLOY_ENABLED',
+      value: 'true',
+    },
   ];
 
-  const appSettings = (await getAppSettingsFromLocal(context)).concat(defaultAppSettings);
+  const localAppSettings = await getAppSettingsFromLocal(context);
+  return [...localAppSettings, ...defaultAppSettings, ...getAadAppSettings(aad, hybridApp)];
+};
+
+export const createOrUpdateHybridApp = async (context: IActionContext, accessToken: string, options: createHybridAppOptions) => {
+  const { sqlConnectionString, location, connectedEnvironment, storageName, subscriptionId, resourceGroup, siteName, hybridApp, aad } =
+    options;
+
+  const appSettings = await getAppSettings(options, context);
   const templatePayload = {
     containers: [
       {
@@ -106,6 +164,23 @@ export const createOrUpdateHybridApp = async (context: IActionContext, accessTok
     ],
   };
 
+  const secrets = hybridApp
+    ? []
+    : [
+        {
+          name: sqlConnectionStringSecretName,
+          value: sqlConnectionString,
+        },
+        ...(aad?.clientSecret
+          ? [
+              {
+                name: clientSecretName,
+                value: aad.clientSecret,
+              },
+            ]
+          : []),
+      ];
+
   const containerAppPayload = hybridApp
     ? {
         type: 'Microsoft.App/containerApps',
@@ -125,12 +200,7 @@ export const createOrUpdateHybridApp = async (context: IActionContext, accessTok
         properties: {
           environmentId: connectedEnvironment.id,
           configuration: {
-            secrets: [
-              {
-                name: sqlConnectionStringSecretName,
-                value: sqlConnectionString,
-              },
-            ],
+            secrets: secrets,
             activeRevisionsMode: 'Single',
             ingress: {
               external: true,
@@ -191,5 +261,39 @@ export const createLogicAppExtension = async (context: ILogicAppWizardContext, a
     }
   } catch (error) {
     throw new Error(`${localize('errorCreatingLogicAppExtension', 'Error in creating logic app extension')} - ${error.message}`);
+  }
+};
+
+export const patchAppSettings = async (options: createHybridAppOptions, context: IActionContext, accessToken: string): Promise<void> => {
+  const url = `${azurePublicBaseUrl}/subscriptions/${options.subscriptionId}/resourceGroups/${options.resourceGroup}/providers/Microsoft.App/containerApps/${options.siteName}?api-version=${hybridAppApiVersion}`;
+
+  const appSettings = await getAppSettings(options, context);
+
+  try {
+    const response = await axios.patch(
+      url,
+      {
+        properties: {
+          template: {
+            ...options.hybridApp?.template,
+            containers: [
+              {
+                ...options.hybridApp?.template?.containers[0],
+                env: appSettings,
+              },
+            ],
+          },
+        },
+      },
+      {
+        headers: { Authorization: accessToken },
+      }
+    );
+
+    if (!isSuccessResponse(response.status)) {
+      throw new Error(response.statusText);
+    }
+  } catch (error) {
+    throw new Error(`${localize('errorPatchingAppSettings', 'Error patching app settings')} - ${error.message}`);
   }
 };
