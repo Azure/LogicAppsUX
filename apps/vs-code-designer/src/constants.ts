@@ -73,6 +73,7 @@ export const workflowSubscriptionIdKey = 'WORKFLOWS_SUBSCRIPTION_ID';
 export const workflowTenantIdKey = 'WORKFLOWS_TENANT_ID';
 export const workflowManagementBaseURIKey = 'WORKFLOWS_MANAGEMENT_BASE_URI';
 export const workflowAppApiVersion = '2018-11-01';
+export const workflowAppApiVersionNew = '2024-04-01';
 export const hybridAppApiVersion = '2024-02-02-preview';
 export const azureWebJobsStorageKey = 'AzureWebJobsStorage';
 export const azureWebJobsSecretStorageTypeKey = 'AzureWebJobsSecretStorageType';

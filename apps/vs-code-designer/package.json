@@ -7,6 +7,7 @@
     "@azure/arm-appservice": "^13.0.3",
     "@azure/arm-resourcegraph": "^4.2.1",
     "@azure/arm-storage": "17.2.1",
+    "@azure/core-rest-pipeline": "1.15.1",
     "@azure/ms-rest-js": "^2.6.4",
     "@azure/storage-file-share": "^12.16.0",
     "@microsoft/logic-apps-shared": "workspace:*",
@@ -40,11 +41,12 @@
     "uuid": "^10.0.0",
     "vscode-nls": "^5.2.0",
     "xml2js": "0.6.2",
-    "yargs-parser": "21.1.1",
     "yaml": "^2.7.0",
     "yaml-types": "^0.4.0",
+    "yargs-parser": "21.1.1",
     "@azure/identity": "^4.5.0",
     "yazl": "^3.3.1"
+    
   },
   "private": true,
   "scripts": {

@@ -3,7 +3,7 @@ import { existsSync, writeFile, createWriteStream } from 'fs';
 import { mkdir, rm } from 'fs/promises';
 import client from 'https';
 
-const releaseBranch = 'release/20250425';
+const releaseBranch = 'release/20250522';
 
 const shouldDownloadImages = process.argv[2] === '--download-images';
 const subdirectory = process.argv[3] === '--subdirectory' ? process.argv[4] : undefined;
