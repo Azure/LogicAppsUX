@@ -15,8 +15,8 @@ export const getQuickViewTabs = (
   intl: IntlShape,
   dispatch: AppDispatch,
   workflowId: string,
-  showCreate: boolean,
-  { templateId, workflowAppName, isMultiWorkflow }: Template.TemplateContext,
+  clearDetailsOnClose: boolean,
+  { templateId, workflowAppName, isMultiWorkflow, showCreate, showCloseButton }: Template.TemplateContext,
   onCloseButtonClick?: () => void
 ) => {
   return [
@@ -24,11 +24,13 @@ export const getQuickViewTabs = (
       intl,
       dispatch,
       workflowId,
-      showCreate,
+      clearDetailsOnClose,
       {
         templateId,
         workflowAppName,
         isMultiWorkflow,
+        showCreate,
+        showCloseButton,
       },
       onCloseButtonClick
     ),
@@ -36,12 +38,14 @@ export const getQuickViewTabs = (
       intl,
       dispatch,
       workflowId,
-      showCreate,
+      clearDetailsOnClose,
       undefined,
       {
         templateId,
         workflowAppName,
         isMultiWorkflow,
+        showCreate,
+        showCloseButton,
       },
       onCloseButtonClick
     ),
@@ -226,13 +230,6 @@ export const validateParameterDetail = (data: { type: string; displayName?: stri
       description: 'Error message when the workflow parameter display name is empty.',
     });
   }
-  if (isUndefinedOrEmptyString(data?.description)) {
-    errorMessages = `${errorMessages ?? ''}${intl.formatMessage({
-      defaultMessage: 'Description is required. ',
-      id: '/5PrlZ',
-      description: 'Error message when the workflow parameter description is empty.',
-    })}`;
-  }
   if (!isUndefinedOrEmptyString(data?.default)) {
     const DefaultValueValidationError = validateParameterValueWithSwaggerType(data?.type, data?.default, false, intl);
     if (DefaultValueValidationError) {
@@ -273,18 +270,10 @@ export const checkWorkflowNameWithRegex = (intl: IntlShape, workflowName: string
 };
 
 export const validateWorkflowData = (workflowData: Partial<WorkflowTemplateData>, isAccelerator: boolean) => {
-  const { manifest: workflowManifest, workflowName } = workflowData;
+  const { manifest: workflowManifest } = workflowData;
   const intl = getIntl();
 
   const manifestErrors: Record<string, string | undefined> = {};
-
-  const workflowNameError = isUndefinedOrEmptyString(workflowName)
-    ? intl.formatMessage({
-        defaultMessage: 'Workflow name is required.',
-        id: 'SakW8J',
-        description: 'Error message when the workflow name field is empty',
-      })
-    : checkWorkflowNameWithRegex(intl, workflowName);
 
   manifestErrors['title'] =
     isAccelerator && isUndefinedOrEmptyString(workflowManifest?.title)
@@ -298,8 +287,8 @@ export const validateWorkflowData = (workflowData: Partial<WorkflowTemplateData>
   manifestErrors['summary'] =
     isAccelerator && isUndefinedOrEmptyString(workflowManifest?.summary)
       ? intl.formatMessage({
-          defaultMessage: 'Workflow summary is required.',
-          id: 'erGyZT',
+          defaultMessage: 'Workflow summary is required for publish.',
+          id: '1lLI6H',
           description: 'Error message when the workflow description is empty',
         })
       : undefined;
@@ -307,66 +296,71 @@ export const validateWorkflowData = (workflowData: Partial<WorkflowTemplateData>
   manifestErrors['kinds'] = (workflowManifest?.kinds ?? []).length
     ? undefined
     : intl.formatMessage({
-        defaultMessage: 'At least one state type is required.',
-        id: '3+Xsk7',
+        defaultMessage: 'At least one state type is required for publish.',
+        id: 'a21rtJ',
         description: 'Error shown when the State type list is missing or empty',
       });
 
   manifestErrors['images.light'] = isUndefinedOrEmptyString(workflowManifest?.images?.light)
     ? intl.formatMessage({
-        defaultMessage: 'The light image version of the workflow is required.',
-        id: 'JhJ8qX',
+        defaultMessage: 'The light image version of the workflow is required for publish.',
+        id: 't/aciw',
         description: 'Error message when the workflow light image is empty',
       })
     : undefined;
 
   manifestErrors['images.dark'] = isUndefinedOrEmptyString(workflowManifest?.images?.dark)
     ? intl.formatMessage({
-        defaultMessage: 'The dark image version of the workflow is required.',
-        id: '7xiCnC',
+        defaultMessage: 'The dark image version of the workflow is required for publish.',
+        id: 'arjUBV',
         description: 'Error message when the workflow dark image is empty',
       })
     : undefined;
 
-  return {
-    workflow: workflowNameError,
-    manifest: manifestErrors,
-  };
+  return manifestErrors;
 };
 
 export const validateTemplateManifestValue = (manifest: Template.TemplateManifest): Record<string, string | undefined> => {
   const intl = getIntl();
   const errors: Record<string, string> = {};
 
+  if (!manifest.skus?.length) {
+    errors['allowedSkus'] = intl.formatMessage({
+      defaultMessage: 'Atleast one sku is required for publish.',
+      id: 'rhBKTF',
+      description: 'Error shown when the template skus are empty',
+    });
+  }
+
   if (isUndefinedOrEmptyString(manifest.title)) {
     errors['title'] = intl.formatMessage({
-      defaultMessage: 'Title is required.',
-      id: 'oF5+jB',
+      defaultMessage: 'Title is required for publish.',
+      id: 't9lUGS',
       description: 'Error shown when the template title is missing or empty',
     });
   }
 
   if (isUndefinedOrEmptyString(manifest.summary)) {
     errors['summary'] = intl.formatMessage({
-      defaultMessage: 'Summary is required.',
-      id: 'h4OHMi',
+      defaultMessage: 'Summary is required for publish.',
+      id: 'm7tML3',
       description: 'Error shown when the template summary is missing or empty',
+    });
+  }
+
+  if (!manifest.featuredConnectors?.length) {
+    errors['featuredConnectors'] = intl.formatMessage({
+      defaultMessage: 'At least one featured connector is required for publish.',
+      id: 'fQh72N',
+      description: 'Error shown when the feature connector field is missing',
     });
   }
 
   if (isUndefinedOrEmptyString(manifest.details?.By)) {
     errors['details.By'] = intl.formatMessage({
-      defaultMessage: 'By field is required.',
-      id: 'JSWwJH',
+      defaultMessage: 'By field is required for publish.',
+      id: 'pRrzwt',
       description: 'Error shown when the author (By) field is missing',
-    });
-  }
-
-  if (isUndefinedOrEmptyString(manifest.details?.Category)) {
-    errors['details.Category'] = intl.formatMessage({
-      defaultMessage: 'At least one category is required.',
-      id: '5GmlRf',
-      description: 'Error shown when the Category field is missing',
     });
   }
 

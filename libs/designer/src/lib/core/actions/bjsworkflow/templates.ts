@@ -46,14 +46,10 @@ export interface WorkflowTemplateData {
     light?: string;
     dark?: string;
   };
+  isManageWorkflow?: boolean;
   triggerType: string;
   connectionKeys: string[];
-  errors: {
-    workflow: string | undefined;
-    kind?: string;
-    manifest?: Record<string, string | undefined>;
-    triggerDescription?: string;
-  };
+  errors: WorkflowErrors;
 }
 
 export interface TemplatePayload {
@@ -61,11 +57,22 @@ export interface TemplatePayload {
   workflows: Record<string, WorkflowTemplateData>;
   parameterDefinitions: Record<string, Template.ParameterDefinition>;
   connections: Record<string, Template.Connection>;
-  errors: {
-    manifest: Record<string, string | undefined>;
-    parameters: Record<string, string | undefined>;
-    connections: string | undefined;
-  };
+  errors: TemplateErrors;
+}
+
+export interface TemplateErrors {
+  general: string | undefined;
+  manifest: Record<string, string | undefined>;
+  parameters: Record<string, string | undefined>;
+  connections: string | undefined;
+}
+
+export interface WorkflowErrors {
+  general: string | undefined;
+  workflow: string | undefined;
+  kind?: string;
+  manifest?: Record<string, string | undefined>;
+  triggerDescription?: string;
 }
 
 export const initializeWorkflowMetadata = createAsyncThunk(
@@ -207,6 +214,7 @@ export const loadCustomTemplateArtifacts = createAsyncThunk('loadCustomTemplateA
     parameterDefinitions: {},
     connections: {},
     errors: {
+      general: undefined,
       manifest: {},
       parameters: {},
       connections: undefined,
@@ -419,6 +427,7 @@ const loadTemplateFromResourcePath = async (
     parameterDefinitions: {},
     connections: {},
     errors: {
+      general: undefined,
       manifest: {},
       parameters: {},
       connections: undefined,
@@ -479,6 +488,7 @@ const loadWorkflowTemplate = async (
         },
         connectionKeys: Object.keys(workflowManifest.connections),
         errors: {
+          general: undefined,
           workflow: undefined,
           kind: undefined,
         },

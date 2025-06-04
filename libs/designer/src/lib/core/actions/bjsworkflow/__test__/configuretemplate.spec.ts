@@ -1,14 +1,11 @@
-import { AnyAction, ThunkDispatch } from '@reduxjs/toolkit';
 import { getTemplateConnections, getTemplateParameters } from '../configuretemplate';
-import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, test, expect } from 'vitest';
+import { describe, vi, beforeEach, afterEach, test, expect } from 'vitest';
 import { RootState } from '../../../state/templates/store';
 import { equals, InitOperationManifestService, InitResourceService, LogicAppsV2 } from '@microsoft/logic-apps-shared';
-import { delimiter, getLogicAppId } from '../../../configuretemplate/utils/helper';
 
 let spy: any;
 
 describe('actions/configuretemplate', () => {
-  let dispatch: ThunkDispatch<unknown, unknown, AnyAction>;
   let mockedState: RootState;
   const workflows = {
     id1: { id: 'id1', manifest: { metadata: { workflowSourceId: 'id1' } } },
@@ -54,7 +51,6 @@ describe('actions/configuretemplate', () => {
 
   describe('getTemplateConnections', () => {
     beforeEach(() => {
-      dispatch = vi.fn();
       mockedState = {
         workflow: {
           subscriptionId: 'sub1',
@@ -77,7 +73,7 @@ describe('actions/configuretemplate', () => {
 
     test('should return all connections for consumption workflow', async () => {
       const state = { ...mockedState, workflow: { ...mockedState.workflow, isConsumption: true } };
-      const result = await getTemplateConnections(state, dispatch, workflows);
+      const result = await getTemplateConnections(state, workflows);
 
       expect(result).toBeDefined();
       expect(result.connections).toEqual({
@@ -86,19 +82,17 @@ describe('actions/configuretemplate', () => {
       expect(result.mapping).toEqual({
         [`${workflows.id1.id}::::::Get_emails_(V3)`]: 'office365-1',
       });
-      expect(dispatch).toHaveBeenCalledWith(
+      expect(result.workflowsWithDefinitions).toEqual(
         expect.objectContaining({
-          payload: {
-            [workflows.id1.id]: expect.objectContaining({
-              connectionKeys: ['office365-1'],
-            }),
-          },
+          [workflows.id1.id]: expect.objectContaining({
+            connectionKeys: ['office365-1'],
+          }),
         })
       );
     });
 
     test('should return only used connections for standard workflows selected in app', async () => {
-      const result = await getTemplateConnections(mockedState, dispatch, workflows);
+      const result = await getTemplateConnections(mockedState, workflows);
 
       expect(result).toBeDefined();
       expect(result.connections).toEqual(
@@ -113,16 +107,13 @@ describe('actions/configuretemplate', () => {
           'id2::::::Get_emails_(V3)': 'office365-1',
         })
       );
-      expect(dispatch).toHaveBeenCalledWith(
+      expect(result.workflowsWithDefinitions).toEqual(
         expect.objectContaining({
-          type: 'template/updateAllWorkflowsData',
-          payload: expect.objectContaining({
-            id1: expect.objectContaining({
-              connectionKeys: ['azureaisearch-1'],
-            }),
-            id2: expect.objectContaining({
-              connectionKeys: ['office365-1'],
-            }),
+          id1: expect.objectContaining({
+            connectionKeys: ['azureaisearch-1'],
+          }),
+          id2: expect.objectContaining({
+            connectionKeys: ['office365-1'],
           }),
         })
       );
@@ -307,7 +298,7 @@ describe('actions/configuretemplate', () => {
       const state = { ...mockedState, workflow: { ...mockedState.workflow, isConsumption: true } } as any;
       state.operation.inputParameters = consumptionWorkflowParameters;
 
-      const result = await getTemplateParameters(state, mapping);
+      const result = await getTemplateParameters(state, consumptionWorkflowParameters as any, state.operation.dependencies, mapping);
       expect(result).toBeDefined();
       expect(Object.keys(result)).toHaveLength(2);
       expect(result).toEqual(
@@ -329,7 +320,12 @@ describe('actions/configuretemplate', () => {
     });
 
     test('should return only used parameters for standard workflows selected in app', async () => {
-      const result = await getTemplateParameters(mockedState, mapping);
+      const result = await getTemplateParameters(
+        mockedState,
+        mockedState.operation.inputParameters,
+        mockedState.operation.dependencies,
+        mapping
+      );
       expect(result).toBeDefined();
       expect(Object.keys(result)).toHaveLength(3);
       expect(result).toEqual(

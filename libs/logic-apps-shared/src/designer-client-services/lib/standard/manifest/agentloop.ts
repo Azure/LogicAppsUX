@@ -41,6 +41,26 @@ export default {
     inputs: {
       type: 'object',
       properties: {
+        agentModelType: {
+          title: 'Agent model type',
+          description: 'Type of agent model to use',
+          'x-ms-visibility': 'important',
+          'x-ms-editor': 'dropdown',
+          'x-ms-editor-options': {
+            options: [
+              {
+                value: 'AzureOpenAI',
+                displayName: 'Azure OpenAI',
+              },
+              {
+                value: 'FoundryAgentService',
+                displayName: 'Foundry Agent Service',
+              },
+            ],
+          },
+          type: 'string',
+          default: 'AzureOpenAI',
+        },
         deploymentId: {
           type: 'string',
           title: 'Deployment Model Name',
@@ -48,13 +68,6 @@ export default {
           'x-ms-connection-required': true,
           'x-ms-visibility': 'important',
           'x-ms-editor': 'combobox',
-        },
-        agentModelType: {
-          title: 'Agent model type',
-          description: 'Type of agent model to use',
-          default: 'AzureOpenAI',
-          type: 'string',
-          hideInUI: true,
         },
         messages: {
           title: 'Instructions for agent',
@@ -76,6 +89,15 @@ export default {
                   format: 'int32',
                   minimum: 1,
                   maximum: 8192,
+                  'x-ms-input-dependencies': {
+                    type: 'visibility',
+                    parameters: [
+                      {
+                        name: 'agentModelType',
+                        values: ['AzureOpenAI'],
+                      },
+                    ],
+                  },
                 },
                 frequencyPenalty: {
                   title: 'Frequency penalty',
@@ -84,6 +106,15 @@ export default {
                   format: 'float',
                   minimum: -2.0,
                   maximum: 2.0,
+                  'x-ms-input-dependencies': {
+                    type: 'visibility',
+                    parameters: [
+                      {
+                        name: 'agentModelType',
+                        values: ['AzureOpenAI'],
+                      },
+                    ],
+                  },
                 },
                 presencePenalty: {
                   title: 'Presence penalty',
@@ -92,6 +123,15 @@ export default {
                   minimum: -2.0,
                   format: 'float',
                   maximum: 2.0,
+                  'x-ms-input-dependencies': {
+                    type: 'visibility',
+                    parameters: [
+                      {
+                        name: 'agentModelType',
+                        values: ['AzureOpenAI'],
+                      },
+                    ],
+                  },
                 },
                 temperature: {
                   title: 'Temperature',
@@ -109,6 +149,33 @@ export default {
                   minimum: 0,
                   maximum: 1.0,
                 },
+                builtinTools: {
+                  type: 'array',
+                  title: 'Built in tools',
+                  'x-ms-editor': 'dropdown',
+                  'x-ms-editor-options': {
+                    multiSelect: true,
+                    titleSeparator: ',',
+                    serialization: {
+                      valueType: 'array',
+                    },
+                    options: [
+                      {
+                        value: 'code_interpreter',
+                        displayName: 'Code interpreter',
+                      },
+                    ],
+                  },
+                  'x-ms-input-dependencies': {
+                    type: 'visibility',
+                    parameters: [
+                      {
+                        name: 'agentModelType',
+                        values: ['FoundryAgentService'],
+                      },
+                    ],
+                  },
+                },
               },
             },
             agentHistoryReductionSettings: {
@@ -116,9 +183,18 @@ export default {
               properties: {
                 agentHistoryReductionType: {
                   type: 'string',
-                  title: 'Agent history reduction type',
+                  title: 'Agent history reduction type (Experimental)',
                   default: 'maximumTokenCountReduction',
                   description: 'Type of agent history reduction to use',
+                  'x-ms-input-dependencies': {
+                    type: 'visibility',
+                    parameters: [
+                      {
+                        name: 'agentModelType',
+                        values: ['AzureOpenAI'],
+                      },
+                    ],
+                  },
                   'x-ms-editor': 'dropdown',
                   'x-ms-editor-options': {
                     options: [
@@ -166,11 +242,72 @@ export default {
                 },
               },
             },
+            deploymentModelProperties: {
+              type: 'object',
+              properties: {
+                name: {
+                  title: 'Model name',
+                  description: 'Name of the model which you want to use for the agent',
+                  type: 'string',
+                  default: 'gpt-4.1',
+                  'x-ms-input-dependencies': {
+                    type: 'visibility',
+                    parameters: [
+                      {
+                        name: 'agentModelType',
+                        values: ['AzureOpenAI'],
+                      },
+                    ],
+                  },
+                },
+                format: {
+                  title: 'Model format',
+                  description: 'Format of the model you are using',
+                  type: 'string',
+                  default: 'OpenAI',
+                  'x-ms-input-dependencies': {
+                    type: 'visibility',
+                    parameters: [
+                      {
+                        name: 'agentModelType',
+                        values: ['AzureOpenAI'],
+                      },
+                    ],
+                  },
+                },
+                version: {
+                  title: 'Model version',
+                  description: 'Version of the model you are using',
+                  type: 'string',
+                  default: '2025-04-14',
+                  'x-ms-input-dependencies': {
+                    type: 'visibility',
+                    parameters: [
+                      {
+                        name: 'agentModelType',
+                        values: ['AzureOpenAI'],
+                      },
+                    ],
+                  },
+                },
+              },
+            },
           },
         },
       },
-      required: ['deploymentId', 'messages', 'agentModelType'],
+      required: ['agentModelType', 'deploymentId', 'messages', 'deploymentModelProperties'],
     },
+    outputs: {
+      type: 'object',
+      properties: {
+        lastAssistantMessage: {
+          type: 'object',
+          title: 'Last Assitant Message',
+          description: 'This is the final message returned by the model',
+        },
+      },
+    },
+    isOutputsOptional: false,
     channels: {
       type: 'object',
       properties: {

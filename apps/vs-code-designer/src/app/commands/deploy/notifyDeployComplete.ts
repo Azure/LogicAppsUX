@@ -5,11 +5,10 @@
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import type { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
-import { uploadAppSettings } from '../appSettings/uploadAppSettings';
 import { startStreamingLogs } from '../logstream/startStreamingLogs';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
-import type { MessageItem, WorkspaceFolder } from 'vscode';
+import type { MessageItem } from 'vscode';
 import { window } from 'vscode';
 
 /**
@@ -18,12 +17,7 @@ import { window } from 'vscode';
  * @param {WorkspaceFolder} workspaceFolder - Workspace folder path.
  * @param {string[]} settingsToExclude - Array of settings to exclude from uploading.
  */
-export async function notifyDeployComplete(
-  node: SlotTreeItem,
-  workspaceFolder: WorkspaceFolder,
-  isHybridLogiApp: boolean,
-  settingsToExclude?: string[]
-): Promise<void> {
+export async function notifyDeployComplete(node: SlotTreeItem, isHybridLogiApp: boolean): Promise<void> {
   const deployComplete: string = localize(
     'deployComplete',
     'Deployment to "{0}" completed.',
@@ -36,10 +30,7 @@ export async function notifyDeployComplete(
 
   const viewOutput: MessageItem = { title: localize('viewOutput', 'View output') };
   const streamLogs: MessageItem = { title: localize('streamLogs', 'Stream logs') };
-  const uploadSettings: MessageItem = { title: localize('uploadAppSettings', 'Upload settings') };
-
-  // NOTE(anandgmenon): For hybrid, we update app settings by default already.
-  const items = node.isHybridLogicApp ? [viewOutput, streamLogs] : [viewOutput, streamLogs, uploadSettings];
+  const items = [viewOutput, streamLogs];
 
   window.showInformationMessage(deployComplete, ...items).then(async (result) => {
     await callWithTelemetryAndErrorHandling('postDeploy', async (postDeployContext: IActionContext) => {
@@ -48,8 +39,6 @@ export async function notifyDeployComplete(
         ext.outputChannel.show();
       } else if (result === streamLogs) {
         await startStreamingLogs(postDeployContext, node);
-      } else if (result === uploadSettings) {
-        await uploadAppSettings(postDeployContext, node.appSettingsTreeItem, undefined, workspaceFolder, settingsToExclude);
       }
     });
   });

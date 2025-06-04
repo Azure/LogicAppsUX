@@ -71,7 +71,17 @@ import type {
   PanelTabProps,
   InitializeVariableProps,
 } from '@microsoft/designer-ui';
-import { EditorService, equals, getPropertyValue, getRecordEntry, isRecordNotEmpty, SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
+import {
+  clone,
+  EditorService,
+  equals,
+  getPropertyValue,
+  getRecordEntry,
+  guid,
+  isNullOrUndefined,
+  isRecordNotEmpty,
+  SUBGRAPH_TYPES,
+} from '@microsoft/logic-apps-shared';
 import type { OperationInfo } from '@microsoft/logic-apps-shared';
 import type React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -79,8 +89,10 @@ import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import { ConnectionInline } from './connectionInline';
 import { ConnectionsSubMenu } from './connectionsSubMenu';
-import { isAgentConnector } from '../../../../../common/utilities/Utils';
 import { useCognitiveServiceAccountDeploymentsForNode } from '../../../connectionsPanel/createConnection/custom/useCognitiveService';
+import { isAgentConnectorAndAgentModel, isAgentConnectorAndAgentServiceModel, isAgentConnectorAndDeploymentId } from './helpers';
+import { useShouldEnableFoundryServiceConnection } from './hooks';
+import { removeNodeConnectionData } from '../../../../../core/state/connection/connectionSlice';
 
 // TODO: Add a readonly per settings section/group
 export interface ParametersTabProps extends PanelTabProps {
@@ -230,6 +242,7 @@ const ParameterSection = ({
   const isTrigger = useSelector((state: RootState) => isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata));
   const operationInfo = useOperationInfo(nodeId);
   const dependencies = useDependencies(nodeId);
+  const isFoundryServiceConnectionEnabled = useShouldEnableFoundryServiceConnection();
 
   // Specific for agentic scenarios
   const { data: deploymentsForCognitiveServiceAccount } = useCognitiveServiceAccountDeploymentsForNode(nodeId, operationInfo?.connectorId);
@@ -260,10 +273,16 @@ const ParameterSection = ({
     [nodeId, rootState.operations.inputParameters]
   );
 
+  const isAgentServiceConnection = useMemo(() => {
+    return isAgentConnectorAndAgentServiceModel(operationInfo.connectorId, group.id, nodeInputs.parameterGroups);
+  }, [group.id, nodeInputs.parameterGroups, operationInfo.connectorId]);
+
   const onValueChange = useCallback(
     (id: string, newState: ChangeState, skipStateSave?: boolean) => {
       const { value, viewModel } = newState;
-      const parameter = nodeInputs.parameterGroups[group.id].parameters.find((param: any) => param.id === id);
+      const parameterGroup = nodeInputs.parameterGroups[group.id];
+      const parameter = parameterGroup.parameters.find((param: any) => param.id === id);
+      const updatedDependencies = clone(dependencies);
 
       const propertiesToUpdate: Partial<ParameterInfo> = {
         value,
@@ -333,6 +352,81 @@ const ParameterSection = ({
         dispatch(addOrUpdateCustomCode({ nodeId, fileData, fileExtension, fileName }));
       }
 
+      if (isAgentConnectorAndAgentModel(operationInfo.connectorId ?? '', parameter?.parameterKey ?? '')) {
+        const newValue = value.length > 0 ? value[0].value : undefined;
+        const oldValue = parameter?.value && parameter.value.length > 0 ? parameter.value[0].value : undefined;
+        if (!isNullOrUndefined(newValue) && !isNullOrUndefined(oldValue) && newValue !== oldValue) {
+          dispatch(removeNodeConnectionData({ nodeId }));
+        }
+      }
+
+      if (isAgentConnectorAndDeploymentId(operationInfo.connectorId ?? '', parameter?.parameterKey ?? '')) {
+        const deploymentInfo =
+          value.length > 0
+            ? deploymentsForCognitiveServiceAccount?.find((deployment: any) => deployment.name === value[0]?.value)
+            : undefined;
+
+        if (!updatedDependencies.inputs) {
+          updatedDependencies.inputs = {};
+        }
+
+        const getDependentInputParameter = (key: string, apiValue?: any) => {
+          const parameterAgentDeploymentName = parameterGroup.parameters.find((param) => equals(key, param.parameterKey, true));
+
+          const value = apiValue ?? parameterAgentDeploymentName?.schema?.default;
+
+          if (value) {
+            return {
+              definition: parameterAgentDeploymentName?.schema,
+              dependencyType: 'AgentSchema' as any,
+              dependentParameters: {
+                [id]: {
+                  isValid: true,
+                },
+              },
+              parameter: {
+                key: key,
+                type: parameterAgentDeploymentName?.type ?? '',
+                name: parameterAgentDeploymentName?.parameterName ?? '',
+                value: [
+                  {
+                    value: value,
+                    type: 'literal',
+                    id: guid(),
+                  },
+                ],
+              },
+            };
+          }
+
+          return undefined;
+        };
+
+        const agentDeploymentKeys = [
+          {
+            key: 'inputs.$.agentModelSettings.deploymentModelProperties.name',
+            default: deploymentInfo?.properties?.model?.name,
+          },
+
+          {
+            key: 'inputs.$.agentModelSettings.deploymentModelProperties.format',
+            default: deploymentInfo?.properties?.model?.format,
+          },
+
+          {
+            key: 'inputs.$.agentModelSettings.deploymentModelProperties.version',
+            default: deploymentInfo?.properties?.model?.version,
+          },
+        ];
+
+        for (const entry of agentDeploymentKeys) {
+          const info = getDependentInputParameter(entry.key, entry.default);
+          if (info) {
+            updatedDependencies.inputs[entry.key] = info;
+          }
+        }
+      }
+
       dispatch(
         updateParameterAndDependencies({
           nodeId,
@@ -343,7 +437,7 @@ const ParameterSection = ({
           operationInfo,
           connectionReference,
           nodeInputs,
-          dependencies,
+          dependencies: updatedDependencies,
           operationDefinition,
           skipStateSave,
         })
@@ -357,6 +451,7 @@ const ParameterSection = ({
       dispatch,
       isTrigger,
       operationInfo,
+      deploymentsForCognitiveServiceAccount,
       connectionReference,
       dependencies,
       operationDefinition,
@@ -594,6 +689,9 @@ const ParameterSection = ({
 
   const settings: Settings[] = group?.parameters
     .filter((x) => !x.hideInUI && shouldUseParameterInGroup(x, group.parameters))
+    .filter((param) => {
+      return param.parameterName !== 'agentModelType' || isFoundryServiceConnectionEnabled;
+    })
     .map((param) => {
       const { id, label, value, required, showTokens, placeholder, editorViewModel, dynamicData, conditionalVisibility, validationErrors } =
         param;
@@ -642,6 +740,7 @@ const ParameterSection = ({
           pickerCallbacks: getPickerCallbacks(param),
           tokenpickerButtonProps: {
             location: panelLocation === PanelLocation.Left ? TokenPickerButtonLocation.Right : TokenPickerButtonLocation.Left,
+            hideButtonOptions: { hideDynamicContent: isAgentServiceConnection, hideExpression: isAgentServiceConnection },
           },
           agentParameterButtonProps: { showAgentParameterButton },
           hostOptions: {
@@ -740,18 +839,16 @@ export const getEditorAndOptions = (
     };
   }
 
-  if (
-    equals(editor, 'combobox') &&
-    isAgentConnector(operationInfo?.connectorId ?? '') &&
-    equals(parameter.parameterKey, 'inputs.$.deploymentId', true)
-  ) {
+  if (equals(editor, 'combobox') && isAgentConnectorAndDeploymentId(operationInfo.connectorId ?? '', parameter.parameterKey)) {
     return {
       editor,
       editorOptions: {
-        options: deploymentsForCognitiveServiceAccount.map((deployment: any) => ({
-          value: deployment.name,
-          displayName: `${deployment.name} ${deployment.properties?.model?.name ? `(${deployment.properties?.model?.name})` : ''}`,
-        })),
+        options: deploymentsForCognitiveServiceAccount
+          .filter((deployment: any) => constants.SUPPORTED_AGENT_MODELS.includes((deployment.properties?.model?.name ?? '').toLowerCase()))
+          .map((deployment: any) => ({
+            value: deployment.name,
+            displayName: `${deployment.name} ${deployment.properties?.model?.name ? `(${deployment.properties?.model?.name})` : ''}`,
+          })),
       },
     };
   }

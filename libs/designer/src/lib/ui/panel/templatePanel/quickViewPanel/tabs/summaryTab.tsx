@@ -150,7 +150,7 @@ export const summaryTab = (
   dispatch: AppDispatch,
   workflowId: string,
   clearDetailsOnClose: boolean,
-  { templateId, workflowAppName, isMultiWorkflow }: Template.TemplateContext,
+  { templateId, workflowAppName, isMultiWorkflow, showCreate, showCloseButton }: Template.TemplateContext,
   onClose?: () => void
 ): TemplateTabProps => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.OVERVIEW,
@@ -162,31 +162,42 @@ export const summaryTab = (
   tabStatusIcon: undefined,
   content: <SummaryPanel workflowId={workflowId} />,
   footerContent: {
-    primaryButtonText: intl.formatMessage({
-      defaultMessage: 'Use this template',
-      id: '5szzYP',
-      description: 'Button text to create workflow from this template',
-    }),
-    primaryButtonOnClick: () => {
-      LoggerService().log({
-        level: LogEntryLevel.Trace,
-        area: 'Templates.overviewTab',
-        message: 'Template create button clicked',
-        args: [templateId, workflowAppName, `isMultiWorkflowTemplate:${isMultiWorkflow}`],
-      });
-      dispatch(openPanelView({ panelView: TemplatePanelView.CreateWorkflow }));
-    },
-    secondaryButtonText: intl.formatMessage({
-      defaultMessage: 'Close',
-      id: 'FTrMxN',
-      description: 'Button text for closing the panel',
-    }),
-    secondaryButtonOnClick: () => {
-      dispatch(closePanel());
-      if (clearDetailsOnClose) {
-        dispatch(clearTemplateDetails());
-      }
-      onClose?.();
-    },
+    buttonContents: [
+      {
+        type: 'action',
+        text: intl.formatMessage({
+          defaultMessage: 'Use this template',
+          id: '5szzYP',
+          description: 'Button text to create workflow from this template',
+        }),
+        appearance: 'primary',
+        onClick: () => {
+          LoggerService().log({
+            level: LogEntryLevel.Trace,
+            area: 'Templates.overviewTab',
+            message: 'Template create button clicked',
+            args: [templateId, workflowAppName, `isMultiWorkflowTemplate:${isMultiWorkflow}`],
+          });
+          dispatch(openPanelView({ panelView: TemplatePanelView.CreateWorkflow }));
+        },
+        hide: !showCreate,
+      },
+      {
+        type: 'action',
+        text: intl.formatMessage({
+          defaultMessage: 'Close',
+          id: 'FTrMxN',
+          description: 'Button text for closing the panel',
+        }),
+        onClick: () => {
+          dispatch(closePanel());
+          if (clearDetailsOnClose) {
+            dispatch(clearTemplateDetails());
+          }
+          onClose?.();
+        },
+        disabled: !showCloseButton,
+      },
+    ],
   },
 });

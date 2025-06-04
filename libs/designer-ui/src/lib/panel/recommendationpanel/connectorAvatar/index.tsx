@@ -30,7 +30,7 @@ export const ConnectorAvatar = ({
         // We don't want to log custom connector image failures since it is provided by users and is a user error
         if (!isCustomApi) {
           LoggerService().log({
-            level: LogEntryLevel.Error,
+            level: LogEntryLevel.Warning,
             area: 'ConnectorAvatar.onError',
             message: 'Connector image failed to load.',
             args: [iconUri, connectorId],

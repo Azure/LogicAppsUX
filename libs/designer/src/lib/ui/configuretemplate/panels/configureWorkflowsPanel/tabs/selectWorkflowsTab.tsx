@@ -15,6 +15,7 @@ export const selectWorkflowsTab = (
     selectedWorkflowsList,
     onWorkflowsSelected,
     onNextButtonClick,
+    onClose,
   }: ConfigureWorkflowsTabProps & {
     onWorkflowsSelected: (normalizedWorkflowIds: string[]) => void;
     onNextButtonClick: () => Promise<void>;
@@ -22,31 +23,44 @@ export const selectWorkflowsTab = (
 ): TemplateTabProps => ({
   id: constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.SELECT_WORKFLOWS,
   title: intl.formatMessage({
-    defaultMessage: 'Select workflows',
-    id: 'vWOWFo',
-    description: 'The tab label for the monitoring select workflows tab on the configure template wizard',
+    defaultMessage: 'Choose workflows',
+    id: 'OqpFYV',
+    description: 'The tab label for the monitoring choosing workflows tab on the configure template wizard',
   }),
   disabled: isSaving,
   content: <SelectWorkflows selectedWorkflowsList={selectedWorkflowsList} onWorkflowsSelected={onWorkflowsSelected} />,
   footerContent: {
-    primaryButtonText: intl.formatMessage({
-      defaultMessage: 'Next',
-      id: '0UfxUM',
-      description: 'Button text for moving to the next tab in the create workflow panel',
-    }),
-    primaryButtonOnClick: () => {
-      dispatch(selectPanelTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.CUSTOMIZE_WORKFLOWS));
-      onNextButtonClick();
-    },
-    primaryButtonDisabled: isPrimaryButtonDisabled,
-    secondaryButtonText: intl.formatMessage({
-      defaultMessage: 'Cancel',
-      id: '75zXUl',
-      description: 'Button text for closing the panel',
-    }),
-    secondaryButtonOnClick: () => {
-      dispatch(closePanel());
-    },
-    secondaryButtonDisabled: isSaving,
+    buttonContents: [
+      {
+        type: 'navigation',
+        text: intl.formatMessage({
+          defaultMessage: 'Next',
+          id: '0UfxUM',
+          description: 'Button text for moving to the next tab in the create workflow panel',
+        }),
+        appearance: 'primary',
+        onClick: () => {
+          dispatch(selectPanelTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.CUSTOMIZE_WORKFLOWS));
+          onNextButtonClick();
+        },
+        disabled: isPrimaryButtonDisabled,
+      },
+      {
+        type: 'navigation',
+        text: intl.formatMessage({
+          defaultMessage: 'Cancel',
+          id: '75zXUl',
+          description: 'Button text for closing the panel',
+        }),
+        onClick: () => {
+          if (onClose) {
+            onClose();
+          } else {
+            dispatch(closePanel());
+          }
+        },
+        disabled: isSaving,
+      },
+    ],
   },
 });

@@ -4,7 +4,7 @@ import { useIntl } from 'react-intl';
 import { useWorkflowsInApp } from '../../../core/configuretemplate/utils/queries';
 import { ResourcePicker } from '../../templates';
 import { useSelector } from 'react-redux';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { equals, type LogicAppResource } from '@microsoft/logic-apps-shared';
 import {
   TableBody,
@@ -21,9 +21,13 @@ import {
   createTableColumn,
   Skeleton,
   SkeletonItem,
+  MessageBar,
+  MessageBarBody,
 } from '@fluentui/react-components';
 import { useResourceStrings } from '../resources';
 import type { WorkflowTemplateData } from '../../../core';
+import { useTemplatesStrings } from '../../templates/templatesStrings';
+import { tableHeaderStyle } from '../common';
 
 export const SelectWorkflows = ({
   selectedWorkflowsList,
@@ -38,7 +42,6 @@ export const SelectWorkflows = ({
     logicAppName: state.workflow.logicAppName,
     subscriptionId: state.workflow.subscriptionId,
     resourceGroup: state.workflow.resourceGroup,
-    workflowsInTemplate: state.template.workflows,
     selectedTabId: state.tab.selectedTabId,
   }));
   const { data: workflows, isLoading } = useWorkflowsInApp(subscriptionId, resourceGroup, logicAppName ?? '', !!isConsumption);
@@ -56,17 +59,28 @@ export const SelectWorkflows = ({
     [onWorkflowsSelected]
   );
 
-  const resourceStrings = useResourceStrings();
+  const differentIdThanResourceRecord = useMemo(() => {
+    const selectedDifferentNameWorkflowsList: Record<string, string | undefined> = {};
+    for (const workflow of Object.values(selectedWorkflowsList)) {
+      const workflowSourceId = workflow.manifest?.metadata?.workflowSourceId;
+      if (workflowSourceId && workflow.isManageWorkflow) {
+        selectedDifferentNameWorkflowsList[workflowSourceId] = workflow.id;
+      }
+    }
+    return selectedDifferentNameWorkflowsList;
+  }, [selectedWorkflowsList]);
+
+  const resourceStrings = { ...useTemplatesStrings().resourceStrings, ...useResourceStrings() };
 
   const intlText = {
     SOURCE: intl.formatMessage({
-      defaultMessage: 'Source',
-      id: '3LM7R3',
+      defaultMessage: 'Project details',
+      id: 'gWNQQQ',
       description: 'Title for the resource selection section',
     }),
     SOURCE_LABEL: intl.formatMessage({
-      defaultMessage: 'Select the logic app from where you want to add workflows.',
-      id: 'LbblPE',
+      defaultMessage: `Select a subscription, resource group and Logic App instance to find the workflows you want to convert to templates. Your changes apply only to this template and won't affect the original workflows.`,
+      id: 'U82s8v',
       description: 'Label for the logic app resource selection description',
     }),
     WORKFLOWS: intl.formatMessage({
@@ -75,14 +89,20 @@ export const SelectWorkflows = ({
       description: 'Title for the workflows selection section',
     }),
     WORKFLOWS_LABEL: intl.formatMessage({
-      defaultMessage: 'Select the workflows to add to this template.',
-      id: 'ODtEzQ',
+      defaultMessage:
+        'Select one or more workflows to build your template. A single workflow creates a workflow template; multiple workflows create an accelerator template.',
+      id: 'zFTBF1',
       description: 'Label for the workflows selection description',
     }),
     WORKFLOW_NAME: intl.formatMessage({
       defaultMessage: 'Name',
       id: 'kLqXDY',
       description: 'Label for workflow Name',
+    }),
+    INFO_TEXT: intl.formatMessage({
+      defaultMessage: 'Currently, templates only support workflows from the same Logic App instance.',
+      id: 'dKW11v',
+      description: 'Info message during workflow selection',
     }),
   };
 
@@ -104,13 +124,14 @@ export const SelectWorkflows = ({
   const items =
     workflows?.map((workflow) => ({
       id: workflow.id,
+      workflowName: differentIdThanResourceRecord[workflow.id],
       name: workflow.name,
       trigger: workflow.triggerType,
     })) ?? [];
 
   const {
     getRows,
-    selection: { allRowsSelected, someRowsSelected, toggleAllRows, toggleRow, isRowSelected },
+    selection: { someRowsSelected, toggleRow, isRowSelected },
   } = useTableFeatures(
     {
       columns,
@@ -145,10 +166,18 @@ export const SelectWorkflows = ({
     };
   });
 
+  const allRowsSelected = useMemo(() => {
+    return !rows?.filter((row) => !row.selected)?.length;
+  }, [rows]);
+
+  const toggleAllRows = useCallback(() => {
+    onWorkflowsSelected(allRowsSelected ? [] : (workflows?.map((workflow) => workflow.id) ?? []));
+  }, [onWorkflowsSelected, workflows, allRowsSelected]);
+
   const toggleAllKeydown = useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
       if (e.key === ' ') {
-        toggleAllRows(e);
+        toggleAllRows();
         e.preventDefault();
       }
     },
@@ -158,6 +187,11 @@ export const SelectWorkflows = ({
   return (
     <div className="msla-templates-tab msla-panel-no-description-tab">
       <TemplatesSection title={intlText.SOURCE} titleHtmlFor={'sourceLabel'} description={intlText.SOURCE_LABEL}>
+        <div style={{ paddingBottom: 10 }}>
+          <MessageBar>
+            <MessageBarBody>{intlText.INFO_TEXT}</MessageBarBody>
+          </MessageBar>
+        </div>
         <ResourcePicker viewMode={'alllogicapps'} onSelectApp={onLogicAppSelected} />
       </TemplatesSection>
       <TemplatesSection title={intlText.WORKFLOWS} titleHtmlFor={'workflowsLabel'} description={intlText.WORKFLOWS_LABEL}>
@@ -170,8 +204,11 @@ export const SelectWorkflows = ({
                 onKeyDown={isConsumption ? () => {} : toggleAllKeydown}
                 checkboxIndicator={{ 'aria-label': resourceStrings.SelectAllWorkflowsLabel }}
               />
-              <TableHeaderCell>{intlText.WORKFLOW_NAME}</TableHeaderCell>
-              <TableHeaderCell>{resourceStrings.Trigger}</TableHeaderCell>
+              <TableHeaderCell style={tableHeaderStyle}>{intlText.WORKFLOW_NAME}</TableHeaderCell>
+              {Object.keys(differentIdThanResourceRecord).length ? (
+                <TableHeaderCell style={tableHeaderStyle}>{resourceStrings.WORKFLOW_NAME}</TableHeaderCell>
+              ) : null}
+              <TableHeaderCell style={tableHeaderStyle}>{resourceStrings.Trigger}</TableHeaderCell>
             </TableRow>
           </TableHeader>
 
@@ -209,6 +246,11 @@ export const SelectWorkflows = ({
                     <TableCell>
                       <TableCellLayout>{item.name}</TableCellLayout>
                     </TableCell>
+                    {Object.keys(differentIdThanResourceRecord).length ? (
+                      <TableCell>
+                        <TableCellLayout>{item.workflowName ?? resourceStrings.Placeholder}</TableCellLayout>
+                      </TableCell>
+                    ) : null}
                     <TableCell>
                       <TableCellLayout>{item.trigger}</TableCellLayout>
                     </TableCell>

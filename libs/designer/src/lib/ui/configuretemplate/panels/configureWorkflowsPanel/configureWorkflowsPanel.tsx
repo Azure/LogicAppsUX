@@ -7,13 +7,18 @@ import { useIntl } from 'react-intl';
 import { Panel, PanelType } from '@fluentui/react';
 import { useConfigureWorkflowPanelTabs } from './usePanelTabs';
 import type { WorkflowTemplateData } from '../../../../core';
+import type { Template } from '@microsoft/logic-apps-shared';
+import { loadResourceDetailsFromWorkflowSource } from '../../../../core/actions/bjsworkflow/configuretemplate';
 
 export interface ConfigureWorkflowsTabProps {
+  onTabClick?: () => void;
   hasError?: boolean;
   disabled?: boolean;
   isPrimaryButtonDisabled: boolean;
   isSaving: boolean;
-  onSave?: () => void;
+  onSave?: (status: Template.TemplateEnvironment) => void;
+  onClose?: () => void;
+  status?: Template.TemplateEnvironment;
   selectedWorkflowsList: Record<string, Partial<WorkflowTemplateData>>;
 }
 
@@ -25,28 +30,12 @@ const layerProps = {
 export const ConfigureWorkflowsPanel = ({ onSave }: { onSave?: (isMultiWorkflow: boolean) => void }) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
-  const { selectedTabId, isOpen, currentPanelView, workflows } = useSelector((state: RootState) => ({
+  const { workflows, selectedTabId, isOpen, currentPanelView } = useSelector((state: RootState) => ({
     selectedTabId: state.panel.selectedTabId,
     isOpen: state.panel.isOpen,
     currentPanelView: state.panel.currentPanelView,
     workflows: state.template.workflows,
   }));
-  const workflowsExist = Object.keys(workflows).length > 0;
-
-  const resources = {
-    addWorkflowsTitle: intl.formatMessage({
-      defaultMessage: 'Add workflows from existing logic app',
-      id: 'uxUH6P',
-      description: 'Panel header title for adding or editing workflows',
-    }),
-    addEditWorkflowsTitle: intl.formatMessage({
-      defaultMessage: 'Add or edit workflows in template',
-      id: 'FOhE+h',
-      description: 'Panel header title for adding workflows',
-    }),
-  };
-
-  const panelTabs: TemplateTabProps[] = useConfigureWorkflowPanelTabs({ onSave });
 
   const handleSelectTab = (tabId: string): void => {
     dispatch(selectPanelTab(tabId));
@@ -54,20 +43,32 @@ export const ConfigureWorkflowsPanel = ({ onSave }: { onSave?: (isMultiWorkflow:
 
   const onRenderHeaderContent = useCallback(
     () => (
-      <TemplatesPanelHeader title={workflowsExist ? resources.addEditWorkflowsTitle : resources.addWorkflowsTitle}>
+      <TemplatesPanelHeader
+        title={intl.formatMessage({
+          defaultMessage: 'Manage workflows in this template',
+          id: 'syFW9c',
+          description: 'Panel header title for managing workflows',
+        })}
+      >
         <div />
       </TemplatesPanelHeader>
     ),
-    [workflowsExist, resources.addWorkflowsTitle, resources.addEditWorkflowsTitle]
+    [intl]
   );
 
   const dismissPanel = useCallback(() => {
-    dispatch(closePanel());
-  }, [dispatch]);
+    const workflowSourceId = Object.values(workflows ?? {})?.[0]?.manifest?.metadata?.workflowSourceId;
+    if (workflowSourceId) {
+      dispatch(loadResourceDetailsFromWorkflowSource({ workflowSourceId }));
+    }
 
+    dispatch(closePanel());
+  }, [dispatch, workflows]);
+
+  const panelTabs: TemplateTabProps[] = useConfigureWorkflowPanelTabs({ onSave, onClose: dismissPanel });
   const selectedTabProps = selectedTabId ? panelTabs?.find((tab) => tab.id === selectedTabId) : panelTabs[0];
   const onRenderFooterContent = useCallback(
-    () => (selectedTabProps?.footerContent ? <TemplatesPanelFooter showPrimaryButton={true} {...selectedTabProps?.footerContent} /> : null),
+    () => (selectedTabProps?.footerContent ? <TemplatesPanelFooter {...selectedTabProps?.footerContent} /> : null),
     [selectedTabProps?.footerContent]
   );
 

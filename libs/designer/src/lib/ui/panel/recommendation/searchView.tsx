@@ -1,15 +1,17 @@
 import type { AppDispatch } from '../../../core';
 import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
+import { useIsWithinAgenticLoop } from '../../../core/state/workflow/workflowSelectors';
 import { SearchService, type DiscoveryOpArray, type DiscoveryOperation, type DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
 import { SearchResultsGrid } from '@microsoft/designer-ui';
 import { useDebouncedEffect } from '@react-hookz/web';
-import type React from 'react';
-import { useCallback, useEffect, useState } from 'react';
+import type { FC } from 'react';
+import { useCallback, useEffect, useState, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
-import { useDiscoveryPanelRelationshipIds } from '../../../core/state/panel/panelSelectors';
+import { useDiscoveryPanelRelationshipIds, useIsAgentTool } from '../../../core/state/panel/panelSelectors';
 import { useAgenticWorkflow } from '../../../core/state/designerView/designerViewSelectors';
 import { useShouldEnableParseDocumentWithMetadata } from './hooks';
 import { DefaultSearchOperationsService } from './SearchOpeationsService';
+import constants from '../../../common/constants';
 
 type SearchViewProps = {
   searchTerm: string;
@@ -24,7 +26,7 @@ type SearchViewProps = {
   displayRuntimeInfo: boolean;
 };
 
-export const SearchView: React.FC<SearchViewProps> = ({
+export const SearchView: FC<SearchViewProps> = ({
   searchTerm,
   allOperations,
   groupByConnector,
@@ -37,7 +39,10 @@ export const SearchView: React.FC<SearchViewProps> = ({
 }) => {
   const isAgenticWorkflow = useAgenticWorkflow();
   const shouldEnableParseDocWithMetadata = useShouldEnableParseDocumentWithMetadata();
-  const isRoot = useDiscoveryPanelRelationshipIds().graphId === 'root';
+  const parentGraphId = useDiscoveryPanelRelationshipIds().graphId;
+  const isWithinAgenticLoop = useIsWithinAgenticLoop(parentGraphId);
+  const isAgentTool = useIsAgentTool();
+  const isRoot = useMemo(() => parentGraphId === 'root', [parentGraphId]);
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -52,15 +57,34 @@ export const SearchView: React.FC<SearchViewProps> = ({
 
   const filterAgenticLoops = useCallback(
     (operation: DiscoveryOperation<DiscoveryResultTypes>): boolean => {
-      if ((!isAgenticWorkflow || !isRoot) && operation.type === 'Agent') {
+      const { type, id } = operation;
+
+      // Exclude agent operations unless it's the root of an agentic workflow
+      if ((!isAgenticWorkflow || !isRoot) && type === 'Agent') {
         return false;
       }
-      if (!isRoot && operation.id === 'initializevariable') {
+
+      // Exclude variable initialization if not at the root
+      if (!isRoot && id === constants.NODE.TYPE.INITIALIZE_VARIABLE) {
         return false;
       }
+
+      // Exclude certain scope flow nodes within agentic loops or tools
+      const isControlFlowNode = [
+        constants.NODE.TYPE.SWITCH,
+        constants.NODE.TYPE.SCOPE,
+        constants.NODE.TYPE.IF,
+        constants.NODE.TYPE.UNTIL,
+        constants.NODE.TYPE.FOREACH,
+      ].includes(id);
+
+      if ((isWithinAgenticLoop || isAgentTool) && isControlFlowNode) {
+        return false;
+      }
+
       return true;
     },
-    [isAgenticWorkflow, isRoot]
+    [isAgentTool, isAgenticWorkflow, isRoot, isWithinAgenticLoop]
   );
 
   useDebouncedEffect(

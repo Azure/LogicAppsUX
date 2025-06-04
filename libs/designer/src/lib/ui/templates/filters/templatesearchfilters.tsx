@@ -25,6 +25,7 @@ interface GalleryTab {
 }
 
 export interface TemplateSearchAndFilterProps {
+  tabFilterKey?: string;
   tabDetails?: GalleryTab[];
   detailFilters: TemplateDetailFilterType;
   showFilters?: boolean;
@@ -35,6 +36,7 @@ export interface TemplateSearchAndFilterProps {
 const templateDefaultTabKey = 'all';
 
 export const TemplateSearchAndFilters = ({
+  tabFilterKey = 'Type',
   tabDetails,
   searchPlaceholder,
   showFilters = true,
@@ -48,7 +50,7 @@ export const TemplateSearchAndFilters = ({
     isConsumption: state.workflow.isConsumption,
     availableTemplates: state.manifest.availableTemplates ?? {},
   }));
-  const selectedTabId = appliedDetailFilters?.Type?.[0]?.value ?? templateDefaultTabKey;
+  const selectedTabId = appliedDetailFilters?.[tabFilterKey]?.[0]?.value ?? templateDefaultTabKey;
 
   const intlText = {
     SEARCH: intl.formatMessage({
@@ -106,7 +108,7 @@ export const TemplateSearchAndFilters = ({
           id: 'YX0jQs',
           description: 'All templates tab',
         }),
-        filterKey: 'Type',
+        filterKey: tabFilterKey,
       },
     ];
 
@@ -118,16 +120,16 @@ export const TemplateSearchAndFilters = ({
       basicTabs.push({
         name: 'Custom',
         displayName: intlText.MY_TEMPLATES,
-        filterKey: 'publishedBy',
+        filterKey: tabFilterKey,
       });
       basicTabs.push({
         name: 'Microsoft',
         displayName: intlText.MICROSOFT_AUTHORED,
-        filterKey: 'publishedBy',
+        filterKey: tabFilterKey,
       });
     }
     return basicTabs;
-  }, [intl, tabDetails, availableTemplates, intlText.MY_TEMPLATES, intlText.MICROSOFT_AUTHORED]);
+  }, [intl, tabDetails, tabFilterKey, availableTemplates, intlText.MY_TEMPLATES, intlText.MICROSOFT_AUTHORED]);
 
   const onTabSelected = (e?: SelectTabEvent, data?: SelectTabData): void => {
     if (data) {

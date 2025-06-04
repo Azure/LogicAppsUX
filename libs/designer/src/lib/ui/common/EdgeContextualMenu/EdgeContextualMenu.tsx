@@ -6,6 +6,7 @@ import {
   LoggerService,
   UiInteractionsService,
   agentOperation,
+  customLengthGuid,
   guid,
   isUiInteractionsServiceEnabled,
   normalizeAutomationId,
@@ -85,7 +86,7 @@ export const EdgeContextualMenu = () => {
       return;
     }
     const relationshipIds = { graphId, childId: undefined, parentId };
-    dispatch(addOperation({ nodeId: 'Agent', relationshipIds, operation: agentOperation }));
+    dispatch(addOperation({ nodeId: `Agent-${customLengthGuid(4)}`, relationshipIds, operation: agentOperation }));
   }, [dispatch, graphId, parentId]);
 
   const newActionText = intl.formatMessage({

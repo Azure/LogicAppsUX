@@ -71,7 +71,7 @@ interface IdentifierTokenInfo {
 export function registerWorkflowLanguageProviders(
   monacoLanguages: typeof languages,
   monacoEditor: typeof editor,
-  themeOptions: { isInverted: boolean }
+  themeOptions: { isInverted: boolean; isIndentationEnabled: boolean }
 ): void {
   const languageName = Constants.LANGUAGE_NAMES.WORKFLOW;
   const themeName = Constants.LANGUAGE_NAMES.THEME;
@@ -89,28 +89,30 @@ export function registerWorkflowLanguageProviders(
   // Register Help Provider Text Field for the language
   monacoLanguages.registerSignatureHelpProvider(languageName, createSignatureHelpProvider(map(templateFunctions, 'name')));
 
+  const brackets: languages.CharacterPair[] = [
+    ['(', ')'],
+    ['[', ']'],
+  ];
+
   monacoLanguages.setLanguageConfiguration(languageName, {
     autoClosingPairs: [
-      {
-        open: '(',
-        close: ')',
-      },
-      {
-        open: '[',
-        close: ']',
-      },
+      ...brackets.map((bracket) => ({
+        open: bracket[0],
+        close: bracket[1],
+      })),
       {
         open: `'`,
         close: `'`,
       },
     ],
+    brackets: themeOptions.isIndentationEnabled ? brackets : undefined,
   });
 
   // Define a new theme that contains only rules that match this language
   monacoEditor.defineTheme(themeName, createThemeData(themeOptions.isInverted));
 }
 
-export function createThemeData(isInverted: boolean): IStandaloneThemeData {
+function createThemeData(isInverted: boolean): IStandaloneThemeData {
   return {
     base: isInverted ? 'vs-dark' : 'vs',
     inherit: true,
@@ -136,7 +138,7 @@ export function createThemeData(isInverted: boolean): IStandaloneThemeData {
   };
 }
 
-export function createLanguageDefinition(templateFunctions: FunctionDefinition[]): IMonarchLanguage {
+function createLanguageDefinition(templateFunctions: FunctionDefinition[]): IMonarchLanguage {
   const keywordRules = keywords.map((keyword) => ({
     regex: keyword,
     action: {
@@ -185,7 +187,7 @@ export function createLanguageDefinition(templateFunctions: FunctionDefinition[]
   };
 }
 
-export function createCompletionItemProviderForFunctions(templateFunctions: FunctionDefinition[]): CompletionItemProvider {
+function createCompletionItemProviderForFunctions(templateFunctions: FunctionDefinition[]): CompletionItemProvider {
   return {
     triggerCharacters: ['.'],
     provideCompletionItems: (model: editor.ITextModel, position: Position): ProviderResult<CompletionList> => {
@@ -214,7 +216,7 @@ export function createCompletionItemProviderForFunctions(templateFunctions: Func
   };
 }
 
-export function createCompletionItemProviderForValues(): CompletionItemProvider {
+function createCompletionItemProviderForValues(): CompletionItemProvider {
   return {
     provideCompletionItems: (model: editor.ITextModel, position: Position): ProviderResult<CompletionList> => {
       const suggestions = keywords.map((value) => {
@@ -239,7 +241,7 @@ export function createCompletionItemProviderForValues(): CompletionItemProvider 
   };
 }
 
-export function createSignatureHelpProvider(functions: Record<string, FunctionDefinition>): SignatureHelpProvider {
+function createSignatureHelpProvider(functions: Record<string, FunctionDefinition>): SignatureHelpProvider {
   return {
     signatureHelpTriggerCharacters: [',', '('],
     provideSignatureHelp(document: IReadOnlyModel, position: Position): ProviderResult<languages.SignatureHelpResult> {
@@ -437,7 +439,7 @@ function parseExpression(value: string, position: Position, templateFunctions: R
   };
 }
 
-export function getTemplateFunctions(): FunctionDefinition[] {
+function getTemplateFunctions(): FunctionDefinition[] {
   return FunctionGroupDefinitions.flatMap((group) => group.functions);
 }
 

@@ -21,7 +21,6 @@ export interface RunServiceOptions {
   baseUrl: string;
   httpClient: IHttpClient;
   updateCors?: () => void;
-  accessToken?: string;
   workflowName: string;
   isDev?: boolean;
 }
@@ -68,25 +67,12 @@ export class StandardRunService implements IRunService {
     }
   }
 
-  private getAccessTokenHeaders = () => {
-    const { accessToken } = this.options;
-    if (!accessToken) {
-      return undefined;
-    }
-
-    return new Headers({
-      Authorization: accessToken,
-    });
-  };
-
   async getMoreRuns(continuationToken: string): Promise<Runs> {
-    const headers = this.getAccessTokenHeaders();
     const { httpClient } = this.options;
 
     try {
       const response = await httpClient.get<ArmResources<Run>>({
         uri: continuationToken,
-        headers: headers as Record<string, any>,
       });
 
       const { nextLink, value: runs }: ArmResources<Run> = response;
@@ -145,13 +131,11 @@ export class StandardRunService implements IRunService {
    */
   async getRuns(): Promise<Runs> {
     const { apiVersion, baseUrl, workflowName, httpClient } = this.options;
-    const headers = this.getAccessTokenHeaders();
 
     const uri = `${baseUrl}/workflows/${workflowName}/runs?api-version=${apiVersion}`;
     try {
       const response = await httpClient.get<ArmResources<Run>>({
         uri,
-        headers: headers as Record<string, any>,
       });
 
       const { nextLink, value: runs }: ArmResources<Run> = response;
@@ -178,7 +162,6 @@ export class StandardRunService implements IRunService {
     }
 
     const { apiVersion, baseUrl, httpClient } = this.options;
-    const headers = this.getAccessTokenHeaders();
 
     const filter = status ? `&$filter=status eq '${status}'` : '';
     const uri = `${baseUrl}${runId}/actions/${nodeId}/scopeRepetitions?api-version=${apiVersion}${filter}`;
@@ -186,7 +169,6 @@ export class StandardRunService implements IRunService {
     try {
       const response = await httpClient.get<{ value: LogicAppsV2.RunRepetition[] }>({
         uri,
-        headers: headers as Record<string, any>,
       });
 
       return response;
@@ -213,13 +195,11 @@ export class StandardRunService implements IRunService {
   ): Promise<LogicAppsV2.RunRepetition> {
     const { nodeId, runId } = action;
     const { apiVersion, baseUrl, httpClient } = this.options;
-    const headers = this.getAccessTokenHeaders();
     const uri = `${baseUrl}${runId}/actions/${nodeId}/agentRepetitions/${repetitionId}?api-version=${apiVersion}`;
 
     try {
       const response = await httpClient.get<LogicAppsV2.RunRepetition>({
         uri,
-        headers: headers as Record<string, any>,
       });
 
       return response;
@@ -243,13 +223,11 @@ export class StandardRunService implements IRunService {
   async getAgentActionsRepetition(action: { nodeId: string; runId: string | undefined }, repetitionId: string): Promise<any> {
     const { nodeId, runId } = action;
     const { apiVersion, baseUrl, httpClient } = this.options;
-    const headers = this.getAccessTokenHeaders();
     const uri = `${baseUrl}${runId}/actions/${nodeId}/agentRepetitions/${repetitionId}/actions?api-version=${apiVersion}`;
 
     try {
       const response = await httpClient.get<LogicAppsV2.RunRepetition>({
         uri,
-        headers: headers as Record<string, any>,
       });
 
       return response;
@@ -269,12 +247,10 @@ export class StandardRunService implements IRunService {
    */
   async getMoreAgentActionsRepetition(continuationToken: string): Promise<any> {
     const { httpClient } = this.options;
-    const headers = this.getAccessTokenHeaders();
 
     try {
       const response = await httpClient.get<LogicAppsV2.RunRepetition>({
         uri: continuationToken,
-        headers: headers as Record<string, any>,
       });
 
       return response;
@@ -292,13 +268,11 @@ export class StandardRunService implements IRunService {
   async getRepetition(action: { nodeId: string; runId: string | undefined }, repetitionId: string): Promise<LogicAppsV2.RunRepetition> {
     const { apiVersion, baseUrl, httpClient } = this.options;
     const { nodeId, runId } = action;
-    const headers = this.getAccessTokenHeaders();
 
     const uri = `${baseUrl}${runId}/actions/${nodeId}/repetitions/${repetitionId}?api-version=${apiVersion}`;
     try {
       const response = await httpClient.get<LogicAppsV2.RunRepetition>({
         uri,
-        headers: headers as Record<string, any>,
       });
 
       return response;
@@ -320,7 +294,7 @@ export class StandardRunService implements IRunService {
     }
 
     try {
-      await this.getHttpRequestByMethod(httpClient, method, { uri });
+      await this.getHttpRequestByMethod(httpClient, method, { uri, noAuth: true });
     } catch (e: any) {
       throw new Error(`${e.status} ${e?.data?.error?.message}`);
     }
@@ -397,13 +371,11 @@ export class StandardRunService implements IRunService {
   async getChatHistory(action: { nodeId: string; runId: string | undefined }): Promise<any> {
     const { apiVersion, baseUrl, httpClient } = this.options;
     const { nodeId, runId } = action;
-    const headers = this.getAccessTokenHeaders();
 
     const uri = `${baseUrl}${runId}/actions/${nodeId}/chatHistory?api-version=${apiVersion}`;
     try {
       const response = await httpClient.get<any>({
         uri,
-        headers: headers as Record<string, any>,
       });
 
       return response.value;
@@ -426,13 +398,11 @@ export class StandardRunService implements IRunService {
   async getAgentChatInvokeUri(action: { idSuffix: string }): Promise<any> {
     const { apiVersion, baseUrl, httpClient } = this.options;
     const { idSuffix } = action;
-    const headers = this.getAccessTokenHeaders();
 
     const uri = `${baseUrl}${idSuffix}/listCallBackUrl?api-version=${apiVersion}`;
     try {
       const response = await httpClient.post<any, any>({
         uri,
-        headers: headers as Record<string, any>,
       });
 
       return response?.value;
