@@ -20,7 +20,7 @@ import { isProjectCV, isRemoteProjectCV } from '../../utils/tree/projectContextV
 import { getFunctionsWorkerRuntime, getWorkspaceSettingFromAnyFolder } from '../../utils/vsCodeConfig/settings';
 import { LogicAppResourceTree } from '../LogicAppResourceTree';
 import { SlotTreeItem } from '../slotsTree/SlotTreeItem';
-import type { Site, WebSiteManagementClient } from '@azure/arm-appservice';
+import type { GeoRegion, Site, WebSiteManagementClient } from '@azure/arm-appservice';
 import { createPipelineRequest } from '@azure/core-rest-pipeline';
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import {
@@ -125,16 +125,17 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
 
     promptSteps.push(new SiteNameStep());
 
-    if (context.newPlanSku && context.newPlanSku.tier) {
-      options.sku = context.newPlanSku.tier.replace(/\s/g, '');
+    let sku = undefined;
+    if (wizardContext.newPlanSku && wizardContext.newPlanSku.tier) {
+      sku = wizardContext.newPlanSku.tier.replace(/\s/g, '');
     }
 
-    const genericClient = await createGenericClient(context, context);
-    const result: AzExtPipelineResponse = await genericClient.sendRequest(
+    const genericClient = await createGenericClient(wizardContext, wizardContext);
+    const result = await genericClient.sendRequest(
       createPipelineRequest({
         method: 'GET',
-        url: `/subscriptions/${context.subscriptionId}/providers/Microsoft.Web/geoRegions?api-version=2024-04-01&sku=ElasticPremium`,
-      })
+        url: `/subscriptions/${wizardContext.subscriptionId}/providers/Microsoft.Web/geoRegions?api-version=2024-04-01&${sku ?? 'sku=ElasticPremium'}`,
+      }) as any
     );
 
     type GeoRegionJsonResponse = {
