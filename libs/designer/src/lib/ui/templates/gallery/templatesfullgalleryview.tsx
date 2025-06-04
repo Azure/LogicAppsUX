@@ -9,6 +9,8 @@ import { CreateWorkflowPanel } from '../../panel/templatePanel/createWorkflowPan
 import { openPanelView, TemplatePanelView } from '../../../core/state/templates/panelSlice';
 import { TemplatesGalleryWithSearch } from './templatesgallerywithsearch';
 
+const tabFilterKey = 'publishedBy';
+
 export const TemplatesFullGalleryView = ({ detailFilters, createWorkflowCall, isWorkflowEmpty = true }: TemplatesDesignerProps) => {
   useEffect(() => setLayerHostSelector('#msla-layer-host'), []);
   const dispatch = useDispatch<AppDispatch>();
@@ -17,10 +19,10 @@ export const TemplatesFullGalleryView = ({ detailFilters, createWorkflowCall, is
     filters: { detailFilters: appliedDetailFilters },
   } = useSelector((state: RootState) => state.manifest);
 
-  const selectedTabId = appliedDetailFilters?.Type?.[0]?.value;
+  const selectedTabId = appliedDetailFilters?.[tabFilterKey]?.[0]?.value;
 
   const blankTemplateCard =
-    selectedTabId !== 'Accelerator' ? <TemplateCard blankWorkflowProps={{ isWorkflowEmpty }} templateName="#blank#" /> : undefined;
+    selectedTabId !== 'Custom' ? <TemplateCard blankWorkflowProps={{ isWorkflowEmpty }} templateName="#blank#" /> : undefined;
   const onTemplateSelect = (_templateName: string, isSingleWorkflow: boolean) => {
     if (isSingleWorkflow) {
       dispatch(openPanelView({ panelView: TemplatePanelView.QuickView }));
@@ -30,7 +32,7 @@ export const TemplatesFullGalleryView = ({ detailFilters, createWorkflowCall, is
   return (
     <>
       <TemplatesGalleryWithSearch
-        searchAndFilterProps={{ detailFilters }}
+        searchAndFilterProps={{ detailFilters, tabFilterKey }}
         blankTemplateCard={blankTemplateCard}
         onTemplateSelect={onTemplateSelect}
       />
