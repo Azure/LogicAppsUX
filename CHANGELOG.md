@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [5.109.8](https://github.com/Azure/LogicAppsUX/compare/v5.109.7...v5.109.8) (2025-06-04)
+
+
+### Features
+
+* **VSCode:** Temporary fix of GeoLocation API version in VSCode until we can update vscode-azuretools ([#7439](https://github.com/Azure/LogicAppsUX/issues/7439)) ([4cc7076](https://github.com/Azure/LogicAppsUX/commit/4cc707686c4b4ab15597a0de53817c48631daedd)), closes [#7434](https://github.com/Azure/LogicAppsUX/issues/7434)
+
 ### [5.109.7](https://github.com/Azure/LogicAppsUX/compare/v5.109.6...v5.109.7) (2025-06-04)
 
 
