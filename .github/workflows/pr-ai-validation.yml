@@ -14,14 +14,22 @@ jobs:
     steps:
       - name: Validate PR with AI Agent
         uses: actions/github-script@v7
+        env:
+          LOGIC_APP_URL: ${{ secrets.PR_VALIDATION_LOGIC_APP_URL }}
         with:
           script: |
             const pr_number = context.payload.pull_request.number;
             const botCommentIdentifier = '## 🤖 AI PR Validation Report';
             
+            // Check if the Logic App URL is configured
+            if (!process.env.LOGIC_APP_URL) {
+              console.log('PR_VALIDATION_LOGIC_APP_URL secret not configured. Skipping AI validation.');
+              return;
+            }
+            
             try {
               // Call the AI validation endpoint
-              const response = await fetch('https://good-test-case.azurewebsites.net:443/api/GitHubPRAgent/triggers/When_a_HTTP_request_is_received/invoke?api-version=2022-05-01&sp=%2Ftriggers%2FWhen_a_HTTP_request_is_received%2Frun&sv=1.0&sig=p26YNf7sdC9r1MpT-acz87UNzlpTnTnbfGFbEmDtGHc', {
+              const response = await fetch(process.env.LOGIC_APP_URL, {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json'
