@@ -1,0 +1,154 @@
+name: PR AI Validation
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize]
+
+permissions:
+  pull-requests: write
+  issues: write
+
+jobs:
+  validate-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate PR with AI Agent
+        uses: actions/github-script@v7
+        env:
+          LOGIC_APP_URL: ${{ secrets.PR_VALIDATION_LOGIC_APP_URL }}
+        with:
+          script: |
+            const pr_number = context.payload.pull_request.number;
+            const botCommentIdentifier = '## 🤖 AI PR Validation Report';
+            
+            // Check if the Logic App URL is configured
+            if (!process.env.LOGIC_APP_URL) {
+              console.log('PR_VALIDATION_LOGIC_APP_URL secret not configured. Skipping AI validation.');
+              return;
+            }
+            
+            try {
+              // Call the AI validation endpoint
+              const response = await fetch(process.env.LOGIC_APP_URL, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                  pr_id: pr_number
+                })
+              });
+              
+              if (!response.ok) {
+                throw new Error(`API request failed with status ${response.status}`);
+              }
+              
+              const result = await response.json();
+              
+              // Check if we got a valid response with the expected properties
+              if (!result.hasOwnProperty('passes') || !result.hasOwnProperty('message')) {
+                throw new Error('Invalid API response format');
+              }
+              
+              // Find existing bot comment
+              const comments = await github.rest.issues.listComments({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: pr_number
+              });
+              
+              const botComment = comments.data.find(comment => 
+                comment.user.type === 'Bot' && 
+                comment.body.includes(botCommentIdentifier)
+              );
+              
+              const commentBody = `${botCommentIdentifier}\n\n${result.message}\n\n---\n*Last updated: ${new Date().toUTCString()}*`;
+              
+              if (botComment) {
+                // Update existing comment
+                await github.rest.issues.updateComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: botComment.id,
+                  body: commentBody
+                });
+              } else {
+                // Create new comment
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: pr_number,
+                  body: commentBody
+                });
+              }
+              
+              // Manage labels based on the passes property
+              if (result.passes === true) {
+                // Add success label
+                try {
+                  await github.rest.issues.addLabels({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: pr_number,
+                    labels: ['pr-validated']
+                  });
+                } catch (e) {
+                  console.log('Error adding pr-validated label:', e.message);
+                }
+                
+                // Remove failure labels if they exist
+                const labelsToRemove = ['needs-pr-update', 'needs-title-update', 'needs-description-update'];
+                for (const label of labelsToRemove) {
+                  try {
+                    await github.rest.issues.removeLabel({
+                      owner: context.repo.owner,
+                      repo: context.repo.repo,
+                      issue_number: pr_number,
+                      name: label
+                    });
+                  } catch (e) {
+                    // Label might not exist, that's okay
+                  }
+                }
+              } else {
+                // Add failure label
+                try {
+                  await github.rest.issues.addLabels({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: pr_number,
+                    labels: ['needs-pr-update']
+                  });
+                } catch (e) {
+                  console.log('Error adding needs-pr-update label:', e.message);
+                }
+                
+                // Remove success label if it exists
+                try {
+                  await github.rest.issues.removeLabel({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: pr_number,
+                    name: 'pr-validated'
+                  });
+                } catch (e) {
+                  // Label might not exist, that's okay
+                }
+                
+                // Fail the workflow
+                core.setFailed('PR validation failed. Please address the issues mentioned in the validation report.');
+              }
+              
+            } catch (error) {
+              console.error('Error during PR validation:', error);
+              
+              // Post an error comment
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: pr_number,
+                body: `## ❌ PR Validation Error\n\nAn error occurred while validating your PR. Please try again later or contact the maintainers.\n\nError: ${error.message}`
+              });
+              
+              core.setFailed(`PR validation error: ${error.message}`);
+            }
