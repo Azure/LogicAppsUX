@@ -1,4 +1,12 @@
 # Logic Apps Designer
+### [5.109.6](https://github.com/Azure/LogicAppsUX/compare/v5.109.5...v5.109.6) (2025-06-04)
+
+
+### Bug Fixes
+
+* **designer:** Fix C Sharp Custom Code Unable to Save Due to # ([#7431](https://github.com/Azure/LogicAppsUX/issues/7431)) ([2c86f4a](https://github.com/Azure/LogicAppsUX/commit/2c86f4ad548153059451569c1d25a16582b59eff))
+* **vscode:** Bypass isMockable check for trigger mocks ([#7419](https://github.com/Azure/LogicAppsUX/issues/7419)) ([#7426](https://github.com/Azure/LogicAppsUX/issues/7426)) ([d76cd5d](https://github.com/Azure/LogicAppsUX/commit/d76cd5d7126ff2a0ee997a4a4b3bdb950e76084e))
+
 ### [5.109.5](https://github.com/Azure/LogicAppsUX/compare/v5.109.4...v5.109.5) (2025-06-02)
 
 
