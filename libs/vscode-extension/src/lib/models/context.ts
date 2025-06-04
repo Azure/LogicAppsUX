@@ -27,8 +27,15 @@ export interface ILogicAppWizardContext extends IAppServiceWizardContext, ICreat
     userName?: string;
     password?: string;
   };
+  aad?: {
+    clientId?: string;
+    clientSecret?: string;
+    objectId?: string;
+    tenantId?: string;
+  };
   suppressCreate?: boolean;
   fileShareName?: string;
+  isCreate?: boolean;
   useHybrid?: boolean;
   hybridSite?: ContainerApp;
   _location?: Record<string, any>;
