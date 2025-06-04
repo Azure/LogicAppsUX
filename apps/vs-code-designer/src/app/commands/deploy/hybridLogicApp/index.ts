@@ -119,8 +119,8 @@ export const zipDeployHybridLogicApp = async (context: IActionContext, node: Slo
         const accessTokenPromise = getAccessTokenForZipDeploy(node, logicAppsContext);
 
         if (!node.hybridSite.configuration?.ingress?.fqdn) {
-          const clientContainer = await createContainerClient(context as ILogicAppWizardContext);
-          await waitForIngressFqdn(node, clientContainer);
+          const clientContainer = await createContainerClient(logicAppsContext);
+          await waitForIngressFqdn(node, context, clientContainer);
         }
 
         const containerAppProvisioningPromise = waitForContainerAppProvisioning(
@@ -193,7 +193,13 @@ const waitForContainerAppProvisioning = async (fqdn: string, context, progress):
   throw new Error(localize('logicAppNotReadyError', errorMessage));
 };
 
-const waitForIngressFqdn = async (node: SlotTreeItem, clientContainer: any, maxRetries = 30, delay = 3000): Promise<void> => {
+const waitForIngressFqdn = async (
+  node: SlotTreeItem,
+  context: IActionContext,
+  clientContainer: any,
+  maxRetries = 30,
+  delay = 3000
+): Promise<void> => {
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     if (node.hybridSite.configuration?.ingress?.fqdn !== null) {
       return;
@@ -208,8 +214,9 @@ const waitForIngressFqdn = async (node: SlotTreeItem, clientContainer: any, maxR
     // Wait before retrying
     await new Promise((resolve) => setTimeout(resolve, delay));
   }
-
-  throw new Error('Failed to retrieve ingress FQDN after waiting.');
+  const errorMessage = 'Failed to retrieve ingress FQDN after waiting.';
+  context.telemetry.properties.ingressFqdnError = errorMessage;
+  throw new Error(localize('errorRetrievingIngressFqdn', errorMessage));
 };
 
 const createZipFileOnDisk = async (sourceDir: string): Promise<string> => {
