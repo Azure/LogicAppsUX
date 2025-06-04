@@ -129,7 +129,7 @@ export const zipDeployHybridLogicApp = async (context: IActionContext, node: Slo
           progress
         );
 
-        const [zipFilePath, accessToken] = await Promise.all([zipFilePromise, accessTokenPromise, containerAppProvisioningPromise]);
+        const [zipFilePath, accessToken, _] = await Promise.all([zipFilePromise, accessTokenPromise, containerAppProvisioningPromise]);
 
         progress.report({ increment: 60, message: 'Uploading ZIP to Logic App' });
         // Step 3: Call the /zipDeploy API
