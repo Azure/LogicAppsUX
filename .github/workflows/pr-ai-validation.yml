@@ -15,7 +15,7 @@ jobs:
       - name: Validate PR with AI Agent
         uses: actions/github-script@v7
         env:
-          LOGIC_APP_URL: ${{ secrets.PR_VALIDATION_LOGIC_APP_URL }}
+          LOGIC_APP_URL: ${{ vars.PR_VALIDATION_LOGIC_APP_URL }}
         with:
           script: |
             const pr_number = context.payload.pull_request.number;
