@@ -1,11 +1,10 @@
 import constants from '../../constants';
 import { isEscapeKey } from '../../utils/keyboardUtils';
 import { handleOnEscapeDown } from './panelheader';
-import { usePanelStyles, getPanelClasses } from '../styles';
 import { bundleIcon, TextDescription20Filled, TextDescription20Regular } from '@fluentui/react-icons';
 import type { ITextField, ITextFieldStyles } from '@fluentui/react/lib/TextField';
 import { TextField } from '@fluentui/react/lib/TextField';
-import { useTheme } from '@fluentui/react';
+import { css } from '@fluentui/react/lib/Utilities';
 import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -36,9 +35,6 @@ export const PanelHeaderComment = ({
   isTrigger,
 }: PanelHeaderCommentProps): JSX.Element => {
   const intl = useIntl();
-  const theme = useTheme();
-  const styles = usePanelStyles();
-  const classes = getPanelClasses(styles, theme.isInverted);
 
   const [commentHasFocus, setCommentHasFocus] = useState(false);
   const commentTextFieldRef = useRef<ITextField>(null);
@@ -50,7 +46,7 @@ export const PanelHeaderComment = ({
   });
 
   const getDescriptionIcon = (): JSX.Element => {
-    return <DescriptionIcon className={classes.commentIcon} aria-label={commentLabel} />;
+    return <DescriptionIcon className={'msla-comment-icon'} aria-label={commentLabel} />;
   };
 
   // Autofocusing when opened for a node
@@ -60,7 +56,7 @@ export const PanelHeaderComment = ({
     }
   }, [comment, commentTextFieldRef, isCollapsed, readOnlyMode, isTrigger]);
   const getCommentEditor = (): JSX.Element => {
-    const commentClassName = commentHasFocus ? classes.cardCommentFocused : classes.cardComment;
+    const commentClassName = commentHasFocus ? 'msla-card-comment-focused' : 'msla-card-comment';
     const commentTitle = intl.formatMessage({
       defaultMessage: 'Description',
       id: 'p8AKOz',
@@ -93,7 +89,7 @@ export const PanelHeaderComment = ({
 
     return (
       <TextField
-        className={readOnlyMode ? undefined : commentClassName}
+        className={css(!readOnlyMode && commentClassName)}
         borderless
         multiline
         autoAdjustHeight
@@ -114,7 +110,7 @@ export const PanelHeaderComment = ({
     );
   };
   return (
-    <div className={classes.panelCommentContainer} hidden={isCollapsed}>
+    <div className="msla-panel-comment-container" hidden={isCollapsed}>
       {noNodeSelected ? null : getDescriptionIcon()}
       {noNodeSelected ? null : getCommentEditor()}
     </div>

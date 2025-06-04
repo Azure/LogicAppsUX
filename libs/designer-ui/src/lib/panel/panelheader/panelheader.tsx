@@ -3,7 +3,6 @@ import type { PanelNodeData } from '../types';
 import { PanelHeaderComment } from './panelheadercomment';
 import type { TitleChangeHandler } from './panelheadertitle';
 import { PanelHeaderTitle } from './panelheadertitle';
-import { usePanelStyles, getPanelClasses } from '../styles';
 import {
   Button,
   Menu,
@@ -15,7 +14,6 @@ import {
   Spinner,
   Tooltip,
   useRestoreFocusTarget,
-  mergeClasses,
 } from '@fluentui/react-components';
 import {
   bundleIcon,
@@ -26,7 +24,7 @@ import {
   PinOffRegular,
 } from '@fluentui/react-icons';
 import { Icon } from '@fluentui/react/lib/Icon';
-import { useTheme } from '@fluentui/react';
+import { css } from '@fluentui/react/lib/Utilities';
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { useEffect, useMemo, useRef } from 'react';
 import { useIntl } from 'react-intl';
@@ -65,8 +63,8 @@ export interface PanelHeaderProps {
 const DismissIcon = bundleIcon(ChevronDoubleRightFilled, ChevronDoubleRightRegular);
 const OverflowIcon = bundleIcon(MoreVertical24Filled, MoreVertical24Regular);
 
-const CollapseButton = (props: PanelHeaderProps & { isRight: boolean; nodeId: string; classes: any }): JSX.Element => {
-  const { isCollapsed, isOutermostPanel, isRight, nodeId, toggleCollapse, classes } = props;
+const CollapseButton = (props: PanelHeaderProps & { isRight: boolean; nodeId: string }): JSX.Element => {
+  const { isCollapsed, isOutermostPanel, isRight, nodeId, toggleCollapse } = props;
 
   const intl = useIntl();
 
@@ -84,16 +82,7 @@ const CollapseButton = (props: PanelHeaderProps & { isRight: boolean; nodeId: st
   });
   const buttonText = isCollapsed ? panelExpandTitle : panelCollapseTitle;
 
-  const className = mergeClasses(
-    classes.collapseToggle,
-    isRight
-      ? isCollapsed
-        ? classes.collapseToggleRightCollapsed
-        : classes.collapseToggleRight
-      : isCollapsed
-        ? classes.collapseToggleLeftCollapsed
-        : classes.collapseToggleLeft
-  );
+  const className: string = css('collapse-toggle', isRight ? 'right' : 'left', isCollapsed && 'collapsed');
 
   useEffect(() => {
     if (isCollapsed || !isOutermostPanel || !nodeId) {
@@ -177,9 +166,6 @@ export const PanelHeader = (props: PanelHeaderProps): JSX.Element => {
   const { comment, displayName: title, iconUri: cardIcon, isError, isLoading, nodeId } = nodeData;
 
   const intl = useIntl();
-  const theme = useTheme();
-  const styles = usePanelStyles();
-  const classes = getPanelClasses(styles, theme.isInverted);
 
   const resubmitButtonText = intl.formatMessage({
     defaultMessage: 'Submit from this action',
@@ -221,30 +207,30 @@ export const PanelHeader = (props: PanelHeaderProps): JSX.Element => {
   const iconComponent = useMemo(
     () =>
       isCollapsed ? null : isLoading ? (
-        <div className={classes.panelCardIcon}>
+        <div className="msla-panel-card-icon">
           <Spinner size={'tiny'} style={{ padding: '6px' }} />
         </div>
       ) : cardIcon ? (
-        <img className={classes.panelCardIcon} src={cardIcon} alt="panel card icon" />
+        <img className="msla-panel-card-icon" src={cardIcon} alt="panel card icon" />
       ) : isError ? (
-        <div className={classes.panelCardIcon}>
+        <div className="msla-panel-card-icon default">
           <Icon iconName="PlugDisconnected" style={{ fontSize: '20px', textAlign: 'center', color: 'white' }} />
         </div>
       ) : (
         <Spinner className="msla-card-header-spinner" size={'tiny'} />
       ),
-    [isLoading, cardIcon, isCollapsed, isError, classes.panelCardIcon]
+    [isLoading, cardIcon, isCollapsed, isError]
   );
 
   return (
     <>
-      <div className={classes.panelHeader} id={noNodeOnCardLevel ? titleId : title}>
-        {shouldHideCollapseButton ? undefined : <CollapseButton {...props} isRight={isRight} nodeId={nodeId} classes={classes} />}
+      <div className="msla-panel-header" id={noNodeOnCardLevel ? titleId : title}>
+        {shouldHideCollapseButton ? undefined : <CollapseButton {...props} isRight={isRight} nodeId={nodeId} />}
         {!noNodeOnCardLevel && !isCollapsed ? (
           <>
-            <div className={classes.panelCardHeader}>
+            <div className={'msla-panel-card-header'}>
               {iconComponent}
-              <div className={classes.panelCardTitleContainer}>
+              <div className={'msla-panel-card-title-container'}>
                 <PanelHeaderTitle
                   key={nodeId}
                   titleId={titleId}
@@ -267,7 +253,7 @@ export const PanelHeader = (props: PanelHeaderProps): JSX.Element => {
         ) : null}
       </div>
       {showTriggerInfo ? (
-        <div className={classes.panelHeaderMessages}>
+        <div className="msla-panel-header-messages">
           <MessageBar
             aria-label={triggerInfoMessageBar.ariaLabel}
             layout="multiline"
@@ -289,10 +275,10 @@ export const PanelHeader = (props: PanelHeaderProps): JSX.Element => {
         />
       ) : null}
       {canResubmit || canShowLogicAppRun ? (
-        <div className={classes.panelHeaderButtons}>
+        <div className="msla-panel-header-buttons">
           {canResubmit ? (
             <Button
-              className={classes.panelHeaderButtonsButton}
+              className="msla-panel-header-buttons__button"
               icon={<Icon iconName="PlaybackRate1x" />}
               onClick={() => resubmitOperation?.()}
             >
@@ -302,7 +288,7 @@ export const PanelHeader = (props: PanelHeaderProps): JSX.Element => {
           {canShowLogicAppRun ? (
             <Button
               iconPosition="after"
-              className={classes.panelHeaderButtonsButton}
+              className="msla-panel-header-buttons__button"
               icon={<Icon iconName="ChevronRight" />}
               onClick={() => showLogicAppRun?.()}
             >
