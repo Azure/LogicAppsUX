@@ -103,6 +103,7 @@ export const deployHybridLogicApp = async (context: IActionContext, node: SlotTr
 
 export const zipDeployHybridLogicApp = async (context: IActionContext, node: SlotTreeItem, effectiveDeployFsPath: string) => {
   try {
+    const logicAppsContext = context as ILogicAppWizardContext;
     await window.withProgress(
       {
         location: ProgressLocation.Notification,
@@ -115,7 +116,7 @@ export const zipDeployHybridLogicApp = async (context: IActionContext, node: Slo
         progress.report({ increment: 20, message: 'Zipping content for deployment' });
 
         const zipFilePromise = createZipFileOnDisk(effectiveDeployFsPath);
-        const accessTokenPromise = getAccessTokenForZipDeploy(node, context as ILogicAppWizardContext);
+        const accessTokenPromise = getAccessTokenForZipDeploy(node, logicAppsContext);
 
         if (!node.hybridSite.configuration?.ingress?.fqdn) {
           const clientContainer = await createContainerClient(context as ILogicAppWizardContext);
@@ -151,9 +152,11 @@ export const zipDeployHybridLogicApp = async (context: IActionContext, node: Slo
           hybridApp: node.hybridSite,
         };
 
-        progress.report({ increment: 80, message: 'Updating app settings' });
+        if (!logicAppsContext.isCreate) {
+          progress.report({ increment: 80, message: 'Updating app settings' });
 
-        await patchAppSettings(hybridAppOptions, context, await getAuthorizationToken());
+          await patchAppSettings(hybridAppOptions, context, await getAuthorizationToken());
+        }
 
         progress.report({ increment: 100, message: 'Deployment completed successfully' });
 

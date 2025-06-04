@@ -35,6 +35,7 @@ export interface ILogicAppWizardContext extends IAppServiceWizardContext, ICreat
   };
   suppressCreate?: boolean;
   fileShareName?: string;
+  isCreate?: boolean;
   useHybrid?: boolean;
   hybridSite?: ContainerApp;
   _location?: Record<string, any>;

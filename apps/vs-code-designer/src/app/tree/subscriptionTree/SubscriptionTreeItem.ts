@@ -168,6 +168,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
     await wizard.prompt();
 
     if (wizardContext.useHybrid) {
+      wizardContext.isCreate = true;
       if (!getWorkspaceSetting<boolean>(useSmbDeployment)) {
         const identityWizardContext: IIdentityWizardContext = {
           clientId: undefined,
