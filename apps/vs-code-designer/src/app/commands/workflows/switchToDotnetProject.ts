@@ -10,6 +10,8 @@ import {
   hostFileName,
   localSettingsFileName,
   workflowFileName,
+  CodefulSDKs,
+  CodefulSdkVersions,
 } from '../../../constants';
 import { localize } from '../../../localize';
 import { initProjectForVSCode } from '../../commands/initProjectForVSCode/initProjectForVSCode';
@@ -186,9 +188,14 @@ async function updateBuildFile(context: IActionContext, target: vscode.Uri, dotn
   xmlBuildFile = JSON.parse(xmlBuildFile);
   xmlBuildFile = addNugetPackagesToBuildFile(xmlBuildFile);
   if (isCodeful) {
-    xmlBuildFile = addNugetPackagesToBuildFileByName(xmlBuildFile, 'Microsoft.Azure.WebJobs.Extensions.DurableTask', '2.9.0');
-    xmlBuildFile = addNugetPackagesToBuildFileByName(xmlBuildFile, 'Microsoft.Azure.Workflows.WebJobs.Extension', '1.126.0.16');
-    xmlBuildFile = addNugetPackagesToBuildFileByName(xmlBuildFile, 'Microsoft.Azure.Workflows.Sdk', '1.126.0.16');
+    xmlBuildFile = addNugetPackagesToBuildFileByName(xmlBuildFile, CodefulSDKs.DurableTask, CodefulSdkVersions[CodefulSDKs.DurableTask]);
+    xmlBuildFile = addNugetPackagesToBuildFileByName(
+      xmlBuildFile,
+      CodefulSDKs.WorkflowsWebJobs,
+      CodefulSdkVersions[CodefulSDKs.WorkflowsWebJobs]
+    );
+    xmlBuildFile = addNugetPackagesToBuildFileByName(xmlBuildFile, CodefulSDKs.WorkflowsSDK, CodefulSdkVersions[CodefulSDKs.WorkflowsSDK]);
+    xmlBuildFile['Project']['PropertyGroup']['TargetFramework'] = dotnetVersion;
   }
   xmlBuildFile = suppressJavaScriptBuildWarnings(xmlBuildFile);
   xmlBuildFile = allowLocalSettingsToPublishDirectory(context, xmlBuildFile);

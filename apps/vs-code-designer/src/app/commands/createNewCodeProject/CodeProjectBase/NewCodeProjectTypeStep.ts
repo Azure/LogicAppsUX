@@ -138,6 +138,7 @@ export class NewCodeProjectTypeStep extends AzureWizardPromptStep<IProjectWizard
 
     if (!this.skipWorkflowStateTypeStep) {
       promptSteps.push(
+        // disabling in main
         await WorkflowCodeTypeStep.create(context, {
           isProjectWizard: true,
           templateId: this.templateId,
