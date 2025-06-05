@@ -77,14 +77,19 @@ export async function activate(context: vscode.ExtensionContext) {
 
       response.contents = response.contents.map((content) => {
         if (content instanceof vscode.MarkdownString) {
-          const args = [{ connectorId: 'eventhub', connectorType: 'serviceProvider' }];
-          const stageCommandUri = vscode.Uri.parse(
-            `command:azureLogicAppsStandard.openConnectionView?${encodeURIComponent(JSON.stringify(args))}`
-          );
-          const contentsAdded = new vscode.MarkdownString(`[Create connection](${stageCommandUri})`);
-          contentsAdded.isTrusted = true;
 
-          return contentsAdded;
+          // mock content
+          // const args = [{ connectorId: 'eventhub', connectorType: 'serviceProvider' }];
+          // const stageCommandUri = vscode.Uri.parse(
+          //   `command:azureLogicAppsStandard.openConnectionView?${encodeURIComponent(JSON.stringify(args))}`
+          // );
+          // const contentsAdded = new vscode.MarkdownString(`[Create connection](${stageCommandUri})`);
+          // contentsAdded.isTrusted = true;
+
+          // return contentsAdded;
+
+          content.isTrusted = true;
+          return content;
         }
         const alteredContent = new vscode.MarkdownString(typeof content === 'string' ? content : content.value);
 

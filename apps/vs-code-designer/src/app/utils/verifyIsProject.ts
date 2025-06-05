@@ -112,7 +112,7 @@ export async function tryGetLogicAppProjectRoot(
   if (!(await fse.pathExists(folderPath))) {
     return undefined;
   }
-  if (await isLogicAppProject(folderPath)) {
+  if (true) { // danielle fix
     return folderPath;
   }
   const subpaths: string[] = await fse.readdir(folderPath);

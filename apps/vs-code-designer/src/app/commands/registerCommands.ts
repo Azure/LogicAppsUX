@@ -144,7 +144,7 @@ export function registerCommands(): void {
   registerCommandWithTreeNodeUnwrapping(extensionCommand.resetValidateAndInstallBinaries, resetValidateAndInstallBinaries);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.disableValidateAndInstallBinaries, disableValidateAndInstallBinaries);
   // Connection management commands
-  registerCommand(extensionCommand.openConnectionView, async (context: IActionContext, ...args: any[]) => {
+  registerCommand(extensionCommand.openConnectionView, async (context: IActionContext, args: any[]) => {
     openConnectionView(context, args);
   });
   // Data Mapper Commands
