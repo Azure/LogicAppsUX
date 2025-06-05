@@ -305,6 +305,7 @@ export const DependencyDefaultPath = {
 export type DependencyDefaultPath = (typeof DependencyDefaultPath)[keyof typeof DependencyDefaultPath];
 // .NET
 export const DotnetVersion = {
+  net8: 'net8.0',
   net6: 'net6.0',
   net3: 'netcoreapp3.1',
   net2: 'netcoreapp2.1',
