@@ -49,7 +49,12 @@ export class GenerateDeploymentCenterScriptsStep extends AzureWizardExecuteStep<
     );
     const dotDeploymentContent = await fse.readFile(dotDeploymentTemplatePath, 'utf-8');
 
+    const readmeTemplateFileName = 'DeploymentCenterReadme';
+    const readmeTemplatePath = path.join(__dirname, assetsFolderName, deploymentScriptTemplatesFolderName, readmeTemplateFileName);
+    const readmeContent = await fse.readFile(readmeTemplatePath, 'utf-8');
+
     // Ensure deployment directory, clear existing files if exist, and create new files
+    context.telemetry.properties.lastStep = 'generateDeploymentCenterFiles';
     const deploymentDirectoryPath = path.join(context.customWorkspaceFolderPath, deploymentDirectory);
     await fse.ensureDir(deploymentDirectoryPath);
 
@@ -60,6 +65,10 @@ export class GenerateDeploymentCenterScriptsStep extends AzureWizardExecuteStep<
     const dotDeploymentFileName = '.deployment';
     const dotDeploymentPath = path.join(context.customWorkspaceFolderPath, dotDeploymentFileName);
     await fse.writeFile(dotDeploymentPath, dotDeploymentContent);
+
+    const readmeFileName = 'README.md';
+    const readmePath = path.join(deploymentDirectoryPath, readmeFileName);
+    await fse.writeFile(readmePath, readmeContent);
 
     // Add deployment folder and cloud.settings.json to workspace
     const deploymentFolderNode = vscode.Uri.file(deploymentDirectoryPath);
