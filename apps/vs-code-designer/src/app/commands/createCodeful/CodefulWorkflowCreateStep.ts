@@ -26,7 +26,7 @@ import {
   logicAppKind,
   functionsInprocNet8EnabledTrue,
 } from '../../../constants';
-import { setLocalAppSetting } from '../../utils/appSettings/localSettings';
+import { removeAppKindFromLocalSettings, setLocalAppSetting } from '../../utils/appSettings/localSettings';
 import { validateDotnetInstalled } from '../../utils/dotnet/executeDotnetTemplateCommand';
 import { switchToDotnetProject } from '../workflows/switchToDotnetProject';
 import * as vscode from 'vscode';
@@ -107,6 +107,7 @@ export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionW
       localEmulatorConnectionString,
       MismatchBehavior.Overwrite
     );
+    await removeAppKindFromLocalSettings(context.projectPath, context);
   }
 
   public async createSystemArtifacts(context: IFunctionWizardContext): Promise<void> {
