@@ -80,11 +80,20 @@ export const useConfigureTemplateWizardTabs = ({
 
   const handleSaveTemplate = useCallback(
     async (newPublishState: Template.TemplateEnvironment) => {
+      const service = TemplateResourceService();
+
       dispatch(setRunValidation(true));
       const templateId = templateManifest?.id as string;
 
       try {
-        await TemplateResourceService().updateTemplate(templateId, templateManifest, newPublishState);
+        const isSingleWorkflow = Object.keys(workflows).length === 1;
+        if (isSingleWorkflow) {
+          await service.updateWorkflow(templateId, Object.values(workflows)[0]?.id, {
+            title: templateManifest?.title,
+            summary: templateManifest?.summary,
+          });
+        }
+        await service.updateTemplate(templateId, templateManifest, newPublishState);
         resetTemplateQuery(templateId);
         dispatch(setApiValidationErrors({ error: undefined, source: 'template' }));
         onSaveTemplate(currentState as Template.TemplateEnvironment, newPublishState);
@@ -93,7 +102,7 @@ export const useConfigureTemplateWizardTabs = ({
         dispatch(getTemplateValidationError({ errorResponse: error, source: 'template' }));
       }
     },
-    [templateManifest, onSaveTemplate, currentState, dispatch]
+    [workflows, templateManifest, onSaveTemplate, currentState, dispatch]
   );
 
   const downloadTemplate = useCallback(async () => {
