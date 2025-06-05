@@ -1,4 +1,4 @@
-import { TemplateService, type Template } from '@microsoft/logic-apps-shared';
+import { equals, TemplateService, type Template } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { RootState } from './store';
@@ -24,6 +24,7 @@ export interface ManifestState {
     sortKey: string;
     connectors: FilterObject[] | undefined;
     subscriptions: FilterObject[] | undefined;
+    status: FilterObject[] | undefined;
     detailFilters: Record<string, FilterObject[]>;
   };
 }
@@ -37,6 +38,7 @@ export const initialManifestState: ManifestState = {
     sortKey: 'a-to-z',
     connectors: undefined,
     subscriptions: undefined,
+    status: undefined,
     detailFilters: {},
   },
 };
@@ -91,7 +93,11 @@ export const manifestSlice = createSlice({
     },
     setSubscriptionsFilters: (state, action: PayloadAction<FilterObject[] | undefined>) => {
       state.filters.subscriptions = action.payload;
-      // state.filters.pageNum = initialPageNum;
+      state.filters.pageNum = initialPageNum;
+    },
+    setStatusFilters: (state, action: PayloadAction<FilterObject[] | undefined>) => {
+      state.filters.status = action.payload;
+      state.filters.pageNum = initialPageNum;
     },
     setDetailsFilters: (
       state,
@@ -133,6 +139,14 @@ export const manifestSlice = createSlice({
     });
 
     builder.addCase(loadCustomTemplates.fulfilled, (state, action) => {
+      const currentTemplates = { ...(state.availableTemplates ?? {}) };
+
+      for (const templateKey of Object.keys(currentTemplates)) {
+        if (equals((currentTemplates[templateKey].details as any).publishedBy, 'custom')) {
+          delete state.availableTemplates?.[templateKey];
+        }
+      }
+
       state.availableTemplates = { ...state.availableTemplates, ...(action.payload ?? {}) };
     });
 
@@ -150,5 +164,7 @@ export const {
   setSortKey,
   setConnectorsFilters,
   setDetailsFilters,
+  setSubscriptionsFilters,
+  setStatusFilters,
 } = manifestSlice.actions;
 export default manifestSlice.reducer;
