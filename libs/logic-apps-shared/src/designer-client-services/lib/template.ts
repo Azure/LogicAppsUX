@@ -14,7 +14,7 @@ export interface ITemplateService {
   openBladeAfterCreate?: (workflowName: string | undefined) => void;
   onAddBlankWorkflow?: () => Promise<void>;
   getAllTemplateNames: () => Promise<string[]>;
-  getCustomTemplates?: (resourceDetails: { subscrpitionId?: string; resourceGroup?: string; subscriptionIds?: string[] }) => Promise<
+  getCustomTemplates?: (resourceDetails: { subscriptionId?: string; resourceGroup?: string; subscriptionIds?: string[] }) => Promise<
     CustomTemplateResource[]
   >;
   getResourceManifest: (resourcePath: string) => Promise<Template.TemplateManifest | Template.WorkflowManifest>;

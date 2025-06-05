@@ -39,7 +39,7 @@ export class BaseTemplateService implements ITemplateService {
 
   public getCustomTemplates = async ({
     subscriptionIds,
-  }: { subscrpitionId?: string; resourceGroup?: string; subscriptionIds?: string[] }): Promise<CustomTemplateResource[]> => {
+  }: { subscriptionId?: string; resourceGroup?: string; subscriptionIds?: string[] }): Promise<CustomTemplateResource[]> => {
     const { httpClient, baseUrl } = this.options;
 
     const uri = `${baseUrl}/providers/Microsoft.ResourceGraph/resources?api-version=2021-03-01`;
