@@ -65,10 +65,10 @@ export const useTemplate = (templateId: string, enabled = true): UseQueryResult<
   });
 };
 
-export const useTemplateWorkflows = (templateId: string, enabled = true): UseQueryResult<ArmResource<any>[], unknown> => {
+export const useTemplateWorkflowResources = (templateId: string, enabled = true): UseQueryResult<ArmResource<any>[], unknown> => {
   return useQuery(
     ['templateworkflowresources', templateId?.toLowerCase()],
-    async () => TemplateResourceService().getTemplateWorkflows(templateId),
+    async () => TemplateResourceService().getTemplateWorkflows(templateId, /* rawData */ true),
     {
       cacheTime: 1000 * 60 * 60 * 24,
       refetchOnMount: false,

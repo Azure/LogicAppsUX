@@ -40,7 +40,7 @@ test.describe(
       await expect(page.getByText('State type')).toBeVisible();
     });
 
-    test('Should only contain the mock templates when templates are loaded from azure endpoint', async ({ page }) => {
+    test('Should only contain the mock templates when templates are loaded from azure endpoint.', async ({ page }) => {
       await page.goto('/templates');
       await page.getByText('Local', { exact: true }).click();
       await page.getByLabel('Categories').click();
