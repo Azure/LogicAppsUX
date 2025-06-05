@@ -2,7 +2,7 @@ export const idDisplayCase = (s: string) => removeIdTag(labelCase(s));
 export const labelCase = (label: string) => label?.replace(/_/g, ' ');
 
 export const replaceWhiteSpaceWithUnderscore = (uiElementName: string): string => {
-  return uiElementName?.replace(/[^a-zA-Z0-9_#]/g, '_')?.toLowerCase();
+  return uiElementName?.replace(/\W/g, '_')?.toLowerCase();
 };
 
 export const containsIdTag = (id: string) => id?.includes('-#');
