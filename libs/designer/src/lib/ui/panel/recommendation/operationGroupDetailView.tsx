@@ -44,6 +44,9 @@ export const OperationGroupDetailView = (props: OperationGroupDetailViewProps) =
       ) {
         return false;
       }
+      if (!isWithinAgenticLoop && data.id === 'invokeNestedAgent') {
+        return false;
+      }
 
       if (shouldEnableParseDocWithMetadata === false && data.id === parsedocumentwithmetadata.id) {
         return false;

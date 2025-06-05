@@ -60,6 +60,7 @@ export const RecommendationPanelCard = ({
       aria-label={operationTitle}
       data-automation-id={apiId}
       style={{ flexDirection: 'row' }}
+      title={operationTitle}
     >
       <div className="msla-recommendation-panel-card-image">
         <ConnectorAvatar
