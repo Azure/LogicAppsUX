@@ -991,6 +991,11 @@
             "type": "string",
             "description": "Default drive letter to mount the smb for hybrid logic apps",
             "default": "X:"
+          },
+          "azureLogicAppsStandard.useSmbDeploymentForHybrid": {
+            "type": "boolean",
+            "description": "Enable to use SMB deployment for hybrid logic apps.",
+            "default": false
           }
         }
       }

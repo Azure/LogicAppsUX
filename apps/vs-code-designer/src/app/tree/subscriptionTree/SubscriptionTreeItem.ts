@@ -2,9 +2,22 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { projectLanguageSetting, webProvider, workflowappRuntime, storageProvider, insightsProvider } from '../../../constants';
+import {
+  projectLanguageSetting,
+  webProvider,
+  workflowappRuntime,
+  storageProvider,
+  insightsProvider,
+  useSmbDeployment,
+} from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
+import {
+  AdvancedIdentityObjectIdStep,
+  AdvancedIdentityClientIdStep,
+  AdvancedIdentityTenantIdStep,
+  AdvancedIdentityClientSecretStep,
+} from '../../commands/createLogicApp/createLogicAppSteps/AdvancedIdentityPromptSteps';
 import { ConnectEnvironmentStep } from '../../commands/createLogicApp/createLogicAppSteps/HybridLogicAppsSteps/ConnectEnvironmentStep';
 import { HybridAppCreateStep } from '../../commands/createLogicApp/createLogicAppSteps/HybridLogicAppsSteps/HybridAppCreateStep';
 import { LogicAppCreateStep } from '../../commands/createLogicApp/createLogicAppSteps/LogicAppCreateStep';
@@ -17,10 +30,11 @@ import { verifyDeploymentResourceGroup } from '../../utils/codeless/common';
 import { getRandomHexString } from '../../utils/fs';
 import { getDefaultFuncVersion } from '../../utils/funcCoreTools/funcVersion';
 import { isProjectCV, isRemoteProjectCV } from '../../utils/tree/projectContextValues';
-import { getFunctionsWorkerRuntime, getWorkspaceSettingFromAnyFolder } from '../../utils/vsCodeConfig/settings';
+import { getFunctionsWorkerRuntime, getWorkspaceSetting, getWorkspaceSettingFromAnyFolder } from '../../utils/vsCodeConfig/settings';
 import { LogicAppResourceTree } from '../LogicAppResourceTree';
 import { SlotTreeItem } from '../slotsTree/SlotTreeItem';
-import type { Site, WebSiteManagementClient } from '@azure/arm-appservice';
+import type { GeoRegion, Site, WebSiteManagementClient } from '@azure/arm-appservice';
+import { createPipelineRequest } from '@azure/core-rest-pipeline';
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import {
   AppInsightsCreateStep,
@@ -30,7 +44,6 @@ import {
   ParsedSite,
   SiteNameStep,
   WebsiteOS,
-  getWebLocations,
 } from '@microsoft/vscode-azext-azureappservice';
 import type { IAppServiceWizardContext, SiteClient } from '@microsoft/vscode-azext-azureappservice';
 import type { INewStorageAccountDefaults } from '@microsoft/vscode-azext-azureutils';
@@ -45,10 +58,11 @@ import {
   uiUtils,
   VerifyProvidersStep,
   storageAccountNamingRules,
+  createGenericClient,
 } from '@microsoft/vscode-azext-azureutils';
 import type { AzExtTreeItem, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext } from '@microsoft/vscode-azext-utils';
 import { nonNullProp, parseError, AzureWizard } from '@microsoft/vscode-azext-utils';
-import type { ILogicAppWizardContext, ICreateLogicAppContext } from '@microsoft/vscode-extension-logic-apps';
+import type { ILogicAppWizardContext, ICreateLogicAppContext, IIdentityWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import { FuncVersion } from '@microsoft/vscode-extension-logic-apps';
 
 export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
@@ -123,7 +137,25 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
 
     promptSteps.push(new SiteNameStep());
 
-    const locations = await getWebLocations({ ...wizardContext, newPlanSku: wizardContext.newPlanSku ?? { tier: 'ElasticPremium' } });
+    let newPlanSku = undefined;
+    if (wizardContext.newPlanSku && wizardContext.newPlanSku.tier) {
+      newPlanSku = wizardContext.newPlanSku.tier.replace(/\s/g, '');
+    }
+
+    const genericClient = await createGenericClient(wizardContext, wizardContext);
+    const result = await genericClient.sendRequest(
+      createPipelineRequest({
+        method: 'GET',
+        url: `/subscriptions/${wizardContext.subscriptionId}/providers/Microsoft.Web/geoRegions?api-version=2024-04-01${newPlanSku ?? '&sku=ElasticPremium'}`,
+      }) as any
+    );
+
+    type GeoRegionJsonResponse = {
+      value: GeoRegion[];
+    };
+
+    const locations = (result.parsedBody as GeoRegionJsonResponse).value.map((l: GeoRegion) => nonNullProp(l, 'name'));
+
     CustomLocationListStep.setLocationSubset(wizardContext, Promise.resolve(locations), 'microsoft.resources');
     CustomLocationListStep.addStep(context as any, promptSteps);
     promptSteps.push(new LogicAppHostingPlanStep());
@@ -155,6 +187,36 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
     await wizard.prompt();
 
     if (wizardContext.useHybrid) {
+      wizardContext.isCreate = true;
+      if (!getWorkspaceSetting<boolean>(useSmbDeployment)) {
+        const identityWizardContext: IIdentityWizardContext = {
+          clientId: undefined,
+          clientSecret: undefined,
+          objectId: undefined,
+          tenantId: undefined,
+          useAdvancedIdentity: undefined,
+          ...context,
+        };
+
+        const identityWizard: AzureWizard<IIdentityWizardContext> = new AzureWizard(identityWizardContext, {
+          promptSteps: [
+            new AdvancedIdentityObjectIdStep(),
+            new AdvancedIdentityClientIdStep(),
+            new AdvancedIdentityTenantIdStep(),
+            new AdvancedIdentityClientSecretStep(),
+          ],
+          title: localize('aadDetails', 'Provide your AAD identity details to use for deployment.'),
+        });
+        await identityWizard.prompt();
+
+        wizardContext.aad = {
+          clientId: identityWizardContext.clientId,
+          clientSecret: identityWizardContext.clientSecret,
+          objectId: identityWizardContext.objectId,
+          tenantId: identityWizardContext.tenantId,
+        };
+      }
+
       executeSteps.push(new ConnectEnvironmentStep());
       executeSteps.push(new HybridAppCreateStep());
     } else {
@@ -178,7 +240,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
     context.telemetry.properties.os = wizardContext.newSiteOS;
     context.telemetry.properties.runtime = wizardContext.newSiteRuntime;
 
-    if (!context.advancedCreation) {
+    if (!context.advancedCreation && !wizardContext.useHybrid) {
       const baseName: string | undefined = await wizardContext.relatedNameTask;
       const newName = await generateRelatedName(wizardContext, baseName);
       if (!newName) {

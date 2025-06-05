@@ -585,7 +585,8 @@ export const initializeCustomCodeDataInInputs = (parameter: ParameterInfo, nodeI
     const fileData = generateDefaultCustomCodeValue(language);
     if (fileData) {
       const fileExtension = getFileExtensionName(language);
-      const fileName = replaceWhiteSpaceWithUnderscore(nodeId) + fileExtension;
+      const fileName = replaceWhiteSpaceWithUnderscore(nodeId.replace(/#/g, 'sharp')) + fileExtension;
+
       parameter.editorViewModel = {
         customCodeData: { fileData, fileName, fileExtension },
       };
