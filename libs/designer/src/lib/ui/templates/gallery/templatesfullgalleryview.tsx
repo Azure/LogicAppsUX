@@ -18,7 +18,6 @@ export const TemplatesFullGalleryView = ({ detailFilters, createWorkflowCall, is
   const {
     filters: { detailFilters: appliedDetailFilters },
   } = useSelector((state: RootState) => state.manifest);
-
   const blankTemplateCard = useMemo(() => {
     const selectedTabId = appliedDetailFilters?.[tabFilterKey]?.[0]?.value;
     return selectedTabId === undefined ? <TemplateCard blankWorkflowProps={{ isWorkflowEmpty }} templateName="#blank#" /> : undefined;
