@@ -1,8 +1,7 @@
 #!/usr/bin/env node
 /* eslint-env node */
-
-const fs = require('fs');
-const path = require('path');
+import fs from 'node:fs';
+import path from 'node:path';
 
 const version = process.argv[2];
 if (!version) {
