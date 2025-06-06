@@ -333,7 +333,7 @@ const useProfileSectionItems = (resources: Record<string, string>) => {
     workflows: state.template.workflows,
   }));
 
-  const { data: allConnectors } = useAllConnectors(operationInfos);
+  const { data: allConnectors } = useAllConnectors(operationInfos, workflows);
   const selectedConnectors = useMemo(() => {
     return allConnectors?.filter((connector) => templateManifest?.featuredConnectors?.some((conn) => equals(conn.id, connector.id)));
   }, [allConnectors, templateManifest]);
