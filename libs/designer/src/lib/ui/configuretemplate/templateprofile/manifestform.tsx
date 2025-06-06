@@ -99,6 +99,11 @@ const useGeneralSectionItems = (
       type: 'textfield',
       required: true,
       onChange: (value: string) => handleUpdateManifest({ title: value }),
+      description: intl.formatMessage({
+        defaultMessage: 'The name users see when browsing templates in the gallery.',
+        id: 't1cE+t',
+        description: 'Description for display name field',
+      }),
       hint: intl.formatMessage({
         defaultMessage: 'Display name is required for Save.',
         id: 'FoUzpc',
@@ -107,9 +112,15 @@ const useGeneralSectionItems = (
       errorMessage: apiErrors?.template?.manifest?.title ?? errors?.manifest?.title,
     },
     {
-      label: resources.WorkflowType,
+      label: resources.TemplateType,
       value: isMultiWorkflow ? 'Accelerator' : 'Workflow',
       type: 'text',
+      description: intl.formatMessage({
+        defaultMessage:
+          'Template classification. A single workflow creates a workflow template; multiple workflows create an accelerator template.',
+        id: 'x7XKH0',
+        description: 'Description for template type field',
+      }),
     },
   ];
 
@@ -126,6 +137,11 @@ const useGeneralSectionItems = (
     value: skuValue,
     type: 'dropdown',
     required: true,
+    description: intl.formatMessage({
+      defaultMessage: 'Specifies which Logic App sku the template supports (e.g., Standard, Consumption).',
+      id: 'hdN+aw',
+      description: 'Description for host field',
+    }),
     errorMessage: apiErrors?.template?.manifest?.allowedSkus ?? errors?.manifest?.allowedSkus,
     multiselect: true,
     options: skuTypes,
@@ -142,12 +158,18 @@ const useContactInfoSectionItems = (
   handleUpdateManifest: (manifest: Partial<Template.TemplateManifest>) => void
 ) => {
   const { manifest, errors, apiValidatationErrors: apiErrors } = useSelector((state: RootState) => state.template);
+  const intl = useIntl();
   const items: TemplatesSectionItem[] = [
     {
       label: resources.BY,
       value: manifest?.details?.By || '',
       type: 'textfield',
       required: true,
+      description: intl.formatMessage({
+        defaultMessage: 'The author or publisher of the template.',
+        id: 'O5svoh',
+        description: 'Description for By field',
+      }),
       onChange: (value: string) => handleUpdateManifest({ details: { ...(manifest?.details ?? {}), By: value } as any }),
       errorMessage: apiErrors?.template?.manifest?.['details.By'] ?? errors?.manifest?.['details.By'],
     },
@@ -190,6 +212,7 @@ const useCategorySectionItems = (
   resources: Record<string, string>,
   handleUpdateManifest: (manifest: Partial<Template.TemplateManifest>) => void
 ) => {
+  const intl = useIntl();
   const { manifest, errors, apiValidatationErrors: apiErrors } = useSelector((state: RootState) => state.template);
   const { details, tags, featuredConnectors } = manifest as Template.TemplateManifest;
   const categories = useMemo(
@@ -219,12 +242,22 @@ const useCategorySectionItems = (
       value: featuredConnectors || [],
       type: 'custom',
       required: true,
+      description: intl.formatMessage({
+        defaultMessage: 'Key services this template integrates with.',
+        id: 'wT/gMB',
+        description: 'Description for featured connectors field',
+      }),
       onRenderItem: () => <FeaturedConnectors />,
     },
     {
       label: resources.Category,
       value: categoryValue,
       type: 'dropdown',
+      description: intl.formatMessage({
+        defaultMessage: 'The group or domain the template belongs to (e.g., automation, data).',
+        id: 'erwucR',
+        description: 'Description for category field',
+      }),
       errorMessage: apiErrors?.template?.manifest?.['details.Category'] ?? errors?.manifest?.['details.Category'],
       multiselect: true,
       options: categories,
