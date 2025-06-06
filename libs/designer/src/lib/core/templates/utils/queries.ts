@@ -120,12 +120,22 @@ export const useLogicApps = (
   );
 };
 
-export const getCustomTemplates = async (subscriptionId: string, resourceGroup: string) => {
+export const getCustomTemplates = async (resourceDetails: {
+  subscriptionId?: string;
+  resourceGroup?: string;
+  subscriptionIds?: string[];
+}) => {
   const queryClient = getReactQueryClient();
   return queryClient.fetchQuery(
-    ['templateQueries', 'customtemplates', subscriptionId.toLowerCase(), resourceGroup.toLowerCase()],
+    [
+      'templateQueries',
+      'customtemplates',
+      resourceDetails.subscriptionId?.toLowerCase(),
+      resourceDetails.resourceGroup?.toLowerCase(),
+      resourceDetails.subscriptionIds?.join(','),
+    ],
     async () => {
-      return (await TemplateService()?.getCustomTemplates?.(subscriptionId, resourceGroup)) ?? [];
+      return (await TemplateService()?.getCustomTemplates?.(resourceDetails)) ?? [];
     }
   );
 };

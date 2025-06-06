@@ -189,8 +189,19 @@ export const loadCustomTemplates = createAsyncThunk(
   'loadCustomTemplates',
   async (_, { getState }): Promise<Record<string, TemplateData>> => {
     try {
-      const { subscriptionId, resourceGroup } = (getState() as RootState).workflow;
-      const customTemplates = await getCustomTemplates(subscriptionId, resourceGroup);
+      const {
+        workflow: { subscriptionId, resourceGroup },
+        manifest: {
+          filters: { subscriptions },
+        },
+      } = getState() as RootState;
+      const resourceDetails = {
+        subscriptionId,
+        resourceGroup,
+        subscriptionIds: subscriptions?.map((sub) => sub.value),
+      };
+
+      const customTemplates = await getCustomTemplates(resourceDetails);
       return customTemplates.reduce((result: Record<string, TemplateData>, template) => {
         result[template.id.toLowerCase()] = {
           ...template.manifest,

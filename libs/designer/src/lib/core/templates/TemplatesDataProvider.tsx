@@ -8,6 +8,7 @@ import {
   loadGithubManifests,
   templatesCountPerPage,
   lazyLoadGithubManifests,
+  setSubscriptionsFilters,
 } from '../state/templates/manifestSlice';
 import { type ResourceDetails, setInitialData } from '../state/templates/workflowSlice';
 import type { ConnectionReferences } from '../../common/models/workflow';
@@ -31,14 +32,18 @@ export interface TemplatesDataProviderProps {
 
 const DataProviderInner = ({ children }: TemplatesDataProviderProps) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { githubTemplateNames } = useSelector((state: RootState) => ({
+  const { githubTemplateNames, selectedSubs } = useSelector((state: RootState) => ({
     githubTemplateNames: state.manifest.githubTemplateNames,
+    selectedSubs: state.manifest.filters.subscriptions,
   }));
 
   useEffect(() => {
     dispatch(loadGithubManifestNames());
-    dispatch(loadCustomTemplates());
   }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(loadCustomTemplates());
+  }, [dispatch, selectedSubs]);
 
   useEffect(() => {
     if (githubTemplateNames) {
@@ -83,7 +88,9 @@ export const TemplatesDataProvider = (props: TemplatesDataProviderProps) => {
     if (!servicesInitialized) {
       dispatch(initializeTemplateServices(services));
     }
+  }, [dispatch, servicesInitialized, services]);
 
+  useEffect(() => {
     dispatch(
       setInitialData({
         isConsumption: !!isConsumption,
@@ -95,7 +102,9 @@ export const TemplatesDataProvider = (props: TemplatesDataProviderProps) => {
         isCreateView: isCreateView,
       })
     );
-  }, [dispatch, servicesInitialized, isConsumption, resourceDetails, connectionReferences, isCreateView, services]);
+
+    dispatch(setSubscriptionsFilters([{ value: resourceDetails.subscriptionId, displayName: resourceDetails.subscriptionId }]));
+  }, [connectionReferences, dispatch, isConsumption, isCreateView, resourceDetails]);
 
   useEffect(() => {
     if (viewTemplate) {

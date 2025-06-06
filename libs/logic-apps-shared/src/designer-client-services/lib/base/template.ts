@@ -37,12 +37,14 @@ export class BaseTemplateService implements ITemplateService {
     return httpClient.get<any>({ uri: `${endpoint}/manifest.json`, headers: { 'Access-Control-Allow-Origin': '*' } });
   };
 
-  public getCustomTemplates = async (subscriptionId: string, _resourceGroup: string): Promise<CustomTemplateResource[]> => {
+  public getCustomTemplates = async ({
+    subscriptionIds,
+  }: { subscriptionId?: string; resourceGroup?: string; subscriptionIds?: string[] }): Promise<CustomTemplateResource[]> => {
     const { httpClient, baseUrl } = this.options;
 
     const uri = `${baseUrl}/providers/Microsoft.ResourceGraph/resources?api-version=2021-03-01`;
     const query = `resources | where type =~ "microsoft.logic/templates" | where properties.state !~ "Development" | project id, name, manifest = properties.manifest, state = properties.state`;
-    const response = await fetchAppsByQuery(httpClient, uri, query, [subscriptionId]);
+    const response = await fetchAppsByQuery(httpClient, uri, query, subscriptionIds?.length ? subscriptionIds : undefined);
 
     return response
       .filter((resource) => !!resource.manifest)

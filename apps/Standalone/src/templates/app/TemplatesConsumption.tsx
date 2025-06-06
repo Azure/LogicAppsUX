@@ -2,6 +2,7 @@ import { useCallback, useMemo } from 'react';
 import {
   type ConnectionReferences,
   getReactQueryClient,
+  getTemplateTypeCategories,
   isOpenApiSchemaVersion,
   TemplatesDataProvider,
   TemplatesDesigner,
@@ -225,6 +226,10 @@ export const TemplatesConsumption = () => {
                       displayName: 'Automation',
                     },
                   ],
+                },
+                Type: {
+                  displayName: 'Type',
+                  items: getTemplateTypeCategories(),
                 },
               }}
               isWorkflowEmpty={isWorkflowEmpty}
