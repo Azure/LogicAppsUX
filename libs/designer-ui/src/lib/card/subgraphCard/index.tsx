@@ -193,9 +193,11 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
           onKeyUp={mainKeyboardInteraction.keyUp}
           tabIndex={nodeIndex}
         >
-          {data.iconUri ? <img className="msla-subgraph-title-icon" src={data.iconUri} alt="" /> : null}
-          <div className="msla-subgraph-title-text">
-            <span>{data.title}</span>
+          <div className="msla-subgraph-title-container">
+            {data.iconUri ? <img className="msla-subgraph-title-icon" src={data.iconUri} alt="" /> : null}
+            <div className="msla-subgraph-title-text">
+              <span>{data.title}</span>
+            </div>
           </div>
           {errorMessage ? <ErrorBanner errorLevel={errorLevel} errorMessage={errorMessage} /> : null}
         </button>
