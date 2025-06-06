@@ -1,4 +1,10 @@
-import { enableACASession, enableParseDocumentWithMetadata, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
+import {
+  enableParseDocumentWithMetadata,
+  enableNestedAgent,
+  enableACASession,
+  LogEntryLevel,
+  LoggerService,
+} from '@microsoft/logic-apps-shared';
 import { useDiscoveryPanelFavoriteOperations } from '../../../core/state/panel/panelSelectors';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -29,9 +35,20 @@ export const useShouldEnableACASession = (): boolean | null => {
     };
     check();
   }, []);
-
   return enabled;
 };
+
+export function useShouldEnableNestedAgent(): boolean | null {
+  const [enabled, setEnabled] = useState<boolean | null>(null);
+  useEffect(() => {
+    const check = async () => {
+      const result = await enableNestedAgent();
+      setEnabled(result);
+    };
+    check();
+  }, []);
+  return enabled;
+}
 
 export const useOnFavoriteClick = () => {
   const favorites = useDiscoveryPanelFavoriteOperations();
