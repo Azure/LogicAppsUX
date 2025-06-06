@@ -1,35 +1,506 @@
 /**
- * Any CSS included here will be global. The classic template
- * bundles Infima by default. Infima is a CSS framework designed to
- * work well for content-centric websites.
+ * Azure Logic Apps UX Documentation - Azure/Fluent UI Design System
+ * Implementing Microsoft's Fluent Design System colors and typography
  */
 
-/* You can override the default Infima variables here. */
+/* Import Azure-friendly fonts */
+@import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@300;400;500;600;700&display=swap');
+
+/* Azure/Fluent UI Design Tokens */
 :root {
-	--ifm-color-primary: #2e8555;
-	--ifm-color-primary-dark: #29784c;
-	--ifm-color-primary-darker: #277148;
-	--ifm-color-primary-darkest: #205d3b;
-	--ifm-color-primary-light: #33925d;
-	--ifm-color-primary-lighter: #359962;
-	--ifm-color-primary-lightest: #3cad6e;
-	--ifm-code-font-size: 95%;
-	--docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+  /* Azure Brand Colors */
+  --azure-blue-primary: #0078d4;
+  --azure-blue-dark: #106ebe;
+  --azure-blue-darker: #005a9e;
+  --azure-blue-darkest: #004578;
+  --azure-blue-light: #40e0ff;
+  --azure-blue-lighter: #deecf9;
+  --azure-blue-lightest: #eff6fc;
+  
+  /* Communication Blue (Microsoft 365) */
+  --communication-blue: #0078d4;
+  --communication-blue-tint: #106ebe;
+  --communication-blue-shade: #005a9e;
+  
+  /* Neutral Colors (Fluent UI) */
+  --neutral-grey-150: #fafafa;
+  --neutral-grey-140: #f5f5f5;
+  --neutral-grey-130: #edebe9;
+  --neutral-grey-120: #e1dfdd;
+  --neutral-grey-110: #d2d0ce;
+  --neutral-grey-100: #c8c6c4;
+  --neutral-grey-90: #a19f9d;
+  --neutral-grey-80: #8a8886;
+  --neutral-grey-70: #605e5c;
+  --neutral-grey-60: #484644;
+  --neutral-grey-50: #323130;
+  --neutral-grey-40: #262626;
+  --neutral-grey-30: #1b1a19;
+  --neutral-grey-20: #161514;
+  --neutral-grey-10: #0b0a09;
+  
+  /* Semantic Colors */
+  --semantic-success: #107c10;
+  --semantic-warning: #ffb900;
+  --semantic-error: #d13438;
+  --semantic-info: var(--azure-blue-primary);
+  
+  /* Apply Azure colors to Docusaurus variables */
+  --ifm-color-primary: var(--azure-blue-primary);
+  --ifm-color-primary-dark: var(--azure-blue-dark);
+  --ifm-color-primary-darker: var(--azure-blue-darker);
+  --ifm-color-primary-darkest: var(--azure-blue-darkest);
+  --ifm-color-primary-light: var(--azure-blue-light);
+  --ifm-color-primary-lighter: var(--azure-blue-lighter);
+  --ifm-color-primary-lightest: var(--azure-blue-lightest);
+  
+  /* Background and surface colors */
+  --ifm-background-color: #ffffff;
+  --ifm-background-surface-color: var(--neutral-grey-150);
+  --ifm-navbar-background-color: #ffffff;
+  --ifm-footer-background-color: var(--neutral-grey-130);
+  
+  /* Typography - Fluent UI inspired */
+  --ifm-font-family-base: 'Segoe UI', 'Helvetica Neue', 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif;
+  --ifm-font-family-monospace: 'Cascadia Code', 'Consolas', 'Monaco', 'Courier New', monospace;
+  --ifm-font-size-base: 16px;
+  --ifm-line-height-base: 1.6;
+  --ifm-font-weight-base: 400;
+  --ifm-font-weight-semibold: 600;
+  --ifm-font-weight-bold: 700;
+  
+  /* Spacing (8px grid system) */
+  --ifm-spacing-horizontal: 16px;
+  --ifm-spacing-vertical: 16px;
+  
+  /* Border radius */
+  --ifm-border-radius: 4px;
+  --ifm-button-border-radius: 2px;
+  
+  /* Code styling */
+  --ifm-code-font-size: 90%;
+  --ifm-code-background: var(--neutral-grey-140);
+  --ifm-code-border-radius: 2px;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 120, 212, 0.1);
+  
+  /* Shadows (Fluent elevation) */
+  --ifm-global-shadow-lw: 0 1.6px 3.6px 0 rgba(0, 0, 0, 0.132), 0 0.3px 0.9px 0 rgba(0, 0, 0, 0.108);
+  --ifm-global-shadow-md: 0 3.2px 7.2px 0 rgba(0, 0, 0, 0.132), 0 0.6px 1.8px 0 rgba(0, 0, 0, 0.108);
+  --ifm-global-shadow-tl: 0 6.4px 14.4px 0 rgba(0, 0, 0, 0.132), 0 1.2px 3.6px 0 rgba(0, 0, 0, 0.108);
 }
 
-/* For readability concerns, you should choose a lighter palette in dark mode. */
+/* Dark theme - Fluent UI dark colors */
 [data-theme="dark"] {
-	--ifm-color-primary: #25c2a0;
-	--ifm-color-primary-dark: #21af90;
-	--ifm-color-primary-darker: #1fa588;
-	--ifm-color-primary-darkest: #1a8870;
-	--ifm-color-primary-light: #29d5b0;
-	--ifm-color-primary-lighter: #32d8b4;
-	--ifm-color-primary-lightest: #4fddbf;
-	--docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+  --azure-blue-primary: #4fc3f7;
+  --azure-blue-dark: #29b6f6;
+  --azure-blue-darker: #0277bd;
+  --azure-blue-darkest: #01579b;
+  --azure-blue-light: #b3e5fc;
+  --azure-blue-lighter: #e1f5fe;
+  --azure-blue-lightest: #f0f9ff;
+  
+  --ifm-color-primary: var(--azure-blue-primary);
+  --ifm-color-primary-dark: var(--azure-blue-dark);
+  --ifm-color-primary-darker: var(--azure-blue-darker);
+  --ifm-color-primary-darkest: var(--azure-blue-darkest);
+  --ifm-color-primary-light: var(--azure-blue-light);
+  --ifm-color-primary-lighter: var(--azure-blue-lighter);
+  --ifm-color-primary-lightest: var(--azure-blue-lightest);
+  
+  --ifm-background-color: var(--neutral-grey-20);
+  --ifm-background-surface-color: var(--neutral-grey-30);
+  --ifm-navbar-background-color: var(--neutral-grey-30);
+  --ifm-footer-background-color: var(--neutral-grey-40);
+  
+  --ifm-code-background: var(--neutral-grey-40);
+  --docusaurus-highlighted-code-line-bg: rgba(79, 195, 247, 0.1);
 }
 
+/* Azure-specific component styling */
+
+/* Navigation Bar - Azure Portal style */
+.navbar {
+  border-bottom: 1px solid var(--neutral-grey-130);
+  backdrop-filter: blur(10px);
+  box-shadow: var(--ifm-global-shadow-lw);
+}
+
+.navbar__brand {
+  font-weight: var(--ifm-font-weight-semibold);
+}
+
+.navbar__title {
+  font-size: 18px;
+  font-weight: var(--ifm-font-weight-semibold);
+  color: var(--neutral-grey-50);
+}
+
+[data-theme="dark"] .navbar__title {
+  color: #ffffff;
+}
+
+/* Sidebar - Fluent UI inspired */
+.theme-doc-sidebar-container {
+  border-right: 1px solid var(--neutral-grey-130);
+}
+
+[data-theme="dark"] .theme-doc-sidebar-container {
+  border-right: 1px solid var(--neutral-grey-60);
+}
+
+.menu__link {
+  border-radius: var(--ifm-border-radius);
+  font-size: 14px;
+  font-weight: var(--ifm-font-weight-base);
+  transition: all 0.2s ease;
+}
+
+.menu__link:hover {
+  background-color: var(--azure-blue-lightest);
+  color: var(--azure-blue-darkest);
+}
+
+[data-theme="dark"] .menu__link:hover {
+  background-color: var(--neutral-grey-40);
+  color: var(--azure-blue-light);
+}
+
+.menu__link--active {
+  background-color: var(--azure-blue-lighter);
+  color: var(--azure-blue-darkest);
+  font-weight: var(--ifm-font-weight-semibold);
+}
+
+[data-theme="dark"] .menu__link--active {
+  background-color: var(--azure-blue-darkest);
+  color: var(--azure-blue-light);
+}
+
+/* Content area */
+.main-wrapper {
+  background-color: var(--ifm-background-color);
+}
+
+.theme-doc-markdown {
+  max-width: none;
+}
+
+/* Typography improvements */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--ifm-font-family-base);
+  font-weight: var(--ifm-font-weight-semibold);
+  line-height: 1.3;
+  margin-bottom: 16px;
+}
+
+h1 {
+  font-size: 36px;
+  font-weight: var(--ifm-font-weight-bold);
+  color: var(--neutral-grey-50);
+  border-bottom: 2px solid var(--azure-blue-primary);
+  padding-bottom: 8px;
+}
+
+[data-theme="dark"] h1 {
+  color: #ffffff;
+}
+
+h2 {
+  font-size: 28px;
+  color: var(--azure-blue-darkest);
+  margin-top: 32px;
+}
+
+[data-theme="dark"] h2 {
+  color: var(--azure-blue-light);
+}
+
+h3 {
+  font-size: 22px;
+  color: var(--neutral-grey-60);
+}
+
+[data-theme="dark"] h3 {
+  color: var(--neutral-grey-100);
+}
+
+h4 {
+  font-size: 18px;
+  color: var(--neutral-grey-60);
+}
+
+[data-theme="dark"] h4 {
+  color: var(--neutral-grey-100);
+}
+
+/* Body text improvements */
+p, li {
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* Make sure menu text is readable */
+.menu__link {
+  font-size: 15px;
+}
+
+/* Code blocks - Azure DevOps style */
+.prism-code {
+  border-radius: var(--ifm-border-radius);
+  border: 1px solid var(--neutral-grey-130);
+  box-shadow: var(--ifm-global-shadow-lw);
+}
+
+[data-theme="dark"] .prism-code {
+  border: 1px solid var(--neutral-grey-60);
+}
+
+/* Buttons - Fluent UI style */
+.button {
+  border-radius: var(--ifm-button-border-radius);
+  font-weight: var(--ifm-font-weight-semibold);
+  transition: all 0.2s ease;
+  box-shadow: var(--ifm-global-shadow-lw);
+}
+
+.button:hover {
+  box-shadow: var(--ifm-global-shadow-md);
+  transform: translateY(-1px);
+}
+
+.button--primary {
+  background: linear-gradient(135deg, var(--azure-blue-primary) 0%, var(--azure-blue-dark) 100%);
+  border: none;
+}
+
+.button--primary:hover {
+  background: linear-gradient(135deg, var(--azure-blue-dark) 0%, var(--azure-blue-darker) 100%);
+}
+
+/* Cards and surfaces */
+.card {
+  border-radius: 8px;
+  box-shadow: var(--ifm-global-shadow-md);
+  border: 1px solid var(--neutral-grey-130);
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  box-shadow: var(--ifm-global-shadow-tl);
+  transform: translateY(-2px);
+}
+
+[data-theme="dark"] .card {
+  border: 1px solid var(--neutral-grey-60);
+  background-color: var(--neutral-grey-30);
+}
+
+/* Admonitions - Microsoft style */
+.admonition {
+  border-radius: var(--ifm-border-radius);
+  border-left: 4px solid var(--azure-blue-primary);
+  background-color: var(--azure-blue-lightest);
+  box-shadow: var(--ifm-global-shadow-lw);
+}
+
+.admonition-heading {
+  font-weight: var(--ifm-font-weight-semibold);
+}
+
+.admonition.admonition-tip {
+  border-left-color: var(--semantic-success);
+  background-color: #f3f9f1;
+}
+
+.admonition.admonition-warning {
+  border-left-color: var(--semantic-warning);
+  background-color: #fff8e1;
+}
+
+.admonition.admonition-danger {
+  border-left-color: var(--semantic-error);
+  background-color: #ffeaea;
+}
+
+/* Table styling */
+table {
+  border-radius: var(--ifm-border-radius);
+  overflow: hidden;
+  box-shadow: var(--ifm-global-shadow-lw);
+}
+
+th {
+  background-color: var(--azure-blue-lightest);
+  font-weight: var(--ifm-font-weight-semibold);
+  color: var(--azure-blue-darkest);
+}
+
+[data-theme="dark"] th {
+  background-color: var(--azure-blue-darkest);
+  color: var(--azure-blue-lighter);
+}
+
+tr:nth-child(even) {
+  background-color: var(--neutral-grey-150);
+}
+
+[data-theme="dark"] tr:nth-child(even) {
+  background-color: var(--neutral-grey-40);
+}
+
+/* Footer */
+.footer {
+  background: linear-gradient(135deg, var(--neutral-grey-130) 0%, var(--neutral-grey-120) 100%);
+  border-top: 1px solid var(--neutral-grey-120);
+}
+
+[data-theme="dark"] .footer {
+  background: linear-gradient(135deg, var(--neutral-grey-40) 0%, var(--neutral-grey-50) 100%);
+  border-top: 1px solid var(--neutral-grey-50);
+}
+
+/* Breadcrumbs */
+.breadcrumbs__item:not(:last-child):after {
+  content: '›';
+  margin: 0 8px;
+  color: var(--neutral-grey-90);
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+}
+
+/* Mermaid diagram styling for better readability */
+.mermaid {
+  text-align: center;
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background-color: #ffffff;
+  border-radius: var(--ifm-border-radius);
+  border: 1px solid var(--neutral-grey-130);
+  box-shadow: var(--ifm-global-shadow-lw);
+}
+
+[data-theme="dark"] .mermaid {
+  background-color: var(--neutral-grey-20);
+  border: 1px solid var(--neutral-grey-60);
+}
+
+/* Override mermaid default styles for better visibility */
+.mermaid svg {
+  max-width: 100%;
+  height: auto;
+  font-size: 16px !important;
+}
+
+/* Force high contrast colors for mermaid diagrams */
+.mermaid .node rect,
+.mermaid .node polygon,
+.mermaid .node circle {
+  stroke: #000000 !important;
+  stroke-width: 2px !important;
+  rx: 6px;
+  ry: 6px;
+}
+
+[data-theme="dark"] .mermaid .node rect,
+[data-theme="dark"] .mermaid .node polygon,
+[data-theme="dark"] .mermaid .node circle {
+  stroke: #ffffff !important;
+}
+
+.mermaid .node text,
+.mermaid text,
+.mermaid .nodeLabel,
+.mermaid .label {
+  font-weight: 700 !important;
+  font-size: 16px !important;
+  font-family: var(--ifm-font-family-base) !important;
+  fill: #000000 !important;
+  color: #000000 !important;
+}
+
+[data-theme="dark"] .mermaid .node text,
+[data-theme="dark"] .mermaid text,
+[data-theme="dark"] .mermaid .nodeLabel,
+[data-theme="dark"] .mermaid .label {
+  fill: #000000 !important;
+  color: #000000 !important;
+}
+
+/* Ensure arrows and connectors are visible */
+.mermaid .edgePath path {
+  stroke: #000000 !important;
+  stroke-width: 2px !important;
+}
+
+[data-theme="dark"] .mermaid .edgePath path {
+  stroke: #ffffff !important;
+}
+
+.mermaid .arrowheadPath {
+  fill: #000000 !important;
+  stroke: #000000 !important;
+}
+
+[data-theme="dark"] .mermaid .arrowheadPath {
+  fill: #ffffff !important;
+  stroke: #ffffff !important;
+}
+
+/* Hide theme toggle images based on theme */
 [data-theme="light"] img[src$="#dark-mode-only"],
 [data-theme="dark"] img[src$="#light-mode-only"] {
-	display: none;
+  display: none;
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 30px;
+  }
+  
+  h2 {
+    font-size: 24px;
+  }
+  
+  h3 {
+    font-size: 20px;
+  }
+  
+  .navbar__title {
+    font-size: 16px;
+  }
+  
+  p, li {
+    font-size: 16px;
+  }
+}
+
+/* Accessibility improvements */
+:focus-visible {
+  outline: 2px solid var(--azure-blue-primary);
+  outline-offset: 2px;
+}
+
+/* Animation for smooth transitions */
+* {
+  transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--neutral-grey-140);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--neutral-grey-100);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--azure-blue-primary);
 }

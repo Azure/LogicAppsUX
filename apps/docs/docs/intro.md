@@ -1,9 +1,14 @@
 ---
 sidebar_position: 1
 slug: /
+title: Getting Started
 ---
 
-# Getting Started
+# Welcome to Azure Logic Apps UX
+
+Build powerful workflow experiences with our comprehensive UI components and design system. This monorepo contains everything you need to create modern workflow designer applications.
+
+## Getting Started
 
 Welcome to the Azure Logic Apps UX monorepo! This comprehensive guide will help you set up your development environment and start contributing to the project.
 
@@ -206,7 +211,7 @@ pnpm install
 # On macOS/Linux:
 lsof -ti:4200 | xargs kill -9
 
-# On Windows:
+# On Windows (findstr and taskkill are Windows commands):
 netstat -ano | findstr :4200
 taskkill /PID <pid> /F
 ```

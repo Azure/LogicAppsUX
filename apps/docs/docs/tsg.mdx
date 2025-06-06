@@ -188,12 +188,13 @@ export const WorkflowSanitizer = () => {
         disabled={!inputWorkflow.trim()}
         style={{
           padding: '8px 16px',
-          backgroundColor: inputWorkflow.trim() ? 'var(--ifm-color-primary)' : '#ccc',
-          color: 'white',
+          backgroundColor: inputWorkflow.trim() ? 'var(--ifm-color-primary-darker)' : 'var(--ifm-color-emphasis-300)',
+          color: '#ffffff',
           border: 'none',
           borderRadius: '4px',
           cursor: inputWorkflow.trim() ? 'pointer' : 'not-allowed',
-          marginBottom: '10px'
+          marginBottom: '10px',
+          fontWeight: '600'
         }}
       >
         Sanitize Workflow
@@ -222,12 +223,13 @@ export const WorkflowSanitizer = () => {
               onClick={handleCopy}
               style={{
                 padding: '4px 12px',
-                backgroundColor: 'var(--ifm-color-primary)',
-                color: 'white',
+                backgroundColor: 'var(--ifm-color-primary-darker)',
+                color: '#ffffff',
                 border: 'none',
                 borderRadius: '4px',
                 cursor: 'pointer',
-                fontSize: '14px'
+                fontSize: '14px',
+                fontWeight: '600'
               }}
             >
               {copied ? '✓ Copied!' : 'Copy to Clipboard'}
