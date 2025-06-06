@@ -2,14 +2,22 @@ import { type FilterObject, TemplatesFilterDropdown } from '@microsoft/designer-
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
-import { setConnectorsFilters, setDetailsFilters, setKeywordFilter, setSortKey } from '../../../core/state/templates/manifestSlice';
+import {
+  setConnectorsFilters,
+  setDetailsFilters,
+  setKeywordFilter,
+  setSortKey,
+  setStatusFilters,
+  setSubscriptionsFilters,
+} from '../../../core/state/templates/manifestSlice';
 import { useEffect, useMemo, useState } from 'react';
-import { getUniqueConnectorsFromConnections } from '../../../core/templates/utils/helper';
+import { getTemplatePublishCategories, getUniqueConnectorsFromConnections } from '../../../core/templates/utils/helper';
 import { useConnector } from '../../../core/state/connection/connectionSelector';
 import { Field, Tab, TabList } from '@fluentui/react-components';
 import { type SelectTabData, type SelectTabEvent, SearchBox, Text, Option, Dropdown } from '@fluentui/react-components';
 import { css } from '@fluentui/utilities';
 import type { Template } from '@microsoft/logic-apps-shared';
+import { useSubscriptions } from '../../../core/templates/utils/queries';
 
 type TemplateDetailFilterValue = {
   displayName: string;
@@ -25,6 +33,7 @@ interface GalleryTab {
 }
 
 export interface TemplateSearchAndFilterProps {
+  tabFilterKey?: string;
   tabDetails?: GalleryTab[];
   detailFilters: TemplateDetailFilterType;
   showFilters?: boolean;
@@ -33,8 +42,10 @@ export interface TemplateSearchAndFilterProps {
 }
 
 const templateDefaultTabKey = 'all';
+const microsoftAuthoredTabKey = 'Microsoft';
 
 export const TemplateSearchAndFilters = ({
+  tabFilterKey = 'Type',
   tabDetails,
   searchPlaceholder,
   showFilters = true,
@@ -48,7 +59,7 @@ export const TemplateSearchAndFilters = ({
     isConsumption: state.workflow.isConsumption,
     availableTemplates: state.manifest.availableTemplates ?? {},
   }));
-  const selectedTabId = appliedDetailFilters?.Type?.[0]?.value ?? templateDefaultTabKey;
+  const selectedTabId = appliedDetailFilters?.[tabFilterKey]?.[0]?.value ?? templateDefaultTabKey;
 
   const intlText = {
     SEARCH: intl.formatMessage({
@@ -106,7 +117,7 @@ export const TemplateSearchAndFilters = ({
           id: 'YX0jQs',
           description: 'All templates tab',
         }),
-        filterKey: 'Type',
+        filterKey: tabFilterKey,
       },
     ];
 
@@ -118,16 +129,16 @@ export const TemplateSearchAndFilters = ({
       basicTabs.push({
         name: 'Custom',
         displayName: intlText.MY_TEMPLATES,
-        filterKey: 'publishedBy',
+        filterKey: tabFilterKey,
       });
       basicTabs.push({
-        name: 'Microsoft',
+        name: microsoftAuthoredTabKey,
         displayName: intlText.MICROSOFT_AUTHORED,
-        filterKey: 'publishedBy',
+        filterKey: tabFilterKey,
       });
     }
     return basicTabs;
-  }, [intl, tabDetails, availableTemplates, intlText.MY_TEMPLATES, intlText.MICROSOFT_AUTHORED]);
+  }, [intl, tabDetails, tabFilterKey, availableTemplates, intlText.MY_TEMPLATES, intlText.MICROSOFT_AUTHORED]);
 
   const onTabSelected = (e?: SelectTabEvent, data?: SelectTabData): void => {
     if (data) {
@@ -180,7 +191,7 @@ export const TemplateSearchAndFilters = ({
         </Field>
       </div>
 
-      {showFilters && <Filters detailFilters={detailFilters} />}
+      {showFilters && <Filters tabFilterKey={tabFilterKey} detailFilters={detailFilters} />}
 
       <div className={css('msla-templates-filters-tabs', cssOverrides?.tabs)}>
         <TabList selectedValue={selectedTabId} onTabSelect={onTabSelected}>
@@ -195,15 +206,25 @@ export const TemplateSearchAndFilters = ({
   );
 };
 
-const Filters = ({ detailFilters }: { detailFilters: TemplateDetailFilterType }) => {
+const Filters = ({ detailFilters, tabFilterKey }: { detailFilters: TemplateDetailFilterType; tabFilterKey: string }) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
-  const { isConsumption, availableTemplates, subscriptionId, location } = useSelector((state: RootState) => ({
-    isConsumption: state.workflow.isConsumption,
-    availableTemplates: state.manifest.availableTemplates ?? {},
-    subscriptionId: state.workflow.subscriptionId,
-    location: state.workflow.location,
-  }));
+  const { isConsumption, availableTemplates, subscriptionId, location, selectedSubscriptions, appliedDetailFilters } = useSelector(
+    (state: RootState) => ({
+      isConsumption: state.workflow.isConsumption,
+      availableTemplates: state.manifest.availableTemplates ?? {},
+      subscriptionId: state.workflow.subscriptionId,
+      location: state.workflow.location,
+      selectedSubscriptions: state.manifest.filters.subscriptions,
+      appliedDetailFilters: state.manifest.filters.detailFilters,
+    })
+  );
+
+  const disableStatusFilter = useMemo(
+    () => appliedDetailFilters?.[tabFilterKey]?.[0]?.value === microsoftAuthoredTabKey,
+    [appliedDetailFilters, tabFilterKey]
+  );
+  const publishCategories = useMemo(() => getTemplatePublishCategories(), []);
   const allTemplatesUniqueConnectorIds = useMemo(() => {
     const skuTemplates = Object.values(availableTemplates).filter((templateManifest) =>
       templateManifest.skus.includes(isConsumption ? 'consumption' : 'standard')
@@ -224,6 +245,15 @@ const Filters = ({ detailFilters }: { detailFilters: TemplateDetailFilterType })
       displayName: allConnectorsData[connectorId] ?? connectorId.split('/').slice(-1)[0],
     }));
   }, [allConnectorsData, allTemplatesUniqueConnectorIds]);
+  const { data: subscriptions, isLoading: isSubscriptionsLoading } = useSubscriptions();
+  const subscriptionOptions = useMemo(
+    () =>
+      subscriptions?.map((sub) => ({
+        value: sub.name,
+        displayName: sub.displayName,
+      })) ?? [],
+    [subscriptions]
+  );
 
   const intlText = {
     CONNECTORS: intl.formatMessage({
@@ -231,10 +261,36 @@ const Filters = ({ detailFilters }: { detailFilters: TemplateDetailFilterType })
       id: 'KO2eUv',
       description: 'Label text for connectors filter',
     }),
+    SUBSCRIPTIONS: intl.formatMessage({
+      defaultMessage: 'Subscriptions',
+      id: 'woJtvu',
+      description: 'Label text for subscriptions filter',
+    }),
+    STATUS: intl.formatMessage({
+      defaultMessage: 'Status',
+      id: 'xkCRtu',
+      description: 'Label text for status filter',
+    }),
+    LOADING: intl.formatMessage({
+      defaultMessage: 'Loading...',
+      id: 'MFg+49',
+      description: 'Loading text for the dropdown',
+    }),
   };
 
   return (
     <div className="msla-templates-filters-dropdowns">
+      <TemplatesFilterDropdown
+        filterName={intlText.SUBSCRIPTIONS}
+        items={subscriptionOptions}
+        selectedItems={selectedSubscriptions}
+        disabled={isSubscriptionsLoading}
+        placeholder={isSubscriptionsLoading ? intlText.LOADING : ''}
+        onApplyButtonClick={(filterItems) => {
+          dispatch(setSubscriptionsFilters(filterItems));
+        }}
+        isSearchable={true}
+      />
       {allTemplatesUniqueConnectorIds && allTemplatesUniqueConnectorIds.length > 0 && (
         <TemplatesFilterDropdown
           filterName={intlText.CONNECTORS}
@@ -252,7 +308,7 @@ const Filters = ({ detailFilters }: { detailFilters: TemplateDetailFilterType })
           onApplyButtonClick={(filterItems) => {
             dispatch(setConnectorsFilters(filterItems));
           }}
-          isSearchable
+          isSearchable={true}
         />
       )}
       {Object.entries(detailFilters).map(([filterName, filterItem], index) => (
@@ -265,6 +321,14 @@ const Filters = ({ detailFilters }: { detailFilters: TemplateDetailFilterType })
           }}
         />
       ))}
+      <TemplatesFilterDropdown
+        filterName={intlText.STATUS}
+        disabled={disableStatusFilter}
+        items={publishCategories}
+        onApplyButtonClick={(filterItems) => {
+          dispatch(setStatusFilters(filterItems));
+        }}
+      />
     </div>
   );
 };

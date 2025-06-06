@@ -10,19 +10,16 @@ import { useTemplatesStrings } from '../../templates/templatesStrings';
 import { useResourceStrings } from '../resources';
 import { setRunValidation } from '../../../core/state/templates/tabSlice';
 import {
-  setApiValidationErrors,
-  updateEnvironment,
   validateParameterDetails,
   validateTemplateManifest,
   validateWorkflowManifestsData,
 } from '../../../core/state/templates/templateSlice';
 import constants from '../../../common/constants';
 import type { Template } from '@microsoft/logic-apps-shared';
-import { isUndefinedOrEmptyString, TemplateResourceService } from '@microsoft/logic-apps-shared';
-import { useQueryClient } from '@tanstack/react-query';
+import { isUndefinedOrEmptyString } from '@microsoft/logic-apps-shared';
 import { useEffect, useCallback } from 'react';
 import { getZippedTemplateForDownload } from '../../../core/configuretemplate/utils/helper';
-import { getTemplateValidationError } from '../../../core/actions/bjsworkflow/configuretemplate';
+import { saveTemplateData } from '../../../core/actions/bjsworkflow/configuretemplate';
 
 export const useConfigureTemplateWizardTabs = ({
   onSaveWorkflows,
@@ -33,7 +30,6 @@ export const useConfigureTemplateWizardTabs = ({
 }) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
-  const queryClient = useQueryClient();
   const resources = { ...useTemplatesStrings().tabLabelStrings, ...useResourceStrings() };
 
   const {
@@ -82,20 +78,16 @@ export const useConfigureTemplateWizardTabs = ({
   const handleSaveTemplate = useCallback(
     async (newPublishState: Template.TemplateEnvironment) => {
       dispatch(setRunValidation(true));
-      const templateId = templateManifest?.id as string;
-
-      try {
-        await TemplateResourceService().updateTemplate(templateId, templateManifest, newPublishState);
-        dispatch(setApiValidationErrors({ error: undefined, source: 'template' }));
-
-        queryClient.removeQueries(['template', templateId.toLowerCase()]);
-        onSaveTemplate(currentState as Template.TemplateEnvironment, newPublishState);
-        dispatch(updateEnvironment(newPublishState));
-      } catch (error: any) {
-        dispatch(getTemplateValidationError({ errorResponse: error, source: 'template' }));
-      }
+      dispatch(
+        saveTemplateData({
+          templateManifest: templateManifest as Template.TemplateManifest,
+          workflows,
+          publishState: newPublishState,
+          onSaveCompleted: () => onSaveTemplate(currentState as Template.TemplateEnvironment, newPublishState),
+        })
+      );
     },
-    [queryClient, templateManifest, onSaveTemplate, currentState, dispatch]
+    [workflows, templateManifest, onSaveTemplate, currentState, dispatch]
   );
 
   const downloadTemplate = useCallback(async () => {

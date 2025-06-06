@@ -170,17 +170,13 @@ const useWorkflowSectionItems = (resources: Record<string, string>) => {
   }));
 
   const workflowDatas = Object.values(workflows);
+  const isSingleWorkflow = workflowDatas.length === 1;
   return workflowDatas?.flatMap((workflow, index) => {
     const isLast = index === workflowDatas.length - 1;
     const thisWorkflowSectionItems: TemplatesSectionItem[] = [
       {
         label: resources.WORKFLOW_NAME,
-        value: workflow.workflowName,
-        type: 'text',
-      },
-      {
-        label: resources.WorkflowDisplayName,
-        value: workflow?.manifest?.title,
+        value: workflow.id,
         type: 'text',
       },
       {
@@ -191,11 +187,6 @@ const useWorkflowSectionItems = (resources: Record<string, string>) => {
               equals(kind, WorkflowKind.STATEFUL) ? resources.STATEFUL : equals(kind, WorkflowKind.STATELESS) ? resources.STATELESS : ''
             )
             ?.join(', ') ?? resources.Placeholder,
-        type: 'text',
-      },
-      {
-        label: resources.Summary,
-        value: workflow?.manifest?.summary ?? resources.Placeholder,
         type: 'text',
       },
       {
@@ -219,6 +210,20 @@ const useWorkflowSectionItems = (resources: Record<string, string>) => {
         type: 'text',
       },
     ];
+
+    if (!isSingleWorkflow) {
+      thisWorkflowSectionItems.splice(1, 0, {
+        label: resources.WorkflowDisplayName,
+        value: workflow?.manifest?.title,
+        type: 'text',
+      });
+
+      thisWorkflowSectionItems.splice(3, 0, {
+        label: resources.Summary,
+        value: workflow?.manifest?.summary ?? resources.Placeholder,
+        type: 'text',
+      });
+    }
 
     if (!isLast) {
       thisWorkflowSectionItems.push(SectionDividerItem);
@@ -328,15 +333,21 @@ const useProfileSectionItems = (resources: Record<string, string>) => {
     workflows: state.template.workflows,
   }));
 
-  const { data: allConnectors } = useAllConnectors(operationInfos);
+  const { data: allConnectors } = useAllConnectors(operationInfos, workflows);
   const selectedConnectors = useMemo(() => {
     return allConnectors?.filter((connector) => templateManifest?.featuredConnectors?.some((conn) => equals(conn.id, connector.id)));
   }, [allConnectors, templateManifest]);
+  const isSingleWorkflow = Object.keys(workflows).length === 1;
 
   const items: TemplatesSectionItem[] = [
     {
       label: resources.TemplateDisplayName,
       value: templateManifest?.title ?? resources.Placeholder,
+      type: 'text',
+    },
+    {
+      label: resources.Summary,
+      value: templateManifest?.summary ?? resources.Placeholder,
       type: 'text',
     },
     {
@@ -351,20 +362,31 @@ const useProfileSectionItems = (resources: Record<string, string>) => {
     },
     {
       label: resources.Category,
-      value: templateManifest?.details?.Category ?? resources.Placeholder,
+      value: templateManifest?.details?.Category ? templateManifest?.details?.Category : resources.Placeholder,
       type: 'text',
     },
     {
       label: resources.FeaturedConnectors,
-      value: selectedConnectors?.map((connector) => connector.displayName).join(', ') ?? resources.Placeholder,
+      value:
+        selectedConnectors && selectedConnectors.length > 0
+          ? selectedConnectors?.map((connector) => connector.displayName).join(', ')
+          : resources.Placeholder,
       type: 'text',
     },
     {
       label: resources.Tags,
-      value: templateManifest?.tags?.join(', ') ?? resources.Placeholder,
+      value: templateManifest?.tags && templateManifest?.tags?.length > 0 ? templateManifest?.tags?.join(', ') : resources.Placeholder,
       type: 'text',
     },
   ];
+
+  if (!isSingleWorkflow) {
+    items.splice(4, 0, {
+      label: resources.Features,
+      value: templateManifest?.description ?? resources.Placeholder,
+      type: 'text',
+    });
+  }
 
   return items;
 };

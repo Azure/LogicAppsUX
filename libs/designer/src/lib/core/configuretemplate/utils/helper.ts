@@ -421,7 +421,8 @@ export const suffixConnectionsWithIdentifier = (
           result.connections[updatedConnectionKey] = connections[connectionKey];
         }
 
-        updatedDefinition = replaceAllStringInWorkflowDefinition(updatedDefinition, connectionKey, updatedConnectionKey);
+        updatedDefinition = replaceAllStringInWorkflowDefinition(updatedDefinition, `"${connectionKey}"`, `"${updatedConnectionKey}"`);
+        updatedDefinition = replaceAllStringInWorkflowDefinition(updatedDefinition, `'${connectionKey}'`, `'${updatedConnectionKey}'`);
       }
     }
 

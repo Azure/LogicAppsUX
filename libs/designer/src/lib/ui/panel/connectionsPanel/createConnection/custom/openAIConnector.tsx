@@ -39,15 +39,25 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
 
   const stringResources = useMemo(
     () => ({
-      COGNITIVE_SERVICE_ACCOUNT: intl.formatMessage({
+      COGNITIVE_SERVICE_OPENAI_RESOURCE: intl.formatMessage({
         defaultMessage: 'Azure OpenAI resource',
-        id: 'u5LIuT',
-        description: 'Select the Azure Cognitive Service Account to use for this connection',
+        id: 'boD8mP',
+        description: 'Azure Cognitive Service Open AI resource label',
       }),
-      SELECT_COGNITIVE_SERVICE_ACCOUNT: intl.formatMessage({
+      SELECT_COGNITIVE_SERVICE_OPENAI_RESOURCE: intl.formatMessage({
         defaultMessage: 'Select an Azure OpenAI resource',
-        id: 'BR/bBa',
-        description: 'Select the Azure Cognitive Service Account to use for this connection',
+        id: '9hKeBq',
+        description: 'Select the Azure Cognitive Service Open AI resource to use for this connection',
+      }),
+      COGNITIVE_SERVICE_AI_RESOURCE: intl.formatMessage({
+        defaultMessage: 'Azure AI Resource',
+        id: 'LBcc5u',
+        description: 'Azure Cognitive Service AI resource label',
+      }),
+      SELECT_COGNITIVE_SERVICE_AI_RESOURCE: intl.formatMessage({
+        defaultMessage: 'Select an Azure AI resource',
+        id: 'EPvt2J',
+        description: 'Select the Azure Cognitive Service AI resource to use for this connection',
       }),
       LOADING_ACCOUNTS: intl.formatMessage({
         defaultMessage: 'Loading accounts...',
@@ -173,7 +183,9 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
         />
         <ConnectionParameterRow
           parameterKey={'cognitive-service-resource-id'}
-          displayName={stringResources.COGNITIVE_SERVICE_ACCOUNT}
+          displayName={
+            isAgentServiceConnection ? stringResources.COGNITIVE_SERVICE_AI_RESOURCE : stringResources.COGNITIVE_SERVICE_OPENAI_RESOURCE
+          }
           required={true}
           tooltip={
             <Link href="https://go.microsoft.com/fwlink/?linkid=2189193" target="_blank">
@@ -186,7 +198,13 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
               <ComboBox
                 required={true}
                 disabled={openAIComboboxDisabled}
-                placeholder={isFetchingAccount ? stringResources.LOADING_ACCOUNTS : stringResources.SELECT_COGNITIVE_SERVICE_ACCOUNT}
+                placeholder={
+                  isFetchingAccount
+                    ? stringResources.LOADING_ACCOUNTS
+                    : isAgentServiceConnection
+                      ? stringResources.SELECT_COGNITIVE_SERVICE_AI_RESOURCE
+                      : stringResources.SELECT_COGNITIVE_SERVICE_OPENAI_RESOURCE
+                }
                 selectedKey={isUndefinedOrEmptyString(cognitiveServiceAccountId) ? null : cognitiveServiceAccountId}
                 className={styles.openAICombobox}
                 options={(allCognitiveServiceAccounts ?? []).map((account: any) => {

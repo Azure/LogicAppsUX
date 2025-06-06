@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   getLogicAppsCategories,
   getReactQueryClient,
+  getTemplateTypeCategories,
   resetStateOnResourceChange,
   TemplatesDataProvider,
   templateStore,
@@ -375,6 +376,10 @@ export const TemplatesStandard = () => {
                 Category: {
                   displayName: 'Categories',
                   items: getLogicAppsCategories(),
+                },
+                Type: {
+                  displayName: 'Type',
+                  items: getTemplateTypeCategories(),
                 },
               }}
             />
