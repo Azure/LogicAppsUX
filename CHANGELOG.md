@@ -1,4 +1,12 @@
 # Logic Apps Designer
+### [5.109.9](https://github.com/Azure/LogicAppsUX/compare/v5.109.8...v5.109.9) (2025-06-06)
+
+
+### Bug Fixes
+
+* **templates:** Fixing publishing of templates and other bug fixes ([#7452](https://github.com/Azure/LogicAppsUX/issues/7452)) ([080bba2](https://github.com/Azure/LogicAppsUX/commit/080bba244023b5f8f02ff793a57f962bb7ade03f)), closes [#7445](https://github.com/Azure/LogicAppsUX/issues/7445)
+* **vscode:** Apim connector parameterization check fix ([#7310](https://github.com/Azure/LogicAppsUX/issues/7310)) ([#7433](https://github.com/Azure/LogicAppsUX/issues/7433)) ([809768d](https://github.com/Azure/LogicAppsUX/commit/809768db985909d393ebddc3bfb031aa25076cf3))
+
 ### [5.109.8](https://github.com/Azure/LogicAppsUX/compare/v5.109.7...v5.109.8) (2025-06-04)
 
 
