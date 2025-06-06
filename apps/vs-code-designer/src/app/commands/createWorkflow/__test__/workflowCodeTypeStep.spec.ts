@@ -5,7 +5,7 @@ import { ScriptWorkflowNameStep } from '../../createCodeless/createCodelessSteps
 import { CodefulWorkflowCreateStep } from '../../createCodeful/CodefulWorkflowCreateStep';
 import { workflowCodeType } from '../../../../constants';
 
-describe('WrokflowCodeTypeStep', () => {
+describe('WorkflowCodeTypeStep', () => {
   describe('prompt', () => {
     it('sets context.isCodeless to false for codeful input and sets template', async () => {
       const wizardContext: any = {
