@@ -26,6 +26,34 @@ function getPackageVersion(): string {
   return packageJson.version;
 }
 
+function getLatestVersionFromTags(): string | null {
+  try {
+    const tags = execSync('git tag -l "v*"', { encoding: 'utf8' })
+      .trim()
+      .split('\n')
+      .filter((tag) => tag.length > 0 && tag.match(/^v\d+\.\d+\.\d+$/));
+
+    if (tags.length === 0) return null;
+
+    // Sort tags by version
+    tags.sort((a, b) => {
+      const aVersion = a.replace('v', '').split('.').map(Number);
+      const bVersion = b.replace('v', '').split('.').map(Number);
+
+      for (let i = 0; i < Math.max(aVersion.length, bVersion.length); i++) {
+        const aPart = aVersion[i] || 0;
+        const bPart = bVersion[i] || 0;
+        if (aPart !== bPart) return aPart - bPart;
+      }
+      return 0;
+    });
+
+    return tags[tags.length - 1]; // Return latest tag
+  } catch {
+    return null;
+  }
+}
+
 function getLatestPatchTag(major: number, minor: number): string | null {
   try {
     const tags = execSync(`git tag -l "v${major}.${minor}.*"`, { encoding: 'utf8' })
@@ -66,11 +94,7 @@ function parseHotfixBranch(branchName: string): HotfixInfo | null {
 }
 
 function calculateNextVersion(releaseType: ReleaseType, branchName: string): VersionResult {
-  const currentVersion = getPackageVersion();
-  const [currentMajor, currentMinor, currentPatch] = currentVersion.split('.').map(Number);
-
   console.log(`Current branch: ${branchName}`);
-  console.log(`Current package.json version: ${currentVersion}`);
   console.log(`Release type: ${releaseType}`);
 
   let major: number, minor: number, patch: number;
@@ -83,9 +107,22 @@ function calculateNextVersion(releaseType: ReleaseType, branchName: string): Ver
       minor = hotfixInfo.minor;
       console.log(`Detected hotfix branch for version ${major}.${minor}`);
     } else {
-      major = currentMajor;
-      minor = currentMinor;
-      console.log(`Using current version's major.minor: ${major}.${minor}`);
+      // For patch releases on non-hotfix branches, get latest version from tags
+      const latestTag = getLatestVersionFromTags();
+      if (latestTag) {
+        const latestVersion = latestTag.replace('v', '');
+        const [latestMajor, latestMinor] = latestVersion.split('.').map(Number);
+        major = latestMajor;
+        minor = latestMinor;
+        console.log(`Using latest tag version's major.minor: ${major}.${minor} from ${latestTag}`);
+      } else {
+        // Fallback to package.json if no tags exist
+        const currentVersion = getPackageVersion();
+        const [currentMajor, currentMinor] = currentVersion.split('.').map(Number);
+        major = currentMajor;
+        minor = currentMinor;
+        console.log(`No git tags found, falling back to package.json version's major.minor: ${major}.${minor}`);
+      }
     }
 
     // Find latest patch version
@@ -102,10 +139,24 @@ function calculateNextVersion(releaseType: ReleaseType, branchName: string): Ver
       console.log(`No existing tags found for ${major}.${minor}, starting with patch 1`);
     }
   } else {
-    // For major/minor releases, use current version from package.json
-    major = currentMajor;
-    minor = currentMinor;
-    patch = currentPatch;
+    // For major/minor releases, use latest version from git tags
+    const latestTag = getLatestVersionFromTags();
+    if (latestTag) {
+      const latestVersion = latestTag.replace('v', '');
+      const [latestMajor, latestMinor, latestPatch] = latestVersion.split('.').map(Number);
+      major = latestMajor;
+      minor = latestMinor;
+      patch = latestPatch;
+      console.log(`Using latest tag as base version: ${latestVersion} from ${latestTag}`);
+    } else {
+      // Fallback to package.json if no tags exist
+      const currentVersion = getPackageVersion();
+      const [currentMajor, currentMinor, currentPatch] = currentVersion.split('.').map(Number);
+      major = currentMajor;
+      minor = currentMinor;
+      patch = currentPatch;
+      console.log(`No git tags found, falling back to package.json version: ${currentVersion}`);
+    }
 
     switch (releaseType) {
       case 'major':
