@@ -73,33 +73,71 @@ jobs:
         run: |
           CURRENT_VERSION=$(node -p "require('./package.json').version")
           RELEASE_TYPE="${{ github.event.inputs.release_type || 'minor' }}"
+          BRANCH_NAME="${{ github.ref_name }}"
           
-          # Split version into parts
-          IFS='.' read -r -a VERSION_PARTS <<< "$CURRENT_VERSION"
-          MAJOR="${VERSION_PARTS[0]}"
-          MINOR="${VERSION_PARTS[1]}"
-          PATCH="${VERSION_PARTS[2]}"
+          echo "Current branch: $BRANCH_NAME"
+          echo "Current package.json version: $CURRENT_VERSION"
+          echo "Release type: $RELEASE_TYPE"
           
-          # Calculate next version based on release type
-          case "$RELEASE_TYPE" in
-            major)
-              MAJOR=$((MAJOR + 1))
-              MINOR=0
-              PATCH=0
-              ;;
-            minor)
-              MINOR=$((MINOR + 1))
-              PATCH=0
-              ;;
-            patch)
-              PATCH=$((PATCH + 1))
-              ;;
-          esac
+          # For patch releases, calculate version based on git tags, not package.json
+          if [ "$RELEASE_TYPE" = "patch" ]; then
+            # Determine the target major.minor version for patch
+            if [[ "$BRANCH_NAME" =~ ^hotfix/v?([0-9]+)\.([0-9]+)$ ]]; then
+              # Extract major.minor from hotfix branch name (e.g., hotfix/5.109 or hotfix/v5.109)
+              TARGET_MAJOR="${BASH_REMATCH[1]}"
+              TARGET_MINOR="${BASH_REMATCH[2]}"
+              echo "Detected hotfix branch for version ${TARGET_MAJOR}.${TARGET_MINOR}"
+            else
+              # For non-hotfix branches, use the current version's major.minor
+              IFS='.' read -r -a VERSION_PARTS <<< "$CURRENT_VERSION"
+              TARGET_MAJOR="${VERSION_PARTS[0]}"
+              TARGET_MINOR="${VERSION_PARTS[1]}"
+              echo "Using current version's major.minor: ${TARGET_MAJOR}.${TARGET_MINOR}"
+            fi
+            
+            # Find the latest patch version for this major.minor
+            LATEST_PATCH_TAG=$(git tag -l "v${TARGET_MAJOR}.${TARGET_MINOR}.*" | sort -V | tail -1)
+            
+            if [ -n "$LATEST_PATCH_TAG" ]; then
+              # Extract patch number from latest tag
+              LATEST_VERSION=${LATEST_PATCH_TAG#v}
+              IFS='.' read -r -a LATEST_PARTS <<< "$LATEST_VERSION"
+              LATEST_PATCH="${LATEST_PARTS[2]}"
+              NEW_PATCH=$((LATEST_PATCH + 1))
+              echo "Found latest patch tag: $LATEST_PATCH_TAG"
+              echo "Incrementing patch from $LATEST_PATCH to $NEW_PATCH"
+            else
+              # No existing tags for this major.minor, start with patch 1
+              NEW_PATCH=1
+              echo "No existing tags found for ${TARGET_MAJOR}.${TARGET_MINOR}, starting with patch 1"
+            fi
+            
+            MAJOR="$TARGET_MAJOR"
+            MINOR="$TARGET_MINOR"
+            PATCH="$NEW_PATCH"
+          else
+            # For major/minor releases, use the current version from package.json
+            IFS='.' read -r -a VERSION_PARTS <<< "$CURRENT_VERSION"
+            MAJOR="${VERSION_PARTS[0]}"
+            MINOR="${VERSION_PARTS[1]}"
+            PATCH="${VERSION_PARTS[2]}"
+            
+            case "$RELEASE_TYPE" in
+              major)
+                MAJOR=$((MAJOR + 1))
+                MINOR=0
+                PATCH=0
+                ;;
+              minor)
+                MINOR=$((MINOR + 1))
+                PATCH=0
+                ;;
+            esac
+          fi
           
           NEW_VERSION="${MAJOR}.${MINOR}.${PATCH}"
           TAG_NAME="v${NEW_VERSION}"
           
-          echo "Current version: $CURRENT_VERSION"
           echo "New version: $NEW_VERSION"
           echo "Tag name: $TAG_NAME"
           
