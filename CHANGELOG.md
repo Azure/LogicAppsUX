@@ -1,4 +1,13 @@
 # Logic Apps Designer
+### [5.109.10](https://github.com/Azure/LogicAppsUX/compare/v5.109.9...v5.109.10) (2025-06-06)
+
+
+### Bug Fixes
+
+* **templates:** Doing case insensitive check for filtering out workflow artifacts while adding workflows in template ([#7455](https://github.com/Azure/LogicAppsUX/issues/7455)) ([#7463](https://github.com/Azure/LogicAppsUX/issues/7463)) ([fee849e](https://github.com/Azure/LogicAppsUX/commit/fee849e4e7f2a2531b9947648dc68b10c0889306))
+* **Templates:** White screen on unpublishing template from workflows panel ([#7465](https://github.com/Azure/LogicAppsUX/issues/7465)) ([#7466](https://github.com/Azure/LogicAppsUX/issues/7466)) ([86eae15](https://github.com/Azure/LogicAppsUX/commit/86eae15d60b60eb859eef64ada9e9067b4bc542f))
+* **vscode:** custom code debugger fixes ([#7464](https://github.com/Azure/LogicAppsUX/issues/7464)) ([bbf3e16](https://github.com/Azure/LogicAppsUX/commit/bbf3e1632fe1967b735abc2f65b938e6f3e913a8)), closes [#7448](https://github.com/Azure/LogicAppsUX/issues/7448)
+
 ### [5.109.9](https://github.com/Azure/LogicAppsUX/compare/v5.109.8...v5.109.9) (2025-06-06)
 
 
