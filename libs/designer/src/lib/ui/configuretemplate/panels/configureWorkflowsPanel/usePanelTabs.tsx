@@ -141,7 +141,7 @@ export const useConfigureWorkflowPanelTabs = ({
     setSelectedWorkflowsList((prevSelectedWorkflows) => {
       for (const [workflowId, workflowData] of Object.entries(prevSelectedWorkflows)) {
         const modifiedWorkflowData = clone(workflowData);
-        modifiedWorkflowData['isManageWorkflow'] = true;
+        modifiedWorkflowData.isManageWorkflow = true;
 
         if (modifiedWorkflowData.id && workflowId !== modifiedWorkflowData.id) {
           prevSelectedWorkflows[modifiedWorkflowData.id] = modifiedWorkflowData;
