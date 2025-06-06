@@ -10,19 +10,16 @@ import { useTemplatesStrings } from '../../templates/templatesStrings';
 import { useResourceStrings } from '../resources';
 import { setRunValidation } from '../../../core/state/templates/tabSlice';
 import {
-  setApiValidationErrors,
-  updateEnvironment,
   validateParameterDetails,
   validateTemplateManifest,
   validateWorkflowManifestsData,
 } from '../../../core/state/templates/templateSlice';
 import constants from '../../../common/constants';
 import type { Template } from '@microsoft/logic-apps-shared';
-import { isUndefinedOrEmptyString, TemplateResourceService } from '@microsoft/logic-apps-shared';
+import { isUndefinedOrEmptyString } from '@microsoft/logic-apps-shared';
 import { useEffect, useCallback } from 'react';
 import { getZippedTemplateForDownload } from '../../../core/configuretemplate/utils/helper';
-import { getTemplateValidationError } from '../../../core/actions/bjsworkflow/configuretemplate';
-import { resetTemplateQuery } from '../../../core/configuretemplate/utils/queries';
+import { saveTemplateData } from '../../../core/actions/bjsworkflow/configuretemplate';
 
 export const useConfigureTemplateWizardTabs = ({
   onSaveWorkflows,
@@ -80,27 +77,15 @@ export const useConfigureTemplateWizardTabs = ({
 
   const handleSaveTemplate = useCallback(
     async (newPublishState: Template.TemplateEnvironment) => {
-      const service = TemplateResourceService();
-
       dispatch(setRunValidation(true));
-      const templateId = templateManifest?.id as string;
-
-      try {
-        const isSingleWorkflow = Object.keys(workflows).length === 1;
-        if (isSingleWorkflow) {
-          await service.updateWorkflow(templateId, Object.values(workflows)[0]?.id, {
-            title: templateManifest?.title,
-            summary: templateManifest?.summary,
-          });
-        }
-        await service.updateTemplate(templateId, templateManifest, newPublishState);
-        resetTemplateQuery(templateId);
-        dispatch(setApiValidationErrors({ error: undefined, source: 'template' }));
-        onSaveTemplate(currentState as Template.TemplateEnvironment, newPublishState);
-        dispatch(updateEnvironment(newPublishState));
-      } catch (error: any) {
-        dispatch(getTemplateValidationError({ errorResponse: error, source: 'template' }));
-      }
+      dispatch(
+        saveTemplateData({
+          templateManifest: templateManifest as Template.TemplateManifest,
+          workflows,
+          publishState: newPublishState,
+          onSaveCompleted: () => onSaveTemplate(currentState as Template.TemplateEnvironment, newPublishState),
+        })
+      );
     },
     [workflows, templateManifest, onSaveTemplate, currentState, dispatch]
   );
