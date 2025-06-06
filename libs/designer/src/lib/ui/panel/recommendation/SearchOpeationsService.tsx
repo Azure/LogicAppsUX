@@ -6,7 +6,7 @@ export class DefaultSearchOperationsService implements Pick<ISearchService, 'sea
   constructor(
     private allOperations: DiscoveryOpArray,
     private showParseDocWithMetadata: boolean,
-    private showACASession: boolean
+    private showACASession?: boolean
   ) {}
 
   // Comparison function for sorting Fuse results
