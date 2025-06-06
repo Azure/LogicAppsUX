@@ -128,6 +128,21 @@ async function pickNetHostChildProcess(taskInfo: IRunningFuncTask): Promise<stri
 
   const children: OSAgnosticProcess[] =
     process.platform === Platform.windows ? await getWindowsChildren(funcPid) : await getUnixChildren(funcPid);
-  const child: OSAgnosticProcess | undefined = children.reverse().find((c) => /(dotnet)(\.exe|)$/i.test(c.command || ''));
+  let child: OSAgnosticProcess | undefined = children.reverse().find((c) => /(dotnet)(\.exe|)$/i.test(c.command || ''));
+
+  // If child is null or undefined, look one level deeper in child processes
+  if (!child) {
+    for (const possibleParent of children) {
+      const childrenOfChild =
+        process.platform === Platform.windows
+          ? await getWindowsChildren(Number(possibleParent.pid))
+          : await getUnixChildren(Number(possibleParent.pid));
+
+      child = childrenOfChild.reverse().find((c) => /(dotnet)(\.exe|)$/i.test(c.command || ''));
+      if (child) {
+        break;
+      }
+    }
+  }
   return child ? child.pid.toString() : undefined;
 }
