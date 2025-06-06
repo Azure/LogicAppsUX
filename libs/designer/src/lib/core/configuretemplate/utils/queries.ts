@@ -5,6 +5,8 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getConnector } from '../../queries/operation';
 import type { NodeOperation } from '../../state/operation/operationMetadataSlice';
 import { getReactQueryClient } from '../../ReactQueryProvider';
+import type { WorkflowTemplateData } from '../../actions/bjsworkflow/templates';
+import { delimiter } from './helper';
 
 export const getTemplateManifest = async (templateId: string): Promise<Template.TemplateManifest> => {
   const templateResource = await getTemplate(templateId);
@@ -84,8 +86,19 @@ export const getTemplate = async (templateId: string): Promise<ArmResource<any>>
   return queryClient.fetchQuery(['template', templateId.toLowerCase()], async () => TemplateResourceService().getTemplate(templateId));
 };
 
-export const useAllConnectors = (operationInfos: Record<string, NodeOperation>) => {
-  const allConnectorIds = Object.values(operationInfos).reduce((result: string[], operationInfo) => {
+export const useAllConnectors = (
+  operationInfos: Record<string, NodeOperation>,
+  workflows: Record<string, Partial<WorkflowTemplateData>>
+) => {
+  const workflowNames = Object.values(workflows).map((workflow) => workflow.id?.toLowerCase());
+  const operationInfosInWorkflows = Object.keys(operationInfos)
+    .filter((operationId) => {
+      const workflowName = operationId.split(delimiter)[0].toLowerCase();
+      return workflowNames.includes(workflowName);
+    })
+    .map((operationId) => operationInfos[operationId]);
+
+  const allConnectorIds = operationInfosInWorkflows.reduce((result: string[], operationInfo) => {
     const normalizedConnectorId = operationInfo.connectorId?.toLowerCase();
     if (normalizedConnectorId && !result.includes(normalizedConnectorId)) {
       result.push(normalizedConnectorId);
