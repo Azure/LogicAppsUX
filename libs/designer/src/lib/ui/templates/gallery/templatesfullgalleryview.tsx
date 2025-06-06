@@ -1,7 +1,7 @@
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { TemplateCard } from '../cards/templateCard';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { setLayerHostSelector } from '@fluentui/react';
 import type { CreateWorkflowHandler, TemplatesDesignerProps } from '../TemplatesDesigner';
 import { QuickViewPanel } from '../../panel/templatePanel/quickViewPanel/quickViewPanel';
@@ -18,11 +18,10 @@ export const TemplatesFullGalleryView = ({ detailFilters, createWorkflowCall, is
   const {
     filters: { detailFilters: appliedDetailFilters },
   } = useSelector((state: RootState) => state.manifest);
-
-  const selectedTabId = appliedDetailFilters?.[tabFilterKey]?.[0]?.value;
-
-  const blankTemplateCard =
-    selectedTabId !== 'Custom' ? <TemplateCard blankWorkflowProps={{ isWorkflowEmpty }} templateName="#blank#" /> : undefined;
+  const blankTemplateCard = useMemo(() => {
+    const selectedTabId = appliedDetailFilters?.[tabFilterKey]?.[0]?.value;
+    return selectedTabId === undefined ? <TemplateCard blankWorkflowProps={{ isWorkflowEmpty }} templateName="#blank#" /> : undefined;
+  }, [appliedDetailFilters, isWorkflowEmpty]);
   const onTemplateSelect = (_templateName: string, isSingleWorkflow: boolean) => {
     if (isSingleWorkflow) {
       dispatch(openPanelView({ panelView: TemplatePanelView.QuickView }));

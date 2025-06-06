@@ -14,7 +14,9 @@ export interface ITemplateService {
   openBladeAfterCreate?: (workflowName: string | undefined) => void;
   onAddBlankWorkflow?: () => Promise<void>;
   getAllTemplateNames: () => Promise<string[]>;
-  getCustomTemplates?: (subscrpitionId: string, resourceGroup: string) => Promise<CustomTemplateResource[]>;
+  getCustomTemplates?: (resourceDetails: { subscriptionId?: string; resourceGroup?: string; subscriptionIds?: string[] }) => Promise<
+    CustomTemplateResource[]
+  >;
   getResourceManifest: (resourcePath: string) => Promise<Template.TemplateManifest | Template.WorkflowManifest>;
   getWorkflowDefinition: (templateId: string, workflowId: string) => Promise<LogicAppsV2.WorkflowDefinition>;
   getContentPathUrl: (templatePath: string, resourcePath: string) => string;

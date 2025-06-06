@@ -25,17 +25,18 @@ export const FeaturedConnectors = () => {
   };
   const dispatch = useDispatch<AppDispatch>();
 
-  const { operationInfos, featuredConnectors, errors, apiErrors, subscriptionId, location } = useSelector((state: RootState) => {
+  const { operationInfos, featuredConnectors, workflows, errors, apiErrors, subscriptionId, location } = useSelector((state: RootState) => {
     return {
       operationInfos: state.operation.operationInfo,
       featuredConnectors: state.template.manifest?.featuredConnectors ?? [],
+      workflows: state.template.workflows,
       errors: state.template.errors,
       apiErrors: state.template.apiValidatationErrors?.template,
       subscriptionId: state.workflow.subscriptionId,
       location: state.workflow.location,
     };
   });
-  const { data: allConnectors, isLoading } = useAllConnectors(operationInfos);
+  const { data: allConnectors, isLoading } = useAllConnectors(operationInfos, workflows);
   const selectedConnectors = useMemo(() => {
     return allConnectors?.filter((connector) =>
       featuredConnectors.some((conn) => equals(normalizeConnectorId(conn.id, subscriptionId, location), connector.id))
