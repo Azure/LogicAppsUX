@@ -24,6 +24,11 @@ export const CustomizeParameter = ({
         label: resourceStrings.ParameterName,
         value: formatNameWithIdentifierToDisplay(parameterDefinition.name) || '',
         type: 'text',
+        description: intl.formatMessage({
+          defaultMessage: 'The name for the parameter in the underlying JSON definition.',
+          id: 'c/g86m',
+          description: 'Description for parameter name field',
+        }),
       },
       {
         label: resourceStrings.ParameterDisplayName,
@@ -36,6 +41,11 @@ export const CustomizeParameter = ({
             displayName: value,
           });
         },
+        description: intl.formatMessage({
+          defaultMessage: 'The user-friendly name for the parameter in the Azure portal.',
+          id: 'TikQGQ',
+          description: 'Description for parameter display name field',
+        }),
         hint: intl.formatMessage({
           defaultMessage: 'Parameter display name is required for Save.',
           id: 'RWd2ii',
@@ -46,11 +56,21 @@ export const CustomizeParameter = ({
         label: resourceStrings.Type,
         value: parameterDefinition.type || '',
         type: 'text',
+        description: intl.formatMessage({
+          defaultMessage: 'The type of value expected (e.g., string, boolean, number).',
+          id: 'GnY5sj',
+          description: 'Description for parameter type field',
+        }),
       },
       {
         label: resourceStrings.DefaultValue,
         value: parameterDefinition.default || '',
         type: 'textfield',
+        description: intl.formatMessage({
+          defaultMessage: `Pre-filled value used if the user doesn't enter anything.`,
+          id: 'eXWIo2',
+          description: 'Description for parameter default value field',
+        }),
         onChange: (value: string) => {
           setParameterDefinition({
             ...parameterDefinition,
@@ -62,6 +82,11 @@ export const CustomizeParameter = ({
         label: resourceStrings.Description,
         value: parameterDefinition.description || '',
         type: 'textarea',
+        description: intl.formatMessage({
+          defaultMessage: 'Additional context or help text for the parameter.',
+          id: 'LULjJn',
+          description: 'Description for parameter description field',
+        }),
         onChange: (value: string) => {
           setParameterDefinition({
             ...parameterDefinition,
@@ -72,6 +97,11 @@ export const CustomizeParameter = ({
       {
         label: resourceStrings.RequiredField,
         value: parameterDefinition.required ?? false,
+        description: intl.formatMessage({
+          defaultMessage: 'Indicates to template users whether the parameter must be filled to proceed',
+          id: '/qCaDo',
+          description: 'Description for the required field',
+        }),
         type: 'switch',
         onChange: (value: boolean) => {
           setParameterDefinition({

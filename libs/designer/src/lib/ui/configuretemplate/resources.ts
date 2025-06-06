@@ -69,10 +69,10 @@ export const useResourceStrings = () => {
       id: 'gOkIvb',
       description: 'Name label',
     }),
-    WorkflowType: intl.formatMessage({
-      defaultMessage: 'Workflow type',
-      id: 'xBIh0S',
-      description: 'Workflow type label',
+    TemplateType: intl.formatMessage({
+      defaultMessage: 'Template type',
+      id: 'RDsZrd',
+      description: 'Template type label',
     }),
     Trigger: intl.formatMessage({
       defaultMessage: 'Trigger',
@@ -215,8 +215,8 @@ export const useResourceStrings = () => {
       description: 'Parameter display name label',
     }),
     RequiredField: intl.formatMessage({
-      defaultMessage: 'Required Field',
-      id: 'vTxIoS',
+      defaultMessage: 'Required field',
+      id: 'l3nn+9',
       description: 'Required field label',
     }),
     WorkflowImages: intl.formatMessage({
@@ -226,13 +226,13 @@ export const useResourceStrings = () => {
     }),
     WorkflowImagesDescription: intl.formatMessage({
       defaultMessage:
-        'Provide your workflow images in both Azure light and dark themes. Open the workflow in the designer, take screenshots in each theme, and save the images. Then upload them to Azure Blob Storage and share the shared access signature (SAS) link.',
-      id: 'B2TJcx',
+        'Add images of this workflow as it appears in the designer in the original logic app. Take a screenshot in both light-mode and dar-mode versions. Upload files to Azure Blob Storage, then create a shared access signature (SAS) URL for each.',
+      id: 'VLn4Dz',
       description: 'Description for the workflow images section',
     }),
     LightModeImage: intl.formatMessage({
-      defaultMessage: 'Light mode image',
-      id: '5LLxEp',
+      defaultMessage: 'Light-mode SAS URL',
+      id: 'fRrZKS',
       description: 'Light mode image label',
     }),
     LightModeImageDescription: intl.formatMessage({
@@ -242,8 +242,8 @@ export const useResourceStrings = () => {
       description: 'Light mode image description',
     }),
     DarkModeImage: intl.formatMessage({
-      defaultMessage: 'Dark mode image',
-      id: 'CdxaGY',
+      defaultMessage: 'Dark-mode SAS URL',
+      id: 'xWbF46',
       description: 'Dark mode image label',
     }),
     DarkModeImageDescription: intl.formatMessage({
@@ -330,8 +330,8 @@ export const useResourceStrings = () => {
       description: 'The tab label for the monitoring workflows tab on the configure template wizard',
     }),
     WorkflowsTabDescription: intl.formatMessage({
-      defaultMessage: `Choose one or more workflows from existing apps to build this template. Your workflows won't affect the original workflows. Save your work anytime and pick up where you left off without having to publish. To publish your template, all fields must be completed.`,
-      id: 'OwXjze',
+      defaultMessage: `Choose one or more workflows from existing apps to build this template. Your changes to these workflows won't affect the original workflows. Save your work anytime and pick up where you left off without having to publish. To publish your template, all fields must be completed.`,
+      id: 'P4r7vy',
       description: 'The description for the workflows tab on the configure template wizard',
     }),
     ConnectionsTabLabel: intl.formatMessage({
