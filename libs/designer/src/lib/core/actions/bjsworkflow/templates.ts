@@ -225,6 +225,7 @@ export const loadCustomTemplateArtifacts = createAsyncThunk('loadCustomTemplateA
   const workflows = await getWorkflowsInTemplate(templateId);
   const workflowsWithName = Object.keys(workflows).reduce((acc: Record<string, string>, workflowId: string) => {
     acc[workflowId] = workflowId;
+    (data.manifest as Template.TemplateManifest).workflows[workflowId] = { name: workflowId };
     return acc;
   }, {});
   const getWorkflowDetailsHandler = async (templateId: string, workflowId: string) => {
