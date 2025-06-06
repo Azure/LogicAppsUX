@@ -51,6 +51,7 @@ export const connectionsTab = (
           id: '0UfxUM',
           description: 'Button text for moving to the next tab in the create workflow panel',
         }),
+        appearance: 'primary',
         onClick: () => {
           dispatch(selectPanelTab(nextTabId));
         },
