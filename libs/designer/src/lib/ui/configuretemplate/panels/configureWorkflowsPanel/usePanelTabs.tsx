@@ -11,7 +11,7 @@ import {
   initializeAndSaveWorkflowsData,
   saveWorkflowsData,
 } from '../../../../core/actions/bjsworkflow/configuretemplate';
-import { getResourceNameFromId, equals, isUndefinedOrEmptyString, getUniqueName, type Template } from '@microsoft/logic-apps-shared';
+import { getResourceNameFromId, equals, isUndefinedOrEmptyString, getUniqueName, type Template, clone } from '@microsoft/logic-apps-shared';
 import { checkWorkflowNameWithRegex, validateWorkflowData } from '../../../../core/templates/utils/helper';
 import { useMemo, useCallback } from 'react';
 import { useResourceStrings } from '../../resources';
@@ -140,10 +140,11 @@ export const useConfigureWorkflowPanelTabs = ({
     // 1. Update the workflowId with user-input id (For newly selected workflow)
     setSelectedWorkflowsList((prevSelectedWorkflows) => {
       for (const [workflowId, workflowData] of Object.entries(prevSelectedWorkflows)) {
-        workflowData.isManageWorkflow = true;
+        const modifiedWorkflowData = clone(workflowData);
+        modifiedWorkflowData['isManageWorkflow'] = true;
 
-        if (workflowData.id && workflowId !== workflowData.id) {
-          prevSelectedWorkflows[workflowData.id] = workflowData;
+        if (modifiedWorkflowData.id && workflowId !== modifiedWorkflowData.id) {
+          prevSelectedWorkflows[modifiedWorkflowData.id] = modifiedWorkflowData;
           delete prevSelectedWorkflows[workflowId];
         }
       }
