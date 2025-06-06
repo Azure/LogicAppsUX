@@ -1,7 +1,7 @@
 import type { IImageStyles, IImageStyleProps, IStyleFunctionOrObject } from '@fluentui/react';
 import { Icon, Shimmer, ShimmerElementType, Spinner, SpinnerSize, css } from '@fluentui/react';
 import { useConnector } from '../../../core/state/connection/connectionSelector';
-import type { Template } from '@microsoft/logic-apps-shared';
+import { type Template, getPropertyValue } from '@microsoft/logic-apps-shared';
 import { getConnectorAllCategories } from '@microsoft/designer-ui';
 import { useConnectionsForConnector } from '../../../core/queries/connections';
 import { useEffect, useMemo } from 'react';
@@ -145,7 +145,7 @@ export const ConnectorWithDetails = ({ id, kind }: Template.FeaturedConnector) =
           <div className="msla-template-connector-name">{connector.properties?.displayName}</div>
         )}
         <div className="msla-template-connector-type">
-          <Text style={textStyles.connectorSubDetails}>{allCategories[kind ?? ''] ?? kind}</Text>
+          <Text style={textStyles.connectorSubDetails}>{getPropertyValue(allCategories, kind ?? '') ?? kind}</Text>
           <Text style={textStyles.connectorSubDetails}>•</Text>
           {isConnectionsLoading ? (
             <Shimmer
