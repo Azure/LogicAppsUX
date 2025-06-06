@@ -183,7 +183,9 @@ jobs:
         run: node scripts/update-versions.js ${{ needs.create-release.outputs.new_version }}
 
       - name: 'Set Designer Extension VSIX aiKey in package.json'
-        run: echo "`jq '.aiKey="${{ env.AI_KEY }}"' apps/vs-code-designer/src/package.json`" > apps/vs-code-designer/src/package.json
+        run: |
+          jq --arg key "${{ env.AI_KEY }}" '.aiKey = $key' apps/vs-code-designer/src/package.json > tmp.json
+          mv tmp.json apps/vs-code-designer/src/package.json
 
       - name: Replace Placeholder with Telemetry Key
         run: sed -i "s/setInGitHubBuild/${{ env.AI_KEY }}/g" apps/vs-code-designer/src/main.ts
