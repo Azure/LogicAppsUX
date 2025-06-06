@@ -22,6 +22,7 @@ import {
   clone,
   getTriggerFromDefinition,
   InitTemplateResourceService,
+  equals,
 } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import type { RootState } from '../../state/templates/store';
@@ -97,7 +98,7 @@ export const initializeWorkflowMetadata = createAsyncThunk(
 );
 
 export const isMultiWorkflowTemplate = (manifest: Template.TemplateManifest | undefined): boolean => {
-  return Object.keys(manifest?.workflows ?? {}).length > 1;
+  return equals(manifest?.details.Type, 'Accelerator');
 };
 
 export const resetStateOnResourceChange = createAsyncThunk(
