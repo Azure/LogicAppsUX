@@ -234,7 +234,14 @@ export const loadCustomTemplateArtifacts = createAsyncThunk('loadCustomTemplateA
     return { workflowManifest, workflowDefinition };
   };
 
-  return loadWorkflowsDataInTemplate(templateId, data, workflowsWithName, /* viewTemplateData */ undefined, getWorkflowDetailsHandler);
+  return loadWorkflowsDataInTemplate(
+    templateId,
+    data,
+    workflowsWithName,
+    /* viewTemplateData */ undefined,
+    getWorkflowDetailsHandler,
+    /* useWorkflowImagesAsIs */ true
+  );
 });
 
 export const loadManifestsFromPaths = async (templateIds: string[]) => {
@@ -449,7 +456,8 @@ const loadWorkflowTemplate = async (
   workflowId: string,
   viewTemplateData: Template.ViewTemplateDetails | undefined,
   defaultNameInManifest: string,
-  getWorkflowAndManifest: GetWorkflowAndManifestHandler
+  getWorkflowAndManifest: GetWorkflowAndManifestHandler,
+  useWorkflowImagesAsIs: boolean
 ): Promise<
   | {
       workflow: WorkflowTemplateData;
@@ -485,8 +493,12 @@ const loadWorkflowTemplate = async (
               : 'stateful',
         triggerType: getTriggerFromDefinition(workflowDefinition.triggers ?? {}),
         images: {
-          light: TemplateService().getContentPathUrl(`${templateId}/${workflowId}`, workflowManifest.images.light),
-          dark: TemplateService().getContentPathUrl(`${templateId}/${workflowId}`, workflowManifest.images.dark),
+          light: useWorkflowImagesAsIs
+            ? workflowManifest.images.light
+            : TemplateService().getContentPathUrl(`${templateId}/${workflowId}`, workflowManifest.images.light),
+          dark: useWorkflowImagesAsIs
+            ? workflowManifest.images.dark
+            : TemplateService().getContentPathUrl(`${templateId}/${workflowId}`, workflowManifest.images.dark),
         },
         connectionKeys: Object.keys(workflowManifest.connections),
         errors: {
@@ -522,7 +534,8 @@ const loadWorkflowsDataInTemplate = async (
   templateData: TemplatePayload,
   workflows: Record<string, string>,
   viewTemplateData: Template.ViewTemplateDetails | undefined,
-  getWorkflowAndManifestCallback: GetWorkflowAndManifestHandler
+  getWorkflowAndManifestCallback: GetWorkflowAndManifestHandler,
+  useWorkflowImagesAsIs = false
 ) => {
   const workflowIds = Object.keys(workflows);
   const isMultiWorkflow = workflowIds.length > 1;
@@ -534,7 +547,8 @@ const loadWorkflowsDataInTemplate = async (
       workflowId,
       viewTemplateData,
       workflows[workflowId],
-      getWorkflowAndManifestCallback
+      getWorkflowAndManifestCallback,
+      useWorkflowImagesAsIs
     );
     if (workflowData) {
       templateData.workflows[workflowId] = workflowData.workflow;
