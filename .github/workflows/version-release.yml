@@ -186,7 +186,7 @@ jobs:
         run: echo "`jq '.aiKey="${{ env.AI_KEY }}"' apps/vs-code-designer/src/package.json`" > apps/vs-code-designer/src/package.json
 
       - name: Replace Placeholder with Telemetry Key
-        run: sed -i 's/setInGitHubBuild/${{ env.AI_KEY }}/g' apps/vs-code-designer/src/main.ts
+        run: sed -i "s/setInGitHubBuild/${{ env.AI_KEY }}/g" apps/vs-code-designer/src/main.ts
 
       - name: 'Pack VSCode Designer Extension'
         run: pnpm run vscode:designer:pack
