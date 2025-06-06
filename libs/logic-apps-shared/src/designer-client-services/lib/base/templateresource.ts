@@ -100,8 +100,6 @@ export class BaseTemplateResourceService implements ITemplateResourceService {
       });
     }
 
-    console.log('--manifest.artifacts ', manifest.artifacts);
-
     await httpClient.put({
       uri,
       queryParameters: { 'api-version': apiVersion },
