@@ -1,4 +1,4 @@
-import { getResourceNameFromId, type ArmResource, type Template } from '../../../index';
+import { equals, getResourceNameFromId, type ArmResource, type Template } from '../../../index';
 import { getAzureResourceRecursive } from '../common/azure';
 import { getTemplateManifestFromResourceManifest } from '../helpers';
 import type { IHttpClient } from '../httpClient';
@@ -93,7 +93,7 @@ export class BaseTemplateResourceService implements ITemplateResourceService {
     delete manifest.description;
 
     if (data.workflow) {
-      manifest.artifacts = (manifest.artifacts ?? []).filter((artifact: any) => artifact.type !== 'workflow');
+      manifest.artifacts = (manifest.artifacts ?? []).filter((artifact: any) => !equals(artifact.type, 'workflow'));
       manifest.artifacts.push({
         type: 'workflow',
         file: data.workflow,
