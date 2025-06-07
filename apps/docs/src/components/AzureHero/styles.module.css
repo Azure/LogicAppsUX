@@ -1,0 +1,366 @@
+/* Azure Hero Component Styles */
+
+.hero {
+	background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 50%, #dee2e6 100%);
+	padding: 4rem 0 2rem;
+	min-height: 80vh;
+	display: flex;
+	align-items: center;
+	position: relative;
+	overflow: hidden;
+}
+
+.hero::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%230078d4' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")
+		repeat;
+	z-index: 0;
+}
+
+[data-theme="dark"] .hero {
+	background: linear-gradient(135deg, #161514 0%, #1b1a19 50%, #262626 100%);
+}
+
+.heroContent {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 4rem;
+	align-items: center;
+	position: relative;
+	z-index: 1;
+}
+
+.heroText {
+	max-width: 600px;
+}
+
+.heroTitle {
+	font-size: 3.5rem;
+	font-weight: 700;
+	line-height: 1.1;
+	margin-bottom: 1.5rem;
+	background: linear-gradient(
+		135deg,
+		var(--azure-blue-primary) 0%,
+		var(--azure-blue-darker) 100%
+	);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
+}
+
+[data-theme="dark"] .heroTitle {
+	background: linear-gradient(135deg, var(--azure-blue-light) 0%, #ffffff 100%);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
+}
+
+.heroSubtitle {
+	font-size: 1.25rem;
+	line-height: 1.6;
+	color: var(--neutral-grey-60);
+	margin-bottom: 2rem;
+}
+
+[data-theme="dark"] .heroSubtitle {
+	color: var(--neutral-grey-100);
+}
+
+.heroButtons {
+	display: flex;
+	gap: 1rem;
+	flex-wrap: wrap;
+}
+
+.heroButton {
+	padding: 0.75rem 2rem;
+	font-weight: 600;
+	border-radius: 6px;
+	transition: all 0.3s ease;
+	text-decoration: none;
+}
+
+.heroButton:hover {
+	transform: translateY(-2px);
+	box-shadow: var(--ifm-global-shadow-md);
+}
+
+.heroImage {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.heroImagePlaceholder {
+	width: 400px;
+	height: 300px;
+	background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+	border-radius: 12px;
+	box-shadow: var(--ifm-global-shadow-tl);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: relative;
+	border: 1px solid var(--neutral-grey-130);
+}
+
+[data-theme="dark"] .heroImagePlaceholder {
+	background: linear-gradient(
+		135deg,
+		var(--neutral-grey-30) 0%,
+		var(--neutral-grey-40) 100%
+	);
+	border: 1px solid var(--neutral-grey-60);
+}
+
+.designerPreview {
+	position: relative;
+	width: 300px;
+	height: 200px;
+}
+
+.designerNode {
+	width: 80px;
+	height: 40px;
+	background: linear-gradient(
+		135deg,
+		var(--azure-blue-primary) 0%,
+		var(--azure-blue-dark) 100%
+	);
+	border-radius: 6px;
+	position: absolute;
+	box-shadow: var(--ifm-global-shadow-md);
+	animation: pulse 2s infinite;
+}
+
+.designerNode:nth-child(1) {
+	top: 20px;
+	left: 20px;
+	animation-delay: 0s;
+}
+
+.designerNode:nth-child(2) {
+	top: 80px;
+	left: 110px;
+	animation-delay: 0.5s;
+}
+
+.designerNode:nth-child(3) {
+	top: 140px;
+	left: 200px;
+	animation-delay: 1s;
+}
+
+.designerConnector {
+	position: absolute;
+	width: 100px;
+	height: 50px;
+	top: 30px;
+	left: 100px;
+	opacity: 0.7;
+}
+
+@keyframes pulse {
+	0%,
+	100% {
+		transform: scale(1);
+		opacity: 1;
+	}
+	50% {
+		transform: scale(1.05);
+		opacity: 0.8;
+	}
+}
+
+/* Features Section */
+.features {
+	padding: 4rem 0;
+	background: #ffffff;
+}
+
+[data-theme="dark"] .features {
+	background: var(--neutral-grey-20);
+}
+
+.featuresTitle {
+	text-align: center;
+	margin-bottom: 3rem;
+}
+
+.featuresTitle h2 {
+	font-size: 2.5rem;
+	font-weight: 600;
+	color: var(--azure-blue-darkest);
+	margin-bottom: 1rem;
+}
+
+[data-theme="dark"] .featuresTitle h2 {
+	color: var(--azure-blue-light);
+}
+
+.featuresTitle p {
+	font-size: 1.1rem;
+	color: var(--neutral-grey-70);
+}
+
+[data-theme="dark"] .featuresTitle p {
+	color: var(--neutral-grey-100);
+}
+
+.featureCard {
+	background: #ffffff;
+	border-radius: 12px;
+	padding: 2rem;
+	box-shadow: var(--ifm-global-shadow-md);
+	border: 1px solid var(--neutral-grey-130);
+	transition: all 0.3s ease;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+}
+
+.featureCard:hover {
+	transform: translateY(-4px);
+	box-shadow: var(--ifm-global-shadow-tl);
+	border-color: var(--azure-blue-primary);
+}
+
+[data-theme="dark"] .featureCard {
+	background: var(--neutral-grey-30);
+	border: 1px solid var(--neutral-grey-60);
+}
+
+[data-theme="dark"] .featureCard:hover {
+	border-color: var(--azure-blue-light);
+}
+
+.featureIcon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+	display: flex;
+	justify-content: center;
+}
+
+.featureContent {
+	flex-grow: 1;
+	display: flex;
+	flex-direction: column;
+}
+
+.featureTitle {
+	font-size: 1.5rem;
+	font-weight: 600;
+	color: var(--azure-blue-darkest);
+	margin-bottom: 1rem;
+	text-align: center;
+}
+
+[data-theme="dark"] .featureTitle {
+	color: var(--azure-blue-light);
+}
+
+.featureDescription {
+	color: var(--neutral-grey-70);
+	line-height: 1.6;
+	text-align: center;
+	flex-grow: 1;
+	margin-bottom: 1.5rem;
+}
+
+[data-theme="dark"] .featureDescription {
+	color: var(--neutral-grey-100);
+}
+
+.featureLink {
+	color: var(--azure-blue-primary);
+	font-weight: 600;
+	text-decoration: none;
+	text-align: center;
+	padding: 0.5rem 1rem;
+	border-radius: 6px;
+	border: 1px solid var(--azure-blue-primary);
+	transition: all 0.2s ease;
+}
+
+.featureLink:hover {
+	background-color: var(--azure-blue-primary);
+	color: white;
+	text-decoration: none;
+}
+
+[data-theme="dark"] .featureLink {
+	color: var(--azure-blue-light);
+	border-color: var(--azure-blue-light);
+}
+
+[data-theme="dark"] .featureLink:hover {
+	background-color: var(--azure-blue-light);
+	color: var(--neutral-grey-20);
+}
+
+/* Responsive Design */
+@media (max-width: 996px) {
+	.heroContent {
+		grid-template-columns: 1fr;
+		gap: 2rem;
+		text-align: center;
+	}
+
+	.heroTitle {
+		font-size: 2.5rem;
+	}
+
+	.heroImagePlaceholder {
+		width: 300px;
+		height: 200px;
+	}
+
+	.designerPreview {
+		width: 200px;
+		height: 150px;
+	}
+
+	.designerNode {
+		width: 60px;
+		height: 30px;
+	}
+}
+
+@media (max-width: 768px) {
+	.hero {
+		padding: 2rem 0;
+		min-height: 60vh;
+	}
+
+	.heroTitle {
+		font-size: 2rem;
+	}
+
+	.heroSubtitle {
+		font-size: 1.1rem;
+	}
+
+	.heroButtons {
+		flex-direction: column;
+		align-items: center;
+	}
+
+	.heroButton {
+		width: 100%;
+		max-width: 250px;
+	}
+
+	.featuresTitle h2 {
+		font-size: 2rem;
+	}
+
+	.featureCard {
+		margin-bottom: 1rem;
+	}
+}

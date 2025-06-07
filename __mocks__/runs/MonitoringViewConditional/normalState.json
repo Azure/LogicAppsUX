@@ -1,883 +1,834 @@
 {
-    "properties": {
-        "waitEndTime": "2025-01-22T02:50:28.2207883Z",
-        "startTime": "2025-01-22T02:50:28.2207883Z",
-        "endTime": "2025-01-22T03:00:31.2124754Z",
-        "status": "Succeeded",
-        "correlation": {
-            "clientTrackingId": "08584640926573727105946217888CU00"
-        },
-        "workflow": {
-            "properties": {
-                "createdTime": "2024-11-21T14:19:48.7291907Z",
-                "changedTime": "2025-01-22T02:50:21.3840854Z",
-                "version": "08584640926645886908",
-                "definition": {
-                    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
-                    "contentVersion": "1.0.0.0",
-                    "parameters": {
-                        "resourceGroup": {
-                            "type": "String"
-                        },
-                        "subscriptionId": {
-                            "type": "String"
-                        },
-                        "resourceName": {
-                            "type": "String"
-                        }
-                    },
-                    "triggers": {
-                        "When_a_HTTP_request_is_received": {
-                            "type": "Request",
-                            "kind": "Http",
-                            "inputs": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "moder": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "actions": {
-                        "Response": {
-                            "runAfter": {
-                                "Parse_JSON": [
-                                    "Succeeded"
-                                ]
-                            },
-                            "type": "Response",
-                            "kind": "Http",
-                            "inputs": {
-                                "statusCode": 200,
-                                "headers": {
-                                    "dsasadas": "dasds"
-                                },
-                                "body": {
-                                    "a": "b"
-                                }
-                            }
-                        },
-                        "Initialize_variable": {
-                            "runAfter": {
-                                "HTTP": [
-                                    "Succeeded"
-                                ]
-                            },
-                            "type": "InitializeVariable",
-                            "inputs": {
-                                "variables": [
-                                    {
-                                        "name": "TEST",
-                                        "type": "integer",
-                                        "value": 2
-                                    }
-                                ]
-                            }
-                        },
-                        "Parse_JSON": {
-                            "runAfter": {
-                                "Condition": [
-                                    "Succeeded"
-                                ]
-                            },
-                            "type": "ParseJson",
-                            "inputs": {
-                                "content": {
-                                    "category-actions": {
-                                        "name": "Navigate To URL",
-                                        "type": "navigateTo",
-                                        "value": "Error! Hyperlink reference not valid.",
-                                        "foreground": true,
-                                        "authentication": true,
-                                        "destructive": false
-                                    }
-                                },
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "category-actions": {
-                                            "type": "object",
-                                            "properties": {
-                                                "name": {
-                                                    "type": "string"
-                                                },
-                                                "type": {
-                                                    "type": "string"
-                                                },
-                                                "value": {
-                                                    "type": "string"
-                                                },
-                                                "foreground": {
-                                                    "type": "boolean"
-                                                },
-                                                "authentication": {
-                                                    "type": "boolean"
-                                                },
-                                                "destructive": {
-                                                    "type": "boolean"
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        "Increment_variable": {
-                            "runAfter": {
-                                "Initialize_variable": [
-                                    "Succeeded"
-                                ]
-                            },
-                            "type": "IncrementVariable",
-                            "inputs": {
-                                "name": "TEST",
-                                "value": 2
-                            }
-                        },
-                        "Decrement_variable": {
-                            "runAfter": {
-                                "Increment_variable": [
-                                    "Succeeded"
-                                ]
-                            },
-                            "type": "DecrementVariable",
-                            "inputs": {
-                                "name": "TEST",
-                                "value": 2
-                            }
-                        },
-                        "Condition": {
-                            "actions": {
-                                "Condition_1": {
-                                    "actions": {
-                                        "Compose": {
-                                            "runAfter": {
-                                                "Scope_1": [
-                                                    "Succeeded"
-                                                ]
-                                            },
-                                            "type": "Compose",
-                                            "inputs": 2
-                                        },
-                                        "Increment_variable_2": {
-                                            "runAfter": {
-                                                "Compose": [
-                                                    "Succeeded"
-                                                ]
-                                            },
-                                            "type": "IncrementVariable",
-                                            "inputs": {
-                                                "name": "TEST",
-                                                "value": 2
-                                            }
-                                        },
-                                        "Scope_1": {
-                                            "actions": {
-                                                "Scope_2": {
-                                                    "actions": {
-                                                        "Increment_variable_5": {
-                                                            "type": "IncrementVariable",
-                                                            "inputs": {
-                                                                "name": "TEST",
-                                                                "value": 1
-                                                            }
-                                                        }
-                                                    },
-                                                    "type": "Scope"
-                                                }
-                                            },
-                                            "type": "Scope"
-                                        }
-                                    },
-                                    "else": {
-                                        "actions": {
-                                            "Switch": {
-                                                "cases": {
-                                                    "Case": {
-                                                        "case": 2,
-                                                        "actions": {
-                                                            "Scope": {
-                                                                "actions": {
-                                                                    "Increment_variable_1": {
-                                                                        "type": "IncrementVariable",
-                                                                        "inputs": {
-                                                                            "name": "TEST",
-                                                                            "value": 3
-                                                                        }
-                                                                    }
-                                                                },
-                                                                "type": "Scope"
-                                                            }
-                                                        }
-                                                    }
-                                                },
-                                                "default": {
-                                                    "actions": {
-                                                        "Increment_variable_3": {
-                                                            "type": "IncrementVariable",
-                                                            "inputs": {
-                                                                "name": "TEST",
-                                                                "value": 1
-                                                            }
-                                                        }
-                                                    }
-                                                },
-                                                "expression": "@variables('TEST')",
-                                                "type": "Switch"
-                                            }
-                                        }
-                                    },
-                                    "expression": {
-                                        "and": [
-                                            {
-                                                "equals": [
-                                                    1,
-                                                    2
-                                                ]
-                                            }
-                                        ]
-                                    },
-                                    "type": "If"
-                                }
-                            },
-                            "runAfter": {
-                                "Decrement_variable": [
-                                    "Succeeded"
-                                ]
-                            },
-                            "else": {
-                                "actions": {
-                                    "Increment_variable_4": {
-                                        "type": "IncrementVariable",
-                                        "inputs": {
-                                            "name": "TEST",
-                                            "value": 2
-                                        }
-                                    }
-                                }
-                            },
-                            "expression": {
-                                "and": [
-                                    {
-                                        "equals": [
-                                            1,
-                                            1
-                                        ]
-                                    }
-                                ]
-                            },
-                            "type": "If"
-                        },
-                        "HTTP": {
-                            "runAfter": {
-                                "Select": [
-                                    "Succeeded"
-                                ]
-                            },
-                            "type": "Http",
-                            "inputs": {
-                                "uri": "https://pokeapi.co/api/v2/pokemon/ditto",
-                                "method": "GET",
-                                "queries": {
-                                    "applicationName": "appname",
-                                    "timeout": "60"
-                                }
-                            },
-                            "runtimeConfiguration": {
-                                "contentTransfer": {
-                                    "transferMode": "Chunked"
-                                }
-                            }
-                        },
-                        "Select": {
-                            "runAfter": {
-                                "Filter_array": [
-                                    "Succeeded"
-                                ]
-                            },
-                            "type": "Select",
-                            "inputs": {
-                                "from": [],
-                                "select": {
-                                    "asdas": ""
-                                }
-                            }
-                        },
-                        "Initialize_variable_1": {
-                            "runAfter": {
-                                "Condition_2": [
-                                    "Succeeded"
-                                ]
-                            },
-                            "type": "InitializeVariable",
-                            "inputs": {
-                                "variables": [
-                                    {
-                                        "name": "Array1",
-                                        "type": "array",
-                                        "value": [
-                                            1,
-                                            2,
-                                            3,
-                                            4,
-                                            2,
-                                            13,
-                                            23,
-                                            312,
-                                            321,
-                                            321,
-                                            21
-                                        ]
-                                    }
-                                ]
-                            }
-                        },
-                        "Filter_array": {
-                            "runAfter": {
-                                "Initialize_variable_1": [
-                                    "Succeeded"
-                                ]
-                            },
-                            "type": "Query",
-                            "inputs": {
-                                "from": "@variables('Array1')",
-                                "where": "@greater(item(),2)"
-                            }
-                        },
-                        "Condition_2": {
-                            "actions": {
-                                "Compose_1": {
-                                    "runAfter": {
-                                        "Compose_3": [
-                                            "Succeeded"
-                                        ]
-                                    },
-                                    "type": "Compose",
-                                    "inputs": 2222
-                                },
-                                "Compose_3": {
-                                    "type": "Compose",
-                                    "inputs": 1
-                                }
-                            },
-                            "runAfter": {
-                                "Delay": [
-                                    "Succeeded"
-                                ]
-                            },
-                            "else": {
-                                "actions": {
-                                    "Compose_2": {
-                                        "type": "Compose",
-                                        "inputs": 2
-                                    }
-                                }
-                            },
-                            "expression": {
-                                "and": [
-                                    {
-                                        "equals": [
-                                            1,
-                                            1
-                                        ]
-                                    }
-                                ]
-                            },
-                            "type": "If"
-                        },
-                        "Delay": {
-                            "runAfter": {},
-                            "type": "Wait",
-                            "inputs": {
-                                "interval": {
-                                    "count": 10,
-                                    "unit": "Minute"
-                                }
-                            }
-                        }
-                    },
-                    "outputs": {}
-                },
-                "parameters": {
-                    "resourceGroup": {
-                        "type": "String",
-                        "value": "cleanupservice"
-                    },
-                    "subscriptionId": {
-                        "type": "String",
-                        "value": "dasdmasda"
-                    },
-                    "resourceName": {
-                        "type": "String",
-                        "value": "sadasdas"
+  "properties": {
+    "waitEndTime": "2025-01-22T02:50:28.2207883Z",
+    "startTime": "2025-01-22T02:50:28.2207883Z",
+    "endTime": "2025-01-22T03:00:31.2124754Z",
+    "status": "Succeeded",
+    "correlation": {
+      "clientTrackingId": "08584640926573727105946217888CU00"
+    },
+    "workflow": {
+      "properties": {
+        "createdTime": "2024-11-21T14:19:48.7291907Z",
+        "changedTime": "2025-01-22T02:50:21.3840854Z",
+        "version": "08584640926645886908",
+        "definition": {
+          "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+          "contentVersion": "1.0.0.0",
+          "parameters": {
+            "resourceGroup": {
+              "type": "String"
+            },
+            "subscriptionId": {
+              "type": "String"
+            },
+            "resourceName": {
+              "type": "String"
+            }
+          },
+          "triggers": {
+            "When_a_HTTP_request_is_received": {
+              "type": "Request",
+              "kind": "Http",
+              "inputs": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "moder": {
+                      "type": "string"
                     }
-                },
-                "endpointsConfiguration": {},
-                "runtimeConfiguration": {
-                    "lifetime": {
-                        "unit": "Day",
-                        "count": 90
-                    },
-                    "operationOptions": "None"
+                  }
                 }
-            },
-            "id": "/workflows/ResponseEmail/versions/08584640926645886908",
-            "name": "08584640926645886908",
-            "type": "workflows/versions"
-        },
-        "trigger": {
-            "name": "When_a_HTTP_request_is_received",
-            "inputsLink": {
-                "uri": "testLink",
-                "contentSize": 69
-            },
-            "outputsLink": {
-                "uri": "testLink",
-                "contentSize": 4406
-            },
-            "startTime": "2025-01-22T02:50:28.1163445Z",
-            "endTime": "2025-01-22T02:50:28.1163445Z",
-            "originHistoryName": "08584640926573727105946217888CU00",
-            "correlation": {
-                "clientTrackingId": "08584640926573727105946217888CU00"
-            },
-            "status": "Succeeded"
-        },
-        "actions": {
-            "Compose": {
-                "canResubmit": false,
-                "startTime": "2025-01-22T03:00:30.934953Z",
-                "endTime": "2025-01-22T03:00:30.9384401Z",
-                "correlation": {
-                    "actionTrackingId": "bb04f1f8-6e93-4d42-a9dc-032587d2a91f",
-                    "clientTrackingId": "08584640926573727105946217888CU00"
+              }
+            }
+          },
+          "actions": {
+            "Response": {
+              "runAfter": {
+                "Parse_JSON": ["Succeeded"]
+              },
+              "type": "Response",
+              "kind": "Http",
+              "inputs": {
+                "statusCode": 200,
+                "headers": {
+                  "dsasadas": "dasds"
                 },
-                "status": "Skipped",
-                "code": "ActionSkipped",
-                "error": {
-                    "code": "ActionConditionFailed",
-                    "message": "The execution of template action 'Compose' is skipped: the 'runAfter' condition for action 'Scope_1' is not satisfied. Expected status values 'Succeeded' and actual value 'Skipped'."
+                "body": {
+                  "a": "b"
                 }
-            },
-            "Compose_1": {
-                "inputsLink": {
-                    "uri": "testLink",
-                    "contentSize": 4
-                },
-                "outputsLink": {
-                    "uri": "testLink",
-                    "contentSize": 4
-                },
-                "canResubmit": true,
-                "startTime": "2025-01-22T03:00:29.988766Z",
-                "endTime": "2025-01-22T03:00:29.9905143Z",
-                "correlation": {
-                    "actionTrackingId": "894eaf08-bc90-436d-9c34-8b24e108a639",
-                    "clientTrackingId": "08584640926573727105946217888CU00"
-                },
-                "status": "Succeeded",
-                "code": "OK"
-            },
-            "Compose_2": {
-                "canResubmit": false,
-                "startTime": "2025-01-22T03:00:29.9917506Z",
-                "endTime": "2025-01-22T03:00:29.9973691Z",
-                "correlation": {
-                    "actionTrackingId": "325adfc6-9ae9-4bdb-93d4-0569a1962eda",
-                    "clientTrackingId": "08584640926573727105946217888CU00"
-                },
-                "status": "Skipped",
-                "code": "ActionSkipped",
-                "error": {
-                    "code": "ActionBranchingConditionNotSatisfied",
-                    "message": "The execution of template action 'Compose_2' skipped: the branching condition for this action is not satisfied."
-                }
-            },
-            "Compose_3": {
-                "inputsLink": {
-                    "uri": "testLink",
-                    "contentSize": 1
-                },
-                "outputsLink": {
-                    "uri": "testLink",
-                    "contentSize": 1
-                },
-                "canResubmit": true,
-                "startTime": "2025-01-22T03:00:29.960226Z",
-                "endTime": "2025-01-22T03:00:29.9871284Z",
-                "correlation": {
-                    "actionTrackingId": "2838022e-47bd-4764-985c-39bfd75eb887",
-                    "clientTrackingId": "08584640926573727105946217888CU00"
-                },
-                "status": "Succeeded",
-                "code": "OK"
-            },
-            "Condition": {
-                "inputsLink": {
-                    "uri": "testLink",
-                    "contentSize": 25
-                },
-                "canResubmit": true,
-                "startTime": "2025-01-22T03:00:30.9182596Z",
-                "endTime": "2025-01-22T03:00:31.0396901Z",
-                "correlation": {
-                    "actionTrackingId": "6ed7de07-afd6-4d2d-81e6-907360612fc2",
-                    "clientTrackingId": "08584640926573727105946217888CU00"
-                },
-                "status": "Succeeded",
-                "code": "NotSpecified"
-            },
-            "Condition_1": {
-                "inputsLink": {
-                    "uri": "testLink",
-                    "contentSize": 26
-                },
-                "canResubmit": true,
-                "startTime": "2025-01-22T03:00:30.921106Z",
-                "endTime": "2025-01-22T03:00:31.0352161Z",
-                "correlation": {
-                    "actionTrackingId": "85a89b16-28e7-4e9f-85c5-d71349334161",
-                    "clientTrackingId": "08584640926573727105946217888CU00"
-                },
-                "status": "Succeeded",
-                "code": "NotSpecified"
-            },
-            "Condition_2": {
-                "inputsLink": {
-                    "uri": "testLink",
-                    "contentSize": 25
-                },
-                "canResubmit": true,
-                "startTime": "2025-01-22T03:00:29.8929481Z",
-                "endTime": "2025-01-22T03:00:30.0225816Z",
-                "correlation": {
-                    "actionTrackingId": "7595067c-dc52-4286-ac85-4af9493e2a25",
-                    "clientTrackingId": "08584640926573727105946217888CU00"
-                },
-                "status": "Succeeded",
-                "code": "NotSpecified"
-            },
-            "Decrement_variable": {
-                "inputsLink": {
-                    "uri": "testLink",
-                    "contentSize": 25
-                },
-                "outputsLink": {
-                    "uri": "testLink",
-                    "contentSize": 34
-                },
-                "canResubmit": true,
-                "startTime": "2025-01-22T03:00:30.8927962Z",
-                "endTime": "2025-01-22T03:00:30.9091267Z",
-                "correlation": {
-                    "actionTrackingId": "1f6abbc3-46d3-4bd0-9c16-ce0dd9350d18",
-                    "clientTrackingId": "08584640926573727105946217888CU00"
-                },
-                "status": "Succeeded",
-                "code": "NotSpecified"
-            },
-            "Delay": {
-                "inputsLink": {
-                    "uri": "testLink",
-                    "contentSize": 41
-                },
-                "canResubmit": true,
-                "startTime": "2025-01-22T02:50:29.7341837Z",
-                "endTime": "2025-01-22T03:00:29.8606602Z",
-                "correlation": {
-                    "actionTrackingId": "8730892a-16cf-4bae-84bc-ee18900e3d81",
-                    "clientTrackingId": "08584640926573727105946217888CU00"
-                },
-                "status": "Succeeded",
-                "code": "OK"
-            },
-            "Filter_array": {
-                "inputsLink": {
-                    "uri": "testLink",
-                    "contentSize": 32
-                },
-                "outputsLink": {
-                    "uri": "testLink",
-                    "contentSize": 35
-                },
-                "canResubmit": true,
-                "startTime": "2025-01-22T03:00:30.1487206Z",
-                "endTime": "2025-01-22T03:00:30.2180155Z",
-                "correlation": {
-                    "actionTrackingId": "2e206c54-61bc-46e9-a2bf-48e17ab1ef88",
-                    "clientTrackingId": "08584640926573727105946217888CU00"
-                },
-                "status": "Succeeded",
-                "code": "NotSpecified"
-            },
-            "HTTP": {
-                "inputsLink": {
-                    "uri": "testLink",
-                    "contentSize": 119
-                },
-                "outputsLink": {
-                    "uri": "testLink",
-                    "contentSize": 25512
-                },
-                "canResubmit": true,
-                "startTime": "2025-01-22T03:00:30.2484542Z",
-                "endTime": "2025-01-22T03:00:30.7595046Z",
-                "correlation": {
-                    "actionTrackingId": "eaa29b31-f9da-4fe5-b4f7-bf86ad35a63c",
-                    "clientTrackingId": "08584640926573727105946217888CU00"
-                },
-                "status": "Succeeded",
-                "code": "OK"
-            },
-            "Increment_variable": {
-                "inputsLink": {
-                    "uri": "testLink",
-                    "contentSize": 25
-                },
-                "outputsLink": {
-                    "uri": "testLink",
-                    "contentSize": 34
-                },
-                "canResubmit": true,
-                "startTime": "2025-01-22T03:00:30.8044228Z",
-                "endTime": "2025-01-22T03:00:30.882763Z",
-                "correlation": {
-                    "actionTrackingId": "ed9b4601-ba0d-41c3-896d-d054a8763345",
-                    "clientTrackingId": "08584640926573727105946217888CU00"
-                },
-                "status": "Succeeded",
-                "code": "NotSpecified"
-            },
-            "Increment_variable_1": {
-                "inputsLink": {
-                    "uri": "testLink",
-                    "contentSize": 25
-                },
-                "outputsLink": {
-                    "uri": "testLink",
-                    "contentSize": 34
-                },
-                "canResubmit": true,
-                "startTime": "2025-01-22T03:00:30.9871738Z",
-                "endTime": "2025-01-22T03:00:31.0050593Z",
-                "correlation": {
-                    "actionTrackingId": "aff39093-7047-4075-8e73-1fa2115a5f7f",
-                    "clientTrackingId": "08584640926573727105946217888CU00"
-                },
-                "status": "Succeeded",
-                "code": "NotSpecified"
-            },
-            "Increment_variable_2": {
-                "canResubmit": false,
-                "startTime": "2025-01-22T03:00:30.939623Z",
-                "endTime": "2025-01-22T03:00:30.9404223Z",
-                "correlation": {
-                    "actionTrackingId": "6289c7b4-c3d7-4bc6-965e-237ff9c73ca4",
-                    "clientTrackingId": "08584640926573727105946217888CU00"
-                },
-                "status": "Skipped",
-                "code": "ActionSkipped",
-                "error": {
-                    "code": "ActionConditionFailed",
-                    "message": "The execution of template action 'Increment_variable_2' is skipped: the 'runAfter' condition for action 'Compose' is not satisfied. Expected status values 'Succeeded' and actual value 'Skipped'."
-                }
-            },
-            "Increment_variable_3": {
-                "canResubmit": false,
-                "startTime": "2025-01-22T03:00:31.0292833Z",
-                "endTime": "2025-01-22T03:00:31.0302961Z",
-                "correlation": {
-                    "actionTrackingId": "ed2adfb1-b91e-43af-a234-d6b4bdf11714",
-                    "clientTrackingId": "08584640926573727105946217888CU00"
-                },
-                "status": "Skipped",
-                "code": "ActionSkipped",
-                "error": {
-                    "code": "ActionBranchingConditionNotSatisfied",
-                    "message": "The execution of template action 'Increment_variable_3' skipped: the branching condition for this action is not satisfied."
-                }
-            },
-            "Increment_variable_4": {
-                "canResubmit": false,
-                "startTime": "2025-01-22T03:00:31.036305Z",
-                "endTime": "2025-01-22T03:00:31.0371201Z",
-                "correlation": {
-                    "actionTrackingId": "997a4dcb-6a00-4fbd-bced-6a4103a7edcf",
-                    "clientTrackingId": "08584640926573727105946217888CU00"
-                },
-                "status": "Skipped",
-                "code": "ActionSkipped",
-                "error": {
-                    "code": "ActionBranchingConditionNotSatisfied",
-                    "message": "The execution of template action 'Increment_variable_4' skipped: the branching condition for this action is not satisfied."
-                }
-            },
-            "Increment_variable_5": {
-                "canResubmit": false,
-                "startTime": "2025-01-22T03:00:30.9297701Z",
-                "endTime": "2025-01-22T03:00:30.9304465Z",
-                "correlation": {
-                    "actionTrackingId": "c9f84709-fb73-427f-af35-d5a9f2971708",
-                    "clientTrackingId": "08584640926573727105946217888CU00"
-                },
-                "status": "Skipped",
-                "code": "ActionSkipped",
-                "error": {
-                    "code": "ActionDependencyFailed",
-                    "message": "The execution of template action 'Increment_variable_5' is skipped: dependant action 'Scope_2' completed with status 'Skipped' and code 'ActionSkipped'."
-                }
+              }
             },
             "Initialize_variable": {
-                "inputsLink": {
-                    "uri": "testLink",
-                    "contentSize": 58
-                },
-                "canResubmit": true,
-                "startTime": "2025-01-22T03:00:30.7814077Z",
-                "endTime": "2025-01-22T03:00:30.7934838Z",
-                "correlation": {
-                    "actionTrackingId": "008a7cc5-3fb1-4648-a24c-6a17c7321580",
-                    "clientTrackingId": "08584640926573727105946217888CU00"
-                },
-                "status": "Succeeded",
-                "code": "NotSpecified"
-            },
-            "Initialize_variable_1": {
-                "inputsLink": {
-                    "uri": "testLink",
-                    "contentSize": 89
-                },
-                "canResubmit": true,
-                "startTime": "2025-01-22T03:00:30.0249017Z",
-                "endTime": "2025-01-22T03:00:30.1372841Z",
-                "correlation": {
-                    "actionTrackingId": "7974097e-49f3-4a2a-bd85-00d643014873",
-                    "clientTrackingId": "08584640926573727105946217888CU00"
-                },
-                "status": "Succeeded",
-                "code": "NotSpecified"
+              "runAfter": {
+                "HTTP": ["Succeeded"]
+              },
+              "type": "InitializeVariable",
+              "inputs": {
+                "variables": [
+                  {
+                    "name": "TEST",
+                    "type": "integer",
+                    "value": 2
+                  }
+                ]
+              }
             },
             "Parse_JSON": {
-                "inputsLink": {
-                    "uri": "testLink",
-                    "contentSize": 458
+              "runAfter": {
+                "Condition": ["Succeeded"]
+              },
+              "type": "ParseJson",
+              "inputs": {
+                "content": {
+                  "category-actions": {
+                    "name": "Navigate To URL",
+                    "type": "navigateTo",
+                    "value": "Error! Hyperlink reference not valid.",
+                    "foreground": true,
+                    "authentication": true,
+                    "destructive": false
+                  }
                 },
-                "outputsLink": {
-                    "uri": "testLink",
-                    "contentSize": 184
-                },
-                "canResubmit": true,
-                "startTime": "2025-01-22T03:00:31.0413718Z",
-                "endTime": "2025-01-22T03:00:31.1667091Z",
-                "correlation": {
-                    "actionTrackingId": "8edf99ae-b3dd-4b85-9426-c4c71d99aeda",
-                    "clientTrackingId": "08584640926573727105946217888CU00"
-                },
-                "status": "Succeeded",
-                "code": "OK"
-            },
-            "Response": {
-                "inputsLink": {
-                    "uri": "testLink",
-                    "contentSize": 68
-                },
-                "canResubmit": false,
-                "startTime": "2025-01-22T03:00:31.1694085Z",
-                "endTime": "2025-01-22T03:00:31.1888301Z",
-                "correlation": {
-                    "actionTrackingId": "ec5b4955-010d-4463-be99-016dee0b17f8",
-                    "clientTrackingId": "08584640926573727105946217888CU00"
-                },
-                "status": "Skipped",
-                "code": "ActionResponseSkipped",
-                "error": {
-                    "code": "ActionResponseSkipped",
-                    "message": "The execution of template action 'Response' is skipped: the client application is not waiting for a response from service."
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "category-actions": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string"
+                        },
+                        "value": {
+                          "type": "string"
+                        },
+                        "foreground": {
+                          "type": "boolean"
+                        },
+                        "authentication": {
+                          "type": "boolean"
+                        },
+                        "destructive": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  }
                 }
+              }
             },
-            "Scope": {
-                "canResubmit": true,
-                "startTime": "2025-01-22T03:00:30.9699004Z",
-                "endTime": "2025-01-22T03:00:31.0280099Z",
-                "correlation": {
-                    "actionTrackingId": "fc96a884-70f5-42c3-bab7-71285f56fb9d",
-                    "clientTrackingId": "08584640926573727105946217888CU00"
-                },
-                "status": "Succeeded",
-                "code": "NotSpecified"
+            "Increment_variable": {
+              "runAfter": {
+                "Initialize_variable": ["Succeeded"]
+              },
+              "type": "IncrementVariable",
+              "inputs": {
+                "name": "TEST",
+                "value": 2
+              }
             },
-            "Scope_1": {
-                "canResubmit": false,
-                "startTime": "2025-01-22T03:00:30.9332386Z",
-                "endTime": "2025-01-22T03:00:30.933779Z",
-                "correlation": {
-                    "actionTrackingId": "e05455bb-07ca-4a52-9a52-f6611889cdc9",
-                    "clientTrackingId": "08584640926573727105946217888CU00"
-                },
-                "status": "Skipped",
-                "code": "ActionSkipped",
-                "error": {
-                    "code": "ActionBranchingConditionNotSatisfied",
-                    "message": "The execution of template action 'Scope_1' skipped: the branching condition for this action is not satisfied."
+            "Decrement_variable": {
+              "runAfter": {
+                "Increment_variable": ["Succeeded"]
+              },
+              "type": "DecrementVariable",
+              "inputs": {
+                "name": "TEST",
+                "value": 2
+              }
+            },
+            "Condition": {
+              "actions": {
+                "Condition_1": {
+                  "actions": {
+                    "Compose": {
+                      "runAfter": {
+                        "Scope_1": ["Succeeded"]
+                      },
+                      "type": "Compose",
+                      "inputs": 2
+                    },
+                    "Increment_variable_2": {
+                      "runAfter": {
+                        "Compose": ["Succeeded"]
+                      },
+                      "type": "IncrementVariable",
+                      "inputs": {
+                        "name": "TEST",
+                        "value": 2
+                      }
+                    },
+                    "Scope_1": {
+                      "actions": {
+                        "Scope_2": {
+                          "actions": {
+                            "Increment_variable_5": {
+                              "type": "IncrementVariable",
+                              "inputs": {
+                                "name": "TEST",
+                                "value": 1
+                              }
+                            }
+                          },
+                          "type": "Scope"
+                        }
+                      },
+                      "type": "Scope"
+                    }
+                  },
+                  "else": {
+                    "actions": {
+                      "Switch": {
+                        "cases": {
+                          "Case": {
+                            "case": 2,
+                            "actions": {
+                              "Scope": {
+                                "actions": {
+                                  "Increment_variable_1": {
+                                    "type": "IncrementVariable",
+                                    "inputs": {
+                                      "name": "TEST",
+                                      "value": 3
+                                    }
+                                  }
+                                },
+                                "type": "Scope"
+                              }
+                            }
+                          }
+                        },
+                        "default": {
+                          "actions": {
+                            "Increment_variable_3": {
+                              "type": "IncrementVariable",
+                              "inputs": {
+                                "name": "TEST",
+                                "value": 1
+                              }
+                            }
+                          }
+                        },
+                        "expression": "@variables('TEST')",
+                        "type": "Switch"
+                      }
+                    }
+                  },
+                  "expression": {
+                    "and": [
+                      {
+                        "equals": [1, 2]
+                      }
+                    ]
+                  },
+                  "type": "If"
                 }
-            },
-            "Scope_2": {
-                "canResubmit": false,
-                "startTime": "2025-01-22T03:00:30.9316154Z",
-                "endTime": "2025-01-22T03:00:30.932053Z",
-                "correlation": {
-                    "actionTrackingId": "079d88b6-7ad7-4f3b-81d2-954bbc4aa7f0",
-                    "clientTrackingId": "08584640926573727105946217888CU00"
-                },
-                "status": "Skipped",
-                "code": "ActionSkipped",
-                "error": {
-                    "code": "ActionDependencyFailed",
-                    "message": "The execution of template action 'Scope_2' is skipped: dependant action 'Scope_1' completed with status 'Skipped' and code 'ActionSkipped'."
+              },
+              "runAfter": {
+                "Decrement_variable": ["Succeeded"]
+              },
+              "else": {
+                "actions": {
+                  "Increment_variable_4": {
+                    "type": "IncrementVariable",
+                    "inputs": {
+                      "name": "TEST",
+                      "value": 2
+                    }
+                  }
                 }
+              },
+              "expression": {
+                "and": [
+                  {
+                    "equals": [1, 1]
+                  }
+                ]
+              },
+              "type": "If"
+            },
+            "HTTP": {
+              "runAfter": {
+                "Select": ["Succeeded"]
+              },
+              "type": "Http",
+              "inputs": {
+                "uri": "https://pokeapi.co/api/v2/pokemon/ditto",
+                "method": "GET",
+                "queries": {
+                  "applicationName": "appname",
+                  "timeout": "60"
+                }
+              },
+              "runtimeConfiguration": {
+                "contentTransfer": {
+                  "transferMode": "Chunked"
+                }
+              }
             },
             "Select": {
-                "inputsLink": {
-                    "uri": "testLink",
-                    "contentSize": 11
-                },
-                "outputsLink": {
-                    "uri": "testLink",
-                    "contentSize": 11
-                },
-                "canResubmit": true,
-                "startTime": "2025-01-22T03:00:30.2290739Z",
-                "endTime": "2025-01-22T03:00:30.2465138Z",
-                "correlation": {
-                    "actionTrackingId": "470bea27-5775-4027-a323-df1f0bb578ec",
-                    "clientTrackingId": "08584640926573727105946217888CU00"
-                },
-                "status": "Succeeded",
-                "code": "NotSpecified"
+              "runAfter": {
+                "Filter_array": ["Succeeded"]
+              },
+              "type": "Select",
+              "inputs": {
+                "from": [],
+                "select": {
+                  "asdas": ""
+                }
+              }
             },
-            "Switch": {
-                "inputsLink": {
-                    "uri": "testLink",
-                    "contentSize": 22
+            "Initialize_variable_1": {
+              "runAfter": {
+                "Condition_2": ["Succeeded"]
+              },
+              "type": "InitializeVariable",
+              "inputs": {
+                "variables": [
+                  {
+                    "name": "Array1",
+                    "type": "array",
+                    "value": [1, 2, 3, 4, 2, 13, 23, 312, 321, 321, 21]
+                  }
+                ]
+              }
+            },
+            "Filter_array": {
+              "runAfter": {
+                "Initialize_variable_1": ["Succeeded"]
+              },
+              "type": "Query",
+              "inputs": {
+                "from": "@variables('Array1')",
+                "where": "@greater(item(),2)"
+              }
+            },
+            "Condition_2": {
+              "actions": {
+                "Compose_1": {
+                  "runAfter": {
+                    "Compose_3": ["Succeeded"]
+                  },
+                  "type": "Compose",
+                  "inputs": 2222
                 },
-                "canResubmit": true,
-                "startTime": "2025-01-22T03:00:30.9416828Z",
-                "endTime": "2025-01-22T03:00:31.032801Z",
-                "correlation": {
-                    "actionTrackingId": "1b712430-f9a5-43c9-8ba0-e94b0207a026",
-                    "clientTrackingId": "08584640926573727105946217888CU00"
-                },
-                "status": "Succeeded",
-                "code": "NotSpecified"
+                "Compose_3": {
+                  "type": "Compose",
+                  "inputs": 1
+                }
+              },
+              "runAfter": {
+                "Delay": ["Succeeded"]
+              },
+              "else": {
+                "actions": {
+                  "Compose_2": {
+                    "type": "Compose",
+                    "inputs": 2
+                  }
+                }
+              },
+              "expression": {
+                "and": [
+                  {
+                    "equals": [1, 1]
+                  }
+                ]
+              },
+              "type": "If"
+            },
+            "Delay": {
+              "runAfter": {},
+              "type": "Wait",
+              "inputs": {
+                "interval": {
+                  "count": 10,
+                  "unit": "Minute"
+                }
+              }
             }
+          },
+          "outputs": {}
         },
-        "outputs": {}
+        "parameters": {
+          "resourceGroup": {
+            "type": "String",
+            "value": "cleanupservice"
+          },
+          "subscriptionId": {
+            "type": "String",
+            "value": "dasdmasda"
+          },
+          "resourceName": {
+            "type": "String",
+            "value": "sadasdas"
+          }
+        },
+        "endpointsConfiguration": {},
+        "runtimeConfiguration": {
+          "lifetime": {
+            "unit": "Day",
+            "count": 90
+          },
+          "operationOptions": "None"
+        }
+      },
+      "id": "/workflows/ResponseEmail/versions/08584640926645886908",
+      "name": "08584640926645886908",
+      "type": "workflows/versions"
     },
-    "id": "/workflows/ResponseEmail/runs/08584640926573727105946217888CU00",
-    "name": "08584640926573727105946217888CU00",
-    "type": "workflows/runs"
+    "trigger": {
+      "name": "When_a_HTTP_request_is_received",
+      "inputsLink": {
+        "uri": "testLink",
+        "contentSize": 69
+      },
+      "outputsLink": {
+        "uri": "testLink",
+        "contentSize": 4406
+      },
+      "startTime": "2025-01-22T02:50:28.1163445Z",
+      "endTime": "2025-01-22T02:50:28.1163445Z",
+      "originHistoryName": "08584640926573727105946217888CU00",
+      "correlation": {
+        "clientTrackingId": "08584640926573727105946217888CU00"
+      },
+      "status": "Succeeded"
+    },
+    "actions": {
+      "Compose": {
+        "canResubmit": false,
+        "startTime": "2025-01-22T03:00:30.934953Z",
+        "endTime": "2025-01-22T03:00:30.9384401Z",
+        "correlation": {
+          "actionTrackingId": "bb04f1f8-6e93-4d42-a9dc-032587d2a91f",
+          "clientTrackingId": "08584640926573727105946217888CU00"
+        },
+        "status": "Skipped",
+        "code": "ActionSkipped",
+        "error": {
+          "code": "ActionConditionFailed",
+          "message": "The execution of template action 'Compose' is skipped: the 'runAfter' condition for action 'Scope_1' is not satisfied. Expected status values 'Succeeded' and actual value 'Skipped'."
+        }
+      },
+      "Compose_1": {
+        "inputsLink": {
+          "uri": "testLink",
+          "contentSize": 4
+        },
+        "outputsLink": {
+          "uri": "testLink",
+          "contentSize": 4
+        },
+        "canResubmit": true,
+        "startTime": "2025-01-22T03:00:29.988766Z",
+        "endTime": "2025-01-22T03:00:29.9905143Z",
+        "correlation": {
+          "actionTrackingId": "894eaf08-bc90-436d-9c34-8b24e108a639",
+          "clientTrackingId": "08584640926573727105946217888CU00"
+        },
+        "status": "Succeeded",
+        "code": "OK"
+      },
+      "Compose_2": {
+        "canResubmit": false,
+        "startTime": "2025-01-22T03:00:29.9917506Z",
+        "endTime": "2025-01-22T03:00:29.9973691Z",
+        "correlation": {
+          "actionTrackingId": "325adfc6-9ae9-4bdb-93d4-0569a1962eda",
+          "clientTrackingId": "08584640926573727105946217888CU00"
+        },
+        "status": "Skipped",
+        "code": "ActionSkipped",
+        "error": {
+          "code": "ActionBranchingConditionNotSatisfied",
+          "message": "The execution of template action 'Compose_2' skipped: the branching condition for this action is not satisfied."
+        }
+      },
+      "Compose_3": {
+        "inputsLink": {
+          "uri": "testLink",
+          "contentSize": 1
+        },
+        "outputsLink": {
+          "uri": "testLink",
+          "contentSize": 1
+        },
+        "canResubmit": true,
+        "startTime": "2025-01-22T03:00:29.960226Z",
+        "endTime": "2025-01-22T03:00:29.9871284Z",
+        "correlation": {
+          "actionTrackingId": "2838022e-47bd-4764-985c-39bfd75eb887",
+          "clientTrackingId": "08584640926573727105946217888CU00"
+        },
+        "status": "Succeeded",
+        "code": "OK"
+      },
+      "Condition": {
+        "inputsLink": {
+          "uri": "testLink",
+          "contentSize": 25
+        },
+        "canResubmit": true,
+        "startTime": "2025-01-22T03:00:30.9182596Z",
+        "endTime": "2025-01-22T03:00:31.0396901Z",
+        "correlation": {
+          "actionTrackingId": "6ed7de07-afd6-4d2d-81e6-907360612fc2",
+          "clientTrackingId": "08584640926573727105946217888CU00"
+        },
+        "status": "Succeeded",
+        "code": "NotSpecified"
+      },
+      "Condition_1": {
+        "inputsLink": {
+          "uri": "testLink",
+          "contentSize": 26
+        },
+        "canResubmit": true,
+        "startTime": "2025-01-22T03:00:30.921106Z",
+        "endTime": "2025-01-22T03:00:31.0352161Z",
+        "correlation": {
+          "actionTrackingId": "85a89b16-28e7-4e9f-85c5-d71349334161",
+          "clientTrackingId": "08584640926573727105946217888CU00"
+        },
+        "status": "Succeeded",
+        "code": "NotSpecified"
+      },
+      "Condition_2": {
+        "inputsLink": {
+          "uri": "testLink",
+          "contentSize": 25
+        },
+        "canResubmit": true,
+        "startTime": "2025-01-22T03:00:29.8929481Z",
+        "endTime": "2025-01-22T03:00:30.0225816Z",
+        "correlation": {
+          "actionTrackingId": "7595067c-dc52-4286-ac85-4af9493e2a25",
+          "clientTrackingId": "08584640926573727105946217888CU00"
+        },
+        "status": "Succeeded",
+        "code": "NotSpecified"
+      },
+      "Decrement_variable": {
+        "inputsLink": {
+          "uri": "testLink",
+          "contentSize": 25
+        },
+        "outputsLink": {
+          "uri": "testLink",
+          "contentSize": 34
+        },
+        "canResubmit": true,
+        "startTime": "2025-01-22T03:00:30.8927962Z",
+        "endTime": "2025-01-22T03:00:30.9091267Z",
+        "correlation": {
+          "actionTrackingId": "1f6abbc3-46d3-4bd0-9c16-ce0dd9350d18",
+          "clientTrackingId": "08584640926573727105946217888CU00"
+        },
+        "status": "Succeeded",
+        "code": "NotSpecified"
+      },
+      "Delay": {
+        "inputsLink": {
+          "uri": "testLink",
+          "contentSize": 41
+        },
+        "canResubmit": true,
+        "startTime": "2025-01-22T02:50:29.7341837Z",
+        "endTime": "2025-01-22T03:00:29.8606602Z",
+        "correlation": {
+          "actionTrackingId": "8730892a-16cf-4bae-84bc-ee18900e3d81",
+          "clientTrackingId": "08584640926573727105946217888CU00"
+        },
+        "status": "Succeeded",
+        "code": "OK"
+      },
+      "Filter_array": {
+        "inputsLink": {
+          "uri": "testLink",
+          "contentSize": 32
+        },
+        "outputsLink": {
+          "uri": "testLink",
+          "contentSize": 35
+        },
+        "canResubmit": true,
+        "startTime": "2025-01-22T03:00:30.1487206Z",
+        "endTime": "2025-01-22T03:00:30.2180155Z",
+        "correlation": {
+          "actionTrackingId": "2e206c54-61bc-46e9-a2bf-48e17ab1ef88",
+          "clientTrackingId": "08584640926573727105946217888CU00"
+        },
+        "status": "Succeeded",
+        "code": "NotSpecified"
+      },
+      "HTTP": {
+        "inputsLink": {
+          "uri": "testLink",
+          "contentSize": 119
+        },
+        "outputsLink": {
+          "uri": "testLink",
+          "contentSize": 25512
+        },
+        "canResubmit": true,
+        "startTime": "2025-01-22T03:00:30.2484542Z",
+        "endTime": "2025-01-22T03:00:30.7595046Z",
+        "correlation": {
+          "actionTrackingId": "eaa29b31-f9da-4fe5-b4f7-bf86ad35a63c",
+          "clientTrackingId": "08584640926573727105946217888CU00"
+        },
+        "status": "Succeeded",
+        "code": "OK"
+      },
+      "Increment_variable": {
+        "inputsLink": {
+          "uri": "testLink",
+          "contentSize": 25
+        },
+        "outputsLink": {
+          "uri": "testLink",
+          "contentSize": 34
+        },
+        "canResubmit": true,
+        "startTime": "2025-01-22T03:00:30.8044228Z",
+        "endTime": "2025-01-22T03:00:30.882763Z",
+        "correlation": {
+          "actionTrackingId": "ed9b4601-ba0d-41c3-896d-d054a8763345",
+          "clientTrackingId": "08584640926573727105946217888CU00"
+        },
+        "status": "Succeeded",
+        "code": "NotSpecified"
+      },
+      "Increment_variable_1": {
+        "inputsLink": {
+          "uri": "testLink",
+          "contentSize": 25
+        },
+        "outputsLink": {
+          "uri": "testLink",
+          "contentSize": 34
+        },
+        "canResubmit": true,
+        "startTime": "2025-01-22T03:00:30.9871738Z",
+        "endTime": "2025-01-22T03:00:31.0050593Z",
+        "correlation": {
+          "actionTrackingId": "aff39093-7047-4075-8e73-1fa2115a5f7f",
+          "clientTrackingId": "08584640926573727105946217888CU00"
+        },
+        "status": "Succeeded",
+        "code": "NotSpecified"
+      },
+      "Increment_variable_2": {
+        "canResubmit": false,
+        "startTime": "2025-01-22T03:00:30.939623Z",
+        "endTime": "2025-01-22T03:00:30.9404223Z",
+        "correlation": {
+          "actionTrackingId": "6289c7b4-c3d7-4bc6-965e-237ff9c73ca4",
+          "clientTrackingId": "08584640926573727105946217888CU00"
+        },
+        "status": "Skipped",
+        "code": "ActionSkipped",
+        "error": {
+          "code": "ActionConditionFailed",
+          "message": "The execution of template action 'Increment_variable_2' is skipped: the 'runAfter' condition for action 'Compose' is not satisfied. Expected status values 'Succeeded' and actual value 'Skipped'."
+        }
+      },
+      "Increment_variable_3": {
+        "canResubmit": false,
+        "startTime": "2025-01-22T03:00:31.0292833Z",
+        "endTime": "2025-01-22T03:00:31.0302961Z",
+        "correlation": {
+          "actionTrackingId": "ed2adfb1-b91e-43af-a234-d6b4bdf11714",
+          "clientTrackingId": "08584640926573727105946217888CU00"
+        },
+        "status": "Skipped",
+        "code": "ActionSkipped",
+        "error": {
+          "code": "ActionBranchingConditionNotSatisfied",
+          "message": "The execution of template action 'Increment_variable_3' skipped: the branching condition for this action is not satisfied."
+        }
+      },
+      "Increment_variable_4": {
+        "canResubmit": false,
+        "startTime": "2025-01-22T03:00:31.036305Z",
+        "endTime": "2025-01-22T03:00:31.0371201Z",
+        "correlation": {
+          "actionTrackingId": "997a4dcb-6a00-4fbd-bced-6a4103a7edcf",
+          "clientTrackingId": "08584640926573727105946217888CU00"
+        },
+        "status": "Skipped",
+        "code": "ActionSkipped",
+        "error": {
+          "code": "ActionBranchingConditionNotSatisfied",
+          "message": "The execution of template action 'Increment_variable_4' skipped: the branching condition for this action is not satisfied."
+        }
+      },
+      "Increment_variable_5": {
+        "canResubmit": false,
+        "startTime": "2025-01-22T03:00:30.9297701Z",
+        "endTime": "2025-01-22T03:00:30.9304465Z",
+        "correlation": {
+          "actionTrackingId": "c9f84709-fb73-427f-af35-d5a9f2971708",
+          "clientTrackingId": "08584640926573727105946217888CU00"
+        },
+        "status": "Skipped",
+        "code": "ActionSkipped",
+        "error": {
+          "code": "ActionDependencyFailed",
+          "message": "The execution of template action 'Increment_variable_5' is skipped: dependant action 'Scope_2' completed with status 'Skipped' and code 'ActionSkipped'."
+        }
+      },
+      "Initialize_variable": {
+        "inputsLink": {
+          "uri": "testLink",
+          "contentSize": 58
+        },
+        "canResubmit": true,
+        "startTime": "2025-01-22T03:00:30.7814077Z",
+        "endTime": "2025-01-22T03:00:30.7934838Z",
+        "correlation": {
+          "actionTrackingId": "008a7cc5-3fb1-4648-a24c-6a17c7321580",
+          "clientTrackingId": "08584640926573727105946217888CU00"
+        },
+        "status": "Succeeded",
+        "code": "NotSpecified"
+      },
+      "Initialize_variable_1": {
+        "inputsLink": {
+          "uri": "testLink",
+          "contentSize": 89
+        },
+        "canResubmit": true,
+        "startTime": "2025-01-22T03:00:30.0249017Z",
+        "endTime": "2025-01-22T03:00:30.1372841Z",
+        "correlation": {
+          "actionTrackingId": "7974097e-49f3-4a2a-bd85-00d643014873",
+          "clientTrackingId": "08584640926573727105946217888CU00"
+        },
+        "status": "Succeeded",
+        "code": "NotSpecified"
+      },
+      "Parse_JSON": {
+        "inputsLink": {
+          "uri": "testLink",
+          "contentSize": 458
+        },
+        "outputsLink": {
+          "uri": "testLink",
+          "contentSize": 184
+        },
+        "canResubmit": true,
+        "startTime": "2025-01-22T03:00:31.0413718Z",
+        "endTime": "2025-01-22T03:00:31.1667091Z",
+        "correlation": {
+          "actionTrackingId": "8edf99ae-b3dd-4b85-9426-c4c71d99aeda",
+          "clientTrackingId": "08584640926573727105946217888CU00"
+        },
+        "status": "Succeeded",
+        "code": "OK"
+      },
+      "Response": {
+        "inputsLink": {
+          "uri": "testLink",
+          "contentSize": 68
+        },
+        "canResubmit": false,
+        "startTime": "2025-01-22T03:00:31.1694085Z",
+        "endTime": "2025-01-22T03:00:31.1888301Z",
+        "correlation": {
+          "actionTrackingId": "ec5b4955-010d-4463-be99-016dee0b17f8",
+          "clientTrackingId": "08584640926573727105946217888CU00"
+        },
+        "status": "Skipped",
+        "code": "ActionResponseSkipped",
+        "error": {
+          "code": "ActionResponseSkipped",
+          "message": "The execution of template action 'Response' is skipped: the client application is not waiting for a response from service."
+        }
+      },
+      "Scope": {
+        "canResubmit": true,
+        "startTime": "2025-01-22T03:00:30.9699004Z",
+        "endTime": "2025-01-22T03:00:31.0280099Z",
+        "correlation": {
+          "actionTrackingId": "fc96a884-70f5-42c3-bab7-71285f56fb9d",
+          "clientTrackingId": "08584640926573727105946217888CU00"
+        },
+        "status": "Succeeded",
+        "code": "NotSpecified"
+      },
+      "Scope_1": {
+        "canResubmit": false,
+        "startTime": "2025-01-22T03:00:30.9332386Z",
+        "endTime": "2025-01-22T03:00:30.933779Z",
+        "correlation": {
+          "actionTrackingId": "e05455bb-07ca-4a52-9a52-f6611889cdc9",
+          "clientTrackingId": "08584640926573727105946217888CU00"
+        },
+        "status": "Skipped",
+        "code": "ActionSkipped",
+        "error": {
+          "code": "ActionBranchingConditionNotSatisfied",
+          "message": "The execution of template action 'Scope_1' skipped: the branching condition for this action is not satisfied."
+        }
+      },
+      "Scope_2": {
+        "canResubmit": false,
+        "startTime": "2025-01-22T03:00:30.9316154Z",
+        "endTime": "2025-01-22T03:00:30.932053Z",
+        "correlation": {
+          "actionTrackingId": "079d88b6-7ad7-4f3b-81d2-954bbc4aa7f0",
+          "clientTrackingId": "08584640926573727105946217888CU00"
+        },
+        "status": "Skipped",
+        "code": "ActionSkipped",
+        "error": {
+          "code": "ActionDependencyFailed",
+          "message": "The execution of template action 'Scope_2' is skipped: dependant action 'Scope_1' completed with status 'Skipped' and code 'ActionSkipped'."
+        }
+      },
+      "Select": {
+        "inputsLink": {
+          "uri": "testLink",
+          "contentSize": 11
+        },
+        "outputsLink": {
+          "uri": "testLink",
+          "contentSize": 11
+        },
+        "canResubmit": true,
+        "startTime": "2025-01-22T03:00:30.2290739Z",
+        "endTime": "2025-01-22T03:00:30.2465138Z",
+        "correlation": {
+          "actionTrackingId": "470bea27-5775-4027-a323-df1f0bb578ec",
+          "clientTrackingId": "08584640926573727105946217888CU00"
+        },
+        "status": "Succeeded",
+        "code": "NotSpecified"
+      },
+      "Switch": {
+        "inputsLink": {
+          "uri": "testLink",
+          "contentSize": 22
+        },
+        "canResubmit": true,
+        "startTime": "2025-01-22T03:00:30.9416828Z",
+        "endTime": "2025-01-22T03:00:31.032801Z",
+        "correlation": {
+          "actionTrackingId": "1b712430-f9a5-43c9-8ba0-e94b0207a026",
+          "clientTrackingId": "08584640926573727105946217888CU00"
+        },
+        "status": "Succeeded",
+        "code": "NotSpecified"
+      }
+    },
+    "outputs": {}
+  },
+  "id": "/workflows/ResponseEmail/runs/08584640926573727105946217888CU00",
+  "name": "08584640926573727105946217888CU00",
+  "type": "workflows/runs"
 }

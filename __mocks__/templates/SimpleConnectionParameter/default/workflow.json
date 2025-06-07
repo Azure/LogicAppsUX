@@ -1,88 +1,84 @@
 {
-    "$schema": "/schemaLink",
-    "actions": {
-        "Azure_Open_AI_-_Get_chat_completions": {
-            "inputs": {
-                "parameters": {
-                    "deploymentId": "@parameters('AzureOpenAI_deployment_model_vision_#workflowname#')",
-                    "max_tokens": 500,
-                    "messages": [
-                        {
-                            "message": "Answer these questions based on the image provided to you.   @{triggerBody()?['questions']}",
-                            "role": "user",
-                            "user": "LA"
-                        },
-                        {
-                            "image": "@body('HTTP_-_Get_Image')",
-                            "role": "user",
-                            "user": "LA"
-                        },
-                        {
-                            "message": "You are an AI assistant that helps people find information.",
-                            "role": "system"
-                        }
-                    ],
-                    "temperature": 1
-                },
-                "serviceProviderConfiguration": {
-                    "connectionName": "Openai_#workflowname#",
-                    "operationId": "getChatCompletions",
-                    "serviceProviderId": "/serviceProviders/openai"
-                }
+  "$schema": "/schemaLink",
+  "actions": {
+    "Azure_Open_AI_-_Get_chat_completions": {
+      "inputs": {
+        "parameters": {
+          "deploymentId": "@parameters('AzureOpenAI_deployment_model_vision_#workflowname#')",
+          "max_tokens": 500,
+          "messages": [
+            {
+              "message": "Answer these questions based on the image provided to you.   @{triggerBody()?['questions']}",
+              "role": "user",
+              "user": "LA"
             },
-            "runAfter": {
-                "HTTP_-_Get_Image": [
-                    "SUCCEEDED"
-                ]
+            {
+              "image": "@body('HTTP_-_Get_Image')",
+              "role": "user",
+              "user": "LA"
             },
-            "type": "ServiceProvider"
+            {
+              "message": "You are an AI assistant that helps people find information.",
+              "role": "system"
+            }
+          ],
+          "temperature": 1
         },
-        "HTTP_-_Get_Image": {
-            "inputs": {
-                "method": "GET",
-                "uri": "@triggerBody()?['filepath']"
-            },
-            "runAfter": {},
-            "runtimeConfiguration": {
-                "contentTransfer": {
-                    "transferMode": "Chunked"
-                }
-            },
-            "type": "Http"
-        },
-        "Response": {
-            "inputs": {
-                "body": "@body('Azure_Open_AI_-_Get_chat_completions')?['content']",
-                "statusCode": 200
-            },
-            "kind": "Http",
-            "runAfter": {
-                "Azure_Open_AI_-_Get_chat_completions": [
-                    "SUCCEEDED"
-                ]
-            },
-            "type": "Response"
+        "serviceProviderConfiguration": {
+          "connectionName": "Openai_#workflowname#",
+          "operationId": "getChatCompletions",
+          "serviceProviderId": "/serviceProviders/openai"
         }
+      },
+      "runAfter": {
+        "HTTP_-_Get_Image": ["SUCCEEDED"]
+      },
+      "type": "ServiceProvider"
     },
-    "contentVersion": "1.0.0.0",
-    "outputs": {},
-    "triggers": {
-        "When_a_HTTP_request_is_received": {
-            "inputs": {
-                "schema": {
-                    "properties": {
-                        "filepath": {
-                            "type": "string"
-                        },
-                        "questions": {
-                            "type": "string"
-                        }
-                    },
-                    "type": "object"
-                }
-            },
-            "kind": "Http",
-            "type": "Request"
+    "HTTP_-_Get_Image": {
+      "inputs": {
+        "method": "GET",
+        "uri": "@triggerBody()?['filepath']"
+      },
+      "runAfter": {},
+      "runtimeConfiguration": {
+        "contentTransfer": {
+          "transferMode": "Chunked"
         }
+      },
+      "type": "Http"
+    },
+    "Response": {
+      "inputs": {
+        "body": "@body('Azure_Open_AI_-_Get_chat_completions')?['content']",
+        "statusCode": 200
+      },
+      "kind": "Http",
+      "runAfter": {
+        "Azure_Open_AI_-_Get_chat_completions": ["SUCCEEDED"]
+      },
+      "type": "Response"
     }
+  },
+  "contentVersion": "1.0.0.0",
+  "outputs": {},
+  "triggers": {
+    "When_a_HTTP_request_is_received": {
+      "inputs": {
+        "schema": {
+          "properties": {
+            "filepath": {
+              "type": "string"
+            },
+            "questions": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "kind": "Http",
+      "type": "Request"
+    }
+  }
 }

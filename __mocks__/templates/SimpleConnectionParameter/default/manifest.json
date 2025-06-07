@@ -1,37 +1,34 @@
 {
-    "id": "default",
-    "title": "[Mock] Simple Connection Parameter Template",
-    "summary": "This is a simple connection parameter template description",
-    "description": "This is a simple connection parameter template details description \n- point 1 \n- point 2.",
-    "prerequisites": "This is a simple connection parameter template prerequisites",
-    "kinds": [
-        "stateful",
-        "stateless"
-    ],
-    "artifacts": [
-        {
-            "type": "workflow",
-            "file": "workflow.json"
-        }
-    ],
-    "images": {
-        "light": "/templates/SimpleConnectionParameter/workflow-light.png",
-        "dark": "/templates/SimpleConnectionParameter/workflow-dark.png"
-    },
-    "parameters": [
-        {
-            "name": "AzureOpenAI_deployment_model_vision_#workflowname#",
-            "displayName": "OpenAI deployment model",
-            "type": "String",
-            "description": "Provide the Azure OpenAI deployment model that supports image and vision.",
-            "required": true
-        }
-    ],
-    "connections": {
-        "Openai_#workflowname#": {
-            "connectorId": "/serviceProviders/openai",
-            "kind": "inapp"
-        }
-    },
-    "sourceCodeUrl": "/sourceCode"
+  "id": "default",
+  "title": "[Mock] Simple Connection Parameter Template",
+  "summary": "This is a simple connection parameter template description",
+  "description": "This is a simple connection parameter template details description \n- point 1 \n- point 2.",
+  "prerequisites": "This is a simple connection parameter template prerequisites",
+  "kinds": ["stateful", "stateless"],
+  "artifacts": [
+    {
+      "type": "workflow",
+      "file": "workflow.json"
+    }
+  ],
+  "images": {
+    "light": "/templates/SimpleConnectionParameter/workflow-light.png",
+    "dark": "/templates/SimpleConnectionParameter/workflow-dark.png"
+  },
+  "parameters": [
+    {
+      "name": "AzureOpenAI_deployment_model_vision_#workflowname#",
+      "displayName": "OpenAI deployment model",
+      "type": "String",
+      "description": "Provide the Azure OpenAI deployment model that supports image and vision.",
+      "required": true
+    }
+  ],
+  "connections": {
+    "Openai_#workflowname#": {
+      "connectorId": "/serviceProviders/openai",
+      "kind": "inapp"
+    }
+  },
+  "sourceCodeUrl": "/sourceCode"
 }
