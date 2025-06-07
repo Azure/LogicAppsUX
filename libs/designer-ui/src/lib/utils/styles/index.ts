@@ -177,3 +177,24 @@ export const conditionalStyles = (baseClass: string, conditionalClasses: [boolea
 export const mergeStyles = (...styles: (any | undefined)[]) => {
   return Object.assign({}, ...styles.filter(Boolean));
 };
+
+/**
+ * Placeholder text styling utility (from common.less)
+ */
+export const placeholderStyles = () => ({
+  '&::-webkit-input-placeholder': {
+    fontFamily: 'inherit',
+  },
+  '&:-moz-placeholder': {
+    fontFamily: 'inherit',
+  },
+  '&::-moz-placeholder': {
+    fontFamily: 'inherit',
+  },
+  '&::placeholder': {
+    fontFamily: 'inherit',
+  },
+  '&:placeholder-shown': {
+    fontFamily: 'inherit',
+  },
+});

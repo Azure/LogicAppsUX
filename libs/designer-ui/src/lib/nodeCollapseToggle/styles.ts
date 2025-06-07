@@ -1,4 +1,5 @@
 import { makeStyles, shorthands } from '@fluentui/react-components';
+import { nodeButtonInteraction } from '../utils/styles';
 
 export const useNodeCollapseToggleStyles = makeStyles({
   root: {
@@ -12,13 +13,7 @@ export const useNodeCollapseToggleStyles = makeStyles({
     alignItems: 'flex-start',
     cursor: 'pointer',
     // node-button-interaction mixin
-    '&:hover': {
-      filter: 'invert(1) brightness(1.15) invert(1)',
-    },
-    '&:focus': {
-      ...shorthands.outline('1px', 'solid', 'white'),
-      outlineOffset: '-3px',
-    },
+    ...nodeButtonInteraction(),
   },
   small: {
     ...shorthands.padding('8px', '6px'),
