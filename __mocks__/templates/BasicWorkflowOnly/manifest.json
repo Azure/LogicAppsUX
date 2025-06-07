@@ -1,25 +1,31 @@
 {
-  "id": "BasicWorkflowOnly",
-  "title": "[Mock] Basic Workflow Only Template",
-  "summary": "This is a simple workflow only template description",
-  "skus": ["consumption", "standard"],
-  "workflows": {
-    "default": {
-      "name": "BasicWorkflowOnly"
-    }
-  },
-  "featuredConnectors": [
-    {
-      "id": "connectionProviders/control",
-      "kind": "builtin"
-    }
-  ],
-  "details": {
-    "By": "Microsoft",
-    "Type": "Workflow",
-    "Trigger": "Request",
-    "Category": "Mock"
-  },
-  "tags": ["Basic Workflow Only", "try catch"],
-  "sourceCodeUrl": "/sourceCode"
+    "id": "BasicWorkflowOnly",
+    "title": "[Mock] Basic Workflow Only Template",
+    "summary": "This is a simple workflow only template description",
+    "skus": [
+        "consumption",
+        "standard"
+    ],
+    "workflows": {
+        "default": {
+            "name": "BasicWorkflowOnly"
+        }
+    },
+    "featuredConnectors": [
+        {
+            "id": "connectionProviders/control",
+            "kind": "builtin"
+        }
+    ],
+    "details": {
+        "By": "Microsoft",
+        "Type": "Workflow",
+        "Trigger": "Request",
+        "Category": "Mock"
+    },
+    "tags": [
+        "Basic Workflow Only",
+        "try catch"
+    ],
+    "sourceCodeUrl": "/sourceCode"
 }

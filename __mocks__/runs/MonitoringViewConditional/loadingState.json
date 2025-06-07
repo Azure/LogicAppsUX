@@ -1,420 +1,469 @@
 {
-  "properties": {
-    "waitEndTime": "2025-01-22T02:50:28.2207883Z",
-    "startTime": "2025-01-22T02:50:28.2207883Z",
-    "status": "Running",
-    "correlation": {
-      "clientTrackingId": "08584640926573727105946217888CU00"
-    },
-    "workflow": {
-      "properties": {
-        "createdTime": "2024-11-21T14:19:48.7291907Z",
-        "changedTime": "2025-01-22T02:50:21.3840854Z",
-        "version": "08584640926645886908",
-        "definition": {
-          "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
-          "contentVersion": "1.0.0.0",
-          "parameters": {
-            "resourceGroup": {
-              "type": "String"
-            },
-            "subscriptionId": {
-              "type": "String"
-            },
-            "resourceName": {
-              "type": "String"
-            }
-          },
-          "triggers": {
-            "When_a_HTTP_request_is_received": {
-              "type": "Request",
-              "kind": "Http",
-              "inputs": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "moder": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "actions": {
-            "Response": {
-              "runAfter": {
-                "Parse_JSON": ["Succeeded"]
-              },
-              "type": "Response",
-              "kind": "Http",
-              "inputs": {
-                "statusCode": 200,
-                "headers": {
-                  "dsasadas": "dasds"
-                },
-                "body": {
-                  "a": "b"
-                }
-              }
-            },
-            "Initialize_variable": {
-              "runAfter": {
-                "HTTP": ["Succeeded"]
-              },
-              "type": "InitializeVariable",
-              "inputs": {
-                "variables": [
-                  {
-                    "name": "TEST",
-                    "type": "integer",
-                    "value": 2
-                  }
-                ]
-              }
-            },
-            "Parse_JSON": {
-              "runAfter": {
-                "Condition": ["Succeeded"]
-              },
-              "type": "ParseJson",
-              "inputs": {
-                "content": {
-                  "category-actions": {
-                    "name": "Navigate To URL",
-                    "type": "navigateTo",
-                    "value": "Error! Hyperlink reference not valid.",
-                    "foreground": true,
-                    "authentication": true,
-                    "destructive": false
-                  }
-                },
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "category-actions": {
-                      "type": "object",
-                      "properties": {
-                        "name": {
-                          "type": "string"
-                        },
-                        "type": {
-                          "type": "string"
-                        },
-                        "value": {
-                          "type": "string"
-                        },
-                        "foreground": {
-                          "type": "boolean"
-                        },
-                        "authentication": {
-                          "type": "boolean"
-                        },
-                        "destructive": {
-                          "type": "boolean"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            },
-            "Increment_variable": {
-              "runAfter": {
-                "Initialize_variable": ["Succeeded"]
-              },
-              "type": "IncrementVariable",
-              "inputs": {
-                "name": "TEST",
-                "value": 2
-              }
-            },
-            "Decrement_variable": {
-              "runAfter": {
-                "Increment_variable": ["Succeeded"]
-              },
-              "type": "DecrementVariable",
-              "inputs": {
-                "name": "TEST",
-                "value": 2
-              }
-            },
-            "Condition": {
-              "actions": {
-                "Condition_1": {
-                  "actions": {
-                    "Compose": {
-                      "runAfter": {
-                        "Scope_1": ["Succeeded"]
-                      },
-                      "type": "Compose",
-                      "inputs": 2
-                    },
-                    "Increment_variable_2": {
-                      "runAfter": {
-                        "Compose": ["Succeeded"]
-                      },
-                      "type": "IncrementVariable",
-                      "inputs": {
-                        "name": "TEST",
-                        "value": 2
-                      }
-                    },
-                    "Scope_1": {
-                      "actions": {
-                        "Scope_2": {
-                          "actions": {
-                            "Increment_variable_5": {
-                              "type": "IncrementVariable",
-                              "inputs": {
-                                "name": "TEST",
-                                "value": 1
-                              }
-                            }
-                          },
-                          "type": "Scope"
-                        }
-                      },
-                      "type": "Scope"
-                    }
-                  },
-                  "else": {
-                    "actions": {
-                      "Switch": {
-                        "cases": {
-                          "Case": {
-                            "case": 2,
-                            "actions": {
-                              "Scope": {
-                                "actions": {
-                                  "Increment_variable_1": {
-                                    "type": "IncrementVariable",
-                                    "inputs": {
-                                      "name": "TEST",
-                                      "value": 3
-                                    }
-                                  }
-                                },
-                                "type": "Scope"
-                              }
-                            }
-                          }
-                        },
-                        "default": {
-                          "actions": {
-                            "Increment_variable_3": {
-                              "type": "IncrementVariable",
-                              "inputs": {
-                                "name": "TEST",
-                                "value": 1
-                              }
-                            }
-                          }
-                        },
-                        "expression": "@variables('TEST')",
-                        "type": "Switch"
-                      }
-                    }
-                  },
-                  "expression": {
-                    "and": [
-                      {
-                        "equals": [1, 2]
-                      }
-                    ]
-                  },
-                  "type": "If"
-                }
-              },
-              "runAfter": {
-                "Decrement_variable": ["Succeeded"]
-              },
-              "else": {
-                "actions": {
-                  "Increment_variable_4": {
-                    "type": "IncrementVariable",
-                    "inputs": {
-                      "name": "TEST",
-                      "value": 2
-                    }
-                  }
-                }
-              },
-              "expression": {
-                "and": [
-                  {
-                    "equals": [1, 1]
-                  }
-                ]
-              },
-              "type": "If"
-            },
-            "HTTP": {
-              "runAfter": {
-                "Select": ["Succeeded"]
-              },
-              "type": "Http",
-              "inputs": {
-                "uri": "https://pokeapi.co/api/v2/pokemon/ditto",
-                "method": "GET",
-                "queries": {
-                  "applicationName": "appname",
-                  "timeout": "60"
-                }
-              },
-              "runtimeConfiguration": {
-                "contentTransfer": {
-                  "transferMode": "Chunked"
-                }
-              }
-            },
-            "Select": {
-              "runAfter": {
-                "Filter_array": ["Succeeded"]
-              },
-              "type": "Select",
-              "inputs": {
-                "from": [],
-                "select": {
-                  "asdas": ""
-                }
-              }
-            },
-            "Initialize_variable_1": {
-              "runAfter": {
-                "Condition_2": ["Succeeded"]
-              },
-              "type": "InitializeVariable",
-              "inputs": {
-                "variables": [
-                  {
-                    "name": "Array1",
-                    "type": "array",
-                    "value": [1, 2, 3, 4, 2, 13, 23, 312, 321, 321, 21]
-                  }
-                ]
-              }
-            },
-            "Filter_array": {
-              "runAfter": {
-                "Initialize_variable_1": ["Succeeded"]
-              },
-              "type": "Query",
-              "inputs": {
-                "from": "@variables('Array1')",
-                "where": "@greater(item(),2)"
-              }
-            },
-            "Condition_2": {
-              "actions": {
-                "Compose_1": {
-                  "runAfter": {
-                    "Compose_3": ["Succeeded"]
-                  },
-                  "type": "Compose",
-                  "inputs": 2222
-                },
-                "Compose_3": {
-                  "type": "Compose",
-                  "inputs": 1
-                }
-              },
-              "runAfter": {
-                "Delay": ["Succeeded"]
-              },
-              "else": {
-                "actions": {
-                  "Compose_2": {
-                    "type": "Compose",
-                    "inputs": 2
-                  }
-                }
-              },
-              "expression": {
-                "and": [
-                  {
-                    "equals": [1, 1]
-                  }
-                ]
-              },
-              "type": "If"
-            },
-            "Delay": {
-              "runAfter": {},
-              "type": "Wait",
-              "inputs": {
-                "interval": {
-                  "count": 10,
-                  "unit": "Minute"
-                }
-              }
-            }
-          },
-          "outputs": {}
-        },
-        "parameters": {
-          "resourceGroup": {
-            "type": "String",
-            "value": "cleanupservice"
-          },
-          "subscriptionId": {
-            "type": "String",
-            "value": "dasdmasda"
-          },
-          "resourceName": {
-            "type": "String",
-            "value": "sadasdas"
-          }
-        },
-        "endpointsConfiguration": {},
-        "runtimeConfiguration": {
-          "lifetime": {
-            "unit": "Day",
-            "count": 90
-          },
-          "operationOptions": "None"
-        }
-      },
-      "id": "/workflows/ResponseEmail/versions/08584640926645886908",
-      "name": "08584640926645886908",
-      "type": "workflows/versions"
-    },
-    "trigger": {
-      "name": "When_a_HTTP_request_is_received",
-      "inputsLink": {
-        "uri": "testLink",
-        "contentSize": 69
-      },
-      "outputsLink": {
-        "uri": "testLink",
-        "contentSize": 4406
-      },
-      "startTime": "2025-01-22T02:50:28.1163445Z",
-      "endTime": "2025-01-22T02:50:28.1163445Z",
-      "originHistoryName": "08584640926573727105946217888CU00",
-      "correlation": {
-        "clientTrackingId": "08584640926573727105946217888CU00"
-      },
-      "status": "Succeeded"
-    },
-    "actions": {
-      "Delay": {
-        "inputsLink": {
-          "uri": "testLink",
-          "contentSize": 41
-        },
-        "canResubmit": false,
-        "startTime": "2025-01-22T02:50:29.7341837Z",
+    "properties": {
+        "waitEndTime": "2025-01-22T02:50:28.2207883Z",
+        "startTime": "2025-01-22T02:50:28.2207883Z",
+        "status": "Running",
         "correlation": {
-          "actionTrackingId": "8730892a-16cf-4bae-84bc-ee18900e3d81",
-          "clientTrackingId": "08584640926573727105946217888CU00"
+            "clientTrackingId": "08584640926573727105946217888CU00"
         },
-        "status": "Running"
-      }
+        "workflow": {
+            "properties": {
+                "createdTime": "2024-11-21T14:19:48.7291907Z",
+                "changedTime": "2025-01-22T02:50:21.3840854Z",
+                "version": "08584640926645886908",
+                "definition": {
+                    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "resourceGroup": {
+                            "type": "String"
+                        },
+                        "subscriptionId": {
+                            "type": "String"
+                        },
+                        "resourceName": {
+                            "type": "String"
+                        }
+                    },
+                    "triggers": {
+                        "When_a_HTTP_request_is_received": {
+                            "type": "Request",
+                            "kind": "Http",
+                            "inputs": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "moder": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "actions": {
+                        "Response": {
+                            "runAfter": {
+                                "Parse_JSON": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "Response",
+                            "kind": "Http",
+                            "inputs": {
+                                "statusCode": 200,
+                                "headers": {
+                                    "dsasadas": "dasds"
+                                },
+                                "body": {
+                                    "a": "b"
+                                }
+                            }
+                        },
+                        "Initialize_variable": {
+                            "runAfter": {
+                                "HTTP": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "TEST",
+                                        "type": "integer",
+                                        "value": 2
+                                    }
+                                ]
+                            }
+                        },
+                        "Parse_JSON": {
+                            "runAfter": {
+                                "Condition": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "ParseJson",
+                            "inputs": {
+                                "content": {
+                                    "category-actions": {
+                                        "name": "Navigate To URL",
+                                        "type": "navigateTo",
+                                        "value": "Error! Hyperlink reference not valid.",
+                                        "foreground": true,
+                                        "authentication": true,
+                                        "destructive": false
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "category-actions": {
+                                            "type": "object",
+                                            "properties": {
+                                                "name": {
+                                                    "type": "string"
+                                                },
+                                                "type": {
+                                                    "type": "string"
+                                                },
+                                                "value": {
+                                                    "type": "string"
+                                                },
+                                                "foreground": {
+                                                    "type": "boolean"
+                                                },
+                                                "authentication": {
+                                                    "type": "boolean"
+                                                },
+                                                "destructive": {
+                                                    "type": "boolean"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "Increment_variable": {
+                            "runAfter": {
+                                "Initialize_variable": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "IncrementVariable",
+                            "inputs": {
+                                "name": "TEST",
+                                "value": 2
+                            }
+                        },
+                        "Decrement_variable": {
+                            "runAfter": {
+                                "Increment_variable": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "DecrementVariable",
+                            "inputs": {
+                                "name": "TEST",
+                                "value": 2
+                            }
+                        },
+                        "Condition": {
+                            "actions": {
+                                "Condition_1": {
+                                    "actions": {
+                                        "Compose": {
+                                            "runAfter": {
+                                                "Scope_1": [
+                                                    "Succeeded"
+                                                ]
+                                            },
+                                            "type": "Compose",
+                                            "inputs": 2
+                                        },
+                                        "Increment_variable_2": {
+                                            "runAfter": {
+                                                "Compose": [
+                                                    "Succeeded"
+                                                ]
+                                            },
+                                            "type": "IncrementVariable",
+                                            "inputs": {
+                                                "name": "TEST",
+                                                "value": 2
+                                            }
+                                        },
+                                        "Scope_1": {
+                                            "actions": {
+                                                "Scope_2": {
+                                                    "actions": {
+                                                        "Increment_variable_5": {
+                                                            "type": "IncrementVariable",
+                                                            "inputs": {
+                                                                "name": "TEST",
+                                                                "value": 1
+                                                            }
+                                                        }
+                                                    },
+                                                    "type": "Scope"
+                                                }
+                                            },
+                                            "type": "Scope"
+                                        }
+                                    },
+                                    "else": {
+                                        "actions": {
+                                            "Switch": {
+                                                "cases": {
+                                                    "Case": {
+                                                        "case": 2,
+                                                        "actions": {
+                                                            "Scope": {
+                                                                "actions": {
+                                                                    "Increment_variable_1": {
+                                                                        "type": "IncrementVariable",
+                                                                        "inputs": {
+                                                                            "name": "TEST",
+                                                                            "value": 3
+                                                                        }
+                                                                    }
+                                                                },
+                                                                "type": "Scope"
+                                                            }
+                                                        }
+                                                    }
+                                                },
+                                                "default": {
+                                                    "actions": {
+                                                        "Increment_variable_3": {
+                                                            "type": "IncrementVariable",
+                                                            "inputs": {
+                                                                "name": "TEST",
+                                                                "value": 1
+                                                            }
+                                                        }
+                                                    }
+                                                },
+                                                "expression": "@variables('TEST')",
+                                                "type": "Switch"
+                                            }
+                                        }
+                                    },
+                                    "expression": {
+                                        "and": [
+                                            {
+                                                "equals": [
+                                                    1,
+                                                    2
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    "type": "If"
+                                }
+                            },
+                            "runAfter": {
+                                "Decrement_variable": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "else": {
+                                "actions": {
+                                    "Increment_variable_4": {
+                                        "type": "IncrementVariable",
+                                        "inputs": {
+                                            "name": "TEST",
+                                            "value": 2
+                                        }
+                                    }
+                                }
+                            },
+                            "expression": {
+                                "and": [
+                                    {
+                                        "equals": [
+                                            1,
+                                            1
+                                        ]
+                                    }
+                                ]
+                            },
+                            "type": "If"
+                        },
+                        "HTTP": {
+                            "runAfter": {
+                                "Select": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "Http",
+                            "inputs": {
+                                "uri": "https://pokeapi.co/api/v2/pokemon/ditto",
+                                "method": "GET",
+                                "queries": {
+                                    "applicationName": "appname",
+                                    "timeout": "60"
+                                }
+                            },
+                            "runtimeConfiguration": {
+                                "contentTransfer": {
+                                    "transferMode": "Chunked"
+                                }
+                            }
+                        },
+                        "Select": {
+                            "runAfter": {
+                                "Filter_array": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "Select",
+                            "inputs": {
+                                "from": [],
+                                "select": {
+                                    "asdas": ""
+                                }
+                            }
+                        },
+                        "Initialize_variable_1": {
+                            "runAfter": {
+                                "Condition_2": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "Array1",
+                                        "type": "array",
+                                        "value": [
+                                            1,
+                                            2,
+                                            3,
+                                            4,
+                                            2,
+                                            13,
+                                            23,
+                                            312,
+                                            321,
+                                            321,
+                                            21
+                                        ]
+                                    }
+                                ]
+                            }
+                        },
+                        "Filter_array": {
+                            "runAfter": {
+                                "Initialize_variable_1": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "Query",
+                            "inputs": {
+                                "from": "@variables('Array1')",
+                                "where": "@greater(item(),2)"
+                            }
+                        },
+                        "Condition_2": {
+                            "actions": {
+                                "Compose_1": {
+                                    "runAfter": {
+                                        "Compose_3": [
+                                            "Succeeded"
+                                        ]
+                                    },
+                                    "type": "Compose",
+                                    "inputs": 2222
+                                },
+                                "Compose_3": {
+                                    "type": "Compose",
+                                    "inputs": 1
+                                }
+                            },
+                            "runAfter": {
+                                "Delay": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "else": {
+                                "actions": {
+                                    "Compose_2": {
+                                        "type": "Compose",
+                                        "inputs": 2
+                                    }
+                                }
+                            },
+                            "expression": {
+                                "and": [
+                                    {
+                                        "equals": [
+                                            1,
+                                            1
+                                        ]
+                                    }
+                                ]
+                            },
+                            "type": "If"
+                        },
+                        "Delay": {
+                            "runAfter": {},
+                            "type": "Wait",
+                            "inputs": {
+                                "interval": {
+                                    "count": 10,
+                                    "unit": "Minute"
+                                }
+                            }
+                        }
+                    },
+                    "outputs": {}
+                },
+                "parameters": {
+                    "resourceGroup": {
+                        "type": "String",
+                        "value": "cleanupservice"
+                    },
+                    "subscriptionId": {
+                        "type": "String",
+                        "value": "dasdmasda"
+                    },
+                    "resourceName": {
+                        "type": "String",
+                        "value": "sadasdas"
+                    }
+                },
+                "endpointsConfiguration": {},
+                "runtimeConfiguration": {
+                    "lifetime": {
+                        "unit": "Day",
+                        "count": 90
+                    },
+                    "operationOptions": "None"
+                }
+            },
+            "id": "/workflows/ResponseEmail/versions/08584640926645886908",
+            "name": "08584640926645886908",
+            "type": "workflows/versions"
+        },
+        "trigger": {
+            "name": "When_a_HTTP_request_is_received",
+            "inputsLink": {
+                "uri": "testLink",
+                "contentSize": 69
+            },
+            "outputsLink": {
+                "uri": "testLink",
+                "contentSize": 4406
+            },
+            "startTime": "2025-01-22T02:50:28.1163445Z",
+            "endTime": "2025-01-22T02:50:28.1163445Z",
+            "originHistoryName": "08584640926573727105946217888CU00",
+            "correlation": {
+                "clientTrackingId": "08584640926573727105946217888CU00"
+            },
+            "status": "Succeeded"
+        },
+        "actions": {
+            "Delay": {
+                "inputsLink": {
+                    "uri": "testLink",
+                    "contentSize": 41
+                },
+                "canResubmit": false,
+                "startTime": "2025-01-22T02:50:29.7341837Z",
+                "correlation": {
+                    "actionTrackingId": "8730892a-16cf-4bae-84bc-ee18900e3d81",
+                    "clientTrackingId": "08584640926573727105946217888CU00"
+                },
+                "status": "Running"
+            }
+        },
+        "outputs": {}
     },
-    "outputs": {}
-  },
-  "id": "/workflows/ResponseEmail/runs/08584640926573727105946217888CU00",
-  "name": "08584640926573727105946217888CU00",
-  "type": "workflows/runs"
+    "id": "/workflows/ResponseEmail/runs/08584640926573727105946217888CU00",
+    "name": "08584640926573727105946217888CU00",
+    "type": "workflows/runs"
 }

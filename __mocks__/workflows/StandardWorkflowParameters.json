@@ -58,33 +58,33 @@
       }
     }
   },
-  "parameters": {
-    "Float Parameter": {
-      "value": 9.9,
-      "type": "Float"
-    },
-    "Int Parameter": {
-      "value": 2,
-      "type": "Int"
-    },
-    "Bool Parameter": {
-      "value": true,
-      "type": "Bool"
-    },
-    "String Parameter": {
-      "value": "Hello",
-      "type": "String"
-    },
-    "Object Parameter": {
-      "value": {
-        "a": 1,
-        "b": 2
-      },
-      "type": "Object"
-    },
-    "Array Parameter": {
-      "value": ["blue", 1, 2, 3],
-      "type": "Array"
-    }
-  }
+	"parameters": {
+		"Float Parameter": {
+			"value": 9.9,
+			"type": "Float"
+		},
+		"Int Parameter": {
+			"value": 2,
+			"type": "Int"
+		},
+		"Bool Parameter": {
+			"value": true,
+			"type": "Bool"
+		},
+		"String Parameter": {
+			"value": "Hello",
+			"type": "String"
+		},
+		"Object Parameter": {
+			"value": {
+				"a": 1,
+				"b": 2
+			},
+			"type": "Object"
+		},
+		"Array Parameter": {
+			"value": ["blue", 1, 2, 3],
+			"type": "Array"
+		}
+	}
 }

@@ -1,49 +1,52 @@
 {
-  "id": "Workflow2",
-  "title": "Workflow 2",
-  "summary": "Workflow 2 description",
-  "description": "Workflow 2 details description \n- point 1 \n- point 2.",
-  "prerequisites": "Workflow 2 prerequisites",
-  "kinds": ["stateful", "stateless"],
-  "artifacts": [
-    {
-      "type": "workflow",
-      "file": "workflow.json"
-    }
-  ],
-  "images": {
-    "light": "/templates/SimpleAccelerator/Workflow2/workflow-light.png",
-    "dark": "/templates/SimpleAccelerator/Workflow2/workflow-dark.png"
-  },
-  "parameters": [
-    {
-      "name": "OpenAIEmbeddingModel_#workflowname#",
-      "displayName": "Azure OpenAI text embedding deployment model name",
-      "type": "String",
-      "description": "Provide the Azure OpenAI embedding model to generate vector embeddings.",
-      "required": true
+    "id": "Workflow2",
+    "title": "Workflow 2",
+    "summary": "Workflow 2 description",
+    "description": "Workflow 2 details description \n- point 1 \n- point 2.",
+    "prerequisites": "Workflow 2 prerequisites",
+    "kinds": [
+        "stateful",
+        "stateless"
+    ],
+    "artifacts": [
+        {
+            "type": "workflow",
+            "file": "workflow.json"
+        }
+    ],
+    "images": {
+        "light": "/templates/SimpleAccelerator/Workflow2/workflow-light.png",
+        "dark": "/templates/SimpleAccelerator/Workflow2/workflow-dark.png"
     },
-    {
-      "name": "BlobPath_#workflowname#",
-      "displayName": "Blob Path",
-      "type": "String",
-      "description": "Provide the Azure Blob container name from where to get your document.",
-      "required": true
-    }
-  ],
-  "connections": {
-    "azuresql_#workflowname#": {
-      "connectorId": "/serviceProviders/sql",
-      "kind": "inapp"
+    "parameters": [
+        {
+            "name": "OpenAIEmbeddingModel_#workflowname#",
+            "displayName": "Azure OpenAI text embedding deployment model name",
+            "type": "String",
+            "description": "Provide the Azure OpenAI embedding model to generate vector embeddings.",
+            "required": true
+        },
+        {
+            "name": "BlobPath_#workflowname#",
+            "displayName": "Blob Path",
+            "type": "String",
+            "description": "Provide the Azure Blob container name from where to get your document.",
+            "required": true
+        }
+    ],
+    "connections": {
+        "azuresql_#workflowname#": {
+            "connectorId": "/serviceProviders/sql",
+            "kind": "inapp"
+        },
+        "openai_#workflowname#": {
+            "connectorId": "/serviceProviders/openai",
+            "kind": "inapp"
+        },
+        "azureblob_#workflowname#": {
+            "connectorId": "/serviceProviders/AzureBlob",
+            "kind": "inapp"
+        }
     },
-    "openai_#workflowname#": {
-      "connectorId": "/serviceProviders/openai",
-      "kind": "inapp"
-    },
-    "azureblob_#workflowname#": {
-      "connectorId": "/serviceProviders/AzureBlob",
-      "kind": "inapp"
-    }
-  },
-  "sourceCodeUrl": "/sourceCode"
+    "sourceCodeUrl": "/sourceCode"
 }

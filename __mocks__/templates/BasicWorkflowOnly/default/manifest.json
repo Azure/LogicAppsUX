@@ -1,20 +1,23 @@
 {
-  "id": "default",
-  "title": "[Mock] Basic Workflow Only Template",
-  "summary": "This is a simple workflow only template description",
-  "description": "This is a basic workflow only template details description \n- point 1 \n- point 2.",
-  "kinds": ["stateful", "stateless"],
-  "artifacts": [
-    {
-      "type": "workflow",
-      "file": "workflow.json"
-    }
-  ],
-  "images": {
-    "light": "/templates/BasicWorkflowOnly/workflow-light.png",
-    "dark": "/templates/BasicWorkflowOnly/workflow-dark.png"
-  },
-  "parameters": [],
-  "connections": {},
-  "sourceCodeUrl": "/sourceCode"
+    "id": "default",
+    "title": "[Mock] Basic Workflow Only Template",
+    "summary": "This is a simple workflow only template description",
+    "description": "This is a basic workflow only template details description \n- point 1 \n- point 2.",
+    "kinds": [
+        "stateful",
+        "stateless"
+    ],
+    "artifacts": [
+        {
+            "type": "workflow",
+            "file": "workflow.json"
+        }
+    ],
+    "images": {
+        "light": "/templates/BasicWorkflowOnly/workflow-light.png",
+        "dark": "/templates/BasicWorkflowOnly/workflow-dark.png"
+    },
+    "parameters": [],
+    "connections": {},
+    "sourceCodeUrl": "/sourceCode"
 }

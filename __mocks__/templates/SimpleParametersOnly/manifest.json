@@ -1,25 +1,31 @@
 {
-  "id": "SimpleParametersOnly",
-  "title": "[Mock] Simple Parameters Only Template",
-  "summary": "This is a simple workflow only template description",
-  "skus": ["consumption", "standard"],
-  "workflows": {
-    "default": {
-      "name": "SimpleParametersOnly"
-    }
-  },
-  "featuredConnectors": [
-    {
-      "id": "connectionProviders/control",
-      "kind": "builtin"
-    }
-  ],
-  "details": {
-    "By": "Microsoft",
-    "Type": "Workflow",
-    "Trigger": "Request",
-    "Category": "Mock"
-  },
-  "tags": ["Simple Parameters Only", "try catch"],
-  "sourceCodeUrl": "/sourceCode"
+    "id": "SimpleParametersOnly",
+    "title": "[Mock] Simple Parameters Only Template",
+    "summary": "This is a simple workflow only template description",
+    "skus": [
+        "consumption",
+        "standard"
+    ],
+    "workflows": {
+        "default": {
+            "name": "SimpleParametersOnly"
+        }
+    },
+    "featuredConnectors": [
+        {
+            "id": "connectionProviders/control",
+            "kind": "builtin"
+        }
+    ],
+    "details": {
+        "By": "Microsoft",
+        "Type": "Workflow",
+        "Trigger": "Request",
+        "Category": "Mock"
+    },
+    "tags": [
+        "Simple Parameters Only",
+        "try catch"
+    ],
+    "sourceCodeUrl": "/sourceCode"
 }

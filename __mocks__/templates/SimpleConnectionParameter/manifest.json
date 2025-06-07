@@ -1,25 +1,29 @@
 {
-  "id": "SimpleConnectionParameter",
-  "title": "[Mock] Simple Connection Parameter Template",
-  "summary": "This is a simple connection parameter template description",
-  "skus": ["standard"],
-  "workflows": {
-    "default": {
-      "name": "SimpleConnectionParameter"
-    }
-  },
-  "featuredConnectors": [
-    {
-      "id": "/serviceProviders/openai",
-      "kind": "inapp"
-    }
-  ],
-  "details": {
-    "By": "Microsoft",
-    "Type": "Workflow",
-    "Trigger": "Request",
-    "Category": "Mock"
-  },
-  "tags": ["Simple-Connection-Parameter"],
-  "sourceCodeUrl": "/sourceCode"
+    "id": "SimpleConnectionParameter",
+    "title": "[Mock] Simple Connection Parameter Template",
+    "summary": "This is a simple connection parameter template description",
+    "skus": [
+        "standard"
+    ],
+    "workflows": {
+        "default": {
+            "name": "SimpleConnectionParameter"
+        }
+    },
+    "featuredConnectors": [
+        {
+            "id": "/serviceProviders/openai",
+            "kind": "inapp"
+        }
+    ],
+    "details": {
+        "By": "Microsoft",
+        "Type": "Workflow",
+        "Trigger": "Request",
+        "Category": "Mock"
+    },
+    "tags": [
+        "Simple-Connection-Parameter"
+    ],
+    "sourceCodeUrl": "/sourceCode"
 }

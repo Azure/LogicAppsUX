@@ -1,99 +1,100 @@
 {
-  "name": "Source.xsd",
-  "type": "XML",
-  "targetNamespace": "http://tempuri.org/source.xsd",
-  "namespaces": {
-    "ns0": "http://tempuri.org/source.xsd",
-    "xs": "http://www.w3.org/2001/XMLSchema"
-  },
-  "schemaTreeRoot": {
-    "key": "/ns0:Root",
-    "name": "Root",
-    "type": "Complex",
-    "properties": "None",
-    "children": [
-      {
-        "key": "/ns0:Root/FirstLoop",
-        "name": "FirstLoop",
-        "type": "Complex",
-        "properties": "Repeating",
-        "children": [
-          {
-            "key": "/ns0:Root/FirstLoop/Name",
-            "name": "Name",
-            "type": "Decimal",
-            "properties": "None",
-            "qName": "Name",
-            "parentKey": "/ns0:Root/FirstLoop"
-          }
-        ],
-        "qName": "FirstLoop",
-        "parentKey": "/ns0:Root"
-      },
-      {
-        "key": "/ns0:Root/SecondLoop",
-        "name": "SecondLoop",
-        "type": "Complex",
-        "properties": "Repeating",
-        "children": [
-          {
-            "key": "/ns0:Root/SecondLoop/Number",
-            "name": "Number",
-            "type": "Decimal",
-            "properties": "None",
-            "qName": "Number",
-            "parentKey": "/ns0:Root/SecondLoop"
-          }
-        ],
-        "qName": "SecondLoop",
-        "parentKey": "/ns0:Root"
-      },
-      {
-        "key": "/ns0:Root/Nested",
-        "name": "Nested",
-        "type": "Complex",
-        "properties": "Repeating",
-        "children": [
-          {
-            "key": "/ns0:Root/Nested/A",
-            "name": "A",
-            "type": "Complex",
-            "properties": "Repeating",
-            "parentKey": "/ns0:Root/Nested",
-            "children": [
-              {
-                "key": "/ns0:Root/Nested/A/Name",
-                "name": "Name",
-                "type": "Decimal",
-                "properties": "None",
-                "qName": "Name",
-                "parentKey": "/ns0:Root/Nested/A"
-              }
-            ]
-          },
-          {
-            "key": "/ns0:Root/Nested/B",
-            "name": "B",
-            "type": "Complex",
-            "properties": "Repeating",
-            "qName": "B",
-            "parentKey": "/ns0:Root/Nested",
-            "children": [
-              {
-                "key": "/ns0:Root/Nested/B/Name",
-                "name": "Name",
-                "type": "Decimal",
-                "properties": "None",
-                "qName": "Name",
-                "parentKey": "/ns0:Root/Nested/B"
-              }
-            ]
-          }
-        ],
-        "qName": "Nested",
-        "parentKey": "/ns0:Root"
-      }
-    ],
-    "qName": "ns0:Root"
+    "name": "Source.xsd",
+    "type": "XML",
+    "targetNamespace": "http://tempuri.org/source.xsd",
+    "namespaces": {
+      "ns0": "http://tempuri.org/source.xsd",
+      "xs": "http://www.w3.org/2001/XMLSchema"
+    },
+    "schemaTreeRoot": {
+      "key": "/ns0:Root",
+      "name": "Root",
+      "type": "Complex",
+      "properties": "None",
+      "children": [
+        {
+          "key": "/ns0:Root/FirstLoop",
+          "name": "FirstLoop",
+          "type": "Complex",
+          "properties": "Repeating",
+          "children": [
+            {
+              "key": "/ns0:Root/FirstLoop/Name",
+              "name": "Name",
+              "type": "Decimal",
+              "properties": "None",
+              "qName": "Name",
+              "parentKey": "/ns0:Root/FirstLoop"
+            }
+          ],
+          "qName": "FirstLoop",
+          "parentKey": "/ns0:Root"
+        },
+        {
+          "key": "/ns0:Root/SecondLoop",
+          "name": "SecondLoop",
+          "type": "Complex",
+          "properties": "Repeating",
+          "children": [
+            {
+              "key": "/ns0:Root/SecondLoop/Number",
+              "name": "Number",
+              "type": "Decimal",
+              "properties": "None",
+              "qName": "Number",
+              "parentKey": "/ns0:Root/SecondLoop"
+            }
+          ],
+          "qName": "SecondLoop",
+          "parentKey": "/ns0:Root"
+        },
+        {
+          "key": "/ns0:Root/Nested",
+          "name": "Nested",
+          "type": "Complex",
+          "properties": "Repeating",
+          "children": [
+            {
+              "key": "/ns0:Root/Nested/A",
+              "name": "A",
+              "type": "Complex",
+              "properties": "Repeating",
+              "parentKey": "/ns0:Root/Nested",
+              "children": [
+                {
+                  "key": "/ns0:Root/Nested/A/Name",
+                  "name": "Name",
+                  "type": "Decimal",
+                  "properties": "None",
+                  "qName": "Name",
+                  "parentKey": "/ns0:Root/Nested/A"
+                }
+              ]
+              
+            },            {
+              "key": "/ns0:Root/Nested/B",
+              "name": "B",
+              "type": "Complex",
+              "properties": "Repeating",
+              "qName": "B",
+              "parentKey": "/ns0:Root/Nested",
+              "children": [
+                {
+                  "key": "/ns0:Root/Nested/B/Name",
+                  "name": "Name",
+                  "type": "Decimal",
+                  "properties": "None",
+                  "qName": "Name",
+                  "parentKey": "/ns0:Root/Nested/B"
+                }
+              ]
+            }
+          ],
+          "qName": "Nested",
+          "parentKey": "/ns0:Root"
+        }
+      ],
+      "qName": "ns0:Root"
+    }
   }
-}
+  
