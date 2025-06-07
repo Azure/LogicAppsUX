@@ -4,12 +4,23 @@
 
 This document outlines a comprehensive plan to migrate 124 .less files in the LogicAppsUX monorepo to Fluent UI v9's makeStyles CSS-in-JS system. The migration will improve performance, enable better tree-shaking, provide type-safe styling, and align with modern React best practices.
 
+**Current Progress**: 9 components migrated (7.3% complete)
+- ✅ peek component (peek.less - 6 lines)
+- ✅ error component (error.less - 29 lines)
+- ✅ tip component (tip.less - 33 lines)
+- ✅ texteditor base component (texteditor.less - 48 lines)
+- ✅ nodeCollapseToggle component (nodeCollapseToggle.less - 20 lines)
+- ✅ overview component (overview.less - 30 lines)
+- ✅ **FOUNDATIONAL**: variables.less → tokens/designTokens.ts (CRITICAL INFRASTRUCTURE)
+- ✅ **FOUNDATIONAL**: mixins.less → utils/mixins.ts (CRITICAL INFRASTRUCTURE)
+- ✅ **FOUNDATIONAL**: common.less → styles/common.ts (CRITICAL INFRASTRUCTURE)
+
 ## Current State Analysis
 
 ### Scope
-- **Total .less files**: 124
+- **Total .less files**: 124 (9 completed, 115 remaining)
 - **Main aggregator file**: `/libs/designer-ui/src/lib/styles.less` (imports 71 files)
-- **Lines of CSS**: ~5,000+ lines across all files
+- **Lines of CSS**: ~5,000+ lines across all files (~400 lines migrated including foundational files)
 - **Affected packages**: 6 packages (designer-ui, designer, data-mapper, vs-code-react, Standalone, chatbot)
 
 ### Existing makeStyles Adoption
@@ -23,7 +34,7 @@ This document outlines a comprehensive plan to migrate 124 .less files in the Lo
 ### Phase 1: Foundation (Week 1-2)
 Establish core infrastructure and patterns
 
-### Phase 2: Shared Resources (Week 3-4)
+### Phase 2: Shared Resources (Week 3-4) ✅ **CORE INFRASTRUCTURE COMPLETED**
 Migrate variables, mixins, and common styles
 
 ### Phase 3: Component Migration (Week 5-12)
@@ -88,9 +99,9 @@ export const customTokens = {
 #### 2.1 Core Style Files
 Priority order for migration:
 
-1. [ ] `/libs/designer-ui/src/lib/variables.less` → `tokens/variables.ts`
-2. [ ] `/libs/designer-ui/src/lib/mixins.less` → `utils/mixins.ts`
-3. [ ] `/libs/designer-ui/src/lib/common.less` → `styles/common.ts`
+1. [x] `/libs/designer-ui/src/lib/variables.less` → `tokens/variables.ts` ✅ **COMPLETED**
+2. [x] `/libs/designer-ui/src/lib/mixins.less` → `utils/mixins.ts` ✅ **COMPLETED**
+3. [x] `/libs/designer-ui/src/lib/common.less` → `styles/common.ts` ✅ **COMPLETED**
 4. [ ] `/libs/designer-ui/src/lib/themes.less` → `themes/index.ts`
 5. [ ] `/libs/designer-ui/src/lib/fabric.less` → Fluent UI tokens
 6. [ ] `/libs/designer-ui/src/lib/logicapps.less` → `styles/logicapps.ts`
@@ -138,23 +149,38 @@ Priority order for migration:
 
 **Lower Priority - Utility Components** (Week 11-12)
 - [ ] Monitoring components
-- [ ] Overview components
+- [x] Overview components - ✅ COMPLETED
 - [ ] Table components
-- [ ] Remaining small components
+- [ ] Remaining small components:
+  - [x] peek.less - ✅ COMPLETED
+  - [x] error.less - ✅ COMPLETED
+  - [x] tip.less - ✅ COMPLETED
+  - [x] texteditor.less - ✅ COMPLETED
+  - [x] nodeCollapseToggle.less - ✅ COMPLETED
+  - [ ] Other utility components
 
 #### 3.2 Component Migration Process
 
 For each component:
 
-1. **Create styles file**:
+1. **Create styles file** (using our new foundational infrastructure):
    ```typescript
    // ComponentName.styles.ts
    import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
-   import { customTokens } from '../../tokens/designTokens';
+   import { designTokens } from '../../tokens/designTokens';        // Our migrated variables
+   import { flexStyles, truncateText } from '../../utils/mixins';   // Our migrated mixins
+   import { baseCardStyles } from '../../styles/common';            // Our migrated common styles
    
    export const useStyles = makeStyles({
      root: {
-       // styles here
+       // Use our design tokens instead of hardcoded values
+       backgroundColor: designTokens.card.backgroundColor,
+       minWidth: designTokens.card.minWidth,
+       ...flexStyles.centerAll,           // Use our migrated mixins
+       ...truncateText,                   // Use our migrated text utilities
+       // Direct CSS properties for single-directional needs
+       marginTop: tokens.spacingVerticalM,
+       paddingLeft: tokens.spacingHorizontalL,
      },
    });
    ```
@@ -224,6 +250,82 @@ For each component:
 
 ## Technical Considerations
 
+### Important Discoveries
+
+#### Fluent UI v9 Shorthands Limitation
+During the migration, we discovered an important pattern difference between standard CSS-in-JS and Fluent UI v9's implementation:
+
+**Issue**: Fluent UI v9's `shorthands` utility only provides functions for multi-directional CSS properties (e.g., `margin`, `padding`, `border`), not for individual directional properties like `marginTop`, `paddingLeft`, etc.
+
+**Examples**:
+```typescript
+// ❌ These do NOT exist in Fluent UI v9 shorthands:
+shorthands.marginTop()
+shorthands.paddingLeft()
+shorthands.borderBottom()
+
+// ✅ Only these multi-directional shorthands are available:
+shorthands.margin('10px')           // all sides
+shorthands.margin('10px', '20px')   // vertical, horizontal
+shorthands.padding('10px', '20px', '30px', '40px') // top, right, bottom, left
+shorthands.border('1px', 'solid', tokens.colorNeutralStroke1)
+```
+
+**Solution**: For individual directional properties, use standard CSS property names:
+```typescript
+makeStyles({
+  root: {
+    marginTop: '10px',      // Direct property, no shorthand needed
+    paddingLeft: '20px',    // Direct property, no shorthand needed
+    ...shorthands.margin('0', 'auto'), // Use shorthand for multi-directional
+  }
+})
+```
+
+This is an important pattern to remember during migration to avoid confusion and errors.
+
+#### Critical Learning: Parallel Migration Strategy
+
+**CRITICAL DISCOVERY**: During the foundational infrastructure migration, we learned that LESS files MUST be kept during the migration process and only removed at the very end.
+
+**The Issue**: Initially, we attempted to remove LESS files immediately after creating their TypeScript equivalents. This caused build failures because:
+- Many components still import and depend on the LESS files
+- The main `styles.less` aggregator file imports these LESS files
+- Removing LESS files before ALL consuming components are migrated breaks the build
+
+**The Solution - Parallel Migration Strategy**:
+1. **Create TypeScript alternatives alongside LESS files** (do not remove LESS files yet)
+2. **Maintain both systems in parallel** during the migration period
+3. **Gradually migrate components** to use the new TypeScript utilities
+4. **Only remove LESS files** when ALL components have been migrated and no LESS imports remain
+
+**Implementation Example**:
+```typescript
+// ✅ CORRECT: Create new file alongside LESS
+/libs/designer-ui/src/lib/tokens/designTokens.ts     // NEW TypeScript version
+/libs/designer-ui/src/lib/variables.less             // KEEP until end of migration
+
+// ✅ CORRECT: Import pattern for new components
+import { designTokens } from '../tokens/designTokens';
+
+// ✅ CORRECT: LESS files remain imported in styles.less until everything is migrated
+@import './variables.less';  // Keep this import until ALL components are migrated
+```
+
+**Benefits of This Approach**:
+- ✅ Prevents breaking changes during migration
+- ✅ Allows gradual component-by-component migration
+- ✅ Maintains build stability throughout the process
+- ✅ Provides fallback if issues arise
+- ✅ Enables testing both systems in parallel
+
+**What NOT to Do**:
+- ❌ Don't remove LESS files immediately after creating TypeScript versions
+- ❌ Don't remove LESS imports from styles.less until all components are migrated
+- ❌ Don't assume TypeScript versions can immediately replace LESS files
+
+**Phase 6 Update**: The cleanup phase (Week 13-14) becomes critical - this is when we systematically remove all LESS files after confirming no component dependencies remain.
+
 ### Build System Updates
 1. **Remove LESS dependencies**:
    - `less`
@@ -254,10 +356,13 @@ For each component:
 ### Migration Checklist Template
 
 For each component migration:
-- [ ] Create .styles.ts file
+- [ ] Create .styles.ts file using foundational infrastructure:
+  - [ ] Import design tokens from `designTokens.ts` (instead of hardcoded values)
+  - [ ] Use migrated mixins from `utils/mixins.ts`
+  - [ ] Import common styles from `styles/common.ts` when applicable
 - [ ] Port all styles maintaining exact visual appearance
 - [ ] Update component to use makeStyles
-- [ ] Remove .less imports
+- [ ] **DO NOT remove .less imports yet** (wait until all components are migrated)
 - [ ] Update any style-dependent tests
 - [ ] Visual regression test
 - [ ] Theme test (light/dark)
@@ -280,9 +385,12 @@ For each component migration:
    - Mitigation: Maintain CSS exports during transition
 
 ### Rollback Strategy
-- Keep .less files in version control during migration
+- **Parallel Migration Approach**: Keep .less files alongside TypeScript versions during entire migration
+- Both systems functional simultaneously until final cleanup phase
+- Can revert individual components back to LESS if issues arise
 - Feature flag for switching between implementations
 - Gradual rollout by component/feature
+- **Critical**: Only remove LESS files in final cleanup phase after confirming all dependencies removed
 
 ## Success Metrics
 
