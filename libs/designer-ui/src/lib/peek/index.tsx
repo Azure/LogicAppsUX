@@ -19,7 +19,7 @@ export function Peek({ input }: PeekProps): JSX.Element {
   };
 
   return (
-    <div className={`msla-card-inner-body ${styles.root}`}>
+    <div data-automation-id="msla-peek" className={`msla-card-inner-body ${styles.root}`}>
       <MonacoEditor
         className={'msla-monaco-peek'}
         value={input}
