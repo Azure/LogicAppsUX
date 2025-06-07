@@ -4,6 +4,7 @@ import { getCallbackUrl, getIsCallbackUrlSupported } from '@microsoft/logic-apps
 import type { CallbackInfo, LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
+import { useOverviewStyles } from './styles';
 
 export interface OverviewPropertiesProps {
   callbackInfo?: CallbackInfo;
@@ -24,6 +25,7 @@ export const OverviewProperties: React.FC<OverviewPropertiesProps> = ({
   definition,
 }) => {
   const intl = useIntl();
+  const styles = useOverviewStyles();
   const callbackUrl = useMemo(() => {
     const { isCallbackUrlSupported = false } = definition ? getIsCallbackUrlSupported(definition) : {};
     return isCallbackUrlSupported ? getCallbackUrl(callbackInfo) : undefined;
@@ -65,7 +67,7 @@ export const OverviewProperties: React.FC<OverviewPropertiesProps> = ({
   return (
     <Pivot>
       <PivotItem headerText={Resources.WORKFLOW_PROPERTIES}>
-        <div className="msla-workflow-properties">
+        <div className={styles.workflowProperties}>
           <Label>
             <Text>{Resources.WORKFLOW_NAME}</Text>
             <Text>{name}</Text>

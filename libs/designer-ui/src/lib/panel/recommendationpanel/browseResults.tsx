@@ -132,7 +132,7 @@ export const BrowseGrid = ({
           <Spinner size="extra-small" label={loadingText} aria-live="assertive" />
         </div>
       )}
-      <List items={operationsData} onRenderCell={onRenderCell} getPageHeight={() => getListHeight(forceSingleCol)} />
+      <List items={operationsData as any} onRenderCell={onRenderCell} getPageHeight={() => getListHeight(forceSingleCol)} />
     </div>
   );
 };

@@ -1,6 +1,7 @@
 import type { IButtonProps } from '@fluentui/react';
 import { Callout, CommandButton, DirectionalHint } from '@fluentui/react';
 import type { ReactNode } from 'react';
+import { useTipStyles } from './styles';
 
 export const DEFAULT_TIP_GAP_SPACE = 0;
 export const DEFAULT_DIRECTIONAL_HINT = DirectionalHint.leftCenter;
@@ -20,21 +21,22 @@ export interface TipProps {
 
 export const Tip = (props: TipProps) => {
   const { directionalHint = DEFAULT_DIRECTIONAL_HINT, gapSpace = DEFAULT_TIP_GAP_SPACE, items = [], message, onDismiss, target } = props;
+  const styles = useTipStyles();
 
   return (
     <Callout
       setInitialFocus={false}
-      className="msla-tip"
+      className={styles.root}
       directionalHint={directionalHint}
       gapSpace={gapSpace}
       target={`#${target}`}
       onDismiss={onDismiss}
     >
-      <div className="msla-tip-inner" data-is-focusable={true} role="dialog" tabIndex={0}>
-        <div className="msla-tip-message">{message}</div>
-        <div className="msla-tip-actions">
+      <div className={styles.inner} data-is-focusable={true} role="dialog" tabIndex={0}>
+        <div className={styles.message}>{message}</div>
+        <div className={styles.actions}>
           {items?.map((item) => (
-            <CommandButton className="msla-tip-command-button" {...item} key={item.key}>
+            <CommandButton className={styles.commandButton} {...item} key={item.key}>
               {item.children}
             </CommandButton>
           ))}

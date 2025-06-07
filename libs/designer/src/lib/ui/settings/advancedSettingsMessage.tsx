@@ -20,15 +20,17 @@ export const AdvancedSettingsMessage = ({ shouldShowMessage }: { shouldShowMessa
     }),
   };
 
+  if (!shouldShowMessage) {
+    return null;
+  }
+
   return (
-    shouldShowMessage && (
-      <div style={{ paddingBottom: '5px' }}>
-        <Text style={{ fontSize: 12 }}>{IntlMessage.message} </Text>
-        <Link href="https://aka.ms/LogicApps/Agents/parameters" target="_blank" style={{ fontSize: 12, fontStyle: 'italic' }}>
-          {IntlMessage.messageLink}
-          <NavigateIcon style={{ position: 'relative', top: '2px', left: '2px' }} />
-        </Link>
-      </div>
-    )
+    <div style={{ paddingBottom: '5px' }}>
+      <Text style={{ fontSize: 12 }}>{IntlMessage.message} </Text>
+      <Link href="https://aka.ms/LogicApps/Agents/parameters" target="_blank" style={{ fontSize: 12, fontStyle: 'italic' }}>
+        {IntlMessage.messageLink}
+        <NavigateIcon style={{ position: 'relative', top: '2px', left: '2px' }} />
+      </Link>
+    </div>
   );
 };
