@@ -1,11 +1,13 @@
 import { MonacoEditor } from '../editor/monaco';
 import { EditorLanguage } from '@microsoft/logic-apps-shared';
+import { usePeekStyles } from './styles';
 
 export interface PeekProps {
   input: string;
 }
 
 export function Peek({ input }: PeekProps): JSX.Element {
+  const styles = usePeekStyles();
   const options = {
     contextmenu: false,
     fontSize: 13,
@@ -17,7 +19,7 @@ export function Peek({ input }: PeekProps): JSX.Element {
   };
 
   return (
-    <div className="msla-card-inner-body msla-peek">
+    <div className={`msla-card-inner-body ${styles.root}`}>
       <MonacoEditor
         className={'msla-monaco-peek'}
         value={input}

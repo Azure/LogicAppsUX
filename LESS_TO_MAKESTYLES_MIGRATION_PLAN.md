@@ -4,12 +4,20 @@
 
 This document outlines a comprehensive plan to migrate 124 .less files in the LogicAppsUX monorepo to Fluent UI v9's makeStyles CSS-in-JS system. The migration will improve performance, enable better tree-shaking, provide type-safe styling, and align with modern React best practices.
 
+**Current Progress**: 6 components migrated (4.8% complete)
+- ✅ peek component (peek.less - 6 lines)
+- ✅ error component (error.less - 29 lines)
+- ✅ tip component (tip.less - 33 lines)
+- ✅ texteditor base component (texteditor.less - 48 lines)
+- ✅ nodeCollapseToggle component (nodeCollapseToggle.less - 20 lines)
+- ✅ overview component (overview.less - 30 lines)
+
 ## Current State Analysis
 
 ### Scope
-- **Total .less files**: 124
+- **Total .less files**: 124 (6 completed, 118 remaining)
 - **Main aggregator file**: `/libs/designer-ui/src/lib/styles.less` (imports 71 files)
-- **Lines of CSS**: ~5,000+ lines across all files
+- **Lines of CSS**: ~5,000+ lines across all files (166 lines migrated)
 - **Affected packages**: 6 packages (designer-ui, designer, data-mapper, vs-code-react, Standalone, chatbot)
 
 ### Existing makeStyles Adoption
@@ -138,9 +146,15 @@ Priority order for migration:
 
 **Lower Priority - Utility Components** (Week 11-12)
 - [ ] Monitoring components
-- [ ] Overview components
+- [x] Overview components - ✅ COMPLETED
 - [ ] Table components
-- [ ] Remaining small components
+- [ ] Remaining small components:
+  - [x] peek.less - ✅ COMPLETED
+  - [x] error.less - ✅ COMPLETED
+  - [x] tip.less - ✅ COMPLETED
+  - [x] texteditor.less - ✅ COMPLETED
+  - [x] nodeCollapseToggle.less - ✅ COMPLETED
+  - [ ] Other utility components
 
 #### 3.2 Component Migration Process
 
@@ -223,6 +237,40 @@ For each component:
 - [ ] Add examples to Storybook (if applicable)
 
 ## Technical Considerations
+
+### Important Discoveries
+
+#### Fluent UI v9 Shorthands Limitation
+During the migration, we discovered an important pattern difference between standard CSS-in-JS and Fluent UI v9's implementation:
+
+**Issue**: Fluent UI v9's `shorthands` utility only provides functions for multi-directional CSS properties (e.g., `margin`, `padding`, `border`), not for individual directional properties like `marginTop`, `paddingLeft`, etc.
+
+**Examples**:
+```typescript
+// ❌ These do NOT exist in Fluent UI v9 shorthands:
+shorthands.marginTop()
+shorthands.paddingLeft()
+shorthands.borderBottom()
+
+// ✅ Only these multi-directional shorthands are available:
+shorthands.margin('10px')           // all sides
+shorthands.margin('10px', '20px')   // vertical, horizontal
+shorthands.padding('10px', '20px', '30px', '40px') // top, right, bottom, left
+shorthands.border('1px', 'solid', tokens.colorNeutralStroke1)
+```
+
+**Solution**: For individual directional properties, use standard CSS property names:
+```typescript
+makeStyles({
+  root: {
+    marginTop: '10px',      // Direct property, no shorthand needed
+    paddingLeft: '20px',    // Direct property, no shorthand needed
+    ...shorthands.margin('0', 'auto'), // Use shorthand for multi-directional
+  }
+})
+```
+
+This is an important pattern to remember during migration to avoid confusion and errors.
 
 ### Build System Updates
 1. **Remove LESS dependencies**:
