@@ -1,4 +1,12 @@
 # Logic Apps Designer
+### [5.109.11](https://github.com/Azure/LogicAppsUX/compare/v5.109.10...v5.109.11) (2025-06-07)
+
+
+### Bug Fixes
+
+* **templates:** Adding case insensitive lookups while using data from custom template ([#7474](https://github.com/Azure/LogicAppsUX/issues/7474)) ([#7475](https://github.com/Azure/LogicAppsUX/issues/7475)) ([2d7c7e6](https://github.com/Azure/LogicAppsUX/commit/2d7c7e67580d0f60f37674ba5e81c53ea6cb9a04))
+* **vscode:** Unit Test Array Object Name [#7472](https://github.com/Azure/LogicAppsUX/issues/7472) ([#7473](https://github.com/Azure/LogicAppsUX/issues/7473)) ([57a61de](https://github.com/Azure/LogicAppsUX/commit/57a61de25a3ae778276779577a8e18eda1088d7c))
+
 ### [5.109.10](https://github.com/Azure/LogicAppsUX/compare/v5.109.9...v5.109.10) (2025-06-06)
 
 
