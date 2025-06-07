@@ -1,5 +1,11 @@
 import type { LogicAppsV2, ParameterInfo, Template } from '@microsoft/logic-apps-shared';
-import { LogEntryLevel, LoggerService, normalizeConnectorId, OperationManifestService } from '@microsoft/logic-apps-shared';
+import {
+  getPropertyValue,
+  LogEntryLevel,
+  LoggerService,
+  normalizeConnectorId,
+  OperationManifestService,
+} from '@microsoft/logic-apps-shared';
 import { getCustomSwaggerIfNeeded, getInputParametersFromManifest } from '../../actions/bjsworkflow/initialize';
 import type { WorkflowTemplateData } from '../../actions/bjsworkflow/templates';
 import { Deserialize } from '../../parsers/BJSWorkflow/BJSDeserializer';
@@ -54,13 +60,13 @@ export const initializeParametersMetadata = async (
       }
       return result;
     }, {});
-    const deserializedWorkflow = Deserialize(workflows[workflowId].workflowDefinition, /* runInstance */ null);
+    const deserializedWorkflow = Deserialize(getPropertyValue(workflows, workflowId)?.workflowDefinition, /* runInstance */ null);
     const { actionData: operations, nodesMetadata } = deserializedWorkflow;
 
     for (const operationId of Object.keys(operationsToInitialize)) {
       const parametersToInitialize = operationsToInitialize[operationId];
       const isTrigger = isRootNodeInGraph(operationId, 'root', nodesMetadata);
-      const operation = operations[operationId];
+      const operation = getPropertyValue(operations, operationId);
       const nodeId = `${templateId}-${workflowId}-${operationId}`;
       const templateConnectionKey = parametersToInitialize[0].dynamicData?.connection;
       const connectorId = templateConnectionKey

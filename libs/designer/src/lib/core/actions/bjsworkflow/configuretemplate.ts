@@ -28,6 +28,7 @@ import {
   equals,
   getIntl,
   normalizeConnectorId,
+  getPropertyValue,
 } from '@microsoft/logic-apps-shared';
 import type { RootState } from '../../state/templates/store';
 import {
@@ -789,7 +790,7 @@ const getConnectionsForStandard = async (
 const getWorkflowDefinitionForStandard = async (workflowId: string): Promise<any> => {
   const queryClient = getReactQueryClient();
   const workflow = await getStandardWorkflow(workflowId, queryClient);
-  return workflow.properties.files?.['workflow.json'];
+  return getPropertyValue(workflow.properties.files, 'workflow.json');
 };
 
 const getWorkflowDefinitionForConsumption = async (subscriptionId: string, resourceGroup: string, logicAppName: string): Promise<any> => {
@@ -862,7 +863,12 @@ export const getTemplateParameters = async (
           if (dependencyType) {
             currentUsedParameters[parameterName] = {
               ...currentUsedParameters[parameterName],
-              dynamicData: { workflow: workflowId, operation: operationId, type: dependencyType, connection: mapping[nodeId] },
+              dynamicData: {
+                workflow: workflowId,
+                operation: operationId,
+                type: dependencyType,
+                connection: getPropertyValue(mapping, nodeId),
+              },
             };
           }
         }
