@@ -9,7 +9,7 @@ import { useCallback, useEffect, useState, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { useDiscoveryPanelRelationshipIds, useIsAgentTool } from '../../../core/state/panel/panelSelectors';
 import { useAgenticWorkflow } from '../../../core/state/designerView/designerViewSelectors';
-import { useShouldEnableNestedAgent, useShouldEnableParseDocumentWithMetadata } from './hooks';
+import { useShouldEnableACASession, useShouldEnableNestedAgent, useShouldEnableParseDocumentWithMetadata } from './hooks';
 import { DefaultSearchOperationsService } from './SearchOpeationsService';
 import constants from '../../../common/constants';
 
@@ -39,6 +39,7 @@ export const SearchView: FC<SearchViewProps> = ({
 }) => {
   const isAgenticWorkflow = useAgenticWorkflow();
   const shouldEnableParseDocWithMetadata = useShouldEnableParseDocumentWithMetadata();
+  const shouldEnableACASession = useShouldEnableACASession();
   const shouldEnableNestedAgent = useShouldEnableNestedAgent();
   const parentGraphId = useDiscoveryPanelRelationshipIds().graphId;
   const isWithinAgenticLoop = useIsWithinAgenticLoop(parentGraphId);
@@ -104,19 +105,18 @@ export const SearchView: FC<SearchViewProps> = ({
 
       const searchResultsPromise = searchOperations
         ? searchOperations(searchTerm, filters['actionType'], filters['runtime'], filterAgenticLoops)
-        : new DefaultSearchOperationsService(allOperations, shouldEnableParseDocWithMetadata ?? false).searchOperations(
-            searchTerm,
-            filters['actionType'],
-            filters['runtime'],
-            filterAgenticLoops
-          );
+        : new DefaultSearchOperationsService(
+            allOperations,
+            shouldEnableParseDocWithMetadata ?? false,
+            shouldEnableACASession ?? false
+          ).searchOperations(searchTerm, filters['actionType'], filters['runtime'], filterAgenticLoops);
 
       searchResultsPromise.then((results) => {
         setSearchResults(results);
         setIsLoadingSearchResults(false);
       });
     },
-    [searchTerm, allOperations, filters, filterAgenticLoops, shouldEnableParseDocWithMetadata],
+    [searchTerm, allOperations, filters, filterAgenticLoops, shouldEnableParseDocWithMetadata, shouldEnableACASession],
     200
   );
 

@@ -1,10 +1,4 @@
-import {
-  CognitiveServiceService,
-  isUndefinedOrEmptyString,
-  LogEntryLevel,
-  LoggerService,
-  type Subscription,
-} from '@microsoft/logic-apps-shared';
+import { CognitiveServiceService, isUndefinedOrEmptyString, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import { type ConnectionParameterProps, UniversalConnectionParameter } from '../formInputs/universalConnectionParameter';
 import { ConnectionParameterRow } from '../connectionParameterRow';
 import { useIntl } from 'react-intl';
@@ -16,6 +10,7 @@ import { Link, tokens } from '@fluentui/react-components';
 import { NavigateIcon } from '@microsoft/designer-ui';
 import { ArrowClockwise16Filled, ArrowClockwise16Regular, bundleIcon } from '@fluentui/react-icons';
 import { useSubscriptions } from '../../../../../core/state/connection/connectionSelector';
+import { SubscriptionDropdown } from './components/SubscriptionDropdown';
 
 const RefreshIcon = bundleIcon(ArrowClockwise16Regular, ArrowClockwise16Filled);
 
@@ -66,38 +61,28 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
       }),
       LOADING_ACCOUNTS: intl.formatMessage({
         defaultMessage: 'Loading accounts...',
-        id: 'DchXwC',
-        description: 'Loading accounts...',
+        id: 'qBxNgD',
+        description: 'Loading accounts text',
       }),
       FETCHING: intl.formatMessage({
         defaultMessage: 'Fetching...',
-        id: 'T0X+Iw',
-        description: 'Fetching...',
-      }),
-      SUBSCRIPTION: intl.formatMessage({
-        defaultMessage: 'Subscription',
-        id: 'jAaD5P',
-        description: 'Subscription',
-      }),
-      LOADING_SUBSCRIPTION: intl.formatMessage({
-        defaultMessage: 'Loading all subscriptions...',
-        id: '45mB92',
-        description: 'Subscription',
+        id: 'WBDuOo',
+        description: 'Fetching data text',
       }),
       SELECT_SUBSCRIPTION: intl.formatMessage({
         defaultMessage: 'Select the subscription for your OpenAI resource',
-        id: 'MFCzRk',
-        description: 'Subscription',
+        id: 'jyyxZo',
+        description: 'Message for selecting subscription',
       }),
       CREATE_NEW: intl.formatMessage({
         defaultMessage: 'Create new',
-        id: 'W1WsMz',
-        description: 'Create new',
+        id: '+ebtNl',
+        description: 'Label to create a new connection',
       }),
       LEARN_MORE_CREATE_NEW: intl.formatMessage({
         defaultMessage: 'Learn more about creating a new Azure OpenAI resource',
-        id: 'D/CS5p',
-        description: 'learn more for create new',
+        id: 'WkqAOm',
+        description: 'info text for create',
       }),
       PROJECT: intl.formatMessage({
         defaultMessage: 'Project',
@@ -189,37 +174,13 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
   if (parameterKey === 'cognitiveServiceAccountId') {
     return (
       <>
-        <ConnectionParameterRow parameterKey={'subscription-id'} displayName={stringResources.SUBSCRIPTION} required={true}>
-          <ComboBox
-            required={true}
-            disabled={isFetchingSubscription}
-            placeholder={isFetchingSubscription ? stringResources.LOADING_SUBSCRIPTION : stringResources.SELECT_SUBSCRIPTION}
-            selectedKey={isUndefinedOrEmptyString(selectedSubscriptionId) ? null : selectedSubscriptionId}
-            className={styles.subscriptionCombobox}
-            options={(subscriptions ?? [])
-              .sort((a, b) => a.displayName.localeCompare(b.displayName))
-              .map((subscription: Subscription) => {
-                const id = subscription.id.split('/subscriptions/')[1];
-                return {
-                  key: id,
-                  text: `${subscription.displayName} (${id})`,
-                };
-              })}
-            onChange={async (_e, option?: IComboBoxOption) => {
-              if (option?.key) {
-                setSelectedSubscriptionId(option?.key as string);
-              }
-            }}
-          >
-            {isFetchingSubscription ? (
-              <Spinner
-                style={{ position: 'absolute', bottom: '6px', left: '8px' }}
-                labelPosition="right"
-                label={stringResources.LOADING_SUBSCRIPTION}
-              />
-            ) : null}
-          </ComboBox>
-        </ConnectionParameterRow>
+        <SubscriptionDropdown
+          subscriptions={subscriptions}
+          isFetchingSubscriptions={isFetchingSubscription}
+          setSelectedSubscriptionId={setSelectedSubscriptionId}
+          selectedSubscriptionId={selectedSubscriptionId}
+          title={stringResources.SELECT_SUBSCRIPTION}
+        />
         <ConnectionParameterRow
           parameterKey={'cognitive-service-resource-id'}
           displayName={

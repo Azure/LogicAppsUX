@@ -1,5 +1,5 @@
-import { getConnectionParameterSetValues } from '../createConnectionWrapper';
-import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
+import { getConnectionParameterSetValues } from '../createConnectionInternal';
+import { describe, it, expect } from 'vitest';
 describe('CreateConnectionWrapper', () => {
   describe('getConnectionParameterSetValues', () => {
     const selectedParameterSetName = 'selectedParameterSetName';

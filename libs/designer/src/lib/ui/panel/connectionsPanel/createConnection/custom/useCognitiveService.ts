@@ -13,6 +13,8 @@ const queryOpts = {
 export const queryKeys = {
   allCognitiveServiceAccounts: 'allCognitiveServiceAccounts',
   allCognitiveServiceAccountsDeployments: 'allCognitiveServiceAccountsDeployments',
+  allSessionPoolAccounts: 'allSessionPoolAccounts',
+  allBuiltInRoleDefinitions: 'allBuiltInRoleDefinitions',
 };
 
 export const useAllCognitiveServiceAccounts = (subscriptionId: string) => {
@@ -63,6 +65,35 @@ export const useAllCognitiveServiceProjects = (serviceAccountId: string) => {
       ...queryOpts,
       retryOnMount: true,
       enabled: !!serviceAccountId,
+    }
+  );
+};
+
+export const useAllSessionPoolAccounts = (subscriptionId: string) => {
+  return useQuery(
+    [queryKeys.allSessionPoolAccounts, { subscriptionId }],
+    async () => {
+      const allSessionPoolAccounts = await CognitiveServiceService().fetchAllSessionPoolAccounts(subscriptionId);
+      return allSessionPoolAccounts ?? [];
+    },
+    {
+      ...queryOpts,
+      retryOnMount: true,
+      enabled: !!subscriptionId,
+    }
+  );
+};
+
+export const useAllBuiltInRoleDefinitions = () => {
+  return useQuery(
+    [queryKeys.allBuiltInRoleDefinitions],
+    async () => {
+      const allBuiltInRoleDefinitions = await CognitiveServiceService().fetchBuiltInRoleDefinitions();
+      return allBuiltInRoleDefinitions ?? [];
+    },
+    {
+      ...queryOpts,
+      retryOnMount: true,
     }
   );
 };
