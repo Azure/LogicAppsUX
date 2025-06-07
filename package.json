@@ -67,11 +67,7 @@
   },
   "license": "MIT",
   "lint-staged": {
-    "*.{js,ts,tsx}": [
-      "npm run extract",
-      "eslint --cache --fix",
-      "biome check --write"
-    ]
+    "*.{js,ts,tsx}": ["npm run extract", "eslint --cache --fix", "biome check --write"]
   },
   "private": true,
   "scripts": {

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
+import { useAriaSearchResultsStyles } from './styles';
 
 interface AriaSearchResultsAlertProps {
   resultCount: number;
@@ -8,6 +9,7 @@ interface AriaSearchResultsAlertProps {
 
 export const AriaSearchResultsAlert = ({ resultCount, resultDescription }: AriaSearchResultsAlertProps) => {
   const intl = useIntl();
+  const classes = useAriaSearchResultsStyles();
   const ariaResultCount = intl.formatMessage({
     defaultMessage: ' results found',
     id: 't/RPwA',
@@ -29,7 +31,5 @@ export const AriaSearchResultsAlert = ({ resultCount, resultDescription }: AriaS
     };
   }, [resultCount]);
 
-  return showAlert ? (
-    <div className={'msla-aria-search-results'} role="alert">{`${resultCount} ${resultDescription} ${ariaResultCount}`}</div>
-  ) : null;
+  return showAlert ? <div className={classes.root} role="alert">{`${resultCount} ${resultDescription} ${ariaResultCount}`}</div> : null;
 };

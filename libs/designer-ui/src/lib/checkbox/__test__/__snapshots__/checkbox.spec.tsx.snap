@@ -2,10 +2,10 @@
 
 exports[`lib/checkbox > should display correct text 1`] = `
 <div
-  className="msla-checkbox"
+  className=""
 >
   <div
-    className="ms-Checkbox is-enabled msla-checkbox-label root-115"
+    className="ms-Checkbox is-enabled ___1wvxhyh_0000000 ftgm304 fk6fouc f1cxpek8 root-115"
   >
     <input
       checked={false}
@@ -43,10 +43,10 @@ exports[`lib/checkbox > should display correct text 1`] = `
 
 exports[`lib/checkbox > should render 1`] = `
 <div
-  className="msla-checkbox"
+  className=""
 >
   <div
-    className="ms-Checkbox is-enabled msla-checkbox-label root-115"
+    className="ms-Checkbox is-enabled ___1wvxhyh_0000000 ftgm304 fk6fouc f1cxpek8 root-115"
   >
     <input
       checked={false}
@@ -79,10 +79,10 @@ exports[`lib/checkbox > should render 1`] = `
 
 exports[`lib/checkbox > should render an additional CSS class 1`] = `
 <div
-  className="additional-class msla-checkbox"
+  className="additional-class"
 >
   <div
-    className="ms-Checkbox is-enabled msla-checkbox-label root-115"
+    className="ms-Checkbox is-enabled ___1wvxhyh_0000000 ftgm304 fk6fouc f1cxpek8 root-115"
   >
     <input
       checked={false}
@@ -115,10 +115,10 @@ exports[`lib/checkbox > should render an additional CSS class 1`] = `
 
 exports[`lib/checkbox > should render an info button if description text is set 1`] = `
 <div
-  className="msla-checkbox"
+  className=""
 >
   <div
-    className="ms-Checkbox is-enabled msla-checkbox-label root-115"
+    className="ms-Checkbox is-enabled ___1wvxhyh_0000000 ftgm304 fk6fouc f1cxpek8 root-115"
   >
     <input
       checked={false}
@@ -165,10 +165,10 @@ exports[`lib/checkbox > should render an info button if description text is set 
 
 exports[`lib/checkbox > should render with initial checked state set to true 1`] = `
 <div
-  className="additional-class msla-checkbox"
+  className="additional-class"
 >
   <div
-    className="ms-Checkbox is-checked is-enabled msla-checkbox-label root-124"
+    className="ms-Checkbox is-checked is-enabled ___1wvxhyh_0000000 ftgm304 fk6fouc f1cxpek8 root-124"
   >
     <input
       checked={true}

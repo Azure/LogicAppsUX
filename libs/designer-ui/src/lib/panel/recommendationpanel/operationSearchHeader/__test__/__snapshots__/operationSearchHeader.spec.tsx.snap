@@ -9,7 +9,7 @@ exports[`OperationSearchHeader > renders correctly with isTriggerNode=false 1`] 
       class="msla-sub-heading"
     >
       <span
-        class="fui-Input r1oeeo9n fui-SearchBox msla-search-box ___h0zxl40_mosemr0 f1f5gg8d f1vdfbxk fvcxoqz f1ub3y4t f1l4zc64 f1m52nbi f8vnjqi fz1etlk f1klwx88 f1hc16gm fjuset5 f1xzfw5u"
+        class="fui-Input r1oeeo9n fui-SearchBox  msla-search-box ___h0zxl40_mosemr0 f1f5gg8d f1vdfbxk fvcxoqz f1ub3y4t f1l4zc64 f1m52nbi f8vnjqi fz1etlk f1klwx88 f1hc16gm fjuset5 f1xzfw5u"
       >
         <span
           class="fui-Input__contentBefore r1572tok fui-SearchBox__contentBefore"
@@ -106,7 +106,7 @@ exports[`OperationSearchHeader > renders correctly with isTriggerNode=true 1`] =
       class="msla-sub-heading"
     >
       <span
-        class="fui-Input r1oeeo9n fui-SearchBox msla-search-box ___h0zxl40_mosemr0 f1f5gg8d f1vdfbxk fvcxoqz f1ub3y4t f1l4zc64 f1m52nbi f8vnjqi fz1etlk f1klwx88 f1hc16gm fjuset5 f1xzfw5u"
+        class="fui-Input r1oeeo9n fui-SearchBox  msla-search-box ___h0zxl40_mosemr0 f1f5gg8d f1vdfbxk fvcxoqz f1ub3y4t f1l4zc64 f1m52nbi f8vnjqi fz1etlk f1klwx88 f1hc16gm fjuset5 f1xzfw5u"
       >
         <span
           class="fui-Input__contentBefore r1572tok fui-SearchBox__contentBefore"
@@ -204,7 +204,7 @@ exports[`OperationSearchHeader > renders correctly with search term and filters 
       class="msla-sub-heading"
     >
       <span
-        class="fui-Input r1oeeo9n fui-SearchBox msla-search-box ___h0zxl40_mosemr0 f1f5gg8d f1vdfbxk fvcxoqz f1ub3y4t f1l4zc64 f1m52nbi f8vnjqi fz1etlk f1klwx88 f1hc16gm fjuset5 f1xzfw5u"
+        class="fui-Input r1oeeo9n fui-SearchBox  msla-search-box ___h0zxl40_mosemr0 f1f5gg8d f1vdfbxk fvcxoqz f1ub3y4t f1l4zc64 f1m52nbi f8vnjqi fz1etlk f1klwx88 f1hc16gm fjuset5 f1xzfw5u"
       >
         <span
           class="fui-Input__contentBefore r1572tok fui-SearchBox__contentBefore"

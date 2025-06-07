@@ -2,7 +2,7 @@
 
 exports[`lib/label > className > should set the "class" attribute 1`] = `
 <label
-  className="ms-Label class-name msla-label root-109"
+  className="ms-Label class-name ___jmchtt0_0000000 ftgm304 f1a3p1vp f1cmbuwj fy9rknc f1lgtm6f f1o700av fhx3js9 fhuq1gn root-109"
   title="label text"
 >
   label text
@@ -11,7 +11,7 @@ exports[`lib/label > className > should set the "class" attribute 1`] = `
 
 exports[`lib/label > htmlFor > should set the "for" attribute 1`] = `
 <label
-  className="ms-Label msla-label root-109"
+  className="ms-Label ___jmchtt0_0000000 ftgm304 f1a3p1vp f1cmbuwj fy9rknc f1lgtm6f f1o700av fhx3js9 fhuq1gn root-109"
   htmlFor="an-input"
   title="label text"
 >
@@ -21,7 +21,7 @@ exports[`lib/label > htmlFor > should set the "for" attribute 1`] = `
 
 exports[`lib/label > id > should set the "id" attribute 1`] = `
 <label
-  className="ms-Label msla-label root-109"
+  className="ms-Label ___jmchtt0_0000000 ftgm304 f1a3p1vp f1cmbuwj fy9rknc f1lgtm6f f1o700av fhx3js9 fhuq1gn root-109"
   id="label-id"
   title="label text"
 >
@@ -31,12 +31,12 @@ exports[`lib/label > id > should set the "id" attribute 1`] = `
 
 exports[`lib/label > isRequiredField > should render the required parameter marker if set 1`] = `
 <label
-  className="ms-Label msla-label root-109"
+  className="ms-Label ___jmchtt0_0000000 ftgm304 f1a3p1vp f1cmbuwj fy9rknc f1lgtm6f f1o700av fhx3js9 fhuq1gn root-109"
   title="label text"
 >
   <span
     aria-label="Required"
-    className="msla-label-required-parameter"
+    className="___1edztwm_0000000 f1hcrxcs f12huiiw"
   >
     *
   </span>
@@ -46,7 +46,7 @@ exports[`lib/label > isRequiredField > should render the required parameter mark
 
 exports[`lib/label > should construct 1`] = `
 <label
-  className="ms-Label msla-label root-109"
+  className="ms-Label ___jmchtt0_0000000 ftgm304 f1a3p1vp f1cmbuwj fy9rknc f1lgtm6f f1o700av fhx3js9 fhuq1gn root-109"
   title="label"
 >
   label
@@ -55,12 +55,12 @@ exports[`lib/label > should construct 1`] = `
 
 exports[`lib/label > tooltip > should set the "title" attribute if tooltip is set 1`] = `
 <label
-  className="ms-Label msla-label root-109"
+  className="ms-Label ___jmchtt0_0000000 ftgm304 f1a3p1vp f1cmbuwj fy9rknc f1lgtm6f f1o700av fhx3js9 fhuq1gn root-109"
   title="title"
 >
   <span
     aria-label="Required"
-    className="msla-label-required-parameter"
+    className="___1edztwm_0000000 f1hcrxcs f12huiiw"
   >
     *
   </span>

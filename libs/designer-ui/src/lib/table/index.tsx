@@ -7,6 +7,7 @@ import { Dropdown } from '@fluentui/react';
 import { getIntl } from '@microsoft/logic-apps-shared';
 import type { FormEvent } from 'react';
 import { useState } from 'react';
+import { useTableStyles } from './styles';
 
 export interface TableEditorProps extends DictionaryEditorProps {
   columnMode: ColumnMode;
@@ -58,6 +59,7 @@ export const TableEditor: React.FC<TableEditorProps> = ({
   loadParameterValueFromString,
 }): JSX.Element => {
   const intl = getIntl();
+  const classes = useTableStyles();
   const columnOptions = [
     {
       key: ColumnMode.Automatic,
@@ -94,7 +96,7 @@ export const TableEditor: React.FC<TableEditorProps> = ({
     <div>
       <Dropdown styles={dropdownStyles} disabled={readonly} options={columnOptions} selectedKey={selectedKey} onChange={onOptionChange} />
       {selectedKey === ColumnMode.Custom ? (
-        <div className="msla-table-editor-container" data-automation-id={dataAutomationId}>
+        <div className={classes.editorContainer} data-automation-id={dataAutomationId}>
           <DictionaryEditor
             labelId={labelId}
             keyTitle={titles?.[0]}

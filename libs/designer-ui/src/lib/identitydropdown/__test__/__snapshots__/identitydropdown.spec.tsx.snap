@@ -5,7 +5,7 @@ exports[`lib/identitydropdown > should render 1`] = `
   className="msla-identity-dropdown-container"
 >
   <label
-    className="ms-Label msla-identity-dropdown-label msla-label root-109"
+    className="ms-Label msla-identity-dropdown-label ___jmchtt0_0000000 ftgm304 f1a3p1vp f1cmbuwj fy9rknc f1lgtm6f f1o700av fhx3js9 fhuq1gn root-109"
     title="Managed identity"
   >
     Managed identity

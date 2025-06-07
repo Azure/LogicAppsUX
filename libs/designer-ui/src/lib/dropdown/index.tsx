@@ -7,6 +7,7 @@ import type { IDropdownOption, IDropdownStyles } from '@fluentui/react';
 import { SelectableOptionMenuItemType, Dropdown } from '@fluentui/react';
 import type { FormEvent } from 'react';
 import { useMemo, useState } from 'react';
+import { useDropdownStyles } from './styles';
 
 interface SerializationOptions {
   valueType: string;
@@ -63,6 +64,7 @@ export const DropdownEditor = ({
     multiSelect ? getSelectedKeys(options, initialValue, serialization) : undefined
   );
   const dropdownOptions = useMemo<IDropdownOption[]>(() => getOptions(options), [options]);
+  const classes = useDropdownStyles();
 
   const dropdownStyles: Partial<IDropdownStyles> = {
     root: {
@@ -106,7 +108,7 @@ export const DropdownEditor = ({
   };
 
   return (
-    <div className="msla-dropdown-editor-container" data-automation-id={dataAutomationId}>
+    <div className={classes.container} data-automation-id={dataAutomationId}>
       <Dropdown
         ariaLabel={label}
         styles={dropdownStyles}
