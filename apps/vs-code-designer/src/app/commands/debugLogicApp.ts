@@ -19,7 +19,7 @@ export async function debugLogicApp(
   if (!projectPath) {
     const errorMessage = 'Failed to find a logic app project in the workspace folder "{0}".';
     context.telemetry.properties.result = 'Failed';
-    context.telemetry.properties.error = errorMessage.replace('{0}', workspaceFolder?.uri?.fsPath);
+    context.telemetry.properties.errorMessage = errorMessage.replace('{0}', workspaceFolder?.uri?.fsPath);
     throw new Error(localize('noLogicAppProject', errorMessage, workspaceFolder?.uri?.fsPath));
   }
   const logicAppName = path.basename(projectPath);
@@ -53,7 +53,7 @@ export async function debugLogicApp(
     } else {
       const errorMessage = 'Unsupported custom code runtime "{0}".';
       context.telemetry.properties.result = 'Failed';
-      context.telemetry.properties.error = errorMessage.replace('{0}', debugConfig.customCodeRuntime);
+      context.telemetry.properties.errorMessage = errorMessage.replace('{0}', debugConfig.customCodeRuntime);
       throw new Error(localize('unsupportedCustomCodeRuntime', errorMessage, debugConfig.customCodeRuntime));
     }
 
