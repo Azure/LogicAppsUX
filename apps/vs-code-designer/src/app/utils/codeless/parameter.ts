@@ -7,6 +7,7 @@ import { localize } from '../../../localize';
 import { isCSharpProject } from '../../commands/initProjectForVSCode/detectProjectLanguage';
 import { writeFormattedJson } from '../fs';
 import { parseJson } from '../parseJson';
+import { createJsonFileIfDoesNotExist } from './common';
 import { getLogicAppProjectRoot } from './connection';
 import { addNewFileInCSharpProject } from './updateBuildFile';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -92,4 +93,8 @@ function getWorkflowParameterObject(workflowParameterRecords: Record<string, any
   });
 
   return workflowParameterObject;
+}
+
+export async function createEmptyParametersJson(projectPath: string): Promise<void> {
+  await createJsonFileIfDoesNotExist(projectPath, parametersFileName);
 }

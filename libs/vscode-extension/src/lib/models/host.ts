@@ -17,6 +17,11 @@ export interface IHostJsonV2 {
     http?: {
       routePrefix?: string;
     };
+    workflow?: {
+      Settings?: {
+        'Runtime.CodefulWorkflows.Enabled'?: string;
+      };
+    };
   };
   concurrency?: {
     dynamicConcurrencyEnabled: boolean;

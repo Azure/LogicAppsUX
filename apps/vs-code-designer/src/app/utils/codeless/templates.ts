@@ -8,6 +8,8 @@ import {
 import { WorkflowKind, WorkflowType } from '../../../constants';
 import { localize } from '../../../localize';
 import type { IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
+import * as fs from 'fs-extra';
+import * as path from 'path';
 
 /**
  * Returns the workflow template based on the provided parameters.
@@ -220,4 +222,16 @@ export const getWorkflowTemplatePickItems = (language: string, isProjectWizard: 
   }
 
   return picks;
+};
+
+/**
+ * Creates a codeful workflow.
+ * @param {boolean} isStateful - A boolean indicating whether the workflow is stateful or not.
+ * @returns The codeful workflow template.
+ */
+export const getCodefulWorkflowTemplate = async () => {
+  const templatePath = path.join(__dirname, 'assets', 'CodefulWorkflowTemplate', 'codefulTemplate.cs');
+  const templateContent = await fs.readFile(templatePath, 'utf-8');
+
+  return templateContent;
 };

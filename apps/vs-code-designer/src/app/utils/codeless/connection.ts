@@ -11,7 +11,7 @@ import { writeFormattedJson } from '../fs';
 import { sendAzureRequest } from '../requestUtils';
 import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
 import { getContainingWorkspace } from '../workspace';
-import { getWorkflowParameters } from './common';
+import { createJsonFileIfDoesNotExist, getWorkflowParameters } from './common';
 import { getAuthorizationToken } from './getAuthorizationToken';
 import { getParametersJson, saveWorkflowParameterRecords } from './parameter';
 import { deleteCustomCode, getCustomCode, getCustomCodeAppFilesToUpdate, uploadCustomCode } from './customcode';
@@ -366,6 +366,10 @@ export async function saveCustomCodeStandard(filePath: string, allCustomCodeFile
     const errorMessage = `Failed to save custom code: ${error}`;
     throw new Error(errorMessage);
   }
+}
+
+export async function createConnectionsJson(projectPath: string): Promise<void> {
+  await createJsonFileIfDoesNotExist(projectPath, connectionsFileName);
 }
 
 export async function saveConnectionReferences(
