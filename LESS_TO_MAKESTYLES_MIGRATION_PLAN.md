@@ -1,420 +1,339 @@
-# LESS to Fluent UI v9 makeStyles Migration Plan
+# LESS to makeStyles Migration Plan
 
-## Overview
+## Executive Summary
 
-This document outlines the comprehensive plan to migrate from .less CSS files to Fluent UI v9's makeStyles CSS-in-JS system across the LogicAppsUX codebase.
+This document outlines a comprehensive plan to migrate 124 .less files in the LogicAppsUX monorepo to Fluent UI v9's makeStyles CSS-in-JS system. The migration will improve performance, enable better tree-shaking, provide type-safe styling, and align with modern React best practices.
 
-### Current State
-- **124 .less files** with 230+ variables requiring migration
-- **64 files already using makeStyles** - established patterns exist
-- **Hybrid Fluent UI v8/v9 setup** already functional
-- **Major impact areas**: libs/designer-ui (94 files), libs/designer (14 files)
+## Current State Analysis
 
-### Migration Goals
-- ✅ Replace all .less files with makeStyles
-- ✅ Consolidate design tokens using Fluent UI v9 tokens
-- ✅ Maintain existing theme switching functionality
-- ✅ Preserve component styling and behavior
-- ✅ Improve type safety and developer experience
+### Scope
+- **Total .less files**: 124
+- **Main aggregator file**: `/libs/designer-ui/src/lib/styles.less` (imports 71 files)
+- **Lines of CSS**: ~5,000+ lines across all files
+- **Affected packages**: 6 packages (designer-ui, designer, data-mapper, vs-code-react, Standalone, chatbot)
 
----
+### Existing makeStyles Adoption
+- **data-mapper-v2**: Fully migrated (reference implementation)
+- **chatbot**: Partially migrated
+- **designer-ui**: Design tokens file exists (`/libs/designer-ui/src/lib/tokens/designTokens.ts`)
+- **Pattern established**: Clear conventions and patterns already in use
 
-## Phase 1: Foundation Setup
+## Migration Strategy
 
-### Task 1.1: Create Design Token System ✅
-**Priority**: Critical
-**Estimated Time**: 2-3 hours
-**Status**: **COMPLETED** ✅
-**Files Created**:
-- ✅ `libs/designer-ui/src/lib/tokens/designTokens.ts`
-- ✅ `libs/designer-ui/src/lib/tokens/index.ts`
-- ✅ Updated `libs/designer-ui/src/lib/index.ts` to export tokens
+### Phase 1: Foundation (Week 1-2)
+Establish core infrastructure and patterns
 
-**Implementation**:
+### Phase 2: Shared Resources (Week 3-4)
+Migrate variables, mixins, and common styles
+
+### Phase 3: Component Migration (Week 5-12)
+Systematic component-by-component migration
+
+### Phase 4: Cleanup & Optimization (Week 13-14)
+Remove legacy code and optimize bundle
+
+## Detailed Implementation Plan
+
+### Phase 1: Foundation Setup
+
+#### 1.1 Design Token Enhancement
+**Location**: `/libs/designer-ui/src/lib/tokens/`
+
+- [ ] Audit existing `designTokens.ts` for completeness
+- [ ] Map all LESS variables to Fluent UI v9 tokens:
+  - [ ] Colors (including theme-specific)
+  - [ ] Spacing/sizing
+  - [ ] Typography
+  - [ ] Shadows
+  - [ ] Border radius
+  - [ ] Z-index values
+- [ ] Create custom tokens for Logic Apps-specific values
+- [ ] Add TypeScript interfaces for type safety
+
+**Example structure**:
 ```typescript
-// libs/designer-ui/src/lib/tokens/designTokens.ts
-import { tokens } from '@fluentui/react-components';
-
-export const designTokens = {
-  colors: {
-    // Map existing @variables to Fluent UI tokens
-    scopeBackground: tokens.colorNeutralBackground1,
-    // ... (230+ variables mapped to Fluent UI tokens)
+// designTokens.ts
+export const customTokens = {
+  card: {
+    minWidth: '284px',
+    maxWidth: '314px',
+    headerHeight: '52px',
+    // ... etc
   },
-  sizes: {
-    cardMinWidth: '200px',
-    cardMaxWidth: '600px',
-    // ... (all size variables preserved)
-  },
-  typography: { /* font tokens */ },
-  spacing: { /* spacing tokens */ },
-  breakpoints: { /* responsive breakpoints */ },
-  // ... other categories
-} as const;
+  // ... other domain-specific tokens
+};
 ```
 
-**Acceptance Criteria**:
-- ✅ All 230+ .less variables mapped to design tokens
-- ✅ Token system exports properly typed
-- ✅ No breaking changes to visual appearance (tokens preserve original values)
-- ✅ Comprehensive categorization (colors, sizes, typography, spacing, etc.)
+#### 1.2 Utility Functions & Helpers
+**Location**: `/libs/designer-ui/src/lib/utils/styles/`
 
-### Task 1.2: Update Package Dependencies ✅
-**Priority**: High
-**Estimated Time**: 30 minutes
-**Status**: **COMPLETED** ✅
-**Actions**:
-- ✅ Verified @fluentui/react-components versions across packages
-- ✅ Confirmed consistent versions (designer-ui: 9.56.0, data-mapper-v2: 9.50.0)
-- ✅ All necessary Fluent UI v9 dependencies present
+- [ ] Create style utility functions:
+  - [ ] `mergeStyles` wrapper for common patterns
+  - [ ] `createThemeStyles` for dark/light theme handling
+  - [ ] `responsiveStyles` for breakpoint management
+- [ ] Port LESS mixins to JavaScript functions:
+  - [ ] Text truncation
+  - [ ] Flexbox helpers
+  - [ ] Animation utilities
+  - [ ] Focus styles
 
----
+#### 1.3 Migration Guidelines Document
+- [ ] Create `/docs/makeStyles-migration-guide.md`
+- [ ] Document patterns and conventions
+- [ ] Provide migration examples
+- [ ] Include common gotchas and solutions
 
-## Phase 2: Component Migration by Priority
+### Phase 2: Shared Resources Migration
 
-### Priority Level 1: Low-Risk, High-Value Components
+#### 2.1 Core Style Files
+Priority order for migration:
 
-#### Task 2.1: Migrate libs/chatbot ✅
-**Priority**: High (Quick Win)
-**Estimated Time**: 1-2 hours
-**Status**: **COMPLETED** ✅
-**Files**: 2 .less files migrated
+1. [ ] `/libs/designer-ui/src/lib/variables.less` → `tokens/variables.ts`
+2. [ ] `/libs/designer-ui/src/lib/mixins.less` → `utils/mixins.ts`
+3. [ ] `/libs/designer-ui/src/lib/common.less` → `styles/common.ts`
+4. [ ] `/libs/designer-ui/src/lib/themes.less` → `themes/index.ts`
+5. [ ] `/libs/designer-ui/src/lib/fabric.less` → Fluent UI tokens
+6. [ ] `/libs/designer-ui/src/lib/logicapps.less` → `styles/logicapps.ts`
 
-**Files Migrated**:
-- ✅ `libs/chatbot/src/lib/styles.less` → `libs/chatbot/src/lib/styles.ts`
-- ✅ `libs/chatbot/src/lib/ui/styles.less` → `libs/chatbot/src/lib/ui/styles.ts`
+#### 2.2 Create makeStyles Index
+**Location**: `/libs/designer-ui/src/lib/styles/index.ts`
 
-**Implementation Steps**:
-1. ✅ Created comprehensive makeStyles with theme support
-2. ✅ Updated ChatbotUi.tsx and panelheader.tsx components
-3. ✅ Removed .less file imports and deleted .less files
-4. ✅ Tested build and unit tests - all passing
+- [ ] Create central export for all migrated styles
+- [ ] Maintain backward compatibility during migration
+- [ ] Provide clear migration path for consumers
 
-**Key Features Implemented**:
-- ✅ Full theme support (light/dark mode)
-- ✅ Type-safe styling with TypeScript
-- ✅ Preserved all original visual styling
-- ✅ Conditional dark theme styles using mergeClasses
+### Phase 3: Component Migration
 
-#### Task 2.2: Migrate libs/data-mapper-v2 remaining files ⬜
-**Priority**: High (Already has patterns)
-**Estimated Time**: 1 hour
-**Files**: 1 .less file remaining
+#### 3.1 Migration Order (by priority and complexity)
 
-**Files to Migrate**:
-- [ ] `libs/data-mapper-v2/src/ui/styles.less`
+**High Priority - Core Components** (Week 5-6)
+- [ ] Card components (12 files, ~800 lines)
+  - [ ] `card/card.less` (512 lines - largest)
+  - [ ] `card/cardv2.less`
+  - [ ] `card/parameters/parameters.less`
+  - [ ] `card/subgraphCard/subgraphCard.less`
+  - [ ] Other card variants
+- [ ] Panel components (7 files, ~400 lines)
+  - [ ] `panel/panel.less` (301 lines)
+  - [ ] Recommendation panel components
 
-### Priority Level 2: Core UI Components
+**Medium Priority - Editor Components** (Week 7-8)
+- [ ] Editor base components (8 files)
+  - [ ] `editor/base/editor.less`
+  - [ ] `editor/monaco/monaco.less`
+  - [ ] `expressioneditor/expressioneditor.less`
+- [ ] HTML editor (`html/htmleditor.less` - 374 lines)
+- [ ] Token picker components
 
-#### Task 2.3: Migrate Card Components ⬜
-**Priority**: Critical
-**Estimated Time**: 4-6 hours
-**Impact**: High - Used throughout application
+**Medium Priority - Form Components** (Week 9-10)
+- [ ] Input components:
+  - [ ] `dropdown/dropdown.less`
+  - [ ] `combobox/combobox.less`
+  - [ ] `searchbox/searchbox.less`
+  - [ ] `checkbox/checkbox.less`
+- [ ] Complex editors:
+  - [ ] `arrayeditor/arrayeditor.less`
+  - [ ] `dictionary/dictionaryeditor.less`
+  - [ ] `schemaeditor/schemaeditor.less`
 
-**Files to Migrate**:
-- [ ] `libs/designer-ui/src/lib/card/card.less`
-- [ ] `libs/designer-ui/src/lib/card/cardv2.less`
-- [ ] `libs/designer-ui/src/lib/card/collapsedCard/collapsedCard.less`
-- [ ] `libs/designer-ui/src/lib/card/scopeCard/scopeCard.less`
-- [ ] Related parameter and function styles
+**Lower Priority - Utility Components** (Week 11-12)
+- [ ] Monitoring components
+- [ ] Overview components
+- [ ] Table components
+- [ ] Remaining small components
 
-**Implementation**:
-1. [ ] Create `libs/designer-ui/src/lib/card/styles.ts`
-2. [ ] Migrate base card styles
-3. [ ] Migrate card variants (v2, collapsed, scope)
-4. [ ] Update all card component imports
-5. [ ] Test card rendering across different themes
-6. [ ] Verify responsive behavior
+#### 3.2 Component Migration Process
 
-#### Task 2.4: Migrate Panel Components ⬜
-**Priority**: Critical
-**Estimated Time**: 6-8 hours
-**Impact**: High - Core designer functionality
+For each component:
 
-**Files to Migrate**:
-- [ ] `libs/designer-ui/src/lib/panel/panel.less`
-- [ ] `libs/designer-ui/src/lib/panel/panelheader.less`
-- [ ] `libs/designer-ui/src/lib/panel/panelbody.less`
-- [ ] `libs/designer-ui/src/lib/panel/panelfooter.less`
+1. **Create styles file**:
+   ```typescript
+   // ComponentName.styles.ts
+   import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
+   import { customTokens } from '../../tokens/designTokens';
+   
+   export const useStyles = makeStyles({
+     root: {
+       // styles here
+     },
+   });
+   ```
 
-**Implementation**:
-1. [ ] Create panel styles with makeStyles
-2. [ ] Preserve panel mode functionality
-3. [ ] Maintain resizing capabilities
-4. [ ] Test panel interactions
+2. **Update component**:
+   ```typescript
+   // ComponentName.tsx
+   import { useStyles } from './ComponentName.styles';
+   
+   export const ComponentName: React.FC = () => {
+     const styles = useStyles();
+     return <div className={styles.root}>...</div>;
+   };
+   ```
 
-#### Task 2.5: Migrate Editor Components ⬜
-**Priority**: High
-**Estimated Time**: 8-10 hours
-**Impact**: High - Core editing experience
+3. **Remove LESS imports**:
+   - Remove from component files
+   - Remove from main styles.less
 
-**Files to Migrate**:
-- [ ] `libs/designer-ui/src/lib/editor/editor.less`
-- [ ] `libs/designer-ui/src/lib/texteditor.less`
-- [ ] All editor variant styles
+4. **Test thoroughly**:
+   - Visual regression testing
+   - Theme switching
+   - Responsive behavior
+   - Performance metrics
 
-### Priority Level 3: Form and Input Components
+### Phase 4: Application-Specific Styles
 
-#### Task 2.6: Migrate Form Controls ⬜
-**Priority**: Medium
-**Estimated Time**: 6-8 hours
+#### 4.1 VS Code React App (Week 11)
+- [ ] Migrate 10 app-specific .less files
+- [ ] Update build configuration
+- [ ] Test in VS Code environment
 
-**Files to Migrate**:
-- [ ] `libs/designer-ui/src/lib/combobox/combobox.less`
-- [ ] `libs/designer-ui/src/lib/dropdown/dropdown.less`
-- [ ] `libs/designer-ui/src/lib/toggle/toggle.less`
-- [ ] Input and field-related styles
+#### 4.2 Standalone App (Week 11)
+- [ ] Migrate 2 app-specific files
+- [ ] Verify hot reload works with makeStyles
+- [ ] Update Vite configuration if needed
 
-#### Task 2.7: Migrate Monitoring Components ⬜
-**Priority**: Medium
-**Estimated Time**: 4-6 hours
+#### 4.3 Designer Library (Week 12)
+- [ ] Migrate 14 designer-specific files
+- [ ] Update style exports
+- [ ] Ensure backward compatibility
 
-**Files to Migrate**:
-- [ ] `libs/designer-ui/src/lib/monitoring/monitoring.less`
-- [ ] `libs/designer-ui/src/lib/monitoring/errorsPanel.less`
-- [ ] Related monitoring styles
+### Phase 5: Data Mapper Migration (Week 12)
+- [ ] Migrate remaining 4 .less files in data-mapper v1
+- [ ] Align with patterns from data-mapper-v2
+- [ ] Consolidate shared styles
 
-### Priority Level 4: Specialized Components
+### Phase 6: Cleanup & Optimization (Week 13-14)
 
-#### Task 2.8: Migrate Template Components ⬜
-**Priority**: Medium
-**Estimated Time**: 4-6 hours
+#### 6.1 Remove Legacy Infrastructure
+- [ ] Delete all .less files
+- [ ] Remove less-loader from build configs
+- [ ] Update package.json dependencies
+- [ ] Clean up webpack/vite configurations
 
-**Files to Migrate**:
-- [ ] `libs/designer-ui/src/lib/templates/templates.less`
-- [ ] Template card and gallery styles
+#### 6.2 Optimization
+- [ ] Analyze bundle size improvements
+- [ ] Implement code splitting for styles
+- [ ] Add performance monitoring
+- [ ] Document performance gains
 
-#### Task 2.9: Migrate Remaining Core Components ⬜
-**Priority**: Medium-Low
-**Estimated Time**: 10-12 hours
+#### 6.3 Documentation Updates
+- [ ] Update README files
+- [ ] Update contribution guidelines
+- [ ] Create style guide documentation
+- [ ] Add examples to Storybook (if applicable)
 
-**Remaining Files**: ~50 component-specific .less files
+## Technical Considerations
 
----
+### Build System Updates
+1. **Remove LESS dependencies**:
+   - `less`
+   - `less-loader`
+   - Any LESS plugins
 
-## Phase 3: Application-Specific Migrations
+2. **Ensure Fluent UI build optimization**:
+   - Tree-shaking for unused styles
+   - Proper production builds
+   - Source map configuration
 
-### Task 3.1: Migrate VS Code Extension Styles ⬜
-**Priority**: Medium
-**Estimated Time**: 3-4 hours
-**Files**: 8 .less files in `apps/vs-code-react`
+### Testing Strategy
+1. **Visual Regression Testing**:
+   - Before/after screenshots
+   - Cross-browser testing
+   - Theme testing (light/dark)
 
-**Files to Migrate**:
-- [ ] `apps/vs-code-react/src/app/designer/app.less`
-- [ ] `apps/vs-code-react/src/app/export/export.less`
-- [ ] Other VS Code specific styles
+2. **Performance Testing**:
+   - Bundle size comparison
+   - Runtime performance
+   - Initial load time
 
-### Task 3.2: Migrate Standalone App Styles ⬜
-**Priority**: Low
-**Estimated Time**: 2-3 hours
-**Files**: 2 .less files in `apps/Standalone`
+3. **Integration Testing**:
+   - Component functionality
+   - Theme switching
+   - Responsive behavior
 
-### Task 3.3: Migrate Designer Library Styles ⬜
-**Priority**: Medium
-**Estimated Time**: 4-6 hours
-**Files**: 14 .less files in `libs/designer`
+### Migration Checklist Template
 
----
+For each component migration:
+- [ ] Create .styles.ts file
+- [ ] Port all styles maintaining exact visual appearance
+- [ ] Update component to use makeStyles
+- [ ] Remove .less imports
+- [ ] Update any style-dependent tests
+- [ ] Visual regression test
+- [ ] Theme test (light/dark)
+- [ ] Responsive test
+- [ ] PR review with screenshots
 
-## Phase 4: Cleanup and Optimization
+## Risk Mitigation
 
-### Task 4.1: Remove .less Build Dependencies ⬜
-**Priority**: Medium
-**Estimated Time**: 1-2 hours
+### Potential Risks
+1. **Visual Regression**: Styles might not match exactly
+   - Mitigation: Comprehensive visual testing, gradual rollout
 
-**Actions**:
-- [ ] Remove less-loader from build configurations
-- [ ] Remove .less file processing from Vite configs
-- [ ] Update any webpack configurations
-- [ ] Clean up package.json dependencies
+2. **Performance Impact**: Initial bundle might be larger
+   - Mitigation: Measure and optimize, use code splitting
 
-### Task 4.2: Delete Migrated .less Files ⬜
-**Priority**: Low
-**Estimated Time**: 1 hour
+3. **Development Velocity**: Migration takes time
+   - Mitigation: Parallel development tracks, clear priorities
 
-**Actions**:
-- [ ] Systematically delete migrated .less files
-- [ ] Remove @import statements
-- [ ] Update any remaining references
+4. **Third-party Dependencies**: Some might expect CSS
+   - Mitigation: Maintain CSS exports during transition
 
-### Task 4.3: Documentation and Standards ⬜
-**Priority**: Medium
-**Estimated Time**: 2-3 hours
-
-**Actions**:
-- [ ] Update component documentation
-- [ ] Create makeStyles style guide
-- [ ] Update development guidelines
-- [ ] Add examples to docs
-
----
-
-## Testing Strategy
-
-### Per-Component Testing ✅
-**For each migrated component**:
-- [ ] Visual regression testing
-- [ ] Theme switching verification
-- [ ] Responsive behavior testing
-- [ ] Cross-browser compatibility
-
-### Integration Testing ✅
-**After major milestones**:
-- [ ] Full application smoke testing
-- [ ] E2E test suite execution
-- [ ] Performance benchmarking
-- [ ] Accessibility testing
-
-### Rollback Plan ✅
-**If issues arise**:
-- [ ] Maintain .less files until migration complete
-- [ ] Branch-based development for safe rollbacks
-- [ ] Feature flags for gradual rollout
-
----
-
-## Migration Utilities and Helpers
-
-### Code Transformation Scripts ⬜
-**Create helper scripts for**:
-- [ ] Automated import replacement
-- [ ] Variable name mapping
-- [ ] Style extraction utilities
-
-### Development Tools ⬜
-**Setup tooling for**:
-- [ ] Visual diff comparison
-- [ ] Automated testing of styled components
-- [ ] Build performance monitoring
-
----
+### Rollback Strategy
+- Keep .less files in version control during migration
+- Feature flag for switching between implementations
+- Gradual rollout by component/feature
 
 ## Success Metrics
 
-### Technical Metrics ✅
-- [ ] 0 .less files remaining in codebase
-- [ ] 100% type safety for component styles
-- [ ] No visual regressions
-- [ ] Build time improvements
-- [ ] Bundle size impact assessment
+1. **Performance**:
+   - 20%+ reduction in CSS bundle size
+   - Improved tree-shaking
+   - Faster build times
 
-### Developer Experience Metrics ✅
-- [ ] Improved IntelliSense for styling
-- [ ] Faster development iteration
-- [ ] Reduced context switching between files
-- [ ] Better debugging capabilities
+2. **Developer Experience**:
+   - Type-safe styles
+   - Better IDE support
+   - Easier debugging
 
----
+3. **Maintainability**:
+   - Styles co-located with components
+   - No global namespace pollution
+   - Easier to track style usage
 
-## Risk Assessment and Mitigation
+## Timeline Summary
 
-### High-Risk Areas ⚠️
-1. **Theme switching functionality** - Critical business requirement
-   - Mitigation: Thorough testing with both themes
-   
-2. **Complex nested selectors** - Potential for visual breaks
-   - Mitigation: Component-by-component migration with testing
-   
-3. **Build process changes** - Could affect deployment
-   - Mitigation: Gradual removal of .less processing
+- **Week 1-2**: Foundation setup
+- **Week 3-4**: Shared resources migration
+- **Week 5-6**: High-priority components
+- **Week 7-8**: Editor components
+- **Week 9-10**: Form components
+- **Week 11-12**: Remaining components & apps
+- **Week 13-14**: Cleanup & optimization
 
-### Medium-Risk Areas ⚠️
-1. **Performance impact** - CSS-in-JS runtime overhead
-   - Mitigation: Performance benchmarking and optimization
-   
-2. **Developer onboarding** - New patterns to learn
-   - Mitigation: Documentation and examples
+**Total Duration**: 14 weeks (3.5 months)
 
----
+## Next Steps
 
-## Timeline Estimation
+1. Review and approve this plan
+2. Assign team members to phases
+3. Set up tracking dashboard
+4. Begin Phase 1 implementation
+5. Schedule weekly progress reviews
 
-### Sprint 1 (Week 1): Foundation
-- Tasks 1.1 - 1.2: Design tokens and dependencies
-- Tasks 2.1 - 2.2: Quick wins (chatbot, data-mapper-v2)
+## Appendix
 
-### Sprint 2 (Week 2): Core Components
-- Task 2.3: Card components
-- Task 2.4: Panel components (start)
+### A. File Mapping Reference
+Complete mapping of all 124 .less files to their new locations (to be maintained during migration)
 
-### Sprint 3 (Week 3): Core Components Continued
-- Task 2.4: Panel components (complete)
-- Task 2.5: Editor components (start)
+### B. Code Examples
+Detailed before/after examples for common patterns
 
-### Sprint 4 (Week 4): Core Components Completion
-- Task 2.5: Editor components (complete)
-- Task 2.6: Form controls (start)
+### C. Performance Benchmarks
+Baseline measurements and targets
 
-### Sprint 5 (Week 5): Remaining Components
-- Task 2.6: Form controls (complete)
-- Tasks 2.7 - 2.9: Specialized components
-
-### Sprint 6 (Week 6): Applications
-- Tasks 3.1 - 3.3: Application-specific migrations
-
-### Sprint 7 (Week 7): Cleanup
-- Tasks 4.1 - 4.3: Cleanup and documentation
-
-**Total Estimated Time**: 6-7 weeks with 1-2 developers
-
----
-
-## Communication Plan
-
-### Stakeholder Updates ✅
-- [ ] Weekly progress reports
-- [ ] Demo sessions for major milestones
-- [ ] Risk escalation procedures
-
-### Team Coordination ✅
-- [ ] Daily standup updates
-- [ ] Code review requirements
-- [ ] Migration guidelines training
-
----
-
-## Completion Checklist
-
-### Technical Completion ✅
-- [ ] All .less files migrated to makeStyles
-- [ ] All components using design tokens
-- [ ] Build process updated
-- [ ] Tests passing
-- [ ] Performance benchmarks met
-
-### Documentation Completion ✅
-- [ ] Migration guide created
-- [ ] Component examples updated
-- [ ] Development standards updated
-- [ ] Troubleshooting guide created
-
-### Team Readiness ✅
-- [ ] Team trained on new patterns
-- [ ] Code review guidelines updated
-- [ ] Development tooling configured
-- [ ] Knowledge transfer completed
-
----
-
-## Progress Summary
-
-### ✅ Phase 1: Foundation Setup - **COMPLETED**
-- ✅ Design token system created and exported
-- ✅ Package dependencies verified
-- ✅ Ready for component migrations
-
-### 🔄 Phase 2: Component Migration by Priority - **IN PROGRESS**
-- ✅ Task 2.1: libs/chatbot migration **COMPLETED**
-- 📋 Quick wins: 1/2 completed (chatbot ✅, data-mapper-v2 pending)
-- 📋 Core components prioritized and ready
-
-### ⏳ Next Steps
-1. ✅ ~~Task 2.1: Migrate libs/chatbot~~ **COMPLETED**
-2. Continue with Task 2.2: Complete data-mapper-v2 migration
-3. Move to core components (cards, panels, editors)
-
----
-
-*Last Updated: December 2024*
-*Status: Phase 1 Complete - Ready for Component Migration*
-*Next Review: Weekly*
+### D. Team Resources
+- Fluent UI v9 documentation
+- makeStyles API reference
+- Internal style guide
+- Migration support contacts

@@ -20,16 +20,16 @@ describe('devSlice', () => {
       });
     });
 
-// Removed redundant test case
+    // Removed redundant test case
   });
 
   describe('action counting behavior', () => {
     it('should count a single action dispatch', () => {
       const testAction = createAction<string>('test/action');
       const action = testAction('test payload');
-      
+
       const result = devReducer(initialState, action);
-      
+
       expect(result.reduxActionCounts).toEqual({
         'test/action': 1,
       });
@@ -38,17 +38,17 @@ describe('devSlice', () => {
     it('should increment count for repeated actions', () => {
       const testAction = createAction<string>('test/repeatedAction');
       const action = testAction('test payload');
-      
+
       let state = initialState;
-      
+
       // First dispatch
       state = devReducer(state, action);
       expect(state.reduxActionCounts?.['test/repeatedAction']).toBe(1);
-      
+
       // Second dispatch
       state = devReducer(state, action);
       expect(state.reduxActionCounts?.['test/repeatedAction']).toBe(2);
-      
+
       // Third dispatch
       state = devReducer(state, action);
       expect(state.reduxActionCounts?.['test/repeatedAction']).toBe(3);
@@ -58,21 +58,21 @@ describe('devSlice', () => {
       const actionA = createAction<string>('test/actionA');
       const actionB = createAction<string>('test/actionB');
       const actionC = createAction<string>('test/actionC');
-      
+
       let state = initialState;
-      
+
       // Dispatch actionA twice
       state = devReducer(state, actionA('payload1'));
       state = devReducer(state, actionA('payload2'));
-      
+
       // Dispatch actionB once
       state = devReducer(state, actionB('payload3'));
-      
+
       // Dispatch actionC three times
       state = devReducer(state, actionC('payload4'));
       state = devReducer(state, actionC('payload5'));
       state = devReducer(state, actionC('payload6'));
-      
+
       expect(state.reduxActionCounts).toEqual({
         'test/actionA': 2,
         'test/actionB': 1,
@@ -87,10 +87,10 @@ describe('devSlice', () => {
           'another/action': 2,
         },
       };
-      
+
       const newAction = createAction<string>('new/action');
       const result = devReducer(existingState, newAction('payload'));
-      
+
       expect(result.reduxActionCounts).toEqual({
         'existing/action': 5,
         'another/action': 2,
@@ -104,9 +104,9 @@ describe('devSlice', () => {
         id: 'test-id',
         data: { nested: { value: 123 }, array: [1, 2, 3] },
       });
-      
+
       const result = devReducer(initialState, action);
-      
+
       expect(result.reduxActionCounts).toEqual({
         'test/complexAction': 1,
       });
@@ -115,9 +115,9 @@ describe('devSlice', () => {
     it('should handle actions with no payload', () => {
       const simpleAction = createAction('test/simpleAction');
       const action = simpleAction();
-      
+
       const result = devReducer(initialState, action);
-      
+
       expect(result.reduxActionCounts).toEqual({
         'test/simpleAction': 1,
       });
@@ -125,9 +125,9 @@ describe('devSlice', () => {
 
     it('should handle built-in redux actions', () => {
       const builtInAction = { type: '@@redux/INIT' };
-      
+
       const result = devReducer(initialState, builtInAction);
-      
+
       expect(result.reduxActionCounts).toEqual({
         '@@redux/INIT': 1,
       });
@@ -143,9 +143,9 @@ describe('devSlice', () => {
           'test/action3': 10,
         },
       };
-      
+
       const result = devReducer(stateWithCounts, resetWorkflowState());
-      
+
       // The state should be reset but the resetWorkflowState action itself should be counted
       expect(result).toEqual({
         reduxActionCounts: {
@@ -163,11 +163,11 @@ describe('devSlice', () => {
           'test/action1': 2,
         },
       };
-      
+
       const result = devReducer(stateWithCounts, resetWorkflowState());
-      
+
       expect(result.reduxActionCounts).toEqual({
-        'resetWorkflowState': 1,
+        resetWorkflowState: 1,
       });
     });
 
@@ -177,25 +177,25 @@ describe('devSlice', () => {
           'test/action1': 5,
         },
       };
-      
+
       // First reset
       state = devReducer(state, resetWorkflowState());
       expect(state.reduxActionCounts).toEqual({
-        'resetWorkflowState': 1,
+        resetWorkflowState: 1,
       });
-      
+
       // Add some actions
       const testAction = createAction('test/afterReset');
       state = devReducer(state, testAction());
       expect(state.reduxActionCounts).toEqual({
-        'resetWorkflowState': 1,
+        resetWorkflowState: 1,
         'test/afterReset': 1,
       });
-      
+
       // Second reset
       state = devReducer(state, resetWorkflowState());
       expect(state.reduxActionCounts).toEqual({
-        'resetWorkflowState': 1,
+        resetWorkflowState: 1,
       });
     });
   });
@@ -205,10 +205,10 @@ describe('devSlice', () => {
       const stateWithUndefinedCounts: DevState = {
         reduxActionCounts: undefined,
       };
-      
+
       const testAction = createAction('test/action');
       const result = devReducer(stateWithUndefinedCounts, testAction());
-      
+
       expect(result.reduxActionCounts).toEqual({
         'test/action': 1,
       });
@@ -216,9 +216,9 @@ describe('devSlice', () => {
 
     it('should handle empty action type string', () => {
       const emptyAction = { type: '' };
-      
+
       const result = devReducer(initialState, emptyAction);
-      
+
       expect(result.reduxActionCounts).toEqual({
         '': 1,
       });
@@ -233,12 +233,12 @@ describe('devSlice', () => {
         { type: 'test/action@with@symbols' },
         { type: 'test/action/with/slashes' },
       ];
-      
+
       let state = initialState;
       for (const action of specialActions) {
         state = devReducer(state, action);
       }
-      
+
       expect(state.reduxActionCounts).toEqual({
         'test/action-with-dashes': 1,
         'test/action_with_underscores': 1,
@@ -252,9 +252,9 @@ describe('devSlice', () => {
     it('should handle very long action type names', () => {
       const longActionType = 'a'.repeat(1000);
       const longAction = { type: longActionType };
-      
+
       const result = devReducer(initialState, longAction);
-      
+
       expect(result.reduxActionCounts?.[longActionType]).toBe(1);
     });
   });
@@ -262,15 +262,15 @@ describe('devSlice', () => {
   describe('performance and memory considerations', () => {
     it('should handle a large number of different actions', () => {
       let state = initialState;
-      
+
       // Dispatch 100 different actions
       for (let i = 0; i < 100; i++) {
         const action = createAction(`test/action${i}`);
         state = devReducer(state, action());
       }
-      
+
       expect(Object.keys(state.reduxActionCounts ?? {})).toHaveLength(100);
-      
+
       // Each action should have a count of 1
       for (let i = 0; i < 100; i++) {
         expect(state.reduxActionCounts?.[`test/action${i}`]).toBe(1);
@@ -280,12 +280,12 @@ describe('devSlice', () => {
     it('should handle high frequency of the same action', () => {
       let state = initialState;
       const highFrequencyAction = createAction('test/highFrequency');
-      
+
       // Dispatch the same action 1000 times
       for (let i = 0; i < 1000; i++) {
         state = devReducer(state, highFrequencyAction());
       }
-      
+
       expect(state.reduxActionCounts?.['test/highFrequency']).toBe(1000);
     });
   });

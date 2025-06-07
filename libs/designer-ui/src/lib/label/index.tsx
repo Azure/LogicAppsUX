@@ -1,6 +1,7 @@
 import { css, Label as FluentLabel, type ILabelStyleProps, type ILabelStyles, type IStyleFunctionOrObject } from '@fluentui/react';
 import type { ReactNode } from 'react';
 import { useIntl } from 'react-intl';
+import { useLabelStyles } from './styles';
 
 export const RequiredMarkerSide = {
   LEFT: 'left',
@@ -39,9 +40,11 @@ export const Label: React.FC<LabelProps> = ({
   styles,
   disabled,
 }) => {
+  const classes = useLabelStyles();
+
   return (
     <FluentLabel
-      className={css(className, 'msla-label')}
+      className={css(className, classes.root)}
       htmlFor={htmlFor}
       id={id}
       title={tooltip || text}
@@ -61,6 +64,8 @@ export const Label: React.FC<LabelProps> = ({
 
 const RequiredParameterMarker: React.FC<RequiredParameterMarkerProps> = ({ isRequiredField, isRight }) => {
   const intl = useIntl();
+  const classes = useLabelStyles();
+
   if (!isRequiredField) {
     return null;
   }
@@ -73,7 +78,7 @@ const RequiredParameterMarker: React.FC<RequiredParameterMarkerProps> = ({ isReq
 
   return (
     // eslint-disable-next-line react/jsx-no-literals
-    <span className={isRight ? 'msla-label-required-parameter-right' : 'msla-label-required-parameter'} aria-label={ariaLabel}>
+    <span className={isRight ? classes.requiredParameterRight : classes.requiredParameterLeft} aria-label={ariaLabel}>
       *
     </span>
   );

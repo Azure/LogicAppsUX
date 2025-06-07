@@ -77,6 +77,9 @@ export const designTokens = {
     oneuiColorBrandNeutral55: tokens.colorNeutralForeground2,
     oneuiColorBrandNeutral45: tokens.colorNeutralForeground2,
     fallbackIconColor: tokens.colorNeutralBackground2,
+
+    // Additional colors from variables.less
+    defaultConnectorColor: '#515151',
   },
 
   /**
