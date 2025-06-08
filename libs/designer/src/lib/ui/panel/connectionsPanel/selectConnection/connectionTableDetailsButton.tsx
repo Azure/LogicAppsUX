@@ -74,7 +74,9 @@ export const ConnectionTableDetailsButton = (props: ConnectionTableDetailsButton
         <h3>{detailsHeader}</h3>
         <h4>{connectionNameLabel}</h4>
         <p>{connection.name}</p>
-        {!isEpochZero && (
+        {isEpochZero ? (
+          <></>
+        ) : (
           <>
             <h4>{createdDateLabel}</h4>
             <p>{intl.formatDate(connection.createdTime, { dateStyle: 'long', timeStyle: 'short' })}</p>
