@@ -1,6 +1,7 @@
 import { css, FontIcon, Spinner, SpinnerSize } from '@fluentui/react';
 import type React from 'react';
 import { useIntl } from 'react-intl';
+import { useConnectionContainerStyles } from '../../styles/connectionContainer';
 
 type ConnectionStatusProps = {
   apiName: string;
@@ -9,6 +10,7 @@ type ConnectionStatusProps = {
 
 export const ConnectionStatus: React.FC<ConnectionStatusProps> = ({ apiName, isConnected }) => {
   const intl = useIntl();
+  const styles = useConnectionContainerStyles();
   const intlText = {
     connectionsSetupCardDescription: intl.formatMessage({
       defaultMessage: 'Set up these connections to use them in your flow.',
@@ -31,7 +33,7 @@ export const ConnectionStatus: React.FC<ConnectionStatusProps> = ({ apiName, isC
     <span className={'msla-connection-status'}>
       <FontIcon
         iconName={isConnected ? 'Completed' : 'Error'}
-        className={css('msla-connection-status-icon', isConnected && CONNECTED_CLASS)}
+        className={css(styles.connectionStatusIcon, isConnected && CONNECTED_CLASS)}
       />
       <span className={'msla-connection-status-text'}>
         {statusFormat}
