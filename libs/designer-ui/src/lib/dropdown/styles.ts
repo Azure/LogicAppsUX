@@ -3,7 +3,6 @@ import { designTokens } from '../tokens/designTokens';
 
 export const useDropdownStyles = makeStyles({
   container: {
-    display: 'inline-block',
     position: 'relative',
     width: '100%',
   },
