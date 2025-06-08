@@ -1,7 +1,8 @@
-import { css, FontIcon, Spinner, SpinnerSize } from '@fluentui/react';
+import { FontIcon, Spinner, SpinnerSize } from '@fluentui/react';
+import { mergeClasses } from '@fluentui/react-components';
 import type React from 'react';
 import { useIntl } from 'react-intl';
-import { useConnectionContainerStyles } from '../../styles/connectionContainer';
+import { useConnectionContainerStyles } from '../../connectioncontainer.styles';
 
 type ConnectionStatusProps = {
   apiName: string;
@@ -33,7 +34,7 @@ export const ConnectionStatus: React.FC<ConnectionStatusProps> = ({ apiName, isC
     <span className={'msla-connection-status'}>
       <FontIcon
         iconName={isConnected ? 'Completed' : 'Error'}
-        className={css(styles.connectionStatusIcon, isConnected && CONNECTED_CLASS)}
+        className={mergeClasses(styles.connectionStatusIcon, isConnected && CONNECTED_CLASS)}
       />
       <span className={'msla-connection-status-text'}>
         {statusFormat}

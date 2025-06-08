@@ -2,7 +2,8 @@ import InformationImage from '../card/images/information_tiny.svg';
 import { getDragStartHandlerWhenDisabled } from '../helper';
 import { FlyoutCallout } from './flyoutcallout';
 import type { ITooltipHostStyles } from '@fluentui/react';
-import { css, mergeStyleSets, TooltipHost } from '@fluentui/react';
+import { mergeStyleSets, TooltipHost } from '@fluentui/react';
+import { mergeClasses } from '@fluentui/react-components';
 import React, { useRef, useState } from 'react';
 import { useFlyoutStyles } from './flyout.styles';
 
@@ -30,7 +31,7 @@ export const Flyout = React.forwardRef<{ collapseFlyout(): void }, FlyoutProps>(
   ({ ariaLabel, iconStyle, style, tabIndex = 0, text, tooltipHostStyles, onClick, title, iconSize = 'lg' }, ref) => {
     const buttonRef = useRef<HTMLButtonElement | null>(null);
     const [flyoutExpanded, setFlyoutExpanded] = useState(false);
-    const flyoutStyles = useFlyoutStyles();
+    const styles = useFlyoutStyles();
 
     React.useImperativeHandle(ref, () => ({
       collapseFlyout() {
@@ -57,14 +58,19 @@ export const Flyout = React.forwardRef<{ collapseFlyout(): void }, FlyoutProps>(
           data-testid="callout-btn"
           ref={buttonRef}
           aria-label={ariaLabel ?? title ?? text}
-          className={css('msla-button', flyoutStyles.flyout)}
+          className={mergeClasses(styles.flyout, 'msla-button', 'msla-flyout')}
           style={style}
           tabIndex={tabIndex}
           onClick={handleFlyoutClick}
         >
           <img
             alt=""
-            className={css(flyoutStyles.flyoutIcon, iconSize)}
+            className={mergeClasses(
+              styles.flyoutIcon,
+              iconSize === 'sm' ? styles.flyoutIconSm : styles.flyoutIconLg,
+              'msla-flyout-icon',
+              iconSize
+            )}
             draggable={false}
             role="presentation"
             style={iconStyle}
