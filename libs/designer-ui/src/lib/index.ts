@@ -68,6 +68,7 @@ export * from './searchabledropdownWithAddAll';
 export * from './searchbox';
 export * from './settings/settingsection';
 export * from './staticResult';
+export * from './styles/connectionContainer';
 export * from './table';
 export * from './telemetry/models';
 export * from './templates';

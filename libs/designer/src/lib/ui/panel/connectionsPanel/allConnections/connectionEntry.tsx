@@ -3,6 +3,7 @@ import { openPanel } from '../../../../core/state/panel/panelSlice';
 import { NodeLinkButton } from './nodeLinkButton';
 import { css } from '@fluentui/react';
 import { Button, Spinner, Text, Tooltip } from '@fluentui/react-components';
+import { useConnectionContainerStyles } from '@microsoft/designer-ui';
 import {
   Open24Filled,
   ArrowSwap24Filled,
@@ -26,6 +27,7 @@ interface ConnectionEntryProps {
 
 export const ConnectionEntry = ({ connectorId, refId, connectionReference, iconUri, disconnectedNodeIds = [] }: ConnectionEntryProps) => {
   const dispatch = useDispatch();
+  const styles = useConnectionContainerStyles();
   const connectionId = cleanResourceId(connectionReference?.connection?.id);
   const connection = useConnectionById(connectionId, connectorId);
   const nodeIds = useMemo(() => connectionReference?.nodes || disconnectedNodeIds, [connectionReference?.nodes, disconnectedNodeIds]);
@@ -94,9 +96,9 @@ export const ConnectionEntry = ({ connectorId, refId, connectionReference, iconU
     return (
       <Tooltip content={hasErrors ? connectionInvalidStatusText : connectionValidStatusText} relationship="label">
         {hasErrors ? (
-          <ErrorCircle24Filled className={'msla-connection-status-icon--error'} />
+          <ErrorCircle24Filled className={styles.connectionStatusIcon} />
         ) : (
-          <CheckmarkCircle24Filled className={'msla-connection-status-icon--success'} />
+          <CheckmarkCircle24Filled className={styles.connectionStatusIcon} />
         )}
       </Tooltip>
     );

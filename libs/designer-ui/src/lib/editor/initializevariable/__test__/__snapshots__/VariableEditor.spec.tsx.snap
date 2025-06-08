@@ -135,7 +135,7 @@ exports[`VariableEditor > renders correctly with empty variables 1`] = `
           </label>
         </div>
         <div
-          class="___1lmsmok_0000000 f14t3ns0 f10pi13n fly5x3f"
+          class="___c4fnqf0_0000000 f10pi13n fly5x3f"
           data-automation-id="undefined-type-0"
         >
           <div
@@ -369,7 +369,7 @@ exports[`VariableEditor > renders correctly with single variable 1`] = `
           </label>
         </div>
         <div
-          class="___1lmsmok_0000000 f14t3ns0 f10pi13n fly5x3f"
+          class="___c4fnqf0_0000000 f10pi13n fly5x3f"
           data-automation-id="undefined-type-0"
         >
           <div
@@ -650,7 +650,7 @@ exports[`VariableEditor > renders correctly with single variable with Token 1`] 
           </label>
         </div>
         <div
-          class="___1lmsmok_0000000 f14t3ns0 f10pi13n fly5x3f"
+          class="___c4fnqf0_0000000 f10pi13n fly5x3f"
           data-automation-id="undefined-type-0"
         >
           <div
