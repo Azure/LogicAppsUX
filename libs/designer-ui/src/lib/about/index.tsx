@@ -4,6 +4,7 @@ import { Spinner, SpinnerSize } from '@fluentui/react';
 import { Label } from '@fluentui/react-components';
 import type { OpenAPIV2 } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
+import { useAboutStyles } from './about.styles';
 
 export interface AboutProps {
   connectorDisplayName?: string;
@@ -25,10 +26,11 @@ export const About = ({
   displayRuntimeInfo,
 }: AboutProps): JSX.Element => {
   const intl = useIntl();
+  const styles = useAboutStyles();
 
   if (isLoading) {
     return (
-      <div className="msla-panel-about-container">
+      <div className={styles.panelAboutContainer}>
         <Spinner size={SpinnerSize.large} />
       </div>
     );
@@ -38,7 +40,7 @@ export const About = ({
     return (
       <>
         {badges.map(({ badgeText, title }: BadgeProps) => (
-          <div className="msla-panel-tag" key={title} title={title} aria-label={badgeText}>
+          <div className={styles.panelTag} key={title} title={title} aria-label={badgeText}>
             {badgeText}
           </div>
         ))}
@@ -87,18 +89,18 @@ export const About = ({
     description: 'Label For Connector Type in About Panel',
   });
   return (
-    <div className="msla-panel-about-container">
+    <div className={styles.panelAboutContainer}>
       <div className="msla-panel-about-name">
-        <Label className="msla-panel-connector-label" size="large">
+        <Label className={styles.panelConnectorLabel} size="large">
           {connectorMsg}
         </Label>
-        <div className="msla-panel-connector-name">{connectorDisplayName ? connectorDisplayName : notAvailable}</div>
+        <div className={styles.panelConnectorName}>{connectorDisplayName ? connectorDisplayName : notAvailable}</div>
       </div>
       <div className="msla-panel-about-description">
-        <Label className="msla-panel-description-label" size="large">
+        <Label className={styles.panelDescriptionLabel} size="large">
           {operationNoteMsg}
         </Label>
-        <div className="msla-panel-description">
+        <div className={styles.panelDescription}>
           <DocumentationItem
             description={description}
             link={
@@ -109,17 +111,17 @@ export const About = ({
       </div>
       {displayRuntimeInfo ? (
         <div className="msla-panel-about-description">
-          <Label className="msla-panel-description-label" size="large">
+          <Label className={styles.panelDescriptionLabel} size="large">
             {connectorTypeLabel}
           </Label>
-          <div className="msla-panel-description">{connectorType}</div>
+          <div className={styles.panelDescription}>{connectorType}</div>
         </div>
       ) : null}
       <div className="msla-panel-about-tags">
-        <Label className="msla-panel-tags-label" size="large">
+        <Label className={styles.panelTagsLabel} size="large">
           {tagsMessage}
         </Label>
-        <div className="msla-panel-tags">{headerIcons && headerIcons.length > 0 ? badgeHeaderIcons(headerIcons) : noTags}</div>
+        <div className={styles.panelTags}>{headerIcons && headerIcons.length > 0 ? badgeHeaderIcons(headerIcons) : noTags}</div>
       </div>
     </div>
   );

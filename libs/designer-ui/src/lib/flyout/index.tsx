@@ -4,6 +4,7 @@ import { FlyoutCallout } from './flyoutcallout';
 import type { ITooltipHostStyles } from '@fluentui/react';
 import { css, mergeStyleSets, TooltipHost } from '@fluentui/react';
 import React, { useRef, useState } from 'react';
+import { useFlyoutStyles } from './flyout.styles';
 
 export interface FlyoutProps {
   ariaLabel?: string;
@@ -29,6 +30,7 @@ export const Flyout = React.forwardRef<{ collapseFlyout(): void }, FlyoutProps>(
   ({ ariaLabel, iconStyle, style, tabIndex = 0, text, tooltipHostStyles, onClick, title, iconSize = 'lg' }, ref) => {
     const buttonRef = useRef<HTMLButtonElement | null>(null);
     const [flyoutExpanded, setFlyoutExpanded] = useState(false);
+    const flyoutStyles = useFlyoutStyles();
 
     React.useImperativeHandle(ref, () => ({
       collapseFlyout() {
@@ -47,22 +49,22 @@ export const Flyout = React.forwardRef<{ collapseFlyout(): void }, FlyoutProps>(
       onClick?.();
     };
 
-    const styles = mergeStyleSets(defaultTooltipHostStyles, tooltipHostStyles);
+    const tooltipStyles = mergeStyleSets(defaultTooltipHostStyles, tooltipHostStyles);
 
     return (
-      <TooltipHost content={ariaLabel} styles={styles}>
+      <TooltipHost content={ariaLabel} styles={tooltipStyles}>
         <button
           data-testid="callout-btn"
           ref={buttonRef}
           aria-label={ariaLabel ?? title ?? text}
-          className="msla-button msla-flyout"
+          className={css('msla-button', flyoutStyles.flyout)}
           style={style}
           tabIndex={tabIndex}
           onClick={handleFlyoutClick}
         >
           <img
             alt=""
-            className={css('msla-flyout-icon', iconSize)}
+            className={css(flyoutStyles.flyoutIcon, iconSize)}
             draggable={false}
             role="presentation"
             style={iconStyle}

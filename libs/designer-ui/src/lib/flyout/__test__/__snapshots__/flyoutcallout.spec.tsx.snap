@@ -4,7 +4,7 @@ exports[`lib/flyout/flyoutcallout > should render 1`] = `
 <FocusTrapCallout
   ariaLabel="text"
   beakWidth={8}
-  className="msla-flyout-callout"
+  className="___j02p3f0_0000000 f1qsv63c f14gfkrv fpothgz"
   directionalHint={11}
   focusTrapProps={
     {
