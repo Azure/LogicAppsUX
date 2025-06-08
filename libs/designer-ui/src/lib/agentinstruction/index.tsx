@@ -81,7 +81,7 @@ export const AgentInstructionEditor = ({
         {descriptionLink}
         <NavigateIcon style={{ position: 'relative', top: '2px', left: '2px' }} />
       </Link>
-      <div className={mergeClasses(styles.editors, 'msla-agent-instruction-editors')}>
+      <div className={mergeClasses(styles.editors)}>
         <Label text={systemPromptLabel} isRequiredField />
         <StringEditor
           {...props}
