@@ -5,7 +5,7 @@ exports[`lib/searchabledropdownwithaddall > should create a dropdown with an add
   className="ms-Stack css-109"
 >
   <div
-    className="ms-Dropdown-container msla-searchable-dropdown-with-buttons"
+    className="ms-Dropdown-container ___125m06r_xtuee40 f1lmfglv f1ujusj6 f19f4twv fcgxt0o fly5x3f"
   >
     <div
       aria-expanded="false"
@@ -80,7 +80,7 @@ exports[`lib/searchabledropdownwithaddall > should create a dropdown with an add
   className="ms-Stack css-109"
 >
   <div
-    className="ms-Dropdown-container msla-searchable-dropdown-with-buttons"
+    className="ms-Dropdown-container ___125m06r_xtuee40 f1lmfglv f1ujusj6 f19f4twv fcgxt0o fly5x3f"
   >
     <div
       aria-expanded="false"

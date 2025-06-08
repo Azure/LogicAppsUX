@@ -1,7 +1,8 @@
 import { calloutContentStyles } from '../fabric';
 import type { IFocusTrapZoneProps, Target } from '@fluentui/react';
 import { DirectionalHint, FocusTrapCallout, mergeStyleSets, useTheme } from '@fluentui/react';
-import { useFlyoutCalloutStyles } from './flyout.styles';
+import { mergeClasses } from '@fluentui/react-components';
+import { useFlyoutStyles } from './flyout.styles';
 
 export interface FlyoutCalloutProps {
   target: Target | undefined;
@@ -21,7 +22,7 @@ const focusTrapProps: IFocusTrapZoneProps = { isClickableOutsideFocusTrap: true 
 
 export const FlyoutCallout: React.FC<FlyoutCalloutProps> = ({ target, text, visible, onDismiss }) => {
   const { palette } = useTheme();
-  const calloutStyles = useFlyoutCalloutStyles();
+  const flyoutStyles = useFlyoutStyles();
 
   if (!visible) {
     return null;
@@ -31,7 +32,7 @@ export const FlyoutCallout: React.FC<FlyoutCalloutProps> = ({ target, text, visi
     <FocusTrapCallout
       ariaLabel={text}
       beakWidth={8}
-      className={calloutStyles.flyoutCallout}
+      className={mergeClasses(flyoutStyles.flyoutCallout, 'msla-flyout-callout')}
       directionalHint={DirectionalHint.rightTopEdge}
       focusTrapProps={focusTrapProps}
       gapSpace={0}

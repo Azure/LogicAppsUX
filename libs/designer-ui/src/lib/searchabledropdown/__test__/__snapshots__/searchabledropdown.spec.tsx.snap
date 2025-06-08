@@ -2,7 +2,7 @@
 
 exports[`lib/searchabledropdown > should create a dropdown with a search box for 5 options 1`] = `
 <div
-  className="ms-Dropdown-container msla-searchable-dropdown"
+  className="ms-Dropdown-container msla-searchable-dropdown ___1gfbwor_1es7wob fyycim2 f1ujusj6 f19f4twv fcgxt0o"
 >
   <div
     aria-expanded="false"
@@ -45,7 +45,7 @@ exports[`lib/searchabledropdown > should create a dropdown with a search box for
 
 exports[`lib/searchabledropdown > should create a dropdown without a search box for 3 options 1`] = `
 <div
-  className="ms-Dropdown-container msla-searchable-dropdown"
+  className="ms-Dropdown-container msla-searchable-dropdown ___1gfbwor_1es7wob fyycim2 f1ujusj6 f19f4twv fcgxt0o"
 >
   <div
     aria-expanded="false"

@@ -1,51 +1,38 @@
-import { makeStyles, tokens } from '@fluentui/react-components';
+import { makeStyles, shorthands } from '@fluentui/react-components';
 import { designTokens } from '../tokens/designTokens';
 
-/**
- * Flyout styles migrated from flyout/flyout.less
- * Includes responsive icon sizes and themed link colors
- */
 export const useFlyoutStyles = makeStyles({
   flyout: {
     display: 'inline-block',
   },
-  flyoutIcon: {
-    '&.sm': {
-      width: '14px',
-      height: '14px',
-      display: 'inline-block',
-    },
-    '&.lg': {
-      width: '28px',
-      height: '28px',
-      margin: '8px',
-    },
-  },
-});
 
-export const useFlyoutCalloutStyles = makeStyles({
+  flyoutIcon: {
+    display: 'inline-block',
+  },
+
+  flyoutIconSm: {
+    width: '14px',
+    height: '14px',
+  },
+
+  flyoutIconLg: {
+    width: '28px',
+    height: '28px',
+    ...shorthands.margin('8px'),
+  },
+
   flyoutCallout: {
-    "& div[role='dialog']": {
-      padding: '8px',
+    '& div[role="dialog"]': {
+      ...shorthands.padding('8px'),
     },
 
     '& a': {
+      textDecoration: 'underline',
+      color: designTokens.colors.brandColor, // Automatically handles theme switching
+
       '&:active, &:link, &:hover, &:visited': {
         textDecoration: 'underline',
         color: designTokens.colors.brandColor,
-      },
-    },
-  },
-});
-
-/**
- * Dark theme specific styles for flyout callout
- */
-export const useFlyoutCalloutDarkStyles = makeStyles({
-  flyoutCallout: {
-    '& a': {
-      '&:active, &:link, &:hover, &:visited': {
-        color: tokens.colorBrandBackground, // Fluent UI's primary theme color
       },
     },
   },

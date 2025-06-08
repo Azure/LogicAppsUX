@@ -1,6 +1,8 @@
 import { ActionResults, type ActionResultUpdateHandler } from './outputMocks';
 import { Label, Dropdown, type IDropdownOption } from '@fluentui/react';
+import { mergeClasses } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
+import { useOutputMocksStyles } from './outputMocks.styles';
 
 export interface ActionResultProps {
   nodeId: string;
@@ -10,6 +12,7 @@ export interface ActionResultProps {
 
 export const ActionResult: React.FC<ActionResultProps> = ({ nodeId, onActionResultUpdate, actionResult }): JSX.Element => {
   const intl = useIntl();
+  const styles = useOutputMocksStyles();
 
   const intlText = {
     ACTION_RESULT: intl.formatMessage({
@@ -46,7 +49,7 @@ export const ActionResult: React.FC<ActionResultProps> = ({ nodeId, onActionResu
       <Label id={labelId}>{intlText.ACTION_RESULT}</Label>
       <Dropdown
         aria-labelledby={labelId}
-        className={'msla-output-mocks-actions-dropdown'}
+        className={mergeClasses(styles.actionsDropdown, 'msla-output-mocks-actions-dropdown')}
         options={options}
         onChange={onChangeActionResult}
         selectedKey={actionResult}

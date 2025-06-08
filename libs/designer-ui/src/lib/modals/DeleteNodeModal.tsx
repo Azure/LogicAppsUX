@@ -13,6 +13,7 @@ import type { WorkflowNodeType } from '@microsoft/logic-apps-shared';
 import { WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
 import { useCallback, useState } from 'react';
 import { useIntl } from 'react-intl';
+import { useModalStyles } from './styles';
 
 export interface DeleteNodeModalProps {
   nodeId: string;
@@ -26,6 +27,7 @@ export interface DeleteNodeModalProps {
 
 export const DeleteNodeModal = (props: DeleteNodeModalProps) => {
   const { nodeId, nodeName, nodeType, isOpen, onDismiss, onConfirm } = props;
+  const styles = useModalStyles();
 
   const intl = useIntl();
 
@@ -121,7 +123,7 @@ export const DeleteNodeModal = (props: DeleteNodeModalProps) => {
       <DialogSurface>
         <DialogBody>
           <DialogTitle>{nodeId ? title : ''}</DialogTitle>
-          <DialogContent className="msla-modal-container">
+          <DialogContent className={styles.modalContainer}>
             {nodeId ? (
               <>
                 <p>{bodyConfirmText}</p>
