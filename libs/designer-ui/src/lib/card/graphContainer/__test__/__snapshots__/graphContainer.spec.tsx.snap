@@ -2,28 +2,28 @@
 
 exports[`GraphContainer component > renders with active prop set to false 1`] = `
 <div
-  className="msla-card-inactive ___16tapc7_phwali0 fly5x3f f1l02sjl f10pi13n f1dmdbja f1ewtqcl f1erghxr f1ehz9de f1spoy8 fmb70yw ftac7j7 f1w0yd9v fdwcyh7 f1h0xgbp fzkkow9 fcdblym fg706s2 fjik90z fezkupx fjp7mhy fxszt0l ffvjst7 fcw4hzm f73gjfx fqf7may f1tzzr66 f1475uvo fzw26dj fei6c6s fd8fhxq fenhr2i fokv5x4 f162m1m7 fg5psxl"
+  className="msla-card-inactive ___1ai772d_15eae7l fly5x3f f1l02sjl f10pi13n f1dmdbja f1ewtqcl f1erghxr f1ehz9de f1spoy8 fmb70yw ftac7j7 f1w0yd9v fdwcyh7 f1h0xgbp fzkkow9 fcdblym fg706s2 fjik90z fj3muxo f1akhkt f1aperda f1lxtadh fcw4hzm f73gjfx fqf7may f1tzzr66 f1475uvo fzw26dj fei6c6s fd8fhxq fenhr2i fokv5x4 f162m1m7 fg5psxl"
   data-automation-id="msla-graph-container-test_container"
 />
 `;
 
 exports[`GraphContainer component > renders with default props 1`] = `
 <div
-  className="___16tapc7_phwali0 fly5x3f f1l02sjl f10pi13n f1dmdbja f1ewtqcl f1erghxr f1ehz9de f1spoy8 fmb70yw ftac7j7 f1w0yd9v fdwcyh7 f1h0xgbp fzkkow9 fcdblym fg706s2 fjik90z fezkupx fjp7mhy fxszt0l ffvjst7 fcw4hzm f73gjfx fqf7may f1tzzr66 f1475uvo fzw26dj fei6c6s fd8fhxq fenhr2i fokv5x4 f162m1m7 fg5psxl"
+  className="___1ai772d_15eae7l fly5x3f f1l02sjl f10pi13n f1dmdbja f1ewtqcl f1erghxr f1ehz9de f1spoy8 fmb70yw ftac7j7 f1w0yd9v fdwcyh7 f1h0xgbp fzkkow9 fcdblym fg706s2 fjik90z fj3muxo f1akhkt f1aperda f1lxtadh fcw4hzm f73gjfx fqf7may f1tzzr66 f1475uvo fzw26dj fei6c6s fd8fhxq fenhr2i fokv5x4 f162m1m7 fg5psxl"
   data-automation-id="msla-graph-container-test_container"
 />
 `;
 
 exports[`GraphContainer component > renders with selected and active props 1`] = `
 <div
-  className="selected msla-card-inactive ___16tapc7_phwali0 fly5x3f f1l02sjl f10pi13n f1dmdbja f1ewtqcl f1erghxr f1ehz9de f1spoy8 fmb70yw ftac7j7 f1w0yd9v fdwcyh7 f1h0xgbp fzkkow9 fcdblym fg706s2 fjik90z fezkupx fjp7mhy fxszt0l ffvjst7 fcw4hzm f73gjfx fqf7may f1tzzr66 f1475uvo fzw26dj fei6c6s fd8fhxq fenhr2i fokv5x4 f162m1m7 fg5psxl"
+  className="selected msla-card-inactive ___1ai772d_15eae7l fly5x3f f1l02sjl f10pi13n f1dmdbja f1ewtqcl f1erghxr f1ehz9de f1spoy8 fmb70yw ftac7j7 f1w0yd9v fdwcyh7 f1h0xgbp fzkkow9 fcdblym fg706s2 fjik90z fj3muxo f1akhkt f1aperda f1lxtadh fcw4hzm f73gjfx fqf7may f1tzzr66 f1475uvo fzw26dj fei6c6s fd8fhxq fenhr2i fokv5x4 f162m1m7 fg5psxl"
   data-automation-id="msla-graph-container-test_container"
 />
 `;
 
 exports[`GraphContainer component > renders with selected prop 1`] = `
 <div
-  className="selected ___16tapc7_phwali0 fly5x3f f1l02sjl f10pi13n f1dmdbja f1ewtqcl f1erghxr f1ehz9de f1spoy8 fmb70yw ftac7j7 f1w0yd9v fdwcyh7 f1h0xgbp fzkkow9 fcdblym fg706s2 fjik90z fezkupx fjp7mhy fxszt0l ffvjst7 fcw4hzm f73gjfx fqf7may f1tzzr66 f1475uvo fzw26dj fei6c6s fd8fhxq fenhr2i fokv5x4 f162m1m7 fg5psxl"
+  className="selected ___1ai772d_15eae7l fly5x3f f1l02sjl f10pi13n f1dmdbja f1ewtqcl f1erghxr f1ehz9de f1spoy8 fmb70yw ftac7j7 f1w0yd9v fdwcyh7 f1h0xgbp fzkkow9 fcdblym fg706s2 fjik90z fj3muxo f1akhkt f1aperda f1lxtadh fcw4hzm f73gjfx fqf7may f1tzzr66 f1475uvo fzw26dj fei6c6s fd8fhxq fenhr2i fokv5x4 f162m1m7 fg5psxl"
   data-automation-id="msla-graph-container-test_container"
 />
 `;

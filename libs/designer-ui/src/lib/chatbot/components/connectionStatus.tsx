@@ -12,7 +12,6 @@ type ConnectionStatusProps = {
 export const ConnectionStatus: React.FC<ConnectionStatusProps> = ({ apiName, isConnected }) => {
   const intl = useIntl();
   const styles = useConnectionContainerStyles();
-  const styles = useConnectionContainerStyles();
   const intlText = {
     connectionsSetupCardDescription: intl.formatMessage({
       defaultMessage: 'Set up these connections to use them in your flow.',

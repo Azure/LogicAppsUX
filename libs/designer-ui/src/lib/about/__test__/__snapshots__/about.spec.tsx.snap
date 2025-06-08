@@ -2,7 +2,7 @@
 
 exports[`lib/monitoring/requestpanel/request > renders correctly when descriptionDocumentation is undefined 1`] = `
 <div
-  className="msla-panel-about-container ___1yay4zj_sahxni0 f1vx9l62 f22iagw fhumf3i fat0sn4 f1cnezvq fekwl8i"
+  className="___1yay4zj_0000000 f1vx9l62 f22iagw fhumf3i fat0sn4 f1cnezvq fekwl8i"
 >
   <div
     className="msla-panel-about-name"
@@ -54,7 +54,7 @@ exports[`lib/monitoring/requestpanel/request > renders correctly when descriptio
 
 exports[`lib/monitoring/requestpanel/request > renders correctly with different connectorDisplayName values 1`] = `
 <div
-  className="msla-panel-about-container ___1yay4zj_sahxni0 f1vx9l62 f22iagw fhumf3i fat0sn4 f1cnezvq fekwl8i"
+  className="___1yay4zj_0000000 f1vx9l62 f22iagw fhumf3i fat0sn4 f1cnezvq fekwl8i"
 >
   <div
     className="msla-panel-about-name"
@@ -106,7 +106,7 @@ exports[`lib/monitoring/requestpanel/request > renders correctly with different 
 
 exports[`lib/monitoring/requestpanel/request > renders correctly with different headerIcons values 1`] = `
 <div
-  className="msla-panel-about-container ___1yay4zj_sahxni0 f1vx9l62 f22iagw fhumf3i fat0sn4 f1cnezvq fekwl8i"
+  className="___1yay4zj_0000000 f1vx9l62 f22iagw fhumf3i fat0sn4 f1cnezvq fekwl8i"
 >
   <div
     className="msla-panel-about-name"
@@ -173,7 +173,7 @@ exports[`lib/monitoring/requestpanel/request > renders correctly with different 
 
 exports[`lib/monitoring/requestpanel/request > should render 1`] = `
 <div
-  className="msla-panel-about-container ___1yay4zj_sahxni0 f1vx9l62 f22iagw fhumf3i fat0sn4 f1cnezvq fekwl8i"
+  className="___1yay4zj_0000000 f1vx9l62 f22iagw fhumf3i fat0sn4 f1cnezvq fekwl8i"
 >
   <div
     className="msla-panel-about-name"
@@ -225,7 +225,7 @@ exports[`lib/monitoring/requestpanel/request > should render 1`] = `
 
 exports[`lib/monitoring/requestpanel/request > should render a body 1`] = `
 <div
-  className="msla-panel-about-container ___1yay4zj_sahxni0 f1vx9l62 f22iagw fhumf3i fat0sn4 f1cnezvq fekwl8i"
+  className="___1yay4zj_0000000 f1vx9l62 f22iagw fhumf3i fat0sn4 f1cnezvq fekwl8i"
 >
   <div
     className="msla-panel-about-name"
@@ -294,7 +294,7 @@ exports[`lib/monitoring/requestpanel/request > should render a body 1`] = `
 
 exports[`lib/monitoring/requestpanel/request > should render a description with external link 1`] = `
 <div
-  className="msla-panel-about-container ___1yay4zj_sahxni0 f1vx9l62 f22iagw fhumf3i fat0sn4 f1cnezvq fekwl8i"
+  className="___1yay4zj_0000000 f1vx9l62 f22iagw fhumf3i fat0sn4 f1cnezvq fekwl8i"
 >
   <div
     className="msla-panel-about-name"

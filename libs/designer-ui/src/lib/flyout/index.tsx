@@ -51,10 +51,8 @@ export const Flyout = React.forwardRef<{ collapseFlyout(): void }, FlyoutProps>(
     };
 
     const tooltipStyles = mergeStyleSets(defaultTooltipHostStyles, tooltipHostStyles);
-    const tooltipStyles = mergeStyleSets(defaultTooltipHostStyles, tooltipHostStyles);
 
     return (
-      <TooltipHost content={ariaLabel} styles={tooltipStyles}>
       <TooltipHost content={ariaLabel} styles={tooltipStyles}>
         <button
           data-testid="callout-btn"

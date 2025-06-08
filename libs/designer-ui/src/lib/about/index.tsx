@@ -1,7 +1,7 @@
 import type { BadgeProps } from '../card';
 import { DocumentationItem } from '../recommendation/documentationItem';
 import { Spinner, SpinnerSize } from '@fluentui/react';
-import { Label, mergeClasses } from '@fluentui/react-components';
+import { Label } from '@fluentui/react-components';
 import type { OpenAPIV2 } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 import { useAboutStyles } from './about.styles';
@@ -26,7 +26,6 @@ export const About = ({
   displayRuntimeInfo,
 }: AboutProps): JSX.Element => {
   const intl = useIntl();
-  const styles = useAboutStyles();
   const styles = useAboutStyles();
 
   if (isLoading) {
@@ -105,7 +104,12 @@ export const About = ({
           <DocumentationItem
             description={description}
             link={
-              descriptionDocumentation?.url ? { url: descriptionDocumentation.url, urlDescription: documentationURLDescription } : undefined
+              descriptionDocumentation?.url
+                ? {
+                    url: descriptionDocumentation.url,
+                    urlDescription: documentationURLDescription,
+                  }
+                : undefined
             }
           />
         </div>
