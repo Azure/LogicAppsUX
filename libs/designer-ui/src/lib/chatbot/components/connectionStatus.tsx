@@ -35,7 +35,7 @@ export const ConnectionStatus: React.FC<ConnectionStatusProps> = ({ apiName, isC
     <span className={'msla-connection-status'}>
       <FontIcon
         iconName={isConnected ? 'Completed' : 'Error'}
-        className={mergeClasses(styles.connectionStatusIcon, 'msla-connection-status-icon', isConnected && CONNECTED_CLASS)}
+        className={mergeClasses(styles.connectionStatusIcon, isConnected && CONNECTED_CLASS)}
       />
       <span className={'msla-connection-status-text'}>
         {statusFormat}
