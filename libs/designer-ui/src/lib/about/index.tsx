@@ -90,7 +90,7 @@ export const About = ({
     description: 'Label For Connector Type in About Panel',
   });
   return (
-    <div className={mergeClasses(styles.container, 'msla-panel-about-container')}>
+    <div className={styles.container}>
       <div className="msla-panel-about-name">
         <Label className={styles.connectorLabel} size="large">
           {connectorMsg}
