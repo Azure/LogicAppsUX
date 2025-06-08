@@ -33,6 +33,39 @@ exports[`GraphContainerNode > should apply correct styles based on node size 1`]
 </div>
 `;
 
+exports[`GraphContainerNode > should apply correct styles based on node size 2`] = `
+<div
+  className="msla-graph-container-wrapper"
+  style={
+    {
+      "height": 100,
+      "width": 100,
+    }
+  }
+>
+  <div
+    className="node-handle top"
+    isConnectable={false}
+    position="top"
+    type="target"
+  >
+    Handle reactflow
+  </div>
+  <div
+    className="___16tapc7_phwali0 fly5x3f f1l02sjl f10pi13n f1dmdbja f1ewtqcl f1erghxr f1ehz9de f1spoy8 fmb70yw ftac7j7 f1w0yd9v fdwcyh7 f1h0xgbp fzkkow9 fcdblym fg706s2 fjik90z fezkupx fjp7mhy fxszt0l ffvjst7 fcw4hzm f73gjfx fqf7may f1tzzr66 f1475uvo fzw26dj fei6c6s fd8fhxq fenhr2i fokv5x4 f162m1m7 fg5psxl"
+    data-automation-id="msla-graph-container-mockid"
+  />
+  <div
+    className="node-handle bottom"
+    isConnectable={false}
+    position="bottom"
+    type="source"
+  >
+    Handle reactflow
+  </div>
+</div>
+`;
+
 exports[`GraphContainerNode > should not render DropZone when showLeafComponents is false 1`] = `
 <div
   className="msla-graph-container-wrapper"
@@ -53,6 +86,39 @@ exports[`GraphContainerNode > should not render DropZone when showLeafComponents
   </div>
   <div
     className="msla-graph-container"
+    data-automation-id="msla-graph-container-mockid"
+  />
+  <div
+    className="node-handle bottom"
+    isConnectable={false}
+    position="bottom"
+    type="source"
+  >
+    Handle reactflow
+  </div>
+</div>
+`;
+
+exports[`GraphContainerNode > should not render DropZone when showLeafComponents is false 2`] = `
+<div
+  className="msla-graph-container-wrapper"
+  style={
+    {
+      "height": 100,
+      "width": 100,
+    }
+  }
+>
+  <div
+    className="node-handle top"
+    isConnectable={false}
+    position="top"
+    type="target"
+  >
+    Handle reactflow
+  </div>
+  <div
+    className="___16tapc7_phwali0 fly5x3f f1l02sjl f10pi13n f1dmdbja f1ewtqcl f1erghxr f1ehz9de f1spoy8 fmb70yw ftac7j7 f1w0yd9v fdwcyh7 f1h0xgbp fzkkow9 fcdblym fg706s2 fjik90z fezkupx fjp7mhy fxszt0l ffvjst7 fcw4hzm f73gjfx fqf7may f1tzzr66 f1475uvo fzw26dj fei6c6s fd8fhxq fenhr2i fokv5x4 f162m1m7 fg5psxl"
     data-automation-id="msla-graph-container-mockid"
   />
   <div
@@ -113,6 +179,53 @@ exports[`GraphContainerNode > should render DropZone when showLeafComponents is 
 ]
 `;
 
+exports[`GraphContainerNode > should render DropZone when showLeafComponents is true 2`] = `
+[
+  <div
+    className="msla-graph-container-wrapper"
+    style={
+      {
+        "height": 100,
+        "width": 100,
+      }
+    }
+  >
+    <div
+      className="node-handle top"
+      isConnectable={false}
+      position="top"
+      type="target"
+    >
+      Handle reactflow
+    </div>
+    <div
+      className="___16tapc7_phwali0 fly5x3f f1l02sjl f10pi13n f1dmdbja f1ewtqcl f1erghxr f1ehz9de f1spoy8 fmb70yw ftac7j7 f1w0yd9v fdwcyh7 f1h0xgbp fzkkow9 fcdblym fg706s2 fjik90z fezkupx fjp7mhy fxszt0l ffvjst7 fcw4hzm f73gjfx fqf7may f1tzzr66 f1475uvo fzw26dj fei6c6s fd8fhxq fenhr2i fokv5x4 f162m1m7 fg5psxl"
+      data-automation-id="msla-graph-container-mockid"
+    />
+    <div
+      className="node-handle bottom"
+      isConnectable={false}
+      position="bottom"
+      type="source"
+    >
+      Handle reactflow
+    </div>
+  </div>,
+  <div
+    className="edge-drop-zone-container"
+  >
+    <div
+      graphId=""
+      isLeaf={true}
+      parentId="mockId"
+      tabIndex={0}
+    >
+      DropZone
+    </div>
+  </div>,
+]
+`;
+
 exports[`GraphContainerNode > should render graph container as inactive when is monitoring view 1`] = `
 <div
   className="msla-graph-container-wrapper"
@@ -133,6 +246,39 @@ exports[`GraphContainerNode > should render graph container as inactive when is 
   </div>
   <div
     className="msla-graph-container msla-card-inactive"
+    data-automation-id="msla-graph-container-mockid"
+  />
+  <div
+    className="node-handle bottom"
+    isConnectable={false}
+    position="bottom"
+    type="source"
+  >
+    Handle reactflow
+  </div>
+</div>
+`;
+
+exports[`GraphContainerNode > should render graph container as inactive when is monitoring view 2`] = `
+<div
+  className="msla-graph-container-wrapper"
+  style={
+    {
+      "height": 100,
+      "width": 100,
+    }
+  }
+>
+  <div
+    className="node-handle top"
+    isConnectable={false}
+    position="top"
+    type="target"
+  >
+    Handle reactflow
+  </div>
+  <div
+    className="msla-card-inactive ___16tapc7_phwali0 fly5x3f f1l02sjl f10pi13n f1dmdbja f1ewtqcl f1erghxr f1ehz9de f1spoy8 fmb70yw ftac7j7 f1w0yd9v fdwcyh7 f1h0xgbp fzkkow9 fcdblym fg706s2 fjik90z fezkupx fjp7mhy fxszt0l ffvjst7 fcw4hzm f73gjfx fqf7may f1tzzr66 f1475uvo fzw26dj fei6c6s fd8fhxq fenhr2i fokv5x4 f162m1m7 fg5psxl"
     data-automation-id="msla-graph-container-mockid"
   />
   <div
@@ -179,6 +325,39 @@ exports[`GraphContainerNode > should render graph container as normal when in mo
 </div>
 `;
 
+exports[`GraphContainerNode > should render graph container as normal when in monitoring view 2`] = `
+<div
+  className="msla-graph-container-wrapper"
+  style={
+    {
+      "height": 100,
+      "width": 100,
+    }
+  }
+>
+  <div
+    className="node-handle top"
+    isConnectable={false}
+    position="top"
+    type="target"
+  >
+    Handle reactflow
+  </div>
+  <div
+    className="___16tapc7_phwali0 fly5x3f f1l02sjl f10pi13n f1dmdbja f1ewtqcl f1erghxr f1ehz9de f1spoy8 fmb70yw ftac7j7 f1w0yd9v fdwcyh7 f1h0xgbp fzkkow9 fcdblym fg706s2 fjik90z fezkupx fjp7mhy fxszt0l ffvjst7 fcw4hzm f73gjfx fqf7may f1tzzr66 f1475uvo fzw26dj fei6c6s fd8fhxq fenhr2i fokv5x4 f162m1m7 fg5psxl"
+    data-automation-id="msla-graph-container-mockid"
+  />
+  <div
+    className="node-handle bottom"
+    isConnectable={false}
+    position="bottom"
+    type="source"
+  >
+    Handle reactflow
+  </div>
+</div>
+`;
+
 exports[`GraphContainerNode > should render the top and bottom handles 1`] = `
 <div
   className="msla-graph-container-wrapper"
@@ -199,6 +378,39 @@ exports[`GraphContainerNode > should render the top and bottom handles 1`] = `
   </div>
   <div
     className="msla-graph-container"
+    data-automation-id="msla-graph-container-mockid"
+  />
+  <div
+    className="node-handle bottom"
+    isConnectable={false}
+    position="bottom"
+    type="source"
+  >
+    Handle reactflow
+  </div>
+</div>
+`;
+
+exports[`GraphContainerNode > should render the top and bottom handles 2`] = `
+<div
+  className="msla-graph-container-wrapper"
+  style={
+    {
+      "height": 100,
+      "width": 100,
+    }
+  }
+>
+  <div
+    className="node-handle top"
+    isConnectable={false}
+    position="top"
+    type="target"
+  >
+    Handle reactflow
+  </div>
+  <div
+    className="___16tapc7_phwali0 fly5x3f f1l02sjl f10pi13n f1dmdbja f1ewtqcl f1erghxr f1ehz9de f1spoy8 fmb70yw ftac7j7 f1w0yd9v fdwcyh7 f1h0xgbp fzkkow9 fcdblym fg706s2 fjik90z fezkupx fjp7mhy fxszt0l ffvjst7 fcw4hzm f73gjfx fqf7may f1tzzr66 f1475uvo fzw26dj fei6c6s fd8fhxq fenhr2i fokv5x4 f162m1m7 fg5psxl"
     data-automation-id="msla-graph-container-mockid"
   />
   <div
@@ -245,6 +457,39 @@ exports[`GraphContainerNode > should render with footer and be a subgraph 1`] = 
 </div>
 `;
 
+exports[`GraphContainerNode > should render with footer and be a subgraph 2`] = `
+<div
+  className="msla-graph-container-wrapper has-footer is-subgraph"
+  style={
+    {
+      "height": 100,
+      "width": 100,
+    }
+  }
+>
+  <div
+    className="node-handle top"
+    isConnectable={false}
+    position="top"
+    type="target"
+  >
+    Handle reactflow
+  </div>
+  <div
+    className="___16tapc7_phwali0 fly5x3f f1l02sjl f10pi13n f1dmdbja f1ewtqcl f1erghxr f1ehz9de f1spoy8 fmb70yw ftac7j7 f1w0yd9v fdwcyh7 f1h0xgbp fzkkow9 fcdblym fg706s2 fjik90z fezkupx fjp7mhy fxszt0l ffvjst7 fcw4hzm f73gjfx fqf7may f1tzzr66 f1475uvo fzw26dj fei6c6s fd8fhxq fenhr2i fokv5x4 f162m1m7 fg5psxl"
+    data-automation-id="msla-graph-container-mockid"
+  />
+  <div
+    className="node-handle bottom"
+    isConnectable={false}
+    position="bottom"
+    type="source"
+  >
+    Handle reactflow
+  </div>
+</div>
+`;
+
 exports[`GraphContainerNode > should render without crashing 1`] = `
 <div
   className="msla-graph-container-wrapper"
@@ -265,6 +510,39 @@ exports[`GraphContainerNode > should render without crashing 1`] = `
   </div>
   <div
     className="msla-graph-container"
+    data-automation-id="msla-graph-container-mockid"
+  />
+  <div
+    className="node-handle bottom"
+    isConnectable={false}
+    position="bottom"
+    type="source"
+  >
+    Handle reactflow
+  </div>
+</div>
+`;
+
+exports[`GraphContainerNode > should render without crashing 2`] = `
+<div
+  className="msla-graph-container-wrapper"
+  style={
+    {
+      "height": 100,
+      "width": 100,
+    }
+  }
+>
+  <div
+    className="node-handle top"
+    isConnectable={false}
+    position="top"
+    type="target"
+  >
+    Handle reactflow
+  </div>
+  <div
+    className="___16tapc7_phwali0 fly5x3f f1l02sjl f10pi13n f1dmdbja f1ewtqcl f1erghxr f1ehz9de f1spoy8 fmb70yw ftac7j7 f1w0yd9v fdwcyh7 f1h0xgbp fzkkow9 fcdblym fg706s2 fjik90z fezkupx fjp7mhy fxszt0l ffvjst7 fcw4hzm f73gjfx fqf7may f1tzzr66 f1475uvo fzw26dj fei6c6s fd8fhxq fenhr2i fokv5x4 f162m1m7 fg5psxl"
     data-automation-id="msla-graph-container-mockid"
   />
   <div

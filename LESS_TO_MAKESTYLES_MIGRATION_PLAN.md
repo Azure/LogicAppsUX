@@ -326,6 +326,115 @@ import { designTokens } from '../tokens/designTokens';
 
 **Phase 6 Update**: The cleanup phase (Week 13-14) becomes critical - this is when we systematically remove all LESS files after confirming no component dependencies remain.
 
+#### Critical Learning: Remove Original CSS Class Names During Migration
+
+**CRITICAL DISCOVERY**: During component migration, original CSS class names should be removed from components, not preserved alongside makeStyles implementations.
+
+**The Issue**: Initially, we preserved original LESS class names alongside new makeStyles classes using `mergeClasses`:
+```typescript
+// ❌ AVOID: Preserving both old and new class names
+className={mergeClasses(styles.root, 'msla-original-class-name')}
+```
+
+**The Problem**: Keeping both class names makes it difficult to:
+- Determine when something breaks (unclear which styling system is being used)
+- Debug styling issues (multiple class names can conflict)
+- Verify that the migration is complete and working correctly
+- Clean up the codebase effectively
+
+**The Solution**: Remove original CSS class names when migrating components:
+```typescript
+// ✅ CORRECT: Use only the new makeStyles classes
+className={styles.root}
+
+// ✅ ACCEPTABLE: Merge with dynamic classes but not original LESS classes  
+className={mergeClasses(styles.root, dynamicClassName)}
+```
+
+**Best Practice Implementation**:
+1. **Keep LESS files** during migration (parallel migration strategy)
+2. **Create makeStyles alternatives** for components
+3. **Remove original CSS class names** from component implementations
+4. **Only use new makeStyles classes** in component className properties
+5. **Test thoroughly** to ensure styling works with only the new system
+6. **Remove LESS files** only after all components are migrated
+
+**Benefits of This Approach**:
+- ✅ Makes it clear when makeStyles migration is complete for each component
+- ✅ Enables easier debugging (only one styling system per component)
+- ✅ Prevents class name conflicts between old and new systems
+- ✅ Ensures migrated components are truly independent of LESS files
+- ✅ Makes it easier to identify remaining LESS dependencies
+
+**What NOT to Do**:
+- ❌ Don't preserve original LESS class names in migrated components
+- ❌ Don't use `mergeClasses` to combine old and new styling systems
+- ❌ Don't leave hybrid implementations that use both LESS and makeStyles
+
+This strategy ensures clean, debuggable migrations while maintaining the parallel migration approach for the overall project.
+
+#### Critical Learning: Use Design Tokens Instead of CSS Selectors for Theme Switching
+
+**CRITICAL DISCOVERY**: Griffel (Fluent UI v9's CSS-in-JS engine) generates warnings and issues when using CSS parent selectors like `.msla-theme-dark &` for theme switching.
+
+**The Issue**: Using CSS selectors for theme switching in makeStyles causes Griffel warnings:
+```typescript
+// ❌ AVOID: Causes Griffel warnings
+makeStyles({
+  root: {
+    '.msla-theme-dark &': {
+      backgroundColor: tokens.colorNeutralBackground1,
+      borderColor: tokens.colorNeutralStroke1,
+    },
+  },
+})
+```
+
+**The Solution**: Use Fluent UI v9 design tokens that automatically handle theme switching:
+```typescript
+// ✅ CORRECT: Use design tokens that automatically adapt to theme
+makeStyles({
+  root: {
+    backgroundColor: tokens.colorNeutralBackground1, // Automatically switches between light/dark
+    borderColor: tokens.colorNeutralStroke1,         // Theme-aware border
+  },
+})
+```
+
+**Benefits of Design Token Approach**:
+- ✅ Eliminates Griffel warnings completely
+- ✅ Follows Fluent UI v9 best practices
+- ✅ Automatic theme switching without CSS selectors
+- ✅ More maintainable and consistent
+- ✅ Better performance (no complex CSS selector resolution)
+
+**Implementation Strategy**:
+1. **Use existing design tokens** from `/libs/designer-ui/src/lib/tokens/designTokens.ts`
+2. **Leverage Fluent UI v9 tokens** directly (e.g., `tokens.colorNeutralBackground1`)
+3. **Only use CSS selectors** for styles that cannot be expressed with design tokens (rare cases)
+
+**Available Token Categories**:
+- Background colors: `tokens.colorNeutralBackground1/2/3`
+- Border colors: `tokens.colorNeutralStroke1/2`
+- Text colors: `tokens.colorNeutralForeground1/2/3`
+- Brand colors: `tokens.colorBrandBackground`
+- Hover states: `tokens.colorNeutralBackground1Hover`
+
+**Example Migration**:
+```typescript
+// Before: CSS selector approach (causes warnings)
+'.msla-theme-dark &': {
+  backgroundColor: tokens.colorNeutralBackground1,
+  borderColor: tokens.colorNeutralStroke1,
+}
+
+// After: Design token approach (no warnings)
+backgroundColor: tokens.colorNeutralBackground1,
+borderColor: tokens.colorNeutralStroke1,
+```
+
+This approach aligns with Fluent UI v9 architecture and eliminates all Griffel-related warnings in tests.
+
 ### Build System Updates
 1. **Remove LESS dependencies**:
    - `less`

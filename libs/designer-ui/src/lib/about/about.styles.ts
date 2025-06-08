@@ -1,41 +1,44 @@
-import { makeStyles, tokens } from '@fluentui/react-components';
+import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
 import { designTokens } from '../tokens/designTokens';
 
-/**
- * About panel styles migrated from about/about.less
- * Styles for connector information panel with labels, descriptions, and tags
- */
 export const useAboutStyles = makeStyles({
-  panelAboutContainer: {
+  container: {
     flexDirection: 'column',
     display: 'flex',
-    padding: '30px 20px',
+    ...shorthands.padding('30px', '20px'),
   },
-  panelConnectorLabel: {
+
+  connectorLabel: {
     paddingBottom: '5px',
-    fontWeight: tokens.fontWeightSemibold,
+    fontFamily: designTokens.typography.semiboldFontFamily,
   },
-  panelConnectorName: {
+
+  connectorName: {
     fontWeight: 'normal',
-    padding: '10px 0 0 0',
+    ...shorthands.padding('10px', '0', '0', '0'),
     marginBottom: '30px',
   },
-  panelDescriptionLabel: {
-    fontWeight: tokens.fontWeightSemibold,
+
+  descriptionLabel: {
+    fontFamily: designTokens.typography.semiboldFontFamily,
   },
-  panelDescription: {
-    padding: '10px 0 0 0',
+
+  description: {
+    ...shorthands.padding('10px', '0', '0', '0'),
     marginBottom: '30px',
   },
-  panelTagsLabel: {
-    fontWeight: tokens.fontWeightSemibold,
+
+  tagsLabel: {
+    fontFamily: designTokens.typography.semiboldFontFamily,
   },
-  panelTags: {
-    padding: '10px 0 0 0',
+
+  tags: {
+    ...shorthands.padding('10px', '0', '0', '0'),
   },
-  panelTag: {
-    border: designTokens.borders.default,
-    padding: '2px',
+
+  tag: {
+    ...shorthands.border(designTokens.spacing.badgeBorder, 'solid', tokens.colorNeutralStroke1),
+    ...shorthands.padding('2px'),
     display: 'inline-block',
     fontSize: designTokens.typography.cardLabelFontSize,
     height: '14px',

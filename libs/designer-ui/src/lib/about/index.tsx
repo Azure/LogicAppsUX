@@ -1,7 +1,7 @@
 import type { BadgeProps } from '../card';
 import { DocumentationItem } from '../recommendation/documentationItem';
 import { Spinner, SpinnerSize } from '@fluentui/react';
-import { Label } from '@fluentui/react-components';
+import { Label, mergeClasses } from '@fluentui/react-components';
 import type { OpenAPIV2 } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 import { useAboutStyles } from './about.styles';
@@ -27,10 +27,11 @@ export const About = ({
 }: AboutProps): JSX.Element => {
   const intl = useIntl();
   const styles = useAboutStyles();
+  const styles = useAboutStyles();
 
   if (isLoading) {
     return (
-      <div className={styles.panelAboutContainer}>
+      <div className={styles.container}>
         <Spinner size={SpinnerSize.large} />
       </div>
     );
@@ -40,7 +41,7 @@ export const About = ({
     return (
       <>
         {badges.map(({ badgeText, title }: BadgeProps) => (
-          <div className={styles.panelTag} key={title} title={title} aria-label={badgeText}>
+          <div className={styles.tag} key={title} title={title} aria-label={badgeText}>
             {badgeText}
           </div>
         ))}
@@ -89,18 +90,18 @@ export const About = ({
     description: 'Label For Connector Type in About Panel',
   });
   return (
-    <div className={styles.panelAboutContainer}>
+    <div className={mergeClasses(styles.container, 'msla-panel-about-container')}>
       <div className="msla-panel-about-name">
-        <Label className={styles.panelConnectorLabel} size="large">
+        <Label className={styles.connectorLabel} size="large">
           {connectorMsg}
         </Label>
-        <div className={styles.panelConnectorName}>{connectorDisplayName ? connectorDisplayName : notAvailable}</div>
+        <div className={styles.connectorName}>{connectorDisplayName ? connectorDisplayName : notAvailable}</div>
       </div>
       <div className="msla-panel-about-description">
-        <Label className={styles.panelDescriptionLabel} size="large">
+        <Label className={styles.descriptionLabel} size="large">
           {operationNoteMsg}
         </Label>
-        <div className={styles.panelDescription}>
+        <div className={styles.description}>
           <DocumentationItem
             description={description}
             link={
@@ -111,17 +112,17 @@ export const About = ({
       </div>
       {displayRuntimeInfo ? (
         <div className="msla-panel-about-description">
-          <Label className={styles.panelDescriptionLabel} size="large">
+          <Label className={styles.descriptionLabel} size="large">
             {connectorTypeLabel}
           </Label>
-          <div className={styles.panelDescription}>{connectorType}</div>
+          <div className={styles.description}>{connectorType}</div>
         </div>
       ) : null}
       <div className="msla-panel-about-tags">
-        <Label className={styles.panelTagsLabel} size="large">
+        <Label className={styles.tagsLabel} size="large">
           {tagsMessage}
         </Label>
-        <div className={styles.panelTags}>{headerIcons && headerIcons.length > 0 ? badgeHeaderIcons(headerIcons) : noTags}</div>
+        <div className={styles.tags}>{headerIcons && headerIcons.length > 0 ? badgeHeaderIcons(headerIcons) : noTags}</div>
       </div>
     </div>
   );

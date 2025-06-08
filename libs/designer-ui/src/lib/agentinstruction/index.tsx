@@ -1,4 +1,4 @@
-import { Link, MessageBar, MessageBarBody, MessageBarTitle, Text } from '@fluentui/react-components';
+import { Link, MessageBar, MessageBarBody, MessageBarTitle, Text, mergeClasses } from '@fluentui/react-components';
 import type { BaseEditorProps, CastHandler, ChangeHandler, ChangeState, GetTokenPickerHandler } from '../editor/base';
 import { useIntl } from 'react-intl';
 import { bundleIcon, Open12Regular, Open12Filled } from '@fluentui/react-icons';
@@ -8,6 +8,7 @@ import { parseAgentInstruction, AGENT_INSTRUCTION_TYPES, serializeAgentInstructi
 import { css } from '@fluentui/utilities';
 import { ArrayEditor, ArrayType } from '../arrayeditor';
 import { Label } from '../label';
+import { useAgentInstructionStyles } from './agentinstruction.styles';
 
 export const NavigateIcon = bundleIcon(Open12Regular, Open12Filled);
 
@@ -24,6 +25,7 @@ export const AgentInstructionEditor = ({
   ...props
 }: AgentInstructionEditorProps): JSX.Element => {
   const intl = useIntl();
+  const styles = useAgentInstructionStyles();
   const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
   const { systemMessage, userMessage } = useMemo(() => {
     return parseAgentInstruction(initialValue, setErrorMessage);
@@ -79,11 +81,11 @@ export const AgentInstructionEditor = ({
         {descriptionLink}
         <NavigateIcon style={{ position: 'relative', top: '2px', left: '2px' }} />
       </Link>
-      <div className="msla-agent-instruction-editors">
+      <div className={mergeClasses(styles.editors, 'msla-agent-instruction-editors')}>
         <Label text={systemPromptLabel} isRequiredField />
         <StringEditor
           {...props}
-          className={css(className, 'msla-agent-instruction-system-editor editor-custom')}
+          className={mergeClasses(styles.systemEditor, css(className, 'msla-agent-instruction-system-editor editor-custom'))}
           placeholder={systemPlaceholder}
           initialValue={systemMessage}
           editorBlur={(newState: ChangeState) => handleValueChange(newState, AGENT_INSTRUCTION_TYPES.SYSTEM)}
@@ -103,7 +105,11 @@ export const AgentInstructionEditor = ({
         />
       </div>
       {errorMessage ? (
-        <MessageBar key={'warning'} intent={'warning'} className="msla-agent-instruction-editor-warning">
+        <MessageBar
+          key={'warning'}
+          intent={'warning'}
+          className={mergeClasses(styles.editorWarning, 'msla-agent-instruction-editor-warning')}
+        >
           <MessageBarBody>
             <MessageBarTitle>{errorMessage}</MessageBarTitle>
             {warningInstructionBody}
