@@ -40,7 +40,7 @@ export const ConnectionTableDetailsButton = (props: ConnectionTableDetailsButton
   });
 
   // Check if creation time is epoch 0 (January 1, 1970) which indicates missing/invalid date
-  const isEpochZero = !!connection.createdTime;
+  const isEpochZero = !connection.createdTime || new Date(connection.createdTime).getTime() === 0;
 
   return (
     <Popover
