@@ -39,6 +39,9 @@ export const ConnectionTableDetailsButton = (props: ConnectionTableDetailsButton
     description: 'Label for connection creation date',
   });
 
+  // Check if creation time is epoch 0 (January 1, 1970) which indicates missing/invalid date
+  const isEpochZero = new Date(connection.createdTime || 0).getTime() === 0;
+
   return (
     <Popover
       onOpenChange={(_e, data) => {
@@ -71,8 +74,12 @@ export const ConnectionTableDetailsButton = (props: ConnectionTableDetailsButton
         <h3>{detailsHeader}</h3>
         <h4>{connectionNameLabel}</h4>
         <p>{connection.name}</p>
-        <h4>{createdDateLabel}</h4>
-        <p>{intl.formatDate(connection.createdTime, { dateStyle: 'long', timeStyle: 'short' })}</p>
+        {!isEpochZero && (
+          <>
+            <h4>{createdDateLabel}</h4>
+            <p>{intl.formatDate(connection.createdTime, { dateStyle: 'long', timeStyle: 'short' })}</p>
+          </>
+        )}
       </PopoverSurface>
     </Popover>
   );
