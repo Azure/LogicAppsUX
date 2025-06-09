@@ -46,7 +46,7 @@ interface GroupProps {
   tokenMapping?: Record<string, ValueSegment>;
   loadParameterValueFromString?: loadParameterValueFromStringHandler;
   getTokenPicker: GetTokenPickerHandler;
-  // handleMove?: (childIndex: number, moveOption: MoveOption) => void;
+  handleMove?: (childIndex: number, moveOption: MoveOption, itemToMove?: GroupItemProps | RowItemProps) => void;
   handleDeleteChild?: (indexToDelete: number | number[]) => void;
   handleUngroupChild?: (indexToInsertAt: number) => void;
   handleUpdateParent: (newProps: GroupItemProps, index: number) => void;
@@ -63,7 +63,7 @@ export const Group = ({
   isBottom,
   getTokenPicker,
   readonly,
-  // handleMove,
+  handleMove,
   handleDeleteChild,
   handleUngroupChild,
   handleUpdateParent,
@@ -94,6 +94,9 @@ export const Group = ({
       itemsToInsert = [{ type: GroupType.ROW, operand1: [], operand2: [], operator: RowDropdownOptions.EQUALS }];
     }
     const newItems = { ...groupProps };
+    if (!newItems.items) {
+      newItems.items = [];
+    }
     newItems.items.splice(indexToAddAt, 1, ...itemsToInsert);
     handleUpdateParent(newItems, index);
   };
@@ -104,15 +107,17 @@ export const Group = ({
     description: 'delete button',
   });
 
-  // const moveUpButton = intl.formatMessage({
-  //   defaultMessage: 'Move up',
-  //   description: 'Move up button',
-  // });
+  const moveUpButton = intl.formatMessage({
+    defaultMessage: 'Move up',
+    id: 'xFQdSb',
+    description: 'Move up button',
+  });
 
-  // const moveDownButton = intl.formatMessage({
-  //   defaultMessage: 'Move down',
-  //   description: 'Move down button',
-  // });
+  const moveDownButton = intl.formatMessage({
+    defaultMessage: 'Move down',
+    id: 'inn/0k',
+    description: 'Move down button',
+  });
 
   const makeGroupButton = intl.formatMessage({
     defaultMessage: 'Make group',
@@ -129,7 +134,7 @@ export const Group = ({
   const groupMenuItems: IOverflowSetItemProps[] = [
     {
       key: deleteButton,
-      disabled: groupProps.items.length <= 1 && mustHaveItem,
+      disabled: (groupProps.items?.length || 0) <= 1 && mustHaveItem,
       iconProps: {
         iconName: 'Delete',
       },
@@ -137,29 +142,26 @@ export const Group = ({
       name: deleteButton,
       onClick: () => handleDeleteChild?.(index),
     },
-    // TODO: Allow Moving of Groups in querybuilder
-    // {
-    //   key: moveUpButton,
-    //   disabled: true, //isTop,
-    //   iconProps: {
-    //     iconName: 'Up',
-    //   },
-    //   iconOnly: true,
-    //   name: moveUpButton,
-    //   onClick: () => handleMove?.(index, MoveOption.UP),
-    // },
-
-    // TODO: Allow Moving of Groups in querybuilder
-    // {
-    //   key: moveDownButton,
-    //   disabled: true, //isBottom,
-    //   iconProps: {
-    //     iconName: 'Down',
-    //   },
-    //   iconOnly: true,
-    //   name: moveDownButton,
-    //   onClick: () => handleMove?.(index, MoveOption.DOWN),
-    // },
+    {
+      key: moveUpButton,
+      disabled: isTop,
+      iconProps: {
+        iconName: 'Up',
+      },
+      iconOnly: true,
+      name: moveUpButton,
+      onClick: () => handleMove?.(index, MoveOption.UP),
+    },
+    {
+      key: moveDownButton,
+      disabled: isBottom,
+      iconProps: {
+        iconName: 'Down',
+      },
+      iconOnly: true,
+      name: moveDownButton,
+      onClick: () => handleMove?.(index, MoveOption.DOWN),
+    },
     {
       key: makeGroupButton,
       disabled: !(isGroupable && groupProps.checked),
@@ -191,6 +193,9 @@ export const Group = ({
   const handleDelete = (indicesToDelete: number | number[]) => {
     // Is an array of indices to delete
     const newItems = { ...groupProps };
+    if (!newItems.items) {
+      newItems.items = [];
+    }
     if (Array.isArray(indicesToDelete)) {
       if (indicesToDelete.length === newItems.items.length) {
         handleDeleteChild?.(index);
@@ -200,7 +205,7 @@ export const Group = ({
         }
         handleUpdateParent(newItems, index);
       }
-    } else if (groupProps.items.length <= 1) {
+    } else if ((groupProps.items?.length || 0) <= 1) {
       handleDeleteChild?.(index);
     } else {
       newItems.items.splice(indicesToDelete, 1);
@@ -208,19 +213,93 @@ export const Group = ({
     }
   };
 
-  // const handleMoveChild = (childIndex: number, moveOption: MoveOption) => {
-  //   if (childIndex <= 0 && moveOption === MoveOption.UP) {
-  //     // const newItems = { ...groupProps };
-  //   } else if (childIndex >= groupProps.items.length - 1 && moveOption === MoveOption.DOWN) {
-  //     // come back
-  //   } else {
-  //     const newItems = { ...groupProps };
-  //     const child = newItems.items[childIndex];
-  //     newItems.items[childIndex] = newItems.items[childIndex + (moveOption === MoveOption.UP ? -1 : 1)];
-  //     newItems.items[childIndex + (moveOption === MoveOption.UP ? -1 : 1)] = child;
-  //     handleUpdateParent(newItems, index);
-  //   }
-  // };
+  const handleMoveChild = (childIndex: number, moveOption: MoveOption, itemToMove?: GroupItemProps | RowItemProps) => {
+    const newItems = { ...groupProps };
+    if (!newItems.items) {
+      newItems.items = [];
+    }
+    const isMovingUp = moveOption === MoveOption.UP;
+    const isAtTop = childIndex === 0;
+    const isAtBottom = childIndex === (groupProps.items?.length || 0) - 1;
+
+    if (itemToMove) {
+      // This is a cross-group move from a nested group
+      if (isMovingUp) {
+        // Insert the item above the group it came from
+        newItems.items.splice(childIndex, 0, itemToMove);
+      } else {
+        // Insert the item below the group it came from
+        newItems.items.splice(childIndex + 1, 0, itemToMove);
+      }
+      handleUpdateParent(newItems, index);
+      return;
+    }
+
+    // Handle moving within the current group
+    if ((isMovingUp && !isAtTop) || (!isMovingUp && !isAtBottom)) {
+      const child = newItems.items[childIndex];
+      const targetIndex = childIndex + (isMovingUp ? -1 : 1);
+      const targetItem = newItems.items[targetIndex];
+
+      // Safety check - ensure both child and targetItem exist
+      if (!child || !targetItem) {
+        return;
+      }
+
+      // Special case: if moving down into a group, add to the top of that group
+      if (!isMovingUp && targetItem.type === GroupType.GROUP) {
+        if (!targetItem.items) {
+          targetItem.items = [];
+        }
+        targetItem.items.unshift(child);
+        newItems.items.splice(childIndex, 1);
+      }
+      // Special case: if moving up into a group, add to the bottom of that group
+      else if (isMovingUp && targetItem.type === GroupType.GROUP) {
+        if (!targetItem.items) {
+          targetItem.items = [];
+        }
+        targetItem.items.push(child);
+        newItems.items.splice(childIndex, 1);
+      }
+      // Normal swap
+      else {
+        newItems.items[childIndex] = targetItem;
+        newItems.items[targetIndex] = child;
+      }
+      handleUpdateParent(newItems, index);
+      return;
+    }
+
+    // Handle boundary conditions - need to move to parent level or into adjacent groups
+    if (isMovingUp && isAtTop) {
+      // Move out of group to above the group, or into the group above if it exists
+      const itemToMove = newItems.items[childIndex];
+      if (!itemToMove) {
+        return;
+      }
+      newItems.items.splice(childIndex, 1);
+      handleUpdateParent(newItems, index);
+
+      // Signal to parent to handle cross-group movement
+      if (handleMove) {
+        handleMove(index, MoveOption.UP, itemToMove);
+      }
+    } else if (!isMovingUp && isAtBottom) {
+      // Move out of group to below the group, or into the group below if it exists
+      const itemToMove = newItems.items[childIndex];
+      if (!itemToMove) {
+        return;
+      }
+      newItems.items.splice(childIndex, 1);
+      handleUpdateParent(newItems, index);
+
+      // Signal to parent to handle cross-group movement
+      if (handleMove) {
+        handleMove(index, MoveOption.DOWN, itemToMove);
+      }
+    }
+  };
 
   const onRenderOverflowButton = (): JSX.Element => {
     const groupCommands = intl.formatMessage({
@@ -282,7 +361,7 @@ export const Group = ({
                 key={groupProps.condition}
                 readonly={readonly}
               />
-              {groupProps.items.map((item, currIndex) => {
+              {(groupProps.items || []).map((item, currIndex) => {
                 return item.type === GroupType.ROW ? (
                   <Row
                     readonly={readonly}
@@ -293,12 +372,12 @@ export const Group = ({
                     operand2={item.operand2}
                     index={currIndex}
                     isGroupable={isGroupable}
-                    showDisabledDelete={groupProps.items.length <= 1 && mustHaveItem}
+                    showDisabledDelete={(groupProps.items?.length || 0) <= 1 && mustHaveItem}
                     groupedItems={groupedItems}
-                    // isTop={isTop && currIndex === 0 && !!isRootGroup}
-                    // isBottom={isBottom && index === groupProps.items.length - 1 && !!isRootGroup}
+                    isTop={isTop && currIndex === 0 && !!isRootGroup}
+                    isBottom={isBottom && currIndex === (groupProps.items?.length || 0) - 1 && !!isRootGroup}
                     getTokenPicker={getTokenPicker}
-                    // handleMove={handleMoveChild}
+                    handleMove={handleMoveChild}
                     handleDeleteChild={handleDelete}
                     handleUpdateParent={handleUpdateNewParent}
                     {...baseEditorProps}
@@ -316,11 +395,11 @@ export const Group = ({
                     index={currIndex}
                     isGroupable={isGroupable}
                     groupedItems={groupedItems}
-                    mustHaveItem={groupProps.items.length <= 1 && mustHaveItem}
+                    mustHaveItem={(groupProps.items?.length || 0) <= 1 && mustHaveItem}
                     isTop={isTop && currIndex === 0}
-                    isBottom={isBottom && currIndex === groupProps.items.length - 1}
+                    isBottom={isBottom && currIndex === (groupProps.items?.length || 0) - 1}
                     getTokenPicker={getTokenPicker}
-                    // handleMove={handleMoveChild}
+                    handleMove={handleMoveChild}
                     handleDeleteChild={handleDelete}
                     handleUngroupChild={() => handleUngroup(currIndex, item.items)}
                     handleUpdateParent={handleUpdateNewParent}
@@ -330,18 +409,18 @@ export const Group = ({
               })}
               {
                 <>
-                  {groupProps.items.length === 0 ? (
+                  {(groupProps.items?.length || 0) === 0 ? (
                     <Row
                       readonly={readonly}
                       key={'row 0'}
                       index={0}
                       isGroupable={isGroupable}
-                      showDisabledDelete={groupProps.items.length <= 1 && mustHaveItem}
-                      // isTop={isTop && !!isRootGroup}
-                      // isBottom={isBottom && !!isRootGroup}
+                      showDisabledDelete={(groupProps.items?.length || 0) <= 1 && mustHaveItem}
+                      isTop={isTop && !!isRootGroup}
+                      isBottom={isBottom && !!isRootGroup}
                       groupedItems={groupedItems}
                       getTokenPicker={getTokenPicker}
-                      // handleMove={handleMoveChild}
+                      handleMove={handleMoveChild}
                       handleDeleteChild={handleDeleteChild}
                       handleUpdateParent={handleUpdateNewParent}
                       {...baseEditorProps}
@@ -350,8 +429,8 @@ export const Group = ({
                   <AddSection
                     readonly={readonly}
                     handleUpdateParent={handleUpdateNewParent}
-                    index={groupProps.items.length}
-                    addEmptyRow={groupProps.items.length === 0}
+                    index={groupProps.items?.length || 0}
+                    addEmptyRow={(groupProps.items?.length || 0) === 0}
                   />
                 </>
               }
