@@ -132,8 +132,8 @@ export function WorkflowParameter({
       <div className={styles.heading}>
         <Button
           id={definition.id}
-          data-automation-id={`${name}-parameter-heading-button`}
-          data-testid={`${name}-parameter-heading-button`}
+          data-automation-id={`${definition.name || definition.id}-parameter-heading-button`}
+          data-testid={`${definition.name || definition.id}-parameter-heading-button`}
           appearance="subtle"
           className={styles.headingButton}
           onClick={handleToggleExpand}

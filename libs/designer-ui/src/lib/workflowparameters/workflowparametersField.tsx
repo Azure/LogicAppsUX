@@ -253,9 +253,8 @@ export const WorkflowparameterField = ({
   };
 
   // Render value input based on type
-  const renderValueInput = (fieldValue: string, isDefault = false) => {
+  const renderValueInput = (fieldValue: string, isDefault = false, fieldId: string) => {
     const placeholder = isDefault ? defaultValueDescription : valueDescription;
-    const fieldId = isDefault ? parameterDetails.defaultValue : parameterDetails.value;
     const fieldLabel = isDefault ? defaultValueTitle : valueTitle;
     const handleInputChange = isDefault ? handleDefaultValueChange : handleValueChange;
     const handleTextareaChange = isDefault ? handleDefaultValueTextareaChange : handleValueTextareaChange;
@@ -265,6 +264,7 @@ export const WorkflowparameterField = ({
         return (
           <Textarea
             data-testid={fieldId}
+            data-automation-id={fieldId}
             id={fieldId}
             aria-label={fieldLabel}
             placeholder={placeholder}
@@ -282,6 +282,7 @@ export const WorkflowparameterField = ({
         return (
           <Textarea
             data-testid={fieldId}
+            data-automation-id={fieldId}
             id={fieldId}
             aria-label={fieldLabel}
             placeholder={placeholder}
@@ -298,6 +299,7 @@ export const WorkflowparameterField = ({
         return (
           <Input
             data-testid={fieldId}
+            data-automation-id={fieldId}
             id={fieldId}
             aria-label={fieldLabel}
             placeholder={placeholder}
@@ -325,6 +327,7 @@ export const WorkflowparameterField = ({
             <>
               <Input
                 data-testid={parameterDetails.name}
+                data-automation-id={parameterDetails.name}
                 id={parameterDetails.name}
                 aria-label={nameTitle}
                 placeholder={nameDescription}
@@ -353,6 +356,7 @@ export const WorkflowparameterField = ({
             <>
               <Dropdown
                 data-testid={parameterDetails.type}
+                data-automation-id={parameterDetails.type}
                 aria-label={typeTitle}
                 placeholder={typeTitle}
                 value={typeTexts[type] || type}
@@ -394,7 +398,7 @@ export const WorkflowparameterField = ({
             <div className={styles.fieldEditor}>
               {isEditable ? (
                 <>
-                  {renderValueInput(defaultValue || '', true)}
+                  {renderValueInput(defaultValue || '', true, parameterDetails.value)}
                   {errors[DEFAULT_VALUE_KEY] && <div className={styles.fieldError}>{errors[DEFAULT_VALUE_KEY]}</div>}
                   {defaultValueWarningMessage && renderWarning(defaultValueWarningMessage)}
                 </>
@@ -434,7 +438,7 @@ export const WorkflowparameterField = ({
           <div className={styles.fieldEditor}>
             {getFieldBooleanValue(isEditable, VALUE_KEY) ? (
               <>
-                {renderValueInput(value || '')}
+                {renderValueInput(value || '', false, parameterDetails.value)}
                 {errors[VALUE_KEY] && <div className={styles.fieldError}>{errors[VALUE_KEY]}</div>}
               </>
             ) : (
