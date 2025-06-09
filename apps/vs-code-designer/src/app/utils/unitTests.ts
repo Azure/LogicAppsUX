@@ -845,7 +845,8 @@ export function buildClassDefinition(className: string, node: any): ClassDefinit
       if (subNode?.nestedTypeProperty === 'array') {
         isObject = true;
         const arrayItemNode = subNode['[*]'];
-        const arrayItemClassName = subNode?.description ? toPascalCase(subNode?.description.replace(/\s+/g, '')) : ''; // Remove spaces from description
+        let arrayItemClassName = subNode?.description ? toPascalCase(subNode?.description.replace(/\s+/g, '')) : ''; // Remove spaces from description
+        arrayItemClassName = arrayItemClassName === '' ? `${propName}${arrayItemNode.title}` : `${propName}Item`;
         const arrayItemDef = buildClassDefinition(arrayItemClassName, arrayItemNode);
 
         // If there are child properties then use the newly created object, otherwise use JObject

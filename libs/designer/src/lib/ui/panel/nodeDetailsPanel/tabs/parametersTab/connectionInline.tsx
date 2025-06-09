@@ -1,20 +1,18 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import {
-  CreateConnectionInternal,
-  type CreatedConnectionPayload,
-} from '../../../connectionsPanel/createConnection/createConnectionWrapper';
+import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import { getConnectionMetadata, reloadParametersTab, updateNodeConnection } from '../../../../../core/actions/bjsworkflow/connections';
 import { useConnectorByNodeId, useNodeConnectionId } from '../../../../../core/state/connection/connectionSelector';
 import { useConnectionPanelSelectedNodeIds, useOperationPanelSelectedNodeId } from '../../../../../core/state/panel/panelSelectors';
 import { useOperationManifest } from '../../../../../core/state/selectors/actionMetadataSelector';
-import { getAssistedConnectionProps } from '../../../../../core/utils/connectors/connections';
-import type { AppDispatch, RootState } from '../../../../../core';
 import { useOperationInfo } from '../../../../../core';
-import { useIntl } from 'react-intl';
 import { useConnectionsForConnector } from '../../../../../core/queries/connections';
+import { getAssistedConnectionProps } from '../../../../../core/utils/connectors/connections';
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { Button, Text } from '@fluentui/react-components';
+import type { CreatedConnectionPayload } from '../../../connectionsPanel/createConnection/createConnectionWrapper';
+import { CreateConnectionInternal } from '../../../connectionsPanel/createConnection/createConnectionInternal';
+import type { AppDispatch, RootState } from '../../../../../core';
 import { useRawInputParameters } from '../../../../../core/state/operation/operationSelector';
 import { isAgentConnectorAndAgentServiceModel } from './helpers';
 
@@ -35,8 +33,8 @@ export const ConnectionInline: React.FC<ConnectionInlineProps> = ({ showSubCompo
   const existingReferences = useSelector((state: RootState) => Object.keys(state.connections.connectionReferences));
   const connectionQuery = useConnectionsForConnector(connector?.id ?? '');
   const connections = useMemo(() => connectionQuery?.data ?? [], [connectionQuery]);
-  const hasExistingConnections = connections.length > 0;
-  const [showCreateConnection, setShowCreation] = useState(hasExistingConnections);
+  const hasExistingConnections = useMemo(() => connections.length > 0, [connections]);
+  const [showCreateConnection, setShowCreateConnection] = useState(hasExistingConnections);
   const currentConnectionId = useNodeConnectionId(nodeId);
   const selectedConnection = useMemo(
     () => connections.find((connection) => connection.id === currentConnectionId),
@@ -48,8 +46,8 @@ export const ConnectionInline: React.FC<ConnectionInlineProps> = ({ showSubCompo
   }, [nodeInputs?.parameterGroups, operationInfo.connectorId]);
 
   const setConnection = useCallback(() => {
-    setShowCreation(true);
-  }, [setShowCreation]);
+    setShowCreateConnection(true);
+  }, [setShowCreateConnection]);
 
   const assistedConnectionProps = useMemo(
     () => (connector ? getAssistedConnectionProps(connector, operationManifest) : undefined),
@@ -57,7 +55,7 @@ export const ConnectionInline: React.FC<ConnectionInlineProps> = ({ showSubCompo
   );
 
   useEffect(() => {
-    setShowCreation(hasExistingConnections);
+    setShowCreateConnection(hasExistingConnections);
   }, [hasExistingConnections]);
 
   const intlText = useMemo(
@@ -113,7 +111,7 @@ export const ConnectionInline: React.FC<ConnectionInlineProps> = ({ showSubCompo
         if (hasExistingConnections) {
           setShowSubComponent && setShowSubComponent(false);
         } else {
-          setShowCreation(false);
+          setShowCreateConnection(false);
         }
       }}
       isAgentServiceConnection={isAgentServiceConnection}

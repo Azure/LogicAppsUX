@@ -1,5 +1,5 @@
 import { useTheme } from '@fluentui/react';
-import type { TokenGroup } from '@microsoft/logic-apps-shared';
+import type { TokenGroup, ValueSegment } from '@microsoft/logic-apps-shared';
 import constants from '../../../constants';
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -12,6 +12,7 @@ import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext
 import type { GetValueSegmentHandler } from '../tokenpickeroption';
 import { SINGLE_VALUE_SEGMENT } from '../../../editor/base/plugins/SingleValueSegment';
 import { INSERT_TOKEN_NODE } from '../../../editor/base/plugins/InsertTokenNode';
+import type { LexicalEditor } from 'lexical';
 
 const AddIcon = bundleIcon(AddFilled, AddRegular);
 
@@ -19,13 +20,24 @@ interface SelectAgentParameterProps {
   agentParameters?: TokenGroup;
   onCreateAgentParameter?: () => void;
   getValueSegmentFromToken: GetValueSegmentHandler;
+  tokenClickedCallback?: (token: ValueSegment) => void;
 }
 
-export const SelectAgentParameter = ({ agentParameters, onCreateAgentParameter, getValueSegmentFromToken }: SelectAgentParameterProps) => {
+export const SelectAgentParameter = ({
+  agentParameters,
+  onCreateAgentParameter,
+  getValueSegmentFromToken,
+  tokenClickedCallback,
+}: SelectAgentParameterProps) => {
   const intl = useIntl();
   const [searchQuery, setSearchQuery] = useState<string>('');
   const { isInverted } = useTheme();
-  const [editor] = useLexicalComposerContext();
+  let editor: LexicalEditor | null;
+  try {
+    [editor] = useLexicalComposerContext();
+  } catch {
+    editor = null;
+  }
 
   const searchPlaceHolderText = intl.formatMessage({
     defaultMessage: 'Search',
@@ -49,19 +61,22 @@ export const SelectAgentParameter = ({ agentParameters, onCreateAgentParameter, 
     async (token: OutputToken) => {
       const { brandColor, icon, title, description, value } = token;
       const segment = await getValueSegmentFromToken(token, false);
-      console.log(segment);
 
-      editor?.dispatchCommand(SINGLE_VALUE_SEGMENT, true);
-      editor?.dispatchCommand(INSERT_TOKEN_NODE, {
-        brandColor,
-        description,
-        title,
-        icon,
-        value,
-        data: segment,
-      });
+      if (tokenClickedCallback) {
+        tokenClickedCallback(segment);
+      } else {
+        editor?.dispatchCommand(SINGLE_VALUE_SEGMENT, true);
+        editor?.dispatchCommand(INSERT_TOKEN_NODE, {
+          brandColor,
+          description,
+          title,
+          icon,
+          value,
+          data: segment,
+        });
+      }
     },
-    [editor, getValueSegmentFromToken]
+    [editor, getValueSegmentFromToken, tokenClickedCallback]
   );
 
   const fuse = useMemo(

@@ -268,6 +268,106 @@ describe('generateCSharpClasses - HTTP Action', () => {
     expect(classCode).toContain('this.StatusCode = HttpStatusCode.OK;');
     expect(classCode).toContain('this.Key1 = string.Empty;');
   });
+
+  it('should generate C# class code from a class definition HTTP action with schema', () => {
+    const workflowName = 'TestWorkflow';
+    const mockType = 'Action';
+    const mockClassName = 'MockClass';
+    const classCode = generateCSharpClasses(
+      'NamespaceName',
+      'RootClass',
+      workflowName,
+      mockType,
+      mockClassName,
+      {
+        body: {
+          orderId: {
+            nestedTypeProperty: 'string',
+            title: 'orderId',
+          },
+          customerId: {
+            nestedTypeProperty: 'string',
+            title: 'customerId',
+          },
+          region: {
+            nestedTypeProperty: 'string',
+            title: 'region',
+          },
+          orderDetails: {
+            '[*]': {
+              productId: {
+                nestedTypeProperty: 'string',
+                title: 'productId',
+              },
+              productName: {
+                nestedTypeProperty: 'string',
+                title: 'productName',
+              },
+              quantity: {
+                nestedTypeProperty: 'integer',
+                title: 'quantity',
+              },
+              unitPrice: {
+                nestedTypeProperty: 'integer',
+                title: 'unitPrice',
+              },
+              nestedTypeProperty: 'object',
+              title: 'Item',
+            },
+            nestedTypeProperty: 'array',
+            title: 'orderDetails',
+          },
+          nestedTypeProperty: 'object',
+          title: 'Body',
+        },
+        headers: {
+          nestedTypeProperty: 'object',
+          title: 'Headers',
+        },
+        relativePathParameters: {
+          nestedTypeProperty: 'object',
+          title: 'Path Parameters',
+        },
+        queries: {
+          nestedTypeProperty: 'object',
+          title: 'Queries',
+        },
+      },
+      true
+    );
+
+    expect(classCode).toContain('public class RootClass');
+    expect(classCode).toContain('public HttpStatusCode StatusCode {get; set;}');
+    expect(classCode).toContain('public RootClassBody Body { get; set; }');
+
+    expect(classCode).toContain('public RootClass()');
+    expect(classCode).toContain('this.StatusCode = HttpStatusCode.OK;');
+    expect(classCode).toContain('this.Body = new RootClassBody();');
+
+    expect(classCode).toContain('public class RootClassBody');
+    expect(classCode).toContain('public string OrderId { get; set; }');
+    expect(classCode).toContain('public string CustomerId { get; set; }');
+    expect(classCode).toContain('public string Region { get; set; }');
+    expect(classCode).toContain('public List<OrderDetailsItem> OrderDetails { get; set; }');
+
+    expect(classCode).toContain('public RootClassBody()');
+    expect(classCode).toContain('this.OrderId = string.Empty;');
+    expect(classCode).toContain('this.CustomerId = string.Empty;');
+    expect(classCode).toContain('this.Region = string.Empty;');
+    expect(classCode).toContain('this.OrderDetails = new List<OrderDetailsItem>();');
+
+    expect(classCode).toContain('public class OrderDetailsItem');
+    expect(classCode).toContain('public string ProductId { get; set; }');
+    expect(classCode).toContain('public string ProductName { get; set; }');
+    expect(classCode).toContain('public int Quantity { get; set; }');
+    expect(classCode).toContain('public int UnitPrice { get; set; }');
+
+    expect(classCode).toContain('public OrderDetailsItem()');
+    expect(classCode).toContain('this.ProductId = string.Empty;');
+    expect(classCode).toContain('this.ProductName = string.Empty;');
+    expect(classCode).toContain('this.Quantity = 0;');
+    expect(classCode).toContain('this.UnitPrice = 0;');
+  });
 });
 
 describe('generateCSharpClasses - non HTTP', () => {

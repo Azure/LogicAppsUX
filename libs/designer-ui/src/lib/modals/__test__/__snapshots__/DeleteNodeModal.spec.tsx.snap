@@ -38,7 +38,7 @@ exports[`DeleteNodeModal Snapshots > should match snapshot for graph node 1`] = 
             Delete workflow graph
           </h2>
           <div
-            class="fui-DialogContent r1v5zwsm msla-modal-container"
+            class="fui-DialogContent r1v5zwsm ___1hy2n0k_n23su40 fvgz9i8"
           >
             <p>
               Are you sure you want to delete 
@@ -174,7 +174,7 @@ exports[`DeleteNodeModal Snapshots > should match snapshot for operation node 1`
             Delete workflow action
           </h2>
           <div
-            class="fui-DialogContent r1v5zwsm msla-modal-container"
+            class="fui-DialogContent r1v5zwsm ___1hy2n0k_n23su40 fvgz9i8"
           >
             <p>
               Are you sure you want to delete 
@@ -310,7 +310,7 @@ exports[`DeleteNodeModal Snapshots > should match snapshot for other node types 
             Node
           </h2>
           <div
-            class="fui-DialogContent r1v5zwsm msla-modal-container"
+            class="fui-DialogContent r1v5zwsm ___1hy2n0k_n23su40 fvgz9i8"
           >
             <p>
               Are you sure you want to delete 
@@ -446,7 +446,7 @@ exports[`DeleteNodeModal Snapshots > should match snapshot for switch case node 
             Delete switch case
           </h2>
           <div
-            class="fui-DialogContent r1v5zwsm msla-modal-container"
+            class="fui-DialogContent r1v5zwsm ___1hy2n0k_n23su40 fvgz9i8"
           >
             <p>
               Are you sure you want to delete 
@@ -580,7 +580,7 @@ exports[`DeleteNodeModal Snapshots > should match snapshot when nodeId is not pr
             id="dialog-title-r1e"
           />
           <div
-            class="fui-DialogContent r1v5zwsm msla-modal-container"
+            class="fui-DialogContent r1v5zwsm ___1hy2n0k_n23su40 fvgz9i8"
           >
             <div
               aria-labelledby="spinnerr1f"

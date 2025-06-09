@@ -40,7 +40,7 @@ test.describe(
       await expect(page.getByText('State type')).toBeVisible();
     });
 
-    test('Should only contain the mock templates when templates are loaded from azure endpoint', async ({ page }) => {
+    test('Should only contain the mock templates when templates are loaded from azure endpoint.', async ({ page }) => {
       await page.goto('/templates');
       await page.getByText('Local', { exact: true }).click();
       await page.getByLabel('Categories').click();
@@ -80,7 +80,10 @@ test.describe(
 
       await page.getByRole('button', { name: 'Use this template' }).click();
       await page.getByRole('tab', { name: 'Basics' }).click();
-      await expect(page.getByText('Subscription 1', { exact: true })).toBeVisible();
+
+      const allSubs = await page.getByText('Subscription 1', { exact: true }).all();
+      expect(allSubs.length).toBe(2);
+
       await expect(page.getByText('SecondRG', { exact: true })).toBeVisible();
       await expect(page.getByText('East US', { exact: true })).toBeVisible();
       await expect(page.getByText('Workflow name*', { exact: true })).toBeVisible();
@@ -117,7 +120,11 @@ test.describe(
 
       await page.getByRole('button', { name: 'Use this template' }).click();
       await page.getByRole('tab', { name: 'Basics' }).click();
-      await page.getByText('Subscription 1', { exact: true }).click();
+
+      const allSubs = await page.getByText('Subscription 1', { exact: true }).all();
+      expect(allSubs.length).toBe(2);
+
+      await allSubs[1].click();
       await page.getByText('Subscription 2', { exact: true }).click();
 
       await expect(page.getByText('Please select a valid resource', { exact: false })).toBeVisible();

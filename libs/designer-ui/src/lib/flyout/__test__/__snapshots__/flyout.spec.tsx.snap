@@ -12,14 +12,14 @@ exports[`ui/flyout > should render 1`] = `
 >
   <button
     aria-label="text"
-    className="msla-button msla-flyout"
+    className="msla-button msla-flyout ___frx9oy0_1ljmivh f14t3ns0"
     data-testid="callout-btn"
     onClick={[Function]}
     tabIndex={0}
   >
     <img
       alt=""
-      className="msla-flyout-icon lg"
+      className="msla-flyout-icon lg ___12p8g0n_rgjm4a0 f14t3ns0 f1w9dchk fxldao9 f2zxqi f1phki43 febqm8h ff9s3yw"
       draggable={false}
       role="presentation"
       src="/src/lib/card/images/information_tiny.svg"
@@ -56,14 +56,14 @@ exports[`ui/flyout > should render with a non-zero tab index 1`] = `
 >
   <button
     aria-label="text"
-    className="msla-button msla-flyout"
+    className="msla-button msla-flyout ___frx9oy0_1ljmivh f14t3ns0"
     data-testid="callout-btn"
     onClick={[Function]}
     tabIndex={-1}
   >
     <img
       alt=""
-      className="msla-flyout-icon lg"
+      className="msla-flyout-icon lg ___12p8g0n_rgjm4a0 f14t3ns0 f1w9dchk fxldao9 f2zxqi f1phki43 febqm8h ff9s3yw"
       draggable={false}
       role="presentation"
       src="/src/lib/card/images/information_tiny.svg"
@@ -100,14 +100,14 @@ exports[`ui/flyout > should render with a title 1`] = `
 >
   <button
     aria-label="title"
-    className="msla-button msla-flyout"
+    className="msla-button msla-flyout ___frx9oy0_1ljmivh f14t3ns0"
     data-testid="callout-btn"
     onClick={[Function]}
     tabIndex={0}
   >
     <img
       alt=""
-      className="msla-flyout-icon lg"
+      className="msla-flyout-icon lg ___12p8g0n_rgjm4a0 f14t3ns0 f1w9dchk fxldao9 f2zxqi f1phki43 febqm8h ff9s3yw"
       draggable={false}
       role="presentation"
       src="/src/lib/card/images/information_tiny.svg"
@@ -144,14 +144,14 @@ exports[`ui/flyout > should render with an ARIA label 1`] = `
 >
   <button
     aria-label="aria-label"
-    className="msla-button msla-flyout"
+    className="msla-button msla-flyout ___frx9oy0_1ljmivh f14t3ns0"
     data-testid="callout-btn"
     onClick={[Function]}
     tabIndex={0}
   >
     <img
       alt=""
-      className="msla-flyout-icon lg"
+      className="msla-flyout-icon lg ___12p8g0n_rgjm4a0 f14t3ns0 f1w9dchk fxldao9 f2zxqi f1phki43 febqm8h ff9s3yw"
       draggable={false}
       role="presentation"
       src="/src/lib/card/images/information_tiny.svg"

@@ -42,9 +42,6 @@ const SWAGGER = {
   COLLECTION_FORMAT: {
     CSV: 'csv',
   },
-  EXTENSION: {
-    CAPABILITIES: 'x-ms-capabilities',
-  },
 };
 
 const VARIABLE_TYPE = {
@@ -386,6 +383,7 @@ export default {
       SLIDING_WINDOW: 'slidingwindow',
       SWITCH: 'switch',
       AGENT: 'agent',
+      NESTED_AGENT: 'nestedagent',
       AGENT_CONDITION: 'agentcondition',
       TABLE: 'table',
       TERMINATE: 'terminate',
@@ -973,4 +971,8 @@ export default {
     OUTPUT: '-outputchannel-',
   },
   SUPPORTED_AGENT_MODELS: ['gpt-35-turbo', 'gpt-4', 'gpt-4.1', 'gpt-4.1-mini', 'gpt-4.1-nano', 'gpt-4o', 'gpt-4o-mini'],
+  CONNECTION_IDS: {
+    ACA_SESSION: '/serviceProviders/acasession',
+    AGENT: '/connectionProviders/agent',
+  },
 };

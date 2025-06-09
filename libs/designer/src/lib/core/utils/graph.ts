@@ -119,7 +119,9 @@ export const getGraphNode = (nodeId: string, node: WorkflowNode, nodesMetadata: 
 };
 
 export const getImmediateSourceNodeIds = (graph: WorkflowNode, nodeId: string): string[] => {
-  return (graph?.edges ?? []).filter((edge) => edge.target === nodeId && !edge.id.includes('#')).map((edge) => edge.source);
+  return (graph?.edges ?? [])
+    .filter((edge) => edge.target === nodeId && !/#(scope|subgraph|footer)/i.test(edge.id))
+    .map((edge) => edge.source);
 };
 
 export const getNewNodeId = (state: WorkflowState, nodeId: string): string => {

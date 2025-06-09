@@ -31,9 +31,9 @@ describe('modalSlice', () => {
     it('should open combine variable modal and set resolve function', () => {
       const mockResolve = vi.fn();
       const action = openCombineVariableModal({ resolve: mockResolve });
-      
+
       const result = modalReducer(initialState, action);
-      
+
       expect(result.isCombineVariableOpen).toBe(true);
       expect(result.resolveCombineVariable).toBe(mockResolve);
       expect(result.isTriggerDescriptionOpen).toBe(false);
@@ -46,9 +46,9 @@ describe('modalSlice', () => {
       };
       const mockResolve = vi.fn();
       const action = openCombineVariableModal({ resolve: mockResolve });
-      
+
       const result = modalReducer(stateWithTriggerOpen, action);
-      
+
       expect(result.isCombineVariableOpen).toBe(true);
       expect(result.resolveCombineVariable).toBe(mockResolve);
       expect(result.isTriggerDescriptionOpen).toBe(true);
@@ -63,9 +63,9 @@ describe('modalSlice', () => {
         resolveCombineVariable: oldResolve,
       };
       const action = openCombineVariableModal({ resolve: newResolve });
-      
+
       const result = modalReducer(stateWithModalOpen, action);
-      
+
       expect(result.isCombineVariableOpen).toBe(true);
       expect(result.resolveCombineVariable).toBe(newResolve);
       expect(result.resolveCombineVariable).not.toBe(oldResolve);
@@ -81,9 +81,9 @@ describe('modalSlice', () => {
         resolveCombineVariable: mockResolve,
       };
       const action = closeCombineVariableModal(true);
-      
+
       const result = modalReducer(stateWithModalOpen, action);
-      
+
       expect(result.isCombineVariableOpen).toBe(false);
       expect(result.resolveCombineVariable).toBeUndefined();
       expect(mockResolve).toHaveBeenCalledWith(true);
@@ -98,9 +98,9 @@ describe('modalSlice', () => {
         resolveCombineVariable: mockResolve,
       };
       const action = closeCombineVariableModal(false);
-      
+
       const result = modalReducer(stateWithModalOpen, action);
-      
+
       expect(result.isCombineVariableOpen).toBe(false);
       expect(result.resolveCombineVariable).toBeUndefined();
       expect(mockResolve).toHaveBeenCalledWith(false);
@@ -114,9 +114,9 @@ describe('modalSlice', () => {
         resolveCombineVariable: undefined,
       };
       const action = closeCombineVariableModal(true);
-      
+
       const result = modalReducer(stateWithModalOpen, action);
-      
+
       expect(result.isCombineVariableOpen).toBe(false);
       expect(result.resolveCombineVariable).toBeUndefined();
       // No error should be thrown when resolve function doesn't exist
@@ -130,9 +130,9 @@ describe('modalSlice', () => {
         isTriggerDescriptionOpen: true,
       };
       const action = closeCombineVariableModal(false);
-      
+
       const result = modalReducer(stateWithBothOpen, action);
-      
+
       expect(result.isCombineVariableOpen).toBe(false);
       expect(result.resolveCombineVariable).toBeUndefined();
       expect(result.isTriggerDescriptionOpen).toBe(true);
@@ -143,9 +143,9 @@ describe('modalSlice', () => {
   describe('openTriggerDescriptionModal', () => {
     it('should open trigger description modal', () => {
       const action = openTriggerDescriptionModal();
-      
+
       const result = modalReducer(initialState, action);
-      
+
       expect(result.isTriggerDescriptionOpen).toBe(true);
       expect(result.isCombineVariableOpen).toBe(false);
       expect(result.resolveCombineVariable).toBeUndefined();
@@ -159,9 +159,9 @@ describe('modalSlice', () => {
         isTriggerDescriptionOpen: false,
       };
       const action = openTriggerDescriptionModal();
-      
+
       const result = modalReducer(stateWithCombineOpen, action);
-      
+
       expect(result.isTriggerDescriptionOpen).toBe(true);
       expect(result.isCombineVariableOpen).toBe(true);
       expect(result.resolveCombineVariable).toBe(mockResolve);
@@ -173,9 +173,9 @@ describe('modalSlice', () => {
         isTriggerDescriptionOpen: true,
       };
       const action = openTriggerDescriptionModal();
-      
+
       const result = modalReducer(stateWithTriggerOpen, action);
-      
+
       expect(result.isTriggerDescriptionOpen).toBe(true);
     });
   });
@@ -187,9 +187,9 @@ describe('modalSlice', () => {
         isTriggerDescriptionOpen: true,
       };
       const action = closeTriggerDescriptionModal();
-      
+
       const result = modalReducer(stateWithTriggerOpen, action);
-      
+
       expect(result.isTriggerDescriptionOpen).toBe(false);
       expect(result.isCombineVariableOpen).toBe(false);
       expect(result.resolveCombineVariable).toBeUndefined();
@@ -203,9 +203,9 @@ describe('modalSlice', () => {
         isTriggerDescriptionOpen: true,
       };
       const action = closeTriggerDescriptionModal();
-      
+
       const result = modalReducer(stateWithBothOpen, action);
-      
+
       expect(result.isTriggerDescriptionOpen).toBe(false);
       expect(result.isCombineVariableOpen).toBe(true);
       expect(result.resolveCombineVariable).toBe(mockResolve);
@@ -213,9 +213,9 @@ describe('modalSlice', () => {
 
     it('should work when modal is already closed', () => {
       const action = closeTriggerDescriptionModal();
-      
+
       const result = modalReducer(initialState, action);
-      
+
       expect(result.isTriggerDescriptionOpen).toBe(false);
       expect(result).toEqual(initialState);
     });

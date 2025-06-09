@@ -2,8 +2,10 @@ import InformationImage from '../card/images/information_tiny.svg';
 import { getDragStartHandlerWhenDisabled } from '../helper';
 import { FlyoutCallout } from './flyoutcallout';
 import type { ITooltipHostStyles } from '@fluentui/react';
-import { css, mergeStyleSets, TooltipHost } from '@fluentui/react';
+import { mergeStyleSets, TooltipHost } from '@fluentui/react';
+import { mergeClasses } from '@fluentui/react-components';
 import React, { useRef, useState } from 'react';
+import { useFlyoutStyles } from './flyout.styles';
 
 export interface FlyoutProps {
   ariaLabel?: string;
@@ -29,6 +31,7 @@ export const Flyout = React.forwardRef<{ collapseFlyout(): void }, FlyoutProps>(
   ({ ariaLabel, iconStyle, style, tabIndex = 0, text, tooltipHostStyles, onClick, title, iconSize = 'lg' }, ref) => {
     const buttonRef = useRef<HTMLButtonElement | null>(null);
     const [flyoutExpanded, setFlyoutExpanded] = useState(false);
+    const styles = useFlyoutStyles();
 
     React.useImperativeHandle(ref, () => ({
       collapseFlyout() {
@@ -47,22 +50,27 @@ export const Flyout = React.forwardRef<{ collapseFlyout(): void }, FlyoutProps>(
       onClick?.();
     };
 
-    const styles = mergeStyleSets(defaultTooltipHostStyles, tooltipHostStyles);
+    const tooltipStyles = mergeStyleSets(defaultTooltipHostStyles, tooltipHostStyles);
 
     return (
-      <TooltipHost content={ariaLabel} styles={styles}>
+      <TooltipHost content={ariaLabel} styles={tooltipStyles}>
         <button
           data-testid="callout-btn"
           ref={buttonRef}
           aria-label={ariaLabel ?? title ?? text}
-          className="msla-button msla-flyout"
+          className={mergeClasses(styles.flyout, 'msla-button', 'msla-flyout')}
           style={style}
           tabIndex={tabIndex}
           onClick={handleFlyoutClick}
         >
           <img
             alt=""
-            className={css('msla-flyout-icon', iconSize)}
+            className={mergeClasses(
+              styles.flyoutIcon,
+              iconSize === 'sm' ? styles.flyoutIconSm : styles.flyoutIconLg,
+              'msla-flyout-icon',
+              iconSize
+            )}
             draggable={false}
             role="presentation"
             style={iconStyle}

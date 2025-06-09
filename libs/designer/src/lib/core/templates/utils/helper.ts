@@ -1,11 +1,12 @@
-import { type Template, getIntl, isUndefinedOrEmptyString, normalizeConnectorId } from '@microsoft/logic-apps-shared';
+import { type Template, equals, getIntl, isUndefinedOrEmptyString, normalizeConnectorId } from '@microsoft/logic-apps-shared';
 import type { AppDispatch, WorkflowTemplateData } from '../../../core';
 import { summaryTab } from '../../../ui/panel/templatePanel/quickViewPanel/tabs/summaryTab';
 import { workflowTab } from '../../../ui/panel/templatePanel/quickViewPanel/tabs/workflowTab';
 import type { IntlShape } from 'react-intl';
 import type { FilterObject } from '@microsoft/designer-ui';
 import Fuse from 'fuse.js';
-import { validateParameterValueWithSwaggerType } from '../../../core/utils/validation';
+import { validateParameterValueWithSwaggerType } from '../../utils/validation';
+import type { TemplateData } from '../../state/templates/manifestSlice';
 
 export const getCurrentWorkflowNames = (workflows: { id: string; name: string }[], idToSkip: string): string[] => {
   return workflows.filter((w) => w.id !== idToSkip).map((w) => w.name) as string[];
@@ -136,11 +137,12 @@ const templateSearchOptions = {
 };
 
 export const getFilteredTemplates = (
-  templates: Record<string, Template.TemplateManifest>,
+  templates: Record<string, TemplateData>,
   filters: {
     keyword?: string;
     sortKey: string;
     connectors?: FilterObject[];
+    status?: FilterObject[];
     detailFilters: Record<Template.DetailsType, FilterObject[]>;
   },
   isConsumption: boolean
@@ -159,6 +161,17 @@ export const getFilteredTemplates = (
       ) ?? true;
 
     if (!hasConnectors) {
+      return false;
+    }
+
+    const hasStatusFilters =
+      filters.status?.some((filterStatus) => {
+        return (
+          !equals((templateManifest.details as any)?.publishedBy, 'custom') || equals(templateManifest.publishState, filterStatus.value)
+        );
+      }) ?? true;
+
+    if (!hasStatusFilters) {
       return false;
     }
 
@@ -365,4 +378,48 @@ export const validateTemplateManifestValue = (manifest: Template.TemplateManifes
   }
 
   return errors;
+};
+
+export const getTemplateTypeCategories = () => {
+  const intl = getIntl();
+  return [
+    {
+      value: 'Workflow',
+      displayName: intl.formatMessage({
+        defaultMessage: 'Workflow',
+        id: 'JsUu6b',
+        description: 'Label for workflow template which contains single workflow',
+      }),
+    },
+    {
+      value: 'Accelerator',
+      displayName: intl.formatMessage({
+        defaultMessage: 'Accelerator',
+        id: '2Js04W',
+        description: 'Label for accelerator template which contains multiple workflows',
+      }),
+    },
+  ];
+};
+
+export const getTemplatePublishCategories = () => {
+  const intl = getIntl();
+  return [
+    {
+      value: 'Testing',
+      displayName: intl.formatMessage({
+        defaultMessage: 'Published for Testing',
+        id: '1i3RKp',
+        description: 'Label for template published for testing',
+      }),
+    },
+    {
+      value: 'Production',
+      displayName: intl.formatMessage({
+        defaultMessage: 'Published for Production',
+        id: '44jsHY',
+        description: 'Label for template published for production',
+      }),
+    },
+  ];
 };

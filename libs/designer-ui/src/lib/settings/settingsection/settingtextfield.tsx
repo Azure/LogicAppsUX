@@ -5,6 +5,7 @@ import type React from 'react';
 import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { useIntl } from 'react-intl';
+import { useErrorStyles } from '../../error';
 
 export type TextInputChangeHandler = (event: FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string | undefined) => void;
 
@@ -40,6 +41,7 @@ export const SettingTextField: React.FC<SettingTextFieldProps> = ({
   const [textValue, setTextValue] = useState(value ?? '');
   const [errorMessage, setErrorMessage] = useState('');
   const intl = useIntl();
+  const errorStyles = useErrorStyles();
   const handleTextInputChange = (_e: React.ChangeEvent<HTMLInputElement>, data: InputOnChangeData): void => {
     setTextValue(data.value);
     if (type === 'number') {
@@ -89,7 +91,7 @@ export const SettingTextField: React.FC<SettingTextFieldProps> = ({
         required={required}
         onChange={handleTextInputChange}
       />
-      {errorMessage && <div className="msla-error-text">{errorMessage}</div>}
+      {errorMessage && <div className={errorStyles.text}>{errorMessage}</div>}
     </>
   );
 };

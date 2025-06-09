@@ -55,6 +55,11 @@ export const StaticResultContainer = ({
   const [propertyValues, setPropertyValues] = useState<OpenAPIV2.SchemaObject>(initialPropertyValues);
   const [errorMessage, setErrorMessage] = useState('');
 
+  // Sync local state with enabled prop
+  useEffect(() => {
+    setShowStaticResults(enabled);
+  }, [enabled]);
+
   // static result validation that trigger whenever the properties change
   useEffect(() => {
     const serializedValue = serializePropertyValues(propertyValues, staticResultSchema);

@@ -1,5 +1,5 @@
 import { Dropdown, type IDropdownOption, type ISelectableOption, SearchBox, SelectableOptionMenuItemType } from '@fluentui/react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import Fuse from 'fuse.js';
 
@@ -18,6 +18,9 @@ interface TemplatesFilterDropdownProps {
   onRenderItem?: (item: ISelectableOption) => JSX.Element;
   onApplyButtonClick: (_filterItems: FilterObject[] | undefined) => void;
   isSearchable?: boolean;
+  selectedItems?: FilterObject[] | undefined;
+  disabled?: boolean;
+  placeholder?: string;
 }
 
 const allOptionId = 'all';
@@ -28,10 +31,19 @@ export const TemplatesFilterDropdown = ({
   onApplyButtonClick,
   onRenderItem,
   isSearchable = false,
+  disabled = false,
+  selectedItems: initialSelectedItems,
+  placeholder,
 }: TemplatesFilterDropdownProps) => {
   const intl = useIntl();
   const [displayItems, setDisplayItems] = useState<InternalFilterObject[]>(items);
-  const [selectedItems, setSelectedItems] = useState<InternalFilterObject[] | undefined>();
+  const [selectedItems, setSelectedItems] = useState<InternalFilterObject[] | undefined>(initialSelectedItems);
+
+  useEffect(() => {
+    if (items) {
+      setDisplayItems(items);
+    }
+  }, [items]);
 
   const dropdownHeadersCount = isSearchable ? 2 : 1; // For the 'All' option (and the SearchBox)
 
@@ -117,6 +129,8 @@ export const TemplatesFilterDropdown = ({
       multiSelect
       options={dropdownOptions}
       label={filterName}
+      placeholder={placeholder}
+      disabled={disabled}
       selectedKeys={selectedItems?.map((i) => i.value) ?? [allOptionId]}
       onRenderOption={onRenderOption}
       onChange={(_e, item, index) => {
