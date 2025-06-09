@@ -6,6 +6,7 @@ export const EditorLanguage = {
   yaml: 'yaml',
   csharp: 'csharp',
   powershell: 'powershell',
+  python: 'python',
 } as const;
 export type EditorLanguage = (typeof EditorLanguage)[keyof typeof EditorLanguage];
 

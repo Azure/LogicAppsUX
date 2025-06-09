@@ -6,6 +6,7 @@ export const ExtensionProperties = {
   BasePath: 'x-ms-base-path',
   Capabilities: 'x-ms-capabilities',
   ContentHint: 'x-ms-content-hint',
+  InlineConncetion: 'x-ms-connection-required',
 
   // used by DynamicsAX & SharePoint connectors to describe table metadata, in particular the order in which table columns should be displayed
   CustomEnum: 'x-ms-enum-values',

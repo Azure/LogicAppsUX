@@ -127,15 +127,23 @@ export const getUniqueConnectionName = async (connectorId: string, existingKeys:
 
 export const useConnectionResource = (_connectionId: string) => {
   const connectionId = cleanResourceId(_connectionId)?.toLowerCase();
-  return useQuery(['connection', connectionId], () => ConnectionService().getConnection(connectionId) ?? null, {
-    enabled: !!_connectionId,
-    refetchOnMount: false,
-  });
+  return useQuery(
+    ['connection', connectionId],
+    async () => {
+      const result = await ConnectionService().getConnection(connectionId);
+      return result ?? null;
+    },
+    {
+      enabled: !!_connectionId,
+      refetchOnMount: false,
+    }
+  );
 };
 
 const getConnectionFromResource = async (connectionId: string) => {
   const queryClient = getReactQueryClient();
   return queryClient.fetchQuery(['connection', connectionId?.toLowerCase()], async () => {
-    return (await ConnectionService().getConnection(connectionId)) ?? null;
+    const result = await ConnectionService().getConnection(connectionId);
+    return result ?? null;
   });
 };

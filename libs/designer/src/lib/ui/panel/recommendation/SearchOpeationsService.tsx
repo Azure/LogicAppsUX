@@ -5,7 +5,8 @@ import Fuse from 'fuse.js';
 export class DefaultSearchOperationsService implements Pick<ISearchService, 'searchOperations'> {
   constructor(
     private allOperations: DiscoveryOpArray,
-    private showParseDocWithMetadata: boolean
+    private showParseDocWithMetadata: boolean,
+    private showACASession?: boolean
   ) {}
 
   // Comparison function for sorting Fuse results
@@ -66,6 +67,10 @@ export class DefaultSearchOperationsService implements Pick<ISearchService, 'sea
 
       // Skip if document with metadata should not be shown
       if (!this.showParseDocWithMetadata && item.id === 'parsedocumentwithmetadata') {
+        return false;
+      }
+
+      if (!this.showACASession && api.id === '/serviceProviders/acasession') {
         return false;
       }
 

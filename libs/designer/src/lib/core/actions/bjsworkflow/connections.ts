@@ -47,7 +47,6 @@ import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { openPanel, setIsCreatingConnection, setIsPanelLoading } from '../../state/panel/panelSlice';
 import type { PanelMode } from '../../state/panel/panelTypes';
-
 export interface ConnectionPayload {
   nodeId: string;
   connector: Connector;
@@ -63,6 +62,7 @@ export interface UpdateConnectionPayload {
   connectionProperties?: Record<string, any>;
   authentication?: ApiHubAuthentication;
   connectionRuntimeUrl?: string;
+  connectionParameterValues?: Record<string, any>;
 }
 
 export const updateTemplateConnection = createAsyncThunk(

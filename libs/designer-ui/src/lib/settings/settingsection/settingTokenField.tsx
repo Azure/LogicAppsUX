@@ -80,6 +80,7 @@ export interface SettingTokenFieldProps extends SettingProps {
   hostOptions?: EditorHostOptions;
   subComponent?: JSX.Element | null;
   subMenu?: JSX.Element | null;
+  hideTokenPicker?: boolean;
 }
 
 export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
@@ -141,6 +142,7 @@ export const TokenField = ({
   getTokenPicker,
   hostOptions,
   required,
+  hideTokenPicker,
 }: TokenFieldProps) => {
   const dropdownOptions = useMemo(() => getDropdownOptionsFromOptions(editorOptions), [editorOptions]);
   const labelForAutomationId = useMemo(() => replaceWhiteSpaceWithUnderscore(label), [label]);
@@ -240,6 +242,7 @@ export const TokenField = ({
           readonly={readOnly}
           placeholder={placeholder}
           customCodeEditor={customCodeEditor}
+          hideTokenPicker={hideTokenPicker}
         />
       );
     }
