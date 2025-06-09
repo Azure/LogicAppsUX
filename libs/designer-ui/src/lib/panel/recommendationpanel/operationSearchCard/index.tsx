@@ -33,7 +33,7 @@ export const OperationSearchCard: React.FC<OperationSearchCardProps> = ({
       data-automation-id={buttonId}
       aria-label={title}
       focusMode="off"
-      style={{'flexDirection': 'row'}}
+      style={{ flexDirection: 'row' }}
     >
       <div className="msla-op-search-card-color-line" style={{ background: brandColor }} />
       {showImage && iconUri ? (

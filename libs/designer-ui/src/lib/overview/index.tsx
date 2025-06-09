@@ -11,6 +11,7 @@ import { isCallbackInfoWithRelativePath } from '@microsoft/logic-apps-shared';
 import { useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useIntl } from 'react-intl';
+import { useOverviewStyles } from './styles';
 
 export interface OverviewProps {
   corsNotice?: string;
@@ -54,6 +55,7 @@ export const Overview: React.FC<OverviewProps> = ({
   onCreateUnitTest,
 }: OverviewProps) => {
   const intl = useIntl();
+  const styles = useOverviewStyles();
   const [navigateDisabled, setNavigateDisabled] = useState(true);
   const [runItem, setRunItem] = useState<RunDisplayItem>();
 
@@ -126,7 +128,7 @@ export const Overview: React.FC<OverviewProps> = ({
       <OverviewProperties {...workflowProperties} />
       <Pivot>
         <PivotItem headerText={Resources.RUN_HISTORY}>
-          <div className="msla-run-history-filter">
+          <div className={styles.runHistoryFilter}>
             <TextField
               data-testid="msla-run-history-filter-input"
               deferredValidationTime={1000}

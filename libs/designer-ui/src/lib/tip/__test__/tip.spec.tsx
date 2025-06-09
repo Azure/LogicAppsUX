@@ -4,13 +4,6 @@ import * as React from 'react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('ui/tip', () => {
-  const classNames = {
-    tip: 'msla-tip',
-    tipActions: 'msla-tip-actions',
-    tipInner: 'msla-tip-inner',
-    tipMessage: 'msla-tip-message',
-  };
-
   let minimal: TipProps;
   let renderer: ReactShallowRenderer.ShallowRenderer;
 
@@ -66,13 +59,14 @@ describe('ui/tip', () => {
       renderer.render(<Tip {...minimal} items={items} />);
 
       const callout = renderer.getRenderOutput();
-      expect(callout.props.className).toBe(classNames.tip);
+      expect((callout.type as any).displayName).toBe('Callout');
 
       const inner = React.Children.only(callout.props.children);
-      expect(inner.props.className).toBe(classNames.tipInner);
+      expect(inner.type).toBe('div');
+      expect(inner.props.role).toBe('dialog');
 
       const [, actions]: any[] = React.Children.toArray(inner.props.children);
-      expect(actions.props.className).toBe(classNames.tipActions);
+      expect(actions.type).toBe('div');
 
       const [first, second]: any[] = React.Children.toArray(actions.props.children);
       expect(first.props.children).toBe(items[0].children);
@@ -87,13 +81,14 @@ describe('ui/tip', () => {
       renderer.render(<Tip {...minimal} />);
 
       const callout = renderer.getRenderOutput();
-      expect(callout.props.className).toBe(classNames.tip);
+      expect(callout.type.displayName).toBe('Callout');
 
       const inner = React.Children.only(callout.props.children);
-      expect(inner.props.className).toBe(classNames.tipInner);
+      expect(inner.type).toBe('div');
+      expect(inner.props.role).toBe('dialog');
 
       const [message]: any[] = React.Children.toArray(inner.props.children);
-      expect(message.props.className).toBe(classNames.tipMessage);
+      expect(message.type).toBe('div');
       expect(message.props.children).toBe(minimal.message);
     });
   });

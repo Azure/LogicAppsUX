@@ -59,14 +59,14 @@ exports[`VariableEditor > renders correctly with empty variables 1`] = `
           class="msla-input-parameter-label"
         >
           <label
-            class="ms-Label msla-label root-184"
+            class="ms-Label ___jmchtt0_0000000 ftgm304 f1a3p1vp f1cmbuwj fy9rknc f1lgtm6f f1o700av fhx3js9 fhuq1gn root-184"
             id="name0"
             title="name"
           >
             name
             <span
               aria-label="Required"
-              class="msla-label-required-parameter-right"
+              class="___17auu19_0000000 f23f7i0 f2lugmd"
             >
               *
             </span>
@@ -121,21 +121,21 @@ exports[`VariableEditor > renders correctly with empty variables 1`] = `
           class="msla-input-parameter-label"
         >
           <label
-            class="ms-Label msla-label root-184"
+            class="ms-Label ___jmchtt0_0000000 ftgm304 f1a3p1vp f1cmbuwj fy9rknc f1lgtm6f f1o700av fhx3js9 fhuq1gn root-184"
             id="type1"
             title="type"
           >
             type
             <span
               aria-label="Required"
-              class="msla-label-required-parameter-right"
+              class="___17auu19_0000000 f23f7i0 f2lugmd"
             >
               *
             </span>
           </label>
         </div>
         <div
-          class="msla-dropdown-editor-container"
+          class="___c4fnqf0_0000000 f10pi13n fly5x3f"
           data-automation-id="undefined-type-0"
         >
           <div
@@ -180,7 +180,7 @@ exports[`VariableEditor > renders correctly with empty variables 1`] = `
           class="msla-input-parameter-label"
         >
           <label
-            class="ms-Label msla-label root-184"
+            class="ms-Label ___jmchtt0_0000000 ftgm304 f1a3p1vp f1cmbuwj fy9rknc f1lgtm6f f1o700av fhx3js9 fhuq1gn root-184"
             id="value2"
             title="value"
           >
@@ -293,14 +293,14 @@ exports[`VariableEditor > renders correctly with single variable 1`] = `
           class="msla-input-parameter-label"
         >
           <label
-            class="ms-Label msla-label root-184"
+            class="ms-Label ___jmchtt0_0000000 ftgm304 f1a3p1vp f1cmbuwj fy9rknc f1lgtm6f f1o700av fhx3js9 fhuq1gn root-184"
             id="name8"
             title="name"
           >
             name
             <span
               aria-label="Required"
-              class="msla-label-required-parameter-right"
+              class="___17auu19_0000000 f23f7i0 f2lugmd"
             >
               *
             </span>
@@ -355,21 +355,21 @@ exports[`VariableEditor > renders correctly with single variable 1`] = `
           class="msla-input-parameter-label"
         >
           <label
-            class="ms-Label msla-label root-184"
+            class="ms-Label ___jmchtt0_0000000 ftgm304 f1a3p1vp f1cmbuwj fy9rknc f1lgtm6f f1o700av fhx3js9 fhuq1gn root-184"
             id="type9"
             title="type"
           >
             type
             <span
               aria-label="Required"
-              class="msla-label-required-parameter-right"
+              class="___17auu19_0000000 f23f7i0 f2lugmd"
             >
               *
             </span>
           </label>
         </div>
         <div
-          class="msla-dropdown-editor-container"
+          class="___c4fnqf0_0000000 f10pi13n fly5x3f"
           data-automation-id="undefined-type-0"
         >
           <div
@@ -414,7 +414,7 @@ exports[`VariableEditor > renders correctly with single variable 1`] = `
           class="msla-input-parameter-label"
         >
           <label
-            class="ms-Label msla-label root-184"
+            class="ms-Label ___jmchtt0_0000000 ftgm304 f1a3p1vp f1cmbuwj fy9rknc f1lgtm6f f1o700av fhx3js9 fhuq1gn root-184"
             id="value10"
             title="value"
           >
@@ -574,14 +574,14 @@ exports[`VariableEditor > renders correctly with single variable with Token 1`] 
           class="msla-input-parameter-label"
         >
           <label
-            class="ms-Label msla-label root-184"
+            class="ms-Label ___jmchtt0_0000000 ftgm304 f1a3p1vp f1cmbuwj fy9rknc f1lgtm6f f1o700av fhx3js9 fhuq1gn root-184"
             id="name16"
             title="name"
           >
             name
             <span
               aria-label="Required"
-              class="msla-label-required-parameter-right"
+              class="___17auu19_0000000 f23f7i0 f2lugmd"
             >
               *
             </span>
@@ -636,21 +636,21 @@ exports[`VariableEditor > renders correctly with single variable with Token 1`] 
           class="msla-input-parameter-label"
         >
           <label
-            class="ms-Label msla-label root-184"
+            class="ms-Label ___jmchtt0_0000000 ftgm304 f1a3p1vp f1cmbuwj fy9rknc f1lgtm6f f1o700av fhx3js9 fhuq1gn root-184"
             id="type17"
             title="type"
           >
             type
             <span
               aria-label="Required"
-              class="msla-label-required-parameter-right"
+              class="___17auu19_0000000 f23f7i0 f2lugmd"
             >
               *
             </span>
           </label>
         </div>
         <div
-          class="msla-dropdown-editor-container"
+          class="___c4fnqf0_0000000 f10pi13n fly5x3f"
           data-automation-id="undefined-type-0"
         >
           <div
@@ -695,7 +695,7 @@ exports[`VariableEditor > renders correctly with single variable with Token 1`] 
           class="msla-input-parameter-label"
         >
           <label
-            class="ms-Label msla-label root-184"
+            class="ms-Label ___jmchtt0_0000000 ftgm304 f1a3p1vp f1cmbuwj fy9rknc f1lgtm6f f1o700av fhx3js9 fhuq1gn root-184"
             id="value18"
             title="value"
           >

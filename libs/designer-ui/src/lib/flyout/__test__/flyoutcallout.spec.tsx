@@ -29,7 +29,6 @@ describe('lib/flyout/flyoutcallout', () => {
       expect.objectContaining({
         ariaLabel: minimal.text,
         beakWidth: 8,
-        className: 'msla-flyout-callout',
         directionalHint: DirectionalHint.rightTopEdge,
         focusTrapProps: {
           isClickableOutsideFocusTrap: true,
@@ -39,6 +38,9 @@ describe('lib/flyout/flyoutcallout', () => {
         target: minimal.target,
       })
     );
+
+    // Check that the className contains the expected class
+    expect(callout.props.className).toContain('msla-flyout-callout');
 
     const dialog = React.Children.only(callout.props.children);
     expect(dialog.props.children).toBe(minimal.text);

@@ -612,6 +612,8 @@ const ParameterSection = ({
     if (isUpdating) {
       dispatch(updateAgentParametersInNode([{ name, type, description }]));
     }
+
+    return undefined;
   };
 
   const getTokenPicker = (
@@ -744,7 +746,10 @@ const ParameterSection = ({
           pickerCallbacks: getPickerCallbacks(param),
           tokenpickerButtonProps: {
             location: panelLocation === PanelLocation.Left ? TokenPickerButtonLocation.Right : TokenPickerButtonLocation.Left,
-            hideButtonOptions: { hideDynamicContent: isAgentServiceConnection, hideExpression: isAgentServiceConnection },
+            hideButtonOptions: {
+              hideDynamicContent: isAgentServiceConnection,
+              hideExpression: isAgentServiceConnection,
+            },
           },
           agentParameterButtonProps: { showAgentParameterButton },
           hostOptions: {
