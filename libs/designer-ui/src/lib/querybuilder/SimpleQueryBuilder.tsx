@@ -96,8 +96,8 @@ export const SimpleQueryBuilder = ({ getTokenPicker, itemValue, readonly, onChan
     <div className="msla-querybuilder-container">
       {isRowFormat ? (
         <Row
-          // isTop={false}
-          // isBottom={false}
+          isTop={false}
+          isBottom={false}
           index={0}
           operand1={getRootProp()?.operand1}
           operand2={getRootProp()?.operand2}
