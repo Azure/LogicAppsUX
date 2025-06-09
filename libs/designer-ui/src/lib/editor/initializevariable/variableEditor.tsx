@@ -61,6 +61,7 @@ interface VariableEditorProps extends Partial<BaseEditorProps> {
   onVariableChange: (value: InitializeVariableProps) => void;
   isMultiVariableEnabled?: boolean;
   isAgentParameter?: boolean;
+  isNewlyAdded?: boolean;
 }
 
 const FieldEditor = ({
@@ -98,12 +99,13 @@ export const VariableEditor = ({
   index,
   isMultiVariableEnabled,
   isAgentParameter,
+  isNewlyAdded,
   ...baseEditorProps
 }: VariableEditorProps) => {
   const intl = useIntl();
   const { isInverted } = useTheme();
   const themeName = isInverted ? 'dark' : 'light';
-  const [expanded, setExpanded] = useState(!isAgentParameter);
+  const [expanded, setExpanded] = useState(isNewlyAdded ?? false);
   const [variableId, setVariableId] = useState<string>(guid());
 
   const handleToggleExpand = (): void => {

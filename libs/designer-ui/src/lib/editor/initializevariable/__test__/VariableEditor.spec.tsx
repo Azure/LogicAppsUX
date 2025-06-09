@@ -419,4 +419,57 @@ describe('VariableEditor', () => {
       expect(badgeContainer).toHaveAttribute('role', 'status');
     });
   });
+
+  describe('Collapse/Expand Behavior', () => {
+    it('starts collapsed by default', () => {
+      const { container } = render(
+        <IntlProvider locale="en">
+          <VariableEditor
+            initialValue={[]}
+            onChange={vi.fn()}
+            getTokenPicker={vi.fn()}
+            index={0}
+            variable={{
+              name: [{ type: ValueSegmentType.LITERAL, id: guid(), value: 'testVariable' }],
+              type: [{ type: ValueSegmentType.LITERAL, id: guid(), value: 'string' }],
+              value: [{ type: ValueSegmentType.LITERAL, id: guid(), value: 'testValue' }],
+            }}
+            disableDelete={false}
+            onDelete={vi.fn()}
+            onVariableChange={vi.fn()}
+          />
+        </IntlProvider>
+      );
+
+      // Content should not be visible when collapsed
+      const content = container.querySelector('.msla-variable-editor-content');
+      expect(content).not.toBeInTheDocument();
+    });
+
+    it('starts expanded when newly added', () => {
+      const { container } = render(
+        <IntlProvider locale="en">
+          <VariableEditor
+            initialValue={[]}
+            onChange={vi.fn()}
+            getTokenPicker={vi.fn()}
+            index={0}
+            variable={{
+              name: [{ type: ValueSegmentType.LITERAL, id: guid(), value: 'testVariable' }],
+              type: [{ type: ValueSegmentType.LITERAL, id: guid(), value: 'string' }],
+              value: [{ type: ValueSegmentType.LITERAL, id: guid(), value: 'testValue' }],
+            }}
+            disableDelete={false}
+            onDelete={vi.fn()}
+            onVariableChange={vi.fn()}
+            isNewlyAdded={true}
+          />
+        </IntlProvider>
+      );
+
+      // Content should be visible when newly added
+      const content = container.querySelector('.msla-variable-editor-content');
+      expect(content).toBeInTheDocument();
+    });
+  });
 });

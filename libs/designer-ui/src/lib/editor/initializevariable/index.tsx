@@ -44,6 +44,7 @@ export const InitializeVariableEditor = ({
       ? parseSchemaAsVariableEditorSegments(initialValue, props.loadParameterValueFromString)
       : parseVariableEditorSegments(initialValue, props.loadParameterValueFromString)
   );
+  const [newlyAddedIndices, setNewlyAddedIndices] = useState<Set<number>>(new Set());
 
   const stringResources = useMemo(
     () => ({
@@ -89,14 +90,18 @@ export const InitializeVariableEditor = ({
   });
 
   const addVariable = useCallback(() => {
-    setVariables((prev) => [
-      ...(prev ?? []),
-      {
-        name: [createEmptyLiteralValueSegment()],
-        type: [createEmptyLiteralValueSegment()],
-        value: [createEmptyLiteralValueSegment()],
-      },
-    ]);
+    setVariables((prev) => {
+      const newIndex = (prev ?? []).length;
+      setNewlyAddedIndices((prevIndices) => new Set([...prevIndices, newIndex]));
+      return [
+        ...(prev ?? []),
+        {
+          name: [createEmptyLiteralValueSegment()],
+          type: [createEmptyLiteralValueSegment()],
+          value: [createEmptyLiteralValueSegment()],
+        },
+      ];
+    });
   }, [setVariables]);
 
   const updateVariables = useCallback(
@@ -122,6 +127,21 @@ export const InitializeVariableEditor = ({
           return prev;
         }
         const updatedVariables = p.filter((_, i) => i !== index);
+
+        // Update newly added indices after deletion
+        setNewlyAddedIndices((prevIndices) => {
+          const newIndices = new Set<number>();
+          prevIndices.forEach((i) => {
+            if (i < index) {
+              newIndices.add(i);
+            } else if (i > index) {
+              newIndices.add(i - 1);
+            }
+            // Skip the deleted index
+          });
+          return newIndices;
+        });
+
         return updateVariables(updatedVariables);
       });
     },
@@ -132,6 +152,12 @@ export const InitializeVariableEditor = ({
     (value: InitializeVariableProps, index: number) => {
       setVariables((prev) => {
         const updatedVariables = (prev ?? []).map((v, i) => (i === index ? value : v));
+        // Clear newly added status once variable has been modified
+        setNewlyAddedIndices((prevIndices) => {
+          const newIndices = new Set(prevIndices);
+          newIndices.delete(index);
+          return newIndices;
+        });
         return updateVariables(updatedVariables);
       });
     },
@@ -181,6 +207,7 @@ export const InitializeVariableEditor = ({
             onVariableChange={(value: InitializeVariableProps) => handleVariableChange(value, index)}
             disableDelete={!isAgentParameter && variables.length === 1}
             errors={validationErrors?.[index]}
+            isNewlyAdded={newlyAddedIndices.has(index)}
           />
           <Divider />
         </div>
