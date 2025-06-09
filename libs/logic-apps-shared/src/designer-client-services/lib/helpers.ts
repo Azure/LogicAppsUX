@@ -72,3 +72,10 @@ export function getTemplateManifestFromResourceManifest(resourceManifest: any): 
 
   return manifest;
 }
+
+export function unwrapPaginatedResponse(response: any): any {
+  if (response && response.__usedNextPage) {
+    return response.value;
+  }
+  return response;
+}
