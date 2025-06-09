@@ -120,7 +120,7 @@ export async function pickCustomCodeNetHostProcessInternal(
   return customCodeNetHostProcess;
 }
 
-async function pickNetHostChildProcess(taskInfo: IRunningFuncTask): Promise<string | undefined> {
+export async function pickNetHostChildProcess(taskInfo: IRunningFuncTask): Promise<string | undefined> {
   const funcPid = Number(await pickChildProcess(taskInfo));
   if (!funcPid) {
     return undefined;
@@ -128,6 +128,6 @@ async function pickNetHostChildProcess(taskInfo: IRunningFuncTask): Promise<stri
 
   const children: OSAgnosticProcess[] =
     process.platform === Platform.windows ? await getWindowsChildren(funcPid) : await getUnixChildren(funcPid);
-  const child: OSAgnosticProcess | undefined = children.reverse().find((c) => /(dotnet)(\.exe|)$/i.test(c.command || ''));
+  const child: OSAgnosticProcess | undefined = children.reverse().find((c) => /(func|dotnet)(\.exe)?$/i.test(c.command || ''));
   return child ? child.pid.toString() : undefined;
 }

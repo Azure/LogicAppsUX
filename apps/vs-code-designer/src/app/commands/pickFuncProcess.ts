@@ -93,6 +93,7 @@ export async function pickFuncProcessInternal(
 
   await waitForPrevFuncTaskToStop(workspaceFolder);
   const projectFiles = await getProjFiles(context, ProjectLanguage.CSharp, projectPath);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const isBundleProject: boolean = projectFiles.length > 0 ? false : true;
 
   const preLaunchTaskName: string | undefined = debugConfig.preLaunchTask;
@@ -113,7 +114,8 @@ export async function pickFuncProcessInternal(
 
   getPickProcessTimeout(context);
 
-  if (debugTask && !debugConfig['noDebug'] && isBundleProject) {
+  if (debugTask && !debugConfig['noDebug']) {
+    //  && isBundleProject removed for codeful
     await startDebugTask(debugTask, workspaceFolder);
   }
 
