@@ -18,7 +18,7 @@ vi.mock('vscode', () => ({
   },
 }));
 
-describe('pickCustomCodeNetHostProcess', () => {
+describe('pickCustomCodeNetHostProcess', async () => {
   const testLogicAppName = 'LogicApp';
   const testFunctionAppName = 'FunctionApp';
   const testLogicAppPath = path.join('path', 'to', testLogicAppName);
@@ -137,5 +137,111 @@ describe('pickCustomCodeNetHostProcessInternal', () => {
     );
     expect(testActionContext.telemetry.properties.result).toBe('Failed');
     expect(testActionContext.telemetry.properties.lastStep).toBe('getRunningFuncTask');
+  });
+});
+
+describe('pickNetHostChildProcess', async () => {
+  const { pickNetHostChildProcess } = await import('../pickCustomCodeNetHostProcess');
+  const testFuncPid = 12345;
+  const testDotnetPid = 67890;
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('should return the pid of a child process matching dotnet.exe on Windows', async () => {
+    vi.stubGlobal('process', { platform: 'win32' });
+    const getWindowsChildren = vi.fn().mockResolvedValue([
+      { command: 'other.exe', pid: 11111 },
+      { command: 'dotnet.exe', pid: testDotnetPid },
+    ]);
+    const getUnixChildren = vi.fn();
+    const pickChildProcess = vi.fn().mockResolvedValue(testFuncPid.toString());
+
+    // Patch the imported functions
+    vi.doMock('../pickFuncProcess', () => ({
+      getWindowsChildren,
+      getUnixChildren,
+      pickChildProcess,
+    }));
+
+    // Re-import to get the mocked version
+    const { pickNetHostChildProcess: pickNetHostChildProcessMocked } = await import('../pickCustomCodeNetHostProcess');
+    const result = await pickNetHostChildProcessMocked({ startTime: Date.now(), processId: testFuncPid });
+    expect(result).toBe(testDotnetPid.toString());
+  });
+
+  it('should return the pid of a child process matching dotnet on Unix', async () => {
+    vi.stubGlobal('process', { platform: 'linux' });
+    const getUnixChildren = vi.fn().mockResolvedValue([
+      { command: 'dotnet', pid: testDotnetPid },
+      { command: 'other', pid: 11111 },
+    ]);
+    const getWindowsChildren = vi.fn();
+    const pickChildProcess = vi.fn().mockResolvedValue(testFuncPid.toString());
+
+    vi.doMock('../pickFuncProcess', () => ({
+      getWindowsChildren,
+      getUnixChildren,
+      pickChildProcess,
+    }));
+
+    const { pickNetHostChildProcess: pickNetHostChildProcessMocked } = await import('../pickCustomCodeNetHostProcess');
+    const result = await pickNetHostChildProcessMocked({ startTime: Date.now(), processId: testFuncPid });
+    expect(result).toBe(testDotnetPid.toString());
+  });
+
+  it('should return the pid of a child process matching func on Unix', async () => {
+    vi.stubGlobal('process', { platform: 'linux' });
+    const getUnixChildren = vi.fn().mockResolvedValue([
+      { command: 'func.exe', pid: testDotnetPid },
+      { command: 'other', pid: 11111 },
+    ]);
+    const getWindowsChildren = vi.fn();
+    const pickChildProcess = vi.fn().mockResolvedValue(testFuncPid.toString());
+
+    vi.doMock('../pickFuncProcess', () => ({
+      getWindowsChildren,
+      getUnixChildren,
+      pickChildProcess,
+    }));
+
+    const { pickNetHostChildProcess: pickNetHostChildProcessMocked } = await import('../pickCustomCodeNetHostProcess');
+    const result = await pickNetHostChildProcessMocked({ startTime: Date.now(), processId: testFuncPid });
+    expect(result).toBe(testDotnetPid.toString());
+  });
+
+  it('should return undefined if no matching child process is found', async () => {
+    vi.stubGlobal('process', { platform: 'win32' });
+    const getWindowsChildren = vi.fn().mockResolvedValue([{ command: 'other.exe', pid: 11111 }]);
+    const getUnixChildren = vi.fn();
+    const pickChildProcess = vi.fn().mockResolvedValue(testFuncPid.toString());
+
+    vi.doMock('../pickFuncProcess', () => ({
+      getWindowsChildren,
+      getUnixChildren,
+      pickChildProcess,
+    }));
+
+    const { pickNetHostChildProcess: pickNetHostChildProcessMocked } = await import('../pickCustomCodeNetHostProcess');
+    const result = await pickNetHostChildProcessMocked({ startTime: Date.now(), processId: testFuncPid });
+    expect(result).toBeUndefined();
+  });
+
+  it('should return undefined if pickChildProcess returns undefined', async () => {
+    vi.stubGlobal('process', { platform: 'win32' });
+    const getWindowsChildren = vi.fn();
+    const getUnixChildren = vi.fn();
+    const pickChildProcess = vi.fn().mockResolvedValue(undefined);
+
+    vi.doMock('../pickFuncProcess', () => ({
+      getWindowsChildren,
+      getUnixChildren,
+      pickChildProcess,
+    }));
+
+    const { pickNetHostChildProcess: pickNetHostChildProcessMocked } = await import('../pickCustomCodeNetHostProcess');
+    const result = await pickNetHostChildProcessMocked({ startTime: Date.now(), processId: testFuncPid });
+    expect(result).toBeUndefined();
   });
 });
