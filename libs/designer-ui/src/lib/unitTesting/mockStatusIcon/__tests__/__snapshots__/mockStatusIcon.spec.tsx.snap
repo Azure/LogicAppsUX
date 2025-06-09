@@ -3,7 +3,7 @@
 exports[`ui/unitTesting/mockStatusIcon > should render the completed status. 1`] = `
 <div
   aria-label="Completed"
-  className="msla-mock-status-icon"
+  className="msla-mock-status-icon ___1ho1f30_1j833t0 f1euv43f funhzul f1scmxx7 f1hc5s0a"
   id="test-id"
   role="status"
 >
@@ -29,7 +29,7 @@ exports[`ui/unitTesting/mockStatusIcon > should render the completed status. 1`]
 exports[`ui/unitTesting/mockStatusIcon > should render the empty status when no completed property is send. 1`] = `
 <div
   aria-label="Empty"
-  className="msla-mock-status-icon"
+  className="msla-mock-status-icon ___1ho1f30_1j833t0 f1euv43f funhzul f1scmxx7 f1hc5s0a"
   id="test-id"
   role="status"
 >
@@ -55,7 +55,7 @@ exports[`ui/unitTesting/mockStatusIcon > should render the empty status when no 
 exports[`ui/unitTesting/mockStatusIcon > should render the empty status. 1`] = `
 <div
   aria-label="Empty"
-  className="msla-mock-status-icon"
+  className="msla-mock-status-icon ___1ho1f30_1j833t0 f1euv43f funhzul f1scmxx7 f1hc5s0a"
   id="test-id"
   role="status"
 >

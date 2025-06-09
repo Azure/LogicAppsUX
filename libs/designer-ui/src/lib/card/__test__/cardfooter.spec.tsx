@@ -54,4 +54,9 @@ describe('lib/card/cardfooter', () => {
     const tree = renderer.create(<CardFooter {...minimal} staticResultsEnabled={true} />).toJSON();
     expect(tree).toMatchSnapshot();
   });
+
+  it('should not render with a testing icon when static results are disabled', () => {
+    const tree = renderer.create(<CardFooter {...minimal} staticResultsEnabled={false} />).toJSON();
+    expect(tree).toMatchSnapshot();
+  });
 });

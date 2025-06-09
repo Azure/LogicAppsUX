@@ -141,9 +141,10 @@ const CustomizeWorkflowSection = ({
           description: 'Hint message to inform workflow name restrictions',
         }),
         description: intl.formatMessage({
-          defaultMessage: 'The unique internal system name for this workflow.',
-          id: '7nWRYH',
-          description: 'Hint message for workflow display name explanation',
+          defaultMessage:
+            'The unique internal system name for this workflow. Use lowercase letters, numbers, and hyphens only—no spaces or special characters.',
+          id: 'leYJf/',
+          description: 'Description for workflow display name field',
         }),
         errorMessage: workflow.errors?.workflow,
       },
@@ -167,6 +168,11 @@ const CustomizeWorkflowSection = ({
           defaultMessage: 'Workflow display name is required for Save.',
           id: 'IOQVnL',
           description: 'Hint message for workflow display name is required for save.',
+        }),
+        description: intl.formatMessage({
+          defaultMessage: 'The user-friendly name displayed for the workflow in the Azure portal.',
+          id: '8nnC5o',
+          description: 'Description for workflow display name field',
         }),
         errorMessage: apiErrors?.manifest?.title ?? workflow.errors?.manifest?.title,
       });
@@ -193,6 +199,11 @@ const CustomizeWorkflowSection = ({
     baseItems.push({
       label: customResourceStrings.Trigger,
       value: workflow.triggerType,
+      description: intl.formatMessage({
+        defaultMessage: 'The event that starts your workflow, such as a request, file update, or schedule.',
+        id: 'FKGCvW',
+        description: 'Description for workflow trigger type field',
+      }),
       type: 'text',
     });
     return baseItems;
@@ -220,6 +231,11 @@ const CustomizeWorkflowSection = ({
             value: workflow.manifest?.summary || '',
             type: 'textarea',
             required: true,
+            description: intl.formatMessage({
+              defaultMessage: 'A short overview of what the template does.',
+              id: 'fsRie2',
+              description: 'Description for workflow summary field',
+            }),
             onChange: (value: string) => {
               updateWorkflowDataField(workflowId, {
                 ...workflow,
@@ -237,6 +253,11 @@ const CustomizeWorkflowSection = ({
       label: resourceStrings.DESCRIPTION,
       value: workflow.manifest?.description || '',
       type: 'textarea',
+      description: intl.formatMessage({
+        defaultMessage: 'A detailed explanation of the template’s purpose and behavior.',
+        id: 'jHEyua',
+        description: 'Description for workflow description field',
+      }),
       errorMessage: apiErrors?.manifest?.details ?? workflow.errors?.manifest?.description,
       onChange: (value: string) => {
         updateWorkflowDataField(workflowId, {
@@ -252,6 +273,11 @@ const CustomizeWorkflowSection = ({
       label: customResourceStrings.Prerequisites,
       value: workflow.manifest?.prerequisites || '',
       type: 'textarea',
+      description: intl.formatMessage({
+        defaultMessage: `What's needed before using this template (e.g., services, connections).`,
+        id: 'GBhksx',
+        description: 'Description for workflow prerequisites field',
+      }),
       onChange: (value: string) => {
         updateWorkflowDataField(workflowId, {
           ...workflow,
@@ -268,6 +294,7 @@ const CustomizeWorkflowSection = ({
     customResourceStrings.Summary,
     customResourceStrings.Prerequisites,
     workflow,
+    intl,
     apiErrors?.manifest?.summary,
     apiErrors?.manifest?.details,
     resourceStrings.DESCRIPTION,

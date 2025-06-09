@@ -4,6 +4,7 @@ import { Stack } from '@fluentui/react';
 import { Button, Tooltip } from '@fluentui/react-components';
 import type { FC } from 'react';
 import { Label } from '../label';
+import { useSearchableDropdownWithAddAllStyles } from './searchabledropdownWithAddAll.styles';
 
 export interface SearchableDropdownWithAddAllProps extends SearchableDropdownProps {
   addAllButtonText?: string;
@@ -29,6 +30,7 @@ export const SearchableDropdownWithAddAll: FC<SearchableDropdownWithAddAllProps>
   onHideAllClick,
   ...searchableDropdownProps
 }): JSX.Element => {
+  const styles = useSearchableDropdownWithAddAllStyles();
   const handleShowAll = () => onShowAllClick?.();
   const handleRemoveAll = () => onHideAllClick?.();
 
@@ -46,9 +48,9 @@ export const SearchableDropdownWithAddAll: FC<SearchableDropdownWithAddAllProps>
 
   return (
     <>
-      {label && <Label id={labelId} className="msla-searchable-dropdown-label" text={label} />}
+      {label && <Label id={labelId} className={styles.searchableDropdownLabel} text={label} />}
       <Stack horizontal tokens={{ childrenGap: '8px' }}>
-        <SearchableDropdown {...searchableDropdownProps} labelId={labelId} className="msla-searchable-dropdown-with-buttons" />
+        <SearchableDropdown {...searchableDropdownProps} labelId={labelId} className={styles.searchableDropdownWithButtons} />
         {renderButton(handleShowAll, addAllButtonText, addAllButtonTooltip, !(addAllButtonEnabled ?? true), 'msla-add-all-button')}
         {renderButton(
           handleRemoveAll,

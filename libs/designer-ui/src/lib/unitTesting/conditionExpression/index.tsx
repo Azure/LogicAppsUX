@@ -12,6 +12,7 @@ import type { GetValueSegmentHandler } from '../../tokenpicker/tokenpickersectio
 import type { EditorContentChangedEventArgs } from '../../editor/monaco';
 import constants from '../../constants';
 import type { TokenGroup } from '@microsoft/logic-apps-shared';
+import { useConditionExpressionStyles } from './conditionExpression.styles';
 
 const buttonStyles: IButtonStyles = {
   root: {
@@ -50,6 +51,7 @@ export function ConditionExpression({
   isReadOnly,
 }: ConditionExpressionProps): JSX.Element {
   const intl = useIntl();
+  const styles = useConditionExpressionStyles();
   const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
   const [expression, setExpression] = useState<ExpressionEditorEvent>({ value: initialValue, selectionStart: 0, selectionEnd: 0 });
   const [isDraggingExpressionEditor, setIsDraggingExpressionEditor] = useState(false);
@@ -164,7 +166,7 @@ export function ConditionExpression({
       </div>
       {isCalloutVisible && !isReadOnly && (
         <Callout
-          className="msla-condition-expression-callout"
+          className={styles.conditionExpressionCallout}
           role="dialog"
           calloutMaxHeight={400}
           ariaLabelledBy={labelId}
