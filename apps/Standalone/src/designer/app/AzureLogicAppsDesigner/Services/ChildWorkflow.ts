@@ -125,12 +125,12 @@ export class ChildWorkflowService {
       return null;
     });
 
-    // Await all promises in parallel
-    const results = await Promise.all(workflowPromises);
+    // Await all promises in parallel, allowing partial failures
+    const results = await Promise.allSettled(workflowPromises);
 
-    for (const res of results) {
-      if (res) {
-        workflowsWithSingleRequestTrigger[res.name] = res.triggerSchema;
+    for (const result of results) {
+      if (result.status === 'fulfilled' && result.value) {
+        workflowsWithSingleRequestTrigger[result.value.name] = result.value.triggerSchema;
       }
     }
 
