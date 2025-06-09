@@ -1,5 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`lib/card/cardfooter > should not render with a testing icon when static results are disabled 1`] = `null`;
+
 exports[`lib/card/cardfooter > should render 1`] = `null`;
 
 exports[`lib/card/cardfooter > should render with a comment icon 1`] = `
