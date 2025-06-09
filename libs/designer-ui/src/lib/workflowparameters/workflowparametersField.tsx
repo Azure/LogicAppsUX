@@ -1,54 +1,18 @@
 import Constants from '../constants';
 import type { WorkflowParameterDefinition, WorkflowParameterUpdateHandler } from './workflowparameter';
-import type { IDropdownOption, IDropdownStyles, ILabelStyles, IStyle, ITextFieldProps, ITextFieldStyles } from '@fluentui/react';
-import { Dropdown, FontWeights, getTheme, TextField } from '@fluentui/react';
+import { useWorkflowParameterStyles } from './styles';
 import { equals, getRecordEntry } from '@microsoft/logic-apps-shared';
 import { type CSSProperties, useState } from 'react';
 import type { IntlShape } from 'react-intl';
 import { useIntl } from 'react-intl';
-import { Text } from '@fluentui/react-components';
+import { Text, Input, Dropdown, Option, Textarea } from '@fluentui/react-components';
+import type { DropdownProps, InputProps, TextareaProps } from '@fluentui/react-components';
 import { SmallText } from '../text';
 import { Label } from '../label';
 
-export const labelStyles: Partial<ILabelStyles> = {
-  root: {
-    display: 'inline-block',
-    minWidth: '120px',
-    verticalAlign: 'top',
-    padding: '0px',
-  },
-};
-
-const fieldStyles: IStyle = {
-  display: 'inline-block',
-  flexGrow: 1,
-  flexShrink: 1,
-  flexBasis: 'auto',
-};
-
-const textFieldStyles: Partial<ITextFieldStyles> = {
-  root: fieldStyles,
-};
-
-const textFieldWithWarningStyles: Partial<ITextFieldStyles> = {
-  root: fieldStyles,
-  fieldGroup: {
-    borderColor: Constants.FIELD_GROUP_BORDER_COLOR_WARNING,
-    selectors: {
-      '&:hover': {
-        borderColor: Constants.FIELD_GROUP_BORDER_COLOR_WARNING,
-      },
-    },
-  },
-};
-
-const dropdownStyles: Partial<IDropdownStyles> = {
-  root: fieldStyles,
-};
-
 const textStyles: CSSProperties = {
-  color: getTheme().palette.yellow,
-  fontWeight: FontWeights.bold,
+  color: '#FF8C00', // Orange color for warnings
+  fontWeight: 600,
 };
 
 const NAME_KEY = 'name';
@@ -91,6 +55,7 @@ export const WorkflowparameterField = ({
   const [type, setType] = useState(definition.type);
   const [value, setValue] = useState<string | undefined>(stringifyValue(definition.value));
   const [defaultValue, setDefaultValue] = useState<string | undefined>(stringifyValue(definition.defaultValue));
+  const styles = useWorkflowParameterStyles();
 
   const intl = useIntl();
 
@@ -105,42 +70,15 @@ export const WorkflowparameterField = ({
   const errors = validationErrors ? validationErrors : {};
   const typeTexts = getWorkflowParameterTypeDisplayNames(intl);
 
-  const typeOptions: IDropdownOption[] = [
-    {
-      key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.ARRAY,
-      text: typeTexts[Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.ARRAY],
-    },
-    {
-      key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.BOOL,
-      text: typeTexts[Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.BOOL],
-    },
-    {
-      key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.FLOAT,
-      text: typeTexts[Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.FLOAT],
-    },
-    {
-      key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.INT,
-      text: typeTexts[Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.INT],
-    },
-    {
-      key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.OBJECT,
-      text: typeTexts[Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.OBJECT],
-    },
-    {
-      key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.STRING,
-      text: typeTexts[Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.STRING],
-    },
+  const typeOptions = [
+    Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.ARRAY,
+    Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.BOOL,
+    Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.FLOAT,
+    Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.INT,
+    Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.OBJECT,
+    Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.STRING,
     ...(useLegacy
-      ? [
-          {
-            key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.SECURE_STRING,
-            text: typeTexts[Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.SECURE_STRING],
-          },
-          {
-            key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.SECURE_OBJECT,
-            text: typeTexts[Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.SECURE_OBJECT],
-          },
-        ]
+      ? [Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.SECURE_STRING, Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.SECURE_OBJECT]
       : []),
   ];
   const nameTitle = intl.formatMessage({
@@ -189,11 +127,18 @@ export const WorkflowparameterField = ({
     description: 'Parameter Field Value Placeholder Text',
   });
 
-  const onNameChange = (_event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string): void => {
+  const handleNameChange: InputProps['onChange'] = (event, data) => {
+    const newValue = data.value;
     setName(newValue);
     onChange?.({
       id: definition.id,
-      newDefinition: { ...definition, name: newValue, type, value, defaultValue },
+      newDefinition: {
+        ...definition,
+        name: newValue,
+        type,
+        value,
+        defaultValue,
+      },
       useLegacy,
     });
   };
@@ -214,12 +159,18 @@ export const WorkflowparameterField = ({
     getDefaultValueWarningMessage(definition.defaultValue, definition.type)
   );
 
-  const onTypeChange = (_event?: React.FormEvent<HTMLDivElement>, item?: IDropdownOption): void => {
-    const newType = item?.key.toString() as string;
+  const handleTypeChange: DropdownProps['onOptionSelect'] = (event, data) => {
+    const newType = data.optionValue as string;
 
     onChange?.({
       id: definition.id,
-      newDefinition: { ...definition, name, type: newType, value, defaultValue },
+      newDefinition: {
+        ...definition,
+        name,
+        type: newType,
+        value,
+        defaultValue,
+      },
       useLegacy,
     });
 
@@ -227,164 +178,269 @@ export const WorkflowparameterField = ({
     setDefaultValueWarningMessage(getDefaultValueWarningMessage(defaultValue, newType));
   };
 
-  const onValueChange = (_event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string): void => {
-    handleValueChange(newValue);
-  };
-
-  const handleValueChange = (value?: string) => {
-    setValue(value);
+  const handleValueChange: InputProps['onChange'] = (event, data) => {
+    const newValue = data.value;
+    setValue(newValue);
 
     onChange?.({
       id: definition.id,
-      newDefinition: { ...definition, name, type, value, defaultValue },
+      newDefinition: {
+        ...definition,
+        name,
+        type,
+        value: newValue,
+        defaultValue,
+      },
       useLegacy,
     });
   };
 
-  const onDefaultValueChange = (_event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string): void => {
-    handleDefaultValueChange(newValue);
-  };
-
-  const handleDefaultValueChange = (defaultValue?: string) => {
-    setDefaultValue(defaultValue);
-    setDefaultValueWarningMessage(getDefaultValueWarningMessage(defaultValue, type));
+  const handleValueTextareaChange: TextareaProps['onChange'] = (event, data) => {
+    const newValue = data.value;
+    setValue(newValue);
 
     onChange?.({
       id: definition.id,
-      newDefinition: { ...definition, name, type, value, defaultValue },
+      newDefinition: {
+        ...definition,
+        name,
+        type,
+        value: newValue,
+        defaultValue,
+      },
       useLegacy,
     });
   };
 
-  const onRenderDescription = (props?: ITextFieldProps): JSX.Element => {
-    return <SmallText style={textStyles} text={props?.description ?? ''} />;
+  const handleDefaultValueChange: InputProps['onChange'] = (event, data) => {
+    const newValue = data.value;
+    setDefaultValue(newValue);
+    setDefaultValueWarningMessage(getDefaultValueWarningMessage(newValue, type));
+
+    onChange?.({
+      id: definition.id,
+      newDefinition: {
+        ...definition,
+        name,
+        type,
+        value,
+        defaultValue: newValue,
+      },
+      useLegacy,
+    });
+  };
+
+  const handleDefaultValueTextareaChange: TextareaProps['onChange'] = (event, data) => {
+    const newValue = data.value;
+    setDefaultValue(newValue);
+    setDefaultValueWarningMessage(getDefaultValueWarningMessage(newValue, type));
+
+    onChange?.({
+      id: definition.id,
+      newDefinition: {
+        ...definition,
+        name,
+        type,
+        value,
+        defaultValue: newValue,
+      },
+      useLegacy,
+    });
+  };
+
+  const renderWarning = (description: string): JSX.Element => {
+    return <SmallText style={textStyles} text={description} />;
+  };
+
+  // Render value input based on type
+  const renderValueInput = (fieldValue: string, isDefault = false) => {
+    const placeholder = isDefault ? defaultValueDescription : valueDescription;
+    const fieldId = isDefault ? parameterDetails.defaultValue : parameterDetails.value;
+    const fieldLabel = isDefault ? defaultValueTitle : valueTitle;
+    const handleInputChange = isDefault ? handleDefaultValueChange : handleValueChange;
+    const handleTextareaChange = isDefault ? handleDefaultValueTextareaChange : handleValueTextareaChange;
+
+    switch (type?.toLowerCase()) {
+      case 'object':
+        return (
+          <Textarea
+            data-testid={fieldId}
+            id={fieldId}
+            aria-label={fieldLabel}
+            placeholder={placeholder}
+            value={fieldValue || ''}
+            onChange={handleTextareaChange}
+            disabled={isReadOnly}
+            resize="vertical"
+            rows={4}
+            style={{ width: '100%' }}
+          />
+        );
+
+      case 'array':
+      case 'string':
+        return (
+          <Textarea
+            data-testid={fieldId}
+            id={fieldId}
+            aria-label={fieldLabel}
+            placeholder={placeholder}
+            value={fieldValue || ''}
+            onChange={handleTextareaChange}
+            disabled={isReadOnly}
+            resize="vertical"
+            rows={4}
+            style={{ width: '100%' }}
+          />
+        );
+
+      default: // bool, int, float, etc.
+        return (
+          <Input
+            data-testid={fieldId}
+            id={fieldId}
+            aria-label={fieldLabel}
+            placeholder={placeholder}
+            value={fieldValue || ''}
+            onChange={handleInputChange}
+            disabled={isReadOnly}
+            size="medium"
+            style={{ width: '100%' }}
+          />
+        );
+    }
   };
 
   return (
     <>
-      <div className="msla-workflow-parameter-field">
+      <div className={styles.field}>
         <Label
-          styles={labelStyles}
+          className={styles.fieldLabel}
           text={nameTitle}
           isRequiredField={getFieldBooleanValue(required, NAME_KEY)}
           htmlFor={parameterDetails.name}
         />
-        {getFieldBooleanValue(isEditable, NAME_KEY) ? (
-          <TextField
-            data-testid={parameterDetails.name}
-            data-automation-id={parameterDetails.name}
-            styles={textFieldStyles}
-            id={parameterDetails.name}
-            ariaLabel={nameTitle}
-            placeholder={nameDescription}
-            value={name}
-            errorMessage={errors[NAME_KEY]}
-            onChange={onNameChange}
-            disabled={isReadOnly}
-          />
-        ) : (
-          <Text className="msla-workflow-parameter-read-only">{name}</Text>
-        )}
+        <div className={styles.fieldEditor}>
+          {getFieldBooleanValue(isEditable, NAME_KEY) ? (
+            <>
+              <Input
+                data-testid={parameterDetails.name}
+                id={parameterDetails.name}
+                aria-label={nameTitle}
+                placeholder={nameDescription}
+                value={name || ''}
+                onChange={handleNameChange}
+                disabled={isReadOnly}
+                size="medium"
+                style={{ width: '100%' }}
+              />
+              {errors[NAME_KEY] && <div className={styles.fieldError}>{errors[NAME_KEY]}</div>}
+            </>
+          ) : (
+            <Text className="msla-workflow-parameter-read-only">{name}</Text>
+          )}
+        </div>
       </div>
-      <div className="msla-workflow-parameter-field">
+      <div className={styles.field}>
         <Label
-          styles={labelStyles}
+          className={styles.fieldLabel}
           text={typeTitle}
           isRequiredField={getFieldBooleanValue(required, TYPE_KEY)}
           htmlFor={parameterDetails.type}
         />
-        {getFieldBooleanValue(isEditable, TYPE_KEY) ? (
-          <Dropdown
-            data-testid={parameterDetails.type}
-            data-automation-id={parameterDetails.type}
-            id={parameterDetails.type}
-            ariaLabel={typeTitle}
-            options={typeOptions}
-            selectedKey={type}
-            styles={dropdownStyles}
-            onChange={onTypeChange}
-            disabled={isReadOnly}
-          />
-        ) : (
-          <Text className="msla-workflow-parameter-read-only">{type}</Text>
-        )}
+        <div className={styles.fieldEditor}>
+          {getFieldBooleanValue(isEditable, TYPE_KEY) ? (
+            <>
+              <Dropdown
+                data-testid={parameterDetails.type}
+                aria-label={typeTitle}
+                placeholder={typeTitle}
+                value={typeTexts[type] || type}
+                selectedOptions={[type]}
+                onOptionSelect={handleTypeChange}
+                disabled={isReadOnly}
+                style={{ width: '100%' }}
+              >
+                {typeOptions.map((option) => (
+                  <Option key={option} value={option}>
+                    {typeTexts[option]}
+                  </Option>
+                ))}
+              </Dropdown>
+              {errors[TYPE_KEY] && <div className={styles.fieldError}>{errors[TYPE_KEY]}</div>}
+            </>
+          ) : (
+            <Text className="msla-workflow-parameter-read-only">{type}</Text>
+          )}
+        </div>
       </div>
       {definition?.description && (
-        <div className="msla-workflow-parameter-field">
-          <Label styles={labelStyles} text={descriptionTitle} isRequiredField={false} htmlFor={parameterDetails.description} />
-          <Text className="msla-workflow-parameter-read-only">{definition.description}</Text>
+        <div className={styles.field}>
+          <Label className={styles.fieldLabel} text={descriptionTitle} isRequiredField={false} htmlFor={parameterDetails.description} />
+          <div className={styles.fieldEditor}>
+            <Text className="msla-workflow-parameter-read-only">{definition.description}</Text>
+          </div>
         </div>
       )}
       {useLegacy ? (
         <>
-          <div className="msla-workflow-parameter-field">
+          <div className={styles.field}>
             <Label
-              styles={labelStyles}
+              className={styles.fieldLabel}
               text={defaultValueTitle}
               isRequiredField={getFieldBooleanValue(required, DEFAULT_VALUE_KEY)}
               htmlFor={parameterDetails.defaultValue}
             />
-            {isEditable ? (
-              <TextField
-                data-testid={parameterDetails.defaultValue}
-                data-automation-id={parameterDetails.defaultValue}
-                id={parameterDetails.defaultValue}
-                ariaLabel={defaultValueTitle}
-                placeholder={defaultValueDescription}
-                description={defaultValueWarningMessage}
-                value={defaultValue}
-                errorMessage={errors[DEFAULT_VALUE_KEY]}
-                styles={defaultValueWarningMessage ? textFieldWithWarningStyles : textFieldStyles}
-                onChange={onDefaultValueChange}
-                onRenderDescription={defaultValueWarningMessage ? onRenderDescription : undefined}
-                disabled={isReadOnly}
-              />
-            ) : (
-              <Text className="msla-workflow-parameter-read-only">{defaultValue}</Text>
-            )}
+            <div className={styles.fieldEditor}>
+              {isEditable ? (
+                <>
+                  {renderValueInput(defaultValue || '', true)}
+                  {errors[DEFAULT_VALUE_KEY] && <div className={styles.fieldError}>{errors[DEFAULT_VALUE_KEY]}</div>}
+                  {defaultValueWarningMessage && renderWarning(defaultValueWarningMessage)}
+                </>
+              ) : (
+                <Text className="msla-workflow-parameter-read-only">{defaultValue}</Text>
+              )}
+            </div>
           </div>
-          <div className="msla-workflow-parameter-field">
-            <Label styles={labelStyles} text={actualValueTitle} htmlFor={parameterDetails.value} />
-            {getFieldBooleanValue(isEditable, VALUE_KEY) ? (
-              <TextField
-                data-testid={parameterDetails.value}
-                data-automation-id={parameterDetails.value}
-                id={parameterDetails.value}
-                ariaLabel={valueTitle}
-                value={value}
-                styles={textFieldStyles}
-                disabled={true}
-                type={isSecureParameter(type) ? 'password' : undefined}
-              />
-            ) : (
-              <Text className="msla-workflow-parameter-read-only">{value}</Text>
-            )}
+          <div className={styles.field}>
+            <Label className={styles.fieldLabel} text={actualValueTitle} htmlFor={parameterDetails.value} />
+            <div className={styles.fieldEditor}>
+              {getFieldBooleanValue(isEditable, VALUE_KEY) ? (
+                <Input
+                  data-testid={parameterDetails.value}
+                  id={parameterDetails.value}
+                  aria-label={valueTitle}
+                  value={value || ''}
+                  disabled={true}
+                  type={isSecureParameter(type) ? 'password' : 'text'}
+                  size="medium"
+                  style={{ width: '100%' }}
+                />
+              ) : (
+                <Text className="msla-workflow-parameter-read-only">{value}</Text>
+              )}
+            </div>
           </div>
         </>
       ) : (
-        <div className="msla-workflow-parameter-field">
+        <div className={styles.field}>
           <Label
-            styles={labelStyles}
+            className={styles.fieldLabel}
             text={valueTitle}
             isRequiredField={getFieldBooleanValue(required, VALUE_KEY)}
             htmlFor={parameterDetails.value}
           />
-          {getFieldBooleanValue(isEditable, VALUE_KEY) ? (
-            <TextField
-              data-testid={parameterDetails.value}
-              data-automation-id={parameterDetails.value}
-              id={parameterDetails.value}
-              ariaLabel={valueTitle}
-              placeholder={valueDescription}
-              value={value}
-              errorMessage={errors[VALUE_KEY]}
-              styles={textFieldStyles}
-              onChange={onValueChange}
-              disabled={isReadOnly}
-            />
-          ) : (
-            <Text className="msla-workflow-parameter-read-only">{value}</Text>
-          )}
+          <div className={styles.fieldEditor}>
+            {getFieldBooleanValue(isEditable, VALUE_KEY) ? (
+              <>
+                {renderValueInput(value || '')}
+                {errors[VALUE_KEY] && <div className={styles.fieldError}>{errors[VALUE_KEY]}</div>}
+              </>
+            ) : (
+              <Text className="msla-workflow-parameter-read-only">{value}</Text>
+            )}
+          </div>
         </div>
       )}
     </>

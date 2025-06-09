@@ -54,3 +54,74 @@ exports[`ui/workflowparameters/workflowparameters > should construct. 1`] = `
   />
 </div>
 `;
+
+exports[`ui/workflowparameters/workflowparameters > should construct. 2`] = `
+<div
+  className="___sl62cg0_0000000 f22iagw f1vx9l62 fnknrz3"
+>
+  <div
+    className="___1f2sl44_0000000 famjcw1 f22iagw fkln5zr fni485r f122n59 f1869bpl"
+  >
+    <XLargeText
+      text="Parameters"
+    />
+    <Button
+      appearance="subtle"
+      aria-label="Close panel"
+      icon={<CompoundIcon />}
+      onClick={[Function]}
+    />
+  </div>
+  <InfoBar />
+  <div
+    className="___1xjmln6_0000000 f1asdtw4"
+  >
+    <Button
+      icon={<CompoundIcon />}
+      onClick={[Function]}
+    >
+      Create parameter
+    </Button>
+  </div>
+  <div
+    className="___1ccp5kb_0000000 f22iagw f1vx9l62"
+  >
+    <div
+      className="___hwuzop0_0000000 fx3omr f85k2jk ffw042j"
+    >
+      <WorkflowParameter
+        definition={
+          {
+            "id": "test1",
+            "isEditable": true,
+            "name": "test",
+            "type": "Bool",
+            "value": "true",
+          }
+        }
+        disableDelete={false}
+        isInverted={false}
+        isNewlyAdded={true}
+      />
+    </div>
+    <div
+      className="___hwuzop0_0000000 fx3omr f85k2jk ffw042j"
+    >
+      <WorkflowParameter
+        definition={
+          {
+            "id": "test2",
+            "isEditable": false,
+            "name": "test2",
+            "type": "Object",
+            "value": "{}",
+          }
+        }
+        disableDelete={false}
+        isInverted={false}
+        isNewlyAdded={false}
+      />
+    </div>
+  </div>
+</div>
+`;
