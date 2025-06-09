@@ -26,19 +26,59 @@ const ExpandIcon = bundleIcon(ChevronRight24Filled, ChevronRight24Regular);
 const CollapseIcon = bundleIcon(ChevronDown24Filled, ChevronDown24Regular);
 
 const variableOptions: DropdownItem[] = [
-  { key: VARIABLE_TYPE.BOOLEAN, value: VARIABLE_TYPE.BOOLEAN, displayName: 'Boolean' },
-  { key: VARIABLE_TYPE.INTEGER, value: VARIABLE_TYPE.INTEGER, displayName: 'Integer' },
-  { key: VARIABLE_TYPE.FLOAT, value: VARIABLE_TYPE.FLOAT, displayName: 'Float' },
-  { key: VARIABLE_TYPE.STRING, value: VARIABLE_TYPE.STRING, displayName: 'String' },
-  { key: VARIABLE_TYPE.OBJECT, value: VARIABLE_TYPE.OBJECT, displayName: 'Object' },
-  { key: VARIABLE_TYPE.ARRAY, value: VARIABLE_TYPE.ARRAY, displayName: 'Array' },
+  {
+    key: VARIABLE_TYPE.BOOLEAN,
+    value: VARIABLE_TYPE.BOOLEAN,
+    displayName: 'Boolean',
+  },
+  {
+    key: VARIABLE_TYPE.INTEGER,
+    value: VARIABLE_TYPE.INTEGER,
+    displayName: 'Integer',
+  },
+  {
+    key: VARIABLE_TYPE.FLOAT,
+    value: VARIABLE_TYPE.FLOAT,
+    displayName: 'Float',
+  },
+  {
+    key: VARIABLE_TYPE.STRING,
+    value: VARIABLE_TYPE.STRING,
+    displayName: 'String',
+  },
+  {
+    key: VARIABLE_TYPE.OBJECT,
+    value: VARIABLE_TYPE.OBJECT,
+    displayName: 'Object',
+  },
+  {
+    key: VARIABLE_TYPE.ARRAY,
+    value: VARIABLE_TYPE.ARRAY,
+    displayName: 'Array',
+  },
 ];
 
 const agentParameterOptions: DropdownItem[] = [
-  { key: VARIABLE_TYPE.STRING, value: VARIABLE_TYPE.STRING, displayName: 'String' },
-  { key: VARIABLE_TYPE.INTEGER, value: VARIABLE_TYPE.INTEGER, displayName: 'Integer' },
-  { key: VARIABLE_TYPE.NUMBER, value: VARIABLE_TYPE.NUMBER, displayName: 'Float (Number)' },
-  { key: VARIABLE_TYPE.BOOLEAN, value: VARIABLE_TYPE.BOOLEAN, displayName: 'Boolean' },
+  {
+    key: VARIABLE_TYPE.STRING,
+    value: VARIABLE_TYPE.STRING,
+    displayName: 'String',
+  },
+  {
+    key: VARIABLE_TYPE.INTEGER,
+    value: VARIABLE_TYPE.INTEGER,
+    displayName: 'Integer',
+  },
+  {
+    key: VARIABLE_TYPE.NUMBER,
+    value: VARIABLE_TYPE.NUMBER,
+    displayName: 'Float (Number)',
+  },
+  {
+    key: VARIABLE_TYPE.BOOLEAN,
+    value: VARIABLE_TYPE.BOOLEAN,
+    displayName: 'Boolean',
+  },
 ];
 
 export const VARIABLE_PROPERTIES = {
@@ -62,6 +102,7 @@ interface VariableEditorProps extends Partial<BaseEditorProps> {
   isMultiVariableEnabled?: boolean;
   isAgentParameter?: boolean;
   isNewlyAdded?: boolean;
+  forceExpandByDefault?: boolean;
 }
 
 const FieldEditor = ({
@@ -97,6 +138,7 @@ export const VariableEditor = ({
   onVariableChange,
   errors,
   index,
+  forceExpandByDefault = false,
   isMultiVariableEnabled,
   isAgentParameter,
   isNewlyAdded,
@@ -105,7 +147,7 @@ export const VariableEditor = ({
   const intl = useIntl();
   const { isInverted } = useTheme();
   const themeName = isInverted ? 'dark' : 'light';
-  const [expanded, setExpanded] = useState(isNewlyAdded ?? false);
+  const [expanded, setExpanded] = useState((isNewlyAdded || forceExpandByDefault) ?? false);
   const [variableId, setVariableId] = useState<string>(guid());
 
   const handleToggleExpand = (): void => {

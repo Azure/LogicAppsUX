@@ -199,6 +199,7 @@ export const InitializeVariableEditor = ({
         <div key={index}>
           <VariableEditor
             {...props}
+            forceExpandByDefault={!isAgentParameter && variables.length === 1}
             isAgentParameter={isAgentParameter}
             key={index}
             index={index}
