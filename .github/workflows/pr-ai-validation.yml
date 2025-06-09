@@ -1,8 +1,6 @@
 name: PR AI Validation
 
 on:
-  pull_request:
-    types: [opened, edited, synchronize]
   pull_request_target:
     types: [opened, edited, synchronize]
   workflow_dispatch:
