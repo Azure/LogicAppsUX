@@ -1,27 +1,37 @@
-## Type of Change
+## Commit Type
+<!-- Select one -->
+- [ ] feature - New functionality
+- [ ] fix - Bug fix
+- [ ] refactor - Code restructuring without behavior change
+- [ ] perf - Performance improvement
+- [ ] docs - Documentation update
+- [ ] test - Test-related changes
+- [ ] chore - Maintenance/tooling
 
-* [ ] Bug fix
-* [ ] Feature
-* [ ] Other
+## Risk Level
+<!-- Select one based on potential impact -->
+- [ ] Low - Minor changes, limited scope
+- [ ] Medium - Moderate changes, some user impact
+- [ ] High - Major changes, significant user/system impact
 
-## Current Behavior
-
-<!-- You can use this section to: link to an open issue, share the repro of a bug that exists today, or describe current functionality. -->
-
-## New Behavior
-
-<!-- For features, describe the new behavior. For bugs, this section can be deleted, or you can optionally describe any new behavior that occurs now that the bug has been addressed. -->
+## What & Why
+<!-- Brief context: What does this change and why? -->
 
 ## Impact of Change
-
-<!-- If this PR has breaking changes for downstream consumers, check the box below. If you check the box, please provide information about the breaking changes as well. -->
-
-* [ ] **This is a breaking change.**
+<!-- Who/what is affected? -->
+- **Users**: <!-- User-facing changes, if any -->
+- **Developers**: <!-- API changes, new patterns, etc. -->
+- **System**: <!-- Performance, architecture, dependencies -->
 
 ## Test Plan
+<!-- How was this tested? -->
+- [ ] Unit tests added/updated
+- [ ] E2E tests added/updated
+- [ ] Manual testing completed
+- [ ] Tested in: <!-- environments/scenarios -->
 
-<!-- Please post how this change has been tested and will be tested going forward --> 
+## Contributors
+<!-- Tag team members who contributed ideas, reviews, or implementation -->
 
-## Screenshots or Videos (if applicable)
-
-<!-- Paste screenshots, videos, or GIFs of the change if it is has a visual impact. -->
+## Screenshots/Videos
+<!-- Visual changes only -->

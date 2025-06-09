@@ -1,10 +1,30 @@
-import { Button, Dropdown, Input, Label, Textarea, useId, Option } from '@fluentui/react-components';
-import { capitalizeFirstLetter, type ParameterInfo } from '@microsoft/logic-apps-shared';
+import { Dropdown, type IDropdownOption } from '@fluentui/react';
+import { Button, Input, Label, Textarea, useId } from '@fluentui/react-components';
+import { capitalizeFirstLetter, equals, type ParameterInfo } from '@microsoft/logic-apps-shared';
 import type { NodeKey } from 'lexical';
-import { useEffect, useMemo, useState } from 'react';
+import { VARIABLE_TYPE } from '../../../constants';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 
-const options = ['boolean', 'integer', 'float', 'string', 'object', 'array'];
+// BE doesn't support general array or object types for now. And Float is essentially a Integer.
+const options: IDropdownOption[] = [
+  {
+    text: 'String',
+    key: VARIABLE_TYPE.STRING,
+  },
+  {
+    text: 'Integer',
+    key: VARIABLE_TYPE.INTEGER,
+  },
+  {
+    text: 'Float (Number)',
+    key: VARIABLE_TYPE.NUMBER,
+  },
+  {
+    text: 'Boolean',
+    key: VARIABLE_TYPE.BOOLEAN,
+  },
+];
 
 interface CreateAgentParameterProps {
   createAgentParameter?: (name: string, type: string, description: string) => void;
@@ -29,10 +49,22 @@ export const CreateAgentParameter = ({
   const typeId = useId('type');
   const descriptionId = useId('description');
   const [name, setName] = useState(defaultName);
-  const initialType = useMemo(() => {
-    return options.includes(defaultType ?? '') ? (defaultType as string) : 'string';
-  }, [defaultType]);
-  const [type, setType] = useState(initialType);
+
+  const getType = useCallback((type?: string) => {
+    if (!type) {
+      return 'string';
+    }
+
+    const option = options.find((o) => equals(o.key as string, type, true));
+
+    if (!option && equals(type, 'float', true)) {
+      return 'number';
+    }
+
+    return option ? (option.key as string) : 'string';
+  }, []);
+
+  const [type, setType] = useState('string');
   const [description, setDescription] = useState(defaultDescription ?? '');
 
   // Because Opening the tokenpicker and populating the agentParameter are asynchronous
@@ -40,18 +72,50 @@ export const CreateAgentParameter = ({
   useEffect(() => {
     setName(defaultName);
     setDescription(defaultDescription ?? '');
-    setType(options.includes(defaultType ?? '') ? (defaultType as string) : 'string');
-  }, [defaultDescription, defaultType, defaultName]);
+    setType(getType(defaultType ?? ''));
+  }, [defaultDescription, defaultType, defaultName, getType]);
 
   const labels = {
-    title: intl.formatMessage({ defaultMessage: 'Create new agent parameter', id: 'uhxyi+', description: 'Create new parameter' }),
-    editTitle: intl.formatMessage({ defaultMessage: 'Edit agent parameter', id: 'nwTyEd', description: 'Edit parameter' }),
-    updateButton: intl.formatMessage({ defaultMessage: 'Update', id: 'Xpo7B8', description: 'Update button label' }),
-    createButton: intl.formatMessage({ defaultMessage: 'Create', id: 'M4MGQN', description: 'Create button label' }),
-    cancelButton: intl.formatMessage({ defaultMessage: 'Cancel', id: '0GT0SI', description: 'Cancel button label' }),
-    name: intl.formatMessage({ defaultMessage: 'Name', id: 'gOkIvb', description: 'Name label' }),
-    type: intl.formatMessage({ defaultMessage: 'Type', id: 'qBKOEO', description: 'Type label' }),
-    description: intl.formatMessage({ defaultMessage: 'Description', id: 'QMyMOI', description: 'Description label' }),
+    title: intl.formatMessage({
+      defaultMessage: 'Create agent parameter',
+      id: 'YsOyuE',
+      description: 'Create agent parameter',
+    }),
+    editTitle: intl.formatMessage({
+      defaultMessage: 'Edit agent parameter',
+      id: 'nwTyEd',
+      description: 'Edit parameter',
+    }),
+    updateButton: intl.formatMessage({
+      defaultMessage: 'Update',
+      id: 'Xpo7B8',
+      description: 'Update button label',
+    }),
+    createButton: intl.formatMessage({
+      defaultMessage: 'Create',
+      id: 'M4MGQN',
+      description: 'Create button label',
+    }),
+    cancelButton: intl.formatMessage({
+      defaultMessage: 'Cancel',
+      id: '0GT0SI',
+      description: 'Cancel button label',
+    }),
+    name: intl.formatMessage({
+      defaultMessage: 'Name',
+      id: 'gOkIvb',
+      description: 'Name label',
+    }),
+    type: intl.formatMessage({
+      defaultMessage: 'Type',
+      id: 'qBKOEO',
+      description: 'Type label',
+    }),
+    description: intl.formatMessage({
+      defaultMessage: 'Description',
+      id: 'QMyMOI',
+      description: 'Description label',
+    }),
   };
 
   const placeholders = {
@@ -105,15 +169,12 @@ export const CreateAgentParameter = ({
             id={typeId}
             placeholder={placeholders.type}
             className="msla-agent-parameter-input"
-            value={type}
-            onOptionSelect={(_, data) => setType((data.optionValue ?? '').toLowerCase())}
-          >
-            {options.map((option) => (
-              <Option key={option} value={option}>
-                {capitalizeFirstLetter(option)}
-              </Option>
-            ))}
-          </Dropdown>
+            selectedKey={type}
+            onChange={(_, data) => {
+              setType(getType(data?.key as string));
+            }}
+            options={options}
+          />
         </div>
 
         <div className="msla-tokenpicker-agentparameter-create-input">

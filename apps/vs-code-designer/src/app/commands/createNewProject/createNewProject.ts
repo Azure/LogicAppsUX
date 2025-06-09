@@ -4,15 +4,15 @@
  *--------------------------------------------------------------------------------------------*/
 import { createNewProjectInternalBase } from '../createNewCodeProject/CodeProjectBase/CreateNewProjectInternal';
 import { ExistingWorkspaceStep } from './createProjectSteps/ExistingWorkspaceStep';
-import { SetLogicAppType } from '../createNewCodeProject/CodeProjectBase/setLogicAppType';
-import { SetLogicAppName } from '../createNewCodeProject/CodeProjectBase/SetLogicAppNameStep';
+import { NewProjectLogicAppTypeStep } from './createProjectSteps/NewProjectLogicAppTypeStep';
+import { LogicAppNameStep } from '../createNewCodeProject/CodeProjectBase/LogicAppNameStep';
 import { TargetFrameworkStep } from '../createNewCodeProject/createCodeProjectSteps/createFunction/TargetFrameworkStep';
 import { NewCodeProjectTypeStep } from '../createNewCodeProject/CodeProjectBase/NewCodeProjectTypeStep';
-import { SetWorkspaceSettings } from '../createNewCodeProject/CodeProjectBase/SetWorkspaceSettings';
+import { WorkspaceSettingsStep } from '../createNewCodeProject/CodeProjectBase/WorkspaceSettingsStep';
 import { isString } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { ProjectLanguage, ProjectVersion } from '@microsoft/vscode-extension-logic-apps';
-import { ConvertToWorkspace } from '../createNewCodeProject/CodeProjectBase/ConvertToWorkspace';
+import { convertToWorkspace } from '../createNewCodeProject/CodeProjectBase/ConvertToWorkspace';
 
 export async function createNewProjectFromCommand(
   context: IActionContext,
@@ -24,7 +24,7 @@ export async function createNewProjectFromCommand(
   functionName?: string,
   functionSettings?: { [key: string]: string | undefined }
 ): Promise<void> {
-  if (await ConvertToWorkspace(context)) {
+  if (await convertToWorkspace(context)) {
     await createNewProjectInternalBase(
       context,
       {
@@ -40,11 +40,11 @@ export async function createNewProjectFromCommand(
       'Create new project',
       [
         new ExistingWorkspaceStep(),
-        new SetLogicAppType(),
+        new NewProjectLogicAppTypeStep(),
         new TargetFrameworkStep(),
-        new SetLogicAppName(),
+        new LogicAppNameStep(),
         new NewCodeProjectTypeStep(templateId, functionSettings, false),
-        new SetWorkspaceSettings(),
+        new WorkspaceSettingsStep(),
       ]
     );
   }

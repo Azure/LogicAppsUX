@@ -1,13 +1,25 @@
 import type { Label, Slot } from '@fluentui/react-components';
 
 interface BaseTemplatesSectionItem {
-  type: 'text' | 'textfield' | 'textarea' | 'dropdown' | 'radiogroup' | 'custom';
+  type: 'text' | 'textfield' | 'textarea' | 'dropdown' | 'radiogroup' | 'switch' | 'divider' | 'custom';
   label?: string | React.ReactNode;
   value: any | undefined;
+  description?: string;
 }
 
 interface TextItem extends BaseTemplatesSectionItem {
   type: 'text';
+}
+
+interface Divider extends BaseTemplatesSectionItem {
+  type: 'divider';
+  value: undefined;
+}
+
+interface SwitchItem extends BaseTemplatesSectionItem {
+  type: 'switch';
+  value: boolean;
+  onChange: (value: boolean) => void;
 }
 
 export interface BaseFieldItem extends BaseTemplatesSectionItem {
@@ -60,7 +72,15 @@ interface CustomFieldItem extends BaseFieldItem {
   onRenderItem: (item: TemplatesSectionItem) => React.ReactNode;
 }
 
-export type TemplatesSectionItem = TextItem | TextFieldItem | TextAreaItem | DropdownItem | RadioGroupItem | CustomFieldItem;
+export type TemplatesSectionItem =
+  | TextItem
+  | TextFieldItem
+  | TextAreaItem
+  | DropdownItem
+  | RadioGroupItem
+  | SwitchItem
+  | CustomFieldItem
+  | Divider;
 
 interface BaseTemplatesSectionProps {
   title?: string;
@@ -71,6 +91,7 @@ interface BaseTemplatesSectionProps {
     text: string;
     href: string;
   };
+  cssOverrides?: Record<string, string>;
 }
 
 interface ContentBasedProps extends BaseTemplatesSectionProps {

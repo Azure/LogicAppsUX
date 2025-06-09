@@ -3,6 +3,7 @@ import type { RootState } from './store';
 import type { WorkflowTemplateData } from '../../actions/bjsworkflow/templates';
 import type { ConnectionReference } from '../../../common/models/workflow';
 import type { Template } from '@microsoft/logic-apps-shared';
+import { getFilteredTemplates } from '../../templates/utils/helper';
 
 export const useTemplateWorkflows = () => {
   return useSelector((state: RootState) => state.template.workflows ?? {});
@@ -42,4 +43,16 @@ export const useTemplateConnections = (): Record<string, Template.Connection> =>
 
 export const useTemplateParameterDefinitions = (): Record<string, Template.ParameterDefinition> => {
   return useSelector((state: RootState) => state.template?.parameterDefinitions);
+};
+
+export const useFilteredTemplateNames = () => {
+  return useSelector((state: RootState) => {
+    const isConsumption = state.workflow.isConsumption;
+    const availableTemplates = state.manifest.availableTemplates;
+    const filters = state.manifest.filters;
+    if (!availableTemplates) {
+      return undefined;
+    }
+    return getFilteredTemplates(availableTemplates, filters, !!isConsumption);
+  });
 };

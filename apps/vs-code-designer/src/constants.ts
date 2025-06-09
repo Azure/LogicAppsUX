@@ -35,6 +35,7 @@ export const schemasDirectory = 'Schemas';
 // Folder names
 export const designTimeDirectoryName = 'workflow-designtime';
 export const testsDirectoryName = 'Tests';
+export const testMockOutputsDirectory = 'MockOutputs';
 export const testResultsDirectoryName = '.testResults';
 export const vscodeFolderName = '.vscode';
 
@@ -72,6 +73,8 @@ export const workflowSubscriptionIdKey = 'WORKFLOWS_SUBSCRIPTION_ID';
 export const workflowTenantIdKey = 'WORKFLOWS_TENANT_ID';
 export const workflowManagementBaseURIKey = 'WORKFLOWS_MANAGEMENT_BASE_URI';
 export const workflowAppApiVersion = '2018-11-01';
+export const workflowAppApiVersionNew = '2024-04-01';
+export const hybridAppApiVersion = '2024-02-02-preview';
 export const azureWebJobsStorageKey = 'AzureWebJobsStorage';
 export const azureWebJobsSecretStorageTypeKey = 'AzureWebJobsSecretStorageType';
 export const workflowappRuntime = 'node|18';
@@ -111,6 +114,9 @@ export const extensionCommand = {
   createNewProject: 'azureLogicAppsStandard.createNewProject',
   createNewWorkspace: 'azureLogicAppsStandard.createNewWorkspace',
   cloudToLocal: 'azureLogicAppsStandard.cloudToLocal',
+  buildCustomCodeFunctionsProject: 'azureLogicAppsStandard.buildCustomCodeFunctionsProject',
+  customCodeSetFunctionsFolders: 'azureLogicAppsStandard.customCode.setFunctionsFolders',
+  createCustomCodeFunction: 'azureLogicAppsStandard.createCustomCodeFunction',
   createNewDataMap: 'azureLogicAppsStandard.dataMap.createNewDataMap',
   createCodeless: 'azureLogicAppsStandard.createCodeless',
   createLogicApp: 'azureLogicAppsStandard.createLogicApp',
@@ -124,6 +130,7 @@ export const extensionCommand = {
   stopLogicApp: 'azureLogicAppsStandard.stopLogicApp',
   restartLogicApp: 'azureLogicAppsStandard.restartLogicApp',
   pickProcess: 'azureLogicAppsStandard.pickProcess',
+  pickCustomCodeNetHostProcess: 'azureLogicAppsStandard.pickCustomCodeNetHostProcess',
   getDebugSymbolDll: 'azureLogicAppsStandard.getDebugSymbolDll',
   deleteLogicApp: 'azureLogicAppsStandard.deleteLogicApp',
   switchToDotnetProject: 'azureLogicAppsStandard.switchToDotnetProject',
@@ -179,10 +186,8 @@ export const extensionCommand = {
   dataMapSaveMapXslt: 'azureLogicAppsStandard.dataMap.saveMapXslt',
   createUnitTest: 'azureLogicAppsStandard.createUnitTest',
   saveBlankUnitTest: 'azureLogicAppsStandard.saveBlankUnitTest',
-  editUnitTest: 'azureLogicAppsStandard.editUnitTest',
-  openUnitTestResults: 'azureLogicAppsStandard.openUnitTestResults',
-  runUnitTest: 'azureLogicAppsStandard.runUnitTest',
   vscodeOpenFolder: 'vscode.openFolder',
+  debugLogicApp: 'azureLogicAppsStandard.debugLogicApp',
 } as const;
 export type extensionCommand = (typeof extensionCommand)[keyof typeof extensionCommand];
 
@@ -232,6 +237,7 @@ export const funcCoreToolsBinaryPathSettingKey = 'funcCoreToolsBinaryPath';
 export const dependencyTimeoutSettingKey = 'dependencyTimeout';
 export const unitTestExplorer = 'unitTestExplorer';
 export const verifyConnectionKeysSetting = 'verifyConnectionKeys';
+export const useSmbDeployment = 'useSmbDeploymentForHybrid';
 
 // host.json
 export const extensionBundleId = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';
@@ -246,6 +252,7 @@ export const workerRuntimeKey = 'FUNCTIONS_WORKER_RUNTIME';
 export const ProjectDirectoryPath = 'ProjectDirectoryPath';
 export const extensionVersionKey = 'FUNCTIONS_EXTENSION_VERSION';
 export const azureStorageTypeSetting = 'Files';
+export const isZipDeployEnabledSetting = 'IS_ZIP_DEPLOY_ENABLED';
 // Project
 export const defaultVersionRange = '[1.*, 2.0.0)'; // Might need to be changed
 export const funcWatchProblemMatcher = '$func-watch';
@@ -270,7 +277,7 @@ export const defaultDataMapperVersion = 1;
 // Fallback Dependency Versions
 export const DependencyVersion = {
   dotnet6: '6.0.413',
-  funcCoreTools: '4.0.5455',
+  funcCoreTools: '4.0.7030',
   nodeJs: '18.17.1',
 } as const;
 export type DependencyVersion = (typeof DependencyVersion)[keyof typeof DependencyVersion];
@@ -353,7 +360,6 @@ export const DirectoryKind = {
 } as const;
 
 // App settings
-export const AzureWebJobsStorage = 'AzureWebJobsStorage';
 export const WEBSITE_CONTENTAZUREFILECONNECTIONSTRING = 'WEBSITE_CONTENTAZUREFILECONNECTIONSTRING';
 export const COMMON_ERRORS = {
   OPERATION_CANCELLED: 'Operation cancelled',
@@ -362,8 +368,10 @@ export type COMMON_ERRORS = (typeof COMMON_ERRORS)[keyof typeof COMMON_ERRORS];
 // Environment Variables
 export const azurePublicBaseUrl = 'https://management.azure.com';
 export const sqlConnectionStringSecretName = 'sqlconnectionstring';
+export const clientSecretName = 'clientsecret';
 
 //Regex validations
 export const workflowNameValidation = /^[a-z][a-z0-9]*(?:[_-][a-z0-9]+)*$/i;
 export const logicAppNameValidation = /^[a-z][a-z0-9]*(?:[_-][a-z0-9]+)*$/i;
+export const dataMapNameValidation = /^[a-z][a-z0-9]*(?:[_-][a-z0-9]+)*$/i;
 export const workspaceNameValidation = /^[a-z][a-z0-9]*(?:[_-][a-z0-9]+)*$/i;

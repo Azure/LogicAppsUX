@@ -40,6 +40,10 @@
       margin-left: 12px;
     }
   }
+  code {
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
 }
 
 .msla-bubble-footer {
@@ -67,11 +71,16 @@
 }
 
 .msla-bubble-footer-role {
-  font-size: 10px;
+  font-size: 12px;
   display: inline-flex;
   color: #707070;
   justify-content: flex-start;
   align-items: center;
+  gap: 4px;
+
+  .msla-bubble-footer-role--button {
+    font-size: inherit;
+  }
 }
 
 .msla-system-message {
@@ -81,6 +90,7 @@
   justify-content: center;
   align-items: center;
   p {
+    margin: 5px 0;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -92,6 +102,7 @@
   gap: 4px;
   justify-content: center;
   p {
+    margin: 5px 0;
     display: flex;
     justify-content: center;
     align-items: center;

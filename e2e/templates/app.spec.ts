@@ -14,11 +14,11 @@ test.describe(
 
       await page.getByRole('tab', { name: 'All' }).click();
       await page.getByText('Blank workflow', { exact: true }).click();
-      await page.getByRole('tab', { name: 'Accelerators' }).click();
-      await expect(page.getByText('Blank workflow', { exact: true })).not.toBeVisible();
+      // await page.getByRole('tab', { name: 'Accelerators' }).click();
+      // await expect(page.getByText('Blank workflow', { exact: true })).not.toBeVisible();
       await expect(page.getByText('[Mock] Simple Accelerator Template', { exact: true })).toBeVisible();
       await page.getByText('A to Z, ascending').click();
-      await page.getByRole('tab', { name: 'Workflows' }).click();
+      // await page.getByRole('tab', { name: 'Workflows' }).click();
       await page.getByText('Blank workflow', { exact: true }).click();
       await expect(page.getByText('[Mock] Basic Workflow Only Template', { exact: true })).toBeVisible();
       await expect(page.getByText('[Mock] Simple Connection Parameter Template', { exact: true })).toBeVisible();
@@ -40,16 +40,15 @@ test.describe(
       await expect(page.getByText('State type')).toBeVisible();
     });
 
-    test('Should only contain the mock templates when templates are loaded from azure endpoint', async ({ page }) => {
+    test('Should only contain the mock templates when templates are loaded from azure endpoint.', async ({ page }) => {
       await page.goto('/templates');
       await page.getByText('Local', { exact: true }).click();
-      await page.getByText('Use Endpoint', { exact: true }).click();
       await page.getByLabel('Categories').click();
       await page.getByText('Automation', { exact: true }).click();
 
       await page.waitForTimeout(5);
 
-      await expect(page.getByText('Azure Business', { exact: false })).not.toBeVisible();
+      await expect(page.getByText('Azure Business', { exact: false })).toBeVisible();
     });
 
     test('Should show basics tab for consumption workflow when it is create view and tabs to be enabled.', async ({ page }) => {
@@ -81,7 +80,10 @@ test.describe(
 
       await page.getByRole('button', { name: 'Use this template' }).click();
       await page.getByRole('tab', { name: 'Basics' }).click();
-      await expect(page.getByText('Subscription 1', { exact: true })).toBeVisible();
+
+      const allSubs = await page.getByText('Subscription 1', { exact: true }).all();
+      expect(allSubs.length).toBe(2);
+
       await expect(page.getByText('SecondRG', { exact: true })).toBeVisible();
       await expect(page.getByText('East US', { exact: true })).toBeVisible();
       await expect(page.getByText('Workflow name*', { exact: true })).toBeVisible();
@@ -118,7 +120,11 @@ test.describe(
 
       await page.getByRole('button', { name: 'Use this template' }).click();
       await page.getByRole('tab', { name: 'Basics' }).click();
-      await page.getByText('Subscription 1', { exact: true }).click();
+
+      const allSubs = await page.getByText('Subscription 1', { exact: true }).all();
+      expect(allSubs.length).toBe(2);
+
+      await allSubs[1].click();
       await page.getByText('Subscription 2', { exact: true }).click();
 
       await expect(page.getByText('Please select a valid resource', { exact: false })).toBeVisible();

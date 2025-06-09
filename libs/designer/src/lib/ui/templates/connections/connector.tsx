@@ -1,7 +1,7 @@
 import type { IImageStyles, IImageStyleProps, IStyleFunctionOrObject } from '@fluentui/react';
 import { Icon, Shimmer, ShimmerElementType, Spinner, SpinnerSize, css } from '@fluentui/react';
 import { useConnector } from '../../../core/state/connection/connectionSelector';
-import type { Template } from '@microsoft/logic-apps-shared';
+import { type Template, getPropertyValue } from '@microsoft/logic-apps-shared';
 import { getConnectorAllCategories } from '@microsoft/designer-ui';
 import { useConnectionsForConnector } from '../../../core/queries/connections';
 import { useEffect, useMemo } from 'react';
@@ -145,13 +145,10 @@ export const ConnectorWithDetails = ({ id, kind }: Template.FeaturedConnector) =
           <div className="msla-template-connector-name">{connector.properties?.displayName}</div>
         )}
         <div className="msla-template-connector-type">
-          <Text style={textStyles.connectorSubDetails} className="msla-template-card-tag">
-            {allCategories[kind ?? ''] ?? kind}
-          </Text>
-          <Icon style={{ padding: 5, color: '#8b8b8b', fontSize: 7 }} iconName="LocationDot" />
+          <Text style={textStyles.connectorSubDetails}>{getPropertyValue(allCategories, kind ?? '') ?? kind}</Text>
+          <Text style={textStyles.connectorSubDetails}>•</Text>
           {isConnectionsLoading ? (
             <Shimmer
-              className="msla-template-card-tag"
               style={{ width: '70px', marginTop: 5 }}
               shimmerElements={[{ type: ShimmerElementType.line, height: 10, verticalAlign: 'bottom', width: '100%' }]}
               size={SpinnerSize.xSmall}
@@ -159,9 +156,7 @@ export const ConnectorWithDetails = ({ id, kind }: Template.FeaturedConnector) =
           ) : (connectorConnections ?? []).length > 0 ? (
             <Text style={{ ...textStyles.connectorSubDetails, color: '#50821b' }}>{text.connected}</Text>
           ) : (
-            <Text style={textStyles.connectorSubDetails} className="msla-template-card-tag">
-              {text.notConnected}
-            </Text>
+            <Text style={textStyles.connectorSubDetails}>{text.notConnected}</Text>
           )}
         </div>
       </div>
@@ -169,7 +164,7 @@ export const ConnectorWithDetails = ({ id, kind }: Template.FeaturedConnector) =
   );
 };
 
-export const ConnectorConnectionName = ({ connectorId, connectionKey }: { connectorId: string; connectionKey: string }) => {
+export const ConnectorConnectionName = ({ connectorId, connectionKey }: { connectorId: string; connectionKey: string | undefined }) => {
   const { data: connector, isLoading } = useConnector(connectorId, /* enabled */ true, /* getCachedData */ true);
 
   return isLoading ? (
@@ -180,7 +175,8 @@ export const ConnectorConnectionName = ({ connectorId, connectionKey }: { connec
     />
   ) : (
     <Text>
-      {connector?.properties?.displayName} ({connectionKey})
+      {connector?.properties?.displayName}
+      {connectionKey ? ` (${connectionKey})` : ''}
     </Text>
   );
 };

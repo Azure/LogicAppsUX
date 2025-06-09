@@ -15,9 +15,8 @@ import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { executeCommand } from '../funcCoreTools/cpUtils';
 import { runWithDurationTelemetry } from '../telemetry';
-import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
 import { getGlobalSetting, updateGlobalSetting, updateWorkspaceSetting } from '../vsCodeConfig/settings';
-import { findFiles, getWorkspaceFolder } from '../workspace';
+import { findFiles, getWorkspaceLogicAppFolders } from '../workspace';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { AzExtFsExtra } from '@microsoft/vscode-azext-utils';
 import type { IWorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
@@ -25,7 +24,6 @@ import { FuncVersion, ProjectLanguage } from '@microsoft/vscode-extension-logic-
 import * as fs from 'fs';
 import * as path from 'path';
 import * as semver from 'semver';
-import * as vscode from 'vscode';
 
 export class ProjectFile {
   public name: string;
@@ -200,7 +198,7 @@ export async function getLocalDotNetVersionFromBinaries(majorVersion?: string): 
       if (version) {
         return version;
       }
-    } catch (error) {
+    } catch {
       return null;
     }
   }
@@ -226,7 +224,7 @@ export function getDotNetCommand(): string {
   return command;
 }
 
-export async function setDotNetCommand(context: IActionContext): Promise<void> {
+export async function setDotNetCommand(): Promise<void> {
   const binariesLocation = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
   const dotNetBinariesPath = path.join(binariesLocation, dotnetDependencyName);
   const binariesExist = fs.existsSync(dotNetBinariesPath);
@@ -241,36 +239,31 @@ export async function setDotNetCommand(context: IActionContext): Promise<void> {
     fs.chmodSync(dotNetBinariesPath, 0o777);
 
     try {
-      if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
-        const workspaceFolder = await getWorkspaceFolder(context);
-        const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
+      const workspaceLogicAppFolders = await getWorkspaceLogicAppFolders();
+      for (const projectPath of workspaceLogicAppFolders) {
+        const pathEnv = {
+          PATH: newPath,
+        };
 
-        // Check if LogicAppProject to prevent updating LogicAppsUX settings.
-        if (projectPath) {
-          const pathEnv = {
-            PATH: newPath,
-          };
-
-          // Required for dotnet cli in VSCode Terminal
-          switch (process.platform) {
-            case Platform.windows: {
-              await updateWorkspaceSetting('integrated.env.windows', pathEnv, projectPath, 'terminal');
-              break;
-            }
-
-            case Platform.linux: {
-              await updateWorkspaceSetting('integrated.env.linux', pathEnv, projectPath, 'terminal');
-              break;
-            }
-
-            case Platform.mac: {
-              await updateWorkspaceSetting('integrated.env.osx', pathEnv, projectPath, 'terminal');
-              break;
-            }
+        // Required for dotnet cli in VSCode Terminal
+        switch (process.platform) {
+          case Platform.windows: {
+            await updateWorkspaceSetting('integrated.env.windows', pathEnv, projectPath, 'terminal');
+            break;
           }
-          // Required for CoreClr
-          await updateWorkspaceSetting('dotNetCliPaths', [dotNetBinariesPath], projectPath, 'omnisharp');
+
+          case Platform.linux: {
+            await updateWorkspaceSetting('integrated.env.linux', pathEnv, projectPath, 'terminal');
+            break;
+          }
+
+          case Platform.mac: {
+            await updateWorkspaceSetting('integrated.env.osx', pathEnv, projectPath, 'terminal');
+            break;
+          }
         }
+        // Required for CoreClr
+        await updateWorkspaceSetting('dotNetCliPaths', [dotNetBinariesPath], projectPath, 'omnisharp');
       }
     } catch (error) {
       console.log(error);

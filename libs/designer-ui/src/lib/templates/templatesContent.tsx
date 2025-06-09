@@ -1,7 +1,7 @@
 import { TabList, Tab, Text, tokens } from '@fluentui/react-components';
 import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
-import type { TemplateTabProps } from './model';
-import { DismissCircleFilled } from '@fluentui/react-icons';
+import type { TemplateTabProps, TemplateTabStatusType } from './model';
+import { CheckmarkCircleFilled, CircleHintHalfVerticalFilled, DismissCircleFilled } from '@fluentui/react-icons';
 
 export interface TemplateContentProps {
   className?: string;
@@ -27,7 +27,7 @@ export const TemplateContent = ({ tabs = [], selectedTab, selectTab, className }
       {tabs.length > 1 && (
         <>
           <TabList selectedValue={selectedTabId} onTabSelect={onTabSelected} className={tabClass}>
-            {tabs.map(({ id, title, disabled = false, hasError = false }) => (
+            {tabs.map(({ id, title, onTabClick = () => {}, disabled = false, tabStatusIcon }) => (
               <Tab
                 disabled={disabled}
                 key={id}
@@ -36,7 +36,8 @@ export const TemplateContent = ({ tabs = [], selectedTab, selectTab, className }
                 className="msla-templates-panel-tabName"
                 value={id}
                 role={'tab'}
-                icon={hasError ? <DismissCircleFilled color={tokens.colorStatusDangerForeground1} /> : undefined}
+                icon={TabStatusIcon(tabStatusIcon)}
+                onClick={onTabClick}
               >
                 {title}
               </Tab>
@@ -48,4 +49,17 @@ export const TemplateContent = ({ tabs = [], selectedTab, selectTab, className }
       <div className="msla-panel-content-container">{selectedTabProps?.content}</div>
     </div>
   );
+};
+
+const TabStatusIcon = (iconName: TemplateTabStatusType) => {
+  switch (iconName) {
+    case 'error':
+      return <DismissCircleFilled color={tokens.colorStatusDangerForeground1} />;
+    case 'success':
+      return <CheckmarkCircleFilled color={tokens.colorPaletteGreenBackground3} />;
+    case 'in-progress':
+      return <CircleHintHalfVerticalFilled />;
+    default:
+      return null;
+  }
 };

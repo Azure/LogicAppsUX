@@ -50,6 +50,8 @@ export const ExtensionCommand = {
   logTelemetry: 'logTelemetry',
   sendNotification: 'sendNotification',
   isTestDisabledForOS: 'isTestDisabledForOS',
+  fileABug: 'fileABug',
+  setIsWorkflowDirty: 'setIsWorkflowDirty',
 } as const;
 export type ExtensionCommand = (typeof ExtensionCommand)[keyof typeof ExtensionCommand];
 

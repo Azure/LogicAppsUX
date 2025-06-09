@@ -1,24 +1,30 @@
-import { TemplateService, type Template } from '@microsoft/logic-apps-shared';
+import { equals, TemplateService, type Template } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { RootState } from './store';
 import type { FilterObject } from '@microsoft/designer-ui';
-import { loadManifestsFromPaths } from '../../actions/bjsworkflow/templates';
+import { loadCustomTemplates, loadManifestsFromPaths } from '../../actions/bjsworkflow/templates';
 import { resetTemplatesState } from '../global';
 
 export const templatesCountPerPage = 25;
 const initialPageNum = 0;
 
+export interface TemplateData extends Template.TemplateManifest {
+  publishState?: string;
+}
+
 export interface ManifestState {
   availableTemplateNames?: ManifestName[];
-  filteredTemplateNames?: ManifestName[];
   githubTemplateNames?: ManifestName[];
-  availableTemplates?: Record<ManifestName, Template.TemplateManifest>;
+  customTemplateNames?: ManifestName[];
+  availableTemplates?: Record<ManifestName, TemplateData>;
   filters: {
     pageNum: number;
     keyword?: string;
     sortKey: string;
     connectors: FilterObject[] | undefined;
+    subscriptions: FilterObject[] | undefined;
+    status: FilterObject[] | undefined;
     detailFilters: Record<string, FilterObject[]>;
   };
 }
@@ -31,6 +37,8 @@ export const initialManifestState: ManifestState = {
     pageNum: initialPageNum,
     sortKey: 'a-to-z',
     connectors: undefined,
+    subscriptions: undefined,
+    status: undefined,
     detailFilters: {},
   },
 };
@@ -69,9 +77,6 @@ export const manifestSlice = createSlice({
     setavailableTemplates: (state, action: PayloadAction<Record<ManifestName, Template.TemplateManifest> | undefined>) => {
       state.availableTemplates = action.payload;
     },
-    setFilteredTemplateNames: (state, action: PayloadAction<ManifestName[] | undefined>) => {
-      state.filteredTemplateNames = action.payload;
-    },
     setPageNum: (state, action: PayloadAction<number>) => {
       state.filters.pageNum = action.payload;
     },
@@ -84,6 +89,14 @@ export const manifestSlice = createSlice({
     },
     setConnectorsFilters: (state, action: PayloadAction<FilterObject[] | undefined>) => {
       state.filters.connectors = action.payload;
+      state.filters.pageNum = initialPageNum;
+    },
+    setSubscriptionsFilters: (state, action: PayloadAction<FilterObject[] | undefined>) => {
+      state.filters.subscriptions = action.payload;
+      state.filters.pageNum = initialPageNum;
+    },
+    setStatusFilters: (state, action: PayloadAction<FilterObject[] | undefined>) => {
+      state.filters.status = action.payload;
       state.filters.pageNum = initialPageNum;
     },
     setDetailsFilters: (
@@ -125,6 +138,18 @@ export const manifestSlice = createSlice({
       state.availableTemplates = undefined;
     });
 
+    builder.addCase(loadCustomTemplates.fulfilled, (state, action) => {
+      const currentTemplates = { ...(state.availableTemplates ?? {}) };
+
+      for (const templateKey of Object.keys(currentTemplates)) {
+        if (equals((currentTemplates[templateKey].details as any).publishedBy, 'custom')) {
+          delete state.availableTemplates?.[templateKey];
+        }
+      }
+
+      state.availableTemplates = { ...state.availableTemplates, ...(action.payload ?? {}) };
+    });
+
     builder.addCase(lazyLoadGithubManifests.fulfilled, (state, action) => {
       state.availableTemplates = { ...state.availableTemplates, ...(action.payload ?? {}) };
     });
@@ -134,11 +159,12 @@ export const manifestSlice = createSlice({
 export const {
   setavailableTemplatesNames,
   setavailableTemplates,
-  setFilteredTemplateNames,
   setPageNum,
   setKeywordFilter,
   setSortKey,
   setConnectorsFilters,
   setDetailsFilters,
+  setSubscriptionsFilters,
+  setStatusFilters,
 } = manifestSlice.actions;
 export default manifestSlice.reducer;

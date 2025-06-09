@@ -11,7 +11,7 @@ import axios from 'axios';
 import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useDispatch } from 'react-redux';
-import { HybridAppUtility } from '../Utilities/HybridAppUtilities';
+import { HybridAppUtility, hybridApiVersion } from '../Utilities/HybridAppUtilities';
 
 const columnProps: Partial<IStackProps> = {
   tokens: { childrenGap: 15 },
@@ -28,7 +28,7 @@ export const AzureStandardLogicAppSelector = () => {
   const runId = useRunId();
   const isMonitoringView = useIsMonitoringView();
   const hostingPlan = useHostingPlan();
-  const standardList = useFetchStandardApps();
+  const standardList = useFetchStandardApps(environment.subscriptionIds);
   const hybridList = useFetchHybridApps();
   const { data: appList, isLoading: isAppsLoading } = hostingPlan === 'hybrid' ? hybridList : standardList;
   const validApp = appId ? resourceIdValidation.test(appId) : false;
@@ -41,7 +41,7 @@ export const AzureStandardLogicAppSelector = () => {
 
     const getWorkflowUrl =
       hostingPlan === 'hybrid'
-        ? `https://management.azure.com${HybridAppUtility.getHybridAppBaseRelativeUrl(appId)}/workflows?api-version=2024-02-02-preview`
+        ? `https://management.azure.com${HybridAppUtility.getHybridAppBaseRelativeUrl(appId)}/workflows?api-version=${hybridApiVersion}`
         : `https://management.azure.com${appId}/workflows?api-version=2018-11-01`;
 
     const results = await axios.get<WorkflowList>(getWorkflowUrl, {

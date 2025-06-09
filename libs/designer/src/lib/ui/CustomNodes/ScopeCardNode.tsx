@@ -29,6 +29,7 @@ import {
   useRunIndex,
 } from '../../core/state/workflow/workflowSelectors';
 import {
+  setFocusElement,
   setRepetitionRunData,
   setSubgraphRunData,
   toggleCollapsedGraphId,
@@ -284,14 +285,19 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
         { actionCount }
       ),
       emptyAgent: intl.formatMessage({
-        defaultMessage: 'No tools were executed ',
-        id: 'ZuQSme',
-        description: 'Text to explain that there are no tools in this agent',
+        defaultMessage: 'This iteration has completed without any tool execution',
+        id: 'w2rxzD',
+        description: 'Text to explain that there are no executed tools in the agent iteration',
       }),
       addTool: intl.formatMessage({
         defaultMessage: 'Add tool',
-        id: 'dXiXiF',
-        description: 'Text to explain that there are no tools in this agent',
+        id: 'Nl4O59',
+        description: 'Text that explains no tools exist in this agent',
+      }),
+      noActions: intl.formatMessage({
+        defaultMessage: 'No actions',
+        id: 'CN+Jfd',
+        description: 'Text to explain that there are no actions',
       }),
     }),
     [actionCount, intl]
@@ -321,10 +327,13 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
 
   const renderLoopsPager = useMemo(() => {
     if (!Array.isArray(metadata?.runData) && metadata?.runData?.status && !equals(metadata.runData.status, 'InProgress')) {
-      return <LoopsPager metadata={metadata} scopeId={scopeId} collapsed={graphCollapsed} />;
+      const focusElement = (index: number, id: string) => {
+        dispatch(setFocusElement(`${id}-${index}-0`));
+      };
+      return <LoopsPager metadata={metadata} scopeId={scopeId} collapsed={graphCollapsed} focusElement={focusElement} />;
     }
     return null;
-  }, [graphCollapsed, metadata, scopeId]);
+  }, [dispatch, graphCollapsed, metadata, scopeId]);
 
   const nodeIndex = useNodeIndex(id);
 
@@ -385,13 +394,13 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
         </p>
       ) : null}
       {isAgent && actionCount === 0 && !graphCollapsed ? (
-        <p className="no-actions-text" data-automation-id={`scope-${id}-no-tools`}>
+        <p className="no-actions-text" style={{ margin: shouldShowPager ? 0 : '1em 0' }} data-automation-id={`scope-${id}-no-tools`}>
           {isMonitoringView ? intlText.emptyAgent : intlText.addTool}
         </p>
       ) : null}
       {showEmptyGraphComponents ? (
         readOnly ? (
-          <p className="no-actions-text">No Actions</p>
+          <p className="no-actions-text">{intlText.noActions}</p>
         ) : (
           <div className={'edge-drop-zone-container'}>
             <DropZone graphId={scopeId} parentId={id} isLeaf={isLeaf} tabIndex={nodeIndex} />

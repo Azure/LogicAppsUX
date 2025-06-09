@@ -19,6 +19,7 @@ export interface RelationshipIds {
   graphId: string;
   parentId?: string;
   childId?: string;
+  subgraphId?: string;
 }
 
 export interface ConnectionPanelContentState {
@@ -27,9 +28,16 @@ export interface ConnectionPanelContentState {
   selectedNodeIds: string[];
 }
 
+export type ActionPanelFavoriteItem = {
+  connectorId: string;
+  operationId?: string;
+};
+
 export interface DiscoveryPanelContentState {
+  favoriteOperations: ActionPanelFavoriteItem[];
   isAddingTrigger: boolean;
   isParallelBranch: boolean;
+  isAgentTool?: boolean;
   panelMode: 'Discovery';
   relationshipIds: RelationshipIds;
   selectedNodeIds: string[];
@@ -44,10 +52,13 @@ export interface ErrorPanelContentState {
 
 export interface OperationPanelContentState {
   panelMode: 'Operation';
-  pinnedNodeId?: string;
-  pinnedNodeActiveTabId?: string;
   selectedNodeId?: string;
   selectedNodeActiveTabId?: string;
+  alternateSelectedNode?: {
+    nodeId?: string;
+    activeTabId?: string;
+    persistence?: 'selected' | 'pinned';
+  };
 }
 
 export interface NodeSearchPanelContentState {

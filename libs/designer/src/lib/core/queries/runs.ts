@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { isNullOrUndefined, type LogicAppsV2, type Run, RunService } from '@microsoft/logic-apps-shared';
 import { getReactQueryClient } from '../ReactQueryProvider';
 import { isRunError } from '@microsoft/designer-ui';
@@ -24,6 +24,9 @@ export const runsQueriesKeys = {
   useAgentRepetition: 'useAgentRepetition',
   useAgentActionsRepetition: 'useAgentActionsRepetition',
   useChatHistory: 'useChatHistory',
+  useAgentChatInvokeUri: 'useAgentChatInvokeUri',
+  useRunInstance: 'useRunInstance',
+  useCancelRun: 'useCancelRun',
 };
 
 export const useRuns = (enabled = false) => {
@@ -166,6 +169,12 @@ export const useAgentRepetition = (
   );
 };
 
+export const useCancelRun = (runId: string) => {
+  return useMutation([runsQueriesKeys.useCancelRun, { runId }], async () => {
+    return await RunService().cancelRun(runId);
+  });
+};
+
 export const useAgentActionsRepetition = (
   isMonitoringView: boolean,
   isParentAgent: boolean,
@@ -212,6 +221,26 @@ export const useChatHistory = (isMonitoringView: boolean, nodeIds: string[], run
       ...queryOpts,
       retryOnMount: false,
       enabled: isMonitoringView && runId !== undefined && nodeIds.length > 0,
+    }
+  );
+};
+
+export const useAgentChatInvokeUri = (isMonitoringView: boolean, isAgenticWorkflow: boolean, id: string | undefined) => {
+  return useQuery(
+    [runsQueriesKeys.useAgentChatInvokeUri, { id }],
+    async () => {
+      if (isNullOrUndefined(id)) {
+        return null;
+      }
+      const uri = await RunService().getAgentChatInvokeUri({
+        idSuffix: id,
+      });
+      return uri ?? '';
+    },
+    {
+      ...queryOpts,
+      retryOnMount: false,
+      enabled: isMonitoringView && isAgenticWorkflow && id !== undefined,
     }
   );
 };

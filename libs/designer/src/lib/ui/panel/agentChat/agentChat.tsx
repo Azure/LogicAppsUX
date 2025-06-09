@@ -1,30 +1,37 @@
-import {
-  AgentMessageEntryType,
-  ConversationItemType,
-  PanelLocation,
-  PanelResizer,
-  PanelSize,
-  type ConversationItem,
-} from '@microsoft/designer-ui';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { type IntlShape, useIntl } from 'react-intl';
-import { defaultChatbotPanelWidth, ChatbotContent } from '@microsoft/logic-apps-chatbot';
-import { type ChatHistory, useChatHistory } from '../../../core/queries/runs';
+import { PanelLocation, PanelResizer, PanelSize, type ConversationItem } from '@microsoft/designer-ui';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useIntl } from 'react-intl';
+import { defaultChatbotPanelWidth, ChatbotUI } from '@microsoft/logic-apps-chatbot';
+import { runsQueriesKeys, useAgentChatInvokeUri, useCancelRun, useChatHistory } from '../../../core/queries/runs';
 import { useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import {
   useAgentLastOperations,
   useAgentOperations,
-  useIsChatInputEnabled,
+  useFocusElement,
+  useUriForAgentChat,
   useRunInstance,
 } from '../../../core/state/workflow/workflowSelectors';
-import { guid, isNullOrUndefined, labelCase } from '@microsoft/logic-apps-shared';
-import { Button, Drawer, mergeClasses } from '@fluentui/react-components';
+import { isNullOrUndefined, LogEntryLevel, LoggerService, RunService } from '@microsoft/logic-apps-shared';
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogBody,
+  DialogContent,
+  DialogSurface,
+  DialogTitle,
+  DialogTrigger,
+  Drawer,
+  mergeClasses,
+} from '@fluentui/react-components';
 import { ChatFilled } from '@fluentui/react-icons';
 import { useDispatch } from 'react-redux';
-import { changePanelNode, type AppDispatch } from '../../../core';
-import type { Dispatch } from '@reduxjs/toolkit';
-import { setFocusNode, setRunIndex } from '../../../core/state/workflow/workflowSlice';
+import { changePanelNode, getReactQueryClient, type AppDispatch } from '../../../core';
+import { clearFocusElement, setFocusNode, setRunIndex } from '../../../core/state/workflow/workflowSlice';
 import { AgentChatHeader } from './agentChatHeader';
+import { parseChatHistory } from './helper';
+import { useMutation } from '@tanstack/react-query';
+import constants from '../../../common/constants';
 
 interface AgentChatProps {
   panelLocation?: PanelLocation;
@@ -32,135 +39,133 @@ interface AgentChatProps {
   panelContainerRef: React.MutableRefObject<HTMLElement | null>;
 }
 
-const parseChatHistory = (
-  chatHistory: ChatHistory[],
-  intl: IntlShape,
-  dispatch: Dispatch,
-  agentLastOperations: Record<string, any>
-): ConversationItem[] => {
-  const agentHeaderPrefix = intl.formatMessage({
-    defaultMessage: 'Chat moved to',
-    id: '25EIWg',
-    description: 'Agent header prefix',
-  });
-
-  const toolResultCallback = (agentName: string, toolName: string, iteration: number, subIteration: number) => {
-    const agentLastOperation = agentLastOperations[agentName][toolName];
-    dispatch(setRunIndex({ page: iteration, nodeId: agentName }));
-    dispatch(setRunIndex({ page: subIteration, nodeId: toolName }));
-    dispatch(setFocusNode(agentLastOperation));
-    dispatch(changePanelNode(agentLastOperation));
-  };
-
-  const agentCallback = (agentName: string) => {
-    dispatch(setFocusNode(agentName));
-    dispatch(changePanelNode(agentName));
-  };
-
-  const conversations: ConversationItem[] = [];
-
-  for (const chat of chatHistory) {
-    const { nodeId, messages } = chat;
-    const parsedMessages: any[] = (messages ?? []).map((message) => parseMessage(message, nodeId, toolResultCallback));
-
-    if (parsedMessages.length > 0) {
-      const agentName = labelCase(nodeId ?? '');
-      conversations.push(...parsedMessages, {
-        id: guid(),
-        text: `${agentHeaderPrefix} ${agentName}`,
-        type: ConversationItemType.AgentHeader,
-        onClick: () => {
-          agentCallback(nodeId);
-        },
-        date: new Date(), // Using current time for header; modify if needed
-      });
-    }
-  }
-
-  return conversations;
-};
-
-const parseMessage = (
-  message: any,
-  parentId: string,
-  toolResultCallback: (agentName: string, toolName: string, iteration: number, subIteration: number) => void
-): ConversationItem => {
-  const { messageEntryType, messageEntryPayload, timestamp, role } = message;
-
-  switch (messageEntryType) {
-    case AgentMessageEntryType.Content: {
-      const content = messageEntryPayload?.content || '';
-      return {
-        text: content,
-        type: ConversationItemType.Reply,
-        id: guid(),
-        role,
-        hideFooter: true,
-        metadata: { parentId },
-        date: new Date(timestamp),
-        isMarkdownText: false,
-        className: 'msla-agent-chat-content',
-      };
-    }
-    case AgentMessageEntryType.ToolResult: {
-      const iteration = message?.iteration ?? 0;
-      const subIteration = message.toolResultsPayload?.toolResult?.subIteration ?? 0;
-      const toolName = message.toolResultsPayload?.toolResult?.toolName ?? '';
-      const status = message.toolResultsPayload?.toolResult?.status;
-
-      return {
-        id: guid(),
-        text: toolName,
-        type: ConversationItemType.Tool,
-        onClick: () => toolResultCallback(parentId, toolName, iteration, subIteration),
-        status,
-        date: new Date(timestamp),
-      };
-    }
-    default: {
-      return {
-        text: '',
-        type: ConversationItemType.Reply,
-        id: guid(),
-        role,
-        hideFooter: true,
-        metadata: { parentId },
-        date: new Date(timestamp),
-        isMarkdownText: false,
-      };
-    }
-  }
-};
-
 export const AgentChat = ({
   panelLocation = PanelLocation.Left,
   chatbotWidth = defaultChatbotPanelWidth,
   panelContainerRef,
 }: AgentChatProps) => {
   const intl = useIntl();
-  const [inputQuery, setInputQuery] = useState('');
   const [focus, setFocus] = useState(false);
   const [conversation, setConversation] = useState<ConversationItem[]>([]);
+  const [textInput, setTextInput] = useState<string>('');
+  const [isWaitingForResponse, setIsWaitingForResponse] = useState(false);
   const isMonitoringView = useMonitoringView();
   const runInstance = useRunInstance();
   const agentOperations = useAgentOperations();
   const agentLastOperations = useAgentLastOperations(agentOperations);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const panelContainerElement = panelContainerRef.current as HTMLElement;
-  const { isFetching: isChatHistoryFetching, data: chatHistoryData } = useChatHistory(!!isMonitoringView, agentOperations, runInstance?.id);
+  const agentChatSuffixUri = useUriForAgentChat(conversation.length > 0 ? conversation[0].metadata?.parentId : undefined);
+  const {
+    refetch: refetchChatHistory,
+    isFetching: isChatHistoryFetching,
+    data: chatHistoryData,
+  } = useChatHistory(!!isMonitoringView, agentOperations, runInstance?.id);
+  const { data: chatInvokeUri } = useAgentChatInvokeUri(!!isMonitoringView, true, agentChatSuffixUri);
   const [overrideWidth, setOverrideWidth] = useState<string | undefined>(chatbotWidth);
-  const isChatInputEnabled = useIsChatInputEnabled(conversation.length > 0 ? conversation[0].metadata?.parentId : undefined);
   const dispatch = useDispatch<AppDispatch>();
-  const agentsNumber = Object.keys(agentLastOperations).length;
   const drawerWidth = isCollapsed ? PanelSize.Auto : overrideWidth;
   const panelRef = useRef<HTMLDivElement>(null);
+  const focusElement = useFocusElement();
+  const rawAgentLastOperations = JSON.stringify(agentLastOperations);
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  const { mutateAsync: refreshChat } = useMutation(async () => {
+    const queryClient = getReactQueryClient();
+    await queryClient.resetQueries([runsQueriesKeys.useRunInstance]);
+    await queryClient.resetQueries([runsQueriesKeys.useChatHistory]);
+    await queryClient.resetQueries([runsQueriesKeys.useAgentActionsRepetition]);
+    await queryClient.resetQueries([runsQueriesKeys.useAgentRepetition]);
+    await queryClient.resetQueries([runsQueriesKeys.useNodeRepetition]);
+
+    await queryClient.refetchQueries([runsQueriesKeys.useRunInstance]);
+    await queryClient.refetchQueries([runsQueriesKeys.useAgentRepetition]);
+    await queryClient.refetchQueries([runsQueriesKeys.useAgentActionsRepetition]);
+    await queryClient.refetchQueries([runsQueriesKeys.useNodeRepetition]);
+    await queryClient.refetchQueries([runsQueriesKeys.useChatHistory]);
+  });
+
+  const showStopButton = useMemo(() => {
+    return runInstance?.properties?.status === constants.FLOW_STATUS.RUNNING;
+  }, [runInstance]);
+
+  const { mutateAsync: cancelRun } = useCancelRun(runInstance?.id ?? '');
+
+  const stopChat = useCallback(() => {
+    setDialogOpen(true);
+  }, []);
+
+  const onCancel = useCallback(async () => {
+    await cancelRun();
+    await refreshChat();
+  }, [cancelRun, refreshChat]);
+
+  const onClosingDialog = useCallback(() => {
+    setDialogOpen(false);
+  }, []);
+
+  const toolResultCallback = useCallback(
+    (agentName: string, toolName: string, iteration: number, subIteration: number) => {
+      const agentLastOperation = JSON.parse(rawAgentLastOperations)?.[agentName]?.[toolName];
+      dispatch(setRunIndex({ page: iteration, nodeId: agentName }));
+      dispatch(setRunIndex({ page: subIteration, nodeId: toolName }));
+      dispatch(setFocusNode(agentLastOperation));
+      dispatch(changePanelNode(agentLastOperation));
+    },
+    [dispatch, rawAgentLastOperations]
+  );
+
+  const toolContentCallback = useCallback(
+    (agentName: string, iteration: number) => {
+      dispatch(setRunIndex({ page: iteration, nodeId: agentName }));
+      dispatch(setFocusNode(agentName));
+      dispatch(changePanelNode(agentName));
+    },
+    [dispatch]
+  );
+
+  const agentCallback = useCallback(
+    (agentName: string) => {
+      dispatch(setRunIndex({ page: 0, nodeId: agentName }));
+      dispatch(setFocusNode(agentName));
+      dispatch(changePanelNode(agentName));
+    },
+    [dispatch]
+  );
+
+  const onChatSubmit = useCallback(async () => {
+    if (!textInput || isNullOrUndefined(chatInvokeUri)) {
+      return;
+    }
+
+    setIsWaitingForResponse(true);
+
+    try {
+      await RunService().invokeAgentChat({
+        id: chatInvokeUri,
+        data: { role: 'User', content: textInput },
+      });
+
+      refetchChatHistory();
+    } catch (e: any) {
+      LoggerService().log({
+        level: LogEntryLevel.Error,
+        area: 'agentchat',
+        message: 'Agent chat invocation failed',
+        error: e,
+      });
+    }
+
+    setIsWaitingForResponse(false);
+    setTextInput('');
+  }, [textInput, chatInvokeUri, refetchChatHistory]);
 
   useEffect(() => {
     if (!isNullOrUndefined(chatHistoryData)) {
-      const newConversations = parseChatHistory(chatHistoryData, intl, dispatch, agentLastOperations);
+      const newConversations = parseChatHistory(chatHistoryData, toolResultCallback, toolContentCallback, agentCallback);
       setConversation([...newConversations]);
     }
-  }, [setConversation, chatHistoryData, intl, agentsNumber, dispatch]);
+  }, [setConversation, chatHistoryData, dispatch, toolResultCallback, toolContentCallback, agentCallback]);
 
   const intlText = useMemo(() => {
     return {
@@ -175,19 +180,14 @@ export const AgentChat = ({
         description: 'Agent chat panel aria label text',
       }),
       agentChatToggleAriaLabel: intl.formatMessage({
-        defaultMessage: 'Toggle agent chat panel',
-        id: '0Jh+AD',
-        description: 'Toggle agent chat panel aria label text',
+        defaultMessage: 'Toggle the agent chat panel.',
+        id: 'fTpBGQ',
+        description: 'Toggle the agent chat panel aria label text',
       }),
-      chatInputDisabledPlaceHolder: intl.formatMessage({
-        defaultMessage: 'The chat is in read-only mode and will be saved in the run history. Agents are no longer available to chat with.',
-        id: 'z/i4aa',
-        description: 'Agent chat input placeholder text when disabled',
-      }),
-      chatInputPlaceholder: intl.formatMessage({
-        defaultMessage: 'Ask me anything...',
-        id: '5+Bccl',
-        description: 'Agent chat input placeholder text',
+      chatReadOnlyMessage: intl.formatMessage({
+        defaultMessage: 'The chat is currently in read-only mode. Agents are unavailable for live chat.',
+        id: '7c50FE',
+        description: 'Agent chat read-only message',
       }),
       protectedMessage: intl.formatMessage({
         defaultMessage: 'Your personal and company data are protected in this chat',
@@ -210,9 +210,9 @@ export const AgentChat = ({
         description: 'Chatbot error message',
       }),
       progressCardText: intl.formatMessage({
-        defaultMessage: 'Fetching chat history...',
-        id: '7col/w',
-        description: 'Fetching chat history progress card text',
+        defaultMessage: 'Processing...',
+        id: '6776lH',
+        description: 'Processing message in the chatbot',
       }),
       progressCardSaveText: intl.formatMessage({
         defaultMessage: '💾 Saving this flow...',
@@ -224,12 +224,28 @@ export const AgentChat = ({
         id: 'JKZpcd',
         description: 'Chatbot card telling user that the AI response is being canceled',
       }),
+      stopChatTitle: intl.formatMessage({
+        defaultMessage: 'Stop chat',
+        id: '9KwscD',
+        description: 'Stop chat title',
+      }),
+      stopChatMessage: intl.formatMessage({
+        defaultMessage: 'Do you want to stop the agent chat? This will cancel the workflow.',
+        id: '7cPLnJ',
+        description: 'Stop chat message',
+      }),
+      cancelDialog: intl.formatMessage({
+        defaultMessage: 'Cancel',
+        id: 'hHNj31',
+        description: 'Cancel button text',
+      }),
+      okDialog: intl.formatMessage({
+        defaultMessage: 'OK',
+        id: 'wWuzqz',
+        description: 'Ok button text',
+      }),
     };
   }, [intl]);
-
-  useEffect(() => {
-    setInputQuery('');
-  }, [conversation]);
 
   return (
     <Drawer
@@ -262,23 +278,32 @@ export const AgentChat = ({
       ) : null}
       {isCollapsed ? null : (
         <>
-          <ChatbotContent
+          <ChatbotUI
             panel={{
               location: panelLocation,
               width: chatbotWidth,
               isOpen: true,
               isBlocking: false,
               onDismiss: () => {},
-              header: <AgentChatHeader title={intlText.agentChatHeader} toggleCollapse={() => setIsCollapsed(true)} />,
+              header: (
+                <AgentChatHeader
+                  showStopButton={showStopButton}
+                  title={intlText.agentChatHeader}
+                  onStopChat={stopChat}
+                  onRefreshChat={refreshChat}
+                  onToggleCollapse={() => setIsCollapsed(true)}
+                />
+              ),
             }}
             inputBox={{
-              value: inputQuery,
-              onChange: setInputQuery,
-              placeholder: isChatInputEnabled ? intlText.chatInputPlaceholder : intlText.chatInputDisabledPlaceHolder,
-              onSubmit: () => {},
-              disabled: isChatInputEnabled,
+              onSubmit: () => {
+                onChatSubmit();
+              },
+              onChange: setTextInput,
+              value: textInput,
+              readOnly: !chatInvokeUri,
+              readOnlyText: intlText.chatReadOnlyMessage,
             }}
-            data={{}}
             string={{
               submit: intlText.submitButtonTitle,
               progressState: intlText.progressCardText,
@@ -288,11 +313,44 @@ export const AgentChat = ({
             body={{
               messages: conversation,
               focus: focus,
-              answerGenerationInProgress: isChatHistoryFetching,
+              answerGenerationInProgress: isChatHistoryFetching || isWaitingForResponse,
               setFocus: setFocus,
+              focusMessageId: focusElement,
+              clearFocusMessageId: () => dispatch(clearFocusElement()),
             }}
           />
           <PanelResizer updatePanelWidth={setOverrideWidth} panelRef={panelRef} />
+          <Dialog
+            inertTrapFocus={true}
+            open={dialogOpen}
+            aria-labelledby={intlText.stopChatTitle}
+            onOpenChange={onClosingDialog}
+            surfaceMotion={null}
+          >
+            <DialogSurface
+              style={{
+                maxWidth: '80%',
+                width: 'fit-content',
+              }}
+              backdrop={<div style={{ width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.4)' }}> </div>}
+              mountNode={panelRef.current}
+            >
+              <DialogBody>
+                <DialogTitle>{intlText.stopChatTitle}</DialogTitle>
+                <DialogContent>{intlText.stopChatMessage}</DialogContent>
+                <DialogActions fluid>
+                  <DialogTrigger>
+                    <Button appearance="primary" onClick={onCancel}>
+                      {intlText.okDialog}
+                    </Button>
+                  </DialogTrigger>
+                  <DialogTrigger>
+                    <Button onClick={onClosingDialog}>{intlText.cancelDialog}</Button>
+                  </DialogTrigger>
+                </DialogActions>
+              </DialogBody>
+            </DialogSurface>
+          </Dialog>
         </>
       )}
     </Drawer>

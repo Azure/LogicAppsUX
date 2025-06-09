@@ -1,20 +1,38 @@
-import InformationImage from './info.svg';
-import { MediumText, SmallText } from '../text';
 import { Tooltip } from '@fluentui/react-components';
+import { Info16Regular } from '@fluentui/react-icons';
+import type { AriaAttributes } from 'react';
+import { MediumText, SmallText } from '../text';
+import { useInfoDotStyles } from './styles';
 
-export const InfoDot = (props: any) => {
-  const { title, description, style, innerAriaHidden } = props;
+interface InfoDotProps {
+  ariaDescribedBy?: AriaAttributes['aria-describedby'];
+  description: string | undefined;
+  innerAriaHidden?: AriaAttributes['aria-hidden'];
+  style?: React.CSSProperties;
+  title: string;
+  className?: string;
+}
+
+export const InfoDot: React.FC<InfoDotProps> = (props) => {
+  const { ariaDescribedBy, title, description, style, innerAriaHidden } = props;
+  const classes = useInfoDotStyles();
 
   const tooltipContent: JSX.Element = (
-    <div className="msla-info-dot-tooltip-content" aria-hidden={innerAriaHidden || 'false'}>
-      <MediumText style={{ marginBottom: '8px', display: 'block' }} text={title} />
-      <SmallText style={{ display: 'block' }} text={description} />
+    <div className={classes.tooltipContent} aria-hidden={innerAriaHidden || 'false'}>
+      <MediumText style={{ display: 'block' }} text={title} />
+      {description ? <SmallText style={{ display: 'block' }} text={description} /> : null}
     </div>
   );
 
   return (
     <Tooltip relationship="description" content={tooltipContent}>
-      <img className="msla-info-dot" alt={`${title} ${description}`} src={InformationImage} style={style} tabIndex={0} />
+      <Info16Regular
+        aria-label={`${title} ${description}`}
+        aria-describedby={ariaDescribedBy}
+        className={props.className ?? classes.root}
+        style={style}
+        tabIndex={0}
+      />
     </Tooltip>
   );
 };

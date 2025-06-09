@@ -1,42 +1,385 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`AgentChatHeader > renders correctly and matches snapshot 1`] = `
-<DocumentFragment>
-  <div
-    style="display: flex; position: relative; justify-content: center; padding: 10px;"
+exports[`AgentChatHeader > renders correctly and matches snapshot when showing stop button 1`] = `
+<div
+  style={
+    {
+      "alignItems": "center",
+      "borderBottom": "1px solid #d6d6d6",
+      "display": "flex",
+      "justifyContent": "space-between",
+      "padding": "10px",
+      "position": "relative",
+    }
+  }
+>
+  <span
+    className="fui-Subtitle2 fui-Text ___i24qii0_1tsayoq fk6fouc fod5ikn faaz57k fl43uef fpgzoln f1w7gpdv f6juhto f1gl81tg f2jf649"
+    style={
+      {
+        "marginLeft": "10px",
+      }
+    }
   >
-    <span
-      class="fui-Subtitle1 fui-Text ___16pfnek_18kobb6 fk6fouc f1pp30po f106mvju fl43uef fpgzoln f1w7gpdv f6juhto f1gl81tg f2jf649"
-    >
-      Test Title
-    </span>
+    Test Title
+  </span>
+  <div
+    className="msla-agent-chat-header-buttons"
+  >
     <button
-      aria-label="Collapse chat panel"
-      class="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
-      data-automation-id="msla-agent-chat-header-collapse"
-      id="msla-agent-chat-header-collapse"
-      style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"
+      aria-label="Stop"
+      className="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
+      data-automation-id="msla-agent-chat-header-stop"
+      id="msla-agent-chat-header-stop"
+      onClick={[Function]}
+      title="Stop chat"
       type="button"
     >
       <span
-        class="fui-Button__icon rywnvv2"
+        className="fui-Button__icon rywnvv2"
       >
         <svg
-          aria-hidden="true"
-          class="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+          aria-hidden={true}
+          className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
           fill="currentColor"
-          height="1em"
-          viewBox="0 0 20 20"
-          width="1em"
+          height="16"
+          viewBox="0 0 16 16"
+          width="16"
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            d="M8.73 4.2a.75.75 0 0 1 1.06.03l5 5.25c.28.3.28.75 0 1.04l-5 5.25a.75.75 0 1 1-1.08-1.04L13.2 10l-4.5-4.73a.75.75 0 0 1 .02-1.06Zm-4 0a.75.75 0 0 1 1.06.03l5 5.25c.28.3.28.75 0 1.04l-5 5.25a.75.75 0 1 1-1.08-1.04L9.2 10l-4.5-4.73a.75.75 0 0 1 .02-1.06Z"
+            d="M3.5 2C2.67 2 2 2.67 2 3.5v9c0 .83.67 1.5 1.5 1.5h9c.83 0 1.5-.67 1.5-1.5v-9c0-.83-.67-1.5-1.5-1.5h-9Z"
+            fill="currentColor"
+          />
+        </svg>
+        <svg
+          aria-hidden={true}
+          className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+          fill="currentColor"
+          height="16"
+          viewBox="0 0 16 16"
+          width="16"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M12.5 3c.28 0 .5.22.5.5v9a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5v-9c0-.28.22-.5.5-.5h9Zm-9-1C2.67 2 2 2.67 2 3.5v9c0 .83.67 1.5 1.5 1.5h9c.83 0 1.5-.67 1.5-1.5v-9c0-.83-.67-1.5-1.5-1.5h-9Z"
+            fill="currentColor"
+          />
+        </svg>
+      </span>
+    </button>
+    <button
+      aria-label="Refresh"
+      className="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
+      data-automation-id="msla-agent-chat-header-refresh"
+      id="msla-agent-chat-header-refresh"
+      onClick={[Function]}
+      title="Refresh chat"
+      type="button"
+    >
+      <span
+        className="fui-Button__icon rywnvv2"
+      >
+        <svg
+          aria-hidden={true}
+          className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+          fill="currentColor"
+          height="16"
+          viewBox="0 0 16 16"
+          width="16"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M3.5 8a4.5 4.5 0 0 1 7.33-3.5H9.75a.75.75 0 0 0 0 1.5h2.5c.41 0 .75-.34.75-.75v-2.5a.75.75 0 0 0-1.5 0v.38A6 6 0 1 0 14 8a.75.75 0 0 0-1.5 0 4.5 4.5 0 1 1-9 0Z"
+            fill="currentColor"
+          />
+        </svg>
+        <svg
+          aria-hidden={true}
+          className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+          fill="currentColor"
+          height="16"
+          viewBox="0 0 16 16"
+          width="16"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M3 8a5 5 0 0 1 9-3H9.5a.5.5 0 0 0 0 1h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-1 0v1.03A6 6 0 1 0 14 8a.5.5 0 0 0-1 0A5 5 0 0 1 3 8Z"
+            fill="currentColor"
+          />
+        </svg>
+      </span>
+    </button>
+    <button
+      aria-label="Collapse"
+      className="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
+      data-automation-id="msla-agent-chat-header-collapse"
+      id="msla-agent-chat-header-collapse"
+      onClick={[Function]}
+      title="Collapse chat panel"
+      type="button"
+    >
+      <span
+        className="fui-Button__icon rywnvv2"
+      >
+        <svg
+          aria-hidden={true}
+          className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+          fill="currentColor"
+          height="16"
+          viewBox="0 0 16 16"
+          width="16"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M7.7 4.26a.75.75 0 1 1 1.1-1.02l4 4.25c.27.29.27.73 0 1.02l-4 4.25a.75.75 0 1 1-1.1-1.02L11.23 8 7.7 4.26Zm-4 0a.75.75 0 1 1 1.1-1.02l4 4.25c.27.29.27.73 0 1.02l-4 4.25a.75.75 0 1 1-1.1-1.02L7.23 8 3.7 4.26Z"
+            fill="currentColor"
+          />
+        </svg>
+        <svg
+          aria-hidden={true}
+          className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+          fill="currentColor"
+          height="16"
+          viewBox="0 0 16 16"
+          width="16"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M7.65 3.85a.5.5 0 1 1 .7-.7l4.5 4.5c.2.2.2.5 0 .7l-4.5 4.5a.5.5 0 0 1-.7-.7L11.79 8 7.65 3.85Zm-4 0a.5.5 0 1 1 .7-.7l4.5 4.5c.2.2.2.5 0 .7l-4.5 4.5a.5.5 0 0 1-.7-.7L7.79 8 3.65 3.85Z"
             fill="currentColor"
           />
         </svg>
       </span>
     </button>
   </div>
-</DocumentFragment>
+</div>
+`;
+
+exports[`AgentChatHeader > renders correctly and matches snapshot with dark mode off 1`] = `
+<div
+  style={
+    {
+      "alignItems": "center",
+      "borderBottom": "1px solid #d6d6d6",
+      "display": "flex",
+      "justifyContent": "space-between",
+      "padding": "10px",
+      "position": "relative",
+    }
+  }
+>
+  <span
+    className="fui-Subtitle2 fui-Text ___i24qii0_1tsayoq fk6fouc fod5ikn faaz57k fl43uef fpgzoln f1w7gpdv f6juhto f1gl81tg f2jf649"
+    style={
+      {
+        "marginLeft": "10px",
+      }
+    }
+  >
+    Test Title
+  </span>
+  <div
+    className="msla-agent-chat-header-buttons"
+  >
+    <button
+      aria-label="Refresh"
+      className="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
+      data-automation-id="msla-agent-chat-header-refresh"
+      id="msla-agent-chat-header-refresh"
+      onClick={[Function]}
+      title="Refresh chat"
+      type="button"
+    >
+      <span
+        className="fui-Button__icon rywnvv2"
+      >
+        <svg
+          aria-hidden={true}
+          className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+          fill="currentColor"
+          height="16"
+          viewBox="0 0 16 16"
+          width="16"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M3.5 8a4.5 4.5 0 0 1 7.33-3.5H9.75a.75.75 0 0 0 0 1.5h2.5c.41 0 .75-.34.75-.75v-2.5a.75.75 0 0 0-1.5 0v.38A6 6 0 1 0 14 8a.75.75 0 0 0-1.5 0 4.5 4.5 0 1 1-9 0Z"
+            fill="currentColor"
+          />
+        </svg>
+        <svg
+          aria-hidden={true}
+          className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+          fill="currentColor"
+          height="16"
+          viewBox="0 0 16 16"
+          width="16"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M3 8a5 5 0 0 1 9-3H9.5a.5.5 0 0 0 0 1h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-1 0v1.03A6 6 0 1 0 14 8a.5.5 0 0 0-1 0A5 5 0 0 1 3 8Z"
+            fill="currentColor"
+          />
+        </svg>
+      </span>
+    </button>
+    <button
+      aria-label="Collapse"
+      className="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
+      data-automation-id="msla-agent-chat-header-collapse"
+      id="msla-agent-chat-header-collapse"
+      onClick={[Function]}
+      title="Collapse chat panel"
+      type="button"
+    >
+      <span
+        className="fui-Button__icon rywnvv2"
+      >
+        <svg
+          aria-hidden={true}
+          className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+          fill="currentColor"
+          height="16"
+          viewBox="0 0 16 16"
+          width="16"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M7.7 4.26a.75.75 0 1 1 1.1-1.02l4 4.25c.27.29.27.73 0 1.02l-4 4.25a.75.75 0 1 1-1.1-1.02L11.23 8 7.7 4.26Zm-4 0a.75.75 0 1 1 1.1-1.02l4 4.25c.27.29.27.73 0 1.02l-4 4.25a.75.75 0 1 1-1.1-1.02L7.23 8 3.7 4.26Z"
+            fill="currentColor"
+          />
+        </svg>
+        <svg
+          aria-hidden={true}
+          className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+          fill="currentColor"
+          height="16"
+          viewBox="0 0 16 16"
+          width="16"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M7.65 3.85a.5.5 0 1 1 .7-.7l4.5 4.5c.2.2.2.5 0 .7l-4.5 4.5a.5.5 0 0 1-.7-.7L11.79 8 7.65 3.85Zm-4 0a.5.5 0 1 1 .7-.7l4.5 4.5c.2.2.2.5 0 .7l-4.5 4.5a.5.5 0 0 1-.7-.7L7.79 8 3.65 3.85Z"
+            fill="currentColor"
+          />
+        </svg>
+      </span>
+    </button>
+  </div>
+</div>
+`;
+
+exports[`AgentChatHeader > renders correctly when dark mode is on 1`] = `
+<div
+  style={
+    {
+      "alignItems": "center",
+      "borderBottom": "1px solid #d6d6d6",
+      "display": "flex",
+      "justifyContent": "space-between",
+      "padding": "10px",
+      "position": "relative",
+    }
+  }
+>
+  <span
+    className="fui-Subtitle2 fui-Text ___i24qii0_1tsayoq fk6fouc fod5ikn faaz57k fl43uef fpgzoln f1w7gpdv f6juhto f1gl81tg f2jf649"
+    style={
+      {
+        "marginLeft": "10px",
+      }
+    }
+  >
+    Test Title
+  </span>
+  <div
+    className="msla-agent-chat-header-buttons"
+  >
+    <button
+      aria-label="Refresh"
+      className="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
+      data-automation-id="msla-agent-chat-header-refresh"
+      id="msla-agent-chat-header-refresh"
+      onClick={[Function]}
+      title="Refresh chat"
+      type="button"
+    >
+      <span
+        className="fui-Button__icon rywnvv2"
+      >
+        <svg
+          aria-hidden={true}
+          className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+          fill="currentColor"
+          height="16"
+          viewBox="0 0 16 16"
+          width="16"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M3.5 8a4.5 4.5 0 0 1 7.33-3.5H9.75a.75.75 0 0 0 0 1.5h2.5c.41 0 .75-.34.75-.75v-2.5a.75.75 0 0 0-1.5 0v.38A6 6 0 1 0 14 8a.75.75 0 0 0-1.5 0 4.5 4.5 0 1 1-9 0Z"
+            fill="currentColor"
+          />
+        </svg>
+        <svg
+          aria-hidden={true}
+          className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+          fill="currentColor"
+          height="16"
+          viewBox="0 0 16 16"
+          width="16"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M3 8a5 5 0 0 1 9-3H9.5a.5.5 0 0 0 0 1h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-1 0v1.03A6 6 0 1 0 14 8a.5.5 0 0 0-1 0A5 5 0 0 1 3 8Z"
+            fill="currentColor"
+          />
+        </svg>
+      </span>
+    </button>
+    <button
+      aria-label="Collapse"
+      className="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
+      data-automation-id="msla-agent-chat-header-collapse"
+      id="msla-agent-chat-header-collapse"
+      onClick={[Function]}
+      title="Collapse chat panel"
+      type="button"
+    >
+      <span
+        className="fui-Button__icon rywnvv2"
+      >
+        <svg
+          aria-hidden={true}
+          className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+          fill="currentColor"
+          height="16"
+          viewBox="0 0 16 16"
+          width="16"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M7.7 4.26a.75.75 0 1 1 1.1-1.02l4 4.25c.27.29.27.73 0 1.02l-4 4.25a.75.75 0 1 1-1.1-1.02L11.23 8 7.7 4.26Zm-4 0a.75.75 0 1 1 1.1-1.02l4 4.25c.27.29.27.73 0 1.02l-4 4.25a.75.75 0 1 1-1.1-1.02L7.23 8 3.7 4.26Z"
+            fill="currentColor"
+          />
+        </svg>
+        <svg
+          aria-hidden={true}
+          className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+          fill="currentColor"
+          height="16"
+          viewBox="0 0 16 16"
+          width="16"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M7.65 3.85a.5.5 0 1 1 .7-.7l4.5 4.5c.2.2.2.5 0 .7l-4.5 4.5a.5.5 0 0 1-.7-.7L11.79 8 7.65 3.85Zm-4 0a.5.5 0 1 1 .7-.7l4.5 4.5c.2.2.2.5 0 .7l-4.5 4.5a.5.5 0 0 1-.7-.7L7.79 8 3.65 3.85Z"
+            fill="currentColor"
+          />
+        </svg>
+      </span>
+    </button>
+  </div>
+</div>
 `;

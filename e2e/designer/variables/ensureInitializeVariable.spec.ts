@@ -12,9 +12,8 @@ test(
     await GoToMockWorkflow(page, 'Recurrence');
     await page.getByLabel('Insert a new step after').click();
     await page.getByText('Add an action').click();
-    await page.getByPlaceholder('Search').click();
-    await page.getByPlaceholder('Search').fill('initialize variable');
-    await page.getByLabel('Initialize variables').click();
+    await page.getByPlaceholder('Search for an action or').fill('initialize variable');
+    await page.getByLabel('Initialize variables', { exact: true }).click();
     await page.getByRole('textbox', { name: 'Enter variable name' }).getByRole('paragraph').click();
     await page.getByRole('textbox', { name: 'Enter variable name' }).fill('test');
     await page.getByText('Select variable type').click();

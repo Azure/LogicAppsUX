@@ -16,28 +16,28 @@ import {
   clone,
   isEmptyString,
   BaseTenantService,
+  BaseCognitiveServiceService,
 } from '@microsoft/logic-apps-shared';
 import type {
   ApiHubServiceDetails,
   ConnectionCreationInfo,
+  ConnectionsData,
   ContentType,
   IHostService,
   ILoggerService,
   IWorkflowService,
   ManagedIdentity,
-} from '@microsoft/logic-apps-shared';
-import type {
   ConnectionAndAppSetting,
-  ConnectionsData,
-  IDesignerPanelMetadata,
-  MessageToVsix,
-} from '@microsoft/vscode-extension-logic-apps';
+  LocalConnectionModel,
+} from '@microsoft/logic-apps-shared';
+import type { IDesignerPanelMetadata, MessageToVsix } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand, HttpClient } from '@microsoft/vscode-extension-logic-apps';
 import type { QueryClient } from '@tanstack/react-query';
 import type { WebviewApi } from 'vscode-webview';
 import { CustomEditorService } from './customEditorService';
 import packagejson from '../../../package.json';
 import { LoggerService } from '../services/Logger';
+import { CustomConnectionParameterEditorService } from './services/customConnectionParameterEditorService';
 
 export interface IDesignerServices {
   connectionService: StandardConnectionService;
@@ -54,6 +54,8 @@ export interface IDesignerServices {
   apimService: BaseApiManagementService;
   functionService: BaseFunctionService;
   loggerService: ILoggerService;
+  connectionParameterEditorService: CustomConnectionParameterEditorService;
+  cognitiveServiceService: BaseCognitiveServiceService;
 }
 
 export const getDesignerServices = (
@@ -76,7 +78,7 @@ export const getDesignerServices = (
   let workflowDetails: Record<string, any> = {};
   let appSettings = {};
   let isStateful = false;
-  let connectionsData = { ...connectionData };
+  let connectionsData: ConnectionsData = { ...connectionData };
   let workflowName = '';
 
   const { subscriptionId = 'subscriptionId', resourceGroup, location } = apiHubDetails;
@@ -92,7 +94,7 @@ export const getDesignerServices = (
     isStateful = panelMetadata.standardApp?.stateful ?? false;
   }
 
-  const addConnectionData = async (connectionAndSetting: ConnectionAndAppSetting): Promise<void> => {
+  const addConnectionData = async (connectionAndSetting: ConnectionAndAppSetting<LocalConnectionModel>): Promise<void> => {
     connectionsData = addConnectionInJson(connectionAndSetting, connectionsData ?? {});
     appSettings = addOrUpdateAppSettings(connectionAndSetting.settings, appSettings ?? {});
     return vscode.postMessage({
@@ -113,14 +115,15 @@ export const getDesignerServices = (
     apiVersion: apiHubDetails.apiVersion ?? apiVersion,
     baseUrl: apiHubDetails.baseUrl ?? baseUrl,
   };
+
   const connectionService = new StandardConnectionService({
     baseUrl,
     apiVersion,
     httpClient,
     apiHubServiceDetails,
     readConnections: () => Promise.resolve(connectionsData),
-    writeConnection: (connectionAndSetting: ConnectionAndAppSetting) => {
-      return addConnectionData(connectionAndSetting);
+    writeConnection: (connectionData: ConnectionAndAppSetting<LocalConnectionModel>) => {
+      return addConnectionData(connectionData);
     },
     connectionCreationClients: {
       FileSystem: {
@@ -325,6 +328,12 @@ export const getDesignerServices = (
     httpClient,
   });
 
+  const cognitiveServiceService = new BaseCognitiveServiceService({
+    apiVersion: '2023-10-01-preview',
+    baseUrl: armUrl,
+    httpClient,
+  });
+
   const editorService = new CustomEditorService({
     areCustomEditorsEnabled: true,
     openRelativeLink: (relativeLink: string) => {
@@ -338,6 +347,8 @@ export const getDesignerServices = (
   const loggerService = new LoggerService(sendMsgToVsix, {
     designerVersion: packagejson.version,
   });
+
+  const connectionParameterEditorService = new CustomConnectionParameterEditorService();
 
   return {
     connectionService,
@@ -353,11 +364,16 @@ export const getDesignerServices = (
     editorService,
     apimService,
     loggerService,
+    connectionParameterEditorService,
+    cognitiveServiceService,
     functionService,
   };
 };
 
-const addConnectionInJson = (connectionAndSetting: ConnectionAndAppSetting, connectionsJson: ConnectionsData): ConnectionsData => {
+const addConnectionInJson = (
+  connectionAndSetting: ConnectionAndAppSetting<LocalConnectionModel>,
+  connectionsJson: ConnectionsData
+): ConnectionsData => {
   const { connectionData, connectionKey, pathLocation } = connectionAndSetting;
   const pathToSetConnectionsData: any = clone(connectionsJson);
 

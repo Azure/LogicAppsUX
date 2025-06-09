@@ -40,41 +40,50 @@ export const connectionsTab = (
     id: 'pqprxZ',
     description: 'An accessibility label that describes the objective of connections tab',
   }),
-  hasError: hasError,
+  tabStatusIcon: hasError ? 'error' : undefined,
   content: <ConnectionsPanel />,
   footerContent: {
-    primaryButtonText: intl.formatMessage({
-      defaultMessage: 'Next',
-      id: '0UfxUM',
-      description: 'Button text for moving to the next tab in the create workflow panel',
-    }),
-    primaryButtonOnClick: () => {
-      dispatch(selectPanelTab(nextTabId));
-    },
-    secondaryButtonText: previousTabId
-      ? intl.formatMessage({
-          defaultMessage: 'Previous',
-          id: 'Yua/4o',
-          description: 'Button text for moving to the previous tab in the create workflow panel',
-        })
-      : intl.formatMessage({
-          defaultMessage: 'Close',
-          id: 'FTrMxN',
-          description: 'Button text for closing the panel',
+    buttonContents: [
+      {
+        type: 'navigation',
+        text: intl.formatMessage({
+          defaultMessage: 'Next',
+          id: '0UfxUM',
+          description: 'Button text for moving to the next tab in the create workflow panel',
         }),
-    secondaryButtonOnClick: () => {
-      if (previousTabId) {
-        dispatch(selectPanelTab(previousTabId));
-      } else {
-        dispatch(closePanel());
+        appearance: 'primary',
+        onClick: () => {
+          dispatch(selectPanelTab(nextTabId));
+        },
+      },
+      {
+        type: 'navigation',
+        text: previousTabId
+          ? intl.formatMessage({
+              defaultMessage: 'Previous',
+              id: 'Yua/4o',
+              description: 'Button text for moving to the previous tab in the create workflow panel',
+            })
+          : intl.formatMessage({
+              defaultMessage: 'Close',
+              id: 'FTrMxN',
+              description: 'Button text for closing the panel',
+            }),
+        onClick: () => {
+          if (previousTabId) {
+            dispatch(selectPanelTab(previousTabId));
+          } else {
+            dispatch(closePanel());
 
-        if (shouldClearDetails) {
-          dispatch(clearTemplateDetails());
-        }
+            if (shouldClearDetails) {
+              dispatch(clearTemplateDetails());
+            }
 
-        onClosePanel?.();
-      }
-    },
-    secondaryButtonDisabled: (!previousTabId && !showCloseButton) || isCreating,
+            onClosePanel?.();
+          }
+        },
+        disabled: (!previousTabId && !showCloseButton) || isCreating,
+      },
+    ],
   },
 });

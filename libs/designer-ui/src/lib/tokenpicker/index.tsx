@@ -81,7 +81,6 @@ export interface TokenPickerProps {
   initialMode?: TokenPickerMode;
   // tokenClickedCallback is used for the code Editor TokenPicker(Legacy Token Picker)
   tokenClickedCallback?: (token: ValueSegment) => void;
-  hideUTFExpressions?: boolean;
   valueType?: string;
   parameter: ParameterInfo;
   createOrUpdateAgentParameter?: (name: string, type: string, description: string, isUpdating?: boolean) => void;
@@ -93,7 +92,6 @@ export function TokenPicker({
   filteredTokenGroup,
   expressionGroup,
   initialMode,
-  hideUTFExpressions,
   valueType,
   parameter,
   getValueSegmentFromToken,
@@ -179,7 +177,7 @@ export function TokenPicker({
   }, [anchorKey, editor, windowDimensions.height]);
 
   const handleInitializeExpression = (s: string, n: NodeKey) => {
-    const escapedString = escapeString(s, /*requireSingleQuotesWrap*/ true);
+    const escapedString = escapeString(s);
     setExpression({ value: escapedString, selectionStart: 0, selectionEnd: 0 });
     setSelectedMode(TokenPickerMode.EXPRESSION);
     setNodeToBeUpdated(n);
@@ -364,7 +362,6 @@ export function TokenPicker({
                       currentHeight={expressionEditorCurrentHeight}
                       setCurrentHeight={setExpressionEditorCurrentHeight}
                       setExpressionEditorError={setExpressionEditorError}
-                      hideUTFExpressions={hideUTFExpressions}
                     />
                     <div className="msla-token-picker-expression-editor-error">{expressionEditorError}</div>
                     <TokenPickerPivot selectedKey={selectedMode} selectKey={handleSelectKey} hideExpressions={!!tokenClickedCallback} />
@@ -392,7 +389,9 @@ export function TokenPicker({
                   setExpression={setExpression}
                   getValueSegmentFromToken={getValueSegmentFromToken}
                   tokenClickedCallback={tokenClickedCallback}
-                  noDynamicContent={!isDynamicContentAvailable(filteredTokenGroup ?? [])}
+                  noDynamicContent={
+                    !isDynamicContentAvailable((selectedMode === TokenPickerMode.TOKEN ? filteredTokenGroup : tokenGroup) ?? [])
+                  }
                   expressionEditorCurrentHeight={expressionEditorCurrentHeight}
                 />
                 {isExpression ? (

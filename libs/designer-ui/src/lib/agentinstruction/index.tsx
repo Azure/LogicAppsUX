@@ -1,15 +1,16 @@
-import { Link, MessageBar, MessageBarBody, MessageBarTitle, Text } from '@fluentui/react-components';
+import { Link, MessageBar, MessageBarBody, MessageBarTitle, Text, mergeClasses } from '@fluentui/react-components';
 import type { BaseEditorProps, CastHandler, ChangeHandler, ChangeState, GetTokenPickerHandler } from '../editor/base';
 import { useIntl } from 'react-intl';
-import { LinkSquare12Regular, LinkSquare12Filled, bundleIcon } from '@fluentui/react-icons';
+import { bundleIcon, Open12Regular, Open12Filled } from '@fluentui/react-icons';
 import { StringEditor } from './../editor/string';
 import { useMemo, useState } from 'react';
 import { parseAgentInstruction, AGENT_INSTRUCTION_TYPES, serializeAgentInstructions } from './util';
 import { css } from '@fluentui/utilities';
 import { ArrayEditor, ArrayType } from '../arrayeditor';
 import { Label } from '../label';
+import { useAgentInstructionStyles } from './agentinstruction.styles';
 
-const NavigateIcon = bundleIcon(LinkSquare12Regular, LinkSquare12Filled);
+export const NavigateIcon = bundleIcon(Open12Regular, Open12Filled);
 
 interface AgentInstructionEditorProps extends BaseEditorProps {
   serializeValue?: ChangeHandler;
@@ -24,30 +25,31 @@ export const AgentInstructionEditor = ({
   ...props
 }: AgentInstructionEditorProps): JSX.Element => {
   const intl = useIntl();
+  const styles = useAgentInstructionStyles();
   const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
   const { systemMessage, userMessage } = useMemo(() => {
     return parseAgentInstruction(initialValue, setErrorMessage);
   }, [initialValue]);
   const description = intl.formatMessage({
     defaultMessage:
-      'Add instructions so the agent understands its role and tasks. It can be helpful to include information about workflow structure, restrictions, tools, and interaction in certain scenarios.',
-    description: 'Agent Instruction Editor description',
-    id: 'gzwIqh',
+      'Add instructions so the agent understands its role and tasks. Include helpful information about workflow structure, restrictions, tools, and interactions in specific scenarios.',
+    description: 'Description for agent instruction editor',
+    id: 'hRLAFg',
   });
   const descriptionLink = intl.formatMessage({
     defaultMessage: 'Tips for writing agent instructions',
-    description: 'Agent Instruction Editor description link',
-    id: 'cC7hlj',
+    description: 'Description link for agent instruction editor',
+    id: 'Vp5rnF',
   });
   const systemPlaceholder = intl.formatMessage({
-    defaultMessage: 'Enter instructions for the agent',
-    description: 'Agent System placeholder',
-    id: '1MXRVZ',
+    defaultMessage: 'Enter the instructions for the agent.',
+    description: 'Agent system placeholder',
+    id: 'dlLxEo',
   });
   const userPlaceholder = intl.formatMessage({
     defaultMessage: 'Enter instructions for the user',
-    description: 'Agent User placeholder',
-    id: 'Jzbnc/',
+    description: 'Agent user placeholder',
+    id: 'SPaCir',
   });
   const userItemLabel = intl.formatMessage({
     defaultMessage: 'User Instructions',
@@ -74,20 +76,16 @@ export const AgentInstructionEditor = ({
 
   return (
     <div className="msla-agent-instruction-editor-container">
-      <Text style={{ fontSize: 12, fontStyle: 'italic' }}>{description} </Text>
-      <Link
-        href="https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/declarative-agent-instructions"
-        target="_blank"
-        style={{ fontSize: 12, fontStyle: 'italic' }}
-      >
+      <Text style={{ fontSize: 12 }}>{description} </Text>
+      <Link href="https://aka.ms/LogicApps/Agents" target="_blank" style={{ fontSize: 12, fontStyle: 'italic' }}>
         {descriptionLink}
-        <NavigateIcon style={{ position: 'relative', top: '2px' }} />
+        <NavigateIcon style={{ position: 'relative', top: '2px', left: '2px' }} />
       </Link>
-      <div className="msla-agent-instruction-editors">
-        <Label text={systemPromptLabel} />
+      <div className={mergeClasses(styles.editors)}>
+        <Label text={systemPromptLabel} isRequiredField />
         <StringEditor
           {...props}
-          className={css(className, 'msla-agent-instruction-system-editor editor-custom')}
+          className={mergeClasses(styles.systemEditor, css(className, 'msla-agent-instruction-system-editor editor-custom'))}
           placeholder={systemPlaceholder}
           initialValue={systemMessage}
           editorBlur={(newState: ChangeState) => handleValueChange(newState, AGENT_INSTRUCTION_TYPES.SYSTEM)}
@@ -95,6 +93,7 @@ export const AgentInstructionEditor = ({
         <Label text={userItemLabel} />
         <ArrayEditor
           {...props}
+          isRequired={false}
           label={userItemLabel}
           placeholder={userPlaceholder}
           itemSchema={{ key: 'userMessage', type: 'string' }}
@@ -106,7 +105,11 @@ export const AgentInstructionEditor = ({
         />
       </div>
       {errorMessage ? (
-        <MessageBar key={'warning'} intent={'warning'} className="msla-agent-instruction-editor-warning">
+        <MessageBar
+          key={'warning'}
+          intent={'warning'}
+          className={mergeClasses(styles.editorWarning, 'msla-agent-instruction-editor-warning')}
+        >
           <MessageBarBody>
             <MessageBarTitle>{errorMessage}</MessageBarTitle>
             {warningInstructionBody}

@@ -11,6 +11,7 @@ export interface Workflow {
 export interface ConnectionReference {
   api: { id: string };
   connection: { id: string };
+  connectionId?: string;
   connectionName?: string;
   connectionProperties?: Record<string, any>;
   connectionRuntimeUrl?: string;

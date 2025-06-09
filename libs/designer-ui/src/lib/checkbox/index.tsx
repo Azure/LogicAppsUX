@@ -3,6 +3,7 @@ import type { ICheckbox } from '@fluentui/react';
 import { Callout, Checkbox as FluentCheckbox, css, DirectionalHint, Icon } from '@fluentui/react';
 import { useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
+import { useCheckboxStyles, useCheckboxDescriptionCalloutStyles } from './styles';
 
 export interface CheckboxProps {
   ariaLabel?: string;
@@ -35,6 +36,8 @@ export const Checkbox: React.FC<CheckboxProps> = ({
   const checkboxDescriptionButtonRef = useRef<HTMLButtonElement | null>();
   const checkboxRef = useRef<ICheckbox>();
   const intl = useIntl();
+  const classes = useCheckboxStyles();
+  const calloutClasses = useCheckboxDescriptionCalloutStyles();
 
   const handleCheckboxDescriptionDismiss = () => {
     setCheckboxDescriptionExpanded(false);
@@ -55,17 +58,17 @@ export const Checkbox: React.FC<CheckboxProps> = ({
 
   const moreInfoMessage = intl.formatMessage({
     defaultMessage: 'More info',
-    id: 'kvUaFw',
-    description: 'This is shown as an aria label on button as well as the tooltip that is shown after clicking the button',
+    id: 'XY5SKM',
+    description: 'Shown as an aria label on button and as the tooltip shown after you select the button.',
   });
 
   return (
-    <div className={css(className, 'msla-checkbox')}>
+    <div className={css(className, classes.root)}>
       <FluentCheckbox
         ariaLabel={ariaLabel}
         componentRef={(e) => (checkboxRef.current = e as any)}
         checked={checked}
-        className="msla-checkbox-label"
+        className={classes.label}
         id={id}
         label={text}
         styles={checkboxStyles}
@@ -86,7 +89,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({
       {checkboxDescriptionExpanded ? (
         <Callout
           ariaLabel={descriptionText}
-          className="msla-checkbox-description-callout"
+          className={calloutClasses.dialog}
           directionalHint={DirectionalHint.rightCenter}
           gapSpace={0}
           setInitialFocus={true}

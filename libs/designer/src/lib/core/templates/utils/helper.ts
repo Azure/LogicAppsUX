@@ -1,11 +1,12 @@
-import { type Template, getIntl, normalizeConnectorId } from '@microsoft/logic-apps-shared';
-import type { AppDispatch } from '../../../core';
+import { type Template, equals, getIntl, isUndefinedOrEmptyString, normalizeConnectorId } from '@microsoft/logic-apps-shared';
+import type { AppDispatch, WorkflowTemplateData } from '../../../core';
 import { summaryTab } from '../../../ui/panel/templatePanel/quickViewPanel/tabs/summaryTab';
 import { workflowTab } from '../../../ui/panel/templatePanel/quickViewPanel/tabs/workflowTab';
 import type { IntlShape } from 'react-intl';
 import type { FilterObject } from '@microsoft/designer-ui';
 import Fuse from 'fuse.js';
-import { validateParameterValueWithSwaggerType } from '../../../core/utils/validation';
+import { validateParameterValueWithSwaggerType } from '../../utils/validation';
+import type { TemplateData } from '../../state/templates/manifestSlice';
 
 export const getCurrentWorkflowNames = (workflows: { id: string; name: string }[], idToSkip: string): string[] => {
   return workflows.filter((w) => w.id !== idToSkip).map((w) => w.name) as string[];
@@ -15,33 +16,37 @@ export const getQuickViewTabs = (
   intl: IntlShape,
   dispatch: AppDispatch,
   workflowId: string,
-  showCreate: boolean,
-  { templateId, workflowAppName, isMultiWorkflow }: Template.TemplateContext,
+  clearDetailsOnClose: boolean,
+  { templateId, workflowAppName, isMultiWorkflow, showCreate, showCloseButton }: Template.TemplateContext,
   onCloseButtonClick?: () => void
 ) => {
   return [
+    summaryTab(
+      intl,
+      dispatch,
+      workflowId,
+      clearDetailsOnClose,
+      {
+        templateId,
+        workflowAppName,
+        isMultiWorkflow,
+        showCreate,
+        showCloseButton,
+      },
+      onCloseButtonClick
+    ),
     workflowTab(
       intl,
       dispatch,
       workflowId,
-      showCreate,
+      clearDetailsOnClose,
       undefined,
       {
         templateId,
         workflowAppName,
         isMultiWorkflow,
-      },
-      onCloseButtonClick
-    ),
-    summaryTab(
-      intl,
-      dispatch,
-      workflowId,
-      showCreate,
-      {
-        templateId,
-        workflowAppName,
-        isMultiWorkflow,
+        showCreate,
+        showCloseButton,
       },
       onCloseButtonClick
     ),
@@ -132,11 +137,12 @@ const templateSearchOptions = {
 };
 
 export const getFilteredTemplates = (
-  templates: Record<string, Template.TemplateManifest>,
+  templates: Record<string, TemplateData>,
   filters: {
     keyword?: string;
     sortKey: string;
     connectors?: FilterObject[];
+    status?: FilterObject[];
     detailFilters: Record<Template.DetailsType, FilterObject[]>;
   },
   isConsumption: boolean
@@ -155,6 +161,17 @@ export const getFilteredTemplates = (
       ) ?? true;
 
     if (!hasConnectors) {
+      return false;
+    }
+
+    const hasStatusFilters =
+      filters.status?.some((filterStatus) => {
+        return (
+          !equals((templateManifest.details as any)?.publishedBy, 'custom') || equals(templateManifest.publishState, filterStatus.value)
+        );
+      }) ?? true;
+
+    if (!hasStatusFilters) {
       return false;
     }
 
@@ -216,6 +233,29 @@ export const validateParameterValue = (data: { type: string; value?: string }, r
   return validateParameterValueWithSwaggerType(type, valueToValidate, required, intl);
 };
 
+export const validateParameterDetail = (data: { type: string; displayName?: string; description?: string; default?: string }) => {
+  const intl = getIntl();
+  let errorMessages: string | undefined = undefined;
+  if (isUndefinedOrEmptyString(data?.displayName)) {
+    errorMessages = intl.formatMessage({
+      defaultMessage: 'Display name is required. ',
+      id: 'kvFOza',
+      description: 'Error message when the workflow parameter display name is empty.',
+    });
+  }
+  if (!isUndefinedOrEmptyString(data?.default)) {
+    const DefaultValueValidationError = validateParameterValueWithSwaggerType(data?.type, data?.default, false, intl);
+    if (DefaultValueValidationError) {
+      errorMessages = `${errorMessages ?? ''}${intl.formatMessage({
+        defaultMessage: 'For default value: ',
+        id: '6WOs0A',
+        description: 'Error message when the workflow parameter description is empty.',
+      })}${DefaultValueValidationError}`;
+    }
+  }
+  return errorMessages ? errorMessages.trim() : undefined;
+};
+
 export const validateConnectionsValue = (
   manifestConnections: Record<string, Template.Connection>,
   connectionsMapping: Record<string, string>
@@ -228,4 +268,158 @@ export const validateConnectionsValue = (
   });
 
   return Object.keys(manifestConnections).some((connectionKey) => !connectionsMapping[connectionKey]) ? errorMessage : undefined;
+};
+
+export const checkWorkflowNameWithRegex = (intl: IntlShape, workflowName: string) => {
+  const regex = /^[A-Za-z][A-Za-z0-9]*(?:[_-][A-Za-z0-9]+)*$/;
+  if (!regex.test(workflowName)) {
+    return intl.formatMessage({
+      defaultMessage: "Name can only contain letters, numbers, and '-', '(', ')', '_' or '.",
+      id: 'TwBRcg',
+      description: 'Error message when the workflow name is invalid regex.',
+    });
+  }
+  return undefined;
+};
+
+export const validateWorkflowData = (workflowData: Partial<WorkflowTemplateData>, isAccelerator: boolean) => {
+  const { manifest: workflowManifest } = workflowData;
+  const intl = getIntl();
+
+  const manifestErrors: Record<string, string | undefined> = {};
+
+  manifestErrors['title'] =
+    isAccelerator && isUndefinedOrEmptyString(workflowManifest?.title)
+      ? intl.formatMessage({
+          defaultMessage: 'Workflow display name (title) is required.',
+          id: 'WnHWrD',
+          description: 'Error message when the workflow display name field which is title is empty',
+        })
+      : undefined;
+
+  manifestErrors['summary'] =
+    isAccelerator && isUndefinedOrEmptyString(workflowManifest?.summary)
+      ? intl.formatMessage({
+          defaultMessage: 'Workflow summary is required for publish.',
+          id: '1lLI6H',
+          description: 'Error message when the workflow description is empty',
+        })
+      : undefined;
+
+  manifestErrors['kinds'] = (workflowManifest?.kinds ?? []).length
+    ? undefined
+    : intl.formatMessage({
+        defaultMessage: 'At least one state type is required for publish.',
+        id: 'a21rtJ',
+        description: 'Error shown when the State type list is missing or empty',
+      });
+
+  manifestErrors['images.light'] = isUndefinedOrEmptyString(workflowManifest?.images?.light)
+    ? intl.formatMessage({
+        defaultMessage: 'The light image version of the workflow is required for publish.',
+        id: 't/aciw',
+        description: 'Error message when the workflow light image is empty',
+      })
+    : undefined;
+
+  manifestErrors['images.dark'] = isUndefinedOrEmptyString(workflowManifest?.images?.dark)
+    ? intl.formatMessage({
+        defaultMessage: 'The dark image version of the workflow is required for publish.',
+        id: 'arjUBV',
+        description: 'Error message when the workflow dark image is empty',
+      })
+    : undefined;
+
+  return manifestErrors;
+};
+
+export const validateTemplateManifestValue = (manifest: Template.TemplateManifest): Record<string, string | undefined> => {
+  const intl = getIntl();
+  const errors: Record<string, string> = {};
+
+  if (!manifest.skus?.length) {
+    errors['allowedSkus'] = intl.formatMessage({
+      defaultMessage: 'Atleast one sku is required for publish.',
+      id: 'rhBKTF',
+      description: 'Error shown when the template skus are empty',
+    });
+  }
+
+  if (isUndefinedOrEmptyString(manifest.title)) {
+    errors['title'] = intl.formatMessage({
+      defaultMessage: 'Title is required for publish.',
+      id: 't9lUGS',
+      description: 'Error shown when the template title is missing or empty',
+    });
+  }
+
+  if (isUndefinedOrEmptyString(manifest.summary)) {
+    errors['summary'] = intl.formatMessage({
+      defaultMessage: 'Summary is required for publish.',
+      id: 'm7tML3',
+      description: 'Error shown when the template summary is missing or empty',
+    });
+  }
+
+  if (!manifest.featuredConnectors?.length) {
+    errors['featuredConnectors'] = intl.formatMessage({
+      defaultMessage: 'At least one featured connector is required for publish.',
+      id: 'fQh72N',
+      description: 'Error shown when the feature connector field is missing',
+    });
+  }
+
+  if (isUndefinedOrEmptyString(manifest.details?.By)) {
+    errors['details.By'] = intl.formatMessage({
+      defaultMessage: 'By field is required for publish.',
+      id: 'pRrzwt',
+      description: 'Error shown when the author (By) field is missing',
+    });
+  }
+
+  return errors;
+};
+
+export const getTemplateTypeCategories = () => {
+  const intl = getIntl();
+  return [
+    {
+      value: 'Workflow',
+      displayName: intl.formatMessage({
+        defaultMessage: 'Workflow',
+        id: 'JsUu6b',
+        description: 'Label for workflow template which contains single workflow',
+      }),
+    },
+    {
+      value: 'Accelerator',
+      displayName: intl.formatMessage({
+        defaultMessage: 'Accelerator',
+        id: '2Js04W',
+        description: 'Label for accelerator template which contains multiple workflows',
+      }),
+    },
+  ];
+};
+
+export const getTemplatePublishCategories = () => {
+  const intl = getIntl();
+  return [
+    {
+      value: 'Testing',
+      displayName: intl.formatMessage({
+        defaultMessage: 'Published for Testing',
+        id: '1i3RKp',
+        description: 'Label for template published for testing',
+      }),
+    },
+    {
+      value: 'Production',
+      displayName: intl.formatMessage({
+        defaultMessage: 'Published for Production',
+        id: '44jsHY',
+        description: 'Label for template published for production',
+      }),
+    },
+  ];
 };

@@ -386,6 +386,7 @@ export default {
       SLIDING_WINDOW: 'slidingwindow',
       SWITCH: 'switch',
       AGENT: 'agent',
+      NESTED_AGENT: 'nestedagent',
       AGENT_CONDITION: 'agentcondition',
       TABLE: 'table',
       TERMINATE: 'terminate',
@@ -498,8 +499,7 @@ export default {
     CONNECTIONS: 'CONNECTIONS',
     PARAMETERS: 'PARAMETERS',
     PROFILE: 'PROFILE',
-    PUBLISH: 'PUBLISH',
-    REVIEW_AND_PUBLISH: 'REVIEW_AND_PUBLISH',
+    SUMMARY: 'SUMMARY',
     SELECT_WORKFLOWS: 'SELECT_WORKFLOWS',
     CUSTOMIZE_WORKFLOWS: 'CUSTOMIZE_WORKFLOWS',
   },
@@ -859,6 +859,7 @@ export default {
       SINGLE_INSTANCE: 'SingleInstance',
       SUPPRESS_WORKFLOW_HEADERS: 'SuppressWorkflowHeaders',
       SUPPRESS_WORKFLOW_HEADERS_ON_RESPONSE: 'SuppressWorkflowHeadersOnResponse',
+      FAILWHENLIMITSREACHED: 'FailWhenLimitsReached',
     },
     TRANSFER_MODE: {
       CHUNKED: 'Chunked',
@@ -972,4 +973,5 @@ export default {
     INPUT: '-inputchannel-',
     OUTPUT: '-outputchannel-',
   },
+  SUPPORTED_AGENT_MODELS: ['gpt-35-turbo', 'gpt-4', 'gpt-4.1', 'gpt-4.1-mini', 'gpt-4.1-nano', 'gpt-4o', 'gpt-4o-mini'],
 };

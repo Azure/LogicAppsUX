@@ -6,10 +6,10 @@ import { useReadOnly, useSuppressDefaultNodeSelectFunctionality } from '../../..
 import { setShowDeleteModalNodeId } from '../../../core/state/designerView/designerViewSlice';
 import {
   useIsPanelCollapsed,
-  useOperationPanelPinnedNodeId,
+  useOperationAlternateSelectedNode,
   useOperationPanelSelectedNodeId,
 } from '../../../core/state/panel/panelSelectors';
-import { expandPanel, setPinnedNode, updatePanelLocation } from '../../../core/state/panel/panelSlice';
+import { expandPanel, setAlternateSelectedNode, updatePanelLocation } from '../../../core/state/panel/panelSlice';
 import { useUndoRedoClickToggle } from '../../../core/state/undoRedo/undoRedoSelectors';
 import { useActionMetadata, useRunData, useRunInstance } from '../../../core/state/workflow/workflowSelectors';
 import { replaceId, setNodeDescription } from '../../../core/state/workflow/workflowSlice';
@@ -31,16 +31,21 @@ import {
 } from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useIntl } from 'react-intl';
 
 export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
   const { isResizeable, panelLocation } = props;
 
   const dispatch = useDispatch<AppDispatch>();
+  const intl = useIntl();
 
   const readOnly = useReadOnly();
   const collapsed = useIsPanelCollapsed();
 
-  const pinnedNode = useOperationPanelPinnedNodeId();
+  const alternateSelectedNode = useOperationAlternateSelectedNode();
+  const alternateSelectedNodeId = alternateSelectedNode?.nodeId ?? '';
+  const alternateSelectedNodePersistence = alternateSelectedNode?.persistence ?? 'selected';
+
   const selectedNode = useOperationPanelSelectedNodeId();
 
   const runData = useRunData(selectedNode);
@@ -60,7 +65,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
 
   const inputs = useSelector((state: RootState) => state.operations.inputParameters[selectedNode]);
 
-  const pinnedNodeData = usePanelNodeData(pinnedNode);
+  const alternateSelectedNodeData = usePanelNodeData(alternateSelectedNodeId);
   const selectedNodeData = usePanelNodeData(selectedNode);
   const actionMetadata = useActionMetadata(selectedNode);
   const nodeType = actionMetadata?.type ?? '';
@@ -88,14 +93,14 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
 
   const handlePinClick = useCallback(
     (nodeId: string) => {
-      dispatch(setPinnedNode({ nodeId }));
+      dispatch(setAlternateSelectedNode({ nodeId }));
     },
     [dispatch]
   );
 
   const handleCommentMenuClick = useCallback(
     (nodeId: string): void => {
-      const nodeData = nodeId === pinnedNode ? pinnedNodeData : selectedNodeData;
+      const nodeData = nodeId === alternateSelectedNodeId ? alternateSelectedNodeData : selectedNodeData;
       const comment = nodeData?.comment;
       const showCommentBox = !isNullOrUndefined(comment);
       dispatch(
@@ -105,12 +110,12 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
         })
       );
     },
-    [dispatch, pinnedNode, pinnedNodeData, selectedNodeData]
+    [dispatch, alternateSelectedNodeId, alternateSelectedNodeData, selectedNodeData]
   );
 
   const getHeaderMenuItems = useCallback(
     (nodeId: string): JSX.Element[] => {
-      const nodeData = nodeId === pinnedNode ? pinnedNodeData : selectedNodeData;
+      const nodeData = nodeId === alternateSelectedNodeId ? alternateSelectedNodeData : selectedNodeData;
       const comment = nodeData?.comment;
 
       // Removing the 'add a description' button for subgraph nodes
@@ -121,18 +126,27 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
           <CommentMenuItem key={'comment'} onClick={() => handleCommentMenuClick(nodeId)} hasComment={!isNullOrUndefined(comment)} />
         );
       }
-      if (nodeId !== pinnedNode) {
+      if (nodeId !== alternateSelectedNodeId) {
         headerMenuItems.push(<PinMenuItem key={'pin'} nodeId={selectedNode} onClick={() => handlePinClick(nodeId)} />);
       }
       headerMenuItems.push(<DeleteMenuItem key={'delete'} onClick={() => handleDeleteClick(nodeId)} />);
       return headerMenuItems;
     },
-    [handleCommentMenuClick, handleDeleteClick, handlePinClick, isTriggerNode, pinnedNode, pinnedNodeData, selectedNode, selectedNodeData]
+    [
+      handleCommentMenuClick,
+      handleDeleteClick,
+      handlePinClick,
+      isTriggerNode,
+      alternateSelectedNodeId,
+      alternateSelectedNodeData,
+      selectedNode,
+      selectedNodeData,
+    ]
   );
 
-  const onTitleChange = (originalId: string, newId: string): { valid: boolean; oldValue?: string } => {
-    const isValid = isOperationNameValid(originalId, newId, isTriggerNode, nodesMetadata, idReplacements);
-    return { valid: isValid, oldValue: isValid ? newId : originalId };
+  const onTitleChange = (originalId: string, newId: string): { valid: boolean; oldValue?: string; message: string } => {
+    const validation = isOperationNameValid(originalId, newId, isTriggerNode, nodesMetadata, idReplacements, intl);
+    return { valid: validation.isValid, oldValue: validation.isValid ? newId : originalId, message: validation.message };
   };
 
   const handleTitleUpdate = (originalId: string, newId: string) => {
@@ -146,7 +160,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
   const togglePanel = (): void => (collapsed ? expand() : collapse());
   const dismissPanel = () => dispatch(clearPanel());
 
-  const unpinAction = () => dispatch(setPinnedNode({ nodeId: '' }));
+  const unpinAction = () => dispatch(setAlternateSelectedNode({ nodeId: '' }));
 
   const runInstance = useRunInstance();
 
@@ -220,8 +234,9 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
       suppressDefaultNodeSelectFunctionality={suppressDefaultNodeSelectFunctionality}
       node={selectedNodeData}
       nodeHeaderItems={getHeaderMenuItems(selectedNode)}
-      pinnedNode={pinnedNodeData}
-      pinnedNodeHeaderItems={getHeaderMenuItems(pinnedNode)}
+      alternateSelectedNode={alternateSelectedNodeData}
+      alternateSelectedNodePersistence={alternateSelectedNodePersistence}
+      alternateSelectedNodeHeaderItems={getHeaderMenuItems(alternateSelectedNodeId)}
       readOnlyMode={readOnly}
       canResubmit={runData?.canResubmit ?? false}
       canShowLogicAppRun={canShowLogicAppRun}

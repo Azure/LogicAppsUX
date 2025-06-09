@@ -30,24 +30,19 @@ export const useResourceStrings = () => {
       description: 'The text for the consumption sku',
     }),
     DevelopmentEnvironment: intl.formatMessage({
-      defaultMessage: 'Development',
-      id: 'DmZRZn',
+      defaultMessage: 'Unpublished',
+      id: 'tT0uiq',
       description: 'The text for the development environment',
+    }),
+    TestingEnvironment: intl.formatMessage({
+      defaultMessage: 'Testing',
+      id: '/LO3Ia',
+      description: 'The text for the testing environment',
     }),
     ProductionEnvironment: intl.formatMessage({
       defaultMessage: 'Production',
       id: '0sbIhI',
       description: 'The text for the production environment',
-    }),
-    Published: intl.formatMessage({
-      defaultMessage: 'Published',
-      id: 'mdhy9X',
-      description: 'The text for the published status',
-    }),
-    Unpublished: intl.formatMessage({
-      defaultMessage: 'Unpublished',
-      id: 'pd0whZ',
-      description: 'The text for the unpublished status',
     }),
     General: intl.formatMessage({
       defaultMessage: 'General',
@@ -69,10 +64,15 @@ export const useResourceStrings = () => {
       id: 'N6SVax',
       description: 'Display name label',
     }),
-    WorkflowType: intl.formatMessage({
-      defaultMessage: 'Workflow type',
-      id: 'xBIh0S',
-      description: 'Workflow type label',
+    Name: intl.formatMessage({
+      defaultMessage: 'Name',
+      id: 'gOkIvb',
+      description: 'Name label',
+    }),
+    TemplateType: intl.formatMessage({
+      defaultMessage: 'Template type',
+      id: 'RDsZrd',
+      description: 'Template type label',
     }),
     Trigger: intl.formatMessage({
       defaultMessage: 'Trigger',
@@ -134,20 +134,173 @@ export const useResourceStrings = () => {
       id: 'JBa1qe',
       description: 'The label for the workflow display name',
     }),
+    LastModified: intl.formatMessage({
+      defaultMessage: 'Last modified',
+      id: 'lx0teD',
+      description: 'Last modified label',
+    }),
+    CreatedDate: intl.formatMessage({
+      defaultMessage: 'Created date',
+      id: 'iuh4i3',
+      description: 'Created date label',
+    }),
     State: intl.formatMessage({
       defaultMessage: 'State',
       id: 'IG4XXf',
       description: 'Label for workflow state',
+    }),
+    StateType: intl.formatMessage({
+      defaultMessage: 'State type',
+      id: 'GkbTLA',
+      description: 'Label for workflow state type',
     }),
     TemplateName: intl.formatMessage({
       defaultMessage: 'Template',
       id: '83Vrgj',
       description: 'Label for template',
     }),
-    WorkflowName: intl.formatMessage({
-      defaultMessage: 'Workflow name',
-      id: 'ekM77J',
-      description: 'Label for workflow Name',
+    Placeholder: intl.formatMessage({
+      defaultMessage: '--',
+      id: '5lRHeK',
+      description: 'Accessibility label indicating that the value is not set',
+    }),
+    Description: intl.formatMessage({
+      defaultMessage: 'Description',
+      id: 'FOoLuS',
+      description: 'Label for description',
+    }),
+    DefaultValue: intl.formatMessage({
+      defaultMessage: 'Default value',
+      id: 'v5CBNu',
+      description: 'Default value label',
+    }),
+    AllowedValues: intl.formatMessage({
+      defaultMessage: 'Allowed values',
+      id: 'gl+tO3',
+      description: 'Allowed values label',
+    }),
+    AssociatedWorkflows: intl.formatMessage({
+      defaultMessage: 'Associated workflows',
+      id: 'cjSsih',
+      description: 'Associated workflows label',
+    }),
+    Required: intl.formatMessage({
+      defaultMessage: 'Required',
+      id: '2q6Vas',
+      description: 'Required label',
+    }),
+    RequiredOn: intl.formatMessage({
+      defaultMessage: 'On',
+      id: 'JHp3nE',
+      description: 'The aria label for the required parameter on (required)',
+    }),
+    RequiredOff: intl.formatMessage({
+      defaultMessage: 'Off',
+      id: '4ZPAvT',
+      description: 'The aria label for the required parameter off (not required)',
+    }),
+    Details: intl.formatMessage({
+      defaultMessage: 'Details',
+      id: 'pr2lJw',
+      description: 'Details label',
+    }),
+    ParameterName: intl.formatMessage({
+      defaultMessage: 'Parameter name',
+      id: '2j1xuE',
+      description: 'Parameter name label',
+    }),
+    ParameterDisplayName: intl.formatMessage({
+      defaultMessage: 'Parameter display name',
+      id: 'uRAbJb',
+      description: 'Parameter display name label',
+    }),
+    RequiredField: intl.formatMessage({
+      defaultMessage: 'Required field',
+      id: 'l3nn+9',
+      description: 'Required field label',
+    }),
+    WorkflowImages: intl.formatMessage({
+      defaultMessage: 'Workflow images',
+      id: 'an1Z0T',
+      description: 'Label for the workflow images section',
+    }),
+    WorkflowImagesDescription: intl.formatMessage({
+      defaultMessage:
+        'Add images of this workflow as it appears in the designer in the original logic app. Take a screenshot in both light-mode and dar-mode versions. Upload files to Azure Blob Storage, then create a shared access signature (SAS) URL for each.',
+      id: 'VLn4Dz',
+      description: 'Description for the workflow images section',
+    }),
+    LightModeImage: intl.formatMessage({
+      defaultMessage: 'Light-mode SAS URL',
+      id: 'fRrZKS',
+      description: 'Light mode image label',
+    }),
+    LightModeImageDescription: intl.formatMessage({
+      defaultMessage:
+        'Provide your workflow image in the Azure light theme. Upload the image to Azure Blob Storage and share the shared access signature (SAS) link.',
+      id: 'Za33CQ',
+      description: 'Light mode image description',
+    }),
+    DarkModeImage: intl.formatMessage({
+      defaultMessage: 'Dark-mode SAS URL',
+      id: 'xWbF46',
+      description: 'Dark mode image label',
+    }),
+    DarkModeImageDescription: intl.formatMessage({
+      defaultMessage:
+        'Provide your workflow image in the Azure dark theme. Upload the image to Azure Blob Storage and share the shared access signature (SAS) link.',
+      id: 'NziQUu',
+      description: 'Dark mode image description',
+    }),
+    InAppKind: intl.formatMessage({
+      defaultMessage: 'In-app',
+      id: 'n6/Zp0',
+      description: 'The label for the in-app connector kind',
+    }),
+    SharedKind: intl.formatMessage({
+      defaultMessage: 'Shared',
+      id: 'PYku3O',
+      description: 'The label for shared connector kind',
+    }),
+    NoConnectionInTemplate: intl.formatMessage({
+      defaultMessage: 'No connections in this template',
+      id: 'oIRKrF',
+      description: 'Text to show no connections present in the template.',
+    }),
+    NoParameterInTemplate: intl.formatMessage({
+      defaultMessage: 'No parameters in this template',
+      id: 'sMjDlb',
+      description: 'Text to show no parameters present in the template.',
+    }),
+    MissingRequiredFields: intl.formatMessage({
+      defaultMessage: 'Missing required fields: ',
+      id: 'uXecuj',
+      description: 'Text to show missing required fields in the template.',
+    }),
+    SaveButtonText: intl.formatMessage({
+      defaultMessage: 'Save',
+      id: 'DTIrLI',
+      description: 'The description for button text of saving the template',
+    }),
+    SavePublishForTestingButton: intl.formatMessage({
+      defaultMessage: 'Save + publish for testing',
+      id: 'hrs5f4',
+      description: 'The description for button text of saving the template as testing status',
+    }),
+    SavePublishForProdButton: intl.formatMessage({
+      defaultMessage: 'Save + publish for production',
+      id: '0UjRS5',
+      description: 'The description for button text of saving the template as production status',
+    }),
+    SaveUnpublishButton: intl.formatMessage({
+      defaultMessage: 'Save + unpublish template',
+      id: 'TEYRnv',
+      description: 'The description for button text of saving the template rolling back to development status',
+    }),
+    DownloadTemplateButton: intl.formatMessage({
+      defaultMessage: 'Download template',
+      id: '2CGfiU',
+      description: 'The description for button text of downloading the template',
     }),
     // Aria labels
     WorkflowsListTableLabel: intl.formatMessage({
@@ -169,6 +322,47 @@ export const useResourceStrings = () => {
       defaultMessage: 'Select workflow row checkbox label',
       id: 'oChTO9',
       description: 'Accessibility label for the select workflow row checkbox',
+    }),
+    // Tabs
+    WorkflowsTabLabel: intl.formatMessage({
+      defaultMessage: 'Workflows',
+      id: 'R7VvvJ',
+      description: 'The tab label for the monitoring workflows tab on the configure template wizard',
+    }),
+    WorkflowsTabDescription: intl.formatMessage({
+      defaultMessage: `Choose one or more workflows from existing apps to build this template. Your changes to these workflows won't affect the original workflows. Save your work anytime and pick up where you left off without having to publish. To publish your template, all fields must be completed.`,
+      id: 'P4r7vy',
+      description: 'The description for the workflows tab on the configure template wizard',
+    }),
+    ConnectionsTabLabel: intl.formatMessage({
+      defaultMessage: 'Connections',
+      id: 'ur+ZvW',
+      description: 'The tab label for the monitoring connections tab on the configure template wizard',
+    }),
+    ParametersTabLabel: intl.formatMessage({
+      defaultMessage: 'Parameters',
+      id: 'lYAlE9',
+      description: 'The tab label for the monitoring parameters tab on the configure template wizard',
+    }),
+    ProfileTabLabel: intl.formatMessage({
+      defaultMessage: 'Profile',
+      id: '6ELsbA',
+      description: 'The tab label for the monitoring profile tab on the configure template wizard',
+    }),
+    PublishTabLabel: intl.formatMessage({
+      defaultMessage: 'Publish',
+      id: 'hA5Aif',
+      description: 'The tab label for the publish tab on the configure template wizard',
+    }),
+    SummaryTabLabel: intl.formatMessage({
+      defaultMessage: 'Summary',
+      id: 'cCmFCI',
+      description: 'The tab label for the summary tab on the configure template wizard',
+    }),
+    LearnMore: intl.formatMessage({
+      defaultMessage: 'Learn more',
+      id: '/udwYv',
+      description: 'The text for the learn more link',
     }),
   };
 };

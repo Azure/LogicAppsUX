@@ -28,41 +28,50 @@ export const parametersTab = (
     id: 'oxCSqB',
     description: 'An accessibility label that describes the objective of parameters tab',
   }),
-  hasError: hasError,
+  tabStatusIcon: hasError ? 'error' : undefined,
   content: <ParametersPanel />,
   footerContent: {
-    primaryButtonText: intl.formatMessage({
-      defaultMessage: 'Next',
-      id: '0UfxUM',
-      description: 'Button text for moving to the next tab in the create workflow panel',
-    }),
-    primaryButtonOnClick: () => {
-      dispatch(selectPanelTab(constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE));
-    },
-    secondaryButtonText: previousTabId
-      ? intl.formatMessage({
-          defaultMessage: 'Previous',
-          id: 'Yua/4o',
-          description: 'Button text for moving to the previous tab in the create workflow panel',
-        })
-      : intl.formatMessage({
-          defaultMessage: 'Close',
-          id: 'FTrMxN',
-          description: 'Button text for closing the panel',
+    buttonContents: [
+      {
+        type: 'navigation',
+        text: intl.formatMessage({
+          defaultMessage: 'Next',
+          id: '0UfxUM',
+          description: 'Button text for moving to the next tab in the create workflow panel',
         }),
-    secondaryButtonOnClick: () => {
-      if (previousTabId) {
-        dispatch(selectPanelTab(previousTabId));
-      } else {
-        dispatch(closePanel());
+        appearance: 'primary',
+        onClick: () => {
+          dispatch(selectPanelTab(constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE));
+        },
+      },
+      {
+        type: 'navigation',
+        text: previousTabId
+          ? intl.formatMessage({
+              defaultMessage: 'Previous',
+              id: 'Yua/4o',
+              description: 'Button text for moving to the previous tab in the create workflow panel',
+            })
+          : intl.formatMessage({
+              defaultMessage: 'Close',
+              id: 'FTrMxN',
+              description: 'Button text for closing the panel',
+            }),
+        onClick: () => {
+          if (previousTabId) {
+            dispatch(selectPanelTab(previousTabId));
+          } else {
+            dispatch(closePanel());
 
-        if (shouldClearDetails) {
-          dispatch(clearTemplateDetails());
-        }
+            if (shouldClearDetails) {
+              dispatch(clearTemplateDetails());
+            }
 
-        onClosePanel?.();
-      }
-    },
-    secondaryButtonDisabled: (!previousTabId && !showCloseButton) || isCreating,
+            onClosePanel?.();
+          }
+        },
+        disabled: (!previousTabId && !showCloseButton) || isCreating,
+      },
+    ],
   },
 });

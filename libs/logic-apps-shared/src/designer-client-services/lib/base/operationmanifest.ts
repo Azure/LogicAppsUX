@@ -66,6 +66,7 @@ const function_ = 'function';
 const liquid = 'liquid';
 const serviceprovider = 'serviceprovider';
 const workflow = 'workflow';
+const nestedAgent = 'nestedagent';
 const xmlvalidation = 'xmlvalidation';
 const xslt = 'xslt';
 const xmlcompose = 'xmlcompose';
@@ -124,7 +125,8 @@ const edifactencode = 'edifactencode';
 const edifactbatchencode = 'edifactbatchencode';
 const edifactdecode = 'edifactdecode';
 const parsedocument = 'parsedocument';
-const parsedocumentwithmetadata = 'parsedocumentwithmetadata';
+export const parsedocumentwithmetadata = 'parsedocumentwithmetadata';
+export const chunktextwithmetadata = 'chunktextwithmetadata';
 
 export const apiManagementConnectorId = '/connectionProviders/apiManagementOperation';
 export const azureFunctionConnectorId = '/connectionProviders/azureFunctionOperation';
@@ -133,6 +135,7 @@ export const batchConnectorId = '/connectionProviders/batch';
 export const dataOperationConnectorId = 'connectionProviders/dataOperationNew';
 const controlConnectorId = 'connectionProviders/control';
 export const agentConnectorId = 'connectionProviders/agent';
+const localWorkflowConnectorId = 'connectionProviders/localWorkflowOperation';
 const dateTimeConnectorId = 'connectionProviders/datetime';
 const scheduleConnectorId = 'connectionProviders/schedule';
 export const httpConnectorId = 'connectionProviders/http';
@@ -150,6 +153,7 @@ const azurefunction = 'azurefunction';
 const appservice = 'appservice';
 const appservicetrigger = 'appservicetrigger';
 const invokeworkflow = 'invokeworkflow';
+const invokenestedagent = 'invokenestedagent';
 const chunktext = 'chunktext';
 
 export const supportedBaseManifestTypes = [
@@ -193,6 +197,7 @@ export const supportedBaseManifestTypes = [
   serviceprovider,
   table,
   workflow,
+  nestedAgent,
   xmlvalidation,
   xslt,
   xmlcompose,
@@ -218,6 +223,7 @@ export const supportedBaseManifestTypes = [
   chunktext,
   parsedocument,
   parsedocumentwithmetadata,
+  chunktextwithmetadata,
 ];
 
 export const builtInConnectorIds = {
@@ -345,13 +351,13 @@ export function isBuiltInOperation(definition: any): boolean {
     case edifactdecode:
     case edifactencode:
     case edifactbatchencode:
-      return true;
-
     case appservice:
     case azurefunction:
     case invokeworkflow:
+    case nestedAgent:
     case parsedocument:
     case chunktext:
+    case chunktextwithmetadata:
     case parsedocumentwithmetadata:
       return true;
 
@@ -626,8 +632,12 @@ const builtInOperationsMetadata: Record<string, OperationInfo> = {
     operationId: agentType,
   },
   [workflow]: {
-    connectorId: 'connectionProviders/localWorkflowOperation',
-    operationId: 'invokeWorkflow',
+    connectorId: localWorkflowConnectorId,
+    operationId: invokeworkflow,
+  },
+  [nestedAgent]: {
+    connectorId: localWorkflowConnectorId,
+    operationId: invokenestedagent,
   },
   [xmlcompose]: {
     connectorId: xmlOperationsConnectionId,
@@ -740,6 +750,10 @@ const builtInOperationsMetadata: Record<string, OperationInfo> = {
   [parsedocumentwithmetadata]: {
     connectorId: dataOperationConnectorId,
     operationId: parsedocumentwithmetadata,
+  },
+  [chunktextwithmetadata]: {
+    connectorId: dataOperationConnectorId,
+    operationId: chunktextwithmetadata,
   },
 };
 

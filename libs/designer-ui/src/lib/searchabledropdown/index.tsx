@@ -1,8 +1,10 @@
 import type { IDropdownProps } from '@fluentui/react';
 import { SearchBox, DropdownMenuItemType, Dropdown } from '@fluentui/react';
+import { mergeClasses } from '@fluentui/react-components';
 import type { FC } from 'react';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
+import { useSearchableDropdownStyles } from './searchabledropdown.styles';
 
 export interface SearchableDropdownProps {
   dropdownProps: Pick<IDropdownProps, 'options'> & Partial<Omit<IDropdownProps, 'onChange' | 'onDismiss' | 'onRenderItem'>>;
@@ -23,6 +25,7 @@ export const SearchableDropdown: FC<SearchableDropdownProps> = ({
   className,
   labelId,
 }): JSX.Element => {
+  const styles = useSearchableDropdownStyles();
   const showFilterInputItemThreshold = showFilterItemThreshold ?? 4;
   const headerKey = 'FilterHeader';
 
@@ -52,7 +55,7 @@ export const SearchableDropdown: FC<SearchableDropdownProps> = ({
     <Dropdown
       {...dropdownProps}
       aria-labelledby={labelId}
-      className={className ?? 'msla-searchable-dropdown'}
+      className={mergeClasses(styles.searchableDropdown, className ?? 'msla-searchable-dropdown')}
       options={options}
       selectedKeys={conditionalVisibilityTempArray}
       onChange={(_e: any, item: any) => {
@@ -77,9 +80,10 @@ export const SearchableDropdown: FC<SearchableDropdownProps> = ({
           return (
             <SearchBox
               autoFocus={true}
-              className="msla-searchable-dropdown-search"
+              className={mergeClasses(styles.searchableDropdownSearch, 'msla-searchable-dropdown-search')}
               onChange={(e, newValue) => setFilterText(newValue ?? '')}
               placeholder={searchOperation}
+              key={headerKey}
             />
           );
         }

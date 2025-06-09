@@ -50,7 +50,9 @@ export const ConfigureTemplateDataProvider = (props: ConfigureTemplateDataProvid
     if (!servicesInitialized) {
       dispatch(initializeConfigureTemplateServices(services));
     }
+  }, [dispatch, servicesInitialized, services]);
 
+  useEffect(() => {
     dispatch(
       setInitialData({
         subscriptionId: resourceDetails.subscriptionId,
@@ -58,7 +60,7 @@ export const ConfigureTemplateDataProvider = (props: ConfigureTemplateDataProvid
         location: resourceDetails.location,
       })
     );
-  }, [dispatch, servicesInitialized, services, resourceDetails]);
+  }, [dispatch, resourceDetails]);
 
   useEffect(() => {
     if (

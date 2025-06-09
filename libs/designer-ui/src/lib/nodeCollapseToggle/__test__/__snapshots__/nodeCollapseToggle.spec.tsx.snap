@@ -7,7 +7,7 @@ exports[`lib/nodeCollapseToggle > should render collapsed 1`] = `
 >
   <button
     aria-label="Expand"
-    className="msla-collapse-toggle"
+    className="___1sko1vd_1vbo4if f9k410n f1k2sg7s f1l02sjl f1ern45e f1n71otn f1h8hb77 f1deefiw fmysjtr f1kcqot9 f1sgzk6v fpe6lb7 f1bg5zqg f22iagw f6jr5hl f1k6fduh fqa1sid f5r6hof f1grzc83 f1y0y41b f16azm0m"
     data-automation-id="nodeId-collapse-toggle"
     disabled={false}
     onClick={[Function]}
@@ -35,7 +35,7 @@ exports[`lib/nodeCollapseToggle > should render expanded 1`] = `
 >
   <button
     aria-label="Collapse"
-    className="msla-collapse-toggle"
+    className="___1sko1vd_1vbo4if f9k410n f1k2sg7s f1l02sjl f1ern45e f1n71otn f1h8hb77 f1deefiw fmysjtr f1kcqot9 f1sgzk6v fpe6lb7 f1bg5zqg f22iagw f6jr5hl f1k6fduh fqa1sid f5r6hof f1grzc83 f1y0y41b f16azm0m"
     data-automation-id="nodeId-collapse-toggle"
     disabled={false}
     onClick={[Function]}

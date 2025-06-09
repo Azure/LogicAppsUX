@@ -1,7 +1,9 @@
-import { TooltipHost, DirectionalHint, Icon, css } from '@fluentui/react';
+import { TooltipHost, DirectionalHint, Icon } from '@fluentui/react';
 import { FontSizes } from '@fluentui/theme';
 import { useCardKeyboardInteraction } from '../card/hooks';
 import { useIntl } from 'react-intl';
+import { useNodeCollapseToggleStyles } from './styles';
+import { mergeClasses } from '@fluentui/react-components';
 
 export interface NodeCollapseToggleProps {
   disabled?: boolean;
@@ -14,7 +16,7 @@ export interface NodeCollapseToggleProps {
 
 const NodeCollapseToggle = (props: NodeCollapseToggleProps) => {
   const { disabled = false, collapsed = false, onSmallCard = false, handleCollapse, tabIndex, id } = props;
-
+  const styles = useNodeCollapseToggleStyles();
   const intl = useIntl();
   const EXPAND_TEXT = intl.formatMessage({
     defaultMessage: 'Expand',
@@ -38,7 +40,7 @@ const NodeCollapseToggle = (props: NodeCollapseToggleProps) => {
       <button
         aria-label={toggleText}
         disabled={disabled}
-        className={css('msla-collapse-toggle', disabled && 'disabled', onSmallCard && 'small')}
+        className={mergeClasses(styles.root, disabled && styles.disabled, onSmallCard && styles.small)}
         onClick={(e) => handleCollapse?.(e.shiftKey)}
         onKeyDown={keyboardInteraction.keyDown}
         onKeyUp={keyboardInteraction.keyUp}

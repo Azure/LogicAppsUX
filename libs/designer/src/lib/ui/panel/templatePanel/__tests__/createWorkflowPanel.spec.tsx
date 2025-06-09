@@ -154,6 +154,7 @@ describe('panel/templatePanel/createWorkflowPanel', () => {
             $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
             contentVersion: '',
           },
+          triggerType: '',
           errors: {
             workflow: undefined,
             kind: undefined,
@@ -172,6 +173,8 @@ describe('panel/templatePanel/createWorkflowPanel', () => {
       }, {}),
       connections: workflow1Manifest.connections,
       errors: {
+        manifest: {},
+        workflows: {},
         parameters: {},
         connections: undefined,
       },
@@ -228,6 +231,7 @@ describe('panel/templatePanel/createWorkflowPanel', () => {
           id: defaultWorkflowId,
           workflowName: '',
           kind: undefined,
+          triggerType: '',
           manifest: workflow2Manifest,
           workflowDefinition: {
             $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
@@ -251,6 +255,8 @@ describe('panel/templatePanel/createWorkflowPanel', () => {
       }, {}),
       connections: workflow2Manifest.connections,
       errors: {
+        manifest: {},
+        workflows: {},
         parameters: {},
         connections: undefined,
       },

@@ -10,6 +10,7 @@ import {
   workflowSubscriptionIdKey,
   localSettingsFileName,
   COMMON_ERRORS,
+  workflowTenantIdKey,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
@@ -19,7 +20,7 @@ import { getAuthorizationToken, getCloudHost } from '../../utils/codeless/getAut
 import { areAllConnectionsParameterized } from '../../utils/codeless/parameterizer';
 import { addLocalFuncTelemetry } from '../../utils/funcCoreTools/funcVersion';
 import { unzipLogicAppArtifacts } from '../../utils/taskUtils';
-import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
+import { isLogicAppProject, tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
 import { getWorkspaceFolder } from '../../utils/workspace';
 import { parameterizeConnections } from '../parameterizeConnections';
 import type { IAzureScriptWizard } from './azureScriptWizard';
@@ -34,22 +35,37 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
-import { ConvertToWorkspace } from '../createNewCodeProject/CodeProjectBase/ConvertToWorkspace';
+import { convertToWorkspace } from '../createNewCodeProject/CodeProjectBase/ConvertToWorkspace';
 
-export async function generateDeploymentScripts(context: IActionContext): Promise<void> {
+/**
+ * Generates deployment scripts for a Logic App project.
+ * @param {IActionContext} context - The action context.
+ * @param {string} node - The node representing the Logic App project. If not provided, the user will be prompted to select a project.
+ * @returns {Promise<void>} - A promise that resolves when the deployment scripts are generated.
+ */
+export async function generateDeploymentScripts(context: IActionContext, node?: vscode.Uri): Promise<void> {
+  let projectPath: string;
+  let projectRoot: vscode.Uri;
+
   try {
     ext.outputChannel.show();
     ext.outputChannel.appendLog(localize('initScriptGen', 'Initiating script generation...'));
 
     addLocalFuncTelemetry(context);
-    const workspaceFolder = await getWorkspaceFolder(context);
-    const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
-    const projectRoot = vscode.Uri.file(projectPath);
+    if (node && Object.keys(node).length > 0 && (await isLogicAppProject(node.fsPath))) {
+      projectPath = node.fsPath;
+      projectRoot = node;
+    } else {
+      const workspaceFolder = await getWorkspaceFolder(context);
+      projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
+      projectRoot = vscode.Uri.file(projectPath);
+    }
+
     const connectionsJson = await getConnectionsJson(projectPath);
     const connectionsData: ConnectionsData = isEmptyString(connectionsJson) ? {} : JSON.parse(connectionsJson);
     const isParameterized = await areAllConnectionsParameterized(connectionsData);
     const workflowFiles = getWorkflowFilePaths(projectPath);
-    if (!(await ConvertToWorkspace(context))) {
+    if (!(await convertToWorkspace(context))) {
       ext.outputChannel.appendLog(localize('exitScriptGen', 'Exiting script generation...'));
       return;
     }
@@ -92,13 +108,17 @@ export async function generateDeploymentScripts(context: IActionContext): Promis
 
     const correlationId = uuidv4();
     const currentDateTime = new Date().toISOString();
-    workflowFiles.forEach((filePath) => updateMetadata(filePath, correlationId, currentDateTime));
+    workflowFiles.forEach((filePath) => updateMetadata(filePath, projectPath, correlationId, currentDateTime));
   } catch (error) {
     const errorMessage = localize('errorScriptGen', 'Error during deployment script generation: {0}', error.message ?? error);
     ext.outputChannel.appendLog(errorMessage);
     context.telemetry.properties.error = errorMessage;
-    context.telemetry.properties.pinnedBundleVersion = ext.pinnedBundleVersion.toString();
-    context.telemetry.properties.currentWorkflowBundleVersion = ext.currentBundleVersion;
+    context.telemetry.properties.pinnedBundleVersion = ext.pinnedBundleVersion.has(projectPath)
+      ? ext.pinnedBundleVersion.get(projectPath).toString()
+      : 'false';
+    context.telemetry.properties.currentWorkflowBundleVersion = ext.currentBundleVersion.has(projectPath)
+      ? ext.currentBundleVersion.get(projectPath)
+      : ext.defaultBundleVersion;
     if (!errorMessage.includes(COMMON_ERRORS.OPERATION_CANCELLED)) {
       throw new Error(errorMessage);
     }
@@ -119,7 +139,7 @@ function getWorkflowFilePaths(source: string): string[] {
     .map((name) => path.join(source, name, workflowFileName));
 }
 
-function updateMetadata(filePath: string, correlationId: string, currentDateTime: string): void {
+function updateMetadata(filePath: string, projectPath: string, correlationId: string, currentDateTime: string): void {
   const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
 
   // Normalize the metadata key to lowercase
@@ -133,8 +153,10 @@ function updateMetadata(filePath: string, correlationId: string, currentDateTime
     IaCGenerationDate: currentDateTime,
     IaCWorkflowCorrelationId: correlationId,
     LogicAppsExtensionVersion: ext.extensionVersion,
-    LogicAppsPinnedBundle: ext.pinnedBundleVersion,
-    LogicAppsCurrentBundleVersion: ext.currentBundleVersion,
+    LogicAppsPinnedBundle: ext.pinnedBundleVersion.has(projectPath) ? ext.pinnedBundleVersion.get(projectPath) : false,
+    LogicAppsCurrentBundleVersion: ext.currentBundleVersion.has(projectPath)
+      ? ext.currentBundleVersion.get(projectPath)
+      : ext.defaultBundleVersion,
   };
 
   if (data.definition.metadata) {
@@ -202,11 +224,12 @@ export async function callConsumptionApi(scriptContext: IAzureScriptWizard, inpu
   try {
     ext.outputChannel.appendLog(localize('initCallConsumption', 'Initiating call to Consumption API for deployment artifacts.'));
 
-    const { localSubscriptionId, localResourceGroup, logicAppName } = inputs;
+    const { localTenantId, localSubscriptionId, localResourceGroup, logicAppName } = inputs;
     ext.outputChannel.appendLog(
       localize(
         'operationalContext',
-        'Operational context: Subscription ID: {0}, Resource Group: {1}, Logic App: {2}',
+        'Operational context: Tenant ID: {0}, Subscription ID: {1}, Resource Group: {2}, Logic App: {3}',
+        localTenantId,
         localSubscriptionId,
         localResourceGroup,
         logicAppName
@@ -225,6 +248,7 @@ export async function callConsumptionApi(scriptContext: IAzureScriptWizard, inpu
 
         // The line below has been modified to pass both originalKey and refEndPoint
         const bufferData = await callManagedConnectionsApi(
+          localTenantId,
           localSubscriptionId,
           localResourceGroup,
           logicAppName,
@@ -313,12 +337,18 @@ async function callStandardResourcesApi(
   try {
     ext.outputChannel.appendLog(localize('initApiWorkflowDesignerPort', 'Initiating API connection through workflow designer port...'));
     await startDesignTimeApi(projectPath);
-    if (ext.designTimePort === undefined) {
+    if (!ext.designTimeInstances.has(projectPath)) {
+      throw new Error(
+        localize('designTimeInstanceNotFound', 'Design time API is undefined. Please retry once Azure Functions Core Tools has started.')
+      );
+    }
+    const designTimeInst = ext.designTimeInstances.get(projectPath);
+    if (designTimeInst.port === undefined) {
       throw new Error(
         localize('errorStandardResourcesApi', 'Design time port is undefined. Please retry once Azure Functions Core Tools has started.')
       );
     }
-    const apiUrl = `http://localhost:${ext.designTimePort}${managementApiPrefix}/generateDeploymentArtifacts`;
+    const apiUrl = `http://localhost:${designTimeInst.port}${managementApiPrefix}/generateDeploymentArtifacts`;
     ext.outputChannel.appendLog(localize('apiUrl', `Calling API URL: ${apiUrl}`));
 
     // Construct the request body based on the parameters
@@ -359,6 +389,7 @@ async function callStandardResourcesApi(
 
 /**
  * Calls the Managed Connections API to retrieve deployment artifacts for a given Logic App.
+ * @param tenantId - The Azure tenant ID.
  * @param subscriptionId - The Azure subscription ID.
  * @param resourceGroup - The Azure resource group name.
  * @param logicAppName - The name of the Logic App.
@@ -367,6 +398,7 @@ async function callStandardResourcesApi(
  * @returns A Buffer containing the API response.
  */
 async function callManagedConnectionsApi(
+  tenantId: string,
   subscriptionId: string,
   resourceGroup: string,
   logicAppName: string,
@@ -375,7 +407,7 @@ async function callManagedConnectionsApi(
 ): Promise<Buffer> {
   try {
     const apiVersion = '2018-07-01-preview';
-    const accessToken = await getAuthorizationToken();
+    const accessToken = await getAuthorizationToken(tenantId);
     const cloudHost = await getCloudHost();
     const baseGraphUri = getBaseGraphApi(cloudHost);
 
@@ -428,6 +460,7 @@ async function gatherAndValidateInputs(scriptContext: IAzureScriptWizard, folder
   }
 
   const {
+    [workflowTenantIdKey]: defaultTenantId,
     [workflowSubscriptionIdKey]: defaultSubscriptionId,
     [workflowResourceGroupNameKey]: defaultResourceGroup,
     [workflowLocationKey]: defaultLocation,
@@ -436,7 +469,7 @@ async function gatherAndValidateInputs(scriptContext: IAzureScriptWizard, folder
   ext.outputChannel.appendLog(
     localize(
       'extractDefaultValues',
-      `Extracted default values: ${JSON.stringify({ defaultSubscriptionId, defaultResourceGroup, defaultLocation })}`
+      `Extracted default values: ${JSON.stringify({ defaultTenantId, defaultSubscriptionId, defaultResourceGroup, defaultLocation })}`
     )
   );
 
@@ -474,6 +507,7 @@ async function gatherAndValidateInputs(scriptContext: IAzureScriptWizard, folder
     storageAccount: scriptContext.storageAccountName || storageAccountName,
     location: scriptContext.resourceGroup.location || resourceGroup.location,
     appServicePlan: scriptContext.appServicePlan || appServicePlan,
+    localTenantId: defaultTenantId,
     localSubscriptionId: defaultSubscriptionId,
     localResourceGroup: defaultResourceGroup,
   };

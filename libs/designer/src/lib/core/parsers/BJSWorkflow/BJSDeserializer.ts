@@ -437,8 +437,8 @@ export const buildGraphFromActions = (
             const outputChannelKeys = Object.keys(action.channels.out);
             for (const key of outputChannelKeys) {
               const channelAction = action.channels.out?.[key];
-              if (channelAction && channelAction?.trigger) {
-                const id = `${actionName}${constants.CHANNELS.OUTPUT}${channelAction.trigger.type}`;
+              if (channelAction && channelAction?.action) {
+                const id = `${actionName}${constants.CHANNELS.OUTPUT}${channelAction.action.type}`;
                 allActionNames.push(id);
               }
             }
@@ -719,9 +719,9 @@ export const processScopeActions = (
         const outputChannelKeys = Object.keys(action.channels.out);
         for (const key of outputChannelKeys) {
           const channelAction: any = action.channels.out?.[key];
-          if (channelAction && channelAction?.trigger) {
-            const id = `${actionName}${constants.CHANNELS.OUTPUT}${channelAction.trigger.type}`;
-            allActions[id] = channelAction.trigger;
+          if (channelAction && channelAction?.action) {
+            const id = `${actionName}${constants.CHANNELS.OUTPUT}${channelAction.action.type}`;
+            allActions[id] = channelAction.action;
           }
         }
       }
@@ -829,20 +829,22 @@ const addActionsInstanceMetaData = (
   Object.entries(updatedNodesData).forEach(([key, node]) => {
     const nodeRunData = runInstanceActions?.[key];
     const isAgent = allActions[key]?.type.toLowerCase() === constants.NODE.TYPE.AGENT;
-    const runIndex = isAgent ? (nodeRunData?.iterationCount ? nodeRunData.iterationCount - 1 : 0) : 0;
+    const isRunning = nodeRunData?.status === 'Running';
+    const runIndex = isAgent && isRunning ? (nodeRunData?.iterationCount ? nodeRunData.iterationCount - 1 : 0) : 0;
 
     if (!isNullOrUndefined(nodeRunData)) {
-      const repetitionRunData = isNullOrUndefined(nodeRunData.repetitionCount)
-        ? {
-            runData: {
-              ...nodeRunData,
-              duration: getDurationStringPanelMode(
-                Date.parse(nodeRunData.endTime) - Date.parse(nodeRunData.startTime),
-                /* abbreviated */ true
-              ),
-            },
-          }
-        : {};
+      const repetitionRunData =
+        isNullOrUndefined(nodeRunData.repetitionCount) || isAgent
+          ? {
+              runData: {
+                ...nodeRunData,
+                duration: getDurationStringPanelMode(
+                  Date.parse(nodeRunData.endTime) - Date.parse(nodeRunData.startTime),
+                  /* abbreviated */ true
+                ),
+              },
+            }
+          : {};
 
       updatedNodesData[key] = {
         ...node,

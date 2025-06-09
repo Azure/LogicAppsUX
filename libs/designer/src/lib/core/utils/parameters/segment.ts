@@ -99,7 +99,10 @@ export class ValueSegmentConvertor {
         ...(schema.anyOf ?? []),
       ].filter(Boolean); // Remove undefined values
 
-      return possibleSchemas.some((s) => s.properties?.[sectionKey]?.format || s.additionalProperties?.format);
+      return possibleSchemas.some((s) => {
+        const format = s.properties?.[sectionKey]?.format ?? s.additionalProperties?.format;
+        return UncastingUtility.isCastableFormat(format);
+      });
     };
 
     for (const section of sections) {
@@ -124,11 +127,13 @@ export class ValueSegmentConvertor {
       const expression = ExpressionParser.parseTemplateExpression(value);
       const segments = this._convertTemplateExpressionToValueSegments(expression);
 
-      // Note: If an non-interpolated expression is turned into a signle TOKEN, we don't surround with double quote. Otherwise,
+      // Note: If an non-interpolated expression is turned into a single TOKEN, we don't surround with double quote. Otherwise,
       // double quotes are added to surround the expression. This is the existing behaviour.
+
       if (segments.length === 1 && isTokenValueSegment(segments[0]) && !isStringInterpolation(expression)) {
         return segments;
       }
+
       const escapedSegments = segments.map((segment) => {
         // Note: All literal segments must be escaped since they are inside a JSON string.
         if (isLiteralValueSegment(segment)) {

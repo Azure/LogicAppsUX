@@ -34,6 +34,7 @@ import {
   startsWith,
   StandardCustomCodeService,
   BaseUserPreferenceService,
+  BaseCognitiveServiceService,
 } from '@microsoft/logic-apps-shared';
 import type { ConnectionReferences, CustomCodeFileNameMapping, Workflow, WorkflowParameter } from '@microsoft/logic-apps-designer';
 import {
@@ -548,6 +549,12 @@ const getDesignerServices = (
     httpClient,
   });
 
+  const cognitiveServiceService = new BaseCognitiveServiceService({
+    apiVersion: '2023-10-01-preview',
+    baseUrl,
+    httpClient,
+  });
+
   const chatbotService = new BaseChatbotService({
     // temporarily having brazilus as the baseUrl until deployment finishes in prod
     baseUrl: 'https://brazilus.management.azure.com',
@@ -591,6 +598,7 @@ const getDesignerServices = (
     hostService,
     chatbotService,
     customCodeService,
+    cognitiveServiceService,
     userPreferenceService: new BaseUserPreferenceService(),
   };
 };

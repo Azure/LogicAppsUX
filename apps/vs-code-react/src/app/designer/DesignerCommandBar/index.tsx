@@ -29,8 +29,32 @@ import {
   DismissCircleFilled,
   BeakerRegular,
   CheckmarkRegular,
+  bundleIcon,
+  BugFilled,
+  BugRegular,
+  SaveFilled,
+  BeakerFilled,
+  MentionBracketsFilled,
+  ArrowClockwiseFilled,
+  CheckmarkFilled,
+  ReplayFilled,
 } from '@fluentui/react-icons';
 import { TrafficLightDot } from '@microsoft/designer-ui';
+
+// Designer icons
+const SaveIcon = bundleIcon(SaveFilled, SaveRegular);
+const ParametersIcon = bundleIcon(MentionBracketsFilled, MentionBracketsRegular);
+const SaveBlankUnitTestIcon = bundleIcon(BeakerFilled, BeakerRegular);
+
+// Base icons
+const BugIcon = bundleIcon(BugFilled, BugRegular);
+
+// Monitoring view icons
+const RefreshIcon = bundleIcon(ArrowClockwiseFilled, ArrowClockwiseRegular);
+const ResubmitIcon = bundleIcon(ReplayFilled, ReplayRegular);
+
+// Unit test icons
+const AssertionsIcon = bundleIcon(CheckmarkFilled, CheckmarkRegular);
 
 export interface DesignerCommandBarProps {
   isRefreshing: boolean;
@@ -143,6 +167,11 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
   };
 
   const Resources = {
+    FILE_A_BUG: intl.formatMessage({
+      defaultMessage: 'File a bug',
+      id: '1PQFOA',
+      description: 'Button text for file a bug',
+    }),
     DESIGNER_SAVE: intl.formatMessage({
       defaultMessage: 'Save',
       id: 'ZvAp7m',
@@ -174,8 +203,8 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
       description: 'Aria describing the way to control the keyboard navigation',
     }),
     CREATE_UNIT_TEST: intl.formatMessage({
-      defaultMessage: 'Create unit test from run (Preview)',
-      id: 'syPKiG',
+      defaultMessage: 'Create unit test from run',
+      id: '4eH9hX',
       description: 'Button text for create unit test',
     }),
     UNIT_TEST_SAVE: intl.formatMessage({
@@ -189,8 +218,8 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
       description: 'Button text for unit test asssertions',
     }),
     UNIT_TEST_CREATE_BLANK: intl.formatMessage({
-      defaultMessage: 'Create unit test (Preview)',
-      id: 'xnhcEo',
+      defaultMessage: 'Create unit test',
+      id: 'SUX3dO',
       description: 'Button test for save blank unit test',
     }),
   };
@@ -213,7 +242,10 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
   const haveAssertionErrors = Object.keys(allAssertionsErrors ?? {}).length > 0;
 
   const isSaveUnitTestDisabled = isSavingUnitTest || haveAssertionErrors;
-  const isSaveBlankUnitTestDisabled = isSavingBlankUnitTest || haveAssertionErrors;
+  const isSaveBlankUnitTestDisabled = useMemo(
+    () => isSavingBlankUnitTest || haveAssertionErrors || designerIsDirty,
+    [isSavingBlankUnitTest, haveAssertionErrors, designerIsDirty]
+  );
   const haveErrors = useMemo(
     () => haveInputErrors || haveWorkflowParameterErrors || haveSettingsErrors || haveConnectionErrors,
     [haveInputErrors, haveWorkflowParameterErrors, haveSettingsErrors, haveConnectionErrors]
@@ -221,13 +253,32 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
 
   const isSaveDisabled = useMemo(() => isSaving || haveErrors || !designerIsDirty, [isSaving, haveErrors, designerIsDirty]);
 
+  const baseItems = useMemo(
+    () => [
+      {
+        key: 'fileABug',
+        disabled: false,
+        ariaLabel: Resources.FILE_A_BUG,
+        text: Resources.FILE_A_BUG,
+        icon: <BugIcon />,
+        renderTextIcon: null,
+        onClick: () => {
+          vscode.postMessage({
+            command: ExtensionCommand.fileABug,
+          });
+        },
+      },
+    ],
+    [Resources.FILE_A_BUG, vscode]
+  );
+
   const designerItems = [
     {
       key: 'Save',
       disabled: isSaveDisabled,
       ariaLabel: Resources.DESIGNER_SAVE,
       text: Resources.DESIGNER_SAVE,
-      icon: isSaving ? <Spinner size="extra-small" /> : <SaveRegular />,
+      icon: isSaving ? <Spinner size="extra-small" /> : <SaveIcon />,
       renderTextIcon: null,
       onClick: () => {
         saveWorkflowMutate();
@@ -238,7 +289,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
       disabled: false,
       ariaLabel: Resources.DESIGNER_PARAMETERS,
       text: Resources.DESIGNER_PARAMETERS,
-      icon: <MentionBracketsRegular />,
+      icon: <ParametersIcon />,
       renderTextIcon: haveWorkflowParameterErrors ? (
         <div style={{ display: 'inline-block', marginLeft: 8 }}>
           <TrafficLightDot fill={RUN_AFTER_COLORS[isDarkMode ? 'dark' : 'light']['FAILED']} />
@@ -261,15 +312,16 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
     },
     {
       key: 'SaveBlank',
-      disabled: isDisabled,
+      disabled: isSaveBlankUnitTestDisabled,
       text: Resources.UNIT_TEST_CREATE_BLANK,
       ariaLabel: Resources.UNIT_TEST_CREATE_BLANK,
-      icon: isSavingBlankUnitTest ? <Spinner size="extra-small" /> : <BeakerRegular />,
+      icon: isSavingBlankUnitTest ? <Spinner size="extra-small" /> : <SaveBlankUnitTestIcon />,
       renderTextIcon: null,
       onClick: () => {
         saveBlankUnitTestMutate();
       },
     },
+    ...baseItems,
   ];
 
   const monitoringViewItems = [
@@ -278,7 +330,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
       disabled: isDisabled ? isDisabled : isRefreshing,
       ariaLabel: Resources.MONITORING_VIEW_REFRESH,
       text: Resources.MONITORING_VIEW_REFRESH,
-      icon: <ArrowClockwiseRegular />,
+      icon: <RefreshIcon />,
       renderTextIcon: null,
       onClick: onRefresh,
     },
@@ -287,7 +339,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
       disabled: isDisabled,
       ariaLabel: Resources.MONITORING_VIEW_RESUBMIT,
       text: Resources.MONITORING_VIEW_RESUBMIT,
-      icon: <ReplayRegular />,
+      icon: <ResubmitIcon />,
       renderTextIcon: null,
       onClick: () => {
         onResubmit();
@@ -300,7 +352,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
             disabled: isDisabled,
             ariaLabel: Resources.CREATE_UNIT_TEST,
             text: Resources.CREATE_UNIT_TEST,
-            icon: <BeakerRegular />,
+            icon: <SaveBlankUnitTestIcon />,
             renderTextIcon: null,
             onClick: () => {
               onCreateUnitTest();
@@ -308,6 +360,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
           },
         ]
       : []),
+    ...baseItems,
   ];
 
   const unitTestItems = [
@@ -316,7 +369,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
       disabled: isSaveUnitTestDisabled,
       text: Resources.UNIT_TEST_SAVE,
       ariaLabel: Resources.UNIT_TEST_SAVE,
-      icon: isSavingUnitTest ? <Spinner size="extra-small" /> : <SaveRegular />,
+      icon: isSavingUnitTest ? <Spinner size="extra-small" /> : <SaveIcon />,
       renderTextIcon: null,
       onClick: () => {
         saveUnitTestMutate();
@@ -338,7 +391,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
       disabled: false,
       text: Resources.UNIT_TEST_ASSERTIONS,
       ariaLabel: Resources.UNIT_TEST_ASSERTIONS,
-      icon: <CheckmarkRegular />,
+      icon: <AssertionsIcon />,
       renderTextIcon: haveWorkflowParameterErrors ? (
         <div style={{ display: 'inline-block', marginLeft: 8 }}>
           <TrafficLightDot fill={RUN_AFTER_COLORS[isDarkMode ? 'dark' : 'light']['FAILED']} />
@@ -346,6 +399,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
       ) : null,
       onClick: () => !!dispatch(openPanel({ panelMode: 'Assertions' })),
     },
+    ...baseItems,
   ];
 
   return (

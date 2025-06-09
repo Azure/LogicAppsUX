@@ -1,6 +1,8 @@
 import type { LogicAppsV2, Template } from '../../../utils/src';
+import { fetchAppsByQuery } from '../common/azure';
+import { getTemplateManifestFromResourceManifest } from '../helpers';
 import type { IHttpClient } from '../httpClient';
-import type { ITemplateService } from '../template';
+import type { CustomTemplateResource, ITemplateService } from '../template';
 
 export interface BaseTemplateServiceOptions {
   baseUrl: string;
@@ -33,6 +35,29 @@ export class BaseTemplateService implements ITemplateService {
   public getAllTemplateNames = async (): Promise<string[]> => {
     const { httpClient, endpoint } = this.options;
     return httpClient.get<any>({ uri: `${endpoint}/manifest.json`, headers: { 'Access-Control-Allow-Origin': '*' } });
+  };
+
+  public getCustomTemplates = async ({
+    subscriptionIds,
+  }: { subscriptionId?: string; resourceGroup?: string; subscriptionIds?: string[] }): Promise<CustomTemplateResource[]> => {
+    const { httpClient, baseUrl } = this.options;
+
+    const uri = `${baseUrl}/providers/Microsoft.ResourceGraph/resources?api-version=2021-03-01`;
+    const query = `resources | where type =~ "microsoft.logic/templates" | where properties.state !~ "Development" | project id, name, manifest = properties.manifest, state = properties.state`;
+    const response = await fetchAppsByQuery(httpClient, uri, query, subscriptionIds?.length ? subscriptionIds : undefined);
+
+    return response
+      .filter((resource) => !!resource.manifest)
+      .map((resource) => ({
+        id: resource.id,
+        name: resource.name,
+        state: resource.state,
+        manifest: {
+          ...getTemplateManifestFromResourceManifest(resource.manifest),
+          id: resource.id,
+          workflows: {},
+        } as Template.TemplateManifest,
+      }));
   };
 
   public getResourceManifest = async (resourcePath: string): Promise<Template.TemplateManifest | Template.WorkflowManifest> => {

@@ -383,4 +383,63 @@ export class ConsumptionRunService implements IRunService {
       throw new Error(e.message);
     }
   }
+
+  /**
+   * Retrieves the chat history for a specified action.
+   *
+   * This function constructs a URI based on the provided runId and nodeId, along with the
+   * baseUrl and apiVersion from the options. It then sends an HTTP GET request to obtain the
+   * chat history information associated with the specified action.
+   * @param action - An object containing the necessary identifiers.
+   * @param action.id - Id suffix for agent and channel.
+   * @returns A promise that resolves with the agent chat url.
+   * @throws {Error} Throws an error with a message if the HTTP request fails.
+   */
+  async getAgentChatInvokeUri(action: { idSuffix: string }): Promise<any> {
+    const { apiVersion, baseUrl, httpClient } = this.options;
+    const { idSuffix } = action;
+    const headers = this.getAccessTokenHeaders();
+
+    const uri = `${baseUrl}${idSuffix}/listCallBackUrl?api-version=${apiVersion}`;
+    try {
+      const response = await httpClient.post({
+        uri,
+        headers: headers as Record<string, any>,
+      });
+
+      return response;
+    } catch (e: any) {
+      throw new Error(e.message);
+    }
+  }
+
+  async invokeAgentChat(action: { id: string; data: any }): Promise<any> {
+    const { httpClient } = this.options;
+    const { id: uri, data } = action;
+
+    try {
+      const response = await httpClient.post<any, any>({
+        uri,
+        content: data,
+      });
+
+      return response;
+    } catch (e: any) {
+      throw new Error(e.message);
+    }
+  }
+
+  async cancelRun(runId: string): Promise<any> {
+    const { apiVersion, baseUrl, httpClient } = this.options;
+
+    const uri = `${baseUrl}${runId}/cancel?api-version=${apiVersion}`;
+    try {
+      const response = await httpClient.post({
+        uri,
+      });
+      return response;
+    } catch (e: any) {
+      return new Error(e.message);
+    }
+  }
 }

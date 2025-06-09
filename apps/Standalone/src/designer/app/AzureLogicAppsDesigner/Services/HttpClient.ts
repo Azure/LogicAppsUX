@@ -31,25 +31,56 @@ export class HttpClient implements IHttpClient {
     return response.data;
   }
 
+  async patch<ReturnType, BodyType>(options: HttpRequestOptions<BodyType>): Promise<ReturnType> {
+    const auth = options.noAuth
+      ? {}
+      : {
+          Authorization: `Bearer ${environment.armToken}`,
+        };
+    try {
+      const response = await axios.patch(getRequestUrl(options), options.content, {
+        headers: {
+          ...this._extraHeaders,
+          ...options.headers,
+          'Content-Type': 'application/json',
+          ...auth,
+        },
+      });
+
+      if (!isSuccessResponse(response.status)) {
+        return Promise.reject(response);
+      }
+
+      return response.data;
+    } catch (error: any) {
+      throw error?.response?.response?.data ?? error?.response?.data ?? error;
+    }
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async post<ReturnType, BodyType>(options: HttpRequestOptions<BodyType>): Promise<ReturnType> {
-    const response = await axios.post(getRequestUrl(options), options.content, {
-      headers: {
-        ...this._extraHeaders,
-        ...options.headers,
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${environment.armToken}`,
-      },
-    });
-
-    if (!isSuccessResponse(response.status)) {
-      return Promise.reject(response);
-    }
-
+    const auth = options.noAuth
+      ? {}
+      : {
+          Authorization: `Bearer ${environment.armToken}`,
+        };
     try {
+      const response = await axios.post(getRequestUrl(options), options.content, {
+        headers: {
+          ...this._extraHeaders,
+          ...options.headers,
+          'Content-Type': 'application/json',
+          ...auth,
+        },
+      });
+
+      if (!isSuccessResponse(response.status)) {
+        return Promise.reject(response);
+      }
+
       return response.data;
-    } catch {
-      return response as any;
+    } catch (error: any) {
+      throw error?.response?.data ?? error;
     }
   }
 
