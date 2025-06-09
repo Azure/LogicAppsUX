@@ -2,7 +2,7 @@ import { Label } from '../../label';
 import { Combobox, DropdownEditor, getVariableType, StringEditor, TrafficLightDot, useId } from '../..';
 import type { DropdownItem } from '../../dropdown';
 import type { BaseEditorProps, ChangeState } from '../base';
-import { Button, Tooltip } from '@fluentui/react-components';
+import { Badge, Button, Tooltip } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 import {
   bundleIcon,
@@ -12,8 +12,6 @@ import {
   ChevronRight24Regular,
   Delete24Filled,
   Delete24Regular,
-  Edit24Filled,
-  Edit24Regular,
 } from '@fluentui/react-icons';
 import { useState } from 'react';
 import { createEmptyLiteralValueSegment, isSingleLiteralValueSegment } from '../base/utils/helper';
@@ -24,7 +22,6 @@ import { useTheme } from '@fluentui/react';
 import type { InitializeVariableProps } from './';
 
 const DeleteIcon = bundleIcon(Delete24Filled, Delete24Regular);
-const EditIcon = bundleIcon(Edit24Filled, Edit24Regular);
 const ExpandIcon = bundleIcon(ChevronRight24Filled, ChevronRight24Regular);
 const CollapseIcon = bundleIcon(ChevronDown24Filled, ChevronDown24Regular);
 
@@ -131,12 +128,6 @@ export const VariableEditor = ({
     description: 'Delete agent last parameter label',
   });
 
-  const editButtonTitle = intl.formatMessage({
-    defaultMessage: 'Edit',
-    id: 'crclvu',
-    description: 'Edit label',
-  });
-
   const newAgentParameterName = intl.formatMessage({
     defaultMessage: 'New agent parameter',
     id: 'qkDzwI',
@@ -201,6 +192,11 @@ export const VariableEditor = ({
 
   const isBooleanType = type[0]?.value === VARIABLE_TYPE.BOOLEAN;
   const variableType = getVariableType(type);
+
+  // Get the display name for the current variable type
+  const currentTypeValue = type[0]?.value;
+  const typeOptions = isAgentParameter ? agentParameterOptions : variableOptions;
+  const typeDisplayName = typeOptions.find((option) => option.value === currentTypeValue)?.displayName || currentTypeValue || '';
   const fields = [
     {
       label: VARIABLE_PROPERTIES.NAME,
@@ -287,18 +283,13 @@ export const VariableEditor = ({
         </Button>
         {!isMultiVariableEnabled && !isAgentParameter ? null : (
           <>
-            <div className={'msla-variable-editor-edit-or-delete-button'}>
-              <Tooltip relationship="label" content={editButtonTitle}>
-                <Button
-                  appearance="subtle"
-                  aria-label={editButtonTitle}
-                  onClick={handleToggleExpand}
-                  icon={<EditIcon />}
-                  disabled={baseEditorProps?.readonly}
-                  style={{ color: 'var(--colorBrandForeground1)' }}
-                />
-              </Tooltip>
-            </div>
+            {(isAgentParameter || isMultiVariableEnabled) && typeDisplayName && (
+              <div className={'msla-variable-editor-type-badge'} data-testid="variable-type-badge">
+                <Badge appearance="filled" size="medium" color="brand">
+                  {typeDisplayName}
+                </Badge>
+              </div>
+            )}
             <div className={'msla-variable-editor-edit-or-delete-button'}>
               <Tooltip
                 relationship="label"
