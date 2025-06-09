@@ -284,7 +284,12 @@ export const VariableEditor = ({
         {!isMultiVariableEnabled && !isAgentParameter ? null : (
           <>
             {(isAgentParameter || isMultiVariableEnabled) && typeDisplayName && (
-              <div className={'msla-variable-editor-type-badge'} data-testid="variable-type-badge">
+              <div
+                className={'msla-variable-editor-type-badge'}
+                data-testid="variable-type-badge"
+                aria-label={`${isAgentParameter ? 'Agent parameter' : 'Variable'} type: ${typeDisplayName}`}
+                role="status"
+              >
                 <Badge appearance="filled" size="medium" color="brand">
                   {typeDisplayName}
                 </Badge>

@@ -366,5 +366,57 @@ describe('VariableEditor', () => {
       const badgeContainer = screen.queryByTestId('variable-type-badge');
       expect(badgeContainer).not.toBeInTheDocument();
     });
+
+    it('has proper accessibility attributes for screen readers', () => {
+      render(
+        <IntlProvider locale="en">
+          <VariableEditor
+            initialValue={[]}
+            onChange={vi.fn()}
+            getTokenPicker={vi.fn()}
+            index={0}
+            variable={{
+              name: [{ type: ValueSegmentType.LITERAL, id: guid(), value: 'testVariable' }],
+              type: [{ type: ValueSegmentType.LITERAL, id: guid(), value: 'string' }],
+              value: [{ type: ValueSegmentType.LITERAL, id: guid(), value: 'testValue' }],
+            }}
+            disableDelete={false}
+            onDelete={vi.fn()}
+            onVariableChange={vi.fn()}
+            isMultiVariableEnabled={true}
+          />
+        </IntlProvider>
+      );
+
+      const badgeContainer = screen.getByTestId('variable-type-badge');
+      expect(badgeContainer).toHaveAttribute('aria-label', 'Variable type: String');
+      expect(badgeContainer).toHaveAttribute('role', 'status');
+    });
+
+    it('has proper accessibility attributes for agent parameters', () => {
+      render(
+        <IntlProvider locale="en">
+          <VariableEditor
+            initialValue={[]}
+            onChange={vi.fn()}
+            getTokenPicker={vi.fn()}
+            index={0}
+            variable={{
+              name: [{ type: ValueSegmentType.LITERAL, id: guid(), value: 'testParameter' }],
+              type: [{ type: ValueSegmentType.LITERAL, id: guid(), value: 'boolean' }],
+              description: [{ type: ValueSegmentType.LITERAL, id: guid(), value: 'Test description' }],
+            }}
+            disableDelete={false}
+            onDelete={vi.fn()}
+            onVariableChange={vi.fn()}
+            isAgentParameter={true}
+          />
+        </IntlProvider>
+      );
+
+      const badgeContainer = screen.getByTestId('variable-type-badge');
+      expect(badgeContainer).toHaveAttribute('aria-label', 'Agent parameter type: Boolean');
+      expect(badgeContainer).toHaveAttribute('role', 'status');
+    });
   });
 });
