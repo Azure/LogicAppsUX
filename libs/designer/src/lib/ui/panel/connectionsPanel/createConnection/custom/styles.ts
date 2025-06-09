@@ -24,4 +24,11 @@ export const useStyles = makeStyles({
   comboxbox: {
     width: '98%',
   },
+  multilineMessageBar: {
+    display: 'block',
+    whiteSpace: 'normal',
+    wordWrap: 'break-word',
+    overflowWrap: 'anywhere',
+    lineHeight: '1.5',
+  },
 });
