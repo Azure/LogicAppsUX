@@ -2,6 +2,7 @@ import { getMonitoringError } from '../../common/utilities/error';
 import { useNodeRepetition, type AppDispatch } from '../../core';
 import { copyOperation } from '../../core/actions/bjsworkflow/copypaste';
 import { moveOperation } from '../../core/actions/bjsworkflow/move';
+import { StaticResultOption } from '../../core/actions/bjsworkflow/staticresults';
 import {
   useMonitoringView,
   useNodeSelectAdditionalCallback,
@@ -347,7 +348,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
           onCopyClick={copyClick}
           selectionMode={selected ? 'selected' : isPinned ? 'pinned' : false}
           setFocus={shouldFocus}
-          staticResultsEnabled={!!staticResults}
+          staticResultsEnabled={!!staticResults && staticResults.staticResultOptions === StaticResultOption.ENABLED}
           isSecureInputsOutputs={isSecureInputsOutputs}
           isLoadingDynamicData={isLoadingDynamicData}
           nodeIndex={nodeIndex}
