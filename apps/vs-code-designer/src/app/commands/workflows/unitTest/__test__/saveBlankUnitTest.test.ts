@@ -11,6 +11,7 @@ import * as unitTestUtils from '../../../../utils/unitTests';
 import * as azextUtils from '@microsoft/vscode-azext-utils';
 import { ext } from '../../../../../extensionVariables';
 import * as ConvertWorkspace from '../../../../commands/createNewCodeProject/CodeProjectBase/ConvertToWorkspace';
+import * as syncCloudSettings from '../../../syncCloudSettings';
 
 vi.mock('../../../../../extensionVariables', () => ({
   ext: {
@@ -74,6 +75,7 @@ describe('saveBlankUnitTest', () => {
     vi.spyOn(unitTestUtils, 'validateWorkflowPath').mockResolvedValue();
     vi.spyOn(unitTestUtils, 'getUnitTestPaths').mockReturnValue(dummyPaths);
     vi.spyOn(unitTestUtils, 'getOperationMockClassContent').mockResolvedValue(dummyMockOperations);
+    vi.spyOn(syncCloudSettings, 'syncCloudSettings').mockResolvedValue();
 
     // Stub directory creation
     vi.spyOn(fs, 'ensureDir').mockResolvedValue();
