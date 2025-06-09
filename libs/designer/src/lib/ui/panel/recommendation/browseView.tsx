@@ -6,6 +6,7 @@ import { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { useDiscoveryPanelRelationshipIds } from '../../../core/state/panel/panelSelectors';
 import { useAgenticWorkflow } from '../../../core/state/designerView/designerViewSelectors';
+import { useShouldEnableACASession } from './hooks';
 
 const defaultFilterConnector = (connector: Connector, runtimeFilter: string): boolean => {
   if (runtimeFilter === 'inapp' && !isBuiltInConnector(connector)) {
@@ -65,6 +66,7 @@ export const BrowseView = (props: BrowseViewProps) => {
   const { filters, isLoadingOperations, displayRuntimeInfo, setFilters } = props;
   const isAgenticWorkflow = useAgenticWorkflow();
   const isRoot = useDiscoveryPanelRelationshipIds().graphId === 'root';
+  const shouldEnableACASession = useShouldEnableACASession();
 
   const dispatch = useDispatch();
 
@@ -76,6 +78,9 @@ export const BrowseView = (props: BrowseViewProps) => {
   const filterItems = useCallback(
     (connector: Connector): boolean => {
       if ((!isAgenticWorkflow || !isRoot) && connector.id === 'connectionProviders/agent') {
+        return false;
+      }
+      if (shouldEnableACASession === false && connector.id === '/serviceProviders/acasession') {
         return false;
       }
       if (getRecordEntry(filters, 'runtime')) {
@@ -102,7 +107,7 @@ export const BrowseView = (props: BrowseViewProps) => {
 
       return true;
     },
-    [isAgenticWorkflow, isRoot, filters, allApiIdsWithActions.data, allApiIdsWithTriggers.data]
+    [isAgenticWorkflow, isRoot, shouldEnableACASession, filters, allApiIdsWithActions.data, allApiIdsWithTriggers.data]
   );
 
   const sortedConnectors = useMemo(() => {

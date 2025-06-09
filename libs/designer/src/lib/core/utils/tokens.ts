@@ -98,7 +98,6 @@ export const getTokenNodeIds = (
       tokenNodeIds.push(...allNodesInsideNode);
     }
   }
-
   return Array.from(new Set(tokenNodeIds));
 };
 

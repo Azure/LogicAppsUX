@@ -12,6 +12,7 @@ export interface ButtonOffSet {
 }
 
 export interface TokenPickerButtonProps {
+  isAgentParameter?: boolean;
   buttonClassName?: string;
   buttonOffset?: ButtonOffSet;
   customButton?: boolean;
@@ -25,6 +26,7 @@ interface ButtonProps extends TokenPickerButtonProps {
 }
 
 export default function TokenPickerButtonLegacy({
+  isAgentParameter,
   showTokenPicker,
   buttonClassName,
   buttonOffset,
@@ -48,7 +50,12 @@ export default function TokenPickerButtonLegacy({
 
   const intl = useIntl();
 
-  const addContent = intl.formatMessage({
+  const agentParameterLabel = intl.formatMessage({
+    defaultMessage: 'Add agent parameters',
+    id: 'h2erb6',
+    description: 'Label for agent parameters',
+  });
+  const defaultAddLabel = intl.formatMessage({
     defaultMessage: 'Add dynamic content',
     id: '3BZnxY',
     description: 'Label for button to open token picker',
@@ -96,7 +103,7 @@ export default function TokenPickerButtonLegacy({
             : { top: `${buttonOffset?.heightOffset}px`, right: `${buttonOffset?.widthOffset}px` }
         }
       >
-        {customButton ? null : <p className="msla-tokenpicker-button-text">{addContent}</p>}
+        {customButton ? null : <p className="msla-tokenpicker-button-text">{isAgentParameter ? agentParameterLabel : defaultAddLabel}</p>}
         {showTokenPicker ? (
           <img
             src="data:image/svg+xml;base64,PHN2ZyBpZD0iTGF5ZXJfMSIgZGF0YS1uYW1lPSJMYXllciAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNiAxMyI+PGRlZnM+PHN0eWxlPi5jbHMtMXtmaWxsOiMwMDU4YWQ7fTwvc3R5bGU+PC9kZWZzPjx0aXRsZT5jbGlja2VkIHN0YXRlX2R5bmFtaWMgY29udGVudDwvdGl0bGU+PHBhdGggY2xhc3M9ImNscy0xIiBkPSJNMCwxLjV2MTNIMTJWMS41SDBabTksN0g3djJINnYtMkg0di0xSDZ2LTJIN3YySDl2MVoiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDAgLTEuNSkiLz48cmVjdCBjbGFzcz0iY2xzLTEiIHg9IjEzIiB3aWR0aD0iMyIgaGVpZ2h0PSIxMyIvPjwvc3ZnPg=="

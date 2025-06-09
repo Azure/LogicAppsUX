@@ -389,7 +389,7 @@ export const useRootTriggerId = (): string =>
     })
   );
 
-export const useIsWithinAgenticLoop = (id: string): boolean => {
+export const useIsWithinAgenticLoop = (id?: string): boolean => {
   return useSelector(
     createSelector(getWorkflowState, (state: WorkflowState) => {
       let currentId = id;

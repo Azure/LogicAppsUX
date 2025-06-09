@@ -20,7 +20,12 @@ import {
 } from '../../../../../core/state/selectors/actionMetadataSelector';
 import type { AgentParameterDeclaration, VariableDeclaration } from '../../../../../core/state/tokens/tokensSlice';
 import { addAgentParameterToNode, updateAgentParameter, updateVariableInfo } from '../../../../../core/state/tokens/tokensSlice';
-import { useGetSwitchOrAgentParentId, useNodeMetadata, useReplacedIds } from '../../../../../core/state/workflow/workflowSelectors';
+import {
+  useGetSwitchOrAgentParentId,
+  useIsWithinAgenticLoop,
+  useNodeMetadata,
+  useReplacedIds,
+} from '../../../../../core/state/workflow/workflowSelectors';
 import type { AppDispatch, RootState } from '../../../../../core/store';
 import { getConnectionReference } from '../../../../../core/utils/connectors/connections';
 import { isRootNodeInGraph } from '../../../../../core/utils/graph';
@@ -75,9 +80,9 @@ import {
   clone,
   EditorService,
   equals,
+  ExtensionProperties,
   getPropertyValue,
   getRecordEntry,
-  guid,
   isNullOrUndefined,
   isRecordNotEmpty,
   SUBGRAPH_TYPES,
@@ -260,6 +265,8 @@ const ParameterSection = ({
         nodesMetadata: state.workflow.nodesMetadata,
       };
     });
+  const nodeGraphId = getRecordEntry(nodesMetadata, nodeId)?.graphId;
+  const isWithinAgenticLoop = useIsWithinAgenticLoop(nodeGraphId);
   const rootState = useSelector((state: RootState) => state);
   const displayNameResult = useConnectorName(operationInfo);
   const panelLocation = usePanelLocation();
@@ -290,26 +297,29 @@ const ParameterSection = ({
         ...(viewModel && { editorViewModel: viewModel }),
       };
 
+      // Handle Initialize Variable operation
       if (isInitializeVariableOperation(operationInfo)) {
-        const variables: InitializeVariableProps[] | undefined = viewModel?.variables;
+        const variables = viewModel?.variables as InitializeVariableProps[] | undefined;
         if (variables?.length) {
           dispatch(
             updateVariableInfo({
               id: nodeId,
-              variables: variables.map(({ name, type }) => {
-                return {
-                  name: name[0]?.value,
-                  type: type[0]?.value,
-                };
-              }),
+              variables: variables.map(({ name, type }) => ({
+                name: name[0]?.value,
+                type: type[0]?.value,
+              })),
             })
           );
         }
       }
+
+      // Handle Agent Condition subgraph
       const nodeMetadataInfo = getRecordEntry(nodesMetadata, nodeId);
+
       if (nodeMetadataInfo?.subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION && nodeMetadataInfo?.parentNodeId) {
-        const agentParameters: InitializeVariableProps[] = viewModel?.variables ?? [];
-        const agentParameter: Record<string, AgentParameterDeclaration> = Object.fromEntries(
+        const agentParameters = (viewModel?.variables ?? []) as InitializeVariableProps[];
+
+        const agentParameterMap: Record<string, AgentParameterDeclaration> = Object.fromEntries(
           agentParameters.map(({ name, type, description }) => [
             name?.[0]?.value,
             {
@@ -319,13 +329,15 @@ const ParameterSection = ({
             },
           ])
         );
+
         dispatch(
           updateAgentParameter({
             id: nodeId,
             agent: nodeMetadataInfo.parentNodeId,
-            agentParameter,
+            agentParameter: agentParameterMap,
           })
         );
+
         const agentParameterUpdates = agentParameters
           .map(({ name, type, description }) => {
             const paramName = name?.[0]?.value;
@@ -344,9 +356,11 @@ const ParameterSection = ({
           type: string;
           description: string;
         }>;
+
         dispatch(updateAgentParametersInNode(agentParameterUpdates));
       }
 
+      // Handle custom code parameters
       if (parameter && isCustomCodeParameter(parameter)) {
         const { fileData, fileExtension, fileName } = viewModel.customCodeData;
         dispatch(addOrUpdateCustomCode({ nodeId, fileData, fileExtension, fileName }));
@@ -360,46 +374,34 @@ const ParameterSection = ({
         }
       }
 
-      if (isAgentConnectorAndDeploymentId(operationInfo.connectorId ?? '', parameter?.parameterKey ?? '')) {
-        const deploymentInfo =
-          value.length > 0
-            ? deploymentsForCognitiveServiceAccount?.find((deployment: any) => deployment.name === value[0]?.value)
-            : undefined;
+      const isAgentDeployment = isAgentConnectorAndDeploymentId(operationInfo.connectorId ?? '', parameter?.parameterKey ?? '');
 
-        if (!updatedDependencies.inputs) {
-          updatedDependencies.inputs = {};
-        }
+      if (isAgentDeployment) {
+        const deploymentInfo = value?.length
+          ? deploymentsForCognitiveServiceAccount?.find((deployment: any) => deployment.name === value[0]?.value)
+          : undefined;
+
+        updatedDependencies.inputs ??= {};
 
         const getDependentInputParameter = (key: string, apiValue?: any) => {
-          const parameterAgentDeploymentName = parameterGroup.parameters.find((param) => equals(key, param.parameterKey, true));
+          const targetParam = parameterGroup.parameters.find((param) => equals(key, param.parameterKey, true));
+          const resolvedValue = apiValue ?? targetParam?.schema?.default;
 
-          const value = apiValue ?? parameterAgentDeploymentName?.schema?.default;
-
-          if (value) {
-            return {
-              definition: parameterAgentDeploymentName?.schema,
-              dependencyType: 'AgentSchema' as any,
-              dependentParameters: {
-                [id]: {
-                  isValid: true,
-                },
-              },
-              parameter: {
-                key: key,
-                type: parameterAgentDeploymentName?.type ?? '',
-                name: parameterAgentDeploymentName?.parameterName ?? '',
-                value: [
-                  {
-                    value: value,
-                    type: 'literal',
-                    id: guid(),
-                  },
-                ],
-              },
-            };
+          if (!resolvedValue) {
+            return undefined;
           }
 
-          return undefined;
+          return {
+            definition: targetParam?.schema,
+            dependencyType: 'AgentSchema' as const,
+            dependentParameters: { [id]: { isValid: true } },
+            parameter: {
+              key,
+              name: targetParam?.parameterName ?? '',
+              type: targetParam?.type ?? '',
+              value: [createLiteralValueSegment(resolvedValue)],
+            },
+          };
         };
 
         const agentDeploymentKeys = [
@@ -407,26 +409,25 @@ const ParameterSection = ({
             key: 'inputs.$.agentModelSettings.deploymentModelProperties.name',
             default: deploymentInfo?.properties?.model?.name,
           },
-
           {
             key: 'inputs.$.agentModelSettings.deploymentModelProperties.format',
             default: deploymentInfo?.properties?.model?.format,
           },
-
           {
             key: 'inputs.$.agentModelSettings.deploymentModelProperties.version',
             default: deploymentInfo?.properties?.model?.version,
           },
         ];
 
-        for (const entry of agentDeploymentKeys) {
-          const info = getDependentInputParameter(entry.key, entry.default);
-          if (info) {
-            updatedDependencies.inputs[entry.key] = info;
+        for (const { key, default: defaultValue } of agentDeploymentKeys) {
+          const dependency = getDependentInputParameter(key, defaultValue);
+          if (dependency) {
+            updatedDependencies.inputs[key] = dependency;
           }
         }
       }
 
+      // Final dispatch to update parameter and dependencies
       dispatch(
         updateParameterAndDependencies({
           nodeId,
@@ -582,15 +583,15 @@ const ParameterSection = ({
     if (!conditionParameter?.id) {
       return;
     }
-    const previousConditionValue = parseSchemaAsVariableEditorSegments(conditionParameter.value) ?? [];
-    previousConditionValue.push({
+    const previousToolValue = parseSchemaAsVariableEditorSegments(conditionParameter.value) ?? [];
+    previousToolValue.push({
       name: [createLiteralValueSegment(name)],
       type: [createLiteralValueSegment(type)],
       description: [createLiteralValueSegment(description)],
       value: [],
     });
 
-    const newConditionValue = convertVariableEditorSegmentsAsSchema(previousConditionValue);
+    const newToolValue = convertVariableEditorSegmentsAsSchema(previousToolValue);
 
     dispatch(
       updateNodeParameters({
@@ -600,7 +601,7 @@ const ParameterSection = ({
             groupId: ParameterGroupKeys.DEFAULT,
             parameterId: conditionParameter.id,
             propertiesToUpdate: {
-              value: newConditionValue,
+              value: newToolValue,
               preservedValue: undefined,
             },
           },
@@ -697,9 +698,11 @@ const ParameterSection = ({
     .map((param) => {
       const { id, label, value, required, showTokens, placeholder, editorViewModel, dynamicData, conditionalVisibility, validationErrors } =
         param;
+
       const remappedEditorViewModel = isRecordNotEmpty(idReplacements)
         ? remapEditorViewModelWithNewIds(editorViewModel, idReplacements)
         : editorViewModel;
+
       const paramSubset = {
         id,
         label,
@@ -709,6 +712,7 @@ const ParameterSection = ({
         editorViewModel: remappedEditorViewModel,
         conditionalVisibility,
       };
+
       const { editor, editorOptions } = getEditorAndOptions(
         operationInfo,
         param,
@@ -718,14 +722,14 @@ const ParameterSection = ({
       );
 
       const { value: remappedValues } = isRecordNotEmpty(idReplacements) ? remapValueSegmentsWithNewIds(value, idReplacements) : { value };
+
       const isCodeEditor = editor?.toLowerCase() === constants.EDITOR.CODE;
-      const subComponent = getSubComponent(param);
-      const subMenu = getSubMenu(param);
+      const { subMenu, subComponent } = getConnectionElements(param);
       return {
         settingType: 'SettingTokenField',
         settingProp: {
           ...paramSubset,
-          readOnly,
+          readOnly: editorOptions?.readOnly || readOnly,
           value: remappedValues,
           editor,
           editorOptions,
@@ -773,6 +777,7 @@ const ParameterSection = ({
           ) => getTokenPicker(param, editorId, labelId, tokenPickerMode, editorType, isCodeEditor, tokenClickedCallback),
           subComponent: subComponent,
           subMenu: subMenu,
+          hideTokenPicker: !isWithinAgenticLoop /* only used in python code editor */,
         },
       };
     });
@@ -792,20 +797,12 @@ const ParameterSection = ({
   );
 };
 
-const getSubComponent = (parameter: ParameterInfo) => {
-  const hasConnectionInline = getPropertyValue(parameter.schema, 'x-ms-connection-required');
-  if (hasConnectionInline) {
-    return <ConnectionInline />;
-  }
-  return null;
-};
-
-const getSubMenu = (parameter: ParameterInfo) => {
-  const hasConnectionInline = getPropertyValue(parameter.schema, 'x-ms-connection-required');
-  if (hasConnectionInline) {
-    return <ConnectionsSubMenu />;
-  }
-  return null;
+const getConnectionElements = (parameter: ParameterInfo) => {
+  const hasConnectionInline = getPropertyValue(parameter.schema, ExtensionProperties.InlineConncetion);
+  return {
+    subComponent: hasConnectionInline ? <ConnectionInline /> : null,
+    subMenu: hasConnectionInline ? <ConnectionsSubMenu /> : null,
+  };
 };
 
 export const getEditorAndOptions = (
@@ -825,36 +822,35 @@ export const getEditorAndOptions = (
 
   const { editor, editorOptions } = parameter;
   const supportedTypes: string[] = editorOptions?.supportedTypes ?? [];
-  if (equals(editor, 'variablename')) {
+
+  // Handle variable dropdown editor
+  if (equals(editor, constants.EDITOR.VARIABLE_NAME)) {
+    const options = getAvailableVariables(variables, upstreamNodeIds)
+      .filter((variable) => supportedTypes.length === 0 || supportedTypes.includes(variable.type))
+      .map((variable) => ({
+        value: variable.name,
+        displayName: variable.name,
+      }));
+
     return {
       editor: 'dropdown',
-      editorOptions: {
-        options: getAvailableVariables(variables, upstreamNodeIds)
-          .filter((variable) => {
-            if (supportedTypes?.length === 0) {
-              return true;
-            }
-            return supportedTypes.includes(variable.type);
-          })
-          .map((variable) => ({
-            value: variable.name,
-            displayName: variable.name,
-          })),
-      },
+      editorOptions: { options },
     };
   }
 
-  if (equals(editor, 'combobox') && isAgentConnectorAndDeploymentId(operationInfo.connectorId ?? '', parameter.parameterKey)) {
+  // Handle agent connector with supported deployments
+  const isAgent = isAgentConnectorAndDeploymentId(parameter.parameterKey, operationInfo?.connectorId);
+  if (equals(editor, 'combobox') && isAgent) {
+    const options = deploymentsForCognitiveServiceAccount
+      .filter((deployment) => constants.SUPPORTED_AGENT_MODELS.includes((deployment.properties?.model?.name ?? '').toLowerCase()))
+      .map((deployment) => ({
+        value: deployment.name,
+        displayName: `${deployment.name}${deployment.properties?.model?.name ? ` (${deployment.properties.model.name})` : ''}`,
+      }));
+
     return {
       editor,
-      editorOptions: {
-        options: deploymentsForCognitiveServiceAccount
-          .filter((deployment: any) => constants.SUPPORTED_AGENT_MODELS.includes((deployment.properties?.model?.name ?? '').toLowerCase()))
-          .map((deployment: any) => ({
-            value: deployment.name,
-            displayName: `${deployment.name} ${deployment.properties?.model?.name ? `(${deployment.properties?.model?.name})` : ''}`,
-          })),
-      },
+      editorOptions: { options },
     };
   }
 
