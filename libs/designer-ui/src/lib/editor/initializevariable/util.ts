@@ -3,7 +3,7 @@ import {
   capitalizeFirstLetter,
   equals,
   getIntl,
-  isSingleTokenExpression,
+  isNullOrEmpty,
   isTemplateExpression,
   LogEntryLevel,
   LoggerService,
@@ -330,7 +330,7 @@ export const validateVariables = (variables: InitializeVariableProps[]): Initial
     }
 
     const isExpression = isTemplateExpression(value);
-    const shouldValidateValue = (!isExpression || type === VARIABLE_TYPE.OBJECT) && value !== '';
+    const shouldValidateValue = (!isExpression || type === VARIABLE_TYPE.OBJECT || type === VARIABLE_TYPE.ARRAY) && value !== '';
 
     if (!shouldValidateValue) {
       return;
@@ -372,7 +372,7 @@ export const validateVariables = (variables: InitializeVariableProps[]): Initial
 };
 
 const validateObjectType = (value: string, index: number, errors: InitializeVariableErrors[], intl: any) => {
-  if (isSingleTokenExpression(value)) {
+  if (isSingleNonStringExpression(value)) {
     return; // Template expressions are valid for objects
   }
 
@@ -435,3 +435,10 @@ export const isInitializeVariableOperation = (operationInfo: OperationInfo): boo
   const { connectorId, operationId } = operationInfo;
   return equals(connectorId, 'connectionProviders/variable') && equals(operationId, 'initializeVariable');
 };
+
+function isSingleNonStringExpression(value: string): boolean {
+  if (isNullOrEmpty(value) || typeof value !== 'string' || value.length < 2) {
+    return false;
+  }
+  return value.charAt(0) === '@';
+}

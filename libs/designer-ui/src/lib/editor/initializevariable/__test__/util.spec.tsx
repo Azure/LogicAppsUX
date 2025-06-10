@@ -1,5 +1,5 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { OperationInfo, ParameterInfo } from '@microsoft/logic-apps-shared';
+import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { InitLoggerService, LoggerService, type OperationInfo, type ParameterInfo } from '@microsoft/logic-apps-shared';
 import {
   createVariableEditorSegments,
   getParameterValue,
@@ -12,9 +12,10 @@ import {
 } from '../util';
 import { createEmptyLiteralValueSegment, createLiteralValueSegment } from '../../base/utils/helper';
 import { InitializeVariableProps } from '..';
-import { VARIABLE_TYPE } from '../../../constants';
+import constants, { VARIABLE_TYPE } from '../../../constants';
 import { ValueSegmentType } from '../../models/parameter';
 import { testTokenSegment } from '../../shared';
+import { createMockVariableValueSegment } from '../../shared/testtokensegment';
 
 describe('parseVariableEditorSegments', () => {
   it('should return empty segments if input is empty', () => {
@@ -117,6 +118,12 @@ describe('getVariableType', () => {
 });
 
 describe('validateVariables', () => {
+  const loggerService: any = {
+    log() {},
+  };
+  beforeAll(() => {
+    InitLoggerService([loggerService]);
+  });
   it('should return error for missing name and type', () => {
     const variables: InitializeVariableProps[] = [{ name: [], type: [], value: [] }];
     const errors = validateVariables(variables);
@@ -135,6 +142,321 @@ describe('validateVariables', () => {
     const errors = validateVariables(variables);
     expect(errors[0].value).toBe(`'Value' must be a valid boolean`);
   });
+
+  it('should accept valid boolean values', () => {
+    const variables: InitializeVariableProps[] = [
+      {
+        name: [createLiteralValueSegment('var1')],
+        type: [createLiteralValueSegment(VARIABLE_TYPE.BOOLEAN)],
+        value: [createLiteralValueSegment('true')],
+      },
+      {
+        name: [createLiteralValueSegment('var2')],
+        type: [createLiteralValueSegment(VARIABLE_TYPE.BOOLEAN)],
+        value: [createLiteralValueSegment('false')],
+      },
+    ];
+    const errors = validateVariables(variables);
+    expect(errors[0].value).toBeUndefined();
+    expect(errors[1].value).toBeUndefined();
+  });
+
+  it('should return error for invalid integer values', () => {
+    const variables: InitializeVariableProps[] = [
+      {
+        name: [createLiteralValueSegment('var1')],
+        type: [createLiteralValueSegment(VARIABLE_TYPE.INTEGER)],
+        value: [createLiteralValueSegment('12.5')],
+      },
+      {
+        name: [createLiteralValueSegment('var2')],
+        type: [createLiteralValueSegment(VARIABLE_TYPE.INTEGER)],
+        value: [createLiteralValueSegment('abc')],
+      },
+    ];
+    const errors = validateVariables(variables);
+    expect(errors[0].value).toBe(`'Value' must be a valid integer`);
+    expect(errors[1].value).toBe(`'Value' must be a valid integer`);
+  });
+
+  it('should accept valid integer values', () => {
+    const variables: InitializeVariableProps[] = [
+      {
+        name: [createLiteralValueSegment('var1')],
+        type: [createLiteralValueSegment(VARIABLE_TYPE.INTEGER)],
+        value: [createLiteralValueSegment('123')],
+      },
+      {
+        name: [createLiteralValueSegment('var2')],
+        type: [createLiteralValueSegment(VARIABLE_TYPE.INTEGER)],
+        value: [createLiteralValueSegment('-456')],
+      },
+      {
+        name: [createLiteralValueSegment('var3')],
+        type: [createLiteralValueSegment(VARIABLE_TYPE.INTEGER)],
+        value: [createLiteralValueSegment('0')],
+      },
+    ];
+    const errors = validateVariables(variables);
+    expect(errors[0].value).toBeUndefined();
+    expect(errors[1].value).toBeUndefined();
+    expect(errors[2].value).toBeUndefined();
+  });
+
+  it('should return error for invalid float values', () => {
+    const variables: InitializeVariableProps[] = [
+      {
+        name: [createLiteralValueSegment('var1')],
+        type: [createLiteralValueSegment(VARIABLE_TYPE.FLOAT)],
+        value: [createLiteralValueSegment('abc')],
+      },
+      {
+        name: [createLiteralValueSegment('var2')],
+        type: [createLiteralValueSegment(VARIABLE_TYPE.FLOAT)],
+        value: [createLiteralValueSegment('12.3.4')],
+      },
+    ];
+    const errors = validateVariables(variables);
+    expect(errors[0].value).toBe(`'Value' must be a valid float`);
+    expect(errors[1].value).toBe(`'Value' must be a valid float`);
+  });
+
+  it('should accept valid float values', () => {
+    const variables: InitializeVariableProps[] = [
+      {
+        name: [createLiteralValueSegment('var1')],
+        type: [createLiteralValueSegment(VARIABLE_TYPE.FLOAT)],
+        value: [createLiteralValueSegment('123.45')],
+      },
+      {
+        name: [createLiteralValueSegment('var2')],
+        type: [createLiteralValueSegment(VARIABLE_TYPE.FLOAT)],
+        value: [createLiteralValueSegment('-456.78')],
+      },
+      {
+        name: [createLiteralValueSegment('var3')],
+        type: [createLiteralValueSegment(VARIABLE_TYPE.FLOAT)],
+        value: [createLiteralValueSegment('123')],
+      },
+    ];
+    const errors = validateVariables(variables);
+    expect(errors[0].value).toBeUndefined();
+    expect(errors[1].value).toBeUndefined();
+    expect(errors[2].value).toBeUndefined();
+  });
+
+  it('should return error for invalid object values', () => {
+    const variables: InitializeVariableProps[] = [
+      {
+        name: [createLiteralValueSegment('var1')],
+        type: [createLiteralValueSegment(VARIABLE_TYPE.OBJECT)],
+        value: [createLiteralValueSegment('"key": "value"')], // Missing braces
+      },
+      {
+        name: [createLiteralValueSegment('var2')],
+        type: [createLiteralValueSegment(VARIABLE_TYPE.OBJECT)],
+        value: [createLiteralValueSegment('{invalid json}')],
+      },
+    ];
+    const errors = validateVariables(variables);
+    expect(errors[0].value).toBe(`'Value' must be a valid JSON object`);
+    expect(errors[1].value).toBe(`'Value' must be a valid JSON object`);
+  });
+
+  it('should accept valid object values', () => {
+    const variables: InitializeVariableProps[] = [
+      {
+        name: [createLiteralValueSegment('var1')],
+        type: [createLiteralValueSegment(VARIABLE_TYPE.OBJECT)],
+        value: [createLiteralValueSegment('{"key": "value"}')],
+      },
+      {
+        name: [createLiteralValueSegment('var2')],
+        type: [createLiteralValueSegment(VARIABLE_TYPE.OBJECT)],
+        value: [createLiteralValueSegment('{}')],
+      },
+    ];
+    const errors = validateVariables(variables);
+    expect(errors[0].value).toBeUndefined();
+    expect(errors[1].value).toBeUndefined();
+  });
+
+  it('should accept single non-string expressions for objects', () => {
+    const variables: InitializeVariableProps[] = [
+      {
+        name: [createLiteralValueSegment('var1')],
+        type: [createLiteralValueSegment(VARIABLE_TYPE.OBJECT)],
+        value: [createMockVariableValueSegment('@{variables("objectVar")}', 'object')],
+      },
+    ];
+    const errors = validateVariables(variables);
+    expect(errors[0].value).toBeUndefined();
+  });
+
+  it('should return error for invalid array values', () => {
+    const variables: InitializeVariableProps[] = [
+      {
+        name: [createLiteralValueSegment('var1')],
+        type: [createLiteralValueSegment(VARIABLE_TYPE.ARRAY)],
+        value: [createLiteralValueSegment('[invalid json]')],
+      },
+      {
+        name: [createLiteralValueSegment('var2')],
+        type: [createLiteralValueSegment(VARIABLE_TYPE.ARRAY)],
+        value: [createLiteralValueSegment('{"key": "value"}')], // Not an array
+      },
+    ];
+    const errors = validateVariables(variables);
+    console.log(errors);
+    expect(errors[0].value).toBe(`'Value' must be a valid JSON array`);
+    expect(errors[1].value).toBe(`'Value' must be a valid JSON array`);
+  });
+
+  it('should accept valid array values', () => {
+    const variables: InitializeVariableProps[] = [
+      {
+        name: [createLiteralValueSegment('var1')],
+        type: [createLiteralValueSegment(VARIABLE_TYPE.ARRAY)],
+        value: [createLiteralValueSegment('["item1", "item2"]')],
+      },
+      {
+        name: [createLiteralValueSegment('var2')],
+        type: [createLiteralValueSegment(VARIABLE_TYPE.ARRAY)],
+        value: [createLiteralValueSegment('[1, 2, 3]')],
+      },
+      {
+        name: [createLiteralValueSegment('var3')],
+        type: [createLiteralValueSegment(VARIABLE_TYPE.ARRAY)],
+        value: [createLiteralValueSegment('[]')],
+      },
+    ];
+    const errors = validateVariables(variables);
+    expect(errors[0].value).toBeUndefined();
+    expect(errors[1].value).toBeUndefined();
+    expect(errors[2].value).toBeUndefined();
+  });
+
+  it('should skip validation for template expressions on non-object/array types', () => {
+    const variables: InitializeVariableProps[] = [
+      {
+        name: [createLiteralValueSegment('var1')],
+        type: [createLiteralValueSegment(VARIABLE_TYPE.STRING)],
+        value: [createMockVariableValueSegment('@{variables("stringVar")}', 'string')],
+      },
+      {
+        name: [createLiteralValueSegment('var2')],
+        type: [createLiteralValueSegment(VARIABLE_TYPE.INTEGER)],
+        value: [createMockVariableValueSegment('@{variables("intVar")}', 'integer')],
+      },
+    ];
+    const errors = validateVariables(variables);
+    expect(errors[0].value).toBeUndefined();
+    expect(errors[1].value).toBeUndefined();
+  });
+
+  it('should validate objects and arrays even when they are template expressions', () => {
+    const variables: InitializeVariableProps[] = [
+      {
+        name: [createLiteralValueSegment('var1')],
+        type: [createLiteralValueSegment(VARIABLE_TYPE.OBJECT)],
+        value: [createLiteralValueSegment('"key": "value"')], // Invalid object, should validate even if it looks like expression
+      },
+      {
+        name: [createLiteralValueSegment('var2')],
+        type: [createLiteralValueSegment(VARIABLE_TYPE.ARRAY)],
+        value: [createLiteralValueSegment('[invalid]')], // Invalid array, should validate
+      },
+    ];
+    const errors = validateVariables(variables);
+    expect(errors[0].value).toBe(`'Value' must be a valid JSON object`);
+    expect(errors[1].value).toBe(`'Value' must be a valid JSON array`);
+  });
+
+  it('should skip validation for empty values', () => {
+    const variables: InitializeVariableProps[] = [
+      {
+        name: [createLiteralValueSegment('var1')],
+        type: [createLiteralValueSegment(VARIABLE_TYPE.STRING)],
+        value: [],
+      },
+      {
+        name: [createLiteralValueSegment('var2')],
+        type: [createLiteralValueSegment(VARIABLE_TYPE.INTEGER)],
+        value: [createLiteralValueSegment('')],
+      },
+    ];
+    const errors = validateVariables(variables);
+    expect(errors[0].value).toBeUndefined();
+    expect(errors[1].value).toBeUndefined();
+  });
+
+  it('should handle multiple validation errors for single variable', () => {
+    const variables: InitializeVariableProps[] = [
+      {
+        name: [],
+        type: [],
+        value: [createLiteralValueSegment('someValue')],
+      },
+    ];
+    const errors = validateVariables(variables);
+    expect(errors[0].name).toBe(`'Name' is required`);
+    expect(errors[0].type).toBe(`'Type' is required`);
+    expect(errors[0].value).toBeUndefined(); // No value validation without type
+  });
+
+  it('should validate multiple variables independently', () => {
+    const variables: InitializeVariableProps[] = [
+      {
+        name: [createLiteralValueSegment('validVar')],
+        type: [createLiteralValueSegment(VARIABLE_TYPE.BOOLEAN)],
+        value: [createLiteralValueSegment('true')],
+      },
+      {
+        name: [createLiteralValueSegment('invalidVar')],
+        type: [createLiteralValueSegment(VARIABLE_TYPE.INTEGER)],
+        value: [createLiteralValueSegment('abc')],
+      },
+      {
+        name: [],
+        type: [createLiteralValueSegment(VARIABLE_TYPE.STRING)],
+        value: [createLiteralValueSegment('test')],
+      },
+    ];
+    const errors = validateVariables(variables);
+    expect(errors[0].value).toBeUndefined(); // Valid boolean
+    expect(errors[1].value).toBe(`'Value' must be a valid integer`); // Invalid integer
+    expect(errors[2].name).toBe(`'Name' is required`); // Missing name
+    expect(errors[2].value).toBeUndefined(); // String type, no validation needed for literals
+  });
+
+  it('should handle edge case with object containing tokens', () => {
+    const variables: InitializeVariableProps[] = [
+      {
+        name: [createLiteralValueSegment('var1')],
+        type: [createLiteralValueSegment(VARIABLE_TYPE.OBJECT)],
+        value: [
+          createLiteralValueSegment('{"test": "'),
+          createMockVariableValueSegment("variables('token')", 'object'),
+          createLiteralValueSegment('"}'),
+        ],
+      },
+    ];
+    const errors = validateVariables(variables);
+    // Should pass validation after wrapUnquotedTokens processes it
+    expect(errors[0].value).toBeUndefined();
+  });
+
+  it('should handle unknown variable types gracefully', () => {
+    const variables: InitializeVariableProps[] = [
+      {
+        name: [createLiteralValueSegment('var1')],
+        type: [createLiteralValueSegment('unknownType')],
+        value: [createLiteralValueSegment('someValue')],
+      },
+    ];
+    const errors = validateVariables(variables);
+    expect(errors[0].value).toBeUndefined(); // Should not crash, no validation for unknown types
+  });
 });
 
 describe('isInitializeVariableParameter', () => {
@@ -148,18 +470,6 @@ describe('isInitializeVariableParameter', () => {
     expect(isInitializeVariableOperation(operationInfo)).toBe(false);
   });
 });
-
-// Mock constants for testing
-const constants = {
-  SWAGGER: {
-    TYPE: {
-      STRING: 'string',
-      NUMBER: 'number',
-      BOOLEAN: 'boolean',
-      OBJECT: 'object',
-    },
-  },
-};
 
 // Mock ValueSegment interface
 interface ValueSegment {
