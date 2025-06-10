@@ -39,12 +39,8 @@
         }
       ],
       "activation": {
-        "onFetch": [
-          "microsoft.web/sites"
-        ],
-        "onResolve": [
-          "microsoft.web/sites"
-        ]
+        "onFetch": ["microsoft.web/sites"],
+        "onResolve": ["microsoft.web/sites"]
       }
     },
     "commands": [
@@ -77,7 +73,7 @@
         }
       },
       {
-        "command": "azureLogicAppsStandard.createCodeless",
+        "command": "azureLogicAppsStandard.createWorkflow",
         "title": "Create workflow...",
         "category": "Azure Logic Apps",
         "icon": {
@@ -398,7 +394,7 @@
           "group": "1_create@2"
         },
         {
-          "command": "azureLogicAppsStandard.createCodeless",
+          "command": "azureLogicAppsStandard.createWorkflow",
           "group": "1_create@3"
         },
         {
@@ -670,7 +666,7 @@
           "group": "zzz_LogicApptools@1"
         },
         {
-          "command": "azureLogicAppsStandard.createCodeless",
+          "command": "azureLogicAppsStandard.createWorkflow",
           "when": "explorerResourceIsRoot == true",
           "group": "zzz_LogicApptools@1"
         },
@@ -785,40 +781,23 @@
           "azureLogicAppsStandard.projectRuntime": {
             "scope": "resource",
             "type": "string",
-            "enum": [
-              "~4",
-              "~3"
-            ],
+            "enum": ["~4", "~3"],
             "description": "The default version of the Azure Functions runtime to use when performing operations like \"Create new logic app\".",
-            "enumDescriptions": [
-              "Azure Functions v4",
-              "Azure Functions v3 (.NET Core)"
-            ]
+            "enumDescriptions": ["Azure Functions v4", "Azure Functions v3 (.NET Core)"]
           },
           "azureLogicAppsStandard.projectLanguage": {
             "scope": "resource",
             "type": "string",
-            "enum": [
-              "JavaScript",
-              "C#"
-            ],
+            "enum": ["JavaScript", "C#"],
             "readOnly": true,
             "description": "The default language to use when performing operations like \"Create New Workflow\".",
-            "enumDescriptions": [
-              ""
-            ]
+            "enumDescriptions": [""]
           },
           "azureLogicAppsStandard.dataMapperVersion": {
             "type": "number",
-            "enum": [
-              1,
-              2
-            ],
+            "enum": [1, 2],
             "description": "The default version of Data Mapper to use when performing operations like \"Create data map\".",
-            "enumDescriptions": [
-              "Version 1",
-              "Version 2 (Preview)"
-            ],
+            "enumDescriptions": ["Version 1", "Version 2 (Preview)"],
             "default": 1
           },
           "azureLogicAppsStandard.deploySubpath": {
@@ -921,11 +900,7 @@
           },
           "azureLogicAppsStandard.projectOpenBehavior": {
             "type": "string",
-            "enum": [
-              "AddToWorkspace",
-              "OpenInNewWindow",
-              "OpenInCurrentWindow"
-            ],
+            "enum": ["AddToWorkspace", "OpenInNewWindow", "OpenInCurrentWindow"],
             "description": "The behavior to use after creating a new project. The options are \"AddToWorkspace\", \"OpenInNewWindow\", or \"OpenInCurrentWindow\"."
           },
           "azureLogicAppsStandard.show64BitWarning": {
@@ -1006,26 +981,18 @@
         "label": "Debug Logic App",
         "configurationAttributes": {
           "launch": {
-            "required": [
-              "funcRuntime"
-            ],
+            "required": ["funcRuntime"],
             "properties": {
               "funcRuntime": {
                 "type": "string",
                 "description": "The runtime to use for the Azure Functions host process.",
-                "enum": [
-                  "coreclr",
-                  "clr"
-                ],
+                "enum": ["coreclr", "clr"],
                 "default": "coreclr"
               },
               "customCodeRuntime": {
                 "type": "string",
                 "description": "The runtime to use for the .NET custom code host process.",
-                "enum": [
-                  "coreclr",
-                  "clr"
-                ]
+                "enum": ["coreclr", "clr"]
               }
             }
           }
@@ -1045,7 +1012,7 @@
     "onCommand:azureLogicAppsStandard.viewContent",
     "onCommand:azureLogicAppsStandard.createNewProject",
     "onCommand:azureLogicAppsStandard.createNewWorkspace",
-    "onCommand:azureLogicAppsStandard.createCodeless",
+    "onCommand:azureLogicAppsStandard.createWorkflow",
     "onCommand:azureLogicAppsStandard.deploy",
     "onCommand:azureLogicAppsStandard.generateDeploymentScripts",
     "onCommand:azureLogicAppsStandard.deploySlot",
@@ -1106,15 +1073,8 @@
   },
   "homepage": "https://azure.microsoft.com/services/logic-apps/",
   "license": "SEE LICENSE IN LICENSE.md",
-  "categories": [
-    "Azure"
-  ],
-  "keywords": [
-    "Azure",
-    "Logic App",
-    "serverless",
-    "multi-root ready"
-  ],
+  "categories": ["Azure"],
+  "keywords": ["Azure", "Logic App", "serverless", "multi-root ready"],
   "preview": false,
   "publisher": "ms-azuretools",
   "icon": "assets/logicapp.png",
