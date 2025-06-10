@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [5.109.12](https://github.com/Azure/LogicAppsUX/compare/v5.109.11...v5.109.12) (2025-06-10)
+
+
+### Bug Fixes
+
+* **vscode:** cherry-pick Rules Engine debugger fix ([#7501](https://github.com/Azure/LogicAppsUX/issues/7501)) ([baacebc](https://github.com/Azure/LogicAppsUX/commit/baacebc3881f573f6bd8a364aa58cf734f2d20f3))
+
 ### [5.109.11](https://github.com/Azure/LogicAppsUX/compare/v5.109.10...v5.109.11) (2025-06-07)
 
 
