@@ -59,6 +59,13 @@ export function isTemplateExpression(value: string): boolean {
   return value.charAt(0) === '@' || value.indexOf('@{') > 0;
 }
 
+export function isSingleTokenExpression(value: string): boolean {
+  if (isNullOrEmpty(value) || typeof value !== 'string' || value.length < 2) {
+    return false;
+  }
+  return value.charAt(0) === '@' || (value.startsWith('@{') && value.endsWith('}'));
+}
+
 export function isStringLiteral(expression: Expression): expression is ExpressionLiteral {
   return equals(expression.type, ExpressionType.StringLiteral);
 }
