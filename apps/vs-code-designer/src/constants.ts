@@ -371,3 +371,21 @@ export const workflowNameValidation = /^[a-z][a-z0-9]*(?:[_-][a-z0-9]+)*$/i;
 export const logicAppNameValidation = /^[a-z][a-z0-9]*(?:[_-][a-z0-9]+)*$/i;
 export const dataMapNameValidation = /^[a-z][a-z0-9]*(?:[_-][a-z0-9]+)*$/i;
 export const workspaceNameValidation = /^[a-z][a-z0-9]*(?:[_-][a-z0-9]+)*$/i;
+export const namespaceValidation = /^([A-Za-z_][A-Za-z0-9_]*)(\.[A-Za-z_][A-Za-z0-9_]*)*$/;
+
+// Codeful SDK versions
+export const CodefulSDKs = {
+  DurableTask: 'Microsoft.Azure.WebJobs.Extensions.DurableTask',
+  WorkflowsWebJobs: 'Microsoft.Azure.Workflows.WebJobs.Extension',
+  WorkflowsSDK: 'Microsoft.Azure.Workflows.Sdk',
+};
+export type CodefulSDKs = (typeof CodefulSDKs)[keyof typeof CodefulSDKs];
+
+const codefulSdkVersion = '1.126.0.16';
+const durableTaskVersion = '2.9.0';
+
+export const CodefulSdkVersions = {
+  [CodefulSDKs.DurableTask]: durableTaskVersion,
+  [CodefulSDKs.WorkflowsWebJobs]: codefulSdkVersion,
+  [CodefulSDKs.WorkflowsSDK]: codefulSdkVersion,
+};
