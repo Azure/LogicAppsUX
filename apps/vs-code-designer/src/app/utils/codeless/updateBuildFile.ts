@@ -89,26 +89,6 @@ export function addLibToPublishPath(xmlBuildFile: Record<string, any>): Record<s
   return xmlBuildFile;
 }
 
-export function addNugetPackagesToBuildFileByName(
-  xmlBuildFile: Record<string, any>,
-  packageName: string,
-  packageVersion: string
-): Record<string, any> {
-  const xmlBuildFileString = JSON.stringify(xmlBuildFile);
-  if (xmlBuildFileString.indexOf(packageName) < 0) {
-    const itemGroup: Record<string, any> = {
-      PackageReference: {
-        $: {
-          Include: packageName,
-          Version: packageVersion,
-        },
-      },
-    };
-    xmlBuildFile['Project']['ItemGroup'].push(itemGroup);
-  }
-  return xmlBuildFile;
-}
-
 export function addNugetPackagesToBuildFile(xmlBuildFile: Record<string, any>): Record<string, any> {
   const packageName = 'Microsoft.Azure.Workflows.WebJobs.Extension';
   const packageVersion = '1.2.*';
