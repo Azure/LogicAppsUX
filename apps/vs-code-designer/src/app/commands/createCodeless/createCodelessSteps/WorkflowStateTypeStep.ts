@@ -35,7 +35,7 @@ export class WorkflowStateTypeStep extends AzureWizardPromptStep<IFunctionWizard
   public async getSubWizard(context: IFunctionWizardContext): Promise<IWizardOptions<IFunctionWizardContext> | undefined> {
     const template: IWorkflowTemplate | undefined = context.functionTemplate;
 
-    if (template) {
+    if (template && context.isCodeless) {
       const promptSteps: AzureWizardPromptStep<IFunctionWizardContext>[] = [];
       const executeSteps: AzureWizardExecuteStep<IFunctionWizardContext>[] = [];
       const title: string = localize('createCodeless', 'Create new {0}', template.name);
@@ -70,7 +70,7 @@ export class WorkflowStateTypeStep extends AzureWizardPromptStep<IFunctionWizard
   }
 
   public shouldPrompt(context: IFunctionWizardContext): boolean {
-    return !context.functionTemplate;
+    return !context.functionTemplate && context.isCodeless;
   }
 
   private async getPicks(context: IFunctionWizardContext): Promise<IAzureQuickPickItem<IWorkflowTemplate | TemplatePromptResult>[]> {

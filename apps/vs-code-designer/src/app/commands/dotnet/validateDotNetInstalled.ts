@@ -68,7 +68,7 @@ export async function isDotNetInstalled(): Promise<boolean> {
   try {
     await executeCommand(undefined, undefined, getDotNetCommand(), '--version');
     return true;
-  } catch (error) {
+  } catch (_error) {
     return false;
   }
 }

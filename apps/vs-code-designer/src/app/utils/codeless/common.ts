@@ -18,6 +18,7 @@ import { createAzureWizard } from '../../commands/workflows/azureConnectorWizard
 import type { IAzureConnectorsContext } from '../../commands/workflows/azureConnectorWizard';
 import type { RemoteWorkflowTreeItem } from '../../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem';
 import { getLocalSettingsJson } from '../appSettings/localSettings';
+import { writeFormattedJson } from '../fs';
 import { getAuthorizationToken } from './getAuthorizationToken';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { DialogResponses } from '@microsoft/vscode-azext-utils';
@@ -75,6 +76,14 @@ export function getStandardAppData(workflowName: string, workflow: IWorkflowFile
     kind,
     operationOptions,
   };
+}
+
+export async function createJsonFileIfDoesNotExist(filePath: string, fileName: string): Promise<void> {
+  const parametersFilePath = path.join(filePath, fileName);
+  const connectionsFileExists = fse.pathExistsSync(parametersFilePath);
+  if (!connectionsFileExists) {
+    await writeFormattedJson(parametersFilePath, {});
+  }
 }
 
 export function getWorkflowParameters(parameters: Record<string, Parameter>): Record<string, WorkflowParameter> {
