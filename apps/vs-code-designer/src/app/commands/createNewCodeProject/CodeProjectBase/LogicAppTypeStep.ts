@@ -5,7 +5,7 @@
 import { localize } from '../../../../localize';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type { IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
-import { ProjectType, type IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
+import { ProjectType, TargetFramework, type IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 
 export class LogicAppTypeStep extends AzureWizardPromptStep<IProjectWizardContext> {
   public async prompt(context: IProjectWizardContext): Promise<void> {
@@ -19,6 +19,9 @@ export class LogicAppTypeStep extends AzureWizardPromptStep<IProjectWizardContex
     context.projectType = (await context.ui.showQuickPick(picks, { placeHolder })).data;
     context.shouldCreateLogicAppProject = true;
     context.isWorkspaceWithFunctions = context.projectType !== ProjectType.logicApp;
+    if (context.projectType === ProjectType.rulesEngine) {
+      context.targetFramework = TargetFramework.NetFx;
+    }
   }
 
   public shouldPrompt(context: IProjectWizardContext): boolean {
