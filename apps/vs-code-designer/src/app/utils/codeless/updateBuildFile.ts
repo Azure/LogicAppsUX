@@ -89,7 +89,11 @@ export function addLibToPublishPath(xmlBuildFile: Record<string, any>): Record<s
   return xmlBuildFile;
 }
 
-export function addNugetPackagesToBuildFileByName(xmlBuildFile: Record<string, any>, packageName: string, packageVersion: string): Record<string, any> {
+export function addNugetPackagesToBuildFileByName(
+  xmlBuildFile: Record<string, any>,
+  packageName: string,
+  packageVersion: string
+): Record<string, any> {
   const xmlBuildFileString = JSON.stringify(xmlBuildFile);
   if (xmlBuildFileString.indexOf(packageName) < 0) {
     const itemGroup: Record<string, any> = {
