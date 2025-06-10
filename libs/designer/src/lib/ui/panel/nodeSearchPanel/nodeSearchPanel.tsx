@@ -35,8 +35,14 @@ const NodeSearchCard = ({ node }: { node: string }) => {
         showImage={true}
         onClick={(_: string) => {
           dispatch(collapseGraphsToShowNode(node));
-          dispatch(setFocusNode(node));
           dispatch(changePanelNode(node));
+          // Delay focus to allow graph expansion to complete.
+          // 100ms provides enough time for React Flow to re-render expanded nodes
+          // and calculate positions without feeling sluggish to users.
+          // This ensures CanvasFinder has accurate node positions for panning.
+          setTimeout(() => {
+            dispatch(setFocusNode(node));
+          }, 100);
         }}
       />
     </div>
