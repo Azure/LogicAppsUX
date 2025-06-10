@@ -255,7 +255,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   return (
     <FavoriteContext.Provider value={contextValue}>
       <div className="msla-app-action-header" ref={recommendationPanelRef}>
-        <XLargeText text={headingText} />
+        <XLargeText text={headingText} as="h2" />
         <Button aria-label={closeButtonAriaLabel} appearance="subtle" onClick={toggleCollapse} icon={<CloseIcon />} />
       </div>
       {selectionState !== SELECTION_STATES.SEARCH || selectedOperationGroupId ? (
