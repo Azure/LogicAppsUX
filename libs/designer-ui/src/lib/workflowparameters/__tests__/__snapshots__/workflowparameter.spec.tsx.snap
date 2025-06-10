@@ -2,38 +2,65 @@
 
 exports[`ui/workflowparameters/workflowparameter > should construct. 1`] = `
 <div
-  className="msla-workflow-parameter"
+  className="___mfvq190_0000000 f22iagw f1vx9l62 f7e3wsx fsycz46"
 >
-  <div>
-    <div>
-      <Button
-        appearance="subtle"
-        aria-expanded={false}
-        className="msla-workflow-parameter-heading-button"
-        data-automation-id="-parameter-heading-button"
-        data-testid="-parameter-heading-button"
-        icon={<CompoundIcon />}
-        id="id"
-        onClick={[Function]}
-      >
-        New parameter
-      </Button>
-    </div>
-  </div>
   <div
-    className="msla-workflow-parameter-edit-or-delete-button"
+    className="___15gw98l_0000000 f22iagw fkln5zr f122n59"
   >
-    <EditOrDeleteButton
-      definition={
+    <Button
+      appearance="subtle"
+      aria-expanded={false}
+      className="___r7kt3y0_0000000 fqerorx"
+      data-automation-id="id-parameter-heading-button"
+      data-testid="id-parameter-heading-button"
+      icon={<CompoundIcon />}
+      id="id"
+      onClick={[Function]}
+      style={
         {
-          "id": "id",
-          "name": "",
-          "type": "Array",
+          "justifyContent": "flex-start",
+          "width": "90%",
         }
       }
-      setExpanded={[Function]}
-      setIsEditable={[Function]}
-    />
+    >
+      New parameter
+    </Button>
+    <React.Fragment>
+      <div
+        aria-label="Parameter type: Array"
+        className="___sl83300_0000000 f22iagw f122n59 fcgxt0o fm0x6gh"
+        data-testid="parameter-type-badge"
+        role="status"
+      >
+        <Badge
+          appearance="filled"
+          color="brand"
+          size="medium"
+        >
+          Array
+        </Badge>
+      </div>
+      <div
+        className="___1wrlx8u_0000000 f22iagw f122n59"
+      >
+        <Tooltip
+          content="Delete parameter"
+          relationship="label"
+        >
+          <Button
+            appearance="subtle"
+            aria-label="Delete parameter"
+            icon={<CompoundIcon />}
+            onClick={[Function]}
+            style={
+              {
+                "color": "var(--colorBrandForeground1)",
+              }
+            }
+          />
+        </Tooltip>
+      </div>
+    </React.Fragment>
   </div>
 </div>
 `;

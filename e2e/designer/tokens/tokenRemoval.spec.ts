@@ -78,7 +78,6 @@ test.describe(
         "@{triggerBody()?['string']}@{variables('ArrayVariable')}@{parameters('EILCO Admin Nominations-OCSA List (cr773_EILCOAdminNominations_OCSA_L2)')}"
       );
       await page.getByRole('button', { name: 'Workflow Parameters' }).click();
-      await page.getByLabel('Edit Parameter').click();
       await page.getByLabel('Delete Parameter').click();
       await page
         .locator('div')
@@ -105,7 +104,6 @@ test.describe(
         "@{triggerBody()?['string']}@{variables('ArrayVariable')}@{parameters('EILCO Admin Nominations-OCSA List (cr773_EILCOAdminNominations_OCSA_L2)')}"
       );
       await page.getByRole('button', { name: 'Workflow Parameters' }).click();
-      await page.getByLabel('Edit Parameter').click();
       await page.getByLabel('Delete Parameter').click();
       await page
         .locator('div')

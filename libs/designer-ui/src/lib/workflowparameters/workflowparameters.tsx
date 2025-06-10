@@ -4,7 +4,8 @@ import Constants from '../constants';
 import { isHighContrastBlack } from '../utils/theme';
 import type { WorkflowParameterDefinition, WorkflowParameterDeleteHandler, WorkflowParameterUpdateHandler } from './workflowparameter';
 import { WorkflowParameter } from './workflowparameter';
-import { List, useTheme } from '@fluentui/react';
+import { useWorkflowParametersStyles } from './styles';
+import { useTheme } from '@fluentui/react';
 import { Button, MessageBar } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular, Add24Filled, Add24Regular } from '@fluentui/react-icons';
 import { useIntl } from 'react-intl';
@@ -13,6 +14,7 @@ const CreateIcon = bundleIcon(Add24Filled, Add24Regular);
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
 const InfoBar = () => {
+  const styles = useWorkflowParametersStyles();
   const intl = useIntl();
   const text = intl.formatMessage({
     defaultMessage:
@@ -21,7 +23,7 @@ const InfoBar = () => {
     description: 'Text for Info Bar',
   });
   return (
-    <div className="msla-workflow-parameters-message-bar">
+    <div className={styles.messageBar}>
       <MessageBar layout="multiline" style={{ padding: '8px 12px' }}>
         {text}
       </MessageBar>
@@ -61,6 +63,7 @@ export function WorkflowParameters({
 }: WorkflowParametersProps): JSX.Element {
   const theme = useTheme();
   const isInverted = isHighContrastBlack() || theme.isInverted;
+  const styles = useWorkflowParametersStyles();
 
   const intl = useIntl();
 
@@ -97,9 +100,9 @@ export function WorkflowParameters({
         });
 
     return (
-      <div className="msla-workflow-parameters-empty">
+      <div className={styles.emptyState}>
         <img src={ParametersIcon} alt="" role="presentation" />
-        <div className="msla-workflow-parameters-text">
+        <div className={styles.emptyStateText}>
           <p>{description1}</p>
           <p>{description2}</p>
         </div>
@@ -107,9 +110,11 @@ export function WorkflowParameters({
     );
   };
 
-  const renderParameter = (item?: WorkflowParameterDefinition): JSX.Element => {
+  const renderParameter = (item?: WorkflowParameterDefinition, _index?: number): JSX.Element => {
     // TODO: 12798972 Workflow Parameter
     const parameterErrors = validationErrors && item ? validationErrors[item.id] : undefined;
+    const disableDelete = false; // Workflow parameters can all be deleted (unlike variables)
+    const isNewlyAdded = item?.isEditable; // New parameters start in editable mode
     return (
       <WorkflowParameter
         key={item?.id}
@@ -121,6 +126,8 @@ export function WorkflowParameters({
         onDelete={onDeleteParameter}
         onRegisterLanguageProvider={onRegisterLanguageProvider}
         validationErrors={parameterErrors}
+        disableDelete={disableDelete}
+        isNewlyAdded={isNewlyAdded}
       />
     );
   };
@@ -144,19 +151,29 @@ export function WorkflowParameters({
   });
 
   return (
-    <div className="msla-workflow-parameters">
-      <div className="msla-workflow-parameters-heading">
+    <div className={styles.container}>
+      <div className={styles.heading}>
         <XLargeText text={titleText} />
         <Button aria-label={closeButtonAriaLabel} appearance="subtle" onClick={onClose} icon={<CloseIcon />} />
       </div>
 
       {useLegacy ? null : <InfoBar />}
-      <div className="msla-workflow-parameters-add">
+      <div className={styles.addButton}>
         <Button disabled={isReadOnly} onClick={handleAddParameter} icon={<CreateIcon />}>
           {createText}
         </Button>
       </div>
-      {parameters.length ? <List items={parameters} onRenderCell={renderParameter} /> : <NoParameters />}
+      {parameters.length ? (
+        <div className={styles.parametersList}>
+          {parameters.map((parameter, index) => (
+            <div key={parameter.id} className={styles.parameterItem}>
+              {renderParameter(parameter, index)}
+            </div>
+          ))}
+        </div>
+      ) : (
+        <NoParameters />
+      )}
     </div>
   );
 }

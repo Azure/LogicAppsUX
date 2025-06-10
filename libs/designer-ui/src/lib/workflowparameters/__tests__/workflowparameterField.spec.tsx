@@ -1,206 +1,507 @@
 import type { WorkflowparameterFieldProps } from '../workflowparametersField';
 import { WorkflowparameterField } from '../workflowparametersField';
-import { initializeIcons } from '@fluentui/react';
-import * as React from 'react';
-import { useIntl } from 'react-intl';
-import * as ReactShallowRenderer from 'react-test-renderer/shallow';
-import { describe, vi, beforeEach, afterEach, it, expect } from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { IntlProvider } from 'react-intl';
+import { describe, vi, beforeEach, it, expect } from 'vitest';
+
+// Mock makeStyles
+vi.mock('../styles', () => ({
+  useWorkflowParameterStyles: () => ({
+    field: 'mock-field-class',
+    fieldLabel: 'mock-field-label-class',
+    fieldEditor: 'mock-field-editor-class',
+    fieldError: 'mock-field-error-class',
+  }),
+}));
+
+// Test wrapper component
+const TestWrapper = ({ children }: { children: React.ReactNode }) => (
+  <IntlProvider locale="en" messages={{}}>
+    {children}
+  </IntlProvider>
+);
+
 describe('ui/workflowparameters/workflowparameterField', () => {
-  let minimal: WorkflowparameterFieldProps;
-  let minimalWithDes: WorkflowparameterFieldProps;
-  let renderer: ReactShallowRenderer.ShallowRenderer;
+  let mockOnChange: ReturnType<typeof vi.fn>;
+  let mockSetName: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
-    minimal = {
-      isEditable: true,
-      name: 'test',
-      definition: { id: 'id', value: 'blue', name: 'test', type: 'String' },
-      setName: vi.fn(),
-    };
-    minimalWithDes = {
-      ...minimal,
-      definition: {
-        ...minimal.definition,
-        description: 'test des',
-      },
-    };
-    renderer = ReactShallowRenderer.createRenderer();
-    initializeIcons();
+    mockOnChange = vi.fn();
+    mockSetName = vi.fn();
   });
 
-  afterEach(() => {
-    renderer.unmount();
+  describe('Basic Rendering', () => {
+    it('should render basic parameter fields', () => {
+      const props: WorkflowparameterFieldProps = {
+        isEditable: true,
+        name: 'testParam',
+        definition: { id: 'test-id', value: 'test-value', name: 'testParam', type: 'String' },
+        setName: mockSetName,
+        onChange: mockOnChange,
+      };
+
+      render(
+        <TestWrapper>
+          <WorkflowparameterField {...props} />
+        </TestWrapper>
+      );
+
+      // Check that name, type, and value fields are rendered
+      expect(screen.getByDisplayValue('testParam')).toBeInTheDocument();
+      expect(screen.getByDisplayValue('test-value')).toBeInTheDocument();
+    });
+
+    it('should render parameter with description', () => {
+      const props: WorkflowparameterFieldProps = {
+        isEditable: true,
+        name: 'testParam',
+        definition: {
+          id: 'test-id',
+          value: 'test-value',
+          name: 'testParam',
+          type: 'String',
+          description: 'Test parameter description',
+        },
+        setName: mockSetName,
+        onChange: mockOnChange,
+      };
+
+      render(
+        <TestWrapper>
+          <WorkflowparameterField {...props} />
+        </TestWrapper>
+      );
+
+      expect(screen.getByText('Test parameter description')).toBeInTheDocument();
+    });
   });
 
-  it('should construct.', () => {
-    renderer.render(<WorkflowparameterField {...minimal} />);
-    const parameterFields = renderer.getRenderOutput();
-    expect(parameterFields).toBeDefined();
+  describe('Parameter Type Input Controls', () => {
+    it('should render Input for Boolean type', () => {
+      const props: WorkflowparameterFieldProps = {
+        isEditable: true,
+        name: 'boolParam',
+        definition: { id: 'bool-id', value: 'true', name: 'boolParam', type: 'Bool' },
+        setName: mockSetName,
+        onChange: mockOnChange,
+      };
+
+      render(
+        <TestWrapper>
+          <WorkflowparameterField {...props} />
+        </TestWrapper>
+      );
+
+      const valueInput = screen.getByDisplayValue('true');
+      expect(valueInput).toBeInTheDocument();
+      expect(valueInput.tagName).toBe('INPUT');
+    });
+
+    it('should render Input for Integer type', () => {
+      const props: WorkflowparameterFieldProps = {
+        isEditable: true,
+        name: 'intParam',
+        definition: { id: 'int-id', value: '42', name: 'intParam', type: 'Int' },
+        setName: mockSetName,
+        onChange: mockOnChange,
+      };
+
+      render(
+        <TestWrapper>
+          <WorkflowparameterField {...props} />
+        </TestWrapper>
+      );
+
+      const valueInput = screen.getByDisplayValue('42');
+      expect(valueInput).toBeInTheDocument();
+      expect(valueInput.tagName).toBe('INPUT');
+    });
+
+    it('should render Input for Float type', () => {
+      const props: WorkflowparameterFieldProps = {
+        isEditable: true,
+        name: 'floatParam',
+        definition: { id: 'float-id', value: '3.14', name: 'floatParam', type: 'Float' },
+        setName: mockSetName,
+        onChange: mockOnChange,
+      };
+
+      render(
+        <TestWrapper>
+          <WorkflowparameterField {...props} />
+        </TestWrapper>
+      );
+
+      const valueInput = screen.getByDisplayValue('3.14');
+      expect(valueInput).toBeInTheDocument();
+      expect(valueInput.tagName).toBe('INPUT');
+    });
+
+    it('should render Textarea for String type', () => {
+      const props: WorkflowparameterFieldProps = {
+        isEditable: true,
+        name: 'stringParam',
+        definition: { id: 'string-id', value: 'test string value', name: 'stringParam', type: 'String' },
+        setName: mockSetName,
+        onChange: mockOnChange,
+      };
+
+      render(
+        <TestWrapper>
+          <WorkflowparameterField {...props} />
+        </TestWrapper>
+      );
+
+      const valueInput = screen.getByDisplayValue('test string value');
+      expect(valueInput).toBeInTheDocument();
+      expect(valueInput.tagName).toBe('TEXTAREA');
+    });
+
+    it('should render Textarea for Array type', () => {
+      const props: WorkflowparameterFieldProps = {
+        isEditable: true,
+        name: 'arrayParam',
+        definition: { id: 'array-id', value: '["item1", "item2"]', name: 'arrayParam', type: 'Array' },
+        setName: mockSetName,
+        onChange: mockOnChange,
+      };
+
+      render(
+        <TestWrapper>
+          <WorkflowparameterField {...props} />
+        </TestWrapper>
+      );
+
+      const valueInput = screen.getByDisplayValue('["item1", "item2"]');
+      expect(valueInput).toBeInTheDocument();
+      expect(valueInput.tagName).toBe('TEXTAREA');
+    });
+
+    it('should render Textarea for Object type', () => {
+      const props: WorkflowparameterFieldProps = {
+        isEditable: true,
+        name: 'objectParam',
+        definition: { id: 'object-id', value: '{"key": "value"}', name: 'objectParam', type: 'Object' },
+        setName: mockSetName,
+        onChange: mockOnChange,
+      };
+
+      render(
+        <TestWrapper>
+          <WorkflowparameterField {...props} />
+        </TestWrapper>
+      );
+
+      const valueInput = screen.getByDisplayValue('{"key": "value"}');
+      expect(valueInput).toBeInTheDocument();
+      expect(valueInput.tagName).toBe('TEXTAREA');
+    });
   });
 
-  it('should render all fields when passed a parameter definition.', () => {
-    const intl = useIntl();
-    renderer.render(<WorkflowparameterField {...minimal} />);
-    const parameterFields = renderer.getRenderOutput();
-    expect(parameterFields.props.children).toHaveLength(4);
+  describe('User Interactions', () => {
+    it('should call setName when name field changes', () => {
+      const props: WorkflowparameterFieldProps = {
+        isEditable: true,
+        name: 'testParam',
+        definition: { id: 'test-id', value: 'test-value', name: 'testParam', type: 'String' },
+        setName: mockSetName,
+        onChange: mockOnChange,
+      };
 
-    expect(parameterFields.props.children?.[2]).toBe(undefined); //undefined for empty description
-    const [name, type, defaultValue]: any[] = React.Children.toArray(parameterFields.props.children);
-    const textFieldClassName = 'msla-workflow-parameter-field';
+      render(
+        <TestWrapper>
+          <WorkflowparameterField {...props} />
+        </TestWrapper>
+      );
 
-    const nameTitle = intl.formatMessage({
-      defaultMessage: 'Name',
-      id: 'm8Q61y',
-      description: 'Parameter Field Name Title',
+      const nameInput = screen.getByDisplayValue('testParam');
+      fireEvent.change(nameInput, { target: { value: 'newParamName' } });
+
+      expect(mockSetName).toHaveBeenCalledWith('newParamName');
     });
-    const nameDescription = intl.formatMessage({
-      defaultMessage: 'Enter parameter name.',
-      id: 'GreYWQ',
-      description: 'Parameter Field Name Description',
+
+    it('should call onChange when value field changes for Boolean type', () => {
+      const props: WorkflowparameterFieldProps = {
+        isEditable: true,
+        name: 'boolParam',
+        definition: { id: 'bool-id', value: 'true', name: 'boolParam', type: 'Bool' },
+        setName: mockSetName,
+        onChange: mockOnChange,
+      };
+
+      render(
+        <TestWrapper>
+          <WorkflowparameterField {...props} />
+        </TestWrapper>
+      );
+
+      const valueInput = screen.getByDisplayValue('true');
+      fireEvent.change(valueInput, { target: { value: 'false' } });
+
+      expect(mockOnChange).toHaveBeenCalledWith({
+        id: 'bool-id',
+        newDefinition: expect.objectContaining({
+          id: 'bool-id',
+          name: 'boolParam',
+          type: 'Bool',
+          value: 'false',
+        }),
+        useLegacy: undefined,
+      });
     });
-    expect(name.props.className).toBe(textFieldClassName);
-    expect(name.props.children).toHaveLength(2);
 
-    const [label, textField1]: any[] = React.Children.toArray(name.props.children);
-    expect(label.props.text).toBe(nameTitle);
-    expect(label.props.htmlFor).toBe('id-name');
+    it('should call onChange when value field changes for String type', () => {
+      const props: WorkflowparameterFieldProps = {
+        isEditable: true,
+        name: 'stringParam',
+        definition: { id: 'string-id', value: 'initial', name: 'stringParam', type: 'String' },
+        setName: mockSetName,
+        onChange: mockOnChange,
+      };
 
-    expect(textField1.props.id).toBe('id-name');
-    expect(textField1.props.ariaLabel).toBe(nameTitle);
-    expect(textField1.props.placeholder).toBe(nameDescription);
-    expect(textField1.props.value).toBe(minimal.name);
+      render(
+        <TestWrapper>
+          <WorkflowparameterField {...props} />
+        </TestWrapper>
+      );
 
-    const typeTitle = intl.formatMessage({
-      defaultMessage: 'Type',
-      id: 'tNoZx2',
-      description: 'Parameter Field Type Title',
+      const valueInput = screen.getByDisplayValue('initial');
+      fireEvent.change(valueInput, { target: { value: 'updated string value' } });
+
+      expect(mockOnChange).toHaveBeenCalledWith({
+        id: 'string-id',
+        newDefinition: expect.objectContaining({
+          id: 'string-id',
+          name: 'stringParam',
+          type: 'String',
+          value: 'updated string value',
+        }),
+        useLegacy: undefined,
+      });
     });
-    expect(type.props.className).toBe(textFieldClassName);
-    expect(type.props.children).toHaveLength(2);
 
-    const [label3, dropdown]: any[] = React.Children.toArray(type.props.children);
-    expect(label3.props.text).toBe(typeTitle);
-    expect(label3.props.htmlFor).toBe('id-type');
+    it('should call onChange when type changes', () => {
+      const props: WorkflowparameterFieldProps = {
+        isEditable: true,
+        name: 'testParam',
+        definition: { id: 'test-id', value: 'test-value', name: 'testParam', type: 'String' },
+        setName: mockSetName,
+        onChange: mockOnChange,
+      };
 
-    expect(dropdown.props.id).toBe('id-type');
-    expect(dropdown.props.ariaLabel).toBe(typeTitle);
-    expect(dropdown.props.options).toHaveLength(6);
-    expect(dropdown.props.selectedKey).toBe('String');
+      render(
+        <TestWrapper>
+          <WorkflowparameterField {...props} />
+        </TestWrapper>
+      );
 
-    const defaultValueTitle = intl.formatMessage({
-      defaultMessage: 'Value',
-      id: 'mOxbN1',
-      description: 'Parameter Field Default Value Title',
+      // Find and click the type dropdown
+      const typeDropdown = screen.getByRole('combobox');
+      fireEvent.click(typeDropdown);
+
+      // Select Boolean option
+      const boolOption = screen.getByText('Boolean');
+      fireEvent.click(boolOption);
+
+      expect(mockOnChange).toHaveBeenCalledWith({
+        id: 'test-id',
+        newDefinition: expect.objectContaining({
+          type: 'Bool',
+        }),
+        useLegacy: undefined,
+      });
     });
-    const defaultValueDescription = intl.formatMessage({
-      defaultMessage: 'Enter value for parameter.',
-      id: '7jAQar',
-      description: 'Parameter Field Default Value Placeholder Text',
-    });
-    expect(defaultValue.props.className).toBe(textFieldClassName);
-    expect(name.props.children).toHaveLength(2);
-
-    const [label4, textField3]: any[] = React.Children.toArray(defaultValue.props.children);
-    expect(label4.props.text).toBe(defaultValueTitle);
-    expect(label4.props.htmlFor).toBe('id-value');
-
-    expect(textField3.props.id).toBe('id-value');
-    expect(textField3.props.ariaLabel).toBe(defaultValueTitle);
-    expect(textField3.props.placeholder).toBe(defaultValueDescription);
-    expect(textField3.props.value).toBe(minimal.definition.value);
   });
 
-  it('should render all fields when passed a parameter definition with a description.', () => {
-    const intl = useIntl();
-    renderer.render(<WorkflowparameterField {...minimalWithDes} />);
-    const parameterFields = renderer.getRenderOutput();
-    expect(parameterFields.props.children).toHaveLength(4);
+  describe('Boolean Parameter Specific Tests', () => {
+    it('should handle boolean value "true" correctly', () => {
+      const props: WorkflowparameterFieldProps = {
+        isEditable: true,
+        name: 'boolParam',
+        definition: { id: 'bool-id', value: 'true', name: 'boolParam', type: 'Bool' },
+        setName: mockSetName,
+        onChange: mockOnChange,
+      };
 
-    const [name, type, description, defaultValue]: any[] = React.Children.toArray(parameterFields.props.children);
-    const textFieldClassName = 'msla-workflow-parameter-field';
+      render(
+        <TestWrapper>
+          <WorkflowparameterField {...props} />
+        </TestWrapper>
+      );
 
-    const nameTitle = intl.formatMessage({
-      defaultMessage: 'Name',
-      id: 'm8Q61y',
-      description: 'Parameter Field Name Title',
+      const valueInput = screen.getByDisplayValue('true');
+      expect(valueInput).toBeInTheDocument();
+      expect(valueInput.tagName).toBe('INPUT');
     });
-    const nameDescription = intl.formatMessage({
-      defaultMessage: 'Enter parameter name.',
-      id: 'GreYWQ',
-      description: 'Parameter Field Name Description',
+
+    it('should handle boolean value "false" correctly', () => {
+      const props: WorkflowparameterFieldProps = {
+        isEditable: true,
+        name: 'boolParam',
+        definition: { id: 'bool-id', value: 'false', name: 'boolParam', type: 'Bool' },
+        setName: mockSetName,
+        onChange: mockOnChange,
+      };
+
+      render(
+        <TestWrapper>
+          <WorkflowparameterField {...props} />
+        </TestWrapper>
+      );
+
+      const valueInput = screen.getByDisplayValue('false');
+      expect(valueInput).toBeInTheDocument();
     });
-    expect(name.props.className).toBe(textFieldClassName);
-    expect(name.props.children).toHaveLength(2);
 
-    const [label, textField1]: any[] = React.Children.toArray(name.props.children);
-    expect(label.props.text).toBe(nameTitle);
-    expect(label.props.htmlFor).toBe('id-name');
+    it('should handle custom boolean values (app settings)', () => {
+      const props: WorkflowparameterFieldProps = {
+        isEditable: true,
+        name: 'boolParam',
+        definition: { id: 'bool-id', value: '@appsetting("MyBoolSetting")', name: 'boolParam', type: 'Bool' },
+        setName: mockSetName,
+        onChange: mockOnChange,
+      };
 
-    expect(textField1.props.id).toBe('id-name');
-    expect(textField1.props.ariaLabel).toBe(nameTitle);
-    expect(textField1.props.placeholder).toBe(nameDescription);
-    expect(textField1.props.value).toBe(minimalWithDes.name);
+      render(
+        <TestWrapper>
+          <WorkflowparameterField {...props} />
+        </TestWrapper>
+      );
 
-    const typeTitle = intl.formatMessage({
-      defaultMessage: 'Type',
-      id: 'tNoZx2',
-      description: 'Parameter Field Type Title',
+      const valueInput = screen.getByDisplayValue('@appsetting("MyBoolSetting")');
+      expect(valueInput).toBeInTheDocument();
+      expect(valueInput.tagName).toBe('INPUT');
     });
-    expect(type.props.className).toBe(textFieldClassName);
-    expect(type.props.children).toHaveLength(2);
-
-    const descriptionTitle = intl.formatMessage({
-      defaultMessage: 'Description',
-      id: 'UXDOiw',
-      description: 'Parameter Field Description Title',
-    });
-    const [label2, textField2]: any[] = React.Children.toArray(description.props.children);
-    expect(description.props.className).toBe(textFieldClassName);
-    expect(label2.props.text).toBe(descriptionTitle);
-    expect(label2.props.htmlFor).toBe('id-description');
-    expect(textField2.props.children).toBe(minimalWithDes.definition.description);
-
-    const [label3, dropdown]: any[] = React.Children.toArray(type.props.children);
-    expect(label3.props.text).toBe(typeTitle);
-    expect(label3.props.htmlFor).toBe('id-type');
-
-    expect(dropdown.props.id).toBe('id-type');
-    expect(dropdown.props.ariaLabel).toBe(typeTitle);
-    expect(dropdown.props.options).toHaveLength(6);
-    expect(dropdown.props.selectedKey).toBe('String');
-
-    const defaultValueTitle = intl.formatMessage({
-      defaultMessage: 'Value',
-      id: 'mOxbN1',
-      description: 'Parameter Field Default Value Title',
-    });
-    const defaultValueDescription = intl.formatMessage({
-      defaultMessage: 'Enter value for parameter.',
-      id: '7jAQar',
-      description: 'Parameter Field Default Value Placeholder Text',
-    });
-    expect(defaultValue.props.className).toBe(textFieldClassName);
-    expect(name.props.children).toHaveLength(2);
-
-    const [label4, textField3]: any[] = React.Children.toArray(defaultValue.props.children);
-    expect(label4.props.text).toBe(defaultValueTitle);
-    expect(label4.props.htmlFor).toBe('id-value');
-
-    expect(textField3.props.id).toBe('id-value');
-    expect(textField3.props.ariaLabel).toBe(defaultValueTitle);
-    expect(textField3.props.placeholder).toBe(defaultValueDescription);
-    expect(textField3.props.value).toBe(minimal.definition.value);
   });
 
-  // TODO: 12798972 render correct type value when case does not match serialized type
+  describe('Legacy Mode', () => {
+    it('should render default value field in legacy mode', () => {
+      const props: WorkflowparameterFieldProps = {
+        isEditable: true,
+        name: 'testParam',
+        definition: {
+          id: 'test-id',
+          value: 'test-value',
+          name: 'testParam',
+          type: 'String',
+          defaultValue: 'default-value',
+        },
+        setName: mockSetName,
+        onChange: mockOnChange,
+        useLegacy: true,
+      };
 
-  it('should render nothing when type passed is invalid.', () => {
-    const props = { ...minimal, definition: { ...minimal.definition, type: 'random' } };
-    renderer.render(<WorkflowparameterField {...props} />);
-    const parameterFields = renderer.getRenderOutput();
-    const [, type]: any[] = React.Children.toArray(parameterFields.props.children);
-    expect(type.props.selectedKey).toBeUndefined();
+      render(
+        <TestWrapper>
+          <WorkflowparameterField {...props} />
+        </TestWrapper>
+      );
+
+      expect(screen.getByDisplayValue('default-value')).toBeInTheDocument();
+    });
+
+    it('should render actual value field as disabled in legacy mode', () => {
+      const props: WorkflowparameterFieldProps = {
+        isEditable: true,
+        name: 'testParam',
+        definition: {
+          id: 'test-id',
+          value: 'test-value',
+          name: 'testParam',
+          type: 'String',
+          defaultValue: 'default-value',
+        },
+        setName: mockSetName,
+        onChange: mockOnChange,
+        useLegacy: true,
+      };
+
+      render(
+        <TestWrapper>
+          <WorkflowparameterField {...props} />
+        </TestWrapper>
+      );
+
+      const actualValueInput = screen.getByDisplayValue('test-value');
+      expect(actualValueInput).toBeDisabled();
+    });
   });
 
-  // TODO: 12798972 render error messages when validation errors have been passed for the properties
+  describe('Read-only Mode', () => {
+    it('should disable all inputs when isReadOnly is true', () => {
+      const props: WorkflowparameterFieldProps = {
+        isEditable: true,
+        isReadOnly: true,
+        name: 'testParam',
+        definition: { id: 'test-id', value: 'test-value', name: 'testParam', type: 'String' },
+        setName: mockSetName,
+        onChange: mockOnChange,
+      };
+
+      render(
+        <TestWrapper>
+          <WorkflowparameterField {...props} />
+        </TestWrapper>
+      );
+
+      const nameInput = screen.getByDisplayValue('testParam');
+      const valueInput = screen.getByDisplayValue('test-value');
+
+      expect(nameInput).toBeDisabled();
+      expect(valueInput).toBeDisabled();
+    });
+  });
+
+  describe('Error Handling', () => {
+    it('should display validation errors', () => {
+      const props: WorkflowparameterFieldProps = {
+        isEditable: true,
+        name: 'testParam',
+        definition: { id: 'test-id', value: 'test-value', name: 'testParam', type: 'String' },
+        setName: mockSetName,
+        onChange: mockOnChange,
+        validationErrors: {
+          name: 'Name is required',
+          value: 'Value is invalid',
+        },
+      };
+
+      render(
+        <TestWrapper>
+          <WorkflowparameterField {...props} />
+        </TestWrapper>
+      );
+
+      expect(screen.getByText('Name is required')).toBeInTheDocument();
+      expect(screen.getByText('Value is invalid')).toBeInTheDocument();
+    });
+  });
+
+  describe('Secure Parameters', () => {
+    it('should show warning for secure string with default value', () => {
+      const props: WorkflowparameterFieldProps = {
+        isEditable: true,
+        name: 'secureParam',
+        definition: {
+          id: 'secure-id',
+          value: 'secure-value',
+          name: 'secureParam',
+          type: 'securestring',
+          defaultValue: 'default-secure-value',
+        },
+        setName: mockSetName,
+        onChange: mockOnChange,
+        useLegacy: true,
+      };
+
+      render(
+        <TestWrapper>
+          <WorkflowparameterField {...props} />
+        </TestWrapper>
+      );
+
+      // Should show warning about default value for secure parameter
+      expect(screen.getByText(/It is not recommended to set a default value/)).toBeInTheDocument();
+    });
+  });
 });
