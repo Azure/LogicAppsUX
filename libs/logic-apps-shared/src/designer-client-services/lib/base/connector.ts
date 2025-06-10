@@ -186,13 +186,17 @@ export abstract class BaseConnectorService implements IConnectorService {
     const content = properties ? { request, properties } : { request };
 
     try {
-      // Fetch the initial page of data
       const initialResponse = await this._fetchData(baseUri, queryParameters, content);
 
-      // Collect all the values from the initial and subsequent pages
-      const allValues = await this._getAllPagedValues(initialResponse, request.headers);
+      const nextLink = initialResponse.nextLink || initialResponse['@odata.nextLink'];
+      const isArrayPagination = Array.isArray(initialResponse.value) && nextLink;
 
-      return { ...initialResponse, value: allValues };
+      if (isArrayPagination) {
+        const allValues = await this._getAllPagedValues(initialResponse, request.headers);
+        return { ...initialResponse, value: allValues, __usedNextPage: true };
+      }
+
+      return initialResponse;
     } catch (ex: any) {
       throw this._handleError(ex, intl, method, baseUri, parameters['path']);
     }

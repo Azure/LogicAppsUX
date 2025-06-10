@@ -3,7 +3,7 @@ import { ArgumentException, UnsupportedException, optional, equals, getResourceN
 import type { BaseConnectorServiceOptions } from '../base';
 import { BaseConnectorService } from '../base';
 import type { ListDynamicValue, ManagedIdentityRequestProperties, TreeDynamicExtension, TreeDynamicValue } from '../connector';
-import { pathCombine } from '../helpers';
+import { pathCombine, unwrapPaginatedResponse } from '../helpers';
 
 interface ConsumptionConnectorServiceOptions extends BaseConnectorServiceOptions {
   workflowReferenceId: string;
@@ -25,12 +25,15 @@ export class ConsumptionConnectorService extends BaseConnectorService {
     managedIdentityProperties?: ManagedIdentityRequestProperties
   ): Promise<any> {
     const { baseUrl, apiVersion, workflowReferenceId } = this.options;
-    return this._executeAzureDynamicApi(
+
+    const result = await this._executeAzureDynamicApi(
       pathCombine(baseUrl, connectionId),
       apiVersion,
       parameters,
       managedIdentityProperties ? { workflowReference: { id: workflowReferenceId } } : undefined
     );
+
+    return unwrapPaginatedResponse(result);
   }
 
   async getListDynamicValues(

@@ -4,7 +4,7 @@ import { validateRequiredServiceArguments } from '../../../utils/src/lib/helpers
 import type { BaseConnectorServiceOptions } from '../base';
 import { BaseConnectorService } from '../base';
 import type { ListDynamicValue, ManagedIdentityRequestProperties, TreeDynamicExtension, TreeDynamicValue } from '../connector';
-import { pathCombine } from '../helpers';
+import { pathCombine, unwrapPaginatedResponse } from '../helpers';
 import { getHybridAppBaseRelativeUrl, hybridApiVersion, isHybridLogicApp } from './hybrid';
 
 type GetConfigurationFunction = (connectionId: string) => Promise<Record<string, any>>;
@@ -33,13 +33,16 @@ export class StandardConnectorService extends BaseConnectorService {
     const { baseUrl, apiHubServiceDetails } = this.options;
     let dynamicUrl: string;
     let apiVersion = this.options.apiVersion;
+
     if (isArmResourceId(connectorId)) {
       dynamicUrl = managedIdentityProperties ? baseUrl : pathCombine(apiHubServiceDetails?.baseUrl as string, connectionId);
       apiVersion = managedIdentityProperties ? apiVersion : (apiHubServiceDetails?.apiVersion as string);
     } else {
       dynamicUrl = baseUrl;
     }
-    return this._executeAzureDynamicApi(dynamicUrl, apiVersion, parameters, managedIdentityProperties);
+
+    const result = await this._executeAzureDynamicApi(dynamicUrl, apiVersion, parameters, managedIdentityProperties);
+    return unwrapPaginatedResponse(result);
   }
 
   async getListDynamicValues(
