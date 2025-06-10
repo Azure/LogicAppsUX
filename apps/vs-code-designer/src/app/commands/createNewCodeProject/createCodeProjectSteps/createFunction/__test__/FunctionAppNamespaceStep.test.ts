@@ -76,7 +76,9 @@ describe('FunctionAppNamespaceStep', () => {
 
     it('returns error when namespace does not pass regex validation', async () => {
       const result = await callValidateNamespace(invalidFunctionAppNamespace);
-      expect(result).toBe('The namespace must start with a letter and can only contain letters, digits, or underscores ("_").');
+      expect(result).toBe(
+        'The namespace must start with a letter or underscore, contain only letters, digits, underscores, and periods, and must not end with a period.'
+      );
     });
 
     it('returns undefined for valid namespace', async () => {
