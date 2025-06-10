@@ -2,44 +2,6 @@
 
 exports[`ui/workflowparameters/workflowparameter > should construct. 1`] = `
 <div
-  className="msla-workflow-parameter"
->
-  <div>
-    <div>
-      <Button
-        appearance="subtle"
-        aria-expanded={false}
-        className="msla-workflow-parameter-heading-button"
-        data-automation-id="-parameter-heading-button"
-        data-testid="-parameter-heading-button"
-        icon={<CompoundIcon />}
-        id="id"
-        onClick={[Function]}
-      >
-        New parameter
-      </Button>
-    </div>
-  </div>
-  <div
-    className="msla-workflow-parameter-edit-or-delete-button"
-  >
-    <EditOrDeleteButton
-      definition={
-        {
-          "id": "id",
-          "name": "",
-          "type": "Array",
-        }
-      }
-      setExpanded={[Function]}
-      setIsEditable={[Function]}
-    />
-  </div>
-</div>
-`;
-
-exports[`ui/workflowparameters/workflowparameter > should construct. 2`] = `
-<div
   className="___mfvq190_0000000 f22iagw f1vx9l62 f7e3wsx fsycz46"
 >
   <div
@@ -49,8 +11,8 @@ exports[`ui/workflowparameters/workflowparameter > should construct. 2`] = `
       appearance="subtle"
       aria-expanded={false}
       className="___r7kt3y0_0000000 fqerorx"
-      data-automation-id="-parameter-heading-button"
-      data-testid="-parameter-heading-button"
+      data-automation-id="id-parameter-heading-button"
+      data-testid="id-parameter-heading-button"
       icon={<CompoundIcon />}
       id="id"
       onClick={[Function]}
