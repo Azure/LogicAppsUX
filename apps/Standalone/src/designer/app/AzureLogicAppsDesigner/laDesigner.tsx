@@ -652,6 +652,7 @@ const getDesignerServices = (
     siteResourceId,
     httpClient,
     workflowName,
+    isHybrid,
   });
   const artifactService = new ArtifactService({
     ...armServiceParams,

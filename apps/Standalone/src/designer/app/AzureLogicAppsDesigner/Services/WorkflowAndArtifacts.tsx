@@ -250,7 +250,7 @@ export const listCallbackUrl = async (
         Authorization: `Bearer ${environment.armToken}`,
       };
       if (HybridAppUtility.isHybridLogicApp(workflowId)) {
-        callbackInfo = HybridAppUtility.postProxy(`${baseUrl}${workflowId}/triggers/${triggerName}/listCallbackUrl`, null, authToken);
+        callbackInfo = await HybridAppUtility.postProxy(`${baseUrl}${workflowId}/triggers/${triggerName}/listCallbackUrl`, null, authToken);
       } else {
         const result = await axios.post(
           `${baseUrl}${workflowId}/triggers/${triggerName}/listCallbackUrl?api-version=${
