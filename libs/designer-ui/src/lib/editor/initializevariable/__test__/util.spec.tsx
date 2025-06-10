@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { OperationInfo, ParameterInfo } from '@microsoft/logic-apps-shared';
 import {
   createVariableEditorSegments,
@@ -146,5 +146,210 @@ describe('isInitializeVariableParameter', () => {
   it('should return false for other editors', () => {
     const operationInfo = { connectorId: 'connectionProviders/otherConnectorId', operationId: 'otherOperation' } as OperationInfo;
     expect(isInitializeVariableOperation(operationInfo)).toBe(false);
+  });
+});
+
+// Mock constants for testing
+const constants = {
+  SWAGGER: {
+    TYPE: {
+      STRING: 'string',
+      NUMBER: 'number',
+      BOOLEAN: 'boolean',
+      OBJECT: 'object',
+    },
+  },
+};
+
+// Mock ValueSegment interface
+interface ValueSegment {
+  token?: {
+    type: string;
+  };
+}
+
+const wrapUnquotedTokens = (value: string, nodeMap?: Map<string, ValueSegment>): string => {
+  // Find property values that contain only tokens (one or more @{...} tokens with no other text)
+  // This regex matches: property_name: followed by only tokens and whitespace
+  // Updated to handle optional whitespace around the colon
+  const propertyWithOnlyTokensRegex = /"[^"]*"\s*:\s*(@\{[^}]*\}(?:\s*@\{[^}]*\})*)\s*(?=[,}])/g;
+
+  return value.replace(propertyWithOnlyTokensRegex, (match, tokensPart) => {
+    // Check if this is a single token
+    const singleTokenMatch = tokensPart.match(/^@\{([^}]*)\}$/);
+
+    if (singleTokenMatch) {
+      // Single token case - check if we should use non-string interpolation
+      const fullTokenKey = tokensPart.trim(); // Use the full matched token, trimmed
+      const tokenKey = singleTokenMatch[1]; // Inner content for @ syntax
+      const tokenSegment = nodeMap?.get(fullTokenKey);
+
+      if (tokenSegment && tokenSegment.token?.type !== constants.SWAGGER.TYPE.STRING) {
+        // Use @ syntax for non-string tokens
+        return match.replace(tokensPart, `"@${tokenKey}"`);
+      }
+    }
+
+    // Multiple tokens or string token - wrap in quotes
+    return match.replace(tokensPart, `"${tokensPart}"`);
+  });
+};
+
+describe('wrapUnquotedTokens', () => {
+  let nodeMap: Map<string, ValueSegment>;
+
+  beforeEach(() => {
+    nodeMap = new Map();
+  });
+
+  describe('without nodeMap', () => {
+    it('should wrap single token in quotes when no nodeMap provided', () => {
+      const input = '{"test": @{variables(\'value\')}}';
+      const expected = '{"test": "@{variables(\'value\')}"}';
+      expect(wrapUnquotedTokens(input)).toBe(expected);
+    });
+
+    it('should wrap multiple tokens in quotes', () => {
+      const input = '{"test": @{var1}@{var2}}';
+      const expected = '{"test": "@{var1}@{var2}"}';
+      expect(wrapUnquotedTokens(input)).toBe(expected);
+    });
+
+    it('should handle multiple properties', () => {
+      const input = '{"prop1": @{token1}, "prop2": @{token2}}';
+      const expected = '{"prop1": "@{token1}", "prop2": "@{token2}"}';
+      expect(wrapUnquotedTokens(input)).toBe(expected);
+    });
+
+    it('should handle whitespace around colons', () => {
+      const input = '{"test" : @{variables(\'value\')}}';
+      const expected = '{"test" : "@{variables(\'value\')}"}';
+      expect(wrapUnquotedTokens(input)).toBe(expected);
+    });
+
+    it('should not modify already quoted tokens', () => {
+      const input = '{"test": "@{variables(\'value\')}"}';
+      const expected = '{"test": "@{variables(\'value\')}"}';
+      expect(wrapUnquotedTokens(input)).toBe(expected);
+    });
+
+    it('should not modify non-token values', () => {
+      const input = '{"test": "regular string"}';
+      const expected = '{"test": "regular string"}';
+      expect(wrapUnquotedTokens(input)).toBe(expected);
+    });
+
+    it('should not modify mixed token and text', () => {
+      const input = '{"test": @{token}extra}';
+      const expected = '{"test": @{token}extra}';
+      expect(wrapUnquotedTokens(input)).toBe(expected);
+    });
+  });
+
+  describe('with nodeMap and string tokens', () => {
+    beforeEach(() => {
+      nodeMap.set("@{variables('stringVar')}", {
+        token: { type: constants.SWAGGER.TYPE.STRING },
+      });
+    });
+
+    it('should wrap string tokens in quotes', () => {
+      const input = '{"test": @{variables(\'stringVar\')}}';
+      const expected = '{"test": "@{variables(\'stringVar\')}"}';
+      expect(wrapUnquotedTokens(input, nodeMap)).toBe(expected);
+    });
+  });
+
+  describe('with nodeMap and non-string tokens', () => {
+    beforeEach(() => {
+      nodeMap.set("@{variables('numberVar')}", {
+        token: { type: constants.SWAGGER.TYPE.NUMBER },
+      });
+      nodeMap.set("@{variables('boolVar')}", {
+        token: { type: constants.SWAGGER.TYPE.BOOLEAN },
+      });
+      nodeMap.set("@{variables('objVar')}", {
+        token: { type: constants.SWAGGER.TYPE.OBJECT },
+      });
+    });
+
+    it('should use @ syntax for number tokens', () => {
+      const input = '{"count": @{variables(\'numberVar\')}}';
+      const expected = '{"count": "@variables(\'numberVar\')"}';
+      expect(wrapUnquotedTokens(input, nodeMap)).toBe(expected);
+    });
+
+    it('should use @ syntax for boolean tokens', () => {
+      const input = '{"enabled": @{variables(\'boolVar\')}}';
+      const expected = '{"enabled": "@variables(\'boolVar\')"}';
+      expect(wrapUnquotedTokens(input, nodeMap)).toBe(expected);
+    });
+
+    it('should use @ syntax for object tokens', () => {
+      const input = '{"data": @{variables(\'objVar\')}}';
+      const expected = '{"data": "@variables(\'objVar\')"}';
+      expect(wrapUnquotedTokens(input, nodeMap)).toBe(expected);
+    });
+
+    it('should handle multiple properties with different token types', () => {
+      nodeMap.set('@{stringToken}', {
+        token: { type: constants.SWAGGER.TYPE.STRING },
+      });
+
+      const input = '{"str": @{stringToken}, "num": @{variables(\'numberVar\')}}';
+      const expected = '{"str": "@{stringToken}", "num": "@variables(\'numberVar\')"}';
+      expect(wrapUnquotedTokens(input, nodeMap)).toBe(expected);
+    });
+  });
+
+  describe('edge cases', () => {
+    it('should handle tokens not in nodeMap', () => {
+      const input = '{"test": @{unknownToken}}';
+      const expected = '{"test": "@{unknownToken}"}';
+      expect(wrapUnquotedTokens(input, nodeMap)).toBe(expected);
+    });
+
+    it('should handle empty nodeMap', () => {
+      const input = '{"test": @{token}}';
+      const expected = '{"test": "@{token}"}';
+      expect(wrapUnquotedTokens(input, new Map())).toBe(expected);
+    });
+
+    it('should handle multiple tokens with mixed types', () => {
+      nodeMap.set('@{token1}', {
+        token: { type: constants.SWAGGER.TYPE.STRING },
+      });
+      nodeMap.set('@{token2}', {
+        token: { type: constants.SWAGGER.TYPE.NUMBER },
+      });
+
+      const input = '{"test": @{token1}@{token2}}';
+      const expected = '{"test": "@{token1}@{token2}"}';
+      expect(wrapUnquotedTokens(input, nodeMap)).toBe(expected);
+    });
+
+    it('should handle whitespace in tokens', () => {
+      const input = '{"test": @{variables(\'value\')}}';
+      const expected = '{"test": "@{variables(\'value\')}"}';
+      expect(wrapUnquotedTokens(input)).toBe(expected);
+    });
+
+    it('should handle complex property names', () => {
+      const input = '{"complex-prop_name": @{token}}';
+      const expected = '{"complex-prop_name": "@{token}"}';
+      expect(wrapUnquotedTokens(input)).toBe(expected);
+    });
+
+    it('should handle nested objects structure', () => {
+      const input = '{"outer": {"inner": @{token}}}';
+      const expected = '{"outer": {"inner": "@{token}"}}';
+      expect(wrapUnquotedTokens(input)).toBe(expected);
+    });
+
+    it('should not modify strings that do not match the pattern', () => {
+      const input = 'not a json object';
+      const expected = 'not a json object';
+      expect(wrapUnquotedTokens(input)).toBe(expected);
+    });
   });
 });
