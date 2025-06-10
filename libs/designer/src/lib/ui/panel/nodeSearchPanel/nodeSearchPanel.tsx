@@ -35,8 +35,11 @@ const NodeSearchCard = ({ node }: { node: string }) => {
         showImage={true}
         onClick={(_: string) => {
           dispatch(collapseGraphsToShowNode(node));
-          dispatch(setFocusNode(node));
           dispatch(changePanelNode(node));
+          // Delay focus to allow graph expansion to complete
+          setTimeout(() => {
+            dispatch(setFocusNode(node));
+          }, 100);
         }}
       />
     </div>
