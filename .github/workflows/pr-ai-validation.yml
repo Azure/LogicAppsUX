@@ -1,8 +1,9 @@
 name: PR AI Validation
 
 on:
-  pull_request:
+  pull_request_target:
     types: [opened, edited, synchronize]
+  workflow_dispatch:
 
 permissions:
   pull-requests: write
@@ -12,6 +13,28 @@ jobs:
   validate-pr:
     runs-on: ubuntu-latest
     steps:
+      - name: Check if contributor is trusted
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const authorAssociation = context.payload.pull_request.author_association;
+            const trustedAssociations = ['COLLABORATOR', 'MEMBER', 'OWNER', 'CONTRIBUTOR'];
+            
+            if (trustedAssociations.includes(authorAssociation)) {
+              console.log(`Trusted contributor (${authorAssociation}), proceeding with validation...`);
+            } else {
+              console.log(`External contributor (${authorAssociation}) - validation requires manual approval`);
+              
+              // Create a comment to inform about the restriction
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.payload.pull_request.number,
+                body: `## 🔒 AI Validation Pending\n\nThis PR is from an external contributor. AI validation will be performed after manual review by a maintainer.\n\nMaintainers: Re-run this workflow after reviewing the changes if you want to enable AI validation.`
+              });
+              
+              core.setFailed('External contributor - requires manual approval before AI validation');
+            }
       - name: Validate PR with AI Agent
         uses: actions/github-script@v7
         env:
