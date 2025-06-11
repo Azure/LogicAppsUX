@@ -306,9 +306,5 @@ export const CLIENT_CERTIFICATE_CONSTANTS = {
 export function connectorContainsAllClientCertificateConnectionParameters(
   connectionParameters: Record<string, ConnectionParameter>
 ): boolean {
-  return hasProperty(
-    connectionParameters,
-
-    CLIENT_CERTIFICATE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_CLIENT_CERTIFICATE_SECRET
-  );
+  return hasProperty(connectionParameters, CLIENT_CERTIFICATE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_CLIENT_CERTIFICATE_SECRET);
 }
