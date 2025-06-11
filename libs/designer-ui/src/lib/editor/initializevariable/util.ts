@@ -381,7 +381,7 @@ const validateObjectType = (
   if (isTokenValueSegment(segmentValue)) {
     const type = segmentValue[0]?.token?.type;
 
-    if (!type || type === constants.SWAGGER.TYPE.OBJECT) {
+    if (!type || type === constants.SWAGGER.TYPE.OBJECT || type === constants.SWAGGER.TYPE.ANY) {
       return; // Either no type to check, or valid object type
     }
   }
@@ -429,7 +429,7 @@ const validateArrayType = (
   if (isTokenValueSegment(segmentValue)) {
     const type = segmentValue[0]?.token?.type;
 
-    if (!type || type === constants.SWAGGER.TYPE.ARRAY) {
+    if (!type || type === constants.SWAGGER.TYPE.ARRAY || type === constants.SWAGGER.TYPE.ANY) {
       return; // Either no type to check, or valid array type
     }
   }
