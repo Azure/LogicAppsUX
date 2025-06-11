@@ -17,6 +17,7 @@ import { convertStringToSegments } from '../base/utils/editorToSegment';
 import constants, { VARIABLE_TYPE } from '../../constants';
 import { VARIABLE_PROPERTIES, type InitializeVariableErrors } from './variableEditor';
 import type { loadParameterValueFromStringHandler } from '../base';
+import type { IntlShape } from 'react-intl';
 
 export const getParameterValue = (
   rawValue: string,
@@ -38,7 +39,7 @@ export const getParameterValue = (
       const token = segment.token;
 
       // If not an FX token, attempt to resolve from nodeMap
-      if (token.type !== TokenType.FX && segment.value) {
+      if (token.tokenType !== TokenType.FX && segment.value) {
         const resolvedSegment = nodeMap.get(wrapTokenValue(segment.value));
         return resolvedSegment ?? segment;
       }
@@ -49,10 +50,11 @@ export const getParameterValue = (
 };
 
 export const wrapStringifiedTokenSegments = (jsonString: string): string => {
-  const tokenRegex = /:\s?("@\{.*?\}")|:\s?(@\{.*?\})/gs;
+  // Making this so that it doesn't match with {} within the token
+  const tokenRegex = /:\s?("@\{(?:[^{}]|\{[^}]*\})*\}")|:\s?(@\{(?:[^{}]|\{[^}]*\})*\})/gs;
 
   // Normalize newlines and carriage returns inside tokens
-  const normalized = jsonString.replace(/@{[^}]*}/gs, (match) => match.replace(/\n/g, '\\n').replace(/\r/g, '\\r'));
+  const normalized = jsonString.replace(/@\{(?:[^{}]|\{[^}]*\})*\}/gs, (match) => match.replace(/\n/g, '\\n').replace(/\r/g, '\\r'));
 
   return normalized.replace(tokenRegex, (match, quotedToken, unquotedToken) => {
     const token = quotedToken ?? unquotedToken;
@@ -166,6 +168,33 @@ export const parseSchemaAsVariableEditorSegments = (
   }
 };
 
+const wrapUnquotedTokens = (value: string, nodeMap?: Map<string, ValueSegment>): string => {
+  // Find property values that contain only tokens (one or more @{...} tokens with no other text)
+  // This regex matches: property_name: followed by only tokens and whitespace
+  // Updated to handle optional whitespace around the colon
+  const propertyWithOnlyTokensRegex = /"[^"]*"\s*:\s*(@\{[^}]*\}(?:\s*@\{[^}]*\})*)\s*(?=[,}])/g;
+
+  return value.replace(propertyWithOnlyTokensRegex, (match, tokensPart) => {
+    // Check if this is a single token
+    const singleTokenMatch = tokensPart.match(/^@\{([^}]*)\}$/);
+
+    if (singleTokenMatch) {
+      // Single token case - check if we should use non-string interpolation
+      const fullTokenKey = tokensPart.trim(); // Use the full matched token, trimmed
+      const tokenKey = singleTokenMatch[1]; // Inner content for @ syntax
+      const tokenSegment = nodeMap?.get(fullTokenKey);
+
+      if (tokenSegment && tokenSegment.token?.type !== constants.SWAGGER.TYPE.STRING) {
+        // Use @ syntax for non-string tokens
+        return match.replace(tokensPart, `"@${tokenKey}"`);
+      }
+    }
+
+    // Multiple tokens or string token - wrap in quotes
+    return match.replace(tokensPart, `"${tokensPart}"`);
+  });
+};
+
 export const createVariableEditorSegments = (variables: InitializeVariableProps[] | undefined): ValueSegment[] => {
   if (!variables || variables.length === 0) {
     return [createEmptyLiteralValueSegment()];
@@ -177,10 +206,16 @@ export const createVariableEditorSegments = (variables: InitializeVariableProps[
     const name = convertSegmentsToString(variable.name);
     const type = convertSegmentsToString(variable.type);
     const isStringType = type === VARIABLE_TYPE.STRING;
+    const isObjectType = type === VARIABLE_TYPE.OBJECT;
 
     const valueSegments = variable.value;
     const isTokenSegment = isTokenValueSegment(valueSegments);
     let value = convertSegmentsToString(valueSegments, nodeMap);
+
+    // Apply token wrapping for object types before parsing
+    if (isObjectType && !isTokenSegment) {
+      value = wrapUnquotedTokens(value, nodeMap);
+    }
 
     try {
       if (!isStringType && !isTokenSegment) {
@@ -275,100 +310,148 @@ export const validateVariables = (variables: InitializeVariableProps[]): Initial
       );
     };
 
+    const getInvalidValueMessage = (expectedType: string) => {
+      return intl.formatMessage(
+        {
+          defaultMessage: "''Value'' must be a valid {expectedType}",
+          id: '6ZzRu4',
+          description:
+            'Error validation message for type. Do not remove the double single quotes around the display name, as it is needed to wrap the placeholder text.',
+        },
+        { expectedType }
+      );
+    };
+
     if (!name) {
       errors[index][VARIABLE_PROPERTIES.NAME] = getMissingPropertyMessage(VARIABLE_PROPERTIES.NAME);
     }
     if (!type) {
       errors[index][VARIABLE_PROPERTIES.TYPE] = getMissingPropertyMessage(VARIABLE_PROPERTIES.TYPE);
     }
+
     const isExpression = isTemplateExpression(value);
-    if (!isExpression && value !== '') {
-      switch (type) {
-        case VARIABLE_TYPE.BOOLEAN:
-          if (!(equals(value, 'true') || equals(value, 'false'))) {
-            errors[index][VARIABLE_PROPERTIES.VALUE] = intl.formatMessage({
-              defaultMessage: `''Value'' must be a valid boolean`,
-              id: 'Aw8LkK',
-              description:
-                'Error validation message for invalid booleans. Do not remove the double single quotes around the display name, as it is needed to wrap the placeholder text.',
-            });
-          }
-          break;
-        case VARIABLE_TYPE.INTEGER:
-          if (!/^-?\d+$/.test(value)) {
-            errors[index][VARIABLE_PROPERTIES.VALUE] = intl.formatMessage({
-              defaultMessage: `''Value'' must be a valid integer`,
-              id: 'BWIM2x',
-              description:
-                'Error validation message for invalid integer. Do not remove the double single quotes around the display name, as it is needed to wrap the placeholder text.',
-            });
-          }
-          break;
-        case VARIABLE_TYPE.FLOAT:
-          if (!/^-?\d+(\.\d+)?$/.test(value)) {
-            errors[index][VARIABLE_PROPERTIES.VALUE] = intl.formatMessage({
-              defaultMessage: `''Value'' must be a valid float`,
-              id: '9kMtmY',
-              description:
-                'Error validation message for invalid float. Do not remove the double single quotes around the display name, as it is needed to wrap the placeholder text.',
-            });
-          }
-          break;
-        case VARIABLE_TYPE.OBJECT:
-          try {
-            JSON.parse(value);
-          } catch (e) {
-            // logger warning only to check if overvalidating
-            LoggerService().log({
-              level: LogEntryLevel.Warning,
-              area: 'Variable Editor',
-              message: 'Failed to parse variable value as JSON object',
-              args: [
-                {
-                  error: e,
-                },
-              ],
-            });
-            errors[index][VARIABLE_PROPERTIES.VALUE] = intl.formatMessage({
-              defaultMessage: `''Value'' must be a valid JSON object`,
-              id: 's2ydQX',
-              description:
-                'Error validation message for invalid JSON object. Do not remove the double single quotes around the display name, as it is needed to wrap the placeholder text.',
-            });
-          }
-          break;
-        case VARIABLE_TYPE.ARRAY:
-          try {
-            if (!Array.isArray(JSON.parse(value))) {
-              throw new Error();
-            }
-          } catch (e) {
-            // logger warning only to check if overvalidating
-            LoggerService().log({
-              level: LogEntryLevel.Warning,
-              area: 'Variable Editor',
-              message: 'Failed to parse variable value as JSON array',
-              args: [
-                {
-                  error: e,
-                },
-              ],
-            });
-            errors[index][VARIABLE_PROPERTIES.VALUE] = intl.formatMessage({
-              defaultMessage: `''Value'' must be a valid JSON array`,
-              id: 'cMvmv5',
-              description:
-                'Error validation message for invalid JSON array. Do not remove the double single quotes around the display name, as it is needed to wrap the placeholder text.',
-            });
-          }
-          break;
-        default:
-          break;
-      }
+    const shouldValidateValue = (!isExpression || type === VARIABLE_TYPE.OBJECT || type === VARIABLE_TYPE.ARRAY) && value !== '';
+
+    if (!shouldValidateValue) {
+      return;
+    }
+
+    switch (type) {
+      case VARIABLE_TYPE.BOOLEAN:
+        if (!equals(value, 'true') && !equals(value, 'false')) {
+          errors[index][VARIABLE_PROPERTIES.VALUE] = getInvalidValueMessage('boolean');
+        }
+        break;
+
+      case VARIABLE_TYPE.INTEGER:
+        if (!/^-?\d+$/.test(value)) {
+          errors[index][VARIABLE_PROPERTIES.VALUE] = getInvalidValueMessage('integer');
+        }
+        break;
+
+      case VARIABLE_TYPE.FLOAT:
+        if (!/^-?\d+(\.\d+)?$/.test(value)) {
+          errors[index][VARIABLE_PROPERTIES.VALUE] = getInvalidValueMessage('float');
+        }
+        break;
+
+      case VARIABLE_TYPE.OBJECT:
+        validateObjectType(value, index, errors, intl, variable.value);
+        break;
+
+      case VARIABLE_TYPE.ARRAY:
+        validateArrayType(value, index, errors, intl, variable.value);
+        break;
+
+      default:
+        break;
     }
   });
 
   return errors;
+};
+
+const validateObjectType = (
+  value: string,
+  index: number,
+  errors: InitializeVariableErrors[],
+  intl: IntlShape,
+  segmentValue: ValueSegment[]
+) => {
+  if (isTokenValueSegment(segmentValue)) {
+    const type = segmentValue[0]?.token?.type;
+
+    if (!type || type === constants.SWAGGER.TYPE.OBJECT || type === constants.SWAGGER.TYPE.ANY) {
+      return; // Either no type to check, or valid object type
+    }
+  }
+
+  const trimmedValue = value.trim();
+
+  // Must be wrapped in braces
+  if (!trimmedValue.startsWith('{') || !trimmedValue.endsWith('}')) {
+    errors[index][VARIABLE_PROPERTIES.VALUE] = intl.formatMessage({
+      defaultMessage: `''Value'' must be a valid JSON object`,
+      id: 's2ydQX',
+      description:
+        'Error validation message for invalid JSON object. Do not remove the double single quotes around the display name, as it is needed to wrap the placeholder text.',
+    });
+    return;
+  }
+
+  // Must be valid JSON
+  try {
+    const wrappedValue = wrapUnquotedTokens(trimmedValue);
+    JSON.parse(wrappedValue);
+  } catch (e) {
+    LoggerService().log({
+      level: LogEntryLevel.Warning,
+      area: 'Variable Editor',
+      message: 'Failed to parse variable value as JSON object',
+      args: [{ error: e }],
+    });
+    errors[index][VARIABLE_PROPERTIES.VALUE] = intl.formatMessage({
+      defaultMessage: `''Value'' must be a valid JSON object`,
+      id: 's2ydQX',
+      description:
+        'Error validation message for invalid JSON object. Do not remove the double single quotes around the display name, as it is needed to wrap the placeholder text.',
+    });
+  }
+};
+
+const validateArrayType = (
+  value: string,
+  index: number,
+  errors: InitializeVariableErrors[],
+  intl: IntlShape,
+  segmentValue: ValueSegment[]
+) => {
+  if (isTokenValueSegment(segmentValue)) {
+    const type = segmentValue[0]?.token?.type;
+
+    if (!type || type === constants.SWAGGER.TYPE.ARRAY || type === constants.SWAGGER.TYPE.ANY) {
+      return; // Either no type to check, or valid array type
+    }
+  }
+  try {
+    const parsed = JSON.parse(value);
+    if (!Array.isArray(parsed)) {
+      throw new Error('Not an array');
+    }
+  } catch (e) {
+    LoggerService().log({
+      level: LogEntryLevel.Warning,
+      area: 'Variable Editor',
+      message: 'Failed to parse variable value as JSON array',
+      args: [{ error: e }],
+    });
+    errors[index][VARIABLE_PROPERTIES.VALUE] = intl.formatMessage({
+      defaultMessage: `''Value'' must be a valid JSON array`,
+      id: 'cMvmv5',
+      description:
+        'Error validation message for invalid JSON array. Do not remove the double single quotes around the display name, as it is needed to wrap the placeholder text.',
+    });
+  }
 };
 
 export const isInitializeVariableOperation = (operationInfo: OperationInfo): boolean => {
