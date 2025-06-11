@@ -282,6 +282,11 @@
         "category": "Azure Logic Apps"
       },
       {
+        "command": "azureLogicAppsStandard.syncCloudSettings",
+        "title": "Sync with local settings",
+        "category": "Azure Logic Apps"
+      },
+      {
         "command": "azureLogicAppsStandard.configureWebhookRedirectEndpoint",
         "title": "Configure webhook redirect endpoint",
         "category": "Azure Logic Apps"
@@ -709,6 +714,11 @@
           "command": "azureLogicAppsStandard.useSQLStorage",
           "when": "explorerResourceIsRoot == true",
           "group": "zzz_LogicApptools@3"
+        },
+        {
+          "command": "azureLogicAppsStandard.syncCloudSettings",
+          "when": "resourceFilename==cloud.settings.json",
+          "group": "zzz_appSettings@3"
         },
         {
           "command": "azureLogicAppsStandard.configureWebhookRedirectEndpoint",
