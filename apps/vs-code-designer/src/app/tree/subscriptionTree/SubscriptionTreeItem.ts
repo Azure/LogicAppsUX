@@ -33,8 +33,7 @@ import { isProjectCV, isRemoteProjectCV } from '../../utils/tree/projectContextV
 import { getFunctionsWorkerRuntime, getWorkspaceSetting, getWorkspaceSettingFromAnyFolder } from '../../utils/vsCodeConfig/settings';
 import { LogicAppResourceTree } from '../LogicAppResourceTree';
 import { SlotTreeItem } from '../slotsTree/SlotTreeItem';
-import type { GeoRegion, Site, WebSiteManagementClient } from '@azure/arm-appservice';
-import { createPipelineRequest } from '@azure/core-rest-pipeline';
+import type { Site, WebSiteManagementClient } from '@azure/arm-appservice';
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import {
   AppInsightsCreateStep,
@@ -44,6 +43,7 @@ import {
   ParsedSite,
   SiteNameStep,
   WebsiteOS,
+  getWebLocations,
 } from '@microsoft/vscode-azext-azureappservice';
 import type { IAppServiceWizardContext, SiteClient } from '@microsoft/vscode-azext-azureappservice';
 import type { INewStorageAccountDefaults } from '@microsoft/vscode-azext-azureutils';
@@ -58,7 +58,6 @@ import {
   uiUtils,
   VerifyProvidersStep,
   storageAccountNamingRules,
-  createGenericClient,
 } from '@microsoft/vscode-azext-azureutils';
 import type { AzExtTreeItem, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext } from '@microsoft/vscode-azext-utils';
 import { nonNullProp, parseError, AzureWizard } from '@microsoft/vscode-azext-utils';
@@ -137,25 +136,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
 
     promptSteps.push(new SiteNameStep());
 
-    let newPlanSku = undefined;
-    if (wizardContext.newPlanSku && wizardContext.newPlanSku.tier) {
-      newPlanSku = wizardContext.newPlanSku.tier.replace(/\s/g, '');
-    }
-
-    const genericClient = await createGenericClient(wizardContext, wizardContext);
-    const result = await genericClient.sendRequest(
-      createPipelineRequest({
-        method: 'GET',
-        url: `/subscriptions/${wizardContext.subscriptionId}/providers/Microsoft.Web/geoRegions?api-version=2024-04-01${newPlanSku ?? '&sku=ElasticPremium'}`,
-      }) as any
-    );
-
-    type GeoRegionJsonResponse = {
-      value: GeoRegion[];
-    };
-
-    const locations = (result.parsedBody as GeoRegionJsonResponse).value.map((l: GeoRegion) => nonNullProp(l, 'name'));
-
+    const locations = await getWebLocations({ ...wizardContext, newPlanSku: wizardContext.newPlanSku ?? { tier: 'ElasticPremium' } });
     CustomLocationListStep.setLocationSubset(wizardContext, Promise.resolve(locations), 'microsoft.resources');
     CustomLocationListStep.addStep(context as any, promptSteps);
     promptSteps.push(new LogicAppHostingPlanStep());

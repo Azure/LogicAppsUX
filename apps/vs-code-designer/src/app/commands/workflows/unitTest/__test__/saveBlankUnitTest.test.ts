@@ -12,6 +12,7 @@ import * as syncCloudSettings from '../../../syncCloudSettings';
 import * as azextUtils from '@microsoft/vscode-azext-utils';
 import { ext } from '../../../../../extensionVariables';
 import * as ConvertWorkspace from '../../../../commands/createNewCodeProject/CodeProjectBase/ConvertToWorkspace';
+import * as syncCloudSettings from '../../../syncCloudSettings';
 
 vi.mock('../../../../../extensionVariables', () => ({
   ext: {

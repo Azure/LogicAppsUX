@@ -73,7 +73,7 @@
         }
       },
       {
-        "command": "azureLogicAppsStandard.createCodeless",
+        "command": "azureLogicAppsStandard.createWorkflow",
         "title": "Create workflow...",
         "category": "Azure Logic Apps",
         "icon": {
@@ -399,7 +399,7 @@
           "group": "1_create@2"
         },
         {
-          "command": "azureLogicAppsStandard.createCodeless",
+          "command": "azureLogicAppsStandard.createWorkflow",
           "group": "1_create@3"
         },
         {
@@ -671,7 +671,7 @@
           "group": "zzz_LogicApptools@1"
         },
         {
-          "command": "azureLogicAppsStandard.createCodeless",
+          "command": "azureLogicAppsStandard.createWorkflow",
           "when": "explorerResourceIsRoot == true",
           "group": "zzz_LogicApptools@1"
         },
@@ -1022,7 +1022,7 @@
     "onCommand:azureLogicAppsStandard.viewContent",
     "onCommand:azureLogicAppsStandard.createNewProject",
     "onCommand:azureLogicAppsStandard.createNewWorkspace",
-    "onCommand:azureLogicAppsStandard.createCodeless",
+    "onCommand:azureLogicAppsStandard.createWorkflow",
     "onCommand:azureLogicAppsStandard.deploy",
     "onCommand:azureLogicAppsStandard.generateDeploymentScripts",
     "onCommand:azureLogicAppsStandard.deploySlot",
