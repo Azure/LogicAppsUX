@@ -9,6 +9,7 @@ import * as path from 'path';
 // File names
 export const hostFileName = 'host.json';
 export const localSettingsFileName = 'local.settings.json';
+export const cloudSettingsFileName = 'cloud.settings.json';
 export const connectionsFileName = 'connections.json';
 export const parametersFileName = 'parameters.json';
 export const gitignoreFileName = '.gitignore';
@@ -173,6 +174,7 @@ export const extensionCommand = {
   disconnectRepo: 'azureLogicAppsStandard.disconnectRepo',
   viewCommitInGitHub: 'azureLogicAppsStandard.viewCommitInGitHub',
   enableAzureConnectors: 'azureLogicAppsStandard.enableAzureConnectors',
+  syncCloudSettings: 'azureLogicAppsStandard.syncCloudSettings',
   configureWebhookRedirectEndpoint: 'azureLogicAppsStandard.configureWebhookRedirectEndpoint',
   initProjectForVSCode: 'azureLogicAppsStandard.initProjectForVSCode',
   configureDeploymentSource: 'azureLogicAppsStandard.configureDeploymentSource',
