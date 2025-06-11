@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [5.109.13](https://github.com/Azure/LogicAppsUX/compare/v5.109.12...v5.109.13) (2025-06-11)
+
+
+### Features
+
+* **vscode:** ZIP deployment steps for hybrid ([#7438](https://github.com/Azure/LogicAppsUX/issues/7438)) ([#7503](https://github.com/Azure/LogicAppsUX/issues/7503)) ([f1eefb9](https://github.com/Azure/LogicAppsUX/commit/f1eefb96d547598324f9251f608a9e2430d81c11))
+
 ### [5.109.12](https://github.com/Azure/LogicAppsUX/compare/v5.109.11...v5.109.12) (2025-06-10)
 
 
