@@ -206,6 +206,11 @@
           flex: 1;
           padding: 15px;
           overflow-y: auto;
+          
+          &[tabindex="0"]:focus {
+            outline: 2px solid @panel-mode-panel-border-color-dark;
+            outline-offset: -2px;
+          }
         }
       }
 
