@@ -3,7 +3,6 @@ import {
   capitalizeFirstLetter,
   equals,
   getIntl,
-  isNullOrEmpty,
   isTemplateExpression,
   LogEntryLevel,
   LoggerService,
@@ -18,6 +17,7 @@ import { convertStringToSegments } from '../base/utils/editorToSegment';
 import constants, { VARIABLE_TYPE } from '../../constants';
 import { VARIABLE_PROPERTIES, type InitializeVariableErrors } from './variableEditor';
 import type { loadParameterValueFromStringHandler } from '../base';
+import type { IntlShape } from 'react-intl';
 
 export const getParameterValue = (
   rawValue: string,
@@ -356,11 +356,11 @@ export const validateVariables = (variables: InitializeVariableProps[]): Initial
         break;
 
       case VARIABLE_TYPE.OBJECT:
-        validateObjectType(value, index, errors, intl);
+        validateObjectType(value, index, errors, intl, variable.value);
         break;
 
       case VARIABLE_TYPE.ARRAY:
-        validateArrayType(value, index, errors, intl);
+        validateArrayType(value, index, errors, intl, variable.value);
         break;
 
       default:
@@ -371,9 +371,19 @@ export const validateVariables = (variables: InitializeVariableProps[]): Initial
   return errors;
 };
 
-const validateObjectType = (value: string, index: number, errors: InitializeVariableErrors[], intl: any) => {
-  if (isSingleNonStringExpression(value)) {
-    return; // Template expressions are valid for objects
+const validateObjectType = (
+  value: string,
+  index: number,
+  errors: InitializeVariableErrors[],
+  intl: IntlShape,
+  segmentValue: ValueSegment[]
+) => {
+  if (isTokenValueSegment(segmentValue)) {
+    const type = segmentValue[0]?.token?.type;
+
+    if (!type || type === constants.SWAGGER.TYPE.OBJECT) {
+      return; // Either no type to check, or valid object type
+    }
   }
 
   const trimmedValue = value.trim();
@@ -409,7 +419,20 @@ const validateObjectType = (value: string, index: number, errors: InitializeVari
   }
 };
 
-const validateArrayType = (value: string, index: number, errors: InitializeVariableErrors[], intl: any) => {
+const validateArrayType = (
+  value: string,
+  index: number,
+  errors: InitializeVariableErrors[],
+  intl: IntlShape,
+  segmentValue: ValueSegment[]
+) => {
+  if (isTokenValueSegment(segmentValue)) {
+    const type = segmentValue[0]?.token?.type;
+
+    if (!type || type === constants.SWAGGER.TYPE.ARRAY) {
+      return; // Either no type to check, or valid array type
+    }
+  }
   try {
     const parsed = JSON.parse(value);
     if (!Array.isArray(parsed)) {
@@ -435,10 +458,3 @@ export const isInitializeVariableOperation = (operationInfo: OperationInfo): boo
   const { connectorId, operationId } = operationInfo;
   return equals(connectorId, 'connectionProviders/variable') && equals(operationId, 'initializeVariable');
 };
-
-function isSingleNonStringExpression(value: string): boolean {
-  if (isNullOrEmpty(value) || typeof value !== 'string' || value.length < 2) {
-    return false;
-  }
-  return value.charAt(0) === '@';
-}
