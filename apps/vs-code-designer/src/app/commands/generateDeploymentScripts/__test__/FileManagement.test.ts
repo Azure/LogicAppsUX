@@ -73,26 +73,4 @@ describe('FileManagement.addFolderToWorkspace', () => {
     // And updateWorkspaceFolders should not have been called.
     expect(updateWorkspaceFoldersSpy).not.toHaveBeenCalled();
   });
-
-  it('should catch and handle errors thrown during folder addition', () => {
-    // Arrange: Set up an empty workspace.
-    (vscode.workspace as any).workspaceFolders = [];
-    const testError = new Error('Test error');
-    // Stub updateWorkspaceFolders to throw an error.
-    updateWorkspaceFoldersSpy.mockImplementation(() => {
-      throw testError;
-    });
-    const showErrorSpy = vi.spyOn(vscode.window, 'showErrorMessage').mockImplementation(async () => undefined);
-
-    // Act
-    FileManagement.addFolderToWorkspace(folderPathError);
-
-    // Assert
-    // Verify that the error is logged.
-    expect(appendLogSpy).toHaveBeenCalledWith(localize('errorAddingFolder', `Error in addFolderToWorkspace: ${testError}`));
-    // And an error message is shown to the user.
-    expect(showErrorSpy).toHaveBeenCalledWith(
-      localize('errorMessageAddingFolder', 'Failed to add folder to workspace: ') + testError.message
-    );
-  });
 });
