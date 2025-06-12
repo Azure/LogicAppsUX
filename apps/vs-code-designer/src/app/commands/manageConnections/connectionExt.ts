@@ -19,7 +19,7 @@ export default class ConnectionsExt {
   private codefulFilePath: string;
 
   public async openConnectionsPanel(context: IActionContext, args: any[]) {
-    const connectionDetails = args[0];
+    const connectionDetails = args[0]; // danielle error handling here
 
     const connectorId = connectionDetails?.connectorId;
     const connectionType = connectionDetails?.connectorType;

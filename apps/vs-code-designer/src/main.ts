@@ -77,8 +77,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
       response.contents = response.contents.map((content) => {
         if (content instanceof vscode.MarkdownString) {
-
-          // mock content
+          //mock content
           // const args = [{ connectorId: 'eventhub', connectorType: 'serviceProvider' }];
           // const stageCommandUri = vscode.Uri.parse(
           //   `command:azureLogicAppsStandard.openConnectionView?${encodeURIComponent(JSON.stringify(args))}`
