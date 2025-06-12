@@ -19,6 +19,7 @@ import {
   ResourceIdentityType,
   BaseTenantService,
   BaseCognitiveServiceService,
+  BaseRoleService,
 } from '@microsoft/logic-apps-shared';
 import type { ContentType } from '@microsoft/logic-apps-shared';
 import {
@@ -147,6 +148,14 @@ const runService = new StandardRunService({
   isDev: true,
 });
 
+const roleService = new BaseRoleService({
+  baseUrl: '/url',
+  apiVersion: '2022-05-01-preview',
+  httpClient,
+  tenantId: 'tenant-id',
+  objectId: 'user-id',
+});
+
 const cognitiveServiceService = new BaseCognitiveServiceService({
   apiVersion: '2023-10-01-preview',
   baseUrl: '/url',
@@ -209,6 +218,7 @@ export const LocalDesigner = () => {
       workflowService,
       hostService,
       runService,
+      roleService,
       editorService,
       connectionParameterEditorService,
       customCodeService,

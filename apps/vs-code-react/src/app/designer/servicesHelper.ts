@@ -17,6 +17,7 @@ import {
   isEmptyString,
   BaseTenantService,
   BaseCognitiveServiceService,
+  BaseRoleService,
 } from '@microsoft/logic-apps-shared';
 import type {
   ApiHubServiceDetails,
@@ -50,6 +51,7 @@ export interface IDesignerServices {
   workflowService: IWorkflowService;
   hostService: IHostService;
   runService: StandardRunService;
+  roleService: BaseRoleService;
   editorService: CustomEditorService;
   apimService: BaseApiManagementService;
   functionService: BaseFunctionService;
@@ -328,6 +330,14 @@ export const getDesignerServices = (
     httpClient,
   });
 
+  const roleService = new BaseRoleService({
+    baseUrl: armUrl,
+    apiVersion: '2022-05-01-preview',
+    httpClient,
+    tenantId: '???', // TODO: Get tenantId from somewhere
+    objectId: '???', // TODO: Get objectId from somewhere
+  });
+
   const cognitiveServiceService = new BaseCognitiveServiceService({
     apiVersion: '2023-10-01-preview',
     baseUrl: armUrl,
@@ -361,6 +371,7 @@ export const getDesignerServices = (
     workflowService,
     hostService,
     runService,
+    roleService,
     editorService,
     apimService,
     loggerService,

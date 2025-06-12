@@ -35,6 +35,7 @@ import {
   BaseUserPreferenceService,
   BaseFunctionService,
   BaseGatewayService,
+  BaseRoleService,
   BaseTenantService,
   StandardConnectionService,
   StandardConnectorService,
@@ -909,6 +910,14 @@ const getDesignerServices = (
     httpClient,
   });
 
+  const roleService = new BaseRoleService({
+    baseUrl: armUrl,
+    httpClient,
+    apiVersion: '2022-04-01',
+    tenantId,
+    objectId,
+  });
+
   const chatbotService = new BaseChatbotService({
     baseUrl: armUrl,
     apiVersion: '2024-06-01-preview',
@@ -949,6 +958,7 @@ const getDesignerServices = (
     apimService: apiManagementService,
     functionService,
     runService,
+    roleService,
     hostService,
     chatbotService,
     customCodeService,
