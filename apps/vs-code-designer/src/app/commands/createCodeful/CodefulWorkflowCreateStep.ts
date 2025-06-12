@@ -5,8 +5,8 @@
 
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { nonNullProp } from '@microsoft/vscode-azext-utils';
-import { WorkflowProjectType, MismatchBehavior, WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
-import type { FuncVersion, IFunctionWizardContext, IHostJsonV2, TargetFramework } from '@microsoft/vscode-extension-logic-apps';
+import { WorkflowProjectType, MismatchBehavior, WorkerRuntime, FuncVersion } from '@microsoft/vscode-extension-logic-apps';
+import type { IFunctionWizardContext, IHostJsonV2, TargetFramework } from '@microsoft/vscode-extension-logic-apps';
 import { writeFileSync } from 'fs';
 import * as fse from 'fs-extra';
 import * as path from 'path';
@@ -36,7 +36,9 @@ import * as vscode from 'vscode';
 import { createConnectionsJson } from '../../utils/codeless/connection';
 import { createEmptyParametersJson } from '../../utils/codeless/parameter';
 import { getDebugConfigs, updateDebugConfigs } from '../../utils/vsCodeConfig/launch';
-import { isMultiRootWorkspace } from '../../utils/workspace';
+import { getWorkspaceFolder, isMultiRootWorkspace } from '../../utils/workspace';
+import { isNullOrUndefined, isString } from '@microsoft/logic-apps-shared';
+import { localize } from '../../../localize';
 
 export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionWizardContext> {
   private constructor() {
@@ -65,6 +67,10 @@ export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionW
 
     await this.createSystemArtifacts(context);
 
+    if (context.workspaceFolder === undefined) {
+      context.workspaceFolder = await this.getWorkspaceFolder(context);
+    }
+
     await this.updateLogicAppLaunchJson(
       context.projectPath,
       context.targetFramework,
@@ -74,6 +80,32 @@ export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionW
     );
 
     return workflowCsFullPath;
+  }
+
+  private createWorkspaceFolderFromPath(path: string): vscode.WorkspaceFolder {
+    const uri = vscode.Uri.file(path);
+    return {
+      uri,
+      name: uri.fsPath.split(/[\\/]/).pop() || uri.fsPath,
+      index: 0, // Set appropriately if you have multiple folders
+    };
+  }
+
+  private async getWorkspaceFolder(context: IFunctionWizardContext): Promise<vscode.WorkspaceFolder | undefined> {
+    let workspaceFolder: string | vscode.WorkspaceFolder | undefined;
+    let workspacePath = context.workspacePath;
+    workspacePath = isString(workspacePath) ? workspacePath : undefined;
+    if (workspacePath === undefined) {
+      workspaceFolder = await getWorkspaceFolder(context);
+      workspacePath = isNullOrUndefined(workspaceFolder)
+        ? undefined
+        : isString(workspaceFolder)
+          ? workspaceFolder
+          : workspaceFolder.uri.fsPath;
+    } else {
+      workspaceFolder = this.createWorkspaceFolderFromPath(workspacePath);
+    }
+    return workspaceFolder as vscode.WorkspaceFolder;
   }
 
   /**
@@ -106,7 +138,7 @@ export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionW
         })
       : [
           {
-            name: logicAppName, //localize('debugLogicApp', `Run/Debug logic app with local function ${logicAppName}`),
+            name: localize('debugLogicApp', `Run/Debug logic app ${logicAppName}`),
             type: 'logicapp',
             request: 'launch',
             funcRuntime: 'coreclr',
@@ -118,16 +150,11 @@ export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionW
         ];
 
     if (isMultiRootWorkspace()) {
-      let launchJsonContent: any;
-      if (await fse.pathExists(logicAppLaunchJsonPath)) {
-        launchJsonContent = await fse.readJson(logicAppLaunchJsonPath);
-        launchJsonContent['configurations'] = updatedDebugConfigs;
-      } else {
-        launchJsonContent = {
-          version: '0.2.0',
-          configurations: updatedDebugConfigs,
-        };
-      }
+      const launchJsonContent = {
+        version: '0.2.0',
+        configurations: updatedDebugConfigs,
+      };
+
       await fse.writeJson(logicAppLaunchJsonPath, launchJsonContent, { spaces: 2 });
     } else {
       updateDebugConfigs(workspaceFolder, updatedDebugConfigs);
