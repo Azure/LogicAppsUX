@@ -403,8 +403,8 @@ export const CodefulSDKs = {
 };
 export type CodefulSDKs = (typeof CodefulSDKs)[keyof typeof CodefulSDKs];
 
-const codefulSdkVersion = '1.127.21.2-preview';
-const workflowsWebJobsVersion = '1.127.21.2-preview';
+const codefulSdkVersion = '1.127.21.3-preview';
+const workflowsWebJobsVersion = '1.127.21.3-preview';
 const durableTaskVersion = '2.9.0';
 
 export const CodefulSdkVersions = {
