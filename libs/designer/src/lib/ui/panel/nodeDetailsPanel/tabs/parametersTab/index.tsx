@@ -373,7 +373,7 @@ const ParameterSection = ({
         dispatch(addOrUpdateCustomCode({ nodeId, fileData, fileExtension, fileName }));
       }
 
-      if (isAgentConnectorAndAgentModel(operationInfo.connectorId ?? '', parameter?.parameterKey ?? '')) {
+      if (isAgentConnectorAndAgentModel(operationInfo.connectorId ?? '', parameter?.parameterName ?? '')) {
         const newValue = value.length > 0 ? value[0].value : undefined;
         const oldValue = parameter?.value && parameter.value.length > 0 ? parameter.value[0].value : undefined;
         if (!isNullOrUndefined(newValue) && !isNullOrUndefined(oldValue) && newValue !== oldValue) {
@@ -381,7 +381,7 @@ const ParameterSection = ({
         }
       }
 
-      const isAgentDeployment = isAgentConnectorAndDeploymentId(operationInfo.connectorId ?? '', parameter?.parameterKey ?? '');
+      const isAgentDeployment = isAgentConnectorAndDeploymentId(operationInfo.connectorId ?? '', parameter?.parameterName ?? '');
 
       if (isAgentDeployment) {
         const deploymentInfo = value?.length
@@ -901,7 +901,7 @@ export const getEditorAndOptions = (
   }
 
   // Handle agent connector with supported deployments
-  const isAgent = isAgentConnectorAndDeploymentId(parameter.parameterKey, operationInfo?.connectorId);
+  const isAgent = isAgentConnectorAndDeploymentId(operationInfo?.connectorId, parameter.parameterName);
   if (equals(editor, 'combobox') && isAgent) {
     const options = deploymentsForCognitiveServiceAccount
       .filter((deployment) => constants.SUPPORTED_AGENT_MODELS.includes((deployment.properties?.model?.name ?? '').toLowerCase()))

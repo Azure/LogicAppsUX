@@ -1,15 +1,14 @@
-import { equals } from '@microsoft/logic-apps-shared';
 import { AgentUtils } from '../../../../../common/utilities/Utils';
 import type { ParameterGroup } from '../../../../../core/state/operation/operationMetadataSlice';
 
 export const agentModelTypeParameterKey = 'inputs.$.agentModelType';
 
 export const isAgentConnectorAndDeploymentId = (id: string, key: string): boolean => {
-  return AgentUtils.isConnector(id) && equals(key, 'inputs.$.deploymentId', true);
+  return AgentUtils.isConnector(id) && AgentUtils.isDeploymentIdParameter(key);
 };
 
 export const isAgentConnectorAndAgentModel = (id: string, key: string): boolean => {
-  return AgentUtils.isConnector(id) && equals(key, agentModelTypeParameterKey, true);
+  return AgentUtils.isConnector(id) && AgentUtils.isAgentModelTypeParameter(key);
 };
 
 export const isAgentConnectorAndAgentServiceModel = (

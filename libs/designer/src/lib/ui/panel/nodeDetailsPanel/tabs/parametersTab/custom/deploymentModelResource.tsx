@@ -5,6 +5,7 @@ import {
   guid,
   LogEntryLevel,
   LoggerService,
+  parseErrorMessage,
   type IEditorProps,
 } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo, useState } from 'react';
@@ -21,6 +22,7 @@ export const CustomDeploymentModelResource = (props: IEditorProps) => {
   const [name, setName] = useState(`model-${customLengthGuid(5)}`);
   const [modelKey, setModelKey] = useState(constants.SUPPORTED_AGENT_MODELS[0]);
   const [isSaving, setIsSaving] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const stringResources = useMemo(
     () => ({
@@ -49,6 +51,11 @@ export const CustomDeploymentModelResource = (props: IEditorProps) => {
         id: '7rItIH',
         description: 'Cancel button text for deployment model resource',
       }),
+      DEFAULT_ERROR_MESSAGE: intl.formatMessage({
+        defaultMessage: 'An error occurred while creating the deployment model resource.',
+        id: 'aZtqSZ',
+        description: 'Default error message for deployment model resource creation',
+      }),
     }),
     [intl]
   );
@@ -63,12 +70,10 @@ export const CustomDeploymentModelResource = (props: IEditorProps) => {
 
     try {
       const newDeploymentResponse = await CognitiveServiceService().createNewDeployment(name, modelKey, resourceId);
-
-      if (newDeploymentResponse) {
-        onClose?.(name);
-        setIsSaving(false);
-        return;
-      }
+      setErrorMessage('');
+      setIsSaving(false);
+      onClose?.(newDeploymentResponse ? name : undefined);
+      return;
     } catch (error: any) {
       LoggerService().log({
         level: LogEntryLevel.Error,
@@ -76,11 +81,10 @@ export const CustomDeploymentModelResource = (props: IEditorProps) => {
         message: 'Failed to create deployment',
         error: error,
       });
+      setIsSaving(false);
+      setErrorMessage(parseErrorMessage(error, stringResources.DEFAULT_ERROR_MESSAGE));
     }
-
-    onClose?.();
-    setIsSaving(false);
-  }, [metadata?.cognitiveServiceAccountId, modelKey, name, onClose]);
+  }, [metadata?.cognitiveServiceAccountId, modelKey, name, onClose, stringResources.DEFAULT_ERROR_MESSAGE]);
 
   return (
     <>
@@ -135,6 +139,9 @@ export const CustomDeploymentModelResource = (props: IEditorProps) => {
           <Button disabled={isSaving || !name || !modelKey} size={'small'}>
             {stringResources.CANCEL_BUTTON}
           </Button>
+        </div>
+        <div className={mergeClasses(styles.rowContainer, styles.buttonContainer)}>
+          <Text className={styles.errorMessageText}>{errorMessage}</Text>
         </div>
       </div>
     </>

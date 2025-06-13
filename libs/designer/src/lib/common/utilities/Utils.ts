@@ -28,4 +28,8 @@ export class AgentUtils {
   public static isDeploymentIdParameter = (parameterName?: string): boolean => {
     return equals(parameterName ?? '', 'deploymentId', true);
   };
+
+  public static isAgentModelTypeParameter = (parameterName?: string): boolean => {
+    return equals(parameterName ?? '', 'agentModelType', true);
+  };
 }

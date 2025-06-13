@@ -21,6 +21,11 @@ export const useDeploymentModelResourceStyles = makeStyles({
     gap: '10px',
     alignItems: 'center',
   },
+  errorMessageText: {
+    fontSize: '11px',
+    fontStyle: 'italic',
+    color: 'red',
+  },
 });
 
 export const deploymentModelNameStyle: CSSProperties = {

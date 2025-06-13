@@ -1,6 +1,5 @@
 import { CognitiveServiceService, foundryServiceConnectionRegex } from '@microsoft/logic-apps-shared';
 import { useQuery } from '@tanstack/react-query';
-import { AgentUtils } from '../../../../../common/utilities/Utils';
 import { useSelectedConnection } from '../../../../../core/state/connection/connectionSelector';
 
 const queryOpts = {
@@ -53,7 +52,9 @@ export const useCognitiveServiceAccountDeploymentsForNode = (nodeId: string, con
     {
       ...queryOpts,
       retryOnMount: true,
-      enabled: AgentUtils.isConnector(connectorId) && !!serviceAccountId,
+      refetchOnMount: true,
+      refetchOnReconnect: true,
+      enabled: true,
     }
   );
 };
