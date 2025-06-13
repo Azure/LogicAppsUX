@@ -128,7 +128,11 @@ export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
             <PopoverTrigger>
               <div className={styles.newResourceContainer}>{'Create New'}</div>
             </PopoverTrigger>
-            <PopoverSurface>{CustomNewResourceComponent ? <CustomNewResourceComponent /> : null}</PopoverSurface>
+            <PopoverSurface>
+              {CustomNewResourceComponent ? (
+                <CustomNewResourceComponent values={[props.editorOptions]} onClose={props.newResourceProps.onClose} />
+              ) : null}
+            </PopoverSurface>
           </Popover>
         ) : null}
       </div>
