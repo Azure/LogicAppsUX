@@ -44,6 +44,7 @@ import { TableEditor } from '../../table';
 import { useId } from '../../useId';
 import { useSettingTokenStyles } from './styles';
 import { Popover, PopoverSurface, PopoverTrigger } from '@fluentui/react-components';
+import { useIntl } from 'react-intl';
 interface EditorHostOptions {
   suppressCastingForSerialize?: boolean;
   isMultiVariableEnabled?: boolean;
@@ -97,6 +98,7 @@ export interface SettingTokenFieldProps extends SettingProps {
 export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
   const normalizedLabel = props.label?.replace(/ /g, '-');
   const styles = useSettingTokenStyles();
+  const intl = useIntl();
   const labelId = useId(normalizedLabel);
   const [openPopover, setOpenPopover] = useState(false);
   const hideLabel =
@@ -104,6 +106,16 @@ export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
     equals(props.editor?.toLowerCase(), constants.PARAMETER.EDITOR.FLOATINGACTIONMENU);
   const [showSubComponent, setShowSubComponent] = useState(false);
   const CustomNewResourceComponent = useMemo(() => props.newResourceProps?.component, [props.newResourceProps?.component]);
+  const stringResources = useMemo(
+    () => ({
+      CREATE_NEW: intl.formatMessage({
+        defaultMessage: 'Create New',
+        id: '+nh6WG',
+        description: 'Label for creating a new resource in the token field.',
+      }),
+    }),
+    [intl]
+  );
 
   return (
     <>
@@ -136,7 +148,7 @@ export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
             >
               <PopoverTrigger>
                 <div className={styles.newResourceContainer} onClick={() => setOpenPopover(!open)}>
-                  {'Create New'}
+                  {stringResources.CREATE_NEW}
                 </div>
               </PopoverTrigger>
               <PopoverSurface tabIndex={-1}>
