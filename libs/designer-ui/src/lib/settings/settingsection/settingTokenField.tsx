@@ -114,28 +114,30 @@ export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
       <div key={props.id}>
         {isCustomEditor(props) ? <CustomTokenField {...props} labelId={labelId} /> : <TokenField {...props} labelId={labelId} />}
       </div>
-      <div className={styles.subComponentContainer}>
-        {props.subComponent ? (
-          <div className="msla-input-parameter-subcomponent">
-            {cloneElement(props.subComponent, {
-              showSubComponent,
-              setShowSubComponent,
-            })}
-          </div>
-        ) : null}
-        {props.newResourceProps ? (
-          <Popover trapFocus>
-            <PopoverTrigger>
-              <div className={styles.newResourceContainer}>{'Create New'}</div>
-            </PopoverTrigger>
-            <PopoverSurface>
-              {CustomNewResourceComponent ? (
-                <CustomNewResourceComponent values={[props.editorOptions]} onClose={props.newResourceProps.onClose} />
-              ) : null}
-            </PopoverSurface>
-          </Popover>
-        ) : null}
-      </div>
+      {props.newResourceProps || props.subComponent ? (
+        <div className={styles.subComponentContainer}>
+          {props.subComponent ? (
+            <div className="msla-input-parameter-subcomponent">
+              {cloneElement(props.subComponent, {
+                showSubComponent,
+                setShowSubComponent,
+              })}
+            </div>
+          ) : null}
+          {props.newResourceProps ? (
+            <Popover trapFocus>
+              <PopoverTrigger>
+                <div className={styles.newResourceContainer}>{'Create New'}</div>
+              </PopoverTrigger>
+              <PopoverSurface>
+                {CustomNewResourceComponent ? (
+                  <CustomNewResourceComponent values={[props.editorOptions]} onClose={props.newResourceProps.onClose} />
+                ) : null}
+              </PopoverSurface>
+            </Popover>
+          ) : null}
+        </div>
+      ) : null}
     </>
   );
 };

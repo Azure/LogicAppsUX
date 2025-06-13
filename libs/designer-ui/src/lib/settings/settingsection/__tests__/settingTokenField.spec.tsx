@@ -119,7 +119,7 @@ describe('ui/settings/settingTokenField', () => {
 
     const { children } = render(SettingTokenField, props);
 
-    expect(children).toHaveLength(2);
+    expect(children).toHaveLength(1);
     const [tokenFieldContainer] = children as [any];
 
     const tokenField: any[] = React.Children.toArray(tokenFieldContainer.props.children);
