@@ -17,6 +17,9 @@ import {
   mockConnectionParameterSets,
   mockOauthWithTenantParameters,
   mockParameterSetsWithCredentialMapping,
+  mockParameterSetWithClientCertAuth,
+  mockParameterSetWithOAuth,
+  mockParameterSetWithSPAuth,
 } from './mocks/connectionParameters';
 
 vi.mock('@microsoft/logic-apps-shared', async (importOriginal) => ({
@@ -450,6 +453,71 @@ describe('ui/createConnection', () => {
     });
   });
 
+  describe('create connection callback arguments', () => {
+    it('should match expected arguments for OAuth auth', () => {
+      const props: CreateConnectionProps = {
+        connector: baseConnector,
+        connectionParameterSets: mockParameterSetWithOAuth,
+        checkOAuthCallback: vi.fn(),
+        createConnectionCallback: vi.fn(),
+      };
+
+      renderer.render(<CreateConnection {...props} />);
+      const createConnectionContainer = renderer.getRenderOutput();
+      const createConnection = findConnectionCreateDiv(createConnectionContainer);
+      expect(createConnectionContainer).toBeDefined();
+
+      // Connector description and submit button text helps validate correct values for isUsingOAuth
+      expect(findConnectorConnectionDescription(createConnectionContainer)).toBeUndefined();
+      // MultiAuth input in the DOM helps validate the value of isMultiAuth
+      expect(findMultiAuthInput(createConnection)).toBeDefined();
+      // Not having LegacyMultiAuth input fields helps validate the value of showLegacyMultiAuth
+      expect(findLegacyMultiAuth(createConnection)).toBeUndefined();
+    });
+
+    it('should match expected arguments for ServicePrincipal auth', () => {
+      const props: CreateConnectionProps = {
+        connector: baseConnector,
+        connectionParameterSets: mockParameterSetWithSPAuth,
+        checkOAuthCallback: vi.fn(),
+        createConnectionCallback: vi.fn(),
+      };
+
+      renderer.render(<CreateConnection {...props} />);
+      const createConnectionContainer = renderer.getRenderOutput();
+      const createConnection = findConnectionCreateDiv(createConnectionContainer);
+      expect(createConnectionContainer).toBeDefined();
+
+      // Connector description and submit button text helps validate correct values for isUsingOAuth
+      expect(findConnectorConnectionDescription(createConnectionContainer)).toBeUndefined();
+      // MultiAuth input in the DOM helps validate the value of isMultiAuth
+      expect(findMultiAuthInput(createConnection)).toBeDefined();
+      // Not having LegacyMultiAuth input fields helps validate the value of showLegacyMultiAuth
+      expect(findLegacyMultiAuth(createConnection)).toBeUndefined();
+    });
+
+    it('should match expected arguments for Client Cert auth', () => {
+      const props: CreateConnectionProps = {
+        connector: baseConnector,
+        connectionParameterSets: mockParameterSetWithClientCertAuth,
+        checkOAuthCallback: vi.fn(),
+        createConnectionCallback: vi.fn(),
+      };
+
+      renderer.render(<CreateConnection {...props} />);
+      const createConnectionContainer = renderer.getRenderOutput();
+      const createConnection = findConnectionCreateDiv(createConnectionContainer);
+      expect(createConnectionContainer).toBeDefined();
+
+      // Connector description and submit button text helps validate correct values for isUsingOAuth
+      expect(findConnectorConnectionDescription(createConnectionContainer)).toBeUndefined();
+      // MultiAuth input in the DOM helps validate the value of isMultiAuth
+      expect(findMultiAuthInput(createConnection)).toBeDefined();
+      // Not having LegacyMultiAuth input fields helps validate the value of showLegacyMultiAuth
+      expect(findLegacyMultiAuth(createConnection)).toBeUndefined();
+    });
+  });
+
   function findConnectionCreateDiv(createConnection: ReactElement) {
     return React.Children.toArray(createConnection.props.children).find(
       (child) => (child as ReactElement)?.props.className === 'msla-create-connection-container'
@@ -481,14 +549,7 @@ describe('ui/createConnection', () => {
   }
 
   function findLegacyMultiAuth(createConnection: ReactElement) {
-    const connectionsParamContainer = findConnectionsParamContainer(createConnection);
-    for (const paramRow of React.Children.toArray(connectionsParamContainer.props.children)) {
-      const testId = (paramRow as ReactElement)?.props?.['data-testId']?.toString();
-      if (testId === 'legacy-multi-auth') {
-        return paramRow;
-      }
-    }
-    return undefined;
+    return findInput(createConnection, 'legacy-multi-auth');
   }
 
   function findTenantPicker(createConnection: ReactElement) {
@@ -496,6 +557,27 @@ describe('ui/createConnection', () => {
     for (const paramRow of React.Children.toArray(connectionsParamContainer.props.children)) {
       const testId = (paramRow as ReactElement)?.props?.['data-testId']?.toString();
       if (testId === 'connection-param-oauth-tenants') {
+        return paramRow;
+      }
+    }
+    return undefined;
+  }
+
+  function findConnectorConnectionDescription(createConnection: ReactElement) {
+    return React.Children.toArray(createConnection.props.children).find(
+      (child) => (child as ReactElement)?.props['data-automation-id'] === 'connector-connection-description'
+    );
+  }
+
+  function findMultiAuthInput(createConnection: ReactElement) {
+    return findInput(createConnection, 'connection-multi-auth-input');
+  }
+
+  function findInput(createConnection: ReactElement, inputDataTestId: string) {
+    const connectionsParamContainer = findConnectionsParamContainer(createConnection);
+    for (const paramRow of React.Children.toArray(connectionsParamContainer.props.children)) {
+      const testId = (paramRow as ReactElement)?.props?.['data-testId']?.toString();
+      if (testId === inputDataTestId) {
         return paramRow;
       }
     }

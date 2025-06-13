@@ -288,3 +288,273 @@ export const mockParameterSetsWithCredentialMapping: ConnectionParameterSets = {
     },
   ],
 };
+
+export const mockParameterSetWithSPAuth: ConnectionParameterSets = {
+  uiDefinition: {
+    description: '',
+    displayName: 'SP Auth',
+  },
+  values: [
+    {
+      name: 'SPAuth',
+      uiDefinition: {
+        displayName: 'Oauth',
+        description: 'Oauth',
+      },
+      parameters: {
+        token: {
+          type: 'oauthSetting',
+          oAuthSettings: {
+            identityProvider: '',
+            scopes: [],
+            clientId: '',
+            redirectUrl: '',
+            properties: {
+              IsFirstParty: 'true',
+            },
+          },
+          uiDefinition: {
+            displayName: '',
+            description: '',
+          },
+        },
+        environment: {
+          type: 'string',
+          uiDefinition: {
+            displayName: 'Environment id',
+            description: '',
+            constraints: {
+              required: 'false',
+              hidden: 'true',
+            },
+          },
+        },
+        'token:clientId': {
+          type: 'string',
+          uiDefinition: {
+            displayName: 'Client ID',
+            description: '',
+            constraints: {
+              required: 'false',
+              hidden: 'true',
+            },
+          },
+        },
+        'token:clientSecret': {
+          type: 'securestring',
+          uiDefinition: {
+            displayName: 'Client Secret',
+            description: '',
+            constraints: {
+              required: 'false',
+              hidden: 'true',
+            },
+          },
+        },
+        'token:TenantId': {
+          type: 'string',
+          uiDefinition: {
+            displayName: 'Tenant',
+            description: '',
+            constraints: {
+              required: 'false',
+              hidden: 'true',
+            },
+          },
+        },
+        'token:resourceUri': {
+          type: 'string',
+          uiDefinition: {
+            displayName: 'ResourceUri',
+            description: '',
+            constraints: {
+              required: 'false',
+              hidden: 'true',
+            },
+          },
+        },
+        'token:grantType': {
+          type: 'string',
+          uiDefinition: {
+            displayName: 'Grant Type',
+            description: '',
+            constraints: {
+              required: 'false',
+              hidden: 'true',
+              allowedValues: [
+                {
+                  text: 'Code',
+                  value: 'code',
+                },
+                {
+                  text: 'Client Credentials',
+                  value: 'client_credentials',
+                },
+              ],
+            },
+          },
+        },
+      },
+    },
+  ],
+};
+
+export const mockParameterSetWithOAuth: ConnectionParameterSets = {
+  uiDefinition: {
+    description: '',
+    displayName: 'OAuth',
+  },
+  values: [
+    {
+      name: 'OAuth',
+      uiDefinition: {
+        displayName: 'OAuth',
+        description: '',
+      },
+      parameters: {
+        token: {
+          type: 'oauthSetting',
+          oAuthSettings: {
+            identityProvider: '',
+            clientId: '',
+            scopes: [],
+            redirectUrl: '',
+            properties: {
+              IsFirstParty: 'true',
+            },
+          },
+          uiDefinition: {
+            displayName: '',
+            description: '',
+          },
+        },
+        environment: {
+          type: 'string',
+          uiDefinition: {
+            displayName: 'Environment id',
+            description: '',
+            constraints: {
+              required: 'false',
+              hidden: 'true',
+            },
+          },
+        },
+        'token:clientId': {
+          type: 'string',
+          uiDefinition: {
+            displayName: 'Client ID',
+            description: '',
+            constraints: {
+              required: 'true',
+              hidden: 'false',
+            },
+          },
+        },
+        'token:clientSecret': {
+          type: 'securestring',
+          uiDefinition: {
+            displayName: 'Client Secret',
+            description: '',
+            constraints: {
+              required: 'true',
+              hidden: 'false',
+            },
+          },
+        },
+        'token:TenantId': {
+          type: 'string',
+          uiDefinition: {
+            displayName: 'Tenant',
+            description: '',
+            constraints: {
+              required: 'true',
+              hidden: 'false',
+            },
+          },
+        },
+      },
+    },
+  ],
+};
+
+export const mockParameterSetWithClientCertAuth: ConnectionParameterSets = {
+  uiDefinition: {
+    description: '',
+    displayName: 'Client Cert Auth',
+  },
+  values: [
+    {
+      name: 'CertOauth',
+      uiDefinition: {
+        displayName: 'Client Certificate Auth',
+        description: '',
+      },
+      parameters: {
+        token: {
+          type: 'oauthSetting',
+          oAuthSettings: {
+            identityProvider: 'DynamicsCrmOnlineCertificateClientCredentials',
+            scopes: [],
+            clientId: '',
+            redirectUrl: '',
+            properties: {
+              IsFirstParty: 'true',
+            },
+          },
+          uiDefinition: {
+            displayName: 'Client Certificate Auth',
+            description: '',
+            constraints: {
+              hidden: 'false',
+            },
+          },
+        },
+        environment: {
+          type: 'string',
+          uiDefinition: {
+            displayName: 'Environment id',
+            description: 'Environment id',
+            tooltip: 'Environment id',
+            constraints: {
+              required: 'false',
+              hidden: 'true',
+            },
+          },
+        },
+        'token:tenantId': {
+          type: 'string',
+          uiDefinition: {
+            displayName: 'Tenant',
+            description: '',
+            constraints: {
+              required: 'true',
+              hidden: 'false',
+            },
+          },
+        },
+        'token:clientId': {
+          type: 'string',
+          uiDefinition: {
+            displayName: 'Client ID',
+            description: '',
+            constraints: {
+              required: 'true',
+              hidden: 'false',
+            },
+          },
+        },
+        'token:clientCertificateSecret': {
+          type: 'clientCertificate',
+          uiDefinition: {
+            displayName: 'Client certificate secret',
+            description: '',
+            constraints: {
+              required: 'true',
+              hidden: 'false',
+            },
+          },
+        },
+      },
+    },
+  ],
+};

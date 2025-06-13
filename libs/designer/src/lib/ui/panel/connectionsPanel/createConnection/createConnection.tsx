@@ -15,7 +15,8 @@ import {
   Capabilities,
   ConnectionParameterTypes,
   SERVICE_PRINCIPLE_CONSTANTS,
-  connectorContainsAllServicePrinicipalConnectionParameters,
+  connectorContainsAllClientCertificateConnectionParameters,
+  connectorContainsAllServicePrincipalConnectionParameters,
   filterRecord,
   getPropertyValue,
   isServicePrinicipalConnectionParameter,
@@ -194,24 +195,47 @@ export const CreateConnection = (props: CreateConnectionProps) => {
 
   const supportsOAuthConnection = useMemo(() => !isHiddenAuthKey('legacyoauth'), [isHiddenAuthKey]);
 
+  const supportsLegacyServicePrincipalConnection = useMemo(
+    () =>
+      !isMultiAuth &&
+      connectorContainsAllServicePrincipalConnectionParameters(singleAuthParams) &&
+      !isHiddenAuthKey('legacyserviceprincipal'),
+    [isHiddenAuthKey, isMultiAuth, singleAuthParams]
+  );
+
+  const multiAuthSupportsServicePrincipalConnection = useMemo(
+    () => isMultiAuth && connectorContainsAllServicePrincipalConnectionParameters(multiAuthParams),
+    [isMultiAuth, multiAuthParams]
+  );
+
   const supportsServicePrincipalConnection = useMemo(
-    () => connectorContainsAllServicePrinicipalConnectionParameters(singleAuthParams) && !isHiddenAuthKey('legacyserviceprincipal'),
-    [isHiddenAuthKey, singleAuthParams]
+    () => multiAuthSupportsServicePrincipalConnection || supportsLegacyServicePrincipalConnection,
+    [multiAuthSupportsServicePrincipalConnection, supportsLegacyServicePrincipalConnection]
+  );
+
+  const supportsClientCertificateConnection = useMemo(
+    () => isMultiAuth && connectorContainsAllClientCertificateConnectionParameters(multiAuthParams),
+    [isMultiAuth, multiAuthParams]
   );
 
   const supportsLegacyManagedIdentityConnection = useMemo(
     () => usesLegacyManagedIdentity(connectionAlternativeParameters) && !isHiddenAuthKey('legacymanagedidentity'),
-    [isHiddenAuthKey, connectionAlternativeParameters]
+    [connectionAlternativeParameters, isHiddenAuthKey]
   );
 
   const showLegacyMultiAuth = useMemo(
-    () => !isMultiAuth && (supportsServicePrincipalConnection || supportsLegacyManagedIdentityConnection),
-    [isMultiAuth, supportsServicePrincipalConnection, supportsLegacyManagedIdentityConnection]
+    () => !isMultiAuth && (supportsLegacyServicePrincipalConnection || supportsLegacyManagedIdentityConnection),
+    [isMultiAuth, supportsLegacyServicePrincipalConnection, supportsLegacyManagedIdentityConnection]
+  );
+
+  const legacyMultiAuthServicePrincipalSelected = useMemo(
+    () => showLegacyMultiAuth && selectedParamSetIndex === LegacyMultiAuthOptions.servicePrincipal,
+    [selectedParamSetIndex, showLegacyMultiAuth]
   );
 
   const servicePrincipalSelected = useMemo(
-    () => showLegacyMultiAuth && selectedParamSetIndex === LegacyMultiAuthOptions.servicePrincipal,
-    [selectedParamSetIndex, showLegacyMultiAuth]
+    () => legacyMultiAuthServicePrincipalSelected || multiAuthSupportsServicePrincipalConnection,
+    [legacyMultiAuthServicePrincipalSelected, multiAuthSupportsServicePrincipalConnection]
   );
 
   const legacyManagedIdentitySelected = useMemo(
@@ -311,8 +335,8 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   );
 
   const isUsingOAuth = useMemo(
-    () => hasOAuth && !servicePrincipalSelected && !legacyManagedIdentitySelected,
-    [hasOAuth, servicePrincipalSelected, legacyManagedIdentitySelected]
+    () => hasOAuth && !servicePrincipalSelected && !legacyManagedIdentitySelected && !supportsClientCertificateConnection,
+    [hasOAuth, servicePrincipalSelected, legacyManagedIdentitySelected, supportsClientCertificateConnection]
   );
 
   const usingAadConnection = useMemo(() => (connector ? isUsingAadAuthentication(connector) : false), [connector]);
@@ -380,7 +404,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
 
     // This value needs to be passed conditionally but the parameter is hidden, so we're manually inputting it here
     if (
-      supportsServicePrincipalConnection &&
+      supportsLegacyServicePrincipalConnection &&
       Object.keys(unfilteredParameters).includes(SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_GRANT_TYPE)
     ) {
       const oauthValue = SERVICE_PRINCIPLE_CONSTANTS.GRANT_TYPE_VALUES.CODE;
@@ -404,7 +428,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     );
   }, [
     parameterValues,
-    supportsServicePrincipalConnection,
+    supportsLegacyServicePrincipalConnection,
     unfilteredParameters,
     legacyManagedIdentitySelected,
     selectedManagedIdentity,
@@ -751,7 +775,9 @@ export const CreateConnection = (props: CreateConnectionProps) => {
         </div>
 
         {/* Descriptor text for simple and oauth */}
-        {isEmptyString(connectorDescription) ? null : <div>{connectorDescription}</div>}
+        {!isEmptyString(connectorDescription) && (
+          <div data-automation-id={'connector-connection-creation-description'}>{connectorDescription}</div>
+        )}
         {/* {needsAuth && <IFrameTermsOfService url={termsOfServiceUrl} />} */}
       </div>
 
