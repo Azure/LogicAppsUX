@@ -93,7 +93,10 @@ import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import { ConnectionInline } from './connectionInline';
 import { ConnectionsSubMenu } from './connectionsSubMenu';
-import { useCognitiveServiceAccountDeploymentsForNode } from '../../../connectionsPanel/createConnection/custom/useCognitiveService';
+import {
+  useCognitiveServiceAccountDeploymentsForNode,
+  useCognitiveServiceAccountId,
+} from '../../../connectionsPanel/createConnection/custom/useCognitiveService';
 import { isAgentConnectorAndAgentModel, isAgentConnectorAndAgentServiceModel, isAgentConnectorAndDeploymentId } from './helpers';
 import { useShouldEnableFoundryServiceConnection } from './hooks';
 import { removeNodeConnectionData } from '../../../../../core/state/connection/connectionSlice';
@@ -249,6 +252,7 @@ const ParameterSection = ({
   const isFoundryServiceConnectionEnabled = useShouldEnableFoundryServiceConnection();
 
   // Specific for agentic scenarios
+  const cognitiveServiceAccountId = useCognitiveServiceAccountId(nodeId, operationInfo?.connectorId);
   const { data: deploymentsForCognitiveServiceAccount, refetch } = useCognitiveServiceAccountDeploymentsForNode(
     nodeId,
     operationInfo?.connectorId
@@ -736,6 +740,7 @@ const ParameterSection = ({
       const createNewResourceEditorProps = getCustomEditorForNewResource(
         operationInfo,
         param,
+        cognitiveServiceAccountId,
         refetchAndSetDeploymentForCognitiveServiceAccount
       );
 
@@ -827,6 +832,7 @@ const getConnectionElements = (parameter: ParameterInfo) => {
 export const getCustomEditorForNewResource = (
   operationInfo: OperationInfo,
   parameter: ParameterInfo,
+  cognitiveServiceAccountId: string | undefined,
   refetchDeploymentModels: (name?: string) => void
 ): NewResourceProps | undefined => {
   const hasInlineCreateResource = getPropertyValue(parameter.schema, ExtensionProperties.InlineCreateNewResource);
@@ -844,6 +850,7 @@ export const getCustomEditorForNewResource = (
         hideLabel: customEditor.hideLabel,
         editor: customEditor.editor,
         onClose: refetchDeploymentModels,
+        metadata: { cognitiveServiceAccountId: cognitiveServiceAccountId },
       };
     }
   }

@@ -32,11 +32,15 @@ export const useAllCognitiveServiceAccounts = (subscriptionId: string) => {
   );
 };
 
-export const useCognitiveServiceAccountDeploymentsForNode = (nodeId: string, connectorId?: string) => {
+export const useCognitiveServiceAccountId = (nodeId: string, _connectorId?: string) => {
   const selectedConnection = useSelectedConnection(nodeId);
   const resourceId = selectedConnection?.properties?.connectionParameters?.cognitiveServiceAccountId?.metadata?.value;
   const isFoundryServiceConnection = foundryServiceConnectionRegex.test(resourceId ?? '');
-  const serviceAccountId = isFoundryServiceConnection ? resourceId?.split('/').slice(0, -2).join('/') : resourceId;
+  return resourceId ? (isFoundryServiceConnection ? resourceId?.split('/').slice(0, -2).join('/') : resourceId) : undefined;
+};
+
+export const useCognitiveServiceAccountDeploymentsForNode = (nodeId: string, connectorId?: string) => {
+  const serviceAccountId = useCognitiveServiceAccountId(nodeId, connectorId);
   return useQuery(
     [queryKeys.allCognitiveServiceAccountsDeployments, { serviceAccountId }],
     async () => {

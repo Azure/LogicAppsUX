@@ -53,7 +53,8 @@ export interface NewResourceProps {
   component: React.FunctionComponent<any>;
   hideLabel?: boolean;
   editor?: string;
-  onClose: () => void;
+  onClose: (name?: string) => void;
+  metadata?: Record<string, any>;
 }
 
 export interface SettingTokenFieldProps extends SettingProps {
@@ -97,6 +98,7 @@ export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
   const normalizedLabel = props.label?.replace(/ /g, '-');
   const styles = useSettingTokenStyles();
   const labelId = useId(normalizedLabel);
+  const [openPopover, setOpenPopover] = useState(false);
   const hideLabel =
     (isCustomEditor(props) && props.editorOptions?.hideLabel === true) ||
     equals(props.editor?.toLowerCase(), constants.PARAMETER.EDITOR.FLOATINGACTIONMENU);
@@ -125,13 +127,28 @@ export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
             </div>
           ) : null}
           {props.newResourceProps ? (
-            <Popover trapFocus>
+            <Popover
+              trapFocus={true}
+              positioning={'below-start'}
+              withArrow={true}
+              open={openPopover}
+              onOpenChange={(_e, data) => setOpenPopover(data.open ?? false)}
+            >
               <PopoverTrigger>
-                <div className={styles.newResourceContainer}>{'Create New'}</div>
+                <div className={styles.newResourceContainer} onClick={() => setOpenPopover(!open)}>
+                  {'Create New'}
+                </div>
               </PopoverTrigger>
-              <PopoverSurface>
+              <PopoverSurface tabIndex={-1}>
                 {CustomNewResourceComponent ? (
-                  <CustomNewResourceComponent values={[props.editorOptions]} onClose={props.newResourceProps.onClose} />
+                  <CustomNewResourceComponent
+                    values={[props.editorOptions]}
+                    onClose={(name?: string) => {
+                      setOpenPopover(false);
+                      props.newResourceProps?.onClose?.(name);
+                    }}
+                    metadata={props.newResourceProps?.metadata}
+                  />
                 ) : null}
               </PopoverSurface>
             </Popover>
