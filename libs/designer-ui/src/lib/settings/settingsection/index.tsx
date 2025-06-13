@@ -20,7 +20,7 @@ export { SettingLabel, getSettingLabel } from './settinglabel';
 export { SettingDictionary } from './settingdictionary';
 export type { SettingDictionaryProps } from './settingdictionary';
 export { SettingTokenField } from './settingTokenField';
-export type { SettingTokenFieldProps as SettingTokenTextFieldProps } from './settingTokenField';
+export type { SettingTokenFieldProps as SettingTokenTextFieldProps, NewResourceProps } from './settingTokenField';
 export { SettingDropdown } from './settingdropdown';
 export type { SettingDropdownProps, DropdownSelectionChangeHandler } from './settingdropdown';
 export { toCustomEditorAndOptions, isCustomEditor } from './customTokenField';
