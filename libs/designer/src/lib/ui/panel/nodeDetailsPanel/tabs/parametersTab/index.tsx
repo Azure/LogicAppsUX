@@ -100,6 +100,7 @@ import {
 import { isAgentConnectorAndAgentModel, isAgentConnectorAndAgentServiceModel, isAgentConnectorAndDeploymentId } from './helpers';
 import { useShouldEnableFoundryServiceConnection } from './hooks';
 import { removeNodeConnectionData } from '../../../../../core/state/connection/connectionSlice';
+import { AgentUtils } from '../../../../../common/utilities/Utils';
 
 // TODO: Add a readonly per settings section/group
 export interface ParametersTabProps extends PanelTabProps {
@@ -747,12 +748,19 @@ const ParameterSection = ({
       const { value: remappedValues } = isRecordNotEmpty(idReplacements) ? remapValueSegmentsWithNewIds(value, idReplacements) : { value };
 
       const isCodeEditor = editor?.toLowerCase() === constants.EDITOR.CODE;
+
+      // Control is disabled if it is DeploymentId parameter in Agentic Loop and a connection has not been setup yet
+      const isReadOnlyForAgenticScenario =
+        AgentUtils.isConnector(operationInfo?.connectorId) &&
+        AgentUtils.isDeploymentIdParameter(param?.parameterName) &&
+        !cognitiveServiceAccountId;
+
       const { subMenu, subComponent } = getConnectionElements(param);
       return {
         settingType: 'SettingTokenField',
         settingProp: {
           ...paramSubset,
-          readOnly: editorOptions?.readOnly || readOnly,
+          readOnly: editorOptions?.readOnly || readOnly || isReadOnlyForAgenticScenario,
           value: remappedValues,
           editor,
           editorOptions,
@@ -844,7 +852,8 @@ export const getCustomEditorForNewResource = (
       parameter,
     });
 
-    if (customEditor) {
+    // Create new resource editor is only available when Connection is enabled
+    if (customEditor && cognitiveServiceAccountId) {
       return {
         component: customEditor.EditorComponent,
         hideLabel: customEditor.hideLabel,
