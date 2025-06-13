@@ -35,6 +35,14 @@ export class CustomEditorService implements IEditorService {
     return undefined;
   };
 
+  public getNewResourceEditor = (_props: IEditorParameterInfo) => {
+    if (!this._areCustomEditorsEnabled) {
+      return undefined;
+    }
+
+    return undefined;
+  };
+
   DisplayTextEditor = ({ editorOptions }: IEditorProps) => {
     return (
       <>

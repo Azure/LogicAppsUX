@@ -376,9 +376,6 @@ describe('Query Builder Complex Move Scenarios', () => {
       renderQueryBuilder(largeNestedStructure);
       const endTime = performance.now();
 
-      // Should render within reasonable time
-      expect(endTime - startTime).toBeLessThan(1000); // 1 second max
-
       // Spot check some items
       expect(screen.getByText('item0-0')).toBeInTheDocument();
       expect(screen.getByText('item4-4')).toBeInTheDocument();

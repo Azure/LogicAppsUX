@@ -42,9 +42,18 @@ import type { SettingProps } from './';
 import { CustomTokenField, isCustomEditor } from './customTokenField';
 import { TableEditor } from '../../table';
 import { useId } from '../../useId';
+import { useSettingTokenStyles } from './styles';
+import { Popover, PopoverSurface, PopoverTrigger } from '@fluentui/react-components';
 interface EditorHostOptions {
   suppressCastingForSerialize?: boolean;
   isMultiVariableEnabled?: boolean;
+}
+
+export interface NewResourceProps {
+  component: React.FunctionComponent<any>;
+  hideLabel?: boolean;
+  editor?: string;
+  onClose: () => void;
 }
 
 export interface SettingTokenFieldProps extends SettingProps {
@@ -81,15 +90,18 @@ export interface SettingTokenFieldProps extends SettingProps {
   subComponent?: JSX.Element | null;
   subMenu?: JSX.Element | null;
   hideTokenPicker?: boolean;
+  newResourceProps?: NewResourceProps;
 }
 
 export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
   const normalizedLabel = props.label?.replace(/ /g, '-');
+  const styles = useSettingTokenStyles();
   const labelId = useId(normalizedLabel);
   const hideLabel =
     (isCustomEditor(props) && props.editorOptions?.hideLabel === true) ||
     equals(props.editor?.toLowerCase(), constants.PARAMETER.EDITOR.FLOATINGACTIONMENU);
   const [showSubComponent, setShowSubComponent] = useState(false);
+  const CustomNewResourceComponent = useMemo(() => props.newResourceProps?.component, [props.newResourceProps?.component]);
 
   return (
     <>
@@ -102,12 +114,28 @@ export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
       <div key={props.id}>
         {isCustomEditor(props) ? <CustomTokenField {...props} labelId={labelId} /> : <TokenField {...props} labelId={labelId} />}
       </div>
-      {props.subComponent ? (
-        <div className="msla-input-parameter-subcomponent">
-          {cloneElement(props.subComponent, {
-            showSubComponent,
-            setShowSubComponent,
-          })}
+      {props.newResourceProps || props.subComponent ? (
+        <div className={styles.subComponentContainer}>
+          {props.subComponent ? (
+            <div className="msla-input-parameter-subcomponent">
+              {cloneElement(props.subComponent, {
+                showSubComponent,
+                setShowSubComponent,
+              })}
+            </div>
+          ) : null}
+          {props.newResourceProps ? (
+            <Popover trapFocus>
+              <PopoverTrigger>
+                <div className={styles.newResourceContainer}>{'Create New'}</div>
+              </PopoverTrigger>
+              <PopoverSurface>
+                {CustomNewResourceComponent ? (
+                  <CustomNewResourceComponent values={[props.editorOptions]} onClose={props.newResourceProps.onClose} />
+                ) : null}
+              </PopoverSurface>
+            </Popover>
+          ) : null}
         </div>
       ) : null}
     </>

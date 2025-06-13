@@ -65,16 +65,15 @@ import {
   isInitializeVariableOperation,
   parseSchemaAsVariableEditorSegments,
   toCustomEditorAndOptions,
-} from '@microsoft/designer-ui';
-import type {
-  ChangeState,
-  ParameterInfo,
-  ValueSegment,
-  OutputToken,
-  TokenPickerMode,
-  PanelTabFn,
-  PanelTabProps,
-  InitializeVariableProps,
+  type ChangeState,
+  type ParameterInfo,
+  type ValueSegment,
+  type OutputToken,
+  type TokenPickerMode,
+  type PanelTabFn,
+  type PanelTabProps,
+  type InitializeVariableProps,
+  type NewResourceProps,
 } from '@microsoft/designer-ui';
 import {
   clone,
@@ -250,7 +249,10 @@ const ParameterSection = ({
   const isFoundryServiceConnectionEnabled = useShouldEnableFoundryServiceConnection();
 
   // Specific for agentic scenarios
-  const { data: deploymentsForCognitiveServiceAccount } = useCognitiveServiceAccountDeploymentsForNode(nodeId, operationInfo?.connectorId);
+  const { data: deploymentsForCognitiveServiceAccount, refetch } = useCognitiveServiceAccountDeploymentsForNode(
+    nodeId,
+    operationInfo?.connectorId
+  );
   const { variables, upstreamNodeIds, operationDefinition, connectionReference, idReplacements, workflowParameters, nodesMetadata } =
     useSelector((state: RootState) => {
       return {
@@ -666,6 +668,16 @@ const ParameterSection = ({
     );
   };
 
+  const refetchAndSetDeploymentForCognitiveServiceAccount = useCallback(
+    (name?: string) => {
+      if (name) {
+        refetch();
+        // TODO: Set default value for the deployment
+      }
+    },
+    [refetch]
+  );
+
   useEffect(() => {
     const callback = async () => {
       const mapping: Record<string, ValueSegment> = {};
@@ -719,6 +731,12 @@ const ParameterSection = ({
         upstreamNodeIds ?? [],
         variables,
         deploymentsForCognitiveServiceAccount ?? []
+      );
+
+      const createNewResourceEditorProps = getCustomEditorForNewResource(
+        operationInfo,
+        param,
+        refetchAndSetDeploymentForCognitiveServiceAccount
       );
 
       const { value: remappedValues } = isRecordNotEmpty(idReplacements) ? remapValueSegmentsWithNewIds(value, idReplacements) : { value };
@@ -777,6 +795,7 @@ const ParameterSection = ({
           ) => getTokenPicker(param, editorId, labelId, tokenPickerMode, editorType, isCodeEditor, tokenClickedCallback),
           subComponent: subComponent,
           subMenu: subMenu,
+          newResourceProps: createNewResourceEditorProps,
           hideTokenPicker: !isWithinAgenticLoop /* only used in python code editor */,
         },
       };
@@ -803,6 +822,33 @@ const getConnectionElements = (parameter: ParameterInfo) => {
     subComponent: hasConnectionInline ? <ConnectionInline /> : null,
     subMenu: hasConnectionInline ? <ConnectionsSubMenu /> : null,
   };
+};
+
+export const getCustomEditorForNewResource = (
+  operationInfo: OperationInfo,
+  parameter: ParameterInfo,
+  refetchDeploymentModels: (name?: string) => void
+): NewResourceProps | undefined => {
+  const hasInlineCreateResource = getPropertyValue(parameter.schema, ExtensionProperties.InlineCreateNewResource);
+
+  // Adding agent check spefically since create new is specific to agentic for now, will generalize and remove it later
+  if (hasInlineCreateResource) {
+    const customEditor = EditorService()?.getNewResourceEditor({
+      operationInfo,
+      parameter,
+    });
+
+    if (customEditor) {
+      return {
+        component: customEditor.EditorComponent,
+        hideLabel: customEditor.hideLabel,
+        editor: customEditor.editor,
+        onClose: refetchDeploymentModels,
+      };
+    }
+  }
+
+  return undefined;
 };
 
 export const getEditorAndOptions = (
