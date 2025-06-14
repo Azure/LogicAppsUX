@@ -93,10 +93,14 @@ import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import { ConnectionInline } from './connectionInline';
 import { ConnectionsSubMenu } from './connectionsSubMenu';
-import { useCognitiveServiceAccountDeploymentsForNode } from '../../../connectionsPanel/createConnection/custom/useCognitiveService';
+import {
+  useCognitiveServiceAccountDeploymentsForNode,
+  useCognitiveServiceAccountId,
+} from '../../../connectionsPanel/createConnection/custom/useCognitiveService';
 import { isAgentConnectorAndAgentModel, isAgentConnectorAndAgentServiceModel, isAgentConnectorAndDeploymentId } from './helpers';
 import { useShouldEnableFoundryServiceConnection } from './hooks';
 import { removeNodeConnectionData } from '../../../../../core/state/connection/connectionSlice';
+import { AgentUtils } from '../../../../../common/utilities/Utils';
 
 // TODO: Add a readonly per settings section/group
 export interface ParametersTabProps extends PanelTabProps {
@@ -249,6 +253,7 @@ const ParameterSection = ({
   const isFoundryServiceConnectionEnabled = useShouldEnableFoundryServiceConnection();
 
   // Specific for agentic scenarios
+  const cognitiveServiceAccountId = useCognitiveServiceAccountId(nodeId, operationInfo?.connectorId);
   const { data: deploymentsForCognitiveServiceAccount, refetch } = useCognitiveServiceAccountDeploymentsForNode(
     nodeId,
     operationInfo?.connectorId
@@ -368,7 +373,7 @@ const ParameterSection = ({
         dispatch(addOrUpdateCustomCode({ nodeId, fileData, fileExtension, fileName }));
       }
 
-      if (isAgentConnectorAndAgentModel(operationInfo.connectorId ?? '', parameter?.parameterKey ?? '')) {
+      if (isAgentConnectorAndAgentModel(operationInfo.connectorId ?? '', parameter?.parameterName ?? '')) {
         const newValue = value.length > 0 ? value[0].value : undefined;
         const oldValue = parameter?.value && parameter.value.length > 0 ? parameter.value[0].value : undefined;
         if (!isNullOrUndefined(newValue) && !isNullOrUndefined(oldValue) && newValue !== oldValue) {
@@ -376,7 +381,7 @@ const ParameterSection = ({
         }
       }
 
-      const isAgentDeployment = isAgentConnectorAndDeploymentId(operationInfo.connectorId ?? '', parameter?.parameterKey ?? '');
+      const isAgentDeployment = isAgentConnectorAndDeploymentId(operationInfo.connectorId ?? '', parameter?.parameterName ?? '');
 
       if (isAgentDeployment) {
         const deploymentInfo = value?.length
@@ -736,18 +741,26 @@ const ParameterSection = ({
       const createNewResourceEditorProps = getCustomEditorForNewResource(
         operationInfo,
         param,
+        cognitiveServiceAccountId,
         refetchAndSetDeploymentForCognitiveServiceAccount
       );
 
       const { value: remappedValues } = isRecordNotEmpty(idReplacements) ? remapValueSegmentsWithNewIds(value, idReplacements) : { value };
 
       const isCodeEditor = editor?.toLowerCase() === constants.EDITOR.CODE;
+
+      // Control is disabled if it is DeploymentId parameter in Agentic Loop and a connection has not been setup yet
+      const isReadOnlyForAgenticScenario =
+        AgentUtils.isConnector(operationInfo?.connectorId) &&
+        AgentUtils.isDeploymentIdParameter(param?.parameterName) &&
+        !cognitiveServiceAccountId;
+
       const { subMenu, subComponent } = getConnectionElements(param);
       return {
         settingType: 'SettingTokenField',
         settingProp: {
           ...paramSubset,
-          readOnly: editorOptions?.readOnly || readOnly,
+          readOnly: editorOptions?.readOnly || readOnly || isReadOnlyForAgenticScenario,
           value: remappedValues,
           editor,
           editorOptions,
@@ -827,6 +840,7 @@ const getConnectionElements = (parameter: ParameterInfo) => {
 export const getCustomEditorForNewResource = (
   operationInfo: OperationInfo,
   parameter: ParameterInfo,
+  cognitiveServiceAccountId: string | undefined,
   refetchDeploymentModels: (name?: string) => void
 ): NewResourceProps | undefined => {
   const hasInlineCreateResource = getPropertyValue(parameter.schema, ExtensionProperties.InlineCreateNewResource);
@@ -838,12 +852,14 @@ export const getCustomEditorForNewResource = (
       parameter,
     });
 
-    if (customEditor) {
+    // Create new resource editor is only available when Connection is enabled
+    if (customEditor && cognitiveServiceAccountId) {
       return {
         component: customEditor.EditorComponent,
         hideLabel: customEditor.hideLabel,
         editor: customEditor.editor,
         onClose: refetchDeploymentModels,
+        metadata: { cognitiveServiceAccountId: cognitiveServiceAccountId },
       };
     }
   }
@@ -885,7 +901,7 @@ export const getEditorAndOptions = (
   }
 
   // Handle agent connector with supported deployments
-  const isAgent = isAgentConnectorAndDeploymentId(parameter.parameterKey, operationInfo?.connectorId);
+  const isAgent = isAgentConnectorAndDeploymentId(operationInfo?.connectorId, parameter.parameterName);
   if (equals(editor, 'combobox') && isAgent) {
     const options = deploymentsForCognitiveServiceAccount
       .filter((deployment) => constants.SUPPORTED_AGENT_MODELS.includes((deployment.properties?.model?.name ?? '').toLowerCase()))

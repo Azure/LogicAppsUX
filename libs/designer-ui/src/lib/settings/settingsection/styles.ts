@@ -8,7 +8,7 @@ export const useSettingTokenStyles = makeStyles({
   newResourceContainer: {
     alignContent: 'center',
     fontSize: '12px',
-    fontStyle: 'italic',
+    fontWeight: 500,
     cursor: 'pointer',
     color: tokens.colorBrandStroke1,
   },

@@ -10,6 +10,7 @@ export interface ICognitiveServiceService {
   fetchSessionPoolAccountById(accountId: string): Promise<any>;
   fetchBuiltInRoleDefinitions(): Promise<any>;
   hasRolePermission(accountId: string, roleDefinitionId: string): Promise<boolean>;
+  createNewDeployment(deploymentName: string, model: string, openAIResourceId: string): Promise<any>;
 }
 
 let service: ICognitiveServiceService;
