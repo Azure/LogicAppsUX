@@ -66,6 +66,7 @@ export interface BaseEditorProps {
   label?: string;
   labelId?: string;
   ariaLabel?: string;
+  style?: React.CSSProperties;
   // Behavior
   readonly?: boolean;
   isSwitchFromPlaintextBlocked?: boolean;
@@ -120,6 +121,7 @@ export const BaseEditor = ({
   onBlur,
   getTokenPicker,
   setIsValuePlaintext,
+  style,
 }: BaseEditorProps) => {
   const editorId = useId('msla-tokenpicker-callout-location');
   const intl = useIntl();
@@ -199,7 +201,7 @@ export const BaseEditor = ({
         id={editorId}
         ref={containerRef}
         data-automation-id={dataAutomationId}
-        style={{ position: 'relative' }}
+        style={style ?? { position: 'relative' }}
       >
         {htmlEditor ? (
           <RichTextToolbar

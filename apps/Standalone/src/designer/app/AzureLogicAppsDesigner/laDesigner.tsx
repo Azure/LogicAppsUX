@@ -72,6 +72,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHostingPlan } from '../../state/workflowLoadingSelectors';
 import CodeViewEditor from './CodeView';
 import { CustomConnectionParameterEditorService } from './Services/customConnectionParameterEditorService';
+import { CustomEditorService } from './Services/customEditorService';
 
 const apiVersion = '2020-06-01';
 const httpClient = new HttpClient();
@@ -934,6 +935,7 @@ const getDesignerServices = (
   });
 
   const connectionParameterEditorService = new CustomConnectionParameterEditorService();
+  const editorService = new CustomEditorService();
 
   return {
     appService,
@@ -954,6 +956,7 @@ const getDesignerServices = (
     customCodeService,
     cognitiveServiceService,
     connectionParameterEditorService,
+    editorService,
     userPreferenceService: new BaseUserPreferenceService(),
     experimentationService: new BaseExperimentationService(),
   };

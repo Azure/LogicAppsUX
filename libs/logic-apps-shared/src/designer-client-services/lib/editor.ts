@@ -88,7 +88,12 @@ export interface IEditorProps {
   /**
    * Post close of the editor callback.
    */
-  onClose?: () => void;
+  onClose?: (name?: string) => void;
+
+  /**
+   * Metadata for the operation and parameter.
+   */
+  metadata?: Record<string, any>;
 }
 
 export interface IEditorParameterInfo {
