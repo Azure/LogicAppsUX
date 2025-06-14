@@ -54,7 +54,7 @@ export const useCognitiveServiceAccountDeploymentsForNode = (nodeId: string, con
       retryOnMount: true,
       refetchOnMount: true,
       refetchOnReconnect: true,
-      enabled: true,
+      enabled: !!serviceAccountId,
     }
   );
 };
