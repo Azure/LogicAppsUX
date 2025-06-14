@@ -59,6 +59,22 @@ export const customCodeSlice = createSlice({
       if (!originalFile) {
         return;
       }
+      
+      // Check if a file with the same name already exists (for CSharp files which is .csx extension)
+      // Only apply validation for C# script files to avoid affecting other code types
+      if (newFileName.endsWith('.csx')) {
+        const duplicateFileExists = Object.entries(state.files).some(([existingFileName, file]) => {
+          // Check if there's another active (not deleted) file with the same name
+          return existingFileName === newFileName && 
+                 !file.isDeleted &&
+                 existingFileName !== oldFileName; // Skip the file being renamed
+        });
+        
+        if (duplicateFileExists) {
+          // If a duplicate exists, don't perform the rename
+          return;
+        }
+      }
 
       state.files[newFileName] = {
         ...originalFile,
