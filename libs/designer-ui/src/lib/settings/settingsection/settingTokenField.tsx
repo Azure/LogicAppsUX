@@ -141,6 +141,7 @@ export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
           {props.newResourceProps ? (
             <Popover
               trapFocus={true}
+              inline={true}
               positioning={'below-start'}
               withArrow={true}
               open={openPopover}

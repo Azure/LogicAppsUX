@@ -194,10 +194,14 @@ export class BaseCognitiveServiceService implements ICognitiveServiceService {
           'api-version': '2023-10-01-preview',
         },
         content: {
-          model: {
-            name: model,
-            version: '2025-04-14',
-            format: 'OpenAI',
+          properties: {
+            model: {
+              name: model,
+              version: '2025-04-14',
+              format: 'OpenAI',
+            },
+            raiPolicyName: 'Microsoft.DefaultV2',
+            versionUpgradeOption: 'OnceNewDefaultVersionAvailable',
           },
           sku: {
             name: 'GlobalStandard',
