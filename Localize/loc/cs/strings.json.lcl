@@ -2556,6 +2556,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";6ZzRu4" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[''Value'' must be a valid {expectedType}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[''Value'' musí být platný typ {expectedType}]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";6c1ffO" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter JSON object of authentication parameter]]></Val>
@@ -3591,15 +3600,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";9kMtmY" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[''Value'' must be a valid float]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[''Hodnota'' musí být platná hodnota float.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";9klmbJ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Save]]></Val>
@@ -3857,15 +3857,6 @@
           <Val><![CDATA[{title} operation]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[operace {title}]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";Aw8LkK" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[''Value'' must be a valid boolean]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[''Hodnota'' musí být platná logická hodnota.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4136,15 +4127,6 @@
           <Val><![CDATA[Expant list of sibling elements]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Rozbalit seznam prvků na stejné úrovni]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";BWIM2x" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[''Value'' must be a valid integer]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[''Hodnota'' musí být platné celé číslo.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
