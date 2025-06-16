@@ -33,7 +33,7 @@ export const store = configureStore({
     app: appReducer,
   },
   //middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false }), // useful for debugging larger schemas, will break gated build
-});
+}) as any;
 
 // Infer the `AppStore` from the store itself
 export type AppStore = typeof store;
