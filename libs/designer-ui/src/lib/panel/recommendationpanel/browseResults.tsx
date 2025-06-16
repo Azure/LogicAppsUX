@@ -69,7 +69,7 @@ export const BrowseGrid = ({
 
       if (isConnector) {
         return (
-          <div className="msla-browse-list-tile-wrapper">
+          <div className="msla-browse-list-tile-wrapper" role="button">
             <div className={className} style={style}>
               <ConnectorSummaryCard
                 key={(item as Connector).id}
