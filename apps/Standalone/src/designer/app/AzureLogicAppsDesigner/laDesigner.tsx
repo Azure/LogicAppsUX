@@ -673,6 +673,8 @@ const getDesignerServices = (
       ['connectionProviders/localWorkflowOperation', 'invokeNestedAgent'],
       ['connectionProviders/xmlOperations', 'xmlValidation'],
       ['connectionProviders/xmlOperations', 'xmlTransform'],
+      ['connectionProviders/xmlOperations', 'XmlParse'],
+      ['connectionProviders/xmlOperations', 'XmlCompose'],
       ['connectionProviders/liquidOperations', 'liquidJsonToJson'],
       ['connectionProviders/liquidOperations', 'liquidJsonToText'],
       ['connectionProviders/liquidOperations', 'liquidXmlToJson'],
