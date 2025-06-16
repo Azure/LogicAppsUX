@@ -39,7 +39,7 @@ import { ConfigureWorkflowsPanel } from '../panels/configureWorkflowsPanel/confi
 import { DescriptionWithLink, tableHeaderStyle, ErrorBar } from '../common';
 import { workflowsHaveErrors } from '../../../core/configuretemplate/utils/errors';
 import EBookIcon from '../../../common/images/templates/openbook.svg';
-import { useTemplateWorkflows } from '../../../core/configuretemplate/utils/queries';
+import { useTemplateWorkflowResources } from '../../../core/configuretemplate/utils/queries';
 import { getDateTimeString } from '../../../core/configuretemplate/utils/helper';
 
 export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean) => void }) => {
@@ -53,7 +53,7 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
     templateId: state.template.manifest?.id as string,
   }));
   const hasErrors = useMemo(() => saveErrors || workflowsHaveErrors(apiErrors, workflows), [apiErrors, saveErrors, workflows]);
-  const { data: workflowResources, isLoading: workflowResourcesLoading } = useTemplateWorkflows(templateId);
+  const { data: workflowResources, isLoading: workflowResourcesLoading } = useTemplateWorkflowResources(templateId);
   const dispatch = useDispatch<AppDispatch>();
   const isMultiWorkflow = Object.keys(workflows).length > 1;
 

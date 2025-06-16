@@ -153,7 +153,7 @@ test.describe(
 
       // Operation panels should have their respective tabs open.
       await expect(page.locator('.msla-panel-border-selected .msla-setting-section').first()).toBeVisible();
-      await expect(page.locator('.msla-panel-layout-pinned .msla-peek')).toBeVisible();
+      await expect(page.locator('.msla-panel-layout-pinned').getByTestId('msla-peek')).toBeVisible();
     });
 
     test('Should only show the panel info message when trigger type is request', async ({ page }) => {

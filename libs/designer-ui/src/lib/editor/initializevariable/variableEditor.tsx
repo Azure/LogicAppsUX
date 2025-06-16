@@ -2,7 +2,7 @@ import { Label } from '../../label';
 import { Combobox, DropdownEditor, getVariableType, StringEditor, TrafficLightDot, useId } from '../..';
 import type { DropdownItem } from '../../dropdown';
 import type { BaseEditorProps, ChangeState } from '../base';
-import { Button, Tooltip } from '@fluentui/react-components';
+import { Badge, Button, Tooltip } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 import {
   bundleIcon,
@@ -12,8 +12,6 @@ import {
   ChevronRight24Regular,
   Delete24Filled,
   Delete24Regular,
-  Edit24Filled,
-  Edit24Regular,
 } from '@fluentui/react-icons';
 import { useState } from 'react';
 import { createEmptyLiteralValueSegment, isSingleLiteralValueSegment } from '../base/utils/helper';
@@ -24,24 +22,63 @@ import { useTheme } from '@fluentui/react';
 import type { InitializeVariableProps } from './';
 
 const DeleteIcon = bundleIcon(Delete24Filled, Delete24Regular);
-const EditIcon = bundleIcon(Edit24Filled, Edit24Regular);
 const ExpandIcon = bundleIcon(ChevronRight24Filled, ChevronRight24Regular);
 const CollapseIcon = bundleIcon(ChevronDown24Filled, ChevronDown24Regular);
 
 const variableOptions: DropdownItem[] = [
-  { key: VARIABLE_TYPE.BOOLEAN, value: VARIABLE_TYPE.BOOLEAN, displayName: 'Boolean' },
-  { key: VARIABLE_TYPE.INTEGER, value: VARIABLE_TYPE.INTEGER, displayName: 'Integer' },
-  { key: VARIABLE_TYPE.FLOAT, value: VARIABLE_TYPE.FLOAT, displayName: 'Float' },
-  { key: VARIABLE_TYPE.STRING, value: VARIABLE_TYPE.STRING, displayName: 'String' },
-  { key: VARIABLE_TYPE.OBJECT, value: VARIABLE_TYPE.OBJECT, displayName: 'Object' },
-  { key: VARIABLE_TYPE.ARRAY, value: VARIABLE_TYPE.ARRAY, displayName: 'Array' },
+  {
+    key: VARIABLE_TYPE.BOOLEAN,
+    value: VARIABLE_TYPE.BOOLEAN,
+    displayName: 'Boolean',
+  },
+  {
+    key: VARIABLE_TYPE.INTEGER,
+    value: VARIABLE_TYPE.INTEGER,
+    displayName: 'Integer',
+  },
+  {
+    key: VARIABLE_TYPE.FLOAT,
+    value: VARIABLE_TYPE.FLOAT,
+    displayName: 'Float',
+  },
+  {
+    key: VARIABLE_TYPE.STRING,
+    value: VARIABLE_TYPE.STRING,
+    displayName: 'String',
+  },
+  {
+    key: VARIABLE_TYPE.OBJECT,
+    value: VARIABLE_TYPE.OBJECT,
+    displayName: 'Object',
+  },
+  {
+    key: VARIABLE_TYPE.ARRAY,
+    value: VARIABLE_TYPE.ARRAY,
+    displayName: 'Array',
+  },
 ];
 
 const agentParameterOptions: DropdownItem[] = [
-  { key: VARIABLE_TYPE.STRING, value: VARIABLE_TYPE.STRING, displayName: 'String' },
-  { key: VARIABLE_TYPE.INTEGER, value: VARIABLE_TYPE.INTEGER, displayName: 'Integer' },
-  { key: VARIABLE_TYPE.NUMBER, value: VARIABLE_TYPE.NUMBER, displayName: 'Float (Number)' },
-  { key: VARIABLE_TYPE.BOOLEAN, value: VARIABLE_TYPE.BOOLEAN, displayName: 'Boolean' },
+  {
+    key: VARIABLE_TYPE.STRING,
+    value: VARIABLE_TYPE.STRING,
+    displayName: 'String',
+  },
+  {
+    key: VARIABLE_TYPE.INTEGER,
+    value: VARIABLE_TYPE.INTEGER,
+    displayName: 'Integer',
+  },
+  {
+    key: VARIABLE_TYPE.NUMBER,
+    value: VARIABLE_TYPE.NUMBER,
+    displayName: 'Float (Number)',
+  },
+  {
+    key: VARIABLE_TYPE.BOOLEAN,
+    value: VARIABLE_TYPE.BOOLEAN,
+    displayName: 'Boolean',
+  },
 ];
 
 export const VARIABLE_PROPERTIES = {
@@ -64,6 +101,8 @@ interface VariableEditorProps extends Partial<BaseEditorProps> {
   onVariableChange: (value: InitializeVariableProps) => void;
   isMultiVariableEnabled?: boolean;
   isAgentParameter?: boolean;
+  isNewlyAdded?: boolean;
+  forceExpandByDefault?: boolean;
 }
 
 const FieldEditor = ({
@@ -99,14 +138,16 @@ export const VariableEditor = ({
   onVariableChange,
   errors,
   index,
+  forceExpandByDefault = false,
   isMultiVariableEnabled,
   isAgentParameter,
+  isNewlyAdded,
   ...baseEditorProps
 }: VariableEditorProps) => {
   const intl = useIntl();
   const { isInverted } = useTheme();
   const themeName = isInverted ? 'dark' : 'light';
-  const [expanded, setExpanded] = useState(!isAgentParameter);
+  const [expanded, setExpanded] = useState((isNewlyAdded || forceExpandByDefault) ?? false);
   const [variableId, setVariableId] = useState<string>(guid());
 
   const handleToggleExpand = (): void => {
@@ -129,12 +170,6 @@ export const VariableEditor = ({
     defaultMessage: "Can't delete the last agent parameter.",
     id: 'zOq84J',
     description: 'Delete agent last parameter label',
-  });
-
-  const editButtonTitle = intl.formatMessage({
-    defaultMessage: 'Edit',
-    id: 'crclvu',
-    description: 'Edit label',
   });
 
   const newAgentParameterName = intl.formatMessage({
@@ -201,6 +236,11 @@ export const VariableEditor = ({
 
   const isBooleanType = type[0]?.value === VARIABLE_TYPE.BOOLEAN;
   const variableType = getVariableType(type);
+
+  // Get the display name for the current variable type
+  const currentTypeValue = type[0]?.value;
+  const typeOptions = isAgentParameter ? agentParameterOptions : variableOptions;
+  const typeDisplayName = typeOptions.find((option) => option.value === currentTypeValue)?.displayName || currentTypeValue || '';
   const fields = [
     {
       label: VARIABLE_PROPERTIES.NAME,
@@ -287,18 +327,18 @@ export const VariableEditor = ({
         </Button>
         {!isMultiVariableEnabled && !isAgentParameter ? null : (
           <>
-            <div className={'msla-variable-editor-edit-or-delete-button'}>
-              <Tooltip relationship="label" content={editButtonTitle}>
-                <Button
-                  appearance="subtle"
-                  aria-label={editButtonTitle}
-                  onClick={handleToggleExpand}
-                  icon={<EditIcon />}
-                  disabled={baseEditorProps?.readonly}
-                  style={{ color: 'var(--colorBrandForeground1)' }}
-                />
-              </Tooltip>
-            </div>
+            {(isAgentParameter || isMultiVariableEnabled) && typeDisplayName && (
+              <div
+                className={'msla-variable-editor-type-badge'}
+                data-testid="variable-type-badge"
+                aria-label={`${isAgentParameter ? 'Agent parameter' : 'Variable'} type: ${typeDisplayName}`}
+                role="status"
+              >
+                <Badge appearance="filled" size="medium" color="brand">
+                  {typeDisplayName}
+                </Badge>
+              </div>
+            )}
             <div className={'msla-variable-editor-edit-or-delete-button'}>
               <Tooltip
                 relationship="label"

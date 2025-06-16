@@ -9,6 +9,7 @@ import * as path from 'path';
 // File names
 export const hostFileName = 'host.json';
 export const localSettingsFileName = 'local.settings.json';
+export const cloudSettingsFileName = 'cloud.settings.json';
 export const connectionsFileName = 'connections.json';
 export const parametersFileName = 'parameters.json';
 export const gitignoreFileName = '.gitignore';
@@ -17,12 +18,13 @@ export const launchFileName = 'launch.json';
 export const settingsFileName = 'settings.json';
 export const extensionsFileName = 'extensions.json';
 export const workflowFileName = 'workflow.json';
+export const codefulWorkflowFileName = 'workflow.cs';
 export const funcIgnoreFileName = '.funcignore';
 export const unitTestsFileName = '.unit-test.json';
 export const powershellRequirementsFileName = 'requirements.psd1';
 
 // Directories names
-export const deploymentsDirectory = 'deployments';
+export const deploymentDirectory = 'deployment';
 export const diagnosticsDirectory = 'diagnostics';
 export const locksDirectory = 'locks';
 export const wwwrootDirectory = 'wwwroot';
@@ -38,6 +40,8 @@ export const testsDirectoryName = 'Tests';
 export const testMockOutputsDirectory = 'MockOutputs';
 export const testResultsDirectoryName = '.testResults';
 export const vscodeFolderName = '.vscode';
+export const assetsFolderName = 'assets';
+export const deploymentScriptTemplatesFolderName = 'DeploymentScriptTemplates';
 
 export const logicAppsStandardExtensionId = 'ms-azuretools.vscode-azurelogicapps';
 
@@ -75,6 +79,8 @@ export const workflowManagementBaseURIKey = 'WORKFLOWS_MANAGEMENT_BASE_URI';
 export const workflowAppApiVersion = '2018-11-01';
 export const hybridAppApiVersion = '2024-02-02-preview';
 export const azureWebJobsStorageKey = 'AzureWebJobsStorage';
+export const functionsInprocNet8Enabled = 'FUNCTIONS_INPROC_NET8_ENABLED';
+export const functionsInprocNet8EnabledTrue = '1';
 export const azureWebJobsSecretStorageTypeKey = 'AzureWebJobsSecretStorageType';
 export const workflowappRuntime = 'node|18';
 export const viewOutput = localize('viewOutput', 'View Output');
@@ -91,6 +97,12 @@ export const WorkflowType = {
   agentic: 'Agentic-Codeless',
 } as const;
 export type WorkflowType = (typeof WorkflowType)[keyof typeof WorkflowType];
+
+export const workflowCodeType = {
+  codeful: 'Codeful',
+  codeless: 'Codeless',
+} as const;
+export type workflowCodeType = (typeof workflowCodeType)[keyof typeof workflowCodeType];
 
 export const WorkflowKind = {
   stateful: 'Stateful',
@@ -117,6 +129,7 @@ export const extensionCommand = {
   customCodeSetFunctionsFolders: 'azureLogicAppsStandard.customCode.setFunctionsFolders',
   createCustomCodeFunction: 'azureLogicAppsStandard.createCustomCodeFunction',
   createNewDataMap: 'azureLogicAppsStandard.dataMap.createNewDataMap',
+  createWorkflow: 'azureLogicAppsStandard.createWorkflow',
   createCodeless: 'azureLogicAppsStandard.createCodeless',
   createLogicApp: 'azureLogicAppsStandard.createLogicApp',
   createLogicAppAdvanced: 'azureLogicAppsStandard.createLogicAppAdvanced',
@@ -163,6 +176,7 @@ export const extensionCommand = {
   disconnectRepo: 'azureLogicAppsStandard.disconnectRepo',
   viewCommitInGitHub: 'azureLogicAppsStandard.viewCommitInGitHub',
   enableAzureConnectors: 'azureLogicAppsStandard.enableAzureConnectors',
+  syncCloudSettings: 'azureLogicAppsStandard.syncCloudSettings',
   configureWebhookRedirectEndpoint: 'azureLogicAppsStandard.configureWebhookRedirectEndpoint',
   initProjectForVSCode: 'azureLogicAppsStandard.initProjectForVSCode',
   configureDeploymentSource: 'azureLogicAppsStandard.configureDeploymentSource',
@@ -236,6 +250,7 @@ export const funcCoreToolsBinaryPathSettingKey = 'funcCoreToolsBinaryPath';
 export const dependencyTimeoutSettingKey = 'dependencyTimeout';
 export const unitTestExplorer = 'unitTestExplorer';
 export const verifyConnectionKeysSetting = 'verifyConnectionKeys';
+export const useSmbDeployment = 'useSmbDeploymentForHybrid';
 
 // host.json
 export const extensionBundleId = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';
@@ -250,6 +265,7 @@ export const workerRuntimeKey = 'FUNCTIONS_WORKER_RUNTIME';
 export const ProjectDirectoryPath = 'ProjectDirectoryPath';
 export const extensionVersionKey = 'FUNCTIONS_EXTENSION_VERSION';
 export const azureStorageTypeSetting = 'Files';
+export const isZipDeployEnabledSetting = 'IS_ZIP_DEPLOY_ENABLED';
 // Project
 export const defaultVersionRange = '[1.*, 2.0.0)'; // Might need to be changed
 export const funcWatchProblemMatcher = '$func-watch';
@@ -303,6 +319,7 @@ export type DependencyDefaultPath = (typeof DependencyDefaultPath)[keyof typeof 
 // .NET
 export const DotnetVersion = {
   net6: 'net6.0',
+  net8: 'net8.0',
   net3: 'netcoreapp3.1',
   net2: 'netcoreapp2.1',
   net48: 'net48',
@@ -365,9 +382,31 @@ export type COMMON_ERRORS = (typeof COMMON_ERRORS)[keyof typeof COMMON_ERRORS];
 // Environment Variables
 export const azurePublicBaseUrl = 'https://management.azure.com';
 export const sqlConnectionStringSecretName = 'sqlconnectionstring';
+export const clientSecretName = 'clientsecret';
 
 //Regex validations
 export const workflowNameValidation = /^[a-z][a-z0-9]*(?:[_-][a-z0-9]+)*$/i;
 export const logicAppNameValidation = /^[a-z][a-z0-9]*(?:[_-][a-z0-9]+)*$/i;
 export const dataMapNameValidation = /^[a-z][a-z0-9]*(?:[_-][a-z0-9]+)*$/i;
 export const workspaceNameValidation = /^[a-z][a-z0-9]*(?:[_-][a-z0-9]+)*$/i;
+export const deployedLogicAppNameValidation = /^[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,62}[a-zA-Z0-9])?$/;
+export const deployedStorageAccountNameValidation = /^[a-z0-9]{3,24}$/;
+export const deployedAppServicePlanNameValidation = /^[a-zA-Z0-9-]{1,60}$/;
+export const namespaceValidation = /^([A-Za-z_][A-Za-z0-9_]*)(\.[A-Za-z_][A-Za-z0-9_]*)*$/;
+
+// Codeful SDK versions
+export const CodefulSDKs = {
+  DurableTask: 'Microsoft.Azure.WebJobs.Extensions.DurableTask',
+  WorkflowsWebJobs: 'Microsoft.Azure.Workflows.WebJobs.Extension',
+  WorkflowsSDK: 'Microsoft.Azure.Workflows.Sdk',
+};
+export type CodefulSDKs = (typeof CodefulSDKs)[keyof typeof CodefulSDKs];
+
+const codefulSdkVersion = '1.126.0.16';
+const durableTaskVersion = '2.9.0';
+
+export const CodefulSdkVersions = {
+  [CodefulSDKs.DurableTask]: durableTaskVersion,
+  [CodefulSDKs.WorkflowsWebJobs]: codefulSdkVersion,
+  [CodefulSDKs.WorkflowsSDK]: codefulSdkVersion,
+};

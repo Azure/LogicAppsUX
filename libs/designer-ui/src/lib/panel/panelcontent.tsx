@@ -50,7 +50,6 @@ export const PanelContent = ({ nodeId, tabs = [], selectedTab, selectTab }: Pane
     id: 'PP63jY',
     description: 'This is a label to access the overflowed panels',
   });
-
   return (
     <div id={`msla-node-details-panel-${nodeId}`} className="msla-node-details-panel">
       <Overflow aria-label={overflowLabel}>
@@ -68,7 +67,14 @@ export const PanelContent = ({ nodeId, tabs = [], selectedTab, selectTab }: Pane
           <OverflowMenu tabs={tabs} onTabSelect={selectTab} />
         </TabList>
       </Overflow>
-      <div className="msla-panel-content-container">{tabs.find((tab) => tab.id === selectedTabId)?.content}</div>
+      <div
+        className="msla-panel-content-container"
+        tabIndex={selectedTabId === 'ABOUT' ? 0 : undefined}
+        role={selectedTabId === 'ABOUT' ? 'region' : undefined}
+        aria-label={selectedTabId === 'ABOUT' ? tabs.find((tab) => tab.id === selectedTabId)?.title : undefined}
+      >
+        {tabs.find((tab) => tab.id === selectedTabId)?.content}
+      </div>
     </div>
   );
 };

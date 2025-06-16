@@ -32,6 +32,7 @@ import * as fse from 'fs-extra';
 import axios from 'axios';
 import { ext } from '../../../../extensionVariables';
 import { unzipLogicAppArtifacts } from '../../../utils/taskUtils';
+import { syncCloudSettings } from '../../syncCloudSettings';
 
 /**
  * Handles the creation of a unit test for a Logic App workflow.
@@ -316,6 +317,8 @@ async function generateUnitTestFromRun(
     } catch (solutionError) {
       ext.outputChannel.appendLog(`Failed to update solution: ${solutionError}`);
     }
+
+    await syncCloudSettings(context, vscode.Uri.file(projectPath));
   } catch (methodError) {
     context.telemetry.properties.unitTestGenerationStatus = 'Failed';
     const errorMessage = parseErrorBeforeTelemetry(methodError);

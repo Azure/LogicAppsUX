@@ -1,4 +1,4 @@
-name: 'Data Mapper'
+name: '🗺️ Data Mapper Issue'
 description: Create an issue specifically for the Data Mapper product
 labels: ['Data Mapper', 'triage']
 assignees:
@@ -22,12 +22,26 @@ body:
         The more information you fill in, the better we can help you.
 
   - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      description: How severe is this issue?
+      options:
+        - 'P1 - Critical (Blocking production)'
+        - 'P2 - High (Major functionality broken)'
+        - 'P3 - Medium (Minor functionality affected)'
+        - 'P4 - Low (Cosmetic/minor inconvenience)'
+    validations:
+      required: true
+
+  - type: dropdown
     id: dataMapperType
     attributes:
-      label: Which Data Mapper Version are you using ?
+      label: Which Data Mapper Version are you using?
       options:
           - v1
           - v2
+          - Both versions affected
     validations:
       required: true
 
@@ -37,12 +51,21 @@ body:
       label: Describe the Bug with repro steps
       description: Provide a clear and concise description of the challenge you are running into.
       placeholder: |
-        Bug XYZ is happening because
+        Expected behavior:
+        - What should happen when mapping data
+        
+        Actual behavior:
+        - What actually happens
+        
+        Steps to reproduce:
         1. Go to '...'
         2. Click on '....'
         3. Connect nodes and add functions
         4. See error
-        5. Please mention if the issue can be reproduced in both Versions of Data Mapper
+        
+        Schema details (if applicable):
+        - Source schema type: [e.g., JSON, XML, CSV]
+        - Target schema type: [e.g., JSON, XML, CSV]
     validations:
       required: true
 
@@ -58,13 +81,46 @@ body:
         You can drag your video or image files inside of this editor ↓
 
   - type: textarea
-    id: version
+    id: environment
     attributes:
-      label: Version
+      label: Environment
+      description: Please provide environment details
       placeholder: |
+        - VS Code Version: [e.g. 1.85.0]
         - Extension Version: [e.g. v2.3.0]
+        - Operating System: [e.g. Windows 11, macOS 14.2, Ubuntu 22.04]
+        - Browser (if applicable): [e.g. Chrome 120]
     validations:
       required: true
+
+  - type: input
+    id: regression
+    attributes:
+      label: Are you experiencing a regression?
+      description: If yes, please provide the last working version/date
+      placeholder: 'e.g., Worked in v2.2.0 or worked until last week'
+    validations:
+      required: false
+
+  - type: textarea
+    id: mapDefinition
+    attributes:
+      label: Map Definition (if applicable)
+      description: If possible, provide the map definition in LML (Logic Apps Mapping Language) format
+      placeholder: |
+        $version: 1
+        $input: SourceSchema
+        $output: TargetSchema
+        
+        TargetField1: SourceField1
+        TargetField2: concat(SourceField2, ' ', SourceField3)
+        TargetField3:
+          $if: greater(SourceField4, 0)
+          $then: SourceField4
+          $else: 0
+      render: yaml
+    validations:
+      required: false
 
   - type: textarea
     id: additional

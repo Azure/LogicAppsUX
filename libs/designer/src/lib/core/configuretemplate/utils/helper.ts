@@ -28,79 +28,45 @@ export const delimiter = '::::::';
 export const getTemplateConnectionsFromConnectionsData = (
   connectionsData: ConnectionsData | undefined
 ): Record<string, Template.Connection> => {
-  let finalData: Record<string, Template.Connection> = {};
   if (!connectionsData) {
-    return finalData;
+    return {};
   }
 
-  const apiManagementConnections = connectionsData.apiManagementConnections || {};
-  const functionConnections = connectionsData.functionConnections || {};
-  const connectionReferences = connectionsData.managedApiConnections || {};
-  const serviceProviderConnections = connectionsData.serviceProviderConnections || {};
-  const agentConnections = connectionsData.agentConnections || {};
+  const {
+    apiManagementConnections = {},
+    functionConnections = {},
+    managedApiConnections = {},
+    serviceProviderConnections = {},
+    agentConnections = {},
+  } = connectionsData;
 
-  finalData = {
-    ...finalData,
-    ...Object.keys(connectionReferences).reduce((result: Record<string, Template.Connection>, connectionReferenceKey) => {
-      const { api } = connectionReferences[connectionReferenceKey];
-      result[connectionReferenceKey] = {
-        connectorId: api.id,
-        kind: 'shared',
-      };
+  const mergeConnections = (
+    source: Record<string, any>,
+    getConnection: (key: string) => Template.Connection
+  ): Record<string, Template.Connection> => Object.fromEntries(Object.keys(source).map((key) => [key, getConnection(key)]));
 
-      return result;
-    }, {}),
+  return {
+    ...mergeConnections(managedApiConnections, (key) => ({
+      connectorId: managedApiConnections[key].api.id,
+      kind: 'shared',
+    })),
+    ...mergeConnections(apiManagementConnections, () => ({
+      connectorId: '/connectionProviders/apiManagementOperation',
+      kind: 'inapp',
+    })),
+    ...mergeConnections(functionConnections, () => ({
+      connectorId: '/connectionProviders/azureFunctionOperation',
+      kind: 'inapp',
+    })),
+    ...mergeConnections(serviceProviderConnections, (key) => ({
+      connectorId: serviceProviderConnections[key].serviceProvider.id,
+      kind: 'inapp',
+    })),
+    ...mergeConnections(agentConnections, () => ({
+      connectorId: 'connectionProviders/agent',
+      kind: 'inapp',
+    })),
   };
-
-  finalData = {
-    ...finalData,
-    ...Object.keys(apiManagementConnections).reduce((result: Record<string, Template.Connection>, connectionReferenceKey) => {
-      result[connectionReferenceKey] = {
-        connectorId: '/connectionProviders/apiManagementOperation',
-        kind: 'inapp',
-      };
-
-      return result;
-    }, {}),
-  };
-
-  finalData = {
-    ...finalData,
-    ...Object.keys(functionConnections).reduce((result: Record<string, Template.Connection>, connectionReferenceKey) => {
-      result[connectionReferenceKey] = {
-        connectorId: '/connectionProviders/azureFunctionOperation',
-        kind: 'inapp',
-      };
-
-      return result;
-    }, {}),
-  };
-
-  finalData = {
-    ...finalData,
-    ...Object.keys(serviceProviderConnections).reduce((result: Record<string, Template.Connection>, connectionReferenceKey) => {
-      result[connectionReferenceKey] = {
-        connectorId: serviceProviderConnections[connectionReferenceKey].serviceProvider.id,
-        kind: 'inapp',
-      };
-
-      return result;
-    }, {}),
-  };
-
-  finalData = {
-    ...finalData,
-    ...Object.keys(agentConnections).reduce((result: Record<string, Template.Connection>, connectionReferenceKey) => {
-      result[connectionReferenceKey] = {
-        connectorId: 'connectionProviders/agent',
-        kind: 'inapp',
-      };
-
-      return result;
-    }, {}),
-  };
-
-  return finalData;
 };
 
 export const getLogicAppId = (subscriptionId: string, resourceGroup: string, logicAppName: string): string => {
@@ -455,7 +421,8 @@ export const suffixConnectionsWithIdentifier = (
           result.connections[updatedConnectionKey] = connections[connectionKey];
         }
 
-        updatedDefinition = replaceAllStringInWorkflowDefinition(updatedDefinition, connectionKey, updatedConnectionKey);
+        updatedDefinition = replaceAllStringInWorkflowDefinition(updatedDefinition, `"${connectionKey}"`, `"${updatedConnectionKey}"`);
+        updatedDefinition = replaceAllStringInWorkflowDefinition(updatedDefinition, `'${connectionKey}'`, `'${updatedConnectionKey}'`);
       }
     }
 

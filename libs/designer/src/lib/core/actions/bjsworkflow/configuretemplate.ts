@@ -28,6 +28,7 @@ import {
   equals,
   getIntl,
   normalizeConnectorId,
+  getPropertyValue,
 } from '@microsoft/logic-apps-shared';
 import type { RootState } from '../../state/templates/store';
 import {
@@ -231,8 +232,15 @@ export const updateWorkflowParameter = createAsyncThunk(
     const {
       template: { manifest, parameterDefinitions },
     } = getState() as RootState;
-    const parameter = parameterDefinitions[parameterId];
-    const allParameters = Object.values(parameterDefinitions);
+    const modifiedParameterDefinitions = {
+      ...parameterDefinitions,
+      [parameterId]: {
+        ...parameterDefinitions?.[parameterId],
+        ...definition,
+      },
+    };
+    const parameter = modifiedParameterDefinitions[parameterId];
+    const allParameters = Object.values(modifiedParameterDefinitions);
     const associatedWorkflows = (parameter?.associatedWorkflows as string[]) ?? [];
     const promises: Promise<void>[] = [];
     const existingWorkflows = await getWorkflowResourcesInTemplate(manifest?.id as string);
@@ -457,9 +465,66 @@ const saveWorkflowsInTemplateInternal = async (
   }
 };
 
+export const saveTemplateData = createAsyncThunk(
+  'saveTemplateData',
+  async (
+    {
+      templateManifest,
+      publishState,
+      workflows,
+      onSaveCompleted,
+    }: {
+      templateManifest: Template.TemplateManifest;
+      workflows: Record<string, Partial<WorkflowTemplateData>>;
+      publishState: Template.TemplateEnvironment;
+      onSaveCompleted: () => void;
+    },
+    { dispatch }
+  ): Promise<void> => {
+    const service = TemplateResourceService();
+    const templateId = templateManifest?.id as string;
+    const existingWorkflows = await getWorkflowResourcesInTemplate(templateId);
+
+    try {
+      const workflowsData = Object.values(workflows);
+      const isSingleWorkflow = workflowsData.length === 1;
+      if (isSingleWorkflow) {
+        await service.updateWorkflow(templateId, workflowsData[0]?.id as string, {
+          title: templateManifest?.title,
+          summary: templateManifest?.summary,
+        });
+        resetTemplateWorkflowsQuery(templateId, /* rawData */ true);
+      }
+
+      await service.updateTemplate(templateId, templateManifest, publishState);
+      resetTemplateQuery(templateId);
+      dispatch(setApiValidationErrors({ error: undefined, source: 'template' }));
+      dispatch(updateEnvironment(publishState));
+
+      onSaveCompleted();
+    } catch (error: any) {
+      dispatch(getTemplateValidationError({ errorResponse: error, source: 'template' }));
+      LoggerService().log({
+        level: LogEntryLevel.Error,
+        area: 'ConfigureTemplate.saveTemplateData',
+        error,
+        message: `Error while updating template manifest: ${templateId}`,
+      });
+      await rollbackWorkflows(
+        templateId,
+        /* template */ undefined,
+        /* state */ undefined,
+        existingWorkflows,
+        /* clearWorkflows */ false,
+        dispatch
+      );
+    }
+  }
+);
+
 const rollbackWorkflows = async (
   id: string,
-  template: ArmResource<any>,
+  template: ArmResource<any> | undefined,
   state: Template.TemplateEnvironment | undefined,
   workflows: ArmResource<any>[],
   clearWorkflows = true,
@@ -469,7 +534,7 @@ const rollbackWorkflows = async (
   const promises: Promise<void>[] = [];
 
   try {
-    if (state) {
+    if (state && template) {
       await service.updateTemplate(id, template.properties?.manifest, state);
     }
 
@@ -725,7 +790,7 @@ const getConnectionsForStandard = async (
 const getWorkflowDefinitionForStandard = async (workflowId: string): Promise<any> => {
   const queryClient = getReactQueryClient();
   const workflow = await getStandardWorkflow(workflowId, queryClient);
-  return workflow.properties.files?.['workflow.json'];
+  return getPropertyValue(workflow.properties.files, 'workflow.json');
 };
 
 const getWorkflowDefinitionForConsumption = async (subscriptionId: string, resourceGroup: string, logicAppName: string): Promise<any> => {
@@ -798,7 +863,12 @@ export const getTemplateParameters = async (
           if (dependencyType) {
             currentUsedParameters[parameterName] = {
               ...currentUsedParameters[parameterName],
-              dynamicData: { workflow: workflowId, operation: operationId, type: dependencyType, connection: mapping[nodeId] },
+              dynamicData: {
+                workflow: workflowId,
+                operation: operationId,
+                type: dependencyType,
+                connection: getPropertyValue(mapping, nodeId),
+              },
             };
           }
         }

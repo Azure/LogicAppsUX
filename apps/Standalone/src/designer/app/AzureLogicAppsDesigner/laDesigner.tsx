@@ -72,6 +72,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHostingPlan } from '../../state/workflowLoadingSelectors';
 import CodeViewEditor from './CodeView';
 import { CustomConnectionParameterEditorService } from './Services/customConnectionParameterEditorService';
+import { CustomEditorService } from './Services/customEditorService';
 
 const apiVersion = '2020-06-01';
 const httpClient = new HttpClient();
@@ -624,7 +625,9 @@ const getDesignerServices = (
           },
         }
       : { appName, identity: workflowApp?.identity as any },
-    readConnections: () => Promise.resolve(connectionsData),
+    readConnections: () => {
+      return WorkflowUtility.resolveConnectionsReferences(JSON.stringify(clone(connectionsData ?? {})), undefined, appSettings);
+    },
     writeConnection: addConnection as any,
     connectionCreationClients: {
       FileSystem: new FileSystemConnectionCreationClient({
@@ -650,6 +653,7 @@ const getDesignerServices = (
     siteResourceId,
     httpClient,
     workflowName,
+    isHybrid,
   });
   const artifactService = new ArtifactService({
     ...armServiceParams,
@@ -666,6 +670,7 @@ const getDesignerServices = (
     ...defaultServiceParams,
     clientSupportedOperations: [
       ['connectionProviders/localWorkflowOperation', 'invokeWorkflow'],
+      ['connectionProviders/localWorkflowOperation', 'invokeNestedAgent'],
       ['connectionProviders/xmlOperations', 'xmlValidation'],
       ['connectionProviders/xmlOperations', 'xmlTransform'],
       ['connectionProviders/liquidOperations', 'liquidJsonToJson'],
@@ -852,7 +857,7 @@ const getDesignerServices = (
 
   const workflowService: IWorkflowService = {
     getCallbackUrl: (triggerName: string) => listCallbackUrl(workflowIdWithHostRuntime, triggerName),
-    getAppIdentity: () => workflowApp.identity as any,
+    getAppIdentity: () => workflowApp?.identity,
     isExplicitAuthRequiredForManagedIdentity: () => true,
     isSplitOnSupported: () => !!isStateful,
     resubmitWorkflow: async (runId, actionsToResubmit) => {
@@ -926,9 +931,11 @@ const getDesignerServices = (
     apiVersion: '2023-10-01-preview',
     baseUrl: armUrl,
     httpClient,
+    identity: workflowApp?.identity,
   });
 
   const connectionParameterEditorService = new CustomConnectionParameterEditorService();
+  const editorService = new CustomEditorService();
 
   return {
     appService,
@@ -949,6 +956,7 @@ const getDesignerServices = (
     customCodeService,
     cognitiveServiceService,
     connectionParameterEditorService,
+    editorService,
     userPreferenceService: new BaseUserPreferenceService(),
     experimentationService: new BaseExperimentationService(),
   };

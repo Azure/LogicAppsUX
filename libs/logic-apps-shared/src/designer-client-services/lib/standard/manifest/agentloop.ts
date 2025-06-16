@@ -66,6 +66,7 @@ export default {
           title: 'Deployment Model Name',
           description: 'The deployment name of the model you want to use.',
           'x-ms-connection-required': true,
+          'x-ms-create-new-resource': true,
           'x-ms-visibility': 'important',
           'x-ms-editor': 'combobox',
         },
@@ -302,7 +303,7 @@ export default {
       properties: {
         lastAssistantMessage: {
           type: 'object',
-          title: 'Last Assitant Message',
+          title: 'Last Assistant Message',
           description: 'This is the final message returned by the model',
         },
       },

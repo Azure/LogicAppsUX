@@ -42,9 +42,20 @@ import type { SettingProps } from './';
 import { CustomTokenField, isCustomEditor } from './customTokenField';
 import { TableEditor } from '../../table';
 import { useId } from '../../useId';
+import { useSettingTokenStyles } from './styles';
+import { Popover, PopoverSurface, PopoverTrigger } from '@fluentui/react-components';
+import { useIntl } from 'react-intl';
 interface EditorHostOptions {
   suppressCastingForSerialize?: boolean;
   isMultiVariableEnabled?: boolean;
+}
+
+export interface NewResourceProps {
+  component: React.FunctionComponent<any>;
+  hideLabel?: boolean;
+  editor?: string;
+  onClose: (name?: string) => void;
+  metadata?: Record<string, any>;
 }
 
 export interface SettingTokenFieldProps extends SettingProps {
@@ -80,15 +91,31 @@ export interface SettingTokenFieldProps extends SettingProps {
   hostOptions?: EditorHostOptions;
   subComponent?: JSX.Element | null;
   subMenu?: JSX.Element | null;
+  hideTokenPicker?: boolean;
+  newResourceProps?: NewResourceProps;
 }
 
 export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
   const normalizedLabel = props.label?.replace(/ /g, '-');
+  const styles = useSettingTokenStyles();
+  const intl = useIntl();
   const labelId = useId(normalizedLabel);
+  const [openPopover, setOpenPopover] = useState(false);
   const hideLabel =
     (isCustomEditor(props) && props.editorOptions?.hideLabel === true) ||
     equals(props.editor?.toLowerCase(), constants.PARAMETER.EDITOR.FLOATINGACTIONMENU);
   const [showSubComponent, setShowSubComponent] = useState(false);
+  const CustomNewResourceComponent = useMemo(() => props.newResourceProps?.component, [props.newResourceProps?.component]);
+  const stringResources = useMemo(
+    () => ({
+      CREATE_NEW: intl.formatMessage({
+        defaultMessage: 'Create New',
+        id: '+nh6WG',
+        description: 'Label for creating a new resource in the token field.',
+      }),
+    }),
+    [intl]
+  );
 
   return (
     <>
@@ -101,12 +128,44 @@ export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
       <div key={props.id}>
         {isCustomEditor(props) ? <CustomTokenField {...props} labelId={labelId} /> : <TokenField {...props} labelId={labelId} />}
       </div>
-      {props.subComponent ? (
-        <div className="msla-input-parameter-subcomponent">
-          {cloneElement(props.subComponent, {
-            showSubComponent,
-            setShowSubComponent,
-          })}
+      {props.newResourceProps || props.subComponent ? (
+        <div className={styles.subComponentContainer}>
+          {props.subComponent ? (
+            <div className="msla-input-parameter-subcomponent">
+              {cloneElement(props.subComponent, {
+                showSubComponent,
+                setShowSubComponent,
+              })}
+            </div>
+          ) : null}
+          {props.newResourceProps ? (
+            <Popover
+              trapFocus={true}
+              inline={true}
+              positioning={'below-start'}
+              withArrow={true}
+              open={openPopover}
+              onOpenChange={(_e, data) => setOpenPopover(data.open ?? false)}
+            >
+              <PopoverTrigger>
+                <div className={styles.newResourceContainer} onClick={() => setOpenPopover(!open)}>
+                  {stringResources.CREATE_NEW}
+                </div>
+              </PopoverTrigger>
+              <PopoverSurface tabIndex={-1}>
+                {CustomNewResourceComponent ? (
+                  <CustomNewResourceComponent
+                    values={[props.editorOptions]}
+                    onClose={(name?: string) => {
+                      setOpenPopover(false);
+                      props.newResourceProps?.onClose?.(name);
+                    }}
+                    metadata={props.newResourceProps?.metadata}
+                  />
+                ) : null}
+              </PopoverSurface>
+            </Popover>
+          ) : null}
         </div>
       ) : null}
     </>
@@ -141,6 +200,7 @@ export const TokenField = ({
   getTokenPicker,
   hostOptions,
   required,
+  hideTokenPicker,
 }: TokenFieldProps) => {
   const dropdownOptions = useMemo(() => getDropdownOptionsFromOptions(editorOptions), [editorOptions]);
   const labelForAutomationId = useMemo(() => replaceWhiteSpaceWithUnderscore(label), [label]);
@@ -240,6 +300,7 @@ export const TokenField = ({
           readonly={readOnly}
           placeholder={placeholder}
           customCodeEditor={customCodeEditor}
+          hideTokenPicker={hideTokenPicker}
         />
       );
     }
