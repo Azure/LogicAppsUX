@@ -1,5 +1,8 @@
 name: 'Auto-merge Validation'
 
+permissions:
+  pull-requests: write
+
 on:
   pull_request:
     branches: main
