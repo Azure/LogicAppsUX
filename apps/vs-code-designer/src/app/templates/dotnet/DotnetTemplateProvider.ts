@@ -9,6 +9,7 @@ import {
   getDotnetItemTemplatePath,
   getDotnetProjectTemplatePath,
 } from '../../utils/dotnet/executeDotnetTemplateCommand';
+import { dotNet8ItemTemplatesURL, dotNet8ProjectTemplatesURL } from '../../../constants';
 import { parseDotnetTemplates } from '../../utils/dotnet/parseDotnetTemplates';
 import { parseJson } from '../../utils/parseJson';
 import { downloadFile } from '../../utils/requestUtils';
@@ -69,8 +70,8 @@ export class DotnetTemplateProvider extends TemplateProviderBase {
     const projKey = await this.getProjKey(context);
     const projectFilePath: string = getDotnetProjectTemplatePath(this.version, projKey);
     const itemFilePath: string = getDotnetItemTemplatePath(this.version, projKey);
-    const projectTemplatesURL = 'https://www.nuget.org/api/v2/package/Microsoft.Azure.WebJobs.ProjectTemplates/4.0.5086';
-    const itemTemplatesURL = 'https://www.nuget.org/api/v2/package/Microsoft.Azure.WebJobs.ItemTemplates/4.0.5086';
+    const projectTemplatesURL = dotNet8ProjectTemplatesURL;
+    const itemTemplatesURL = dotNet8ItemTemplatesURL;
 
     await Promise.all([downloadFile(context, projectTemplatesURL, projectFilePath), downloadFile(context, itemTemplatesURL, itemFilePath)]);
 
