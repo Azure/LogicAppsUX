@@ -490,7 +490,7 @@ export const DesignerCommandBar = ({
   return (
     <>
       <CommandBar
-        items={isMonitoringView ? monitoringItems : [...editorItems]}
+        items={isMonitoringView ? monitoringItems : editorItems}
         ariaLabel="Use left and right arrow keys to navigate between commands"
         styles={{
           root: {
