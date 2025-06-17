@@ -101,7 +101,7 @@ const uploadArtifactsFiles = async (projectPath: string | undefined, smbFolderPa
   }
 
   if (artifactsFiles.rules.length > 0) {
-    await uploadFiles(artifactsFiles.maps, path.join(smbFolderPath, artifactsDirectory, mapsDirectory));
+    await uploadFiles(artifactsFiles.rules, path.join(smbFolderPath, artifactsDirectory, mapsDirectory));
   }
 };
 
