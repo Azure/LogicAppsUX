@@ -104,7 +104,7 @@ export async function getFramework(context: IActionContext, workingDirectory: st
     }
 
     // Prioritize "LTS", then "Current", then "Preview"
-    let netVersions: string[] = ['6', '3', '2'];
+    let netVersions: string[] = ['8', '3', '2'];
     if (isCodeful) {
       netVersions = ['8', ...netVersions];
     }

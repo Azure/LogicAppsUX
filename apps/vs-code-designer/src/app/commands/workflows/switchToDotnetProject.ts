@@ -50,7 +50,7 @@ export async function switchToDotnetProjectCommand(context: IProjectWizardContex
   switchToDotnetProject(context, target);
 }
 
-export async function switchToDotnetProject(context: IProjectWizardContext, target: vscode.Uri, dotNetVersion = '6', isCodeful = false) {
+export async function switchToDotnetProject(context: IProjectWizardContext, target: vscode.Uri, dotNetVersion = '8', isCodeful = false) {
   if (target === undefined || Object.keys(target).length === 0) {
     const workspaceFolder = await getWorkspaceFolder(context);
     const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
