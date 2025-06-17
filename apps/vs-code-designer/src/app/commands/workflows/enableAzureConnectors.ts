@@ -18,9 +18,9 @@ import { isString } from '@microsoft/logic-apps-shared';
 /**
  * Enables Azure connectors for the project containing workflow node.
  * @param {IActionContext} context - The action context for the command.
- * @param {vscode.Uri} node - The URI of the workflow node.
+ * @param {vscode.Uri | undefined} node - The URI of the workflow node.
  */
-export async function enableAzureConnectors(context: IActionContext, node: vscode.Uri): Promise<void> {
+export async function enableAzureConnectors(context: IActionContext, node: vscode.Uri | undefined): Promise<void> {
   const projectRoot = node !== undefined ? await getLogicAppProjectRoot(context, node.fsPath) : await getWorkspaceFolder(context);
   const projectPath = isString(projectRoot) ? projectRoot : projectRoot.uri.fsPath;
   const localSettingsFilePath: string = path.join(projectPath, localSettingsFileName);
