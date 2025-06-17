@@ -8,6 +8,7 @@ import { getFunctionNode } from '../../utils/Function.Utils';
 import { emptyCanvasRect } from '@microsoft/logic-apps-shared';
 import { NodeIds } from '../../constants/ReactFlowConstants';
 import { updateCanvasDimensions, updateFunctionNodesPosition } from '../../core/state/DataMapSlice';
+import type { FunctionData } from '../../models/Function';
 
 type ReactFlowStatesProps = {
   newWidth?: number;
@@ -96,9 +97,10 @@ const useReactFlowStates = (props: ReactFlowStatesProps) => {
   useEffect(() => {
     const changes: Record<string, NodeChange> = {};
     for (const [key, functionData] of Object.entries(functionNodesMap)) {
+      const data = functionData as FunctionData;
       changes[key] = {
         type: 'add',
-        item: getFunctionNode(functionData, key, functionData.position),
+        item: getFunctionNode(data, key, data.position),
       };
     }
 
@@ -159,7 +161,8 @@ const useReactFlowStates = (props: ReactFlowStatesProps) => {
 
         const updatedPositions: Record<string, XYPosition> = {};
         for (const [key, functionData] of Object.entries(functionNodesMap)) {
-          const node = getFunctionNode(functionData, key, functionData.position);
+          const data = functionData as FunctionData;
+          const node = getFunctionNode(data, key, data.position);
           updatedPositions[node.id] = {
             x: node.position.x * xChange,
             y: node.position.y,

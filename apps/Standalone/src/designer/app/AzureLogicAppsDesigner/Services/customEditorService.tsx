@@ -41,10 +41,6 @@ export class CustomEditorService implements IEditorService {
     const { connectorId } = operationInfo ?? {};
     const { parameterName } = parameter ?? {};
 
-    if (!this.areCustomEditorsEnabled) {
-      return undefined;
-    }
-
     if (connectorId === 'connectionProviders/agent' && parameterName === 'deploymentId') {
       return {
         EditorComponent: CustomDeploymentModelResource,

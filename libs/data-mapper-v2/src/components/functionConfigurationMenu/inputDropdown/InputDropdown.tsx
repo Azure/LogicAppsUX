@@ -1,12 +1,18 @@
 import type { RootState } from '../../../core/state/Store';
-import { FunctionCategory, type FunctionData } from '../../../models/Function';
+import { FunctionCategory, type FunctionDictionary, type FunctionData } from '../../../models/Function';
 import { functionDropDownItemText } from '../../../utils/Function.Utils';
 import { iconForNormalizedDataType } from '../../../utils/Icon.Utils';
 import { addSourceReactFlowPrefix, addTargetReactFlowPrefix } from '../../../utils/ReactFlow.Util';
 import { Stack } from '@fluentui/react';
 import type { ComboboxProps } from '@fluentui/react-components';
 import { Caption2, Combobox, Option } from '@fluentui/react-components';
-import { isNullOrEmpty, SchemaType, type NormalizedDataType } from '@microsoft/logic-apps-shared';
+import {
+  isNullOrEmpty,
+  type SchemaNodeDictionary,
+  type SchemaNodeExtended,
+  SchemaType,
+  type NormalizedDataType,
+} from '@microsoft/logic-apps-shared';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
@@ -51,13 +57,15 @@ export const InputDropdown = ({
   const intl = useIntl();
   const styles = useStyles();
 
-  const sourceSchemaDictionary = useSelector((state: RootState) =>
+  const sourceSchemaDictionary: SchemaNodeDictionary = useSelector((state: RootState) =>
     schemaListType === SchemaType.Source
       ? state.dataMap.present.curDataMapOperation.flattenedSourceSchema
       : state.dataMap.present.curDataMapOperation.flattenedTargetSchema
   );
-  const functionNodeDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.functionNodes);
-  const functionManifest = useSelector((state: RootState) => state.function.availableFunctions);
+  const functionNodeDictionary: FunctionDictionary = useSelector(
+    (state: RootState) => state.dataMap.present.curDataMapOperation.functionNodes
+  );
+  const functionManifest: FunctionData[] = useSelector((state: RootState) => state.function.availableFunctions);
   const connectionDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
 
   const [matchingOptions, setMatchingOptions] = useState<InputOptionProps[]>([]);
@@ -185,7 +193,7 @@ export const InputDropdown = ({
   }, [inputValue]);
 
   const originalOptions = useMemo(() => {
-    const options = Object.values(sourceSchemaDictionary).map<InputOptionProps>((srcSchemaNode) => {
+    const options = Object.values(sourceSchemaDictionary).map<InputOptionProps>((srcSchemaNode: SchemaNodeExtended) => {
       return {
         key: srcSchemaNode.key,
         text: srcSchemaNode.name,

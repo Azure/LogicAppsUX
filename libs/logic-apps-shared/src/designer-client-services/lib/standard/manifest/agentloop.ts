@@ -331,16 +331,13 @@ export default {
         },
       },
     ],
-
     connection: {
       required: true,
       type: 'agent',
     },
-
     connectionReference: {
       referenceKeyFormat: 'agentconnection',
     },
-
     connector: {
       id: '/connectionProviders/agent',
       name: 'Agent',
@@ -349,7 +346,6 @@ export default {
         displayName: 'Agent',
       },
     } as any,
-
     settings: {
       trackedProperties: {
         scopes: [SettingScope.Action],

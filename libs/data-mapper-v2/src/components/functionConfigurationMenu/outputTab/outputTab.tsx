@@ -25,7 +25,9 @@ export const OutputTabContents = (props: {
   func: FunctionData;
   functionId: string;
 }) => {
-  const connectionDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
+  const connectionDictionary: ConnectionDictionary = useSelector(
+    (state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections
+  );
   const targetSchemaDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.flattenedTargetSchema);
   const functionNodeDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.functionNodes);
   const connections = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
