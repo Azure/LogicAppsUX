@@ -1,11 +1,22 @@
 import { guid, type ArmResource } from '../../../utils/src';
 import { getAzureResourceRecursive } from '../common/azure';
-import type { IRoleService, RoleAssignment, RoleAssignmentPayload, RoleDefinition, RoleServiceOptions } from '../role';
+import type { IHttpClient } from '../httpClient';
+import type { IRoleService, RoleAssignment, RoleAssignmentPayload, RoleDefinition } from '../role';
 
 const defaultApiVersion = '2022-05-01-preview';
 
+export type BaseRoleServiceOptions = {
+  httpClient: IHttpClient;
+  subscriptionId: string;
+  baseUrl: string;
+  apiVersion: string;
+  tenantId: string;
+  userId: string;
+  appIdentity: string;
+};
+
 export class BaseRoleService implements IRoleService {
-  constructor(private options: RoleServiceOptions) {}
+  constructor(private options: BaseRoleServiceOptions) {}
 
   async fetchRoleDefinitions(resourceId: string, _queryParameters?: Record<string, string>): Promise<ArmResource<RoleDefinition>[]> {
     const { baseUrl, httpClient, apiVersion = defaultApiVersion } = this.options;

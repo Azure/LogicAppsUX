@@ -1,6 +1,5 @@
 import type { ArmResource } from '../../utils/src';
 import { AssertionErrorCode, AssertionException } from '../../utils/src';
-import type { IHttpClient } from './httpClient';
 
 export type RoleDefinition = {
   roleName: string;
@@ -41,16 +40,6 @@ export type RoleAssignmentPayload = {
   principalType: string;
   roleDefinitionId: string;
   scope: string;
-};
-
-export type RoleServiceOptions = {
-  httpClient: IHttpClient;
-  subscriptionId: string;
-  baseUrl: string;
-  apiVersion: string;
-  tenantId: string;
-  userId: string;
-  appIdentity: string;
 };
 
 export interface IRoleService {
