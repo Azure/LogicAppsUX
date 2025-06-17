@@ -65,6 +65,18 @@ export class DotnetTemplateProvider extends TemplateProviderBase {
     return await this.parseTemplates(context, projKey);
   }
 
+  public async getNet8Templates(context: IActionContext): Promise<ITemplates> {
+    const projKey = await this.getProjKey(context);
+    const projectFilePath: string = getDotnetProjectTemplatePath(this.version, projKey);
+    const itemFilePath: string = getDotnetItemTemplatePath(this.version, projKey);
+    const projectTemplatesURL = 'https://www.nuget.org/api/v2/package/Microsoft.Azure.WebJobs.ProjectTemplates/4.0.5086';
+    const itemTemplatesURL = 'https://www.nuget.org/api/v2/package/Microsoft.Azure.WebJobs.ItemTemplates/4.0.5086';
+
+    await Promise.all([downloadFile(context, projectTemplatesURL, projectFilePath), downloadFile(context, itemTemplatesURL, itemFilePath)]);
+
+    return await this.parseTemplates(context, projKey);
+  }
+
   private async getNetRelease(context: IActionContext, projKey: string, templateVersion: string): Promise<IWorkerRuntime | undefined> {
     const funcRelease: IRelease = await getRelease(context, templateVersion);
     return Object.values(funcRelease.workerRuntimes.dotnet).find((r) => projKey === getTemplateKeyFromFeedEntry(r));
