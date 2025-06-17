@@ -17,6 +17,7 @@ import {
   mapsDirectory,
   parametersFileName,
   Platform,
+  rulesDirectory,
   schemasDirectory,
   workflowFileName,
 } from '../../../../constants';
@@ -101,7 +102,7 @@ const uploadArtifactsFiles = async (projectPath: string | undefined, smbFolderPa
   }
 
   if (artifactsFiles.rules.length > 0) {
-    await uploadFiles(artifactsFiles.rules, path.join(smbFolderPath, artifactsDirectory, mapsDirectory));
+    await uploadFiles(artifactsFiles.rules, path.join(smbFolderPath, artifactsDirectory, rulesDirectory));
   }
 };
 
