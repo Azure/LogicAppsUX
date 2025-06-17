@@ -1,5 +1,6 @@
 import type { ArmResource } from '../../utils/src';
 import { AssertionErrorCode, AssertionException } from '../../utils/src';
+import type { IHttpClient } from './httpClient';
 
 export type RoleDefinition = {
   roleName: string;
@@ -33,10 +34,30 @@ export type RoleAssignment = {
   description: string;
 };
 
+export type RoleAssignmentPayload = {
+  condition?: string;
+  conditionVersion?: string;
+  principalId: string;
+  principalType: string;
+  roleDefinitionId: string;
+  scope: string;
+};
+
+export type RoleServiceOptions = {
+  httpClient: IHttpClient;
+  subscriptionId: string;
+  baseUrl: string;
+  apiVersion: string;
+  tenantId: string;
+  userId: string;
+  appIdentity: string;
+};
+
 export interface IRoleService {
-  getRoleDefinitions: (resourceId: string, queryParameters?: Record<string, string>) => Promise<ArmResource<RoleDefinition>[]>;
-  getUserRoleAssignmentsForResource: (resourceId: string) => Promise<ArmResource<RoleAssignment>[]>;
-  hasRoleAssignmentsWritePermission: (resourceId: string) => Promise<boolean>;
+  fetchRoleDefinitions: (resourceId: string, queryParameters?: Record<string, string>) => Promise<ArmResource<RoleDefinition>[]>;
+  fetchUserRoleAssignmentsForResource: (resourceId: string) => Promise<ArmResource<RoleAssignment>[]>;
+  fetchAppIdentityRoleAssignments: () => Promise<ArmResource<RoleAssignment>[]>;
+  addRoleAssignmentForApp: (resourceId: string, definitionId: string) => Promise<ArmResource<RoleAssignment>>;
 }
 
 let service: IRoleService;

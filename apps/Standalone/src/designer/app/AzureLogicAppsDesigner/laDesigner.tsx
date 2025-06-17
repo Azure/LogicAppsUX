@@ -49,6 +49,7 @@ import {
   isArmResourceId,
   optional,
   BaseCognitiveServiceService,
+  RoleService,
 } from '@microsoft/logic-apps-shared';
 import type { ContentType, IHostService, IWorkflowService } from '@microsoft/logic-apps-shared';
 import type { AllCustomCodeFiles, CustomCodeFileNameMapping, Workflow } from '@microsoft/logic-apps-designer';
@@ -64,6 +65,7 @@ import {
   RunHistoryPanel,
   CombineInitializeVariableDialog,
   TriggerDescriptionDialog,
+  getMissingRoleDefinitions,
 } from '@microsoft/logic-apps-designer';
 import axios from 'axios';
 import isEqual from 'lodash.isequal';
@@ -396,6 +398,29 @@ const DesignerEditor = () => {
           ...connectionsData?.agentConnections,
           ...newAgentConnections,
         };
+
+        // Assign MSI roles if needed
+        /**
+         *  This is currently only for Agentic workflows,
+         *    but we should work to make this generic in the future
+         *  The issue with making it generic is that we don't have a good way of getting the required definition names for any given connection reference
+         *  The required roles are listed on connection parameters which we don't have access to here,
+         *    and would take several requests to check for each connection, when most will not need it, leading to unnecessary slowdown during save
+         *  One option is to populate that info somewhere in the connection reference for use here,
+         *    but that is unavailable at authoring time when we are populating the values that require the roles
+         */
+        for (const [refKey, agentConnection] of Object.entries(newAgentConnections)) {
+          const reference = connectionReferences?.[refKey];
+          if (reference?.authentication?.type === 'ManagedServiceIdentity') {
+            const definitionNames = ['Azure AI Administrator', 'Cognitive Services Contributor'];
+            const missingRoleAssignments = await getMissingRoleDefinitions(agentConnection?.resourceId, definitionNames);
+            const assignmentPromises = [];
+            for (const roleDefinition of missingRoleAssignments) {
+              assignmentPromises.push(RoleService().addRoleAssignmentForApp(agentConnection?.resourceId, roleDefinition.id));
+            }
+            await Promise.all(assignmentPromises);
+          }
+        }
       }
     }
 
@@ -914,8 +939,10 @@ const getDesignerServices = (
     baseUrl: armUrl,
     httpClient,
     apiVersion: '2022-04-01',
-    tenantId,
-    objectId,
+    subscriptionId,
+    tenantId: tenantId ?? '',
+    userId: objectId ?? '',
+    appIdentity: workflowApp?.identity?.principalId ?? '',
   });
 
   const chatbotService = new BaseChatbotService({

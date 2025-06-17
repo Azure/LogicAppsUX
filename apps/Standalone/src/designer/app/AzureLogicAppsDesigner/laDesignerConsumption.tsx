@@ -554,8 +554,10 @@ const getDesignerServices = (
     baseUrl,
     apiVersion: '2022-05-01-preview',
     httpClient,
-    tenantId,
-    objectId,
+    subscriptionId,
+    tenantId: tenantId ?? '',
+    userId: objectId ?? '',
+    appIdentity: workflow?.identity?.principalId ?? '',
   });
 
   const cognitiveServiceService = new BaseCognitiveServiceService({

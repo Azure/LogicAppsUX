@@ -87,6 +87,8 @@ export const getDesignerServices = (
 
   const armUrl = 'https://management.azure.com';
 
+  const emptyArmId = '00000000-0000-0000-0000-000000000000';
+
   if (panelMetadata) {
     authToken = panelMetadata.accessToken ?? '';
     panelId = panelMetadata.panelId;
@@ -302,8 +304,8 @@ export const getDesignerServices = (
     },
     getAppIdentity: () => {
       return {
-        principalId: '00000000-0000-0000-0000-000000000000',
-        tenantId: '00000000-0000-0000-0000-000000000000',
+        principalId: emptyArmId,
+        tenantId: emptyArmId,
         type: 'SystemAssigned',
       } as ManagedIdentity;
     },
@@ -330,12 +332,15 @@ export const getDesignerServices = (
     httpClient,
   });
 
+  // MSI is not supported in VS Code
   const roleService = new BaseRoleService({
     baseUrl: armUrl,
     apiVersion: '2022-05-01-preview',
     httpClient,
-    tenantId: '???', // TODO: Get tenantId from somewhere
-    objectId: '???', // TODO: Get objectId from somewhere
+    tenantId: emptyArmId,
+    userId: emptyArmId,
+    subscriptionId,
+    appIdentity: emptyArmId,
   });
 
   const cognitiveServiceService = new BaseCognitiveServiceService({

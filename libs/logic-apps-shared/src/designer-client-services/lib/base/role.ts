@@ -1,22 +1,13 @@
-import type { ArmResource } from '../../../utils/src';
+import { guid, type ArmResource } from '../../../utils/src';
 import { getAzureResourceRecursive } from '../common/azure';
-import type { IHttpClient } from '../httpClient';
-import type { IRoleService, RoleAssignment, RoleDefinition } from '../role';
-
-export interface BaseRoleServiceOptions {
-  httpClient: IHttpClient;
-  baseUrl: string;
-  apiVersion: string;
-  tenantId?: string;
-  objectId?: string;
-}
+import type { IRoleService, RoleAssignment, RoleAssignmentPayload, RoleDefinition, RoleServiceOptions } from '../role';
 
 const defaultApiVersion = '2022-05-01-preview';
 
 export class BaseRoleService implements IRoleService {
-  constructor(private options: BaseRoleServiceOptions) {}
+  constructor(private options: RoleServiceOptions) {}
 
-  async getRoleDefinitions(resourceId: string, _queryParameters?: Record<string, string>): Promise<ArmResource<RoleDefinition>[]> {
+  async fetchRoleDefinitions(resourceId: string, _queryParameters?: Record<string, string>): Promise<ArmResource<RoleDefinition>[]> {
     const { baseUrl, httpClient, apiVersion = defaultApiVersion } = this.options;
     const uri = `${baseUrl}${resourceId}/providers/Microsoft.Authorization/roleDefinitions`;
     const queryParameters = {
@@ -27,27 +18,52 @@ export class BaseRoleService implements IRoleService {
     return response ?? [];
   }
 
-  async getUserRoleAssignmentsForResource(resourceId: string): Promise<ArmResource<RoleAssignment>[]> {
-    const { baseUrl, httpClient, apiVersion = defaultApiVersion, objectId } = this.options;
+  async fetchUserRoleAssignmentsForResource(resourceId: string): Promise<ArmResource<RoleAssignment>[]> {
+    const { baseUrl, httpClient, apiVersion = defaultApiVersion, userId } = this.options;
     const uri = `${baseUrl}${resourceId}/providers/Microsoft.Authorization/roleAssignments`;
     const queryParameters = {
       'api-version': apiVersion,
-      $filter: `assignedTo('${objectId}')`,
+      $filter: `atScope() and assignedTo('${userId}')`,
     };
     const response = await getAzureResourceRecursive(httpClient, uri, queryParameters);
     return response ?? [];
   }
 
-  async hasRoleAssignmentsWritePermission(resourceId: string): Promise<boolean> {
-    const writeRoleDefinitions = await this.getRoleDefinitions(resourceId, {
-      $filter: "hasAllPermissions('Microsoft.Authorization/roleAssignments/write')",
+  async fetchAppIdentityRoleAssignments(): Promise<ArmResource<RoleAssignment>[]> {
+    const { baseUrl, subscriptionId, httpClient, apiVersion = defaultApiVersion, appIdentity } = this.options;
+    const uri = `${baseUrl}/subscriptions/${subscriptionId}/providers/Microsoft.Authorization/roleAssignments`;
+    const queryParameters = {
+      'api-version': apiVersion,
+      $filter: `assignedTo('${appIdentity}')`,
+    };
+    const response = await getAzureResourceRecursive(httpClient, uri, queryParameters);
+    return response ?? [];
+  }
+
+  async addRoleAssignmentForApp(resourceId: string, definitionId: string): Promise<ArmResource<RoleAssignment>> {
+    const { baseUrl, httpClient, apiVersion = defaultApiVersion, appIdentity } = this.options;
+    const newId = guid();
+    const uri = `${baseUrl}${resourceId}/providers/Microsoft.Authorization/roleAssignments/${newId}`;
+    const queryParameters = {
+      'api-version': apiVersion,
+    };
+    const response = await httpClient.put<ArmResource<RoleAssignment>, { id: string; properties: RoleAssignmentPayload }>({
+      uri,
+      queryParameters,
+      includeAuth: true,
+      content: {
+        id: newId,
+        properties: {
+          principalId: appIdentity,
+          principalType: 'ServicePrincipal',
+          roleDefinitionId: definitionId,
+          scope: resourceId,
+        },
+      },
     });
-    const UserRoleAssignments = await this.getUserRoleAssignmentsForResource(resourceId);
-    for (const roleDefinition of writeRoleDefinitions) {
-      if (UserRoleAssignments.some((assignment) => assignment.properties.roleDefinitionId === roleDefinition.id)) {
-        return true;
-      }
+    if (!response) {
+      throw new Error('Failed to create role assignment');
     }
-    return false;
+    return response;
   }
 }

@@ -152,8 +152,10 @@ const roleService = new BaseRoleService({
   baseUrl: '/url',
   apiVersion: '2022-05-01-preview',
   httpClient,
-  tenantId: 'tenant-id',
-  objectId: 'user-id',
+  subscriptionId: 'test',
+  tenantId: 'test',
+  userId: 'test',
+  appIdentity: 'test',
 });
 
 const cognitiveServiceService = new BaseCognitiveServiceService({
