@@ -99,6 +99,10 @@ const uploadArtifactsFiles = async (projectPath: string | undefined, smbFolderPa
   if (artifactsFiles.schemas.length > 0) {
     await uploadFiles(artifactsFiles.schemas, path.join(smbFolderPath, artifactsDirectory, schemasDirectory));
   }
+
+  if (artifactsFiles.rules.length > 0) {
+    await uploadFiles(artifactsFiles.maps, path.join(smbFolderPath, artifactsDirectory, mapsDirectory));
+  }
 };
 
 const uploadLibFolderFiles = async (projectPath: string, smbFolderPath: string) => {
