@@ -119,7 +119,6 @@ export const getMissingRoleDefinitions = async (resourceId: string, definitionNa
     return Object.values(definitions); // No assignments found, return all definitions
   }
 
-  console.log('#> Checking for missing role definitions for resource:', { resourceId, definitions, assignments });
   const missingDefinitions: ArmResource<RoleDefinition>[] = [];
   for (const name of definitionNames) {
     if (
@@ -131,6 +130,5 @@ export const getMissingRoleDefinitions = async (resourceId: string, definitionNa
       missingDefinitions.push(definitions[name]);
     }
   }
-  console.log('#> Missing role definitions:', missingDefinitions);
   return missingDefinitions;
 };
