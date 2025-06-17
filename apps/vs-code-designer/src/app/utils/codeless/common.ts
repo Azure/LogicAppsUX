@@ -11,6 +11,7 @@ import {
   mapsDirectory,
   schemasDirectory,
   azurePublicBaseUrl,
+  rulesDirectory,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
@@ -29,7 +30,6 @@ import type {
   ILocalSettingsJson,
   Parameter,
   WorkflowParameter,
-  Artifacts,
 } from '@microsoft/vscode-extension-logic-apps';
 import { readFileSync } from 'fs';
 import * as fse from 'fs-extra';
@@ -117,14 +117,16 @@ export async function updateFuncIgnore(projectPath: string, variables: string[])
   await fse.writeFile(funcIgnorePath, funcIgnoreContents);
 }
 
-export async function getArtifactsPathInLocalProject(projectPath: string): Promise<{ maps: File[]; schemas: File[] }> {
+export async function getArtifactsPathInLocalProject(projectPath: string): Promise<{ maps: File[]; schemas: File[]; rules: File[] }> {
   const artifacts = {
     maps: [],
     schemas: [],
+    rules: [],
   };
   const artifactsPath = path.join(projectPath, artifactsDirectory);
   const mapsPath = path.join(projectPath, artifactsDirectory, mapsDirectory);
   const schemasPath = path.join(projectPath, artifactsDirectory, schemasDirectory);
+  const rulesPath = path.join(projectPath, artifactsDirectory, rulesDirectory);
 
   if (!(await fse.pathExists(projectPath)) || !(await fse.pathExists(artifactsPath))) {
     return artifacts;
@@ -164,58 +166,21 @@ export async function getArtifactsPathInLocalProject(projectPath: string): Promi
     artifacts.schemas = schemasFiles;
   }
 
-  return artifacts;
-}
-
-export async function getArtifactsInLocalProject(projectPath: string): Promise<Artifacts> {
-  const artifacts: Artifacts = {
-    maps: {},
-    schemas: [],
-  };
-
-  const artifactsPath = path.join(projectPath, artifactsDirectory);
-  const mapsPath = path.join(projectPath, artifactsDirectory, mapsDirectory);
-  const schemasPath = path.join(projectPath, artifactsDirectory, schemasDirectory);
-
-  if (!(await fse.pathExists(projectPath)) || !(await fse.pathExists(artifactsPath))) {
-    return artifacts;
-  }
-
-  if (await fse.pathExists(mapsPath)) {
-    const subPaths: string[] = await fse.readdir(mapsPath);
+  if (await fse.pathExists(rulesPath)) {
+    const rulesFiles = [];
+    const subPaths: string[] = await fse.readdir(rulesPath);
 
     for (const subPath of subPaths) {
-      const fullPath: string = path.join(mapsPath, subPath);
+      const fullPath: string = path.join(rulesPath, subPath);
       const fileStats = await fse.lstat(fullPath);
 
       if (fileStats.isFile()) {
-        const extensionName = path.extname(subPath);
-        const name = path.basename(subPath, extensionName);
-        const normalizedExtensionName = extensionName.toLowerCase();
-
-        if (!artifacts.maps[normalizedExtensionName]) {
-          artifacts.maps[normalizedExtensionName] = [];
+        if (await fse.pathExists(fullPath)) {
+          rulesFiles.push({ path: fullPath, name: subPath });
         }
-
-        artifacts.maps[normalizedExtensionName].push({ name, fileName: subPath, relativePath: path.join('Artifacts', 'Maps', subPath) });
       }
     }
-  }
-
-  if (await fse.pathExists(schemasPath)) {
-    const subPaths: string[] = await fse.readdir(schemasPath);
-
-    for (const subPath of subPaths) {
-      const fullPath: string = path.join(schemasPath, subPath);
-      const fileStats = await fse.lstat(fullPath);
-
-      if (fileStats.isFile()) {
-        const extensionName = path.extname(subPath);
-        const name = path.basename(subPath, extensionName);
-
-        artifacts.schemas.push({ name, fileName: subPath, relativePath: path.join('Artifacts', 'Schemas', subPath) });
-      }
-    }
+    artifacts.rules = rulesFiles;
   }
 
   return artifacts;
