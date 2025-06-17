@@ -1,5 +1,6 @@
 import type { IEditorParameterInfo, IEditorProps, IEditorService } from '@microsoft/logic-apps-shared';
 import { Link } from '@fluentui/react';
+import { CustomDeploymentModelResource } from '@microsoft/logic-apps-designer';
 
 export interface CustomEditorServiceOptions {
   areCustomEditorsEnabled?: boolean;
@@ -29,6 +30,24 @@ export class CustomEditorService implements IEditorService {
         hideLabel: true,
         editor,
         editorOptions,
+      };
+    }
+
+    return undefined;
+  };
+
+  public getNewResourceEditor = (props: IEditorParameterInfo) => {
+    const { operationInfo, parameter } = props;
+    const { connectorId } = operationInfo ?? {};
+    const { parameterName } = parameter ?? {};
+    if (!this._areCustomEditorsEnabled) {
+      return undefined;
+    }
+
+    if (connectorId === 'connectionProviders/agent' && parameterName === 'deploymentId') {
+      return {
+        EditorComponent: CustomDeploymentModelResource,
+        hideLabel: false,
       };
     }
 

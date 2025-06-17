@@ -111,7 +111,7 @@ export const TemplatesSection = ({
   );
 };
 
-const CustomFieldInput = (item: TemplatesSectionItem) => {
+const CustomFieldInput = (item: TemplatesSectionItem): JSX.Element | null => {
   switch (item.type) {
     case 'textfield':
       return (
@@ -170,7 +170,7 @@ const CustomFieldInput = (item: TemplatesSectionItem) => {
       );
 
     case 'custom':
-      return item.onRenderItem(item);
+      return item.onRenderItem(item) as JSX.Element;
 
     default:
       return null;

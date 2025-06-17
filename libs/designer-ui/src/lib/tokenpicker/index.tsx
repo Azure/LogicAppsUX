@@ -264,14 +264,19 @@ export function TokenPicker({
         value: agentParameterValue,
         description,
       };
-      editor?.dispatchCommand(INSERT_TOKEN_NODE, {
-        brandColor: token.brandColor,
-        description: token.description,
-        title: token.title,
-        icon: token.icon,
-        value: token.value,
-        data: { id: guid(), type: ValueSegmentType.TOKEN, value: agentParameterValue, token },
-      });
+      const segment: ValueSegment = { id: guid(), type: ValueSegmentType.TOKEN, value: agentParameterValue, token };
+      if (tokenClickedCallback) {
+        tokenClickedCallback(segment);
+      } else {
+        editor?.dispatchCommand(INSERT_TOKEN_NODE, {
+          brandColor: token.brandColor,
+          description: token.description,
+          title: token.title,
+          icon: token.icon,
+          value: token.value,
+          data: segment,
+        });
+      }
     }
 
     createOrUpdateAgentParameter?.(name, type, description, !!nodeToBeUpdated);
@@ -338,6 +343,7 @@ export function TokenPicker({
                 agentParameters={agentParameterGroup}
                 onCreateAgentParameter={() => setSelectedMode(TokenPickerMode.AGENT_PARAMETER_ADD)}
                 getValueSegmentFromToken={getValueSegmentFromToken}
+                tokenClickedCallback={tokenClickedCallback}
               />
             ) : showCreateAgentParameter ? (
               <CreateAgentParameter

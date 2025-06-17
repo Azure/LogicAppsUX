@@ -40,13 +40,12 @@ test.describe(
 
       // Open workflow parameters panel
       await page.getByText('Workflow Parameters', { exact: true }).click();
-      await expect(page.locator('.msla-workflow-parameters-heading')).toBeVisible();
+      await expect(page.getByText('Parameters', { exact: true })).toBeVisible();
       // Create new parameter
       await page.getByRole('button', { name: 'Create parameter' }).click();
       await expect(page.getByRole('button', { name: 'New parameter' })).toBeVisible();
-      const paramId = await page.getByRole('button', { name: 'New parameter' }).getAttribute('id');
       // Give param a name
-      await page.getByTestId(`${paramId}-name`).click();
+      await page.getByPlaceholder('Enter parameter name.').click();
       await page.keyboard.type('PlaywrightParam');
       // Verify name changed
       await expect(page.getByRole('button', { name: 'PlaywrightParam' })).toBeVisible();

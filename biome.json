@@ -18,7 +18,18 @@
   "formatter": {
     "enabled": true,
     "formatWithErrors": false,
-    "ignore": ["dist/*", "**/build/**", "**/*.d.ts", "test-results/*", "tmp/*", "playwright-report/*"]
+    "ignore": [
+      "dist/*",
+      "**/build/**",
+      "**/*.d.ts",
+      "test-results/*",
+      "tmp/*",
+      "playwright-report/*",
+      "**/coverage/**",
+      "**/__mocks__/**",
+      "Localize/**",
+      "**/compiled-lang/**"
+    ]
   },
   "linter": {
     "enabled": true,
@@ -181,11 +192,32 @@
       }
     },
     "include": ["libs/**/*.ts", "libs/**/*.tsx", "apps/**/*.ts", "apps/**/*.tsx"],
-    "ignore": ["**/__test__/**", "dist/*", "**/build/**", "**/*.d.ts", "test-results/*", "tmp/*", "playwright-report/*"]
+    "ignore": [
+      "**/__test__/**",
+      "dist/*",
+      "**/build/**",
+      "**/*.d.ts",
+      "test-results/*",
+      "tmp/*",
+      "playwright-report/*",
+      "**/coverage/**",
+      "**/__mocks__/**",
+      "Localize/**",
+      "**/compiled-lang/**"
+    ]
   },
   "organizeImports": {
     "enabled": false,
     "include": ["libs/**/*.ts", "libs/**/*.tsx", "apps/**/*.ts", "apps/**/*.tsx"],
-    "ignore": ["dist/*", "test-results/*", "tmp/*", "playwright-report/*"]
+    "ignore": [
+      "dist/*",
+      "test-results/*",
+      "tmp/*",
+      "playwright-report/*",
+      "**/coverage/**",
+      "**/__mocks__/**",
+      "Localize/**",
+      "**/compiled-lang/**"
+    ]
   }
 }

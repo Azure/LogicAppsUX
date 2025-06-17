@@ -2079,6 +2079,7 @@ export const updateDynamicDataInNode = async (
       parameterDynamicValues.push(parameter);
     }
   }
+
   if (parameterDynamicValues.length > 0) {
     dispatch(updateNodeParameters({ nodeId, parameters: parameterDynamicValues }));
   }

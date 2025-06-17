@@ -1,6 +1,6 @@
 import { Plus } from './images/plus';
-import { css } from '@fluentui/react';
-import { Tooltip } from '@fluentui/react-components';
+import { Tooltip, mergeClasses } from '@fluentui/react-components';
+import { useActionButtonV2Styles } from './actionbuttonv2.styles';
 
 export interface ActionButtonV2Props {
   id?: string;
@@ -21,13 +21,15 @@ export const ActionButtonV2: React.FC<ActionButtonV2Props> = ({
   title,
   onClick,
 }) => {
+  const styles = useActionButtonV2Styles();
+
   return (
     <Tooltip withArrow positioning={'before'} content={title} relationship="label" aria-expanded={undefined}>
       <button
         id={id}
         data-automation-id={dataAutomationId}
         aria-label={title}
-        className={css('msla-action-button-v2', className)}
+        className={mergeClasses(styles.root, className)}
         disabled={disabled}
         onClick={onClick}
         onContextMenu={onClick}

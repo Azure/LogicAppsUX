@@ -20,6 +20,16 @@ export const getSKUDefaultHostOptions = (sku: string) => {
   }
 };
 
-export const isAgentConnector = (connectorId?: string): boolean => {
-  return equals(connectorId ?? '', 'connectionProviders/agent', true);
-};
+export class AgentUtils {
+  public static isConnector = (connectorId?: string): boolean => {
+    return equals(connectorId ?? '', 'connectionProviders/agent', true);
+  };
+
+  public static isDeploymentIdParameter = (parameterName?: string): boolean => {
+    return equals(parameterName ?? '', 'deploymentId', true);
+  };
+
+  public static isAgentModelTypeParameter = (parameterName?: string): boolean => {
+    return equals(parameterName ?? '', 'agentModelType', true);
+  };
+}

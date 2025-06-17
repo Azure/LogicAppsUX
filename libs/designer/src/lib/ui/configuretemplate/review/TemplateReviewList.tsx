@@ -84,6 +84,10 @@ export const TemplateReviewList = () => {
       label: resources.StatusAndPlanLabel,
       value: statusAndPlanItems,
     },
+    profile: {
+      label: resources.ProfileTabLabel,
+      value: profileSectionItems,
+    },
     workflows: {
       label: resources.WorkflowsTabLabel,
       value: workflowsSectionItems,
@@ -97,10 +101,6 @@ export const TemplateReviewList = () => {
       label: resources.ParametersTabLabel,
       value: paramtersSectionItems,
       emptyText: resources.NoParameterInTemplate,
-    },
-    profile: {
-      label: resources.ProfileTabLabel,
-      value: profileSectionItems,
     },
   };
 
@@ -333,7 +333,7 @@ const useProfileSectionItems = (resources: Record<string, string>) => {
     workflows: state.template.workflows,
   }));
 
-  const { data: allConnectors } = useAllConnectors(operationInfos);
+  const { data: allConnectors } = useAllConnectors(operationInfos, workflows);
   const selectedConnectors = useMemo(() => {
     return allConnectors?.filter((connector) => templateManifest?.featuredConnectors?.some((conn) => equals(conn.id, connector.id)));
   }, [allConnectors, templateManifest]);
@@ -351,7 +351,7 @@ const useProfileSectionItems = (resources: Record<string, string>) => {
       type: 'text',
     },
     {
-      label: resources.WorkflowType,
+      label: resources.TemplateType,
       value: Object.keys(workflows).length > 1 ? resources.ACCELERATOR : resources.WORKFLOW,
       type: 'text',
     },

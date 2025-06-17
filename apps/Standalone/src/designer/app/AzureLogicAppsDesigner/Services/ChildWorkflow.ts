@@ -1,5 +1,6 @@
 import type { ArmResources } from '../Models/Arm';
 import type { Workflow } from '../Models/Workflow';
+import { hybridApiVersion, HybridAppUtility } from '../Utilities/HybridAppUtilities';
 import type { HttpClient } from './HttpClient';
 import type { ListDynamicValue } from '@microsoft/logic-apps-shared';
 import { hasProperty, getPropertyValue } from '@microsoft/logic-apps-shared';
@@ -9,6 +10,7 @@ export interface DynamicCallServiceOptions {
   baseUrl: string;
   siteResourceId: string;
   httpClient: HttpClient;
+  isHybrid?: boolean;
 }
 
 interface ChildWorkflowServiceOptions extends DynamicCallServiceOptions {
@@ -108,13 +110,27 @@ export class ChildWorkflowService {
     const workflowsInApp = await this._listWorkflows();
     const workflowsWithSingleRequestTrigger: Record<string, any> = {};
 
-    for (const workflow of workflowsInApp) {
+    // Create an array of promises for all workflow content fetches
+    const workflowPromises = workflowsInApp.map(async (workflow) => {
       const { id } = workflow;
       const workflowContent = await this._getWorkflowContent(id);
 
       if (workflowContent !== undefined && hasSingleRequestTrigger(workflowContent?.definition?.triggers)) {
         const workflowName = id.split('/').slice(-1)[0];
-        workflowsWithSingleRequestTrigger[workflowName.toLowerCase()] = getTriggerSchema(workflowContent.definition.triggers);
+        return {
+          name: workflowName.toLowerCase(),
+          triggerSchema: getTriggerSchema(workflowContent.definition.triggers),
+        };
+      }
+      return null;
+    });
+
+    // Await all promises in parallel, allowing partial failures
+    const results = await Promise.allSettled(workflowPromises);
+
+    for (const result of results) {
+      if (result.status === 'fulfilled' && result.value) {
+        workflowsWithSingleRequestTrigger[result.value.name] = result.value.triggerSchema;
       }
     }
 
@@ -122,18 +138,25 @@ export class ChildWorkflowService {
   }
 
   private async _listWorkflows(): Promise<Workflow[]> {
-    const { apiVersion, baseUrl, siteResourceId, httpClient } = this.options;
+    const { apiVersion, baseUrl, siteResourceId, httpClient, isHybrid } = this.options;
+
+    // Compose the logicApp resource ID when hybrid
+    const resourceId = isHybrid ? HybridAppUtility.getHybridAppBaseRelativeUrl(siteResourceId) : siteResourceId;
+
     const response = await httpClient.get<ArmResources<Workflow>>({
-      uri: `${baseUrl}${siteResourceId}/workflows`,
-      queryParameters: { 'api-version': apiVersion },
+      uri: `${baseUrl}${resourceId}/workflows`,
+      queryParameters: { 'api-version': isHybrid ? hybridApiVersion : apiVersion },
     });
 
     return response.value;
   }
 
   private async _getWorkflowContent(resourceId: string): Promise<any> {
-    const { apiVersion, baseUrl, httpClient } = this.options;
-    const response = await httpClient.get<Workflow>({ uri: `${baseUrl}${resourceId}`, queryParameters: { 'api-version': apiVersion } });
+    const { apiVersion, baseUrl, httpClient, isHybrid } = this.options;
+    const response = await httpClient.get<Workflow>({
+      uri: `${baseUrl}${resourceId}`,
+      queryParameters: { 'api-version': isHybrid ? hybridApiVersion : apiVersion },
+    });
     if (response?.properties?.health?.state.toLowerCase() === 'healthy') {
       return response.properties.files ? response.properties.files['workflow.json'] : undefined;
     }

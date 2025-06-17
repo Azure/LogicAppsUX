@@ -84,6 +84,16 @@ export interface IEditorProps {
    * Map a token string value to corresponding value segment.
    */
   tokenMapping?: Record<string, ValueSegment>;
+
+  /**
+   * Post close of the editor callback.
+   */
+  onClose?: (name?: string) => void;
+
+  /**
+   * Metadata for the operation and parameter.
+   */
+  metadata?: Record<string, any>;
 }
 
 export interface IEditorParameterInfo {
@@ -116,6 +126,7 @@ export interface ICustomEditorOptions {
 
 export interface IEditorService {
   getEditor(parameter: IEditorParameterInfo): undefined | ICustomEditorOptions;
+  getNewResourceEditor(parameter: IEditorParameterInfo): undefined | ICustomEditorOptions;
 }
 
 let service: IEditorService | undefined;

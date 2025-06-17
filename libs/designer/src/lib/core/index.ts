@@ -100,6 +100,7 @@ export {
   type WorkflowTemplateData,
   validateWorkflowsBasicInfo,
 } from './actions/bjsworkflow/templates';
+export { getTemplateTypeCategories } from './templates/utils/helper';
 export type { AppDispatch as TemplatesAppDispatch, RootState as TemplatesRootState } from './state/templates/store';
 export type { TemplateServiceOptions } from './templates/TemplatesDesignerContext';
 export { ConfigureTemplateWizard } from './configuretemplate/ConfigureTemplateWizard';

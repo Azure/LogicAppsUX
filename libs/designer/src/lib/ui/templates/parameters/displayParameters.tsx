@@ -3,7 +3,7 @@ import { Link, Popover, PopoverSurface, PopoverTrigger, Text } from '@fluentui/r
 import { updateTemplateParameterValue } from '../../../core/state/templates/templateSlice';
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
 import { useDispatch, useSelector } from 'react-redux';
-import { getPropertyValue, type Template } from '@microsoft/logic-apps-shared';
+import { getPropertyValue, isUndefinedOrEmptyString, type Template } from '@microsoft/logic-apps-shared';
 import { useFunctionalState } from '@react-hookz/web';
 import { type IntlShape, useIntl } from 'react-intl';
 import { useMemo } from 'react';
@@ -168,45 +168,55 @@ const ParameterName = ({
 
   return (
     <div className="msla-template-parameters-tab-name">
-      <Popover withArrow>
-        <PopoverTrigger disableButtonEnhancement>
-          <Link id={buttonId} as="button">
-            <Label className={'msla-templates-parameters-values link'} required={item.required}>
-              {item.displayName}
-            </Label>
-          </Link>
-        </PopoverTrigger>
+      {!isUndefinedOrEmptyString(item?.description) || !isSingleWorkflow ? (
+        <Popover withArrow>
+          <PopoverTrigger disableButtonEnhancement>
+            <Link id={buttonId} as="button">
+              <Label className={'msla-templates-parameters-values link'} required={item.required}>
+                {item.displayName}
+              </Label>
+            </Link>
+          </PopoverTrigger>
 
-        <PopoverSurface autoFocus className={'msla-templates-parameters-callout'}>
-          {!isSingleWorkflow && (
-            <Text className="msla-templates-parameter-callout-title" block>
-              {intl.formatMessage({ defaultMessage: 'Details', description: 'Title text for details', id: 'c2ZT7p' })}
-            </Text>
-          )}
-          <Text className="msla-templates-parameter-callout-subtitle" block>
-            {intl.formatMessage({ defaultMessage: 'Description', description: 'Subtitle text for description', id: 'eTW4SD' })}
-          </Text>
-          <Text className="msla-templates-parameter-callout-body" block>
-            {item.description}
-          </Text>
-          {isSingleWorkflow ? null : (
-            <div className="msla-templates-parameter-callout-associatedWorkflow">
-              <Text className="msla-templates-parameter-callout-subtitle" block>
-                {intl.formatMessage({
-                  defaultMessage: 'Associated workflows',
-                  description: 'Subtitle text for Associated workflows',
-                  id: 'Xz88HV',
-                })}
+          <PopoverSurface autoFocus className={'msla-templates-parameters-callout'}>
+            {!isSingleWorkflow && (
+              <Text className="msla-templates-parameter-callout-title" block>
+                {intl.formatMessage({ defaultMessage: 'Details', description: 'Title text for details', id: 'c2ZT7p' })}
               </Text>
-              {item?.associatedWorkflows?.map((workflow) => (
-                <li key={workflow} className={css('msla-templates-parameter-callout-body', 'list')}>
-                  {workflow}
-                </li>
-              ))}
-            </div>
-          )}
-        </PopoverSurface>
-      </Popover>
+            )}
+            {isUndefinedOrEmptyString(item.description) ? null : (
+              <div>
+                <Text className="msla-templates-parameter-callout-subtitle" block>
+                  {intl.formatMessage({ defaultMessage: 'Description', description: 'Subtitle text for description', id: 'eTW4SD' })}
+                </Text>
+                <Text className="msla-templates-parameter-callout-body" block>
+                  {item.description}
+                </Text>
+              </div>
+            )}
+            {isSingleWorkflow ? null : (
+              <div className="msla-templates-parameter-callout-associatedWorkflow">
+                <Text className="msla-templates-parameter-callout-subtitle" block>
+                  {intl.formatMessage({
+                    defaultMessage: 'Associated workflows',
+                    description: 'Subtitle text for Associated workflows',
+                    id: 'Xz88HV',
+                  })}
+                </Text>
+                {item?.associatedWorkflows?.map((workflow) => (
+                  <li key={workflow} className={css('msla-templates-parameter-callout-body', 'list')}>
+                    {workflow}
+                  </li>
+                ))}
+              </div>
+            )}
+          </PopoverSurface>
+        </Popover>
+      ) : (
+        <Label className={'msla-templates-parameters-values'} required={item.required}>
+          {item.displayName}
+        </Label>
+      )}
     </div>
   );
 };

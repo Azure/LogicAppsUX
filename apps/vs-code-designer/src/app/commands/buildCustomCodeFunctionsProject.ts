@@ -86,14 +86,24 @@ async function buildCustomCodeProject(functionsProjectPath: string): Promise<voi
     const currTaskPath = (task.scope as vscode.WorkspaceFolder)?.uri.fsPath;
     return task.name === 'build' && currTaskPath === functionsProjectPath;
   });
-  await vscode.tasks.executeTask(buildTask);
+
+  if (!buildTask) {
+    throw new Error(`Build task not found for project at "${functionsProjectPath}".`);
+  }
 
   return new Promise<void>((resolve, reject) => {
     const disposable: vscode.Disposable = vscode.tasks.onDidEndTaskProcess((e) => {
-      if ((e.execution.task.scope as vscode.WorkspaceFolder).uri.fsPath === functionsProjectPath && e.execution.task === buildTask) {
+      const isMatchingTask =
+        (e.execution.task.scope as vscode.WorkspaceFolder)?.uri.fsPath === functionsProjectPath && e.execution.task.name === buildTask.name;
+
+      if (isMatchingTask) {
+        disposable.dispose();
+
         if (e.exitCode !== 0) {
           const errorMessage = 'Error building custom code functions project at "{0}": {1}';
-          const internalErrorMessage = errorMessage.replace('{0}', functionsProjectPath).replace('{1}', e.exitCode.toString());
+          const internalErrorMessage = errorMessage
+            .replace('{0}', functionsProjectPath)
+            .replace('{1}', e.exitCode?.toString() ?? 'unknown');
           const userErrorMessage = localize(
             'azureLogicAppsStandard.buildCustomCodeFunctionsProjectError',
             errorMessage,
@@ -102,14 +112,14 @@ async function buildCustomCodeProject(functionsProjectPath: string): Promise<voi
           );
           ext.outputChannel.appendLog(userErrorMessage);
           vscode.window.showWarningMessage(userErrorMessage);
-          disposable.dispose();
           reject(new Error(internalErrorMessage));
         } else {
           ext.outputChannel.appendLog(`Custom code functions project built successfully at ${functionsProjectPath}.`);
-          disposable.dispose();
           resolve();
         }
       }
     });
+
+    vscode.tasks.executeTask(buildTask);
   });
 }

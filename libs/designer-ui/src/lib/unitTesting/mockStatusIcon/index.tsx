@@ -3,7 +3,8 @@ import { getMockStatusString } from '../../utils';
 import type { OutputMock } from '../outputMocks';
 import { Completed } from './completed';
 import { Empty } from './empty';
-import './mockStatusIcon.less';
+import { mergeClasses } from '@fluentui/react-components';
+import { useMockStatusIconStyles } from './mockStatusIcon.styles';
 
 export interface MockStatusIconProps {
   nodeMockResults?: OutputMock;
@@ -16,6 +17,7 @@ export interface MockStatusIconProps {
  * @returns {React.ReactElement} The rendered mock status icon.
  */
 export const MockStatusIcon: React.FC<MockStatusIconProps> = ({ nodeMockResults, id }) => {
+  const styles = useMockStatusIconStyles();
   const status = nodeMockResults && nodeMockResults.isCompleted ? Constants.MOCKSTATUS.COMPLETED : Constants.MOCKSTATUS.EMPTY;
   const tooltipLabel = getMockStatusString(status);
 
@@ -30,7 +32,7 @@ export const MockStatusIcon: React.FC<MockStatusIconProps> = ({ nodeMockResults,
   };
 
   return (
-    <div id={id} aria-label={tooltipLabel} role="status" className="msla-mock-status-icon">
+    <div id={id} aria-label={tooltipLabel} role="status" className={mergeClasses(styles.mockStatusIcon, 'msla-mock-status-icon')}>
       {getIcon(status)}
     </div>
   );

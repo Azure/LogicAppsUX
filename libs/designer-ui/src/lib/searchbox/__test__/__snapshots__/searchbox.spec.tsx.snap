@@ -2,7 +2,7 @@
 
 exports[`lib/searchabledropdownwithaddall > should render a search box 1`] = `
 <span
-  className="fui-Input r1oeeo9n fui-SearchBox msla-search-box ___13yg2oi_15g8mz3 f1f5gg8d fhxju0i fvcxoqz f1ub3y4t f1l4zc64 f1m52nbi f8vnjqi fz1etlk f1klwx88 f1hc16gm fjuset5 f1xzfw5u"
+  className="fui-Input r1oeeo9n fui-SearchBox  msla-search-box ___13yg2oi_15g8mz3 f1f5gg8d fhxju0i fvcxoqz f1ub3y4t f1l4zc64 f1m52nbi f8vnjqi fz1etlk f1klwx88 f1hc16gm fjuset5 f1xzfw5u"
   onBlur={[Function]}
   onFocus={[Function]}
 >
