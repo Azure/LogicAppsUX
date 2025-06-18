@@ -9,13 +9,12 @@ import {
   getDotnetItemTemplatePath,
   getDotnetProjectTemplatePath,
 } from '../../utils/dotnet/executeDotnetTemplateCommand';
-import { dotNet8ItemTemplatesURL, dotNet8ProjectTemplatesURL } from '../../../constants';
 import { parseDotnetTemplates } from '../../utils/dotnet/parseDotnetTemplates';
 import { parseJson } from '../../utils/parseJson';
 import { downloadFile } from '../../utils/requestUtils';
 import { TemplateProviderBase } from '../TemplateProviderBase';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { AzExtFsExtra, nonNullValue } from '@microsoft/vscode-azext-utils';
+import { AzExtFsExtra } from '@microsoft/vscode-azext-utils';
 import type { IRelease, ITemplates, IWorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
 import { ProjectLanguage, TemplateType } from '@microsoft/vscode-extension-logic-apps';
 import * as path from 'path';
@@ -55,27 +54,25 @@ export class DotnetTemplateProvider extends TemplateProviderBase {
     const projKey = await this.getProjKey(context);
     const projectFilePath: string = getDotnetProjectTemplatePath(this.version, projKey);
     const itemFilePath: string = getDotnetItemTemplatePath(this.version, projKey);
+    let templates: ITemplates | undefined = undefined;
 
-    const netRelease = nonNullValue(await this.getNetRelease(context, projKey, latestTemplateVersion), 'netRelease');
+    let netRelease = await this.getNetRelease(context, projKey, latestTemplateVersion);
+    if (!netRelease) {
+      // If the latest template version does not have the workerRuntime, attempts to get the in-process version
+      const inprocessTemplateVersion: string = (latestTemplateVersion += '-inprocess');
+      netRelease = await this.getNetRelease(context, projKey, inprocessTemplateVersion);
+    }
 
-    await Promise.all([
-      downloadFile(context, netRelease.projectTemplates, projectFilePath),
-      downloadFile(context, netRelease.itemTemplates, itemFilePath),
-    ]);
+    if (netRelease) {
+      await Promise.all([
+        downloadFile(context, netRelease.projectTemplates, projectFilePath),
+        downloadFile(context, netRelease.itemTemplates, itemFilePath),
+      ]);
 
-    return await this.parseTemplates(context, projKey);
-  }
+      templates = await this.parseTemplates(context, projKey);
+    }
 
-  public async getNet8Templates(context: IActionContext): Promise<ITemplates> {
-    const projKey = await this.getProjKey(context);
-    const projectFilePath: string = getDotnetProjectTemplatePath(this.version, projKey);
-    const itemFilePath: string = getDotnetItemTemplatePath(this.version, projKey);
-    const projectTemplatesURL = dotNet8ProjectTemplatesURL;
-    const itemTemplatesURL = dotNet8ItemTemplatesURL;
-
-    await Promise.all([downloadFile(context, projectTemplatesURL, projectFilePath), downloadFile(context, itemTemplatesURL, itemFilePath)]);
-
-    return await this.parseTemplates(context, projKey);
+    return templates;
   }
 
   private async getNetRelease(context: IActionContext, projKey: string, templateVersion: string): Promise<IWorkerRuntime | undefined> {
