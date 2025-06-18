@@ -29,7 +29,7 @@ export async function createWorkflow(
   version?: FuncVersion
 ): Promise<void> {
   addLocalFuncTelemetry(context);
-  let workspaceFolder: WorkspaceFolder | undefined;
+  let workspaceFolder: WorkspaceFolder | string | undefined;
 
   workspacePath = isString(workspacePath) ? workspacePath : undefined;
   if (workspacePath === undefined) {
