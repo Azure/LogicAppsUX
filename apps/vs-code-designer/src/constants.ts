@@ -326,6 +326,8 @@ export const DotnetVersion = {
   net48: 'net48',
 } as const;
 export type DotnetVersion = (typeof DotnetVersion)[keyof typeof DotnetVersion];
+export const dotNet8ItemTemplatesURL = 'https://www.nuget.org/api/v2/package/Microsoft.Azure.WebJobs.ItemTemplates/4.0.5086';
+export const dotNet8ProjectTemplatesURL = 'https://www.nuget.org/api/v2/package/Microsoft.Azure.WebJobs.ProjectTemplates/4.0.5086';
 
 export const dotnetExtensionId = 'ms-dotnettools.csharp';
 

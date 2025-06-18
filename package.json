@@ -55,7 +55,7 @@
     "sherif": "^0.8.4",
     "tsup": "^8.0.2",
     "turbo": "^2.3.0",
-    "typescript": "^5.4.5",
+    "typescript": "5.7.2",
     "typescript-eslint": "7.7.0",
     "vite-plugin-mkcert": "^1.17.5",
     "vite-plugin-node-polyfills": "^0.21.0",
