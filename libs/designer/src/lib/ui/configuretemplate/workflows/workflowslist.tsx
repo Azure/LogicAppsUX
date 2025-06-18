@@ -62,9 +62,14 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
 
   const intlText = useMemo(
     () => ({
+      ADD: intl.formatMessage({
+        defaultMessage: 'Add',
+        id: 'I2XWRg',
+        description: 'Button text for opening panel for adding workflows',
+      }),
       EDIT: intl.formatMessage({
-        defaultMessage: 'Manage workflows',
-        id: 'FK8YcR',
+        defaultMessage: 'Edit',
+        id: 'p2eSD1',
         description: 'Button text for opening panel for editing workflows',
       }),
       DELETE: intl.formatMessage({
@@ -78,8 +83,8 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
         description: 'Title text for deleting selected workflows',
       }),
       EMPTY_TITLE: intl.formatMessage({
-        defaultMessage: 'Manage workflows for this template',
-        id: 'gA8nWC',
+        defaultMessage: 'Add workflows for this template',
+        id: '+yTsXQ',
         description: 'Empty state title for workflows list',
       }),
       ERROR_TITLE: intl.formatMessage({
@@ -119,6 +124,12 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
   }, [dispatch]);
 
   const commandBarItems: ICommandBarItemProps[] = [
+    {
+      key: 'add',
+      text: intlText.ADD,
+      iconProps: { iconName: 'Add' },
+      onClick: handleAddWorkflows,
+    },
     {
       key: 'edit',
       text: intlText.EDIT,
@@ -372,7 +383,7 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
             className={mergeStyles({ width: '40%', marginTop: 0 })}
           />
           <div style={{ padding: '10px 0' }}>
-            <PrimaryButton onClick={handleAddWorkflows}>{intlText.EDIT}</PrimaryButton>
+            <PrimaryButton onClick={handleAddWorkflows}>{intlText.ADD}</PrimaryButton>
           </div>
         </div>
       )}
