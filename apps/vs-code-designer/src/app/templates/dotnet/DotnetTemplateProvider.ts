@@ -59,7 +59,7 @@ export class DotnetTemplateProvider extends TemplateProviderBase {
     let netRelease = await this.getNetRelease(context, projKey, latestTemplateVersion);
     if (!netRelease) {
       // If the latest template version does not have the workerRuntime, attempts to get the in-process version
-      const inprocessTemplateVersion: string = (latestTemplateVersion += '-inprocess');
+      const inprocessTemplateVersion: string = `${latestTemplateVersion}-inprocess`;
       netRelease = await this.getNetRelease(context, projKey, inprocessTemplateVersion);
     }
 
