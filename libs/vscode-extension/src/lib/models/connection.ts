@@ -55,6 +55,7 @@ export interface APIManagementConnectionModel {
 export interface AgentConnectionModel {
   authentication: Record<string, any>;
   endpoint: string;
+  resourceId: string;
   type?: string;
   displayName?: string;
 }

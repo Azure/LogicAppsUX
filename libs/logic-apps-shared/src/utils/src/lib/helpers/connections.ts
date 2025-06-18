@@ -191,9 +191,9 @@ export function isHiddenConnectionParameter(
   showServicePrincipal = false
 ): boolean {
   const isServicePrincipalParameter =
-    isServicePrinicipalConnectionParameter(connectionParameterKey) &&
-    connectorContainsAllServicePrinicipalConnectionParameters(connectionParameters);
-  return showServicePrincipal === isServicePrincipalParameter && _isConnectionParameterHidden(connectionParameters[connectionParameterKey]);
+    isServicePrincipalConnectionParameter(connectionParameterKey) &&
+    connectorContainsAllServicePrincipalConnectionParameters(connectionParameters);
+  return showServicePrincipal === isServicePrincipalParameter && isConnectionParameterHidden(connectionParameters[connectionParameterKey]);
 }
 
 export const SERVICE_PRINCIPLE_CONSTANTS = {
@@ -211,13 +211,13 @@ export const SERVICE_PRINCIPLE_CONSTANTS = {
   },
 };
 
-export function isServicePrinicipalConnectionParameter(connectionParameterKey: string): boolean {
+export function isServicePrincipalConnectionParameter(connectionParameterKey: string): boolean {
   return Object.values(SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS)
     .map((key) => key.toLowerCase())
     .includes(connectionParameterKey.toLowerCase());
 }
 
-export function connectorContainsAllServicePrinicipalConnectionParameters(
+export function connectorContainsAllServicePrincipalConnectionParameters(
   connectionParameters: Record<string, ConnectionParameter>
 ): boolean {
   return (
@@ -261,7 +261,7 @@ export function getIdentityDropdownOptions(managedIdentity: ManagedIdentity | un
   return options;
 }
 
-function _isConnectionParameterHidden(connectionParameter: ConnectionParameter): boolean {
+export function isConnectionParameterHidden(connectionParameter: ConnectionParameter): boolean {
   return connectionParameter?.uiDefinition?.constraints?.hidden === 'true';
 }
 
@@ -296,4 +296,16 @@ export function fallbackConnectorIconUrl(iconUrl?: string): string {
   const fallbackUrl =
     'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iTGF5ZXJfMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeD0iMHB4IiB5PSIwcHgiDQoJIHdpZHRoPSIzMnB4IiBoZWlnaHQ9IjMycHgiIHZpZXdCb3g9IjAgMCAzMiAzMiIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgMzIgMzI7IiB4bWw6c3BhY2U9InByZXNlcnZlIj4NCjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+DQoJLnN0MHtmaWxsOiM0RTRGNEY7fQ0KCS5zdDF7ZmlsbDojRkZGRkZGO30NCjwvc3R5bGU+DQo8ZyBpZD0iWE1MSURfMzM4XyI+DQoJPHJlY3QgeD0iMCIgeT0iMCIgY2xhc3M9InN0MCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIi8+DQo8L2c+DQo8cGF0aCBjbGFzcz0ic3QxIiBkPSJNMTEuODgsNXY1LjVIOS4xM3Y0LjEzYzAsMy41NiwyLjcyLDYuNDksNi4xOSw2Ljg0VjI3aDEuMzd2LTUuNTNjMy40Ny0wLjM1LDYuMTktMy4yOCw2LjE5LTYuODRWMTAuNWgtMi43NVY1DQoJaC0xLjM4djUuNWgtNS41VjVIMTEuODh6IE0yMS41LDE0LjYzYzAsMy4wMy0yLjQ3LDUuNS01LjUsNS41cy01LjUtMi40Ny01LjUtNS41di0yLjc1aDExVjE0LjYzeiIvPg0KPC9zdmc+DQo=';
   return iconUrl?.includes('/Content/retail/assets/default-connection-icon') ? fallbackUrl : (iconUrl ?? fallbackUrl);
+}
+
+export const CLIENT_CERTIFICATE_CONSTANTS = {
+  CONFIG_ITEM_KEYS: {
+    TOKEN_CLIENT_CERTIFICATE_SECRET: 'token:clientCertificateSecret',
+  },
+};
+
+export function connectorContainsAllClientCertificateConnectionParameters(
+  connectionParameters: Record<string, ConnectionParameter>
+): boolean {
+  return hasProperty(connectionParameters, CLIENT_CERTIFICATE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_CLIENT_CERTIFICATE_SECRET);
 }

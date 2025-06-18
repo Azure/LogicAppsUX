@@ -54,7 +54,7 @@ export const initializeInputsOutputsBinding = createAsyncThunk(
 
       LoggerService().endTrace(traceId, { status: Status.Success });
       return { nodeId, inputs: boundInputs[0], outputs: boundOutputs[0] };
-    } catch (e) {
+    } catch (_e) {
       LoggerService().endTrace(traceId, { status: Status.Failure });
       return { nodeId, inputs: parseInputs(inputsOutputs.inputs), outputs: parseOutputs(inputsOutputs.outputs) };
     }

@@ -422,14 +422,24 @@ export function needsConnection(connector: Connector | undefined): boolean {
   );
 }
 
-export function needsOAuth(connectionParameters: Record<string, ConnectionParameter>): boolean {
-  return (
-    Object.keys(connectionParameters || {})
-      .filter((connectionParameterKey) => !isHiddenConnectionParameter(connectionParameters, connectionParameterKey))
-      .map((connectionParameterKey) => connectionParameters[connectionParameterKey])
-      .filter((connectionParameter) => equals(connectionParameter.type, ConnectionParameterTypes.oauthSetting)).length > 0
+export const getVisibleConnectionParameters = (connectionParameters: Record<string, ConnectionParameter>): ConnectionParameter[] => {
+  const visibleConnectionParameters: ConnectionParameter[] = [];
+
+  for (const connectionParameterKey in connectionParameters) {
+    if (isHiddenConnectionParameter(connectionParameters, connectionParameterKey)) {
+      continue;
+    }
+
+    visibleConnectionParameters.push(connectionParameters[connectionParameterKey]);
+  }
+
+  return visibleConnectionParameters;
+};
+
+export const needsOAuth = (connectionParameters: Record<string, ConnectionParameter>): boolean =>
+  getVisibleConnectionParameters(connectionParameters || {}).some((connectionParameter) =>
+    equals(connectionParameter.type, ConnectionParameterTypes.oauthSetting)
   );
-}
 
 export function hasOnlyOAuthParameters(connector: Connector): boolean {
   if (
@@ -491,15 +501,14 @@ function needsSimpleConnection(connector: Connector): boolean {
   return false;
 }
 
-function needsConfigConnection(connector: Connector): boolean {
+export const needsParameterConfiguration = (connectionParameters: Record<string, ConnectionParameter>): boolean => {
+  return getVisibleConnectionParameters(connectionParameters).some(isConfigConnectionParameter);
+};
+
+export function needsConfigConnection(connector: Connector): boolean {
   const connectionParameters = connector?.properties?.connectionParameters;
   if (connectionParameters) {
-    return Object.keys(connectionParameters)
-      .filter((connectionParameterKey) => !isHiddenConnectionParameter(connectionParameters, connectionParameterKey))
-      .some((connectionParameterKey) => {
-        const connectionParameter = connectionParameters[connectionParameterKey];
-        return isConfigConnectionParameter(connectionParameter);
-      });
+    return needsParameterConfiguration(connectionParameters);
   }
 
   return false;

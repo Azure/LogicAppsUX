@@ -11,14 +11,11 @@ import { css, type IDropdownOption } from '@fluentui/react';
 import { Body1Strong, Button, Divider, MessageBar, MessageBarActions, MessageBarBody } from '@fluentui/react-components';
 import {
   ConnectionParameterEditorService,
-  ConnectionService,
   Capabilities,
-  ConnectionParameterTypes,
   SERVICE_PRINCIPLE_CONSTANTS,
-  connectorContainsAllServicePrinicipalConnectionParameters,
+  connectorContainsAllServicePrincipalConnectionParameters,
+  connectorContainsAllClientCertificateConnectionParameters,
   filterRecord,
-  getPropertyValue,
-  isServicePrinicipalConnectionParameter,
   usesLegacyManagedIdentity,
   isUsingAadAuthentication,
   equals,
@@ -46,8 +43,15 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { DismissRegular } from '@fluentui/react-icons';
 import TenantPicker from './formInputs/tenantPicker';
+import {
+  connectorOnlySupportsOnPremisesGateway,
+  getDefaultParameterValues,
+  isHiddenAuthKey,
+  isParameterVisible,
+  parseParameterValues,
+} from './helper';
 
-type ParamType = ConnectionParameter | ConnectionParameterSetParameter;
+export type ParameterType = ConnectionParameter | ConnectionParameterSetParameter;
 
 export interface CreateButtonTexts {
   create?: string;
@@ -127,20 +131,10 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     displayName: connectorDisplayName,
   } = connector.properties;
 
-  const [parameterValues, setParameterValues] = useState<Record<string, any>>({});
+  const [connectionDisplayName, setConnectionDisplayName] = useState<string>(`new_conn_${customLengthGuid(5)}`.toLowerCase());
 
   const [selectedParamSetIndex, setSelectedParamSetIndex] = useState<number>(0);
-  const onAuthDropdownChange = useCallback(
-    (_event: FormEvent<HTMLDivElement>, item: any): void => {
-      if (item.key !== selectedParamSetIndex) {
-        setSelectedParamSetIndex(item.key as number);
-        setParameterValues({}); // Clear out the config params from previous set
-      }
-    },
-    [selectedParamSetIndex]
-  );
 
-  const isHiddenAuthKey = useCallback((key: string) => ConnectionService().getAuthSetHideKeys?.()?.includes(key) ?? false, []);
   const connectionParameterSets: ConnectionParameterSets | undefined = useMemo(() => {
     if (!_connectionParameterSets) {
       return undefined;
@@ -154,7 +148,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
       ..._connectionParameterSets,
       values: filteredValues,
     };
-  }, [_connectionParameterSets, isAgentServiceConnection, isHiddenAuthKey]);
+  }, [_connectionParameterSets, isAgentServiceConnection]);
 
   const singleAuthParams = useMemo(
     () => ({
@@ -169,10 +163,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   );
   const isMultiAuth = useMemo(() => (connectionParameterSets?.values?.length ?? 0) > 0, [connectionParameterSets?.values]);
 
-  const hasOnlyOnPremGateway = useMemo(
-    () => (connectorCapabilities?.includes(Capabilities.gateway) && !connectorCapabilities?.includes(Capabilities.cloud)) ?? false,
-    [connectorCapabilities]
-  );
+  const hasOnlyOnPremGateway = useMemo(() => connectorOnlySupportsOnPremisesGateway(connectorCapabilities), [connectorCapabilities]);
 
   const [enabledCapabilities, setEnabledCapabilities] = useState<Capabilities[]>([Capabilities.general, Capabilities.cloud]);
   const toggleCapability = useCallback(
@@ -192,26 +183,49 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     }
   }, [enabledCapabilities, hasOnlyOnPremGateway, toggleCapability]);
 
-  const supportsOAuthConnection = useMemo(() => !isHiddenAuthKey('legacyoauth'), [isHiddenAuthKey]);
+  const supportsOAuthConnection = useMemo(() => !isHiddenAuthKey('legacyoauth'), []);
+
+  const supportsLegacyServicePrincipalConnection = useMemo(
+    () =>
+      !isMultiAuth &&
+      connectorContainsAllServicePrincipalConnectionParameters(singleAuthParams) &&
+      !isHiddenAuthKey('legacyserviceprincipal'),
+    [isMultiAuth, singleAuthParams]
+  );
+
+  const multiAuthSupportsServicePrincipalConnection = useMemo(
+    () => isMultiAuth && connectorContainsAllServicePrincipalConnectionParameters(multiAuthParams),
+    [isMultiAuth, multiAuthParams]
+  );
 
   const supportsServicePrincipalConnection = useMemo(
-    () => connectorContainsAllServicePrinicipalConnectionParameters(singleAuthParams) && !isHiddenAuthKey('legacyserviceprincipal'),
-    [isHiddenAuthKey, singleAuthParams]
+    () => multiAuthSupportsServicePrincipalConnection || supportsLegacyServicePrincipalConnection,
+    [multiAuthSupportsServicePrincipalConnection, supportsLegacyServicePrincipalConnection]
+  );
+
+  const supportsClientCertificateConnection = useMemo(
+    () => isMultiAuth && connectorContainsAllClientCertificateConnectionParameters(multiAuthParams),
+    [isMultiAuth, multiAuthParams]
   );
 
   const supportsLegacyManagedIdentityConnection = useMemo(
     () => usesLegacyManagedIdentity(connectionAlternativeParameters) && !isHiddenAuthKey('legacymanagedidentity'),
-    [isHiddenAuthKey, connectionAlternativeParameters]
+    [connectionAlternativeParameters]
   );
 
   const showLegacyMultiAuth = useMemo(
-    () => !isMultiAuth && (supportsServicePrincipalConnection || supportsLegacyManagedIdentityConnection),
-    [isMultiAuth, supportsServicePrincipalConnection, supportsLegacyManagedIdentityConnection]
+    () => !isMultiAuth && (supportsLegacyServicePrincipalConnection || supportsLegacyManagedIdentityConnection),
+    [isMultiAuth, supportsLegacyServicePrincipalConnection, supportsLegacyManagedIdentityConnection]
+  );
+
+  const legacyMultiAuthServicePrincipalSelected = useMemo(
+    () => showLegacyMultiAuth && selectedParamSetIndex === LegacyMultiAuthOptions.servicePrincipal,
+    [selectedParamSetIndex, showLegacyMultiAuth]
   );
 
   const servicePrincipalSelected = useMemo(
-    () => showLegacyMultiAuth && selectedParamSetIndex === LegacyMultiAuthOptions.servicePrincipal,
-    [selectedParamSetIndex, showLegacyMultiAuth]
+    () => legacyMultiAuthServicePrincipalSelected || multiAuthSupportsServicePrincipalConnection,
+    [legacyMultiAuthServicePrincipalSelected, multiAuthSupportsServicePrincipalConnection]
   );
 
   const legacyManagedIdentitySelected = useMemo(
@@ -225,62 +239,60 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     setSelectedManagedIdentity(option?.key.toString());
   }, []);
 
-  const isParamVisible = useCallback(
-    (key: string, parameter: ParamType) => {
-      const constraints = parameter?.uiDefinition?.constraints;
-      if (servicePrincipalSelected) {
-        return isServicePrinicipalConnectionParameter(key) && isServicePrincipalParameterVisible(key, parameter);
-      }
-      if (legacyManagedIdentitySelected) {
-        return false; // TODO: Riley - Only show the managed identity parameters (which is none for now)
-      }
-      if (constraints?.hidden === 'true' || constraints?.hideInUI === 'true') {
-        return false;
-      }
-      const dependentParam = constraints?.dependentParameter;
-      if (dependentParam?.parameter && getPropertyValue(parameterValues, dependentParam.parameter) !== dependentParam.value) {
-        return false;
-      }
-      if (parameter.type === ConnectionParameterTypes.oauthSetting) {
-        return false;
-      }
-      if (parameter.type === ConnectionParameterTypes.managedIdentity) {
-        return false;
-      }
-      return true;
-    },
-    [parameterValues, servicePrincipalSelected, legacyManagedIdentitySelected]
-  );
-
-  const unfilteredParameters: Record<string, ConnectionParameterSetParameter | ConnectionParameter> = useMemo(
+  const unfilteredParameters: Record<string, ParameterType> = useMemo(
     () => (isMultiAuth ? { ...multiAuthParams } : { ...singleAuthParams }),
     [isMultiAuth, multiAuthParams, singleAuthParams]
   );
 
-  const parameters: Record<string, ConnectionParameterSetParameter | ConnectionParameter> = useMemo(
-    () => filterRecord<any>(unfilteredParameters, (key, value) => isParamVisible(key, value)),
-    [isParamVisible, unfilteredParameters]
+  const [parameterValues, setParameterValues] = useState<Record<string, any>>(() =>
+    getDefaultParameterValues(unfilteredParameters, {
+      legacyManagedIdentitySelected,
+      servicePrincipalSelected,
+    })
+  );
+
+  const isParameterVisibleInUi = useCallback(
+    (key: string, parameter: ParameterType) =>
+      isParameterVisible(key, parameter, {
+        legacyManagedIdentitySelected,
+        parameterValues,
+        servicePrincipalSelected,
+      }),
+    [legacyManagedIdentitySelected, parameterValues, servicePrincipalSelected]
+  );
+
+  const filteredParameters: Record<string, ParameterType> = useMemo(
+    () => filterRecord(unfilteredParameters, (key, value) => isParameterVisibleInUi(key, value)),
+    [isParameterVisibleInUi, unfilteredParameters]
+  );
+
+  const onAuthDropdownChange = useCallback(
+    (_event: FormEvent<HTMLDivElement>, item: any): void => {
+      if (item.key !== selectedParamSetIndex) {
+        setSelectedParamSetIndex(item.key as number);
+        setParameterValues(
+          getDefaultParameterValues(unfilteredParameters, {
+            legacyManagedIdentitySelected,
+            servicePrincipalSelected,
+          })
+        ); // Clear out the config params from previous set
+      }
+    },
+    [legacyManagedIdentitySelected, selectedParamSetIndex, servicePrincipalSelected, unfilteredParameters]
   );
 
   // Parameters record, under a layer of singular capability, if it has none or more than one it's under "general"
   const parametersByCapability = useMemo(() => {
-    const output: {
-      [_: string]: {
-        [_: string]: ConnectionParameter | ConnectionParameterSetParameter;
-      };
-    } = {};
-    Object.entries(parameters ?? {}).forEach(([key, parameter]) => {
-      const capability =
-        (parameter.uiDefinition?.constraints?.capability?.length ?? 0) === 1
-          ? (parameter.uiDefinition?.constraints?.capability?.[0] ?? 'general')
-          : 'general';
+    const output: Record<string, Record<string, ParameterType>> = {};
+    Object.entries(filteredParameters).forEach(([key, parameter]) => {
+      const capability = parameter.uiDefinition?.constraints?.capability?.[0] ?? Capabilities.general;
       output[capability] = {
         ...output[capability],
         [key]: parameter,
       };
     });
     return output;
-  }, [parameters]);
+  }, [filteredParameters]);
 
   const getParametersByCapability = useCallback(
     (capability: Capabilities) => parametersByCapability?.[Capabilities[capability]] ?? {},
@@ -288,44 +300,45 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   );
 
   const capabilityEnabledParameters = useMemo(() => {
-    let output: Record<string, ConnectionParameterSetParameter | ConnectionParameter> = parametersByCapability['general'];
-    Object.entries(parametersByCapability).forEach(([capabilityText, parameters]) => {
-      if (enabledCapabilities.map((c) => Capabilities[c]).includes(capabilityText as any)) {
+    let output = parametersByCapability[Capabilities.general];
+    Object.entries(parametersByCapability).forEach(([capabilityText, parametersInner]) => {
+      if (enabledCapabilities.map((c) => Capabilities[c]).some((c) => c === capabilityText)) {
         output = {
           ...output,
-          ...parameters,
+          ...parametersInner,
         };
       }
     });
     return output ?? {};
   }, [enabledCapabilities, parametersByCapability]);
 
-  const usingLegacyGatewayAuth = useMemo(
+  const isUsingLegacyGatewayAuth = useMemo(
     () => !hasOnlyOnPremGateway && enabledCapabilities.includes(Capabilities.gateway),
     [enabledCapabilities, hasOnlyOnPremGateway]
   );
 
   const hasOAuth = useMemo(
-    () => needsOAuth(isMultiAuth ? multiAuthParams : singleAuthParams) && !usingLegacyGatewayAuth,
-    [isMultiAuth, multiAuthParams, singleAuthParams, usingLegacyGatewayAuth]
+    () => needsOAuth(isMultiAuth ? multiAuthParams : singleAuthParams) && !isUsingLegacyGatewayAuth,
+    [isMultiAuth, multiAuthParams, singleAuthParams, isUsingLegacyGatewayAuth]
   );
 
   const isUsingOAuth = useMemo(
-    () => hasOAuth && !servicePrincipalSelected && !legacyManagedIdentitySelected,
-    [hasOAuth, servicePrincipalSelected, legacyManagedIdentitySelected]
+    () => hasOAuth && !servicePrincipalSelected && !legacyManagedIdentitySelected && !supportsClientCertificateConnection,
+    [hasOAuth, servicePrincipalSelected, legacyManagedIdentitySelected, supportsClientCertificateConnection]
   );
 
-  const usingAadConnection = useMemo(() => (connector ? isUsingAadAuthentication(connector) : false), [connector]);
+  const isUsingAadConnection = useMemo(() => (connector ? isUsingAadAuthentication(connector) : false), [connector]);
+
   const showTenantIdSelection = useMemo(
     () =>
       isTenantServiceEnabled() &&
-      usingAadConnection &&
+      isUsingAadConnection &&
       isUsingOAuth &&
-      Object.keys(connectionParameters?.['token']?.oAuthSettings?.customParameters ?? {}).some((key: string) => equals(key, 'tenantId')) &&
+      Object.keys(connectionParameters?.token?.oAuthSettings?.customParameters ?? {}).some((key: string) => equals(key, 'tenantId')) &&
       Object.keys(connectionParameters ?? {}).some((key: string) =>
         equals(key, SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_TENANT_ID)
       ),
-    [connectionParameters, isUsingOAuth, usingAadConnection]
+    [connectionParameters, isUsingOAuth, isUsingAadConnection]
   );
 
   // Don't show name for simple connections
@@ -336,8 +349,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     [isUsingOAuth, isMultiAuth, capabilityEnabledParameters, legacyManagedIdentitySelected]
   );
 
-  const [connectionDisplayName, setConnectionDisplayName] = useState<string>(`new_conn_${customLengthGuid(5)}`.toLowerCase());
-  const validParams = useMemo(() => {
+  const areAllParametersValid = useMemo(() => {
     if (showNameInput && !connectionDisplayName) {
       return false;
     }
@@ -367,7 +379,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     parameterValues,
   ]);
 
-  const canSubmit = useMemo(() => !isLoading && validParams, [isLoading, validParams]);
+  const canSubmit = useMemo(() => !isLoading && areAllParametersValid, [isLoading, areAllParametersValid]);
 
   const submitCallback = useCallback(() => {
     const { visibleParameterValues, additionalParameterValues } = parseParameterValues(parameterValues, capabilityEnabledParameters);
@@ -511,11 +523,11 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     if (isUsingOAuth) {
       return authDescriptionText;
     }
-    if (Object.keys(parameters ?? {}).length === 0) {
+    if (Object.keys(filteredParameters ?? {}).length === 0) {
       return simpleDescriptionText;
     }
     return '';
-  }, [authDescriptionText, isUsingOAuth, parameters, simpleDescriptionText]);
+  }, [authDescriptionText, isUsingOAuth, filteredParameters, simpleDescriptionText]);
 
   const submitButtonText = useMemo(() => {
     if (isLoading) {
@@ -547,7 +559,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     [resourceSelectorProps, isMultiAuth]
   );
 
-  const renderConnectionParameter = (key: string, parameter: ConnectionParameterSetParameter | ConnectionParameter) => {
+  const renderConnectionParameter = (key: string, parameter: ParameterType) => {
     const connectionParameterProps: ConnectionParameterProps = {
       parameterKey: key,
       parameter,
@@ -581,11 +593,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   // Keep track of encountered and active mappings to avoid rendering the same mapping multiple times, or rendering the included parameters.
   const allParameterMappings = new Set<string>();
   const activeParameterMappings = new Set<string>();
-  const renderCredentialsMappingParameter = (
-    parameterKey: string,
-    parameter: ConnectionParameterSetParameter | ConnectionParameter,
-    mappingName: string
-  ) => {
+  const renderCredentialsMappingParameter = (parameterKey: string, parameter: ParameterType, mappingName: string) => {
     if (!allParameterMappings.has(mappingName)) {
       allParameterMappings.add(mappingName);
       // This is the first time this mapping has been encountered,
@@ -769,40 +777,3 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     </div>
   );
 };
-
-const isServicePrincipalParameterVisible = (key: string, parameter: any): boolean => {
-  const hiddenOverrrideKeys = {
-    TOKEN_CLIENT_ID: 'token:clientId',
-    TOKEN_CLIENT_SECRET: 'token:clientSecret',
-    TOKEN_TENANT_ID: 'token:tenantId',
-  };
-  if (
-    Object.values(hiddenOverrrideKeys)
-      .map((key) => key.toLowerCase())
-      .includes(key.toLowerCase())
-  ) {
-    return true;
-  }
-  const constraints = parameter?.uiDefinition?.constraints;
-  if (constraints?.hidden === 'true' || constraints?.hideInUI === 'true') {
-    return false;
-  }
-  return true;
-};
-
-export function parseParameterValues(
-  parameterValues: Record<string, any>,
-  capabilityEnabledParameters: Record<string, ConnectionParameter | ConnectionParameterSetParameter>
-) {
-  const visibleParameterValues = Object.fromEntries(
-    Object.entries(parameterValues).filter(([key]) => Object.keys(capabilityEnabledParameters).includes(key)) ?? []
-  );
-  const additionalParameterValues = Object.fromEntries(
-    Object.entries(parameterValues).filter(([key]) => !Object.keys(capabilityEnabledParameters).includes(key)) ?? []
-  );
-
-  return {
-    visibleParameterValues,
-    additionalParameterValues: Object.keys(additionalParameterValues).length ? additionalParameterValues : undefined,
-  };
-}

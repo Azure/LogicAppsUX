@@ -16,6 +16,7 @@ import type { HttpResponse } from '../common/exceptions/service';
 import type { ConnectionCreationInfo, ConnectionParametersMetadata, CreateConnectionResult, IConnectionService } from '../connection';
 import type { HttpRequestOptions, IHttpClient, QueryParameters } from '../httpClient';
 import { getAzureResourceRecursive } from '../common/azure';
+import { getIntl } from '../../../intl/src';
 
 export interface ApiHubServiceDetails {
   apiVersion: string;
@@ -272,7 +273,12 @@ export abstract class BaseConnectionService implements IConnectionService {
   }
 
   private handleTestLinkResponse(response: HttpResponse<any>): void {
-    const defaultErrorResponse = 'Please check your account info and/or permissions and try again.';
+    const intl = getIntl();
+    const defaultErrorResponse = intl.formatMessage({
+      defaultMessage: 'Please check your account info and/or permissions and try again.',
+      id: 'rgK8/T',
+      description: 'Default error message for test connection failure',
+    });
     const status = response?.status;
     if (status >= 400 && status < 500 && status !== 429) {
       let errorMessage = defaultErrorResponse;
@@ -285,7 +291,12 @@ export abstract class BaseConnectionService implements IConnectionService {
   }
 
   private handleTestRequestResponse(response: any): void {
-    const defaultErrorResponse = 'Please check your account info and/or permissions and try again.';
+    const intl = getIntl();
+    const defaultErrorResponse = intl.formatMessage({
+      defaultMessage: 'Please check your account info and/or permissions and try again.',
+      id: 'rgK8/T',
+      description: 'Default error message for test connection failure',
+    });
     const statusCode = response?.statusCode;
     if (statusCode !== 'OK') {
       let errorMessage = defaultErrorResponse;
