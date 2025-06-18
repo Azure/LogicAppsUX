@@ -65,7 +65,7 @@ export const ConfigureTemplateWizard = ({
     }
   };
 
-  const onSaveTemplate = (prevStatus: Template.TemplateEnvironment, newStatus: Template.TemplateEnvironment) => {
+  const onSaveTemplate = (prevStatus: Template.TemplateEnvironment, newStatus?: Template.TemplateEnvironment) => {
     const isNewStatusPublished = equals(newStatus, 'Production') || equals(newStatus, 'Testing');
     setToasterData({
       title: isNewStatusPublished
