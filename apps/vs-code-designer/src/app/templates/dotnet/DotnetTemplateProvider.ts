@@ -9,6 +9,7 @@ import {
   getDotnetItemTemplatePath,
   getDotnetProjectTemplatePath,
 } from '../../utils/dotnet/executeDotnetTemplateCommand';
+import { dotNet8ItemTemplatesURL, dotNet8ProjectTemplatesURL } from '../../../constants';
 import { parseDotnetTemplates } from '../../utils/dotnet/parseDotnetTemplates';
 import { parseJson } from '../../utils/parseJson';
 import { downloadFile } from '../../utils/requestUtils';
@@ -61,6 +62,18 @@ export class DotnetTemplateProvider extends TemplateProviderBase {
       downloadFile(context, netRelease.projectTemplates, projectFilePath),
       downloadFile(context, netRelease.itemTemplates, itemFilePath),
     ]);
+
+    return await this.parseTemplates(context, projKey);
+  }
+
+  public async getNet8Templates(context: IActionContext): Promise<ITemplates> {
+    const projKey = await this.getProjKey(context);
+    const projectFilePath: string = getDotnetProjectTemplatePath(this.version, projKey);
+    const itemFilePath: string = getDotnetItemTemplatePath(this.version, projKey);
+    const projectTemplatesURL = dotNet8ProjectTemplatesURL;
+    const itemTemplatesURL = dotNet8ItemTemplatesURL;
+
+    await Promise.all([downloadFile(context, projectTemplatesURL, projectFilePath), downloadFile(context, itemTemplatesURL, itemFilePath)]);
 
     return await this.parseTemplates(context, projKey);
   }

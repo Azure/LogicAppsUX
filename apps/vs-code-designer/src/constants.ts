@@ -319,13 +319,15 @@ export const DependencyDefaultPath = {
 export type DependencyDefaultPath = (typeof DependencyDefaultPath)[keyof typeof DependencyDefaultPath];
 // .NET
 export const DotnetVersion = {
-  net6: 'net6.0',
   net8: 'net8.0',
+  net6: 'net6.0',
   net3: 'netcoreapp3.1',
   net2: 'netcoreapp2.1',
   net48: 'net48',
 } as const;
 export type DotnetVersion = (typeof DotnetVersion)[keyof typeof DotnetVersion];
+export const dotNet8ItemTemplatesURL = 'https://www.nuget.org/api/v2/package/Microsoft.Azure.WebJobs.ItemTemplates/4.0.5086';
+export const dotNet8ProjectTemplatesURL = 'https://www.nuget.org/api/v2/package/Microsoft.Azure.WebJobs.ProjectTemplates/4.0.5086';
 
 export const dotnetExtensionId = 'ms-dotnettools.csharp';
 
