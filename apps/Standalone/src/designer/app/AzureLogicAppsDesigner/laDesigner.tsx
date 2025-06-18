@@ -409,9 +409,8 @@ const DesignerEditor = () => {
          *  One option is to populate that info somewhere in the connection reference for use here,
          *    but that is unavailable at authoring time when we are populating the values that require the roles
          */
-        for (const [refKey, agentConnection] of Object.entries(newAgentConnections)) {
-          const reference = connectionReferences?.[refKey];
-          if (reference?.authentication?.type === 'ManagedServiceIdentity') {
+        for (const [_refKey, agentConnection] of Object.entries(newAgentConnections)) {
+          if (agentConnection?.authentication?.type === 'ManagedServiceIdentity') {
             const definitionNames = ['Azure AI Administrator', 'Cognitive Services Contributor'];
             const missingRoleAssignments = await getMissingRoleDefinitions(agentConnection?.resourceId, definitionNames);
             const assignmentPromises = [];

@@ -32,6 +32,7 @@ const ConnectionNameInput = ({ isLoading, value, onChange }: ConnectionNameInput
       />
       <TextField
         id={'connection-display-name-input'}
+        data-automation-id="connection-display-name-input"
         className="connection-parameter-input"
         disabled={isLoading}
         autoComplete="off"

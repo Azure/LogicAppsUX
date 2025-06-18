@@ -757,11 +757,22 @@ export const CreateConnection = (props: CreateConnectionProps) => {
 
       {/* Action Buttons */}
       <div className="msla-edit-connection-actions-container">
-        <Button appearance="primary" disabled={!canSubmit} aria-label={submitButtonAriaLabel} onClick={submitCallback}>
+        <Button
+          appearance="primary"
+          disabled={!canSubmit}
+          aria-label={submitButtonAriaLabel}
+          onClick={submitCallback}
+          data-automation-id="create-connection-button"
+        >
           {submitButtonText}
         </Button>
         {hideCancelButton ? null : (
-          <Button disabled={isLoading} aria-label={cancelButtonAria} onClick={cancelCallback}>
+          <Button
+            disabled={isLoading}
+            aria-label={cancelButtonAria}
+            onClick={cancelCallback}
+            data-automation-id="cancel-create-connection-button"
+          >
             {cancelButtonText}
           </Button>
         )}

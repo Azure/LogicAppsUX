@@ -281,6 +281,7 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
           <div className={styles.openAIContainer}>
             <div className={styles.comboxbox}>
               <ComboBox
+                data-automation-id="openai-combobox"
                 required={true}
                 disabled={openAIComboboxDisabled}
                 placeholder={
@@ -340,6 +341,7 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
             <div className={styles.openAIContainer}>
               <div className={styles.comboxbox}>
                 <ComboBox
+                  data-automation-id="openai-project-combobox"
                   required={true}
                   disabled={serviceProjectsComboBoxDisabled}
                   placeholder={
