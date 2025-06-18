@@ -50,7 +50,7 @@ export async function switchToDotnetProjectCommand(context: IProjectWizardContex
   switchToDotnetProject(context, target);
 }
 
-export async function switchToDotnetProject(context: IProjectWizardContext, target: vscode.Uri, dotNetVersion = '6', isCodeful = false) {
+export async function switchToDotnetProject(context: IProjectWizardContext, target: vscode.Uri, dotNetVersion = '8', isCodeful = false) {
   if (target === undefined || Object.keys(target).length === 0) {
     const workspaceFolder = await getWorkspaceFolder(context);
     const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
@@ -93,10 +93,9 @@ export async function switchToDotnetProject(context: IProjectWizardContext, targ
   // 1. try to get cached templates
   let templates: ITemplates | undefined = await dotnetTemplateProvider.getCachedTemplates(context);
 
-  // 2. try to download the latest templates
+  // 2. try to download the latest templates (Currently dotnet 8)
   if (!templates) {
-    const templateVersion: string = await dotnetTemplateProvider.getLatestTemplateVersion(context);
-    templates = await dotnetTemplateProvider.getLatestTemplates(context, templateVersion);
+    templates = await dotnetTemplateProvider.getNet8Templates(context);
   }
 
   // 3. try to get the backup templates
