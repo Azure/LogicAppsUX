@@ -33,15 +33,24 @@ export const useAllCognitiveServiceAccounts = (subscriptionId: string) => {
   );
 };
 
+const getServiceAccountId = (resourceId: string | undefined, isFoundryServiceConnection: boolean) => {
+  if (!resourceId) {
+    return undefined;
+  }
+
+  if (isFoundryServiceConnection) {
+    const parts = resourceId.split('/');
+    return parts.length >= 2 ? parts.slice(0, -2).join('/') : resourceId;
+  }
+
+  return resourceId;
+};
+
 export const getCognitiveServiceAccountDeploymentsForConnection = async (connection: Connection) => {
   const queryClient = getReactQueryClient();
   const resourceId = connection?.properties?.connectionParameters?.cognitiveServiceAccountId?.metadata?.value;
   const isFoundryServiceConnection = foundryServiceConnectionRegex.test(resourceId ?? '');
-  const serviceAccountId = resourceId
-    ? isFoundryServiceConnection
-      ? resourceId?.split('/').slice(0, -2).join('/')
-      : resourceId
-    : undefined;
+  const serviceAccountId = getServiceAccountId(resourceId, isFoundryServiceConnection);
 
   return queryClient.fetchQuery([queryKeys.allCognitiveServiceAccountsDeployments, { serviceAccountId }], async () => {
     if (serviceAccountId) {
@@ -56,7 +65,7 @@ export const useCognitiveServiceAccountId = (nodeId: string, _connectorId?: stri
   const selectedConnection = useSelectedConnection(nodeId);
   const resourceId = selectedConnection?.properties?.connectionParameters?.cognitiveServiceAccountId?.metadata?.value;
   const isFoundryServiceConnection = foundryServiceConnectionRegex.test(resourceId ?? '');
-  return resourceId ? (isFoundryServiceConnection ? resourceId?.split('/').slice(0, -2).join('/') : resourceId) : undefined;
+  return getServiceAccountId(resourceId, isFoundryServiceConnection);
 };
 
 export const useCognitiveServiceAccountDeploymentsForNode = (nodeId: string, connectorId?: string) => {
