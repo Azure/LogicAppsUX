@@ -40,6 +40,10 @@ function stringifyEnv(env) {
 // Update a specific key in .env
 function updateEnvFile(filePath, key, newValue) {
   const absPath = path.resolve(filePath);
+  if (!fs.existsSync(absPath)) {
+    // Create the file if it doesn't exist
+    fs.writeFileSync(absPath, '', 'utf-8');
+  }
   const content = fs.readFileSync(absPath, 'utf-8');
   const env = parseEnv(content);
 
