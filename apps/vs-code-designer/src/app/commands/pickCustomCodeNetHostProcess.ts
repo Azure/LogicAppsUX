@@ -128,7 +128,8 @@ export async function pickNetHostChildProcess(taskInfo: IRunningFuncTask): Promi
 
   const children: OSAgnosticProcess[] =
     process.platform === Platform.windows ? await getWindowsChildren(funcPid) : await getUnixChildren(funcPid);
-  let child: OSAgnosticProcess | undefined = children.reverse().find((c) => /(func|dotnet)(\.exe)?$/i.test(c.command || ''));
+  const childRegex = /(func|dotnet)(\.exe)?$/i;
+  let child: OSAgnosticProcess | undefined = children.reverse().find((c) => childRegex.test(c.command || ''));
 
   // If child is null or undefined, look one level deeper in child processes
   if (!child) {
@@ -138,7 +139,7 @@ export async function pickNetHostChildProcess(taskInfo: IRunningFuncTask): Promi
           ? await getWindowsChildren(Number(possibleParent.pid))
           : await getUnixChildren(Number(possibleParent.pid));
 
-      child = childrenOfChild.reverse().find((c) => /(func|dotnet)(\.exe)?$/i.test(c.command || ''));
+      child = childrenOfChild.reverse().find((c) => childRegex.test(c.command || ''));
       if (child) {
         break;
       }
