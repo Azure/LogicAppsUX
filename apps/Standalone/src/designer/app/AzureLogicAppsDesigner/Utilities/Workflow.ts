@@ -104,16 +104,17 @@ export class WorkflowUtility {
 }
 
 function replaceAllOccurrences(content: string, searchValue: string, value: any): string {
-  while (content.includes(searchValue)) {
-    const tempResult =
-      replaceIfFoundAndVerifyJson(content, `"${searchValue}"`, JSON.stringify(value)) ??
-      replaceIfFoundAndVerifyJson(content, searchValue, `${value}`) ??
-      content.replace(searchValue, '');
-
-    content = tempResult;
+  let result = replaceIfFoundAndVerifyJson(content, `"${searchValue}"`, JSON.stringify(value));
+  if (result) {
+    return result;
   }
 
-  return content;
+  result = replaceIfFoundAndVerifyJson(content, searchValue, `${value}`);
+  if (result) {
+    return result;
+  }
+
+  return content.replaceAll(searchValue, '');
 }
 
 function replaceIfFoundAndVerifyJson(stringifiedJson: string, searchValue: string, value: string): string | undefined {
