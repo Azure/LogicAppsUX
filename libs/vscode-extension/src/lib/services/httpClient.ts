@@ -87,19 +87,20 @@ export class HttpClient implements IHttpClient {
       data: options.content,
       commandName: 'Designer.httpClient.post',
     };
-    const responseData = await axios({
-      method: HTTP_METHODS.POST,
-      ...request,
-    });
-
-    if (!isSuccessResponse(responseData.status)) {
-      return Promise.reject(responseData);
-    }
 
     try {
-      return JSON.parse(responseData.data);
-    } catch {
-      return responseData.data as any;
+      const response = await axios({
+        method: HTTP_METHODS.POST,
+        ...request,
+      });
+
+      if (!isSuccessResponse(response.status)) {
+        return Promise.reject(response);
+      }
+
+      return JSON.parse(response.data);
+    } catch (error: any) {
+      throw error?.response?.data ?? error;
     }
   }
   async put<ReturnType, BodyType>(options: HttpRequestOptions<BodyType>): Promise<ReturnType> {

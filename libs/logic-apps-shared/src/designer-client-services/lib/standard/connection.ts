@@ -236,6 +236,7 @@ export class StandardConnectionService extends BaseConnectionService implements 
     parametersMetadata?: ConnectionParametersMetadata,
     shouldTestConnection = true
   ): Promise<Connection> {
+    console.log('charlie creatting connection', connectionId, connector, connectionInfo, parametersMetadata);
     const connectionName = connectionId.split('/').at(-1) as string;
 
     const logId = LoggerService().startTrace({
@@ -252,6 +253,7 @@ export class StandardConnectionService extends BaseConnectionService implements 
       LoggerService().endTrace(logId, { status: Status.Success });
       return connection;
     } catch (error) {
+      console.log('charlie creatting connection error', error);
       this.deleteConnection(connectionId);
       const errorMessage = `Failed to create connection: ${this.tryParseErrorMessage(error)}`;
       LoggerService().log({
