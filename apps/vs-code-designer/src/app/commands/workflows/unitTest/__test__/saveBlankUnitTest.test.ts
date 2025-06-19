@@ -12,6 +12,7 @@ import * as azextUtils from '@microsoft/vscode-azext-utils';
 import { ext } from '../../../../../extensionVariables';
 import * as ConvertWorkspace from '../../../../commands/createNewCodeProject/CodeProjectBase/ConvertToWorkspace';
 import * as syncCloudSettings from '../../../syncCloudSettings';
+import { IActionContext } from '@microsoft/vscode-azext-utils';
 
 vi.mock('../../../../../extensionVariables', () => ({
   ext: {
@@ -22,7 +23,7 @@ vi.mock('../../../../../extensionVariables', () => ({
 }));
 
 describe('saveBlankUnitTest', () => {
-  const dummyContext: any = { telemetry: {} };
+  let dummyContext: IActionContext;
   const dummyNode: vscode.Uri = vscode.Uri.file('/dummy/path/to/workflow.json');
   const dummyUnitTestDefinition = {
     operationInfo: { some: 'info' },
@@ -65,6 +66,10 @@ describe('saveBlankUnitTest', () => {
   let updateSolutionWithProjectSpy: any;
 
   beforeEach(() => {
+    dummyContext = {
+      telemetry: { properties: {} },
+    } as IActionContext;
+
     // Stub utility functions used in saveBlankUnitTest
     vi.spyOn(workspaceUtils, 'getWorkspacePath').mockResolvedValue(dummyWorkspaceFolder.uri.fsPath);
     vi.spyOn(workspaceUtils, 'getWorkspaceFolder').mockResolvedValue(dummyWorkspaceFolder);
@@ -82,9 +87,6 @@ describe('saveBlankUnitTest', () => {
 
     // Stub telemetry logging functions
     vi.spyOn(unitTestUtils, 'logTelemetry').mockImplementation(() => {});
-    vi.spyOn(unitTestUtils, 'handleError').mockImplementation((context, error, source) => {
-      throw error;
-    });
     vi.spyOn(unitTestUtils, 'logError').mockImplementation(() => {});
     vi.spyOn(unitTestUtils, 'logSuccess').mockImplementation(() => {});
 
@@ -120,10 +122,11 @@ describe('saveBlankUnitTest', () => {
     expect(unitTestUtils.logTelemetry).toHaveBeenCalledWith(dummyContext, expect.objectContaining({ unitTestSaveStatus: 'Success' }));
     expect(unitTestUtils.promptForUnitTestName).toHaveBeenCalledTimes(1);
     expect(fs.ensureDir).toHaveBeenCalled();
-    expect(azextUtils.callWithTelemetryAndErrorHandling).toHaveBeenCalled();
 
     expect(updateSolutionWithProjectSpy).toHaveBeenCalledOnce();
     expect(updateSolutionWithProjectSpy).not.toThrowError();
+    expect(dummyContext.telemetry.properties.result).toBe('Succeeded');
+    expect(dummyContext.telemetry.properties.lastStep).toBe('syncCloudSettings');
   });
 
   test('should not continue if not a valid workspace', async () => {
@@ -131,19 +134,21 @@ describe('saveBlankUnitTest', () => {
     vi.spyOn(ConvertWorkspace, 'convertToWorkspace').mockResolvedValue(false);
 
     await saveBlankUnitTest(dummyContext, dummyNode, dummyUnitTestDefinition);
+
     expect(unitTestUtils.promptForUnitTestName).toHaveBeenCalledTimes(0);
     expect(unitTestUtils.logTelemetry).toHaveBeenCalledWith(dummyContext, expect.objectContaining({ multiRootWorkspaceValid: 'false' }));
     expect(updateSolutionWithProjectSpy).not.toHaveBeenCalled();
+    expect(dummyContext.telemetry.properties.result).toBe('Canceled');
   });
 
   test('should log an error and call handleError when an exception occurs', async () => {
     const testError = new Error('Test error');
     vi.spyOn(unitTestUtils, 'parseUnitTestOutputs').mockRejectedValueOnce(testError);
 
-    await expect(saveBlankUnitTest(dummyContext, dummyNode, dummyUnitTestDefinition)).rejects.toThrow('Test error');
+    await saveBlankUnitTest(dummyContext, dummyNode, dummyUnitTestDefinition);
 
-    // Verify that the error logging function was called
-    expect(unitTestUtils.handleError).toHaveBeenCalled();
     expect(updateSolutionWithProjectSpy).not.toHaveBeenCalled();
+    expect(dummyContext.telemetry.properties.result).toBe('Failed');
+    expect(dummyContext.telemetry.properties.errorMessage).toBeDefined();
   });
 });
