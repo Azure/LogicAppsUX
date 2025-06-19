@@ -8,7 +8,6 @@ import {
   getStandardAppData,
   getWorkflowManagementBaseURI,
 } from '../../../utils/codeless/common';
-import { getAuthorizationToken } from '../../../utils/codeless/getAuthorizationToken';
 import type { IAzureConnectorsContext } from '../azureConnectorWizard';
 import { OpenDesignerBase } from './openDesignerBase';
 import type { IWorkflowFileContent, IDesignerPanelMetadata } from '@microsoft/vscode-extension-logic-apps';
@@ -16,6 +15,7 @@ import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { Uri } from 'vscode';
+import { getAuthorizationTokenFromNode } from '../../../utils/codeless/getAuthorizationToken';
 
 export class OpenDesignerForAzureResource extends OpenDesignerBase {
   private readonly node: RemoteWorkflowTreeItem;
@@ -112,7 +112,7 @@ export class OpenDesignerForAzureResource extends OpenDesignerBase {
   }
 
   private async getDesignerPanelMetadata(): Promise<IDesignerPanelMetadata> {
-    const accessToken: string = await getAuthorizationToken(this.node.subscription?.tenantId);
+    const accessToken = await getAuthorizationTokenFromNode(this.node);
 
     return {
       panelId: this.panelName,

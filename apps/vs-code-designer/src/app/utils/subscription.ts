@@ -10,9 +10,9 @@ import { SubscriptionTreeItem } from '../tree/subscriptionTree/SubscriptionTreeI
 
 /**
  * Retrieves the subscription context based on the provided subscription ID or prompts the user to select a subscription node.
- * @param context - The action context.
- * @param subscriptionId - Optional subscription ID to find the specific subscription node.
- * @return A promise that resolves to the found or selected node's subscription context.
+ * @param {IActionContext} context - The action context.
+ * @param {string} subscriptionId - Optional subscription ID to find the specific subscription node.
+ * @returns {Promise<ISubscriptionContext>} - A promise that resolves to the found or selected node's subscription context.
  */
 export async function getSubscriptionContext(context: IActionContext, subscriptionId?: string): Promise<ISubscriptionContext> {
   let node: AzExtParentTreeItem;

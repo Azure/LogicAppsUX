@@ -8,7 +8,7 @@ import { getRandomHexString } from '../../../utils/fs';
 import { createOrUpdateHybridApp, patchAppSettings } from '../../../utils/codeless/hybridLogicApp/hybridApp';
 import { updateSMBConnectedEnvironment } from '../../../utils/codeless/hybridLogicApp/connectedEnvironment';
 import path from 'path';
-import { getAuthorizationToken } from '../../../utils/codeless/getAuthorizationToken';
+import { getAuthorizationTokenFromNode } from '../../../utils/codeless/getAuthorizationToken';
 import { getWorkspaceSetting } from '../../../utils/vsCodeConfig/settings';
 import {
   azurePublicBaseUrl,
@@ -42,7 +42,7 @@ export const deployHybridLogicApp = async (context: IActionContext, node: SlotTr
 
         const newSmbFolderName = `${node.hybridSite.name}-${getRandomHexString(32 - node.hybridSite.name.length - 1)}`.toLowerCase();
 
-        const accessToken = await getAuthorizationToken(node.subscription?.tenantId);
+        const accessToken = await getAuthorizationTokenFromNode(node);
 
         progress.report({ increment: 16, message: 'Connecting to SMB and uploading files' });
 
@@ -155,7 +155,7 @@ export const zipDeployHybridLogicApp = async (context: IActionContext, node: Slo
         if (!logicAppsContext.isCreate) {
           progress.report({ increment: 80, message: 'Updating app settings' });
 
-          await patchAppSettings(hybridAppOptions, context, await getAuthorizationToken(node.subscription?.tenantId));
+          await patchAppSettings(hybridAppOptions, context, await getAuthorizationTokenFromNode(node));
         }
 
         progress.report({ increment: 100, message: 'Deployment completed successfully' });
@@ -315,7 +315,7 @@ const getSMBDetails = async (context: IActionContext, node: SlotTreeItem) => {
 };
 
 const getStorageInfoForConnectedEnv = async (connectedEnvId: string, storageName: string, context: IActionContext, node: SlotTreeItem) => {
-  const accessToken = await getAuthorizationToken(node.subscription?.tenantId);
+  const accessToken = await getAuthorizationTokenFromNode(node);
 
   const url = `${azurePublicBaseUrl}/${connectedEnvId}/storages/${storageName}?api-version=${hybridAppApiVersion}`;
 

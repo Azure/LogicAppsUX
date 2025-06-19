@@ -69,7 +69,7 @@ class ExportEngine {
   };
 
   public constructor(
-    private getAccessToken: () => Promise<string>,
+    private getAccessToken: () => string,
     private packageUrl: string,
     private targetDirectory: string,
     private subscriptionId: string,
@@ -148,7 +148,7 @@ class ExportEngine {
     return axios
       .get(uri, {
         headers: {
-          authorization: await this.getAccessToken(),
+          authorization: this.getAccessToken(),
         },
       })
       .then(({ data }) => data)
@@ -167,7 +167,7 @@ class ExportEngine {
 
     return axios
       .put(uri, body, {
-        headers: { authorization: await this.getAccessToken() },
+        headers: { authorization: this.getAccessToken() },
       })
       .then(({ data }) => data)
       .catch((error) => {
@@ -190,7 +190,7 @@ class ExportEngine {
 
     await axios
       .put(uri, body, {
-        headers: { authorization: await this.getAccessToken() },
+        headers: { authorization: this.getAccessToken() },
       })
       .catch((error) => {
         throw new Error(localize('templateDeploymentFailure', 'Failed to deploy connections template. {0}', error.message ?? ''));
@@ -224,7 +224,7 @@ class ExportEngine {
 
   private async getDeployment(uri: string): Promise<Deployment> {
     return axios
-      .get(uri, { headers: { authorization: await this.getAccessToken() } })
+      .get(uri, { headers: { authorization: this.getAccessToken() } })
       .then(({ data }) => data)
       .catch((error) => {
         throw new Error(localize('getDeploymentFailure', 'Failed to get deployment. {1}', error.message ?? ''));
@@ -246,7 +246,7 @@ class ExportEngine {
       .post(
         `${this.baseGraphUri}${connectionId}/listConnectionKeys?api-version=2018-07-01-preview`,
         { validityTimeSpan: '7' },
-        { headers: { authorization: await this.getAccessToken() } }
+        { headers: { authorization: this.getAccessToken() } }
       )
       .then((response) => {
         return response.data?.connectionKey;
@@ -273,7 +273,7 @@ class ExportEngine {
 
     return axios
       .get(uri, {
-        headers: { authorization: await this.getAccessToken() },
+        headers: { authorization: this.getAccessToken() },
       })
       .then(({ data }) => data)
       .catch((error) => {
@@ -324,8 +324,11 @@ export async function exportLogicApp(context: IActionContext): Promise<void> {
   const apiVersion = '2021-03-01';
   const existingPanel: vscode.WebviewPanel | undefined = tryGetWebviewPanel(panelGroupKey, panelName);
   const cloudHost = await getCloudHost();
+  // TODO(aeldridge): This is a workaround to get the subscription context needed for auth token before selection is made in the webview.
+  // TODO(aeldridge): This should be refactored to not require a separate prompt for subscription selection.
+  const selectedSubscription = await getSubscriptionContext(context);
   let accessToken: string;
-  accessToken = await getAuthorizationToken();
+  accessToken = await getAuthorizationToken(selectedSubscription?.tenantId);
 
   if (existingPanel) {
     if (!existingPanel.active) {
@@ -363,7 +366,7 @@ export async function exportLogicApp(context: IActionContext): Promise<void> {
           },
         });
         interval = setInterval(async () => {
-          const updatedAccessToken = await getAuthorizationToken();
+          const updatedAccessToken = await getAuthorizationToken(selectedSubscription?.tenantId);
           if (updatedAccessToken !== accessToken) {
             accessToken = updatedAccessToken;
             panel.webview.postMessage({
@@ -396,7 +399,7 @@ export async function exportLogicApp(context: IActionContext): Promise<void> {
         const { targetDirectory, packageUrl, selectedSubscription, resourceGroupName, location } = message;
         const baseGraphUri = getBaseGraphApi(cloudHost);
         const engine = new ExportEngine(
-          async () => await getAuthorizationToken((await getSubscriptionContext(context, selectedSubscription))?.tenantId),
+          () => accessToken,
           packageUrl,
           targetDirectory.fsPath,
           selectedSubscription,

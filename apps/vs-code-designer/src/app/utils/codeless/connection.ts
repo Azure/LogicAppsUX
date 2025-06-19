@@ -12,7 +12,7 @@ import { sendAzureRequest } from '../requestUtils';
 import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
 import { getContainingWorkspace } from '../workspace';
 import { createJsonFileIfDoesNotExist, getWorkflowParameters } from './common';
-import { getAuthorizationToken } from './getAuthorizationToken';
+import { getAuthorizationToken, getAuthorizationTokenFromNode } from './getAuthorizationToken';
 import { getParametersJson, saveWorkflowParameterRecords } from './parameter';
 import { deleteCustomCode, getCustomCode, getCustomCodeAppFilesToUpdate, uploadCustomCode } from './customcode';
 import { addNewFileInCSharpProject } from './updateBuildFile';
@@ -40,6 +40,7 @@ import * as vscode from 'vscode';
 import { parameterizeConnection } from './parameterizer';
 import { window } from 'vscode';
 import { getGlobalSetting } from '../vsCodeConfig/settings';
+import type { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
 
 export async function getConnectionsFromFile(context: IActionContext, workflowFilePath: string): Promise<string> {
   const projectRoot: string = await getLogicAppProjectRoot(context, workflowFilePath);
@@ -434,13 +435,14 @@ export function resolveSettingsInConnection(
  * Creates acknowledge connections to managed api connections.
  * @param {IIdentityWizardContext} identityWizardContext - Identity context.
  * @param {string} connectionId - Connection ID.
- * @param {ParsedSite} site - Logic app site.
+ * @param {SlotTreeItem} node - The Logic App node.
  */
 export async function createAclInConnectionIfNeeded(
   identityWizardContext: IIdentityWizardContext,
   connectionId: string,
-  site: ParsedSite
+  node: SlotTreeItem
 ): Promise<void> {
+  const site = node.site;
   if ((!site || !site.rawSite.identity || site.rawSite.identity.type !== 'SystemAssigned') && !identityWizardContext?.useAdvancedIdentity) {
     return;
   }
@@ -465,7 +467,8 @@ export async function createAclInConnectionIfNeeded(
         acl.properties?.principal.identity.tenantId === identity?.tenantId
     )
   ) {
-    return createAccessPolicyInConnection(identityWizardContext, connectionId, site, identity);
+    const accessToken = await getAuthorizationTokenFromNode(node);
+    return createAccessPolicyInConnection(identityWizardContext, connectionId, site, identity, accessToken);
   }
 }
 
@@ -473,9 +476,9 @@ async function createAccessPolicyInConnection(
   identityWizardContext: IIdentityWizardContext,
   connectionId: string,
   site: ParsedSite,
-  identity: any
+  identity: any,
+  accessToken: string
 ): Promise<void> {
-  const accessToken = await getAuthorizationToken(identityWizardContext.tenantId ?? site.subscription?.tenantId);
   const getUrl = `${connectionId}?api-version=2018-07-01-preview`;
   let connection: any;
 
