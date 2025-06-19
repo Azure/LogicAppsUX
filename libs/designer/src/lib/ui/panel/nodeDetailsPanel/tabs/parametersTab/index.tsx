@@ -102,6 +102,7 @@ import {
 import { isAgentConnectorAndAgentModel, isAgentConnectorAndAgentServiceModel, isAgentConnectorAndDeploymentId } from './helpers';
 import { useShouldEnableFoundryServiceConnection } from './hooks';
 import { AgentUtils } from '../../../../../common/utilities/Utils';
+import type { AnyAction, ThunkDispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { getConnectionsForConnector } from '../../../../../core/queries/connections';
 import { updateNodeConnection } from '../../../../../core/actions/bjsworkflow/connections';
@@ -245,11 +246,32 @@ const getConnectionToAssign = (
   const connections = modelType === 'AzureOpenAI' ? azureOpenAIConnections : foundryConnections;
 
   if (connections.length === 0) {
-    console.warn(`No connections available for model type: ${modelType}`);
     return null;
   }
 
   return connections[0];
+};
+
+const clearConnectionAndDeploymentModel = (
+  dispatch: ThunkDispatch<unknown, unknown, AnyAction>,
+  nodeId: string,
+  deploymentIdParam: string
+): void => {
+  dispatch(removeNodeConnectionData({ nodeId }));
+  dispatch(
+    updateNodeParameters({
+      nodeId,
+      parameters: [
+        {
+          groupId: ParameterGroupKeys.DEFAULT,
+          parameterId: deploymentIdParam,
+          propertiesToUpdate: {
+            value: [createLiteralValueSegment('')],
+          },
+        },
+      ],
+    })
+  );
 };
 
 export const dynamicallyLoadAgentConnection = createAsyncThunk(
@@ -291,7 +313,22 @@ export const dynamicallyLoadAgentConnection = createAsyncThunk(
 
     if (!connectionToAssign) {
       // Clear connection and deployment model if no connection is found
-      dispatch(removeNodeConnectionData({ nodeId }));
+      clearConnectionAndDeploymentModel(dispatch, nodeId, deploymentIdParam.id);
+      return;
+    }
+
+    try {
+      // Update connection
+      dispatch(
+        updateNodeConnection({
+          nodeId,
+          connection: connectionToAssign,
+          connector: connector as Connector,
+        })
+      );
+      ConnectionService().setupConnectionIfNeeded(connectionToAssign);
+
+      // Update that parameter to point at the matching connection
       dispatch(
         updateNodeParameters({
           nodeId,
@@ -300,40 +337,16 @@ export const dynamicallyLoadAgentConnection = createAsyncThunk(
               groupId: ParameterGroupKeys.DEFAULT,
               parameterId: deploymentIdParam.id,
               propertiesToUpdate: {
-                value: [createLiteralValueSegment('')],
+                value: [createLiteralValueSegment('gpt-4o')],
               },
             },
           ],
         })
       );
-      return;
+    } catch (error) {
+      console.error('Error dynamically loading agent connection:', error);
+      clearConnectionAndDeploymentModel(dispatch, nodeId, deploymentIdParam.id);
     }
-
-    // Update connection
-    dispatch(
-      updateNodeConnection({
-        nodeId,
-        connection: connectionToAssign,
-        connector: connector as Connector,
-      })
-    );
-    ConnectionService().setupConnectionIfNeeded(connectionToAssign);
-
-    // Update that parameter to point at the matching connection
-    dispatch(
-      updateNodeParameters({
-        nodeId,
-        parameters: [
-          {
-            groupId: ParameterGroupKeys.DEFAULT,
-            parameterId: deploymentIdParam.id,
-            propertiesToUpdate: {
-              value: [createLiteralValueSegment('gpt-4o')],
-            },
-          },
-        ],
-      })
-    );
   }
 );
 
