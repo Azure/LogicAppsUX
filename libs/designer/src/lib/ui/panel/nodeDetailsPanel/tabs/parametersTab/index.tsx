@@ -1,5 +1,5 @@
 import constants from '../../../../../common/constants';
-import { useShowIdentitySelectorQuery } from '../../../../../core/state/connection/connectionSelector';
+import { useConnectorByNodeId, useShowIdentitySelectorQuery } from '../../../../../core/state/connection/connectionSelector';
 import { addOrUpdateCustomCode, renameCustomCodeFile } from '../../../../../core/state/customcode/customcodeSlice';
 import { useHostOptions, useReadOnly } from '../../../../../core/state/designerOptions/designerOptionsSelectors';
 import type { ParameterGroup } from '../../../../../core/state/operation/operationMetadataSlice';
@@ -77,6 +77,7 @@ import {
 } from '@microsoft/designer-ui';
 import {
   clone,
+  ConnectionService,
   EditorService,
   equals,
   ExtensionProperties,
@@ -87,7 +88,7 @@ import {
   isRecordNotEmpty,
   SUBGRAPH_TYPES,
 } from '@microsoft/logic-apps-shared';
-import type { Connection, OperationInfo } from '@microsoft/logic-apps-shared';
+import type { Connection, Connector, OperationInfo } from '@microsoft/logic-apps-shared';
 import type React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -103,6 +104,7 @@ import { useShouldEnableFoundryServiceConnection } from './hooks';
 import { AgentUtils } from '../../../../../common/utilities/Utils';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { getConnectionsForConnector } from '../../../../../core/queries/connections';
+import { updateNodeConnection } from '../../../../../core/actions/bjsworkflow/connections';
 
 // TODO: Add a readonly per settings section/group
 export interface ParametersTabProps extends PanelTabProps {
@@ -252,11 +254,11 @@ const getConnectionToAssign = (
 export const dynamicallyLoadAgentConnection = createAsyncThunk(
   'dynamicallyLoadAgentConnection',
   async (
-    { nodeId, connectorId, modelType }: { nodeId: string; connectorId: string; modelType: string },
+    { nodeId, connector, modelType }: { nodeId: string; connector: Connector; modelType: string },
     { dispatch, getState }
   ): Promise<void> => {
     // Fetch all connections for the agentic connector
-    const connections = await getConnectionsForConnector(`/${connectorId}`);
+    const connections = await getConnectionsForConnector(connector.id);
 
     // Find the connection whose metadata matches the chosen model type
     const azureOpenAIConnections = connections.filter(
@@ -290,7 +292,15 @@ export const dynamicallyLoadAgentConnection = createAsyncThunk(
       return;
     }
 
-    console.log(dispatch);
+    // Update connection
+    dispatch(
+      updateNodeConnection({
+        nodeId,
+        connection: connectionToAssign,
+        connector: connector as Connector,
+      })
+    );
+    ConnectionService().setupConnectionIfNeeded(connectionToAssign);
 
     // Update that parameter to point at the matching connection
     // dispatch(
@@ -355,6 +365,7 @@ const ParameterSection = ({
   const rootState = useSelector((state: RootState) => state);
   const displayNameResult = useConnectorName(operationInfo);
   const panelLocation = usePanelLocation();
+  const connector = useConnectorByNodeId(nodeId);
 
   const { suppressCastingForSerialize, enableMultiVariable } = useHostOptions();
 
@@ -455,7 +466,7 @@ const ParameterSection = ({
         const newValue = value.length > 0 ? value[0].value : undefined;
         const oldValue = parameter?.value && parameter.value.length > 0 ? parameter.value[0].value : undefined;
         if (!isNullOrUndefined(newValue) && !isNullOrUndefined(oldValue) && newValue !== oldValue) {
-          dispatch(dynamicallyLoadAgentConnection({ nodeId, connectorId: operationInfo.connectorId ?? '', modelType: newValue }));
+          dispatch(dynamicallyLoadAgentConnection({ nodeId, connector, modelType: newValue }));
         }
       }
 
