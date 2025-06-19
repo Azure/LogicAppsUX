@@ -44,13 +44,14 @@ import { getDateTimeString } from '../../../core/configuretemplate/utils/helper'
 
 export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean) => void }) => {
   const intl = useIntl();
-  const { workflows, currentPanelView, apiErrors, saveErrors, isLoading, templateId } = useSelector((state: RootState) => ({
+  const { workflows, currentPanelView, apiErrors, saveErrors, isLoading, templateId, status } = useSelector((state: RootState) => ({
     workflows: state.template.workflows ?? {},
     apiErrors: state.template.apiValidatationErrors?.workflows ?? {},
     saveErrors: state.template.apiValidatationErrors?.saveGeneral?.workflows,
     currentPanelView: state.panel.currentPanelView,
     isLoading: state.template.dataIsLoading,
     templateId: state.template.manifest?.id as string,
+    status: state.template.status,
   }));
   const hasErrors = useMemo(() => saveErrors || workflowsHaveErrors(apiErrors, workflows), [apiErrors, saveErrors, workflows]);
   const { data: workflowResources, isLoading: workflowResourcesLoading } = useTemplateWorkflowResources(templateId);
@@ -59,6 +60,7 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
 
   const [selectedWorkflowsList, setSelectedWorkflowsList] = useFunctionalState<string[]>([]);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
+  const isPublishedTemplate = useMemo(() => status !== 'Development', [status]);
 
   const intlText = useMemo(
     () => ({
@@ -72,9 +74,9 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
         id: 'Ld62T8',
         description: 'Button text for deleting selected workflows',
       }),
-      DELETE_WORKFLOW: intl.formatMessage({
-        defaultMessage: 'Delete workflow',
-        id: 'hufv85',
+      DELETE_WORKFLOWS: intl.formatMessage({
+        defaultMessage: 'Delete workflows',
+        id: 'YRW3/2',
         description: 'Title text for deleting selected workflows',
       }),
       EMPTY_TITLE: intl.formatMessage({
@@ -101,6 +103,11 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
         defaultMessage: 'Do you want to delete the workflow(s)? This will remove the workflow(s) from this template.',
         id: 'gt3JdS',
         description: 'Body text for informing users this action is deleting selected workflows',
+      }),
+      DELETE_UNPUBLISH_CONFIRM_TEXT: intl.formatMessage({
+        defaultMessage: `Deleting workflows wlil remove them from this template. The template will be unpublished and won't appear in the template library until it is republished. Do you want to delete the workflow(s) and unpublish?`,
+        id: 'r/H4us',
+        description: 'Body text for informing users this action is deleting selected workflows and unpublishing the template',
       }),
       CLOSE: intl.formatMessage({
         defaultMessage: 'Cancel',
@@ -268,8 +275,8 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
       >
         <DialogSurface>
           <DialogBody>
-            <DialogTitle>{intlText.DELETE_WORKFLOW}</DialogTitle>
-            <DialogContent>{intlText.DELETE_CONFIRM_TEXT}</DialogContent>
+            <DialogTitle>{intlText.DELETE_WORKFLOWS}</DialogTitle>
+            <DialogContent>{isPublishedTemplate ? intlText.DELETE_UNPUBLISH_CONFIRM_TEXT : intlText.DELETE_CONFIRM_TEXT}</DialogContent>
             <DialogActions>
               <Button
                 appearance="primary"
@@ -283,7 +290,7 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
                   setIsDeleteModalOpen(false);
                 }}
               >
-                {intlText.DELETE}
+                {intlText.DELETE_WORKFLOWS}
               </Button>
               <DialogTrigger disableButtonEnhancement>
                 <Button

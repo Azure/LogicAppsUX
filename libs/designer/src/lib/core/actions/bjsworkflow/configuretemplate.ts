@@ -341,6 +341,7 @@ export const initializeAndSaveWorkflowsData = createAsyncThunk(
       finalConnections
     );
 
+    const newState = equals(oldState, 'Development') ? undefined : 'Development';
     // If the old state is published then we need to move template to development state before updating any workflows.
     // Users would be informed in the UI about this change.
     await saveWorkflowsInTemplateInternal(
@@ -350,7 +351,7 @@ export const initializeAndSaveWorkflowsData = createAsyncThunk(
       finalConnections,
       finalParameterDefinitions,
       oldState as Template.TemplateEnvironment,
-      equals(oldState, 'Development') ? undefined : 'Development',
+      newState,
       /* updateTemplateManifest */ true,
       /* clearWorkflows */ true
     );
@@ -358,6 +359,10 @@ export const initializeAndSaveWorkflowsData = createAsyncThunk(
     dispatch(updateAllWorkflowsData({ workflows: finalWorkflowsData, manifest: updatedTemplateManifest }));
     dispatch(updateConnectionAndParameterDefinitions({ connections: finalConnections, parameterDefinitions: finalParameterDefinitions }));
     dispatch(initializeNodeOperationInputsData(operationsData));
+
+    if (newState) {
+      dispatch(updateEnvironment(newState));
+    }
 
     onSaveCompleted?.();
   }
@@ -581,7 +586,7 @@ export const deleteWorkflowData = createAsyncThunk(
   'deleteWorkflowData',
   async (
     { ids }: { ids: string[] },
-    { getState }
+    { getState, dispatch }
   ): Promise<{
     ids: string[];
     manifest: Template.TemplateManifest;
@@ -594,10 +599,19 @@ export const deleteWorkflowData = createAsyncThunk(
     const parametersToUpdate: Record<string, Partial<Template.ParameterDefinition>> = {};
     const promises: Promise<void>[] = [];
     const {
-      template: { workflows, parameterDefinitions, connections, manifest },
+      template: { workflows, parameterDefinitions, connections, manifest, status: oldState },
       operation: { operationInfo },
     } = getState() as RootState;
     const templateId = manifest?.id as string;
+
+    const newState = equals(oldState, 'Development') ? undefined : 'Development';
+    if (newState) {
+      // If the old state is published then we need to move template to development state before deleting any workflows.
+      // Users would be informed in the UI about this change.
+      await TemplateResourceService().updateTemplate(templateId, /* manifest */ undefined, newState);
+      resetTemplateQuery(templateId);
+      dispatch(updateEnvironment(newState));
+    }
 
     for (const id of ids) {
       const workflowId = id.toLowerCase();
@@ -650,12 +664,11 @@ export const deleteWorkflowData = createAsyncThunk(
     }
 
     const updatedTemplateManifest = getUpdatedTemplateManifest(manifest as Template.TemplateManifest, finalWorkflows, finalConnections);
-    const updatedFeaturedConnectors = getFeaturedConnectorsForWorkflows(finalWorkflows, operationInfo, manifest?.featuredConnectors);
-
-    // TODO: We need to do something if featured connectors are empty since validation will fail for already published template.
-    if (updatedFeaturedConnectors.length) {
-      updatedTemplateManifest.featuredConnectors = updatedFeaturedConnectors;
-    }
+    updatedTemplateManifest.featuredConnectors = getFeaturedConnectorsForWorkflows(
+      finalWorkflows,
+      operationInfo,
+      manifest?.featuredConnectors
+    );
 
     await TemplateResourceService().updateTemplate(templateId, updatedTemplateManifest, /* state */ undefined);
     resetTemplateQuery(templateId);
@@ -992,17 +1005,17 @@ const getFeaturedConnectorsForWorkflows = (
   featuredConnectors: Template.FeaturedConnector[] = []
 ): Template.FeaturedConnector[] => {
   const workflowIds = workflows.map((workflow) => workflow.id?.toLowerCase());
-  const allConnectorIds: string[] = [];
+  const allConnectorIds: Set<string> = new Set<string>();
   for (const workflowId of workflowIds) {
     for (const nodeId of Object.keys(operationInfo)) {
       if (nodeId.toLowerCase().startsWith(`${workflowId}${delimiter}`)) {
         const connectorId = sanitizeConnectorId(operationInfo[nodeId]?.connectorId).toLowerCase();
-        if (connectorId && !allConnectorIds.includes(connectorId)) {
-          allConnectorIds.push(connectorId);
+        if (connectorId && !allConnectorIds.has(connectorId)) {
+          allConnectorIds.add(connectorId);
         }
       }
     }
   }
 
-  return featuredConnectors.filter((featuredConnector) => allConnectorIds.includes(featuredConnector.id.toLowerCase()));
+  return featuredConnectors.filter((featuredConnector) => allConnectorIds.has(featuredConnector.id.toLowerCase()));
 };
