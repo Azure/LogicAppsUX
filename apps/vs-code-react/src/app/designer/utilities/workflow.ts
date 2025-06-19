@@ -93,17 +93,17 @@ export const resolveConnectionsReferences = (
 };
 
 function replaceAllOccurrences(content: string, searchValue: string, value: any): string {
-  let currContent = content;
-  while (currContent.includes(searchValue)) {
-    const tempResult =
-      replaceIfFoundAndVerifyJson(currContent, `"${searchValue}"`, JSON.stringify(value)) ??
-      replaceIfFoundAndVerifyJson(currContent, searchValue, `${value}`) ??
-      currContent.replace(searchValue, '');
-
-    currContent = tempResult;
+  let result = replaceIfFoundAndVerifyJson(content, `"${searchValue}"`, JSON.stringify(value));
+  if (result) {
+    return result;
   }
 
-  return currContent;
+  result = replaceIfFoundAndVerifyJson(content, searchValue, `${value}`);
+  if (result) {
+    return result;
+  }
+
+  return content.replaceAll(searchValue, '');
 }
 
 function replaceIfFoundAndVerifyJson(stringifiedJson: string, searchValue: string, value: string): string | undefined {

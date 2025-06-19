@@ -326,8 +326,6 @@ export const DotnetVersion = {
   net48: 'net48',
 } as const;
 export type DotnetVersion = (typeof DotnetVersion)[keyof typeof DotnetVersion];
-export const dotNet8ItemTemplatesURL = 'https://www.nuget.org/api/v2/package/Microsoft.Azure.WebJobs.ItemTemplates/4.0.5086';
-export const dotNet8ProjectTemplatesURL = 'https://www.nuget.org/api/v2/package/Microsoft.Azure.WebJobs.ProjectTemplates/4.0.5086';
 
 export const dotnetExtensionId = 'ms-dotnettools.csharp';
 
@@ -405,11 +403,12 @@ export const CodefulSDKs = {
 };
 export type CodefulSDKs = (typeof CodefulSDKs)[keyof typeof CodefulSDKs];
 
-const codefulSdkVersion = '1.126.0.16';
+const codefulSdkVersion = '1.127.21.3-preview';
+const workflowsWebJobsVersion = '1.127.21.3-preview';
 const durableTaskVersion = '2.9.0';
 
 export const CodefulSdkVersions = {
   [CodefulSDKs.DurableTask]: durableTaskVersion,
-  [CodefulSDKs.WorkflowsWebJobs]: codefulSdkVersion,
+  [CodefulSDKs.WorkflowsWebJobs]: workflowsWebJobsVersion,
   [CodefulSDKs.WorkflowsSDK]: codefulSdkVersion,
 };

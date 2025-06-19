@@ -25,7 +25,7 @@ import {
 } from '../../../utils/unitTests';
 import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
 import { ensureDirectoryInWorkspace, getWorkflowNode, getWorkspaceFolder, getWorkspacePath } from '../../../utils/workspace';
-import { type IActionContext, callWithTelemetryAndErrorHandling, parseError } from '@microsoft/vscode-azext-utils';
+import { type IActionContext, parseError } from '@microsoft/vscode-azext-utils';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import * as fse from 'fs-extra';
@@ -51,15 +51,17 @@ export async function createUnitTest(
 ): Promise<void> {
   try {
     // Validate and extract Run ID
+    context.telemetry.properties.lastStep = 'extractAndValidateRunId';
     const validatedRunId = await extractAndValidateRunId(runId);
 
+    context.telemetry.properties.lastStep = 'convertToWorkspace';
     if (!(await convertToWorkspace(context))) {
       ext.outputChannel.appendLog(
         localize('createUnitTestCancelled', 'Exiting unit test creation, a workspace is required to create unit tests.')
       );
+      context.telemetry.properties.result = 'Canceled';
       return;
     }
-
     logTelemetry(context, {
       workspaceLocated: 'true',
       projectRootLocated: 'true',
@@ -69,37 +71,44 @@ export async function createUnitTest(
     });
 
     // Determine workflow node
+    context.telemetry.properties.lastStep = 'getWorkflowNode';
     let workflowNode = getWorkflowNode(node) as vscode.Uri;
     let projectPath: string | undefined;
     if (workflowNode) {
+      context.telemetry.properties.lastStep = 'getProjectRootFromWorkflowNode';
       const workspaceFolder = getWorkspacePath(workflowNode.fsPath);
       projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
     } else {
+      context.telemetry.properties.lastStep = 'getProjectRootFromWorkspaceFolder';
       const workspaceFolder = await getWorkspaceFolder(context);
       projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
+      context.telemetry.properties.lastStep = 'selectWorkflowNode';
       workflowNode = await selectWorkflowNode(context, projectPath);
     }
 
     try {
+      context.telemetry.properties.lastStep = 'validateWorkflowPath';
       validateWorkflowPath(projectPath, workflowNode.fsPath);
     } catch (error) {
       vscode.window.showErrorMessage(`Workflow validation failed: ${error.message}`);
+      context.telemetry.properties.result = 'Failed';
+      context.telemetry.properties.errorMessage = error.message;
       return;
     }
+
     // Get workflow name and prompt for unit test name
+    context.telemetry.properties.lastStep = 'promptForUnitTestName';
     const workflowName = path.basename(path.dirname(workflowNode.fsPath));
     const unitTestName = await promptForUnitTestName(context, projectPath, workflowName);
-
-    // Log telemetry and initiate unit test generation
     logTelemetry(context, {
       workflowName: workflowName,
       unitTestName: unitTestName,
       runId: validatedRunId,
     });
-    await callWithTelemetryAndErrorHandling('logicApp.createUnitTest', async (telemetryContext: IActionContext) => {
-      Object.assign(telemetryContext, context);
-      await generateUnitTestFromRun(context, projectPath, workflowName, unitTestName, validatedRunId, unitTestDefinition, node.fsPath);
-    });
+
+    context.telemetry.properties.lastStep = 'generateUnitTestFromRun';
+    await generateUnitTestFromRun(context, projectPath, workflowName, unitTestName, validatedRunId, unitTestDefinition, node.fsPath);
+    context.telemetry.properties.result = 'Succeeded';
   } catch (error) {
     handleError(context, error, 'createUnitTest');
   }
@@ -137,10 +146,10 @@ async function generateUnitTestFromRun(
   });
 
   // Get parsed outputs
+  context.telemetry.properties.lastStep = 'parseUnitTestOutputs';
   const parsedOutputs = await parseUnitTestOutputs(unitTestDefinition);
   const operationInfo = parsedOutputs['operationInfo'];
   const outputParameters = parsedOutputs['outputParameters'];
-
   logTelemetry(context, {
     operationInfoExists: operationInfo ? 'true' : 'false',
     outputParametersExists: outputParameters ? 'true' : 'false',
@@ -169,10 +178,10 @@ async function generateUnitTestFromRun(
         `Operational context: Workflow Name: ${workflowName}, Run ID: ${runId}, Unit Test Name: ${unitTestName}`
       )
     );
-    ext.outputChannel.appendLog(localize('initiatingApiCall', 'Initiating Unit Test Generation API call...'));
-
+    ext.outputChannel.appendLog(localize('initiatingApiCall', 'Fetching unit test details from run...'));
     logTelemetry(context, { apiCallInitiated: 'true' });
 
+    context.telemetry.properties.lastStep = 'postGenerateUnitTest';
     let response: any;
     try {
       response = await axios.post(
@@ -188,7 +197,6 @@ async function generateUnitTestFromRun(
       );
 
       logTelemetry(context, { apiCallSucceeded: 'true', processStage: 'API Call Completed' });
-      ext.outputChannel.appendLog(localize('apiCallSuccessful', 'API call successful, processing response...'));
     } catch (apiError) {
       const failReason = parseErrorBeforeTelemetry(apiError);
       logTelemetry(context, {
@@ -206,7 +214,10 @@ async function generateUnitTestFromRun(
       throw new Error(localize('invalidResponseType', `Expected a zip file but received ${contentType}`));
     }
 
+    context.telemetry.properties.lastStep = 'getUnitTestPaths';
     const paths = getUnitTestPaths(projectPath, workflowName, unitTestName);
+
+    context.telemetry.properties.lastStep = 'getOperationMockClassContent';
     const { mockClassContent, foundActionMocks, foundTriggerMocks } = await getOperationMockClassContent(
       operationInfo,
       outputParameters,
@@ -224,11 +235,11 @@ async function generateUnitTestFromRun(
     const cleanedLogicAppName = paths.logicAppName.replace(/-/g, '_');
 
     try {
+      context.telemetry.properties.lastStep = 'unzipLogicAppArtifacts';
       await fse.ensureDir(paths.unitTestFolderPath);
       ext.outputChannel.appendLog(localize('unzippingFiles', `Unzipping Mock.json into: ${paths.unitTestFolderPath}`));
       await unzipLogicAppArtifacts(zipBuffer, paths.unitTestFolderPath);
       logTelemetry(context, { filesUnzipped: 'true', processStage: 'Files Unzipped' });
-      ext.outputChannel.appendLog(localize('filesUnzipped', 'Files successfully unzipped.'));
       context.telemetry.properties.processStage = 'Files Unzipped';
     } catch (unzipError) {
       const unzipFailReason = parseError(unzipError).message;
@@ -238,8 +249,10 @@ async function generateUnitTestFromRun(
 
     try {
       // Create the testSettings.config and TestExecutor.cs files
-      ext.outputChannel.appendLog(localize('creatingTestSettingsConfig', 'Creating testSettings.config file for unit test...'));
+      ext.outputChannel.appendLog(localize('ensureTestProjectFiles', 'Ensuring test project files...'));
+      context.telemetry.properties.lastStep = 'createTestSettingsConfigFile';
       await createTestSettingsConfigFile(paths.workflowTestFolderPath, workflowName, paths.logicAppName);
+      context.telemetry.properties.lastStep = 'createTestExecutorFile';
       await createTestExecutorFile(paths.logicAppTestFolderPath, cleanedLogicAppName);
 
       const [actionName, actionOutputClassName] = Object.entries(foundActionMocks)[0] || [];
@@ -249,13 +262,15 @@ async function generateUnitTestFromRun(
       const actionMockClassName = actionOutputClassName?.replace(/(.*)Output$/, '$1Mock');
       const triggerMockClassName = triggerOutputClassName.replace(/(.*)Output$/, '$1Mock');
 
+      context.telemetry.properties.lastStep = 'createMockClasses';
       await fse.ensureDir(paths.mocksFolderPath);
       for (const [mockClassName, classContent] of Object.entries(mockClassContent)) {
         const mockFilePath = path.join(paths.mocksFolderPath, `${mockClassName}.cs`);
         await fse.writeFile(mockFilePath, classContent, 'utf-8');
-        ext.outputChannel.appendLog(localize('csMockFileCreated', 'Created .cs file for mock at: {0}', mockFilePath));
+        ext.outputChannel.appendLog(localize('csMockFileCreated', 'Created mock class file at: "{0}".', mockFilePath));
       }
 
+      context.telemetry.properties.lastStep = 'createTestCsFile';
       await createTestCsFile(
         paths.unitTestFolderPath!,
         unitTestName,
@@ -286,15 +301,16 @@ async function generateUnitTestFromRun(
       throw nugetError;
     }
 
+    context.telemetry.properties.lastStep = 'updateCsprojFile';
     const csprojFilePath = path.join(paths.logicAppTestFolderPath, `${paths.logicAppName}.csproj`);
     const isCsprojUpdated = await updateCsprojFile(csprojFilePath, workflowName);
     logTelemetry(context, { csprojUpdated: isCsprojUpdated ? 'true' : 'false' });
 
     try {
-      ext.outputChannel.appendLog(localize('checkingWorkspace', 'Checking if tests directory is already part of the workspace...'));
+      context.telemetry.properties.lastStep = 'ensureTestsDirectoryInWorkspace';
+      ext.outputChannel.appendLog(localize('ensureTestsDirectory', 'Ensuring tests directory exists in workspace...'));
       await ensureDirectoryInWorkspace(paths.testsDirectory);
       context.telemetry.properties.testsFolderAddedToWorkspace = 'true';
-      ext.outputChannel.appendLog(localize('workspaceUpdated', 'Tests directory added to workspace if not already included.'));
     } catch (workspaceError) {
       const testsFolderFailReason = parseError(workspaceError).message;
       logTelemetry(context, { testsFolderAddedToWorkspace: 'false', testsFolderFailReason });
@@ -305,19 +321,21 @@ async function generateUnitTestFromRun(
     }
 
     vscode.window.showInformationMessage(
-      localize('info.generateCodefulUnitTest', `Generated unit test "${unitTestName}" in "${paths.unitTestFolderPath}"`)
+      localize('generateCodefulUnitTest', 'Successfully created unit test "{0}" at "{1}"', unitTestName, paths.unitTestFolderPath)
     );
     logTelemetry(context, { unitTestGenerationStatus: 'Success' });
     context.telemetry.measurements.generateCodefulUnitTestMs = Date.now() - startTime;
     try {
       const csprojFilePath = path.join(paths.logicAppTestFolderPath, `${paths.logicAppName}.csproj`);
 
+      context.telemetry.properties.lastStep = 'updateTestsSln';
       ext.outputChannel.appendLog(`Updating solution in tests folder: ${paths.testsDirectory}`);
       await updateTestsSln(paths.testsDirectory, csprojFilePath);
     } catch (solutionError) {
       ext.outputChannel.appendLog(`Failed to update solution: ${solutionError}`);
     }
 
+    context.telemetry.properties.lastStep = 'syncCloudSettings';
     await syncCloudSettings(context, vscode.Uri.file(projectPath));
   } catch (methodError) {
     context.telemetry.properties.unitTestGenerationStatus = 'Failed';
