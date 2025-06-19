@@ -16,6 +16,7 @@ import {
   InitFunctionService,
   InitAppServiceService,
   InitRunService,
+  InitRoleService,
   InitEditorService,
   InitConnectionParameterEditorService,
   InitChatbotService,
@@ -68,6 +69,7 @@ export const initializeServices = createAsyncThunk(
     hostService,
     apimService,
     runService,
+    roleService,
     editorService,
     connectionParameterEditorService,
     chatbotService,
@@ -122,6 +124,10 @@ export const initializeServices = createAsyncThunk(
 
     if (runService) {
       InitRunService(runService);
+    }
+
+    if (roleService) {
+      InitRoleService(roleService);
     }
 
     if (uiInteractionsService) {
