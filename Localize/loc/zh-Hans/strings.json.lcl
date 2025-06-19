@@ -207,6 +207,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";+nh6WG" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Create New]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[新建]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";+oelX4" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The string to examine.]]></Val>
@@ -653,6 +662,15 @@
           <Val><![CDATA[Required. The base64 encoded string.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[必需。base64 编码字符串。]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";0G6CfM" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Model]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[模型]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2916,6 +2934,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";7ScdN6" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Name]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[名称]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";7X4UA/" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Waiting]]></Val>
@@ -3020,6 +3047,15 @@
           <Val><![CDATA[Returns the number of ticks (100 nanoseconds interval) since 1 January 0001 00:00:00 UT of a string timestamp]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[返回字符串时间戳自 1 月 1 日 0001 00:00:00 UT 以来的计时周期(100 纳秒间隔)数]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";7rItIH" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Cancel]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[取消]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7452,6 +7488,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";MoCBWG" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[No connections found]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[找不到连接]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";MqZCAn" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Host]]></Val>
@@ -7638,6 +7683,15 @@
       <Item ItemId=";NNCFBV.icu.content" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[{actionCount, plural, one {Collapsed card with # action} =0 {Collapsed card with 0 Actions} other {Collapsed card with # actions}}]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";NOIQRN" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Deployment model is directly tied to your agent connection. You need to create a connection first before selecting the relevant deployment model.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[部署模型直接绑定到代理连接。在选择相关部署模型之前，需要先创建连接。]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -8555,6 +8609,15 @@
           <Val><![CDATA[Required. The object to check if it is less or equal to the comparing object.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[必需。要检查其是否小于或等于比较对象的对象。]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";Q13J5V" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Create deployment model]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[创建部署模型]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -11840,6 +11903,15 @@
           <Val><![CDATA[Cancelled]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[已取消]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";aZtqSZ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[An error occurred while creating the deployment model resource.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[创建部署模型资源时出错。]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -17748,6 +17820,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";scUBYR" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Create a connection]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[创建连接]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";sfJTHV" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The number to remove from the Minuend.]]></Val>
@@ -18365,6 +18446,15 @@
           <Val><![CDATA[Name must be unique.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[名称必须唯一。]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";u7p0Dp" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[No connections found in this workflow]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[在此工作流中找不到任何连接]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -19571,6 +19661,15 @@
           <Val><![CDATA[Run information loading]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[正在加载运行信息]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";xL0gmX" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Submit]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[提交]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
