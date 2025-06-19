@@ -81,7 +81,6 @@ import {
   EditorService,
   equals,
   ExtensionProperties,
-  foundryServiceConnectionRegex,
   getPropertyValue,
   getRecordEntry,
   isNullOrUndefined,
@@ -96,11 +95,17 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ConnectionInline } from './connectionInline';
 import { ConnectionsSubMenu } from './connectionsSubMenu';
 import {
-  getCognitiveServiceAccountDeploymentsForConnection,
   useCognitiveServiceAccountDeploymentsForNode,
   useCognitiveServiceAccountId,
 } from '../../../connectionsPanel/createConnection/custom/useCognitiveService';
-import { isAgentConnectorAndAgentModel, isAgentConnectorAndAgentServiceModel, isAgentConnectorAndDeploymentId } from './helpers';
+import {
+  categorizeConnections,
+  getDeploymentIdParameter,
+  getFirstDeploymentModelName,
+  isAgentConnectorAndAgentModel,
+  isAgentConnectorAndAgentServiceModel,
+  isAgentConnectorAndDeploymentId,
+} from './helpers';
 import { useShouldEnableFoundryServiceConnection } from './hooks';
 import { AgentUtils } from '../../../../../common/utilities/Utils';
 import type { AnyAction, ThunkDispatch } from '@reduxjs/toolkit';
@@ -275,82 +280,75 @@ const clearConnectionAndDeploymentModel = (
   );
 };
 
+const updateConnectionAndDeployment = async (
+  dispatch: ThunkDispatch<unknown, unknown, AnyAction>,
+  nodeId: string,
+  connector: Connector,
+  connection: Connection,
+  deploymentIdParamId: string
+): Promise<void> => {
+  try {
+    // Update connection
+    dispatch(
+      updateNodeConnection({
+        nodeId,
+        connection,
+        connector,
+      })
+    );
+
+    ConnectionService().setupConnectionIfNeeded(connection);
+
+    // Get deployment model name
+    const deploymentModelName = await getFirstDeploymentModelName(connection);
+
+    // Update deployment model parameter
+    dispatch(
+      updateNodeParameters({
+        nodeId,
+        parameters: [
+          {
+            groupId: ParameterGroupKeys.DEFAULT,
+            parameterId: deploymentIdParamId,
+            propertiesToUpdate: {
+              value: [createLiteralValueSegment(deploymentModelName)],
+            },
+          },
+        ],
+      })
+    );
+  } catch (error) {
+    clearConnectionAndDeploymentModel(dispatch, nodeId, deploymentIdParamId);
+    throw error;
+  }
+};
+
 export const dynamicallyLoadAgentConnection = createAsyncThunk(
   'dynamicallyLoadAgentConnection',
   async (
     { nodeId, connector, modelType }: { nodeId: string; connector: Connector; modelType: string },
     { dispatch, getState }
   ): Promise<void> => {
-    // Fetch all connections for the agentic connector
+    // Fetch and categorize connections
     const connections = await getConnectionsForConnector(connector.id);
+    const categorizedConnections = categorizeConnections(connections);
 
-    // Find the connection whose metadata matches the chosen model type
-    const azureOpenAIConnections = connections.filter(
-      (connection) =>
-        !foundryServiceConnectionRegex.test(connection.properties?.connectionParameters?.cognitiveServiceAccountId?.metadata?.value ?? '')
-    );
-
-    const foundryConnections = connections.filter((connection) =>
-      foundryServiceConnectionRegex.test(connection.properties?.connectionParameters?.cognitiveServiceAccountId?.metadata?.value ?? '')
-    );
-
-    // Read current parameters from state
-    const state = getState() as RootState;
-    const parameterGroups = state.operations.inputParameters[nodeId]?.parameterGroups;
-    if (!parameterGroups) {
-      return;
-    }
-    const defaultGroup = parameterGroups[ParameterGroupKeys.DEFAULT];
-
-    // Find the parameter that holds the connection reference (named 'agentConnection' in metadata)
-    const deploymentIdParam = defaultGroup.parameters.find((param) => param.parameterKey === 'inputs.$.deploymentId');
-
+    // Validate node parameters
+    const deploymentIdParam = getDeploymentIdParameter(getState() as RootState, nodeId);
     if (!deploymentIdParam) {
       return;
     }
 
-    // Get the first connection that matches the model type
-    const connectionToAssign: Connection | null = getConnectionToAssign(modelType, azureOpenAIConnections, foundryConnections);
+    // Find appropriate connection for the model type
+    const connectionToAssign = getConnectionToAssign(modelType, categorizedConnections.azureOpenAI, categorizedConnections.foundry);
 
     if (!connectionToAssign) {
-      // Clear connection and deployment model if no connection is found
-      clearConnectionAndDeploymentModel(dispatch, nodeId, deploymentIdParam.id);
+      await clearConnectionAndDeploymentModel(dispatch, nodeId, deploymentIdParam.id);
       return;
     }
 
-    try {
-      // Update connection
-      dispatch(
-        updateNodeConnection({
-          nodeId,
-          connection: connectionToAssign,
-          connector: connector as Connector,
-        })
-      );
-      ConnectionService().setupConnectionIfNeeded(connectionToAssign);
-
-      // Get the cognitive service account deployments for the connection
-      const deploymentModels = await getCognitiveServiceAccountDeploymentsForConnection(connectionToAssign);
-      const deploymentModelName = deploymentModels.length > 0 ? deploymentModels[0].name : '';
-
-      // Update that parameter taht holds the deployment model name
-      dispatch(
-        updateNodeParameters({
-          nodeId,
-          parameters: [
-            {
-              groupId: ParameterGroupKeys.DEFAULT,
-              parameterId: deploymentIdParam.id,
-              propertiesToUpdate: {
-                value: [createLiteralValueSegment(deploymentModelName)],
-              },
-            },
-          ],
-        })
-      );
-    } catch {
-      clearConnectionAndDeploymentModel(dispatch, nodeId, deploymentIdParam.id);
-    }
+    // Update connection and deployment model
+    await updateConnectionAndDeployment(dispatch, nodeId, connector, connectionToAssign, deploymentIdParam.id);
   }
 );
 
