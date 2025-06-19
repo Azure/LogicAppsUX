@@ -143,7 +143,7 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
         // Just shipping the access Token every 5 seconds is easier and more
         // performant that asking for it every time and waiting.
         interval = setInterval(async () => {
-          const updatedAccessToken = await getAuthorizationToken();
+          const updatedAccessToken = await getAuthorizationToken(context.tenantId);
 
           if (updatedAccessToken !== accessToken) {
             accessToken = updatedAccessToken;

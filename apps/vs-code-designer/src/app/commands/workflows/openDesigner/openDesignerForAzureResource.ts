@@ -112,7 +112,7 @@ export class OpenDesignerForAzureResource extends OpenDesignerBase {
   }
 
   private async getDesignerPanelMetadata(): Promise<IDesignerPanelMetadata> {
-    const accessToken: string = await getAuthorizationToken();
+    const accessToken: string = await getAuthorizationToken(this.node.subscription?.tenantId);
 
     return {
       panelId: this.panelName,

@@ -27,6 +27,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 
 import AdmZip = require('adm-zip');
+import { getSubscriptionContext } from '../../utils/subscription';
 
 interface ConnectionsDeploymentOutput {
   connections: {
@@ -68,7 +69,7 @@ class ExportEngine {
   };
 
   public constructor(
-    private getAccessToken: () => string,
+    private getAccessToken: () => Promise<string>,
     private packageUrl: string,
     private targetDirectory: string,
     private subscriptionId: string,
@@ -119,7 +120,7 @@ class ExportEngine {
 
       try {
         await this.getResourceGroup();
-      } catch (exception) {
+      } catch {
         await this.createResourceGroup();
       }
 
@@ -147,7 +148,7 @@ class ExportEngine {
     return axios
       .get(uri, {
         headers: {
-          authorization: this.getAccessToken(),
+          authorization: await this.getAccessToken(),
         },
       })
       .then(({ data }) => data)
@@ -166,7 +167,7 @@ class ExportEngine {
 
     return axios
       .put(uri, body, {
-        headers: { authorization: this.getAccessToken() },
+        headers: { authorization: await this.getAccessToken() },
       })
       .then(({ data }) => data)
       .catch((error) => {
@@ -189,7 +190,7 @@ class ExportEngine {
 
     await axios
       .put(uri, body, {
-        headers: { authorization: this.getAccessToken() },
+        headers: { authorization: await this.getAccessToken() },
       })
       .catch((error) => {
         throw new Error(localize('templateDeploymentFailure', 'Failed to deploy connections template. {0}', error.message ?? ''));
@@ -223,7 +224,7 @@ class ExportEngine {
 
   private async getDeployment(uri: string): Promise<Deployment> {
     return axios
-      .get(uri, { headers: { authorization: this.getAccessToken() } })
+      .get(uri, { headers: { authorization: await this.getAccessToken() } })
       .then(({ data }) => data)
       .catch((error) => {
         throw new Error(localize('getDeploymentFailure', 'Failed to get deployment. {1}', error.message ?? ''));
@@ -245,7 +246,7 @@ class ExportEngine {
       .post(
         `${this.baseGraphUri}${connectionId}/listConnectionKeys?api-version=2018-07-01-preview`,
         { validityTimeSpan: '7' },
-        { headers: { authorization: this.getAccessToken() } }
+        { headers: { authorization: await this.getAccessToken() } }
       )
       .then((response) => {
         return response.data?.connectionKey;
@@ -272,7 +273,7 @@ class ExportEngine {
 
     return axios
       .get(uri, {
-        headers: { authorization: this.getAccessToken() },
+        headers: { authorization: await this.getAccessToken() },
       })
       .then(({ data }) => data)
       .catch((error) => {
@@ -395,7 +396,7 @@ export async function exportLogicApp(context: IActionContext): Promise<void> {
         const { targetDirectory, packageUrl, selectedSubscription, resourceGroupName, location } = message;
         const baseGraphUri = getBaseGraphApi(cloudHost);
         const engine = new ExportEngine(
-          () => accessToken,
+          async () => await getAuthorizationToken((await getSubscriptionContext(context, selectedSubscription))?.tenantId),
           packageUrl,
           targetDirectory.fsPath,
           selectedSubscription,

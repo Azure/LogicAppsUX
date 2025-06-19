@@ -165,7 +165,7 @@ export default class openMonitoringViewForAzureResource extends OpenMonitoringVi
   }
 
   private async getDesignerPanelMetadata(): Promise<IDesignerPanelMetadata> {
-    const accessToken: string = await getAuthorizationToken();
+    const accessToken: string = await getAuthorizationToken(this.node.subscription?.tenantId);
 
     return {
       panelId: this.panelName,

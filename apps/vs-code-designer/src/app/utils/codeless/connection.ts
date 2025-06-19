@@ -475,7 +475,7 @@ async function createAccessPolicyInConnection(
   site: ParsedSite,
   identity: any
 ): Promise<void> {
-  const accessToken = await getAuthorizationToken();
+  const accessToken = await getAuthorizationToken(identityWizardContext.tenantId ?? site.subscription?.tenantId);
   const getUrl = `${connectionId}?api-version=2018-07-01-preview`;
   let connection: any;
 
