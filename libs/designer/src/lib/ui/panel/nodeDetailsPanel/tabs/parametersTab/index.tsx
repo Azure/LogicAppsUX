@@ -100,6 +100,7 @@ import {
 } from '../../../connectionsPanel/createConnection/custom/useCognitiveService';
 import {
   categorizeConnections,
+  getConnectionToAssign,
   getDeploymentIdParameter,
   getFirstDeploymentModelName,
   isAgentConnectorAndAgentModel,
@@ -244,20 +245,6 @@ export const ParametersTab: React.FC<ParametersTabProps> = (props) => {
   );
 };
 
-const getConnectionToAssign = (
-  modelType: string,
-  azureOpenAIConnections: Connection[],
-  foundryConnections: Connection[]
-): Connection | null => {
-  const connections = modelType === 'AzureOpenAI' ? azureOpenAIConnections : foundryConnections;
-
-  if (connections.length === 0) {
-    return null;
-  }
-
-  return connections[0];
-};
-
 const clearConnectionAndDeploymentModel = (
   dispatch: ThunkDispatch<unknown, unknown, AnyAction>,
   nodeId: string,
@@ -317,9 +304,8 @@ const updateConnectionAndDeployment = async (
         ],
       })
     );
-  } catch (error) {
+  } catch {
     clearConnectionAndDeploymentModel(dispatch, nodeId, deploymentIdParamId);
-    throw error;
   }
 };
 

@@ -61,3 +61,17 @@ export const getDeploymentIdParameter = (state: RootState, nodeId: string): Para
   // Find the parameter that holds the connection reference (named 'agentConnection' in metadata)
   return defaultGroup.parameters.find((param) => param.parameterKey === 'inputs.$.deploymentId');
 };
+
+export const getConnectionToAssign = (
+  modelType: string,
+  azureOpenAIConnections: Connection[],
+  foundryConnections: Connection[]
+): Connection | null => {
+  const connections = modelType === 'AzureOpenAI' ? azureOpenAIConnections : foundryConnections;
+
+  if (connections.length === 0) {
+    return null;
+  }
+
+  return connections[0];
+};
