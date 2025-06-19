@@ -98,7 +98,11 @@ export class HttpClient implements IHttpClient {
         return Promise.reject(response);
       }
 
-      return JSON.parse(response.data);
+      try {
+        return typeof response.data === 'string' ? JSON.parse(response.data) : response.data;
+      } catch {
+        return response.data as any;
+      }
     } catch (error: any) {
       throw error?.response?.data ?? error;
     }
