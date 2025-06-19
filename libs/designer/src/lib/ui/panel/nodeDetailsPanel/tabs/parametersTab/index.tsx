@@ -96,6 +96,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ConnectionInline } from './connectionInline';
 import { ConnectionsSubMenu } from './connectionsSubMenu';
 import {
+  getCognitiveServiceAccountDeploymentsForConnection,
   useCognitiveServiceAccountDeploymentsForNode,
   useCognitiveServiceAccountId,
 } from '../../../connectionsPanel/createConnection/custom/useCognitiveService';
@@ -328,7 +329,11 @@ export const dynamicallyLoadAgentConnection = createAsyncThunk(
       );
       ConnectionService().setupConnectionIfNeeded(connectionToAssign);
 
-      // Update that parameter to point at the matching connection
+      // Get the cognitive service account deployments for the connection
+      const deploymentModels = await getCognitiveServiceAccountDeploymentsForConnection(connectionToAssign);
+      const deploymentModelName = deploymentModels.length > 0 ? deploymentModels[0].name : '';
+
+      // Update that parameter taht holds the deployment model name
       dispatch(
         updateNodeParameters({
           nodeId,
@@ -337,14 +342,13 @@ export const dynamicallyLoadAgentConnection = createAsyncThunk(
               groupId: ParameterGroupKeys.DEFAULT,
               parameterId: deploymentIdParam.id,
               propertiesToUpdate: {
-                value: [createLiteralValueSegment('gpt-4o')],
+                value: [createLiteralValueSegment(deploymentModelName)],
               },
             },
           ],
         })
       );
-    } catch (error) {
-      console.error('Error dynamically loading agent connection:', error);
+    } catch {
       clearConnectionAndDeploymentModel(dispatch, nodeId, deploymentIdParam.id);
     }
   }

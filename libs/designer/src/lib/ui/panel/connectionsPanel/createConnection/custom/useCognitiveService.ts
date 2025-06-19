@@ -1,6 +1,8 @@
+import type { Connection } from '@microsoft/logic-apps-shared';
 import { CognitiveServiceService, foundryServiceConnectionRegex } from '@microsoft/logic-apps-shared';
 import { useQuery } from '@tanstack/react-query';
 import { useSelectedConnection } from '../../../../../core/state/connection/connectionSelector';
+import { getReactQueryClient } from '../../../../../core';
 
 const queryOpts = {
   cacheTime: 1000 * 60 * 60 * 24,
@@ -29,6 +31,25 @@ export const useAllCognitiveServiceAccounts = (subscriptionId: string) => {
       enabled: !!subscriptionId,
     }
   );
+};
+
+export const getCognitiveServiceAccountDeploymentsForConnection = async (connection: Connection) => {
+  const queryClient = getReactQueryClient();
+  const resourceId = connection?.properties?.connectionParameters?.cognitiveServiceAccountId?.metadata?.value;
+  const isFoundryServiceConnection = foundryServiceConnectionRegex.test(resourceId ?? '');
+  const serviceAccountId = resourceId
+    ? isFoundryServiceConnection
+      ? resourceId?.split('/').slice(0, -2).join('/')
+      : resourceId
+    : undefined;
+
+  return queryClient.fetchQuery([queryKeys.allCognitiveServiceAccountsDeployments, { serviceAccountId }], async () => {
+    if (serviceAccountId) {
+      return await CognitiveServiceService().fetchAllCognitiveServiceAccountDeployments(serviceAccountId);
+    }
+
+    return [];
+  });
 };
 
 export const useCognitiveServiceAccountId = (nodeId: string, _connectorId?: string) => {
