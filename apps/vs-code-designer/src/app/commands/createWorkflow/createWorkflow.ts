@@ -29,7 +29,7 @@ export async function createWorkflow(
   version?: FuncVersion
 ): Promise<void> {
   addLocalFuncTelemetry(context);
-  let workspaceFolder: WorkspaceFolder | undefined;
+  let workspaceFolder: WorkspaceFolder | string | undefined;
 
   workspacePath = isString(workspacePath) ? workspacePath : undefined;
   if (workspacePath === undefined) {
@@ -70,7 +70,7 @@ export async function createWorkflow(
     projectTemplateKey,
   });
 
-  wizardContext.isCodeless = true; // default to codeless workflow, disabling codeful option until Public Preview
+  // wizardContext.isCodeless = true; // default to codeless workflow, disabling codeful option until Public Preview
 
   const wizard: AzureWizard<IFunctionWizardContext> = new AzureWizard(wizardContext, {
     promptSteps: [

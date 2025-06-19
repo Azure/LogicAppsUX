@@ -69,6 +69,7 @@ export interface IProjectWizardContext extends IActionContext {
   workspaceFolder: WorkspaceFolder | undefined;
   customWorkspaceFolderPath?: string;
   projectTemplateKey: string | undefined;
+  isCodeless?: boolean;
   language?: ProjectLanguage;
   languageFilter?: RegExp;
   workerRuntime?: IWorkerRuntime;
