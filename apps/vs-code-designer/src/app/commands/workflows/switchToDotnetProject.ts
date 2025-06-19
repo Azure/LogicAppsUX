@@ -99,7 +99,7 @@ export async function switchToDotnetProject(
   // 1. try to get cached templates
   let templates: ITemplates | undefined = await dotnetTemplateProvider.getCachedTemplates(context);
 
-  // 2. try to download the latest templates (Currently dotnet 8)
+  // 2. try to download the latest templates
   if (!templates) {
     const templateVersion: string = await dotnetTemplateProvider.getLatestTemplateVersion(context);
     try {
