@@ -105,6 +105,7 @@ import { AgentUtils } from '../../../../../common/utilities/Utils';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { getConnectionsForConnector } from '../../../../../core/queries/connections';
 import { updateNodeConnection } from '../../../../../core/actions/bjsworkflow/connections';
+import { removeNodeConnectionData } from '../../../../../core/state/connection/connectionSlice';
 
 // TODO: Add a readonly per settings section/group
 export interface ParametersTabProps extends PanelTabProps {
@@ -270,13 +271,6 @@ export const dynamicallyLoadAgentConnection = createAsyncThunk(
       foundryServiceConnectionRegex.test(connection.properties?.connectionParameters?.cognitiveServiceAccountId?.metadata?.value ?? '')
     );
 
-    // Get the first connection that matches the model type
-    const connectionToAssign: Connection | null = getConnectionToAssign(modelType, azureOpenAIConnections, foundryConnections);
-
-    if (!connectionToAssign) {
-      return;
-    }
-
     // Read current parameters from state
     const state = getState() as RootState;
     const parameterGroups = state.operations.inputParameters[nodeId]?.parameterGroups;
@@ -292,6 +286,29 @@ export const dynamicallyLoadAgentConnection = createAsyncThunk(
       return;
     }
 
+    // Get the first connection that matches the model type
+    const connectionToAssign: Connection | null = getConnectionToAssign(modelType, azureOpenAIConnections, foundryConnections);
+
+    if (!connectionToAssign) {
+      // Clear connection and deployment model if no connection is found
+      dispatch(removeNodeConnectionData({ nodeId }));
+      dispatch(
+        updateNodeParameters({
+          nodeId,
+          parameters: [
+            {
+              groupId: ParameterGroupKeys.DEFAULT,
+              parameterId: deploymentIdParam.id,
+              propertiesToUpdate: {
+                value: [createLiteralValueSegment('')],
+              },
+            },
+          ],
+        })
+      );
+      return;
+    }
+
     // Update connection
     dispatch(
       updateNodeConnection({
@@ -303,20 +320,20 @@ export const dynamicallyLoadAgentConnection = createAsyncThunk(
     ConnectionService().setupConnectionIfNeeded(connectionToAssign);
 
     // Update that parameter to point at the matching connection
-    // dispatch(
-    //   updateNodeParameters({
-    //     nodeId,
-    //     parameters: [
-    //       {
-    //         groupId: ParameterGroupKeys.DEFAULT,
-    //         parameterId: connectionParam.id,
-    //         propertiesToUpdate: {
-    //           value: [createLiteralValueSegment(matchingConnection.name)],
-    //         },
-    //       },
-    //     ],
-    //   })
-    // );
+    dispatch(
+      updateNodeParameters({
+        nodeId,
+        parameters: [
+          {
+            groupId: ParameterGroupKeys.DEFAULT,
+            parameterId: deploymentIdParam.id,
+            propertiesToUpdate: {
+              value: [createLiteralValueSegment('gpt-4o')],
+            },
+          },
+        ],
+      })
+    );
   }
 );
 
@@ -465,7 +482,7 @@ const ParameterSection = ({
       if (isAgentConnectorAndAgentModel(operationInfo.connectorId ?? '', parameter?.parameterName ?? '')) {
         const newValue = value.length > 0 ? value[0].value : undefined;
         const oldValue = parameter?.value && parameter.value.length > 0 ? parameter.value[0].value : undefined;
-        if (!isNullOrUndefined(newValue) && !isNullOrUndefined(oldValue) && newValue !== oldValue) {
+        if (!isNullOrUndefined(newValue) && !isNullOrUndefined(oldValue) && newValue !== oldValue && !isNullOrUndefined(connector)) {
           dispatch(dynamicallyLoadAgentConnection({ nodeId, connector, modelType: newValue }));
         }
       }
@@ -543,15 +560,16 @@ const ParameterSection = ({
     [
       nodeInputs,
       group.id,
+      dependencies,
+      operationInfo,
       nodesMetadata,
       nodeId,
       dispatch,
       isTrigger,
-      operationInfo,
-      deploymentsForCognitiveServiceAccount,
       connectionReference,
-      dependencies,
       operationDefinition,
+      connector,
+      deploymentsForCognitiveServiceAccount,
     ]
   );
 
