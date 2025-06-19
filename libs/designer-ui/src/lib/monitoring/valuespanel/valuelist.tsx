@@ -32,7 +32,7 @@ export const ValueList: React.FC<ValueListProps> = ({ labelledBy, noValuesText, 
   const advancedKeys = keys.filter((key) => equals(values[key].visibility, 'advanced'));
 
   return (
-    <div aria-labelledby={labelledBy} className="msla-trace-values">
+    <div aria-labelledby={labelledBy} className="msla-value-list">
       {keys.length === 0 ? <div className="msla-monitoring-parameters-empty">{noValuesText}</div> : null}
       {basicKeys.map((key) => (
         <Value {...values[key]} key={key} />
