@@ -95,7 +95,7 @@ export class HttpClient implements IHttpClient {
       });
 
       if (!isSuccessResponse(response.status)) {
-        return Promise.reject(response);
+        throw response;
       }
 
       try {
