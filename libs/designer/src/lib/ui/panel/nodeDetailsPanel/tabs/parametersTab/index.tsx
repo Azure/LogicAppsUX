@@ -80,13 +80,14 @@ import {
   EditorService,
   equals,
   ExtensionProperties,
+  foundryServiceConnectionRegex,
   getPropertyValue,
   getRecordEntry,
   isNullOrUndefined,
   isRecordNotEmpty,
   SUBGRAPH_TYPES,
 } from '@microsoft/logic-apps-shared';
-import type { OperationInfo } from '@microsoft/logic-apps-shared';
+import type { Connection, OperationInfo } from '@microsoft/logic-apps-shared';
 import type React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -99,8 +100,9 @@ import {
 } from '../../../connectionsPanel/createConnection/custom/useCognitiveService';
 import { isAgentConnectorAndAgentModel, isAgentConnectorAndAgentServiceModel, isAgentConnectorAndDeploymentId } from './helpers';
 import { useShouldEnableFoundryServiceConnection } from './hooks';
-import { removeNodeConnectionData } from '../../../../../core/state/connection/connectionSlice';
 import { AgentUtils } from '../../../../../common/utilities/Utils';
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import { getConnectionsForConnector } from '../../../../../core/queries/connections';
 
 // TODO: Add a readonly per settings section/group
 export interface ParametersTabProps extends PanelTabProps {
@@ -231,6 +233,82 @@ export const ParametersTab: React.FC<ParametersTabProps> = (props) => {
     </>
   );
 };
+
+const getConnectionToAssign = (
+  modelType: string,
+  azureOpenAIConnections: Connection[],
+  foundryConnections: Connection[]
+): Connection | null => {
+  const connections = modelType === 'AzureOpenAI' ? azureOpenAIConnections : foundryConnections;
+
+  if (connections.length === 0) {
+    console.warn(`No connections available for model type: ${modelType}`);
+    return null;
+  }
+
+  return connections[0];
+};
+
+export const dynamicallyLoadAgentConnection = createAsyncThunk(
+  'dynamicallyLoadAgentConnection',
+  async (
+    { nodeId, connectorId, modelType }: { nodeId: string; connectorId: string; modelType: string },
+    { dispatch, getState }
+  ): Promise<void> => {
+    // Fetch all connections for the agentic connector
+    const connections = await getConnectionsForConnector(`/${connectorId}`);
+
+    // Find the connection whose metadata matches the chosen model type
+    const azureOpenAIConnections = connections.filter(
+      (connection) =>
+        !foundryServiceConnectionRegex.test(connection.properties?.connectionParameters?.cognitiveServiceAccountId?.metadata?.value ?? '')
+    );
+
+    const foundryConnections = connections.filter((connection) =>
+      foundryServiceConnectionRegex.test(connection.properties?.connectionParameters?.cognitiveServiceAccountId?.metadata?.value ?? '')
+    );
+
+    // Get the first connection that matches the model type
+    const connectionToAssign: Connection | null = getConnectionToAssign(modelType, azureOpenAIConnections, foundryConnections);
+
+    if (!connectionToAssign) {
+      return;
+    }
+
+    // Read current parameters from state
+    const state = getState() as RootState;
+    const parameterGroups = state.operations.inputParameters[nodeId]?.parameterGroups;
+    if (!parameterGroups) {
+      return;
+    }
+    const defaultGroup = parameterGroups[ParameterGroupKeys.DEFAULT];
+
+    // Find the parameter that holds the connection reference (named 'agentConnection' in metadata)
+    const deploymentIdParam = defaultGroup.parameters.find((param) => param.parameterKey === 'inputs.$.deploymentId');
+
+    if (!deploymentIdParam) {
+      return;
+    }
+
+    console.log(dispatch);
+
+    // Update that parameter to point at the matching connection
+    // dispatch(
+    //   updateNodeParameters({
+    //     nodeId,
+    //     parameters: [
+    //       {
+    //         groupId: ParameterGroupKeys.DEFAULT,
+    //         parameterId: connectionParam.id,
+    //         propertiesToUpdate: {
+    //           value: [createLiteralValueSegment(matchingConnection.name)],
+    //         },
+    //       },
+    //     ],
+    //   })
+    // );
+  }
+);
 
 const ParameterSection = ({
   nodeId,
@@ -377,7 +455,7 @@ const ParameterSection = ({
         const newValue = value.length > 0 ? value[0].value : undefined;
         const oldValue = parameter?.value && parameter.value.length > 0 ? parameter.value[0].value : undefined;
         if (!isNullOrUndefined(newValue) && !isNullOrUndefined(oldValue) && newValue !== oldValue) {
-          dispatch(removeNodeConnectionData({ nodeId }));
+          dispatch(dynamicallyLoadAgentConnection({ nodeId, connectorId: operationInfo.connectorId ?? '', modelType: newValue }));
         }
       }
 
