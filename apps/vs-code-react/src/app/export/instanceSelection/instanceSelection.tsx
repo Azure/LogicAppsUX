@@ -5,8 +5,7 @@ import type { AppDispatch, RootState } from '../../../state/store';
 import { VSCodeContext } from '../../../webviewCommunication';
 import { SearchableDropdown } from '../../components/searchableDropdown';
 import { getDropdownPlaceholder, parseIseList, parseRegionList, parseSubscriptionsList } from './helper';
-import { DropdownMenuItemType } from '@fluentui/react';
-import type { IDropdownOption } from '@fluentui/react';
+import type { Option } from '@fluentui/react-components';
 import { isEmptyString } from '@microsoft/logic-apps-shared';
 import { useContext, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -137,7 +136,7 @@ export const InstanceSelection: React.FC = () => {
     retry: 4,
   });
 
-  const onChangeSubscriptions = (_event: React.FormEvent<HTMLDivElement>, selectedOption?: IDropdownOption) => {
+  const onChangeSubscriptions = (_event: React.FormEvent<HTMLDivElement>, selectedOption?: Option) => {
     if (selectedOption && selectedSubscription !== selectedOption.key) {
       const subscriptionId = selectedOption.key as string;
       if (!isEmptyString(subscriptionId)) {
@@ -157,7 +156,7 @@ export const InstanceSelection: React.FC = () => {
     }
   }, [selectedSubscription, refetchIse, refetchRegion]);
 
-  const onChangeLocation = (_event: React.FormEvent<HTMLDivElement>, selectedOption?: IDropdownOption) => {
+  const onChangeLocation = (_event: React.FormEvent<HTMLDivElement>, selectedOption?: Option) => {
     if (selectedOption) {
       const key = selectedOption.key as string;
       if (key.startsWith('ise:')) {
@@ -178,20 +177,13 @@ export const InstanceSelection: React.FC = () => {
     }
   };
 
-  const subscriptions: IDropdownOption[] = isSubscriptionsLoading || !subscriptionsList ? [] : parseSubscriptionsList(subscriptionsList);
-  const ise: IDropdownOption[] = selectedSubscription !== '' && !isIseLoading && iseList ? parseIseList(iseList) : [];
-  const regions: IDropdownOption[] = selectedSubscription !== '' && !isRegionLoading && regionData ? parseRegionList(regionData) : [];
+  const subscriptions: Option[] = isSubscriptionsLoading || !subscriptionsList ? [] : parseSubscriptionsList(subscriptionsList);
+  const ise: Option[] = selectedSubscription !== '' && !isIseLoading && iseList ? parseIseList(iseList) : [];
+  const regions: Option[] = selectedSubscription !== '' && !isRegionLoading && regionData ? parseRegionList(regionData) : [];
 
-  const locations: IDropdownOption[] =
+  const locations: Option[] =
     ise.length || regions.length
-      ? [
-          { key: 'divider:ise', text: intlText.DIVIDER_ISE, itemType: DropdownMenuItemType.Divider },
-          { key: 'header:ise', text: intlText.DIVIDER_ISE, itemType: DropdownMenuItemType.Header },
-          ...ise,
-          { key: 'divider:regions', text: intlText.DIVIDER_REGIONS, itemType: DropdownMenuItemType.Divider },
-          { key: 'header:regions', text: intlText.DIVIDER_REGIONS, itemType: DropdownMenuItemType.Header },
-          ...regions,
-        ]
+      ? [{ key: 'header:ise', text: intlText.DIVIDER_ISE }, ...ise, { key: 'header:regions', text: intlText.DIVIDER_REGIONS }, ...regions]
       : [];
 
   const subscriptionLoading = accessToken === undefined ? true : isSubscriptionsLoading;

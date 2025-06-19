@@ -1,13 +1,12 @@
 import './styles.less';
-import { Dropdown, DropdownMenuItemType, SearchBox, Spinner, SpinnerSize } from '@fluentui/react';
-import type { IDropdownOption, IDropdownProps } from '@fluentui/react';
+import { Dropdown, Spinner } from '@fluentui/react-components';
+import type { DropdownProps, Option } from '@fluentui/react-components';
 import { useState } from 'react';
-import type { ChangeEvent } from 'react';
-import { useIntl } from 'react-intl';
 
-export interface ISearchableDropdownProps extends IDropdownProps {
+export interface ISearchableDropdownProps extends DropdownProps {
   isLoading?: boolean;
   searchBoxPlaceholder?: string;
+  options: Option[];
 }
 
 export const SearchableDropdown: React.FC<ISearchableDropdownProps> = (props) => {
@@ -15,62 +14,31 @@ export const SearchableDropdown: React.FC<ISearchableDropdownProps> = (props) =>
   const filterHeader = 'FilterHeader';
   const dividerHeader = `Divider_${filterHeader}`;
 
-  const intl = useIntl();
-
-  const intlText = {
-    SEARCH_OPTIONS: intl.formatMessage({
-      defaultMessage: 'Search options',
-      id: 'R7LyKb',
-      description: 'Search options description',
-    }),
-  };
-
-  const renderOption = (option: any): JSX.Element => {
-    const searchString = (_event?: ChangeEvent<HTMLInputElement> | undefined, newValue?: string | undefined) => {
-      const newString = newValue as string;
-      setSearchText(newString);
-    };
-
-    const isHeader = option.itemType === DropdownMenuItemType.Header && option.key === filterHeader;
-
-    const searchBox = (
-      <div className="searchable-dropdown-searchbox">
-        <SearchBox showIcon underlined onChange={searchString} placeholder={props.searchBoxPlaceholder ?? intlText.SEARCH_OPTIONS} />
-      </div>
-    );
-
-    return isHeader ? searchBox : <>{option.text}</>;
-  };
-
-  const getOptions = (options: IDropdownOption[]) => {
-    const filterOptions = options.map((option) => {
-      if (option.itemType === DropdownMenuItemType.Header || option.itemType === DropdownMenuItemType.Divider) {
-        return option;
+  const getOptions = (options: Option[]) => {
+    const filterOptions = options.filter((option) => {
+      if (option.key === filterHeader || option.key === dividerHeader) {
+        return true;
       }
-
-      return option.text.toLowerCase().indexOf(searchText.toLowerCase()) > -1 ? option : { ...option, hidden: true };
+      return option.text?.toLowerCase().indexOf(searchText.toLowerCase()) > -1;
     });
 
-    return [
-      { key: filterHeader, text: '-', itemType: DropdownMenuItemType.Header },
-      { key: dividerHeader, text: '-', itemType: DropdownMenuItemType.Divider },
-      ...filterOptions,
-    ];
+    return [{ key: filterHeader, text: '-' }, { key: dividerHeader, text: '-' }, ...filterOptions];
   };
 
-  const spinnerLoader = props.isLoading ? <Spinner className="searchable-dropdown-spinner" size={SpinnerSize.xSmall} /> : null;
+  const spinnerLoader = props.isLoading ? <Spinner className="searchable-dropdown-spinner" size="extra-small" /> : null;
 
   return (
     <div className="searchable-dropdown">
       <Dropdown
         {...props}
-        calloutProps={{
-          gapSpace: 10,
-          calloutMaxHeight: 400,
-        }}
+        positioning={{ gapSpace: 10, maxHeight: 400 }}
         options={getOptions(props.options)}
-        onRenderOption={renderOption}
-        onDismiss={() => setSearchText('')}
+        onOptionSelect={(_, data) => props.onSelectionChange?.(_, data)}
+        onOpenChange={(_, data) => {
+          if (!data.open) {
+            setSearchText('');
+          }
+        }}
       />
       {spinnerLoader}
     </div>

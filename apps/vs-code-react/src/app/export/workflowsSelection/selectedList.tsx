@@ -1,7 +1,7 @@
 import type { WorkflowsList } from '../../../run-service';
 import type { RootState } from '../../../state/store';
-import { IconButton, Shimmer } from '@fluentui/react';
-import type { IIconProps } from '@fluentui/react';
+import { Button, Skeleton } from '@fluentui/react-components';
+import { Dismiss16Regular } from '@fluentui/react-icons';
 import { LargeText, MediumText, XLargeText } from '@microsoft/designer-ui';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -28,7 +28,7 @@ export const SelectedList: React.FC<ISelectedListProps> = ({ isLoading, deselect
 
   const shimmerList = useMemo(() => {
     return new Array(5).fill(0).map((_element, index) => {
-      return <Shimmer className="msla-export-workflows-panel-selected-list-shimmer" key={index} />;
+      return <Skeleton className="msla-export-workflows-panel-selected-list-shimmer" key={index} />;
     });
   }, []);
 
@@ -36,8 +36,15 @@ export const SelectedList: React.FC<ISelectedListProps> = ({ isLoading, deselect
     const getList = (list: WorkflowsList[]) => {
       return list.map((workflow: WorkflowsList) => {
         const { name, resourceGroup } = workflow;
-        const deselectIcon: IIconProps = { iconName: 'Cancel' };
-        const deselectButton = <IconButton iconProps={deselectIcon} aria-label="cancel" onClick={() => deselectWorkflow(workflow.key)} />;
+        const deselectButton = (
+          <Button
+            appearance="subtle"
+            size="small"
+            icon={<Dismiss16Regular />}
+            aria-label="cancel"
+            onClick={() => deselectWorkflow(workflow.key)}
+          />
+        );
 
         return (
           <div key={workflow.key} className="msla-export-workflows-panel-selected-list-item">

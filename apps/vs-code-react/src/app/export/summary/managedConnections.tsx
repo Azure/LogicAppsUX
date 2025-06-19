@@ -6,8 +6,8 @@ import { VSCodeContext } from '../../../webviewCommunication';
 import { SearchableDropdown } from '../../components/searchableDropdown';
 import { parseResourceGroupsData } from './helper';
 import { NewResourceGroup } from './newResourceGroup';
-import { Checkbox } from '@fluentui/react';
-import type { IDropdownOption } from '@fluentui/react';
+import { Checkbox } from '@fluentui/react-components';
+import type { Option } from '@fluentui/react-components';
 import { useContext, useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from '@tanstack/react-query';
@@ -84,10 +84,9 @@ export const ManagedConnections: React.FC = () => {
   );
 
   const resourceGroups = useMemo(() => {
-    const resourceGroups: IDropdownOption[] =
-      isResourceGroupsLoading || !resourceGroupsData ? [] : parseResourceGroupsData(resourceGroupsData);
+    const resourceGroups: Option[] = isResourceGroupsLoading || !resourceGroupsData ? [] : parseResourceGroupsData(resourceGroupsData);
 
-    const onChangeResourceGroup = (_event: React.FormEvent<HTMLDivElement> | undefined, selectedOption?: IDropdownOption) => {
+    const onChangeResourceGroup = (_event: React.FormEvent<HTMLDivElement> | undefined, selectedOption?: Option) => {
       if (selectedOption && selectedResourceGroup !== selectedOption.key) {
         const resourceGroupId = selectedOption.key as string;
         dispatch(
@@ -100,7 +99,7 @@ export const ManagedConnections: React.FC = () => {
       }
     };
 
-    const onAddNewResourceGroup = (selectedOption: IDropdownOption) => {
+    const onAddNewResourceGroup = (selectedOption: Option) => {
       resourceGroupsData.resourceGroups.unshift({ name: selectedOption.key, location: selectedOption.data, text: selectedOption.text });
 
       onChangeResourceGroup(undefined, selectedOption);
