@@ -48,6 +48,9 @@ export { BaseResourceService } from './resource';
 // Tenant
 export { BaseTenantService } from './tenant';
 export type { BaseTenantServiceOptions } from './tenant';
+// Role
+export { BaseRoleService } from './role';
+export type { BaseRoleServiceOptions } from './role';
 
 export { BaseUserPreferenceService } from './userpreference';
 

@@ -24,6 +24,12 @@ export const useStyles = makeStyles({
   comboxbox: {
     width: '98%',
   },
+  comboboxFooter: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    justifyContent: 'flex-end',
+  },
   multilineMessageBar: {
     display: 'block',
     whiteSpace: 'normal',

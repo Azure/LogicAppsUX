@@ -14,6 +14,7 @@ import type {
   IFunctionService,
   IAppServiceService,
   IRunService,
+  IRoleService,
   IEditorService,
   IConnectionParameterEditorService,
   IChatbotService,
@@ -71,6 +72,7 @@ export interface ServiceOptions {
   functionService?: IFunctionService;
   appServiceService?: IAppServiceService;
   runService?: IRunService;
+  roleService?: IRoleService;
   editorService?: IEditorService;
   connectionParameterEditorService?: IConnectionParameterEditorService;
   chatbotService?: IChatbotService;

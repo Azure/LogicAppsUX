@@ -139,6 +139,7 @@ export interface OAuthSetting {
 export interface ManagedIdentitySetting {
   resourceUri: string;
   additionalResourceUris?: string[];
+  requiredRoles?: string[];
 }
 
 export interface GatewaySetting {

@@ -140,6 +140,7 @@ export const DesignerCommandBar = ({
       }
     }
   });
+
   const { isLoading: isSavingUnitTest, mutate: saveUnitTestMutate } = useMutation(async () => {
     const designerState = DesignerStore.getState();
     const definition = await serializeUnitTestDefinition(designerState);
@@ -296,7 +297,7 @@ export const DesignerCommandBar = ({
       },
       {
         key: 'save',
-        text: 'Save',
+        text: isSaving ? 'Saving' : 'Save',
         disabled: saveIsDisabled,
         onRenderIcon: () => {
           return isSaving ? (

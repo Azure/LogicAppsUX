@@ -58,6 +58,7 @@ export const SubscriptionDropdown = ({
   return (
     <ConnectionParameterRow parameterKey={'subscription-id'} displayName={stringResources.SUBSCRIPTION} required={true}>
       <ComboBox
+        data-automation-id="subscription-combobox"
         autoFocus={false}
         componentRef={comboRef}
         allowFreeform

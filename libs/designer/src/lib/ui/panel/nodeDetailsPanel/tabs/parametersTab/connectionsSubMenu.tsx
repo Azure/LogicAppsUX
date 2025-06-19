@@ -93,13 +93,14 @@ export const ConnectionsSubMenu: React.FC<ConnectionsSubMenuProps> = ({ setShowS
               setShowSubComponent && setShowSubComponent(true);
             }}
             icon={<AddRegular />}
+            data-automation-id={`${nodeId}-create-connection-button`}
           >
             {intlText.CREATE}
           </MenuItem>
         </MenuGroup>
       </MenuList>
     );
-  }, [connections, currentConnectionId, intlText.CREATE, onConnectionSelect, setShowSubComponent]);
+  }, [nodeId, connections, currentConnectionId, intlText.CREATE, onConnectionSelect, setShowSubComponent]);
 
   if (connections.length === 0) {
     return null;
@@ -108,7 +109,7 @@ export const ConnectionsSubMenu: React.FC<ConnectionsSubMenuProps> = ({ setShowS
   return (
     <Menu positioning={{ autoSize: true }}>
       <MenuTrigger disableButtonEnhancement>
-        <MenuButton appearance="transparent" icon={<MoreHorizontalRegular />} />
+        <MenuButton appearance="transparent" icon={<MoreHorizontalRegular />} data-automation-id={`${nodeId}-connection-submenu`} />
       </MenuTrigger>
       <MenuPopover>{connectionsList}</MenuPopover>
     </Menu>
