@@ -104,10 +104,8 @@ export async function getFramework(context: IActionContext, workingDirectory: st
     }
 
     // Prioritize "LTS", then "Current", then "Preview"
-    let netVersions: string[] = ['8', '3', '2'];
-    if (isCodeful) {
-      netVersions = ['8', ...netVersions];
-    }
+    const netVersions: string[] = ['8', '3', '2'];
+
     const semVersions: SemVer[] = netVersions.map((v) => semVerCoerce(v) as SemVer);
 
     let pickedVersion: SemVer | undefined;
