@@ -397,7 +397,7 @@ export async function createTestCsFile(
   const csFilePath = path.join(unitTestFolderPath, `${unitTestName}.cs`);
   await fse.writeFile(csFilePath, templateContent);
 
-  ext.outputChannel.appendLog(localize('csTestFileCreated', 'Created .cs file for unit test at: {0}', csFilePath));
+  ext.outputChannel.appendLog(localize('csTestFileCreated', 'Created unit test file at: "{0}".', csFilePath));
 }
 
 /**
@@ -414,7 +414,6 @@ export async function createTestExecutorFile(logicAppTestFolderPath: string, cle
   const csFilePath = path.join(logicAppTestFolderPath, 'TestExecutor.cs');
 
   if (await fse.pathExists(csFilePath)) {
-    ext.outputChannel.appendLog(localize('testExecutorFileExists', 'TestExecutor.cs file already exists at: {0}', csFilePath));
     return;
   }
 
@@ -422,7 +421,6 @@ export async function createTestExecutorFile(logicAppTestFolderPath: string, cle
   templateContent = templateContent.replace(/<%= LogicAppName %>/g, cleanedLogicAppName);
 
   await fse.writeFile(csFilePath, templateContent);
-  ext.outputChannel.appendLog(localize('createdTestExecutorFile', 'Created TestExecutor.cs file at: {0}', csFilePath));
 }
 
 /**
@@ -438,7 +436,6 @@ export async function createTestSettingsConfigFile(unitTestFolderPath: string, w
   const csFilePath = path.join(unitTestFolderPath, 'testSettings.config');
 
   if (await fse.pathExists(csFilePath)) {
-    ext.outputChannel.appendLog(localize('testSettingsConfigFileExists', 'testSettings.config file already exists at: {0}', csFilePath));
     return;
   }
 
@@ -449,7 +446,6 @@ export async function createTestSettingsConfigFile(unitTestFolderPath: string, w
     .replace(/%WorkflowName%/g, workflowName);
 
   await fse.writeFile(csFilePath, templateContent);
-  ext.outputChannel.appendLog(localize('createdTestSettingsConfig', 'Created testSettings.config file at: {0}', csFilePath));
 }
 
 /**
@@ -616,6 +612,8 @@ export function logTelemetry(context: IActionContext, properties: Record<string,
  */
 export function handleError(context: IActionContext, error: unknown, source: string): void {
   const errorMessage = error instanceof Error ? error.message : String(error);
+  context.telemetry.properties.result = 'Failed';
+  context.telemetry.properties.errorMessage = errorMessage;
   context.telemetry.properties[`${source}Error`] = errorMessage;
   vscode.window.showErrorMessage(localize(`${source}Error`, 'An error occurred: {0}', errorMessage));
   ext.outputChannel.appendLog(localize(`${source}Log`, 'Error in {0}: {1}', source, errorMessage));
