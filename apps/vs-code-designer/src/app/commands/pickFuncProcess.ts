@@ -15,7 +15,6 @@ import { localize } from '../../localize';
 import { getMatchingWorkspaceFolder, preDebugValidate } from '../debug/validatePreDebug';
 import { verifyLocalConnectionKeys } from '../utils/appSettings/connectionKeys';
 import { activateAzurite } from '../utils/azurite/activateAzurite';
-import { getProjFiles } from '../utils/dotnet/dotnet';
 import { getFuncPortFromTaskOrProject, isFuncHostTask, runningFuncTaskMap } from '../utils/funcCoreTools/funcHostTask';
 import type { IRunningFuncTask } from '../utils/funcCoreTools/funcHostTask';
 import { isTimeoutError } from '../utils/requestUtils';
@@ -31,7 +30,6 @@ import type { AzExtRequestPrepareOptions } from '@microsoft/vscode-azext-azureut
 import { sendRequestWithTimeout } from '@microsoft/vscode-azext-azureutils';
 import { UserCancelledError, callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
 import type { IProcessInfo } from '@microsoft/vscode-extension-logic-apps';
 import unixPsTree from 'ps-tree';
 import * as vscode from 'vscode';
@@ -92,8 +90,6 @@ export async function pickFuncProcessInternal(
   await buildCustomCodeFunctionsProject(context, workspaceFolder.uri);
 
   await waitForPrevFuncTaskToStop(workspaceFolder);
-  const projectFiles = await getProjFiles(context, ProjectLanguage.CSharp, projectPath);
-  const isBundleProject: boolean = projectFiles.length > 0 ? false : true;
 
   const preLaunchTaskName: string | undefined = debugConfig.preLaunchTask;
   const tasks: vscode.Task[] = await vscode.tasks.fetchTasks();
@@ -113,7 +109,7 @@ export async function pickFuncProcessInternal(
 
   getPickProcessTimeout(context);
 
-  if (debugTask && !debugConfig['noDebug'] && isBundleProject) {
+  if (debugTask && !debugConfig['noDebug']) {
     await startDebugTask(debugTask, workspaceFolder);
   }
 

@@ -220,13 +220,13 @@ export abstract class InitVSCodeStepBase extends AzureWizardExecuteStep<IProject
   }
 
   private async writeLaunchJson(
-    context: IActionContext,
+    context: IProjectWizardContext,
     folder: WorkspaceFolder | undefined,
     vscodePath: string,
     version: FuncVersion,
     logicAppName: string
   ): Promise<void> {
-    if (this.getDebugConfiguration) {
+    if (this.getDebugConfiguration && context.isCodeless !== false) {
       const newDebugConfig: DebugConfiguration = this.getDebugConfiguration(version, logicAppName);
       const versionMismatchError: Error = new Error(
         localize(

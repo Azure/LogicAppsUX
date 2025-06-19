@@ -42,7 +42,7 @@ namespace <%= LogicAppName %>.Tests
             var workflowDefinitionPath = Path.Combine(this.rootDirectory, this.logicAppName, this.workflow, "workflow.json");
             var connectionsPath = Path.Combine(this.rootDirectory, this.logicAppName, "connections.json");
             var parametersPath = Path.Combine(this.rootDirectory, this.logicAppName, "parameters.json");
-            var localSettingsPath = Path.Combine(this.rootDirectory, this.logicAppName, "local.settings.json");
+            var localSettingsPath = Path.Combine(this.rootDirectory, this.logicAppName, "cloud.settings.json");
             
             return new UnitTestExecutor(
                 workflowFilePath: workflowDefinitionPath,
