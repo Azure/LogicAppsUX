@@ -38,12 +38,13 @@ export const SelectWorkflows = ({
   onWorkflowsSelected: (normalizedWorkflowIds: string[]) => void;
 }) => {
   const intl = useIntl();
-  const { isConsumption, logicAppName, subscriptionId, resourceGroup } = useSelector((state: RootState) => ({
+  const { isConsumption, logicAppName, subscriptionId, resourceGroup, workflowsInTemplate } = useSelector((state: RootState) => ({
     isConsumption: !!state.workflow.isConsumption,
     logicAppName: state.workflow.logicAppName,
     subscriptionId: state.workflow.subscriptionId,
     resourceGroup: state.workflow.resourceGroup,
     selectedTabId: state.tab.selectedTabId,
+    workflowsInTemplate: state.template.workflows,
   }));
   const { data: workflows, isLoading } = useWorkflowsInApp(
     subscriptionId,
@@ -76,6 +77,12 @@ export const SelectWorkflows = ({
     }
     return selectedDifferentNameWorkflowsList;
   }, [selectedWorkflowsList]);
+
+  const selectedWorkflowSourceIds = useMemo(() => {
+    return Object.values(workflowsInTemplate)
+      .map((workflow) => workflow.manifest?.metadata?.workflowSourceId)
+      .filter((id) => !!id);
+  }, [workflowsInTemplate]);
 
   const resourceStrings = { ...useTemplatesStrings().resourceStrings, ...useResourceStrings() };
 
@@ -131,9 +138,9 @@ export const SelectWorkflows = ({
   const items =
     workflows?.map((workflow) => ({
       id: workflow.id,
-      workflowName: differentIdThanResourceRecord[workflow.id],
       name: workflow.name,
       trigger: workflow.triggerType,
+      disabled: selectedWorkflowSourceIds.includes(workflow.id),
     })) ?? [];
 
   const {
@@ -253,11 +260,11 @@ export const SelectWorkflows = ({
                     <TableCell>
                       <TableCellLayout>{item.name}</TableCellLayout>
                     </TableCell>
-                    {Object.keys(differentIdThanResourceRecord).length ? (
+                    {/* {Object.keys(differentIdThanResourceRecord).length ? (
                       <TableCell>
                         <TableCellLayout>{item.workflowName ?? resourceStrings.Placeholder}</TableCellLayout>
                       </TableCell>
-                    ) : null}
+                    ) : null} */}
                     <TableCell>
                       <TableCellLayout>{item.trigger}</TableCellLayout>
                     </TableCell>

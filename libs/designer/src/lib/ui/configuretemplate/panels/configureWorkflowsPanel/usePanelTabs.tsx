@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../../core/state/templates/store';
 import { useFunctionalState } from '@react-hookz/web';
 import type { WorkflowTemplateData } from '../../../../core';
-import { getWorkflowsWithDefinitions, addWorkflowsData, saveWorkflowsData } from '../../../../core/actions/bjsworkflow/configuretemplate';
+import { getWorkflowsWithDefinitions, addWorkflowsData } from '../../../../core/actions/bjsworkflow/configuretemplate';
 import { getResourceNameFromId, equals, isUndefinedOrEmptyString, getUniqueName, clone } from '@microsoft/logic-apps-shared';
 import { checkWorkflowNameWithRegex, validateWorkflowData } from '../../../../core/templates/utils/helper';
 import { useMemo, useCallback } from 'react';
@@ -21,23 +21,21 @@ export const useConfigureWorkflowPanelTabs = ({
 }): TemplateTabProps[] => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
-  const { isWizardUpdating, workflowsInTemplate, workflowState, runValidation, currentPublishedState } = useSelector(
-    (state: RootState) => ({
-      workflowsInTemplate: state.template.workflows,
-      isWizardUpdating: state.tab.isWizardUpdating,
-      workflowState: state.workflow,
-      runValidation: state.tab.runValidation,
-      currentPublishedState: state.template.status,
-    })
-  );
+  const { isWizardUpdating, workflowState, runValidation, currentPublishedState } = useSelector((state: RootState) => ({
+    workflowsInTemplate: state.template.workflows,
+    isWizardUpdating: state.tab.isWizardUpdating,
+    workflowState: state.workflow,
+    runValidation: state.tab.runValidation,
+    currentPublishedState: state.template.status,
+  }));
 
   const hasError = false; // Placeholder for actual error state
   const resources = useResourceStrings();
 
-  const [selectedWorkflowsList, setSelectedWorkflowsList] =
-    useFunctionalState<Record<string, Partial<WorkflowTemplateData>>>(workflowsInTemplate);
+  const [selectedWorkflowsList, setSelectedWorkflowsList] = useFunctionalState<Record<string, Partial<WorkflowTemplateData>>>({});
 
   const currentSelectedWorkflowsList = selectedWorkflowsList();
+  // TODO: check name must be unique from existing workflows in the template as well
   const duplicateIds = useMemo(() => {
     const seen = new Set<string>();
     const duplicateIds = new Set<string>();
@@ -96,6 +94,7 @@ export const useConfigureWorkflowPanelTabs = ({
         ...workflowData,
       };
       const updatedManifestError = validateWorkflowData(updatedWorkflowData, Object.keys(prevSelectedWorkflows).length > 1);
+      // TODO: check name must be unique from existing workflows in the template as well
       const formattedOtherSelectedIds = Object.entries(prevSelectedWorkflows).map(
         ([curWorkflowId, workflow]) => workflowId !== curWorkflowId && getResourceNameFromId(workflow.id as string)
       );
@@ -133,7 +132,7 @@ export const useConfigureWorkflowPanelTabs = ({
   const onSaveCompleted = useCallback(() => onSave?.(Object.keys(selectedWorkflowsList()).length > 1), [onSave, selectedWorkflowsList]);
 
   const onSaveChanges = () => {
-    // 1. Update the workflowId with user-input id (For newly selected workflow)
+    // Update the workflowId with user-input id (For newly selected workflow)
     setSelectedWorkflowsList((prevSelectedWorkflows) => {
       for (const [workflowId, workflowData] of Object.entries(prevSelectedWorkflows)) {
         const modifiedWorkflowData = clone(workflowData);
@@ -147,24 +146,7 @@ export const useConfigureWorkflowPanelTabs = ({
       return prevSelectedWorkflows;
     });
 
-    // 2. With updated workflowIds, dispatch based on whether workflows data have changed
-    const selectedWorkflowIds = Object.values(selectedWorkflowsList()).map((workflow) =>
-      workflow.manifest?.metadata?.workflowSourceId?.toLowerCase()
-    );
-    const originalWorkflowIds = Object.values(workflowsInTemplate).map((workflow) =>
-      workflow.manifest?.metadata?.workflowSourceId?.toLowerCase()
-    );
-    const hasWorkflowListChanged =
-      originalWorkflowIds.length === selectedWorkflowIds.length
-        ? originalWorkflowIds.some((resourceId) => !selectedWorkflowIds.includes(resourceId))
-        : true;
-
-    // TODO: change below logic to API call then modify state
-    if (hasWorkflowListChanged) {
-      dispatch(addWorkflowsData({ workflows: selectedWorkflowsList(), onSaveCompleted }));
-    } else {
-      dispatch(saveWorkflowsData({ workflows: selectedWorkflowsList(), onSaveCompleted }));
-    }
+    dispatch(addWorkflowsData({ workflows: selectedWorkflowsList(), onSaveCompleted }));
   };
 
   const isNoWorkflowsSelected = Object.keys(selectedWorkflowsList()).length === 0;
