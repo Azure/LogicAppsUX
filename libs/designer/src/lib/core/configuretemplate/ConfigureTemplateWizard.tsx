@@ -65,7 +65,7 @@ export const ConfigureTemplateWizard = ({
     }
   };
 
-  const onSaveTemplate = (prevStatus: Template.TemplateEnvironment, newStatus: Template.TemplateEnvironment) => {
+  const onSaveTemplate = (prevStatus: Template.TemplateEnvironment, newStatus?: Template.TemplateEnvironment) => {
     const isNewStatusPublished = equals(newStatus, 'Production') || equals(newStatus, 'Testing');
     setToasterData({
       title: isNewStatusPublished
@@ -79,7 +79,7 @@ export const ConfigureTemplateWizard = ({
               newStatus,
             }
           )
-        : equals(prevStatus, 'Development')
+        : !newStatus || equals(prevStatus, 'Development')
           ? intl.formatMessage({
               defaultMessage: 'Your template has been saved.',
               id: '+gBLFF',
@@ -96,7 +96,7 @@ export const ConfigureTemplateWizard = ({
             id: 'ILcDyX',
             description: 'Content for the toaster for after publishing template.',
           })
-        : equals(prevStatus, 'Development')
+        : !newStatus || equals(prevStatus, 'Development')
           ? intl.formatMessage({
               defaultMessage: 'Your template in action is in development mode.',
               id: 'rlfK4u',

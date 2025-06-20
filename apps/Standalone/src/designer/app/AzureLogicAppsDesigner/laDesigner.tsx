@@ -66,6 +66,7 @@ import {
   CombineInitializeVariableDialog,
   TriggerDescriptionDialog,
   getMissingRoleDefinitions,
+  roleQueryKeys,
 } from '@microsoft/logic-apps-designer';
 import axios from 'axios';
 import isEqual from 'lodash.isequal';
@@ -416,9 +417,14 @@ const DesignerEditor = () => {
             const missingRoleAssignments = await getMissingRoleDefinitions(agentConnection?.resourceId, definitionNames);
             const assignmentPromises = [];
             for (const roleDefinition of missingRoleAssignments) {
-              assignmentPromises.push(RoleService().addRoleAssignmentForApp(agentConnection?.resourceId, roleDefinition.id));
+              assignmentPromises.push(RoleService().addAppRoleAssignmentForResource(agentConnection?.resourceId, roleDefinition.id));
             }
             await Promise.all(assignmentPromises);
+
+            // Invalidate the cache for the role assignments
+            const cacheKey = [roleQueryKeys.appIdentityRoleAssignments, agentConnection?.resourceId];
+            const queryClient = getReactQueryClient();
+            queryClient.invalidateQueries(cacheKey);
           }
         }
       }
@@ -941,8 +947,8 @@ const getDesignerServices = (
     apiVersion: '2022-04-01',
     subscriptionId,
     tenantId: tenantId ?? '',
-    userId: objectId ?? '',
-    appIdentity: workflowApp?.identity?.principalId ?? '',
+    userIdentityId: objectId ?? '',
+    appIdentityId: workflowApp?.identity?.principalId ?? '',
   });
 
   const chatbotService = new BaseChatbotService({

@@ -24,6 +24,7 @@ import {
   DialogContent,
   Button,
   tokens,
+  Link,
 } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 import { CommandBar, type ICommandBarItemProps, mergeStyles, PrimaryButton } from '@fluentui/react';
@@ -42,15 +43,26 @@ import EBookIcon from '../../../common/images/templates/openbook.svg';
 import { useTemplateWorkflowResources } from '../../../core/configuretemplate/utils/queries';
 import { getDateTimeString } from '../../../core/configuretemplate/utils/helper';
 
+const columnTextStyle: React.CSSProperties = {
+  display: '-webkit-box',
+  WebkitLineClamp: 1,
+  WebkitBoxOrient: 'vertical',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  wordBreak: 'break-word',
+  lineBreak: 'anywhere',
+};
+
 export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean) => void }) => {
   const intl = useIntl();
-  const { workflows, currentPanelView, apiErrors, saveErrors, isLoading, templateId } = useSelector((state: RootState) => ({
+  const { workflows, currentPanelView, apiErrors, saveErrors, isLoading, templateId, status } = useSelector((state: RootState) => ({
     workflows: state.template.workflows ?? {},
     apiErrors: state.template.apiValidatationErrors?.workflows ?? {},
     saveErrors: state.template.apiValidatationErrors?.saveGeneral?.workflows,
     currentPanelView: state.panel.currentPanelView,
     isLoading: state.template.dataIsLoading,
     templateId: state.template.manifest?.id as string,
+    status: state.template.status,
   }));
   const hasErrors = useMemo(() => saveErrors || workflowsHaveErrors(apiErrors, workflows), [apiErrors, saveErrors, workflows]);
   const { data: workflowResources, isLoading: workflowResourcesLoading } = useTemplateWorkflowResources(templateId);
@@ -59,12 +71,18 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
 
   const [selectedWorkflowsList, setSelectedWorkflowsList] = useFunctionalState<string[]>([]);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
+  const isPublishedTemplate = useMemo(() => status !== 'Development', [status]);
 
   const intlText = useMemo(
     () => ({
+      ADD: intl.formatMessage({
+        defaultMessage: 'Add',
+        id: 'I2XWRg',
+        description: 'Button text for opening panel for adding workflows',
+      }),
       EDIT: intl.formatMessage({
-        defaultMessage: 'Manage workflows',
-        id: 'FK8YcR',
+        defaultMessage: 'Edit',
+        id: 'p2eSD1',
         description: 'Button text for opening panel for editing workflows',
       }),
       DELETE: intl.formatMessage({
@@ -72,14 +90,14 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
         id: 'Ld62T8',
         description: 'Button text for deleting selected workflows',
       }),
-      DELETE_WORKFLOW: intl.formatMessage({
-        defaultMessage: 'Delete workflow',
-        id: 'hufv85',
+      DELETE_WORKFLOWS: intl.formatMessage({
+        defaultMessage: 'Delete workflows',
+        id: 'YRW3/2',
         description: 'Title text for deleting selected workflows',
       }),
       EMPTY_TITLE: intl.formatMessage({
-        defaultMessage: 'Manage workflows for this template',
-        id: 'gA8nWC',
+        defaultMessage: 'Add workflows for this template',
+        id: '+yTsXQ',
         description: 'Empty state title for workflows list',
       }),
       ERROR_TITLE: intl.formatMessage({
@@ -102,6 +120,11 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
         id: 'gt3JdS',
         description: 'Body text for informing users this action is deleting selected workflows',
       }),
+      DELETE_UNPUBLISH_CONFIRM_TEXT: intl.formatMessage({
+        defaultMessage: `Deleting workflows wlil remove them from this template. The template will be unpublished and won't appear in the template library until it is republished. Do you want to delete the workflow(s) and unpublish?`,
+        id: 'r/H4us',
+        description: 'Body text for informing users this action is deleting selected workflows and unpublishing the template',
+      }),
       CLOSE: intl.formatMessage({
         defaultMessage: 'Cancel',
         id: '4LQwvg',
@@ -120,9 +143,15 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
 
   const commandBarItems: ICommandBarItemProps[] = [
     {
+      key: 'add',
+      text: intlText.ADD,
+      iconProps: { iconName: 'Add' },
+      onClick: handleAddWorkflows,
+    },
+    {
       key: 'edit',
       text: intlText.EDIT,
-      iconProps: { iconName: 'Settings' },
+      iconProps: { iconName: 'Edit' },
       onClick: handleAddWorkflows,
     },
     {
@@ -268,8 +297,8 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
       >
         <DialogSurface>
           <DialogBody>
-            <DialogTitle>{intlText.DELETE_WORKFLOW}</DialogTitle>
-            <DialogContent>{intlText.DELETE_CONFIRM_TEXT}</DialogContent>
+            <DialogTitle>{intlText.DELETE_WORKFLOWS}</DialogTitle>
+            <DialogContent>{isPublishedTemplate ? intlText.DELETE_UNPUBLISH_CONFIRM_TEXT : intlText.DELETE_CONFIRM_TEXT}</DialogContent>
             <DialogActions>
               <Button
                 appearance="primary"
@@ -283,7 +312,7 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
                   setIsDeleteModalOpen(false);
                 }}
               >
-                {intlText.DELETE}
+                {intlText.DELETE_WORKFLOWS}
               </Button>
               <DialogTrigger disableButtonEnhancement>
                 <Button
@@ -337,7 +366,11 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
             <TableRow key={item.id} onClick={onClick} onKeyDown={onKeyDown} aria-selected={selected} appearance={appearance}>
               <TableSelectionCell checked={selected} checkboxIndicator={{ 'aria-label': customResourceStrings.WorkflowCheckboxRowLabel }} />
               <TableCell>
-                <TableCellLayout>{item.id}</TableCellLayout>
+                <TableCellLayout>
+                  <Link style={columnTextStyle} as="button" onClick={handleAddWorkflows}>
+                    {item.id}
+                  </Link>
+                </TableCellLayout>
               </TableCell>
               {isMultiWorkflow && (
                 <TableCell>
@@ -372,7 +405,7 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
             className={mergeStyles({ width: '40%', marginTop: 0 })}
           />
           <div style={{ padding: '10px 0' }}>
-            <PrimaryButton onClick={handleAddWorkflows}>{intlText.EDIT}</PrimaryButton>
+            <PrimaryButton onClick={handleAddWorkflows}>{intlText.ADD}</PrimaryButton>
           </div>
         </div>
       )}
