@@ -75,7 +75,7 @@ export const CustomizeWorkflows = ({
         ) : (
           <CustomizeWorkflowSection
             workflowId={workflowEntries[0][0]}
-            isMultiWorkflowTemplate={false}
+            isMultiWorkflowTemplate={Object.keys(workflows).length > 1}
             workflow={workflowEntries[0][1]}
             updateWorkflowDataField={updateWorkflowDataField}
           />

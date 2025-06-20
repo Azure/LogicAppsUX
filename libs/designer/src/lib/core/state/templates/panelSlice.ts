@@ -8,7 +8,8 @@ export const TemplatePanelView = {
   QuickView: 'quickView',
   CreateWorkflow: 'createWorkflow',
   // Configure template panels
-  ConfigureWorkflows: 'configureWorkflows',
+  ConfigureWorkflows: 'configureWorkflows', //TODO: change this to AddWorkflows
+  EditWorkflows: 'editWorkflows',
   CustomizeParameter: 'customizeParameter',
 } as const;
 export type ConfigPanelView = (typeof TemplatePanelView)[keyof typeof TemplatePanelView];
