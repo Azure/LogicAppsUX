@@ -208,7 +208,11 @@ export const SelectWorkflows = ({
             <MessageBarBody>{intlText.INFO_TEXT}</MessageBarBody>
           </MessageBar>
         </div>
-        <ResourcePicker viewMode={'alllogicapps'} onSelectApp={onLogicAppSelected} />
+        <ResourcePicker
+          viewMode={'alllogicapps'}
+          onSelectApp={onLogicAppSelected}
+          disableOnValue={!!Object.keys(workflowsInTemplate).length}
+        />
       </TemplatesSection>
       <TemplatesSection title={intlText.WORKFLOWS} titleHtmlFor={'workflowsLabel'} description={intlText.WORKFLOWS_LABEL}>
         <Table aria-label={resourceStrings.WorkflowsListTableLabel} style={{ minWidth: '550px' }}>

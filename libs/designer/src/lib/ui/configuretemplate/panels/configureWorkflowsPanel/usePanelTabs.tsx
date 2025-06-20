@@ -154,7 +154,7 @@ export const useConfigureWorkflowPanelTabs = ({
     (workflow) =>
       isUndefinedOrEmptyString(workflow?.id) ||
       !isUndefinedOrEmptyString(workflow?.errors?.workflow) ||
-      (Object.keys(selectedWorkflowsList()).length > 1 && !workflow?.manifest?.title)
+      (Object.keys(selectedWorkflowsList()).length > 1 && !workflow?.manifest?.title) //TODO: check this condition...
   );
 
   return [

@@ -18,9 +18,10 @@ import { useAllLogicApps } from '../../../core/configuretemplate/utils/queries';
 export interface ResourcePickerProps {
   viewMode?: 'default' | 'alllogicapps';
   onSelectApp?: (value: LogicAppResource) => void;
+  disableOnValue?: boolean;
 }
 
-export const ResourcePicker = ({ viewMode = 'default', onSelectApp }: ResourcePickerProps) => {
+export const ResourcePicker = ({ viewMode = 'default', onSelectApp, disableOnValue = false }: ResourcePickerProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const isDefaultMode = viewMode === 'default';
   const { subscriptionId, resourceGroup, location, workflowAppName, logicAppName, isConsumption } = useSelector(
@@ -91,6 +92,7 @@ export const ResourcePicker = ({ viewMode = 'default', onSelectApp }: ResourcePi
         onSelect={(value) => dispatch(setSubscription(value))}
         defaultKey={subscriptionId}
         isLoading={isLoading}
+        disableOnValue={disableOnValue}
         resources={subscriptions ?? []}
         errorMessage={subscriptionId ? '' : intlText.VALIDATION_ERROR}
       />
@@ -100,6 +102,7 @@ export const ResourcePicker = ({ viewMode = 'default', onSelectApp }: ResourcePi
         onSelect={(value) => dispatch(setResourceGroup(value))}
         defaultKey={resourceGroup}
         isLoading={isResourceGroupLoading}
+        disableOnValue={disableOnValue}
         resources={resourceGroups ?? []}
         errorMessage={resourceGroup ? '' : intlText.VALIDATION_ERROR}
       />
@@ -110,6 +113,7 @@ export const ResourcePicker = ({ viewMode = 'default', onSelectApp }: ResourcePi
           onSelect={(value) => dispatch(setLocation(value))}
           defaultKey={location}
           isLoading={islocationLoading}
+          disableOnValue={disableOnValue}
           resources={locations ?? []}
           errorMessage={location ? '' : intlText.VALIDATION_ERROR}
         />
@@ -121,6 +125,7 @@ export const ResourcePicker = ({ viewMode = 'default', onSelectApp }: ResourcePi
           onSelect={onLogicAppSelect}
           defaultKey={workflowAppName ?? ''}
           isLoading={isLogicAppsLoading}
+          disableOnValue={disableOnValue}
           resources={(logicApps ?? []).map((app) => ({
             id: app.id,
             name: app.name,
@@ -136,6 +141,7 @@ export const ResourcePicker = ({ viewMode = 'default', onSelectApp }: ResourcePi
           onSelect={onLogicAppInstanceSelect}
           defaultKey={logicAppName ?? ''}
           isLoading={isAllLogicAppsLoading}
+          disableOnValue={disableOnValue}
           resources={(allLogicApps ?? []).map((app) => ({
             id: app.id,
             name: app.name,
@@ -155,6 +161,7 @@ const ResourceField = ({
   defaultKey,
   errorMessage,
   isLoading,
+  disableOnValue,
   onSelect,
 }: {
   id: string;
@@ -163,6 +170,7 @@ const ResourceField = ({
   resources: Resource[];
   onSelect: (value: any) => void;
   isLoading?: boolean;
+  disableOnValue?: boolean;
   errorMessage?: string;
 }) => {
   const intl = useIntl();
@@ -208,7 +216,7 @@ const ResourceField = ({
           style={{ width: '100%' }}
           id={id}
           onOptionSelect={(e, option) => onSelect(option?.optionValue)}
-          disabled={isLoading}
+          disabled={isLoading || (disableOnValue && !!selectedResource)}
           value={selectedResource}
           selectedOptions={[defaultKey]}
           size="small"
