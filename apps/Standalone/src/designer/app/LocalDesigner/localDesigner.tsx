@@ -154,8 +154,8 @@ const roleService = new BaseRoleService({
   httpClient,
   subscriptionId: 'test',
   tenantId: 'test',
-  userId: 'test',
-  appIdentity: 'test',
+  userIdentityId: 'test',
+  appIdentityId: 'test',
 });
 
 const cognitiveServiceService = new BaseCognitiveServiceService({
