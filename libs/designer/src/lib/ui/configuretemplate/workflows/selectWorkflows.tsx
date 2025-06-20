@@ -72,7 +72,7 @@ export const SelectWorkflows = ({
     [onWorkflowsSelected]
   );
 
-  const selectedWorkflowSourceIds = useMemo(() => {
+  const workflowSourceIdsInTemplate = useMemo(() => {
     return Object.values(workflowsInTemplate)
       .map((workflow) => workflow.manifest?.metadata?.workflowSourceId)
       .filter((id) => !!id);
@@ -136,14 +136,10 @@ export const SelectWorkflows = ({
         id: workflow.id,
         name: workflow.name,
         trigger: workflow.triggerType,
-        disabled: isConsumption || selectedWorkflowSourceIds.includes(workflow.id),
+        disabled: isConsumption || workflowSourceIdsInTemplate.includes(workflow.id),
       })) ?? [],
-    [workflows, isConsumption, selectedWorkflowSourceIds]
+    [workflows, isConsumption, workflowSourceIdsInTemplate]
   );
-
-  const isAllRowsDisabled = useMemo(() => {
-    return items.length > 0 && items.every((item) => item.disabled);
-  }, [items]);
 
   const {
     getRows,
@@ -182,22 +178,26 @@ export const SelectWorkflows = ({
     };
   });
 
-  const allRowsSelected = useMemo(() => {
-    return !rows?.filter((row) => !row.selected)?.length;
+  const isAllRowsDisabled = useMemo(() => {
+    return items.length > 0 && items.every((item) => item.disabled);
+  }, [items]);
+
+  const isAllValidRowsSelected = useMemo(() => {
+    return !rows?.filter((row) => !row?.item?.disabled && !row.selected)?.length;
   }, [rows]);
 
-  const toggleAllRows = useCallback(() => {
-    onWorkflowsSelected(allRowsSelected ? [] : (workflows?.map((workflow) => workflow.id) ?? []));
-  }, [onWorkflowsSelected, workflows, allRowsSelected]);
+  const toggleAllValidRows = useCallback(() => {
+    onWorkflowsSelected(isAllValidRowsSelected ? [] : (items?.filter((item) => !item?.disabled)?.map((workflow) => workflow.id) ?? []));
+  }, [onWorkflowsSelected, items, isAllValidRowsSelected]);
 
   const toggleAllKeydown = useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
       if (e.key === ' ') {
-        toggleAllRows();
+        toggleAllValidRows();
         e.preventDefault();
       }
     },
-    [toggleAllRows]
+    [toggleAllValidRows]
   );
 
   return (
@@ -215,8 +215,8 @@ export const SelectWorkflows = ({
           <TableHeader>
             <TableRow>
               <TableSelectionCell
-                checked={allRowsSelected ? true : someRowsSelected ? 'mixed' : false}
-                onClick={isAllRowsDisabled ? () => {} : toggleAllRows}
+                checked={isAllValidRowsSelected ? true : someRowsSelected ? 'mixed' : false}
+                onClick={isAllRowsDisabled ? () => {} : toggleAllValidRows}
                 onKeyDown={isAllRowsDisabled ? () => {} : toggleAllKeydown}
                 checkboxIndicator={{ 'aria-label': resourceStrings.SelectAllWorkflowsLabel }}
                 style={isAllRowsDisabled ? disabledStyle : undefined}
