@@ -132,7 +132,16 @@ export const useConfigureWorkflowPanelTabs = ({
     setSelectedWorkflowsList(await getWorkflowsWithDefinitions(workflowState, selectedWorkflowsList()));
   };
 
-  const onSaveCompleted = useCallback(() => onSave?.(Object.keys(selectedWorkflowsList()).length > 1), [onSave, selectedWorkflowsList]);
+  const onSaveCompleted = useCallback(
+    () =>
+      onSave?.(
+        Object.keys({
+          ...workflowsInTemplate,
+          ...selectedWorkflowsList(),
+        }).length > 1
+      ),
+    [onSave, workflowsInTemplate, selectedWorkflowsList]
+  );
 
   const onSaveChanges = () => {
     // Update the workflowId with user-input id (For newly selected workflow)
@@ -157,7 +166,11 @@ export const useConfigureWorkflowPanelTabs = ({
     (workflow) =>
       isUndefinedOrEmptyString(workflow?.id) ||
       !isUndefinedOrEmptyString(workflow?.errors?.workflow) ||
-      (Object.keys(selectedWorkflowsList()).length > 1 && !workflow?.manifest?.title) //TODO: check this condition...
+      (Object.keys({
+        ...workflowsInTemplate,
+        ...selectedWorkflowsList(),
+      }).length > 1 &&
+        !workflow?.manifest?.title)
   );
 
   return [
