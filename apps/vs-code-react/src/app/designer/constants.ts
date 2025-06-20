@@ -9,14 +9,6 @@ export const clientSupportedOperations = [
   },
   {
     connectorId: 'connectionProviders/xmlOperations',
-    operationId: 'XmlParse',
-  },
-  {
-    connectorId: 'connectionProviders/xmlOperations',
-    operationId: 'XmlCompose',
-  },
-  {
-    connectorId: 'connectionProviders/xmlOperations',
     operationId: 'xmlTransform',
   },
   {
