@@ -9,7 +9,7 @@ import { css } from '@fluentui/utilities';
 import { ArrayEditor, ArrayType } from '../arrayeditor';
 import { Label } from '../label';
 import { useAgentInstructionStyles } from './agentinstruction.styles';
-import constants from './../constants';
+import constants from '../constants';
 
 export const NavigateIcon = bundleIcon(Open12Regular, Open12Filled);
 
