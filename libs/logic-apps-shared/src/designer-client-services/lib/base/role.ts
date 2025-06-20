@@ -11,8 +11,8 @@ export type BaseRoleServiceOptions = {
   baseUrl: string;
   apiVersion: string;
   tenantId: string;
-  userId: string;
-  appIdentity: string;
+  userIdentityId: string;
+  appIdentityId: string;
 };
 
 export class BaseRoleService implements IRoleService {
@@ -30,29 +30,30 @@ export class BaseRoleService implements IRoleService {
   }
 
   async fetchUserRoleAssignmentsForResource(resourceId: string): Promise<ArmResource<RoleAssignment>[]> {
-    const { baseUrl, httpClient, apiVersion = defaultApiVersion, userId } = this.options;
+    const { baseUrl, httpClient, apiVersion = defaultApiVersion, userIdentityId } = this.options;
     const uri = `${baseUrl}${resourceId}/providers/Microsoft.Authorization/roleAssignments`;
     const queryParameters = {
       'api-version': apiVersion,
-      $filter: `atScope() and assignedTo('${userId}')`,
+      $filter: `atScope() and assignedTo('${userIdentityId}')`,
     };
     const response = await getAzureResourceRecursive(httpClient, uri, queryParameters);
     return response ?? [];
   }
 
-  async fetchAppIdentityRoleAssignments(): Promise<ArmResource<RoleAssignment>[]> {
-    const { baseUrl, subscriptionId, httpClient, apiVersion = defaultApiVersion, appIdentity } = this.options;
-    const uri = `${baseUrl}/subscriptions/${subscriptionId}/providers/Microsoft.Authorization/roleAssignments`;
+  async fetchAppRoleAssignmentsForResource(resourceId: string): Promise<ArmResource<RoleAssignment>[]> {
+    const { baseUrl, httpClient, apiVersion = defaultApiVersion, appIdentityId, userIdentityId } = this.options;
+    const uri = `${baseUrl}${resourceId}/providers/Microsoft.Authorization/roleAssignments`;
+    console.log('#> Identities', { appIdentityId, userIdentityId });
     const queryParameters = {
       'api-version': apiVersion,
-      $filter: `assignedTo('${appIdentity}')`,
+      $filter: `atScope() and assignedTo('${appIdentityId}')`,
     };
     const response = await getAzureResourceRecursive(httpClient, uri, queryParameters);
     return response ?? [];
   }
 
-  async addRoleAssignmentForApp(resourceId: string, definitionId: string): Promise<ArmResource<RoleAssignment>> {
-    const { baseUrl, httpClient, apiVersion = defaultApiVersion, appIdentity } = this.options;
+  async addAppRoleAssignmentForResource(resourceId: string, definitionId: string): Promise<ArmResource<RoleAssignment>> {
+    const { baseUrl, httpClient, apiVersion = defaultApiVersion, appIdentityId } = this.options;
     const newId = guid();
     const uri = `${baseUrl}${resourceId}/providers/Microsoft.Authorization/roleAssignments/${newId}`;
     const queryParameters = {
@@ -65,7 +66,7 @@ export class BaseRoleService implements IRoleService {
       content: {
         id: newId,
         properties: {
-          principalId: appIdentity,
+          principalId: appIdentityId,
           principalType: 'ServicePrincipal',
           roleDefinitionId: definitionId,
           scope: resourceId,
