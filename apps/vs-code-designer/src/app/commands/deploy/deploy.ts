@@ -407,11 +407,11 @@ async function getProjectPathToDeploy(
     for (const referenceKey of Object.keys(connectionsData.managedApiConnections)) {
       try {
         const connection = resolvedConnections.managedApiConnections[referenceKey].connection;
-        await createAclInConnectionIfNeeded(identityWizardContext, connection.id, node.site);
+        await createAclInConnectionIfNeeded(identityWizardContext, connection.id, node);
 
         if (node.site.isSlot) {
           const parentTreeItem = node.parent?.parent as SlotTreeItem;
-          await createAclInConnectionIfNeeded(identityWizardContext, connection.id, parentTreeItem.site);
+          await createAclInConnectionIfNeeded(identityWizardContext, connection.id, parentTreeItem);
         }
       } catch (error) {
         throw new Error(`Error in creating access policy for connection in reference - '${referenceKey}'. ${error}`);
