@@ -4,6 +4,6 @@ import type { Template } from '@microsoft/logic-apps-shared';
 export interface TemplateWizardTabProps {
   disabled?: boolean;
   tabStatusIcon?: TemplateTabStatusType;
-  onSave?: (status: Template.TemplateEnvironment) => void;
+  onSave?: (newStatus?: Template.TemplateEnvironment) => void;
   status?: Template.TemplateEnvironment;
 }
