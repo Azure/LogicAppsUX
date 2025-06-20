@@ -16,7 +16,7 @@ export interface ConfigureWorkflowsTabProps {
   disabled?: boolean;
   isPrimaryButtonDisabled: boolean;
   isSaving: boolean;
-  onSave?: (status: Template.TemplateEnvironment) => void;
+  onSave?: () => void;
   onClose?: () => void;
   status?: Template.TemplateEnvironment;
   selectedWorkflowsList: Record<string, Partial<WorkflowTemplateData>>;

@@ -8,11 +8,9 @@ import { Panel, PanelType } from '@fluentui/react';
 import { CustomizeParameter } from '../../../configuretemplate/parameters/customizeParameter';
 import { validateParameterDetails } from '../../../../core/state/templates/templateSlice';
 import { useFunctionalState } from '@react-hookz/web';
-import { equals, isUndefinedOrEmptyString, type Template } from '@microsoft/logic-apps-shared';
+import { isUndefinedOrEmptyString, type Template } from '@microsoft/logic-apps-shared';
 import { useParameterDefinition } from '../../../../core/configuretemplate/configuretemplateselectors';
 import { updateWorkflowParameter } from '../../../../core/actions/bjsworkflow/configuretemplate';
-import { getSaveMenuButtons } from '../../../../core/configuretemplate/utils/helper';
-import { useResourceStrings } from '../../resources';
 
 const layerProps = {
   hostId: 'msla-layer-host',
@@ -22,13 +20,12 @@ const layerProps = {
 export const CustomizeParameterPanel = () => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
-  const { parameterId, runValidation, isOpen, currentPanelView, parameterErrors, currentStatus } = useSelector((state: RootState) => ({
+  const { parameterId, runValidation, isOpen, currentPanelView, parameterErrors } = useSelector((state: RootState) => ({
     parameterId: state.panel.selectedTabId,
     runValidation: state.tab.runValidation,
     isOpen: state.panel.isOpen,
     currentPanelView: state.panel.currentPanelView,
     parameterErrors: state.template.errors.parameters,
-    currentStatus: state.template.status,
   }));
 
   const parameterDefinition = useParameterDefinition(parameterId as string);
@@ -40,7 +37,6 @@ export const CustomizeParameterPanel = () => {
       description: 'Panel header title for customizing parameters',
     }),
   };
-  const resources = useResourceStrings();
   const [selectedParameterDefinition, setSelectedParameterDefinition] =
     useFunctionalState<Template.ParameterDefinition>(parameterDefinition);
   const [isDirty, setIsDirty] = useState(false);
@@ -81,9 +77,7 @@ export const CustomizeParameterPanel = () => {
             description: 'Button text for saving changes for parameter in the customize parameter panel',
           }),
           appearance: 'primary',
-          onClick: () => {},
-          disabled: !isDirty || isDisplayNameEmpty,
-          menuItems: getSaveMenuButtons(resources, currentStatus ?? 'Development', (newStatus) => {
+          onClick: () => {
             if (runValidation) {
               dispatch(validateParameterDetails());
             }
@@ -91,10 +85,10 @@ export const CustomizeParameterPanel = () => {
               updateWorkflowParameter({
                 parameterId: parameterId as string,
                 definition: selectedParameterDefinition(),
-                changedStatus: equals(currentStatus, newStatus) ? undefined : newStatus,
               })
             );
-          }),
+          },
+          disabled: !isDirty || isDisplayNameEmpty,
         },
         {
           type: 'action',
@@ -109,7 +103,7 @@ export const CustomizeParameterPanel = () => {
         },
       ],
     };
-  }, [dispatch, intl, isDirty, parameterId, runValidation, currentStatus, resources, selectedParameterDefinition]);
+  }, [dispatch, intl, isDirty, parameterId, runValidation, selectedParameterDefinition]);
 
   const onRenderFooterContent = useCallback(() => <TemplatesPanelFooter {...footerContent} />, [footerContent]);
 

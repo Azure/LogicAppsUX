@@ -26,7 +26,7 @@ export const useConfigureTemplateWizardTabs = ({
   onSaveTemplate,
 }: {
   onSaveWorkflows: (isMultiWorkflow: boolean) => void;
-  onSaveTemplate: (prevStatus: Template.TemplateEnvironment, newStatus: Template.TemplateEnvironment) => void;
+  onSaveTemplate: (prevStatus: Template.TemplateEnvironment, newStatus?: Template.TemplateEnvironment) => void;
 }) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
@@ -76,7 +76,7 @@ export const useConfigureTemplateWizardTabs = ({
   }, [dispatch, selectedTabId]);
 
   const handleSaveTemplate = useCallback(
-    async (newPublishState: Template.TemplateEnvironment) => {
+    async (newPublishState?: Template.TemplateEnvironment) => {
       dispatch(setRunValidation(true));
       dispatch(
         saveTemplateData({

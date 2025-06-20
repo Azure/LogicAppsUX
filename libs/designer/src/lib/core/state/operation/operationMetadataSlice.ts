@@ -642,7 +642,9 @@ export const operationMetadataSlice = createSlice({
     builder.addCase(setStateAfterUndoRedo, (_, action: PayloadAction<UndoRedoPartialRootState>) => action.payload.operations);
     builder.addCase(deleteWorkflowData.fulfilled, (state, action: PayloadAction<{ ids: string[] }>) => {
       for (const id of action.payload.ids) {
-        const nodeIds = Object.keys(state.operationInfo).filter((nodeId) => nodeId.startsWith(`${id}${delimiter}`));
+        const nodeIds = Object.keys(state.operationInfo).filter((nodeId) =>
+          nodeId.toLowerCase().startsWith(`${id.toLowerCase()}${delimiter}`)
+        );
 
         for (const nodeId of nodeIds) {
           delete state.inputParameters[nodeId];

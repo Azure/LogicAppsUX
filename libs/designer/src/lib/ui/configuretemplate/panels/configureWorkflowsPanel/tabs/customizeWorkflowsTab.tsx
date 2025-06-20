@@ -7,7 +7,6 @@ import type { IntlShape } from 'react-intl';
 import type { WorkflowTemplateData } from '../../../../../core';
 import { CustomizeWorkflows } from '../../../workflows/customizeWorkflows';
 import { Spinner } from '@fluentui/react-components';
-import { getSaveMenuButtons } from '../../../../../core/configuretemplate/utils/helper';
 
 export const customizeWorkflowsTab = (
   intl: IntlShape,
@@ -22,7 +21,6 @@ export const customizeWorkflowsTab = (
     updateWorkflowDataField,
     onSave,
     duplicateIds,
-    status,
     onClose,
   }: ConfigureWorkflowsTabProps & {
     duplicateIds: string[];
@@ -58,10 +56,9 @@ export const customizeWorkflowsTab = (
             description: 'Button text for saving changes in the configure workflows panel',
           })
         ),
-        onClick: () => {},
+        onClick: () => onSave?.(),
         appearance: 'primary',
         disabled: isPrimaryButtonDisabled || isSaving,
-        menuItems: getSaveMenuButtons(resources, status ?? 'Development', (newStatus) => onSave?.(newStatus)),
       },
       {
         type: 'action',
