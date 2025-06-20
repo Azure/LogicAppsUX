@@ -155,6 +155,23 @@ describe('HttpClient', () => {
     await expect(httpClient.post(options)).rejects.toThrow(errorMessage);
   });
 
+  it('should throw the error message when POST request returns an error', async () => {
+    const errorMessage = 'Network Error';
+    (axios as any).mockRejectedValueOnce(new Error(errorMessage)); // Simulate error
+
+    const options: HttpRequestOptions<unknown> = {
+      uri: '/test/subscriptions/subscription-test/test-get',
+      headers: {},
+      content: { key: 'value' },
+    };
+
+    try {
+      await httpClient.post(options);
+    } catch (error) {
+      expect(error.message).toBe(errorMessage);
+    }
+  });
+
   it('should make a PUT request', async () => {
     const responseData = { data: { result: 'test-result' } };
     (axios as any).mockResolvedValue({ data: responseData, status: 200 });
