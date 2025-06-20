@@ -1,45 +1,62 @@
 import './styles.less';
-import { Dropdown, Spinner } from '@fluentui/react-components';
-import type { DropdownProps, Option } from '@fluentui/react-components';
+import type { ComboboxProps } from '@fluentui/react-components';
+import { Combobox, Spinner, useComboboxFilter, useId } from '@fluentui/react-components';
 import { useState } from 'react';
+import { useIntl } from 'react-intl';
 
-export interface ISearchableDropdownProps extends DropdownProps {
+export interface SearchableDropdownOption {
+  key: string;
+  text: string;
+  data?: any;
+}
+
+export interface ISearchableDropdownProps extends Omit<ComboboxProps, 'onChange'> {
   isLoading?: boolean;
-  searchBoxPlaceholder?: string;
-  options: Option[];
+  label: string;
+  options: SearchableDropdownOption[];
+  onChange?: (selectedOption?: SearchableDropdownOption) => void;
 }
 
 export const SearchableDropdown: React.FC<ISearchableDropdownProps> = (props) => {
+  const { label, defaultValue, options = [], placeholder, onChange } = props;
+  const comboId = useId('searchable-dropdown');
   const [searchText, setSearchText] = useState<string>('');
-  const filterHeader = 'FilterHeader';
-  const dividerHeader = `Divider_${filterHeader}`;
+  const intl = useIntl();
 
-  const getOptions = (options: Option[]) => {
-    const filterOptions = options.filter((option) => {
-      if (option.key === filterHeader || option.key === dividerHeader) {
-        return true;
-      }
-      return option.text?.toLowerCase().indexOf(searchText.toLowerCase()) > -1;
-    });
-
-    return [{ key: filterHeader, text: '-' }, { key: dividerHeader, text: '-' }, ...filterOptions];
+  const intlText = {
+    NO_OPTIONS_FOUND: intl.formatMessage({
+      defaultMessage: 'No option match your search.',
+      id: '76y6GF',
+      description: 'No options search text',
+    }),
   };
 
   const spinnerLoader = props.isLoading ? <Spinner className="searchable-dropdown-spinner" size="extra-small" /> : null;
+  const filterOptions = useComboboxFilter(
+    searchText,
+    options.map((option) => option.text),
+    {
+      noOptionsMessage: intlText.NO_OPTIONS_FOUND,
+    }
+  );
+  const onOptionSelect: ComboboxProps['onOptionSelect'] = (event, data) => {
+    setSearchText(data.optionText ?? '');
+    onChange?.({ text: data.optionText ?? '', key: data.optionText ?? '' });
+  };
 
   return (
     <div className="searchable-dropdown">
-      <Dropdown
-        {...props}
-        positioning={{ gapSpace: 10, maxHeight: 400 }}
-        options={getOptions(props.options)}
-        onOptionSelect={(_, data) => props.onSelectionChange?.(_, data)}
-        onOpenChange={(_, data) => {
-          if (!data.open) {
-            setSearchText('');
-          }
-        }}
-      />
+      <label id={comboId}>{label}</label>
+      <Combobox
+        onOptionSelect={onOptionSelect}
+        aria-labelledby={comboId}
+        placeholder={placeholder}
+        onChange={(ev) => setSearchText(ev.target.value)}
+        value={searchText}
+        defaultValue={defaultValue}
+      >
+        {filterOptions}
+      </Combobox>
       {spinnerLoader}
     </div>
   );

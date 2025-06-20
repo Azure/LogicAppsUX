@@ -3,9 +3,9 @@ import { ApiService } from '../../../run-service/export';
 import { updateSelectedLocation, updateSelectedSubscripton } from '../../../state/WorkflowSlice';
 import type { AppDispatch, RootState } from '../../../state/store';
 import { VSCodeContext } from '../../../webviewCommunication';
+import type { SearchableDropdownOption } from '../../components/searchableDropdown';
 import { SearchableDropdown } from '../../components/searchableDropdown';
 import { getDropdownPlaceholder, parseIseList, parseRegionList, parseSubscriptionsList } from './helper';
-import type { Option } from '@fluentui/react-components';
 import { isEmptyString } from '@microsoft/logic-apps-shared';
 import { useContext, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -136,7 +136,7 @@ export const InstanceSelection: React.FC = () => {
     retry: 4,
   });
 
-  const onChangeSubscriptions = (_event: React.FormEvent<HTMLDivElement>, selectedOption?: Option) => {
+  const onChangeSubscriptions = (selectedOption?: SearchableDropdownOption) => {
     if (selectedOption && selectedSubscription !== selectedOption.key) {
       const subscriptionId = selectedOption.key as string;
       if (!isEmptyString(subscriptionId)) {
@@ -156,7 +156,7 @@ export const InstanceSelection: React.FC = () => {
     }
   }, [selectedSubscription, refetchIse, refetchRegion]);
 
-  const onChangeLocation = (_event: React.FormEvent<HTMLDivElement>, selectedOption?: Option) => {
+  const onChangeLocation = (selectedOption?: SearchableDropdownOption) => {
     if (selectedOption) {
       const key = selectedOption.key as string;
       if (key.startsWith('ise:')) {
@@ -177,11 +177,13 @@ export const InstanceSelection: React.FC = () => {
     }
   };
 
-  const subscriptions: Option[] = isSubscriptionsLoading || !subscriptionsList ? [] : parseSubscriptionsList(subscriptionsList);
-  const ise: Option[] = selectedSubscription !== '' && !isIseLoading && iseList ? parseIseList(iseList) : [];
-  const regions: Option[] = selectedSubscription !== '' && !isRegionLoading && regionData ? parseRegionList(regionData) : [];
+  const subscriptions: SearchableDropdownOption[] =
+    isSubscriptionsLoading || !subscriptionsList ? [] : parseSubscriptionsList(subscriptionsList);
+  const ise: SearchableDropdownOption[] = selectedSubscription !== '' && !isIseLoading && iseList ? parseIseList(iseList) : [];
+  const regions: SearchableDropdownOption[] =
+    selectedSubscription !== '' && !isRegionLoading && regionData ? parseRegionList(regionData) : [];
 
-  const locations: Option[] =
+  const locations: SearchableDropdownOption[] =
     ise.length || regions.length
       ? [{ key: 'header:ise', text: intlText.DIVIDER_ISE }, ...ise, { key: 'header:regions', text: intlText.DIVIDER_REGIONS }, ...regions]
       : [];
@@ -214,10 +216,9 @@ export const InstanceSelection: React.FC = () => {
         placeholder={subscriptionPlaceholder}
         disabled={isSubscriptionsLoading || !subscriptions.length}
         onChange={onChangeSubscriptions}
-        selectedKey={selectedSubscription !== '' ? selectedSubscription : null}
+        defaultValue={selectedSubscription !== '' ? selectedSubscription : undefined}
         className="msla-export-instance-panel-dropdown"
         isLoading={subscriptionLoading}
-        searchBoxPlaceholder={intlText.SEARCH_SUBSCRIPTION}
       />
       <SearchableDropdown
         label={intlText.SELECTION_LOCATION}
@@ -231,10 +232,9 @@ export const InstanceSelection: React.FC = () => {
           !(ise.length || regions.length)
         }
         onChange={onChangeLocation}
-        selectedKey={selectedIse !== '' ? `ise:${selectedIse}` : location ? `region:${location}` : null}
+        defaultValue={selectedIse !== '' ? `ise:${selectedIse}` : location ? `region:${location}` : undefined}
         className="msla-export-instance-panel-dropdown"
         isLoading={iseLoading}
-        searchBoxPlaceholder={intlText.SEARCH_LOCATION}
       />
     </div>
   );
