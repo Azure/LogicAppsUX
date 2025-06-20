@@ -104,7 +104,7 @@ export class HttpClient implements IHttpClient {
         return response.data as any;
       }
     } catch (error: any) {
-      throw error?.response?.data ?? error;
+      throw error?.response?.data ?? error?.response ?? error;
     }
   }
   async put<ReturnType, BodyType>(options: HttpRequestOptions<BodyType>): Promise<ReturnType> {
