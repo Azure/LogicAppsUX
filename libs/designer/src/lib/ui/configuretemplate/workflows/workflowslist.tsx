@@ -390,7 +390,8 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
                   <Link
                     style={columnTextStyle}
                     as="button"
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation();
                       handleSelectWorkflow(item.id);
                     }}
                   >
