@@ -5,7 +5,7 @@ import { useWorkflowsInApp } from '../../../core/configuretemplate/utils/queries
 import { ResourcePicker } from '../../templates';
 import { useSelector } from 'react-redux';
 import { useCallback, useMemo } from 'react';
-import { equals, type LogicAppResource } from '@microsoft/logic-apps-shared';
+import { type ArmResource, equals, type LogicAppResource } from '@microsoft/logic-apps-shared';
 import {
   TableBody,
   TableCell,
@@ -28,6 +28,7 @@ import { useResourceStrings } from '../resources';
 import type { WorkflowTemplateData } from '../../../core';
 import { useTemplatesStrings } from '../../templates/templatesStrings';
 import { tableHeaderStyle } from '../common';
+import { WorkflowKind } from '../../../core/state/workflow/workflowInterfaces';
 
 export const SelectWorkflows = ({
   selectedWorkflowsList,
@@ -44,7 +45,13 @@ export const SelectWorkflows = ({
     resourceGroup: state.workflow.resourceGroup,
     selectedTabId: state.tab.selectedTabId,
   }));
-  const { data: workflows, isLoading } = useWorkflowsInApp(subscriptionId, resourceGroup, logicAppName ?? '', !!isConsumption);
+  const { data: workflows, isLoading } = useWorkflowsInApp(
+    subscriptionId,
+    resourceGroup,
+    logicAppName ?? '',
+    !!isConsumption,
+    filterWorkflows
+  );
 
   const onLogicAppSelected = useCallback(
     (app: LogicAppResource) => {
@@ -261,4 +268,9 @@ export const SelectWorkflows = ({
       </TemplatesSection>
     </div>
   );
+};
+
+// TODO: This need to be updated when kind if merged with Stateful in backend [ETA July end]
+const filterWorkflows = (workflow: ArmResource<any>) => {
+  return !equals(workflow.kind, WorkflowKind.AGENTIC);
 };
