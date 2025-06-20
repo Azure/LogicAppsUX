@@ -30,6 +30,11 @@ import { useTemplatesStrings } from '../../templates/templatesStrings';
 import { tableHeaderStyle } from '../common';
 import { WorkflowKind } from '../../../core/state/workflow/workflowInterfaces';
 
+const disabledStyle = {
+  opacity: 0.5,
+  cursor: 'not-allowed',
+};
+
 export const SelectWorkflows = ({
   selectedWorkflowsList,
   onWorkflowsSelected,
@@ -66,17 +71,6 @@ export const SelectWorkflows = ({
     },
     [onWorkflowsSelected]
   );
-
-  const differentIdThanResourceRecord = useMemo(() => {
-    const selectedDifferentNameWorkflowsList: Record<string, string | undefined> = {};
-    for (const workflow of Object.values(selectedWorkflowsList)) {
-      const workflowSourceId = workflow.manifest?.metadata?.workflowSourceId;
-      if (workflowSourceId && workflow.isManageWorkflow) {
-        selectedDifferentNameWorkflowsList[workflowSourceId] = workflow.id;
-      }
-    }
-    return selectedDifferentNameWorkflowsList;
-  }, [selectedWorkflowsList]);
 
   const selectedWorkflowSourceIds = useMemo(() => {
     return Object.values(workflowsInTemplate)
@@ -124,6 +118,7 @@ export const SelectWorkflows = ({
     id: string;
     name: string;
     trigger: string;
+    disabled?: boolean;
   };
 
   const columns: TableColumnDefinition<WorkflowsTableItem>[] = [
@@ -135,13 +130,20 @@ export const SelectWorkflows = ({
     }),
   ];
 
-  const items =
-    workflows?.map((workflow) => ({
-      id: workflow.id,
-      name: workflow.name,
-      trigger: workflow.triggerType,
-      disabled: selectedWorkflowSourceIds.includes(workflow.id),
-    })) ?? [];
+  const items = useMemo(
+    () =>
+      workflows?.map((workflow) => ({
+        id: workflow.id,
+        name: workflow.name,
+        trigger: workflow.triggerType,
+        disabled: isConsumption || selectedWorkflowSourceIds.includes(workflow.id),
+      })) ?? [],
+    [workflows, isConsumption, selectedWorkflowSourceIds]
+  );
+
+  const isAllRowsDisabled = useMemo(() => {
+    return items.length > 0 && items.every((item) => item.disabled);
+  }, [items]);
 
   const {
     getRows,
@@ -165,7 +167,7 @@ export const SelectWorkflows = ({
   );
 
   const rows = getRows((row) => {
-    const selected = isRowSelected(row.item.id);
+    const selected = isConsumption || isRowSelected(row.item.id);
     return {
       ...row,
       onClick: (e: React.MouseEvent) => toggleRow(e, row.item.id),
@@ -213,15 +215,13 @@ export const SelectWorkflows = ({
           <TableHeader>
             <TableRow>
               <TableSelectionCell
-                checked={isConsumption || allRowsSelected ? true : someRowsSelected ? 'mixed' : false}
-                onClick={isConsumption ? () => {} : toggleAllRows}
-                onKeyDown={isConsumption ? () => {} : toggleAllKeydown}
+                checked={allRowsSelected ? true : someRowsSelected ? 'mixed' : false}
+                onClick={isAllRowsDisabled ? () => {} : toggleAllRows}
+                onKeyDown={isAllRowsDisabled ? () => {} : toggleAllKeydown}
                 checkboxIndicator={{ 'aria-label': resourceStrings.SelectAllWorkflowsLabel }}
+                style={isAllRowsDisabled ? disabledStyle : undefined}
               />
               <TableHeaderCell style={tableHeaderStyle}>{intlText.WORKFLOW_NAME}</TableHeaderCell>
-              {Object.keys(differentIdThanResourceRecord).length ? (
-                <TableHeaderCell style={tableHeaderStyle}>{resourceStrings.WORKFLOW_NAME}</TableHeaderCell>
-              ) : null}
               <TableHeaderCell style={tableHeaderStyle}>{resourceStrings.Trigger}</TableHeaderCell>
             </TableRow>
           </TableHeader>
@@ -248,23 +248,16 @@ export const SelectWorkflows = ({
               : rows.map(({ item, selected, onClick, onKeyDown, appearance }) => (
                   <TableRow
                     key={item.id}
-                    onClick={isConsumption ? () => {} : onClick}
-                    onKeyDown={isConsumption ? () => {} : onKeyDown}
+                    onClick={item.disabled ? () => {} : onClick}
+                    onKeyDown={item.disabled ? () => {} : onKeyDown}
                     aria-selected={selected}
                     appearance={appearance}
+                    style={item.disabled ? disabledStyle : undefined}
                   >
-                    <TableSelectionCell
-                      checked={isConsumption || selected}
-                      checkboxIndicator={{ 'aria-label': resourceStrings.WorkflowCheckboxRowLabel }}
-                    />
+                    <TableSelectionCell checked={selected} checkboxIndicator={{ 'aria-label': resourceStrings.WorkflowCheckboxRowLabel }} />
                     <TableCell>
                       <TableCellLayout>{item.name}</TableCellLayout>
                     </TableCell>
-                    {/* {Object.keys(differentIdThanResourceRecord).length ? (
-                      <TableCell>
-                        <TableCellLayout>{item.workflowName ?? resourceStrings.Placeholder}</TableCellLayout>
-                      </TableCell>
-                    ) : null} */}
                     <TableCell>
                       <TableCellLayout>{item.trigger}</TableCellLayout>
                     </TableCell>
