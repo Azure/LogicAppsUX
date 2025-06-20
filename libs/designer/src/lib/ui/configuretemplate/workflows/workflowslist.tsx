@@ -42,6 +42,7 @@ import { workflowsHaveErrors } from '../../../core/configuretemplate/utils/error
 import EBookIcon from '../../../common/images/templates/openbook.svg';
 import { useTemplateWorkflowResources } from '../../../core/configuretemplate/utils/queries';
 import { getDateTimeString } from '../../../core/configuretemplate/utils/helper';
+import { EditWorkflowsPanel } from '../panels/configureWorkflowsPanel/edit/editWorkflowsPanel';
 
 const columnTextStyle: React.CSSProperties = {
   display: '-webkit-box',
@@ -141,6 +142,10 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
     dispatch(openPanelView({ panelView: TemplatePanelView.ConfigureWorkflows }));
   }, [dispatch]);
 
+  const handleEditWorkflows = useCallback(() => {
+    dispatch(openPanelView({ panelView: TemplatePanelView.EditWorkflows }));
+  }, [dispatch]);
+
   const commandBarItems: ICommandBarItemProps[] = [
     {
       key: 'add',
@@ -152,7 +157,8 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
       key: 'edit',
       text: intlText.EDIT,
       iconProps: { iconName: 'Edit' },
-      onClick: handleAddWorkflows,
+      disabled: !selectedWorkflowsList().length,
+      onClick: handleEditWorkflows,
     },
     {
       key: 'delete',
@@ -281,6 +287,9 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
   return (
     <div className="msla-templates-wizard-tab-content">
       {currentPanelView === TemplatePanelView.ConfigureWorkflows && <ConfigureWorkflowsPanel onSave={onSave} />}
+      {currentPanelView === TemplatePanelView.EditWorkflows && (
+        <EditWorkflowsPanel onSave={onSave} selectedWorkflowIds={selectedWorkflowsList()} />
+      )}
 
       <DescriptionWithLink
         text={customResourceStrings.WorkflowsTabDescription}
