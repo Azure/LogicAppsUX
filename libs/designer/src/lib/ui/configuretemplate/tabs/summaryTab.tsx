@@ -36,6 +36,12 @@ export const summaryTab = (
         },
       },
       {
+        type: 'navigation',
+        text: resources.NextButtonText,
+        disabled: true, // Next button is disabled in summary tab
+        onClick: () => {},
+      },
+      {
         type: 'action',
         text: resources.SaveButtonText,
         appearance: 'primary',
