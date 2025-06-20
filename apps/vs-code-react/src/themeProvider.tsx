@@ -1,5 +1,3 @@
-import { AzureThemeDark, AzureThemeLight } from '@fluentui/azure-themes';
-import { ThemeProvider as FluentThemeProvider } from '@fluentui/react';
 import type { ReactNode } from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import { FluentProvider, webDarkTheme, webLightTheme } from '@fluentui/react-components';
@@ -35,9 +33,5 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     return () => observer.disconnect();
   }, [observer]);
 
-  return (
-    <FluentThemeProvider theme={theme === 'dark' ? AzureThemeDark : AzureThemeLight}>
-      <FluentProvider theme={theme === 'dark' ? webDarkTheme : webLightTheme}>{children}</FluentProvider>
-    </FluentThemeProvider>
-  );
+  return <FluentProvider theme={theme === 'dark' ? webDarkTheme : webLightTheme}>{children}</FluentProvider>;
 };

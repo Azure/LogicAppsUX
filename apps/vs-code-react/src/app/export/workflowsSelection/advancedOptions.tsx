@@ -4,7 +4,7 @@ import { updateSelectedAdvanceOptions } from '../../../state/WorkflowSlice';
 import type { AppDispatch, RootState } from '../../../state/store';
 import { SearchableDropdown } from '../../components/searchableDropdown';
 import { getAdvanceOptionsSelection, isCloneConnectionsAvailable } from './helper';
-import type { IDropdownOption } from '@fluentui/react';
+import type { Option } from '@fluentui/react-components';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -60,7 +60,7 @@ export const AdvancedOptions: React.FC = () => {
     }),
   };
 
-  const advancedOptions: IDropdownOption[] = [
+  const advancedOptions: Option[] = [
     { key: AdvancedOptionsTypes.generateInfrastructureTemplates, text: intlText.GENERATE_INFRAESTRUCTURE, selected: false },
     {
       key: AdvancedOptionsTypes.cloneConnections,
@@ -81,7 +81,7 @@ export const AdvancedOptions: React.FC = () => {
   ];
 
   const onChangeOptions = useCallback(
-    (_event: React.FormEvent<HTMLDivElement>, selectedOption?: IDropdownOption<any> | undefined) => {
+    (_event: React.FormEvent<HTMLDivElement>, selectedOption?: Option | undefined) => {
       if (selectedOption) {
         const optionsSelection = getAdvanceOptionsSelection(selectedAdvanceOptions, selectedOption);
         dispatch(

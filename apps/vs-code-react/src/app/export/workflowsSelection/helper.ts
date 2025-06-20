@@ -1,24 +1,24 @@
 import type { WorkflowsList, SelectedWorkflowsList } from '../../../run-service';
 import { AdvancedOptionsTypes } from '../../../run-service';
-import type { IDropdownOption } from '@fluentui/react';
+import type { Option } from '@fluentui/react-components';
 
-export const parseResourceGroups = (workflowItems: WorkflowsList[]): IDropdownOption[] => {
+export const parseResourceGroups = (workflowItems: WorkflowsList[]): Option[] => {
   const resourceGroups: string[] = workflowItems.reduce((acc: string[], curr: WorkflowsList): string[] => {
     acc.push(curr.resourceGroup);
     return acc;
   }, []);
 
-  const dropdownGroups: IDropdownOption[] = [...new Set(resourceGroups)].map((resourceGroup) => {
+  const dropdownGroups: Option[] = [...new Set(resourceGroups)].map((resourceGroup) => {
     return { key: resourceGroup, text: resourceGroup, selected: false };
   });
 
   return dropdownGroups;
 };
 
-export const filterWorkflows = (workflowItems: WorkflowsList[], resourceGroups: IDropdownOption[], newSearchString: string) => {
+export const filterWorkflows = (workflowItems: WorkflowsList[], resourceGroups: Option[], newSearchString: string) => {
   const selectedFilters: Array<string | number> = resourceGroups
-    .filter((resourceGroup: IDropdownOption) => resourceGroup.selected)
-    .map((resourceGroup: IDropdownOption) => resourceGroup.key);
+    .filter((resourceGroup: Option) => resourceGroup.selected)
+    .map((resourceGroup: Option) => resourceGroup.key);
 
   let renderWorkflows = [...workflowItems];
 
@@ -90,7 +90,7 @@ export const hasInfrastructureTemplates = (selectedAdvanceOptions: AdvancedOptio
 
 export const getAdvanceOptionsSelection = (
   selectedAdvanceOptions: AdvancedOptionsTypes[],
-  selectedOption: IDropdownOption
+  selectedOption: Option
 ): AdvancedOptionsTypes[] => {
   const updatedOptions = [...selectedAdvanceOptions];
 
