@@ -24,6 +24,7 @@ import {
   DialogContent,
   Button,
   tokens,
+  Link,
 } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 import { CommandBar, type ICommandBarItemProps, mergeStyles, PrimaryButton } from '@fluentui/react';
@@ -41,6 +42,16 @@ import { workflowsHaveErrors } from '../../../core/configuretemplate/utils/error
 import EBookIcon from '../../../common/images/templates/openbook.svg';
 import { useTemplateWorkflowResources } from '../../../core/configuretemplate/utils/queries';
 import { getDateTimeString } from '../../../core/configuretemplate/utils/helper';
+
+const columnTextStyle: React.CSSProperties = {
+  display: '-webkit-box',
+  WebkitLineClamp: 1,
+  WebkitBoxOrient: 'vertical',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  wordBreak: 'break-word',
+  lineBreak: 'anywhere',
+};
 
 export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean) => void }) => {
   const intl = useIntl();
@@ -64,9 +75,14 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
 
   const intlText = useMemo(
     () => ({
+      ADD: intl.formatMessage({
+        defaultMessage: 'Add',
+        id: 'I2XWRg',
+        description: 'Button text for opening panel for adding workflows',
+      }),
       EDIT: intl.formatMessage({
-        defaultMessage: 'Manage workflows',
-        id: 'FK8YcR',
+        defaultMessage: 'Edit',
+        id: 'p2eSD1',
         description: 'Button text for opening panel for editing workflows',
       }),
       DELETE: intl.formatMessage({
@@ -80,8 +96,8 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
         description: 'Title text for deleting selected workflows',
       }),
       EMPTY_TITLE: intl.formatMessage({
-        defaultMessage: 'Manage workflows for this template',
-        id: 'gA8nWC',
+        defaultMessage: 'Add workflows for this template',
+        id: '+yTsXQ',
         description: 'Empty state title for workflows list',
       }),
       ERROR_TITLE: intl.formatMessage({
@@ -127,9 +143,15 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
 
   const commandBarItems: ICommandBarItemProps[] = [
     {
+      key: 'add',
+      text: intlText.ADD,
+      iconProps: { iconName: 'Add' },
+      onClick: handleAddWorkflows,
+    },
+    {
       key: 'edit',
       text: intlText.EDIT,
-      iconProps: { iconName: 'Settings' },
+      iconProps: { iconName: 'Edit' },
       onClick: handleAddWorkflows,
     },
     {
@@ -344,7 +366,11 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
             <TableRow key={item.id} onClick={onClick} onKeyDown={onKeyDown} aria-selected={selected} appearance={appearance}>
               <TableSelectionCell checked={selected} checkboxIndicator={{ 'aria-label': customResourceStrings.WorkflowCheckboxRowLabel }} />
               <TableCell>
-                <TableCellLayout>{item.id}</TableCellLayout>
+                <TableCellLayout>
+                  <Link style={columnTextStyle} as="button" onClick={handleAddWorkflows}>
+                    {item.id}
+                  </Link>
+                </TableCellLayout>
               </TableCell>
               {isMultiWorkflow && (
                 <TableCell>
@@ -379,7 +405,7 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
             className={mergeStyles({ width: '40%', marginTop: 0 })}
           />
           <div style={{ padding: '10px 0' }}>
-            <PrimaryButton onClick={handleAddWorkflows}>{intlText.EDIT}</PrimaryButton>
+            <PrimaryButton onClick={handleAddWorkflows}>{intlText.ADD}</PrimaryButton>
           </div>
         </div>
       )}
