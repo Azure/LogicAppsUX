@@ -1,4 +1,4 @@
-import { makeStyles } from '@fluentui/react-components';
+import { makeStyles, tokens } from '@fluentui/react-components';
 
 /**
  * Connection container styles migrated from connectioncontainer.less
@@ -20,5 +20,13 @@ export const useConnectionContainerStyles = makeStyles({
   connectionStatusIcon: {
     fontSize: connectionContainerTokens.fontSizeXLarge,
     verticalAlign: 'middle',
+  },
+
+  iconSuccess: {
+    color: tokens.colorStatusSuccessForeground1,
+  },
+
+  iconError: {
+    color: tokens.colorStatusDangerForeground1,
   },
 });

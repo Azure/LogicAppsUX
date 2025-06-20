@@ -22,6 +22,7 @@ const getInitialConnectionContentState = (): ConnectionPanelContentState => ({
   isCreatingConnection: false,
   panelMode: 'Connection',
   selectedNodeIds: [],
+  expandedConnectorIds: [],
 });
 
 const getInitialDiscoveryContentState = (): DiscoveryPanelContentState => ({
@@ -91,7 +92,10 @@ export const panelSlice = createSlice({
     clearPanel: (state, action: PayloadAction<{ clearPinnedState?: boolean } | undefined>) => {
       const { clearPinnedState } = action.payload ?? {};
 
-      state.connectionContent = getInitialConnectionContentState();
+      state.connectionContent = {
+        ...getInitialConnectionContentState(),
+        expandedConnectorIds: state.connectionContent.expandedConnectorIds,
+      };
       state.currentPanelMode = 'Operation';
       state.discoveryContent = {
         ...getInitialDiscoveryContentState(),
@@ -278,6 +282,9 @@ export const panelSlice = createSlice({
     setIsCreatingConnection: (state, action: PayloadAction<boolean>) => {
       state.connectionContent.isCreatingConnection = action.payload;
     },
+    setConnectionPanelExpandedConnectorIds: (state, action: PayloadAction<string[]>) => {
+      state.connectionContent.expandedConnectorIds = action.payload;
+    },
     selectErrorsPanelTab: (state, action: PayloadAction<string>) => {
       state.errorContent.selectedTabId = action.payload;
 
@@ -329,6 +336,7 @@ export const {
   setPinnedPanelActiveTab,
   setSelectedPanelActiveTab,
   setIsCreatingConnection,
+  setConnectionPanelExpandedConnectorIds,
   setIsPanelLoading,
   setAlternateSelectedNode,
   setSelectedNodeId,
