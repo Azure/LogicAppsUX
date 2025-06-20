@@ -64,16 +64,22 @@ export class BaseResourceService implements IResourceService {
     return response.map((item) => ({ id: item.id, name: item.name, location: item.location, plan: item.plan }));
   }
 
-  async listWorkflowsInApp(subscriptionId: string, resourceGroup: string, logicAppName: string): Promise<WorkflowResource[]> {
+  async listWorkflowsInApp(
+    subscriptionId: string,
+    resourceGroup: string,
+    logicAppName: string,
+    filter?: (workflow: ArmResource<any>) => boolean
+  ): Promise<WorkflowResource[]> {
     const { baseUrl, httpClient } = this.options;
     const uri = `${baseUrl}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/sites/${logicAppName}/hostruntime/runtime/webhooks/workflow/api/management/workflows`;
     const queryParameters = { 'api-version': '2018-11-01' };
     const response: any = await httpClient.get({ uri, queryParameters });
-    return response.map((item: any) => ({
+    const mapper = (item: any) => ({
       id: `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/sites/${logicAppName}/workflows/${item.name}`,
       name: getResourceNameFromId(item.name),
       triggerType: getTriggerFromDefinition(item.triggers),
-    }));
+    });
+    return filter ? response.filter(filter).map(mapper) : response.map(mapper);
   }
 
   async getResource(resourceId: string, queryParameters: Record<string, string>): Promise<ArmResource<any>> {

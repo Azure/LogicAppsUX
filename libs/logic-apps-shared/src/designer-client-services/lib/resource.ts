@@ -15,7 +15,7 @@ export interface IResourceService {
     subscriptionId: string,
     resourceGroup: string,
     logicAppName: string,
-    isConsumption: boolean
+    filter?: (workflow: ArmResource<any>) => boolean
   ) => Promise<WorkflowResource[]>;
   getResource: (resourceId: string, queryParameters: Record<string, string>) => Promise<ArmResource<any>>;
 }

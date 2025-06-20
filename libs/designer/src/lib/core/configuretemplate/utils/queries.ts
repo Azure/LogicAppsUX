@@ -142,18 +142,26 @@ export const useWorkflowsInApp = (
   subscriptionId: string,
   resourceGroup: string,
   logicAppName: string,
-  isConsumption: boolean
+  isConsumption: boolean,
+  filter?: (workflow: ArmResource<any>) => boolean
 ): UseQueryResult<WorkflowResource[], unknown> => {
   const queryClient = useQueryClient();
   return useQuery(
-    ['workflowsInApp', subscriptionId?.toLowerCase(), resourceGroup?.toLowerCase(), logicAppName?.toLowerCase(), isConsumption],
+    [
+      'workflowsInApp',
+      subscriptionId?.toLowerCase(),
+      resourceGroup?.toLowerCase(),
+      logicAppName?.toLowerCase(),
+      isConsumption,
+      `hasFilter:${!!filter}`,
+    ],
     async () => {
       if (isConsumption) {
         const workflow = await getConsumptionWorkflow(subscriptionId, resourceGroup, logicAppName, queryClient);
         return [{ id: workflow.id, name: workflow.name, triggerType: getTriggerFromDefinition(workflow.properties.definition.triggers) }];
       }
 
-      return ResourceService().listWorkflowsInApp(subscriptionId, resourceGroup, logicAppName, isConsumption);
+      return ResourceService().listWorkflowsInApp(subscriptionId, resourceGroup, logicAppName, filter);
     },
     {
       cacheTime: 1000 * 60 * 60 * 24,
