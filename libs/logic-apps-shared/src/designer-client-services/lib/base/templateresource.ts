@@ -133,11 +133,6 @@ export class BaseTemplateResourceService implements ITemplateResourceService {
     await httpClient.delete({ uri, queryParameters: { 'api-version': apiVersion } });
   }
 
-  public async deleteAllWorkflows(resourceId: string) {
-    const workflows = await this.getTemplateWorkflows(resourceId);
-    await Promise.all(workflows.map((workflow) => this.deleteWorkflow(resourceId, workflow.name)));
-  }
-
   public async createArtifact(_id: string, _artifact: Template.Artifact) {
     throw new Error('Method not implemented.');
   }
