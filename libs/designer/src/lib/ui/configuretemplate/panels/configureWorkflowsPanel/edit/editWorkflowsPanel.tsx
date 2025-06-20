@@ -1,7 +1,7 @@
 import type { AppDispatch, RootState } from '../../../../../core/state/templates/store';
 import { useDispatch, useSelector } from 'react-redux';
-import { closePanel, selectPanelTab, TemplatePanelView } from '../../../../../core/state/templates/panelSlice';
-import { type TemplateTabProps, TemplateContent, TemplatesPanelFooter, TemplatesPanelHeader } from '@microsoft/designer-ui';
+import { closePanel, TemplatePanelView } from '../../../../../core/state/templates/panelSlice';
+import { type TemplateTabProps, TemplatesPanelFooter, TemplatesPanelHeader } from '@microsoft/designer-ui';
 import { useCallback, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { Panel, PanelType } from '@fluentui/react';
@@ -39,10 +39,9 @@ export const EditWorkflowsPanel = ({
 }) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
-  const { isWizardUpdating, workflows, selectedTabId, isOpen, currentPanelView, currentPublishedState, runValidation } = useSelector(
+  const { isWizardUpdating, workflows, isOpen, currentPanelView, currentPublishedState, runValidation } = useSelector(
     (state: RootState) => ({
       isWizardUpdating: state.tab.isWizardUpdating,
-      selectedTabId: state.panel.selectedTabId,
       isOpen: state.panel.isOpen,
       currentPanelView: state.panel.currentPanelView,
       workflows: state.template.workflows,
@@ -88,10 +87,6 @@ export const EditWorkflowsPanel = ({
     dispatch(saveWorkflowsData({ workflows: selectedWorkflowsList(), onSaveCompleted }));
   };
 
-  const handleSelectTab = (tabId: string): void => {
-    dispatch(selectPanelTab(tabId));
-  };
-
   const onRenderHeaderContent = useCallback(
     () => (
       <TemplatesPanelHeader
@@ -117,23 +112,21 @@ export const EditWorkflowsPanel = ({
       (Object.keys(selectedWorkflowsList()).length > 1 && !workflow?.manifest?.title)
   );
 
-  const panelTabs: TemplateTabProps[] = [
-    customizeWorkflowsTab(intl, resources, dispatch, {
-      selectedWorkflowsList: selectedWorkflowsList(),
-      updateWorkflowDataField,
-      isSaving: isWizardUpdating,
-      disabled: isDirty,
-      isPrimaryButtonDisabled: !isDirty || hasInvalidOrMissingTitle,
-      status: currentPublishedState,
-      onSave: onSaveChanges,
-      onClose: dismissPanel,
-      duplicateIds: [],
-    }),
-  ];
-  const selectedTabProps = selectedTabId ? panelTabs?.find((tab) => tab.id === selectedTabId) : panelTabs[0];
+  const panelTab: TemplateTabProps = customizeWorkflowsTab(intl, resources, dispatch, {
+    selectedWorkflowsList: selectedWorkflowsList(),
+    updateWorkflowDataField,
+    isSaving: isWizardUpdating,
+    disabled: isDirty,
+    isPrimaryButtonDisabled: !isDirty || hasInvalidOrMissingTitle,
+    status: currentPublishedState,
+    onSave: onSaveChanges,
+    onClose: dismissPanel,
+    duplicateIds: [],
+  });
+
   const onRenderFooterContent = useCallback(
-    () => (selectedTabProps?.footerContent ? <TemplatesPanelFooter {...selectedTabProps?.footerContent} /> : null),
-    [selectedTabProps?.footerContent]
+    () => (panelTab?.footerContent ? <TemplatesPanelFooter {...panelTab?.footerContent} /> : null),
+    [panelTab?.footerContent]
   );
 
   return (
@@ -150,7 +143,7 @@ export const EditWorkflowsPanel = ({
       layerProps={layerProps}
       isFooterAtBottom={true}
     >
-      <TemplateContent tabs={panelTabs} selectedTab={selectedTabId ?? panelTabs?.[0]?.id} selectTab={handleSelectTab} />
+      {panelTab?.content}
     </Panel>
   );
 };
