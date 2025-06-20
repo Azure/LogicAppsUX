@@ -27,7 +27,6 @@ export const parametersTab = (
       {
         type: 'navigation',
         text: resources.NextButtonText,
-        appearance: 'primary',
         onClick: () => {
           dispatch(selectWizardTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.PROFILE));
         },

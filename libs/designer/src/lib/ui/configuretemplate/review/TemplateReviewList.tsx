@@ -42,10 +42,10 @@ export const TemplateReviewList = () => {
       id: '0m0zNa',
       description: 'The label for the connector type',
     }),
-    StatusAndPlanLabel: intl.formatMessage({
-      defaultMessage: 'Status and Plan',
-      id: 'oiME91',
-      description: 'The label for the status and plan tab label',
+    BasicsLabel: intl.formatMessage({
+      defaultMessage: 'Basics',
+      id: 'yk8Zqn',
+      description: 'The label for the basics section',
     }),
     ErrorMessage: intl.formatMessage({
       defaultMessage: 'Template validation failed. Please check the tabs for more details to fix the errors',
@@ -73,7 +73,7 @@ export const TemplateReviewList = () => {
   const { connectorKinds, stateTypes, resourceStrings: templateResourceStrings } = useTemplatesStrings();
   const resources = { ...templateResourceStrings, ...connectorKinds, ...stateTypes, ...useResourceStrings(), ...intlText };
 
-  const statusAndPlanItems: TemplatesSectionItem[] = useStatusAndPlanItems(resources);
+  const BasicsItems: TemplatesSectionItem[] = useBascisItems(resources);
   const workflowsSectionItems: TemplatesSectionItem[] = useWorkflowSectionItems(resources);
   const connectionsSectionItems: TemplatesSectionItem[] = useConnectionSectionItems(resources);
   const paramtersSectionItems: TemplatesSectionItem[] = useParameterSectionItems(resources);
@@ -81,8 +81,8 @@ export const TemplateReviewList = () => {
 
   const sectionItems: Record<string, { label: string; value: TemplatesSectionItem[]; emptyText?: string }> = {
     statusAndPlan: {
-      label: resources.StatusAndPlanLabel,
-      value: statusAndPlanItems,
+      label: resources.BasicsLabel,
+      value: BasicsItems,
     },
     profile: {
       label: resources.ProfileTabLabel,
@@ -133,13 +133,22 @@ export const TemplateReviewList = () => {
   );
 };
 
-const useStatusAndPlanItems = (resources: Record<string, string>) => {
+const useBascisItems = (resources: Record<string, string>) => {
   const { status, templateManifest } = useSelector((state: RootState) => ({
     status: state.template.status,
     templateManifest: state.template.manifest,
   }));
 
   const items: TemplatesSectionItem[] = [
+    {
+      label: resources.Status,
+      value: equals(status, 'Production')
+        ? resources.ProductionEnvironment
+        : equals(status, 'Testing')
+          ? resources.TestingEnvironment
+          : resources.DevelopmentEnvironment,
+      type: 'text',
+    },
     {
       label: resources.Host,
       value:
@@ -148,15 +157,6 @@ const useStatusAndPlanItems = (resources: Record<string, string>) => {
             equals(skuKind, 'standard') ? resources.Standard : equals(skuKind, 'consumption') ? resources.Consumption : ''
           )
           ?.join(', ') ?? resources.Placeholder,
-      type: 'text',
-    },
-    {
-      label: resources.Status,
-      value: equals(status, 'Production')
-        ? resources.ProductionEnvironment
-        : equals(status, 'Testing')
-          ? resources.TestingEnvironment
-          : resources.DevelopmentEnvironment,
       type: 'text',
     },
   ];
@@ -219,6 +219,12 @@ const useWorkflowSectionItems = (resources: Record<string, string>) => {
       });
 
       thisWorkflowSectionItems.splice(3, 0, {
+        label: resources.Trigger,
+        value: workflow?.triggerType ?? resources.Placeholder,
+        type: 'text',
+      });
+
+      thisWorkflowSectionItems.splice(4, 0, {
         label: resources.Summary,
         value: workflow?.manifest?.summary ?? resources.Placeholder,
         type: 'text',
@@ -346,11 +352,6 @@ const useProfileSectionItems = (resources: Record<string, string>) => {
       type: 'text',
     },
     {
-      label: resources.Summary,
-      value: templateManifest?.summary ?? resources.Placeholder,
-      type: 'text',
-    },
-    {
       label: resources.TemplateType,
       value: Object.keys(workflows).length > 1 ? resources.ACCELERATOR : resources.WORKFLOW,
       type: 'text',
@@ -361,8 +362,8 @@ const useProfileSectionItems = (resources: Record<string, string>) => {
       type: 'text',
     },
     {
-      label: resources.Category,
-      value: templateManifest?.details?.Category ? templateManifest?.details?.Category : resources.Placeholder,
+      label: resources.Summary,
+      value: templateManifest?.summary ?? resources.Placeholder,
       type: 'text',
     },
     {
@@ -374,13 +375,24 @@ const useProfileSectionItems = (resources: Record<string, string>) => {
       type: 'text',
     },
     {
+      label: resources.Category,
+      value: templateManifest?.details?.Category ? templateManifest?.details?.Category : resources.Placeholder,
+      type: 'text',
+    },
+    {
       label: resources.Tags,
       value: templateManifest?.tags && templateManifest?.tags?.length > 0 ? templateManifest?.tags?.join(', ') : resources.Placeholder,
       type: 'text',
     },
   ];
 
-  if (!isSingleWorkflow) {
+  if (isSingleWorkflow) {
+    items.splice(2, 0, {
+      label: resources.Trigger,
+      value: templateManifest?.details?.Trigger ?? resources.Placeholder,
+      type: 'text',
+    });
+  } else {
     items.splice(4, 0, {
       label: resources.Features,
       value: templateManifest?.description ?? resources.Placeholder,
