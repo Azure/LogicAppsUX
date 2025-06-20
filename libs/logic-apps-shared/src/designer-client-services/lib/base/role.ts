@@ -41,9 +41,8 @@ export class BaseRoleService implements IRoleService {
   }
 
   async fetchAppRoleAssignmentsForResource(resourceId: string): Promise<ArmResource<RoleAssignment>[]> {
-    const { baseUrl, httpClient, apiVersion = defaultApiVersion, appIdentityId, userIdentityId } = this.options;
+    const { baseUrl, httpClient, apiVersion = defaultApiVersion, appIdentityId } = this.options;
     const uri = `${baseUrl}${resourceId}/providers/Microsoft.Authorization/roleAssignments`;
-    console.log('#> Identities', { appIdentityId, userIdentityId });
     const queryParameters = {
       'api-version': apiVersion,
       $filter: `atScope() and assignedTo('${appIdentityId}')`,
