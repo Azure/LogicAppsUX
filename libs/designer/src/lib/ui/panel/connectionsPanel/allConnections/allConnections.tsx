@@ -67,7 +67,6 @@ export const AllConnections = () => {
 
   const openConnectors = useSelector((state: RootState) => state.panel.connectionContent.expandedConnectorIds) || [];
   const handleToggle: AccordionToggleEventHandler = (_e, data: any) => {
-    console.log('#> handleToggle', data);
     dispatch(setConnectionPanelExpandedConnectorIds((data?.openItems ?? []) as string[]));
   };
 
