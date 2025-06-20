@@ -34,7 +34,7 @@ import { useHotkeys } from 'react-hotkeys-hook';
 import { useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { Background, ReactFlow, ReactFlowProvider, BezierEdge } from '@xyflow/react';
-import type { BackgroundProps, EdgeTypes, NodeChange } from '@xyflow/react';
+import type { BackgroundProps, EdgeTypes, NodeChange, ReactFlowInstance } from '@xyflow/react';
 import { PerformanceDebugTool } from './common/PerformanceDebug/PerformanceDebug';
 import { CanvasFinder } from './CanvasFinder';
 import { DesignerContextualMenu } from './common/DesignerContextualMenu/DesignerContextualMenu';
@@ -81,6 +81,21 @@ export const Designer = (props: DesignerProps) => {
   const { backgroundProps, panelLocation = PanelLocation.Right, customPanelLocations } = props;
 
   const [nodes, edges, flowSize] = useLayout();
+
+  const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null);
+
+  const onInit = useCallback((instance: ReactFlowInstance) => {
+    setReactFlowInstance(instance);
+  }, []);
+
+  useEffect(() => {
+    if (nodes.length > 0 && reactFlowInstance) {
+      requestAnimationFrame(() => {
+        reactFlowInstance.fitView({ padding: 0.6 });
+      });
+    }
+  }, [nodes, reactFlowInstance]);
+
   const isEmpty = useIsGraphEmpty();
   const isVSCode = useIsVSCode();
   const isReadOnly = useReadOnly();
@@ -231,6 +246,7 @@ export const Designer = (props: DesignerProps) => {
           <div style={{ flexGrow: 1 }}>
             <ReactFlow
               ref={canvasRef}
+              onInit={onInit}
               nodeTypes={nodeTypes}
               nodes={nodesWithPlaceholder}
               edges={edges}
