@@ -21,13 +21,15 @@ export const useConfigureWorkflowPanelTabs = ({
 }): TemplateTabProps[] => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
-  const { isWizardUpdating, workflowState, runValidation, currentPublishedState } = useSelector((state: RootState) => ({
-    workflowsInTemplate: state.template.workflows,
-    isWizardUpdating: state.tab.isWizardUpdating,
-    workflowState: state.workflow,
-    runValidation: state.tab.runValidation,
-    currentPublishedState: state.template.status,
-  }));
+  const { isWizardUpdating, workflowState, runValidation, currentPublishedState, workflowsInTemplate } = useSelector(
+    (state: RootState) => ({
+      workflowsInTemplate: state.template.workflows,
+      isWizardUpdating: state.tab.isWizardUpdating,
+      workflowState: state.workflow,
+      runValidation: state.tab.runValidation,
+      currentPublishedState: state.template.status,
+    })
+  );
 
   const hasError = false; // Placeholder for actual error state
   const resources = useResourceStrings();
@@ -35,11 +37,12 @@ export const useConfigureWorkflowPanelTabs = ({
   const [selectedWorkflowsList, setSelectedWorkflowsList] = useFunctionalState<Record<string, Partial<WorkflowTemplateData>>>({});
 
   const currentSelectedWorkflowsList = selectedWorkflowsList();
-  // TODO: check name must be unique from existing workflows in the template as well
   const duplicateIds = useMemo(() => {
+    // Combine workflows in template and currently selected workflows (with new user-input id) to check for duplicates
+    const combinedWorkflowsUsingIds = { ...workflowsInTemplate, ...currentSelectedWorkflowsList };
     const seen = new Set<string>();
     const duplicateIds = new Set<string>();
-    for (const { id } of Object.values(currentSelectedWorkflowsList)) {
+    for (const { id } of Object.values(combinedWorkflowsUsingIds)) {
       if (!id) {
         continue;
       }
@@ -49,7 +52,7 @@ export const useConfigureWorkflowPanelTabs = ({
       seen.add(id);
     }
     return Array.from(duplicateIds);
-  }, [currentSelectedWorkflowsList]);
+  }, [workflowsInTemplate, currentSelectedWorkflowsList]);
 
   const onWorkflowsSelected = (normalizedWorkflowIds: string[]) => {
     setSelectedWorkflowsList((prevSelectedWorkflows) => {
@@ -94,8 +97,8 @@ export const useConfigureWorkflowPanelTabs = ({
         ...workflowData,
       };
       const updatedManifestError = validateWorkflowData(updatedWorkflowData, Object.keys(prevSelectedWorkflows).length > 1);
-      // TODO: check name must be unique from existing workflows in the template as well
-      const formattedOtherSelectedIds = Object.entries(prevSelectedWorkflows).map(
+      const combinedWorkflowsUsingIds = { ...workflowsInTemplate, ...prevSelectedWorkflows };
+      const formattedOtherSelectedIds = Object.entries(combinedWorkflowsUsingIds).map(
         ([curWorkflowId, workflow]) => workflowId !== curWorkflowId && getResourceNameFromId(workflow.id as string)
       );
 
