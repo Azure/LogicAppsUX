@@ -20,7 +20,7 @@ export class HybridAppCreateStep extends AzureWizardExecuteStep<ILogicAppWizardC
       ext.outputChannel.appendLog(message);
       progress.report({ message });
 
-      const accessToken = await getAuthorizationToken();
+      const accessToken = await getAuthorizationToken(context.tenantId);
 
       const hybridAppOptions = {
         sqlConnectionString: context.sqlConnectionString,

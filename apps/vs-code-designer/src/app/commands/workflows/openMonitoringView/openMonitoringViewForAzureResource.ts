@@ -13,7 +13,6 @@ import {
   getWorkflowManagementBaseURI,
   getStandardAppData,
 } from '../../../utils/codeless/common';
-import { getAuthorizationToken } from '../../../utils/codeless/getAuthorizationToken';
 import { sendAzureRequest } from '../../../utils/requestUtils';
 import type { IAzureConnectorsContext } from '../azureConnectorWizard';
 import { OpenMonitoringViewBase } from './openMonitoringViewBase';
@@ -24,6 +23,7 @@ import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic
 import * as vscode from 'vscode';
 import type { WebviewPanel } from 'vscode';
 import { Uri, ViewColumn } from 'vscode';
+import { getAuthorizationTokenFromNode } from '../../../utils/codeless/getAuthorizationToken';
 
 export default class openMonitoringViewForAzureResource extends OpenMonitoringViewBase {
   private node: RemoteWorkflowTreeItem;
@@ -165,7 +165,7 @@ export default class openMonitoringViewForAzureResource extends OpenMonitoringVi
   }
 
   private async getDesignerPanelMetadata(): Promise<IDesignerPanelMetadata> {
-    const accessToken: string = await getAuthorizationToken();
+    const accessToken: string = await getAuthorizationTokenFromNode(this.node);
 
     return {
       panelId: this.panelName,
