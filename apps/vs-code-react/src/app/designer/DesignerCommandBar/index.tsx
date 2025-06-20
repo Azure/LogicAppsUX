@@ -306,12 +306,13 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
       onClick: () => !!dispatch(openPanel({ panelMode: 'WorkflowParameters' })),
     },
     {
-      key: 'connections',
-      text: 'Connections',
+      key: 'Connections',
       disabled: false,
+      ariaLabel: Resources.DESIGNER_CONNECTIONS,
+      text: Resources.DESIGNER_CONNECTIONS,
       icon: <ConnectionsIcon />,
-      onClick: () => !!dispatch(openPanel({ panelMode: 'Connection' })),
       renderTextIcon: null,
+      onClick: () => !!dispatch(openPanel({ panelMode: 'Connection' })),
     },
     {
       key: 'errors',
