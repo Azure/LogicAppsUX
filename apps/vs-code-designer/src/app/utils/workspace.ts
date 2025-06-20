@@ -108,9 +108,9 @@ export const getWorkspaceFileInParentDirectory = async (actionContext: IActionCo
 };
 
 /**
- * Gets workspace folder from the workflow file path.
- * @param {string} fsPath - Workflow file path.
- * @returns {vscode.WorkspaceFolder | undefined} Workflow folder.
+ * Gets workspace folder from path of any file in the workspace folder.
+ * @param {string} fsPath - The path of the file in the workspace folder.
+ * @returns {vscode.WorkspaceFolder | undefined} - The workspace folder.
  */
 export function getContainingWorkspace(fsPath: string): vscode.WorkspaceFolder | undefined {
   const openFolders = vscode.workspace.workspaceFolders || [];
@@ -160,7 +160,7 @@ export async function getWorkspaceFolder(
   context: IActionContext,
   message?: string,
   skipPromptOnMultipleFolders?: boolean
-): Promise<vscode.WorkspaceFolder | string | undefined> {
+): Promise<vscode.WorkspaceFolder | undefined> {
   const promptMessage: string = message ?? localize('noWorkspaceWarning', 'You must have a workspace open to perform this action.');
 
   if (!vscode.workspace.workspaceFolders || vscode.workspace.workspaceFolders.length === 0) {
@@ -180,43 +180,40 @@ export async function getWorkspaceFolder(
     const folderContents = await fse.readdir(workspaceFolderPath, { withFileTypes: true });
     const subFolders = folderContents.filter((dirent) => dirent.isDirectory()).map((dirent) => path.join(workspaceFolderPath, dirent.name));
 
-    const returnsWorkspaceFolder: boolean = false;
-    return await selectLogicAppWorkspaceFolder(context, returnsWorkspaceFolder, subFolders, skipPromptOnMultipleFolders);
+    return await selectLogicAppWorkspaceFolder(context, subFolders, skipPromptOnMultipleFolders);
   }
 
-  const returnsWorkspaceFolder: boolean = true;
-  return await selectLogicAppWorkspaceFolder(context, returnsWorkspaceFolder, null, skipPromptOnMultipleFolders);
+  return await selectLogicAppWorkspaceFolder(context, null, skipPromptOnMultipleFolders);
 }
 
 async function selectLogicAppWorkspaceFolder(
   context: IActionContext,
-  returnsWorkspaceFolder: boolean,
   subFolders: string[],
   skipPromptOnMultipleFolders?: boolean
-): Promise<vscode.WorkspaceFolder | string> {
-  const logicAppsWorkspaces = [];
-  for (const folder of returnsWorkspaceFolder ? vscode.workspace.workspaceFolders : subFolders) {
+): Promise<vscode.WorkspaceFolder> {
+  const logicAppProjectRoots: string[] = [];
+  for (const folder of subFolders ?? vscode.workspace.workspaceFolders) {
     const projectRoot = await tryGetLogicAppProjectRoot(context, folder);
     if (projectRoot) {
-      logicAppsWorkspaces.push(projectRoot);
+      logicAppProjectRoots.push(projectRoot);
     }
   }
 
-  if (logicAppsWorkspaces.length === 0) {
+  if (logicAppProjectRoots.length === 0) {
     return undefined;
   }
 
-  if (logicAppsWorkspaces.length === 1 || skipPromptOnMultipleFolders) {
-    return logicAppsWorkspaces[0];
+  if (logicAppProjectRoots.length === 1 || skipPromptOnMultipleFolders) {
+    return getContainingWorkspace(logicAppProjectRoots[0]);
   }
 
   const placeHolder: string = localize('selectProjectFolder', 'Select the folder containing your logic app project');
-  const folderPicks: IAzureQuickPickItem<vscode.WorkspaceFolder>[] = logicAppsWorkspaces.map((projectRoot) => {
+  const folderPicks: IAzureQuickPickItem<vscode.WorkspaceFolder>[] = logicAppProjectRoots.map((projectRoot) => {
     const workspaceFolder = vscode.workspace.workspaceFolders?.find((folder) => folder.uri.fsPath === projectRoot);
     return {
       label: path.basename(projectRoot),
       description: projectRoot,
-      data: returnsWorkspaceFolder ? workspaceFolder : projectRoot,
+      data: workspaceFolder ?? getContainingWorkspace(projectRoot),
     };
   });
 

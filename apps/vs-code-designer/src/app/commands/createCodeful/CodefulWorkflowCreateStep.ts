@@ -37,7 +37,6 @@ import { createConnectionsJson } from '../../utils/codeless/connection';
 import { createEmptyParametersJson } from '../../utils/codeless/parameter';
 import { getDebugConfigs, updateDebugConfigs } from '../../utils/vsCodeConfig/launch';
 import { getWorkspaceFolder, isMultiRootWorkspace } from '../../utils/workspace';
-import { isNullOrUndefined, isString } from '@microsoft/logic-apps-shared';
 import { localize } from '../../../localize';
 
 export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionWizardContext> {
@@ -68,7 +67,7 @@ export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionW
     await this.createSystemArtifacts(context);
 
     if (context.workspaceFolder === undefined) {
-      context.workspaceFolder = await this.getWorkspaceFolder(context);
+      context.workspaceFolder = await getWorkspaceFolder(context);
     }
 
     await this.updateLogicAppLaunchJson(
@@ -80,32 +79,6 @@ export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionW
     );
 
     return workflowCsFullPath;
-  }
-
-  private createWorkspaceFolderFromPath(path: string): vscode.WorkspaceFolder {
-    const uri = vscode.Uri.file(path);
-    return {
-      uri,
-      name: uri.fsPath.split(/[\\/]/).pop() || uri.fsPath,
-      index: 0, // Set appropriately if you have multiple folders
-    };
-  }
-
-  private async getWorkspaceFolder(context: IFunctionWizardContext): Promise<vscode.WorkspaceFolder | undefined> {
-    let workspaceFolder: string | vscode.WorkspaceFolder | undefined;
-    let workspacePath = context.workspacePath;
-    workspacePath = isString(workspacePath) ? workspacePath : undefined;
-    if (workspacePath === undefined) {
-      workspaceFolder = await getWorkspaceFolder(context);
-      workspacePath = isNullOrUndefined(workspaceFolder)
-        ? undefined
-        : isString(workspaceFolder)
-          ? workspaceFolder
-          : workspaceFolder.uri.fsPath;
-    } else {
-      workspaceFolder = this.createWorkspaceFolderFromPath(workspacePath);
-    }
-    return workspaceFolder as vscode.WorkspaceFolder;
   }
 
   /**

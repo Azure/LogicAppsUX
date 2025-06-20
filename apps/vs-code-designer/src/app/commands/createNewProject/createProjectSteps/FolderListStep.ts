@@ -21,7 +21,7 @@ export class FolderListStep extends AzureWizardPromptStep<IProjectWizardContext>
   }
 
   public async prompt(context: IProjectWizardContext): Promise<void> {
-    const placeHolder: string = localize('selectNewProjectFolder', 'Select the folder that will contain your workflow project');
+    const placeHolder: string = localize('selectNewProjectFolder', 'Select the folder that will contain your logic app workspace');
     FolderListStep.setProjectPath(context, await selectWorkspaceFolder(context, placeHolder));
   }
 

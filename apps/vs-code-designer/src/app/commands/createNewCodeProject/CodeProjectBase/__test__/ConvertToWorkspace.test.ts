@@ -151,7 +151,7 @@ describe('convertToWorkspace', () => {
 
     const result = await convertToWorkspace(context);
 
-    expect(isLogicAppProjectInRootSpy).toHaveBeenCalledWith(testLogicAppChildFolder);
+    expect(isLogicAppProjectInRootSpy).toHaveBeenCalledWith(testWorkspaceFolder);
     expect(showInfoSpy).toHaveBeenCalledWith(
       localize(
         'openContainingWorkspace',
