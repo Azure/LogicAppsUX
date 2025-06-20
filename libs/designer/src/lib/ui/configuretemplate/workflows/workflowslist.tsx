@@ -71,6 +71,8 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
   const isMultiWorkflow = Object.keys(workflows).length > 1;
 
   const [selectedWorkflowsList, setSelectedWorkflowsList] = useFunctionalState<string[]>([]);
+  const [workflowListToBeEdited, setWorkflowListToBeEdited] = useFunctionalState<string[]>([]);
+
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
   const isPublishedTemplate = useMemo(() => status !== 'Development', [status]);
 
@@ -143,8 +145,17 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
   }, [dispatch]);
 
   const handleEditWorkflows = useCallback(() => {
+    setWorkflowListToBeEdited(selectedWorkflowsList());
     dispatch(openPanelView({ panelView: TemplatePanelView.EditWorkflows }));
-  }, [dispatch]);
+  }, [dispatch, setWorkflowListToBeEdited, selectedWorkflowsList]);
+
+  const handleSelectWorkflow = useCallback(
+    (workflowId: string) => {
+      setWorkflowListToBeEdited([workflowId]);
+      dispatch(openPanelView({ panelView: TemplatePanelView.EditWorkflows }));
+    },
+    [dispatch, setWorkflowListToBeEdited]
+  );
 
   const commandBarItems: ICommandBarItemProps[] = [
     {
@@ -288,7 +299,7 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
     <div className="msla-templates-wizard-tab-content">
       {currentPanelView === TemplatePanelView.ConfigureWorkflows && <ConfigureWorkflowsPanel onSave={onSave} />}
       {currentPanelView === TemplatePanelView.EditWorkflows && (
-        <EditWorkflowsPanel onSave={onSave} selectedWorkflowIds={selectedWorkflowsList()} />
+        <EditWorkflowsPanel onSave={onSave} selectedWorkflowIds={workflowListToBeEdited()} />
       )}
 
       <DescriptionWithLink
@@ -376,7 +387,13 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
               <TableSelectionCell checked={selected} checkboxIndicator={{ 'aria-label': customResourceStrings.WorkflowCheckboxRowLabel }} />
               <TableCell>
                 <TableCellLayout>
-                  <Link style={columnTextStyle} as="button" onClick={handleAddWorkflows}>
+                  <Link
+                    style={columnTextStyle}
+                    as="button"
+                    onClick={() => {
+                      handleSelectWorkflow(item.id);
+                    }}
+                  >
                     {item.id}
                   </Link>
                 </TableCellLayout>
