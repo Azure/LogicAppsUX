@@ -2,7 +2,7 @@ import type { AppDispatch, RootState } from '../../../../../core/state/templates
 import { useDispatch, useSelector } from 'react-redux';
 import { closePanel, selectPanelTab, TemplatePanelView } from '../../../../../core/state/templates/panelSlice';
 import { type TemplateTabProps, TemplateContent, TemplatesPanelFooter, TemplatesPanelHeader } from '@microsoft/designer-ui';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { Panel, PanelType } from '@fluentui/react';
 import type { WorkflowTemplateData } from '../../../../../core';
@@ -11,6 +11,7 @@ import { customizeWorkflowsTab } from '../tabs/customizeWorkflowsTab';
 import { useFunctionalState } from '@react-hookz/web';
 import { useResourceStrings } from '../../../resources';
 import { validateWorkflowData } from '../../../../../core/templates/utils/helper';
+import { saveWorkflowsData } from '../../../../../core/actions/bjsworkflow/configuretemplate';
 
 export interface EditWorkflowPanelProps {
   onTabClick?: () => void;
@@ -49,12 +50,14 @@ export const EditWorkflowsPanel = ({
       runValidation: state.tab.runValidation,
     })
   );
+  const resources = useResourceStrings();
 
+  const [isDirty, setIsDirty] = useState(false);
   const [selectedWorkflowsList, setSelectedWorkflowsList] = useFunctionalState<Record<string, Partial<WorkflowTemplateData>>>(
     Object.fromEntries(Object.entries(workflows).filter(([key]) => selectedWorkflowIds.includes(key)))
   );
 
-  // Note: onSave toaster logic is determined by how many workflows ins presnet in the template currently
+  // Note: onSave toaster logic is determined by how many workflows ins present in the template currently
   // TODO: change this as toaster content is to-be-updated
   const onSaveCompleted = useCallback(() => onSave?.(Object.keys(workflows).length > 1), [onSave, workflows]);
 
@@ -78,11 +81,11 @@ export const EditWorkflowsPanel = ({
         },
       };
     });
+    setIsDirty(true);
   };
 
   const onSaveChanges = () => {
-    //TODO
-    onSaveCompleted();
+    dispatch(saveWorkflowsData({ workflows: selectedWorkflowsList(), onSaveCompleted }));
   };
 
   const handleSelectTab = (tabId: string): void => {
@@ -114,14 +117,9 @@ export const EditWorkflowsPanel = ({
       (Object.keys(selectedWorkflowsList()).length > 1 && !workflow?.manifest?.title)
   );
 
-  const isDirty = true; // Placeholder for actual dirty state logic
-  const resources = useResourceStrings();
-
   const panelTabs: TemplateTabProps[] = [
     customizeWorkflowsTab(intl, resources, dispatch, {
-      // hasError,
       selectedWorkflowsList: selectedWorkflowsList(),
-      // onTabClick: onCustomizeWorkflowsTabNavigation,
       updateWorkflowDataField,
       isSaving: isWizardUpdating,
       disabled: isDirty,
