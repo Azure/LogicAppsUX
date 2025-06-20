@@ -13,7 +13,7 @@ export const NodeLinkButton = ({ nodeId, iconUri }: { nodeId: string; iconUri?: 
 
   return (
     <Button
-      appearance="subtle"
+      appearance="transparent"
       icon={<img className="msla-action-icon" src={iconUri} alt="" style={{ position: 'absolute', left: '4px' }} />}
       onClick={nodeClick}
     >
