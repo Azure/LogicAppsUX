@@ -53,7 +53,7 @@ export const EditWorkflowsPanel = ({
 
   const [isDirty, setIsDirty] = useState(false);
   const [selectedWorkflowsList, setSelectedWorkflowsList] = useFunctionalState<Record<string, Partial<WorkflowTemplateData>>>(
-    Object.fromEntries(Object.entries(workflows).filter(([key]) => selectedWorkflowIds.includes(key)))
+    Object.fromEntries(Object.entries(workflows).filter(([_key, data]) => selectedWorkflowIds.includes(data.id)))
   );
 
   // Note: onSave toaster logic is determined by how many workflows ins present in the template currently
