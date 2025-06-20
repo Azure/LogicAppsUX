@@ -88,10 +88,13 @@ export const Designer = (props: DesignerProps) => {
     setReactFlowInstance(instance);
   }, []);
 
+  const hasFitViewRun = useRef(false);
+
   useEffect(() => {
-    if (nodes.length > 0 && reactFlowInstance) {
+    if (!hasFitViewRun.current && nodes.length > 0 && reactFlowInstance) {
       requestAnimationFrame(() => {
         reactFlowInstance.fitView({ padding: 0.6 });
+        hasFitViewRun.current = true;
       });
     }
   }, [nodes, reactFlowInstance]);
