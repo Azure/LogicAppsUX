@@ -24,6 +24,7 @@ import {
   DialogContent,
   Button,
   tokens,
+  Link,
 } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 import { CommandBar, type ICommandBarItemProps, mergeStyles, PrimaryButton } from '@fluentui/react';
@@ -41,6 +42,16 @@ import { workflowsHaveErrors } from '../../../core/configuretemplate/utils/error
 import EBookIcon from '../../../common/images/templates/openbook.svg';
 import { useTemplateWorkflowResources } from '../../../core/configuretemplate/utils/queries';
 import { getDateTimeString } from '../../../core/configuretemplate/utils/helper';
+
+const columnTextStyle: React.CSSProperties = {
+  display: '-webkit-box',
+  WebkitLineClamp: 1,
+  WebkitBoxOrient: 'vertical',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  wordBreak: 'break-word',
+  lineBreak: 'anywhere',
+};
 
 export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean) => void }) => {
   const intl = useIntl();
@@ -133,7 +144,7 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
     {
       key: 'edit',
       text: intlText.EDIT,
-      iconProps: { iconName: 'Settings' },
+      iconProps: { iconName: 'Edit' },
       onClick: handleAddWorkflows,
     },
     {
@@ -348,7 +359,11 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
             <TableRow key={item.id} onClick={onClick} onKeyDown={onKeyDown} aria-selected={selected} appearance={appearance}>
               <TableSelectionCell checked={selected} checkboxIndicator={{ 'aria-label': customResourceStrings.WorkflowCheckboxRowLabel }} />
               <TableCell>
-                <TableCellLayout>{item.id}</TableCellLayout>
+                <TableCellLayout>
+                  <Link style={columnTextStyle} as="button" onClick={handleAddWorkflows}>
+                    {item.id}
+                  </Link>
+                </TableCellLayout>
               </TableCell>
               {isMultiWorkflow && (
                 <TableCell>
