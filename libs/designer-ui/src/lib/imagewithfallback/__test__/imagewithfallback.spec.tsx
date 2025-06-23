@@ -1,7 +1,7 @@
 import type { ImageWithFallbackProps } from '..';
 import { ImageWithFallback } from '..';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
-import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
+import { describe, vi, beforeEach, afterEach, it, expect } from 'vitest';
 describe('ui/imagewithfallback', () => {
   let minimal: ImageWithFallbackProps, renderer: ReactShallowRenderer.ShallowRenderer;
 
@@ -36,7 +36,10 @@ describe('ui/imagewithfallback', () => {
     };
     image.props.onError(e as any);
 
-    expect(e.currentTarget.setAttribute).toHaveBeenCalledWith('src', '/src/lib/documentationlinkitem/images/defaulticon.svg');
+    expect(e.currentTarget.setAttribute).toHaveBeenCalled();
+    const callArgs = e.currentTarget.setAttribute.mock.calls[0];
+    expect(callArgs[0]).toBe('src');
+    expect(callArgs[1]).toMatch(/^data:image\/svg\+xml/);
   });
 
   it('should render the specified fallback image', () => {

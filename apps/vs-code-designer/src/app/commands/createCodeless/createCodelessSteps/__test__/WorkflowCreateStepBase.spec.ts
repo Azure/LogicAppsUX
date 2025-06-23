@@ -7,6 +7,10 @@ import { workflowCodeTypeForTelemetry } from '../../../../utils/codeful/utils';
 import { Progress } from 'vscode';
 import { parseJson } from '../../../../utils/parseJson';
 
+// Mock modules at the top level
+vi.mock('../../../../utils/parseJson');
+vi.mock('fs-extra');
+
 describe('WorkflowCreateStepBase', async () => {
   class MockWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionWizardContext> {
     public executeCore = vi.fn().mockResolvedValue('testPath');
@@ -69,15 +73,17 @@ describe('WorkflowCreateStepBase', async () => {
 
   describe('getJsonFromFile', () => {
     let mockBase;
+
+    const mockPathExists = vi.fn();
+    const mockReadFile = vi.fn();
+    const mockParseJson = vi.fn();
+
     beforeEach(() => {
-      vi.mock('../../../../utils/parseJson', () => ({
-        parseJson: vi.fn(),
-      }));
-      vi.mock('fs-extra', () => ({
-        pathExists: vi.fn().mockReturnValue(Promise.resolve(true)),
-        readFile: vi.fn().mockResolvedValue(''),
-      }));
       mockBase = new MockWorkflowCreateStep();
+      // Setup mocks
+      (fse as any).pathExists = mockPathExists;
+      (fse as any).readFile = mockReadFile;
+      (parseJson as any) = mockParseJson;
     });
 
     const mockDefaultValue = { version: '2.0' };
@@ -99,7 +105,7 @@ describe('WorkflowCreateStepBase', async () => {
 
     it("returns defaultValue when file doesn't exist", async () => {
       // Setup
-      (fse.pathExists as unknown as Mock).mockReturnValue(Promise.resolve(false));
+      mockPathExists.mockResolvedValue(false);
 
       // Execute
       const result = await mockBase.getJsonFromFile(mockGetJsonContext as IFunctionWizardContext, mockFilePath, mockDefaultValue);
@@ -111,8 +117,8 @@ describe('WorkflowCreateStepBase', async () => {
 
     it('returns defaultValue when file is empty', async () => {
       // Setup
-      (fse.pathExists as unknown as Mock).mockReturnValue(Promise.resolve(true));
-      (fse.readFile as unknown as Mock).mockResolvedValue('');
+      mockPathExists.mockResolvedValue(true);
+      mockReadFile.mockResolvedValue('');
       const spyPathExists = vi.spyOn(fse, 'pathExists');
       // Execute
       const result = await mockBase.getJsonFromFile(mockContext as IFunctionWizardContext, mockFilePath, mockDefaultValue);
@@ -128,9 +134,9 @@ describe('WorkflowCreateStepBase', async () => {
       const mockJson = { test: 'value', nested: { prop: true } };
       const mockJsonBuffer = Buffer.from(JSON.stringify(mockJson));
 
-      (fse.pathExists as unknown as Mock).mockReturnValue(Promise.resolve(true));
-      (fse.readFile as unknown as Mock).mockReturnValue(Promise.resolve(mockJsonBuffer));
-      (parseJson as unknown as Mock).mockReturnValue(mockJson);
+      mockPathExists.mockResolvedValue(true);
+      mockReadFile.mockResolvedValue(mockJsonBuffer);
+      mockParseJson.mockReturnValue(mockJson);
 
       // Execute
       const result = await mockBase.getJsonFromFile(mockContext as IFunctionWizardContext, mockFilePath, mockDefaultValue);
@@ -148,9 +154,9 @@ describe('WorkflowCreateStepBase', async () => {
       const parseError = new Error('Invalid JSON');
       const mockJsonBuffer = Buffer.from(JSON.stringify(invalidJson));
 
-      (fse.pathExists as unknown as Mock).mockReturnValue(Promise.resolve(true));
-      (fse.readFile as unknown as Mock).mockReturnValue(Promise.resolve(mockJsonBuffer));
-      (parseJson as unknown as Mock).mockImplementation(() => {
+      mockPathExists.mockResolvedValue(true);
+      mockReadFile.mockResolvedValue(mockJsonBuffer);
+      mockParseJson.mockImplementation(() => {
         throw parseError;
       });
 
