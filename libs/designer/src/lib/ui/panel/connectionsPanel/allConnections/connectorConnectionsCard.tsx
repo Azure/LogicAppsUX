@@ -1,6 +1,6 @@
 import { useAllConnectionErrors } from '../../../../core';
 import { ConnectionEntry } from './connectionEntry';
-import { AccordionHeader, AccordionPanel, Badge, Spinner, Text } from '@fluentui/react-components';
+import { AccordionHeader, AccordionItem, AccordionPanel, Badge, Spinner, Text } from '@fluentui/react-components';
 import { getConnectorCategoryString, isBuiltInConnector } from '@microsoft/designer-ui';
 import type { Connector } from '@microsoft/logic-apps-shared';
 import {
@@ -44,12 +44,12 @@ export const ConnectorConnectionsCard: React.FC<ConnectorConnectionsCardProps> =
   }, [allErrors, connectionRefs, disconnectedNodes?.length]);
 
   return (
-    <div key={connectorId} className="msla-connector-connections-card">
+    <AccordionItem key={connectorId} value={connectorId} className="msla-connector-connections-card">
       <AccordionHeader>
         <div className="msla-flex-header">
           {isLoading ? (
             <div className="msla-action-icon large">
-              <Spinner size="extra-small" style={{ margin: '4px' }} />
+              <Spinner size="extra-small" style={{ margin: '4px' }} label={title} />
             </div>
           ) : (
             <>
@@ -84,6 +84,6 @@ export const ConnectorConnectionsCard: React.FC<ConnectorConnectionsCardProps> =
           )}
         </div>
       </AccordionPanel>
-    </div>
+    </AccordionItem>
   );
 };

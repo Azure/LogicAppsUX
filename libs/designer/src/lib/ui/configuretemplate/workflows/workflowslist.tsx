@@ -42,6 +42,7 @@ import { workflowsHaveErrors } from '../../../core/configuretemplate/utils/error
 import EBookIcon from '../../../common/images/templates/openbook.svg';
 import { useTemplateWorkflowResources } from '../../../core/configuretemplate/utils/queries';
 import { getDateTimeString } from '../../../core/configuretemplate/utils/helper';
+import { EditWorkflowsPanel } from '../panels/configureWorkflowsPanel/edit/editWorkflowsPanel';
 
 const columnTextStyle: React.CSSProperties = {
   display: '-webkit-box',
@@ -70,6 +71,8 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
   const isMultiWorkflow = Object.keys(workflows).length > 1;
 
   const [selectedWorkflowsList, setSelectedWorkflowsList] = useFunctionalState<string[]>([]);
+  const [workflowListToBeEdited, setWorkflowListToBeEdited] = useFunctionalState<string[]>([]);
+
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
   const isPublishedTemplate = useMemo(() => status !== 'Development', [status]);
 
@@ -121,7 +124,7 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
         description: 'Body text for informing users this action is deleting selected workflows',
       }),
       DELETE_UNPUBLISH_CONFIRM_TEXT: intl.formatMessage({
-        defaultMessage: `Deleting workflows wlil remove them from this template. The template will be unpublished and won't appear in the template library until it is republished. Do you want to delete the workflow(s) and unpublish?`,
+        defaultMessage: `Deleting workflows will remove them from this template. The template will be unpublished and won't appear in the template library until it is republished. Do you want to delete the workflow(s) and unpublish?`,
         id: 'r/H4us',
         description: 'Body text for informing users this action is deleting selected workflows and unpublishing the template',
       }),
@@ -141,6 +144,19 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
     dispatch(openPanelView({ panelView: TemplatePanelView.ConfigureWorkflows }));
   }, [dispatch]);
 
+  const handleEditWorkflows = useCallback(() => {
+    setWorkflowListToBeEdited(selectedWorkflowsList());
+    dispatch(openPanelView({ panelView: TemplatePanelView.EditWorkflows }));
+  }, [dispatch, setWorkflowListToBeEdited, selectedWorkflowsList]);
+
+  const handleSelectWorkflow = useCallback(
+    (workflowId: string) => {
+      setWorkflowListToBeEdited([workflowId]);
+      dispatch(openPanelView({ panelView: TemplatePanelView.EditWorkflows }));
+    },
+    [dispatch, setWorkflowListToBeEdited]
+  );
+
   const commandBarItems: ICommandBarItemProps[] = [
     {
       key: 'add',
@@ -152,7 +168,8 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
       key: 'edit',
       text: intlText.EDIT,
       iconProps: { iconName: 'Edit' },
-      onClick: handleAddWorkflows,
+      disabled: !selectedWorkflowsList().length,
+      onClick: handleEditWorkflows,
     },
     {
       key: 'delete',
@@ -281,6 +298,9 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
   return (
     <div className="msla-templates-wizard-tab-content">
       {currentPanelView === TemplatePanelView.ConfigureWorkflows && <ConfigureWorkflowsPanel onSave={onSave} />}
+      {currentPanelView === TemplatePanelView.EditWorkflows && (
+        <EditWorkflowsPanel onSave={onSave} selectedWorkflowIds={workflowListToBeEdited()} />
+      )}
 
       <DescriptionWithLink
         text={customResourceStrings.WorkflowsTabDescription}
@@ -367,7 +387,14 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
               <TableSelectionCell checked={selected} checkboxIndicator={{ 'aria-label': customResourceStrings.WorkflowCheckboxRowLabel }} />
               <TableCell>
                 <TableCellLayout>
-                  <Link style={columnTextStyle} as="button" onClick={handleAddWorkflows}>
+                  <Link
+                    style={columnTextStyle}
+                    as="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleSelectWorkflow(item.id);
+                    }}
+                  >
                     {item.id}
                   </Link>
                 </TableCellLayout>

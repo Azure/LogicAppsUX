@@ -14278,7 +14278,7 @@
         <Str Cat="Text">
           <Val><![CDATA[{count} Milliseconds]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[{{count}} ms]]></Val>
+            <Val><![CDATA[{count} ms]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
