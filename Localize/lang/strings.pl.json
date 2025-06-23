@@ -1561,7 +1561,7 @@
   "haeWoU": "Nie można obliczyć danych wyjściowych, ponieważ nie można obliczyć wartości splitOn {splitOn}. W rezultacie dane wyjściowe tej operacji mogą nie być poprawnie widoczne w kolejnych akcjach",
   "hbOvB4": "Tego nie szukam",
   "hdN+aw": "Określa, który kod SKU aplikacji logiki obsługuje szablon (np. standardowe, zużycie).",
-  "hesDPs": "{{count}} ms",
+  "hesDPs": "{count} ms",
   "hhW/w8": "Jeśli w cyklu nie określono konkretnej daty i godziny rozpoczęcia, pierwszy cykl zostanie uruchomiony natychmiast po zapisaniu lub wdrożeniu aplikacji logiki",
   "hlrKDC": "Połączenie",
   "ho2D6F": "Zamknij panel",
