@@ -111,7 +111,7 @@ export const PanelHeaderComment = ({
   };
 
   if (readOnlyMode && !comment) {
-    return undefined;
+    return null;
   }
 
   return (
