@@ -1,15 +1,13 @@
 import type { AppDispatch } from '../../../core';
-import { addOperation, initializeSwitchCaseFromManifest } from '../../../core/actions/bjsworkflow/add';
+import { addOperation } from '../../../core/actions/bjsworkflow/add';
 import { useAllConnectors, useAllOperations } from '../../../core/queries/browse';
 import { useHostOptions } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import {
-  useAgentToolMetadata,
   useDiscoveryPanelFavoriteOperations,
   useDiscoveryPanelIsAddingTrigger,
   useDiscoveryPanelIsParallelBranch,
   useDiscoveryPanelRelationshipIds,
   useDiscoveryPanelSelectedOperationGroupId,
-  useIsAddingAgentTool,
 } from '../../../core/state/panel/panelSelectors';
 import { selectOperationGroupId, selectOperationId } from '../../../core/state/panel/panelSlice';
 import { AzureResourceSelection } from './azureResourceSelection';
@@ -57,8 +55,6 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   const recommendationPanelRef = useRef<HTMLDivElement>(null);
   const favorites = useDiscoveryPanelFavoriteOperations();
   const onFavoriteClick = useOnFavoriteClick();
-  const isAddingAgentTool = useIsAddingAgentTool();
-  const agentToolMetadata = useAgentToolMetadata();
 
   const isOperationFavorited = useCallback(
     (connectorId: string, operationId?: string) =>
@@ -195,9 +191,6 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
         }
         const newNodeId = (operation?.properties?.summary ?? operation?.name ?? guid()).replaceAll(' ', '_');
 
-        if (isAddingAgentTool && agentToolMetadata?.newCaseIdNewAdditiveSubgraphId && agentToolMetadata?.subGraphManifest) {
-          initializeSwitchCaseFromManifest(agentToolMetadata.newCaseIdNewAdditiveSubgraphId, agentToolMetadata?.subGraphManifest, dispatch);
-        }
         dispatch(
           addOperation({
             operation,
@@ -214,13 +207,11 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
       dispatch,
       hasAzureResourceSelection,
       hasSwaggerSelection,
-      isAddingAgentTool,
       isParallelBranch,
       isTrigger,
       relationshipIds,
       startAzureResourceSelection,
       startSwaggerSelection,
-      agentToolMetadata,
     ]
   );
 
