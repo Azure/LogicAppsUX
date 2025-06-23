@@ -45,8 +45,8 @@ export type RoleAssignmentPayload = {
 export interface IRoleService {
   fetchRoleDefinitions: (resourceId: string, queryParameters?: Record<string, string>) => Promise<ArmResource<RoleDefinition>[]>;
   fetchUserRoleAssignmentsForResource: (resourceId: string) => Promise<ArmResource<RoleAssignment>[]>;
-  fetchAppIdentityRoleAssignments: () => Promise<ArmResource<RoleAssignment>[]>;
-  addRoleAssignmentForApp: (resourceId: string, definitionId: string) => Promise<ArmResource<RoleAssignment>>;
+  fetchAppRoleAssignmentsForResource: (resourceId: string) => Promise<ArmResource<RoleAssignment>[]>;
+  addAppRoleAssignmentForResource: (resourceId: string, definitionId: string) => Promise<ArmResource<RoleAssignment>>;
 }
 
 let service: IRoleService;

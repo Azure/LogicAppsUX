@@ -362,6 +362,14 @@ export const DesignerCommandBar = ({
         onRenderText: (item: { text: string }) => <CustomCommandBarButton text={item.text} showError={haveWorkflowParameterErrors} />,
       },
       {
+        key: 'connections',
+        text: 'Connections',
+        disabled: !isDesignerView,
+        iconProps: { iconName: 'Link' },
+        onClick: () => !!dispatch(openPanel({ panelMode: 'Connection' })),
+        onRenderText: (item: { text: string }) => <CustomCommandBarButton text={item.text} showError={haveConnectionErrors} />,
+      },
+      {
         key: 'Assertions',
         text: 'Assertions',
         ariaLabel: 'Assertions',
