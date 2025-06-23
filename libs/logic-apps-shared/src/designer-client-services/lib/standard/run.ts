@@ -105,16 +105,7 @@ export class StandardRunService implements IRunService {
     try {
       if (isHybridLogicApp(uri)) {
         uri = `${baseUrl}/workflows/${workflowName}/runs/${onlyRunId}?$expand=properties/actions,workflow/properties`;
-
-        const { uri: newUri, headerPath } = StandardRunService.getProxyUrl(uri);
-        const response = await httpClient.post<Run, undefined>({
-          uri: newUri,
-          headers: {
-            'X-Ms-Logicapps-Proxy-Path': headerPath,
-            'X-Ms-Logicapps-Proxy-Method': 'GET',
-          },
-        });
-        return response;
+        return this.fetchHybridLogicAppRunRepetitions<Run>(uri, 'GET', httpClient);
       }
       const response = await httpClient.get<Run>({
         uri,
@@ -163,12 +154,23 @@ export class StandardRunService implements IRunService {
 
     const { apiVersion, baseUrl, httpClient } = this.options;
 
-    const filter = status ? `&$filter=status eq '${status}'` : '';
-    const uri = `${baseUrl}${runId}/actions/${nodeId}/scopeRepetitions?api-version=${apiVersion}${filter}`;
+    const queryParameters: Record<string, string> = {};
+    if (status) {
+      queryParameters['$filter'] = `status eq '${status}`;
+    }
+    const uri = `${baseUrl}${runId}/actions/${nodeId}/scopeRepetitions`;
 
     try {
+      if (isHybridLogicApp(uri)) {
+        return this.fetchHybridLogicAppRunRepetitions<{ value: LogicAppsV2.RunRepetition[] }>(uri, 'GET', httpClient, queryParameters);
+      }
+
       const response = await httpClient.get<{ value: LogicAppsV2.RunRepetition[] }>({
         uri,
+        queryParameters: {
+          ...queryParameters,
+          'api-version': apiVersion,
+        },
       });
 
       return response;
@@ -195,11 +197,15 @@ export class StandardRunService implements IRunService {
   ): Promise<LogicAppsV2.RunRepetition> {
     const { nodeId, runId } = action;
     const { apiVersion, baseUrl, httpClient } = this.options;
-    const uri = `${baseUrl}${runId}/actions/${nodeId}/agentRepetitions/${repetitionId}?api-version=${apiVersion}`;
+    const uri = `${baseUrl}${runId}/actions/${nodeId}/agentRepetitions/${repetitionId}`;
 
     try {
+      if (isHybridLogicApp(uri)) {
+        return this.fetchHybridLogicAppRunRepetitions(uri, 'GET', httpClient);
+      }
+
       const response = await httpClient.get<LogicAppsV2.RunRepetition>({
-        uri,
+        uri: `${uri}?api-version=${apiVersion}`,
       });
 
       return response;
@@ -223,11 +229,15 @@ export class StandardRunService implements IRunService {
   async getAgentActionsRepetition(action: { nodeId: string; runId: string | undefined }, repetitionId: string): Promise<any> {
     const { nodeId, runId } = action;
     const { apiVersion, baseUrl, httpClient } = this.options;
-    const uri = `${baseUrl}${runId}/actions/${nodeId}/agentRepetitions/${repetitionId}/actions?api-version=${apiVersion}`;
+    const uri = `${baseUrl}${runId}/actions/${nodeId}/agentRepetitions/${repetitionId}/actions`;
 
     try {
+      if (isHybridLogicApp(uri)) {
+        return this.fetchHybridLogicAppRunRepetitions<{ value: LogicAppsV2.RunRepetition[] }>(uri, 'GET', httpClient);
+      }
+
       const response = await httpClient.get<LogicAppsV2.RunRepetition>({
-        uri,
+        uri: `${uri}?api-version=${apiVersion}`,
       });
 
       return response;
@@ -269,10 +279,15 @@ export class StandardRunService implements IRunService {
     const { apiVersion, baseUrl, httpClient } = this.options;
     const { nodeId, runId } = action;
 
-    const uri = `${baseUrl}${runId}/actions/${nodeId}/repetitions/${repetitionId}?api-version=${apiVersion}`;
+    const uri = `${baseUrl}${runId}/actions/${nodeId}/repetitions/${repetitionId}`;
+
     try {
+      if (isHybridLogicApp(uri)) {
+        return this.fetchHybridLogicAppRunRepetitions<LogicAppsV2.RunRepetition>(uri, 'GET', httpClient);
+      }
+
       const response = await httpClient.get<LogicAppsV2.RunRepetition>({
-        uri,
+        uri: `${uri}?api-version=${apiVersion}`,
       });
 
       return response;
@@ -371,11 +386,16 @@ export class StandardRunService implements IRunService {
   async getChatHistory(action: { nodeId: string; runId: string | undefined }): Promise<any> {
     const { apiVersion, baseUrl, httpClient } = this.options;
     const { nodeId, runId } = action;
+    const uri = `${baseUrl}${runId}/actions/${nodeId}/chatHistory`;
 
-    const uri = `${baseUrl}${runId}/actions/${nodeId}/chatHistory?api-version=${apiVersion}`;
     try {
+      if (isHybridLogicApp(uri)) {
+        const response = await this.fetchHybridLogicAppRunRepetitions<any>(uri, 'GET', httpClient);
+        return response.value;
+      }
+
       const response = await httpClient.get<any>({
-        uri,
+        uri: `${uri}?api-version=${apiVersion}`,
       });
 
       return response.value;
@@ -399,10 +419,16 @@ export class StandardRunService implements IRunService {
     const { apiVersion, baseUrl, httpClient } = this.options;
     const { idSuffix } = action;
 
-    const uri = `${baseUrl}${idSuffix}/listCallBackUrl?api-version=${apiVersion}`;
+    const uri = `${baseUrl}${idSuffix}/listCallBackUrl`;
+
     try {
+      if (isHybridLogicApp(uri)) {
+        const response = await this.fetchHybridLogicAppRunRepetitions<any>(uri, 'POST', httpClient);
+        return response?.value;
+      }
+
       const response = await httpClient.post<any, any>({
-        uri,
+        uri: `${uri}?api-version=${apiVersion}`,
       });
 
       return response?.value;
@@ -436,15 +462,7 @@ export class StandardRunService implements IRunService {
       if (isHybridLogicApp(uri)) {
         uri = `${baseUrl}${runId}/cancel`;
 
-        const { uri: newUri, headerPath } = StandardRunService.getProxyUrl(uri);
-        const response = await httpClient.post({
-          uri: newUri,
-          headers: {
-            'X-Ms-Logicapps-Proxy-Path': headerPath,
-            'X-Ms-Logicapps-Proxy-Method': 'GET',
-          },
-        });
-        return response;
+        return this.fetchHybridLogicAppRunRepetitions(uri, 'POST', httpClient);
       }
       const response = await httpClient.post({
         uri,
@@ -453,5 +471,23 @@ export class StandardRunService implements IRunService {
     } catch (e: any) {
       return new Error(e.message);
     }
+  }
+
+  private async fetchHybridLogicAppRunRepetitions<T>(
+    uri: string,
+    httpMethod: string,
+    httpClient: IHttpClient,
+    queryParameters?: Record<string, string>
+  ) {
+    const { uri: newUri, headerPath } = StandardRunService.getProxyUrl(uri);
+    const response = await httpClient.post<T, undefined>({
+      uri: newUri,
+      queryParameters,
+      headers: {
+        'X-Ms-Logicapps-Proxy-Path': headerPath,
+        'X-Ms-Logicapps-Proxy-Method': httpMethod,
+      },
+    });
+    return response;
   }
 }
