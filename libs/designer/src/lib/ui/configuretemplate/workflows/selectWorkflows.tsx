@@ -23,6 +23,7 @@ import {
   SkeletonItem,
   MessageBar,
   MessageBarBody,
+  tokens,
 } from '@fluentui/react-components';
 import { useResourceStrings } from '../resources';
 import type { WorkflowTemplateData } from '../../../core';
@@ -31,7 +32,7 @@ import { tableHeaderStyle } from '../common';
 import { WorkflowKind } from '../../../core/state/workflow/workflowInterfaces';
 
 const disabledStyle = {
-  opacity: 0.5,
+  opacity: tokens.colorNeutralForegroundDisabled,
   cursor: 'not-allowed',
 };
 
