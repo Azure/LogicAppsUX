@@ -8,8 +8,8 @@
           "variables": [
             {
               "name": "testVariable2",
-              "type": "float",
-              "value": 123.5
+              "type": "array",
+              "value": []
             }
           ]
         },
@@ -82,7 +82,7 @@
             {
               "name": "testVariable3",
               "type": "array",
-              "value": []
+              "value": "@variables('testVariable2')"
             }
           ]
         },
