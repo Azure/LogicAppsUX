@@ -18,9 +18,9 @@
     "@types/react-test-renderer": "^18.0.7",
     "@typescript-eslint/eslint-plugin": "^8.15.0",
     "@typescript-eslint/parser": "^8.29.1",
-    "@vitejs/plugin-react": "^4.2.1",
-    "@vitest/coverage-istanbul": "^2.1.2",
-    "@vitest/ui": "^2.1.2",
+    "@vitejs/plugin-react": "^4.4.6",
+    "@vitest/coverage-istanbul": "^3.2.4",
+    "@vitest/ui": "^3.2.4",
     "@xyflow/system": "^0.0.37",
     "D": "^1.0.0",
     "archiver": "^7.0.1",
@@ -59,7 +59,7 @@
     "typescript-eslint": "7.7.0",
     "vite-plugin-mkcert": "^1.17.5",
     "vite-plugin-node-polyfills": "^0.21.0",
-    "vitest": "^2.1.2"
+    "vitest": "^3.2.4"
   },
   "engines": {
     "node": ">=18",
@@ -79,7 +79,7 @@
     "compile:loc:psuedo": "formatjs compile \"Localize/lang/strings.json\" --ast --format ./format.js --out-file \"libs/logic-apps-shared/src/intl/compiled-lang/strings.en-XA.json\" --pseudo-locale en-XA",
     "e2e:setup": "playwright install --with-deps",
     "extract": "formatjs extract \"libs/**/*.{ts,tsx}\" --ignore \"libs/**/*.{d,test,spec}.{ts,tsx}\" --out-file Localize/lang/strings.json --format ./format.js",
-		"generateArmToken": "node ./scripts/generateArmToken.js",
+    "generateArmToken": "node ./scripts/generateArmToken.js",
     "prepare": "husky || true",
     "publish": "turbo run build:lib && pnpm publish -r",
     "scrub-secrets:e2e": "node ./scrub-e2e-trace.js",
