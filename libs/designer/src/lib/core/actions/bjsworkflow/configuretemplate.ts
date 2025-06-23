@@ -438,8 +438,9 @@ const saveWorkflowsInTemplateInternal = async (
 
     if (updateTemplateManifest || newState) {
       await service.updateTemplate(templateId, templateManifest, newState);
+      resetTemplateQuery(templateId);
     }
-    resetTemplateQuery(templateId);
+
     resetTemplateWorkflowsQuery(templateId, /* clearRawData */ true);
     dispatch(setApiValidationErrors({ error: undefined, source: 'workflows' }));
   } catch (error: any) {
