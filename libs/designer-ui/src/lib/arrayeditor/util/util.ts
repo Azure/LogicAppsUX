@@ -121,6 +121,7 @@ const handleArrayItems = (
         arrayVal.push(convertComplexItemsToArray(value.items, arrayItem.items, isKeyRequired, nodeMap, suppressCasting, castParameter));
       }
     });
+    returnItem[keyName] = arrayVal;
   } else if (isKeyRequired) {
     returnItem[keyName] = [];
   }
