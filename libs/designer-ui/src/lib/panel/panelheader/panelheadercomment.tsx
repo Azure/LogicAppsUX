@@ -33,7 +33,7 @@ export const PanelHeaderComment = ({
   readOnlyMode,
   commentChange,
   isTrigger,
-}: PanelHeaderCommentProps): JSX.Element | undefined => {
+}: PanelHeaderCommentProps): JSX.Element | null => {
   const intl = useIntl();
 
   const [commentHasFocus, setCommentHasFocus] = useState(false);
