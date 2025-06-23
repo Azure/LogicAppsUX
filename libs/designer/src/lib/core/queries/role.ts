@@ -37,9 +37,8 @@ export const useAppIdentityRoleAssignmentsForResourceQuery = (resourceId: string
   useQuery<ArmResource<RoleAssignment>[]>(appIdentityRoleAssignmentsQueryOpts(resourceId));
 const appIdentityRoleAssignmentsQueryOpts = (resourceId: string) => ({
   queryKey: [roleQueryKeys.appIdentityRoleAssignments, resourceId],
-  queryFn: () => RoleService().fetchAppIdentityRoleAssignments(),
+  queryFn: () => RoleService().fetchAppRoleAssignmentsForResource(resourceId),
   enabled: !isUndefinedOrEmptyString(resourceId),
-  select: (data: ArmResource<RoleAssignment>[]) => data.filter((assignment) => assignment.properties.scope === resourceId),
   ...queryOpts,
 });
 

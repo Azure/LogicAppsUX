@@ -2,7 +2,7 @@ import { useConnectionById } from '../../../../core/queries/connections';
 import { openPanel } from '../../../../core/state/panel/panelSlice';
 import { NodeLinkButton } from './nodeLinkButton';
 import { css } from '@fluentui/react';
-import { Button, Spinner, Text, Tooltip } from '@fluentui/react-components';
+import { Button, Spinner, Text, Tooltip, mergeClasses } from '@fluentui/react-components';
 import { useConnectionContainerStyles } from '@microsoft/designer-ui';
 import {
   Open24Filled,
@@ -96,9 +96,9 @@ export const ConnectionEntry = ({ connectorId, refId, connectionReference, iconU
     return (
       <Tooltip content={hasErrors ? connectionInvalidStatusText : connectionValidStatusText} relationship="label">
         {hasErrors ? (
-          <ErrorCircle24Filled className={styles.connectionStatusIcon} />
+          <ErrorCircle24Filled className={mergeClasses(styles.connectionStatusIcon, styles.iconError)} />
         ) : (
-          <CheckmarkCircle24Filled className={styles.connectionStatusIcon} />
+          <CheckmarkCircle24Filled className={mergeClasses(styles.connectionStatusIcon, styles.iconSuccess)} />
         )}
       </Tooltip>
     );

@@ -338,9 +338,9 @@ export const getDesignerServices = (
     apiVersion: '2022-05-01-preview',
     httpClient,
     tenantId: emptyArmId,
-    userId: emptyArmId,
+    userIdentityId: emptyArmId,
+    appIdentityId: emptyArmId,
     subscriptionId,
-    appIdentity: emptyArmId,
   });
 
   const cognitiveServiceService = new BaseCognitiveServiceService({
