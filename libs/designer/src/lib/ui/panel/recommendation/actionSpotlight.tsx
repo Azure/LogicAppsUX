@@ -4,7 +4,7 @@ import { useAllConnectors, useFavoriteOperations } from '../../../core/queries/b
 import {
   useDiscoveryPanelFavoriteOperations,
   useDiscoveryPanelRelationshipIds,
-  useIsAgentTool,
+  useIsAddingAgentTool,
 } from '../../../core/state/panel/panelSelectors';
 import { useIsWithinAgenticLoop } from '../../../core/state/workflow/workflowSelectors';
 import { useMemo, useState } from 'react';
@@ -40,7 +40,7 @@ export const ActionSpotlight = (props: ActionSpotlightProps) => {
   const parentGraphId = useDiscoveryPanelRelationshipIds().graphId;
   const isWithinAgenticLoop = useIsWithinAgenticLoop(parentGraphId);
 
-  const isAgentTool = useIsAgentTool();
+  const isAgentTool = useIsAddingAgentTool();
   const isAgenticWorkflow = useAgenticWorkflow();
 
   const favoriteOperationIds = useDiscoveryPanelFavoriteOperations();

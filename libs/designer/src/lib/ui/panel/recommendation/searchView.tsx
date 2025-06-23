@@ -7,7 +7,7 @@ import { useDebouncedEffect } from '@react-hookz/web';
 import type { FC } from 'react';
 import { useCallback, useEffect, useState, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
-import { useDiscoveryPanelRelationshipIds, useIsAgentTool } from '../../../core/state/panel/panelSelectors';
+import { useDiscoveryPanelRelationshipIds, useIsAddingAgentTool } from '../../../core/state/panel/panelSelectors';
 import { useAgenticWorkflow } from '../../../core/state/designerView/designerViewSelectors';
 import { useShouldEnableACASession, useShouldEnableNestedAgent, useShouldEnableParseDocumentWithMetadata } from './hooks';
 import { DefaultSearchOperationsService } from './SearchOpeationsService';
@@ -43,7 +43,7 @@ export const SearchView: FC<SearchViewProps> = ({
   const shouldEnableNestedAgent = useShouldEnableNestedAgent();
   const parentGraphId = useDiscoveryPanelRelationshipIds().graphId;
   const isWithinAgenticLoop = useIsWithinAgenticLoop(parentGraphId);
-  const isAgentTool = useIsAgentTool();
+  const isAgentTool = useIsAddingAgentTool();
   const isRoot = useMemo(() => parentGraphId === 'root', [parentGraphId]);
 
   const dispatch = useDispatch<AppDispatch>();

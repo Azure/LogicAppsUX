@@ -85,4 +85,4 @@ export const usePanelLocation = () => useSelector(createSelector(getPanelState, 
 
 export const usePreviousPanelMode = () => useSelector(createSelector(getPanelState, (state) => state.previousPanelMode));
 
-export const useIsAgentTool = () => useSelector(createSelector(getPanelState, (state) => state.discoveryContent.isAgentTool));
+export const useIsAddingAgentTool = () => useSelector(createSelector(getPanelState, (state) => state.discoveryContent.isAddingAgentTool));
