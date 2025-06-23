@@ -1,5 +1,5 @@
 import { PanelLocation } from '@microsoft/designer-ui';
-import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
+import type { LogicAppsV2, OperationManifest } from '@microsoft/logic-apps-shared';
 import { cleanConnectorId, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
@@ -213,6 +213,16 @@ export const panelSlice = createSlice({
         args: [action.payload],
       });
     },
+    addAgentToolMetadata: (
+      state,
+      action: PayloadAction<{
+        newCaseIdNewAdditiveSubgraphId: string;
+        subGraphManifest: OperationManifest;
+      }>
+    ) => {
+      const { newCaseIdNewAdditiveSubgraphId, subGraphManifest } = action.payload;
+      state.discoveryContent.agentToolMetadata = { newCaseIdNewAdditiveSubgraphId, subGraphManifest };
+    },
     selectOperationGroupId: (state, action: PayloadAction<string>) => {
       state.discoveryContent.selectedOperationGroupId = cleanConnectorId(action.payload);
 
@@ -342,6 +352,7 @@ export const {
   setSelectedNodeId,
   updatePanelLocation,
   initRunInPanel,
+  addAgentToolMetadata,
 } = panelSlice.actions;
 
 export default panelSlice.reducer;
