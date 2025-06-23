@@ -510,3 +510,11 @@
     }
   }
 }
+
+.msla-panel-card-container.msla-card-subtle-background {
+  background-color: fade(@brandColor, 90%); // Light mode - subtle tint
+}
+
+.msla-theme-dark .msla-panel-card-container.msla-card-subtle-background {
+  background-color: darken(@brandColor, 10%); // Dark mode - slight darkening
+}

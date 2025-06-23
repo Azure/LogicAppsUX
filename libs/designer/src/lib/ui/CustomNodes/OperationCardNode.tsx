@@ -48,6 +48,7 @@ import {
   useSubgraphRunData,
   useRunIndex,
 } from '../../core/state/workflow/workflowSelectors';
+import { useIsA2AWorkflow } from '../../core/state/designerView/designerViewSelectors';
 import { setRepetitionRunData } from '../../core/state/workflow/workflowSlice';
 import { getRepetitionName } from '../common/LoopsPager/helper';
 import { DropZone } from '../connections/dropzone';
@@ -98,6 +99,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const selfRunData = useRunData(id);
   const parentSubgraphRunData = useSubgraphRunData(parentNodeId ?? '');
   const toolRunIndex = useRunIndex(graphId);
+  const isA2AWorkflow = useIsA2AWorkflow();
 
   const { isFetching: isRepetitionFetching, data: repetitionRunData } = useNodeRepetition(
     !!isMonitoringView,
@@ -352,6 +354,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
           isSecureInputsOutputs={isSecureInputsOutputs}
           isLoadingDynamicData={isLoadingDynamicData}
           nodeIndex={nodeIndex}
+          subtleBackground={isA2AWorkflow}
         />
         {showCopyCallout ? <CopyTooltip id={id} targetRef={ref} hideTooltip={clearCopyTooltip} /> : null}
         <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />

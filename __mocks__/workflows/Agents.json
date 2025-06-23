@@ -1,5 +1,5 @@
 {
-"definition": {
+  "definition": {
     "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
     "actions": {
       "WorkflowAgent": {
@@ -67,9 +67,7 @@
                   "body": "@agentParameters('Parameter1')"
                 },
                 "runAfter": {
-                  "HTTP": [
-                    "SUCCEEDED"
-                  ]
+                  "HTTP": ["SUCCEEDED"]
                 },
                 "runtimeConfiguration": {
                   "contentTransfer": {
@@ -148,9 +146,7 @@
                   "body": "@{body('Current_time')}@{agentParameters('Response Content')}"
                 },
                 "runAfter": {
-                  "Current_time": [
-                    "SUCCEEDED"
-                  ]
+                  "Current_time": ["SUCCEEDED"]
                 }
               }
             },
@@ -163,9 +159,7 @@
                   "description": "Response content"
                 }
               },
-              "required": [
-                "Response Content"
-              ]
+              "required": ["Response Content"]
             }
           },
           "If_Condition_X_Matches_1": {
@@ -192,9 +186,7 @@
                   "body": "@agentParameters('Parameter1')"
                 },
                 "runAfter": {
-                  "HTTP_2": [
-                    "SUCCEEDED"
-                  ]
+                  "HTTP_2": ["SUCCEEDED"]
                 },
                 "runtimeConfiguration": {
                   "contentTransfer": {
@@ -216,17 +208,12 @@
                   "description": "this is a boolean parameter"
                 }
               },
-              "required": [
-                "TestParameter",
-                "Parameter1"
-              ]
+              "required": ["TestParameter", "Parameter1"]
             }
           }
         },
         "runAfter": {
-          "WorkflowAgent": [
-            "SUCCEEDED"
-          ]
+          "WorkflowAgent": ["SUCCEEDED"]
         },
         "limit": {
           "count": 100,
@@ -239,7 +226,7 @@
     "parameters": {},
     "triggers": {
       "When_a_HTTP_request_is_received": {
-        "type": "Request",
+        "type": "a2aRequest",
         "kind": "Http"
       }
     }

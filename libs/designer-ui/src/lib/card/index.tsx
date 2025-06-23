@@ -9,7 +9,7 @@ import { Gripper } from './images/dynamicsvgs/gripper';
 import type { CommentBoxProps } from './types';
 import { getCardStyle } from './utils';
 import type { MessageBarType } from '@fluentui/react';
-import { Icon, css } from '@fluentui/react';
+import { Icon, css, useTheme } from '@fluentui/react';
 import { Spinner, useRestoreFocusTarget } from '@fluentui/react-components';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
@@ -53,6 +53,7 @@ export interface CardProps {
   isMockSupported?: boolean;
   isLoadingDynamicData?: boolean;
   showStatusPill?: boolean;
+  subtleBackground?: boolean;
 }
 
 export interface BadgeProps {
@@ -95,6 +96,7 @@ export const Card: React.FC<CardProps> = memo(
     isSecureInputsOutputs,
     isLoadingDynamicData,
     showStatusPill,
+    subtleBackground,
   }) => {
     const handleClick: React.MouseEventHandler<HTMLElement> = (e) => {
       e.stopPropagation();
@@ -103,6 +105,7 @@ export const Card: React.FC<CardProps> = memo(
     const focusRef = useRef<HTMLElement | null>(null);
     const keyboardInteraction = useCardKeyboardInteraction(onClick, onDeleteClick, onCopyClick);
     const restoreFocusTargetAttribute = useRestoreFocusTarget();
+    const { isInverted } = useTheme();
 
     useEffect(() => {
       if (setFocus) {
@@ -184,9 +187,10 @@ export const Card: React.FC<CardProps> = memo(
           selectionMode === 'selected' && 'msla-panel-card-container-selected',
           !active && 'msla-card-inactive',
           cloned && 'msla-card-ghost-image',
-          isDragging && 'dragging'
+          isDragging && 'dragging',
+          subtleBackground && 'msla-card-subtle-background'
         )}
-        style={getCardStyle(brandColor)}
+        style={getCardStyle(brandColor, subtleBackground, isInverted)}
         data-testid={`card-${title}`}
         data-automation-id={`card-${replaceWhiteSpaceWithUnderscore(title)}`}
         onClick={handleClick}

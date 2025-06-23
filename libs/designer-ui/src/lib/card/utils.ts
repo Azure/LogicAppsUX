@@ -1,11 +1,18 @@
 import Constants from '../constants';
 import type { IButtonStyles } from '@fluentui/react';
-import { hexToRgbA } from '@microsoft/logic-apps-shared';
+import { getAdjustedBackgroundColor, hexToRgbA } from '@microsoft/logic-apps-shared';
 
-export function getCardStyle(brandColor?: string): React.CSSProperties {
+export function getCardStyle(brandColor?: string, subtleBackground = false, isDark = false): React.CSSProperties {
+  let backgroundColor = undefined;
+
+  if (brandColor && subtleBackground) {
+    backgroundColor = getAdjustedBackgroundColor(brandColor, isDark);
+  }
+
   return {
     borderLeft: `4px solid ${brandColor}`,
     borderRadius: '2px',
+    ...(backgroundColor && { backgroundColor }),
   };
 }
 
