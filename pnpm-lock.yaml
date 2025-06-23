@@ -30,25 +30,18 @@ overrides:
   nanoid@<3.3.8: '>=3.3.8'
   '@octokit/request-error@>=1.0.0 <5.1.1': '>=5.1.1'
   esbuild@<=0.24.2: '>=0.25.0'
-  vite@>=5.0.0 <=5.4.11: '>=5.4.12'
+  vite@>=5.0.0 <5.4.19: '>=5.4.19'
   prismjs@<1.30.0: '>=1.30.0'
   '@octokit/request@>=1.0.0 <8.4.1': '>=8.4.1'
   '@octokit/plugin-paginate-rest@>=1.0.0 <9.2.2': '>=9.2.2'
-  vite@>=5.0.0 <5.4.15: '>=5.4.15'
   axios@>=1.0.0 <1.8.2: '>=1.8.2'
-  vite@>=5.0.0 <5.4.16: '>=5.4.16'
   estree-util-value-to-estree@<3.3.3: '>=3.3.3'
-  vite@>=5.0.0 <5.4.18: '>=5.4.18'
   '@babel/runtime-corejs3@<7.26.10': '>=7.26.10'
   '@babel/runtime@<7.26.10': '>=7.26.10'
   '@babel/helpers@<7.26.10': '>=7.26.10'
   http-proxy-middleware@>=3.0.0 <3.0.5: '>=3.0.5'
-  http-proxy-middleware@>=3.0.0 <3.0.4: '>=3.0.4'
-  vite@>=5.0.0 <=5.4.18: '>=5.4.19'
-  vite@>=5.0.0 <5.4.17: '>=5.4.17'
-  tar-fs@>=2.0.0 <2.1.2: '>=2.1.2'
-  image-size@>=1.1.0 <1.2.1: '>=1.2.1'
   tar-fs@>=2.0.0 <2.1.3: '>=2.1.3'
+  image-size@>=1.1.0 <1.2.1: '>=1.2.1'
   path-to-regexp@<0.1.12: '>=0.1.12'
   webpack-dev-server@<=5.2.0: '>=5.2.1'
   brace-expansion@>=1.0.0 <=1.1.11: '>=1.1.12'
@@ -648,7 +641,7 @@ importers:
         specifier: ^0.13.0
         version: 0.13.0(rollup@4.44.0)
       vite:
-        specifier: '>=5.4.17'
+        specifier: '>=5.4.19'
         version: 6.3.5(@types/node@20.12.7)(jiti@1.21.0)(less@4.2.0)(terser@5.30.2)(yaml@2.7.0)
       vite-plugin-node-polyfills:
         specifier: ^0.21.0
@@ -5599,7 +5592,7 @@ packages:
     resolution: {integrity: sha512-5Kgff+m8e2PB+9j51eGHEpn5kUzRKH2Ry0qGoe8ItJg7pqnkPrYPkDQZGgGmTa0EGarHrkjLvOdU3b1fzI8otQ==}
     engines: {node: ^14.18.0 || >=16.0.0}
     peerDependencies:
-      vite: '>=5.4.17'
+      vite: '>=5.4.19'
 
   '@vitest/coverage-istanbul@3.2.4':
     resolution: {integrity: sha512-IDlpuFJiWU9rhcKLkpzj8mFu/lpe64gVgnV15ZOrYx1iFzxxrxCzbExiUEKtwwXRvEiEMUS6iZeYgnMxgbqbxQ==}
@@ -5613,7 +5606,7 @@ packages:
     resolution: {integrity: sha512-46ryTE9RZO/rfDd7pEqFl7etuyzekzEhUbTW3BvmeO/BcCMEgq59BKhek3dXDWgAj4oMK6OZi+vRr1wPW6qjEQ==}
     peerDependencies:
       msw: ^2.4.9
-      vite: '>=5.4.17'
+      vite: '>=5.4.19'
     peerDependenciesMeta:
       msw:
         optional: true
@@ -12201,7 +12194,7 @@ packages:
     resolution: {integrity: sha512-S+4tNEyGqdZQ3RLAG54ETeO2qyURHWrVjUWKYikLAbmhh/iJ+36gDEja4OWwFyXNuvyXcZwNt5TZZR9itPeG5Q==}
     engines: {node: '>=v16.7.0'}
     peerDependencies:
-      vite: '>=5.4.17'
+      vite: '>=5.4.19'
 
   vite-plugin-node-polyfills@0.21.0:
     resolution: {integrity: sha512-Sk4DiKnmxN8E0vhgEhzLudfJQfaT8k4/gJ25xvUPG54KjLJ6HAmDKbr4rzDD/QWEY+Lwg80KE85fGYBQihEPQA==}
@@ -12211,7 +12204,7 @@ packages:
   vite-plugin-node-polyfills@0.23.0:
     resolution: {integrity: sha512-4n+Ys+2bKHQohPBKigFlndwWQ5fFKwaGY6muNDMTb0fSQLyBzS+jjUNRZG9sKF0S/Go4ApG6LFnUGopjkILg3w==}
     peerDependencies:
-      vite: '>=5.4.17'
+      vite: '>=5.4.19'
 
   vite@6.3.5:
     resolution: {integrity: sha512-cZn6NDFE7wdTpINgs++ZJ4N49W2vRp8LCKrn3Ob1kYNtOo21vfDoaV5GzBfLU4MovSAB8uNRm4jgzVQZ+mBzPQ==}
