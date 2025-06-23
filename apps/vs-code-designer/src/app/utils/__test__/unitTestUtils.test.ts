@@ -730,7 +730,7 @@ describe('aom getOperationMockClassContent with triggers and actions', () => {
       },
     };
 
-    expect(
+    await expect(
       getOperationMockClassContent(operationInfo, outputParameters, projectPath, 'workflowName', fakeLogicAppName)
     ).rejects.toThrowError();
   });
@@ -1072,7 +1072,7 @@ describe('updateCsprojFile', () => {
       callback(readError, undefined);
     });
 
-    expect(() => updateCsprojFile(csprojFilePath, workflowName)).rejects.toThrowError(readError);
+    await expect(updateCsprojFile(csprojFilePath, workflowName)).rejects.toThrowError(readError);
   });
 
   it('should throw an error when parsing XML fails', async () => {
@@ -1084,7 +1084,7 @@ describe('updateCsprojFile', () => {
       callback(null, invalidXml);
     });
 
-    expect(() => updateCsprojFile(csprojFilePath, workflowName)).rejects.toThrowError();
+    await expect(updateCsprojFile(csprojFilePath, workflowName)).rejects.toThrowError();
   });
 });
 
