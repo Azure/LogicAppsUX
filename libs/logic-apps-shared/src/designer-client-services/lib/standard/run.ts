@@ -160,11 +160,11 @@ export class StandardRunService implements IRunService {
     }
     const uri = `${baseUrl}${runId}/actions/${nodeId}/scopeRepetitions`;
 
-    if (isHybridLogicApp(uri)) {
-      return this.fetchHybridLogicAppRunRepetitions<{ value: LogicAppsV2.RunRepetition[] }>(uri, 'GET', httpClient, queryParameters);
-    }
-
     try {
+      if (isHybridLogicApp(uri)) {
+        return this.fetchHybridLogicAppRunRepetitions<{ value: LogicAppsV2.RunRepetition[] }>(uri, 'GET', httpClient, queryParameters);
+      }
+
       const response = await httpClient.get<{ value: LogicAppsV2.RunRepetition[] }>({
         uri,
         queryParameters: {
@@ -199,11 +199,11 @@ export class StandardRunService implements IRunService {
     const { apiVersion, baseUrl, httpClient } = this.options;
     const uri = `${baseUrl}${runId}/actions/${nodeId}/agentRepetitions/${repetitionId}`;
 
-    if (isHybridLogicApp(uri)) {
-      return this.fetchHybridLogicAppRunRepetitions(uri, 'GET', httpClient);
-    }
-
     try {
+      if (isHybridLogicApp(uri)) {
+        return this.fetchHybridLogicAppRunRepetitions(uri, 'GET', httpClient);
+      }
+
       const response = await httpClient.get<LogicAppsV2.RunRepetition>({
         uri: `${uri}?api-version=${apiVersion}`,
       });
@@ -231,10 +231,11 @@ export class StandardRunService implements IRunService {
     const { apiVersion, baseUrl, httpClient } = this.options;
     const uri = `${baseUrl}${runId}/actions/${nodeId}/agentRepetitions/${repetitionId}/actions`;
 
-    if (isHybridLogicApp(uri)) {
-      return this.fetchHybridLogicAppRunRepetitions<{ value: LogicAppsV2.RunRepetition[] }>(uri, 'GET', httpClient);
-    }
     try {
+      if (isHybridLogicApp(uri)) {
+        return this.fetchHybridLogicAppRunRepetitions<{ value: LogicAppsV2.RunRepetition[] }>(uri, 'GET', httpClient);
+      }
+
       const response = await httpClient.get<LogicAppsV2.RunRepetition>({
         uri: `${uri}?api-version=${apiVersion}`,
       });
@@ -280,10 +281,11 @@ export class StandardRunService implements IRunService {
 
     const uri = `${baseUrl}${runId}/actions/${nodeId}/repetitions/${repetitionId}`;
 
-    if (isHybridLogicApp(uri)) {
-      return this.fetchHybridLogicAppRunRepetitions<LogicAppsV2.RunRepetition>(uri, 'GET', httpClient);
-    }
     try {
+      if (isHybridLogicApp(uri)) {
+        return this.fetchHybridLogicAppRunRepetitions<LogicAppsV2.RunRepetition>(uri, 'GET', httpClient);
+      }
+
       const response = await httpClient.get<LogicAppsV2.RunRepetition>({
         uri: `${uri}?api-version=${apiVersion}`,
       });
@@ -386,12 +388,12 @@ export class StandardRunService implements IRunService {
     const { nodeId, runId } = action;
     const uri = `${baseUrl}${runId}/actions/${nodeId}/chatHistory`;
 
-    if (isHybridLogicApp(uri)) {
-      const response = await this.fetchHybridLogicAppRunRepetitions<any>(uri, 'GET', httpClient);
-      return response.value;
-    }
-
     try {
+      if (isHybridLogicApp(uri)) {
+        const response = await this.fetchHybridLogicAppRunRepetitions<any>(uri, 'GET', httpClient);
+        return response.value;
+      }
+
       const response = await httpClient.get<any>({
         uri: `${uri}?api-version=${apiVersion}`,
       });
@@ -419,12 +421,12 @@ export class StandardRunService implements IRunService {
 
     const uri = `${baseUrl}${idSuffix}/listCallBackUrl`;
 
-    if (isHybridLogicApp(uri)) {
-      const response = await this.fetchHybridLogicAppRunRepetitions<any>(uri, 'POST', httpClient);
-      return response?.value;
-    }
-
     try {
+      if (isHybridLogicApp(uri)) {
+        const response = await this.fetchHybridLogicAppRunRepetitions<any>(uri, 'POST', httpClient);
+        return response?.value;
+      }
+
       const response = await httpClient.post<any, any>({
         uri: `${uri}?api-version=${apiVersion}`,
       });
