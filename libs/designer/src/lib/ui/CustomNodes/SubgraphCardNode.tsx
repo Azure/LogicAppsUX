@@ -7,7 +7,7 @@ import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions
 import { setNodeContextMenuData, setShowDeleteModalNodeId } from '../../core/state/designerView/designerViewSlice';
 import { useIconUri, useParameterValidationErrors } from '../../core/state/operation/operationSelector';
 import { useIsNodePinnedToOperationPanel, useIsNodeSelectedInOperationPanel } from '../../core/state/panel/panelSelectors';
-import { changePanelNode, expandDiscoveryPanel } from '../../core/state/panel/panelSlice';
+import { addAgentToolMetadata, changePanelNode, expandDiscoveryPanel } from '../../core/state/panel/panelSlice';
 import {
   useActionMetadata,
   useIsGraphCollapsed,
@@ -118,8 +118,10 @@ const SubgraphCardNode = ({ targetPosition = Position.Top, sourcePosition = Posi
         const subGraphManifest = {
           properties: { ...caseManifestData, iconUri: iconUri ?? '', brandColor: '' },
         };
-        initializeSwitchCaseFromManifest(newCaseIdNewAdditiveSubgraphId, subGraphManifest, dispatch);
-        if (!isAgentAddTool) {
+        if (isAgentAddTool) {
+          dispatch(addAgentToolMetadata({ newCaseIdNewAdditiveSubgraphId, subGraphManifest }));
+        } else {
+          initializeSwitchCaseFromManifest(newCaseIdNewAdditiveSubgraphId, subGraphManifest, dispatch);
           dispatch(changePanelNode(newCaseIdNewAdditiveSubgraphId));
         }
         dispatch(setFocusNode(newCaseIdNewAdditiveSubgraphId));
