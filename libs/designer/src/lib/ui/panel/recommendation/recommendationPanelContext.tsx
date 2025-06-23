@@ -190,7 +190,6 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
           return;
         }
         const newNodeId = (operation?.properties?.summary ?? operation?.name ?? guid()).replaceAll(' ', '_');
-
         dispatch(
           addOperation({
             operation,
