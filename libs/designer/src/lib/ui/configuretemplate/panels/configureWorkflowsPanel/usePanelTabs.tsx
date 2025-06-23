@@ -6,12 +6,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../../core/state/templates/store';
 import { useFunctionalState } from '@react-hookz/web';
 import type { WorkflowTemplateData } from '../../../../core';
-import {
-  getWorkflowsWithDefinitions,
-  initializeAndSaveWorkflowsData,
-  saveWorkflowsData,
-} from '../../../../core/actions/bjsworkflow/configuretemplate';
-import { getResourceNameFromId, equals, isUndefinedOrEmptyString, getUniqueName, type Template, clone } from '@microsoft/logic-apps-shared';
+import { getWorkflowsWithDefinitions, addWorkflowsData, saveWorkflowsData } from '../../../../core/actions/bjsworkflow/configuretemplate';
+import { getResourceNameFromId, equals, isUndefinedOrEmptyString, getUniqueName, clone } from '@microsoft/logic-apps-shared';
 import { checkWorkflowNameWithRegex, validateWorkflowData } from '../../../../core/templates/utils/helper';
 import { useMemo, useCallback } from 'react';
 import { useResourceStrings } from '../../resources';
@@ -136,7 +132,7 @@ export const useConfigureWorkflowPanelTabs = ({
 
   const onSaveCompleted = useCallback(() => onSave?.(Object.keys(selectedWorkflowsList()).length > 1), [onSave, selectedWorkflowsList]);
 
-  const onSaveChanges = (newPublishState: Template.TemplateEnvironment) => {
+  const onSaveChanges = () => {
     // 1. Update the workflowId with user-input id (For newly selected workflow)
     setSelectedWorkflowsList((prevSelectedWorkflows) => {
       for (const [workflowId, workflowData] of Object.entries(prevSelectedWorkflows)) {
@@ -165,9 +161,9 @@ export const useConfigureWorkflowPanelTabs = ({
 
     // TODO: change below logic to API call then modify state
     if (hasWorkflowListChanged) {
-      dispatch(initializeAndSaveWorkflowsData({ workflows: selectedWorkflowsList(), publishState: newPublishState, onSaveCompleted }));
+      dispatch(addWorkflowsData({ workflows: selectedWorkflowsList(), onSaveCompleted }));
     } else {
-      dispatch(saveWorkflowsData({ workflows: selectedWorkflowsList(), publishState: newPublishState, onSaveCompleted }));
+      dispatch(saveWorkflowsData({ workflows: selectedWorkflowsList(), onSaveCompleted }));
     }
   };
 

@@ -26,6 +26,7 @@ export interface ConnectionPanelContentState {
   isCreatingConnection: boolean;
   panelMode: 'Connection';
   selectedNodeIds: string[];
+  expandedConnectorIds: string[];
 }
 
 export type ActionPanelFavoriteItem = {

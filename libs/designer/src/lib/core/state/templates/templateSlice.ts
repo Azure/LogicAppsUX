@@ -179,9 +179,13 @@ export const templateSlice = createSlice({
     },
     updateAllWorkflowsData: (
       state,
-      action: PayloadAction<{ workflows: Record<string, Partial<WorkflowTemplateData>>; manifest?: Template.TemplateManifest }>
+      action: PayloadAction<{
+        workflows: Record<string, Partial<WorkflowTemplateData>>;
+        manifest?: Template.TemplateManifest;
+        reset?: boolean;
+      }>
     ) => {
-      const { workflows: workflowsToUpdate, manifest } = action.payload;
+      const { workflows: workflowsToUpdate, manifest, reset } = action.payload;
       const workflows: Record<string, WorkflowTemplateData> = {};
 
       for (const id of Object.keys(workflowsToUpdate)) {
@@ -194,7 +198,7 @@ export const templateSlice = createSlice({
         state.manifest = manifest;
       }
 
-      state.workflows = workflows;
+      state.workflows = reset ? workflows : { ...state.workflows, ...workflows };
     },
     updateConnectionAndParameterDefinitions: (
       state,
@@ -204,8 +208,8 @@ export const templateSlice = createSlice({
       }>
     ) => {
       if (action.payload) {
-        state.connections = action.payload.connections;
-        state.parameterDefinitions = action.payload.parameterDefinitions as any;
+        state.connections = { ...state.connections, ...action.payload.connections };
+        state.parameterDefinitions = { ...state.parameterDefinitions, ...(action.payload.parameterDefinitions as any) };
       }
     },
     updateEnvironment: (state, action: PayloadAction<Template.TemplateEnvironment>) => {
