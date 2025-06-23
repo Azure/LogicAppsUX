@@ -100,10 +100,11 @@ export class StandardRunService implements IRunService {
   async getRun(runId: string): Promise<Run> {
     const { apiVersion, baseUrl, httpClient, workflowName } = this.options;
     const onlyRunId = runId.split('/')?.at(-1);
-    const uri = `${baseUrl}/workflows/${workflowName}/runs/${onlyRunId}?api-version=${apiVersion}&$expand=properties/actions,workflow/properties`;
+    let uri = `${baseUrl}/workflows/${workflowName}/runs/${onlyRunId}?api-version=${apiVersion}&$expand=properties/actions,workflow/properties`;
 
     try {
       if (isHybridLogicApp(uri)) {
+        uri = `${baseUrl}/workflows/${workflowName}/runs/${onlyRunId}?$expand=properties/actions,workflow/properties`;
         return this.fetchHybridLogicAppRunRepetitions<Run>(uri, 'GET', httpClient);
       }
       const response = await httpClient.get<Run>({
