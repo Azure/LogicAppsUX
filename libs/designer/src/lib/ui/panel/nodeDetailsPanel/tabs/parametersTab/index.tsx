@@ -51,7 +51,7 @@ import { SettingsSection } from '../../../../settings/settingsection';
 import type { Settings } from '../../../../settings/settingsection';
 import { ConnectionDisplay } from './connectionDisplay';
 import { IdentitySelector } from './identityselector';
-import { Divider, MessageBar, Spinner } from '@fluentui/react-components';
+import { Divider, MessageBar, MessageBarBody, Spinner, Text } from '@fluentui/react-components';
 import {
   PanelLocation,
   TokenPicker,
@@ -207,11 +207,20 @@ export const ParametersTab: React.FC<ParametersTabProps> = (props) => {
                 ? 'warning'
                 : 'error'
           }
+          layout="multiline"
         >
-          {errorInfo.message}
+          <MessageBarBody>
+            <Text>{errorInfo.message}</Text>
+          </MessageBarBody>
         </MessageBar>
       ) : null}
-      {showNoParamsMessage ? <MessageBar>{emptyParametersMessage}</MessageBar> : null}
+      {showNoParamsMessage ? (
+        <MessageBar layout="multiline">
+          <MessageBarBody>
+            <Text>{emptyParametersMessage}</Text>
+          </MessageBarBody>
+        </MessageBar>
+      ) : null}
       {Object.keys(inputs?.parameterGroups ?? {}).map((sectionName) => (
         <div key={sectionName}>
           <ParameterSection
