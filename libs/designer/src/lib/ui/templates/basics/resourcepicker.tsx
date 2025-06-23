@@ -15,12 +15,15 @@ import { type LogicAppResource, type Resource, equals } from '@microsoft/logic-a
 import { useTemplatesStrings } from '../templatesStrings';
 import { useAllLogicApps } from '../../../core/configuretemplate/utils/queries';
 
+type ResourceFieldId = 'alllogicapp' | 'logicapp' | 'location' | 'resourceGroupName' | 'subscriptionId';
+
 export interface ResourcePickerProps {
   viewMode?: 'default' | 'alllogicapps';
   onSelectApp?: (value: LogicAppResource) => void;
+  disabledIds?: 'all' | ResourceFieldId[];
 }
 
-export const ResourcePicker = ({ viewMode = 'default', onSelectApp }: ResourcePickerProps) => {
+export const ResourcePicker = ({ viewMode = 'default', onSelectApp, disabledIds }: ResourcePickerProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const isDefaultMode = viewMode === 'default';
   const { subscriptionId, resourceGroup, location, workflowAppName, logicAppName, isConsumption } = useSelector(
@@ -93,6 +96,7 @@ export const ResourcePicker = ({ viewMode = 'default', onSelectApp }: ResourcePi
         isLoading={isLoading}
         resources={subscriptions ?? []}
         errorMessage={subscriptionId ? '' : intlText.VALIDATION_ERROR}
+        disableOnValue={disabledIds === 'all' || !!disabledIds?.includes('subscriptionId')}
       />
       <ResourceField
         id="resourceGroupName"
@@ -102,6 +106,7 @@ export const ResourcePicker = ({ viewMode = 'default', onSelectApp }: ResourcePi
         isLoading={isResourceGroupLoading}
         resources={resourceGroups ?? []}
         errorMessage={resourceGroup ? '' : intlText.VALIDATION_ERROR}
+        disableOnValue={disabledIds === 'all' || !!disabledIds?.includes('resourceGroupName')}
       />
       {isDefaultMode && isConsumption ? (
         <ResourceField
@@ -112,6 +117,7 @@ export const ResourcePicker = ({ viewMode = 'default', onSelectApp }: ResourcePi
           isLoading={islocationLoading}
           resources={locations ?? []}
           errorMessage={location ? '' : intlText.VALIDATION_ERROR}
+          disableOnValue={disabledIds === 'all' || !!disabledIds?.includes('location')}
         />
       ) : null}
       {isDefaultMode && !isConsumption ? (
@@ -127,6 +133,7 @@ export const ResourcePicker = ({ viewMode = 'default', onSelectApp }: ResourcePi
             displayName: app.name,
           }))}
           errorMessage={workflowAppName ? '' : intlText.VALIDATION_ERROR}
+          disableOnValue={disabledIds === 'all' || !!disabledIds?.includes('logicapp')}
         />
       ) : null}
       {isDefaultMode ? null : (
@@ -142,6 +149,7 @@ export const ResourcePicker = ({ viewMode = 'default', onSelectApp }: ResourcePi
             displayName: equals(app.plan, 'consumption') ? `${app.name} (Consumption)` : `${app.name} (Standard)`,
           }))}
           errorMessage={logicAppName ? '' : intlText.VALIDATION_ERROR}
+          disableOnValue={disabledIds === 'all' || !!disabledIds?.includes('alllogicapp')}
         />
       )}
     </div>
@@ -156,14 +164,16 @@ const ResourceField = ({
   errorMessage,
   isLoading,
   onSelect,
+  disableOnValue,
 }: {
-  id: string;
+  id: ResourceFieldId;
   label: string;
   defaultKey: string;
   resources: Resource[];
   onSelect: (value: any) => void;
   isLoading?: boolean;
   errorMessage?: string;
+  disableOnValue: boolean;
 }) => {
   const intl = useIntl();
   const texts = {
@@ -208,7 +218,7 @@ const ResourceField = ({
           style={{ width: '100%' }}
           id={id}
           onOptionSelect={(e, option) => onSelect(option?.optionValue)}
-          disabled={isLoading}
+          disabled={isLoading || (disableOnValue && !!selectedResource)}
           value={selectedResource}
           selectedOptions={[defaultKey]}
           size="small"
