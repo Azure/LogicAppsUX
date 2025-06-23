@@ -107,6 +107,8 @@ interface ConnectionInfo {
   connectionId: string;
 }
 
+export type ResourceFieldId = 'subscription' | 'resourceGroup' | 'location' | 'resource';
+
 export interface ViewTemplateDetails {
   id: string;
   basicsOverride?: Record<
@@ -118,6 +120,7 @@ export interface ViewTemplateDetails {
   >;
   parametersOverride?: Record<string, ContentInfo<any>>;
   connectionsOverride?: Record<string, ConnectionInfo>;
+  lockResourceField?: ResourceFieldId;
 }
 
 export interface FileStructure {
