@@ -1,8 +1,10 @@
 @import (reference) "../variables.less";
 
 .msla-colorizer-json-body {
-	margin: 8px 0px;
+	margin-top: 4px;
 	overflow: hidden;
+	border-radius: 4px;
+
   .monaco-editor {
     .decorationsOverviewRuler {
       display: none;
@@ -21,15 +23,14 @@
 }
 
 .msla-colorizer-wrapper {
-	border: 1px solid lightgray;
+	border: 1px solid var(--colorNeutralForegroundDisabled);
 	border-radius: 4px;
-	overflow: hidden;
-  max-height: 12rem;   /* 192px = 12×16px = 10×19px + 2px borders */
+  max-height: 280px;
   position: relative;
   font-size: 13px;
   margin: 0;
   overflow: auto;
-  padding: 0.5em 1.25em;
+  padding: 6px 16px;
 	
   &.date-time {
     pre {
@@ -40,9 +41,6 @@
   pre {
     margin: 0 50px 0 0;
     white-space: pre-wrap;
-    .token {
-      padding-inline-start: 8px;
-    }
   }
 
   .buttons {

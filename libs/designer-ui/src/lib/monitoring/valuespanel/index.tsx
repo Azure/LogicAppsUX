@@ -43,7 +43,7 @@ export const ValuesPanel: React.FC<ValuesPanelProps> = ({
   const borderStyle = {
     borderRadius: '8px',
     background: brandColor,
-    minHeight: '100%',
+    minHeight: '32px',
     minWidth: '6px',
   };
 
@@ -53,12 +53,11 @@ export const ValuesPanel: React.FC<ValuesPanelProps> = ({
   };
 
   return (
-    <div className={'msla-editor-initialize-variable'}>
-      <div className={'msla-variable-editor-heading'}>
+    <div className={'msla-trace-inputs-outputs'}>
+      <div className={'msla-trace-inputs-outputs-header'}>
         <div style={borderStyle} />
         <Button
           appearance="subtle"
-          className="msla-variable-editor-heading-button"
           onClick={handleToggleExpand}
           icon={expanded ? <CollapseIcon /> : <ExpandIcon />}
           aria-expanded={expanded}

@@ -24,7 +24,7 @@
     "fuse.js": "6.6.2",
     "lexical": "0.21.0",
     "monaco-editor": "0.44.0",
-    "prism-react-renderer": "2.3.1",
+    "prism-react-renderer": "2.4.1",
     "react-dnd": "16.0.1",
     "react-infinite-scroll-component": "6.1.0",
     "react-intl": "6.3.0",

@@ -28,7 +28,7 @@ export interface ColorizerProps {
   utcProps?: UTCDateTimeProps;
 }
 
-export const Colorizer: React.FC<ColorizerProps> = ({ ariaLabel, code, utcProps, language = 'json' }) => {
+export const Colorizer: React.FC<ColorizerProps> = ({ ariaLabel, code, utcProps, language = 'text' }) => {
   const { isInverted } = useTheme();
   const theme = useMemo(() => (isInverted ? themes.vsDark : themes.vsLight), [isInverted]);
   const elementRef = useRef<HTMLPreElement | null>(null);
