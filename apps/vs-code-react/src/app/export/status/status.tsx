@@ -1,6 +1,7 @@
 import { Status as FinalStatus } from '../../../state/WorkflowSlice';
 import type { RootState } from '../../../state/store';
-import { List, Icon, Spinner, SpinnerSize } from '@fluentui/react';
+import { Spinner } from '@fluentui/react-components';
+import { CheckmarkCircleRegular } from '@fluentui/react-icons';
 import { MediumText, XLargeText } from '@microsoft/designer-ui';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
@@ -21,11 +22,7 @@ export const Status: React.FC = () => {
 
   const renderStatus = (status?: string, index?: number): JSX.Element => {
     const icon =
-      index === statuses.length - 1 && finalStatus !== FinalStatus.Succeeded ? (
-        <Spinner size={SpinnerSize.small} />
-      ) : (
-        <Icon iconName={'SkypeCheck'} />
-      );
+      index === statuses.length - 1 && finalStatus !== FinalStatus.Succeeded ? <Spinner size="small" /> : <CheckmarkCircleRegular />;
 
     return (
       <div key={`index-${finalStatus}`} className="msla-export-status--item">
@@ -38,7 +35,7 @@ export const Status: React.FC = () => {
   return (
     <div className="msla-export-status">
       <XLargeText text={intlText.EXPORT_STATUS_TITLE} style={{ display: 'block' }} />
-      <List items={statuses} onRenderCell={renderStatus} />
+      <div className="msla-export-status-list">{statuses.map((status, index) => renderStatus(status, index))}</div>
       <FinalStatusGadget finalStatus={finalStatus} />
     </div>
   );
@@ -68,7 +65,7 @@ const FinalStatusGadget: React.FC<FinalStatusGadgetProps> = ({ finalStatus }) =>
     case FinalStatus.Succeeded:
       return (
         <div className="msla-export-status--item">
-          <Icon iconName={'SkypeCheck'} />
+          <CheckmarkCircleRegular />
           <MediumText text={exportNextStepsPath} style={{ marginLeft: '5px' }} />
         </div>
       );
