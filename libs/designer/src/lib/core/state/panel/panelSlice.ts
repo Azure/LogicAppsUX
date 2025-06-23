@@ -204,7 +204,7 @@ export const panelSlice = createSlice({
       state.discoveryContent.isParallelBranch = isParallelBranch ?? false;
       state.discoveryContent.relationshipIds = relationshipIds;
       state.discoveryContent.selectedNodeIds = [nodeId];
-      state.discoveryContent.isAgentTool = isAgentTool;
+      state.discoveryContent.isAddingAgentTool = isAgentTool;
 
       LoggerService().log({
         level: LogEntryLevel.Verbose,

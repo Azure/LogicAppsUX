@@ -64,6 +64,7 @@ import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { batch } from 'react-redux';
 import { operationSupportsSplitOn } from '../../utils/outputs';
+import { useIsAddingAgentTool } from '../../../core/state/panel/panelSelectors';
 
 type AddOperationPayload = {
   operation: DiscoveryOperation<DiscoveryResultTypes> | undefined;
@@ -83,7 +84,7 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
     }
 
     const workflowState = (getState() as RootState).workflow;
-    const isAddingAgentTool = (getState() as RootState).panel.discoveryContent.isAgentTool;
+    const isAddingAgentTool = useIsAddingAgentTool();
     const nodeId = getNonDuplicateNodeId(workflowState.nodesMetadata, actionId, workflowState.idReplacements);
     const newPayload = { ...payload, nodeId };
     const newToolGraphId = (getState() as RootState).panel.discoveryContent.relationshipIds.graphId;

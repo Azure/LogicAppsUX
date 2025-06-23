@@ -38,7 +38,7 @@ export interface DiscoveryPanelContentState {
   favoriteOperations: ActionPanelFavoriteItem[];
   isAddingTrigger: boolean;
   isParallelBranch: boolean;
-  isAgentTool?: boolean;
+  isAddingAgentTool?: boolean;
   panelMode: 'Discovery';
   relationshipIds: RelationshipIds;
   selectedNodeIds: string[];

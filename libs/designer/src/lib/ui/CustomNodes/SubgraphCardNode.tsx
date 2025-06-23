@@ -118,8 +118,8 @@ const SubgraphCardNode = ({ targetPosition = Position.Top, sourcePosition = Posi
         const subGraphManifest = {
           properties: { ...caseManifestData, iconUri: iconUri ?? '', brandColor: '' },
         };
-        initializeSwitchCaseFromManifest(newCaseIdNewAdditiveSubgraphId, subGraphManifest, dispatch);
         if (!isAgentAddTool) {
+          initializeSwitchCaseFromManifest(newCaseIdNewAdditiveSubgraphId, subGraphManifest, dispatch);
           dispatch(changePanelNode(newCaseIdNewAdditiveSubgraphId));
         }
         dispatch(setFocusNode(newCaseIdNewAdditiveSubgraphId));
