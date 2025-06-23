@@ -69,6 +69,7 @@ export const ExpandedComplexArray = ({
     } else {
       newItems[index].items[itemIndex].value = newState.value;
     }
+
     setItems(newItems);
   };
 
@@ -76,7 +77,6 @@ export const ExpandedComplexArray = ({
     const key = schemaItem.key;
     const itemIndex = allItems[index].items.findIndex((item) => item.key === key);
     const newItems = [...allItems];
-
     if (itemIndex === -1) {
       newItems[index].items.push({
         key: schemaItem.key,

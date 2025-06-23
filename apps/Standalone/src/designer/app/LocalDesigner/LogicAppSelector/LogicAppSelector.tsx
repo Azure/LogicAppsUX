@@ -23,7 +23,6 @@ const fileOptions = [
   { key: 'BlankAgent.json', text: 'Empty Agent' },
   { key: 'Agent.json', text: 'Starter Agent' },
   { key: 'AgentWithChannels.json', text: 'Agent with Channels' },
-  { key: 'Agents.json', text: 'A2A Agents' },
 
   // Scope Nodes
   { key: 'divider_2', text: '-', itemType: DropdownMenuItemType.Divider },

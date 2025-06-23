@@ -742,6 +742,7 @@ const ParameterSection = ({
   ): JSX.Element => {
     const parameterType = editorType ?? parameter?.type;
     const supportedTypes: string[] = getPropertyValue(constants.TOKENS, getTypeForTokenFiltering(parameterType));
+
     const filteredTokenGroup = tokenGroup.map((group) => ({
       ...group,
       tokens: group.tokens.filter((token: OutputToken) => {
