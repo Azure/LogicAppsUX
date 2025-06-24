@@ -720,7 +720,7 @@ Error: Invalid hook call. Hooks can only be called inside of the body of a funct
 pnpm ls react react-dom
 
 # You might see:
-# ├─ react@18.3.1
+# ├─ react@18.2.0
 # └─ some-package
 #    └─ react@17.0.2  ❌ Different version!
 
@@ -730,8 +730,8 @@ pnpm dedupe
 # Or force resolution in package.json
 {
   "overrides": {
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   }
 }
 ```
