@@ -73,7 +73,7 @@ export const TemplateReviewList = () => {
   const { connectorKinds, stateTypes, resourceStrings: templateResourceStrings } = useTemplatesStrings();
   const resources = { ...templateResourceStrings, ...connectorKinds, ...stateTypes, ...useResourceStrings(), ...intlText };
 
-  const BasicsItems: TemplatesSectionItem[] = useBascisItems(resources);
+  const BasicsItems: TemplatesSectionItem[] = useBasicsItems(resources);
   const workflowsSectionItems: TemplatesSectionItem[] = useWorkflowSectionItems(resources);
   const connectionsSectionItems: TemplatesSectionItem[] = useConnectionSectionItems(resources);
   const paramtersSectionItems: TemplatesSectionItem[] = useParameterSectionItems(resources);
@@ -133,7 +133,7 @@ export const TemplateReviewList = () => {
   );
 };
 
-const useBascisItems = (resources: Record<string, string>) => {
+const useBasicsItems = (resources: Record<string, string>) => {
   const { status, templateManifest } = useSelector((state: RootState) => ({
     status: state.template.status,
     templateManifest: state.template.manifest,
@@ -376,7 +376,7 @@ const useProfileSectionItems = (resources: Record<string, string>) => {
     },
     {
       label: resources.Category,
-      value: templateManifest?.details?.Category ? templateManifest?.details?.Category : resources.Placeholder,
+      value: templateManifest?.details?.Category ?? resources.Placeholder,
       type: 'text',
     },
     {
