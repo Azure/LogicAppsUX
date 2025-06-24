@@ -402,11 +402,12 @@ export const CodefulSDKs = {
 };
 export type CodefulSDKs = (typeof CodefulSDKs)[keyof typeof CodefulSDKs];
 
-const codefulSdkVersion = '1.126.0.16';
+const codefulSdkVersion = '1.127.21.3-preview';
+const workflowsWebJobsVersion = '1.127.21.3-preview';
 const durableTaskVersion = '2.9.0';
 
 export const CodefulSdkVersions = {
   [CodefulSDKs.DurableTask]: durableTaskVersion,
-  [CodefulSDKs.WorkflowsWebJobs]: codefulSdkVersion,
+  [CodefulSDKs.WorkflowsWebJobs]: workflowsWebJobsVersion,
   [CodefulSDKs.WorkflowsSDK]: codefulSdkVersion,
 };
