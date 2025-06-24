@@ -2,8 +2,8 @@ import Elk, { type ElkNode } from 'elkjs/lib/elk.bundled.js';
 import { useEffect, useState } from 'react';
 import { type Node, type Edge, type XYPosition, useStore, useReactFlow } from '@xyflow/react';
 import { isFunctionNode, panelWidth } from '../../utils/ReactFlow.Util';
-import { useDispatch } from 'react-redux';
-import type { AppDispatch } from '../../core/state/Store';
+import { useDispatch, useSelector } from 'react-redux';
+import type { AppDispatch, RootState } from '../../core/state/Store';
 import { updateFunctionNodesPosition } from '../../core/state/DataMapSlice';
 
 // the layout direction (T = top, R = right, B = bottom, L = left, TB = top to bottom, ...)
@@ -100,6 +100,7 @@ const useAutoLayout = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [isLayouted, setIsLayouted] = useState(false);
   const { getIntersectingNodes } = useReactFlow();
+  const needsLayout = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.needsLayout);
   // Here we are storing a map of the nodes and edges in the flow. By using a
   // custom equality function as the second argument to `useStore`, we can make
   // sure the layout algorithm only runs when something has changed that should
@@ -119,7 +120,8 @@ const useAutoLayout = () => {
     // Only run the layout if there are nodes and they have been initialized with
     // their dimensions
     // does not run on first node placed
-    if (isLayouted) {
+    if (isLayouted && !needsLayout) {
+      console.debug('useAutoLayout: Layout already applied, skipping.');
       return;
     }
 
@@ -128,6 +130,7 @@ const useAutoLayout = () => {
     const functionNodes = nodes.filter((node) => isFunctionNode(node.id));
 
     if (functionNodes.length === 0) {
+      console.debug('useAutoLayout: No function nodes found, skipping layout.');
       return;
     }
 
@@ -139,6 +142,8 @@ const useAutoLayout = () => {
         break;
       }
     }
+
+    console.debug(`useAutoLayout: Found ${functionNodes.length} function nodes, ${intersectingNodeCount} intersecting nodes.`);
 
     if (functionNodes.length > 0 && intersectingNodeCount === 0) {
       setIsLayouted(true);
@@ -172,7 +177,7 @@ const useAutoLayout = () => {
     };
 
     runLayout(nodes, edges);
-  }, [elements, dispatch, isLayouted, getIntersectingNodes]);
+  }, [elements, dispatch, isLayouted, getIntersectingNodes, needsLayout]);
 };
 
 export default useAutoLayout;
