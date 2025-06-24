@@ -24,12 +24,15 @@ export const SingleWorkflowBasics = ({ workflowId }: { workflowId: string }) => 
     [workflowTemplate]
   );
   const { isNameEditable, isKindEditable } = useWorkflowBasicsEditable(workflowId);
-  const { enableResourceSelection, isConsumption, subscriptionId, resourceGroupName } = useSelector((state: RootState) => ({
-    isConsumption: state.workflow.isConsumption,
-    subscriptionId: state.workflow.subscriptionId,
-    resourceGroupName: state.workflow.resourceGroup,
-    enableResourceSelection: state.templateOptions.enableResourceSelection,
-  }));
+  const { enableResourceSelection, isConsumption, subscriptionId, resourceGroupName, viewTemplateDetails } = useSelector(
+    (state: RootState) => ({
+      isConsumption: state.workflow.isConsumption,
+      subscriptionId: state.workflow.subscriptionId,
+      resourceGroupName: state.workflow.resourceGroup,
+      enableResourceSelection: state.templateOptions.enableResourceSelection,
+      viewTemplateDetails: state.templateOptions.viewTemplateDetails,
+    })
+  );
   const { data: existingWorkflowNames } = useExistingWorkflowNames();
   const name = useMemo(() => workflowName, [workflowName]);
   const intl = useIntl();
@@ -89,7 +92,7 @@ export const SingleWorkflowBasics = ({ workflowId }: { workflowId: string }) => 
 
   return (
     <div className="msla-templates-tab msla-panel-no-description-tab">
-      {enableResourceSelection ? <ResourcePicker /> : null}
+      {enableResourceSelection ? <ResourcePicker lockField={viewTemplateDetails?.lockResourceField} /> : null}
       <TemplatesSection
         title={resources.WORKFLOW_NAME}
         isTitleRequired={true}
