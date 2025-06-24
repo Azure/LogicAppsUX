@@ -5,8 +5,8 @@ export const useResourceStrings = () => {
   const intl = useIntl();
   return {
     Host: intl.formatMessage({
-      defaultMessage: 'Host (SKU)',
-      id: 'vM1hcr',
+      defaultMessage: 'Plan (SKU)',
+      id: 'Fd3EpL',
       description: 'The label for the supported skus',
     }),
     Environment: intl.formatMessage({
@@ -355,8 +355,8 @@ export const useResourceStrings = () => {
       description: 'The tab label for the publish tab on the configure template wizard',
     }),
     SummaryTabLabel: intl.formatMessage({
-      defaultMessage: 'Summary',
-      id: 'cCmFCI',
+      defaultMessage: 'Review + publish',
+      id: 'k2a8ry',
       description: 'The tab label for the summary tab on the configure template wizard',
     }),
     LearnMore: intl.formatMessage({
