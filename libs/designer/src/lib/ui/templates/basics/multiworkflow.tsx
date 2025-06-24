@@ -34,9 +34,10 @@ interface WorkflowItem {
 export const MultiWorkflowBasics = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { workflows } = useSelector((state: RootState) => state.template);
-  const { basicsOverrideByWorkflow, enableResourceSelection } = useSelector((state: RootState) => ({
+  const { basicsOverrideByWorkflow, enableResourceSelection, viewTemplateDetails } = useSelector((state: RootState) => ({
     basicsOverrideByWorkflow: state.templateOptions.viewTemplateDetails?.basicsOverride,
     enableResourceSelection: state.templateOptions.enableResourceSelection,
+    viewTemplateDetails: state.templateOptions.viewTemplateDetails,
   }));
   const { data: existingWorkflowNames } = useExistingWorkflowNames();
   const { stateTypes } = useTemplatesStrings();
@@ -233,7 +234,7 @@ export const MultiWorkflowBasics = () => {
 
   return (
     <div className="msla-templates-basics-tab">
-      {enableResourceSelection ? <ResourcePicker /> : null}
+      {enableResourceSelection ? <ResourcePicker lockField={viewTemplateDetails?.lockResourceField} /> : null}
       <div>
         <Text>{resources.general_line1}</Text>
         <br />
