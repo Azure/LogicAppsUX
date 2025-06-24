@@ -16,13 +16,13 @@ export const checkIfValueNeedsQuotes = (customValue: string): boolean => {
 
 export const quoteSelectedCustomValue = (customValue: string): string => {
   if (!checkIfValueNeedsQuotes(customValue)) {
-    return customValue; // If it's a number, boolean, or date, return as is
+    return customValue; // If it's a number return as is
   }
   return quoteString(customValue); // Otherwise, quote the string
 };
 
 const quoteString = (value: string): string => {
-  // If the value is empty, return empty quotes
+  // If the value is empty, return empty string
   if (!value) {
     return '';
   }
@@ -42,6 +42,7 @@ const quoteString = (value: string): string => {
 
   // Check if the string is wrapped in single quotes
   else if (cleanValue.startsWith("'") && cleanValue.endsWith("'")) {
+    // single quotes are also compatible with backend
     cleanValue = cleanValue.substring(1, cleanValue.length - 1);
   }
 
