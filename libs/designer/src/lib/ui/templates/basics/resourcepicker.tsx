@@ -94,9 +94,7 @@ export const ResourcePicker = ({ viewMode = 'default', onSelectApp, lockField }:
         isLoading={isLoading}
         resources={subscriptions ?? []}
         errorMessage={subscriptionId ? '' : intlText.VALIDATION_ERROR}
-        disableOnValue={
-          lockField === 'subscription' || lockField === 'resourceGroup' || lockField === 'location' || lockField === 'resource'
-        }
+        lockField={lockField === 'subscription' || lockField === 'resourcegroup' || lockField === 'resource'}
       />
       <ResourceField
         id="resourceGroupName"
@@ -106,7 +104,7 @@ export const ResourcePicker = ({ viewMode = 'default', onSelectApp, lockField }:
         isLoading={isResourceGroupLoading}
         resources={resourceGroups ?? []}
         errorMessage={resourceGroup ? '' : intlText.VALIDATION_ERROR}
-        disableOnValue={lockField === 'resourceGroup' || lockField === 'location' || lockField === 'resource'}
+        lockField={lockField === 'resourcegroup' || lockField === 'resource'}
       />
       {isDefaultMode && isConsumption ? (
         <ResourceField
@@ -117,7 +115,7 @@ export const ResourcePicker = ({ viewMode = 'default', onSelectApp, lockField }:
           isLoading={islocationLoading}
           resources={locations ?? []}
           errorMessage={location ? '' : intlText.VALIDATION_ERROR}
-          disableOnValue={lockField === 'location' || lockField === 'resource'}
+          lockField={lockField === 'location' || lockField === 'resource'}
         />
       ) : null}
       {isDefaultMode && !isConsumption ? (
@@ -133,7 +131,7 @@ export const ResourcePicker = ({ viewMode = 'default', onSelectApp, lockField }:
             displayName: app.name,
           }))}
           errorMessage={workflowAppName ? '' : intlText.VALIDATION_ERROR}
-          disableOnValue={lockField === 'resource'}
+          lockField={lockField === 'resource'}
         />
       ) : null}
       {isDefaultMode ? null : (
@@ -149,7 +147,7 @@ export const ResourcePicker = ({ viewMode = 'default', onSelectApp, lockField }:
             displayName: equals(app.plan, 'consumption') ? `${app.name} (Consumption)` : `${app.name} (Standard)`,
           }))}
           errorMessage={logicAppName ? '' : intlText.VALIDATION_ERROR}
-          disableOnValue={lockField === 'resource'}
+          lockField={lockField === 'resource'}
         />
       )}
     </div>
@@ -164,7 +162,7 @@ const ResourceField = ({
   errorMessage,
   isLoading,
   onSelect,
-  disableOnValue,
+  lockField,
 }: {
   id: string;
   label: string;
@@ -173,7 +171,7 @@ const ResourceField = ({
   onSelect: (value: any) => void;
   isLoading?: boolean;
   errorMessage?: string;
-  disableOnValue: boolean;
+  lockField: boolean;
 }) => {
   const intl = useIntl();
   const texts = {
@@ -218,7 +216,7 @@ const ResourceField = ({
           style={{ width: '100%' }}
           id={id}
           onOptionSelect={(e, option) => onSelect(option?.optionValue)}
-          disabled={isLoading || (disableOnValue && !!selectedResource)}
+          disabled={isLoading || (lockField && !!selectedResource)}
           value={selectedResource}
           selectedOptions={[defaultKey]}
           size="small"

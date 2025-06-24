@@ -107,7 +107,7 @@ interface ConnectionInfo {
   connectionId: string;
 }
 
-export type ResourceFieldId = 'subscription' | 'resourceGroup' | 'location' | 'resource';
+export type ResourceFieldId = 'subscription' | 'resourcegroup' | 'location' | 'resource';
 
 export interface ViewTemplateDetails {
   id: string;
