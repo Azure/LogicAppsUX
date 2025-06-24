@@ -1,10 +1,11 @@
 import { defineConfig } from 'tsup';
 
 export default defineConfig({
-  entry: ['src/main.ts'],
+  entry: ['src/main.ts', 'src/e2e/**/*.ts'], // Include the specific file and folder
   splitting: false,
   sourcemap: true,
   clean: true,
-  external: ['vscode'],
+  external: ['vscode', 'monocart-coverage-reports', '@aws-sdk/client-s3'],
   keepNames: true,
+  outDir: 'dist',
 });
