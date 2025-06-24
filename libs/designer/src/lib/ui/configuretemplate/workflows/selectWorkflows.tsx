@@ -212,7 +212,7 @@ export const SelectWorkflows = ({
         <ResourcePicker
           viewMode={'alllogicapps'}
           onSelectApp={onLogicAppSelected}
-          disableOnValue={!!Object.keys(workflowsInTemplate).length}
+          lockField={Object.keys(workflowsInTemplate).length ? 'resource' : undefined}
         />
       </TemplatesSection>
       <TemplatesSection title={intlText.WORKFLOWS} titleHtmlFor={'workflowsLabel'} description={intlText.WORKFLOWS_LABEL}>

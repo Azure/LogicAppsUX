@@ -11,17 +11,17 @@ import {
   setSubscription,
   setWorkflowAppDetails,
 } from '../../../core/state/templates/workflowSlice';
-import { type LogicAppResource, type Resource, equals } from '@microsoft/logic-apps-shared';
+import { type LogicAppResource, type Resource, type Template, equals } from '@microsoft/logic-apps-shared';
 import { useTemplatesStrings } from '../templatesStrings';
 import { useAllLogicApps } from '../../../core/configuretemplate/utils/queries';
 
 export interface ResourcePickerProps {
   viewMode?: 'default' | 'alllogicapps';
   onSelectApp?: (value: LogicAppResource) => void;
-  disableOnValue?: boolean;
+  lockField?: Template.ResourceFieldId;
 }
 
-export const ResourcePicker = ({ viewMode = 'default', onSelectApp, disableOnValue = false }: ResourcePickerProps) => {
+export const ResourcePicker = ({ viewMode = 'default', onSelectApp, lockField }: ResourcePickerProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const isDefaultMode = viewMode === 'default';
   const { subscriptionId, resourceGroup, location, workflowAppName, logicAppName, isConsumption } = useSelector(
@@ -92,9 +92,9 @@ export const ResourcePicker = ({ viewMode = 'default', onSelectApp, disableOnVal
         onSelect={(value) => dispatch(setSubscription(value))}
         defaultKey={subscriptionId}
         isLoading={isLoading}
-        disableOnValue={disableOnValue}
         resources={subscriptions ?? []}
         errorMessage={subscriptionId ? '' : intlText.VALIDATION_ERROR}
+        lockField={lockField === 'subscription' || lockField === 'resourcegroup' || lockField === 'resource'}
       />
       <ResourceField
         id="resourceGroupName"
@@ -102,9 +102,9 @@ export const ResourcePicker = ({ viewMode = 'default', onSelectApp, disableOnVal
         onSelect={(value) => dispatch(setResourceGroup(value))}
         defaultKey={resourceGroup}
         isLoading={isResourceGroupLoading}
-        disableOnValue={disableOnValue}
         resources={resourceGroups ?? []}
         errorMessage={resourceGroup ? '' : intlText.VALIDATION_ERROR}
+        lockField={lockField === 'resourcegroup' || lockField === 'resource'}
       />
       {isDefaultMode && isConsumption ? (
         <ResourceField
@@ -113,9 +113,9 @@ export const ResourcePicker = ({ viewMode = 'default', onSelectApp, disableOnVal
           onSelect={(value) => dispatch(setLocation(value))}
           defaultKey={location}
           isLoading={islocationLoading}
-          disableOnValue={disableOnValue}
           resources={locations ?? []}
           errorMessage={location ? '' : intlText.VALIDATION_ERROR}
+          lockField={lockField === 'location' || lockField === 'resource'}
         />
       ) : null}
       {isDefaultMode && !isConsumption ? (
@@ -125,13 +125,13 @@ export const ResourcePicker = ({ viewMode = 'default', onSelectApp, disableOnVal
           onSelect={onLogicAppSelect}
           defaultKey={workflowAppName ?? ''}
           isLoading={isLogicAppsLoading}
-          disableOnValue={disableOnValue}
           resources={(logicApps ?? []).map((app) => ({
             id: app.id,
             name: app.name,
             displayName: app.name,
           }))}
           errorMessage={workflowAppName ? '' : intlText.VALIDATION_ERROR}
+          lockField={lockField === 'resource'}
         />
       ) : null}
       {isDefaultMode ? null : (
@@ -141,13 +141,13 @@ export const ResourcePicker = ({ viewMode = 'default', onSelectApp, disableOnVal
           onSelect={onLogicAppInstanceSelect}
           defaultKey={logicAppName ?? ''}
           isLoading={isAllLogicAppsLoading}
-          disableOnValue={disableOnValue}
           resources={(allLogicApps ?? []).map((app) => ({
             id: app.id,
             name: app.name,
             displayName: equals(app.plan, 'consumption') ? `${app.name} (Consumption)` : `${app.name} (Standard)`,
           }))}
           errorMessage={logicAppName ? '' : intlText.VALIDATION_ERROR}
+          lockField={lockField === 'resource'}
         />
       )}
     </div>
@@ -161,8 +161,8 @@ const ResourceField = ({
   defaultKey,
   errorMessage,
   isLoading,
-  disableOnValue,
   onSelect,
+  lockField,
 }: {
   id: string;
   label: string;
@@ -170,8 +170,8 @@ const ResourceField = ({
   resources: Resource[];
   onSelect: (value: any) => void;
   isLoading?: boolean;
-  disableOnValue?: boolean;
   errorMessage?: string;
+  lockField: boolean;
 }) => {
   const intl = useIntl();
   const texts = {
@@ -216,7 +216,7 @@ const ResourceField = ({
           style={{ width: '100%' }}
           id={id}
           onOptionSelect={(e, option) => onSelect(option?.optionValue)}
-          disabled={isLoading || (disableOnValue && !!selectedResource)}
+          disabled={isLoading || (lockField && !!selectedResource)}
           value={selectedResource}
           selectedOptions={[defaultKey]}
           size="small"

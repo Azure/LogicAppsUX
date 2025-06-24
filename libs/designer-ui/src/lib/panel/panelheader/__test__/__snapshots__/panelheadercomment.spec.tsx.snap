@@ -9,7 +9,7 @@ exports[`ui/panel/panelheadercomment > should construct. 1`] = `
     aria-label="Comment"
     className="msla-comment-icon"
   />
-  <StyledTextFieldBase
+  <StyledTextFieldBase2
     ariaLabel="Description"
     autoAdjustHeight={true}
     borderless={true}

@@ -124,8 +124,8 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
         description: 'Body text for informing users this action is deleting selected workflows',
       }),
       DELETE_UNPUBLISH_CONFIRM_TEXT: intl.formatMessage({
-        defaultMessage: `Deleting workflows wlil remove them from this template. The template will be unpublished and won't appear in the template library until it is republished. Do you want to delete the workflow(s) and unpublish?`,
-        id: 'r/H4us',
+        defaultMessage: `Deleting workflows will remove them from this template. The template will be unpublished and won't appear in the template library until it is republished. Do you want to delete the workflow(s) and unpublish?`,
+        id: 'Ap0SOB',
         description: 'Body text for informing users this action is deleting selected workflows and unpublishing the template',
       }),
       CLOSE: intl.formatMessage({
