@@ -1,6 +1,6 @@
 import './styles.less';
 import type { ComboboxProps } from '@fluentui/react-components';
-import { Combobox, Spinner, useComboboxFilter, useId } from '@fluentui/react-components';
+import { Combobox, useComboboxFilter, useId } from '@fluentui/react-components';
 import { useCallback, useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -31,7 +31,6 @@ export const SearchableDropdown: React.FC<ISearchableDropdownProps> = (props) =>
     }),
   };
 
-  const spinnerLoader = props.isLoading ? <Spinner className="searchable-dropdown-spinner" size="extra-small" /> : null;
   const filterOptions = useComboboxFilter(
     searchText,
     options.map((option) => option.text),
@@ -61,7 +60,6 @@ export const SearchableDropdown: React.FC<ISearchableDropdownProps> = (props) =>
       >
         {filterOptions}
       </Combobox>
-      {spinnerLoader}
     </div>
   );
 };

@@ -161,10 +161,10 @@ export const Navigation: React.FC = () => {
 
   return (
     <div className="msla-export-navigation-panel">
-      <Button className="msla-export-navigation-panel-button" onClick={onClickBack} disabled={isBackDisabled()}>
+      <Button onClick={onClickBack} disabled={isBackDisabled()}>
         {intlText.BACK}
       </Button>
-      <Button className="msla-export-navigation-panel-button" appearance="primary" onClick={onClickNext} disabled={isNextDisabled()}>
+      <Button appearance="primary" onClick={onClickNext} disabled={isNextDisabled()}>
         {nextText}
       </Button>
     </div>
