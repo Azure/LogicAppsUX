@@ -75,7 +75,7 @@ export const SelectWorkflows = ({
 
   const workflowSourceIdsInTemplate = useMemo(() => {
     return Object.values(workflowsInTemplate)
-      .map((workflow) => workflow.manifest?.metadata?.workflowSourceId)
+      .map((workflow) => workflow.manifest?.metadata?.workflowSourceId?.toLowerCase())
       .filter((id) => !!id);
   }, [workflowsInTemplate]);
 
@@ -137,7 +137,7 @@ export const SelectWorkflows = ({
         id: workflow.id,
         name: workflow.name,
         trigger: workflow.triggerType,
-        disabled: isConsumption || workflowSourceIdsInTemplate.includes(workflow.id),
+        disabled: isConsumption || workflowSourceIdsInTemplate.includes(workflow.id.toLowerCase()),
       })) ?? [],
     [workflows, isConsumption, workflowSourceIdsInTemplate]
   );
