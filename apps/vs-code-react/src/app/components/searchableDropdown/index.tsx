@@ -1,7 +1,7 @@
 import './styles.less';
 import type { ComboboxProps } from '@fluentui/react-components';
 import { Combobox, Spinner, useComboboxFilter, useId } from '@fluentui/react-components';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export interface SearchableDropdownOption {
@@ -39,10 +39,14 @@ export const SearchableDropdown: React.FC<ISearchableDropdownProps> = (props) =>
       noOptionsMessage: intlText.NO_OPTIONS_FOUND,
     }
   );
-  const onOptionSelect: ComboboxProps['onOptionSelect'] = (event, data) => {
-    setSearchText(data.optionText ?? '');
-    onChange?.({ text: data.optionText ?? '', key: data.optionText ?? '' });
-  };
+  const onOptionSelect = useCallback(
+    (_event: any, data: any) => {
+      const selectedOption = options.find((opt) => opt.text === data.optionText);
+      setSearchText(data.optionText ?? '');
+      onChange?.(selectedOption);
+    },
+    [options, onChange]
+  );
 
   return (
     <div className="searchable-dropdown">
