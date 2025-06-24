@@ -83,14 +83,18 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
     }
 
     const workflowState = (getState() as RootState).workflow;
-    const isAddingAgentTool = (getState() as RootState).panel.discoveryContent.isAgentTool;
+    const isAddingAgentTool = (getState() as RootState).panel.discoveryContent.isAddingAgentTool;
     const nodeId = getNonDuplicateNodeId(workflowState.nodesMetadata, actionId, workflowState.idReplacements);
     const newPayload = { ...payload, nodeId };
     const newToolGraphId = (getState() as RootState).panel.discoveryContent.relationshipIds.graphId;
+    const agentToolMetadata = (getState() as RootState).panel.discoveryContent.agentToolMetadata;
 
     if (isAddingAgentTool) {
       const newToolSubgraphId = (getState() as RootState).panel.discoveryContent.relationshipIds.subgraphId;
       if (newToolSubgraphId && newToolGraphId) {
+        if (agentToolMetadata?.newCaseIdNewAdditiveSubgraphId && agentToolMetadata?.subGraphManifest) {
+          initializeSwitchCaseFromManifest(agentToolMetadata.newCaseIdNewAdditiveSubgraphId, agentToolMetadata?.subGraphManifest, dispatch);
+        }
         dispatch(addAgentTool({ toolId: newToolGraphId, nodeId: newToolSubgraphId }));
       }
     }
