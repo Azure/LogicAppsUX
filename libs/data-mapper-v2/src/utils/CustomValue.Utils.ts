@@ -9,25 +9,8 @@ export const checkIfValueNeedsQuotes = (customValue: string): boolean => {
     return false;
   }
 
-  // Check if string is a boolean using literal comparison
-  const lowerCaseValue = customValue.toLowerCase();
-  if (lowerCaseValue === 'true' || lowerCaseValue === 'false') {
-    // Convert string to actual boolean and check its type
-    const boolValue = lowerCaseValue === 'true';
-    if (typeof boolValue === 'boolean') {
-      return false;
-    }
-  }
+  // both boolean and datetime values need to be quoted
 
-  // Check if string is a valid date
-  const dateValue = new Date(customValue);
-  if (
-    !Number.isNaN(dateValue.getTime()) &&
-    // Additional check to avoid treating numbers as dates
-    !/^\d+$/.test(customValue)
-  ) {
-    return false;
-  }
   return true;
 };
 
