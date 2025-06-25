@@ -78,7 +78,7 @@ export const getDesignerServices = (
   let authToken = '';
   let panelId = '';
   let workflowDetails: Record<string, any> = {};
-  let appSettings = {};
+  let appSettings: Record<string, any> = {};
   let isStateful = false;
   let connectionsData: ConnectionsData = { ...connectionData };
   let workflowName = '';
@@ -176,7 +176,7 @@ export const getDesignerServices = (
       }
 
       const defaultConfiguration: Record<string, any> = {
-        workflowAppLocation: '/Users/carloscastrotrejo/Downloads/IssueDavis/XMLissue/LogicApp',
+        workflowAppLocation: appSettings.ProjectDirectoryPath,
       };
 
       const connectionName = connectionId.split('/').splice(-1)[0];
