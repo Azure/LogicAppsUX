@@ -1,7 +1,6 @@
-import type { IIconProps, IIconStyles, ITextFieldStyles } from '@fluentui/react';
-import { css, Icon, IconButton, TextField, TooltipHost } from '@fluentui/react';
-import { Text } from '@fluentui/react-components';
-import React, { useCallback, useEffect, useMemo } from 'react';
+import { css, Icon } from '@fluentui/react';
+import { makeStyles, tokens, Text } from '@fluentui/react-components';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export type PageChangeEventHandler = (e: PageChangeEventArgs) => void;
@@ -37,37 +36,149 @@ export interface PagerProps {
   onChange?: PageChangeEventHandler;
 }
 
-interface PagerButtonProps {
-  disabled: boolean;
-  failed?: boolean;
-  iconProps: IIconProps;
-  text: string;
-  onClick(): void;
-}
-
-const iconFailedProps: IIconProps = {
-  iconName: 'Important',
-};
-
-const iconFailedNextStyles: IIconStyles = {
-  root: {
-    right: 0,
+// Modern unified styles using Fluent UI v9 makeStyles
+const usePagerStyles = makeStyles({
+  // Main containers
+  pagerContainer: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
-};
-
-const iconFailedPreviousStyles: IIconStyles = {
-  root: {
-    left: 0,
+  pagerV2: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '12px',
+    margin: '5px',
+    position: 'relative',
+    zIndex: '5',
   },
-};
+  pagerInner: {
+    height: '32px',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '6px',
+  },
 
-const nextIconProps: IIconProps = {
-  iconName: 'ChevronRight',
-};
+  // Modern navigation buttons
+  navButton: {
+    backgroundColor: 'transparent',
+    border: 'none',
+    borderRadius: '50%',
+    width: '40px',
+    height: '40px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    cursor: 'pointer',
+    color: tokens.colorNeutralForeground3,
+    fontSize: '18px',
+    transitionProperty: 'all',
+    transitionDuration: tokens.durationNormal,
+    transitionTimingFunction: tokens.curveEasyEase,
+    '&:hover:not(:disabled)': {
+      backgroundColor: tokens.colorNeutralBackground1Hover,
+      color: tokens.colorNeutralForeground2,
+      transform: 'scale(1.1)',
+    },
+    '&:disabled': {
+      opacity: '0.5',
+      cursor: 'not-allowed',
+      transform: 'none',
+    },
+  },
 
-const previousIconProps: IIconProps = {
-  iconName: 'ChevronLeft',
-};
+  // Failed iteration button container
+  failedButtonContainer: {
+    position: 'relative',
+  },
+
+  // Failed iteration icon overlay
+  failedIcon: {
+    position: 'absolute',
+    top: '25%',
+    height: '24px',
+    color: tokens.colorPaletteRedForeground1,
+    pointerEvents: 'none',
+  },
+
+  failedIconPrevious: {
+    left: '0',
+  },
+
+  failedIconNext: {
+    right: '0',
+  },
+
+  // Page input container
+  pageContainer: {
+    backgroundColor: tokens.colorNeutralBackground1Hover,
+    padding: '8px 16px',
+    borderRadius: '20px',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '6px',
+    transitionProperty: 'background-color',
+    transitionDuration: tokens.durationNormal,
+    transitionTimingFunction: tokens.curveEasyEase,
+    '&:focus-within': {
+      backgroundColor: tokens.colorNeutralBackground1Selected,
+    },
+  },
+
+  pageInput: {
+    border: 'none',
+    backgroundColor: 'transparent',
+    width: '24px',
+    textAlign: 'center',
+    fontWeight: tokens.fontWeightMedium,
+    color: tokens.colorNeutralForeground2,
+    outline: 'none',
+    fontFamily: 'inherit',
+    fontSize: tokens.fontSizeBase200,
+  },
+
+  pageText: {
+    color: tokens.colorNeutralForeground3,
+    fontWeight: tokens.fontWeightMedium,
+    fontSize: tokens.fontSizeBase200,
+  },
+
+  // Clickable page numbers
+  pageNum: {
+    padding: '4px 8px',
+    borderRadius: '8px',
+    cursor: 'default',
+    fontWeight: tokens.fontWeightMedium,
+    fontSize: tokens.fontSizeBase200,
+    color: tokens.colorNeutralForeground2,
+    transitionProperty: 'all',
+    transitionDuration: tokens.durationFast,
+    transitionTimingFunction: tokens.curveEasyEase,
+  },
+
+  pageNumCurrent: {
+    backgroundColor: tokens.colorBrandBackground,
+    color: tokens.colorNeutralForegroundOnBrand,
+    borderRadius: '8px',
+  },
+
+  pageNumSelectable: {
+    color: tokens.colorBrandForeground1,
+    cursor: 'pointer',
+    '&:hover': {
+      backgroundColor: tokens.colorNeutralBackground1Hover,
+      textDecoration: 'underline',
+    },
+  },
+
+  // Readonly text
+  readonlyText: {
+    color: tokens.colorNeutralForeground2,
+    fontWeight: tokens.fontWeightMedium,
+    fontSize: tokens.fontSizeBase200,
+  },
+});
 
 export const Pager: React.FC<PagerProps> = ({
   current: initialCurrent = 1,
@@ -81,9 +192,12 @@ export const Pager: React.FC<PagerProps> = ({
   onChange,
 }) => {
   const [current, setCurrent] = React.useState(initialCurrent);
+  const [inputValue, setInputValue] = useState(String(initialCurrent));
+  const styles = usePagerStyles();
 
   useEffect(() => {
     setCurrent(initialCurrent);
+    setInputValue(String(initialCurrent));
   }, [initialCurrent]);
 
   let failedMax = 0;
@@ -98,26 +212,52 @@ export const Pager: React.FC<PagerProps> = ({
   const changeValue = useCallback(
     (newValue: string, changeHandler = onChange, minimum = min, maximum = max): void => {
       const value = Number.parseInt(newValue, 10);
+      let finalValue = value;
       if (value < minimum) {
-        setCurrent(minimum);
-        changeHandler && changeHandler({ value });
-      } else if (value >= minimum && value <= maximum) {
-        setCurrent(value);
-        changeHandler && changeHandler({ value });
+        finalValue = minimum;
       } else if (value > maximum) {
-        setCurrent(maximum);
-        changeHandler && changeHandler({ value });
+        finalValue = maximum;
       }
+      setCurrent(finalValue);
+      setInputValue(String(finalValue));
+      changeHandler && changeHandler({ value: finalValue });
     },
     [max, min, onChange]
   );
 
-  const handleChange = useCallback(
-    (_: React.FormEvent<HTMLElement>, newValue: string): void => {
-      changeValue(newValue);
+  const handleModernInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>): void => {
+      const value = e.target.value.replace(/[^0-9]/g, '');
+      if (value === '' || (Number.parseInt(value, 10) >= min && Number.parseInt(value, 10) <= max)) {
+        setInputValue(value);
+      }
     },
-    [changeValue]
+    [min, max]
   );
+
+  const handleModernInputKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>): void => {
+      if (e.key === 'Enter') {
+        e.currentTarget.blur();
+        if (inputValue) {
+          changeValue(inputValue);
+        }
+      }
+    },
+    [inputValue, changeValue]
+  );
+
+  const handleModernInputBlur = useCallback((): void => {
+    if (inputValue && inputValue !== String(current)) {
+      changeValue(inputValue);
+    } else {
+      setInputValue(String(current));
+    }
+  }, [inputValue, current, changeValue]);
+
+  const handleModernInputFocus = useCallback((e: React.FocusEvent<HTMLInputElement>): void => {
+    e.target.select();
+  }, []);
 
   // Prevent pager button clicks from selecting the foreach/until card.
   const handleClick = useCallback((e: React.MouseEvent<HTMLElement>): void => {
@@ -154,12 +294,6 @@ export const Pager: React.FC<PagerProps> = ({
     id: '6oqk+A',
     description: 'Text of a button to go to previous page',
   });
-
-  const textFieldStyles: Pick<ITextFieldStyles, 'fieldGroup'> = {
-    fieldGroup: {
-      width: maxLength ? 14 * maxLength : 'none',
-    },
-  };
 
   const previousPagerFailedStrign = intl.formatMessage({
     defaultMessage: 'Previous failed',
@@ -250,30 +384,45 @@ export const Pager: React.FC<PagerProps> = ({
   }, [current, clickablePageNumbers, max, min]);
 
   return (
-    <div className={countInfo && 'msla-pager-v2-pagenumbers'}>
+    <div className={countInfo ? styles.pagerContainer : undefined}>
+      {/* Count display */}
       {countInfo && (
-        <div className="msla-pager-v2">
-          <div className="msla-pager-v2--inner">
+        <div className={styles.pagerV2}>
+          <div className={styles.pagerInner}>
             <Text>{showingResultsString}</Text>
           </div>
         </div>
       )}
-      <div className="msla-pager-v2" onClick={handleClick}>
-        <PagerButton disabled={current <= min} iconProps={previousIconProps} text={pagerPreviousString} onClick={handlePreviousClick} />
+
+      {/* Main pager */}
+      <div className={styles.pagerV2} onClick={handleClick}>
+        {/* Previous button */}
+        <button className={styles.navButton} disabled={current <= min} onClick={handlePreviousClick} aria-label={pagerPreviousString}>
+          ‹
+        </button>
+
+        {/* Previous failed button */}
         {failedIterationProps && (
-          <PagerButton
-            disabled={failedMin < 1 || current <= failedMin}
-            failed={true}
-            iconProps={previousIconProps}
-            text={previousPagerFailedStrign}
-            onClick={handlePreviousFailedClick}
-          />
+          <div className={styles.failedButtonContainer}>
+            <button
+              className={styles.navButton}
+              disabled={failedMin < 1 || current <= failedMin}
+              onClick={handlePreviousFailedClick}
+              aria-label={previousPagerFailedStrign}
+            >
+              ‹
+            </button>
+            <Icon className={css(styles.failedIcon, styles.failedIconPrevious)} iconName="Important" />
+          </div>
         )}
-        {clickablePageNumbers ? (
-          <div className="msla-pager-v2--inner">
-            {pageNumbers.map((pageNum) => (
+
+        {/* Page content area */}
+        <div className={styles.pagerInner}>
+          {clickablePageNumbers ? (
+            // Clickable page numbers
+            pageNumbers.map((pageNum) => (
               <Text
-                className={css('msla-pager-pageNum', pageNum !== current && 'toSelect')}
+                className={css(styles.pageNum, pageNum === current ? styles.pageNumCurrent : styles.pageNumSelectable)}
                 key={pageNum}
                 onClick={() => {
                   if (pageNum !== current) {
@@ -283,68 +432,52 @@ export const Pager: React.FC<PagerProps> = ({
               >
                 {pageNum}
               </Text>
-            ))}
-          </div>
-        ) : (
-          <div className="msla-pager-v2--inner">
-            {readonlyPagerInput ? null : (
-              <TextField
-                ariaLabel={pagerOfStringAria}
-                borderless={readonlyPagerInput}
-                max={max}
-                min={min}
-                maxLength={maxLength}
-                readOnly={readonlyPagerInput}
-                styles={textFieldStyles}
-                value={String(current)}
-                onChange={handleChange as any}
+            ))
+          ) : readonlyPagerInput ? (
+            // Readonly text display
+            <Text className={styles.readonlyText}>{pagerOfStringAria}</Text>
+          ) : (
+            // Editable page input
+            <div className={styles.pageContainer}>
+              <input
+                className={styles.pageInput}
+                type="text"
+                value={inputValue}
+                onChange={handleModernInputChange}
+                onKeyDown={handleModernInputKeyDown}
+                onBlur={handleModernInputBlur}
+                onFocus={handleModernInputFocus}
+                aria-label={pagerOfStringAria}
+                style={maxLength ? { width: `${maxLength * 14}px` } : undefined}
               />
-            )}
-            {clickablePageNumbers ? (
-              <Text>{current}</Text>
-            ) : readonlyPagerInput ? (
-              <Text>{pagerOfStringAria}</Text>
-            ) : (
-              <Text>&nbsp;{pagerOfString}</Text>
-            )}
+              <span className={styles.pageText}>{pagerOfString}</span>
+            </div>
+          )}
+        </div>
+
+        {/* Next failed button */}
+        {failedIterationProps && (
+          <div className={styles.failedButtonContainer}>
+            <button
+              className={styles.navButton}
+              disabled={failedMax < 1 || current >= failedMax}
+              onClick={handleNextFailedClick}
+              aria-label={pagerNextFailedString}
+            >
+              ›
+            </button>
+            <Icon className={css(styles.failedIcon, styles.failedIconNext)} iconName="Important" />
           </div>
         )}
-        {failedIterationProps && (
-          <PagerButton
-            disabled={failedMax < 1 || current >= failedMax}
-            failed={true}
-            iconProps={nextIconProps}
-            text={pagerNextFailedString}
-            onClick={handleNextFailedClick}
-          />
-        )}
-        <PagerButton disabled={current >= max} iconProps={nextIconProps} text={pagerNextString} onClick={handleNextClick} />
+
+        {/* Next button */}
+        <button className={styles.navButton} disabled={current >= max} onClick={handleNextClick} aria-label={pagerNextString}>
+          ›
+        </button>
       </div>
+
+      {/* Spacer for layout when count is displayed */}
       {countInfo && <div />}
-    </div>
-  );
-};
-
-const PagerButton: React.FC<PagerButtonProps> = ({ disabled, failed, iconProps, text, onClick }) => {
-  const intl = useIntl();
-  const previousPagerFailedString = intl.formatMessage({
-    defaultMessage: 'Previous failed',
-    id: 'gKq3Jv',
-    description: 'Label of a button to go to the previous failed page option',
-  });
-
-  return (
-    <div className="msla-pager-failed-container">
-      <TooltipHost content={text}>
-        <IconButton ariaLabel={text} disabled={disabled} iconProps={iconProps} text={text} onClick={onClick} />
-      </TooltipHost>
-      {failed && (
-        <Icon
-          className="msla-pager-failed-icon"
-          iconName={iconFailedProps.iconName}
-          styles={text === previousPagerFailedString ? iconFailedPreviousStyles : iconFailedNextStyles}
-        />
-      )}
     </div>
   );
 };
