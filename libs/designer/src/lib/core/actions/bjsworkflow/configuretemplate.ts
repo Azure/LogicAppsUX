@@ -282,7 +282,7 @@ export const updateWorkflowParameter = createAsyncThunk(
           `templateId: ${manifest?.id as string}`,
           `parameterId: ${parameterId}`,
           `state: ${state}`,
-          `workflowIds: ${Object.keys(associatedWorkflows).join(', ')}`,
+          `workflowIds: ${associatedWorkflows.join(', ')}`,
         ],
       });
     } catch (error: any) {
@@ -459,7 +459,7 @@ const saveWorkflowsInTemplateInternal = async (
       message: addingWorkflows ? 'Added workflow(s) in template' : 'Saved workflow(s) in template',
       args: [
         `templateId: ${templateId}`,
-        `state: ${newState}`,
+        `state: ${newState ?? oldState}`,
         `oldState: ${oldState}`,
         `workflowIds: ${Object.keys(workflows).join(', ')}`,
       ],
@@ -524,7 +524,7 @@ export const saveTemplateData = createAsyncThunk(
         message: 'Saved template data',
         args: [
           `templateId: ${templateId}`,
-          `state: ${newState}`,
+          `state: ${newState ?? oldState}`,
           `oldState: ${oldState}`,
           `workflowIds: ${Object.keys(workflows).join(', ')}`,
           `location: ${location}`,
