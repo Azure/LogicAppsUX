@@ -1,14 +1,15 @@
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import { resetTemplatesState } from '../global';
-import { initializeAndSaveWorkflowsData, saveWorkflowsData, updateWorkflowParameter } from '../../actions/bjsworkflow/configuretemplate';
+import { addWorkflowsData, saveWorkflowsData, updateWorkflowParameter } from '../../actions/bjsworkflow/configuretemplate';
 
 export const TemplatePanelView = {
   // Template creation panels
   QuickView: 'quickView',
   CreateWorkflow: 'createWorkflow',
   // Configure template panels
-  ConfigureWorkflows: 'configureWorkflows',
+  ConfigureWorkflows: 'configureWorkflows', //TODO: change this to AddWorkflows
+  EditWorkflows: 'editWorkflows',
   CustomizeParameter: 'customizeParameter',
 } as const;
 export type ConfigPanelView = (typeof TemplatePanelView)[keyof typeof TemplatePanelView];
@@ -53,7 +54,7 @@ export const panelSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(resetTemplatesState, () => initialState);
 
-    builder.addCase(initializeAndSaveWorkflowsData.fulfilled, closePanelReducer);
+    builder.addCase(addWorkflowsData.fulfilled, closePanelReducer);
     builder.addCase(saveWorkflowsData.fulfilled, closePanelReducer);
     builder.addCase(updateWorkflowParameter.fulfilled, closePanelReducer);
   },

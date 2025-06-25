@@ -35,6 +35,8 @@ import {
   SaveFilled,
   BeakerFilled,
   MentionBracketsFilled,
+  LinkFilled,
+  LinkRegular,
   ArrowClockwiseFilled,
   CheckmarkFilled,
   ReplayFilled,
@@ -44,6 +46,7 @@ import { TrafficLightDot } from '@microsoft/designer-ui';
 // Designer icons
 const SaveIcon = bundleIcon(SaveFilled, SaveRegular);
 const ParametersIcon = bundleIcon(MentionBracketsFilled, MentionBracketsRegular);
+const ConnectionsIcon = bundleIcon(LinkFilled, LinkRegular);
 const SaveBlankUnitTestIcon = bundleIcon(BeakerFilled, BeakerRegular);
 
 // Base icons
@@ -182,6 +185,11 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
       id: '+0ua83',
       description: 'Button text for parameters',
     }),
+    DESIGNER_CONNECTIONS: intl.formatMessage({
+      defaultMessage: 'Connections',
+      id: 'm/GihH',
+      description: 'Button text for connections',
+    }),
     DESIGNER_ERRORS: intl.formatMessage({
       defaultMessage: 'Errors',
       id: 'ohOaXj',
@@ -296,6 +304,15 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
         </div>
       ) : null,
       onClick: () => !!dispatch(openPanel({ panelMode: 'WorkflowParameters' })),
+    },
+    {
+      key: 'Connections',
+      disabled: false,
+      ariaLabel: Resources.DESIGNER_CONNECTIONS,
+      text: Resources.DESIGNER_CONNECTIONS,
+      icon: <ConnectionsIcon />,
+      renderTextIcon: null,
+      onClick: () => !!dispatch(openPanel({ panelMode: 'Connection' })),
     },
     {
       key: 'errors',

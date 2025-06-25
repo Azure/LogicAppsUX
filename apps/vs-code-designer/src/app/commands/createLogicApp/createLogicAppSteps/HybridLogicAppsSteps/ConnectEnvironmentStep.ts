@@ -27,7 +27,7 @@ export class ConnectEnvironmentStep extends AzureWizardExecuteStep<ILogicAppWiza
       const message: string = localize('linkingSMBEnvironment', 'Linking SMB to connected environment  "{0}"...', context.newSiteName);
       ext.outputChannel.appendLog(message);
       progress.report({ message });
-      const accessToken = await getAuthorizationToken();
+      const accessToken = await getAuthorizationToken(context.tenantId);
 
       await updateSMBConnectedEnvironment(
         accessToken,

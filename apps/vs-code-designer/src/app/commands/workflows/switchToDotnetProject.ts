@@ -45,12 +45,18 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import { validateDotNetIsInstalled } from '../dotnet/validateDotNetInstalled';
 import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
+import { ext } from '../../../extensionVariables';
 
 export async function switchToDotnetProjectCommand(context: IProjectWizardContext, target: vscode.Uri) {
   switchToDotnetProject(context, target);
 }
 
-export async function switchToDotnetProject(context: IProjectWizardContext, target: vscode.Uri, dotNetVersion = '6', isCodeful = false) {
+export async function switchToDotnetProject(
+  context: IProjectWizardContext,
+  target: vscode.Uri,
+  localDotNetMajorVersion = '8',
+  isCodeful = false
+) {
   if (target === undefined || Object.keys(target).length === 0) {
     const workspaceFolder = await getWorkspaceFolder(context);
     const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
@@ -96,7 +102,11 @@ export async function switchToDotnetProject(context: IProjectWizardContext, targ
   // 2. try to download the latest templates
   if (!templates) {
     const templateVersion: string = await dotnetTemplateProvider.getLatestTemplateVersion(context);
-    templates = await dotnetTemplateProvider.getLatestTemplates(context, templateVersion);
+    try {
+      templates = await dotnetTemplateProvider.getLatestTemplates(context, templateVersion);
+    } catch (error) {
+      ext.showError(error);
+    }
   }
 
   // 3. try to get the backup templates
@@ -125,7 +135,7 @@ export async function switchToDotnetProject(context: IProjectWizardContext, targ
   const projTemplateKey = await getTemplateKeyFromProjFile(context, projectPath, version, ProjectLanguage.CSharp);
   const dotnetVersion = await getFramework(context, projectPath, isCodeful);
   const useBinaries = useBinariesDependencies();
-  const dotnetLocalVersion = useBinaries ? await getLocalDotNetVersionFromBinaries(dotNetVersion) : '';
+  const dotnetLocalVersion = useBinaries ? await getLocalDotNetVersionFromBinaries(localDotNetMajorVersion) : '';
 
   await deleteBundleProjectFiles(target);
   await renameBundleProjectFiles(target);

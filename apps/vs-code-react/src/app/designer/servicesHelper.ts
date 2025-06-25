@@ -17,6 +17,7 @@ import {
   isEmptyString,
   BaseTenantService,
   BaseCognitiveServiceService,
+  BaseRoleService,
 } from '@microsoft/logic-apps-shared';
 import type {
   ApiHubServiceDetails,
@@ -50,6 +51,7 @@ export interface IDesignerServices {
   workflowService: IWorkflowService;
   hostService: IHostService;
   runService: StandardRunService;
+  roleService: BaseRoleService;
   editorService: CustomEditorService;
   apimService: BaseApiManagementService;
   functionService: BaseFunctionService;
@@ -84,6 +86,8 @@ export const getDesignerServices = (
   const { subscriptionId = 'subscriptionId', resourceGroup, location } = apiHubDetails;
 
   const armUrl = 'https://management.azure.com';
+
+  const emptyArmId = '00000000-0000-0000-0000-000000000000';
 
   if (panelMetadata) {
     authToken = panelMetadata.accessToken ?? '';
@@ -300,8 +304,8 @@ export const getDesignerServices = (
     },
     getAppIdentity: () => {
       return {
-        principalId: '00000000-0000-0000-0000-000000000000',
-        tenantId: '00000000-0000-0000-0000-000000000000',
+        principalId: emptyArmId,
+        tenantId: emptyArmId,
         type: 'SystemAssigned',
       } as ManagedIdentity;
     },
@@ -326,6 +330,17 @@ export const getDesignerServices = (
     baseUrl: isEmptyString(workflowRuntimeBaseUrl) ? baseUrl : workflowRuntimeBaseUrl,
     workflowName: workflowName ?? '',
     httpClient,
+  });
+
+  // MSI is not supported in VS Code
+  const roleService = new BaseRoleService({
+    baseUrl: armUrl,
+    apiVersion: '2022-05-01-preview',
+    httpClient,
+    tenantId: emptyArmId,
+    userIdentityId: emptyArmId,
+    appIdentityId: emptyArmId,
+    subscriptionId,
   });
 
   const cognitiveServiceService = new BaseCognitiveServiceService({
@@ -361,6 +376,7 @@ export const getDesignerServices = (
     workflowService,
     hostService,
     runService,
+    roleService,
     editorService,
     apimService,
     loggerService,

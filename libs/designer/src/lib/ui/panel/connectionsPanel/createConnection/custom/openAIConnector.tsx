@@ -2,15 +2,16 @@ import { CognitiveServiceService, isUndefinedOrEmptyString, LogEntryLevel, Logge
 import { type ConnectionParameterProps, UniversalConnectionParameter } from '../formInputs/universalConnectionParameter';
 import { ConnectionParameterRow } from '../connectionParameterRow';
 import { useIntl } from 'react-intl';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ComboBox, type IComboBoxOption, Spinner } from '@fluentui/react';
 import { useAllCognitiveServiceAccounts, useAllCognitiveServiceProjects } from './useCognitiveService';
 import { useStyles } from './styles';
-import { Link, tokens } from '@fluentui/react-components';
+import { Link, tokens, Spinner as SpinnerFUI9, Field } from '@fluentui/react-components';
 import { NavigateIcon } from '@microsoft/designer-ui';
 import { ArrowClockwise16Filled, ArrowClockwise16Regular, bundleIcon } from '@fluentui/react-icons';
 import { useSubscriptions } from '../../../../../core/state/connection/connectionSelector';
 import { SubscriptionDropdown } from './components/SubscriptionDropdown';
+import { useHasRoleAssignmentsWritePermissionQuery, useHasRoleDefinitionsByNameQuery } from '../../../../../core/queries/role';
 
 const RefreshIcon = bundleIcon(ArrowClockwise16Regular, ArrowClockwise16Filled);
 
@@ -18,6 +19,7 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
   const { parameterKey, setKeyValue, setValue, parameter, isAgentServiceConnection } = props;
   const intl = useIntl();
   const styles = useStyles();
+  const [parameterValue, setParameterValue] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [loadingAccountDetails, setLoadingAccountDetails] = useState<boolean>(false);
   const [selectedSubscriptionId, setSelectedSubscriptionId] = useState('');
@@ -99,6 +101,16 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
         id: 'QwAEWd',
         description: 'Select the project to use for this connection',
       }),
+      MISSING_ROLE_WRITE_PERMISSIONS: intl.formatMessage({
+        defaultMessage: 'Missing role write permissions',
+        id: 'p/Pfr/',
+        description: 'Message indicating that the user does not have write permissions for the role',
+      }),
+      FETCHING_RESOURCE_DETAILS: intl.formatMessage({
+        defaultMessage: 'Fetching resource details...',
+        id: 'EXxdfo',
+        description: 'Message displayed while fetching resource details',
+      }),
     }),
     [intl]
   );
@@ -171,13 +183,86 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
     [setAPIEndpoint, setAPIKey]
   );
 
+  const roleResourceId = useMemo(() => {
+    if (isAgentServiceConnection) {
+      return selectedCognitiveServiceProject;
+    }
+    return cognitiveServiceAccountId;
+  }, [cognitiveServiceAccountId, isAgentServiceConnection, selectedCognitiveServiceProject]);
+
+  const requiredRoles = useMemo(() => {
+    return parameter.managedIdentitySettings?.requiredRoles ?? [];
+  }, [parameter.managedIdentitySettings?.requiredRoles]);
+  const requiresRoleAssignments = useMemo(() => requiredRoles.length > 0, [requiredRoles.length]);
+
+  const { data: hasRoleWritePermission, isFetching: isFetchingRoleWritePermission } = useHasRoleAssignmentsWritePermissionQuery(
+    roleResourceId,
+    requiresRoleAssignments
+  );
+
+  const { data: hasRequiredRoles, isFetching: isFetchingRequiredRoles } = useHasRoleDefinitionsByNameQuery(
+    roleResourceId,
+    requiredRoles,
+    requiresRoleAssignments
+  );
+
+  const validRoleState = useMemo(() => {
+    if (requiredRoles.length === 0) {
+      return true; // No required roles, so valid by default
+    }
+    if (isFetchingRequiredRoles || isFetchingRoleWritePermission) {
+      return false; // Still fetching role data, so not valid yet
+    }
+    if (hasRequiredRoles || hasRoleWritePermission) {
+      return true; // Either has required roles or write permission, so valid
+    }
+    return false; // Does not have required roles or write permission, so not valid
+  }, [hasRequiredRoles, hasRoleWritePermission, isFetchingRequiredRoles, isFetchingRoleWritePermission, requiredRoles]);
+
+  // TODO: Once we find a generalized solution for role management, we can remove this logic
+  useEffect(() => {
+    if (parameterValue && validRoleState) {
+      setValue(parameterValue);
+    } else {
+      setValue('');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [parameterValue, validRoleState]);
+
+  const CreateNewButton = (props: { href: string }) => (
+    <Link className={styles.createNewButton} target="_blank" href={props.href}>
+      {stringResources.CREATE_NEW}
+      <NavigateIcon style={{ position: 'relative', top: '2px', left: '2px' }} />
+    </Link>
+  );
+
+  const RoleMessages = () => (
+    <div style={{ flexGrow: 1 }}>
+      {isFetchingRoleWritePermission || isFetchingRequiredRoles ? (
+        <Field
+          validationState="warning"
+          validationMessageIcon={<SpinnerFUI9 size="extra-tiny" />}
+          validationMessage={stringResources.FETCHING_RESOURCE_DETAILS}
+        />
+      ) : hasRequiredRoles || hasRoleWritePermission ? null : (
+        <Field validationState="warning" validationMessage={stringResources.MISSING_ROLE_WRITE_PERMISSIONS} />
+      )}
+    </div>
+  );
+
   if (parameterKey === 'cognitiveServiceAccountId') {
     return (
       <>
         <SubscriptionDropdown
           subscriptions={subscriptions}
           isFetchingSubscriptions={isFetchingSubscription}
-          setSelectedSubscriptionId={setSelectedSubscriptionId}
+          setSelectedSubscriptionId={(id) => {
+            setSelectedSubscriptionId(id);
+            // Reset account and project selections when subscription changes
+            setCognitiveServiceAccountId('');
+            setSelectedCognitiveServiceProject('');
+            setParameterValue('');
+          }}
           selectedSubscriptionId={selectedSubscriptionId}
           title={stringResources.SELECT_SUBSCRIPTION}
         />
@@ -196,6 +281,7 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
           <div className={styles.openAIContainer}>
             <div className={styles.comboxbox}>
               <ComboBox
+                data-automation-id="openai-combobox"
                 required={true}
                 disabled={openAIComboboxDisabled}
                 placeholder={
@@ -217,7 +303,8 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
                   if (option?.key) {
                     const cognitiveServiceKey = option?.key as string;
                     setCognitiveServiceAccountId(cognitiveServiceKey);
-                    setValue(cognitiveServiceKey);
+                    setSelectedCognitiveServiceProject(''); // Reset project selection when account changes
+                    setParameterValue(cognitiveServiceKey);
                     if (!isAgentServiceConnection) {
                       onSetOpenAIValues(cognitiveServiceKey);
                     }
@@ -233,10 +320,10 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
                   />
                 ) : null}
               </ComboBox>
-              <Link className={styles.createNewButton} target="_blank" href="https://aka.ms/openAICreate">
-                {stringResources.CREATE_NEW}
-                <NavigateIcon style={{ position: 'relative', top: '2px', left: '2px' }} />
-              </Link>
+              <div className={styles.comboboxFooter}>
+                {requiresRoleAssignments && !isAgentServiceConnection && !!cognitiveServiceAccountId ? <RoleMessages /> : null}
+                <CreateNewButton href="https://aka.ms/openAICreate" />
+              </div>
             </div>
             <RefreshIcon
               style={{
@@ -254,6 +341,7 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
             <div className={styles.openAIContainer}>
               <div className={styles.comboxbox}>
                 <ComboBox
+                  data-automation-id="openai-project-combobox"
                   required={true}
                   disabled={serviceProjectsComboBoxDisabled}
                   placeholder={
@@ -276,7 +364,7 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
                       const cognitiveServiceAccountName = cognitiveServiceAccountId.split('/').pop();
                       const openAIEndpoint = `https://${cognitiveServiceAccountName}.services.ai.azure.com/api/projects/${serviceProjectName}`;
                       setSelectedCognitiveServiceProject(serviceProjectId);
-                      setValue(serviceProjectId);
+                      setParameterValue(serviceProjectId);
                       setKeyValue?.('openAIEndpoint', openAIEndpoint);
                     }
                   }}
@@ -290,10 +378,10 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
                     />
                   ) : null}
                 </ComboBox>
-                <Link className={styles.createNewButton} target="_blank" href="https://aka.ms/openFoundryProjectCreate">
-                  {stringResources.CREATE_NEW}
-                  <NavigateIcon style={{ position: 'relative', top: '2px', left: '2px' }} />
-                </Link>
+                <div className={styles.comboboxFooter}>
+                  {requiresRoleAssignments && selectedCognitiveServiceProject ? <RoleMessages /> : null}
+                  <CreateNewButton href="https://aka.ms/openFoundryProjectCreate" />
+                </div>
               </div>
               <RefreshIcon
                 style={{

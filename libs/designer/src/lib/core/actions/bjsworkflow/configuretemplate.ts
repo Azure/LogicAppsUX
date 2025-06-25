@@ -55,6 +55,7 @@ import {
   getParametersForWorkflow,
   getSupportedSkus,
   getTemplateConnectionsFromConnectionsData,
+  sanitizeConnectorId,
   sanitizeConnectorIds,
   suffixConnectionsWithIdentifier,
   suffixParametersWithIdentifier,
@@ -67,7 +68,12 @@ import {
   updateTemplateParameterDefinition,
 } from '../../state/templates/templateSlice';
 import type { WorkflowTemplateData } from './templates';
-import { initializeNodeOperationInputsData, type NodeDependencies, type NodeInputs } from '../../state/operation/operationMetadataSlice';
+import {
+  initializeNodeOperationInputsData,
+  type NodeOperation,
+  type NodeDependencies,
+  type NodeInputs,
+} from '../../state/operation/operationMetadataSlice';
 import type { WorkflowParameter } from '../../../common/models/workflow';
 import { getAllInputParameters } from '../../utils/parameters/helper';
 import { shouldAddDynamicData } from '../../templates/utils/parametershelper';
@@ -163,7 +169,7 @@ export const loadCustomTemplate = createAsyncThunk(
     );
     const updatedTemplateManifest = getUpdatedTemplateManifest(clone(manifest), Object.values(allWorkflowsData), allConnectionsData);
 
-    dispatch(updateAllWorkflowsData({ workflows: allWorkflowsData, manifest: updatedTemplateManifest }));
+    dispatch(updateAllWorkflowsData({ workflows: allWorkflowsData, manifest: updatedTemplateManifest, reset: true }));
     dispatch(updateConnectionAndParameterDefinitions({ connections: allConnectionsData, parameterDefinitions: allParametersData }));
 
     if (workflowSourceId) {
@@ -221,11 +227,7 @@ export const loadResourceDetailsFromWorkflowSource = createAsyncThunk(
 export const updateWorkflowParameter = createAsyncThunk(
   'updateWorkflowParameter',
   async (
-    {
-      parameterId,
-      definition,
-      changedStatus,
-    }: { parameterId: string; definition: Template.ParameterDefinition; changedStatus: Template.TemplateEnvironment | undefined },
+    { parameterId, definition }: { parameterId: string; definition: Template.ParameterDefinition },
     { getState, dispatch }
   ): Promise<void> => {
     const service = TemplateResourceService();
@@ -262,12 +264,6 @@ export const updateWorkflowParameter = createAsyncThunk(
 
       await Promise.all(promises);
 
-      if (changedStatus) {
-        await service.updateTemplate(manifest?.id as string, /* manifest */ undefined, changedStatus);
-        resetTemplateQuery(manifest?.id as string);
-        dispatch(updateEnvironment(changedStatus));
-      }
-
       dispatch(setApiValidationErrors({ error: undefined, source: 'parameters' }));
       dispatch(
         updateTemplateParameterDefinition({
@@ -288,30 +284,29 @@ export const updateWorkflowParameter = createAsyncThunk(
       await rollbackWorkflows(
         manifest?.id as string,
         existingTemplate,
-        changedStatus as Template.TemplateEnvironment,
+        /* state */ undefined,
         existingWorkflows.filter((workflow) => associatedWorkflows.includes(workflow.name)),
         /* clearWorkflows */ false,
+        /* addedWorkflowIds */ [],
         dispatch
       );
     }
   }
 );
 
-export const initializeAndSaveWorkflowsData = createAsyncThunk(
-  'initializeAndSaveWorkflowsData',
+export const addWorkflowsData = createAsyncThunk(
+  'addWorkflowsData',
   async (
     {
       workflows,
-      publishState,
       onSaveCompleted,
     }: {
       workflows: Record<string, Partial<WorkflowTemplateData>>;
-      publishState: Template.TemplateEnvironment;
       onSaveCompleted?: () => void;
     },
     { getState, dispatch }
   ): Promise<void> => {
-    const { manifest, status: oldState } = (getState() as RootState).template;
+    const { manifest, status: oldState, parameterDefinitions: existingParameters } = (getState() as RootState).template;
     const { connections, mapping, workflowsWithDefinitions } = await getTemplateConnections(getState() as RootState, workflows);
     const {
       connections: updatedConnections,
@@ -335,10 +330,11 @@ export const initializeAndSaveWorkflowsData = createAsyncThunk(
     );
 
     const parameterDefinitions = await getTemplateParameters(getState() as RootState, allInputs, allDependencies, finalMapping);
-    const { parameters: finalParameterDefinitions, workflowsData: finalWorkflowsData } = suffixParametersWithIdentifier(
+    const { parameters: updatedParameterDefinitions, workflowsData: finalWorkflowsData } = suffixParametersWithIdentifier(
       parameterDefinitions,
       updatedWorkflowsData
     );
+    const finalParameterDefinitions = mergeParametersWithExisting(existingParameters, updatedParameterDefinitions);
 
     const finalConnections = sanitizeConnectorIds(updatedConnections);
     const updatedTemplateManifest = getUpdatedTemplateManifest(
@@ -346,8 +342,10 @@ export const initializeAndSaveWorkflowsData = createAsyncThunk(
       Object.values(finalWorkflowsData),
       finalConnections
     );
-    updatedTemplateManifest.featuredConnectors = [];
 
+    const newState = equals(oldState, 'Development') ? undefined : 'Development';
+    // If the old state is published then we need to move template to development state before updating any workflows.
+    // Users would be informed in the UI about this change.
     await saveWorkflowsInTemplateInternal(
       dispatch,
       updatedTemplateManifest,
@@ -355,16 +353,17 @@ export const initializeAndSaveWorkflowsData = createAsyncThunk(
       finalConnections,
       finalParameterDefinitions,
       oldState as Template.TemplateEnvironment,
-      publishState,
+      newState,
       /* updateTemplateManifest */ true,
-      /* clearWorkflows */ true
+      /* addingWorkflows */ true
     );
 
     dispatch(updateAllWorkflowsData({ workflows: finalWorkflowsData, manifest: updatedTemplateManifest }));
     dispatch(updateConnectionAndParameterDefinitions({ connections: finalConnections, parameterDefinitions: finalParameterDefinitions }));
     dispatch(initializeNodeOperationInputsData(operationsData));
-    if (oldState !== publishState) {
-      dispatch(updateEnvironment(publishState));
+
+    if (newState) {
+      dispatch(updateEnvironment(newState));
     }
 
     onSaveCompleted?.();
@@ -376,11 +375,9 @@ export const saveWorkflowsData = createAsyncThunk(
   async (
     {
       workflows,
-      publishState,
       onSaveCompleted,
     }: {
       workflows: Record<string, Partial<WorkflowTemplateData>>;
-      publishState: Template.TemplateEnvironment;
       onSaveCompleted?: () => void;
     },
     { getState, dispatch }
@@ -395,16 +392,12 @@ export const saveWorkflowsData = createAsyncThunk(
       connections,
       parameterDefinitions,
       oldState as Template.TemplateEnvironment,
-      publishState,
+      /* newState */ undefined,
       /* updateTemplateManifest */ false,
-      /* clearWorkflows */ false
+      /* addingWorkflows */ false
     );
 
     dispatch(updateAllWorkflowsData({ workflows }));
-
-    if (oldState !== publishState) {
-      dispatch(updateEnvironment(publishState));
-    }
 
     onSaveCompleted?.();
   }
@@ -417,25 +410,24 @@ const saveWorkflowsInTemplateInternal = async (
   connections: Record<string, Template.Connection>,
   parameterDefinitions: Record<string, Partial<Template.ParameterDefinition>>,
   oldState: Template.TemplateEnvironment,
-  publishState: Template.TemplateEnvironment,
+  newState: Template.TemplateEnvironment | undefined,
   updateTemplateManifest = false,
-  clearWorkflows = true
+  addingWorkflows = false
 ): Promise<void> => {
   const promises: Promise<void>[] = [];
   const service = TemplateResourceService();
   const templateId = templateManifest?.id as string;
 
+  const workflowIds = Object.values(workflows).map((workflow) => (workflow.id ?? '').toLowerCase());
   const existingWorkflows = await getWorkflowResourcesInTemplate(templateId);
+  const workflowsBeingUpdated = addingWorkflows
+    ? []
+    : existingWorkflows.filter((workflow) => workflowIds.includes(workflow.name.toLowerCase()));
   const existingTemplate = await getTemplate(templateId);
 
   try {
-    // 1. Delete all workflows for a clean replace
-    // 2. Add/Update all workflows
-    // 3. Update template state to make sure new changes are present for validation
-    if (clearWorkflows) {
-      await service.deleteAllWorkflows(templateId);
-    }
-
+    // 1. Add/Update all workflows
+    // 2. Update template state to make sure new changes are present for validation
     for (const workflowId of Object.keys(workflows)) {
       const { id } = workflows[workflowId];
       const workflowData = getManifestAndDefinitionFromWorkflowData(workflows[workflowId], connections, parameterDefinitions);
@@ -444,8 +436,8 @@ const saveWorkflowsInTemplateInternal = async (
 
     await Promise.all(promises);
 
-    if (updateTemplateManifest || oldState !== publishState) {
-      await service.updateTemplate(templateId, templateManifest, publishState);
+    if (updateTemplateManifest || newState) {
+      await service.updateTemplate(templateId, templateManifest, newState);
       resetTemplateQuery(templateId);
     }
 
@@ -458,9 +450,9 @@ const saveWorkflowsInTemplateInternal = async (
       area: 'ConfigureTemplate.saveWorkflowsInTemplateInternal',
       error,
       message: `Error while saving workflows in template: ${templateId}`,
-      args: [`clearWorkflows: ${clearWorkflows}`],
+      args: [`workflowIds: ${Object.keys(workflows).join(', ')}`, `newState: ${newState}`],
     });
-    await rollbackWorkflows(templateId, existingTemplate, oldState, existingWorkflows, clearWorkflows, dispatch);
+    await rollbackWorkflows(templateId, existingTemplate, oldState, workflowsBeingUpdated, addingWorkflows, workflowIds, dispatch);
     throw error;
   }
 };
@@ -476,7 +468,7 @@ export const saveTemplateData = createAsyncThunk(
     }: {
       templateManifest: Template.TemplateManifest;
       workflows: Record<string, Partial<WorkflowTemplateData>>;
-      publishState: Template.TemplateEnvironment;
+      publishState?: Template.TemplateEnvironment;
       onSaveCompleted: () => void;
     },
     { dispatch }
@@ -499,7 +491,10 @@ export const saveTemplateData = createAsyncThunk(
       await service.updateTemplate(templateId, templateManifest, publishState);
       resetTemplateQuery(templateId);
       dispatch(setApiValidationErrors({ error: undefined, source: 'template' }));
-      dispatch(updateEnvironment(publishState));
+
+      if (publishState) {
+        dispatch(updateEnvironment(publishState));
+      }
 
       onSaveCompleted();
     } catch (error: any) {
@@ -516,6 +511,7 @@ export const saveTemplateData = createAsyncThunk(
         /* state */ undefined,
         existingWorkflows,
         /* clearWorkflows */ false,
+        /* addedWorkflowIds */ [],
         dispatch
       );
     }
@@ -528,6 +524,7 @@ const rollbackWorkflows = async (
   state: Template.TemplateEnvironment | undefined,
   workflows: ArmResource<any>[],
   clearWorkflows = true,
+  addedWorkflowIds: string[] = [],
   dispatch: ThunkDispatch<unknown, unknown, any>
 ) => {
   const service = TemplateResourceService();
@@ -539,13 +536,15 @@ const rollbackWorkflows = async (
     }
 
     if (clearWorkflows) {
-      await service.deleteAllWorkflows(id);
-    }
-
-    for (const workflow of workflows) {
-      promises.push(
-        service.updateWorkflow(id, workflow.name, (workflow.properties?.manifest as Template.WorkflowManifest) ?? {}, /* rawData */ true)
-      );
+      for (const workflowId of addedWorkflowIds) {
+        promises.push(service.deleteWorkflow(id, workflowId));
+      }
+    } else {
+      for (const workflow of workflows) {
+        promises.push(
+          service.updateWorkflow(id, workflow.name, (workflow.properties?.manifest as Template.WorkflowManifest) ?? {}, /* rawData */ true)
+        );
+      }
     }
 
     await Promise.all(promises);
@@ -555,7 +554,12 @@ const rollbackWorkflows = async (
       area: 'ConfigureTemplate.rollbackWorkflows',
       error,
       message: `Error while rolling back workflows in template: ${id}`,
-      args: [`clearWorkflows: ${clearWorkflows}`],
+      args: [
+        `workflowIds: ${Object.keys(workflows).join(', ')}`,
+        `state: ${state}`,
+        `clearWorkflows: ${clearWorkflows}`,
+        `newWorkflowIds: ${addedWorkflowIds.join(', ')}`,
+      ],
     });
     resetAllTemplatesQuery(id, /* clearRawData */ true);
 
@@ -592,7 +596,7 @@ export const deleteWorkflowData = createAsyncThunk(
   'deleteWorkflowData',
   async (
     { ids }: { ids: string[] },
-    { getState }
+    { getState, dispatch }
   ): Promise<{
     ids: string[];
     manifest: Template.TemplateManifest;
@@ -605,9 +609,19 @@ export const deleteWorkflowData = createAsyncThunk(
     const parametersToUpdate: Record<string, Partial<Template.ParameterDefinition>> = {};
     const promises: Promise<void>[] = [];
     const {
-      template: { workflows, parameterDefinitions, connections, manifest },
+      template: { workflows, parameterDefinitions, connections, manifest, status: oldState },
+      operation: { operationInfo },
     } = getState() as RootState;
     const templateId = manifest?.id as string;
+
+    const newState = equals(oldState, 'Development') ? undefined : 'Development';
+    if (newState) {
+      // If the old state is published then we need to move template to development state before deleting any workflows.
+      // Users would be informed in the UI about this change.
+      await TemplateResourceService().updateTemplate(templateId, /* manifest */ undefined, newState);
+      resetTemplateQuery(templateId);
+      dispatch(updateEnvironment(newState));
+    }
 
     for (const id of ids) {
       const workflowId = id.toLowerCase();
@@ -660,6 +674,12 @@ export const deleteWorkflowData = createAsyncThunk(
     }
 
     const updatedTemplateManifest = getUpdatedTemplateManifest(manifest as Template.TemplateManifest, finalWorkflows, finalConnections);
+    updatedTemplateManifest.featuredConnectors = getFeaturedConnectorsForWorkflows(
+      finalWorkflows,
+      operationInfo,
+      manifest?.featuredConnectors
+    );
+
     await TemplateResourceService().updateTemplate(templateId, updatedTemplateManifest, /* state */ undefined);
     resetTemplateQuery(templateId);
 
@@ -987,4 +1007,49 @@ const getUpdatedTemplateManifest = (
       Trigger: workflows.length === 1 ? workflows[0].triggerType : undefined,
     },
   } as Template.TemplateManifest;
+};
+
+const getFeaturedConnectorsForWorkflows = (
+  workflows: Partial<WorkflowTemplateData>[],
+  operationInfo: Record<string, NodeOperation>,
+  featuredConnectors: Template.FeaturedConnector[] = []
+): Template.FeaturedConnector[] => {
+  const workflowIds = workflows.map((workflow) => workflow.id?.toLowerCase());
+  const allConnectorIds: Set<string> = new Set<string>();
+  for (const workflowId of workflowIds) {
+    for (const nodeId of Object.keys(operationInfo)) {
+      if (nodeId.toLowerCase().startsWith(`${workflowId}${delimiter}`)) {
+        const connectorId = sanitizeConnectorId(operationInfo[nodeId]?.connectorId).toLowerCase();
+        if (connectorId && !allConnectorIds.has(connectorId)) {
+          allConnectorIds.add(connectorId);
+        }
+      }
+    }
+  }
+
+  return featuredConnectors.filter((featuredConnector) => allConnectorIds.has(featuredConnector.id.toLowerCase()));
+};
+
+const mergeParametersWithExisting = (
+  existingParameters: Record<string, Partial<Template.ParameterDefinition>>,
+  newParameters: Record<string, Partial<Template.ParameterDefinition>>
+): Record<string, Partial<Template.ParameterDefinition>> => {
+  const mergedParameters: Record<string, Partial<Template.ParameterDefinition>> = {};
+
+  for (const [key, newParameter] of Object.entries(newParameters)) {
+    const existingParameter = existingParameters[key];
+    if (existingParameter) {
+      mergedParameters[key] = {
+        ...existingParameter,
+        associatedWorkflows: [...new Set([...(existingParameter.associatedWorkflows ?? []), ...(newParameter.associatedWorkflows ?? [])])],
+      };
+      if (!existingParameter.dynamicData && newParameter.dynamicData) {
+        mergedParameters[key].dynamicData = newParameter.dynamicData;
+      }
+    } else {
+      mergedParameters[key] = newParameter;
+    }
+  }
+
+  return mergedParameters;
 };

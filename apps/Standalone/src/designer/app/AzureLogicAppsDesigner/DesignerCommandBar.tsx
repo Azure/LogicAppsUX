@@ -140,6 +140,7 @@ export const DesignerCommandBar = ({
       }
     }
   });
+
   const { isLoading: isSavingUnitTest, mutate: saveUnitTestMutate } = useMutation(async () => {
     const designerState = DesignerStore.getState();
     const definition = await serializeUnitTestDefinition(designerState);
@@ -296,7 +297,7 @@ export const DesignerCommandBar = ({
       },
       {
         key: 'save',
-        text: 'Save',
+        text: isSaving ? 'Saving' : 'Save',
         disabled: saveIsDisabled,
         onRenderIcon: () => {
           return isSaving ? (
@@ -359,6 +360,14 @@ export const DesignerCommandBar = ({
         iconProps: { iconName: 'Parameter' },
         onClick: () => !!dispatch(openPanel({ panelMode: 'WorkflowParameters' })),
         onRenderText: (item: { text: string }) => <CustomCommandBarButton text={item.text} showError={haveWorkflowParameterErrors} />,
+      },
+      {
+        key: 'connections',
+        text: 'Connections',
+        disabled: !isDesignerView,
+        iconProps: { iconName: 'Link' },
+        onClick: () => !!dispatch(openPanel({ panelMode: 'Connection' })),
+        onRenderText: (item: { text: string }) => <CustomCommandBarButton text={item.text} showError={haveConnectionErrors} />,
       },
       {
         key: 'Assertions',
