@@ -163,11 +163,12 @@ export const PanelHeaderComment = ({
         iconProps={{ iconName: isCommentCollapsed ? 'ChevronRight' : 'ChevronDown' }}
         title={toggleButtonLabel}
         ariaLabel={toggleButtonLabel}
+        aria-expanded={!isCommentCollapsed}
         onClick={() => setIsCommentCollapsed(!isCommentCollapsed)}
       />
       {isCommentCollapsed ? (
         <span className="msla-panel-comment-collapsed-label">
-          {comment ? `${commentLabel}: ${comment.substring(0, 50)}...` : commentLabel}
+          {comment ? `${commentLabel}: ${comment.substring(0, 50)}${comment.length > 50 ? '...' : ''}` : commentLabel}
         </span>
       ) : null}
       {getCommentEditor()}
