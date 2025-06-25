@@ -1,15 +1,13 @@
 import constants from '../../constants';
 import { isEscapeKey } from '../../utils/keyboardUtils';
 import { handleOnEscapeDown } from './panelheader';
-import { bundleIcon, TextDescription20Filled, TextDescription20Regular } from '@fluentui/react-icons';
 import type { ITextField, ITextFieldStyles } from '@fluentui/react/lib/TextField';
 import { TextField } from '@fluentui/react/lib/TextField';
 import { css } from '@fluentui/react/lib/Utilities';
+import { IconButton } from '@fluentui/react/lib/Button';
 import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
-
-const DescriptionIcon = bundleIcon(TextDescription20Filled, TextDescription20Regular);
 
 export interface PanelHeaderCommentProps {
   comment?: string;
@@ -20,11 +18,25 @@ export interface PanelHeaderCommentProps {
   isTrigger?: boolean;
 }
 
-const commentTextFieldStyle: Partial<ITextFieldStyles> = {
+const getCommentTextFieldStyle = (isSmallViewport: boolean, isCommentCollapsed: boolean): Partial<ITextFieldStyles> => ({
   field: {
     backgroundColor: '#faf9f8',
+    maxHeight: isSmallViewport ? '60px' : '25vh',
+    overflowY: 'auto',
+    fontSize: isSmallViewport ? '12px' : undefined,
+    lineHeight: isSmallViewport ? '16px' : undefined,
+    paddingLeft: '28px', // Space for collapse icon
+    paddingRight: '8px',
   },
-};
+  fieldGroup: {
+    maxHeight: isSmallViewport ? '60px' : '25vh',
+    position: 'relative',
+  },
+  root: {
+    marginTop: 0,
+    display: isCommentCollapsed ? 'none' : 'block',
+  },
+});
 
 export const PanelHeaderComment = ({
   comment,
@@ -33,11 +45,34 @@ export const PanelHeaderComment = ({
   readOnlyMode,
   commentChange,
   isTrigger,
-}: PanelHeaderCommentProps): JSX.Element => {
+}: PanelHeaderCommentProps): JSX.Element | null => {
   const intl = useIntl();
 
   const [commentHasFocus, setCommentHasFocus] = useState(false);
   const commentTextFieldRef = useRef<ITextField>(null);
+
+  // Check if viewport is small
+  const [isSmallViewport, setIsSmallViewport] = useState(false);
+
+  // Initialize collapsed state based on viewport
+  const getInitialCollapsedState = () => {
+    const isSmall = window.innerHeight < 400 || window.innerWidth < 400;
+    // Auto-collapse on small viewports for triggers without comments
+    return isSmall && isTrigger && !comment;
+  };
+
+  const [isCommentCollapsed, setIsCommentCollapsed] = useState(getInitialCollapsedState);
+
+  useEffect(() => {
+    const checkViewport = () => {
+      const isSmall = window.innerHeight < 400 || window.innerWidth < 400;
+      setIsSmallViewport(isSmall);
+    };
+
+    checkViewport();
+    window.addEventListener('resize', checkViewport);
+    return () => window.removeEventListener('resize', checkViewport);
+  }, []);
 
   const commentLabel = intl.formatMessage({
     defaultMessage: 'Comment',
@@ -45,16 +80,12 @@ export const PanelHeaderComment = ({
     description: 'Comment Label',
   });
 
-  const getDescriptionIcon = (): JSX.Element => {
-    return <DescriptionIcon className={'msla-comment-icon'} aria-label={commentLabel} />;
-  };
-
-  // Autofocusing when opened for a node
+  // Autofocusing when opened for a node (skip on small viewports)
   useEffect(() => {
-    if (!isCollapsed && !readOnlyMode && !comment && !isTrigger) {
+    if (!isCollapsed && !readOnlyMode && !comment && !isTrigger && !isSmallViewport) {
       commentTextFieldRef.current?.focus();
     }
-  }, [comment, commentTextFieldRef, isCollapsed, readOnlyMode, isTrigger]);
+  }, [comment, commentTextFieldRef, isCollapsed, readOnlyMode, isTrigger, isSmallViewport]);
   const getCommentEditor = (): JSX.Element => {
     const commentClassName = commentHasFocus ? 'msla-card-comment-focused' : 'msla-card-comment';
     const commentTitle = intl.formatMessage({
@@ -96,7 +127,7 @@ export const PanelHeaderComment = ({
         resizable={false}
         componentRef={commentTextFieldRef}
         readOnly={readOnlyMode}
-        styles={commentTextFieldStyle}
+        styles={getCommentTextFieldStyle(isSmallViewport, !!isCommentCollapsed)}
         ariaLabel={commentTitle}
         placeholder={commentPlaceholder}
         maxLength={constants.PANEL.MAX_COMMENT_LENGTH}
@@ -109,10 +140,38 @@ export const PanelHeaderComment = ({
       />
     );
   };
+  const toggleButtonLabel = isCommentCollapsed
+    ? intl.formatMessage({
+        defaultMessage: 'Show description',
+        id: 'W99jiu',
+        description: 'Toggle button label to show comment section',
+      })
+    : intl.formatMessage({
+        defaultMessage: 'Hide description',
+        id: 'zWxKLk',
+        description: 'Toggle button label to hide comment section',
+      });
+
+  if (isCollapsed || noNodeSelected) {
+    return null;
+  }
+
   return (
-    <div className="msla-panel-comment-container" hidden={isCollapsed}>
-      {noNodeSelected ? null : getDescriptionIcon()}
-      {noNodeSelected ? null : getCommentEditor()}
+    <div className={css('msla-panel-comment-container', isCommentCollapsed && 'collapsed')}>
+      <IconButton
+        className="msla-panel-comment-toggle-inline"
+        iconProps={{ iconName: isCommentCollapsed ? 'ChevronRight' : 'ChevronDown' }}
+        title={toggleButtonLabel}
+        ariaLabel={toggleButtonLabel}
+        aria-expanded={!isCommentCollapsed}
+        onClick={() => setIsCommentCollapsed(!isCommentCollapsed)}
+      />
+      {isCommentCollapsed ? (
+        <span className="msla-panel-comment-collapsed-label">
+          {comment ? `${commentLabel}: ${comment.substring(0, 50)}${comment.length > 50 ? '...' : ''}` : commentLabel}
+        </span>
+      ) : null}
+      {getCommentEditor()}
     </div>
   );
 };

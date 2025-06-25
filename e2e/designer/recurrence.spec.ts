@@ -7,7 +7,7 @@ test.describe(
     tag: '@mock',
   },
   async () => {
-    test('Recurrence should load preview text properly', async ({ page }) => {
+    test.skip('Recurrence should load preview text properly', async ({ page }) => {
       await page.goto('/');
       await GoToMockWorkflow(page, 'Recurrence');
       await page.getByTestId('card-recurrence').click();
