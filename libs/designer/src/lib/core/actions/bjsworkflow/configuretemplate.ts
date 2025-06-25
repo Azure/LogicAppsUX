@@ -277,7 +277,7 @@ export const updateWorkflowParameter = createAsyncThunk(
       LoggerService().log({
         level: LogEntryLevel.Trace,
         area: 'ConfigureTemplate.updateWorkflowParameter',
-        message: 'Parameter is updated',
+        message: 'Updated parameter in template',
         args: [
           `templateId: ${manifest?.id as string}`,
           `parameterId: ${parameterId}`,
@@ -456,7 +456,7 @@ const saveWorkflowsInTemplateInternal = async (
     LoggerService().log({
       level: LogEntryLevel.Trace,
       area: 'ConfigureTemplate.saveWorkflowsInTemplateInternal',
-      message: addingWorkflows ? 'Adding workflows in template' : 'Saving workflows in template',
+      message: addingWorkflows ? 'Added workflow(s) in template' : 'Saved workflow(s) in template',
       args: [
         `templateId: ${templateId}`,
         `state: ${newState}`,
@@ -521,7 +521,7 @@ export const saveTemplateData = createAsyncThunk(
       LoggerService().log({
         level: LogEntryLevel.Trace,
         area: 'ConfigureTemplate.saveTemplateData',
-        message: 'Saving template',
+        message: 'Saved template data',
         args: [
           `templateId: ${templateId}`,
           `state: ${newState}`,
@@ -730,7 +730,7 @@ export const deleteWorkflowData = createAsyncThunk(
       LoggerService().log({
         level: LogEntryLevel.Trace,
         area: 'ConfigureTemplate.deleteWorkflowData',
-        message: 'Deleting workflows in template',
+        message: 'Deleted workflow(s) in template',
         args: [
           `templateId: ${templateId}`,
           `state: ${newState}`,
