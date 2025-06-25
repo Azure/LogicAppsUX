@@ -82,12 +82,14 @@ export const useConfigureTemplateWizardTabs = ({
         saveTemplateData({
           templateManifest: templateManifest as Template.TemplateManifest,
           workflows,
-          publishState: newPublishState,
+          newState: newPublishState,
+          oldState: currentState as Template.TemplateEnvironment,
           onSaveCompleted: () => onSaveTemplate(currentState as Template.TemplateEnvironment, newPublishState),
+          location: selectedTabId as string,
         })
       );
     },
-    [workflows, templateManifest, onSaveTemplate, currentState, dispatch]
+    [workflows, templateManifest, onSaveTemplate, currentState, dispatch, selectedTabId]
   );
 
   const downloadTemplate = useCallback(async () => {

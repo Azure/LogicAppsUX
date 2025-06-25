@@ -3,11 +3,18 @@
 exports[`ui/panel/panelheadercomment > should construct. 1`] = `
 <div
   className="msla-panel-comment-container"
-  hidden={false}
 >
-  <CompoundIcon
-    aria-label="Comment"
-    className="msla-comment-icon"
+  <CustomizedIconButton
+    aria-expanded={true}
+    ariaLabel="Hide description"
+    className="msla-panel-comment-toggle-inline"
+    iconProps={
+      {
+        "iconName": "ChevronDown",
+      }
+    }
+    onClick={[Function]}
+    title="Hide description"
   />
   <StyledTextFieldBase2
     ariaLabel="Description"
@@ -32,6 +39,20 @@ exports[`ui/panel/panelheadercomment > should construct. 1`] = `
       {
         "field": {
           "backgroundColor": "#faf9f8",
+          "fontSize": undefined,
+          "lineHeight": undefined,
+          "maxHeight": "25vh",
+          "overflowY": "auto",
+          "paddingLeft": "28px",
+          "paddingRight": "8px",
+        },
+        "fieldGroup": {
+          "maxHeight": "25vh",
+          "position": "relative",
+        },
+        "root": {
+          "display": "block",
+          "marginTop": 0,
         },
       }
     }
