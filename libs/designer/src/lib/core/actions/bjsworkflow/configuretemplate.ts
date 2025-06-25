@@ -645,81 +645,106 @@ export const deleteWorkflowData = createAsyncThunk(
     const templateId = manifest?.id as string;
 
     const newState = equals(oldState, 'Development') ? undefined : 'Development';
-    if (newState) {
-      // If the old state is published then we need to move template to development state before deleting any workflows.
-      // Users would be informed in the UI about this change.
-      await TemplateResourceService().updateTemplate(templateId, /* manifest */ undefined, newState);
-      resetTemplateQuery(templateId);
-      dispatch(updateEnvironment(newState));
-    }
 
-    for (const id of ids) {
-      const workflowId = id.toLowerCase();
+    try {
+      if (newState) {
+        // If the old state is published then we need to move template to development state before deleting any workflows.
+        // Users would be informed in the UI about this change.
+        await TemplateResourceService().updateTemplate(templateId, /* manifest */ undefined, newState);
+        resetTemplateQuery(templateId);
+        dispatch(updateEnvironment(newState));
+      }
 
-      // Getting connection keys to delete
-      const connectionKeysInUse = Object.keys(workflows).reduce((result: string[], currentId: string) => {
-        if (currentId !== workflowId) {
-          result.push(...workflows[currentId].connectionKeys.filter((key) => !result.includes(key)));
-        }
-        return result;
-      }, []);
-      const connectionKeys = (workflows[workflowId]?.connectionKeys ?? []).filter((key) => !connectionKeysInUse.includes(key));
-      combinedConnectionKeys.push(...connectionKeys);
+      for (const id of ids) {
+        const workflowId = id.toLowerCase();
 
-      // Getting parameter keys to delete
-      const parameterKeys = Object.keys(parameterDefinitions).filter((key) => {
-        const { associatedWorkflows, dynamicData } = parameterDefinitions[key];
-        if (associatedWorkflows?.includes(workflowId)) {
-          if (associatedWorkflows.length === 1) {
-            return true;
+        // Getting connection keys to delete
+        const connectionKeysInUse = Object.keys(workflows).reduce((result: string[], currentId: string) => {
+          if (currentId !== workflowId) {
+            result.push(...workflows[currentId].connectionKeys.filter((key) => !result.includes(key)));
+          }
+          return result;
+        }, []);
+        const connectionKeys = (workflows[workflowId]?.connectionKeys ?? []).filter((key) => !connectionKeysInUse.includes(key));
+        combinedConnectionKeys.push(...connectionKeys);
+
+        // Getting parameter keys to delete
+        const parameterKeys = Object.keys(parameterDefinitions).filter((key) => {
+          const { associatedWorkflows, dynamicData } = parameterDefinitions[key];
+          if (associatedWorkflows?.includes(workflowId)) {
+            if (associatedWorkflows.length === 1) {
+              return true;
+            }
+
+            // TODO: Try fetching the dynamic data from the next workflow in the list, fo rnow just deleting.
+            parametersToUpdate[key] = {
+              ...parameterDefinitions[key],
+              associatedWorkflows: associatedWorkflows.filter((id) => id !== workflowId),
+              dynamicData: dynamicData?.workflow === workflowId ? undefined : dynamicData,
+            };
           }
 
-          // TODO: Try fetching the dynamic data from the next workflow in the list, fo rnow just deleting.
-          parametersToUpdate[key] = {
-            ...parameterDefinitions[key],
-            associatedWorkflows: associatedWorkflows.filter((id) => id !== workflowId),
-            dynamicData: dynamicData?.workflow === workflowId ? undefined : dynamicData,
-          };
-        }
+          return false;
+        });
+        combinedParameterKeys.push(...parameterKeys);
 
-        return false;
+        promises.push(TemplateResourceService().deleteWorkflow(templateId, workflowId));
+      }
+
+      await Promise.all(promises);
+      resetTemplateWorkflowsQuery(templateId, /* clearRawData */ true);
+
+      const finalWorkflows = Object.values(workflows).filter((workflowData) => !ids.includes(workflowData.id));
+      const finalConnections = { ...connections };
+      for (const key of combinedConnectionKeys) {
+        delete finalConnections[key];
+      }
+
+      const finalParameterDefinitions = { ...parameterDefinitions, ...parametersToUpdate };
+      for (const key of combinedParameterKeys) {
+        delete finalParameterDefinitions[key];
+      }
+
+      const updatedTemplateManifest = getUpdatedTemplateManifest(manifest as Template.TemplateManifest, finalWorkflows, finalConnections);
+      updatedTemplateManifest.featuredConnectors = getFeaturedConnectorsForWorkflows(
+        finalWorkflows,
+        operationInfo,
+        manifest?.featuredConnectors
+      );
+
+      await TemplateResourceService().updateTemplate(templateId, updatedTemplateManifest, /* state */ undefined);
+      resetTemplateQuery(templateId);
+
+      LoggerService().log({
+        level: LogEntryLevel.Trace,
+        area: 'ConfigureTemplate.deleteWorkflowData',
+        message: 'Deleting workflows in template',
+        args: [
+          `templateId: ${templateId}`,
+          `state: ${newState}`,
+          `oldState: ${oldState}`,
+          `workflowIds: ${Object.keys(workflows).join(', ')}`,
+        ],
       });
-      combinedParameterKeys.push(...parameterKeys);
 
-      promises.push(TemplateResourceService().deleteWorkflow(templateId, workflowId));
+      return {
+        ids,
+        manifest: updatedTemplateManifest,
+        connections: finalConnections,
+        parameters: finalParameterDefinitions as Record<string, Template.ParameterDefinition>,
+        disableWizard: finalWorkflows.length === 0,
+      };
+    } catch (error: any) {
+      dispatch(getTemplateValidationError({ errorResponse: error, source: 'workflows' }));
+      LoggerService().log({
+        level: LogEntryLevel.Error,
+        area: 'ConfigureTemplate.deleteWorkflowData',
+        error,
+        message: `Error while deleting workflows in template: ${templateId}`,
+        args: [`workflowIds: ${Object.keys(workflows).join(', ')}`, `oldState: ${oldState}`],
+      });
+      throw error;
     }
-
-    await Promise.all(promises);
-    resetTemplateWorkflowsQuery(templateId, /* clearRawData */ true);
-
-    const finalWorkflows = Object.values(workflows).filter((workflowData) => !ids.includes(workflowData.id));
-    const finalConnections = { ...connections };
-    for (const key of combinedConnectionKeys) {
-      delete finalConnections[key];
-    }
-
-    const finalParameterDefinitions = { ...parameterDefinitions, ...parametersToUpdate };
-    for (const key of combinedParameterKeys) {
-      delete finalParameterDefinitions[key];
-    }
-
-    const updatedTemplateManifest = getUpdatedTemplateManifest(manifest as Template.TemplateManifest, finalWorkflows, finalConnections);
-    updatedTemplateManifest.featuredConnectors = getFeaturedConnectorsForWorkflows(
-      finalWorkflows,
-      operationInfo,
-      manifest?.featuredConnectors
-    );
-
-    await TemplateResourceService().updateTemplate(templateId, updatedTemplateManifest, /* state */ undefined);
-    resetTemplateQuery(templateId);
-
-    return {
-      ids,
-      manifest: updatedTemplateManifest,
-      connections: finalConnections,
-      parameters: finalParameterDefinitions as Record<string, Template.ParameterDefinition>,
-      disableWizard: finalWorkflows.length === 0,
-    };
   }
 );
 
