@@ -45,7 +45,7 @@ export const PanelHeaderComment = ({
   readOnlyMode,
   commentChange,
   isTrigger,
-}: PanelHeaderCommentProps): JSX.Element => {
+}: PanelHeaderCommentProps): JSX.Element | null => {
   const intl = useIntl();
 
   const [commentHasFocus, setCommentHasFocus] = useState(false);
@@ -127,7 +127,7 @@ export const PanelHeaderComment = ({
         resizable={false}
         componentRef={commentTextFieldRef}
         readOnly={readOnlyMode}
-        styles={getCommentTextFieldStyle(isSmallViewport, isCommentCollapsed)}
+        styles={getCommentTextFieldStyle(isSmallViewport, !!isCommentCollapsed)}
         ariaLabel={commentTitle}
         placeholder={commentPlaceholder}
         maxLength={constants.PANEL.MAX_COMMENT_LENGTH}
