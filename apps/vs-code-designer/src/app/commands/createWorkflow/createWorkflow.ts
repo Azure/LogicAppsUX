@@ -70,7 +70,7 @@ export async function createWorkflow(
     projectTemplateKey,
   });
 
-  // wizardContext.isCodeless = true; // default to codeless workflow, disabling codeful option until Public Preview
+  wizardContext.isCodeless = true; // default to codeless workflow, disabling codeful option until Public Preview
 
   const wizard: AzureWizard<IFunctionWizardContext> = new AzureWizard(wizardContext, {
     promptSteps: [
