@@ -441,6 +441,18 @@ const saveWorkflowsInTemplateInternal = async (
       resetTemplateQuery(templateId);
     }
 
+    LoggerService().log({
+      level: LogEntryLevel.Trace,
+      area: 'ConfigureTemplate.saveWorkflowsInTemplateInternal',
+      message: addingWorkflows ? 'Adding workflows in template' : 'Saving workflows in template',
+      args: [
+        `templateId: ${templateId}`,
+        `state: ${newState}`,
+        `oldState: ${oldState}`,
+        `workflowIds: ${Object.keys(workflows).join(', ')}`,
+      ],
+    });
+
     resetTemplateWorkflowsQuery(templateId, /* clearRawData */ true);
     dispatch(setApiValidationErrors({ error: undefined, source: 'workflows' }));
   } catch (error: any) {
@@ -462,14 +474,18 @@ export const saveTemplateData = createAsyncThunk(
   async (
     {
       templateManifest,
-      publishState,
+      newState,
+      oldState,
       workflows,
       onSaveCompleted,
+      location,
     }: {
       templateManifest: Template.TemplateManifest;
       workflows: Record<string, Partial<WorkflowTemplateData>>;
-      publishState?: Template.TemplateEnvironment;
+      newState?: Template.TemplateEnvironment;
+      oldState: Template.TemplateEnvironment;
       onSaveCompleted: () => void;
+      location: string;
     },
     { dispatch }
   ): Promise<void> => {
@@ -488,12 +504,26 @@ export const saveTemplateData = createAsyncThunk(
         resetTemplateWorkflowsQuery(templateId, /* rawData */ true);
       }
 
-      await service.updateTemplate(templateId, templateManifest, publishState);
+      await service.updateTemplate(templateId, templateManifest, newState);
+
+      LoggerService().log({
+        level: LogEntryLevel.Trace,
+        area: 'ConfigureTemplate.saveTemplateData',
+        message: 'Saving template',
+        args: [
+          `templateId: ${templateId}`,
+          `state: ${newState}`,
+          `oldState: ${oldState}`,
+          `workflowIds: ${Object.keys(workflows).join(', ')}`,
+          `location: ${location}`,
+        ],
+      });
+
       resetTemplateQuery(templateId);
       dispatch(setApiValidationErrors({ error: undefined, source: 'template' }));
 
-      if (publishState) {
-        dispatch(updateEnvironment(publishState));
+      if (newState) {
+        dispatch(updateEnvironment(newState));
       }
 
       onSaveCompleted();
