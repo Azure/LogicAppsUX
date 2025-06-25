@@ -232,7 +232,7 @@ export const updateWorkflowParameter = createAsyncThunk(
   ): Promise<void> => {
     const service = TemplateResourceService();
     const {
-      template: { manifest, parameterDefinitions },
+      template: { manifest, parameterDefinitions, status: state },
     } = getState() as RootState;
     const modifiedParameterDefinitions = {
       ...parameterDefinitions,
@@ -273,6 +273,18 @@ export const updateWorkflowParameter = createAsyncThunk(
       );
 
       resetTemplateWorkflowsQuery(manifest?.id as string, /* clearRawData */ true);
+
+      LoggerService().log({
+        level: LogEntryLevel.Trace,
+        area: 'ConfigureTemplate.updateWorkflowParameter',
+        message: 'Parameter is updated',
+        args: [
+          `templateId: ${manifest?.id as string}`,
+          `parameterId: ${parameterId}`,
+          `state: ${state}`,
+          `workflowIds: ${Object.keys(associatedWorkflows).join(', ')}`,
+        ],
+      });
     } catch (error: any) {
       dispatch(getTemplateValidationError({ errorResponse: error, source: 'parameters' }));
       LoggerService().log({
