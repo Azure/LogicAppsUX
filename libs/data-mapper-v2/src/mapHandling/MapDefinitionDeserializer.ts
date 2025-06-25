@@ -173,7 +173,11 @@ export class MapDefinitionDeserializer {
 
     if (this._loop.length > 0 && !possibleSourceSchemaNode) {
       if (!possibleSourceSchemaNode) {
-        possibleSourceSchemaNode = this.getSourceNodeForRelativeKeyInLoop(key, connections, targetNode);
+        let keyToFind = key;
+        if (key === '' && funcMetadata?.type === 'SingleValueMetadata') {
+          keyToFind = funcMetadata.value;
+        }
+        possibleSourceSchemaNode = this.getSourceNodeForRelativeKeyInLoop(keyToFind, connections, targetNode);
       }
 
       if (isSchemaNodeExtended(targetNode)) {
@@ -355,11 +359,11 @@ export class MapDefinitionDeserializer {
       }
 
       this.addLoopConnectionIfNeeded(connections, targetNode as SchemaNodeExtended);
-      this.addConnectionFromConditionalToTargetIfNeeded(connections, targetNode);
 
       if (parentTargetNode?.name === '<ArrayItem>') {
         targetNode = parentTargetNode.children.find((child) => child.qName === leftSideKey) as SchemaNodeExtended;
       }
+      this.addConnectionFromConditionalToTargetIfNeeded(connections, targetNode);
 
       // if right side is string- process it, if object, process all children
       if (typeof rightSideStringOrObject === 'string') {

@@ -1,5 +1,5 @@
 import { directAccessPseudoFunctionKey, functionMock, ifPseudoFunctionKey, indexPseudoFunctionKey } from '../../models';
-import type { Connection, ConnectionDictionary, ConnectionUnit, CustomValueConnection } from '../../models/Connection';
+import type { Connection, ConnectionDictionary, ConnectionUnit, CustomValueConnection, NodeConnection } from '../../models/Connection';
 import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
 import { MapDefinitionDeserializer, getLoopTargetNodeWithJson } from '../MapDefinitionDeserializer';
 import {
@@ -2793,6 +2793,36 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
     const extendedSource = convertSchemaToSchemaExtended(sourceMockSchema);
     const extendedTarget = convertSchemaToSchemaExtended(targetMockJsonSchema);
 
+    it('maps a looping XSD to JSON with nested if', () => {
+      simpleMap['root'] = {
+        ComplexArray1: {
+          '$for(/ns0:Root/Looping/Employee)': {
+            '$if(Name)': {
+              F1: 'TelephoneNumber',
+            },
+          },
+        },
+      };
+
+      const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedSource, extendedTarget, functionMock);
+      const result = mapDefinitionDeserializer.convertFromMapDefinition();
+      const resultEntries = Object.entries(result);
+      resultEntries.sort();
+
+      expect(resultEntries.length).toEqual(6);
+
+      // if
+      expect(resultEntries[0][0]).toContain(ifPseudoFunctionKey);
+      expect((resultEntries[0][1].inputs[0] as NodeConnection).reactFlowKey).toEqual('source-/ns0:Root/Looping/Employee/Name');
+      expect((resultEntries[0][1].inputs[1] as NodeConnection).reactFlowKey).toEqual('source-/ns0:Root/Looping/Employee/TelephoneNumber');
+      expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/root/ComplexArray1/*/F1');
+
+      // looping
+      expect(resultEntries[1][0]).toEqual('source-/ns0:Root/Looping/Employee');
+      expect(resultEntries[1][1]).toBeTruthy();
+      expect(resultEntries[1][1].outputs[0].reactFlowKey).toEqual('target-/root/ComplexArray1/*');
+    });
+
     it('maps a looping XSD to JSON', () => {
       simpleMap['root'] = {
         ComplexArray1: {
@@ -2818,35 +2848,35 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       expect(resultEntries[1][1].outputs[0].reactFlowKey).toEqual('target-/root/ComplexArray1/*/F1');
     });
   });
+});
 
-  describe('getLowestCommonParentForConditional', () => {
-    let simpleMap: MapDefinitionEntry = {};
+describe('getLowestCommonParentForConditional', () => {
+  let simpleMap: MapDefinitionEntry = {};
 
-    const extendedSource = convertSchemaToSchemaExtended(sourceMockSchema as any as DataMapSchema);
-    const extendedTarget = convertSchemaToSchemaExtended(targetMockSchema as any as DataMapSchema);
-    const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedSource, extendedTarget, functionMock);
+  const extendedSource = convertSchemaToSchemaExtended(sourceMockSchema as any as DataMapSchema);
+  const extendedTarget = convertSchemaToSchemaExtended(targetMockSchema as any as DataMapSchema);
+  const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedSource, extendedTarget, functionMock);
 
-    it('gets correct lowest common parent for two nodes', () => {
-      const children = ['/ns0:Root/ConditionalMapping/ItemQuantity', '/ns0:Root/ConditionalMapping/ItemPrice'];
-      const lowestCommonParent = mapDefinitionDeserializer.getLowestCommonParentForConditional(children);
-      expect(lowestCommonParent).toEqual('/ns0:Root/ConditionalMapping');
-    });
-
-    it('gets correct lowest common parent when parent is an input', () => {
-      const children = ['/ns0:Root/idk/ConditionalMapping/ItemQuantity', '/ns0:Root/idk/ConditionalMapping/ItemPrice', '/ns0:Root/idk'];
-
-      const lowestCommonParent = mapDefinitionDeserializer.getLowestCommonParentForConditional(children);
-      expect(lowestCommonParent).toEqual('/ns0:Root/idk');
-    });
+  it('gets correct lowest common parent for two nodes', () => {
+    const children = ['/ns0:Root/ConditionalMapping/ItemQuantity', '/ns0:Root/ConditionalMapping/ItemPrice'];
+    const lowestCommonParent = mapDefinitionDeserializer.getLowestCommonParentForConditional(children);
+    expect(lowestCommonParent).toEqual('/ns0:Root/ConditionalMapping');
   });
 
-  it('gets correct target node for json schema', () => {
-    const extendedTarget = convertSchemaToSchemaExtended(targetMockJsonSchema as any as DataMapSchema);
-    const root = extendedTarget.schemaTreeRoot;
-    const matchingTarget = getLoopTargetNodeWithJson('root/ComplexArray1/F1', root);
+  it('gets correct lowest common parent when parent is an input', () => {
+    const children = ['/ns0:Root/idk/ConditionalMapping/ItemQuantity', '/ns0:Root/idk/ConditionalMapping/ItemPrice', '/ns0:Root/idk'];
 
-    expect((matchingTarget as SchemaNodeExtended).name).toEqual('<ArrayItem>');
+    const lowestCommonParent = mapDefinitionDeserializer.getLowestCommonParentForConditional(children);
+    expect(lowestCommonParent).toEqual('/ns0:Root/idk');
   });
+});
+
+it('gets correct target node for json schema', () => {
+  const extendedTarget = convertSchemaToSchemaExtended(targetMockJsonSchema as any as DataMapSchema);
+  const root = extendedTarget.schemaTreeRoot;
+  const matchingTarget = getLoopTargetNodeWithJson('root/ComplexArray1/F1', root);
+
+  expect((matchingTarget as SchemaNodeExtended).name).toEqual('<ArrayItem>');
 });
 
 const isEqualToCustomValue = (value: string, customConnection: ConnectionUnit) => {
