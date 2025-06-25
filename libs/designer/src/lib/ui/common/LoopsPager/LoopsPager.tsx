@@ -23,7 +23,7 @@ export const LoopsPager = ({ metadata, scopeId, collapsed, focusElement, isFromT
   const normalizedType = useMemo(() => actionMetadata?.type.toLowerCase(), [actionMetadata]);
   const nodeMetadata = useNodeMetadata(scopeId);
   const currentPage = useMemo(() => nodeMetadata?.runIndex ?? 0, [nodeMetadata]);
-  const loopsCount = useMemo(() => (isFromTrigger ? 4 : getLoopsCount(metadata?.runData)), [metadata?.runData]);
+  const loopsCount = useMemo(() => (isFromTrigger ? 4 : getLoopsCount(metadata?.runData)), [isFromTrigger, metadata?.runData]);
   const { isError, isFetching, data: failedRepetitions } = useScopeFailedRepetitions(normalizedType ?? '', scopeId, runInstance?.id);
 
   const findPreviousAndNextFailed = useCallback(
