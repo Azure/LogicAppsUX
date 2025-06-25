@@ -76,6 +76,7 @@ const DesignerEditorConsumption = () => {
     showRunHistory,
     hostOptions,
     showConnectionsPanel,
+    showEdgeDrawing,
     suppressDefaultNodeSelect,
     showPerformanceDebug,
     language,
@@ -286,6 +287,7 @@ const DesignerEditorConsumption = () => {
           isMonitoringView,
           useLegacyWorkflowParameters: true,
           showConnectionsPanel,
+          showEdgeDrawing,
           suppressDefaultNodeSelectFunctionality: suppressDefaultNodeSelect,
           hostOptions: {
             ...hostOptions,

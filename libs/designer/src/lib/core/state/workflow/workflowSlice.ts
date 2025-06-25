@@ -611,6 +611,12 @@ export const workflowSlice = createSlice({
         return;
       }
 
+      // If there was an existing run after and the parent operation is in it, do nothing
+      // TODO: Doesn't work for actions after trigger
+      if (childOperation.runAfter?.[parentOperationId]) {
+        return;
+      }
+
       // If there is no existing run after, it was running after the trigger
       // We need to add a dummy trigger node to populate the settings object and flag validation
       if (Object.keys(childOperation.runAfter ?? {}).length === 0) {

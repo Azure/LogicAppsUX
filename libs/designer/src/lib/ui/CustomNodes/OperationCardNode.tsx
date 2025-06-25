@@ -7,6 +7,7 @@ import {
   useMonitoringView,
   useNodeSelectAdditionalCallback,
   useReadOnly,
+  useShowEdgeDrawing,
   useSuppressDefaultNodeSelectFunctionality,
   useUnitTest,
 } from '../../core/state/designerOptions/designerOptionsSelectors';
@@ -67,6 +68,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const readOnly = useReadOnly();
   const isMonitoringView = useMonitoringView();
   const isUnitTest = useUnitTest();
+  const showEdgeDrawing = useShowEdgeDrawing();
 
   const intl = useIntl();
 
@@ -318,7 +320,14 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   return (
     <>
       <div className="nopan" ref={ref as any}>
-        <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
+        <Handle
+          className="node-handle top"
+          type="target"
+          position={targetPosition}
+          isConnectable={true}
+          isConnectableStart={false}
+          isConnectableEnd={true}
+        />
         <Card
           active={isCardActive}
           showStatusPill={isMonitoringView && isCardActive}
@@ -354,7 +363,22 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
           nodeIndex={nodeIndex}
         />
         {showCopyCallout ? <CopyTooltip id={id} targetRef={ref} hideTooltip={clearCopyTooltip} /> : null}
-        <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
+        <Handle
+          className="node-handle bottom"
+          type="source"
+          position={sourcePosition}
+          isConnectable={true}
+          isConnectableStart={true}
+          isConnectableEnd={false}
+          style={
+            readOnly || !showEdgeDrawing
+              ? {
+                  visibility: 'hidden',
+                  transform: 'translate(-50%, 0)',
+                }
+              : {}
+          }
+        />
       </div>
       {showLeafComponents ? (
         <div className={'edge-drop-zone-container'}>
