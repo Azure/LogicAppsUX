@@ -1,7 +1,7 @@
-import type { EdgeTypes, NodeChange, ReactFlowInstance } from '@xyflow/react';
+import type { Connection, Edge, EdgeTypes, NodeChange, ReactFlowInstance } from '@xyflow/react';
 import { BezierEdge, ReactFlow } from '@xyflow/react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { guid, WORKFLOW_NODE_TYPES, type WorkflowNodeType } from '@microsoft/logic-apps-shared';
+import { containsIdTag, guid, removeIdTag, WORKFLOW_NODE_TYPES, type WorkflowNodeType } from '@microsoft/logic-apps-shared';
 import { useDispatch } from 'react-redux';
 import { useResizeObserver } from '@react-hookz/web';
 
@@ -152,7 +152,7 @@ const DesignerReactFlow = (props: any) => {
     (event: any, connectionState: any) => {
       const { isValid, fromNode, toNode } = connectionState;
       const parentId = fromNode?.id;
-      const targetId = toNode?.id;
+      const targetId = containsIdTag(toNode?.id) ? removeIdTag(toNode?.id) : toNode?.id;
 
       if (parentId === targetId) {
         // Prevent self-connection
@@ -191,6 +191,27 @@ const DesignerReactFlow = (props: any) => {
     [nodesMetadata, dispatch]
   );
 
+  const isValidConnection = useCallback(
+    (connection: Edge | Connection): boolean => {
+      if (!connection.source || !connection.target) {
+        return false;
+      }
+
+      const sourceId = containsIdTag(connection.source) ? removeIdTag(connection.source) : connection.source;
+      const targetId = containsIdTag(connection.target) ? removeIdTag(connection.target) : connection.target;
+      // Prevent self-connection
+      if (sourceId === targetId) {
+        return false;
+      }
+      // Edge already exists
+      if (edges.some((edge) => edge.source === sourceId && edge.target === targetId)) {
+        return false;
+      }
+      return true;
+    },
+    [edges]
+  );
+
   const onPaneClick = useCallback(() => {
     if (isDraggingConnection) {
       setIsDraggingConnection(false);
@@ -220,6 +241,7 @@ const DesignerReactFlow = (props: any) => {
       connectionLineComponent={DraftEdge}
       onConnectStart={onConnectStart}
       onConnectEnd={onConnectEnd}
+      isValidConnection={isValidConnection}
       connectionRadius={0}
       minZoom={0.05}
       onPaneClick={onPaneClick}

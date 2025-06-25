@@ -25,7 +25,7 @@ export const DraftEdge: React.FC<ConnectionLineComponentProps> = ({
   );
 
   return (
-    <g className={'react-flow__edge'}>
+    <g className={'react-flow__edge no-interaction'}>
       <defs>
         <marker id={'arrow-end-draft'} className={'highlighted'} viewBox="0 0 20 20" refX="6" refY="4" markerWidth="10" markerHeight="10">
           <ArrowCap />

@@ -9,9 +9,9 @@
 .react-flow__edge {
   cursor: grab;
 
-  .react-flow__edge-path {
-    pointer-events: none;
-  }
+	&.no-interaction {
+		pointer-events: none;
+	}
 }
 
 .msla-theme-provider {
@@ -34,17 +34,30 @@
 		border-radius: 2px;
 		background: transparent;
 		box-sizing: border-box;
+		z-index: 2;
   }
 	
   &.bottom {
+		visibility: hidden;
+		transform: translate(-50%, 0%);
+  }
+
+	&.edge-draw-start {
+		visibility: visible;
 		background: #1f85ff;
 		width: 18px;
 		height: 6px;
 		border-radius: 32px;
 		transform: translate(-50%, 50%);
-    bottom: 0px;
+		bottom: 0px;
 		z-index: 3;
-  }
+	}
+}
+
+.react-flow__handle {
+	&.valid {
+		border: 2px solid #0078d4;
+	}
 }
 
 .edge-drop-zone-container {
