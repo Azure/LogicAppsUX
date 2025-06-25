@@ -646,7 +646,7 @@ export class MapDefinitionDeserializer {
     } else {
       const issueType = MapIssueType.SourceSchemaNodeNotFound;
       const error: MapIssue = {
-        severity: MapCheckerItemSeverity.Warning,
+        severity: MapCheckerItemSeverity.Error,
         reactFlowId: key,
         issueType: issueType,
       };

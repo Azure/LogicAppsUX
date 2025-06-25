@@ -585,7 +585,7 @@
   "FMA0Q0": "Your flow has been updated.",
   "FN5zHQ": "Returns a section of a string defined by the start index and the end index",
   "FOoLuS": "Description",
-  "FPBmrA": "Source schema node not found for node key ''{nodeKey}''",
+  "FPBmrA": "Source schema node not found, or invalid custom value for key ''{nodeKey}''",
   "FSD5Z4": "Select all workflows checkbox rows label",
   "FT3jt6": "Webhook reference information",
   "FTrMxN": "Close",
