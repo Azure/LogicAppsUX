@@ -137,6 +137,7 @@ export class NewCodeProjectTypeStep extends AzureWizardPromptStep<IProjectWizard
     await addInitVSCodeSteps(context, executeSteps, false);
 
     if (!this.skipWorkflowStateTypeStep) {
+      context.isCodeless = true; // default to codeless workflow, disabling codeful option until Public Preview
       // promptSteps.push(
       //   // disabling in main
       //   await WorkflowCodeTypeStep.create(context, {
