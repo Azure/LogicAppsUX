@@ -709,7 +709,7 @@ const updateTokenTitlesInViewModel = (viewModel: any, tokenTitles: Record<string
   return hasChanges ? updatedObject : viewModel;
 };
 
-const updateExistingInputTokenTitles = (state: OperationMetadataState, actionPayload: AddDynamicOutputsPayload) => {
+export const updateExistingInputTokenTitles = (state: OperationMetadataState, actionPayload: AddDynamicOutputsPayload) => {
   const { outputs } = actionPayload;
 
   if (!outputs || Object.keys(outputs).length === 0) {
