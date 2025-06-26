@@ -1,5 +1,5 @@
 import { css, Icon } from '@fluentui/react';
-import { makeStyles, tokens, Text, Input, Button } from '@fluentui/react-components';
+import { makeStyles, tokens, Text, Input, Button, Tooltip } from '@fluentui/react-components';
 import { bundleIcon, ChevronLeftFilled, ChevronLeftRegular, ChevronRightFilled, ChevronRightRegular } from '@fluentui/react-icons';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -35,6 +35,15 @@ export interface PagerProps {
     totalCount: number;
   };
   onChange?: PageChangeEventHandler;
+}
+
+interface PagerButtonProps {
+  disabled: boolean;
+  failed?: boolean;
+  text: string;
+  onClick(): void;
+  ariaLabel: string;
+  icon: any;
 }
 
 const ChevronLeftIcon = bundleIcon(ChevronLeftFilled, ChevronLeftRegular);
@@ -166,6 +175,7 @@ export const Pager: React.FC<PagerProps> = ({
   const [current, setCurrent] = React.useState(initialCurrent);
   const [inputValue, setInputValue] = useState(String(initialCurrent));
   const styles = usePagerStyles();
+  const intl = useIntl();
 
   useEffect(() => {
     setCurrent(initialCurrent);
@@ -259,19 +269,28 @@ export const Pager: React.FC<PagerProps> = ({
     changeValue(String(current - 1), onClickPrevious, failedMin, failedMax);
   }, [changeValue, current, failedMax, failedMin, onClickPrevious]);
 
-  const intl = useIntl();
-
-  const pagerPreviousString = intl.formatMessage({
-    defaultMessage: 'Previous',
-    id: '6oqk+A',
-    description: 'Text of a button to go to previous page',
-  });
-
-  const previousPagerFailedString = intl.formatMessage({
-    defaultMessage: 'Previous failed',
-    id: 'gKq3Jv',
-    description: 'Label of a button to go to the previous failed page option',
-  });
+  const intlText = {
+    PREVIOUS: intl.formatMessage({
+      defaultMessage: 'Previous',
+      id: '6oqk+A',
+      description: 'Text of a button to go to previous page',
+    }),
+    NEXT: intl.formatMessage({
+      defaultMessage: 'Next',
+      id: 'iJOIca',
+      description: 'Button indicating to go to the next page',
+    }),
+    PREVIOUS_FAILED: intl.formatMessage({
+      defaultMessage: 'Previous failed',
+      id: 'gKq3Jv',
+      description: 'Label of a button to go to the previous failed page option',
+    }),
+    NEXT_FAILED: intl.formatMessage({
+      defaultMessage: 'Next failed',
+      id: 'Mb/Vp8',
+      description: 'Button indicating to go to the next page with failed options',
+    }),
+  };
 
   const pagerOfString = intl.formatMessage(
     {
@@ -310,18 +329,6 @@ export const Pager: React.FC<PagerProps> = ({
       max_page: max,
     }
   );
-
-  const pagerNextFailedString = intl.formatMessage({
-    defaultMessage: 'Next failed',
-    id: 'Mb/Vp8',
-    description: 'Button indicating to go to the next page with failed options',
-  });
-
-  const pagerNextString = intl.formatMessage({
-    defaultMessage: 'Next',
-    id: 'iJOIca',
-    description: 'Button indicating to go to the next page',
-  });
 
   const pageNumbers = useMemo(() => {
     const result = [];
@@ -369,27 +376,24 @@ export const Pager: React.FC<PagerProps> = ({
       {/* Main pager */}
       <div className={styles.pagerV2} onClick={handleClick}>
         {/* Previous button */}
-        <Button
-          appearance="subtle"
+        <PagerButton
           disabled={current <= min}
           onClick={handlePreviousClick}
-          aria-label={pagerPreviousString}
+          ariaLabel={intlText.PREVIOUS}
+          text={intlText.PREVIOUS}
           icon={<ChevronLeftIcon />}
-          shape="circular"
         />
-
         {/* Previous failed button */}
         {failedIterationProps && (
           <div className={styles.failedButtonContainer}>
-            <Button
-              appearance="subtle"
+            <PagerButton
               disabled={failedMin < 1 || current <= failedMin}
               onClick={handlePreviousFailedClick}
-              aria-label={previousPagerFailedString}
+              ariaLabel={intlText.PREVIOUS_FAILED}
+              text={intlText.PREVIOUS_FAILED}
               icon={<ChevronLeftIcon />}
-              shape="circular"
+              failed={true}
             />
-            <Icon className={css(styles.failedIcon, styles.failedIconPrevious)} iconName="Important" />
           </div>
         )}
 
@@ -437,28 +441,53 @@ export const Pager: React.FC<PagerProps> = ({
         {/* Next failed button */}
         {failedIterationProps && (
           <div className={styles.failedButtonContainer}>
-            <Button
-              appearance="subtle"
+            <PagerButton
               disabled={failedMax < 1 || current >= failedMax}
               onClick={handleNextFailedClick}
-              aria-label={pagerNextFailedString}
+              ariaLabel={intlText.NEXT_FAILED}
+              text={intlText.NEXT_FAILED}
               icon={<ChevronRightIcon />}
-              shape="circular"
+              failed={true}
             />
-            <Icon className={css(styles.failedIcon, styles.failedIconNext)} iconName="Important" />
           </div>
         )}
-
-        {/* Next button */}
-        <Button
-          shape="circular"
-          appearance="subtle"
+        {/* Next  button */}
+        <PagerButton
           disabled={current >= max}
           onClick={handleNextClick}
-          aria-label={pagerNextString}
+          ariaLabel={intlText.NEXT}
+          text={intlText.NEXT}
           icon={<ChevronRightIcon />}
         />
       </div>
     </div>
+  );
+};
+
+const PagerButton: React.FC<PagerButtonProps> = ({ disabled, failed, icon, text, onClick, ariaLabel }) => {
+  const styles = usePagerStyles();
+  return (
+    <>
+      <Tooltip content={text} relationship="label" withArrow>
+        {/* <> */}
+        <Button shape="circular" appearance="subtle" disabled={disabled} onClick={onClick} aria-label={ariaLabel} icon={icon} />
+        {/* </> */}
+      </Tooltip>
+
+      {failed && <Icon className={css(styles.failedIcon, styles.failedIconNext)} iconName="Important" />}
+    </>
+
+    // <div className="msla-pager-failed-container">
+    //   <TooltipHost content={text}>
+    //     <IconButton ariaLabel={text} disabled={disabled} iconProps={iconProps} text={text} onClick={onClick} />
+    //   </TooltipHost>
+    //   {failed && (
+    //     <Icon
+    //       className="msla-pager-failed-icon"
+    //       iconName={iconFailedProps.iconName}
+    //       styles={text === previousPagerFailedString ? iconFailedPreviousStyles : iconFailedNextStyles}
+    //     />
+    //   )}
+    // </div>
   );
 };
