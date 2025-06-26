@@ -175,24 +175,23 @@ export const getDesignerServices = (
         return Promise.resolve();
       }
 
-      const defaultConfiguration: Record<string, any> = {
-        workflowAppLocation: '/Users/carloscastrotrejo/Downloads/IssueDavis/XMLissue/LogicApp',
-      };
-
       const connectionName = connectionId.split('/').splice(-1)[0];
-      const connectionsInfo = {
+      const connnectionsInfo = {
         ...connectionsData?.serviceProviderConnections,
         ...connectionsData?.apiManagementConnections,
       };
-      const connectionInfo = connectionsInfo[connectionName];
+      const connectionInfo = connnectionsInfo[connectionName];
 
       if (connectionInfo) {
         const resolvedConnectionInfo = resolveConnectionsReferences(JSON.stringify(connectionInfo), {}, appSettings);
         delete resolvedConnectionInfo.displayName;
-        defaultConfiguration.connection = resolvedConnectionInfo;
+
+        return {
+          connection: resolvedConnectionInfo,
+        };
       }
 
-      return defaultConfiguration;
+      return undefined;
     },
     schemaClient: {
       getWorkflowSwagger: (args) => {
