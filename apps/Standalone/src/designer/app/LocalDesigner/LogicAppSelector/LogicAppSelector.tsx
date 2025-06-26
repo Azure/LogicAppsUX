@@ -20,8 +20,8 @@ const fileOptions = [
   // Agent
   { key: 'divider_1', text: '-', itemType: DropdownMenuItemType.Divider },
   { key: 'AgentHeader', text: 'Agentic Workflows', itemType: DropdownMenuItemType.Header },
-  { key: 'BlankAgent.json', text: 'Empty Agent' },
-  { key: 'Agent.json', text: 'Starter Agent' },
+  { key: 'BlankAgent.json', text: 'Starter Agent' },
+  { key: 'Agent.json', text: 'Simple Agent' },
   { key: 'AgentWithChannels.json', text: 'Agent with Channels' },
   { key: 'Agents.json', text: 'A2A Agents' },
 
