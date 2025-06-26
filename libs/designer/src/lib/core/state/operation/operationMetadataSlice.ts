@@ -694,13 +694,16 @@ const updateTokenTitlesInViewModel = (viewModel: any, tokenTitles: Record<string
   }
 
   let hasChanges = false;
-  const updatedObject: any = {};
+  let updatedObject: any = null;
   for (const [key, value] of Object.entries(viewModel)) {
     const updatedValue = updateTokenTitlesInViewModel(value, tokenTitles);
     if (updatedValue !== value) {
       hasChanges = true;
+      if (!updatedObject) {
+        updatedObject = {};
+      }
+      updatedObject[key] = updatedValue;
     }
-    updatedObject[key] = updatedValue;
   }
 
   return hasChanges ? updatedObject : viewModel;
