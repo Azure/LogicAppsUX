@@ -14,6 +14,7 @@ import { useStyles } from './styles';
 import { isSchemaNodeExtended } from '../../../utils';
 import { isValidConnectionByType, isValidCustomValueByType } from '../../../utils/Connection.Utils';
 import { UnboundedInput } from '../../../constants/FunctionConstants';
+import { quoteSelectedCustomValue } from '../../../utils/CustomValue.Utils';
 
 export interface InputOptionProps {
   key: string;
@@ -263,7 +264,7 @@ export const InputDropdown = ({
       if (matchingOption) {
         setCustomValue(undefined);
       } else {
-        setCustomValue(data.optionText);
+        setCustomValue(data.optionText ? quoteSelectedCustomValue(data.optionText) : undefined); // If the option is not in the matching options, set it as a custom value
       }
 
       setSelectedOptions(data.selectedOptions);
@@ -287,10 +288,12 @@ export const InputDropdown = ({
     if (data.open === false) {
       const matchingOption = customValue && matchingOptions.some((option) => option.text === customValue);
       if (!matchingOption && customValue && customValue !== value) {
-        setSelectedOptions([customValue]);
-        setValue(customValue);
+        const formattedCustomValue = quoteSelectedCustomValue(customValue);
+        setSelectedOptions([formattedCustomValue]);
+        setValue(formattedCustomValue);
+        setCustomValue(formattedCustomValue);
 
-        validateAndCreateConnection(customValue, undefined);
+        validateAndCreateConnection(formattedCustomValue, undefined);
       }
     }
   };
