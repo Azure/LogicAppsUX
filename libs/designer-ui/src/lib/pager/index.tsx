@@ -7,7 +7,7 @@ import {
   ChevronRightRegular,
   ImportantFilled,
 } from '@fluentui/react-icons';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export type PageChangeEventHandler = (e: PageChangeEventArgs) => void;
@@ -156,6 +156,8 @@ const usePagerStyles = makeStyles({
   },
 });
 
+const PAGE_INPUT_WIDTH_MULTIPLIER = 14;
+
 export const Pager: React.FC<PagerProps> = ({
   current: initialCurrent = 1,
   failedIterationProps,
@@ -167,7 +169,7 @@ export const Pager: React.FC<PagerProps> = ({
   countToDisplay: countInfo,
   onChange,
 }) => {
-  const [current, setCurrent] = React.useState(initialCurrent);
+  const [current, setCurrent] = useState(initialCurrent);
   const [inputValue, setInputValue] = useState(String(initialCurrent));
   const styles = usePagerStyles();
   const intl = useIntl();
@@ -310,19 +312,18 @@ export const Pager: React.FC<PagerProps> = ({
         max_count: countInfo?.totalCount,
       }
     ),
+    CURRENT_PAGE: intl.formatMessage(
+      {
+        defaultMessage: '{current_page} of {max_page}',
+        id: 'o1HOyf',
+        description: 'Accessibility label telling that the user is on page {current} of {max} pages',
+      },
+      {
+        current_page: current,
+        max_page: max,
+      }
+    ),
   };
-
-  const pagerOfStringAria = intl.formatMessage(
-    {
-      defaultMessage: '{current_page} of {max_page}',
-      id: 'o1HOyf',
-      description: 'Accessibility label telling that the user is on page {current} of {max} pages',
-    },
-    {
-      current_page: current,
-      max_page: max,
-    }
-  );
 
   const pageNumbers = useMemo(() => {
     const result = [];
@@ -412,7 +413,7 @@ export const Pager: React.FC<PagerProps> = ({
             ))
           ) : readonlyPagerInput ? (
             // Readonly text display
-            <Text>{pagerOfStringAria}</Text>
+            <Text>{intlText.CURRENT_PAGE}</Text>
           ) : (
             // Editable page input
             <div className={styles.pageContainer}>
@@ -424,8 +425,8 @@ export const Pager: React.FC<PagerProps> = ({
                 onKeyDown={(e) => handleModernInputKeyDown(e as React.KeyboardEvent<HTMLInputElement>)}
                 onBlur={handleModernInputBlur}
                 onFocus={(e) => handleModernInputFocus(e as React.FocusEvent<HTMLInputElement>)}
-                aria-label={pagerOfStringAria}
-                style={maxLength ? { width: `${maxLength * 14}px` } : undefined}
+                aria-label={intlText.CURRENT_PAGE}
+                style={maxLength ? { width: `${maxLength * PAGE_INPUT_WIDTH_MULTIPLIER}px` } : undefined}
                 size="small"
                 appearance="underline"
               />
