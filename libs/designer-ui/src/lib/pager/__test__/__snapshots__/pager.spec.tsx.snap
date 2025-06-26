@@ -538,6 +538,7 @@ exports[`lib/pager > Snapshots > should match snapshot for pager with count disp
         </span>
       </button>
     </div>
+    <div />
   </div>
 </div>
 `;

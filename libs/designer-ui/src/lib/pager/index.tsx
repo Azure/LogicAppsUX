@@ -204,7 +204,7 @@ export const Pager: React.FC<PagerProps> = ({
     [max, min, onChange]
   );
 
-  const handleModernInputChange = useCallback(
+  const onInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>): void => {
       const value = e.target.value.replace(/[^0-9]/g, '');
       if (value === '' || (Number.parseInt(value, 10) >= min && Number.parseInt(value, 10) <= max)) {
@@ -214,7 +214,7 @@ export const Pager: React.FC<PagerProps> = ({
     [min, max]
   );
 
-  const handleModernInputKeyDown = useCallback(
+  const onInputKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>): void => {
       if (e.key === 'Enter') {
         e.currentTarget.blur();
@@ -226,7 +226,7 @@ export const Pager: React.FC<PagerProps> = ({
     [inputValue, changeValue]
   );
 
-  const handleModernInputBlur = useCallback((): void => {
+  const onInputBlur = useCallback((): void => {
     if (inputValue && inputValue !== String(current)) {
       changeValue(inputValue);
     } else {
@@ -234,7 +234,7 @@ export const Pager: React.FC<PagerProps> = ({
     }
   }, [inputValue, current, changeValue]);
 
-  const handleModernInputFocus = useCallback((e: React.FocusEvent<HTMLInputElement>): void => {
+  const onInputFocus = useCallback((e: React.FocusEvent<HTMLInputElement>): void => {
     e.target.select();
   }, []);
 
@@ -421,10 +421,10 @@ export const Pager: React.FC<PagerProps> = ({
                 className={styles.pageInput}
                 type="text"
                 value={inputValue}
-                onChange={(e) => handleModernInputChange(e as React.ChangeEvent<HTMLInputElement>)}
-                onKeyDown={(e) => handleModernInputKeyDown(e as React.KeyboardEvent<HTMLInputElement>)}
-                onBlur={handleModernInputBlur}
-                onFocus={(e) => handleModernInputFocus(e as React.FocusEvent<HTMLInputElement>)}
+                onChange={(e) => onInputChange(e as React.ChangeEvent<HTMLInputElement>)}
+                onKeyDown={(e) => onInputKeyDown(e as React.KeyboardEvent<HTMLInputElement>)}
+                onBlur={onInputBlur}
+                onFocus={(e) => onInputFocus(e as React.FocusEvent<HTMLInputElement>)}
                 aria-label={intlText.CURRENT_PAGE}
                 style={maxLength ? { width: `${maxLength * PAGE_INPUT_WIDTH_MULTIPLIER}px` } : undefined}
                 size="small"
