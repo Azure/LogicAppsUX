@@ -310,7 +310,7 @@ export const addWorkflowsData = createAsyncThunk(
   'addWorkflowsData',
   async (
     {
-      workflows,
+      workflows, // Note: only workflows to be added
       onSaveCompleted,
     }: {
       workflows: Record<string, Partial<WorkflowTemplateData>>;
