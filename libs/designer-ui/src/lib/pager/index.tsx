@@ -269,6 +269,8 @@ export const Pager: React.FC<PagerProps> = ({
     changeValue(String(current - 1), onClickPrevious, failedMin, failedMax);
   }, [changeValue, current, failedMax, failedMin, onClickPrevious]);
 
+  const currentIndexStart = (current - 1) * (countInfo?.countPerPage ?? 0);
+
   const intlText = {
     PREVIOUS: intl.formatMessage({
       defaultMessage: 'Previous',
@@ -290,33 +292,30 @@ export const Pager: React.FC<PagerProps> = ({
       id: 'Mb/Vp8',
       description: 'Button indicating to go to the next page with failed options',
     }),
+    PAGER_OF: intl.formatMessage(
+      {
+        defaultMessage: 'of {max}',
+        id: 'W070M2',
+        description: 'Text on a pager where people can select a page number out of {max}',
+      },
+      {
+        max,
+      }
+    ),
+    SHOWING_RESULTS: intl.formatMessage(
+      {
+        defaultMessage: 'Showing {current_index_start} - {current_index_last} of {max_count} results.',
+        id: '0ZZJos',
+        description:
+          'Accessibility label telling that the results showing is from {current_index_start} to {current_index_last} out of {max_count} items',
+      },
+      {
+        current_index_start: currentIndexStart + 1,
+        current_index_last: Math.min(currentIndexStart + (countInfo?.countPerPage ?? 0), countInfo?.totalCount ?? 0),
+        max_count: countInfo?.totalCount,
+      }
+    ),
   };
-
-  const pagerOfString = intl.formatMessage(
-    {
-      defaultMessage: 'of {max}',
-      id: 'W070M2',
-      description: 'Text on a pager where people can select a page number out of {max}',
-    },
-    {
-      max,
-    }
-  );
-
-  const currentIndexStart = (current - 1) * (countInfo?.countPerPage ?? 0);
-  const showingResultsString = intl.formatMessage(
-    {
-      defaultMessage: 'Showing {current_index_start} - {current_index_last} of {max_count} results.',
-      id: '0ZZJos',
-      description:
-        'Accessibility label telling that the results showing is from {current_index_start} to {current_index_last} out of {max_count} items',
-    },
-    {
-      current_index_start: currentIndexStart + 1,
-      current_index_last: Math.min(currentIndexStart + (countInfo?.countPerPage ?? 0), countInfo?.totalCount ?? 0),
-      max_count: countInfo?.totalCount,
-    }
-  );
 
   const pagerOfStringAria = intl.formatMessage(
     {
@@ -368,7 +367,7 @@ export const Pager: React.FC<PagerProps> = ({
       {countInfo && (
         <div className={styles.pagerV2}>
           <div className={styles.pagerInner}>
-            <Text>{showingResultsString}</Text>
+            <Text>{intlText.SHOWING_RESULTS}</Text>
           </div>
         </div>
       )}
@@ -433,7 +432,7 @@ export const Pager: React.FC<PagerProps> = ({
                 size="small"
                 appearance="underline"
               />
-              <span className={styles.pageText}>{pagerOfString}</span>
+              <Text className={styles.pageText}>{intlText.PAGER_OF}</Text>
             </div>
           )}
         </div>
@@ -469,9 +468,7 @@ const PagerButton: React.FC<PagerButtonProps> = ({ disabled, failed, icon, text,
   return (
     <>
       <Tooltip content={text} relationship="label" withArrow>
-        {/* <> */}
         <Button shape="circular" appearance="subtle" disabled={disabled} onClick={onClick} aria-label={ariaLabel} icon={icon} />
-        {/* </> */}
       </Tooltip>
 
       {failed && <Icon className={css(styles.failedIcon, styles.failedIconNext)} iconName="Important" />}
