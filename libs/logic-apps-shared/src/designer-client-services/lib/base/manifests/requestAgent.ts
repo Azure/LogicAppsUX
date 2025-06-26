@@ -16,7 +16,7 @@ export default {
           type: 'string',
           title: 'HTTP URL',
           description: 'URL will be generated after save',
-          'x-ms-visiblity': 'important',
+          'x-ms-visibility': 'important',
           'x-ms-editor': 'copyable',
           'x-ms-serialization': {
             skip: true,
