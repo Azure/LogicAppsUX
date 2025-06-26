@@ -1,5 +1,6 @@
 import { css, Icon } from '@fluentui/react';
-import { makeStyles, tokens, Text } from '@fluentui/react-components';
+import { makeStyles, tokens, Text, Input, Button } from '@fluentui/react-components';
+import { ChevronLeft16Regular, ChevronRight16Regular } from '@fluentui/react-icons';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -48,8 +49,8 @@ const usePagerStyles = makeStyles({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: '12px',
-    margin: '5px',
+    gap: '8px',
+    margin: '4px',
     position: 'relative',
     zIndex: '5',
   },
@@ -60,29 +61,29 @@ const usePagerStyles = makeStyles({
     gap: '6px',
   },
 
-  // Modern navigation buttons
+  // Modern navigation buttons - thin, lightweight design
   navButton: {
+    minWidth: '28px',
+    height: '28px',
+    borderRadius: '50%',
+    padding: '0',
+    fontSize: '14px',
+    fontWeight: '300',
+    color: tokens.colorNeutralForeground3,
     backgroundColor: 'transparent',
     border: 'none',
-    borderRadius: '50%',
-    width: '40px',
-    height: '40px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    cursor: 'pointer',
-    color: tokens.colorNeutralForeground3,
-    fontSize: '18px',
-    transitionProperty: 'all',
-    transitionDuration: tokens.durationNormal,
-    transitionTimingFunction: tokens.curveEasyEase,
+    boxShadow: 'none',
     '&:hover:not(:disabled)': {
       backgroundColor: tokens.colorNeutralBackground1Hover,
       color: tokens.colorNeutralForeground2,
-      transform: 'scale(1.1)',
+      transform: 'scale(1.02)',
+    },
+    '&:active:not(:disabled)': {
+      backgroundColor: tokens.colorNeutralBackground1Pressed,
+      transform: 'scale(0.98)',
     },
     '&:disabled': {
-      opacity: '0.5',
+      opacity: '0.4',
       cursor: 'not-allowed',
       transform: 'none',
     },
@@ -113,8 +114,8 @@ const usePagerStyles = makeStyles({
   // Page input container
   pageContainer: {
     backgroundColor: tokens.colorNeutralBackground1Hover,
-    padding: '8px 16px',
-    borderRadius: '20px',
+    padding: '6px 14px',
+    borderRadius: '18px',
     display: 'flex',
     alignItems: 'center',
     gap: '6px',
@@ -127,20 +128,23 @@ const usePagerStyles = makeStyles({
   },
 
   pageInput: {
-    border: 'none',
-    backgroundColor: 'transparent',
-    width: '24px',
+    width: '22px',
     textAlign: 'center',
-    fontWeight: tokens.fontWeightMedium,
-    color: tokens.colorNeutralForeground2,
-    outline: 'none',
-    fontFamily: 'inherit',
-    fontSize: tokens.fontSizeBase200,
+    '& input': {
+      backgroundColor: 'transparent',
+      border: 'none',
+      fontWeight: tokens.fontWeightRegular,
+      color: tokens.colorNeutralForeground2,
+      outline: 'none',
+      fontFamily: 'inherit',
+      fontSize: tokens.fontSizeBase200,
+      textAlign: 'center',
+    },
   },
 
   pageText: {
     color: tokens.colorNeutralForeground3,
-    fontWeight: tokens.fontWeightMedium,
+    fontWeight: tokens.fontWeightRegular,
     fontSize: tokens.fontSizeBase200,
   },
 
@@ -397,21 +401,26 @@ export const Pager: React.FC<PagerProps> = ({
       {/* Main pager */}
       <div className={styles.pagerV2} onClick={handleClick}>
         {/* Previous button */}
-        <button className={styles.navButton} disabled={current <= min} onClick={handlePreviousClick} aria-label={pagerPreviousString}>
-          ‹
-        </button>
+        <Button
+          className={styles.navButton}
+          appearance="transparent"
+          disabled={current <= min}
+          onClick={handlePreviousClick}
+          aria-label={pagerPreviousString}
+          icon={<ChevronLeft16Regular />}
+        />
 
         {/* Previous failed button */}
         {failedIterationProps && (
           <div className={styles.failedButtonContainer}>
-            <button
+            <Button
               className={styles.navButton}
+              appearance="transparent"
               disabled={failedMin < 1 || current <= failedMin}
               onClick={handlePreviousFailedClick}
               aria-label={previousPagerFailedStrign}
-            >
-              ‹
-            </button>
+              icon={<ChevronLeft16Regular />}
+            />
             <Icon className={css(styles.failedIcon, styles.failedIconPrevious)} iconName="Important" />
           </div>
         )}
@@ -439,16 +448,18 @@ export const Pager: React.FC<PagerProps> = ({
           ) : (
             // Editable page input
             <div className={styles.pageContainer}>
-              <input
+              <Input
                 className={styles.pageInput}
                 type="text"
                 value={inputValue}
-                onChange={handleModernInputChange}
-                onKeyDown={handleModernInputKeyDown}
+                onChange={(e) => handleModernInputChange(e as React.ChangeEvent<HTMLInputElement>)}
+                onKeyDown={(e) => handleModernInputKeyDown(e as React.KeyboardEvent<HTMLInputElement>)}
                 onBlur={handleModernInputBlur}
-                onFocus={handleModernInputFocus}
+                onFocus={(e) => handleModernInputFocus(e as React.FocusEvent<HTMLInputElement>)}
                 aria-label={pagerOfStringAria}
                 style={maxLength ? { width: `${maxLength * 14}px` } : undefined}
+                size="small"
+                appearance="underline"
               />
               <span className={styles.pageText}>{pagerOfString}</span>
             </div>
@@ -458,26 +469,28 @@ export const Pager: React.FC<PagerProps> = ({
         {/* Next failed button */}
         {failedIterationProps && (
           <div className={styles.failedButtonContainer}>
-            <button
+            <Button
               className={styles.navButton}
+              appearance="transparent"
               disabled={failedMax < 1 || current >= failedMax}
               onClick={handleNextFailedClick}
               aria-label={pagerNextFailedString}
-            >
-              ›
-            </button>
+              icon={<ChevronRight16Regular />}
+            />
             <Icon className={css(styles.failedIcon, styles.failedIconNext)} iconName="Important" />
           </div>
         )}
 
         {/* Next button */}
-        <button className={styles.navButton} disabled={current >= max} onClick={handleNextClick} aria-label={pagerNextString}>
-          ›
-        </button>
+        <Button
+          className={styles.navButton}
+          appearance="transparent"
+          disabled={current >= max}
+          onClick={handleNextClick}
+          aria-label={pagerNextString}
+          icon={<ChevronRight16Regular />}
+        />
       </div>
-
-      {/* Spacer for layout when count is displayed */}
-      {countInfo && <div />}
     </div>
   );
 };
