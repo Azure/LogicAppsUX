@@ -13,6 +13,7 @@ export interface LoopsPagerProps {
   scopeId: string;
   collapsed: boolean;
   focusElement?: (index: number, nodeId: string) => void;
+  isFromTrigger?: boolean;
 }
 
 export const LoopsPager = ({ metadata, scopeId, collapsed, focusElement, isFromTrigger }: LoopsPagerProps) => {
