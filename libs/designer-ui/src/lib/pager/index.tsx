@@ -459,6 +459,7 @@ export const Pager: React.FC<PagerProps> = ({
           isNext={true}
         />
       </div>
+      {countInfo && <div />}
     </div>
   );
 };
