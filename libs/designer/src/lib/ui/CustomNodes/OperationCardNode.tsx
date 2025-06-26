@@ -315,7 +315,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
 
   const nodeIndex = useNodeIndex(id);
   const isCardActive = isMonitoringView ? !isNullOrUndefined(selfRunData?.status) : true;
-  const shouldShowPager = true;
+  const shouldShowPager = false;
   return (
     <>
       <div className="nopan" ref={ref as any}>

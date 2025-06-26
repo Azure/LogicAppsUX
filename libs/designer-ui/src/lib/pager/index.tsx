@@ -89,7 +89,7 @@ const usePagerStyles = makeStyles({
   // Page input container
   pageContainer: {
     backgroundColor: tokens.colorNeutralBackground1Hover,
-    padding: '6px 14px',
+    padding: '4px 14px',
     borderRadius: '18px',
     display: 'flex',
     alignItems: 'center',
