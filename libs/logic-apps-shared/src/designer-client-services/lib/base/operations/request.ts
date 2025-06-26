@@ -23,31 +23,6 @@ export const requestOperation = {
   },
 };
 
-export const requestAgentOperation = {
-  name: 'requestAgent',
-  id: 'requestAgent',
-  type: 'Request',
-  kind: 'Agent',
-  properties: {
-    api: {
-      id: 'connectionProviders/request',
-      name: 'requestAgent',
-      brandColor: '#009DA5',
-      description: 'Operations to handle inbound request to workflow and send workflow response',
-      displayName: 'requestAgent',
-      iconUri: 'https://logicappsv2resources.blob.core.windows.net/icons/request.svg',
-    },
-    summary: 'When a HTTP request is received for agents',
-    description: 'This is an incoming API call that could use actions in a Logic App or other API to trigger this flow.',
-    visibility: 'Important',
-    operationType: 'Request',
-    operationKind: 'Agent',
-    trigger: 'single',
-    brandColor: '#009DA5',
-    iconUri: 'https://logicappsv2resources.blob.core.windows.net/icons/request.svg',
-  },
-};
-
 export const responseOperation = {
   name: 'response',
   id: 'response',

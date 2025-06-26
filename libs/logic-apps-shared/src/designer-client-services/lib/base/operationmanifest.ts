@@ -34,7 +34,6 @@ import joinManifest from './manifests/join';
 import parsejsonManifest from './manifests/parsejson';
 import queryManifest from './manifests/query';
 import requestManifest from './manifests/request';
-import requestManifestAgent from './manifests/requestAgent';
 import responseManifest from './manifests/response';
 import { delayManifest, delayUntilManifest, recurrenceManifest, slidingWindowManifest } from './manifests/schedule';
 import scopeManifest from './manifests/scope';
@@ -87,7 +86,6 @@ const condition = 'if';
 const switchType = 'switch';
 export const agentType = 'agent';
 const request = 'request';
-const requestAgent = 'request';
 const response = 'response';
 const table = 'table';
 const terminate = 'terminate';
@@ -189,7 +187,6 @@ export const supportedBaseManifestTypes = [
   query,
   recurrence,
   request,
-  requestAgent,
   response,
   rosettanetdecode,
   rosettanetencode,
@@ -326,7 +323,6 @@ export function isBuiltInOperation(definition: any): boolean {
     case query:
     case recurrence:
     case request:
-    case requestAgent:
     case response:
     case select:
     case sendtobatch:
@@ -453,11 +449,6 @@ export function getBuiltInOperationInfo(definition: any, isTrigger: boolean): Op
           return {
             connectorId: 'connectionProviders/request',
             operationId: request,
-          };
-        case 'agent':
-          return {
-            connectorId: 'connectionProviders/request',
-            operationId: requestAgent,
           };
         default: {
           if (kind === undefined) {
@@ -801,7 +792,6 @@ export const supportedBaseManifestObjects = new Map<string, OperationManifest>([
   [query, queryManifest],
   [recurrence, recurrenceManifest],
   [request, requestManifest],
-  [requestAgent, requestManifestAgent],
   [response, responseManifest],
   [scope, scopeManifest],
   [select, selectManifest],
