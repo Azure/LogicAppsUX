@@ -23,12 +23,18 @@ import {
   SkeletonItem,
   MessageBar,
   MessageBarBody,
+  tokens,
 } from '@fluentui/react-components';
 import { useResourceStrings } from '../resources';
 import type { WorkflowTemplateData } from '../../../core';
 import { useTemplatesStrings } from '../../templates/templatesStrings';
 import { tableHeaderStyle } from '../common';
 import { WorkflowKind } from '../../../core/state/workflow/workflowInterfaces';
+
+const disabledStyle = {
+  opacity: tokens.colorNeutralForegroundDisabled,
+  cursor: 'not-allowed',
+};
 
 export const SelectWorkflows = ({
   selectedWorkflowsList,
@@ -38,12 +44,13 @@ export const SelectWorkflows = ({
   onWorkflowsSelected: (normalizedWorkflowIds: string[]) => void;
 }) => {
   const intl = useIntl();
-  const { isConsumption, logicAppName, subscriptionId, resourceGroup } = useSelector((state: RootState) => ({
+  const { isConsumption, logicAppName, subscriptionId, resourceGroup, workflowsInTemplate } = useSelector((state: RootState) => ({
     isConsumption: !!state.workflow.isConsumption,
     logicAppName: state.workflow.logicAppName,
     subscriptionId: state.workflow.subscriptionId,
     resourceGroup: state.workflow.resourceGroup,
     selectedTabId: state.tab.selectedTabId,
+    workflowsInTemplate: state.template.workflows,
   }));
   const { data: workflows, isLoading } = useWorkflowsInApp(
     subscriptionId,
@@ -66,16 +73,11 @@ export const SelectWorkflows = ({
     [onWorkflowsSelected]
   );
 
-  const differentIdThanResourceRecord = useMemo(() => {
-    const selectedDifferentNameWorkflowsList: Record<string, string | undefined> = {};
-    for (const workflow of Object.values(selectedWorkflowsList)) {
-      const workflowSourceId = workflow.manifest?.metadata?.workflowSourceId;
-      if (workflowSourceId && workflow.isManageWorkflow) {
-        selectedDifferentNameWorkflowsList[workflowSourceId] = workflow.id;
-      }
-    }
-    return selectedDifferentNameWorkflowsList;
-  }, [selectedWorkflowsList]);
+  const workflowSourceIdsInTemplate = useMemo(() => {
+    return Object.values(workflowsInTemplate)
+      .map((workflow) => workflow.manifest?.metadata?.workflowSourceId?.toLowerCase())
+      .filter((id) => !!id);
+  }, [workflowsInTemplate]);
 
   const resourceStrings = { ...useTemplatesStrings().resourceStrings, ...useResourceStrings() };
 
@@ -117,6 +119,7 @@ export const SelectWorkflows = ({
     id: string;
     name: string;
     trigger: string;
+    disabled?: boolean;
   };
 
   const columns: TableColumnDefinition<WorkflowsTableItem>[] = [
@@ -128,13 +131,16 @@ export const SelectWorkflows = ({
     }),
   ];
 
-  const items =
-    workflows?.map((workflow) => ({
-      id: workflow.id,
-      workflowName: differentIdThanResourceRecord[workflow.id],
-      name: workflow.name,
-      trigger: workflow.triggerType,
-    })) ?? [];
+  const items = useMemo(
+    () =>
+      workflows?.map((workflow) => ({
+        id: workflow.id,
+        name: workflow.name,
+        trigger: workflow.triggerType,
+        disabled: isConsumption || workflowSourceIdsInTemplate.includes(workflow.id.toLowerCase()),
+      })) ?? [],
+    [workflows, isConsumption, workflowSourceIdsInTemplate]
+  );
 
   const {
     getRows,
@@ -158,7 +164,7 @@ export const SelectWorkflows = ({
   );
 
   const rows = getRows((row) => {
-    const selected = isRowSelected(row.item.id);
+    const selected = isConsumption || isRowSelected(row.item.id);
     return {
       ...row,
       onClick: (e: React.MouseEvent) => toggleRow(e, row.item.id),
@@ -173,22 +179,26 @@ export const SelectWorkflows = ({
     };
   });
 
-  const allRowsSelected = useMemo(() => {
-    return !rows?.filter((row) => !row.selected)?.length;
+  const isAllRowsDisabled = useMemo(() => {
+    return items.length > 0 && items.every((item) => item.disabled);
+  }, [items]);
+
+  const isAllValidRowsSelected = useMemo(() => {
+    return !rows?.filter((row) => !row?.item?.disabled && !row.selected)?.length;
   }, [rows]);
 
-  const toggleAllRows = useCallback(() => {
-    onWorkflowsSelected(allRowsSelected ? [] : (workflows?.map((workflow) => workflow.id) ?? []));
-  }, [onWorkflowsSelected, workflows, allRowsSelected]);
+  const toggleAllValidRows = useCallback(() => {
+    onWorkflowsSelected(isAllValidRowsSelected ? [] : (items?.filter((item) => !item?.disabled)?.map((workflow) => workflow.id) ?? []));
+  }, [onWorkflowsSelected, items, isAllValidRowsSelected]);
 
   const toggleAllKeydown = useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
       if (e.key === ' ') {
-        toggleAllRows();
+        toggleAllValidRows();
         e.preventDefault();
       }
     },
-    [toggleAllRows]
+    [toggleAllValidRows]
   );
 
   return (
@@ -199,22 +209,24 @@ export const SelectWorkflows = ({
             <MessageBarBody>{intlText.INFO_TEXT}</MessageBarBody>
           </MessageBar>
         </div>
-        <ResourcePicker viewMode={'alllogicapps'} onSelectApp={onLogicAppSelected} />
+        <ResourcePicker
+          viewMode={'alllogicapps'}
+          onSelectApp={onLogicAppSelected}
+          lockField={Object.keys(workflowsInTemplate).length ? 'resource' : undefined}
+        />
       </TemplatesSection>
       <TemplatesSection title={intlText.WORKFLOWS} titleHtmlFor={'workflowsLabel'} description={intlText.WORKFLOWS_LABEL}>
         <Table aria-label={resourceStrings.WorkflowsListTableLabel} style={{ minWidth: '550px' }}>
           <TableHeader>
             <TableRow>
               <TableSelectionCell
-                checked={isConsumption || allRowsSelected ? true : someRowsSelected ? 'mixed' : false}
-                onClick={isConsumption ? () => {} : toggleAllRows}
-                onKeyDown={isConsumption ? () => {} : toggleAllKeydown}
+                checked={isAllValidRowsSelected ? true : someRowsSelected ? 'mixed' : false}
+                onClick={isAllRowsDisabled ? () => {} : toggleAllValidRows}
+                onKeyDown={isAllRowsDisabled ? () => {} : toggleAllKeydown}
                 checkboxIndicator={{ 'aria-label': resourceStrings.SelectAllWorkflowsLabel }}
+                style={isAllRowsDisabled ? disabledStyle : undefined}
               />
               <TableHeaderCell style={tableHeaderStyle}>{intlText.WORKFLOW_NAME}</TableHeaderCell>
-              {Object.keys(differentIdThanResourceRecord).length ? (
-                <TableHeaderCell style={tableHeaderStyle}>{resourceStrings.WORKFLOW_NAME}</TableHeaderCell>
-              ) : null}
               <TableHeaderCell style={tableHeaderStyle}>{resourceStrings.Trigger}</TableHeaderCell>
             </TableRow>
           </TableHeader>
@@ -241,23 +253,16 @@ export const SelectWorkflows = ({
               : rows.map(({ item, selected, onClick, onKeyDown, appearance }) => (
                   <TableRow
                     key={item.id}
-                    onClick={isConsumption ? () => {} : onClick}
-                    onKeyDown={isConsumption ? () => {} : onKeyDown}
+                    onClick={item.disabled ? () => {} : onClick}
+                    onKeyDown={item.disabled ? () => {} : onKeyDown}
                     aria-selected={selected}
                     appearance={appearance}
+                    style={item.disabled ? disabledStyle : undefined}
                   >
-                    <TableSelectionCell
-                      checked={isConsumption || selected}
-                      checkboxIndicator={{ 'aria-label': resourceStrings.WorkflowCheckboxRowLabel }}
-                    />
+                    <TableSelectionCell checked={selected} checkboxIndicator={{ 'aria-label': resourceStrings.WorkflowCheckboxRowLabel }} />
                     <TableCell>
                       <TableCellLayout>{item.name}</TableCellLayout>
                     </TableCell>
-                    {Object.keys(differentIdThanResourceRecord).length ? (
-                      <TableCell>
-                        <TableCellLayout>{item.workflowName ?? resourceStrings.Placeholder}</TableCellLayout>
-                      </TableCell>
-                    ) : null}
                     <TableCell>
                       <TableCellLayout>{item.trigger}</TableCellLayout>
                     </TableCell>
