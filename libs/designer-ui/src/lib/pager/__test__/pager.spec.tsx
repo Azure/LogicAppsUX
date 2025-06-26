@@ -1,17 +1,22 @@
 import type { PagerProps } from '../index';
 import { Pager } from '../index';
 import * as React from 'react';
-import * as ReactShallowRenderer from 'react-test-renderer/shallow';
-import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
-describe('lib/pager', () => {
-  const classNames = {
-    Pager: 'msla-pager-v2',
-    PagerInner: 'msla-pager-v2--inner',
-    PageNumber: 'msla-pager-pageNum',
-    PageNumberToSelect: 'msla-pager-pageNum toSelect',
-  };
+import { render, screen, fireEvent } from '@testing-library/react';
+import { FluentProvider, webLightTheme } from '@fluentui/react-components';
+import { IntlProvider } from 'react-intl';
+import { describe, vi, beforeEach, afterEach, it, expect } from 'vitest';
+import renderer from 'react-test-renderer';
 
-  let minimal: PagerProps, renderer: ReactShallowRenderer.ShallowRenderer;
+describe('lib/pager', () => {
+  let minimal: PagerProps;
+
+  const TestWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+    <FluentProvider theme={webLightTheme}>
+      <IntlProvider locale="en" messages={{}}>
+        {children}
+      </IntlProvider>
+    </FluentProvider>
+  );
 
   beforeEach(() => {
     minimal = {
@@ -19,137 +24,369 @@ describe('lib/pager', () => {
       max: 1,
       min: 1,
     };
-    renderer = ReactShallowRenderer.createRenderer();
   });
 
   afterEach(() => {
-    renderer.unmount();
+    vi.clearAllMocks();
   });
 
   it('should render the default pager', () => {
-    renderer.render(<Pager {...minimal} />);
+    render(
+      <TestWrapper>
+        <Pager {...minimal} />
+      </TestWrapper>
+    );
 
-    const pagerWrapper = renderer.getRenderOutput();
-    const [pager] = React.Children.toArray(pagerWrapper.props.children) as React.ReactElement[];
-    expect(pager.props.className).toBe(classNames.Pager);
+    // Check for navigation buttons
+    const previousButton = screen.getByLabelText('Previous');
+    const nextButton = screen.getByLabelText('Next');
 
-    const [previous, inner, next] = React.Children.toArray(pager.props.children) as React.ReactElement[];
-    expect(previous.props.disabled).toBeTruthy();
-    expect(previous.props.iconProps.iconName).toBe('ChevronLeft');
-    expect(previous.props.text).toBe('Previous');
-    expect(inner.props.className).toBe(classNames.PagerInner);
-    expect(next.props.disabled).toBeTruthy();
-    expect(next.props.iconProps.iconName).toBe('ChevronRight');
-    expect(next.props.text).toBe('Next');
+    expect(previousButton).toBeDisabled();
+    expect(nextButton).toBeDisabled();
 
-    const [textField, text] = React.Children.toArray(inner.props.children) as React.ReactElement[];
-    expect(textField.props.ariaLabel).toBe('1 of 1');
-    expect(textField.props.borderless).toBeFalsy();
-    expect(textField.props.max).toBe(minimal.max);
-    expect(textField.props.min).toBe(minimal.min);
-    expect(textField.props.readOnly).toBeFalsy();
-    expect(textField.props.value).toBe('1');
-    expect(text.props.children).toEqual(['\u00a0', 'of 1']);
+    // Check for page input
+    const pageInput = screen.getByLabelText('1 of 1');
+    expect(pageInput).toHaveValue('1');
+
+    // Check for "of" text
+    expect(screen.getByText('of 1')).toBeInTheDocument();
   });
 
   it('should render the default pager with read-only pager input', () => {
-    renderer.render(<Pager {...minimal} readonlyPagerInput={true} />);
+    render(
+      <TestWrapper>
+        <Pager {...minimal} readonlyPagerInput={true} />
+      </TestWrapper>
+    );
 
-    const pagerWrapper = renderer.getRenderOutput();
-    const [pager] = React.Children.toArray(pagerWrapper.props.children) as React.ReactElement[];
-    const [, inner] = React.Children.toArray(pager.props.children) as React.ReactElement[];
-    const [textField] = React.Children.toArray(inner.props.children) as React.ReactElement[];
-    const [str] = React.Children.toArray(textField.props.children) as React.ReactElement[];
-    expect(str).toEqual('1 of 1');
+    // Should show readonly text instead of input
+    expect(screen.getByText('1 of 1')).toBeInTheDocument();
+
+    // Should not have an editable input
+    expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
   });
 
   it('should render the default pager with failed iteration buttons', () => {
     const onClickNext = vi.fn();
     const onClickPrevious = vi.fn();
     const failedIterationProps = {
-      max: 0,
-      min: 0,
+      max: 2,
+      min: 1,
       onClickNext,
       onClickPrevious,
     };
 
-    renderer.render(<Pager {...minimal} failedIterationProps={failedIterationProps} />);
+    render(
+      <TestWrapper>
+        <Pager {...minimal} max={2} failedIterationProps={failedIterationProps} />
+      </TestWrapper>
+    );
 
-    const pagerWrapper = renderer.getRenderOutput();
-    const [pager] = React.Children.toArray(pagerWrapper.props.children) as React.ReactElement[];
-    const [, previous, inner, next] = React.Children.toArray(pager.props.children) as React.ReactElement[];
-    expect(previous.props.disabled).toBeTruthy();
-    expect(previous.props.failed).toBeTruthy();
-    expect(previous.props.iconProps.iconName).toBe('ChevronLeft');
-    expect(previous.props.text).toBe('Previous failed');
-    expect(inner.props.className).toBe(classNames.PagerInner);
-    expect(next.props.disabled).toBeTruthy();
-    expect(next.props.failed).toBeTruthy();
-    expect(next.props.iconProps.iconName).toBe('ChevronRight');
-    expect(next.props.text).toBe('Next failed');
+    // Should have regular navigation buttons
+    expect(screen.getByLabelText('Previous')).toBeInTheDocument();
+    expect(screen.getByLabelText('Next')).toBeInTheDocument();
+
+    // Should have failed iteration buttons
+    expect(screen.getByLabelText('Previous failed')).toBeInTheDocument();
+    expect(screen.getByLabelText('Next failed')).toBeInTheDocument();
+
+    // Failed buttons should be disabled when at boundaries
+    expect(screen.getByLabelText('Previous failed')).toBeDisabled();
   });
 
   it('should render the pager with clickable page numbers of less than max numbers', () => {
-    renderer.render(<Pager {...minimal} max={2} clickablePageNumbers={5} />);
+    render(
+      <TestWrapper>
+        <Pager {...minimal} max={2} clickablePageNumbers={5} />
+      </TestWrapper>
+    );
 
-    const pagerWrapper = renderer.getRenderOutput();
-    const [pager] = React.Children.toArray(pagerWrapper.props.children) as React.ReactElement[];
-    const [, inner] = React.Children.toArray(pager.props.children) as React.ReactElement[];
-    expect(inner.props.className).toBe(classNames.PagerInner);
-    expect(inner.props.children.length).toBe(2);
-    const [number1, number2] = React.Children.toArray(inner.props.children) as React.ReactElement[];
-    expect(number1.props.className).toBe(classNames.PageNumber);
-    expect(number2.props.className).toBe(classNames.PageNumberToSelect);
-    const [number1Children] = React.Children.toArray(number1.props.children) as React.ReactElement[];
-    expect(number1Children).toEqual(1);
-    const [number2Children] = React.Children.toArray(number2.props.children) as React.ReactElement[];
-    expect(number2Children).toEqual(2);
+    // Should show page numbers instead of input
+    expect(screen.getByText('1')).toBeInTheDocument();
+    expect(screen.getByText('2')).toBeInTheDocument();
+
+    // Should not have text input
+    expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+
+    // Current page (1) should not be clickable, page 2 should be
+    const page2 = screen.getByText('2');
+    fireEvent.click(page2);
   });
 
   it('should render the pager with clickable page numbers with more than max numbers', () => {
-    renderer.render(<Pager {...minimal} max={6} clickablePageNumbers={5} />);
+    render(
+      <TestWrapper>
+        <Pager {...minimal} max={6} clickablePageNumbers={5} />
+      </TestWrapper>
+    );
 
-    const pagerWrapper = renderer.getRenderOutput();
-    const [pager] = React.Children.toArray(pagerWrapper.props.children) as React.ReactElement[];
-    const [, inner] = React.Children.toArray(pager.props.children) as React.ReactElement[];
-    expect(inner.props.className).toBe(classNames.PagerInner);
-    expect(inner.props.children.length).toBe(5);
-    const [number1, number2, number3, number4, number5] = React.Children.toArray(inner.props.children) as React.ReactElement[];
-    expect(number1.props.className).toBe(classNames.PageNumber);
-    expect(number2.props.className).toBe(classNames.PageNumberToSelect);
-    expect(number3.props.className).toBe(classNames.PageNumberToSelect);
-    expect(number4.props.className).toBe(classNames.PageNumberToSelect);
-    expect(number5.props.className).toBe(classNames.PageNumberToSelect);
-    const [number1Children] = React.Children.toArray(number1.props.children) as React.ReactElement[];
-    expect(number1Children).toEqual(1);
-    const [number2Children] = React.Children.toArray(number2.props.children) as React.ReactElement[];
-    expect(number2Children).toEqual(2);
-    const [number3Children] = React.Children.toArray(number3.props.children) as React.ReactElement[];
-    expect(number3Children).toEqual(3);
-    const [number4Children] = React.Children.toArray(number4.props.children) as React.ReactElement[];
-    expect(number4Children).toEqual(4);
-    const [number5Children] = React.Children.toArray(number5.props.children) as React.ReactElement[];
-    expect(number5Children).toEqual(5);
+    // Should show 5 page numbers (1-5)
+    expect(screen.getByText('1')).toBeInTheDocument();
+    expect(screen.getByText('2')).toBeInTheDocument();
+    expect(screen.getByText('3')).toBeInTheDocument();
+    expect(screen.getByText('4')).toBeInTheDocument();
+    expect(screen.getByText('5')).toBeInTheDocument();
+
+    // Should not show page 6 (beyond the 5 clickable range)
+    expect(screen.queryByText('6')).not.toBeInTheDocument();
   });
 
   it('should render the pager with count info', () => {
-    renderer.render(
-      <Pager
-        {...minimal}
-        countToDisplay={{
-          countPerPage: 5,
-          totalCount: 10,
-        }}
-      />
+    render(
+      <TestWrapper>
+        <Pager
+          {...minimal}
+          countToDisplay={{
+            countPerPage: 5,
+            totalCount: 10,
+          }}
+        />
+      </TestWrapper>
     );
 
-    const pagerWrapper = renderer.getRenderOutput();
-    const [countInfo] = React.Children.toArray(pagerWrapper.props.children) as React.ReactElement[];
-    expect(countInfo.props.className).toBe(classNames.Pager);
-    const [countInfoInner] = React.Children.toArray(countInfo.props.children) as React.ReactElement[];
-    expect(countInfoInner.props.className).toBe(classNames.PagerInner);
-    const [textField] = React.Children.toArray(countInfoInner.props.children) as React.ReactElement[];
-    const [str] = React.Children.toArray(textField.props.children) as React.ReactElement[];
-    expect(str).toEqual('Showing 1 - 5 of 10 results.');
+    // Should display count information
+    expect(screen.getByText('Showing 1 - 5 of 10 results.')).toBeInTheDocument();
+  });
+
+  describe('Navigation interactions', () => {
+    it('should call onChange when next button is clicked', () => {
+      const onChange = vi.fn();
+      render(
+        <TestWrapper>
+          <Pager {...minimal} max={3} onChange={onChange} />
+        </TestWrapper>
+      );
+
+      const nextButton = screen.getByLabelText('Next');
+      expect(nextButton).not.toBeDisabled();
+
+      fireEvent.click(nextButton);
+      expect(onChange).toHaveBeenCalledWith({ value: 2 });
+    });
+
+    it('should call onChange when previous button is clicked', () => {
+      const onChange = vi.fn();
+      render(
+        <TestWrapper>
+          <Pager current={2} max={3} min={1} onChange={onChange} />
+        </TestWrapper>
+      );
+
+      const previousButton = screen.getByLabelText('Previous');
+      expect(previousButton).not.toBeDisabled();
+
+      fireEvent.click(previousButton);
+      expect(onChange).toHaveBeenCalledWith({ value: 1 });
+    });
+
+    it('should handle input changes correctly', () => {
+      const onChange = vi.fn();
+      render(
+        <TestWrapper>
+          <Pager current={1} max={5} min={1} onChange={onChange} />
+        </TestWrapper>
+      );
+
+      const input = screen.getByRole('textbox');
+
+      // Change input value
+      fireEvent.change(input, { target: { value: '3' } });
+      expect(input).toHaveValue('3');
+
+      // Press Enter to commit
+      fireEvent.keyDown(input, { key: 'Enter' });
+      expect(onChange).toHaveBeenCalledWith({ value: 3 });
+    });
+
+    it('should handle input blur correctly', () => {
+      const onChange = vi.fn();
+      render(
+        <TestWrapper>
+          <Pager current={1} max={5} min={1} onChange={onChange} />
+        </TestWrapper>
+      );
+
+      const input = screen.getByRole('textbox');
+
+      // Change input value and blur
+      fireEvent.change(input, { target: { value: '4' } });
+      fireEvent.blur(input);
+
+      expect(onChange).toHaveBeenCalledWith({ value: 4 });
+    });
+
+    it('should restrict input to valid numbers only', () => {
+      render(
+        <TestWrapper>
+          <Pager current={1} max={5} min={1} />
+        </TestWrapper>
+      );
+
+      const input = screen.getByRole('textbox');
+
+      // Try to enter invalid characters
+      fireEvent.change(input, { target: { value: 'abc' } });
+      expect(input).toHaveValue('1'); // Should remain unchanged
+
+      // Try to enter number beyond max
+      fireEvent.change(input, { target: { value: '10' } });
+      expect(input).toHaveValue('1'); // Should remain unchanged
+    });
+
+    it('should handle clickable page number selection', () => {
+      const onChange = vi.fn();
+      render(
+        <TestWrapper>
+          <Pager current={1} max={5} min={1} clickablePageNumbers={5} onChange={onChange} />
+        </TestWrapper>
+      );
+
+      // Click on page 3
+      const page3 = screen.getByText('3');
+      fireEvent.click(page3);
+
+      expect(onChange).toHaveBeenCalledWith({ value: 3 });
+    });
+  });
+
+  describe('Failed iteration functionality', () => {
+    it('should call failed iteration handlers', () => {
+      const onClickNext = vi.fn();
+      const onClickPrevious = vi.fn();
+      const failedIterationProps = {
+        max: 3,
+        min: 1,
+        onClickNext,
+        onClickPrevious,
+      };
+
+      render(
+        <TestWrapper>
+          <Pager current={2} max={5} min={1} failedIterationProps={failedIterationProps} />
+        </TestWrapper>
+      );
+
+      const nextFailedButton = screen.getByLabelText('Next failed');
+      const previousFailedButton = screen.getByLabelText('Previous failed');
+
+      fireEvent.click(nextFailedButton);
+      expect(onClickNext).toHaveBeenCalledWith({ value: 3 });
+
+      fireEvent.click(previousFailedButton);
+      expect(onClickPrevious).toHaveBeenCalledWith({ value: 1 });
+    });
+  });
+
+  describe('Edge cases', () => {
+    it('should handle single page scenario', () => {
+      render(
+        <TestWrapper>
+          <Pager current={1} max={1} min={1} />
+        </TestWrapper>
+      );
+
+      const previousButton = screen.getByLabelText('Previous');
+      const nextButton = screen.getByLabelText('Next');
+
+      expect(previousButton).toBeDisabled();
+      expect(nextButton).toBeDisabled();
+    });
+
+    it('should handle maxLength prop for input width', () => {
+      render(
+        <TestWrapper>
+          <Pager current={1} max={100} min={1} maxLength={3} />
+        </TestWrapper>
+      );
+
+      const input = screen.getByRole('textbox');
+      expect(input).toHaveStyle({ width: '42px' }); // 3 * 14px
+    });
+  });
+
+  describe('Snapshots', () => {
+    it('should match snapshot for default pager', () => {
+      const tree = renderer
+        .create(
+          <TestWrapper>
+            <Pager current={1} max={5} min={1} />
+          </TestWrapper>
+        )
+        .toJSON();
+      expect(tree).toMatchSnapshot();
+    });
+
+    it('should match snapshot for pager with clickable page numbers', () => {
+      const tree = renderer
+        .create(
+          <TestWrapper>
+            <Pager current={3} max={10} min={1} clickablePageNumbers={5} />
+          </TestWrapper>
+        )
+        .toJSON();
+      expect(tree).toMatchSnapshot();
+    });
+
+    it('should match snapshot for readonly pager', () => {
+      const tree = renderer
+        .create(
+          <TestWrapper>
+            <Pager current={2} max={5} min={1} readonlyPagerInput={true} />
+          </TestWrapper>
+        )
+        .toJSON();
+      expect(tree).toMatchSnapshot();
+    });
+
+    it('should match snapshot for pager with count display', () => {
+      const tree = renderer
+        .create(
+          <TestWrapper>
+            <Pager
+              current={2}
+              max={5}
+              min={1}
+              countToDisplay={{
+                countPerPage: 10,
+                totalCount: 50,
+              }}
+            />
+          </TestWrapper>
+        )
+        .toJSON();
+      expect(tree).toMatchSnapshot();
+    });
+
+    it('should match snapshot for pager with failed iteration props', () => {
+      const tree = renderer
+        .create(
+          <TestWrapper>
+            <Pager
+              current={2}
+              max={5}
+              min={1}
+              failedIterationProps={{
+                max: 4,
+                min: 1,
+                onClickNext: vi.fn(),
+                onClickPrevious: vi.fn(),
+              }}
+            />
+          </TestWrapper>
+        )
+        .toJSON();
+      expect(tree).toMatchSnapshot();
+    });
+
+    it('should match snapshot for disabled state (single page)', () => {
+      const tree = renderer
+        .create(
+          <TestWrapper>
+            <Pager current={1} max={1} min={1} />
+          </TestWrapper>
+        )
+        .toJSON();
+      expect(tree).toMatchSnapshot();
+    });
   });
 });
