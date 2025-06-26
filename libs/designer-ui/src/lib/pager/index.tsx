@@ -150,13 +150,6 @@ const usePagerStyles = makeStyles({
       textDecoration: 'underline',
     },
   },
-
-  // Readonly text
-  readonlyText: {
-    color: tokens.colorNeutralForeground2,
-    fontWeight: tokens.fontWeightMedium,
-    fontSize: tokens.fontSizeBase200,
-  },
 });
 
 export const Pager: React.FC<PagerProps> = ({
@@ -274,7 +267,7 @@ export const Pager: React.FC<PagerProps> = ({
     description: 'Text of a button to go to previous page',
   });
 
-  const previousPagerFailedStrign = intl.formatMessage({
+  const previousPagerFailedString = intl.formatMessage({
     defaultMessage: 'Previous failed',
     id: 'gKq3Jv',
     description: 'Label of a button to go to the previous failed page option',
@@ -392,7 +385,7 @@ export const Pager: React.FC<PagerProps> = ({
               appearance="subtle"
               disabled={failedMin < 1 || current <= failedMin}
               onClick={handlePreviousFailedClick}
-              aria-label={previousPagerFailedStrign}
+              aria-label={previousPagerFailedString}
               icon={<ChevronLeftIcon />}
               shape="circular"
             />
@@ -419,7 +412,7 @@ export const Pager: React.FC<PagerProps> = ({
             ))
           ) : readonlyPagerInput ? (
             // Readonly text display
-            <Text className={styles.readonlyText}>{pagerOfStringAria}</Text>
+            <Text>{pagerOfStringAria}</Text>
           ) : (
             // Editable page input
             <div className={styles.pageContainer}>
