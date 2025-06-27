@@ -375,6 +375,7 @@ export default {
       QUERY: 'query',
       RECURRENCE: 'recurrence',
       REQUEST: 'request',
+      REQUEST_AGENT: 'requestagent',
       RESPONSE: 'response',
       SCOPE: 'scope',
       SELECT: 'select',

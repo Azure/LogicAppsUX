@@ -47,6 +47,7 @@ import {
   useIsWithinAgenticLoop,
   useSubgraphRunData,
   useRunIndex,
+  useActionMetadata,
 } from '../../core/state/workflow/workflowSelectors';
 import { setRepetitionRunData } from '../../core/state/workflow/workflowSlice';
 import { getRepetitionName } from '../common/LoopsPager/helper';
@@ -63,12 +64,15 @@ import { Handle, Position, type NodeProps } from '@xyflow/react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { CopyTooltip } from '../common/DesignerContextualMenu/CopyTooltip';
 import { LoopsPager } from '../common/LoopsPager/LoopsPager';
+import constants from '../../common/constants';
+import { useAgentWorkflow } from '../../core/state/designerView/designerViewSelectors';
 
 const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
   const readOnly = useReadOnly();
   const isMonitoringView = useMonitoringView();
   const isUnitTest = useUnitTest();
-
+  const node = useActionMetadata(id);
+  const isAgentWorkflow = useAgentWorkflow();
   const intl = useIntl();
 
   const dispatch = useDispatch<AppDispatch>();
@@ -91,6 +95,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   );
   const isSecureInputsOutputs = useSecureInputsOutputs(id);
   const isLoadingDynamicData = useIsNodeLoadingDynamicData(id);
+  const normalizedType = node?.type.toLowerCase();
 
   const suppressDefaultNodeSelect = useSuppressDefaultNodeSelectFunctionality();
   const nodeSelectCallbackOverride = useNodeSelectAdditionalCallback();
@@ -315,7 +320,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
 
   const nodeIndex = useNodeIndex(id);
   const isCardActive = isMonitoringView ? !isNullOrUndefined(selfRunData?.status) : true;
-  const shouldShowPager = true;
+  const shouldShowPager = normalizedType === constants.NODE.TYPE.REQUEST_AGENT && isAgentWorkflow && isMonitoringView;
   return (
     <>
       <div className="nopan" ref={ref as any}>
@@ -355,7 +360,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
           nodeIndex={nodeIndex}
         />
         {showCopyCallout ? <CopyTooltip id={id} targetRef={ref} hideTooltip={clearCopyTooltip} /> : null}
-        {shouldShowPager ? <LoopsPager metadata={metadata} scopeId={id} collapsed={false} isFromTrigger /> : null}
+        {shouldShowPager ? <LoopsPager metadata={metadata} scopeId={id} isFromTrigger /> : null}
         <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
       </div>
       {showLeafComponents ? (

@@ -11,12 +11,12 @@ import { useDispatch } from 'react-redux';
 export interface LoopsPagerProps {
   metadata: any;
   scopeId: string;
-  collapsed: boolean;
+  collapsed?: boolean;
   focusElement?: (index: number, nodeId: string) => void;
   isFromTrigger?: boolean;
 }
 
-export const LoopsPager = ({ metadata, scopeId, collapsed, focusElement, isFromTrigger }: LoopsPagerProps) => {
+export const LoopsPager = ({ metadata, scopeId, collapsed = false, focusElement, isFromTrigger }: LoopsPagerProps) => {
   const runInstance = useRunInstance();
   const dispatch = useDispatch<AppDispatch>();
   const actionMetadata = useActionMetadata(scopeId);
