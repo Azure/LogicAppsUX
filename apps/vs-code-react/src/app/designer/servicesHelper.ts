@@ -175,9 +175,11 @@ export const getDesignerServices = (
         return Promise.resolve();
       }
 
-      const defaultConfiguration: Record<string, any> = {
-        workflowAppLocation: appSettings.ProjectDirectoryPath,
-      };
+      const defaultConfiguration: Record<string, any> = isLocal
+        ? {
+            workflowAppLocation: appSettings.ProjectDirectoryPath,
+          }
+        : {};
 
       const connectionName = connectionId.split('/').splice(-1)[0];
       const connectionsInfo = {
