@@ -65,14 +65,14 @@ import { useHotkeys } from 'react-hotkeys-hook';
 import { CopyTooltip } from '../common/DesignerContextualMenu/CopyTooltip';
 import { LoopsPager } from '../common/LoopsPager/LoopsPager';
 import constants from '../../common/constants';
-import { useAgentWorkflow } from '../../core/state/designerView/designerViewSelectors';
+import { useIsA2AWorkflow } from '../../core/state/designerView/designerViewSelectors';
 
 const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
   const readOnly = useReadOnly();
   const isMonitoringView = useMonitoringView();
   const isUnitTest = useUnitTest();
   const node = useActionMetadata(id);
-  const isAgentWorkflow = useAgentWorkflow();
+  const isAgentWorkflow = useIsA2AWorkflow();
   const intl = useIntl();
 
   const dispatch = useDispatch<AppDispatch>();

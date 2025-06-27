@@ -34,7 +34,7 @@ import joinManifest from './manifests/join';
 import parsejsonManifest from './manifests/parsejson';
 import queryManifest from './manifests/query';
 import requestManifest from './manifests/request';
-import requestAgentManifest from './manifests/requestAgent';
+import a2aRequestManifest from './manifests/a2arequest';
 import responseManifest from './manifests/response';
 import { delayManifest, delayUntilManifest, recurrenceManifest, slidingWindowManifest } from './manifests/schedule';
 import scopeManifest from './manifests/scope';
@@ -87,7 +87,7 @@ const condition = 'if';
 const switchType = 'switch';
 export const agentType = 'agent';
 const request = 'request';
-const requestagent = 'requestagent';
+const a2arequest = 'a2arequest';
 const response = 'response';
 const table = 'table';
 const terminate = 'terminate';
@@ -189,7 +189,7 @@ export const supportedBaseManifestTypes = [
   query,
   recurrence,
   request,
-  requestagent,
+  a2arequest,
   response,
   rosettanetdecode,
   rosettanetencode,
@@ -326,7 +326,7 @@ export function isBuiltInOperation(definition: any): boolean {
     case query:
     case recurrence:
     case request:
-    case requestagent:
+    case a2arequest:
     case response:
     case select:
     case sendtobatch:
@@ -454,11 +454,6 @@ export function getBuiltInOperationInfo(definition: any, isTrigger: boolean): Op
             connectorId: 'connectionProviders/request',
             operationId: request,
           };
-        case 'agent':
-          return {
-            connectorId: 'connectionProviders/request',
-            operationId: requestagent,
-          };
         default: {
           if (kind === undefined) {
             return {
@@ -467,6 +462,23 @@ export function getBuiltInOperationInfo(definition: any, isTrigger: boolean): Op
             };
           }
           throw new UnsupportedException(`Unsupported operation kind ${kind} for request type`);
+        }
+      }
+    case a2arequest:
+      switch (kind) {
+        case 'http':
+          return {
+            connectorId: 'connectionProviders/a2a',
+            operationId: a2arequest,
+          };
+        default: {
+          if (kind === undefined) {
+            return {
+              connectorId: 'connectionProviders/a2a',
+              operationId: a2arequest,
+            };
+          }
+          throw new UnsupportedException(`Unsupported operation kind ${kind} for a2a request type`);
         }
       }
     case response:
@@ -801,7 +813,7 @@ export const supportedBaseManifestObjects = new Map<string, OperationManifest>([
   [query, queryManifest],
   [recurrence, recurrenceManifest],
   [request, requestManifest],
-  [requestagent, requestAgentManifest],
+  [a2arequest, a2aRequestManifest],
   [response, responseManifest],
   [scope, scopeManifest],
   [select, selectManifest],
