@@ -454,6 +454,11 @@ export function getBuiltInOperationInfo(definition: any, isTrigger: boolean): Op
             connectorId: 'connectionProviders/request',
             operationId: request,
           };
+        case 'agent':
+          return {
+            connectorId: 'connectionProviders/a2a',
+            operationId: a2arequest,
+          };
         default: {
           if (kind === undefined) {
             return {
@@ -462,23 +467,6 @@ export function getBuiltInOperationInfo(definition: any, isTrigger: boolean): Op
             };
           }
           throw new UnsupportedException(`Unsupported operation kind ${kind} for request type`);
-        }
-      }
-    case a2arequest:
-      switch (kind) {
-        case 'http':
-          return {
-            connectorId: 'connectionProviders/a2a',
-            operationId: a2arequest,
-          };
-        default: {
-          if (kind === undefined) {
-            return {
-              connectorId: 'connectionProviders/a2a',
-              operationId: a2arequest,
-            };
-          }
-          throw new UnsupportedException(`Unsupported operation kind ${kind} for a2a request type`);
         }
       }
     case response:

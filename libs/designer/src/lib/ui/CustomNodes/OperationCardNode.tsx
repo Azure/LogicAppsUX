@@ -318,7 +318,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   ]);
 
   const isCardActive = isMonitoringView ? !isNullOrUndefined(selfRunData?.status) : true;
-  const shouldShowPager = normalizedType === constants.NODE.TYPE.REQUEST_AGENT && isAgentWorkflow && isMonitoringView;
+  const shouldShowPager = normalizedType === constants.NODE.TYPE.A2AREQUEST && isAgentWorkflow && isMonitoringView;
   return (
     <>
       <div className="nopan" ref={ref as any}>

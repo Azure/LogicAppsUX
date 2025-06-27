@@ -371,7 +371,7 @@ export function getClientBuiltInOperations(
 ): DiscoveryOperation<BuiltInOperation>[] {
   const allOperations: DiscoveryOperation<BuiltInOperation>[] = [
     ClientOperationsData.requestOperation,
-    ClientOperationsData.requestAgentOperation,
+    ClientOperationsData.a2aRequestOperation,
     ClientOperationsData.responseOperation,
     ClientOperationsData.parseJsonOperation,
     ClientOperationsData.csvTableOperation,
