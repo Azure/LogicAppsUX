@@ -96,7 +96,9 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const isSecureInputsOutputs = useSecureInputsOutputs(id);
   const isLoadingDynamicData = useIsNodeLoadingDynamicData(id);
   const normalizedType = node?.type.toLowerCase();
-
+  const shouldFocus = useShouldNodeFocus(id);
+  const staticResults = useParameterStaticResult(id);
+  const nodeIndex = useNodeIndex(id);
   const suppressDefaultNodeSelect = useSuppressDefaultNodeSelectFunctionality();
   const nodeSelectCallbackOverride = useNodeSelectAdditionalCallback();
   const graphId = metadata?.graphId ?? '';
@@ -315,10 +317,6 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     selfRunData,
   ]);
 
-  const shouldFocus = useShouldNodeFocus(id);
-  const staticResults = useParameterStaticResult(id);
-
-  const nodeIndex = useNodeIndex(id);
   const isCardActive = isMonitoringView ? !isNullOrUndefined(selfRunData?.status) : true;
   const shouldShowPager = normalizedType === constants.NODE.TYPE.REQUEST_AGENT && isAgentWorkflow && isMonitoringView;
   return (
