@@ -37,7 +37,7 @@ export const requestAgentOperation = {
       displayName: 'requestAgent',
       iconUri: 'https://logicappsv2resources.blob.core.windows.net/icons/request.svg',
     },
-    summary: 'When a HTTP request is received for agents',
+    summary: 'Request agent',
     description: 'This is an incoming API call that could use actions in a Logic App or other API to trigger this flow.',
     visibility: 'Important',
     operationType: 'Request',

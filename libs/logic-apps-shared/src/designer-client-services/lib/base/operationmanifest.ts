@@ -87,7 +87,7 @@ const condition = 'if';
 const switchType = 'switch';
 export const agentType = 'agent';
 const request = 'request';
-const requestAgent = 'requestAgent';
+const requestagent = 'requestagent';
 const response = 'response';
 const table = 'table';
 const terminate = 'terminate';
@@ -189,7 +189,7 @@ export const supportedBaseManifestTypes = [
   query,
   recurrence,
   request,
-  requestAgent,
+  requestagent,
   response,
   rosettanetdecode,
   rosettanetencode,
@@ -326,7 +326,7 @@ export function isBuiltInOperation(definition: any): boolean {
     case query:
     case recurrence:
     case request:
-    case requestAgent:
+    case requestagent:
     case response:
     case select:
     case sendtobatch:
@@ -457,7 +457,7 @@ export function getBuiltInOperationInfo(definition: any, isTrigger: boolean): Op
         case 'agent':
           return {
             connectorId: 'connectionProviders/request',
-            operationId: requestAgent,
+            operationId: requestagent,
           };
         default: {
           if (kind === undefined) {
@@ -801,7 +801,7 @@ export const supportedBaseManifestObjects = new Map<string, OperationManifest>([
   [query, queryManifest],
   [recurrence, recurrenceManifest],
   [request, requestManifest],
-  [requestAgent, requestAgentManifest],
+  [requestagent, requestAgentManifest],
   [response, responseManifest],
   [scope, scopeManifest],
   [select, selectManifest],
