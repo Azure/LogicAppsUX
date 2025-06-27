@@ -16,35 +16,6 @@ import { hybridApiVersion, isHybridLogicApp } from './hybrid';
 import { LogEntryLevel } from '../logging/logEntry';
 import { LoggerService } from '../logger';
 
-// Import FLOW_STATUS constants from designer
-// Since this is in logic-apps-shared, we need to reference the designer constants
-const FLOW_STATUS = {
-  ABORTED: 'Aborted',
-  CANCELLED: 'Cancelled',
-  FAILED: 'Failed',
-  FAULTED: 'Faulted',
-  IGNORED: 'Ignored',
-  PAUSED: 'Paused',
-  RUNNING: 'Running',
-  SKIPPED: 'Skipped',
-  SUCCEEDED: 'Succeeded',
-  SUSPENDED: 'Suspended',
-  TIMEDOUT: 'TimedOut',
-  WAITING: 'Waiting',
-} as const;
-
-/**
- * Validates that the provided status is one of the allowed FLOW_STATUS values
- * @param status - The status string to validate
- * @throws {Error} If the status is not a valid FLOW_STATUS value
- */
-function validateFlowStatus(status: string): void {
-  const allowedStatuses = Object.values(FLOW_STATUS);
-  if (!allowedStatuses.includes(status as any)) {
-    throw new Error(`Invalid status value: '${status}'. Allowed values are: ${allowedStatuses.join(', ')}`);
-  }
-}
-
 export interface RunServiceOptions {
   apiVersion: string;
   baseUrl: string;
@@ -185,8 +156,6 @@ export class StandardRunService implements IRunService {
 
     const queryParameters: Record<string, string> = {};
     if (status) {
-      // Validate status against allowed FLOW_STATUS values
-      validateFlowStatus(status);
       queryParameters['$filter'] = `status eq '${status}'`;
     }
     const uri = `${baseUrl}${runId}/actions/${nodeId}/scopeRepetitions`;
