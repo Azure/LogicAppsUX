@@ -3,7 +3,6 @@ import { BaseOAuthService } from './services/oAuth';
 import { resolveConnectionsReferences } from './utilities/workflow';
 import {
   StandardConnectionService,
-  StandardConnectorService,
   StandardOperationManifestService,
   StandardSearchService,
   BaseGatewayService,
@@ -18,6 +17,7 @@ import {
   BaseTenantService,
   BaseCognitiveServiceService,
   BaseRoleService,
+  StandardVSCodeConnectorService,
 } from '@microsoft/logic-apps-shared';
 import type {
   ApiHubServiceDetails,
@@ -30,6 +30,7 @@ import type {
   ManagedIdentity,
   ConnectionAndAppSetting,
   LocalConnectionModel,
+  OperationManifest,
 } from '@microsoft/logic-apps-shared';
 import type { IDesignerPanelMetadata, MessageToVsix } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand, HttpClient } from '@microsoft/vscode-extension-logic-apps';
@@ -42,7 +43,7 @@ import { CustomConnectionParameterEditorService } from './services/customConnect
 
 export interface IDesignerServices {
   connectionService: StandardConnectionService;
-  connectorService: StandardConnectorService;
+  connectorService: StandardVSCodeConnectorService;
   operationManifestService: StandardOperationManifestService;
   searchService: StandardSearchService;
   oAuthService: BaseOAuthService;
@@ -165,17 +166,19 @@ export const getDesignerServices = (
     httpClient,
   });
 
-  const connectorService = new StandardConnectorService({
+  const connectorService = new StandardVSCodeConnectorService({
     apiVersion,
     baseUrl,
     httpClient,
     clientSupportedOperations: clientSupportedOperations,
-    getConfiguration: async (connectionId: string): Promise<any> => {
+    getConfiguration: async (connectionId: string, manifest: OperationManifest | undefined): Promise<any> => {
       if (!connectionId) {
         return Promise.resolve();
       }
-
-      const defaultConfiguration: Record<string, any> = isLocal
+      console.log('charlie ', connectionId, manifest);
+      const shouldUseWorkflowAppLocation =
+        isLocal && !manifest?.properties?.dynamicContent?.payloadConfiguration?.includes('WorkflowAppLocation');
+      const defaultConfiguration: Record<string, any> = shouldUseWorkflowAppLocation
         ? {
             workflowAppLocation: appSettings.ProjectDirectoryPath,
           }

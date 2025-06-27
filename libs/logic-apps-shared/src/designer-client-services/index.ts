@@ -35,3 +35,4 @@ export * from './lib/userpreference';
 export * from './lib/resource';
 export * from './lib/role';
 export * from './lib/providers/FavoriteContextProvider';
+export * from './lib/vscode';
