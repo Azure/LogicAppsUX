@@ -175,9 +175,8 @@ export const getDesignerServices = (
       if (!connectionId) {
         return Promise.resolve();
       }
-      console.log('charlie ', connectionId, manifest);
       const shouldUseWorkflowAppLocation =
-        isLocal && !manifest?.properties?.dynamicContent?.payloadConfiguration?.includes('WorkflowAppLocation');
+        isLocal && manifest?.properties?.dynamicContent?.payloadConfiguration?.includes('WorkflowAppLocation');
       const defaultConfiguration: Record<string, any> = shouldUseWorkflowAppLocation
         ? {
             workflowAppLocation: appSettings.ProjectDirectoryPath,
