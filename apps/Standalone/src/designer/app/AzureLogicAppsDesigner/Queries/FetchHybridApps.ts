@@ -3,15 +3,15 @@ import type { Data as FetchLogicAppsData } from '../Models/LogicAppAppTypes';
 import { fetchAppsByQuery } from '../Utilities/resourceUtilities';
 import { useQuery } from '@tanstack/react-query';
 
-export const useFetchHybridApps = () => {
+export const useFetchHybridApps = (subscriptionIds?: string[]) => {
   return useQuery<FetchLogicAppsData[]>(
-    ['listAllLogicApps', 'hybrid'],
+    ['listAllLogicApps', 'hybrid', (subscriptionIds ?? ['all']).join(',')],
     async () => {
       if (!environment.armToken) {
         return [];
       }
       const query = `resources | where type =~ "microsoft.app/containerApps" and kind contains "workflowapp"`;
-      const data = await fetchAppsByQuery(query);
+      const data = await fetchAppsByQuery(query, subscriptionIds);
       return data.map((item: any) => ({
         id: item[0],
         name: item[1],
