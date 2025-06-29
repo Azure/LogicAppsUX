@@ -15,7 +15,7 @@ export const useStaticResultStyles = makeStyles({
     height: '30px',
 
     '&:hover, &:active': {
-      backgroundColor: designTokens.selectedItemBackgroundColor,
+      backgroundColor: designTokens.colors.selectedItemBackground,
     },
   },
 

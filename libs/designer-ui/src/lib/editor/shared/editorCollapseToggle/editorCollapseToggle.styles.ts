@@ -1,5 +1,4 @@
 import { makeStyles, shorthands } from '@fluentui/react-components';
-import { designTokens } from '../../../tokens/designTokens';
 
 export const useEditorCollapseToggleStyles = makeStyles({
   toggleButton: {
@@ -8,8 +7,8 @@ export const useEditorCollapseToggleStyles = makeStyles({
     ...shorthands.padding('0'),
 
     '& img': {
-      width: designTokens.sizes.commandIconWidth,
-      height: designTokens.sizes.commandIconWidth,
+      width: '16px',
+      height: '16px',
       verticalAlign: 'middle',
     },
 
