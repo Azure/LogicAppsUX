@@ -1,4 +1,5 @@
-import { test, expect } from '../fixtures/opacityFixture';
+import test from '@playwright/test';
+import { expect } from '../fixtures/opacityFixture';
 import { GoToMockWorkflow, LoadRunFile } from '../utils/GoToWorkflow';
 
 test.describe(
