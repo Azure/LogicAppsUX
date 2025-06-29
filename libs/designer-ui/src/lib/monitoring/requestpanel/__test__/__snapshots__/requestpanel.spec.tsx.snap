@@ -7,11 +7,11 @@ exports[`lib/monitoring/requestpanel > should render 1`] = `
   >
     <div>
       <div
-        className="___1xdkp92_0000000 f22iagw f4d9j23 f1rqyxcv fq02s40 f475ppk f1f7bkv5 f10pi13n f1i1ikuc fdjgbec f168hjlk"
+        className="msla-pager-v2"
         onClick={[Function]}
       >
         <div
-          className="___77lcry0_0000000 f10pi13n"
+          className="msla-pager-failed-container"
         >
           <div
             className="ms-TooltipHost root-109"
@@ -78,7 +78,7 @@ exports[`lib/monitoring/requestpanel > should render 1`] = `
           </div>
         </div>
         <div
-          className="___k09c4y0_0000000 f1d2rq10 f22iagw f122n59 f4xv25i f13os38c"
+          className="msla-pager-v2--inner"
         >
           <span
             className="fui-Text ___c56hd20_1xy0w11 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1gl81tg f2jf649"
@@ -87,7 +87,7 @@ exports[`lib/monitoring/requestpanel > should render 1`] = `
           </span>
         </div>
         <div
-          className="___77lcry0_0000000 f10pi13n"
+          className="msla-pager-failed-container"
         >
           <div
             className="ms-TooltipHost root-109"
@@ -585,11 +585,11 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
   >
     <div>
       <div
-        className="___1xdkp92_0000000 f22iagw f4d9j23 f1rqyxcv fq02s40 f475ppk f1f7bkv5 f10pi13n f1i1ikuc fdjgbec f168hjlk"
+        className="msla-pager-v2"
         onClick={[Function]}
       >
         <div
-          className="___77lcry0_0000000 f10pi13n"
+          className="msla-pager-failed-container"
         >
           <div
             className="ms-TooltipHost root-109"
@@ -656,7 +656,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
           </div>
         </div>
         <div
-          className="___k09c4y0_0000000 f1d2rq10 f22iagw f122n59 f4xv25i f13os38c"
+          className="msla-pager-v2--inner"
         >
           <span
             className="fui-Text ___c56hd20_1xy0w11 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1gl81tg f2jf649"
@@ -665,7 +665,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
           </span>
         </div>
         <div
-          className="___77lcry0_0000000 f10pi13n"
+          className="msla-pager-failed-container"
         >
           <div
             className="ms-TooltipHost root-109"
@@ -1584,11 +1584,11 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
   >
     <div>
       <div
-        className="___1xdkp92_0000000 f22iagw f4d9j23 f1rqyxcv fq02s40 f475ppk f1f7bkv5 f10pi13n f1i1ikuc fdjgbec f168hjlk"
+        className="msla-pager-v2"
         onClick={[Function]}
       >
         <div
-          className="___77lcry0_0000000 f10pi13n"
+          className="msla-pager-failed-container"
         >
           <div
             className="ms-TooltipHost root-109"
@@ -1655,7 +1655,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
           </div>
         </div>
         <div
-          className="___k09c4y0_0000000 f1d2rq10 f22iagw f122n59 f4xv25i f13os38c"
+          className="msla-pager-v2--inner"
         >
           <span
             className="fui-Text ___c56hd20_1xy0w11 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1gl81tg f2jf649"
@@ -1664,7 +1664,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
           </span>
         </div>
         <div
-          className="___77lcry0_0000000 f10pi13n"
+          className="msla-pager-failed-container"
         >
           <div
             className="ms-TooltipHost root-109"
@@ -2583,11 +2583,11 @@ exports[`lib/monitoring/requestpanel > should render with a secured request 1`] 
   >
     <div>
       <div
-        className="___1xdkp92_0000000 f22iagw f4d9j23 f1rqyxcv fq02s40 f475ppk f1f7bkv5 f10pi13n f1i1ikuc fdjgbec f168hjlk"
+        className="msla-pager-v2"
         onClick={[Function]}
       >
         <div
-          className="___77lcry0_0000000 f10pi13n"
+          className="msla-pager-failed-container"
         >
           <div
             className="ms-TooltipHost root-109"
@@ -2654,7 +2654,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured request 1`] 
           </div>
         </div>
         <div
-          className="___k09c4y0_0000000 f1d2rq10 f22iagw f122n59 f4xv25i f13os38c"
+          className="msla-pager-v2--inner"
         >
           <span
             className="fui-Text ___c56hd20_1xy0w11 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1gl81tg f2jf649"
@@ -2663,7 +2663,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured request 1`] 
           </span>
         </div>
         <div
-          className="___77lcry0_0000000 f10pi13n"
+          className="msla-pager-failed-container"
         >
           <div
             className="ms-TooltipHost root-109"
@@ -3192,11 +3192,11 @@ exports[`lib/monitoring/requestpanel > should render with a secured response 1`]
   >
     <div>
       <div
-        className="___1xdkp92_0000000 f22iagw f4d9j23 f1rqyxcv fq02s40 f475ppk f1f7bkv5 f10pi13n f1i1ikuc fdjgbec f168hjlk"
+        className="msla-pager-v2"
         onClick={[Function]}
       >
         <div
-          className="___77lcry0_0000000 f10pi13n"
+          className="msla-pager-failed-container"
         >
           <div
             className="ms-TooltipHost root-109"
@@ -3263,7 +3263,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured response 1`]
           </div>
         </div>
         <div
-          className="___k09c4y0_0000000 f1d2rq10 f22iagw f122n59 f4xv25i f13os38c"
+          className="msla-pager-v2--inner"
         >
           <span
             className="fui-Text ___c56hd20_1xy0w11 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1gl81tg f2jf649"
@@ -3272,7 +3272,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured response 1`]
           </span>
         </div>
         <div
-          className="___77lcry0_0000000 f10pi13n"
+          className="msla-pager-failed-container"
         >
           <div
             className="ms-TooltipHost root-109"

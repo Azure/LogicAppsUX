@@ -1,9 +1,8 @@
 import type { IIconProps, IIconStyles, ITextFieldStyles } from '@fluentui/react';
-import { Icon, IconButton, TextField, TooltipHost } from '@fluentui/react';
-import { Text, mergeClasses } from '@fluentui/react-components';
+import { css, Icon, IconButton, TextField, TooltipHost } from '@fluentui/react';
+import { Text } from '@fluentui/react-components';
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { usePagerStyles } from './pager.styles';
 
 export type PageChangeEventHandler = (e: PageChangeEventArgs) => void;
 
@@ -82,7 +81,6 @@ export const Pager: React.FC<PagerProps> = ({
   onChange,
 }) => {
   const [current, setCurrent] = React.useState(initialCurrent);
-  const styles = usePagerStyles();
 
   useEffect(() => {
     setCurrent(initialCurrent);
@@ -252,15 +250,15 @@ export const Pager: React.FC<PagerProps> = ({
   }, [current, clickablePageNumbers, max, min]);
 
   return (
-    <div className={countInfo ? styles.pageNumbers : undefined}>
+    <div className={countInfo && 'msla-pager-v2-pagenumbers'}>
       {countInfo && (
-        <div className={styles.pagerV2}>
-          <div className={styles.pagerV2Inner}>
+        <div className="msla-pager-v2">
+          <div className="msla-pager-v2--inner">
             <Text>{showingResultsString}</Text>
           </div>
         </div>
       )}
-      <div className={styles.pagerV2} onClick={handleClick}>
+      <div className="msla-pager-v2" onClick={handleClick}>
         <PagerButton disabled={current <= min} iconProps={previousIconProps} text={pagerPreviousString} onClick={handlePreviousClick} />
         {failedIterationProps && (
           <PagerButton
@@ -272,10 +270,10 @@ export const Pager: React.FC<PagerProps> = ({
           />
         )}
         {clickablePageNumbers ? (
-          <div className={styles.pagerV2Inner}>
+          <div className="msla-pager-v2--inner">
             {pageNumbers.map((pageNum) => (
               <Text
-                className={mergeClasses(styles.pageNum, pageNum !== current && styles.pageNumSelectable)}
+                className={css('msla-pager-pageNum', pageNum !== current && 'toSelect')}
                 key={pageNum}
                 onClick={() => {
                   if (pageNum !== current) {
@@ -288,7 +286,7 @@ export const Pager: React.FC<PagerProps> = ({
             ))}
           </div>
         ) : (
-          <div className={styles.pagerV2Inner}>
+          <div className="msla-pager-v2--inner">
             {readonlyPagerInput ? null : (
               <TextField
                 ariaLabel={pagerOfStringAria}
@@ -307,7 +305,7 @@ export const Pager: React.FC<PagerProps> = ({
             ) : readonlyPagerInput ? (
               <Text>{pagerOfStringAria}</Text>
             ) : (
-              <Text>{pagerOfString}</Text>
+              <Text>&nbsp;{pagerOfString}</Text>
             )}
           </div>
         )}
@@ -329,24 +327,20 @@ export const Pager: React.FC<PagerProps> = ({
 
 const PagerButton: React.FC<PagerButtonProps> = ({ disabled, failed, iconProps, text, onClick }) => {
   const intl = useIntl();
-  const styles = usePagerStyles();
   const previousPagerFailedString = intl.formatMessage({
     defaultMessage: 'Previous failed',
     id: 'gKq3Jv',
     description: 'Label of a button to go to the previous failed page option',
   });
 
-  // Check if dark theme is active
-  const isDarkTheme = document.querySelector('.msla-theme-dark') !== null;
-
   return (
-    <div className={styles.failedContainer}>
+    <div className="msla-pager-failed-container">
       <TooltipHost content={text}>
         <IconButton ariaLabel={text} disabled={disabled} iconProps={iconProps} text={text} onClick={onClick} />
       </TooltipHost>
       {failed && (
         <Icon
-          className={mergeClasses(styles.failedIcon, isDarkTheme && styles.failedIconDark)}
+          className="msla-pager-failed-icon"
           iconName={iconFailedProps.iconName}
           styles={text === previousPagerFailedString ? iconFailedPreviousStyles : iconFailedNextStyles}
         />
