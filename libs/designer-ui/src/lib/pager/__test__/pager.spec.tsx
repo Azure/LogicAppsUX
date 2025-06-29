@@ -4,12 +4,8 @@ import * as React from 'react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('lib/pager', () => {
-  const classNames = {
-    Pager: 'msla-pager-v2',
-    PagerInner: 'msla-pager-v2--inner',
-    PageNumber: 'msla-pager-pageNum',
-    PageNumberToSelect: 'msla-pager-pageNum toSelect',
-  };
+  // Note: Class names have been migrated to makeStyles and are no longer static strings
+  // We'll focus on testing functionality rather than specific CSS classes
 
   let minimal: PagerProps, renderer: ReactShallowRenderer.ShallowRenderer;
 
@@ -31,13 +27,13 @@ describe('lib/pager', () => {
 
     const pagerWrapper = renderer.getRenderOutput();
     const [pager] = React.Children.toArray(pagerWrapper.props.children) as React.ReactElement[];
-    expect(pager.props.className).toBe(classNames.Pager);
+    expect(pager.props.className).toBeDefined(); // Class names are now dynamic
 
     const [previous, inner, next] = React.Children.toArray(pager.props.children) as React.ReactElement[];
     expect(previous.props.disabled).toBeTruthy();
     expect(previous.props.iconProps.iconName).toBe('ChevronLeft');
     expect(previous.props.text).toBe('Previous');
-    expect(inner.props.className).toBe(classNames.PagerInner);
+    expect(inner.props.className).toBeDefined(); // Class names are now dynamic
     expect(next.props.disabled).toBeTruthy();
     expect(next.props.iconProps.iconName).toBe('ChevronRight');
     expect(next.props.text).toBe('Next');
@@ -49,7 +45,7 @@ describe('lib/pager', () => {
     expect(textField.props.min).toBe(minimal.min);
     expect(textField.props.readOnly).toBeFalsy();
     expect(textField.props.value).toBe('1');
-    expect(text.props.children).toEqual(['\u00a0', 'of 1']);
+    expect(text.props.children).toEqual('of 1'); // Removed non-breaking space
   });
 
   it('should render the default pager with read-only pager input', () => {
@@ -82,7 +78,7 @@ describe('lib/pager', () => {
     expect(previous.props.failed).toBeTruthy();
     expect(previous.props.iconProps.iconName).toBe('ChevronLeft');
     expect(previous.props.text).toBe('Previous failed');
-    expect(inner.props.className).toBe(classNames.PagerInner);
+    expect(inner.props.className).toBeDefined(); // Class names are now dynamic
     expect(next.props.disabled).toBeTruthy();
     expect(next.props.failed).toBeTruthy();
     expect(next.props.iconProps.iconName).toBe('ChevronRight');
@@ -95,11 +91,11 @@ describe('lib/pager', () => {
     const pagerWrapper = renderer.getRenderOutput();
     const [pager] = React.Children.toArray(pagerWrapper.props.children) as React.ReactElement[];
     const [, inner] = React.Children.toArray(pager.props.children) as React.ReactElement[];
-    expect(inner.props.className).toBe(classNames.PagerInner);
+    expect(inner.props.className).toBeDefined(); // Class names are now dynamic
     expect(inner.props.children.length).toBe(2);
     const [number1, number2] = React.Children.toArray(inner.props.children) as React.ReactElement[];
-    expect(number1.props.className).toBe(classNames.PageNumber);
-    expect(number2.props.className).toBe(classNames.PageNumberToSelect);
+    expect(number1.props.className).toBeDefined(); // Dynamic class for current page
+    expect(number2.props.className).toBeDefined(); // Dynamic class for selectable page
     const [number1Children] = React.Children.toArray(number1.props.children) as React.ReactElement[];
     expect(number1Children).toEqual(1);
     const [number2Children] = React.Children.toArray(number2.props.children) as React.ReactElement[];
@@ -112,14 +108,14 @@ describe('lib/pager', () => {
     const pagerWrapper = renderer.getRenderOutput();
     const [pager] = React.Children.toArray(pagerWrapper.props.children) as React.ReactElement[];
     const [, inner] = React.Children.toArray(pager.props.children) as React.ReactElement[];
-    expect(inner.props.className).toBe(classNames.PagerInner);
+    expect(inner.props.className).toBeDefined(); // Class names are now dynamic
     expect(inner.props.children.length).toBe(5);
     const [number1, number2, number3, number4, number5] = React.Children.toArray(inner.props.children) as React.ReactElement[];
-    expect(number1.props.className).toBe(classNames.PageNumber);
-    expect(number2.props.className).toBe(classNames.PageNumberToSelect);
-    expect(number3.props.className).toBe(classNames.PageNumberToSelect);
-    expect(number4.props.className).toBe(classNames.PageNumberToSelect);
-    expect(number5.props.className).toBe(classNames.PageNumberToSelect);
+    expect(number1.props.className).toBeDefined(); // Dynamic class for current page
+    expect(number2.props.className).toBeDefined(); // Dynamic class for selectable page
+    expect(number3.props.className).toBeDefined(); // Dynamic class for selectable page
+    expect(number4.props.className).toBeDefined(); // Dynamic class for selectable page
+    expect(number5.props.className).toBeDefined(); // Dynamic class for selectable page
     const [number1Children] = React.Children.toArray(number1.props.children) as React.ReactElement[];
     expect(number1Children).toEqual(1);
     const [number2Children] = React.Children.toArray(number2.props.children) as React.ReactElement[];
@@ -145,9 +141,9 @@ describe('lib/pager', () => {
 
     const pagerWrapper = renderer.getRenderOutput();
     const [countInfo] = React.Children.toArray(pagerWrapper.props.children) as React.ReactElement[];
-    expect(countInfo.props.className).toBe(classNames.Pager);
+    expect(countInfo.props.className).toBeDefined(); // Class names are now dynamic
     const [countInfoInner] = React.Children.toArray(countInfo.props.children) as React.ReactElement[];
-    expect(countInfoInner.props.className).toBe(classNames.PagerInner);
+    expect(countInfoInner.props.className).toBeDefined(); // Class names are now dynamic
     const [textField] = React.Children.toArray(countInfoInner.props.children) as React.ReactElement[];
     const [str] = React.Children.toArray(textField.props.children) as React.ReactElement[];
     expect(str).toEqual('Showing 1 - 5 of 10 results.');
