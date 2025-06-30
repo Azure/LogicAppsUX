@@ -2,17 +2,7 @@
 import type { CardProps } from './index';
 import { getHeaderStyle } from './utils';
 import type { FluentIcon } from '@fluentui/react-icons';
-import {
-  bundleIcon,
-  CommentFilled,
-  CommentRegular,
-  BeakerFilled,
-  BeakerRegular,
-  LockClosedFilled,
-  LockClosedRegular,
-  LinkMultipleRegular,
-  LinkMultipleFilled,
-} from '@fluentui/react-icons';
+import { CommentRegular, BeakerRegular, LockClosedRegular, LinkMultipleRegular } from '@fluentui/react-icons';
 import { Spinner, Tooltip } from '@fluentui/react-components';
 import { memo, useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -46,11 +36,6 @@ interface CardBadgeProps {
   tabIndex?: number;
   cardTitle?: string;
 }
-
-const CommentIcon = bundleIcon(CommentFilled, CommentRegular);
-const LinkIcon = bundleIcon(LinkMultipleFilled, LinkMultipleRegular);
-const BeakerIcon = bundleIcon(BeakerFilled, BeakerRegular);
-const LockIcon = bundleIcon(LockClosedFilled, LockClosedRegular);
 
 export const CardFooter: React.FC<CardFooterProps> = memo(
   ({
@@ -129,28 +114,28 @@ export const CardFooter: React.FC<CardFooterProps> = memo(
             enabled: staticResultsEnabled,
             active: true,
             content: strings.MENU_STATIC_RESULT_ICON_TOOLTIP,
-            IconComponent: BeakerIcon,
+            IconComponent: BeakerRegular,
             title: strings.PANEL_STATIC_RESULT_TITLE,
           },
           {
             enabled: !!commentBox?.comment,
             active: true,
             content: commentBox?.comment,
-            IconComponent: CommentIcon,
+            IconComponent: CommentRegular,
             title: strings.COMMENT,
           },
           {
             enabled: !!(connectionRequired || connectionDisplayName),
             active: !!connectionDisplayName,
             content: connectionDisplayName || connectionTitle,
-            IconComponent: LinkIcon,
+            IconComponent: LinkMultipleRegular,
             title: connectionTitle,
           },
           {
             enabled: isSecureInputsOutputs,
             active: true,
             content: strings.SECURE_INPUTS_OUTPUTS_TOOLTIP,
-            IconComponent: LockIcon,
+            IconComponent: LockClosedRegular,
             title: strings.SECURE_INPUTS_OUTPUTS_TITLE,
           },
         ].filter((badge) => badge.enabled),
