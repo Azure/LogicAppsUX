@@ -5,6 +5,7 @@ import { Value } from '../index';
 import type { ValueProps } from '../types';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 import React from 'react';
+
 describe('ui/monitoring/values/value', () => {
   it('should render a body link value', () => {
     const props: ValueProps = {

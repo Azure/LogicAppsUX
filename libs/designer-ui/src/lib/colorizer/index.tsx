@@ -28,7 +28,7 @@ export interface ColorizerProps {
   utcProps?: UTCDateTimeProps;
 }
 
-export const Colorizer: React.FC<ColorizerProps> = ({ ariaLabel, code, utcProps, language = 'text' }) => {
+export const Colorizer: React.FC<ColorizerProps> = ({ ariaLabel, code, utcProps, language = 'json' }) => {
   const { isInverted } = useTheme();
   const theme = useMemo(() => (isInverted ? themes.vsDark : themes.vsLight), [isInverted]);
   const elementRef = useRef<HTMLPreElement | null>(null);
@@ -92,7 +92,7 @@ export const Colorizer: React.FC<ColorizerProps> = ({ ariaLabel, code, utcProps,
   return (
     <div
       aria-label={ariaLabel}
-      aria-readonly={true}
+      aria-readonly={'true'}
       className={css('msla-colorizer-wrapper', utcProps && 'date-time')}
       role="textbox"
       tabIndex={0}
