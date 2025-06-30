@@ -71,11 +71,7 @@ export const SpotlightSection = ({
     }
 
     return (
-      <AccordionItem
-        value={index}
-        className={styles.recommendationPanelSpotlightSectionContainer}
-        style={{ backgroundColor: tokens.colorNeutralBackground2 }}
-      >
+      <AccordionItem value={index} className={styles.spotlightSectionContainer} style={{ backgroundColor: tokens.colorNeutralBackground2 }}>
         <AccordionHeader className={styles.spotlightSectionHeaderButton}>
           <Text weight="semibold" size={300}>
             {title}
