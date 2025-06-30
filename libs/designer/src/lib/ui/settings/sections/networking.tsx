@@ -425,12 +425,7 @@ export const Networking = ({
         readOnly,
         value: downloadChunkSize?.value?.toString() ?? '',
         placeholder: downloadChunkSizePlaceholder,
-        customLabel: getSettingLabel(
-          contentTransferTitle,
-          /* infoTooltipText */ undefined,
-          downloadContentTransferDescription,
-          chunkedTransferNodeSizeLabel
-        ),
+        customLabel: getSettingLabel('', /* infoTooltipText */ undefined, downloadContentTransferDescription, chunkedTransferNodeSizeLabel),
         onValueChange: (_, newVal) => onDownloadChunkSizeChange(newVal as string),
         ariaLabel: chunkedTransferNodeSizeLabel,
       },

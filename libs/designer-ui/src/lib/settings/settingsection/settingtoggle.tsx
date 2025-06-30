@@ -46,18 +46,20 @@ export const SettingToggle = ({
   };
 
   return (
-    <div className={styles.root}>
+    <>
       {customLabel ? customLabel : null}
-      <Switch
-        className={styles.switch}
-        checked={checked}
-        disabled={readOnly}
-        onChange={handleChange}
-        label={label || `${checked ? (onText ?? defaultOnText) : (offText ?? defaultOffText)}`}
-        labelPosition="before"
-        aria-label={ariaLabel}
-        {...rest}
-      />
-    </div>
+      <div className={styles.root}>
+        <Switch
+          className={styles.switch}
+          checked={checked}
+          disabled={readOnly}
+          onChange={handleChange}
+          label={label || `${checked ? (onText ?? defaultOnText) : (offText ?? defaultOffText)}`}
+          labelPosition="before"
+          aria-label={ariaLabel}
+          {...rest}
+        />
+      </div>
+    </>
   );
 };
