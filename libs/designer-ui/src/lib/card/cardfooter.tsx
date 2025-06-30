@@ -129,7 +129,7 @@ export const CardFooter: React.FC<CardFooterProps> = memo(
             enabled: staticResultsEnabled,
             active: true,
             content: strings.MENU_STATIC_RESULT_ICON_TOOLTIP,
-            iconProps: BeakerIcon,
+            IconComponent: BeakerIcon,
             title: strings.PANEL_STATIC_RESULT_TITLE,
           },
           {
