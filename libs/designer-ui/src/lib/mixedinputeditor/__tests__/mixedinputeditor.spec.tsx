@@ -126,7 +126,7 @@ describe('MixedInputEditor', () => {
       },
     ];
 
-    const { container } = render(
+    const { getByText } = render(
       <MixedInputEditor
         initialValue={initialValue}
         onChange={mockOnChange}
@@ -135,7 +135,8 @@ describe('MixedInputEditor', () => {
       />
     );
 
-    const schemaEditorContainer = container.querySelector('.msla-schema-editor-body');
-    expect(schemaEditorContainer).toBeTruthy();
+    // Check for the schema editor button text instead of class name
+    const schemaButton = getByText('Use sample payload to generate schema');
+    expect(schemaButton).toBeTruthy();
   });
 });

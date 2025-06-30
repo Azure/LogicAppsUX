@@ -6,7 +6,6 @@ import { DropdownControl, DropdownType } from './dropdownControl';
 import { Preview } from './preview';
 import { MinuteTextInput, TextInput } from './textInput';
 import { getIntervalValue, getRecurrenceValue, resources } from './util';
-import { css } from '@fluentui/react';
 import {
   equals,
   getFrequencyValues,
@@ -17,6 +16,7 @@ import {
 } from '@microsoft/logic-apps-shared';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
+import { useRecurrenceStyles } from './recurrence.styles';
 
 export interface Recurrence {
   frequency: string | undefined;
@@ -46,6 +46,7 @@ export const ScheduleEditor = ({
   onChange,
 }: ScheduleEditorProps): JSX.Element => {
   const intl = useIntl();
+  const styles = useRecurrenceStyles();
   const initialRecurrenceValue = getRecurrenceValue(initialValue);
   const [recurrence, setRecurrence] = useState<Recurrence>(initialRecurrenceValue);
 
@@ -133,10 +134,10 @@ export const ScheduleEditor = ({
   };
 
   return (
-    <div className="msla-recurrence-editor">
-      <div className="msla-recurrence-editor-frequency-group">
+    <div className={styles.editor}>
+      <div className={styles.frequencyGroup}>
         <TextInput
-          className={css('msla-recurrence-editor-group', 'msla-recurrence-editor-interval')}
+          className={styles.intervalGroup}
           label={resources.interval.label}
           required={true}
           initialValue={recurrence.interval !== undefined ? recurrence?.interval?.toString() : ''}
@@ -146,7 +147,7 @@ export const ScheduleEditor = ({
           readOnly={readOnly}
         />
         <DropdownControl
-          className={'msla-recurrence-editor-group'}
+          className={styles.editorGroup}
           label={resources.frequency.label}
           required={true}
           options={getFrequencyValues(intl).map((option) => ({ key: option.value, text: option.displayName }))}

@@ -10,9 +10,11 @@ export const useGraphContainerStyles = makeStyles({
     boxSizing: 'border-box',
     ...shorthands.borderRadius('8px'),
     ...shorthands.border('2px', 'solid', tokens.colorNeutralStroke1), // Theme-aware border
-
-    '&.selected': {
-      ...shorthands.border('2px', 'solid', '#1f85ff'), // Blue selection border stays the same
-    },
+  },
+  selected: {
+    ...shorthands.border('2px', 'solid', '#1f85ff'), // Blue selection border stays the same
+  },
+  inactive: {
+    // Add styles for inactive state
   },
 });

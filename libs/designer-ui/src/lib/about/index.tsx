@@ -90,13 +90,13 @@ export const About = ({
   });
   return (
     <div className={styles.container}>
-      <div className="msla-panel-about-name">
+      <div>
         <Label className={styles.connectorLabel} size="large">
           {connectorMsg}
         </Label>
         <div className={styles.connectorName}>{connectorDisplayName ? connectorDisplayName : notAvailable}</div>
       </div>
-      <div className="msla-panel-about-description">
+      <div>
         <Label className={styles.descriptionLabel} size="large">
           {operationNoteMsg}
         </Label>
@@ -115,14 +115,14 @@ export const About = ({
         </div>
       </div>
       {displayRuntimeInfo ? (
-        <div className="msla-panel-about-description">
+        <div>
           <Label className={styles.descriptionLabel} size="large">
             {connectorTypeLabel}
           </Label>
           <div className={styles.description}>{connectorType}</div>
         </div>
       ) : null}
-      <div className="msla-panel-about-tags">
+      <div>
         <Label className={styles.tagsLabel} size="large">
           {tagsMessage}
         </Label>

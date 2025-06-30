@@ -1,4 +1,3 @@
-import { css } from '@fluentui/react';
 import { mergeClasses } from '@fluentui/react-components';
 import { replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
 import { useGraphContainerStyles } from './graphContainer.styles';
@@ -16,7 +15,7 @@ export const GraphContainer: React.FC<GraphContainerProps> = (props: GraphContai
   return (
     <div
       data-automation-id={`msla-graph-container-${replaceWhiteSpaceWithUnderscore(id)}`}
-      className={mergeClasses(styles.root, css(selected && 'selected', !active && 'msla-card-inactive'))}
+      className={mergeClasses(styles.root, selected && styles.selected, !active && styles.inactive)}
     />
   );
 };

@@ -2,6 +2,8 @@ import type { Recurrence } from '.';
 import constants from '../constants';
 import { getIntl, equals, getPropertyValue } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
+import { useRecurrenceStyles } from './recurrence.styles';
+import { mergeClasses } from '@fluentui/react-components';
 
 interface PreviewProps {
   recurrence: Recurrence;
@@ -9,24 +11,30 @@ interface PreviewProps {
 
 export const Preview = ({ recurrence }: PreviewProps): JSX.Element => {
   const intl = useIntl();
+  const styles = useRecurrenceStyles();
   const { frequency, interval, schedule, startTime } = recurrence;
   const previewTitle = intl.formatMessage({ defaultMessage: 'Preview', id: 'MCzWDc', description: 'Recurrence preview title' });
   const scheduleHours = (schedule?.hours ?? []).map((hour) => {
     return hour;
   });
+
+  // Check if dark theme is active
+  const isDarkTheme = document.querySelector('.msla-theme-dark') !== null;
+
   return (
     <>
       {frequency && interval ? (
-        <div className="msla-recurrence-preview">
-          <div className="msla-recurrence-preview-title">{previewTitle}</div>
-          <div className="msla-recurrence-preview-content">
+        <div className={mergeClasses(styles.preview, isDarkTheme && styles.previewDark)}>
+          <div className={styles.previewTitle}>{previewTitle}</div>
+          <div className={styles.previewContent}>
             {convertRecurrenceToExpression(
               frequency,
               interval,
               schedule?.weekDays,
               scheduleHours as number[],
               schedule?.minutes,
-              getMinuteValueFromDatetimeString(startTime)
+              getMinuteValueFromDatetimeString(startTime),
+              styles
             )}
           </div>
         </div>
@@ -41,7 +49,8 @@ const convertRecurrenceToExpression = (
   weekdays?: string[],
   hours?: number[],
   minutes?: number[],
-  startMinute?: number
+  startMinute?: number,
+  styles?: any
 ): JSX.Element => {
   const intl = getIntl();
   let frequencyDesc: string | undefined;
@@ -154,9 +163,9 @@ const convertRecurrenceToExpression = (
     description: 'Recurrence additional message if no minutes or starttime is specified',
   });
   return (
-    <div className="msla-recurrence-friendly-desc">
+    <div className={styles?.friendlyDesc}>
       {summary}
-      {(!minutes || !minutes.length) && !startMinute && <div className="warning-message">{noMinuteOrStartTimeWarning}</div>}
+      {(!minutes || !minutes.length) && !startMinute && <div className={styles?.warningMessage}>{noMinuteOrStartTimeWarning}</div>}
     </div>
   );
 };

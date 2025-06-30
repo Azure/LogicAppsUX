@@ -55,7 +55,7 @@ export const SearchableDropdown: FC<SearchableDropdownProps> = ({
     <Dropdown
       {...dropdownProps}
       aria-labelledby={labelId}
-      className={mergeClasses(styles.searchableDropdown, className ?? 'msla-searchable-dropdown')}
+      className={mergeClasses(styles.searchableDropdown, className)}
       options={options}
       selectedKeys={conditionalVisibilityTempArray}
       onChange={(_e: any, item: any) => {
@@ -80,7 +80,7 @@ export const SearchableDropdown: FC<SearchableDropdownProps> = ({
           return (
             <SearchBox
               autoFocus={true}
-              className={mergeClasses(styles.searchableDropdownSearch, 'msla-searchable-dropdown-search')}
+              className={styles.searchableDropdownSearch}
               onChange={(e, newValue) => setFilterText(newValue ?? '')}
               placeholder={searchOperation}
               key={headerKey}

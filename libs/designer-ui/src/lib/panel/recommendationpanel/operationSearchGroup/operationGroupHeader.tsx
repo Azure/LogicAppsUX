@@ -3,6 +3,7 @@ import { getDisplayNameFromConnector, isBuiltInConnectorId } from '@microsoft/lo
 import { FavoriteButton } from '../favoriteButton';
 import type { Connector, OperationApi } from '@microsoft/logic-apps-shared';
 import { OperationRuntimeBadges } from '../../../connectorsummarycard/operationRuntimeBadges';
+import { useOperationSearchGroupStyles } from './operationSearchGroup.styles';
 
 export interface OperationGroupHeaderNewProps {
   connector: Connector | OperationApi;
@@ -12,12 +13,13 @@ export const OperationGroupHeaderNew = ({ connector }: OperationGroupHeaderNewPr
   const { id } = connector;
   const connectorName = getDisplayNameFromConnector(connector);
   const isBuiltIn = isBuiltInConnectorId(id);
+  const styles = useOperationSearchGroupStyles();
 
   return (
-    <div className="msla-recommendation-panel-operation-search-group-header-display">
-      <Text className="msla-recommendation-panel-operation-search-group-header-title">{connectorName}</Text>
+    <div className={styles.headerDisplay}>
+      <Text className={styles.headerTitle}>{connectorName}</Text>
       <OperationRuntimeBadges isBuiltIn={isBuiltIn} />
-      <div className="msla-recommendation-panel-operation-search-group-header-icons">
+      <div className={styles.headerIcons}>
         <FavoriteButton connectorId={id} showFilledFavoriteOnlyOnHover={false} showUnfilledFavoriteOnlyOnHover={false} />
       </div>
     </div>

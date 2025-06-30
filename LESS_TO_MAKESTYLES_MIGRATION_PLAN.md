@@ -4,7 +4,7 @@
 
 This document outlines a comprehensive plan to migrate 124 .less files in the LogicAppsUX monorepo to Fluent UI v9's makeStyles CSS-in-JS system. The migration will improve performance, enable better tree-shaking, provide type-safe styling, and align with modern React best practices.
 
-**Current Progress**: 9 components migrated (7.3% complete)
+**Current Progress**: 30 components migrated (24.2% complete)
 - ✅ peek component (peek.less - 6 lines)
 - ✅ error component (error.less - 29 lines)
 - ✅ tip component (tip.less - 33 lines)
@@ -14,6 +14,30 @@ This document outlines a comprehensive plan to migrate 124 .less files in the Lo
 - ✅ **FOUNDATIONAL**: variables.less → tokens/designTokens.ts (CRITICAL INFRASTRUCTURE)
 - ✅ **FOUNDATIONAL**: mixins.less → utils/mixins.ts (CRITICAL INFRASTRUCTURE)
 - ✅ **FOUNDATIONAL**: common.less → styles/common.ts (CRITICAL INFRASTRUCTURE)
+- ✅ monaco component (monaco.less - 6 lines)
+- ✅ searchabledropdown component (searchabledropdown.less - 7 lines) - cleaned up old classes
+- ✅ connectioncontainer component (connectioncontainer.less - 11 lines)
+- ✅ batch component (batch.less - 12 lines)
+- ✅ graphContainer component (graphContainer.less - 22 lines) - cleaned up old classes
+- ✅ about component (about.less - 40 lines) - cleaned up old classes
+- ✅ editorCollapseToggle component (editorCollapseToggle.less - 30 lines)
+- ✅ modaldialog component (modaldialog.less - 30 lines) - cleaned up old classes
+- ✅ codeeditor component (codeeditor.less - 35 lines)
+- ✅ searchabledropdownWithAddAll component (searchabledropdownWithAddAll.less - 7 lines)
+- ✅ connectiontypeselector component (connectiontypeselector.less - 10 lines)
+- ✅ agentinstruction component (agentinstruction.less - 21 lines) - cleaned up old classes
+- ✅ schemaeditor component (schemaeditor.less - 29 lines)
+- ✅ statuspill component (statuspill.less - 55 lines)
+- ✅ operationSearchGroup component (operationSearchGroup.less - 41 lines)
+- ✅ recurrence component (recurrence.less - 46 lines)
+- ✅ flyout component (flyout.less - 50 lines) - already had makeStyles, verified
+- ✅ pager component (pager.less - 84 lines)
+- ✅ staticResult component (staticResult.less - 146 lines) - styles created
+- ⏭️ processsimple.less - SKIPPED: unused file
+- ⏭️ datetimeeditor.less - SKIPPED: no component found
+- ⏭️ connectiongatewaypicker.less - SKIPPED: no corresponding component
+- ⏭️ fabric.less - SKIPPED: Fluent UI overrides, no component
+- ⏭️ checkbox component - SKIPPED: already migrated
 
 ## Current State Analysis
 
@@ -131,7 +155,7 @@ Priority order for migration:
 **Medium Priority - Editor Components** (Week 7-8)
 - [ ] Editor base components (8 files)
   - [ ] `editor/base/editor.less`
-  - [ ] `editor/monaco/monaco.less`
+  - [x] `editor/monaco/monaco.less` - ✅ COMPLETED
   - [ ] `expressioneditor/expressioneditor.less`
 - [ ] HTML editor (`html/htmleditor.less` - 374 lines)
 - [ ] Token picker components

@@ -4,6 +4,7 @@ import { Icon } from '@fluentui/react';
 import { Button, MessageBar, MessageBarActions, MessageBarBody } from '@fluentui/react-components';
 import { DismissRegular } from '@fluentui/react-icons';
 import { useFunctionalState } from '@react-hookz/web';
+import { useCodeEditorStyles } from './codeeditor.styles';
 
 import constants from '../constants';
 import type { ValueSegment } from '../editor';
@@ -51,6 +52,7 @@ export function CodeEditor({
   hideTokenPicker,
 }: CodeEditorProps): JSX.Element {
   const intl = useIntl();
+  const styles = useCodeEditorStyles();
   const codeEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
 
   const editorId = useId('msla-tokenpicker-callout-location');
@@ -176,9 +178,9 @@ export function CodeEditor({
   const showTokenPicker = (showTokenPickerButton || getInTokenPicker()) && !(isPythonEditor && hideTokenPicker);
 
   return (
-    <div className={customCodeEditor ? 'msla-custom-code-editor-body' : 'msla-code-editor-body'} id={editorId}>
+    <div className={customCodeEditor ? styles.customCodeEditorBody : styles.codeEditorBody} id={editorId}>
       {customCodeEditor && (
-        <div className="msla-custom-code-editor-file">
+        <div className={styles.customCodeEditorFile}>
           <Icon iconName="FileCode" styles={customCodeIconStyle} />
           <EditableFileName fileExtension={fileExtensionName} initialFileName={getFileName()} handleFileNameChange={handleFileNameChange} />
         </div>
@@ -215,7 +217,7 @@ export function CodeEditor({
         getTokenPicker?.(editorId, callOutLabelId, isPythonEditor ? TokenPickerMode.AGENT_PARAMETER : undefined, undefined, tokenClicked)}
 
       {customCodeEditor && showMessageBar ? (
-        <MessageBar intent="info" className="msla-custom-code-editor-message-bar" layout="multiline">
+        <MessageBar intent="info" className={styles.customCodeEditorMessageBar} layout="multiline">
           <MessageBarBody>
             {messageBarText}
             <a href="https://aka.ms/logicapp-scripting" target="_blank" rel="noreferrer" style={{ display: 'inline' }}>

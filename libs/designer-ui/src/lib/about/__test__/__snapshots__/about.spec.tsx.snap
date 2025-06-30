@@ -4,9 +4,7 @@ exports[`lib/monitoring/requestpanel/request > renders correctly when descriptio
 <div
   className="___1yay4zj_0000000 f1vx9l62 f22iagw fhumf3i fat0sn4 f1cnezvq fekwl8i"
 >
-  <div
-    className="msla-panel-about-name"
-  >
+  <div>
     <Label
       className="___vbk37y0_0000000 fdghr9 fk6fouc"
       size="large"
@@ -19,9 +17,7 @@ exports[`lib/monitoring/requestpanel/request > renders correctly when descriptio
       Not available
     </div>
   </div>
-  <div
-    className="msla-panel-about-description"
-  >
+  <div>
     <Label
       className="___1a366p4_0000000 fk6fouc"
       size="large"
@@ -34,9 +30,7 @@ exports[`lib/monitoring/requestpanel/request > renders correctly when descriptio
       <DocumentationItem />
     </div>
   </div>
-  <div
-    className="msla-panel-about-tags"
-  >
+  <div>
     <Label
       className="___1a366p4_0000000 fk6fouc"
       size="large"
@@ -56,9 +50,7 @@ exports[`lib/monitoring/requestpanel/request > renders correctly with different 
 <div
   className="___1yay4zj_0000000 f1vx9l62 f22iagw fhumf3i fat0sn4 f1cnezvq fekwl8i"
 >
-  <div
-    className="msla-panel-about-name"
-  >
+  <div>
     <Label
       className="___vbk37y0_0000000 fdghr9 fk6fouc"
       size="large"
@@ -71,9 +63,7 @@ exports[`lib/monitoring/requestpanel/request > renders correctly with different 
       new test
     </div>
   </div>
-  <div
-    className="msla-panel-about-description"
-  >
+  <div>
     <Label
       className="___1a366p4_0000000 fk6fouc"
       size="large"
@@ -86,9 +76,7 @@ exports[`lib/monitoring/requestpanel/request > renders correctly with different 
       <DocumentationItem />
     </div>
   </div>
-  <div
-    className="msla-panel-about-tags"
-  >
+  <div>
     <Label
       className="___1a366p4_0000000 fk6fouc"
       size="large"
@@ -108,9 +96,7 @@ exports[`lib/monitoring/requestpanel/request > renders correctly with different 
 <div
   className="___1yay4zj_0000000 f1vx9l62 f22iagw fhumf3i fat0sn4 f1cnezvq fekwl8i"
 >
-  <div
-    className="msla-panel-about-name"
-  >
+  <div>
     <Label
       className="___vbk37y0_0000000 fdghr9 fk6fouc"
       size="large"
@@ -123,9 +109,7 @@ exports[`lib/monitoring/requestpanel/request > renders correctly with different 
       Not available
     </div>
   </div>
-  <div
-    className="msla-panel-about-description"
-  >
+  <div>
     <Label
       className="___1a366p4_0000000 fk6fouc"
       size="large"
@@ -138,9 +122,7 @@ exports[`lib/monitoring/requestpanel/request > renders correctly with different 
       <DocumentationItem />
     </div>
   </div>
-  <div
-    className="msla-panel-about-tags"
-  >
+  <div>
     <Label
       className="___1a366p4_0000000 fk6fouc"
       size="large"
@@ -175,9 +157,7 @@ exports[`lib/monitoring/requestpanel/request > should render 1`] = `
 <div
   className="___1yay4zj_0000000 f1vx9l62 f22iagw fhumf3i fat0sn4 f1cnezvq fekwl8i"
 >
-  <div
-    className="msla-panel-about-name"
-  >
+  <div>
     <Label
       className="___vbk37y0_0000000 fdghr9 fk6fouc"
       size="large"
@@ -190,9 +170,7 @@ exports[`lib/monitoring/requestpanel/request > should render 1`] = `
       Not available
     </div>
   </div>
-  <div
-    className="msla-panel-about-description"
-  >
+  <div>
     <Label
       className="___1a366p4_0000000 fk6fouc"
       size="large"
@@ -205,9 +183,7 @@ exports[`lib/monitoring/requestpanel/request > should render 1`] = `
       <DocumentationItem />
     </div>
   </div>
-  <div
-    className="msla-panel-about-tags"
-  >
+  <div>
     <Label
       className="___1a366p4_0000000 fk6fouc"
       size="large"
@@ -227,9 +203,7 @@ exports[`lib/monitoring/requestpanel/request > should render a body 1`] = `
 <div
   className="___1yay4zj_0000000 f1vx9l62 f22iagw fhumf3i fat0sn4 f1cnezvq fekwl8i"
 >
-  <div
-    className="msla-panel-about-name"
-  >
+  <div>
     <Label
       className="___vbk37y0_0000000 fdghr9 fk6fouc"
       size="large"
@@ -242,9 +216,7 @@ exports[`lib/monitoring/requestpanel/request > should render a body 1`] = `
       test
     </div>
   </div>
-  <div
-    className="msla-panel-about-description"
-  >
+  <div>
     <Label
       className="___1a366p4_0000000 fk6fouc"
       size="large"
@@ -259,9 +231,7 @@ exports[`lib/monitoring/requestpanel/request > should render a body 1`] = `
       />
     </div>
   </div>
-  <div
-    className="msla-panel-about-tags"
-  >
+  <div>
     <Label
       className="___1a366p4_0000000 fk6fouc"
       size="large"
@@ -296,9 +266,7 @@ exports[`lib/monitoring/requestpanel/request > should render a description with 
 <div
   className="___1yay4zj_0000000 f1vx9l62 f22iagw fhumf3i fat0sn4 f1cnezvq fekwl8i"
 >
-  <div
-    className="msla-panel-about-name"
-  >
+  <div>
     <Label
       className="___vbk37y0_0000000 fdghr9 fk6fouc"
       size="large"
@@ -311,9 +279,7 @@ exports[`lib/monitoring/requestpanel/request > should render a description with 
       test
     </div>
   </div>
-  <div
-    className="msla-panel-about-description"
-  >
+  <div>
     <Label
       className="___1a366p4_0000000 fk6fouc"
       size="large"
@@ -334,9 +300,7 @@ exports[`lib/monitoring/requestpanel/request > should render a description with 
       />
     </div>
   </div>
-  <div
-    className="msla-panel-about-tags"
-  >
+  <div>
     <Label
       className="___1a366p4_0000000 fk6fouc"
       size="large"
