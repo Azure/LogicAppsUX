@@ -59,9 +59,11 @@ import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
-import { Handle, Position, type NodeProps } from '@xyflow/react';
+import { Position, type NodeProps } from '@xyflow/react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { CopyTooltip } from '../common/DesignerContextualMenu/CopyTooltip';
+import { EdgeDrawSourceHandle } from './handles/EdgeDrawSourceHandle';
+import { EdgeDrawTargetHandle } from './handles/EdgeDrawTargetHandle';
 
 const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
   const readOnly = useReadOnly();
@@ -318,7 +320,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   return (
     <>
       <div className="nopan" ref={ref as any}>
-        <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
+        <EdgeDrawTargetHandle targetPosition={targetPosition} />
         <Card
           active={isCardActive}
           showStatusPill={isMonitoringView && isCardActive}
@@ -354,7 +356,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
           nodeIndex={nodeIndex}
         />
         {showCopyCallout ? <CopyTooltip id={id} targetRef={ref} hideTooltip={clearCopyTooltip} /> : null}
-        <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
+        <EdgeDrawSourceHandle sourcePosition={sourcePosition} />
       </div>
       {showLeafComponents ? (
         <div className={'edge-drop-zone-container'}>

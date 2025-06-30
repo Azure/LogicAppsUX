@@ -13,6 +13,7 @@ import { GraphContainer } from '@microsoft/designer-ui';
 import { SUBGRAPH_TYPES, useNodeSize, useNodeLeafIndex, isNullOrUndefined, removeIdTag } from '@microsoft/logic-apps-shared';
 import { memo } from 'react';
 import { Handle, Position, type NodeProps } from '@xyflow/react';
+import { EdgeDrawSourceHandle } from './handles/EdgeDrawSourceHandle';
 
 const GraphContainerNode = ({ targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
   const readOnly = useReadOnly();
@@ -42,7 +43,7 @@ const GraphContainerNode = ({ targetPosition = Position.Top, sourcePosition = Po
       >
         <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
         <GraphContainer id={id} active={isMonitoringView ? !isNullOrUndefined(runData?.status) : true} selected={selected} />
-        <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
+        <EdgeDrawSourceHandle sourcePosition={sourcePosition} />
       </div>
       {showLeafComponents && (
         <div className="edge-drop-zone-container">

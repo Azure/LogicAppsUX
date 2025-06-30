@@ -37,7 +37,6 @@ export interface SpotlightSectionProps {
   noOperationDescription?: string;
   onConnectorSelected: (connectorId: string, origin?: string) => void;
   onOperationSelected: (operationId: string, apiId?: string, origin?: string) => void;
-  onSectionBodyRender?: (isExpanded: boolean) => JSX.Element;
   filters?: Record<string, string>;
 }
 
@@ -51,7 +50,6 @@ export const SpotlightSection = ({
   noOperationDescription,
   onConnectorSelected,
   onOperationSelected,
-  onSectionBodyRender,
   filters,
   children,
 }: PropsWithChildren<SpotlightSectionProps>) => {
@@ -94,7 +92,7 @@ export const SpotlightSection = ({
             {title}
           </Text>
         </AccordionHeader>
-        <AccordionPanel style={{ padding: '12px 16px' }}>
+        <AccordionPanel className="msla-recommendation-panel-spotlight-section-body" style={{ padding: '12px 16px' }}>
           <Text size={200}>{noOperationDescription}</Text>
         </AccordionPanel>
       </AccordionItem>
@@ -133,23 +131,19 @@ export const SpotlightSection = ({
           </Link>
         ) : null}
       </div>
-      <AccordionPanel style={{ margin: 0 }}>
-        {onSectionBodyRender ? (
-          onSectionBodyRender(isExpanded)
-        ) : (
-          <BrowseGrid
-            onConnectorSelected={onSpotlightSectionConnectorSelected}
-            onOperationSelected={onSpotlightSectionOperationSelected}
-            operationsData={
-              isExpanded
-                ? filteredOperationsData
-                : filteredOperationsData.slice(0, RecommendationPanelConstants.ACTION_SPOTLIGHT.MAX_AMOUNT_OF_SPOTLIGHT_ITEMS)
-            }
-            isLoading={isLoading}
-            hideNoResultsText={true}
-            displayRuntimeInfo={false}
-          />
-        )}
+      <AccordionPanel className="msla-recommendation-panel-spotlight-section-body" style={{ margin: 0 }}>
+        <BrowseGrid
+          onConnectorSelected={onSpotlightSectionConnectorSelected}
+          onOperationSelected={onSpotlightSectionOperationSelected}
+          operationsData={
+            isExpanded
+              ? filteredOperationsData
+              : filteredOperationsData.slice(0, RecommendationPanelConstants.ACTION_SPOTLIGHT.MAX_AMOUNT_OF_SPOTLIGHT_ITEMS)
+          }
+          isLoading={isLoading}
+          hideNoResultsText={true}
+          displayRuntimeInfo={false}
+        />
         {isExpanded ? children : null}
       </AccordionPanel>
     </AccordionItem>

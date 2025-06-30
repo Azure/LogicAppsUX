@@ -53,6 +53,7 @@ import { copyScopeOperation } from '../../core/actions/bjsworkflow/copypaste';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { CopyTooltip } from '../common/DesignerContextualMenu/CopyTooltip';
 import { useNodeRepetition, useAgentRepetition, useAgentActionsRepetition } from '../../core/queries/runs';
+import { EdgeDrawTargetHandle } from './handles/EdgeDrawTargetHandle';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
@@ -356,7 +357,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     <>
       <div className="msla-scope-card nopan" ref={ref as any}>
         <div ref={rootRef}>
-          <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
+          <EdgeDrawTargetHandle targetPosition={targetPosition} />
           <ScopeCard
             active={isCardActive}
             showStatusPill={!isAgent && isMonitoringView && isCardActive}
