@@ -270,7 +270,6 @@ export const InputToken: React.FC<InputTokenProps> = ({ value, brandColor, icon,
   const accessibilityProps = isClickable
     ? {
         role: 'button',
-        // tabIndex: -1, // Not in tab order but still focusable programmatically
         'aria-label': intl.formatMessage(
           {
             defaultMessage: 'Edit {tokenTitle} expression',
