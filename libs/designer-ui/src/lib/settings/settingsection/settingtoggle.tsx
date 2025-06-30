@@ -1,12 +1,15 @@
 import type { SettingProps } from './';
-import type { IToggleProps } from '@fluentui/react';
-import { Toggle } from '@fluentui/react';
+import type { SwitchProps } from '@fluentui/react-components';
+import { Switch } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
+import { useStyles } from './settingtoggle.styles';
 
 export type ToggleChangeHandler = (e: React.MouseEvent<HTMLElement>, checked?: boolean) => void;
 
-export interface SettingToggleProps extends IToggleProps, SettingProps {
+export interface SettingToggleProps extends Omit<SwitchProps, 'onChange'>, SettingProps {
   onToggleInputChange?: ToggleChangeHandler;
+  onText?: string;
+  offText?: string;
 }
 
 export const SettingToggle = ({
@@ -18,8 +21,11 @@ export const SettingToggle = ({
   ariaLabel,
   onText,
   offText,
+  ...rest
 }: SettingToggleProps): JSX.Element | null => {
   const intl = useIntl();
+  const styles = useStyles();
+
   const defaultOnText = intl.formatMessage({
     defaultMessage: 'On',
     id: '2tTQ0A',
@@ -30,20 +36,29 @@ export const SettingToggle = ({
     id: '1htSs7',
     description: 'label when setting is off',
   });
+
+  // v9 Switch onChange handler provides the checked state directly
+  const handleChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
+    if (onToggleInputChange) {
+      // Convert to match the existing handler signature
+      onToggleInputChange(ev as any, ev.currentTarget.checked);
+    }
+  };
+
   return (
     <>
       {customLabel ? customLabel : null}
-      <Toggle
-        className="msla-setting-section-toggle"
-        checked={checked}
-        disabled={readOnly}
-        onText={onText ?? defaultOnText}
-        offText={offText ?? defaultOffText}
-        onChange={onToggleInputChange}
-        label={label}
-        ariaLabel={ariaLabel}
-        aria-label={ariaLabel}
-      />
+      <div className={styles.root}>
+        <Switch
+          checked={checked}
+          disabled={readOnly}
+          onChange={handleChange}
+          label={label || `${checked ? (onText ?? defaultOnText) : (offText ?? defaultOffText)}`}
+          labelPosition="before"
+          aria-label={ariaLabel}
+          {...rest}
+        />
+      </div>
     </>
   );
 };

@@ -1,8 +1,8 @@
-import type { ITextFieldStyles } from '@fluentui/react';
-import { TextField } from '@fluentui/react';
+import { Field, Input } from '@fluentui/react-components';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 import { Label } from '../label';
+import { useStyles } from './textInput.styles';
 
 interface BaseTextProps {
   label: string;
@@ -18,11 +18,6 @@ interface TextProps extends BaseTextProps {
   onChange: (newValue: string) => void;
 }
 
-const textFieldStyles: Partial<ITextFieldStyles> = {
-  fieldGroup: { height: 28, width: '100%' },
-  wrapper: { display: 'inline-flex', width: '100%', maxHeight: 40, alignItems: 'center' },
-};
-
 export const TextInput = ({
   label,
   required,
@@ -36,9 +31,10 @@ export const TextInput = ({
   const [value, setValue] = useState<string>(initialValue ?? '');
   const [errorMessage, setErrorMessage] = useState('');
   const intl = useIntl();
+  const styles = useStyles();
 
   const updateValue = (newValue?: string) => {
-    if (isInteger && Number.isNaN(newValue as any)) {
+    if (isInteger && Number.isNaN(Number(newValue))) {
       setValue(value ?? '');
       setErrorMessage(
         intl.formatMessage({
@@ -53,27 +49,34 @@ export const TextInput = ({
     }
   };
 
+  const handleChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
+    updateValue(ev.target.value);
+  };
+
+  const handleBlur = () => {
+    if (errorMessage) {
+      setErrorMessage('');
+    }
+    onChange(value ?? '');
+  };
+
   return (
-    <div className={className}>
-      <div className="msla-input-parameter-label">
+    <div className={`${styles.root} ${className || ''}`}>
+      <div className={styles.labelContainer}>
         <Label text={label} isRequiredField={required} />
       </div>
-      <TextField
-        ariaLabel={label}
-        value={value}
-        required={required}
-        placeholder={placeholder}
-        styles={textFieldStyles}
-        readOnly={readOnly}
-        onChange={(_, value) => updateValue(value)}
-        onBlur={() => {
-          if (errorMessage) {
-            setErrorMessage('');
-          }
-          onChange(value ?? '');
-        }}
-        errorMessage={errorMessage}
-      />
+      <Field validationMessage={errorMessage} validationState={errorMessage ? 'error' : 'none'} required={required}>
+        <Input
+          className={styles.input}
+          aria-label={label}
+          value={value}
+          placeholder={placeholder}
+          readOnly={readOnly}
+          disabled={readOnly}
+          onChange={handleChange}
+          onBlur={handleBlur}
+        />
+      </Field>
     </div>
   );
 };
@@ -92,6 +95,7 @@ export const MinuteTextInput = ({
   readOnly,
 }: MinuteTextProps): JSX.Element => {
   const intl = useIntl();
+  const styles = useStyles();
   const [value, setValue] = useState<string>(initialValue);
   const getErrorMessage = (input: number[]): string => {
     if (input.includes(Number.NaN)) {
@@ -126,25 +130,33 @@ export const MinuteTextInput = ({
     setValue(newValue ?? '');
   };
 
+  const handleChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
+    updateValue(ev.target.value);
+  };
+
+  const handleBlur = () => {
+    if (!errorMessage) {
+      onChange(convertStringToNumberArray(value));
+    }
+  };
+
   return (
-    <div className={className}>
-      <div className="msla-input-parameter-label">
+    <div className={`${styles.root} ${className || ''}`}>
+      <div className={styles.labelContainer}>
         <Label text={label} isRequiredField={required} />
       </div>
-      <TextField
-        ariaLabel={label}
-        value={value}
-        placeholder={placeholder}
-        styles={textFieldStyles}
-        readOnly={readOnly}
-        onChange={(_, value) => updateValue(value)}
-        onBlur={() => {
-          if (!errorMessage) {
-            onChange(convertStringToNumberArray(value));
-          }
-        }}
-        errorMessage={errorMessage}
-      />
+      <Field validationMessage={errorMessage} validationState={errorMessage ? 'error' : 'none'} required={required}>
+        <Input
+          className={styles.input}
+          aria-label={label}
+          value={value}
+          placeholder={placeholder}
+          readOnly={readOnly}
+          disabled={readOnly}
+          onChange={handleChange}
+          onBlur={handleBlur}
+        />
+      </Field>
     </div>
   );
 };

@@ -63,7 +63,6 @@ export const DataHandling = ({
           checked: !disableAutomaticDecompression?.value,
           onToggleInputChange: (_, checked) => onAutomaticDecompressionChange(!checked),
           customLabel: getSettingLabel(automaticDecompressionLabelText, automaticDecompressionLabelTooltip),
-          inlineLabel: true,
           ariaLabel: automaticDecompressionLabelText,
         },
         visible: disableAutomaticDecompression?.isSupported,

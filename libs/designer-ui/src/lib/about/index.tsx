@@ -1,7 +1,6 @@
 import type { BadgeProps } from '../card';
 import { DocumentationItem } from '../recommendation/documentationItem';
-import { Spinner, SpinnerSize } from '@fluentui/react';
-import { Label } from '@fluentui/react-components';
+import { Label, Spinner } from '@fluentui/react-components';
 import type { OpenAPIV2 } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 import { useAboutStyles } from './about.styles';
@@ -31,7 +30,7 @@ export const About = ({
   if (isLoading) {
     return (
       <div className={styles.container}>
-        <Spinner size={SpinnerSize.large} />
+        <Spinner size="large" />
       </div>
     );
   }
