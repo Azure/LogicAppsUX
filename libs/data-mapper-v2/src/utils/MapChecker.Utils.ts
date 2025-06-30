@@ -256,8 +256,8 @@ const deserializationMessages = defineMessages<MapIssueType>({
     description: 'Error message for key not found',
   },
   SourceSchemaNodeNotFound: {
-    defaultMessage: `Source schema node not found for node key ''{nodeKey}''`,
-    id: 'FPBmrA',
+    defaultMessage: `Source schema node not found, or invalid custom value for key ''{nodeKey}''`,
+    id: 'UWsN6V',
     description: 'Error message for source schema node not found',
   },
 });

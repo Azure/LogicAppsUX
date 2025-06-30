@@ -4,6 +4,7 @@ import type { OperationActionData } from '../interfaces';
 import { useIntl } from 'react-intl';
 import type { OperationApi } from '@microsoft/logic-apps-shared';
 import { OperationGroupHeaderNew } from './operationGroupHeader';
+import { useOperationSearchGroupStyles } from './operationSearchGroup.styles';
 
 export interface OperationSearchGroupProps {
   operationApi: OperationApi;
@@ -23,6 +24,7 @@ export const OperationSearchGroup = ({
 }: OperationSearchGroupProps) => {
   const { id } = operationApi;
   const intl = useIntl();
+  const styles = useOperationSearchGroupStyles();
 
   const seeMoreText = intl.formatMessage({
     defaultMessage: 'See more',
@@ -32,10 +34,10 @@ export const OperationSearchGroup = ({
 
   return (
     <div style={{ position: 'relative' }}>
-      <div className={'msla-recommendation-panel-operation-search-group-header'}>
+      <div className={styles.header}>
         <OperationGroupHeaderNew connector={operationApi} />
         <Button
-          className="msla-op-search-group-see-more"
+          className={styles.seeMoreButton}
           style={{ padding: 0, justifyContent: 'flex-end' }}
           appearance="transparent"
           onClick={() => onConnectorClick(id)}
