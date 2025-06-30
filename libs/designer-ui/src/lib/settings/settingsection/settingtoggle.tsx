@@ -54,6 +54,7 @@ export const SettingToggle = ({
         disabled={readOnly}
         onChange={handleChange}
         label={label || `${checked ? (onText ?? defaultOnText) : (offText ?? defaultOffText)}`}
+        labelPosition="before"
         aria-label={ariaLabel}
         {...rest}
       />

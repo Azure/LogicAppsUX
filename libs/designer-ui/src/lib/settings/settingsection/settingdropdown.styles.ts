@@ -4,7 +4,7 @@ export const useStyles = makeStyles({
   root: {
     display: 'flex',
     flexDirection: 'column',
-    width: '100%',
+    width: '50%', // Match the LESS style for dropdowns
   },
   dropdown: {
     width: '100%',
