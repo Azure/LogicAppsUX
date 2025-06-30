@@ -9,7 +9,7 @@ exports[`CollapsedNode > should call dispatch on context menu event 1`] = `
         style="width: 200px; height: 50px;"
       >
         <div
-          class="node-handle top"
+          class="___1jzzvj1_8dxafd0 f3bhgqh f15a45g f113wtx2 fly5x3f f1l02sjl fl4tsp0 f2imlf6 f1ewtqcl fj25m7a"
           position="top"
           type="target"
         >
@@ -27,7 +27,7 @@ exports[`CollapsedNode > should call dispatch on context menu event 1`] = `
           not expanding
         </div>
         <div
-          class="node-handle bottom"
+          class="___ntqwa30_se4bvr0 f3bhgqh fd7fpy0 f15a45g"
           position="bottom"
           type="source"
         >
@@ -41,7 +41,7 @@ exports[`CollapsedNode > should call dispatch on context menu event 1`] = `
       style="width: 200px; height: 50px;"
     >
       <div
-        class="node-handle top"
+        class="___1jzzvj1_8dxafd0 f3bhgqh f15a45g f113wtx2 fly5x3f f1l02sjl fl4tsp0 f2imlf6 f1ewtqcl fj25m7a"
         position="top"
         type="target"
       >
@@ -59,7 +59,7 @@ exports[`CollapsedNode > should call dispatch on context menu event 1`] = `
         not expanding
       </div>
       <div
-        class="node-handle bottom"
+        class="___ntqwa30_se4bvr0 f3bhgqh fd7fpy0 f15a45g"
         position="bottom"
         type="source"
       >
@@ -131,7 +131,7 @@ exports[`CollapsedNode > should render without crashing 1`] = `
   }
 >
   <div
-    className="node-handle top"
+    className="___1jzzvj1_8dxafd0 f3bhgqh f15a45g f113wtx2 fly5x3f f1l02sjl fl4tsp0 f2imlf6 f1ewtqcl fj25m7a"
     isConnectable={false}
     position="top"
     type="target"
@@ -151,7 +151,7 @@ exports[`CollapsedNode > should render without crashing 1`] = `
     not expanding
   </div>
   <div
-    className="node-handle bottom"
+    className="___ntqwa30_se4bvr0 f3bhgqh fd7fpy0 f15a45g"
     isConnectable={false}
     position="bottom"
     type="source"

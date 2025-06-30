@@ -54,6 +54,10 @@ export const useShowConnectionsPanel = () => {
   return useSelector((state: RootState) => state.designerOptions?.showConnectionsPanel ?? false);
 };
 
+export const useShowEdgeDrawing = () => {
+  return useSelector((state: RootState) => state.designerOptions?.showEdgeDrawing ?? false);
+};
+
 export const useShowPerformanceDebug = () => {
   return useSelector((state: RootState) => state.designerOptions.showPerformanceDebug ?? false);
 };

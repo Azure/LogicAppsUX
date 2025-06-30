@@ -1,14 +1,15 @@
 import { CollapsedCard } from '@microsoft/designer-ui';
 import { memo, useCallback, useEffect, useMemo } from 'react';
-import { Handle, Position, type NodeProps } from '@xyflow/react';
+import type { NodeProps } from '@xyflow/react';
 import { setNodeContextMenuData } from '../../core/state/designerView/designerViewSlice';
 import { setFocusNode, type AppDispatch, type RootState } from '../../core';
 import { useDispatch, useSelector } from 'react-redux';
 import { useCollapsedMapping, useIsActionCollapsed, useShouldNodeFocus } from '../../core/state/workflow/workflowSelectors';
 import { isNullOrUndefined, useNodeIndex } from '@microsoft/logic-apps-shared';
 import { useOperationsVisuals } from '../../core/state/operation/operationSelector';
+import { DefaultHandle } from './handles/DefaultHandle';
 
-const CollapsedNode = ({ targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
+const CollapsedNode = ({ id }: NodeProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const collapsedMapping = useCollapsedMapping();
   const isNodeCollapsed = useIsActionCollapsed(id);
@@ -56,7 +57,7 @@ const CollapsedNode = ({ targetPosition = Position.Top, sourcePosition = Positio
         height: 50,
       }}
     >
-      <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
+      <DefaultHandle type="target" />
       <CollapsedCard
         id={id}
         actionCount={actionCount}
@@ -66,7 +67,7 @@ const CollapsedNode = ({ targetPosition = Position.Top, sourcePosition = Positio
         setFocus={shouldFocus}
         nodeIndex={nodeIndex}
       />
-      <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
+      <DefaultHandle type="source" />
     </div>
   );
 };
