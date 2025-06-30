@@ -192,10 +192,15 @@ export const Networking = ({
     id: 'hMf2TA',
     description: 'sublabel for content transfer setting',
   });
-  const chunkedTransferNodeSizeLabel = intl.formatMessage({
-    defaultMessage: 'Chunk size',
-    id: 'STWbak',
-    description: 'label for chunked transfer node size',
+  const uploadChunkSizeLabel = intl.formatMessage({
+    defaultMessage: 'Upload chunk size',
+    id: 'Lu+3Y4',
+    description: 'label for upload chunk size',
+  });
+  const downloadChunkSizeLabel = intl.formatMessage({
+    defaultMessage: 'Download chunk size',
+    id: '0bqihO',
+    description: 'label for download chunk size',
   });
   const uploadChunkSizePlaceholder = intl.formatMessage(
     {
@@ -410,9 +415,9 @@ export const Networking = ({
         readOnly,
         value: uploadChunk?.value?.uploadChunkSize?.toString() ?? '',
         placeholder: uploadChunkSizePlaceholder,
-        customLabel: getSettingLabel('', /* infoTooltipText */ undefined, /* SettingDescription */ undefined, chunkedTransferNodeSizeLabel),
+        customLabel: getSettingLabel('', /* infoTooltipText */ undefined, /* SettingDescription */ undefined, uploadChunkSizeLabel),
         onValueChange: (_, newVal) => onUploadChunkSizeChange(newVal as string),
-        ariaLabel: chunkedTransferNodeSizeLabel,
+        ariaLabel: uploadChunkSizeLabel,
       },
       visible: uploadChunk?.isSupported && uploadChunkMetadata?.acceptUploadSize && chunkedTransferMode,
     };
@@ -425,9 +430,9 @@ export const Networking = ({
         readOnly,
         value: downloadChunkSize?.value?.toString() ?? '',
         placeholder: downloadChunkSizePlaceholder,
-        customLabel: getSettingLabel('', /* infoTooltipText */ undefined, downloadContentTransferDescription, chunkedTransferNodeSizeLabel),
+        customLabel: getSettingLabel('', /* infoTooltipText */ undefined, downloadContentTransferDescription, downloadChunkSizeLabel),
         onValueChange: (_, newVal) => onDownloadChunkSizeChange(newVal as string),
-        ariaLabel: chunkedTransferNodeSizeLabel,
+        ariaLabel: downloadChunkSizeLabel,
       },
       visible: hideContentTransferSettings ? !hideContentTransferSettings : downloadChunkMetadata?.acceptDownloadSize,
     };
