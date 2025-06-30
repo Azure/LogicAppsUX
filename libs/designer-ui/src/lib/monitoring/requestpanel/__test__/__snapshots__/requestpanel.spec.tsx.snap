@@ -7,78 +7,55 @@ exports[`lib/monitoring/requestpanel > should render 1`] = `
   >
     <div>
       <div
-        className="msla-pager-v2"
+        className="___139oj93_0000000 f22iagw f122n59 f4d9j23 f19jf40t fduql59 f10pi13n"
         onClick={[Function]}
       >
-        <div
-          className="msla-pager-failed-container"
+        <button
+          aria-label="Previous"
+          className="fui-Button r1alrhcs ___1pr7tf5_16tipiy f1c21dwh f1p3nwhy f11589ue f1q5o8ev f1pdflbu f1s2aq7o f9ql6rf f1s2uweq fr80ssc f1ukrpxl fecsdlb fvgxktp f19vpps7 fv5swzo f1al02dq f3h1zc4 f1h0usnq fs4ktlq f16h9ulv fx2bmrt fcvwxyo f1ol4fw6 f1q1lw4e f1dwjv2g f1kc2mi9 f1et0tmh fb3rf2x f1wi8ngl f44lkw9 fdrzuqr f15x8b5r fphbwmw f8w4c43 f4lkoma fg455y9 f1rvyvqg f1cwzwz f14g86mu f1dcs8yz fjwq6ea f1lr3nhc fn5gmvv f1mbxvi6 f1vmkb5g f53ppgq f1663y11 f18v5270 f80fkiy f1y0svfh fihuait fnxhupq fx507ft fyd6l6x f1062rbf f18ktai2 fwbmr0d f44c6la"
+          disabled={true}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onPointerEnter={[Function]}
+          onPointerLeave={[Function]}
+          type="button"
         >
-          <div
-            className="ms-TooltipHost root-109"
-            onBlurCapture={[Function]}
-            onFocusCapture={[Function]}
-            onKeyDown={[Function]}
-            onMouseEnter={[Function]}
-            onMouseLeave={[Function]}
-            role="none"
+          <span
+            className="fui-Button__icon rywnvv2"
           >
-            <button
-              aria-disabled={true}
-              aria-label="Previous"
-              className="ms-Button ms-Button--icon is-disabled root-110"
-              data-is-focusable={false}
-              disabled={true}
-              onClick={[Function]}
-              onKeyDown={[Function]}
-              onKeyPress={[Function]}
-              onKeyUp={[Function]}
-              onMouseDown={[Function]}
-              onMouseUp={[Function]}
-              type="button"
+            <svg
+              aria-hidden={true}
+              className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+              fill="currentColor"
+              height="1em"
+              viewBox="0 0 20 20"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
             >
-              <span
-                className="ms-Button-flexContainer flexContainer-111"
-                data-automationid="splitbuttonprimary"
-              >
-                <i
-                  aria-hidden={true}
-                  className="ms-Icon root-105 css-119 ms-Button-icon icon-113"
-                  data-icon-name="ChevronLeft"
-                  style={
-                    {
-                      "fontFamily": ""FabricMDL2Icons"",
-                    }
-                  }
-                >
-                  
-                </i>
-                <span
-                  className="ms-Button-textContainer textContainer-112"
-                />
-              </span>
-            </button>
-            <div
-              hidden={true}
-              id="tooltip0"
-              style={
-                {
-                  "border": 0,
-                  "height": 1,
-                  "margin": -1,
-                  "overflow": "hidden",
-                  "padding": 0,
-                  "position": "absolute",
-                  "whiteSpace": "nowrap",
-                  "width": 1,
-                }
-              }
+              <path
+                d="M12.27 15.8a.75.75 0 0 1-1.06-.03l-5-5.25a.75.75 0 0 1 0-1.04l5-5.25a.75.75 0 1 1 1.08 1.04L7.8 10l4.5 4.73c.29.3.28.78-.02 1.06Z"
+                fill="currentColor"
+              />
+            </svg>
+            <svg
+              aria-hidden={true}
+              className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+              fill="currentColor"
+              height="1em"
+              viewBox="0 0 20 20"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
             >
-              Previous
-            </div>
-          </div>
-        </div>
+              <path
+                d="M12.35 15.85a.5.5 0 0 1-.7 0L6.16 10.4a.55.55 0 0 1 0-.78l5.49-5.46a.5.5 0 1 1 .7.7L7.2 10l5.16 5.15c.2.2.2.5 0 .7Z"
+                fill="currentColor"
+              />
+            </svg>
+          </span>
+        </button>
         <div
-          className="msla-pager-v2--inner"
+          className="___mwxu0x0_0000000 f1d2rq10 f22iagw f122n59 f19jf40t"
         >
           <span
             className="fui-Text ___c56hd20_1xy0w11 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1gl81tg f2jf649"
@@ -86,73 +63,50 @@ exports[`lib/monitoring/requestpanel > should render 1`] = `
             1 of 1
           </span>
         </div>
-        <div
-          className="msla-pager-failed-container"
+        <button
+          aria-label="Next"
+          className="fui-Button r1alrhcs ___1pr7tf5_16tipiy f1c21dwh f1p3nwhy f11589ue f1q5o8ev f1pdflbu f1s2aq7o f9ql6rf f1s2uweq fr80ssc f1ukrpxl fecsdlb fvgxktp f19vpps7 fv5swzo f1al02dq f3h1zc4 f1h0usnq fs4ktlq f16h9ulv fx2bmrt fcvwxyo f1ol4fw6 f1q1lw4e f1dwjv2g f1kc2mi9 f1et0tmh fb3rf2x f1wi8ngl f44lkw9 fdrzuqr f15x8b5r fphbwmw f8w4c43 f4lkoma fg455y9 f1rvyvqg f1cwzwz f14g86mu f1dcs8yz fjwq6ea f1lr3nhc fn5gmvv f1mbxvi6 f1vmkb5g f53ppgq f1663y11 f18v5270 f80fkiy f1y0svfh fihuait fnxhupq fx507ft fyd6l6x f1062rbf f18ktai2 fwbmr0d f44c6la"
+          disabled={true}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onPointerEnter={[Function]}
+          onPointerLeave={[Function]}
+          type="button"
         >
-          <div
-            className="ms-TooltipHost root-109"
-            onBlurCapture={[Function]}
-            onFocusCapture={[Function]}
-            onKeyDown={[Function]}
-            onMouseEnter={[Function]}
-            onMouseLeave={[Function]}
-            role="none"
+          <span
+            className="fui-Button__icon rywnvv2"
           >
-            <button
-              aria-disabled={true}
-              aria-label="Next"
-              className="ms-Button ms-Button--icon is-disabled root-110"
-              data-is-focusable={false}
-              disabled={true}
-              onClick={[Function]}
-              onKeyDown={[Function]}
-              onKeyPress={[Function]}
-              onKeyUp={[Function]}
-              onMouseDown={[Function]}
-              onMouseUp={[Function]}
-              type="button"
+            <svg
+              aria-hidden={true}
+              className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+              fill="currentColor"
+              height="1em"
+              viewBox="0 0 20 20"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
             >
-              <span
-                className="ms-Button-flexContainer flexContainer-111"
-                data-automationid="splitbuttonprimary"
-              >
-                <i
-                  aria-hidden={true}
-                  className="ms-Icon root-105 css-119 ms-Button-icon icon-113"
-                  data-icon-name="ChevronRight"
-                  style={
-                    {
-                      "fontFamily": ""FabricMDL2Icons"",
-                    }
-                  }
-                >
-                  
-                </i>
-                <span
-                  className="ms-Button-textContainer textContainer-112"
-                />
-              </span>
-            </button>
-            <div
-              hidden={true}
-              id="tooltip4"
-              style={
-                {
-                  "border": 0,
-                  "height": 1,
-                  "margin": -1,
-                  "overflow": "hidden",
-                  "padding": 0,
-                  "position": "absolute",
-                  "whiteSpace": "nowrap",
-                  "width": 1,
-                }
-              }
+              <path
+                d="M7.73 4.2a.75.75 0 0 1 1.06.03l5 5.25c.28.3.28.75 0 1.04l-5 5.25a.75.75 0 1 1-1.08-1.04L12.2 10l-4.5-4.73a.75.75 0 0 1 .02-1.06Z"
+                fill="currentColor"
+              />
+            </svg>
+            <svg
+              aria-hidden={true}
+              className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+              fill="currentColor"
+              height="1em"
+              viewBox="0 0 20 20"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
             >
-              Next
-            </div>
-          </div>
-        </div>
+              <path
+                d="M7.65 4.15c.2-.2.5-.2.7 0l5.49 5.46c.21.22.21.57 0 .78l-5.49 5.46a.5.5 0 0 1-.7-.7L12.8 10 7.65 4.85a.5.5 0 0 1 0-.7Z"
+                fill="currentColor"
+              />
+            </svg>
+          </span>
+        </button>
       </div>
     </div>
   </div>,
@@ -197,7 +151,7 @@ exports[`lib/monitoring/requestpanel > should render 1`] = `
               >
                 <button
                   aria-label="Select all text in 'Duration'"
-                  className="ms-Button ms-Button--icon root-120"
+                  className="ms-Button ms-Button--icon root-109"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -209,12 +163,12 @@ exports[`lib/monitoring/requestpanel > should render 1`] = `
                   type="button"
                 >
                   <span
-                    className="ms-Button-flexContainer flexContainer-111"
+                    className="ms-Button-flexContainer flexContainer-110"
                     data-automationid="splitbuttonprimary"
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
+                      className="ms-Icon root-105 css-118 ms-Button-icon icon-112"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -228,7 +182,7 @@ exports[`lib/monitoring/requestpanel > should render 1`] = `
                 </button>
                 <button
                   aria-label="Copy the value of 'Duration' to the clipboard"
-                  className="ms-Button ms-Button--icon root-120"
+                  className="ms-Button ms-Button--icon root-109"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -240,12 +194,12 @@ exports[`lib/monitoring/requestpanel > should render 1`] = `
                   type="button"
                 >
                   <span
-                    className="ms-Button-flexContainer flexContainer-111"
+                    className="ms-Button-flexContainer flexContainer-110"
                     data-automationid="splitbuttonprimary"
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
+                      className="ms-Icon root-105 css-120 ms-Button-icon icon-112"
                       data-icon-name="Copy"
                       style={
                         {
@@ -309,7 +263,7 @@ exports[`lib/monitoring/requestpanel > should render 1`] = `
               >
                 <button
                   aria-label="Switch 'Start time' to the UTC time format"
-                  className="ms-Button ms-Button--icon root-120"
+                  className="ms-Button ms-Button--icon root-109"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -321,12 +275,12 @@ exports[`lib/monitoring/requestpanel > should render 1`] = `
                   type="button"
                 >
                   <span
-                    className="ms-Button-flexContainer flexContainer-111"
+                    className="ms-Button-flexContainer flexContainer-110"
                     data-automationid="splitbuttonprimary"
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-128 ms-Button-icon icon-121"
+                      className="ms-Icon root-105 css-122 ms-Button-icon icon-112"
                       data-icon-name="DateTime"
                       style={
                         {
@@ -340,7 +294,7 @@ exports[`lib/monitoring/requestpanel > should render 1`] = `
                 </button>
                 <button
                   aria-label="Select all text in 'Start time'"
-                  className="ms-Button ms-Button--icon root-120"
+                  className="ms-Button ms-Button--icon root-109"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -352,12 +306,12 @@ exports[`lib/monitoring/requestpanel > should render 1`] = `
                   type="button"
                 >
                   <span
-                    className="ms-Button-flexContainer flexContainer-111"
+                    className="ms-Button-flexContainer flexContainer-110"
                     data-automationid="splitbuttonprimary"
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
+                      className="ms-Icon root-105 css-118 ms-Button-icon icon-112"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -371,7 +325,7 @@ exports[`lib/monitoring/requestpanel > should render 1`] = `
                 </button>
                 <button
                   aria-label="Copy the value of 'Start time' to the clipboard"
-                  className="ms-Button ms-Button--icon root-120"
+                  className="ms-Button ms-Button--icon root-109"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -383,12 +337,12 @@ exports[`lib/monitoring/requestpanel > should render 1`] = `
                   type="button"
                 >
                   <span
-                    className="ms-Button-flexContainer flexContainer-111"
+                    className="ms-Button-flexContainer flexContainer-110"
                     data-automationid="splitbuttonprimary"
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
+                      className="ms-Icon root-105 css-120 ms-Button-icon icon-112"
                       data-icon-name="Copy"
                       style={
                         {
@@ -452,7 +406,7 @@ exports[`lib/monitoring/requestpanel > should render 1`] = `
               >
                 <button
                   aria-label="Switch 'End time' to the UTC time format"
-                  className="ms-Button ms-Button--icon root-120"
+                  className="ms-Button ms-Button--icon root-109"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -464,12 +418,12 @@ exports[`lib/monitoring/requestpanel > should render 1`] = `
                   type="button"
                 >
                   <span
-                    className="ms-Button-flexContainer flexContainer-111"
+                    className="ms-Button-flexContainer flexContainer-110"
                     data-automationid="splitbuttonprimary"
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-128 ms-Button-icon icon-121"
+                      className="ms-Icon root-105 css-122 ms-Button-icon icon-112"
                       data-icon-name="DateTime"
                       style={
                         {
@@ -483,7 +437,7 @@ exports[`lib/monitoring/requestpanel > should render 1`] = `
                 </button>
                 <button
                   aria-label="Select all text in 'End time'"
-                  className="ms-Button ms-Button--icon root-120"
+                  className="ms-Button ms-Button--icon root-109"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -495,12 +449,12 @@ exports[`lib/monitoring/requestpanel > should render 1`] = `
                   type="button"
                 >
                   <span
-                    className="ms-Button-flexContainer flexContainer-111"
+                    className="ms-Button-flexContainer flexContainer-110"
                     data-automationid="splitbuttonprimary"
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
+                      className="ms-Icon root-105 css-118 ms-Button-icon icon-112"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -514,7 +468,7 @@ exports[`lib/monitoring/requestpanel > should render 1`] = `
                 </button>
                 <button
                   aria-label="Copy the value of 'End time' to the clipboard"
-                  className="ms-Button ms-Button--icon root-120"
+                  className="ms-Button ms-Button--icon root-109"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -526,12 +480,12 @@ exports[`lib/monitoring/requestpanel > should render 1`] = `
                   type="button"
                 >
                   <span
-                    className="ms-Button-flexContainer flexContainer-111"
+                    className="ms-Button-flexContainer flexContainer-110"
                     data-automationid="splitbuttonprimary"
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
+                      className="ms-Icon root-105 css-120 ms-Button-icon icon-112"
                       data-icon-name="Copy"
                       style={
                         {
@@ -585,78 +539,55 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
   >
     <div>
       <div
-        className="msla-pager-v2"
+        className="___139oj93_0000000 f22iagw f122n59 f4d9j23 f19jf40t fduql59 f10pi13n"
         onClick={[Function]}
       >
-        <div
-          className="msla-pager-failed-container"
+        <button
+          aria-label="Previous"
+          className="fui-Button r1alrhcs ___1pr7tf5_16tipiy f1c21dwh f1p3nwhy f11589ue f1q5o8ev f1pdflbu f1s2aq7o f9ql6rf f1s2uweq fr80ssc f1ukrpxl fecsdlb fvgxktp f19vpps7 fv5swzo f1al02dq f3h1zc4 f1h0usnq fs4ktlq f16h9ulv fx2bmrt fcvwxyo f1ol4fw6 f1q1lw4e f1dwjv2g f1kc2mi9 f1et0tmh fb3rf2x f1wi8ngl f44lkw9 fdrzuqr f15x8b5r fphbwmw f8w4c43 f4lkoma fg455y9 f1rvyvqg f1cwzwz f14g86mu f1dcs8yz fjwq6ea f1lr3nhc fn5gmvv f1mbxvi6 f1vmkb5g f53ppgq f1663y11 f18v5270 f80fkiy f1y0svfh fihuait fnxhupq fx507ft fyd6l6x f1062rbf f18ktai2 fwbmr0d f44c6la"
+          disabled={true}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onPointerEnter={[Function]}
+          onPointerLeave={[Function]}
+          type="button"
         >
-          <div
-            className="ms-TooltipHost root-109"
-            onBlurCapture={[Function]}
-            onFocusCapture={[Function]}
-            onKeyDown={[Function]}
-            onMouseEnter={[Function]}
-            onMouseLeave={[Function]}
-            role="none"
+          <span
+            className="fui-Button__icon rywnvv2"
           >
-            <button
-              aria-disabled={true}
-              aria-label="Previous"
-              className="ms-Button ms-Button--icon is-disabled root-110"
-              data-is-focusable={false}
-              disabled={true}
-              onClick={[Function]}
-              onKeyDown={[Function]}
-              onKeyPress={[Function]}
-              onKeyUp={[Function]}
-              onMouseDown={[Function]}
-              onMouseUp={[Function]}
-              type="button"
+            <svg
+              aria-hidden={true}
+              className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+              fill="currentColor"
+              height="1em"
+              viewBox="0 0 20 20"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
             >
-              <span
-                className="ms-Button-flexContainer flexContainer-111"
-                data-automationid="splitbuttonprimary"
-              >
-                <i
-                  aria-hidden={true}
-                  className="ms-Icon root-105 css-119 ms-Button-icon icon-113"
-                  data-icon-name="ChevronLeft"
-                  style={
-                    {
-                      "fontFamily": ""FabricMDL2Icons"",
-                    }
-                  }
-                >
-                  
-                </i>
-                <span
-                  className="ms-Button-textContainer textContainer-112"
-                />
-              </span>
-            </button>
-            <div
-              hidden={true}
-              id="tooltip32"
-              style={
-                {
-                  "border": 0,
-                  "height": 1,
-                  "margin": -1,
-                  "overflow": "hidden",
-                  "padding": 0,
-                  "position": "absolute",
-                  "whiteSpace": "nowrap",
-                  "width": 1,
-                }
-              }
+              <path
+                d="M12.27 15.8a.75.75 0 0 1-1.06-.03l-5-5.25a.75.75 0 0 1 0-1.04l5-5.25a.75.75 0 1 1 1.08 1.04L7.8 10l4.5 4.73c.29.3.28.78-.02 1.06Z"
+                fill="currentColor"
+              />
+            </svg>
+            <svg
+              aria-hidden={true}
+              className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+              fill="currentColor"
+              height="1em"
+              viewBox="0 0 20 20"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
             >
-              Previous
-            </div>
-          </div>
-        </div>
+              <path
+                d="M12.35 15.85a.5.5 0 0 1-.7 0L6.16 10.4a.55.55 0 0 1 0-.78l5.49-5.46a.5.5 0 1 1 .7.7L7.2 10l5.16 5.15c.2.2.2.5 0 .7Z"
+                fill="currentColor"
+              />
+            </svg>
+          </span>
+        </button>
         <div
-          className="msla-pager-v2--inner"
+          className="___mwxu0x0_0000000 f1d2rq10 f22iagw f122n59 f19jf40t"
         >
           <span
             className="fui-Text ___c56hd20_1xy0w11 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1gl81tg f2jf649"
@@ -664,73 +595,50 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
             1 of 1
           </span>
         </div>
-        <div
-          className="msla-pager-failed-container"
+        <button
+          aria-label="Next"
+          className="fui-Button r1alrhcs ___1pr7tf5_16tipiy f1c21dwh f1p3nwhy f11589ue f1q5o8ev f1pdflbu f1s2aq7o f9ql6rf f1s2uweq fr80ssc f1ukrpxl fecsdlb fvgxktp f19vpps7 fv5swzo f1al02dq f3h1zc4 f1h0usnq fs4ktlq f16h9ulv fx2bmrt fcvwxyo f1ol4fw6 f1q1lw4e f1dwjv2g f1kc2mi9 f1et0tmh fb3rf2x f1wi8ngl f44lkw9 fdrzuqr f15x8b5r fphbwmw f8w4c43 f4lkoma fg455y9 f1rvyvqg f1cwzwz f14g86mu f1dcs8yz fjwq6ea f1lr3nhc fn5gmvv f1mbxvi6 f1vmkb5g f53ppgq f1663y11 f18v5270 f80fkiy f1y0svfh fihuait fnxhupq fx507ft fyd6l6x f1062rbf f18ktai2 fwbmr0d f44c6la"
+          disabled={true}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onPointerEnter={[Function]}
+          onPointerLeave={[Function]}
+          type="button"
         >
-          <div
-            className="ms-TooltipHost root-109"
-            onBlurCapture={[Function]}
-            onFocusCapture={[Function]}
-            onKeyDown={[Function]}
-            onMouseEnter={[Function]}
-            onMouseLeave={[Function]}
-            role="none"
+          <span
+            className="fui-Button__icon rywnvv2"
           >
-            <button
-              aria-disabled={true}
-              aria-label="Next"
-              className="ms-Button ms-Button--icon is-disabled root-110"
-              data-is-focusable={false}
-              disabled={true}
-              onClick={[Function]}
-              onKeyDown={[Function]}
-              onKeyPress={[Function]}
-              onKeyUp={[Function]}
-              onMouseDown={[Function]}
-              onMouseUp={[Function]}
-              type="button"
+            <svg
+              aria-hidden={true}
+              className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+              fill="currentColor"
+              height="1em"
+              viewBox="0 0 20 20"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
             >
-              <span
-                className="ms-Button-flexContainer flexContainer-111"
-                data-automationid="splitbuttonprimary"
-              >
-                <i
-                  aria-hidden={true}
-                  className="ms-Icon root-105 css-119 ms-Button-icon icon-113"
-                  data-icon-name="ChevronRight"
-                  style={
-                    {
-                      "fontFamily": ""FabricMDL2Icons"",
-                    }
-                  }
-                >
-                  
-                </i>
-                <span
-                  className="ms-Button-textContainer textContainer-112"
-                />
-              </span>
-            </button>
-            <div
-              hidden={true}
-              id="tooltip36"
-              style={
-                {
-                  "border": 0,
-                  "height": 1,
-                  "margin": -1,
-                  "overflow": "hidden",
-                  "padding": 0,
-                  "position": "absolute",
-                  "whiteSpace": "nowrap",
-                  "width": 1,
-                }
-              }
+              <path
+                d="M7.73 4.2a.75.75 0 0 1 1.06.03l5 5.25c.28.3.28.75 0 1.04l-5 5.25a.75.75 0 1 1-1.08-1.04L12.2 10l-4.5-4.73a.75.75 0 0 1 .02-1.06Z"
+                fill="currentColor"
+              />
+            </svg>
+            <svg
+              aria-hidden={true}
+              className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+              fill="currentColor"
+              height="1em"
+              viewBox="0 0 20 20"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
             >
-              Next
-            </div>
-          </div>
-        </div>
+              <path
+                d="M7.65 4.15c.2-.2.5-.2.7 0l5.49 5.46c.21.22.21.57 0 .78l-5.49 5.46a.5.5 0 0 1-.7-.7L12.8 10 7.65 4.85a.5.5 0 0 1 0-.7Z"
+                fill="currentColor"
+              />
+            </svg>
+          </span>
+        </button>
       </div>
     </div>
   </div>,
@@ -775,7 +683,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
               >
                 <button
                   aria-label="Select all text in 'Duration'"
-                  className="ms-Button ms-Button--icon root-120"
+                  className="ms-Button ms-Button--icon root-109"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -787,12 +695,12 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                   type="button"
                 >
                   <span
-                    className="ms-Button-flexContainer flexContainer-111"
+                    className="ms-Button-flexContainer flexContainer-110"
                     data-automationid="splitbuttonprimary"
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
+                      className="ms-Icon root-105 css-118 ms-Button-icon icon-112"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -806,7 +714,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                 </button>
                 <button
                   aria-label="Copy the value of 'Duration' to the clipboard"
-                  className="ms-Button ms-Button--icon root-120"
+                  className="ms-Button ms-Button--icon root-109"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -818,12 +726,12 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                   type="button"
                 >
                   <span
-                    className="ms-Button-flexContainer flexContainer-111"
+                    className="ms-Button-flexContainer flexContainer-110"
                     data-automationid="splitbuttonprimary"
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
+                      className="ms-Icon root-105 css-120 ms-Button-icon icon-112"
                       data-icon-name="Copy"
                       style={
                         {
@@ -887,7 +795,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
               >
                 <button
                   aria-label="Switch 'Start time' to the UTC time format"
-                  className="ms-Button ms-Button--icon root-120"
+                  className="ms-Button ms-Button--icon root-109"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -899,12 +807,12 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                   type="button"
                 >
                   <span
-                    className="ms-Button-flexContainer flexContainer-111"
+                    className="ms-Button-flexContainer flexContainer-110"
                     data-automationid="splitbuttonprimary"
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-128 ms-Button-icon icon-121"
+                      className="ms-Icon root-105 css-122 ms-Button-icon icon-112"
                       data-icon-name="DateTime"
                       style={
                         {
@@ -918,7 +826,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                 </button>
                 <button
                   aria-label="Select all text in 'Start time'"
-                  className="ms-Button ms-Button--icon root-120"
+                  className="ms-Button ms-Button--icon root-109"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -930,12 +838,12 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                   type="button"
                 >
                   <span
-                    className="ms-Button-flexContainer flexContainer-111"
+                    className="ms-Button-flexContainer flexContainer-110"
                     data-automationid="splitbuttonprimary"
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
+                      className="ms-Icon root-105 css-118 ms-Button-icon icon-112"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -949,7 +857,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                 </button>
                 <button
                   aria-label="Copy the value of 'Start time' to the clipboard"
-                  className="ms-Button ms-Button--icon root-120"
+                  className="ms-Button ms-Button--icon root-109"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -961,12 +869,12 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                   type="button"
                 >
                   <span
-                    className="ms-Button-flexContainer flexContainer-111"
+                    className="ms-Button-flexContainer flexContainer-110"
                     data-automationid="splitbuttonprimary"
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
+                      className="ms-Icon root-105 css-120 ms-Button-icon icon-112"
                       data-icon-name="Copy"
                       style={
                         {
@@ -1030,7 +938,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
               >
                 <button
                   aria-label="Switch 'End time' to the UTC time format"
-                  className="ms-Button ms-Button--icon root-120"
+                  className="ms-Button ms-Button--icon root-109"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -1042,12 +950,12 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                   type="button"
                 >
                   <span
-                    className="ms-Button-flexContainer flexContainer-111"
+                    className="ms-Button-flexContainer flexContainer-110"
                     data-automationid="splitbuttonprimary"
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-128 ms-Button-icon icon-121"
+                      className="ms-Icon root-105 css-122 ms-Button-icon icon-112"
                       data-icon-name="DateTime"
                       style={
                         {
@@ -1061,7 +969,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                 </button>
                 <button
                   aria-label="Select all text in 'End time'"
-                  className="ms-Button ms-Button--icon root-120"
+                  className="ms-Button ms-Button--icon root-109"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -1073,12 +981,12 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                   type="button"
                 >
                   <span
-                    className="ms-Button-flexContainer flexContainer-111"
+                    className="ms-Button-flexContainer flexContainer-110"
                     data-automationid="splitbuttonprimary"
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
+                      className="ms-Icon root-105 css-118 ms-Button-icon icon-112"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -1092,7 +1000,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                 </button>
                 <button
                   aria-label="Copy the value of 'End time' to the clipboard"
-                  className="ms-Button ms-Button--icon root-120"
+                  className="ms-Button ms-Button--icon root-109"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -1104,12 +1012,12 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                   type="button"
                 >
                   <span
-                    className="ms-Button-flexContainer flexContainer-111"
+                    className="ms-Button-flexContainer flexContainer-110"
                     data-automationid="splitbuttonprimary"
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
+                      className="ms-Icon root-105 css-120 ms-Button-icon icon-112"
                       data-icon-name="Copy"
                       style={
                         {
@@ -1190,7 +1098,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
               >
                 <button
                   aria-label="Select all text in 'Method'"
-                  className="ms-Button ms-Button--icon root-120"
+                  className="ms-Button ms-Button--icon root-109"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -1202,12 +1110,12 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                   type="button"
                 >
                   <span
-                    className="ms-Button-flexContainer flexContainer-111"
+                    className="ms-Button-flexContainer flexContainer-110"
                     data-automationid="splitbuttonprimary"
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
+                      className="ms-Icon root-105 css-118 ms-Button-icon icon-112"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -1221,7 +1129,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                 </button>
                 <button
                   aria-label="Copy the value of 'Method' to the clipboard"
-                  className="ms-Button ms-Button--icon root-120"
+                  className="ms-Button ms-Button--icon root-109"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -1233,12 +1141,12 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                   type="button"
                 >
                   <span
-                    className="ms-Button-flexContainer flexContainer-111"
+                    className="ms-Button-flexContainer flexContainer-110"
                     data-automationid="splitbuttonprimary"
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
+                      className="ms-Icon root-105 css-120 ms-Button-icon icon-112"
                       data-icon-name="Copy"
                       style={
                         {
@@ -1302,7 +1210,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
               >
                 <button
                   aria-label="Select all text in 'URI'"
-                  className="ms-Button ms-Button--icon root-120"
+                  className="ms-Button ms-Button--icon root-109"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -1314,12 +1222,12 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                   type="button"
                 >
                   <span
-                    className="ms-Button-flexContainer flexContainer-111"
+                    className="ms-Button-flexContainer flexContainer-110"
                     data-automationid="splitbuttonprimary"
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
+                      className="ms-Icon root-105 css-118 ms-Button-icon icon-112"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -1333,7 +1241,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                 </button>
                 <button
                   aria-label="Copy the value of 'URI' to the clipboard"
-                  className="ms-Button ms-Button--icon root-120"
+                  className="ms-Button ms-Button--icon root-109"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -1345,12 +1253,12 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                   type="button"
                 >
                   <span
-                    className="ms-Button-flexContainer flexContainer-111"
+                    className="ms-Button-flexContainer flexContainer-110"
                     data-automationid="splitbuttonprimary"
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
+                      className="ms-Icon root-105 css-120 ms-Button-icon icon-112"
                       data-icon-name="Copy"
                       style={
                         {
@@ -1412,7 +1320,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
               }
             >
               <div
-                className="ms-DetailsList is-fixed ms-DetailsList--Compact is-horizontalConstrained root-129"
+                className="ms-DetailsList is-fixed ms-DetailsList--Compact is-horizontalConstrained root-123"
                 data-automationid="DetailsList"
                 data-is-scrollable="false"
               >
@@ -1429,9 +1337,9 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                   >
                     <div
                       aria-label="Headers"
-                      className="ms-FocusZone css-147 ms-DetailsHeader root-131"
+                      className="ms-FocusZone css-141 ms-DetailsHeader root-125"
                       data-automationid="DetailsHeader"
-                      data-focuszone-id="FocusZone78"
+                      data-focuszone-id="FocusZone62"
                       data-tabster="{"uncontrolled": {}}"
                       onFocus={[Function]}
                       onKeyDown={[Function]}
@@ -1442,7 +1350,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                       <div
                         aria-label="Key"
                         aria-sort="none"
-                        className="ms-DetailsHeader-cell is-actionable root-148"
+                        className="ms-DetailsHeader-cell is-actionable root-142"
                         data-automationid="ColumnsHeaderColumn"
                         data-is-draggable={false}
                         data-is-focusable="true"
@@ -1456,17 +1364,17 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                         }
                       >
                         <span
-                          className="cellTooltip-156"
+                          className="cellTooltip-150"
                         >
                           <span
-                            className="ms-DetailsHeader-cellTitle cellTitle-154"
-                            id="header77-$key"
+                            className="ms-DetailsHeader-cellTitle cellTitle-148"
+                            id="header61-$key"
                             onClick={[Function]}
                             onContextMenu={[Function]}
                           >
                             <span
-                              className="ms-DetailsHeader-cellName cellName-155"
-                              id="header77-$key-name"
+                              className="ms-DetailsHeader-cellName cellName-149"
+                              id="header61-$key-name"
                             >
                               Key
                             </span>
@@ -1475,7 +1383,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                       </div>
                       <div
                         aria-hidden={true}
-                        className="ms-DetailsHeader-cellSizer cellSizer-138 cellSizerStart-139"
+                        className="ms-DetailsHeader-cellSizer cellSizer-132 cellSizerStart-133"
                         data-is-focusable={false}
                         data-sizer-index={0}
                         onBlur={[Function]}
@@ -1486,7 +1394,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                       <div
                         aria-label="Value"
                         aria-sort="none"
-                        className="ms-DetailsHeader-cell is-actionable root-148"
+                        className="ms-DetailsHeader-cell is-actionable root-142"
                         data-automationid="ColumnsHeaderColumn"
                         data-is-draggable={false}
                         data-is-focusable="true"
@@ -1500,17 +1408,17 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                         }
                       >
                         <span
-                          className="cellTooltip-156"
+                          className="cellTooltip-150"
                         >
                           <span
-                            className="ms-DetailsHeader-cellTitle cellTitle-154"
-                            id="header77-$value"
+                            className="ms-DetailsHeader-cellTitle cellTitle-148"
+                            id="header61-$value"
                             onClick={[Function]}
                             onContextMenu={[Function]}
                           >
                             <span
-                              className="ms-DetailsHeader-cellName cellName-155"
-                              id="header77-$value-name"
+                              className="ms-DetailsHeader-cellName cellName-149"
+                              id="header61-$value-name"
                             >
                               Value
                             </span>
@@ -1519,7 +1427,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                       </div>
                       <div
                         aria-hidden={true}
-                        className="ms-DetailsHeader-cellSizer cellSizer-138 cellSizerEnd-140"
+                        className="ms-DetailsHeader-cellSizer cellSizer-132 cellSizerEnd-134"
                         data-is-focusable={false}
                         data-sizer-index={1}
                         onBlur={[Function]}
@@ -1547,8 +1455,8 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                       role="presentation"
                     >
                       <div
-                        className="ms-FocusZone css-147 focusZone-130"
-                        data-focuszone-id="FocusZone79"
+                        className="ms-FocusZone css-141 focusZone-124"
+                        data-focuszone-id="FocusZone63"
                         data-tabster="{"uncontrolled": {}}"
                         onBlur={[Function]}
                         onFocus={[Function]}
@@ -1584,78 +1492,55 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
   >
     <div>
       <div
-        className="msla-pager-v2"
+        className="___139oj93_0000000 f22iagw f122n59 f4d9j23 f19jf40t fduql59 f10pi13n"
         onClick={[Function]}
       >
-        <div
-          className="msla-pager-failed-container"
+        <button
+          aria-label="Previous"
+          className="fui-Button r1alrhcs ___1pr7tf5_16tipiy f1c21dwh f1p3nwhy f11589ue f1q5o8ev f1pdflbu f1s2aq7o f9ql6rf f1s2uweq fr80ssc f1ukrpxl fecsdlb fvgxktp f19vpps7 fv5swzo f1al02dq f3h1zc4 f1h0usnq fs4ktlq f16h9ulv fx2bmrt fcvwxyo f1ol4fw6 f1q1lw4e f1dwjv2g f1kc2mi9 f1et0tmh fb3rf2x f1wi8ngl f44lkw9 fdrzuqr f15x8b5r fphbwmw f8w4c43 f4lkoma fg455y9 f1rvyvqg f1cwzwz f14g86mu f1dcs8yz fjwq6ea f1lr3nhc fn5gmvv f1mbxvi6 f1vmkb5g f53ppgq f1663y11 f18v5270 f80fkiy f1y0svfh fihuait fnxhupq fx507ft fyd6l6x f1062rbf f18ktai2 fwbmr0d f44c6la"
+          disabled={true}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onPointerEnter={[Function]}
+          onPointerLeave={[Function]}
+          type="button"
         >
-          <div
-            className="ms-TooltipHost root-109"
-            onBlurCapture={[Function]}
-            onFocusCapture={[Function]}
-            onKeyDown={[Function]}
-            onMouseEnter={[Function]}
-            onMouseLeave={[Function]}
-            role="none"
+          <span
+            className="fui-Button__icon rywnvv2"
           >
-            <button
-              aria-disabled={true}
-              aria-label="Previous"
-              className="ms-Button ms-Button--icon is-disabled root-110"
-              data-is-focusable={false}
-              disabled={true}
-              onClick={[Function]}
-              onKeyDown={[Function]}
-              onKeyPress={[Function]}
-              onKeyUp={[Function]}
-              onMouseDown={[Function]}
-              onMouseUp={[Function]}
-              type="button"
+            <svg
+              aria-hidden={true}
+              className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+              fill="currentColor"
+              height="1em"
+              viewBox="0 0 20 20"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
             >
-              <span
-                className="ms-Button-flexContainer flexContainer-111"
-                data-automationid="splitbuttonprimary"
-              >
-                <i
-                  aria-hidden={true}
-                  className="ms-Icon root-105 css-119 ms-Button-icon icon-113"
-                  data-icon-name="ChevronLeft"
-                  style={
-                    {
-                      "fontFamily": ""FabricMDL2Icons"",
-                    }
-                  }
-                >
-                  
-                </i>
-                <span
-                  className="ms-Button-textContainer textContainer-112"
-                />
-              </span>
-            </button>
-            <div
-              hidden={true}
-              id="tooltip112"
-              style={
-                {
-                  "border": 0,
-                  "height": 1,
-                  "margin": -1,
-                  "overflow": "hidden",
-                  "padding": 0,
-                  "position": "absolute",
-                  "whiteSpace": "nowrap",
-                  "width": 1,
-                }
-              }
+              <path
+                d="M12.27 15.8a.75.75 0 0 1-1.06-.03l-5-5.25a.75.75 0 0 1 0-1.04l5-5.25a.75.75 0 1 1 1.08 1.04L7.8 10l4.5 4.73c.29.3.28.78-.02 1.06Z"
+                fill="currentColor"
+              />
+            </svg>
+            <svg
+              aria-hidden={true}
+              className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+              fill="currentColor"
+              height="1em"
+              viewBox="0 0 20 20"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
             >
-              Previous
-            </div>
-          </div>
-        </div>
+              <path
+                d="M12.35 15.85a.5.5 0 0 1-.7 0L6.16 10.4a.55.55 0 0 1 0-.78l5.49-5.46a.5.5 0 1 1 .7.7L7.2 10l5.16 5.15c.2.2.2.5 0 .7Z"
+                fill="currentColor"
+              />
+            </svg>
+          </span>
+        </button>
         <div
-          className="msla-pager-v2--inner"
+          className="___mwxu0x0_0000000 f1d2rq10 f22iagw f122n59 f19jf40t"
         >
           <span
             className="fui-Text ___c56hd20_1xy0w11 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1gl81tg f2jf649"
@@ -1663,73 +1548,50 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
             1 of 1
           </span>
         </div>
-        <div
-          className="msla-pager-failed-container"
+        <button
+          aria-label="Next"
+          className="fui-Button r1alrhcs ___1pr7tf5_16tipiy f1c21dwh f1p3nwhy f11589ue f1q5o8ev f1pdflbu f1s2aq7o f9ql6rf f1s2uweq fr80ssc f1ukrpxl fecsdlb fvgxktp f19vpps7 fv5swzo f1al02dq f3h1zc4 f1h0usnq fs4ktlq f16h9ulv fx2bmrt fcvwxyo f1ol4fw6 f1q1lw4e f1dwjv2g f1kc2mi9 f1et0tmh fb3rf2x f1wi8ngl f44lkw9 fdrzuqr f15x8b5r fphbwmw f8w4c43 f4lkoma fg455y9 f1rvyvqg f1cwzwz f14g86mu f1dcs8yz fjwq6ea f1lr3nhc fn5gmvv f1mbxvi6 f1vmkb5g f53ppgq f1663y11 f18v5270 f80fkiy f1y0svfh fihuait fnxhupq fx507ft fyd6l6x f1062rbf f18ktai2 fwbmr0d f44c6la"
+          disabled={true}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onPointerEnter={[Function]}
+          onPointerLeave={[Function]}
+          type="button"
         >
-          <div
-            className="ms-TooltipHost root-109"
-            onBlurCapture={[Function]}
-            onFocusCapture={[Function]}
-            onKeyDown={[Function]}
-            onMouseEnter={[Function]}
-            onMouseLeave={[Function]}
-            role="none"
+          <span
+            className="fui-Button__icon rywnvv2"
           >
-            <button
-              aria-disabled={true}
-              aria-label="Next"
-              className="ms-Button ms-Button--icon is-disabled root-110"
-              data-is-focusable={false}
-              disabled={true}
-              onClick={[Function]}
-              onKeyDown={[Function]}
-              onKeyPress={[Function]}
-              onKeyUp={[Function]}
-              onMouseDown={[Function]}
-              onMouseUp={[Function]}
-              type="button"
+            <svg
+              aria-hidden={true}
+              className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+              fill="currentColor"
+              height="1em"
+              viewBox="0 0 20 20"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
             >
-              <span
-                className="ms-Button-flexContainer flexContainer-111"
-                data-automationid="splitbuttonprimary"
-              >
-                <i
-                  aria-hidden={true}
-                  className="ms-Icon root-105 css-119 ms-Button-icon icon-113"
-                  data-icon-name="ChevronRight"
-                  style={
-                    {
-                      "fontFamily": ""FabricMDL2Icons"",
-                    }
-                  }
-                >
-                  
-                </i>
-                <span
-                  className="ms-Button-textContainer textContainer-112"
-                />
-              </span>
-            </button>
-            <div
-              hidden={true}
-              id="tooltip116"
-              style={
-                {
-                  "border": 0,
-                  "height": 1,
-                  "margin": -1,
-                  "overflow": "hidden",
-                  "padding": 0,
-                  "position": "absolute",
-                  "whiteSpace": "nowrap",
-                  "width": 1,
-                }
-              }
+              <path
+                d="M7.73 4.2a.75.75 0 0 1 1.06.03l5 5.25c.28.3.28.75 0 1.04l-5 5.25a.75.75 0 1 1-1.08-1.04L12.2 10l-4.5-4.73a.75.75 0 0 1 .02-1.06Z"
+                fill="currentColor"
+              />
+            </svg>
+            <svg
+              aria-hidden={true}
+              className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+              fill="currentColor"
+              height="1em"
+              viewBox="0 0 20 20"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
             >
-              Next
-            </div>
-          </div>
-        </div>
+              <path
+                d="M7.65 4.15c.2-.2.5-.2.7 0l5.49 5.46c.21.22.21.57 0 .78l-5.49 5.46a.5.5 0 0 1-.7-.7L12.8 10 7.65 4.85a.5.5 0 0 1 0-.7Z"
+                fill="currentColor"
+              />
+            </svg>
+          </span>
+        </button>
       </div>
     </div>
   </div>,
@@ -1774,7 +1636,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
               >
                 <button
                   aria-label="Select all text in 'Duration'"
-                  className="ms-Button ms-Button--icon root-120"
+                  className="ms-Button ms-Button--icon root-109"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -1786,12 +1648,12 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                   type="button"
                 >
                   <span
-                    className="ms-Button-flexContainer flexContainer-111"
+                    className="ms-Button-flexContainer flexContainer-110"
                     data-automationid="splitbuttonprimary"
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
+                      className="ms-Icon root-105 css-118 ms-Button-icon icon-112"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -1805,7 +1667,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                 </button>
                 <button
                   aria-label="Copy the value of 'Duration' to the clipboard"
-                  className="ms-Button ms-Button--icon root-120"
+                  className="ms-Button ms-Button--icon root-109"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -1817,12 +1679,12 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                   type="button"
                 >
                   <span
-                    className="ms-Button-flexContainer flexContainer-111"
+                    className="ms-Button-flexContainer flexContainer-110"
                     data-automationid="splitbuttonprimary"
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
+                      className="ms-Icon root-105 css-120 ms-Button-icon icon-112"
                       data-icon-name="Copy"
                       style={
                         {
@@ -1886,7 +1748,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
               >
                 <button
                   aria-label="Switch 'Start time' to the UTC time format"
-                  className="ms-Button ms-Button--icon root-120"
+                  className="ms-Button ms-Button--icon root-109"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -1898,12 +1760,12 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                   type="button"
                 >
                   <span
-                    className="ms-Button-flexContainer flexContainer-111"
+                    className="ms-Button-flexContainer flexContainer-110"
                     data-automationid="splitbuttonprimary"
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-128 ms-Button-icon icon-121"
+                      className="ms-Icon root-105 css-122 ms-Button-icon icon-112"
                       data-icon-name="DateTime"
                       style={
                         {
@@ -1917,7 +1779,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                 </button>
                 <button
                   aria-label="Select all text in 'Start time'"
-                  className="ms-Button ms-Button--icon root-120"
+                  className="ms-Button ms-Button--icon root-109"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -1929,12 +1791,12 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                   type="button"
                 >
                   <span
-                    className="ms-Button-flexContainer flexContainer-111"
+                    className="ms-Button-flexContainer flexContainer-110"
                     data-automationid="splitbuttonprimary"
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
+                      className="ms-Icon root-105 css-118 ms-Button-icon icon-112"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -1948,7 +1810,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                 </button>
                 <button
                   aria-label="Copy the value of 'Start time' to the clipboard"
-                  className="ms-Button ms-Button--icon root-120"
+                  className="ms-Button ms-Button--icon root-109"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -1960,12 +1822,12 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                   type="button"
                 >
                   <span
-                    className="ms-Button-flexContainer flexContainer-111"
+                    className="ms-Button-flexContainer flexContainer-110"
                     data-automationid="splitbuttonprimary"
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
+                      className="ms-Icon root-105 css-120 ms-Button-icon icon-112"
                       data-icon-name="Copy"
                       style={
                         {
@@ -2029,7 +1891,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
               >
                 <button
                   aria-label="Switch 'End time' to the UTC time format"
-                  className="ms-Button ms-Button--icon root-120"
+                  className="ms-Button ms-Button--icon root-109"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -2041,12 +1903,12 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                   type="button"
                 >
                   <span
-                    className="ms-Button-flexContainer flexContainer-111"
+                    className="ms-Button-flexContainer flexContainer-110"
                     data-automationid="splitbuttonprimary"
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-128 ms-Button-icon icon-121"
+                      className="ms-Icon root-105 css-122 ms-Button-icon icon-112"
                       data-icon-name="DateTime"
                       style={
                         {
@@ -2060,7 +1922,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                 </button>
                 <button
                   aria-label="Select all text in 'End time'"
-                  className="ms-Button ms-Button--icon root-120"
+                  className="ms-Button ms-Button--icon root-109"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -2072,12 +1934,12 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                   type="button"
                 >
                   <span
-                    className="ms-Button-flexContainer flexContainer-111"
+                    className="ms-Button-flexContainer flexContainer-110"
                     data-automationid="splitbuttonprimary"
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
+                      className="ms-Icon root-105 css-118 ms-Button-icon icon-112"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -2091,7 +1953,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                 </button>
                 <button
                   aria-label="Copy the value of 'End time' to the clipboard"
-                  className="ms-Button ms-Button--icon root-120"
+                  className="ms-Button ms-Button--icon root-109"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -2103,12 +1965,12 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                   type="button"
                 >
                   <span
-                    className="ms-Button-flexContainer flexContainer-111"
+                    className="ms-Button-flexContainer flexContainer-110"
                     data-automationid="splitbuttonprimary"
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
+                      className="ms-Icon root-105 css-120 ms-Button-icon icon-112"
                       data-icon-name="Copy"
                       style={
                         {
@@ -2189,7 +2051,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
               >
                 <button
                   aria-label="Select all text in 'Status code'"
-                  className="ms-Button ms-Button--icon root-120"
+                  className="ms-Button ms-Button--icon root-109"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -2201,12 +2063,12 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                   type="button"
                 >
                   <span
-                    className="ms-Button-flexContainer flexContainer-111"
+                    className="ms-Button-flexContainer flexContainer-110"
                     data-automationid="splitbuttonprimary"
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
+                      className="ms-Icon root-105 css-118 ms-Button-icon icon-112"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -2220,7 +2082,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                 </button>
                 <button
                   aria-label="Copy the value of 'Status code' to the clipboard"
-                  className="ms-Button ms-Button--icon root-120"
+                  className="ms-Button ms-Button--icon root-109"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -2232,12 +2094,12 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                   type="button"
                 >
                   <span
-                    className="ms-Button-flexContainer flexContainer-111"
+                    className="ms-Button-flexContainer flexContainer-110"
                     data-automationid="splitbuttonprimary"
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
+                      className="ms-Icon root-105 css-120 ms-Button-icon icon-112"
                       data-icon-name="Copy"
                       style={
                         {
@@ -2299,7 +2161,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
               }
             >
               <div
-                className="ms-DetailsList is-fixed ms-DetailsList--Compact is-horizontalConstrained root-129"
+                className="ms-DetailsList is-fixed ms-DetailsList--Compact is-horizontalConstrained root-123"
                 data-automationid="DetailsList"
                 data-is-scrollable="false"
               >
@@ -2316,9 +2178,9 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                   >
                     <div
                       aria-label="Headers"
-                      className="ms-FocusZone css-147 ms-DetailsHeader root-131"
+                      className="ms-FocusZone css-141 ms-DetailsHeader root-125"
                       data-automationid="DetailsHeader"
-                      data-focuszone-id="FocusZone152"
+                      data-focuszone-id="FocusZone120"
                       data-tabster="{"uncontrolled": {}}"
                       onFocus={[Function]}
                       onKeyDown={[Function]}
@@ -2329,7 +2191,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                       <div
                         aria-label="Key"
                         aria-sort="none"
-                        className="ms-DetailsHeader-cell is-actionable root-148"
+                        className="ms-DetailsHeader-cell is-actionable root-142"
                         data-automationid="ColumnsHeaderColumn"
                         data-is-draggable={false}
                         data-is-focusable="true"
@@ -2343,17 +2205,17 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                         }
                       >
                         <span
-                          className="cellTooltip-156"
+                          className="cellTooltip-150"
                         >
                           <span
-                            className="ms-DetailsHeader-cellTitle cellTitle-154"
-                            id="header151-$key"
+                            className="ms-DetailsHeader-cellTitle cellTitle-148"
+                            id="header119-$key"
                             onClick={[Function]}
                             onContextMenu={[Function]}
                           >
                             <span
-                              className="ms-DetailsHeader-cellName cellName-155"
-                              id="header151-$key-name"
+                              className="ms-DetailsHeader-cellName cellName-149"
+                              id="header119-$key-name"
                             >
                               Key
                             </span>
@@ -2362,7 +2224,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                       </div>
                       <div
                         aria-hidden={true}
-                        className="ms-DetailsHeader-cellSizer cellSizer-138 cellSizerStart-139"
+                        className="ms-DetailsHeader-cellSizer cellSizer-132 cellSizerStart-133"
                         data-is-focusable={false}
                         data-sizer-index={0}
                         onBlur={[Function]}
@@ -2373,7 +2235,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                       <div
                         aria-label="Value"
                         aria-sort="none"
-                        className="ms-DetailsHeader-cell is-actionable root-148"
+                        className="ms-DetailsHeader-cell is-actionable root-142"
                         data-automationid="ColumnsHeaderColumn"
                         data-is-draggable={false}
                         data-is-focusable="true"
@@ -2387,17 +2249,17 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                         }
                       >
                         <span
-                          className="cellTooltip-156"
+                          className="cellTooltip-150"
                         >
                           <span
-                            className="ms-DetailsHeader-cellTitle cellTitle-154"
-                            id="header151-$value"
+                            className="ms-DetailsHeader-cellTitle cellTitle-148"
+                            id="header119-$value"
                             onClick={[Function]}
                             onContextMenu={[Function]}
                           >
                             <span
-                              className="ms-DetailsHeader-cellName cellName-155"
-                              id="header151-$value-name"
+                              className="ms-DetailsHeader-cellName cellName-149"
+                              id="header119-$value-name"
                             >
                               Value
                             </span>
@@ -2406,7 +2268,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                       </div>
                       <div
                         aria-hidden={true}
-                        className="ms-DetailsHeader-cellSizer cellSizer-138 cellSizerEnd-140"
+                        className="ms-DetailsHeader-cellSizer cellSizer-132 cellSizerEnd-134"
                         data-is-focusable={false}
                         data-sizer-index={1}
                         onBlur={[Function]}
@@ -2434,8 +2296,8 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                       role="presentation"
                     >
                       <div
-                        className="ms-FocusZone css-147 focusZone-130"
-                        data-focuszone-id="FocusZone153"
+                        className="ms-FocusZone css-141 focusZone-124"
+                        data-focuszone-id="FocusZone121"
                         data-tabster="{"uncontrolled": {}}"
                         onBlur={[Function]}
                         onFocus={[Function]}
@@ -2481,7 +2343,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
               >
                 <button
                   aria-label="Select all text in 'Body'"
-                  className="ms-Button ms-Button--icon root-120"
+                  className="ms-Button ms-Button--icon root-109"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -2493,12 +2355,12 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                   type="button"
                 >
                   <span
-                    className="ms-Button-flexContainer flexContainer-111"
+                    className="ms-Button-flexContainer flexContainer-110"
                     data-automationid="splitbuttonprimary"
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
+                      className="ms-Icon root-105 css-118 ms-Button-icon icon-112"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -2512,7 +2374,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                 </button>
                 <button
                   aria-label="Copy the value of 'Body' to the clipboard"
-                  className="ms-Button ms-Button--icon root-120"
+                  className="ms-Button ms-Button--icon root-109"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -2524,12 +2386,12 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                   type="button"
                 >
                   <span
-                    className="ms-Button-flexContainer flexContainer-111"
+                    className="ms-Button-flexContainer flexContainer-110"
                     data-automationid="splitbuttonprimary"
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
+                      className="ms-Icon root-105 css-120 ms-Button-icon icon-112"
                       data-icon-name="Copy"
                       style={
                         {
@@ -2583,78 +2445,55 @@ exports[`lib/monitoring/requestpanel > should render with a secured request 1`] 
   >
     <div>
       <div
-        className="msla-pager-v2"
+        className="___139oj93_0000000 f22iagw f122n59 f4d9j23 f19jf40t fduql59 f10pi13n"
         onClick={[Function]}
       >
-        <div
-          className="msla-pager-failed-container"
+        <button
+          aria-label="Previous"
+          className="fui-Button r1alrhcs ___1pr7tf5_16tipiy f1c21dwh f1p3nwhy f11589ue f1q5o8ev f1pdflbu f1s2aq7o f9ql6rf f1s2uweq fr80ssc f1ukrpxl fecsdlb fvgxktp f19vpps7 fv5swzo f1al02dq f3h1zc4 f1h0usnq fs4ktlq f16h9ulv fx2bmrt fcvwxyo f1ol4fw6 f1q1lw4e f1dwjv2g f1kc2mi9 f1et0tmh fb3rf2x f1wi8ngl f44lkw9 fdrzuqr f15x8b5r fphbwmw f8w4c43 f4lkoma fg455y9 f1rvyvqg f1cwzwz f14g86mu f1dcs8yz fjwq6ea f1lr3nhc fn5gmvv f1mbxvi6 f1vmkb5g f53ppgq f1663y11 f18v5270 f80fkiy f1y0svfh fihuait fnxhupq fx507ft fyd6l6x f1062rbf f18ktai2 fwbmr0d f44c6la"
+          disabled={true}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onPointerEnter={[Function]}
+          onPointerLeave={[Function]}
+          type="button"
         >
-          <div
-            className="ms-TooltipHost root-109"
-            onBlurCapture={[Function]}
-            onFocusCapture={[Function]}
-            onKeyDown={[Function]}
-            onMouseEnter={[Function]}
-            onMouseLeave={[Function]}
-            role="none"
+          <span
+            className="fui-Button__icon rywnvv2"
           >
-            <button
-              aria-disabled={true}
-              aria-label="Previous"
-              className="ms-Button ms-Button--icon is-disabled root-110"
-              data-is-focusable={false}
-              disabled={true}
-              onClick={[Function]}
-              onKeyDown={[Function]}
-              onKeyPress={[Function]}
-              onKeyUp={[Function]}
-              onMouseDown={[Function]}
-              onMouseUp={[Function]}
-              type="button"
+            <svg
+              aria-hidden={true}
+              className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+              fill="currentColor"
+              height="1em"
+              viewBox="0 0 20 20"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
             >
-              <span
-                className="ms-Button-flexContainer flexContainer-111"
-                data-automationid="splitbuttonprimary"
-              >
-                <i
-                  aria-hidden={true}
-                  className="ms-Icon root-105 css-119 ms-Button-icon icon-113"
-                  data-icon-name="ChevronLeft"
-                  style={
-                    {
-                      "fontFamily": ""FabricMDL2Icons"",
-                    }
-                  }
-                >
-                  
-                </i>
-                <span
-                  className="ms-Button-textContainer textContainer-112"
-                />
-              </span>
-            </button>
-            <div
-              hidden={true}
-              id="tooltip80"
-              style={
-                {
-                  "border": 0,
-                  "height": 1,
-                  "margin": -1,
-                  "overflow": "hidden",
-                  "padding": 0,
-                  "position": "absolute",
-                  "whiteSpace": "nowrap",
-                  "width": 1,
-                }
-              }
+              <path
+                d="M12.27 15.8a.75.75 0 0 1-1.06-.03l-5-5.25a.75.75 0 0 1 0-1.04l5-5.25a.75.75 0 1 1 1.08 1.04L7.8 10l4.5 4.73c.29.3.28.78-.02 1.06Z"
+                fill="currentColor"
+              />
+            </svg>
+            <svg
+              aria-hidden={true}
+              className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+              fill="currentColor"
+              height="1em"
+              viewBox="0 0 20 20"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
             >
-              Previous
-            </div>
-          </div>
-        </div>
+              <path
+                d="M12.35 15.85a.5.5 0 0 1-.7 0L6.16 10.4a.55.55 0 0 1 0-.78l5.49-5.46a.5.5 0 1 1 .7.7L7.2 10l5.16 5.15c.2.2.2.5 0 .7Z"
+                fill="currentColor"
+              />
+            </svg>
+          </span>
+        </button>
         <div
-          className="msla-pager-v2--inner"
+          className="___mwxu0x0_0000000 f1d2rq10 f22iagw f122n59 f19jf40t"
         >
           <span
             className="fui-Text ___c56hd20_1xy0w11 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1gl81tg f2jf649"
@@ -2662,73 +2501,50 @@ exports[`lib/monitoring/requestpanel > should render with a secured request 1`] 
             1 of 1
           </span>
         </div>
-        <div
-          className="msla-pager-failed-container"
+        <button
+          aria-label="Next"
+          className="fui-Button r1alrhcs ___1pr7tf5_16tipiy f1c21dwh f1p3nwhy f11589ue f1q5o8ev f1pdflbu f1s2aq7o f9ql6rf f1s2uweq fr80ssc f1ukrpxl fecsdlb fvgxktp f19vpps7 fv5swzo f1al02dq f3h1zc4 f1h0usnq fs4ktlq f16h9ulv fx2bmrt fcvwxyo f1ol4fw6 f1q1lw4e f1dwjv2g f1kc2mi9 f1et0tmh fb3rf2x f1wi8ngl f44lkw9 fdrzuqr f15x8b5r fphbwmw f8w4c43 f4lkoma fg455y9 f1rvyvqg f1cwzwz f14g86mu f1dcs8yz fjwq6ea f1lr3nhc fn5gmvv f1mbxvi6 f1vmkb5g f53ppgq f1663y11 f18v5270 f80fkiy f1y0svfh fihuait fnxhupq fx507ft fyd6l6x f1062rbf f18ktai2 fwbmr0d f44c6la"
+          disabled={true}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onPointerEnter={[Function]}
+          onPointerLeave={[Function]}
+          type="button"
         >
-          <div
-            className="ms-TooltipHost root-109"
-            onBlurCapture={[Function]}
-            onFocusCapture={[Function]}
-            onKeyDown={[Function]}
-            onMouseEnter={[Function]}
-            onMouseLeave={[Function]}
-            role="none"
+          <span
+            className="fui-Button__icon rywnvv2"
           >
-            <button
-              aria-disabled={true}
-              aria-label="Next"
-              className="ms-Button ms-Button--icon is-disabled root-110"
-              data-is-focusable={false}
-              disabled={true}
-              onClick={[Function]}
-              onKeyDown={[Function]}
-              onKeyPress={[Function]}
-              onKeyUp={[Function]}
-              onMouseDown={[Function]}
-              onMouseUp={[Function]}
-              type="button"
+            <svg
+              aria-hidden={true}
+              className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+              fill="currentColor"
+              height="1em"
+              viewBox="0 0 20 20"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
             >
-              <span
-                className="ms-Button-flexContainer flexContainer-111"
-                data-automationid="splitbuttonprimary"
-              >
-                <i
-                  aria-hidden={true}
-                  className="ms-Icon root-105 css-119 ms-Button-icon icon-113"
-                  data-icon-name="ChevronRight"
-                  style={
-                    {
-                      "fontFamily": ""FabricMDL2Icons"",
-                    }
-                  }
-                >
-                  
-                </i>
-                <span
-                  className="ms-Button-textContainer textContainer-112"
-                />
-              </span>
-            </button>
-            <div
-              hidden={true}
-              id="tooltip84"
-              style={
-                {
-                  "border": 0,
-                  "height": 1,
-                  "margin": -1,
-                  "overflow": "hidden",
-                  "padding": 0,
-                  "position": "absolute",
-                  "whiteSpace": "nowrap",
-                  "width": 1,
-                }
-              }
+              <path
+                d="M7.73 4.2a.75.75 0 0 1 1.06.03l5 5.25c.28.3.28.75 0 1.04l-5 5.25a.75.75 0 1 1-1.08-1.04L12.2 10l-4.5-4.73a.75.75 0 0 1 .02-1.06Z"
+                fill="currentColor"
+              />
+            </svg>
+            <svg
+              aria-hidden={true}
+              className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+              fill="currentColor"
+              height="1em"
+              viewBox="0 0 20 20"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
             >
-              Next
-            </div>
-          </div>
-        </div>
+              <path
+                d="M7.65 4.15c.2-.2.5-.2.7 0l5.49 5.46c.21.22.21.57 0 .78l-5.49 5.46a.5.5 0 0 1-.7-.7L12.8 10 7.65 4.85a.5.5 0 0 1 0-.7Z"
+                fill="currentColor"
+              />
+            </svg>
+          </span>
+        </button>
       </div>
     </div>
   </div>,
@@ -2773,7 +2589,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured request 1`] 
               >
                 <button
                   aria-label="Select all text in 'Duration'"
-                  className="ms-Button ms-Button--icon root-120"
+                  className="ms-Button ms-Button--icon root-109"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -2785,12 +2601,12 @@ exports[`lib/monitoring/requestpanel > should render with a secured request 1`] 
                   type="button"
                 >
                   <span
-                    className="ms-Button-flexContainer flexContainer-111"
+                    className="ms-Button-flexContainer flexContainer-110"
                     data-automationid="splitbuttonprimary"
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
+                      className="ms-Icon root-105 css-118 ms-Button-icon icon-112"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -2804,7 +2620,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured request 1`] 
                 </button>
                 <button
                   aria-label="Copy the value of 'Duration' to the clipboard"
-                  className="ms-Button ms-Button--icon root-120"
+                  className="ms-Button ms-Button--icon root-109"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -2816,12 +2632,12 @@ exports[`lib/monitoring/requestpanel > should render with a secured request 1`] 
                   type="button"
                 >
                   <span
-                    className="ms-Button-flexContainer flexContainer-111"
+                    className="ms-Button-flexContainer flexContainer-110"
                     data-automationid="splitbuttonprimary"
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
+                      className="ms-Icon root-105 css-120 ms-Button-icon icon-112"
                       data-icon-name="Copy"
                       style={
                         {
@@ -2885,7 +2701,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured request 1`] 
               >
                 <button
                   aria-label="Switch 'Start time' to the UTC time format"
-                  className="ms-Button ms-Button--icon root-120"
+                  className="ms-Button ms-Button--icon root-109"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -2897,12 +2713,12 @@ exports[`lib/monitoring/requestpanel > should render with a secured request 1`] 
                   type="button"
                 >
                   <span
-                    className="ms-Button-flexContainer flexContainer-111"
+                    className="ms-Button-flexContainer flexContainer-110"
                     data-automationid="splitbuttonprimary"
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-128 ms-Button-icon icon-121"
+                      className="ms-Icon root-105 css-122 ms-Button-icon icon-112"
                       data-icon-name="DateTime"
                       style={
                         {
@@ -2916,7 +2732,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured request 1`] 
                 </button>
                 <button
                   aria-label="Select all text in 'Start time'"
-                  className="ms-Button ms-Button--icon root-120"
+                  className="ms-Button ms-Button--icon root-109"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -2928,12 +2744,12 @@ exports[`lib/monitoring/requestpanel > should render with a secured request 1`] 
                   type="button"
                 >
                   <span
-                    className="ms-Button-flexContainer flexContainer-111"
+                    className="ms-Button-flexContainer flexContainer-110"
                     data-automationid="splitbuttonprimary"
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
+                      className="ms-Icon root-105 css-118 ms-Button-icon icon-112"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -2947,7 +2763,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured request 1`] 
                 </button>
                 <button
                   aria-label="Copy the value of 'Start time' to the clipboard"
-                  className="ms-Button ms-Button--icon root-120"
+                  className="ms-Button ms-Button--icon root-109"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -2959,12 +2775,12 @@ exports[`lib/monitoring/requestpanel > should render with a secured request 1`] 
                   type="button"
                 >
                   <span
-                    className="ms-Button-flexContainer flexContainer-111"
+                    className="ms-Button-flexContainer flexContainer-110"
                     data-automationid="splitbuttonprimary"
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
+                      className="ms-Icon root-105 css-120 ms-Button-icon icon-112"
                       data-icon-name="Copy"
                       style={
                         {
@@ -3028,7 +2844,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured request 1`] 
               >
                 <button
                   aria-label="Switch 'End time' to the UTC time format"
-                  className="ms-Button ms-Button--icon root-120"
+                  className="ms-Button ms-Button--icon root-109"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -3040,12 +2856,12 @@ exports[`lib/monitoring/requestpanel > should render with a secured request 1`] 
                   type="button"
                 >
                   <span
-                    className="ms-Button-flexContainer flexContainer-111"
+                    className="ms-Button-flexContainer flexContainer-110"
                     data-automationid="splitbuttonprimary"
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-128 ms-Button-icon icon-121"
+                      className="ms-Icon root-105 css-122 ms-Button-icon icon-112"
                       data-icon-name="DateTime"
                       style={
                         {
@@ -3059,7 +2875,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured request 1`] 
                 </button>
                 <button
                   aria-label="Select all text in 'End time'"
-                  className="ms-Button ms-Button--icon root-120"
+                  className="ms-Button ms-Button--icon root-109"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -3071,12 +2887,12 @@ exports[`lib/monitoring/requestpanel > should render with a secured request 1`] 
                   type="button"
                 >
                   <span
-                    className="ms-Button-flexContainer flexContainer-111"
+                    className="ms-Button-flexContainer flexContainer-110"
                     data-automationid="splitbuttonprimary"
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
+                      className="ms-Icon root-105 css-118 ms-Button-icon icon-112"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -3090,7 +2906,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured request 1`] 
                 </button>
                 <button
                   aria-label="Copy the value of 'End time' to the clipboard"
-                  className="ms-Button ms-Button--icon root-120"
+                  className="ms-Button ms-Button--icon root-109"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -3102,12 +2918,12 @@ exports[`lib/monitoring/requestpanel > should render with a secured request 1`] 
                   type="button"
                 >
                   <span
-                    className="ms-Button-flexContainer flexContainer-111"
+                    className="ms-Button-flexContainer flexContainer-110"
                     data-automationid="splitbuttonprimary"
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
+                      className="ms-Icon root-105 css-120 ms-Button-icon icon-112"
                       data-icon-name="Copy"
                       style={
                         {
@@ -3192,78 +3008,55 @@ exports[`lib/monitoring/requestpanel > should render with a secured response 1`]
   >
     <div>
       <div
-        className="msla-pager-v2"
+        className="___139oj93_0000000 f22iagw f122n59 f4d9j23 f19jf40t fduql59 f10pi13n"
         onClick={[Function]}
       >
-        <div
-          className="msla-pager-failed-container"
+        <button
+          aria-label="Previous"
+          className="fui-Button r1alrhcs ___1pr7tf5_16tipiy f1c21dwh f1p3nwhy f11589ue f1q5o8ev f1pdflbu f1s2aq7o f9ql6rf f1s2uweq fr80ssc f1ukrpxl fecsdlb fvgxktp f19vpps7 fv5swzo f1al02dq f3h1zc4 f1h0usnq fs4ktlq f16h9ulv fx2bmrt fcvwxyo f1ol4fw6 f1q1lw4e f1dwjv2g f1kc2mi9 f1et0tmh fb3rf2x f1wi8ngl f44lkw9 fdrzuqr f15x8b5r fphbwmw f8w4c43 f4lkoma fg455y9 f1rvyvqg f1cwzwz f14g86mu f1dcs8yz fjwq6ea f1lr3nhc fn5gmvv f1mbxvi6 f1vmkb5g f53ppgq f1663y11 f18v5270 f80fkiy f1y0svfh fihuait fnxhupq fx507ft fyd6l6x f1062rbf f18ktai2 fwbmr0d f44c6la"
+          disabled={true}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onPointerEnter={[Function]}
+          onPointerLeave={[Function]}
+          type="button"
         >
-          <div
-            className="ms-TooltipHost root-109"
-            onBlurCapture={[Function]}
-            onFocusCapture={[Function]}
-            onKeyDown={[Function]}
-            onMouseEnter={[Function]}
-            onMouseLeave={[Function]}
-            role="none"
+          <span
+            className="fui-Button__icon rywnvv2"
           >
-            <button
-              aria-disabled={true}
-              aria-label="Previous"
-              className="ms-Button ms-Button--icon is-disabled root-110"
-              data-is-focusable={false}
-              disabled={true}
-              onClick={[Function]}
-              onKeyDown={[Function]}
-              onKeyPress={[Function]}
-              onKeyUp={[Function]}
-              onMouseDown={[Function]}
-              onMouseUp={[Function]}
-              type="button"
+            <svg
+              aria-hidden={true}
+              className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+              fill="currentColor"
+              height="1em"
+              viewBox="0 0 20 20"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
             >
-              <span
-                className="ms-Button-flexContainer flexContainer-111"
-                data-automationid="splitbuttonprimary"
-              >
-                <i
-                  aria-hidden={true}
-                  className="ms-Icon root-105 css-119 ms-Button-icon icon-113"
-                  data-icon-name="ChevronLeft"
-                  style={
-                    {
-                      "fontFamily": ""FabricMDL2Icons"",
-                    }
-                  }
-                >
-                  
-                </i>
-                <span
-                  className="ms-Button-textContainer textContainer-112"
-                />
-              </span>
-            </button>
-            <div
-              hidden={true}
-              id="tooltip160"
-              style={
-                {
-                  "border": 0,
-                  "height": 1,
-                  "margin": -1,
-                  "overflow": "hidden",
-                  "padding": 0,
-                  "position": "absolute",
-                  "whiteSpace": "nowrap",
-                  "width": 1,
-                }
-              }
+              <path
+                d="M12.27 15.8a.75.75 0 0 1-1.06-.03l-5-5.25a.75.75 0 0 1 0-1.04l5-5.25a.75.75 0 1 1 1.08 1.04L7.8 10l4.5 4.73c.29.3.28.78-.02 1.06Z"
+                fill="currentColor"
+              />
+            </svg>
+            <svg
+              aria-hidden={true}
+              className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+              fill="currentColor"
+              height="1em"
+              viewBox="0 0 20 20"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
             >
-              Previous
-            </div>
-          </div>
-        </div>
+              <path
+                d="M12.35 15.85a.5.5 0 0 1-.7 0L6.16 10.4a.55.55 0 0 1 0-.78l5.49-5.46a.5.5 0 1 1 .7.7L7.2 10l5.16 5.15c.2.2.2.5 0 .7Z"
+                fill="currentColor"
+              />
+            </svg>
+          </span>
+        </button>
         <div
-          className="msla-pager-v2--inner"
+          className="___mwxu0x0_0000000 f1d2rq10 f22iagw f122n59 f19jf40t"
         >
           <span
             className="fui-Text ___c56hd20_1xy0w11 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1gl81tg f2jf649"
@@ -3271,73 +3064,50 @@ exports[`lib/monitoring/requestpanel > should render with a secured response 1`]
             1 of 1
           </span>
         </div>
-        <div
-          className="msla-pager-failed-container"
+        <button
+          aria-label="Next"
+          className="fui-Button r1alrhcs ___1pr7tf5_16tipiy f1c21dwh f1p3nwhy f11589ue f1q5o8ev f1pdflbu f1s2aq7o f9ql6rf f1s2uweq fr80ssc f1ukrpxl fecsdlb fvgxktp f19vpps7 fv5swzo f1al02dq f3h1zc4 f1h0usnq fs4ktlq f16h9ulv fx2bmrt fcvwxyo f1ol4fw6 f1q1lw4e f1dwjv2g f1kc2mi9 f1et0tmh fb3rf2x f1wi8ngl f44lkw9 fdrzuqr f15x8b5r fphbwmw f8w4c43 f4lkoma fg455y9 f1rvyvqg f1cwzwz f14g86mu f1dcs8yz fjwq6ea f1lr3nhc fn5gmvv f1mbxvi6 f1vmkb5g f53ppgq f1663y11 f18v5270 f80fkiy f1y0svfh fihuait fnxhupq fx507ft fyd6l6x f1062rbf f18ktai2 fwbmr0d f44c6la"
+          disabled={true}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onPointerEnter={[Function]}
+          onPointerLeave={[Function]}
+          type="button"
         >
-          <div
-            className="ms-TooltipHost root-109"
-            onBlurCapture={[Function]}
-            onFocusCapture={[Function]}
-            onKeyDown={[Function]}
-            onMouseEnter={[Function]}
-            onMouseLeave={[Function]}
-            role="none"
+          <span
+            className="fui-Button__icon rywnvv2"
           >
-            <button
-              aria-disabled={true}
-              aria-label="Next"
-              className="ms-Button ms-Button--icon is-disabled root-110"
-              data-is-focusable={false}
-              disabled={true}
-              onClick={[Function]}
-              onKeyDown={[Function]}
-              onKeyPress={[Function]}
-              onKeyUp={[Function]}
-              onMouseDown={[Function]}
-              onMouseUp={[Function]}
-              type="button"
+            <svg
+              aria-hidden={true}
+              className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+              fill="currentColor"
+              height="1em"
+              viewBox="0 0 20 20"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
             >
-              <span
-                className="ms-Button-flexContainer flexContainer-111"
-                data-automationid="splitbuttonprimary"
-              >
-                <i
-                  aria-hidden={true}
-                  className="ms-Icon root-105 css-119 ms-Button-icon icon-113"
-                  data-icon-name="ChevronRight"
-                  style={
-                    {
-                      "fontFamily": ""FabricMDL2Icons"",
-                    }
-                  }
-                >
-                  
-                </i>
-                <span
-                  className="ms-Button-textContainer textContainer-112"
-                />
-              </span>
-            </button>
-            <div
-              hidden={true}
-              id="tooltip164"
-              style={
-                {
-                  "border": 0,
-                  "height": 1,
-                  "margin": -1,
-                  "overflow": "hidden",
-                  "padding": 0,
-                  "position": "absolute",
-                  "whiteSpace": "nowrap",
-                  "width": 1,
-                }
-              }
+              <path
+                d="M7.73 4.2a.75.75 0 0 1 1.06.03l5 5.25c.28.3.28.75 0 1.04l-5 5.25a.75.75 0 1 1-1.08-1.04L12.2 10l-4.5-4.73a.75.75 0 0 1 .02-1.06Z"
+                fill="currentColor"
+              />
+            </svg>
+            <svg
+              aria-hidden={true}
+              className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+              fill="currentColor"
+              height="1em"
+              viewBox="0 0 20 20"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
             >
-              Next
-            </div>
-          </div>
-        </div>
+              <path
+                d="M7.65 4.15c.2-.2.5-.2.7 0l5.49 5.46c.21.22.21.57 0 .78l-5.49 5.46a.5.5 0 0 1-.7-.7L12.8 10 7.65 4.85a.5.5 0 0 1 0-.7Z"
+                fill="currentColor"
+              />
+            </svg>
+          </span>
+        </button>
       </div>
     </div>
   </div>,
@@ -3382,7 +3152,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured response 1`]
               >
                 <button
                   aria-label="Select all text in 'Duration'"
-                  className="ms-Button ms-Button--icon root-120"
+                  className="ms-Button ms-Button--icon root-109"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -3394,12 +3164,12 @@ exports[`lib/monitoring/requestpanel > should render with a secured response 1`]
                   type="button"
                 >
                   <span
-                    className="ms-Button-flexContainer flexContainer-111"
+                    className="ms-Button-flexContainer flexContainer-110"
                     data-automationid="splitbuttonprimary"
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
+                      className="ms-Icon root-105 css-118 ms-Button-icon icon-112"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -3413,7 +3183,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured response 1`]
                 </button>
                 <button
                   aria-label="Copy the value of 'Duration' to the clipboard"
-                  className="ms-Button ms-Button--icon root-120"
+                  className="ms-Button ms-Button--icon root-109"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -3425,12 +3195,12 @@ exports[`lib/monitoring/requestpanel > should render with a secured response 1`]
                   type="button"
                 >
                   <span
-                    className="ms-Button-flexContainer flexContainer-111"
+                    className="ms-Button-flexContainer flexContainer-110"
                     data-automationid="splitbuttonprimary"
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
+                      className="ms-Icon root-105 css-120 ms-Button-icon icon-112"
                       data-icon-name="Copy"
                       style={
                         {
@@ -3494,7 +3264,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured response 1`]
               >
                 <button
                   aria-label="Switch 'Start time' to the UTC time format"
-                  className="ms-Button ms-Button--icon root-120"
+                  className="ms-Button ms-Button--icon root-109"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -3506,12 +3276,12 @@ exports[`lib/monitoring/requestpanel > should render with a secured response 1`]
                   type="button"
                 >
                   <span
-                    className="ms-Button-flexContainer flexContainer-111"
+                    className="ms-Button-flexContainer flexContainer-110"
                     data-automationid="splitbuttonprimary"
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-128 ms-Button-icon icon-121"
+                      className="ms-Icon root-105 css-122 ms-Button-icon icon-112"
                       data-icon-name="DateTime"
                       style={
                         {
@@ -3525,7 +3295,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured response 1`]
                 </button>
                 <button
                   aria-label="Select all text in 'Start time'"
-                  className="ms-Button ms-Button--icon root-120"
+                  className="ms-Button ms-Button--icon root-109"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -3537,12 +3307,12 @@ exports[`lib/monitoring/requestpanel > should render with a secured response 1`]
                   type="button"
                 >
                   <span
-                    className="ms-Button-flexContainer flexContainer-111"
+                    className="ms-Button-flexContainer flexContainer-110"
                     data-automationid="splitbuttonprimary"
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
+                      className="ms-Icon root-105 css-118 ms-Button-icon icon-112"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -3556,7 +3326,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured response 1`]
                 </button>
                 <button
                   aria-label="Copy the value of 'Start time' to the clipboard"
-                  className="ms-Button ms-Button--icon root-120"
+                  className="ms-Button ms-Button--icon root-109"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -3568,12 +3338,12 @@ exports[`lib/monitoring/requestpanel > should render with a secured response 1`]
                   type="button"
                 >
                   <span
-                    className="ms-Button-flexContainer flexContainer-111"
+                    className="ms-Button-flexContainer flexContainer-110"
                     data-automationid="splitbuttonprimary"
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
+                      className="ms-Icon root-105 css-120 ms-Button-icon icon-112"
                       data-icon-name="Copy"
                       style={
                         {
@@ -3637,7 +3407,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured response 1`]
               >
                 <button
                   aria-label="Switch 'End time' to the UTC time format"
-                  className="ms-Button ms-Button--icon root-120"
+                  className="ms-Button ms-Button--icon root-109"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -3649,12 +3419,12 @@ exports[`lib/monitoring/requestpanel > should render with a secured response 1`]
                   type="button"
                 >
                   <span
-                    className="ms-Button-flexContainer flexContainer-111"
+                    className="ms-Button-flexContainer flexContainer-110"
                     data-automationid="splitbuttonprimary"
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-128 ms-Button-icon icon-121"
+                      className="ms-Icon root-105 css-122 ms-Button-icon icon-112"
                       data-icon-name="DateTime"
                       style={
                         {
@@ -3668,7 +3438,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured response 1`]
                 </button>
                 <button
                   aria-label="Select all text in 'End time'"
-                  className="ms-Button ms-Button--icon root-120"
+                  className="ms-Button ms-Button--icon root-109"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -3680,12 +3450,12 @@ exports[`lib/monitoring/requestpanel > should render with a secured response 1`]
                   type="button"
                 >
                   <span
-                    className="ms-Button-flexContainer flexContainer-111"
+                    className="ms-Button-flexContainer flexContainer-110"
                     data-automationid="splitbuttonprimary"
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
+                      className="ms-Icon root-105 css-118 ms-Button-icon icon-112"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -3699,7 +3469,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured response 1`]
                 </button>
                 <button
                   aria-label="Copy the value of 'End time' to the clipboard"
-                  className="ms-Button ms-Button--icon root-120"
+                  className="ms-Button ms-Button--icon root-109"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -3711,12 +3481,12 @@ exports[`lib/monitoring/requestpanel > should render with a secured response 1`]
                   type="button"
                 >
                   <span
-                    className="ms-Button-flexContainer flexContainer-111"
+                    className="ms-Button-flexContainer flexContainer-110"
                     data-automationid="splitbuttonprimary"
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
+                      className="ms-Icon root-105 css-120 ms-Button-icon icon-112"
                       data-icon-name="Copy"
                       style={
                         {

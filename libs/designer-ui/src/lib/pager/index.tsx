@@ -1,7 +1,13 @@
-import type { IIconProps, IIconStyles, ITextFieldStyles } from '@fluentui/react';
-import { css, Icon, IconButton, TextField, TooltipHost } from '@fluentui/react';
-import { Text } from '@fluentui/react-components';
-import React, { useCallback, useEffect, useMemo } from 'react';
+import { makeStyles, tokens, Text, Input, Button, Tooltip, mergeClasses } from '@fluentui/react-components';
+import {
+  bundleIcon,
+  ChevronLeftFilled,
+  ChevronLeftRegular,
+  ChevronRightFilled,
+  ChevronRightRegular,
+  ImportantFilled,
+} from '@fluentui/react-icons';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export type PageChangeEventHandler = (e: PageChangeEventArgs) => void;
@@ -40,34 +46,117 @@ export interface PagerProps {
 interface PagerButtonProps {
   disabled: boolean;
   failed?: boolean;
-  iconProps: IIconProps;
   text: string;
   onClick(): void;
+  ariaLabel: string;
+  icon: any;
+  isNext: boolean; // Indicates if the button is for next or previous
 }
 
-const iconFailedProps: IIconProps = {
-  iconName: 'Important',
-};
+const ChevronLeftIcon = bundleIcon(ChevronLeftFilled, ChevronLeftRegular);
+const ChevronRightIcon = bundleIcon(ChevronRightFilled, ChevronRightRegular);
 
-const iconFailedNextStyles: IIconStyles = {
-  root: {
-    right: 0,
+// Modern unified styles using Fluent UI v9 makeStyles
+const usePagerStyles = makeStyles({
+  // Main containers
+  pagerContainer: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
-};
-
-const iconFailedPreviousStyles: IIconStyles = {
-  root: {
-    left: 0,
+  pagerV2: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '6px',
+    margin: '4px',
+    position: 'relative',
   },
-};
+  pagerInner: {
+    height: '32px',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '6px',
+  },
 
-const nextIconProps: IIconProps = {
-  iconName: 'ChevronRight',
-};
+  // Failed iteration button container
+  failedButtonContainer: {
+    position: 'relative',
+  },
 
-const previousIconProps: IIconProps = {
-  iconName: 'ChevronLeft',
-};
+  // Failed iteration icon overlay
+  failedIcon: {
+    position: 'absolute',
+    top: '25%',
+    color: tokens.colorPaletteRedForeground1,
+    pointerEvents: 'none',
+  },
+
+  failedIconPrevious: {
+    left: '0',
+  },
+
+  failedIconNext: {
+    right: '0',
+  },
+
+  // Page input container
+  pageContainer: {
+    backgroundColor: tokens.colorNeutralBackground1Hover,
+    padding: '4px 14px',
+    borderRadius: '18px',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '6px',
+    transitionProperty: 'background-color',
+    transitionDuration: tokens.durationNormal,
+    transitionTimingFunction: tokens.curveEasyEase,
+    '&:focus-within': {
+      backgroundColor: tokens.colorNeutralBackground1Selected,
+    },
+  },
+
+  pageInput: {
+    width: '22px',
+    textAlign: 'center',
+  },
+
+  pageText: {
+    color: tokens.colorNeutralForeground3,
+    fontWeight: tokens.fontWeightRegular,
+    fontSize: tokens.fontSizeBase200,
+  },
+
+  // Clickable page numbers
+  pageNum: {
+    padding: '4px 8px',
+    borderRadius: '8px',
+    cursor: 'default',
+    fontWeight: tokens.fontWeightMedium,
+    fontSize: tokens.fontSizeBase200,
+    color: tokens.colorNeutralForeground2,
+    transitionProperty: 'all',
+    transitionDuration: tokens.durationFast,
+    transitionTimingFunction: tokens.curveEasyEase,
+  },
+
+  pageNumCurrent: {
+    backgroundColor: tokens.colorBrandBackground,
+    color: tokens.colorNeutralForegroundOnBrand,
+    borderRadius: '8px',
+  },
+
+  pageNumSelectable: {
+    color: tokens.colorBrandForeground1,
+    cursor: 'pointer',
+    '&:hover': {
+      backgroundColor: tokens.colorNeutralBackground1Hover,
+      textDecoration: 'underline',
+    },
+  },
+});
+
+const PAGE_INPUT_WIDTH_MULTIPLIER = 14;
 
 export const Pager: React.FC<PagerProps> = ({
   current: initialCurrent = 1,
@@ -80,10 +169,14 @@ export const Pager: React.FC<PagerProps> = ({
   countToDisplay: countInfo,
   onChange,
 }) => {
-  const [current, setCurrent] = React.useState(initialCurrent);
+  const [current, setCurrent] = useState(initialCurrent);
+  const [inputValue, setInputValue] = useState(String(initialCurrent));
+  const styles = usePagerStyles();
+  const intl = useIntl();
 
   useEffect(() => {
     setCurrent(initialCurrent);
+    setInputValue(String(initialCurrent));
   }, [initialCurrent]);
 
   let failedMax = 0;
@@ -98,26 +191,52 @@ export const Pager: React.FC<PagerProps> = ({
   const changeValue = useCallback(
     (newValue: string, changeHandler = onChange, minimum = min, maximum = max): void => {
       const value = Number.parseInt(newValue, 10);
+      let finalValue = value;
       if (value < minimum) {
-        setCurrent(minimum);
-        changeHandler && changeHandler({ value });
-      } else if (value >= minimum && value <= maximum) {
-        setCurrent(value);
-        changeHandler && changeHandler({ value });
+        finalValue = minimum;
       } else if (value > maximum) {
-        setCurrent(maximum);
-        changeHandler && changeHandler({ value });
+        finalValue = maximum;
       }
+      setCurrent(finalValue);
+      setInputValue(String(finalValue));
+      changeHandler && changeHandler({ value: finalValue });
     },
     [max, min, onChange]
   );
 
-  const handleChange = useCallback(
-    (_: React.FormEvent<HTMLElement>, newValue: string): void => {
-      changeValue(newValue);
+  const onInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>): void => {
+      const value = e.target.value.replace(/[^0-9]/g, '');
+      if (value === '' || (Number.parseInt(value, 10) >= min && Number.parseInt(value, 10) <= max)) {
+        setInputValue(value);
+      }
     },
-    [changeValue]
+    [min, max]
   );
+
+  const onInputKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>): void => {
+      if (e.key === 'Enter') {
+        e.currentTarget.blur();
+        if (inputValue) {
+          changeValue(inputValue);
+        }
+      }
+    },
+    [inputValue, changeValue]
+  );
+
+  const onInputBlur = useCallback((): void => {
+    if (inputValue && inputValue !== String(current)) {
+      changeValue(inputValue);
+    } else {
+      setInputValue(String(current));
+    }
+  }, [inputValue, current, changeValue]);
+
+  const onInputFocus = useCallback((e: React.FocusEvent<HTMLInputElement>): void => {
+    e.target.select();
+  }, []);
 
   // Prevent pager button clicks from selecting the foreach/until card.
   const handleClick = useCallback((e: React.MouseEvent<HTMLElement>): void => {
@@ -147,75 +266,64 @@ export const Pager: React.FC<PagerProps> = ({
     changeValue(String(current - 1), onClickPrevious, failedMin, failedMax);
   }, [changeValue, current, failedMax, failedMin, onClickPrevious]);
 
-  const intl = useIntl();
-
-  const pagerPreviousString = intl.formatMessage({
-    defaultMessage: 'Previous',
-    id: '6oqk+A',
-    description: 'Text of a button to go to previous page',
-  });
-
-  const textFieldStyles: Pick<ITextFieldStyles, 'fieldGroup'> = {
-    fieldGroup: {
-      width: maxLength ? 14 * maxLength : 'none',
-    },
-  };
-
-  const previousPagerFailedStrign = intl.formatMessage({
-    defaultMessage: 'Previous failed',
-    id: 'gKq3Jv',
-    description: 'Label of a button to go to the previous failed page option',
-  });
-
-  const pagerOfString = intl.formatMessage(
-    {
-      defaultMessage: 'of {max}',
-      id: 'W070M2',
-      description: 'Text on a pager where people can select a page number out of {max}',
-    },
-    {
-      max,
-    }
-  );
-
   const currentIndexStart = (current - 1) * (countInfo?.countPerPage ?? 0);
-  const showingResultsString = intl.formatMessage(
-    {
-      defaultMessage: 'Showing {current_index_start} - {current_index_last} of {max_count} results.',
-      id: '0ZZJos',
-      description:
-        'Accessibility label telling that the results showing is from {current_index_start} to {current_index_last} out of {max_count} items',
-    },
-    {
-      current_index_start: currentIndexStart + 1,
-      current_index_last: Math.min(currentIndexStart + (countInfo?.countPerPage ?? 0), countInfo?.totalCount ?? 0),
-      max_count: countInfo?.totalCount,
-    }
-  );
 
-  const pagerOfStringAria = intl.formatMessage(
-    {
-      defaultMessage: '{current_page} of {max_page}',
-      id: 'o1HOyf',
-      description: 'Accessibility label telling that the user is on page {current} of {max} pages',
-    },
-    {
-      current_page: current,
-      max_page: max,
-    }
-  );
-
-  const pagerNextFailedString = intl.formatMessage({
-    defaultMessage: 'Next failed',
-    id: 'Mb/Vp8',
-    description: 'Button indicating to go to the next page with failed options',
-  });
-
-  const pagerNextString = intl.formatMessage({
-    defaultMessage: 'Next',
-    id: 'iJOIca',
-    description: 'Button indicating to go to the next page',
-  });
+  const intlText = {
+    PREVIOUS: intl.formatMessage({
+      defaultMessage: 'Previous',
+      id: '6oqk+A',
+      description: 'Text of a button to go to previous page',
+    }),
+    NEXT: intl.formatMessage({
+      defaultMessage: 'Next',
+      id: 'iJOIca',
+      description: 'Button indicating to go to the next page',
+    }),
+    PREVIOUS_FAILED: intl.formatMessage({
+      defaultMessage: 'Previous failed',
+      id: 'gKq3Jv',
+      description: 'Label of a button to go to the previous failed page option',
+    }),
+    NEXT_FAILED: intl.formatMessage({
+      defaultMessage: 'Next failed',
+      id: 'Mb/Vp8',
+      description: 'Button indicating to go to the next page with failed options',
+    }),
+    PAGER_OF: intl.formatMessage(
+      {
+        defaultMessage: 'of {max}',
+        id: 'W070M2',
+        description: 'Text on a pager where people can select a page number out of {max}',
+      },
+      {
+        max,
+      }
+    ),
+    SHOWING_RESULTS: intl.formatMessage(
+      {
+        defaultMessage: 'Showing {current_index_start} - {current_index_last} of {max_count} results.',
+        id: '0ZZJos',
+        description:
+          'Accessibility label telling that the results showing is from {current_index_start} to {current_index_last} out of {max_count} items',
+      },
+      {
+        current_index_start: currentIndexStart + 1,
+        current_index_last: Math.min(currentIndexStart + (countInfo?.countPerPage ?? 0), countInfo?.totalCount ?? 0),
+        max_count: countInfo?.totalCount,
+      }
+    ),
+    CURRENT_PAGE: intl.formatMessage(
+      {
+        defaultMessage: '{current_page} of {max_page}',
+        id: 'o1HOyf',
+        description: 'Accessibility label telling that the user is on page {current} of {max} pages',
+      },
+      {
+        current_page: current,
+        max_page: max,
+      }
+    ),
+  };
 
   const pageNumbers = useMemo(() => {
     const result = [];
@@ -250,30 +358,49 @@ export const Pager: React.FC<PagerProps> = ({
   }, [current, clickablePageNumbers, max, min]);
 
   return (
-    <div className={countInfo && 'msla-pager-v2-pagenumbers'}>
+    <div className={countInfo ? styles.pagerContainer : undefined}>
+      {/* Count display */}
       {countInfo && (
-        <div className="msla-pager-v2">
-          <div className="msla-pager-v2--inner">
-            <Text>{showingResultsString}</Text>
+        <div className={styles.pagerV2}>
+          <div className={styles.pagerInner}>
+            <Text>{intlText.SHOWING_RESULTS}</Text>
           </div>
         </div>
       )}
-      <div className="msla-pager-v2" onClick={handleClick}>
-        <PagerButton disabled={current <= min} iconProps={previousIconProps} text={pagerPreviousString} onClick={handlePreviousClick} />
+
+      {/* Main pager */}
+      <div className={styles.pagerV2} onClick={handleClick}>
+        {/* Previous button */}
+        <PagerButton
+          disabled={current <= min}
+          onClick={handlePreviousClick}
+          ariaLabel={intlText.PREVIOUS}
+          text={intlText.PREVIOUS}
+          icon={<ChevronLeftIcon />}
+          isNext={false}
+        />
+        {/* Previous failed button */}
         {failedIterationProps && (
-          <PagerButton
-            disabled={failedMin < 1 || current <= failedMin}
-            failed={true}
-            iconProps={previousIconProps}
-            text={previousPagerFailedStrign}
-            onClick={handlePreviousFailedClick}
-          />
+          <div className={styles.failedButtonContainer}>
+            <PagerButton
+              disabled={failedMin < 1 || current <= failedMin}
+              onClick={handlePreviousFailedClick}
+              ariaLabel={intlText.PREVIOUS_FAILED}
+              text={intlText.PREVIOUS_FAILED}
+              icon={<ChevronLeftIcon />}
+              failed={true}
+              isNext={false}
+            />
+          </div>
         )}
-        {clickablePageNumbers ? (
-          <div className="msla-pager-v2--inner">
-            {pageNumbers.map((pageNum) => (
+
+        {/* Page content area */}
+        <div className={styles.pagerInner}>
+          {clickablePageNumbers ? (
+            // Clickable page numbers
+            pageNumbers.map((pageNum) => (
               <Text
-                className={css('msla-pager-pageNum', pageNum !== current && 'toSelect')}
+                className={mergeClasses(styles.pageNum, pageNum === current ? styles.pageNumCurrent : styles.pageNumSelectable)}
                 key={pageNum}
                 onClick={() => {
                   if (pageNum !== current) {
@@ -283,68 +410,70 @@ export const Pager: React.FC<PagerProps> = ({
               >
                 {pageNum}
               </Text>
-            ))}
-          </div>
-        ) : (
-          <div className="msla-pager-v2--inner">
-            {readonlyPagerInput ? null : (
-              <TextField
-                ariaLabel={pagerOfStringAria}
-                borderless={readonlyPagerInput}
-                max={max}
-                min={min}
-                maxLength={maxLength}
-                readOnly={readonlyPagerInput}
-                styles={textFieldStyles}
-                value={String(current)}
-                onChange={handleChange as any}
+            ))
+          ) : readonlyPagerInput ? (
+            // Readonly text display
+            <Text>{intlText.CURRENT_PAGE}</Text>
+          ) : (
+            // Editable page input
+            <div className={styles.pageContainer}>
+              <Input
+                className={styles.pageInput}
+                type="text"
+                value={inputValue}
+                onChange={(e) => onInputChange(e as React.ChangeEvent<HTMLInputElement>)}
+                onKeyDown={(e) => onInputKeyDown(e as React.KeyboardEvent<HTMLInputElement>)}
+                onBlur={onInputBlur}
+                onFocus={(e) => onInputFocus(e as React.FocusEvent<HTMLInputElement>)}
+                aria-label={intlText.CURRENT_PAGE}
+                style={maxLength ? { width: `${maxLength * PAGE_INPUT_WIDTH_MULTIPLIER}px` } : undefined}
+                size="small"
+                appearance="underline"
               />
-            )}
-            {clickablePageNumbers ? (
-              <Text>{current}</Text>
-            ) : readonlyPagerInput ? (
-              <Text>{pagerOfStringAria}</Text>
-            ) : (
-              <Text>&nbsp;{pagerOfString}</Text>
-            )}
+              <Text className={styles.pageText}>{intlText.PAGER_OF}</Text>
+            </div>
+          )}
+        </div>
+
+        {/* Next failed button */}
+        {failedIterationProps && (
+          <div className={styles.failedButtonContainer}>
+            <PagerButton
+              disabled={failedMax < 1 || current >= failedMax}
+              onClick={handleNextFailedClick}
+              ariaLabel={intlText.NEXT_FAILED}
+              text={intlText.NEXT_FAILED}
+              icon={<ChevronRightIcon />}
+              failed={true}
+              isNext={true}
+            />
           </div>
         )}
-        {failedIterationProps && (
-          <PagerButton
-            disabled={failedMax < 1 || current >= failedMax}
-            failed={true}
-            iconProps={nextIconProps}
-            text={pagerNextFailedString}
-            onClick={handleNextFailedClick}
-          />
-        )}
-        <PagerButton disabled={current >= max} iconProps={nextIconProps} text={pagerNextString} onClick={handleNextClick} />
+        {/* Next  button */}
+        <PagerButton
+          disabled={current >= max}
+          onClick={handleNextClick}
+          ariaLabel={intlText.NEXT}
+          text={intlText.NEXT}
+          icon={<ChevronRightIcon />}
+          isNext={true}
+        />
       </div>
       {countInfo && <div />}
     </div>
   );
 };
 
-const PagerButton: React.FC<PagerButtonProps> = ({ disabled, failed, iconProps, text, onClick }) => {
-  const intl = useIntl();
-  const previousPagerFailedString = intl.formatMessage({
-    defaultMessage: 'Previous failed',
-    id: 'gKq3Jv',
-    description: 'Label of a button to go to the previous failed page option',
-  });
-
+const PagerButton: React.FC<PagerButtonProps> = ({ disabled, failed, icon, text, onClick, ariaLabel, isNext }) => {
+  const styles = usePagerStyles();
   return (
-    <div className="msla-pager-failed-container">
-      <TooltipHost content={text}>
-        <IconButton ariaLabel={text} disabled={disabled} iconProps={iconProps} text={text} onClick={onClick} />
-      </TooltipHost>
+    <>
+      <Tooltip content={text} relationship="label" withArrow>
+        <Button shape="circular" appearance="subtle" disabled={disabled} onClick={onClick} aria-label={ariaLabel} icon={icon} />
+      </Tooltip>
       {failed && (
-        <Icon
-          className="msla-pager-failed-icon"
-          iconName={iconFailedProps.iconName}
-          styles={text === previousPagerFailedString ? iconFailedPreviousStyles : iconFailedNextStyles}
-        />
+        <ImportantFilled className={mergeClasses(styles.failedIcon, isNext ? styles.failedIconNext : styles.failedIconPrevious)} />
       )}
-    </div>
+    </>
   );
 };
