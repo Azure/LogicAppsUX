@@ -612,7 +612,6 @@ export const workflowSlice = createSlice({
       }
 
       // If there was an existing run after and the parent operation is in it, do nothing
-      // TODO: Doesn't work for actions after trigger
       if (childOperation.runAfter?.[parentOperationId]) {
         return;
       }

@@ -1,4 +1,4 @@
-import { AccordionHeader, AccordionItem, AccordionPanel, Link, makeStyles, Text, tokens } from '@fluentui/react-components';
+import { AccordionHeader, AccordionItem, AccordionPanel, Link, Text, tokens } from '@fluentui/react-components';
 import type { PropsWithChildren } from 'react';
 import { useCallback, useMemo, useState } from 'react';
 import { BrowseGrid } from '../browseResults';
@@ -6,18 +6,7 @@ import { useIntl } from 'react-intl';
 import { filterOperationData } from '../helpers';
 import { RecommendationPanelConstants } from '../../../constants';
 import type { OperationActionData, OperationGroupCardData } from '../interfaces';
-
-const useSpotlightSectionStyles = makeStyles({
-  linkText: {
-    marginLeft: 'auto',
-    marginRight: tokens.spacingHorizontalM,
-    fontSize: tokens.fontSizeBase200,
-    color: tokens.colorNeutralForeground1,
-    '&:hover': {
-      color: tokens.colorNeutralForeground1,
-    },
-  },
-});
+import { useSpotlightSectionStyles } from './spotlightSection.styles';
 
 export const SpotlightCategoryType = {
   AICapabilities: 'AICapabilities',
@@ -55,7 +44,7 @@ export const SpotlightSection = ({
 }: PropsWithChildren<SpotlightSectionProps>) => {
   const intl = useIntl();
 
-  const classNames = useSpotlightSectionStyles();
+  const styles = useSpotlightSectionStyles();
 
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -84,15 +73,15 @@ export const SpotlightSection = ({
     return (
       <AccordionItem
         value={index}
-        className="msla-recommendation-panel-spotlight-section-container"
+        className={styles.recommendationPanelSpotlightSectionContainer}
         style={{ backgroundColor: tokens.colorNeutralBackground2 }}
       >
-        <AccordionHeader className="msla-recommendation-panel-spotlight-section-header-button">
+        <AccordionHeader className={styles.spotlightSectionHeaderButton}>
           <Text weight="semibold" size={300}>
             {title}
           </Text>
         </AccordionHeader>
-        <AccordionPanel className="msla-recommendation-panel-spotlight-section-body" style={{ padding: '12px 16px' }}>
+        <AccordionPanel className={styles.spotlightSectionBody} style={{ padding: '12px 16px' }}>
           <Text size={200}>{noOperationDescription}</Text>
         </AccordionPanel>
       </AccordionItem>
@@ -114,24 +103,20 @@ export const SpotlightSection = ({
   );
 
   return (
-    <AccordionItem
-      value={index}
-      className="msla-recommendation-panel-spotlight-section-container"
-      style={{ backgroundColor: tokens.colorNeutralBackground2 }}
-    >
-      <div className="msla-recommendation-panel-spotlight-section-header">
-        <AccordionHeader className="msla-recommendation-panel-spotlight-section-header-button">
+    <AccordionItem value={index} className={styles.spotlightSectionContainer} style={{ backgroundColor: tokens.colorNeutralBackground2 }}>
+      <div className={styles.spotlightSectionHeader}>
+        <AccordionHeader className={styles.spotlightSectionHeaderButton}>
           <Text weight="semibold" size={300}>
             {title}
           </Text>
         </AccordionHeader>
         {isOpen && operationsCount > RecommendationPanelConstants.ACTION_SPOTLIGHT.MAX_AMOUNT_OF_SPOTLIGHT_ITEMS ? (
-          <Link onClick={() => setIsExpanded((v) => !v)} className={classNames.linkText}>
+          <Link onClick={() => setIsExpanded((v) => !v)} className={styles.linkText}>
             {isExpanded ? seeLessText : seeAllText}
           </Link>
         ) : null}
       </div>
-      <AccordionPanel className="msla-recommendation-panel-spotlight-section-body" style={{ margin: 0 }}>
+      <AccordionPanel className={styles.spotlightSectionBody} style={{ margin: 0 }}>
         <BrowseGrid
           onConnectorSelected={onSpotlightSectionConnectorSelected}
           onOperationSelected={onSpotlightSectionOperationSelected}

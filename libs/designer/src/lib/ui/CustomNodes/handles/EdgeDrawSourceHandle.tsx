@@ -1,15 +1,18 @@
-import { Handle, type Position } from '@xyflow/react';
+import { Handle, Position } from '@xyflow/react';
 import { useReadOnly, useShowEdgeDrawing } from '../../../core/state/designerOptions/designerOptionsSelectors';
+import { useHandleStyles } from './handles.styles';
+import { mergeClasses } from '@fluentui/react-components';
 
-export const EdgeDrawSourceHandle = (props: { sourcePosition: Position }) => {
+export const EdgeDrawSourceHandle = () => {
+  const styles = useHandleStyles();
   const readOnly = useReadOnly();
   const showEdgeDrawing = useShowEdgeDrawing();
 
   return (
     <Handle
-      className="node-handle bottom edge-draw-start"
+      className={mergeClasses(styles.nodeHandle, styles.bottom, styles.edgeDrawStart)}
       type="source"
-      position={props.sourcePosition}
+      position={Position.Bottom}
       isConnectable={true}
       isConnectableStart={true}
       isConnectableEnd={false}

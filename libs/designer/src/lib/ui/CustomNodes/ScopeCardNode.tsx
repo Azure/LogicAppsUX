@@ -48,12 +48,13 @@ import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
-import { Handle, Position, type NodeProps } from '@xyflow/react';
+import { Position, type NodeProps } from '@xyflow/react';
 import { copyScopeOperation } from '../../core/actions/bjsworkflow/copypaste';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { CopyTooltip } from '../common/DesignerContextualMenu/CopyTooltip';
 import { useNodeRepetition, useAgentRepetition, useAgentActionsRepetition } from '../../core/queries/runs';
 import { EdgeDrawTargetHandle } from './handles/EdgeDrawTargetHandle';
+import { DefaultHandle } from './handles/DefaultHandle';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
@@ -357,7 +358,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     <>
       <div className="msla-scope-card nopan" ref={ref as any}>
         <div ref={rootRef}>
-          <EdgeDrawTargetHandle targetPosition={targetPosition} />
+          <EdgeDrawTargetHandle />
           <ScopeCard
             active={isCardActive}
             showStatusPill={!isAgent && isMonitoringView && isCardActive}
@@ -386,7 +387,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
           />
           {showCopyCallout ? <CopyTooltip id={scopeId} targetRef={rootRef} hideTooltip={clearCopyCallout} /> : null}
           {shouldShowPager ? renderLoopsPager : null}
-          <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
+          <DefaultHandle type="source" />
         </div>
       </div>
       {graphCollapsed && !isFooter ? (

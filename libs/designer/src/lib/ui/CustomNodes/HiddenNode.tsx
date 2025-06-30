@@ -1,12 +1,13 @@
 import { memo } from 'react';
-import { Handle, Position, type NodeProps } from '@xyflow/react';
+import type { NodeProps } from '@xyflow/react';
+import { DefaultHandle } from './handles/DefaultHandle';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const HiddenNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
+const HiddenNode = ({ id }: NodeProps) => {
   return (
     <div>
-      <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
-      <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
+      <DefaultHandle type="target" />
+      <DefaultHandle type="source" />
     </div>
   );
 };
