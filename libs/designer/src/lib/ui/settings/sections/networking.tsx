@@ -306,7 +306,6 @@ export const Networking = ({
         checked: !disableAsyncPattern?.value,
         onToggleInputChange: (_, checked) => onAsyncPatternToggle(!checked),
         customLabel: getSettingLabel(asyncPatternTitle, asyncPatternTooltipText),
-        inlineLabel: true,
         ariaLabel: asyncPatternTitle,
       },
       visible: disableAsyncPattern?.isSupported,
