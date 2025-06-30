@@ -71,19 +71,6 @@ export const SimpleQueryBuilder = ({
     description: 'Error message when unable to switch to basic mode',
   });
 
-  // useEffect(() => {
-  //   setRootProp(itemValue);
-  //   if (itemValue) {
-  //     setAdvancedValue(convertRootPropToValue(itemValue));
-  //     setIsRowFormat(true);
-  //   } else if (initialValue) {
-  //     const convertedRowProps = convertAdvancedValueToRootProp(initialValue, baseEditorProps.loadParameterValueFromString);
-  //     setRootProp(convertedRowProps);
-  //     setAdvancedValue(initialValue);
-  //     setIsRowFormat(convertedRowProps !== undefined);
-  //   }
-  // }, [itemValue, initialValue, setRootProp, baseEditorProps.loadParameterValueFromString]);
-
   const handleUpdateParent = (newProps: GroupItems) => {
     const updatedRowProps = newProps as RowItemProps;
     const updatedAdvancedValue = convertRootPropToValue(updatedRowProps);
