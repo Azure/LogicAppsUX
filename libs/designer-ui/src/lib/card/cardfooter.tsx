@@ -1,7 +1,6 @@
 /* eslint-disable react/display-name */
 import type { CardProps } from './index';
 import { getHeaderStyle } from './utils';
-import type { FluentIcon } from '@fluentui/react-icons';
 import {
   bundleIcon,
   CommentFilled,
@@ -14,7 +13,7 @@ import {
   LinkMultipleFilled,
 } from '@fluentui/react-icons';
 import { Spinner, Tooltip } from '@fluentui/react-components';
-import { memo, useMemo } from 'react';
+import React, { memo, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 
 export type CardFooterProps = Pick<
@@ -40,7 +39,7 @@ interface CardBadgeProps {
   enabled?: boolean;
   active: boolean;
   content?: string;
-  IconComponent?: FluentIcon;
+  icon?: React.ReactElement;
   badgeContent?: any;
   title: string;
   tabIndex?: number;
@@ -129,28 +128,28 @@ export const CardFooter: React.FC<CardFooterProps> = memo(
             enabled: staticResultsEnabled,
             active: true,
             content: strings.MENU_STATIC_RESULT_ICON_TOOLTIP,
-            IconComponent: BeakerIcon,
+            icon: <BeakerIcon />,
             title: strings.PANEL_STATIC_RESULT_TITLE,
           },
           {
             enabled: !!commentBox?.comment,
             active: true,
             content: commentBox?.comment,
-            IconComponent: CommentIcon,
+            icon: <CommentIcon />,
             title: strings.COMMENT,
           },
           {
             enabled: !!(connectionRequired || connectionDisplayName),
             active: !!connectionDisplayName,
             content: connectionDisplayName || connectionTitle,
-            IconComponent: LinkIcon,
+            icon: <LinkIcon />,
             title: connectionTitle,
           },
           {
             enabled: isSecureInputsOutputs,
             active: true,
             content: strings.SECURE_INPUTS_OUTPUTS_TOOLTIP,
-            IconComponent: LockIcon,
+            icon: <LockIcon />,
             title: strings.SECURE_INPUTS_OUTPUTS_TITLE,
           },
         ].filter((badge) => badge.enabled),
@@ -181,14 +180,14 @@ export const CardFooter: React.FC<CardFooterProps> = memo(
 const CardBadgeBar: React.FC<CardBadgeBarProps> = ({ badges, brandColor, tabIndex, cardTitle }) => {
   return (
     <div className="msla-badges" style={getHeaderStyle(brandColor)}>
-      {badges.map(({ enabled, active, content, badgeContent, IconComponent, title }) => (
+      {badges.map(({ enabled, active, content, badgeContent, icon, title }) => (
         <CardBadge
           key={title}
           title={title}
           cardTitle={cardTitle}
           content={content}
           badgeContent={badgeContent}
-          IconComponent={IconComponent}
+          icon={icon}
           enabled={enabled}
           active={active}
           tabIndex={tabIndex}
@@ -198,7 +197,7 @@ const CardBadgeBar: React.FC<CardBadgeBarProps> = ({ badges, brandColor, tabInde
   );
 };
 
-const CardBadge: React.FC<CardBadgeProps> = ({ enabled, active, content, badgeContent, IconComponent, title, cardTitle, tabIndex }) => {
+const CardBadge: React.FC<CardBadgeProps> = ({ enabled, active, content, badgeContent, icon, title, cardTitle, tabIndex }) => {
   if (!enabled || !content) {
     return null;
   }
@@ -207,11 +206,11 @@ const CardBadge: React.FC<CardBadgeProps> = ({ enabled, active, content, badgeCo
     <Tooltip relationship={'label'} withArrow={true} content={`${cardTitle ?? ''} ${title}: ${content}`}>
       {badgeContent ?? (
         <div style={{ display: 'flex' }}>
-          {IconComponent && <IconComponent role="button" className={'panel-card-v2-badge active'} tabIndex={tabIndex} />}
+          {icon && React.cloneElement(icon, { role: 'button', className: 'panel-card-v2-badge active', tabIndex })}
         </div>
       )}
     </Tooltip>
   ) : (
-    (badgeContent ?? (IconComponent && <IconComponent className="panel-card-v2-badge inactive" aria-label={title} tabIndex={0} />))
+    (badgeContent ?? (icon && React.cloneElement(icon, { className: 'panel-card-v2-badge inactive', 'aria-label': title, tabIndex: 0 })))
   );
 };
