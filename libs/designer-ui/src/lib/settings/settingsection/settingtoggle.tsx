@@ -50,7 +50,6 @@ export const SettingToggle = ({
       {customLabel ? customLabel : null}
       <div className={styles.root}>
         <Switch
-          className={styles.switch}
           checked={checked}
           disabled={readOnly}
           onChange={handleChange}

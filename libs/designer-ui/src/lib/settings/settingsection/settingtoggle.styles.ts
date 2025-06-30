@@ -9,8 +9,4 @@ export const useStyles = makeStyles({
     width: 'calc(100% - 35px)', // Match textfield width
     marginRight: '36px', // Match textfield margin
   },
-  switch: {
-    // The Switch component in v9 doesn't need the explicit class name
-    // as it handles its own internal styling
-  },
 });
