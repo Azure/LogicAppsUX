@@ -23,9 +23,17 @@ exports[`GraphContainerNode > should apply correct styles based on node size 1`]
     data-automation-id="msla-graph-container-mockid"
   />
   <div
-    className="node-handle bottom"
-    isConnectable={false}
+    className="node-handle bottom edge-draw-start"
+    isConnectable={true}
+    isConnectableEnd={false}
+    isConnectableStart={true}
     position="bottom"
+    style={
+      {
+        "transform": "translate(-50%, 0)",
+        "visibility": "hidden",
+      }
+    }
     type="source"
   >
     Handle reactflow
@@ -56,9 +64,17 @@ exports[`GraphContainerNode > should not render DropZone when showLeafComponents
     data-automation-id="msla-graph-container-mockid"
   />
   <div
-    className="node-handle bottom"
-    isConnectable={false}
+    className="node-handle bottom edge-draw-start"
+    isConnectable={true}
+    isConnectableEnd={false}
+    isConnectableStart={true}
     position="bottom"
+    style={
+      {
+        "transform": "translate(-50%, 0)",
+        "visibility": "hidden",
+      }
+    }
     type="source"
   >
     Handle reactflow
@@ -90,9 +106,17 @@ exports[`GraphContainerNode > should render DropZone when showLeafComponents is 
       data-automation-id="msla-graph-container-mockid"
     />
     <div
-      className="node-handle bottom"
-      isConnectable={false}
+      className="node-handle bottom edge-draw-start"
+      isConnectable={true}
+      isConnectableEnd={false}
+      isConnectableStart={true}
       position="bottom"
+      style={
+        {
+          "transform": "translate(-50%, 0)",
+          "visibility": "hidden",
+        }
+      }
       type="source"
     >
       Handle reactflow
@@ -136,9 +160,17 @@ exports[`GraphContainerNode > should render graph container as inactive when is 
     data-automation-id="msla-graph-container-mockid"
   />
   <div
-    className="node-handle bottom"
-    isConnectable={false}
+    className="node-handle bottom edge-draw-start"
+    isConnectable={true}
+    isConnectableEnd={false}
+    isConnectableStart={true}
     position="bottom"
+    style={
+      {
+        "transform": "translate(-50%, 0)",
+        "visibility": "hidden",
+      }
+    }
     type="source"
   >
     Handle reactflow
@@ -169,9 +201,17 @@ exports[`GraphContainerNode > should render graph container as normal when in mo
     data-automation-id="msla-graph-container-mockid"
   />
   <div
-    className="node-handle bottom"
-    isConnectable={false}
+    className="node-handle bottom edge-draw-start"
+    isConnectable={true}
+    isConnectableEnd={false}
+    isConnectableStart={true}
     position="bottom"
+    style={
+      {
+        "transform": "translate(-50%, 0)",
+        "visibility": "hidden",
+      }
+    }
     type="source"
   >
     Handle reactflow
@@ -202,9 +242,17 @@ exports[`GraphContainerNode > should render the top and bottom handles 1`] = `
     data-automation-id="msla-graph-container-mockid"
   />
   <div
-    className="node-handle bottom"
-    isConnectable={false}
+    className="node-handle bottom edge-draw-start"
+    isConnectable={true}
+    isConnectableEnd={false}
+    isConnectableStart={true}
     position="bottom"
+    style={
+      {
+        "transform": "translate(-50%, 0)",
+        "visibility": "hidden",
+      }
+    }
     type="source"
   >
     Handle reactflow
@@ -235,9 +283,17 @@ exports[`GraphContainerNode > should render with footer and be a subgraph 1`] = 
     data-automation-id="msla-graph-container-mockid"
   />
   <div
-    className="node-handle bottom"
-    isConnectable={false}
+    className="node-handle bottom edge-draw-start"
+    isConnectable={true}
+    isConnectableEnd={false}
+    isConnectableStart={true}
     position="bottom"
+    style={
+      {
+        "transform": "translate(-50%, 0)",
+        "visibility": "hidden",
+      }
+    }
     type="source"
   >
     Handle reactflow
@@ -268,9 +324,17 @@ exports[`GraphContainerNode > should render without crashing 1`] = `
     data-automation-id="msla-graph-container-mockid"
   />
   <div
-    className="node-handle bottom"
-    isConnectable={false}
+    className="node-handle bottom edge-draw-start"
+    isConnectable={true}
+    isConnectableEnd={false}
+    isConnectableStart={true}
     position="bottom"
+    style={
+      {
+        "transform": "translate(-50%, 0)",
+        "visibility": "hidden",
+      }
+    }
     type="source"
   >
     Handle reactflow

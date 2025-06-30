@@ -2,7 +2,7 @@ import React from 'react';
 import renderer from 'react-test-renderer';
 import GraphContainerNode from '../GraphContainerNode';
 import { vi, beforeEach, describe, Mock, it, expect } from 'vitest';
-import { useMonitoringView, useReadOnly } from '../../../core/state/designerOptions/designerOptionsSelectors';
+import { useMonitoringView, useReadOnly, useShowEdgeDrawing } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { useIsNodeSelectedInOperationPanel } from '../../../core/state/panel/panelSelectors';
 import { useNodeMetadata } from '../../../core';
 import { useActionMetadata, useIsLeafNode, useParentNodeId, useRunData } from '../../../core/state/workflow/workflowSelectors';
@@ -12,6 +12,7 @@ import { NodeProps } from '@xyflow/react';
 vi.mock('../../../core/state/designerOptions/designerOptionsSelectors', () => ({
   useReadOnly: vi.fn(),
   useMonitoringView: vi.fn(),
+  useShowEdgeDrawing: vi.fn(),
 }));
 
 vi.mock('../../../core/state/panel/panelSelectors', () => ({
