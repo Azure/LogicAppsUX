@@ -4,10 +4,11 @@ export const useStyles = makeStyles({
   root: {
     display: 'flex',
     flexDirection: 'column',
-    width: '50%', // Match the LESS style for dropdowns
+    width: '100%',
   },
   dropdown: {
-    width: '100%',
+    width: 'calc(100% - 35px)', // Match textfield width
+    marginRight: '36px', // Match textfield margin
     minWidth: '250px',
   },
 });

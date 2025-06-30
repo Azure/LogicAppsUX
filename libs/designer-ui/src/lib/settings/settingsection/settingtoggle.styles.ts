@@ -4,8 +4,8 @@ export const useStyles = makeStyles({
   root: {
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'space-between',
     minHeight: '32px',
+    marginTop: '6px', // Match the LESS style
   },
   switch: {
     // The Switch component in v9 doesn't need the explicit class name
