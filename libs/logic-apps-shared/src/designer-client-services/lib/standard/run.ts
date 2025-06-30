@@ -156,7 +156,7 @@ export class StandardRunService implements IRunService {
 
     const queryParameters: Record<string, string> = {};
     if (status) {
-      queryParameters['$filter'] = `status eq '${status}`;
+      queryParameters['$filter'] = `status eq '${status}'`;
     }
     const uri = `${baseUrl}${runId}/actions/${nodeId}/scopeRepetitions`;
 
