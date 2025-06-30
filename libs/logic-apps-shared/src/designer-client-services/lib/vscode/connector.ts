@@ -25,8 +25,7 @@ export class StandardVSCodeConnectorService extends StandardConnectorService {
     parameters: Record<string, any>,
     dynamicState: any
   ): Promise<ListDynamicValue[]> {
-    const { baseUrl, apiVersion, getConfiguration, httpClient } = this.options;
-    const { operationId: dynamicOperation } = dynamicState;
+    const { getConfiguration } = this.options;
     const operationManifestService = OperationManifestService();
     let manifest: OperationManifest | undefined = undefined;
 
@@ -34,42 +33,8 @@ export class StandardVSCodeConnectorService extends StandardConnectorService {
       manifest = await operationManifestService.getOperationManifest(connectorId, operationId);
     }
 
-    const invokeParameters = this._getInvokeParameters(parameters, dynamicState);
     const configuration = await getConfiguration(connectionId ?? '', manifest);
-
-    if (this._isClientSupportedOperation(connectorId, operationId)) {
-      if (!this.options.valuesClient?.[dynamicOperation]) {
-        throw new UnsupportedException(`Operation ${dynamicOperation} is not implemented by the values client.`);
-      }
-      return this.options.valuesClient?.[dynamicOperation]({
-        operationId,
-        parameters: invokeParameters,
-        configuration,
-      });
-    }
-
-    const uri = `${baseUrl}/operationGroups/${connectorId.split('/').slice(-1)}/operations/${dynamicOperation}/dynamicInvoke`;
-    let response = null;
-    if (isHybridLogicApp(uri)) {
-      response = await httpClient.post({
-        uri: `${getHybridAppBaseRelativeUrl(baseUrl.split('hostruntime')[0])}/invoke?api-version=${hybridApiVersion}`,
-        headers: {
-          'x-ms-logicapps-proxy-path': `/runtime/webhooks/workflow/api/management/operationGroups/${connectorId
-            .split('/')
-            .slice(-1)}/operations/${dynamicOperation}/dynamicInvoke`,
-          'x-ms-logicapps-proxy-method': 'POST',
-        },
-        content: { parameters: invokeParameters, configuration },
-      });
-    } else {
-      response = await httpClient.post({
-        uri,
-        queryParameters: { 'api-version': apiVersion },
-        content: { parameters: invokeParameters, configuration },
-      });
-    }
-
-    return this._getResponseFromDynamicApi(response, uri);
+    return this._listDynamicValues(connectorId, operationId, parameters, dynamicState, configuration);
   }
 
   async getDynamicSchema(

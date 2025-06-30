@@ -45,18 +45,16 @@ export class StandardConnectorService extends BaseConnectorService {
     return unwrapPaginatedResponse(result);
   }
 
-  async getListDynamicValues(
-    connectionId: string | undefined,
+  protected async _listDynamicValues(
     connectorId: string,
     operationId: string,
     parameters: Record<string, any>,
-    dynamicState: any
+    dynamicState: any,
+    configuration: Record<string, any>
   ): Promise<ListDynamicValue[]> {
-    const { baseUrl, apiVersion, getConfiguration, httpClient } = this.options;
+    const { baseUrl, apiVersion, httpClient } = this.options;
     const { operationId: dynamicOperation } = dynamicState;
-
     const invokeParameters = this._getInvokeParameters(parameters, dynamicState);
-    const configuration = await getConfiguration(connectionId ?? '');
 
     if (this._isClientSupportedOperation(connectorId, operationId)) {
       if (!this.options.valuesClient?.[dynamicOperation]) {
@@ -91,6 +89,18 @@ export class StandardConnectorService extends BaseConnectorService {
     }
 
     return this._getResponseFromDynamicApi(response, uri);
+  }
+
+  async getListDynamicValues(
+    connectionId: string | undefined,
+    connectorId: string,
+    operationId: string,
+    parameters: Record<string, any>,
+    dynamicState: any
+  ): Promise<ListDynamicValue[]> {
+    const { getConfiguration } = this.options;
+    const configuration = await getConfiguration(connectionId ?? '');
+    return this._listDynamicValues(connectorId, operationId, parameters, dynamicState, configuration);
   }
 
   async getDynamicSchema(
