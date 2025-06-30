@@ -268,6 +268,10 @@ export interface OperationManifestProperties {
   connectionReference?: ConnectionReferenceKeyFormatMapping;
 
   externalDocs?: Documentation;
+
+  dynamicContent?: {
+    payloadConfiguration?: string[];
+  };
 }
 
 export type SubgraphType =
