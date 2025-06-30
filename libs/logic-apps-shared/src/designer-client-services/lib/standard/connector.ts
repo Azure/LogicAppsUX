@@ -103,21 +103,19 @@ export class StandardConnectorService extends BaseConnectorService {
     return this._listDynamicValues(connectorId, operationId, parameters, dynamicState, configuration);
   }
 
-  async getDynamicSchema(
-    connectionId: string | undefined,
+  protected async _getDynamicSchema(
     connectorId: string,
     operationId: string,
     parameters: Record<string, any>,
-    dynamicState: any
+    dynamicState: any,
+    configuration: Record<string, any>
   ): Promise<OpenAPIV2.SchemaObject> {
-    const { baseUrl, apiVersion, getConfiguration, httpClient } = this.options;
+    const { baseUrl, apiVersion, httpClient } = this.options;
     const {
       extension: { operationId: dynamicOperation },
       isInput,
     } = dynamicState;
-
     const invokeParameters = this._getInvokeParameters(parameters, dynamicState);
-    const configuration = await getConfiguration(connectionId ?? '');
 
     if (this._isClientSupportedOperation(connectorId, operationId)) {
       if (!this.options.schemaClient?.[dynamicOperation]) {
@@ -154,6 +152,19 @@ export class StandardConnectorService extends BaseConnectorService {
     }
 
     return this._getResponseFromDynamicApi(response, uri);
+  }
+
+  async getDynamicSchema(
+    connectionId: string | undefined,
+    connectorId: string,
+    operationId: string,
+    parameters: Record<string, any>,
+    dynamicState: any
+  ): Promise<OpenAPIV2.SchemaObject> {
+    const { getConfiguration } = this.options;
+    const configuration = await getConfiguration(connectionId ?? '');
+
+    return this._getDynamicSchema(connectorId, operationId, parameters, dynamicState, configuration);
   }
 
   getTreeDynamicValues(
