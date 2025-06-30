@@ -1,4 +1,5 @@
 import type { PanelLocation } from '@microsoft/designer-ui';
+import type { OperationManifest } from '@microsoft/logic-apps-shared';
 
 export interface PanelState {
   connectionContent: ConnectionPanelContentState;
@@ -38,7 +39,8 @@ export interface DiscoveryPanelContentState {
   favoriteOperations: ActionPanelFavoriteItem[];
   isAddingTrigger: boolean;
   isParallelBranch: boolean;
-  isAgentTool?: boolean;
+  isAddingAgentTool?: boolean;
+  agentToolMetadata?: { newCaseIdNewAdditiveSubgraphId: string; subGraphManifest: OperationManifest };
   panelMode: 'Discovery';
   relationshipIds: RelationshipIds;
   selectedNodeIds: string[];

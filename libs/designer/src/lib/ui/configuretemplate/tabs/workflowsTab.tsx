@@ -19,8 +19,13 @@ export const workflowsTab = (
     buttonContents: [
       {
         type: 'navigation',
+        text: resources.PreviousButtonText,
+        disabled: true, // Previous button is disabled in workflows tab
+        onClick: () => {},
+      },
+      {
+        type: 'navigation',
         text: resources.NextButtonText,
-        appearance: 'primary',
         onClick: () => {
           dispatch(selectWizardTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.CONNECTIONS));
         },

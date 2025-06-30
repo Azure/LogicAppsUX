@@ -3,7 +3,6 @@ import type { IDialogContentProps, IDialogStyleProps, IDialogStyles } from '@flu
 import { Dialog, DialogFooter, DialogType } from '@fluentui/react/lib/Dialog';
 import type { IModalProps } from '@fluentui/react/lib/Modal';
 import type { IStyleFunction } from '@fluentui/react/lib/Utilities';
-import { mergeClasses } from '@fluentui/react-components';
 import type * as React from 'react';
 import { useModalDialogStyles } from './modaldialog.styles';
 
@@ -22,7 +21,7 @@ export const ModalDialog = ({ confirmText, isOpen, title, children, getStyles, o
   const styles = useModalDialogStyles();
 
   const modalProps: IModalProps = {
-    className: mergeClasses(styles.modalDialog, 'msla-modal-dialog'),
+    className: styles.modalDialog,
     layerProps: {
       eventBubblingEnabled: true,
     },
@@ -44,8 +43,8 @@ export const ModalDialog = ({ confirmText, isOpen, title, children, getStyles, o
   };
   return (
     <Dialog dialogContentProps={dialogContentProps} hidden={!isOpen} modalProps={modalProps} styles={getStyles} onDismiss={handleDismiss}>
-      <div className={mergeClasses(styles.modalContent, 'msla-modal-content')} onClick={handleModalBodyClick}>
-        <div className={mergeClasses(styles.modalBody, 'msla-modal-body')}>{children}</div>
+      <div className={styles.modalContent} onClick={handleModalBodyClick}>
+        <div className={styles.modalBody}>{children}</div>
       </div>
       <DialogFooter>
         <PrimaryButton autoFocus onClick={handleConfirm}>

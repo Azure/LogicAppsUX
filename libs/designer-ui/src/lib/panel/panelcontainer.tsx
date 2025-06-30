@@ -11,7 +11,7 @@ import {
   MessageBarTitle,
 } from '@fluentui/react-components';
 import { ChevronDoubleRightFilled } from '@fluentui/react-icons';
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState, useEffect } from 'react';
 import { useIntl } from 'react-intl';
 import { EmptyContent } from '../card/emptycontent';
 import type { PageActionTelemetryData } from '../telemetry/models';
@@ -107,9 +107,46 @@ export const PanelContainer = ({
     localStorage.getItem(constants.TEACHING_POPOVER_ID.agentToolPanel) !== 'true'
   );
   const panelRef = useRef<HTMLDivElement>(null);
-  const drawerWidth = isCollapsed
-    ? PanelSize.Auto
-    : ((canResize ? overrideWidth : undefined) ?? (alternateSelectedNode ? PanelSize.DualView : PanelSize.Medium));
+
+  // Viewport-aware panel width
+  const [viewportWidth, setViewportWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setViewportWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Calculate responsive panel width
+  const getResponsiveWidth = () => {
+    if (isCollapsed) {
+      return PanelSize.Auto;
+    }
+
+    // If manually resized, use that width but constrain to viewport
+    if (canResize && overrideWidth) {
+      const numericWidth = Number.parseInt(overrideWidth, 10);
+      const maxWidth = viewportWidth * 0.9; // 90% of viewport width
+      return `${Math.min(numericWidth, maxWidth)}px`;
+    }
+
+    // Default widths based on panel type
+    const defaultWidth = alternateSelectedNode ? Number.parseInt(PanelSize.DualView, 10) : Number.parseInt(PanelSize.Medium, 10);
+
+    // Responsive breakpoints
+    if (viewportWidth < 768) {
+      return '100%'; // Full width on mobile
+    }
+    if (viewportWidth < 1024) {
+      return `${Math.min(defaultWidth, viewportWidth * 0.8)}px`; // 80% max on tablet
+    }
+    return `${Math.min(defaultWidth, viewportWidth * 0.6)}px`; // 60% max on desktop
+  };
+
+  const drawerWidth = getResponsiveWidth();
 
   const renderHeader = useCallback(
     (headerNode: PanelNodeData): JSX.Element => {
