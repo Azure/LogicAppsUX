@@ -1,4 +1,4 @@
-import type { OpenAPIV2 } from '../../../utils/src';
+import type { OpenAPIV2, OperationManifest } from '../../../utils/src';
 import { isArmResourceId, UnsupportedException } from '../../../utils/src';
 import { validateRequiredServiceArguments } from '../../../utils/src/lib/helpers/functions';
 import type { BaseConnectorServiceOptions } from '../base';
@@ -7,9 +7,9 @@ import type { ListDynamicValue, ManagedIdentityRequestProperties, TreeDynamicExt
 import { pathCombine, unwrapPaginatedResponse } from '../helpers';
 import { getHybridAppBaseRelativeUrl, hybridApiVersion, isHybridLogicApp } from './hybrid';
 
-type GetConfigurationFunction = (connectionId: string) => Promise<Record<string, any>>;
+type GetConfigurationFunction = (connectionId: string, manifest?: OperationManifest) => Promise<Record<string, any>>;
 
-interface StandardConnectorServiceOptions extends BaseConnectorServiceOptions {
+export interface StandardConnectorServiceOptions extends BaseConnectorServiceOptions {
   getConfiguration: GetConfigurationFunction;
 }
 

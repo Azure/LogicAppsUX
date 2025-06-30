@@ -1,21 +1,14 @@
 import type { OpenAPIV2, OperationManifest } from '../../../utils/src';
-import { isArmResourceId, UnsupportedException } from '../../../utils/src';
+import { UnsupportedException } from '../../../utils/src';
 import { validateRequiredServiceArguments } from '../../../utils/src/lib/helpers/functions';
-import type { BaseConnectorServiceOptions } from '../base';
-import { BaseConnectorService } from '../base';
-import type { ListDynamicValue, ManagedIdentityRequestProperties, TreeDynamicExtension, TreeDynamicValue } from '../connector';
-import { pathCombine, unwrapPaginatedResponse } from '../helpers';
+import type { ListDynamicValue } from '../connector';
 import { OperationManifestService } from '../operationmanifest';
+import { StandardConnectorService } from '../standard';
+import type { StandardConnectorServiceOptions } from '../standard/connector';
 import { getHybridAppBaseRelativeUrl, hybridApiVersion, isHybridLogicApp } from '../standard/hybrid';
 
-type GetConfigurationFunction = (connectionId: string, manifest: OperationManifest | undefined) => Promise<Record<string, any>>;
-
-interface StandardVSCodeConnectorServiceOptions extends BaseConnectorServiceOptions {
-  getConfiguration: GetConfigurationFunction;
-}
-
-export class StandardVSCodeConnectorService extends BaseConnectorService {
-  constructor(override readonly options: StandardVSCodeConnectorServiceOptions) {
+export class StandardVSCodeConnectorService extends StandardConnectorService {
+  constructor(override readonly options: StandardConnectorServiceOptions) {
     super({
       ...options,
       baseUrl: options.apiHubServiceDetails?.baseUrl ?? options.baseUrl,
@@ -23,27 +16,6 @@ export class StandardVSCodeConnectorService extends BaseConnectorService {
     });
     const { apiVersion, baseUrl, getConfiguration } = options;
     validateRequiredServiceArguments({ apiVersion, baseUrl, getConfiguration });
-  }
-
-  async getLegacyDynamicContent(
-    connectionId: string,
-    connectorId: string,
-    parameters: Record<string, any>,
-    managedIdentityProperties?: ManagedIdentityRequestProperties
-  ): Promise<any> {
-    const { baseUrl, apiHubServiceDetails } = this.options;
-    let dynamicUrl: string;
-    let apiVersion = this.options.apiVersion;
-
-    if (isArmResourceId(connectorId)) {
-      dynamicUrl = managedIdentityProperties ? baseUrl : pathCombine(apiHubServiceDetails?.baseUrl as string, connectionId);
-      apiVersion = managedIdentityProperties ? apiVersion : (apiHubServiceDetails?.apiVersion as string);
-    } else {
-      dynamicUrl = baseUrl;
-    }
-
-    const result = await this._executeAzureDynamicApi(dynamicUrl, apiVersion, parameters, managedIdentityProperties);
-    return unwrapPaginatedResponse(result);
   }
 
   async getListDynamicValues(
@@ -156,15 +128,5 @@ export class StandardVSCodeConnectorService extends BaseConnectorService {
     }
 
     return this._getResponseFromDynamicApi(response, uri);
-  }
-
-  getTreeDynamicValues(
-    _connectionId: string | undefined,
-    _connectorId: string,
-    _operationId: string,
-    _parameters: Record<string, any>,
-    _dynamicState: TreeDynamicExtension
-  ): Promise<TreeDynamicValue[]> {
-    throw new UnsupportedException('Unsupported dynamic call connector method - getTreeDynamicValues');
   }
 }
