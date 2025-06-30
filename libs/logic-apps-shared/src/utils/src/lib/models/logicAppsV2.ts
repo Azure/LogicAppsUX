@@ -984,7 +984,7 @@ export interface WorkflowRunAction {
   };
   status: string;
   code: string;
-  error: {
+  error?: {
     code: string;
     message: string;
   };

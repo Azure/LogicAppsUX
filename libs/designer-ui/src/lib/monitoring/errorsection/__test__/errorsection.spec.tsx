@@ -1,9 +1,9 @@
 import type { ErrorSectionProps } from '..';
 import { ErrorSection } from '..';
-import { MessageBarType } from '@fluentui/react';
 import React from 'react';
 import ShallowRenderer from 'react-test-renderer/shallow';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
+
 describe('lib/monitoring/requestpanel/errorsection', () => {
   let minimal: ErrorSectionProps, renderer: ShallowRenderer.ShallowRenderer;
 
@@ -25,10 +25,11 @@ describe('lib/monitoring/requestpanel/errorsection', () => {
     renderer.render(<ErrorSection {...minimal} />);
 
     const messageBar = renderer.getRenderOutput();
-    expect(messageBar.props.messageBarType).toBe(MessageBarType.severeWarning);
+    expect(messageBar.props.intent).toBe('error');
 
-    const [code, message]: any[] = React.Children.toArray(messageBar.props.children);
-    expect(code.props.children).toBe(minimal?.error?.code);
+    const [messageBarBody]: any[] = React.Children.toArray(messageBar.props.children);
+    const [title, _, message]: any[] = React.Children.toArray(messageBarBody.props.children);
+    expect(title.props.children).toBe(minimal?.error?.code);
     expect(message.props.children).toBe(minimal?.error?.message);
   });
 

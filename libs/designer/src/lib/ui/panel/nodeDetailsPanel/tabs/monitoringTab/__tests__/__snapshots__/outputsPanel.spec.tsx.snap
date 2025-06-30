@@ -5,46 +5,91 @@ exports[`OutputsPanel > Should render OutputsPanel with error state 1`] = `
   "asFragment": [Function],
   "baseElement": <body>
     <div>
-      <section
+      <div
         class="msla-trace-inputs-outputs"
       >
         <div
           class="msla-trace-inputs-outputs-header"
         >
           <div
-            class="msla-trace-inputs-outputs-header-text"
-            id="outputs-node1"
-            style="border-color: #000000b3;"
-          >
-            Outputs
-          </div>
+            style="border-radius: 8px; background: rgb(0, 0, 0); min-height: 32px; min-width: 6px;"
+          />
           <button
-            class="ms-Button ms-Button--action ms-Button--command msla-show-raw-button root-184"
-            data-is-focusable="true"
+            aria-expanded="true"
+            class="fui-Button r1alrhcs ___13arsol_wkbbhs0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl"
+            style="justify-content: flex-start; flex-grow: 1;"
             type="button"
           >
             <span
-              class="ms-Button-flexContainer flexContainer-185"
-              data-automationid="splitbuttonprimary"
+              class="fui-Button__icon rywnvv2 ___963sj20_1qpm2bl f1nizpg2"
             >
-              <i
+              <svg
                 aria-hidden="true"
-                class="ms-Icon root-105 css-193 ms-Button-icon icon-187"
-                data-icon-name="ChevronRightSmall"
-                style="font-family: "FabricMDL2Icons-3";"
+                class="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+                fill="currentColor"
+                height="24"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
               >
-                
-              </i>
-              <span
-                class="ms-Button-textContainer textContainer-186"
+                <path
+                  d="M4.3 8.3a1 1 0 0 1 1.4 0l6.3 6.29 6.3-6.3a1 1 0 1 1 1.4 1.42l-7 7a1 1 0 0 1-1.4 0l-7-7a1 1 0 0 1 0-1.42Z"
+                  fill="currentColor"
+                />
+              </svg>
+              <svg
+                aria-hidden="true"
+                class="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+                fill="currentColor"
+                height="24"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
               >
-                <span
-                  class="ms-Button-label label-188"
-                  id="id__18"
-                >
-                  Show raw outputs
-                </span>
-              </span>
+                <path
+                  d="M4.22 8.47c.3-.3.77-.3 1.06 0L12 15.19l6.72-6.72a.75.75 0 1 1 1.06 1.06l-7.25 7.25c-.3.3-.77.3-1.06 0L4.22 9.53a.75.75 0 0 1 0-1.06Z"
+                  fill="currentColor"
+                />
+              </svg>
+            </span>
+            Outputs
+          </button>
+          <button
+            class="fui-Button r1alrhcs msla-show-raw-button ___13arsol_wkbbhs0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl"
+            type="button"
+          >
+            Show raw outputs
+            <span
+              class="fui-Button__icon rywnvv2 ___1yz413i_pen21v0 f1a695kz"
+            >
+              <svg
+                aria-hidden="true"
+                class="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+                fill="currentColor"
+                height="1em"
+                viewBox="0 0 20 20"
+                width="1em"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M7.73 4.2a.75.75 0 0 1 1.06.03l5 5.25c.28.3.28.75 0 1.04l-5 5.25a.75.75 0 1 1-1.08-1.04L12.2 10l-4.5-4.73a.75.75 0 0 1 .02-1.06Z"
+                  fill="currentColor"
+                />
+              </svg>
+              <svg
+                aria-hidden="true"
+                class="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+                fill="currentColor"
+                height="1em"
+                viewBox="0 0 20 20"
+                width="1em"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M7.65 4.15c.2-.2.5-.2.7 0l5.49 5.46c.21.22.21.57 0 .78l-5.49 5.46a.5.5 0 0 1-.7-.7L12.8 10 7.65 4.85a.5.5 0 0 1 0-.7Z"
+                  fill="currentColor"
+                />
+              </svg>
             </span>
           </button>
         </div>
@@ -72,44 +117,78 @@ exports[`OutputsPanel > Should render OutputsPanel with error state 1`] = `
                 >
                   <button
                     aria-label="Select all text in ''"
-                    class="ms-Button ms-Button--icon root-194"
-                    data-is-focusable="true"
-                    title="Select all text in ''"
+                    class="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
                     type="button"
                   >
                     <span
-                      class="ms-Button-flexContainer flexContainer-195"
-                      data-automationid="splitbuttonprimary"
+                      class="fui-Button__icon rywnvv2"
                     >
-                      <i
+                      <svg
                         aria-hidden="true"
-                        class="ms-Icon root-105 css-200 ms-Button-icon icon-197"
-                        data-icon-name="SelectAll"
-                        style="font-family: "FabricMDL2Icons-1";"
+                        class="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+                        fill="currentColor"
+                        height="1em"
+                        viewBox="0 0 20 20"
+                        width="1em"
+                        xmlns="http://www.w3.org/2000/svg"
                       >
-                        
-                      </i>
+                        <path
+                          d="M4.5 3.5a1 1 0 0 0-1 1v2.25a.75.75 0 0 1-1.5 0V4.5A2.5 2.5 0 0 1 4.5 2h2.25a.75.75 0 0 1 0 1.5H4.5Zm0 13a1 1 0 0 1-1-1v-2.25a.75.75 0 0 0-1.5 0v2.25A2.5 2.5 0 0 0 4.5 18h2.25a.75.75 0 0 0 0-1.5H4.5Zm12-12a1 1 0 0 0-1-1h-2.25a.75.75 0 0 1 0-1.5h2.25A2.5 2.5 0 0 1 18 4.5v2.25a.75.75 0 0 1-1.5 0V4.5Zm-1 12a1 1 0 0 0 1-1v-2.25a.75.75 0 0 1 1.5 0v2.25a2.5 2.5 0 0 1-2.5 2.5h-2.25a.75.75 0 0 1 0-1.5h2.25ZM6 6.75c0-.41.34-.75.75-.75h6.5a.75.75 0 0 1 0 1.5h-6.5A.75.75 0 0 1 6 6.75ZM6.75 9a.75.75 0 0 0 0 1.5h6.5a.75.75 0 0 0 0-1.5h-6.5ZM6 12.75c0-.41.34-.75.75-.75h3.5a.75.75 0 0 1 0 1.5h-3.5a.75.75 0 0 1-.75-.75Z"
+                          fill="currentColor"
+                        />
+                      </svg>
+                      <svg
+                        aria-hidden="true"
+                        class="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+                        fill="currentColor"
+                        height="1em"
+                        viewBox="0 0 20 20"
+                        width="1em"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M4.5 3C3.67 3 3 3.67 3 4.5v2a.5.5 0 0 1-1 0v-2A2.5 2.5 0 0 1 4.5 2h2a.5.5 0 0 1 0 1h-2Zm0 14A1.5 1.5 0 0 1 3 15.5v-2a.5.5 0 0 0-1 0v2A2.5 2.5 0 0 0 4.5 18h2a.5.5 0 0 0 0-1h-2ZM17 4.5c0-.83-.67-1.5-1.5-1.5h-2a.5.5 0 0 1 0-1h2A2.5 2.5 0 0 1 18 4.5v2a.5.5 0 0 1-1 0v-2ZM15.5 17c.83 0 1.5-.67 1.5-1.5v-2a.5.5 0 0 1 1 0v2a2.5 2.5 0 0 1-2.5 2.5h-2a.5.5 0 0 1 0-1h2Zm-9-11a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7Zm0 3a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7ZM6 12.5c0-.28.22-.5.5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5Z"
+                          fill="currentColor"
+                        />
+                      </svg>
                     </span>
                   </button>
                   <button
                     aria-label="Copy the value of '' to the clipboard"
-                    class="ms-Button ms-Button--icon root-194"
-                    data-is-focusable="true"
-                    title="Copy the value of '' to the clipboard"
+                    class="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
                     type="button"
                   >
                     <span
-                      class="ms-Button-flexContainer flexContainer-195"
-                      data-automationid="splitbuttonprimary"
+                      class="fui-Button__icon rywnvv2"
                     >
-                      <i
+                      <svg
                         aria-hidden="true"
-                        class="ms-Icon root-105 css-202 ms-Button-icon icon-197"
-                        data-icon-name="Copy"
-                        style="font-family: "FabricMDL2Icons-2";"
+                        class="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+                        fill="currentColor"
+                        height="1em"
+                        viewBox="0 0 20 20"
+                        width="1em"
+                        xmlns="http://www.w3.org/2000/svg"
                       >
-                        
-                      </i>
+                        <path
+                          d="M6 4c0-1.1.9-2 2-2h6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
+                          fill="currentColor"
+                        />
+                      </svg>
+                      <svg
+                        aria-hidden="true"
+                        class="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+                        fill="currentColor"
+                        height="1em"
+                        viewBox="0 0 20 20"
+                        width="1em"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M8 2a2 2 0 0 0-2 2v10c0 1.1.9 2 2 2h6a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8ZM7 4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
+                          fill="currentColor"
+                        />
+                      </svg>
                     </span>
                   </button>
                 </div>
@@ -132,50 +211,100 @@ exports[`OutputsPanel > Should render OutputsPanel with error state 1`] = `
             </div>
           </section>
         </div>
-      </section>
+        <div
+          aria-orientation="horizontal"
+          class="fui-Divider ___14drqcq_2rxt2r0 f122n59 f1ewtqcl f22iagw f1063pyq fqerorx f10pi13n fk6fouc fy9rknc figsok6 fwrc4pm f17mccla fyl8oag f16vkdww fhsnbul f1gw3sf2 f1ly5f7u f1s3tz6t f1wl9k8s f13zj6fq fkfq4zb f1vccso1 f1geml7w f1r7kh1m fjml6kk f16j7guv fx01ahm fl8d8yv fj1a37q fly5x3f f163fonl f51yk4v f13rof3u f8rth92 f6czdpx f1iyka9k fzynn9s fekrn8e f1kyqvp9 fesgyo"
+          role="separator"
+        />
+      </div>
     </div>
   </body>,
   "container": <div>
-    <section
+    <div
       class="msla-trace-inputs-outputs"
     >
       <div
         class="msla-trace-inputs-outputs-header"
       >
         <div
-          class="msla-trace-inputs-outputs-header-text"
-          id="outputs-node1"
-          style="border-color: #000000b3;"
-        >
-          Outputs
-        </div>
+          style="border-radius: 8px; background: rgb(0, 0, 0); min-height: 32px; min-width: 6px;"
+        />
         <button
-          class="ms-Button ms-Button--action ms-Button--command msla-show-raw-button root-184"
-          data-is-focusable="true"
+          aria-expanded="true"
+          class="fui-Button r1alrhcs ___13arsol_wkbbhs0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl"
+          style="justify-content: flex-start; flex-grow: 1;"
           type="button"
         >
           <span
-            class="ms-Button-flexContainer flexContainer-185"
-            data-automationid="splitbuttonprimary"
+            class="fui-Button__icon rywnvv2 ___963sj20_1qpm2bl f1nizpg2"
           >
-            <i
+            <svg
               aria-hidden="true"
-              class="ms-Icon root-105 css-193 ms-Button-icon icon-187"
-              data-icon-name="ChevronRightSmall"
-              style="font-family: "FabricMDL2Icons-3";"
+              class="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+              fill="currentColor"
+              height="24"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
             >
-              
-            </i>
-            <span
-              class="ms-Button-textContainer textContainer-186"
+              <path
+                d="M4.3 8.3a1 1 0 0 1 1.4 0l6.3 6.29 6.3-6.3a1 1 0 1 1 1.4 1.42l-7 7a1 1 0 0 1-1.4 0l-7-7a1 1 0 0 1 0-1.42Z"
+                fill="currentColor"
+              />
+            </svg>
+            <svg
+              aria-hidden="true"
+              class="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+              fill="currentColor"
+              height="24"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
             >
-              <span
-                class="ms-Button-label label-188"
-                id="id__18"
-              >
-                Show raw outputs
-              </span>
-            </span>
+              <path
+                d="M4.22 8.47c.3-.3.77-.3 1.06 0L12 15.19l6.72-6.72a.75.75 0 1 1 1.06 1.06l-7.25 7.25c-.3.3-.77.3-1.06 0L4.22 9.53a.75.75 0 0 1 0-1.06Z"
+                fill="currentColor"
+              />
+            </svg>
+          </span>
+          Outputs
+        </button>
+        <button
+          class="fui-Button r1alrhcs msla-show-raw-button ___13arsol_wkbbhs0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl"
+          type="button"
+        >
+          Show raw outputs
+          <span
+            class="fui-Button__icon rywnvv2 ___1yz413i_pen21v0 f1a695kz"
+          >
+            <svg
+              aria-hidden="true"
+              class="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+              fill="currentColor"
+              height="1em"
+              viewBox="0 0 20 20"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M7.73 4.2a.75.75 0 0 1 1.06.03l5 5.25c.28.3.28.75 0 1.04l-5 5.25a.75.75 0 1 1-1.08-1.04L12.2 10l-4.5-4.73a.75.75 0 0 1 .02-1.06Z"
+                fill="currentColor"
+              />
+            </svg>
+            <svg
+              aria-hidden="true"
+              class="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+              fill="currentColor"
+              height="1em"
+              viewBox="0 0 20 20"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M7.65 4.15c.2-.2.5-.2.7 0l5.49 5.46c.21.22.21.57 0 .78l-5.49 5.46a.5.5 0 0 1-.7-.7L12.8 10 7.65 4.85a.5.5 0 0 1 0-.7Z"
+                fill="currentColor"
+              />
+            </svg>
           </span>
         </button>
       </div>
@@ -203,44 +332,78 @@ exports[`OutputsPanel > Should render OutputsPanel with error state 1`] = `
               >
                 <button
                   aria-label="Select all text in ''"
-                  class="ms-Button ms-Button--icon root-194"
-                  data-is-focusable="true"
-                  title="Select all text in ''"
+                  class="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
                   type="button"
                 >
                   <span
-                    class="ms-Button-flexContainer flexContainer-195"
-                    data-automationid="splitbuttonprimary"
+                    class="fui-Button__icon rywnvv2"
                   >
-                    <i
+                    <svg
                       aria-hidden="true"
-                      class="ms-Icon root-105 css-200 ms-Button-icon icon-197"
-                      data-icon-name="SelectAll"
-                      style="font-family: "FabricMDL2Icons-1";"
+                      class="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+                      fill="currentColor"
+                      height="1em"
+                      viewBox="0 0 20 20"
+                      width="1em"
+                      xmlns="http://www.w3.org/2000/svg"
                     >
-                      
-                    </i>
+                      <path
+                        d="M4.5 3.5a1 1 0 0 0-1 1v2.25a.75.75 0 0 1-1.5 0V4.5A2.5 2.5 0 0 1 4.5 2h2.25a.75.75 0 0 1 0 1.5H4.5Zm0 13a1 1 0 0 1-1-1v-2.25a.75.75 0 0 0-1.5 0v2.25A2.5 2.5 0 0 0 4.5 18h2.25a.75.75 0 0 0 0-1.5H4.5Zm12-12a1 1 0 0 0-1-1h-2.25a.75.75 0 0 1 0-1.5h2.25A2.5 2.5 0 0 1 18 4.5v2.25a.75.75 0 0 1-1.5 0V4.5Zm-1 12a1 1 0 0 0 1-1v-2.25a.75.75 0 0 1 1.5 0v2.25a2.5 2.5 0 0 1-2.5 2.5h-2.25a.75.75 0 0 1 0-1.5h2.25ZM6 6.75c0-.41.34-.75.75-.75h6.5a.75.75 0 0 1 0 1.5h-6.5A.75.75 0 0 1 6 6.75ZM6.75 9a.75.75 0 0 0 0 1.5h6.5a.75.75 0 0 0 0-1.5h-6.5ZM6 12.75c0-.41.34-.75.75-.75h3.5a.75.75 0 0 1 0 1.5h-3.5a.75.75 0 0 1-.75-.75Z"
+                        fill="currentColor"
+                      />
+                    </svg>
+                    <svg
+                      aria-hidden="true"
+                      class="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+                      fill="currentColor"
+                      height="1em"
+                      viewBox="0 0 20 20"
+                      width="1em"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M4.5 3C3.67 3 3 3.67 3 4.5v2a.5.5 0 0 1-1 0v-2A2.5 2.5 0 0 1 4.5 2h2a.5.5 0 0 1 0 1h-2Zm0 14A1.5 1.5 0 0 1 3 15.5v-2a.5.5 0 0 0-1 0v2A2.5 2.5 0 0 0 4.5 18h2a.5.5 0 0 0 0-1h-2ZM17 4.5c0-.83-.67-1.5-1.5-1.5h-2a.5.5 0 0 1 0-1h2A2.5 2.5 0 0 1 18 4.5v2a.5.5 0 0 1-1 0v-2ZM15.5 17c.83 0 1.5-.67 1.5-1.5v-2a.5.5 0 0 1 1 0v2a2.5 2.5 0 0 1-2.5 2.5h-2a.5.5 0 0 1 0-1h2Zm-9-11a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7Zm0 3a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7ZM6 12.5c0-.28.22-.5.5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5Z"
+                        fill="currentColor"
+                      />
+                    </svg>
                   </span>
                 </button>
                 <button
                   aria-label="Copy the value of '' to the clipboard"
-                  class="ms-Button ms-Button--icon root-194"
-                  data-is-focusable="true"
-                  title="Copy the value of '' to the clipboard"
+                  class="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
                   type="button"
                 >
                   <span
-                    class="ms-Button-flexContainer flexContainer-195"
-                    data-automationid="splitbuttonprimary"
+                    class="fui-Button__icon rywnvv2"
                   >
-                    <i
+                    <svg
                       aria-hidden="true"
-                      class="ms-Icon root-105 css-202 ms-Button-icon icon-197"
-                      data-icon-name="Copy"
-                      style="font-family: "FabricMDL2Icons-2";"
+                      class="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+                      fill="currentColor"
+                      height="1em"
+                      viewBox="0 0 20 20"
+                      width="1em"
+                      xmlns="http://www.w3.org/2000/svg"
                     >
-                      
-                    </i>
+                      <path
+                        d="M6 4c0-1.1.9-2 2-2h6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
+                        fill="currentColor"
+                      />
+                    </svg>
+                    <svg
+                      aria-hidden="true"
+                      class="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+                      fill="currentColor"
+                      height="1em"
+                      viewBox="0 0 20 20"
+                      width="1em"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M8 2a2 2 0 0 0-2 2v10c0 1.1.9 2 2 2h6a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8ZM7 4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
+                        fill="currentColor"
+                      />
+                    </svg>
                   </span>
                 </button>
               </div>
@@ -263,7 +426,12 @@ exports[`OutputsPanel > Should render OutputsPanel with error state 1`] = `
           </div>
         </section>
       </div>
-    </section>
+      <div
+        aria-orientation="horizontal"
+        class="fui-Divider ___14drqcq_2rxt2r0 f122n59 f1ewtqcl f22iagw f1063pyq fqerorx f10pi13n fk6fouc fy9rknc figsok6 fwrc4pm f17mccla fyl8oag f16vkdww fhsnbul f1gw3sf2 f1ly5f7u f1s3tz6t f1wl9k8s f13zj6fq fkfq4zb f1vccso1 f1geml7w f1r7kh1m fjml6kk f16j7guv fx01ahm fl8d8yv fj1a37q fly5x3f f163fonl f51yk4v f13rof3u f8rth92 f6czdpx f1iyka9k fzynn9s fekrn8e f1kyqvp9 fesgyo"
+        role="separator"
+      />
+    </div>
   </div>,
   "debug": [Function],
   "findAllByAltText": [Function],
@@ -324,46 +492,91 @@ exports[`OutputsPanel > Should render OutputsPanel with loading state 1`] = `
   "asFragment": [Function],
   "baseElement": <body>
     <div>
-      <section
+      <div
         class="msla-trace-inputs-outputs"
       >
         <div
           class="msla-trace-inputs-outputs-header"
         >
           <div
-            class="msla-trace-inputs-outputs-header-text"
-            id="outputs-node1"
-            style="border-color: #000000b3;"
-          >
-            Outputs
-          </div>
+            style="border-radius: 8px; background: rgb(0, 0, 0); min-height: 32px; min-width: 6px;"
+          />
           <button
-            class="ms-Button ms-Button--action ms-Button--command msla-show-raw-button root-184"
-            data-is-focusable="true"
+            aria-expanded="true"
+            class="fui-Button r1alrhcs ___13arsol_wkbbhs0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl"
+            style="justify-content: flex-start; flex-grow: 1;"
             type="button"
           >
             <span
-              class="ms-Button-flexContainer flexContainer-185"
-              data-automationid="splitbuttonprimary"
+              class="fui-Button__icon rywnvv2 ___963sj20_1qpm2bl f1nizpg2"
             >
-              <i
+              <svg
                 aria-hidden="true"
-                class="ms-Icon root-105 css-193 ms-Button-icon icon-187"
-                data-icon-name="ChevronRightSmall"
-                style="font-family: "FabricMDL2Icons-3";"
+                class="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+                fill="currentColor"
+                height="24"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
               >
-                
-              </i>
-              <span
-                class="ms-Button-textContainer textContainer-186"
+                <path
+                  d="M4.3 8.3a1 1 0 0 1 1.4 0l6.3 6.29 6.3-6.3a1 1 0 1 1 1.4 1.42l-7 7a1 1 0 0 1-1.4 0l-7-7a1 1 0 0 1 0-1.42Z"
+                  fill="currentColor"
+                />
+              </svg>
+              <svg
+                aria-hidden="true"
+                class="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+                fill="currentColor"
+                height="24"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
               >
-                <span
-                  class="ms-Button-label label-188"
-                  id="id__9"
-                >
-                  Show raw outputs
-                </span>
-              </span>
+                <path
+                  d="M4.22 8.47c.3-.3.77-.3 1.06 0L12 15.19l6.72-6.72a.75.75 0 1 1 1.06 1.06l-7.25 7.25c-.3.3-.77.3-1.06 0L4.22 9.53a.75.75 0 0 1 0-1.06Z"
+                  fill="currentColor"
+                />
+              </svg>
+            </span>
+            Outputs
+          </button>
+          <button
+            class="fui-Button r1alrhcs msla-show-raw-button ___13arsol_wkbbhs0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl"
+            type="button"
+          >
+            Show raw outputs
+            <span
+              class="fui-Button__icon rywnvv2 ___1yz413i_pen21v0 f1a695kz"
+            >
+              <svg
+                aria-hidden="true"
+                class="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+                fill="currentColor"
+                height="1em"
+                viewBox="0 0 20 20"
+                width="1em"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M7.73 4.2a.75.75 0 0 1 1.06.03l5 5.25c.28.3.28.75 0 1.04l-5 5.25a.75.75 0 1 1-1.08-1.04L12.2 10l-4.5-4.73a.75.75 0 0 1 .02-1.06Z"
+                  fill="currentColor"
+                />
+              </svg>
+              <svg
+                aria-hidden="true"
+                class="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+                fill="currentColor"
+                height="1em"
+                viewBox="0 0 20 20"
+                width="1em"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M7.65 4.15c.2-.2.5-.2.7 0l5.49 5.46c.21.22.21.57 0 .78l-5.49 5.46a.5.5 0 0 1-.7-.7L12.8 10 7.65 4.85a.5.5 0 0 1 0-.7Z"
+                  fill="currentColor"
+                />
+              </svg>
             </span>
           </button>
         </div>
@@ -391,44 +604,78 @@ exports[`OutputsPanel > Should render OutputsPanel with loading state 1`] = `
                 >
                   <button
                     aria-label="Select all text in ''"
-                    class="ms-Button ms-Button--icon root-194"
-                    data-is-focusable="true"
-                    title="Select all text in ''"
+                    class="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
                     type="button"
                   >
                     <span
-                      class="ms-Button-flexContainer flexContainer-195"
-                      data-automationid="splitbuttonprimary"
+                      class="fui-Button__icon rywnvv2"
                     >
-                      <i
+                      <svg
                         aria-hidden="true"
-                        class="ms-Icon root-105 css-200 ms-Button-icon icon-197"
-                        data-icon-name="SelectAll"
-                        style="font-family: "FabricMDL2Icons-1";"
+                        class="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+                        fill="currentColor"
+                        height="1em"
+                        viewBox="0 0 20 20"
+                        width="1em"
+                        xmlns="http://www.w3.org/2000/svg"
                       >
-                        
-                      </i>
+                        <path
+                          d="M4.5 3.5a1 1 0 0 0-1 1v2.25a.75.75 0 0 1-1.5 0V4.5A2.5 2.5 0 0 1 4.5 2h2.25a.75.75 0 0 1 0 1.5H4.5Zm0 13a1 1 0 0 1-1-1v-2.25a.75.75 0 0 0-1.5 0v2.25A2.5 2.5 0 0 0 4.5 18h2.25a.75.75 0 0 0 0-1.5H4.5Zm12-12a1 1 0 0 0-1-1h-2.25a.75.75 0 0 1 0-1.5h2.25A2.5 2.5 0 0 1 18 4.5v2.25a.75.75 0 0 1-1.5 0V4.5Zm-1 12a1 1 0 0 0 1-1v-2.25a.75.75 0 0 1 1.5 0v2.25a2.5 2.5 0 0 1-2.5 2.5h-2.25a.75.75 0 0 1 0-1.5h2.25ZM6 6.75c0-.41.34-.75.75-.75h6.5a.75.75 0 0 1 0 1.5h-6.5A.75.75 0 0 1 6 6.75ZM6.75 9a.75.75 0 0 0 0 1.5h6.5a.75.75 0 0 0 0-1.5h-6.5ZM6 12.75c0-.41.34-.75.75-.75h3.5a.75.75 0 0 1 0 1.5h-3.5a.75.75 0 0 1-.75-.75Z"
+                          fill="currentColor"
+                        />
+                      </svg>
+                      <svg
+                        aria-hidden="true"
+                        class="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+                        fill="currentColor"
+                        height="1em"
+                        viewBox="0 0 20 20"
+                        width="1em"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M4.5 3C3.67 3 3 3.67 3 4.5v2a.5.5 0 0 1-1 0v-2A2.5 2.5 0 0 1 4.5 2h2a.5.5 0 0 1 0 1h-2Zm0 14A1.5 1.5 0 0 1 3 15.5v-2a.5.5 0 0 0-1 0v2A2.5 2.5 0 0 0 4.5 18h2a.5.5 0 0 0 0-1h-2ZM17 4.5c0-.83-.67-1.5-1.5-1.5h-2a.5.5 0 0 1 0-1h2A2.5 2.5 0 0 1 18 4.5v2a.5.5 0 0 1-1 0v-2ZM15.5 17c.83 0 1.5-.67 1.5-1.5v-2a.5.5 0 0 1 1 0v2a2.5 2.5 0 0 1-2.5 2.5h-2a.5.5 0 0 1 0-1h2Zm-9-11a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7Zm0 3a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7ZM6 12.5c0-.28.22-.5.5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5Z"
+                          fill="currentColor"
+                        />
+                      </svg>
                     </span>
                   </button>
                   <button
                     aria-label="Copy the value of '' to the clipboard"
-                    class="ms-Button ms-Button--icon root-194"
-                    data-is-focusable="true"
-                    title="Copy the value of '' to the clipboard"
+                    class="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
                     type="button"
                   >
                     <span
-                      class="ms-Button-flexContainer flexContainer-195"
-                      data-automationid="splitbuttonprimary"
+                      class="fui-Button__icon rywnvv2"
                     >
-                      <i
+                      <svg
                         aria-hidden="true"
-                        class="ms-Icon root-105 css-202 ms-Button-icon icon-197"
-                        data-icon-name="Copy"
-                        style="font-family: "FabricMDL2Icons-2";"
+                        class="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+                        fill="currentColor"
+                        height="1em"
+                        viewBox="0 0 20 20"
+                        width="1em"
+                        xmlns="http://www.w3.org/2000/svg"
                       >
-                        
-                      </i>
+                        <path
+                          d="M6 4c0-1.1.9-2 2-2h6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
+                          fill="currentColor"
+                        />
+                      </svg>
+                      <svg
+                        aria-hidden="true"
+                        class="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+                        fill="currentColor"
+                        height="1em"
+                        viewBox="0 0 20 20"
+                        width="1em"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M8 2a2 2 0 0 0-2 2v10c0 1.1.9 2 2 2h6a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8ZM7 4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
+                          fill="currentColor"
+                        />
+                      </svg>
                     </span>
                   </button>
                 </div>
@@ -451,50 +698,100 @@ exports[`OutputsPanel > Should render OutputsPanel with loading state 1`] = `
             </div>
           </section>
         </div>
-      </section>
+        <div
+          aria-orientation="horizontal"
+          class="fui-Divider ___14drqcq_2rxt2r0 f122n59 f1ewtqcl f22iagw f1063pyq fqerorx f10pi13n fk6fouc fy9rknc figsok6 fwrc4pm f17mccla fyl8oag f16vkdww fhsnbul f1gw3sf2 f1ly5f7u f1s3tz6t f1wl9k8s f13zj6fq fkfq4zb f1vccso1 f1geml7w f1r7kh1m fjml6kk f16j7guv fx01ahm fl8d8yv fj1a37q fly5x3f f163fonl f51yk4v f13rof3u f8rth92 f6czdpx f1iyka9k fzynn9s fekrn8e f1kyqvp9 fesgyo"
+          role="separator"
+        />
+      </div>
     </div>
   </body>,
   "container": <div>
-    <section
+    <div
       class="msla-trace-inputs-outputs"
     >
       <div
         class="msla-trace-inputs-outputs-header"
       >
         <div
-          class="msla-trace-inputs-outputs-header-text"
-          id="outputs-node1"
-          style="border-color: #000000b3;"
-        >
-          Outputs
-        </div>
+          style="border-radius: 8px; background: rgb(0, 0, 0); min-height: 32px; min-width: 6px;"
+        />
         <button
-          class="ms-Button ms-Button--action ms-Button--command msla-show-raw-button root-184"
-          data-is-focusable="true"
+          aria-expanded="true"
+          class="fui-Button r1alrhcs ___13arsol_wkbbhs0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl"
+          style="justify-content: flex-start; flex-grow: 1;"
           type="button"
         >
           <span
-            class="ms-Button-flexContainer flexContainer-185"
-            data-automationid="splitbuttonprimary"
+            class="fui-Button__icon rywnvv2 ___963sj20_1qpm2bl f1nizpg2"
           >
-            <i
+            <svg
               aria-hidden="true"
-              class="ms-Icon root-105 css-193 ms-Button-icon icon-187"
-              data-icon-name="ChevronRightSmall"
-              style="font-family: "FabricMDL2Icons-3";"
+              class="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+              fill="currentColor"
+              height="24"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
             >
-              
-            </i>
-            <span
-              class="ms-Button-textContainer textContainer-186"
+              <path
+                d="M4.3 8.3a1 1 0 0 1 1.4 0l6.3 6.29 6.3-6.3a1 1 0 1 1 1.4 1.42l-7 7a1 1 0 0 1-1.4 0l-7-7a1 1 0 0 1 0-1.42Z"
+                fill="currentColor"
+              />
+            </svg>
+            <svg
+              aria-hidden="true"
+              class="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+              fill="currentColor"
+              height="24"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
             >
-              <span
-                class="ms-Button-label label-188"
-                id="id__9"
-              >
-                Show raw outputs
-              </span>
-            </span>
+              <path
+                d="M4.22 8.47c.3-.3.77-.3 1.06 0L12 15.19l6.72-6.72a.75.75 0 1 1 1.06 1.06l-7.25 7.25c-.3.3-.77.3-1.06 0L4.22 9.53a.75.75 0 0 1 0-1.06Z"
+                fill="currentColor"
+              />
+            </svg>
+          </span>
+          Outputs
+        </button>
+        <button
+          class="fui-Button r1alrhcs msla-show-raw-button ___13arsol_wkbbhs0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl"
+          type="button"
+        >
+          Show raw outputs
+          <span
+            class="fui-Button__icon rywnvv2 ___1yz413i_pen21v0 f1a695kz"
+          >
+            <svg
+              aria-hidden="true"
+              class="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+              fill="currentColor"
+              height="1em"
+              viewBox="0 0 20 20"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M7.73 4.2a.75.75 0 0 1 1.06.03l5 5.25c.28.3.28.75 0 1.04l-5 5.25a.75.75 0 1 1-1.08-1.04L12.2 10l-4.5-4.73a.75.75 0 0 1 .02-1.06Z"
+                fill="currentColor"
+              />
+            </svg>
+            <svg
+              aria-hidden="true"
+              class="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+              fill="currentColor"
+              height="1em"
+              viewBox="0 0 20 20"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M7.65 4.15c.2-.2.5-.2.7 0l5.49 5.46c.21.22.21.57 0 .78l-5.49 5.46a.5.5 0 0 1-.7-.7L12.8 10 7.65 4.85a.5.5 0 0 1 0-.7Z"
+                fill="currentColor"
+              />
+            </svg>
           </span>
         </button>
       </div>
@@ -522,44 +819,78 @@ exports[`OutputsPanel > Should render OutputsPanel with loading state 1`] = `
               >
                 <button
                   aria-label="Select all text in ''"
-                  class="ms-Button ms-Button--icon root-194"
-                  data-is-focusable="true"
-                  title="Select all text in ''"
+                  class="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
                   type="button"
                 >
                   <span
-                    class="ms-Button-flexContainer flexContainer-195"
-                    data-automationid="splitbuttonprimary"
+                    class="fui-Button__icon rywnvv2"
                   >
-                    <i
+                    <svg
                       aria-hidden="true"
-                      class="ms-Icon root-105 css-200 ms-Button-icon icon-197"
-                      data-icon-name="SelectAll"
-                      style="font-family: "FabricMDL2Icons-1";"
+                      class="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+                      fill="currentColor"
+                      height="1em"
+                      viewBox="0 0 20 20"
+                      width="1em"
+                      xmlns="http://www.w3.org/2000/svg"
                     >
-                      
-                    </i>
+                      <path
+                        d="M4.5 3.5a1 1 0 0 0-1 1v2.25a.75.75 0 0 1-1.5 0V4.5A2.5 2.5 0 0 1 4.5 2h2.25a.75.75 0 0 1 0 1.5H4.5Zm0 13a1 1 0 0 1-1-1v-2.25a.75.75 0 0 0-1.5 0v2.25A2.5 2.5 0 0 0 4.5 18h2.25a.75.75 0 0 0 0-1.5H4.5Zm12-12a1 1 0 0 0-1-1h-2.25a.75.75 0 0 1 0-1.5h2.25A2.5 2.5 0 0 1 18 4.5v2.25a.75.75 0 0 1-1.5 0V4.5Zm-1 12a1 1 0 0 0 1-1v-2.25a.75.75 0 0 1 1.5 0v2.25a2.5 2.5 0 0 1-2.5 2.5h-2.25a.75.75 0 0 1 0-1.5h2.25ZM6 6.75c0-.41.34-.75.75-.75h6.5a.75.75 0 0 1 0 1.5h-6.5A.75.75 0 0 1 6 6.75ZM6.75 9a.75.75 0 0 0 0 1.5h6.5a.75.75 0 0 0 0-1.5h-6.5ZM6 12.75c0-.41.34-.75.75-.75h3.5a.75.75 0 0 1 0 1.5h-3.5a.75.75 0 0 1-.75-.75Z"
+                        fill="currentColor"
+                      />
+                    </svg>
+                    <svg
+                      aria-hidden="true"
+                      class="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+                      fill="currentColor"
+                      height="1em"
+                      viewBox="0 0 20 20"
+                      width="1em"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M4.5 3C3.67 3 3 3.67 3 4.5v2a.5.5 0 0 1-1 0v-2A2.5 2.5 0 0 1 4.5 2h2a.5.5 0 0 1 0 1h-2Zm0 14A1.5 1.5 0 0 1 3 15.5v-2a.5.5 0 0 0-1 0v2A2.5 2.5 0 0 0 4.5 18h2a.5.5 0 0 0 0-1h-2ZM17 4.5c0-.83-.67-1.5-1.5-1.5h-2a.5.5 0 0 1 0-1h2A2.5 2.5 0 0 1 18 4.5v2a.5.5 0 0 1-1 0v-2ZM15.5 17c.83 0 1.5-.67 1.5-1.5v-2a.5.5 0 0 1 1 0v2a2.5 2.5 0 0 1-2.5 2.5h-2a.5.5 0 0 1 0-1h2Zm-9-11a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7Zm0 3a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7ZM6 12.5c0-.28.22-.5.5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5Z"
+                        fill="currentColor"
+                      />
+                    </svg>
                   </span>
                 </button>
                 <button
                   aria-label="Copy the value of '' to the clipboard"
-                  class="ms-Button ms-Button--icon root-194"
-                  data-is-focusable="true"
-                  title="Copy the value of '' to the clipboard"
+                  class="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
                   type="button"
                 >
                   <span
-                    class="ms-Button-flexContainer flexContainer-195"
-                    data-automationid="splitbuttonprimary"
+                    class="fui-Button__icon rywnvv2"
                   >
-                    <i
+                    <svg
                       aria-hidden="true"
-                      class="ms-Icon root-105 css-202 ms-Button-icon icon-197"
-                      data-icon-name="Copy"
-                      style="font-family: "FabricMDL2Icons-2";"
+                      class="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+                      fill="currentColor"
+                      height="1em"
+                      viewBox="0 0 20 20"
+                      width="1em"
+                      xmlns="http://www.w3.org/2000/svg"
                     >
-                      
-                    </i>
+                      <path
+                        d="M6 4c0-1.1.9-2 2-2h6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
+                        fill="currentColor"
+                      />
+                    </svg>
+                    <svg
+                      aria-hidden="true"
+                      class="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+                      fill="currentColor"
+                      height="1em"
+                      viewBox="0 0 20 20"
+                      width="1em"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M8 2a2 2 0 0 0-2 2v10c0 1.1.9 2 2 2h6a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8ZM7 4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
+                        fill="currentColor"
+                      />
+                    </svg>
                   </span>
                 </button>
               </div>
@@ -582,7 +913,12 @@ exports[`OutputsPanel > Should render OutputsPanel with loading state 1`] = `
           </div>
         </section>
       </div>
-    </section>
+      <div
+        aria-orientation="horizontal"
+        class="fui-Divider ___14drqcq_2rxt2r0 f122n59 f1ewtqcl f22iagw f1063pyq fqerorx f10pi13n fk6fouc fy9rknc figsok6 fwrc4pm f17mccla fyl8oag f16vkdww fhsnbul f1gw3sf2 f1ly5f7u f1s3tz6t f1wl9k8s f13zj6fq fkfq4zb f1vccso1 f1geml7w f1r7kh1m fjml6kk f16j7guv fx01ahm fl8d8yv fj1a37q fly5x3f f163fonl f51yk4v f13rof3u f8rth92 f6czdpx f1iyka9k fzynn9s fekrn8e f1kyqvp9 fesgyo"
+        role="separator"
+      />
+    </div>
   </div>,
   "debug": [Function],
   "findAllByAltText": [Function],
@@ -643,19 +979,55 @@ exports[`OutputsPanel > Should render OutputsPanel with no outputs 1`] = `
   "asFragment": [Function],
   "baseElement": <body>
     <div>
-      <section
+      <div
         class="msla-trace-inputs-outputs"
       >
         <div
           class="msla-trace-inputs-outputs-header"
         >
           <div
-            class="msla-trace-inputs-outputs-header-text"
-            id="outputs-node1"
-            style="border-color: #000000b3;"
+            style="border-radius: 8px; background: rgb(0, 0, 0); min-height: 32px; min-width: 6px;"
+          />
+          <button
+            aria-expanded="true"
+            class="fui-Button r1alrhcs ___13arsol_wkbbhs0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl"
+            style="justify-content: flex-start; flex-grow: 1;"
+            type="button"
           >
+            <span
+              class="fui-Button__icon rywnvv2 ___963sj20_1qpm2bl f1nizpg2"
+            >
+              <svg
+                aria-hidden="true"
+                class="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+                fill="currentColor"
+                height="24"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M4.3 8.3a1 1 0 0 1 1.4 0l6.3 6.29 6.3-6.3a1 1 0 1 1 1.4 1.42l-7 7a1 1 0 0 1-1.4 0l-7-7a1 1 0 0 1 0-1.42Z"
+                  fill="currentColor"
+                />
+              </svg>
+              <svg
+                aria-hidden="true"
+                class="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+                fill="currentColor"
+                height="24"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M4.22 8.47c.3-.3.77-.3 1.06 0L12 15.19l6.72-6.72a.75.75 0 1 1 1.06 1.06l-7.25 7.25c-.3.3-.77.3-1.06 0L4.22 9.53a.75.75 0 0 1 0-1.06Z"
+                  fill="currentColor"
+                />
+              </svg>
+            </span>
             Outputs
-          </div>
+          </button>
         </div>
         <div
           class="msla-trace-values"
@@ -665,7 +1037,7 @@ exports[`OutputsPanel > Should render OutputsPanel with no outputs 1`] = `
           >
             <a
               aria-label="Download (Alt or Option + select)"
-              class="ms-Link root-203"
+              class="ms-Link root-184"
               download=""
               href="http://example.com"
               rel="noopener"
@@ -675,23 +1047,64 @@ exports[`OutputsPanel > Should render OutputsPanel with no outputs 1`] = `
             </a>
           </div>
         </div>
-      </section>
+        <div
+          aria-orientation="horizontal"
+          class="fui-Divider ___14drqcq_2rxt2r0 f122n59 f1ewtqcl f22iagw f1063pyq fqerorx f10pi13n fk6fouc fy9rknc figsok6 fwrc4pm f17mccla fyl8oag f16vkdww fhsnbul f1gw3sf2 f1ly5f7u f1s3tz6t f1wl9k8s f13zj6fq fkfq4zb f1vccso1 f1geml7w f1r7kh1m fjml6kk f16j7guv fx01ahm fl8d8yv fj1a37q fly5x3f f163fonl f51yk4v f13rof3u f8rth92 f6czdpx f1iyka9k fzynn9s fekrn8e f1kyqvp9 fesgyo"
+          role="separator"
+        />
+      </div>
     </div>
   </body>,
   "container": <div>
-    <section
+    <div
       class="msla-trace-inputs-outputs"
     >
       <div
         class="msla-trace-inputs-outputs-header"
       >
         <div
-          class="msla-trace-inputs-outputs-header-text"
-          id="outputs-node1"
-          style="border-color: #000000b3;"
+          style="border-radius: 8px; background: rgb(0, 0, 0); min-height: 32px; min-width: 6px;"
+        />
+        <button
+          aria-expanded="true"
+          class="fui-Button r1alrhcs ___13arsol_wkbbhs0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl"
+          style="justify-content: flex-start; flex-grow: 1;"
+          type="button"
         >
+          <span
+            class="fui-Button__icon rywnvv2 ___963sj20_1qpm2bl f1nizpg2"
+          >
+            <svg
+              aria-hidden="true"
+              class="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+              fill="currentColor"
+              height="24"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M4.3 8.3a1 1 0 0 1 1.4 0l6.3 6.29 6.3-6.3a1 1 0 1 1 1.4 1.42l-7 7a1 1 0 0 1-1.4 0l-7-7a1 1 0 0 1 0-1.42Z"
+                fill="currentColor"
+              />
+            </svg>
+            <svg
+              aria-hidden="true"
+              class="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+              fill="currentColor"
+              height="24"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M4.22 8.47c.3-.3.77-.3 1.06 0L12 15.19l6.72-6.72a.75.75 0 1 1 1.06 1.06l-7.25 7.25c-.3.3-.77.3-1.06 0L4.22 9.53a.75.75 0 0 1 0-1.06Z"
+                fill="currentColor"
+              />
+            </svg>
+          </span>
           Outputs
-        </div>
+        </button>
       </div>
       <div
         class="msla-trace-values"
@@ -701,7 +1114,7 @@ exports[`OutputsPanel > Should render OutputsPanel with no outputs 1`] = `
         >
           <a
             aria-label="Download (Alt or Option + select)"
-            class="ms-Link root-203"
+            class="ms-Link root-184"
             download=""
             href="http://example.com"
             rel="noopener"
@@ -711,7 +1124,12 @@ exports[`OutputsPanel > Should render OutputsPanel with no outputs 1`] = `
           </a>
         </div>
       </div>
-    </section>
+      <div
+        aria-orientation="horizontal"
+        class="fui-Divider ___14drqcq_2rxt2r0 f122n59 f1ewtqcl f22iagw f1063pyq fqerorx f10pi13n fk6fouc fy9rknc figsok6 fwrc4pm f17mccla fyl8oag f16vkdww fhsnbul f1gw3sf2 f1ly5f7u f1s3tz6t f1wl9k8s f13zj6fq fkfq4zb f1vccso1 f1geml7w f1r7kh1m fjml6kk f16j7guv fx01ahm fl8d8yv fj1a37q fly5x3f f163fonl f51yk4v f13rof3u f8rth92 f6czdpx f1iyka9k fzynn9s fekrn8e f1kyqvp9 fesgyo"
+        role="separator"
+      />
+    </div>
   </div>,
   "debug": [Function],
   "findAllByAltText": [Function],
@@ -772,46 +1190,91 @@ exports[`OutputsPanel > Should render OutputsPanel with outputs 1`] = `
   "asFragment": [Function],
   "baseElement": <body>
     <div>
-      <section
+      <div
         class="msla-trace-inputs-outputs"
       >
         <div
           class="msla-trace-inputs-outputs-header"
         >
           <div
-            class="msla-trace-inputs-outputs-header-text"
-            id="outputs-node1"
-            style="border-color: #000000b3;"
-          >
-            Outputs
-          </div>
+            style="border-radius: 8px; background: rgb(0, 0, 0); min-height: 32px; min-width: 6px;"
+          />
           <button
-            class="ms-Button ms-Button--action ms-Button--command msla-show-raw-button root-184"
-            data-is-focusable="true"
+            aria-expanded="true"
+            class="fui-Button r1alrhcs ___13arsol_wkbbhs0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl"
+            style="justify-content: flex-start; flex-grow: 1;"
             type="button"
           >
             <span
-              class="ms-Button-flexContainer flexContainer-185"
-              data-automationid="splitbuttonprimary"
+              class="fui-Button__icon rywnvv2 ___963sj20_1qpm2bl f1nizpg2"
             >
-              <i
+              <svg
                 aria-hidden="true"
-                class="ms-Icon root-105 css-193 ms-Button-icon icon-187"
-                data-icon-name="ChevronRightSmall"
-                style="font-family: "FabricMDL2Icons-3";"
+                class="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+                fill="currentColor"
+                height="24"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
               >
-                
-              </i>
-              <span
-                class="ms-Button-textContainer textContainer-186"
+                <path
+                  d="M4.3 8.3a1 1 0 0 1 1.4 0l6.3 6.29 6.3-6.3a1 1 0 1 1 1.4 1.42l-7 7a1 1 0 0 1-1.4 0l-7-7a1 1 0 0 1 0-1.42Z"
+                  fill="currentColor"
+                />
+              </svg>
+              <svg
+                aria-hidden="true"
+                class="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+                fill="currentColor"
+                height="24"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
               >
-                <span
-                  class="ms-Button-label label-188"
-                  id="id__0"
-                >
-                  Show raw outputs
-                </span>
-              </span>
+                <path
+                  d="M4.22 8.47c.3-.3.77-.3 1.06 0L12 15.19l6.72-6.72a.75.75 0 1 1 1.06 1.06l-7.25 7.25c-.3.3-.77.3-1.06 0L4.22 9.53a.75.75 0 0 1 0-1.06Z"
+                  fill="currentColor"
+                />
+              </svg>
+            </span>
+            Outputs
+          </button>
+          <button
+            class="fui-Button r1alrhcs msla-show-raw-button ___13arsol_wkbbhs0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl"
+            type="button"
+          >
+            Show raw outputs
+            <span
+              class="fui-Button__icon rywnvv2 ___1yz413i_pen21v0 f1a695kz"
+            >
+              <svg
+                aria-hidden="true"
+                class="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+                fill="currentColor"
+                height="1em"
+                viewBox="0 0 20 20"
+                width="1em"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M7.73 4.2a.75.75 0 0 1 1.06.03l5 5.25c.28.3.28.75 0 1.04l-5 5.25a.75.75 0 1 1-1.08-1.04L12.2 10l-4.5-4.73a.75.75 0 0 1 .02-1.06Z"
+                  fill="currentColor"
+                />
+              </svg>
+              <svg
+                aria-hidden="true"
+                class="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+                fill="currentColor"
+                height="1em"
+                viewBox="0 0 20 20"
+                width="1em"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M7.65 4.15c.2-.2.5-.2.7 0l5.49 5.46c.21.22.21.57 0 .78l-5.49 5.46a.5.5 0 0 1-.7-.7L12.8 10 7.65 4.85a.5.5 0 0 1 0-.7Z"
+                  fill="currentColor"
+                />
+              </svg>
             </span>
           </button>
         </div>
@@ -839,44 +1302,78 @@ exports[`OutputsPanel > Should render OutputsPanel with outputs 1`] = `
                 >
                   <button
                     aria-label="Select all text in ''"
-                    class="ms-Button ms-Button--icon root-194"
-                    data-is-focusable="true"
-                    title="Select all text in ''"
+                    class="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
                     type="button"
                   >
                     <span
-                      class="ms-Button-flexContainer flexContainer-195"
-                      data-automationid="splitbuttonprimary"
+                      class="fui-Button__icon rywnvv2"
                     >
-                      <i
+                      <svg
                         aria-hidden="true"
-                        class="ms-Icon root-105 css-200 ms-Button-icon icon-197"
-                        data-icon-name="SelectAll"
-                        style="font-family: "FabricMDL2Icons-1";"
+                        class="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+                        fill="currentColor"
+                        height="1em"
+                        viewBox="0 0 20 20"
+                        width="1em"
+                        xmlns="http://www.w3.org/2000/svg"
                       >
-                        
-                      </i>
+                        <path
+                          d="M4.5 3.5a1 1 0 0 0-1 1v2.25a.75.75 0 0 1-1.5 0V4.5A2.5 2.5 0 0 1 4.5 2h2.25a.75.75 0 0 1 0 1.5H4.5Zm0 13a1 1 0 0 1-1-1v-2.25a.75.75 0 0 0-1.5 0v2.25A2.5 2.5 0 0 0 4.5 18h2.25a.75.75 0 0 0 0-1.5H4.5Zm12-12a1 1 0 0 0-1-1h-2.25a.75.75 0 0 1 0-1.5h2.25A2.5 2.5 0 0 1 18 4.5v2.25a.75.75 0 0 1-1.5 0V4.5Zm-1 12a1 1 0 0 0 1-1v-2.25a.75.75 0 0 1 1.5 0v2.25a2.5 2.5 0 0 1-2.5 2.5h-2.25a.75.75 0 0 1 0-1.5h2.25ZM6 6.75c0-.41.34-.75.75-.75h6.5a.75.75 0 0 1 0 1.5h-6.5A.75.75 0 0 1 6 6.75ZM6.75 9a.75.75 0 0 0 0 1.5h6.5a.75.75 0 0 0 0-1.5h-6.5ZM6 12.75c0-.41.34-.75.75-.75h3.5a.75.75 0 0 1 0 1.5h-3.5a.75.75 0 0 1-.75-.75Z"
+                          fill="currentColor"
+                        />
+                      </svg>
+                      <svg
+                        aria-hidden="true"
+                        class="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+                        fill="currentColor"
+                        height="1em"
+                        viewBox="0 0 20 20"
+                        width="1em"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M4.5 3C3.67 3 3 3.67 3 4.5v2a.5.5 0 0 1-1 0v-2A2.5 2.5 0 0 1 4.5 2h2a.5.5 0 0 1 0 1h-2Zm0 14A1.5 1.5 0 0 1 3 15.5v-2a.5.5 0 0 0-1 0v2A2.5 2.5 0 0 0 4.5 18h2a.5.5 0 0 0 0-1h-2ZM17 4.5c0-.83-.67-1.5-1.5-1.5h-2a.5.5 0 0 1 0-1h2A2.5 2.5 0 0 1 18 4.5v2a.5.5 0 0 1-1 0v-2ZM15.5 17c.83 0 1.5-.67 1.5-1.5v-2a.5.5 0 0 1 1 0v2a2.5 2.5 0 0 1-2.5 2.5h-2a.5.5 0 0 1 0-1h2Zm-9-11a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7Zm0 3a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7ZM6 12.5c0-.28.22-.5.5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5Z"
+                          fill="currentColor"
+                        />
+                      </svg>
                     </span>
                   </button>
                   <button
                     aria-label="Copy the value of '' to the clipboard"
-                    class="ms-Button ms-Button--icon root-194"
-                    data-is-focusable="true"
-                    title="Copy the value of '' to the clipboard"
+                    class="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
                     type="button"
                   >
                     <span
-                      class="ms-Button-flexContainer flexContainer-195"
-                      data-automationid="splitbuttonprimary"
+                      class="fui-Button__icon rywnvv2"
                     >
-                      <i
+                      <svg
                         aria-hidden="true"
-                        class="ms-Icon root-105 css-202 ms-Button-icon icon-197"
-                        data-icon-name="Copy"
-                        style="font-family: "FabricMDL2Icons-2";"
+                        class="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+                        fill="currentColor"
+                        height="1em"
+                        viewBox="0 0 20 20"
+                        width="1em"
+                        xmlns="http://www.w3.org/2000/svg"
                       >
-                        
-                      </i>
+                        <path
+                          d="M6 4c0-1.1.9-2 2-2h6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
+                          fill="currentColor"
+                        />
+                      </svg>
+                      <svg
+                        aria-hidden="true"
+                        class="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+                        fill="currentColor"
+                        height="1em"
+                        viewBox="0 0 20 20"
+                        width="1em"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M8 2a2 2 0 0 0-2 2v10c0 1.1.9 2 2 2h6a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8ZM7 4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
+                          fill="currentColor"
+                        />
+                      </svg>
                     </span>
                   </button>
                 </div>
@@ -899,50 +1396,100 @@ exports[`OutputsPanel > Should render OutputsPanel with outputs 1`] = `
             </div>
           </section>
         </div>
-      </section>
+        <div
+          aria-orientation="horizontal"
+          class="fui-Divider ___14drqcq_2rxt2r0 f122n59 f1ewtqcl f22iagw f1063pyq fqerorx f10pi13n fk6fouc fy9rknc figsok6 fwrc4pm f17mccla fyl8oag f16vkdww fhsnbul f1gw3sf2 f1ly5f7u f1s3tz6t f1wl9k8s f13zj6fq fkfq4zb f1vccso1 f1geml7w f1r7kh1m fjml6kk f16j7guv fx01ahm fl8d8yv fj1a37q fly5x3f f163fonl f51yk4v f13rof3u f8rth92 f6czdpx f1iyka9k fzynn9s fekrn8e f1kyqvp9 fesgyo"
+          role="separator"
+        />
+      </div>
     </div>
   </body>,
   "container": <div>
-    <section
+    <div
       class="msla-trace-inputs-outputs"
     >
       <div
         class="msla-trace-inputs-outputs-header"
       >
         <div
-          class="msla-trace-inputs-outputs-header-text"
-          id="outputs-node1"
-          style="border-color: #000000b3;"
-        >
-          Outputs
-        </div>
+          style="border-radius: 8px; background: rgb(0, 0, 0); min-height: 32px; min-width: 6px;"
+        />
         <button
-          class="ms-Button ms-Button--action ms-Button--command msla-show-raw-button root-184"
-          data-is-focusable="true"
+          aria-expanded="true"
+          class="fui-Button r1alrhcs ___13arsol_wkbbhs0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl"
+          style="justify-content: flex-start; flex-grow: 1;"
           type="button"
         >
           <span
-            class="ms-Button-flexContainer flexContainer-185"
-            data-automationid="splitbuttonprimary"
+            class="fui-Button__icon rywnvv2 ___963sj20_1qpm2bl f1nizpg2"
           >
-            <i
+            <svg
               aria-hidden="true"
-              class="ms-Icon root-105 css-193 ms-Button-icon icon-187"
-              data-icon-name="ChevronRightSmall"
-              style="font-family: "FabricMDL2Icons-3";"
+              class="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+              fill="currentColor"
+              height="24"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
             >
-              
-            </i>
-            <span
-              class="ms-Button-textContainer textContainer-186"
+              <path
+                d="M4.3 8.3a1 1 0 0 1 1.4 0l6.3 6.29 6.3-6.3a1 1 0 1 1 1.4 1.42l-7 7a1 1 0 0 1-1.4 0l-7-7a1 1 0 0 1 0-1.42Z"
+                fill="currentColor"
+              />
+            </svg>
+            <svg
+              aria-hidden="true"
+              class="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+              fill="currentColor"
+              height="24"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
             >
-              <span
-                class="ms-Button-label label-188"
-                id="id__0"
-              >
-                Show raw outputs
-              </span>
-            </span>
+              <path
+                d="M4.22 8.47c.3-.3.77-.3 1.06 0L12 15.19l6.72-6.72a.75.75 0 1 1 1.06 1.06l-7.25 7.25c-.3.3-.77.3-1.06 0L4.22 9.53a.75.75 0 0 1 0-1.06Z"
+                fill="currentColor"
+              />
+            </svg>
+          </span>
+          Outputs
+        </button>
+        <button
+          class="fui-Button r1alrhcs msla-show-raw-button ___13arsol_wkbbhs0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl"
+          type="button"
+        >
+          Show raw outputs
+          <span
+            class="fui-Button__icon rywnvv2 ___1yz413i_pen21v0 f1a695kz"
+          >
+            <svg
+              aria-hidden="true"
+              class="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+              fill="currentColor"
+              height="1em"
+              viewBox="0 0 20 20"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M7.73 4.2a.75.75 0 0 1 1.06.03l5 5.25c.28.3.28.75 0 1.04l-5 5.25a.75.75 0 1 1-1.08-1.04L12.2 10l-4.5-4.73a.75.75 0 0 1 .02-1.06Z"
+                fill="currentColor"
+              />
+            </svg>
+            <svg
+              aria-hidden="true"
+              class="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+              fill="currentColor"
+              height="1em"
+              viewBox="0 0 20 20"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M7.65 4.15c.2-.2.5-.2.7 0l5.49 5.46c.21.22.21.57 0 .78l-5.49 5.46a.5.5 0 0 1-.7-.7L12.8 10 7.65 4.85a.5.5 0 0 1 0-.7Z"
+                fill="currentColor"
+              />
+            </svg>
           </span>
         </button>
       </div>
@@ -970,44 +1517,78 @@ exports[`OutputsPanel > Should render OutputsPanel with outputs 1`] = `
               >
                 <button
                   aria-label="Select all text in ''"
-                  class="ms-Button ms-Button--icon root-194"
-                  data-is-focusable="true"
-                  title="Select all text in ''"
+                  class="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
                   type="button"
                 >
                   <span
-                    class="ms-Button-flexContainer flexContainer-195"
-                    data-automationid="splitbuttonprimary"
+                    class="fui-Button__icon rywnvv2"
                   >
-                    <i
+                    <svg
                       aria-hidden="true"
-                      class="ms-Icon root-105 css-200 ms-Button-icon icon-197"
-                      data-icon-name="SelectAll"
-                      style="font-family: "FabricMDL2Icons-1";"
+                      class="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+                      fill="currentColor"
+                      height="1em"
+                      viewBox="0 0 20 20"
+                      width="1em"
+                      xmlns="http://www.w3.org/2000/svg"
                     >
-                      
-                    </i>
+                      <path
+                        d="M4.5 3.5a1 1 0 0 0-1 1v2.25a.75.75 0 0 1-1.5 0V4.5A2.5 2.5 0 0 1 4.5 2h2.25a.75.75 0 0 1 0 1.5H4.5Zm0 13a1 1 0 0 1-1-1v-2.25a.75.75 0 0 0-1.5 0v2.25A2.5 2.5 0 0 0 4.5 18h2.25a.75.75 0 0 0 0-1.5H4.5Zm12-12a1 1 0 0 0-1-1h-2.25a.75.75 0 0 1 0-1.5h2.25A2.5 2.5 0 0 1 18 4.5v2.25a.75.75 0 0 1-1.5 0V4.5Zm-1 12a1 1 0 0 0 1-1v-2.25a.75.75 0 0 1 1.5 0v2.25a2.5 2.5 0 0 1-2.5 2.5h-2.25a.75.75 0 0 1 0-1.5h2.25ZM6 6.75c0-.41.34-.75.75-.75h6.5a.75.75 0 0 1 0 1.5h-6.5A.75.75 0 0 1 6 6.75ZM6.75 9a.75.75 0 0 0 0 1.5h6.5a.75.75 0 0 0 0-1.5h-6.5ZM6 12.75c0-.41.34-.75.75-.75h3.5a.75.75 0 0 1 0 1.5h-3.5a.75.75 0 0 1-.75-.75Z"
+                        fill="currentColor"
+                      />
+                    </svg>
+                    <svg
+                      aria-hidden="true"
+                      class="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+                      fill="currentColor"
+                      height="1em"
+                      viewBox="0 0 20 20"
+                      width="1em"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M4.5 3C3.67 3 3 3.67 3 4.5v2a.5.5 0 0 1-1 0v-2A2.5 2.5 0 0 1 4.5 2h2a.5.5 0 0 1 0 1h-2Zm0 14A1.5 1.5 0 0 1 3 15.5v-2a.5.5 0 0 0-1 0v2A2.5 2.5 0 0 0 4.5 18h2a.5.5 0 0 0 0-1h-2ZM17 4.5c0-.83-.67-1.5-1.5-1.5h-2a.5.5 0 0 1 0-1h2A2.5 2.5 0 0 1 18 4.5v2a.5.5 0 0 1-1 0v-2ZM15.5 17c.83 0 1.5-.67 1.5-1.5v-2a.5.5 0 0 1 1 0v2a2.5 2.5 0 0 1-2.5 2.5h-2a.5.5 0 0 1 0-1h2Zm-9-11a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7Zm0 3a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7ZM6 12.5c0-.28.22-.5.5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5Z"
+                        fill="currentColor"
+                      />
+                    </svg>
                   </span>
                 </button>
                 <button
                   aria-label="Copy the value of '' to the clipboard"
-                  class="ms-Button ms-Button--icon root-194"
-                  data-is-focusable="true"
-                  title="Copy the value of '' to the clipboard"
+                  class="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
                   type="button"
                 >
                   <span
-                    class="ms-Button-flexContainer flexContainer-195"
-                    data-automationid="splitbuttonprimary"
+                    class="fui-Button__icon rywnvv2"
                   >
-                    <i
+                    <svg
                       aria-hidden="true"
-                      class="ms-Icon root-105 css-202 ms-Button-icon icon-197"
-                      data-icon-name="Copy"
-                      style="font-family: "FabricMDL2Icons-2";"
+                      class="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+                      fill="currentColor"
+                      height="1em"
+                      viewBox="0 0 20 20"
+                      width="1em"
+                      xmlns="http://www.w3.org/2000/svg"
                     >
-                      
-                    </i>
+                      <path
+                        d="M6 4c0-1.1.9-2 2-2h6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
+                        fill="currentColor"
+                      />
+                    </svg>
+                    <svg
+                      aria-hidden="true"
+                      class="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+                      fill="currentColor"
+                      height="1em"
+                      viewBox="0 0 20 20"
+                      width="1em"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M8 2a2 2 0 0 0-2 2v10c0 1.1.9 2 2 2h6a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8ZM7 4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
+                        fill="currentColor"
+                      />
+                    </svg>
                   </span>
                 </button>
               </div>
@@ -1030,7 +1611,12 @@ exports[`OutputsPanel > Should render OutputsPanel with outputs 1`] = `
           </div>
         </section>
       </div>
-    </section>
+      <div
+        aria-orientation="horizontal"
+        class="fui-Divider ___14drqcq_2rxt2r0 f122n59 f1ewtqcl f22iagw f1063pyq fqerorx f10pi13n fk6fouc fy9rknc figsok6 fwrc4pm f17mccla fyl8oag f16vkdww fhsnbul f1gw3sf2 f1ly5f7u f1s3tz6t f1wl9k8s f13zj6fq fkfq4zb f1vccso1 f1geml7w f1r7kh1m fjml6kk f16j7guv fx01ahm fl8d8yv fj1a37q fly5x3f f163fonl f51yk4v f13rof3u f8rth92 f6czdpx f1iyka9k fzynn9s fekrn8e f1kyqvp9 fesgyo"
+        role="separator"
+      />
+    </div>
   </div>,
   "debug": [Function],
   "findAllByAltText": [Function],
@@ -1208,19 +1794,55 @@ exports[`OutputsPanel > Should render OutputsPanel without uri 1`] = `
   "asFragment": [Function],
   "baseElement": <body>
     <div>
-      <section
+      <div
         class="msla-trace-inputs-outputs"
       >
         <div
           class="msla-trace-inputs-outputs-header"
         >
           <div
-            class="msla-trace-inputs-outputs-header-text"
-            id="outputs-node1"
-            style="border-color: #000000b3;"
+            style="border-radius: 8px; background: rgb(0, 0, 0); min-height: 32px; min-width: 6px;"
+          />
+          <button
+            aria-expanded="true"
+            class="fui-Button r1alrhcs ___13arsol_wkbbhs0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl"
+            style="justify-content: flex-start; flex-grow: 1;"
+            type="button"
           >
+            <span
+              class="fui-Button__icon rywnvv2 ___963sj20_1qpm2bl f1nizpg2"
+            >
+              <svg
+                aria-hidden="true"
+                class="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+                fill="currentColor"
+                height="24"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M4.3 8.3a1 1 0 0 1 1.4 0l6.3 6.29 6.3-6.3a1 1 0 1 1 1.4 1.42l-7 7a1 1 0 0 1-1.4 0l-7-7a1 1 0 0 1 0-1.42Z"
+                  fill="currentColor"
+                />
+              </svg>
+              <svg
+                aria-hidden="true"
+                class="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+                fill="currentColor"
+                height="24"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M4.22 8.47c.3-.3.77-.3 1.06 0L12 15.19l6.72-6.72a.75.75 0 1 1 1.06 1.06l-7.25 7.25c-.3.3-.77.3-1.06 0L4.22 9.53a.75.75 0 0 1 0-1.06Z"
+                  fill="currentColor"
+                />
+              </svg>
+            </span>
             Outputs
-          </div>
+          </button>
         </div>
         <div
           aria-labelledby="outputs-node1"
@@ -1246,44 +1868,78 @@ exports[`OutputsPanel > Should render OutputsPanel without uri 1`] = `
                 >
                   <button
                     aria-label="Select all text in ''"
-                    class="ms-Button ms-Button--icon root-194"
-                    data-is-focusable="true"
-                    title="Select all text in ''"
+                    class="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
                     type="button"
                   >
                     <span
-                      class="ms-Button-flexContainer flexContainer-195"
-                      data-automationid="splitbuttonprimary"
+                      class="fui-Button__icon rywnvv2"
                     >
-                      <i
+                      <svg
                         aria-hidden="true"
-                        class="ms-Icon root-105 css-200 ms-Button-icon icon-197"
-                        data-icon-name="SelectAll"
-                        style="font-family: "FabricMDL2Icons-1";"
+                        class="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+                        fill="currentColor"
+                        height="1em"
+                        viewBox="0 0 20 20"
+                        width="1em"
+                        xmlns="http://www.w3.org/2000/svg"
                       >
-                        
-                      </i>
+                        <path
+                          d="M4.5 3.5a1 1 0 0 0-1 1v2.25a.75.75 0 0 1-1.5 0V4.5A2.5 2.5 0 0 1 4.5 2h2.25a.75.75 0 0 1 0 1.5H4.5Zm0 13a1 1 0 0 1-1-1v-2.25a.75.75 0 0 0-1.5 0v2.25A2.5 2.5 0 0 0 4.5 18h2.25a.75.75 0 0 0 0-1.5H4.5Zm12-12a1 1 0 0 0-1-1h-2.25a.75.75 0 0 1 0-1.5h2.25A2.5 2.5 0 0 1 18 4.5v2.25a.75.75 0 0 1-1.5 0V4.5Zm-1 12a1 1 0 0 0 1-1v-2.25a.75.75 0 0 1 1.5 0v2.25a2.5 2.5 0 0 1-2.5 2.5h-2.25a.75.75 0 0 1 0-1.5h2.25ZM6 6.75c0-.41.34-.75.75-.75h6.5a.75.75 0 0 1 0 1.5h-6.5A.75.75 0 0 1 6 6.75ZM6.75 9a.75.75 0 0 0 0 1.5h6.5a.75.75 0 0 0 0-1.5h-6.5ZM6 12.75c0-.41.34-.75.75-.75h3.5a.75.75 0 0 1 0 1.5h-3.5a.75.75 0 0 1-.75-.75Z"
+                          fill="currentColor"
+                        />
+                      </svg>
+                      <svg
+                        aria-hidden="true"
+                        class="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+                        fill="currentColor"
+                        height="1em"
+                        viewBox="0 0 20 20"
+                        width="1em"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M4.5 3C3.67 3 3 3.67 3 4.5v2a.5.5 0 0 1-1 0v-2A2.5 2.5 0 0 1 4.5 2h2a.5.5 0 0 1 0 1h-2Zm0 14A1.5 1.5 0 0 1 3 15.5v-2a.5.5 0 0 0-1 0v2A2.5 2.5 0 0 0 4.5 18h2a.5.5 0 0 0 0-1h-2ZM17 4.5c0-.83-.67-1.5-1.5-1.5h-2a.5.5 0 0 1 0-1h2A2.5 2.5 0 0 1 18 4.5v2a.5.5 0 0 1-1 0v-2ZM15.5 17c.83 0 1.5-.67 1.5-1.5v-2a.5.5 0 0 1 1 0v2a2.5 2.5 0 0 1-2.5 2.5h-2a.5.5 0 0 1 0-1h2Zm-9-11a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7Zm0 3a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7ZM6 12.5c0-.28.22-.5.5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5Z"
+                          fill="currentColor"
+                        />
+                      </svg>
                     </span>
                   </button>
                   <button
                     aria-label="Copy the value of '' to the clipboard"
-                    class="ms-Button ms-Button--icon root-194"
-                    data-is-focusable="true"
-                    title="Copy the value of '' to the clipboard"
+                    class="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
                     type="button"
                   >
                     <span
-                      class="ms-Button-flexContainer flexContainer-195"
-                      data-automationid="splitbuttonprimary"
+                      class="fui-Button__icon rywnvv2"
                     >
-                      <i
+                      <svg
                         aria-hidden="true"
-                        class="ms-Icon root-105 css-202 ms-Button-icon icon-197"
-                        data-icon-name="Copy"
-                        style="font-family: "FabricMDL2Icons-2";"
+                        class="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+                        fill="currentColor"
+                        height="1em"
+                        viewBox="0 0 20 20"
+                        width="1em"
+                        xmlns="http://www.w3.org/2000/svg"
                       >
-                        
-                      </i>
+                        <path
+                          d="M6 4c0-1.1.9-2 2-2h6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
+                          fill="currentColor"
+                        />
+                      </svg>
+                      <svg
+                        aria-hidden="true"
+                        class="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+                        fill="currentColor"
+                        height="1em"
+                        viewBox="0 0 20 20"
+                        width="1em"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M8 2a2 2 0 0 0-2 2v10c0 1.1.9 2 2 2h6a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8ZM7 4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
+                          fill="currentColor"
+                        />
+                      </svg>
                     </span>
                   </button>
                 </div>
@@ -1306,23 +1962,64 @@ exports[`OutputsPanel > Should render OutputsPanel without uri 1`] = `
             </div>
           </section>
         </div>
-      </section>
+        <div
+          aria-orientation="horizontal"
+          class="fui-Divider ___14drqcq_2rxt2r0 f122n59 f1ewtqcl f22iagw f1063pyq fqerorx f10pi13n fk6fouc fy9rknc figsok6 fwrc4pm f17mccla fyl8oag f16vkdww fhsnbul f1gw3sf2 f1ly5f7u f1s3tz6t f1wl9k8s f13zj6fq fkfq4zb f1vccso1 f1geml7w f1r7kh1m fjml6kk f16j7guv fx01ahm fl8d8yv fj1a37q fly5x3f f163fonl f51yk4v f13rof3u f8rth92 f6czdpx f1iyka9k fzynn9s fekrn8e f1kyqvp9 fesgyo"
+          role="separator"
+        />
+      </div>
     </div>
   </body>,
   "container": <div>
-    <section
+    <div
       class="msla-trace-inputs-outputs"
     >
       <div
         class="msla-trace-inputs-outputs-header"
       >
         <div
-          class="msla-trace-inputs-outputs-header-text"
-          id="outputs-node1"
-          style="border-color: #000000b3;"
+          style="border-radius: 8px; background: rgb(0, 0, 0); min-height: 32px; min-width: 6px;"
+        />
+        <button
+          aria-expanded="true"
+          class="fui-Button r1alrhcs ___13arsol_wkbbhs0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl"
+          style="justify-content: flex-start; flex-grow: 1;"
+          type="button"
         >
+          <span
+            class="fui-Button__icon rywnvv2 ___963sj20_1qpm2bl f1nizpg2"
+          >
+            <svg
+              aria-hidden="true"
+              class="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+              fill="currentColor"
+              height="24"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M4.3 8.3a1 1 0 0 1 1.4 0l6.3 6.29 6.3-6.3a1 1 0 1 1 1.4 1.42l-7 7a1 1 0 0 1-1.4 0l-7-7a1 1 0 0 1 0-1.42Z"
+                fill="currentColor"
+              />
+            </svg>
+            <svg
+              aria-hidden="true"
+              class="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+              fill="currentColor"
+              height="24"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M4.22 8.47c.3-.3.77-.3 1.06 0L12 15.19l6.72-6.72a.75.75 0 1 1 1.06 1.06l-7.25 7.25c-.3.3-.77.3-1.06 0L4.22 9.53a.75.75 0 0 1 0-1.06Z"
+                fill="currentColor"
+              />
+            </svg>
+          </span>
           Outputs
-        </div>
+        </button>
       </div>
       <div
         aria-labelledby="outputs-node1"
@@ -1348,44 +2045,78 @@ exports[`OutputsPanel > Should render OutputsPanel without uri 1`] = `
               >
                 <button
                   aria-label="Select all text in ''"
-                  class="ms-Button ms-Button--icon root-194"
-                  data-is-focusable="true"
-                  title="Select all text in ''"
+                  class="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
                   type="button"
                 >
                   <span
-                    class="ms-Button-flexContainer flexContainer-195"
-                    data-automationid="splitbuttonprimary"
+                    class="fui-Button__icon rywnvv2"
                   >
-                    <i
+                    <svg
                       aria-hidden="true"
-                      class="ms-Icon root-105 css-200 ms-Button-icon icon-197"
-                      data-icon-name="SelectAll"
-                      style="font-family: "FabricMDL2Icons-1";"
+                      class="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+                      fill="currentColor"
+                      height="1em"
+                      viewBox="0 0 20 20"
+                      width="1em"
+                      xmlns="http://www.w3.org/2000/svg"
                     >
-                      
-                    </i>
+                      <path
+                        d="M4.5 3.5a1 1 0 0 0-1 1v2.25a.75.75 0 0 1-1.5 0V4.5A2.5 2.5 0 0 1 4.5 2h2.25a.75.75 0 0 1 0 1.5H4.5Zm0 13a1 1 0 0 1-1-1v-2.25a.75.75 0 0 0-1.5 0v2.25A2.5 2.5 0 0 0 4.5 18h2.25a.75.75 0 0 0 0-1.5H4.5Zm12-12a1 1 0 0 0-1-1h-2.25a.75.75 0 0 1 0-1.5h2.25A2.5 2.5 0 0 1 18 4.5v2.25a.75.75 0 0 1-1.5 0V4.5Zm-1 12a1 1 0 0 0 1-1v-2.25a.75.75 0 0 1 1.5 0v2.25a2.5 2.5 0 0 1-2.5 2.5h-2.25a.75.75 0 0 1 0-1.5h2.25ZM6 6.75c0-.41.34-.75.75-.75h6.5a.75.75 0 0 1 0 1.5h-6.5A.75.75 0 0 1 6 6.75ZM6.75 9a.75.75 0 0 0 0 1.5h6.5a.75.75 0 0 0 0-1.5h-6.5ZM6 12.75c0-.41.34-.75.75-.75h3.5a.75.75 0 0 1 0 1.5h-3.5a.75.75 0 0 1-.75-.75Z"
+                        fill="currentColor"
+                      />
+                    </svg>
+                    <svg
+                      aria-hidden="true"
+                      class="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+                      fill="currentColor"
+                      height="1em"
+                      viewBox="0 0 20 20"
+                      width="1em"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M4.5 3C3.67 3 3 3.67 3 4.5v2a.5.5 0 0 1-1 0v-2A2.5 2.5 0 0 1 4.5 2h2a.5.5 0 0 1 0 1h-2Zm0 14A1.5 1.5 0 0 1 3 15.5v-2a.5.5 0 0 0-1 0v2A2.5 2.5 0 0 0 4.5 18h2a.5.5 0 0 0 0-1h-2ZM17 4.5c0-.83-.67-1.5-1.5-1.5h-2a.5.5 0 0 1 0-1h2A2.5 2.5 0 0 1 18 4.5v2a.5.5 0 0 1-1 0v-2ZM15.5 17c.83 0 1.5-.67 1.5-1.5v-2a.5.5 0 0 1 1 0v2a2.5 2.5 0 0 1-2.5 2.5h-2a.5.5 0 0 1 0-1h2Zm-9-11a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7Zm0 3a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7ZM6 12.5c0-.28.22-.5.5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5Z"
+                        fill="currentColor"
+                      />
+                    </svg>
                   </span>
                 </button>
                 <button
                   aria-label="Copy the value of '' to the clipboard"
-                  class="ms-Button ms-Button--icon root-194"
-                  data-is-focusable="true"
-                  title="Copy the value of '' to the clipboard"
+                  class="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
                   type="button"
                 >
                   <span
-                    class="ms-Button-flexContainer flexContainer-195"
-                    data-automationid="splitbuttonprimary"
+                    class="fui-Button__icon rywnvv2"
                   >
-                    <i
+                    <svg
                       aria-hidden="true"
-                      class="ms-Icon root-105 css-202 ms-Button-icon icon-197"
-                      data-icon-name="Copy"
-                      style="font-family: "FabricMDL2Icons-2";"
+                      class="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+                      fill="currentColor"
+                      height="1em"
+                      viewBox="0 0 20 20"
+                      width="1em"
+                      xmlns="http://www.w3.org/2000/svg"
                     >
-                      
-                    </i>
+                      <path
+                        d="M6 4c0-1.1.9-2 2-2h6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
+                        fill="currentColor"
+                      />
+                    </svg>
+                    <svg
+                      aria-hidden="true"
+                      class="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+                      fill="currentColor"
+                      height="1em"
+                      viewBox="0 0 20 20"
+                      width="1em"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M8 2a2 2 0 0 0-2 2v10c0 1.1.9 2 2 2h6a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8ZM7 4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
+                        fill="currentColor"
+                      />
+                    </svg>
                   </span>
                 </button>
               </div>
@@ -1408,7 +2139,12 @@ exports[`OutputsPanel > Should render OutputsPanel without uri 1`] = `
           </div>
         </section>
       </div>
-    </section>
+      <div
+        aria-orientation="horizontal"
+        class="fui-Divider ___14drqcq_2rxt2r0 f122n59 f1ewtqcl f22iagw f1063pyq fqerorx f10pi13n fk6fouc fy9rknc figsok6 fwrc4pm f17mccla fyl8oag f16vkdww fhsnbul f1gw3sf2 f1ly5f7u f1s3tz6t f1wl9k8s f13zj6fq fkfq4zb f1vccso1 f1geml7w f1r7kh1m fjml6kk f16j7guv fx01ahm fl8d8yv fj1a37q fly5x3f f163fonl f51yk4v f13rof3u f8rth92 f6czdpx f1iyka9k fzynn9s fekrn8e f1kyqvp9 fesgyo"
+        role="separator"
+      />
+    </div>
   </div>,
   "debug": [Function],
   "findAllByAltText": [Function],

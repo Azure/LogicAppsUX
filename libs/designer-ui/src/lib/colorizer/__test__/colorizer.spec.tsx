@@ -3,6 +3,7 @@ import { Colorizer } from '../index';
 import React from 'react';
 import ShallowRenderer from 'react-test-renderer/shallow';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
+
 describe('lib/colorizer', () => {
   let minimal: ColorizerProps, renderer: ShallowRenderer.ShallowRenderer;
 
@@ -30,18 +31,19 @@ describe('lib/colorizer', () => {
     renderer.render(<Colorizer {...minimal} utcProps={{ toggleUTC, showUTC: true }} ariaLabel="start time" />);
     const colorizer = renderer.getRenderOutput();
     expect(colorizer).toMatchSnapshot();
-    const buttons = colorizer.props.children[0].props.children;
-
-    const utcButton = buttons[0];
-    expect(utcButton.props.title).toBe(`Switch '${minimal.ariaLabel}' to the local time`);
+    const [buttons]: any[] = React.Children.toArray(colorizer.props.children);
+    const [firstButton]: any[] = React.Children.toArray(buttons.props.children);
+    const [utcButton]: any[] = React.Children.toArray(firstButton.props.children);
+    expect(utcButton.props['aria-label']).toBe(`Switch '${minimal.ariaLabel}' to the local time`);
   });
 
   it('should call toggleUTC function when UTC button is clicked', () => {
     const toggleUTC = vi.fn();
     renderer.render(<Colorizer {...minimal} utcProps={{ toggleUTC, showUTC: true }} ariaLabel="start time" />);
     const colorizer = renderer.getRenderOutput();
-    const buttons = colorizer.props.children[0].props.children;
-    const utcButton = buttons[0];
+    const [buttons]: any[] = React.Children.toArray(colorizer.props.children);
+    const [firstButton]: any[] = React.Children.toArray(buttons.props.children);
+    const [utcButton]: any[] = React.Children.toArray(firstButton.props.children);
     utcButton.props.onClick();
     expect(toggleUTC).toHaveBeenCalledTimes(1);
   });

@@ -140,6 +140,7 @@ export const PanelHeaderComment = ({
       />
     );
   };
+
   const toggleButtonLabel = isCommentCollapsed
     ? intl.formatMessage({
         defaultMessage: 'Show description',
