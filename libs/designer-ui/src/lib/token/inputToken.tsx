@@ -55,7 +55,7 @@ const useStyles = makeStyles({
     backgroundRepeat: 'no-repeat',
     backgroundSize: 'contain',
     backgroundPosition: 'center',
-    borderRadius: tokens.borderRadiusMedium, // Rounded icon
+    borderRadius: tokens.borderRadiusSmall, // Rounded icon
   },
   tokenTitle: {
     overflow: 'hidden',
@@ -73,10 +73,7 @@ const useStyles = makeStyles({
     fontWeight: tokens.fontWeightBold,
     color: tokens.colorNeutralForeground1,
     lineHeight: '1',
-    paddingTop: '3px', // Bump down 3px for better visual alignment
-    paddingBottom: '0px',
-    paddingLeft: '2px',
-    paddingRight: '2px',
+    padding: '3px 2px 0px 2px', // top right bottom left
     marginLeft: '4px',
     backgroundColor: 'transparent',
     ...shorthands.border('none'),
