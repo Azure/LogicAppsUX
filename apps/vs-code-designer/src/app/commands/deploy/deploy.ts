@@ -216,10 +216,6 @@ async function deploy(
       if (deployProjectPathForWorkflowApp !== undefined && !isHybridLogicApp) {
         await cleanAndRemoveDeployFolder(deployProjectPathForWorkflowApp);
         await node.loadAllChildren(context);
-      }
-
-      // Always upload app settings for non-hybrid Logic Apps to ensure new settings are deployed
-      if (!isHybridLogicApp) {
         await uploadAppSettings(context, node.resourceTree.appSettingsTreeItem, workspaceFolder, settingsToExclude);
       }
     }
