@@ -1,4 +1,4 @@
-name: w
+name: Version and Release
 run-name: Version and Release - [ ${{ github.ref_name }} ] - ${{ github.event.inputs.release_type }}
 on:
   workflow_dispatch:
