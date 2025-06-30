@@ -6,6 +6,8 @@ export const useStyles = makeStyles({
     alignItems: 'center',
     minHeight: '32px',
     marginTop: '6px', // Match the LESS style
+    width: 'calc(100% - 35px)', // Match textfield width
+    marginRight: '36px', // Match textfield margin
   },
   switch: {
     // The Switch component in v9 doesn't need the explicit class name
