@@ -23,6 +23,31 @@ export const requestOperation = {
   },
 };
 
+export const a2aRequestOperation = {
+  name: 'a2arequest',
+  id: 'a2arequest',
+  type: 'Request',
+  kind: 'Agent',
+  properties: {
+    api: {
+      id: 'connectionProviders/a2a',
+      name: 'a2arequest',
+      brandColor: '#009DA5',
+      description: 'Operations to handle inbound request to workflow and send workflow response',
+      displayName: 'a2arequest',
+      iconUri: 'https://logicappsv2resources.blob.core.windows.net/icons/request.svg',
+    },
+    summary: 'A2A Request',
+    description: 'This is an incoming API call that could use actions in a Logic App or other API to trigger this flow.',
+    visibility: 'Important',
+    operationType: 'Request',
+    operationKind: 'Agent',
+    trigger: 'single',
+    brandColor: '#009DA5',
+    iconUri: 'https://logicappsv2resources.blob.core.windows.net/icons/request.svg',
+  },
+};
+
 export const responseOperation = {
   name: 'response',
   id: 'response',

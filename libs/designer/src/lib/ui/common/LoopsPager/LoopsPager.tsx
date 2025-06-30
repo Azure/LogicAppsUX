@@ -11,18 +11,19 @@ import { useDispatch } from 'react-redux';
 export interface LoopsPagerProps {
   metadata: any;
   scopeId: string;
-  collapsed: boolean;
+  collapsed?: boolean;
   focusElement?: (index: number, nodeId: string) => void;
+  isFromTrigger?: boolean;
 }
 
-export const LoopsPager = ({ metadata, scopeId, collapsed, focusElement }: LoopsPagerProps) => {
+export const LoopsPager = ({ metadata, scopeId, collapsed = false, focusElement, isFromTrigger }: LoopsPagerProps) => {
   const runInstance = useRunInstance();
   const dispatch = useDispatch<AppDispatch>();
   const actionMetadata = useActionMetadata(scopeId);
   const normalizedType = useMemo(() => actionMetadata?.type.toLowerCase(), [actionMetadata]);
   const nodeMetadata = useNodeMetadata(scopeId);
   const currentPage = useMemo(() => nodeMetadata?.runIndex ?? 0, [nodeMetadata]);
-  const loopsCount = useMemo(() => getLoopsCount(metadata?.runData), [metadata?.runData]);
+  const loopsCount = useMemo(() => (isFromTrigger ? 4 : getLoopsCount(metadata?.runData)), [isFromTrigger, metadata?.runData]);
   const { isError, isFetching, data: failedRepetitions } = useScopeFailedRepetitions(normalizedType ?? '', scopeId, runInstance?.id);
 
   const findPreviousAndNextFailed = useCallback(

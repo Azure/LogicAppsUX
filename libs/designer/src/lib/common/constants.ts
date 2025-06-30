@@ -375,6 +375,7 @@ export default {
       QUERY: 'query',
       RECURRENCE: 'recurrence',
       REQUEST: 'request',
+      A2AREQUEST: 'a2arequest',
       RESPONSE: 'response',
       SCOPE: 'scope',
       SELECT: 'select',

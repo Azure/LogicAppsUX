@@ -9,8 +9,8 @@ import { Gripper } from './images/dynamicsvgs/gripper';
 import type { CommentBoxProps } from './types';
 import { getCardStyle } from './utils';
 import type { MessageBarType } from '@fluentui/react';
-import { Icon, css } from '@fluentui/react';
-import { Spinner, useRestoreFocusTarget } from '@fluentui/react-components';
+import { Icon } from '@fluentui/react';
+import { mergeClasses, Spinner, useRestoreFocusTarget } from '@fluentui/react-components';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
 import type { MouseEventHandler } from 'react';
@@ -179,7 +179,7 @@ export const Card: React.FC<CardProps> = memo(
         role={'button'}
         id={`msla-node-${id}`}
         aria-label={cardAltText}
-        className={css(
+        className={mergeClasses(
           'msla-panel-card-container',
           selectionMode === 'selected' && 'msla-panel-card-container-selected',
           !active && 'msla-card-inactive',
@@ -206,11 +206,13 @@ export const Card: React.FC<CardProps> = memo(
           />
         ) : null}
         {isUnitTest && isMockSupported ? <MockStatusIcon id={`${title}-status`} nodeMockResults={nodeMockResults} /> : null}
-        <div className={css('msla-selection-box', selectionMode)} />
+        <div className={mergeClasses('msla-selection-box', selectionMode)} />
         <div className="panel-card-main">
           <div className="panel-card-header" role="button">
             <div className="panel-card-content-container">
-              <div className={css('panel-card-content-gripper-section', draggable && 'draggable')}>{draggable ? <Gripper /> : null}</div>
+              <div className={mergeClasses('panel-card-content-gripper-section', draggable && 'draggable')}>
+                {draggable ? <Gripper /> : null}
+              </div>
               <div className="panel-card-content-icon-section">{cardIcon}</div>
               <div className="panel-card-top-content">
                 <div className="panel-msla-title">{title}</div>
