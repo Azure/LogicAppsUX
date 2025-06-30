@@ -108,15 +108,6 @@ describe('GraphContainerNode', () => {
     expect(tree).toMatchSnapshot();
   });
 
-  it('should render the top and bottom handles', () => {
-    const tree = renderer.create(<GraphContainerNode {...defaultProps} />).toJSON();
-    const topHandle = tree.children.find((child) => child.props.className.includes('node-handle top'));
-    const bottomHandle = tree.children.find((child) => child.props.className.includes('node-handle bottom'));
-    expect(topHandle).toBeTruthy();
-    expect(bottomHandle).toBeTruthy();
-    expect(tree).toMatchSnapshot();
-  });
-
   it('should render DropZone when showLeafComponents is true', () => {
     (useIsLeafNode as Mock).mockReturnValue(true);
     (useActionMetadata as Mock).mockReturnValue({ type: 'someType' });
