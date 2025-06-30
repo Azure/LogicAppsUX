@@ -204,10 +204,8 @@ const CardBadge: React.FC<CardBadgeProps> = ({ enabled, active, content, badgeCo
   }
 
   return active ? (
-    <Tooltip relationship={'label'} withArrow={true} content={`${cardTitle ?? ''} ${title}: ${content}`}>
-      {badgeContent ?? (
-        <div>{IconComponent && <IconComponent role="button" className={'panel-card-v2-badge active'} tabIndex={tabIndex} />}</div>
-      )}
+    <Tooltip relationship={'label'} withArrow={true} content={`${cardTitle ?? ''} ${title}: ${content}`} positioning="above-start">
+      {badgeContent ?? (IconComponent && <IconComponent role="button" className={'panel-card-v2-badge active'} tabIndex={tabIndex} />)}
     </Tooltip>
   ) : (
     (badgeContent ?? (IconComponent && <IconComponent className="panel-card-v2-badge inactive" aria-label={title} tabIndex={0} />))
