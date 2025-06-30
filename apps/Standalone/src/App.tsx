@@ -1,6 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
-import { DesignerWrapper } from './designer/app/DesignerShell/designer';
 import { store as designerStore } from './designer/state/store';
 import { store as dataMapperStore } from './dataMapperV1/state/Store';
 import { store as templateStore } from './templates/state/Store';
@@ -9,6 +8,7 @@ import { DataMapperStandaloneDesignerV1 } from './dataMapperV1/app/DataMapperSta
 import { DataMapperStandaloneDesignerV2 } from './dataMapperV1/app/DataMapperStandaloneDesignerV2';
 import { TemplatesWrapper } from './templates/app/TemplatesShell';
 import { ConfigureTemplateWrapper } from './configuretemplate/app/ConfigureTemplateShell';
+import { DesignerWrapper } from './designer/app/DesignerShell/designer';
 
 export const App = () => {
   return (
