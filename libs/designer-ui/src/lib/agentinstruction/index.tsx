@@ -107,11 +107,7 @@ export const AgentInstructionEditor = ({
         />
       </div>
       {errorMessage ? (
-        <MessageBar
-          key={'warning'}
-          intent={'warning'}
-          className={mergeClasses(styles.editorWarning, 'msla-agent-instruction-editor-warning')}
-        >
+        <MessageBar key={'warning'} intent={'warning'} className={styles.editorWarning}>
           <MessageBarBody>
             <MessageBarTitle>{errorMessage}</MessageBarTitle>
             {warningInstructionBody}
