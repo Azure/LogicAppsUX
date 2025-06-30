@@ -8,7 +8,7 @@ import type {
   IDropDownOption,
 } from '../../../run-service';
 import { resourceGroupNamingRules } from './newResourceGroup';
-import type { IDropdownOption } from '@fluentui/react';
+import type { Option } from '@fluentui/react-components';
 
 const getTypeName = (typeName: string): string => {
   switch (typeName) {
@@ -56,7 +56,7 @@ export const parseResourceGroupsData = (resourceGroupsData: { resourceGroups: IR
   });
 };
 
-export const isNameValid = (name: string, intlText: any, resourceGroups: IDropdownOption[]): INamingValidation => {
+export const isNameValid = (name: string, intlText: any, resourceGroups: Option[]): INamingValidation => {
   const trimmedName = name.trim();
 
   let validName = false;
