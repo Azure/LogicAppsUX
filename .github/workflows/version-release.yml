@@ -1,4 +1,4 @@
-name: Version and Release
+name: w
 run-name: Version and Release - [ ${{ github.ref_name }} ] - ${{ github.event.inputs.release_type }}
 on:
   workflow_dispatch:
@@ -86,7 +86,7 @@ jobs:
       - name: 'Generate Release Notes'
         id: release-notes
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.AUTOMATION_PAT }}
         run: |
           # Get the previous tag
           PREV_TAG=$(git describe --tags --abbrev=0 ${{ steps.version.outputs.tag_name }}^ 2>/dev/null || echo "")
