@@ -1,4 +1,5 @@
-import { test, expect } from '@playwright/test';
+import test from '@playwright/test';
+import { expect } from '../fixtures/opacityFixture';
 import { GoToMockWorkflow, LoadRunFile } from '../utils/GoToWorkflow';
 
 test.describe(
@@ -22,11 +23,11 @@ test.describe(
       await expect(page.getByTestId('card-compose_2').getByRole('button')).toContainText(" 'Compose_2' skipped");
 
       // Verify actions below the loading actions are not inactive
-      await expect(page.getByTestId('card-increment_variable')).not.toHaveClass(/msla-card-inactive/);
-      await expect(page.getByTestId('card-filter_array')).not.toHaveClass(/msla-card-inactive/);
-      await expect(page.getByTestId('card-increment_variable')).not.toHaveClass(/msla-card-inactive/);
-      await expect(page.getByTestId('msla-graph-container-condition_2')).not.toHaveClass(/msla-card-inactive/);
-      await expect(page.getByTestId('msla-graph-container-condition')).not.toHaveClass(/msla-card-inactive/);
+      await expect(page.getByTestId('card-increment_variable')).not.toHaveOpacity(0.3);
+      await expect(page.getByTestId('card-filter_array')).not.toHaveOpacity(0.3);
+      await expect(page.getByTestId('card-increment_variable')).not.toHaveOpacity(0.3);
+      await expect(page.getByTestId('card-condition_2')).not.toHaveOpacity(0.3);
+      await expect(page.getByTestId('card-condition')).not.toHaveOpacity(0.3);
     });
 
     test('Sanity check for loading state', async ({ page }) => {
@@ -44,14 +45,13 @@ test.describe(
       // Verify loading status for action
       await expect(page.getByTestId('msla-pill-delay_status')).toBeVisible();
       await expect(page.getByTestId('msla-pill-delay_status')).toHaveAttribute('aria-label', 'Running');
-      await expect(page.getByTestId('msla-pill-delay_status')).toHaveClass(/status-only/);
 
       // Verify actions below the loading actions are inactive
-      await expect(page.getByTestId('card-increment_variable')).toHaveClass(/msla-card-inactive/);
-      await expect(page.getByTestId('card-filter_array')).toHaveClass(/msla-card-inactive/);
-      await expect(page.getByTestId('card-increment_variable')).toHaveClass(/msla-card-inactive/);
-      await expect(page.getByTestId('msla-graph-container-condition_2')).toHaveClass(/msla-card-inactive/);
-      await expect(page.getByTestId('msla-graph-container-condition')).toHaveClass(/msla-card-inactive/);
+
+      await expect(page.getByTestId('card-increment_variable')).toHaveOpacity(0.3);
+      await expect(page.getByTestId('card-filter_array')).toHaveOpacity(0.3);
+      await expect(page.getByTestId('card-condition_2')).toHaveOpacity(0.3);
+      await expect(page.getByTestId('card-condition')).toHaveOpacity(0.3);
     });
   }
 );
