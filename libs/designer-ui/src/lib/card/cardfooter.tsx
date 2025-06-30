@@ -1,8 +1,8 @@
 /* eslint-disable react/display-name */
 import type { CardProps } from './index';
 import { getHeaderStyle } from './utils';
-import type { IIconProps } from '@fluentui/react';
-import { Icon } from '@fluentui/react';
+import type { FluentIcon } from '@fluentui/react-icons';
+import { CommentRegular, BeakerRegular, LockClosedRegular, LinkMultipleRegular } from '@fluentui/react-icons';
 import { Spinner, Tooltip } from '@fluentui/react-components';
 import { memo, useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -30,28 +30,12 @@ interface CardBadgeProps {
   enabled?: boolean;
   active: boolean;
   content?: string;
-  iconProps?: IIconProps;
+  IconComponent?: FluentIcon;
   badgeContent?: any;
   title: string;
   tabIndex?: number;
   cardTitle?: string;
 }
-
-const commentIconProps: IIconProps = {
-  iconName: 'Comment',
-};
-
-const connectionIconProps: IIconProps = {
-  iconName: 'Link',
-};
-
-const staticResultIconProps: IIconProps = {
-  iconName: 'TestBeaker',
-};
-
-const lockIconProps: IIconProps = {
-  iconName: 'Lock',
-};
 
 export const CardFooter: React.FC<CardFooterProps> = memo(
   ({
@@ -130,28 +114,28 @@ export const CardFooter: React.FC<CardFooterProps> = memo(
             enabled: staticResultsEnabled,
             active: true,
             content: strings.MENU_STATIC_RESULT_ICON_TOOLTIP,
-            iconProps: staticResultIconProps,
+            IconComponent: BeakerRegular,
             title: strings.PANEL_STATIC_RESULT_TITLE,
           },
           {
             enabled: !!commentBox?.comment,
             active: true,
             content: commentBox?.comment,
-            iconProps: commentIconProps,
+            IconComponent: CommentRegular,
             title: strings.COMMENT,
           },
           {
             enabled: !!(connectionRequired || connectionDisplayName),
             active: !!connectionDisplayName,
             content: connectionDisplayName || connectionTitle,
-            iconProps: connectionIconProps,
+            IconComponent: LinkMultipleRegular,
             title: connectionTitle,
           },
           {
             enabled: isSecureInputsOutputs,
             active: true,
             content: strings.SECURE_INPUTS_OUTPUTS_TOOLTIP,
-            iconProps: lockIconProps,
+            IconComponent: LockClosedRegular,
             title: strings.SECURE_INPUTS_OUTPUTS_TITLE,
           },
         ].filter((badge) => badge.enabled),
@@ -182,14 +166,14 @@ export const CardFooter: React.FC<CardFooterProps> = memo(
 const CardBadgeBar: React.FC<CardBadgeBarProps> = ({ badges, brandColor, tabIndex, cardTitle }) => {
   return (
     <div className="msla-badges" style={getHeaderStyle(brandColor)}>
-      {badges.map(({ enabled, active, content, badgeContent, iconProps, title }) => (
+      {badges.map(({ enabled, active, content, badgeContent, IconComponent, title }) => (
         <CardBadge
           key={title}
           title={title}
           cardTitle={cardTitle}
           content={content}
           badgeContent={badgeContent}
-          iconProps={iconProps}
+          IconComponent={IconComponent}
           enabled={enabled}
           active={active}
           tabIndex={tabIndex}
@@ -199,7 +183,7 @@ const CardBadgeBar: React.FC<CardBadgeBarProps> = ({ badges, brandColor, tabInde
   );
 };
 
-const CardBadge: React.FC<CardBadgeProps> = ({ enabled, active, content, badgeContent, iconProps, title, cardTitle, tabIndex }) => {
+const CardBadge: React.FC<CardBadgeProps> = ({ enabled, active, content, badgeContent, IconComponent, title, cardTitle, tabIndex }) => {
   if (!enabled || !content) {
     return null;
   }
@@ -207,12 +191,12 @@ const CardBadge: React.FC<CardBadgeProps> = ({ enabled, active, content, badgeCo
   return active ? (
     <Tooltip relationship={'label'} withArrow={true} content={`${cardTitle ?? ''} ${title}: ${content}`}>
       {badgeContent ?? (
-        <div>
-          <Icon role="button" className={'panel-card-v2-badge active'} {...iconProps} tabIndex={tabIndex} />
+        <div style={{ display: 'flex' }}>
+          {IconComponent && <IconComponent role="button" className={'panel-card-v2-badge active'} tabIndex={tabIndex} />}
         </div>
       )}
     </Tooltip>
   ) : (
-    (badgeContent ?? <Icon className="panel-card-v2-badge inactive" {...iconProps} aria-label={title} tabIndex={0} />)
+    (badgeContent ?? (IconComponent && <IconComponent className="panel-card-v2-badge inactive" aria-label={title} tabIndex={0} />))
   );
 };
