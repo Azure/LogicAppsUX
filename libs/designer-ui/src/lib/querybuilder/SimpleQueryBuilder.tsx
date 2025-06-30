@@ -174,13 +174,13 @@ const convertRootPropToValue = (rootProps: RowItemProps): ValueSegment[] => {
   return [operatorLiteral, op1, separatorLiteral, op2, endingLiteral];
 };
 
-// Common parsing logic extracted
+// Common parsing logic used to convert between advanced and row item
+// also used when deserializing from initial deserialization
 export const parseQueryStringToRowItemProps = (
   stringValue: string,
   loadParameterValueFromString?: (value: string, options: any) => ValueSegment[],
   nodeMap?: Map<string, ValueSegment>
 ): RowItemProps | undefined => {
-  // Basic validation
   if (!stringValue || !stringValue.includes('@') || !stringValue.includes(',')) {
     return undefined;
   }
@@ -202,10 +202,7 @@ export const parseQueryStringToRowItemProps = (
       return undefined;
     }
 
-    // Extract operands substring
     const operandSubstring = workingString.substring(workingString.indexOf('(') + 1, nthLastIndexOf(workingString, ')', negatory ? 2 : 1));
-
-    // Split operands at the outermost comma
     const [operand1String, operand2String] = splitAtIndex(operandSubstring, getOuterMostCommaIndex(operandSubstring)).map((s) =>
       removeQuotes(s.trim())
     );
@@ -247,7 +244,7 @@ export const parseQueryStringToRowItemProps = (
   }
 };
 
-// Updated convertAdvancedValueToRootProp using common logic
+// Converting Advanced Value to Row Editor Props
 const convertAdvancedValueToRootProp = (
   value: ValueSegment[],
   loadParameterValueFromString?: (value: string, options: any) => ValueSegment[]
