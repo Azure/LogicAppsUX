@@ -1,65 +1,78 @@
 import './styles.less';
-import type { ComboboxProps } from '@fluentui/react-components';
-import { Combobox, useComboboxFilter, useId } from '@fluentui/react-components';
-import { useCallback, useState } from 'react';
+import { Dropdown, DropdownMenuItemType, SearchBox, Spinner, SpinnerSize } from '@fluentui/react';
+import type { IDropdownOption, IDropdownProps } from '@fluentui/react';
+import { useState } from 'react';
+import type { ChangeEvent } from 'react';
 import { useIntl } from 'react-intl';
 
-export interface SearchableDropdownOption {
-  key: string;
-  text: string;
-  data?: any;
-}
-
-export interface ISearchableDropdownProps extends Omit<ComboboxProps, 'onChange'> {
+export interface ISearchableDropdownProps extends IDropdownProps {
   isLoading?: boolean;
-  label: string;
-  options: SearchableDropdownOption[];
-  onChange?: (selectedOption?: SearchableDropdownOption) => void;
+  searchBoxPlaceholder?: string;
 }
 
 export const SearchableDropdown: React.FC<ISearchableDropdownProps> = (props) => {
-  const { label, defaultValue, options = [], placeholder, onChange } = props;
-  const comboId = useId('searchable-dropdown');
   const [searchText, setSearchText] = useState<string>('');
+  const filterHeader = 'FilterHeader';
+  const dividerHeader = `Divider_${filterHeader}`;
+
   const intl = useIntl();
 
   const intlText = {
-    NO_OPTIONS_FOUND: intl.formatMessage({
-      defaultMessage: 'No option match your search.',
-      id: '76y6GF',
-      description: 'No options search text',
+    SEARCH_OPTIONS: intl.formatMessage({
+      defaultMessage: 'Search options',
+      id: 'R7LyKb',
+      description: 'Search options description',
     }),
   };
 
-  const filterOptions = useComboboxFilter(
-    searchText,
-    options.map((option) => option.text),
-    {
-      noOptionsMessage: intlText.NO_OPTIONS_FOUND,
-    }
-  );
-  const onOptionSelect = useCallback(
-    (_event: any, data: any) => {
-      const selectedOption = options.find((opt) => opt.text === data.optionText);
-      setSearchText(data.optionText ?? '');
-      onChange?.(selectedOption);
-    },
-    [options, onChange]
-  );
+  const renderOption = (option: any): JSX.Element => {
+    const searchString = (_event?: ChangeEvent<HTMLInputElement> | undefined, newValue?: string | undefined) => {
+      const newString = newValue as string;
+      setSearchText(newString);
+    };
+
+    const isHeader = option.itemType === DropdownMenuItemType.Header && option.key === filterHeader;
+
+    const searchBox = (
+      <div className="searchable-dropdown-searchbox">
+        <SearchBox showIcon underlined onChange={searchString} placeholder={props.searchBoxPlaceholder ?? intlText.SEARCH_OPTIONS} />
+      </div>
+    );
+
+    return isHeader ? searchBox : <>{option.text}</>;
+  };
+
+  const getOptions = (options: IDropdownOption[]) => {
+    const filterOptions = options.map((option) => {
+      if (option.itemType === DropdownMenuItemType.Header || option.itemType === DropdownMenuItemType.Divider) {
+        return option;
+      }
+
+      return option.text.toLowerCase().indexOf(searchText.toLowerCase()) > -1 ? option : { ...option, hidden: true };
+    });
+
+    return [
+      { key: filterHeader, text: '-', itemType: DropdownMenuItemType.Header },
+      { key: dividerHeader, text: '-', itemType: DropdownMenuItemType.Divider },
+      ...filterOptions,
+    ];
+  };
+
+  const spinnerLoader = props.isLoading ? <Spinner className="searchable-dropdown-spinner" size={SpinnerSize.xSmall} /> : null;
 
   return (
     <div className="searchable-dropdown">
-      <label id={comboId}>{label}</label>
-      <Combobox
-        onOptionSelect={onOptionSelect}
-        aria-labelledby={comboId}
-        placeholder={placeholder}
-        onChange={(ev) => setSearchText(ev.target.value)}
-        value={searchText}
-        defaultValue={defaultValue}
-      >
-        {filterOptions}
-      </Combobox>
+      <Dropdown
+        {...props}
+        calloutProps={{
+          gapSpace: 10,
+          calloutMaxHeight: 400,
+        }}
+        options={getOptions(props.options)}
+        onRenderOption={renderOption}
+        onDismiss={() => setSearchText('')}
+      />
+      {spinnerLoader}
     </div>
   );
 };

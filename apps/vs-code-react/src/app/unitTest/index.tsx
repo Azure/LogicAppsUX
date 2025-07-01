@@ -1,7 +1,7 @@
 import type { RootState } from '../../state/store';
 import { VSCodeContext } from '../../webviewCommunication';
 import './unitTest.less';
-import { Link, tokens } from '@fluentui/react-components';
+import { Link } from '@fluentui/react';
 import { MediumText, XLargeText, XXLargeText } from '@microsoft/designer-ui';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { useContext } from 'react';
@@ -9,6 +9,7 @@ import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 import { CheckmarkCircleFilled, CloudBeakerRegular, DismissCircleFilled } from '@fluentui/react-icons';
 import type { AssertionResults } from '@microsoft/vscode-extension-logic-apps';
+import { tokens } from '@fluentui/react-components';
 
 export const UnitTestResults: React.FC = () => {
   const unitTestState = useSelector((state: RootState) => state.unitTest);

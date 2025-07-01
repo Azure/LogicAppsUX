@@ -6,7 +6,7 @@ import type { AppDispatch, RootState } from '../../../state/store';
 import { VSCodeContext } from '../../../webviewCommunication';
 import { getListColumns, getSummaryData } from './helper';
 import { ManagedConnections } from './managedConnections';
-import { MessageBar, Button, DataGrid, Input, Field, Skeleton } from '@fluentui/react-components';
+import { MessageBar, MessageBarType, PrimaryButton, SelectionMode, ShimmeredDetailsList, TextField } from '@fluentui/react';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { useContext, useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -109,9 +109,12 @@ export const Summary: React.FC = () => {
 
   const locationText = useMemo(() => {
     return (
-      <Field label={intlText.EXPORT_LOCATION}>
-        <Input placeholder={targetDirectory.path} disabled className="msla-export-summary-file-location-text" />
-      </Field>
+      <TextField
+        label={intlText.EXPORT_LOCATION}
+        placeholder={targetDirectory.path}
+        disabled
+        className="msla-export-summary-file-location-text"
+      />
     );
   }, [targetDirectory, intlText.EXPORT_LOCATION]);
 
@@ -126,15 +129,14 @@ export const Summary: React.FC = () => {
         <XLargeText text={intlText.AFTER_EXPORT} style={{ display: 'block' }} />
         <LargeText text={intlText.ADDITIONAL_STEPS} style={{ display: 'block' }} />
         <div className="msla-export-summary-detail-list">
-          {isSummaryLoading ? (
-            <div className="msla-export-summary-loading">
-              <Skeleton />
-              <Skeleton />
-              <Skeleton />
-            </div>
-          ) : (
-            <DataGrid items={exportDetails} columns={getListColumns()} getRowId={(item) => item.key} selectionMode="none" size="small" />
-          )}
+          <ShimmeredDetailsList
+            items={exportDetails}
+            columns={getListColumns()}
+            setKey="set"
+            enableShimmer={isSummaryLoading}
+            selectionMode={SelectionMode.none}
+            compact={true}
+          />
           {noDetails}
         </div>
       </>
@@ -143,7 +145,7 @@ export const Summary: React.FC = () => {
 
   const packageWarning = useMemo(() => {
     return isError && !packageUrl ? (
-      <MessageBar className="msla-export-summary-package-warning" intent="error">
+      <MessageBar className="msla-export-summary-package-warning" messageBarType={MessageBarType.error} isMultiline={true}>
         {intlText.PACKAGE_WARNING}
         <br />
         {(summaryError as any)?.message ?? null}
@@ -158,9 +160,12 @@ export const Summary: React.FC = () => {
       {packageWarning}
       <div className="msla-export-summary-file-location">
         {locationText}
-        <Button className="msla-export-summary-file-location-button" appearance="primary" onClick={onOpenExplorer}>
-          {intlText.OPEN_FILE_EXPLORER}
-        </Button>
+        <PrimaryButton
+          className="msla-export-summary-file-location-button"
+          text={intlText.OPEN_FILE_EXPLORER}
+          ariaLabel={intlText.OPEN_FILE_EXPLORER}
+          onClick={onOpenExplorer}
+        />
       </div>
       <ManagedConnections />
       {detailsList}

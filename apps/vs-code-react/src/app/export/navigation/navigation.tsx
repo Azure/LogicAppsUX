@@ -2,7 +2,7 @@ import { RouteName, ValidationStatus } from '../../../run-service';
 import { Status } from '../../../state/WorkflowSlice';
 import type { RootState } from '../../../state/store';
 import { VSCodeContext } from '../../../webviewCommunication';
-import { Button } from '@fluentui/react-components';
+import { PrimaryButton } from '@fluentui/react';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { useContext } from 'react';
 import { useIntl } from 'react-intl';
@@ -161,12 +161,20 @@ export const Navigation: React.FC = () => {
 
   return (
     <div className="msla-export-navigation-panel">
-      <Button onClick={onClickBack} disabled={isBackDisabled()}>
-        {intlText.BACK}
-      </Button>
-      <Button appearance="primary" onClick={onClickNext} disabled={isNextDisabled()}>
-        {nextText}
-      </Button>
+      <PrimaryButton
+        className="msla-export-navigation-panel-button"
+        text={intlText.BACK}
+        ariaLabel={intlText.BACK}
+        onClick={onClickBack}
+        disabled={isBackDisabled()}
+      />
+      <PrimaryButton
+        className="msla-export-navigation-panel-button"
+        text={nextText}
+        ariaLabel={nextText}
+        onClick={onClickNext}
+        disabled={isNextDisabled()}
+      />
     </div>
   );
 };

@@ -1,8 +1,8 @@
 import type { INamingRules } from '../../../run-service';
 import type { RootState } from '../../../state/store';
 import { isNameValid } from './helper';
-import { Popover, PopoverTrigger, PopoverSurface, Link, Button, Input, Field } from '@fluentui/react-components';
-import type { Option } from '@fluentui/react-components';
+import { Callout, Link, PrimaryButton, TextField } from '@fluentui/react';
+import type { IDropdownOption } from '@fluentui/react';
 import { useBoolean } from '@fluentui/react-hooks';
 import { MediumText } from '@microsoft/designer-ui';
 import { useState } from 'react';
@@ -17,8 +17,8 @@ export const resourceGroupNamingRules: INamingRules = {
 };
 
 export interface INewResourceGroupProps {
-  onAddNewResourceGroup: (selectedOption: Option) => void;
-  resourceGroups: Option[];
+  onAddNewResourceGroup: (selectedOption: IDropdownOption) => void;
+  resourceGroups: IDropdownOption[];
 }
 
 export const NewResourceGroup: React.FC<INewResourceGroupProps> = ({ onAddNewResourceGroup, resourceGroups }) => {
@@ -79,8 +79,8 @@ export const NewResourceGroup: React.FC<INewResourceGroupProps> = ({ onAddNewRes
 
   const linkClassName = 'msla-export-summary-connections-new-resource';
 
-  const onChangeName = (_event: FormEvent<HTMLInputElement>, data: { value: string }) => {
-    setName(data.value);
+  const onChangeName = (_event: FormEvent<HTMLInputElement | HTMLTextAreaElement>, newName?: string | undefined) => {
+    setName(newName as string);
   };
 
   const onClickOk = () => {
@@ -89,37 +89,43 @@ export const NewResourceGroup: React.FC<INewResourceGroupProps> = ({ onAddNewRes
   };
 
   return (
-    <Popover open={isCalloutVisible} onOpenChange={(_, data) => (data.open ? null : toggleIsCalloutVisible())}>
-      <PopoverTrigger disableButtonEnhancement>
-        <Link className={linkClassName} onClick={toggleIsCalloutVisible}>
-          {intlText.CREATE_NEW}
-        </Link>
-      </PopoverTrigger>
-      <PopoverSurface style={{ padding: '20px 15px 0 15px', maxWidth: '360px' }}>
-        <MediumText text={intlText.RESOURCE_GROUP_DESCRIPTION} style={{ display: 'block', marginBottom: '10px' }} />
-        <Field
-          label={intlText.NAME}
-          required
-          validationMessage={isNameValid(name, intlText, resourceGroups).validationError}
-          validationState={isNameValid(name, intlText, resourceGroups).validName ? 'none' : 'error'}
+    <>
+      <Link className={linkClassName} onClick={toggleIsCalloutVisible}>
+        {intlText.CREATE_NEW}
+      </Link>
+      {isCalloutVisible && (
+        <Callout
+          role="dialog"
+          gapSpace={8}
+          calloutMaxWidth={360}
+          style={{ padding: '20px 15px 0 15px' }}
+          target={`.${linkClassName}`}
+          onDismiss={toggleIsCalloutVisible}
         >
-          <Input value={name} onChange={onChangeName} autoFocus={true} />
-        </Field>
-        <div style={{ marginTop: '10px', display: 'flex', gap: '10px' }}>
-          <Button
+          <MediumText text={intlText.RESOURCE_GROUP_DESCRIPTION} style={{ display: 'block' }} />
+          <TextField
+            required
+            label={intlText.NAME}
+            value={name}
+            onChange={onChangeName}
+            onGetErrorMessage={(newName) => isNameValid(newName, intlText, resourceGroups).validationError}
+            autoFocus={true}
+          />
+          <PrimaryButton
             className="msla-export-summary-connections-button"
-            appearance="primary"
-            aria-label={intlText.OK}
+            text={intlText.OK}
+            ariaLabel={intlText.OK}
             disabled={!isNameValid(name, intlText, resourceGroups).validName}
             onClick={onClickOk}
-          >
-            {intlText.OK}
-          </Button>
-          <Button className="msla-export-summary-connections-button" aria-label={intlText.CANCEL} onClick={toggleIsCalloutVisible}>
-            {intlText.CANCEL}
-          </Button>
-        </div>
-      </PopoverSurface>
-    </Popover>
+          />
+          <PrimaryButton
+            className="msla-export-summary-connections-button"
+            text={intlText.CANCEL}
+            ariaLabel={intlText.CANCEL}
+            onClick={toggleIsCalloutVisible}
+          />
+        </Callout>
+      )}
+    </>
   );
 };

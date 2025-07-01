@@ -1,3 +1,4 @@
+import WarningIcon from '../../../resources/Caution.svg';
 import { QueryKeys } from '../../../run-service';
 import type { WorkflowsList, SelectedWorkflowsList } from '../../../run-service';
 import { ApiService } from '../../../run-service/export/index';
@@ -9,14 +10,15 @@ import { Filters } from './filters';
 import {
   filterWorkflows,
   getListColumns,
+  getSelectedItems,
   parsePreviousSelectedWorkflows,
   parseResourceGroups,
   parseSelectedWorkflows,
   updateSelectedItems,
 } from './helper';
 import { SelectedList } from './selectedList';
-import { Divider, DataGrid, MessageBar } from '@fluentui/react-components';
-import type { Option } from '@fluentui/react-components';
+import { Separator, ShimmeredDetailsList, SelectionMode, Selection, MessageBar, MessageBarType } from '@fluentui/react';
+import type { IDropdownOption } from '@fluentui/react';
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { useMemo, useRef, useState, useEffect, useContext } from 'react';
 import { useIntl } from 'react-intl';
@@ -31,7 +33,7 @@ export const WorkflowsSelection: React.FC = () => {
   const { selectedSubscription, selectedIse, selectedWorkflows, location } = exportData;
 
   const [renderWorkflows, setRenderWorkflows] = useState<WorkflowsList[] | null>(null);
-  const [resourceGroups, setResourceGroups] = useState<Option[]>([]);
+  const [resourceGroups, setResourceGroups] = useState<IDropdownOption[]>([]);
   const [searchString, setSearchString] = useState<string>('');
   const allWorkflows = useRef<WorkflowsList[]>([]);
   const allItemsSelected = useRef<SelectedWorkflowsList[]>(parsePreviousSelectedWorkflows(selectedWorkflows));
@@ -127,6 +129,33 @@ export const WorkflowsSelection: React.FC = () => {
     allItemsSelected.current = updatedItems;
   }, [selectedWorkflows, renderWorkflows, allWorkflows]);
 
+  const selection: Selection = useMemo(() => {
+    const onItemsChange = () => {
+      const selectedItems = [...allItemsSelected.current.filter((item) => item.selected)];
+      if (selection && selection.getItems().length > 0) {
+        selectedItems.forEach((workflow: WorkflowsList) => {
+          selection.setKeySelected(workflow.key, true, false);
+        });
+      }
+    };
+
+    const onSelectionChanged = () => {
+      const currentSelection = selection.getSelection() as WorkflowsList[];
+      const selectedItems = getSelectedItems(allItemsSelected.current, currentSelection);
+
+      dispatch(
+        updateSelectedWorkFlows({
+          selectedWorkflows: selectedItems,
+        })
+      );
+    };
+
+    return new Selection({
+      onSelectionChanged: onSelectionChanged,
+      onItemsChanged: onItemsChange,
+    });
+  }, [dispatch]);
+
   const workflowsList = useMemo(() => {
     const emptyText = (
       <LargeText text={intlText.NO_WORKFLOWS} style={{ display: 'block' }} className="msla-export-workflows-panel-list-workflows-empty" />
@@ -138,32 +167,29 @@ export const WorkflowsSelection: React.FC = () => {
 
     return (
       <div className={`msla-export-workflows-panel-list-workflows ${enableShimmer ? 'loading' : ''}`}>
-        {enableShimmer ? (
-          <div>Loading...</div>
-        ) : (
-          <DataGrid
-            items={renderWorkflows || []}
-            columns={getListColumns(intlText.NAME, intlText.RESOURCE_GROUP)}
-            getRowId={(item) => item.key}
-            selectionMode="multiselect"
-            selectedItems={new Set(selectedWorkflows.map((w) => w.key))}
-            onSelectionChange={(_, data) => {
-              const newSelection = Array.from(data.selectedItems);
-              const selectedItems = allWorkflows.current.filter((w) => newSelection.includes(w.key));
-              dispatch(updateSelectedWorkFlows({ selectedWorkflows: selectedItems }));
-            }}
-            size="small"
-          />
-        )}
+        <ShimmeredDetailsList
+          items={renderWorkflows || []}
+          columns={getListColumns(intlText.NAME, intlText.RESOURCE_GROUP)}
+          setKey="set"
+          enableShimmer={enableShimmer}
+          ariaLabelForSelectionColumn={intlText.SELECTION}
+          ariaLabelForSelectAllCheckbox={intlText.SELECTION_ALL}
+          checkButtonAriaLabel={intlText.SELECT_WORKFLOW}
+          selectionMode={SelectionMode.multiple}
+          selection={selection}
+          compact={true}
+          selectionPreservedOnEmptyClick={true}
+        />
         {noWorkflows}
       </div>
     );
   }, [
     renderWorkflows,
     isWorkflowsLoading,
-    selectedWorkflows,
-    allWorkflows,
-    dispatch,
+    selection,
+    intlText.SELECTION,
+    intlText.SELECTION_ALL,
+    intlText.SELECT_WORKFLOW,
     intlText.NO_WORKFLOWS,
     intlText.NAME,
     intlText.RESOURCE_GROUP,
@@ -171,7 +197,18 @@ export const WorkflowsSelection: React.FC = () => {
 
   const limitInfo = useMemo(() => {
     return selectedWorkflows.length >= 15 ? (
-      <MessageBar className="msla-export-workflows-panel-limit-selection" intent="info">
+      <MessageBar
+        className="msla-export-workflows-panel-limit-selection"
+        messageBarType={MessageBarType.info}
+        isMultiline={true}
+        messageBarIconProps={{
+          imageProps: {
+            src: WarningIcon,
+            width: 15,
+            height: 15,
+          },
+        }}
+      >
         {intlText.LIMIT_INFO}
       </MessageBar>
     ) : null;
@@ -188,7 +225,7 @@ export const WorkflowsSelection: React.FC = () => {
       setSearchString(newSearchString);
     };
 
-    const onChangeResourceGroup = (_event: React.FormEvent<HTMLDivElement>, _selectedOption: Option, index: number) => {
+    const onChangeResourceGroup = (_event: React.FormEvent<HTMLDivElement>, _selectedOption: IDropdownOption, index: number) => {
       const updatedResourceGroups = [...resourceGroups];
       updatedResourceGroups[index - 2].selected = !updatedResourceGroups[index - 2].selected;
       const filteredWorkflows = filterWorkflows(allWorkflows.current, updatedResourceGroups, searchString);
@@ -231,8 +268,23 @@ export const WorkflowsSelection: React.FC = () => {
     });
   };
 
+  const updateRenderWorkflows = () => {
+    return new Promise<void>((resolve) => {
+      const updatedRenderWorkflows = renderWorkflows?.map((workflow, index) => {
+        return { ...workflow, key: index.toString() };
+      }) as WorkflowsList[];
+      setRenderWorkflows(updatedRenderWorkflows);
+
+      resolve();
+    });
+  };
+
   const deselectWorkflow = async (itemKey: string) => {
+    const copyRenderWorkflows = [...(renderWorkflows ?? [])];
     await deselectItemKey(itemKey);
+    selection.setItems(renderWorkflows as WorkflowsList[]);
+    await updateRenderWorkflows();
+    setRenderWorkflows(copyRenderWorkflows);
   };
 
   return (
@@ -245,7 +297,7 @@ export const WorkflowsSelection: React.FC = () => {
           {filters}
           {workflowsList}
         </div>
-        <Divider vertical className="msla-export-workflows-panel-divider" />
+        <Separator vertical className="msla-export-workflows-panel-divider" />
         <SelectedList isLoading={isWorkflowsLoading || renderWorkflows === null} deselectWorkflow={deselectWorkflow} />
       </div>
       <AdvancedOptions />
