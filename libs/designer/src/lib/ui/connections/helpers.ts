@@ -7,13 +7,25 @@ export const canDropItem = (
     loopSources?: string[];
     graphId?: string;
     isScope?: boolean;
+    isAgent?: boolean;
   },
   upstreamNodes: Set<string>,
   upstreamNodesDependencies: Record<string, Set<string>>,
   upstreamScopes: Set<string>,
   childId: string | undefined,
-  parentId: string | undefined
+  parentId: string | undefined,
+  preventDropItemInA2A: boolean,
+  isWithinAgenticLoop: boolean
 ): boolean => {
+  // prevent dropping agents within agentic loops
+  if (item.isAgent && isWithinAgenticLoop) {
+    return false;
+  }
+  // Prevent dropping nodes if there's an upstream agentic loop
+  if (preventDropItemInA2A) {
+    return false;
+  }
+
   // This supports preventing moving a node with a dependency above its upstream node
   for (const dec of item.dependencies ?? []) {
     if (!upstreamNodes.has(dec)) {
