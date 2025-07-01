@@ -101,6 +101,7 @@ const DesignerEditor = () => {
     hostOptions,
     hostingPlan,
     showConnectionsPanel,
+    showEdgeDrawing,
     showPerformanceDebug,
     suppressDefaultNodeSelect,
   } = useSelector((state: RootState) => state.workflowLoader);
@@ -525,6 +526,7 @@ const DesignerEditor = () => {
             ...getSKUDefaultHostOptions(Constants.SKU.STANDARD),
           },
           showConnectionsPanel,
+          showEdgeDrawing,
           showPerformanceDebug,
         }}
       >

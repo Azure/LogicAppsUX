@@ -12,6 +12,7 @@ import {
   useStringOverrides,
   useQueryCachePersist,
   useIsMultiVariableEnabled,
+  useShowEdgeDrawing,
 } from '../../state/workflowLoadingSelectors';
 import {
   setDarkMode,
@@ -27,6 +28,7 @@ import {
   setStringOverrides,
   setQueryCachePersist,
   setEnableMultiVariable,
+  setShowEdgeDrawing,
 } from '../../state/workflowLoadingSlice';
 import { Checkbox, TextField } from '@fluentui/react';
 import { useCallback } from 'react';
@@ -38,6 +40,7 @@ const ContextSettings = () => {
   const isUnitTest = useIsUnitTestView();
   const isDarkMode = useIsDarkMode();
   const showConnectionsPanel = useShowConnectionsPanel();
+  const showEdgeDrawing = useShowEdgeDrawing();
   const areCustomEditorsEnabled = useAreCustomEditorsEnabled();
   const suppressDefaultNodeSelect = useSuppressDefaultNodeSelect();
   const hostOptions = useHostOptions();
@@ -89,6 +92,7 @@ const ContextSettings = () => {
         checked={showConnectionsPanel}
         onChange={(_, checked) => dispatch(setShowConnectionsPanel(!!checked))}
       />
+      <Checkbox label="Show Edge Drawing" checked={showEdgeDrawing} onChange={(_, checked) => dispatch(setShowEdgeDrawing(!!checked))} />
       <Checkbox
         label="Display Runtime Info"
         checked={hostOptions.displayRuntimeInfo}
