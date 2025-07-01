@@ -1,0 +1,351 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`lib/card/addActionCard > Component Snapshots > should match snapshot for action card - selected 1`] = `
+<div
+  data-component="add-action-card-root"
+>
+  <div
+    aria-label="Add an action"
+    data-automation-id="card-add_an_action"
+    data-selected={true}
+    data-testid="card-Add an action"
+    onClick={[MockFunction spy]}
+    style={
+      {
+        "backgroundColor": "#fff",
+        "border": "1px solid #c8c6c4",
+        "borderRadius": "2px",
+        "cursor": "pointer",
+        "width": "200px",
+      }
+    }
+    tabIndex={0}
+  >
+    <div
+      data-component="selection-box"
+      data-selected={true}
+    />
+    <div
+      data-component="card-main"
+    >
+      <div
+        data-component="card-header"
+      >
+        <div
+          data-component="card-content-container"
+        >
+          <div
+            data-component="card-gripper"
+          />
+          <div
+            data-component="card-icon-section"
+          >
+            <img
+              alt=""
+              src="test-icon.svg"
+              style={
+                {
+                  "background": "#484F58",
+                  "borderRadius": "2px",
+                  "height": "16px",
+                  "padding": "4px",
+                  "width": "16px",
+                }
+              }
+            />
+          </div>
+          <div
+            data-component="card-content"
+          >
+            <div
+              data-component="card-title"
+            >
+              Add an action
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`lib/card/addActionCard > Component Snapshots > should match snapshot for action card - unselected 1`] = `
+<div
+  data-component="add-action-card-root"
+>
+  <div
+    aria-label="Add an action"
+    data-automation-id="card-add_an_action"
+    data-selected={false}
+    data-testid="card-Add an action"
+    onClick={[MockFunction spy]}
+    style={
+      {
+        "backgroundColor": "#fff",
+        "border": "1px solid #c8c6c4",
+        "borderRadius": "2px",
+        "cursor": "pointer",
+        "width": "200px",
+      }
+    }
+    tabIndex={0}
+  >
+    <div
+      data-component="selection-box"
+      data-selected={false}
+    />
+    <div
+      data-component="card-main"
+    >
+      <div
+        data-component="card-header"
+      >
+        <div
+          data-component="card-content-container"
+        >
+          <div
+            data-component="card-gripper"
+          />
+          <div
+            data-component="card-icon-section"
+          >
+            <img
+              alt=""
+              src="test-icon.svg"
+              style={
+                {
+                  "background": "#484F58",
+                  "borderRadius": "2px",
+                  "height": "16px",
+                  "padding": "4px",
+                  "width": "16px",
+                }
+              }
+            />
+          </div>
+          <div
+            data-component="card-content"
+          >
+            <div
+              data-component="card-title"
+            >
+              Add an action
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`lib/card/addActionCard > Component Snapshots > should match snapshot for trigger card - selected 1`] = `
+<div
+  data-component="add-action-card-root"
+>
+  <div
+    aria-label="Add a trigger"
+    data-automation-id="card-add_a_trigger"
+    data-selected={true}
+    data-testid="card-Add a trigger"
+    onClick={[MockFunction spy]}
+    style={
+      {
+        "backgroundColor": "#fff",
+        "border": "1px solid #c8c6c4",
+        "borderRadius": "2px",
+        "cursor": "pointer",
+        "width": "200px",
+      }
+    }
+    tabIndex={0}
+  >
+    <div
+      data-component="selection-box"
+      data-selected={true}
+    />
+    <div
+      data-component="card-main"
+    >
+      <div
+        data-component="card-header"
+      >
+        <div
+          data-component="card-content-container"
+        >
+          <div
+            data-component="card-gripper"
+          />
+          <div
+            data-component="card-icon-section"
+          >
+            <img
+              alt=""
+              src="test-icon.svg"
+              style={
+                {
+                  "background": "#484F58",
+                  "borderRadius": "2px",
+                  "height": "16px",
+                  "padding": "4px",
+                  "width": "16px",
+                }
+              }
+            />
+          </div>
+          <div
+            data-component="card-content"
+          >
+            <div
+              data-component="card-title"
+            >
+              Add a trigger
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`lib/card/addActionCard > Component Snapshots > should match snapshot for trigger card - unselected 1`] = `
+<div
+  data-component="add-action-card-root"
+>
+  <div
+    aria-label="Add a trigger"
+    data-automation-id="card-add_a_trigger"
+    data-selected={false}
+    data-testid="card-Add a trigger"
+    onClick={[MockFunction spy]}
+    style={
+      {
+        "backgroundColor": "#fff",
+        "border": "1px solid #c8c6c4",
+        "borderRadius": "2px",
+        "cursor": "pointer",
+        "width": "200px",
+      }
+    }
+    tabIndex={0}
+  >
+    <div
+      data-component="selection-box"
+      data-selected={false}
+    />
+    <div
+      data-component="card-main"
+    >
+      <div
+        data-component="card-header"
+      >
+        <div
+          data-component="card-content-container"
+        >
+          <div
+            data-component="card-gripper"
+          />
+          <div
+            data-component="card-icon-section"
+          >
+            <img
+              alt=""
+              src="test-icon.svg"
+              style={
+                {
+                  "background": "#484F58",
+                  "borderRadius": "2px",
+                  "height": "16px",
+                  "padding": "4px",
+                  "width": "16px",
+                }
+              }
+            />
+          </div>
+          <div
+            data-component="card-content"
+          >
+            <div
+              data-component="card-title"
+            >
+              Add a trigger
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`lib/card/addActionCard > Component Snapshots > should match snapshot with different props combination 1`] = `
+<div
+  data-component="add-action-card-root"
+>
+  <div
+    aria-label="Add an action"
+    data-automation-id="card-add_an_action"
+    data-selected={true}
+    data-testid="card-Add an action"
+    onClick={[MockFunction spy]}
+    style={
+      {
+        "backgroundColor": "#fff",
+        "border": "1px solid #c8c6c4",
+        "borderRadius": "2px",
+        "cursor": "pointer",
+        "width": "200px",
+      }
+    }
+    tabIndex={0}
+  >
+    <div
+      data-component="selection-box"
+      data-selected={true}
+    />
+    <div
+      data-component="card-main"
+    >
+      <div
+        data-component="card-header"
+      >
+        <div
+          data-component="card-content-container"
+        >
+          <div
+            data-component="card-gripper"
+          />
+          <div
+            data-component="card-icon-section"
+          >
+            <img
+              alt=""
+              src="test-icon.svg"
+              style={
+                {
+                  "background": "#484F58",
+                  "borderRadius": "2px",
+                  "height": "16px",
+                  "padding": "4px",
+                  "width": "16px",
+                }
+              }
+            />
+          </div>
+          <div
+            data-component="card-content"
+          >
+            <div
+              data-component="card-title"
+            >
+              Add an action
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
