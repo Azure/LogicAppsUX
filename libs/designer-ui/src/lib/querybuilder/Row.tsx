@@ -39,7 +39,7 @@ type RowProps = {
   isBottom: boolean;
   tokenMapping?: Record<string, ValueSegment>;
   loadParameterValueFromString?: loadParameterValueFromStringHandler;
-  getTokenPicker: GetTokenPickerHandler;
+  getTokenPicker?: GetTokenPickerHandler;
   readonly?: boolean;
   handleMove?: (childIndex: number, moveOption: MoveOption, itemToMove?: GroupItemProps | RowItemProps) => void;
   handleDeleteChild?: (indexToDelete: number | number[]) => void;

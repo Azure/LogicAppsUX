@@ -109,14 +109,12 @@ import {
   UnsupportedException,
   ValidationErrorCode,
   ValidationException,
-  nthLastIndexOf,
   parseErrorMessage,
   getRecordEntry,
   replaceWhiteSpaceWithUnderscore,
   isRecordNotEmpty,
   isBodySegment,
   canStringBeConverted,
-  splitAtIndex,
 } from '@microsoft/logic-apps-shared';
 import type {
   AuthProps,
@@ -136,7 +134,6 @@ import {
   removeQuotes,
   ArrayType,
   FloatingActionMenuKind,
-  getOuterMostCommaIndex,
   RowDropdownOptions,
   GroupDropdownOptions,
   GroupType,
@@ -146,6 +143,7 @@ import {
   TokenType,
   AuthenticationOAuthType,
   validateVariables,
+  parseQueryStringToRowItemProps,
 } from '@microsoft/designer-ui';
 import type {
   DependentParameterInfo,
@@ -621,77 +619,29 @@ export const toSimpleQueryBuilderViewModel = (
   input: any
 ): {
   isOldFormat: boolean;
-  itemValue: ValueSegment[] | undefined;
+  itemValue: RowItemProps | undefined;
   isRowFormat: boolean;
 } => {
-  const advancedModeResult = {
-    isOldFormat: true,
-    isRowFormat: false,
-    itemValue: undefined,
-  };
-
-  if (!input || !input.includes('@') || !input.includes(',')) {
-    return input?.length === 0
-      ? {
-          isOldFormat: true,
-          isRowFormat: true,
-          itemValue: [createLiteralValueSegment("@equals('','')")],
-        }
-      : advancedModeResult;
-  }
-
-  try {
-    let stringValue = input;
-    let operator: string = stringValue.substring(stringValue.indexOf('@') + 1, stringValue.indexOf('('));
-    let operationLiteral: ValueSegment;
-    let endingLiteral: ValueSegment;
-    const negatory = operator === 'not';
-
-    if (negatory) {
-      stringValue = stringValue.replace('@not(', '@');
-
-      const negatedOperator = stringValue.substring(stringValue.indexOf('@') + 1, stringValue.indexOf('('));
-
-      operationLiteral = createLiteralValueSegment(`@not(${negatedOperator}(`);
-      endingLiteral = createLiteralValueSegment('))');
-      operator = `not${negatedOperator}`;
-    } else {
-      operationLiteral = createLiteralValueSegment(`@${operator}(`);
-      endingLiteral = createLiteralValueSegment(')');
-    }
-
-    if (!Object.values(RowDropdownOptions).includes(operator as RowDropdownOptions)) {
-      return advancedModeResult;
-    }
-
-    const operandSubstring: string = stringValue.substring(
-      stringValue.indexOf('(') + 1,
-      nthLastIndexOf(stringValue, ')', negatory ? 2 : 1)
-    );
-    const [operand1String, operand2String] = splitAtIndex(operandSubstring, getOuterMostCommaIndex(operandSubstring)).map(removeQuotes);
-
+  if (input?.length === 0) {
     return {
       isOldFormat: true,
       isRowFormat: true,
-      itemValue: [
-        operationLiteral,
-        loadParameterValueFromString(operand1String.trim(), {
-          removeQuotesFromExpression: true,
-          trimExpression: true,
-          convertIfContainsExpression: true,
-        })[0],
-        createLiteralValueSegment(','),
-        loadParameterValueFromString(operand2String.trim(), {
-          removeQuotesFromExpression: true,
-          trimExpression: true,
-          convertIfContainsExpression: true,
-        })[0],
-        endingLiteral,
-      ],
+      itemValue: {
+        operand1: [],
+        operand2: [],
+        operator: RowDropdownOptions.EQUALS,
+        type: GroupType.ROW,
+      },
     };
-  } catch {
-    return advancedModeResult;
   }
+
+  const itemValue = parseQueryStringToRowItemProps(input, loadParameterValueFromString);
+
+  return {
+    isOldFormat: true,
+    isRowFormat: itemValue !== undefined,
+    itemValue,
+  };
 };
 
 export const canConvertToComplexCondition = (input: any): boolean => {
@@ -2736,7 +2686,7 @@ function getStringifiedValueFromEditorViewModel(
   idReplacements?: Record<string, string>,
   shouldEncodeBasedOnMetadata = true
 ): string | undefined {
-  const { editor, editorOptions, editorViewModel } = parameter;
+  const { editor, editorOptions, editorViewModel, value } = parameter;
   switch (editor?.toLowerCase()) {
     case constants.EDITOR.TABLE: {
       if (editorViewModel?.columnMode === ColumnMode.Custom && editorOptions?.columns) {
@@ -2773,7 +2723,7 @@ function getStringifiedValueFromEditorViewModel(
     }
     case constants.EDITOR.CONDITION:
       return editorOptions?.isOldFormat
-        ? iterateSimpleQueryBuilderEditor(editorViewModel.itemValue, editorViewModel.isRowFormat, idReplacements)
+        ? iterateSimpleQueryBuilderEditor(value, editorViewModel.isRowFormat, idReplacements)
         : JSON.stringify(
             recurseSerializeCondition(
               parameter,
@@ -2845,7 +2795,7 @@ const getStringifiedValueFromFloatingActionMenuOutputsViewModel = (
 };
 
 const iterateSimpleQueryBuilderEditor = (
-  itemValue: ValueSegment[],
+  value: ValueSegment[],
   isRowFormat: boolean,
   idReplacements?: Record<string, string>
 ): string | undefined => {
@@ -2853,7 +2803,7 @@ const iterateSimpleQueryBuilderEditor = (
   if (!isRowFormat) {
     return undefined;
   }
-  const { value: remappedItemValue } = idReplacements ? remapValueSegmentsWithNewIds(itemValue, idReplacements) : { value: itemValue };
+  const { value: remappedItemValue } = idReplacements ? remapValueSegmentsWithNewIds(value, idReplacements) : { value: value };
   // otherwise we iterate through row items and concatenate the values
   let stringValue = '';
   remappedItemValue.forEach((segment) => {

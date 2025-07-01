@@ -333,10 +333,12 @@ export const TokenField = ({
       return <CopyInputControl placeholder={placeholder} text={value[0].value} />;
 
     case constants.PARAMETER.EDITOR.CONDITION:
-      return editorViewModel.isOldFormat ? (
+      return editorOptions?.isOldFormat ? (
         <SimpleQueryBuilder
           readonly={readOnly}
-          itemValue={editorViewModel.itemValue ?? value}
+          itemValue={editorViewModel?.itemValue}
+          rowFormat={editorViewModel?.isRowFormat}
+          initialValue={value}
           tokenMapping={tokenMapping}
           loadParameterValueFromString={loadParameterValueFromString}
           getTokenPicker={getTokenPicker}

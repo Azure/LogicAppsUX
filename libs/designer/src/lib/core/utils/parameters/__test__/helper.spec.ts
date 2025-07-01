@@ -3457,14 +3457,14 @@ describe('core/utils/parameters/helper', () => {
       const { isOldFormat, isRowFormat, itemValue } = toSimpleQueryBuilderViewModel(input);
       expect(isOldFormat).toEqual(true);
       expect(isRowFormat).toEqual(true);
-      expect(itemValue?.length).toEqual(5);
-      expect(itemValue?.[0].type).toEqual('literal');
-      expect(itemValue?.[0].value).toEqual('@equals(');
-      expect(itemValue?.[1].value).toEqual('test');
-      expect(itemValue?.[2].value).toEqual(',');
-      expect(itemValue?.[3].value).toEqual('test2');
-      expect(itemValue?.[4].type).toEqual('literal');
-      expect(itemValue?.[4].value).toEqual(')');
+      expect(itemValue?.operator).toEqual('equals');
+      expect(itemValue?.operand1?.length).toEqual(1);
+      expect(itemValue?.operand1?.[0].type).toEqual(ValueSegmentType.LITERAL);
+      expect(itemValue?.operand1?.[0].value).toEqual('test');
+      expect(itemValue?.operand2?.length).toEqual(1);
+      expect(itemValue?.operand2?.[0].value).toEqual('test2');
+      expect(itemValue?.operand2?.[0].type).toEqual(ValueSegmentType.LITERAL);
+      expect(itemValue?.type).toEqual(GroupType.ROW);
     });
 
     it('should handle expression tokens', () => {
@@ -3472,14 +3472,12 @@ describe('core/utils/parameters/helper', () => {
       const { isOldFormat, isRowFormat, itemValue } = toSimpleQueryBuilderViewModel(input);
       expect(isOldFormat).toEqual(true);
       expect(isRowFormat).toEqual(true);
-      expect(itemValue?.length).toEqual(5);
-      expect(itemValue?.[0].type).toEqual('literal');
-      expect(itemValue?.[0].value).toEqual('@greater(');
-      expect(itemValue?.[1].token?.value).toEqual('concat(1,2)');
-      expect(itemValue?.[2].value).toEqual(',');
-      expect(itemValue?.[3].value).toEqual('test');
-      expect(itemValue?.[4].type).toEqual('literal');
-      expect(itemValue?.[4].value).toEqual(')');
+      const { operand1, operand2, operator } = itemValue || {};
+      expect(operand1?.[0].value).toEqual('concat(1,2)');
+      expect(operand1?.[0].type).toEqual(ValueSegmentType.TOKEN);
+      expect(operand2?.[0].value).toEqual('test');
+      expect(operand2?.[0].type).toEqual(ValueSegmentType.LITERAL);
+      expect(operator).toEqual('greater');
     });
 
     it('should handle non-query builder values', () => {
@@ -3499,15 +3497,14 @@ describe('core/utils/parameters/helper', () => {
       const { isOldFormat, isRowFormat, itemValue } = toSimpleQueryBuilderViewModel(input);
       expect(isOldFormat).toEqual(true);
       expect(isRowFormat).toEqual(true);
-      expect(itemValue?.length).toEqual(5);
-      expect(itemValue?.[0].type).toEqual('literal');
-      expect(itemValue?.[0].value).toEqual('@not(contains(');
-      expect(itemValue?.[1].type).toEqual('token');
-      expect(itemValue?.[1].token?.value).toEqual("length(split(item(), '|')?[0])");
-      expect(itemValue?.[2].value).toEqual(',');
-      expect(itemValue?.[3].token?.value).toEqual("length(split(item(), '|')?[0])");
-      expect(itemValue?.[4].type).toEqual('literal');
-      expect(itemValue?.[4].value).toEqual('))');
+      expect(itemValue?.operator).toEqual('notcontains');
+      expect(itemValue?.operand1?.length).toEqual(1);
+      expect(itemValue?.operand1?.[0].type).toEqual(ValueSegmentType.TOKEN);
+      expect(itemValue?.operand1?.[0].token?.value).toEqual("length(split(item(), '|')?[0])");
+      expect(itemValue?.operand2?.length).toEqual(1);
+      expect(itemValue?.operand2?.[0].type).toEqual(ValueSegmentType.TOKEN);
+      expect(itemValue?.operand2?.[0].token?.value).toEqual("length(split(item(), '|')?[0])");
+      expect(itemValue?.type).toEqual(GroupType.ROW);
     });
   });
 });

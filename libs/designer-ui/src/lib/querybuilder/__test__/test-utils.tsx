@@ -10,10 +10,7 @@ import type { GetTokenPickerHandler } from '../../editor/base';
 import { vi } from 'vitest';
 
 // Mock token picker handler
-export const mockGetTokenPicker: GetTokenPickerHandler = vi.fn(() => ({
-  tokenpicker: <div data-testid="mock-token-picker" />,
-  onSetTokenPickerVisibility: vi.fn(),
-}));
+export const mockGetTokenPicker = vi.fn<GetTokenPickerHandler>(() => <div data-testid="mock-token-picker" />);
 
 // Helper to create literal value segments
 export const createTestValueSegment = (value: string): ValueSegment[] => [createLiteralValueSegment(value)];
