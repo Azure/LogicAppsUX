@@ -102,6 +102,7 @@ export const useAddActionCardStyles = makeStyles({
   },
   tooltipContent: {
     maxWidth: '250px',
+    margin: '10px',
   },
   tooltipHeading: {
     ...shorthands.margin('0', '0', '8px', '0'),
