@@ -32,6 +32,7 @@ import { BlockDropTarget } from './dynamicsvgs/blockdroptarget';
 import { retrieveClipboardData } from '../../core/utils/clipboard';
 import { setEdgeContextMenuData } from '../../core/state/designerView/designerViewSlice';
 import { useIsA2AWorkflow } from '../../core/state/designerView/designerViewSelectors';
+import type { DropItem } from './helpers';
 import { canDropItem } from './helpers';
 import { useIsDraggingNode } from '../../core/hooks/useIsDraggingNode';
 import { useIsDarkMode } from '../../core/state/designerOptions/designerOptionsSelectors';
@@ -122,6 +123,9 @@ export const DropZone: React.FC<DropZoneProps> = memo(({ graphId, parentId, chil
   const hotkeyRef = useHotkeys(
     ['meta+v', 'ctrl+v'],
     async () => {
+      if (preventDropItemInA2A) {
+        return;
+      }
       const copiedNode = await retrieveClipboardData();
       const pasteEnabled = !!copiedNode;
       if (pasteEnabled) {
@@ -137,14 +141,7 @@ export const DropZone: React.FC<DropZoneProps> = memo(({ graphId, parentId, chil
     () => ({
       accept: 'BOX',
       drop: () => ({ graphId, parentId, childId }),
-      canDrop: (item: {
-        id: string;
-        dependencies?: string[];
-        loopSources?: string[];
-        graphId?: string;
-        isScope?: boolean;
-        isAgent?: boolean;
-      }) =>
+      canDrop: (item: DropItem) =>
         canDropItem(
           item,
           upstreamNodes,

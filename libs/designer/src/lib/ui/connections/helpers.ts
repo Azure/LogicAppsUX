@@ -1,14 +1,16 @@
 import { removeIdTag } from '@microsoft/logic-apps-shared';
 
+export interface DropItem {
+  id: string;
+  dependencies?: string[];
+  loopSources?: string[];
+  graphId?: string;
+  isScope?: boolean;
+  isAgent?: boolean;
+}
+
 export const canDropItem = (
-  item: {
-    id: string;
-    dependencies?: string[];
-    loopSources?: string[];
-    graphId?: string;
-    isScope?: boolean;
-    isAgent?: boolean;
-  },
+  item: DropItem,
   upstreamNodes: Set<string>,
   upstreamNodesDependencies: Record<string, Set<string>>,
   upstreamScopes: Set<string>,
@@ -17,7 +19,7 @@ export const canDropItem = (
   preventDropItemInA2A: boolean,
   isWithinAgenticLoop: boolean
 ): boolean => {
-  // prevent dropping agents within agentic loops
+  // Prevent dropping agents within agentic loops
   if (item.isAgent && isWithinAgenticLoop) {
     return false;
   }
@@ -26,7 +28,7 @@ export const canDropItem = (
     return false;
   }
 
-  // This supports preventing moving a node with a dependency above its upstream node
+  // Prevent dropping nodes with a dependency above its upstream node
   for (const dec of item.dependencies ?? []) {
     if (!upstreamNodes.has(dec)) {
       return false;
