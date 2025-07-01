@@ -287,7 +287,7 @@ export const EdgeContextualMenu = () => {
                 addParallelBranchMenuItem
               ))}
             {(isAgenticWorkflow || isA2AWorkflow) && graphId === 'root' && (
-              <MenuItem icon={<AgentIcon />} onClick={addAgenticLoop} data-automation-id={automationId('add-agentic=loop')}>
+              <MenuItem icon={<AgentIcon />} onClick={addAgenticLoop} data-automation-id={automationId('add-agentic-loop')}>
                 {newAgentText}
               </MenuItem>
             )}
