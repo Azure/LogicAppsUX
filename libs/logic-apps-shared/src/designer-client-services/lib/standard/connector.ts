@@ -1,4 +1,4 @@
-import type { OpenAPIV2 } from '../../../utils/src';
+import type { OpenAPIV2, OperationManifest } from '../../../utils/src';
 import { isArmResourceId, UnsupportedException } from '../../../utils/src';
 import { validateRequiredServiceArguments } from '../../../utils/src/lib/helpers/functions';
 import type { BaseConnectorServiceOptions } from '../base';
@@ -7,9 +7,9 @@ import type { ListDynamicValue, ManagedIdentityRequestProperties, TreeDynamicExt
 import { pathCombine, unwrapPaginatedResponse } from '../helpers';
 import { getHybridAppBaseRelativeUrl, hybridApiVersion, isHybridLogicApp } from './hybrid';
 
-type GetConfigurationFunction = (connectionId: string) => Promise<Record<string, any>>;
+type GetConfigurationFunction = (connectionId: string, manifest?: OperationManifest) => Promise<Record<string, any>>;
 
-interface StandardConnectorServiceOptions extends BaseConnectorServiceOptions {
+export interface StandardConnectorServiceOptions extends BaseConnectorServiceOptions {
   getConfiguration: GetConfigurationFunction;
 }
 
@@ -45,18 +45,16 @@ export class StandardConnectorService extends BaseConnectorService {
     return unwrapPaginatedResponse(result);
   }
 
-  async getListDynamicValues(
-    connectionId: string | undefined,
+  protected async _listDynamicValues(
     connectorId: string,
     operationId: string,
     parameters: Record<string, any>,
-    dynamicState: any
+    dynamicState: any,
+    configuration: Record<string, any>
   ): Promise<ListDynamicValue[]> {
-    const { baseUrl, apiVersion, getConfiguration, httpClient } = this.options;
+    const { baseUrl, apiVersion, httpClient } = this.options;
     const { operationId: dynamicOperation } = dynamicState;
-
     const invokeParameters = this._getInvokeParameters(parameters, dynamicState);
-    const configuration = await getConfiguration(connectionId ?? '');
 
     if (this._isClientSupportedOperation(connectorId, operationId)) {
       if (!this.options.valuesClient?.[dynamicOperation]) {
@@ -93,21 +91,31 @@ export class StandardConnectorService extends BaseConnectorService {
     return this._getResponseFromDynamicApi(response, uri);
   }
 
-  async getDynamicSchema(
+  async getListDynamicValues(
     connectionId: string | undefined,
     connectorId: string,
     operationId: string,
     parameters: Record<string, any>,
     dynamicState: any
+  ): Promise<ListDynamicValue[]> {
+    const { getConfiguration } = this.options;
+    const configuration = await getConfiguration(connectionId ?? '');
+    return this._listDynamicValues(connectorId, operationId, parameters, dynamicState, configuration);
+  }
+
+  protected async _getDynamicSchema(
+    connectorId: string,
+    operationId: string,
+    parameters: Record<string, any>,
+    dynamicState: any,
+    configuration: Record<string, any>
   ): Promise<OpenAPIV2.SchemaObject> {
-    const { baseUrl, apiVersion, getConfiguration, httpClient } = this.options;
+    const { baseUrl, apiVersion, httpClient } = this.options;
     const {
       extension: { operationId: dynamicOperation },
       isInput,
     } = dynamicState;
-
     const invokeParameters = this._getInvokeParameters(parameters, dynamicState);
-    const configuration = await getConfiguration(connectionId ?? '');
 
     if (this._isClientSupportedOperation(connectorId, operationId)) {
       if (!this.options.schemaClient?.[dynamicOperation]) {
@@ -144,6 +152,19 @@ export class StandardConnectorService extends BaseConnectorService {
     }
 
     return this._getResponseFromDynamicApi(response, uri);
+  }
+
+  async getDynamicSchema(
+    connectionId: string | undefined,
+    connectorId: string,
+    operationId: string,
+    parameters: Record<string, any>,
+    dynamicState: any
+  ): Promise<OpenAPIV2.SchemaObject> {
+    const { getConfiguration } = this.options;
+    const configuration = await getConfiguration(connectionId ?? '');
+
+    return this._getDynamicSchema(connectorId, operationId, parameters, dynamicState, configuration);
   }
 
   getTreeDynamicValues(
