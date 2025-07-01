@@ -1,9 +1,9 @@
 import { useCardKeyboardInteraction } from '../hooks';
-import { getCardStyle } from '../utils';
 import AddNodeIcon from './addNodeIcon.svg';
-import { TooltipHost, DirectionalHint, css } from '@fluentui/react';
+import { Tooltip, mergeClasses } from '@fluentui/react-components';
 import { replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
+import { useAddActionCardStyles } from './addActionCard.styles';
 
 export const ADD_CARD_TYPE = {
   TRIGGER: 'Trigger',
@@ -19,6 +19,7 @@ export interface AddActionCardProps {
 
 export const AddActionCard: React.FC<AddActionCardProps> = ({ addCardType, onClick, selected }) => {
   const intl = useIntl();
+  const classes = useAddActionCardStyles();
 
   const handleClick: React.MouseEventHandler<HTMLElement> = (e) => {
     e.stopPropagation();
@@ -29,9 +30,9 @@ export const AddActionCard: React.FC<AddActionCardProps> = ({ addCardType, onCli
 
   const brandColor = '#484F58';
   const cardIcon = (
-    <div className="panel-card-content-icon-section">
+    <div className={classes.cardContentIconSection}>
       <img
-        className="panel-card-icon"
+        className={classes.cardIcon}
         src={AddNodeIcon}
         alt=""
         style={{
@@ -84,57 +85,41 @@ export const AddActionCard: React.FC<AddActionCardProps> = ({ addCardType, onCli
 
   const tooltipHeading = addCardType === ADD_CARD_TYPE.TRIGGER ? triggerTooltipHeading : actionTooltipHeading;
   const tooltipBody = addCardType === ADD_CARD_TYPE.TRIGGER ? triggerTooltipBody : actionTooltipBody;
-  const tooltipId = `placeholder-node-${addCardType}`;
-  const tooltipDescriptionId = `${tooltipId}-description`;
+
+  const tooltipContent = (
+    <div className={classes.tooltipContent}>
+      <h2 className={classes.tooltipHeading}>{tooltipHeading}</h2>
+      <p className={classes.tooltipBody}>{tooltipBody}</p>
+    </div>
+  );
 
   return (
-    <>
-      {/* Hidden element for screen readers to access tooltip content */}
-      <div id={tooltipDescriptionId} style={{ display: 'none' }}>
-        {tooltipHeading}: {tooltipBody}
-      </div>
-      <TooltipHost
-        id={tooltipId}
-        delay={0}
-        directionalHint={DirectionalHint.rightCenter}
-        calloutProps={{ gapSpace: 8 }}
-        tooltipProps={{
-          onRenderContent: () => (
-            <div style={{ margin: '-8px 12px 0px', maxWidth: '250px' }}>
-              <h2>{tooltipHeading}</h2>
-              <p>{tooltipBody}</p>
-            </div>
-          ),
-        }}
-      >
-        <div style={{ position: 'relative' }}>
-          <div
-            aria-describedby={tooltipDescriptionId}
-            aria-label={title}
-            className={css('msla-panel-card-container', selected && 'msla-panel-card-container-selected')}
-            style={getCardStyle(brandColor)}
-            data-testid={`card-${title}`}
-            data-automation-id={`card-${replaceWhiteSpaceWithUnderscore(title)}`}
-            onClick={handleClick}
-            onKeyDown={keyboardInteraction.keyDown}
-            onKeyUp={keyboardInteraction.keyUp}
-            tabIndex={0}
-          >
-            <div className={css('msla-selection-box', selected && 'selected')} />
-            <div className="panel-card-main">
-              <div className="panel-card-header" role="button">
-                <div className="panel-card-content-container">
-                  <div className={'panel-card-content-gripper-section'} />
-                  {cardIcon}
-                  <div className="panel-card-top-content">
-                    <div className="panel-msla-title">{title}</div>
-                  </div>
+    <Tooltip relationship="description" withArrow content={tooltipContent} positioning="after">
+      <div className={classes.root}>
+        <div
+          aria-label={title}
+          className={mergeClasses(classes.cardContainer, selected && classes.cardContainerSelected)}
+          data-testid={`card-${title}`}
+          data-automation-id={`card-${replaceWhiteSpaceWithUnderscore(title)}`}
+          onClick={handleClick}
+          onKeyDown={keyboardInteraction.keyDown}
+          onKeyUp={keyboardInteraction.keyUp}
+          tabIndex={0}
+        >
+          <div className={mergeClasses(classes.selectionBox, selected && 'selected')} />
+          <div className={classes.cardMain}>
+            <div className={classes.cardHeader} role="button">
+              <div className={classes.cardContentContainer}>
+                <div className={classes.cardContentGripperSection} />
+                {cardIcon}
+                <div className={classes.cardTopContent}>
+                  <div className={classes.cardTitle}>{title}</div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </TooltipHost>
-    </>
+      </div>
+    </Tooltip>
   );
 };
