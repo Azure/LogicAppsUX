@@ -512,9 +512,13 @@ export class StandardConnectionService extends BaseConnectionService implements 
     );
     const oAuthService = OAuthService();
     let oAuthPopupInstance: IOAuthPopup | undefined;
-
     try {
-      const consentUrl = await oAuthService.fetchConsentUrlForConnection(connectionId);
+      const oauthKey = parametersMetadata?.connectionParameters
+        ? Object.keys(parametersMetadata.connectionParameters).find(
+            (key) => parametersMetadata.connectionParameters?.[key]?.type === 'oauthSetting'
+          )
+        : undefined;
+      const consentUrl = await oAuthService.fetchConsentUrlForConnection(connectionId, oauthKey);
       oAuthPopupInstance = oAuthService.openLoginPopup({ consentUrl });
 
       const loginResponse = await oAuthPopupInstance.loginPromise;
