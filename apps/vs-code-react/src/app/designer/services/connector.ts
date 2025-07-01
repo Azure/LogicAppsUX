@@ -1,9 +1,5 @@
-import type { OpenAPIV2, OperationManifest } from '../../../utils/src';
-import { validateRequiredServiceArguments } from '../../../utils/src/lib/helpers/functions';
-import type { ListDynamicValue } from '../connector';
-import { OperationManifestService } from '../operationmanifest';
-import { StandardConnectorService } from '../standard';
-import type { StandardConnectorServiceOptions } from '../standard/connector';
+import type { ListDynamicValue, OpenAPIV2, OperationManifest, StandardConnectorServiceOptions } from '@microsoft/logic-apps-shared';
+import { OperationManifestService, StandardConnectorService, validateRequiredServiceArguments } from '@microsoft/logic-apps-shared';
 
 export class StandardVSCodeConnectorService extends StandardConnectorService {
   constructor(override readonly options: StandardConnectorServiceOptions) {

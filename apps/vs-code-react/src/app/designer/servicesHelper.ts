@@ -17,7 +17,6 @@ import {
   BaseTenantService,
   BaseCognitiveServiceService,
   BaseRoleService,
-  StandardVSCodeConnectorService,
 } from '@microsoft/logic-apps-shared';
 import type {
   ApiHubServiceDetails,
@@ -40,6 +39,7 @@ import { CustomEditorService } from './customEditorService';
 import packagejson from '../../../package.json';
 import { LoggerService } from '../services/Logger';
 import { CustomConnectionParameterEditorService } from './services/customConnectionParameterEditorService';
+import { StandardVSCodeConnectorService } from './services/connector';
 
 export interface IDesignerServices {
   connectionService: StandardConnectionService;
