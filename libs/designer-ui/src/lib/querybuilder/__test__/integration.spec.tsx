@@ -173,7 +173,6 @@ describe('Query Builder Integration Tests', () => {
           />
         </QueryBuilderTestWrapper>
       );
-      screen.debug();
 
       expect(screen.getByText('test field')).toBeInTheDocument();
       expect(screen.getByText('test value')).toBeInTheDocument();
