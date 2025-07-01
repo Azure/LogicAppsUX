@@ -15,6 +15,7 @@ import { useFunctionalState } from '@react-hookz/web';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 import constants from '../constants';
+import { useId } from '@fluentui/react-components';
 
 export * from './helper';
 
@@ -48,6 +49,7 @@ export const SimpleQueryBuilder = ({
   ...baseEditorProps
 }: SimpleQueryBuilderProps) => {
   const intl = useIntl();
+  const labelId = useId('Advanced-editor-label');
 
   const [getRootProp, setRootProp] = useFunctionalState<RowItemProps | undefined>(itemValue);
   const [advancedValue, setAdvancedValue] = useState<ValueSegment[]>(itemValue ? convertRootPropToValue(itemValue) : initialValue || []);
@@ -119,6 +121,7 @@ export const SimpleQueryBuilder = ({
           getTokenPicker={getTokenPicker}
           onChange={handleUpdateRootProps}
           valueType={constants.SWAGGER.TYPE.ANY}
+          labelId={labelId}
           {...baseEditorProps}
         />
       )}
@@ -144,7 +147,7 @@ export const SimpleQueryBuilder = ({
   );
 };
 
-const convertRootPropToValue = (rootProps: RowItemProps): ValueSegment[] => {
+export const convertRootPropToValue = (rootProps: RowItemProps): ValueSegment[] => {
   const { operator, operand1, operand2 } = rootProps;
   const negatory = operator.includes('not');
   const op1: ValueSegment = getOperationValue(operand1[0]) ?? createLiteralValueSegment('');
