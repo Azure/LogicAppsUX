@@ -34,6 +34,7 @@ import type { PickerCallbackHandlers } from '../../picker/filepickerEditor';
 import { FilePickerEditor } from '../../picker/filepickerEditor';
 import { QueryBuilderEditor } from '../../querybuilder';
 import { SimpleQueryBuilder } from '../../querybuilder/SimpleQueryBuilder';
+import { HybridQueryBuilderEditor } from '../../querybuilder/HybridQueryBuilder';
 import { ScheduleEditor } from '../../recurrence';
 import { SchemaEditor } from '../../schemaeditor';
 import type { SettingProps } from './';
@@ -341,6 +342,13 @@ export const TokenField = ({
           loadParameterValueFromString={loadParameterValueFromString}
           getTokenPicker={getTokenPicker}
           onChange={onValueChange}
+        />
+      ) : editorViewModel.isHybridEditor ? (
+        <HybridQueryBuilderEditor
+          readonly={readOnly}
+          groupProps={JSON.parse(JSON.stringify(editorViewModel.items))}
+          onChange={onValueChange}
+          getTokenPicker={getTokenPicker}
         />
       ) : (
         <QueryBuilderEditor
