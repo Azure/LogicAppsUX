@@ -97,6 +97,7 @@ export const AddActionCard: React.FC<AddActionCardProps> = ({ addCardType, onCli
 
   return (
     <>
+      {/* Hidden element for screen readers to access tooltip content */}
       <div id={tooltipDescriptionId} style={{ display: 'none' }}>
         {tooltipHeading}: {tooltipBody}
       </div>
