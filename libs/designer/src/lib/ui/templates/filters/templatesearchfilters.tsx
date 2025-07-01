@@ -13,9 +13,9 @@ import {
 import { useEffect, useMemo, useState } from 'react';
 import { getTemplatePublishCategories, getUniqueConnectorsFromConnections } from '../../../core/templates/utils/helper';
 import { useConnector } from '../../../core/state/connection/connectionSelector';
-import { Field, Tab, TabList } from '@fluentui/react-components';
-import { type SelectTabData, type SelectTabEvent, SearchBox, Text, Option, Dropdown } from '@fluentui/react-components';
-import { css } from '@fluentui/utilities';
+import { Field, Tab, TabList, Dropdown, Option, mergeClasses } from '@fluentui/react-components';
+import { type SelectTabData, type SelectTabEvent, SearchBox, Text } from '@fluentui/react-components';
+import { useTemplateSearchFiltersStyles } from './templatesearchfilters.styles';
 import type { Template } from '@microsoft/logic-apps-shared';
 import { useSubscriptions } from '../../../core/templates/utils/queries';
 
@@ -41,6 +41,62 @@ export interface TemplateSearchAndFilterProps {
   cssOverrides?: Record<string, string>;
 }
 
+export const useSortOptions = () => {
+  const intl = useIntl();
+  return [
+    {
+      key: 'a-to-z',
+      text: intl.formatMessage({
+        defaultMessage: 'A to Z, ascending',
+        id: 'zxF7g+',
+        description: 'Sort by dropdown option of A to Z ascending',
+      }),
+    },
+    {
+      key: 'z-to-a',
+      text: intl.formatMessage({
+        defaultMessage: 'Z to A, descending',
+        id: '1jf3Dq',
+        description: 'Sort by dropdown option of Z to A descending',
+      }),
+    },
+  ];
+};
+
+const SortDropdown = () => {
+  const intl = useIntl();
+  const dispatch = useDispatch<AppDispatch>();
+  const { sortKey } = useSelector((state: RootState) => state?.manifest?.filters);
+  const sortOptions = useSortOptions();
+  const styles = useTemplateSearchFiltersStyles();
+
+  const intlText = {
+    SORT_BY: intl.formatMessage({
+      defaultMessage: 'Sort By',
+      id: 'ZOIvqN',
+      description: 'Label text for sort by filter',
+    }),
+  };
+
+  return (
+    <Field className={styles.sortField} label={intlText.SORT_BY} orientation="horizontal">
+      <Dropdown
+        className={styles.sortDropdown}
+        onOptionSelect={(e, option) => dispatch(setSortKey(option.optionValue as string))}
+        value={sortOptions.find((op) => op.key === sortKey)?.text}
+        selectedOptions={[sortKey]}
+        size="small"
+      >
+        {sortOptions.map((op) => (
+          <Option key={op.key} value={op.key}>
+            {op.text}
+          </Option>
+        ))}
+      </Dropdown>
+    </Field>
+  );
+};
+
 const templateDefaultTabKey = 'all';
 const microsoftAuthoredTabKey = 'Microsoft';
 
@@ -53,8 +109,9 @@ export const TemplateSearchAndFilters = ({
   cssOverrides,
 }: TemplateSearchAndFilterProps) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { sortKey, detailFilters: appliedDetailFilters } = useSelector((state: RootState) => state?.manifest?.filters);
+  const { detailFilters: appliedDetailFilters } = useSelector((state: RootState) => state?.manifest?.filters);
   const intl = useIntl();
+  const styles = useTemplateSearchFiltersStyles();
   const { availableTemplates } = useSelector((state: RootState) => ({
     isConsumption: state.workflow.isConsumption,
     availableTemplates: state.manifest.availableTemplates ?? {},
@@ -88,25 +145,6 @@ export const TemplateSearchAndFilters = ({
       description: 'Label text for Microsoft authored templates tab',
     }),
   };
-
-  const sortOptions = [
-    {
-      key: 'a-to-z',
-      text: intl.formatMessage({
-        defaultMessage: 'A to Z, ascending',
-        id: 'zxF7g+',
-        description: 'Sort by dropdown option of A to Z ascending',
-      }),
-    },
-    {
-      key: 'z-to-a',
-      text: intl.formatMessage({
-        defaultMessage: 'Z to A, descending',
-        id: '1jf3Dq',
-        description: 'Sort by dropdown option of Z to A descending',
-      }),
-    },
-  ];
 
   const templateTabs = useMemo(() => {
     const basicTabs: GalleryTab[] = [
@@ -163,10 +201,10 @@ export const TemplateSearchAndFilters = ({
 
   const placeholderText = searchPlaceholder ?? intlText.SEARCH;
   return (
-    <div className="msla-templates-search-and-filters">
-      <div className="msla-templates-search-and-sort">
+    <div className={styles.root}>
+      <div className={styles.searchBoxContainer}>
         <SearchBox
-          className="msla-templates-filters-search-box"
+          className={styles.searchBox}
           placeholder={placeholderText}
           aria-label={placeholderText}
           autoFocus={false}
@@ -174,26 +212,11 @@ export const TemplateSearchAndFilters = ({
             dispatch(setKeywordFilter(data.value));
           }}
         />
-        <Field className="msla-templates-filters-sort" label={intlText.SORT_BY} orientation="horizontal">
-          <Dropdown
-            className="msla-templates-filters-sort-dropdown"
-            onOptionSelect={(e, option) => dispatch(setSortKey(option.optionValue as string))}
-            value={sortOptions.find((op) => op.key === sortKey)?.text}
-            selectedOptions={[sortKey]}
-            size="small"
-          >
-            {sortOptions.map((op) => (
-              <Option key={op.key} value={op.key}>
-                {op.text}
-              </Option>
-            ))}
-          </Dropdown>
-        </Field>
       </div>
 
       {showFilters && <Filters tabFilterKey={tabFilterKey} detailFilters={detailFilters} />}
 
-      <div className={css('msla-templates-filters-tabs', cssOverrides?.tabs)}>
+      <div className={mergeClasses(styles.filtersTabs, cssOverrides?.tabs)}>
         <TabList selectedValue={selectedTabId} onTabSelect={onTabSelected}>
           {templateTabs.map((tab) => (
             <Tab key={tab.name} id={tab.name} value={tab.name}>
@@ -201,6 +224,7 @@ export const TemplateSearchAndFilters = ({
             </Tab>
           ))}
         </TabList>
+        <SortDropdown />
       </div>
     </div>
   );
@@ -209,6 +233,7 @@ export const TemplateSearchAndFilters = ({
 const Filters = ({ detailFilters, tabFilterKey }: { detailFilters: TemplateDetailFilterType; tabFilterKey: string }) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
+  const styles = useTemplateSearchFiltersStyles();
   const { isConsumption, availableTemplates, subscriptionId, location, selectedSubscriptions, appliedDetailFilters } = useSelector(
     (state: RootState) => ({
       isConsumption: state.workflow.isConsumption,
@@ -279,7 +304,7 @@ const Filters = ({ detailFilters, tabFilterKey }: { detailFilters: TemplateDetai
   };
 
   return (
-    <div className="msla-templates-filters-dropdowns">
+    <div className={styles.filtersDropdowns}>
       <TemplatesFilterDropdown
         filterName={intlText.SUBSCRIPTIONS}
         items={subscriptionOptions}
