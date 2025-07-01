@@ -140,13 +140,20 @@ export const WorkflowsSelection: React.FC = () => {
 
   const [selectedRows, setSelectedRows] = useState<Set<TableRowId>>(new Set());
 
+  // Sync selectedRows with selectedWorkflows from Redux store
+  useEffect(() => {
+    if (renderWorkflows && selectedWorkflows) {
+      const selectedKeys = new Set(selectedWorkflows.map((workflow) => workflow.key));
+      setSelectedRows(selectedKeys);
+    }
+  }, [selectedWorkflows, renderWorkflows]);
+
   const onSelectionChange = useCallback(
     (_event: any, data: { selectedItems: Set<TableRowId> }) => {
       setSelectedRows(data.selectedItems);
       const selectedItems = Array.from(data.selectedItems)
         .map((rowId) => {
-          const index = Number.parseInt(rowId.toString());
-          return renderWorkflows?.[index];
+          return renderWorkflows?.find((workflow) => workflow.key === rowId.toString());
         })
         .filter(Boolean) as WorkflowsList[];
 
@@ -230,7 +237,8 @@ export const WorkflowsSelection: React.FC = () => {
   }, [intlText.LIMIT_INFO, selectedWorkflows]);
 
   const filters = useMemo(() => {
-    const onChangeSearch = (_event: React.FormEvent<HTMLDivElement>, newSearchString: string) => {
+    const onChangeSearch = (_event: React.ChangeEvent<HTMLInputElement>, data: { value: string }) => {
+      const newSearchString = data.value;
       const filteredWorkflows = filterWorkflows(allWorkflows.current, resourceGroups, newSearchString);
       allItemsSelected.current = allItemsSelected.current.map((workflow) => {
         const isWorkflowInRender = !!filteredWorkflows.find((item: WorkflowsList) => item.key === workflow.key);
@@ -240,17 +248,25 @@ export const WorkflowsSelection: React.FC = () => {
       setSearchString(newSearchString);
     };
 
-    const onChangeResourceGroup = (_event: React.FormEvent<HTMLDivElement>, _selectedOption: IDropdownOption, index: number) => {
-      const updatedResourceGroups = [...resourceGroups];
-      updatedResourceGroups[index - 2].selected = !updatedResourceGroups[index - 2].selected;
-      const filteredWorkflows = filterWorkflows(allWorkflows.current, updatedResourceGroups, searchString);
-      allItemsSelected.current = allItemsSelected.current.map((workflow) => {
-        const isWorkflowInRender = !!filteredWorkflows.find((item: WorkflowsList) => item.key === workflow.key);
-        return { ...workflow, rendered: isWorkflowInRender };
-      });
+    const onChangeResourceGroup = (_event: React.FormEvent<HTMLDivElement>, selectedOption?: IDropdownOption, index?: number) => {
+      if (!selectedOption || typeof index !== 'number') {
+        return;
+      }
 
-      setRenderWorkflows(filteredWorkflows);
-      setResourceGroups(updatedResourceGroups);
+      const updatedResourceGroups = [...resourceGroups];
+      const actualIndex = index - 2; // Account for header and divider
+
+      if (actualIndex >= 0 && actualIndex < updatedResourceGroups.length) {
+        updatedResourceGroups[actualIndex].selected = !updatedResourceGroups[actualIndex].selected;
+        const filteredWorkflows = filterWorkflows(allWorkflows.current, updatedResourceGroups, searchString);
+        allItemsSelected.current = allItemsSelected.current.map((workflow) => {
+          const isWorkflowInRender = !!filteredWorkflows.find((item: WorkflowsList) => item.key === workflow.key);
+          return { ...workflow, rendered: isWorkflowInRender };
+        });
+
+        setRenderWorkflows(filteredWorkflows);
+        setResourceGroups(updatedResourceGroups);
+      }
     };
 
     return (
