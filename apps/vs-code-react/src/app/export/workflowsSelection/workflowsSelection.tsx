@@ -1,4 +1,3 @@
-import WarningIcon from '../../../resources/Caution.svg';
 import { QueryKeys } from '../../../run-service';
 import type { WorkflowsList, SelectedWorkflowsList } from '../../../run-service';
 import { ApiService } from '../../../run-service/export/index';
@@ -9,18 +8,28 @@ import { AdvancedOptions } from './advancedOptions';
 import { Filters } from './filters';
 import {
   filterWorkflows,
-  getListColumns,
-  getSelectedItems,
   parsePreviousSelectedWorkflows,
   parseResourceGroups,
   parseSelectedWorkflows,
   updateSelectedItems,
 } from './helper';
 import { SelectedList } from './selectedList';
-import { Separator, ShimmeredDetailsList, SelectionMode, Selection, MessageBar, MessageBarType } from '@fluentui/react';
+import {
+  Divider,
+  DataGrid,
+  DataGridBody,
+  DataGridRow,
+  DataGridHeader,
+  DataGridHeaderCell,
+  DataGridCell,
+  type TableColumnDefinition,
+  type TableRowId,
+  createTableColumn,
+  MessageBar,
+} from '@fluentui/react-components';
 import type { IDropdownOption } from '@fluentui/react';
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
-import { useMemo, useRef, useState, useEffect, useContext } from 'react';
+import { useMemo, useRef, useState, useEffect, useContext, useCallback } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
@@ -129,32 +138,26 @@ export const WorkflowsSelection: React.FC = () => {
     allItemsSelected.current = updatedItems;
   }, [selectedWorkflows, renderWorkflows, allWorkflows]);
 
-  const selection: Selection = useMemo(() => {
-    const onItemsChange = () => {
-      const selectedItems = [...allItemsSelected.current.filter((item) => item.selected)];
-      if (selection && selection.getItems().length > 0) {
-        selectedItems.forEach((workflow: WorkflowsList) => {
-          selection.setKeySelected(workflow.key, true, false);
-        });
-      }
-    };
+  const [selectedRows, setSelectedRows] = useState<Set<TableRowId>>(new Set());
 
-    const onSelectionChanged = () => {
-      const currentSelection = selection.getSelection() as WorkflowsList[];
-      const selectedItems = getSelectedItems(allItemsSelected.current, currentSelection);
+  const onSelectionChange = useCallback(
+    (_event: any, data: { selectedItems: Set<TableRowId> }) => {
+      setSelectedRows(data.selectedItems);
+      const selectedItems = Array.from(data.selectedItems)
+        .map((rowId) => {
+          const index = Number.parseInt(rowId.toString());
+          return renderWorkflows?.[index];
+        })
+        .filter(Boolean) as WorkflowsList[];
 
       dispatch(
         updateSelectedWorkFlows({
           selectedWorkflows: selectedItems,
         })
       );
-    };
-
-    return new Selection({
-      onSelectionChanged: onSelectionChanged,
-      onItemsChanged: onItemsChange,
-    });
-  }, [dispatch]);
+    },
+    [renderWorkflows, dispatch]
+  );
 
   const workflowsList = useMemo(() => {
     const emptyText = (
@@ -165,30 +168,53 @@ export const WorkflowsSelection: React.FC = () => {
 
     const enableShimmer = isWorkflowsLoading || renderWorkflows === null;
 
+    const columns: TableColumnDefinition<WorkflowsList>[] = [
+      createTableColumn<WorkflowsList>({
+        columnId: 'name',
+        compare: (a, b) => a.name.localeCompare(b.name),
+        renderHeaderCell: () => intlText.NAME,
+        renderCell: (item) => item.name,
+      }),
+      createTableColumn<WorkflowsList>({
+        columnId: 'resourceGroup',
+        compare: (a, b) => a.resourceGroup?.localeCompare(b.resourceGroup || '') || 0,
+        renderHeaderCell: () => intlText.RESOURCE_GROUP,
+        renderCell: (item) => item.resourceGroup,
+      }),
+    ];
+
     return (
       <div className={`msla-export-workflows-panel-list-workflows ${enableShimmer ? 'loading' : ''}`}>
-        <ShimmeredDetailsList
+        <DataGrid
           items={renderWorkflows || []}
-          columns={getListColumns(intlText.NAME, intlText.RESOURCE_GROUP)}
-          setKey="set"
-          enableShimmer={enableShimmer}
-          ariaLabelForSelectionColumn={intlText.SELECTION}
-          ariaLabelForSelectAllCheckbox={intlText.SELECTION_ALL}
-          checkButtonAriaLabel={intlText.SELECT_WORKFLOW}
-          selectionMode={SelectionMode.multiple}
-          selection={selection}
-          compact={true}
-          selectionPreservedOnEmptyClick={true}
-        />
+          columns={columns}
+          selectionMode="multiselect"
+          selectedItems={selectedRows}
+          onSelectionChange={onSelectionChange}
+          getRowId={(item) => item.key}
+        >
+          <DataGridHeader>
+            <DataGridRow selectionCell={{ 'aria-label': intlText.SELECTION }}>
+              {({ renderHeaderCell }) => <DataGridHeaderCell>{renderHeaderCell()}</DataGridHeaderCell>}
+            </DataGridRow>
+          </DataGridHeader>
+          <DataGridBody<WorkflowsList>>
+            {({ item, rowId }) => (
+              <DataGridRow<WorkflowsList> key={rowId} selectionCell={{ 'aria-label': intlText.SELECT_WORKFLOW }}>
+                {({ renderCell }) => <DataGridCell>{renderCell(item)}</DataGridCell>}
+              </DataGridRow>
+            )}
+          </DataGridBody>
+        </DataGrid>
         {noWorkflows}
       </div>
     );
   }, [
     renderWorkflows,
     isWorkflowsLoading,
-    selection,
+    selectedRows,
+    onSelectionChange,
     intlText.SELECTION,
-    intlText.SELECTION_ALL,
     intlText.SELECT_WORKFLOW,
     intlText.NO_WORKFLOWS,
     intlText.NAME,
@@ -197,18 +223,7 @@ export const WorkflowsSelection: React.FC = () => {
 
   const limitInfo = useMemo(() => {
     return selectedWorkflows.length >= 15 ? (
-      <MessageBar
-        className="msla-export-workflows-panel-limit-selection"
-        messageBarType={MessageBarType.info}
-        isMultiline={true}
-        messageBarIconProps={{
-          imageProps: {
-            src: WarningIcon,
-            width: 15,
-            height: 15,
-          },
-        }}
-      >
+      <MessageBar className="msla-export-workflows-panel-limit-selection" intent="info">
         {intlText.LIMIT_INFO}
       </MessageBar>
     ) : null;
@@ -282,7 +297,9 @@ export const WorkflowsSelection: React.FC = () => {
   const deselectWorkflow = async (itemKey: string) => {
     const copyRenderWorkflows = [...(renderWorkflows ?? [])];
     await deselectItemKey(itemKey);
-    selection.setItems(renderWorkflows as WorkflowsList[]);
+    const newSelectedRows = new Set(selectedRows);
+    newSelectedRows.delete(itemKey);
+    setSelectedRows(newSelectedRows);
     await updateRenderWorkflows();
     setRenderWorkflows(copyRenderWorkflows);
   };
@@ -297,7 +314,7 @@ export const WorkflowsSelection: React.FC = () => {
           {filters}
           {workflowsList}
         </div>
-        <Separator vertical className="msla-export-workflows-panel-divider" />
+        <Divider vertical className="msla-export-workflows-panel-divider" />
         <SelectedList isLoading={isWorkflowsLoading || renderWorkflows === null} deselectWorkflow={deselectWorkflow} />
       </div>
       <AdvancedOptions />

@@ -1,9 +1,8 @@
 import type { INamingRules } from '../../../run-service';
 import type { RootState } from '../../../state/store';
 import { isNameValid } from './helper';
-import { Callout, Link, PrimaryButton, TextField } from '@fluentui/react';
+import { Popover, PopoverTrigger, PopoverSurface, Link, Button, Input, Label } from '@fluentui/react-components';
 import type { IDropdownOption } from '@fluentui/react';
-import { useBoolean } from '@fluentui/react-hooks';
 import { MediumText } from '@microsoft/designer-ui';
 import { useState } from 'react';
 import type { FormEvent } from 'react';
@@ -23,7 +22,8 @@ export interface INewResourceGroupProps {
 
 export const NewResourceGroup: React.FC<INewResourceGroupProps> = ({ onAddNewResourceGroup, resourceGroups }) => {
   const intl = useIntl();
-  const [isCalloutVisible, { toggle: toggleIsCalloutVisible }] = useBoolean(false);
+  const [isCalloutVisible, setIsCalloutVisible] = useState(false);
+  const toggleIsCalloutVisible = () => setIsCalloutVisible(!isCalloutVisible);
   const [name, setName] = useState<string>('');
   const workflowState = useSelector((state: RootState) => state.workflow);
   const { exportData } = workflowState;
@@ -89,43 +89,34 @@ export const NewResourceGroup: React.FC<INewResourceGroupProps> = ({ onAddNewRes
   };
 
   return (
-    <>
-      <Link className={linkClassName} onClick={toggleIsCalloutVisible}>
-        {intlText.CREATE_NEW}
-      </Link>
-      {isCalloutVisible && (
-        <Callout
-          role="dialog"
-          gapSpace={8}
-          calloutMaxWidth={360}
-          style={{ padding: '20px 15px 0 15px' }}
-          target={`.${linkClassName}`}
-          onDismiss={toggleIsCalloutVisible}
-        >
-          <MediumText text={intlText.RESOURCE_GROUP_DESCRIPTION} style={{ display: 'block' }} />
-          <TextField
-            required
-            label={intlText.NAME}
-            value={name}
-            onChange={onChangeName}
-            onGetErrorMessage={(newName) => isNameValid(newName, intlText, resourceGroups).validationError}
-            autoFocus={true}
-          />
-          <PrimaryButton
+    <Popover open={isCalloutVisible} onOpenChange={(e, data) => setIsCalloutVisible(data.open)}>
+      <PopoverTrigger disableButtonEnhancement>
+        <Link className={linkClassName}>{intlText.CREATE_NEW}</Link>
+      </PopoverTrigger>
+      <PopoverSurface role="dialog" style={{ padding: '20px 15px 0 15px', maxWidth: '360px' }}>
+        <MediumText text={intlText.RESOURCE_GROUP_DESCRIPTION} style={{ display: 'block' }} />
+        <div style={{ marginTop: '10px' }}>
+          <Label required>{intlText.NAME}</Label>
+          <Input value={name} onChange={onChangeName} autoFocus={true} />
+          <div style={{ color: 'red', fontSize: '12px', marginTop: '5px' }}>
+            {isNameValid(name, intlText, resourceGroups).validationError}
+          </div>
+        </div>
+        <div style={{ marginTop: '10px', display: 'flex', gap: '10px' }}>
+          <Button
             className="msla-export-summary-connections-button"
-            text={intlText.OK}
-            ariaLabel={intlText.OK}
+            appearance="primary"
+            aria-label={intlText.OK}
             disabled={!isNameValid(name, intlText, resourceGroups).validName}
             onClick={onClickOk}
-          />
-          <PrimaryButton
-            className="msla-export-summary-connections-button"
-            text={intlText.CANCEL}
-            ariaLabel={intlText.CANCEL}
-            onClick={toggleIsCalloutVisible}
-          />
-        </Callout>
-      )}
-    </>
+          >
+            {intlText.OK}
+          </Button>
+          <Button className="msla-export-summary-connections-button" aria-label={intlText.CANCEL} onClick={toggleIsCalloutVisible}>
+            {intlText.CANCEL}
+          </Button>
+        </div>
+      </PopoverSurface>
+    </Popover>
   );
 };

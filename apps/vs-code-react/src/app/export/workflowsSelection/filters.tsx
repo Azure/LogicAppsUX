@@ -1,5 +1,5 @@
 import { SearchableDropdown } from '../../components/searchableDropdown';
-import { TextField } from '@fluentui/react';
+import { Input, Label } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 
 export const Filters: React.FC<any> = ({ dropdownOptions, onChangeResourceGroup, onChangeSearch, isDataLoading }) => {
@@ -30,13 +30,10 @@ export const Filters: React.FC<any> = ({ dropdownOptions, onChangeResourceGroup,
 
   return (
     <div className="msla-export-workflows-panel-filters">
-      <TextField
-        className="msla-export-workflows-panel-filters-input"
-        placeholder={intlText.SEARCH}
-        label={intlText.SEARCH_LOGIC_APP}
-        onChange={onChangeSearch}
-        disabled={isDataLoading}
-      />
+      <div className="msla-export-workflows-panel-filters-input">
+        <Label>{intlText.SEARCH_LOGIC_APP}</Label>
+        <Input placeholder={intlText.SEARCH} onChange={onChangeSearch} disabled={isDataLoading} />
+      </div>
       <SearchableDropdown
         className="msla-export-workflows-panel-filters-dropdown"
         placeholder={intlText.SEARCH}
