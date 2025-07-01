@@ -12,7 +12,7 @@ import type { IButtonStyles, IStyle } from '@fluentui/react';
 import { ActionButton, FontSizes } from '@fluentui/react';
 import { nthLastIndexOf, splitAtIndex } from '@microsoft/logic-apps-shared';
 import { useFunctionalState } from '@react-hookz/web';
-import { useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import constants from '../constants';
 import { useId } from '@fluentui/react-components';
@@ -95,6 +95,32 @@ export const SimpleQueryBuilder = ({
     });
   };
 
+  const canConvertToBasicMode = useCallback(() => {
+    if (isRowFormat) {
+      return true;
+    }
+
+    const convertedRowProps = convertAdvancedValueToRootProp(advancedValue, baseEditorProps.loadParameterValueFromString);
+    return convertedRowProps !== undefined;
+  }, [advancedValue, baseEditorProps.loadParameterValueFromString, isRowFormat]);
+
+  const isButtonDisabled = useMemo(() => {
+    return readonly || (!getRootProp() && !advancedValue?.length) || (!isRowFormat && !canConvertToBasicMode());
+  }, [advancedValue?.length, canConvertToBasicMode, getRootProp, isRowFormat, readonly]);
+
+  const getButtonTitle = (): string => {
+    if (readonly) {
+      return invalidRowFormat;
+    }
+    if (!getRootProp() && !advancedValue?.length) {
+      return invalidRowFormat;
+    }
+    if (!isRowFormat && !canConvertToBasicMode()) {
+      return invalidRowFormat;
+    }
+    return isRowFormat ? advancedButtonLabel : basicButtonLabel;
+  };
+
   return (
     <div className="msla-querybuilder-container">
       {isRowFormat ? (
@@ -127,16 +153,17 @@ export const SimpleQueryBuilder = ({
       )}
       <ActionButton
         className="msla-simple-querybuilder-advanced-button"
-        disabled={readonly || (!getRootProp() && !advancedValue?.length)}
-        title={
-          readonly || (!getRootProp() && !advancedValue?.length) ? invalidRowFormat : isRowFormat ? advancedButtonLabel : basicButtonLabel
-        }
+        disabled={isButtonDisabled}
+        title={getButtonTitle()}
         styles={buttonStyles}
         onClick={() => {
           if (isRowFormat) {
             setAdvancedValue(convertRootPropToValue(getRootProp() as RowItemProps));
           } else {
-            setRootProp(convertAdvancedValueToRootProp(advancedValue, baseEditorProps.loadParameterValueFromString));
+            const convertedProps = convertAdvancedValueToRootProp(advancedValue, baseEditorProps.loadParameterValueFromString);
+            if (convertedProps) {
+              setRootProp(convertedProps);
+            }
           }
           setIsRowFormat(!isRowFormat);
         }}
