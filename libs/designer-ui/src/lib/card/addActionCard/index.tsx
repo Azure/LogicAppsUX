@@ -4,6 +4,7 @@ import { Tooltip, mergeClasses } from '@fluentui/react-components';
 import { replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 import { useAddActionCardStyles } from './addActionCard.styles';
+import { getCardStyle } from '../utils';
 
 export const ADD_CARD_TYPE = {
   TRIGGER: 'Trigger',
@@ -108,6 +109,7 @@ export const AddActionCard: React.FC<AddActionCardProps> = ({ addCardType, onCli
             aria-describedby={tooltipDescriptionId}
             className={mergeClasses(classes.cardContainer, selected && classes.cardContainerSelected)}
             data-testid={`card-${title}`}
+            style={getCardStyle(brandColor)}
             data-automation-id={`card-${replaceWhiteSpaceWithUnderscore(title)}`}
             onClick={handleClick}
             onKeyDown={keyboardInteraction.keyDown}
