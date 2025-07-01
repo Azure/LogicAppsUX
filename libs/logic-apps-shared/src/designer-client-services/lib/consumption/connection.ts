@@ -91,8 +91,12 @@ export class ConsumptionConnectionService extends BaseConnectionService {
         /* shouldTestConnection */ false
       );
       const oAuthService = OAuthService();
-      console.log(parametersMetadata);
-      const consentUrl = await oAuthService.fetchConsentUrlForConnection(connectionId);
+      const oauthKey = parametersMetadata?.connectionParameters
+        ? Object.keys(parametersMetadata.connectionParameters).find(
+            (key) => parametersMetadata.connectionParameters?.[key]?.type === 'oauthSetting'
+          )
+        : undefined;
+      const consentUrl = await oAuthService.fetchConsentUrlForConnection(connectionId, oauthKey);
       const oAuthPopupInstance: IOAuthPopup = oAuthService.openLoginPopup({ consentUrl });
 
       const loginResponse = await oAuthPopupInstance.loginPromise;
