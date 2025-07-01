@@ -201,6 +201,7 @@ export const LocalDesigner = () => {
     language,
     areCustomEditorsEnabled,
     showConnectionsPanel,
+    showEdgeDrawing,
     hostOptions,
     suppressDefaultNodeSelect,
   } = useSelector((state: RootState) => state.workflowLoader);
@@ -232,6 +233,7 @@ export const LocalDesigner = () => {
     isDarkMode,
     useLegacyWorkflowParameters: isConsumption,
     showConnectionsPanel,
+    showEdgeDrawing,
     suppressDefaultNodeSelectFunctionality: suppressDefaultNodeSelect,
     hostOptions,
   };

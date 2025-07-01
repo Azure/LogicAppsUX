@@ -307,7 +307,6 @@ describe('validateVariables', () => {
       },
     ];
     const errors = validateVariables(variables);
-    console.log(errors);
     expect(errors[0].value).toBe(`'Value' must be a valid JSON array`);
     expect(errors[1].value).toBe(`'Value' must be a valid JSON array`);
   });

@@ -11,6 +11,7 @@ import {
   QueryBuilderTestWrapper,
   createTestValueSegment,
 } from './test-utils';
+import { ValueSegmentType } from '../../editor';
 
 describe('QueryBuilderEditor Move Functionality', () => {
   let user: ReturnType<typeof userEvent.setup>;
@@ -297,7 +298,7 @@ describe('QueryBuilderEditor Move Functionality', () => {
 
     it('should pass token mapping to child components', () => {
       const tokenMapping = {
-        token1: { id: '1', type: 'literal', value: 'test' },
+        token1: { id: '1', type: ValueSegmentType.LITERAL, value: 'test' },
       };
       renderQueryBuilder({ tokenMapping });
 
