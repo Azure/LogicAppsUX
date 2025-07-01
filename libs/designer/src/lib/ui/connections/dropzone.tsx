@@ -61,7 +61,7 @@ export const DropZone: React.FC<DropZoneProps> = memo(({ graphId, parentId, chil
   }, [nodeMetadata, parentId]);
 
   const upstreamNodesOfChild = useUpstreamNodes(removeIdTag(childId ?? newParentId ?? ''), graphId, childId);
-  const hasUpstreamAgenticLoop = useHasUpstreamAgenticLoop(upstreamNodesOfChild);
+  const hasUpstreamAgenticLoop = useHasUpstreamAgenticLoop(Array.from(upstreamNodesOfChild));
 
   const isWithinAgenticLoop = useIsWithinAgenticLoop(graphId);
 
