@@ -94,6 +94,7 @@ export const useAddActionCardStyles = makeStyles({
     alignSelf: 'center',
     display: 'inline-block',
     fontSize: '14px',
+    fontWeight: tokens.fontWeightSemibold,
     lineHeight: '20px',
     ...shorthands.margin('10px', '8px', '10px', '0'),
     textAlign: 'left',

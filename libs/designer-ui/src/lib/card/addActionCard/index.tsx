@@ -85,41 +85,49 @@ export const AddActionCard: React.FC<AddActionCardProps> = ({ addCardType, onCli
 
   const tooltipHeading = addCardType === ADD_CARD_TYPE.TRIGGER ? triggerTooltipHeading : actionTooltipHeading;
   const tooltipBody = addCardType === ADD_CARD_TYPE.TRIGGER ? triggerTooltipBody : actionTooltipBody;
+  const tooltipId = `placeholder-node-${addCardType}`;
+  const tooltipDescriptionId = `${tooltipId}-description`;
 
   const tooltipContent = (
-    <div className={classes.tooltipContent}>
+    <div className={classes.tooltipContent} id={tooltipId}>
       <h2 className={classes.tooltipHeading}>{tooltipHeading}</h2>
       <p className={classes.tooltipBody}>{tooltipBody}</p>
     </div>
   );
 
   return (
-    <Tooltip relationship="description" withArrow content={tooltipContent} positioning="after">
-      <div className={classes.root}>
-        <div
-          aria-label={title}
-          className={mergeClasses(classes.cardContainer, selected && classes.cardContainerSelected)}
-          data-testid={`card-${title}`}
-          data-automation-id={`card-${replaceWhiteSpaceWithUnderscore(title)}`}
-          onClick={handleClick}
-          onKeyDown={keyboardInteraction.keyDown}
-          onKeyUp={keyboardInteraction.keyUp}
-          tabIndex={0}
-        >
-          <div className={mergeClasses(classes.selectionBox, selected && 'selected')} />
-          <div className={classes.cardMain}>
-            <div className={classes.cardHeader} role="button">
-              <div className={classes.cardContentContainer}>
-                <div className={classes.cardContentGripperSection} />
-                {cardIcon}
-                <div className={classes.cardTopContent}>
-                  <div className={classes.cardTitle}>{title}</div>
+    <>
+      <div id={tooltipDescriptionId} style={{ display: 'none' }}>
+        {tooltipHeading}: {tooltipBody}
+      </div>
+      <Tooltip relationship="description" showDelay={0} hideDelay={0} withArrow content={tooltipContent} positioning="after">
+        <div className={classes.root}>
+          <div
+            aria-label={title}
+            aria-describedby={tooltipDescriptionId}
+            className={mergeClasses(classes.cardContainer, selected && classes.cardContainerSelected)}
+            data-testid={`card-${title}`}
+            data-automation-id={`card-${replaceWhiteSpaceWithUnderscore(title)}`}
+            onClick={handleClick}
+            onKeyDown={keyboardInteraction.keyDown}
+            onKeyUp={keyboardInteraction.keyUp}
+            tabIndex={0}
+          >
+            <div className={mergeClasses(classes.selectionBox, selected && 'selected')} />
+            <div className={classes.cardMain}>
+              <div className={classes.cardHeader} role="button">
+                <div className={classes.cardContentContainer}>
+                  <div className={classes.cardContentGripperSection} />
+                  {cardIcon}
+                  <div className={classes.cardTopContent}>
+                    <div className={classes.cardTitle}>{title}</div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </Tooltip>
+      </Tooltip>
+    </>
   );
 };
