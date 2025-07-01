@@ -28,9 +28,10 @@ import { SUBGRAPH_TYPES, guid, isNullOrUndefined, removeIdTag, useNodeIndex } fr
 import { memo, useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
-import { Handle, Position, type NodeProps } from '@xyflow/react';
+import type { NodeProps } from '@xyflow/react';
+import { DefaultHandle } from './handles/DefaultHandle';
 
-const SubgraphCardNode = ({ targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
+const SubgraphCardNode = ({ id }: NodeProps) => {
   const subgraphId = removeIdTag(id);
   const node = useActionMetadata(subgraphId);
 
@@ -179,7 +180,7 @@ const SubgraphCardNode = ({ targetPosition = Position.Top, sourcePosition = Posi
     <div>
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <div style={{ position: 'relative' }}>
-          <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
+          <DefaultHandle type="target" />
           {metadata?.subgraphType ? (
             <>
               <SubgraphCard
@@ -202,7 +203,7 @@ const SubgraphCardNode = ({ targetPosition = Position.Top, sourcePosition = Posi
               {shouldShowPager ? <LoopsPager metadata={metadata} scopeId={subgraphId} collapsed={graphCollapsed} /> : null}
             </>
           ) : null}
-          <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
+          <DefaultHandle type="source" />
         </div>
       </div>
       {graphCollapsed ? (
