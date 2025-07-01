@@ -29,7 +29,7 @@ export const AzureStandardLogicAppSelector = () => {
   const isMonitoringView = useIsMonitoringView();
   const hostingPlan = useHostingPlan();
   const standardList = useFetchStandardApps(environment.subscriptionIds);
-  const hybridList = useFetchHybridApps();
+  const hybridList = useFetchHybridApps(environment.subscriptionIds);
   const { data: appList, isLoading: isAppsLoading } = hostingPlan === 'hybrid' ? hybridList : standardList;
   const validApp = appId ? resourceIdValidation.test(appId) : false;
   const dispatch = useDispatch<AppDispatch>();
