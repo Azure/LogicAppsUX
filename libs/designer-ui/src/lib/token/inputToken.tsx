@@ -290,7 +290,6 @@ export const InputToken: React.FC<InputTokenProps> = ({ value, brandColor, icon,
         isSelected && hasFocus && styles.tokenWrapperSelected
       )}
       data-automation-id={`msla-token msla-input-token-${title}`}
-      contentEditable="true"
       onClick={(e) => {
         handleTokenClicked(e);
         e.stopPropagation();
