@@ -101,7 +101,7 @@ export const useAddActionCardStyles = makeStyles({
     wordBreak: 'break-word',
   },
   tooltipContent: {
-    maxWidth: '250px',
+    maxWidth: '300px',
     margin: '10px',
   },
   tooltipHeading: {

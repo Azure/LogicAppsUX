@@ -89,7 +89,7 @@ export const AddActionCard: React.FC<AddActionCardProps> = ({ addCardType, onCli
   const tooltipDescriptionId = `${tooltipId}-description`;
 
   const tooltipContent = (
-    <div className={classes.tooltipContent} id={tooltipId}>
+    <div className={classes.tooltipContent}>
       <h2 className={classes.tooltipHeading}>{tooltipHeading}</h2>
       <p className={classes.tooltipBody}>{tooltipBody}</p>
     </div>

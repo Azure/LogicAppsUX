@@ -289,6 +289,36 @@ describe('lib/card/addActionCard', () => {
       const card = screen.getByTestId('card-Add an action');
       expect(card).toHaveAttribute('aria-label', 'Add an action');
     });
+
+    it('should have aria-describedby attribute for trigger', () => {
+      renderWithProvider(<AddActionCard {...defaultProps} addCardType={ADD_CARD_TYPE.TRIGGER} />);
+
+      const card = screen.getByTestId('card-Add a trigger');
+      expect(card).toHaveAttribute('aria-describedby', 'placeholder-node-Trigger-description');
+    });
+
+    it('should have aria-describedby attribute for action', () => {
+      renderWithProvider(<AddActionCard {...defaultProps} addCardType={ADD_CARD_TYPE.ACTION} />);
+
+      const card = screen.getByTestId('card-Add an action');
+      expect(card).toHaveAttribute('aria-describedby', 'placeholder-node-Action-description');
+    });
+
+    it('should have hidden description element for trigger', () => {
+      renderWithProvider(<AddActionCard {...defaultProps} addCardType={ADD_CARD_TYPE.TRIGGER} />);
+
+      const descriptionElement = document.getElementById('placeholder-node-Trigger-description');
+      expect(descriptionElement).toBeInTheDocument();
+      expect(descriptionElement).toHaveStyle({ display: 'none' });
+    });
+
+    it('should have hidden description element for action', () => {
+      renderWithProvider(<AddActionCard {...defaultProps} addCardType={ADD_CARD_TYPE.ACTION} />);
+
+      const descriptionElement = document.getElementById('placeholder-node-Action-description');
+      expect(descriptionElement).toBeInTheDocument();
+      expect(descriptionElement).toHaveStyle({ display: 'none' });
+    });
   });
 
   describe('Selection State', () => {
