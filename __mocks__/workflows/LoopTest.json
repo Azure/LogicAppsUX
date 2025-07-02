@@ -38,12 +38,12 @@
 					"where": "@not(contains(length(split(item(), '|')?[0]),length(split(item(), '|')?[0])))"
 				},
 				"runAfter": {
-					"HTTP": [
-						"SUCCEEDED",
-						"SKIPPED"
-					],
 					"Initialize_ArrayVariable": [
 						"SUCCEEDED"
+					],
+					"HTTP_1": [
+						"SKIPPED",
+						"FAILED"
 					]
 				}
 			},
@@ -56,8 +56,7 @@
 				},
 				"runAfter": {
 					"Filter_array": [
-						"SUCCEEDED",
-						"SKIPPED"
+						"SUCCEEDED"
 					]
 				},
 				"runtimeConfiguration": {
@@ -76,6 +75,25 @@
 					"HTTP": [
 						"SUCCEEDED"
 					]
+				}
+			},
+			"HTTP_1": {
+				"type": "Http",
+				"inputs": {
+					"uri": "",
+					"method": ""
+				},
+				"runAfter": {
+					"HTTP": [
+						"SUCCEEDED",
+						"SKIPPED",
+						"TIMEDOUT"
+					]
+				},
+				"runtimeConfiguration": {
+					"contentTransfer": {
+						"transferMode": "Chunked"
+					}
 				}
 			}
 		},
