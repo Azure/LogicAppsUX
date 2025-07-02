@@ -129,10 +129,10 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
 
     this.migrationOptions = await this._getMigrationOptions(this.baseUrl);
     this.panelMetadata = await this._getDesignerPanelMetadata(this.migrationOptions);
-    console.log('charlie', this.panelMetadata);
     const callbackUri: Uri = await (env as any).asExternalUri(
       Uri.parse(`${env.uriScheme}://ms-azuretools.vscode-azurelogicapps/authcomplete`)
     );
+    this.context.telemetry.properties.extensionBundleVersion = this.panelMetadata.extensionBundleVersion;
     this.oauthRedirectUrl = callbackUri.toString(true);
 
     this.panel.webview.html = await this.getWebviewContent({
