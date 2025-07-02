@@ -9,7 +9,7 @@ import { createContext, useState, useContext } from 'react';
 import { useSelector } from 'react-redux';
 import type { Edge, Node } from '@xyflow/react';
 
-export const layerSpacing = {
+export const spacing = {
   default: '64',
   readOnly: '48',
   onlyEdge: '16',
@@ -26,19 +26,26 @@ const defaultLayoutOptions: Record<string, string> = {
   'elk.layered.nodePlacement.strategy': 'BRANDES_KOEPF',
   'elk.layered.nodePlacement.bk.fixedAlignment': 'BALANCED',
   // Spacing values
-  'elk.spacing.edgeNode': '180',
-  'elk.layered.spacing.edgeNodeBetweenLayers': layerSpacing.default,
-  'elk.layered.spacing.nodeNodeBetweenLayers': layerSpacing.default,
+  'elk.spacing.edgeNode': '40',
+  'elk.spacing.edgeEdge': '40',
+  'elk.layered.spacing.edgeNodeBetweenLayers': spacing.default,
+  'elk.layered.spacing.nodeNodeBetweenLayers': spacing.default,
   'elk.padding': '[top=0,left=16,bottom=16,right=16]',
   // This option allows the first layer children of a graph to be laid out in order of appearance in manifest. This is useful for subgraph ordering, like in Switch nodes.
   // 'elk.layered.crossingMinimization.semiInteractive': 'true',
   'elk.layered.crossingMinimization.forceNodeModelOrder': 'false',
   'elk.layered.considerModelOrder.strategy': 'NODES_AND_EDGES',
+  // Options for Bezier edges (These do not have any effect on our default edges)
+  'elk.layered.cycleBreaking.strategy': 'DEPTH_FIRST',
+  'elk.edgeRouting': 'SPLINES', // POLYLINE / ORTHOGONAL / SPLINES
+  'elk.layered.edgeRouting.splines.mode': 'CONSERVATIVE_SOFT', // SLOPPY / CONSERVATIVE_SOFT / CONSERVATIVE
+  'elk.portAlignment.default': 'DISTRIBUTED', // DISTRIBUTED / CENTER
+  // 'elk.spacing.portPort': '64',
 };
 
 const readOnlyOptions: Record<string, string> = {
-  'elk.layered.spacing.edgeNodeBetweenLayers': layerSpacing.readOnly,
-  'elk.layered.spacing.nodeNodeBetweenLayers': layerSpacing.readOnly,
+  'elk.layered.spacing.edgeNodeBetweenLayers': spacing.readOnly,
+  'elk.layered.spacing.nodeNodeBetweenLayers': spacing.readOnly,
 };
 
 const elk = new ELK();
@@ -178,8 +185,8 @@ const convertWorkflowGraphToElkGraph = (node: WorkflowNode): ElkNode => {
       nodeType: node?.type ?? WORKFLOW_NODE_TYPES.GRAPH_NODE,
       ...(node.edges?.some((edge) => edge.type === WORKFLOW_EDGE_TYPES.ONLY_EDGE) && {
         'elk.layered.nodePlacement.strategy': 'SIMPLE',
-        'elk.layered.spacing.edgeNodeBetweenLayers': layerSpacing.onlyEdge,
-        'elk.layered.spacing.nodeNodeBetweenLayers': layerSpacing.onlyEdge,
+        'elk.layered.spacing.edgeNodeBetweenLayers': spacing.onlyEdge,
+        'elk.layered.spacing.nodeNodeBetweenLayers': spacing.onlyEdge,
         'elk.layered.crossingMinimization.forceNodeModelOrder': 'true',
       }),
       ...(node.children?.findIndex((child) => child.id.endsWith('#footer')) !== -1 && {
