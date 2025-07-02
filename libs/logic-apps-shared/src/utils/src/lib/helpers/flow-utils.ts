@@ -22,7 +22,6 @@ export function getEdgeCenter({
 
 export function buildSvgSpline(points: XYPosition[]): string {
   if (points.length < 4 || (points.length - 1) % 3 !== 0) {
-    console.warn('Invalid point structure for Bézier spline.');
     return '';
   }
 
