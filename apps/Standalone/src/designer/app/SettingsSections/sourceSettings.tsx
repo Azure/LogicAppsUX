@@ -6,9 +6,6 @@ import { type HostingPlanTypes, loadLastWorkflow, setHostingPlan, setIsLocalSele
 import { ChoiceGroup, IconButton } from '@fluentui/react';
 import { useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
-import { LocalLogicAppSelector } from '../LocalDesigner/LogicAppSelector/LogicAppSelector';
-import { AzureConsumptionLogicAppSelector } from '../AzureLogicAppsDesigner/LogicAppSelectionSetting/AzureConsumptionLogicAppSelector';
-import { AzureStandardLogicAppSelector } from '../AzureLogicAppsDesigner/LogicAppSelectionSetting/AzureStandardLogicAppSelector';
 
 const SourceSettings = ({
   showEnvironment = true,
@@ -17,7 +14,6 @@ const SourceSettings = ({
 }: { showEnvironment?: boolean; showHistoryButton?: boolean; showHybridPlan?: boolean }) => {
   const isLocal = useIsLocal();
   const hostingPlan = useHostingPlan();
-
   const dispatch = useDispatch<AppDispatch>();
 
   const resourcePath = useResourcePath();
@@ -60,16 +56,6 @@ const SourceSettings = ({
       {showHistoryButton && !resourcePath && stateHistory ? (
         <IconButton iconProps={{ iconName: 'History' }} title="History" ariaLabel="History" onClick={() => dispatch(loadLastWorkflow())} />
       ) : null}
-      {/* Logic App Selector */}
-      <div style={{ flexGrow: 1 }}>
-        {isLocal ? (
-          <LocalLogicAppSelector />
-        ) : hostingPlan === 'consumption' ? (
-          <AzureConsumptionLogicAppSelector />
-        ) : (
-          <AzureStandardLogicAppSelector />
-        )}
-      </div>
     </div>
   );
 };
