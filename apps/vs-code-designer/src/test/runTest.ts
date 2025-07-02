@@ -1,11 +1,14 @@
 import * as path from 'path';
 import { runTests } from '@vscode/test-electron';
 
+// Ensure Node.js environment variables are correctly set
+process.env.NODE_ENV = 'test';
+
 async function main() {
   try {
     // The folder containing the Extension Manifest package.json
     // Passed to `--extensionDevelopmentPath`
-    const extensionDevelopmentPath = path.resolve('../');
+    const extensionDevelopmentPath = path.resolve(__dirname, '../');
 
     // The path to the extension test script
     // Passed to --extensionTestsPath
