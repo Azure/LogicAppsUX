@@ -4,6 +4,12 @@
   "dangerouslyDisablePackageManagerCheck": true,
 
   "tasks": {
+    "test:vscode:run": {
+      "cache": false
+    },
+    "vscode-designer#test:vscode:run": {
+      "cache": false
+    },
     "e2e": {
       "cache": false,
       "persistent": true

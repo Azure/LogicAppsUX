@@ -39,6 +39,10 @@ testem.log
 **/dist
 debug.log
 
+# vscode e2e
+/apps/vs-code-designer/.vscode-test
+.vscode-test
+
 # System Files
 .DS_Store
 Thumbs.db
