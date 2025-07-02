@@ -75,6 +75,7 @@ export const BrowseView = (props: BrowseViewProps) => {
   const allApiIdsWithActions = useAllApiIdsWithActions();
   const allApiIdsWithTriggers = useAllApiIdsWithTriggers();
 
+  // TODO: This callback is expensive, consider optimizing it
   const filterItems = useCallback(
     (connector: Connector): boolean => {
       if ((!isAgenticWorkflow || !isRoot) && connector.id === 'connectionProviders/agent') {
@@ -94,6 +95,7 @@ export const BrowseView = (props: BrowseViewProps) => {
         const capabilities = connector.properties?.capabilities ?? [];
         const ignoreCapabilities = !capabilities.includes('triggers') && !capabilities.includes('actions');
         const connectorId = cleanConnectorId(connector.id);
+        // TODO: This line is EXPENSIVE, consider caching the results or optimizing the query
         const supportsActions = (ignoreCapabilities || capabilities.includes('actions')) && allApiIdsWithActions.data.includes(connectorId);
         const supportsTriggers =
           (ignoreCapabilities || capabilities.includes('triggers')) && allApiIdsWithTriggers.data.includes(connectorId);

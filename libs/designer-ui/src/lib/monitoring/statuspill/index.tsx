@@ -1,8 +1,8 @@
-import { Tooltip } from '@fluentui/react-components';
+import { Tooltip, mergeClasses } from '@fluentui/react-components';
 import { getDurationStringFromTimes, getStatusString } from '../../utils';
 import { StatusIcon } from './statusicon';
-import { css } from '@fluentui/react';
 import { replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
+import { useStatusPillStyles } from './statuspill.styles';
 
 export interface StatusPillProps {
   id: string;
@@ -23,6 +23,7 @@ export const StatusPill: React.FC<StatusPillProps> = ({
   resubmittedResults = false,
   status,
 }) => {
+  const styles = useStatusPillStyles();
   const statusString = getStatusString(status, hasRetries);
   let tooltipLabel = statusString;
   const statusOnly = !duration || duration === '--' || !startTime || !endTime;
@@ -37,10 +38,10 @@ export const StatusPill: React.FC<StatusPillProps> = ({
       data-automation-id={`msla-pill-${replaceWhiteSpaceWithUnderscore(id)}`}
       aria-label={tooltipLabel}
       role="status"
-      className={css('msla-pill', statusOnly && 'status-only')}
+      className={mergeClasses(styles.pill, statusOnly && styles.statusOnly)}
     >
       <Tooltip content={tooltipLabel} relationship="description" withArrow>
-        <div className="msla-pill--inner">
+        <div className={mergeClasses(styles.pillInner, statusOnly && styles.statusOnlyImg)}>
           {!statusOnly && <span aria-hidden={true}>{duration}</span>}
           <StatusIcon hasRetries={hasRetries} status={status} iconOpacity={resubmittedResults ? '50%' : '100%'} />
         </div>

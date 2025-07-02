@@ -39,6 +39,11 @@ export const CustomizeWorkflows = ({
     saveError: state.template.apiValidatationErrors?.saveGeneral?.workflows,
   }));
   const hasErrors = useMemo(() => workflowsHaveErrors(apiErrors, workflows), [apiErrors, workflows]);
+  const isMultiWorkflowTemplate =
+    Object.keys({
+      ...workflows,
+      ...selectedWorkflowsList,
+    }).length > 1;
 
   return (
     <div className="msla-templates-tab msla-panel-no-description-tab">
@@ -75,7 +80,7 @@ export const CustomizeWorkflows = ({
         ) : (
           <CustomizeWorkflowSection
             workflowId={workflowEntries[0][0]}
-            isMultiWorkflowTemplate={false}
+            isMultiWorkflowTemplate={isMultiWorkflowTemplate}
             workflow={workflowEntries[0][1]}
             updateWorkflowDataField={updateWorkflowDataField}
           />

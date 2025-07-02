@@ -9,6 +9,7 @@ import { css } from '@fluentui/utilities';
 import { ArrayEditor, ArrayType } from '../arrayeditor';
 import { Label } from '../label';
 import { useAgentInstructionStyles } from './agentinstruction.styles';
+import constants from '../constants';
 
 export const NavigateIcon = bundleIcon(Open12Regular, Open12Filled);
 
@@ -89,6 +90,7 @@ export const AgentInstructionEditor = ({
           placeholder={systemPlaceholder}
           initialValue={systemMessage}
           editorBlur={(newState: ChangeState) => handleValueChange(newState, AGENT_INSTRUCTION_TYPES.SYSTEM)}
+          valueType={constants.SWAGGER.TYPE.STRING}
         />
         <Label text={userItemLabel} />
         <ArrayEditor
@@ -105,11 +107,7 @@ export const AgentInstructionEditor = ({
         />
       </div>
       {errorMessage ? (
-        <MessageBar
-          key={'warning'}
-          intent={'warning'}
-          className={mergeClasses(styles.editorWarning, 'msla-agent-instruction-editor-warning')}
-        >
+        <MessageBar key={'warning'} intent={'warning'} className={styles.editorWarning}>
           <MessageBarBody>
             <MessageBarTitle>{errorMessage}</MessageBarTitle>
             {warningInstructionBody}

@@ -12,8 +12,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import constants from '../../../../../../common/constants';
 import { deploymentModelNameStyle, useDeploymentModelResourceStyles } from './styles';
-import { Text } from '@fluentui/react';
-import { Button, mergeClasses } from '@fluentui/react-components';
+import { Button, mergeClasses, Text } from '@fluentui/react-components';
 
 export const CustomDeploymentModelResource = (props: IEditorProps) => {
   const intl = useIntl();

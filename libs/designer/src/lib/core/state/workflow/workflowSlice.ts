@@ -611,6 +611,11 @@ export const workflowSlice = createSlice({
         return;
       }
 
+      // If there was an existing run after and the parent operation is in it, do nothing
+      if (childOperation.runAfter?.[parentOperationId]) {
+        return;
+      }
+
       // If there is no existing run after, it was running after the trigger
       // We need to add a dummy trigger node to populate the settings object and flag validation
       if (Object.keys(childOperation.runAfter ?? {}).length === 0) {
@@ -619,7 +624,20 @@ export const workflowSlice = createSlice({
         childOperation.runAfter = { [rootTriggerNodeId]: [RUN_AFTER_STATUS.SUCCEEDED] };
       }
 
-      childOperation.runAfter = { ...(childOperation.runAfter ?? {}), [parentOperationId]: [RUN_AFTER_STATUS.SUCCEEDED] };
+      if (!childOperation.runAfter) {
+        childOperation.runAfter = {};
+      }
+      childOperation.runAfter[parentOperationId] = [RUN_AFTER_STATUS.SUCCEEDED];
+
+      // Check if it only contains the trigger node, if so, set to empty object
+      if (Object.keys(childOperation.runAfter ?? {}).length === 1) {
+        const rootTriggerNodeId = Object.entries(state.nodesMetadata).find(
+          ([_, node]) => node.graphId === 'root' && node.isRoot === true
+        )?.[0];
+        if (Object.keys(childOperation.runAfter ?? {})[0] === rootTriggerNodeId) {
+          childOperation.runAfter = {};
+        }
+      }
 
       const graphPath: string[] = [];
       let operationGraph = getRecordEntry(state.nodesMetadata, childOperationId);
@@ -632,8 +650,15 @@ export const workflowSlice = createSlice({
       for (const id of graphPath.reverse()) {
         graph = graph?.children?.find((x) => x.id === id) ?? null;
       }
+
+      const edgeId = `${parentOperationId}-${childOperationId}`;
+      if (graph?.edges?.some((edge) => edge.id === edgeId)) {
+        // Edge already exists, no need to add it again
+        return;
+      }
+
       graph?.edges?.push({
-        id: `${parentOperationId}-${childOperationId}`,
+        id: edgeId,
         source: parentOperationId,
         target: childOperationId,
         type: 'BUTTON_EDGE',

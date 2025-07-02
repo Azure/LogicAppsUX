@@ -1,5 +1,5 @@
 import constants from '../../../../../common/constants';
-import { useShowIdentitySelectorQuery } from '../../../../../core/state/connection/connectionSelector';
+import { useConnectorByNodeId, useShowIdentitySelectorQuery } from '../../../../../core/state/connection/connectionSelector';
 import { addOrUpdateCustomCode, renameCustomCodeFile } from '../../../../../core/state/customcode/customcodeSlice';
 import { useHostOptions, useReadOnly } from '../../../../../core/state/designerOptions/designerOptionsSelectors';
 import type { ParameterGroup } from '../../../../../core/state/operation/operationMetadataSlice';
@@ -51,8 +51,7 @@ import { SettingsSection } from '../../../../settings/settingsection';
 import type { Settings } from '../../../../settings/settingsection';
 import { ConnectionDisplay } from './connectionDisplay';
 import { IdentitySelector } from './identityselector';
-import { MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/react';
-import { Divider } from '@fluentui/react-components';
+import { Divider, MessageBar, MessageBarBody, Spinner, Text } from '@fluentui/react-components';
 import {
   PanelLocation,
   TokenPicker,
@@ -77,6 +76,7 @@ import {
 } from '@microsoft/designer-ui';
 import {
   clone,
+  ConnectionService,
   EditorService,
   equals,
   ExtensionProperties,
@@ -86,7 +86,7 @@ import {
   isRecordNotEmpty,
   SUBGRAPH_TYPES,
 } from '@microsoft/logic-apps-shared';
-import type { OperationInfo } from '@microsoft/logic-apps-shared';
+import type { Connection, Connector, OperationInfo } from '@microsoft/logic-apps-shared';
 import type React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -97,10 +97,22 @@ import {
   useCognitiveServiceAccountDeploymentsForNode,
   useCognitiveServiceAccountId,
 } from '../../../connectionsPanel/createConnection/custom/useCognitiveService';
-import { isAgentConnectorAndAgentModel, isAgentConnectorAndAgentServiceModel, isAgentConnectorAndDeploymentId } from './helpers';
+import {
+  categorizeConnections,
+  getConnectionToAssign,
+  getDeploymentIdParameter,
+  getFirstDeploymentModelName,
+  isAgentConnectorAndAgentModel,
+  isAgentConnectorAndAgentServiceModel,
+  isAgentConnectorAndDeploymentId,
+} from './helpers';
 import { useShouldEnableFoundryServiceConnection } from './hooks';
-import { removeNodeConnectionData } from '../../../../../core/state/connection/connectionSlice';
 import { AgentUtils } from '../../../../../common/utilities/Utils';
+import type { AnyAction, ThunkDispatch } from '@reduxjs/toolkit';
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import { getConnectionsForConnector } from '../../../../../core/queries/connections';
+import { updateNodeConnection } from '../../../../../core/actions/bjsworkflow/connections';
+import { removeNodeConnectionData } from '../../../../../core/state/connection/connectionSlice';
 
 // TODO: Add a readonly per settings section/group
 export interface ParametersTabProps extends PanelTabProps {
@@ -169,7 +181,7 @@ export const ParametersTab: React.FC<ParametersTabProps> = (props) => {
   if (isLoading) {
     return (
       <div className="msla-loading-container">
-        <Spinner size={SpinnerSize.large} />
+        <Spinner size="large" />
       </div>
     );
   }
@@ -188,18 +200,27 @@ export const ParametersTab: React.FC<ParametersTabProps> = (props) => {
     <>
       {errorInfo ? (
         <MessageBar
-          messageBarType={
+          intent={
             errorInfo.level === ErrorLevel.DynamicInputs || errorInfo.level === ErrorLevel.Default
-              ? MessageBarType.severeWarning
+              ? 'warning'
               : errorInfo.level === ErrorLevel.DynamicOutputs
-                ? MessageBarType.warning
-                : MessageBarType.error
+                ? 'warning'
+                : 'error'
           }
+          layout="multiline"
         >
-          {errorInfo.message}
+          <MessageBarBody>
+            <Text>{errorInfo.message}</Text>
+          </MessageBarBody>
         </MessageBar>
       ) : null}
-      {showNoParamsMessage ? <MessageBar messageBarType={MessageBarType.info}>{emptyParametersMessage}</MessageBar> : null}
+      {showNoParamsMessage ? (
+        <MessageBar layout="multiline">
+          <MessageBarBody>
+            <Text>{emptyParametersMessage}</Text>
+          </MessageBarBody>
+        </MessageBar>
+      ) : null}
       {Object.keys(inputs?.parameterGroups ?? {}).map((sectionName) => (
         <div key={sectionName}>
           <ParameterSection
@@ -231,6 +252,99 @@ export const ParametersTab: React.FC<ParametersTabProps> = (props) => {
     </>
   );
 };
+
+const clearConnectionAndDeploymentModel = (
+  dispatch: ThunkDispatch<unknown, unknown, AnyAction>,
+  nodeId: string,
+  deploymentIdParam: string
+): void => {
+  dispatch(removeNodeConnectionData({ nodeId }));
+  dispatch(
+    updateNodeParameters({
+      nodeId,
+      parameters: [
+        {
+          groupId: ParameterGroupKeys.DEFAULT,
+          parameterId: deploymentIdParam,
+          propertiesToUpdate: {
+            value: [createLiteralValueSegment('')],
+          },
+        },
+      ],
+    })
+  );
+};
+
+const updateConnectionAndDeployment = async (
+  dispatch: ThunkDispatch<unknown, unknown, AnyAction>,
+  nodeId: string,
+  connector: Connector,
+  connection: Connection,
+  deploymentIdParamId: string
+): Promise<void> => {
+  try {
+    // Update connection
+    dispatch(
+      updateNodeConnection({
+        nodeId,
+        connection,
+        connector,
+      })
+    );
+
+    ConnectionService().setupConnectionIfNeeded(connection);
+
+    // Get deployment model name
+    const deploymentModelName = await getFirstDeploymentModelName(connection);
+
+    // Update deployment model parameter
+    dispatch(
+      updateNodeParameters({
+        nodeId,
+        parameters: [
+          {
+            groupId: ParameterGroupKeys.DEFAULT,
+            parameterId: deploymentIdParamId,
+            propertiesToUpdate: {
+              value: [createLiteralValueSegment(deploymentModelName)],
+            },
+          },
+        ],
+      })
+    );
+  } catch {
+    clearConnectionAndDeploymentModel(dispatch, nodeId, deploymentIdParamId);
+  }
+};
+
+export const dynamicallyLoadAgentConnection = createAsyncThunk(
+  'dynamicallyLoadAgentConnection',
+  async (
+    { nodeId, connector, modelType }: { nodeId: string; connector: Connector; modelType: string },
+    { dispatch, getState }
+  ): Promise<void> => {
+    // Fetch and categorize connections
+    const connections = await getConnectionsForConnector(connector.id);
+    const categorizedConnections = categorizeConnections(connections);
+
+    // Validate node parameters
+    const deploymentIdParam = getDeploymentIdParameter(getState() as RootState, nodeId);
+    if (!deploymentIdParam) {
+      return;
+    }
+
+    // Find appropriate connection for the model type
+    const connectionToAssign = getConnectionToAssign(modelType, categorizedConnections.azureOpenAI, categorizedConnections.foundry);
+
+    if (!connectionToAssign) {
+      await clearConnectionAndDeploymentModel(dispatch, nodeId, deploymentIdParam.id);
+      return;
+    }
+
+    // Update connection and deployment model
+    await updateConnectionAndDeployment(dispatch, nodeId, connector, connectionToAssign, deploymentIdParam.id);
+  }
+);
 
 const ParameterSection = ({
   nodeId,
@@ -277,6 +391,7 @@ const ParameterSection = ({
   const rootState = useSelector((state: RootState) => state);
   const displayNameResult = useConnectorName(operationInfo);
   const panelLocation = usePanelLocation();
+  const connector = useConnectorByNodeId(nodeId);
 
   const { suppressCastingForSerialize, enableMultiVariable } = useHostOptions();
 
@@ -376,8 +491,8 @@ const ParameterSection = ({
       if (isAgentConnectorAndAgentModel(operationInfo.connectorId ?? '', parameter?.parameterName ?? '')) {
         const newValue = value.length > 0 ? value[0].value : undefined;
         const oldValue = parameter?.value && parameter.value.length > 0 ? parameter.value[0].value : undefined;
-        if (!isNullOrUndefined(newValue) && !isNullOrUndefined(oldValue) && newValue !== oldValue) {
-          dispatch(removeNodeConnectionData({ nodeId }));
+        if (!isNullOrUndefined(newValue) && !isNullOrUndefined(oldValue) && newValue !== oldValue && !isNullOrUndefined(connector)) {
+          dispatch(dynamicallyLoadAgentConnection({ nodeId, connector, modelType: newValue }));
         }
       }
 
@@ -454,15 +569,16 @@ const ParameterSection = ({
     [
       nodeInputs,
       group.id,
+      dependencies,
+      operationInfo,
       nodesMetadata,
       nodeId,
       dispatch,
       isTrigger,
-      operationInfo,
-      deploymentsForCognitiveServiceAccount,
       connectionReference,
-      dependencies,
       operationDefinition,
+      connector,
+      deploymentsForCognitiveServiceAccount,
     ]
   );
 

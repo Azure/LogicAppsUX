@@ -19,6 +19,7 @@ import {
   ResourceIdentityType,
   BaseTenantService,
   BaseCognitiveServiceService,
+  BaseRoleService,
 } from '@microsoft/logic-apps-shared';
 import type { ContentType } from '@microsoft/logic-apps-shared';
 import {
@@ -147,6 +148,16 @@ const runService = new StandardRunService({
   isDev: true,
 });
 
+const roleService = new BaseRoleService({
+  baseUrl: '/url',
+  apiVersion: '2022-05-01-preview',
+  httpClient,
+  subscriptionId: 'test',
+  tenantId: 'test',
+  userIdentityId: 'test',
+  appIdentityId: 'test',
+});
+
 const cognitiveServiceService = new BaseCognitiveServiceService({
   apiVersion: '2023-10-01-preview',
   baseUrl: '/url',
@@ -190,6 +201,7 @@ export const LocalDesigner = () => {
     language,
     areCustomEditorsEnabled,
     showConnectionsPanel,
+    showEdgeDrawing,
     hostOptions,
     suppressDefaultNodeSelect,
   } = useSelector((state: RootState) => state.workflowLoader);
@@ -209,6 +221,7 @@ export const LocalDesigner = () => {
       workflowService,
       hostService,
       runService,
+      roleService,
       editorService,
       connectionParameterEditorService,
       customCodeService,
@@ -220,6 +233,7 @@ export const LocalDesigner = () => {
     isDarkMode,
     useLegacyWorkflowParameters: isConsumption,
     showConnectionsPanel,
+    showEdgeDrawing,
     suppressDefaultNodeSelectFunctionality: suppressDefaultNodeSelect,
     hostOptions,
   };

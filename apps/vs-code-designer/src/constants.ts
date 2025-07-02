@@ -32,6 +32,7 @@ export const artifactsDirectory = 'Artifacts';
 export const libDirectory = 'lib';
 export const mapsDirectory = 'Maps';
 export const schemasDirectory = 'Schemas';
+export const rulesDirectory = 'Rules';
 
 // Extension Id
 // Folder names
@@ -318,8 +319,8 @@ export const DependencyDefaultPath = {
 export type DependencyDefaultPath = (typeof DependencyDefaultPath)[keyof typeof DependencyDefaultPath];
 // .NET
 export const DotnetVersion = {
-  net6: 'net6.0',
   net8: 'net8.0',
+  net6: 'net6.0',
   net3: 'netcoreapp3.1',
   net2: 'netcoreapp2.1',
   net48: 'net48',
@@ -402,11 +403,12 @@ export const CodefulSDKs = {
 };
 export type CodefulSDKs = (typeof CodefulSDKs)[keyof typeof CodefulSDKs];
 
-const codefulSdkVersion = '1.126.0.16';
+const codefulSdkVersion = '1.127.21.3-preview';
+const workflowsWebJobsVersion = '1.127.21.3-preview';
 const durableTaskVersion = '2.9.0';
 
 export const CodefulSdkVersions = {
   [CodefulSDKs.DurableTask]: durableTaskVersion,
-  [CodefulSDKs.WorkflowsWebJobs]: codefulSdkVersion,
+  [CodefulSDKs.WorkflowsWebJobs]: workflowsWebJobsVersion,
   [CodefulSDKs.WorkflowsSDK]: codefulSdkVersion,
 };

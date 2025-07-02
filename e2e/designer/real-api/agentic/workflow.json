@@ -1,0 +1,80 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "actions": {
+      "Default_Agent": {
+        "type": "Agent",
+        "inputs": {
+          "parameters": {
+            "agentModelType": "AzureOpenAI",
+            "deploymentId": "gpt-4o",
+            "messages": [
+              {
+                "role": "system",
+                "content": "Test"
+              }
+            ],
+            "agentModelSettings": {
+              "agentHistoryReductionSettings": {
+                "agentHistoryReductionType": "maximumTokenCountReduction",
+                "maximumTokenCount": 128000
+              },
+              "deploymentModelProperties": {
+                "name": "gpt-4.1",
+                "format": "OpenAI",
+                "version": "2025-04-14"
+              }
+            }
+          },
+          "modelConfigurations": {
+            "model1": {
+              "referenceName": "agent-9"
+            }
+          }
+        },
+        "tools": {
+          "Respond": {
+            "actions": {
+              "HTTP": {
+                "type": "Http",
+                "inputs": {
+                  "uri": "https://www.google.com",
+                  "method": "GET"
+                },
+                "runtimeConfiguration": {
+                  "contentTransfer": {
+                    "transferMode": "Chunked"
+                  }
+                }
+              }
+            },
+            "description": "Respond to the initial request"
+          }
+        },
+        "runAfter": {},
+        "limit": {
+          "count": 100
+        }
+      },
+      "Response": {
+        "type": "Response",
+        "kind": "Http",
+        "inputs": {
+          "statusCode": 200
+        },
+        "runAfter": {
+          "Default_Agent": ["SUCCEEDED"]
+        }
+      }
+    },
+    "contentVersion": "1.0.0.0",
+    "outputs": {},
+    "triggers": {
+      "When_a_HTTP_request_is_received": {
+        "type": "Request",
+        "kind": "Http"
+      }
+    }
+  },
+  "kind": "Agentic"
+}

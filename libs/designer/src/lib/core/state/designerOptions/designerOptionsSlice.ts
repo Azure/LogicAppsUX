@@ -16,6 +16,7 @@ import {
   InitFunctionService,
   InitAppServiceService,
   InitRunService,
+  InitRoleService,
   InitEditorService,
   InitConnectionParameterEditorService,
   InitChatbotService,
@@ -40,6 +41,7 @@ export const initialDesignerOptionsState: DesignerOptionsState = {
   useLegacyWorkflowParameters: false,
   isXrmConnectionReferenceMode: false,
   showConnectionsPanel: false,
+  showEdgeDrawing: false,
   panelTabHideKeys: [],
   hostOptions: {
     displayRuntimeInfo: true,
@@ -68,6 +70,7 @@ export const initializeServices = createAsyncThunk(
     hostService,
     apimService,
     runService,
+    roleService,
     editorService,
     connectionParameterEditorService,
     chatbotService,
@@ -124,6 +127,10 @@ export const initializeServices = createAsyncThunk(
       InitRunService(runService);
     }
 
+    if (roleService) {
+      InitRoleService(roleService);
+    }
+
     if (uiInteractionsService) {
       InitUiInteractionsService(uiInteractionsService);
     }
@@ -160,6 +167,7 @@ export const designerOptionsSlice = createSlice({
       state.suppressDefaultNodeSelectFunctionality = action.payload.suppressDefaultNodeSelectFunctionality;
       state.nodeSelectAdditionalCallback = action.payload.nodeSelectAdditionalCallback;
       state.showConnectionsPanel = action.payload.showConnectionsPanel;
+      state.showEdgeDrawing = action.payload.showEdgeDrawing;
       state.panelTabHideKeys = action.payload.panelTabHideKeys;
       state.hostOptions = {
         ...state.hostOptions,

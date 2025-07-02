@@ -10,8 +10,8 @@ export const validateResourceId = (resourceId: string): string => {
   return resourceId.startsWith('/') ? resourceId : `/${resourceId}`;
 };
 
-export const fetchAppsByQuery = async (query: string): Promise<any[]> => {
-  const requestPage = async (value: any[] = [], pageNum = 0, currentSkipToken = ''): Promise<any> => {
+export const fetchAppsByQuery = async (query: string, subscriptions?: string[]): Promise<any[]> => {
+  const requestPage = async (subscriptions?: string[], value: any[] = [], pageNum = 0, currentSkipToken = ''): Promise<any> => {
     try {
       const pageSize = 500;
       const { data } = await axios.post(
@@ -24,6 +24,7 @@ export const fetchAppsByQuery = async (query: string): Promise<any[]> => {
             $skipToken: currentSkipToken,
             resultFormat: 'table',
           },
+          subscriptions,
         },
         {
           headers: {
@@ -36,12 +37,12 @@ export const fetchAppsByQuery = async (query: string): Promise<any[]> => {
       const newValues = data.data.rows;
       value.push(...newValues);
       if ($skipToken && newValues.length !== 0) {
-        return await requestPage(value, pageNum + 1, $skipToken);
+        return await requestPage(subscriptions, value, pageNum + 1, $skipToken);
       }
       return value;
     } catch (_e) {
       return value;
     }
   };
-  return requestPage();
+  return requestPage(subscriptions);
 };

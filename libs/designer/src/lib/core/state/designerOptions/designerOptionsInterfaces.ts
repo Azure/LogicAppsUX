@@ -14,6 +14,7 @@ import type {
   IFunctionService,
   IAppServiceService,
   IRunService,
+  IRoleService,
   IEditorService,
   IConnectionParameterEditorService,
   IChatbotService,
@@ -52,6 +53,7 @@ export interface DesignerOptionsState {
   };
   nodeSelectAdditionalCallback?: (nodeId: string) => any;
   showConnectionsPanel?: boolean;
+  showEdgeDrawing?: boolean;
   panelTabHideKeys?: PANEL_TAB_NAMES[];
   showPerformanceDebug?: boolean;
 }
@@ -71,6 +73,7 @@ export interface ServiceOptions {
   functionService?: IFunctionService;
   appServiceService?: IAppServiceService;
   runService?: IRunService;
+  roleService?: IRoleService;
   editorService?: IEditorService;
   connectionParameterEditorService?: IConnectionParameterEditorService;
   chatbotService?: IChatbotService;

@@ -1,261 +1,351 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`lib/card/addActionCard > Basic Rendering > should render as selected 1`] = `
-[
+exports[`lib/card/addActionCard > Component Snapshots > should match snapshot for action card - selected 1`] = `
+<div
+  data-component="add-action-card-root"
+>
   <div
-    id="placeholder-node-Trigger-description"
+    aria-label="Add an action"
+    data-automation-id="card-add_an_action"
+    data-selected={true}
+    data-testid="card-Add an action"
+    onClick={[MockFunction spy]}
     style={
       {
-        "display": "none",
+        "backgroundColor": "#fff",
+        "border": "1px solid #c8c6c4",
+        "borderRadius": "2px",
+        "cursor": "pointer",
+        "width": "200px",
       }
     }
-  >
-    Triggers
-    : 
-    Triggers tell your app when to start running. Each workflow needs at least one trigger.
-  </div>,
-  <div
-    className="ms-TooltipHost root-109"
-    onBlurCapture={[Function]}
-    onFocusCapture={[Function]}
-    onKeyDown={[Function]}
-    onMouseEnter={[Function]}
-    onMouseLeave={[Function]}
-    role="none"
+    tabIndex={0}
   >
     <div
-      style={
-        {
-          "position": "relative",
-        }
-      }
+      data-component="selection-box"
+      data-selected={true}
+    />
+    <div
+      data-component="card-main"
     >
       <div
-        aria-describedby="placeholder-node-Trigger-description"
-        aria-label="Add a trigger"
-        className="msla-panel-card-container msla-panel-card-container-selected"
-        data-automation-id="card-add_a_trigger"
-        data-testid="card-Add a trigger"
-        onClick={[Function]}
-        onKeyDown={[Function]}
-        onKeyUp={[Function]}
-        style={
-          {
-            "borderLeft": "4px solid #484F58",
-            "borderRadius": "2px",
-          }
-        }
-        tabIndex={0}
+        data-component="card-header"
       >
         <div
-          className="msla-selection-box selected"
-        />
-        <div
-          className="panel-card-main"
+          data-component="card-content-container"
         >
           <div
-            className="panel-card-header"
-            role="button"
+            data-component="card-gripper"
+          />
+          <div
+            data-component="card-icon-section"
+          >
+            <img
+              alt=""
+              src="test-icon.svg"
+              style={
+                {
+                  "background": "#484F58",
+                  "borderRadius": "2px",
+                  "height": "16px",
+                  "padding": "4px",
+                  "width": "16px",
+                }
+              }
+            />
+          </div>
+          <div
+            data-component="card-content"
           >
             <div
-              className="panel-card-content-container"
+              data-component="card-title"
             >
-              <div
-                className="panel-card-content-gripper-section"
-              />
-              <div
-                className="panel-card-content-icon-section"
-              >
-                <img
-                  alt=""
-                  className="panel-card-icon"
-                  src="/src/lib/card/addActionCard/addNodeIcon.svg"
-                  style={
-                    {
-                      "background": "#484F58",
-                      "height": "16px",
-                      "padding": "4px",
-                      "width": "16px",
-                    }
-                  }
-                />
-              </div>
-              <div
-                className="panel-card-top-content"
-              >
-                <div
-                  className="panel-msla-title"
-                >
-                  Add a trigger
-                </div>
-              </div>
+              Add an action
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div
-      hidden={true}
-      id="placeholder-node-Trigger"
-      style={
-        {
-          "border": 0,
-          "height": 1,
-          "margin": -1,
-          "overflow": "hidden",
-          "padding": 0,
-          "position": "absolute",
-          "whiteSpace": "nowrap",
-          "width": 1,
-        }
-      }
-    >
-      <div
-        style={
-          {
-            "margin": "-8px 12px 0px",
-            "maxWidth": "250px",
-          }
-        }
-      >
-        <h2>
-          Triggers
-        </h2>
-        <p>
-          Triggers tell your app when to start running. Each workflow needs at least one trigger.
-        </p>
-      </div>
-    </div>
-  </div>,
-]
+  </div>
+</div>
 `;
 
-exports[`lib/card/addActionCard > Basic Rendering > should render with minimal props 1`] = `
-[
+exports[`lib/card/addActionCard > Component Snapshots > should match snapshot for action card - unselected 1`] = `
+<div
+  data-component="add-action-card-root"
+>
   <div
-    id="placeholder-node-Trigger-description"
+    aria-label="Add an action"
+    data-automation-id="card-add_an_action"
+    data-selected={false}
+    data-testid="card-Add an action"
+    onClick={[MockFunction spy]}
     style={
       {
-        "display": "none",
+        "backgroundColor": "#fff",
+        "border": "1px solid #c8c6c4",
+        "borderRadius": "2px",
+        "cursor": "pointer",
+        "width": "200px",
       }
     }
-  >
-    Triggers
-    : 
-    Triggers tell your app when to start running. Each workflow needs at least one trigger.
-  </div>,
-  <div
-    className="ms-TooltipHost root-109"
-    onBlurCapture={[Function]}
-    onFocusCapture={[Function]}
-    onKeyDown={[Function]}
-    onMouseEnter={[Function]}
-    onMouseLeave={[Function]}
-    role="none"
+    tabIndex={0}
   >
     <div
-      style={
-        {
-          "position": "relative",
-        }
-      }
+      data-component="selection-box"
+      data-selected={false}
+    />
+    <div
+      data-component="card-main"
     >
       <div
-        aria-describedby="placeholder-node-Trigger-description"
-        aria-label="Add a trigger"
-        className="msla-panel-card-container"
-        data-automation-id="card-add_a_trigger"
-        data-testid="card-Add a trigger"
-        onClick={[Function]}
-        onKeyDown={[Function]}
-        onKeyUp={[Function]}
-        style={
-          {
-            "borderLeft": "4px solid #484F58",
-            "borderRadius": "2px",
-          }
-        }
-        tabIndex={0}
+        data-component="card-header"
       >
         <div
-          className="msla-selection-box"
-        />
-        <div
-          className="panel-card-main"
+          data-component="card-content-container"
         >
           <div
-            className="panel-card-header"
-            role="button"
+            data-component="card-gripper"
+          />
+          <div
+            data-component="card-icon-section"
+          >
+            <img
+              alt=""
+              src="test-icon.svg"
+              style={
+                {
+                  "background": "#484F58",
+                  "borderRadius": "2px",
+                  "height": "16px",
+                  "padding": "4px",
+                  "width": "16px",
+                }
+              }
+            />
+          </div>
+          <div
+            data-component="card-content"
           >
             <div
-              className="panel-card-content-container"
+              data-component="card-title"
             >
-              <div
-                className="panel-card-content-gripper-section"
-              />
-              <div
-                className="panel-card-content-icon-section"
-              >
-                <img
-                  alt=""
-                  className="panel-card-icon"
-                  src="/src/lib/card/addActionCard/addNodeIcon.svg"
-                  style={
-                    {
-                      "background": "#484F58",
-                      "height": "16px",
-                      "padding": "4px",
-                      "width": "16px",
-                    }
-                  }
-                />
-              </div>
-              <div
-                className="panel-card-top-content"
-              >
-                <div
-                  className="panel-msla-title"
-                >
-                  Add a trigger
-                </div>
-              </div>
+              Add an action
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div
-      hidden={true}
-      id="placeholder-node-Trigger"
-      style={
-        {
-          "border": 0,
-          "height": 1,
-          "margin": -1,
-          "overflow": "hidden",
-          "padding": 0,
-          "position": "absolute",
-          "whiteSpace": "nowrap",
-          "width": 1,
-        }
+  </div>
+</div>
+`;
+
+exports[`lib/card/addActionCard > Component Snapshots > should match snapshot for trigger card - selected 1`] = `
+<div
+  data-component="add-action-card-root"
+>
+  <div
+    aria-label="Add a trigger"
+    data-automation-id="card-add_a_trigger"
+    data-selected={true}
+    data-testid="card-Add a trigger"
+    onClick={[MockFunction spy]}
+    style={
+      {
+        "backgroundColor": "#fff",
+        "border": "1px solid #c8c6c4",
+        "borderRadius": "2px",
+        "cursor": "pointer",
+        "width": "200px",
       }
+    }
+    tabIndex={0}
+  >
+    <div
+      data-component="selection-box"
+      data-selected={true}
+    />
+    <div
+      data-component="card-main"
     >
       <div
-        style={
-          {
-            "margin": "-8px 12px 0px",
-            "maxWidth": "250px",
-          }
-        }
+        data-component="card-header"
       >
-        <h2>
-          Triggers
-        </h2>
-        <p>
-          Triggers tell your app when to start running. Each workflow needs at least one trigger.
-        </p>
+        <div
+          data-component="card-content-container"
+        >
+          <div
+            data-component="card-gripper"
+          />
+          <div
+            data-component="card-icon-section"
+          >
+            <img
+              alt=""
+              src="test-icon.svg"
+              style={
+                {
+                  "background": "#484F58",
+                  "borderRadius": "2px",
+                  "height": "16px",
+                  "padding": "4px",
+                  "width": "16px",
+                }
+              }
+            />
+          </div>
+          <div
+            data-component="card-content"
+          >
+            <div
+              data-component="card-title"
+            >
+              Add a trigger
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-  </div>,
-]
+  </div>
+</div>
+`;
+
+exports[`lib/card/addActionCard > Component Snapshots > should match snapshot for trigger card - unselected 1`] = `
+<div
+  data-component="add-action-card-root"
+>
+  <div
+    aria-label="Add a trigger"
+    data-automation-id="card-add_a_trigger"
+    data-selected={false}
+    data-testid="card-Add a trigger"
+    onClick={[MockFunction spy]}
+    style={
+      {
+        "backgroundColor": "#fff",
+        "border": "1px solid #c8c6c4",
+        "borderRadius": "2px",
+        "cursor": "pointer",
+        "width": "200px",
+      }
+    }
+    tabIndex={0}
+  >
+    <div
+      data-component="selection-box"
+      data-selected={false}
+    />
+    <div
+      data-component="card-main"
+    >
+      <div
+        data-component="card-header"
+      >
+        <div
+          data-component="card-content-container"
+        >
+          <div
+            data-component="card-gripper"
+          />
+          <div
+            data-component="card-icon-section"
+          >
+            <img
+              alt=""
+              src="test-icon.svg"
+              style={
+                {
+                  "background": "#484F58",
+                  "borderRadius": "2px",
+                  "height": "16px",
+                  "padding": "4px",
+                  "width": "16px",
+                }
+              }
+            />
+          </div>
+          <div
+            data-component="card-content"
+          >
+            <div
+              data-component="card-title"
+            >
+              Add a trigger
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`lib/card/addActionCard > Component Snapshots > should match snapshot with different props combination 1`] = `
+<div
+  data-component="add-action-card-root"
+>
+  <div
+    aria-label="Add an action"
+    data-automation-id="card-add_an_action"
+    data-selected={true}
+    data-testid="card-Add an action"
+    onClick={[MockFunction spy]}
+    style={
+      {
+        "backgroundColor": "#fff",
+        "border": "1px solid #c8c6c4",
+        "borderRadius": "2px",
+        "cursor": "pointer",
+        "width": "200px",
+      }
+    }
+    tabIndex={0}
+  >
+    <div
+      data-component="selection-box"
+      data-selected={true}
+    />
+    <div
+      data-component="card-main"
+    >
+      <div
+        data-component="card-header"
+      >
+        <div
+          data-component="card-content-container"
+        >
+          <div
+            data-component="card-gripper"
+          />
+          <div
+            data-component="card-icon-section"
+          >
+            <img
+              alt=""
+              src="test-icon.svg"
+              style={
+                {
+                  "background": "#484F58",
+                  "borderRadius": "2px",
+                  "height": "16px",
+                  "padding": "4px",
+                  "width": "16px",
+                }
+              }
+            />
+          </div>
+          <div
+            data-component="card-content"
+          >
+            <div
+              data-component="card-title"
+            >
+              Add an action
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 `;

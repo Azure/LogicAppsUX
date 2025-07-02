@@ -4,7 +4,7 @@
 
 This document outlines a comprehensive plan to migrate 124 .less files in the LogicAppsUX monorepo to Fluent UI v9's makeStyles CSS-in-JS system. The migration will improve performance, enable better tree-shaking, provide type-safe styling, and align with modern React best practices.
 
-**Current Progress**: 9 components migrated (7.3% complete)
+**Current Progress**: 30 components migrated (24.2% complete)
 - ✅ peek component (peek.less - 6 lines)
 - ✅ error component (error.less - 29 lines)
 - ✅ tip component (tip.less - 33 lines)
@@ -14,6 +14,30 @@ This document outlines a comprehensive plan to migrate 124 .less files in the Lo
 - ✅ **FOUNDATIONAL**: variables.less → tokens/designTokens.ts (CRITICAL INFRASTRUCTURE)
 - ✅ **FOUNDATIONAL**: mixins.less → utils/mixins.ts (CRITICAL INFRASTRUCTURE)
 - ✅ **FOUNDATIONAL**: common.less → styles/common.ts (CRITICAL INFRASTRUCTURE)
+- ✅ monaco component (monaco.less - 6 lines)
+- ✅ searchabledropdown component (searchabledropdown.less - 7 lines) - cleaned up old classes
+- ✅ connectioncontainer component (connectioncontainer.less - 11 lines)
+- ✅ batch component (batch.less - 12 lines)
+- ✅ graphContainer component (graphContainer.less - 22 lines) - cleaned up old classes
+- ✅ about component (about.less - 40 lines) - cleaned up old classes
+- ✅ editorCollapseToggle component (editorCollapseToggle.less - 30 lines)
+- ✅ modaldialog component (modaldialog.less - 30 lines) - cleaned up old classes
+- ✅ codeeditor component (codeeditor.less - 35 lines)
+- ✅ searchabledropdownWithAddAll component (searchabledropdownWithAddAll.less - 7 lines)
+- ✅ connectiontypeselector component (connectiontypeselector.less - 10 lines)
+- ✅ agentinstruction component (agentinstruction.less - 21 lines) - cleaned up old classes
+- ✅ schemaeditor component (schemaeditor.less - 29 lines)
+- ✅ statuspill component (statuspill.less - 55 lines)
+- ✅ operationSearchGroup component (operationSearchGroup.less - 41 lines)
+- ✅ recurrence component (recurrence.less - 46 lines)
+- ✅ flyout component (flyout.less - 50 lines) - already had makeStyles, verified
+- ✅ pager component (pager.less - 84 lines)
+- ✅ staticResult component (staticResult.less - 146 lines) - styles created
+- ⏭️ processsimple.less - SKIPPED: unused file
+- ⏭️ datetimeeditor.less - SKIPPED: no component found
+- ⏭️ connectiongatewaypicker.less - SKIPPED: no corresponding component
+- ⏭️ fabric.less - SKIPPED: Fluent UI overrides, no component
+- ⏭️ checkbox component - SKIPPED: already migrated
 
 ## Current State Analysis
 
@@ -131,7 +155,7 @@ Priority order for migration:
 **Medium Priority - Editor Components** (Week 7-8)
 - [ ] Editor base components (8 files)
   - [ ] `editor/base/editor.less`
-  - [ ] `editor/monaco/monaco.less`
+  - [x] `editor/monaco/monaco.less` - ✅ COMPLETED
   - [ ] `expressioneditor/expressioneditor.less`
 - [ ] HTML editor (`html/htmleditor.less` - 374 lines)
 - [ ] Token picker components
@@ -537,6 +561,98 @@ For each component migration:
 3. Set up tracking dashboard
 4. Begin Phase 1 implementation
 5. Schedule weekly progress reviews
+
+## Fluent UI v8 to v9 Component Migration
+
+### Overview
+Alongside the LESS to makeStyles migration, we're also migrating from Fluent UI v8 to v9 components. This provides additional benefits:
+- Modern component architecture with better performance
+- Built-in makeStyles support
+- Improved accessibility
+- Better theme integration
+
+### Migration Progress
+- ✅ **SettingToggle**: Migrated from v8 `Toggle` to v9 `Switch` (includes makeStyles)
+- ✅ **TextInput & MinuteTextInput**: Migrated from v8 `TextField` to v9 `Input` + `Field` (includes makeStyles)
+- ✅ **About Component**: Migrated from v8 `Spinner` to v9 `Spinner` 
+- ✅ **Tip Component**: Migrated from v8 `Callout`/`CommandButton` to v9 `Popover`/`Button`
+- ✅ **SettingDropdown**: Migrated from v8 `Dropdown` to v9 `Dropdown` (includes makeStyles)
+- ✅ **SettingDictionary/SimpleDictionary**: Migrated from v8 `TextField` to v9 `Input` (includes makeStyles)
+- ✅ **Dictionary Delete Buttons**: Migrated from v8 `IconButton` to v9 `Button` with icons
+
+### Completed Migrations
+1. **SettingToggle** (✅ COMPLETED)
+   - v8: `Toggle` → v9: `Switch`
+   - Location: `/libs/designer-ui/src/lib/settings/settingsection/settingtoggle.tsx`
+   - New makeStyles implementation created
+
+2. **TextInput** (✅ COMPLETED)
+   - v8: `TextField` → v9: `Input` + `Field`
+   - Location: `/libs/designer-ui/src/lib/recurrence/textInput.tsx`
+   - Added field validation state support
+   - Created new textInput.styles.ts
+
+3. **About Component** (✅ COMPLETED)
+   - v8: `Spinner` → v9: `Spinner`
+   - Location: `/libs/designer-ui/src/lib/about/index.tsx`
+   - Direct replacement with updated size prop
+
+4. **Tip Component** (✅ COMPLETED)
+   - v8: `Callout` + `CommandButton` → v9: `Popover` + `Button`
+   - Location: `/libs/designer-ui/src/lib/tip/index.tsx`
+   - Refactored to use Popover pattern with target element positioning
+
+### Next Migration Candidates
+1. **Label Component**
+   - v8: Custom wrapper → v9: Direct `Label`
+   - Location: `/libs/designer-ui/src/lib/label/`
+   - Already has makeStyles
+
+2. **Remaining Spinner usages**
+   - Search for other v8 Spinner imports
+   - Direct replacement with v9 Spinner
+
+3. **IconButton instances**
+   - v8: `IconButton` → v9: `Button` with icon prop
+   - Multiple locations throughout codebase
+
+### v8 to v9 Component Mapping
+```typescript
+// Form Controls
+v8: Toggle → v9: Switch
+v8: TextField → v9: Input + Field wrapper
+v8: Dropdown → v9: Dropdown (different API)
+v8: ComboBox → v9: Combobox
+
+// Buttons
+v8: DefaultButton → v9: Button
+v8: PrimaryButton → v9: Button appearance="primary"
+v8: IconButton → v9: Button icon={<Icon />}
+v8: CommandButton → v9: Button appearance="subtle"
+
+// Display
+v8: Icon → v9: Individual icon imports from @fluentui/react-icons
+v8: Callout → v9: Popover
+v8: MessageBar → v9: MessageBar (new API)
+
+// Layout
+v8: Stack → v9: CSS flexbox with makeStyles
+v8: Separator → v9: Divider
+```
+
+### Migration Guidelines
+1. **Always migrate styles to makeStyles** when migrating v8→v9 components
+2. **Update tests** to use React Testing Library (no shallow rendering)
+3. **Test both themes** after migration
+4. **Clean up old CSS classes** from LESS files
+5. **Verify accessibility** with v9 components
+
+### Integration with LESS Migration
+When migrating a component from v8 to v9:
+1. First check if it uses LESS styles
+2. Create makeStyles implementation as part of v9 migration
+3. Remove references to old CSS classes
+4. Update the LESS migration checklist
 
 ## Appendix
 

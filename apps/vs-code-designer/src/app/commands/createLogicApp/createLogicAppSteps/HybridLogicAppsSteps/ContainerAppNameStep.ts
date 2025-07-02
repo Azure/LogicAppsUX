@@ -23,7 +23,7 @@ export class ContainerAppNameStep extends AzureWizardPromptStep<ILogicAppWizardC
       'newLogicAppName',
       `Enter a new logic app name, ${nameAvailabiltyValidationError ?? nameValidationError}.`,
       context.newSiteName,
-      context.resourceGroup.name
+      context?.resourceGroup?.name ?? context?.newResourceGroupName
     );
 
     context.newSiteName = (
@@ -57,7 +57,7 @@ export class ContainerAppNameStep extends AzureWizardPromptStep<ILogicAppWizardC
   }
 
   private async validateNameAvailable(context: ILogicAppWizardContext, name: string): Promise<string | undefined> {
-    const resourceGroupName: string = context.resourceGroup.name;
+    const resourceGroupName: string = context?.resourceGroup?.name ?? context?.newResourceGroupName;
     if (!(await ContainerAppNameStep.isNameAvailable(context, resourceGroupName, name))) {
       return localize('containerAppExists', 'The container app "{0}" already exists in resource group "{1}".', name, resourceGroupName);
     }

@@ -406,7 +406,6 @@ export function getClientBuiltInOperations(
     ClientOperationsData.getFutureTimeOperation,
     ClientOperationsData.getPastTimeOperation,
     ClientOperationsData.currentTimeOperation,
-    ClientOperationsData.inlinePythonCodeOperation,
   ];
   return filterOperation ? allOperations.filter(filterOperation) : allOperations;
 }

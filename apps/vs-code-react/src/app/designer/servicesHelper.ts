@@ -3,7 +3,6 @@ import { BaseOAuthService } from './services/oAuth';
 import { resolveConnectionsReferences } from './utilities/workflow';
 import {
   StandardConnectionService,
-  StandardConnectorService,
   StandardOperationManifestService,
   StandardSearchService,
   BaseGatewayService,
@@ -17,6 +16,7 @@ import {
   isEmptyString,
   BaseTenantService,
   BaseCognitiveServiceService,
+  BaseRoleService,
 } from '@microsoft/logic-apps-shared';
 import type {
   ApiHubServiceDetails,
@@ -29,6 +29,7 @@ import type {
   ManagedIdentity,
   ConnectionAndAppSetting,
   LocalConnectionModel,
+  OperationManifest,
 } from '@microsoft/logic-apps-shared';
 import type { IDesignerPanelMetadata, MessageToVsix } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand, HttpClient } from '@microsoft/vscode-extension-logic-apps';
@@ -38,10 +39,11 @@ import { CustomEditorService } from './customEditorService';
 import packagejson from '../../../package.json';
 import { LoggerService } from '../services/Logger';
 import { CustomConnectionParameterEditorService } from './services/customConnectionParameterEditorService';
+import { StandardVSCodeConnectorService } from './services/connector';
 
 export interface IDesignerServices {
   connectionService: StandardConnectionService;
-  connectorService: StandardConnectorService;
+  connectorService: StandardVSCodeConnectorService;
   operationManifestService: StandardOperationManifestService;
   searchService: StandardSearchService;
   oAuthService: BaseOAuthService;
@@ -50,6 +52,7 @@ export interface IDesignerServices {
   workflowService: IWorkflowService;
   hostService: IHostService;
   runService: StandardRunService;
+  roleService: BaseRoleService;
   editorService: CustomEditorService;
   apimService: BaseApiManagementService;
   functionService: BaseFunctionService;
@@ -76,7 +79,7 @@ export const getDesignerServices = (
   let authToken = '';
   let panelId = '';
   let workflowDetails: Record<string, any> = {};
-  let appSettings = {};
+  let appSettings: Record<string, any> = {};
   let isStateful = false;
   let connectionsData: ConnectionsData = { ...connectionData };
   let workflowName = '';
@@ -84,6 +87,8 @@ export const getDesignerServices = (
   const { subscriptionId = 'subscriptionId', resourceGroup, location } = apiHubDetails;
 
   const armUrl = 'https://management.azure.com';
+
+  const emptyArmId = '00000000-0000-0000-0000-000000000000';
 
   if (panelMetadata) {
     authToken = panelMetadata.accessToken ?? '';
@@ -161,33 +166,38 @@ export const getDesignerServices = (
     httpClient,
   });
 
-  const connectorService = new StandardConnectorService({
+  const connectorService = new StandardVSCodeConnectorService({
     apiVersion,
     baseUrl,
     httpClient,
     clientSupportedOperations: clientSupportedOperations,
-    getConfiguration: async (connectionId: string): Promise<any> => {
+    getConfiguration: async (connectionId: string, manifest: OperationManifest | undefined): Promise<any> => {
       if (!connectionId) {
         return Promise.resolve();
       }
+      const shouldUseWorkflowAppLocation = !!(
+        isLocal && manifest?.properties?.dynamicContent?.payloadConfiguration?.includes('WorkflowAppLocation')
+      );
+      const defaultConfiguration: Record<string, any> = shouldUseWorkflowAppLocation
+        ? {
+            workflowAppLocation: appSettings.ProjectDirectoryPath,
+          }
+        : {};
 
       const connectionName = connectionId.split('/').splice(-1)[0];
-      const connnectionsInfo = {
+      const connectionsInfo = {
         ...connectionsData?.serviceProviderConnections,
         ...connectionsData?.apiManagementConnections,
       };
-      const connectionInfo = connnectionsInfo[connectionName];
+      const connectionInfo = connectionsInfo[connectionName];
 
       if (connectionInfo) {
         const resolvedConnectionInfo = resolveConnectionsReferences(JSON.stringify(connectionInfo), {}, appSettings);
         delete resolvedConnectionInfo.displayName;
-
-        return {
-          connection: resolvedConnectionInfo,
-        };
+        defaultConfiguration.connection = resolvedConnectionInfo;
       }
 
-      return undefined;
+      return defaultConfiguration;
     },
     schemaClient: {
       getWorkflowSwagger: (args) => {
@@ -300,8 +310,8 @@ export const getDesignerServices = (
     },
     getAppIdentity: () => {
       return {
-        principalId: '00000000-0000-0000-0000-000000000000',
-        tenantId: '00000000-0000-0000-0000-000000000000',
+        principalId: emptyArmId,
+        tenantId: emptyArmId,
         type: 'SystemAssigned',
       } as ManagedIdentity;
     },
@@ -326,6 +336,17 @@ export const getDesignerServices = (
     baseUrl: isEmptyString(workflowRuntimeBaseUrl) ? baseUrl : workflowRuntimeBaseUrl,
     workflowName: workflowName ?? '',
     httpClient,
+  });
+
+  // MSI is not supported in VS Code
+  const roleService = new BaseRoleService({
+    baseUrl: armUrl,
+    apiVersion: '2022-05-01-preview',
+    httpClient,
+    tenantId: emptyArmId,
+    userIdentityId: emptyArmId,
+    appIdentityId: emptyArmId,
+    subscriptionId,
   });
 
   const cognitiveServiceService = new BaseCognitiveServiceService({
@@ -361,6 +382,7 @@ export const getDesignerServices = (
     workflowService,
     hostService,
     runService,
+    roleService,
     editorService,
     apimService,
     loggerService,
