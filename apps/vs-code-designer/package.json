@@ -54,13 +54,14 @@
   "private": true,
   "scripts": {
     "build:extension": "tsup && pnpm run copyFiles",
+    "build:vscode:e2e": "tsup",
     "copyFiles": "node extension-copy-svgs.js",
     "vscode:designer:pack": "pnpm run vscode:designer:pack:step1 && pnpm run vscode:designer:pack:step2",
     "vscode:designer:pack:step1": "cd ./dist && npm install",
     "vscode:designer:pack:step2": "cd ./dist && vsce package",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "test:extension-unit": "vitest run --retry=3",
-    "e2e-setup": "extest run-tests src/e2e/*.test.js", 
+    "e2e-setup": "extest run-tests dist/e2e/*.test.js", 
     "ui-test": "extest run-tests src/e2e/*.test.js"
   }
 }

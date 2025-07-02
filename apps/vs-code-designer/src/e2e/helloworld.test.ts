@@ -41,14 +41,19 @@ async function getTitle(): Promise<[string | undefined, Error | undefined]> {
   }
 }
 
-describe('Open resource test', function () {
+describe('Open resource test', async function () {
   this.timeout(30000);
+
+  function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 
   it('Single folder is open from CLI', async function () {
     let lastError = new Error('Could not get title from TitleBar.');
     const prefix = 'folder: ';
 
-    console.log('charlie', VSBrowser, VSBrowser.instance);
+    while (!VSBrowser.instance) {
+      await sleep(2000); // Wait for VS Code to start
 
     await VSBrowser.instance.driver.wait(
       async () => {
@@ -74,6 +79,10 @@ describe('Open resource test', function () {
       this.timeout() - 2000,
       lastError.toString()
     );
+   // console.log('VSBrowser', VSBrowser, VSBrowser.);
+    console.log('charlie', VSBrowser, VSBrowser.instance);
+
+  };
   });
 });
 console.log('Hello World!');
