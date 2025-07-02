@@ -13,6 +13,24 @@ import * as path from 'path';
 export async function getDebugSymbolDll(): Promise<string> {
   const bundleFolderRoot = await getExtensionBundleFolder();
   const bundleFolder = path.join(bundleFolderRoot, extensionBundleId);
+  const bundleVersionNumber = await getBundleVersionNumber();
+
+  return path.join(bundleFolder, bundleVersionNumber, 'bin', debugSymbolDll);
+}
+
+/**
+ * Retrieves the highest version number of the extension bundle available in the bundle folder.
+ *
+ * This function locates the extension bundle folder, enumerates its subdirectories,
+ * and determines the maximum version number present among them. If no bundle is found,
+ * it throws an error.
+ *
+ * @returns {Promise<string>} A promise that resolves to the highest bundle version number as a string (e.g., "1.2.3").
+ * @throws {Error} If the extension bundle folder is missing or contains no subdirectories.
+ */
+export async function getBundleVersionNumber(): Promise<string> {
+  const bundleFolderRoot = await getExtensionBundleFolder();
+  const bundleFolder = path.join(bundleFolderRoot, extensionBundleId);
   let bundleVersionNumber = '0.0.0';
 
   const bundleFolders = await fse.readdir(bundleFolder);
@@ -27,7 +45,7 @@ export async function getDebugSymbolDll(): Promise<string> {
     }
   }
 
-  return path.join(bundleFolder, bundleVersionNumber, 'bin', debugSymbolDll);
+  return bundleVersionNumber;
 }
 
 /**

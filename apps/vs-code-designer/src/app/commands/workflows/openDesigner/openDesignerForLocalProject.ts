@@ -44,6 +44,7 @@ import { env, ProgressLocation, Uri, ViewColumn, window, workspace } from 'vscod
 import type { WebviewPanel, ProgressOptions } from 'vscode';
 import type { IAzureConnectorsContext } from '../azureConnectorWizard';
 import { saveBlankUnitTest } from '../unitTest/saveBlankUnitTest';
+import { getBundleVersionNumber } from '../getDebugSymbolDll';
 
 export default class OpenDesignerForLocalProject extends OpenDesignerBase {
   private readonly workflowFilePath: string;
@@ -128,6 +129,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
 
     this.migrationOptions = await this._getMigrationOptions(this.baseUrl);
     this.panelMetadata = await this._getDesignerPanelMetadata(this.migrationOptions);
+    console.log('charlie', this.panelMetadata);
     const callbackUri: Uri = await (env as any).asExternalUri(
       Uri.parse(`${env.uriScheme}://ms-azuretools.vscode-azurelogicapps/authcomplete`)
     );
@@ -474,6 +476,8 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     const customCodeData: Record<string, string> = await getCustomCodeFromFiles(this.workflowFilePath);
     const workflowDetails = await getManualWorkflowsInLocalProject(projectPath, this.workflowName);
     const artifacts = await getArtifactsInLocalProject(projectPath);
+    const bundleVersionNumber = await getBundleVersionNumber();
+
     let localSettings: Record<string, string>;
     let azureDetails: AzureConnectorDetails;
 
@@ -500,6 +504,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
       artifacts,
       schemaArtifacts: this.schemaArtifacts,
       mapArtifacts: this.mapArtifacts,
+      extensionBundleVersion: bundleVersionNumber,
     };
   }
 
