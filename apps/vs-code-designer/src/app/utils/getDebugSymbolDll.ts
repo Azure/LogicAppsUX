@@ -2,15 +2,33 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { debugSymbolDll, extensionBundleId } from '../../../constants';
-import { ext } from '../../../extensionVariables';
-import { localize } from '../../../localize';
-import { getFunctionsCommand } from '../../utils/funcCoreTools/funcVersion';
+import { debugSymbolDll, extensionBundleId } from '../../constants';
+import { ext } from '../../extensionVariables';
+import { localize } from '../../localize';
+import { getFunctionsCommand } from './funcCoreTools/funcVersion';
 import * as cp from 'child_process';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 
 export async function getDebugSymbolDll(): Promise<string> {
+  const bundleFolderRoot = await getExtensionBundleFolder();
+  const bundleFolder = path.join(bundleFolderRoot, extensionBundleId);
+  const bundleVersionNumber = await getBundleVersionNumber();
+
+  return path.join(bundleFolder, bundleVersionNumber, 'bin', debugSymbolDll);
+}
+
+/**
+ * Retrieves the highest version number of the extension bundle available in the bundle folder.
+ *
+ * This function locates the extension bundle folder, enumerates its subdirectories,
+ * and determines the maximum version number present among them. If no bundle is found,
+ * it throws an error.
+ *
+ * @returns {Promise<string>} A promise that resolves to the highest bundle version number as a string (e.g., "1.2.3").
+ * @throws {Error} If the extension bundle folder is missing or contains no subdirectories.
+ */
+export async function getBundleVersionNumber(): Promise<string> {
   const bundleFolderRoot = await getExtensionBundleFolder();
   const bundleFolder = path.join(bundleFolderRoot, extensionBundleId);
   let bundleVersionNumber = '0.0.0';
@@ -27,7 +45,7 @@ export async function getDebugSymbolDll(): Promise<string> {
     }
   }
 
-  return path.join(bundleFolder, bundleVersionNumber, 'bin', debugSymbolDll);
+  return bundleVersionNumber;
 }
 
 /**

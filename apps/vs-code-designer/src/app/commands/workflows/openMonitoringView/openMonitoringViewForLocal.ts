@@ -32,6 +32,7 @@ import type { WebviewPanel } from 'vscode';
 import { Uri, ViewColumn } from 'vscode';
 import { getArtifactsInLocalProject } from '../../../utils/codeless/artifacts';
 import { saveBlankUnitTest } from '../unitTest/saveBlankUnitTest';
+import { getBundleVersionNumber } from '../../../utils/getDebugSymbolDll';
 
 export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
   private projectPath: string | undefined;
@@ -92,7 +93,7 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
     });
     this.panelMetadata.mapArtifacts = this.mapArtifacts;
     this.panelMetadata.schemaArtifacts = this.schemaArtifacts;
-
+    this.context.telemetry.properties.extensionBundleVersion = this.panelMetadata.extensionBundleVersion;
     this.panel.webview.onDidReceiveMessage(
       async (message) => await this._handleWebviewMsg(message),
       /* thisArgs */ undefined,
@@ -191,6 +192,8 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
     const workflowContent: any = JSON.parse(readFileSync(this.workflowFilePath, 'utf8'));
     const parametersData: Record<string, Parameter> = await getParametersFromFile(this.context, this.workflowFilePath);
     const customCodeData: Record<string, string> = await getCustomCodeFromFiles(this.workflowFilePath);
+    const bundleVersionNumber = await getBundleVersionNumber();
+
     let localSettings: Record<string, string>;
     let azureDetails: AzureConnectorDetails;
 
@@ -216,6 +219,7 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
       standardApp: getStandardAppData(this.workflowName, { ...workflowContent, definition: {} }),
       schemaArtifacts: this.schemaArtifacts,
       mapArtifacts: this.mapArtifacts,
+      extensionBundleVersion: bundleVersionNumber,
     };
   }
 }

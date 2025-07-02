@@ -3,7 +3,7 @@ import type { AppDispatch, RootState } from '../../state/store';
 import { VSCodeContext } from '../../webviewCommunication';
 import { DesignerCommandBar } from './DesignerCommandBar';
 import './app.less';
-import { getDesignerServices } from './servicesHelper';
+import { getDesignerServices, isMultiVariableSupport } from './servicesHelper';
 import { getRunInstanceMocks } from './utilities/runInstance';
 import { convertConnectionsDataToReferences } from './utilities/workflow';
 import { Spinner, SpinnerSize } from '@fluentui/react';
@@ -128,6 +128,11 @@ export const DesignerApp = () => {
     return convertConnectionsDataToReferences(connectionData);
   }, [connectionData]);
 
+  const isMultiVariableSupportEnabled = useMemo(
+    () => isMultiVariableSupport(panelMetaData?.extensionBundleVersion),
+    [panelMetaData?.extensionBundleVersion]
+  );
+
   const getRunInstance = () => {
     return services.runService.getRun(runId);
   };
@@ -245,6 +250,7 @@ export const DesignerApp = () => {
           services: services,
           hostOptions: {
             displayRuntimeInfo: true,
+            enableMultiVariable: isMultiVariableSupportEnabled,
           },
         }}
       >
