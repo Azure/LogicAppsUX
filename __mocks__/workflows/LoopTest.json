@@ -39,7 +39,8 @@
 				},
 				"runAfter": {
 					"HTTP": [
-						"SUCCEEDED"
+						"SUCCEEDED",
+						"SKIPPED"
 					],
 					"Initialize_ArrayVariable": [
 						"SUCCEEDED"
@@ -55,7 +56,8 @@
 				},
 				"runAfter": {
 					"Filter_array": [
-						"SUCCEEDED"
+						"SUCCEEDED",
+						"SKIPPED"
 					]
 				},
 				"runtimeConfiguration": {
