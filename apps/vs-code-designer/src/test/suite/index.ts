@@ -11,7 +11,10 @@ export async function run(): Promise<void> {
     const testsRoot = path.resolve(__dirname, '..');
 
     // Find all test files
-    const testFiles = await glob('**/**.test.{js,ts}', { cwd: testsRoot });
+    console.log('Directory:', path.dirname);
+    const testFiles = await glob('**/**.testE2E.{js,ts}');
+
+    console.log('Found test files:', testFiles);
 
     if (testFiles.length === 0) {
       console.log('No test files found');
@@ -26,6 +29,7 @@ export async function run(): Promise<void> {
       include: testFiles.map((f) => path.resolve(testsRoot, f)),
       // Use the same config as in vitest.config.ts
       environment: 'node',
+      exclude: ['**/**.test.{js,ts}'],
     });
 
     // Wait for tests to complete

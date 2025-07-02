@@ -1,5 +1,5 @@
 import * as path from 'path';
-import { runTests } from '@vscode/test-electron';
+import { runTests, runVSCodeCommand } from '@vscode/test-electron';
 
 // Ensure Node.js environment variables are correctly set
 process.env.NODE_ENV = 'test';
@@ -14,11 +14,16 @@ async function main() {
     // Passed to --extensionTestsPath
     const extensionTestsPath = path.resolve(__dirname, './suite');
 
+    await runVSCodeCommand(['--install-extension', 'ms-azuretools.vscode-azurefunctions']);
+    await runVSCodeCommand(['--install-extension', 'Azurite.azurite']);
+    await runVSCodeCommand(['--install-extension', 'ms-dotnettools.csharp']);
+    await runVSCodeCommand(['--install-extension', 'ms-dotnettools.csdevkit']);
+
     // Download VS Code, unzip it and run the integration test
     await runTests({
       extensionDevelopmentPath,
       extensionTestsPath,
-      launchArgs: ['--disable-extensions'],
+      //launchArgs: ['--disable-extensions'],
     });
   } catch (err) {
     console.error('Failed to run tests:', err);
