@@ -38,10 +38,10 @@
     "parameters": {},
     "triggers": {
       "When_a_HTTP_request_is_received": {
-        "type": "a2aRequest",
-        "kind": "Http"
+        "type": "Request",
+        "kind": "Agent"
       }
     }
   },
-  "kind": "Agents"
+  "kind": "Agent"
 }

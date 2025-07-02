@@ -11,8 +11,8 @@ export const parseWorkflowKind = (kind?: string): WorkflowKind => {
   if (equals(kind, 'agentic')) {
     return WorkflowKind.AGENTIC;
   }
-  if (equals(kind, 'agents')) {
-    return WorkflowKind.AGENTS;
+  if (equals(kind, 'agent')) {
+    return WorkflowKind.AGENT;
   }
   return undefined;
 };

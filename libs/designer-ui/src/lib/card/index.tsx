@@ -7,7 +7,6 @@ import { ErrorBanner } from './errorbanner';
 import { useCardKeyboardInteraction } from './hooks';
 import { Gripper } from './images/dynamicsvgs/gripper';
 import type { CommentBoxProps } from './types';
-import { getCardStyle } from './utils';
 import type { MessageBarType } from '@fluentui/react';
 import { Icon, css, useTheme } from '@fluentui/react';
 import { Spinner, useRestoreFocusTarget } from '@fluentui/react-components';
@@ -187,8 +186,7 @@ export const Card: React.FC<CardProps> = memo(
           selectionMode === 'selected' && 'msla-panel-card-container-selected',
           !active && 'msla-card-inactive',
           cloned && 'msla-card-ghost-image',
-          isDragging && 'dragging',
-          subtleBackground && 'msla-card-subtle-background'
+          isDragging && 'dragging'
         )}
         style={getCardStyle(brandColor, subtleBackground, isInverted)}
         data-testid={`card-${title}`}
@@ -237,3 +235,13 @@ export const Card: React.FC<CardProps> = memo(
     );
   }
 );
+
+function getCardStyle(brandColor?: string, subtleBackground?: boolean, isInverted?: boolean): React.CSSProperties {
+  const backgroundColor = subtleBackground ? (isInverted ? '#343434' : '#d3d3d3') : undefined;
+
+  return {
+    borderLeft: `4px solid ${brandColor}`,
+    borderRadius: '2px',
+    backgroundColor,
+  };
+}

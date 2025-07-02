@@ -1,19 +1,4 @@
 import Constants from '../constants';
-import { getAdjustedBackgroundColor } from '@microsoft/logic-apps-shared';
-
-export function getCardStyle(brandColor?: string, subtleBackground = false, isDark = false): React.CSSProperties {
-  let backgroundColor = undefined;
-
-  if (brandColor && subtleBackground) {
-    backgroundColor = getAdjustedBackgroundColor(brandColor, isDark);
-  }
-
-  return {
-    borderLeft: `4px solid ${brandColor}`,
-    borderRadius: '2px',
-    ...(backgroundColor && { backgroundColor }),
-  };
-}
 
 export function getHeaderStyle(brandColor?: string): React.CSSProperties | undefined {
   return brandColor ? { backgroundColor: brandColor } : undefined;

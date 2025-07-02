@@ -27,5 +27,5 @@ export const useAgenticWorkflow = () => {
 };
 
 export const useIsA2AWorkflow = () => {
-  return useSelector((state: RootState) => equals(state.workflow.workflowKind, 'agents', false));
+  return useSelector((state: RootState) => equals(state.workflow.workflowKind, 'agent', false));
 };

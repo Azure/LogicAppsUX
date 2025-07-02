@@ -356,7 +356,7 @@ const DefaultNode = ({ id }: NodeProps) => {
           isSecureInputsOutputs={isSecureInputsOutputs}
           isLoadingDynamicData={isLoadingDynamicData}
           nodeIndex={nodeIndex}
-          subtleBackground={isA2AWorkflow}
+          subtleBackground={isA2AWorkflow && isTrigger}
         />
         {showCopyCallout ? <CopyTooltip id={id} targetRef={ref} hideTooltip={clearCopyTooltip} /> : null}
         <EdgeDrawSourceHandle />

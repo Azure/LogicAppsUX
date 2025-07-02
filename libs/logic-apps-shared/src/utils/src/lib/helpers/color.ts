@@ -171,34 +171,3 @@ export function getContrastTextColor(hexColor?: string): string | undefined {
 
   return luminance > 0.5 ? '#000000' : '#FFFFFF';
 }
-
-export function getAdjustedBackgroundColor(hexColor: string, isDark: boolean): string {
-  return adjustColorToHint(hexColor, isDark, 0.05); // 5% brand color
-}
-
-export function adjustColorToHint(hex: string, isDark: boolean, weight = 0.05): string {
-  // Clamp weight between 0 and 1
-  weight = Math.max(0, Math.min(1, weight));
-
-  let color = hex.startsWith('#') ? hex.slice(1) : hex;
-
-  if (color.length === 3) {
-    color = color
-      .split('')
-      .map((c) => c + c)
-      .join('');
-  }
-
-  const num = Number.parseInt(color, 16);
-  const r = (num >> 16) & 0xff;
-  const g = (num >> 8) & 0xff;
-  const b = num & 0xff;
-
-  const blendTarget = isDark ? 0 : 255; // blend with black in dark mode, white in light mode
-
-  const rOut = Math.round(r * weight + blendTarget * (1 - weight));
-  const gOut = Math.round(g * weight + blendTarget * (1 - weight));
-  const bOut = Math.round(b * weight + blendTarget * (1 - weight));
-
-  return `rgb(${rOut}, ${gOut}, ${bOut})`;
-}
