@@ -1,5 +1,5 @@
 import type { Connection, Edge, EdgeTypes, NodeChange, ReactFlowInstance } from '@xyflow/react';
-import { BezierEdge, ReactFlow } from '@xyflow/react';
+import { BezierEdge as ReactFlowBezierEdge, ReactFlow } from '@xyflow/react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { containsIdTag, guid, removeIdTag, WORKFLOW_NODE_TYPES, type WorkflowNodeType } from '@microsoft/logic-apps-shared';
 import { useDispatch } from 'react-redux';
@@ -26,6 +26,7 @@ import CollapsedNode from './CustomNodes/CollapsedCardNode';
 import ScopeCardNode from './CustomNodes/ScopeCardNode';
 import SubgraphCardNode from './CustomNodes/SubgraphCardNode';
 import ButtonEdge from './connections/edge';
+import BezierEdge from './connections/bezierEdge';
 import HiddenEdge from './connections/hiddenEdge';
 
 const DesignerReactFlow = (props: any) => {
@@ -47,9 +48,9 @@ const DesignerReactFlow = (props: any) => {
   };
 
   const edgeTypes = {
-    BUTTON_EDGE: ButtonEdge,
-    HEADING_EDGE: ButtonEdge, // This is functionally the same as a button edge
-    ONLY_EDGE: BezierEdge, // Setting it as default React Flow Edge, can be changed as needed
+    BUTTON_EDGE: props?.isLooping ? BezierEdge : ButtonEdge,
+    HEADING_EDGE: props?.isLooping ? BezierEdge : ButtonEdge,
+    ONLY_EDGE: ReactFlowBezierEdge, // Setting it as default React Flow Edge, can be changed as needed
     HIDDEN_EDGE: HiddenEdge,
   } as EdgeTypes;
 
