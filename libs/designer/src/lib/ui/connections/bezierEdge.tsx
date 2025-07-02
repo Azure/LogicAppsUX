@@ -182,7 +182,6 @@ const BezierEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({ id, source, targe
   const [midpoint, setMidpoint] = useState<XYPosition>({ x: -999, y: -999 });
   useEffect(() => {
     if (!pathReady || !pathRef.current) {
-      console.warn('#> ButtonEdge: Path not ready or ref not set');
       return;
     }
     setMidpoint(getPointOnPath(0.5));
