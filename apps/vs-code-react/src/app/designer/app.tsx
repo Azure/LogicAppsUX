@@ -245,6 +245,7 @@ export const DesignerApp = () => {
           services: services,
           hostOptions: {
             displayRuntimeInfo: true,
+            enableMultiVariable: true,
           },
         }}
       >
