@@ -1,0 +1,13 @@
+{
+  "type": "module",
+  "devDependencies": {
+    "@wdio/cli": "^8.40.6",
+    "@wdio/local-runner": "^8.40.6",
+    "@wdio/mocha-framework": "^8.40.2",
+    "@wdio/spec-reporter": "^8.40.2",
+    "@wdio/json-reporter": "^8.40.2",
+    "wdio-vscode-service": "^6.0.4",
+    "@types/mocha": "^10.0.8",
+    "typescript": "^5.7.2"
+  }
+}

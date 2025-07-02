@@ -23,6 +23,13 @@
     "@vscode/extension-telemetry": "^0.9.8",
     "@vscode/test-electron": "2.3.0",
     "@vscode/vsce": "^3.1.1",
+    "@wdio/cli": "^8.40.6",
+    "@wdio/local-runner": "^8.40.6",
+    "@wdio/mocha-framework": "^8.40.2",
+    "@wdio/spec-reporter": "^8.40.2",
+    "@wdio/json-reporter": "^8.40.2",
+    "@types/mocha": "^10.0.8",
+    "wdio-vscode-service": "^6.0.4",
     "adm-zip": "^0.5.10",
     "axios": "^1.7.7",
     "azure-storage": "^2.10.3",
@@ -44,7 +51,8 @@
     "yaml-types": "^0.4.0",
     "yargs-parser": "21.1.1",
     "@azure/identity": "^4.5.0",
-    "yazl": "^3.3.1"
+    "yazl": "^3.3.1",
+    "rimraf": "^5.0.5"
   },
   "private": true,
   "scripts": {
@@ -54,6 +62,15 @@
     "vscode:designer:pack:step1": "cd ./dist && npm install",
     "vscode:designer:pack:step2": "cd ./dist && vsce package",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "test:extension-unit": "vitest run --retry=3"
+    "test:extension-unit": "vitest run --retry=3",
+    "test:e2e": "wdio run ./test/wdio.conf.ts",
+    "test:e2e:headless": "wdio run ./test/wdio.conf.ts",
+    "test:e2e:headful": "wdio run ./test/wdio.headful.conf.ts",
+    "test:e2e:setup": "bash ./test/setup.sh",
+    "test:e2e:watch": "wdio run ./test/wdio.conf.ts --watch",
+    "test:e2e:watch:headful": "wdio run ./test/wdio.headful.conf.ts --watch",
+    "test:e2e:commands": "wdio run ./test/wdio.headful.conf.ts --spec ./test/specs/commands.e2e.ts",
+    "test:e2e:workflows": "wdio run ./test/wdio.headful.conf.ts --spec ./test/specs/workflowOperations.e2e.ts",
+    "test:e2e:clean": "rimraf ./test/results ./test/screenshots"
   }
 }

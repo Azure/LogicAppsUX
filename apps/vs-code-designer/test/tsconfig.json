@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "lib": ["ES2022", "DOM"],
+    "declaration": false,
+    "outDir": "./dist",
+    "rootDir": "./",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "types": ["mocha", "@wdio/globals/types"]
+  },
+  "include": [
+    "**/*.ts",
+    "../src/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "results",
+    "screenshots"
+  ]
+}

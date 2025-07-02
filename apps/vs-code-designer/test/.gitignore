@@ -1,0 +1,6 @@
+node_modules/
+dist/
+results/
+screenshots/
+*.log
+.wdio-vscode-service/
