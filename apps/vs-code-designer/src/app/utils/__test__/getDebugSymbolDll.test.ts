@@ -2,6 +2,7 @@ import { getBundleVersionNumber } from '../getDebugSymbolDll';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as fse from 'fs-extra';
 import * as path from 'path';
+import * as cp from 'child_process';
 import { extensionBundleId } from '../../../constants';
 
 // Mock VS Code
@@ -28,14 +29,14 @@ vi.mock('../../localize', () => ({
   localize: vi.fn((key: string, defaultValue: string) => defaultValue),
 }));
 
-// // Mock extension variables
-// vi.mock('../../extensionVariables', () => ({
-//   ext: {
-//     outputChannel: {
-//       appendLog: vi.fn(),
-//     },
-//   },
-// }));
+// Mock extension variables
+vi.mock('../../extensionVariables', () => ({
+  ext: {
+    outputChannel: {
+      appendLog: vi.fn(),
+    },
+  },
+}));
 
 // Mock funcVersion
 vi.mock('../funcCoreTools/funcVersion', () => ({
@@ -43,10 +44,7 @@ vi.mock('../funcCoreTools/funcVersion', () => ({
 }));
 
 const mockedFse = vi.mocked(fse);
-const mockedExecSync = vi.mocked((await import('child_process')).execSync);
-
-// Now we can mock getExtensionBundleFolder by mocking execSync
-const mockGetExtensionBundleFolder = vi.fn();
+const mockedExecSync = vi.mocked(cp.execSync);
 
 describe('getBundleVersionNumber', () => {
   const mockBundleFolderRoot = '/mock/bundle/root';
