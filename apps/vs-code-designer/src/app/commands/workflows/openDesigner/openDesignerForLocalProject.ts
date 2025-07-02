@@ -351,13 +351,15 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     if (!designTimePort) {
       throw new Error(localize('designTimePortNotFound', 'Design time port not found.'));
     }
-    const url = `http://localhost:${designTimePort}${managementApiPrefix}/workflows/${this.workflowName}/validate?api-version=${this.apiVersion}`;
+    const url = `http://localhost:${designTimePort}${managementApiPrefix}/workflows/${this.workflowName}/validatePartial?api-version=${this.apiVersion}`;
     try {
       await sendRequest(this.context, {
         url,
         method: HTTP_METHODS.POST,
         headers: { ['Content-Type']: 'application/json' },
-        body: { properties: workflow },
+        body: {
+          properties: { definition: workflow.definition, kind: workflow.kind, appSettings: { values: this.panelMetadata.localSettings } },
+        },
       });
     } catch (error) {
       if (error.statusCode !== 404) {
