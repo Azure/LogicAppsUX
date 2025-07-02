@@ -44,7 +44,7 @@ import { env, ProgressLocation, Uri, ViewColumn, window, workspace } from 'vscod
 import type { WebviewPanel, ProgressOptions } from 'vscode';
 import type { IAzureConnectorsContext } from '../azureConnectorWizard';
 import { saveBlankUnitTest } from '../unitTest/saveBlankUnitTest';
-import { getBundleVersionNumber } from '../getDebugSymbolDll';
+import { getBundleVersionNumber } from '../../../utils/getDebugSymbolDll';
 
 export default class OpenDesignerForLocalProject extends OpenDesignerBase {
   private readonly workflowFilePath: string;
