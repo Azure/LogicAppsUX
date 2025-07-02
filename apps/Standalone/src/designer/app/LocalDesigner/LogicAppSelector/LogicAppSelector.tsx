@@ -24,6 +24,11 @@ const fileOptions = [
   { key: 'Agent.json', text: 'Starter Agent' },
   { key: 'AgentWithChannels.json', text: 'Agent with Channels' },
 
+  // A2A
+  { key: 'divider_A2A', text: '-', itemType: DropdownMenuItemType.Divider },
+  { key: 'A2AHeader', text: 'A2A Workflows', itemType: DropdownMenuItemType.Header },
+  { key: 'LoopTest.json', text: 'Loop Test' },
+
   // Scope Nodes
   { key: 'divider_2', text: '-', itemType: DropdownMenuItemType.Divider },
   { key: 'ScopeNodesHeader', text: 'Scope Node Testing Workflows', itemType: DropdownMenuItemType.Header },

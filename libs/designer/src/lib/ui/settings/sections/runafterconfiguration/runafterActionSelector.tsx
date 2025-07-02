@@ -16,9 +16,14 @@ const getSuccessorNodes = (state: RootState, nodeId: string) => {
   const wfs = state.workflow;
   let successors: string[] = [];
   let nodes = [nodeId];
+  const processedNodes: string[] = [];
 
   while (nodes.length) {
     const node = nodes.shift();
+    if (!node || processedNodes.includes(node)) {
+      continue;
+    }
+    processedNodes.push(node);
     const newNodes = Object.entries(wfs.operations)
       // eslint-disable-next-line no-loop-func
       .filter(([, op]: [string, LogicAppsV2.ActionDefinition]) => !!getRecordEntry(op.runAfter, node))

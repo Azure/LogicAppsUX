@@ -1,7 +1,7 @@
 import { openPanel, useNodesInitialized } from '../core';
 import { usePreloadOperationsQuery, usePreloadConnectorsQuery } from '../core/queries/browse';
 import { useMonitoringView, useReadOnly, useHostOptions, useIsVSCode } from '../core/state/designerOptions/designerOptionsSelectors';
-import { useAgenticWorkflow } from '../core/state/designerView/designerViewSelectors';
+import { useAgenticWorkflow, useIsA2AWorkflow } from '../core/state/designerView/designerViewSelectors';
 import { buildEdgeIdsBySource } from '../core/state/workflow/workflowSlice';
 import type { AppDispatch, RootState } from '../core/store';
 import Controls from './Controls';
@@ -86,6 +86,7 @@ export const Designer = (props: DesignerProps) => {
 
   const isMonitoringView = useMonitoringView();
   const isAgenticWorkflow = useAgenticWorkflow();
+  const isA2AWorkflow = useIsA2AWorkflow(); // Specifically A2A + Handoffs
 
   const DND_OPTIONS: any = {
     backends: [
@@ -128,7 +129,7 @@ export const Designer = (props: DesignerProps) => {
       <div className="msla-designer-canvas msla-panel-mode" ref={designerContainerRef}>
         <ReactFlowProvider>
           <div style={{ flexGrow: 1 }}>
-            <DesignerReactFlow canvasRef={canvasRef}>
+            <DesignerReactFlow canvasRef={canvasRef} isLooping={isA2AWorkflow}>
               {backgroundProps ? <Background {...backgroundProps} /> : null}
               <DeleteModal />
               <DesignerContextualMenu />

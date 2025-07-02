@@ -1,0 +1,144 @@
+{
+	"definition": {
+		"$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+		"actions": {
+			"Initialize_ArrayVariable": {
+				"type": "InitializeVariable",
+				"inputs": {
+					"variables": [
+						{
+							"name": "ArrayVariable",
+							"type": "array",
+							"value": [
+								{
+									"document": "A",
+									"min": 7500001,
+									"policy": "X"
+								},
+								{
+									"document": "B",
+									"min": 7500001,
+									"policy": "Y"
+								},
+								{
+									"document": "C",
+									"min": 7500001,
+									"policy": "Z"
+								}
+							]
+						}
+					]
+				},
+				"runAfter": {}
+			},
+			"Filter_array": {
+				"type": "Query",
+				"inputs": {
+					"from": "test",
+					"where": "@not(contains(length(split(item(), '|')?[0]),length(split(item(), '|')?[0])))"
+				},
+				"runAfter": {
+					"Initialize_ArrayVariable": [
+						"SUCCEEDED"
+					],
+					"HTTP_1": [
+						"SKIPPED",
+						"FAILED"
+					]
+				}
+			},
+			"HTTP": {
+				"type": "Http",
+				"inputs": {
+					"uri": "http://test.com",
+					"method": "GET",
+					"body": "@variables('ArrayVariable')"
+				},
+				"runAfter": {
+					"Filter_array": [
+						"SUCCEEDED"
+					]
+				},
+				"runtimeConfiguration": {
+					"contentTransfer": {
+						"transferMode": "Chunked"
+					}
+				}
+			},
+			"Response": {
+				"type": "Response",
+				"kind": "Http",
+				"inputs": {
+					"statusCode": 200
+				},
+				"runAfter": {
+					"HTTP": [
+						"SUCCEEDED"
+					]
+				}
+			},
+			"HTTP_1": {
+				"type": "Http",
+				"inputs": {
+					"uri": "",
+					"method": ""
+				},
+				"runAfter": {
+					"HTTP": [
+						"SUCCEEDED",
+						"SKIPPED",
+						"TIMEDOUT"
+					]
+				},
+				"runtimeConfiguration": {
+					"contentTransfer": {
+						"transferMode": "Chunked"
+					}
+				}
+			}
+		},
+		"contentVersion": "1.0.0.0",
+		"outputs": {},
+		"triggers": {
+			"manual": {
+				"type": "Request",
+				"kind": "Http",
+				"inputs": {
+					"schema": {
+						"type": "object",
+						"properties": {
+							"array": {
+								"type": "array",
+								"items": {
+									"type": "object",
+									"properties": {
+										"item1": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"item1"
+									]
+								}
+							},
+							"string": {
+								"type": "string"
+							},
+							"number": {
+								"type": "integer"
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"connectionReferences": {},
+	"parameters": {
+		"EILCO Admin Nominations-OCSA List (cr773_EILCOAdminNominations_OCSA_L2)": {
+			"type": "String",
+			"value": "test"
+		}
+	},
+	"kind": "agent"
+}
