@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [5.109.14](https://github.com/Azure/LogicAppsUX/compare/v5.109.13...v5.109.14) (2025-07-02)
+
+
+### Bug Fixes
+
+* **vscode:** Always upload app settings during Logic App deployment  ([#7682](https://github.com/Azure/LogicAppsUX/issues/7682)) ([005802d](https://github.com/Azure/LogicAppsUX/commit/005802d2bb8c8232765f15b37232a97af77f4dc3)), closes [#7664](https://github.com/Azure/LogicAppsUX/issues/7664)
+
 ### [5.109.13](https://github.com/Azure/LogicAppsUX/compare/v5.109.12...v5.109.13) (2025-06-11)
 
 
