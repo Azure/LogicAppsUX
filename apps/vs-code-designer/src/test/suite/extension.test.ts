@@ -1,23 +1,30 @@
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import * as assert from 'assert';
 import * as vscode from 'vscode';
+import * as mocha from 'mocha';
+import { logicAppsStandardExtensionId } from '../../constants';
 
+// Import Mocha test functions
+const { describe, it, before, after } = mocha;
+
+// Use standard Mocha functions
 describe('Extension Test Suite', () => {
-  beforeAll(() => {
+  // Use Mocha hooks
+  before(() => {
     console.log('Starting VS Code extension tests');
   });
 
-  afterAll(() => {
+  after(() => {
     console.log('All tests done!');
   });
 
   it('Sample test', () => {
-    expect([1, 2, 3].indexOf(5)).toBe(-1);
-    expect([1, 2, 3].indexOf(1)).toBe(0);
+    assert.strictEqual([1, 2, 3].indexOf(5), -1);
+    assert.strictEqual([1, 2, 3].indexOf(1), 0);
   });
 
   it('Extension is loaded', () => {
     // Check if our extension is loaded
-    const extension = vscode.extensions.getExtension('microsoft.vscode-designer');
-    expect(extension).toBeTruthy();
+    const extension = vscode.extensions.getExtension(logicAppsStandardExtensionId);
+    assert.ok(extension, 'Extension should be present');
   });
 });
