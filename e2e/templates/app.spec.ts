@@ -92,7 +92,7 @@ test.describe(
       await page.getByRole('tab', { name: 'Review + create' }).click();
 
       await page.getByRole('tab', { name: 'Basics' }).click();
-      await page.getByRole('button', { name: 'Close' }).click();
+      await page.getByRole('button', { name: 'Close Panel' }).click();
       await page.getByRole('combobox', { name: 'Gallery' }).click();
       await page.getByText('Simple Parameters', { exact: true }).click();
       await page.waitForTimeout(10);
