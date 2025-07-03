@@ -39,7 +39,6 @@ interface InitialWorkflowState {
   resourceGroup: string;
   location: string;
   references?: ConnectionReferences;
-  isCreateView?: boolean;
 }
 
 export const workflowSlice = createSlice({
