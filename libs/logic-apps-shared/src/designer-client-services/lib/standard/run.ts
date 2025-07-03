@@ -15,6 +15,7 @@ import {
 import { hybridApiVersion, isHybridLogicApp } from './hybrid';
 import { LogEntryLevel } from '../logging/logEntry';
 import { LoggerService } from '../logger';
+import { TimelineRepetitionsMock } from '../__test__/__mocks__/timelineRepetititonsResponse';
 
 export interface RunServiceOptions {
   apiVersion: string;
@@ -23,6 +24,7 @@ export interface RunServiceOptions {
   updateCors?: () => void;
   workflowName: string;
   isDev?: boolean;
+  isTimelineSupported?: boolean;
 }
 
 export class StandardRunService implements IRunService {
@@ -177,6 +179,35 @@ export class StandardRunService implements IRunService {
     } catch (e: any) {
       throw new Error(e.message);
     }
+  }
+
+  /**
+   * Gets an array of workflow-level action repetitions for a run.
+   * @param {string} runId - The ID of the workflow run.
+   * @returns {Promise<any>}
+   */
+
+  async getTimelineRepetitions(_runId: string): Promise<any> {
+    // TODO: This is mock repetition data, should be replaced when the API is available.
+    return TimelineRepetitionsMock;
+
+    // const { apiVersion, baseUrl, httpClient, isTimelineSupported } = this.options;
+
+    // if (!isTimelineSupported) {
+    // 	return undefined;
+    // }
+
+    // const onlyRunId = runId.split('/')?.at(-1);
+    // const uri = `${baseUrl}/runs/${onlyRunId}/timelineRepetitions?api-version=${apiVersion}&$expand=properties/actions,workflow/properties`;
+
+    // try {
+    // 	const response = await httpClient.get<Run>({
+    // 		uri,
+    // 	});
+    // 	return response;
+    // } catch (e: any) {
+    // 	throw new Error(e.message);
+    // }
   }
 
   /**
