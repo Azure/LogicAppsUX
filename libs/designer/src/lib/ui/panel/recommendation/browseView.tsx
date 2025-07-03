@@ -109,7 +109,7 @@ export const BrowseView = (props: BrowseViewProps) => {
 
       return true;
     },
-    [isAgenticWorkflow, isRoot, shouldEnableACASession, filters, allApiIdsWithActions.data, allApiIdsWithTriggers.data]
+    [allApiIdsWithActions, isAgenticWorkflow, isRoot, shouldEnableACASession, filters, allApiIdsWithTriggers.data]
   );
 
   const sortedConnectors = useMemo(() => {

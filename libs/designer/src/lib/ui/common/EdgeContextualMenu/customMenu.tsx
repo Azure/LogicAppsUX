@@ -32,7 +32,13 @@ export const CustomMenu: React.FC<CustomMenuProps> = ({ item }) => {
                   return subItem.renderCustomComponent();
                 }
                 return (
-                  <MenuItem key={subItem.text} aria-label={subItem.ariaLabel} icon={subItem.icon} onClick={subItem.onClick}>
+                  <MenuItem
+                    key={subItem.text}
+                    aria-label={subItem.ariaLabel}
+                    icon={subItem.icon}
+                    onClick={subItem.onClick}
+                    disabled={subItem.disabled}
+                  >
                     {subItem.text}
                   </MenuItem>
                 );

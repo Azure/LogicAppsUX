@@ -11,7 +11,7 @@ export const useOperationSearchGroupStyles = makeStyles({
   seeMoreButton: {
     position: 'absolute',
     right: '0',
-    fontSize: '8px',
+    fontSize: '12px',
   },
 
   header: {
@@ -35,6 +35,10 @@ export const useOperationSearchGroupStyles = makeStyles({
     overflow: 'hidden',
     whiteSpace: 'nowrap',
     textOverflow: 'ellipsis',
+    display: 'inline-block',
+    minWidth: 'auto',
+    maxWidth: '100%',
+    padding: '5px 0',
   },
 
   headerIcons: {
