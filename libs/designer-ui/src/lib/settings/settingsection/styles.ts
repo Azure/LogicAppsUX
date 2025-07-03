@@ -2,8 +2,7 @@ import { makeStyles, tokens } from '@fluentui/react-components';
 
 export const useSettingTokenStyles = makeStyles({
   subComponentContainer: {
-    display: 'flex',
-    justifyContent: 'space-between',
+    position: 'relative',
   },
   newResourceContainer: {
     alignContent: 'center',
@@ -11,5 +10,8 @@ export const useSettingTokenStyles = makeStyles({
     fontWeight: 500,
     cursor: 'pointer',
     color: tokens.colorBrandStroke1,
+    position: 'absolute',
+    top: 0,
+    right: 0,
   },
 });

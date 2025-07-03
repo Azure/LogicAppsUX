@@ -4,7 +4,7 @@ import { CustomEditorInitializeVariable } from './customEditor/CustomEditorIniti
 import { CustomDeploymentModelResource } from '@microsoft/logic-apps-designer';
 
 export class CustomEditorService implements IEditorService {
-  public areCustomEditorsEnabled = false;
+  public areCustomEditorsEnabled = true;
 
   public getEditor = (props: IEditorParameterInfo) => {
     const { operationInfo, parameter } = props;
