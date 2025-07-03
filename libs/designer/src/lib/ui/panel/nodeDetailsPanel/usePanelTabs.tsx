@@ -1,6 +1,7 @@
 import constants from '../../../common/constants';
 import type { RootState } from '../../../core';
 import { useNodeMetadata, useOperationInfo } from '../../../core';
+import { useIsA2AWorkflow } from '../../../core/state/designerView/designerViewSelectors';
 import { usePanelTabHideKeys, useUnitTest, useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { useParameterValidationErrors } from '../../../core/state/operation/operationSelector';
 import { useIsNodePinnedToOperationPanel } from '../../../core/state/panel/panelSelectors';
@@ -38,6 +39,7 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
   const runHistory = useRetryHistory(nodeId);
   const isScopeNode = operationInfo?.type.toLowerCase() === constants.NODE.TYPE.SCOPE;
   const isAgentNode = useMemo(() => equals(operationInfo?.type ?? '', constants.NODE.TYPE.AGENT, true), [operationInfo?.type]);
+  const isA2AWorkflow = useIsA2AWorkflow();
   const parameterValidationErrors = useParameterValidationErrors(nodeId);
   const settingValidationErrors = useSettingValidationErrors(nodeId);
 
@@ -86,9 +88,9 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
   const channelsTabItem = useMemo(
     () => ({
       ...channelsTab(intl, tabProps),
-      visible: isAgentNode,
+      visible: isAgentNode && !isA2AWorkflow,
     }),
-    [intl, tabProps, isAgentNode]
+    [intl, tabProps, isAgentNode, isA2AWorkflow]
   );
 
   const codeViewTabItem = useMemo(() => codeViewTab(intl, tabProps), [intl, tabProps]);
