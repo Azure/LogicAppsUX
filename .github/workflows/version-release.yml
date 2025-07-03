@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       release_type:
-        description: 'Release type'
+        description: "Release type"
         required: true
-        default: 'minor'
+        default: "minor"
         type: choice
         options:
           - major
@@ -15,7 +15,7 @@ on:
   repository_dispatch:
     types: [release]
   schedule:
-    - cron: '0 17 * * 4'
+    - cron: "0 17 * * 4"
 
 env:
   AI_KEY: ${{ vars.AI_KEY }}
@@ -32,7 +32,7 @@ jobs:
           RELEASE_TYPE="${{ github.event.inputs.release_type || 'minor' }}"
           echo "Branch: $BRANCH_NAME"
           echo "Release Type: $RELEASE_TYPE"
-          
+
           if [[ "$BRANCH_NAME" == "main" && "$RELEASE_TYPE" == "patch" ]]; then
             echo "Patch releases are not allowed on the main branch."
             exit 1
@@ -50,7 +50,7 @@ jobs:
       new_version: ${{ steps.version.outputs.new_version }}
       tag_name: ${{ steps.version.outputs.tag_name }}
     steps:
-      - name: 'Checkout Github Action'
+      - name: "Checkout Github Action"
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.AUTOMATION_PAT }}
@@ -68,49 +68,81 @@ jobs:
             - recursive: true
               args: [--frozen-lockfile, --strict-peer-dependencies]
 
-      - name: 'Calculate Next Version'
+      - name: "Calculate Next Version"
         id: version
         run: |
           npx tsx scripts/calculate-next-version.ts "${{ github.event.inputs.release_type || 'minor' }}" "${{ github.ref_name }}"
 
-      - name: 'Configure Git'
+      - name: "Configure Git"
         run: |
           git config --global user.name "release-automation-${{ github.actor }}"
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
 
-      - name: 'Create and Push Tag'
+      - name: "Create and Push Tag"
         run: |
           git tag -a ${{ steps.version.outputs.tag_name }} -m "Release ${{ steps.version.outputs.tag_name }}"
           git push origin ${{ steps.version.outputs.tag_name }}
 
-      - name: 'Generate Release Notes'
+      - name: "Generate Release Notes"
         id: release-notes
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # Get the previous tag
           PREV_TAG=$(git describe --tags --abbrev=0 ${{ steps.version.outputs.tag_name }}^ 2>/dev/null || echo "")
-          
+
           if [ -z "$PREV_TAG" ]; then
             echo "No previous tag found, this is the first release"
             RELEASE_NOTES="Initial release"
           else
             echo "Previous tag: $PREV_TAG"
+            echo "Current tag: ${{ steps.version.outputs.tag_name }}"
+            
             # Generate release notes using GitHub API
-            RELEASE_NOTES=$(gh api \
+            API_RESPONSE=$(gh api \
               --method POST \
               -H "Accept: application/vnd.github+json" \
               -H "X-GitHub-Api-Version: 2022-11-28" \
               /repos/${{ github.repository }}/releases/generate-notes \
               -f tag_name="${{ steps.version.outputs.tag_name }}" \
               -f target_commitish="${{ github.ref_name }}" \
-              -f previous_tag_name="$PREV_TAG" | jq -r .body)
+              -f previous_tag_name="$PREV_TAG" 2>/dev/null || echo '{"body": null}')
+            
+            echo "API Response: $API_RESPONSE"
+            
+            # Extract the body, with fallback for null values
+            RELEASE_NOTES=$(echo "$API_RESPONSE" | jq -r '.body // empty')
+            
+            # If the API didn't return meaningful notes, generate our own
+            if [ -z "$RELEASE_NOTES" ] || [ "$RELEASE_NOTES" = "null" ]; then
+              echo "API returned empty/null body, generating custom release notes"
+              
+              # Get commit messages between tags
+              COMMITS=$(git log $PREV_TAG..${{ steps.version.outputs.tag_name }} --oneline --pretty=format:"* %s (%h)" 2>/dev/null || echo "")
+              
+              if [ -n "$COMMITS" ]; then
+                RELEASE_NOTES="## What's Changed
+
+          $COMMITS
+
+          **Full Changelog**: https://github.com/${{ github.repository }}/compare/$PREV_TAG...${{ steps.version.outputs.tag_name }}"
+              else
+                RELEASE_NOTES="## Release ${{ steps.version.outputs.tag_name }}
+
+          This release includes updates and improvements.
+
+          **Full Changelog**: https://github.com/${{ github.repository }}/compare/$PREV_TAG...${{ steps.version.outputs.tag_name }}"
+              fi
+            fi
           fi
-          
+
+          echo "Final release notes:"
+          echo "$RELEASE_NOTES"
+
           # Save to file to handle multi-line content
           echo "$RELEASE_NOTES" > release-notes.md
 
-      - name: 'Create GitHub Release'
+      - name: "Create GitHub Release"
         id: create-release
         env:
           GITHUB_TOKEN: ${{ secrets.AUTOMATION_PAT }}
@@ -128,7 +160,7 @@ jobs:
       contents: read
       id-token: write # for Azure login
     steps:
-      - name: 'Checkout Github Action'
+      - name: "Checkout Github Action"
         uses: actions/checkout@v4
         with:
           ref: ${{ needs.create-release.outputs.tag_name }}
@@ -146,10 +178,10 @@ jobs:
             - recursive: true
               args: [--frozen-lockfile, --strict-peer-dependencies]
 
-      - name: 'Update Version in Package Files'
+      - name: "Update Version in Package Files"
         run: node scripts/update-versions.js ${{ needs.create-release.outputs.new_version }}
 
-      - name: 'Set Designer Extension VSIX aiKey in package.json'
+      - name: "Set Designer Extension VSIX aiKey in package.json"
         run: |
           jq --arg key "${{ env.AI_KEY }}" '.aiKey = $key' apps/vs-code-designer/src/package.json > tmp.json
           mv tmp.json apps/vs-code-designer/src/package.json
@@ -157,7 +189,7 @@ jobs:
       - name: Replace Placeholder with Telemetry Key
         run: sed -i "s/setInGitHubBuild/${{ env.AI_KEY }}/g" apps/vs-code-designer/src/main.ts
 
-      - name: 'Pack VSCode Designer Extension'
+      - name: "Pack VSCode Designer Extension"
         run: pnpm run vscode:designer:pack
 
       - name: Archive VSIX
@@ -167,7 +199,7 @@ jobs:
           path: |
             apps/vs-code-designer/dist/*.vsix
 
-      - name: 'Upload VSIX to Release'
+      - name: "Upload VSIX to Release"
         env:
           GITHUB_TOKEN: ${{ secrets.AUTOMATION_PAT }}
         run: |
@@ -181,12 +213,12 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TESTING_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }}
 
-      - name: 'Generate NPMRC'
+      - name: "Generate NPMRC"
         shell: bash
         run: |
           token=`az account get-access-token --resource 499b84ac-1321-427f-aa17-267ca6975798 | jq -r .accessToken`
           export ADO_TOKEN=$token
           node ./productionNpmRCCreator.js
 
-      - name: 'Publish to NPM'
+      - name: "Publish to NPM"
         run: pnpm run publish --no-git-checks --access public --tag latest
