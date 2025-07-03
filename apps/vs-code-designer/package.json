@@ -18,7 +18,6 @@
     "@microsoft/vscode-extension-logic-apps": "workspace:*",
     "@types/adm-zip": "^0.5.1",
     "@types/fs-extra": "^11.0.4",
-    "@types/mocha": "^10.0.10",
     "@types/vscode": "1.76.0",
     "@types/vscode-webview": "1.57.1",
     "@vscode/extension-telemetry": "^0.9.8",
@@ -44,13 +43,7 @@
     "yaml": "^2.7.0",
     "yaml-types": "^0.4.0",
     "yargs-parser": "21.1.1",
-    "@azure/identity": "^4.5.0",
-    "yazl": "^3.3.1",
-    "@types/chai": "^4.3.16",
-    "@types/mocha": "^10.0.10",
-    "chai": "^4.5.0",
-    "mocha": "^10.2.0",
-    "vscode-extension-tester": "^8.15.0"
+    "@azure/identity": "^4.5.0"
   },
   "private": true,
   "scripts": {
