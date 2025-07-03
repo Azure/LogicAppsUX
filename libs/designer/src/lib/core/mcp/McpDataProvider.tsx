@@ -17,7 +17,7 @@ export const McpDataProvider = (props: McpDataProviderProps) => {
   const wrapped = useContext(McpWrappedContext);
 
   if (!wrapped) {
-    throw new Error('McpDataProvider must be used inside of a McpWizardWrappedContext');
+    throw new Error('McpDataProvider must be used inside of a McpWrappedContext');
   }
 
   // TODO: initialize services in useEffect
