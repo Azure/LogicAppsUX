@@ -3,12 +3,14 @@ import resourceReducer from './resourceSlice';
 import mcpOptionsReducer from './mcpOptionsSlice';
 import operationReducer from '../operation/operationMetadataSlice';
 import connectionReducer from '../connection/connectionSlice';
+import panelReducer from '../panel/panelSlice';
 
 const rootReducer = combineReducers({
   resource: resourceReducer,
   operation: operationReducer,
   connection: connectionReducer,
   mcpOptions: mcpOptionsReducer,
+  panel: panelReducer,
 });
 
 export const setupStore = (preloadedState?: Partial<RootState>) => {
