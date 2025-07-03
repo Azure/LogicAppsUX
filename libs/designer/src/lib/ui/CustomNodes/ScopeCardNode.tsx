@@ -174,6 +174,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
         dependencies,
         loopSources,
         isScope: true,
+        isAgent: isAgent,
       },
       canDrag: !readOnly,
       collect: (monitor) => ({

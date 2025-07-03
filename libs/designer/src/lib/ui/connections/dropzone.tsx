@@ -22,6 +22,8 @@ import { useUpstreamNodes } from '../../core/state/tokens/tokenSelectors';
 import {
   useAllGraphParents,
   useGetAllOperationNodesWithin,
+  useHasUpstreamAgenticLoop,
+  useIsWithinAgenticLoop,
   useNodeDisplayName,
   useNodeMetadata,
 } from '../../core/state/workflow/workflowSelectors';
@@ -29,6 +31,8 @@ import { AllowDropTarget } from './dynamicsvgs/allowdroptarget';
 import { BlockDropTarget } from './dynamicsvgs/blockdroptarget';
 import { retrieveClipboardData } from '../../core/utils/clipboard';
 import { setEdgeContextMenuData } from '../../core/state/designerView/designerViewSlice';
+import { useIsA2AWorkflow } from '../../core/state/designerView/designerViewSelectors';
+import type { DropItem } from './helpers';
 import { canDropItem } from './helpers';
 import { useIsDraggingNode } from '../../core/hooks/useIsDraggingNode';
 import { useIsDarkMode } from '../../core/state/designerOptions/designerOptionsSelectors';
@@ -45,6 +49,7 @@ export const DropZone: React.FC<DropZoneProps> = memo(({ graphId, parentId, chil
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const isDarkMode = useIsDarkMode();
+  const isA2AWorkflow = useIsA2AWorkflow();
 
   const nodeMetadata = useNodeMetadata(removeIdTag(parentId ?? ''));
   // For subgraph nodes, we want to use the id of the scope node as the parentId to get the dependancies
@@ -56,6 +61,23 @@ export const DropZone: React.FC<DropZoneProps> = memo(({ graphId, parentId, chil
   }, [nodeMetadata, parentId]);
 
   const upstreamNodesOfChild = useUpstreamNodes(removeIdTag(childId ?? newParentId ?? ''), graphId, childId);
+  const hasUpstreamAgenticLoop = useHasUpstreamAgenticLoop(Array.from(upstreamNodesOfChild));
+
+  const isWithinAgenticLoop = useIsWithinAgenticLoop(graphId);
+
+  const preventDropItemInA2A = useMemo(() => {
+    if (!isA2AWorkflow) {
+      return false;
+    }
+    // If there's an upstream agentic loop
+    if (hasUpstreamAgenticLoop) {
+      // Allow drop only if we're within a different agentic loop (subgraph)
+      return !isWithinAgenticLoop;
+    }
+    // No upstream agentic loop, allow drop
+    return false;
+  }, [hasUpstreamAgenticLoop, isA2AWorkflow, isWithinAgenticLoop]);
+
   const immediateAncestor = useGetAllOperationNodesWithin(parentId && !containsIdTag(parentId) ? parentId : '');
   const upstreamNodes = useMemo(() => new Set([...upstreamNodesOfChild, ...immediateAncestor]), [immediateAncestor, upstreamNodesOfChild]);
   const upstreamNodesDependencies = useNodesTokenDependencies(upstreamNodes);
@@ -101,6 +123,9 @@ export const DropZone: React.FC<DropZoneProps> = memo(({ graphId, parentId, chil
   const hotkeyRef = useHotkeys(
     ['meta+v', 'ctrl+v'],
     async () => {
+      if (preventDropItemInA2A) {
+        return;
+      }
       const copiedNode = await retrieveClipboardData();
       const pasteEnabled = !!copiedNode;
       if (pasteEnabled) {
@@ -116,18 +141,22 @@ export const DropZone: React.FC<DropZoneProps> = memo(({ graphId, parentId, chil
     () => ({
       accept: 'BOX',
       drop: () => ({ graphId, parentId, childId }),
-      canDrop: (item: {
-        id: string;
-        dependencies?: string[];
-        loopSources?: string[];
-        graphId?: string;
-        isScope?: boolean;
-      }) => canDropItem(item, upstreamNodes, upstreamNodesDependencies, upstreamScopes, childId, parentId),
+      canDrop: (item: DropItem) =>
+        canDropItem(
+          item,
+          upstreamNodes,
+          upstreamNodesDependencies,
+          upstreamScopes,
+          childId,
+          parentId,
+          preventDropItemInA2A,
+          isWithinAgenticLoop
+        ),
       collect: (monitor) => ({
         canDrop: monitor.canDrop(),
       }),
     }),
-    [graphId, parentId, childId, upstreamNodes, upstreamNodesDependencies]
+    [graphId, parentId, childId, upstreamNodes, upstreamNodesDependencies, preventDropItemInA2A, isWithinAgenticLoop]
   );
 
   const parentName = useNodeDisplayName(removeIdTag(parentId ?? ''));

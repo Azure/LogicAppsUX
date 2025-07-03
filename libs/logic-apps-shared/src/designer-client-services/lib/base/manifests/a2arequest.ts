@@ -1,0 +1,39 @@
+import type { OperationManifest } from '../../../../utils/src';
+
+export default {
+  properties: {
+    iconUri:
+      'data:image/svg+xml;base64,PHN2ZyBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAzMiAzMiIgdmVyc2lvbj0iMS4xIiB2aWV3Qm94PSIwIDAgMzIgMzIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPHBhdGggZD0ibTAgMGgzMnYzMmgtMzJ6IiBmaWxsPSIjMWExYTJlIi8+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImFpR3JhZGllbnQiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjojMDBkNGZmO3N0b3Atb3BhY2l0eToxIiAvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiM5YjU5YjY7c3RvcC1vcGFjaXR5OjEiIC8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KICA8ZyBmaWxsPSJ1cmwoI2FpR3JhZGllbnQpIj4KICAgIDwhLS0gTmV1cmFsIG5ldHdvcmsgbm9kZXMgLS0+CiAgICA8Y2lyY2xlIGN4PSI4IiBjeT0iMTIiIHI9IjEuNSIvPgogICAgPGNpcmNsZSBjeD0iOCIgY3k9IjE2IiByPSIxLjUiLz4KICAgIDxjaXJjbGUgY3g9IjgiIGN5PSIyMCIgcj0iMS41Ii8+CiAgICAKICAgIDxjaXJjbGUgY3g9IjE2IiBjeT0iMTAiIHI9IjEuNSIvPgogICAgPGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iMS41Ii8+CiAgICA8Y2lyY2xlIGN4PSIxNiIgY3k9IjIyIiByPSIxLjUiLz4KICAgIAogICAgPGNpcmNsZSBjeD0iMjQiIGN5PSIxMiIgcj0iMS41Ii8+CiAgICA8Y2lyY2xlIGN4PSIyNCIgY3k9IjE2IiByPSIxLjUiLz4KICAgIDxjaXJjbGUgY3g9IjI0IiBjeT0iMjAiIHI9IjEuNSIvPgogICAgCiAgICA8IS0tIE5ldXJhbCBjb25uZWN0aW9ucyAtLT4KICAgIDxwYXRoIGQ9Ik05LjUgMTJMMTQuNSAxMCIgc3Ryb2tlPSJ1cmwoI2FpR3JhZGllbnQpIiBzdHJva2Utd2lkdGg9IjAuOCIgZmlsbD0ibm9uZSIgb3BhY2l0eT0iMC42Ii8+CiAgICA8cGF0aCBkPSJNOS41IDEyTDE0LjUgMTYiIHN0cm9rZT0idXJsKCNhaUdyYWRpZW50KSIgc3Ryb2tlLXdpZHRoPSIwLjgiIGZpbGw9Im5vbmUiIG9wYWNpdHk9IjAuNiIvPgogICAgPHBhdGggZD0iTTkuNSAxNkwxNC41IDEwIiBzdHJva2U9InVybCgjYWlHcmFkaWVudCkiIHN0cm9rZS13aWR0aD0iMC44IiBmaWxsPSJub25lIiBvcGFjaXR5PSIwLjYiLz4KICAgIDxwYXRoIGQ9Ik05LjUgMTZMMTQuNSAxNiIgc3Ryb2tlPSJ1cmwoI2FpR3JhZGllbnQpIiBzdHJva2Utd2lkdGg9IjAuOCIgZmlsbD0ibm9uZSIgb3BhY2l0eT0iMC42Ii8+CiAgICA8cGF0aCBkPSJNOS41IDE2TDE0LjUgMjIiIHN0cm9rZT0idXJsKCNhaUdyYWRpZW50KSIgc3Ryb2tlLXdpZHRoPSIwLjgiIGZpbGw9Im5vbmUiIG9wYWNpdHk9IjAuNiIvPgogICAgPHBhdGggZD0iTTkuNSAyMEwxNC41IDE2IiBzdHJva2U9InVybCgjYWlHcmFkaWVudCkiIHN0cm9rZS13aWR0aD0iMC44IiBmaWxsPSJub25lIiBvcGFjaXR5PSIwLjYiLz4KICAgIDxwYXRoIGQ9Ik05LjUgMjBMMTQuNSAyMiIgc3Ryb2tlPSJ1cmwoI2FpR3JhZGllbnQpIiBzdHJva2Utd2lkdGg9IjAuOCIgZmlsbD0ibm9uZSIgb3BhY2l0eT0iMC42Ii8+CiAgICAKICAgIDxwYXRoIGQ9Ik0xNy41IDEwTDIyLjUgMTIiIHN0cm9rZT0idXJsKCNhaUdyYWRpZW50KSIgc3Ryb2tlLXdpZHRoPSIwLjgiIGZpbGw9Im5vbmUiIG9wYWNpdHk9IjAuNiIvPgogICAgPHBhdGggZD0iTTE3LjUgMTBMMjIuNSAxNiIgc3Ryb2tlPSJ1cmwoI2FpR3JhZGllbnQpIiBzdHJva2Utd2lkdGg9IjAuOCIgZmlsbD0ibm9uZSIgb3BhY2l0eT0iMC42Ii8+CiAgICA8cGF0aCBkPSJNMTcuNSAxNkwyMi41IDEyIiBzdHJva2U9InVybCgjYWlHcmFkaWVudCkiIHN0cm9rZS13aWR0aD0iMC44IiBmaWxsPSJub25lIiBvcGFjaXR5PSIwLjYiLz4KICAgIDxwYXRoIGQ9Ik0xNy41IDE2TDIyLjUgMTYiIHN0cm9rZT0idXJsKCNhaUdyYWRpZW50KSIgc3Ryb2tlLXdpZHRoPSIwLjgiIGZpbGw9Im5vbmUiIG9wYWNpdHk9IjAuNiIvPgogICAgPHBhdGggZD0iTTE3LjUgMTZMMjIuNSAyMCIgc3Ryb2tlPSJ1cmwoI2FpR3JhZGllbnQpIiBzdHJva2Utd2lkdGg9IjAuOCIgZmlsbD0ibm9uZSIgb3BhY2l0eT0iMC42Ii8+CiAgICA8cGF0aCBkPSJNMTcuNSAyMkwyMi41IDE2IiBzdHJva2U9InVybCgjYWlHcmFkaWVudCkiIHN0cm9rZS13aWR0aD0iMC44IiBmaWxsPSJub25lIiBvcGFjaXR5PSIwLjYiLz4KICAgIDxwYXRoIGQ9Ik0xNy41IDIyTDIyLjUgMjAiIHN0cm9rZT0idXJsKCNhaUdyYWRpZW50KSIgc3Ryb2tlLXdpZHRoPSIwLjgiIGZpbGw9Im5vbmUiIG9wYWNpdHk9IjAuNiIvPgogICAgCiAgICA8IS0tIENlbnRyYWwgQUkgYnJhaW4vcHJvY2Vzc29yIC0tPgogICAgPHBhdGggZD0iTTEyIDZoOGMxLjEgMCAyIDAuOSAyIDJ2MmgtMTJ2LTJjMC0xLjEgMC45LTIgMi0yeiIvPgogICAgPHJlY3QgeD0iMTAiIHk9IjgiIHdpZHRoPSIxMiIgaGVpZ2h0PSIxIiBvcGFjaXR5PSIwLjciLz4KICAgIDxyZWN0IHg9IjEwIiB5PSI5IiB3aWR0aD0iMTIiIGhlaWdodD0iMC41IiBvcGFjaXR5PSIwLjUiLz4KICAgIAogICAgPCEtLSBCaW5hcnkgZGF0YSBzdHJlYW0gLS0+CiAgICA8dGV4dCB4PSIxMyIgeT0iMjgiIGZvbnQtZmFtaWx5PSJtb25vc3BhY2UiIGZvbnQtc2l6ZT0iMyIgb3BhY2l0eT0iMC44Ij4wMTwvdGV4dD4KICAgIDx0ZXh0IHg9IjE3IiB5PSIyOCIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSIzIiBvcGFjaXR5PSIwLjYiPjEwPC90ZXh0PgogICAgPHRleHQgeD0iMjEiIHk9IjI4IiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjMiIG9wYWNpdHk9IjAuNCI+MTE8L3RleHQ+CiAgPC9nPgo8L3N2Zz4=',
+    brandColor: '#1a1a2e',
+    summary: 'On agent HTTP request',
+    description: 'Triggers the flow when an HTTP request is received from a trusted agent or system as part of an A2A integration.',
+
+    inputs: {
+      type: 'object',
+      properties: {
+        callbackUrl: {
+          type: 'string',
+          title: 'HTTP URL',
+          description: 'URL will be generated after save',
+          'x-ms-visiblity': 'important',
+          'x-ms-editor': 'copyable',
+          'x-ms-serialization': {
+            skip: true,
+          },
+        },
+      },
+      required: [],
+    },
+    inputsLocation: ['inputs'],
+    isInputsOptional: false,
+
+    connector: {
+      id: 'connectionProviders/a2a',
+      name: 'a2aRequest',
+      properties: {
+        description: 'Operations to receive and respond to HTTP requests from trusted agents in an A2A integration.',
+        displayName: 'Agent Request',
+      },
+    } as any,
+  },
+} as OperationManifest;

@@ -1,12 +1,5 @@
 import Constants from '../constants';
 
-export function getCardStyle(brandColor?: string): React.CSSProperties {
-  return {
-    borderLeft: `4px solid ${brandColor}`,
-    borderRadius: '2px',
-  };
-}
-
 export function getHeaderStyle(brandColor?: string): React.CSSProperties | undefined {
   return brandColor ? { backgroundColor: brandColor } : undefined;
 }

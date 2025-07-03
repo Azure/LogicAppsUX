@@ -4,7 +4,6 @@ import { Tooltip, mergeClasses } from '@fluentui/react-components';
 import { replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 import { useAddActionCardStyles } from './addActionCard.styles';
-import { getCardStyle } from '../utils';
 
 export const ADD_CARD_TYPE = {
   TRIGGER: 'Trigger',
@@ -134,3 +133,10 @@ export const AddActionCard: React.FC<AddActionCardProps> = ({ addCardType, onCli
     </>
   );
 };
+
+function getCardStyle(brandColor?: string): React.CSSProperties {
+  return {
+    borderLeft: `4px solid ${brandColor}`,
+    borderRadius: '2px',
+  };
+}

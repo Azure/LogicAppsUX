@@ -1,0 +1,235 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "actions": {
+      "WorkflowAgent": {
+        "type": "Agent",
+        "inputs": {
+          "parameters": {
+            "agentModelType": "AzureOpenAI",
+            "deploymentId": "gpt-4o",
+            "messages": [
+              {
+                "role": "System",
+                "content": "This is a system message."
+              },
+              {
+                "role": "User",
+                "content": "This is a user message."
+              },
+              {
+                "role": "User",
+                "content": "You are a helpful assistant."
+              }
+            ]
+          },
+          "modelConfigurations": {
+            "model1": {
+              "referenceName": ""
+            }
+          }
+        },
+        "tools": {
+          "If_Condition_Y_Matches": {
+            "actions": {
+              "Service_Bus": {
+                "type": "connector",
+                "inputs": {
+                  "operations": "getQueues,getTopics,getTopicSubcriptions,sendMessage",
+                  "connector": "/serviceProviders/serviceBus"
+                },
+                "runAfter": {}
+              }
+            },
+            "description": "If the condition Y matches, execute this branch"
+          },
+          "If_Condition_X_Matches": {
+            "actions": {
+              "HTTP": {
+                "type": "Http",
+                "inputs": {
+                  "uri": "http://test.com",
+                  "method": "GET",
+                  "body": "@triggerBody()"
+                },
+                "runtimeConfiguration": {
+                  "contentTransfer": {
+                    "transferMode": "Chunked"
+                  }
+                }
+              },
+              "HTTP_1": {
+                "type": "Http",
+                "inputs": {
+                  "uri": "http://google.com",
+                  "method": "POST",
+                  "headers": "@agentParameters('TestParameter')",
+                  "body": "@agentParameters('Parameter1')"
+                },
+                "runAfter": {
+                  "HTTP": ["SUCCEEDED"]
+                },
+                "runtimeConfiguration": {
+                  "contentTransfer": {
+                    "transferMode": "Chunked"
+                  }
+                }
+              }
+            },
+            "description": "If the condition X matches, execute this branch",
+            "agentParameterSchema": {
+              "type": "object",
+              "properties": {
+                "TestParameter": {
+                  "type": "string",
+                  "description": "this is a string parameter"
+                },
+                "Parameter1": {
+                  "type": "boolean",
+                  "description": "this is a boolean parameter"
+                }
+              }
+            }
+          }
+        },
+        "runAfter": {},
+        "limit": {
+          "count": 100,
+          "timeout": "PT1H"
+        }
+      },
+      "Another_Agent": {
+        "type": "Agent",
+        "inputs": {
+          "parameters": {
+            "agentModelType": "AzureOpenAI",
+            "deploymentId": "gpt-4o",
+            "messages": [
+              {
+                "role": "system",
+                "content": "This is the best system message."
+              },
+              {
+                "role": "user",
+                "content": "test user messsage"
+              },
+              {
+                "role": "user",
+                "content": "You are a helpful assistant."
+              }
+            ],
+            "agentModelSettings": {
+              "agentChatCompletionSettings": {
+                "temperature": 2
+              }
+            }
+          },
+          "modelConfigurations": {
+            "model1": {
+              "referenceName": ""
+            }
+          }
+        },
+        "tools": {
+          "If_Condition_Y_Matches_1": {
+            "actions": {
+              "Current_time": {
+                "type": "Expression",
+                "kind": "CurrentTime",
+                "inputs": {}
+              },
+              "Response": {
+                "type": "Response",
+                "kind": "Http",
+                "inputs": {
+                  "statusCode": 200,
+                  "body": "@{body('Current_time')}@{agentParameters('Response Content')}"
+                },
+                "runAfter": {
+                  "Current_time": ["SUCCEEDED"]
+                }
+              }
+            },
+            "description": "If the condition Y matches, execute this branch",
+            "agentParameterSchema": {
+              "type": "object",
+              "properties": {
+                "Response Content": {
+                  "type": "string",
+                  "description": "Response content"
+                }
+              },
+              "required": ["Response Content"]
+            }
+          },
+          "If_Condition_X_Matches_1": {
+            "actions": {
+              "HTTP_2": {
+                "type": "Http",
+                "inputs": {
+                  "uri": "http://test.com",
+                  "method": "GET",
+                  "body": "@triggerBody()"
+                },
+                "runtimeConfiguration": {
+                  "contentTransfer": {
+                    "transferMode": "Chunked"
+                  }
+                }
+              },
+              "HTTP_3": {
+                "type": "Http",
+                "inputs": {
+                  "uri": "http://google.com",
+                  "method": "POST",
+                  "headers": "@agentParameters('TestParameter')",
+                  "body": "@agentParameters('Parameter1')"
+                },
+                "runAfter": {
+                  "HTTP_2": ["SUCCEEDED"]
+                },
+                "runtimeConfiguration": {
+                  "contentTransfer": {
+                    "transferMode": "Chunked"
+                  }
+                }
+              }
+            },
+            "description": "If the condition X matches, execute this branch",
+            "agentParameterSchema": {
+              "type": "object",
+              "properties": {
+                "TestParameter": {
+                  "type": "string",
+                  "description": "this is a string parameter"
+                },
+                "Parameter1": {
+                  "type": "boolean",
+                  "description": "this is a boolean parameter"
+                }
+              },
+              "required": ["TestParameter", "Parameter1"]
+            }
+          }
+        },
+        "runAfter": {
+          "WorkflowAgent": ["SUCCEEDED"]
+        },
+        "limit": {
+          "count": 100,
+          "timeout": "PT1H"
+        }
+      }
+    },
+    "contentVersion": "1.0.0.0",
+    "outputs": {},
+    "parameters": {},
+    "triggers": {
+      "When_a_HTTP_request_is_received": {
+        "type": "Request",
+        "kind": "Agent"
+      }
+    }
+  },
+  "kind": "Agent"
+}

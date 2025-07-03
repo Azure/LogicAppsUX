@@ -46,7 +46,6 @@ export * from './flyout';
 export * from './flyout2';
 export * from './html';
 export * from './identitydropdown';
-export * from './imagewithfallback';
 export * from './infoDot';
 export * from './label';
 export * from './modals';

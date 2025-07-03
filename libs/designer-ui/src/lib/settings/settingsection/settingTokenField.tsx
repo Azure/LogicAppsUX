@@ -30,12 +30,11 @@ import { FloatingActionMenuInputs } from '../../floatingactionmenu/floatingactio
 import { FloatingActionMenuOutputs } from '../../floatingactionmenu/floatingactionmenuoutputs';
 import { HTMLEditor } from '../../html';
 import { Label } from '../../label';
-import { MixedInputEditor } from '../../mixedinputeditor/mixedinputeditor';
 import type { PickerCallbackHandlers } from '../../picker/filepickerEditor';
 import { FilePickerEditor } from '../../picker/filepickerEditor';
 import { QueryBuilderEditor } from '../../querybuilder';
-import { HybridQueryBuilderEditor } from '../../querybuilder/HybridQueryBuilder';
 import { SimpleQueryBuilder } from '../../querybuilder/SimpleQueryBuilder';
+import { HybridQueryBuilderEditor } from '../../querybuilder/HybridQueryBuilder';
 import { ScheduleEditor } from '../../recurrence';
 import { SchemaEditor } from '../../schemaeditor';
 import type { SettingProps } from './';
@@ -465,6 +464,7 @@ export const TokenField = ({
           getTokenPicker={getTokenPicker}
           onChange={onValueChange}
           dataAutomationId={`msla-setting-token-editor-htmleditor-${labelForAutomationId}`}
+          valueType={constants.SWAGGER.TYPE.ANY}
         />
       );
 
@@ -524,18 +524,6 @@ export const TokenField = ({
           loadParameterValueFromString={loadParameterValueFromString}
         />
       );
-
-    case constants.PARAMETER.EDITOR.MIXEDINPUTEDITOR: {
-      return (
-        <MixedInputEditor
-          supportedTypes={editorOptions?.supportedTypes}
-          useStaticInputs={editorOptions?.useStaticInputs}
-          initialValue={value}
-          isRequestApiConnectionTrigger={editorOptions?.isRequestApiConnectionTrigger}
-          onChange={onValueChange ?? (() => {})}
-        />
-      );
-    }
 
     default:
       return (

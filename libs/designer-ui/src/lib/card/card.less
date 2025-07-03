@@ -1,13 +1,13 @@
-@import (reference) '../variables.less';
-@import './config/config.less';
-@import './connectiontypeselector/connectiontypeselector.less';
-@import '../selector/listitem.less';
-@import '../flyout/flyout.less';
-@import './parameters/parameters.less';
-@import './function/function.less';
-@import './graphContainer/graphContainer.less';
-@import './collapsedCard/collapsedCard.less';
-@import './scopeCard/scopeCard.less';
+@import (reference) "../variables.less";
+@import "./config/config.less";
+@import "./connectiontypeselector/connectiontypeselector.less";
+@import "../selector/listitem.less";
+@import "../flyout/flyout.less";
+@import "./parameters/parameters.less";
+@import "./function/function.less";
+@import "./graphContainer/graphContainer.less";
+@import "./collapsedCard/collapsedCard.less";
+@import "./scopeCard/scopeCard.less";
 
 .msla-card-loading {
   font-family: @font-family;
@@ -106,7 +106,8 @@
 .msla-panel-card-container {
   border: 1px solid #c8c6c4;
   box-sizing: border-box;
-  box-shadow: 0 0.3px 0.9px rgba(0, 0, 0, 0.1), 0 1.6px 3.6px rgba(0, 0, 0, 0.13);
+  box-shadow: 0 0.3px 0.9px rgba(0, 0, 0, 0.1),
+    0 1.6px 3.6px rgba(0, 0, 0, 0.13);
   font-size: 12px;
   border-radius: 2px;
   width: @panel-mode-card-width;
@@ -124,7 +125,8 @@
 
   &:focus,
   &:hover {
-    box-shadow: 0 1.2px 3.6px rgba(0, 0, 0, 0.1), 0 6.4px 14.4px rgba(0, 0, 0, 0.13) !important;
+    box-shadow: 0 1.2px 3.6px rgba(0, 0, 0, 0.1),
+      0 6.4px 14.4px rgba(0, 0, 0, 0.13) !important;
 
     .panel-card-content-gripper-section {
       visibility: visible;
@@ -135,14 +137,16 @@
   }
 
   &.msla-panel-card-container-selected {
-    box-shadow: 0 0.3px 0.9px rgba(0, 0, 0, 0.1), 0 1.6px 3.6px rgba(0, 0, 0, 0.13);
+    box-shadow: 0 0.3px 0.9px rgba(0, 0, 0, 0.1),
+      0 1.6px 3.6px rgba(0, 0, 0, 0.13);
   }
 
   &.dragging {
     cursor: grabbing;
     opacity: 0.6;
     outline: none;
-    box-shadow: 0 1.2px 3.6px rgba(0, 0, 0, 0.1), 0 6.4px 14.4px rgba(0, 0, 0, 0.13);
+    box-shadow: 0 1.2px 3.6px rgba(0, 0, 0, 0.1),
+      0 6.4px 14.4px rgba(0, 0, 0, 0.13);
 
     .panel-card-content-gripper-section {
       visibility: hidden;
@@ -154,7 +158,8 @@
     pointer-events: none;
     opacity: 100%;
     z-index: 12;
-    box-shadow: 0 1.2px 3.6px rgba(0, 0, 0, 0.1), 0px 12px 40px rgba(0, 0, 0, 0.24);
+    box-shadow: 0 1.2px 3.6px rgba(0, 0, 0, 0.1),
+      0px 12px 40px rgba(0, 0, 0, 0.24);
 
     .panel-card-content-gripper-section {
       visibility: visible;
@@ -319,7 +324,8 @@
 .msla-panel-card-container--no-action {
   border: 1px dashed #c8c6c4;
   box-sizing: border-box;
-  box-shadow: 0 0.3px 0.9px rgba(0, 0, 0, 0.1), 0 1.6px 3.6px rgba(0, 0, 0, 0.13);
+  box-shadow: 0 0.3px 0.9px rgba(0, 0, 0, 0.1),
+    0 1.6px 3.6px rgba(0, 0, 0, 0.13);
   font-size: 12px;
   border-radius: 2px;
   width: @panel-mode-card-width;
@@ -389,7 +395,6 @@
 }
 
 .msla-theme-dark {
-
   .msla-panel-card-container {
     background-color: @ms-color-primaryBackground;
     border: 1px solid @ms-color-primaryBorder;
@@ -402,11 +407,11 @@
       background-color: @ms-color-primaryBackgroundHover;
     }
 
-		&:focus {
-			.msla-selection-box {
-				border: 2px solid #ffffff;
-			}
-		}
+    &:focus {
+      .msla-selection-box {
+        border: 2px solid #ffffff;
+      }
+    }
   }
 
   .msla-panel-card-container--no-action {
@@ -443,13 +448,13 @@
 }
 
 .msla-badge-spinner {
-	width: 20px;
-	height: 20px;
-	
-	.fui-Spinner__spinner {
-		width: 12px;
-		height: 12px;
-	}
+  width: 20px;
+  height: 20px;
+
+  .fui-Spinner__spinner {
+    width: 12px;
+    height: 12px;
+  }
 }
 
 .msla-theme-dark {
@@ -510,4 +515,12 @@
       color: #69afe5;
     }
   }
+}
+
+.msla-panel-card-container.msla-card-subtle-background {
+  background-color: fade(@brandColor, 90%);
+}
+
+.msla-theme-dark .msla-panel-card-container.msla-card-subtle-background {
+  background-color: darken(@brandColor, 10%);
 }

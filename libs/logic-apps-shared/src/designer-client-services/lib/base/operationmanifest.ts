@@ -34,6 +34,7 @@ import joinManifest from './manifests/join';
 import parsejsonManifest from './manifests/parsejson';
 import queryManifest from './manifests/query';
 import requestManifest from './manifests/request';
+import a2aRequestManifest from './manifests/a2arequest';
 import responseManifest from './manifests/response';
 import { delayManifest, delayUntilManifest, recurrenceManifest, slidingWindowManifest } from './manifests/schedule';
 import scopeManifest from './manifests/scope';
@@ -84,6 +85,7 @@ const condition = 'if';
 const switchType = 'switch';
 export const agentType = 'agent';
 const request = 'request';
+const a2arequest = 'a2arequest';
 const response = 'response';
 const table = 'table';
 const terminate = 'terminate';
@@ -184,6 +186,7 @@ export const supportedBaseManifestTypes = [
   query,
   recurrence,
   request,
+  a2arequest,
   response,
   rosettanetdecode,
   rosettanetencode,
@@ -320,6 +323,7 @@ export function isBuiltInOperation(definition: any): boolean {
     case query:
     case recurrence:
     case request:
+    case a2arequest:
     case response:
     case select:
     case sendtobatch:
@@ -446,6 +450,11 @@ export function getBuiltInOperationInfo(definition: any, isTrigger: boolean): Op
           return {
             connectorId: 'connectionProviders/request',
             operationId: request,
+          };
+        case 'agent':
+          return {
+            connectorId: 'connectionProviders/a2a',
+            operationId: a2arequest,
           };
         default: {
           if (kind === undefined) {
@@ -785,6 +794,7 @@ export const supportedBaseManifestObjects = new Map<string, OperationManifest>([
   [query, queryManifest],
   [recurrence, recurrenceManifest],
   [request, requestManifest],
+  [a2arequest, a2aRequestManifest],
   [response, responseManifest],
   [scope, scopeManifest],
   [select, selectManifest],

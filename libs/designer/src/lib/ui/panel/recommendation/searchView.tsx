@@ -88,7 +88,7 @@ export const SearchView: FC<SearchViewProps> = ({
         if (!shouldEnableNestedAgent) {
           return false;
         }
-        if (!isWithinAgenticLoop) {
+        if (!(isWithinAgenticLoop || isAgentTool)) {
           return false;
         }
         return true;
