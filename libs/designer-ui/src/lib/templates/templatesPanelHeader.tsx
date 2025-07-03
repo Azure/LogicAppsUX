@@ -1,6 +1,7 @@
 import { Link, Text } from '@fluentui/react-components';
 import { ArrowLeft16Filled } from '@fluentui/react-icons';
 import { useIntl } from 'react-intl';
+import { useStyles } from './templatesPanelHeader.styles';
 
 export interface TemplatesPanelHeaderProps {
   title: string;
@@ -11,21 +12,18 @@ export interface TemplatesPanelHeaderProps {
 
 export const TemplatesPanelHeader = ({ title, onBackClick, children, rightAction }: TemplatesPanelHeaderProps) => {
   const intl = useIntl();
+  const styles = useStyles();
+
   return (
-    <div className="msla-templates-panel-header">
-      <div
-        className="msla-templates-panel-header-title-section"
-        style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px' }}
-      >
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: 1 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px' }}>
-            <Text className="msla-templates-panel-header-title" style={{ flex: 1 }}>
-              {title}
-            </Text>
-            {rightAction && <div style={{ flexShrink: 0 }}>{rightAction}</div>}
+    <div className={styles.header}>
+      <div className={styles.titleSection}>
+        <div className={styles.titleWrapper}>
+          <div className={styles.titleRow}>
+            <Text className={styles.title}>{title}</Text>
+            {rightAction && <div className={styles.rightActionWrapper}>{rightAction}</div>}
           </div>
           {onBackClick && (
-            <Link as="button" className="msla-templates-panel-header-back-button" onClick={onBackClick}>
+            <Link as="button" className={styles.backButton} onClick={onBackClick}>
               <ArrowLeft16Filled />
               {intl.formatMessage({
                 defaultMessage: 'Back to template library',

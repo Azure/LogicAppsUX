@@ -13,6 +13,7 @@ import { closePanel, TemplatePanelView } from '../../../../core/state/templates/
 import { clearTemplateDetails } from '../../../../core/state/templates/templateSlice';
 import { isMultiWorkflowTemplate } from '../../../../core/actions/bjsworkflow/templates';
 import { useTemplatesStrings } from '../../../templates/templatesStrings';
+import { useStyles, panelStyles } from './quickViewPanel.styles';
 
 export interface QuickViewPanelProps {
   showCreate: boolean;
@@ -106,7 +107,7 @@ export const QuickViewPanel = ({
 
   return (
     <Panel
-      styles={{ main: { padding: '0 20px', zIndex: 1000 }, content: { paddingLeft: '0px' } }}
+      styles={panelStyles}
       isLightDismiss={shouldCloseByDefault}
       type={PanelType.custom}
       customWidth={panelWidth}
@@ -144,6 +145,7 @@ export const QuickViewPanelHeader = ({
 }) => {
   const intl = useIntl();
   const { resourceStrings } = useTemplatesStrings();
+  const styles = useStyles();
 
   const detailsTags: Record<string, string> = useMemo(() => {
     const baseDetailsTags: Record<string, string> = isMultiWorkflowTemplate
@@ -161,7 +163,7 @@ export const QuickViewPanelHeader = ({
   }, [isMultiWorkflowTemplate, intl, resourceStrings.BY]);
 
   const closeButton = onClose ? (
-    <Button appearance="subtle" icon={<Dismiss24Regular />} onClick={onClose} style={{ minWidth: 'auto', flexShrink: 0 }}>
+    <Button appearance="subtle" icon={<Dismiss24Regular />} onClick={onClose} className={styles.closeButton}>
       {intl.formatMessage({
         defaultMessage: 'Close Panel',
         id: 'XV/4oe',

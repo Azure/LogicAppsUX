@@ -13,6 +13,7 @@ import { isMultiWorkflowTemplate } from '../../../../core/actions/bjsworkflow/te
 import type { CreateWorkflowHandler } from '../../../templates';
 import { useExistingWorkflowNames } from '../../../../core/queries/template';
 import { clearTemplateDetails } from '../../../../core/state/templates/templateSlice';
+import { useStyles, panelStyles } from './createWorkflowPanel.styles';
 
 export interface CreateWorkflowTabProps {
   isCreating: boolean;
@@ -127,7 +128,7 @@ export const CreateWorkflowPanel = ({
 
   return (
     <Panel
-      styles={{ main: { padding: '0 20px', zIndex: 1000 }, content: { paddingLeft: '0px' } }}
+      styles={panelStyles}
       isLightDismiss={shouldCloseByDefault}
       type={PanelType.custom}
       customWidth={panelWidth}
@@ -152,6 +153,7 @@ export const CreateWorkflowPanelHeader = ({
 }: { title: string; summary: string; headerTitle?: string; onClose?: () => void }) => {
   const [isOpen, setIsOpen] = useState(false);
   const intl = useIntl();
+  const styles = useStyles();
 
   const intlText = {
     CREATE_WORKFLOW: intl.formatMessage({
@@ -177,7 +179,7 @@ export const CreateWorkflowPanelHeader = ({
   };
 
   const closeButton = onClose ? (
-    <Button appearance="subtle" icon={<Dismiss24Regular />} onClick={onClose} style={{ minWidth: 'auto', flexShrink: 0 }}>
+    <Button appearance="subtle" icon={<Dismiss24Regular />} onClick={onClose} className={styles.closeButton}>
       {intl.formatMessage({
         defaultMessage: 'Close Panel',
         id: 'XV/4oe',
