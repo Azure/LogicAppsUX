@@ -32,17 +32,23 @@ export const OperationSearchGroup = ({
     description: 'Text to select for more connector information',
   });
 
+  const viewConnectorText = intl.formatMessage({
+    defaultMessage: 'See connector',
+    id: '7hqkG9',
+    description: 'Text to select to view connector operations',
+  });
+
   return (
     <div style={{ position: 'relative' }}>
       <div className={styles.header}>
-        <OperationGroupHeaderNew connector={operationApi} />
+        <OperationGroupHeaderNew connector={operationApi} onConnectorClick={onConnectorClick} />
         <Button
           className={styles.seeMoreButton}
           style={{ padding: 0, justifyContent: 'flex-end' }}
           appearance="transparent"
           onClick={() => onConnectorClick(id)}
         >
-          {seeMoreText}
+          {operationActionsData.length > maxOperationsToDisplay ? seeMoreText : viewConnectorText}
         </Button>
       </div>
       <BrowseGrid
