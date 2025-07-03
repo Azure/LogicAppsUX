@@ -20,9 +20,16 @@ const fileOptions = [
   // Agent
   { key: 'divider_1', text: '-', itemType: DropdownMenuItemType.Divider },
   { key: 'AgentHeader', text: 'Agentic Workflows', itemType: DropdownMenuItemType.Header },
-  { key: 'BlankAgent.json', text: 'Empty Agent' },
-  { key: 'Agent.json', text: 'Starter Agent' },
+  { key: 'BlankAgent.json', text: 'Starter Agent' },
+  { key: 'Agent.json', text: 'Simple Agent' },
   { key: 'AgentWithChannels.json', text: 'Agent with Channels' },
+  { key: 'BlankAgents.json', text: 'New A2A Agent' },
+  { key: 'Agents.json', text: 'A2A Agent' },
+
+  // A2A
+  { key: 'divider_A2A', text: '-', itemType: DropdownMenuItemType.Divider },
+  { key: 'A2AHeader', text: 'A2A Workflows', itemType: DropdownMenuItemType.Header },
+  { key: 'LoopTest.json', text: 'Loop Test' },
 
   // Scope Nodes
   { key: 'divider_2', text: '-', itemType: DropdownMenuItemType.Divider },

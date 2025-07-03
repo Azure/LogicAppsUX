@@ -35,7 +35,7 @@ export const OperationSearchGroup = ({
   return (
     <div style={{ position: 'relative' }}>
       <div className={styles.header}>
-        <OperationGroupHeaderNew connector={operationApi} />
+        <OperationGroupHeaderNew connector={operationApi} onConnectorClick={onConnectorClick} />
         <Button
           className={styles.seeMoreButton}
           style={{ padding: 0, justifyContent: 'flex-end' }}
