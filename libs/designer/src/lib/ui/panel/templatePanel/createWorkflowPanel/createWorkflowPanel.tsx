@@ -5,15 +5,14 @@ import { type TemplateTabProps, TemplateContent, TemplatesPanelFooter, Templates
 import { ChevronDown16Regular, ChevronUp16Regular, Dismiss24Regular } from '@fluentui/react-icons';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { Text, Button } from '@fluentui/react-components';
-import { Label, Panel, PanelType } from '@fluentui/react';
+import { Text, Button, Label, Drawer, DrawerBody, DrawerHeader, DrawerFooter } from '@fluentui/react-components';
 import Markdown from 'react-markdown';
 import { useCreateWorkflowPanelTabs } from './usePanelTabs';
 import { isMultiWorkflowTemplate } from '../../../../core/actions/bjsworkflow/templates';
 import type { CreateWorkflowHandler } from '../../../templates';
 import { useExistingWorkflowNames } from '../../../../core/queries/template';
 import { clearTemplateDetails } from '../../../../core/state/templates/templateSlice';
-import { useStyles, getPanelStyles } from './createWorkflowPanel.styles';
+import { useStyles } from './createWorkflowPanel.styles';
 
 export interface CreateWorkflowTabProps {
   isCreating: boolean;
@@ -33,11 +32,6 @@ export interface CreateWorkflowPanelProps {
   showCloseButton?: boolean;
   onClose?: () => void;
 }
-
-const layerProps = {
-  hostId: 'msla-layer-host',
-  eventBubblingEnabled: true,
-};
 
 export const CreateWorkflowPanel = ({
   createWorkflow,
@@ -121,27 +115,28 @@ export const CreateWorkflowPanel = ({
   );
 
   const selectedTabProps = selectedTabId ? panelTabs?.find((tab) => tab.id === selectedTabId) : panelTabs[0];
-  const onRenderFooterContent = useCallback(
-    () => (selectedTabProps?.footerContent ? <TemplatesPanelFooter {...selectedTabProps?.footerContent} /> : null),
-    [selectedTabProps?.footerContent]
-  );
+
+  const styles = useStyles();
 
   return (
-    <Panel
-      styles={getPanelStyles()}
-      isLightDismiss={shouldCloseByDefault}
-      type={PanelType.custom}
-      customWidth={panelWidth}
-      isOpen={isOpen && currentPanelView === TemplatePanelView.CreateWorkflow}
-      onDismiss={shouldCloseByDefault ? dismissPanel : undefined}
-      hasCloseButton={false}
-      onRenderHeader={onRenderHeaderContent}
-      onRenderFooterContent={onRenderFooterContent}
-      layerProps={layerProps}
-      isFooterAtBottom={true}
+    <Drawer
+      className={styles.drawer}
+      modalType={shouldCloseByDefault ? 'modal' : 'non-modal'}
+      open={isOpen && currentPanelView === TemplatePanelView.CreateWorkflow}
+      onOpenChange={(_, { open }) => !open && shouldCloseByDefault && dismissPanel()}
+      position="end"
+      style={{ width: panelWidth }}
     >
-      <TemplateContent tabs={panelTabs} selectedTab={selectedTabId ?? panelTabs?.[0]?.id} selectTab={handleSelectTab} />
-    </Panel>
+      <DrawerHeader className={styles.header}>{onRenderHeaderContent()}</DrawerHeader>
+      <DrawerBody className={styles.body}>
+        <TemplateContent tabs={panelTabs} selectedTab={selectedTabId ?? panelTabs?.[0]?.id} selectTab={handleSelectTab} />
+      </DrawerBody>
+      {selectedTabProps?.footerContent && (
+        <DrawerFooter className={styles.footer}>
+          <TemplatesPanelFooter {...selectedTabProps.footerContent} />
+        </DrawerFooter>
+      )}
+    </Drawer>
   );
 };
 
@@ -191,23 +186,23 @@ export const CreateWorkflowPanelHeader = ({
   return (
     <TemplatesPanelHeader title={headerTitle ?? intlText.CREATE_WORKFLOW} rightAction={closeButton}>
       <div
-        className="msla-template-createworkflow-title"
+        className={styles.templateDetailsToggle}
         onClick={() => {
           setIsOpen(!isOpen);
         }}
       >
-        <Text className="msla-template-createworkflow-title-text">{intlText.TEMPLATE_DETAILS}</Text>
+        <Text className={styles.templateDetailsToggleText}>{intlText.TEMPLATE_DETAILS}</Text>
         {isOpen ? <ChevronUp16Regular /> : <ChevronDown16Regular />}
       </div>
       {isOpen && (
-        <div className="msla-template-createworkflow-description-wrapper">
-          <div className="msla-template-createworkflow-description">
-            <Label className="msla-template-createworkflow-description-title">{intlText.NAME}</Label>
-            <Text className="msla-template-createworkflow-description-text">{title}</Text>
+        <div className={styles.descriptionWrapper}>
+          <div className={styles.descriptionRow}>
+            <Label className={styles.descriptionTitle}>{intlText.NAME}</Label>
+            <Text className={styles.descriptionText}>{title}</Text>
           </div>
-          <div className="msla-template-createworkflow-description">
-            <Label className="msla-template-createworkflow-description-title">{intlText.DESCRIPTION}</Label>
-            <Markdown className="msla-template-createworkflow-description-text" linkTarget="_blank">
+          <div className={styles.descriptionRow}>
+            <Label className={styles.descriptionTitle}>{intlText.DESCRIPTION}</Label>
+            <Markdown className={styles.descriptionText} linkTarget="_blank">
               {summary}
             </Markdown>
           </div>
