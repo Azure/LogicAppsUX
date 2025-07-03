@@ -4,7 +4,7 @@ import { closePanel, selectPanelTab, TemplatePanelView } from '../../../../core/
 import { type TemplateTabProps, TemplateContent, TemplatesPanelFooter, TemplatesPanelHeader } from '@microsoft/designer-ui';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
-import { Panel, PanelType } from '@fluentui/react';
+import { Drawer, DrawerBody, DrawerHeader, DrawerFooter, makeStyles, shorthands, tokens } from '@fluentui/react-components';
 import { useConfigureWorkflowPanelTabs } from './usePanelTabs';
 import type { WorkflowTemplateData } from '../../../../core';
 import type { Template } from '@microsoft/logic-apps-shared';
@@ -22,10 +22,23 @@ export interface ConfigureWorkflowsTabProps {
   selectedWorkflowsList: Record<string, Partial<WorkflowTemplateData>>;
 }
 
-const layerProps = {
-  hostId: 'msla-layer-host',
-  eventBubblingEnabled: true,
-};
+const useStyles = makeStyles({
+  drawer: {
+    zIndex: 1000,
+    height: '100%',
+    width: '50%',
+  },
+  header: {
+    ...shorthands.padding('0', tokens.spacingHorizontalL),
+  },
+  body: {
+    ...shorthands.padding('0', tokens.spacingHorizontalL),
+    overflow: 'auto',
+  },
+  footer: {
+    ...shorthands.padding(tokens.spacingVerticalM, tokens.spacingHorizontalL),
+  },
+});
 
 export const ConfigureWorkflowsPanel = ({ onSave }: { onSave?: (isMultiWorkflow: boolean) => void }) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -67,26 +80,25 @@ export const ConfigureWorkflowsPanel = ({ onSave }: { onSave?: (isMultiWorkflow:
 
   const panelTabs: TemplateTabProps[] = useConfigureWorkflowPanelTabs({ onSave, onClose: dismissPanel });
   const selectedTabProps = selectedTabId ? panelTabs?.find((tab) => tab.id === selectedTabId) : panelTabs[0];
-  const onRenderFooterContent = useCallback(
-    () => (selectedTabProps?.footerContent ? <TemplatesPanelFooter {...selectedTabProps?.footerContent} /> : null),
-    [selectedTabProps?.footerContent]
-  );
+  const styles = useStyles();
 
   return (
-    <Panel
-      styles={{ main: { padding: '0 20px', zIndex: 1000 }, content: { paddingLeft: '0px' } }}
-      isLightDismiss={false}
-      type={PanelType.custom}
-      customWidth={'50%'}
-      isOpen={isOpen && currentPanelView === TemplatePanelView.ConfigureWorkflows}
-      onDismiss={dismissPanel}
-      onRenderHeader={onRenderHeaderContent}
-      onRenderFooterContent={onRenderFooterContent}
-      hasCloseButton={true}
-      layerProps={layerProps}
-      isFooterAtBottom={true}
+    <Drawer
+      className={styles.drawer}
+      modalType="non-modal"
+      open={isOpen && currentPanelView === TemplatePanelView.ConfigureWorkflows}
+      onOpenChange={(_, { open }) => !open && dismissPanel()}
+      position="end"
     >
-      <TemplateContent tabs={panelTabs} selectedTab={selectedTabId ?? panelTabs?.[0]?.id} selectTab={handleSelectTab} />
-    </Panel>
+      <DrawerHeader className={styles.header}>{onRenderHeaderContent()}</DrawerHeader>
+      <DrawerBody className={styles.body}>
+        <TemplateContent tabs={panelTabs} selectedTab={selectedTabId ?? panelTabs?.[0]?.id} selectTab={handleSelectTab} />
+      </DrawerBody>
+      {selectedTabProps?.footerContent && (
+        <DrawerFooter className={styles.footer}>
+          <TemplatesPanelFooter {...selectedTabProps.footerContent} />
+        </DrawerFooter>
+      )}
+    </Drawer>
   );
 };
