@@ -1,5 +1,4 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
-import type {} from 'redux-thunk';
 import workflowReducer from './workflowSlice';
 import mcpReducer from './mcpSlice';
 import mcpOptionsReducer from './mcpOptionsSlice';
