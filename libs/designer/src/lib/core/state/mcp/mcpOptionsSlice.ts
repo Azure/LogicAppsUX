@@ -3,12 +3,12 @@ import { createSlice, isAnyOf } from '@reduxjs/toolkit';
 import { setInitialData, setLocation, setResourceGroup, setSubscription } from './workflowSlice';
 import { resetMcpState } from '../global';
 
-export interface TemplateOptionsState {
+export interface McpOptionsState {
   servicesInitialized: boolean;
   reInitializeServices?: boolean;
 }
 
-const initialState: TemplateOptionsState = {
+const initialState: McpOptionsState = {
   servicesInitialized: false,
 };
 
@@ -26,7 +26,7 @@ export const mcpOptionsSlice = createSlice({
       state.reInitializeServices = !!action.payload.reloadServices;
     });
     // TODO: after the services initialization is implemented
-    // builder.addMatcher(isAnyOf(initializeTemplateServices.fulfilled, initializeConfigureTemplateServices.fulfilled), (state, action) => {
+    // builder.addMatcher(isAnyOf(initializeMcpServices.fulfilled, initializeMcpServices.fulfilled), (state, action) => {
     //   state.servicesInitialized = action.payload;
     // });
     builder.addMatcher(isAnyOf(setSubscription, setResourceGroup, setLocation), (state, action) => {

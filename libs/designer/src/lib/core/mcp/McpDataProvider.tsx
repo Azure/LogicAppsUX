@@ -1,6 +1,6 @@
 import type React from 'react';
 import { useContext, useEffect } from 'react';
-import type { ResourceDetails } from '../state/templates/workflowSlice';
+import type { ResourceDetails } from '../state/mcp/workflowSlice';
 import { McpWrappedContext } from './McpWizardContext';
 import { useDispatch } from 'react-redux';
 import type { AppDispatch } from '../state/mcp/store';
