@@ -30,6 +30,8 @@ const fileOptions = [
   { key: 'divider_A2A', text: '-', itemType: DropdownMenuItemType.Divider },
   { key: 'A2AHeader', text: 'A2A Workflows', itemType: DropdownMenuItemType.Header },
   { key: 'LoopTest.json', text: 'Loop Test' },
+  { key: 'LoopingA2A.json', text: 'Looping A2A' },
+  // { key: 'HandoffA2A.json', text: 'Handoff A2A' }, // Will enable when handoff is supported
 
   // Scope Nodes
   { key: 'divider_2', text: '-', itemType: DropdownMenuItemType.Divider },

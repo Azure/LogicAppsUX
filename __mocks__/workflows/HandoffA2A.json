@@ -1,0 +1,294 @@
+{
+	"definition": {
+		"$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+		"actions": {
+			"InitialState": {
+				"type": "initializeVariable",
+				"inputs": {
+					"variables": [
+						{
+							"name": "state",
+							"type": "string",
+							"value": "TriageAgent"
+						},
+						{
+							"name": "inputs",
+							"type": "object",
+							"value": {
+								"content": "Place an order for 3 units of ACME one"
+							}
+						}
+					]
+				},
+				"runAfter": {}
+			},
+			"TriageAgent": {
+				"type": "Agent",
+				"limit": {
+					"timeout": "PT1H",
+					"count": 10
+				},
+				"inputs": {
+					"parameters": {
+						"deploymentId": "Gpt-4o",
+						"agentModelType": "AzureOpenAI",
+						"messages": [
+							{
+								"role": "System",
+								"content": "You are a triage agent for ACME Inc who is responsible for deciding which agent should handle a given user message. Invoke the right hand-off tool based on the decision"
+							}
+						],
+						"agentModelSettings": {
+							"agentChatCompletionSettings": {
+								"maxTokens": 3000,
+								"frequencyPenalty": 0.1,
+								"presencePenalty": 0.1,
+								"temperature": 0.1,
+								"topP": 0.1
+							},
+							"agentHistoryReductionSettings": {
+								"agentHistoryReductionType": "messageCountReduction",
+								"messageCountLimit": 50
+							}
+						}
+					},
+					"modelConfigurations": {
+						"model1": {
+							"referenceName": "agent"
+						}
+					}
+				},
+				"tools": {
+					"handoff_from_triage_to_sales_agent": {
+						"description": "Hand off to sales agent who can fulfill sales requests such as ordering a product.",
+						"actions": {
+							"handoff_from_triage_to_sales": {
+								"type": "AgentHandOff",
+								"inputs": {
+									"name": "SalesAgent"
+								}
+							}
+						}
+					},
+					"handoff_from_triage_to_refund_agent": {
+						"description": "Hand off to refund agent who can fulfill refund requests.",
+						"actions": {
+							"handoff_from_triage_to_refund": {
+								"type": "AgentHandOff",
+								"inputs": {
+									"name": "RefundAgent"
+								}
+							}
+						}
+					}
+				},
+				"runAfter": {
+					"InitialState": [
+						"SUCCEEDED"
+					]
+				}
+			},
+			"SalesAgent": {
+				"type": "Agent",
+				"limit": {
+					"timeout": "PT1H",
+					"count": 10
+				},
+				"inputs": {
+					"parameters": {
+						"deploymentId": "Gpt-4o",
+						"agentModelType": "AzureOpenAI",
+						"messages": [
+							{
+								"role": "System",
+								"content": "You are a sales agent for ACME Inc. Perform the given task or answer questions. Once the given task is done, call the hand off tool to hand off the the triage agent."
+							}
+						],
+						"agentModelSettings": {
+							"agentChatCompletionSettings": {
+								"maxTokens": 3000,
+								"frequencyPenalty": 0.1,
+								"presencePenalty": 0.1,
+								"temperature": 0.1,
+								"topP": 0.1
+							},
+							"agentHistoryReductionSettings": {
+								"agentHistoryReductionType": "messageCountReduction",
+								"messageCountLimit": 50
+							}
+						}
+					},
+					"modelConfigurations": {
+						"model1": {
+							"referenceName": "agent"
+						}
+					}
+				},
+				"tools": {
+					"handoff_from_sales_to_triage_agent": {
+						"description": "Hand off to triage agent who can check if there are any further help needed.",
+						"actions": {
+							"handoff_from_sales_to_triage": {
+								"type": "AgentHandOff",
+								"inputs": {
+									"name": "TriageAgent"
+								}
+							}
+						}
+					},
+					"place_order": {
+						"description": "Place the order",
+						"agentParameterSchema": {
+							"type": "object",
+							"properties": {
+								"product": {
+									"type": "string",
+									"description": "The name of the product to order.",
+									"required": true
+								},
+								"quantity": {
+									"type": "number",
+									"description": "The quantity of the product to order.",
+									"required": true
+								}
+							}
+						},
+						"actions": {
+							"set_order_parameters": {
+								"type": "Compose",
+								"inputs": {
+									"product": "@agentparameters('product')",
+									"quantity": "@agentparameters('quantity')"
+								},
+								"transitions": {
+									"resetset_state_variable_from_sales_to_triage": {
+										"when": [
+											"succeeded"
+										],
+										"inputs": {
+											"name": "state",
+											"value": ""
+										}
+									}
+								}
+							},
+							"resetset_state_variable_from_sales_to_triage": {
+								"type": "SetVariable",
+								"inputs": {
+									"name": "state",
+									"value": ""
+								},
+								"transitions": {
+									"complete_order": {
+										"when": [
+											"succeeded"
+										],
+										"inputs": {
+											"body": {
+												"result": "Order placed successfully"
+											}
+										}
+									}
+								}
+							},
+							"complete_order": {
+								"type": "Compose",
+								"inputs": {
+									"body": {
+										"result": "Order placed successfully"
+									}
+								}
+							}
+						}
+					}
+				},
+				"runAfter": {
+					"TriageAgent": [
+						"HANDOFF"
+					],
+					"RefundAgent": [
+						"HANDOFF"
+					]
+				}
+			},
+			"RefundAgent": {
+				"type": "Agent",
+				"limit": {
+					"timeout": "PT1H",
+					"count": 10
+				},
+				"inputs": {
+					"parameters": {
+						"deploymentId": "Gpt-4o",
+						"agentModelType": "AzureOpenAI",
+						"messages": [
+							{
+								"role": "System",
+								"content": "You are a refund agent for ACME Inc. Perform the given task or answer questions. Once done hand off the control back to the triage agent"
+							}
+						],
+						"agentModelSettings": {
+							"agentChatCompletionSettings": {
+								"maxTokens": 3000,
+								"frequencyPenalty": 0.1,
+								"presencePenalty": 0.1,
+								"temperature": 0.1,
+								"topP": 0.1
+							},
+							"agentHistoryReductionSettings": {
+								"agentHistoryReductionType": "messageCountReduction",
+								"messageCountLimit": 50
+							}
+						}
+					},
+					"modelConfigurations": {
+						"model1": {
+							"referenceName": "agent"
+						}
+					}
+				},
+				"tools": {
+					"handoff_from_refund_to_triage_agent": {
+						"description": "Hand off to triage agent who can check if there are any further help needed.",
+						"actions": {
+							"handoff_from_refund_to_triage": {
+								"type": "AgentHandOff",
+								"inputs": {
+									"name": "TriageAgent"
+								}
+							}
+						}
+					},
+					"handoff_from_refund_to_sales_agent": {
+						"description": "Hand off to sales agent who can fulfill refund requests.",
+						"actions": {
+							"handoff_from_refund_to_sales": {
+								"type": "AgentHandOff",
+								"inputs": {
+									"name": "SalesAgent"
+								}
+							}
+						}
+					}
+				},
+				"runAfter": {
+					"TriageAgent": [
+						"HANDOFF"
+					],
+					"SalesAgent": [
+						"HANDOFF"
+					]
+				}
+			}
+		},
+		"contentVersion": "1.0.0.0",
+		"outputs": {},
+		"triggers": {
+			"When_a_HTTP_request_is_received": {
+				"type": "Request",
+				"kind": "Http"
+			}
+		}
+	},
+	"kind": "agent"
+}

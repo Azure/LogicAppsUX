@@ -12,6 +12,7 @@ import Queue from 'yocto-queue';
 import type {} from 'reselect';
 import type {} from '@tanstack/react-query';
 import { collapseFlowTree } from './helper';
+import { useTimelineRepetitionOffset } from '../../../ui/MonitoringTimeline/hooks';
 
 export const getWorkflowState = (state: RootState): WorkflowState => state.workflow;
 
@@ -38,6 +39,35 @@ export const useShouldNodeFocus = (id: string) =>
 export const useFocusElement = () => useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.focusElement));
 
 export const useIsWorkflowDirty = () => useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.isDirty));
+
+export const useTimelineRepetitionIndex = () =>
+  useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.timelineRepetitionIndex));
+
+export const useTimelineRepetitionArray = () =>
+  useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.timelineRepetitionArray));
+
+export const useActionTimelineRepetitionCount = (actionId: string, index: number) =>
+  useSelector(
+    createSelector(getWorkflowState, (state: WorkflowState) => {
+      const timelineRepetitionArray = state.timelineRepetitionArray;
+      // For each timeline repetition up to the current one, add the count of action IDs that match the actionId
+      let count = 0;
+      for (let i = 0; i <= index; i++) {
+        if (timelineRepetitionArray[i]) {
+          count += timelineRepetitionArray[i].filter((id) => id === actionId).length;
+        }
+      }
+      return count;
+    })
+  );
+
+export const useIsActionInSelectedTimelineRepetition = (actionId: string) =>
+  useSelector(
+    createSelector(getWorkflowState, (state: WorkflowState) => {
+      const selectedTransitionActions = state.timelineRepetitionArray[state.timelineRepetitionIndex];
+      return selectedTransitionActions ? selectedTransitionActions.includes(actionId) : false;
+    })
+  );
 
 export const useIsEverythingExpanded = () =>
   useSelector(
@@ -118,10 +148,10 @@ const reduceCollapsed =
   };
 
 export const useIsGraphCollapsed = (graphId: string): boolean =>
-  useSelector(createSelector(getWorkflowState, (state: WorkflowState): boolean => state.collapsedGraphIds?.[graphId]));
+  useSelector(createSelector(getWorkflowState, (state: WorkflowState): boolean => state.collapsedGraphIds?.[graphId] ?? false));
 
 export const useIsActionCollapsed = (actionId: string): boolean =>
-  useSelector(createSelector(getWorkflowState, (state: WorkflowState): boolean => state.collapsedActionIds?.[actionId]));
+  useSelector(createSelector(getWorkflowState, (state: WorkflowState): boolean => state.collapsedActionIds?.[actionId] ?? false));
 
 export const useGetSwitchOrAgentParentId = (nodeId: string): { parentId?: string; type?: string } | undefined => {
   return useSelector(
@@ -335,6 +365,7 @@ export const useNodesMetadata = (): NodesMetadata =>
   useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.nodesMetadata));
 
 export const useParentRunIndex = (id: string | undefined): number | undefined => {
+  const offset = useTimelineRepetitionOffset(id ?? '');
   return useSelector(
     createSelector(getWorkflowState, (state: WorkflowState) => {
       if (!id) {
@@ -347,17 +378,18 @@ export const useParentRunIndex = (id: string | undefined): number | undefined =>
           operationType
         );
       });
-      return parents.length ? getRecordEntry(state.nodesMetadata, parents[0])?.runIndex : undefined;
+      return parents.length ? (getRecordEntry(state.nodesMetadata, parents[0])?.runIndex ?? 0) + offset : undefined;
     })
   );
 };
 export const useRunIndex = (id: string | undefined): number | undefined => {
+  const offset = useTimelineRepetitionOffset(id ?? '');
   return useSelector(
     createSelector(getWorkflowState, (state: WorkflowState) => {
       if (!id) {
         return undefined;
       }
-      return getRecordEntry(state.nodesMetadata, id)?.runIndex;
+      return (getRecordEntry(state.nodesMetadata, id)?.runIndex ?? 0) + offset;
     })
   );
 };
