@@ -166,7 +166,7 @@ jobs:
           ref: ${{ needs.create-release.outputs.tag_name }}
           fetch-depth: 0
 
-      - name: Set up Node.js
+      - name: 'Set up Node.js'
         uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -186,13 +186,13 @@ jobs:
           jq --arg key "${{ env.AI_KEY }}" '.aiKey = $key' apps/vs-code-designer/src/package.json > tmp.json
           mv tmp.json apps/vs-code-designer/src/package.json
 
-      - name: Replace Placeholder with Telemetry Key
+      - name: 'Replace Placeholder with Telemetry Key'
         run: sed -i "s/setInGitHubBuild/${{ env.AI_KEY }}/g" apps/vs-code-designer/src/main.ts
 
       - name: 'Pack VSCode Designer Extension'
         run: pnpm run vscode:designer:pack
 
-      - name: Archive VSIX
+      - name: 'Archive VSIX'
         uses: actions/upload-artifact@v4
         with:
           name: vscode-extension
@@ -206,7 +206,7 @@ jobs:
           gh release upload ${{ needs.create-release.outputs.tag_name }} apps/vs-code-designer/dist/*.vsix --clobber
 
       # NPM Publishing
-      - name: Azure login
+      - name: 'Azure login'
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_TESTING_CLIENT_ID }}
