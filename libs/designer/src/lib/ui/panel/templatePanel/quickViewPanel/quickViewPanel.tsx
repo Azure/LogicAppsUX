@@ -1,6 +1,6 @@
 import type { AppDispatch, RootState } from '../../../../core/state/templates/store';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, Text } from '@fluentui/react-components';
+import { Link, Text, Button } from '@fluentui/react-components';
 import { Icon, Panel, PanelType } from '@fluentui/react';
 import { useIntl } from 'react-intl';
 import { useCallback, useMemo, useState } from 'react';
@@ -8,7 +8,7 @@ import { TemplateContent, TemplatesPanelFooter, TemplatesPanelHeader } from '@mi
 import { getQuickViewTabs } from '../../../../core/templates/utils/helper';
 import Markdown from 'react-markdown';
 import { useWorkflowTemplate } from '../../../../core/state/templates/templateselectors';
-import { Open16Regular } from '@fluentui/react-icons';
+import { Open16Regular, Dismiss24Regular } from '@fluentui/react-icons';
 import { closePanel, TemplatePanelView } from '../../../../core/state/templates/panelSlice';
 import { clearTemplateDetails } from '../../../../core/state/templates/templateSlice';
 import { isMultiWorkflowTemplate } from '../../../../core/actions/bjsworkflow/templates';
@@ -84,9 +84,10 @@ export const QuickViewPanel = ({
         sourceCodeUrl={manifest?.sourceCodeUrl}
         isMultiWorkflowTemplate={isMultiWorkflowTemplate(templateManifest)}
         details={templateManifest?.details ?? {}}
+        onClose={shouldCloseByDefault ? dismissPanel : undefined}
       />
     ),
-    [templateManifest, manifest]
+    [templateManifest, manifest, shouldCloseByDefault, dismissPanel]
   );
 
   const selectedTabProps = selectedTabId ? panelTabs?.find((tab) => tab.id === selectedTabId) : panelTabs[0];
@@ -111,7 +112,7 @@ export const QuickViewPanel = ({
       customWidth={panelWidth}
       isOpen={isOpen && currentPanelView === TemplatePanelView.QuickView}
       onDismiss={shouldCloseByDefault ? dismissPanel : undefined}
-      hasCloseButton={shouldCloseByDefault}
+      hasCloseButton={false}
       onRenderHeader={onRenderHeaderContent}
       onRenderFooterContent={onRenderFooterContent}
       layerProps={layerProps}
@@ -130,6 +131,7 @@ export const QuickViewPanelHeader = ({
   details,
   features,
   onBackClick,
+  onClose,
 }: {
   title: string;
   summary: string;
@@ -138,6 +140,7 @@ export const QuickViewPanelHeader = ({
   isMultiWorkflowTemplate?: boolean;
   features?: string;
   onBackClick?: () => void;
+  onClose?: () => void;
 }) => {
   const intl = useIntl();
   const { resourceStrings } = useTemplatesStrings();
@@ -157,8 +160,18 @@ export const QuickViewPanelHeader = ({
     return baseDetailsTags;
   }, [isMultiWorkflowTemplate, intl, resourceStrings.BY]);
 
+  const closeButton = onClose ? (
+    <Button appearance="subtle" icon={<Dismiss24Regular />} onClick={onClose} style={{ minWidth: 'auto', flexShrink: 0 }}>
+      {intl.formatMessage({
+        defaultMessage: 'Close Panel',
+        id: 'XV/4oe',
+        description: 'Close panel button text',
+      })}
+    </Button>
+  ) : undefined;
+
   return (
-    <TemplatesPanelHeader title={title} onBackClick={onBackClick}>
+    <TemplatesPanelHeader title={title} onBackClick={onBackClick} rightAction={closeButton}>
       <div className="msla-template-quickview-tags">
         {Object.keys(detailsTags).map((key: string, index: number, array: any[]) => {
           return (

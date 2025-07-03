@@ -2,10 +2,10 @@ import type { AppDispatch, RootState } from '../../../../core/state/templates/st
 import { useDispatch, useSelector } from 'react-redux';
 import { closePanel, selectPanelTab, TemplatePanelView } from '../../../../core/state/templates/panelSlice';
 import { type TemplateTabProps, TemplateContent, TemplatesPanelFooter, TemplatesPanelHeader } from '@microsoft/designer-ui';
-import { ChevronDown16Regular, ChevronUp16Regular } from '@fluentui/react-icons';
+import { ChevronDown16Regular, ChevronUp16Regular, Dismiss24Regular } from '@fluentui/react-icons';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { Text } from '@fluentui/react-components';
+import { Text, Button } from '@fluentui/react-components';
 import { Label, Panel, PanelType } from '@fluentui/react';
 import Markdown from 'react-markdown';
 import { useCreateWorkflowPanelTabs } from './usePanelTabs';
@@ -104,9 +104,19 @@ export const CreateWorkflowPanel = ({
         headerTitle={isMultiWorkflow ? resources.multiWorkflowCreateTitle : isCreateView ? undefined : resources.updatedWorkflowTitle}
         title={manifest?.title ?? ''}
         summary={manifest?.summary ?? ''}
+        onClose={shouldCloseByDefault ? dismissPanel : undefined}
       />
     ),
-    [isMultiWorkflow, resources.multiWorkflowCreateTitle, resources.updatedWorkflowTitle, isCreateView, manifest?.title, manifest?.summary]
+    [
+      isMultiWorkflow,
+      resources.multiWorkflowCreateTitle,
+      resources.updatedWorkflowTitle,
+      isCreateView,
+      manifest?.title,
+      manifest?.summary,
+      shouldCloseByDefault,
+      dismissPanel,
+    ]
   );
 
   const selectedTabProps = selectedTabId ? panelTabs?.find((tab) => tab.id === selectedTabId) : panelTabs[0];
@@ -123,7 +133,7 @@ export const CreateWorkflowPanel = ({
       customWidth={panelWidth}
       isOpen={isOpen && currentPanelView === TemplatePanelView.CreateWorkflow}
       onDismiss={shouldCloseByDefault ? dismissPanel : undefined}
-      hasCloseButton={shouldCloseByDefault}
+      hasCloseButton={false}
       onRenderHeader={onRenderHeaderContent}
       onRenderFooterContent={onRenderFooterContent}
       layerProps={layerProps}
@@ -134,7 +144,12 @@ export const CreateWorkflowPanel = ({
   );
 };
 
-export const CreateWorkflowPanelHeader = ({ headerTitle, title, summary }: { title: string; summary: string; headerTitle?: string }) => {
+export const CreateWorkflowPanelHeader = ({
+  headerTitle,
+  title,
+  summary,
+  onClose,
+}: { title: string; summary: string; headerTitle?: string; onClose?: () => void }) => {
   const [isOpen, setIsOpen] = useState(false);
   const intl = useIntl();
 
@@ -161,8 +176,18 @@ export const CreateWorkflowPanelHeader = ({ headerTitle, title, summary }: { tit
     }),
   };
 
+  const closeButton = onClose ? (
+    <Button appearance="subtle" icon={<Dismiss24Regular />} onClick={onClose} style={{ minWidth: 'auto', flexShrink: 0 }}>
+      {intl.formatMessage({
+        defaultMessage: 'Close Panel',
+        id: 'XV/4oe',
+        description: 'Close panel button text',
+      })}
+    </Button>
+  ) : undefined;
+
   return (
-    <TemplatesPanelHeader title={headerTitle ?? intlText.CREATE_WORKFLOW}>
+    <TemplatesPanelHeader title={headerTitle ?? intlText.CREATE_WORKFLOW} rightAction={closeButton}>
       <div
         className="msla-template-createworkflow-title"
         onClick={() => {
