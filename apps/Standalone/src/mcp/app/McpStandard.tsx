@@ -37,7 +37,11 @@ export const McpStandard = () => {
             margin: '20px',
           }}
         >
-          <McpWizard onCreateCall={() => {}} />
+          <McpWizard
+            onCreateCall={() => {
+              console.log('MCP Create call is triggered.');
+            }}
+          />
         </div>
       </McpDataProvider>
     </McpWizardProvider>

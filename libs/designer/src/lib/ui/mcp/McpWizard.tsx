@@ -5,11 +5,12 @@ export interface McpWizardProps {
 }
 
 export const McpWizard = (props: McpWizardProps) => {
+  // Note: Below is a placeholder
   return (
     <div>
-      <h1>Mcp Wizard</h1>
+      <h1>Mcp Wizard placeholder</h1>
       <Button appearance="primary" onClick={props.onCreateCall}>
-        Create placeholder
+        Create
       </Button>
     </div>
   );
