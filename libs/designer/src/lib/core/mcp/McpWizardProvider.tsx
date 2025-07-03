@@ -1,4 +1,4 @@
-import { templateStore } from '../state/templates/store';
+import { mcpStore } from '../state/mcp/store';
 import { AzureThemeDark } from '@fluentui/azure-themes/lib/azure/AzureThemeDark';
 import { AzureThemeLight } from '@fluentui/azure-themes/lib/azure/AzureThemeLight';
 import { ThemeProvider } from '@fluentui/react';
@@ -77,5 +77,5 @@ export const McpWizardProvider = ({
     </McpWrappedContext.Provider>
   );
 
-  return useExternalRedux ? content : <ReduxProvider store={templateStore}>{content}</ReduxProvider>;
+  return useExternalRedux ? content : <ReduxProvider store={mcpStore}>{content}</ReduxProvider>;
 };
