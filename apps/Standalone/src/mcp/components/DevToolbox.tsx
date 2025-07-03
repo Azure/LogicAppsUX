@@ -12,7 +12,6 @@ import { AzureThemeDark } from '@fluentui/azure-themes/lib/azure/AzureThemeDark'
 import { AzureThemeLight } from '@fluentui/azure-themes/lib/azure/AzureThemeLight';
 import { workflowLoaderSlice } from '../state/WorkflowLoader';
 import { environment } from '../../environments/environment';
-import SourceSettings from '../../designer/app/SettingsSections/sourceSettings';
 
 const themeDropdownOptions = [
   { key: ThemeType.Light, text: 'Light' },
@@ -70,9 +69,6 @@ export const DevToolbox = () => {
                       options={themeDropdownOptions}
                       style={{ width: '100px' }}
                     />
-                  </StackItem>
-                  <StackItem style={{ width: '100%' }}>
-                    <SourceSettings showHistoryButton={false} showHybridPlan={false} />
                   </StackItem>
                   <StackItem style={{ width: '100%' }}>
                     <AzureStandardLogicAppSelector />
