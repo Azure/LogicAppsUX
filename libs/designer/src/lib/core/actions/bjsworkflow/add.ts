@@ -129,8 +129,14 @@ const addDefaultSecureSettings = (settings: Settings, isSecureByDefault: boolean
   if (isSecureByDefault) {
     const updatedSettings = {
       ...settings,
-      secureInputs: { isSupported: settings.secureInputs?.isSupported ?? false, value: true },
-      secureOutputs: { isSupported: settings.secureOutputs?.isSupported ?? false, value: true },
+      secureInputs: {
+        isSupported: settings.secureInputs?.isSupported ?? false,
+        value: true,
+      },
+      secureOutputs: {
+        isSupported: settings.secureOutputs?.isSupported ?? false,
+        value: true,
+      },
     };
     return updatedSettings;
   }
@@ -188,7 +194,10 @@ export const initializeOperationDetails = async (
     );
     parsedManifest = new ManifestParser(manifest, operationManifestService.isAliasingSupported(type, kind));
 
-    const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
+    const nodeDependencies = {
+      inputs: inputDependencies,
+      outputs: outputDependencies,
+    };
     let settings = getOperationSettings(
       isTrigger,
       operationInfo,
@@ -244,7 +253,10 @@ export const initializeOperationDetails = async (
       operationInfo,
       nodeInputs
     );
-    const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
+    const nodeDependencies = {
+      inputs: inputDependencies,
+      outputs: outputDependencies,
+    };
     let settings = getOperationSettings(
       isTrigger,
       operationInfo,
@@ -303,7 +315,12 @@ export const initializeOperationDetails = async (
 
   staticResultService.getOperationResultSchema(connectorId, operationId, swagger || parsedManifest).then((schema) => {
     if (schema) {
-      dispatch(addResultSchema({ id: `${connectorId}-${operationId}`, schema: schema }));
+      dispatch(
+        addResultSchema({
+          id: `${connectorId}-${operationId}`,
+          schema: schema,
+        })
+      );
     }
   });
 
@@ -333,13 +350,19 @@ export const initializeSwitchCaseFromManifest = async (id: string, manifest: Ope
     dispatch,
     /* splitOnValue */ undefined
   );
-  const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
+  const nodeDependencies = {
+    inputs: inputDependencies,
+    outputs: outputDependencies,
+  };
   const initData = {
     id,
     nodeInputs,
     nodeOutputs,
     nodeDependencies,
-    operationMetadata: { iconUri: manifest.properties.iconUri ?? '', brandColor: '' },
+    operationMetadata: {
+      iconUri: manifest.properties.iconUri ?? '',
+      brandColor: '',
+    },
   };
   dispatch(initializeNodes({ nodes: [initData] }));
 };
@@ -357,11 +380,14 @@ export const trySetDefaultConnectionForNode = async (
     await ConnectionService().setupConnectionIfNeeded(connection);
     dispatch(updateNodeConnection({ nodeId, connection, connector }));
   } else if (isConnectionRequired) {
-    // these connectors use inline connections
-    if (connectorId !== Constants.CONNECTION_IDS.AGENT) {
-      dispatch(initEmptyConnectionMap(nodeId));
-      dispatch(openPanel({ nodeId, panelMode: 'Connection', referencePanelMode: 'Operation' }));
-    }
+    dispatch(initEmptyConnectionMap(nodeId));
+    dispatch(
+      openPanel({
+        nodeId,
+        panelMode: 'Connection',
+        referencePanelMode: 'Operation',
+      })
+    );
   }
 };
 
