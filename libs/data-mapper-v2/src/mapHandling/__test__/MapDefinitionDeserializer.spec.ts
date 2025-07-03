@@ -1303,7 +1303,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         ).toEqual('source-/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild/SourceSimpleChildChild/SourceDirect');
       });
 
-      it.skip('creates a many-to-one loop connections', () => {
+      it('creates a many-to-one loop connections', () => {
         const extendedComprehensiveSourceSchema = convertSchemaToSchemaExtended(comprehensiveSourceSchema);
         const extendedComprehensiveTargetSchema = convertSchemaToSchemaExtended(comprehensiveTargetSchema);
         simpleMap['ns0:TargetSchemaRoot'] = {
@@ -1375,7 +1375,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         );
       });
 
-      it.skip('creates a many-to-one loop connection with nested index variables', () => {
+      it('creates a many-to-one loop connection with nested index variables', () => {
         const extendedComprehensiveSourceSchema = convertSchemaToSchemaExtended(comprehensiveSourceSchema);
         const extendedComprehensiveTargetSchema = convertSchemaToSchemaExtended(comprehensiveTargetSchema);
         simpleMap['ns0:TargetSchemaRoot'] = {
@@ -1407,7 +1407,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         const indexRfKey1 = (result['target-/ns0:TargetSchemaRoot/Looping/ManyToOne/Simple'].inputs[0] as ConnectionUnit).reactFlowKey;
         expect(indexRfKey1).toContain(indexPseudoFunctionKey);
         expect((result[indexRfKey1].inputs[0] as ConnectionUnit).reactFlowKey).toBe(
-          'source-/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild/SourceSimpleChildChild'
+          'source-/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple'
         );
 
         const indexRfKey2 = (result['target-/ns0:TargetSchemaRoot/Looping/ManyToOne/Simple'].inputs[1] as ConnectionUnit).reactFlowKey;
@@ -1419,7 +1419,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         const indexRfKey3 = (result['target-/ns0:TargetSchemaRoot/Looping/ManyToOne/Simple'].inputs[2] as ConnectionUnit).reactFlowKey;
         expect(indexRfKey3).toContain(indexPseudoFunctionKey);
         expect((result[indexRfKey3].inputs[0] as ConnectionUnit).reactFlowKey).toBe(
-          'source-/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple'
+          'source-/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild/SourceSimpleChildChild'
         );
 
         const directAccessRfKey = (result['target-/ns0:TargetSchemaRoot/Looping/ManyToOne/Simple/Direct'].inputs[0] as ConnectionUnit)
@@ -1542,7 +1542,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect((resultEntries[4][1].inputs[0] as ConnectionUnit).reactFlowKey).toContain('IfElse');
       });
 
-      it.skip('Everything test', () => {
+      it('Everything test', () => {
         const extendedSource = convertSchemaToSchemaExtended(comprehensiveSourceSchema);
         const extendedTarget = convertSchemaToSchemaExtended(comprehensiveTargetSchema);
         simpleMap['ns0:TargetSchemaRoot'] = {
@@ -1574,7 +1574,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect(resultEntries[0][0]).toEqual(isGreaterId);
         expect(resultEntries[0][1]).toBeTruthy();
         expect((resultEntries[0][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual(indexId);
-        expect(resultEntries[0][1].inputs[1]).toEqual('3');
+        expect((resultEntries[0][1].inputs[1] as CustomValueConnection).value).toEqual('3');
         expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual(ifId);
 
         expect(resultEntries[1][0]).toEqual(directAccessId);
@@ -1599,14 +1599,14 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect((resultEntries[3][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual(
           'source-/ns0:SourceSchemaRoot/Looping/OneToOne/StressTest'
         );
-        expect(resultEntries[3][1].outputs[0].reactFlowKey).toEqual(isGreaterId);
-        expect(resultEntries[3][1].outputs[1].reactFlowKey).toEqual(directAccessId);
-        expect(resultEntries[3][1].outputs[2].reactFlowKey).toEqual('target-/ns0:TargetSchemaRoot/Looping/OneToOne/StressTest');
+        expect(resultEntries[3][1].outputs[0].reactFlowKey).toEqual('target-/ns0:TargetSchemaRoot/Looping/OneToOne/StressTest');
+        expect(resultEntries[3][1].outputs[1].reactFlowKey).toEqual(isGreaterId);
+        expect(resultEntries[3][1].outputs[2].reactFlowKey).toEqual(directAccessId);
 
         expect(resultEntries[4][0]).toEqual('source-/ns0:SourceSchemaRoot/Looping/OneToOne/StressTest');
         expect(resultEntries[4][1]).toBeTruthy();
-        expect(resultEntries[4][1].outputs[0].reactFlowKey).toEqual(directAccessId);
-        expect(resultEntries[4][1].outputs[1].reactFlowKey).toEqual(indexId);
+        expect(resultEntries[4][1].outputs[1].reactFlowKey).toEqual(directAccessId);
+        expect(resultEntries[4][1].outputs[0].reactFlowKey).toEqual(indexId);
 
         expect(resultEntries[5][0]).toEqual('source-/ns0:SourceSchemaRoot/Looping/OneToOne/StressTest/SourceDirect');
         expect(resultEntries[5][1]).toBeTruthy();
@@ -1918,12 +1918,13 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect(getFirstInputReactFlowKey(resultEntries[6][1])).toEqual('source-/ns0:Root/Looping/Employee/TelephoneNumber');
       });
 
-      it.skip('creates a simple sequence function with mapped children with functions', () => {
+      it('creates a simple sequence function with mapped children with functions', () => {
         simpleMap['ns0:Root'] = {
           Looping: {
             '$for(reverse(/ns0:Root/Looping/Employee))': {
               Person: {
                 Name: 'Name',
+                Other: 'TelephoneNumber',
               },
             },
           },
@@ -2390,7 +2391,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect((resultEntries[6][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual(multiplyId);
       });
 
-      it.skip('creates a looping conditional connection', () => {
+      it('creates a looping conditional connection', () => {
         simpleMap['root'] = {
           ComplexArray1: {
             '$for(/root/Nums/*)': {
