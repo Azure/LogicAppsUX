@@ -29,6 +29,7 @@ import { DragPanMonitor } from './common/DragPanMonitor/DragPanMonitor';
 import { CanvasSizeMonitor } from './CanvasSizeMonitor';
 import { AgentChat } from './panel/agentChat/agentChat';
 import DesignerReactFlow from './DesignerReactFlow';
+import MonitoringTimeline from './MonitoringTimeline';
 
 export interface DesignerProps {
   backgroundProps?: BackgroundProps;
@@ -149,6 +150,7 @@ export const Designer = (props: DesignerProps) => {
             <Controls />
             <Minimap />
           </div>
+          {isMonitoringView && isA2AWorkflow && <MonitoringTimeline />}
           <PerformanceDebugTool />
           <CanvasFinder />
           <CanvasSizeMonitor canvasRef={canvasRef} />
