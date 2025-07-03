@@ -9,6 +9,7 @@ import { DataMapperStandaloneDesignerV2 } from './dataMapperV1/app/DataMapperSta
 import { TemplatesWrapper } from './templates/app/TemplatesShell';
 import { ConfigureTemplateWrapper } from './configuretemplate/app/ConfigureTemplateShell';
 import { DesignerWrapper } from './designer/app/DesignerShell/designer';
+import { McpWrapper } from './mcp/app/McpShell';
 
 export const App = () => {
   return (
@@ -19,6 +20,7 @@ export const App = () => {
       <Route path="/datamapperv2" element={<DataMapperV2 />} />
       <Route path="/templates" element={<TemplatesStandalone />} />
       <Route path="/configuretemplate" element={<ConfigureTemplateStandalone />} />
+      <Route path="/mcp" element={<McpStandalone />} />
       {/* Using path="*"" means "match anything", so this route
                 acts like a catch-all for URLs that we don't have explicit
                 routes for. */}
@@ -63,6 +65,14 @@ const ConfigureTemplateStandalone = () => {
   return (
     <Provider store={configureTemplateStore}>
       <ConfigureTemplateWrapper />
+    </Provider>
+  );
+};
+
+const McpStandalone = () => {
+  return (
+    <Provider store={configureTemplateStore}>
+      <McpWrapper />
     </Provider>
   );
 };
