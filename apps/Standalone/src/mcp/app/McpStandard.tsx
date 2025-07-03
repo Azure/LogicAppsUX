@@ -1,12 +1,10 @@
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { McpDataProvider, McpWizard, McpWizardProvider } from '@microsoft/logic-apps-designer';
 import type { RootState } from '../state/Store';
 import { useSelector } from 'react-redux';
-import { useConnectionsData, useWorkflowApp } from '../../designer/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts';
+import { useWorkflowApp } from '../../designer/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts';
 import { ArmParser } from '../../designer/app/AzureLogicAppsDesigner/Utilities/ArmParser';
 import { WorkflowUtility } from '../../designer/app/AzureLogicAppsDesigner/Utilities/Workflow';
-import { useFunctionalState } from '@react-hookz/web';
-import { clone } from '@microsoft/logic-apps-shared';
 
 export const McpStandard = () => {
   const { theme } = useSelector((state: RootState) => ({
@@ -18,17 +16,6 @@ export const McpStandard = () => {
     () => WorkflowUtility.convertToCanonicalFormat(workflowAppData?.location ?? 'westus'),
     [workflowAppData]
   );
-  const { data: originalConnectionsData } = useConnectionsData(appId);
-  const [connectionsData, setConnectionsData] = useFunctionalState(originalConnectionsData);
-
-  useEffect(() => {
-    if (originalConnectionsData) {
-      setConnectionsData(JSON.parse(JSON.stringify(clone(originalConnectionsData ?? {}))));
-    }
-  }, [originalConnectionsData, setConnectionsData]);
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const connectionReferences = useMemo(() => WorkflowUtility.convertConnectionsDataToReferences(connectionsData()), [connectionsData()]);
 
   const resourceDetails = new ArmParser(appId ?? '');
 
@@ -44,7 +31,6 @@ export const McpStandard = () => {
           resourceGroup: resourceDetails.resourceGroup,
           location: canonicalLocation,
         }}
-        connectionReferences={connectionReferences}
       >
         <div
           style={{

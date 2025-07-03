@@ -1,16 +1,14 @@
 import type React from 'react';
 import { useContext, useEffect } from 'react';
-import type { ResourceDetails } from '../state/mcp/workflowSlice';
+import type { ResourceState } from '../state/mcp/resourceSlice';
 import { McpWrappedContext } from './McpWizardContext';
 import { useDispatch } from 'react-redux';
 import type { AppDispatch } from '../state/mcp/store';
-import { setInitialData } from '../state/mcp/workflowSlice';
-import type { ConnectionReferences } from '../../common/models/workflow';
+import { setInitialData } from '../state/mcp/resourceSlice';
 
 export interface McpDataProviderProps {
-  resourceDetails: ResourceDetails; //TODO: set up the mcp store and store this.
+  resourceDetails: ResourceState;
   // services: any;  // TODO
-  connectionReferences: ConnectionReferences;
   children?: React.ReactNode;
 }
 
@@ -21,7 +19,7 @@ const DataProviderInner = ({ children }: McpDataProviderProps) => {
 export const McpDataProvider = (props: McpDataProviderProps) => {
   const wrapped = useContext(McpWrappedContext);
   const dispatch = useDispatch<AppDispatch>();
-  const { resourceDetails, connectionReferences } = props;
+  const { resourceDetails } = props;
 
   if (!wrapped) {
     throw new Error('McpDataProvider must be used inside of a McpWrappedContext');
@@ -40,10 +38,9 @@ export const McpDataProvider = (props: McpDataProviderProps) => {
         subscriptionId: resourceDetails.subscriptionId,
         resourceGroup: resourceDetails.resourceGroup,
         location: resourceDetails.location,
-        references: connectionReferences,
       })
     );
-  }, [connectionReferences, dispatch, resourceDetails]);
+  }, [dispatch, resourceDetails]);
 
   return <DataProviderInner {...props} />;
 };

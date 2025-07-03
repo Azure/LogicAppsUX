@@ -1,6 +1,6 @@
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice, isAnyOf } from '@reduxjs/toolkit';
-import { setInitialData, setLocation, setResourceGroup, setSubscription } from './workflowSlice';
+import { setInitialData, setLocation, setResourceGroup, setSubscription } from './resourceSlice';
 import { resetMcpState } from '../global';
 
 export interface McpOptionsState {
