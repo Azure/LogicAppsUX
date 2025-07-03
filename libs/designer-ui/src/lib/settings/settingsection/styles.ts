@@ -11,7 +11,7 @@ export const useSettingTokenStyles = makeStyles({
     cursor: 'pointer',
     color: tokens.colorBrandStroke1,
     position: 'absolute',
-    top: 0,
-    right: 0,
+    top: tokens.spacingVerticalNone,
+    right: tokens.spacingHorizontalNone,
   },
 });
