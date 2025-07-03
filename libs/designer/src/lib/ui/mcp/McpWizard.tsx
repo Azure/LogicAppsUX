@@ -7,17 +7,15 @@ export interface McpWizardProps {
 }
 
 export const McpWizard = (props: McpWizardProps) => {
-  // const { subscriptionId, resourceGroup, location } = useSelector((state: RootState) => state.resource);
-  const hello = useSelector((state: RootState) => state);
+  const { subscriptionId, resourceGroup, location } = useSelector((state: RootState) => state.resource);
 
   // Note: Below is a placeholder
   return (
     <div>
       <h1>Mcp Wizard placeholder</h1>
-      {JSON.stringify(hello)}
-      {/* <div>{`subscriptionId: ${subscriptionId}`}</div>
+      <div>{`subscriptionId: ${subscriptionId}`}</div>
       <div>{`resourceGroup: ${resourceGroup}`}</div>
-      <div>{`location: ${location}`}</div> */}
+      <div>{`location: ${location}`}</div>
       <Button appearance="primary" onClick={props.onCreateCall}>
         Create
       </Button>
