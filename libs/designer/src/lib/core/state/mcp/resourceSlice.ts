@@ -44,6 +44,10 @@ export const resourceSlice = createSlice({
       const location = action.payload;
       state.location = location;
     },
+    setLogicAppName: (state, action: PayloadAction<string>) => {
+      const logicAppName = action.payload;
+      state.logicAppName = logicAppName;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(resetMcpState, () => initialState);

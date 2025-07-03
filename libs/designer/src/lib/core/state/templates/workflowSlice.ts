@@ -41,7 +41,6 @@ const initialState: WorkflowState = {
   },
 };
 
-// resourceSlice
 interface InitialWorkflowState {
   isConsumption?: boolean;
   subscriptionId: string;

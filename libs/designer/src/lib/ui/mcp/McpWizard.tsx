@@ -1,5 +1,5 @@
 import { Button } from '@fluentui/react-components';
-import type { RootState } from 'lib/core/state/mcp/store';
+import type { RootState } from '../../core/state/mcp/store';
 import { useSelector } from 'react-redux';
 
 export interface McpWizardProps {
@@ -7,15 +7,17 @@ export interface McpWizardProps {
 }
 
 export const McpWizard = (props: McpWizardProps) => {
-  const { subscriptionId, resourceGroup, location } = useSelector((state: RootState) => state.workflow);
+  // const { subscriptionId, resourceGroup, location } = useSelector((state: RootState) => state.resource);
+  const hello = useSelector((state: RootState) => state);
 
   // Note: Below is a placeholder
   return (
     <div>
       <h1>Mcp Wizard placeholder</h1>
-      <div>{`subscriptionId: ${subscriptionId}`}</div>
+      {JSON.stringify(hello)}
+      {/* <div>{`subscriptionId: ${subscriptionId}`}</div>
       <div>{`resourceGroup: ${resourceGroup}`}</div>
-      <div>{`location: ${location}`}</div>
+      <div>{`location: ${location}`}</div> */}
       <Button appearance="primary" onClick={props.onCreateCall}>
         Create
       </Button>
