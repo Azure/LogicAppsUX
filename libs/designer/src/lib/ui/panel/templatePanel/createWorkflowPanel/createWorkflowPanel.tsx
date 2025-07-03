@@ -13,7 +13,7 @@ import { isMultiWorkflowTemplate } from '../../../../core/actions/bjsworkflow/te
 import type { CreateWorkflowHandler } from '../../../templates';
 import { useExistingWorkflowNames } from '../../../../core/queries/template';
 import { clearTemplateDetails } from '../../../../core/state/templates/templateSlice';
-import { useStyles, panelStyles } from './createWorkflowPanel.styles';
+import { useStyles, getPanelStyles } from './createWorkflowPanel.styles';
 
 export interface CreateWorkflowTabProps {
   isCreating: boolean;
@@ -128,7 +128,7 @@ export const CreateWorkflowPanel = ({
 
   return (
     <Panel
-      styles={panelStyles}
+      styles={getPanelStyles()}
       isLightDismiss={shouldCloseByDefault}
       type={PanelType.custom}
       customWidth={panelWidth}

@@ -13,7 +13,7 @@ import { closePanel, TemplatePanelView } from '../../../../core/state/templates/
 import { clearTemplateDetails } from '../../../../core/state/templates/templateSlice';
 import { isMultiWorkflowTemplate } from '../../../../core/actions/bjsworkflow/templates';
 import { useTemplatesStrings } from '../../../templates/templatesStrings';
-import { useStyles, panelStyles } from './quickViewPanel.styles';
+import { useStyles, getPanelStyles } from './quickViewPanel.styles';
 
 export interface QuickViewPanelProps {
   showCreate: boolean;
@@ -107,7 +107,7 @@ export const QuickViewPanel = ({
 
   return (
     <Panel
-      styles={panelStyles}
+      styles={getPanelStyles()}
       isLightDismiss={shouldCloseByDefault}
       type={PanelType.custom}
       customWidth={panelWidth}

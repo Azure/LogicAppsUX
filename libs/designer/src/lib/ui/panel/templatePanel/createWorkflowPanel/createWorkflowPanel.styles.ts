@@ -1,4 +1,5 @@
-import { makeStyles, shorthands } from '@fluentui/react-components';
+import { makeStyles } from '@fluentui/react-components';
+import type { IPanelStyles } from '@fluentui/react';
 
 export const useStyles = makeStyles({
   closeButton: {
@@ -7,12 +8,12 @@ export const useStyles = makeStyles({
   },
 });
 
-export const panelStyles = {
+export const getPanelStyles = (): Partial<IPanelStyles> => ({
   main: {
-    ...shorthands.padding('0', '20px'),
+    padding: '0 20px',
     zIndex: 1000,
   },
   content: {
     paddingLeft: '0px',
   },
-};
+});
