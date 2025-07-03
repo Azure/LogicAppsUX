@@ -38,7 +38,6 @@ const extendedWebDarkTheme: ExtendedTheme = {
 export const customTokens = themeToTokensObject(extendedWebLightTheme);
 
 export interface McpWizardProviderProps {
-  id?: string;
   theme?: ThemeType;
   locale?: string;
   useExternalRedux?: boolean;
