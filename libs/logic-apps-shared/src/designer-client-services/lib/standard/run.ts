@@ -15,7 +15,7 @@ import {
 import { hybridApiVersion, isHybridLogicApp } from './hybrid';
 import { LogEntryLevel } from '../logging/logEntry';
 import { LoggerService } from '../logger';
-import { TimelineRepetitionsMock } from '../__test__/__mocks__/timelineRepetititonsResponse';
+import { TimelineRepetitionsMock } from '../__test__/__mocks__/timelineRepetitionsResponse';
 
 export interface RunServiceOptions {
   apiVersion: string;

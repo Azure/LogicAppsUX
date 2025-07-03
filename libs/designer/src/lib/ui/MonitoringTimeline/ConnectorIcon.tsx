@@ -1,6 +1,12 @@
 import { useOperationVisuals } from '../../core/state/operation/operationSelector';
 
-export const ConnectorIcon = ({ nodeId, size = '32px', borderRadius = '4px' }: any) => {
+interface ConnectorIconProps {
+  nodeId: string;
+  size?: string;
+  borderRadius?: string;
+}
+
+export const ConnectorIcon = ({ nodeId, size = '32px', borderRadius = '4px' }: ConnectorIconProps) => {
   const { iconUri } = useOperationVisuals(nodeId);
 
   if (!iconUri) {
