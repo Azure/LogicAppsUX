@@ -100,36 +100,9 @@
 		"contentVersion": "1.0.0.0",
 		"outputs": {},
 		"triggers": {
-			"manual": {
+			"A2A_Trigger": {
 				"type": "Request",
-				"kind": "Http",
-				"inputs": {
-					"schema": {
-						"type": "object",
-						"properties": {
-							"array": {
-								"type": "array",
-								"items": {
-									"type": "object",
-									"properties": {
-										"item1": {
-											"type": "string"
-										}
-									},
-									"required": [
-										"item1"
-									]
-								}
-							},
-							"string": {
-								"type": "string"
-							},
-							"number": {
-								"type": "integer"
-							}
-						}
-					}
-				}
+				"kind": "Agent"
 			}
 		}
 	},
@@ -140,5 +113,5 @@
 			"value": "test"
 		}
 	},
-	"kind": "agent"
+	"kind": "Agent"
 }

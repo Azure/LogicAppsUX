@@ -37,7 +37,7 @@
     "outputs": {},
     "parameters": {},
     "triggers": {
-      "When_a_HTTP_request_is_received": {
+      "A2A_Trigger": {
         "type": "Request",
         "kind": "Agent"
       }
