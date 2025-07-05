@@ -6,7 +6,7 @@ import type { AppDispatch, RootState } from '../../../state/store';
 import { VSCodeContext } from '../../../webviewCommunication';
 import { ReviewList } from '../../components/reviewList/reviewList';
 import { getOverallValidationStatus, parseValidationData } from './helper';
-import { MessageBar, MessageBarType } from '@fluentui/react';
+import { MessageBar } from '@fluentui/react-components';
 import { useContext, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from '@tanstack/react-query';
@@ -76,11 +76,7 @@ export const Validation: React.FC = () => {
     isValidationLoading || !validationData ? {} : parseValidationData(validationData?.properties, intlText.WORKFLOW_GROUP_DISPLAY_NAME);
 
   const validationError = useMemo(() => {
-    return isError ? (
-      <MessageBar messageBarType={MessageBarType.error} isMultiline={true}>
-        {(error as any)?.message}
-      </MessageBar>
-    ) : null;
+    return isError ? <MessageBar intent="error">{(error as any)?.message}</MessageBar> : null;
   }, [isError, error]);
 
   return (
