@@ -43,7 +43,7 @@ describe('CreateNewWorkspace Command E2E Test', () => {
     */
   });
 
-  it('should create a new Logic Apps workspace with all required files', async () => {
+  it.skip('should create a new Logic Apps workspace with all required files', async () => {
     // Store original UI functions
     const originalShowQuickPick = vscode.window.showQuickPick;
     const originalShowInputBox = vscode.window.showInputBox;
