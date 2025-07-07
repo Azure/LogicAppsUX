@@ -16,6 +16,7 @@ export const McpStandard = () => {
     () => WorkflowUtility.convertToCanonicalFormat(workflowAppData?.location ?? 'westus'),
     [workflowAppData]
   );
+
   const resourceDetails = new ArmParser(appId ?? '');
 
   if (!workflowAppData) {
@@ -29,7 +30,6 @@ export const McpStandard = () => {
           subscriptionId: resourceDetails.subscriptionId,
           resourceGroup: resourceDetails.resourceGroup,
           location: canonicalLocation,
-          workflowAppName: resourceDetails.resourceName,
         }}
       >
         <div
