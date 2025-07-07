@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import {
-  ProjectDirectoryPath,
+  ProjectDirectoryPathKey,
   appKindSetting,
   azureWebJobsStorageKey,
   funcIgnoreFileName,
@@ -64,7 +64,7 @@ export class ScriptProjectCreateStep extends ProjectCreateStepBase {
 
     const localSettingsJsonPath: string = path.join(context.projectPath, localSettingsFileName);
     if (await confirmOverwriteFile(context, localSettingsJsonPath)) {
-      this.localSettingsJson.Values[ProjectDirectoryPath] = path.join(context.projectPath);
+      this.localSettingsJson.Values[ProjectDirectoryPathKey] = path.join(context.projectPath);
       await writeFormattedJson(localSettingsJsonPath, this.localSettingsJson);
     }
 

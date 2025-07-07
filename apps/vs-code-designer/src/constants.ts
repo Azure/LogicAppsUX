@@ -80,6 +80,7 @@ export const workflowManagementBaseURIKey = 'WORKFLOWS_MANAGEMENT_BASE_URI';
 export const workflowAppApiVersion = '2018-11-01';
 export const hybridAppApiVersion = '2024-02-02-preview';
 export const azureWebJobsStorageKey = 'AzureWebJobsStorage';
+export const functionsInProcNet8Key = 'FUNCTIONS_INPROC_NET8_ENABLED';
 export const functionsInprocNet8Enabled = 'FUNCTIONS_INPROC_NET8_ENABLED';
 export const functionsInprocNet8EnabledTrue = '1';
 export const azureWebJobsSecretStorageTypeKey = 'AzureWebJobsSecretStorageType';
@@ -264,7 +265,7 @@ export const appKindSetting = 'APP_KIND';
 export const sqlStorageConnectionStringKey = 'Workflows.Sql.ConnectionString';
 
 export const workerRuntimeKey = 'FUNCTIONS_WORKER_RUNTIME';
-export const ProjectDirectoryPath = 'ProjectDirectoryPath';
+export const ProjectDirectoryPathKey = 'ProjectDirectoryPath';
 export const extensionVersionKey = 'FUNCTIONS_EXTENSION_VERSION';
 export const azureStorageTypeSetting = 'Files';
 export const isZipDeployEnabledSetting = 'IS_ZIP_DEPLOY_ENABLED';

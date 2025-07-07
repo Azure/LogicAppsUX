@@ -5,7 +5,7 @@
 import {
   azureWebJobsStorageKey,
   localSettingsFileName,
-  ProjectDirectoryPath,
+  ProjectDirectoryPathKey,
   appKindSetting,
   azureWebJobsSecretStorageTypeKey,
   localEmulatorConnectionString,
@@ -178,7 +178,7 @@ export const getLocalSettingsSchema = (isDesignTime: boolean, projectPath?: stri
     Values: {
       [appKindSetting]: logicAppKind,
       [workerRuntimeKey]: WorkerRuntime.Node,
-      ...(projectPath ? { [ProjectDirectoryPath]: projectPath } : {}),
+      ...(projectPath ? { [ProjectDirectoryPathKey]: projectPath } : {}),
       ...(isDesignTime
         ? { [azureWebJobsSecretStorageTypeKey]: azureStorageTypeSetting }
         : { [azureWebJobsStorageKey]: localEmulatorConnectionString }),
