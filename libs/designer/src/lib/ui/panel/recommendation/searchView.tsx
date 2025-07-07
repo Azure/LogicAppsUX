@@ -67,8 +67,6 @@ export const SearchView: FC<SearchViewProps> = ({
     (operation: DiscoveryOperation<DiscoveryResultTypes>): boolean => {
       const { type, id } = operation;
 
-      console.log('#> filterAgenticLoops', { operation });
-
       // Exclude handoff operations from search results
       if (equals(type, 'AgentHandoff')) {
         return false;

@@ -31,7 +31,7 @@ const fileOptions = [
   { key: 'Agents.json', text: 'A2A Agent' },
   { key: 'LoopTest.json', text: 'Loop Test' },
   { key: 'LoopingA2A.json', text: 'Looping A2A' },
-  { key: 'HandoffA2A.json', text: 'Handoff A2A' }, // Will enable when handoff is supported
+  { key: 'HandoffA2A.json', text: 'Handoff A2A' },
 
   // Scope Nodes
   { key: 'divider_2', text: '-', itemType: DropdownMenuItemType.Divider },
