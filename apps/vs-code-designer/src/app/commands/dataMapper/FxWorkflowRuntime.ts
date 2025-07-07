@@ -1,6 +1,6 @@
 import { WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
 import {
-  ProjectDirectoryPath,
+  ProjectDirectoryPathKey,
   appKindSetting,
   designTimeDirectoryName,
   designerStartApi,
@@ -64,7 +64,7 @@ export async function startBackendRuntime(projectPath: string, context: IActionC
           designTimeDirectory.fsPath,
           {
             [appKindSetting]: logicAppKind,
-            [ProjectDirectoryPath]: projectPath,
+            [ProjectDirectoryPathKey]: projectPath,
             [workerRuntimeKey]: WorkerRuntime.Node,
           },
           true
