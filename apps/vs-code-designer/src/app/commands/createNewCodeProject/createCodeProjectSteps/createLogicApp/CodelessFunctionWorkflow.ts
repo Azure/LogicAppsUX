@@ -10,6 +10,8 @@ import {
   localEmulatorConnectionString,
   extensionBundleId,
   defaultVersionRange,
+  functionsInprocNet8EnabledTrue,
+  functionsInprocNet8Enabled,
 } from '../../../../../constants';
 import { setLocalAppSetting } from '../../../../utils/appSettings/localSettings';
 import {
@@ -120,6 +122,13 @@ export class CodelessFunctionWorkflow extends WorkflowCreateStepBase<IFunctionWi
       context.projectPath,
       azureWebJobsStorageKey,
       localEmulatorConnectionString,
+      MismatchBehavior.Overwrite
+    );
+    await setLocalAppSetting(
+      context,
+      context.projectPath,
+      functionsInprocNet8Enabled,
+      functionsInprocNet8EnabledTrue,
       MismatchBehavior.Overwrite
     );
   }

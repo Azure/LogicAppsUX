@@ -9,6 +9,8 @@ import {
   extensionBundleId,
   extensionVersionKey,
   functionAppKind,
+  functionsInprocNet8Enabled,
+  functionsInprocNet8EnabledTrue,
   logicAppKind,
   logicAppKindAppSetting,
   sqlStorageConnectionStringKey,
@@ -133,6 +135,11 @@ export class LogicAppCreateStep extends AzureWizardExecuteStep<ILogicAppWizardCo
         name: workerRuntimeKey,
         value: runtimeWithoutVersion,
       },
+      {
+        name: functionsInprocNet8Enabled,
+        value: functionsInprocNet8EnabledTrue,
+      },
+
       {
         name: webhookRedirectHostUri,
         value: '',

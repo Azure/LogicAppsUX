@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import {
   Platform,
-  ProjectDirectoryPath,
+  ProjectDirectoryPathKey,
   autoStartDesignTimeSetting,
   defaultVersionRange,
   designTimeDirectoryName,
@@ -105,7 +105,7 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
           designTimeDirectory.fsPath,
           {
             [appKindSetting]: logicAppKind,
-            [ProjectDirectoryPath]: projectPath,
+            [ProjectDirectoryPathKey]: projectPath,
             [workerRuntimeKey]: WorkerRuntime.Node,
           },
           true

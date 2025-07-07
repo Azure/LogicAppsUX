@@ -10,6 +10,8 @@ import {
   extensionBundleId,
   defaultVersionRange,
   type WorkflowType,
+  functionsInprocNet8Enabled,
+  functionsInprocNet8EnabledTrue,
 } from '../../../../constants';
 import { setLocalAppSetting } from '../../../utils/appSettings/localSettings';
 import { getCodelessWorkflowTemplate } from '../../../utils/codeless/templates';
@@ -101,6 +103,13 @@ export class CodelessWorkflowCreateStep extends WorkflowCreateStepBase<IFunction
       context.projectPath,
       azureWebJobsStorageKey,
       localEmulatorConnectionString,
+      MismatchBehavior.Overwrite
+    );
+    await setLocalAppSetting(
+      context,
+      context.projectPath,
+      functionsInprocNet8Enabled,
+      functionsInprocNet8EnabledTrue,
       MismatchBehavior.Overwrite
     );
   }

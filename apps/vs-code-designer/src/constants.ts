@@ -264,7 +264,7 @@ export const appKindSetting = 'APP_KIND';
 export const sqlStorageConnectionStringKey = 'Workflows.Sql.ConnectionString';
 
 export const workerRuntimeKey = 'FUNCTIONS_WORKER_RUNTIME';
-export const ProjectDirectoryPath = 'ProjectDirectoryPath';
+export const ProjectDirectoryPathKey = 'ProjectDirectoryPath';
 export const extensionVersionKey = 'FUNCTIONS_EXTENSION_VERSION';
 export const azureStorageTypeSetting = 'Files';
 export const isZipDeployEnabledSetting = 'IS_ZIP_DEPLOY_ENABLED';

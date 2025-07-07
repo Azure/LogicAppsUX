@@ -5,13 +5,15 @@
 import {
   azureWebJobsStorageKey,
   localSettingsFileName,
-  ProjectDirectoryPath,
+  ProjectDirectoryPathKey,
   appKindSetting,
   azureWebJobsSecretStorageTypeKey,
   localEmulatorConnectionString,
   logicAppKind,
   workerRuntimeKey,
   azureStorageTypeSetting,
+  functionsInprocNet8Enabled,
+  functionsInprocNet8EnabledTrue,
 } from '../../../constants';
 import { localize } from '../../../localize';
 import { decryptLocalSettings } from '../../commands/appSettings/decryptLocalSettings';
@@ -178,10 +180,11 @@ export const getLocalSettingsSchema = (isDesignTime: boolean, projectPath?: stri
     Values: {
       [appKindSetting]: logicAppKind,
       [workerRuntimeKey]: WorkerRuntime.Node,
-      ...(projectPath ? { [ProjectDirectoryPath]: projectPath } : {}),
+      ...(projectPath ? { [ProjectDirectoryPathKey]: projectPath } : {}),
       ...(isDesignTime
         ? { [azureWebJobsSecretStorageTypeKey]: azureStorageTypeSetting }
         : { [azureWebJobsStorageKey]: localEmulatorConnectionString }),
+      ...(isDesignTime ? {} : { [functionsInprocNet8Enabled]: functionsInprocNet8EnabledTrue }),
     },
   };
 };
