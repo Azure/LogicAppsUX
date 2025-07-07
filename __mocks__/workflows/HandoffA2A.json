@@ -63,7 +63,7 @@
 						"description": "Hand off to sales agent who can fulfill sales requests such as ordering a product.",
 						"actions": {
 							"handoff_from_triage_to_sales": {
-								"type": "AgentHandOff",
+								"type": "AgentHandoff",
 								"inputs": {
 									"name": "SalesAgent"
 								}
@@ -74,7 +74,7 @@
 						"description": "Hand off to refund agent who can fulfill refund requests.",
 						"actions": {
 							"handoff_from_triage_to_refund": {
-								"type": "AgentHandOff",
+								"type": "AgentHandoff",
 								"inputs": {
 									"name": "RefundAgent"
 								}
@@ -129,7 +129,7 @@
 						"description": "Hand off to triage agent who can check if there are any further help needed.",
 						"actions": {
 							"handoff_from_sales_to_triage": {
-								"type": "AgentHandOff",
+								"type": "AgentHandoff",
 								"inputs": {
 									"name": "TriageAgent"
 								}
@@ -202,14 +202,7 @@
 						}
 					}
 				},
-				"runAfter": {
-					"TriageAgent": [
-						"HANDOFF"
-					],
-					"RefundAgent": [
-						"HANDOFF"
-					]
-				}
+				"runAfter": {}
 			},
 			"RefundAgent": {
 				"type": "Agent",
@@ -252,7 +245,7 @@
 						"description": "Hand off to triage agent who can check if there are any further help needed.",
 						"actions": {
 							"handoff_from_refund_to_triage": {
-								"type": "AgentHandOff",
+								"type": "AgentHandoff",
 								"inputs": {
 									"name": "TriageAgent"
 								}
@@ -263,7 +256,7 @@
 						"description": "Hand off to sales agent who can fulfill refund requests.",
 						"actions": {
 							"handoff_from_refund_to_sales": {
-								"type": "AgentHandOff",
+								"type": "AgentHandoff",
 								"inputs": {
 									"name": "SalesAgent"
 								}
@@ -271,14 +264,7 @@
 						}
 					}
 				},
-				"runAfter": {
-					"TriageAgent": [
-						"HANDOFF"
-					],
-					"SalesAgent": [
-						"HANDOFF"
-					]
-				}
+				"runAfter": {}
 			}
 		},
 		"contentVersion": "1.0.0.0",

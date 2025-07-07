@@ -1,7 +1,13 @@
 import type { AppDispatch } from '../../../core';
 import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
 import { useIsWithinAgenticLoop } from '../../../core/state/workflow/workflowSelectors';
-import { SearchService, type DiscoveryOpArray, type DiscoveryOperation, type DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
+import {
+  equals,
+  SearchService,
+  type DiscoveryOpArray,
+  type DiscoveryOperation,
+  type DiscoveryResultTypes,
+} from '@microsoft/logic-apps-shared';
 import { SearchResultsGrid } from '@microsoft/designer-ui';
 import { useDebouncedEffect } from '@react-hookz/web';
 import type { FC } from 'react';
@@ -60,6 +66,13 @@ export const SearchView: FC<SearchViewProps> = ({
   const filterAgenticLoops = useCallback(
     (operation: DiscoveryOperation<DiscoveryResultTypes>): boolean => {
       const { type, id } = operation;
+
+      console.log('#> filterAgenticLoops', { operation });
+
+      // Exclude handoff operations from search results
+      if (equals(type, 'AgentHandoff')) {
+        return false;
+      }
 
       // Exclude agent operations unless it's the root of an agentic workflow
       if ((!isAgenticWorkflow || !isRoot) && type === 'Agent') {
