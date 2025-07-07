@@ -7,6 +7,8 @@ import {
   appKindSetting,
   azureWebJobsStorageKey,
   funcIgnoreFileName,
+  functionsInprocNet8Enabled,
+  functionsInprocNet8EnabledTrue,
   gitignoreFileName,
   hostFileName,
   localEmulatorConnectionString,
@@ -43,6 +45,7 @@ export class ScriptProjectCreateStep extends ProjectCreateStepBase {
     IsEncrypted: false,
     Values: {
       [azureWebJobsStorageKey]: localEmulatorConnectionString,
+      [functionsInprocNet8Enabled]: functionsInprocNet8EnabledTrue,
       [workerRuntimeKey]: 'node',
       [appKindSetting]: logicAppKind,
     },
