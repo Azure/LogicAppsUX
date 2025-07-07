@@ -4,9 +4,17 @@ import SuccessIcon from '../../../resources/Success.svg';
 import { ValidationStatus } from '../../../run-service';
 import type { IGroupedGroup, IGroupedItem } from '../../../run-service';
 import './styles.less';
-import { Skeleton, SkeletonItem, Accordion, AccordionHeader, AccordionItem, AccordionPanel } from '@fluentui/react-components';
+import {
+  Skeleton,
+  SkeletonItem,
+  Accordion,
+  AccordionHeader,
+  AccordionItem,
+  AccordionPanel,
+  type AccordionToggleEventHandler,
+} from '@fluentui/react-components';
 import { ChevronRightRegular } from '@fluentui/react-icons';
-import { useMemo } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 
 export interface IReviewListProps {
   isValidationLoading?: boolean;
@@ -15,6 +23,12 @@ export interface IReviewListProps {
 }
 
 export const ReviewList: React.FC<IReviewListProps> = ({ isValidationLoading, validationItems, validationGroups }) => {
+  const [openItems, setOpenItems] = useState<string[]>([]);
+
+  const handleToggle: AccordionToggleEventHandler<string> = useCallback((_event, data) => {
+    setOpenItems(data.openItems);
+  }, []);
+
   const getGroupIcon = (groupStatus: string): JSX.Element | null => {
     switch (groupStatus) {
       case ValidationStatus.succeeded: {
@@ -55,7 +69,7 @@ export const ReviewList: React.FC<IReviewListProps> = ({ isValidationLoading, va
 
     return (
       <div className="review-list">
-        <Accordion multiple collapsible>
+        <Accordion multiple collapsible openItems={openItems} onToggle={handleToggle}>
           {groupedData.map((groupData, groupIndex) => {
             const groupIcon = getGroupIcon(groupData.group.status);
             return (
@@ -83,7 +97,7 @@ export const ReviewList: React.FC<IReviewListProps> = ({ isValidationLoading, va
         </Accordion>
       </div>
     );
-  }, [validationItems, validationGroups]);
+  }, [validationItems, validationGroups, openItems, handleToggle]);
 
   return isValidationLoading ? <>{shimmerList}</> : <>{groupedList}</>;
 };

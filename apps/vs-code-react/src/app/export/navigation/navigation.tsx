@@ -8,12 +8,14 @@ import { useContext } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useExportStyles } from '../exportStyles';
 
 export const Navigation: React.FC = () => {
   const intl = useIntl();
   const vscode = useContext(VSCodeContext);
   const navigate = useNavigate();
   const location = useLocation();
+  const styles = useExportStyles();
 
   const workflowState = useSelector((state: RootState) => state.workflow);
   const { exportData } = workflowState;
@@ -162,7 +164,7 @@ export const Navigation: React.FC = () => {
   return (
     <div className="msla-export-navigation-panel">
       <Button
-        className="msla-export-navigation-panel-button"
+        className={styles.navigationPanelButton}
         appearance="primary"
         aria-label={intlText.BACK}
         onClick={onClickBack}
@@ -171,7 +173,7 @@ export const Navigation: React.FC = () => {
         {intlText.BACK}
       </Button>
       <Button
-        className="msla-export-navigation-panel-button"
+        className={styles.navigationPanelButton}
         appearance="primary"
         aria-label={nextText}
         onClick={onClickNext}
