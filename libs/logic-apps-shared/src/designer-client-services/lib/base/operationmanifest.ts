@@ -41,6 +41,7 @@ import scopeManifest from './manifests/scope';
 import selectManifest from './manifests/select';
 import switchManifest from './manifests/switch';
 import agentloopManifest from '../standard/manifest/agentloop';
+import handoffManifest from '../standard/manifest/handoff';
 import terminateManifest from './manifests/terminate';
 import untilManifest from './manifests/until';
 
@@ -84,6 +85,7 @@ const foreach = 'foreach';
 const condition = 'if';
 const switchType = 'switch';
 export const agentType = 'agent';
+export const handoff = 'agenthandoff';
 const request = 'request';
 const a2arequest = 'a2arequest';
 const response = 'response';
@@ -197,6 +199,7 @@ export const supportedBaseManifestTypes = [
   slidingwindow,
   switchType,
   agentType,
+  handoff,
   serviceprovider,
   table,
   workflow,
@@ -331,6 +334,7 @@ export function isBuiltInOperation(definition: any): boolean {
     case slidingwindow:
     case switchType:
     case agentType:
+    case handoff:
     case workflow:
     case xslt:
     case xmlcompose:
@@ -640,6 +644,10 @@ const builtInOperationsMetadata: Record<string, OperationInfo> = {
     connectorId: agentConnectorId,
     operationId: agentType,
   },
+  [handoff]: {
+    connectorId: agentConnectorId,
+    operationId: handoff,
+  },
   [workflow]: {
     connectorId: localWorkflowConnectorId,
     operationId: invokeworkflow,
@@ -803,6 +811,7 @@ export const supportedBaseManifestObjects = new Map<string, OperationManifest>([
   [subtractfromtime, subtractFromTimeManifest],
   [switchType, switchManifest],
   [agentType, agentloopManifest],
+  [handoff, handoffManifest],
   [terminate, terminateManifest],
   [until, untilManifest],
 ]);
