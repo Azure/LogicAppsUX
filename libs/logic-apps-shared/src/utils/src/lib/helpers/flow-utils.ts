@@ -21,6 +21,10 @@ export function getEdgeCenter({
 }
 
 export function buildSvgSpline(points: XYPosition[]): string {
+  if (points.length === 2) {
+    return `M ${points[0].x},${points[0].y} L ${points[1].x},${points[1].y}`;
+  }
+
   if (points.length < 4 || (points.length - 1) % 3 !== 0) {
     return '';
   }
