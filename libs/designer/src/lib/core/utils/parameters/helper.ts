@@ -2686,7 +2686,7 @@ function getStringifiedValueFromEditorViewModel(
   idReplacements?: Record<string, string>,
   shouldEncodeBasedOnMetadata = true
 ): string | undefined {
-  const { editor, editorOptions, editorViewModel, value } = parameter;
+  const { editor, editorOptions, editorViewModel } = parameter;
   switch (editor?.toLowerCase()) {
     case constants.EDITOR.TABLE: {
       if (editorViewModel?.columnMode === ColumnMode.Custom && editorOptions?.columns) {
@@ -2723,7 +2723,7 @@ function getStringifiedValueFromEditorViewModel(
     }
     case constants.EDITOR.CONDITION:
       return editorOptions?.isOldFormat
-        ? iterateSimpleQueryBuilderEditor(value, editorViewModel.isRowFormat, idReplacements)
+        ? iterateSimpleQueryBuilderEditor(editorViewModel.itemValue, editorViewModel.isRowFormat, idReplacements)
         : JSON.stringify(
             recurseSerializeCondition(
               parameter,
@@ -2794,8 +2794,15 @@ const getStringifiedValueFromFloatingActionMenuOutputsViewModel = (
   return JSON.stringify(value);
 };
 
-const iterateSimpleQueryBuilderEditor = (
-  value: ValueSegment[],
+const NEGATED_OPERATORS: Record<string, string> = {
+  notcontains: 'contains',
+  notequals: 'equals',
+  notstartswith: 'startsWith',
+  notendswith: 'endsWith',
+};
+
+export const iterateSimpleQueryBuilderEditor = (
+  itemValue: RowItemProps,
   isRowFormat: boolean,
   idReplacements?: Record<string, string>
 ): string | undefined => {
@@ -2803,15 +2810,32 @@ const iterateSimpleQueryBuilderEditor = (
   if (!isRowFormat) {
     return undefined;
   }
-  const { value: remappedItemValue } = idReplacements ? remapValueSegmentsWithNewIds(value, idReplacements) : { value: value };
-  // otherwise we iterate through row items and concatenate the values
-  let stringValue = '';
-  remappedItemValue.forEach((segment) => {
-    stringValue += segment.value;
-  });
-  return stringValue;
+
+  const remappedItemValue: RowItemProps = idReplacements ? remapEditorViewModelWithNewIds(itemValue, idReplacements) : itemValue;
+
+  const { operator, operand1, operand2 } = remappedItemValue;
+
+  const operand1Str = formatSegment(operand1[0]);
+  const operand2Str = formatSegment(operand2[0]);
+
+  const baseOperator = NEGATED_OPERATORS[operator.toLowerCase()];
+  if (baseOperator) {
+    return `@not(${baseOperator}(${operand1Str}, ${operand2Str}))`;
+  }
+
+  return `@${operator}(${operand1Str}, ${operand2Str})`;
 };
 
+function formatSegment(segment: ValueSegment): string {
+  if (segment.type === ValueSegmentType.TOKEN) {
+    return segment.value;
+  }
+
+  const lowerValue = segment.value.toLowerCase();
+  const isPrimitive = lowerValue === 'true' || lowerValue === 'false' || lowerValue === 'null' || !Number.isNaN(Number(segment.value));
+
+  return isPrimitive ? segment.value : `'${segment.value}'`;
+}
 export const recurseSerializeCondition = (
   parameter: ParameterInfo,
   editorViewModel: any,

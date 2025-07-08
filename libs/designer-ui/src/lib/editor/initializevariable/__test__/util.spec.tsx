@@ -68,7 +68,7 @@ describe('getParameterValue', () => {
 
     const result = getParameterValue('ignored', VARIABLE_TYPE.STRING, nodeMap, () => [mockSegment]);
 
-    expect(result[0].value).toBe('TEST_TOKEN');
+    expect(result[0].value).toBe('triggerBody()');
   });
 });
 
