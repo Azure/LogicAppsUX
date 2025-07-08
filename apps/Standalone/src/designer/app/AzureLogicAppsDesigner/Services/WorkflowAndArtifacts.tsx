@@ -294,6 +294,7 @@ export const useWorkflowApp = (siteResourceId: string, hostingPlan: HostingPlanT
     refetchOnMount: false,
     refetchOnReconnect: false,
     refetchOnWindowFocus: false,
+    enabled: !!siteResourceId && !!hostingPlan,
   });
 };
 

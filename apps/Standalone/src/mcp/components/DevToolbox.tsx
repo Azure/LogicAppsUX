@@ -5,7 +5,6 @@ import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, tokens, Mess
 import { Theme as ThemeType } from '@microsoft/logic-apps-shared';
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { AzureStandardLogicAppSelector } from '../../designer/app/AzureLogicAppsDesigner/LogicAppSelectionSetting/AzureStandardLogicAppSelector';
 import { ThemeProvider } from '@fluentui/react';
 import { FluentProvider, webDarkTheme, webLightTheme } from '@fluentui/react-components';
 import { AzureThemeDark } from '@fluentui/azure-themes/lib/azure/AzureThemeDark';
@@ -69,9 +68,6 @@ export const DevToolbox = () => {
                       options={themeDropdownOptions}
                       style={{ width: '100px' }}
                     />
-                  </StackItem>
-                  <StackItem style={{ width: '100%' }}>
-                    <AzureStandardLogicAppSelector />
                   </StackItem>
                 </Stack>
               </AccordionPanel>
