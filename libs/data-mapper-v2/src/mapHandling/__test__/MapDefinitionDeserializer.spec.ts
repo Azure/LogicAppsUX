@@ -24,8 +24,7 @@ import {
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 import { isCustomValueConnection } from '../../utils/Connection.Utils';
 import type { ILoggerService } from '@microsoft/logic-apps-shared';
-import { LogEntryLevel } from '@microsoft/logic-apps-shared';
-import { compareCustomValueConnection, isEqualToCustomValue } from './MapHandlingTestUtilis';
+import { isEqualToCustomValue } from './MapHandlingTestUtilis';
 
 // Mock LoggerService
 const createMockLoggerService = (): ILoggerService => {
