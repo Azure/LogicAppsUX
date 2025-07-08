@@ -247,7 +247,7 @@ export const useAgentChatInvokeUri = (isMonitoringView: boolean, isAgenticWorkfl
   );
 };
 
-const parseFailedRepetitions = (failedRunRepetitions: LogicAppsV2.RunRepetition[], nodeId: string) => {
+export const parseFailedRepetitions = (failedRunRepetitions: LogicAppsV2.RunRepetition[], nodeId: string) => {
   const _failedRepetitions: number[] = failedRunRepetitions.reduce((acc: number[], current: LogicAppsV2.RunRepetition) => {
     const scopeObject = current.properties?.repetitionIndexes?.find((item) => item.scopeName === nodeId);
     const indexOfFail = isNullOrUndefined(scopeObject) ? undefined : scopeObject.itemIndex;
