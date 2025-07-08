@@ -1,6 +1,6 @@
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
-import { resetMcpState } from '../global';
+import { resetMcpState } from '../../global';
 
 export const McpPanelView = {
   SelectConnector: 'selectConnector',
@@ -21,14 +21,8 @@ const initialState: PanelState = {
   selectedConnectorId: undefined,
 };
 
-const closePanelReducer = (state: typeof initialState) => {
-  state.isOpen = false;
-  state.currentPanelView = undefined;
-  state.selectedConnectorId = undefined;
-};
-
-export const panelSlice = createSlice({
-  name: 'panel',
+export const mcpPanelSlice = createSlice({
+  name: 'mcpPanel',
   initialState,
   reducers: {
     openPanelView: (
@@ -45,12 +39,17 @@ export const panelSlice = createSlice({
     selectPanelTab: (state, action: PayloadAction<string | undefined>) => {
       state.selectedConnectorId = action.payload;
     },
-    closePanel: closePanelReducer,
+    closePanel: (state: typeof initialState) => {
+      state.isOpen = false;
+      state.currentPanelView = undefined;
+      state.selectedConnectorId = undefined;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(resetMcpState, () => initialState);
   },
 });
 
-export const { openPanelView, selectPanelTab, closePanel } = panelSlice.actions;
-export default panelSlice.reducer;
+export const { openPanelView, selectPanelTab, closePanel } = mcpPanelSlice.actions;
+
+export default mcpPanelSlice.reducer;

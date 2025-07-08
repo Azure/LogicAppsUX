@@ -1,36 +1,32 @@
 import type React from 'react';
-import { useContext, useEffect } from 'react';
-import type { ResourceState } from '../state/mcp/resourceSlice';
-import { McpWrappedContext } from './McpWizardContext';
+import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
+import { initializeServices } from '../state/mcp/mcpOptions/mcpOptionsSlice';
+import { useAreServicesInitialized } from '../state/mcp/mcpOptions/mcpOptionsSelector';
+import { setInitialData, type ResourceState } from '../state/mcp/resourceSlice';
 import type { AppDispatch } from '../state/mcp/store';
-import { setInitialData } from '../state/mcp/resourceSlice';
+import type { ServiceOptions } from '../state/mcp/mcpOptions/mcpOptionsInterface';
 
 export interface McpDataProviderProps {
   resourceDetails: ResourceState;
-  // services: any;  // TODO
+  services?: ServiceOptions;
   children?: React.ReactNode;
 }
 
-const DataProviderInner = ({ children }: McpDataProviderProps) => {
+const DataProviderInner = ({ children }: { children?: React.ReactNode }) => {
   return <>{children}</>;
 };
 
-export const McpDataProvider = (props: McpDataProviderProps) => {
-  const wrapped = useContext(McpWrappedContext);
+export const McpDataProvider = ({ resourceDetails, services, children }: McpDataProviderProps) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { resourceDetails } = props;
+  const servicesInitialized = useAreServicesInitialized();
 
-  if (!wrapped) {
-    throw new Error('McpDataProvider must be used inside of a McpWrappedContext');
-  }
-
-  // TODO: initialize services in useEffect
-  //  then, uncomment below
-  // if (!servicesInitialized) {
-  //   return null;
-  // }
-  //TODO: add useEffect for onResourceChange
+  // Prefer props.services if provided; fallback to context
+  useEffect(() => {
+    if (!servicesInitialized && services) {
+      dispatch(initializeServices(services));
+    }
+  }, [dispatch, servicesInitialized, services]);
 
   useEffect(() => {
     dispatch(
@@ -42,5 +38,9 @@ export const McpDataProvider = (props: McpDataProviderProps) => {
     );
   }, [dispatch, resourceDetails]);
 
-  return <DataProviderInner {...props} />;
+  if (!servicesInitialized) {
+    return null;
+  }
+
+  return <DataProviderInner>{children}</DataProviderInner>;
 };
