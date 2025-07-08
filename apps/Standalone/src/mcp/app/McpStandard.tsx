@@ -21,6 +21,7 @@ import {
   type IWorkflowService,
   StandardConnectionService,
   StandardConnectorService,
+  StandardSearchService,
 } from '@microsoft/logic-apps-shared';
 import { HttpClient } from '../../designer/app/AzureLogicAppsDesigner/Services/HttpClient';
 import { StandaloneOAuthService } from '../../designer/app/AzureLogicAppsDesigner/Services/OAuthService';
@@ -195,7 +196,7 @@ const getServices = (
   });
   const connectionParameterEditorService = new CustomConnectionParameterEditorService();
   const resourceService = new BaseResourceService({ baseUrl: armUrl, httpClient, apiVersion });
-  const { connectionService, oAuthService, connectorService, workflowService } = getResourceBasedServices(
+  const { connectionService, oAuthService, connectorService, workflowService, searchService } = getResourceBasedServices(
     siteResourceId,
     workflowApp,
     addConnection,
@@ -215,6 +216,7 @@ const getServices = (
     workflowService,
     connectorService,
     resourceService,
+    searchService,
   };
 };
 
@@ -233,6 +235,17 @@ const getResourceBasedServices = (
   const { subscriptionId, resourceGroup, resourceName } = new ArmParser(siteResourceId ?? '');
 
   const defaultServiceParams = { baseUrl, httpClient, apiVersion };
+
+  const searchService = new StandardSearchService({
+    ...defaultServiceParams,
+    apiHubServiceDetails: {
+      apiVersion: '2018-07-01-preview',
+      subscriptionId,
+      location,
+    },
+    isDev: false,
+    unsupportedConnectorIds: ['/subscriptions/#subscription#/providers/Microsoft.Web/locations/#location#/managedApis/gmail'],
+  });
 
   const connectionService = new StandardConnectionService({
     ...defaultServiceParams,
@@ -282,5 +295,6 @@ const getResourceBasedServices = (
     oAuthService,
     workflowService,
     connectorService,
+    searchService,
   };
 };

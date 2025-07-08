@@ -32,6 +32,12 @@ export const resourceSlice = createSlice({
       state.resourceGroup = resourceGroup;
       state.location = location;
     },
+    setResourceGroup: (state, action: PayloadAction<string>) => {
+      state.resourceGroup = action.payload;
+    },
+    setLocation: (state, action: PayloadAction<string>) => {
+      state.location = action.payload;
+    },
     setLogicAppId: (state, action: PayloadAction<string>) => {
       state.logicAppId = action.payload;
     },
@@ -41,5 +47,5 @@ export const resourceSlice = createSlice({
   },
 });
 
-export const { setInitialData, setLogicAppId } = resourceSlice.actions;
+export const { setInitialData, setResourceGroup, setLocation, setLogicAppId } = resourceSlice.actions;
 export default resourceSlice.reducer;

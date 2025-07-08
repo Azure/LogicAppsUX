@@ -12,10 +12,12 @@ import {
   InitLoggerService,
   InitOAuthService,
   InitResourceService,
+  InitSearchService,
   InitTenantService,
   InitWorkflowService,
   type IOAuthService,
   type IResourceService,
+  type ISearchService,
   type ITenantService,
   type IWorkflowService,
 } from '@microsoft/logic-apps-shared';
@@ -30,6 +32,7 @@ export interface McpServiceOptions {
   connectionParameterEditorService?: IConnectionParameterEditorService;
   connectorService: IConnectorService;
   resourceService: IResourceService;
+  searchService?: ISearchService;
   loggerService?: ILoggerService;
   workflowService?: IWorkflowService;
 }
@@ -65,6 +68,7 @@ const initializeServices = ({
   tenantService,
   connectionParameterEditorService,
   resourceService,
+  searchService,
 }: Partial<McpServiceOptions>) => {
   if (connectionService) {
     InitConnectionService(connectionService);
@@ -76,6 +80,10 @@ const initializeServices = ({
 
   if (workflowService) {
     InitWorkflowService(workflowService);
+  }
+
+  if (searchService) {
+    InitSearchService(searchService);
   }
 
   if (connectorService) {
@@ -98,3 +106,10 @@ const initializeServices = ({
     InitResourceService(resourceService);
   }
 };
+
+export const initializeOperationsMetadata = createAsyncThunk(
+  'initializeOperationsMetadata',
+  async (_payload: { connectorId: string; operations: string[] }, _data): Promise<void> => {
+    // This function is a placeholder for initializing operations metadata.
+  }
+);
