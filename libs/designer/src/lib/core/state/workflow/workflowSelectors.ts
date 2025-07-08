@@ -64,6 +64,9 @@ export const useActionTimelineRepetitionCount = (actionId: string, index: number
 export const useIsActionInSelectedTimelineRepetition = (actionId: string) =>
   useSelector(
     createSelector(getWorkflowState, (state: WorkflowState) => {
+      if (!equals(state.workflowKind, 'agent')) {
+        return true; // For non-agent workflows, always return true
+      }
       const selectedTransitionActions = state.timelineRepetitionArray[state.timelineRepetitionIndex];
       return selectedTransitionActions ? selectedTransitionActions.includes(actionId) : false;
     })
