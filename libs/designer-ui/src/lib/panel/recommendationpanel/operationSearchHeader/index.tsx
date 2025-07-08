@@ -8,9 +8,17 @@ interface OperationSearchHeaderProps {
   filters?: Record<string, string>;
   setFilters?: (filters: Record<string, string>) => void;
   isTriggerNode: boolean;
+  hideOperations?: boolean;
 }
 
-export const OperationSearchHeader = ({ searchCallback, searchTerm, filters, setFilters, isTriggerNode }: OperationSearchHeaderProps) => {
+export const OperationSearchHeader = ({
+  searchCallback,
+  searchTerm,
+  filters,
+  setFilters,
+  isTriggerNode,
+  hideOperations,
+}: OperationSearchHeaderProps) => {
   const intl = useIntl();
 
   const actionTypeFilters = isTriggerNode
@@ -35,17 +43,23 @@ export const OperationSearchHeader = ({ searchCallback, searchTerm, filters, set
       ];
 
   const searchPlaceholderText = intl.formatMessage(
-    isTriggerNode
+    hideOperations
       ? {
-          defaultMessage: 'Search for a trigger or connector',
+          defaultMessage: 'Search for a connector',
           id: 'CLJuAQ',
-          description: 'Placeholder text for Trigger/Connector search bar',
+          description: 'Placeholder text for Connector search bar',
         }
-      : {
-          defaultMessage: 'Search for an action or connector',
-          id: 'py9dSW',
-          description: 'Placeholder text for Operation/Connector search bar',
-        }
+      : isTriggerNode
+        ? {
+            defaultMessage: 'Search for a trigger or connector',
+            id: 'CLJuAQ',
+            description: 'Placeholder text for Trigger/Connector search bar',
+          }
+        : {
+            defaultMessage: 'Search for an action or connector',
+            id: 'py9dSW',
+            description: 'Placeholder text for Operation/Connector search bar',
+          }
   );
 
   return (

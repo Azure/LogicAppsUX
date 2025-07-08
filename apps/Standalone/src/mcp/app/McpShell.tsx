@@ -4,7 +4,6 @@ import { useQuery } from '@tanstack/react-query';
 import { DevToolbox } from '../components/DevToolbox';
 import { McpStandard } from './McpStandard';
 import { loadToken } from '../../environments/environment';
-
 const LoadWhenArmTokenIsLoaded = ({ children }: { children: ReactNode }) => {
   const { isLoading } = useQuery(['armToken'], loadToken);
   return isLoading ? null : <>{children}</>;
