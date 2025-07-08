@@ -22,7 +22,6 @@ export const McpWizard = () => {
 
   const INTL_TEXT = {
     title: intl.formatMessage({ id: 'rCjtl8', defaultMessage: 'Connectors', description: 'Title for the connectors section' }),
-    addButton: intl.formatMessage({ id: 'Q54uLy', defaultMessage: 'Add Connectors', description: 'Button text to add connectors' }),
     noConnectors: intl.formatMessage({
       id: 'xyhnsP',
       defaultMessage: 'No connectors added yet',
