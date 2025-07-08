@@ -127,18 +127,20 @@ export const useScopeFailedRepetitions = (normalizedType: string, nodeId: string
     async () => {
       let failedRunRepetitions: LogicAppsV2.RunRepetition[] = [];
       try {
-        const { value } = await RunService().getScopeRepetitions({ nodeId, runId }, constants.FLOW_STATUS.FAILED);
-        failedRunRepetitions = value;
+        const firstFailedActions = await RunService().getScopeRepetitions({ nodeId, runId }, constants.FLOW_STATUS.FAILED);
+        failedRunRepetitions.push(...(firstFailedActions?.value ?? []));
+        let nextLink = firstFailedActions?.nextLink;
+
+        while (nextLink) {
+          const moreActions = await RunService().getMoreScopeRepetitions(nextLink);
+          failedRunRepetitions.push(...(moreActions?.value ?? []));
+          nextLink = moreActions?.nextLink;
+        }
       } catch {
         failedRunRepetitions = [];
       }
-      const _failedRepetitions: number[] = failedRunRepetitions.reduce((acc: number[], current: LogicAppsV2.RunRepetition) => {
-        const scopeObject = current.properties?.repetitionIndexes?.find((item) => item.scopeName === nodeId);
-        const indexOfFail = isNullOrUndefined(scopeObject) ? undefined : scopeObject.itemIndex;
-        acc.push(indexOfFail ?? []);
-        return acc;
-      }, []);
-      return _failedRepetitions.sort((a, b) => a - b);
+
+      return parseFailedRepetitions(failedRunRepetitions, nodeId);
     },
     {
       ...queryOpts,
@@ -243,4 +245,14 @@ export const useAgentChatInvokeUri = (isMonitoringView: boolean, isAgenticWorkfl
       enabled: isMonitoringView && isAgenticWorkflow && id !== undefined,
     }
   );
+};
+
+const parseFailedRepetitions = (failedRunRepetitions: LogicAppsV2.RunRepetition[], nodeId: string) => {
+  const _failedRepetitions: number[] = failedRunRepetitions.reduce((acc: number[], current: LogicAppsV2.RunRepetition) => {
+    const scopeObject = current.properties?.repetitionIndexes?.find((item) => item.scopeName === nodeId);
+    const indexOfFail = isNullOrUndefined(scopeObject) ? undefined : scopeObject.itemIndex;
+    acc.push(indexOfFail ?? []);
+    return acc;
+  }, []);
+  return _failedRepetitions.sort((a, b) => a - b);
 };

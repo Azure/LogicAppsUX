@@ -176,6 +176,29 @@ export class ConsumptionRunService implements IRunService {
   }
 
   /**
+   * Retrieves additional scope repetitions using a continuation token.
+   *
+   * @param continuationToken - The token used to fetch the next set of scope repetitions.
+   * @returns A promise that resolves with the response containing the scope repetitions.
+   * @throws Throws an error if the HTTP request fails.
+   */
+  async getMoreScopeRepetitions(continuationToken: string): Promise<any> {
+    const { httpClient } = this.options;
+    const headers = this.getAccessTokenHeaders();
+
+    try {
+      const response = await httpClient.get<LogicAppsV2.RunRepetition>({
+        uri: continuationToken,
+        headers: headers as Record<string, any>,
+      });
+
+      return response;
+    } catch (e: any) {
+      throw new Error(e.message);
+    }
+  }
+
+  /**
    * Gets an array of workflow-level action repetitions for a run.
    * @param {string} runId - The ID of the workflow run.
    * @returns {Promise<any>}
