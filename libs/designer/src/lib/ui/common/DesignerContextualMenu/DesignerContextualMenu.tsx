@@ -17,8 +17,13 @@ import { PinMenuItem } from '../../../ui/menuItems/pinMenuItem';
 import { RunAfterMenuItem } from '../../../ui/menuItems/runAfterMenuItem';
 import { useOperationInfo, type AppDispatch, type RootState } from '../../../core';
 import { setShowDeleteModalNodeId } from '../../../core/state/designerView/designerViewSlice';
-import { useOperationPanelPinnedNodeId } from '../../../core/state/panel/panelSelectors';
-import { changePanelNode, setSelectedPanelActiveTab, setPinnedNode, setSelectedNodeId } from '../../../core/state/panel/panelSlice';
+import { useOperationAlternateSelectedNodeId } from '../../../core/state/panel/panelSelectors';
+import {
+  changePanelNode,
+  setSelectedPanelActiveTab,
+  setAlternateSelectedNode,
+  setSelectedNodeId,
+} from '../../../core/state/panel/panelSlice';
 import { RUN_AFTER_PANEL_TAB } from '../../../ui/CustomNodes/constants';
 import { shouldDisplayRunAfter } from '../../../ui/CustomNodes/helpers';
 import {
@@ -52,7 +57,7 @@ export const DesignerContextualMenu = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const rootState = useSelector((state: RootState) => state);
-  const pinnedNodeId = useOperationPanelPinnedNodeId();
+  const alternateSelectedNodeId = useOperationAlternateSelectedNodeId();
 
   const runInstance = useRunInstance();
   const runData = useRunData(nodeId);
@@ -82,12 +87,13 @@ export const DesignerContextualMenu = () => {
 
   const pinClick = useCallback(() => {
     dispatch(
-      setPinnedNode({
-        nodeId: nodeId === pinnedNodeId ? '' : nodeId,
+      setAlternateSelectedNode({
+        nodeId: nodeId === alternateSelectedNodeId ? '' : nodeId,
         updatePanelOpenState: true,
+        panelPersistence: 'pinned',
       })
     );
-  }, [dispatch, nodeId, pinnedNodeId]);
+  }, [dispatch, nodeId, alternateSelectedNodeId]);
 
   const collapseClick = useCallback(() => {
     dispatch(toggleCollapsedActionId(nodeId));
@@ -139,7 +145,10 @@ export const DesignerContextualMenu = () => {
       ...(isUiInteractionsServiceEnabled()
         ? transformMenuItems(UiInteractionsService().getNodeContextMenuItems?.({ graphId: metadata?.graphId, nodeId: nodeId }) ?? [])
         : []),
-      { priority: NodeMenuPriorities.Delete, renderCustomComponent: () => <DeleteMenuItem key={'delete'} onClick={deleteClick} showKey /> },
+      {
+        priority: NodeMenuPriorities.Delete,
+        renderCustomComponent: () => <DeleteMenuItem isTrigger={isTrigger} key={'delete'} onClick={deleteClick} showKey />,
+      },
       {
         priority: NodeMenuPriorities.Copy,
         renderCustomComponent: () => <CopyMenuItem key={'copy'} isTrigger={isTrigger} isScope={isScopeNode} onClick={copyClick} showKey />,

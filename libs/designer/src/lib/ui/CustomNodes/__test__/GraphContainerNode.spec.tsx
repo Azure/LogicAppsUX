@@ -2,16 +2,17 @@ import React from 'react';
 import renderer from 'react-test-renderer';
 import GraphContainerNode from '../GraphContainerNode';
 import { vi, beforeEach, describe, Mock, it, expect } from 'vitest';
-import { useMonitoringView, useReadOnly } from '../../../core/state/designerOptions/designerOptionsSelectors';
+import { useMonitoringView, useReadOnly, useShowEdgeDrawing } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { useIsNodeSelectedInOperationPanel } from '../../../core/state/panel/panelSelectors';
 import { useNodeMetadata } from '../../../core';
-import { useActionMetadata, useIsLeafNode, useParentRunId, useRunData } from '../../../core/state/workflow/workflowSelectors';
+import { useActionMetadata, useIsLeafNode, useParentNodeId, useRunData } from '../../../core/state/workflow/workflowSelectors';
 import { useNodeSize, useNodeLeafIndex, SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
 import { NodeProps } from '@xyflow/react';
 
 vi.mock('../../../core/state/designerOptions/designerOptionsSelectors', () => ({
   useReadOnly: vi.fn(),
   useMonitoringView: vi.fn(),
+  useShowEdgeDrawing: vi.fn(),
 }));
 
 vi.mock('../../../core/state/panel/panelSelectors', () => ({
@@ -22,7 +23,7 @@ vi.mock('../../../core/state/workflow/workflowSelectors', () => ({
   useActionMetadata: vi.fn(),
   useNodeMetadata: vi.fn(),
   useIsLeafNode: vi.fn(),
-  useParentRunId: vi.fn(),
+  useParentNodeId: vi.fn(),
   useRunData: vi.fn(),
 }));
 
@@ -63,7 +64,7 @@ describe('GraphContainerNode', () => {
     (useNodeMetadata as Mock).mockReturnValue({});
     (useIsLeafNode as Mock).mockReturnValue(false);
     (useMonitoringView as Mock).mockReturnValue(false);
-    (useParentRunId as Mock).mockReturnValue(null);
+    (useParentNodeId as Mock).mockReturnValue(null);
     (useRunData as Mock).mockReturnValue({});
     (useNodeSize as Mock).mockReturnValue({ width: 100, height: 100 });
     (useNodeLeafIndex as Mock).mockReturnValue(0);
@@ -104,15 +105,6 @@ describe('GraphContainerNode', () => {
   it('should apply correct styles based on node size', () => {
     const tree = renderer.create(<GraphContainerNode {...defaultProps} />).toJSON();
     expect(tree?.props.style).toEqual({ width: 100, height: 100 });
-    expect(tree).toMatchSnapshot();
-  });
-
-  it('should render the top and bottom handles', () => {
-    const tree = renderer.create(<GraphContainerNode {...defaultProps} />).toJSON();
-    const topHandle = tree.children.find((child) => child.props.className.includes('node-handle top'));
-    const bottomHandle = tree.children.find((child) => child.props.className.includes('node-handle bottom'));
-    expect(topHandle).toBeTruthy();
-    expect(bottomHandle).toBeTruthy();
     expect(tree).toMatchSnapshot();
   });
 

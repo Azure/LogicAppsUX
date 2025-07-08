@@ -1,16 +1,18 @@
 import type { AppDispatch, RootState } from '../../../../core/state/templates/store';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, Text } from '@fluentui/react-components';
-import { Icon, Panel, PanelType } from '@fluentui/react';
+import { Link, Text, Button, Drawer, DrawerBody, DrawerHeader, DrawerFooter } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 import { useCallback, useMemo, useState } from 'react';
-import { TemplatesPanelContent, TemplatesPanelFooter, TemplatesPanelHeader } from '@microsoft/designer-ui';
+import { TemplateContent, TemplatesPanelFooter, TemplatesPanelHeader } from '@microsoft/designer-ui';
 import { getQuickViewTabs } from '../../../../core/templates/utils/helper';
 import Markdown from 'react-markdown';
 import { useWorkflowTemplate } from '../../../../core/state/templates/templateselectors';
-import { Open16Regular } from '@fluentui/react-icons';
+import { Open16Regular, Dismiss24Regular } from '@fluentui/react-icons';
 import { closePanel, TemplatePanelView } from '../../../../core/state/templates/panelSlice';
 import { clearTemplateDetails } from '../../../../core/state/templates/templateSlice';
+import { isMultiWorkflowTemplate } from '../../../../core/actions/bjsworkflow/templates';
+import { useTemplatesStrings } from '../../../templates/templatesStrings';
+import { useStyles } from './quickViewPanel.styles';
 
 export interface QuickViewPanelProps {
   showCreate: boolean;
@@ -20,11 +22,6 @@ export interface QuickViewPanelProps {
   showCloseButton?: boolean;
   onClose?: () => void;
 }
-
-const layerProps = {
-  hostId: 'msla-layer-host',
-  eventBubblingEnabled: true,
-};
 
 export const QuickViewPanel = ({
   onClose,
@@ -57,6 +54,8 @@ export const QuickViewPanel = ({
       templateId: templateName ?? '',
       workflowAppName,
       isMultiWorkflow: false,
+      showCreate,
+      showCloseButton,
     },
     onClose
   );
@@ -78,25 +77,16 @@ export const QuickViewPanel = ({
         title={manifest?.title ?? ''}
         summary={manifest?.summary ?? ''}
         sourceCodeUrl={manifest?.sourceCodeUrl}
+        isMultiWorkflowTemplate={isMultiWorkflowTemplate(templateManifest)}
         details={templateManifest?.details ?? {}}
+        onClose={shouldCloseByDefault ? dismissPanel : undefined}
       />
     ),
-    [templateManifest, manifest]
+    [templateManifest, manifest, shouldCloseByDefault, dismissPanel]
   );
 
   const selectedTabProps = selectedTabId ? panelTabs?.find((tab) => tab.id === selectedTabId) : panelTabs[0];
-  const onRenderFooterContent = useCallback(
-    () =>
-      selectedTabProps?.footerContent ? (
-        <TemplatesPanelFooter
-          showPrimaryButton={showCreate}
-          secondaryButtonDisabled={!showCloseButton}
-          {...selectedTabProps?.footerContent}
-        />
-      ) : null,
-    [selectedTabProps?.footerContent, showCloseButton, showCreate]
-  );
-
+  const styles = useStyles();
   if (!manifest) {
     return null;
   }
@@ -106,26 +96,24 @@ export const QuickViewPanel = ({
   };
 
   return (
-    <Panel
-      styles={{ main: { padding: '0 20px', zIndex: 1000 }, content: { paddingLeft: '0px' } }}
-      isLightDismiss={shouldCloseByDefault}
-      type={PanelType.custom}
-      customWidth={panelWidth}
-      isOpen={isOpen && currentPanelView === TemplatePanelView.QuickView}
-      onDismiss={shouldCloseByDefault ? dismissPanel : undefined}
-      hasCloseButton={shouldCloseByDefault}
-      onRenderHeader={onRenderHeaderContent}
-      onRenderFooterContent={onRenderFooterContent}
-      layerProps={layerProps}
-      isFooterAtBottom={true}
+    <Drawer
+      className={styles.drawer}
+      modalType={shouldCloseByDefault ? 'modal' : 'non-modal'}
+      open={isOpen && currentPanelView === TemplatePanelView.QuickView}
+      onOpenChange={(_, { open }) => !open && shouldCloseByDefault && dismissPanel()}
+      position="end"
+      style={{ width: panelWidth }}
     >
-      <TemplatesPanelContent
-        className="msla-template-quickview-tabs"
-        tabs={panelTabs}
-        selectedTab={selectedTabId}
-        selectTab={onTabSelected}
-      />
-    </Panel>
+      <DrawerHeader className={styles.header}>{onRenderHeaderContent()}</DrawerHeader>
+      <DrawerBody className={styles.body}>
+        <TemplateContent className={styles.quickviewTabs} tabs={panelTabs} selectedTab={selectedTabId} selectTab={onTabSelected} />
+      </DrawerBody>
+      {selectedTabProps?.footerContent && (
+        <DrawerFooter className={styles.footer}>
+          <TemplatesPanelFooter {...selectedTabProps.footerContent} />
+        </DrawerFooter>
+      )}
+    </Drawer>
   );
 };
 
@@ -133,62 +121,79 @@ export const QuickViewPanelHeader = ({
   title,
   summary,
   sourceCodeUrl,
+  isMultiWorkflowTemplate = false,
   details,
   features,
   onBackClick,
+  onClose,
 }: {
   title: string;
   summary: string;
   sourceCodeUrl: string | undefined;
   details: Record<string, string>;
+  isMultiWorkflowTemplate?: boolean;
   features?: string;
   onBackClick?: () => void;
+  onClose?: () => void;
 }) => {
   const intl = useIntl();
-  const detailsTags: Record<string, string> = {
-    Type: intl.formatMessage({
-      defaultMessage: 'Type',
-      id: 'tjQdhq',
-      description: 'Solution type of the template',
-    }),
-    By: intl.formatMessage({
-      defaultMessage: 'By',
-      id: 'nhEgHb',
-      description: 'Name of the organization that published this template',
-    }),
-  };
+  const { resourceStrings } = useTemplatesStrings();
+  const styles = useStyles();
+
+  const detailsTags: Record<string, string> = useMemo(() => {
+    const baseDetailsTags: Record<string, string> = isMultiWorkflowTemplate
+      ? {}
+      : {
+          Type: intl.formatMessage({
+            defaultMessage: 'Type',
+            id: 'tjQdhq',
+            description: 'Solution type of the template',
+          }),
+        };
+
+    baseDetailsTags.By = resourceStrings.BY;
+    return baseDetailsTags;
+  }, [isMultiWorkflowTemplate, intl, resourceStrings.BY]);
+
+  const closeButton = onClose ? (
+    <Button appearance="subtle" icon={<Dismiss24Regular />} onClick={onClose} className={styles.closeButton}>
+      {intl.formatMessage({
+        defaultMessage: 'Close Panel',
+        id: 'XV/4oe',
+        description: 'Close panel button text',
+      })}
+    </Button>
+  ) : undefined;
 
   return (
-    <TemplatesPanelHeader title={title} onBackClick={onBackClick}>
-      <div className="msla-template-quickview-tags">
+    <TemplatesPanelHeader title={title} onBackClick={onBackClick} rightAction={closeButton}>
+      <div className={styles.tagsContainer}>
         {Object.keys(detailsTags).map((key: string, index: number, array: any[]) => {
           return (
             <div key={key}>
-              <Text className={index === array.length - 1 ? 'msla-template-last-tag' : ''}>
+              <Text className={index === array.length - 1 ? styles.lastTag : ''}>
                 {detailsTags[key]}: {details[key]}
               </Text>
-              {index !== array.length - 1 ? (
-                <Icon style={{ padding: '3px 10px 3px 10px', color: '#dedede', fontSize: 10 }} iconName="LocationDot" />
-              ) : null}
+              {index !== array.length - 1 ? <Text style={{ padding: '3px 10px 3px 10px', color: '#dedede', fontSize: 10 }}>•</Text> : null}
             </div>
           );
         })}
         {sourceCodeUrl && (
-          <Link className="msla-template-quickview-source-code" href={sourceCodeUrl} target="_blank">
+          <Link className={styles.sourceCodeLink} href={sourceCodeUrl} target="_blank">
             {intl.formatMessage({
               defaultMessage: 'Source code',
               id: 'EFQ56R',
               description: 'Link to the source code of the template',
             })}
-            <Open16Regular className="msla-templates-tab-source-code-icon" />
+            <Open16Regular className={styles.sourceCodeIcon} />
           </Link>
         )}
       </div>
-      <Markdown className="msla-template-markdown" linkTarget="_blank">
+      <Markdown className={styles.markdownContent} linkTarget="_blank">
         {summary}
       </Markdown>
       {features && (
-        <div className="msla-template-quickview-features">
+        <div className={styles.featuresSection}>
           <Text>
             {intl.formatMessage({
               defaultMessage: 'Features',
@@ -197,7 +202,7 @@ export const QuickViewPanelHeader = ({
             })}
             :
           </Text>
-          <Markdown className="msla-template-markdown" linkTarget="_blank">
+          <Markdown className={styles.markdownContent} linkTarget="_blank">
             {features}
           </Markdown>
         </div>

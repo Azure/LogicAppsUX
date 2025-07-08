@@ -12,7 +12,7 @@ import type { AzureOperationsFetchResponse, BaseSearchServiceOptions } from '../
 import { getClientBuiltInOperations, getClientBuiltInConnectors } from '../base/search';
 import type { ContinuationTokenResponse } from '../common/azure';
 import type { QueryParameters } from '../httpClient';
-import { getHybridAppBaseRelativeUrl, isHybridLogicApp } from './hybrid';
+import { getHybridAppBaseRelativeUrl, hybridApiVersion, isHybridLogicApp } from './hybrid';
 import * as ClientOperationsData from '../base/operations';
 
 const ISE_RESOURCE_ID = 'properties/integrationServiceEnvironmentResourceId';
@@ -59,7 +59,7 @@ export class StandardSearchService extends BaseSearchService {
     let response = null;
     if (isHybridLogicApp(uri)) {
       response = await httpClient.post<AzureOperationsFetchResponse, null>({
-        uri: `${getHybridAppBaseRelativeUrl(baseUrl.split('hostruntime')[0])}/invoke?api-version=2024-02-02-preview`,
+        uri: `${getHybridAppBaseRelativeUrl(baseUrl.split('hostruntime')[0])}/invoke?api-version=${hybridApiVersion}`,
         headers: {
           'x-ms-logicapps-proxy-path': `/runtime/webhooks/workflow/api/management/operations/?workflowKind=${
             showStatefulOperations ? 'Stateful' : 'Stateless'
@@ -154,7 +154,7 @@ export class StandardSearchService extends BaseSearchService {
     let response = null;
     if (isHybridLogicApp(uri)) {
       response = await httpClient.post<{ value: Connector[] }, null>({
-        uri: `${getHybridAppBaseRelativeUrl(baseUrl.split('hostruntime')[0])}/invoke?api-version=2024-02-02-preview`,
+        uri: `${getHybridAppBaseRelativeUrl(baseUrl.split('hostruntime')[0])}/invoke?api-version=${hybridApiVersion}`,
         headers: {
           'x-ms-logicapps-proxy-path': '/runtime/webhooks/workflow/api/management/operationGroups/',
           'x-ms-logicapps-proxy-method': 'GET',

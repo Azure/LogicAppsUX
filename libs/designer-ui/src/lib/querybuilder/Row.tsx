@@ -1,5 +1,6 @@
-import type { GroupedItems, GroupItems } from '.';
+import type { GroupedItems, GroupItems, GroupItemProps, RowItemProps } from '.';
 import { GroupType } from '.';
+import { MoveOption } from './Group';
 import { Checkbox } from '../checkbox';
 import constants from '../constants';
 import type { ValueSegment } from '../editor';
@@ -34,13 +35,13 @@ type RowProps = {
   showDisabledDelete?: boolean;
   isGroupable?: boolean;
   groupedItems: GroupedItems[];
-  // isTop: boolean;
-  // isBottom: boolean;
+  isTop: boolean;
+  isBottom: boolean;
   tokenMapping?: Record<string, ValueSegment>;
   loadParameterValueFromString?: loadParameterValueFromStringHandler;
-  getTokenPicker: GetTokenPickerHandler;
+  getTokenPicker?: GetTokenPickerHandler;
   readonly?: boolean;
-  // handleMove?: (childIndex: number, moveOption: MoveOption) => void;
+  handleMove?: (childIndex: number, moveOption: MoveOption, itemToMove?: GroupItemProps | RowItemProps) => void;
   handleDeleteChild?: (indexToDelete: number | number[]) => void;
   forceSingleCondition?: boolean;
   handleUpdateParent: (newProps: GroupItems, index: number) => void;
@@ -58,9 +59,9 @@ export const Row = ({
   isGroupable,
   groupedItems,
   getTokenPicker,
-  // isTop,
-  // isBottom,
-  // handleMove,
+  isTop,
+  isBottom,
+  handleMove,
   forceSingleCondition,
   readonly,
   clearEditorOnTokenInsertion,
@@ -93,15 +94,17 @@ export const Row = ({
     description: 'delete button',
   });
 
-  // const moveUpButton = intl.formatMessage({
-  //   defaultMessage: 'Move up',
-  //   description: 'Move up button',
-  // });
+  const moveUpButton = intl.formatMessage({
+    defaultMessage: 'Move up',
+    id: 'xFQdSb',
+    description: 'Move up button',
+  });
 
-  // const moveDownButton = intl.formatMessage({
-  //   defaultMessage: 'Move down',
-  //   description: 'Move down button',
-  // });
+  const moveDownButton = intl.formatMessage({
+    defaultMessage: 'Move down',
+    id: 'inn/0k',
+    description: 'Move down button',
+  });
 
   const makeGroupButton = intl.formatMessage({
     defaultMessage: 'Make group',
@@ -120,28 +123,26 @@ export const Row = ({
       name: deleteButton,
       onClick: () => handleDeleteChild?.(index),
     },
-    // TODO: Allow Moving of Rows in querybuilder
-    // {
-    //   key: moveUpButton,
-    //   disabled: true, //isTop,
-    //   iconProps: {
-    //     iconName: 'Up',
-    //   },
-    //   iconOnly: true,
-    //   name: moveUpButton,
-    //   onClick: () => handleMove?.(index, MoveOption.UP),
-    // },
-    // TODO: Allow Moving of Rows in querybuilder
-    // {
-    //   key: moveDownButton,
-    //   disabled: true, //isBottom,
-    //   iconProps: {
-    //     iconName: 'Down',
-    //   },
-    //   iconOnly: true,
-    //   name: moveDownButton,
-    //   onClick: () => handleMove?.(index, MoveOption.DOWN),
-    // },
+    {
+      key: moveUpButton,
+      disabled: isTop || readonly,
+      iconProps: {
+        iconName: 'Up',
+      },
+      iconOnly: true,
+      name: moveUpButton,
+      onClick: () => handleMove?.(index, MoveOption.UP),
+    },
+    {
+      key: moveDownButton,
+      disabled: isBottom || readonly,
+      iconProps: {
+        iconName: 'Down',
+      },
+      iconOnly: true,
+      name: moveDownButton,
+      onClick: () => handleMove?.(index, MoveOption.DOWN),
+    },
     {
       key: makeGroupButton,
       disabled: !(isGroupable && checked),
@@ -269,7 +270,7 @@ export const Row = ({
           editorBlur={handleKeySave}
           tokenPickerButtonProps={{
             location: TokenPickerButtonLocation.Left,
-            newlineVerticalOffset: 16,
+            newlineVerticalOffset: isSimpleQueryBuilder ? 16.5 : 16,
             horizontalOffSet: isSimpleQueryBuilder ? undefined /* uses default of 38*/ : 33,
           }}
           {...baseEditorProps}
@@ -284,7 +285,11 @@ export const Row = ({
           getTokenPicker={getTokenPicker}
           editorBlur={handleValueSave}
           clearEditorOnTokenInsertion={clearEditorOnTokenInsertion}
-          tokenPickerButtonProps={{ location: TokenPickerButtonLocation.Left, newlineVerticalOffset: 16, horizontalOffSet: 33 }}
+          tokenPickerButtonProps={{
+            location: TokenPickerButtonLocation.Left,
+            newlineVerticalOffset: isSimpleQueryBuilder ? 16.5 : 16,
+            horizontalOffSet: 33,
+          }}
           {...baseEditorProps}
         />
       </div>

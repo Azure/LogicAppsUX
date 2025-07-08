@@ -28,7 +28,7 @@ import type { NodeTokens, VariableDeclaration } from '../../state/tokens/tokensS
 import { initializeTokensAndVariables } from '../../state/tokens/tokensSlice';
 import type { NodesMetadata, Operations, WorkflowKind } from '../../state/workflow/workflowInterfaces';
 import type { RootState } from '../../store';
-import { getConnectionReference, isConnectionReferenceValid } from '../../utils/connectors/connections';
+import { getConnectionReference, isConnectionReferenceValid, mockConnectionReference } from '../../utils/connectors/connections';
 import { isRootNodeInGraph } from '../../utils/graph';
 import { getRepetitionContext } from '../../utils/loops';
 import type { RepetitionContext } from '../../utils/parameters/helper';
@@ -51,6 +51,7 @@ import {
   getCustomSwaggerIfNeeded,
   getInputParametersFromManifest,
   getOutputParametersFromManifest,
+  getSupportedChannelsFromManifest,
   updateCallbackUrlInInputs,
   updateCustomCodeInInputs,
   updateInvokerSettings,
@@ -73,6 +74,7 @@ import {
   getRecordEntry,
   parseErrorMessage,
   cleanResourceId,
+  deepCompareObjects,
 } from '@microsoft/logic-apps-shared';
 import type { InputParameter, OutputParameter, LogicAppsV2, OperationManifest } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
@@ -164,7 +166,7 @@ export const initializeOperationMetadata = async (
   dispatch(
     initializeNodes({
       nodes: allNodeData.map((data) => {
-        const { id, nodeInputs, nodeOutputs, nodeDependencies, settings, operationMetadata, staticResult } = data;
+        const { id, nodeInputs, nodeOutputs, nodeDependencies, settings, operationMetadata, staticResult, supportedChannels } = data;
         return {
           id,
           nodeInputs,
@@ -173,6 +175,7 @@ export const initializeOperationMetadata = async (
           settings,
           operationMetadata,
           staticResult,
+          supportedChannels,
           actionMetadata: getRecordEntry(nodesMetadata, id)?.actionMetadata,
           repetitionInfo: getRecordEntry(repetitionInfos, id),
         };
@@ -279,6 +282,8 @@ export const initializeOperationDetailsForManifest = async (
     );
     const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
 
+    const supportedChannels = getSupportedChannelsFromManifest(nodeId, nodeOperationInfo, manifest);
+
     const settings = getOperationSettings(isTrigger, nodeOperationInfo, manifest, undefined /* swagger */, operation, workflowKind);
 
     const childGraphInputs = processChildGraphAndItsInputs(manifest, operation, dispatch);
@@ -292,6 +297,7 @@ export const initializeOperationDetailsForManifest = async (
         settings,
         operationInfo: nodeOperationInfo,
         manifest,
+        supportedChannels,
         operationMetadata: { iconUri, brandColor },
         staticResult: operation?.runtimeConfiguration?.staticResult,
       },
@@ -299,7 +305,7 @@ export const initializeOperationDetailsForManifest = async (
     ];
   } catch (error: any) {
     const errorMessage = parseErrorMessage(error);
-    const message = `Unable to initialize operation details for operation - ${nodeId}. Error details - ${errorMessage}`;
+    const message = `Can't initialize operation details for operation: ${nodeId}. Error details: ${errorMessage}`;
     LoggerService().log({
       level: LogEntryLevel.Error,
       area: 'operation deserializer',
@@ -494,7 +500,7 @@ const initializeOutputTokensForOperations = (
       LoggerService().log({
         level: LogEntryLevel.Warning,
         area: 'OperationDeserializer:InitializeOutputTokens',
-        message: `Error initializing output tokens for operation - ${operationId}. Error details - ${errorMessage}`,
+        message: `Error occurred while initializing output tokens for operation: ${operationId}. Error details: ${errorMessage}`,
       });
     }
 
@@ -602,6 +608,9 @@ export const initializeDynamicDataInNodes = async (
 
       const isTrigger = isRootNodeInGraph(nodeId, 'root', nodesMetadata);
       const connectionReference = getConnectionReference(connections, nodeId);
+      const isFreshCreatedAgent =
+        (Object.keys(connections.connectionReferences).length === 0 || deepCompareObjects(connectionReference, mockConnectionReference)) &&
+        equals(operation.type, Constants.NODE.TYPE.AGENT);
 
       return updateDynamicDataForValidConnection(
         nodeId,
@@ -611,7 +620,8 @@ export const initializeDynamicDataInNodes = async (
         nodeDependencies,
         dispatch,
         getState,
-        operation
+        operation,
+        isFreshCreatedAgent
       );
     })
   );
@@ -627,13 +637,14 @@ const updateDynamicDataForValidConnection = async (
   dependencies: NodeDependencies,
   dispatch: Dispatch,
   getState: () => RootState,
-  operation: LogicAppsV2.ActionDefinition | LogicAppsV2.TriggerDefinition
+  operation: LogicAppsV2.ActionDefinition | LogicAppsV2.TriggerDefinition,
+  isFreshCreatedAgent: boolean
 ): Promise<void> => {
   const isValidConnection = await isConnectionReferenceValid(operationInfo, reference);
 
   if (isValidConnection) {
     await updateDynamicDataInNode(nodeId, isTrigger, operationInfo, reference, dependencies, dispatch, getState, operation);
-  } else {
+  } else if (!isFreshCreatedAgent) {
     LoggerService().log({
       level: LogEntryLevel.Warning,
       area: 'OperationDeserializer:UpdateDynamicData',
@@ -647,9 +658,9 @@ const updateDynamicDataForValidConnection = async (
         errorInfo: {
           level: ErrorLevel.Connection,
           message: intl.formatMessage({
-            defaultMessage: 'Invalid connection, please update your connection to load complete details',
-            id: 'tMdcE1',
-            description: 'Error message to show on connection error during deserialization',
+            defaultMessage: 'Invalid connection. To load complete details, complete or update the connection.',
+            id: '4bT5AR',
+            description: 'Error message to show for connection error during deserialization.',
           }),
         },
       })

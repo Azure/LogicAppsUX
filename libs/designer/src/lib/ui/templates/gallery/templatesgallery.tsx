@@ -3,8 +3,10 @@ import { TemplateCard } from '../cards/templateCard';
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { setPageNum, templatesCountPerPage } from '../../../core/state/templates/manifestSlice';
-import { Text } from '@fluentui/react-components';
+import { Text, mergeClasses } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
+import { useTemplatesGalleryStyles } from './templatesgallery.styles';
+import { useFilteredTemplateNames } from '../../../core/state/templates/templateselectors';
 
 interface TemplatesGalleryProps {
   isLightweight?: boolean;
@@ -23,10 +25,11 @@ export const TemplatesGallery = ({
 }: TemplatesGalleryProps) => {
   const {
     filters: { pageNum },
-    filteredTemplateNames,
   } = useSelector((state: RootState) => state.manifest);
+  const filteredTemplateNames = useFilteredTemplateNames();
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
+  const styles = useTemplatesGalleryStyles();
   const intlText = {
     NO_RESULTS: intl.formatMessage({
       defaultMessage: "Can't find any search results",
@@ -45,9 +48,9 @@ export const TemplatesGallery = ({
   const endingIndex = startingIndex + countPerPage;
   const lastPage = Math.ceil((filteredTemplateNames?.length ?? 0) / countPerPage);
   return (
-    <>
+    <div className={styles.galleryWrapper}>
       <div>
-        <div className="msla-templates-list">
+        <div className={mergeClasses(styles.galleryList, cssOverrides?.['list'])}>
           {blankTemplateCard ? blankTemplateCard : null}
           {filteredTemplateNames === undefined
             ? [1, 2, 3, 4].map((i) => <TemplateCard key={i} cssOverrides={cssOverrides} templateName={''} />)
@@ -81,14 +84,14 @@ export const TemplatesGallery = ({
         ) : null}
       </div>
       {filteredTemplateNames?.length === 0 ? (
-        <div className="msla-templates-empty-list">
+        <div className={styles.emptyList}>
           <EmptySearch />
-          <Text size={500} weight="semibold" align="start" className="msla-template-empty-list-title">
+          <Text size={500} weight="semibold" align="start" className={styles.emptyListTitle}>
             {intlText.NO_RESULTS}
           </Text>
           <Text>{intlText.TRY_DIFFERENT}</Text>
         </div>
       ) : null}
-    </>
+    </div>
   );
 };

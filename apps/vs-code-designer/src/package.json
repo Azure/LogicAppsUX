@@ -1,7 +1,7 @@
 {
   "name": "vscode-azurelogicapps",
   "displayName": "Azure Logic Apps (Standard)",
-  "version": "5.57.0",
+  "version": "5.110.0",
   "aiKey": "setInGitHubBuild",
   "repository": "https://github.com/Azure/LogicAppsUX",
   "main": "main.js",
@@ -39,23 +39,19 @@
         }
       ],
       "activation": {
-        "onFetch": [
-          "microsoft.web/sites"
-        ],
-        "onResolve": [
-          "microsoft.web/sites"
-        ]
+        "onFetch": ["microsoft.web/sites"],
+        "onResolve": ["microsoft.web/sites"]
       }
     },
     "commands": [
       {
         "command": "azureLogicAppsStandard.openDesigner",
-        "title": "Open Designer",
+        "title": "Open designer",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.viewContent",
-        "title": "View Content",
+        "title": "View content",
         "category": "Azure Logic Apps"
       },
       {
@@ -77,7 +73,7 @@
         }
       },
       {
-        "command": "azureLogicAppsStandard.createCodeless",
+        "command": "azureLogicAppsStandard.createWorkflow",
         "title": "Create workflow...",
         "category": "Azure Logic Apps",
         "icon": {
@@ -99,7 +95,7 @@
       },
       {
         "command": "azureLogicAppsStandard.deploySlot",
-        "title": "Deploy to Slot...",
+        "title": "Deploy to slot...",
         "category": "Azure Logic Apps"
       },
       {
@@ -134,7 +130,12 @@
       },
       {
         "command": "azureLogicAppsStandard.pickProcess",
-        "title": "Pick Process",
+        "title": "Pick process",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "azureLogicAppsStandard.pickCustomCodeNetHostProcess",
+        "title": "Pick Custom Code .NET Host Process",
         "category": "Azure Logic Apps"
       },
       {
@@ -145,6 +146,16 @@
       {
         "command": "azureLogicAppsStandard.cloudToLocal",
         "title": "Create new logic app workspace from package...",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "azureLogicAppsStandard.buildCustomCodeFunctionsProject",
+        "title": "Build functions project...",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "azureLogicAppsStandard.createCustomCodeFunction",
+        "title": "New function...",
         "category": "Azure Logic Apps"
       },
       {
@@ -168,57 +179,57 @@
       },
       {
         "command": "azureLogicAppsStandard.openInPortal",
-        "title": "Open in Portal",
+        "title": "Open in portal",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.browseWebsite",
-        "title": "Browse Website",
+        "title": "Browse website",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.viewProperties",
-        "title": "View Properties",
+        "title": "View properties",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.createSlot",
-        "title": "Create Slot...",
+        "title": "Create slot...",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.deleteSlot",
-        "title": "Delete Slot...",
+        "title": "Delete slot...",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.viewDeploymentLogs",
-        "title": "View Deployment Logs",
+        "title": "View deployment logs",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.startStreamingLogs",
-        "title": "Start Streaming Logs",
+        "title": "Start streaming logs",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.stopStreamingLogs",
-        "title": "Stop Streaming Logs",
+        "title": "Stop streaming logs",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.reviewValidation",
-        "title": "Review Validation",
+        "title": "Review validation",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.swapSlot",
-        "title": "Swap Slot...",
+        "title": "Swap slot...",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.toggleAppSettingVisibility",
-        "title": "Toggle App Setting Visibility.",
+        "title": "Toggle app setting visibility.",
         "category": "Azure Logic Apps",
         "icon": {
           "light": "assets/light/visible.svg",
@@ -227,37 +238,37 @@
       },
       {
         "command": "azureLogicAppsStandard.appSettings.add",
-        "title": "Add New Setting...",
+        "title": "Add new setting...",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.appSettings.delete",
-        "title": "Delete Setting...",
+        "title": "Delete setting...",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.appSettings.download",
-        "title": "Download Remote Settings...",
+        "title": "Download remote settings...",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.appSettings.edit",
-        "title": "Edit Setting...",
+        "title": "Edit setting...",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.appSettings.rename",
-        "title": "Rename Setting...",
+        "title": "Rename setting...",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.appSettings.toggleSlotSetting",
-        "title": "Toggle as Slot Setting",
+        "title": "Toggle as slot setting",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.appSettings.upload",
-        "title": "Upload Local Settings...",
+        "title": "Upload local settings...",
         "category": "Azure Logic Apps"
       },
       {
@@ -271,43 +282,48 @@
         "category": "Azure Logic Apps"
       },
       {
+        "command": "azureLogicAppsStandard.syncCloudSettings",
+        "title": "Sync with local settings",
+        "category": "Azure Logic Apps"
+      },
+      {
         "command": "azureLogicAppsStandard.configureWebhookRedirectEndpoint",
-        "title": "Configure Webhook Redirect Endpoint",
+        "title": "Configure webhook redirect endpoint",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.enableAzureConnectors",
-        "title": "Use Connectors from Azure",
+        "title": "Use connectors from Azure",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.viewCommitInGitHub",
-        "title": "View Commit in GitHub",
+        "title": "View commit in GitHub",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.connectToGitHub",
-        "title": "Connect to GitHub Repository...",
+        "title": "Connect to GitHub repository...",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.disconnectRepo",
-        "title": "Disconnect from Repo...",
+        "title": "Disconnect from repo...",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.startRemoteDebug",
-        "title": "Start Remote Debugging",
+        "title": "Start remote debugging",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.initProjectForVSCode",
-        "title": "Initialize Project for Use with VS Code...",
+        "title": "Initialize project for use with VS Code...",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.configureDeploymentSource",
-        "title": "Configure Deployment Source...",
+        "title": "Configure deployment source...",
         "category": "Azure Logic Apps"
       },
       {
@@ -383,7 +399,7 @@
           "group": "1_create@2"
         },
         {
-          "command": "azureLogicAppsStandard.createCodeless",
+          "command": "azureLogicAppsStandard.createWorkflow",
           "group": "1_create@3"
         },
         {
@@ -655,8 +671,18 @@
           "group": "zzz_LogicApptools@1"
         },
         {
-          "command": "azureLogicAppsStandard.createCodeless",
+          "command": "azureLogicAppsStandard.createWorkflow",
           "when": "explorerResourceIsRoot == true",
+          "group": "zzz_LogicApptools@1"
+        },
+        {
+          "command": "azureLogicAppsStandard.createCustomCodeFunction",
+          "when": "explorerResourceIsRoot == true && resourcePath in azureLogicAppsStandard.customCode.setFunctionsFolders",
+          "group": "navigation@1"
+        },
+        {
+          "command": "azureLogicAppsStandard.buildCustomCodeFunctionsProject",
+          "when": "explorerResourceIsRoot == true && resourcePath in azureLogicAppsStandard.customCode.setFunctionsFolders",
           "group": "zzz_LogicApptools@1"
         },
         {
@@ -690,6 +716,11 @@
           "group": "zzz_LogicApptools@3"
         },
         {
+          "command": "azureLogicAppsStandard.syncCloudSettings",
+          "when": "resourceFilename==cloud.settings.json",
+          "group": "zzz_appSettings@3"
+        },
+        {
           "command": "azureLogicAppsStandard.configureWebhookRedirectEndpoint",
           "when": "resourceFilename==local.settings.json",
           "group": "zzz_appSettings@3"
@@ -716,6 +747,10 @@
         },
         {
           "command": "azureLogicAppsStandard.pickProcess",
+          "when": "never"
+        },
+        {
+          "command": "azureLogicAppsStandard.pickCustomCodeNetHostProcess",
           "when": "never"
         },
         {
@@ -756,40 +791,23 @@
           "azureLogicAppsStandard.projectRuntime": {
             "scope": "resource",
             "type": "string",
-            "enum": [
-              "~4",
-              "~3"
-            ],
+            "enum": ["~4", "~3"],
             "description": "The default version of the Azure Functions runtime to use when performing operations like \"Create new logic app\".",
-            "enumDescriptions": [
-              "Azure Functions v4",
-              "Azure Functions v3 (.NET Core)"
-            ]
+            "enumDescriptions": ["Azure Functions v4", "Azure Functions v3 (.NET Core)"]
           },
           "azureLogicAppsStandard.projectLanguage": {
             "scope": "resource",
             "type": "string",
-            "enum": [
-              "JavaScript",
-              "C#"
-            ],
+            "enum": ["JavaScript", "C#"],
             "readOnly": true,
             "description": "The default language to use when performing operations like \"Create New Workflow\".",
-            "enumDescriptions": [
-              ""
-            ]
+            "enumDescriptions": [""]
           },
           "azureLogicAppsStandard.dataMapperVersion": {
             "type": "number",
-            "enum": [
-              1,
-              2
-            ],
+            "enum": [1, 2],
             "description": "The default version of Data Mapper to use when performing operations like \"Create data map\".",
-            "enumDescriptions": [
-              "Version 1",
-              "Version 2 (Preview)"
-            ],
+            "enumDescriptions": ["Version 1", "Version 2 (Preview)"],
             "default": 1
           },
           "azureLogicAppsStandard.deploySubpath": {
@@ -860,16 +878,6 @@
             "description": "Ask to confirm before deploying to a function app in Azure. Deployment overwrites any previous deployment and can't be undone.",
             "default": true
           },
-          "azureLogicAppsStandard.showCoreToolsWarning": {
-            "type": "boolean",
-            "description": "Show a warning when your installed version of the Azure Functions Core Tools is outdated.",
-            "default": true
-          },
-          "azureLogicAppsStandard.showDotNetWarning": {
-            "type": "boolean",
-            "description": "Show a warning when your installed version of the .NET SDK is outdated.",
-            "default": true
-          },
           "azureLogicAppsStandard.showNodeJsWarning": {
             "type": "boolean",
             "description": "Show a warning when your installed version of Node JS is outdated.",
@@ -902,11 +910,7 @@
           },
           "azureLogicAppsStandard.projectOpenBehavior": {
             "type": "string",
-            "enum": [
-              "AddToWorkspace",
-              "OpenInNewWindow",
-              "OpenInCurrentWindow"
-            ],
+            "enum": ["AddToWorkspace", "OpenInNewWindow", "OpenInCurrentWindow"],
             "description": "The behavior to use after creating a new project. The options are \"AddToWorkspace\", \"OpenInNewWindow\", or \"OpenInCurrentWindow\"."
           },
           "azureLogicAppsStandard.show64BitWarning": {
@@ -972,6 +976,35 @@
             "type": "string",
             "description": "Default drive letter to mount the smb for hybrid logic apps",
             "default": "X:"
+          },
+          "azureLogicAppsStandard.useSmbDeploymentForHybrid": {
+            "type": "boolean",
+            "description": "Enable to use SMB deployment for hybrid logic apps.",
+            "default": false
+          }
+        }
+      }
+    ],
+    "debuggers": [
+      {
+        "type": "logicapp",
+        "label": "Debug Logic App",
+        "configurationAttributes": {
+          "launch": {
+            "required": ["funcRuntime"],
+            "properties": {
+              "funcRuntime": {
+                "type": "string",
+                "description": "The runtime to use for the Azure Functions host process.",
+                "enum": ["coreclr", "clr"],
+                "default": "coreclr"
+              },
+              "customCodeRuntime": {
+                "type": "string",
+                "description": "The runtime to use for the .NET custom code host process.",
+                "enum": ["coreclr", "clr"]
+              }
+            }
           }
         }
       }
@@ -981,14 +1014,15 @@
     "ms-azuretools.vscode-azurefunctions",
     "azurite.azurite",
     "ms-azuretools.vscode-azureresourcegroups",
-    "ms-dotnettools.csharp"
+    "ms-dotnettools.csharp",
+    "ms-dotnettools.csdevkit"
   ],
   "activationEvents": [
     "onCommand:azureLogicAppsStandard.openDesigner",
     "onCommand:azureLogicAppsStandard.viewContent",
     "onCommand:azureLogicAppsStandard.createNewProject",
     "onCommand:azureLogicAppsStandard.createNewWorkspace",
-    "onCommand:azureLogicAppsStandard.createCodeless",
+    "onCommand:azureLogicAppsStandard.createWorkflow",
     "onCommand:azureLogicAppsStandard.deploy",
     "onCommand:azureLogicAppsStandard.generateDeploymentScripts",
     "onCommand:azureLogicAppsStandard.deploySlot",
@@ -998,10 +1032,13 @@
     "onCommand:azureLogicAppsStandard.stopLogicApp",
     "onCommand:azureLogicAppsStandard.restartLogicApp",
     "onCommand:azureLogicAppsStandard.pickProcess",
+    "onCommand:azureLogicAppsStandard.pickCustomCodeNetHostProcess",
     "onCommand:azureLogicAppsStandard.deleteLogicApp",
     "onCommand:azureLogicAppsStandard.openOverview",
     "onCommand:azureLogicAppsStandard.exportLogicApp",
     "onCommand:azureLogicAppsStandard.cloudToLocal",
+    "onCommand:azureLogicAppsStandard.buildCustomCodeFunctionsProject",
+    "onCommand:azureLogicAppsStandard.createCustomCodeFunction",
     "onCommand:azureLogicAppsStandard.reviewValidation",
     "onCommand:azureLogicAppsStandard.switchToDotnetProject",
     "onCommand:azureLogicAppsStandard.openInPortal",
@@ -1046,15 +1083,8 @@
   },
   "homepage": "https://azure.microsoft.com/services/logic-apps/",
   "license": "SEE LICENSE IN LICENSE.md",
-  "categories": [
-    "Azure"
-  ],
-  "keywords": [
-    "Azure",
-    "Logic App",
-    "serverless",
-    "multi-root ready"
-  ],
+  "categories": ["Azure"],
+  "keywords": ["Azure", "Logic App", "serverless", "multi-root ready"],
   "preview": false,
   "publisher": "ms-azuretools",
   "icon": "assets/logicapp.png",

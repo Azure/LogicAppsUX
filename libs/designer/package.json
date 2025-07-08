@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/logic-apps-designer",
-  "version": "5.57.0",
+  "version": "5.110.0",
   "dependencies": {
     "@fluentui/azure-themes": "8.5.70",
     "@fluentui/react": "8.110.2",
@@ -10,13 +10,16 @@
     "@fluentui/utilities": "8.15.0",
     "@microsoft/applicationinsights-core-js": "2.8.9",
     "@microsoft/designer-ui": "workspace:*",
+    "@microsoft/logic-apps-chatbot": "workspace:*",
     "@microsoft/logic-apps-shared": "workspace:*",
     "@react-hookz/web": "22.0.0",
     "@reduxjs/toolkit": "1.8.5",
     "@xyflow/react": "^12.3.5",
     "elkjs": "0.8.2",
+    "file-saver": "2.0.5",
     "fuse.js": "6.6.2",
     "immer": "9.0.15",
+    "jszip": "3.10.1",
     "lodash.frompairs": "4.0.1",
     "lodash.isequal": "4.5.0",
     "lodash.merge": "4.6.2",
@@ -43,7 +46,8 @@
     "@types/lodash.isequal": "^4.5.8",
     "@types/lodash.merge": "^4.6.9",
     "@types/pako": "^2.0.3",
-    "@types/to-title-case": "^1.0.2"
+    "@types/to-title-case": "^1.0.2",
+    "@types/file-saver": "^2.0.5"
   },
   "engines": {
     "node": ">=12"
@@ -56,10 +60,7 @@
     },
     "./package.json": "./package.json"
   },
-  "files": [
-    "build/lib/**/*",
-    "src"
-  ],
+  "files": ["build/lib/**/*", "src"],
   "license": "MIT",
   "main": "src/index.ts",
   "module": "src/index.ts",

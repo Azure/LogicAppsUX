@@ -1,6 +1,6 @@
-name: '🐞 Logic Apps/Power Automate Bug Report'
+name: '🐞 Logic Apps Bug Report'
 description: Create a report to help us improve Logic Apps
-labels: ['bug']
+labels: ['bug', 'triage']
 body:
   - type: markdown
     attributes:
@@ -19,15 +19,36 @@ body:
         Please refer to the Troubleshooting Guide to help with filling in this information: https://aka.ms/lauxtsg
         The more information you fill in, the better we can help you.
 
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      description: How severe is this issue?
+      options:
+        - 'P1 - Critical (Blocking production)'
+        - 'P2 - High (Major functionality broken)'
+        - 'P3 - Medium (Minor functionality affected)'
+        - 'P4 - Low (Cosmetic/minor inconvenience)'
+    validations:
+      required: true
+
   - type: textarea
     id: description
     attributes:
       label: Describe the Bug with repro steps
       description: Provide a clear and concise description of the challenge you are running into.
       placeholder: |
+        Expected behavior:
+        - What should happen
+        
+        Actual behavior:
+        - What actually happens
+        
+        Steps to reproduce:
         1. Go to '...'
         2. Click on '....'
         3. Scroll down to '....'
+        4. See error
     validations:
       required: true
 
@@ -37,11 +58,20 @@ body:
       label: What type of Logic App Is this happening in?
       options:
         - Consumption (Portal)
-        - Power Automate
         - Standard (Portal)
         - Standard (VSCode)
+        - Standard (Local Development)
     validations:
       required: true
+
+  - type: input
+    id: regression
+    attributes:
+      label: Are you experiencing a regression?
+      description: If yes, please provide the last working version/date
+      placeholder: 'e.g., Worked in v2.3.0 or worked until October 2024'
+    validations:
+      required: false
 
   - type: dropdown
     id: operatingSystem
@@ -96,11 +126,15 @@ body:
         You can drag your video or image files inside of this editor ↓
 
   - type: textarea
-    id: browser
+    id: environment
     attributes:
-      label: Browser
+      label: Environment
+      description: Please provide environment details
       placeholder: |
-        - Browser: [e.g. Chrome, Safari, Firefox]
+        - Browser: [e.g. Chrome 120, Safari 17, Firefox 121]
+        - VS Code Version: [e.g. 1.85.0]
+        - Extension Version: [e.g. v2.3.0] You can find this by following the https://aka.ms/lauxtsg
+        - Azure CLI Version: [if applicable]
     validations:
       required: true
 

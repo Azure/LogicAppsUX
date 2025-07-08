@@ -3,6 +3,7 @@ import designerOptionsReducer from '../core/state/designerOptions/designerOption
 import designerViewReducer from '../core/state/designerView/designerViewSlice';
 import operationMetadataReducer from '../core/state/operation/operationMetadataSlice';
 import panelReducer from '../core/state/panel/panelSlice';
+import unitTestReducer from '../core/state/unitTest/unitTestSlice';
 import customCodeReducer from '../core/state/customcode/customcodeSlice';
 import settingsReducer from '../core/state/setting/settingSlice';
 import staticResultsSchemasReducer from '../core/state/staticresultschema/staticresultsSlice';
@@ -42,6 +43,7 @@ export function renderWithRedux(
         tokens: tokens,
         workflowParameters: workflowParametersReducer,
         staticResults: staticResultsSchemasReducer,
+        unitTest: unitTestReducer,
         customCode: customCodeReducer,
         undoRedo: undoRedoReducer,
       },

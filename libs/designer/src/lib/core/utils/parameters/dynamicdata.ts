@@ -467,7 +467,9 @@ function getParameterValuesForLegacyDynamicOperation(
   const { method, path } = operation;
   const operationInputs = map(
     toParameterInfoMap(
-      unmap(swagger.getInputParameters(operationId as string, { excludeInternalParameters: false, excludeInternalOperations: false }).byId)
+      unmap(swagger.getInputParameters(operationId as string, { excludeInternalParameters: false, excludeInternalOperations: false }).byId),
+      undefined,
+      shouldEncodeBasedOnMetadata
     ),
     'parameterName'
   );
@@ -791,12 +793,14 @@ function getSwaggerBasedInputParameters(
     propertyNames,
     getObjectPropertyValue(operationDefinition.inputs, propertyNames)
   );
-  const dynamicInputParameters = loadInputValuesFromDefinition(
+  let dynamicInputParameters = loadInputValuesFromDefinition(
     dynamicInputDefinition as Record<string, any>,
     isNested ? [getDynamicInputParameterFromDynamicParameter(dynamicParameter)] : inputs,
     operationPath,
     basePath as string
   );
+
+  dynamicInputParameters = removeParentObjectInputsIfNotNeeded(dynamicInputParameters);
 
   if (isNested) {
     const parameter = first((inputParameter) => inputParameter.key === key, dynamicInputParameters);

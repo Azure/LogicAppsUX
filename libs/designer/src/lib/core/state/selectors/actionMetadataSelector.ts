@@ -3,7 +3,7 @@ import { isConnectionRequiredForOperation } from '../../actions/bjsworkflow/conn
 import { useConnectionResource } from '../../queries/connections';
 import type { RootState } from '../../store';
 import { useConnector, useNodeConnectionId, useSwagger } from '../connection/connectionSelector';
-import type { NodeOperation } from '../operation/operationMetadataSlice';
+import type { NodeOperation, OperationMetadataState } from '../operation/operationMetadataSlice';
 import { OperationManifestService, SwaggerParser, getObjectPropertyValue, getRecordEntry } from '@microsoft/logic-apps-shared';
 import type { LAOperation, OperationManifest } from '@microsoft/logic-apps-shared';
 import { createSelector } from '@reduxjs/toolkit';
@@ -18,6 +18,8 @@ interface QueryResult {
   isLoading?: boolean;
   result: any;
 }
+
+export const getOperationsState = (state: RootState): OperationMetadataState => state.operations;
 
 export const useIsConnectionRequired = (operationInfo: NodeOperation) => {
   const result = useOperationManifest(operationInfo);
@@ -37,7 +39,7 @@ export const useIsInlineConnection = (operationInfo: NodeOperation) => {
     return false;
   }
   const manifest = result.data;
-  return manifest?.properties.connector?.id === '/connectionProviders/agent';
+  return manifest?.properties.connector?.id === Constants.CONNECTION_IDS.AGENT;
 };
 
 export const useAllowUserToChangeConnection = (op: NodeOperation) => {

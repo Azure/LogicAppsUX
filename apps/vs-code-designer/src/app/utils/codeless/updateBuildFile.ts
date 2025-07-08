@@ -89,6 +89,26 @@ export function addLibToPublishPath(xmlBuildFile: Record<string, any>): Record<s
   return xmlBuildFile;
 }
 
+export function addNugetPackagesToBuildFileByName(
+  xmlBuildFile: Record<string, any>,
+  packageName: string,
+  packageVersion: string
+): Record<string, any> {
+  const xmlBuildFileString = JSON.stringify(xmlBuildFile);
+  if (xmlBuildFileString.indexOf(packageName) < 0) {
+    const itemGroup: Record<string, any> = {
+      PackageReference: {
+        $: {
+          Include: packageName,
+          Version: packageVersion,
+        },
+      },
+    };
+    xmlBuildFile['Project']['ItemGroup'].push(itemGroup);
+  }
+  return xmlBuildFile;
+}
+
 export function addNugetPackagesToBuildFile(xmlBuildFile: Record<string, any>): Record<string, any> {
   const packageName = 'Microsoft.Azure.Workflows.WebJobs.Extension';
   const packageVersion = '1.2.*';
@@ -115,7 +135,17 @@ export function suppressJavaScriptBuildWarnings(xmlBuildFile: Record<string, any
 export function updateFunctionsSDKVersion(xmlBuildFile: Record<string, any>, dotnetVersion: string): Record<string, any> {
   for (const item of xmlBuildFile['Project']['ItemGroup']) {
     if ('PackageReference' in item && item['PackageReference']['$']['Include'] === 'Microsoft.NET.Sdk.Functions') {
-      const packageVersion = dotnetVersion === DotnetVersion.net6 ? '4.1.3' : '3.0.13';
+      let packageVersion = '';
+      switch (dotnetVersion) {
+        case DotnetVersion.net6:
+          packageVersion = '4.1.3';
+          break;
+        case DotnetVersion.net8:
+          packageVersion = '4.5.0';
+          break;
+        default:
+          packageVersion = '3.0.13';
+      }
       item['PackageReference']['$']['Version'] = packageVersion;
       break;
     }

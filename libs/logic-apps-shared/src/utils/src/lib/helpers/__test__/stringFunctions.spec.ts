@@ -1,4 +1,4 @@
-import { escapeString, idDisplayCase, labelCase, canStringBeConverted, unescapeString } from '../stringFunctions';
+import { escapeString, idDisplayCase, labelCase, canStringBeConverted, unescapeString, toPascalCase } from '../stringFunctions';
 import { describe, it, expect } from 'vitest';
 describe('label_case', () => {
   it('should replace _ with spaces', () => {
@@ -113,84 +113,79 @@ describe('unescapeString', () => {
 });
 
 describe('escapeString', () => {
-  it('escapes newline characters', () => {
-    expect(escapeString('Hello\nWorld')).toBe('Hello\\nWorld');
+  it('escapes newline inside single quotes', () => {
+    expect(escapeString("concat('line\nbreak')")).toBe("concat('line\\nbreak')");
   });
 
-  it('escapes carriage return characters', () => {
-    expect(escapeString('Hello\rWorld')).toBe('Hello\\rWorld');
+  it('escapes carriage return inside single quotes', () => {
+    expect(escapeString("concat('line\rreturn')")).toBe("concat('line\\rreturn')");
   });
 
-  it('escapes tab characters', () => {
-    expect(escapeString('Hello\tWorld')).toBe('Hello\\tWorld');
+  it('escapes tab inside single quotes', () => {
+    expect(escapeString("concat('tab\tvalue')")).toBe("concat('tab\\tvalue')");
   });
 
-  it('escapes vertical tab characters', () => {
-    expect(escapeString('Hello\vWorld')).toBe('Hello\\vWorld');
+  it('escapes vertical tab inside single quotes', () => {
+    expect(escapeString("concat('vertical\vtab')")).toBe("concat('vertical\\vtab')");
   });
 
-  it('returns the same string if there are no special characters', () => {
-    expect(escapeString('Hello World')).toBe('Hello World');
+  it('escapes double quote inside single quotes', () => {
+    expect(escapeString("concat('quote\"test')")).toBe("concat('quote\\\"test')");
   });
 
-  it('escapes newline characters', () => {
-    expect(escapeString('\n')).toBe('\\n');
-    expect(escapeString('Test\nTest')).toBe('Test\\nTest');
+  it('does not escape special characters outside of single quotes', () => {
+    expect(escapeString('concat(\n\t\r\v)')).toBe('concat(\n\t\r\v)');
   });
 
-  it('escapes backslashes and newline characters together', () => {
-    expect(escapeString('\\\n')).toBe('\\\\n');
-    expect(escapeString('Test\\\nTest')).toBe('Test\\\\nTest');
+  it('does not escape if special characters are outside single quotes', () => {
+    expect(escapeString("'\n'\n'\t'")).toBe("'\\n'\n'\\t'");
   });
 
-  it('handles an empty string', () => {
-    expect(escapeString('')).toBe('');
+  it('handles input with no quotes', () => {
+    expect(escapeString('plain text')).toBe('plain text');
   });
 
-  it('does not escape characters if requireSingleQuotesWrap is true and the string is not wrapped in single quotes', () => {
-    expect(escapeString('Test\nTest', true)).toBe('Test\nTest');
+  it('handles input with only special characters inside quotes', () => {
+    expect(escapeString("concat('\n\r\t\v\"\\')")).toBe("concat('\\n\\r\\t\\v\\\"\\')");
   });
 
-  it('escapes characters if requireSingleQuotesWrap is true and the string is wrapped in single quotes', () => {
-    expect(escapeString("'Test\nTest'", true)).toBe("'Test\\nTest'");
+  it('handles multiple quoted sections correctly', () => {
+    expect(escapeString("before 'line\none' middle 'line\ttwo' after")).toBe("before 'line\\none' middle 'line\\ttwo' after");
   });
 
-  it('escapes multiple newlines when requireSingleQuotesWrap is true and wrapped in single quotes', () => {
-    expect(escapeString("'Test\nAnotherLine\nTest'", true)).toBe(`'Test
-AnotherLine
-Test'`);
+  it('handles uneven quotes gracefully (simple toggle)', () => {
+    expect(escapeString("'open\nquote")).toBe("'open\\nquote");
+  });
+});
+
+describe('toPascalCase', () => {
+  it('should convert a valid snake_case string to PascalCase', () => {
+    const input = 'example_string';
+    const result = toPascalCase(input);
+    expect(result).toBe('ExampleString');
   });
 
-  it('escapes characters even if requireSingleQuotesWrap is false, regardless of surrounding quotes', () => {
-    expect(escapeString("'Test\nTest'", false)).toBe("'Test\\nTest'");
+  it('should capitalize the first letter of a single word', () => {
+    const input = 'example';
+    const result = toPascalCase(input);
+    expect(result).toBe('Example');
   });
 
-  it('escapes characters when requireSingleQuotesWrap is undefined, regardless of surrounding quotes', () => {
-    expect(escapeString("'Test\nTest'")).toBe("'Test\\nTest'");
+  it('should handle strings with multiple underscores', () => {
+    const input = 'example__string__test';
+    const result = toPascalCase(input);
+    expect(result).toBe('ExampleStringTest');
   });
 
-  it('escapes double quotes only when requireSingleQuotesWrap is true', () => {
-    expect(escapeString(`concat('{', '"ErrorDetail"', ':', '"Exchange get failed with exchange id', '-', '"}')`, true)).toBe(
-      `concat('{', '\\"ErrorDetail\\"', ':', '\\"Exchange get failed with exchange id', '-', '\\"}')`
-    );
-    expect(escapeString(`concat('{', '"ErrorDetail"', ':', '"Exchange get failed with exchange id', '-', '"}')`, false)).toBe(
-      `concat('{', '"ErrorDetail"', ':', '"Exchange get failed with exchange id', '-', '"}')`
-    );
+  it('should handle an empty string gracefully', () => {
+    const input = '';
+    const result = toPascalCase(input);
+    expect(result).toBe('');
   });
 
-  it('escapes double quotes and newlines when requireSingleQuotesWrap is true', () => {
-    expect(escapeString('\'Hello\n"World"\'', true)).toBe('\'Hello\\n\\"World\\"\'');
-  });
-
-  it('does not escape double quotes when requireSingleQuotesWrap is false', () => {
-    expect(escapeString('Hello "World"', false)).toBe('Hello "World"');
-  });
-
-  it('escapes double quotes and other characters when requireSingleQuotesWrap is true and surrounded by single quotes', () => {
-    expect(escapeString('\'Test\n"AnotherTest"\'', true)).toBe('\'Test\\n\\"AnotherTest\\"\'');
-  });
-
-  it('does not escape double quotes when requireSingleQuotesWrap is false', () => {
-    expect(escapeString('Test "Hello"', false)).toBe('Test "Hello"');
+  it('should handle strings with leading underscores', () => {
+    const input = '_example_string';
+    const result = toPascalCase(input);
+    expect(result).toBe('ExampleString');
   });
 });

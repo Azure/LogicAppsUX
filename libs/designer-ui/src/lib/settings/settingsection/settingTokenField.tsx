@@ -1,7 +1,11 @@
+import { cloneElement, useMemo, useState } from 'react';
+import { EditorLanguage, equals, getPropertyValue, replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
+import type { TokenGroup } from '@microsoft/logic-apps-shared';
+import { AgentInstructionEditor } from '../../agentinstruction';
 import { ArrayEditor } from '../../arrayeditor';
 import { AuthenticationEditor } from '../../authentication';
-import type { FileNameChangeHandler } from '../../code';
 import { CodeEditor } from '../../code';
+import type { FileNameChangeHandler } from '../../code';
 import { isCustomCode } from '../../code/util';
 import { Combobox } from '../../combobox';
 import constants from '../../constants';
@@ -17,6 +21,7 @@ import type {
   loadParameterValueFromStringHandler,
 } from '../../editor/base';
 import type { TokenPickerButtonEditorProps } from '../../editor/base/plugins/tokenpickerbutton';
+import type { AgentParameterButtonProps } from '../../editor/base/plugins/tokenpickerbutton/agentParameterButton';
 import { createLiteralValueSegment, getDropdownOptionsFromOptions } from '../../editor/base/utils/helper';
 import { InitializeVariableEditor } from '../../editor/initializevariable';
 import { StringEditor } from '../../editor/string';
@@ -24,28 +29,32 @@ import { FloatingActionMenuKind } from '../../floatingactionmenu/constants';
 import { FloatingActionMenuInputs } from '../../floatingactionmenu/floatingactionmenuinputs';
 import { FloatingActionMenuOutputs } from '../../floatingactionmenu/floatingactionmenuoutputs';
 import { HTMLEditor } from '../../html';
+import { Label } from '../../label';
 import type { PickerCallbackHandlers } from '../../picker/filepickerEditor';
 import { FilePickerEditor } from '../../picker/filepickerEditor';
 import { QueryBuilderEditor } from '../../querybuilder';
-import { HybridQueryBuilderEditor } from '../../querybuilder/HybridQueryBuilder';
 import { SimpleQueryBuilder } from '../../querybuilder/SimpleQueryBuilder';
+import { HybridQueryBuilderEditor } from '../../querybuilder/HybridQueryBuilder';
 import { ScheduleEditor } from '../../recurrence';
 import { SchemaEditor } from '../../schemaeditor';
-import { TableEditor } from '../../table';
-import type { TokenGroup } from '@microsoft/logic-apps-shared';
-import { useId } from '../../useId';
 import type { SettingProps } from './';
 import { CustomTokenField, isCustomEditor } from './customTokenField';
-import { Label } from '../../label';
-import { EditorLanguage, equals, getPropertyValue, replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
-import { MixedInputEditor } from '../../mixedinputeditor/mixedinputeditor';
-import { cloneElement, useMemo, useState } from 'react';
+import { TableEditor } from '../../table';
+import { useId } from '../../useId';
+import { useSettingTokenStyles } from './styles';
+import { Popover, PopoverSurface, PopoverTrigger } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
-import type { AgentParameterButtonProps } from '../../editor/base/plugins/tokenpickerbutton/agentParameterButton';
-
 interface EditorHostOptions {
   suppressCastingForSerialize?: boolean;
   isMultiVariableEnabled?: boolean;
+}
+
+export interface NewResourceProps {
+  component: React.FunctionComponent<any>;
+  hideLabel?: boolean;
+  editor?: string;
+  onClose: (name?: string) => void;
+  metadata?: Record<string, any>;
 }
 
 export interface SettingTokenFieldProps extends SettingProps {
@@ -81,15 +90,31 @@ export interface SettingTokenFieldProps extends SettingProps {
   hostOptions?: EditorHostOptions;
   subComponent?: JSX.Element | null;
   subMenu?: JSX.Element | null;
+  hideTokenPicker?: boolean;
+  newResourceProps?: NewResourceProps;
 }
 
 export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
   const normalizedLabel = props.label?.replace(/ /g, '-');
+  const styles = useSettingTokenStyles();
+  const intl = useIntl();
   const labelId = useId(normalizedLabel);
+  const [openPopover, setOpenPopover] = useState(false);
   const hideLabel =
     (isCustomEditor(props) && props.editorOptions?.hideLabel === true) ||
     equals(props.editor?.toLowerCase(), constants.PARAMETER.EDITOR.FLOATINGACTIONMENU);
   const [showSubComponent, setShowSubComponent] = useState(false);
+  const CustomNewResourceComponent = useMemo(() => props.newResourceProps?.component, [props.newResourceProps?.component]);
+  const stringResources = useMemo(
+    () => ({
+      CREATE_NEW: intl.formatMessage({
+        defaultMessage: 'Create New',
+        id: '+nh6WG',
+        description: 'Label for creating a new resource in the token field.',
+      }),
+    }),
+    [intl]
+  );
 
   return (
     <>
@@ -102,9 +127,44 @@ export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
       <div key={props.id}>
         {isCustomEditor(props) ? <CustomTokenField {...props} labelId={labelId} /> : <TokenField {...props} labelId={labelId} />}
       </div>
-      {props.subComponent ? (
-        <div className="msla-input-parameter-subcomponent">
-          {cloneElement(props.subComponent, { showSubComponent, setShowSubComponent })}
+      {props.newResourceProps || props.subComponent ? (
+        <div className={styles.subComponentContainer}>
+          {props.subComponent ? (
+            <div className="msla-input-parameter-subcomponent">
+              {cloneElement(props.subComponent, {
+                showSubComponent,
+                setShowSubComponent,
+              })}
+            </div>
+          ) : null}
+          {props.newResourceProps ? (
+            <Popover
+              trapFocus={true}
+              inline={true}
+              positioning={'below-start'}
+              withArrow={true}
+              open={openPopover}
+              onOpenChange={(_e, data) => setOpenPopover(data.open ?? false)}
+            >
+              <PopoverTrigger>
+                <div className={styles.newResourceContainer} onClick={() => setOpenPopover(!open)}>
+                  {stringResources.CREATE_NEW}
+                </div>
+              </PopoverTrigger>
+              <PopoverSurface tabIndex={-1}>
+                {CustomNewResourceComponent ? (
+                  <CustomNewResourceComponent
+                    values={[props.editorOptions]}
+                    onClose={(name?: string) => {
+                      setOpenPopover(false);
+                      props.newResourceProps?.onClose?.(name);
+                    }}
+                    metadata={props.newResourceProps?.metadata}
+                  />
+                ) : null}
+              </PopoverSurface>
+            </Popover>
+          ) : null}
         </div>
       ) : null}
     </>
@@ -139,27 +199,33 @@ export const TokenField = ({
   getTokenPicker,
   hostOptions,
   required,
+  hideTokenPicker,
 }: TokenFieldProps) => {
-  const intl = useIntl();
   const dropdownOptions = useMemo(() => getDropdownOptionsFromOptions(editorOptions), [editorOptions]);
   const labelForAutomationId = useMemo(() => replaceWhiteSpaceWithUnderscore(label), [label]);
 
-  const arrayItemLabel = intl.formatMessage(
-    {
-      defaultMessage: '{label} Item',
-      id: 'fBUCrA',
-      description: 'Label for array item',
-    },
-    { label }
-  );
-
-  const defaultArrayItemLabel = intl.formatMessage({
-    defaultMessage: 'Array Item',
-    id: 'gS4Teq',
-    description: 'Label for array item',
-  });
-
   switch (editor?.toLowerCase()) {
+    case constants.PARAMETER.EDITOR.AGENT_INSTRUCTION:
+      return (
+        <AgentInstructionEditor
+          labelId={labelId}
+          className="msla-setting-token-editor-container"
+          placeholder={placeholder}
+          basePlugins={{ tokens: showTokens }}
+          readonly={readOnly}
+          initialValue={value}
+          tokenPickerButtonProps={tokenpickerButtonProps}
+          agentParameterButtonProps={agentParameterButtonProps}
+          tokenMapping={tokenMapping}
+          loadParameterValueFromString={loadParameterValueFromString}
+          serializeValue={onValueChange}
+          getTokenPicker={getTokenPicker}
+          onChange={hideValidationErrors}
+          onCastParameter={onCastParameter}
+          dataAutomationId={`msla-setting-token-editor-agent-instruction-${labelForAutomationId}`}
+        />
+      );
+
     case constants.PARAMETER.EDITOR.ARRAY:
       return (
         <ArrayEditor
@@ -167,13 +233,14 @@ export const TokenField = ({
           labelId={labelId}
           arrayType={editorViewModel.arrayType}
           initialMode={editorOptions?.initialMode}
-          labelProps={{ text: label ? arrayItemLabel : defaultArrayItemLabel }}
+          label={label}
           placeholder={placeholder}
           readonly={readOnly}
           initialValue={editorViewModel.uncastedValue}
           agentParameterButtonProps={agentParameterButtonProps}
           tokenPickerButtonProps={tokenpickerButtonProps}
           getTokenPicker={getTokenPicker}
+          basePlugins={{ tokens: showTokens }}
           itemSchema={editorViewModel.itemSchema}
           castParameter={onCastParameter}
           onChange={onValueChange}
@@ -232,6 +299,7 @@ export const TokenField = ({
           readonly={readOnly}
           placeholder={placeholder}
           customCodeEditor={customCodeEditor}
+          hideTokenPicker={hideTokenPicker}
         />
       );
     }
@@ -264,10 +332,12 @@ export const TokenField = ({
       return <CopyInputControl placeholder={placeholder} text={value[0].value} />;
 
     case constants.PARAMETER.EDITOR.CONDITION:
-      return editorViewModel.isOldFormat ? (
+      return editorOptions?.isOldFormat ? (
         <SimpleQueryBuilder
           readonly={readOnly}
-          itemValue={editorViewModel.itemValue ?? value}
+          itemValue={editorViewModel?.itemValue}
+          rowFormat={editorViewModel?.isRowFormat}
+          initialValue={value}
           tokenMapping={tokenMapping}
           loadParameterValueFromString={loadParameterValueFromString}
           getTokenPicker={getTokenPicker}
@@ -317,7 +387,11 @@ export const TokenField = ({
           label={label}
           readonly={readOnly}
           initialValue={value}
-          options={dropdownOptions.map((option: any, index: number) => ({ key: index.toString(), ...option }))}
+          options={dropdownOptions.map((option: any, index: number) => ({
+            key: index.toString(),
+            ...option,
+          }))}
+          placeholder={placeholder}
           multiSelect={!!getPropertyValue(editorOptions, 'multiSelect')}
           serialization={editorOptions?.serialization}
           onChange={onValueChange}
@@ -390,6 +464,7 @@ export const TokenField = ({
           getTokenPicker={getTokenPicker}
           onChange={onValueChange}
           dataAutomationId={`msla-setting-token-editor-htmleditor-${labelForAutomationId}`}
+          valueType={constants.SWAGGER.TYPE.ANY}
         />
       );
 
@@ -449,18 +524,6 @@ export const TokenField = ({
           loadParameterValueFromString={loadParameterValueFromString}
         />
       );
-
-    case constants.PARAMETER.EDITOR.MIXEDINPUTEDITOR: {
-      return (
-        <MixedInputEditor
-          supportedTypes={editorOptions?.supportedTypes}
-          useStaticInputs={editorOptions?.useStaticInputs}
-          initialValue={value}
-          isRequestApiConnectionTrigger={editorOptions?.isRequestApiConnectionTrigger}
-          onChange={onValueChange ?? (() => {})}
-        />
-      );
-    }
 
     default:
       return (

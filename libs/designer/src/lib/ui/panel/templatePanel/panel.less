@@ -5,7 +5,7 @@
     }
 
     a {
-        color: #115EA3;
+        color: var(--colorBrandForegroundLink);
     }
 }
 
@@ -16,7 +16,7 @@
 .msla-template-quickview-tags {
     display: flex;
     flex-direction: row;
-    color: grey;
+    color: var(--colorNeutralForeground3);
     padding: 10px 0 10px 0;
 
     .msla-template-last-tag {
@@ -38,7 +38,7 @@
 }
 
 .msla-template-quickview-tabs {
-    border-bottom: solid #d4d4d4 1px;
+    border-bottom: 1px solid var(--colorNeutralStroke1);
 }
 
 .msla-template-createworkflow-title {
@@ -69,7 +69,7 @@
             display: flex;
             align-items: flex-start;
             justify-content: flex-start;
-            color: #605E5C;
+            color: var(--colorNeutralForeground3);
             font-size: 12px;
         }
 
@@ -127,11 +127,7 @@
     }
 
     .msla-templates-tab-choiceGroup {
-        padding-top: 16px;
-    }
-
-    .msla-templates-tab-choiceGroup-label {
-        padding-left: 32px;
+        padding-top: 12px;
     }
 
     .msla-templates-tab-choiceGroup-list {
@@ -189,7 +185,7 @@
             padding: 5px 0;
             
             .msla-template-overview-section-detailkey {
-                color: rgb(119, 118, 118);
+                color: var(--colorNeutralForeground4);
                 padding-right: 6px;
             }
         }
@@ -198,14 +194,6 @@
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
-
-            .msla-template-overview-section-tag {
-                border: 5px solid #d9eefe;
-                border-radius: 2px;
-                padding: 1px 2px;
-                background-color: #d9eefe;
-                width: fit-content;
-            }
         }
 
         .msla-template-overview-connections {
@@ -218,6 +206,8 @@
                 .msla-template-connector {
                     display: flex;
                     flex-direction: row;
+										gap: 10px;
+										margin-bottom: 10px;
 
                     .msla-template-connector-box {
                         width: 50px;
@@ -233,7 +223,7 @@
                     }
 
                     .msla-template-connector-details {
-                        padding: 10px;;
+                        padding: 4px 0;
                         .msla-template-connector-name {
                             font-size: 15px;
                             font-weight: 600;
@@ -243,6 +233,7 @@
                             padding-top: 3px;
                             font-size: 10px !important;
                             display: flex;
+														gap: 4px;
                         }
                     }
                 }
@@ -256,7 +247,7 @@
 .msla-template-overview-footer {
     position: sticky;
     bottom: 0;
-    border-top: 1px solid #cacaca;
+    border-top: 1px solid var(--colorNeutralStroke1);
     background-color: white;
     padding: 16px 0;
 }
@@ -294,5 +285,9 @@
 		display: grid;
 		grid-template-columns: 1fr 1fr;
 		gap: 6px 32px;
+	}
+
+	&.description {
+		margin: 4px 0;
 	}
 }

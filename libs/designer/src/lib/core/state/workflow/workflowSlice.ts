@@ -2,7 +2,7 @@ import constants from '../../../common/constants';
 import { updateNodeConnection } from '../../actions/bjsworkflow/connections';
 import { initializeGraphState } from '../../parsers/ParseReduxAction';
 import type { AddNodePayload } from '../../parsers/addNodeToWorkflow';
-import { addSwitchCaseToWorkflow, addNodeToWorkflow, addAgentConditionToWorkflow } from '../../parsers/addNodeToWorkflow';
+import { addSwitchCaseToWorkflow, addNodeToWorkflow, addAgentToolToWorkflow } from '../../parsers/addNodeToWorkflow';
 import type { DeleteNodePayload } from '../../parsers/deleteNodeFromWorkflow';
 import { deleteWorkflowNode, deleteNodeFromWorkflow } from '../../parsers/deleteNodeFromWorkflow';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
@@ -22,7 +22,8 @@ import {
   updateStaticResults,
 } from '../operation/operationMetadataSlice';
 import type { RelationshipIds } from '../panel/panelTypes';
-import type { ErrorMessage, SpecTypes, WorkflowState, WorkflowKind } from './workflowInterfaces';
+import type { ErrorMessage, SpecTypes, WorkflowState, WorkflowKind, NodeMetadata } from './workflowInterfaces';
+import type { BoundParameters } from '@microsoft/logic-apps-shared';
 import { getParentsUncollapseFromGraphState, getWorkflowNodeFromGraphState } from './workflowSelectors';
 import {
   LogEntryLevel,
@@ -32,6 +33,8 @@ import {
   RUN_AFTER_STATUS,
   WORKFLOW_EDGE_TYPES,
   WORKFLOW_NODE_TYPES,
+  containsIdTag,
+  containsCaseTag,
 } from '@microsoft/logic-apps-shared';
 import type { MessageLevel } from '@microsoft/designer-ui';
 import { getDurationStringPanelMode } from '@microsoft/designer-ui';
@@ -41,6 +44,7 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import type { NodeChange, NodeDimensionChange } from '@xyflow/system';
 import type { UndoRedoPartialRootState } from '../undoRedo/undoRedoTypes';
 import { initializeInputsOutputsBinding } from '../../actions/bjsworkflow/monitoring';
+import { updateAgenticSubgraph, type UpdateAgenticGraphPayload } from '../../parsers/updateAgenticGraph';
 
 export interface AddImplicitForeachPayload {
   nodeId: string;
@@ -65,9 +69,12 @@ export const initialWorkflowState: WorkflowState = {
     $schema: constants.SCHEMA.GA_20160601.URL,
     contentVersion: '1.0.0.0',
   },
+  agentsGraph: {},
   hostData: {
     errorMessages: {},
   },
+  timelineRepetitionIndex: 0,
+  timelineRepetitionArray: [],
 };
 
 export const workflowSlice = createSlice({
@@ -247,6 +254,74 @@ export const workflowSlice = createSlice({
         args: [action.payload],
       });
     },
+    updateAgenticGraph: (state: WorkflowState, action: PayloadAction<UpdateAgenticGraphPayload>) => {
+      if (!state.graph) {
+        return; // log exception
+      }
+      const { nodeId } = action.payload;
+      const graph = getWorkflowNodeFromGraphState(state, nodeId);
+      if (!graph) {
+        throw new Error('graph not set');
+      }
+
+      updateAgenticSubgraph(action.payload, graph, state);
+
+      LoggerService().log({
+        level: LogEntryLevel.Verbose,
+        area: 'Designer:Workflow Slice',
+        message: 'Update node agentic workflow',
+        args: [action.payload],
+      });
+    },
+    updateAgenticMetadata: (state: WorkflowState, action: PayloadAction<UpdateAgenticGraphPayload>) => {
+      if (!state.graph) {
+        return; // log exception
+      }
+      const { scopeRepetitionRunData, nodeId } = action.payload;
+      const { tools = {} } = scopeRepetitionRunData ?? {};
+      const agentGraph = getWorkflowNodeFromGraphState(state, nodeId);
+
+      Object.keys(tools).forEach((toolId: any) => {
+        const nodeMetadata = getRecordEntry(state.nodesMetadata, toolId);
+        if (!nodeMetadata) {
+          return;
+        }
+        const nodeData = {
+          ...nodeMetadata,
+          runData: {
+            status: tools[toolId].status,
+            repetitionCount: tools[toolId].iterations,
+          },
+          runIndex: 0,
+        };
+        state.nodesMetadata[toolId] = nodeData as NodeMetadata;
+      });
+
+      const nodeMetadata = getRecordEntry(state.nodesMetadata, nodeId);
+      if (!nodeMetadata) {
+        return;
+      }
+      const nodeRunData = {
+        ...nodeMetadata.runData,
+        ...scopeRepetitionRunData,
+        inputsLink: scopeRepetitionRunData?.inputsLink ?? null,
+        outputsLink: scopeRepetitionRunData?.outputsLink ?? null,
+        duration: getDurationStringPanelMode(
+          Date.parse(scopeRepetitionRunData?.endTime) - Date.parse(scopeRepetitionRunData?.startTime),
+          /* abbreviated */ true
+        ),
+      };
+      nodeMetadata.runData = nodeRunData as LogicAppsV2.WorkflowRunAction;
+      nodeMetadata.actionCount =
+        (agentGraph?.children ?? []).filter((node) => !containsIdTag(node.id) && !containsCaseTag(node.id))?.length ?? -1;
+
+      LoggerService().log({
+        level: LogEntryLevel.Verbose,
+        area: 'Designer:Workflow Slice',
+        message: 'Update agentic metadata',
+        args: [action.payload],
+      });
+    },
     deleteSwitchCase: (state: WorkflowState, action: PayloadAction<{ caseId: string; nodeId: string }>) => {
       delete (getRecordEntry(state.operations, action.payload.nodeId) as any).cases?.[action.payload.caseId];
 
@@ -262,6 +337,12 @@ export const workflowSlice = createSlice({
     },
     clearFocusNode: (state: WorkflowState) => {
       state.focusedCanvasNodeId = undefined;
+    },
+    setFocusElement: (state: WorkflowState, action: PayloadAction<string>) => {
+      state.focusElement = action.payload;
+    },
+    clearFocusElement: (state: WorkflowState) => {
+      state.focusElement = undefined;
     },
     clearFocusCollapsedNode: (state: WorkflowState) => {
       state.focusCollapsedNodeId = undefined;
@@ -286,6 +367,12 @@ export const workflowSlice = createSlice({
         const change = getRecordEntry(dimensionChangesById, node?.id ?? '');
         if (change && node && isWorkflowNode(node)) {
           const c = change as NodeDimensionChange;
+          if ((c.dimensions?.height ?? 0) === 0 || (c.dimensions?.width ?? 0) === 0) {
+            continue; // Skip if the dimensions are 0
+          }
+          if (node.height === c.dimensions?.height && node.width === c.dimensions?.width) {
+            continue; // Skip if the dimensions have not changed
+          }
           node.height = c.dimensions?.height ?? 0;
           node.width = c.dimensions?.width ?? 0;
         }
@@ -373,18 +460,57 @@ export const workflowSlice = createSlice({
       }
       nodeMetadata.runIndex = page;
     },
-    setRepetitionRunData: (state: WorkflowState, action: PayloadAction<{ nodeId: string; runData: LogicAppsV2.WorkflowRunAction }>) => {
+    setRepetitionRunData: (
+      state: WorkflowState,
+      action: PayloadAction<{ nodeId: string; runData: LogicAppsV2.WorkflowRunAction; isWithinAgentic?: boolean }>
+    ) => {
+      const { nodeId, runData, isWithinAgentic = false } = action.payload;
+      const nodeMetadata = getRecordEntry(state.nodesMetadata, nodeId);
+      if (!nodeMetadata) {
+        return;
+      }
+      const nodeRunData = {
+        ...(isWithinAgentic ? {} : nodeMetadata.runData),
+        ...runData,
+        inputsLink: runData?.inputsLink ?? null,
+        outputsLink: runData?.outputsLink ?? null,
+        duration: getDurationStringPanelMode(Date.parse(runData?.endTime) - Date.parse(runData?.startTime), /* abbreviated */ true),
+      };
+      nodeMetadata.runData = nodeRunData as LogicAppsV2.WorkflowRunAction;
+    },
+    clearAllRepetitionRunData: (state: WorkflowState) => {
+      for (const node of Object.values(state.nodesMetadata)) {
+        if (node.runData) {
+          delete node.runData;
+        }
+      }
+    },
+    setSubgraphRunData: (state: WorkflowState, action: PayloadAction<{ nodeId: string; runData: LogicAppsV2.RunRepetition[] }>) => {
       const { nodeId, runData } = action.payload;
+      const nodeMetadata = getRecordEntry(state.nodesMetadata, nodeId);
+      if (!nodeMetadata) {
+        return;
+      }
+      const subgraph = runData.reduce((acc, run) => {
+        const nodeId = run.name;
+        acc[nodeId] = run.properties;
+        return acc;
+      }, {} as any);
+      nodeMetadata.subgraphRunData = subgraph;
+    },
+    setRunDataInputOutputs: (
+      state: WorkflowState,
+      action: PayloadAction<{ nodeId: string; inputs: BoundParameters; outputs: BoundParameters }>
+    ) => {
+      const { nodeId, inputs, outputs } = action.payload;
       const nodeMetadata = getRecordEntry(state.nodesMetadata, nodeId);
       if (!nodeMetadata) {
         return;
       }
       const nodeRunData = {
         ...nodeMetadata.runData,
-        ...runData,
-        inputsLink: runData?.inputsLink ?? null,
-        outputsLink: runData?.outputsLink ?? null,
-        duration: getDurationStringPanelMode(Date.parse(runData?.endTime) - Date.parse(runData?.startTime), /* abbreviated */ true),
+        inputs: inputs,
+        outputs: outputs,
       };
       nodeMetadata.runData = nodeRunData as LogicAppsV2.WorkflowRunAction;
     },
@@ -407,17 +533,17 @@ export const workflowSlice = createSlice({
         args: [action.payload],
       });
     },
-    addAgentCondition: (state: WorkflowState, action: PayloadAction<{ conditionId: string; nodeId: string }>) => {
+    addAgentTool: (state: WorkflowState, action: PayloadAction<{ toolId: string; nodeId: string }>) => {
       if (!state.graph) {
         return; // log exception
       }
-      const { conditionId, nodeId } = action.payload;
+      const { toolId, nodeId } = action.payload;
       const graphId = getRecordEntry(state.nodesMetadata, nodeId)?.graphId ?? '';
       const node = getWorkflowNodeFromGraphState(state, graphId);
       if (!node) {
         throw new Error('node not set');
       }
-      addAgentConditionToWorkflow(conditionId, node, state.nodesMetadata, state);
+      addAgentToolToWorkflow(toolId, node, state.nodesMetadata, state);
 
       LoggerService().log({
         level: LogEntryLevel.Verbose,
@@ -500,6 +626,11 @@ export const workflowSlice = createSlice({
         return;
       }
 
+      // If there was an existing run after and the parent operation is in it, do nothing
+      if (childOperation.runAfter?.[parentOperationId]) {
+        return;
+      }
+
       // If there is no existing run after, it was running after the trigger
       // We need to add a dummy trigger node to populate the settings object and flag validation
       if (Object.keys(childOperation.runAfter ?? {}).length === 0) {
@@ -508,7 +639,20 @@ export const workflowSlice = createSlice({
         childOperation.runAfter = { [rootTriggerNodeId]: [RUN_AFTER_STATUS.SUCCEEDED] };
       }
 
-      childOperation.runAfter = { ...(childOperation.runAfter ?? {}), [parentOperationId]: [RUN_AFTER_STATUS.SUCCEEDED] };
+      if (!childOperation.runAfter) {
+        childOperation.runAfter = {};
+      }
+      childOperation.runAfter[parentOperationId] = [RUN_AFTER_STATUS.SUCCEEDED];
+
+      // Check if it only contains the trigger node, if so, set to empty object
+      if (Object.keys(childOperation.runAfter ?? {}).length === 1) {
+        const rootTriggerNodeId = Object.entries(state.nodesMetadata).find(
+          ([_, node]) => node.graphId === 'root' && node.isRoot === true
+        )?.[0];
+        if (Object.keys(childOperation.runAfter ?? {})[0] === rootTriggerNodeId) {
+          childOperation.runAfter = {};
+        }
+      }
 
       const graphPath: string[] = [];
       let operationGraph = getRecordEntry(state.nodesMetadata, childOperationId);
@@ -521,12 +665,25 @@ export const workflowSlice = createSlice({
       for (const id of graphPath.reverse()) {
         graph = graph?.children?.find((x) => x.id === id) ?? null;
       }
+
+      const edgeId = `${parentOperationId}-${childOperationId}`;
+      if (graph?.edges?.some((edge) => edge.id === edgeId)) {
+        // Edge already exists, no need to add it again
+        return;
+      }
+
       graph?.edges?.push({
-        id: `${parentOperationId}-${childOperationId}`,
+        id: edgeId,
         source: parentOperationId,
         target: childOperationId,
         type: 'BUTTON_EDGE',
       });
+    },
+    setTimelineRepetitionIndex: (state: WorkflowState, action: PayloadAction<number>) => {
+      state.timelineRepetitionIndex = action.payload;
+    },
+    setTimelineRepetitionArray: (state: WorkflowState, action: PayloadAction<string[][]>) => {
+      state.timelineRepetitionArray = action.payload;
     },
     updateRunAfter: (
       state: WorkflowState,
@@ -565,16 +722,10 @@ export const workflowSlice = createSlice({
     // Add reducers for additional action types here, and handle loading state as needed
     builder.addCase(initializeGraphState.fulfilled, (state, action) => {
       const { deserializedWorkflow, originalDefinition } = action.payload;
-      const isFirstLoad = !state.graph;
       state.originalDefinition = originalDefinition;
       state.graph = deserializedWorkflow.graph;
       state.operations = deserializedWorkflow.actionData;
       state.nodesMetadata = deserializedWorkflow.nodesMetadata;
-
-      // Only interested in behavior like centering canvas when it is the first load of the workflow
-      state.focusedCanvasNodeId = isFirstLoad
-        ? Object.entries(deserializedWorkflow?.actionData ?? {}).find(([, value]) => !(value as LogicAppsV2.ActionDefinition).runAfter)?.[0]
-        : undefined;
     });
     builder.addCase(updateNodeParameters, (state, action) => {
       state.isDirty = state.isDirty || action.payload.isUserAction || false;
@@ -607,7 +758,7 @@ export const workflowSlice = createSlice({
         deleteNode,
         addSwitchCase,
         deleteSwitchCase,
-        addAgentCondition,
+        addAgentTool,
         addImplicitForeachNode,
         pasteScopeNode,
         setNodeDescription,
@@ -642,12 +793,14 @@ export const {
   setNodeDescription,
   toggleCollapsedGraphId,
   addSwitchCase,
-  addAgentCondition,
+  addAgentTool,
   discardAllChanges,
   buildEdgeIdsBySource,
   updateRunAfter,
   addEdgeFromRunAfter,
   removeEdgeFromRunAfter,
+  setTimelineRepetitionIndex,
+  setTimelineRepetitionArray,
   clearFocusNode,
   setFocusNode,
   setCollapsedGraphIds,
@@ -655,10 +808,17 @@ export const {
   replaceId,
   setRunIndex,
   setRepetitionRunData,
+  clearAllRepetitionRunData,
+  setSubgraphRunData,
   setIsWorkflowDirty,
   setHostErrorMessages,
+  setRunDataInputOutputs,
   toggleCollapsedActionId,
   clearFocusCollapsedNode,
+  updateAgenticGraph,
+  updateAgenticMetadata,
+  setFocusElement,
+  clearFocusElement,
 } = workflowSlice.actions;
 
 export default workflowSlice.reducer;

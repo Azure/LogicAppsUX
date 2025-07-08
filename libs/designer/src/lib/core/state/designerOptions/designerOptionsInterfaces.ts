@@ -14,6 +14,7 @@ import type {
   IFunctionService,
   IAppServiceService,
   IRunService,
+  IRoleService,
   IEditorService,
   IConnectionParameterEditorService,
   IChatbotService,
@@ -22,6 +23,7 @@ import type {
   IDesignerUiInteractionsService,
   IUserPreferenceService,
   IExperimentationService,
+  ICognitiveServiceService,
 } from '@microsoft/logic-apps-shared';
 import type { MaximumWaitingRunsMetadata } from '../../../ui/settings';
 
@@ -31,6 +33,7 @@ export interface DesignerOptionsState {
   readOnly?: boolean;
   isMonitoringView?: boolean;
   isDarkMode?: boolean;
+  isUnitTest?: boolean;
   isVSCode?: boolean;
   servicesInitialized?: boolean;
   designerOptionsInitialized?: boolean;
@@ -42,7 +45,6 @@ export interface DesignerOptionsState {
     suppressCastingForSerialize?: boolean; // suppress casting for serialize
     recurrenceInterval?: LogicApps.Recurrence;
     maxWaitingRuns?: MaximumWaitingRunsMetadata; // min and max of Maximum Waiting Runs Concurrency Setting
-    hideUTFExpressions?: boolean; // hide UTF expressions in template functions
     stringOverrides?: Record<string, string>; // string overrides for localization
     maxStateHistorySize?: number; // maximum number of states to save in history for undo/redo (default is 0)
     hideContentTransferSettings?: boolean; // hide content transfer settings in the designer
@@ -51,6 +53,7 @@ export interface DesignerOptionsState {
   };
   nodeSelectAdditionalCallback?: (nodeId: string) => any;
   showConnectionsPanel?: boolean;
+  showEdgeDrawing?: boolean;
   panelTabHideKeys?: PANEL_TAB_NAMES[];
   showPerformanceDebug?: boolean;
 }
@@ -70,6 +73,7 @@ export interface ServiceOptions {
   functionService?: IFunctionService;
   appServiceService?: IAppServiceService;
   runService?: IRunService;
+  roleService?: IRoleService;
   editorService?: IEditorService;
   connectionParameterEditorService?: IConnectionParameterEditorService;
   chatbotService?: IChatbotService;
@@ -77,4 +81,5 @@ export interface ServiceOptions {
   uiInteractionsService?: IDesignerUiInteractionsService;
   userPreferenceService?: IUserPreferenceService;
   experimentationService?: IExperimentationService;
+  cognitiveServiceService?: ICognitiveServiceService;
 }

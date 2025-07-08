@@ -1,11 +1,12 @@
 import { useAllApiIdsWithActions, useAllApiIdsWithTriggers, useAllConnectors } from '../../../core/queries/browse';
 import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
-import { SearchService, cleanConnectorId, type Connector } from '@microsoft/logic-apps-shared';
-import { BrowseGrid, isBuiltInConnector, isCustomConnector } from '@microsoft/designer-ui';
+import { SearchService, cleanConnectorId, getRecordEntry, type Connector } from '@microsoft/logic-apps-shared';
+import { BrowseGrid, isBuiltInConnector, isCustomConnector, RuntimeFilterTagList } from '@microsoft/designer-ui';
 import { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { useDiscoveryPanelRelationshipIds } from '../../../core/state/panel/panelSelectors';
 import { useAgenticWorkflow } from '../../../core/state/designerView/designerViewSelectors';
+import { useShouldEnableACASession } from './hooks';
 
 const defaultFilterConnector = (connector: Connector, runtimeFilter: string): boolean => {
   if (runtimeFilter === 'inapp' && !isBuiltInConnector(connector)) {
@@ -57,12 +58,15 @@ export interface BrowseViewProps {
   filters: Record<string, string>;
   isLoadingOperations: boolean;
   displayRuntimeInfo: boolean;
+  setFilters: (filters: Record<string, string>) => void;
+  onConnectorCardSelected: (connectorId: string) => void;
 }
 
 export const BrowseView = (props: BrowseViewProps) => {
-  const { filters, isLoadingOperations, displayRuntimeInfo } = props;
+  const { filters, isLoadingOperations, displayRuntimeInfo, setFilters } = props;
   const isAgenticWorkflow = useAgenticWorkflow();
   const isRoot = useDiscoveryPanelRelationshipIds().graphId === 'root';
+  const shouldEnableACASession = useShouldEnableACASession();
 
   const dispatch = useDispatch();
 
@@ -71,36 +75,41 @@ export const BrowseView = (props: BrowseViewProps) => {
   const allApiIdsWithActions = useAllApiIdsWithActions();
   const allApiIdsWithTriggers = useAllApiIdsWithTriggers();
 
+  // TODO: This callback is expensive, consider optimizing it
   const filterItems = useCallback(
     (connector: Connector): boolean => {
       if ((!isAgenticWorkflow || !isRoot) && connector.id === 'connectionProviders/agent') {
         return false;
       }
-      if (filters['runtime']) {
+      if (shouldEnableACASession === false && connector.id === '/serviceProviders/acasession') {
+        return false;
+      }
+      if (getRecordEntry(filters, 'runtime')) {
         const filterMethod = SearchService().filterConnector?.bind(SearchService()) || defaultFilterConnector;
         if (!filterMethod(connector, filters['runtime'])) {
           return false;
         }
       }
 
-      if (filters['actionType'] && (allApiIdsWithActions.data.length > 0 || allApiIdsWithTriggers.data.length > 0)) {
+      if (getRecordEntry(filters, 'actionType') && (allApiIdsWithActions.data.length > 0 || allApiIdsWithTriggers.data.length > 0)) {
         const capabilities = connector.properties?.capabilities ?? [];
         const ignoreCapabilities = !capabilities.includes('triggers') && !capabilities.includes('actions');
         const connectorId = cleanConnectorId(connector.id);
+        // TODO: This line is EXPENSIVE, consider caching the results or optimizing the query
         const supportsActions = (ignoreCapabilities || capabilities.includes('actions')) && allApiIdsWithActions.data.includes(connectorId);
         const supportsTriggers =
           (ignoreCapabilities || capabilities.includes('triggers')) && allApiIdsWithTriggers.data.includes(connectorId);
-        if (filters['actionType'].toLowerCase() === 'triggers' && !supportsTriggers) {
+        if (getRecordEntry(filters, 'actionType')?.toLowerCase() === 'triggers' && !supportsTriggers) {
           return false;
         }
-        if (filters['actionType'].toLowerCase() === 'actions' && !supportsActions) {
+        if (getRecordEntry(filters, 'actionType')?.toLowerCase() === 'actions' && !supportsActions) {
           return false;
         }
       }
 
       return true;
     },
-    [isAgenticWorkflow, isRoot, filters, allApiIdsWithActions.data, allApiIdsWithTriggers.data]
+    [allApiIdsWithActions, isAgenticWorkflow, isRoot, shouldEnableACASession, filters, allApiIdsWithTriggers.data]
   );
 
   const sortedConnectors = useMemo(() => {
@@ -117,11 +126,15 @@ export const BrowseView = (props: BrowseViewProps) => {
   );
 
   return (
-    <BrowseGrid
-      onConnectorSelected={onConnectorCardSelected}
-      connectors={sortedConnectors}
-      isLoading={isLoading || isLoadingOperations}
-      displayRuntimeInfo={displayRuntimeInfo}
-    />
+    <>
+      <RuntimeFilterTagList filters={filters} setFilters={setFilters} />
+      <BrowseGrid
+        onConnectorSelected={onConnectorCardSelected}
+        operationsData={sortedConnectors}
+        isLoading={isLoading || isLoadingOperations}
+        displayRuntimeInfo={displayRuntimeInfo}
+        isConnector={true}
+      />
+    </>
   );
 };

@@ -2,16 +2,25 @@ import type { Settings } from '../../actions/bjsworkflow/settings';
 import type { NodeStaticResults } from '../../actions/bjsworkflow/staticresults';
 import { StaticResultOption } from '../../actions/bjsworkflow/staticresults';
 import type { RepetitionContext } from '../../utils/parameters/helper';
-import { createTokenValueSegment, isTokenValueSegment } from '../../utils/parameters/segment';
+import { createTokenValueSegment, isTokenValueSegment, isValueSegment } from '../../utils/parameters/segment';
 import { getTokenTitle, normalizeKey } from '../../utils/tokens';
 import { resetNodesLoadStatus, resetTemplatesState, resetWorkflowState, setStateAfterUndoRedo } from '../global';
-import { LogEntryLevel, LoggerService, filterRecord, getRecordEntry } from '@microsoft/logic-apps-shared';
+import { LogEntryLevel, LoggerService, TokenType, filterRecord, getRecordEntry } from '@microsoft/logic-apps-shared';
 import type { ParameterInfo } from '@microsoft/designer-ui';
-import type { FilePickerInfo, InputParameter, OutputParameter, OpenAPIV2, OperationInfo } from '@microsoft/logic-apps-shared';
+import type {
+  FilePickerInfo,
+  InputParameter,
+  OutputParameter,
+  OpenAPIV2,
+  OperationInfo,
+  SupportedChannels,
+} from '@microsoft/logic-apps-shared';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { WritableDraft } from 'immer/dist/internal';
 import type { UndoRedoPartialRootState } from '../undoRedo/undoRedoTypes';
+import { deleteWorkflowData } from '../../actions/bjsworkflow/configuretemplate';
+import { delimiter } from '../../configuretemplate/utils/helper';
 
 export interface ParameterGroup {
   id: string;
@@ -60,7 +69,7 @@ export interface NodeOutputs {
   originalOutputs?: Record<string, OutputInfo>;
 }
 
-type DependencyType = 'StaticSchema' | 'ApiSchema' | 'ListValues' | 'TreeNavigation';
+type DependencyType = 'StaticSchema' | 'ApiSchema' | 'ListValues' | 'TreeNavigation' | 'AgentSchema';
 
 export interface DependencyInfo {
   definition: any; // This is the dependency definition from manifest/swagger.
@@ -113,6 +122,7 @@ export interface OperationMetadataState {
   repetitionInfos: Record<string, RepetitionContext>;
   errors: Record<string, Record<ErrorLevel, ErrorInfo | undefined>>;
   loadStatus: OperationMetadataLoadStatus;
+  supportedChannels: Record<string, SupportedChannels[]>;
 }
 
 interface OperationMetadataLoadStatus {
@@ -131,6 +141,7 @@ export const initialState: OperationMetadataState = {
   staticResults: {},
   repetitionInfos: {},
   errors: {},
+  supportedChannels: {},
   loadStatus: {
     nodesInitialized: false,
     nodesAndDynamicDataInitialized: false,
@@ -161,6 +172,7 @@ export interface NodeData {
   operationMetadata: OperationMetadata;
   staticResult?: NodeStaticResults;
   settings?: Settings;
+  supportedChannels?: SupportedChannels[];
   actionMetadata?: Record<string, any>;
   repetitionInfo?: RepetitionContext;
 }
@@ -247,18 +259,31 @@ export const operationMetadataSlice = createSlice({
         state.staticResults = {};
         state.actionMetadata = {};
         state.repetitionInfos = {};
+        state.supportedChannels = {};
       }
+
       for (const nodeData of nodes) {
         if (!nodeData) {
           return;
         }
 
-        const { id, nodeInputs, nodeOutputs, nodeDependencies, settings, operationMetadata, actionMetadata, staticResult, repetitionInfo } =
-          nodeData;
+        const {
+          id,
+          nodeInputs,
+          nodeOutputs,
+          nodeDependencies,
+          settings,
+          operationMetadata,
+          actionMetadata,
+          staticResult,
+          repetitionInfo,
+          supportedChannels,
+        } = nodeData;
         state.inputParameters[id] = nodeInputs;
         state.outputParameters[id] = nodeOutputs;
         state.dependencies[id] = nodeDependencies;
         state.operationMetadata[id] = operationMetadata;
+        state.supportedChannels[id] = supportedChannels ?? [];
 
         if (settings) {
           state.settings[id] = settings;
@@ -355,6 +380,27 @@ export const operationMetadataSlice = createSlice({
           }
         }
       }
+    },
+    updateAgentParametersInNode: (state, action: PayloadAction<Array<{ name: string; type: string; description: string }>>) => {
+      const updatesMap = new Map(action.payload.map(({ name, type, description }) => [name, { type, description }]));
+      Object.entries(state.inputParameters).forEach(([_nodeId, nodeInputs]) => {
+        Object.entries(nodeInputs.parameterGroups).forEach(([_parameterId, parameterGroup]) => {
+          parameterGroup.parameters.forEach((parameter) => {
+            parameter.value.forEach((segment) => {
+              if (
+                isTokenValueSegment(segment) &&
+                segment.token?.tokenType === TokenType.AGENTPARAMETER &&
+                segment.token.name &&
+                updatesMap.has(segment.token.name)
+              ) {
+                const { type, description } = updatesMap.get(segment.token.name)!;
+                segment.token.type = type;
+                segment.token.description = description;
+              }
+            });
+          });
+        });
+      });
     },
     updateNodeSettings: (state, action: PayloadAction<AddSettingsPayload>) => {
       const { id, settings } = action.payload;
@@ -594,30 +640,120 @@ export const operationMetadataSlice = createSlice({
       state.loadStatus.nodesAndDynamicDataInitialized = false;
     });
     builder.addCase(setStateAfterUndoRedo, (_, action: PayloadAction<UndoRedoPartialRootState>) => action.payload.operations);
+    builder.addCase(deleteWorkflowData.fulfilled, (state, action: PayloadAction<{ ids: string[] }>) => {
+      for (const id of action.payload.ids) {
+        const nodeIds = Object.keys(state.operationInfo).filter((nodeId) =>
+          nodeId.toLowerCase().startsWith(`${id.toLowerCase()}${delimiter}`)
+        );
+
+        for (const nodeId of nodeIds) {
+          delete state.inputParameters[nodeId];
+          delete state.dependencies[nodeId];
+          delete state.operationInfo[nodeId];
+        }
+      }
+    });
   },
 });
 
-const updateExistingInputTokenTitles = (state: OperationMetadataState, actionPayload: AddDynamicOutputsPayload) => {
+// Helper function to update token titles in any nested structure
+const updateTokenTitlesInViewModel = (viewModel: any, tokenTitles: Record<string, string>): any => {
+  if (!viewModel || typeof viewModel !== 'object') {
+    return viewModel;
+  }
+
+  // Handle ValueSegment arrays - base case for our editors
+  if (Array.isArray(viewModel) && viewModel.every((item) => isValueSegment(item))) {
+    let hasChanges = false;
+    const updatedSegments = viewModel.map((segment) => {
+      if (isTokenValueSegment(segment) && segment.token?.key) {
+        const normalizedKey = normalizeKey(segment.token.key);
+        if (normalizedKey in tokenTitles) {
+          hasChanges = true;
+          return createTokenValueSegment({ ...segment.token, title: tokenTitles[normalizedKey] }, segment.value, segment.type);
+        }
+      }
+      return segment;
+    });
+
+    return hasChanges ? updatedSegments : viewModel;
+  }
+
+  // Handle arrays - only create new array if changes made
+  if (Array.isArray(viewModel)) {
+    let hasChanges = false;
+    const updatedArray = viewModel.map((item) => {
+      const updated = updateTokenTitlesInViewModel(item, tokenTitles);
+      if (updated !== item) {
+        hasChanges = true;
+      }
+      return updated;
+    });
+
+    return hasChanges ? updatedArray : viewModel;
+  }
+
+  let hasChanges = false;
+  const updatedObject: any = {};
+
+  for (const [key, value] of Object.entries(viewModel)) {
+    const updatedValue = updateTokenTitlesInViewModel(value, tokenTitles);
+    updatedObject[key] = updatedValue;
+    if (updatedValue !== value) {
+      hasChanges = true;
+    }
+  }
+
+  return hasChanges ? updatedObject : viewModel;
+};
+
+export const updateExistingInputTokenTitles = (state: OperationMetadataState, actionPayload: AddDynamicOutputsPayload) => {
   const { outputs } = actionPayload;
 
+  if (!outputs || Object.keys(outputs).length === 0) {
+    return;
+  }
+
+  // Token titles lookup
   const tokenTitles: Record<string, string> = {};
   for (const outputValue of Object.values(outputs)) {
     const normalizedKey = normalizeKey(outputValue.key);
     tokenTitles[normalizedKey] = getTokenTitle(outputValue);
   }
 
-  Object.entries(state.inputParameters).forEach(([nodeId, nodeInputs]) => {
-    Object.entries(nodeInputs.parameterGroups).forEach(([parameterId, parameterGroup]) => {
-      parameterGroup.parameters.forEach((parameter, parameterIndex) => {
-        parameter.value.forEach((segment, segmentIndex) => {
+  if (Object.keys(tokenTitles).length === 0) {
+    return;
+  }
+
+  Object.entries(state.inputParameters).forEach(([_nodeId, nodeInputs]) => {
+    Object.entries(nodeInputs.parameterGroups).forEach(([_parameterId, parameterGroup]) => {
+      parameterGroup.parameters = parameterGroup.parameters.map((parameter) => {
+        let hasValueChanges = false;
+        const updatedValue = parameter.value.map((segment) => {
           if (isTokenValueSegment(segment) && segment.token?.key) {
             const normalizedKey = normalizeKey(segment.token.key);
             if (normalizedKey in tokenTitles) {
-              state.inputParameters[nodeId].parameterGroups[parameterId].parameters[parameterIndex].value[segmentIndex] =
-                createTokenValueSegment({ ...segment.token, title: tokenTitles[normalizedKey] }, segment.value, segment.type);
+              hasValueChanges = true;
+              return createTokenValueSegment({ ...segment.token, title: tokenTitles[normalizedKey] }, segment.value, segment.type);
             }
           }
+          return segment;
         });
+
+        const updatedEditorViewModel = parameter.editorViewModel
+          ? updateTokenTitlesInViewModel(parameter.editorViewModel, tokenTitles)
+          : parameter.editorViewModel;
+
+        // Only create new parameter object if there were changes
+        if (hasValueChanges || updatedEditorViewModel !== parameter.editorViewModel) {
+          return {
+            ...parameter,
+            value: hasValueChanges ? updatedValue : parameter.value,
+            editorViewModel: updatedEditorViewModel,
+          };
+        }
+
+        return parameter;
       });
     });
   });
@@ -639,6 +775,7 @@ export const {
   updateParameterValidation,
   updateParameterEditorViewModel,
   removeParameterValidationError,
+  updateAgentParametersInNode,
   updateOutputs,
   updateActionMetadata,
   updateRepetitionContext,

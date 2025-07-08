@@ -6,6 +6,7 @@ export interface IArtifactFile {
 export interface Artifacts {
   maps: Record<string, FileDetails[]>;
   schemas: FileDetails[];
+  rules: FileDetails[];
 }
 
 export interface FileDetails {

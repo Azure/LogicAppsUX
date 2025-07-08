@@ -1,9 +1,9 @@
 import type { BadgeProps } from '../card';
 import { DocumentationItem } from '../recommendation/documentationItem';
-import { Spinner, SpinnerSize } from '@fluentui/react';
-import { Label } from '@fluentui/react-components';
+import { Label, Spinner } from '@fluentui/react-components';
 import type { OpenAPIV2 } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
+import { useAboutStyles } from './about.styles';
 
 export interface AboutProps {
   connectorDisplayName?: string;
@@ -25,11 +25,12 @@ export const About = ({
   displayRuntimeInfo,
 }: AboutProps): JSX.Element => {
   const intl = useIntl();
+  const styles = useAboutStyles();
 
   if (isLoading) {
     return (
-      <div className="msla-panel-about-container">
-        <Spinner size={SpinnerSize.large} />
+      <div className={styles.container}>
+        <Spinner size="large" />
       </div>
     );
   }
@@ -38,7 +39,7 @@ export const About = ({
     return (
       <>
         {badges.map(({ badgeText, title }: BadgeProps) => (
-          <div className="msla-panel-tag" key={title} title={title} aria-label={badgeText}>
+          <div className={styles.tag} key={title} title={title} aria-label={badgeText}>
             {badgeText}
           </div>
         ))}
@@ -87,39 +88,44 @@ export const About = ({
     description: 'Label For Connector Type in About Panel',
   });
   return (
-    <div className="msla-panel-about-container">
-      <div className="msla-panel-about-name">
-        <Label className="msla-panel-connector-label" size="large">
+    <div className={styles.container}>
+      <div>
+        <Label className={styles.connectorLabel} size="large">
           {connectorMsg}
         </Label>
-        <div className="msla-panel-connector-name">{connectorDisplayName ? connectorDisplayName : notAvailable}</div>
+        <div className={styles.connectorName}>{connectorDisplayName ? connectorDisplayName : notAvailable}</div>
       </div>
-      <div className="msla-panel-about-description">
-        <Label className="msla-panel-description-label" size="large">
+      <div>
+        <Label className={styles.descriptionLabel} size="large">
           {operationNoteMsg}
         </Label>
-        <div className="msla-panel-description">
+        <div className={styles.description}>
           <DocumentationItem
             description={description}
             link={
-              descriptionDocumentation?.url ? { url: descriptionDocumentation.url, urlDescription: documentationURLDescription } : undefined
+              descriptionDocumentation?.url
+                ? {
+                    url: descriptionDocumentation.url,
+                    urlDescription: documentationURLDescription,
+                  }
+                : undefined
             }
           />
         </div>
       </div>
       {displayRuntimeInfo ? (
-        <div className="msla-panel-about-description">
-          <Label className="msla-panel-description-label" size="large">
+        <div>
+          <Label className={styles.descriptionLabel} size="large">
             {connectorTypeLabel}
           </Label>
-          <div className="msla-panel-description">{connectorType}</div>
+          <div className={styles.description}>{connectorType}</div>
         </div>
       ) : null}
-      <div className="msla-panel-about-tags">
-        <Label className="msla-panel-tags-label" size="large">
+      <div>
+        <Label className={styles.tagsLabel} size="large">
           {tagsMessage}
         </Label>
-        <div className="msla-panel-tags">{headerIcons && headerIcons.length > 0 ? badgeHeaderIcons(headerIcons) : noTags}</div>
+        <div className={styles.tags}>{headerIcons && headerIcons.length > 0 ? badgeHeaderIcons(headerIcons) : noTags}</div>
       </div>
     </div>
   );

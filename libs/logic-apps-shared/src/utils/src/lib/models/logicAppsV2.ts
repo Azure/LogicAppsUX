@@ -582,7 +582,8 @@ export type TimeoutableActionDefinition =
   | FunctionAction
   | HttpAction
   | HttpWebhookAction
-  | UntilAction;
+  | UntilAction
+  | AgentAction;
 
 /* Terminate type */
 
@@ -807,8 +808,9 @@ export interface SwitchAction extends Action {
   expression: string;
 }
 
-export interface AgentAction extends Action {
+export interface AgentAction extends TimeoutableAction {
   tools?: Record<string, AgentCondition>;
+  channels?: AgentChannels;
   deploymentId: string;
   messages: AgentMessage[];
   temperature?: number;
@@ -826,6 +828,22 @@ export interface AgentCondition {
   description?: string;
   type: string;
   agentParameterSchema?: any;
+}
+
+export interface AgentChannels {
+  in: Record<string, AgentInputChannelDefinition>;
+  out: Record<string, AgentOutputChannelDefinition>;
+}
+
+export interface AgentInputChannelDefinition {
+  trigger: OperationDefinition;
+  mapping?: {
+    message: string;
+  };
+}
+
+export interface AgentOutputChannelDefinition {
+  action: OperationDefinition;
 }
 
 export interface ConnectorAction extends Action {
@@ -966,7 +984,7 @@ export interface WorkflowRunAction {
   };
   status: string;
   code: string;
-  error: {
+  error?: {
     code: string;
     message: string;
   };

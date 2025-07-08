@@ -3,7 +3,7 @@ import type { CallbackInfo, ConnectionsData, ParametersData, Workflow } from '..
 import { Artifact } from '../Models/Workflow';
 import { validateResourceId } from '../Utilities/resourceUtilities';
 import { convertDesignerWorkflowToConsumptionWorkflow } from './ConsumptionSerializationHelpers';
-import { getReactQueryClient, type AllCustomCodeFiles } from '@microsoft/logic-apps-designer';
+import { getReactQueryClient, runsQueriesKeys, type AllCustomCodeFiles } from '@microsoft/logic-apps-designer';
 import { CustomCodeService, LogEntryLevel, LoggerService, equals, getAppFileForFileExtension } from '@microsoft/logic-apps-shared';
 import type { LogicAppsV2, VFSObject } from '@microsoft/logic-apps-shared';
 import axios from 'axios';
@@ -12,13 +12,12 @@ import { useQuery } from '@tanstack/react-query';
 import { isSuccessResponse } from './HttpClient';
 import { fetchFileData, fetchFilesFromFolder } from './vfsService';
 import type { CustomCodeFileNameMapping } from '@microsoft/logic-apps-designer';
-import { HybridAppUtility } from '../Utilities/HybridAppUtilities';
+import { HybridAppUtility, hybridApiVersion } from '../Utilities/HybridAppUtilities';
 import type { HostingPlanTypes } from '../../../state/workflowLoadingSlice';
 import { ArmParser } from '../Utilities/ArmParser';
 
 const baseUrl = 'https://management.azure.com';
 const standardApiVersion = '2020-06-01';
-const hybridApiVersion = '2024-02-02-preview';
 const consumptionApiVersion = '2019-05-01';
 
 export const useConnectionsData = (appId?: string) => {
@@ -182,7 +181,7 @@ export const getWorkflowAndArtifactsConsumption = async (workflowId: string): Pr
 
 export const useRunInstanceStandard = (workflowName: string, appId?: string, runId?: string) => {
   return useQuery(
-    ['getRunInstance', appId, workflowName, runId],
+    [runsQueriesKeys.useRunInstance, appId, workflowName, runId],
     async () => {
       if (!appId) {
         return;
@@ -218,7 +217,7 @@ export const useRunInstanceStandard = (workflowName: string, appId?: string, run
 
 export const useRunInstanceConsumption = (workflowname: string, appId?: string, runId?: string) => {
   return useQuery(
-    ['getRunInstance', workflowname, runId],
+    [runsQueriesKeys.useRunInstance, workflowname, runId],
     async () => {
       const results = await axios.get<LogicAppsV2.RunInstanceDefinition>(
         `${baseUrl}${appId}/runs/${runId}?api-version=${consumptionApiVersion}&$expand=properties/actions,workflow/properties`,
@@ -251,7 +250,7 @@ export const listCallbackUrl = async (
         Authorization: `Bearer ${environment.armToken}`,
       };
       if (HybridAppUtility.isHybridLogicApp(workflowId)) {
-        callbackInfo = HybridAppUtility.postProxy(`${baseUrl}${workflowId}/triggers/${triggerName}/listCallbackUrl`, null, authToken);
+        callbackInfo = await HybridAppUtility.postProxy(`${baseUrl}${workflowId}/triggers/${triggerName}/listCallbackUrl`, null, authToken);
       } else {
         const result = await axios.post(
           `${baseUrl}${workflowId}/triggers/${triggerName}/listCallbackUrl?api-version=${
@@ -330,7 +329,7 @@ export const useAppSettings = (siteResourceId: string) => {
 export const getAppSettings = async (siteResourceId: string) => {
   if (HybridAppUtility.isHybridLogicApp(siteResourceId)) {
     const containerAppInfo = (
-      await axios.get(`${baseUrl}${siteResourceId}?api-version=2024-02-02-preview`, {
+      await axios.get(`${baseUrl}${siteResourceId}?api-version=${hybridApiVersion}`, {
         headers: {
           Authorization: `Bearer ${environment.armToken}`,
         },

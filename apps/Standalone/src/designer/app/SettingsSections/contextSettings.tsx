@@ -6,11 +6,13 @@ import {
   useIsReadOnly,
   useShowConnectionsPanel,
   useHostOptions,
+  useIsUnitTestView,
   useShowPerformanceDebug,
   useSuppressDefaultNodeSelect,
   useStringOverrides,
   useQueryCachePersist,
   useIsMultiVariableEnabled,
+  useShowEdgeDrawing,
 } from '../../state/workflowLoadingSelectors';
 import {
   setDarkMode,
@@ -20,11 +22,13 @@ import {
   setAreCustomEditorsEnabled,
   setShowConnectionsPanel,
   setHostOptions,
+  setUnitTest,
   setShowPerformanceDebug,
   setSuppressDefaultNodeSelect,
   setStringOverrides,
   setQueryCachePersist,
   setEnableMultiVariable,
+  setShowEdgeDrawing,
 } from '../../state/workflowLoadingSlice';
 import { Checkbox, TextField } from '@fluentui/react';
 import { useCallback } from 'react';
@@ -33,8 +37,10 @@ import { useDispatch } from 'react-redux';
 const ContextSettings = () => {
   const isReadOnly = useIsReadOnly();
   const isMonitoringView = useIsMonitoringView();
+  const isUnitTest = useIsUnitTestView();
   const isDarkMode = useIsDarkMode();
   const showConnectionsPanel = useShowConnectionsPanel();
+  const showEdgeDrawing = useShowEdgeDrawing();
   const areCustomEditorsEnabled = useAreCustomEditorsEnabled();
   const suppressDefaultNodeSelect = useSuppressDefaultNodeSelect();
   const hostOptions = useHostOptions();
@@ -54,6 +60,17 @@ const ContextSettings = () => {
     [dispatch]
   );
 
+  const changeUnitTestView = useCallback(
+    (_: unknown, checked?: boolean) => {
+      dispatch(setUnitTest(!!checked));
+      if (checked) {
+        dispatch(loadRun());
+        dispatch(loadWorkflow());
+      }
+    },
+    [dispatch]
+  );
+
   return (
     <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
       <Checkbox
@@ -63,6 +80,7 @@ const ContextSettings = () => {
         onChange={(_, checked) => dispatch(setReadOnly(!!checked))}
       />
       <Checkbox label="Monitoring View" checked={isMonitoringView} onChange={changeMonitoringView} />
+      <Checkbox label="Unit Test View" checked={isUnitTest} onChange={changeUnitTestView} />
       <Checkbox label="Dark Mode" checked={isDarkMode} onChange={(_, checked) => dispatch(setDarkMode(!!checked))} />
       <Checkbox
         label="Custom Editors"
@@ -74,6 +92,7 @@ const ContextSettings = () => {
         checked={showConnectionsPanel}
         onChange={(_, checked) => dispatch(setShowConnectionsPanel(!!checked))}
       />
+      <Checkbox label="Show Edge Drawing" checked={showEdgeDrawing} onChange={(_, checked) => dispatch(setShowEdgeDrawing(!!checked))} />
       <Checkbox
         label="Display Runtime Info"
         checked={hostOptions.displayRuntimeInfo}

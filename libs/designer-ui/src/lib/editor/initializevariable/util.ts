@@ -6,60 +6,135 @@ import {
   isTemplateExpression,
   LogEntryLevel,
   LoggerService,
-  wrapStringifiedTokenSegments,
+  TokenType,
+  wrapTokenValue,
 } from '@microsoft/logic-apps-shared';
 import type { InitializeVariableProps } from '.';
-import { createEmptyLiteralValueSegment, createLiteralValueSegment } from '../base/utils/helper';
+import { createEmptyLiteralValueSegment, createLiteralValueSegment, isTokenValueSegment } from '../base/utils/helper';
 import { convertSegmentsToString, isEmptySegments } from '../base/utils/parsesegments';
-import type { ValueSegment } from '../models/parameter';
+import { ValueSegmentType, type ValueSegment } from '../models/parameter';
 import { convertStringToSegments } from '../base/utils/editorToSegment';
 import constants, { VARIABLE_TYPE } from '../../constants';
 import { VARIABLE_PROPERTIES, type InitializeVariableErrors } from './variableEditor';
+import type { loadParameterValueFromStringHandler } from '../base';
+import type { IntlShape } from 'react-intl';
 
-export const parseVariableEditorSegments = (initialValue: ValueSegment[]): InitializeVariableProps[] => {
+export const getParameterValue = (
+  rawValue: string,
+  type: string,
+  nodeMap: Map<string, ValueSegment>,
+  loadParameterValueFromString?: (value: string) => ValueSegment[] | undefined
+): ValueSegment[] => {
+  const valueSegments = loadParameterValueFromString?.(rawValue);
+
+  if (!valueSegments) {
+    return convertStringToSegments(rawValue, nodeMap, {
+      tokensEnabled: true,
+      stringifyNonString: type !== VARIABLE_TYPE.STRING,
+    });
+  }
+
+  return valueSegments.map((segment) => {
+    if (segment.type === ValueSegmentType.TOKEN && segment.token) {
+      const token = segment.token;
+
+      // If not an FX token, attempt to resolve from nodeMap
+      if (token.tokenType !== TokenType.FX && segment.value) {
+        const resolvedSegment = nodeMap.get(wrapTokenValue(segment.value));
+        return resolvedSegment ?? segment;
+      }
+    }
+
+    return segment;
+  });
+};
+
+export const wrapStringifiedTokenSegments = (jsonString: string): string => {
+  // Making this so that it doesn't match with {} within the token
+  const tokenRegex = /:\s?("@\{(?:[^{}]|\{[^}]*\})*\}")|:\s?(@\{(?:[^{}]|\{[^}]*\})*\})/gs;
+
+  // Normalize newlines and carriage returns inside tokens
+  const normalized = jsonString.replace(/@\{(?:[^{}]|\{[^}]*\})*\}/gs, (match) => match.replace(/\n/g, '\\n').replace(/\r/g, '\\r'));
+
+  return normalized.replace(tokenRegex, (match, quotedToken, unquotedToken) => {
+    const token = quotedToken ?? unquotedToken;
+    if (!token) {
+      return match;
+    }
+
+    const isQuoted = quotedToken !== undefined;
+    const innerToken = isQuoted ? token.slice(1, -1) : token;
+
+    const escaped = innerToken
+      .replace(/\\/g, '\\\\')
+      .replace(/"/g, '\\"')
+      .replace(/\n/g, '\\n')
+      .replace(/\r/g, '\\r')
+      .replace(/\t/g, '\\t')
+      .replace(/\v/g, '\\v');
+
+    return `: "${escaped}"`;
+  });
+};
+
+// Determines if the value is a string-wrapped token
+export const shouldUnescapeToken = (value: unknown): value is string => typeof value === 'string' && /^@\{[\s\S]*\}$/.test(value);
+
+//We need to unescape tokens that are wrapped in @{...} as we need the raw value to load valueSegments
+export const unescapeToken = (token: string): string =>
+  token.replace(/\\\\/g, '\\').replace(/\\"/g, '"').replace(/\\n/g, '\n').replace(/\\r/g, '\r').replace(/\\t/g, '\t').replace(/\\v/g, '\v');
+
+export const parseVariableEditorSegments = (
+  initialValue: ValueSegment[],
+  loadParameterValueFromString?: loadParameterValueFromStringHandler
+): InitializeVariableProps[] | undefined => {
   if (isEmptySegments(initialValue)) {
     return [
-      { name: [createEmptyLiteralValueSegment()], type: [createEmptyLiteralValueSegment()], value: [createEmptyLiteralValueSegment()] },
+      {
+        name: [createEmptyLiteralValueSegment()],
+        type: [createEmptyLiteralValueSegment()],
+        value: [createEmptyLiteralValueSegment()],
+      },
     ];
   }
 
-  const nodeMap: Map<string, ValueSegment> = new Map<string, ValueSegment>();
+  const nodeMap = new Map<string, ValueSegment>();
   const initialValueString = convertSegmentsToString(initialValue, nodeMap);
   const wrappedValueString = wrapStringifiedTokenSegments(initialValueString);
 
   try {
-    const variables = JSON.parse(wrappedValueString);
+    const parsedVariables = JSON.parse(wrappedValueString);
 
-    return Array.isArray(variables)
-      ? variables.map((variable: { name: string; type: string; value: string }) => ({
-          name: [createLiteralValueSegment(variable.name)],
-          type: [createLiteralValueSegment(variable.type)],
-          value: convertStringToSegments(variable.value, nodeMap, {
-            tokensEnabled: true,
-            stringifyNonString: variable.type !== VARIABLE_TYPE.STRING,
-          }),
-        }))
-      : [];
+    if (!Array.isArray(parsedVariables)) {
+      return [];
+    }
+
+    return parsedVariables.map(({ name, type, value }) => {
+      const rawValue = shouldUnescapeToken(value) ? unescapeToken(value) : value;
+
+      return {
+        name: [createLiteralValueSegment(name)],
+        type: [createLiteralValueSegment(type)],
+        value: getParameterValue(rawValue, type, nodeMap, loadParameterValueFromString),
+      };
+    });
   } catch (error) {
     LoggerService().log({
       level: LogEntryLevel.Error,
       area: 'Variable Editor',
       message: 'Failed to parse variable editor segments',
-      args: [
-        {
-          error,
-        },
-      ],
+      args: [{ error }],
     });
-    return [];
+    return undefined;
   }
 };
 
-export const parseSchemaAsVariableEditorSegments = (initialValue: ValueSegment[]): InitializeVariableProps[] => {
+export const parseSchemaAsVariableEditorSegments = (
+  initialValue: ValueSegment[],
+  loadParameterValueFromString?: loadParameterValueFromStringHandler
+): InitializeVariableProps[] | undefined => {
   if (isEmptySegments(initialValue)) {
-    return [
-      { name: [createEmptyLiteralValueSegment()], type: [createEmptyLiteralValueSegment()], value: [createEmptyLiteralValueSegment()] },
-    ];
+    return [];
   }
   const nodeMap: Map<string, ValueSegment> = new Map<string, ValueSegment>();
   const initialValueString = convertSegmentsToString(initialValue, nodeMap);
@@ -74,13 +149,11 @@ export const parseSchemaAsVariableEditorSegments = (initialValue: ValueSegment[]
 
     return Object.entries(schema.properties).map(([key, property]: [string, any]) => {
       const { name, type, description } = property;
+      const rawValue = shouldUnescapeToken(description) ? unescapeToken(description) : description;
       return {
         name: [createLiteralValueSegment(name || key)],
         type: [createLiteralValueSegment(type)],
-        description: convertStringToSegments(description, nodeMap, {
-          tokensEnabled: true,
-          stringifyNonString: true,
-        }),
+        description: getParameterValue(rawValue, type, nodeMap, loadParameterValueFromString),
         value: [createEmptyLiteralValueSegment()],
       };
     });
@@ -91,8 +164,35 @@ export const parseSchemaAsVariableEditorSegments = (initialValue: ValueSegment[]
       message: 'Failed to parse schema editor segments',
       args: [{ error }],
     });
-    return [];
+    return undefined;
   }
+};
+
+const wrapUnquotedTokens = (value: string, nodeMap?: Map<string, ValueSegment>): string => {
+  // Find property values that contain only tokens (one or more @{...} tokens with no other text)
+  // This regex matches: property_name: followed by only tokens and whitespace
+  // Updated to handle optional whitespace around the colon
+  const propertyWithOnlyTokensRegex = /"[^"]*"\s*:\s*(@\{[^}]*\}(?:\s*@\{[^}]*\})*)\s*(?=[,}])/g;
+
+  return value.replace(propertyWithOnlyTokensRegex, (match, tokensPart) => {
+    // Check if this is a single token
+    const singleTokenMatch = tokensPart.match(/^@\{([^}]*)\}$/);
+
+    if (singleTokenMatch) {
+      // Single token case - check if we should use non-string interpolation
+      const fullTokenKey = tokensPart.trim(); // Use the full matched token, trimmed
+      const tokenKey = singleTokenMatch[1]; // Inner content for @ syntax
+      const tokenSegment = nodeMap?.get(fullTokenKey);
+
+      if (tokenSegment && tokenSegment.token?.type !== constants.SWAGGER.TYPE.STRING) {
+        // Use @ syntax for non-string tokens
+        return match.replace(tokensPart, `"@${tokenKey}"`);
+      }
+    }
+
+    // Multiple tokens or string token - wrap in quotes
+    return match.replace(tokensPart, `"${tokensPart}"`);
+  });
 };
 
 export const createVariableEditorSegments = (variables: InitializeVariableProps[] | undefined): ValueSegment[] => {
@@ -101,24 +201,52 @@ export const createVariableEditorSegments = (variables: InitializeVariableProps[
   }
 
   const nodeMap = new Map<string, ValueSegment>();
-  const mappedVariables = variables.map((variable) => {
+
+  const mappedVariableStrings = variables.map((variable) => {
     const name = convertSegmentsToString(variable.name);
     const type = convertSegmentsToString(variable.type);
-    let value = convertSegmentsToString(variable.value, nodeMap);
+    const isStringType = type === VARIABLE_TYPE.STRING;
+    const isObjectType = type === VARIABLE_TYPE.OBJECT;
+
+    const valueSegments = variable.value;
+    const isTokenSegment = isTokenValueSegment(valueSegments);
+    let value = convertSegmentsToString(valueSegments, nodeMap);
+
+    // Apply token wrapping for object types before parsing
+    if (isObjectType && !isTokenSegment) {
+      value = wrapUnquotedTokens(value, nodeMap);
+    }
 
     try {
-      if (type !== VARIABLE_TYPE.STRING) {
+      if (!isStringType && !isTokenSegment) {
         value = JSON.parse(value);
       }
-    } catch (_error) {
-      // do nothing
+    } catch {
+      // ignore parse errors
     }
-    return value !== '' ? { name, type, value } : { name, type };
+
+    const parts = [`"name": ${JSON.stringify(name)}`, `"type": ${JSON.stringify(type)}`];
+
+    if (value !== '') {
+      if (isTokenSegment) {
+        if (isStringType) {
+          // Clean up multiline token before quoting
+          const cleaned = value.replace(/[\r\n]+/g, '');
+          parts.push(`"value": ${JSON.stringify(cleaned)}`);
+        } else {
+          parts.push(`"value": ${value}`);
+        }
+      } else {
+        const valueStr = JSON.stringify(value);
+        parts.push(`"value": ${valueStr}`);
+      }
+    }
+
+    return `{ ${parts.join(', ')} }`;
   });
 
-  const stringifiedVariables = JSON.stringify(mappedVariables);
-
-  return convertStringToSegments(stringifiedVariables, nodeMap, { tokensEnabled: true });
+  const finalString = `[${mappedVariableStrings.join(',')}]`;
+  return convertStringToSegments(finalString, nodeMap, { tokensEnabled: true });
 };
 
 export const convertVariableEditorSegmentsAsSchema = (variables: InitializeVariableProps[] | undefined): ValueSegment[] => {
@@ -129,26 +257,29 @@ export const convertVariableEditorSegmentsAsSchema = (variables: InitializeVaria
   const nodeMap = new Map<string, ValueSegment>();
   const properties: Record<string, any> = {};
 
-  variables.forEach((variable) => {
+  for (const variable of variables) {
     const { name: _name, type: _type, description: _description } = variable;
     const name = convertSegmentsToString(_name);
     const type = convertSegmentsToString(_type);
     const description = convertSegmentsToString(_description ?? [], nodeMap);
 
+    if (!name && !type) {
+      return [createEmptyLiteralValueSegment()];
+    }
+
     properties[name] = {
       type,
       ...(description ? { description } : {}),
     };
-  });
+  }
 
   const schema = {
     type: 'object',
     properties,
+    required: Object.keys(properties),
   };
 
-  const stringifiedSchema = JSON.stringify(schema);
-
-  return convertStringToSegments(stringifiedSchema, nodeMap, { tokensEnabled: true });
+  return convertStringToSegments(JSON.stringify(schema), nodeMap, { tokensEnabled: true });
 };
 
 export const getVariableType = (type: ValueSegment[]): string => {
@@ -179,100 +310,148 @@ export const validateVariables = (variables: InitializeVariableProps[]): Initial
       );
     };
 
+    const getInvalidValueMessage = (expectedType: string) => {
+      return intl.formatMessage(
+        {
+          defaultMessage: "''Value'' must be a valid {expectedType}",
+          id: '6ZzRu4',
+          description:
+            'Error validation message for type. Do not remove the double single quotes around the display name, as it is needed to wrap the placeholder text.',
+        },
+        { expectedType }
+      );
+    };
+
     if (!name) {
       errors[index][VARIABLE_PROPERTIES.NAME] = getMissingPropertyMessage(VARIABLE_PROPERTIES.NAME);
     }
     if (!type) {
       errors[index][VARIABLE_PROPERTIES.TYPE] = getMissingPropertyMessage(VARIABLE_PROPERTIES.TYPE);
     }
+
     const isExpression = isTemplateExpression(value);
-    if (!isExpression && value !== '') {
-      switch (type) {
-        case VARIABLE_TYPE.BOOLEAN:
-          if (!(equals(value, 'true') || equals(value, 'false'))) {
-            errors[index][VARIABLE_PROPERTIES.VALUE] = intl.formatMessage({
-              defaultMessage: `''Value'' must be a valid boolean`,
-              id: 'Aw8LkK',
-              description:
-                'Error validation message for invalid booleans. Do not remove the double single quotes around the display name, as it is needed to wrap the placeholder text.',
-            });
-          }
-          break;
-        case VARIABLE_TYPE.INTEGER:
-          if (!/^-?\d+$/.test(value)) {
-            errors[index][VARIABLE_PROPERTIES.VALUE] = intl.formatMessage({
-              defaultMessage: `''Value'' must be a valid integer`,
-              id: 'BWIM2x',
-              description:
-                'Error validation message for invalid integer. Do not remove the double single quotes around the display name, as it is needed to wrap the placeholder text.',
-            });
-          }
-          break;
-        case VARIABLE_TYPE.FLOAT:
-          if (!/^-?\d+(\.\d+)?$/.test(value)) {
-            errors[index][VARIABLE_PROPERTIES.VALUE] = intl.formatMessage({
-              defaultMessage: `''Value'' must be a valid float`,
-              id: '9kMtmY',
-              description:
-                'Error validation message for invalid float. Do not remove the double single quotes around the display name, as it is needed to wrap the placeholder text.',
-            });
-          }
-          break;
-        case VARIABLE_TYPE.OBJECT:
-          try {
-            JSON.parse(value);
-          } catch (e) {
-            // logger warning only to check if overvalidating
-            LoggerService().log({
-              level: LogEntryLevel.Warning,
-              area: 'Variable Editor',
-              message: 'Failed to parse variable value as JSON object',
-              args: [
-                {
-                  error: e,
-                },
-              ],
-            });
-            errors[index][VARIABLE_PROPERTIES.VALUE] = intl.formatMessage({
-              defaultMessage: `''Value'' must be a valid JSON object`,
-              id: 's2ydQX',
-              description:
-                'Error validation message for invalid JSON object. Do not remove the double single quotes around the display name, as it is needed to wrap the placeholder text.',
-            });
-          }
-          break;
-        case VARIABLE_TYPE.ARRAY:
-          try {
-            if (!Array.isArray(JSON.parse(value))) {
-              throw new Error();
-            }
-          } catch (e) {
-            // logger warning only to check if overvalidating
-            LoggerService().log({
-              level: LogEntryLevel.Warning,
-              area: 'Variable Editor',
-              message: 'Failed to parse variable value as JSON array',
-              args: [
-                {
-                  error: e,
-                },
-              ],
-            });
-            errors[index][VARIABLE_PROPERTIES.VALUE] = intl.formatMessage({
-              defaultMessage: `''Value'' must be a valid JSON array`,
-              id: 'cMvmv5',
-              description:
-                'Error validation message for invalid JSON array. Do not remove the double single quotes around the display name, as it is needed to wrap the placeholder text.',
-            });
-          }
-          break;
-        default:
-          break;
-      }
+    const shouldValidateValue = (!isExpression || type === VARIABLE_TYPE.OBJECT || type === VARIABLE_TYPE.ARRAY) && value !== '';
+
+    if (!shouldValidateValue) {
+      return;
+    }
+
+    switch (type) {
+      case VARIABLE_TYPE.BOOLEAN:
+        if (!equals(value, 'true') && !equals(value, 'false')) {
+          errors[index][VARIABLE_PROPERTIES.VALUE] = getInvalidValueMessage('boolean');
+        }
+        break;
+
+      case VARIABLE_TYPE.INTEGER:
+        if (!/^-?\d+$/.test(value)) {
+          errors[index][VARIABLE_PROPERTIES.VALUE] = getInvalidValueMessage('integer');
+        }
+        break;
+
+      case VARIABLE_TYPE.FLOAT:
+        if (!/^-?\d+(\.\d+)?$/.test(value)) {
+          errors[index][VARIABLE_PROPERTIES.VALUE] = getInvalidValueMessage('float');
+        }
+        break;
+
+      case VARIABLE_TYPE.OBJECT:
+        validateObjectType(value, index, errors, intl, variable.value);
+        break;
+
+      case VARIABLE_TYPE.ARRAY:
+        validateArrayType(value, index, errors, intl, variable.value);
+        break;
+
+      default:
+        break;
     }
   });
 
   return errors;
+};
+
+const validateObjectType = (
+  value: string,
+  index: number,
+  errors: InitializeVariableErrors[],
+  intl: IntlShape,
+  segmentValue: ValueSegment[]
+) => {
+  if (isTokenValueSegment(segmentValue)) {
+    const type = segmentValue[0]?.token?.type;
+
+    if (!type || type === constants.SWAGGER.TYPE.OBJECT || type === constants.SWAGGER.TYPE.ANY) {
+      return; // Either no type to check, or valid object type
+    }
+  }
+
+  const trimmedValue = value.trim();
+
+  // Must be wrapped in braces
+  if (!trimmedValue.startsWith('{') || !trimmedValue.endsWith('}')) {
+    errors[index][VARIABLE_PROPERTIES.VALUE] = intl.formatMessage({
+      defaultMessage: `''Value'' must be a valid JSON object`,
+      id: 's2ydQX',
+      description:
+        'Error validation message for invalid JSON object. Do not remove the double single quotes around the display name, as it is needed to wrap the placeholder text.',
+    });
+    return;
+  }
+
+  // Must be valid JSON
+  try {
+    const wrappedValue = wrapUnquotedTokens(trimmedValue);
+    JSON.parse(wrappedValue);
+  } catch (e) {
+    LoggerService().log({
+      level: LogEntryLevel.Warning,
+      area: 'Variable Editor',
+      message: 'Failed to parse variable value as JSON object',
+      args: [{ error: e }],
+    });
+    errors[index][VARIABLE_PROPERTIES.VALUE] = intl.formatMessage({
+      defaultMessage: `''Value'' must be a valid JSON object`,
+      id: 's2ydQX',
+      description:
+        'Error validation message for invalid JSON object. Do not remove the double single quotes around the display name, as it is needed to wrap the placeholder text.',
+    });
+  }
+};
+
+const validateArrayType = (
+  value: string,
+  index: number,
+  errors: InitializeVariableErrors[],
+  intl: IntlShape,
+  segmentValue: ValueSegment[]
+) => {
+  if (isTokenValueSegment(segmentValue)) {
+    const type = segmentValue[0]?.token?.type;
+
+    if (!type || type === constants.SWAGGER.TYPE.ARRAY || type === constants.SWAGGER.TYPE.ANY) {
+      return; // Either no type to check, or valid array type
+    }
+  }
+  try {
+    const parsed = JSON.parse(value);
+    if (!Array.isArray(parsed)) {
+      throw new Error('Not an array');
+    }
+  } catch (e) {
+    LoggerService().log({
+      level: LogEntryLevel.Warning,
+      area: 'Variable Editor',
+      message: 'Failed to parse variable value as JSON array',
+      args: [{ error: e }],
+    });
+    errors[index][VARIABLE_PROPERTIES.VALUE] = intl.formatMessage({
+      defaultMessage: `''Value'' must be a valid JSON array`,
+      id: 'cMvmv5',
+      description:
+        'Error validation message for invalid JSON array. Do not remove the double single quotes around the display name, as it is needed to wrap the placeholder text.',
+    });
+  }
 };
 
 export const isInitializeVariableOperation = (operationInfo: OperationInfo): boolean => {

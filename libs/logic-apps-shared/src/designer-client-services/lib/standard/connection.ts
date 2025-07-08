@@ -25,7 +25,7 @@ import { LoggerService } from '../logger';
 import { LogEntryLevel, Status } from '../logging/logEntry';
 import type { IOAuthPopup } from '../oAuth';
 import { OAuthService } from '../oAuth';
-import { getHybridAppBaseRelativeUrl, isHybridLogicApp } from './hybrid';
+import { getHybridAppBaseRelativeUrl, hybridApiVersion, isHybridLogicApp } from './hybrid';
 import { validateRequiredServiceArguments } from '../../../utils/src/lib/helpers/functions';
 import agentloopConnector from '../standard/manifest/agentLoopConnector';
 
@@ -83,11 +83,12 @@ interface APIManagementConnectionModel {
 export interface AgentConnectionModel {
   authentication: Record<string, any>;
   endpoint: string;
+  resourceId: string;
   type?: string;
   displayName?: string;
 }
 
-interface ConnectionAndAppSetting<T> {
+export interface ConnectionAndAppSetting<T> {
   connectionKey: string;
   connectionData: T;
   settings: Record<string, string>;
@@ -102,7 +103,11 @@ export interface ConnectionsData {
   agentConnections?: Record<string, AgentConnectionModel>;
 }
 
-type LocalConnectionModel = FunctionsConnectionModel | ServiceProviderConnectionModel | APIManagementConnectionModel | AgentConnectionModel;
+export type LocalConnectionModel =
+  | FunctionsConnectionModel
+  | ServiceProviderConnectionModel
+  | APIManagementConnectionModel
+  | AgentConnectionModel;
 type ReadConnectionsFunc = () => Promise<ConnectionsData>;
 type WriteConnectionFunc = (connectionData: ConnectionAndAppSetting<LocalConnectionModel>) => Promise<void>;
 
@@ -110,6 +115,7 @@ const serviceProviderLocation = 'serviceProviderConnections';
 const functionsLocation = 'functionConnections';
 const apimLocation = 'apiManagementConnections';
 const agentLocation = 'agentConnections';
+export const foundryServiceConnectionRegex = /\/Microsoft\.CognitiveServices\/accounts\/[^/]+\/projects\/[^/]+/;
 
 export interface StandardConnectionServiceOptions {
   apiVersion: string;
@@ -162,20 +168,19 @@ export class StandardConnectionService extends BaseConnectionService implements 
       const { apiVersion, baseUrl, httpClient } = this._options;
 
       let response = null;
+      const connectorIdKeyword = connectorId.split('/').at(-1);
+      if (connectorIdKeyword === 'agent') {
+        return agentloopConnector;
+      }
       if (isHybridLogicApp(baseUrl)) {
         response = await httpClient.post<any, null>({
-          uri: `${getHybridAppBaseRelativeUrl(baseUrl.split('hostruntime')[0])}/invoke?api-version=2024-02-02-preview`,
+          uri: `${getHybridAppBaseRelativeUrl(baseUrl.split('hostruntime')[0])}/invoke?api-version=${hybridApiVersion}`,
           headers: {
             'x-ms-logicapps-proxy-path': `/runtime/webhooks/workflow/api/management/operationGroups/${connectorId.split('/').at(-1)}/`,
             'x-ms-logicapps-proxy-method': 'GET',
           },
         });
       } else {
-        const connectorIdKeyword = connectorId.split('/').at(-1);
-        if (connectorIdKeyword === 'agent') {
-          return agentloopConnector;
-        }
-
         response = await httpClient.get<Connector>({
           uri: `${baseUrl}/operationGroups/${connectorIdKeyword}?api-version=${apiVersion}`,
         });
@@ -368,7 +373,10 @@ export class StandardConnectionService extends BaseConnectionService implements 
     let identityDetailsForApiHubAuth: { principalId: string; tenantId: string };
 
     if (isHybridLogicApp(baseUrl) && identity?.principalId && identity?.tenantId) {
-      identityDetailsForApiHubAuth = { principalId: identity?.principalId, tenantId: identity?.tenantId };
+      identityDetailsForApiHubAuth = {
+        principalId: identity?.principalId,
+        tenantId: identity?.tenantId,
+      };
     } else {
       identityDetailsForApiHubAuth = this._getIdentityDetailsForApiHubAuth(identity as ManagedIdentity, tenantId as string, identityId);
     }
@@ -475,7 +483,10 @@ export class StandardConnectionService extends BaseConnectionService implements 
       (equals(managedIdentity.type, ResourceIdentityType.SYSTEM_ASSIGNED) ||
         equals(managedIdentity.type, ResourceIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED))
     ) {
-      return { principalId: managedIdentity.principalId as string, tenantId: managedIdentity.tenantId as string };
+      return {
+        principalId: managedIdentity.principalId as string,
+        tenantId: managedIdentity.tenantId as string,
+      };
     }
     const identityKeys = Object.keys(managedIdentity.userAssignedIdentities ?? {});
     const selectedIdentity = identityKeys.find((identityKey) => equals(identityKey, identityIdForConnection)) ?? identityKeys[0];
@@ -501,9 +512,13 @@ export class StandardConnectionService extends BaseConnectionService implements 
     );
     const oAuthService = OAuthService();
     let oAuthPopupInstance: IOAuthPopup | undefined;
-
     try {
-      const consentUrl = await oAuthService.fetchConsentUrlForConnection(connectionId);
+      const oauthKey = parametersMetadata?.connectionParameters
+        ? Object.keys(parametersMetadata.connectionParameters).find(
+            (key) => parametersMetadata.connectionParameters?.[key]?.type === 'oauthSetting'
+          )
+        : undefined;
+      const consentUrl = await oAuthService.fetchConsentUrlForConnection(connectionId, oauthKey);
       oAuthPopupInstance = oAuthService.openLoginPopup({ consentUrl });
 
       const loginResponse = await oAuthPopupInstance.loginPromise;
@@ -565,16 +580,12 @@ export class StandardConnectionService extends BaseConnectionService implements 
         break;
       }
       case ConnectionType.Agent: {
-        const { connectionAndSettings } = convertToAgentConnectionsData(connectionName, connector.id, connectionInfo, parametersMetadata);
+        const { connectionAndSettings } = convertToAgentConnectionsData(connectionName, connectionInfo, parametersMetadata);
         connectionsData = connectionAndSettings;
         connection = convertAgentConnectionDataToConnection(
           connectionsData.connectionKey,
           connectionsData.connectionData as AgentConnectionModel
         );
-
-        // if (connector.properties.testConnectionUrl) {
-        //   await this._testServiceProviderConnection(connector.properties.testConnectionUrl, rawConnection);
-        // }
         break;
       }
       default: {
@@ -606,12 +617,14 @@ export class StandardConnectionService extends BaseConnectionService implements 
     try {
       const { httpClient, baseUrl, apiVersion } = this._options;
       let uri = `${baseUrl.replace('/runtime/webhooks/workflow/api/management', '')}${requestUrl}`;
-      let queryParameters: Record<string, string> = { 'api-version': apiVersion };
+      let queryParameters: Record<string, string> = {
+        'api-version': apiVersion,
+      };
       let headers: Record<string, string> = {};
 
       if (isHybridLogicApp(uri)) {
         const [baseUri, proxyPath] = uri.split('/hostruntime');
-        uri = `${getHybridAppBaseRelativeUrl(baseUri)}/invoke?api-version=2024-02-02-preview`;
+        uri = `${getHybridAppBaseRelativeUrl(baseUri)}/invoke?api-version=${hybridApiVersion}`;
         queryParameters = {};
         headers = {
           'x-ms-logicapps-proxy-path': proxyPath || '',
@@ -658,6 +671,7 @@ function convertServiceProviderConnectionDataToConnection(
       statuses: [{ status: 'Connected' }],
       overallStatus: 'Connected',
       testLinks: [],
+      ...optional('parameterValues', connectionData.parameterValues),
     },
   };
 }
@@ -672,7 +686,14 @@ function convertAgentConnectionDataToConnection(connectionKey: string, connectio
     properties: {
       api: { id: `/${agentConnectorId}` } as any,
       createdTime: '',
-      connectionParameters: {},
+      connectionParameters: {
+        cognitiveServiceAccountId: {
+          type: 'string',
+          metadata: {
+            value: connectionData.resourceId,
+          },
+        },
+      },
       displayName: displayName as string,
       statuses: [{ status: 'Connected' }],
       overallStatus: 'Connected',
@@ -721,10 +742,12 @@ function convertFunctionsConnectionDataToConnection(connectionKey: string, conne
 
 function convertToAgentConnectionsData(
   connectionKey: string,
-  connectorId: string,
   connectionInfo: ConnectionCreationInfo,
   connectionParameterMetadata: ConnectionParametersMetadata
-): { connectionAndSettings: ConnectionAndAppSetting<AgentConnectionModel>; rawConnection: ServiceProviderConnectionModel } {
+): {
+  connectionAndSettings: ConnectionAndAppSetting<AgentConnectionModel>;
+  rawConnection: ServiceProviderConnectionModel;
+} {
   const { connectionParametersSet: connectionParametersSetValues } = connectionInfo;
   const { parameterValues, rawParameterValues, settings, displayName } = createLocalConnectionsData(
     connectionKey,
@@ -732,16 +755,21 @@ function convertToAgentConnectionsData(
     connectionParameterMetadata
   );
 
+  const cognitiveServiceAccountId = parameterValues?.['cognitiveServiceAccountId'];
+  const isFoundryAgentServiceConnection =
+    equals(connectionParametersSetValues?.name ?? '', 'ManagedServiceIdentity', true) &&
+    foundryServiceConnectionRegex.test(cognitiveServiceAccountId);
   const connectionsData: ConnectionAndAppSetting<AgentConnectionModel> = {
     connectionKey,
     connectionData: {
       displayName,
       authentication: {
         type: connectionParametersSetValues?.name,
-        key: parameterValues?.['openAIKey'],
+        key: equals(connectionParametersSetValues?.name ?? '', 'ManagedServiceIdentity', true) ? undefined : parameterValues?.['openAIKey'],
       },
       endpoint: parameterValues?.['openAIEndpoint'],
-      type: 'model',
+      resourceId: cognitiveServiceAccountId,
+      type: isFoundryAgentServiceConnection ? 'FoundryAgentService' : 'model',
     },
     settings,
     pathLocation: [agentLocation],
@@ -757,7 +785,10 @@ function convertToServiceProviderConnectionsData(
   connectorId: string,
   connectionInfo: ConnectionCreationInfo,
   connectionParameterMetadata: ConnectionParametersMetadata
-): { connectionAndSettings: ConnectionAndAppSetting<ServiceProviderConnectionModel>; rawConnection: ServiceProviderConnectionModel } {
+): {
+  connectionAndSettings: ConnectionAndAppSetting<ServiceProviderConnectionModel>;
+  rawConnection: ServiceProviderConnectionModel;
+} {
   const { additionalParameterValues, connectionParametersSet: connectionParametersSetValues } = connectionInfo;
   const { parameterValues, rawParameterValues, settings, displayName } = createLocalConnectionsData(
     connectionKey,
@@ -813,7 +844,10 @@ function convertToFunctionsConnectionsData(
   const { parameterValues, settings, displayName } = createLocalConnectionsData(connectionKey, connectionInfo, connectionParameterMetadata);
   return {
     connectionKey,
-    connectionData: { ...(parameterValues as FunctionsConnectionModel), displayName },
+    connectionData: {
+      ...(parameterValues as FunctionsConnectionModel),
+      displayName,
+    },
     settings,
     pathLocation: [functionsLocation],
   };

@@ -1,3 +1,4 @@
+import { convertSegmentsToString } from '../editor/base/utils/parsesegments';
 import constants from '../constants';
 import type { Token, ValueSegment } from '../editor';
 import { TokenType } from '../editor';
@@ -76,6 +77,9 @@ export function buildInlineCodeTextFromToken(inputToken: Token, language: string
     case constants.PARAMETER.EDITOR_OPTIONS.LANGUAGE.JAVASCRIPT: {
       return formatForJavascript(property, actionName, source);
     }
+    case constants.PARAMETER.EDITOR_OPTIONS.LANGUAGE.PYTHON: {
+      return formatForPython(property, actionName, source);
+    }
     case constants.PARAMETER.EDITOR_OPTIONS.LANGUAGE.POWERSHELL: {
       return formatForPowershell(property, actionName, source);
     }
@@ -114,6 +118,11 @@ function formatForJavascript(property: string, actionName?: string, source?: str
   }
 
   return result;
+}
+
+function formatForPython(property: string, _actionName?: string, _source?: string): string {
+  // currently python only supports agent parameters
+  return `@{agentParameters('${property}')}`;
 }
 
 function formatForPowershell(property: string, actionName?: string, source?: string): string {
@@ -164,10 +173,8 @@ function matchesOutputKey(tokenName: string): boolean {
 }
 
 export const getInitialValue = (initialValue: ValueSegment[]): string => {
-  if (initialValue[0]?.value) {
-    return formatValue(initialValue[0].value);
-  }
-  return '';
+  const stringifiedSegments = convertSegmentsToString(initialValue);
+  return stringifiedSegments;
 };
 
 export const formatValue = (input: string): string => {
@@ -191,9 +198,21 @@ export const getCodeEditorHeight = (input = ''): string => {
 export const isCustomCodeParameter = (parameter: ParameterInfo): boolean => {
   const { editor, editorOptions } = parameter;
   const language = editorOptions?.['language'];
-  return equals(editor, constants.PARAMETER.EDITOR.CODE) && !equals(language, constants.PARAMETER.EDITOR_OPTIONS.LANGUAGE.JAVASCRIPT);
+  return (
+    equals(editor, constants.PARAMETER.EDITOR.CODE) &&
+    !(
+      equals(language, constants.PARAMETER.EDITOR_OPTIONS.LANGUAGE.JAVASCRIPT) ||
+      equals(language, constants.PARAMETER.EDITOR_OPTIONS.LANGUAGE.PYTHON)
+    )
+  );
 };
 
 export const isCustomCode = (editor?: string, language?: string): boolean => {
-  return equals(editor, constants.PARAMETER.EDITOR.CODE) && !equals(language, constants.PARAMETER.EDITOR_OPTIONS.LANGUAGE.JAVASCRIPT);
+  return (
+    equals(editor, constants.PARAMETER.EDITOR.CODE) &&
+    !(
+      equals(language, constants.PARAMETER.EDITOR_OPTIONS.LANGUAGE.JAVASCRIPT) ||
+      equals(language, constants.PARAMETER.EDITOR_OPTIONS.LANGUAGE.PYTHON)
+    )
+  );
 };

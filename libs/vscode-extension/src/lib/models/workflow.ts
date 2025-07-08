@@ -15,7 +15,7 @@ export interface IDesignerPanelMetadata {
   standardApp: StandardApp;
   connectionsData: string;
   parametersData: Record<string, Parameter>;
-  customCodeData: Record<string, string>;
+  customCodeData?: Record<string, string>;
   localSettings: Record<string, string>;
   azureDetails: AzureConnectorDetails;
   workflowDetails: Record<string, any>;
@@ -26,6 +26,7 @@ export interface IDesignerPanelMetadata {
   accessToken?: string;
   schemaArtifacts: FileDetails[];
   mapArtifacts: Record<string, FileDetails[]>;
+  extensionBundleVersion?: string;
 }
 
 export interface StandardApp {

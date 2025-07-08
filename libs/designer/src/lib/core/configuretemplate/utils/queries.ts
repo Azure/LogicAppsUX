@@ -1,7 +1,122 @@
-import type { ArmResource, LogicAppResource } from '@microsoft/logic-apps-shared';
-import { getTriggerFromDefinition, ResourceService } from '@microsoft/logic-apps-shared';
+import type { ArmResource, LogicAppResource, WorkflowResource, Template } from '@microsoft/logic-apps-shared';
+import { getTriggerFromDefinition, ResourceService, TemplateResourceService } from '@microsoft/logic-apps-shared';
 import type { QueryClient, UseQueryResult } from '@tanstack/react-query';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { getConnector } from '../../queries/operation';
+import type { NodeOperation } from '../../state/operation/operationMetadataSlice';
+import { getReactQueryClient } from '../../ReactQueryProvider';
+import type { WorkflowTemplateData } from '../../actions/bjsworkflow/templates';
+import { delimiter } from './helper';
+
+export const getTemplateManifest = async (templateId: string): Promise<Template.TemplateManifest> => {
+  const templateResource = await getTemplate(templateId);
+  return (
+    templateResource?.properties?.manifest
+      ? { id: templateId, workflows: {}, ...templateResource.properties.manifest }
+      : {
+          id: templateId,
+          title: '',
+          summary: '',
+          workflows: {},
+          skus: [],
+          details: {
+            By: '',
+            Type: '',
+            Category: '',
+          },
+        }
+  ) as Template.TemplateManifest;
+};
+
+export const getWorkflowsInTemplate = async (templateId: string): Promise<Record<string, Template.WorkflowManifest>> => {
+  const queryClient = getReactQueryClient();
+  return queryClient.fetchQuery(['templateworkflows', templateId.toLowerCase()], async () => {
+    const workflows = await TemplateResourceService().getTemplateWorkflows(templateId);
+    return workflows.reduce((result: Record<string, Template.WorkflowManifest>, workflow) => {
+      const workflowId = workflow.properties.manifest.id;
+      result[workflowId] = workflow.properties.manifest
+        ? workflow.properties.manifest
+        : {
+            id: workflowId,
+            title: '',
+            summary: '',
+            images: { light: '', dark: '' },
+            parameters: [],
+            connections: {},
+          };
+      return result;
+    }, {});
+  });
+};
+
+export const getWorkflowResourcesInTemplate = async (templateId: string): Promise<ArmResource<any>[]> => {
+  const queryClient = getReactQueryClient();
+  return queryClient.fetchQuery(['templateworkflowresources', templateId.toLowerCase()], async () => {
+    const workflows = await TemplateResourceService().getTemplateWorkflows(templateId, /* rawData */ true);
+    return workflows;
+  });
+};
+
+export const useTemplate = (templateId: string, enabled = true): UseQueryResult<ArmResource<any>, unknown> => {
+  return useQuery(['template', templateId?.toLowerCase()], async () => TemplateResourceService().getTemplate(templateId), {
+    cacheTime: 1000 * 60 * 60 * 24,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    enabled: enabled && !!templateId,
+  });
+};
+
+export const useTemplateWorkflowResources = (templateId: string, enabled = true): UseQueryResult<ArmResource<any>[], unknown> => {
+  return useQuery(
+    ['templateworkflowresources', templateId?.toLowerCase()],
+    async () => TemplateResourceService().getTemplateWorkflows(templateId, /* rawData */ true),
+    {
+      cacheTime: 1000 * 60 * 60 * 24,
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+      enabled: enabled && !!templateId,
+    }
+  );
+};
+
+export const getTemplate = async (templateId: string): Promise<ArmResource<any>> => {
+  const queryClient = getReactQueryClient();
+  return queryClient.fetchQuery(['template', templateId.toLowerCase()], async () => TemplateResourceService().getTemplate(templateId));
+};
+
+export const useAllConnectors = (
+  operationInfos: Record<string, NodeOperation>,
+  workflows: Record<string, Partial<WorkflowTemplateData>>
+) => {
+  const workflowNames = Object.values(workflows).map((workflow) => workflow.id?.toLowerCase());
+  const operationInfosInWorkflows = Object.keys(operationInfos)
+    .filter((operationId) => {
+      const workflowName = operationId.split(delimiter)[0].toLowerCase();
+      return workflowNames.includes(workflowName);
+    })
+    .map((operationId) => operationInfos[operationId]);
+
+  const allConnectorIds = operationInfosInWorkflows.reduce((result: string[], operationInfo) => {
+    const normalizedConnectorId = operationInfo.connectorId?.toLowerCase();
+    if (normalizedConnectorId && !result.includes(normalizedConnectorId)) {
+      result.push(normalizedConnectorId);
+    }
+
+    return result;
+  }, []);
+
+  return useQuery(['allconnectors', ...allConnectorIds], async () => {
+    const promises = allConnectorIds.map((connectorId) => getConnector(connectorId));
+    return (await Promise.all(promises))
+      .filter((connector) => !!connector)
+      .map((connector) => ({
+        id: connector.id.toLowerCase(),
+        displayName: connector.properties.displayName ?? connector.name,
+      }));
+  });
+};
 
 export const useAllLogicApps = (
   subscriptionId: string,
@@ -27,18 +142,26 @@ export const useWorkflowsInApp = (
   subscriptionId: string,
   resourceGroup: string,
   logicAppName: string,
-  isConsumption: boolean
-): UseQueryResult<LogicAppResource[], unknown> => {
+  isConsumption: boolean,
+  filter?: (workflow: ArmResource<any>) => boolean
+): UseQueryResult<WorkflowResource[], unknown> => {
   const queryClient = useQueryClient();
   return useQuery(
-    ['workflowsInApp', subscriptionId?.toLowerCase(), resourceGroup?.toLowerCase(), logicAppName?.toLowerCase(), isConsumption],
+    [
+      'workflowsInApp',
+      subscriptionId?.toLowerCase(),
+      resourceGroup?.toLowerCase(),
+      logicAppName?.toLowerCase(),
+      isConsumption,
+      `hasFilter:${!!filter}`,
+    ],
     async () => {
       if (isConsumption) {
         const workflow = await getConsumptionWorkflow(subscriptionId, resourceGroup, logicAppName, queryClient);
         return [{ id: workflow.id, name: workflow.name, triggerType: getTriggerFromDefinition(workflow.properties.definition.triggers) }];
       }
 
-      return ResourceService().listWorkflowsInApp(subscriptionId, resourceGroup, logicAppName, isConsumption);
+      return ResourceService().listWorkflowsInApp(subscriptionId, resourceGroup, logicAppName, filter);
     },
     {
       cacheTime: 1000 * 60 * 60 * 24,
@@ -96,4 +219,52 @@ export const getConnectionsInWorkflowApp = async (
       throw error;
     }
   });
+};
+
+export const getParametersInWorkflowApp = async (
+  subscriptionId: string,
+  resourceGroup: string,
+  logicAppName: string,
+  queryClient: QueryClient
+): Promise<Record<string, any>> => {
+  const resourceId = `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/sites/${logicAppName}/hostruntime/admin/vfs/parameters.json`;
+  const queryParameters = {
+    'api-version': '2018-11-01',
+    relativepath: '1',
+  };
+  return queryClient.fetchQuery(['parametersdata', resourceId.toLowerCase()], async () => {
+    try {
+      const parameters: Record<string, any> = await ResourceService().getResource(resourceId, queryParameters);
+      return Object.keys(parameters ?? {}).reduce((result: Record<string, any>, parameterKey: string) => {
+        result[parameterKey] = { ...parameters[parameterKey] };
+        delete result[parameterKey].value;
+        return result;
+      }, {});
+    } catch (error: any) {
+      if (error?.response?.status === 404) {
+        return {};
+      }
+      throw error;
+    }
+  });
+};
+
+export const resetTemplateWorkflowsQuery = (templateId: string, clearRawData = false) => {
+  const queryClient = getReactQueryClient();
+  queryClient.removeQueries(['templateworkflows', templateId.toLowerCase()]);
+
+  if (clearRawData) {
+    queryClient.removeQueries(['templateworkflowresources', templateId.toLowerCase()]);
+  }
+};
+
+export const resetAllTemplatesQuery = (templateId: string, clearRawData = false) => {
+  const queryClient = getReactQueryClient();
+  queryClient.removeQueries(['template', templateId.toLowerCase()]);
+  resetTemplateWorkflowsQuery(templateId, clearRawData);
+};
+
+export const resetTemplateQuery = (templateId: string) => {
+  const queryClient = getReactQueryClient();
+  queryClient.removeQueries(['template', templateId.toLowerCase()]);
 };

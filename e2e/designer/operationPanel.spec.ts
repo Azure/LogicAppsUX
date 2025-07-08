@@ -35,7 +35,7 @@ test.describe(
     test('Can select a node, and collapse & expand the panel', async ({ page }) => {
       const validatePanel = async (state: 'open' | 'closed') => {
         if (state === 'open') {
-          await expect(page.locator('.msla-panel-container-nested .msla-panel-layout-selected')).toBeVisible();
+          await expect(page.locator('.msla-panel-container-nested .msla-panel-border-selected')).toBeVisible();
           await expect(page.locator('.msla-panel-card-header input#Initialize_ArrayVariable-title')).toBeVisible();
           await expect(page.locator('.msla-panel-card-header button[aria-label="Unpin action"]')).not.toBeVisible();
           return;
@@ -65,7 +65,7 @@ test.describe(
     test('Can pin a node, and collapse & expand the panel', async ({ page }) => {
       const validatePanel = async (state: 'open' | 'closed') => {
         if (state === 'open') {
-          await expect(page.locator('.msla-panel-container-nested .msla-panel-layout-selected')).toBeVisible();
+          await expect(page.locator('.msla-panel-container-nested .msla-panel-border-selected')).toBeVisible();
           await expect(page.locator('.msla-panel-card-header input#Initialize_ArrayVariable-title')).toBeVisible();
           await expect(page.locator('.msla-panel-card-header button[aria-label="Unpin action"]')).toBeVisible();
           return;
@@ -97,9 +97,9 @@ test.describe(
       const validatePanel = async (state: 'open' | 'closed') => {
         if (state === 'open') {
           // Node panel tab should be open with 'Parse JSON' node.
-          await expect(page.locator('.msla-panel-layout-selected .msla-panel-card-header input#Parse_JSON-title')).toBeVisible();
+          await expect(page.locator('.msla-panel-border-selected .msla-panel-card-header input#Parse_JSON-title')).toBeVisible();
           await expect(
-            page.locator('.msla-panel-layout-selected .msla-panel-card-header button[aria-label="Unpin action"]')
+            page.locator('.msla-panel-border-selected .msla-panel-card-header button[aria-label="Unpin action"]')
           ).not.toBeVisible();
 
           // Node panel tab should also be open with 'Initialize Variable' action pinned.
@@ -148,12 +148,12 @@ test.describe(
       await page.getByTestId('msla-pin-menu-option').click();
 
       // Click on 'Settings' tab for 'Parse JSON' and on 'Code view' tab for 'Initialize ArrayVariable'.
-      await page.locator('.msla-panel-layout-selected #msla-node-details-panel-Parse_JSON button[value=SETTINGS]').click();
+      await page.locator('.msla-panel-border-selected #msla-node-details-panel-Parse_JSON button[value=SETTINGS]').click();
       await page.locator('.msla-panel-layout-pinned #msla-node-details-panel-Initialize_ArrayVariable button[value=CODE_VIEW]').click();
 
       // Operation panels should have their respective tabs open.
-      await expect(page.locator('.msla-panel-layout-selected .msla-setting-section').first()).toBeVisible();
-      await expect(page.locator('.msla-panel-layout-pinned .msla-peek')).toBeVisible();
+      await expect(page.locator('.msla-panel-border-selected .msla-setting-section').first()).toBeVisible();
+      await expect(page.locator('.msla-panel-layout-pinned').getByTestId('msla-peek')).toBeVisible();
     });
 
     test('Should only show the panel info message when trigger type is request', async ({ page }) => {
@@ -164,7 +164,7 @@ test.describe(
       await page.getByTestId('card-manual').click();
 
       // Panel should be open, with 'manual' action.
-      await expect(page.locator('.msla-panel-container-nested .msla-panel-layout-selected')).toBeVisible();
+      await expect(page.locator('.msla-panel-container-nested .msla-panel-border-selected')).toBeVisible();
       await expect(page.locator('.msla-panel-card-header input#manual-title')).toBeVisible();
       await expect(page.getByTestId('msla-panel-header-trigger-info')).toBeVisible();
 

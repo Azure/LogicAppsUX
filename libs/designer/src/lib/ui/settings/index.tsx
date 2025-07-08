@@ -242,9 +242,8 @@ function GeneralSettings({
   const operationInfo = useOperationInfo(nodeId) ?? ({} as any);
   const nodeInputs = useRawInputParameters(nodeId) ?? ({} as any);
 
-  const { timeout, splitOn, splitOnConfiguration, concurrency, conditionExpressions, invokerConnection } = useSelector(
-    (state: RootState) => getRecordEntry(state.operations.settings, nodeId) ?? {}
-  );
+  const { timeout, splitOn, splitOnConfiguration, concurrency, conditionExpressions, invokerConnection, count, shouldFailOperation } =
+    useSelector((state: RootState) => getRecordEntry(state.operations.settings, nodeId) ?? {});
 
   const onConcurrencyToggle = (checked: boolean): void => {
     const value = checked ? (concurrency?.value?.runs ?? constants.CONCURRENCY_ACTION_SLIDER_LIMITS.DEFAULT) : undefined;
@@ -252,6 +251,15 @@ function GeneralSettings({
       concurrency: {
         isSupported: !!concurrency?.isSupported,
         value: { runs: value, enabled: checked },
+      },
+    });
+  };
+
+  const onShouldFailOperationToggle = (checked: boolean): void => {
+    updateSettings({
+      shouldFailOperation: {
+        isSupported: !!shouldFailOperation?.isSupported,
+        value: checked,
       },
     });
   };
@@ -292,6 +300,15 @@ function GeneralSettings({
       timeout: {
         isSupported: !!timeout?.isSupported,
         value: newVal,
+      },
+    });
+  };
+
+  const onCountValueChange = (value: number): void => {
+    updateSettings({
+      count: {
+        isSupported: !!count?.isSupported,
+        value: value,
       },
     });
   };
@@ -348,7 +365,8 @@ function GeneralSettings({
     timeout?.isSupported ||
     concurrency?.isSupported ||
     conditionExpressions?.isSupported ||
-    invokerConnection?.isSupported
+    invokerConnection?.isSupported ||
+    count?.isSupported
   ) {
     return (
       <General
@@ -357,19 +375,23 @@ function GeneralSettings({
         expanded={isExpanded}
         validationErrors={validationErrors}
         splitOn={splitOn}
+        count={count}
         timeout={timeout}
         concurrency={concurrency}
+        shouldFailOperation={shouldFailOperation}
         invokerConnection={invokerConnection}
         conditionExpressions={conditionExpressions}
         splitOnConfiguration={splitOnConfiguration}
         onHeaderClick={(sectionName) => dispatch(setExpandedSections(sectionName))}
         onConcurrencyToggle={onConcurrencyToggle}
+        onShouldFailOperationToggle={onShouldFailOperationToggle}
         onConcurrencyRunValueChange={onConcurrencyRunValueChange}
         onConcurrencyMaxWaitRunChange={onConcurrencyMaxWaitRunChange}
         onInvokerConnectionToggle={onInvokerConnectionToggle}
         onSplitOnToggle={onSplitOnToggle}
         onSplitOnSelectionChanged={onSplitOnSelectionChanged}
         onTimeoutValueChange={onTimeoutValueChange}
+        onCountValueChange={onCountValueChange}
         onTriggerConditionsChange={onTriggerConditionsChange}
         onClientTrackingIdChange={onClientTrackingIdChange}
         maximumWaitingRunsMetadata={maximumWaitingRunsMetadata ?? constants.MAXIMUM_WAITING_RUNS.DEFAULT}

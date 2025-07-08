@@ -1,5 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`lib/card/cardfooter > should not render with a testing icon when static results are disabled 1`] = `null`;
+
 exports[`lib/card/cardfooter > should render 1`] = `null`;
 
 exports[`lib/card/cardfooter > should render with a comment icon 1`] = `
@@ -10,20 +12,32 @@ exports[`lib/card/cardfooter > should render with a comment icon 1`] = `
     className="msla-badges"
   >
     <div
-      aria-label=" Comment: comment"
+      aria-label="test title Description: comment"
       onBlur={[Function]}
       onFocus={[Function]}
       onPointerEnter={[Function]}
       onPointerLeave={[Function]}
+      style={
+        {
+          "display": "flex",
+        }
+      }
     >
-      <i
+      <svg
         aria-hidden={true}
-        className="panel-card-v2-badge active root-111"
-        data-icon-name="Comment"
+        className="panel-card-v2-badge active ___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        fill="currentColor"
+        height="1em"
         role="button"
+        viewBox="0 0 20 20"
+        width="1em"
+        xmlns="http://www.w3.org/2000/svg"
       >
-        
-      </i>
+        <path
+          d="M10.48 13.84h4.92c.9 0 1.6-.71 1.6-1.56V5.57C17 4.7 16.3 4 15.4 4H4.6C3.7 4 3 4.71 3 5.57v6.7c0 .86.7 1.57 1.6 1.57h1.6V17l4.28-3.16ZM6.8 17.8a1 1 0 0 1-1.4-.2.98.98 0 0 1-.2-.59v-2.17h-.6A2.58 2.58 0 0 1 2 12.28V5.57A2.58 2.58 0 0 1 4.6 3h10.8C16.84 3 18 4.15 18 5.57v6.7a2.58 2.58 0 0 1-2.6 2.57h-4.59L6.8 17.8Z"
+          fill="currentColor"
+        />
+      </svg>
     </div>
   </div>
 </div>
@@ -37,20 +51,32 @@ exports[`lib/card/cardfooter > should render with a connection icon 1`] = `
     className="msla-badges"
   >
     <div
-      aria-label=" Connection name: joechung@microsoft.com"
+      aria-label="test title Connection name: joechung@microsoft.com"
       onBlur={[Function]}
       onFocus={[Function]}
       onPointerEnter={[Function]}
       onPointerLeave={[Function]}
+      style={
+        {
+          "display": "flex",
+        }
+      }
     >
-      <i
+      <svg
         aria-hidden={true}
-        className="panel-card-v2-badge active root-114"
-        data-icon-name="Link"
+        className="panel-card-v2-badge active ___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        fill="currentColor"
+        height="1em"
         role="button"
+        viewBox="0 0 20 20"
+        width="1em"
+        xmlns="http://www.w3.org/2000/svg"
       >
-        
-      </i>
+        <path
+          d="M1 8a4 4 0 0 1 4-4h6a4 4 0 0 1 0 8H9.5a.5.5 0 0 1 0-1H11a3 3 0 1 0 0-6H5a3 3 0 0 0-.87 5.87 5 5 0 0 0-.13 1A4 4 0 0 1 1 8Zm17 4a3 3 0 0 0-2.13-2.87c.08-.32.12-.66.13-1A4 4 0 0 1 15 16H9a4 4 0 0 1 0-8h1.5a.5.5 0 0 1 0 1H9a3 3 0 1 0 0 6h6a3 3 0 0 0 3-3Z"
+          fill="currentColor"
+        />
+      </svg>
     </div>
   </div>
 </div>
@@ -64,20 +90,32 @@ exports[`lib/card/cardfooter > should render with a lock icon 1`] = `
     className="msla-badges"
   >
     <div
-      aria-label=" Secure inputs or outputs enabled: This operation has secure inputs or outputs enabled."
+      aria-label="test title Secure inputs or outputs enabled: This operation has secure inputs or outputs enabled."
       onBlur={[Function]}
       onFocus={[Function]}
       onPointerEnter={[Function]}
       onPointerLeave={[Function]}
+      style={
+        {
+          "display": "flex",
+        }
+      }
     >
-      <i
+      <svg
         aria-hidden={true}
-        className="panel-card-v2-badge active root-114"
-        data-icon-name="Lock"
+        className="panel-card-v2-badge active ___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        fill="currentColor"
+        height="1em"
         role="button"
+        viewBox="0 0 20 20"
+        width="1em"
+        xmlns="http://www.w3.org/2000/svg"
       >
-        
-      </i>
+        <path
+          d="M10 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2ZM6 6h1V5a3 3 0 0 1 6 0v1h1a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V9a3 3 0 0 1 3-3Zm4-3a2 2 0 0 0-2 2v1h4V5a2 2 0 0 0-2-2Zm6 6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v6c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V9Z"
+          fill="currentColor"
+        />
+      </svg>
     </div>
   </div>
 </div>
@@ -91,20 +129,32 @@ exports[`lib/card/cardfooter > should render with a testing icon 1`] = `
     className="msla-badges"
   >
     <div
-      aria-label=" Testing: This action has testing configured."
+      aria-label="test title Testing: This action has testing configured."
       onBlur={[Function]}
       onFocus={[Function]}
       onPointerEnter={[Function]}
       onPointerLeave={[Function]}
+      style={
+        {
+          "display": "flex",
+        }
+      }
     >
-      <i
+      <svg
         aria-hidden={true}
-        className="panel-card-v2-badge active root-117"
-        data-icon-name="TestBeaker"
+        className="panel-card-v2-badge active ___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        fill="currentColor"
+        height="1em"
         role="button"
+        viewBox="0 0 20 20"
+        width="1em"
+        xmlns="http://www.w3.org/2000/svg"
       >
-        
-      </i>
+        <path
+          d="M14 3a.5.5 0 0 1 0 1h-1v4.68c0 .58.15 1.15.42 1.66l2.4 4.45A1.5 1.5 0 0 1 14.5 17h-9a1.5 1.5 0 0 1-1.32-2.21l2.4-4.44a3.5 3.5 0 0 0 .41-1.66V4H6a.5.5 0 0 1 0-1h8ZM8 4v4.69a4.5 4.5 0 0 1-.54 2.13L6.82 12h6.36l-.64-1.18A4.5 4.5 0 0 1 12 8.68V4H8Zm5.72 9H6.28l-1.22 2.26a.5.5 0 0 0 .44.74h9a.5.5 0 0 0 .44-.74L13.72 13Z"
+          fill="currentColor"
+        />
+      </svg>
     </div>
   </div>
 </div>
@@ -117,15 +167,22 @@ exports[`lib/card/cardfooter > should render with an inactive connection icon 1`
   <div
     className="msla-badges"
   >
-    <i
+    <svg
       aria-label="Connection required"
-      className="panel-card-v2-badge inactive root-114"
-      data-icon-name="Link"
+      className="panel-card-v2-badge inactive ___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+      fill="currentColor"
+      height="1em"
       role="img"
       tabIndex={0}
+      viewBox="0 0 20 20"
+      width="1em"
+      xmlns="http://www.w3.org/2000/svg"
     >
-      
-    </i>
+      <path
+        d="M1 8a4 4 0 0 1 4-4h6a4 4 0 0 1 0 8H9.5a.5.5 0 0 1 0-1H11a3 3 0 1 0 0-6H5a3 3 0 0 0-.87 5.87 5 5 0 0 0-.13 1A4 4 0 0 1 1 8Zm17 4a3 3 0 0 0-2.13-2.87c.08-.32.12-.66.13-1A4 4 0 0 1 15 16H9a4 4 0 0 1 0-8h1.5a.5.5 0 0 1 0 1H9a3 3 0 1 0 0 6h6a3 3 0 0 0 3-3Z"
+        fill="currentColor"
+      />
+    </svg>
   </div>
 </div>
 `;

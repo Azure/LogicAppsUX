@@ -6,6 +6,8 @@ export const ExtensionProperties = {
   BasePath: 'x-ms-base-path',
   Capabilities: 'x-ms-capabilities',
   ContentHint: 'x-ms-content-hint',
+  InlineConncetion: 'x-ms-connection-required',
+  InlineCreateNewResource: 'x-ms-create-new-resource',
 
   // used by DynamicsAX & SharePoint connectors to describe table metadata, in particular the order in which table columns should be displayed
   CustomEnum: 'x-ms-enum-values',
@@ -177,3 +179,9 @@ export class ExpressionConstants {
     singleQuote: "'",
   };
 }
+
+export const TOKEN_PICKER_OUTPUT_SECTIONS = {
+  AGENT_PARAMETERS: 'agentparameters',
+  WORKFLOW_PARAMETERS: 'workflowparameters',
+  VARIABLES: 'variables',
+};

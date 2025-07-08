@@ -15,18 +15,18 @@
               {
                 "role": "User",
                 "content": "This is a user message."
+              },
+              {
+                "role": "User",
+                "content": "You are a helpful assistant."
               }
-            ],
-            "limit": {
-              "count": 60,
-              "timeout": "PT1H"
-            }
+            ]
           }
         },
         "tools": {
           "If_Condition_Y_Matches": {
             "actions": {
-              "Service Bus": {
+              "Service_Bus": {
                 "type": "connector",
                 "inputs": {
                   "operations": "getQueues,getTopics,getTopicSubcriptions,sendMessage",
@@ -88,7 +88,11 @@
             }
           }
         },
-        "runAfter": {}
+        "runAfter": {},
+        "limit": {
+          "timeout": "PT1H",
+          "count": 100
+        }
       }
     },
     "contentVersion": "1.0.0.0",

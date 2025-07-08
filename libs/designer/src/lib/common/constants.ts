@@ -42,9 +42,6 @@ const SWAGGER = {
   COLLECTION_FORMAT: {
     CSV: 'csv',
   },
-  EXTENSION: {
-    CAPABILITIES: 'x-ms-capabilities',
-  },
 };
 
 const VARIABLE_TYPE = {
@@ -81,6 +78,7 @@ export default {
     TRUE: 'true',
     FALSE: 'false',
   },
+  PARAMETER_NULL_VALUE: 'null',
   CONTENT_SIZE_MAX: 262144, // 2^18
   API_CATEGORIES: {
     APP_SERVICES: 'Microsoft.Web/sites',
@@ -385,6 +383,7 @@ export default {
       SLIDING_WINDOW: 'slidingwindow',
       SWITCH: 'switch',
       AGENT: 'agent',
+      NESTED_AGENT: 'nestedagent',
       AGENT_CONDITION: 'agentcondition',
       TABLE: 'table',
       TERMINATE: 'terminate',
@@ -473,6 +472,7 @@ export default {
     MONITORING: 'MONITORING',
     OPERATION_SELECTOR: 'OPERATION_SELECTOR',
     PARAMETERS: 'PARAMETERS',
+    CHANNELS: 'CHANNELS',
     REQUEST_HISTORY: 'REQUEST_HISTORY',
     RETRY_HISTORY: 'RETRY_HISTORY',
     RUN_AFTER: 'RUN_AFTER',
@@ -481,6 +481,7 @@ export default {
     STATIC_RESULT: 'STATIC_RESULT',
     SWAGGER_ENDPOINT: 'SWAGGER_ENDPOINT',
     TESTING: 'TESTING',
+    MOCK_RESULTS: 'MOCK_RESULTS',
   },
   TEMPLATE_PANEL_TAB_NAMES: {
     OVERVIEW: 'OVERVIEW',
@@ -489,6 +490,15 @@ export default {
     PARAMETERS: 'PARAMETERS',
     BASIC: 'BASIC',
     REVIEW_AND_CREATE: 'REVIEW_AND_CREATE',
+  },
+  CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES: {
+    WORKFLOWS: 'WORKFLOWS',
+    CONNECTIONS: 'CONNECTIONS',
+    PARAMETERS: 'PARAMETERS',
+    PROFILE: 'PROFILE',
+    SUMMARY: 'SUMMARY',
+    SELECT_WORKFLOWS: 'SELECT_WORKFLOWS',
+    CUSTOMIZE_WORKFLOWS: 'CUSTOMIZE_WORKFLOWS',
   },
   ERRORS_PANEL_TAB_NAMES: {
     ERRORS: 'ERRORS',
@@ -846,6 +856,7 @@ export default {
       SINGLE_INSTANCE: 'SingleInstance',
       SUPPRESS_WORKFLOW_HEADERS: 'SuppressWorkflowHeaders',
       SUPPRESS_WORKFLOW_HEADERS_ON_RESPONSE: 'SuppressWorkflowHeadersOnResponse',
+      FAILWHENLIMITSREACHED: 'FailWhenLimitsReached',
     },
     TRANSFER_MODE: {
       CHUNKED: 'Chunked',
@@ -954,5 +965,14 @@ export default {
     SELECT_BATCH_WORKFLOW_ACTION: 'sendtobatch',
     SELECT_BATCH_WORKFLOW_TRIGGER: 'sendtobatchtrigger',
     SELECT_MANUAL_WORKFLOW_ACTION: 'invokeworkflow',
+  },
+  CHANNELS: {
+    INPUT: '-inputchannel-',
+    OUTPUT: '-outputchannel-',
+  },
+  SUPPORTED_AGENT_MODELS: ['gpt-4.1', 'gpt-4', 'gpt-4o', 'gpt-35-turbo', 'gpt-4.1-mini', 'gpt-4.1-nano', 'gpt-4o-mini'],
+  CONNECTION_IDS: {
+    ACA_SESSION: '/serviceProviders/acasession',
+    AGENT: '/connectionProviders/agent',
   },
 };

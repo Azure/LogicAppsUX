@@ -1,13 +1,13 @@
 import { useDispatch, useSelector } from 'react-redux';
 import type { CreateWorkflowHandler } from './TemplatesDesigner';
 import type { AppDispatch, RootState } from '../../core/state/templates/store';
-import { initializeWorkflowMetadata, isMultiWorkflowTemplate, loadTemplate } from '../../core/actions/bjsworkflow/templates';
+import { isMultiWorkflowTemplate, loadTemplate } from '../../core/actions/bjsworkflow/templates';
 import { useEffect } from 'react';
 import { TemplateOverview } from './templateoverview';
 import { setLayerHostSelector, Spinner, SpinnerSize, Text } from '@fluentui/react';
 import { CreateWorkflowPanel } from '../panel/templatePanel/createWorkflowPanel/createWorkflowPanel';
 import { QuickViewPanel } from '../panel/templatePanel/quickViewPanel/quickViewPanel';
-import { openCreateWorkflowPanelView, openQuickViewPanelView } from '../../core/state/templates/panelSlice';
+import { openPanelView, TemplatePanelView } from '../../core/state/templates/panelSlice';
 import { useIntl } from 'react-intl';
 
 export interface TemplateViewProps {
@@ -24,7 +24,6 @@ export const TemplatesView = (props: TemplateViewProps) => {
   const intl = useIntl();
   const { templateName, manifest } = useSelector((state: RootState) => ({
     templateName: state.template.templateName,
-    allTemplates: state.manifest.availableTemplates,
     manifest: state.template.manifest,
   }));
 
@@ -33,12 +32,6 @@ export const TemplatesView = (props: TemplateViewProps) => {
       dispatch(loadTemplate({ preLoadedManifest: undefined }));
     }
   }, [dispatch, templateName]);
-
-  useEffect(() => {
-    if (manifest) {
-      dispatch(initializeWorkflowMetadata());
-    }
-  }, [dispatch, manifest]);
 
   if (!manifest) {
     return templateName ? (
@@ -75,9 +68,9 @@ const SingleTemplateView = ({
 
   useEffect(() => {
     if (showSummary) {
-      dispatch(openQuickViewPanelView());
+      dispatch(openPanelView({ panelView: TemplatePanelView.QuickView }));
     } else {
-      dispatch(openCreateWorkflowPanelView());
+      dispatch(openPanelView({ panelView: TemplatePanelView.CreateWorkflow }));
     }
   }, [dispatch, showSummary]);
   return (

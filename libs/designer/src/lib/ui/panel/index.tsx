@@ -4,5 +4,7 @@ export * from './connectionsPanel/allConnections/allConnections';
 export * from './connectionsPanel/allConnections/connectionEntry';
 export * from './connectionsPanel/allConnections/connectorConnectionsCard';
 export * from './connectionsPanel/createConnection/createConnection';
-
+export * from './connectionsPanel/createConnection/custom/openAIConnector';
+export * from './connectionsPanel/createConnection/custom/acasessionConnector';
+export * from './nodeDetailsPanel/tabs/parametersTab/custom/deploymentModelResource';
 export * from './runHistoryPanel/runHistoryPanel';

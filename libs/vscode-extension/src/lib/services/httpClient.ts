@@ -43,7 +43,7 @@ export class HttpClient implements IHttpClient {
     return responseData?.data;
   }
 
-  async post<ReturnType, BodyType>(options: HttpRequestOptions<BodyType>): Promise<ReturnType> {
+  async patch<ReturnType, BodyType>(options: HttpRequestOptions<BodyType>): Promise<ReturnType> {
     const isArmId = isArmResourceId(options.uri);
     const request = {
       ...options,
@@ -55,10 +55,10 @@ export class HttpClient implements IHttpClient {
         'Content-Type': 'application/json',
       },
       data: options.content,
-      commandName: 'Designer.httpClient.post',
+      commandName: 'Designer.httpClient.patch',
     };
     const responseData = await axios({
-      method: HTTP_METHODS.POST,
+      method: HTTP_METHODS.PATCH,
       ...request,
     });
 
@@ -70,6 +70,41 @@ export class HttpClient implements IHttpClient {
       return JSON.parse(responseData.data);
     } catch {
       return responseData.data as any;
+    }
+  }
+
+  async post<ReturnType, BodyType>(options: HttpRequestOptions<BodyType>): Promise<ReturnType> {
+    const authHeader: Record<string, string> = options.includeAuth || !options.noAuth ? { Authorization: `${this._accessToken}` } : {};
+    const request = {
+      ...options,
+      url: this.getRequestUrl(options),
+      headers: {
+        ...this._extraHeaders,
+        ...options.headers,
+        ...authHeader,
+        'Content-Type': 'application/json',
+      },
+      data: options.content,
+      commandName: 'Designer.httpClient.post',
+    };
+
+    try {
+      const response = await axios({
+        method: HTTP_METHODS.POST,
+        ...request,
+      });
+
+      if (!isSuccessResponse(response.status)) {
+        throw response;
+      }
+
+      try {
+        return typeof response.data === 'string' ? JSON.parse(response.data) : response.data;
+      } catch {
+        return response.data as any;
+      }
+    } catch (error: any) {
+      throw error?.response?.data ?? error?.response ?? error;
     }
   }
   async put<ReturnType, BodyType>(options: HttpRequestOptions<BodyType>): Promise<ReturnType> {

@@ -11,11 +11,12 @@ import { QuickViewPanel, QuickViewPanelHeader } from '../panel/templatePanel/qui
 import { ConnectionsList } from './connections/connections';
 import { useFunctionalState } from '@react-hookz/web';
 import type { WorkflowTemplateData } from '../../core/actions/bjsworkflow/templates';
-import { openQuickViewPanelView } from '../../core/state/templates/panelSlice';
+import { openPanelView, TemplatePanelView } from '../../core/state/templates/panelSlice';
 import { TemplatesPanelFooter } from '@microsoft/designer-ui';
 import { workflowTab } from '../panel/templatePanel/quickViewPanel/tabs/workflowTab';
 import { clearTemplateDetails } from '../../core/state/templates/templateSlice';
 import { CreateWorkflowPanel } from '../panel/templatePanel/createWorkflowPanel/createWorkflowPanel';
+import { useTemplatesStrings } from './templatesStrings';
 
 export const TemplateOverview = ({
   createWorkflow,
@@ -42,25 +43,21 @@ export const TemplateOverview = ({
   }));
   const { title, summary, sourceCodeUrl, details, description } = manifest as Template.TemplateManifest;
   const resources = {
-    by: intl.formatMessage({
-      defaultMessage: 'By',
-      id: '+5Jp42',
-      description: 'Title for publisher',
-    }),
     type: intl.formatMessage({
       defaultMessage: 'Type',
       id: 'k/X2ml',
       description: 'Title for solution type',
     }),
   };
+  const { resourceStrings } = useTemplatesStrings();
   const info = {
-    [resources.by]: getPropertyValue(details, 'by'),
+    [resourceStrings.BY]: getPropertyValue(details, 'by'),
     [resources.type]: getPropertyValue(details, 'type'),
   };
   const templateHasConnections = Object.keys(connections).length > 0;
 
   const showDetails = (workflowId: string) => {
-    dispatch(openQuickViewPanelView());
+    dispatch(openPanelView({ panelView: TemplatePanelView.QuickView }));
     setSelectedWorkflow(workflowId);
   };
 
@@ -78,6 +75,8 @@ export const TemplateOverview = ({
       templateId: templateName ?? '',
       workflowAppName,
       isMultiWorkflow: true,
+      showCreate: true,
+      showCloseButton,
     },
     onClose
   ).footerContent;
@@ -121,7 +120,7 @@ export const TemplateOverview = ({
         </div>
       </div>
       <div className="msla-template-overview-footer">
-        <TemplatesPanelFooter showPrimaryButton={true} secondaryButtonDisabled={!showCloseButton} {...footerContentProps} />
+        <TemplatesPanelFooter {...footerContentProps} />
       </div>
 
       {selectedWorkflow ? (
@@ -170,7 +169,7 @@ const WorkflowList = ({
     unmap(workflows).map((workflow) => {
       const { id, manifest } = workflow;
       const { title } = manifest as Template.WorkflowManifest;
-      return { id, name: title, trigger: '' };
+      return { id, name: title, trigger: workflow.triggerType };
     })
   );
   const columnsNames = {

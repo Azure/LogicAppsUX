@@ -1,16 +1,17 @@
+@import (css) '@xyflow/react/dist/style.css';
 @import '../../../../designer-ui/src/styles.less';
 @import './settings/sections/runafterconfiguration/runafterconfiguration.less';
 @import './connections/runAfterIndicator/styles.less';
 @import './panel/connectionsPanel/connectionsPanel.less';
 @import './panel/runHistoryPanel/runHistoryPanel.less';
 @import './templates/styles.less';
-@import (css) '@xyflow/react/dist/style.css';
 
 .react-flow__edge {
   cursor: grab;
-  .react-flow__edge-path {
-    pointer-events: none;
-  }
+
+	&.no-interaction {
+		pointer-events: none;
+	}
 }
 
 .msla-theme-provider {
@@ -22,15 +23,10 @@
   overflow: visible;
 }
 
-.node-handle {
-  visibility: hidden;
-	transform: translate(-50%, 0%);
-  &.top {
-		top: 0px;
-  }
-  &.bottom {
-		bottom: 0px;
-  }
+.react-flow__handle {
+	&.valid {
+		border: 2px solid #0078d4;
+	}
 }
 
 .edge-drop-zone-container {
@@ -71,6 +67,7 @@
   gap: 8px;
   align-items: flex-end;
   box-sizing: border-box;
+
   &.left-panel {
     left: 52px; // Add extra 32px taken from the collapsed panel
   }
@@ -91,6 +88,7 @@
   bottom: 0px !important;
   width: 300px;
   height: 225px;
+	background: var(--colorNeutralBackground1);
   border-radius: 4px;
   overflow: hidden;
   box-shadow: 0px 3.2px 7.2px rgba(0, 0, 0, 0.132), 0px 0.6px 1.8px rgba(0, 0, 0, 0.108) !important;
@@ -102,7 +100,7 @@
 }
 
 .react-flow__minimap-mask {
-  stroke: #1f85ff;
+  stroke: var(--colorBrandStroke1);
   stroke-width: 6px;
   stroke-linejoin: round;
   fill: #ffffffb3; // white, 70% opacity
@@ -117,6 +115,7 @@
   position: relative !important;
   left: 0px !important;
   bottom: 0px !important;
+  background: var(--colorNeutralBackground1);
   border-radius: 4px;
   overflow: hidden;
   box-shadow: 0px 3.2px 7.2px rgba(0, 0, 0, 0.132), 0px 0.6px 1.8px rgba(0, 0, 0, 0.108) !important;
@@ -125,27 +124,44 @@
 .react-flow__controls-button {
   width: 20px !important;
   height: 20px !important;
-  font-size: 16px;
-	border-bottom: 1px solid #eee;
+  font-size: 30px;
+  border-bottom: 1px solid var(--colorNeutralStroke1);
+  padding: 12px !important;
+	fill: var(--colorNeutralForeground1);
 	box-sizing: content-box;
+
+  svg {
+    height: 100%;
+    width: 100%;
+    max-width: 20px !important;
+    max-height: 20px !important;
+  }
+
+	&:hover {
+		background-color: var(--colorNeutralBackground1Hover);
+	}
+	&:active {
+		background-color: var(--colorNeutralBackground1Pressed);
+	}
+
 }
 
 .react-flow__edge-path {
   stroke-width: 2 !important;
 
-	&.highlighted {
-		stroke: #1f85ff;
-	}
+  &.highlighted {
+    stroke: #1f85ff;
+  }
 }
 
 .react-flow__edge {
-	marker > path {
-		fill: @ms-color-edge;
-	}
+  marker>path {
+    fill: @ms-color-edge;
+  }
 
-	marker.highlighted > path {
-		fill: #1f85ff;
-	}
+  marker.highlighted>path {
+    fill: #1f85ff;
+  }
 }
 
 .msla-add-context-menu {
@@ -184,15 +200,6 @@
 }
 
 .msla-theme-dark {
-  .react-flow__controls-button {
-    background: @ms-color-primaryBackground;
-    border-bottom: 1px solid @ms-color-primaryBackgroundHover;
-    fill: white;
-  }
-
-  .react-flow__minimap {
-    background: @ms-color-bodyBackground;
-  }
 
   .react-flow__minimap-mask {
     fill: #323130b3; // nodeBackground, 70% opacity
@@ -201,18 +208,19 @@
   .react-flow__edge-path {
     stroke: @ms-color-edge-dark;
 
-		&.highlighted {
-			stroke: #1f85ff;
-		}
+    &.highlighted {
+      stroke: #1f85ff;
+    }
   }
 
   .react-flow__edge {
-    marker > path {
+    marker>path {
       fill: @ms-color-edge-dark;
     }
-		marker.highlighted > path {
-			fill: #1f85ff;
-		}
+
+    marker.highlighted>path {
+      fill: #1f85ff;
+    }
   }
 
   .ms-Pivot-link {

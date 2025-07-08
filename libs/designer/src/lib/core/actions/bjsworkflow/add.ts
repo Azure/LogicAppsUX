@@ -13,12 +13,12 @@ import {
   updateNodeSettings,
 } from '../../state/operation/operationMetadataSlice';
 import type { RelationshipIds } from '../../state/panel/panelTypes';
-import { changePanelNode, openPanel, setIsPanelLoading } from '../../state/panel/panelSlice';
+import { changePanelNode, openPanel, setIsPanelLoading, setAlternateSelectedNode } from '../../state/panel/panelSlice';
 import { addResultSchema } from '../../state/staticresultschema/staticresultsSlice';
 import type { NodeTokens, VariableDeclaration } from '../../state/tokens/tokensSlice';
 import { initializeTokensAndVariables } from '../../state/tokens/tokensSlice';
 import type { NodesMetadata, WorkflowState } from '../../state/workflow/workflowInterfaces';
-import { addNode, setFocusNode } from '../../state/workflow/workflowSlice';
+import { addAgentTool, addNode, setFocusNode } from '../../state/workflow/workflowSlice';
 import type { AppDispatch, RootState } from '../../store';
 import { getBrandColorFromManifest, getIconUriFromManifest } from '../../utils/card';
 import { getTriggerNodeId, isRootNodeInGraph } from '../../utils/graph';
@@ -83,8 +83,21 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
     }
 
     const workflowState = (getState() as RootState).workflow;
+    const isAddingAgentTool = (getState() as RootState).panel.discoveryContent.isAddingAgentTool;
     const nodeId = getNonDuplicateNodeId(workflowState.nodesMetadata, actionId, workflowState.idReplacements);
     const newPayload = { ...payload, nodeId };
+    const newToolGraphId = (getState() as RootState).panel.discoveryContent.relationshipIds.graphId;
+    const agentToolMetadata = (getState() as RootState).panel.discoveryContent.agentToolMetadata;
+
+    if (isAddingAgentTool) {
+      const newToolSubgraphId = (getState() as RootState).panel.discoveryContent.relationshipIds.subgraphId;
+      if (newToolSubgraphId && newToolGraphId) {
+        if (agentToolMetadata?.newCaseIdNewAdditiveSubgraphId && agentToolMetadata?.subGraphManifest) {
+          initializeSwitchCaseFromManifest(agentToolMetadata.newCaseIdNewAdditiveSubgraphId, agentToolMetadata?.subGraphManifest, dispatch);
+        }
+        dispatch(addAgentTool({ toolId: newToolGraphId, nodeId: newToolSubgraphId }));
+      }
+    }
 
     dispatch(addNode(newPayload as any));
 
@@ -98,9 +111,16 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
     dispatch(initializeOperationInfo({ id: nodeId, ...nodeOperationInfo }));
     initializeOperationDetails(nodeId, nodeOperationInfo, getState as () => RootState, dispatch, presetParameterValues, actionMetadata);
 
-    // Update settings for children and parents
-
     dispatch(setFocusNode(nodeId));
+    if (isAddingAgentTool) {
+      dispatch(
+        setAlternateSelectedNode({
+          nodeId: newToolGraphId,
+          updatePanelOpenState: true,
+          panelPersistence: 'selected',
+        })
+      );
+    }
   });
 });
 
@@ -337,7 +357,8 @@ export const trySetDefaultConnectionForNode = async (
     await ConnectionService().setupConnectionIfNeeded(connection);
     dispatch(updateNodeConnection({ nodeId, connection, connector }));
   } else if (isConnectionRequired) {
-    if (connector.id !== '/connectionProviders/agent') {
+    // these connectors use inline connections
+    if (connectorId !== Constants.CONNECTION_IDS.AGENT) {
       dispatch(initEmptyConnectionMap(nodeId));
       dispatch(openPanel({ nodeId, panelMode: 'Connection', referencePanelMode: 'Operation' }));
     }

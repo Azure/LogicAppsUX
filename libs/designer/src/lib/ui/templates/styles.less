@@ -1,73 +1,20 @@
 @import './cards/templateCard.less';
 @import '../panel/templatePanel/panel.less';
 
-.msla-templates-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, 343px);
 
-    gap: 24px;
-    justify-content: center;
-    margin-bottom: 40px;
+.msla-templates-wizard-tab-content {
+    height: 82vh;
+    overflow: auto;
+    position: relative;
+    justify-content: flex-start;
+    padding: 10px 20px;
 }
 
-.msla-templates-empty-list {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-
-    .msla-template-empty-list-title {
-        padding-top: 24px;
-        padding-bottom: 8px;
-    }
+.msla-templates-error-message-bar {
+    margin: 8px 0px;
 }
-
-.msla-templates-filters-tabs {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-}
-
 .msla-templates-agent-filters-tabs {
     margin-top: 12px;
-}
-
-.msla-templates-search-and-filters {
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-
-    .msla-templates-search-and-sort {
-        display: flex;
-        margin: 0 10px 0 10px;
-    }
-
-    .msla-templates-filters-search-box {
-        flex-grow: 2;
-        max-width: 100%;
-        border-radius: 4px;
-    }
-
-    .msla-templates-filters-dropdowns {
-        justify-content: center;
-        display: flex;
-        flex-direction: row;
-        padding: 10px;
-    }
-    
-    .msla-templates-filters-sort {
-        display: flex;
-        justify-content: flex-end;
-        width: 50%;
-        border-radius: 4px;
-    }
-
-    .msla-templates-filters-sort-dropdown {
-        width: 200px;
-    }
 }
 
 .msla-template-connection-name {
@@ -103,7 +50,7 @@
         font-size: 14px;
 
         &.link {
-            color: #0078D4;
+            color: var(--colorBrandForegroundLink);
             cursor: pointer;
         }
     }
@@ -122,7 +69,7 @@
     }
 
     .msla-templates-parameter-callout-subtitle {
-        color: #424242;
+				color: var(--colorNeutralForeground2);
         height: 32px;
     }
 
@@ -154,7 +101,7 @@
     flex-direction: row;
 
     .msla-template-connection-compact-image {
-        border: #dcd8d8 1px solid;
+        border: 1px solid var(--colorNeutralStroke1);
         border-radius: 4px;
         padding: 10px 0 0 10px;
         width: 40px;
@@ -180,5 +127,12 @@
 .msla-connection-status-compact {
 	display: flex;
 	align-items: center;
-	gap: 6px;	
+	gap: 8px;
+
+	.msla-connection-status-compact-icon {
+		width: 16px;
+		height: 16px;
+		border-radius: 2px;
+		overflow: hidden;
+	}
 }

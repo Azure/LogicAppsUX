@@ -3,10 +3,13 @@ import { useConnector } from '../../../../core/state/connection/connectionSelect
 import { ConnectorConnectionsCard } from './connectorConnectionsCard';
 import { Accordion, AccordionItem, type AccordionToggleEventHandler } from '@fluentui/react-components';
 import { getRecordEntry } from '@microsoft/logic-apps-shared';
-import { useMemo, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { setConnectionPanelExpandedConnectorIds } from '../../../../core/state/panel/panelSlice';
+import { AllConnectionsEmptyState } from './allConnectionsEmptyState';
 
 export const AllConnections = () => {
+  const dispatch = useDispatch();
   const connectionMapping = useConnectionMapping();
   const connectionReferences = useConnectionRefs();
 
@@ -62,10 +65,16 @@ export const AllConnections = () => {
     return grouped;
   }, [connectionsWithNodes, connectionReferences, groupedDisconnectedNodes]);
 
-  const [openConnectors, setOpenConnectors] = useState<string[]>([]);
+  const openConnectors = useSelector((state: RootState) => state.panel.connectionContent.expandedConnectorIds) || [];
   const handleToggle: AccordionToggleEventHandler = (_e, data: any) => {
-    setOpenConnectors((data?.openItems ?? []) as string[]);
+    dispatch(setConnectionPanelExpandedConnectorIds((data?.openItems ?? []) as string[]));
   };
+
+  const hasConnections = Object.keys(groupedConnections).length > 0;
+
+  if (!hasConnections) {
+    return <AllConnectionsEmptyState />;
+  }
 
   return (
     <Accordion collapsible multiple openItems={openConnectors} onToggle={handleToggle}>

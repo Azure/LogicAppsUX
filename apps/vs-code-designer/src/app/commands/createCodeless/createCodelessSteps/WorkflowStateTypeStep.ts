@@ -2,7 +2,6 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { workflowType } from '../../../../constants';
 import { localize } from '../../../../localize';
 import { CodelessWorkflowCreateStep } from './CodelessWorkflowCreateStep';
 import { ScriptWorkflowNameStep } from './ScriptSteps/ScriptWorkflowNameStep';
@@ -14,7 +13,8 @@ import type {
   IFunctionWizardContext,
   ProjectLanguage,
 } from '@microsoft/vscode-extension-logic-apps';
-import { TemplateCategory, TemplatePromptResult } from '@microsoft/vscode-extension-logic-apps';
+import { TemplatePromptResult } from '@microsoft/vscode-extension-logic-apps';
+import { getWorkflowTemplatePickItems } from '../../../utils/codeless/templates';
 
 export class WorkflowStateTypeStep extends AzureWizardPromptStep<IFunctionWizardContext> {
   public hideStepCount = true;
@@ -35,7 +35,7 @@ export class WorkflowStateTypeStep extends AzureWizardPromptStep<IFunctionWizard
   public async getSubWizard(context: IFunctionWizardContext): Promise<IWizardOptions<IFunctionWizardContext> | undefined> {
     const template: IWorkflowTemplate | undefined = context.functionTemplate;
 
-    if (template) {
+    if (template && context.isCodeless) {
       const promptSteps: AzureWizardPromptStep<IFunctionWizardContext>[] = [];
       const executeSteps: AzureWizardExecuteStep<IFunctionWizardContext>[] = [];
       const title: string = localize('createCodeless', 'Create new {0}', template.name);
@@ -55,8 +55,8 @@ export class WorkflowStateTypeStep extends AzureWizardPromptStep<IFunctionWizard
   public async prompt(context: IFunctionWizardContext): Promise<void> {
     while (!context.functionTemplate) {
       const placeHolder: string = this.isProjectWizard
-        ? localize('selectFirstFuncTemplate', "Select a template for your project's first workflow")
-        : localize('selectFuncTemplate', 'Select a template for your workflow');
+        ? localize('selectFirstWorkflowTemplate', "Select a template for your project's first workflow")
+        : localize('selectWorkflowTemplate', 'Select a template for your workflow');
 
       const result: IWorkflowTemplate | TemplatePromptResult = (await context.ui.showQuickPick(this.getPicks(context), { placeHolder }))
         .data;
@@ -70,52 +70,11 @@ export class WorkflowStateTypeStep extends AzureWizardPromptStep<IFunctionWizard
   }
 
   public shouldPrompt(context: IFunctionWizardContext): boolean {
-    return !context.functionTemplate;
+    return !context.functionTemplate && context.isCodeless;
   }
 
   private async getPicks(context: IFunctionWizardContext): Promise<IAzureQuickPickItem<IWorkflowTemplate | TemplatePromptResult>[]> {
     const language: ProjectLanguage = nonNullProp(context, 'language');
-    const picks: IAzureQuickPickItem<IWorkflowTemplate | TemplatePromptResult>[] = [];
-
-    const stateful: IWorkflowTemplate = {
-      id: workflowType.stateful,
-      name: localize('Stateful', 'Stateful Workflow'),
-      defaultFunctionName: 'Stateful',
-      language: language,
-      isHttpTrigger: true,
-      isTimerTrigger: false,
-      userPromptedSettings: [],
-      categories: [TemplateCategory.Core],
-    };
-
-    const stateless: IWorkflowTemplate = {
-      id: workflowType.stateless,
-      name: localize('Stateless', 'Stateless Workflow'),
-      defaultFunctionName: 'Stateless',
-      language: language,
-      isHttpTrigger: true,
-      isTimerTrigger: false,
-      userPromptedSettings: [],
-      categories: [TemplateCategory.Core],
-    };
-
-    picks.push({
-      label: stateful.name,
-      data: stateful,
-    });
-
-    picks.push({
-      label: stateless.name,
-      data: stateless,
-    });
-
-    if (this.isProjectWizard) {
-      picks.push({
-        label: localize('skipForNow', '$(clock) Skip for now'),
-        data: TemplatePromptResult.skipForNow,
-        suppressPersistence: true,
-      });
-    }
-    return picks;
+    return getWorkflowTemplatePickItems(language, this.isProjectWizard);
   }
 }

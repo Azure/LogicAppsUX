@@ -12,7 +12,6 @@ export interface ResolvedParameter extends InputParameter {
 
 export interface InputParameter extends ParameterBase {
   in?: string;
-  value?: any;
   // This defines a complex type for the object supported by the editors.
   schema?: any;
   suppressCasting?: boolean;
@@ -58,6 +57,10 @@ export const DynamicValuesType = {
   DynamicTree: 'DynamicTree',
 };
 export type DynamicValuesType = (typeof DynamicValuesType)[keyof typeof DynamicValuesType];
+
+export function isLegacyDynamicValuesBuiltInExtension(extension: ParameterDynamicValues): boolean {
+  return isLegacyDynamicValuesExtension(extension) && !!extension.extension?.builtInOperation;
+}
 
 export function isLegacyDynamicValuesExtension(extension: ParameterDynamicValues): extension is LegacyDynamicValues {
   return extension.type === DynamicValuesType.LegacyDynamicValues;
@@ -237,6 +240,7 @@ interface ParameterBase {
   name: string;
   type: string;
   default?: any;
+  value?: any;
   dependencies?: InputDependencies;
   description?: string;
   dynamicSchema?: ParameterDynamicSchema;

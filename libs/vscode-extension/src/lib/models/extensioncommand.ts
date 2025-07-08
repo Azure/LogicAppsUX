@@ -42,10 +42,16 @@ export const ExtensionCommand = {
   completeOauthLogin: 'CompleteOauthLogin',
   webviewLoaded: 'webviewLoaded',
   webviewRscLoadError: 'webviewRscLoadError',
+  saveUnitTest: 'saveUnitTest',
+  saveBlankUnitTest: 'saveBlankUnitTest',
+  createUnitTest: 'createUnitTest',
+  viewWorkflow: 'viewWorkflow',
   openRelativeLink: 'openRelativeLink',
   logTelemetry: 'logTelemetry',
   sendNotification: 'sendNotification',
   isTestDisabledForOS: 'isTestDisabledForOS',
+  fileABug: 'fileABug',
+  setIsWorkflowDirty: 'setIsWorkflowDirty',
 } as const;
 export type ExtensionCommand = (typeof ExtensionCommand)[keyof typeof ExtensionCommand];
 

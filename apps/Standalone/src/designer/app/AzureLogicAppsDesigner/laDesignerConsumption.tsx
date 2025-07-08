@@ -16,7 +16,7 @@ import {
 } from './Services/WorkflowAndArtifacts';
 import { ArmParser } from './Utilities/ArmParser';
 import { getDataForConsumption, WorkflowUtility } from './Utilities/Workflow';
-import { Chatbot } from '@microsoft/logic-apps-chatbot';
+import { CoPilotChatbot } from '@microsoft/logic-apps-chatbot';
 import type { ContentType } from '@microsoft/logic-apps-shared';
 import {
   BaseApiManagementService,
@@ -34,6 +34,8 @@ import {
   startsWith,
   StandardCustomCodeService,
   BaseUserPreferenceService,
+  BaseCognitiveServiceService,
+  BaseRoleService,
 } from '@microsoft/logic-apps-shared';
 import type { ConnectionReferences, CustomCodeFileNameMapping, Workflow, WorkflowParameter } from '@microsoft/logic-apps-designer';
 import {
@@ -48,6 +50,7 @@ import {
   Constants,
   RunHistoryPanel,
   CombineInitializeVariableDialog,
+  TriggerDescriptionDialog,
 } from '@microsoft/logic-apps-designer';
 import { useDispatch, useSelector } from 'react-redux';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -73,6 +76,7 @@ const DesignerEditorConsumption = () => {
     showRunHistory,
     hostOptions,
     showConnectionsPanel,
+    showEdgeDrawing,
     suppressDefaultNodeSelect,
     showPerformanceDebug,
     language,
@@ -283,6 +287,7 @@ const DesignerEditorConsumption = () => {
           isMonitoringView,
           useLegacyWorkflowParameters: true,
           showConnectionsPanel,
+          showEdgeDrawing,
           suppressDefaultNodeSelectFunctionality: suppressDefaultNodeSelect,
           hostOptions: {
             ...hostOptions,
@@ -309,7 +314,7 @@ const DesignerEditorConsumption = () => {
                 onRunSelected={onRunSelected}
               />
               {showChatBot ? (
-                <Chatbot
+                <CoPilotChatbot
                   getUpdatedWorkflow={getUpdatedWorkflow}
                   openFeedbackPanel={openFeedBackPanel}
                   closeChatBot={() => {
@@ -327,6 +332,7 @@ const DesignerEditorConsumption = () => {
                   isReadOnly={readOnly}
                   isDarkMode={isDarkMode}
                   isDesignerView={designerView}
+                  isUnitTest={false}
                   isMonitoringView={isMonitoringView}
                   showConnectionsPanel={showConnectionsPanel}
                   enableCopilot={() => dispatch(setIsChatBotEnabled(!showChatBot))}
@@ -342,6 +348,7 @@ const DesignerEditorConsumption = () => {
                 />
                 {designerView ? <Designer /> : <CodeViewEditor ref={codeEditorRef} isConsumption />}
                 <CombineInitializeVariableDialog />
+                <TriggerDescriptionDialog workflowId={workflowId} />
               </div>
             </div>
           </BJSWorkflowProvider>
@@ -545,6 +552,22 @@ const getDesignerServices = (
     httpClient,
   });
 
+  const roleService = new BaseRoleService({
+    baseUrl,
+    apiVersion: '2022-05-01-preview',
+    httpClient,
+    subscriptionId,
+    tenantId: tenantId ?? '',
+    userIdentityId: objectId ?? '',
+    appIdentityId: workflow?.identity?.principalId ?? '',
+  });
+
+  const cognitiveServiceService = new BaseCognitiveServiceService({
+    apiVersion: '2023-10-01-preview',
+    baseUrl,
+    httpClient,
+  });
+
   const chatbotService = new BaseChatbotService({
     // temporarily having brazilus as the baseUrl until deployment finishes in prod
     baseUrl: 'https://brazilus.management.azure.com',
@@ -585,9 +608,11 @@ const getDesignerServices = (
     apimService,
     functionService,
     runService,
+    roleService,
     hostService,
     chatbotService,
     customCodeService,
+    cognitiveServiceService,
     userPreferenceService: new BaseUserPreferenceService(),
   };
 };

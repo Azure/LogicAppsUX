@@ -1,4 +1,4 @@
-import type { LogicAppsV2, Template } from '../../utils/src';
+import type { ArmResource, LogicAppsV2, Template } from '../../utils/src';
 import { AssertionErrorCode, AssertionException } from '../../utils/src';
 
 export interface WorkflowData {
@@ -7,10 +7,13 @@ export interface WorkflowData {
 }
 
 export interface ITemplateResourceService {
-  updateTemplate: (id: string, manifest: Template.TemplateManifest) => Promise<void>;
-  updateWorkflow: (id: string, data: WorkflowData) => Promise<void>;
+  getTemplate: (id: string) => Promise<ArmResource<any>>;
+  getTemplateWorkflows: (id: string, rawData?: boolean) => Promise<ArmResource<any>[]>;
+  updateTemplate: (id: string, manifest?: Template.TemplateManifest, state?: string) => Promise<void>;
+  addWorkflow: (id: string, workflowName: string, data: WorkflowData) => Promise<void>;
+  updateWorkflow: (id: string, workflowName: string, manifest: Partial<Template.WorkflowManifest>, rawData?: boolean) => Promise<void>;
+  deleteWorkflow: (id: string, workflowName: string) => Promise<void>;
   createArtifact: (templateId: string, artifact: Template.Artifact) => Promise<void>;
-  isWorkflowNameAvailable: (id: string, name: string) => Promise<boolean>;
 }
 
 let service: ITemplateResourceService;

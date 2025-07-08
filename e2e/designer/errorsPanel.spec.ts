@@ -16,7 +16,7 @@ test.describe(
       // Delete required parameter value
       await page.getByRole('button', { name: 'HTTP', exact: true }).click();
       await page.getByLabel('URI*').fill('');
-      await page.getByLabel('Collapse').click();
+      await page.getByTestId('msla-panel-header-collapse-nav').click();
       // Open errors panel
       await page.getByRole('button', { name: 'Errors' }).click();
       await expect(page.getByText("'URI' is required.")).toBeVisible();
@@ -25,13 +25,13 @@ test.describe(
 
       // Change uri param to an invalid value
       await page.getByLabel('URI*').fill('test');
-      await page.getByLabel('Collapse').click();
+      await page.getByTestId('msla-panel-header-collapse-nav').click();
       // Open errors panel
       await page.getByRole('button', { name: 'Errors' }).click();
       await expect(page.getByText('Enter a valid URI.')).toBeVisible();
       await page.getByText('Open operation').click();
       await expect(page.getByText('Enter a valid URI.')).toBeVisible();
-      await page.getByLabel('Collapse').click();
+      await page.getByTestId('msla-panel-header-collapse-nav').click();
     });
 
     test('Should show workflow parameters errors in errors panel', async ({ page }) => {
@@ -40,13 +40,12 @@ test.describe(
 
       // Open workflow parameters panel
       await page.getByText('Workflow Parameters', { exact: true }).click();
-      await expect(page.locator('.msla-workflow-parameters-heading')).toBeVisible();
+      await expect(page.getByText('Parameters', { exact: true })).toBeVisible();
       // Create new parameter
       await page.getByRole('button', { name: 'Create parameter' }).click();
       await expect(page.getByRole('button', { name: 'New parameter' })).toBeVisible();
-      const paramId = await page.getByRole('button', { name: 'New parameter' }).getAttribute('id');
       // Give param a name
-      await page.getByTestId(`${paramId}-name`).click();
+      await page.getByPlaceholder('Enter parameter name.').click();
       await page.keyboard.type('PlaywrightParam');
       // Verify name changed
       await expect(page.getByRole('button', { name: 'PlaywrightParam' })).toBeVisible();

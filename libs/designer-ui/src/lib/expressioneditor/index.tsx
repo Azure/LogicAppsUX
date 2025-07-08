@@ -1,3 +1,4 @@
+import type { EditorContentChangedEventArgs } from '../editor/monaco';
 import { MonacoEditor } from '../editor/monaco';
 import type { EventHandler } from '../eventhandler';
 import { EditorLanguage, clamp } from '@microsoft/logic-apps-shared';
@@ -14,7 +15,6 @@ export interface ExpressionEditorEvent {
 export interface ExpressionEditorProps {
   initialValue: string;
   editorRef?: MutableRefObject<editor.IStandaloneCodeEditor | null>;
-  hideUTFExpressions?: boolean;
   isDragging: boolean;
   dragDistance?: number;
   currentHeight: number;
@@ -22,19 +22,24 @@ export interface ExpressionEditorProps {
   onBlur?: EventHandler<ExpressionEditorEvent>;
   setIsDragging: (isDragging: boolean) => void;
   setExpressionEditorError: (error: string) => void;
+  onFocus?: () => void;
+  onContentChanged?(e: EditorContentChangedEventArgs): void;
+  isReadOnly?: boolean;
 }
 
 export function ExpressionEditor({
   initialValue,
   editorRef,
-  hideUTFExpressions,
   isDragging,
   dragDistance,
   currentHeight,
   setCurrentHeight,
   onBlur,
+  onFocus,
   setIsDragging,
   setExpressionEditorError,
+  onContentChanged,
+  isReadOnly = false,
 }: ExpressionEditorProps): JSX.Element {
   const [mouseDownLocation, setMouseDownLocation] = useState(0);
   const [heightOnMouseDown, setHeightOnMouseDown] = useState(0);
@@ -67,7 +72,6 @@ export function ExpressionEditor({
       <MonacoEditor
         ref={editorRef}
         language={EditorLanguage.templateExpressionLanguage}
-        hideUTFExpressions={hideUTFExpressions}
         lineNumbers="off"
         value={initialValue}
         scrollbar={{ horizontal: 'hidden', vertical: 'hidden' }}
@@ -76,13 +80,16 @@ export function ExpressionEditor({
         overviewRulerBorder={false}
         contextMenu={false}
         onBlur={handleBlur}
-        onContentChanged={handleChangeEvent}
+        onFocus={onFocus}
+        onContentChanged={onContentChanged ?? handleChangeEvent}
         width={'100%'}
         wordWrap="bounded"
         wordWrapColumn={200}
         automaticLayout={true}
         data-automation-id="msla-expression-editor"
         height={`${currentHeight}px`}
+        readOnly={isReadOnly}
+        tabSize={2}
       />
       <div
         className="msla-expression-editor-expand"

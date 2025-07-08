@@ -145,6 +145,7 @@ export const RouteName = {
   review: 'review',
   designer: 'designer',
   dataMapper: 'dataMapper',
+  unitTest: 'unitTest',
 };
 
 export type RouteNameType = (typeof RouteName)[keyof typeof RouteName];
@@ -258,6 +259,11 @@ export interface GetDataMapperVersionMessage {
 export interface ReceiveCallbackMessage {
   command: typeof ExtensionCommand.receiveCallback;
   data: any;
+}
+
+export interface SetIsWorkflowDirtyMessage {
+  command: typeof ExtensionCommand.setIsWorkflowDirty;
+  data: boolean;
 }
 
 export interface CompleteFileSystemConnectionMessage {

@@ -1,7 +1,7 @@
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
 import { changeCurrentTemplateName } from '../../../core/state/templates/templateSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import { Text } from '@fluentui/react-components';
+import { Divider, Tag, Text } from '@fluentui/react-components';
 import type { IContextualMenuItem, IContextualMenuProps, IDocumentCardStyles } from '@fluentui/react';
 import { css, DocumentCard, IconButton, Image } from '@fluentui/react';
 import { ConnectorIcon, ConnectorIconWithName } from '../connections/connector';
@@ -9,13 +9,15 @@ import type { Template } from '@microsoft/logic-apps-shared';
 import { getUniqueConnectorsFromConnections } from '../../../core/templates/utils/helper';
 import type { IntlShape } from 'react-intl';
 import { useIntl } from 'react-intl';
-import { equals, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
+import { equals, isArmResourceId, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import MicrosoftIcon from '../../../common/images/templates/microsoft.svg';
-import { PeopleCommunity16Regular } from '@fluentui/react-icons';
-import { isMultiWorkflowTemplate, loadTemplate } from '../../../core/actions/bjsworkflow/templates';
+import WorkflowIcon from '../../../common/images/templates/logicapps.svg';
+import { Beaker20Regular, BuildingMultiple20Regular, CheckmarkCircle20Regular, PeopleCommunity16Regular } from '@fluentui/react-icons';
+import { isMultiWorkflowTemplate, loadCustomTemplateArtifacts, loadTemplate } from '../../../core/actions/bjsworkflow/templates';
 import { useMemo } from 'react';
 import { BlankWorkflowTemplateCard } from './blankworklowcard';
 import { LoadingTemplateCard } from './loadingcard';
+import type { TemplateData } from '../../../core/state/templates/manifestSlice';
 
 interface TemplateCardProps {
   templateName: string;
@@ -26,9 +28,13 @@ interface TemplateCardProps {
 }
 
 export type TemplateSelectHandler = (templateName: string, isSingleWorkflow: boolean) => void;
-export const maxConnectorsToShow = 5;
+export const maxConnectorsToShow = 4;
 export const templateCardStyles: IDocumentCardStyles = {
   root: { display: 'inline-block', height: 220, maxWidth: 1000 },
+};
+const templateCardBodyStyles = {
+  cardBody: { height: 180 },
+  cardTitle: { minHeight: 70, maxHeight: 70 },
 };
 
 export const TemplateCard = ({ templateName, isLightweight, blankWorkflowProps, cssOverrides, onSelect }: TemplateCardProps) => {
@@ -45,7 +51,7 @@ export const TemplateCard = ({ templateName, isLightweight, blankWorkflowProps, 
   }
 
   if (!templateManifest) {
-    return <LoadingTemplateCard />;
+    return <LoadingTemplateCard isLightweight={isLightweight} cssOverrides={cssOverrides} />;
   }
 
   const intlText = {
@@ -60,6 +66,11 @@ export const TemplateCard = ({ templateName, isLightweight, blankWorkflowProps, 
       description: 'Label text for Microsoft authored templates',
       id: 'rEQceE',
     }),
+    RESOURCE: intl.formatMessage({
+      defaultMessage: 'Workflow',
+      description: 'Label text for logic app resource',
+      id: 'XUFUOM',
+    }),
   };
 
   const onSelectTemplate = () => {
@@ -70,13 +81,20 @@ export const TemplateCard = ({ templateName, isLightweight, blankWorkflowProps, 
       args: [templateName, workflowAppName, `isMultiWorkflowTemplate:${isMultiWorkflow}`],
     });
     dispatch(changeCurrentTemplateName(templateName));
-    dispatch(loadTemplate({ preLoadedManifest: templateManifest }));
+
+    if (isArmResourceId(templateManifest?.id)) {
+      dispatch(loadCustomTemplateArtifacts(templateManifest));
+    } else {
+      dispatch(loadTemplate({ preLoadedManifest: templateManifest }));
+    }
 
     onSelect?.(templateName, !isMultiWorkflow);
   };
 
-  const { title, details } = templateManifest as Template.TemplateManifest;
-  const isMicrosoftAuthored = equals(details?.By, 'Microsoft');
+  const { id, title, details } = templateManifest as Template.TemplateManifest;
+  const templateAuthor = details?.By ?? intlText.COMMUNITY_AUTHORED;
+  const isMicrosoftAuthored = equals(templateAuthor, 'Microsoft');
+  const isWorkflowResource = equals(templateAuthor, 'resource');
 
   return (
     <DocumentCard
@@ -89,18 +107,23 @@ export const TemplateCard = ({ templateName, isLightweight, blankWorkflowProps, 
         <div className="msla-template-card-authored">
           {isMicrosoftAuthored ? (
             <Image src={MicrosoftIcon} aria-label={intlText.MICROSOFT_AUTHORED} width={16} />
+          ) : isWorkflowResource ? (
+            <Image src={WorkflowIcon} aria-label={intlText.RESOURCE} width={16} />
+          ) : isArmResourceId(id) ? (
+            <BuildingMultiple20Regular aria-label={templateAuthor} />
           ) : (
             <PeopleCommunity16Regular aria-label={intlText.COMMUNITY_AUTHORED} />
           )}
           <Text size={200} weight="semibold" align="start" className="msla-template-card-authored-label">
-            {isMicrosoftAuthored ? intlText.MICROSOFT_AUTHORED : intlText.COMMUNITY_AUTHORED}
+            {isMicrosoftAuthored ? intlText.MICROSOFT_AUTHORED : isWorkflowResource ? intlText.RESOURCE : templateAuthor}
           </Text>
         </div>
       </div>
 
-      <div className="msla-template-card-body">
-        <div className="msla-template-card-title-wrapper">
-          <Text size={400} weight="semibold" align="start" className="msla-template-card-title">
+      <Divider />
+      <div className="msla-template-card-body" style={isLightweight ? undefined : templateCardBodyStyles.cardBody}>
+        <div className="msla-template-card-title-wrapper" style={isLightweight ? undefined : templateCardBodyStyles.cardTitle}>
+          <Text size={400} weight="semibold" align="start" className={css('msla-template-card-title', cssOverrides?.['cardTitle'])}>
             {title}
           </Text>
         </div>
@@ -110,7 +133,7 @@ export const TemplateCard = ({ templateName, isLightweight, blankWorkflowProps, 
   );
 };
 
-const TemplateFeaturedConnectors = ({ manifest, intl }: { manifest: Template.TemplateManifest; intl: IntlShape }) => {
+const TemplateFeaturedConnectors = ({ manifest, intl }: { manifest: TemplateData; intl: IntlShape }) => {
   const noConnectorsMessage = intl.formatMessage({
     defaultMessage: 'This template does not have connectors',
     description: 'Accessibility text to inform user this template does not contain connectors',
@@ -120,7 +143,7 @@ const TemplateFeaturedConnectors = ({ manifest, intl }: { manifest: Template.Tem
     subscriptionId: state.workflow.subscriptionId,
     location: state.workflow.location,
   }));
-  const { details, featuredConnectors = [] } = manifest;
+  const { publishState, details, featuredConnectors = [] } = manifest;
   const allConnectors = getUniqueConnectorsFromConnections(featuredConnectors, subscriptionId, location);
   const showOverflow = allConnectors.length > maxConnectorsToShow;
   const connectorsToShow = showOverflow ? allConnectors.slice(0, maxConnectorsToShow) : allConnectors;
@@ -147,32 +170,62 @@ const TemplateFeaturedConnectors = ({ manifest, intl }: { manifest: Template.Tem
   return (
     <div className="msla-template-card-footer">
       <div className="msla-template-card-tags">
-        <Text size={300} className="msla-template-card-tag">
+        <Tag appearance="brand" size="small">
           {details.Type}
-        </Text>
+        </Tag>
         {details.Trigger ? (
-          <Text size={300} className="msla-template-card-tag">
+          <Tag appearance="brand" size="small">
             {details.Trigger}
-          </Text>
+          </Tag>
         ) : null}
       </div>
-      <div className="msla-template-card-connectors-list">
-        {connectorsToShow.length > 0 ? (
-          connectorsToShow.map((info) => (
-            <ConnectorIcon
-              key={info.id}
-              connectorId={info.id}
-              operationId={info.id}
-              classes={{ root: 'msla-template-card-connector', icon: 'msla-template-card-connector-icon' }}
-            />
-          ))
-        ) : (
-          <Text className="msla-template-card-connectors-emptyText">{noConnectorsMessage}</Text>
-        )}
-        {showOverflow ? (
-          <IconButton className="msla-template-card-connector-overflow" onRenderMenuIcon={onRenderMenuIcon} menuProps={menuProps} />
-        ) : null}
+      <div className="msla-template-card-features">
+        <div className="msla-template-card-connectors-list">
+          {connectorsToShow.length > 0 ? (
+            connectorsToShow.map((info) => (
+              <ConnectorIcon
+                key={info.id}
+                connectorId={info.id}
+                operationId={info.id}
+                classes={{ root: 'msla-template-card-connector', icon: 'msla-template-card-connector-icon' }}
+              />
+            ))
+          ) : (
+            <Text className="msla-template-card-connectors-emptyText">{noConnectorsMessage}</Text>
+          )}
+          {showOverflow ? (
+            <IconButton className="msla-template-card-connector-overflow" onRenderMenuIcon={onRenderMenuIcon} menuProps={menuProps} />
+          ) : null}
+        </div>
+        {publishState ? <PublishBadge publishedState={publishState} /> : null}
       </div>
+    </div>
+  );
+};
+
+const iconStyle = { paddingTop: 8, verticalAlign: 'bottom' };
+const PublishBadge = ({ publishedState }: { publishedState: string }) => {
+  const intl = useIntl();
+  const publishStateText = {
+    TESTING: intl.formatMessage({
+      defaultMessage: 'Testing',
+      description: 'Label text for testing publish state',
+      id: 'Kv+Pa3',
+    }),
+    PRODUCTION: intl.formatMessage({
+      defaultMessage: 'Production',
+      description: 'Label text for production publish state',
+      id: 'srg0hY',
+    }),
+  };
+  const isProduction = equals(publishedState, 'Production');
+
+  return (
+    <div className="msla-template-card-publish-badge" style={isProduction ? { color: 'green' } : undefined}>
+      <Text size={300} align="start" className="msla-template-card-publish-text">
+        {isProduction ? publishStateText.PRODUCTION : publishStateText.TESTING}
+      </Text>
+      {isProduction ? <CheckmarkCircle20Regular style={iconStyle} /> : <Beaker20Regular style={iconStyle} />}
     </div>
   );
 };

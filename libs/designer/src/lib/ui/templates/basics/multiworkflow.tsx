@@ -12,6 +12,7 @@ import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import { getCurrentWorkflowNames } from '../../../core/templates/utils/helper';
 import { ResourcePicker } from './resourcepicker';
+import { useTemplatesStrings } from '../templatesStrings';
 
 interface WorkflowItem {
   id: string;
@@ -33,11 +34,13 @@ interface WorkflowItem {
 export const MultiWorkflowBasics = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { workflows } = useSelector((state: RootState) => state.template);
-  const { basicsOverrideByWorkflow, enableResourceSelection } = useSelector((state: RootState) => ({
+  const { basicsOverrideByWorkflow, enableResourceSelection, viewTemplateDetails } = useSelector((state: RootState) => ({
     basicsOverrideByWorkflow: state.templateOptions.viewTemplateDetails?.basicsOverride,
     enableResourceSelection: state.templateOptions.enableResourceSelection,
+    viewTemplateDetails: state.templateOptions.viewTemplateDetails,
   }));
   const { data: existingWorkflowNames } = useExistingWorkflowNames();
+  const { stateTypes } = useTemplatesStrings();
 
   const intl = useIntl();
   const resources = {
@@ -66,20 +69,10 @@ export const MultiWorkflowBasics = () => {
       id: 'ekM77J',
       description: 'Label for workflow Name',
     }),
-    kind_stateful: intl.formatMessage({
-      defaultMessage: 'Stateful',
-      id: 'Qqmb+W',
-      description: 'Dropdown option for stateful type',
-    }),
-    kind_stateless: intl.formatMessage({
-      defaultMessage: 'Stateless',
-      id: 'cNXS5n',
-      description: 'Dropdown option for stateless type',
-    }),
   };
   const defaultKindOptions = [
-    { key: WorkflowKind.STATEFUL, text: resources.kind_stateful },
-    { key: WorkflowKind.STATELESS, text: resources.kind_stateless },
+    { key: WorkflowKind.STATEFUL, text: stateTypes.STATEFUL },
+    { key: WorkflowKind.STATELESS, text: stateTypes.STATELESS },
   ];
 
   const [workflowsList, setWorkflowsList] = useFunctionalState<WorkflowItem[]>(
@@ -92,7 +85,7 @@ export const MultiWorkflowBasics = () => {
       allowedKinds: workflow.manifest.kinds?.length
         ? workflow.manifest.kinds.map((kind) => ({
             key: kind,
-            text: equals(kind, WorkflowKind.STATEFUL) ? resources.kind_stateful : resources.kind_stateless,
+            text: equals(kind, WorkflowKind.STATEFUL) ? stateTypes.STATEFUL : stateTypes.STATELESS,
           }))
         : defaultKindOptions,
       summary: workflow.manifest.summary,
@@ -241,7 +234,7 @@ export const MultiWorkflowBasics = () => {
 
   return (
     <div className="msla-templates-basics-tab">
-      {enableResourceSelection ? <ResourcePicker /> : null}
+      {enableResourceSelection ? <ResourcePicker lockField={viewTemplateDetails?.lockResourceField} /> : null}
       <div>
         <Text>{resources.general_line1}</Text>
         <br />

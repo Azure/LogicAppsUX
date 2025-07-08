@@ -1,10 +1,9 @@
 import type { EventHandler } from '../../../eventhandler';
-import { IconButton } from '@fluentui/react/lib/Button';
-import type { IIconProps } from '@fluentui/react/lib/Icon';
-import { TextField } from '@fluentui/react/lib/TextField';
-import { TooltipHost } from '@fluentui/react/lib/Tooltip';
+import { Button, Input, Tooltip } from '@fluentui/react-components';
+import { Dismiss12Regular } from '@fluentui/react-icons';
 import type * as React from 'react';
 import { useIntl } from 'react-intl';
+import { useStyles } from './simpledictionaryitem.styles';
 
 export interface SimpleDictionaryRowModel {
   key: string;
@@ -27,10 +26,6 @@ export interface SimpleDictionaryItemProps {
   onDelete?: EventHandler<SimpleDictionaryRowModel>;
 }
 
-const deleteButtonIconProps: IIconProps = {
-  iconName: 'Cancel',
-};
-
 export const SimpleDictionaryItem: React.FC<SimpleDictionaryItemProps> = ({
   disabled,
   allowDeletion,
@@ -41,10 +36,11 @@ export const SimpleDictionaryItem: React.FC<SimpleDictionaryItemProps> = ({
   ariaLabel,
 }): JSX.Element => {
   const intl = useIntl();
+  const styles = useStyles();
 
   const dictionaryItemDelete = intl.formatMessage({
-    defaultMessage: 'Click to delete item',
-    id: 'Ur+wph',
+    defaultMessage: 'Select to delete item',
+    id: 'jfQPGz',
     description: 'Label for delete button',
   });
 
@@ -81,36 +77,36 @@ export const SimpleDictionaryItem: React.FC<SimpleDictionaryItemProps> = ({
   });
 
   const renderDelete = (): JSX.Element | null => {
-    const deleteButtonClass = 'msla-button msla-dictionary-item-delete';
-
     return (
-      <TooltipHost content={dictionaryItemDelete}>
-        <IconButton
+      <Tooltip content={dictionaryItemDelete} relationship="label">
+        <Button
           aria-label={dictionaryItemDelete}
-          className={deleteButtonClass}
-          iconProps={deleteButtonIconProps}
+          className={styles.deleteButton}
+          icon={<Dismiss12Regular />}
+          appearance="subtle"
+          size="small"
           onClick={handleDeleteItem}
         />
-      </TooltipHost>
+      </Tooltip>
     );
   };
 
-  const handleKeyChange = (_: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string): void => {
+  const handleKeyChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     if (onChange) {
       onChange({
         value: item.value,
         index: item.index,
-        key: newValue ?? '',
+        key: e.target.value ?? '',
       });
     }
   };
 
-  const handleValueChange = (_: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string): void => {
+  const handleValueChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     if (onChange) {
       onChange({
         index: item.index,
         key: item.key,
-        value: newValue ?? '',
+        value: e.target.value ?? '',
       });
     }
   };
@@ -124,29 +120,28 @@ export const SimpleDictionaryItem: React.FC<SimpleDictionaryItemProps> = ({
   };
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '45% 45% 10%' }}>
-      <div style={{ padding: '5px' }}>
-        <TextField
-          ariaLabel={itemKeyAriaLabel}
-          disabled={disabled}
-          readOnly={readOnly}
-          spellCheck={false}
+    <div className={styles.root}>
+      <div className={styles.fieldWrapper}>
+        <Input
+          aria-label={itemKeyAriaLabel}
+          disabled={disabled || readOnly}
           value={item.key}
           onChange={handleKeyChange}
           placeholder={dictionaryItemKeyPlaceholder}
+          style={{ width: '100%' }}
         />
       </div>
-      <div style={{ padding: '5px' }}>
-        <TextField
-          ariaLabel={itemValueAriaLabel}
-          disabled={disabled}
-          readOnly={readOnly}
+      <div className={styles.fieldWrapper}>
+        <Input
+          aria-label={itemValueAriaLabel}
+          disabled={disabled || readOnly}
           value={item.value}
           onChange={handleValueChange}
           placeholder={dictionaryItemValuePlaceholder}
+          style={{ width: '100%' }}
         />
       </div>
-      {allowDeletion && !disabled ? renderDelete() : null}
+      <div>{allowDeletion && !disabled ? renderDelete() : null}</div>
     </div>
   );
 };

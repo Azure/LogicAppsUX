@@ -10,6 +10,7 @@ import {
   MenuPopover,
   MenuTrigger,
   MessageBar,
+  MessageBarActions,
   MessageBarBody,
   Spinner,
   Tooltip,
@@ -19,6 +20,7 @@ import {
   bundleIcon,
   ChevronDoubleRightFilled,
   ChevronDoubleRightRegular,
+  DismissRegular,
   MoreVertical24Filled,
   MoreVertical24Regular,
   PinOffRegular,
@@ -26,7 +28,7 @@ import {
 import { Icon } from '@fluentui/react/lib/Icon';
 import { css } from '@fluentui/react/lib/Utilities';
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export const handleOnEscapeDown = (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
@@ -57,6 +59,7 @@ export interface PanelHeaderProps {
   canShowLogicAppRun?: boolean;
   showLogicAppRun?: () => void;
   showTriggerInfo?: boolean;
+  isTrigger?: boolean;
 }
 
 const DismissIcon = bundleIcon(ChevronDoubleRightFilled, ChevronDoubleRightRegular);
@@ -159,11 +162,13 @@ export const PanelHeader = (props: PanelHeaderProps): JSX.Element => {
     canShowLogicAppRun,
     showLogicAppRun,
     showTriggerInfo,
+    isTrigger,
   } = props;
 
   const { comment, displayName: title, iconUri: cardIcon, isError, isLoading, nodeId } = nodeData;
 
   const intl = useIntl();
+  const [isTriggerInfoDismissed, setIsTriggerInfoDismissed] = useState(false);
 
   const resubmitButtonText = intl.formatMessage({
     defaultMessage: 'Submit from this action',
@@ -250,25 +255,41 @@ export const PanelHeader = (props: PanelHeaderProps): JSX.Element => {
           </>
         ) : null}
       </div>
-      {showTriggerInfo ? (
+      {showTriggerInfo && !isTriggerInfoDismissed ? (
         <div className="msla-panel-header-messages">
           <MessageBar
             aria-label={triggerInfoMessageBar.ariaLabel}
             layout="multiline"
             data-automation-id="msla-panel-header-trigger-info"
             data-testid="msla-panel-header-trigger-info"
+            intent="info"
           >
             <MessageBarBody>{triggerInfoMessageBar.text}</MessageBarBody>
+            <MessageBarActions
+              containerAction={
+                <Button
+                  aria-label={intl.formatMessage({
+                    defaultMessage: 'Dismiss trigger info message',
+                    id: 'IjvmvR',
+                    description: 'Dismiss button label for trigger info',
+                  })}
+                  appearance="transparent"
+                  icon={<DismissRegular />}
+                  onClick={() => setIsTriggerInfoDismissed(true)}
+                />
+              }
+            />
           </MessageBar>
         </div>
       ) : null}
-      {!isNullOrUndefined(comment) && !noNodeOnCardLevel && !isCollapsed ? (
+      {isTrigger || (!isNullOrUndefined(comment) && !noNodeOnCardLevel && !isCollapsed) ? (
         <PanelHeaderComment
           comment={comment}
           isCollapsed={isCollapsed}
           noNodeSelected={noNodeOnCardLevel}
           readOnlyMode={readOnlyMode}
           commentChange={commentChange}
+          isTrigger={isTrigger}
         />
       ) : null}
       {canResubmit || canShowLogicAppRun ? (

@@ -1,5 +1,6 @@
 import toTitleCase from 'to-title-case';
 import constants from '../constants';
+import { equals } from '@microsoft/logic-apps-shared';
 
 export const titleCase = (s: string) => toTitleCase(s);
 
@@ -18,3 +19,17 @@ export const getSKUDefaultHostOptions = (sku: string) => {
       return {};
   }
 };
+
+export class AgentUtils {
+  public static isConnector = (connectorId?: string): boolean => {
+    return equals(connectorId ?? '', 'connectionProviders/agent', true);
+  };
+
+  public static isDeploymentIdParameter = (parameterName?: string): boolean => {
+    return equals(parameterName ?? '', 'deploymentId', true);
+  };
+
+  public static isAgentModelTypeParameter = (parameterName?: string): boolean => {
+    return equals(parameterName ?? '', 'agentModelType', true);
+  };
+}

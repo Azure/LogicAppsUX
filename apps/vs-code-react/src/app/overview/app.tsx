@@ -42,7 +42,6 @@ export const OverviewApp = () => {
     return new StandardRunService({
       baseUrl: workflowState.baseUrl,
       apiVersion: workflowState.apiVersion,
-      accessToken: workflowState.accessToken,
       workflowName: workflowState.workflowProperties.name,
       httpClient,
     });
@@ -142,6 +141,13 @@ export const OverviewApp = () => {
         }}
         onRunTrigger={runTriggerCall}
         onVerifyRunId={onVerifyRunId}
+        supportsUnitTest={workflowState.isLocal}
+        onCreateUnitTest={(run: RunDisplayItem) => {
+          vscode.postMessage({
+            command: ExtensionCommand.createUnitTest,
+            runId: run.id,
+          });
+        }}
       />
     </div>
   );

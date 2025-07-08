@@ -92,10 +92,11 @@ export interface ServiceProviderConnectionModel {
 }
 
 export interface AgentConnectionModel {
-  parameterValues: Record<string, unknown>;
-  parameterSetName?: string;
+  authentication: Record<string, any>;
+  endpoint: string;
   type?: string;
   displayName?: string;
+  resourceId: string;
 }
 
 export interface ConnectionAndAppSetting {

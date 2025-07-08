@@ -2,7 +2,7 @@ import type { AppDispatch } from '../../../../../core/state/templates/store';
 import type { IntlShape } from 'react-intl';
 import { MessageBar } from '@fluentui/react-components';
 import constants from '../../../../../common/constants';
-import type { TemplatePanelTab } from '@microsoft/designer-ui';
+import type { TemplateTabProps } from '@microsoft/designer-ui';
 import { Spinner, SpinnerSize } from '@fluentui/react';
 import { closePanel, selectPanelTab } from '../../../../../core/state/templates/panelSlice';
 import type { CreateWorkflowTabProps } from '../createWorkflowPanel';
@@ -28,7 +28,7 @@ export const reviewCreateTab = (
     isPrimaryButtonDisabled: boolean;
     isCreateView: boolean;
   } & CreateWorkflowTabProps
-): TemplatePanelTab => ({
+): TemplateTabProps => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE,
   disabled,
   title: isCreateView
@@ -57,50 +57,59 @@ export const reviewCreateTab = (
       description: 'An accessibility label that describes the objective of review and update tab',
     })
   ),
-  hasError: false,
+  tabStatusIcon: undefined,
   content: <ReviewCreatePanel />,
   footerContent: {
-    primaryButtonText: isCreating ? (
-      <Spinner size={SpinnerSize.xSmall} />
-    ) : isCreateView ? (
-      intl.formatMessage({
-        defaultMessage: 'Create',
-        id: '/qrBuJ',
-        description: 'Button text for creating the workflow',
-      })
-    ) : (
-      intl.formatMessage({
-        defaultMessage: 'Update',
-        id: 'thnhGU',
-        description: 'Button text for updating the workflow',
-      })
-    ),
-    primaryButtonOnClick: onCreateClick,
-    primaryButtonDisabled: isPrimaryButtonDisabled || isCreating,
-    secondaryButtonText: previousTabId
-      ? intl.formatMessage({
-          defaultMessage: 'Previous',
-          id: 'Yua/4o',
-          description: 'Button text for moving to the previous tab in the create workflow panel',
-        })
-      : intl.formatMessage({
-          defaultMessage: 'Close',
-          id: 'FTrMxN',
-          description: 'Button text for closing the panel',
-        }),
-    secondaryButtonOnClick: () => {
-      if (previousTabId) {
-        dispatch(selectPanelTab(previousTabId));
-      } else {
-        dispatch(closePanel());
+    buttonContents: [
+      {
+        type: 'action',
+        text: isCreating ? (
+          <Spinner size={SpinnerSize.xSmall} />
+        ) : isCreateView ? (
+          intl.formatMessage({
+            defaultMessage: 'Create',
+            id: '/qrBuJ',
+            description: 'Button text for creating the workflow',
+          })
+        ) : (
+          intl.formatMessage({
+            defaultMessage: 'Update',
+            id: 'thnhGU',
+            description: 'Button text for updating the workflow',
+          })
+        ),
+        onClick: onCreateClick,
+        appearance: 'primary',
+        disabled: isPrimaryButtonDisabled || isCreating,
+      },
+      {
+        type: 'action',
+        text: previousTabId
+          ? intl.formatMessage({
+              defaultMessage: 'Previous',
+              id: 'Yua/4o',
+              description: 'Button text for moving to the previous tab in the create workflow panel',
+            })
+          : intl.formatMessage({
+              defaultMessage: 'Close',
+              id: 'FTrMxN',
+              description: 'Button text for closing the panel',
+            }),
+        onClick: () => {
+          if (previousTabId) {
+            dispatch(selectPanelTab(previousTabId));
+          } else {
+            dispatch(closePanel());
 
-        if (shouldClearDetails) {
-          dispatch(clearTemplateDetails());
-        }
+            if (shouldClearDetails) {
+              dispatch(clearTemplateDetails());
+            }
 
-        onClosePanel?.();
-      }
-    },
-    secondaryButtonDisabled: (!previousTabId && !showCloseButton) || isCreating,
+            onClosePanel?.();
+          }
+        },
+        disabled: (!previousTabId && !showCloseButton) || isCreating,
+      },
+    ],
   },
 });

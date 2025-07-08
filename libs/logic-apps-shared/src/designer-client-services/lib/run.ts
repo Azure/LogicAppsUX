@@ -13,7 +13,15 @@ export interface IRunService {
     action: { nodeId: string; runId: string | undefined },
     status?: string
   ): Promise<{ value: LogicAppsV2.RunRepetition[] }>;
+  getTimelineRepetitions(runId: string): Promise<any>;
+  getAgentRepetition(action: { nodeId: string; runId: string | undefined }, repetitionId: string): Promise<LogicAppsV2.RunRepetition>;
+  getAgentActionsRepetition(action: { nodeId: string; runId: string | undefined }, repetitionId: string): Promise<any>;
+  getMoreAgentActionsRepetition(continuationToken: string): Promise<any>;
   getRepetition(action: { nodeId: string; runId: string | undefined }, repetitionId: string): Promise<LogicAppsV2.RunRepetition>;
+  getChatHistory(action: { nodeId: string; runId: string | undefined }): Promise<any>;
+  getAgentChatInvokeUri(action: { idSuffix: string }): Promise<any>;
+  invokeAgentChat(action: { id: string; data: any }): Promise<any>;
+  cancelRun(runId: string): Promise<any>;
 }
 
 let service: IRunService;

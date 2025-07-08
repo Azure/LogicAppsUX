@@ -4,7 +4,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../state/templates/store';
 import { setInitialData } from '../state/templates/workflowSlice';
 import type { ResourceDetails } from '../state/templates/workflowSlice';
-import { initializeConfigureTemplateServices, type ConfigureTemplateServiceOptions } from '../actions/bjsworkflow/configuretemplate';
+import {
+  initializeConfigureTemplateServices,
+  loadCustomTemplate,
+  type ConfigureTemplateServiceOptions,
+} from '../actions/bjsworkflow/configuretemplate';
 import { TemplatesWrappedContext } from '../templates/TemplatesDesignerContext';
 
 export interface ConfigureTemplateDataProviderProps {
@@ -16,11 +20,12 @@ export interface ConfigureTemplateDataProviderProps {
 }
 
 const DataProviderInner = ({ templateId, children }: ConfigureTemplateDataProviderProps) => {
+  const dispatch = useDispatch<AppDispatch>();
   useEffect(() => {
     if (templateId) {
-      // Load the template
+      dispatch(loadCustomTemplate({ templateId }));
     }
-  }, [templateId]);
+  }, [dispatch, templateId]);
 
   return <>{children}</>;
 };
@@ -45,7 +50,9 @@ export const ConfigureTemplateDataProvider = (props: ConfigureTemplateDataProvid
     if (!servicesInitialized) {
       dispatch(initializeConfigureTemplateServices(services));
     }
+  }, [dispatch, servicesInitialized, services]);
 
+  useEffect(() => {
     dispatch(
       setInitialData({
         subscriptionId: resourceDetails.subscriptionId,
@@ -53,7 +60,7 @@ export const ConfigureTemplateDataProvider = (props: ConfigureTemplateDataProvid
         location: resourceDetails.location,
       })
     );
-  }, [dispatch, servicesInitialized, services, resourceDetails]);
+  }, [dispatch, resourceDetails]);
 
   useEffect(() => {
     if (

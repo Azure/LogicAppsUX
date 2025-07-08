@@ -7,6 +7,7 @@ export const replaceWhiteSpaceWithUnderscore = (uiElementName: string): string =
 
 export const containsIdTag = (id: string) => id?.includes('-#');
 export const removeIdTag = (id: string) => id?.split('-#')[0];
+export const containsCaseTag = (id: string) => id?.includes('-addCase');
 
 export const getIdLeaf = (id?: string) => id?.split('/').at(-1) ?? '';
 
@@ -19,13 +20,16 @@ export const normalizeAutomationId = (s: string) => s.replace(/\W/g, '-');
 
 export const wrapTokenValue = (s: string) => `@{${s}}`;
 
-export const wrapStringifiedTokenSegments = (jsonString: string): string => {
-  const tokenRegex = /:\s?(@{?(?:[^,}\s]+}?))/g;
+export const wrapStringInQuotes = (s: string) => `"${s}"`;
 
-  return jsonString.replace(tokenRegex, (match, token) => {
-    return /^".*"$/.test(token) ? match : `: "${token}"`;
-  });
+export const unwrapQuotesFromString = (s: string) => {
+  if (s.startsWith('"') && s.endsWith('"')) {
+    return s.slice(1, -1);
+  }
+  return s;
 };
+
+export const normalizeEscapes = (key: string): string => key.replace(/\n/g, '\\n').replace(/\r/g, '\\r');
 
 // Some staging locations like `East US (stage)` show sometimes as `eastus(stage)` and sometimes as `eastusstage`
 // This function just removes the parentheses so they can be compared as equal
@@ -75,34 +79,64 @@ export const unescapeString = (input: string): string => {
         return '\v';
       case '"':
         return '"';
-      case '\\':
-        return '\\';
       default:
         return char;
     }
   });
 };
 
-export const escapeString = (input: string, requireSingleQuotesWrap?: boolean): string => {
-  // Only apply escaping if requireSingleQuotesWrap is true and the input is wrapped in single quotes
-  if (requireSingleQuotesWrap && !/'.*[\n\r\t\v"].*'/.test(input)) {
-    return input;
+export const escapeString = (input: string): string => {
+  let result = '';
+  let inSingleQuotes = false;
+
+  for (const char of input) {
+    if (char === "'") {
+      inSingleQuotes = !inSingleQuotes;
+      result += char;
+      continue;
+    }
+
+    if (inSingleQuotes) {
+      switch (char) {
+        case '\n': {
+          result += '\\n';
+          continue;
+        }
+        case '\r': {
+          result += '\\r';
+          continue;
+        }
+        case '\t': {
+          result += '\\t';
+          continue;
+        }
+        case '\v': {
+          result += '\\v';
+          continue;
+        }
+        case '"': {
+          result += '\\"';
+          continue;
+        }
+      }
+    }
+
+    result += char;
   }
 
-  return input?.replace(/[\n\r\t\v"]/g, (char) => {
-    switch (char) {
-      case '\n':
-        return '\\n';
-      case '\r':
-        return '\\r';
-      case '\t':
-        return '\\t';
-      case '\v':
-        return '\\v';
-      case '"':
-        return requireSingleQuotesWrap ? '\\"' : '"'; // Escape only if requireSingleQuotesWrap is true
-      default:
-        return char;
-    }
-  });
+  return result;
 };
+
+export const escapeBackslash = (s: string): string => {
+  return s.replace(/\\/g, '\\\\').replace(/\n/g, '\\n');
+};
+
+/**
+ * Converts a string to PascalCase.
+ * Assumes the input string has been cleaned of invalid characters.
+ * @param {string} str - The input string.
+ * @returns {string} - The PascalCase version of the string.
+ */
+export function toPascalCase(str: string): string {
+  return str.replace(/(?:_+|^)(\w)/g, (match, p1) => p1.toUpperCase());
+}

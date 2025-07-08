@@ -172,10 +172,6 @@ export const findNodeForKey = (
 
   let result = searchChildrenNodeForKey(tempKey, schemaNode);
 
-  if (!result) {
-    //result = getLoopTargetNodeWithJson(tempKey, schemaNode) as SchemaNodeExtended | undefined;
-  }
-
   if (result || !collapseLoopFallback) {
     return result;
   }

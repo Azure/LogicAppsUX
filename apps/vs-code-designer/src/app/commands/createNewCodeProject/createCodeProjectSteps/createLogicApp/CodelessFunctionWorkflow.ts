@@ -5,14 +5,14 @@
 import {
   hostFileName,
   azureWebJobsStorageKey,
-  localSettingsFileName,
   workflowFileName,
-  workflowType,
+  WorkflowType,
   localEmulatorConnectionString,
   extensionBundleId,
   defaultVersionRange,
+  functionsInprocNet8EnabledTrue,
+  functionsInprocNet8Enabled,
 } from '../../../../../constants';
-import { localize } from '../../../../../localize';
 import { setLocalAppSetting } from '../../../../utils/appSettings/localSettings';
 import {
   addFolderToBuildPath,
@@ -24,16 +24,14 @@ import {
 } from '../../../../utils/codeless/updateBuildFile';
 import { getFramework } from '../../../../utils/dotnet/executeDotnetTemplateCommand';
 import { writeFormattedJson } from '../../../../utils/fs';
-import { parseJson } from '../../../../utils/parseJson';
 import { WorkflowCreateStepBase } from '../../../createCodeless/createCodelessSteps/WorkflowCreateStepBase';
-import { DialogResponses, nonNullProp, parseError } from '@microsoft/vscode-azext-utils';
+import { nonNullProp } from '@microsoft/vscode-azext-utils';
 import { WorkflowProjectType, MismatchBehavior } from '@microsoft/vscode-extension-logic-apps';
 import type { IFunctionWizardContext, IWorkflowTemplate, IHostJsonV2, StandardApp } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
-import type { MessageItem } from 'vscode';
 import { validateDotNetIsInstalled } from '../../../dotnet/validateDotNetInstalled';
-import { getFunctionWorkflowTemplate } from '../../../../utils/codeless/templates';
+import { getWorkflowTemplate } from '../../../../utils/codeless/templates';
 
 // This class creates a new workflow for a codeless Azure Function project
 export class CodelessFunctionWorkflow extends WorkflowCreateStepBase<IFunctionWizardContext> {
@@ -55,15 +53,14 @@ export class CodelessFunctionWorkflow extends WorkflowCreateStepBase<IFunctionWi
 
   // Async method that creates a new workflow for the codeless Azure Function project
   public async executeCore(context: IFunctionWizardContext): Promise<string> {
-    // Get the function template and function name from the IFunctionWizardContext object
+    // Get the function template and function path from the IFunctionWizardContext object
     const template: IWorkflowTemplate = nonNullProp(context, 'functionTemplate');
     const functionPath: string = path.join(context.projectPath, nonNullProp(context, 'functionName'));
-    const methodName = context.methodName;
 
     // Determine which definition object to use based on the type of workflow template
-    const codelessDefinition: StandardApp = getFunctionWorkflowTemplate(
-      methodName,
-      template?.id === workflowType.stateful,
+    const codelessDefinition: StandardApp = getWorkflowTemplate(
+      context.functionAppName,
+      template?.id === WorkflowType.stateful,
       context.projectType
     );
 
@@ -119,6 +116,7 @@ export class CodelessFunctionWorkflow extends WorkflowCreateStepBase<IFunctionWi
     if (hostJsonUpdated) {
       await writeFormattedJson(hostJsonPath, hostJson);
     }
+
     await setLocalAppSetting(
       context,
       context.projectPath,
@@ -126,48 +124,12 @@ export class CodelessFunctionWorkflow extends WorkflowCreateStepBase<IFunctionWi
       localEmulatorConnectionString,
       MismatchBehavior.Overwrite
     );
-  }
-
-  // Private async method that reads and parses the host.json file
-  private async getHostJson(context: IFunctionWizardContext, hostJsonPath: string, allowOverwrite = false): Promise<IHostJsonV2> {
-    return this.getJsonFromFile(context, hostJsonPath, { version: '2.0' }, allowOverwrite);
-  }
-
-  // Private async method that reads and parses a JSON file
-  private async getJsonFromFile<T extends object>(
-    context: IFunctionWizardContext,
-    filePath: string,
-    defaultValue: T,
-    allowOverwrite = false
-  ): Promise<T> {
-    if (await fse.pathExists(filePath)) {
-      const data: string = (await fse.readFile(filePath)).toString();
-      if (/[^\s]/.test(data)) {
-        try {
-          return parseJson(data);
-        } catch (error) {
-          if (allowOverwrite) {
-            const message: string = localize(
-              'failedToParseWithOverwrite',
-              'Failed to parse "{0}": {1}. Overwrite?',
-              localSettingsFileName,
-              parseError(error).message
-            );
-            const overwriteButton: MessageItem = { title: localize('overwrite', 'Overwrite') };
-            // Overwrite is the only button and cancel automatically throws, so no need to check result
-            await context.ui.showWarningMessage(message, { modal: true }, overwriteButton, DialogResponses.cancel);
-          } else {
-            const message: string = localize(
-              'failedToParse',
-              'Failed to parse "{0}": {1}.',
-              localSettingsFileName,
-              parseError(error).message
-            );
-            throw new Error(message);
-          }
-        }
-      }
-    }
-    return defaultValue;
+    await setLocalAppSetting(
+      context,
+      context.projectPath,
+      functionsInprocNet8Enabled,
+      functionsInprocNet8EnabledTrue,
+      MismatchBehavior.Overwrite
+    );
   }
 }

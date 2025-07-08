@@ -27,6 +27,12 @@ export const useDiscoveryPanelIsParallelBranch = () =>
 export const useDiscoveryPanelRelationshipIds = () =>
   useSelector(createSelector(getPanelState, (state) => state.discoveryContent.relationshipIds));
 
+export const useDiscoveryPanelFavoriteOperations = () =>
+  useSelector(createSelector(getPanelState, (state) => state.discoveryContent.favoriteOperations));
+
+export const useDiscoveryPanelIsOperationFavorited = (connectorId: string, operationId?: string) =>
+  useDiscoveryPanelFavoriteOperations().some((favorite) => favorite.connectorId === connectorId && favorite.operationId === operationId);
+
 export const useErrorsPanelSelectedTabId = () => useSelector(createSelector(getPanelState, (state) => state.errorContent.selectedTabId));
 
 export const useFocusReturnElementId = () => useSelector(createSelector(getPanelState, (state) => state.focusReturnElementId));
@@ -39,22 +45,35 @@ export const useIsPanelCollapsed = () => useSelector(createSelector(getPanelStat
 export const useIsPanelLoading = () => useSelector(createSelector(getPanelState, (state) => state.isLoading));
 
 export const useIsNodePinnedToOperationPanel = (nodeId: string) =>
-  useSelector(createSelector(getPanelState, (state) => (state.operationContent.pinnedNodeId ?? '') === nodeId));
+  useSelector(
+    createSelector(getPanelState, (state) => {
+      return (
+        (state.operationContent.alternateSelectedNode?.nodeId ?? '') === nodeId &&
+        (state.operationContent.alternateSelectedNode?.persistence ?? '') === 'pinned'
+      );
+    })
+  );
+
+export const useIsAlternateNodePinned = () =>
+  useSelector(createSelector(getPanelState, (state) => (state.operationContent.alternateSelectedNode?.persistence ?? '') === 'pinned'));
 
 export const useIsNodeSelectedInOperationPanel = (nodeId: string) =>
   useSelector(createSelector(getPanelState, (state) => (state.operationContent.selectedNodeId ?? '') === nodeId));
 
 export const useIsPanelInPinnedViewMode = (): boolean => {
   const selectedNodeId = useOperationPanelSelectedNodeId();
-  const pinnedNodeId = useOperationPanelPinnedNodeId();
-  return !!(selectedNodeId && pinnedNodeId && pinnedNodeId !== selectedNodeId);
+  const alternateSelectedNode = useOperationAlternateSelectedNodeId();
+  return !!(selectedNodeId && alternateSelectedNode && alternateSelectedNode !== selectedNodeId);
 };
 
-export const useOperationPanelPinnedNodeId = () =>
-  useSelector(createSelector(getPanelState, (state) => state.operationContent.pinnedNodeId ?? ''));
+export const useOperationAlternateSelectedNodeId = () =>
+  useSelector(createSelector(getPanelState, (state) => state.operationContent.alternateSelectedNode?.nodeId ?? ''));
 
-export const useOperationPanelPinnedNodeActiveTabId = () =>
-  useSelector(createSelector(getPanelState, (state) => state.operationContent.pinnedNodeActiveTabId));
+export const useOperationAlternateSelectedNode = () =>
+  useSelector(createSelector(getPanelState, (state) => state.operationContent.alternateSelectedNode ?? {}));
+
+export const useOperationPanelAlternateNodeActiveTabId = () =>
+  useSelector(createSelector(getPanelState, (state) => state.operationContent.alternateSelectedNode?.activeTabId));
 
 export const useOperationPanelSelectedNodeId = () =>
   useSelector(createSelector(getPanelState, (state) => state.operationContent.selectedNodeId ?? ''));
@@ -65,3 +84,5 @@ export const useOperationPanelSelectedNodeActiveTabId = () =>
 export const usePanelLocation = () => useSelector(createSelector(getPanelState, (state) => state.location));
 
 export const usePreviousPanelMode = () => useSelector(createSelector(getPanelState, (state) => state.previousPanelMode));
+
+export const useIsAddingAgentTool = () => useSelector(createSelector(getPanelState, (state) => state.discoveryContent.isAddingAgentTool));

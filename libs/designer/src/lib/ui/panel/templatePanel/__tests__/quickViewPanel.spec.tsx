@@ -154,6 +154,7 @@ describe('panel/templatePanel/quickViewPanel', () => {
             $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
             contentVersion: '',
           },
+          triggerType: '',
           errors: {
             workflow: undefined,
             kind: undefined,
@@ -172,11 +173,23 @@ describe('panel/templatePanel/quickViewPanel', () => {
       }, {}),
       connections: workflow1Manifest.connections,
       errors: {
+        manifest: {},
+        workflows: {},
         parameters: {},
         connections: undefined,
       },
     };
     const minimalStoreData = {
+      workflow: {
+        isConsumption: true,
+        subscriptionId: 'subscriptionId',
+        resourceGroup: 'resourceGroup',
+        location: 'location',
+        connections: {
+          references: {},
+          mapping: {},
+        },
+      },
       template: templateSliceData,
       panel: {
         isOpen: true,
@@ -223,5 +236,14 @@ describe('panel/templatePanel/quickViewPanel', () => {
     expect(store.getState().panel.currentPanelView).toBe(TemplatePanelView.QuickView);
     expect(screen.queryByText(store.getState().template?.templateName ?? '')).toBeDefined();
     expect(screen.queryByText('No connections are needed in this template')).toBeDefined();
+  });
+
+  it('Ensures the quickView panel is open without connections section', async () => {
+    const newState = store.getState();
+    newState.panel.selectedTabId = constants.TEMPLATE_PANEL_TAB_NAMES.OVERVIEW;
+    newState.workflow.isConsumption = false;
+    store = setupStore(newState);
+    expect(screen.queryByText(store.getState().template?.templateName ?? '')).toBeDefined();
+    expect(screen.queryByText('No connections are needed in this template')).toBeNull();
   });
 });

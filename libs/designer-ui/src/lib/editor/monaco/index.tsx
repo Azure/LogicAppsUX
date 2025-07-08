@@ -7,6 +7,7 @@ import * as monaco from 'monaco-editor';
 import type { IScrollEvent, editor } from 'monaco-editor';
 import type { MutableRefObject } from 'react';
 import { useState, useEffect, forwardRef, useRef, useCallback } from 'react';
+import { useMonacoStyles } from './monaco.styles';
 
 loader.config({ monaco });
 
@@ -46,30 +47,34 @@ export interface MonacoProps extends MonacoOptions {
   openTokenPicker?(): void;
 }
 
-export interface MonacoOptions {
-  folding?: boolean;
-  fontSize?: number;
-  readOnly?: boolean;
-  lineNumbers?: 'on' | 'off' | 'relative' | 'interval' | ((lineNumber: number) => string);
-  lineNumbersMinChars?: number;
-  lineHeight?: number;
+type SupportedEditorOptions = Pick<
+  editor.IEditorOptions,
+  | 'folding'
+  | 'fontSize'
+  | 'readOnly'
+  | 'lineNumbers'
+  | 'lineNumbersMinChars'
+  | 'lineHeight'
+  | 'scrollBeyondLastLine'
+  | 'wordWrap'
+  | 'wordWrapColumn'
+  | 'scrollbar'
+  | 'overviewRulerLanes'
+  | 'overviewRulerBorder'
+  | 'wrappingIndent'
+  | 'automaticLayout'
+> &
+  Pick<editor.IGlobalEditorOptions, 'tabSize' | 'insertSpaces'>;
+
+export type MonacoOptions = SupportedEditorOptions & {
   minimapEnabled?: boolean;
-  scrollBeyondLastLine?: boolean;
-  hideUTFExpressions?: boolean;
-  wordWrap?: 'off' | 'on' | 'wordWrapColumn' | 'bounded';
-  wordWrapColumn?: number;
   contextMenu?: boolean;
-  scrollbar?: editor.IEditorScrollbarOptions;
-  overviewRulerLanes?: number;
-  overviewRulerBorder?: boolean;
-  wrappingIndent?: 'none' | 'same' | 'indent' | 'deepIndent';
-  automaticLayout?: boolean;
-}
+};
 
 export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps>(
   (
     {
-      className = 'msla-monaco',
+      className,
       contextMenu = false,
       defaultValue = '',
       readOnly = false,
@@ -78,7 +83,6 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
       minimapEnabled = false,
       value,
       scrollBeyondLastLine = false,
-      hideUTFExpressions,
       height,
       width,
       lineNumbersMinChars,
@@ -109,16 +113,17 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
     ref
   ) => {
     const { isInverted } = useTheme();
+    const styles = useMonacoStyles();
     const [canRender, setCanRender] = useState(false);
     const currentRef = useRef<editor.IStandaloneCodeEditor>();
 
     const initTemplateLanguage = useCallback(async () => {
       const { languages, editor } = await loader.init();
       if (!languages.getLanguages().some((lang: any) => lang.id === Constants.LANGUAGE_NAMES.WORKFLOW)) {
-        registerWorkflowLanguageProviders(languages, editor, hideUTFExpressions);
+        registerWorkflowLanguageProviders(languages, editor, { isInverted, isIndentationEnabled: true });
       }
       setCanRender(true);
-    }, [hideUTFExpressions]);
+    }, [isInverted]);
 
     useEffect(() => {
       if (language === EditorLanguage.templateExpressionLanguage) {
@@ -248,19 +253,27 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
     };
 
     return (
-      <div className="msla-monaco-container" style={options.monacoContainerStyle} data-automation-id={`monaco-editor-${label}`}>
+      <div className={styles.container} style={options.monacoContainerStyle} data-automation-id={`monaco-editor-${label}`}>
         {canRender ? (
           <Editor
             keepCurrentModel={true}
-            className={className}
+            className={className || styles.root}
             options={{
+              bracketPairColorization: {
+                enabled: true,
+                independentColorPoolPerBracketType: true,
+              },
               readOnly: readOnly,
               contextmenu: contextMenu,
               folding: folding,
               minimap: { enabled: minimapEnabled },
               scrollBeyondLastLine: scrollBeyondLastLine,
               lineNumbersMinChars: lineNumbersMinChars,
-              unicodeHighlight: { invisibleCharacters: false, nonBasicASCII: false, ambiguousCharacters: false },
+              unicodeHighlight: {
+                invisibleCharacters: false,
+                nonBasicASCII: false,
+                ambiguousCharacters: false,
+              },
               renderWhitespace: 'none',
               ariaLabel: label,
               wordWrap,

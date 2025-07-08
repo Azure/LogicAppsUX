@@ -139,6 +139,7 @@ export interface OAuthSetting {
 export interface ManagedIdentitySetting {
   resourceUri: string;
   additionalResourceUris?: string[];
+  requiredRoles?: string[];
 }
 
 export interface GatewaySetting {
@@ -150,6 +151,7 @@ export type ConnectionAlternativeParameters = Record<string, ConnectionParameter
 
 export interface ConnectionParameterMetadata {
   sourceType?: string;
+  value?: string;
 }
 
 export const ConnectionParameterSource = {

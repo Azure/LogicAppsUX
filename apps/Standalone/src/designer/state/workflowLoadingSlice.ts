@@ -22,10 +22,12 @@ export interface WorkflowLoadingState {
   isDarkMode: boolean;
   hostingPlan: HostingPlanTypes;
   isLocal: boolean;
+  isUnitTest: boolean;
   showChatBot?: boolean;
   showRunHistory?: boolean;
   parameters: Record<string, WorkflowParameter>;
   showConnectionsPanel?: boolean;
+  showEdgeDrawing?: boolean; // show edge drawing
   workflowKind?: string;
   language: string;
   areCustomEditorsEnabled?: boolean;
@@ -51,6 +53,7 @@ const initialState: WorkflowLoadingState = {
   resourcePath: '',
   isReadOnly: false,
   isMonitoringView: false,
+  isUnitTest: false,
   isDarkMode: false,
   hostingPlan: 'standard',
   isLocal: false,
@@ -131,6 +134,8 @@ export const workflowLoadingSlice = createSlice({
     },
     changeRunId: (state, action: PayloadAction<string | undefined>) => {
       state.runId = action.payload;
+      // set runId to history
+      setStateHistory(state);
     },
     setResourcePath: (state, action: PayloadAction<string>) => {
       state.resourcePath = action.payload;
@@ -151,6 +156,12 @@ export const workflowLoadingSlice = createSlice({
     },
     setMonitoringView: (state, action: PayloadAction<boolean>) => {
       state.isMonitoringView = action.payload;
+      if (action.payload) {
+        state.isReadOnly = true;
+      }
+    },
+    setUnitTest: (state, action: PayloadAction<boolean>) => {
+      state.isUnitTest = action.payload;
       if (action.payload) {
         state.isReadOnly = true;
       }
@@ -178,6 +189,9 @@ export const workflowLoadingSlice = createSlice({
     setShowConnectionsPanel: (state, action: PayloadAction<boolean>) => {
       state.showConnectionsPanel = action.payload;
     },
+    setShowEdgeDrawing: (state, action: PayloadAction<boolean>) => {
+      state.showEdgeDrawing = action.payload;
+    },
     loadLastWorkflow: (state) => {
       const lastWorkflow = getStateHistory() as WorkflowLoadingState;
       if (!lastWorkflow) {
@@ -194,6 +208,7 @@ export const workflowLoadingSlice = createSlice({
       state.isDarkMode = lastWorkflow.isDarkMode;
       state.isReadOnly = lastWorkflow.isReadOnly;
       state.isMonitoringView = lastWorkflow.isMonitoringView;
+      state.isUnitTest = lastWorkflow.isUnitTest;
       // Clear these state values, they get built with the other values
       state.workflowDefinition = null;
       state.runInstance = null;
@@ -255,12 +270,14 @@ export const {
   clearWorkflowDetails,
   setReadOnly,
   setMonitoringView,
+  setUnitTest,
   setDarkMode,
   setHostingPlan,
   setIsLocalSelected,
   setIsChatBotEnabled,
   setRunHistoryEnabled,
   setShowConnectionsPanel,
+  setShowEdgeDrawing,
   changeRunId,
   setLanguage,
   loadLastWorkflow,

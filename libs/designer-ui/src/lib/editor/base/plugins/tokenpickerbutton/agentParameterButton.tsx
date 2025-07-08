@@ -19,9 +19,9 @@ export const AgentParameterButton = ({ openTokenPicker, shifted }: AgentParamete
   const boxRef = useRef<HTMLDivElement>(null);
 
   const agentParameterButtonText = intl.formatMessage({
-    defaultMessage: 'Click to generate Agent Parameter',
-    id: 'nhD0ye',
-    description: 'Label for button to auto-generate agent parameter',
+    defaultMessage: 'Select to generate the agent parameter',
+    id: 'ol3TWp',
+    description: 'Button label to automaticlaly generate agent parameter',
   });
 
   return (
@@ -33,6 +33,7 @@ export const AgentParameterButton = ({ openTokenPicker, shifted }: AgentParamete
       <Tooltip content={agentParameterButtonText} relationship="label">
         <Button
           icon={<SparkleIcon />}
+          appearance="primary"
           className={'msla-agent-parameter-entrypoint-button'}
           onClick={() => {
             LoggerService().log({

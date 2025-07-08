@@ -1,7 +1,8 @@
-import { useNodesData } from '@xyflow/react';
+import { useNodesData, useInternalNode } from '@xyflow/react';
 import type { MutableRefObject } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useEdgesData } from './useEdgesData';
+import type { Size } from '../models/graphics';
 
 export const useThrottledEffect = (effect: () => void, deps: any[], delay: number) => {
   const timestamp = useRef(Date.now());
@@ -21,7 +22,7 @@ export const useThrottledEffect = (effect: () => void, deps: any[], delay: numbe
   }, [callback, delay]);
 };
 
-function getWindowDimensions() {
+function getWindowDimensions(): Size {
   const { innerWidth: width, innerHeight: height } = window;
   return { width, height };
 }
@@ -81,3 +82,7 @@ export const useEdgeIndex = (edgeId?: string) => {
 export const useNodeLeafIndex = (nodeId?: string) => {
   return (useNodesData(nodeId ?? '')?.data?.['nodeLeafIndex'] as number) ?? 0;
 };
+
+export function useNodeGlobalPosition(nodeId: string) {
+  return useInternalNode(nodeId)?.internals?.positionAbsolute ?? { x: 0, y: 0 };
+}

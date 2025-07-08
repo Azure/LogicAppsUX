@@ -1,4 +1,4 @@
-import type { ApiHubServiceDetails, ListDynamicValue } from '@microsoft/logic-apps-shared';
+import type { ApiHubServiceDetails, ListDynamicValue, UnitTestDefinition } from '@microsoft/logic-apps-shared';
 import type { ConnectionsData, ICallbackUrlResponse, IDesignerPanelMetadata } from '@microsoft/vscode-extension-logic-apps';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
@@ -7,6 +7,7 @@ export interface DesignerState {
   panelMetaData: IDesignerPanelMetadata | null;
   connectionData: ConnectionsData;
   baseUrl: string;
+  workflowRuntimeBaseUrl: string;
   apiVersion: string;
   apiHubServiceDetails: ApiHubServiceDetails;
   readOnly: boolean;
@@ -18,11 +19,14 @@ export interface DesignerState {
   iaMapArtifacts: ListDynamicValue[];
   oauthRedirectUrl: string;
   hostVersion: string;
+  isUnitTest: boolean;
+  unitTestDefinition: UnitTestDefinition | null;
 }
 
 const initialState: DesignerState = {
   panelMetaData: null,
   baseUrl: '/url',
+  workflowRuntimeBaseUrl: '',
   apiVersion: '2018-11-01',
   connectionData: {},
   apiHubServiceDetails: {
@@ -46,12 +50,15 @@ const initialState: DesignerState = {
   iaMapArtifacts: [],
   oauthRedirectUrl: '',
   hostVersion: '',
+  isUnitTest: false,
+  unitTestDefinition: null,
 };
 
 export const designerSlice = createSlice({
   name: 'designer',
   initialState,
   reducers: {
+    /// TODO(ccastrotrejo): Update missing types
     initializeDesigner: (state, action: PayloadAction<any>) => {
       const {
         panelMetadata,
@@ -65,11 +72,15 @@ export const designerSlice = createSlice({
         isMonitoringView,
         runId,
         hostVersion,
+        isUnitTest,
+        unitTestDefinition,
+        workflowRuntimeBaseUrl,
       } = action.payload;
 
       state.panelMetaData = panelMetadata;
       state.connectionData = connectionData;
       state.baseUrl = baseUrl;
+      state.workflowRuntimeBaseUrl = workflowRuntimeBaseUrl ?? '';
       state.apiVersion = apiVersion;
       state.apiHubServiceDetails = apiHubServiceDetails;
       state.readOnly = readOnly;
@@ -78,6 +89,8 @@ export const designerSlice = createSlice({
       state.runId = runId;
       state.oauthRedirectUrl = oauthRedirectUrl;
       state.hostVersion = hostVersion;
+      state.isUnitTest = isUnitTest;
+      state.unitTestDefinition = unitTestDefinition;
     },
     updateCallbackUrl: (state, action: PayloadAction<any>) => {
       const { callbackInfo } = action.payload;
@@ -110,8 +123,18 @@ export const designerSlice = createSlice({
       }
       delete state.fileSystemConnections[connectionName];
     },
+    updateUnitTestDefinition: (state, action: PayloadAction<{ unitTestDefinition: UnitTestDefinition }>) => {
+      const { unitTestDefinition } = action.payload;
+      state.unitTestDefinition = unitTestDefinition;
+    },
   },
 });
 
-export const { initializeDesigner, updateCallbackUrl, createFileSystemConnection, updateFileSystemConnection, updatePanelMetadata } =
-  designerSlice.actions;
+export const {
+  initializeDesigner,
+  updateCallbackUrl,
+  createFileSystemConnection,
+  updateFileSystemConnection,
+  updatePanelMetadata,
+  updateUnitTestDefinition,
+} = designerSlice.actions;

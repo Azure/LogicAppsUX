@@ -46,6 +46,7 @@ export const VARIABLE_TYPE = {
   INTEGER: 'integer',
   OBJECT: 'object',
   STRING: 'string',
+  NUMBER: 'number',
 };
 
 const PANEL_TAB_NAMES = {
@@ -107,6 +108,8 @@ export default {
   STANDARD_TEXT_COLOR: '#424242',
   INVERTED_EDITOR_BACKGROUND_COLOR: '#1B1A19',
   STANDARD_EDITOR_BACKGROUND_COLOR: '#FFFFFF',
+  AGENT_PARAMETER_SECTION_LIGHT_COLOR: '#E6EAF4',
+  AGENT_PARAMETER_SECTION_DARK_COLOR: '#041547',
 
   DARK_COLOR: '#252423',
   LIGHT_COLOR: '#F3F2F1',
@@ -136,6 +139,12 @@ export default {
     SUSPENDED: 'Suspended',
     TIMEDOUT: 'TimedOut',
     WAITING: 'Waiting',
+  },
+
+  // Mock status
+  MOCKSTATUS: {
+    COMPLETED: 'Completed',
+    EMPTY: 'Empty',
   },
 
   CONDITIONCONTROLPROPS: {
@@ -445,6 +454,7 @@ export default {
 
   PARAMETER: {
     EDITOR: {
+      AGENT_INSTRUCTION: 'agentinstruction',
       ARRAY: 'array',
       AUTHENTICATION: 'authentication',
       CODE: 'code',
@@ -461,7 +471,6 @@ export default {
       SCHEMA: 'schema',
       STRING: 'string',
       TABLE: 'table',
-      MIXEDINPUTEDITOR: 'mixedinputeditor',
       CUSTOM: 'custom', // To align with back-end types, not used to render editor
       CUSTOMEDITORNAME: 'internal-custom-editor', // Overridden custom editors are identified by this name internally.
     },
@@ -471,11 +480,25 @@ export default {
         JAVASCRIPT: 'javascript',
         JSON: 'json',
         POWERSHELL: 'powershell',
+        PYTHON: 'python',
       },
     },
     VARIABLE_EDITOR_MAX_VARIABLES: 20,
   },
+  TEACHING_POPOVER_ID: {
+    expandCollapseButton: 'control-expand-collapse-button',
+    agentToolPanel: 'agent-tool-default-panel',
+  },
 };
+
+export const RecommendationPanelConstants = {
+  ACTION_SPOTLIGHT: {
+    MAX_AMOUNT_OF_SPOTLIGHT_ITEMS: 4,
+  },
+  SEARCH_VIEW: {
+    MAX_OPERATIONS_IN_SEARCH_GROUP: 8,
+  },
+} as const;
 
 export const FxBrandColor = '#AD008C';
 export const FxIcon =

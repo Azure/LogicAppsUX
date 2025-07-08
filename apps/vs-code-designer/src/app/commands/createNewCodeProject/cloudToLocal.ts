@@ -6,8 +6,8 @@ import { OpenBehaviorStep } from '../createNewProject/OpenBehaviorStep';
 import { NewCodeProjectTypeStep } from './CodeProjectBase/NewCodeProjectTypeStep';
 import { SelectPackageStep } from '../createNewProject/createProjectSteps/SelectPackageStep';
 import { OpenFolderStepCodeProject } from './CodeProjectBase/OpenFolderStepCodeProject';
-import { SetLogicAppName } from './CodeProjectBase/SetLogicAppNameStep';
-import { SetWorkspaceName } from './CodeProjectBase/SetWorkspaceName';
+import { LogicAppNameStep } from './CodeProjectBase/LogicAppNameStep';
+import { WorkspaceNameStep } from './CodeProjectBase/WorkspaceNameStep';
 import { AzureWizard } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { latestGAVersion, OpenBehavior } from '@microsoft/vscode-extension-logic-apps';
@@ -15,6 +15,7 @@ import type { ICreateFunctionOptions, IFunctionWizardContext, ProjectLanguage } 
 import { ProcessPackageStep } from './CodeProjectBase/ProcessPackageStep';
 import { SelectFolderForNewWorkspaceStep } from '../createNewProject/createProjectSteps/SelectFolderForNewWorkspaceStep';
 import { ExtractPackageStep } from './CodeProjectBase/ExtractPackageStep';
+import { WorkspaceSettingsStep } from './CodeProjectBase/WorkspaceSettingsStep';
 
 const openFolder = true;
 
@@ -54,9 +55,10 @@ export async function cloudToLocalCommand(
     promptSteps: [
       new SelectPackageStep(),
       new SelectFolderForNewWorkspaceStep(),
-      new SetWorkspaceName(),
-      new SetLogicAppName(),
+      new WorkspaceNameStep(),
+      new LogicAppNameStep(),
       new NewCodeProjectTypeStep(options.templateId, options.functionSettings, true),
+      new WorkspaceSettingsStep(),
       new ExtractPackageStep(),
       new OpenBehaviorStep(),
     ],

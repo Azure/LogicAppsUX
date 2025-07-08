@@ -4,6 +4,7 @@ import { Dialog, DialogFooter, DialogType } from '@fluentui/react/lib/Dialog';
 import type { IModalProps } from '@fluentui/react/lib/Modal';
 import type { IStyleFunction } from '@fluentui/react/lib/Utilities';
 import type * as React from 'react';
+import { useModalDialogStyles } from './modaldialog.styles';
 
 export interface ModalDialogProps {
   confirmText: string;
@@ -16,14 +17,16 @@ export interface ModalDialogProps {
   onDismiss: () => void;
 }
 
-const modalProps: IModalProps = {
-  className: 'msla-modal-dialog',
-  layerProps: {
-    eventBubblingEnabled: true,
-  },
-};
-
 export const ModalDialog = ({ confirmText, isOpen, title, children, getStyles, onConfirm, onDismiss }: ModalDialogProps): JSX.Element => {
+  const styles = useModalDialogStyles();
+
+  const modalProps: IModalProps = {
+    className: styles.modalDialog,
+    layerProps: {
+      eventBubblingEnabled: true,
+    },
+  };
+
   const dialogContentProps: IDialogContentProps = {
     type: DialogType.close,
     title,
@@ -40,8 +43,8 @@ export const ModalDialog = ({ confirmText, isOpen, title, children, getStyles, o
   };
   return (
     <Dialog dialogContentProps={dialogContentProps} hidden={!isOpen} modalProps={modalProps} styles={getStyles} onDismiss={handleDismiss}>
-      <div className="msla-modal-content" onClick={handleModalBodyClick}>
-        <div className="msla-modal-body">{children}</div>
+      <div className={styles.modalContent} onClick={handleModalBodyClick}>
+        <div className={styles.modalBody}>{children}</div>
       </div>
       <DialogFooter>
         <PrimaryButton autoFocus onClick={handleConfirm}>

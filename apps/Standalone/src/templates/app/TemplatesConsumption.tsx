@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import {
   type ConnectionReferences,
   getReactQueryClient,
+  getTemplateTypeCategories,
   isOpenApiSchemaVersion,
   TemplatesDataProvider,
   TemplatesDesigner,
@@ -22,6 +23,7 @@ import {
   ConsumptionConnectorService,
   ConsumptionTemplateService,
   BaseResourceService,
+  BaseTemplateResourceService,
 } from '@microsoft/logic-apps-shared';
 import {
   getWorkflowAndArtifactsConsumption,
@@ -49,14 +51,12 @@ export const TemplatesConsumption = () => {
   const {
     resourcePath: workflowId,
     language,
-    useEndpoint,
     isCreateView,
     enableResourceSelection,
   } = useSelector((state: RootState) => state.workflowLoader);
   const { data: workflowData } = useWorkflowAndArtifactsConsumption(workflowId!);
   const { data: tenantId } = useCurrentTenantId();
   const { data: objectId } = useCurrentObjectId();
-  const [reload, setReload] = useState<boolean | undefined>(undefined);
   const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowData?.location ?? 'westus');
 
   const { workflow, connectionReferences } = useMemo(() => getDataForConsumption(workflowData), [workflowData]);
@@ -64,12 +64,6 @@ export const TemplatesConsumption = () => {
 
   const isWorkflowEmpty = useMemo(() => Object.keys((workflow?.definition as any)?.triggers ?? {}).length === 0, [workflow]);
   const queryClient = getReactQueryClient();
-
-  useEffect(() => {
-    if (useEndpoint !== undefined) {
-      setReload(true);
-    }
-  }, [useEndpoint]);
 
   const onBlankWorkflowClick = async () => {
     if (!workflowData) {
@@ -139,20 +133,9 @@ export const TemplatesConsumption = () => {
   };
 
   const services = useMemo(
-    () =>
-      getServices(
-        workflowId!,
-        workflow as any,
-        tenantId,
-        objectId,
-        canonicalLocation,
-        language,
-        onBlankWorkflowClick,
-        queryClient,
-        useEndpoint
-      ),
+    () => getServices(workflowId!, workflow as any, tenantId, objectId, canonicalLocation, language, onBlankWorkflowClick, queryClient),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [workflowId, workflow, tenantId, canonicalLocation, language, useEndpoint]
+    [workflowId, workflow, tenantId, canonicalLocation, language]
   );
 
   const resourceDetails = new ArmParser(workflowId ?? '');
@@ -198,7 +181,6 @@ export const TemplatesConsumption = () => {
         isCreateView={!!isCreateView}
         enableResourceSelection={enableResourceSelection}
         viewTemplate={isSingleTemplateView ? { id: templatesView } : undefined}
-        reload={reload}
         onResourceChange={onReloadServices}
       >
         <div
@@ -245,6 +227,10 @@ export const TemplatesConsumption = () => {
                     },
                   ],
                 },
+                Type: {
+                  displayName: 'Type',
+                  items: getTemplateTypeCategories(),
+                },
               }}
               isWorkflowEmpty={isWorkflowEmpty}
             />
@@ -266,8 +252,7 @@ const getServices = (
   location: string,
   locale: string | undefined,
   onBlankWorkflowClick: () => Promise<void>,
-  queryClient?: any,
-  useEndpoint?: boolean
+  queryClient?: any
 ): any => {
   const baseUrl = 'https://management.azure.com';
   const { subscriptionId, resourceGroup } = new ArmParser(workflowId);
@@ -298,14 +283,16 @@ const getServices = (
   };
   const templateService = new ConsumptionTemplateService({
     ...defaultServiceParams,
-    endpoint: 'https://priti-cxf4h5cpcteue4az.b02.azurefd.net',
-    useEndpointForTemplates: !!useEndpoint,
+    endpoint: '/templatesLocalProxy/templates/logicapps',
+    useEndpointForTemplates: true,
     openBladeAfterCreate: (_workflowName: string | undefined) => {
       window.alert('Open blade after create, consumption creation is complete');
     },
     onAddBlankWorkflow: onBlankWorkflowClick,
   });
   const resourceService = new BaseResourceService(defaultServiceParams);
+  const templateResourceService = new BaseTemplateResourceService({ baseUrl, httpClient, apiVersion: '2025-06-01-preview' });
+
   const { connectionService, oAuthService, operationManifestService, connectorService } = getResourceBasedServices(
     subscriptionId,
     resourceGroup,
@@ -327,6 +314,7 @@ const getServices = (
     workflowService,
     connectorService,
     resourceService,
+    templateResourceService,
   };
 };
 

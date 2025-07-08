@@ -14,7 +14,7 @@ describe('lib/card/cardfooter', () => {
   });
 
   beforeEach(() => {
-    minimal = {};
+    minimal = { title: 'test title' };
   });
 
   it('should render', () => {
@@ -52,6 +52,11 @@ describe('lib/card/cardfooter', () => {
 
   it('should render with a testing icon', () => {
     const tree = renderer.create(<CardFooter {...minimal} staticResultsEnabled={true} />).toJSON();
+    expect(tree).toMatchSnapshot();
+  });
+
+  it('should not render with a testing icon when static results are disabled', () => {
+    const tree = renderer.create(<CardFooter {...minimal} staticResultsEnabled={false} />).toJSON();
     expect(tree).toMatchSnapshot();
   });
 });

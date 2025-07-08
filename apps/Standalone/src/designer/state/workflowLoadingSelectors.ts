@@ -25,6 +25,10 @@ export const useIsMonitoringView = () => {
   return useSelector((state: RootState) => state.workflowLoader.isMonitoringView);
 };
 
+export const useIsUnitTestView = () => {
+  return useSelector((state: RootState) => state.workflowLoader.isUnitTest);
+};
+
 export const useResourcePath = () => {
   return useSelector((state: RootState) => state.workflowLoader.resourcePath);
 };
@@ -47,6 +51,10 @@ export const useShowChatBot = () => {
 
 export const useShowConnectionsPanel = () => {
   return useSelector((state: RootState) => state.workflowLoader?.showConnectionsPanel ?? false);
+};
+
+export const useShowEdgeDrawing = () => {
+  return useSelector((state: RootState) => state.workflowLoader?.showEdgeDrawing ?? false);
 };
 
 export const useAreCustomEditorsEnabled = () => {

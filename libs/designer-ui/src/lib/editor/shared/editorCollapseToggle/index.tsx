@@ -4,6 +4,8 @@ import TextMode from '../../../card/images/text_mode.svg';
 import TextModeInverted from '../../../card/images/text_mode_inverted.svg';
 import type { ICalloutProps, ITooltipHostStyles } from '@fluentui/react';
 import { useTheme, IconButton, TooltipHost, DirectionalHint } from '@fluentui/react';
+import { mergeClasses } from '@fluentui/react-components';
+import { useEditorCollapseToggleStyles } from './editorCollapseToggle.styles';
 
 export interface EditorCollapseToggleProps {
   collapsed: boolean;
@@ -27,6 +29,7 @@ export const EditorCollapseToggle: React.FC<EditorCollapseToggleProps> = ({
   toggleCollapsed,
 }): JSX.Element => {
   const { isInverted } = useTheme();
+  const styles = useEditorCollapseToggleStyles();
 
   const handleToggle = (e: React.MouseEvent<HTMLButtonElement>): void => {
     e.stopPropagation();
@@ -39,7 +42,7 @@ export const EditorCollapseToggle: React.FC<EditorCollapseToggleProps> = ({
     <TooltipHost calloutProps={calloutProps} content={label} styles={inlineBlockStyle}>
       <IconButton
         aria-label={label}
-        className="msla-button msla-editor-toggle-button"
+        className={mergeClasses('msla-button', styles.toggleButton)}
         disabled={disabled}
         iconProps={{ imageProps: { src: toggleIcon } }}
         onClick={handleToggle}

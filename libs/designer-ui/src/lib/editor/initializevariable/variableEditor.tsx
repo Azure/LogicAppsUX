@@ -2,7 +2,7 @@ import { Label } from '../../label';
 import { Combobox, DropdownEditor, getVariableType, StringEditor, TrafficLightDot, useId } from '../..';
 import type { DropdownItem } from '../../dropdown';
 import type { BaseEditorProps, ChangeState } from '../base';
-import { Button, Tooltip } from '@fluentui/react-components';
+import { Badge, Button, Tooltip } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 import {
   bundleIcon,
@@ -23,15 +23,62 @@ import type { InitializeVariableProps } from './';
 
 const DeleteIcon = bundleIcon(Delete24Filled, Delete24Regular);
 const ExpandIcon = bundleIcon(ChevronRight24Filled, ChevronRight24Regular);
-const CollapseIcon = bundleIcon(ChevronDown24Regular, ChevronDown24Filled);
+const CollapseIcon = bundleIcon(ChevronDown24Filled, ChevronDown24Regular);
 
-const typeOptions: DropdownItem[] = [
-  { key: VARIABLE_TYPE.BOOLEAN, value: VARIABLE_TYPE.BOOLEAN, displayName: 'Boolean' },
-  { key: VARIABLE_TYPE.INTEGER, value: VARIABLE_TYPE.INTEGER, displayName: 'Integer' },
-  { key: VARIABLE_TYPE.FLOAT, value: VARIABLE_TYPE.FLOAT, displayName: 'Float' },
-  { key: VARIABLE_TYPE.STRING, value: VARIABLE_TYPE.STRING, displayName: 'String' },
-  { key: VARIABLE_TYPE.OBJECT, value: VARIABLE_TYPE.OBJECT, displayName: 'Object' },
-  { key: VARIABLE_TYPE.ARRAY, value: VARIABLE_TYPE.ARRAY, displayName: 'Array' },
+const variableOptions: DropdownItem[] = [
+  {
+    key: VARIABLE_TYPE.BOOLEAN,
+    value: VARIABLE_TYPE.BOOLEAN,
+    displayName: 'Boolean',
+  },
+  {
+    key: VARIABLE_TYPE.INTEGER,
+    value: VARIABLE_TYPE.INTEGER,
+    displayName: 'Integer',
+  },
+  {
+    key: VARIABLE_TYPE.FLOAT,
+    value: VARIABLE_TYPE.FLOAT,
+    displayName: 'Float',
+  },
+  {
+    key: VARIABLE_TYPE.STRING,
+    value: VARIABLE_TYPE.STRING,
+    displayName: 'String',
+  },
+  {
+    key: VARIABLE_TYPE.OBJECT,
+    value: VARIABLE_TYPE.OBJECT,
+    displayName: 'Object',
+  },
+  {
+    key: VARIABLE_TYPE.ARRAY,
+    value: VARIABLE_TYPE.ARRAY,
+    displayName: 'Array',
+  },
+];
+
+const agentParameterOptions: DropdownItem[] = [
+  {
+    key: VARIABLE_TYPE.STRING,
+    value: VARIABLE_TYPE.STRING,
+    displayName: 'String',
+  },
+  {
+    key: VARIABLE_TYPE.INTEGER,
+    value: VARIABLE_TYPE.INTEGER,
+    displayName: 'Integer',
+  },
+  {
+    key: VARIABLE_TYPE.NUMBER,
+    value: VARIABLE_TYPE.NUMBER,
+    displayName: 'Float (Number)',
+  },
+  {
+    key: VARIABLE_TYPE.BOOLEAN,
+    value: VARIABLE_TYPE.BOOLEAN,
+    displayName: 'Boolean',
+  },
 ];
 
 export const VARIABLE_PROPERTIES = {
@@ -52,8 +99,10 @@ interface VariableEditorProps extends Partial<BaseEditorProps> {
   errors?: InitializeVariableErrors;
   onDelete: () => void;
   onVariableChange: (value: InitializeVariableProps) => void;
-  preventMultiVariable?: boolean;
+  isMultiVariableEnabled?: boolean;
   isAgentParameter?: boolean;
+  isNewlyAdded?: boolean;
+  forceExpandByDefault?: boolean;
 }
 
 const FieldEditor = ({
@@ -89,14 +138,16 @@ export const VariableEditor = ({
   onVariableChange,
   errors,
   index,
-  preventMultiVariable,
+  forceExpandByDefault = false,
+  isMultiVariableEnabled,
   isAgentParameter,
+  isNewlyAdded,
   ...baseEditorProps
 }: VariableEditorProps) => {
   const intl = useIntl();
   const { isInverted } = useTheme();
   const themeName = isInverted ? 'dark' : 'light';
-  const [expanded, setExpanded] = useState(true);
+  const [expanded, setExpanded] = useState((isNewlyAdded || forceExpandByDefault) ?? false);
   const [variableId, setVariableId] = useState<string>(guid());
 
   const handleToggleExpand = (): void => {
@@ -116,15 +167,15 @@ export const VariableEditor = ({
   });
 
   const deleteButtonDisabledAgentParameter = intl.formatMessage({
-    defaultMessage: 'Cannot delete the last agent parameter',
-    id: 'hcpXlK',
-    description: 'Delete label',
+    defaultMessage: "Can't delete the last agent parameter.",
+    id: 'zOq84J',
+    description: 'Delete agent last parameter label',
   });
 
   const newAgentParameterName = intl.formatMessage({
-    defaultMessage: 'New Agent Parameter',
-    id: '2bR583',
-    description: 'Heading Title for a Agent Parameter Without Name',
+    defaultMessage: 'New agent parameter',
+    id: 'qkDzwI',
+    description: 'Heading title for an unnamed agent parameter',
   });
 
   const newVariableName = intl.formatMessage({
@@ -140,8 +191,8 @@ export const VariableEditor = ({
   });
 
   const nameAgentParameterPlaceHolder = intl.formatMessage({
-    defaultMessage: 'Enter agent parameter name',
-    id: '02TAGZ',
+    defaultMessage: 'Enter the agent parameter name',
+    id: 'umS0FT',
     description: 'Placeholder for parameter name',
   });
 
@@ -152,9 +203,9 @@ export const VariableEditor = ({
   });
 
   const typeAgentParameterPlaceholder = intl.formatMessage({
-    defaultMessage: 'Select agent parameter type',
-    id: 'gQSH6J',
-    description: 'Placeholder for agent parameter type',
+    defaultMessage: 'Select the agent parameter type',
+    id: 'vp016T',
+    description: 'Placeholder for the agent parameter type',
   });
 
   const valuePlaceHolder = intl.formatMessage({
@@ -170,7 +221,10 @@ export const VariableEditor = ({
   });
 
   const handleBlur = (newState: ChangeState, property: string): void => {
-    const newVariable = { ...variable, [property]: isEmptySegments(newState.value) ? [createEmptyLiteralValueSegment()] : newState.value };
+    const newVariable = {
+      ...variable,
+      [property]: isEmptySegments(newState.value) ? [createEmptyLiteralValueSegment()] : newState.value,
+    };
     onVariableChange(newVariable);
   };
 
@@ -182,6 +236,11 @@ export const VariableEditor = ({
 
   const isBooleanType = type[0]?.value === VARIABLE_TYPE.BOOLEAN;
   const variableType = getVariableType(type);
+
+  // Get the display name for the current variable type
+  const currentTypeValue = type[0]?.value;
+  const typeOptions = isAgentParameter ? agentParameterOptions : variableOptions;
+  const typeDisplayName = typeOptions.find((option) => option.value === currentTypeValue)?.displayName || currentTypeValue || '';
   const fields = [
     {
       label: VARIABLE_PROPERTIES.NAME,
@@ -196,6 +255,7 @@ export const VariableEditor = ({
         editorBlur: (newState: ChangeState) => handleBlur(newState, VARIABLE_PROPERTIES.NAME),
         basePlugins: { ...baseEditorProps.basePlugins, tokens: false },
         placeholder: isAgentParameter ? nameAgentParameterPlaceHolder : nameVariablePlaceHolder,
+        dataAutomationId: `${baseEditorProps.dataAutomationId}-${VARIABLE_PROPERTIES.NAME}-${index}`,
       },
       errorMessage: errors?.[VARIABLE_PROPERTIES.NAME],
     },
@@ -208,9 +268,10 @@ export const VariableEditor = ({
         ...baseEditorProps,
         key: `${VARIABLE_PROPERTIES.TYPE}-${variableId}`,
         initialValue: type,
-        options: typeOptions,
+        options: isAgentParameter ? agentParameterOptions : variableOptions,
         onChange: (newState: ChangeState) => handleBlur(newState, VARIABLE_PROPERTIES.TYPE),
         placeholder: isAgentParameter ? typeAgentParameterPlaceholder : typeVariablePlaceHolder,
+        dataAutomationId: `${baseEditorProps.dataAutomationId}-${VARIABLE_PROPERTIES.TYPE}-${index}`,
       },
       errorMessage: errors?.[VARIABLE_PROPERTIES.TYPE],
     },
@@ -235,6 +296,7 @@ export const VariableEditor = ({
             : undefined,
         onChange: isBooleanType ? (newState: ChangeState) => handleBlur(newState, valueOrDescription) : undefined,
         placeholder: isAgentParameter ? descriptionPlaceHolder : valuePlaceHolder,
+        dataAutomationId: `${baseEditorProps.dataAutomationId}-${valueOrDescription}-${index}`,
       },
       errorMessage: errors?.[valueOrDescription],
     },
@@ -246,65 +308,77 @@ export const VariableEditor = ({
   };
 
   return (
-    <div className="msla-editor-initialize-variable">
-      <div>
-        <div>
-          <Button
-            appearance="subtle"
-            className="msla-variable-editor-heading-button"
-            onClick={handleToggleExpand}
-            icon={expanded ? <CollapseIcon /> : <ExpandIcon />}
-            aria-expanded={expanded}
-            style={{ justifyContent: 'flex-start' }}
-          >
-            {displayName}
-          </Button>
+    <div className={'msla-editor-initialize-variable'}>
+      <div className={'msla-variable-editor-heading'}>
+        <Button
+          appearance="subtle"
+          className="msla-variable-editor-heading-button"
+          onClick={handleToggleExpand}
+          icon={expanded ? <CollapseIcon /> : <ExpandIcon />}
+          aria-expanded={expanded}
+          style={{ justifyContent: 'flex-start', width: '90%' }}
+        >
+          {displayName}
           {Object.values(errors ?? {}).filter((x) => !!x).length > 0 ? (
             <span className="msla-initialize-variable-error-dot">
               <TrafficLightDot fill={RUN_AFTER_COLORS[themeName]['FAILED']} />
             </span>
           ) : null}
-        </div>
-        {expanded ? (
+        </Button>
+        {!isMultiVariableEnabled && !isAgentParameter ? null : (
           <>
-            {fields.map(({ label, id, isRequired, editor, editorProps, errorMessage }) => (
-              <FieldEditor
-                key={id}
-                label={label}
-                id={id}
-                index={index}
-                isRequired={isRequired}
-                editor={editor}
-                editorProps={editorProps}
-                errorMessage={errorMessage}
-              />
-            ))}
+            {(isAgentParameter || isMultiVariableEnabled) && typeDisplayName && (
+              <div
+                className={'msla-variable-editor-type-badge'}
+                data-testid="variable-type-badge"
+                aria-label={`${isAgentParameter ? 'Agent parameter' : 'Variable'} type: ${typeDisplayName}`}
+                role="status"
+              >
+                <Badge appearance="filled" size="medium" color="brand">
+                  {typeDisplayName}
+                </Badge>
+              </div>
+            )}
+            <div className={'msla-variable-editor-edit-or-delete-button'}>
+              <Tooltip
+                relationship="label"
+                content={
+                  disableDelete
+                    ? isAgentParameter
+                      ? deleteButtonDisabledAgentParameter
+                      : deleteButtonDisabledVariableTitle
+                    : deleteButtonTitle
+                }
+              >
+                <Button
+                  appearance="subtle"
+                  aria-label={deleteButtonTitle}
+                  onClick={handleDelete}
+                  icon={<DeleteIcon />}
+                  disabled={disableDelete || baseEditorProps?.readonly}
+                  style={{ color: 'var(--colorBrandForeground1)' }}
+                />
+              </Tooltip>
+            </div>
           </>
-        ) : null}
+        )}
       </div>
-      {preventMultiVariable && !isAgentParameter ? null : (
-        <div className={'msla-variable-editor-edit-or-delete-button'}>
-          <Tooltip
-            relationship="label"
-            content={
-              disableDelete
-                ? isAgentParameter
-                  ? deleteButtonDisabledAgentParameter
-                  : deleteButtonDisabledVariableTitle
-                : deleteButtonTitle
-            }
-          >
-            <Button
-              appearance="subtle"
-              aria-label={deleteButtonTitle}
-              onClick={handleDelete}
-              icon={<DeleteIcon />}
-              disabled={disableDelete || baseEditorProps?.readonly}
-              style={{ color: 'var(--colorBrandForeground1)' }}
+      {expanded ? (
+        <div className="msla-variable-editor-content">
+          {fields.map(({ label, id, isRequired, editor, editorProps, errorMessage }) => (
+            <FieldEditor
+              key={id}
+              label={label}
+              id={id}
+              index={index}
+              isRequired={isRequired}
+              editor={editor}
+              editorProps={editorProps}
+              errorMessage={errorMessage}
             />
-          </Tooltip>
+          ))}
         </div>
-      )}
+      ) : null}
     </div>
   );
 };

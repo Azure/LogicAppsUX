@@ -1,4 +1,4 @@
-import { isBuiltInConnector, isCustomConnector, isPremiumConnector } from '../connectors';
+import { isBuiltInConnector, isCustomConnector } from '../connectors';
 import Constants from '../constants';
 import type { Connector, OperationApi } from '@microsoft/logic-apps-shared';
 import { equals, getIntl } from '@microsoft/logic-apps-shared';
@@ -371,6 +371,30 @@ export function getStatusString(status: string | undefined, hasRetries: boolean)
   }
 }
 
+/**
+ * Returns the corresponding status string based on the provided status value.
+ * @param {string} status - The status value.
+ * @returns The status string.
+ */
+export function getMockStatusString(status: string): string {
+  const intl = getIntl();
+  switch (status) {
+    case Constants.MOCKSTATUS.COMPLETED:
+      return intl.formatMessage({
+        defaultMessage: 'Completed',
+        id: 'dgPMsl',
+        description: 'Completed status message in mock card.',
+      });
+    case Constants.MOCKSTATUS.EMPTY:
+    default:
+      return intl.formatMessage({
+        defaultMessage: 'Empty',
+        id: 'eIzHIR',
+        description: 'Empty status message in mock card.',
+      });
+  }
+}
+
 export const filterRecord = <T>(data: Record<string, T>, filter: (_key: string, _val: any) => boolean): Record<string, T> => {
   const keyValuePropArray = Object.entries(data).filter(([key, value]) => filter(key, value));
   const output: Record<string, T> = {};
@@ -387,8 +411,6 @@ export const getConnectorCategoryString = (connector: Connector | OperationApi |
     connectorCategory = allStrings['inapp'];
   } else if (isCustomConnector(connector)) {
     connectorCategory = allStrings['custom'];
-  } else if (isPremiumConnector(connector)) {
-    connectorCategory = allStrings['premium'];
   } else {
     connectorCategory = allStrings['shared'];
   }

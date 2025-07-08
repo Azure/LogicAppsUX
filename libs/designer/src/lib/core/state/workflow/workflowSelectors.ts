@@ -1,4 +1,4 @@
-import constants from '../../../common/constants';
+import commonConstants from '../../../common/constants';
 import type { WorkflowEdge, WorkflowNode } from '../../parsers/models/workflowNode';
 import type { RootState } from '../../store';
 import { createWorkflowEdge, getAllParentsForNode } from '../../utils/graph';
@@ -12,6 +12,7 @@ import Queue from 'yocto-queue';
 import type {} from 'reselect';
 import type {} from '@tanstack/react-query';
 import { collapseFlowTree } from './helper';
+import { useTimelineRepetitionOffset } from '../../../ui/MonitoringTimeline/hooks';
 
 export const getWorkflowState = (state: RootState): WorkflowState => state.workflow;
 
@@ -35,7 +36,52 @@ export const useNodeDescription = (id: string) =>
 export const useShouldNodeFocus = (id: string) =>
   useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.focusedCanvasNodeId === id));
 
+export const useFocusElement = () => useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.focusElement));
+
 export const useIsWorkflowDirty = () => useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.isDirty));
+
+export const useTimelineRepetitionIndex = () =>
+  useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.timelineRepetitionIndex));
+
+export const useTimelineRepetitionArray = () =>
+  useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.timelineRepetitionArray));
+
+export const useActionTimelineRepetitionCount = (actionId: string, index: number) =>
+  useSelector(
+    createSelector(getWorkflowState, (state: WorkflowState) => {
+      const timelineRepetitionArray = state.timelineRepetitionArray;
+      // For each timeline repetition up to the current one, add the count of action IDs that match the actionId
+      let count = 0;
+      for (let i = 0; i <= index; i++) {
+        if (timelineRepetitionArray[i]) {
+          count += timelineRepetitionArray[i].filter((id) => id === actionId).length;
+        }
+      }
+      return count;
+    })
+  );
+
+export const useIsActionInSelectedTimelineRepetition = (actionId: string) =>
+  useSelector(
+    createSelector(getWorkflowState, (state: WorkflowState) => {
+      if (!equals(state.workflowKind, 'agent')) {
+        return true; // For non-agent workflows, always return true
+      }
+      const selectedTransitionActions = state.timelineRepetitionArray[state.timelineRepetitionIndex];
+      return selectedTransitionActions ? selectedTransitionActions.includes(actionId) : false;
+    })
+  );
+
+export const useIsEverythingExpanded = () =>
+  useSelector(
+    createSelector(getWorkflowState, (data) => {
+      const collapsedIds = data.collapsedGraphIds;
+      const collapsedActionsIds = data.collapsedActionIds;
+      const numberOfCollapsedGraphs = Object.keys(collapsedIds ?? {}).filter((id) => collapsedIds[id]).length;
+      const numberOfCollapsedActions = Object.keys(collapsedActionsIds ?? {}).length;
+      return numberOfCollapsedGraphs === 0 && numberOfCollapsedActions === 0;
+    })
+  );
 
 export const getRootWorkflowGraphForLayout = createSelector(getWorkflowState, (data) => {
   const rootNode = data.graph;
@@ -96,16 +142,19 @@ const reduceCollapsed =
         filteredChildren.length === 2
           ? [createWorkflowEdge(filteredChildren[0]?.id, filteredChildren[1]?.id, WORKFLOW_EDGE_TYPES.HIDDEN_EDGE)]
           : [];
-      acc.push({ ...child, ...{ children: filteredChildren, edges: filteredEdges } });
+      acc.push({
+        ...child,
+        ...{ children: filteredChildren, edges: filteredEdges },
+      });
       return acc;
     }, []);
   };
 
 export const useIsGraphCollapsed = (graphId: string): boolean =>
-  useSelector(createSelector(getWorkflowState, (state: WorkflowState): boolean => state.collapsedGraphIds?.[graphId]));
+  useSelector(createSelector(getWorkflowState, (state: WorkflowState): boolean => state.collapsedGraphIds?.[graphId] ?? false));
 
 export const useIsActionCollapsed = (actionId: string): boolean =>
-  useSelector(createSelector(getWorkflowState, (state: WorkflowState): boolean => state.collapsedActionIds?.[actionId]));
+  useSelector(createSelector(getWorkflowState, (state: WorkflowState): boolean => state.collapsedActionIds?.[actionId] ?? false));
 
 export const useGetSwitchOrAgentParentId = (nodeId: string): { parentId?: string; type?: string } | undefined => {
   return useSelector(
@@ -206,7 +255,7 @@ export const useNewAdditiveSubgraphId = (baseId: string) =>
       // eslint-disable-next-line no-loop-func
       while (idList.some((id) => id === caseId)) {
         caseCount++;
-        caseId = `${baseId} ${caseCount}`;
+        caseId = `${baseId}_${caseCount}`;
       }
       return caseId;
     })
@@ -312,25 +361,43 @@ export const useRetryHistory = (id: string): LogicAppsV2.RetryHistory[] | undefi
 export const useRunData = (id: string): LogicAppsV2.WorkflowRunAction | LogicAppsV2.WorkflowRunTrigger | undefined =>
   useSelector(createSelector(getWorkflowState, (state: WorkflowState) => getRecordEntry(state.nodesMetadata, id)?.runData));
 
+export const useSubgraphRunData = (id: string): Record<string, { actionResults: LogicAppsV2.WorkflowRunAction[] }> | undefined =>
+  useSelector(createSelector(getWorkflowState, (state: WorkflowState) => getRecordEntry(state.nodesMetadata, id)?.subgraphRunData));
+
 export const useNodesMetadata = (): NodesMetadata =>
   useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.nodesMetadata));
 
 export const useParentRunIndex = (id: string | undefined): number | undefined => {
+  const offset = useTimelineRepetitionOffset(id ?? '');
   return useSelector(
     createSelector(getWorkflowState, (state: WorkflowState) => {
       if (!id) {
         return undefined;
       }
-      const parents = getAllParentsForNode(id, state.nodesMetadata).filter((x) => {
-        const operationType = getRecordEntry(state.operations, x)?.type?.toLowerCase();
-        return operationType ? operationType === constants.NODE.TYPE.FOREACH || operationType === constants.NODE.TYPE.UNTIL : false;
+      const allParents = getAllParentsForNode(id, state.nodesMetadata);
+      const parents = allParents.filter((x) => {
+        const operationType = getRecordEntry(state.operations, x)?.type?.toLowerCase() ?? '';
+        return [commonConstants.NODE.TYPE.FOREACH, commonConstants.NODE.TYPE.UNTIL, commonConstants.NODE.TYPE.AGENT].includes(
+          operationType
+        );
       });
-      return parents.length ? getRecordEntry(state.nodesMetadata, parents[0])?.runIndex : undefined;
+      return parents.length ? (getRecordEntry(state.nodesMetadata, parents[0])?.runIndex ?? 0) + offset : undefined;
+    })
+  );
+};
+export const useRunIndex = (id: string | undefined): number | undefined => {
+  const offset = useTimelineRepetitionOffset(id ?? '');
+  return useSelector(
+    createSelector(getWorkflowState, (state: WorkflowState) => {
+      if (!id) {
+        return undefined;
+      }
+      return (getRecordEntry(state.nodesMetadata, id)?.runIndex ?? 0) + offset;
     })
   );
 };
 
-export const useParentRunId = (id: string | undefined): string | undefined => {
+export const useParentNodeId = (id: string | undefined): string | undefined => {
   return useSelector(
     createSelector(getWorkflowState, (state: WorkflowState) => {
       if (!id) {
@@ -357,14 +424,14 @@ export const useRootTriggerId = (): string =>
     })
   );
 
-export const useIsWithinAgenticLoop = (id: string): boolean => {
+export const useIsWithinAgenticLoop = (id?: string): boolean => {
   return useSelector(
     createSelector(getWorkflowState, (state: WorkflowState) => {
       let currentId = id;
 
       while (currentId) {
         const type = getRecordEntry(state.operations, currentId)?.type;
-        if (equals(type, constants.NODE.TYPE.AGENT)) {
+        if (equals(type, commonConstants.NODE.TYPE.AGENT)) {
           return true;
         }
         const parentId = getRecordEntry(state.nodesMetadata, currentId)?.parentNodeId;
@@ -379,6 +446,97 @@ export const useIsWithinAgenticLoop = (id: string): boolean => {
       return false;
     })
   );
+};
+
+export const useHasUpstreamAgenticLoop = (upstreamNodes: string[]): boolean => {
+  return useSelector(
+    createSelector(getWorkflowState, (state: WorkflowState) => {
+      for (const nodeId of upstreamNodes) {
+        const type = getRecordEntry(state.operations, nodeId)?.type;
+        if (equals(type, commonConstants.NODE.TYPE.AGENT)) {
+          return true;
+        }
+      }
+      return false;
+    })
+  );
+};
+
+export const useAgentOperations = () => {
+  const agentOperationsSelector = useMemo(
+    () =>
+      createSelector(getWorkflowState, (state: WorkflowState) => {
+        return Object.entries(state.operations).reduce((acc: string[], [id, node]) => {
+          if (equals(node.type, commonConstants.NODE.TYPE.AGENT)) {
+            acc.push(id);
+          }
+          return acc;
+        }, []);
+      }),
+    []
+  );
+  return useSelector(agentOperationsSelector);
+};
+
+export const useUriForAgentChat = (nodeId?: string) =>
+  useSelector(
+    createSelector(getWorkflowState, (state: WorkflowState) => {
+      if (nodeId) {
+        const runData = getRecordEntry(state.nodesMetadata, nodeId)?.runData;
+        /**
+         * Chat input is only enabled when the node is an agent, and is currently running or succeeded,
+         * Workflow itself is running,
+         * and input channel is configured
+         * */
+        if (
+          equals(state.runInstance?.properties.status ?? '', commonConstants.FLOW_STATUS.RUNNING) &&
+          (equals(runData?.status ?? '', commonConstants.FLOW_STATUS.SUCCEEDED) ||
+            equals(runData?.status ?? '', commonConstants.FLOW_STATUS.RUNNING))
+        ) {
+          const operation = getRecordEntry(state.operations, nodeId);
+          if (operation) {
+            const operationDefinitionAsAgentOperation = operation as LogicAppsV2.AgentAction;
+            const allInputChannelKeys = Object.keys(operationDefinitionAsAgentOperation.channels?.in ?? {});
+            if (allInputChannelKeys.length > 0) {
+              return `${state.runInstance?.id ?? ''}/agents/${nodeId}/channels/${allInputChannelKeys[0]}`;
+            }
+          }
+        }
+      }
+
+      return undefined;
+    })
+  );
+
+export const useAgentLastOperations = (agentOperations: string[]): Record<string, any> => {
+  const lastOperationsSelector = useMemo(
+    () =>
+      createSelector(getWorkflowState, (state: WorkflowState) => {
+        const lastOperationsAgent: Record<string, any> = {};
+
+        for (const agentId of agentOperations) {
+          const agentGraph = state.agentsGraph[agentId];
+
+          if (agentGraph) {
+            const tools = agentGraph.children?.filter((child: WorkflowNode) => child.subGraphLocation === 'tools');
+            const lastOperationTools: Record<string, string> = {};
+            for (const tool of tools ?? []) {
+              const toolSubgraph = agentGraph.children.find((child: WorkflowNode) => child.id === tool.id);
+              const lastOperation = toolSubgraph?.children ? toolSubgraph.children[toolSubgraph.children.length - 1] : undefined;
+              lastOperationTools[tool.id] = lastOperation?.id ?? '';
+            }
+
+            lastOperationsAgent[agentId] = lastOperationTools;
+          }
+        }
+
+        return lastOperationsAgent;
+      }),
+    // Only recreate the selector if agentOperations changes.
+    [agentOperations]
+  );
+
+  return useSelector(lastOperationsSelector);
 };
 
 export const getAgentFromCondition = (state: WorkflowState, nodeId: string): string | undefined => {

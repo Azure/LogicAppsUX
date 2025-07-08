@@ -2,15 +2,27 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import type { VSCodeAzureSubscriptionProvider } from '@microsoft/vscode-azext-azureauth';
 import type DataMapperPanel from './app/commands/dataMapper/DataMapperPanel';
 import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTreeItemWithProjects';
+import type { TestData } from './app/tree/unitTestTree';
 import { dotnet, func, node, npm } from './constants';
 import type { ContainerApp, Site } from '@azure/arm-appservice';
 import type { IActionContext, IAzExtOutputChannel } from '@microsoft/vscode-azext-utils';
 import type { AzureHostExtensionApi } from '@microsoft/vscode-azext-utils/hostapi';
 import type TelemetryReporter from '@vscode/extension-telemetry';
 import type * as cp from 'child_process';
-import { type MessageOptions, window, type ExtensionContext, type WebviewPanel } from 'vscode';
+import {
+  window,
+  type ExtensionContext,
+  type WebviewPanel,
+  type TestItem,
+  type TestRunProfile,
+  EventEmitter,
+  type Uri,
+  type TestController,
+  type MessageOptions,
+} from 'vscode';
 
 /**
  * Namespace for common variables used throughout the extension. They must be initialized in the activate() method of extension.ts
@@ -19,23 +31,31 @@ import { type MessageOptions, window, type ExtensionContext, type WebviewPanel }
 type DataMapperPanelDictionary = { [key: string]: DataMapperPanel }; // key == dataMapName
 type LogicAppMap = Map<string, Site>;
 type SubscriptionMap = Map<string, LogicAppMap>;
+type DesignTimeInstance = {
+  process?: cp.ChildProcess;
+  childFuncPid?: string;
+  port?: number;
+};
 
 // biome-ignore lint/style/noNamespace:
 export namespace ext {
   export let context: ExtensionContext;
-  export let designTimePort: number;
-  export let designChildProcess: cp.ChildProcess | undefined;
-  export let designChildFuncProcessId: string | undefined;
+  export const designTimeInstances: Map<string, DesignTimeInstance> = new Map();
   export let workflowDotNetProcess: cp.ChildProcess | undefined;
   export let workflowNodeProcess: cp.ChildProcess | undefined;
-  export let logicAppWorkspace: string;
+  export let defaultLogicAppPath: string;
   export let outputChannel: IAzExtOutputChannel;
   export let workflowRuntimePort: number;
   export let extensionVersion: string;
+  export let bundleFolderRoot: string | undefined;
   export const prefix = 'azureLogicAppsStandard';
-  export let currentBundleVersion: string;
-  export let pinnedBundleVersion: boolean;
+  export const currentBundleVersion: Map<string, string> = new Map();
+  export const pinnedBundleVersion: Map<string, boolean> = new Map();
+  export let defaultBundleVersion: string;
   export let latestBundleVersion: string;
+
+  // Services
+  export let subscriptionProvider: VSCodeAzureSubscriptionProvider;
 
   // Tree item view
   export let azureAccountTreeItem: AzureAccountTreeItemWithProjects;
@@ -67,6 +87,7 @@ export namespace ext {
     monitoring: 'monitoring',
     export: 'export',
     overview: 'overview',
+    unitTest: 'unitTest',
   } as const;
   export type webViewKey = keyof typeof webViewKey;
 
@@ -104,6 +125,12 @@ export namespace ext {
     context.telemetry.properties[key] = value;
   };
 
+  // Unit Test
+  export const watchingTests = new Map<TestItem | 'ALL', TestRunProfile | undefined>();
+  export const testFileChangedEmitter = new EventEmitter<Uri>();
+  export const testData = new WeakMap<TestItem, TestData>();
+  export let unitTestController: TestController;
+  export const testRuns = new Map<string, any>();
   // Telemetry
   export let telemetryReporter: TelemetryReporter;
 }

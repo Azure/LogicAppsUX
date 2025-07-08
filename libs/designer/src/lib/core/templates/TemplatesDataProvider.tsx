@@ -6,15 +6,14 @@ import type { AppDispatch, RootState } from '../state/templates/store';
 import {
   loadGithubManifestNames,
   loadGithubManifests,
-  setFilteredTemplateNames,
   templatesCountPerPage,
   lazyLoadGithubManifests,
+  setSubscriptionsFilters,
 } from '../state/templates/manifestSlice';
 import { type ResourceDetails, setInitialData } from '../state/templates/workflowSlice';
 import type { ConnectionReferences } from '../../common/models/workflow';
-import { getFilteredTemplates } from './utils/helper';
-import { initializeTemplateServices, reloadTemplates } from '../actions/bjsworkflow/templates';
-import { InitTemplateService, type Template } from '@microsoft/logic-apps-shared';
+import { initializeTemplateServices, initializeWorkflowMetadata, loadCustomTemplates } from '../actions/bjsworkflow/templates';
+import type { Template } from '@microsoft/logic-apps-shared';
 import { setEnableResourceSelection, setViewTemplateDetails } from '../state/templates/templateOptionsSlice';
 import { changeCurrentTemplateName } from '../state/templates/templateSlice';
 
@@ -26,19 +25,16 @@ export interface TemplatesDataProviderProps {
   connectionReferences: ConnectionReferences;
   viewTemplate?: Template.ViewTemplateDetails;
   children?: React.ReactNode;
-  reload?: boolean;
   servicesToReload?: Partial<TemplateServiceOptions>;
   enableResourceSelection?: boolean;
   onResourceChange?: () => void;
 }
 
-const DataProviderInner = ({ isConsumption, children, reload, services }: TemplatesDataProviderProps) => {
+const DataProviderInner = ({ children }: TemplatesDataProviderProps) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { githubTemplateNames, availableTemplates, filters, servicesInitialized } = useSelector((state: RootState) => ({
+  const { githubTemplateNames, selectedSubs } = useSelector((state: RootState) => ({
     githubTemplateNames: state.manifest.githubTemplateNames,
-    availableTemplates: state.manifest.availableTemplates,
-    filters: state.manifest.filters,
-    servicesInitialized: state.templateOptions.servicesInitialized,
+    selectedSubs: state.manifest.filters.subscriptions,
   }));
 
   useEffect(() => {
@@ -46,13 +42,8 @@ const DataProviderInner = ({ isConsumption, children, reload, services }: Templa
   }, [dispatch]);
 
   useEffect(() => {
-    if (reload !== undefined) {
-      if (servicesInitialized && services.templateService) {
-        InitTemplateService(services.templateService);
-      }
-      dispatch(reloadTemplates({ clear: true }));
-    }
-  }, [reload, dispatch, services.templateService, servicesInitialized]);
+    dispatch(loadCustomTemplates());
+  }, [dispatch, selectedSubs]);
 
   useEffect(() => {
     if (githubTemplateNames) {
@@ -64,27 +55,19 @@ const DataProviderInner = ({ isConsumption, children, reload, services }: Templa
     }
   }, [dispatch, githubTemplateNames]);
 
-  useEffect(() => {
-    if (!availableTemplates) {
-      dispatch(setFilteredTemplateNames(undefined));
-      return;
-    }
-    const filteredTemplateNames = getFilteredTemplates(availableTemplates, filters, !!isConsumption);
-    dispatch(setFilteredTemplateNames(filteredTemplateNames));
-  }, [dispatch, availableTemplates, filters, isConsumption]);
-
   return <>{children}</>;
 };
 
 export const TemplatesDataProvider = (props: TemplatesDataProviderProps) => {
   const wrapped = useContext(TemplatesWrappedContext);
   const dispatch = useDispatch<AppDispatch>();
-  const { servicesInitialized, subscriptionId, resourceGroup, location, workflowAppName } = useSelector((state: RootState) => ({
+  const { servicesInitialized, subscriptionId, resourceGroup, location, workflowAppName, manifest } = useSelector((state: RootState) => ({
     servicesInitialized: state.templateOptions.servicesInitialized,
     subscriptionId: state.workflow.subscriptionId,
     resourceGroup: state.workflow.resourceGroup,
     location: state.workflow.location,
     workflowAppName: state.workflow.workflowAppName,
+    manifest: state.template.manifest,
   }));
   const {
     services,
@@ -105,7 +88,9 @@ export const TemplatesDataProvider = (props: TemplatesDataProviderProps) => {
     if (!servicesInitialized) {
       dispatch(initializeTemplateServices(services));
     }
+  }, [dispatch, servicesInitialized, services]);
 
+  useEffect(() => {
     dispatch(
       setInitialData({
         isConsumption: !!isConsumption,
@@ -117,7 +102,9 @@ export const TemplatesDataProvider = (props: TemplatesDataProviderProps) => {
         isCreateView: isCreateView,
       })
     );
-  }, [dispatch, servicesInitialized, isConsumption, resourceDetails, connectionReferences, isCreateView, services]);
+
+    dispatch(setSubscriptionsFilters([{ value: resourceDetails.subscriptionId, displayName: resourceDetails.subscriptionId }]));
+  }, [connectionReferences, dispatch, isConsumption, isCreateView, resourceDetails]);
 
   useEffect(() => {
     if (viewTemplate) {
@@ -138,6 +125,12 @@ export const TemplatesDataProvider = (props: TemplatesDataProviderProps) => {
       onResourceChange();
     }
   }, [onResourceChange, subscriptionId, resourceGroup, location, workflowAppName]);
+
+  useEffect(() => {
+    if (manifest) {
+      dispatch(initializeWorkflowMetadata());
+    }
+  }, [dispatch, manifest]);
 
   if (!servicesInitialized) {
     return null;

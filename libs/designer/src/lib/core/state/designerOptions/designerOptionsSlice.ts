@@ -16,6 +16,7 @@ import {
   InitFunctionService,
   InitAppServiceService,
   InitRunService,
+  InitRoleService,
   InitEditorService,
   InitConnectionParameterEditorService,
   InitChatbotService,
@@ -23,6 +24,7 @@ import {
   InitUiInteractionsService,
   InitUserPreferenceService,
   InitExperimentationServiceService,
+  InitCognitiveServiceService,
 } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
@@ -31,6 +33,7 @@ import CONSTANTS from '../../../common/constants';
 export const initialDesignerOptionsState: DesignerOptionsState = {
   readOnly: false,
   isMonitoringView: false,
+  isUnitTest: false,
   isDarkMode: false,
   isVSCode: false,
   servicesInitialized: false,
@@ -38,6 +41,7 @@ export const initialDesignerOptionsState: DesignerOptionsState = {
   useLegacyWorkflowParameters: false,
   isXrmConnectionReferenceMode: false,
   showConnectionsPanel: false,
+  showEdgeDrawing: false,
   panelTabHideKeys: [],
   hostOptions: {
     displayRuntimeInfo: true,
@@ -66,6 +70,7 @@ export const initializeServices = createAsyncThunk(
     hostService,
     apimService,
     runService,
+    roleService,
     editorService,
     connectionParameterEditorService,
     chatbotService,
@@ -73,6 +78,7 @@ export const initializeServices = createAsyncThunk(
     uiInteractionsService,
     userPreferenceService,
     experimentationService,
+    cognitiveServiceService,
   }: ServiceOptions) => {
     const loggerServices: ILoggerService[] = [];
     if (loggerService) {
@@ -121,12 +127,20 @@ export const initializeServices = createAsyncThunk(
       InitRunService(runService);
     }
 
+    if (roleService) {
+      InitRoleService(roleService);
+    }
+
     if (uiInteractionsService) {
       InitUiInteractionsService(uiInteractionsService);
     }
 
     if (userPreferenceService) {
       InitUserPreferenceService(userPreferenceService);
+    }
+
+    if (cognitiveServiceService) {
+      InitCognitiveServiceService(cognitiveServiceService);
     }
 
     // Experimentation service is being used to A/B test features in the designer so in case client does not want to use the A/B test feature,
@@ -146,12 +160,14 @@ export const designerOptionsSlice = createSlice({
     initDesignerOptions: (state: DesignerOptionsState, action: PayloadAction<Omit<DesignerOptionsState, 'servicesInitialized'>>) => {
       state.readOnly = action.payload.readOnly;
       state.isMonitoringView = action.payload.isMonitoringView;
+      state.isUnitTest = action.payload.isUnitTest;
       state.isDarkMode = action.payload.isDarkMode;
       state.useLegacyWorkflowParameters = action.payload.useLegacyWorkflowParameters;
       state.isXrmConnectionReferenceMode = action.payload.isXrmConnectionReferenceMode;
       state.suppressDefaultNodeSelectFunctionality = action.payload.suppressDefaultNodeSelectFunctionality;
       state.nodeSelectAdditionalCallback = action.payload.nodeSelectAdditionalCallback;
       state.showConnectionsPanel = action.payload.showConnectionsPanel;
+      state.showEdgeDrawing = action.payload.showEdgeDrawing;
       state.panelTabHideKeys = action.payload.panelTabHideKeys;
       state.hostOptions = {
         ...state.hostOptions,

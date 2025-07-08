@@ -3,7 +3,7 @@ import type { RootState } from '../../store';
 import { updateParameterAndDependencies } from '../../utils/parameters/helper';
 import { updateStaticResults } from '../operation/operationMetadataSlice';
 import {
-  addAgentCondition,
+  addAgentTool,
   addEdgeFromRunAfter,
   addNode,
   addSwitchCase,
@@ -42,7 +42,7 @@ export const undoableWorkflowActionTypes = [
   addNode,
   moveNode,
   addSwitchCase,
-  addAgentCondition,
+  addAgentTool,
   addForeachToNode.pending,
   pasteNode,
   pasteScopeNode,
@@ -63,7 +63,7 @@ export const undoablePanelActionTypes = [
   /*
    * The following two actions are not triggering state saves since they are dispatched for each keystroke for text input
    * updateNodeSettings // Settings tab - settings text field dispatches updateNodeSettings on change (i.e. on each keystroke)
-   * setNodeDescription, // Add a note - onCommentChange in nodeDetailsPanel
+   * setNodeDescription, // Add a description - onCommentChange in nodeDetailsPanel
    */
 ].map((action) => action.type);
 

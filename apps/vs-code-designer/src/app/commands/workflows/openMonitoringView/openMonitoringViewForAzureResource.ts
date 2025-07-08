@@ -13,17 +13,17 @@ import {
   getWorkflowManagementBaseURI,
   getStandardAppData,
 } from '../../../utils/codeless/common';
-import { getAuthorizationToken } from '../../../utils/codeless/getAuthorizationToken';
 import { sendAzureRequest } from '../../../utils/requestUtils';
 import type { IAzureConnectorsContext } from '../azureConnectorWizard';
 import { OpenMonitoringViewBase } from './openMonitoringViewBase';
 import { getTriggerName, HTTP_METHODS } from '@microsoft/logic-apps-shared';
-import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import { openUrl, type IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IDesignerPanelMetadata, IWorkflowFileContent } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
 import * as vscode from 'vscode';
 import type { WebviewPanel } from 'vscode';
 import { Uri, ViewColumn } from 'vscode';
+import { getAuthorizationTokenFromNode } from '../../../utils/codeless/getAuthorizationToken';
 
 export default class openMonitoringViewForAzureResource extends OpenMonitoringViewBase {
   private node: RemoteWorkflowTreeItem;
@@ -49,7 +49,6 @@ export default class openMonitoringViewForAzureResource extends OpenMonitoringVi
       return;
     }
 
-    vscode.window.showInformationMessage(localize('logicApps.designer', 'Starting workflow designer. It might take a few seconds.'), 'OK');
     this.panel = vscode.window.createWebviewPanel(
       this.panelGroupKey, // Key used to reference the panel
       this.panelName, // Title display in the tab
@@ -118,7 +117,7 @@ export default class openMonitoringViewForAzureResource extends OpenMonitoringVi
             readOnly: this.readOnly,
             isLocal: this.isLocal,
             isMonitoringView: this.isMonitoringView,
-            runId: this.runName,
+            runId: this.runId,
             hostVersion: ext.extensionVersion,
           },
         });
@@ -137,6 +136,10 @@ export default class openMonitoringViewForAzureResource extends OpenMonitoringVi
         ext.telemetryReporter.sendTelemetryEvent(eventName, { ...message.data });
         break;
       }
+      case ExtensionCommand.fileABug: {
+        await openUrl('https://github.com/Azure/LogicAppsUX/issues/new?template=bug_report.yml');
+        break;
+      }
       default:
         break;
     }
@@ -150,7 +153,7 @@ export default class openMonitoringViewForAzureResource extends OpenMonitoringVi
 
     await vscode.window.withProgress(options, async () => {
       const triggerName = getTriggerName(this.node.workflowFileContent.definition);
-      const url = `${this.baseUrl}/workflows/${this.workflowName}/triggers/${triggerName}/histories/${this.runName}/resubmit?api-version=${this.apiVersion}`;
+      const url = `${this.baseUrl}/workflows/${this.workflowName}/triggers/${triggerName}/histories/${this.runId}/resubmit?api-version=${this.apiVersion}`;
 
       try {
         await sendAzureRequest(url, this.context, HTTP_METHODS.POST, this.node.subscription);
@@ -162,7 +165,7 @@ export default class openMonitoringViewForAzureResource extends OpenMonitoringVi
   }
 
   private async getDesignerPanelMetadata(): Promise<IDesignerPanelMetadata> {
-    const accessToken: string = await getAuthorizationToken();
+    const accessToken: string = await getAuthorizationTokenFromNode(this.node);
 
     return {
       panelId: this.panelName,

@@ -19,9 +19,10 @@ import {
   getParametersFromFile,
 } from '../../../utils/codeless/connection';
 import { sendRequest } from '../../../utils/requestUtils';
+import { createUnitTest } from '../unitTest/createUnitTest';
 import { OpenMonitoringViewBase } from './openMonitoringViewBase';
 import { getTriggerName, HTTP_METHODS } from '@microsoft/logic-apps-shared';
-import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import { openUrl, type IActionContext } from '@microsoft/vscode-azext-utils';
 import type { AzureConnectorDetails, IDesignerPanelMetadata, Parameter } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
 import { promises, readFileSync } from 'fs';
@@ -30,6 +31,8 @@ import * as vscode from 'vscode';
 import type { WebviewPanel } from 'vscode';
 import { Uri, ViewColumn } from 'vscode';
 import { getArtifactsInLocalProject } from '../../../utils/codeless/artifacts';
+import { saveBlankUnitTest } from '../unitTest/saveBlankUnitTest';
+import { getBundleVersionNumber } from '../../../utils/getDebugSymbolDll';
 
 export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
   private projectPath: string | undefined;
@@ -64,6 +67,11 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
       dark: Uri.file(path.join(ext.context.extensionPath, 'assets', 'light', 'workflow.svg')),
     };
 
+    this.panel.iconPath = {
+      light: Uri.file(path.join(ext.context.extensionPath, 'assets', 'light', 'workflow.svg')),
+      dark: Uri.file(path.join(ext.context.extensionPath, 'assets', 'dark', 'workflow.svg')),
+    };
+
     this.projectPath = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
     const connectionsData = await getConnectionsFromFile(this.context, this.workflowFilePath);
     const parametersData = await getParametersFromFile(this.context, this.workflowFilePath);
@@ -85,7 +93,7 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
     });
     this.panelMetadata.mapArtifacts = this.mapArtifacts;
     this.panelMetadata.schemaArtifacts = this.schemaArtifacts;
-
+    this.context.telemetry.properties.extensionBundleVersion = this.panelMetadata.extensionBundleVersion;
     this.panel.webview.onDidReceiveMessage(
       async (message) => await this._handleWebviewMsg(message),
       /* thisArgs */ undefined,
@@ -121,7 +129,7 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
             readOnly: this.readOnly,
             isLocal: this.isLocal,
             isMonitoringView: this.isMonitoringView,
-            runId: this.runName,
+            runId: this.runId,
             hostVersion: ext.extensionVersion,
           },
         });
@@ -140,6 +148,18 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
         ext.telemetryReporter.sendTelemetryEvent(eventName, { ...message.data });
         break;
       }
+      case ExtensionCommand.createUnitTest: {
+        await createUnitTest(this.context, vscode.Uri.file(this.workflowFilePath), message.runId, message.definition);
+        break;
+      }
+      case ExtensionCommand.saveBlankUnitTest: {
+        await saveBlankUnitTest(this.context, vscode.Uri.file(this.workflowFilePath), message.definition);
+        break;
+      }
+      case ExtensionCommand.fileABug: {
+        await openUrl('https://github.com/Azure/LogicAppsUX/issues/new?template=bug_report.yml');
+        break;
+      }
       default:
         break;
     }
@@ -156,7 +176,7 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
         const fileContent = await promises.readFile(this.workflowFilePath, 'utf8');
         const workflowContent: any = JSON.parse(fileContent);
         const triggerName = getTriggerName(workflowContent.definition);
-        const url = `${this.baseUrl}/workflows/${this.workflowName}/triggers/${triggerName}/histories/${this.runName}/resubmit?api-version=${this.apiVersion}`;
+        const url = `${this.baseUrl}/workflows/${this.workflowName}/triggers/${triggerName}/histories/${this.runId}/resubmit?api-version=${this.apiVersion}`;
 
         await sendRequest(this.context, { url, method: HTTP_METHODS.POST });
       } catch (error) {
@@ -172,6 +192,8 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
     const workflowContent: any = JSON.parse(readFileSync(this.workflowFilePath, 'utf8'));
     const parametersData: Record<string, Parameter> = await getParametersFromFile(this.context, this.workflowFilePath);
     const customCodeData: Record<string, string> = await getCustomCodeFromFiles(this.workflowFilePath);
+    const bundleVersionNumber = await getBundleVersionNumber();
+
     let localSettings: Record<string, string>;
     let azureDetails: AzureConnectorDetails;
 
@@ -197,6 +219,7 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
       standardApp: getStandardAppData(this.workflowName, { ...workflowContent, definition: {} }),
       schemaArtifacts: this.schemaArtifacts,
       mapArtifacts: this.mapArtifacts,
+      extensionBundleVersion: bundleVersionNumber,
     };
   }
 }

@@ -12,6 +12,7 @@ export const ProjectName = {
   review: 'review',
   designer: 'designer',
   dataMapper: 'dataMapper',
+  unitTest: 'unitTest',
 } as const;
 export type ProjectNameType = (typeof ProjectName)[keyof typeof ProjectName];
 
@@ -56,8 +57,9 @@ export interface IProjectTreeItem {
 }
 
 export interface IProjectWizardContext extends IActionContext {
-  namespaceName?: string;
-  methodName?: string;
+  functionAppNamespace?: string;
+  functionAppName?: string;
+  customCodeFunctionName?: string;
   functionFolderPath?: string;
   logicAppFolderPath?: string;
   projectPath: string;
@@ -67,6 +69,7 @@ export interface IProjectWizardContext extends IActionContext {
   workspaceFolder: WorkspaceFolder | undefined;
   customWorkspaceFolderPath?: string;
   projectTemplateKey: string | undefined;
+  isCodeless?: boolean;
   language?: ProjectLanguage;
   languageFilter?: RegExp;
   workerRuntime?: IWorkerRuntime;
@@ -77,9 +80,11 @@ export interface IProjectWizardContext extends IActionContext {
   openApiSpecificationFile?: Uri[];
   targetFramework?: TargetFramework;
   projectType?: ProjectType;
+  shouldCreateLogicAppProject?: boolean;
   isWorkspaceWithFunctions?: boolean;
   logicAppName?: string;
   packagePath?: string;
+  deploymentScriptType?: DeploymentScriptType;
 }
 
 export const OpenBehavior = {
@@ -97,3 +102,9 @@ export const ProjectType = {
   rulesEngine: 'rulesEngine',
 } as const;
 export type ProjectType = (typeof ProjectType)[keyof typeof ProjectType];
+
+export const DeploymentScriptType = {
+  azureDevOpsPipeline: 'azureDevOpsPipeline',
+  azureDeploymentCenter: 'azureDeploymentCenter',
+} as const;
+export type DeploymentScriptType = (typeof DeploymentScriptType)[keyof typeof DeploymentScriptType];

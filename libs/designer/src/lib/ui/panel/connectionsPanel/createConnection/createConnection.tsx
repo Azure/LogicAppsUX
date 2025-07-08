@@ -15,7 +15,8 @@ import {
   Capabilities,
   ConnectionParameterTypes,
   SERVICE_PRINCIPLE_CONSTANTS,
-  connectorContainsAllServicePrinicipalConnectionParameters,
+  connectorContainsAllClientCertificateConnectionParameters,
+  connectorContainsAllServicePrincipalConnectionParameters,
   filterRecord,
   getPropertyValue,
   isServicePrinicipalConnectionParameter,
@@ -24,6 +25,7 @@ import {
   equals,
   isTenantServiceEnabled,
   isEmptyString,
+  customLengthGuid,
 } from '@microsoft/logic-apps-shared';
 import type {
   GatewayServiceConfig,
@@ -86,6 +88,7 @@ export interface CreateConnectionProps {
   gatewayServiceConfig?: Partial<GatewayServiceConfig>;
   checkOAuthCallback: (parameters: Record<string, ConnectionParameter>) => boolean;
   resourceSelectorProps?: AzureResourcePickerProps;
+  isAgentServiceConnection?: boolean;
 }
 
 export const CreateConnection = (props: CreateConnectionProps) => {
@@ -111,6 +114,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     availableGateways,
     gatewayServiceConfig,
     resourceSelectorProps,
+    isAgentServiceConnection,
   } = props;
 
   const intl = useIntl();
@@ -138,16 +142,20 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   );
 
   const isHiddenAuthKey = useCallback((key: string) => ConnectionService().getAuthSetHideKeys?.()?.includes(key) ?? false, []);
-
   const connectionParameterSets: ConnectionParameterSets | undefined = useMemo(() => {
     if (!_connectionParameterSets) {
       return undefined;
     }
+
+    const filteredValues = _connectionParameterSets.values
+      .filter((set) => !isHiddenAuthKey(set.name))
+      .filter((set) => !isAgentServiceConnection || set.name === 'ManagedServiceIdentity');
+
     return {
       ..._connectionParameterSets,
-      values: _connectionParameterSets.values.filter((set) => !isHiddenAuthKey(set.name)),
+      values: filteredValues,
     };
-  }, [_connectionParameterSets, isHiddenAuthKey]);
+  }, [_connectionParameterSets, isAgentServiceConnection, isHiddenAuthKey]);
 
   const singleAuthParams = useMemo(
     () => ({
@@ -187,24 +195,47 @@ export const CreateConnection = (props: CreateConnectionProps) => {
 
   const supportsOAuthConnection = useMemo(() => !isHiddenAuthKey('legacyoauth'), [isHiddenAuthKey]);
 
+  const supportsLegacyServicePrincipalConnection = useMemo(
+    () =>
+      !isMultiAuth &&
+      connectorContainsAllServicePrincipalConnectionParameters(singleAuthParams) &&
+      !isHiddenAuthKey('legacyserviceprincipal'),
+    [isHiddenAuthKey, isMultiAuth, singleAuthParams]
+  );
+
+  const multiAuthSupportsServicePrincipalConnection = useMemo(
+    () => isMultiAuth && connectorContainsAllServicePrincipalConnectionParameters(multiAuthParams),
+    [isMultiAuth, multiAuthParams]
+  );
+
   const supportsServicePrincipalConnection = useMemo(
-    () => connectorContainsAllServicePrinicipalConnectionParameters(singleAuthParams) && !isHiddenAuthKey('legacyserviceprincipal'),
-    [isHiddenAuthKey, singleAuthParams]
+    () => multiAuthSupportsServicePrincipalConnection || supportsLegacyServicePrincipalConnection,
+    [multiAuthSupportsServicePrincipalConnection, supportsLegacyServicePrincipalConnection]
+  );
+
+  const supportsClientCertificateConnection = useMemo(
+    () => isMultiAuth && connectorContainsAllClientCertificateConnectionParameters(multiAuthParams),
+    [isMultiAuth, multiAuthParams]
   );
 
   const supportsLegacyManagedIdentityConnection = useMemo(
     () => usesLegacyManagedIdentity(connectionAlternativeParameters) && !isHiddenAuthKey('legacymanagedidentity'),
-    [isHiddenAuthKey, connectionAlternativeParameters]
+    [connectionAlternativeParameters, isHiddenAuthKey]
   );
 
   const showLegacyMultiAuth = useMemo(
-    () => !isMultiAuth && (supportsServicePrincipalConnection || supportsLegacyManagedIdentityConnection),
-    [isMultiAuth, supportsServicePrincipalConnection, supportsLegacyManagedIdentityConnection]
+    () => !isMultiAuth && (supportsLegacyServicePrincipalConnection || supportsLegacyManagedIdentityConnection),
+    [isMultiAuth, supportsLegacyServicePrincipalConnection, supportsLegacyManagedIdentityConnection]
+  );
+
+  const legacyMultiAuthServicePrincipalSelected = useMemo(
+    () => showLegacyMultiAuth && selectedParamSetIndex === LegacyMultiAuthOptions.servicePrincipal,
+    [selectedParamSetIndex, showLegacyMultiAuth]
   );
 
   const servicePrincipalSelected = useMemo(
-    () => showLegacyMultiAuth && selectedParamSetIndex === LegacyMultiAuthOptions.servicePrincipal,
-    [selectedParamSetIndex, showLegacyMultiAuth]
+    () => legacyMultiAuthServicePrincipalSelected || multiAuthSupportsServicePrincipalConnection,
+    [legacyMultiAuthServicePrincipalSelected, multiAuthSupportsServicePrincipalConnection]
   );
 
   const legacyManagedIdentitySelected = useMemo(
@@ -257,7 +288,11 @@ export const CreateConnection = (props: CreateConnectionProps) => {
 
   // Parameters record, under a layer of singular capability, if it has none or more than one it's under "general"
   const parametersByCapability = useMemo(() => {
-    const output: { [_: string]: { [_: string]: ConnectionParameter | ConnectionParameterSetParameter } } = {};
+    const output: {
+      [_: string]: {
+        [_: string]: ConnectionParameter | ConnectionParameterSetParameter;
+      };
+    } = {};
     Object.entries(parameters ?? {}).forEach(([key, parameter]) => {
       const capability =
         (parameter.uiDefinition?.constraints?.capability?.length ?? 0) === 1
@@ -300,8 +335,8 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   );
 
   const isUsingOAuth = useMemo(
-    () => hasOAuth && !servicePrincipalSelected && !legacyManagedIdentitySelected,
-    [hasOAuth, servicePrincipalSelected, legacyManagedIdentitySelected]
+    () => hasOAuth && !servicePrincipalSelected && !legacyManagedIdentitySelected && !supportsClientCertificateConnection,
+    [hasOAuth, servicePrincipalSelected, legacyManagedIdentitySelected, supportsClientCertificateConnection]
   );
 
   const usingAadConnection = useMemo(() => (connector ? isUsingAadAuthentication(connector) : false), [connector]);
@@ -325,7 +360,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     [isUsingOAuth, isMultiAuth, capabilityEnabledParameters, legacyManagedIdentitySelected]
   );
 
-  const [connectionDisplayName, setConnectionDisplayName] = useState<string>('');
+  const [connectionDisplayName, setConnectionDisplayName] = useState<string>(`new_conn_${customLengthGuid(5)}`.toLowerCase());
   const validParams = useMemo(() => {
     if (showNameInput && !connectionDisplayName) {
       return false;
@@ -369,7 +404,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
 
     // This value needs to be passed conditionally but the parameter is hidden, so we're manually inputting it here
     if (
-      supportsServicePrincipalConnection &&
+      supportsLegacyServicePrincipalConnection &&
       Object.keys(unfilteredParameters).includes(SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_GRANT_TYPE)
     ) {
       const oauthValue = SERVICE_PRINCIPLE_CONSTANTS.GRANT_TYPE_VALUES.CODE;
@@ -393,7 +428,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     );
   }, [
     parameterValues,
-    supportsServicePrincipalConnection,
+    supportsLegacyServicePrincipalConnection,
     unfilteredParameters,
     legacyManagedIdentitySelected,
     selectedManagedIdentity,
@@ -541,7 +576,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
       parameterKey: key,
       parameter,
       value: parameterValues[key],
-      setValue: (val: any) => setParameterValues({ ...parameterValues, [key]: val }),
+      setValue: (val: any) => setParameterValues((values) => ({ ...values, [key]: val })),
       isSubscriptionDropdownDisabled: gatewayServiceConfig?.disableSubscriptionLookup,
       isLoading,
       selectedSubscriptionId,
@@ -549,6 +584,9 @@ export const CreateConnection = (props: CreateConnectionProps) => {
       availableGateways,
       availableSubscriptions,
       identity,
+      parameterSet: connectionParameterSets?.values[selectedParamSetIndex],
+      setKeyValue: (customKey: string, val: any) => setParameterValues((values) => ({ ...values, [customKey]: val })),
+      isAgentServiceConnection: isAgentServiceConnection,
     };
 
     const customParameterOptions = ConnectionParameterEditorService()?.getConnectionParameterEditor({
@@ -711,7 +749,10 @@ export const CreateConnection = (props: CreateConnectionProps) => {
               isLoading={isLoading}
               value={parameterValues[SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_TENANT_ID]}
               setValue={(val: string) =>
-                setParameterValues({ ...parameterValues, [SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_TENANT_ID]: val })
+                setParameterValues({
+                  ...parameterValues,
+                  [SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_TENANT_ID]: val,
+                })
               }
             />
           )}
@@ -734,17 +775,30 @@ export const CreateConnection = (props: CreateConnectionProps) => {
         </div>
 
         {/* Descriptor text for simple and oauth */}
-        {isEmptyString(connectorDescription) ? null : <div>{connectorDescription}</div>}
+        {!isEmptyString(connectorDescription) && (
+          <div data-automation-id={'connector-connection-creation-description'}>{connectorDescription}</div>
+        )}
         {/* {needsAuth && <IFrameTermsOfService url={termsOfServiceUrl} />} */}
       </div>
 
       {/* Action Buttons */}
       <div className="msla-edit-connection-actions-container">
-        <Button appearance="primary" disabled={!canSubmit} aria-label={submitButtonAriaLabel} onClick={submitCallback}>
+        <Button
+          appearance="primary"
+          disabled={!canSubmit}
+          aria-label={submitButtonAriaLabel}
+          onClick={submitCallback}
+          data-automation-id="create-connection-button"
+        >
           {submitButtonText}
         </Button>
         {hideCancelButton ? null : (
-          <Button disabled={isLoading} aria-label={cancelButtonAria} onClick={cancelCallback}>
+          <Button
+            disabled={isLoading}
+            aria-label={cancelButtonAria}
+            onClick={cancelCallback}
+            data-automation-id="cancel-create-connection-button"
+          >
             {cancelButtonText}
           </Button>
         )}

@@ -11,16 +11,17 @@ import {
   setSubscription,
   setWorkflowAppDetails,
 } from '../../../core/state/templates/workflowSlice';
-import { type LogicAppResource, type Resource, equals } from '@microsoft/logic-apps-shared';
+import { type LogicAppResource, type Resource, type Template, equals } from '@microsoft/logic-apps-shared';
 import { useTemplatesStrings } from '../templatesStrings';
 import { useAllLogicApps } from '../../../core/configuretemplate/utils/queries';
 
 export interface ResourcePickerProps {
   viewMode?: 'default' | 'alllogicapps';
   onSelectApp?: (value: LogicAppResource) => void;
+  lockField?: Template.ResourceFieldId;
 }
 
-export const ResourcePicker = ({ viewMode = 'default', onSelectApp }: ResourcePickerProps) => {
+export const ResourcePicker = ({ viewMode = 'default', onSelectApp, lockField }: ResourcePickerProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const isDefaultMode = viewMode === 'default';
   const { subscriptionId, resourceGroup, location, workflowAppName, logicAppName, isConsumption } = useSelector(
@@ -54,8 +55,8 @@ export const ResourcePicker = ({ viewMode = 'default', onSelectApp }: ResourcePi
         description: 'Validation error message when a resource is not selected',
       }),
       ALL_LOGIC_APPS: intl.formatMessage({
-        defaultMessage: 'Logic App instance',
-        id: 'Tx+tIP',
+        defaultMessage: 'Logic app instance',
+        id: 'IpD27y',
         description: 'Label field for logic app instance',
       }),
     }),
@@ -93,6 +94,7 @@ export const ResourcePicker = ({ viewMode = 'default', onSelectApp }: ResourcePi
         isLoading={isLoading}
         resources={subscriptions ?? []}
         errorMessage={subscriptionId ? '' : intlText.VALIDATION_ERROR}
+        lockField={lockField === 'subscription' || lockField === 'resourcegroup' || lockField === 'resource'}
       />
       <ResourceField
         id="resourceGroupName"
@@ -102,6 +104,7 @@ export const ResourcePicker = ({ viewMode = 'default', onSelectApp }: ResourcePi
         isLoading={isResourceGroupLoading}
         resources={resourceGroups ?? []}
         errorMessage={resourceGroup ? '' : intlText.VALIDATION_ERROR}
+        lockField={lockField === 'resourcegroup' || lockField === 'resource'}
       />
       {isDefaultMode && isConsumption ? (
         <ResourceField
@@ -112,6 +115,7 @@ export const ResourcePicker = ({ viewMode = 'default', onSelectApp }: ResourcePi
           isLoading={islocationLoading}
           resources={locations ?? []}
           errorMessage={location ? '' : intlText.VALIDATION_ERROR}
+          lockField={lockField === 'location' || lockField === 'resource'}
         />
       ) : null}
       {isDefaultMode && !isConsumption ? (
@@ -127,6 +131,7 @@ export const ResourcePicker = ({ viewMode = 'default', onSelectApp }: ResourcePi
             displayName: app.name,
           }))}
           errorMessage={workflowAppName ? '' : intlText.VALIDATION_ERROR}
+          lockField={lockField === 'resource'}
         />
       ) : null}
       {isDefaultMode ? null : (
@@ -142,6 +147,7 @@ export const ResourcePicker = ({ viewMode = 'default', onSelectApp }: ResourcePi
             displayName: equals(app.plan, 'consumption') ? `${app.name} (Consumption)` : `${app.name} (Standard)`,
           }))}
           errorMessage={logicAppName ? '' : intlText.VALIDATION_ERROR}
+          lockField={lockField === 'resource'}
         />
       )}
     </div>
@@ -156,6 +162,7 @@ const ResourceField = ({
   errorMessage,
   isLoading,
   onSelect,
+  lockField,
 }: {
   id: string;
   label: string;
@@ -164,6 +171,7 @@ const ResourceField = ({
   onSelect: (value: any) => void;
   isLoading?: boolean;
   errorMessage?: string;
+  lockField: boolean;
 }) => {
   const intl = useIntl();
   const texts = {
@@ -208,7 +216,7 @@ const ResourceField = ({
           style={{ width: '100%' }}
           id={id}
           onOptionSelect={(e, option) => onSelect(option?.optionValue)}
-          disabled={isLoading}
+          disabled={isLoading || (lockField && !!selectedResource)}
           value={selectedResource}
           selectedOptions={[defaultKey]}
           size="small"

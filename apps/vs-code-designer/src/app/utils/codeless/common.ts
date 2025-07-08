@@ -11,6 +11,7 @@ import {
   mapsDirectory,
   schemasDirectory,
   azurePublicBaseUrl,
+  rulesDirectory,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
@@ -18,6 +19,7 @@ import { createAzureWizard } from '../../commands/workflows/azureConnectorWizard
 import type { IAzureConnectorsContext } from '../../commands/workflows/azureConnectorWizard';
 import type { RemoteWorkflowTreeItem } from '../../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem';
 import { getLocalSettingsJson } from '../appSettings/localSettings';
+import { writeFormattedJson } from '../fs';
 import { getAuthorizationToken } from './getAuthorizationToken';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { DialogResponses } from '@microsoft/vscode-azext-utils';
@@ -28,7 +30,6 @@ import type {
   ILocalSettingsJson,
   Parameter,
   WorkflowParameter,
-  Artifacts,
 } from '@microsoft/vscode-extension-logic-apps';
 import { readFileSync } from 'fs';
 import * as fse from 'fs-extra';
@@ -77,6 +78,14 @@ export function getStandardAppData(workflowName: string, workflow: IWorkflowFile
   };
 }
 
+export async function createJsonFileIfDoesNotExist(filePath: string, fileName: string): Promise<void> {
+  const parametersFilePath = path.join(filePath, fileName);
+  const connectionsFileExists = fse.pathExistsSync(parametersFilePath);
+  if (!connectionsFileExists) {
+    await writeFormattedJson(parametersFilePath, {});
+  }
+}
+
 export function getWorkflowParameters(parameters: Record<string, Parameter>): Record<string, WorkflowParameter> {
   const workflowParameters: Record<string, WorkflowParameter> = {};
   for (const parameterKey of Object.keys(parameters)) {
@@ -108,14 +117,16 @@ export async function updateFuncIgnore(projectPath: string, variables: string[])
   await fse.writeFile(funcIgnorePath, funcIgnoreContents);
 }
 
-export async function getArtifactsPathInLocalProject(projectPath: string): Promise<{ maps: File[]; schemas: File[] }> {
+export async function getArtifactsPathInLocalProject(projectPath: string): Promise<{ maps: File[]; schemas: File[]; rules: File[] }> {
   const artifacts = {
     maps: [],
     schemas: [],
+    rules: [],
   };
   const artifactsPath = path.join(projectPath, artifactsDirectory);
   const mapsPath = path.join(projectPath, artifactsDirectory, mapsDirectory);
   const schemasPath = path.join(projectPath, artifactsDirectory, schemasDirectory);
+  const rulesPath = path.join(projectPath, artifactsDirectory, rulesDirectory);
 
   if (!(await fse.pathExists(projectPath)) || !(await fse.pathExists(artifactsPath))) {
     return artifacts;
@@ -155,58 +166,21 @@ export async function getArtifactsPathInLocalProject(projectPath: string): Promi
     artifacts.schemas = schemasFiles;
   }
 
-  return artifacts;
-}
-
-export async function getArtifactsInLocalProject(projectPath: string): Promise<Artifacts> {
-  const artifacts: Artifacts = {
-    maps: {},
-    schemas: [],
-  };
-
-  const artifactsPath = path.join(projectPath, artifactsDirectory);
-  const mapsPath = path.join(projectPath, artifactsDirectory, mapsDirectory);
-  const schemasPath = path.join(projectPath, artifactsDirectory, schemasDirectory);
-
-  if (!(await fse.pathExists(projectPath)) || !(await fse.pathExists(artifactsPath))) {
-    return artifacts;
-  }
-
-  if (await fse.pathExists(mapsPath)) {
-    const subPaths: string[] = await fse.readdir(mapsPath);
+  if (await fse.pathExists(rulesPath)) {
+    const rulesFiles = [];
+    const subPaths: string[] = await fse.readdir(rulesPath);
 
     for (const subPath of subPaths) {
-      const fullPath: string = path.join(mapsPath, subPath);
+      const fullPath: string = path.join(rulesPath, subPath);
       const fileStats = await fse.lstat(fullPath);
 
       if (fileStats.isFile()) {
-        const extensionName = path.extname(subPath);
-        const name = path.basename(subPath, extensionName);
-        const normalizedExtensionName = extensionName.toLowerCase();
-
-        if (!artifacts.maps[normalizedExtensionName]) {
-          artifacts.maps[normalizedExtensionName] = [];
+        if (await fse.pathExists(fullPath)) {
+          rulesFiles.push({ path: fullPath, name: subPath });
         }
-
-        artifacts.maps[normalizedExtensionName].push({ name, fileName: subPath, relativePath: path.join('Artifacts', 'Maps', subPath) });
       }
     }
-  }
-
-  if (await fse.pathExists(schemasPath)) {
-    const subPaths: string[] = await fse.readdir(schemasPath);
-
-    for (const subPath of subPaths) {
-      const fullPath: string = path.join(schemasPath, subPath);
-      const fileStats = await fse.lstat(fullPath);
-
-      if (fileStats.isFile()) {
-        const extensionName = path.extname(subPath);
-        const name = path.basename(subPath, extensionName);
-
-        artifacts.schemas.push({ name, fileName: subPath, relativePath: path.join('Artifacts', 'Schemas', subPath) });
-      }
-    }
+    artifacts.rules = rulesFiles;
   }
 
   return artifacts;
@@ -240,8 +214,6 @@ export async function getAzureConnectorDetailsForLocalProject(
   }
 
   const enabled = !!subscriptionId;
-
-  ext.telemetryReporter.sendTelemetryEvent('getAzureConnectorDetails', { tenantId: tenantId });
 
   return {
     enabled,
@@ -315,6 +287,40 @@ export async function getWorkflowsPathInLocalProject(projectPath: string): Promi
   return worfklowFiles;
 }
 
+/**
+ * Retrieves the workflows in a local project.
+ * @param {string} projectPath - The path to the project.
+ * @returns A promise that resolves to a record of workflow names and their corresponding schemas.
+ */
+export async function getWorkflowsInLocalProject(projectPath: string): Promise<Record<string, StandardApp>> {
+  if (!(await fse.pathExists(projectPath))) {
+    return {};
+  }
+
+  const workflowDetails: Record<string, any> = {};
+  const subPaths: string[] = await fse.readdir(projectPath);
+  for (const subPath of subPaths) {
+    const fullPath: string = path.join(projectPath, subPath);
+    const fileStats = await fse.lstat(fullPath);
+
+    if (fileStats.isDirectory()) {
+      try {
+        const workflowFilePath = path.join(fullPath, workflowFileName);
+
+        if (await fse.pathExists(workflowFilePath)) {
+          const schema = JSON.parse(readFileSync(workflowFilePath, 'utf8'));
+          if (schema) {
+            workflowDetails[subPath] = schema;
+          }
+        }
+      } catch {
+        // If unable to load the workflow or read the definition we skip the workflow
+      }
+    }
+  }
+
+  return workflowDetails;
+}
 export function getRequestTriggerSchema(workflowContent: IWorkflowFileContent): any {
   const {
     definition: { triggers },

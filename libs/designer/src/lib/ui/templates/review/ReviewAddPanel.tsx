@@ -1,6 +1,6 @@
 import type { RootState } from '../../../core/state/templates/store';
 import { useIntl } from 'react-intl';
-import { makeStyles, mergeClasses, Text, tokens } from '@fluentui/react-components';
+import { Text } from '@fluentui/react-components';
 import { useSelector } from 'react-redux';
 import { normalizeConnectorId } from '@microsoft/logic-apps-shared';
 import { CompactConnectorConnectionStatus } from '../connections/connector';
@@ -12,17 +12,13 @@ import {
   useTemplateParameterDefinitions,
 } from '../../../core/state/templates/templateselectors';
 import { useMemo } from 'react';
-
-const useStyles = makeStyles({
-  actionName: {
-    color: tokens.colorPaletteLavenderBorderActive,
-  },
-});
+import { TemplateDisplay } from '../templateDisplay';
 
 type ReviewCreatePanelProps = {
   resourceOverrides?: {
     templateName?: string;
     workflowName?: string;
+    triggerDescription?: string;
   };
 };
 
@@ -67,13 +63,22 @@ export const ReviewAddPanel = ({ resourceOverrides }: ReviewCreatePanelProps) =>
 
   return (
     <div className="msla-templates-tab msla-templates-review-container">
-      <TemplateDisplay label={resourceOverrides?.templateName} />
+      <TemplateDisplay titleLabel={resourceOverrides?.templateName} />
 
       <div className="msla-templates-review-block">
         <Text>{resourceOverrides?.workflowName ?? resourceStrings.WORKFLOW_NAME}</Text>
         {Object.values(workflows).map((workflow) => (
           <Text weight="semibold" key={workflow.id}>
-            {workflow.workflowName}
+            {workflow.workflowName ?? intlText.PLACEHOLDER}
+          </Text>
+        ))}
+      </div>
+
+      <div className="msla-templates-review-block">
+        <Text>{resourceOverrides?.triggerDescription ?? resourceStrings.TRIGGER_DESCRIPTION}</Text>
+        {Object.values(workflows).map((workflow) => (
+          <Text weight="semibold" key={workflow.id}>
+            {Object.values(workflow?.workflowDefinition?.triggers ?? {})?.[0]?.description ?? intlText.PLACEHOLDER}
           </Text>
         ))}
       </div>
@@ -105,21 +110,6 @@ export const ReviewAddPanel = ({ resourceOverrides }: ReviewCreatePanelProps) =>
           ))}
         </div>
       )}
-    </div>
-  );
-};
-
-export const TemplateDisplay = ({ label, cssOverrides }: { label?: string; cssOverrides?: Record<string, string> }) => {
-  const styles = useStyles();
-  const { resourceStrings } = useTemplatesStrings();
-  const templateTitle = useSelector((state: RootState) => state.template.manifest?.title);
-
-  return (
-    <div className={mergeClasses('msla-templates-review-block', cssOverrides?.template)}>
-      <Text>{label ?? resourceStrings.TEMPLATE_NAME}</Text>
-      <Text weight="semibold" className={styles.actionName}>
-        {templateTitle}
-      </Text>
     </div>
   );
 };

@@ -5,13 +5,15 @@
 import {
   azureWebJobsStorageKey,
   localSettingsFileName,
-  ProjectDirectoryPath,
+  ProjectDirectoryPathKey,
   appKindSetting,
   azureWebJobsSecretStorageTypeKey,
   localEmulatorConnectionString,
   logicAppKind,
   workerRuntimeKey,
   azureStorageTypeSetting,
+  functionsInprocNet8Enabled,
+  functionsInprocNet8EnabledTrue,
 } from '../../../constants';
 import { localize } from '../../../localize';
 import { decryptLocalSettings } from '../../commands/appSettings/decryptLocalSettings';
@@ -178,10 +180,21 @@ export const getLocalSettingsSchema = (isDesignTime: boolean, projectPath?: stri
     Values: {
       [appKindSetting]: logicAppKind,
       [workerRuntimeKey]: WorkerRuntime.Node,
-      ...(projectPath ? { [ProjectDirectoryPath]: projectPath } : {}),
+      ...(projectPath ? { [ProjectDirectoryPathKey]: projectPath } : {}),
       ...(isDesignTime
         ? { [azureWebJobsSecretStorageTypeKey]: azureStorageTypeSetting }
         : { [azureWebJobsStorageKey]: localEmulatorConnectionString }),
+      ...(isDesignTime ? {} : { [functionsInprocNet8Enabled]: functionsInprocNet8EnabledTrue }),
     },
   };
 };
+
+export async function removeAppKindFromLocalSettings(logicAppPath: string, context: IActionContext): Promise<void> {
+  const localSettingsPath: string = path.join(logicAppPath, localSettingsFileName);
+  const settings: ILocalSettingsJson = await getLocalSettingsJson(context, localSettingsPath);
+
+  if (settings.Values && settings.Values[appKindSetting]) {
+    delete settings.Values[appKindSetting];
+    await writeFormattedJson(localSettingsPath, settings);
+  }
+}

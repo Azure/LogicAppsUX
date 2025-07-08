@@ -18,9 +18,17 @@ import {
   StandardCustomCodeService,
   ResourceIdentityType,
   BaseTenantService,
+  BaseCognitiveServiceService,
+  BaseRoleService,
 } from '@microsoft/logic-apps-shared';
 import type { ContentType } from '@microsoft/logic-apps-shared';
-import { DesignerProvider, BJSWorkflowProvider, Designer, CombineInitializeVariableDialog } from '@microsoft/logic-apps-designer';
+import {
+  DesignerProvider,
+  BJSWorkflowProvider,
+  Designer,
+  CombineInitializeVariableDialog,
+  TriggerDescriptionDialog,
+} from '@microsoft/logic-apps-designer';
 import { useSelector } from 'react-redux';
 
 const httpClient = new HttpClient();
@@ -140,6 +148,22 @@ const runService = new StandardRunService({
   isDev: true,
 });
 
+const roleService = new BaseRoleService({
+  baseUrl: '/url',
+  apiVersion: '2022-05-01-preview',
+  httpClient,
+  subscriptionId: 'test',
+  tenantId: 'test',
+  userIdentityId: 'test',
+  appIdentityId: 'test',
+});
+
+const cognitiveServiceService = new BaseCognitiveServiceService({
+  apiVersion: '2023-10-01-preview',
+  baseUrl: '/url',
+  httpClient,
+});
+
 const customCodeService = new StandardCustomCodeService({
   apiVersion: '2018-11-01',
   baseUrl: '/url',
@@ -177,6 +201,7 @@ export const LocalDesigner = () => {
     language,
     areCustomEditorsEnabled,
     showConnectionsPanel,
+    showEdgeDrawing,
     hostOptions,
     suppressDefaultNodeSelect,
   } = useSelector((state: RootState) => state.workflowLoader);
@@ -196,16 +221,19 @@ export const LocalDesigner = () => {
       workflowService,
       hostService,
       runService,
+      roleService,
       editorService,
       connectionParameterEditorService,
       customCodeService,
       uiInteractionsService,
+      cognitiveServiceService,
     },
     readOnly: isReadOnly,
     isMonitoringView,
     isDarkMode,
     useLegacyWorkflowParameters: isConsumption,
     showConnectionsPanel,
+    showEdgeDrawing,
     suppressDefaultNodeSelectFunctionality: suppressDefaultNodeSelect,
     hostOptions,
   };
@@ -226,6 +254,7 @@ export const LocalDesigner = () => {
           <PseudoCommandBar />
           <Designer />
           <CombineInitializeVariableDialog />
+          <TriggerDescriptionDialog workflowId={'local'} />
         </BJSWorkflowProvider>
       ) : null}
     </DesignerProvider>

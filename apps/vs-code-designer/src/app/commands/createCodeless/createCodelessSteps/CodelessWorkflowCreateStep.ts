@@ -5,14 +5,14 @@
 import {
   hostFileName,
   azureWebJobsStorageKey,
-  localSettingsFileName,
   workflowFileName,
-  workflowType,
   localEmulatorConnectionString,
   extensionBundleId,
   defaultVersionRange,
+  type WorkflowType,
+  functionsInprocNet8Enabled,
+  functionsInprocNet8EnabledTrue,
 } from '../../../../constants';
-import { localize } from '../../../../localize';
 import { setLocalAppSetting } from '../../../utils/appSettings/localSettings';
 import { getCodelessWorkflowTemplate } from '../../../utils/codeless/templates';
 import {
@@ -25,15 +25,13 @@ import {
 } from '../../../utils/codeless/updateBuildFile';
 import { getFramework, validateDotnetInstalled } from '../../../utils/dotnet/executeDotnetTemplateCommand';
 import { writeFormattedJson } from '../../../utils/fs';
-import { parseJson } from '../../../utils/parseJson';
 import { WorkflowCreateStepBase } from './WorkflowCreateStepBase';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { DialogResponses, nonNullProp, parseError } from '@microsoft/vscode-azext-utils';
+import { nonNullProp } from '@microsoft/vscode-azext-utils';
 import { WorkflowProjectType, MismatchBehavior } from '@microsoft/vscode-extension-logic-apps';
 import type { IFunctionWizardContext, IWorkflowTemplate, IHostJsonV2, StandardApp } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
-import type { MessageItem } from 'vscode';
 
 export class CodelessWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionWizardContext> {
   private constructor() {
@@ -49,7 +47,7 @@ export class CodelessWorkflowCreateStep extends WorkflowCreateStepBase<IFunction
     const template: IWorkflowTemplate = nonNullProp(context, 'functionTemplate');
     const functionPath: string = path.join(context.projectPath, nonNullProp(context, 'functionName'));
 
-    const codelessDefinition: StandardApp = getCodelessWorkflowTemplate(template?.id === workflowType.stateful);
+    const codelessDefinition: StandardApp = getCodelessWorkflowTemplate(template?.id as WorkflowType);
 
     const workflowJsonFullPath: string = path.join(functionPath, workflowFileName);
 
@@ -107,49 +105,12 @@ export class CodelessWorkflowCreateStep extends WorkflowCreateStepBase<IFunction
       localEmulatorConnectionString,
       MismatchBehavior.Overwrite
     );
-  }
-
-  private async getHostJson(context: IFunctionWizardContext, hostJsonPath: string, allowOverwrite = false): Promise<IHostJsonV2> {
-    return this.getJsonFromFile(context, hostJsonPath, { version: '2.0' }, allowOverwrite);
-  }
-
-  private async getJsonFromFile<T extends object>(
-    context: IFunctionWizardContext,
-    filePath: string,
-    defaultValue: T,
-    allowOverwrite = false
-  ): Promise<T> {
-    if (await fse.pathExists(filePath)) {
-      const data: string = (await fse.readFile(filePath)).toString();
-      if (emptyStringTest.test(data)) {
-        try {
-          return parseJson(data);
-        } catch (error) {
-          if (allowOverwrite) {
-            const message: string = localize(
-              'failedToParseWithOverwrite',
-              'Failed to parse "{0}": {1}. Overwrite?',
-              localSettingsFileName,
-              parseError(error).message
-            );
-            const overwriteButton: MessageItem = { title: localize('overwrite', 'Overwrite') };
-            // Overwrite is the only button and cancel automatically throws, so no need to check result
-            await context.ui.showWarningMessage(message, { modal: true }, overwriteButton, DialogResponses.cancel);
-          } else {
-            const message: string = localize(
-              'failedToParse',
-              'Failed to parse "{0}": {1}.',
-              localSettingsFileName,
-              parseError(error).message
-            );
-            throw new Error(message);
-          }
-        }
-      }
-    }
-
-    return defaultValue;
+    await setLocalAppSetting(
+      context,
+      context.projectPath,
+      functionsInprocNet8Enabled,
+      functionsInprocNet8EnabledTrue,
+      MismatchBehavior.Overwrite
+    );
   }
 }
-
-const emptyStringTest = /[^\s]/;

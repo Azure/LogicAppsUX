@@ -160,7 +160,7 @@ export class BaseOAuthService implements IOAuthService {
     });
   }
 
-  public async fetchConsentUrlForConnection(connectionName: string) {
+  public async fetchConsentUrlForConnection(connectionName: string, oauthKey?: string) {
     const { baseUrl, httpClient, apiVersion } = this.options;
     const hostName = baseUrl.split('/subscriptions')[0];
     const uri = `${hostName}${this.getConnectionRequestPath(connectionName)}/listConsentLinks`;
@@ -171,7 +171,7 @@ export class BaseOAuthService implements IOAuthService {
       parameters: [
         {
           objectId: tokenObject[JwtTokenConstants.objectId],
-          parameterName: 'token',
+          parameterName: oauthKey ?? 'token',
           redirectUrl: this._redirectUrl,
           tenantId: tokenObject[JwtTokenConstants.tenantId],
         },

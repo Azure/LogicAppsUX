@@ -22,13 +22,13 @@ export class RealDataApi {
     await this.page.getByRole('option', { name: workflowName ?? this.workflowName, exact: true }).click();
     await this.page.getByRole('button', { name: 'Toolbox' }).click();
     await this.page.waitForTimeout(2000);
-    await this.page.getByLabel('fit view').click({ force: true });
+    await this.page.getByLabel('Zoom view to fit').click({ force: true });
   }
   async saveWorkflow() {
     const responsePromise = this.page.waitForResponse(
       `${Constants.managementUrl}${this.siteId}/deployWorkflowArtifacts?api-version=${Constants.siteApiVersion}`
     );
-    await this.page.getByRole('menuitem', { name: 'Save Save' }).click();
+    await this.page.getByRole('menuitem', { name: 'Save Save', exact: true }).click();
     await responsePromise;
   }
   async verifyWorkflowSaveWithRequest(expectedStatus: number, expectedBody: string, triggerName: string, dataToSend?: any) {
@@ -87,6 +87,8 @@ export class RealDataApi {
   async deployWorkflow(workflowData: any) {
     if ((workflowData.kind as string).toLowerCase() === 'stateless') {
       this.workflowName = `${this.workflowName}-stateless`;
+    } else if ((workflowData.kind as string).toLowerCase() === 'agentic') {
+      this.workflowName = `${this.workflowName}-agentic`;
     }
     return this.request.post(`${Constants.managementUrl}${this.siteId}/deployWorkflowArtifacts?api-version=${Constants.siteApiVersion}`, {
       data: {
@@ -100,6 +102,44 @@ export class RealDataApi {
         'If-Match': '*',
       },
     });
+  }
+
+  async getConnectionsJSON() {
+    const response = await this.request.fetch(
+      `${Constants.managementUrl}${this.siteId}/workflowsconfiguration/connections?api-version=2018-11-01`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${process.env.AZURE_MANAGEMENT_TOKEN}`,
+          'If-Match': '*',
+        },
+      }
+    );
+    console.log('getConnectionsJSON response', response.json());
+    return (await response.json()).properties.files['connections.json'];
+  }
+
+  async deployConnectionsJSON(connectionsData: any) {
+    return this.request.post(`${Constants.managementUrl}${this.siteId}/deployWorkflowArtifacts?api-version=${Constants.siteApiVersion}`, {
+      data: {
+        files: {
+          ['connections.json']: connectionsData,
+        },
+      },
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${process.env.AZURE_MANAGEMENT_TOKEN}`,
+        'If-Match': '*',
+      },
+    });
+  }
+
+  async removeConnectionFromConnectionsJSON(type: string, connectionName: string) {
+    const connectionsData = await this.getConnectionsJSON();
+    if (connectionsData?.[type]?.[connectionName]) {
+      delete connectionsData[type][connectionName];
+      await this.deployConnectionsJSON(connectionsData);
+    }
   }
 }
 

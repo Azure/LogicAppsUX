@@ -27,8 +27,13 @@ import {
   ValidationException,
 } from '@microsoft/logic-apps-shared';
 
-// biome-ignore lint/suspicious/noConfusingVoidType: Needed for library compatibility
-type OperationManifestSettingType = UploadChunkMetadata | DownloadChunkMetadata | SecureDataOptions | OperationOptions[] | void;
+type OperationManifestSettingType =
+  | UploadChunkMetadata
+  | DownloadChunkMetadata
+  | SecureDataOptions
+  | OperationOptions[]
+  // biome-ignore lint/suspicious/noConfusingVoidType: Needed for library compatibility
+  | void;
 
 /**
  * @interface RetryPolicy - The retry policy operation setting.
@@ -108,6 +113,8 @@ export interface Settings {
   downloadChunkSize?: SettingData<number>;
   runAfter?: SettingData<GraphEdge[]>;
   invokerConnection?: SettingData<SimpleSetting<boolean>>;
+  count?: SettingData<string | number>;
+  shouldFailOperation?: SettingData<boolean>;
 }
 
 /**
@@ -184,6 +191,10 @@ export const getOperationSettings = (
       isSupported: isTimeoutSupported(isTrigger, nodeType, manifest),
       value: getTimeout(nodeType, isTrigger, manifest, operation),
     },
+    count: {
+      isSupported: isCountSupported(isTrigger, nodeType, manifest),
+      value: getCount(nodeType, isTrigger, manifest, operation),
+    },
     paging: {
       isSupported: isPagingSupported(isTrigger, nodeType, manifest, swagger, operationId),
       value: getPaging(operation),
@@ -216,6 +227,10 @@ export const getOperationSettings = (
       isSupported: false,
       value: { enabled: false },
     },
+    shouldFailOperation: {
+      isSupported: isShouldFailOperationSupported(isTrigger, nodeType, manifest),
+      value: getShouldFailOperation(operation),
+    },
   };
 };
 
@@ -236,6 +251,11 @@ const getAsynchronous = (definition?: LogicAppsV2.OperationDefinition): boolean 
   return isOperationOptionSet(Constants.SETTINGS.OPERATION_OPTIONS.ASYNCHRONOUS, operationOptions);
 };
 
+const getShouldFailOperation = (definition?: LogicAppsV2.OperationDefinition): boolean => {
+  const operationOptions = definition && definition.operationOptions;
+  return isOperationOptionSet(Constants.SETTINGS.OPERATION_OPTIONS.FAILWHENLIMITSREACHED, operationOptions);
+};
+
 const isAsynchronousSupported = (isTrigger: boolean, nodeType: string, manifest?: OperationManifest): boolean => {
   if (manifest) {
     const operationOptionSetting = getOperationSettingFromManifest(manifest, 'operationOptions') as OperationManifestSetting<
@@ -249,6 +269,21 @@ const isAsynchronousSupported = (isTrigger: boolean, nodeType: string, manifest?
     );
   }
   return equals(nodeType, Constants.NODE.TYPE.RESPONSE);
+};
+
+const isShouldFailOperationSupported = (isTrigger: boolean, nodeType: string, manifest?: OperationManifest): boolean => {
+  if (manifest) {
+    const operationOptionSetting = getOperationSettingFromManifest(manifest, 'operationOptions') as OperationManifestSetting<
+      OperationOptions[]
+    >;
+
+    return (
+      isSettingSupportedFromOperationManifest(operationOptionSetting, isTrigger) &&
+      !!operationOptionSetting.options &&
+      operationOptionSetting.options.indexOf(OperationOptions.FailWhenLimitsReached) > -1
+    );
+  }
+  return false;
 };
 
 const getSplitOnConfiguration = (definition?: LogicAppsV2.TriggerDefinition): SplitOnConfiguration | undefined => {
@@ -578,7 +613,11 @@ export const getSplitOnValue = (
       if (array) {
         const { collectionPath, required } = array;
         return collectionPath
-          ? `@${getTokenExpressionValue({ name: collectionPath, required, tokenType: TokenType.OUTPUTS } as any)}`
+          ? `@${getTokenExpressionValue({
+              name: collectionPath,
+              required,
+              tokenType: TokenType.OUTPUTS,
+            } as any)}`
           : `@${Constants.TRIGGER_BODY_OUTPUT}`;
       }
     }
@@ -622,6 +661,22 @@ const getTimeout = (
   return undefined;
 };
 
+const getCount = (
+  nodeType: string,
+  isTrigger: boolean,
+  manifest?: OperationManifest,
+  definition?: LogicAppsV2.ActionDefinition
+): string | number | undefined => {
+  const isSupported = isCountSupported(isTrigger, nodeType, manifest);
+
+  if (isSupported) {
+    const timeoutableActionDefinition = definition as LogicAppsV2.TimeoutableActionDefinition;
+    return timeoutableActionDefinition?.limit?.count ?? 100; // TODO: Change this to come from manifest
+  }
+
+  return undefined;
+};
+
 const isTimeoutableAction = (operationType: string): boolean => {
   const supportedTypes = [Constants.NODE.TYPE.API_CONNECTION, Constants.NODE.TYPE.API_CONNECTION_WEBHOOK, Constants.NODE.TYPE.HTTP];
   return supportedTypes.indexOf(operationType.toLowerCase()) > -1;
@@ -634,6 +689,16 @@ const isTimeoutSupported = (isTrigger: boolean, nodeType: string, manifest?: Ope
         isTrigger
       )
     : isTimeoutableAction(nodeType);
+};
+
+const isCountSupported = (isTrigger: boolean, _nodeType: string, manifest?: OperationManifest): boolean => {
+  return (
+    !!manifest &&
+    !!isSettingSupportedFromOperationManifest(
+      getOperationSettingFromManifest(manifest, 'count') as OperationManifestSetting<void>,
+      isTrigger
+    )
+  );
 };
 
 const getOperationSettingFromManifest = (

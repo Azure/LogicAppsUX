@@ -1,6 +1,6 @@
+import { openUrl } from '@microsoft/vscode-azext-utils';
 import { workflowAppApiVersion } from '../../../../constants';
 import { ext } from '../../../../extensionVariables';
-import { localize } from '../../../../localize';
 import type { RemoteWorkflowTreeItem } from '../../../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem';
 import {
   removeWebviewPanelFromCache,
@@ -8,7 +8,6 @@ import {
   getStandardAppData,
   getWorkflowManagementBaseURI,
 } from '../../../utils/codeless/common';
-import { getAuthorizationToken } from '../../../utils/codeless/getAuthorizationToken';
 import type { IAzureConnectorsContext } from '../azureConnectorWizard';
 import { OpenDesignerBase } from './openDesignerBase';
 import type { IWorkflowFileContent, IDesignerPanelMetadata } from '@microsoft/vscode-extension-logic-apps';
@@ -16,6 +15,7 @@ import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { Uri } from 'vscode';
+import { getAuthorizationTokenFromNode } from '../../../utils/codeless/getAuthorizationToken';
 
 export class OpenDesignerForAzureResource extends OpenDesignerBase {
   private readonly node: RemoteWorkflowTreeItem;
@@ -27,7 +27,7 @@ export class OpenDesignerForAzureResource extends OpenDesignerBase {
     const panelName = `${vscode.workspace.name}-${workflowName}`;
     const panelGroupKey = ext.webViewKey.designerAzure;
 
-    super(context, workflowName, panelName, workflowAppApiVersion, panelGroupKey, true, false, false);
+    super(context, workflowName, panelName, workflowAppApiVersion, panelGroupKey, true, false, false, '');
 
     this.node = node;
     this.workflow = node.workflowFileContent;
@@ -44,7 +44,6 @@ export class OpenDesignerForAzureResource extends OpenDesignerBase {
       }
     }
 
-    vscode.window.showInformationMessage(localize('logicApps.designer', 'Starting workflow designer. It might take a few seconds.'), 'OK');
     this.panel = vscode.window.createWebviewPanel(this.panelGroupKey, this.workflowName, vscode.ViewColumn.Active, this.getPanelOptions());
     this.panel.iconPath = {
       light: Uri.file(path.join(ext.context.extensionPath, 'assets', 'dark', 'workflow.svg')),
@@ -103,13 +102,17 @@ export class OpenDesignerForAzureResource extends OpenDesignerBase {
         ext.telemetryReporter.sendTelemetryEvent(eventName, { ...msg.data });
         break;
       }
+      case ExtensionCommand.fileABug: {
+        await openUrl('https://github.com/Azure/LogicAppsUX/issues/new?template=bug_report.yml');
+        break;
+      }
       default:
         break;
     }
   }
 
   private async getDesignerPanelMetadata(): Promise<IDesignerPanelMetadata> {
-    const accessToken: string = await getAuthorizationToken();
+    const accessToken = await getAuthorizationTokenFromNode(this.node);
 
     return {
       panelId: this.panelName,

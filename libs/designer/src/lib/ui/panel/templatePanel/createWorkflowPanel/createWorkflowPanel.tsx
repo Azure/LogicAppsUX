@@ -1,18 +1,18 @@
 import type { AppDispatch, RootState } from '../../../../core/state/templates/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { closePanel, selectPanelTab, TemplatePanelView } from '../../../../core/state/templates/panelSlice';
-import { type TemplatePanelTab, TemplatesPanelContent, TemplatesPanelFooter, TemplatesPanelHeader } from '@microsoft/designer-ui';
-import { ChevronDown16Regular, ChevronUp16Regular } from '@fluentui/react-icons';
+import { type TemplateTabProps, TemplateContent, TemplatesPanelFooter, TemplatesPanelHeader } from '@microsoft/designer-ui';
+import { ChevronDown16Regular, ChevronUp16Regular, Dismiss24Regular } from '@fluentui/react-icons';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { Text } from '@fluentui/react-components';
-import { Label, Panel, PanelType } from '@fluentui/react';
+import { Text, Button, Label, Drawer, DrawerBody, DrawerHeader, DrawerFooter } from '@fluentui/react-components';
 import Markdown from 'react-markdown';
 import { useCreateWorkflowPanelTabs } from './usePanelTabs';
 import { isMultiWorkflowTemplate } from '../../../../core/actions/bjsworkflow/templates';
 import type { CreateWorkflowHandler } from '../../../templates';
 import { useExistingWorkflowNames } from '../../../../core/queries/template';
 import { clearTemplateDetails } from '../../../../core/state/templates/templateSlice';
+import { useStyles } from './createWorkflowPanel.styles';
 
 export interface CreateWorkflowTabProps {
   isCreating: boolean;
@@ -32,11 +32,6 @@ export interface CreateWorkflowPanelProps {
   showCloseButton?: boolean;
   onClose?: () => void;
 }
-
-const layerProps = {
-  hostId: 'msla-layer-host',
-  eventBubblingEnabled: true,
-};
 
 export const CreateWorkflowPanel = ({
   createWorkflow,
@@ -58,7 +53,7 @@ export const CreateWorkflowPanel = ({
   }));
   const isMultiWorkflow = useMemo(() => !!manifest && isMultiWorkflowTemplate(manifest), [manifest]);
 
-  const panelTabs: TemplatePanelTab[] = useCreateWorkflowPanelTabs({
+  const panelTabs: TemplateTabProps[] = useCreateWorkflowPanelTabs({
     isMultiWorkflowTemplate: isMultiWorkflow,
     createWorkflow: createWorkflow ?? (() => Promise.resolve()),
     showCloseButton,
@@ -104,39 +99,56 @@ export const CreateWorkflowPanel = ({
         headerTitle={isMultiWorkflow ? resources.multiWorkflowCreateTitle : isCreateView ? undefined : resources.updatedWorkflowTitle}
         title={manifest?.title ?? ''}
         summary={manifest?.summary ?? ''}
+        onClose={shouldCloseByDefault ? dismissPanel : undefined}
       />
     ),
-    [isMultiWorkflow, resources.multiWorkflowCreateTitle, resources.updatedWorkflowTitle, isCreateView, manifest?.title, manifest?.summary]
+    [
+      isMultiWorkflow,
+      resources.multiWorkflowCreateTitle,
+      resources.updatedWorkflowTitle,
+      isCreateView,
+      manifest?.title,
+      manifest?.summary,
+      shouldCloseByDefault,
+      dismissPanel,
+    ]
   );
 
   const selectedTabProps = selectedTabId ? panelTabs?.find((tab) => tab.id === selectedTabId) : panelTabs[0];
-  const onRenderFooterContent = useCallback(
-    () => (selectedTabProps?.footerContent ? <TemplatesPanelFooter showPrimaryButton={true} {...selectedTabProps?.footerContent} /> : null),
-    [selectedTabProps?.footerContent]
-  );
+
+  const styles = useStyles();
 
   return (
-    <Panel
-      styles={{ main: { padding: '0 20px', zIndex: 1000 }, content: { paddingLeft: '0px' } }}
-      isLightDismiss={shouldCloseByDefault}
-      type={PanelType.custom}
-      customWidth={panelWidth}
-      isOpen={isOpen && currentPanelView === TemplatePanelView.CreateWorkflow}
-      onDismiss={shouldCloseByDefault ? dismissPanel : undefined}
-      hasCloseButton={shouldCloseByDefault}
-      onRenderHeader={onRenderHeaderContent}
-      onRenderFooterContent={onRenderFooterContent}
-      layerProps={layerProps}
-      isFooterAtBottom={true}
+    <Drawer
+      className={styles.drawer}
+      modalType={shouldCloseByDefault ? 'modal' : 'non-modal'}
+      open={isOpen && currentPanelView === TemplatePanelView.CreateWorkflow}
+      onOpenChange={(_, { open }) => !open && shouldCloseByDefault && dismissPanel()}
+      position="end"
+      style={{ width: panelWidth }}
     >
-      <TemplatesPanelContent tabs={panelTabs} selectedTab={selectedTabId ?? panelTabs?.[0]?.id} selectTab={handleSelectTab} />
-    </Panel>
+      <DrawerHeader className={styles.header}>{onRenderHeaderContent()}</DrawerHeader>
+      <DrawerBody className={styles.body}>
+        <TemplateContent tabs={panelTabs} selectedTab={selectedTabId ?? panelTabs?.[0]?.id} selectTab={handleSelectTab} />
+      </DrawerBody>
+      {selectedTabProps?.footerContent && (
+        <DrawerFooter className={styles.footer}>
+          <TemplatesPanelFooter {...selectedTabProps.footerContent} />
+        </DrawerFooter>
+      )}
+    </Drawer>
   );
 };
 
-export const CreateWorkflowPanelHeader = ({ headerTitle, title, summary }: { title: string; summary: string; headerTitle?: string }) => {
+export const CreateWorkflowPanelHeader = ({
+  headerTitle,
+  title,
+  summary,
+  onClose,
+}: { title: string; summary: string; headerTitle?: string; onClose?: () => void }) => {
   const [isOpen, setIsOpen] = useState(false);
   const intl = useIntl();
+  const styles = useStyles();
 
   const intlText = {
     CREATE_WORKFLOW: intl.formatMessage({
@@ -146,8 +158,8 @@ export const CreateWorkflowPanelHeader = ({ headerTitle, title, summary }: { tit
     }),
     TEMPLATE_DETAILS: intl.formatMessage({
       defaultMessage: 'Template details',
-      id: 'WdO1cs',
-      description: 'Panel description title for template details, allowing to click to read more',
+      id: 'Btpmnv',
+      description: 'Panel description title for template details where you can select for more information',
     }),
     NAME: intl.formatMessage({
       defaultMessage: 'Name',
@@ -161,26 +173,36 @@ export const CreateWorkflowPanelHeader = ({ headerTitle, title, summary }: { tit
     }),
   };
 
+  const closeButton = onClose ? (
+    <Button appearance="subtle" icon={<Dismiss24Regular />} onClick={onClose} className={styles.closeButton}>
+      {intl.formatMessage({
+        defaultMessage: 'Close Panel',
+        id: 'XV/4oe',
+        description: 'Close panel button text',
+      })}
+    </Button>
+  ) : undefined;
+
   return (
-    <TemplatesPanelHeader title={headerTitle ?? intlText.CREATE_WORKFLOW}>
+    <TemplatesPanelHeader title={headerTitle ?? intlText.CREATE_WORKFLOW} rightAction={closeButton}>
       <div
-        className="msla-template-createworkflow-title"
+        className={styles.templateDetailsToggle}
         onClick={() => {
           setIsOpen(!isOpen);
         }}
       >
-        <Text className="msla-template-createworkflow-title-text">{intlText.TEMPLATE_DETAILS}</Text>
+        <Text className={styles.templateDetailsToggleText}>{intlText.TEMPLATE_DETAILS}</Text>
         {isOpen ? <ChevronUp16Regular /> : <ChevronDown16Regular />}
       </div>
       {isOpen && (
-        <div className="msla-template-createworkflow-description-wrapper">
-          <div className="msla-template-createworkflow-description">
-            <Label className="msla-template-createworkflow-description-title">{intlText.NAME}</Label>
-            <Text className="msla-template-createworkflow-description-text">{title}</Text>
+        <div className={styles.descriptionWrapper}>
+          <div className={styles.descriptionRow}>
+            <Label className={styles.descriptionTitle}>{intlText.NAME}</Label>
+            <Text className={styles.descriptionText}>{title}</Text>
           </div>
-          <div className="msla-template-createworkflow-description">
-            <Label className="msla-template-createworkflow-description-title">{intlText.DESCRIPTION}</Label>
-            <Markdown className="msla-template-createworkflow-description-text" linkTarget="_blank">
+          <div className={styles.descriptionRow}>
+            <Label className={styles.descriptionTitle}>{intlText.DESCRIPTION}</Label>
+            <Markdown className={styles.descriptionText} linkTarget="_blank">
               {summary}
             </Markdown>
           </div>

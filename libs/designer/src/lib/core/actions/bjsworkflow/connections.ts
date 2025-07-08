@@ -47,7 +47,6 @@ import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { openPanel, setIsCreatingConnection, setIsPanelLoading } from '../../state/panel/panelSlice';
 import type { PanelMode } from '../../state/panel/panelTypes';
-
 export interface ConnectionPayload {
   nodeId: string;
   connector: Connector;
@@ -63,6 +62,7 @@ export interface UpdateConnectionPayload {
   connectionProperties?: Record<string, any>;
   authentication?: ApiHubAuthentication;
   connectionRuntimeUrl?: string;
+  connectionParameterValues?: Record<string, any>;
 }
 
 export const updateTemplateConnection = createAsyncThunk(
@@ -256,8 +256,14 @@ export const autoCreateConnectionIfPossible = async (payload: {
   applyNewConnection: (connection: Connection) => void;
   onSuccess: (connection: Connection) => void;
   onManualConnectionCreation: () => void;
+  skipOAuth?: boolean;
 }): Promise<void> => {
-  const { connector, operationInfo, referenceKeys, applyNewConnection, onSuccess, onManualConnectionCreation } = payload;
+  const { connector, operationInfo, referenceKeys, skipOAuth, applyNewConnection, onSuccess, onManualConnectionCreation } = payload;
+
+  if (connectorHasMultiAuth(connector)) {
+    return onManualConnectionCreation();
+  }
+
   const operationManifest = operationInfo
     ? await getOperationManifest({ connectorId: connector.id, operationId: operationInfo.operationId ?? '' })
     : undefined;
@@ -272,7 +278,7 @@ export const autoCreateConnectionIfPossible = async (payload: {
 
   if (needsSimpleConnection(connector) && !hasTermsOfUse(connector)) {
     connection = await ConnectionService().createConnection(newName, connector, connectionInfo, parametersMetadata);
-  } else if (hasOnlyOAuthParameters(connector)) {
+  } else if (!skipOAuth && hasOnlyOAuthParameters(connector)) {
     // TODO: First party connections were never created for LA, so would need separate implementation and testing if we need to include this.
 
     const connectionResult = await ConnectionService().createAndAuthorizeOAuthConnection(
@@ -449,6 +455,10 @@ export function hasOnlyOAuthParameters(connector: Connector): boolean {
   return false;
 }
 
+function connectorHasMultiAuth(connector: Connector): boolean {
+  return connector !== undefined && connector.properties?.connectionParameterSets !== undefined;
+}
+
 // This only checks if this connector has any OAuth connection, it can be just part of Multi Auth
 function needsAuth(connector?: Connector): boolean {
   if (!connector) {
@@ -462,7 +472,7 @@ function hasPrerequisiteConnection(connector: Connector): boolean {
 }
 
 function needsSimpleConnection(connector: Connector): boolean {
-  if (!connector) {
+  if (!connector || connectorHasMultiAuth(connector)) {
     return false;
   }
 
@@ -528,7 +538,7 @@ function getConnectionReferenceKeyForManifest(referenceFormat: string, operation
       return (operationDefinition as LogicAppsV2.ServiceProvider).inputs.serviceProviderConfiguration.connectionName;
 
     case ConnectionReferenceKeyFormat.AgentConnection:
-      return (operationDefinition as any).inputs.modelConfiguration.connectionName;
+      return (operationDefinition as any).inputs.modelConfigurations.model1.referenceName;
 
     case ConnectionReferenceKeyFormat.OpenApi:
     case ConnectionReferenceKeyFormat.OpenApiConnection:

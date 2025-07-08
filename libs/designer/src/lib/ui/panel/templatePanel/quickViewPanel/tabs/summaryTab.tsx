@@ -1,10 +1,10 @@
 import { LogEntryLevel, LoggerService, type Template, isNullOrUndefined } from '@microsoft/logic-apps-shared';
-import type { AppDispatch } from '../../../../../core/state/templates/store';
+import type { AppDispatch, RootState } from '../../../../../core/state/templates/store';
 import { useIntl, type IntlShape } from 'react-intl';
 import constants from '../../../../../common/constants';
-import { closePanel, openCreateWorkflowPanelView } from '../../../../../core/state/templates/panelSlice';
-import { Link, Text } from '@fluentui/react-components';
-import type { TemplatePanelTab } from '@microsoft/designer-ui';
+import { closePanel, openPanelView, TemplatePanelView } from '../../../../../core/state/templates/panelSlice';
+import { Link, Tag, Text } from '@fluentui/react-components';
+import type { TemplateTabProps } from '@microsoft/designer-ui';
 import { clearTemplateDetails } from '../../../../../core/state/templates/templateSlice';
 import Markdown from 'react-markdown';
 import { useTemplateManifest, useWorkflowTemplate } from '../../../../../core/state/templates/templateselectors';
@@ -12,9 +12,11 @@ import { ConnectionsList } from '../../../../templates/connections/connections';
 import { Open16Regular } from '@fluentui/react-icons';
 import { isMultiWorkflowTemplate } from '../../../../../core/actions/bjsworkflow/templates';
 import { useMemo } from 'react';
+import { useSelector } from 'react-redux';
 
 export const SummaryPanel = ({ workflowId }: { workflowId: string }) => {
   const intl = useIntl();
+  const { isConsumption, subscriptionId, resourceGroup, workflowAppName } = useSelector((state: RootState) => state.workflow);
   const workflowTemplate = useWorkflowTemplate(workflowId);
   const workflowManifest = useMemo(() => workflowTemplate?.manifest, [workflowTemplate]);
   const templateManifest = useTemplateManifest();
@@ -37,25 +39,30 @@ export const SummaryPanel = ({ workflowId }: { workflowId: string }) => {
       description: 'Name of the organization that published this template',
     }),
   };
+  const hideConnection = useMemo(() => {
+    return !isConsumption && !(subscriptionId && resourceGroup && workflowAppName);
+  }, [isConsumption, subscriptionId, resourceGroup, workflowAppName]);
 
   return isNullOrUndefined(workflowManifest) || isNullOrUndefined(templateManifest) ? null : (
     <div className="msla-template-overview">
-      <div className="msla-template-overview-section">
-        <Text className="msla-template-overview-section-title" style={templateHasConnections ? undefined : { marginBottom: '-30px' }}>
-          {templateHasConnections
-            ? intl.formatMessage({
-                defaultMessage: 'Connections included in this template',
-                id: 'TnwRGo',
-                description: 'Title for the connections section in the template overview tab',
-              })
-            : intl.formatMessage({
-                defaultMessage: 'No connections are needed in this template',
-                id: 'j2v8BE',
-                description: 'Text to show no connections present in the template.',
-              })}
-        </Text>
-        {templateHasConnections ? <ConnectionsList connections={workflowManifest?.connections ?? {}} /> : null}
-      </div>
+      {hideConnection ? null : (
+        <div className="msla-template-overview-section">
+          <Text className="msla-template-overview-section-title" style={templateHasConnections ? undefined : { marginBottom: '-30px' }}>
+            {templateHasConnections
+              ? intl.formatMessage({
+                  defaultMessage: 'Connections included in this template',
+                  id: 'TnwRGo',
+                  description: 'Title for the connections section in the template overview tab',
+                })
+              : intl.formatMessage({
+                  defaultMessage: 'No connections are needed in this template',
+                  id: 'j2v8BE',
+                  description: 'Text to show no connections present in the template.',
+                })}
+          </Text>
+          {templateHasConnections ? <ConnectionsList connections={workflowManifest?.connections ?? {}} /> : null}
+        </div>
+      )}
       {workflowManifest?.prerequisites ? (
         <div className="msla-template-overview-section">
           <Text className="msla-template-overview-section-title">
@@ -99,14 +106,22 @@ export const SummaryPanel = ({ workflowId }: { workflowId: string }) => {
             </Link>
           </div>
         )}
-        {Object.keys(detailsTags).map((key) => {
-          return (
-            <div className="msla-template-overview-section-detail" key={key}>
-              <Text className="msla-template-overview-section-detailkey">{detailsTags[key as Template.DetailsType]}:</Text>
-              <Text>{templateManifest.details[key as Template.DetailsType]}</Text>
-            </div>
-          );
-        })}
+        {!isMultiWorkflow && (
+          <div className="msla-template-overview-section-detail">
+            <Text className="msla-template-overview-section-detailkey">{detailsTags.Type}:</Text>
+            <Text>{templateManifest.details.Type}</Text>
+          </div>
+        )}
+
+        <div className="msla-template-overview-section-detail">
+          <Text className="msla-template-overview-section-detailkey">{detailsTags.Trigger}:</Text>
+          <Text>{isMultiWorkflow ? workflowTemplate?.triggerType : templateManifest.details.Trigger}</Text>
+        </div>
+
+        <div className="msla-template-overview-section-detail">
+          <Text className="msla-template-overview-section-detailkey">{detailsTags.By}:</Text>
+          <Text>{templateManifest.details.By}</Text>
+        </div>
       </div>
       {!isMultiWorkflow && templateManifest.tags?.length ? (
         <div className="msla-template-overview-section">
@@ -119,9 +134,9 @@ export const SummaryPanel = ({ workflowId }: { workflowId: string }) => {
           </Text>
           <div className="msla-template-overview-section-tags-section">
             {templateManifest.tags.map((key: string) => (
-              <Text key={key} className="msla-template-overview-section-tag" size={300}>
+              <Tag key={key} appearance="brand">
                 {key}
-              </Text>
+              </Tag>
             ))}
           </div>
         </div>
@@ -135,43 +150,54 @@ export const summaryTab = (
   dispatch: AppDispatch,
   workflowId: string,
   clearDetailsOnClose: boolean,
-  { templateId, workflowAppName, isMultiWorkflow }: Template.TemplateContext,
+  { templateId, workflowAppName, isMultiWorkflow, showCreate, showCloseButton }: Template.TemplateContext,
   onClose?: () => void
-): TemplatePanelTab => ({
+): TemplateTabProps => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.OVERVIEW,
   title: intl.formatMessage({
     defaultMessage: 'Summary',
     id: 'mgD2ZT',
     description: 'The tab label for the monitoring parameters tab on the operation panel',
   }),
-  hasError: false,
+  tabStatusIcon: undefined,
   content: <SummaryPanel workflowId={workflowId} />,
   footerContent: {
-    primaryButtonText: intl.formatMessage({
-      defaultMessage: 'Use this template',
-      id: '5szzYP',
-      description: 'Button text to create workflow from this template',
-    }),
-    primaryButtonOnClick: () => {
-      LoggerService().log({
-        level: LogEntryLevel.Trace,
-        area: 'Templates.overviewTab',
-        message: 'Template create button clicked',
-        args: [templateId, workflowAppName, `isMultiWorkflowTemplate:${isMultiWorkflow}`],
-      });
-      dispatch(openCreateWorkflowPanelView());
-    },
-    secondaryButtonText: intl.formatMessage({
-      defaultMessage: 'Close',
-      id: 'FTrMxN',
-      description: 'Button text for closing the panel',
-    }),
-    secondaryButtonOnClick: () => {
-      dispatch(closePanel());
-      if (clearDetailsOnClose) {
-        dispatch(clearTemplateDetails());
-      }
-      onClose?.();
-    },
+    buttonContents: [
+      {
+        type: 'action',
+        text: intl.formatMessage({
+          defaultMessage: 'Use this template',
+          id: '5szzYP',
+          description: 'Button text to create workflow from this template',
+        }),
+        appearance: 'primary',
+        onClick: () => {
+          LoggerService().log({
+            level: LogEntryLevel.Trace,
+            area: 'Templates.overviewTab',
+            message: 'Template create button clicked',
+            args: [templateId, workflowAppName, `isMultiWorkflowTemplate:${isMultiWorkflow}`],
+          });
+          dispatch(openPanelView({ panelView: TemplatePanelView.CreateWorkflow }));
+        },
+        hide: !showCreate,
+      },
+      {
+        type: 'action',
+        text: intl.formatMessage({
+          defaultMessage: 'Close',
+          id: 'FTrMxN',
+          description: 'Button text for closing the panel',
+        }),
+        onClick: () => {
+          dispatch(closePanel());
+          if (clearDetailsOnClose) {
+            dispatch(clearTemplateDetails());
+          }
+          onClose?.();
+        },
+        disabled: !showCloseButton,
+      },
+    ],
   },
 });

@@ -34,12 +34,14 @@ import joinManifest from './manifests/join';
 import parsejsonManifest from './manifests/parsejson';
 import queryManifest from './manifests/query';
 import requestManifest from './manifests/request';
+import a2aRequestManifest from './manifests/a2arequest';
 import responseManifest from './manifests/response';
 import { delayManifest, delayUntilManifest, recurrenceManifest, slidingWindowManifest } from './manifests/schedule';
 import scopeManifest from './manifests/scope';
 import selectManifest from './manifests/select';
 import switchManifest from './manifests/switch';
 import agentloopManifest from '../standard/manifest/agentloop';
+import handoffManifest from '../standard/manifest/handoff';
 import terminateManifest from './manifests/terminate';
 import untilManifest from './manifests/until';
 
@@ -66,6 +68,7 @@ const function_ = 'function';
 const liquid = 'liquid';
 const serviceprovider = 'serviceprovider';
 const workflow = 'workflow';
+const nestedAgent = 'nestedagent';
 const xmlvalidation = 'xmlvalidation';
 const xslt = 'xslt';
 const xmlcompose = 'xmlcompose';
@@ -82,7 +85,9 @@ const foreach = 'foreach';
 const condition = 'if';
 const switchType = 'switch';
 export const agentType = 'agent';
+export const handoff = 'agenthandoff';
 const request = 'request';
+const a2arequest = 'a2arequest';
 const response = 'response';
 const table = 'table';
 const terminate = 'terminate';
@@ -124,7 +129,8 @@ const edifactencode = 'edifactencode';
 const edifactbatchencode = 'edifactbatchencode';
 const edifactdecode = 'edifactdecode';
 const parsedocument = 'parsedocument';
-const parsedocumentwithmetadata = 'parsedocumentwithmetadata';
+export const parsedocumentwithmetadata = 'parsedocumentwithmetadata';
+export const chunktextwithmetadata = 'chunktextwithmetadata';
 
 export const apiManagementConnectorId = '/connectionProviders/apiManagementOperation';
 export const azureFunctionConnectorId = '/connectionProviders/azureFunctionOperation';
@@ -133,6 +139,7 @@ export const batchConnectorId = '/connectionProviders/batch';
 export const dataOperationConnectorId = 'connectionProviders/dataOperationNew';
 const controlConnectorId = 'connectionProviders/control';
 export const agentConnectorId = 'connectionProviders/agent';
+const localWorkflowConnectorId = 'connectionProviders/localWorkflowOperation';
 const dateTimeConnectorId = 'connectionProviders/datetime';
 const scheduleConnectorId = 'connectionProviders/schedule';
 export const httpConnectorId = 'connectionProviders/http';
@@ -150,6 +157,7 @@ const azurefunction = 'azurefunction';
 const appservice = 'appservice';
 const appservicetrigger = 'appservicetrigger';
 const invokeworkflow = 'invokeworkflow';
+const invokenestedagent = 'invokenestedagent';
 const chunktext = 'chunktext';
 
 export const supportedBaseManifestTypes = [
@@ -180,6 +188,7 @@ export const supportedBaseManifestTypes = [
   query,
   recurrence,
   request,
+  a2arequest,
   response,
   rosettanetdecode,
   rosettanetencode,
@@ -190,9 +199,11 @@ export const supportedBaseManifestTypes = [
   slidingwindow,
   switchType,
   agentType,
+  handoff,
   serviceprovider,
   table,
   workflow,
+  nestedAgent,
   xmlvalidation,
   xslt,
   xmlcompose,
@@ -218,7 +229,18 @@ export const supportedBaseManifestTypes = [
   chunktext,
   parsedocument,
   parsedocumentwithmetadata,
+  chunktextwithmetadata,
 ];
+
+export const builtInConnectorIds = {
+  dataOperation: dataOperationConnectorId,
+  control: controlConnectorId,
+  agent: agentConnectorId,
+  dateTime: dateTimeConnectorId,
+  schedule: scheduleConnectorId,
+  http: httpConnectorId,
+  variable: variableConnectorId,
+};
 
 export type getAccessTokenType = () => Promise<string>;
 
@@ -262,9 +284,17 @@ export abstract class BaseOperationManifestService implements IOperationManifest
   abstract getOperationInfo(definition: any, isTrigger: boolean): Promise<OperationInfo>;
 
   abstract getOperationManifest(_connectorId: string, _operationId: string): Promise<OperationManifest>;
+
+  abstract isBuiltInConnector(connectorId: string): boolean;
+
+  abstract getBuiltInConnector(connectorId: string): any;
 }
 
 export function isBuiltInOperation(definition: any): boolean {
+  if (!definition?.type) {
+    return false;
+  }
+
   switch (definition?.type?.toLowerCase()) {
     case apimanagement:
     case as2Decode:
@@ -296,6 +326,7 @@ export function isBuiltInOperation(definition: any): boolean {
     case query:
     case recurrence:
     case request:
+    case a2arequest:
     case response:
     case select:
     case sendtobatch:
@@ -303,6 +334,7 @@ export function isBuiltInOperation(definition: any): boolean {
     case slidingwindow:
     case switchType:
     case agentType:
+    case handoff:
     case workflow:
     case xslt:
     case xmlcompose:
@@ -327,13 +359,13 @@ export function isBuiltInOperation(definition: any): boolean {
     case edifactdecode:
     case edifactencode:
     case edifactbatchencode:
-      return true;
-
     case appservice:
     case azurefunction:
     case invokeworkflow:
+    case nestedAgent:
     case parsedocument:
     case chunktext:
+    case chunktextwithmetadata:
     case parsedocumentwithmetadata:
       return true;
 
@@ -422,6 +454,11 @@ export function getBuiltInOperationInfo(definition: any, isTrigger: boolean): Op
           return {
             connectorId: 'connectionProviders/request',
             operationId: request,
+          };
+        case 'agent':
+          return {
+            connectorId: 'connectionProviders/a2a',
+            operationId: a2arequest,
           };
         default: {
           if (kind === undefined) {
@@ -607,9 +644,17 @@ const builtInOperationsMetadata: Record<string, OperationInfo> = {
     connectorId: agentConnectorId,
     operationId: agentType,
   },
+  [handoff]: {
+    connectorId: agentConnectorId,
+    operationId: handoff,
+  },
   [workflow]: {
-    connectorId: 'connectionProviders/localWorkflowOperation',
-    operationId: 'invokeWorkflow',
+    connectorId: localWorkflowConnectorId,
+    operationId: invokeworkflow,
+  },
+  [nestedAgent]: {
+    connectorId: localWorkflowConnectorId,
+    operationId: invokenestedagent,
   },
   [xmlcompose]: {
     connectorId: xmlOperationsConnectionId,
@@ -723,6 +768,10 @@ const builtInOperationsMetadata: Record<string, OperationInfo> = {
     connectorId: dataOperationConnectorId,
     operationId: parsedocumentwithmetadata,
   },
+  [chunktextwithmetadata]: {
+    connectorId: dataOperationConnectorId,
+    operationId: chunktextwithmetadata,
+  },
 };
 
 export const supportedBaseManifestObjects = new Map<string, OperationManifest>([
@@ -753,6 +802,7 @@ export const supportedBaseManifestObjects = new Map<string, OperationManifest>([
   [query, queryManifest],
   [recurrence, recurrenceManifest],
   [request, requestManifest],
+  [a2arequest, a2aRequestManifest],
   [response, responseManifest],
   [scope, scopeManifest],
   [select, selectManifest],
@@ -761,6 +811,7 @@ export const supportedBaseManifestObjects = new Map<string, OperationManifest>([
   [subtractfromtime, subtractFromTimeManifest],
   [switchType, switchManifest],
   [agentType, agentloopManifest],
+  [handoff, handoffManifest],
   [terminate, terminateManifest],
   [until, untilManifest],
 ]);

@@ -6,11 +6,11 @@ import { basicsTab } from './tabs/basicsTab';
 import { reviewCreateTab } from './tabs/reviewCreateTab';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../../core/state/templates/store';
-import type { TemplatePanelTab } from '@microsoft/designer-ui';
+import type { TemplateTabProps } from '@microsoft/designer-ui';
 import Constants from '../../../../common/constants';
 import { useExistingWorkflowNames } from '../../../../core/queries/template';
 import { validateWorkflowsBasicInfo } from '../../../../core/actions/bjsworkflow/templates';
-import { validateConnections, validateParameters, clearTemplateDetails } from '../../../../core/state/templates/templateSlice';
+import { validateConnections, validateParameterValues, clearTemplateDetails } from '../../../../core/state/templates/templateSlice';
 import { LogEntryLevel, LoggerService, Status, TemplateService } from '@microsoft/logic-apps-shared';
 import { useMutation } from '@tanstack/react-query';
 import type { CreateWorkflowHandler } from '../../../templates';
@@ -26,7 +26,7 @@ export const useCreateWorkflowPanelTabs = ({
   isMultiWorkflowTemplate: boolean;
   showCloseButton?: boolean;
   onClosePanel?: () => void;
-}): TemplatePanelTab[] => {
+}): TemplateTabProps[] => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const { data: existingWorkflowNames } = useExistingWorkflowNames();
@@ -76,7 +76,7 @@ export const useCreateWorkflowPanelTabs = ({
       dispatch(validateConnections(connections.mapping));
     } else if (selectedTabId === Constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE) {
       dispatch(validateConnections(connections.mapping));
-      dispatch(validateParameters());
+      dispatch(validateParameterValues());
     }
     if (!isConsumption && selectedTabId && selectedTabId !== Constants.TEMPLATE_PANEL_TAB_NAMES.BASIC) {
       dispatch(validateWorkflowsBasicInfo({ existingWorkflowNames: existingWorkflowNames ?? [] }));
@@ -152,7 +152,7 @@ export const useCreateWorkflowPanelTabs = ({
       dispatch(closePanel());
       dispatch(clearTemplateDetails());
 
-      TemplateService()?.openBladeAfterCreate(isMultiWorkflowTemplate ? undefined : (Object.values(workflows)[0].workflowName as string));
+      TemplateService()?.openBladeAfterCreate?.(isMultiWorkflowTemplate ? undefined : (Object.values(workflows)[0].workflowName as string));
     } catch (e: any) {
       setErrorMessage(e.message);
       LoggerService().log({
@@ -166,6 +166,11 @@ export const useCreateWorkflowPanelTabs = ({
     }
   });
 
+  const nameStateTabItemError = useMemo(
+    () => Object.values(workflows).some((workflowData) => workflowData.errors.kind || workflowData.errors.workflow),
+    [workflows]
+  );
+
   const nameStateTabItem = useMemo(
     () =>
       basicsTab(intl, dispatch, {
@@ -175,7 +180,7 @@ export const useCreateWorkflowPanelTabs = ({
           : parametersExist
             ? Constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS
             : Constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE,
-        hasError: Object.values(workflows).some((workflowData) => workflowData.errors.kind || workflowData.errors.workflow),
+        hasError: nameStateTabItemError,
         isCreating,
         onClosePanel,
         showCloseButton,
@@ -187,7 +192,7 @@ export const useCreateWorkflowPanelTabs = ({
       isMultiWorkflowTemplate,
       connectionsExist,
       parametersExist,
-      workflows,
+      nameStateTabItemError,
       isCreating,
       onClosePanel,
       showCloseButton,
@@ -260,7 +265,7 @@ export const useCreateWorkflowPanelTabs = ({
         isCreateView: !!isCreateView,
         errorMessage,
         hasError: false,
-        isPrimaryButtonDisabled: nameStateTabItem.hasError || !!connectionsError || hasParametersValidationErrors,
+        isPrimaryButtonDisabled: nameStateTabItemError || !!connectionsError || hasParametersValidationErrors,
         previousTabId: parametersExist
           ? Constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS
           : connectionsExist
@@ -281,7 +286,7 @@ export const useCreateWorkflowPanelTabs = ({
       isCreating,
       isCreateView,
       errorMessage,
-      nameStateTabItem.hasError,
+      nameStateTabItemError,
       connectionsError,
       hasParametersValidationErrors,
       parametersExist,

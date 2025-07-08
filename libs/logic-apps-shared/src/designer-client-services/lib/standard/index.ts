@@ -1,5 +1,12 @@
-export { StandardConnectionService, type ConnectionsData, escapeSpecialChars } from './connection';
-export { StandardConnectorService } from './connector';
+export {
+  StandardConnectionService,
+  type ConnectionsData,
+  type ConnectionAndAppSetting,
+  type LocalConnectionModel,
+  escapeSpecialChars,
+  foundryServiceConnectionRegex,
+} from './connection';
+export { StandardConnectorService, type StandardConnectorServiceOptions } from './connector';
 export { StandardOperationManifestService, isServiceProviderOperation } from './operationmanifest';
 export { StandardSearchService } from './search';
 export { StandardRunService } from './run';

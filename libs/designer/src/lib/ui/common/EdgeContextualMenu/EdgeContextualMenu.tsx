@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { Popover, PopoverSurface, MenuList, MenuItem } from '@fluentui/react-components';
+import { Popover, PopoverSurface, MenuList, MenuItem, Tooltip } from '@fluentui/react-components';
 import {
   LogEntryLevel,
   LoggerService,
   UiInteractionsService,
   agentOperation,
+  customLengthGuid,
   guid,
   isUiInteractionsServiceEnabled,
   normalizeAutomationId,
@@ -15,7 +16,7 @@ import {
 import { useIntl } from 'react-intl';
 import { useOnViewportChange } from '@xyflow/react';
 
-import { useAgenticWorkflow, useEdgeContextMenuData } from '../../../core/state/designerView/designerViewSelectors';
+import { useAgenticWorkflow, useEdgeContextMenuData, useIsA2AWorkflow } from '../../../core/state/designerView/designerViewSelectors';
 import { addOperation, useNodeDisplayName, useNodeMetadata, type AppDispatch } from '../../../core';
 import { expandDiscoveryPanel } from '../../../core/state/panel/panelSlice';
 import { retrieveClipboardData } from '../../../core/utils/clipboard';
@@ -34,6 +35,7 @@ import {
 } from '@fluentui/react-icons';
 import { pasteOperation, pasteScopeOperation } from '../../../core/actions/bjsworkflow/copypaste';
 import { useUpstreamNodes } from '../../../core/state/tokens/tokenSelectors';
+import { useHasUpstreamAgenticLoop } from '../../../core/state/workflow/workflowSelectors';
 
 const AddIcon = bundleIcon(ArrowBetweenDown24Filled, ArrowBetweenDown24Regular);
 const ParallelIcon = bundleIcon(ArrowSplit24Filled, ArrowSplit24Regular);
@@ -45,11 +47,28 @@ export const EdgeContextualMenu = () => {
 
   const menuData = useEdgeContextMenuData();
   const isAgenticWorkflow = useAgenticWorkflow();
+  const isA2AWorkflow = useIsA2AWorkflow();
   const graphId = useMemo(() => menuData?.graphId, [menuData]);
   const parentId = useMemo(() => menuData?.parentId, [menuData]);
   const childId = useMemo(() => menuData?.childId, [menuData]);
   const isLeaf = useMemo(() => menuData?.isLeaf, [menuData]);
   const location = useMemo(() => menuData?.location, [menuData]);
+
+  const nodeMetadata = useNodeMetadata(removeIdTag(parentId ?? ''));
+  // For subgraph nodes, we want to use the id of the scope node as the parentId to get the dependancies
+  const newParentId = useMemo(() => {
+    if (nodeMetadata?.subgraphType) {
+      return nodeMetadata.parentNodeId;
+    }
+    return parentId;
+  }, [nodeMetadata, parentId]);
+
+  const upstreamNodesOfChild = useUpstreamNodes(removeIdTag(childId ?? newParentId ?? ''), graphId, childId);
+  const hasUpstreamAgenticLoop = useHasUpstreamAgenticLoop(upstreamNodesOfChild);
+
+  const isAddActionDisabled = isA2AWorkflow && graphId === 'root' && hasUpstreamAgenticLoop;
+  const isAddParallelBranchDisabled = isA2AWorkflow && graphId === 'root';
+  const isPasteDisabled = isA2AWorkflow && graphId === 'root' && hasUpstreamAgenticLoop;
 
   const [open, setOpen] = useState<boolean>(false);
   useEffect(() => setOpen(!!menuData), [menuData]);
@@ -85,7 +104,7 @@ export const EdgeContextualMenu = () => {
       return;
     }
     const relationshipIds = { graphId, childId: undefined, parentId };
-    dispatch(addOperation({ nodeId: 'Agent', relationshipIds, operation: agentOperation }));
+    dispatch(addOperation({ nodeId: `Agent-${customLengthGuid(4)}`, relationshipIds, operation: agentOperation }));
   }, [dispatch, graphId, parentId]);
 
   const newActionText = intl.formatMessage({
@@ -102,8 +121,8 @@ export const EdgeContextualMenu = () => {
 
   const newAgentText = intl.formatMessage({
     defaultMessage: 'Add an agentic loop',
-    id: 'J7ybbb',
-    description: 'Text for button to add an agentic loop',
+    id: 'Wq8rLF',
+    description: 'Button text for adding an agentic loop',
   });
 
   const pasteFromClipboard = intl.formatMessage({
@@ -116,6 +135,24 @@ export const EdgeContextualMenu = () => {
     defaultMessage: 'Paste a parallel action',
     id: 'wPjnM9',
     description: 'Text for button to paste a parallel action from clipboard',
+  });
+
+  const a2aAgentLoopDisabledText = intl.formatMessage({
+    defaultMessage: 'Cannot add subsequent actions below agentic loops in agent to agent workflows',
+    id: 'KFFF+N',
+    description: 'Message shown when action addition is disabled within agentic loops in A2A workflows',
+  });
+
+  const a2aParallelBranchDisabledText = intl.formatMessage({
+    defaultMessage: 'Cannot add parallel branches on the root level in agent to agent workflows',
+    id: 'ukGRNP',
+    description: 'Message shown when parallel branch addition is disabled on root in A2A workflows',
+  });
+
+  const a2aPasteDisabledText = intl.formatMessage({
+    defaultMessage: 'Cannot paste actions below agentic loops in agent to agent workflows',
+    id: 'VPVCkv',
+    description: 'Message shown when paste is disabled below agentic loops in A2A workflows',
   });
 
   const openAddNodePanel = useCallback(() => {
@@ -141,9 +178,9 @@ export const EdgeContextualMenu = () => {
         return;
       }
       const copiedNode = await retrieveClipboardData();
-      setIsPasteEnabled(!!copiedNode);
+      setIsPasteEnabled(!!copiedNode && !isPasteDisabled);
     })();
-  }, [open]);
+  }, [open, isPasteDisabled]);
 
   const parentName = useNodeDisplayName(removeIdTag(parentId ?? ''));
   const childName = useNodeDisplayName(childId);
@@ -158,20 +195,9 @@ export const EdgeContextualMenu = () => {
     [parentName, childName]
   );
 
-  const nodeMetadata = useNodeMetadata(removeIdTag(parentId ?? ''));
-  // For subgraph nodes, we want to use the id of the scope node as the parentId to get the dependancies
-  const newParentId = useMemo(() => {
-    if (nodeMetadata?.subgraphType) {
-      return nodeMetadata.parentNodeId;
-    }
-    return parentId;
-  }, [nodeMetadata, parentId]);
-
-  const upstreamNodesOfChild = useUpstreamNodes(removeIdTag(childId ?? newParentId ?? ''), graphId, childId);
-
   const handlePasteClicked = useCallback(
     async (isParallelBranch: boolean) => {
-      if (!graphId) {
+      if (!graphId || isPasteDisabled) {
         return;
       }
       const relationshipIds = { graphId, childId, parentId };
@@ -211,10 +237,27 @@ export const EdgeContextualMenu = () => {
         message: `New ${isParallelBranch ? 'parallel' : ''} node added via paste.`,
       });
     },
-    [graphId, childId, parentId, dispatch, upstreamNodesOfChild]
+    [graphId, childId, parentId, dispatch, upstreamNodesOfChild, isPasteDisabled]
   );
 
   const ref = useRef<HTMLDivElement>(null);
+
+  const addActionMenuItem = (
+    <MenuItem icon={<AddIcon />} onClick={openAddNodePanel} data-automation-id={automationId('add')} disabled={isAddActionDisabled}>
+      {newActionText}
+    </MenuItem>
+  );
+
+  const addParallelBranchMenuItem = (
+    <MenuItem
+      icon={<ParallelIcon />}
+      onClick={addParallelBranch}
+      data-automation-id={automationId('add-parallel')}
+      disabled={isAddParallelBranchDisabled}
+    >
+      {newBranchText}
+    </MenuItem>
+  );
 
   return (
     <>
@@ -228,41 +271,75 @@ export const EdgeContextualMenu = () => {
       >
         <PopoverSurface style={{ padding: '4px' }}>
           <MenuList onClick={() => setOpen(false)}>
-            <MenuItem icon={<AddIcon />} onClick={openAddNodePanel} data-automation-id={automationId('add')}>
-              {newActionText}
-            </MenuItem>
-            {showParallelBranchButton && (
-              <MenuItem icon={<ParallelIcon />} onClick={addParallelBranch} data-automation-id={automationId('add-parallel')}>
-                {newBranchText}
-              </MenuItem>
+            {isAddActionDisabled ? (
+              <Tooltip content={a2aAgentLoopDisabledText} relationship="description">
+                {addActionMenuItem}
+              </Tooltip>
+            ) : (
+              addActionMenuItem
             )}
-            {isAgenticWorkflow && graphId === 'root' && (
-              <MenuItem icon={<AgentIcon />} onClick={addAgenticLoop} data-automation-id={automationId('add-agentic=loop')}>
+            {showParallelBranchButton &&
+              (isAddParallelBranchDisabled ? (
+                <Tooltip content={a2aParallelBranchDisabledText} relationship="description">
+                  {addParallelBranchMenuItem}
+                </Tooltip>
+              ) : (
+                addParallelBranchMenuItem
+              ))}
+            {(isAgenticWorkflow || isA2AWorkflow) && graphId === 'root' && (
+              <MenuItem icon={<AgentIcon />} onClick={addAgenticLoop} data-automation-id={automationId('add-agentic-loop')}>
                 {newAgentText}
               </MenuItem>
             )}
-            {isPasteEnabled && (
-              <CustomMenu
-                item={{
-                  icon: <ClipboardIcon />,
-                  text: pasteFromClipboard,
-                  onClick: () => handlePasteClicked(false),
-                  dataAutomationId: automationId('paste'),
-                  subMenuItems: [
-                    {
+            {isPasteEnabled &&
+              (isPasteDisabled ? (
+                <Tooltip content={a2aPasteDisabledText} relationship="description">
+                  <CustomMenu
+                    item={{
+                      icon: <ClipboardIcon />,
                       text: pasteFromClipboard,
-                      ariaLabel: pasteFromClipboard,
                       onClick: () => handlePasteClicked(false),
-                    },
-                    {
-                      text: pasteParallelFromClipboard,
-                      ariaLabel: pasteParallelFromClipboard,
-                      onClick: () => handlePasteClicked(true),
-                    },
-                  ],
-                }}
-              />
-            )}
+                      dataAutomationId: automationId('paste'),
+                      disabled: true,
+                      subMenuItems: [
+                        {
+                          text: pasteFromClipboard,
+                          ariaLabel: pasteFromClipboard,
+                          onClick: () => handlePasteClicked(false),
+                          disabled: true,
+                        },
+                        {
+                          text: pasteParallelFromClipboard,
+                          ariaLabel: pasteParallelFromClipboard,
+                          onClick: () => handlePasteClicked(true),
+                          disabled: true,
+                        },
+                      ],
+                    }}
+                  />
+                </Tooltip>
+              ) : (
+                <CustomMenu
+                  item={{
+                    icon: <ClipboardIcon />,
+                    text: pasteFromClipboard,
+                    onClick: () => handlePasteClicked(false),
+                    dataAutomationId: automationId('paste'),
+                    subMenuItems: [
+                      {
+                        text: pasteFromClipboard,
+                        ariaLabel: pasteFromClipboard,
+                        onClick: () => handlePasteClicked(false),
+                      },
+                      {
+                        text: pasteParallelFromClipboard,
+                        ariaLabel: pasteParallelFromClipboard,
+                        onClick: () => handlePasteClicked(true),
+                      },
+                    ],
+                  }}
+                />
+              ))}
             {isUiInteractionsServiceEnabled()
               ? UiInteractionsService()
                   .getAddButtonMenuItems?.({ graphId, parentId, childId })

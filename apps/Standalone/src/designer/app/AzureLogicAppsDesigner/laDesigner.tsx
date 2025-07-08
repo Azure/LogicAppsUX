@@ -2,7 +2,7 @@ import { environment } from '../../../environments/environment';
 import type { AppDispatch, RootState } from '../../state/store';
 import { changeRunId, setIsChatBotEnabled, setMonitoringView, setReadOnly, setRunHistoryEnabled } from '../../state/workflowLoadingSlice';
 import { DesignerCommandBar } from './DesignerCommandBar';
-import type { ConnectionAndAppSetting, ConnectionsData, ParametersData } from './Models/Workflow';
+import type { ConnectionAndAppSetting, ConnectionReferenceModel, ConnectionsData, ParametersData } from './Models/Workflow';
 import { Artifact } from './Models/Workflow';
 import type { WorkflowApp } from './Models/WorkflowApp';
 import { ArtifactService } from './Services/Artifact';
@@ -26,13 +26,16 @@ import {
 } from './Services/WorkflowAndArtifacts';
 import { ArmParser } from './Utilities/ArmParser';
 import { WorkflowUtility, addConnectionInJson, addOrUpdateAppSettings } from './Utilities/Workflow';
-import { Chatbot, chatbotPanelWidth } from '@microsoft/logic-apps-chatbot';
+import { CoPilotChatbot } from '@microsoft/logic-apps-chatbot';
 import {
   BaseApiManagementService,
   BaseAppServiceService,
   BaseChatbotService,
+  BaseExperimentationService,
+  BaseUserPreferenceService,
   BaseFunctionService,
   BaseGatewayService,
+  BaseRoleService,
   BaseTenantService,
   StandardConnectionService,
   StandardConnectorService,
@@ -45,6 +48,8 @@ import {
   guid,
   isArmResourceId,
   optional,
+  BaseCognitiveServiceService,
+  RoleService,
 } from '@microsoft/logic-apps-shared';
 import type { ContentType, IHostService, IWorkflowService } from '@microsoft/logic-apps-shared';
 import type { AllCustomCodeFiles, CustomCodeFileNameMapping, Workflow } from '@microsoft/logic-apps-designer';
@@ -59,6 +64,9 @@ import {
   getSKUDefaultHostOptions,
   RunHistoryPanel,
   CombineInitializeVariableDialog,
+  TriggerDescriptionDialog,
+  getMissingRoleDefinitions,
+  roleQueryKeys,
 } from '@microsoft/logic-apps-designer';
 import axios from 'axios';
 import isEqual from 'lodash.isequal';
@@ -67,7 +75,8 @@ import type { QueryClient } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHostingPlan } from '../../state/workflowLoadingSelectors';
 import CodeViewEditor from './CodeView';
-import { BaseUserPreferenceService } from '@microsoft/logic-apps-shared';
+import { CustomConnectionParameterEditorService } from './Services/customConnectionParameterEditorService';
+import { CustomEditorService } from './Services/customEditorService';
 
 const apiVersion = '2020-06-01';
 const httpClient = new HttpClient();
@@ -82,6 +91,7 @@ const DesignerEditor = () => {
   const {
     isReadOnly,
     isDarkMode,
+    isUnitTest,
     isMonitoringView,
     runId,
     appId,
@@ -91,6 +101,7 @@ const DesignerEditor = () => {
     hostOptions,
     hostingPlan,
     showConnectionsPanel,
+    showEdgeDrawing,
     showPerformanceDebug,
     suppressDefaultNodeSelect,
   } = useSelector((state: RootState) => state.workflowLoader);
@@ -104,14 +115,17 @@ const DesignerEditor = () => {
   const { data: tenantId } = useCurrentTenantId();
   const { data: objectId } = useCurrentObjectId();
   const [designerID, setDesignerID] = useState(guid());
-  const [workflow, setWorkflow] = useState<Workflow>({ ...data?.properties.files[Artifact.WorkflowFile], id: guid() });
+  const [workflow, setWorkflow] = useState<Workflow>({
+    ...data?.properties.files[Artifact.WorkflowFile],
+    id: guid(),
+  });
   const [designerView, setDesignerView] = useState(true);
   const codeEditorRef = useRef<{ getValue: () => string | undefined }>(null);
   const originalConnectionsData = useMemo(() => data?.properties.files[Artifact.ConnectionsFile] ?? {}, [data?.properties.files]);
   const originalCustomCodeData = useMemo(() => Object.keys(customCodeData ?? {}), [customCodeData]);
   const parameters = useMemo(() => data?.properties.files[Artifact.ParametersFile] ?? {}, [data?.properties.files]);
   const queryClient = getReactQueryClient();
-  const displayChatbotUI = showChatBot && designerView;
+  const displayCopilotChatbot = showChatBot && designerView;
 
   const connectionsData = useMemo(
     () =>
@@ -161,12 +175,15 @@ const DesignerEditor = () => {
   };
 
   const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowAppData?.location ?? '');
+  const supportsStateful = !equals(workflow?.kind, 'stateless');
+  const isA2A = equals(workflow?.kind, 'Agent');
   const services = useMemo(
     () =>
       getDesignerServices(
         workflowId,
-        equals(workflow?.kind, 'stateful'),
+        supportsStateful,
         isHybridLogicApp,
+        isA2A,
         connectionsData ?? {},
         workflowAppData as WorkflowApp,
         addConnectionDataInternal,
@@ -226,6 +243,84 @@ const DesignerEditor = () => {
     [dispatch]
   );
 
+  const workflowDefinition = useMemo(() => {
+    if (equals(workflow?.kind ?? '', 'Agentic', true)) {
+      if (workflow?.definition) {
+        const { actions, triggers, outputs, parameters } = workflow.definition;
+        if (
+          Object.keys(actions ?? {}).length === 0 &&
+          Object.keys(triggers ?? {}).length === 0 &&
+          Object.keys(outputs ?? {}).length === 0 &&
+          Object.keys(parameters ?? {}).length === 0
+        ) {
+          return {
+            ...workflow.definition,
+            actions: {
+              Default_Agent: {
+                type: 'Agent',
+                limit: {},
+                inputs: {
+                  parameters: {
+                    deploymentId: '',
+                    messages: '',
+                    agentModelType: 'AzureOpenAI',
+                    agentModelSettings: {
+                      agentHistoryReductionSettings: {
+                        agentHistoryReductionType: 'maximumTokenCountReduction',
+                        maximumTokenCount: 128000,
+                      },
+                    },
+                  },
+                  modelConfigurations: {
+                    model1: {
+                      referenceName: '',
+                    },
+                  },
+                },
+                tools: {},
+                runAfter: {},
+              },
+            },
+          };
+        }
+      } else {
+        return {
+          $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
+          contentVersion: '1.0.0.0',
+          actions: {
+            Default_Agent: {
+              type: 'Agent',
+              limit: {},
+              inputs: {
+                parameters: {
+                  deploymentId: '',
+                  messages: '',
+                  agentModelType: 'AzureOpenAI',
+                  agentModelSettings: {
+                    agentHistoryReductionSettings: {
+                      agentHistoryReductionType: 'maximumTokenCountReduction',
+                      maximumTokenCount: 128000,
+                    },
+                  },
+                },
+                modelConfigurations: {
+                  model1: {
+                    referenceName: '',
+                  },
+                },
+              },
+              tools: {},
+              runAfter: {},
+            },
+          },
+          outputs: {},
+          triggers: {},
+        };
+      }
+    }
+    return workflow?.definition;
+  }, [workflow?.definition, workflow?.kind]);
+
   if (isLoading || appLoading || settingsLoading || customCodeLoading) {
     return <></>;
   }
@@ -281,7 +376,7 @@ const DesignerEditor = () => {
               connectionProperties,
             };
             newManagedApiConnections[referenceKey] = newConnectionObj;
-          } else if (reference?.connection?.id.startsWith('connectionProviders/agent/')) {
+          } else if (reference?.connection?.id.startsWith('/connectionProviders/agent/')) {
             // Service Provider Connection
             const connectionKey = reference.connection.id.split('/').splice(-1)[0];
             // We can't apply this directly in case there is a temporary key overlap
@@ -303,10 +398,39 @@ const DesignerEditor = () => {
         ...connectionsData?.serviceProviderConnections,
         ...newServiceProviderConnections,
       };
-      (connectionsData as ConnectionsData).agentConnections = {
-        ...connectionsData?.agentConnections,
-        ...newAgentConnections,
-      };
+      if (workflow?.kind?.toLowerCase() === 'agentic') {
+        (connectionsData as ConnectionsData).agentConnections = {
+          ...connectionsData?.agentConnections,
+          ...newAgentConnections,
+        };
+
+        // Assign MSI roles if needed
+        /**
+         *  This is currently only for Agentic workflows,
+         *    but we should work to make this generic in the future
+         *  The issue with making it generic is that we don't have a good way of getting the required definition names for any given connection reference
+         *  The required roles are listed on connection parameters which we don't have access to here,
+         *    and would take several requests to check for each connection, when most will not need it, leading to unnecessary slowdown during save
+         *  One option is to populate that info somewhere in the connection reference for use here,
+         *    but that is unavailable at authoring time when we are populating the values that require the roles
+         */
+        for (const [_refKey, agentConnection] of Object.entries(newAgentConnections)) {
+          if (agentConnection?.authentication?.type === 'ManagedServiceIdentity') {
+            const definitionNames = ['Azure AI Administrator', 'Cognitive Services Contributor'];
+            const missingRoleAssignments = await getMissingRoleDefinitions(agentConnection?.resourceId, definitionNames);
+            const assignmentPromises = [];
+            for (const roleDefinition of missingRoleAssignments) {
+              assignmentPromises.push(RoleService().addAppRoleAssignmentForResource(agentConnection?.resourceId, roleDefinition.id));
+            }
+            await Promise.all(assignmentPromises);
+
+            // Invalidate the cache for the role assignments
+            const cacheKey = [roleQueryKeys.appIdentityRoleAssignments, agentConnection?.resourceId];
+            const queryClient = getReactQueryClient();
+            queryClient.invalidateQueries(cacheKey);
+          }
+        }
+      }
     }
 
     const connectionsToUpdate = getConnectionsToUpdate(originalConnectionsData, connectionsData ?? {});
@@ -397,19 +521,21 @@ const DesignerEditor = () => {
           isDarkMode,
           readOnly: isReadOnly,
           isMonitoringView,
+          isUnitTest,
           suppressDefaultNodeSelectFunctionality: suppressDefaultNodeSelect,
           hostOptions: {
             ...hostOptions,
             ...getSKUDefaultHostOptions(Constants.SKU.STANDARD),
           },
           showConnectionsPanel,
+          showEdgeDrawing,
           showPerformanceDebug,
         }}
       >
         {workflow?.definition ? (
           <BJSWorkflowProvider
             workflow={{
-              definition: workflow?.definition,
+              definition: workflowDefinition,
               connectionReferences,
               parameters,
               kind: workflow?.kind,
@@ -420,30 +546,43 @@ const DesignerEditor = () => {
             appSettings={settingsData?.properties}
             isMultiVariableEnabled={hostOptions.enableMultiVariable}
           >
-            <div style={{ display: 'flex', flexDirection: 'row', height: 'inherit' }}>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                height: 'inherit',
+              }}
+            >
               <RunHistoryPanel
                 collapsed={!showRunHistory}
                 onClose={() => dispatch(setRunHistoryEnabled(false))}
                 onRunSelected={onRunSelected}
               />
-              {displayChatbotUI ? (
-                <div style={{ minWidth: chatbotPanelWidth }}>
-                  <Chatbot
-                    openAzureCopilotPanel={() => openPanel('Azure Copilot Panel has been opened')}
-                    getAuthToken={getAuthToken}
-                    getUpdatedWorkflow={getUpdatedWorkflow}
-                    openFeedbackPanel={() => openPanel('Azure Feedback Panel has been opened')}
-                    closeChatBot={() => dispatch(setIsChatBotEnabled(false))}
-                  />
-                </div>
+              {displayCopilotChatbot ? (
+                <CoPilotChatbot
+                  openAzureCopilotPanel={() => openPanel('Azure Copilot Panel has been opened')}
+                  getAuthToken={getAuthToken}
+                  getUpdatedWorkflow={getUpdatedWorkflow}
+                  openFeedbackPanel={() => openPanel('Azure Feedback Panel has been opened')}
+                  closeChatBot={() => dispatch(setIsChatBotEnabled(false))}
+                />
               ) : null}
-              <div style={{ display: 'flex', flexDirection: 'column', height: 'inherit', flexGrow: 1, maxWidth: '100%' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  height: 'inherit',
+                  flexGrow: 1,
+                  maxWidth: '100%',
+                }}
+              >
                 <DesignerCommandBar
                   id={workflowId}
                   saveWorkflow={saveWorkflowFromDesigner}
                   discard={discardAllChanges}
                   location={canonicalLocation}
                   isReadOnly={isReadOnly}
+                  isUnitTest={isUnitTest}
                   isDarkMode={isDarkMode}
                   isDesignerView={designerView}
                   showConnectionsPanel={showConnectionsPanel}
@@ -460,6 +599,7 @@ const DesignerEditor = () => {
                 />
                 {designerView ? <Designer /> : <CodeViewEditor ref={codeEditorRef} workflowKind={workflow?.kind} />}
                 <CombineInitializeVariableDialog />
+                <TriggerDescriptionDialog workflowId={workflowId} />
               </div>
             </div>
           </BJSWorkflowProvider>
@@ -473,6 +613,7 @@ const getDesignerServices = (
   workflowId: string,
   isStateful: boolean,
   isHybrid: boolean,
+  isA2A: boolean,
   connectionsData: ConnectionsData,
   workflowApp: WorkflowApp,
   addConnection: (data: ConnectionAndAppSetting) => Promise<void>,
@@ -520,7 +661,9 @@ const getDesignerServices = (
           },
         }
       : { appName, identity: workflowApp?.identity as any },
-    readConnections: () => Promise.resolve(connectionsData),
+    readConnections: () => {
+      return WorkflowUtility.resolveConnectionsReferences(JSON.stringify(clone(connectionsData ?? {})), undefined, appSettings);
+    },
     writeConnection: addConnection as any,
     connectionCreationClients: {
       FileSystem: new FileSystemConnectionCreationClient({
@@ -546,6 +689,7 @@ const getDesignerServices = (
     siteResourceId,
     httpClient,
     workflowName,
+    isHybrid,
   });
   const artifactService = new ArtifactService({
     ...armServiceParams,
@@ -562,6 +706,7 @@ const getDesignerServices = (
     ...defaultServiceParams,
     clientSupportedOperations: [
       ['connectionProviders/localWorkflowOperation', 'invokeWorkflow'],
+      ['connectionProviders/localWorkflowOperation', 'invokeNestedAgent'],
       ['connectionProviders/xmlOperations', 'xmlValidation'],
       ['connectionProviders/xmlOperations', 'xmlTransform'],
       ['connectionProviders/liquidOperations', 'liquidJsonToJson'],
@@ -748,7 +893,7 @@ const getDesignerServices = (
 
   const workflowService: IWorkflowService = {
     getCallbackUrl: (triggerName: string) => listCallbackUrl(workflowIdWithHostRuntime, triggerName),
-    getAppIdentity: () => workflowApp.identity as any,
+    getAppIdentity: () => workflowApp?.identity,
     isExplicitAuthRequiredForManagedIdentity: () => true,
     isSplitOnSupported: () => !!isStateful,
     resubmitWorkflow: async (runId, actionsToResubmit) => {
@@ -799,6 +944,17 @@ const getDesignerServices = (
     baseUrl,
     workflowName,
     httpClient,
+    isTimelineSupported: isA2A,
+  });
+
+  const roleService = new BaseRoleService({
+    baseUrl: armUrl,
+    httpClient,
+    apiVersion: '2022-04-01',
+    subscriptionId,
+    tenantId: tenantId ?? '',
+    userIdentityId: objectId ?? '',
+    appIdentityId: workflowApp?.identity?.principalId ?? '',
   });
 
   const chatbotService = new BaseChatbotService({
@@ -818,6 +974,16 @@ const getDesignerServices = (
     httpClient,
   });
 
+  const cognitiveServiceService = new BaseCognitiveServiceService({
+    apiVersion: '2023-10-01-preview',
+    baseUrl: armUrl,
+    httpClient,
+    identity: workflowApp?.identity,
+  });
+
+  const connectionParameterEditorService = new CustomConnectionParameterEditorService();
+  const editorService = new CustomEditorService();
+
   return {
     appService,
     connectionService,
@@ -832,29 +998,52 @@ const getDesignerServices = (
     apimService: apiManagementService,
     functionService,
     runService,
+    roleService,
     hostService,
     chatbotService,
     customCodeService,
+    cognitiveServiceService,
+    connectionParameterEditorService,
+    editorService,
     userPreferenceService: new BaseUserPreferenceService(),
+    experimentationService: new BaseExperimentationService(),
   };
 };
+const hasNewKeys = (original: Record<string, any>, updated: Record<string, any>) => {
+  return Object.keys(updated).some((key) => !Object.keys(original).includes(key));
+};
 
-const hasNewKeys = (original: Record<string, any> = {}, updated: Record<string, any> = {}) => {
-  return !Object.keys(updated).some((key) => !Object.keys(original).includes(key));
+const hasNewConnectionRuntimeUrl = (
+  original: Record<string, ConnectionReferenceModel>,
+  updated: Record<string, ConnectionReferenceModel>
+) => {
+  return Object.keys(updated).some((key) => {
+    const originalConnection = original[key];
+    const updatedConnection = updated[key];
+    const haveDifferentRuntimeUrl = originalConnection?.connectionRuntimeUrl !== updatedConnection?.connectionRuntimeUrl;
+    const haveSameConnectionId = originalConnection?.connection.id === updatedConnection?.connection.id;
+    return haveDifferentRuntimeUrl && haveSameConnectionId;
+  });
 };
 
 const getConnectionsToUpdate = (
   originalConnectionsJson: ConnectionsData,
   connectionsJson: ConnectionsData
 ): ConnectionsData | undefined => {
-  const hasNewFunctionKeys = hasNewKeys(originalConnectionsJson.functionConnections, connectionsJson.functionConnections);
-  const hasNewApimKeys = hasNewKeys(originalConnectionsJson.apiManagementConnections, connectionsJson.apiManagementConnections);
-  const hasNewManagedApiKeys = hasNewKeys(originalConnectionsJson.managedApiConnections, connectionsJson.managedApiConnections);
+  const hasNewFunctionKeys = hasNewKeys(originalConnectionsJson.functionConnections ?? {}, connectionsJson.functionConnections ?? {});
+  const hasNewApimKeys = hasNewKeys(originalConnectionsJson.apiManagementConnections ?? {}, connectionsJson.apiManagementConnections ?? {});
+  const hasNewManagedApiKeys = hasNewKeys(originalConnectionsJson.managedApiConnections ?? {}, connectionsJson.managedApiConnections ?? {});
   const hasNewServiceProviderKeys = hasNewKeys(
-    originalConnectionsJson.serviceProviderConnections,
-    connectionsJson.serviceProviderConnections
+    originalConnectionsJson.serviceProviderConnections ?? {},
+    connectionsJson.serviceProviderConnections ?? {}
   );
-  const hasNewAgentKeys = hasNewKeys(originalConnectionsJson.agentConnections, connectionsJson.agentConnections);
+
+  const hasNewManagedApiConnectionRuntimeUrl = hasNewConnectionRuntimeUrl(
+    originalConnectionsJson.managedApiConnections ?? {},
+    connectionsJson.managedApiConnections ?? {}
+  );
+
+  const hasNewAgentKeys = hasNewKeys(originalConnectionsJson.agentConnections ?? {}, connectionsJson.agentConnections ?? {});
 
   if (!hasNewFunctionKeys && !hasNewApimKeys && !hasNewManagedApiKeys && !hasNewServiceProviderKeys && !hasNewAgentKeys) {
     return undefined;
@@ -883,9 +1072,15 @@ const getConnectionsToUpdate = (
   if (hasNewManagedApiKeys) {
     for (const managedApiConnectionName of Object.keys(connectionsJson.managedApiConnections ?? {})) {
       if (originalConnectionsJson.managedApiConnections?.[managedApiConnectionName]) {
-        // eslint-disable-next-line no-param-reassign
-        (connectionsJson.managedApiConnections as any)[managedApiConnectionName] =
+        (connectionsToUpdate.managedApiConnections as any)[managedApiConnectionName] =
           originalConnectionsJson.managedApiConnections[managedApiConnectionName];
+
+        if (hasNewManagedApiConnectionRuntimeUrl) {
+          const newRuntimeUrl = connectionsJson?.managedApiConnections?.[managedApiConnectionName]?.connectionRuntimeUrl;
+          if (newRuntimeUrl !== undefined) {
+            (connectionsToUpdate.managedApiConnections as any)[managedApiConnectionName].connectionRuntimeUrl = newRuntimeUrl;
+          }
+        }
       }
     }
   }

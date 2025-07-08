@@ -2,6 +2,7 @@ export type SkuType = 'standard' | 'consumption';
 export type WorkflowKindType = 'stateful' | 'stateless';
 export type ConnectorRuntimeType = 'inapp' | 'shared';
 export type FeaturedConnectorType = ConnectorRuntimeType | 'builtin';
+export type TemplateEnvironment = 'Production' | 'Testing' | 'Development';
 
 export type DetailsType = 'By' | 'Type' | 'Category' | 'Trigger';
 
@@ -42,6 +43,9 @@ export interface WorkflowManifest {
   };
   parameters: Parameter[];
   connections: Record<string, Connection>;
+  metadata?: {
+    workflowSourceId: string;
+  };
 
   sourceCodeUrl?: string; // Automatically generated for public templates, otherwise optional
 }
@@ -90,6 +94,8 @@ export interface TemplateContext {
   templateId: string;
   workflowAppName?: string;
   isMultiWorkflow: boolean;
+  showCreate: boolean;
+  showCloseButton: boolean;
 }
 
 interface ContentInfo<T> {
@@ -100,6 +106,8 @@ interface ContentInfo<T> {
 interface ConnectionInfo {
   connectionId: string;
 }
+
+export type ResourceFieldId = 'subscription' | 'resourcegroup' | 'location' | 'resource';
 
 export interface ViewTemplateDetails {
   id: string;
@@ -112,4 +120,19 @@ export interface ViewTemplateDetails {
   >;
   parametersOverride?: Record<string, ContentInfo<any>>;
   connectionsOverride?: Record<string, ConnectionInfo>;
+  lockResourceField?: ResourceFieldId;
 }
+
+export interface FileStructure {
+  type: 'file';
+  name: string;
+  data: any;
+}
+
+export interface FolderStructure {
+  type: 'folder';
+  name: string;
+  contents: (FolderStructure | FileStructure)[];
+}
+
+export type ZipContent = FileStructure | FolderStructure;

@@ -2,49 +2,43 @@
 
 exports[`lib/monitoring/requestpanel/request > renders correctly when descriptionDocumentation is undefined 1`] = `
 <div
-  className="msla-panel-about-container"
+  className="___1yay4zj_0000000 f1vx9l62 f22iagw fhumf3i fat0sn4 f1cnezvq fekwl8i"
 >
-  <div
-    className="msla-panel-about-name"
-  >
+  <div>
     <Label
-      className="msla-panel-connector-label"
+      className="___vbk37y0_0000000 fdghr9 fk6fouc"
       size="large"
     >
       Connector
     </Label>
     <div
-      className="msla-panel-connector-name"
+      className="___jp3ych0_0000000 f5ljve1 f1809wu7 fhxju0i f1qch9an f1cnd47f f1v0a5fv"
     >
       Not available
     </div>
   </div>
-  <div
-    className="msla-panel-about-description"
-  >
+  <div>
     <Label
-      className="msla-panel-description-label"
+      className="___1a366p4_0000000 fk6fouc"
       size="large"
     >
       Operation note
     </Label>
     <div
-      className="msla-panel-description"
+      className="___1j3lqu8_0000000 f1809wu7 fhxju0i f1qch9an f1cnd47f f1v0a5fv"
     >
       <DocumentationItem />
     </div>
   </div>
-  <div
-    className="msla-panel-about-tags"
-  >
+  <div>
     <Label
-      className="msla-panel-tags-label"
+      className="___1a366p4_0000000 fk6fouc"
       size="large"
     >
       Tags
     </Label>
     <div
-      className="msla-panel-tags"
+      className="___p2yld90_0000000 f1809wu7 fhxju0i f1qch9an f1cnd47f"
     >
       None
     </div>
@@ -54,49 +48,43 @@ exports[`lib/monitoring/requestpanel/request > renders correctly when descriptio
 
 exports[`lib/monitoring/requestpanel/request > renders correctly with different connectorDisplayName values 1`] = `
 <div
-  className="msla-panel-about-container"
+  className="___1yay4zj_0000000 f1vx9l62 f22iagw fhumf3i fat0sn4 f1cnezvq fekwl8i"
 >
-  <div
-    className="msla-panel-about-name"
-  >
+  <div>
     <Label
-      className="msla-panel-connector-label"
+      className="___vbk37y0_0000000 fdghr9 fk6fouc"
       size="large"
     >
       Connector
     </Label>
     <div
-      className="msla-panel-connector-name"
+      className="___jp3ych0_0000000 f5ljve1 f1809wu7 fhxju0i f1qch9an f1cnd47f f1v0a5fv"
     >
       new test
     </div>
   </div>
-  <div
-    className="msla-panel-about-description"
-  >
+  <div>
     <Label
-      className="msla-panel-description-label"
+      className="___1a366p4_0000000 fk6fouc"
       size="large"
     >
       Operation note
     </Label>
     <div
-      className="msla-panel-description"
+      className="___1j3lqu8_0000000 f1809wu7 fhxju0i f1qch9an f1cnd47f f1v0a5fv"
     >
       <DocumentationItem />
     </div>
   </div>
-  <div
-    className="msla-panel-about-tags"
-  >
+  <div>
     <Label
-      className="msla-panel-tags-label"
+      className="___1a366p4_0000000 fk6fouc"
       size="large"
     >
       Tags
     </Label>
     <div
-      className="msla-panel-tags"
+      className="___p2yld90_0000000 f1809wu7 fhxju0i f1qch9an f1cnd47f"
     >
       None
     </div>
@@ -106,61 +94,55 @@ exports[`lib/monitoring/requestpanel/request > renders correctly with different 
 
 exports[`lib/monitoring/requestpanel/request > renders correctly with different headerIcons values 1`] = `
 <div
-  className="msla-panel-about-container"
+  className="___1yay4zj_0000000 f1vx9l62 f22iagw fhumf3i fat0sn4 f1cnezvq fekwl8i"
 >
-  <div
-    className="msla-panel-about-name"
-  >
+  <div>
     <Label
-      className="msla-panel-connector-label"
+      className="___vbk37y0_0000000 fdghr9 fk6fouc"
       size="large"
     >
       Connector
     </Label>
     <div
-      className="msla-panel-connector-name"
+      className="___jp3ych0_0000000 f5ljve1 f1809wu7 fhxju0i f1qch9an f1cnd47f f1v0a5fv"
     >
       Not available
     </div>
   </div>
-  <div
-    className="msla-panel-about-description"
-  >
+  <div>
     <Label
-      className="msla-panel-description-label"
+      className="___1a366p4_0000000 fk6fouc"
       size="large"
     >
       Operation note
     </Label>
     <div
-      className="msla-panel-description"
+      className="___1j3lqu8_0000000 f1809wu7 fhxju0i f1qch9an f1cnd47f f1v0a5fv"
     >
       <DocumentationItem />
     </div>
   </div>
-  <div
-    className="msla-panel-about-tags"
-  >
+  <div>
     <Label
-      className="msla-panel-tags-label"
+      className="___1a366p4_0000000 fk6fouc"
       size="large"
     >
       Tags
     </Label>
     <div
-      className="msla-panel-tags"
+      className="___p2yld90_0000000 f1809wu7 fhxju0i f1qch9an f1cnd47f"
     >
       <React.Fragment>
         <div
           aria-label="new test"
-          className="msla-panel-tag"
+          className="___vnph4y0_0000000 f5ogflp f1hqa2wf f1f09k3d finvdd3 fzkkow9 fcdblym fg706s2 fjik90z fj3muxo f1akhkt f1aperda f1lxtadh fq1loh5 f12huiiw futqtb8 f161knb0 f14t3ns0 fy9rknc fuesxvb f1w850hb fq02s40 f17mccla f1u78bsq f1j72l69"
           title="NewTag1"
         >
           new test
         </div>
         <div
           aria-label="new more"
-          className="msla-panel-tag"
+          className="___vnph4y0_0000000 f5ogflp f1hqa2wf f1f09k3d finvdd3 fzkkow9 fcdblym fg706s2 fjik90z fj3muxo f1akhkt f1aperda f1lxtadh fq1loh5 f12huiiw futqtb8 f161knb0 f14t3ns0 fy9rknc fuesxvb f1w850hb fq02s40 f17mccla f1u78bsq f1j72l69"
           title="NewTag2"
         >
           new more
@@ -173,49 +155,43 @@ exports[`lib/monitoring/requestpanel/request > renders correctly with different 
 
 exports[`lib/monitoring/requestpanel/request > should render 1`] = `
 <div
-  className="msla-panel-about-container"
+  className="___1yay4zj_0000000 f1vx9l62 f22iagw fhumf3i fat0sn4 f1cnezvq fekwl8i"
 >
-  <div
-    className="msla-panel-about-name"
-  >
+  <div>
     <Label
-      className="msla-panel-connector-label"
+      className="___vbk37y0_0000000 fdghr9 fk6fouc"
       size="large"
     >
       Connector
     </Label>
     <div
-      className="msla-panel-connector-name"
+      className="___jp3ych0_0000000 f5ljve1 f1809wu7 fhxju0i f1qch9an f1cnd47f f1v0a5fv"
     >
       Not available
     </div>
   </div>
-  <div
-    className="msla-panel-about-description"
-  >
+  <div>
     <Label
-      className="msla-panel-description-label"
+      className="___1a366p4_0000000 fk6fouc"
       size="large"
     >
       Operation note
     </Label>
     <div
-      className="msla-panel-description"
+      className="___1j3lqu8_0000000 f1809wu7 fhxju0i f1qch9an f1cnd47f f1v0a5fv"
     >
       <DocumentationItem />
     </div>
   </div>
-  <div
-    className="msla-panel-about-tags"
-  >
+  <div>
     <Label
-      className="msla-panel-tags-label"
+      className="___1a366p4_0000000 fk6fouc"
       size="large"
     >
       Tags
     </Label>
     <div
-      className="msla-panel-tags"
+      className="___p2yld90_0000000 f1809wu7 fhxju0i f1qch9an f1cnd47f"
     >
       None
     </div>
@@ -225,63 +201,57 @@ exports[`lib/monitoring/requestpanel/request > should render 1`] = `
 
 exports[`lib/monitoring/requestpanel/request > should render a body 1`] = `
 <div
-  className="msla-panel-about-container"
+  className="___1yay4zj_0000000 f1vx9l62 f22iagw fhumf3i fat0sn4 f1cnezvq fekwl8i"
 >
-  <div
-    className="msla-panel-about-name"
-  >
+  <div>
     <Label
-      className="msla-panel-connector-label"
+      className="___vbk37y0_0000000 fdghr9 fk6fouc"
       size="large"
     >
       Connector
     </Label>
     <div
-      className="msla-panel-connector-name"
+      className="___jp3ych0_0000000 f5ljve1 f1809wu7 fhxju0i f1qch9an f1cnd47f f1v0a5fv"
     >
       test
     </div>
   </div>
-  <div
-    className="msla-panel-about-description"
-  >
+  <div>
     <Label
-      className="msla-panel-description-label"
+      className="___1a366p4_0000000 fk6fouc"
       size="large"
     >
       Operation note
     </Label>
     <div
-      className="msla-panel-description"
+      className="___1j3lqu8_0000000 f1809wu7 fhxju0i f1qch9an f1cnd47f f1v0a5fv"
     >
       <DocumentationItem
         description="This is a description "
       />
     </div>
   </div>
-  <div
-    className="msla-panel-about-tags"
-  >
+  <div>
     <Label
-      className="msla-panel-tags-label"
+      className="___1a366p4_0000000 fk6fouc"
       size="large"
     >
       Tags
     </Label>
     <div
-      className="msla-panel-tags"
+      className="___p2yld90_0000000 f1809wu7 fhxju0i f1qch9an f1cnd47f"
     >
       <React.Fragment>
         <div
           aria-label="test"
-          className="msla-panel-tag"
+          className="___vnph4y0_0000000 f5ogflp f1hqa2wf f1f09k3d finvdd3 fzkkow9 fcdblym fg706s2 fjik90z fj3muxo f1akhkt f1aperda f1lxtadh fq1loh5 f12huiiw futqtb8 f161knb0 f14t3ns0 fy9rknc fuesxvb f1w850hb fq02s40 f17mccla f1u78bsq f1j72l69"
           title="Tag1"
         >
           test
         </div>
         <div
           aria-label="more"
-          className="msla-panel-tag"
+          className="___vnph4y0_0000000 f5ogflp f1hqa2wf f1f09k3d finvdd3 fzkkow9 fcdblym fg706s2 fjik90z fj3muxo f1akhkt f1aperda f1lxtadh fq1loh5 f12huiiw futqtb8 f161knb0 f14t3ns0 fy9rknc fuesxvb f1w850hb fq02s40 f17mccla f1u78bsq f1j72l69"
           title="Tag2"
         >
           more
@@ -294,34 +264,30 @@ exports[`lib/monitoring/requestpanel/request > should render a body 1`] = `
 
 exports[`lib/monitoring/requestpanel/request > should render a description with external link 1`] = `
 <div
-  className="msla-panel-about-container"
+  className="___1yay4zj_0000000 f1vx9l62 f22iagw fhumf3i fat0sn4 f1cnezvq fekwl8i"
 >
-  <div
-    className="msla-panel-about-name"
-  >
+  <div>
     <Label
-      className="msla-panel-connector-label"
+      className="___vbk37y0_0000000 fdghr9 fk6fouc"
       size="large"
     >
       Connector
     </Label>
     <div
-      className="msla-panel-connector-name"
+      className="___jp3ych0_0000000 f5ljve1 f1809wu7 fhxju0i f1qch9an f1cnd47f f1v0a5fv"
     >
       test
     </div>
   </div>
-  <div
-    className="msla-panel-about-description"
-  >
+  <div>
     <Label
-      className="msla-panel-description-label"
+      className="___1a366p4_0000000 fk6fouc"
       size="large"
     >
       Operation note
     </Label>
     <div
-      className="msla-panel-description"
+      className="___1j3lqu8_0000000 f1809wu7 fhxju0i f1qch9an f1cnd47f f1v0a5fv"
     >
       <DocumentationItem
         description="This is a description "
@@ -334,29 +300,27 @@ exports[`lib/monitoring/requestpanel/request > should render a description with 
       />
     </div>
   </div>
-  <div
-    className="msla-panel-about-tags"
-  >
+  <div>
     <Label
-      className="msla-panel-tags-label"
+      className="___1a366p4_0000000 fk6fouc"
       size="large"
     >
       Tags
     </Label>
     <div
-      className="msla-panel-tags"
+      className="___p2yld90_0000000 f1809wu7 fhxju0i f1qch9an f1cnd47f"
     >
       <React.Fragment>
         <div
           aria-label="test"
-          className="msla-panel-tag"
+          className="___vnph4y0_0000000 f5ogflp f1hqa2wf f1f09k3d finvdd3 fzkkow9 fcdblym fg706s2 fjik90z fj3muxo f1akhkt f1aperda f1lxtadh fq1loh5 f12huiiw futqtb8 f161knb0 f14t3ns0 fy9rknc fuesxvb f1w850hb fq02s40 f17mccla f1u78bsq f1j72l69"
           title="Tag1"
         >
           test
         </div>
         <div
           aria-label="more"
-          className="msla-panel-tag"
+          className="___vnph4y0_0000000 f5ogflp f1hqa2wf f1f09k3d finvdd3 fzkkow9 fcdblym fg706s2 fjik90z fj3muxo f1akhkt f1aperda f1lxtadh fq1loh5 f12huiiw futqtb8 f161knb0 f14t3ns0 fy9rknc fuesxvb f1w850hb fq02s40 f17mccla f1u78bsq f1j72l69"
           title="Tag2"
         >
           more

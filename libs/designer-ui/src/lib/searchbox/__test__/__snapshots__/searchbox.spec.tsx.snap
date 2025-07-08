@@ -1,71 +1,66 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`lib/searchabledropdownwithaddall > should render a search box 1`] = `
-<div
-  className="ms-SearchBox can-clear msla-search-box root-109"
-  onFocusCapture={[Function]}
+<span
+  className="fui-Input r1oeeo9n fui-SearchBox  msla-search-box ___13yg2oi_15g8mz3 f1f5gg8d fhxju0i fvcxoqz f1ub3y4t f1l4zc64 f1m52nbi f8vnjqi fz1etlk f1klwx88 f1hc16gm fjuset5 f1xzfw5u"
+  onBlur={[Function]}
+  onFocus={[Function]}
 >
-  <div
-    aria-hidden={true}
-    className="ms-SearchBox-iconContainer iconContainer-110"
-    onClick={[Function]}
+  <span
+    className="fui-Input__contentBefore r1572tok fui-SearchBox__contentBefore"
   >
-    <i
+    <svg
       aria-hidden={true}
-      className="ms-SearchBox-icon icon-116"
-      data-icon-name="Search"
+      className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+      fill="currentColor"
+      height="1em"
+      viewBox="0 0 20 20"
+      width="1em"
+      xmlns="http://www.w3.org/2000/svg"
     >
-      
-    </i>
-  </div>
+      <path
+        d="M8.5 3a5.5 5.5 0 0 1 4.23 9.02l4.12 4.13a.5.5 0 0 1-.63.76l-.07-.06-4.13-4.12A5.5 5.5 0 1 1 8.5 3Zm0 1a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9Z"
+        fill="currentColor"
+      />
+    </svg>
+  </span>
   <input
     aria-label="Search"
     autoFocus={true}
-    className="ms-SearchBox-field field-113"
+    className="fui-Input__input r12stul0 fui-SearchBox__input ___69a85s0_ca35df0 fk8j09s f1vdfbxk f18izjht fcoa6sg"
     data-automation-id="msla-search-box"
-    id="SearchBox0"
-    onBlur={[Function]}
+    disabled={false}
+    maxLength={80}
     onChange={[Function]}
-    onInput={[Function]}
-    onKeyDown={[Function]}
     placeholder="Search"
-    role="searchbox"
+    type="search"
     value="foo"
   />
-  <div
-    className="ms-SearchBox-clearButton clearButton-112"
+  <span
+    className="fui-Input__contentAfter r1572tok fui-SearchBox__contentAfter ___yrbim60_1xrsupy f1cnd47f f1ufnopg fniina8 f3tsq5r f1a3p1vp"
   >
-    <button
-      aria-label="Clear text"
-      className="ms-Button ms-Button--icon root-117"
-      data-is-focusable={true}
-      onBlur={[Function]}
+    <span
+      aria-label="clear"
+      className="fui-SearchBox__dismiss r1pvzcuu"
       onClick={[Function]}
-      onKeyDown={[Function]}
-      onKeyPress={[Function]}
-      onKeyUp={[Function]}
-      onMouseDown={[Function]}
-      onMouseUp={[Function]}
-      type="button"
+      role="button"
+      tabIndex={-1}
     >
-      <span
-        className="ms-Button-flexContainer flexContainer-118"
-        data-automationid="splitbuttonprimary"
+      <svg
+        aria-hidden={true}
+        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        fill="currentColor"
+        height="1em"
+        viewBox="0 0 20 20"
+        width="1em"
+        xmlns="http://www.w3.org/2000/svg"
       >
-        <i
-          aria-hidden={true}
-          className="ms-Icon root-105 css-115 ms-Button-icon icon-120"
-          data-icon-name="Clear"
-          style={
-            {
-              "fontFamily": ""FabricMDL2Icons"",
-            }
-          }
-        >
-          
-        </i>
-      </span>
-    </button>
-  </div>
-</div>
+        <path
+          d="m4.09 4.22.06-.07a.5.5 0 0 1 .63-.06l.07.06L10 9.29l5.15-5.14a.5.5 0 0 1 .63-.06l.07.06c.18.17.2.44.06.63l-.06.07L10.71 10l5.14 5.15c.18.17.2.44.06.63l-.06.07a.5.5 0 0 1-.63.06l-.07-.06L10 10.71l-5.15 5.14a.5.5 0 0 1-.63.06l-.07-.06a.5.5 0 0 1-.06-.63l.06-.07L9.29 10 4.15 4.85a.5.5 0 0 1-.06-.63l.06-.07-.06.07Z"
+          fill="currentColor"
+        />
+      </svg>
+    </span>
+  </span>
+</span>
 `;

@@ -3,13 +3,15 @@ import type { ConnectionReferences, Workflow, WorkflowParameter } from '../../..
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { getConnectorWithSwagger } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
-import type { NodeInputs, NodeOperation, ParameterGroup } from '../../state/operation/operationMetadataSlice';
+import type { NodeInputs, NodeOperation, NodeOutputs, ParameterGroup } from '../../state/operation/operationMetadataSlice';
 import { ErrorLevel } from '../../state/operation/operationMetadataSlice';
 import { getOperationInputParameters } from '../../state/operation/operationSelector';
+import type { OutputMock } from '../../state/unitTest/unitTestInterfaces';
 import type { WorkflowParameterDefinition } from '../../state/workflowparameters/workflowparametersSlice';
 import type { RootState } from '../../store';
 import { getNode, getTriggerNodeId, isRootNode, isRootNodeInGraph } from '../../utils/graph';
 import {
+  castValueSegments,
   encodePathValue,
   getAndEscapeSegment,
   getEncodeValue,
@@ -56,10 +58,21 @@ import {
   excludePathValueFromTarget,
   getRecordEntry,
 } from '@microsoft/logic-apps-shared';
-import type { ParameterInfo } from '@microsoft/designer-ui';
-import { UIConstants } from '@microsoft/designer-ui';
-import type { Segment, LocationSwapMap, LogicAppsV2, OperationManifest, SubGraphDetail } from '@microsoft/logic-apps-shared';
+import type { ParameterInfo, ValueSegment } from '@microsoft/designer-ui';
+import { TokenType, UIConstants } from '@microsoft/designer-ui';
+import type {
+  Segment,
+  LocationSwapMap,
+  LogicAppsV2,
+  OperationManifest,
+  SubGraphDetail,
+  OperationMock,
+  AssertionDefinition,
+  Assertion,
+  UnitTestDefinition,
+} from '@microsoft/logic-apps-shared';
 import merge from 'lodash.merge';
+import { createTokenValueSegment } from '../../utils/parameters/segment';
 import { ConnectorManifest } from './agent';
 
 export interface SerializeOptions {
@@ -86,7 +99,9 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
           },
           { invalidNodes }
         ),
-        { errorMessage: `Workflow has invalid connections on the following operations: ${invalidNodes}` }
+        {
+          errorMessage: `Workflow has invalid connections on the following operations: ${invalidNodes}`,
+        }
       );
     }
 
@@ -105,7 +120,9 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
           },
           { invalidNodes }
         ),
-        { errorMessage: `Workflow has settings validation errors on the following operations: ${invalidNodes}` }
+        {
+          errorMessage: `Workflow has settings validation errors on the following operations: ${invalidNodes}`,
+        }
       );
     }
 
@@ -127,7 +144,9 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
           },
           { invalidNodes }
         ),
-        { errorMessage: `Workflow has parameter validation errors on the following operations: ${invalidNodes}` }
+        {
+          errorMessage: `Workflow has parameter validation errors on the following operations: ${invalidNodes}`,
+        }
       );
     }
   }
@@ -293,10 +312,93 @@ export const serializeOperation = async (
 
   const actionMetadata = getRecordEntry(rootState.operations.actionMetadata, operationId);
   if (actionMetadata) {
-    serializedOperation.metadata = { ...serializedOperation.metadata, ...actionMetadata };
+    serializedOperation.metadata = {
+      ...serializedOperation.metadata,
+      ...actionMetadata,
+    };
   }
 
   return serializedOperation;
+};
+
+const serializeChannel = async (
+  rootState: RootState,
+  _operationId: string,
+  _operation: NodeOperation,
+  channelPrefix: string
+): Promise<any> => {
+  const allInputParameterKeys = Object.keys(rootState.operations.inputParameters ?? {});
+  const channelOperationId = allInputParameterKeys.find((id) => id.toLowerCase().startsWith(channelPrefix.toLowerCase()));
+
+  if (channelOperationId) {
+    const channelOperation = getRecordEntry(rootState.operations.operationInfo, channelOperationId);
+
+    if (!channelOperation) {
+      throw new AssertionException(AssertionErrorCode.OPERATION_NOT_FOUND, `Operation with id ${channelOperationId} not found`);
+    }
+    const channelManifest = await getOperationManifest(channelOperation);
+    const inputsToSerialize = getOperationInputsToSerialize(rootState, channelOperationId);
+    const inputs = serializeParametersFromManifest(inputsToSerialize, channelManifest);
+
+    return {
+      type: channelOperation.type,
+      ...optional('kind', channelOperation.kind),
+      inputs,
+    };
+  }
+  return undefined;
+};
+
+const serializeAllChannels = async (rootState: RootState, operationId: string): Promise<any> => {
+  const operation = getRecordEntry(rootState.operations.operationInfo, operationId);
+  if (!operation) {
+    throw new AssertionException(AssertionErrorCode.OPERATION_NOT_FOUND, `Operation with id ${operationId} not found`);
+  }
+
+  // NOTE: Channels is applicable for Agents only so keeping it strictly specific for now
+  if (!equals(operation.type, Constants.NODE.TYPE.AGENT, true)) {
+    return undefined;
+  }
+
+  let serializedInputChannel: Record<string, any> | undefined = undefined;
+  let serializedOutputChannel: Record<string, any> | undefined = undefined;
+
+  const serializedInputChannelTrigger = await serializeChannel(
+    rootState,
+    operationId,
+    operation,
+    `${operationId}${Constants.CHANNELS.INPUT}`
+  );
+
+  if (serializedInputChannelTrigger) {
+    serializedInputChannel = {
+      'in-channel-1': {
+        trigger: serializedInputChannelTrigger,
+      },
+    };
+  }
+
+  const serializedOutputChannelTrigger = await serializeChannel(
+    rootState,
+    operationId,
+    operation,
+    `${operationId}${Constants.CHANNELS.OUTPUT}`
+  );
+
+  if (serializedOutputChannelTrigger) {
+    serializedOutputChannel = {
+      'out-channel-1': {
+        action: serializedOutputChannelTrigger,
+      },
+    };
+  }
+
+  const channels = {
+    ...optional('in', serializedInputChannel),
+    ...optional('out', serializedOutputChannel),
+  };
+
+  return Object.keys(channels).length === 0 ? undefined : channels;
 };
 
 const serializeManifestBasedOperation = async (rootState: RootState, operationId: string): Promise<LogicAppsV2.OperationDefinition> => {
@@ -328,6 +430,8 @@ const serializeManifestBasedOperation = async (rootState: RootState, operationId
   const inputsLocation = manifest.properties.inputsLocation ?? ['inputs'];
   const inputsObject = inputsLocation.length ? optional(inputsLocation[0], inputs) : inputs;
 
+  const channels = await serializeAllChannels(rootState, operationId);
+
   setRetryPolicy(inputsObject, nodeSettings);
 
   return {
@@ -336,6 +440,7 @@ const serializeManifestBasedOperation = async (rootState: RootState, operationId
     ...optional('kind', operation.kind),
     ...inputsObject,
     ...childOperations,
+    ...optional('channels', channels),
     ...optional('runAfter', runAfter),
     ...optional('recurrence', recurrence),
     ...serializeSettings(operationId, nodeSettings, nodeStaticResults, isTrigger, rootState),
@@ -358,7 +463,13 @@ const serializeSwaggerBasedOperation = async (rootState: RootState, operationId:
       : undefined;
   const retryPolicy = getRetryPolicy(nodeSettings);
   const inputPathValue = await serializeParametersFromSwagger(inputsToSerialize, operationInfo);
-  const hostInfo = { host: { connection: { referenceName: getRecordEntry(rootState.connections.connectionsMapping, operationId) } } };
+  const hostInfo = {
+    host: {
+      connection: {
+        referenceName: getRecordEntry(rootState.connections.connectionsMapping, operationId),
+      },
+    },
+  };
   const inputs = { ...hostInfo, ...inputPathValue, retryPolicy };
   const serializedType = equals(type, Constants.NODE.TYPE.API_CONNECTION)
     ? Constants.SERIALIZED_TYPE.API_CONNECTION
@@ -471,7 +582,10 @@ export const constructInputValues = (key: string, inputs: SerializedParameter[],
         parameterValue = encodePathValue(parameterValue, encodeCount);
       }
 
-      const serializedParameter = { ...descendantParameter, value: parameterValue };
+      const serializedParameter = {
+        ...descendantParameter,
+        value: parameterValue,
+      };
       if (descendantParameter.info.serialization?.property?.type === PropertySerializationType.ParentObject) {
         propertyNameParameters.push(serializedParameter);
       }
@@ -634,7 +748,10 @@ const swapInputsLocationIfNeeded = (parametersValue: any, swapMap: LocationSwapM
       continue;
     }
 
-    const value = { ...excludePathValueFromTarget(parametersValue, source, target), ...getObjectPropertyValue(parametersValue, source) };
+    const value = {
+      ...excludePathValueFromTarget(parametersValue, source, target),
+      ...getObjectPropertyValue(parametersValue, source),
+    };
     finalValue = target.length ? safeSetObjectPropertyValue(finalValue, target, value) : { ...finalValue, ...value };
   }
 
@@ -673,10 +790,10 @@ interface ServiceProviderConnectionConfigInfo {
 }
 
 interface AgentConnectionInfo {
-  modelConfiguration: {
-    connectionName: string;
-    operationId: string;
-    agentId: string;
+  modelConfigurations: {
+    model1: {
+      referenceName: string;
+    };
   };
 }
 
@@ -745,10 +862,10 @@ const serializeHost = (
       };
     case ConnectionReferenceKeyFormat.AgentConnection:
       return {
-        modelConfiguration: {
-          connectionName: referenceKey,
-          operationId,
-          agentId: connectorId,
+        modelConfigurations: {
+          model1: {
+            referenceName: referenceKey,
+          },
         },
       };
     case ConnectionReferenceKeyFormat.HybridTrigger:
@@ -880,6 +997,13 @@ const serializeSubGraph = async (
   if (graphDetail?.inputs && graphDetail?.inputsLocation) {
     const inputs = serializeParametersFromManifest(getOperationInputsToSerialize(rootState, graphId), { properties: graphDetail } as any);
     safeSetObjectPropertyValue(result, [...graphInputsLocation, ...graphDetail.inputsLocation], inputs, true);
+    if (inputs?.agentParameterSchema?.required) {
+      safeSetObjectPropertyValue(
+        result,
+        [...graphInputsLocation, 'agentParameterSchema', 'required'],
+        inputs?.agentParameterSchema?.required
+      );
+    }
   }
 
   return result;
@@ -901,7 +1025,10 @@ const serializeSettings = (
   const conditions = conditionExpressions
     ? conditionExpressions.value?.filter((expression) => !!expression).map((expression) => ({ expression }))
     : undefined;
-  const timeout = settings.timeout?.isSupported && settings.timeout.value ? { timeout: settings.timeout.value } : undefined;
+  const timeout = settings.timeout?.isSupported ? settings.timeout.value : undefined;
+  const count = settings.count?.isSupported ? settings.count.value : undefined;
+  const limit = timeout || count ? { count, timeout } : undefined;
+
   const trackedProperties = settings.trackedProperties?.value;
 
   return {
@@ -910,7 +1037,7 @@ const serializeSettings = (
       ? optional('isInvokerConnectionEnabled', settings.invokerConnection?.value?.enabled)
       : {}),
     ...optional('conditions', conditions),
-    ...optional('limit', timeout),
+    ...optional('limit', limit),
     ...optional('operationOptions', getSerializedOperationOptions(operationId, settings, rootState)),
     ...optional('runtimeConfiguration', getSerializedRuntimeConfiguration(operationId, settings, nodeStaticResults, rootState)),
     ...optional('trackedProperties', trackedProperties),
@@ -1065,6 +1192,12 @@ const getSerializedOperationOptions = (operationId: string, settings: Settings, 
     !!settings.requestSchemaValidation?.value,
     deserializedOptions
   );
+  updateOperationOptions(
+    Constants.SETTINGS.OPERATION_OPTIONS.FAILWHENLIMITSREACHED,
+    !!settings.shouldFailOperation?.isSupported,
+    !!settings.shouldFailOperation?.value,
+    deserializedOptions
+  );
 
   return deserializedOptions.length ? deserializedOptions.join(', ') : undefined;
 };
@@ -1140,4 +1273,145 @@ const getSplitOn = (
     ...(splitOnConfiguration ? { splitOnConfiguration } : {}),
   };
 };
-//#endregion
+
+/**
+ * Serializes the unit test definition based on the provided root state.
+ * @param {RootState} rootState The root state object containing the unit test data.
+ * @returns A promise that resolves to the serialized unit test definition.
+ */
+export const serializeUnitTestDefinition = async (rootState: RootState): Promise<UnitTestDefinition> => {
+  const { mockResults, assertions } = rootState.unitTest;
+  const { triggerMocks, actionMocks } = getTriggerActionMocks(mockResults);
+
+  return {
+    triggerMocks: triggerMocks,
+    actionMocks: actionMocks,
+    assertions: getAssertions(assertions),
+  };
+};
+
+/**
+ * Gets the node output operations based on the provided root state.
+ * @param {RootState} rootState The root state object containing the current designer state.
+ * @returns A promise that resolves to the serialized unit test definition.
+ */
+export const getNodeOutputOperations = (state: RootState) => {
+  const outputOperations: {
+    operationInfo: Record<string, NodeOperation>;
+    outputParameters: Record<string, NodeOutputs>;
+  } = {
+    operationInfo: state.operations.operationInfo,
+    outputParameters: state.operations.outputParameters,
+  };
+  return outputOperations;
+};
+
+/**
+ * Retrieves an array of Assertion objects based on the provided Assertion definitions.
+ * @param {Record<string, AssertionDefinition>} assertions - The Assertion definitions.
+ * @returns An array of Assertion objects.
+ */
+const getAssertions = (assertions: Record<string, AssertionDefinition>): Assertion[] => {
+  return Object.values(assertions).map((assertion) => {
+    const { name, description, assertionString } = assertion;
+    const assertionValueSegment = createTokenValueSegment(
+      {
+        title: assertionString,
+        key: assertionString,
+        tokenType: TokenType.FX,
+        type: Constants.SWAGGER.TYPE.STRING,
+      },
+      assertionString,
+      TokenType.FX
+    );
+    const castAsertionString = castValueSegments([assertionValueSegment], false, Constants.SWAGGER.TYPE.STRING, false);
+
+    return { name, description, assertionString: castAsertionString };
+  });
+};
+
+/**
+ * Parses the output of a workflow into a more structured format.
+ * @param {Record<string, ValueSegment[]>} outputs - The outputs of the workflow.
+ * @returns The parsed outputs in a more structured format.
+ */
+const parseOutputMock = (outputs: Record<string, ValueSegment[]>): Record<string, any> => {
+  const outputValues: Record<string, any> = {};
+  for (const [key, value] of Object.entries(outputs)) {
+    if (value && value.length > 0) {
+      outputValues[key] = value[0].value;
+    }
+  }
+  return unifyOutputs(outputValues);
+};
+
+/**
+ * Unifies the outputs by converting a dot-separated key-value object into a nested object.
+ * @param {Record<string, any>} outputs - The dot-separated key-value object to unify.
+ * @returns The unified object with nested properties.
+ */
+const unifyOutputs = (outputs: Record<string, any>): Record<string, any> => {
+  const result: Record<string, any> = {};
+
+  Object.keys(outputs).forEach((key) => {
+    const parts = key.split('.').filter((part) => part !== '$');
+    let currentLevel = result;
+
+    parts.forEach((part, index) => {
+      if (index === parts.length - 1) {
+        currentLevel[part] = outputs[key];
+      } else {
+        if (!currentLevel[part]) {
+          currentLevel[part] = {};
+        }
+        currentLevel = currentLevel[part];
+      }
+    });
+  });
+
+  return result;
+};
+
+/**
+ * Retrieves the trigger and action mocks from the provided mock results.
+ * @param {Record<string, OutputMock>} mockResults - The mock results containing the trigger and action mocks.
+ * @returns An object containing the trigger mocks and action mocks.
+ */
+const getTriggerActionMocks = (
+  mockResults: Record<string, OutputMock>
+): {
+  triggerMocks: Record<string, OperationMock>;
+  actionMocks: Record<string, OperationMock>;
+} => {
+  const triggerMocks: Record<string, OperationMock> = {};
+  const actionMocks: Record<string, OperationMock> = {};
+
+  Object.keys(mockResults).forEach((key) => {
+    const outputMock = mockResults[key];
+    if (outputMock) {
+      const outputsValue = parseOutputMock(outputMock.output);
+      const operationMock: OperationMock = {
+        properties: {
+          status: outputMock.actionResult,
+        },
+        ...outputsValue,
+      };
+
+      // Only add error property if errorCode or errorMessage exists
+      if (outputMock.errorCode || outputMock.errorMessage) {
+        operationMock.error = {
+          ...(outputMock.errorCode && { code: outputMock.errorCode }),
+          ...(outputMock.errorMessage && { message: outputMock.errorMessage }),
+        };
+      }
+
+      if (key.charAt(0) === '&') {
+        const triggerName = key.substring(1);
+        triggerMocks[triggerName] = operationMock;
+      } else {
+        actionMocks[key] = operationMock;
+      }
+    }
+  });
+  return { triggerMocks, actionMocks };
+};

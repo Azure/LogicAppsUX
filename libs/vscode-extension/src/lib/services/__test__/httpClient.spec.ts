@@ -103,7 +103,7 @@ describe('HttpClient', () => {
       method: 'POST',
       url: `${baseUrl}/test-post`,
       headers: {
-        Authorization: '',
+        Authorization: 'test-token',
         'Content-Type': 'application/json',
         'x-ms-user-agent': 'LogicAppsDesigner/(host vscode 1.0.0)',
       },
@@ -153,6 +153,23 @@ describe('HttpClient', () => {
     };
 
     await expect(httpClient.post(options)).rejects.toThrow(errorMessage);
+  });
+
+  it('should throw the error message when POST request returns an error', async () => {
+    const errorMessage = 'Network Error';
+    (axios as any).mockRejectedValueOnce(new Error(errorMessage)); // Simulate error
+
+    const options: HttpRequestOptions<unknown> = {
+      uri: '/test/subscriptions/subscription-test/test-get',
+      headers: {},
+      content: { key: 'value' },
+    };
+
+    try {
+      await httpClient.post(options);
+    } catch (error) {
+      expect(error.message).toBe(errorMessage);
+    }
   });
 
   it('should make a PUT request', async () => {

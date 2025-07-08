@@ -3,6 +3,7 @@ import { addOperation } from '../../../core/actions/bjsworkflow/add';
 import { useAllConnectors, useAllOperations } from '../../../core/queries/browse';
 import { useHostOptions } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import {
+  useDiscoveryPanelFavoriteOperations,
   useDiscoveryPanelIsAddingTrigger,
   useDiscoveryPanelIsParallelBranch,
   useDiscoveryPanelRelationshipIds,
@@ -10,21 +11,23 @@ import {
 } from '../../../core/state/panel/panelSelectors';
 import { selectOperationGroupId, selectOperationId } from '../../../core/state/panel/panelSlice';
 import { AzureResourceSelection } from './azureResourceSelection';
-import { BrowseView } from './browseView';
 import { CustomSwaggerSelection } from './customSwaggerSelection';
 import { OperationGroupDetailView } from './operationGroupDetailView';
 import { SearchView } from './searchView';
 import { Link, Icon } from '@fluentui/react';
 import { Button } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
-import { SearchService, equals, guid, areApiIdsEqual } from '@microsoft/logic-apps-shared';
+import { SearchService, equals, guid, areApiIdsEqual, LoggerService, LogEntryLevel, FavoriteContext } from '@microsoft/logic-apps-shared';
 import { OperationSearchHeader, XLargeText } from '@microsoft/designer-ui';
 import type { CommonPanelProps } from '@microsoft/designer-ui';
 import type { DiscoveryOpArray, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
 import { useDebouncedEffect } from '@react-hookz/web';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
+import { ActionSpotlight } from './actionSpotlight';
+import { BrowseView } from './browseView';
+import { useOnFavoriteClick } from './hooks';
 
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
@@ -48,6 +51,18 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   const [allOperationsForGroup, setAllOperationsForGroup] = useState<DiscoveryOpArray>([]);
 
   const [isGrouped, setIsGrouped] = useState(true);
+
+  const recommendationPanelRef = useRef<HTMLDivElement>(null);
+  const favorites = useDiscoveryPanelFavoriteOperations();
+  const onFavoriteClick = useOnFavoriteClick();
+
+  const isOperationFavorited = useCallback(
+    (connectorId: string, operationId?: string) =>
+      favorites.some((favorite) => favorite.connectorId === connectorId && favorite.operationId === operationId),
+    [favorites]
+  );
+
+  const contextValue = useMemo(() => ({ isOperationFavorited, onFavoriteClick }), [isOperationFavorited, onFavoriteClick]);
 
   const [selectionState, setSelectionState] = useState<SelectionState>(SELECTION_STATES.SEARCH);
 
@@ -175,7 +190,15 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
           return;
         }
         const newNodeId = (operation?.properties?.summary ?? operation?.name ?? guid()).replaceAll(' ', '_');
-        dispatch(addOperation({ operation, relationshipIds, nodeId: newNodeId, isParallelBranch, isTrigger }));
+        dispatch(
+          addOperation({
+            operation,
+            relationshipIds,
+            nodeId: newNodeId,
+            isParallelBranch,
+            isTrigger,
+          })
+        );
       });
     },
     [
@@ -191,6 +214,19 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
     ]
   );
 
+  const onConnectorCardSelected = useCallback(
+    (id: string, origin?: string): void => {
+      LoggerService().log({
+        area: 'recommendationPanelContext.onConnectorCardSelected',
+        level: LogEntryLevel.Verbose,
+        message: 'Connector card selected from RecommendationPanel',
+        args: [`connectorId: ${id}`, `origin: ${origin}`],
+      });
+      dispatch(selectOperationGroupId(id));
+    },
+    [dispatch]
+  );
+
   const intl = useIntl();
   const returnToSearchText = intl.formatMessage({
     defaultMessage: 'Return to search',
@@ -199,8 +235,16 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   });
 
   const headingText = isTrigger
-    ? intl.formatMessage({ defaultMessage: 'Add a trigger', id: 'dBxX0M', description: 'Text for the "Add Trigger" page header' })
-    : intl.formatMessage({ defaultMessage: 'Add an action', id: 'EUQDM6', description: 'Text for the "Add Action" page header' });
+    ? intl.formatMessage({
+        defaultMessage: 'Add a trigger',
+        id: 'dBxX0M',
+        description: 'Text for the "Add Trigger" page header',
+      })
+    : intl.formatMessage({
+        defaultMessage: 'Add an action',
+        id: 'EUQDM6',
+        description: 'Text for the "Add Action" page header',
+      });
 
   const closeButtonAriaLabel = intl.formatMessage({
     defaultMessage: 'Close panel',
@@ -209,9 +253,9 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   });
 
   return (
-    <>
-      <div className="msla-app-action-header">
-        <XLargeText text={headingText} />
+    <FavoriteContext.Provider value={contextValue}>
+      <div className="msla-app-action-header" ref={recommendationPanelRef}>
+        <XLargeText text={headingText} as="h2" />
         <Button aria-label={closeButtonAriaLabel} appearance="subtle" onClick={toggleCollapse} icon={<CloseIcon />} />
       </div>
       {selectionState !== SELECTION_STATES.SEARCH || selectedOperationGroupId ? (
@@ -233,7 +277,6 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
               filters={filters}
               onOperationClick={onOperationClick}
               isLoading={isLoadingOperations || isLoadingOperationGroup}
-              displayRuntimeInfo={displayRuntimeInfo}
               ignoreActionsFilter={hideActionTypeFilter}
             />
           ) : null,
@@ -241,14 +284,10 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
             <>
               <OperationSearchHeader
                 searchCallback={setSearchTerm}
-                onGroupToggleChange={() => setIsGrouped(!isGrouped)}
-                isGrouped={isGrouped}
                 searchTerm={searchTerm}
                 filters={filters}
                 setFilters={setFilters}
                 isTriggerNode={isTrigger}
-                displayRuntimeInfo={displayRuntimeInfo}
-                displayActionType={!hideActionTypeFilter}
               />
               {searchTerm ? (
                 <SearchView
@@ -256,19 +295,36 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
                   allOperations={allOperations ?? []}
                   isLoadingOperations={isLoadingOperations}
                   groupByConnector={isGrouped}
+                  setGroupByConnector={(newValue: boolean) => setIsGrouped(newValue)}
                   isLoading={isLoadingOperations}
                   filters={filters}
+                  setFilters={setFilters}
                   onOperationClick={onOperationClick}
                   displayRuntimeInfo={displayRuntimeInfo}
                 />
               ) : (
-                <BrowseView filters={filters} isLoadingOperations={isLoadingOperations} displayRuntimeInfo={displayRuntimeInfo} />
+                <>
+                  <ActionSpotlight
+                    onConnectorSelected={onConnectorCardSelected}
+                    onOperationSelected={onOperationClick}
+                    filters={filters}
+                    allOperations={allOperations}
+                  />
+                  <BrowseView
+                    filters={filters}
+                    isLoadingOperations={isLoadingOperations}
+                    setFilters={setFilters}
+                    onConnectorCardSelected={onConnectorCardSelected}
+                    displayRuntimeInfo={false}
+                  />
+                  {/* <ScrollToTop scrollToRef={recommendationPanelRef} /> */}
+                </>
               )}
             </>
           ),
         }[selectionState ?? '']
       }
-    </>
+    </FavoriteContext.Provider>
   );
 };
 

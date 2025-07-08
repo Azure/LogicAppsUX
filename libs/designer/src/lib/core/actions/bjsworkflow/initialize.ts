@@ -44,6 +44,7 @@ import {
   getParametersSortedByVisibility,
   loadParameterValuesArrayFromDefault,
   ParameterGroupKeys,
+  shouldEncodeParameterValueForOperationBasedOnMetadata,
   toParameterInfoMap,
   updateParameterWithValues,
 } from '../../utils/parameters/helper';
@@ -104,6 +105,7 @@ import {
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { addOrUpdateCustomCode } from '../../state/customcode/customcodeSlice';
+import { setFavoriteOperations } from '../../state/panel/panelSlice';
 
 export interface ServiceOptions {
   connectionService: IConnectionService;
@@ -190,7 +192,8 @@ export const getInputParametersFromManifest = (
     }
   }
 
-  const allParametersAsArray = toParameterInfoMap(primaryInputParametersInArray, stepDefinition);
+  const shouldEncodeBasedOnMetadata = shouldEncodeParameterValueForOperationBasedOnMetadata(operationInfo);
+  const allParametersAsArray = toParameterInfoMap(primaryInputParametersInArray, stepDefinition, shouldEncodeBasedOnMetadata);
   const dynamicInput = primaryInputParametersInArray.find((parameter) => parameter.dynamicSchema);
 
   const defaultParameterGroup = {
@@ -203,12 +206,21 @@ export const getInputParametersFromManifest = (
     [ParameterGroupKeys.DEFAULT]: defaultParameterGroup,
   };
 
-  addRecurrenceParametersInGroup(parameterGroups, manifest.properties.recurrence, stepDefinition);
+  addRecurrenceParametersInGroup(parameterGroups, manifest.properties.recurrence, stepDefinition, shouldEncodeBasedOnMetadata);
 
   defaultParameterGroup.parameters = getParametersSortedByVisibility(defaultParameterGroup.parameters);
 
   const nodeInputs = { dynamicLoadStatus: dynamicInput ? DynamicLoadStatus.NOTSTARTED : undefined, parameterGroups };
   return { inputs: nodeInputs, dependencies: getInputDependencies(nodeInputs, allInputParameters) };
+};
+
+export const getSupportedChannelsFromManifest = (_nodeId: string, operationInfo: NodeOperation, manifest: OperationManifest) => {
+  const manifestParser = new ManifestParser(
+    manifest,
+    OperationManifestService().isAliasingSupported(operationInfo.type, operationInfo.kind)
+  );
+
+  return manifestParser.getSupportedChannels();
 };
 
 export const getOutputParametersFromManifest = (
@@ -573,7 +585,8 @@ export const initializeCustomCodeDataInInputs = (parameter: ParameterInfo, nodeI
     const fileData = generateDefaultCustomCodeValue(language);
     if (fileData) {
       const fileExtension = getFileExtensionName(language);
-      const fileName = replaceWhiteSpaceWithUnderscore(nodeId) + fileExtension;
+      const fileName = replaceWhiteSpaceWithUnderscore(nodeId.replace(/#/g, 'sharp')) + fileExtension;
+
       parameter.editorViewModel = {
         customCodeData: { fileData, fileName, fileExtension },
       };
@@ -699,5 +712,17 @@ export const updateInvokerSettings = (
         updateNodeSettingsCallback({ invokerConnection: { isSupported: true, value: { enabled: true } } });
       }
     });
+  }
+};
+
+export const initializeDiscoveryPanelFavoriteOperations = async (dispatch: Dispatch): Promise<void> => {
+  try {
+    const rawFavorites = localStorage.getItem('msla-favoriteOperations');
+    const favoriteOperations = rawFavorites ? JSON.parse(rawFavorites) : [];
+
+    dispatch(setFavoriteOperations(favoriteOperations));
+  } catch (error) {
+    console.error('Failed to initialize favorite operations from localStorage:', error);
+    dispatch(setFavoriteOperations([])); // fallback to empty if there's an error
   }
 };

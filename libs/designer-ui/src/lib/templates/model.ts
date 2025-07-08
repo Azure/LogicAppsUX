@@ -1,13 +1,14 @@
-import type { IntlShape } from 'react-intl';
 import type { TemplatePanelFooterProps } from './templatesPanelFooter';
 import type { ReactNode } from 'react';
 
-export type TemplatePanelTabFn = (intl: IntlShape) => TemplatePanelTab;
-export interface TemplatePanelTab {
+export type TemplateTabStatusType = 'error' | 'success' | 'in-progress' | undefined;
+
+export interface TemplateTabProps {
   id: string;
   title: string;
+  onTabClick?: () => void;
   description?: string | ReactNode;
-  hasError?: boolean;
+  tabStatusIcon?: TemplateTabStatusType;
   disabled?: boolean;
   content: React.ReactElement;
   footerContent: TemplatePanelFooterProps;

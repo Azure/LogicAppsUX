@@ -12,18 +12,19 @@ import {
   isNullOrUndefined,
   validateRequiredServiceArguments,
 } from '../../../utils/src';
-import { isHybridLogicApp } from './hybrid';
+import { hybridApiVersion, isHybridLogicApp } from './hybrid';
 import { LogEntryLevel } from '../logging/logEntry';
 import { LoggerService } from '../logger';
+import { TimelineRepetitionsMock } from '../__test__/__mocks__/timelineRepetitionsResponse';
 
 export interface RunServiceOptions {
   apiVersion: string;
   baseUrl: string;
   httpClient: IHttpClient;
   updateCors?: () => void;
-  accessToken?: string;
   workflowName: string;
   isDev?: boolean;
+  isTimelineSupported?: boolean;
 }
 
 export class StandardRunService implements IRunService {
@@ -68,25 +69,12 @@ export class StandardRunService implements IRunService {
     }
   }
 
-  private getAccessTokenHeaders = () => {
-    const { accessToken } = this.options;
-    if (!accessToken) {
-      return undefined;
-    }
-
-    return new Headers({
-      Authorization: accessToken,
-    });
-  };
-
   async getMoreRuns(continuationToken: string): Promise<Runs> {
-    const headers = this.getAccessTokenHeaders();
     const { httpClient } = this.options;
 
     try {
       const response = await httpClient.get<ArmResources<Run>>({
         uri: continuationToken,
-        headers: headers as Record<string, any>,
       });
 
       const { nextLink, value: runs }: ArmResources<Run> = response;
@@ -101,7 +89,7 @@ export class StandardRunService implements IRunService {
     const appName = baseUri.split('/');
     appName.pop();
     return {
-      uri: `${baseUri}/providers/Microsoft.App/logicapps/${appName.pop()}/invoke?api-version=2024-02-02-preview`,
+      uri: `${baseUri}/providers/Microsoft.App/logicapps/${appName.pop()}/invoke?api-version=${hybridApiVersion}`,
       headerPath: path,
     };
   }
@@ -119,16 +107,7 @@ export class StandardRunService implements IRunService {
     try {
       if (isHybridLogicApp(uri)) {
         uri = `${baseUrl}/workflows/${workflowName}/runs/${onlyRunId}?$expand=properties/actions,workflow/properties`;
-
-        const { uri: newUri, headerPath } = StandardRunService.getProxyUrl(uri);
-        const response = await httpClient.post<Run, undefined>({
-          uri: newUri,
-          headers: {
-            'X-Ms-Logicapps-Proxy-Path': headerPath,
-            'X-Ms-Logicapps-Proxy-Method': 'GET',
-          },
-        });
-        return response;
+        return this.fetchHybridLogicAppRunRepetitions<Run>(uri, 'GET', httpClient);
       }
       const response = await httpClient.get<Run>({
         uri,
@@ -145,13 +124,11 @@ export class StandardRunService implements IRunService {
    */
   async getRuns(): Promise<Runs> {
     const { apiVersion, baseUrl, workflowName, httpClient } = this.options;
-    const headers = this.getAccessTokenHeaders();
 
     const uri = `${baseUrl}/workflows/${workflowName}/runs?api-version=${apiVersion}`;
     try {
       const response = await httpClient.get<ArmResources<Run>>({
         uri,
-        headers: headers as Record<string, any>,
       });
 
       const { nextLink, value: runs }: ArmResources<Run> = response;
@@ -178,15 +155,143 @@ export class StandardRunService implements IRunService {
     }
 
     const { apiVersion, baseUrl, httpClient } = this.options;
-    const headers = this.getAccessTokenHeaders();
 
-    const filter = status ? `&$filter=status eq '${status}'` : '';
-    const uri = `${baseUrl}${runId}/actions/${nodeId}/scopeRepetitions?api-version=${apiVersion}${filter}`;
+    const queryParameters: Record<string, string> = {};
+    if (status) {
+      queryParameters['$filter'] = `status eq '${status}'`;
+    }
+    const uri = `${baseUrl}${runId}/actions/${nodeId}/scopeRepetitions`;
 
     try {
+      if (isHybridLogicApp(uri)) {
+        return this.fetchHybridLogicAppRunRepetitions<{ value: LogicAppsV2.RunRepetition[] }>(uri, 'GET', httpClient, queryParameters);
+      }
+
       const response = await httpClient.get<{ value: LogicAppsV2.RunRepetition[] }>({
         uri,
-        headers: headers as Record<string, any>,
+        queryParameters: {
+          ...queryParameters,
+          'api-version': apiVersion,
+        },
+      });
+
+      return response;
+    } catch (e: any) {
+      throw new Error(e.message);
+    }
+  }
+
+  /**
+   * Gets an array of workflow-level action repetitions for a run.
+   * @param {string} runId - The ID of the workflow run.
+   * @returns {Promise<any>}
+   */
+
+  async getTimelineRepetitions(_runId: string): Promise<any> {
+    // TODO: This is mock repetition data, should be replaced when the API is available.
+    return TimelineRepetitionsMock;
+
+    // const { apiVersion, baseUrl, httpClient, isTimelineSupported } = this.options;
+
+    // if (!isTimelineSupported) {
+    // 	return undefined;
+    // }
+
+    // const onlyRunId = runId.split('/')?.at(-1);
+    // const uri = `${baseUrl}/runs/${onlyRunId}/timelineRepetitions?api-version=${apiVersion}&$expand=properties/actions,workflow/properties`;
+
+    // try {
+    // 	const response = await httpClient.get<Run>({
+    // 		uri,
+    // 	});
+    // 	return response;
+    // } catch (e: any) {
+    // 	throw new Error(e.message);
+    // }
+  }
+
+  /**
+   * Retrieves the repetition details of a specific agent action run.
+   *
+   * This function constructs the request URI using the provided run ID, action node ID, and repetition ID,
+   * and then uses an HTTP client to fetch the run repetition data.
+   * @param action - An object containing the identifier for the action node and the run ID.
+   * @param action.nodeId - The unique identifier for the action node.
+   * @param action.runId - The identifier of the run; can be undefined.
+   * @param repetitionId - The identifier for the specific repetition of the agent action.
+   * @returns A promise that resolves to the run repetition details.
+   * @throws Will throw an error if the HTTP request fails.
+   */
+  async getAgentRepetition(
+    action: { nodeId: string; runId: string | undefined },
+    repetitionId: string
+  ): Promise<LogicAppsV2.RunRepetition> {
+    const { nodeId, runId } = action;
+    const { apiVersion, baseUrl, httpClient } = this.options;
+    const uri = `${baseUrl}${runId}/actions/${nodeId}/agentRepetitions/${repetitionId}`;
+
+    try {
+      if (isHybridLogicApp(uri)) {
+        return this.fetchHybridLogicAppRunRepetitions(uri, 'GET', httpClient);
+      }
+
+      const response = await httpClient.get<LogicAppsV2.RunRepetition>({
+        uri: `${uri}?api-version=${apiVersion}`,
+      });
+
+      return response;
+    } catch (e: any) {
+      throw new Error(e.message);
+    }
+  }
+
+  /**
+   * Retrieves the actions of an agent repetition for a specific node and run.
+   *
+   * This function constructs the API endpoint URI using the provided node and run identifiers,
+   * along with the given repetition ID, then sends an HTTP GET request to fetch the corresponding actions.
+   * @param action - An object containing:
+   *   - nodeId: The identifier for the node.
+   *   - runId: The identifier for the run (may be undefined).
+   * @param repetitionId - The identifier for the repetition to query.
+   * @returns A promise that resolves with the run repetition actions retrieved from the API.
+   * @throws An error if the HTTP request fails, propagating the error message.
+   */
+  async getAgentActionsRepetition(action: { nodeId: string; runId: string | undefined }, repetitionId: string): Promise<any> {
+    const { nodeId, runId } = action;
+    const { apiVersion, baseUrl, httpClient } = this.options;
+    const uri = `${baseUrl}${runId}/actions/${nodeId}/agentRepetitions/${repetitionId}/actions`;
+
+    try {
+      if (isHybridLogicApp(uri)) {
+        return this.fetchHybridLogicAppRunRepetitions<{ value: LogicAppsV2.RunRepetition[] }>(uri, 'GET', httpClient);
+      }
+
+      const response = await httpClient.get<LogicAppsV2.RunRepetition>({
+        uri: `${uri}?api-version=${apiVersion}`,
+      });
+
+      return response;
+    } catch (e: any) {
+      throw new Error(e.message);
+    }
+  }
+
+  /**
+   * Retrieves additional agent actions repetition data based on the provided continuation token.
+   *
+   * This method constructs an HTTP GET request using the continuation token as the URI and leverages the authorized HTTP client.
+   * It returns a promise that resolves with the run repetition data in the form of a [[LogicAppsV2.RunRepetition]] object.
+   * @param continuationToken - A string token used to fetch the next set of agent actions repetition data.
+   * @returns A promise that resolves with the run repetition data.
+   * @throws Will throw an error with the corresponding message if the HTTP request fails.
+   */
+  async getMoreAgentActionsRepetition(continuationToken: string): Promise<any> {
+    const { httpClient } = this.options;
+
+    try {
+      const response = await httpClient.get<LogicAppsV2.RunRepetition>({
+        uri: continuationToken,
       });
 
       return response;
@@ -204,13 +309,16 @@ export class StandardRunService implements IRunService {
   async getRepetition(action: { nodeId: string; runId: string | undefined }, repetitionId: string): Promise<LogicAppsV2.RunRepetition> {
     const { apiVersion, baseUrl, httpClient } = this.options;
     const { nodeId, runId } = action;
-    const headers = this.getAccessTokenHeaders();
 
-    const uri = `${baseUrl}${runId}/actions/${nodeId}/repetitions/${repetitionId}?api-version=${apiVersion}`;
+    const uri = `${baseUrl}${runId}/actions/${nodeId}/repetitions/${repetitionId}`;
+
     try {
+      if (isHybridLogicApp(uri)) {
+        return this.fetchHybridLogicAppRunRepetitions<LogicAppsV2.RunRepetition>(uri, 'GET', httpClient);
+      }
+
       const response = await httpClient.get<LogicAppsV2.RunRepetition>({
-        uri,
-        headers: headers as Record<string, any>,
+        uri: `${uri}?api-version=${apiVersion}`,
       });
 
       return response;
@@ -232,7 +340,7 @@ export class StandardRunService implements IRunService {
     }
 
     try {
-      await this.getHttpRequestByMethod(httpClient, method, { uri });
+      await this.getHttpRequestByMethod(httpClient, method, { uri, noAuth: true });
     } catch (e: any) {
       throw new Error(`${e.status} ${e?.data?.error?.message}`);
     }
@@ -292,5 +400,125 @@ export class StandardRunService implements IRunService {
       default:
         throw new UnsupportedException(`Unsupported call connector method - '${method}'`);
     }
+  }
+
+  /**
+   * Retrieves the chat history for a specified action.
+   *
+   * This function constructs a URI based on the provided runId and nodeId, along with the
+   * baseUrl and apiVersion from the options. It then sends an HTTP GET request to obtain the
+   * chat history information associated with the specified action.
+   * @param action - An object containing the necessary identifiers.
+   * @param action.nodeId - The unique identifier of the node to retrieve the chat history for.
+   * @param action.runId - The unique identifier of the run; may be undefined.
+   * @returns A promise that resolves with the chat history response.
+   * @throws {Error} Throws an error with a message if the HTTP request fails.
+   */
+  async getChatHistory(action: { nodeId: string; runId: string | undefined }): Promise<any> {
+    const { apiVersion, baseUrl, httpClient } = this.options;
+    const { nodeId, runId } = action;
+    const uri = `${baseUrl}${runId}/actions/${nodeId}/chatHistory`;
+
+    try {
+      if (isHybridLogicApp(uri)) {
+        const response = await this.fetchHybridLogicAppRunRepetitions<any>(uri, 'GET', httpClient);
+        return response.value;
+      }
+
+      const response = await httpClient.get<any>({
+        uri: `${uri}?api-version=${apiVersion}`,
+      });
+
+      return response.value;
+    } catch (e: any) {
+      throw new Error(e.message);
+    }
+  }
+
+  /**
+   * Retrieves the chat history for a specified action.
+   *
+   * This function constructs a URI based on the provided runId and nodeId, along with the
+   * baseUrl and apiVersion from the options. It then sends an HTTP GET request to obtain the
+   * chat history information associated with the specified action.
+   * @param action - An object containing the necessary identifiers.
+   * @param action.id - Id suffix for agent and channel.
+   * @returns A promise that resolves with the agent chat url.
+   * @throws {Error} Throws an error with a message if the HTTP request fails.
+   */
+  async getAgentChatInvokeUri(action: { idSuffix: string }): Promise<any> {
+    const { apiVersion, baseUrl, httpClient } = this.options;
+    const { idSuffix } = action;
+
+    const uri = `${baseUrl}${idSuffix}/listCallBackUrl`;
+
+    try {
+      if (isHybridLogicApp(uri)) {
+        const response = await this.fetchHybridLogicAppRunRepetitions<any>(uri, 'POST', httpClient);
+        return response?.value;
+      }
+
+      const response = await httpClient.post<any, any>({
+        uri: `${uri}?api-version=${apiVersion}`,
+      });
+
+      return response?.value;
+    } catch (e: any) {
+      throw new Error(e.message);
+    }
+  }
+
+  async invokeAgentChat(action: { id: string; data: any }): Promise<any> {
+    const { httpClient } = this.options;
+    const { id: uri, data } = action;
+
+    try {
+      const response = await httpClient.post<any, any>({
+        uri,
+        noAuth: true,
+        content: data,
+      });
+
+      return response;
+    } catch (e: any) {
+      throw new Error(e.message);
+    }
+  }
+
+  async cancelRun(runId: string): Promise<any> {
+    const { apiVersion, baseUrl, httpClient } = this.options;
+
+    let uri = `${baseUrl}${runId}/cancel?api-version=${apiVersion}`;
+    try {
+      if (isHybridLogicApp(uri)) {
+        uri = `${baseUrl}${runId}/cancel`;
+
+        return this.fetchHybridLogicAppRunRepetitions(uri, 'POST', httpClient);
+      }
+      const response = await httpClient.post({
+        uri,
+      });
+      return response;
+    } catch (e: any) {
+      return new Error(e.message);
+    }
+  }
+
+  private async fetchHybridLogicAppRunRepetitions<T>(
+    uri: string,
+    httpMethod: string,
+    httpClient: IHttpClient,
+    queryParameters?: Record<string, string>
+  ) {
+    const { uri: newUri, headerPath } = StandardRunService.getProxyUrl(uri);
+    const response = await httpClient.post<T, undefined>({
+      uri: newUri,
+      queryParameters,
+      headers: {
+        'X-Ms-Logicapps-Proxy-Path': headerPath,
+        'X-Ms-Logicapps-Proxy-Method': httpMethod,
+      },
+    });
+    return response;
   }
 }
