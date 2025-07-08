@@ -82,6 +82,7 @@ export const ConnectorSelectionPanel = ({ onDismiss }: ConnectorSelectionPanelPr
             filters={filters}
             setFilters={setFilters}
             isTriggerNode={false}
+            hideOperations={true}
           />
         </div>
       )}

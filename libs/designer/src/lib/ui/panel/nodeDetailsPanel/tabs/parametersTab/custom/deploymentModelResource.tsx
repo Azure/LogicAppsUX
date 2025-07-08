@@ -85,6 +85,10 @@ export const CustomDeploymentModelResource = (props: IEditorProps) => {
     }
   }, [metadata?.cognitiveServiceAccountId, modelKey, name, onClose, stringResources.DEFAULT_ERROR_MESSAGE]);
 
+  const onCloseModal = useCallback(() => {
+    onClose?.(undefined);
+  }, [onClose]);
+
   return (
     <>
       <Text className={styles.containerTitle}>{stringResources.CREATE_DEPLOYMENT_MODE}</Text>
@@ -135,7 +139,7 @@ export const CustomDeploymentModelResource = (props: IEditorProps) => {
           <Button appearance="primary" disabled={isSaving || !name || !modelKey} size={'small'} onClick={onSubmit}>
             {stringResources.SUBMIT_BUTTON}
           </Button>
-          <Button disabled={isSaving || !name || !modelKey} size={'small'}>
+          <Button disabled={isSaving || !name || !modelKey} size={'small'} onClick={onCloseModal}>
             {stringResources.CANCEL_BUTTON}
           </Button>
         </div>

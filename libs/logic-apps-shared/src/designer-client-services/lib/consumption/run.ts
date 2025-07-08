@@ -176,6 +176,16 @@ export class ConsumptionRunService implements IRunService {
   }
 
   /**
+   * Gets an array of workflow-level action repetitions for a run.
+   * @param {string} runId - The ID of the workflow run.
+   * @returns {Promise<any>}
+   */
+  async getTimelineRepetitions(_runId: string): Promise<any> {
+    // A2A is not supported in consumption
+    return undefined;
+  }
+
+  /**
    * Gets an array of scope repetition records for a node with the specified status.
    * @param {{ actionId: string, runId: string }} action - An object with nodeId and the runId of the workflow
    * @param {string} repetitionId - A string with the resource ID of a repetition record

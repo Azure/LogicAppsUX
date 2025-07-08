@@ -12,8 +12,10 @@ import {
   hybridAppApiVersion,
   localSettingsFileName,
   logicAppKind,
+  ProjectDirectoryPathKey,
   sqlConnectionStringSecretName,
   sqlStorageConnectionStringKey,
+  workerRuntimeKey,
   workflowAppAADClientId,
   workflowAppAADClientSecret,
   workflowAppAADObjectId,
@@ -43,7 +45,7 @@ interface createHybridAppOptions {
 }
 
 const getAppSettingsFromLocal = async (context): Promise<EnvironmentVar[]> => {
-  const appSettingsToskip = [azureWebJobsStorageKey, 'ProjectDirectoryPath', 'FUNCTIONS_WORKER_RUNTIME'];
+  const appSettingsToskip = [azureWebJobsStorageKey, ProjectDirectoryPathKey, workerRuntimeKey];
   const workspaceFolder = await getWorkspaceFolder(context);
   const projectPath: string | undefined = await tryGetLogicAppProjectRoot(context, workspaceFolder, true /* suppressPrompt */);
   const settings = await getLocalSettingsJson(context, path.join(projectPath, localSettingsFileName));

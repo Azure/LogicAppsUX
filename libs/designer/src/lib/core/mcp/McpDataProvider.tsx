@@ -1,17 +1,16 @@
 import type React from 'react';
 import { useContext, useEffect } from 'react';
-import type { ResourceDetails } from '../state/mcp/workflowSlice';
 import { McpWrappedContext } from './McpWizardContext';
 import { useDispatch } from 'react-redux';
-import type { AppDispatch } from '../state/mcp/store';
 import { setInitialData } from '../state/mcp/workflowSlice';
 import type { ConnectionReferences } from '../../common/models/workflow';
 import { initializeServices } from '../state/mcp/mcpOptions/mcpOptionsSlice';
 import { useAreServicesInitialized } from '../state/mcp/mcpOptions/mcpOptionsSelector';
+import type { ResourceState } from '../state/mcp/resourceSlice';
+import type { AppDispatch } from '../state/mcp/store';
 
 export interface McpDataProviderProps {
-  resourceDetails: ResourceDetails; //TODO: set up the mcp store and store this.
-  // services: any;  // TODO
+  resourceDetails: ResourceState;
   connectionReferences: ConnectionReferences;
   children?: React.ReactNode;
 }

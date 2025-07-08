@@ -1,14 +1,14 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
-import workflowReducer from './workflowSlice';
-import mcpReducer from './mcpSlice';
 import mcpOptionsReducer from './mcpOptions/mcpOptionsSlice';
 import operationReducer from '../operation/operationMetadataSlice';
 import panelReducer from './panel/mcpPanelSlice';
+import connectionReducer from '../connection/connectionSlice';
+import resourceReducer from './resourceSlice';
 
 const rootReducer = combineReducers({
-  workflow: workflowReducer,
+  resource: resourceReducer,
   operation: operationReducer,
-  mcp: mcpReducer,
+  connection: connectionReducer,
   mcpOptions: mcpOptionsReducer,
   mcpPanel: panelReducer,
 });
