@@ -1,12 +1,12 @@
-export { default as sourceMockSchema } from './SourceSchema.json';
-export { default as targetMockSchema } from './TargetSchema.json';
+export { default as sourceMockSchema } from './SourceSchemaXsd';
+export { default as targetMockSchema } from './TargetSchemaXsd';
 export { default as sourceMockJsonSchema } from './SourceSchemaJson';
 export { default as targetMockJsonSchema } from './TargetSchemaJson';
-export { default as comprehensiveSourceSchema } from './ComprehensiveSourceSchema.json';
-export { default as comprehensiveTargetSchema } from './ComprehensiveTargetSchema.json';
+export { default as comprehensiveSourceSchema } from './ComprehensiveSourceSchema';
+export { default as comprehensiveTargetSchema } from './ComprehensiveTargetSchema';
 export { default as playgroundSourceSchema } from './PlaygroundSourceSchema.json';
 export { default as playgroundTargetSchema } from './PlaygroundTargetSchema.json';
-export { default as deepNestedSequenceAndObject } from './DeepNestedSequenceAndObj.json';
+export { default as deepNestedSequenceAndObject } from './DeepNestedSequenceAndObjXsd';
 export { default as customerSchema } from './customerSchema.json';
 export { default as overlappingLoopsSchema } from './OverlappingLoopsSourceSchema.json';
 export { default as adjacentLoopsSchema } from './adjacentLoopTest.json';

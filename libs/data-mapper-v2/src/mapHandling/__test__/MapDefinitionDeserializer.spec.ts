@@ -1475,9 +1475,9 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       });
 
       it('creates a loop connection with backout access', () => {
-        const mockNestedTestSchema: Schema = deepNestedSequenceAndObject;
+        const mockNestedTestSchema: DataMapSchema = deepNestedSequenceAndObject;
         const extendedComprehensiveSourceSchema: SchemaExtended = convertSchemaToSchemaExtended(mockNestedTestSchema);
-        const mockComprehensiveTargetSchema: Schema = targetMockSchema;
+        const mockComprehensiveTargetSchema: DataMapSchema = targetMockSchema;
         const extendedComprehensiveTargetSchema: SchemaExtended = convertSchemaToSchemaExtended(mockComprehensiveTargetSchema);
         simpleMap['ns0:Root'] = {
           Looping: {
