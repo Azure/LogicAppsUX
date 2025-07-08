@@ -6,6 +6,8 @@ import { useDispatch } from 'react-redux';
 import type { AppDispatch } from '../state/mcp/store';
 import { setInitialData } from '../state/mcp/workflowSlice';
 import type { ConnectionReferences } from '../../common/models/workflow';
+import { initializeServices } from '../state/mcp/mcpOptions/mcpOptionsSlice';
+import { useAreServicesInitialized } from '../state/mcp/mcpOptions/mcpOptionsSelector';
 
 export interface McpDataProviderProps {
   resourceDetails: ResourceDetails; //TODO: set up the mcp store and store this.
@@ -21,17 +23,19 @@ const DataProviderInner = ({ children }: McpDataProviderProps) => {
 export const McpDataProvider = (props: McpDataProviderProps) => {
   const wrapped = useContext(McpWrappedContext);
   const dispatch = useDispatch<AppDispatch>();
+  const servicesInitialized = useAreServicesInitialized();
   const { resourceDetails, connectionReferences } = props;
 
   if (!wrapped) {
     throw new Error('McpDataProvider must be used inside of a McpWrappedContext');
   }
 
-  // TODO: initialize services in useEffect
-  //  then, uncomment below
-  // if (!servicesInitialized) {
-  //   return null;
-  // }
+  useEffect(() => {
+    if (!servicesInitialized) {
+      dispatch(initializeServices(wrapped));
+    }
+  }, [dispatch, servicesInitialized, wrapped]);
+
   //TODO: add useEffect for onResourceChange
 
   useEffect(() => {

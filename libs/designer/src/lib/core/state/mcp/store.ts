@@ -1,14 +1,16 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import workflowReducer from './workflowSlice';
 import mcpReducer from './mcpSlice';
-import mcpOptionsReducer from './mcpOptionsSlice';
+import mcpOptionsReducer from './mcpOptions/mcpOptionsSlice';
 import operationReducer from '../operation/operationMetadataSlice';
+import panelReducer from './panel/mcpPanelSlice';
 
 const rootReducer = combineReducers({
   workflow: workflowReducer,
   operation: operationReducer,
   mcp: mcpReducer,
   mcpOptions: mcpOptionsReducer,
+  mcpPanel: panelReducer,
 });
 
 export const setupStore = (preloadedState?: Partial<RootState>) => {
