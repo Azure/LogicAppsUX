@@ -64,7 +64,7 @@ const EdgeContent = (props: EdgeContentProps) => {
             '--colorBrandBackground': '#3352b9',
             '--colorBrandBackgroundHover': '#1438ae',
             '--colorBrandBackgroundPressed': '#0f2d8b',
-          }}
+          } as any}
         />
       </div>
     </EdgeLabelRenderer>
