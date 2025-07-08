@@ -2,7 +2,7 @@ import { useCallback, useState, useRef, useEffect } from 'react';
 import { Panel, PanelType } from '@fluentui/react';
 import { useSelector, useDispatch } from 'react-redux';
 import type { AppDispatch } from '../../../';
-import { clearMcpPanel } from '../../../core/state/mcp/panel/mcpPanelSlice';
+import { closePanel, McpPanelView } from '../../../core/state/mcp/panel/mcpPanelSlice';
 import { ConnectorSelectionPanel } from './ConnectorSelectionPanel';
 import { useMcpPanelStyles } from './styles';
 import type { RootState } from '../../../core/state/mcp/store';
@@ -29,11 +29,11 @@ export const McpPanelRoot = ({ panelContainerRef }: McpPanelRootProps) => {
 
   const { isOpen, panelMode } = useSelector((state: RootState) => ({
     isOpen: state.mcpPanel?.isOpen ?? false,
-    panelMode: state.mcpPanel?.panelMode ?? null,
+    panelMode: state.mcpPanel?.currentPanelView ?? null,
   }));
 
   const dismissPanel = useCallback(() => {
-    dispatch(clearMcpPanel());
+    dispatch(closePanel());
   }, [dispatch]);
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
@@ -135,7 +135,7 @@ export const McpPanelRoot = ({ panelContainerRef }: McpPanelRootProps) => {
       />
 
       <div className={styles.panelContent} onKeyDown={handleKeyDown} tabIndex={-1}>
-        {panelMode === 'ConnectorSelection' && <ConnectorSelectionPanel onDismiss={dismissPanel} />}
+        {panelMode === McpPanelView.SelectConnector && <ConnectorSelectionPanel onDismiss={dismissPanel} />}
         {/* Add other panel modes here as needed */}
       </div>
     </Panel>

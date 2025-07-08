@@ -2,20 +2,24 @@ import { Text, Button } from '@fluentui/react-components';
 import { Add24Regular, ConnectorFilled } from '@fluentui/react-icons';
 import { useMcpWizardStyles } from './styles';
 import { useIntl } from 'react-intl';
-import { openMcpPanel } from '../../../core/state/mcp/panel/mcpPanelSlice';
+import { McpPanelView, openPanelView } from '../../../core/state/mcp/panel/mcpPanelSlice';
 import { useDispatch } from 'react-redux';
 import type { AppDispatch } from '../../../core/state/mcp/store';
+import { McpPanelRoot } from '../panel/mcpPanelRoot';
+import { useRef } from 'react';
 
 export const McpWizard = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const panelContainerRef = useRef<HTMLElement | null>(null);
   const intl = useIntl();
   const styles = useMcpWizardStyles();
   const connectors = [];
 
   const handleAddConnectors = () => {
     dispatch(
-      openMcpPanel({
-        panelMode: 'ConnectorSelection',
+      openPanelView({
+        panelView: McpPanelView.SelectConnector,
+        selectedConnectorId: undefined,
       })
     );
   };
@@ -70,6 +74,7 @@ export const McpWizard = () => {
           <div className={styles.connectorsList}>{/* Connector items will go here */}</div>
         )}
       </div>
+      <McpPanelRoot panelContainerRef={panelContainerRef} />
     </div>
   );
 };

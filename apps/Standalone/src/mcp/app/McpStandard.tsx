@@ -1,13 +1,13 @@
-import { useEffect, useMemo } from 'react';
-import { McpContainer, McpDataProvider, McpWizardProvider } from '@microsoft/logic-apps-designer';
+import { useMemo } from 'react';
+import { McpDataProvider, McpWizard, McpWizardProvider } from '@microsoft/logic-apps-designer';
 import { Text, Badge, Spinner } from '@fluentui/react-components';
 import type { RootState } from '../state/Store';
 import { useSelector } from 'react-redux';
-import { useConnectionsData, useWorkflowApp } from '../../designer/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts';
+import { useWorkflowApp } from '../../designer/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts';
 import { ArmParser } from '../../designer/app/AzureLogicAppsDesigner/Utilities/ArmParser';
 import { WorkflowUtility } from '../../designer/app/AzureLogicAppsDesigner/Utilities/Workflow';
-import { useFunctionalState } from '@react-hookz/web';
-import { clone, type ContentType, type IHostService, StandardSearchService } from '@microsoft/logic-apps-shared';
+import { StandardSearchService } from '@microsoft/logic-apps-shared';
+import type { ContentType, IHostService } from '@microsoft/logic-apps-shared';
 import { useMcpStandardStyles } from './styles';
 import { HttpClient } from '../../designer/app/AzureLogicAppsDesigner/Services/HttpClient';
 
@@ -87,25 +87,10 @@ export const McpStandard = () => {
     error: workflowError,
   } = useWorkflowApp(isValidResourceId ? appId : '', hostingPlan, isValidResourceId);
 
-  const { data: originalConnectionsData, isLoading: isConnectionsLoading } = useConnectionsData(
-    isValidResourceId ? appId : '',
-    isValidResourceId
-  );
-
   const canonicalLocation = useMemo(
     () => WorkflowUtility.convertToCanonicalFormat(workflowAppData?.location ?? 'westus'),
     [workflowAppData]
   );
-
-  const [connectionsData, setConnectionsData] = useFunctionalState(originalConnectionsData);
-
-  useEffect(() => {
-    if (originalConnectionsData) {
-      setConnectionsData(JSON.parse(JSON.stringify(clone(originalConnectionsData ?? {}))));
-    }
-  }, [originalConnectionsData, setConnectionsData]);
-
-  const connectionReferences = useMemo(() => WorkflowUtility.convertConnectionsDataToReferences(connectionsData()), [connectionsData]);
 
   const resourceDetails = useMemo(() => {
     if (!isValidResourceId) {
@@ -114,14 +99,7 @@ export const McpStandard = () => {
     return new ArmParser(appId);
   }, [appId, isValidResourceId]);
 
-  const isConnected = !!(
-    isValidResourceId &&
-    workflowAppData &&
-    resourceDetails &&
-    !workflowError &&
-    !isWorkflowLoading &&
-    !isConnectionsLoading
-  );
+  const isConnected = !!(isValidResourceId && workflowAppData && resourceDetails && !workflowError && !isWorkflowLoading);
 
   const services = useMemo(() => {
     const siteResourceId = new ArmParser(appId ?? '').topmostResourceId;
@@ -154,32 +132,32 @@ export const McpStandard = () => {
   }, [appId, canonicalLocation, resourceDetails]);
 
   return (
-    <div className={`${styles.container} ${styles.fadeIn}`}>
-      <McpHeader isConnected={isConnected} workflowAppData={workflowAppData} canonicalLocation={canonicalLocation} />
+    <McpWizardProvider locale="en-US" theme={theme}>
+      <div className={`${styles.container} ${styles.fadeIn}`}>
+        <McpHeader isConnected={isConnected} workflowAppData={workflowAppData} canonicalLocation={canonicalLocation} />
 
-      {isConnected ? (
-        <div className={styles.wizardContainer}>
-          <div className={styles.wizardContent}>
-            <div className={styles.wizardWrapper}>
-              <McpWizardProvider locale="en-US" theme={theme} services={services}>
+        {isConnected ? (
+          <div className={styles.wizardContainer}>
+            <div className={styles.wizardContent}>
+              <div className={styles.wizardWrapper}>
                 <McpDataProvider
                   resourceDetails={{
                     subscriptionId: resourceDetails!.subscriptionId,
                     resourceGroup: resourceDetails!.resourceGroup,
                     location: canonicalLocation,
                   }}
-                  connectionReferences={connectionReferences}
+                  services={services}
                 >
-                  <McpContainer />
+                  <McpWizard />
+                  <div id="mcp-layer-host" className={styles.layerHost} />
                 </McpDataProvider>
-              </McpWizardProvider>
+              </div>
             </div>
           </div>
-        </div>
-      ) : (
-        <AwaitingConnection />
-      )}
-      <div id="mcp-layer-host" className={styles.layerHost} />
-    </div>
+        ) : (
+          <AwaitingConnection />
+        )}
+      </div>
+    </McpWizardProvider>
   );
 };

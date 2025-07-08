@@ -2,14 +2,15 @@ import { useState, useCallback, useMemo } from 'react';
 import { Text, Button } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular, ArrowLeft24Regular } from '@fluentui/react-icons';
 import { useIntl } from 'react-intl';
+import { useSelector, useDispatch } from 'react-redux';
 import { useAllConnectors } from '../../../core/queries/browse';
 import { useConnectorSelectionStyles } from './connectorSelectionStyles';
 import { OperationSearchHeader } from '@microsoft/designer-ui';
 import { ConnectorBrowseView } from './ConnectorBrowseView';
+import type { RootState } from '../../../core/state/mcp/store';
+import { openPanelView, McpPanelView, closePanel } from '../../../core/state/mcp/panel/mcpPanelSlice';
 
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
-
-type SelectionState = 'BROWSE' | 'DETAILS';
 
 interface ConnectorSelectionPanelProps {
   onDismiss: () => void;
@@ -18,10 +19,11 @@ interface ConnectorSelectionPanelProps {
 export const ConnectorSelectionPanel = ({ onDismiss }: ConnectorSelectionPanelProps) => {
   const intl = useIntl();
   const styles = useConnectorSelectionStyles();
+  const dispatch = useDispatch();
+
+  const { currentPanelView, selectedConnectorId } = useSelector((state: RootState) => state.mcpPanel);
 
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectionState, setSelectionState] = useState<SelectionState>('BROWSE');
-  const [selectedConnectorId, setSelectedConnectorId] = useState<string>('');
   const [filters, setFilters] = useState<Record<string, string>>({
     actionType: 'actions',
   });
@@ -30,15 +32,31 @@ export const ConnectorSelectionPanel = ({ onDismiss }: ConnectorSelectionPanelPr
 
   const selectedConnector = useMemo(() => allConnectors?.find((c) => c.id === selectedConnectorId), [allConnectors, selectedConnectorId]);
 
-  const handleConnectorSelect = useCallback((connectorId: string) => {
-    setSelectedConnectorId(connectorId);
-    setSelectionState('DETAILS');
-  }, []);
+  const handleConnectorSelect = useCallback(
+    (connectorId: string) => {
+      dispatch(
+        openPanelView({
+          panelView: McpPanelView.SelectOperation,
+          selectedConnectorId: connectorId,
+        })
+      );
+    },
+    [dispatch]
+  );
 
   const handleBackToBrowse = useCallback(() => {
-    setSelectionState('BROWSE');
-    setSelectedConnectorId('');
-  }, []);
+    dispatch(
+      openPanelView({
+        panelView: McpPanelView.SelectConnector,
+        selectedConnectorId: undefined,
+      })
+    );
+  }, [dispatch]);
+
+  const handleDismiss = useCallback(() => {
+    dispatch(closePanel());
+    onDismiss();
+  }, [dispatch, onDismiss]);
 
   const INTL_TEXT = {
     title: intl.formatMessage({
@@ -58,23 +76,26 @@ export const ConnectorSelectionPanel = ({ onDismiss }: ConnectorSelectionPanelPr
     }),
   };
 
+  const isInBrowseView = currentPanelView === McpPanelView.SelectConnector;
+  const isInDetailsView = currentPanelView === McpPanelView.SelectOperation;
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
         <div className={styles.headerContent}>
-          {selectionState === 'DETAILS' && (
+          {isInDetailsView && (
             <Button appearance="subtle" icon={<ArrowLeft24Regular />} onClick={handleBackToBrowse}>
               {INTL_TEXT.backToBrowse}
             </Button>
           )}
           <Text size={600} weight="semibold" style={{ flex: 1 }}>
-            {selectionState === 'DETAILS' ? selectedConnector?.properties?.displayName : INTL_TEXT.title}
+            {isInDetailsView ? selectedConnector?.properties?.displayName : INTL_TEXT.title}
           </Text>
-          <Button appearance="subtle" icon={<CloseIcon />} onClick={onDismiss} aria-label={INTL_TEXT.closeAriaLabel} />
+          <Button appearance="subtle" icon={<CloseIcon />} onClick={handleDismiss} aria-label={INTL_TEXT.closeAriaLabel} />
         </div>
       </div>
 
-      {selectionState === 'BROWSE' && (
+      {isInBrowseView && (
         <div className={styles.searchSection}>
           <OperationSearchHeader
             searchCallback={setSearchTerm}
@@ -88,24 +109,25 @@ export const ConnectorSelectionPanel = ({ onDismiss }: ConnectorSelectionPanelPr
       )}
 
       <div className={styles.content}>
-        {
-          selectionState === 'BROWSE' ? (
-            <ConnectorBrowseView
-              connectors={allConnectors || []}
-              isLoading={isLoadingConnectors}
-              onConnectorSelect={handleConnectorSelect}
-              searchTerm={searchTerm}
-              filters={filters}
-              setFilters={setFilters}
-            />
-          ) : null
+        {isInBrowseView ? (
+          <ConnectorBrowseView
+            connectors={allConnectors || []}
+            isLoading={isLoadingConnectors}
+            onConnectorSelect={handleConnectorSelect}
+            searchTerm={searchTerm}
+            filters={filters}
+            setFilters={setFilters}
+          />
+        ) : (
+          // Show details view or other views based on currentPanelView
+          <div>Details view for connector: {selectedConnector?.properties?.displayName}</div>
           // <ConnectorDetailView
           //   connector={selectedConnector}
           //   operations={allOperations}
           //   isLoading={isLoadingOperations}
           //   onOperationSelect={handleOperationSelect}
           // />
-        }
+        )}
       </div>
     </div>
   );

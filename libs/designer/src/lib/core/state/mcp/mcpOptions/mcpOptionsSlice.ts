@@ -1,6 +1,6 @@
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice, isAnyOf } from '@reduxjs/toolkit';
-import { setInitialData, setLocation, setResourceGroup, setSubscription } from '../workflowSlice';
+import { setInitialData, setLocation, setResourceGroup, setSubscription } from '../resourceSlice';
 import { resetMcpState } from '../../global';
 import { InitHostService, InitSearchService } from '@microsoft/logic-apps-shared';
 import type { ServiceOptions } from './mcpOptionsInterface';

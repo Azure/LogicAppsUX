@@ -1,4 +1,7 @@
 import { createContext } from 'react';
-import type { ServiceOptions } from '../state/mcp/mcpOptions/mcpOptionsInterface';
 
-export const McpWrappedContext = createContext<ServiceOptions | null>(null);
+export interface McpWizardContext {
+  readOnly?: boolean;
+}
+
+export const McpWrappedContext = createContext<McpWizardContext | null>(null);

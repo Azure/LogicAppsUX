@@ -79,7 +79,6 @@ export const useMcpStandardStyles = makeStyles({
     borderRadius: '12px 12px 0 0',
     margin: '0 16px',
     boxShadow: `inset 0 2px 8px ${tokens.colorNeutralShadowAmbient}`,
-    overflow: 'auto',
     position: 'relative',
   },
 

@@ -1,49 +1,55 @@
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
+import { resetMcpState } from '../../global';
 
-export type McpPanelMode = 'ConnectorSelection' | null;
+export const McpPanelView = {
+  SelectConnector: 'selectConnector',
+  CreateConnection: 'createConnection',
+  SelectOperation: 'selectOperation',
+  EditOperation: 'editOperation',
+} as const;
+export type ConfigPanelView = (typeof McpPanelView)[keyof typeof McpPanelView];
 
-export interface McpPanelState {
+export interface PanelState {
   isOpen: boolean;
-  panelMode: McpPanelMode;
-  selectedNodeIds?: string[];
+  currentPanelView?: ConfigPanelView;
+  selectedConnectorId: string | undefined;
 }
 
-const initialState: McpPanelState = {
+const initialState: PanelState = {
   isOpen: false,
-  panelMode: null,
-  selectedNodeIds: [],
+  selectedConnectorId: undefined,
 };
 
 export const mcpPanelSlice = createSlice({
   name: 'mcpPanel',
   initialState,
   reducers: {
-    openMcpPanel: (
+    openPanelView: (
       state,
       action: PayloadAction<{
-        panelMode: McpPanelMode;
-        selectedNodeIds?: string[];
+        panelView: ConfigPanelView;
+        selectedConnectorId: string | undefined;
       }>
     ) => {
-      const { panelMode, selectedNodeIds } = action.payload;
+      state.selectedConnectorId = action.payload.selectedConnectorId;
+      state.currentPanelView = action.payload.panelView;
       state.isOpen = true;
-      state.panelMode = panelMode;
-      state.selectedNodeIds = selectedNodeIds ?? [];
     },
-
-    clearMcpPanel: (state) => {
+    selectPanelTab: (state, action: PayloadAction<string | undefined>) => {
+      state.selectedConnectorId = action.payload;
+    },
+    closePanel: (state: typeof initialState) => {
       state.isOpen = false;
-      state.panelMode = null;
-      state.selectedNodeIds = [];
+      state.currentPanelView = undefined;
+      state.selectedConnectorId = undefined;
     },
-
-    toggleMcpPanel: (state) => {
-      state.isOpen = !state.isOpen;
-    },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(resetMcpState, () => initialState);
   },
 });
 
-export const { openMcpPanel, clearMcpPanel, toggleMcpPanel } = mcpPanelSlice.actions;
+export const { openPanelView, selectPanelTab, closePanel } = mcpPanelSlice.actions;
 
 export default mcpPanelSlice.reducer;

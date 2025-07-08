@@ -1,41 +1,32 @@
 import type React from 'react';
-import { useContext, useEffect } from 'react';
-import { McpWrappedContext } from './McpWizardContext';
+import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { setInitialData } from '../state/mcp/workflowSlice';
-import type { ConnectionReferences } from '../../common/models/workflow';
 import { initializeServices } from '../state/mcp/mcpOptions/mcpOptionsSlice';
 import { useAreServicesInitialized } from '../state/mcp/mcpOptions/mcpOptionsSelector';
-import type { ResourceState } from '../state/mcp/resourceSlice';
+import { setInitialData, type ResourceState } from '../state/mcp/resourceSlice';
 import type { AppDispatch } from '../state/mcp/store';
+import type { ServiceOptions } from '../state/mcp/mcpOptions/mcpOptionsInterface';
 
 export interface McpDataProviderProps {
   resourceDetails: ResourceState;
-  connectionReferences: ConnectionReferences;
+  services?: ServiceOptions;
   children?: React.ReactNode;
 }
 
-const DataProviderInner = ({ children }: McpDataProviderProps) => {
+const DataProviderInner = ({ children }: { children?: React.ReactNode }) => {
   return <>{children}</>;
 };
 
-export const McpDataProvider = (props: McpDataProviderProps) => {
-  const wrapped = useContext(McpWrappedContext);
+export const McpDataProvider = ({ resourceDetails, services, children }: McpDataProviderProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const servicesInitialized = useAreServicesInitialized();
-  const { resourceDetails, connectionReferences } = props;
 
-  if (!wrapped) {
-    throw new Error('McpDataProvider must be used inside of a McpWrappedContext');
-  }
-
+  // Prefer props.services if provided; fallback to context
   useEffect(() => {
-    if (!servicesInitialized) {
-      dispatch(initializeServices(wrapped));
+    if (!servicesInitialized && services) {
+      dispatch(initializeServices(services));
     }
-  }, [dispatch, servicesInitialized, wrapped]);
-
-  //TODO: add useEffect for onResourceChange
+  }, [dispatch, servicesInitialized, services]);
 
   useEffect(() => {
     dispatch(
@@ -43,10 +34,13 @@ export const McpDataProvider = (props: McpDataProviderProps) => {
         subscriptionId: resourceDetails.subscriptionId,
         resourceGroup: resourceDetails.resourceGroup,
         location: resourceDetails.location,
-        references: connectionReferences,
       })
     );
-  }, [connectionReferences, dispatch, resourceDetails]);
+  }, [dispatch, resourceDetails]);
 
-  return <DataProviderInner {...props} />;
+  if (!servicesInitialized) {
+    return null;
+  }
+
+  return <DataProviderInner>{children}</DataProviderInner>;
 };
