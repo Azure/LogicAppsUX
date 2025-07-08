@@ -36,7 +36,6 @@ export const McpPanelRoot = ({ panelContainerRef }: McpPanelRootProps) => {
     dispatch(clearMcpPanel());
   }, [dispatch]);
 
-  // Handle resize functionality
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     setIsResizing(true);
@@ -64,7 +63,6 @@ export const McpPanelRoot = ({ panelContainerRef }: McpPanelRootProps) => {
     setIsResizing(false);
   }, []);
 
-  // Add global mouse event listeners for resize
   useEffect(() => {
     if (isResizing) {
       document.addEventListener('mousemove', handleMouseMove);
@@ -81,7 +79,6 @@ export const McpPanelRoot = ({ panelContainerRef }: McpPanelRootProps) => {
     };
   }, [isResizing, handleMouseMove, handleMouseUp]);
 
-  // Handle keyboard navigation
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
       if (e.key === 'Escape') {
