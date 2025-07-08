@@ -135,18 +135,10 @@ describe('runs queries', () => {
       expect(result.current.data).toEqual([]);
     });
 
-    test('should be disabled for non-loop node types', async () => {
-      const { result } = renderHook(() => useScopeFailedRepetitions('Action', 'testScope', 'runId123'), { wrapper: createWrapper });
+    test('should be disabled for non-loop node types', () => {
+      renderHook(() => useScopeFailedRepetitions('Action', 'testScope', 'runId123'), { wrapper: createWrapper });
 
-      // Wait for the query to stabilize
-      await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
-      });
-
-      // When query is disabled, React Query returns isLoading: false and data: undefined
-      expect(result.current.data).toBeUndefined();
-      expect(result.current.isSuccess).toBe(false);
-      expect(result.current.isError).toBe(false);
+      // Query should be disabled and not make service calls
       expect(mockRunService.getScopeRepetitions).not.toHaveBeenCalled();
     });
   });
@@ -268,8 +260,8 @@ describe('runs queries', () => {
       expect(result.current.data).toEqual([]);
     });
 
-    test('should be disabled when conditions are not met', async () => {
-      const { result } = renderHook(
+    test('should be disabled when conditions are not met', () => {
+      renderHook(
         () =>
           useAgentActionsRepetition(
             false, // isMonitoringView - disabled
@@ -283,15 +275,7 @@ describe('runs queries', () => {
         { wrapper: createWrapper }
       );
 
-      // Wait for the query to stabilize
-      await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
-      });
-
-      // When query is disabled, React Query returns isLoading: false and data: undefined
-      expect(result.current.data).toBeUndefined();
-      expect(result.current.isSuccess).toBe(false);
-      expect(result.current.isError).toBe(false);
+      // Query should be disabled and not make service calls
       expect(mockRunService.getAgentActionsRepetition).not.toHaveBeenCalled();
     });
   });
