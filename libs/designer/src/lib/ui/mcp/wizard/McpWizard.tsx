@@ -18,7 +18,7 @@ export const McpWizard = () => {
     dispatch(
       openPanelView({
         panelView: McpPanelView.SelectConnector,
-        selectedNodeId: undefined,
+        selectedConnectorId: undefined,
       })
     );
   };

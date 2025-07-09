@@ -9,7 +9,7 @@ export interface McpPanelTabProps {
   footerContent: TemplatePanelFooterProps;
 }
 
-export interface McpConnectorPanelProps {
+export interface McpConnectorTabProps {
   isTabDisabled?: boolean;
   isPrimaryButtonDisabled: boolean;
   isPreviousButtonDisabled: boolean;

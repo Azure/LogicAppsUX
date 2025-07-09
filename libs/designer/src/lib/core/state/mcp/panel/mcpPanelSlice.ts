@@ -30,10 +30,10 @@ export const mcpPanelSlice = createSlice({
       state,
       action: PayloadAction<{
         panelView: ConfigPanelView;
-        selectedNodeId: string | undefined;
+        selectedConnectorId: string | undefined;
       }>
     ) => {
-      state.selectedConnectorId = action.payload.selectedNodeId;
+      state.selectedConnectorId = action.payload.selectedConnectorId;
       state.currentPanelView = action.payload.panelView;
       state.isOpen = true;
     },
