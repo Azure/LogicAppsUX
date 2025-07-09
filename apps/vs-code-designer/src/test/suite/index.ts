@@ -1,8 +1,11 @@
 import * as path from 'path';
 import { glob } from 'glob';
 import { startVitest } from 'vitest/node';
+import * as vscode from 'vscode';
 // Fix for URL errors - set NODE_ENV to test
 process.env.NODE_ENV = 'test';
+
+process.vscode = vscode;
 
 export async function run(): Promise<void> {
   try {
@@ -19,16 +22,16 @@ export async function run(): Promise<void> {
       return;
     }
 
-    // const { startVitest } = await import('vitest/node'); // Ensure Vitest is imported
+    globalThis.vscode = vscode; // Ensure vscode is available globally
 
     // Start Vitest programmatically
     const vitest = await startVitest('test', [], {
       mode: 'test',
-      watch: false,
       reporters: ['default'],
       include: testFiles,
       // Use the same config as in vitest.config.ts
       environment: 'node',
+      globals: true, // Important for accessing vscode through global object
       //exclude: ['**/**.test.{js,ts}'],
       config: '/Users/daniellecogburn/code/LogicAppsUX/apps/vs-code-designer/vitest.config.ts'
     });
