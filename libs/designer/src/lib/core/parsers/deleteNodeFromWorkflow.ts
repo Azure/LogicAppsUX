@@ -40,11 +40,9 @@ export const deleteNodeFromWorkflow = (
   const handoffEdges = (workflowGraph.edges ?? []).filter(
     (edge) => edge.type === WORKFLOW_EDGE_TYPES.HANDOFF_EDGE && (edge.source === nodeId || edge.target === nodeId)
   );
-  if (handoffEdges.length > 0) {
-    handoffEdges.forEach((edge) => {
-      removeEdge(state, edge.source, edge.target, workflowGraph);
-    });
-  }
+  handoffEdges.forEach((edge) => {
+    removeEdge(state, edge.source, edge.target, workflowGraph);
+  });
 
   // Adjust other edges
   if (isTrigger) {
