@@ -1,6 +1,6 @@
 import type { AppDispatch } from '../../../../../core/state/templates/store';
 import constants from '../../../../../common/constants';
-import type { McpConnectorPanelProps, McpTabProps } from '@microsoft/designer-ui';
+import type { McpConnectorPanelProps, McpPanelTabProps } from '@microsoft/designer-ui';
 import type { IntlShape } from 'react-intl';
 import { selectPanelTab } from '../../../../../core/state/mcp/panel/mcpPanelSlice';
 
@@ -12,7 +12,7 @@ export const operationsTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
   { isTabDisabled, isPrimaryButtonDisabled, isPreviousButtonDisabled }: McpConnectorPanelProps
-): McpTabProps => ({
+): McpPanelTabProps => ({
   id: constants.MCP_PANEL_TAB_NAMES.OPERATIONS,
   title: intl.formatMessage({
     defaultMessage: 'Select Operation(s)',

@@ -1,18 +1,18 @@
 import type { AppDispatch } from '../../../../../core/state/templates/store';
 import constants from '../../../../../common/constants';
-import type { McpConnectorPanelProps, McpTabProps } from '@microsoft/designer-ui';
+import type { McpConnectorPanelProps, McpPanelTabProps } from '@microsoft/designer-ui';
 import type { IntlShape } from 'react-intl';
 import { selectPanelTab } from '../../../../../core/state/mcp/panel/mcpPanelSlice';
 
 export const ConnectionsComponent = () => {
-  return null;
+  return <div>connections component</div>;
 };
 
 export const connectionsTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
   { isTabDisabled, isPrimaryButtonDisabled, isPreviousButtonDisabled, onAddConnector: onSubmit }: McpConnectorPanelProps
-): McpTabProps => ({
+): McpPanelTabProps => ({
   id: constants.MCP_PANEL_TAB_NAMES.CONNECTIONS,
   title: intl.formatMessage({
     defaultMessage: 'Create connection',

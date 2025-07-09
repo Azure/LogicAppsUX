@@ -5,37 +5,36 @@ import { McpPanelView } from '../../../../core/state/mcp/panel/mcpPanelSlice';
 import { operationsTab } from './tabs/operationsTab';
 import { useIntl } from 'react-intl';
 import { connectorsTab } from './tabs/connectorsTab';
+import type { McpPanelTabProps } from '@microsoft/designer-ui';
 
-export const usePanelTabs = () => {
+export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const { currentPanelView } = useSelector((state: RootState) => state.mcpPanel);
 
   const connectorsTabItem = useMemo(
-    () => ({
-      ...connectorsTab(intl, dispatch, {
+    () =>
+      connectorsTab(intl, dispatch, {
         isTabDisabled: false,
         isPreviousButtonDisabled: false,
         isPrimaryButtonDisabled: false,
       }),
-    }),
     [intl, dispatch]
   );
 
   const operationsTabItem = useMemo(
-    () => ({
-      ...operationsTab(intl, dispatch, {
+    () =>
+      operationsTab(intl, dispatch, {
         isTabDisabled: false,
         isPreviousButtonDisabled: false,
         isPrimaryButtonDisabled: false,
       }),
-    }),
     [intl, dispatch]
   );
 
   const connectionsTabItem = useMemo(
-    () => ({
-      ...connectorsTab(intl, dispatch, {
+    () =>
+      connectorsTab(intl, dispatch, {
         isTabDisabled: false,
         isPreviousButtonDisabled: false,
         isPrimaryButtonDisabled: false,
@@ -43,11 +42,10 @@ export const usePanelTabs = () => {
           //TODO
         },
       }),
-    }),
     [intl, dispatch]
   );
 
-  const tabs = useMemo(() => {
+  const tabs: McpPanelTabProps[] = useMemo(() => {
     const validTabs = [];
     if (currentPanelView === McpPanelView.SelectConnector) {
       validTabs.push(connectorsTabItem);
@@ -56,6 +54,8 @@ export const usePanelTabs = () => {
       validTabs.push(operationsTabItem);
     }
     validTabs.push(connectionsTabItem);
+    return validTabs;
   }, [currentPanelView, connectorsTabItem, operationsTabItem, connectionsTabItem]);
+
   return tabs;
 };

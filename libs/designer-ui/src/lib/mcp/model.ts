@@ -1,6 +1,6 @@
 import type { TemplatePanelFooterProps } from '../templates/templatesPanelFooter';
 
-export interface McpTabProps {
+export interface McpPanelTabProps {
   id: string;
   title: string;
   onTabClick?: () => void;

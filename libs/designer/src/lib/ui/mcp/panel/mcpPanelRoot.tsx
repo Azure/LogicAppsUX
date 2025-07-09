@@ -1,11 +1,11 @@
-import { useCallback, useState, useRef, useEffect } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { Panel, PanelType } from '@fluentui/react';
 import { useSelector, useDispatch } from 'react-redux';
 import type { AppDispatch } from '../../../';
 import { closePanel, McpPanelView } from '../../../core/state/mcp/panel/mcpPanelSlice';
-import { ConnectorSelectionPanel } from './ConnectorSelectionPanel';
 import { useMcpPanelStyles } from './styles';
 import type { RootState } from '../../../core/state/mcp/store';
+import { ConnectorPanelInner } from './connectorPanel/ConnectorPanel';
 
 export interface McpPanelRootProps {
   panelContainerRef: React.MutableRefObject<HTMLElement | null>;
@@ -20,7 +20,6 @@ export const McpPanelRoot = ({ panelContainerRef }: McpPanelRootProps) => {
   const styles = useMcpPanelStyles();
   const [panelWidth, setPanelWidth] = useState(DEFAULT_WIDTH);
   const [isResizing, setIsResizing] = useState(false);
-  const resizeRef = useRef<HTMLDivElement>(null);
 
   const layerProps = {
     hostId: 'mcp-layer-host',
@@ -35,11 +34,6 @@ export const McpPanelRoot = ({ panelContainerRef }: McpPanelRootProps) => {
   const dismissPanel = useCallback(() => {
     dispatch(closePanel());
   }, [dispatch]);
-
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    setIsResizing(true);
-  }, []);
 
   const handleMouseMove = useCallback(
     (e: MouseEvent) => {
@@ -117,25 +111,12 @@ export const McpPanelRoot = ({ panelContainerRef }: McpPanelRootProps) => {
       }}
       layerProps={layerProps}
     >
-      <div
-        ref={resizeRef}
-        className={styles.resizeHandle}
-        onMouseDown={handleMouseDown}
-        role="separator"
-        aria-label="Resize panel"
-        tabIndex={0}
-        onKeyDown={(e) => {
-          if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
-            e.preventDefault();
-            const delta = e.key === 'ArrowLeft' ? -20 : 20;
-            const newWidth = Math.max(MIN_WIDTH, Math.min(MAX_WIDTH, panelWidth + delta));
-            setPanelWidth(newWidth);
-          }
-        }}
-      />
-
       <div className={styles.panelContent} onKeyDown={handleKeyDown} tabIndex={-1}>
-        {panelMode === McpPanelView.SelectConnector && <ConnectorSelectionPanel onDismiss={dismissPanel} />}
+        {(panelMode === McpPanelView.SelectConnector ||
+          panelMode === McpPanelView.SelectOperation ||
+          panelMode === McpPanelView.CreateConnection) && <ConnectorPanelInner />}
+
+        {/* {panelMode === McpPanelView.SelectConnector && <ConnectorSelectionPanel onDismiss={dismissPanel} />} */}
         {/* Add other panel modes here as needed */}
       </div>
     </Panel>
