@@ -329,7 +329,7 @@ describe('runs queries', () => {
       ];
 
       const result = parseFailedRepetitions(mockRepetitions, 'testScope');
-      expect(result).toEqual([[]]);
+      expect(result).toEqual([]);
     });
 
     test('should handle missing scope object', () => {
@@ -346,7 +346,7 @@ describe('runs queries', () => {
       ];
 
       const result = parseFailedRepetitions(mockRepetitions, 'testScope');
-      expect(result).toEqual([[]]);
+      expect(result).toEqual([]);
     });
 
     test('should handle empty repetitions array', () => {
