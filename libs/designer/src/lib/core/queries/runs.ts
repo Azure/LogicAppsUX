@@ -127,18 +127,20 @@ export const useScopeFailedRepetitions = (normalizedType: string, nodeId: string
     async () => {
       let failedRunRepetitions: LogicAppsV2.RunRepetition[] = [];
       try {
-        const { value } = await RunService().getScopeRepetitions({ nodeId, runId }, constants.FLOW_STATUS.FAILED);
-        failedRunRepetitions = value;
+        const firstFailedActions = await RunService().getScopeRepetitions({ nodeId, runId }, constants.FLOW_STATUS.FAILED);
+        failedRunRepetitions.push(...(firstFailedActions?.value ?? []));
+        let nextLink = firstFailedActions?.nextLink;
+
+        while (nextLink) {
+          const moreActions = await RunService().getMoreScopeRepetitions(nextLink);
+          failedRunRepetitions.push(...(moreActions?.value ?? []));
+          nextLink = moreActions?.nextLink;
+        }
       } catch {
         failedRunRepetitions = [];
       }
-      const _failedRepetitions: number[] = failedRunRepetitions.reduce((acc: number[], current: LogicAppsV2.RunRepetition) => {
-        const scopeObject = current.properties?.repetitionIndexes?.find((item) => item.scopeName === nodeId);
-        const indexOfFail = isNullOrUndefined(scopeObject) ? undefined : scopeObject.itemIndex;
-        acc.push(indexOfFail ?? []);
-        return acc;
-      }, []);
-      return _failedRepetitions.sort((a, b) => a - b);
+
+      return parseFailedRepetitions(failedRunRepetitions, nodeId);
     },
     {
       ...queryOpts,
@@ -243,4 +245,26 @@ export const useAgentChatInvokeUri = (isMonitoringView: boolean, isAgenticWorkfl
       enabled: isMonitoringView && isAgenticWorkflow && id !== undefined,
     }
   );
+};
+
+export const parseFailedRepetitions = (failedRunRepetitions: LogicAppsV2.RunRepetition[], nodeId: string): number[] => {
+  // Early return for empty input
+  if (!failedRunRepetitions?.length) {
+    return [];
+  }
+
+  // Extract and filter valid indices in a single pass
+  const failedIndices = failedRunRepetitions
+    .map((repetition) => {
+      // Use optional chaining for safer property access
+      const scopeObject = repetition.properties?.repetitionIndexes?.find((item) => item.scopeName === nodeId);
+
+      // Return the itemIndex if found, otherwise undefined
+      return scopeObject?.itemIndex;
+    })
+    // Filter out undefined values and ensure we have numbers
+    .filter((index): index is number => index !== undefined && index !== null && typeof index === 'number');
+
+  // Sort in ascending order
+  return failedIndices.sort((a, b) => a - b);
 };
