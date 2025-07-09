@@ -116,7 +116,7 @@ describe('runs queries', () => {
         expect(result.current.isSuccess).toBe(true);
       });
 
-      expect(mockRunService.getScopeRepetitions).toHaveBeenCalledOnce();
+      expect(mockRunService.getScopeRepetitions).toHaveBeenCalledTimes(1);
       expect(mockRunService.getMoreScopeRepetitions).not.toHaveBeenCalled();
       expect(result.current.data).toEqual([0, 2]);
     });

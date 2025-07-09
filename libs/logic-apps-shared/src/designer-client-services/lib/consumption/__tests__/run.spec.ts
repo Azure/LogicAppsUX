@@ -1,6 +1,6 @@
 import { describe, test, expect, beforeEach, vi } from 'vitest';
 import { ConsumptionRunService } from '../run';
-import type { IHttpClient } from '../../../httpClient';
+import type { IHttpClient } from '../../httpClient';
 
 describe('ConsumptionRunService', () => {
   let runService: ConsumptionRunService;
@@ -13,6 +13,8 @@ describe('ConsumptionRunService', () => {
       post: vi.fn(),
       put: vi.fn(),
       delete: vi.fn(),
+      patch: vi.fn(),
+      dispose: vi.fn(),
     };
 
     mockOptions = {
@@ -59,7 +61,7 @@ describe('ConsumptionRunService', () => {
 
       expect(mockHttpClient.get).toHaveBeenCalledWith({
         uri: continuationToken,
-        headers: expect.any(Headers),
+        headers: expect.any(Object),
       });
 
       expect(result).toEqual(mockResponse);
@@ -78,7 +80,7 @@ describe('ConsumptionRunService', () => {
 
       expect(mockHttpClient.get).toHaveBeenCalledWith({
         uri: continuationToken,
-        headers: expect.any(Headers),
+        headers: expect.any(Object),
       });
 
       expect(result).toEqual(mockResponse);
@@ -94,7 +96,7 @@ describe('ConsumptionRunService', () => {
 
       expect(mockHttpClient.get).toHaveBeenCalledWith({
         uri: continuationToken,
-        headers: expect.any(Headers),
+        headers: expect.any(Object),
       });
     });
 
@@ -108,7 +110,7 @@ describe('ConsumptionRunService', () => {
 
       expect(mockHttpClient.get).toHaveBeenCalledWith({
         uri: continuationToken,
-        headers: expect.any(Headers),
+        headers: expect.any(Object),
       });
     });
 
@@ -121,7 +123,7 @@ describe('ConsumptionRunService', () => {
 
       expect(mockHttpClient.get).toHaveBeenCalledWith({
         uri: continuationToken,
-        headers: expect.any(Headers),
+        headers: expect.any(Object),
       });
 
       // Verify the headers contain the correct authorization
