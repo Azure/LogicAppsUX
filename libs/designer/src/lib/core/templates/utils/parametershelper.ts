@@ -60,7 +60,13 @@ export const initializeParametersMetadata = async (
       }
       return result;
     }, {});
-    const deserializedWorkflow = Deserialize(getPropertyValue(workflows, workflowId)?.workflowDefinition, /* runInstance */ null);
+    const workflowTemplateData: WorkflowTemplateData = getPropertyValue(workflows, workflowId);
+    const deserializedWorkflow = Deserialize(
+      workflowTemplateData?.workflowDefinition,
+      /* runInstance */ null,
+      true,
+      workflowTemplateData?.kind
+    );
     const { actionData: operations, nodesMetadata } = deserializedWorkflow;
 
     for (const operationId of Object.keys(operationsToInitialize)) {

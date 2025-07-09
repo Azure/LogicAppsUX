@@ -101,8 +101,8 @@ export const getOperationDataInDefinitions = async (
 ): Promise<NodeOperationInputsData[]> => {
   const promises: Promise<OperationDetails | undefined>[] = [];
   const references = getReferencesFromConnections(connections);
-  for (const { id, workflowDefinition } of Object.values(workflows)) {
-    const deserializedWorkflow = Deserialize(workflowDefinition, /* runInstance */ null);
+  for (const { id, workflowDefinition, kind } of Object.values(workflows)) {
+    const deserializedWorkflow = Deserialize(workflowDefinition, /* runInstance */ null, true, kind);
     const { actionData: operations, nodesMetadata } = deserializedWorkflow;
 
     for (const operationId of Object.keys(operations)) {

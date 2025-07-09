@@ -39,8 +39,8 @@ const defaultLayoutOptions: Record<string, string> = {
   'elk.layered.cycleBreaking.strategy': 'DEPTH_FIRST',
   'elk.edgeRouting': 'SPLINES', // POLYLINE / ORTHOGONAL / SPLINES
   'elk.layered.edgeRouting.splines.mode': 'CONSERVATIVE_SOFT', // SLOPPY / CONSERVATIVE_SOFT / CONSERVATIVE
-  'elk.portAlignment.default': 'DISTRIBUTED', // DISTRIBUTED / CENTER
-  // 'elk.spacing.portPort': '64',
+  'elk.portAlignment.default': 'CENTER', // DISTRIBUTED / CENTER
+  'elk.spacing.portPort': '48',
 };
 
 const readOnlyOptions: Record<string, string> = {

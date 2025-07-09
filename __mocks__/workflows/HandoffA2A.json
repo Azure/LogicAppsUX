@@ -20,7 +20,11 @@
 						}
 					]
 				},
-				"runAfter": {}
+				"runAfter": {
+					"When_a_HTTP_request_is_received": [
+						"SUCCEEDED"
+					]
+				}
 			},
 			"TriageAgent": {
 				"type": "Agent",
@@ -59,10 +63,10 @@
 					}
 				},
 				"tools": {
-					"handoff_from_triage_to_sales_agent": {
+					"handoff_from_TriageAgent_to_SalesAgent_tool": {
 						"description": "Hand off to sales agent who can fulfill sales requests such as ordering a product.",
 						"actions": {
-							"handoff_from_triage_to_sales": {
+							"handoff_from_TriageAgent_to_SalesAgent": {
 								"type": "AgentHandoff",
 								"inputs": {
 									"name": "SalesAgent"
@@ -70,10 +74,10 @@
 							}
 						}
 					},
-					"handoff_from_triage_to_refund_agent": {
+					"handoff_from_TriageAgent_to_RefundAgent_tool": {
 						"description": "Hand off to refund agent who can fulfill refund requests.",
 						"actions": {
-							"handoff_from_triage_to_refund": {
+							"handoff_from_TriageAgent_to_RefundAgent": {
 								"type": "AgentHandoff",
 								"inputs": {
 									"name": "RefundAgent"
@@ -125,10 +129,10 @@
 					}
 				},
 				"tools": {
-					"handoff_from_sales_to_triage_agent": {
+					"handoff_from_SalesAgent_to_TriageAgent_tool": {
 						"description": "Hand off to triage agent who can check if there are any further help needed.",
 						"actions": {
-							"handoff_from_sales_to_triage": {
+							"handoff_from_SalesAgent_to_TriageAgent": {
 								"type": "AgentHandoff",
 								"inputs": {
 									"name": "TriageAgent"
@@ -241,10 +245,10 @@
 					}
 				},
 				"tools": {
-					"handoff_from_refund_to_triage_agent": {
+					"handoff_from_RefundAgent_to_TriageAgent_tool": {
 						"description": "Hand off to triage agent who can check if there are any further help needed.",
 						"actions": {
-							"handoff_from_refund_to_triage": {
+							"handoff_from_RefundAgent_to_TriageAgent": {
 								"type": "AgentHandoff",
 								"inputs": {
 									"name": "TriageAgent"
@@ -252,10 +256,10 @@
 							}
 						}
 					},
-					"handoff_from_refund_to_sales_agent": {
+					"handoff_from_RefundAgent_to_SalesAgent_tool": {
 						"description": "Hand off to sales agent who can fulfill refund requests.",
 						"actions": {
-							"handoff_from_refund_to_sales": {
+							"handoff_from_RefundAgent_to_SalesAgent": {
 								"type": "AgentHandoff",
 								"inputs": {
 									"name": "SalesAgent"

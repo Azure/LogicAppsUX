@@ -83,7 +83,8 @@ export const initializeGraphState = createAsyncThunk<
       const deserializedWorkflow = BJSDeserialize(
         selectedDefinition,
         runInstance,
-        !(designerOptions.readOnly || designerOptions.isMonitoringView)
+        !(designerOptions.readOnly || designerOptions.isMonitoringView),
+        workflowDefinition.kind
       );
 
       // For situations where there is an existing workflow, respect the node dimensions so that they are not reset
