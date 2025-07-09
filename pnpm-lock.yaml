@@ -432,8 +432,8 @@ importers:
         specifier: ^4.1.0
         version: 4.1.1
       '@microsoft/vscode-azext-azureutils':
-        specifier: ^0.3.9
-        version: 0.3.9(@azure/ms-rest-azure-env@2.0.0)(tslib@2.4.0)
+        specifier: 0.3.9-beta
+        version: 0.3.9-beta(@azure/ms-rest-azure-env@2.0.0)(tslib@2.4.0)
       '@microsoft/vscode-azext-utils':
         specifier: 0.4.6
         version: 0.4.6(@azure/ms-rest-azure-env@2.0.0)(tslib@2.4.0)
@@ -4515,6 +4515,9 @@ packages:
 
   '@microsoft/vscode-azext-azureutils@0.3.9':
     resolution: {integrity: sha512-lKhxSROhTBpz45f0hqYDHfdrGlNOgzfMGXbNproqwyc5qnEYBhs/qG65hcwhLzVm44lYPpBP1aka7OyDEocPOQ==}
+
+  '@microsoft/vscode-azext-azureutils@0.3.9-beta':
+    resolution: {integrity: sha512-fm2daKKZpAWR3TTcdVXve7rAIEzDp+aj8lahsFhFPVBgra5QXMDO1nuKVgda/ehMgBeXqtieGkgO4Ua7Hx+KrA==}
 
   '@microsoft/vscode-azext-utils@0.4.6':
     resolution: {integrity: sha512-CPIIvdod95Qdz5vdGg4j7HpryjKEsDVmdir/VduJZHgdVs1iuqa/9UY0+kIg2JnsnpThAdQH36A1GVA8jQeheg==}
@@ -12731,7 +12734,7 @@ snapshots:
       '@azure/core-client': 1.9.2
       '@azure/core-lro': 2.7.1
       '@azure/core-paging': 1.6.1
-      '@azure/core-rest-pipeline': 1.15.1
+      '@azure/core-rest-pipeline': 1.17.0
       tslib: 2.4.0
     transitivePeerDependencies:
       - supports-color
@@ -12749,11 +12752,11 @@ snapshots:
   '@azure/arm-resources@5.2.0':
     dependencies:
       '@azure/abort-controller': 1.1.0
-      '@azure/core-auth': 1.7.1
-      '@azure/core-client': 1.9.1
+      '@azure/core-auth': 1.9.0
+      '@azure/core-client': 1.9.2
       '@azure/core-lro': 2.7.1
       '@azure/core-paging': 1.6.1
-      '@azure/core-rest-pipeline': 1.15.1
+      '@azure/core-rest-pipeline': 1.17.0
       tslib: 2.4.0
     transitivePeerDependencies:
       - supports-color
@@ -12765,7 +12768,7 @@ snapshots:
       '@azure/core-client': 1.9.2
       '@azure/core-lro': 2.7.1
       '@azure/core-paging': 1.6.1
-      '@azure/core-rest-pipeline': 1.15.1
+      '@azure/core-rest-pipeline': 1.17.0
       tslib: 2.4.0
     transitivePeerDependencies:
       - supports-color
@@ -17979,6 +17982,23 @@ snapshots:
       - supports-color
 
   '@microsoft/vscode-azext-azureutils@0.3.9(@azure/ms-rest-azure-env@2.0.0)(tslib@2.4.0)':
+    dependencies:
+      '@azure/arm-resources': 5.2.0
+      '@azure/arm-resources-profile-2020-09-01-hybrid': 2.1.0
+      '@azure/arm-resources-subscriptions': 2.1.0
+      '@azure/arm-storage': 17.2.1
+      '@azure/arm-storage-profile-2020-09-01-hybrid': 2.1.0
+      '@azure/ms-rest-js': 2.7.0
+      '@microsoft/vscode-azext-utils': 0.4.6(@azure/ms-rest-azure-env@2.0.0)(tslib@2.4.0)
+      semver: 7.6.0
+      vscode-nls: 5.2.0
+    transitivePeerDependencies:
+      - '@azure/ms-rest-azure-env'
+      - encoding
+      - supports-color
+      - tslib
+
+  '@microsoft/vscode-azext-azureutils@0.3.9-beta(@azure/ms-rest-azure-env@2.0.0)(tslib@2.4.0)':
     dependencies:
       '@azure/arm-resources': 5.2.0
       '@azure/arm-resources-profile-2020-09-01-hybrid': 2.1.0
