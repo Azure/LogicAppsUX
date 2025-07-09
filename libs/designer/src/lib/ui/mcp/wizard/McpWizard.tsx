@@ -95,7 +95,12 @@ export const McpWizard = () => {
       <Button icon={<Add24Regular />} onClick={handleLoadOperations}>
         {'Load operations'}
       </Button>
-      <ListOperations connectorId={sampleConnectorId} />
+      <div>
+        <Text size={600} weight="semibold">
+          {'Operations section'}
+        </Text>
+        <ListOperations connectorId={sampleConnectorId} />
+      </div>
       <McpPanelRoot />
     </div>
   );
