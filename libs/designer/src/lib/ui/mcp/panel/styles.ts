@@ -8,7 +8,19 @@ export const useMcpPanelStyles = makeStyles({
   },
   header: {
     ...shorthands.padding('0', tokens.spacingHorizontalL),
+
+    padding: '16px 20px',
+    borderBottom: `1px solid ${tokens.colorNeutralStroke2}`,
+    background: tokens.colorNeutralBackground1,
+    flexShrink: 0,
   },
+
+  headerContent: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+  },
+
   body: {
     ...shorthands.padding('0', tokens.spacingHorizontalL),
     overflow: 'auto',
@@ -20,6 +32,7 @@ export const useMcpPanelStyles = makeStyles({
     minWidth: 'auto',
     flexShrink: 0,
   },
+
   //
 
   panelContent: {
