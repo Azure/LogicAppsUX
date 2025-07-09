@@ -3,10 +3,7 @@ import constants from '../../../../../common/constants';
 import type { McpConnectorPanelProps, McpPanelTabProps } from '@microsoft/designer-ui';
 import type { IntlShape } from 'react-intl';
 import { selectPanelTab } from '../../../../../core/state/mcp/panel/mcpPanelSlice';
-
-export const OperationsComponent = () => {
-  return null;
-};
+import { SelectOperations } from '../../../operations/SelectOperations';
 
 export const operationsTab = (
   intl: IntlShape,
@@ -19,7 +16,7 @@ export const operationsTab = (
     id: 'ohEtV6',
     description: 'The tab label for the select operations tab on the connector panel',
   }),
-  content: <OperationsComponent />,
+  content: <SelectOperations />,
   disabled: isTabDisabled,
   footerContent: {
     buttonContents: [

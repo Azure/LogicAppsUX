@@ -7,15 +7,11 @@ import type { RootState } from '../../../core/state/mcp/store';
 import { ConnectorPanelInner } from './connectorPanel/ConnectorPanel';
 import { Drawer } from '@fluentui/react-components';
 
-export interface McpPanelRootProps {
-  panelContainerRef: React.MutableRefObject<HTMLElement | null>;
-}
-
 const MIN_WIDTH = 300;
 const MAX_WIDTH = 1200;
 const DEFAULT_WIDTH = 600;
 
-export const McpPanelRoot = ({ panelContainerRef }: McpPanelRootProps) => {
+export const McpPanelRoot = () => {
   const dispatch = useDispatch<AppDispatch>();
   const styles = useMcpPanelStyles();
   const [panelWidth, setPanelWidth] = useState(DEFAULT_WIDTH);
@@ -36,16 +32,11 @@ export const McpPanelRoot = ({ panelContainerRef }: McpPanelRootProps) => {
         return;
       }
 
-      const rect = panelContainerRef.current?.getBoundingClientRect();
-      if (!rect) {
-        return;
-      }
-
-      const newWidth = rect.right - e.clientX;
+      const newWidth = window.innerWidth - e.clientX;
       const clampedWidth = Math.max(MIN_WIDTH, Math.min(MAX_WIDTH, newWidth));
       setPanelWidth(clampedWidth);
     },
-    [isResizing, panelContainerRef]
+    [isResizing]
   );
 
   const handleMouseUp = useCallback(() => {
