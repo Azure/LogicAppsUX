@@ -4,8 +4,8 @@ import { resetMcpState } from '../../global';
 
 export const McpPanelView = {
   SelectConnector: 'selectConnector',
-  CreateConnection: 'createConnection',
   SelectOperation: 'selectOperation',
+  CreateConnection: 'createConnection',
   EditOperation: 'editOperation',
 } as const;
 export type ConfigPanelView = (typeof McpPanelView)[keyof typeof McpPanelView];
@@ -13,12 +13,13 @@ export type ConfigPanelView = (typeof McpPanelView)[keyof typeof McpPanelView];
 export interface PanelState {
   isOpen: boolean;
   currentPanelView?: ConfigPanelView;
-  selectedConnectorId: string | undefined;
+  selectedTabId?: string;
+  selectedNodeId: string | undefined;
 }
 
 const initialState: PanelState = {
   isOpen: false,
-  selectedConnectorId: undefined,
+  selectedNodeId: undefined,
 };
 
 export const mcpPanelSlice = createSlice({
@@ -29,20 +30,21 @@ export const mcpPanelSlice = createSlice({
       state,
       action: PayloadAction<{
         panelView: ConfigPanelView;
-        selectedConnectorId: string | undefined;
+        selectedNodeId: string | undefined;
       }>
     ) => {
-      state.selectedConnectorId = action.payload.selectedConnectorId;
+      state.selectedNodeId = action.payload.selectedNodeId;
       state.currentPanelView = action.payload.panelView;
       state.isOpen = true;
     },
     selectPanelTab: (state, action: PayloadAction<string | undefined>) => {
-      state.selectedConnectorId = action.payload;
+      state.selectedTabId = action.payload;
     },
     closePanel: (state: typeof initialState) => {
       state.isOpen = false;
       state.currentPanelView = undefined;
-      state.selectedConnectorId = undefined;
+      state.selectedNodeId = undefined;
+      state.selectedTabId = undefined;
     },
   },
   extraReducers: (builder) => {

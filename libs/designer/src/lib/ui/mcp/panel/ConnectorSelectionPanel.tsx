@@ -21,7 +21,7 @@ export const ConnectorSelectionPanel = ({ onDismiss }: ConnectorSelectionPanelPr
   const styles = useConnectorSelectionStyles();
   const dispatch = useDispatch();
 
-  const { currentPanelView, selectedConnectorId } = useSelector((state: RootState) => state.mcpPanel);
+  const { currentPanelView, selectedNodeId: selectedConnectorId } = useSelector((state: RootState) => state.mcpPanel);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState<Record<string, string>>({
@@ -37,7 +37,7 @@ export const ConnectorSelectionPanel = ({ onDismiss }: ConnectorSelectionPanelPr
       dispatch(
         openPanelView({
           panelView: McpPanelView.SelectOperation,
-          selectedConnectorId: connectorId,
+          selectedNodeId: connectorId,
         })
       );
     },
@@ -48,7 +48,7 @@ export const ConnectorSelectionPanel = ({ onDismiss }: ConnectorSelectionPanelPr
     dispatch(
       openPanelView({
         panelView: McpPanelView.SelectConnector,
-        selectedConnectorId: undefined,
+        selectedNodeId: undefined,
       })
     );
   }, [dispatch]);
