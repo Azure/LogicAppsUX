@@ -1,11 +1,11 @@
 import { useCallback, useState, useEffect } from 'react';
-import { Panel, PanelType } from '@fluentui/react';
 import { useSelector, useDispatch } from 'react-redux';
 import type { AppDispatch } from '../../../';
 import { closePanel, McpPanelView } from '../../../core/state/mcp/panel/mcpPanelSlice';
 import { useMcpPanelStyles } from './styles';
 import type { RootState } from '../../../core/state/mcp/store';
 import { ConnectorPanelInner } from './connectorPanel/ConnectorPanel';
+import { Drawer } from '@fluentui/react-components';
 
 export interface McpPanelRootProps {
   panelContainerRef: React.MutableRefObject<HTMLElement | null>;
@@ -20,11 +20,6 @@ export const McpPanelRoot = ({ panelContainerRef }: McpPanelRootProps) => {
   const styles = useMcpPanelStyles();
   const [panelWidth, setPanelWidth] = useState(DEFAULT_WIDTH);
   const [isResizing, setIsResizing] = useState(false);
-
-  const layerProps = {
-    hostId: 'mcp-layer-host',
-    eventBubblingEnabled: true,
-  };
 
   const { isOpen, panelMode } = useSelector((state: RootState) => ({
     isOpen: state.mcpPanel?.isOpen ?? false,
@@ -73,52 +68,21 @@ export const McpPanelRoot = ({ panelContainerRef }: McpPanelRootProps) => {
     };
   }, [isResizing, handleMouseMove, handleMouseUp]);
 
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent<HTMLDivElement>) => {
-      if (e.key === 'Escape') {
-        dismissPanel();
-      }
-    },
-    [dismissPanel]
-  );
-
   if (!isOpen || !panelMode) {
     return null;
   }
 
   return (
-    <Panel
-      className={`mcp-panel-root-${panelMode}`}
-      isLightDismiss
-      isBlocking={false}
-      type={PanelType.custom}
-      isOpen={isOpen}
-      onDismiss={dismissPanel}
-      hasCloseButton={false}
-      customWidth={`${panelWidth}px`}
-      styles={{
-        main: {
-          backgroundColor: '#ffffff',
-          transition: isResizing ? 'none' : 'width 0.2s ease',
-        },
-        content: {
-          padding: 0,
-          position: 'relative',
-        },
-        scrollableContent: {
-          height: '100%',
-        },
-      }}
-      layerProps={layerProps}
+    <Drawer
+      className={styles.drawer}
+      open={isOpen}
+      onOpenChange={(_, { open }) => !open && dismissPanel()}
+      position="end"
+      style={{ width: panelWidth }}
     >
-      <div className={styles.panelContent} onKeyDown={handleKeyDown} tabIndex={-1}>
-        {(panelMode === McpPanelView.SelectConnector ||
-          panelMode === McpPanelView.SelectOperation ||
-          panelMode === McpPanelView.CreateConnection) && <ConnectorPanelInner />}
-
-        {/* {panelMode === McpPanelView.SelectConnector && <ConnectorSelectionPanel onDismiss={dismissPanel} />} */}
-        {/* Add other panel modes here as needed */}
-      </div>
-    </Panel>
+      {(panelMode === McpPanelView.SelectConnector ||
+        panelMode === McpPanelView.SelectOperation ||
+        panelMode === McpPanelView.CreateConnection) && <ConnectorPanelInner />}
+    </Drawer>
   );
 };

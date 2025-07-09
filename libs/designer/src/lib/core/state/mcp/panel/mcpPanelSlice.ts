@@ -37,6 +37,9 @@ export const mcpPanelSlice = createSlice({
       state.currentPanelView = action.payload.panelView;
       state.isOpen = true;
     },
+    selectNodeId: (state, action: PayloadAction<string | undefined>) => {
+      state.selectedNodeId = action.payload;
+    },
     selectPanelTab: (state, action: PayloadAction<string | undefined>) => {
       state.selectedTabId = action.payload;
     },
@@ -52,6 +55,6 @@ export const mcpPanelSlice = createSlice({
   },
 });
 
-export const { openPanelView, selectPanelTab, closePanel } = mcpPanelSlice.actions;
+export const { openPanelView, selectNodeId, selectPanelTab, closePanel } = mcpPanelSlice.actions;
 
 export default mcpPanelSlice.reducer;

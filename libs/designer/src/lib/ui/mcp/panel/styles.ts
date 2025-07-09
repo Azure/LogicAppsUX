@@ -1,6 +1,27 @@
-import { makeStyles, tokens } from '@fluentui/react-components';
+import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
 
 export const useMcpPanelStyles = makeStyles({
+  //
+  drawer: {
+    zIndex: 1000,
+    height: '100%',
+  },
+  header: {
+    ...shorthands.padding('0', tokens.spacingHorizontalL),
+  },
+  body: {
+    ...shorthands.padding('0', tokens.spacingHorizontalL),
+    overflow: 'auto',
+  },
+  footer: {
+    ...shorthands.padding(tokens.spacingVerticalM, tokens.spacingHorizontalL),
+  },
+  closeButton: {
+    minWidth: 'auto',
+    flexShrink: 0,
+  },
+  //
+
   panelContent: {
     height: '100%',
     display: 'flex',
