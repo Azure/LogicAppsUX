@@ -8,7 +8,7 @@ export const SelectOperations = () => {
   const styles = useConnectorSelectionStyles();
   const { data: allConnectors } = useAllConnectors();
 
-  const { selectedNodeId: selectedConnectorId } = useSelector((state: RootState) => state.mcpPanel);
+  const { selectedConnectorId } = useSelector((state: RootState) => state.mcpPanel);
   const selectedConnector = useMemo(() => allConnectors?.find((c) => c.id === selectedConnectorId), [allConnectors, selectedConnectorId]);
 
   return (

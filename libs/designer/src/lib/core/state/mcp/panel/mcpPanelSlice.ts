@@ -14,12 +14,12 @@ export interface PanelState {
   isOpen: boolean;
   currentPanelView?: ConfigPanelView;
   selectedTabId?: string;
-  selectedNodeId: string | undefined;
+  selectedConnectorId: string | undefined;
 }
 
 const initialState: PanelState = {
   isOpen: false,
-  selectedNodeId: undefined,
+  selectedConnectorId: undefined,
 };
 
 export const mcpPanelSlice = createSlice({
@@ -33,12 +33,12 @@ export const mcpPanelSlice = createSlice({
         selectedNodeId: string | undefined;
       }>
     ) => {
-      state.selectedNodeId = action.payload.selectedNodeId;
+      state.selectedConnectorId = action.payload.selectedNodeId;
       state.currentPanelView = action.payload.panelView;
       state.isOpen = true;
     },
     selectNodeId: (state, action: PayloadAction<string | undefined>) => {
-      state.selectedNodeId = action.payload;
+      state.selectedConnectorId = action.payload;
     },
     selectPanelTab: (state, action: PayloadAction<string | undefined>) => {
       state.selectedTabId = action.payload;
@@ -46,7 +46,7 @@ export const mcpPanelSlice = createSlice({
     closePanel: (state: typeof initialState) => {
       state.isOpen = false;
       state.currentPanelView = undefined;
-      state.selectedNodeId = undefined;
+      state.selectedConnectorId = undefined;
       state.selectedTabId = undefined;
     },
   },
