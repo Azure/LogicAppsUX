@@ -413,7 +413,7 @@ export const buildGraphFromActions = (
             const handoffSource = actionName;
             const handoffTarget = (handoffAction as any).inputs?.name ?? '';
             if (handoffTarget !== '' && allActionNames.includes(handoffTarget)) {
-              edges.push(createWorkflowEdge(handoffSource, `${handoffTarget}`, WORKFLOW_EDGE_TYPES.HANDOFF_EDGE));
+              edges.push(createWorkflowEdge(handoffSource, handoffTarget, WORKFLOW_EDGE_TYPES.HANDOFF_EDGE));
             }
           }
         }
