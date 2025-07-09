@@ -30,7 +30,7 @@ export const useConnectionsData = (appId?: string, enabled = true) => {
 };
 
 export const getConnectionsData = async (appId: string): Promise<ConnectionsData> => {
-  const uri = `${baseUrl}/${appId}/workflowsconfiguration/connections?api-version=2018-11-01`;
+  const uri = `${baseUrl}${appId}/workflowsconfiguration/connections?api-version=2018-11-01`;
   try {
     const response = await axios.get(uri, {
       headers: {
@@ -294,7 +294,7 @@ export const useWorkflowApp = (siteResourceId: string, hostingPlan: HostingPlanT
     refetchOnMount: false,
     refetchOnReconnect: false,
     refetchOnWindowFocus: false,
-    enabled: enabled,
+    enabled,
   });
 };
 
