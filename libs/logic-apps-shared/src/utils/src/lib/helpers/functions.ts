@@ -183,6 +183,20 @@ export function removeKeys<T>(object: Record<string, T>, keys: string[]): boolea
   );
 }
 
+export function findKeyValue<T>(object: Record<string, T>, key: string, caseInsensitive?: boolean): any {
+  if (!object || !key) {
+    return null;
+  }
+
+  for (const objectKey of Object.keys(object)) {
+    if (equals(objectKey, key, caseInsensitive)) {
+      return object[objectKey];
+    }
+  }
+
+  return null;
+}
+
 /**
  * Removes the item from the list of items given.
  * @arg {string[]} array - List of items to remove from.

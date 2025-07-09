@@ -72,7 +72,7 @@ export const SelectConnection = () => {
       applyNewConnection: saveSelectionCallback,
       onSuccess: closeConnectionsFlow,
       onManualConnectionCreation: () => {
-        setIsCreatingConnection(false);
+        setIsInlineCreatingConnection(false);
         dispatch(setIsCreatingConnection(true));
       },
     });

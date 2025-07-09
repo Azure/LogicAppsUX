@@ -1,6 +1,6 @@
 import Constants from '../../../common/constants';
 import type { ApiHubAuthentication } from '../../../common/models/workflow';
-import { isOpenApiSchemaVersion } from '../../../common/utilities/Utils';
+import { AgentUtils, isOpenApiSchemaVersion } from '../../../common/utilities/Utils';
 import type { DeserializedWorkflow } from '../../parsers/BJSWorkflow/BJSDeserializer';
 import { getConnection, getUniqueConnectionName, updateNewConnectionInQueryCache } from '../../queries/connections';
 import { getConnector, getOperationInfo, getOperationManifest } from '../../queries/operation';
@@ -212,7 +212,10 @@ const getApiHubAuthenticationIfRequired = (): ApiHubAuthentication | undefined =
 
 export const getApiHubAuthentication = (userAssignedIdentity: string | undefined): ApiHubAuthentication | undefined => {
   return WorkflowService().isExplicitAuthRequiredForManagedIdentity?.()
-    ? { type: 'ManagedServiceIdentity', ...optional('identity', userAssignedIdentity) }
+    ? {
+        type: 'ManagedServiceIdentity',
+        ...optional('identity', userAssignedIdentity),
+      }
     : undefined;
 };
 
@@ -260,12 +263,15 @@ export const autoCreateConnectionIfPossible = async (payload: {
 }): Promise<void> => {
   const { connector, operationInfo, referenceKeys, skipOAuth, applyNewConnection, onSuccess, onManualConnectionCreation } = payload;
 
-  if (connectorHasMultiAuth(connector)) {
+  if (connectorHasMultiAuth(connector) || AgentUtils.isConnector(connector.id)) {
     return onManualConnectionCreation();
   }
 
   const operationManifest = operationInfo
-    ? await getOperationManifest({ connectorId: connector.id, operationId: operationInfo.operationId ?? '' })
+    ? await getOperationManifest({
+        connectorId: connector.id,
+        operationId: operationInfo.operationId ?? '',
+      })
     : undefined;
 
   const connectionInfo: ConnectionCreationInfo = { connectionParameters: {} };
@@ -378,7 +384,10 @@ export async function getManifestBasedConnectionMapping(
 ): Promise<Record<string, string> | undefined> {
   try {
     const { connectorId, operationId } = await getOperationInfo(nodeId, operationDefinition, isTrigger);
-    const operationManifest = await getOperationManifest({ connectorId, operationId });
+    const operationManifest = await getOperationManifest({
+      connectorId,
+      operationId,
+    });
     const connectionReferenceKeyFormat =
       (operationManifest.properties.connectionReference && operationManifest.properties.connectionReference.referenceKeyFormat) ?? '';
     if (connectionReferenceKeyFormat === '') {

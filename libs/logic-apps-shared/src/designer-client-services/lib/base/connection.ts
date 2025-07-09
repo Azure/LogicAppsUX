@@ -11,6 +11,7 @@ import {
   UserErrorCode,
   isCustomConnectorId,
   getUniqueName,
+  findKeyValue,
 } from '../../../utils/src';
 import type { HttpResponse } from '../common/exceptions/service';
 import type { ConnectionCreationInfo, ConnectionParametersMetadata, CreateConnectionResult, IConnectionService } from '../connection';
@@ -100,10 +101,10 @@ export abstract class BaseConnectionService implements IConnectionService {
       return this.getConnectionInApiHub(connectionId);
     }
 
-    let connection = this._connections[connectionId];
+    let connection = findKeyValue<Connection>(this._connections, connectionId);
     if (!connection) {
       await this.getConnections();
-      connection = this._connections[connectionId];
+      connection = findKeyValue<Connection>(this._connections, connectionId);
     }
 
     return connection;
