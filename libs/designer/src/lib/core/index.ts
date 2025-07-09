@@ -4,6 +4,7 @@ export * from './ProviderWrappedContext';
 export { getReactQueryClient } from './ReactQueryProvider';
 export type { RootState, AppDispatch } from './store';
 export { store } from './store';
+export { mcpStore } from './state/mcp/store';
 export { templateStore } from './state/templates/store';
 export {
   useConnectionMapping,
@@ -63,6 +64,7 @@ export { TemplatesDesignerProvider } from './templates/TemplatesDesignerProvider
 export { ConfigureTemplateDataProvider } from './configuretemplate/ConfigureTemplateDataProvider';
 export { McpDataProvider } from './mcp/McpDataProvider';
 export { McpWizardProvider } from './mcp/McpWizardProvider';
+export { resetMcpStateOnResourceChange } from './actions/bjsworkflow/mcp';
 export {
   validateParameter,
   parameterValueToString,
