@@ -1,7 +1,6 @@
 import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
 
 export const useMcpPanelStyles = makeStyles({
-  //
   drawer: {
     zIndex: 1000,
     height: '100%',
@@ -32,8 +31,6 @@ export const useMcpPanelStyles = makeStyles({
     minWidth: 'auto',
     flexShrink: 0,
   },
-
-  //
 
   panelContent: {
     height: '100%',
