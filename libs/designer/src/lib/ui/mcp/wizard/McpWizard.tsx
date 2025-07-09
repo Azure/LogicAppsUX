@@ -6,11 +6,9 @@ import { McpPanelView, openPanelView } from '../../../core/state/mcp/panel/mcpPa
 import { useDispatch } from 'react-redux';
 import type { AppDispatch } from '../../../core/state/mcp/store';
 import { McpPanelRoot } from '../panel/mcpPanelRoot';
-import { useRef } from 'react';
 
 export const McpWizard = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const panelContainerRef = useRef<HTMLElement | null>(null);
   const intl = useIntl();
   const styles = useMcpWizardStyles();
   const connectors = [];
@@ -74,7 +72,7 @@ export const McpWizard = () => {
           <div className={styles.connectorsList}>{/* Connector items will go here */}</div>
         )}
       </div>
-      <McpPanelRoot panelContainerRef={panelContainerRef} />
+      <McpPanelRoot />
     </div>
   );
 };

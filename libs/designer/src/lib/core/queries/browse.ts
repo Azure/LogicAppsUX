@@ -26,6 +26,35 @@ const favoriteActionQueryPageSize = 10;
 
 /// Operations ///
 
+export const useAllManagedOperations = () => {
+  const { data: azureData, isFetching: azureFetching, hasNextPage: azureHasNextPage } = useAzureOperationsLazyQuery();
+
+  const data = useMemo(() => {
+    const azure = azureData?.pages.flatMap((page) => page.data) ?? [];
+    return azure.filter((operation) => operation !== undefined);
+  }, [azureData]);
+
+  const hasNextPage = azureHasNextPage;
+  const isLoading = azureFetching;
+
+  return useMemo(() => ({ data, isLoading, hasNextPage }), [data, isLoading, hasNextPage]);
+};
+
+export const useAllManagedApiIdsWithActions = () => {
+  const allOperations = useAllManagedOperations();
+
+  return useMemo(() => {
+    const actions = allOperations.data.filter((operation) => !operation.properties?.trigger);
+
+    const apiIdsWithActions = [...new Set(actions.map((action) => cleanConnectorId(action?.properties.api.id)))];
+
+    return {
+      ...allOperations,
+      data: apiIdsWithActions,
+    };
+  }, [allOperations]);
+};
+
 export const useAllOperations = () => {
   const { data: azureOperations, isLoading: azureLoading, hasNextPage: azureHasNextPage } = useAzureOperationsLazyQuery();
 
@@ -179,6 +208,20 @@ const useBuiltInOperationsQuery = () =>
   );
 
 /// Connectors ///
+
+export const useAllManagedConnectors = () => {
+  const { data: azureData, isFetching: azureFetching, hasNextPage: azureHasNextPage } = useAzureConnectorsLazyQuery();
+
+  const hasNextPage = azureHasNextPage;
+  const isLoading = azureFetching; // Only check if currently fetching, not if more pages exist
+
+  const data = useMemo(() => {
+    const azure = azureData?.pages.flatMap((page) => page.data) ?? [];
+    return azure.filter((connector) => connector !== undefined);
+  }, [azureData]);
+
+  return useMemo(() => ({ data, isLoading, hasNextPage }), [data, isLoading, hasNextPage]);
+};
 
 export const useAllConnectors = () => {
   const { data: azureData, isLoading: azureLoading, hasNextPage: azureHasNextPage } = useAzureConnectorsLazyQuery();
