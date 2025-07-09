@@ -153,7 +153,7 @@ const DesignerReactFlow = (props: any) => {
   const onConnectEnd = useCallback(
     (event: any, connectionState: any) => {
       const { isValid, fromNode, toNode } = connectionState;
-      const parentId = fromNode?.id;
+      const parentId = containsIdTag(fromNode?.id) ? removeIdTag(fromNode?.id) : fromNode?.id;
       const targetId = containsIdTag(toNode?.id) ? removeIdTag(toNode?.id) : toNode?.id;
 
       if (parentId === targetId) {
