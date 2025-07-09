@@ -7,14 +7,13 @@ export default defineProject({
   resolve: {
     alias: {
       vscode: path.resolve(path.join(__dirname, 'node_modules', '@types', 'vscode', 'index.d.ts')),
-      '@microsoft/vscode-azext-azureauth/out/src/getSessionFromVSCode': '/__mocks__/vscode-azext-azureauth.ts',
     },
   },
   test: {
     name: packageJson.name,
     environment: 'node',
-    setupFiles: ['test-setup.ts'],
-    coverage: { enabled: true, provider: 'istanbul', include: ['src/**/*'], reporter: ['html', 'cobertura'] },
+    //setupFiles: ['test-setup.ts'],
+    coverage: { enabled: false },
     restoreMocks: true,
   },
 });

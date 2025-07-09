@@ -12,8 +12,9 @@ async function main() {
 
     // The path to the extension test script
     // Passed to --extensionTestsPath
-    const extensionTestsPath = path.resolve(__dirname, './suite');
+    const extensionTestsPath = path.resolve(__dirname, './suite/index.js');
 
+    // needed for running outside of debug mode
     await runVSCodeCommand(['--install-extension', 'ms-azuretools.vscode-azurefunctions']);
     await runVSCodeCommand(['--install-extension', 'Azurite.azurite']);
     await runVSCodeCommand(['--install-extension', 'ms-dotnettools.csharp']);

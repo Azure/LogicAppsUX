@@ -1,8 +1,6 @@
 import * as path from 'path';
 import { glob } from 'glob';
-// Import with a dynamic import to avoid URL issues during bundling
 import { startVitest } from 'vitest/node';
-
 // Fix for URL errors - set NODE_ENV to test
 process.env.NODE_ENV = 'test';
 
@@ -21,15 +19,18 @@ export async function run(): Promise<void> {
       return;
     }
 
+    // const { startVitest } = await import('vitest/node'); // Ensure Vitest is imported
+
     // Start Vitest programmatically
     const vitest = await startVitest('test', [], {
       mode: 'test',
       watch: false,
       reporters: ['default'],
-      include: testFiles.map((f) => path.resolve(testsRoot, f)),
+      include: testFiles,
       // Use the same config as in vitest.config.ts
       environment: 'node',
-      exclude: ['**/**.test.{js,ts}'],
+      //exclude: ['**/**.test.{js,ts}'],
+      config: '/Users/daniellecogburn/code/LogicAppsUX/apps/vs-code-designer/vitest.config.ts'
     });
 
     // Wait for tests to complete
