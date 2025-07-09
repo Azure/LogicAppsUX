@@ -132,8 +132,8 @@ const MonitoringTimeline = () => {
   const text = useMemo(
     () => ({
       title: intl.formatMessage({
-        defaultMessage: 'Task Timeline',
-        id: 'lrllOG',
+        defaultMessage: 'Task timeline',
+        id: 'JRsTtp',
         description: 'Title for the monitoring timeline component.',
       }),
       noData: intl.formatMessage({
@@ -142,14 +142,19 @@ const MonitoringTimeline = () => {
         description: 'Text displayed when there are no transitions in the monitoring timeline.',
       }),
       previousTask: intl.formatMessage({
-        defaultMessage: 'Previous Task',
-        id: 'H05uw6',
+        defaultMessage: 'Previous task',
+        id: 'Z9zin7',
         description: 'Text for the previous task button in the monitoring timeline.',
       }),
       nextTask: intl.formatMessage({
-        defaultMessage: 'Next Task',
-        id: 'DOQAmS',
+        defaultMessage: 'Next task',
+        id: 'WtieWd',
         description: 'Text for the next task button in the monitoring timeline.',
+      }),
+      loading: intl.formatMessage({
+        defaultMessage: 'Loading...',
+        id: 'CemHmO',
+        description: 'Text displayed when the monitoring timeline is loading.',
       }),
     }),
     [intl]
@@ -248,7 +253,7 @@ const MonitoringTimeline = () => {
         )}
         {isFetchingRepetitions ? (
           <div className={styles.loadingContainer}>
-            <Spinner label={expanded ? 'Loading...' : ''} />
+            <Spinner label={expanded ? text.loading : ''} />
           </div>
         ) : null}
         <Divider />
