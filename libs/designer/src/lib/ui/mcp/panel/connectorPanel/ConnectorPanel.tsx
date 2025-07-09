@@ -48,7 +48,7 @@ export const ConnectorPanelInner = () => {
       <DrawerHeader className={styles.header}>
         <div className={styles.headerContent}>
           <Text size={600} weight="semibold" style={{ flex: 1 }}>
-            {INTL_TEXT.title}
+            {selectedTabProps?.title ?? INTL_TEXT.title}
           </Text>
           <Button appearance="subtle" icon={<CloseIcon />} onClick={handleDismiss} aria-label={INTL_TEXT.closeAriaLabel} />
         </div>
