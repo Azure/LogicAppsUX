@@ -176,6 +176,39 @@ export class ConsumptionRunService implements IRunService {
   }
 
   /**
+   * Retrieves additional scope repetitions using a continuation token.
+   *
+   * @param continuationToken - The token used to fetch the next set of scope repetitions.
+   * @returns A promise that resolves with the response containing the scope repetitions.
+   * @throws Throws an error if the HTTP request fails.
+   */
+  async getMoreScopeRepetitions(continuationToken: string): Promise<{ value: LogicAppsV2.RunRepetition[]; nextLink?: string }> {
+    const { httpClient } = this.options;
+    const headers = this.getAccessTokenHeaders();
+
+    try {
+      const response = await httpClient.get<{ value: LogicAppsV2.RunRepetition[]; nextLink?: string }>({
+        uri: continuationToken,
+        headers: headers as Record<string, any>,
+      });
+
+      return response;
+    } catch (e: any) {
+      throw new Error(e.message);
+    }
+  }
+
+  /**
+   * Gets an array of workflow-level action repetitions for a run.
+   * @param {string} runId - The ID of the workflow run.
+   * @returns {Promise<any>}
+   */
+  async getTimelineRepetitions(_runId: string): Promise<any> {
+    // A2A is not supported in consumption
+    return undefined;
+  }
+
+  /**
    * Gets an array of scope repetition records for a node with the specified status.
    * @param {{ actionId: string, runId: string }} action - An object with nodeId and the runId of the workflow
    * @param {string} repetitionId - A string with the resource ID of a repetition record

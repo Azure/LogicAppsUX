@@ -26,6 +26,7 @@ import {
   useIsWithinAgenticLoop,
   useNodeDisplayName,
   useNodeMetadata,
+  useNodeIds,
 } from '../../core/state/workflow/workflowSelectors';
 import { AllowDropTarget } from './dynamicsvgs/allowdroptarget';
 import { BlockDropTarget } from './dynamicsvgs/blockdroptarget';
@@ -83,6 +84,10 @@ export const DropZone: React.FC<DropZoneProps> = memo(({ graphId, parentId, chil
   const upstreamNodesDependencies = useNodesTokenDependencies(upstreamNodes);
   const upstreamScopeArr = useAllGraphParents(graphId);
   const upstreamScopes = useMemo(() => new Set(upstreamScopeArr), [upstreamScopeArr]);
+
+  // Get all nodes in the workflow to compute downstream dependencies
+  const allNodeIds = useNodeIds();
+  const allNodesDependencies = useNodesTokenDependencies(new Set(allNodeIds));
 
   const handlePasteClicked = useCallback(async () => {
     const relationshipIds = { graphId, childId, parentId };
@@ -150,13 +155,14 @@ export const DropZone: React.FC<DropZoneProps> = memo(({ graphId, parentId, chil
           childId,
           parentId,
           preventDropItemInA2A,
-          isWithinAgenticLoop
+          isWithinAgenticLoop,
+          allNodesDependencies
         ),
       collect: (monitor) => ({
         canDrop: monitor.canDrop(),
       }),
     }),
-    [graphId, parentId, childId, upstreamNodes, upstreamNodesDependencies, preventDropItemInA2A, isWithinAgenticLoop]
+    [graphId, parentId, childId, upstreamNodes, upstreamNodesDependencies, preventDropItemInA2A, isWithinAgenticLoop, allNodesDependencies]
   );
 
   const parentName = useNodeDisplayName(removeIdTag(parentId ?? ''));

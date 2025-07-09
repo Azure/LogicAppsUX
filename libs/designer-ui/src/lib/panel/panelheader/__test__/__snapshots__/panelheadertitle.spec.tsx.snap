@@ -30,3 +30,34 @@ exports[`ui/panel/panelheadertitle > should construct. 1`] = `
   }
 />
 `;
+
+exports[`ui/panel/panelheadertitle > should construct. 2`] = `
+<StyledTextFieldBase
+  ariaLabel="Card title"
+  borderless={true}
+  className="msla-card-title"
+  componentRef={
+    {
+      "current": null,
+    }
+  }
+  errorMessage=""
+  maxLength={80}
+  onBlur={[Function]}
+  onChange={[Function]}
+  onKeyDown={[Function]}
+  styles={
+    {
+      "errorMessage": {
+        "paddingLeft": "8px",
+      },
+      "fieldGroup": {
+        "background": "inherit",
+      },
+      "root": {
+        "marginTop": "5px",
+      },
+    }
+  }
+/>
+`;

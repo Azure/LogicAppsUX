@@ -12,7 +12,9 @@ export interface IRunService {
   getScopeRepetitions(
     action: { nodeId: string; runId: string | undefined },
     status?: string
-  ): Promise<{ value: LogicAppsV2.RunRepetition[] }>;
+  ): Promise<{ value: LogicAppsV2.RunRepetition[]; nextLink?: string }>;
+  getMoreScopeRepetitions(continuationToken: string): Promise<{ value: LogicAppsV2.RunRepetition[]; nextLink?: string }>;
+  getTimelineRepetitions(runId: string): Promise<any>;
   getAgentRepetition(action: { nodeId: string; runId: string | undefined }, repetitionId: string): Promise<LogicAppsV2.RunRepetition>;
   getAgentActionsRepetition(action: { nodeId: string; runId: string | undefined }, repetitionId: string): Promise<any>;
   getMoreAgentActionsRepetition(continuationToken: string): Promise<any>;
