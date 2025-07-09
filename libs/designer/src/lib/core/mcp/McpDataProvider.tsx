@@ -1,15 +1,15 @@
 import type React from 'react';
 import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-import { initializeServices } from '../state/mcp/mcpOptions/mcpOptionsSlice';
-import { useAreServicesInitialized } from '../state/mcp/mcpOptions/mcpOptionsSelector';
-import { setInitialData, type ResourceState } from '../state/mcp/resourceSlice';
-import type { AppDispatch } from '../state/mcp/store';
-import type { ServiceOptions } from '../state/mcp/mcpOptions/mcpOptionsInterface';
+import type { ResourceState } from '../state/mcp/resourceSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import type { AppDispatch, RootState } from '../state/mcp/store';
+import { setInitialData } from '../state/mcp/resourceSlice';
+import { initializeMcpServices, type McpServiceOptions } from '../actions/bjsworkflow/mcp';
 
 export interface McpDataProviderProps {
   resourceDetails: ResourceState;
-  services?: ServiceOptions;
+  services: McpServiceOptions;
+  onResourceChange?: () => void;
   children?: React.ReactNode;
 }
 
@@ -17,14 +17,17 @@ const DataProviderInner = ({ children }: { children?: React.ReactNode }) => {
   return <>{children}</>;
 };
 
-export const McpDataProvider = ({ resourceDetails, services, children }: McpDataProviderProps) => {
+export const McpDataProvider = ({ resourceDetails, services, onResourceChange, children }: McpDataProviderProps) => {
   const dispatch = useDispatch<AppDispatch>();
-  const servicesInitialized = useAreServicesInitialized();
 
-  // Prefer props.services if provided; fallback to context
+  const { logicAppName, servicesInitialized } = useSelector((state: RootState) => ({
+    logicAppName: state.resource.logicAppName,
+    servicesInitialized: state.mcpOptions.servicesInitialized,
+  }));
+
   useEffect(() => {
     if (!servicesInitialized && services) {
-      dispatch(initializeServices(services));
+      dispatch(initializeMcpServices(services));
     }
   }, [dispatch, servicesInitialized, services]);
 
@@ -38,9 +41,11 @@ export const McpDataProvider = ({ resourceDetails, services, children }: McpData
     );
   }, [dispatch, resourceDetails]);
 
-  if (!servicesInitialized) {
-    return null;
-  }
+  useEffect(() => {
+    if (onResourceChange && logicAppName !== undefined) {
+      onResourceChange();
+    }
+  }, [logicAppName, onResourceChange, resourceDetails]);
 
   return <DataProviderInner>{children}</DataProviderInner>;
 };
