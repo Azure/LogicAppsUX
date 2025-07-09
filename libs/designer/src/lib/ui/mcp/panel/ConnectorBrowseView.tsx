@@ -1,12 +1,35 @@
 import { useCallback, useMemo } from 'react';
-import { cleanConnectorId, type Connector } from '@microsoft/logic-apps-shared';
+import type { Connector } from '@microsoft/logic-apps-shared';
 import { BrowseGrid } from '@microsoft/designer-ui';
-import { useAllManagedApiIdsWithActions } from '../../../core/queries/browse';
 
 const sortConnectors = (connectors: Connector[]): Connector[] => {
   return connectors.sort((a, b) => {
     return (a.properties?.displayName ?? '').localeCompare(b.properties?.displayName ?? '');
   });
+};
+
+const supportsActions = (connector: Connector): boolean => {
+  const capabilities = connector.properties?.capabilities ?? [];
+
+  // If no capabilities are defined, assume it doesn't support actions
+  if (capabilities.length === 0) {
+    return false;
+  }
+
+  // Check if it explicitly supports actions
+  return capabilities.includes('actions');
+};
+
+const matchesSearch = (connector: Connector, searchTerm: string): boolean => {
+  if (!searchTerm) {
+    return true;
+  }
+
+  const lowerSearchTerm = searchTerm.toLowerCase();
+  const displayName = connector.properties?.displayName?.toLowerCase() ?? '';
+  const description = connector.properties?.description?.toLowerCase() ?? '';
+
+  return displayName.includes(lowerSearchTerm) || description.includes(lowerSearchTerm);
 };
 
 interface ConnectorBrowseViewProps {
@@ -17,34 +40,11 @@ interface ConnectorBrowseViewProps {
 }
 
 export const ConnectorBrowseView = ({ connectors, isLoading, onConnectorSelect, searchTerm }: ConnectorBrowseViewProps) => {
-  const allApiIdsWithActions = useAllManagedApiIdsWithActions();
-
   const filteredConnectors = useMemo(() => {
-    let filtered = connectors;
-
-    // Apply search filter
-    if (searchTerm) {
-      filtered = filtered.filter(
-        (connector) =>
-          connector.properties?.displayName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          connector.properties?.description?.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    // Filter to only connectors that support actions
-    if (allApiIdsWithActions.data.length > 0) {
-      filtered = filtered.filter((connector) => {
-        const capabilities = connector.properties?.capabilities ?? [];
-        const ignoreCapabilities = !capabilities.includes('triggers') && !capabilities.includes('actions');
-        const connectorId = cleanConnectorId(connector.id);
-
-        const supportsActions = (ignoreCapabilities || capabilities.includes('actions')) && allApiIdsWithActions.data.includes(connectorId);
-        return supportsActions;
-      });
-    }
+    const filtered = connectors.filter((connector) => supportsActions(connector) && matchesSearch(connector, searchTerm));
 
     return sortConnectors(filtered);
-  }, [connectors, searchTerm, allApiIdsWithActions.data]);
+  }, [connectors, searchTerm]);
 
   const handleConnectorClick = useCallback(
     (connectorId: string) => {
