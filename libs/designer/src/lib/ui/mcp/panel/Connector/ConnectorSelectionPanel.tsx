@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { Text, Button, SearchBox } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
 import { useIntl } from 'react-intl';
-import { useConnectorSelectionStyles } from './connectorSelectionStyles';
+import { useConnectorSelectionStyles } from './styles';
 import { ConnectorBrowseView } from './ConnectorBrowseView';
-import { useAllManagedConnectors } from '../../../core/queries/browse';
+import { useAllManagedConnectors } from '../../../../core/mcp/utils/queries';
 
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 

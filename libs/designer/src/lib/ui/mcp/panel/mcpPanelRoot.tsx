@@ -3,8 +3,8 @@ import { Panel, PanelType } from '@fluentui/react';
 import { useSelector, useDispatch } from 'react-redux';
 import type { AppDispatch } from '../../../';
 import { closePanel, McpPanelView, openPanelView } from '../../../core/state/mcp/panel/mcpPanelSlice';
-import { ConnectorSelectionPanel } from './ConnectorSelectionPanel';
-import { OperationSelectionPanel } from './OperationSelectionPanel';
+import { ConnectorSelectionPanel } from './Connector/ConnectorSelectionPanel';
+import { OperationSelectionPanel } from './Operation/OperationSelectionPanel';
 import { useMcpPanelStyles } from './styles';
 import type { RootState } from '../../../core/state/mcp/store';
 
@@ -54,9 +54,9 @@ export const McpPanelRoot = () => {
     );
   }, [dispatch]);
 
-  const handleOperationSelect = useCallback((operationId: string) => {
+  const handleOperationSelect = useCallback((operationIds: string[]) => {
     // TODO: Handle operation selection
-    console.log('Operation selected:', operationId);
+    console.log('Operations selected:', operationIds);
   }, []);
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
@@ -111,7 +111,7 @@ export const McpPanelRoot = () => {
       case McpPanelView.SelectConnector:
         return <ConnectorSelectionPanel onDismiss={dismissPanel} onConnectorSelect={handleConnectorSelect} />;
       case McpPanelView.SelectOperation:
-        return <OperationSelectionPanel onDismiss={dismissPanel} onBack={handleBackToBrowse} onOperationSelect={handleOperationSelect} />;
+        return <OperationSelectionPanel onDismiss={dismissPanel} onBack={handleBackToBrowse} onOperationsSelect={handleOperationSelect} />;
       default:
         return null;
     }

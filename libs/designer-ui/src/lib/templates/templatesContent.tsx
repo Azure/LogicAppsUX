@@ -14,7 +14,7 @@ export const TemplateContent = ({ tabs = [], selectedTab, selectTab, className }
 
   const selectedTabProps = tabs?.find((tab) => tab.id === selectedTabId);
 
-  const onTabSelected = (e?: SelectTabEvent, data?: SelectTabData): void => {
+  const onTabSelected = (_e?: SelectTabEvent, data?: SelectTabData): void => {
     if (data) {
       const itemKey = data.value as string;
       selectTab(itemKey);

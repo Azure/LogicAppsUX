@@ -139,6 +139,31 @@ export abstract class BaseSearchService implements ISearchService {
     return this.removeUnsupportedOperations(operations);
   }
 
+  async getOperationsByConnector(connectorId: string, actionType?: 'triggers' | 'actions'): Promise<DiscoveryOpArray> {
+    const {
+      apiHubServiceDetails: { location, subscriptionId, apiVersion },
+    } = this.options;
+
+    const connectorName = this.getConnectorName(connectorId);
+    const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/managedApis/${connectorName}/apiOperations`;
+
+    let filter: string | undefined;
+
+    if (actionType === 'triggers') {
+      filter = 'properties/trigger ne null';
+    } else if (actionType === 'actions') {
+      filter = 'properties/trigger eq null';
+    }
+
+    const queryParameters: QueryParameters = {
+      'api-version': apiVersion,
+      ...(filter ? { $filter: filter } : {}),
+    };
+
+    const { value } = await this.getAzureResourceByPage(uri, queryParameters);
+    return this.removeUnsupportedOperations(value);
+  }
+
   async getAzureOperationsByPage(page: number): Promise<DiscoveryOpArray> {
     const {
       apiHubServiceDetails: { location, subscriptionId, apiVersion },
@@ -234,6 +259,10 @@ export abstract class BaseSearchService implements ISearchService {
     } catch (_error) {
       return [];
     }
+  }
+
+  private getConnectorName(connectorId: string): string {
+    return connectorId.split('/').slice(-1)[0];
   }
 
   private moveGeneralInformation(connectors: Connector[]): Connector[] {
