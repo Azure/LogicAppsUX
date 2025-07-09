@@ -6,12 +6,10 @@ import { McpPanelView, openPanelView } from '../../../core/state/mcp/panel/mcpPa
 import { useDispatch } from 'react-redux';
 import type { AppDispatch } from '../../../core/state/mcp/store';
 import { McpPanelRoot } from '../panel/mcpPanelRoot';
-import { useRef } from 'react';
 import { initializeOperationsMetadata } from '../../../core/actions/bjsworkflow/mcp';
 
 export const McpWizard = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const panelContainerRef = useRef<HTMLElement | null>(null);
   const intl = useIntl();
   const styles = useMcpWizardStyles();
   const connectors = [];
@@ -95,7 +93,7 @@ export const McpWizard = () => {
       <Button icon={<Add24Regular />} onClick={handleLoadOperations}>
         {'Load operations'}
       </Button>
-      <McpPanelRoot panelContainerRef={panelContainerRef} />
+      <McpPanelRoot />
     </div>
   );
 };
