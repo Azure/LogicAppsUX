@@ -20,8 +20,8 @@ const DataProviderInner = ({ children }: { children?: React.ReactNode }) => {
 export const McpDataProvider = ({ resourceDetails, services, onResourceChange, children }: McpDataProviderProps) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { logicAppId, servicesInitialized } = useSelector((state: RootState) => ({
-    logicAppId: state.resource.logicAppId,
+  const { logicAppName, servicesInitialized } = useSelector((state: RootState) => ({
+    logicAppName: state.resource.logicAppName,
     servicesInitialized: state.mcpOptions.servicesInitialized,
   }));
 
@@ -42,10 +42,10 @@ export const McpDataProvider = ({ resourceDetails, services, onResourceChange, c
   }, [dispatch, resourceDetails]);
 
   useEffect(() => {
-    if (onResourceChange && logicAppId !== undefined) {
+    if (onResourceChange && logicAppName !== undefined) {
       onResourceChange();
     }
-  }, [logicAppId, onResourceChange, resourceDetails]);
+  }, [logicAppName, onResourceChange, resourceDetails]);
 
   return <DataProviderInner>{children}</DataProviderInner>;
 };
