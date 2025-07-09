@@ -9,6 +9,7 @@ import {
   InitConnectionService,
   InitConnectorService,
   InitGatewayService,
+  InitHostService,
   InitLoggerService,
   InitOAuthService,
   InitResourceService,
@@ -35,10 +36,11 @@ export interface McpServiceOptions {
   searchService?: ISearchService;
   loggerService?: ILoggerService;
   workflowService?: IWorkflowService;
+  hostService?: any; // Placeholder for IHostService, not used in this context
 }
 
 export const initializeMcpServices = createAsyncThunk('initializeMcpServices', async (services: McpServiceOptions) => {
-  initializeMcpServices(services);
+  initializeServices(services);
   const loggerServices: ILoggerService[] = [];
   if (services.loggerService) {
     loggerServices.push(services.loggerService);
@@ -47,6 +49,7 @@ export const initializeMcpServices = createAsyncThunk('initializeMcpServices', a
     loggerServices.push(new DevLogger());
   }
   InitLoggerService(loggerServices);
+  InitHostService(services.hostService);
   return true;
 });
 
