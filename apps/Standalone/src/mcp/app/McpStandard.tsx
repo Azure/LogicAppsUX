@@ -5,19 +5,16 @@ import type { RootState } from '../state/Store';
 import { useSelector } from 'react-redux';
 import {
   getWorkflowAppFromCache,
-  useConnectionsData,
   useCurrentObjectId,
   useCurrentTenantId,
   useWorkflowApp,
 } from '../../designer/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts';
 import { ArmParser } from '../../designer/app/AzureLogicAppsDesigner/Utilities/ArmParser';
-import { addConnectionInJson, WorkflowUtility } from '../../designer/app/AzureLogicAppsDesigner/Utilities/Workflow';
+import { WorkflowUtility } from '../../designer/app/AzureLogicAppsDesigner/Utilities/Workflow';
 import {
   BaseGatewayService,
   BaseResourceService,
   BaseTenantService,
-  clone,
-  type ConnectionsData,
   equals,
   type IWorkflowService,
   StandardConnectionService,
@@ -27,8 +24,6 @@ import {
 import { useMcpStandardStyles } from './styles';
 import { HttpClient } from '../../designer/app/AzureLogicAppsDesigner/Services/HttpClient';
 import type { WorkflowApp } from '../../designer/app/AzureLogicAppsDesigner/Models/WorkflowApp';
-import type { ConnectionAndAppSetting } from '../../designer/app/AzureLogicAppsDesigner/Models/Workflow';
-import { useFunctionalState } from '@react-hookz/web';
 import { CustomConnectionParameterEditorService } from '../../designer/app/AzureLogicAppsDesigner/Services/customConnectionParameterEditorService';
 import { StandaloneOAuthService } from '../../designer/app/AzureLogicAppsDesigner/Services/OAuthService';
 
@@ -123,38 +118,11 @@ export const McpStandard = () => {
 
   const { data: tenantId } = useCurrentTenantId();
   const { data: objectId } = useCurrentObjectId();
-  const { data: originalConnectionsData } = useConnectionsData(appId);
 
-  const [connectionsData, setConnectionsData] = useFunctionalState(originalConnectionsData);
-
-  useEffect(() => {
-    if (originalConnectionsData) {
-      setConnectionsData(JSON.parse(JSON.stringify(clone(originalConnectionsData ?? {}))));
-    }
-  }, [originalConnectionsData, setConnectionsData]);
-  const addConnectionDataInternal = useCallback(
-    async (connectionAndSetting: ConnectionAndAppSetting): Promise<void> => {
-      addConnectionInJson(connectionAndSetting, connectionsData() ?? {});
-    },
-    [connectionsData]
-  );
-
-  const getConnectionConfiguration = useCallback(() => Promise.resolve(), []);
-  const getWorkflowConnectionsData = useCallback(() => connectionsData() ?? {}, [connectionsData]);
   const services = useMemo(
-    () =>
-      getServices(
-        appId as string,
-        workflowAppData as WorkflowApp,
-        addConnectionDataInternal,
-        getConnectionConfiguration,
-        tenantId,
-        objectId,
-        canonicalLocation,
-        getWorkflowConnectionsData
-      ),
+    () => getServices(appId as string, workflowAppData as WorkflowApp, tenantId, objectId, canonicalLocation),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [connectionsData, workflowAppData, tenantId, canonicalLocation, appId]
+    [workflowAppData, tenantId, canonicalLocation, appId]
   );
 
   useEffect(() => {
@@ -165,31 +133,13 @@ export const McpStandard = () => {
       if (equals(logicAppId, workflowAppData?.id)) {
         mcpStore.dispatch(
           resetMcpStateOnResourceChange(
-            getResourceBasedServices(
-              logicAppId as string,
-              workflowAppData as WorkflowApp,
-              addConnectionDataInternal,
-              getConnectionConfiguration,
-              tenantId,
-              objectId,
-              canonicalLocation,
-              getWorkflowConnectionsData
-            )
+            getResourceBasedServices(logicAppId as string, workflowAppData as WorkflowApp, tenantId, objectId, canonicalLocation)
           )
         );
         setShouldReload(false);
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    addConnectionDataInternal,
-    getConnectionConfiguration,
-    getWorkflowConnectionsData,
-    objectId,
-    shouldReload,
-    tenantId,
-    workflowAppData,
-  ]);
+  }, [canonicalLocation, objectId, shouldReload, tenantId, workflowAppData]);
 
   const onResourceChange = useCallback(async () => {
     const {
@@ -246,12 +196,9 @@ export const McpStandard = () => {
 const getServices = (
   siteResourceId: string,
   workflowApp: WorkflowApp | undefined,
-  addConnection: (data: ConnectionAndAppSetting) => Promise<void>,
-  getConfiguration: (connectionId: string) => Promise<any>,
   tenantId: string | undefined,
   objectId: string | undefined,
-  location: string,
-  getConnectionsData: () => ConnectionsData
+  location: string
 ): any => {
   const armUrl = 'https://management.azure.com';
 
@@ -273,12 +220,9 @@ const getServices = (
   const { connectionService, oAuthService, connectorService, workflowService, searchService } = getResourceBasedServices(
     siteResourceId,
     workflowApp,
-    addConnection,
-    getConfiguration,
     tenantId,
     objectId,
-    location,
-    getConnectionsData
+    location
   );
 
   return {
@@ -298,12 +242,9 @@ const getServices = (
 const getResourceBasedServices = (
   siteResourceId: string,
   workflowApp: WorkflowApp | undefined,
-  addConnection: (data: ConnectionAndAppSetting) => Promise<void>,
-  getConfiguration: (connectionId: string) => Promise<any>,
   tenantId: string | undefined,
   objectId: string | undefined,
-  location: string,
-  getConnectionsData: () => ConnectionsData
+  location: string
 ): any => {
   const armUrl = 'https://management.azure.com';
   const baseUrl = `${armUrl}${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management`;
@@ -334,8 +275,7 @@ const getResourceBasedServices = (
       httpClient,
     },
     workflowAppDetails: { appName: resourceName, identity: workflowApp?.identity as any },
-    readConnections: () => Promise.resolve(getConnectionsData() as any),
-    writeConnection: addConnection as any,
+    readConnections: () => Promise.resolve({}),
   });
   const oAuthService = new StandaloneOAuthService({
     ...defaultServiceParams,
@@ -350,7 +290,7 @@ const getResourceBasedServices = (
   const connectorService = new StandardConnectorService({
     ...defaultServiceParams,
     clientSupportedOperations: [],
-    getConfiguration,
+    getConfiguration: () => Promise.resolve({}),
     schemaClient: {},
     valuesClient: {},
     apiHubServiceDetails: {
