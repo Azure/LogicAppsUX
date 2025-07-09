@@ -25,10 +25,10 @@ import {
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { clearConnectionCaches } from '../../queries/connections';
 import type { RootState } from '../../state/mcp/store';
-import { getConnectionsInWorkflowApp } from 'lib/core/configuretemplate/utils/queries';
-import { getReactQueryClient } from 'lib/core/ReactQueryProvider';
-import { convertConnectionsDataToReferences } from 'lib/core/mcp/utils/helper';
-import { initializeConnectionReferences, initializeConnectionsMappings } from 'lib/core/state/connection/connectionSlice';
+import { getConnectionsInWorkflowApp } from '../../configuretemplate/utils/queries';
+import { getReactQueryClient } from '../../ReactQueryProvider';
+import { convertConnectionsDataToReferences } from '../../mcp/utils/helper';
+import { initializeConnectionReferences, initializeConnectionsMappings } from '../../state/connection/connectionSlice';
 
 export interface McpServiceOptions {
   connectionService: IConnectionService;

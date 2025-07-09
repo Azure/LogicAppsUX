@@ -7,6 +7,7 @@ import { useDispatch } from 'react-redux';
 import type { AppDispatch } from '../../../core/state/mcp/store';
 import { McpPanelRoot } from '../panel/mcpPanelRoot';
 import { useRef } from 'react';
+import { initializeOperationsMetadata } from '../../../core/actions/bjsworkflow/mcp';
 
 export const McpWizard = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -20,6 +21,15 @@ export const McpWizard = () => {
       openPanelView({
         panelView: McpPanelView.SelectConnector,
         selectedConnectorId: undefined,
+      })
+    );
+  };
+
+  const handleLoadOperations = () => {
+    dispatch(
+      initializeOperationsMetadata({
+        connectorId: '',
+        operations: [],
       })
     );
   };
@@ -77,7 +87,7 @@ export const McpWizard = () => {
       <Text size={600} weight="semibold">
         {'Test section'}
       </Text>
-      <Button icon={<Add24Regular />} onClick={handleAddConnectors}>
+      <Button icon={<Add24Regular />} onClick={handleLoadOperations}>
         {'Load operations'}
       </Button>
       <McpPanelRoot panelContainerRef={panelContainerRef} />
