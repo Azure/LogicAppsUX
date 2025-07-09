@@ -59,6 +59,7 @@ import { CopyTooltip } from '../common/DesignerContextualMenu/CopyTooltip';
 import { useNodeRepetition, useAgentRepetition, useAgentActionsRepetition } from '../../core/queries/runs';
 import { EdgeDrawTargetHandle } from './handles/EdgeDrawTargetHandle';
 import { DefaultHandle } from './handles/DefaultHandle';
+import { EdgeDrawSourceHandle } from './handles/EdgeDrawSourceHandle';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
@@ -434,7 +435,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
           />
           {showCopyCallout ? <CopyTooltip id={scopeId} targetRef={rootRef} hideTooltip={clearCopyCallout} /> : null}
           {shouldShowPager ? renderLoopsPager : null}
-          <DefaultHandle type="source" />
+          {isFooter ? <EdgeDrawSourceHandle /> : <DefaultHandle type="source" />}
         </div>
       </div>
       {graphCollapsed && !isFooter ? (
