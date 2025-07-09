@@ -18,18 +18,24 @@ export const McpWizardProvider = ({ locale = 'en', useExternalRedux = false, chi
   const content = (
     <McpWrappedContext.Provider value={{ readOnly: false }}>
       <FluentProvider theme={webTheme} style={{ height: 'inherit' }}>
-        <IntlProvider
-          locale={locale}
-          defaultLocale={locale}
-          onError={(err) => {
-            if (err.code === 'MISSING_TRANSLATION') {
-              return;
-            }
-            throw err;
-          }}
+        <div
+          data-color-scheme={theme}
+          className={`msla-theme-${theme}`}
+          style={{ display: 'flex', flexDirection: 'column', height: 'inherit', overflow: 'hidden' }}
         >
-          {children}
-        </IntlProvider>
+          <IntlProvider
+            locale={locale}
+            defaultLocale={locale}
+            onError={(err) => {
+              if (err.code === 'MISSING_TRANSLATION') {
+                return;
+              }
+              throw err;
+            }}
+          >
+            {children}
+          </IntlProvider>
+        </div>
       </FluentProvider>
     </McpWrappedContext.Provider>
   );

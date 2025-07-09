@@ -31,3 +31,7 @@ export const HostService = (): IHostService => {
 
   return service;
 };
+
+export const TryGetHostService = (): IHostService | undefined => {
+  return service;
+};
