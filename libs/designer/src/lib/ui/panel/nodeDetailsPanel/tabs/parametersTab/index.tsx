@@ -14,7 +14,6 @@ import { useIsPanelInPinnedViewMode, usePanelLocation } from '../../../../../cor
 import {
   useAllowUserToChangeConnection,
   useConnectorName,
-  useIsInlineConnection,
   useNodeConnectionName,
   useOperationInfo,
 } from '../../../../../core/state/selectors/actionMetadataSelector';
@@ -135,7 +134,6 @@ export const ParametersTab: React.FC<ParametersTabProps> = (props) => {
   const connectionName = useNodeConnectionName(selectedNodeId);
   const operationInfo = useOperationInfo(selectedNodeId);
   const showConnectionDisplay = useAllowUserToChangeConnection(operationInfo);
-  const isInlineConnection = useIsInlineConnection(operationInfo);
   const showIdentitySelector = useShowIdentitySelectorQuery(selectedNodeId);
   const errorInfo = useOperationErrorInfo(selectedNodeId);
   const replacedIds = useReplacedIds();
@@ -233,7 +231,7 @@ export const ParametersTab: React.FC<ParametersTabProps> = (props) => {
           />
         </div>
       ))}
-      {!isInlineConnection && operationInfo && showConnectionDisplay && connectionName.isLoading !== undefined ? (
+      {operationInfo && showConnectionDisplay && connectionName.isLoading !== undefined ? (
         <>
           <Divider style={{ padding: '16px 0px' }} />
           <ConnectionDisplay
