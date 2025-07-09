@@ -1,16 +1,16 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
-import resourceReducer from './resourceSlice';
-import mcpOptionsReducer from './mcpOptionsSlice';
+import mcpOptionsReducer from './mcpOptions/mcpOptionsSlice';
 import operationReducer from '../operation/operationMetadataSlice';
+import panelReducer from './panel/mcpPanelSlice';
 import connectionReducer from '../connection/connectionSlice';
-import panelReducer from '../panel/panelSlice';
+import resourceReducer from './resourceSlice';
 
 const rootReducer = combineReducers({
   resource: resourceReducer,
   operation: operationReducer,
   connection: connectionReducer,
   mcpOptions: mcpOptionsReducer,
-  panel: panelReducer,
+  mcpPanel: panelReducer,
 });
 
 export const setupStore = (preloadedState?: Partial<RootState>) => {

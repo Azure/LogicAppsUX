@@ -1,7 +1,6 @@
 import type React from 'react';
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 import type { ResourceState } from '../state/mcp/resourceSlice';
-import { McpWrappedContext } from './McpWizardContext';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../state/mcp/store';
 import { setInitialData } from '../state/mcp/resourceSlice';
@@ -14,14 +13,12 @@ export interface McpDataProviderProps {
   children?: React.ReactNode;
 }
 
-const DataProviderInner = ({ children }: McpDataProviderProps) => {
+const DataProviderInner = ({ children }: { children?: React.ReactNode }) => {
   return <>{children}</>;
 };
 
-export const McpDataProvider = (props: McpDataProviderProps) => {
-  const wrapped = useContext(McpWrappedContext);
+export const McpDataProvider = ({ resourceDetails, services, onResourceChange, children }: McpDataProviderProps) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { resourceDetails, services, onResourceChange } = props;
 
   const { logicAppId, servicesInitialized } = useSelector((state: RootState) => ({
     logicAppId: state.resource.logicAppId,
@@ -29,7 +26,7 @@ export const McpDataProvider = (props: McpDataProviderProps) => {
   }));
 
   useEffect(() => {
-    if (!servicesInitialized) {
+    if (!servicesInitialized && services) {
       dispatch(initializeMcpServices(services));
     }
   }, [dispatch, servicesInitialized, services]);
@@ -50,13 +47,5 @@ export const McpDataProvider = (props: McpDataProviderProps) => {
     }
   }, [logicAppId, onResourceChange, resourceDetails]);
 
-  if (!wrapped) {
-    throw new Error('McpDataProvider must be used inside of a McpWrappedContext');
-  }
-
-  if (!servicesInitialized) {
-    return null;
-  }
-
-  return <DataProviderInner {...props} />;
+  return <DataProviderInner>{children}</DataProviderInner>;
 };
