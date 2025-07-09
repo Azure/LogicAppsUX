@@ -24,10 +24,15 @@ export const McpWizard = () => {
   };
 
   const handleLoadOperations = () => {
+    const connectorId =
+      '/subscriptions/f34b22a3-2202-4fb1-b040-1332bd928c84/providers/Microsoft.Web/locations/northcentralus/managedApis/office365';
     dispatch(
       initializeOperationsMetadata({
-        connectorId: '',
-        operations: [],
+        operations: [
+          { connectorId, operationId: 'SendEmailV2', type: 'apiconnection' },
+          { connectorId, operationId: 'ForwardEmail_V2', type: 'apiconnection' },
+          { connectorId, operationId: 'ContactGetItems_V2', type: 'apiconnection' },
+        ],
       })
     );
   };
