@@ -1,4 +1,7 @@
-import type { ConnectionReferences, ConnectionsData } from '@microsoft/logic-apps-shared';
+import { LogEntryLevel, LoggerService, type ConnectionReferences, type ConnectionsData } from '@microsoft/logic-apps-shared';
+import { getSwaggerForConnector } from '../../queries/connections';
+import type { NodeOperation, NodeOperationInputsData } from '../../state/operation/operationMetadataSlice';
+import { getInputParametersFromSwagger, getOutputParametersFromSwagger } from '../../utils/swagger/operation';
 
 export const convertConnectionsDataToReferences = (connectionsData: ConnectionsData | undefined): ConnectionReferences => {
   const references: any = {};
@@ -60,4 +63,40 @@ export const convertConnectionsDataToReferences = (connectionsData: ConnectionsD
   }
 
   return references;
+};
+
+export const initializeOperationDetails = async (
+  nodeId: string,
+  operationInfo: NodeOperation
+): Promise<NodeOperationInputsData | undefined> => {
+  try {
+    const parsedSwagger = await getSwaggerForConnector(operationInfo.connectorId);
+    const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromSwagger(
+      nodeId,
+      /* isTrigger */ false,
+      parsedSwagger,
+      operationInfo
+    );
+    const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromSwagger(
+      /* isTrigger */ false,
+      parsedSwagger,
+      operationInfo,
+      nodeInputs
+    );
+    return {
+      id: nodeId,
+      nodeInputs,
+      nodeOutputs,
+      operationInfo,
+      nodeDependencies: { inputs: inputDependencies, outputs: outputDependencies },
+    };
+  } catch (error: any) {
+    LoggerService().log({
+      level: LogEntryLevel.Error,
+      area: 'MCP.initializeOperationDetails',
+      error,
+      message: `Error while initializing operation details for connectorId: ${operationInfo.connectorId}, nodeId: ${nodeId}`,
+    });
+    return undefined;
+  }
 };

@@ -162,6 +162,7 @@ export interface NodeOperationInputsData {
   nodeInputs: NodeInputs;
   nodeDependencies: NodeDependencies;
   operationInfo: NodeOperation;
+  nodeOutputs?: NodeOutputs;
 }
 
 export interface NodeData {
@@ -237,10 +238,14 @@ export const operationMetadataSlice = createSlice({
           return;
         }
 
-        const { id, nodeInputs, nodeDependencies, operationInfo } = nodeData;
+        const { id, nodeInputs, nodeOutputs, nodeDependencies, operationInfo } = nodeData;
         state.inputParameters[id] = nodeInputs;
         state.dependencies[id] = nodeDependencies;
         state.operationInfo[id] = operationInfo;
+
+        if (nodeOutputs) {
+          state.outputParameters[id] = nodeOutputs;
+        }
       }
       state.loadStatus.nodesInitialized = true;
     },
