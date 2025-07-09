@@ -182,12 +182,12 @@ export class ConsumptionRunService implements IRunService {
    * @returns A promise that resolves with the response containing the scope repetitions.
    * @throws Throws an error if the HTTP request fails.
    */
-  async getMoreScopeRepetitions(continuationToken: string): Promise<any> {
+  async getMoreScopeRepetitions(continuationToken: string): Promise<{ value: LogicAppsV2.RunRepetition[]; nextLink?: string }> {
     const { httpClient } = this.options;
     const headers = this.getAccessTokenHeaders();
 
     try {
-      const response = await httpClient.get<LogicAppsV2.RunRepetition>({
+      const response = await httpClient.get<{ value: LogicAppsV2.RunRepetition[]; nextLink?: string }>({
         uri: continuationToken,
         headers: headers as Record<string, any>,
       });

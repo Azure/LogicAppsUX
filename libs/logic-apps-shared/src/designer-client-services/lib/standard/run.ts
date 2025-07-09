@@ -188,7 +188,7 @@ export class StandardRunService implements IRunService {
    * @returns A promise that resolves to the response containing the scope repetitions.
    * @throws Throws an error if the HTTP request fails.
    */
-  async getMoreScopeRepetitions(continuationToken: string): Promise<{ value: LogicAppsV2.RunRepetition[] }> {
+  async getMoreScopeRepetitions(continuationToken: string): Promise<{ value: LogicAppsV2.RunRepetition[]; nextLink?: string }> {
     const { httpClient } = this.options;
 
     try {
