@@ -3,7 +3,7 @@ import { Text, Button } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular, ArrowLeft24Regular } from '@fluentui/react-icons';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
-import { useAllManagedConnectors } from '../../../core/queries/browse';
+import { useAllConnectors } from '../../../core/queries/browse';
 import { useConnectorSelectionStyles } from './connectorSelectionStyles';
 import type { RootState } from '../../../core/state/mcp/store';
 
@@ -20,7 +20,7 @@ export const OperationSelectionPanel = ({ onDismiss, onBack }: ConnectorDetailPa
   const styles = useConnectorSelectionStyles();
 
   const { selectedConnectorId } = useSelector((state: RootState) => state.mcpPanel);
-  const { data: allConnectors } = useAllManagedConnectors();
+  const { data: allConnectors } = useAllConnectors();
 
   const selectedConnector = useMemo(() => allConnectors?.find((c) => c.id === selectedConnectorId), [allConnectors, selectedConnectorId]);
 
