@@ -12,11 +12,13 @@ import { openPanelView, McpPanelView, closePanel } from '../../../core/state/mcp
 
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
-interface ConnectorSelectionPanelProps {
-  onDismiss: () => void;
-}
+// interface ConnectorSelectionPanelProps {
+//   onDismiss: () => void;
+// }
 
-export const ConnectorSelectionPanel = ({ onDismiss }: ConnectorSelectionPanelProps) => {
+export const SelectConnectors = (
+  // { onDismiss }: ConnectorSelectionPanelProps
+) => {
   const intl = useIntl();
   const styles = useConnectorSelectionStyles();
   const dispatch = useDispatch();
@@ -55,8 +57,8 @@ export const ConnectorSelectionPanel = ({ onDismiss }: ConnectorSelectionPanelPr
 
   const handleDismiss = useCallback(() => {
     dispatch(closePanel());
-    onDismiss();
-  }, [dispatch, onDismiss]);
+    // onDismiss();
+  }, [dispatch]);
 
   const INTL_TEXT = {
     title: intl.formatMessage({

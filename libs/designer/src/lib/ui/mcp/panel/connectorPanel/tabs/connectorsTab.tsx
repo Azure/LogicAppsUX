@@ -3,10 +3,7 @@ import constants from '../../../../../common/constants';
 import type { McpConnectorPanelProps, McpPanelTabProps } from '@microsoft/designer-ui';
 import type { IntlShape } from 'react-intl';
 import { selectPanelTab } from '../../../../../core/state/mcp/panel/mcpPanelSlice';
-
-export const ConnectorsComponent = () => {
-  return null;
-};
+import { SelectConnectors } from '../../../connectors/SelectConnectors';
 
 export const connectorsTab = (
   intl: IntlShape,
@@ -19,7 +16,7 @@ export const connectorsTab = (
     id: 'BimumA',
     description: 'The tab label for the add connector tab on the connector panel',
   }),
-  content: <ConnectorsComponent />,
+  content: <SelectConnectors />,
   disabled: isTabDisabled,
   footerContent: {
     buttonContents: [
