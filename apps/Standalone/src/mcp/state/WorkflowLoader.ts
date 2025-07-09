@@ -14,6 +14,7 @@ export interface WorkflowLoadingState {
   theme: ThemeType;
   language: string;
   enableResourceSelection?: boolean;
+  toolboxOpen?: boolean;
 }
 
 const initialState: WorkflowLoadingState = {
@@ -22,6 +23,7 @@ const initialState: WorkflowLoadingState = {
   isLocal: false,
   theme: ThemeType.Light,
   language: 'en',
+  toolboxOpen: true,
 };
 
 export const workflowLoaderSlice = createSlice({
@@ -64,10 +66,13 @@ export const workflowLoaderSlice = createSlice({
     changeTheme: (state, action: PayloadAction<ThemeType>) => {
       state.theme = action.payload;
     },
+    setToolboxOpen: (state, action: PayloadAction<boolean>) => {
+      state.toolboxOpen = action.payload;
+    },
   },
 });
 
-export const { setResourcePath, setAppid, setWorkflowName, clearWorkflowDetails, setHostingPlan, changeRunId } =
+export const { setResourcePath, setAppid, setWorkflowName, clearWorkflowDetails, setHostingPlan, changeRunId, setToolboxOpen } =
   workflowLoaderSlice.actions;
 
 export default workflowLoaderSlice.reducer;
