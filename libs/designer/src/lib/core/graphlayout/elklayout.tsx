@@ -168,14 +168,13 @@ const convertWorkflowGraphToElkGraph = (node: WorkflowNode): ElkNode => {
   const children = node.children?.map(convertWorkflowGraphToElkGraph);
 
   // Remove edges that are pointing to nodes that don't exist
+  const childIdsSet = new Set(children?.map((child) => child.id) ?? []);
   const filteredEdges =
     node.edges?.filter((edge) => {
-      const sourceExists = children?.find((child) => child.id === edge.source);
-      if (!sourceExists) {
+      if (!childIdsSet.has(edge.source)) {
         return false; // Remove edge if source does not exist
       }
-      const targetExists = children?.find((child) => child.id === edge.target);
-      if (!targetExists) {
+      if (!childIdsSet.has(edge.target)) {
         return false; // Remove edge if target does not exist
       }
       return true; // Keep edge if both source and target exist
