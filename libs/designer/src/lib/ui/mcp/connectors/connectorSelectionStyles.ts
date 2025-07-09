@@ -8,19 +8,6 @@ export const useConnectorSelectionStyles = makeStyles({
     background: tokens.colorNeutralBackground1,
   },
 
-  header: {
-    padding: '16px 20px',
-    borderBottom: `1px solid ${tokens.colorNeutralStroke2}`,
-    background: tokens.colorNeutralBackground1,
-    flexShrink: 0,
-  },
-
-  headerContent: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '12px',
-  },
-
   searchSection: {
     padding: '16px 20px',
     borderBottom: `1px solid ${tokens.colorNeutralStroke2}`,
