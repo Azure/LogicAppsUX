@@ -410,9 +410,10 @@ export const buildGraphFromActions = (
         for (const [_handoffName, handoffAction] of Object.entries(toolValue.actions ?? {})) {
           if (equals(handoffAction.type, 'AgentHandoff')) {
             // Create an edge for the handoff action
+            const handoffSource = actionName;
             const handoffTarget = (handoffAction as any).inputs?.name ?? '';
-            if (handoffTarget !== '') {
-              edges.push(createWorkflowEdge(actionName, `${handoffTarget}`, WORKFLOW_EDGE_TYPES.HANDOFF_EDGE));
+            if (handoffTarget !== '' && allActionNames.includes(handoffTarget)) {
+              edges.push(createWorkflowEdge(handoffSource, `${handoffTarget}`, WORKFLOW_EDGE_TYPES.HANDOFF_EDGE));
             }
           }
         }

@@ -164,14 +164,30 @@ const convertWorkflowGraphToElkGraph = (node: WorkflowNode): ElkNode => {
       },
     };
   }
+
   const children = node.children?.map(convertWorkflowGraphToElkGraph);
+
+  // Remove edges that are pointing to nodes that don't exist
+  const filteredEdges =
+    node.edges?.filter((edge) => {
+      const sourceExists = children?.find((child) => child.id === edge.source);
+      if (!sourceExists) {
+        return false; // Remove edge if source does not exist
+      }
+      const targetExists = children?.find((child) => child.id === edge.target);
+      if (!targetExists) {
+        return false; // Remove edge if target does not exist
+      }
+      return true; // Keep edge if both source and target exist
+    }) ?? [];
+
   return {
     id: node.id,
     height: node.height,
     width: node.width,
     children,
     edges:
-      node.edges?.map((edge) => ({
+      filteredEdges?.map((edge) => ({
         id: edge.id,
         sources: [edge.source],
         targets: [edge.target],
@@ -183,7 +199,7 @@ const convertWorkflowGraphToElkGraph = (node: WorkflowNode): ElkNode => {
       'elk.padding': '[top=0,left=16,bottom=48,right=16]', // allow space for add buttons
       'elk.position': '(0, 0)', // See 'crossingMinimization.semiInteractive' above
       nodeType: node?.type ?? WORKFLOW_NODE_TYPES.GRAPH_NODE,
-      ...(node.edges?.some((edge) => edge.type === WORKFLOW_EDGE_TYPES.ONLY_EDGE) && {
+      ...(filteredEdges?.some((edge) => edge.type === WORKFLOW_EDGE_TYPES.ONLY_EDGE) && {
         'elk.layered.nodePlacement.strategy': 'SIMPLE',
         'elk.layered.spacing.edgeNodeBetweenLayers': spacing.onlyEdge,
         'elk.layered.spacing.nodeNodeBetweenLayers': spacing.onlyEdge,
