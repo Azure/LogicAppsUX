@@ -149,6 +149,10 @@
 .react-flow__edge-path {
   stroke-width: 2 !important;
 
+	&.handoff {
+		stroke: #3352b9;
+	}
+
   &.highlighted {
     stroke: #1f85ff;
   }
@@ -158,6 +162,10 @@
   marker>path {
     fill: @ms-color-edge;
   }
+
+	marker.handoff>path {
+		fill: #3352b9;
+	}
 
   marker.highlighted>path {
     fill: #1f85ff;
@@ -208,6 +216,10 @@
   .react-flow__edge-path {
     stroke: @ms-color-edge-dark;
 
+		&.handoff {
+			stroke: #3352b9;
+		}
+
     &.highlighted {
       stroke: #1f85ff;
     }
@@ -217,6 +229,10 @@
     marker>path {
       fill: @ms-color-edge-dark;
     }
+
+		marker.handoff>path {
+			fill: #3352b9;
+		}
 
     marker.highlighted>path {
       fill: #1f85ff;
