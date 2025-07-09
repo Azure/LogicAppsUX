@@ -6,7 +6,7 @@ export interface ResourceState {
   subscriptionId: string;
   resourceGroup: string;
   location: string;
-  logicAppId?: string;
+  logicAppName?: string;
 }
 
 const initialState: ResourceState = {
@@ -32,14 +32,12 @@ export const resourceSlice = createSlice({
       state.resourceGroup = resourceGroup;
       state.location = location;
     },
-    setResourceGroup: (state, action: PayloadAction<string>) => {
-      state.resourceGroup = action.payload;
-    },
-    setLocation: (state, action: PayloadAction<string>) => {
-      state.location = action.payload;
-    },
-    setLogicAppId: (state, action: PayloadAction<string>) => {
-      state.logicAppId = action.payload;
+    setLogicApp: (state, action: PayloadAction<InitialResourceState & { logicAppName: string }>) => {
+      const { subscriptionId, resourceGroup, location, logicAppName } = action.payload;
+      state.subscriptionId = subscriptionId;
+      state.resourceGroup = resourceGroup;
+      state.location = location;
+      state.logicAppName = logicAppName;
     },
   },
   extraReducers: (builder) => {
@@ -47,5 +45,5 @@ export const resourceSlice = createSlice({
   },
 });
 
-export const { setInitialData, setResourceGroup, setLocation, setLogicAppId } = resourceSlice.actions;
+export const { setInitialData, setLogicApp } = resourceSlice.actions;
 export default resourceSlice.reducer;

@@ -24,6 +24,11 @@ import {
 } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { clearConnectionCaches } from '../../queries/connections';
+import type { RootState } from '../../state/mcp/store';
+import { getConnectionsInWorkflowApp } from 'lib/core/configuretemplate/utils/queries';
+import { getReactQueryClient } from 'lib/core/ReactQueryProvider';
+import { convertConnectionsDataToReferences } from 'lib/core/mcp/utils/helper';
+import { initializeConnectionReferences, initializeConnectionsMappings } from 'lib/core/state/connection/connectionSlice';
 
 export interface McpServiceOptions {
   connectionService: IConnectionService;
@@ -55,9 +60,17 @@ export const initializeMcpServices = createAsyncThunk('initializeMcpServices', a
 
 export const resetMcpStateOnResourceChange = createAsyncThunk(
   'resetMcpStateOnResourceChange',
-  async (services: Partial<McpServiceOptions>) => {
+  async (services: Partial<McpServiceOptions>, { dispatch, getState }) => {
     clearConnectionCaches();
     initializeServices(services);
+
+    const {
+      resource: { subscriptionId, resourceGroup, logicAppName },
+    } = getState() as RootState;
+    const connectionsData = await getConnectionsInWorkflowApp(subscriptionId, resourceGroup, logicAppName as string, getReactQueryClient());
+    const references = convertConnectionsDataToReferences(connectionsData);
+    dispatch(initializeConnectionReferences(references));
+    dispatch(initializeConnectionsMappings({}));
     return true;
   }
 );

@@ -127,9 +127,7 @@ export const McpStandard = () => {
 
   useEffect(() => {
     if (shouldReload) {
-      const {
-        resource: { logicAppId },
-      } = mcpStore.getState();
+      const logicAppId = getWorkflowAppIdFromStore();
       if (equals(logicAppId, workflowAppData?.id)) {
         mcpStore.dispatch(
           resetMcpStateOnResourceChange(
@@ -144,10 +142,10 @@ export const McpStandard = () => {
   const onResourceChange = useCallback(async () => {
     const {
       mcpOptions: { reInitializeServices },
-      resource: { logicAppId },
     } = mcpStore.getState();
     console.log('onReloadServices - Resource is updated');
     if (reInitializeServices) {
+      const logicAppId = getWorkflowAppIdFromStore();
       if (logicAppId && !equals(logicAppId, appId)) {
         try {
           const appData = await getWorkflowAppFromCache(logicAppId, hostingPlan);
@@ -312,4 +310,11 @@ const getResourceBasedServices = (
     connectorService,
     searchService,
   };
+};
+
+const getWorkflowAppIdFromStore = () => {
+  const { subscriptionId, resourceGroup, logicAppName } = mcpStore.getState().resource;
+  return subscriptionId && resourceGroup && logicAppName
+    ? `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/sites/${logicAppName}`
+    : '';
 };
