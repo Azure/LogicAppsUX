@@ -27,8 +27,13 @@ import { clearConnectionCaches } from '../../queries/connections';
 import type { RootState } from '../../state/mcp/store';
 import { getConnectionsInWorkflowApp } from '../../configuretemplate/utils/queries';
 import { getReactQueryClient } from '../../ReactQueryProvider';
-import { convertConnectionsDataToReferences } from '../../mcp/utils/helper';
+import { convertConnectionsDataToReferences, initializeOperationDetails } from '../../mcp/utils/helper';
 import { initializeConnectionReferences, initializeConnectionsMappings } from '../../state/connection/connectionSlice';
+import {
+  initializeNodeOperationInputsData,
+  type NodeOperation,
+  type NodeOperationInputsData,
+} from '../../state/operation/operationMetadataSlice';
 
 export interface McpServiceOptions {
   connectionService: IConnectionService;
@@ -125,7 +130,12 @@ const initializeServices = ({
 
 export const initializeOperationsMetadata = createAsyncThunk(
   'initializeOperationsMetadata',
-  async (_payload: { connectorId: string; operations: string[] }, _data): Promise<void> => {
-    // This function is a placeholder for initializing operations metadata.
+  async ({ operations }: { operations: NodeOperation[] }, { dispatch }): Promise<void> => {
+    const promises: Promise<NodeOperationInputsData | undefined>[] = operations.map((operation) =>
+      initializeOperationDetails(operation.operationId, operation)
+    );
+    const allNodeData = (await Promise.all(promises)).filter((data) => !!data) as NodeOperationInputsData[];
+
+    dispatch(initializeNodeOperationInputsData(allNodeData));
   }
 );
