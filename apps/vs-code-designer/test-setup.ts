@@ -1,7 +1,6 @@
 import '@testing-library/jest-dom/vitest';
 import { cleanup } from '@testing-library/react';
 import { afterEach, vi } from 'vitest';
-import { COMMON_ERRORS } from './src/constants';
 
 // https://testing-library.com/docs/react-testing-library/api#cleanup
 afterEach(() => cleanup());
@@ -36,14 +35,7 @@ vi.mock('@microsoft/vscode-azext-utils', () => {
     parseError: vi.fn(() => {
       return { message: 'error' };
     }),
-    UserCancelledError: class UserCancelledError extends Error {
-      constructor() {
-        super(COMMON_ERRORS.OPERATION_CANCELLED);
-      }
-    },
     DialogResponses: vi.fn(),
-    AzExtTreeItem: class AzExtTreeItem {},
-    AzExtParentTreeItem: class AzExtParentTreeItem {},
   };
 });
 
@@ -105,11 +97,8 @@ vi.mock('vscode', () => ({
 vi.mock('./src/extensionVariables', () => ({
   ext: {
     outputChannel: {
-      show: vi.fn(),
       appendLog: vi.fn(),
     },
     designTimeInstances: new Map(),
-    pinnedBundleVersion: new Map(),
-    currentBundleVersion: new Map(),
   },
 }));
