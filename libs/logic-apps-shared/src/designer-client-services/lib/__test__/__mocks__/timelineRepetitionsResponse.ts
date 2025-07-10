@@ -63,7 +63,6 @@ export const TimelineRepetitionsMock: { value: any[] } = {
         a2ametadata: {
           taskId: 0,
         }
-        
       },
       id: "/workflows/multiagent/runs/08584543176225710360248387968CU00/actions/default/agentRepetitions/000001",
       name: "000001",

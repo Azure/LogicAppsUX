@@ -25,9 +25,9 @@ import {
   setTimelineRepetitionArray,
   setTimelineRepetitionIndex,
 } from '../../core/state/workflow/workflowSlice';
-import type { WorkflowRunTrigger } from '@microsoft/logic-apps-shared/src/utils/src/lib/models/logicAppsV2';
 import { useMonitoringTimelineStyles } from './monitoringTimeline.styles';
 import { useIntl } from 'react-intl';
+import { parseRepetitions } from './helpers';
 
 const ChevronUpIcon = bundleIcon(ChevronUpFilled, ChevronUpRegular);
 const ChevronDownIcon = bundleIcon(ChevronDownFilled, ChevronDownRegular);
@@ -41,53 +41,14 @@ const MonitoringTimeline = () => {
   const { data: repetitionData, isFetching: isFetchingRepetitions, refetch: refetchTimelineRepetitions } = useTimelineRepetitions();
 
   const repetitions = useMemo(() => {
-    if ((repetitionData ?? []).length === 0) {
-      return [];
-    }
-    const output: {
-      actionIds: string[] | undefined;
-      repetitionIndex: number;
-      data?: TimelineRepetition;
-    }[] = [];
-    // Add trigger (not a repetition)
-    const triggerId = runInstance?.properties?.trigger?.name ?? '';
-    const trigger = runInstance?.properties?.trigger as WorkflowRunTrigger;
-    output.push({
-      actionIds: [triggerId],
-      repetitionIndex: -1,
-      data: {
-        id: triggerId,
-        name: triggerId,
-        properties: {
-          actions: {
-            [triggerId]: trigger,
-          },
-          canResubmit: trigger?.canResubmit ?? false,
-          correlation: trigger?.correlation ?? '',
-          startTime: trigger?.startTime ?? '',
-          status: trigger?.status ?? 'Unknown',
-        },
-        type: 'trigger',
-      },
-    });
-    // Add all repetitions
-    output.push(
-      ...(repetitionData ?? [])
-        .map((repetition: any) => ({
-          actionIds: Object.keys(repetition.properties.actions ?? {}),
-          repetitionIndex: Number(repetition.name),
-          data: repetition,
-        }))
-        .filter((repetition: any) => repetition.actionIds?.length > 0)
-    );
-    return output;
-  }, [repetitionData, runInstance?.properties?.trigger]);
+    return parseRepetitions(repetitionData, runInstance);
+  }, [repetitionData, runInstance]);
 
   useEffect(() => {
     dispatch(setTimelineRepetitionArray((repetitions ?? []).map((repetition) => repetition.actionIds ?? [])));
   }, [dispatch, repetitions]);
 
-  const [expanded, setExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const [transitionIndex, setTransitionIndex] = useState(-1);
 
@@ -130,11 +91,11 @@ const MonitoringTimeline = () => {
 
   return (
     <div style={{ position: 'absolute' }}>
-      <Card className={styles.monitoringTimelineRoot} onMouseOver={() => setExpanded(true)} onMouseOut={() => setExpanded(false)}>
-        <TimelineHeader expanded={expanded} refetchTimelineRepetitions={refetchTimelineRepetitions} />
+      <Card className={styles.monitoringTimelineRoot} onMouseOver={() => setIsExpanded(true)} onMouseOut={() => setIsExpanded(false)}>
+        <TimelineHeader isExpanded={isExpanded} refetchTimelineRepetitions={refetchTimelineRepetitions} />
         <Divider />
         <TimelineContent
-          expanded={expanded}
+          isExpanded={isExpanded}
           isFetchingRepetitions={isFetchingRepetitions}
           noRepetitions={noRepetitions}
           transitionIndex={transitionIndex}
@@ -143,7 +104,7 @@ const MonitoringTimeline = () => {
         />
         <Divider />
         <TimelineButtons
-          expanded={expanded}
+          isExpanded={isExpanded}
           transitionIndex={transitionIndex}
           setTransitionIndex={setTransitionIndex}
           repetitions={repetitions}
@@ -155,14 +116,14 @@ const MonitoringTimeline = () => {
 };
 
 const TimelineContent = ({
-  expanded,
+  isExpanded,
   isFetchingRepetitions,
   noRepetitions,
   transitionIndex,
   repetitions,
   setTransitionIndex,
 }: {
-  expanded: boolean;
+  isExpanded: boolean;
   isFetchingRepetitions: boolean;
   noRepetitions: boolean;
   transitionIndex: number;
@@ -188,85 +149,107 @@ const TimelineContent = ({
         id: 'CemHmO',
         description: 'Text displayed when the monitoring timeline is loading.',
       }),
+      taskCount: (count: number) =>
+        intl.formatMessage(
+          {
+            defaultMessage: 'Task #{count}',
+            id: 'wbjWVF',
+            description: 'Text displaying the task number.',
+          },
+          { count }
+        ),
     }),
     [intl]
   );
 
+  if (isFetchingRepetitions) {
+    return (
+      <div className={styles.loadingContainer}>
+        <Spinner style={{ gap: `${isExpanded ? '8px' : '0px'}` }} size="extra-small" label={isExpanded ? text.loading : ''} />
+      </div>
+    );
+  }
+
+  if (noRepetitions) {
+    return (
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: '8px',
+          ...(isExpanded ? { minWidth: '200px' } : {}),
+        }}
+      >
+        <BorderNoneRegular style={{ color: '#80808080', width: '30px', height: '30px' }} />
+        {isExpanded && (
+          <Text weight={'semibold'} style={{ color: '#80808080' }}>
+            {text.noData}
+          </Text>
+        )}
+      </div>
+    );
+  }
+
   return (
-    <>
-      {isFetchingRepetitions ? (
-        <div className={styles.loadingContainer}>
-          <Spinner style={{ gap: `${expanded ? '8px' : '0px'}` }} size="extra-small" label={expanded ? text.loading : ''} />
-        </div>
-      ) : noRepetitions ? (
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: '8px',
-            ...(expanded ? { minWidth: '200px' } : {}),
-          }}
-        >
-          <BorderNoneRegular style={{ color: '#80808080', width: '30px', height: '30px' }} />
-          {expanded && (
-            <Text weight={'semibold'} style={{ color: '#80808080' }}>
-              {text.noData}
-            </Text>
-          )}
-        </div>
-      ) : (
-        <div className={styles.timelineMainContent}>
-          <div
-            className={styles.timelineNodeContainer}
-            style={{
-              ...(expanded ? { scrollbarColor: 'grey transparent' } : { scrollbarWidth: 'none' }),
-            }}
-          >
-            {(repetitions ?? []).map((repetition, index) => (
-              <TimelineNode
-                key={repetition.repetitionIndex}
-                index={index}
-                selected={index === transitionIndex}
-                onSelect={() => setTransitionIndex(index)}
-                expanded={expanded}
-                data={repetition.data!}
-              />
-            ))}
+    <div className={styles.timelineMainContent}>
+      <div
+        className={styles.timelineNodeContainer}
+        style={{
+          ...(isExpanded ? { scrollbarColor: 'grey transparent' } : { scrollbarWidth: 'none' }),
+        }}
+      >
+        {(repetitions ?? []).map((repetition, index) => (
+          <div key={repetition.repetitionIndex} style={{ display: 'flex', flexDirection: 'column' }}>
+            {(index === 0 ||
+              repetition.data?.properties?.a2ametadata?.taskId !== repetitions[index - 1]?.data?.properties?.a2ametadata?.taskId) && (
+              <Text className={styles.timelineTask} align={'center'} size={200} weight={'medium'}>
+                {isExpanded
+                  ? text.taskCount((repetition.data?.properties?.a2ametadata?.taskId ?? 0) + 1)
+                  : (repetition.data?.properties?.a2ametadata?.taskId ?? 0) + 1}
+              </Text>
+            )}
+            <TimelineNode
+              index={index}
+              selected={index === transitionIndex}
+              onSelect={() => setTransitionIndex(index)}
+              isExpanded={isExpanded}
+              data={repetition.data!}
+            />
           </div>
-          {expanded && (
-            <>
-              <Slider
-                vertical
-                step={1}
-                value={transitionIndex}
-                min={0}
-                max={repetitions.length - 1}
-                onChange={(e, data) => setTransitionIndex(data.value as number)}
-                style={{ transform: 'rotate(180deg)' }}
-              />
-              <div className={styles.errorCaretContainer}>
-                {(repetitions ?? []).map((repetition, _index) =>
-                  equals(Object.values(repetition?.data?.properties?.actions ?? {})?.[0]?.status, 'failed') ? (
-                    <CaretLeftFilled key={repetition.repetitionIndex} className={styles.errorCaret} />
-                  ) : (
-                    <div key={repetition.repetitionIndex} />
-                  )
-                )}
-              </div>
-            </>
-          )}
-        </div>
+        ))}
+      </div>
+      {isExpanded && (
+        <>
+          <Slider
+            vertical
+            step={1}
+            value={transitionIndex}
+            min={0}
+            max={repetitions.length - 1}
+            onChange={(e, data) => setTransitionIndex(data.value as number)}
+            style={{ transform: 'rotate(180deg)' }}
+          />
+          <div className={styles.errorCaretContainer}>
+            {(repetitions ?? []).map((repetition, _index) =>
+              equals(Object.values(repetition?.data?.properties?.actions ?? {})?.[0]?.status, 'failed') ? (
+                <CaretLeftFilled key={repetition.repetitionIndex} className={styles.errorCaret} />
+              ) : (
+                <div key={repetition.repetitionIndex} />
+              )
+            )}
+          </div>
+        </>
       )}
-    </>
+    </div>
   );
 };
 
 const TimelineHeader = ({
-  expanded,
+  isExpanded,
   refetchTimelineRepetitions,
 }: {
-  expanded: boolean;
+  isExpanded: boolean;
   refetchTimelineRepetitions: () => void;
 }) => {
   const intl = useIntl();
@@ -290,16 +273,16 @@ const TimelineHeader = ({
         flexDirection: 'row',
         alignItems: 'center',
         gap: '8px',
-        ...(expanded ? { minWidth: '200px' } : {}),
+        ...(isExpanded ? { minWidth: '200px' } : {}),
       }}
     >
       <TimelineRegular className={styles.timelineIcon} />
-      {expanded && (
+      {isExpanded && (
         <Text weight={'semibold'} style={{ flexGrow: 1 }}>
           {text.title}
         </Text>
       )}
-      {expanded && (
+      {isExpanded && (
         <Button
           appearance="subtle"
           icon={<RefreshIcon />}
@@ -315,13 +298,13 @@ const TimelineHeader = ({
 };
 
 const TimelineButtons = ({
-  expanded,
+  isExpanded,
   transitionIndex,
   setTransitionIndex,
   repetitions,
   noRepetitions,
 }: {
-  expanded: boolean;
+  isExpanded: boolean;
   transitionIndex: number;
   setTransitionIndex: (index: number) => void;
   repetitions: {
@@ -360,7 +343,7 @@ const TimelineButtons = ({
         disabled={noRepetitions || transitionIndex === 0}
         onClick={() => setTransitionIndex(transitionIndex - 1)}
       >
-        {expanded ? text.previousTask : ''}
+        {isExpanded ? text.previousTask : ''}
       </Button>
       <Button
         appearance="subtle"
@@ -370,7 +353,7 @@ const TimelineButtons = ({
         disabled={noRepetitions || transitionIndex === repetitions.length - 1}
         onClick={() => setTransitionIndex(transitionIndex + 1)}
       >
-        {expanded ? text.nextTask : ''}
+        {isExpanded ? text.nextTask : ''}
       </Button>
     </div>
   );

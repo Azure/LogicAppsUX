@@ -13,6 +13,9 @@ export interface TimelineRepetition {
     correlation: any;
     startTime: string;
     status: string;
+    a2ametadata: {
+      taskId: number;
+    };
   };
   type: string;
 }

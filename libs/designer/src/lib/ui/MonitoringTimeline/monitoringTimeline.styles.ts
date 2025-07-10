@@ -54,6 +54,12 @@ export const useMonitoringTimelineStyles = makeStyles({
     },
   },
 
+  timelineTask: {
+    margin: '5px 0px',
+    borderRadius: '4px',
+    backgroundColor: '#1f85ff20',
+  },
+
   selectionBox: {
     position: 'absolute',
     top: '0',

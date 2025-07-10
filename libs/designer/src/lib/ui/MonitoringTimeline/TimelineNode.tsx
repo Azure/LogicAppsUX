@@ -11,13 +11,13 @@ const TimelineNode = ({
   index,
   selected,
   onSelect,
-  expanded,
+  isExpanded,
   data,
 }: {
   index: number;
   selected: boolean;
   onSelect: () => void;
-  expanded: boolean;
+  isExpanded: boolean;
   data: TimelineRepetition;
 }) => {
   const styles = useMonitoringTimelineStyles();
@@ -53,12 +53,12 @@ const TimelineNode = ({
           #{actionRepetitionCount}
         </Badge>
       )}
-      {expanded && (
+      {isExpanded && (
         <Text weight={'semibold'} style={{ flexGrow: 1, marginRight: '8px' }}>
           {nodeText}
         </Text>
       )}
-      {expanded && equals(Object.values(data.properties?.actions ?? {})?.[0]?.status, 'failed') && (
+      {isExpanded && equals(Object.values(data.properties?.actions ?? {})?.[0]?.status, 'failed') && (
         <Tooltip relationship="description" content={Object.values(data.properties?.actions ?? {})?.[0]?.error?.code ?? ''} withArrow>
           <div className={styles.errorIcon}>
             <Failed />
