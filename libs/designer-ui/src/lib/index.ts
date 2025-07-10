@@ -48,6 +48,7 @@ export * from './html';
 export * from './identitydropdown';
 export * from './infoDot';
 export * from './label';
+export * from './mcp';
 export * from './modals';
 export * from './monitoring';
 export * from './monitoring/statuspill/images';

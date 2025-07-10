@@ -1,8 +1,8 @@
-import type { PayloadAction } from '@reduxjs/toolkit';
-import { createAsyncThunk, createSlice, isAnyOf } from '@reduxjs/toolkit';
-import { setInitialData, setLocation, setResourceGroup, setSubscription } from '../resourceSlice';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { setLogicApp } from '../resourceSlice';
 import { resetMcpState } from '../../global';
 import { InitHostService, InitSearchService } from '@microsoft/logic-apps-shared';
+import { initializeMcpServices, resetMcpStateOnResourceChange } from '../../../actions/bjsworkflow/mcp';
 import type { ServiceOptions } from './mcpOptionsInterface';
 
 export interface McpOptionsState {
@@ -28,14 +28,14 @@ export const mcpOptionsSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(resetMcpState, () => initialState);
-    builder.addCase(setInitialData, (state, action: PayloadAction<any | { reloadServices: boolean }>) => {
-      state.reInitializeServices = !!action.payload.reloadServices;
+    builder.addCase(resetMcpStateOnResourceChange.fulfilled, (state, action) => {
+      state.reInitializeServices = !action.payload;
     });
-    builder.addCase(initializeServices.fulfilled, (state, action) => {
+    builder.addCase(initializeMcpServices.fulfilled, (state, action) => {
       state.servicesInitialized = action.payload;
     });
-    builder.addMatcher(isAnyOf(setSubscription, setResourceGroup, setLocation), (state, action) => {
-      state.reInitializeServices = !!action.payload;
+    builder.addCase(setLogicApp, (state, action) => {
+      state.reInitializeServices = !!action.payload?.logicAppName;
     });
   },
 });
