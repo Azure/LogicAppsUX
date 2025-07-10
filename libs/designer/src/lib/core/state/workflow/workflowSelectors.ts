@@ -83,19 +83,22 @@ export const useIsEverythingExpanded = () =>
     })
   );
 
-export const getRootWorkflowGraphForLayout = createSelector(getWorkflowState, (data) => {
-  const rootNode = data.graph;
-  const collapsedIds = data.collapsedGraphIds;
-  const collapsedActionsIds = data.collapsedActionIds;
+export const getRootWorkflowGraphForLayout = createSelector(getWorkflowState, (state) => {
+  const rootNode = state.graph;
+  const collapsedIds = state.collapsedGraphIds;
+  const collapsedActionsIds = state.collapsedActionIds;
+
   if (!rootNode) {
     return undefined;
   }
 
-  if (Object.keys(collapsedIds).length === 0 && Object.keys(collapsedActionsIds).length === 0) {
-    return rootNode;
-  }
-
   let newGraph = rootNode;
+
+  newGraph = removeSingleHandoffTools(newGraph, state);
+
+  if (Object.keys(collapsedIds).length === 0 && Object.keys(collapsedActionsIds).length === 0) {
+    return newGraph;
+  }
 
   if (Object.keys(collapsedActionsIds).length !== 0) {
     newGraph = collapseFlowTree(newGraph, collapsedActionsIds).graph;
@@ -149,6 +152,45 @@ const reduceCollapsed =
       return acc;
     }, []);
   };
+
+const removeSingleHandoffTools = (graph: WorkflowNode, state: WorkflowState): WorkflowNode => {
+  const operations = state.operations;
+
+  // Iterate over graph, if any agent action tools only have a single handoff action, log it
+  const handoffToolIds: string[] = [];
+  for (const child of graph.children ?? []) {
+    if (equals(operations[child.id]?.type, commonConstants.NODE.TYPE.AGENT)) {
+      // Check if the agent action has tools with only a handoff action
+      const tools = child?.children?.filter((_child) => _child.subGraphLocation === 'tools');
+      for (const tool of tools ?? []) {
+        const toolActions = tool.children?.filter((child) => child.type === WORKFLOW_NODE_TYPES.OPERATION_NODE) ?? [];
+        if (toolActions?.length === 1 && equals(operations[toolActions[0].id]?.type, commonConstants.NODE.TYPE.HANDOFF)) {
+          handoffToolIds.push(tool.id);
+        }
+      }
+    }
+  }
+
+  // Remove handoff tools from graph
+  if (handoffToolIds.length > 0) {
+    return filterOutNodeIdsRecursive(graph, handoffToolIds);
+  }
+
+  return graph;
+};
+
+const filterOutNodeIdsRecursive = (node: WorkflowNode, idsToFilter: string[]): WorkflowNode => {
+  const filteredEdges = node.edges?.filter((edge) => !idsToFilter.includes(edge.source) && !idsToFilter.includes(edge.target)) ?? [];
+  const filteredChildren = (node.children?.filter((child) => !idsToFilter.includes(child.id)) ?? []).map((child) =>
+    filterOutNodeIdsRecursive(child, idsToFilter)
+  );
+
+  return {
+    ...node,
+    children: filteredChildren,
+    edges: filteredEdges,
+  };
+};
 
 export const useIsGraphCollapsed = (graphId: string): boolean =>
   useSelector(createSelector(getWorkflowState, (state: WorkflowState): boolean => state.collapsedGraphIds?.[graphId] ?? false));
