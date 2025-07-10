@@ -53,7 +53,6 @@ export class BaseResourceService implements IResourceService {
     const uri = `${baseUrl}/providers/Microsoft.ResourceGraph/resources?api-version=2019-04-01`;
     const query = `resources | where type == "microsoft.web/sites" and kind contains "workflowapp"${resourceGroup ? ` and resourceGroup =~ "${resourceGroup.toLowerCase()}"` : ''}${optionalQuery ?? ''}`;
     const response = await fetchAppsByQuery(httpClient, uri, query, [subscriptionId]);
-    console.log('---response ', response);
     return response.map((item) => ({
       id: item.id,
       name: item.name,
