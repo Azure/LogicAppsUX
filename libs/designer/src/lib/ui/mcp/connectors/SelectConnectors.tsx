@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import { useAllConnectors } from '../../../core/queries/browse';
 import { useConnectorSelectionStyles } from './connectorSelectionStyles';
 import { ConnectorBrowseView } from './ConnectorBrowseView';
-import { selectPanelTab, selectNodeId } from '../../../core/state/mcp/panel/mcpPanelSlice';
+import { selectPanelTab, selectConnectorId } from '../../../core/state/mcp/panel/mcpPanelSlice';
 import constants from '../../../common/constants';
 import { SearchBox } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
@@ -19,7 +19,7 @@ export const SelectConnectors = () => {
 
   const handleConnectorSelect = useCallback(
     (connectorId: string) => {
-      dispatch(selectNodeId(connectorId));
+      dispatch(selectConnectorId(connectorId));
       dispatch(selectPanelTab(constants.MCP_PANEL_TAB_NAMES.OPERATIONS));
     },
     [dispatch]

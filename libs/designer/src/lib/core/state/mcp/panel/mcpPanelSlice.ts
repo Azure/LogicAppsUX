@@ -15,18 +15,20 @@ export interface PanelState {
   currentPanelView?: ConfigPanelView;
   selectedTabId?: string;
   selectedConnectorId: string | undefined;
+  selectedOperationId: string | undefined;
 }
 
 const initialState: PanelState = {
   isOpen: false,
   selectedConnectorId: undefined,
+  selectedOperationId: undefined,
 };
 
 export const mcpPanelSlice = createSlice({
   name: 'mcpPanel',
   initialState,
   reducers: {
-    openPanelView: (
+    openConnectorPanelView: (
       state,
       action: PayloadAction<{
         panelView: ConfigPanelView;
@@ -37,7 +39,17 @@ export const mcpPanelSlice = createSlice({
       state.currentPanelView = action.payload.panelView;
       state.isOpen = true;
     },
-    selectNodeId: (state, action: PayloadAction<string | undefined>) => {
+    openOperationPanelView: (
+      state,
+      action: PayloadAction<{
+        selectedOperationId: string | undefined;
+      }>
+    ) => {
+      state.selectedOperationId = action.payload.selectedOperationId;
+      state.currentPanelView = McpPanelView.EditOperation;
+      state.isOpen = true;
+    },
+    selectConnectorId: (state, action: PayloadAction<string | undefined>) => {
       state.selectedConnectorId = action.payload;
     },
     selectPanelTab: (state, action: PayloadAction<string | undefined>) => {
@@ -55,6 +67,6 @@ export const mcpPanelSlice = createSlice({
   },
 });
 
-export const { openPanelView, selectNodeId, selectPanelTab, closePanel } = mcpPanelSlice.actions;
+export const { openConnectorPanelView, openOperationPanelView, selectConnectorId, selectPanelTab, closePanel } = mcpPanelSlice.actions;
 
 export default mcpPanelSlice.reducer;

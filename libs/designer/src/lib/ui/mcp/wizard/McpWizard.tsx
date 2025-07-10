@@ -2,12 +2,16 @@ import { Text, Button } from '@fluentui/react-components';
 import { Add24Regular, ConnectorFilled } from '@fluentui/react-icons';
 import { useMcpWizardStyles } from './styles';
 import { useIntl } from 'react-intl';
-import { McpPanelView, openPanelView } from '../../../core/state/mcp/panel/mcpPanelSlice';
+import { McpPanelView, openConnectorPanelView } from '../../../core/state/mcp/panel/mcpPanelSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../core/state/mcp/store';
 import { McpPanelRoot } from '../panel/mcpPanelRoot';
 import { initializeOperationsMetadata } from '../../../core/actions/bjsworkflow/mcp';
+import { ListOperations } from '../operations/ListOperations';
 import { serializeMcpWorkflows } from '../../../core/mcp/utils/serializer';
+
+const sampleConnectorId =
+  '/subscriptions/f34b22a3-2202-4fb1-b040-1332bd928c84/providers/Microsoft.Web/locations/northcentralus/managedApis/office365';
 
 export const McpWizard = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -18,7 +22,7 @@ export const McpWizard = () => {
 
   const handleAddConnectors = () => {
     dispatch(
-      openPanelView({
+      openConnectorPanelView({
         panelView: McpPanelView.SelectConnector,
         selectedConnectorId: undefined,
       })
@@ -26,14 +30,12 @@ export const McpWizard = () => {
   };
 
   const handleLoadOperations = () => {
-    const connectorId =
-      '/subscriptions/f34b22a3-2202-4fb1-b040-1332bd928c84/providers/Microsoft.Web/locations/northcentralus/managedApis/office365';
     dispatch(
       initializeOperationsMetadata({
         operations: [
-          { connectorId, operationId: 'SendEmailV2', type: 'apiconnection' },
-          { connectorId, operationId: 'ForwardEmail_V2', type: 'apiconnection' },
-          { connectorId, operationId: 'ContactGetItems_V2', type: 'apiconnection' },
+          { connectorId: sampleConnectorId, operationId: 'SendEmailV2', type: 'apiconnection' },
+          { connectorId: sampleConnectorId, operationId: 'ForwardEmail_V2', type: 'apiconnection' },
+          { connectorId: sampleConnectorId, operationId: 'ContactGetItems_V2', type: 'apiconnection' },
         ],
       })
     );
@@ -100,6 +102,12 @@ export const McpWizard = () => {
       <div>
         <Button onClick={handleLoadOperations}>{'Load operations'}</Button>
         <Button onClick={handleGenerateWorkflows}>{'Generate workflows'}</Button>
+      </div>
+      <div>
+        <Text size={600} weight="semibold">
+          {'Operations section'}
+        </Text>
+        <ListOperations connectorId={sampleConnectorId} />
       </div>
 
       <McpPanelRoot />
