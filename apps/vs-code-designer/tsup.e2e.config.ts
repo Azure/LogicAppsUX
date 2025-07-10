@@ -1,36 +1,30 @@
-import { defineConfig } from 'tsup';
-import type { Options } from 'tsup';
+import { defineConfig } from "tsup";
+import type { Options } from "tsup";
 
 const e2eConfig: Options = {
-  entry: ['src/test/**/*.ts', 'src/test/**/*.js', 'src/test/vscode-environment.ts'],
-  format: ['esm'],
+  entry: ["src/test/**/*.ts"],
+  format: ["cjs"], // Changed to CommonJS for Mocha compatibility
   splitting: false,
   sourcemap: true,
   clean: false,
   external: [
     // VS Code related
-    'vscode',
+    "vscode",
     // Core Node modules
-    'path',
-    'fs',
-    'url',
-    'util',
-    'os',
-    'assert',
-    'process',
-    'module',
+    "path",
+    "fs",
+    "url",
+    "util",
+    "os",
+    "assert",
+    "process",
+    "module",
     // Test related
-    'vitest',
-    'vitest/node',
-    'vite',
-    'glob',
-    'monocart-coverage-reports',
-    '@aws-sdk/client-s3',
-    '@vitest/browser',
-    'lightningcss',
+    "glob",
+    "mocha",
   ],
   keepNames: true,
-  outDir: 'dist/e2e',
+  outDir: "dist/e2e",
 };
 
 export default defineConfig(e2eConfig);

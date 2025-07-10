@@ -1,12 +1,8 @@
 /**
- * Global declarations for VS Code API in tests
+ * This file can be used to add TypeScript type definitions for
+ * extension APIs that VS Code provides but may not be included
+ * in the standard TypeScript library
+ *
+ * For E2E tests using Mocha, the vscode module is automatically available
+ * and doesn't need any special global declarations
  */
-
-// AI attempt to fix this issue that did not work https://github.com/microsoft/vscode-test/issues/37
-// Tell TypeScript about the global vscode object
-declare global {
-  // eslint-disable-next-line no-var
-  var vscode: any;
-}
-
-export {};

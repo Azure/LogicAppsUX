@@ -7,6 +7,7 @@
     "@azure/arm-appservice": "^13.0.3",
     "@azure/arm-resourcegraph": "^4.2.1",
     "@azure/arm-storage": "17.2.1",
+    "@azure/identity": "^4.5.0",
     "@azure/ms-rest-js": "^2.6.4",
     "@azure/storage-file-share": "^12.16.0",
     "@microsoft/logic-apps-shared": "workspace:*",
@@ -18,6 +19,7 @@
     "@microsoft/vscode-extension-logic-apps": "workspace:*",
     "@types/adm-zip": "^0.5.1",
     "@types/fs-extra": "^11.0.4",
+    "@types/mocha": "^10.0.10",
     "@types/vscode": "1.76.0",
     "@types/vscode-webview": "1.57.1",
     "@vscode/extension-telemetry": "^0.9.8",
@@ -30,6 +32,7 @@
     "globby": "^11.0.2",
     "js-yaml": "4.1.0",
     "jsonc-parser": "2.3.1",
+    "mocha": "^11.7.1",
     "portfinder": "1.0.32",
     "process": "^0.11.10",
     "process-tree": "^1.0.3",
@@ -42,8 +45,7 @@
     "xml2js": "0.6.2",
     "yaml": "^2.7.0",
     "yaml-types": "^0.4.0",
-    "yargs-parser": "21.1.1",
-    "@azure/identity": "^4.5.0"
+    "yargs-parser": "21.1.1"
   },
   "private": true,
   "scripts": {
@@ -59,6 +61,7 @@
     "test:extension-unit": "vitest run --retry=3",
     "pretest": "pnpm run build:e2e",
     "test:vscode": "node ./dist/e2e/runTest.js",
-    "test:vscode:run": "pnpm run pretest"
+    "test:vscode:run": "pnpm run pretest",
+    "test:e2e": "pnpm run build:e2e && node ./dist/e2e/runTest.js"
   }
 }
