@@ -42,8 +42,7 @@ export const getNodeOperationData = (state: OperationMetadataState, nodeId: stri
   };
 };
 
-export const getOperationInputParameters = (rootState: RootState, nodeId: string): ParameterInfo[] => {
-  const nodeInputs = getRecordEntry(rootState.operations.inputParameters, nodeId);
+export const getOperationInputParameters = (nodeInputs: NodeInputs): ParameterInfo[] => {
   const allParameters: ParameterInfo[] = [];
 
   if (nodeInputs) {

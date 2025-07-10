@@ -3,11 +3,12 @@ import { Add24Regular, ConnectorFilled } from '@fluentui/react-icons';
 import { useMcpWizardStyles } from './styles';
 import { useIntl } from 'react-intl';
 import { McpPanelView, openConnectorPanelView } from '../../../core/state/mcp/panel/mcpPanelSlice';
-import { useDispatch } from 'react-redux';
-import type { AppDispatch } from '../../../core/state/mcp/store';
+import { useDispatch, useSelector } from 'react-redux';
+import type { AppDispatch, RootState } from '../../../core/state/mcp/store';
 import { McpPanelRoot } from '../panel/mcpPanelRoot';
 import { initializeOperationsMetadata } from '../../../core/actions/bjsworkflow/mcp';
 import { ListOperations } from '../operations/ListOperations';
+import { serializeMcpWorkflows } from '../../../core/mcp/utils/serializer';
 
 const sampleConnectorId =
   '/subscriptions/f34b22a3-2202-4fb1-b040-1332bd928c84/providers/Microsoft.Web/locations/northcentralus/managedApis/office365';
@@ -17,6 +18,7 @@ export const McpWizard = () => {
   const intl = useIntl();
   const styles = useMcpWizardStyles();
   const connectors = [];
+  const rootState = useSelector((state: RootState) => state);
 
   const handleAddConnectors = () => {
     dispatch(
@@ -37,6 +39,11 @@ export const McpWizard = () => {
         ],
       })
     );
+  };
+
+  const handleGenerateWorkflows = async () => {
+    const result = await serializeMcpWorkflows(rootState);
+    console.log('Generated workflows:', result);
   };
 
   const INTL_TEXT = {
@@ -92,15 +99,17 @@ export const McpWizard = () => {
       <Text size={600} weight="semibold">
         {'Test section'}
       </Text>
-      <Button icon={<Add24Regular />} onClick={handleLoadOperations}>
-        {'Load operations'}
-      </Button>
+      <div>
+        <Button onClick={handleLoadOperations}>{'Load operations'}</Button>
+        <Button onClick={handleGenerateWorkflows}>{'Generate workflows'}</Button>
+      </div>
       <div>
         <Text size={600} weight="semibold">
           {'Operations section'}
         </Text>
         <ListOperations connectorId={sampleConnectorId} />
       </div>
+
       <McpPanelRoot />
     </div>
   );
