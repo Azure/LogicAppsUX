@@ -8,6 +8,7 @@ import type {
   ConnectionParameterAllowedValue,
   ConnectionParameterSet,
   ManagedIdentity,
+  ValueSegment,
 } from '@microsoft/logic-apps-shared';
 import { ConnectionParameterTypes, equals } from '@microsoft/logic-apps-shared';
 import LegacyManagedIdentityDropdown from './legacyManagedIdentityPicker';
@@ -28,7 +29,7 @@ export interface ConnectionParameterProps {
   identity?: ManagedIdentity;
   setKeyValue?: (key: string, value: any) => void;
   parameterSet?: ConnectionParameterSet;
-  isAgentServiceConnection?: boolean;
+  operationParameterValues?: Record<string, ValueSegment>;
 }
 
 export const UniversalConnectionParameter = (props: ConnectionParameterProps) => {

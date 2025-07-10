@@ -45,7 +45,7 @@ export default {
           title: 'Agent model type',
           description: 'Type of agent model to use',
           'x-ms-editor': 'dropdown',
-          'x-ms-visibility': 'important',
+          'x-ms-visibility': 'hideInUI',
           'x-ms-editor-options': {
             options: [
               {
