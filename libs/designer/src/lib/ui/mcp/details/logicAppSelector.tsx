@@ -18,25 +18,20 @@ export const LogicAppSelector = () => {
 
   const intlText = useMemo(
     () => ({
-      VALIDATION_ERROR: intl.formatMessage({
-        defaultMessage: 'Please select a valid resource',
-        id: 'nJfJNU',
-        description: 'Validation error message when a resource is not selected',
-      }),
       LOGIC_APP: intl.formatMessage({
         defaultMessage: 'Logic app instance',
         id: 'IpD27y',
         description: 'Label field for logic app instance',
       }),
       LOADING: intl.formatMessage({
-        defaultMessage: 'Loading resources ...',
-        id: 'IMWSjN',
-        description: 'Loading text',
+        defaultMessage: 'Loading logic apps ...',
+        id: 'BwxTBw',
+        description: 'Loading logic apps',
       }),
       NO_ITEMS: intl.formatMessage({
-        defaultMessage: 'No resources found',
-        id: 'yytPY3',
-        description: 'No items to select text',
+        defaultMessage: 'No logic apps found',
+        id: '/boIFK',
+        description: 'No logic apps items to select text',
       }),
     }),
     [intl]
