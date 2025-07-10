@@ -27,9 +27,9 @@ export const useTimelineRepetitions = (): UseQueryResult<TimelineRepetition[]> =
     async () => {
       const timelineRepetitions = await RunService().getTimelineRepetitions(run!.id);
       const parsedData: TimelineRepetition[] = JSON.parse(JSON.stringify(timelineRepetitions))?.value ?? [];
-      const sortedData = parsedData.sort((a, b) => new Date(a.properties.startTime).getTime() - new Date(b.properties.startTime).getTime());
+      const sortedData = parsedData.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
 
-      await new Promise((resolve) => setTimeout(resolve, 3000)); // Allow React to update the state before returning
+      await new Promise((resolve) => setTimeout(resolve, 3000));
       return sortedData;
     },
     {
