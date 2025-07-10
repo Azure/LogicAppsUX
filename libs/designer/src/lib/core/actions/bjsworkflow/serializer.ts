@@ -443,7 +443,7 @@ const serializeManifestBasedOperation = async (rootState: RootState, operationId
     ...optional('channels', channels),
     ...optional('runAfter', runAfter),
     ...optional('recurrence', recurrence),
-    ...serializeSettings(operationId, nodeSettings, nodeStaticResults, isTrigger, rootState),
+    ...serializeSettings(nodeSettings, nodeStaticResults, isTrigger, operationFromWorkflow),
   };
 };
 
@@ -486,7 +486,7 @@ const serializeSwaggerBasedOperation = async (rootState: RootState, operationId:
     ...optional('inputs', inputs),
     ...optional('runAfter', runAfter),
     ...optional('recurrence', recurrence),
-    ...serializeSettings(operationId, nodeSettings, nodeStaticResults, isTrigger, rootState),
+    ...serializeSettings(nodeSettings, nodeStaticResults, isTrigger, operationFromWorkflow),
   };
 };
 
@@ -530,7 +530,8 @@ export interface SerializedParameter extends ParameterInfo {
 
 export const getOperationInputsToSerialize = (rootState: RootState, operationId: string): SerializedParameter[] => {
   const idReplacements = rootState.workflow.idReplacements;
-  return getOperationInputParameters(rootState, operationId).map((input) => ({
+  const nodeInputs = getRecordEntry(rootState.operations.inputParameters, operationId) as NodeInputs;
+  return getOperationInputParameters(nodeInputs).map((input) => ({
     ...input,
     value: parameterValueToString(
       input,
@@ -705,7 +706,7 @@ const serializeParameterWithPath = (
   return result;
 };
 
-const serializeParametersFromSwagger = async (
+export const serializeParametersFromSwagger = async (
   inputs: SerializedParameter[],
   operationInfo: NodeOperation
 ): Promise<Record<string, any>> => {
@@ -1014,12 +1015,11 @@ export const isWorkflowOperationNode = (node: WorkflowNode) =>
 //#endregion
 
 //#region Settings Serialization
-const serializeSettings = (
-  operationId: string,
+export const serializeSettings = (
   settings: Settings,
   nodeStaticResults: NodeStaticResults,
   isTrigger: boolean,
-  rootState: RootState
+  originalDefinition?: LogicAppsV2.OperationDefinition
 ): Partial<LogicAppsV2.Action | LogicAppsV2.Trigger> => {
   const conditionExpressions = settings.conditionExpressions;
   const conditions = conditionExpressions
@@ -1038,21 +1038,19 @@ const serializeSettings = (
       : {}),
     ...optional('conditions', conditions),
     ...optional('limit', limit),
-    ...optional('operationOptions', getSerializedOperationOptions(operationId, settings, rootState)),
-    ...optional('runtimeConfiguration', getSerializedRuntimeConfiguration(operationId, settings, nodeStaticResults, rootState)),
+    ...optional('operationOptions', getSerializedOperationOptions(settings, originalDefinition)),
+    ...optional('runtimeConfiguration', getSerializedRuntimeConfiguration(settings, nodeStaticResults, isTrigger)),
     ...optional('trackedProperties', trackedProperties),
     ...(getSplitOn(isTrigger, settings) ?? {}),
   };
 };
 
 const getSerializedRuntimeConfiguration = (
-  operationId: string,
   settings: Settings,
   nodeStaticResults: NodeStaticResults,
-  rootState: RootState
+  isTrigger: boolean
 ): LogicAppsV2.RuntimeConfiguration | undefined => {
   const runtimeConfiguration: LogicAppsV2.RuntimeConfiguration = {};
-  const isTrigger = isRootNodeInGraph(operationId, 'root', rootState.workflow.nodesMetadata);
 
   const transferMode = settings.uploadChunk?.value?.transferMode;
   const uploadChunkSize = settings.uploadChunk?.value?.uploadChunkSize;
@@ -1149,8 +1147,10 @@ const getSerializedRuntimeConfiguration = (
   return runtimeConfiguration && !Object.keys(runtimeConfiguration).length ? undefined : runtimeConfiguration;
 };
 
-const getSerializedOperationOptions = (operationId: string, settings: Settings, rootState: RootState): string | undefined => {
-  const originalDefinition = getRecordEntry(rootState.workflow.operations, operationId);
+const getSerializedOperationOptions = (
+  settings: Settings,
+  originalDefinition: LogicAppsV2.OperationDefinition | undefined
+): string | undefined => {
   const originalOptions = originalDefinition?.operationOptions;
   const deserializedOptions = isNullOrUndefined(originalOptions) ? [] : originalOptions.split(',').map((option) => option.trim());
 
@@ -1220,7 +1220,7 @@ const updateOperationOptions = (
   }
 };
 
-const getRetryPolicy = (settings: Settings): LogicAppsV2.RetryPolicy | undefined => {
+export const getRetryPolicy = (settings: Settings): LogicAppsV2.RetryPolicy | undefined => {
   const retryPolicy = settings.retryPolicy?.value;
   if (!retryPolicy) {
     return undefined;

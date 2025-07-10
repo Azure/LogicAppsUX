@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { getReactQueryClient } from '../ReactQueryProvider';
-import { ConnectionService, OperationManifestService } from '@microsoft/logic-apps-shared';
+import { ConnectionService, OperationManifestService, TryGetOperationManifestService } from '@microsoft/logic-apps-shared';
 import type { Connector, LogicAppsV2, OpenAPIV2, OperationInfo, OperationManifest } from '@microsoft/logic-apps-shared';
 
 export const getOperationInfo = async (
@@ -24,10 +24,10 @@ export const getConnector = async (connectorId: string, useCachedData = false): 
   }
   const queryClient = getReactQueryClient();
   const connectionService = ConnectionService();
-  const manifestService = OperationManifestService();
+  const manifestService = TryGetOperationManifestService();
   connectorId = connectorId.toLowerCase();
   return queryClient.fetchQuery(['connector', { connectorId }], () => {
-    if (manifestService.isBuiltInConnector(connectorId)) {
+    if (manifestService?.isBuiltInConnector(connectorId)) {
       return Promise.resolve(manifestService.getBuiltInConnector(connectorId));
     }
     return connectionService.getConnector(connectorId, useCachedData);

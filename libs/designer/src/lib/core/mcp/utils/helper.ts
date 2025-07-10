@@ -1,7 +1,12 @@
 import { LogEntryLevel, LoggerService, type ConnectionReferences, type ConnectionsData } from '@microsoft/logic-apps-shared';
-import { getSwaggerForConnector } from '../../queries/connections';
+import { getConnectorWithSwagger } from '../../queries/connections';
 import type { NodeOperation, NodeOperationInputsData } from '../../state/operation/operationMetadataSlice';
 import { getInputParametersFromSwagger, getOutputParametersFromSwagger } from '../../utils/swagger/operation';
+import { getOperationSettings } from '../../actions/bjsworkflow/settings';
+import { WorkflowKind } from '../../state/workflow/workflowInterfaces';
+import { addDefaultSecureSettings } from '../../actions/bjsworkflow/add';
+
+const workflowKind = WorkflowKind.STATEFUL;
 
 export const convertConnectionsDataToReferences = (connectionsData: ConnectionsData | undefined): ConnectionReferences => {
   const references: any = {};
@@ -70,7 +75,7 @@ export const initializeOperationDetails = async (
   operationInfo: NodeOperation
 ): Promise<NodeOperationInputsData | undefined> => {
   try {
-    const parsedSwagger = await getSwaggerForConnector(operationInfo.connectorId);
+    const { connector, parsedSwagger } = await getConnectorWithSwagger(operationInfo.connectorId);
     const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromSwagger(
       nodeId,
       /* isTrigger */ false,
@@ -83,12 +88,25 @@ export const initializeOperationDetails = async (
       operationInfo,
       nodeInputs
     );
+
+    let settings = getOperationSettings(
+      /* isTrigger */ false,
+      operationInfo,
+      /* manifest */ undefined,
+      parsedSwagger,
+      /* operation */ undefined,
+      workflowKind
+    );
+
+    settings = addDefaultSecureSettings(settings, connector?.properties?.isSecureByDefault ?? false);
+
     return {
       id: nodeId,
       nodeInputs,
       nodeOutputs,
       operationInfo,
       nodeDependencies: { inputs: inputDependencies, outputs: outputDependencies },
+      settings,
     };
   } catch (error: any) {
     LoggerService().log({

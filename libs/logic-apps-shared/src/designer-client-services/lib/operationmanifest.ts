@@ -77,3 +77,7 @@ export const OperationManifestService = (): IOperationManifestService => {
 
   return service;
 };
+
+export const TryGetOperationManifestService = (): IOperationManifestService => {
+  return service;
+};
