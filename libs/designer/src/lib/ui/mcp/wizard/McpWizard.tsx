@@ -9,6 +9,7 @@ import { McpPanelRoot } from '../panel/mcpPanelRoot';
 import { initializeOperationsMetadata } from '../../../core/actions/bjsworkflow/mcp';
 import { ListOperations } from '../operations/ListOperations';
 import { serializeMcpWorkflows } from '../../../core/mcp/utils/serializer';
+import { LogicAppSelector } from '../details/logicAppSelector';
 
 const sampleConnectorId =
   '/subscriptions/f34b22a3-2202-4fb1-b040-1332bd928c84/providers/Microsoft.Web/locations/northcentralus/managedApis/office365';
@@ -74,6 +75,10 @@ export const McpWizard = () => {
         <Button appearance="primary" icon={<Add24Regular />} onClick={handleAddConnectors}>
           {INTL_TEXT.addConnectorsButton}
         </Button>
+      </div>
+
+      <div className={styles.content}>
+        <LogicAppSelector />
       </div>
 
       <div className={styles.content}>
