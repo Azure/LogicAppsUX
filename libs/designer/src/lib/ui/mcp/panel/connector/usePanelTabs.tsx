@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import type { AppDispatch, RootState } from '../../../../core/state/mcp/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { McpPanelView } from '../../../../core/state/mcp/panel/mcpPanelSlice';
-import { operationsTab } from './tabs/operationsTab'; // Back to function import
+import { operationsTab } from './tabs/operationsTab';
 import { useIntl } from 'react-intl';
 import { connectorsTab } from './tabs/connectorsTab';
 import type { McpPanelTabProps } from '@microsoft/designer-ui';
