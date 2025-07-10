@@ -5,9 +5,11 @@ export const useEmptyLogicApps = (subscriptionId: string): UseQueryResult<LogicA
   return useQuery(
     ['mcpQueries', 'logicapps', subscriptionId],
     async () => {
-      //TODO: Provide optionalQuery to filter out the empty logic apps
-      // For now, we are fetching all logic apps without any filters.
-      return ResourceService().listLogicApps(subscriptionId);
+      return ResourceService().listLogicApps(
+        subscriptionId,
+        undefined,
+        ` | distinct name | join kind=leftouter (appserviceresources | where type contains "/sites/workflows" | extend appName = tostring(split(name, "/")[0]) | distinct appName) on $left.name == $right.appName | where appName == "" | project name`
+      );
     },
     {
       cacheTime: 1000 * 60 * 60 * 24,
