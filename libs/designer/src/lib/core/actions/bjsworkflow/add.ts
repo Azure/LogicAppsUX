@@ -124,7 +124,7 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
   });
 });
 
-const addDefaultSecureSettings = (settings: Settings, isSecureByDefault: boolean): Settings => {
+export const addDefaultSecureSettings = (settings: Settings, isSecureByDefault: boolean): Settings => {
   // Toggle secure inputs & outputs only when adding to workflow for actions that support secure data and connector sets by default
   if (isSecureByDefault) {
     const updatedSettings = {

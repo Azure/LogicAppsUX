@@ -3,16 +3,18 @@ import { Add24Regular, ConnectorFilled } from '@fluentui/react-icons';
 import { useMcpWizardStyles } from './styles';
 import { useIntl } from 'react-intl';
 import { McpPanelView, openPanelView } from '../../../core/state/mcp/panel/mcpPanelSlice';
-import { useDispatch } from 'react-redux';
-import type { AppDispatch } from '../../../core/state/mcp/store';
+import { useDispatch, useSelector } from 'react-redux';
+import type { AppDispatch, RootState } from '../../../core/state/mcp/store';
 import { McpPanelRoot } from '../panel/mcpPanelRoot';
 import { initializeOperationsMetadata } from '../../../core/actions/bjsworkflow/mcp';
+import { serializeMcpWorkflows } from '../../../core/mcp/utils/serializer';
 
 export const McpWizard = () => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
   const styles = useMcpWizardStyles();
   const connectors = [];
+  const rootState = useSelector((state: RootState) => state);
 
   const handleAddConnectors = () => {
     dispatch(
@@ -24,12 +26,22 @@ export const McpWizard = () => {
   };
 
   const handleLoadOperations = () => {
+    const connectorId =
+      '/subscriptions/f34b22a3-2202-4fb1-b040-1332bd928c84/providers/Microsoft.Web/locations/northcentralus/managedApis/office365';
     dispatch(
       initializeOperationsMetadata({
-        connectorId: '',
-        operations: [],
+        operations: [
+          { connectorId, operationId: 'SendEmailV2', type: 'apiconnection' },
+          { connectorId, operationId: 'ForwardEmail_V2', type: 'apiconnection' },
+          { connectorId, operationId: 'ContactGetItems_V2', type: 'apiconnection' },
+        ],
       })
     );
+  };
+
+  const handleGenerateWorkflows = async () => {
+    const result = await serializeMcpWorkflows(rootState);
+    console.log('Generated workflows:', result);
   };
 
   const INTL_TEXT = {
@@ -85,9 +97,11 @@ export const McpWizard = () => {
       <Text size={600} weight="semibold">
         {'Test section'}
       </Text>
-      <Button icon={<Add24Regular />} onClick={handleLoadOperations}>
-        {'Load operations'}
-      </Button>
+      <div>
+        <Button onClick={handleLoadOperations}>{'Load operations'}</Button>
+        <Button onClick={handleGenerateWorkflows}>{'Generate workflows'}</Button>
+      </div>
+
       <McpPanelRoot />
     </div>
   );

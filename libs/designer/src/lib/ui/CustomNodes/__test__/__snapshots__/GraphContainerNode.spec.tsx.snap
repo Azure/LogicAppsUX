@@ -241,6 +241,14 @@ exports[`GraphContainerNode > should render with footer and be a subgraph 1`] = 
     className="___12cglbp_5g59060 fly5x3f f1l02sjl f10pi13n f1dmdbja f1ewtqcl f1erghxr f1ehz9de f1spoy8 fmb70yw ftac7j7 f1w0yd9v fdwcyh7 f1h0xgbp fzkkow9 fcdblym fg706s2 fjik90z fj3muxo f1akhkt f1aperda f1lxtadh"
     data-automation-id="msla-graph-container-mockid"
   />
+  <div
+    className="___ntqwa30_se4bvr0 f3bhgqh fd7fpy0 f15a45g"
+    isConnectable={false}
+    position="bottom"
+    type="source"
+  >
+    Handle reactflow
+  </div>
 </div>
 `;
 

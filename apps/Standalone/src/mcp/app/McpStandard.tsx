@@ -15,11 +15,11 @@ import {
   BaseResourceService,
   BaseTenantService,
   equals,
+  type IWorkflowService,
   StandardConnectionService,
   StandardConnectorService,
   StandardSearchService,
 } from '@microsoft/logic-apps-shared';
-import type { IWorkflowService } from '@microsoft/logic-apps-shared';
 import { useMcpStandardStyles } from './styles';
 import { HttpClient } from '../../designer/app/AzureLogicAppsDesigner/Services/HttpClient';
 import { McpHeader } from './McpHeader';
@@ -54,7 +54,7 @@ export const McpStandard = () => {
     data: workflowAppData,
     isLoading: isWorkflowLoading,
     error: workflowError,
-  } = useWorkflowApp(isValidResourceId ? appId : '', hostingPlan, isValidResourceId && !!appId);
+  } = useWorkflowApp(isValidResourceId ? appId : '', hostingPlan, isValidResourceId);
 
   const canonicalLocation = useMemo(
     () => WorkflowUtility.convertToCanonicalFormat(workflowAppData?.location ?? 'westus'),
@@ -68,8 +68,7 @@ export const McpStandard = () => {
 
   const services = useMemo(
     () => getServices(appId as string, workflowAppData as WorkflowApp, tenantId, objectId, canonicalLocation),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [workflowAppData, tenantId, canonicalLocation, appId]
+    [appId, workflowAppData, tenantId, objectId, canonicalLocation]
   );
 
   useEffect(() => {

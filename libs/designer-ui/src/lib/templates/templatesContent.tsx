@@ -11,7 +11,6 @@ export interface TemplateContentProps {
 }
 export const TemplateContent = ({ tabs = [], selectedTab, selectTab, className }: TemplateContentProps): JSX.Element => {
   const selectedTabId = selectedTab ?? tabs[0]?.id;
-
   const selectedTabProps = tabs?.find((tab) => tab.id === selectedTabId);
 
   const onTabSelected = (_e?: SelectTabEvent, data?: SelectTabData): void => {
@@ -22,8 +21,9 @@ export const TemplateContent = ({ tabs = [], selectedTab, selectTab, className }
   };
 
   const tabClass = className ?? 'msla-templates-panel-tabs';
+
   return (
-    <div className="msla-templates-panel">
+    <div className="msla-templates-panel-mcp">
       {tabs.length > 1 && (
         <>
           <TabList selectedValue={selectedTabId} onTabSelect={onTabSelected} className={tabClass}>

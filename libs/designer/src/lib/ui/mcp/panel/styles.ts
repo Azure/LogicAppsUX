@@ -1,31 +1,30 @@
 import { makeStyles, tokens } from '@fluentui/react-components';
 
 export const useMcpPanelStyles = makeStyles({
-  panelContent: {
+  drawer: {
+    zIndex: 1000,
     height: '100%',
+  },
+  header: {
+    padding: '16px 20px',
+    borderBottom: `1px solid ${tokens.colorNeutralStroke2}`,
+    background: tokens.colorNeutralBackground1,
+    flexShrink: 0,
+  },
+  headerContent: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+  },
+  body: {
+    padding: '0 20px',
+    overflow: 'hidden',
+    flex: 1,
     display: 'flex',
     flexDirection: 'column',
-    background: tokens.colorNeutralBackground1,
-    position: 'relative',
-    marginLeft: '4px', // Make room for the resize handle
   },
-
-  resizeHandle: {
-    position: 'absolute',
-    left: '-6px',
-    top: '0',
-    bottom: '0',
-    width: '4px',
-    cursor: 'col-resize',
-    zIndex: 1000,
-    backgroundColor: tokens.colorNeutralStroke2,
-    transition: 'background-color 0.2s ease',
-
-    ':hover': {
-      backgroundColor: tokens.colorBrandBackground,
-    },
-    ':active': {
-      backgroundColor: tokens.colorBrandBackgroundPressed,
-    },
+  footer: {
+    padding: `${tokens.spacingVerticalM} 20px`,
+    borderTop: `1px solid ${tokens.colorNeutralStroke2}`,
   },
 });
