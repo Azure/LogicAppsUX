@@ -15,7 +15,6 @@ export interface OperationSelectionGridProps {
   allowSelectAll?: boolean;
 }
 
-// Separate cell component with consistent dimensions
 interface OperationCellProps {
   operation: DiscoveryOpArray[number];
   isSelected: boolean;
@@ -104,7 +103,7 @@ export const OperationSelectionGrid = ({
       setColumnsCount(getColumnsCount(element.clientWidth));
     };
 
-    updateLayout(); // Initial layout
+    updateLayout();
 
     const observer = new ResizeObserver(() => {
       updateLayout();
@@ -117,7 +116,6 @@ export const OperationSelectionGrid = ({
 
   const handleCardClick = useCallback(
     (operationId: string, event: React.MouseEvent) => {
-      // Prevent toggling if the checkbox itself was clicked
       if ((event.target as HTMLElement).closest('[role="checkbox"]')) {
         return;
       }
@@ -134,6 +132,9 @@ export const OperationSelectionGrid = ({
     },
     [onOperationToggle]
   );
+  const selectableOperations = operationsData;
+  const allSelected = selectableOperations.length > 0 && selectableOperations.every((item) => selectedOperations.has(item.id));
+  const someSelected = selectableOperations.some((item) => selectedOperations.has(item.id));
 
   const noResultsText = intl.formatMessage({
     defaultMessage: 'No operations found',
@@ -147,17 +148,29 @@ export const OperationSelectionGrid = ({
     description: 'Label for select all checkbox',
   });
 
-  // Calculate select all state
-  const selectableOperations = operationsData;
-  const allSelected = selectableOperations.length > 0 && selectableOperations.every((item) => selectedOperations.has(item.id));
-  const someSelected = selectableOperations.some((item) => selectedOperations.has(item.id));
+  const noOperationsText = intl.formatMessage({
+    defaultMessage: 'This connector may not have any operations available, or they may not be loaded yet',
+    id: 'TaoHbb',
+    description: 'Text to show when there are no operations available for the selected connector',
+  });
+  const selectionCountText = intl.formatMessage(
+    {
+      defaultMessage: '{selectedCount} of {totalCount} selected',
+      id: 'qwZaWJ',
+      description: 'Text showing how many operations are selected out of total available',
+    },
+    {
+      selectedCount: selectedOperations.size,
+      totalCount: selectableOperations.length,
+    }
+  );
 
   if (!isLoading && operationsData.length === 0 && !hideNoResultsText) {
     return (
       <div className={styles.noResultsContainer}>
         <Text size={500}>{noResultsText}</Text>
         <Text size={300} className={styles.noResultsSubtext}>
-          This connector may not have any operations available, or they may not be loaded yet.
+          {noOperationsText}
         </Text>
       </div>
     );
@@ -173,7 +186,7 @@ export const OperationSelectionGrid = ({
             label={selectAllText}
           />
           <Text size={200} className={styles.selectionCount}>
-            {selectedOperations.size} of {selectableOperations.length} selected
+            {selectionCountText}
           </Text>
         </div>
       )}

@@ -1,8 +1,8 @@
 import { TemplateContent, TemplatesPanelFooter, type McpPanelTabProps } from '@microsoft/designer-ui';
 import { useMcpConnectorPanelTabs } from './usePanelTabs';
 import { useDispatch, useSelector } from 'react-redux';
-import type { AppDispatch, RootState } from './../../../../core/state/mcp/store';
-import { closePanel, selectPanelTab } from './../../../../core/state/mcp/panel/mcpPanelSlice';
+import type { AppDispatch, RootState } from '../../../../core/state/mcp/store';
+import { closePanel, selectPanelTab } from '../../../../core/state/mcp/panel/mcpPanelSlice';
 import { Button, DrawerBody, DrawerFooter, DrawerHeader, Text } from '@fluentui/react-components';
 import { useMcpPanelStyles } from '../styles';
 import { useIntl } from 'react-intl';
@@ -11,7 +11,7 @@ import { useCallback } from 'react';
 
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
-export const ConnectorPanelInner = () => {
+export const SelectionPanel = () => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const panelTabs: McpPanelTabProps[] = useMcpConnectorPanelTabs();
@@ -54,7 +54,12 @@ export const ConnectorPanelInner = () => {
         </div>
       </DrawerHeader>
       <DrawerBody className={styles.body}>
-        <TemplateContent tabs={panelTabs} selectedTab={selectedTabId} selectTab={onTabSelected} />
+        <TemplateContent
+          tabs={panelTabs}
+          selectedTab={selectedTabId}
+          selectTab={onTabSelected}
+          containerClassName={'msla-templates-panel-mcp'}
+        />
       </DrawerBody>
       {selectedTabProps?.footerContent && (
         <DrawerFooter className={styles.footer}>
