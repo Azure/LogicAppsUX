@@ -174,46 +174,38 @@ export const getDesignerServices = (
     clientSupportedOperations: clientSupportedOperations,
     getConfiguration: async (connectionId: string, manifest: OperationManifest | undefined): Promise<any> => {
       try {
-        // Initialize configuration
         const configuration: Record<string, any> = {};
 
-        // Add workflow app location if needed
         if (shouldIncludeWorkflowAppLocation(isLocal, manifest)) {
           configuration.workflowAppLocation = appSettings.ProjectDirectoryPath;
         }
 
-        // Early return if no connectionId
         if (!connectionId) {
           return configuration;
         }
 
-        // Extract and validate connection name
         const connectionName = extractConnectionName(connectionId);
         if (!connectionName) {
           return configuration;
         }
 
-        // Merge connections data
         const allConnections: Record<string, any> = {
           ...(connectionsData?.serviceProviderConnections || {}),
           ...(connectionsData?.apiManagementConnections || {}),
         };
 
-        // Get connection info
         const connectionInfo = allConnections[connectionName];
         if (!connectionInfo) {
           return configuration;
         }
 
-        // Resolve connection references
         try {
           const resolvedConnectionInfo = resolveConnectionsReferences(JSON.stringify(connectionInfo), {}, appSettings);
 
-          // Create a clean copy without displayName
           delete resolvedConnectionInfo.displayName;
           configuration.connection = resolvedConnectionInfo;
         } catch {
-          // Return configuration without connection info on error
+          // Return configuration without connection
         }
 
         return configuration;
