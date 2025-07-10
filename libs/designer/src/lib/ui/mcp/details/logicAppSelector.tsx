@@ -46,11 +46,13 @@ export const LogicAppSelector = () => {
 
   const resources = useMemo(
     () =>
-      (logicApps ?? []).map((app) => ({
-        id: app.id,
-        name: app.name,
-        displayName: app.name,
-      })),
+      (logicApps ?? [])
+        .map((app) => ({
+          id: app.id,
+          name: app.name,
+          displayName: app.name,
+        }))
+        .sort((a, b) => a.displayName.localeCompare(b.displayName)),
     [logicApps]
   );
 
@@ -81,8 +83,6 @@ export const LogicAppSelector = () => {
     }
   }, [resources, logicAppName, onLogicAppSelect, isLogicAppsLoading, selectedResource]);
 
-  const sortedResources = useMemo(() => resources.sort((a, b) => a.displayName.localeCompare(b.displayName)), [resources]);
-
   return (
     <div className={styles.container}>
       <div className={styles.labelSection}>
@@ -100,12 +100,12 @@ export const LogicAppSelector = () => {
             size="small"
             placeholder={isLogicAppsLoading ? intlText.LOADING : ''}
           >
-            {!isLogicAppsLoading && !sortedResources.length ? (
+            {!isLogicAppsLoading && !resources.length ? (
               <Option key={'no-items'} value={'#noitem#'} disabled>
                 {intlText.NO_ITEMS}
               </Option>
             ) : (
-              sortedResources.map((resource) => (
+              resources.map((resource) => (
                 <Option key={resource.id} value={resource.name}>
                   {resource.displayName}
                 </Option>
