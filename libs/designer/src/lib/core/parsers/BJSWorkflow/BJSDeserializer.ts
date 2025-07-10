@@ -406,12 +406,13 @@ export const buildGraphFromActions = (
       }
     } else if (isAgentAction(action)) {
       for (const [toolKey, toolValue] of Object.entries(action?.tools ?? {})) {
+        const toolActions = Object.values(toolValue.actions ?? {});
         // Add edges for agent handoff actions
-        for (const [_handoffName, handoffAction] of Object.entries(toolValue.actions ?? {})) {
-          if (equals(handoffAction.type, 'AgentHandoff')) {
+        for (const toolAction of toolActions) {
+          if (equals(toolAction.type, constants.NODE.TYPE.HANDOFF)) {
             // Create an edge for the handoff action
             const handoffSource = actionName;
-            const handoffTarget = (handoffAction as any).inputs?.name ?? '';
+            const handoffTarget = (toolAction as any).inputs?.name ?? '';
             if (handoffTarget !== '' && allActionNames.includes(handoffTarget)) {
               edges.push(createWorkflowEdge(handoffSource, handoffTarget, WORKFLOW_EDGE_TYPES.HANDOFF_EDGE));
             }
@@ -422,6 +423,7 @@ export const buildGraphFromActions = (
           allActionNames.push(toolKey);
           continue;
         }
+
         const toolAction: any = action.tools?.[toolKey];
         const newToolId = pasteScopeParams
           ? (pasteScopeParams.renamedNodes[toolKey] ?? toolKey)
