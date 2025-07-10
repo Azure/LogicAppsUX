@@ -21,6 +21,12 @@ export const useMonitoringTimelineStyles = makeStyles({
     maxHeight: '390px',
   },
 
+  timelineIcon: {
+    color: tokens.colorBrandForeground1,
+    width: '30px',
+    height: '30px',
+  },
+
   timelineNodeContainer: {
     display: 'flex',
     flexDirection: 'column',

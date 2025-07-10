@@ -34,7 +34,6 @@ const ChevronDownIcon = bundleIcon(ChevronDownFilled, ChevronDownRegular);
 const RefreshIcon = bundleIcon(ArrowClockwiseFilled, ArrowClockwiseRegular);
 
 const MonitoringTimeline = () => {
-  const intl = useIntl();
   const styles = useMonitoringTimelineStyles();
   const dispatch = useDispatch();
 
@@ -129,27 +128,60 @@ const MonitoringTimeline = () => {
 
   const noRepetitions = useMemo(() => (repetitions ?? []).length === 0, [repetitions]);
 
+  return (
+    <div style={{ position: 'absolute' }}>
+      <Card className={styles.monitoringTimelineRoot} onMouseOver={() => setExpanded(true)} onMouseOut={() => setExpanded(false)}>
+        <TimelineHeader expanded={expanded} refetchTimelineRepetitions={refetchTimelineRepetitions} />
+        <Divider />
+        <TimelineContent
+          expanded={expanded}
+          isFetchingRepetitions={isFetchingRepetitions}
+          noRepetitions={noRepetitions}
+          transitionIndex={transitionIndex}
+          repetitions={repetitions}
+          setTransitionIndex={setTransitionIndex}
+        />
+        <Divider />
+        <TimelineButtons
+          expanded={expanded}
+          transitionIndex={transitionIndex}
+          setTransitionIndex={setTransitionIndex}
+          repetitions={repetitions}
+          noRepetitions={noRepetitions}
+        />
+      </Card>
+    </div>
+  );
+};
+
+const TimelineContent = ({
+  expanded,
+  isFetchingRepetitions,
+  noRepetitions,
+  transitionIndex,
+  repetitions,
+  setTransitionIndex,
+}: {
+  expanded: boolean;
+  isFetchingRepetitions: boolean;
+  noRepetitions: boolean;
+  transitionIndex: number;
+  repetitions: {
+    actionIds: string[] | undefined;
+    repetitionIndex: number;
+    data?: TimelineRepetition;
+  }[];
+  setTransitionIndex: (index: number) => void;
+}) => {
+  const styles = useMonitoringTimelineStyles();
+  const intl = useIntl();
+
   const text = useMemo(
     () => ({
-      title: intl.formatMessage({
-        defaultMessage: 'Task timeline',
-        id: 'JRsTtp',
-        description: 'Title for the monitoring timeline component.',
-      }),
       noData: intl.formatMessage({
         defaultMessage: 'No tasks',
         id: 'WbPW+Q',
         description: 'Text displayed when there are no transitions in the monitoring timeline.',
-      }),
-      previousTask: intl.formatMessage({
-        defaultMessage: 'Previous task',
-        id: 'Z9zin7',
-        description: 'Text for the previous task button in the monitoring timeline.',
-      }),
-      nextTask: intl.formatMessage({
-        defaultMessage: 'Next task',
-        id: 'WtieWd',
-        description: 'Text for the next task button in the monitoring timeline.',
       }),
       loading: intl.formatMessage({
         defaultMessage: 'Loading...',
@@ -161,8 +193,12 @@ const MonitoringTimeline = () => {
   );
 
   return (
-    <div style={{ position: 'absolute' }}>
-      <Card className={styles.monitoringTimelineRoot} onMouseOver={() => setExpanded(true)} onMouseOut={() => setExpanded(false)}>
+    <>
+      {isFetchingRepetitions ? (
+        <div className={styles.loadingContainer}>
+          <Spinner style={{ gap: `${expanded ? '8px' : '0px'}` }} size="extra-small" label={expanded ? text.loading : ''} />
+        </div>
+      ) : noRepetitions ? (
         <div
           style={{
             display: 'flex',
@@ -172,113 +208,170 @@ const MonitoringTimeline = () => {
             ...(expanded ? { minWidth: '200px' } : {}),
           }}
         >
-          <TimelineRegular style={{ color: '#1f85ff', width: '30px', height: '30px' }} />
+          <BorderNoneRegular style={{ color: '#80808080', width: '30px', height: '30px' }} />
           {expanded && (
-            <Text weight={'semibold'} style={{ flexGrow: 1 }}>
-              {text.title}
+            <Text weight={'semibold'} style={{ color: '#80808080' }}>
+              {text.noData}
             </Text>
           )}
-          {expanded && (
-            <Button
-              appearance="subtle"
-              icon={<RefreshIcon />}
-              shape="circular"
-              onClick={() => {
-                refetchTimelineRepetitions();
-                // refetchChatHistory(); // TODO: Refetch the workflow level chat history
-              }}
-            />
-          )}
         </div>
-        <Divider />
-        {isFetchingRepetitions ? (
-          <div className={styles.loadingContainer}>
-            <Spinner style={{ gap: `${expanded ? '8px' : '0px'}` }} size="extra-small" label={expanded ? text.loading : ''} />
-          </div>
-        ) : noRepetitions ? (
+      ) : (
+        <div className={styles.timelineMainContent}>
           <div
+            className={styles.timelineNodeContainer}
             style={{
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: '8px',
-              ...(expanded ? { minWidth: '200px' } : {}),
+              ...(expanded ? { scrollbarColor: 'grey transparent' } : { scrollbarWidth: 'none' }),
             }}
           >
-            <BorderNoneRegular style={{ color: '#80808080', width: '30px', height: '30px' }} />
-            {expanded && (
-              <Text weight={'semibold'} style={{ color: '#80808080' }}>
-                {text.noData}
-              </Text>
-            )}
+            {(repetitions ?? []).map((repetition, index) => (
+              <TimelineNode
+                key={repetition.repetitionIndex}
+                index={index}
+                selected={index === transitionIndex}
+                onSelect={() => setTransitionIndex(index)}
+                expanded={expanded}
+                data={repetition.data!}
+              />
+            ))}
           </div>
-        ) : (
-          <div className={styles.timelineMainContent}>
-            <div
-              className={styles.timelineNodeContainer}
-              style={{
-                ...(expanded ? { scrollbarColor: 'grey transparent' } : { scrollbarWidth: 'none' }),
-              }}
-            >
-              {(repetitions ?? []).map((repetition, index) => (
-                <TimelineNode
-                  key={repetition.repetitionIndex}
-                  index={index}
-                  selected={index === transitionIndex}
-                  onSelect={() => setTransitionIndex(index)}
-                  expanded={expanded}
-                  data={repetition.data!}
-                />
-              ))}
-            </div>
-            {expanded && (
-              <>
-                <Slider
-                  vertical
-                  step={1}
-                  value={transitionIndex}
-                  min={0}
-                  max={repetitions.length - 1}
-                  onChange={(e, data) => setTransitionIndex(data.value as number)}
-                  style={{ transform: 'rotate(180deg)' }}
-                />
-                <div className={styles.errorCaretContainer}>
-                  {(repetitions ?? []).map((repetition, _index) =>
-                    equals(Object.values(repetition?.data?.properties?.actions ?? {})?.[0]?.status, 'failed') ? (
-                      <CaretLeftFilled key={repetition.repetitionIndex} className={styles.errorCaret} />
-                    ) : (
-                      <div key={repetition.repetitionIndex} />
-                    )
-                  )}
-                </div>
-              </>
-            )}
-          </div>
-        )}
-        <Divider />
-        <div className={styles.flexCol}>
-          <Button
-            appearance="subtle"
-            icon={<ChevronUpIcon />}
-            shape="circular"
-            className={styles.navButton}
-            disabled={noRepetitions || transitionIndex === 0}
-            onClick={() => setTransitionIndex(transitionIndex - 1)}
-          >
-            {expanded ? text.previousTask : ''}
-          </Button>
-          <Button
-            appearance="subtle"
-            icon={<ChevronDownIcon />}
-            shape="circular"
-            className={styles.navButton}
-            disabled={noRepetitions || transitionIndex === repetitions.length - 1}
-            onClick={() => setTransitionIndex(transitionIndex + 1)}
-          >
-            {expanded ? text.nextTask : ''}
-          </Button>
+          {expanded && (
+            <>
+              <Slider
+                vertical
+                step={1}
+                value={transitionIndex}
+                min={0}
+                max={repetitions.length - 1}
+                onChange={(e, data) => setTransitionIndex(data.value as number)}
+                style={{ transform: 'rotate(180deg)' }}
+              />
+              <div className={styles.errorCaretContainer}>
+                {(repetitions ?? []).map((repetition, _index) =>
+                  equals(Object.values(repetition?.data?.properties?.actions ?? {})?.[0]?.status, 'failed') ? (
+                    <CaretLeftFilled key={repetition.repetitionIndex} className={styles.errorCaret} />
+                  ) : (
+                    <div key={repetition.repetitionIndex} />
+                  )
+                )}
+              </div>
+            </>
+          )}
         </div>
-      </Card>
+      )}
+    </>
+  );
+};
+
+const TimelineHeader = ({
+  expanded,
+  refetchTimelineRepetitions,
+}: {
+  expanded: boolean;
+  refetchTimelineRepetitions: () => void;
+}) => {
+  const intl = useIntl();
+  const styles = useMonitoringTimelineStyles();
+
+  const text = useMemo(
+    () => ({
+      title: intl.formatMessage({
+        defaultMessage: 'Task timeline',
+        id: 'JRsTtp',
+        description: 'Title for the monitoring timeline component.',
+      }),
+    }),
+    [intl]
+  );
+
+  return (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: '8px',
+        ...(expanded ? { minWidth: '200px' } : {}),
+      }}
+    >
+      <TimelineRegular className={styles.timelineIcon} />
+      {expanded && (
+        <Text weight={'semibold'} style={{ flexGrow: 1 }}>
+          {text.title}
+        </Text>
+      )}
+      {expanded && (
+        <Button
+          appearance="subtle"
+          icon={<RefreshIcon />}
+          shape="circular"
+          onClick={() => {
+            refetchTimelineRepetitions();
+            // refetchChatHistory(); // TODO: Refetch the workflow level chat history
+          }}
+        />
+      )}
+    </div>
+  );
+};
+
+const TimelineButtons = ({
+  expanded,
+  transitionIndex,
+  setTransitionIndex,
+  repetitions,
+  noRepetitions,
+}: {
+  expanded: boolean;
+  transitionIndex: number;
+  setTransitionIndex: (index: number) => void;
+  repetitions: {
+    actionIds: string[] | undefined;
+    repetitionIndex: number;
+    data?: TimelineRepetition;
+  }[];
+  noRepetitions: boolean;
+}) => {
+  const styles = useMonitoringTimelineStyles();
+  const intl = useIntl();
+
+  const text = useMemo(
+    () => ({
+      previousTask: intl.formatMessage({
+        defaultMessage: 'Previous task',
+        id: 'Z9zin7',
+        description: 'Text for the previous task button in the monitoring timeline.',
+      }),
+      nextTask: intl.formatMessage({
+        defaultMessage: 'Next task',
+        id: 'WtieWd',
+        description: 'Text for the next task button in the monitoring timeline.',
+      }),
+    }),
+    [intl]
+  );
+
+  return (
+    <div className={styles.flexCol}>
+      <Button
+        appearance="subtle"
+        icon={<ChevronUpIcon />}
+        shape="circular"
+        className={styles.navButton}
+        disabled={noRepetitions || transitionIndex === 0}
+        onClick={() => setTransitionIndex(transitionIndex - 1)}
+      >
+        {expanded ? text.previousTask : ''}
+      </Button>
+      <Button
+        appearance="subtle"
+        icon={<ChevronDownIcon />}
+        shape="circular"
+        className={styles.navButton}
+        disabled={noRepetitions || transitionIndex === repetitions.length - 1}
+        onClick={() => setTransitionIndex(transitionIndex + 1)}
+      >
+        {expanded ? text.nextTask : ''}
+      </Button>
     </div>
   );
 };
