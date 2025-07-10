@@ -6,12 +6,12 @@ import { operationsTab } from './tabs/operationsTab';
 import { useIntl } from 'react-intl';
 import { connectorsTab } from './tabs/connectorsTab';
 import type { McpPanelTabProps } from '@microsoft/designer-ui';
-import { connectionsTab } from './tabs/connectionsTab';
+import { connectionsTab } from './tabs/connections/connectionsTab';
 
 export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
-  const { currentPanelView } = useSelector((state: RootState) => state.mcpPanel);
+  const { currentPanelView, selectedConnectorId } = useSelector((state: RootState) => state.mcpPanel);
 
   const connectorsTabItem = useMemo(
     () =>
@@ -35,7 +35,7 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
 
   const connectionsTabItem = useMemo(
     () =>
-      connectionsTab(intl, dispatch, {
+      connectionsTab(intl, dispatch, selectedConnectorId as string, {
         isTabDisabled: false,
         isPreviousButtonDisabled: false,
         isPrimaryButtonDisabled: false,
@@ -43,7 +43,7 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
           //TODO
         },
       }),
-    [intl, dispatch]
+    [intl, dispatch, selectedConnectorId]
   );
 
   const tabs: McpPanelTabProps[] = useMemo(() => {
