@@ -198,25 +198,25 @@ const TimelineContent = ({
           ...(isExpanded ? { scrollbarColor: 'grey transparent' } : { scrollbarWidth: 'none' }),
         }}
       >
-        {(repetitions ?? []).map((repetition, index) => (
-          <div key={repetition.repetitionIndex} style={{ display: 'flex', flexDirection: 'column' }}>
-            {(index === 0 ||
-              repetition.data?.properties?.a2ametadata?.taskId !== repetitions[index - 1]?.data?.properties?.a2ametadata?.taskId) && (
-              <Text className={styles.timelineTask} align={'center'} size={200} weight={'medium'}>
-                {isExpanded
-                  ? text.taskCount((repetition.data?.properties?.a2ametadata?.taskId ?? 0) + 1)
-                  : (repetition.data?.properties?.a2ametadata?.taskId ?? 0) + 1}
-              </Text>
-            )}
-            <TimelineNode
-              index={index}
-              selected={index === transitionIndex}
-              onSelect={() => setTransitionIndex(index)}
-              isExpanded={isExpanded}
-              data={repetition.data!}
-            />
-          </div>
-        ))}
+        {(repetitions ?? []).map((repetition, index) => {
+          const taskIndex = repetition.data?.properties?.a2ametadata?.taskId;
+          return (
+            <div key={repetition.repetitionIndex} style={{ display: 'flex', flexDirection: 'column' }}>
+              {(index === 0 || taskIndex !== repetitions[index - 1]?.data?.properties?.a2ametadata?.taskId) && (
+                <Text className={styles.timelineTask} align={'center'} size={200} weight={'medium'}>
+                  {isExpanded ? text.taskCount((taskIndex ?? 0) + 1) : (taskIndex ?? 0) + 1}
+                </Text>
+              )}
+              <TimelineNode
+                index={index}
+                selected={index === transitionIndex}
+                onSelect={() => setTransitionIndex(tas)}
+                isExpanded={isExpanded}
+                data={repetition.data!}
+              />
+            </div>
+          );
+        })}
       </div>
       {isExpanded && (
         <>
