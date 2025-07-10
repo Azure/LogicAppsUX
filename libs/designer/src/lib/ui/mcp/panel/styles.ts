@@ -1,36 +1,60 @@
-import { makeStyles, tokens } from '@fluentui/react-components';
+import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
 
 export const useMcpPanelStyles = makeStyles({
+  drawer: {
+    zIndex: 1000,
+    height: '100%',
+  },
+  header: {
+    ...shorthands.padding('0', tokens.spacingHorizontalL),
+
+    padding: '16px 20px',
+    borderBottom: `1px solid ${tokens.colorNeutralStroke2}`,
+    background: tokens.colorNeutralBackground1,
+    flexShrink: 0,
+  },
+
+  headerContent: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+  },
+
+  body: {
+    ...shorthands.padding('0', tokens.spacingHorizontalL),
+    overflow: 'auto',
+  },
+  footer: {
+    ...shorthands.padding(tokens.spacingVerticalM, tokens.spacingHorizontalL),
+  },
+  closeButton: {
+    minWidth: 'auto',
+    flexShrink: 0,
+  },
+
   panelContent: {
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
     background: tokens.colorNeutralBackground1,
     position: 'relative',
+    marginLeft: '4px', // Make room for the resize handle
   },
 
   resizeHandle: {
     position: 'absolute',
-    left: '0',
+    left: '-6px',
     top: '0',
     bottom: '0',
     width: '4px',
     cursor: 'col-resize',
     zIndex: 1000,
-    backgroundColor: 'transparent',
-    borderLeft: `1px solid ${tokens.colorNeutralStroke2}`,
+    backgroundColor: tokens.colorNeutralStroke2,
     transition: 'background-color 0.2s ease',
 
     ':hover': {
       backgroundColor: tokens.colorBrandBackground,
-      borderLeft: `1px solid ${tokens.colorBrandStroke1}`,
     },
-
-    ':focus': {
-      outline: `2px solid ${tokens.colorStrokeFocus2}`,
-      outlineOffset: '1px',
-    },
-
     ':active': {
       backgroundColor: tokens.colorBrandBackgroundPressed,
     },
