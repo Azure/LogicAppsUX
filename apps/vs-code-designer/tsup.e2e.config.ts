@@ -2,7 +2,8 @@ import { defineConfig } from 'tsup';
 import type { Options } from 'tsup';
 
 const e2eConfig: Options = {
-  entry: ['src/test/**/*.ts'],
+  entry: ['src/test/**/*.ts', 'src/test/**/*.js', 'src/test/vscode-environment.ts'],
+  format: ['esm'],
   splitting: false,
   sourcemap: true,
   clean: false,

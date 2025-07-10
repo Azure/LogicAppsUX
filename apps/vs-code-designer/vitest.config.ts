@@ -12,8 +12,8 @@ export default defineProject({
   test: {
     name: packageJson.name,
     environment: 'node',
-    //setupFiles: ['test-setup.ts'],
-    coverage: { enabled: false },
+    setupFiles: ['/Users/daniellecogburn/code/LogicAppsUX/apps/vs-code-designer/dist/e2e/vscode-environment.js'], // Use our custom environment setup
+    globals: true, // Important for accessing global.vscode
     restoreMocks: true,
   },
 });
