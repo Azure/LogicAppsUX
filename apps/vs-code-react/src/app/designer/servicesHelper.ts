@@ -173,29 +173,53 @@ export const getDesignerServices = (
     httpClient,
     clientSupportedOperations: clientSupportedOperations,
     getConfiguration: async (connectionId: string, manifest: OperationManifest | undefined): Promise<any> => {
-      const shouldUseWorkflowAppLocation = !!(
-        isLocal && manifest?.properties?.dynamicContent?.payloadConfiguration?.includes('WorkflowAppLocation')
-      );
-      const defaultConfiguration: Record<string, any> = shouldUseWorkflowAppLocation
-        ? {
-            workflowAppLocation: appSettings.ProjectDirectoryPath,
-          }
-        : {};
+      try {
+        // Initialize configuration
+        const configuration: Record<string, any> = {};
 
-      const connectionName = connectionId?.split('/').splice(-1)[0];
-      const connectionsInfo = {
-        ...connectionsData?.serviceProviderConnections,
-        ...connectionsData?.apiManagementConnections,
-      };
-      const connectionInfo = connectionsInfo?.[connectionName];
+        // Add workflow app location if needed
+        if (shouldIncludeWorkflowAppLocation(isLocal, manifest)) {
+          configuration.workflowAppLocation = appSettings.ProjectDirectoryPath;
+        }
 
-      if (connectionInfo) {
-        const resolvedConnectionInfo = resolveConnectionsReferences(JSON.stringify(connectionInfo), {}, appSettings);
-        delete resolvedConnectionInfo.displayName;
-        defaultConfiguration.connection = resolvedConnectionInfo;
+        // Early return if no connectionId
+        if (!connectionId) {
+          return configuration;
+        }
+
+        // Extract and validate connection name
+        const connectionName = extractConnectionName(connectionId);
+        if (!connectionName) {
+          return configuration;
+        }
+
+        // Merge connections data
+        const allConnections: Record<string, any> = {
+          ...(connectionsData?.serviceProviderConnections || {}),
+          ...(connectionsData?.apiManagementConnections || {}),
+        };
+
+        // Get connection info
+        const connectionInfo = allConnections[connectionName];
+        if (!connectionInfo) {
+          return configuration;
+        }
+
+        // Resolve connection references
+        try {
+          const resolvedConnectionInfo = resolveConnectionsReferences(JSON.stringify(connectionInfo), {}, appSettings);
+
+          // Create a clean copy without displayName
+          delete resolvedConnectionInfo.displayName;
+          configuration.connection = resolvedConnectionInfo;
+        } catch {
+          // Return configuration without connection info on error
+        }
+
+        return configuration;
+      } catch {
+        return {};
       }
-
-      return defaultConfiguration;
     },
     schemaClient: {
       getWorkflowSwagger: (args) => {
@@ -446,4 +470,17 @@ export const isMultiVariableSupport = (version?: string): boolean => {
   }
 
   return false;
+};
+
+const extractConnectionName = (connectionId: string): string => {
+  const parts = connectionId.split('/');
+  return parts[parts.length - 1] || '';
+};
+
+const shouldIncludeWorkflowAppLocation = (isLocal: boolean, manifest: OperationManifest | undefined): boolean => {
+  if (!isLocal || !manifest?.properties?.dynamicContent?.payloadConfiguration) {
+    return false;
+  }
+
+  return manifest.properties.dynamicContent.payloadConfiguration.includes('WorkflowAppLocation');
 };
