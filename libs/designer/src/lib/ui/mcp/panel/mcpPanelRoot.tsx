@@ -4,8 +4,9 @@ import type { AppDispatch } from '../../../';
 import { closePanel, McpPanelView } from '../../../core/state/mcp/panel/mcpPanelSlice';
 import { useMcpPanelStyles } from './styles';
 import type { RootState } from '../../../core/state/mcp/store';
-import { ConnectorPanelInner } from './connectorPanel/ConnectorPanel';
+import { ConnectorPanelInner } from './connector/ConnectorPanelInner';
 import { Drawer } from '@fluentui/react-components';
+import { EditOperationPanelInner } from './operation/EditOperationPanelInner';
 
 const MIN_WIDTH = 300;
 const MAX_WIDTH = 1200;
@@ -74,6 +75,7 @@ export const McpPanelRoot = () => {
       {(panelMode === McpPanelView.SelectConnector ||
         panelMode === McpPanelView.SelectOperation ||
         panelMode === McpPanelView.CreateConnection) && <ConnectorPanelInner />}
+      {panelMode === McpPanelView.EditOperation && <EditOperationPanelInner />}
     </Drawer>
   );
 };
