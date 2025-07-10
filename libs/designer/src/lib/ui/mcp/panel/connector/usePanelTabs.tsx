@@ -11,7 +11,11 @@ import { connectionsTab } from './tabs/connectionsTab';
 export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
-  const { currentPanelView } = useSelector((state: RootState) => state.mcpPanel);
+
+  const { currentPanelView, selectedOperations } = useSelector((state: RootState) => ({
+    currentPanelView: state.mcpPanel.currentPanelView,
+    selectedOperations: state.mcpPanel.selectedOperations ?? [],
+  }));
 
   const connectorsTabItem = useMemo(
     () =>
@@ -29,8 +33,9 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
         isTabDisabled: false,
         isPreviousButtonDisabled: false,
         isPrimaryButtonDisabled: false,
+        selectedOperationsCount: selectedOperations.length,
       }),
-    [intl, dispatch]
+    [intl, dispatch, selectedOperations.length]
   );
 
   const connectionsTabItem = useMemo(

@@ -118,16 +118,12 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
       return;
     }
 
-    const searchOperation = SearchService().getOperationsByConnector?.bind(SearchService());
-
-    const searchResultPromise = searchOperation
-      ? searchOperation(selectedOperationGroupId, hideActionTypeFilter ? undefined : filters['actionType']?.toLowerCase())
-      : Promise.resolve(
-          (allOperations ?? []).filter((operation) => {
-            const apiId = operation.properties.api.id;
-            return areApiIdsEqual(apiId, selectedOperationGroupId);
-          })
-        );
+    const searchResultPromise = Promise.resolve(
+      (allOperations ?? []).filter((operation) => {
+        const apiId = operation.properties.api.id;
+        return areApiIdsEqual(apiId, selectedOperationGroupId);
+      })
+    );
 
     setIsLoadingOperationGroup(true);
     searchResultPromise
