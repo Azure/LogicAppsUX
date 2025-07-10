@@ -173,9 +173,6 @@ export const getDesignerServices = (
     httpClient,
     clientSupportedOperations: clientSupportedOperations,
     getConfiguration: async (connectionId: string, manifest: OperationManifest | undefined): Promise<any> => {
-      if (!connectionId) {
-        return Promise.resolve();
-      }
       const shouldUseWorkflowAppLocation = !!(
         isLocal && manifest?.properties?.dynamicContent?.payloadConfiguration?.includes('WorkflowAppLocation')
       );
@@ -185,12 +182,12 @@ export const getDesignerServices = (
           }
         : {};
 
-      const connectionName = connectionId.split('/').splice(-1)[0];
+      const connectionName = connectionId?.split('/').splice(-1)[0];
       const connectionsInfo = {
         ...connectionsData?.serviceProviderConnections,
         ...connectionsData?.apiManagementConnections,
       };
-      const connectionInfo = connectionsInfo[connectionName];
+      const connectionInfo = connectionsInfo?.[connectionName];
 
       if (connectionInfo) {
         const resolvedConnectionInfo = resolveConnectionsReferences(JSON.stringify(connectionInfo), {}, appSettings);
