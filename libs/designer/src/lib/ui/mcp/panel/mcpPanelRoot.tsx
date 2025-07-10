@@ -4,8 +4,9 @@ import type { AppDispatch } from '../../../';
 import { closePanel, McpPanelView } from '../../../core/state/mcp/panel/mcpPanelSlice';
 import { useMcpPanelStyles } from './styles';
 import type { RootState } from '../../../core/state/mcp/store';
-import { SelectionPanel } from './connectorPanel/SelectionPanel';
+import { SelectionPanel } from './connector/SelectionPanel';
 import { Drawer } from '@fluentui/react-components';
+import { EditOperationPanelInner } from './operation/EditOperationPanelInner';
 
 export const McpPanelRoot = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -29,6 +30,7 @@ export const McpPanelRoot = () => {
       {(panelMode === McpPanelView.SelectConnector ||
         panelMode === McpPanelView.SelectOperation ||
         panelMode === McpPanelView.CreateConnection) && <SelectionPanel />}
+      {panelMode === McpPanelView.EditOperation && <EditOperationPanelInner />}
     </Drawer>
   );
 };
