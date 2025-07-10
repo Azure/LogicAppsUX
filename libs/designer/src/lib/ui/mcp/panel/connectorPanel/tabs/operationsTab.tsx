@@ -1,27 +1,28 @@
-import type { AppDispatch, RootState } from '../../../../../core/state/mcp/store';
+import type { AppDispatch } from '../../../../../core/state/mcp/store';
 import constants from '../../../../../common/constants';
 import type { McpConnectorTabProps, McpPanelTabProps } from '@microsoft/designer-ui';
 import type { IntlShape } from 'react-intl';
 import { selectPanelTab } from '../../../../../core/state/mcp/panel/mcpPanelSlice';
 import { SelectOperations } from '../../../operations/SelectOperations';
-import { useSelector } from 'react-redux';
 
-export const useOperationsTab = (
+interface OperationsTabProps extends McpConnectorTabProps {
+  selectedOperationsCount: number;
+}
+
+export const operationsTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
-  { isTabDisabled, isPrimaryButtonDisabled, isPreviousButtonDisabled }: McpConnectorTabProps
+  { isTabDisabled, isPrimaryButtonDisabled, isPreviousButtonDisabled, selectedOperationsCount }: OperationsTabProps
 ): McpPanelTabProps => {
-  const selectedOperations = useSelector((state: RootState) => state.mcpPanel.selectedOperations || []);
-
   const nextButtonText =
-    selectedOperations.length > 0
+    selectedOperationsCount > 0
       ? intl.formatMessage(
           {
             defaultMessage: 'Next ({count} selected)',
             id: 'DYJI/D',
             description: 'Button text for moving to the next tab with operation count',
           },
-          { count: selectedOperations.length }
+          { count: selectedOperationsCount }
         )
       : intl.formatMessage({
           defaultMessage: 'Next',
@@ -59,7 +60,7 @@ export const useOperationsTab = (
             dispatch(selectPanelTab(constants.MCP_PANEL_TAB_NAMES.CONNECTIONS));
           },
           appearance: 'primary',
-          disabled: isPrimaryButtonDisabled || selectedOperations.length === 0,
+          disabled: isPrimaryButtonDisabled || selectedOperationsCount === 0,
         },
       ],
     },

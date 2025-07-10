@@ -3,6 +3,7 @@ import { useIntl } from 'react-intl';
 import { Text, Checkbox, Card, CardHeader, Body1, Caption1 } from '@fluentui/react-components';
 import { useOperationSelectionGridStyles } from './styles';
 import type { DiscoveryOpArray } from '@microsoft/logic-apps-shared';
+import DefaultIcon from '../../../common/images/recommendation/defaulticon.svg';
 
 export interface OperationSelectionGridProps {
   operationsData: DiscoveryOpArray;
@@ -25,45 +26,37 @@ interface OperationCellProps {
 }
 
 const OperationCell = ({ operation, isSelected, showConnectorName, onCardClick, onCheckboxChange, styles }: OperationCellProps) => {
+  const { properties, id } = operation;
+  const { api, summary, description, annotation } = properties;
+
   return (
     <Card
       className={isSelected ? styles.operationCardSelected : styles.operationCard}
       appearance="subtle"
-      onClick={(event) => onCardClick(operation.id, event)}
+      onClick={(event) => onCardClick(id, event)}
     >
       <CardHeader
-        image={
-          operation.properties.api.iconUri ? (
-            <img src={operation.properties.api.iconUri} alt={operation.properties.api.displayName} className={styles.connectorIcon} />
-          ) : (
-            <div
-              className={styles.connectorIconPlaceholder}
-              style={{ backgroundColor: operation.properties.api.brandColor || '#0078d4' }}
-            />
-          )
-        }
+        image={<img src={api?.iconUri ?? DefaultIcon} alt={api?.displayName} className={styles.connectorIcon} />}
         header={
           <div className={styles.operationHeader}>
-            <Body1 className={styles.operationTitle} title={operation.properties.summary}>
-              {operation.properties.summary}
+            <Body1 className={styles.operationTitle} title={summary}>
+              {summary}
             </Body1>
             <Checkbox
               checked={isSelected}
-              onChange={(_, data) => onCheckboxChange(operation.id, data.checked === true)}
-              aria-label={`Select ${operation.properties.summary}`}
+              onChange={(_, data) => onCheckboxChange(id, data.checked === true)}
+              aria-label={`Select ${summary}`}
               className={styles.checkboxInCard}
             />
           </div>
         }
         description={
           <div className={styles.operationMeta}>
-            <Caption1 className={styles.operationDescription} title={operation.properties.description}>
-              {operation.properties.description}
+            <Caption1 className={styles.operationDescription} title={description}>
+              {description}
             </Caption1>
-            {showConnectorName && <Caption1 className={styles.connectorName}>{operation.properties.api.displayName}</Caption1>}
-            {operation.properties.annotation?.status && (
-              <Caption1 className={styles.operationStatus}>{operation.properties.annotation.status}</Caption1>
-            )}
+            {showConnectorName && <Caption1 className={styles.connectorName}>{api.displayName}</Caption1>}
+            {annotation?.status && <Caption1 className={styles.operationStatus}>{annotation.status}</Caption1>}
           </div>
         }
       />

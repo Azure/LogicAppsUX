@@ -26,12 +26,25 @@ export const useAllManagedConnectors = () => {
 
 export const useOperationsByConnectorQuery = (connectorId: string) =>
   useQuery({
-    queryKey: ['operationsByConnector', connectorId],
+    queryKey: ['mcpOperationsByConnector', connectorId],
     queryFn: async () => {
       if (!connectorId) {
         return [];
       }
-      return await SearchService().getOperationsByConnector?.(connectorId, 'actions');
+
+      const operations = await SearchService().getOperationsByConnector?.(connectorId, 'actions');
+
+      const filteredOperations =
+        operations?.filter((operation) => {
+          const props = operation.properties as any;
+
+          const isWebhook = props.isWebhook ?? false;
+          const isNotification = props.isNotification ?? false;
+
+          return !isWebhook && !isNotification;
+        }) ?? [];
+
+      return filteredOperations;
     },
     enabled: !!connectorId,
     ...queryOpts,

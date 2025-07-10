@@ -8,7 +8,7 @@ import type {
   DiscoveryWorkflowTrigger,
   BuiltInOperation,
 } from '../../../utils/src';
-import { ArgumentException, equals, normalizeConnectorIds } from '../../../utils/src';
+import { ArgumentException, equals, getResourceNameFromId, normalizeConnectorIds } from '../../../utils/src';
 import { AzureConnectorMock } from '../__test__/__mocks__/azureConnectorResponse';
 import { azureOperationsResponse } from '../__test__/__mocks__/azureOperationResponse';
 import type { ContinuationTokenResponse } from '../common/azure';
@@ -144,7 +144,7 @@ export abstract class BaseSearchService implements ISearchService {
       apiHubServiceDetails: { location, subscriptionId, apiVersion },
     } = this.options;
 
-    const connectorName = this.getConnectorName(connectorId);
+    const connectorName = getResourceNameFromId(connectorId);
     const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/managedApis/${connectorName}/apiOperations`;
 
     let filter: string | undefined;
@@ -259,10 +259,6 @@ export abstract class BaseSearchService implements ISearchService {
     } catch (_error) {
       return [];
     }
-  }
-
-  private getConnectorName(connectorId: string): string {
-    return connectorId.split('/').slice(-1)[0];
   }
 
   private moveGeneralInformation(connectors: Connector[]): Connector[] {

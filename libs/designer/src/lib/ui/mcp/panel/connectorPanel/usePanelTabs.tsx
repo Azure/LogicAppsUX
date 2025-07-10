@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import type { AppDispatch, RootState } from '../../../../core/state/mcp/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { McpPanelView } from '../../../../core/state/mcp/panel/mcpPanelSlice';
-import { useOperationsTab } from './tabs/operationsTab'; // Changed import
+import { operationsTab } from './tabs/operationsTab'; // Back to function import
 import { useIntl } from 'react-intl';
 import { connectorsTab } from './tabs/connectorsTab';
 import type { McpPanelTabProps } from '@microsoft/designer-ui';
@@ -11,7 +11,11 @@ import { connectionsTab } from './tabs/connectionsTab';
 export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
-  const { currentPanelView } = useSelector((state: RootState) => state.mcpPanel);
+
+  const { currentPanelView, selectedOperations } = useSelector((state: RootState) => ({
+    currentPanelView: state.mcpPanel.currentPanelView,
+    selectedOperations: state.mcpPanel.selectedOperations ?? [],
+  }));
 
   const connectorsTabItem = useMemo(
     () =>
@@ -23,11 +27,16 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
     [intl, dispatch]
   );
 
-  const operationsTabItem = useOperationsTab(intl, dispatch, {
-    isTabDisabled: false,
-    isPreviousButtonDisabled: false,
-    isPrimaryButtonDisabled: false,
-  });
+  const operationsTabItem = useMemo(
+    () =>
+      operationsTab(intl, dispatch, {
+        isTabDisabled: false,
+        isPreviousButtonDisabled: false,
+        isPrimaryButtonDisabled: false,
+        selectedOperationsCount: selectedOperations.length,
+      }),
+    [intl, dispatch, selectedOperations.length]
+  );
 
   const connectionsTabItem = useMemo(
     () =>

@@ -21,7 +21,7 @@ export interface PanelState {
 const initialState: PanelState = {
   isOpen: false,
   selectedConnectorId: undefined,
-  selectedOperations: undefined,
+  selectedOperations: [],
 };
 
 export const mcpPanelSlice = createSlice({
