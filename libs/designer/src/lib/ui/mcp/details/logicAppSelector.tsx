@@ -3,15 +3,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useIntl } from 'react-intl';
 import { Option, Field, Dropdown, Text } from '@fluentui/react-components';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { type LogicAppResource, type Resource, type Template, equals } from '@microsoft/logic-apps-shared';
+import { type Resource, equals } from '@microsoft/logic-apps-shared';
 import { setLogicApp } from '../../../core/state/mcp/resourceSlice';
 import { useEmptyLogicApps } from '../../../core/mcp/utils/queries';
-
-export interface LogicAppSelectorProps {
-  viewMode?: 'default' | 'alllogicapps';
-  onSelectApp?: (value: LogicAppResource) => void;
-  lockField?: Template.ResourceFieldId;
-}
+import { useMcpDetailsStyles } from './styles';
 
 export const LogicAppSelector = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -88,6 +83,7 @@ const ResourceField = ({
   errorMessage?: string;
 }) => {
   const intl = useIntl();
+  const styles = useMcpDetailsStyles();
   const texts = {
     LOADING: intl.formatMessage({
       defaultMessage: 'Loading resources ...',
@@ -118,37 +114,36 @@ const ResourceField = ({
   }, [resources, defaultKey, onSelect, isLoading, selectedResource]);
 
   return (
-    <div style={{ marginBottom: '12px' }}>
-      <Field
-        className="msla-templates-tab-label"
-        label={label}
-        required={true}
-        validationMessage={errorMessage}
-        validationState={errorMessage ? 'error' : 'none'}
-      >
-        <Dropdown
-          style={{ width: '100%' }}
-          id={id}
-          onOptionSelect={(e, option) => onSelect(option?.optionValue)}
-          disabled={isLoading}
-          value={selectedResource}
-          selectedOptions={[defaultKey]}
-          size="small"
-          placeholder={isLoading ? texts.LOADING : ''}
-        >
-          {!isLoading && !sortedResources.length ? (
-            <Option key={'no-items'} value={'#noitem#'} disabled>
-              {texts.NO_ITEMS}
-            </Option>
-          ) : (
-            sortedResources.map((resource) => (
-              <Option key={resource.id} value={resource.name}>
-                {resource.displayName}
+    <div className={styles.container}>
+      <div className={styles.labelSection}>
+        <Text>{label}</Text>
+      </div>
+      <div className={styles.fieldSection}>
+        <Field required={true} validationMessage={errorMessage} validationState={errorMessage ? 'error' : 'none'}>
+          <Dropdown
+            style={{ width: '100%' }}
+            id={id}
+            onOptionSelect={(e, option) => onSelect(option?.optionValue)}
+            disabled={isLoading}
+            value={selectedResource}
+            selectedOptions={[defaultKey]}
+            size="small"
+            placeholder={isLoading ? texts.LOADING : ''}
+          >
+            {!isLoading && !sortedResources.length ? (
+              <Option key={'no-items'} value={'#noitem#'} disabled>
+                {texts.NO_ITEMS}
               </Option>
-            ))
-          )}
-        </Dropdown>
-      </Field>
+            ) : (
+              sortedResources.map((resource) => (
+                <Option key={resource.id} value={resource.name}>
+                  {resource.displayName}
+                </Option>
+              ))
+            )}
+          </Dropdown>
+        </Field>
+      </div>
     </div>
   );
 };

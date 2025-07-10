@@ -48,7 +48,8 @@ export const McpWizard = () => {
   };
 
   const INTL_TEXT = {
-    title: intl.formatMessage({ id: 'rCjtl8', defaultMessage: 'Connectors', description: 'Title for the connectors section' }),
+    connectorsTitle: intl.formatMessage({ id: 'rCjtl8', defaultMessage: 'Connectors', description: 'Title for the connectors section' }),
+    detailsTitle: intl.formatMessage({ id: '1Orv4i', defaultMessage: 'Details', description: 'Title for the details section' }),
     noConnectors: intl.formatMessage({
       id: 'xyhnsP',
       defaultMessage: 'No connectors added yet',
@@ -70,15 +71,21 @@ export const McpWizard = () => {
     <div className={styles.wizardContainer}>
       <div className={styles.header}>
         <Text size={600} weight="semibold">
-          {INTL_TEXT.title}
+          {INTL_TEXT.detailsTitle}
         </Text>
-        <Button appearance="primary" icon={<Add24Regular />} onClick={handleAddConnectors}>
-          {INTL_TEXT.addConnectorsButton}
-        </Button>
       </div>
 
       <div className={styles.content}>
         <LogicAppSelector />
+      </div>
+
+      <div className={styles.header}>
+        <Text size={600} weight="semibold">
+          {INTL_TEXT.connectorsTitle}
+        </Text>
+        <Button appearance="primary" icon={<Add24Regular />} onClick={handleAddConnectors}>
+          {INTL_TEXT.addConnectorsButton}
+        </Button>
       </div>
 
       <div className={styles.content}>
@@ -101,6 +108,7 @@ export const McpWizard = () => {
           <div className={styles.connectorsList}>{/* Connector items will go here */}</div>
         )}
       </div>
+
       <Text size={600} weight="semibold">
         {'Test section'}
       </Text>
