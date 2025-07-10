@@ -39,7 +39,7 @@ const TimelineNode = ({
   return (
     <div ref={ref} className={styles.timelineNode} onClick={onSelect}>
       {selected && <div className={styles.selectionBox} />}
-      <ConnectorIcon nodeId={firstNodeId} />
+      <ConnectorIcon size="30px" nodeId={firstNodeId} />
       {actionRepetitionCount > 1 && (
         <Badge
           shape="rounded"

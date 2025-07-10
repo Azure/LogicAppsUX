@@ -172,7 +172,7 @@ const MonitoringTimeline = () => {
             ...(expanded ? { minWidth: '200px' } : {}),
           }}
         >
-          <TimelineRegular style={{ color: '#1f85ff', width: '32px', height: '32px' }} />
+          <TimelineRegular style={{ color: '#1f85ff', width: '30px', height: '30px' }} />
           {expanded && (
             <Text weight={'semibold'} style={{ flexGrow: 1 }}>
               {text.title}
@@ -191,7 +191,11 @@ const MonitoringTimeline = () => {
           )}
         </div>
         <Divider />
-        {noRepetitions ? (
+        {isFetchingRepetitions ? (
+          <div className={styles.loadingContainer}>
+            <Spinner style={{ gap: `${expanded ? '8px' : '0px'}` }} size="extra-small" label={expanded ? text.loading : ''} />
+          </div>
+        ) : noRepetitions ? (
           <div
             style={{
               display: 'flex',
@@ -201,7 +205,7 @@ const MonitoringTimeline = () => {
               ...(expanded ? { minWidth: '200px' } : {}),
             }}
           >
-            <BorderNoneRegular style={{ color: '#80808080', width: '32px', height: '32px' }} />
+            <BorderNoneRegular style={{ color: '#80808080', width: '30px', height: '30px' }} />
             {expanded && (
               <Text weight={'semibold'} style={{ color: '#80808080' }}>
                 {text.noData}
@@ -251,11 +255,6 @@ const MonitoringTimeline = () => {
             )}
           </div>
         )}
-        {isFetchingRepetitions ? (
-          <div className={styles.loadingContainer}>
-            <Spinner label={expanded ? text.loading : ''} />
-          </div>
-        ) : null}
         <Divider />
         <div className={styles.flexCol}>
           <Button
