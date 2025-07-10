@@ -64,7 +64,7 @@ const MonitoringTimeline = () => {
     () => {
       dispatch(clearAllRepetitionRunData());
 
-      const selectedRepetition = repetitions[transitionIndex];
+      const selectedRepetition = repetitions.find((repetition) => repetition.data?.properties?.a2ametadata?.taskId === transitionIndex);
       const firstNodeId = selectedRepetition?.actionIds?.[0];
 
       if (firstNodeId) {
