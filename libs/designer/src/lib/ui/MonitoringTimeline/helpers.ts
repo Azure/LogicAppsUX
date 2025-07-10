@@ -52,3 +52,22 @@ export const parseRepetitions = (
   );
   return output;
 };
+
+export const countUniqueTasks = (
+  repetitions: {
+    actionIds: string[] | undefined;
+    repetitionIndex: number;
+    data?: TimelineRepetition;
+  }[]
+): number => {
+  const uniqueTaskIds = new Set<number>();
+
+  repetitions.forEach((repetition) => {
+    const taskId = repetition.data?.properties?.a2ametadata?.taskId;
+    if (taskId !== undefined && taskId !== null) {
+      uniqueTaskIds.add(taskId);
+    }
+  });
+
+  return uniqueTaskIds.size;
+};

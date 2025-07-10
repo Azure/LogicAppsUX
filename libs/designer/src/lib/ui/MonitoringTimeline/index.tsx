@@ -27,7 +27,7 @@ import {
 } from '../../core/state/workflow/workflowSlice';
 import { useMonitoringTimelineStyles } from './monitoringTimeline.styles';
 import { useIntl } from 'react-intl';
-import { parseRepetitions } from './helpers';
+import { parseRepetitions, countUniqueTasks } from './helpers';
 
 const ChevronUpIcon = bundleIcon(ChevronUpFilled, ChevronUpRegular);
 const ChevronDownIcon = bundleIcon(ChevronDownFilled, ChevronDownRegular);
@@ -45,6 +45,10 @@ const MonitoringTimeline = () => {
   const repetitions = useMemo(() => {
     return parseRepetitions(repetitionData, runInstance);
   }, [repetitionData, runInstance]);
+
+  const tasksNumber = useMemo(() => {
+    return countUniqueTasks(repetitions);
+  }, [repetitions]);
 
   useEffect(() => {
     dispatch(setTimelineRepetitionArray((repetitions ?? []).map((repetition) => repetition.actionIds ?? [])));
@@ -99,14 +103,15 @@ const MonitoringTimeline = () => {
           transitionIndex={transitionIndex}
           repetitions={repetitions}
           setTransitionIndex={setTransitionIndex}
+          tasksNumber={tasksNumber}
         />
         <Divider />
         <TimelineButtons
+          tasksNumber={tasksNumber}
           isFetchingRepetitions={isFetchingRepetitions}
           isExpanded={isExpanded}
           transitionIndex={transitionIndex}
           setTransitionIndex={setTransitionIndex}
-          repetitions={repetitions}
           noRepetitions={noRepetitions}
         />
       </Card>
@@ -121,6 +126,7 @@ const TimelineContent = ({
   transitionIndex,
   repetitions,
   setTransitionIndex,
+  tasksNumber,
 }: {
   isExpanded: boolean;
   isFetchingRepetitions: boolean;
@@ -132,6 +138,7 @@ const TimelineContent = ({
     data?: TimelineRepetition;
   }[];
   setTransitionIndex: (index: number) => void;
+  tasksNumber: number;
 }) => {
   const styles = useMonitoringTimelineStyles();
   const intl = useIntl();
@@ -199,18 +206,19 @@ const TimelineContent = ({
         }}
       >
         {(repetitions ?? []).map((repetition, index) => {
-          const taskIndex = repetition.data?.properties?.a2ametadata?.taskId;
+          const taskIndex = repetition.data?.properties?.a2ametadata?.taskId ?? 0;
+          const isFirstRepetitionInTask = taskIndex !== repetitions[index - 1]?.data?.properties?.a2ametadata?.taskId;
           return (
             <div key={repetition.repetitionIndex} style={{ display: 'flex', flexDirection: 'column' }}>
-              {(index === 0 || taskIndex !== repetitions[index - 1]?.data?.properties?.a2ametadata?.taskId) && (
+              {(index === 0 || isFirstRepetitionInTask) && (
                 <Text className={styles.timelineTask} align={'center'} size={200} weight={'medium'}>
-                  {isExpanded ? text.taskCount((taskIndex ?? 0) + 1) : (taskIndex ?? 0) + 1}
+                  {isExpanded ? text.taskCount(taskIndex + 1) : taskIndex + 1}
                 </Text>
               )}
               <TimelineNode
                 index={index}
-                selected={index === transitionIndex}
-                onSelect={() => setTransitionIndex(tas)}
+                selected={taskIndex === transitionIndex && isFirstRepetitionInTask}
+                onSelect={() => setTransitionIndex(taskIndex)}
                 isExpanded={isExpanded}
                 data={repetition.data!}
               />
@@ -225,7 +233,7 @@ const TimelineContent = ({
             step={1}
             value={transitionIndex}
             min={0}
-            max={repetitions.length - 1}
+            max={tasksNumber - 1}
             onChange={(e, data) => setTransitionIndex(data.value as number)}
             style={{ transform: 'rotate(180deg)' }}
           />
@@ -301,19 +309,15 @@ const TimelineButtons = ({
   isFetchingRepetitions,
   transitionIndex,
   setTransitionIndex,
-  repetitions,
   noRepetitions,
+  tasksNumber,
 }: {
   isExpanded: boolean;
   isFetchingRepetitions: boolean;
   transitionIndex: number;
   setTransitionIndex: (index: number) => void;
-  repetitions: {
-    actionIds: string[] | undefined;
-    repetitionIndex: number;
-    data?: TimelineRepetition;
-  }[];
   noRepetitions: boolean;
+  tasksNumber: number;
 }) => {
   const styles = useMonitoringTimelineStyles();
   const intl = useIntl();
@@ -351,7 +355,7 @@ const TimelineButtons = ({
         icon={<ChevronDownIcon />}
         shape="circular"
         className={styles.navButton}
-        disabled={noRepetitions || transitionIndex === repetitions.length - 1 || isFetchingRepetitions}
+        disabled={noRepetitions || transitionIndex === tasksNumber - 1 || isFetchingRepetitions}
         onClick={() => setTransitionIndex(transitionIndex + 1)}
       >
         {isExpanded ? text.nextTask : ''}
