@@ -1,12 +1,12 @@
 import { useState, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
-import { useAllConnectors } from '../../../core/queries/browse';
-import { useConnectorSelectionStyles } from './connectorSelectionStyles';
 import { ConnectorBrowseView } from './ConnectorBrowseView';
 import { selectPanelTab, selectConnectorId } from '../../../core/state/mcp/panel/mcpPanelSlice';
 import constants from '../../../common/constants';
 import { SearchBox } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
+import { useAllManagedConnectors } from '../../../core/mcp/utils/queries';
+import { useConnectorSelectionStyles } from './styles';
 
 export const SelectConnectors = () => {
   const intl = useIntl();
@@ -15,7 +15,7 @@ export const SelectConnectors = () => {
 
   const [searchTerm, setSearchTerm] = useState('');
 
-  const { data: allConnectors, isLoading: isLoadingConnectors } = useAllConnectors();
+  const { data: allConnectors, isLoading: isLoadingConnectors } = useAllManagedConnectors();
 
   const handleConnectorSelect = useCallback(
     (connectorId: string) => {
