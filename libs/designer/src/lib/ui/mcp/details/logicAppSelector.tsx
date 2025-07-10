@@ -3,17 +3,19 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useIntl } from 'react-intl';
 import { Option, Field, Dropdown, Text } from '@fluentui/react-components';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { type Resource, equals } from '@microsoft/logic-apps-shared';
+import { equals } from '@microsoft/logic-apps-shared';
 import { setLogicApp } from '../../../core/state/mcp/resourceSlice';
 import { useEmptyLogicApps } from '../../../core/mcp/utils/queries';
 import { useMcpDetailsStyles } from './styles';
 
 export const LogicAppSelector = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { subscriptionId, resourceGroup, logicAppName } = useSelector((state: RootState) => state.resource);
+  const { subscriptionId, logicAppName } = useSelector((state: RootState) => state.resource);
   const { data: logicApps, isLoading: isLogicAppsLoading } = useEmptyLogicApps(subscriptionId ?? '');
 
   const intl = useIntl();
+  const styles = useMcpDetailsStyles();
+
   const intlText = useMemo(
     () => ({
       VALIDATION_ERROR: intl.formatMessage({
@@ -26,8 +28,30 @@ export const LogicAppSelector = () => {
         id: 'IpD27y',
         description: 'Label field for logic app instance',
       }),
+      LOADING: intl.formatMessage({
+        defaultMessage: 'Loading resources ...',
+        id: 'IMWSjN',
+        description: 'Loading text',
+      }),
+      NO_ITEMS: intl.formatMessage({
+        defaultMessage: 'No resources found',
+        id: 'yytPY3',
+        description: 'No items to select text',
+      }),
     }),
     [intl]
+  );
+
+  const [selectedResource, setSelectedResource] = useState<string | undefined>('');
+
+  const resources = useMemo(
+    () =>
+      (logicApps ?? []).map((app) => ({
+        id: app.id,
+        name: app.name,
+        displayName: app.name,
+      })),
+    [logicApps]
   );
 
   const onLogicAppSelect = useCallback(
@@ -35,104 +59,50 @@ export const LogicAppSelector = () => {
       const app = logicApps?.find((app) => equals(app.name, value));
       dispatch(
         setLogicApp({
-          subscriptionId: subscriptionId ?? '',
           resourceGroup: app?.resourceGroup ?? '',
           location: app?.location ?? '',
           logicAppName: app?.name ?? '',
         })
       );
     },
-    [dispatch, subscriptionId, logicApps]
+    [dispatch, logicApps]
   );
 
-  return (
-    <div>
-      <Text>resourceGroup: {resourceGroup}</Text>
-      <ResourceField
-        id="logicapp"
-        label={intlText.LOGIC_APP}
-        onSelect={onLogicAppSelect}
-        defaultKey={logicAppName ?? ''}
-        isLoading={isLogicAppsLoading}
-        resources={(logicApps ?? []).map((app) => ({
-          id: app.id,
-          name: app.name,
-          displayName: app.name,
-        }))}
-        errorMessage={logicAppName ? '' : intlText.VALIDATION_ERROR}
-      />
-    </div>
-  );
-};
-
-const ResourceField = ({
-  id,
-  label,
-  resources,
-  defaultKey,
-  errorMessage,
-  isLoading,
-  onSelect,
-}: {
-  id: string;
-  label: string;
-  defaultKey: string;
-  resources: Resource[];
-  onSelect: (value: any) => void;
-  isLoading?: boolean;
-  errorMessage?: string;
-}) => {
-  const intl = useIntl();
-  const styles = useMcpDetailsStyles();
-  const texts = {
-    LOADING: intl.formatMessage({
-      defaultMessage: 'Loading resources ...',
-      id: 'IMWSjN',
-      description: 'Loading text',
-    }),
-    NO_ITEMS: intl.formatMessage({
-      defaultMessage: 'No resources found',
-      id: 'yytPY3',
-      description: 'No items to select text',
-    }),
-  };
-
-  const sortedResources = useMemo(() => resources.sort((a, b) => a.displayName.localeCompare(b.displayName)), [resources]);
-
-  const [selectedResource, setSelectedResource] = useState<string | undefined>('');
   useEffect(() => {
-    if (!isLoading) {
-      const resource = resources.find((resource) => equals(resource.name, defaultKey))?.displayName;
-      if (!resource && !!defaultKey) {
-        onSelect('');
+    if (!isLogicAppsLoading) {
+      const resource = resources.find((resource) => equals(resource.name, logicAppName ?? ''))?.displayName;
+      if (!resource && !!logicAppName) {
+        onLogicAppSelect('');
       }
 
       if (resource !== selectedResource) {
         setSelectedResource(resource);
       }
     }
-  }, [resources, defaultKey, onSelect, isLoading, selectedResource]);
+  }, [resources, logicAppName, onLogicAppSelect, isLogicAppsLoading, selectedResource]);
+
+  const sortedResources = useMemo(() => resources.sort((a, b) => a.displayName.localeCompare(b.displayName)), [resources]);
 
   return (
     <div className={styles.container}>
       <div className={styles.labelSection}>
-        <Text>{label}</Text>
+        <Text>{intlText.LOGIC_APP}</Text>
       </div>
       <div className={styles.fieldSection}>
-        <Field required={true} validationMessage={errorMessage} validationState={errorMessage ? 'error' : 'none'}>
+        <Field required={true}>
           <Dropdown
             style={{ width: '100%' }}
-            id={id}
-            onOptionSelect={(e, option) => onSelect(option?.optionValue)}
-            disabled={isLoading}
+            id={'logicapps'}
+            onOptionSelect={(e, option) => onLogicAppSelect(option?.optionValue as string)}
+            disabled={isLogicAppsLoading}
             value={selectedResource}
-            selectedOptions={[defaultKey]}
+            selectedOptions={[logicAppName ?? '']}
             size="small"
-            placeholder={isLoading ? texts.LOADING : ''}
+            placeholder={isLogicAppsLoading ? intlText.LOADING : ''}
           >
-            {!isLoading && !sortedResources.length ? (
+            {!isLogicAppsLoading && !sortedResources.length ? (
               <Option key={'no-items'} value={'#noitem#'} disabled>
-                {texts.NO_ITEMS}
+                {intlText.NO_ITEMS}
               </Option>
             ) : (
               sortedResources.map((resource) => (
