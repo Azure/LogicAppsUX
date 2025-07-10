@@ -1,6 +1,6 @@
-import { equals, type LogicAppsV2, optional } from '@microsoft/logic-apps-shared';
+import { equals, guid, type LogicAppsV2, optional, type ParameterInfo } from '@microsoft/logic-apps-shared';
 import type { RootState } from '../../state/mcp/store';
-import { parameterValueToString } from '../../utils/parameters/helper';
+import { parameterHasValue, parameterValueToString } from '../../utils/parameters/helper';
 import type { Settings } from '../../actions/bjsworkflow/settings';
 import type { NodeOperation, NodeInputs } from '../../state/operation/operationMetadataSlice';
 import {
@@ -21,7 +21,7 @@ export const serializeMcpWorkflows = async (state: RootState): Promise<Record<st
   const workflows: Record<string, LogicAppsV2.WorkflowDefinition> = {};
   const promises = Object.keys(operationInfo).map(async (nodeId) => {
     const referenceName = connectionsMapping[nodeId] as string;
-    return getOperationDefinitionAndTriggerInputs(referenceName, operationInfo[nodeId], inputParameters[nodeId], settings[nodeId] ?? {});
+    return getOperationDefinitionAndTriggerInputs(referenceName, operationInfo[nodeId], inputParameters[nodeId], settings[nodeId]);
   });
 
   const allOperations = await Promise.all(promises);
@@ -42,25 +42,34 @@ const getOperationDefinitionAndTriggerInputs = async (
   nodeSettings: Settings
 ): Promise<{ operationId: string; definition: LogicAppsV2.OperationDefinition; triggerInputs: SerializedParameter[] }> => {
   const { operationId, type, kind } = operationInfo;
-  const allInputs: SerializedParameter[] = getOperationInputParameters(nodeInputs).map((input) => ({
-    ...input,
-    value: parameterValueToString(input, true /* isDefinitionValue */),
-  }));
+  const allInputs = getOperationInputParameters(nodeInputs);
   const triggerInputs: SerializedParameter[] = [];
-  const inputsToSerialize = allInputs.map((input) => {
-    if (input.required) {
-      if (!input.value) {
-        input.value = getTriggerInputExpression(input);
-        triggerInputs.push(input);
-      }
-    } else if (input.visibility === 'important' && !input.conditionalVisibility) {
-      if (!input.value) {
-        input.value = getTriggerInputExpression(input);
+  const inputsToSerialize: SerializedParameter[] = allInputs.map((input) => {
+    const updatedInput = { ...input } as SerializedParameter;
+    if (isParameterSelected(updatedInput)) {
+      if (!parameterHasValue(updatedInput)) {
+        const { parameterName, type, required } = input;
+        updatedInput.value = [
+          {
+            id: guid(),
+            type: 'token',
+            value: `triggerBody()${required ? '' : '?'}['${parameterName}']`,
+            token: {
+              key: `outputs.$.body.${parameterName}`,
+              name: `body.${parameterName}`,
+              type,
+              required,
+              tokenType: 'outputs',
+              source: 'outputs',
+            },
+          },
+        ];
         triggerInputs.push(input);
       }
     }
 
-    return input;
+    updatedInput.value = parameterValueToString(updatedInput, true /* isDefinitionValue */);
+    return updatedInput;
   });
 
   const inputPathValue = await serializeParametersFromSwagger(inputsToSerialize, operationInfo);
@@ -78,8 +87,16 @@ const getOperationDefinitionAndTriggerInputs = async (
   };
 };
 
-const getTriggerInputExpression = (input: SerializedParameter): string => {
-  return input.type === 'string' ? `@{triggerBody()?['${input.parameterName}']}` : `@triggerBody()?['${input.parameterName}']`;
+const isParameterSelected = (parameter: ParameterInfo): boolean => {
+  if (parameter.required) {
+    return true;
+  }
+
+  if (parameter.visibility === 'important') {
+    return parameter.conditionalVisibility !== false;
+  }
+
+  return !!parameter.conditionalVisibility;
 };
 
 const generateDefinition = (
