@@ -1,4 +1,4 @@
-import { Text, Button, Card, Divider, Slider, Spinner } from '@fluentui/react-components';
+import { Text, Button, Card, Divider, Slider, Spinner, tokens } from '@fluentui/react-components';
 
 import {
   bundleIcon,
@@ -34,10 +34,12 @@ const ChevronDownIcon = bundleIcon(ChevronDownFilled, ChevronDownRegular);
 const RefreshIcon = bundleIcon(ArrowClockwiseFilled, ArrowClockwiseRegular);
 
 const MonitoringTimeline = () => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [transitionIndex, setTransitionIndex] = useState(-1);
   const styles = useMonitoringTimelineStyles();
   const dispatch = useDispatch();
-
   const runInstance = useRunInstance();
+
   const { data: repetitionData, isFetching: isFetchingRepetitions, refetch: refetchTimelineRepetitions } = useTimelineRepetitions();
 
   const repetitions = useMemo(() => {
@@ -47,10 +49,6 @@ const MonitoringTimeline = () => {
   useEffect(() => {
     dispatch(setTimelineRepetitionArray((repetitions ?? []).map((repetition) => repetition.actionIds ?? [])));
   }, [dispatch, repetitions]);
-
-  const [isExpanded, setIsExpanded] = useState(false);
-
-  const [transitionIndex, setTransitionIndex] = useState(-1);
 
   useEffect(() => {
     if (transitionIndex === -1 && (repetitions ?? []).length > 0 && !isFetchingRepetitions) {
@@ -104,6 +102,7 @@ const MonitoringTimeline = () => {
         />
         <Divider />
         <TimelineButtons
+          isFetchingRepetitions={isFetchingRepetitions}
           isExpanded={isExpanded}
           transitionIndex={transitionIndex}
           setTransitionIndex={setTransitionIndex}
@@ -181,9 +180,9 @@ const TimelineContent = ({
           ...(isExpanded ? { minWidth: '200px' } : {}),
         }}
       >
-        <BorderNoneRegular style={{ color: '#80808080', width: '30px', height: '30px' }} />
+        <BorderNoneRegular style={{ color: tokens.colorNeutralForeground3, width: '30px', height: '30px' }} />
         {isExpanded && (
-          <Text weight={'semibold'} style={{ color: '#80808080' }}>
+          <Text weight={'semibold'} style={{ color: tokens.colorNeutralForeground3 }}>
             {text.noData}
           </Text>
         )}
@@ -299,12 +298,14 @@ const TimelineHeader = ({
 
 const TimelineButtons = ({
   isExpanded,
+  isFetchingRepetitions,
   transitionIndex,
   setTransitionIndex,
   repetitions,
   noRepetitions,
 }: {
   isExpanded: boolean;
+  isFetchingRepetitions: boolean;
   transitionIndex: number;
   setTransitionIndex: (index: number) => void;
   repetitions: {
@@ -340,7 +341,7 @@ const TimelineButtons = ({
         icon={<ChevronUpIcon />}
         shape="circular"
         className={styles.navButton}
-        disabled={noRepetitions || transitionIndex === 0}
+        disabled={noRepetitions || transitionIndex === 0 || isFetchingRepetitions}
         onClick={() => setTransitionIndex(transitionIndex - 1)}
       >
         {isExpanded ? text.previousTask : ''}
@@ -350,7 +351,7 @@ const TimelineButtons = ({
         icon={<ChevronDownIcon />}
         shape="circular"
         className={styles.navButton}
-        disabled={noRepetitions || transitionIndex === repetitions.length - 1}
+        disabled={noRepetitions || transitionIndex === repetitions.length - 1 || isFetchingRepetitions}
         onClick={() => setTransitionIndex(transitionIndex + 1)}
       >
         {isExpanded ? text.nextTask : ''}

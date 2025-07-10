@@ -28,7 +28,8 @@ export const useTimelineRepetitions = (): UseQueryResult<TimelineRepetition[]> =
       const timelineRepetitions = await RunService().getTimelineRepetitions(run!.id);
       const parsedData: TimelineRepetition[] = JSON.parse(JSON.stringify(timelineRepetitions))?.value ?? [];
       const sortedData = parsedData.sort((a, b) => new Date(a.properties.startTime).getTime() - new Date(b.properties.startTime).getTime());
-      console.log('Timeline Repetitions:', sortedData);
+
+      await new Promise((resolve) => setTimeout(resolve, 3000)); // Allow React to update the state before returning
       return sortedData;
     },
     {

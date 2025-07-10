@@ -44,7 +44,7 @@ export const useMonitoringTimelineStyles = makeStyles({
     flexDirection: 'row',
     alignItems: 'center',
     gap: '8px',
-    borderRadius: '8px',
+    borderRadius: tokens.borderRadiusXLarge,
     cursor: 'pointer',
     margin: '-4px',
     padding: '4px',
@@ -56,7 +56,7 @@ export const useMonitoringTimelineStyles = makeStyles({
 
   timelineTask: {
     margin: '5px 0px',
-    borderRadius: '4px',
+    borderRadius: tokens.borderRadiusMedium,
     backgroundColor: '#1f85ff20',
   },
 
