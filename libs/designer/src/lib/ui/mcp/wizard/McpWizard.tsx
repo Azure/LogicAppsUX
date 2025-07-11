@@ -68,8 +68,9 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
   };
 
   const INTL_TEXT = {
-    connectorsTitle: intl.formatMessage({ id: 'rCjtl8', defaultMessage: 'Connectors', description: 'Title for the connectors section' }),
+    connectorsTitle: intl.formatMessage({ id: 'ERYPWh', defaultMessage: 'Connector', description: 'Title for the connector section' }),
     detailsTitle: intl.formatMessage({ id: '1Orv4i', defaultMessage: 'Details', description: 'Title for the details section' }),
+    operationsTitle: intl.formatMessage({ id: 'FwHl49', defaultMessage: 'Operations', description: 'Title for the operations section' }),
     noConnectors: intl.formatMessage({
       id: 'xyhnsP',
       defaultMessage: 'No connectors added yet',
@@ -89,61 +90,72 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
 
   return (
     <div className={styles.wizardContainer}>
-      <div className={styles.header}>
-        <Text size={600} weight="semibold">
-          {INTL_TEXT.detailsTitle}
-        </Text>
+      <div className={styles.section}>
+        <div className={styles.header}>
+          <Text size={400} weight="semibold">
+            {INTL_TEXT.detailsTitle}
+          </Text>
+        </div>
+
+        <div className={styles.content}>
+          <LogicAppSelector />
+        </div>
       </div>
 
-      <div className={styles.content}>
-        <LogicAppSelector />
-      </div>
-
-      <div className={styles.header}>
-        <Text size={600} weight="semibold">
-          {INTL_TEXT.connectorsTitle}
-        </Text>
-        <Button appearance="primary" icon={<Add24Regular />} onClick={handleAddConnectors}>
-          {INTL_TEXT.addConnectorsButton}
-        </Button>
-      </div>
-
-      <div className={styles.content}>
-        {connectors.length === 0 ? (
-          <div className={styles.emptyState}>
-            <div className={styles.emptyStateIcon}>
-              <ConnectorFilled />
+      <div className={styles.section}>
+        <div className={styles.header}>
+          <Text size={400} weight="semibold">
+            {INTL_TEXT.connectorsTitle}
+          </Text>
+          <Button appearance="primary" icon={<Add24Regular />} onClick={handleAddConnectors}>
+            {INTL_TEXT.addConnectorsButton}
+          </Button>
+        </div>
+        <div className={styles.content}>
+          {connectors.length === 0 ? (
+            <div className={styles.emptyState}>
+              <div className={styles.emptyStateIcon}>
+                <ConnectorFilled />
+              </div>
+              <Text size={500} weight="semibold" style={{ marginBottom: '8px' }}>
+                {INTL_TEXT.noConnectors}
+              </Text>
+              <Text size={300} style={{ opacity: 0.7, marginBottom: '24px' }}>
+                {INTL_TEXT.addFirstConnector}
+              </Text>
+              <Button appearance="primary" icon={<Add24Regular />} onClick={handleAddConnectors} size="large">
+                {INTL_TEXT.addConnectorsButton}
+              </Button>
             </div>
-            <Text size={500} weight="semibold" style={{ marginBottom: '8px' }}>
-              {INTL_TEXT.noConnectors}
-            </Text>
-            <Text size={300} style={{ opacity: 0.7, marginBottom: '24px' }}>
-              {INTL_TEXT.addFirstConnector}
-            </Text>
-            <Button appearance="primary" icon={<Add24Regular />} onClick={handleAddConnectors} size="large">
-              {INTL_TEXT.addConnectorsButton}
-            </Button>
-          </div>
-        ) : (
-          <div className={styles.connectorsList}>{/* Connector items will go here */}</div>
-        )}
-      </div>
+          ) : (
+            <div className={styles.connectorsList}>{/* Connector items will go here */}</div>
+          )}
+        </div>
 
-      <Text size={600} weight="semibold">
-        {'Test section'}
-      </Text>
-      <div>
-        <Button onClick={handleLoadOperations}>{'Load operations'}</Button>
-        <Button onClick={handleRegisterMcpServer}>{'Register MCP Server'}</Button>
-      </div>
-      <div>
-        <Text size={600} weight="semibold">
-          {'Operations section'}
-        </Text>
-        <ListOperations connectorId={sampleConnectorId} />
+        <div className={styles.section}>
+          <div className={styles.header}>
+            <Text size={400} weight="semibold">
+              {INTL_TEXT.operationsTitle}
+            </Text>
+          </div>
+          <div className={styles.content}>
+            <ListOperations connectorId={sampleConnectorId} />
+          </div>
+        </div>
       </div>
 
       <McpPanelRoot />
+
+      {/* TO BE REMOVED */}
+      <div>
+        <Text size={600} weight="semibold">
+          {'Test section'}
+        </Text>
+        <div>
+          <Button onClick={handleLoadOperations}>{'Load operations'}</Button>
+          <Button onClick={handleRegisterMcpServer}>{'Register MCP Server'}</Button>
+        </div>
+      </div>
     </div>
   );
 };
