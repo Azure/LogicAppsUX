@@ -1,20 +1,31 @@
 import { makeStyles, tokens } from '@fluentui/react-components';
 
+const borderStyle = `1px solid ${tokens.colorNeutralStroke1}`;
+const mainGap = '16px';
+
 export const useMcpWizardStyles = makeStyles({
   wizardContainer: {
     display: 'flex',
+    flex: 1,
     flexDirection: 'column',
     height: '100%',
     background: tokens.colorNeutralBackground1,
+    gap: '32px',
+  },
+
+  section: {
+    borderRadius: '8px',
+    border: borderStyle,
+    padding: mainGap,
   },
 
   header: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: '24px 24px 20px 24px',
-    borderBottom: `1px solid ${tokens.colorNeutralStroke2}`,
-    background: tokens.colorNeutralBackground1,
+    paddingBottom: '12px',
+    position: 'relative',
+    borderBottom: borderStyle,
   },
 
   content: {
@@ -22,6 +33,7 @@ export const useMcpWizardStyles = makeStyles({
     display: 'flex',
     flexDirection: 'column',
     overflow: 'hidden',
+    paddingTop: mainGap,
   },
 
   emptyState: {
@@ -62,11 +74,9 @@ export const useMcpWizardStyles = makeStyles({
       fontSize: '48px',
     },
   },
-  actionButtons: {
-    display: 'flex',
-    gap: '8px',
-    marginTop: '24px',
-    justifyContent: 'flex-start',
+  footer: {
+    padding: `${tokens.spacingVerticalM} 0px`,
+    borderTop: `1px solid ${tokens.colorNeutralStroke2}`,
   },
 });
 

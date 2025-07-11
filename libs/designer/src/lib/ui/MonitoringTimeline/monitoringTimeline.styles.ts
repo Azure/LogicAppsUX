@@ -21,6 +21,12 @@ export const useMonitoringTimelineStyles = makeStyles({
     maxHeight: '390px',
   },
 
+  timelineIcon: {
+    color: tokens.colorBrandForeground1,
+    width: '30px',
+    height: '30px',
+  },
+
   timelineNodeContainer: {
     display: 'flex',
     flexDirection: 'column',
@@ -38,7 +44,7 @@ export const useMonitoringTimelineStyles = makeStyles({
     flexDirection: 'row',
     alignItems: 'center',
     gap: '8px',
-    borderRadius: '8px',
+    borderRadius: tokens.borderRadiusXLarge,
     cursor: 'pointer',
     margin: '-4px',
     padding: '4px',
@@ -46,6 +52,13 @@ export const useMonitoringTimelineStyles = makeStyles({
     '&:hover': {
       backgroundColor: '#1f85ff20',
     },
+  },
+
+  timelineTask: {
+    padding: '0px 5px',
+    margin: '5px 0px',
+    borderRadius: tokens.borderRadiusMedium,
+    backgroundColor: '#1f85ff20',
   },
 
   selectionBox: {
@@ -59,11 +72,6 @@ export const useMonitoringTimelineStyles = makeStyles({
   },
 
   loadingContainer: {
-    position: 'absolute',
-    top: '0px',
-    left: '0px',
-    width: '100%',
-    height: '100%',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',

@@ -1,11 +1,9 @@
 import { Text, Button, Spinner } from '@fluentui/react-components';
 import { Add24Regular, ConnectorFilled, AppGeneric24Regular } from '@fluentui/react-icons';
-import { useMcpWizardStyles } from './styles';
 import { useIntl } from 'react-intl';
 import { McpPanelView, openConnectorPanelView, openOperationPanelView } from '../../../core/state/mcp/panel/mcpPanelSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../core/state/mcp/store';
-import { McpPanelRoot } from '../panel/mcpPanelRoot';
 import { type McpWorkflowsData, serializeMcpWorkflows } from '../../../core/mcp/utils/serializer';
 import { resetQueriesOnRegisterMcpServer } from '../../../core/mcp/utils/queries';
 import { LogicAppSelector } from '../details/logicAppSelector';
@@ -15,6 +13,9 @@ import { useMemo, useCallback, useEffect, useState } from 'react';
 import { selectConnectorId, selectOperations } from '../../../core/state/mcp/connector/connectorSlice';
 import { getConnector } from '../../../core/queries/operation';
 import type { Connector } from '@microsoft/logic-apps-shared';
+import { useMcpWizardStyles } from './styles';
+import { McpPanelRoot } from '../panel/mcpPanelRoot';
+import { type TemplatePanelFooterProps, TemplatesPanelFooter } from '@microsoft/designer-ui';
 
 export type RegisterMcpServerHandler = (workflowsData: McpWorkflowsData, onCompleted?: () => void) => Promise<void>;
 
@@ -142,7 +143,7 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
     resetQueriesOnRegisterMcpServer(subscriptionId, resourceGroup, logicAppName as string);
   }, [logicAppName, resourceGroup, subscriptionId]);
 
-  const handleRegisterMcpServer = async () => {
+  const handleRegisterMcpServer = useCallback(async () => {
     const workflowsData = await serializeMcpWorkflows(
       {
         subscriptionId,
@@ -154,7 +155,7 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
     );
     console.log('Generated workflows:', workflowsData);
     await registerMcpServer(workflowsData, onRegisterCompleted);
-  };
+  }, [connection, logicAppName, operation, registerMcpServer, resourceGroup, subscriptionId, onRegisterCompleted]);
 
   const handleCancel = useCallback(() => {
     // TODO: Implement cancel logic
@@ -224,6 +225,35 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
     }),
   };
 
+  const footerContent: TemplatePanelFooterProps = useMemo(() => {
+    return {
+      buttonContents: [
+        {
+          type: 'action',
+          text: intl.formatMessage({
+            defaultMessage: 'Save',
+            id: 'ZigP3P',
+            description: 'Button text for registering the MCP server',
+          }),
+          appearance: 'primary',
+          onClick: () => {
+            handleRegisterMcpServer();
+          },
+          disabled: !logicAppName || !subscriptionId || !resourceGroup || !connection || !operation,
+        },
+        {
+          type: 'action',
+          text: intl.formatMessage({
+            defaultMessage: 'Cancel',
+            id: 'OA8qkc',
+            description: 'Button text for closing the wizard without saving',
+          }),
+          onClick: handleCancel,
+        },
+      ],
+    };
+  }, [intl, logicAppName, subscriptionId, resourceGroup, connection, operation, handleCancel, handleRegisterMcpServer]);
+
   return (
     <div className={styles.wizardContainer}>
       {/* Details Section */}
@@ -277,15 +307,6 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
             <div className={styles.emptyStateIcon}>
               <ConnectorFilled />
             </div>
-            <Text size={500} weight="semibold" style={{ marginBottom: '8px' }}>
-              {INTL_TEXT.noConnectors}
-            </Text>
-            <Text size={300} style={{ opacity: 0.7, marginBottom: '24px' }}>
-              {INTL_TEXT.addFirstConnector}
-            </Text>
-            <Button appearance="primary" icon={<Add24Regular />} disabled={disableConfiguration} onClick={handleAddConnectors} size="large">
-              {INTL_TEXT.addConnectorsButton}
-            </Button>
           </div>
         )}
       </div>
@@ -338,18 +359,9 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
           </div>
         )}
       </div>
-
-      {/* Action Buttons */}
-      <div className={styles.actionButtons}>
-        <Button appearance="primary" onClick={handleRegisterMcpServer}>
-          {INTL_TEXT.save}
-        </Button>
-        <Button appearance="subtle" onClick={handleCancel}>
-          {INTL_TEXT.cancel}
-        </Button>
-      </div>
-
       <McpPanelRoot />
+
+      <TemplatesPanelFooter {...footerContent} />
     </div>
   );
 };
