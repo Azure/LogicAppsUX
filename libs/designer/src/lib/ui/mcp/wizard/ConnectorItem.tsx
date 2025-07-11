@@ -1,6 +1,7 @@
 import { Text, Button, Badge } from '@fluentui/react-components';
 import { Edit24Regular, Delete24Regular, Checkmark24Filled } from '@fluentui/react-icons';
 import { useConnectorItemStyles } from './styles';
+import { useIntl } from 'react-intl';
 
 interface ConnectorItemProps {
   connectorId: string;
@@ -14,10 +15,42 @@ interface ConnectorItemProps {
 
 export const ConnectorItem = ({ connectorId, displayName, connectionName, status, icon, onEdit, onDelete }: ConnectorItemProps) => {
   const styles = useConnectorItemStyles();
+  const intl = useIntl();
+
+  const connectionText = intl.formatMessage(
+    {
+      defaultMessage: 'Connection : {connectionName}',
+      id: 'c4ud9e',
+      description: 'Label for the connection status',
+    },
+    { connectionName }
+  );
+
+  const editButtonLabel = intl.formatMessage({
+    defaultMessage: 'Edit connector',
+    id: 'RTfra/',
+    description: 'Label for the edit connector button',
+  });
+
+  const deleteButtonLabel = intl.formatMessage({
+    defaultMessage: 'Delete connector',
+    id: '8e1bKU',
+    description: 'Label for the delete connector button',
+  });
 
   return (
     <div className={styles.connectorItem}>
-      <div className={styles.connectorIcon}>{icon}</div>
+      <div className={styles.connectorIcon}>
+        <img
+          src={icon}
+          alt={`${displayName} icon`}
+          style={{
+            width: '24px',
+            height: '24px',
+            objectFit: 'contain',
+          }}
+        />
+      </div>
 
       <div className={styles.connectorInfo}>
         <div className={styles.connectorHeader}>
@@ -33,18 +66,24 @@ export const ConnectorItem = ({ connectorId, displayName, connectionName, status
           </Badge>
         </div>
         <Text size={300} className={styles.connectorSubtext}>
-          Connection: {connectionName}
+          {connectionText}
         </Text>
       </div>
 
       <div className={styles.itemActions}>
-        <Button appearance="subtle" size="small" icon={<Edit24Regular />} onClick={() => onEdit(connectorId)} aria-label="Edit connector" />
+        <Button
+          appearance="subtle"
+          size="small"
+          icon={<Edit24Regular />}
+          onClick={() => onEdit(connectorId)}
+          aria-label={editButtonLabel}
+        />
         <Button
           appearance="subtle"
           size="small"
           icon={<Delete24Regular />}
           onClick={() => onDelete(connectorId)}
-          aria-label="Delete connector"
+          aria-label={deleteButtonLabel}
         />
       </div>
     </div>

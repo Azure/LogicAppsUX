@@ -1,4 +1,4 @@
-import { Text, Button } from '@fluentui/react-components';
+import { Text, Button, Spinner } from '@fluentui/react-components';
 import { Add24Regular, ConnectorFilled, AppGeneric24Regular } from '@fluentui/react-icons';
 import { useMcpWizardStyles } from './styles';
 import { useIntl } from 'react-intl';
@@ -11,10 +11,13 @@ import { resetQueriesOnRegisterMcpServer } from '../../../core/mcp/utils/queries
 import { LogicAppSelector } from '../details/logicAppSelector';
 import { ConnectorItem } from './ConnectorItem';
 import { OperationItem } from './OperationItem';
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, useEffect, useState } from 'react';
 import { selectConnectorId, selectOperations } from '../../../core/state/mcp/connector/connectorSlice';
+import { getConnector } from '../../../core/queries/operation';
+import type { Connector } from '@microsoft/logic-apps-shared';
 
 export type RegisterMcpServerHandler = (workflowsData: McpWorkflowsData, onCompleted?: () => void) => Promise<void>;
+
 export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMcpServerHandler }) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
@@ -25,9 +28,13 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
     resource: { subscriptionId, resourceGroup, logicAppName },
   } = useSelector((state: RootState) => state);
 
-  const { operationInfos } = useSelector((state: RootState) => ({
+  const { operationInfos, isInitializingOperations } = useSelector((state: RootState) => ({
     operationInfos: state.operation.operationInfo,
+    isInitializingOperations: state.operation.loadStatus.isInitializingOperations,
   }));
+
+  const [connectorsMap, setConnectorsMap] = useState<Record<string, Connector>>({});
+  const [isLoadingConnectors, setIsLoadingConnectors] = useState(false);
 
   const connectorIds = useMemo(() => {
     const ids = Object.values(operationInfos)
@@ -40,8 +47,53 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
     return Object.values(operationInfos).filter((info) => Boolean(info?.operationId));
   }, [operationInfos]);
 
+  // Fetch all connector data when connectorIds change
+  useEffect(() => {
+    const fetchConnectorsData = async () => {
+      if (connectorIds.length === 0) {
+        setConnectorsMap({});
+        return;
+      }
+
+      setIsLoadingConnectors(true);
+
+      try {
+        // Fetch all connectors in parallel
+        const connectorPromises = connectorIds.map(async (connectorId) => {
+          try {
+            const connector = await getConnector(connectorId, true);
+            return { connectorId, connector };
+          } catch (error) {
+            console.error(`Failed to fetch connector ${connectorId}:`, error);
+            return { connectorId, connector: null };
+          }
+        });
+
+        const results = await Promise.allSettled(connectorPromises);
+
+        // Build the connectors map
+        const newConnectorsMap: Record<string, Connector> = {};
+        results.forEach((result) => {
+          if (result.status === 'fulfilled' && result.value.connector) {
+            const { connectorId, connector } = result.value;
+            newConnectorsMap[connectorId] = connector;
+          }
+        });
+
+        setConnectorsMap(newConnectorsMap);
+      } catch (error) {
+        console.error('Error fetching connectors data:', error);
+      } finally {
+        setIsLoadingConnectors(false);
+      }
+    };
+
+    fetchConnectorsData();
+  }, [connectorIds]);
+
   const hasConnectors = connectorIds.length > 0;
   const hasOperations = allOperations.length > 0;
+  const isLoadingOperations = isInitializingOperations || (connectorIds.length > 0 && allOperations.length === 0);
 
   const handleAddConnectors = useCallback(() => {
     dispatch(
@@ -104,7 +156,7 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
   };
 
   const handleCancel = useCallback(() => {
-    // TODO: Implement cancel logic - you can add your cancel functionality here
+    // TODO: Implement cancel logic
     console.log('Cancel clicked');
   }, []);
 
@@ -159,6 +211,11 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
       defaultMessage: 'Cancel',
       description: 'Cancel button text',
     }),
+    loadingOperationsText: intl.formatMessage({
+      id: 'VFaFVs',
+      defaultMessage: 'Loading operations...',
+      description: 'Loading message for operations',
+    }),
   };
 
   return (
@@ -187,20 +244,27 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
       <div className={styles.content}>
         {hasConnectors ? (
           <div className={styles.connectorsList}>
-            {connectorIds.map((connectorId) => {
-              return (
-                <ConnectorItem
-                  key={connectorId}
-                  connectorId={connectorId}
-                  displayName={connectorId}
-                  connectionName="Default Connection" // Mock for now
-                  status="connected" // Mock for now
-                  icon="🔗" // Mock for now
-                  onEdit={handleEditConnector}
-                  onDelete={handleDeleteConnector}
-                />
-              );
-            })}
+            {isLoadingConnectors ? (
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '40px' }}>
+                <Spinner size="medium" label="Loading connectors..." />
+              </div>
+            ) : (
+              connectorIds.map((connectorId) => {
+                const connector = connectorsMap[connectorId];
+                return (
+                  <ConnectorItem
+                    key={connectorId}
+                    connectorId={connectorId}
+                    displayName={connector?.properties.displayName || connectorId}
+                    connectionName="Default Connection"
+                    status="connected"
+                    icon={connector?.properties.iconUri || connector?.properties.iconUrl || ''}
+                    onEdit={handleEditConnector}
+                    onDelete={handleDeleteConnector}
+                  />
+                );
+              })
+            )}
           </div>
         ) : (
           <div className={styles.emptyState}>
@@ -228,20 +292,26 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
       </div>
 
       <div className={styles.content}>
-        {hasOperations ? (
+        {isLoadingOperations ? (
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '40px' }}>
+            <Spinner size="medium" label={INTL_TEXT.loadingOperationsText} />
+          </div>
+        ) : hasOperations ? (
           <div className={styles.operationsList}>
             {allOperations.map((operationInfo) => {
               if (!operationInfo?.operationId || !operationInfo?.connectorId) {
                 return null;
               }
 
+              const connector = connectorsMap[operationInfo.connectorId];
+
               return (
                 <OperationItem
                   key={operationInfo.operationId}
                   operationId={operationInfo.operationId}
                   operationName={operationInfo.operationId}
-                  connectorIcon="🔗" // Mock for now
-                  connectorName={operationInfo.connectorId}
+                  connectorIcon={connector?.properties.iconUri || connector?.properties.iconUrl || ''}
+                  connectorName={connector?.properties.displayName || operationInfo.connectorId}
                   onEdit={handleEditOperation}
                   onDelete={handleDeleteOperation}
                 />
