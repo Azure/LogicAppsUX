@@ -1,8 +1,15 @@
-import { equals, guid, type LogicAppsV2, optional, type ParameterInfo } from '@microsoft/logic-apps-shared';
-import type { RootState } from '../../state/mcp/store';
+import {
+  type ConnectionsData,
+  equals,
+  guid,
+  isArmResourceId,
+  type LogicAppsV2,
+  optional,
+  type ParameterInfo,
+} from '@microsoft/logic-apps-shared';
 import { parameterHasValue, parameterValueToString } from '../../utils/parameters/helper';
 import type { Settings } from '../../actions/bjsworkflow/settings';
-import type { NodeOperation, NodeInputs } from '../../state/operation/operationMetadataSlice';
+import type { NodeOperation, NodeInputs, OperationMetadataState } from '../../state/operation/operationMetadataSlice';
 import {
   getRetryPolicy,
   type SerializedParameter,
@@ -12,15 +19,34 @@ import {
 import { getOperationInputParameters } from '../../state/operation/operationSelector';
 import Constants from '../../../common/constants';
 import type { NodeStaticResults } from '../../actions/bjsworkflow/staticresults';
+import { getConnectionsInWorkflowApp } from '../../configuretemplate/utils/queries';
+import { getReactQueryClient } from '../../ReactQueryProvider';
+import { getConnectionsToUpdate, getUpdatedConnectionForManagedApiReference } from '../../utils/createhelper';
+import type { ConnectionsStoreState } from '../../state/connection/connectionSlice';
+import { getStandardLogicAppId } from '../../configuretemplate/utils/helper';
 
-export const serializeMcpWorkflows = async (state: RootState): Promise<Record<string, LogicAppsV2.WorkflowDefinition>> => {
-  const {
-    connection: { connectionsMapping },
-    operation: { operationInfo, inputParameters, settings },
-  } = state;
-  const workflows: Record<string, LogicAppsV2.WorkflowDefinition> = {};
+export interface McpWorkflowsData {
+  logicAppId: string;
+  workflows: Record<
+    string,
+    {
+      definition: LogicAppsV2.WorkflowDefinition;
+      kind: string;
+    }
+  >;
+  connectionsData: ConnectionsData | undefined;
+}
+
+export const serializeMcpWorkflows = async (
+  { subscriptionId, resourceGroup, logicAppName }: { subscriptionId: string; resourceGroup: string; logicAppName: string },
+  connectionState: ConnectionsStoreState,
+  operationsState: OperationMetadataState
+): Promise<McpWorkflowsData> => {
+  const { operationInfo, inputParameters, settings } = operationsState;
+  const logicAppId = getStandardLogicAppId(subscriptionId, resourceGroup, logicAppName);
+  const workflows: Record<string, { definition: LogicAppsV2.WorkflowDefinition; kind: string }> = {};
   const promises = Object.keys(operationInfo).map(async (nodeId) => {
-    const referenceName = connectionsMapping[nodeId] as string;
+    const referenceName = connectionState.connectionsMapping[nodeId] as string;
     return getOperationDefinitionAndTriggerInputs(referenceName, operationInfo[nodeId], inputParameters[nodeId], settings[nodeId]);
   });
 
@@ -28,11 +54,12 @@ export const serializeMcpWorkflows = async (state: RootState): Promise<Record<st
 
   for (const operationData of allOperations) {
     const { operationId, definition: operationDefinition, triggerInputs } = operationData;
-    const definition = generateDefinition(operationId, operationDefinition, triggerInputs);
-    workflows[operationId] = definition;
+    const definition = JSON.parse(JSON.stringify(generateDefinition(operationId, operationDefinition, triggerInputs)));
+    workflows[operationId] = { definition, kind: 'Stateful' };
   }
 
-  return workflows;
+  const connectionsData = await getConnectionsDataToSerialize(connectionState, subscriptionId, resourceGroup, logicAppName);
+  return { logicAppId, workflows, connectionsData };
 };
 
 const getOperationDefinitionAndTriggerInputs = async (
@@ -151,4 +178,36 @@ const generateInputsSchema = (inputs: SerializedParameter[]): any => {
     required,
     properties,
   };
+};
+
+const getConnectionsDataToSerialize = async (
+  connectionState: ConnectionsStoreState,
+  subscriptionId: string,
+  resourceGroup: string,
+  logicAppName: string
+): Promise<ConnectionsData | undefined> => {
+  const { connectionReferences, connectionsMapping } = connectionState;
+  const queryClient = getReactQueryClient();
+  const referencesToSerialize = Object.values(connectionsMapping).reduce((result: string[], referenceKey: string | null) => {
+    if (referenceKey && !result.includes(referenceKey)) {
+      result.push(referenceKey);
+    }
+    return result;
+  }, []);
+
+  const originalConnectionsData = await getConnectionsInWorkflowApp(subscriptionId, resourceGroup, logicAppName as string, queryClient);
+  const managedApiConnections = originalConnectionsData?.managedApiConnections ?? {};
+
+  await Promise.all(
+    referencesToSerialize.map(async (referenceKey) => {
+      const reference = connectionReferences[referenceKey];
+      if (isArmResourceId(reference?.connection?.id)) {
+        managedApiConnections[referenceKey] = await getUpdatedConnectionForManagedApiReference(reference, /* isHybridApp */ false);
+      }
+    })
+  );
+
+  const updatedConnectionsData = { ...originalConnectionsData, managedApiConnections };
+
+  return getConnectionsToUpdate(originalConnectionsData, updatedConnectionsData);
 };
