@@ -8,9 +8,10 @@ import { isConnectionValid } from '../../../../../../core/utils/connectors/conne
 import { CreateConnectionInternal } from '../../../../../panel/connectionsPanel/createConnection/createConnectionInternal';
 import type { CreatedConnectionPayload } from '../../../../../panel/connectionsPanel/createConnection/createConnectionWrapper';
 import { SelectConnection } from '../../../../../panel/connectionsPanel/selectConnection/selectConnection';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
+import { Spinner } from '@fluentui/react-components';
 
 export const ConnectionSelection = ({ connectorId }: { connectorId: string }) => {
   const intl = useIntl();
@@ -24,6 +25,12 @@ export const ConnectionSelection = ({ connectorId }: { connectorId: string }) =>
   const validConnections = useMemo(() => (connectionsQuery.data ?? []).filter(isConnectionValid), [connectionsQuery.data]);
   const hasConnections = useMemo(() => validConnections.length > 0, [validConnections]);
   const [showCreate, setShowCreate] = useState(!hasConnections);
+
+  useEffect(() => {
+    if (hasConnections !== undefined) {
+      setShowCreate(!hasConnections);
+    }
+  }, [hasConnections]);
 
   const buttonAddText = intl.formatMessage({
     defaultMessage: 'Add new',
@@ -62,28 +69,40 @@ export const ConnectionSelection = ({ connectorId }: { connectorId: string }) =>
   const handleOnAdd = useCallback(() => setShowCreate(true), []);
   const handleCreateComplete = useCallback(() => setShowCreate(false), []);
 
-  return showCreate ? (
-    <CreateConnectionInternal
-      connectorId={connector?.id ?? ''}
-      operationType={'ApiConnection'}
-      existingReferences={existingReferences}
-      nodeIds={operationNodeIds}
-      showActionBar={true}
-      hideCancelButton={!hasConnections}
-      updateConnectionInState={updateConnectionInState}
-      onConnectionCreated={handleCreateComplete}
-    />
-  ) : (
-    <SelectConnection
-      connections={validConnections}
-      currentConnectionId={reference?.connection.id ?? ''}
-      saveSelectionCallback={saveSelectionCallback}
-      isXrmConnectionReferenceMode={false}
-      addButton={{
-        text: buttonAddText,
-        onAdd: handleOnAdd,
-      }}
-      errorMessage={connectionsQuery.isError ? parseErrorMessage(connectionsQuery.error) : undefined}
-    />
+  if (connectionsQuery.isLoading) {
+    return (
+      <Spinner
+        label={intl.formatMessage({ defaultMessage: 'Loading connections...', id: 'qlKTtw', description: 'Text for loading connections' })}
+      />
+    );
+  }
+
+  return (
+    <div style={{ width: '100%' }}>
+      {showCreate ? (
+        <CreateConnectionInternal
+          connectorId={connector?.id ?? ''}
+          operationType={'ApiConnection'}
+          existingReferences={existingReferences}
+          nodeIds={operationNodeIds}
+          showActionBar={true}
+          hideCancelButton={!hasConnections}
+          updateConnectionInState={updateConnectionInState}
+          onConnectionCreated={handleCreateComplete}
+        />
+      ) : (
+        <SelectConnection
+          connections={validConnections}
+          currentConnectionId={reference?.connection.id ?? ''}
+          saveSelectionCallback={saveSelectionCallback}
+          isXrmConnectionReferenceMode={false}
+          addButton={{
+            text: buttonAddText,
+            onAdd: handleOnAdd,
+          }}
+          errorMessage={connectionsQuery.isError ? parseErrorMessage(connectionsQuery.error) : undefined}
+        />
+      )}
+    </div>
   );
 };
