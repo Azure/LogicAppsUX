@@ -61,7 +61,7 @@ export function getFunctionsWorkerRuntime(language: string | undefined): WorkerR
   switch (language) {
     case ProjectLanguage.JavaScript:
     case ProjectLanguage.TypeScript:
-      return WorkerRuntime.Dotnet;
+      return WorkerRuntime.Node;
     case ProjectLanguage.CSharp:
     case ProjectLanguage.FSharp:
       return WorkerRuntime.Dotnet;
