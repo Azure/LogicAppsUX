@@ -1,9 +1,17 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { McpDataProvider, mcpStore, McpWizard, McpWizardProvider, resetMcpStateOnResourceChange } from '@microsoft/logic-apps-designer';
+import {
+  McpDataProvider,
+  mcpStore,
+  McpWizard,
+  McpWizardProvider,
+  type McpWorkflowsData,
+  resetMcpStateOnResourceChange,
+} from '@microsoft/logic-apps-designer';
 import type { RootState } from '../state/Store';
 import { useSelector } from 'react-redux';
 import {
   getWorkflowAppFromCache,
+  saveWorkflowStandard,
   useCurrentObjectId,
   useCurrentTenantId,
   useWorkflowApp,
@@ -108,6 +116,29 @@ export const McpStandard = () => {
     }
   }, [appId, hostingPlan]);
 
+  const onRegisterMcpServer = useCallback(
+    async ({ logicAppId, workflows, connectionsData }: McpWorkflowsData, onCompleted?: () => void) => {
+      const workflowsToCreate = Object.keys(workflows).map((key) => ({
+        name: key,
+        workflow: workflows[key].definition,
+        kind: workflows[key].kind,
+      }));
+
+      await saveWorkflowStandard(
+        logicAppId,
+        workflowsToCreate,
+        connectionsData,
+        /* parametersData */ undefined,
+        /* settingsProperties */ undefined,
+        /* customCodeData */ undefined,
+        /* clearDirtyState */ () => {},
+        { skipValidation: true, throwError: true }
+      );
+      onCompleted?.();
+    },
+    []
+  );
+
   return (
     <McpWizardProvider locale="en-US" theme={theme}>
       <div className={`${styles.container} ${styles.fadeIn}`}>
@@ -118,7 +149,7 @@ export const McpStandard = () => {
             <div className={styles.wizardContent}>
               <div className={styles.wizardWrapper}>
                 <McpDataProvider resourceDetails={resourceDetails} onResourceChange={onResourceChange} services={services}>
-                  <McpWizard />
+                  <McpWizard registerMcpServer={onRegisterMcpServer} />
                   <div id="mcp-layer-host" className={styles.layerHost} />
                 </McpDataProvider>
               </div>

@@ -6,16 +6,24 @@ import { McpPanelView, openConnectorPanelView, openOperationPanelView } from '..
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../core/state/mcp/store';
 import { McpPanelRoot } from '../panel/mcpPanelRoot';
+import { type McpWorkflowsData, serializeMcpWorkflows } from '../../../core/mcp/utils/serializer';
+import { resetQueriesOnRegisterMcpServer } from '../../../core/mcp/utils/queries';
 import { LogicAppSelector } from '../details/logicAppSelector';
 import { ConnectorItem } from './ConnectorItem';
 import { OperationItem } from './OperationItem';
 import { useMemo, useCallback } from 'react';
 import { selectConnectorId, selectOperations } from '../../../core/state/mcp/connector/connectorSlice';
 
-export const McpWizard = () => {
+export type RegisterMcpServerHandler = (workflowsData: McpWorkflowsData, onCompleted?: () => void) => Promise<void>;
+export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMcpServerHandler }) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
   const styles = useMcpWizardStyles();
+  const {
+    connection,
+    operation,
+    resource: { subscriptionId, resourceGroup, logicAppName },
+  } = useSelector((state: RootState) => state);
 
   const { operationInfos } = useSelector((state: RootState) => ({
     operationInfos: state.operation.operationInfo,
@@ -77,6 +85,29 @@ export const McpWizard = () => {
     console.log('Delete operation:', operationId);
   }, []);
 
+  const onRegisterCompleted = useCallback(() => {
+    resetQueriesOnRegisterMcpServer(subscriptionId, resourceGroup, logicAppName as string);
+  }, [logicAppName, resourceGroup, subscriptionId]);
+
+  const handleRegisterMcpServer = async () => {
+    const workflowsData = await serializeMcpWorkflows(
+      {
+        subscriptionId,
+        resourceGroup,
+        logicAppName: logicAppName as string,
+      },
+      connection,
+      operation
+    );
+    console.log('Generated workflows:', workflowsData);
+    await registerMcpServer(workflowsData, onRegisterCompleted);
+  };
+
+  const handleCancel = useCallback(() => {
+    // TODO: Implement cancel logic - you can add your cancel functionality here
+    console.log('Cancel clicked');
+  }, []);
+
   const INTL_TEXT = {
     connectorsTitle: intl.formatMessage({
       id: 'rCjtl8',
@@ -117,6 +148,16 @@ export const McpWizard = () => {
       id: 'iWZd2h',
       defaultMessage: 'Add connectors and operations to see them here',
       description: 'Message prompting to add operations',
+    }),
+    save: intl.formatMessage({
+      id: 'RT8KNi',
+      defaultMessage: 'Save',
+      description: 'Save button text',
+    }),
+    cancel: intl.formatMessage({
+      id: 'hHNj31',
+      defaultMessage: 'Cancel',
+      description: 'Cancel button text',
     }),
   };
 
@@ -220,6 +261,16 @@ export const McpWizard = () => {
             </Text>
           </div>
         )}
+      </div>
+
+      {/* Action Buttons */}
+      <div className={styles.actionButtons}>
+        <Button appearance="primary" onClick={handleRegisterMcpServer}>
+          {INTL_TEXT.save}
+        </Button>
+        <Button appearance="subtle" onClick={handleCancel}>
+          {INTL_TEXT.cancel}
+        </Button>
       </div>
 
       <McpPanelRoot />

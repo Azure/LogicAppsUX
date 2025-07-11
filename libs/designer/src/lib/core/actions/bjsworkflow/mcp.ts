@@ -135,6 +135,7 @@ export const initializeOperationsMetadata = createAsyncThunk(
       initializeOperationDetails(operation.operationId, operation)
     );
     const allNodeData = (await Promise.all(promises)).filter((data) => !!data) as NodeOperationInputsData[];
+    console.log(allNodeData);
 
     dispatch(initializeNodeOperationInputsData(allNodeData));
   }

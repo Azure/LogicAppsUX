@@ -62,6 +62,12 @@ export const useMcpWizardStyles = makeStyles({
       fontSize: '48px',
     },
   },
+  actionButtons: {
+    display: 'flex',
+    gap: '8px',
+    marginTop: '24px',
+    justifyContent: 'flex-start',
+  },
 });
 
 // ConnectorItem styles
