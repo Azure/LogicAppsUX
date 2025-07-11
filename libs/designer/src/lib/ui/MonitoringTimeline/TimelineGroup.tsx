@@ -1,5 +1,5 @@
 import { Button, Text } from '@fluentui/react-components';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useMonitoringTimelineStyles } from './monitoringTimeline.styles';
 import type { TimelineRepetitionWithActions } from './helpers';
 import { bundleIcon, ChevronDown24Filled, ChevronDown24Regular, ChevronRight24Filled, ChevronRight24Regular } from '@fluentui/react-icons';
@@ -14,10 +14,10 @@ interface TimelineGroupProps {
   taskId: number;
   repetitions: TimelineRepetitionWithActions[];
   transitionIndex: number;
-  setTransitionIndex: (index: number) => void;
+  handleSelectRepetition: (groupIndex: number, repetitionIndex: number) => void;
 }
 
-const TimelineGroup = ({ isTimelineExpanded, taskId, repetitions, transitionIndex, setTransitionIndex }: TimelineGroupProps) => {
+const TimelineGroup = ({ isTimelineExpanded, taskId, repetitions, transitionIndex, handleSelectRepetition }: TimelineGroupProps) => {
   const [isGroupExpanded, setIsGroupExpanded] = useState(false);
   const styles = useMonitoringTimelineStyles();
 
@@ -42,12 +42,19 @@ const TimelineGroup = ({ isTimelineExpanded, taskId, repetitions, transitionInde
     [intl]
   );
 
+  useEffect(() => {
+    if (taskId === transitionIndex) {
+      setIsGroupExpanded(true);
+    }
+  }, [transitionIndex, taskId]);
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       {isTimelineExpanded ? (
         <Button
           className={styles.timelineTask}
           appearance="subtle"
+          size="small"
           onClick={handleToggleExpand}
           icon={isGroupExpanded ? <CollapseIcon /> : <ExpandIcon />}
           style={{ justifyContent: 'center', flexGrow: 1 }}
@@ -60,19 +67,20 @@ const TimelineGroup = ({ isTimelineExpanded, taskId, repetitions, transitionInde
         </Text>
       )}
 
-      {(repetitions ?? []).map((repetition, index) => {
-        return (
-          <div key={repetition.repetitionIndex} style={{ display: 'flex', flexDirection: 'column' }}>
-            <TimelineNode
-              index={index}
-              selected={taskId === transitionIndex}
-              onSelect={() => setTransitionIndex(taskId)}
-              isExpanded={isTimelineExpanded}
-              data={repetition.data!}
-            />
-          </div>
-        );
-      })}
+      {isGroupExpanded &&
+        repetitions.map((repetition, index) => {
+          return (
+            <div key={repetition.repetitionIndex} style={{ margin: '3px' }}>
+              <TimelineNode
+                index={index}
+                selected={false}
+                onSelect={() => handleSelectRepetition(taskId, index)}
+                isExpanded={isTimelineExpanded}
+                data={repetition.data!}
+              />
+            </div>
+          );
+        })}
     </div>
   );
 };

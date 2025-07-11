@@ -10,17 +10,24 @@ import {
   ArrowClockwiseFilled,
   ArrowClockwiseRegular,
 } from '@fluentui/react-icons';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useThrottledEffect } from '@microsoft/logic-apps-shared';
 import { useTimelineRepetitions } from './hooks';
 import { useRunInstance } from '../../core/state/workflow/workflowSelectors';
-import { clearAllRepetitionRunData } from '../../core/state/workflow/workflowSlice';
+import {
+  clearAllRepetitionRunData,
+  setFocusNode,
+  setRepetitionRunData,
+  setTimelineRepetitionArray,
+  setTimelineRepetitionIndex,
+} from '../../core/state/workflow/workflowSlice';
 import { useMonitoringTimelineStyles } from './monitoringTimeline.styles';
 import { useIntl } from 'react-intl';
 import type { TimelineRepetitionWithActions } from './helpers';
 import { parseRepetitions } from './helpers';
 import TimelineGroup from './TimelineGroup';
+import { openPanel, setSelectedNodeId } from '../../core/state/panel/panelSlice';
 
 const ChevronUpIcon = bundleIcon(ChevronUpFilled, ChevronUpRegular);
 const ChevronDownIcon = bundleIcon(ChevronDownFilled, ChevronDownRegular);
@@ -29,6 +36,7 @@ const RefreshIcon = bundleIcon(ArrowClockwiseFilled, ArrowClockwiseRegular);
 const MonitoringTimeline = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [transitionIndex, setTransitionIndex] = useState(-1);
+  const [selectedRepetition, setSelectedRepetition] = useState<TimelineRepetitionWithActions | null>(null);
   const styles = useMonitoringTimelineStyles();
   const dispatch = useDispatch();
   const runInstance = useRunInstance();
@@ -40,7 +48,11 @@ const MonitoringTimeline = () => {
   }, [repetitionData, runInstance]);
 
   useEffect(() => {
-    // dispatch(setTimelineRepetitionArray((repetitions ).map((repetition) => repetition.actionIds ?? [])));
+    const test = Array.from(repetitions).flatMap(([_taskId, repetitionList]) => {
+      const repetitionsActions = repetitionList.map((repetition) => repetition.actionIds ?? []);
+      return repetitionsActions;
+    });
+    dispatch(setTimelineRepetitionArray(test));
   }, [dispatch, repetitions]);
 
   useEffect(() => {
@@ -53,32 +65,45 @@ const MonitoringTimeline = () => {
     () => {
       dispatch(clearAllRepetitionRunData());
 
-      // const selectedRepetition = repetitions.find((repetition) => repetition.data?.properties?.a2ametadata?.taskId === transitionIndex);
-      // const firstNodeId = selectedRepetition?.actionIds?.[0];
+      const firstNodeId = selectedRepetition?.actionIds?.[0];
 
-      // if (firstNodeId) {
-      //   for (const a of Object.entries(selectedRepetition?.data?.properties?.actions ?? {})) {
-      //     const [actionId, action] = a;
-      //     dispatch(
-      //       setRepetitionRunData({
-      //         nodeId: actionId,
-      //         runData: action,
-      //       })
-      //     );
-      //   }
+      if (firstNodeId) {
+        for (const a of Object.entries(selectedRepetition?.data?.properties?.actions ?? {})) {
+          const [actionId, action] = a;
+          dispatch(
+            setRepetitionRunData({
+              nodeId: actionId,
+              runData: action,
+            })
+          );
+        }
 
-      //   dispatch(setTimelineRepetitionIndex(transitionIndex));
+        dispatch(setTimelineRepetitionIndex(transitionIndex));
 
-      //   dispatch(setSelectedNodeId(firstNodeId));
-      //   dispatch(openPanel({ nodeId: firstNodeId, panelMode: 'Operation' }));
-      //   dispatch(setFocusNode(firstNodeId));
-      // }
+        dispatch(setSelectedNodeId(firstNodeId));
+        dispatch(openPanel({ nodeId: firstNodeId, panelMode: 'Operation' }));
+        dispatch(setFocusNode(firstNodeId));
+      }
     },
-    [dispatch, transitionIndex],
+    [dispatch, selectedRepetition, transitionIndex],
     200
   );
 
   const noRepetitions = useMemo(() => repetitions.size === 0, [repetitions]);
+
+  const handleSelectRepetition = useCallback(
+    (groupIndex: number, repetitionIndex: number) => {
+      const repetitionGroup = repetitions.get(groupIndex);
+      if (repetitionGroup) {
+        const repetition = repetitionGroup[repetitionIndex];
+        if (repetition) {
+          setSelectedRepetition(repetition);
+          setTransitionIndex(groupIndex);
+        }
+      }
+    },
+    [repetitions]
+  );
 
   return (
     <div style={{ position: 'absolute' }}>
@@ -91,8 +116,8 @@ const MonitoringTimeline = () => {
           noRepetitions={noRepetitions}
           transitionIndex={transitionIndex}
           repetitions={repetitions}
-          setTransitionIndex={setTransitionIndex}
           tasksNumber={repetitions.size}
+          handleSelectRepetition={handleSelectRepetition}
         />
         <Divider />
         <TimelineButtons
@@ -100,8 +125,8 @@ const MonitoringTimeline = () => {
           isFetchingRepetitions={isFetchingRepetitions}
           isExpanded={isExpanded}
           transitionIndex={transitionIndex}
-          setTransitionIndex={setTransitionIndex}
           noRepetitions={noRepetitions}
+          handleSelectRepetition={handleSelectRepetition}
         />
       </Card>
     </div>
@@ -114,7 +139,7 @@ const TimelineContent = ({
   noRepetitions,
   transitionIndex,
   repetitions,
-  setTransitionIndex,
+  handleSelectRepetition,
   tasksNumber,
 }: {
   isExpanded: boolean;
@@ -122,8 +147,8 @@ const TimelineContent = ({
   noRepetitions: boolean;
   transitionIndex: number;
   repetitions: Map<number, TimelineRepetitionWithActions[]>;
-  setTransitionIndex: (index: number) => void;
   tasksNumber: number;
+  handleSelectRepetition: (groupIndex: number, repetitionIndex: number) => void;
 }) => {
   const styles = useMonitoringTimelineStyles();
   const intl = useIntl();
@@ -189,7 +214,7 @@ const TimelineContent = ({
               isTimelineExpanded={isExpanded}
               repetitions={repetitionList}
               transitionIndex={transitionIndex}
-              setTransitionIndex={setTransitionIndex}
+              handleSelectRepetition={handleSelectRepetition}
             />
           );
         })}
@@ -202,7 +227,7 @@ const TimelineContent = ({
             value={transitionIndex}
             min={0}
             max={tasksNumber - 1}
-            onChange={(e, data) => setTransitionIndex(data.value as number)}
+            onChange={(e, data) => handleSelectRepetition(data.value as number, 0)}
             style={{ transform: 'rotate(180deg)' }}
           />
           <div className={styles.errorCaretContainer}>
@@ -276,16 +301,16 @@ const TimelineButtons = ({
   isExpanded,
   isFetchingRepetitions,
   transitionIndex,
-  setTransitionIndex,
   noRepetitions,
   tasksNumber,
+  handleSelectRepetition,
 }: {
   isExpanded: boolean;
   isFetchingRepetitions: boolean;
   transitionIndex: number;
-  setTransitionIndex: (index: number) => void;
   noRepetitions: boolean;
   tasksNumber: number;
+  handleSelectRepetition: (groupIndex: number, repetitionIndex: number) => void;
 }) => {
   const styles = useMonitoringTimelineStyles();
   const intl = useIntl();
@@ -314,7 +339,7 @@ const TimelineButtons = ({
         shape="circular"
         className={styles.navButton}
         disabled={noRepetitions || transitionIndex === 0 || isFetchingRepetitions}
-        onClick={() => setTransitionIndex(transitionIndex - 1)}
+        onClick={() => handleSelectRepetition(transitionIndex - 1, 0)}
       >
         {isExpanded ? text.previousTask : ''}
       </Button>
@@ -324,7 +349,7 @@ const TimelineButtons = ({
         shape="circular"
         className={styles.navButton}
         disabled={noRepetitions || transitionIndex === tasksNumber - 1 || isFetchingRepetitions}
-        onClick={() => setTransitionIndex(transitionIndex + 1)}
+        onClick={() => handleSelectRepetition(transitionIndex + 1, 0)}
       >
         {isExpanded ? text.nextTask : ''}
       </Button>
