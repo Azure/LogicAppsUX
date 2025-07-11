@@ -79,7 +79,6 @@ const TimelineGroup = ({
           return (
             <div key={repetition.repetitionIndex} style={{ margin: '3px' }}>
               <TimelineNode
-                index={index * (taskId + 1)} // Need to fix this
                 selected={repetition.repetitionIndex === selectedRepetition?.repetitionIndex}
                 onSelect={() => handleSelectRepetition(taskId, index)}
                 isExpanded={isTimelineExpanded}

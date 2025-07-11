@@ -1,20 +1,17 @@
-import { Badge, Text, Tooltip } from '@fluentui/react-components';
+import { Text, Tooltip } from '@fluentui/react-components';
 import { equals, idDisplayCase } from '@microsoft/logic-apps-shared';
 import { useEffect, useMemo, useRef } from 'react';
-import { useActionTimelineRepetitionCount } from '../../core/state/workflow/workflowSelectors';
 import type { TimelineRepetition } from './hooks';
 import { ConnectorIcon } from './ConnectorIcon';
 import { Failed } from '@microsoft/designer-ui';
 import { useMonitoringTimelineStyles } from './monitoringTimeline.styles';
 
 const TimelineNode = ({
-  index,
   selected,
   onSelect,
   isExpanded,
   data,
 }: {
-  index: number;
   selected: boolean;
   onSelect: () => void;
   isExpanded: boolean;
@@ -25,8 +22,6 @@ const TimelineNode = ({
   const firstNodeId = useMemo(() => nodeIds?.[0] ?? '', [nodeIds]);
 
   const ref = useRef<HTMLDivElement>(null);
-
-  const actionRepetitionCount = useActionTimelineRepetitionCount(firstNodeId, index);
 
   useEffect(() => {
     if (selected && ref.current) {
@@ -40,19 +35,6 @@ const TimelineNode = ({
     <div ref={ref} className={styles.timelineNode} onClick={onSelect}>
       {selected && <div className={styles.selectionBox} />}
       <ConnectorIcon size="30px" nodeId={firstNodeId} />
-      {actionRepetitionCount > 1 && (
-        <Badge
-          shape="rounded"
-          size="small"
-          style={{
-            position: 'absolute',
-            bottom: '0px',
-            left: '0px',
-          }}
-        >
-          #{actionRepetitionCount}
-        </Badge>
-      )}
       {isExpanded && (
         <Text weight={'semibold'} style={{ flexGrow: 1, marginRight: '8px' }}>
           {nodeText}

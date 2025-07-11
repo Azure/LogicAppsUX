@@ -9,10 +9,11 @@ import {
   BorderNoneRegular,
   ArrowClockwiseFilled,
   ArrowClockwiseRegular,
+  CaretLeftFilled,
 } from '@fluentui/react-icons';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { useThrottledEffect } from '@microsoft/logic-apps-shared';
+import { equals, useThrottledEffect } from '@microsoft/logic-apps-shared';
 import { useTimelineRepetitions } from './hooks';
 import { useRunInstance } from '../../core/state/workflow/workflowSelectors';
 import {
@@ -233,13 +234,15 @@ const TimelineContent = ({
             style={{ transform: 'rotate(180deg)' }}
           />
           <div className={styles.errorCaretContainer}>
-            {/* {(repetitions ?? []).map((repetition, _index) =>
-              equals(Object.values(repetition?.data?.properties?.actions ?? {})?.[0]?.status, 'failed') ? (
-                <CaretLeftFilled key={repetition.repetitionIndex} className={styles.errorCaret} />
-              ) : (
-                <div key={repetition.repetitionIndex} />
+            {Array.from(repetitions).flatMap(([_taskId, repetitionList]) =>
+              repetitionList.map((repetition, _index) =>
+                equals(Object.values(repetition?.data?.properties?.actions ?? {})?.[0]?.status, 'failed') ? (
+                  <CaretLeftFilled key={repetition.repetitionIndex} className={styles.errorCaret} />
+                ) : (
+                  <div key={repetition.repetitionIndex} />
+                )
               )
-            )} */}
+            )}
           </div>
         </>
       )}
