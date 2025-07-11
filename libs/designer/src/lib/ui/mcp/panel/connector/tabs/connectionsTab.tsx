@@ -38,8 +38,8 @@ export const connectionsTab = (
         type: 'navigation',
         text: intl.formatMessage({
           defaultMessage: 'Save',
-          id: 'RhToWS',
-          description: 'Button text for moving to the save in the connector panel',
+          id: 'CPH+z+',
+          description: 'Button text to the save in the connector panel',
         }),
         onClick: () => {
           onSubmit?.();

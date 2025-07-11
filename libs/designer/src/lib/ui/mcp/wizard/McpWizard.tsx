@@ -212,6 +212,11 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
       defaultMessage: 'Cancel',
       description: 'Cancel button text',
     }),
+    loadingConnectorsText: intl.formatMessage({
+      id: 'TWeskw',
+      defaultMessage: 'Loading connectors...',
+      description: 'Loading message for connectors',
+    }),
     loadingOperationsText: intl.formatMessage({
       id: 'VFaFVs',
       defaultMessage: 'Loading operations...',
@@ -247,7 +252,7 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
           <div className={styles.connectorsList}>
             {isLoadingConnectors ? (
               <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '40px' }}>
-                <Spinner size="medium" label="Loading connectors..." />
+                <Spinner size="medium" label={INTL_TEXT.loadingConnectorsText} />
               </div>
             ) : (
               connectorIds.map((connectorId) => {

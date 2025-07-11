@@ -20,8 +20,8 @@ export const ConnectorItem = ({ connectorId, displayName, connectionName, status
 
   const connectionText = intl.formatMessage(
     {
-      defaultMessage: 'Connection : {connectionName}',
-      id: 'c4ud9e',
+      defaultMessage: 'Connection: {connectionName}',
+      id: 'vQahao',
       description: 'Label for the connection status',
     },
     { connectionName }
