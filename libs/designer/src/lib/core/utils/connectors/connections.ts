@@ -72,7 +72,10 @@ export async function isConnectionReferenceValid(
   }
 }
 
-export function getExistingReferenceKey(allReferences: ConnectionReferences, connectionData: UpdateConnectionPayload): string | undefined {
+export function getExistingReferenceKey(
+  allReferences: ConnectionReferences,
+  connectionData: Omit<UpdateConnectionPayload, 'nodeId'>
+): string | undefined {
   const { connectionId, connectorId, connectionProperties, connectionRuntimeUrl } = connectionData;
   return Object.keys(allReferences).find((referenceKey) => {
     const reference = allReferences[referenceKey];

@@ -28,6 +28,7 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
     operation,
     resource: { subscriptionId, resourceGroup, logicAppName },
   } = useSelector((state: RootState) => state);
+  const disableConfiguration = useMemo(() => !logicAppName, [logicAppName]);
 
   const handleAddConnectors = () => {
     dispatch(
@@ -139,7 +140,7 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
           <Text size={400} weight="semibold">
             {INTL_TEXT.connectorsTitle}
           </Text>
-          <Button appearance="outline" icon={<Add16Regular />} onClick={handleAddConnectors} size="small">
+          <Button appearance="outline" icon={<Add16Regular />} onClick={handleAddConnectors} size="small" disabled={disableConfiguration}>
             {INTL_TEXT.addConnectorsButton}
           </Button>
         </div>
