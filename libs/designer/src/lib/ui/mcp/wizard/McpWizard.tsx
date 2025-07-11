@@ -1,5 +1,5 @@
 import { Text, Button } from '@fluentui/react-components';
-import { Add24Regular, ConnectorFilled } from '@fluentui/react-icons';
+import { Add16Regular, ConnectorFilled } from '@fluentui/react-icons';
 import { useMcpWizardStyles } from './styles';
 import { useIntl } from 'react-intl';
 import { McpPanelView, openConnectorPanelView } from '../../../core/state/mcp/panel/mcpPanelSlice';
@@ -107,7 +107,7 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
           <Text size={400} weight="semibold">
             {INTL_TEXT.connectorsTitle}
           </Text>
-          <Button appearance="primary" icon={<Add24Regular />} onClick={handleAddConnectors}>
+          <Button appearance="outline" icon={<Add16Regular />} onClick={handleAddConnectors} size="small">
             {INTL_TEXT.addConnectorsButton}
           </Button>
         </div>
@@ -117,31 +117,31 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
               <div className={styles.emptyStateIcon}>
                 <ConnectorFilled />
               </div>
-              <Text size={500} weight="semibold" style={{ marginBottom: '8px' }}>
+              <Text size={400} weight="semibold" style={{ marginBottom: '8px' }}>
                 {INTL_TEXT.noConnectors}
               </Text>
-              <Text size={300} style={{ opacity: 0.7, marginBottom: '24px' }}>
+              <Text size={200} style={{ opacity: 0.7, marginBottom: '24px' }}>
                 {INTL_TEXT.addFirstConnector}
               </Text>
-              <Button appearance="primary" icon={<Add24Regular />} onClick={handleAddConnectors} size="large">
-                {INTL_TEXT.addConnectorsButton}
-              </Button>
             </div>
           ) : (
             <div className={styles.connectorsList}>{/* Connector items will go here */}</div>
           )}
         </div>
 
-        <div className={styles.section}>
-          <div className={styles.header}>
-            <Text size={400} weight="semibold">
-              {INTL_TEXT.operationsTitle}
-            </Text>
+        {/* TODO: Update this condition to check if connector or operations are available */}
+        {sampleConnectorId && (
+          <div className={styles.section}>
+            <div className={styles.header}>
+              <Text size={400} weight="semibold">
+                {INTL_TEXT.operationsTitle}
+              </Text>
+            </div>
+            <div className={styles.content}>
+              <ListOperations connectorId={sampleConnectorId} />
+            </div>
           </div>
-          <div className={styles.content}>
-            <ListOperations connectorId={sampleConnectorId} />
-          </div>
-        </div>
+        )}
       </div>
 
       <McpPanelRoot />
