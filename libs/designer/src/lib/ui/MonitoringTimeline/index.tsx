@@ -9,34 +9,22 @@ import {
   BorderNoneRegular,
   ArrowClockwiseFilled,
   ArrowClockwiseRegular,
-  CaretLeftFilled,
-  ChevronDown24Filled,
-  ChevronDown24Regular,
-  ChevronRight24Filled,
-  ChevronRight24Regular,
 } from '@fluentui/react-icons';
 import { useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import TimelineNode from './TimelineNode';
-import { openPanel, setFocusNode, setSelectedNodeId } from '../../core';
-import { equals, useThrottledEffect } from '@microsoft/logic-apps-shared';
-import { type TimelineRepetition, useTimelineRepetitions } from './hooks';
+import { useThrottledEffect } from '@microsoft/logic-apps-shared';
+import { useTimelineRepetitions } from './hooks';
 import { useRunInstance } from '../../core/state/workflow/workflowSelectors';
-import {
-  clearAllRepetitionRunData,
-  setRepetitionRunData,
-  setTimelineRepetitionArray,
-  setTimelineRepetitionIndex,
-} from '../../core/state/workflow/workflowSlice';
+import { clearAllRepetitionRunData } from '../../core/state/workflow/workflowSlice';
 import { useMonitoringTimelineStyles } from './monitoringTimeline.styles';
 import { useIntl } from 'react-intl';
-import { parseRepetitions, countUniqueTasks } from './helpers';
+import type { TimelineRepetitionWithActions } from './helpers';
+import { parseRepetitions } from './helpers';
+import TimelineGroup from './TimelineGroup';
 
 const ChevronUpIcon = bundleIcon(ChevronUpFilled, ChevronUpRegular);
 const ChevronDownIcon = bundleIcon(ChevronDownFilled, ChevronDownRegular);
 const RefreshIcon = bundleIcon(ArrowClockwiseFilled, ArrowClockwiseRegular);
-const ExpandIcon = bundleIcon(ChevronRight24Filled, ChevronRight24Regular);
-const CollapseIcon = bundleIcon(ChevronDown24Filled, ChevronDown24Regular);
 
 const MonitoringTimeline = () => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -51,16 +39,12 @@ const MonitoringTimeline = () => {
     return parseRepetitions(repetitionData, runInstance);
   }, [repetitionData, runInstance]);
 
-  const tasksNumber = useMemo(() => {
-    return countUniqueTasks(repetitions);
-  }, [repetitions]);
-
   useEffect(() => {
-    dispatch(setTimelineRepetitionArray((repetitions ?? []).map((repetition) => repetition.actionIds ?? [])));
+    // dispatch(setTimelineRepetitionArray((repetitions ).map((repetition) => repetition.actionIds ?? [])));
   }, [dispatch, repetitions]);
 
   useEffect(() => {
-    if (transitionIndex === -1 && (repetitions ?? []).length > 0 && !isFetchingRepetitions) {
+    if (transitionIndex === -1 && repetitions.size > 0 && !isFetchingRepetitions) {
       setTransitionIndex(0);
     }
   }, [transitionIndex, repetitions, isFetchingRepetitions]);
@@ -69,32 +53,32 @@ const MonitoringTimeline = () => {
     () => {
       dispatch(clearAllRepetitionRunData());
 
-      const selectedRepetition = repetitions.find((repetition) => repetition.data?.properties?.a2ametadata?.taskId === transitionIndex);
-      const firstNodeId = selectedRepetition?.actionIds?.[0];
+      // const selectedRepetition = repetitions.find((repetition) => repetition.data?.properties?.a2ametadata?.taskId === transitionIndex);
+      // const firstNodeId = selectedRepetition?.actionIds?.[0];
 
-      if (firstNodeId) {
-        for (const a of Object.entries(selectedRepetition?.data?.properties?.actions ?? {})) {
-          const [actionId, action] = a;
-          dispatch(
-            setRepetitionRunData({
-              nodeId: actionId,
-              runData: action,
-            })
-          );
-        }
+      // if (firstNodeId) {
+      //   for (const a of Object.entries(selectedRepetition?.data?.properties?.actions ?? {})) {
+      //     const [actionId, action] = a;
+      //     dispatch(
+      //       setRepetitionRunData({
+      //         nodeId: actionId,
+      //         runData: action,
+      //       })
+      //     );
+      //   }
 
-        dispatch(setTimelineRepetitionIndex(transitionIndex));
+      //   dispatch(setTimelineRepetitionIndex(transitionIndex));
 
-        dispatch(setSelectedNodeId(firstNodeId));
-        dispatch(openPanel({ nodeId: firstNodeId, panelMode: 'Operation' }));
-        dispatch(setFocusNode(firstNodeId));
-      }
+      //   dispatch(setSelectedNodeId(firstNodeId));
+      //   dispatch(openPanel({ nodeId: firstNodeId, panelMode: 'Operation' }));
+      //   dispatch(setFocusNode(firstNodeId));
+      // }
     },
     [dispatch, transitionIndex],
     200
   );
 
-  const noRepetitions = useMemo(() => (repetitions ?? []).length === 0, [repetitions]);
+  const noRepetitions = useMemo(() => repetitions.size === 0, [repetitions]);
 
   return (
     <div style={{ position: 'absolute' }}>
@@ -108,11 +92,11 @@ const MonitoringTimeline = () => {
           transitionIndex={transitionIndex}
           repetitions={repetitions}
           setTransitionIndex={setTransitionIndex}
-          tasksNumber={tasksNumber}
+          tasksNumber={repetitions.size}
         />
         <Divider />
         <TimelineButtons
-          tasksNumber={tasksNumber}
+          tasksNumber={repetitions.size}
           isFetchingRepetitions={isFetchingRepetitions}
           isExpanded={isExpanded}
           transitionIndex={transitionIndex}
@@ -137,11 +121,7 @@ const TimelineContent = ({
   isFetchingRepetitions: boolean;
   noRepetitions: boolean;
   transitionIndex: number;
-  repetitions: {
-    actionIds: string[] | undefined;
-    repetitionIndex: number;
-    data?: TimelineRepetition;
-  }[];
+  repetitions: Map<number, TimelineRepetitionWithActions[]>;
   setTransitionIndex: (index: number) => void;
   tasksNumber: number;
 }) => {
@@ -160,15 +140,6 @@ const TimelineContent = ({
         id: 'CemHmO',
         description: 'Text displayed when the monitoring timeline is loading.',
       }),
-      taskCount: (count: number) =>
-        intl.formatMessage(
-          {
-            defaultMessage: 'Task #{count}',
-            id: 'wbjWVF',
-            description: 'Text displaying the task number.',
-          },
-          { count }
-        ),
     }),
     [intl]
   );
@@ -210,35 +181,16 @@ const TimelineContent = ({
           ...(isExpanded ? { scrollbarColor: 'grey transparent' } : { scrollbarWidth: 'none' }),
         }}
       >
-        {(repetitions ?? []).map((repetition, index) => {
-          const taskIndex = repetition.data?.properties?.a2ametadata?.taskId ?? 0;
-          const isFirstRepetitionInTask = taskIndex !== repetitions[index - 1]?.data?.properties?.a2ametadata?.taskId;
+        {Array.from(repetitions).map(([taskId, repetitionList]) => {
           return (
-            <div key={repetition.repetitionIndex} style={{ display: 'flex', flexDirection: 'column' }}>
-              {(index === 0 || isFirstRepetitionInTask) &&
-                (isExpanded ? (
-                  <Button
-                    className={styles.timelineTask}
-                    appearance="subtle"
-                    // onClick={handleToggleExpand}
-                    icon={isExpanded ? <CollapseIcon /> : <ExpandIcon />}
-                    style={{ justifyContent: 'center', flexGrow: 1 }}
-                  >
-                    {isExpanded ? text.taskCount(taskIndex + 1) : taskIndex + 1}
-                  </Button>
-                ) : (
-                  <Text className={styles.timelineTask} align={'center'} size={200} weight={'medium'}>
-                    {taskIndex + 1}
-                  </Text>
-                ))}
-              <TimelineNode
-                index={index}
-                selected={taskIndex === transitionIndex && isFirstRepetitionInTask}
-                onSelect={() => setTransitionIndex(taskIndex)}
-                isExpanded={isExpanded}
-                data={repetition.data!}
-              />
-            </div>
+            <TimelineGroup
+              key={taskId}
+              taskId={taskId}
+              isTimelineExpanded={isExpanded}
+              repetitions={repetitionList}
+              transitionIndex={transitionIndex}
+              setTransitionIndex={setTransitionIndex}
+            />
           );
         })}
       </div>
@@ -254,13 +206,13 @@ const TimelineContent = ({
             style={{ transform: 'rotate(180deg)' }}
           />
           <div className={styles.errorCaretContainer}>
-            {(repetitions ?? []).map((repetition, _index) =>
+            {/* {(repetitions ?? []).map((repetition, _index) =>
               equals(Object.values(repetition?.data?.properties?.actions ?? {})?.[0]?.status, 'failed') ? (
                 <CaretLeftFilled key={repetition.repetitionIndex} className={styles.errorCaret} />
               ) : (
                 <div key={repetition.repetitionIndex} />
               )
-            )}
+            )} */}
           </div>
         </>
       )}

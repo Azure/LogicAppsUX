@@ -1,22 +1,24 @@
 import type { TimelineRepetition } from './hooks';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 
-export const parseRepetitions = (
-  repetitionData: TimelineRepetition[] | undefined,
-  runInstance: LogicAppsV2.RunInstanceDefinition | null
-): {
+export interface TimelineRepetitionWithActions {
   actionIds: string[] | undefined;
   repetitionIndex: number;
   data?: TimelineRepetition;
-}[] => {
+}
+
+export const parseRepetitions = (
+  repetitionData: TimelineRepetition[] | undefined,
+  runInstance: LogicAppsV2.RunInstanceDefinition | null
+): Map<number, TimelineRepetitionWithActions[]> => {
   if ((repetitionData ?? []).length === 0) {
-    return [];
+    return new Map();
   }
 
   // Add trigger (not a repetition)
   const triggerId = runInstance?.properties?.trigger?.name ?? '';
   const trigger = runInstance?.properties?.trigger as LogicAppsV2.WorkflowRunTrigger;
-  const output = [
+  const repetitions = [
     {
       actionIds: [triggerId],
       repetitionIndex: -1,
@@ -41,7 +43,7 @@ export const parseRepetitions = (
   ];
 
   // Add all repetitions
-  output.push(
+  repetitions.push(
     ...(repetitionData ?? [])
       .map((repetition: any) => ({
         actionIds: Object.keys(repetition.properties.actions ?? {}),
@@ -50,24 +52,19 @@ export const parseRepetitions = (
       }))
       .filter((repetition: any) => repetition.actionIds?.length > 0)
   );
-  return output;
-};
 
-export const countUniqueTasks = (
-  repetitions: {
-    actionIds: string[] | undefined;
-    repetitionIndex: number;
-    data?: TimelineRepetition;
-  }[]
-): number => {
-  const uniqueTaskIds = new Set<number>();
+  // Create a map of taskId to repetitions
+  const taskIdToRepetitionsMap = new Map<number, TimelineRepetitionWithActions[]>();
 
   repetitions.forEach((repetition) => {
     const taskId = repetition.data?.properties?.a2ametadata?.taskId;
     if (taskId !== undefined && taskId !== null) {
-      uniqueTaskIds.add(taskId);
+      if (!taskIdToRepetitionsMap.has(taskId)) {
+        taskIdToRepetitionsMap.set(taskId, []);
+      }
+      taskIdToRepetitionsMap.get(taskId)!.push(repetition);
     }
   });
 
-  return uniqueTaskIds.size;
+  return taskIdToRepetitionsMap;
 };

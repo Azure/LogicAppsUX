@@ -55,6 +55,7 @@ export const useMonitoringTimelineStyles = makeStyles({
   },
 
   timelineTask: {
+    padding: '0px 5px',
     margin: '5px 0px',
     borderRadius: tokens.borderRadiusMedium,
     backgroundColor: '#1f85ff20',
