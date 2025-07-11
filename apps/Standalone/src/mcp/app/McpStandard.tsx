@@ -1,9 +1,17 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { McpDataProvider, mcpStore, McpWizard, McpWizardProvider, resetMcpStateOnResourceChange } from '@microsoft/logic-apps-designer';
+import {
+  McpDataProvider,
+  mcpStore,
+  McpWizard,
+  McpWizardProvider,
+  type McpWorkflowsData,
+  resetMcpStateOnResourceChange,
+} from '@microsoft/logic-apps-designer';
 import type { RootState } from '../state/Store';
 import { useSelector } from 'react-redux';
 import {
   getWorkflowAppFromCache,
+  saveWorkflowStandard,
   useCurrentObjectId,
   useCurrentTenantId,
   useWorkflowApp,
@@ -45,11 +53,14 @@ export const McpStandard = () => {
     /^\/subscriptions\/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\/resourceGroups\/[a-zA-Z0-9](?:[a-zA-Z0-9-_.]*[a-zA-Z0-9])?\/providers\/[a-zA-Z0-9-_.]+\/[a-zA-Z0-9-_./]+$/;
   const isValidResourceId = hasValidAppId && resourceIdValidation.test(appId);
 
-  const resourceDetails = {
-    subscriptionId: 'f34b22a3-2202-4fb1-b040-1332bd928c84',
-    resourceGroup: 'TestACSRG',
-    location: 'westus',
-  };
+  const resourceDetails = useMemo(
+    () => ({
+      subscriptionId: 'f34b22a3-2202-4fb1-b040-1332bd928c84',
+      resourceGroup: 'TestACSRG',
+      location: 'westus',
+    }),
+    []
+  );
   const {
     data: workflowAppData,
     isLoading: isWorkflowLoading,
@@ -105,6 +116,29 @@ export const McpStandard = () => {
     }
   }, [appId, hostingPlan]);
 
+  const onRegisterMcpServer = useCallback(
+    async ({ logicAppId, workflows, connectionsData }: McpWorkflowsData, onCompleted?: () => void) => {
+      const workflowsToCreate = Object.keys(workflows).map((key) => ({
+        name: key,
+        workflow: workflows[key].definition,
+        kind: workflows[key].kind,
+      }));
+
+      await saveWorkflowStandard(
+        logicAppId,
+        workflowsToCreate,
+        connectionsData,
+        /* parametersData */ undefined,
+        /* settingsProperties */ undefined,
+        /* customCodeData */ undefined,
+        /* clearDirtyState */ () => {},
+        { skipValidation: true, throwError: true }
+      );
+      onCompleted?.();
+    },
+    []
+  );
+
   return (
     <McpWizardProvider locale="en-US" theme={theme}>
       <div className={`${styles.container} ${styles.fadeIn}`}>
@@ -114,16 +148,8 @@ export const McpStandard = () => {
           <div className={styles.wizardContainer}>
             <div className={styles.wizardContent}>
               <div className={styles.wizardWrapper}>
-                <McpDataProvider
-                  resourceDetails={{
-                    subscriptionId: resourceDetails!.subscriptionId,
-                    resourceGroup: resourceDetails!.resourceGroup,
-                    location: canonicalLocation,
-                  }}
-                  onResourceChange={onResourceChange}
-                  services={services}
-                >
-                  <McpWizard />
+                <McpDataProvider resourceDetails={resourceDetails} onResourceChange={onResourceChange} services={services}>
+                  <McpWizard registerMcpServer={onRegisterMcpServer} />
                   <div id="mcp-layer-host" className={styles.layerHost} />
                 </McpDataProvider>
               </div>

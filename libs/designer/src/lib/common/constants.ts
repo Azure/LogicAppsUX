@@ -359,6 +359,7 @@ export default {
       FLAT_FILE_ENCODING: 'flatfileencoding',
       FOREACH: 'foreach',
       FUNCTION: 'function',
+      HANDOFF: 'agenthandoff',
       HTTP_WEBHOOK: 'httpwebhook',
       HTTP: 'http',
       IF: 'if',
