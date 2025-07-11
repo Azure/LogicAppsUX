@@ -32,9 +32,8 @@ export const resourceSlice = createSlice({
       state.resourceGroup = resourceGroup;
       state.location = location;
     },
-    setLogicApp: (state, action: PayloadAction<InitialResourceState & { logicAppName: string }>) => {
-      const { subscriptionId, resourceGroup, location, logicAppName } = action.payload;
-      state.subscriptionId = subscriptionId;
+    setLogicApp: (state, action: PayloadAction<{ resourceGroup: string; location: string; logicAppName: string }>) => {
+      const { resourceGroup, location, logicAppName } = action.payload;
       state.resourceGroup = resourceGroup;
       state.location = location;
       state.logicAppName = logicAppName;

@@ -1,4 +1,5 @@
-import { useQuery } from '@tanstack/react-query';
+import { ResourceService, type LogicAppResource } from '@microsoft/logic-apps-shared';
+import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { useAzureConnectorsLazyQuery } from '../../../core/queries/browse';
 import { useMemo } from 'react';
 import { SearchService } from '@microsoft/logic-apps-shared';
@@ -49,3 +50,23 @@ export const useOperationsByConnectorQuery = (connectorId: string) =>
     enabled: !!connectorId,
     ...queryOpts,
   });
+
+export const useEmptyLogicApps = (subscriptionId: string): UseQueryResult<LogicAppResource[], unknown> => {
+  return useQuery(
+    ['mcp', 'logicapps', subscriptionId],
+    async () => {
+      return ResourceService().listLogicApps(
+        subscriptionId,
+        /* resourceGroup */ undefined,
+        ` | join kind=leftouter (appserviceresources | where type contains "/sites/workflows" | extend appName = tostring(split(name, "/")[0]) | distinct appName) on $left.name == $right.appName | where appName == "" | distinct id, location, name, resourceGroup`
+      );
+    },
+    {
+      cacheTime: 1000 * 60 * 60 * 24,
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+      enabled: !!subscriptionId,
+    }
+  );
+};
