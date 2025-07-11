@@ -58,7 +58,7 @@ export const useEmptyLogicApps = (subscriptionId: string): UseQueryResult<LogicA
       return ResourceService().listLogicApps(
         subscriptionId,
         /* resourceGroup */ undefined,
-        ` | join kind=leftouter (appserviceresources | where type contains "/sites/workflows" | extend appName = tostring(split(name, "/")[0]) | distinct appName) on $left.name == $right.appName | where appName == "" | distinct name, resourceGroup`
+        ` | join kind=leftouter (appserviceresources | where type contains "/sites/workflows" | extend appName = tostring(split(name, "/")[0]) | distinct appName) on $left.name == $right.appName | where appName == "" | distinct id, location, name, resourceGroup`
       );
     },
     {
