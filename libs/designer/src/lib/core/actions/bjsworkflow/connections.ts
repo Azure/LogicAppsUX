@@ -4,7 +4,11 @@ import { AgentUtils, isOpenApiSchemaVersion } from '../../../common/utilities/Ut
 import type { DeserializedWorkflow } from '../../parsers/BJSWorkflow/BJSDeserializer';
 import { getConnection, getUniqueConnectionName, updateNewConnectionInQueryCache } from '../../queries/connections';
 import { getConnector, getOperationInfo, getOperationManifest } from '../../queries/operation';
-import { changeConnectionMapping, initializeConnectionsMappings } from '../../state/connection/connectionSlice';
+import {
+  changeConnectionMapping,
+  changeConnectionMappingsForNodes,
+  initializeConnectionsMappings,
+} from '../../state/connection/connectionSlice';
 import { changeConnectionMapping as changeTemplateConnectionMapping } from '../../state/templates/workflowSlice';
 import type { NodeOperation } from '../../state/operation/operationMetadataSlice';
 import { updateErrorDetails } from '../../state/operation/operationMetadataSlice';
@@ -65,6 +69,23 @@ export interface UpdateConnectionPayload {
   connectionParameterValues?: Record<string, any>;
 }
 
+export const updateMcpConnection = createAsyncThunk(
+  'updateMcpConnection',
+  async (payload: Omit<ConnectionPayload, 'nodeId'> & { nodeIds: string[]; reset?: boolean }, { dispatch }): Promise<void> => {
+    const { nodeIds, connector, connection, connectionProperties, authentication, reset } = payload;
+    dispatch(
+      changeConnectionMappingsForNodes({
+        reset,
+        nodeIds,
+        connectorId: connector.id,
+        connectionId: connection.id,
+        authentication: authentication ?? getApiHubAuthenticationIfRequired(),
+        connectionProperties: connectionProperties ?? getConnectionPropertiesIfRequired(connection, connector),
+      })
+    );
+  }
+);
+
 export const updateTemplateConnection = createAsyncThunk(
   'updateTemplateConnection',
   async (payload: ConnectionPayload & { connectionKey: string }, { dispatch, getState }): Promise<void> => {
@@ -102,7 +123,7 @@ export const updateNodeConnection = createAsyncThunk(
         connectionId: connection.id,
         authentication: authentication ?? getApiHubAuthenticationIfRequired(),
         connectionProperties: connectionProperties ?? getConnectionPropertiesIfRequired(connection, connector),
-        connectionRuntimeUrl: isOpenApiSchemaVersion((getState() as RootState).workflow.originalDefinition)
+        connectionRuntimeUrl: isOpenApiSchemaVersion((getState() as RootState).workflow?.originalDefinition)
           ? connection.properties.connectionRuntimeUrl
           : undefined,
       },
