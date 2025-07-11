@@ -8,17 +8,24 @@ import type { AppDispatch, RootState } from '../../../core/state/mcp/store';
 import { McpPanelRoot } from '../panel/mcpPanelRoot';
 import { initializeOperationsMetadata } from '../../../core/actions/bjsworkflow/mcp';
 import { ListOperations } from '../operations/ListOperations';
-import { serializeMcpWorkflows } from '../../../core/mcp/utils/serializer';
+import { type McpWorkflowsData, serializeMcpWorkflows } from '../../../core/mcp/utils/serializer';
+import { useCallback } from 'react';
+import { resetQueriesOnRegisterMcpServer } from '../../../core/mcp/utils/queries';
 
 const sampleConnectorId =
   '/subscriptions/f34b22a3-2202-4fb1-b040-1332bd928c84/providers/Microsoft.Web/locations/northcentralus/managedApis/office365';
 
-export const McpWizard = () => {
+export type RegisterMcpServerHandler = (workflowsData: McpWorkflowsData, onCompleted?: () => void) => Promise<void>;
+export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMcpServerHandler }) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
   const styles = useMcpWizardStyles();
   const connectors = [];
-  const rootState = useSelector((state: RootState) => state);
+  const {
+    connection,
+    operation,
+    resource: { subscriptionId, resourceGroup, logicAppName },
+  } = useSelector((state: RootState) => state);
 
   const handleAddConnectors = () => {
     dispatch(
@@ -41,9 +48,22 @@ export const McpWizard = () => {
     );
   };
 
-  const handleGenerateWorkflows = async () => {
-    const result = await serializeMcpWorkflows(rootState);
-    console.log('Generated workflows:', result);
+  const onRegisterCompleted = useCallback(() => {
+    resetQueriesOnRegisterMcpServer(subscriptionId, resourceGroup, logicAppName as string);
+  }, [logicAppName, resourceGroup, subscriptionId]);
+
+  const handleRegisterMcpServer = async () => {
+    const workflowsData = await serializeMcpWorkflows(
+      {
+        subscriptionId,
+        resourceGroup,
+        logicAppName: logicAppName as string,
+      },
+      connection,
+      operation
+    );
+    console.log('Generated workflows:', workflowsData);
+    await registerMcpServer(workflowsData, onRegisterCompleted);
   };
 
   const INTL_TEXT = {
@@ -101,7 +121,7 @@ export const McpWizard = () => {
       </Text>
       <div>
         <Button onClick={handleLoadOperations}>{'Load operations'}</Button>
-        <Button onClick={handleGenerateWorkflows}>{'Generate workflows'}</Button>
+        <Button onClick={handleRegisterMcpServer}>{'Register MCP Server'}</Button>
       </div>
       <div>
         <Text size={600} weight="semibold">

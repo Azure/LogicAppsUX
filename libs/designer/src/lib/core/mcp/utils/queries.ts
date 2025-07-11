@@ -2,6 +2,9 @@ import { useQuery } from '@tanstack/react-query';
 import { useAzureConnectorsLazyQuery } from '../../../core/queries/browse';
 import { useMemo } from 'react';
 import { SearchService } from '@microsoft/logic-apps-shared';
+import { getReactQueryClient } from '../../ReactQueryProvider';
+import { workflowAppConnectionsKey } from '../../configuretemplate/utils/queries';
+import { getStandardLogicAppId } from '../../configuretemplate/utils/helper';
 
 const queryOpts = {
   cacheTime: 1000 * 60 * 60 * 24,
@@ -49,3 +52,10 @@ export const useOperationsByConnectorQuery = (connectorId: string) =>
     enabled: !!connectorId,
     ...queryOpts,
   });
+
+export const resetQueriesOnRegisterMcpServer = (subscriptionId: string, resourceGroup: string, logicAppName: string) => {
+  const queryClient = getReactQueryClient();
+
+  const resourceId = `${getStandardLogicAppId(subscriptionId, resourceGroup, logicAppName)}/workflowsconfiguration/connections`;
+  queryClient.invalidateQueries([workflowAppConnectionsKey, resourceId.toLowerCase()]);
+};
