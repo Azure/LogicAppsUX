@@ -188,8 +188,9 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
           <Button onClick={handleRegisterMcpServer}>{'Register MCP Server'}</Button>
         </div>
       </div>
-
-      <TemplatesPanelFooter {...footerContent} />
+      <div className={styles.footer}>
+        <TemplatesPanelFooter {...footerContent} />
+      </div>
     </div>
   );
 };

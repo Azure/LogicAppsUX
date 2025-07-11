@@ -6,6 +6,7 @@ const mainGap = '16px';
 export const useMcpWizardStyles = makeStyles({
   wizardContainer: {
     display: 'flex',
+    flex: 1,
     flexDirection: 'column',
     height: '100%',
     background: tokens.colorNeutralBackground1,
@@ -58,5 +59,10 @@ export const useMcpWizardStyles = makeStyles({
   connectorsList: {
     flex: 1,
     padding: '24px',
+  },
+
+  footer: {
+    padding: `${tokens.spacingVerticalM} 0px`,
+    borderTop: `1px solid ${tokens.colorNeutralStroke2}`,
   },
 });
