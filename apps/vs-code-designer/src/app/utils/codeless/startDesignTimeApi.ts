@@ -106,7 +106,7 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
           {
             [appKindSetting]: logicAppKind,
             [ProjectDirectoryPathKey]: projectPath,
-            [workerRuntimeKey]: WorkerRuntime.Dotnet,
+            [workerRuntimeKey]: WorkerRuntime.Node,
           },
           true
         );
