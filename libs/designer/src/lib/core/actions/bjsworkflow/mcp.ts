@@ -1,4 +1,5 @@
 import {
+  ConnectionService,
   DevLogger,
   type IConnectionParameterEditorService,
   type IConnectionService,
@@ -23,17 +24,25 @@ import {
   type IWorkflowService,
 } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { clearConnectionCaches } from '../../queries/connections';
+import { clearConnectionCaches, getConnectionsForConnector } from '../../queries/connections';
 import type { RootState } from '../../state/mcp/store';
 import { getConnectionsInWorkflowApp } from '../../configuretemplate/utils/queries';
 import { getReactQueryClient } from '../../ReactQueryProvider';
 import { convertConnectionsDataToReferences, initializeOperationDetails } from '../../mcp/utils/helper';
-import { initializeConnectionReferences, initializeConnectionsMappings } from '../../state/connection/connectionSlice';
+import {
+  initEmptyConnectionMap,
+  initializeConnectionReferences,
+  initializeConnectionsMappings,
+} from '../../state/connection/connectionSlice';
 import {
   initializeNodeOperationInputsData,
   type NodeOperation,
   type NodeOperationInputsData,
 } from '../../state/operation/operationMetadataSlice';
+import { tryGetMostRecentlyUsedConnectionId } from './add';
+import { isConnectionValid } from '../../utils/connectors/connections';
+import { updateMcpConnection } from './connections';
+import { getConnector } from '../../queries/operation';
 
 export interface McpServiceOptions {
   connectionService: IConnectionService;
@@ -138,5 +147,20 @@ export const initializeOperationsMetadata = createAsyncThunk(
     console.log(allNodeData);
 
     dispatch(initializeNodeOperationInputsData(allNodeData));
+  }
+);
+
+export const initializeConnectionMappings = createAsyncThunk(
+  'initializeConnectionMappings',
+  async ({ operations, connectorId }: { operations: string[]; connectorId: string }, { dispatch }) => {
+    const connector = await getConnector(connectorId, /* useCachedData */ true);
+    const connections = (await getConnectionsForConnector(connectorId)).filter(isConnectionValid);
+    if (connector && connections.length > 0) {
+      const connection = (await tryGetMostRecentlyUsedConnectionId(connectorId, connections)) ?? connections[0];
+      await ConnectionService().setupConnectionIfNeeded(connection);
+      dispatch(updateMcpConnection({ nodeIds: operations, connection, connector, reset: true }));
+    } else {
+      dispatch(initEmptyConnectionMap(operations));
+    }
   }
 );
