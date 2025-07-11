@@ -14,13 +14,20 @@ interface TimelineGroupProps {
   taskId: number;
   repetitions: TimelineRepetitionWithActions[];
   transitionIndex: number;
+  selectedRepetition: TimelineRepetitionWithActions | null;
   handleSelectRepetition: (groupIndex: number, repetitionIndex: number) => void;
 }
 
-const TimelineGroup = ({ isTimelineExpanded, taskId, repetitions, transitionIndex, handleSelectRepetition }: TimelineGroupProps) => {
+const TimelineGroup = ({
+  isTimelineExpanded,
+  taskId,
+  repetitions,
+  transitionIndex,
+  selectedRepetition,
+  handleSelectRepetition,
+}: TimelineGroupProps) => {
   const [isGroupExpanded, setIsGroupExpanded] = useState(false);
   const styles = useMonitoringTimelineStyles();
-
   const intl = useIntl();
 
   const handleToggleExpand = (): void => {
@@ -72,8 +79,8 @@ const TimelineGroup = ({ isTimelineExpanded, taskId, repetitions, transitionInde
           return (
             <div key={repetition.repetitionIndex} style={{ margin: '3px' }}>
               <TimelineNode
-                index={index}
-                selected={false}
+                index={index * (taskId + 1)} // Need to fix this
+                selected={repetition.repetitionIndex === selectedRepetition?.repetitionIndex}
                 onSelect={() => handleSelectRepetition(taskId, index)}
                 isExpanded={isTimelineExpanded}
                 data={repetition.data!}

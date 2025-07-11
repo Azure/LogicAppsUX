@@ -117,6 +117,7 @@ const MonitoringTimeline = () => {
           transitionIndex={transitionIndex}
           repetitions={repetitions}
           tasksNumber={repetitions.size}
+          selectedRepetition={selectedRepetition}
           handleSelectRepetition={handleSelectRepetition}
         />
         <Divider />
@@ -139,6 +140,7 @@ const TimelineContent = ({
   noRepetitions,
   transitionIndex,
   repetitions,
+  selectedRepetition,
   handleSelectRepetition,
   tasksNumber,
 }: {
@@ -148,6 +150,7 @@ const TimelineContent = ({
   transitionIndex: number;
   repetitions: Map<number, TimelineRepetitionWithActions[]>;
   tasksNumber: number;
+  selectedRepetition: TimelineRepetitionWithActions | null;
   handleSelectRepetition: (groupIndex: number, repetitionIndex: number) => void;
 }) => {
   const styles = useMonitoringTimelineStyles();
@@ -206,18 +209,17 @@ const TimelineContent = ({
           ...(isExpanded ? { scrollbarColor: 'grey transparent' } : { scrollbarWidth: 'none' }),
         }}
       >
-        {Array.from(repetitions).map(([taskId, repetitionList]) => {
-          return (
-            <TimelineGroup
-              key={taskId}
-              taskId={taskId}
-              isTimelineExpanded={isExpanded}
-              repetitions={repetitionList}
-              transitionIndex={transitionIndex}
-              handleSelectRepetition={handleSelectRepetition}
-            />
-          );
-        })}
+        {Array.from(repetitions).map(([taskId, repetitionList]) => (
+          <TimelineGroup
+            key={taskId}
+            taskId={taskId}
+            isTimelineExpanded={isExpanded}
+            repetitions={repetitionList}
+            transitionIndex={transitionIndex}
+            selectedRepetition={selectedRepetition}
+            handleSelectRepetition={handleSelectRepetition}
+          />
+        ))}
       </div>
       {isExpanded && (
         <>
