@@ -37,7 +37,7 @@ export const LogicAppSelector = () => {
     [intl]
   );
 
-  const [selectedResource, setSelectedResource] = useState<string | undefined>('');
+  const [selectedResource, setSelectedResource] = useState<string>('');
 
   const resources = useMemo(
     () =>
@@ -75,7 +75,7 @@ export const LogicAppSelector = () => {
       }
 
       if (resource !== selectedResource) {
-        setSelectedResource(resource);
+        setSelectedResource(resource ?? '');
       }
     }
   }, [resources, logicAppName, onLogicAppSelect, isLogicAppsLoading, selectedResource]);
