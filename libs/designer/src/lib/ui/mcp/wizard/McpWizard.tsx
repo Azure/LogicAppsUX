@@ -110,8 +110,8 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
           type: 'action',
           text: intl.formatMessage({
             defaultMessage: 'Cancel',
-            id: '75zXUl',
-            description: 'Button text for closing the panel',
+            id: 'OA8qkc',
+            description: 'Button text for closing the wizard without saving',
           }),
           onClick: () => {
             //TODO: what do we want here?
