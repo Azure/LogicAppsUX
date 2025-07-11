@@ -11,6 +11,7 @@ import { ListOperations } from '../operations/ListOperations';
 import { type McpWorkflowsData, serializeMcpWorkflows } from '../../../core/mcp/utils/serializer';
 import { useCallback } from 'react';
 import { resetQueriesOnRegisterMcpServer } from '../../../core/mcp/utils/queries';
+import { LogicAppSelector } from '../details/logicAppSelector';
 
 const sampleConnectorId =
   '/subscriptions/f34b22a3-2202-4fb1-b040-1332bd928c84/providers/Microsoft.Web/locations/northcentralus/managedApis/office365';
@@ -67,7 +68,8 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
   };
 
   const INTL_TEXT = {
-    title: intl.formatMessage({ id: 'rCjtl8', defaultMessage: 'Connectors', description: 'Title for the connectors section' }),
+    connectorsTitle: intl.formatMessage({ id: 'rCjtl8', defaultMessage: 'Connectors', description: 'Title for the connectors section' }),
+    detailsTitle: intl.formatMessage({ id: '1Orv4i', defaultMessage: 'Details', description: 'Title for the details section' }),
     noConnectors: intl.formatMessage({
       id: 'xyhnsP',
       defaultMessage: 'No connectors added yet',
@@ -89,7 +91,17 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
     <div className={styles.wizardContainer}>
       <div className={styles.header}>
         <Text size={600} weight="semibold">
-          {INTL_TEXT.title}
+          {INTL_TEXT.detailsTitle}
+        </Text>
+      </div>
+
+      <div className={styles.content}>
+        <LogicAppSelector />
+      </div>
+
+      <div className={styles.header}>
+        <Text size={600} weight="semibold">
+          {INTL_TEXT.connectorsTitle}
         </Text>
         <Button appearance="primary" icon={<Add24Regular />} onClick={handleAddConnectors}>
           {INTL_TEXT.addConnectorsButton}
@@ -116,6 +128,7 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
           <div className={styles.connectorsList}>{/* Connector items will go here */}</div>
         )}
       </div>
+
       <Text size={600} weight="semibold">
         {'Test section'}
       </Text>

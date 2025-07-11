@@ -53,11 +53,14 @@ export const McpStandard = () => {
     /^\/subscriptions\/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\/resourceGroups\/[a-zA-Z0-9](?:[a-zA-Z0-9-_.]*[a-zA-Z0-9])?\/providers\/[a-zA-Z0-9-_.]+\/[a-zA-Z0-9-_./]+$/;
   const isValidResourceId = hasValidAppId && resourceIdValidation.test(appId);
 
-  const resourceDetails = {
-    subscriptionId: 'f34b22a3-2202-4fb1-b040-1332bd928c84',
-    resourceGroup: 'TestACSRG',
-    location: 'westus',
-  };
+  const resourceDetails = useMemo(
+    () => ({
+      subscriptionId: 'f34b22a3-2202-4fb1-b040-1332bd928c84',
+      resourceGroup: 'TestACSRG',
+      location: 'westus',
+    }),
+    []
+  );
   const {
     data: workflowAppData,
     isLoading: isWorkflowLoading,
@@ -145,15 +148,7 @@ export const McpStandard = () => {
           <div className={styles.wizardContainer}>
             <div className={styles.wizardContent}>
               <div className={styles.wizardWrapper}>
-                <McpDataProvider
-                  resourceDetails={{
-                    subscriptionId: resourceDetails!.subscriptionId,
-                    resourceGroup: resourceDetails!.resourceGroup,
-                    location: canonicalLocation,
-                  }}
-                  onResourceChange={onResourceChange}
-                  services={services}
-                >
+                <McpDataProvider resourceDetails={resourceDetails} onResourceChange={onResourceChange} services={services}>
                   <McpWizard registerMcpServer={onRegisterMcpServer} />
                   <div id="mcp-layer-host" className={styles.layerHost} />
                 </McpDataProvider>
