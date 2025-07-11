@@ -21,7 +21,7 @@ describe('helpers', () => {
             correlation: 'correlation-123',
           },
         },
-      } as LogicAppsV2.RunInstanceDefinition;
+      } as unknown as LogicAppsV2.RunInstanceDefinition;
 
       mockRepetitionData = [
         {
@@ -214,7 +214,7 @@ describe('helpers', () => {
           },
           type: 'repetition',
         },
-      ] as TimelineRepetition[];
+      ] as unknown as TimelineRepetition[];
 
       const result = parseRepetitions(repetitionsWithUndefinedTaskId, mockRunInstance);
 

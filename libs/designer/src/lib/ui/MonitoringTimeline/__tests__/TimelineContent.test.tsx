@@ -18,7 +18,7 @@ vi.mock('../monitoringTimeline.styles', () => ({
 
 // Mock useId to return consistent IDs for snapshots
 vi.mock('react', async (importOriginal) => {
-  const original = await importOriginal();
+  const original = await importOriginal<typeof import('react')>();
   return {
     ...original,
     useId: () => 'test-id',
