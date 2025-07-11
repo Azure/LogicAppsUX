@@ -41,7 +41,7 @@ import {
 } from '../../state/operation/operationMetadataSlice';
 import { tryGetMostRecentlyUsedConnectionId } from './add';
 import { isConnectionValid } from '../../utils/connectors/connections';
-import { updateNodeConnection } from './connections';
+import { updateMcpConnection } from './connections';
 import { getConnector } from '../../queries/operation';
 
 export interface McpServiceOptions {
@@ -157,20 +157,9 @@ export const initializeConnectionMappings = createAsyncThunk(
     if (connector && connections.length > 0) {
       const connection = (await tryGetMostRecentlyUsedConnectionId(connectorId, connections)) ?? connections[0];
       await ConnectionService().setupConnectionIfNeeded(connection);
-
-      for (const operation of operations) {
-        dispatch(
-          updateNodeConnection({
-            nodeId: operation,
-            connection,
-            connector,
-          })
-        );
-      }
+      dispatch(updateMcpConnection({ nodeIds: operations, connection, connector, reset: true }));
     } else {
-      for (const operation of operations) {
-        dispatch(initEmptyConnectionMap(operation));
-      }
+      dispatch(initEmptyConnectionMap(operations));
     }
   }
 );

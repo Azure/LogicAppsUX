@@ -1,5 +1,5 @@
 import { type Connection, ConnectionService, type Connector, parseErrorMessage } from '@microsoft/logic-apps-shared';
-import { updateNodeConnection } from '../../../core/actions/bjsworkflow/connections';
+import { updateMcpConnection } from '../../../core/actions/bjsworkflow/connections';
 import { useConnectionsForConnector } from '../../../core/queries/connections';
 import { useConnector } from '../../../core/state/connection/connectionSelector';
 import {
@@ -51,25 +51,21 @@ export const ConnectionSelection = ({ connectorId, operations }: { connectorId: 
       if (!connection) {
         return;
       }
-      for (const nodeId of operationNodeIds) {
-        dispatch(
-          updateNodeConnection({
-            nodeId,
-            connection,
-            connector: connector as Connector,
-          })
-        );
-        ConnectionService().setupConnectionIfNeeded(connection);
-      }
+      dispatch(
+        updateMcpConnection({
+          nodeIds: operationNodeIds,
+          connection,
+          connector: connector as Connector,
+        })
+      );
+      ConnectionService().setupConnectionIfNeeded(connection);
     },
     [operationNodeIds, dispatch, connector]
   );
 
   const updateConnectionInState = useCallback(
     (payload: CreatedConnectionPayload) => {
-      for (const nodeId of operationNodeIds) {
-        dispatch(updateNodeConnection({ ...payload, nodeId }));
-      }
+      dispatch(updateMcpConnection({ ...payload, nodeIds: operationNodeIds }));
     },
     [dispatch, operationNodeIds]
   );

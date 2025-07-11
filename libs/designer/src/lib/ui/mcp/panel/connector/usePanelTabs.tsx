@@ -1,13 +1,12 @@
 import { useCallback, useMemo } from 'react';
 import type { AppDispatch, RootState } from '../../../../core/state/mcp/store';
 import { useDispatch, useSelector } from 'react-redux';
-import { McpPanelView, selectPanelTab } from '../../../../core/state/mcp/panel/mcpPanelSlice';
+import { McpPanelView } from '../../../../core/state/mcp/panel/mcpPanelSlice';
 import { operationsTab } from './tabs/operationsTab';
 import { useIntl } from 'react-intl';
 import { connectorsTab } from './tabs/connectorsTab';
 import type { McpPanelTabProps } from '@microsoft/designer-ui';
 import { connectionsTab } from './tabs/connectionsTab';
-import constants from '../../../../common/constants';
 import { initializeConnectionMappings } from '../../../../core/actions/bjsworkflow/mcp';
 
 export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
@@ -22,7 +21,6 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
 
   const handleOnSelectOperations = useCallback(() => {
     dispatch(initializeConnectionMappings({ connectorId: selectedConnectorId as string, operations: selectedOperations }));
-    dispatch(selectPanelTab(constants.MCP_PANEL_TAB_NAMES.CONNECTIONS));
   }, [dispatch, selectedConnectorId, selectedOperations]);
 
   const connectorsTabItem = useMemo(
