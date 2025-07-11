@@ -1,9 +1,11 @@
 import { Text, Button, Spinner } from '@fluentui/react-components';
 import { Add24Regular, ConnectorFilled, AppGeneric24Regular } from '@fluentui/react-icons';
+import { useMcpWizardStyles } from './styles';
 import { useIntl } from 'react-intl';
 import { McpPanelView, openConnectorPanelView, openOperationPanelView } from '../../../core/state/mcp/panel/mcpPanelSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../core/state/mcp/store';
+import { McpPanelRoot } from '../panel/mcpPanelRoot';
 import { type McpWorkflowsData, serializeMcpWorkflows } from '../../../core/mcp/utils/serializer';
 import { resetQueriesOnRegisterMcpServer } from '../../../core/mcp/utils/queries';
 import { LogicAppSelector } from '../details/logicAppSelector';
@@ -13,9 +15,8 @@ import { useMemo, useCallback, useEffect, useState } from 'react';
 import { selectConnectorId, selectOperations } from '../../../core/state/mcp/connector/connectorSlice';
 import { getConnector } from '../../../core/queries/operation';
 import type { Connector } from '@microsoft/logic-apps-shared';
-import { useMcpWizardStyles } from './styles';
-import { McpPanelRoot } from '../panel/mcpPanelRoot';
-import { type TemplatePanelFooterProps, TemplatesPanelFooter } from '@microsoft/designer-ui';
+import type { TemplatePanelFooterProps } from '@microsoft/designer-ui';
+import { TemplatesPanelFooter } from '@microsoft/designer-ui';
 
 export type RegisterMcpServerHandler = (workflowsData: McpWorkflowsData, onCompleted?: () => void) => Promise<void>;
 
@@ -28,7 +29,6 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
     operation,
     resource: { subscriptionId, resourceGroup, logicAppName },
   } = useSelector((state: RootState) => state);
-  const disableConfiguration = useMemo(() => !logicAppName, [logicAppName]);
 
   const { operationInfos, isInitializingOperations } = useSelector((state: RootState) => ({
     operationInfos: state.operation.operationInfo,
@@ -272,7 +272,7 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
         <Text size={600} weight="semibold">
           {INTL_TEXT.connectorsTitle}
         </Text>
-        <Button appearance="primary" icon={<Add24Regular />} disabled={disableConfiguration} onClick={handleAddConnectors}>
+        <Button appearance="primary" icon={<Add24Regular />} onClick={handleAddConnectors}>
           {INTL_TEXT.addConnectorsButton}
         </Button>
       </div>
@@ -307,6 +307,15 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
             <div className={styles.emptyStateIcon}>
               <ConnectorFilled />
             </div>
+            <Text size={500} weight="semibold" style={{ marginBottom: '8px' }}>
+              {INTL_TEXT.noConnectors}
+            </Text>
+            <Text size={300} style={{ opacity: 0.7, marginBottom: '24px' }}>
+              {INTL_TEXT.addFirstConnector}
+            </Text>
+            <Button appearance="primary" icon={<Add24Regular />} onClick={handleAddConnectors} size="large">
+              {INTL_TEXT.addConnectorsButton}
+            </Button>
           </div>
         )}
       </div>
@@ -360,7 +369,6 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
         )}
       </div>
       <McpPanelRoot />
-
       <TemplatesPanelFooter {...footerContent} />
     </div>
   );
