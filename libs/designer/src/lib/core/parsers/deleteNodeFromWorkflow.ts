@@ -2,7 +2,7 @@
 import type { NodesMetadata, WorkflowState } from '../state/workflow/workflowInterfaces';
 import type { WorkflowNode } from './models/workflowNode';
 import { removeEdge, reassignEdgeSources, reassignEdgeTargets } from './restructuringHelpers';
-import { getRecordEntry, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
+import { getRecordEntry, WORKFLOW_EDGE_TYPES, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
 
 export interface DeleteNodePayload {
   nodeId: string;
@@ -36,7 +36,15 @@ export const deleteNodeFromWorkflow = (
 
   // Nodes with multiple parents AND children are not allowed to be deleted
 
-  // Adjust edges
+  // Delete any handoff edges that are associated with the node
+  const handoffEdges = (workflowGraph.edges ?? []).filter(
+    (edge) => edge.type === WORKFLOW_EDGE_TYPES.HANDOFF_EDGE && (edge.source === nodeId || edge.target === nodeId)
+  );
+  handoffEdges.forEach((edge) => {
+    removeEdge(state, edge.source, edge.target, workflowGraph);
+  });
+
+  // Adjust other edges
   if (isTrigger) {
     workflowGraph.edges = (workflowGraph.edges ?? []).filter((edge) => edge.source !== nodeId);
   } else if (multipleParents) {

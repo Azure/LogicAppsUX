@@ -180,20 +180,6 @@ const useBuiltInOperationsQuery = () =>
 
 /// Connectors ///
 
-export const useAllManagedConnectors = () => {
-  const { data: azureData, isFetching: azureFetching, hasNextPage: azureHasNextPage } = useAzureConnectorsLazyQuery();
-
-  const hasNextPage = azureHasNextPage;
-  const isLoading = azureFetching; // Only check if currently fetching, not if more pages exist
-
-  const data = useMemo(() => {
-    const azure = azureData?.pages.flatMap((page) => page.data) ?? [];
-    return azure.filter((connector) => connector !== undefined);
-  }, [azureData]);
-
-  return useMemo(() => ({ data, isLoading, hasNextPage }), [data, isLoading, hasNextPage]);
-};
-
 export const useAllConnectors = () => {
   const { data: azureData, isLoading: azureLoading, hasNextPage: azureHasNextPage } = useAzureConnectorsLazyQuery();
 
@@ -263,7 +249,7 @@ export const usePreloadConnectorsQuery = (): any => {
   return { isLoading };
 };
 
-const useAzureConnectorsLazyQuery = () =>
+export const useAzureConnectorsLazyQuery = () =>
   useInfiniteQuery(
     ['allConnectorsLazy', 'azure'],
     async ({ pageParam = 0 }: any) => {

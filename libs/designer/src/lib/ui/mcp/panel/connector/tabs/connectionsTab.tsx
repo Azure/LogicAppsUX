@@ -1,9 +1,9 @@
-import type { AppDispatch } from '../../../../../../core/state/templates/store';
-import constants from '../../../../../../common/constants';
+import type { AppDispatch } from '../../../../../core/state/templates/store';
+import constants from '../../../../../common/constants';
 import type { McpConnectorTabProps, McpPanelTabProps } from '@microsoft/designer-ui';
 import type { IntlShape } from 'react-intl';
-import { selectPanelTab } from '../../../../../../core/state/mcp/panel/mcpPanelSlice';
-import { ConnectionSelection } from './connectionselection';
+import { selectPanelTab } from '../../../../../core/state/mcp/panel/mcpPanelSlice';
+import { ConnectionSelection } from '../../../connections/connectionselection';
 
 export const connectionsTab = (
   intl: IntlShape,
