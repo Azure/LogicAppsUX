@@ -84,8 +84,6 @@ export const useMcpStandardStyles = makeStyles({
 
   wizardWrapper: {
     background: tokens.colorNeutralBackground2,
-    borderRadius: '8px',
-    border: `1px solid ${tokens.colorNeutralStroke1}`,
     minHeight: '100%',
     position: 'relative',
     overflow: 'hidden',
