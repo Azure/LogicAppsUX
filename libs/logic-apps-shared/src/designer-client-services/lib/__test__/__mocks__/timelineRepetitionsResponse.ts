@@ -281,8 +281,7 @@ export const TimelineRepetitionsMock: { value: any[] } = {
           clientTrackingId: "08584543176225710360248387968CU00"
         },
         status: "Running",
-        code: "Accepted"
-        ,
+        code: "Accepted",
          a2ametadata: {
           taskId: 2,
         }
@@ -393,8 +392,7 @@ export const TimelineRepetitionsMock: { value: any[] } = {
           clientTrackingId: "08584543176225710360248387968CU00"
         },
         status: "Running",
-        code: "Accepted"
-        ,
+        code: "Accepted",
          a2ametadata: {
           taskId: 3,
         }
@@ -426,7 +424,7 @@ export const TimelineRepetitionsMock: { value: any[] } = {
         },
         status: "Running",
         code: "Accepted",
-         a2ametadata: {
+        a2ametadata: {
           taskId: 3,
         }
       },

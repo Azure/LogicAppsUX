@@ -1,5 +1,4 @@
 import { Text, Button, Card, Divider, Slider, Spinner, tokens } from '@fluentui/react-components';
-
 import {
   bundleIcon,
   ChevronUpFilled,
@@ -11,6 +10,10 @@ import {
   ArrowClockwiseFilled,
   ArrowClockwiseRegular,
   CaretLeftFilled,
+  ChevronDown24Filled,
+  ChevronDown24Regular,
+  ChevronRight24Filled,
+  ChevronRight24Regular,
 } from '@fluentui/react-icons';
 import { useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -32,6 +35,8 @@ import { parseRepetitions, countUniqueTasks } from './helpers';
 const ChevronUpIcon = bundleIcon(ChevronUpFilled, ChevronUpRegular);
 const ChevronDownIcon = bundleIcon(ChevronDownFilled, ChevronDownRegular);
 const RefreshIcon = bundleIcon(ArrowClockwiseFilled, ArrowClockwiseRegular);
+const ExpandIcon = bundleIcon(ChevronRight24Filled, ChevronRight24Regular);
+const CollapseIcon = bundleIcon(ChevronDown24Filled, ChevronDown24Regular);
 
 const MonitoringTimeline = () => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -210,11 +215,22 @@ const TimelineContent = ({
           const isFirstRepetitionInTask = taskIndex !== repetitions[index - 1]?.data?.properties?.a2ametadata?.taskId;
           return (
             <div key={repetition.repetitionIndex} style={{ display: 'flex', flexDirection: 'column' }}>
-              {(index === 0 || isFirstRepetitionInTask) && (
-                <Text className={styles.timelineTask} align={'center'} size={200} weight={'medium'}>
-                  {isExpanded ? text.taskCount(taskIndex + 1) : taskIndex + 1}
-                </Text>
-              )}
+              {(index === 0 || isFirstRepetitionInTask) &&
+                (isExpanded ? (
+                  <Button
+                    className={styles.timelineTask}
+                    appearance="subtle"
+                    // onClick={handleToggleExpand}
+                    icon={isExpanded ? <CollapseIcon /> : <ExpandIcon />}
+                    style={{ justifyContent: 'center', flexGrow: 1 }}
+                  >
+                    {isExpanded ? text.taskCount(taskIndex + 1) : taskIndex + 1}
+                  </Button>
+                ) : (
+                  <Text className={styles.timelineTask} align={'center'} size={200} weight={'medium'}>
+                    {taskIndex + 1}
+                  </Text>
+                ))}
               <TimelineNode
                 index={index}
                 selected={taskIndex === transitionIndex && isFirstRepetitionInTask}
