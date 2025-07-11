@@ -28,7 +28,10 @@ export const TimelineRepetitionsMock: { value: any[] } = {
           clientTrackingId: "08584543176225710360248387968CU00"
         },
         status: "Running",
-        code: "Accepted"
+        code: "Accepted",
+        a2ametadata: {
+          taskId: 0,
+        }
       },
       id: "/workflows/multiagent/runs/08584543176225710360248387968CU00/actions/default/agentRepetitions/000000",
       name: "000000",
@@ -56,7 +59,10 @@ export const TimelineRepetitionsMock: { value: any[] } = {
           clientTrackingId: "08584543176225710360248387968CU00"
         },
         status: "Running",
-        code: "Accepted"
+        code: "Accepted",
+        a2ametadata: {
+          taskId: 0,
+        }
       },
       id: "/workflows/multiagent/runs/08584543176225710360248387968CU00/actions/default/agentRepetitions/000001",
       name: "000001",
@@ -84,7 +90,10 @@ export const TimelineRepetitionsMock: { value: any[] } = {
           clientTrackingId: "08584543176225710360248387968CU00"
         },
         status: "Running",
-        code: "Accepted"
+        code: "Accepted",
+        a2ametadata: {
+          taskId: 0,
+        }
       },
       id: "/workflows/multiagent/runs/08584543176225710360248387968CU00/actions/default/agentRepetitions/000002",
       name: "000002",
@@ -130,7 +139,10 @@ export const TimelineRepetitionsMock: { value: any[] } = {
           clientTrackingId: "08584543176225710360248387968CU00"
         },
         status: "Running",
-        code: "Accepted"
+        code: "Accepted",
+        a2ametadata: {
+          taskId: 0,
+        }
       },
       id: "/workflows/multiagent/runs/08584543176225710360248387968CU00/actions/default/agentRepetitions/000003",
       name: "000003",
@@ -158,7 +170,10 @@ export const TimelineRepetitionsMock: { value: any[] } = {
           clientTrackingId: "08584543176225710360248387968CU00"
         },
         status: "Running",
-        code: "Accepted"
+        code: "Accepted",
+        a2ametadata: {
+          taskId: 1,
+        }
       },
       id: "/workflows/multiagent/runs/08584543176225710360248387968CU00/actions/default/agentRepetitions/000023",
       name: "000023",
@@ -186,7 +201,10 @@ export const TimelineRepetitionsMock: { value: any[] } = {
           clientTrackingId: "08584543176225710360248387968CU00"
         },
         status: "Running",
-        code: "Accepted"
+        code: "Accepted",
+         a2ametadata: {
+          taskId: 1,
+        }
       },
       id: "/workflows/multiagent/runs/08584543176225710360248387968CU00/actions/default/agentRepetitions/000024",
       name: "000024",
@@ -232,7 +250,10 @@ export const TimelineRepetitionsMock: { value: any[] } = {
           clientTrackingId: "08584543176225710360248387968CU00"
         },
         status: "Running",
-        code: "Accepted"
+        code: "Accepted",
+         a2ametadata: {
+          taskId: 1,
+        }
       },
       id: "/workflows/multiagent/runs/08584543176225710360248387968CU00/actions/default/agentRepetitions/000025",
       name: "000025",
@@ -260,7 +281,10 @@ export const TimelineRepetitionsMock: { value: any[] } = {
           clientTrackingId: "08584543176225710360248387968CU00"
         },
         status: "Running",
-        code: "Accepted"
+        code: "Accepted",
+         a2ametadata: {
+          taskId: 2,
+        }
       },
       id: "/workflows/multiagent/runs/08584543176225710360248387968CU00/actions/default/agentRepetitions/000925",
       name: "000925",
@@ -288,7 +312,10 @@ export const TimelineRepetitionsMock: { value: any[] } = {
           clientTrackingId: "08584543176225710360248387968CU00"
         },
         status: "Running",
-        code: "Accepted"
+        code: "Accepted",
+         a2ametadata: {
+          taskId: 2,
+        }
       },
       id: "/workflows/multiagent/runs/08584543176225710360248387968CU00/actions/default/agentRepetitions/000926",
       name: "000926",
@@ -334,7 +361,10 @@ export const TimelineRepetitionsMock: { value: any[] } = {
           clientTrackingId: "08584543176225710360248387968CU00"
         },
         status: "Running",
-        code: "Accepted"
+        code: "Accepted",
+         a2ametadata: {
+          taskId: 2,
+        }
       },
       id: "/workflows/multiagent/runs/08584543176225710360248387968CU00/actions/default/agentRepetitions/000927",
       name: "000927",
@@ -362,7 +392,10 @@ export const TimelineRepetitionsMock: { value: any[] } = {
           clientTrackingId: "08584543176225710360248387968CU00"
         },
         status: "Running",
-        code: "Accepted"
+        code: "Accepted",
+         a2ametadata: {
+          taskId: 3,
+        }
       },
       id: "/workflows/multiagent/runs/08584543176225710360248387968CU00/actions/default/agentRepetitions/009350",
       name: "009350",
@@ -390,7 +423,10 @@ export const TimelineRepetitionsMock: { value: any[] } = {
           clientTrackingId: "08584543176225710360248387968CU00"
         },
         status: "Running",
-        code: "Accepted"
+        code: "Accepted",
+        a2ametadata: {
+          taskId: 3,
+        }
       },
       id: "/workflows/multiagent/runs/08584543176225710360248387968CU00/actions/default/agentRepetitions/009351",
       name: "009351",
@@ -436,7 +472,10 @@ export const TimelineRepetitionsMock: { value: any[] } = {
           clientTrackingId: "08584543176225710360248387968CU00"
         },
         status: "Running",
-        code: "Accepted"
+        code: "Accepted",
+         a2ametadata: {
+          taskId: 3,
+        }
       },
       id: "/workflows/multiagent/runs/08584543176225710360248387968CU00/actions/default/agentRepetitions/009352",
       name: "009352",
@@ -464,7 +503,10 @@ export const TimelineRepetitionsMock: { value: any[] } = {
           clientTrackingId: "08584543176225710360248387968CU00"
         },
         status: "Running",
-        code: "Accepted"
+        code: "Accepted",
+         a2ametadata: {
+          taskId: 3,
+        }
       },
       id: "/workflows/multiagent/runs/08584543176225710360248387968CU00/actions/default/agentRepetitions/009364",
       name: "009364",
@@ -496,7 +538,10 @@ export const TimelineRepetitionsMock: { value: any[] } = {
           clientTrackingId: "08584543176225710360248387968CU00"
         },
         status: "Running",
-        code: "Accepted"
+        code: "Accepted",
+         a2ametadata: {
+          taskId: 3,
+        }
       },
       id: "/workflows/multiagent/runs/08584543176225710360248387968CU00/actions/default/agentRepetitions/009365",
       name: "009365",
@@ -527,7 +572,10 @@ export const TimelineRepetitionsMock: { value: any[] } = {
           clientTrackingId: "08584543176225710360248387968CU00"
         },
         status: "Running",
-        code: "Accepted"
+        code: "Accepted",
+         a2ametadata: {
+          taskId: 3,
+        }
       },
       id: "/workflows/multiagent/runs/08584543176225710360248387968CU00/actions/default/agentRepetitions/009447",
       name: "009447",
