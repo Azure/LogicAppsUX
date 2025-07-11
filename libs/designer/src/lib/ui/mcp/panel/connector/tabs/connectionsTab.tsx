@@ -9,6 +9,7 @@ export const connectionsTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
   connectorId: string,
+  operations: string[],
   { isTabDisabled, isPrimaryButtonDisabled, isPreviousButtonDisabled, onAddConnector: onSubmit }: McpConnectorTabProps
 ): McpPanelTabProps => ({
   id: constants.MCP_PANEL_TAB_NAMES.CONNECTIONS,
@@ -17,7 +18,7 @@ export const connectionsTab = (
     id: 'Cosbik',
     description: 'The tab label for the create connection tab on the connector panel',
   }),
-  content: <ConnectionSelection connectorId={connectorId} />,
+  content: <ConnectionSelection connectorId={connectorId} operations={operations} />,
   disabled: isTabDisabled,
   footerContent: {
     buttonContents: [

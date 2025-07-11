@@ -8,6 +8,7 @@ import { useOperationsByConnectorQuery } from '../../../core/mcp/utils/queries';
 import { setSelectedOperations } from '../../../core/state/mcp/panel/mcpPanelSlice';
 import { OperationSelectionGrid } from './OperationSelectionGrid';
 import { useOperationsStyles } from './styles';
+import { getResourceNameFromId } from '@microsoft/logic-apps-shared';
 
 export const SelectOperations = () => {
   const intl = useIntl();
@@ -37,10 +38,11 @@ export const SelectOperations = () => {
   const handleOperationToggle = useCallback(
     (operationId: string, isSelected: boolean) => {
       const newSelection = new Set(selectedOperations);
+      const operationName = getResourceNameFromId(operationId);
       if (isSelected) {
-        newSelection.add(operationId);
+        newSelection.add(operationName);
       } else {
-        newSelection.delete(operationId);
+        newSelection.delete(operationName);
       }
       dispatch(setSelectedOperations(Array.from(newSelection)));
     },
@@ -49,7 +51,7 @@ export const SelectOperations = () => {
 
   const handleSelectAll = useCallback(
     (isSelected: boolean) => {
-      const newSelection = isSelected ? operations.map((op) => op.id) : [];
+      const newSelection = isSelected ? operations.map((op) => op.name) : [];
       dispatch(setSelectedOperations(newSelection));
     },
     [operations, dispatch]

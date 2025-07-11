@@ -7,12 +7,13 @@ import { SelectOperations } from '../../../operations/SelectOperations';
 
 interface OperationsTabProps extends McpConnectorTabProps {
   selectedOperationsCount: number;
+  onSelectOperations: () => void;
 }
 
 export const operationsTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
-  { isTabDisabled, isPrimaryButtonDisabled, isPreviousButtonDisabled, selectedOperationsCount }: OperationsTabProps
+  { isTabDisabled, isPrimaryButtonDisabled, isPreviousButtonDisabled, selectedOperationsCount, onSelectOperations }: OperationsTabProps
 ): McpPanelTabProps => {
   const nextButtonText =
     selectedOperationsCount > 0
@@ -56,9 +57,7 @@ export const operationsTab = (
         {
           type: 'navigation',
           text: nextButtonText,
-          onClick: () => {
-            dispatch(selectPanelTab(constants.MCP_PANEL_TAB_NAMES.CONNECTIONS));
-          },
+          onClick: onSelectOperations,
           appearance: 'primary',
           disabled: isPrimaryButtonDisabled || selectedOperationsCount === 0,
         },

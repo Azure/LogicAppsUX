@@ -1,6 +1,8 @@
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import { resetMcpState } from '../../global';
+import constants from '../../../../common/constants';
+import { initializeConnectionMappings } from '../../../actions/bjsworkflow/mcp';
 
 export const McpPanelView = {
   SelectConnector: 'selectConnector',
@@ -78,6 +80,9 @@ export const mcpPanelSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(resetMcpState, () => initialState);
+    builder.addCase(initializeConnectionMappings.fulfilled, (state) => {
+      state.selectedTabId = constants.MCP_PANEL_TAB_NAMES.CONNECTIONS;
+    });
   },
 });
 

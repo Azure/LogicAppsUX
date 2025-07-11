@@ -16,7 +16,6 @@ import {
 import { Theme as ThemeType } from '@microsoft/logic-apps-shared';
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { AzureStandardLogicAppSelector } from '../../designer/app/AzureLogicAppsDesigner/LogicAppSelectionSetting/AzureStandardLogicAppSelector';
 import { ThemeProvider } from '@fluentui/react';
 import { FluentProvider, webDarkTheme, webLightTheme } from '@fluentui/react-components';
 import { AzureThemeDark } from '@fluentui/azure-themes/lib/azure/AzureThemeDark';
@@ -44,10 +43,6 @@ export const DevToolbox = () => {
     },
     [dispatch]
   );
-
-  const onLogicAppSelected = () => {
-    dispatch(setToolboxOpen(false));
-  };
 
   const armToken = environment.armToken;
 
@@ -110,31 +105,6 @@ export const DevToolbox = () => {
                           dropdown: styles.dropdownField,
                         }}
                       />
-                    </Card>
-                  </StackItem>
-
-                  <StackItem className={styles.logicAppCard}>
-                    <Card className={styles.transparentCard}>
-                      <CardHeader
-                        header={
-                          <Text size={400} weight="semibold">
-                            ⚡ Logic App Configuration
-                          </Text>
-                        }
-                        description={
-                          <Text size={200} className={styles.sectionDescription}>
-                            Select and configure your Azure Logic App
-                          </Text>
-                        }
-                      />
-                      <Divider className={styles.cardDivider} />
-                      <div className={styles.logicAppContainer}>
-                        {armToken ? (
-                          <AzureStandardLogicAppSelector hideWorkflowSelection={true} onLogicAppSelected={onLogicAppSelected} />
-                        ) : (
-                          <Text size={200}>Please connect your ARM token to select a Logic App.</Text>
-                        )}
-                      </div>
                     </Card>
                   </StackItem>
                 </Stack>

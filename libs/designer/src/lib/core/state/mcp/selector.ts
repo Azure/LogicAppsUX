@@ -2,6 +2,12 @@ import { useSelector } from 'react-redux';
 import type { RootState } from './store';
 import { equals, type ConnectionReference } from '@microsoft/logic-apps-shared';
 
+export const useAreMappingsInitialized = (operations: string[]): boolean => {
+  const state = useSelector((state: RootState) => state.connection);
+  const initializedOperations = Object.keys(state.connectionsMapping);
+  return operations.every((operation) => initializedOperations.includes(operation));
+};
+
 export const useAllReferenceKeys = (): string[] => {
   const state = useSelector((state: RootState) => state.connection);
   return Object.keys(state.connectionReferences);
