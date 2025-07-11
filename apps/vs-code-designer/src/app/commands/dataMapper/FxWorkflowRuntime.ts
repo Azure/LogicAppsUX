@@ -65,7 +65,7 @@ export async function startBackendRuntime(projectPath: string, context: IActionC
           {
             [appKindSetting]: logicAppKind,
             [ProjectDirectoryPathKey]: projectPath,
-            [workerRuntimeKey]: WorkerRuntime.Node,
+            [workerRuntimeKey]: WorkerRuntime.Dotnet,
           },
           true
         );
