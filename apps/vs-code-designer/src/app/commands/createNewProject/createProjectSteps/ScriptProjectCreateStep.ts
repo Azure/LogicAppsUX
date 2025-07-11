@@ -23,7 +23,7 @@ import { ProjectCreateStepBase } from './ProjectCreateStepBase';
 import { nonNullProp } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IHostJsonV1, IHostJsonV2, ILocalSettingsJson, IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
-import { FuncVersion } from '@microsoft/vscode-extension-logic-apps';
+import { FuncVersion, WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';
@@ -46,7 +46,7 @@ export class ScriptProjectCreateStep extends ProjectCreateStepBase {
     Values: {
       [azureWebJobsStorageKey]: localEmulatorConnectionString,
       [functionsInprocNet8Enabled]: functionsInprocNet8EnabledTrue,
-      [workerRuntimeKey]: 'node',
+      [workerRuntimeKey]: WorkerRuntime.Dotnet,
       [appKindSetting]: logicAppKind,
     },
   };
