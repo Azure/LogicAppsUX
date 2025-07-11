@@ -6,8 +6,9 @@ import { getConnector } from '../../queries/operation';
 import type { NodeOperation } from '../../state/operation/operationMetadataSlice';
 import { getReactQueryClient } from '../../ReactQueryProvider';
 import type { WorkflowTemplateData } from '../../actions/bjsworkflow/templates';
-import { delimiter } from './helper';
+import { delimiter, getStandardLogicAppId } from './helper';
 
+export const workflowAppConnectionsKey = 'connectionsdata';
 export const getTemplateManifest = async (templateId: string): Promise<Template.TemplateManifest> => {
   const templateResource = await getTemplate(templateId);
   return (
@@ -204,11 +205,11 @@ export const getConnectionsInWorkflowApp = async (
   logicAppName: string,
   queryClient: QueryClient
 ): Promise<Record<string, any>> => {
-  const resourceId = `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/sites/${logicAppName}/workflowsconfiguration/connections`;
+  const resourceId = `${getStandardLogicAppId(subscriptionId, resourceGroup, logicAppName)}/workflowsconfiguration/connections`;
   const queryParameters = {
     'api-version': '2018-11-01',
   };
-  return queryClient.fetchQuery(['connectionsdata', resourceId.toLowerCase()], async () => {
+  return queryClient.fetchQuery([workflowAppConnectionsKey, resourceId.toLowerCase()], async () => {
     try {
       const response = await ResourceService().getResource(resourceId, queryParameters);
       return response.properties.files?.['connections.json'];
@@ -227,7 +228,7 @@ export const getParametersInWorkflowApp = async (
   logicAppName: string,
   queryClient: QueryClient
 ): Promise<Record<string, any>> => {
-  const resourceId = `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/sites/${logicAppName}/hostruntime/admin/vfs/parameters.json`;
+  const resourceId = `${getStandardLogicAppId(subscriptionId, resourceGroup, logicAppName)}/hostruntime/admin/vfs/parameters.json`;
   const queryParameters = {
     'api-version': '2018-11-01',
     relativepath: '1',

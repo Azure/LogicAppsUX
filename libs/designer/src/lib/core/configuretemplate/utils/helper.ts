@@ -73,6 +73,10 @@ export const getLogicAppId = (subscriptionId: string, resourceGroup: string, log
   return `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Logic/workflows/${logicAppName}`.toLowerCase();
 };
 
+export const getStandardLogicAppId = (subscriptionId: string, resourceGroup: string, logicAppName: string): string => {
+  return `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/sites/${logicAppName}`.toLowerCase();
+};
+
 export const getConnectionMappingInDefinition = async (
   definition: LogicAppsV2.WorkflowDefinition,
   workflowId: string
