@@ -5,10 +5,10 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useAllConnectors } from '../../../core/queries/browse';
 import type { RootState, AppDispatch } from '../../../core/state/mcp/store';
 import { useOperationsByConnectorQuery } from '../../../core/mcp/utils/queries';
-import { setSelectedOperations } from '../../../core/state/mcp/panel/mcpPanelSlice';
 import { OperationSelectionGrid } from './OperationSelectionGrid';
 import { useOperationsStyles } from './styles';
 import { getResourceNameFromId } from '@microsoft/logic-apps-shared';
+import { selectOperations } from '../../../core/state/mcp/connector/connectorSlice';
 
 export const SelectOperations = () => {
   const intl = useIntl();
@@ -16,8 +16,8 @@ export const SelectOperations = () => {
   const styles = useOperationsStyles();
 
   const { selectedConnectorId, selectedOperations } = useSelector((state: RootState) => ({
-    selectedConnectorId: state.mcpPanel.selectedConnectorId,
-    selectedOperations: state.mcpPanel.selectedOperations || [],
+    selectedConnectorId: state.connector.selectedConnectorId,
+    selectedOperations: state.connector.selectedOperations ?? [],
   }));
 
   const selectedOperationsSet = useMemo(() => new Set(selectedOperations), [selectedOperations]);
@@ -44,7 +44,7 @@ export const SelectOperations = () => {
       } else {
         newSelection.delete(operationName);
       }
-      dispatch(setSelectedOperations(Array.from(newSelection)));
+      dispatch(selectOperations(Array.from(newSelection)));
     },
     [selectedOperations, dispatch]
   );
@@ -52,7 +52,7 @@ export const SelectOperations = () => {
   const handleSelectAll = useCallback(
     (isSelected: boolean) => {
       const newSelection = isSelected ? operations.map((op) => op.name) : [];
-      dispatch(setSelectedOperations(newSelection));
+      dispatch(selectOperations(newSelection));
     },
     [operations, dispatch]
   );

@@ -1,12 +1,13 @@
 import { useState, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { ConnectorBrowseView } from './ConnectorBrowseView';
-import { selectPanelTab, selectConnectorId } from '../../../core/state/mcp/panel/mcpPanelSlice';
+import { selectPanelTab } from '../../../core/state/mcp/panel/mcpPanelSlice';
 import constants from '../../../common/constants';
 import { SearchBox } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 import { useAllManagedConnectors } from '../../../core/mcp/utils/queries';
 import { useConnectorSelectionStyles } from './styles';
+import { selectConnectorId } from '../../../core/state/mcp/connector/connectorSlice';
 
 export const SelectConnectors = () => {
   const intl = useIntl();

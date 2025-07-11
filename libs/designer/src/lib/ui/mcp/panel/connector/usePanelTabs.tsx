@@ -1,13 +1,14 @@
-import { useCallback, useMemo } from 'react';
+import { useMemo, useCallback } from 'react';
 import type { AppDispatch, RootState } from '../../../../core/state/mcp/store';
 import { useDispatch, useSelector } from 'react-redux';
-import { McpPanelView } from '../../../../core/state/mcp/panel/mcpPanelSlice';
+import { closePanel, McpPanelView } from '../../../../core/state/mcp/panel/mcpPanelSlice';
+import { initializeOperationsMetadata, initializeConnectionMappings } from '../../../../core/actions/bjsworkflow/mcp';
 import { operationsTab } from './tabs/operationsTab';
 import { useIntl } from 'react-intl';
 import { connectorsTab } from './tabs/connectorsTab';
 import type { McpPanelTabProps } from '@microsoft/designer-ui';
 import { connectionsTab } from './tabs/connectionsTab';
-import { initializeConnectionMappings } from '../../../../core/actions/bjsworkflow/mcp';
+import { getResourceNameFromId } from '@microsoft/logic-apps-shared';
 
 export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
   const intl = useIntl();
@@ -15,9 +16,22 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
 
   const { currentPanelView, selectedOperations, selectedConnectorId } = useSelector((state: RootState) => ({
     currentPanelView: state.mcpPanel.currentPanelView,
-    selectedConnectorId: state.mcpPanel.selectedConnectorId,
-    selectedOperations: state.mcpPanel.selectedOperations ?? [],
+    selectedConnectorId: state.connector.selectedConnectorId,
+    selectedOperations: state.connector.selectedOperations ?? [],
   }));
+
+  const handleSubmit = useCallback(() => {
+    if (selectedConnectorId && selectedOperations.length > 0) {
+      const operations = selectedOperations.map((operationId) => ({
+        connectorId: selectedConnectorId,
+        operationId: getResourceNameFromId(operationId),
+        type: 'apiconnection' as const, // Assuming all are API connections for now
+      }));
+
+      dispatch(initializeOperationsMetadata({ operations }));
+      dispatch(closePanel());
+    }
+  }, [dispatch, selectedConnectorId, selectedOperations]);
 
   const handleOnSelectOperations = useCallback(() => {
     dispatch(initializeConnectionMappings({ connectorId: selectedConnectorId as string, operations: selectedOperations }));
@@ -50,12 +64,11 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
       connectionsTab(intl, dispatch, selectedConnectorId as string, selectedOperations, {
         isTabDisabled: false,
         isPreviousButtonDisabled: false,
-        isPrimaryButtonDisabled: false,
-        onAddConnector: () => {
-          //TODO
-        },
+        // Disable the primary button if no connector or operations are selected
+        isPrimaryButtonDisabled: !selectedConnectorId || selectedOperations.length === 0,
+        onAddConnector: handleSubmit,
       }),
-    [intl, dispatch, selectedConnectorId, selectedOperations]
+    [intl, dispatch, selectedConnectorId, selectedOperations, handleSubmit]
   );
 
   const tabs: McpPanelTabProps[] = useMemo(() => {
