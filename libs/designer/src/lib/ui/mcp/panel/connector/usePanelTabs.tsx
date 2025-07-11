@@ -1,12 +1,14 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import type { AppDispatch, RootState } from '../../../../core/state/mcp/store';
 import { useDispatch, useSelector } from 'react-redux';
-import { McpPanelView } from '../../../../core/state/mcp/panel/mcpPanelSlice';
+import { McpPanelView, selectPanelTab } from '../../../../core/state/mcp/panel/mcpPanelSlice';
 import { operationsTab } from './tabs/operationsTab';
 import { useIntl } from 'react-intl';
 import { connectorsTab } from './tabs/connectorsTab';
 import type { McpPanelTabProps } from '@microsoft/designer-ui';
 import { connectionsTab } from './tabs/connectionsTab';
+import constants from '../../../../common/constants';
+import { initializeConnectionMappings } from '../../../../core/actions/bjsworkflow/mcp';
 
 export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
   const intl = useIntl();
@@ -17,6 +19,11 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
     selectedConnectorId: state.mcpPanel.selectedConnectorId,
     selectedOperations: state.mcpPanel.selectedOperations ?? [],
   }));
+
+  const handleOnSelectOperations = useCallback(() => {
+    dispatch(initializeConnectionMappings({ connectorId: selectedConnectorId as string, operations: selectedOperations }));
+    dispatch(selectPanelTab(constants.MCP_PANEL_TAB_NAMES.CONNECTIONS));
+  }, [dispatch, selectedConnectorId, selectedOperations]);
 
   const connectorsTabItem = useMemo(
     () =>
@@ -35,13 +42,14 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
         isPreviousButtonDisabled: false,
         isPrimaryButtonDisabled: false,
         selectedOperationsCount: selectedOperations.length,
+        onSelectOperations: handleOnSelectOperations,
       }),
-    [intl, dispatch, selectedOperations.length]
+    [intl, dispatch, selectedOperations.length, handleOnSelectOperations]
   );
 
   const connectionsTabItem = useMemo(
     () =>
-      connectionsTab(intl, dispatch, selectedConnectorId as string, {
+      connectionsTab(intl, dispatch, selectedConnectorId as string, selectedOperations, {
         isTabDisabled: false,
         isPreviousButtonDisabled: false,
         isPrimaryButtonDisabled: false,
@@ -49,7 +57,7 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
           //TODO
         },
       }),
-    [intl, dispatch, selectedConnectorId]
+    [intl, dispatch, selectedConnectorId, selectedOperations]
   );
 
   const tabs: McpPanelTabProps[] = useMemo(() => {

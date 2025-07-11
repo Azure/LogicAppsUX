@@ -2,7 +2,12 @@ import { type Connection, ConnectionService, type Connector, parseErrorMessage }
 import { updateNodeConnection } from '../../../core/actions/bjsworkflow/connections';
 import { useConnectionsForConnector } from '../../../core/queries/connections';
 import { useConnector } from '../../../core/state/connection/connectionSelector';
-import { useAllReferenceKeys, useConnectionReference, useOperationNodeIds } from '../../../core/state/mcp/selector';
+import {
+  useAllReferenceKeys,
+  useAreMappingsInitialized,
+  useConnectionReference,
+  useOperationNodeIds,
+} from '../../../core/state/mcp/selector';
 import type { AppDispatch } from '../../../core/state/mcp/store';
 import { isConnectionValid } from '../../../core/utils/connectors/connections';
 import { CreateConnectionInternal } from '../../panel/connectionsPanel/createConnection/createConnectionInternal';
@@ -14,7 +19,7 @@ import { useDispatch } from 'react-redux';
 import { Spinner } from '@fluentui/react-components';
 import { useConnectionSelectionStyles } from './styles';
 
-export const ConnectionSelection = ({ connectorId }: { connectorId: string }) => {
+export const ConnectionSelection = ({ connectorId, operations }: { connectorId: string; operations: string[] }) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const styles = useConnectionSelectionStyles();
@@ -23,6 +28,7 @@ export const ConnectionSelection = ({ connectorId }: { connectorId: string }) =>
   const existingReferences = useAllReferenceKeys();
   const reference = useConnectionReference();
   const operationNodeIds = useOperationNodeIds(connectorId);
+  const areMappingsInitialized = useAreMappingsInitialized(operations);
 
   const validConnections = useMemo(() => (connectionsQuery.data ?? []).filter(isConnectionValid), [connectionsQuery.data]);
   const hasConnections = useMemo(() => validConnections.length > 0, [validConnections]);
@@ -71,11 +77,11 @@ export const ConnectionSelection = ({ connectorId }: { connectorId: string }) =>
   const handleOnAdd = useCallback(() => setShowCreate(true), []);
   const handleCreateComplete = useCallback(() => setShowCreate(false), []);
 
-  if (connectionsQuery.isLoading) {
+  if (connectionsQuery.isLoading || !areMappingsInitialized) {
     return (
       <Spinner
         className={styles.loadingContainer}
-        label={intl.formatMessage({ defaultMessage: 'Loading connections...', id: 'qlKTtw', description: 'Text for loading connections' })}
+        label={intl.formatMessage({ defaultMessage: 'Loading...', id: '4yQ6LA', description: 'Text for loading connections' })}
       />
     );
   }
