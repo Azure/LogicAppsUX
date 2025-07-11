@@ -1,5 +1,5 @@
 import { Text, Button } from '@fluentui/react-components';
-import { Add24Regular, ConnectorFilled } from '@fluentui/react-icons';
+import { Add16Regular, ConnectorFilled } from '@fluentui/react-icons';
 import { useMcpWizardStyles } from './styles';
 import { useIntl } from 'react-intl';
 import { McpPanelView, openConnectorPanelView } from '../../../core/state/mcp/panel/mcpPanelSlice';
@@ -12,6 +12,7 @@ import { type McpWorkflowsData, serializeMcpWorkflows } from '../../../core/mcp/
 import { useCallback, useMemo } from 'react';
 import { resetQueriesOnRegisterMcpServer } from '../../../core/mcp/utils/queries';
 import { LogicAppSelector } from '../details/logicAppSelector';
+import { type TemplatePanelFooterProps, TemplatesPanelFooter } from '@microsoft/designer-ui';
 
 const sampleConnectorId =
   '/subscriptions/f34b22a3-2202-4fb1-b040-1332bd928c84/providers/Microsoft.Web/locations/northcentralus/managedApis/office365';
@@ -54,7 +55,7 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
     resetQueriesOnRegisterMcpServer(subscriptionId, resourceGroup, logicAppName as string);
   }, [logicAppName, resourceGroup, subscriptionId]);
 
-  const handleRegisterMcpServer = async () => {
+  const handleRegisterMcpServer = useCallback(async () => {
     const workflowsData = await serializeMcpWorkflows(
       {
         subscriptionId,
@@ -66,11 +67,12 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
     );
     console.log('Generated workflows:', workflowsData);
     await registerMcpServer(workflowsData, onRegisterCompleted);
-  };
+  }, [connection, logicAppName, operation, registerMcpServer, resourceGroup, subscriptionId, onRegisterCompleted]);
 
   const INTL_TEXT = {
-    connectorsTitle: intl.formatMessage({ id: 'rCjtl8', defaultMessage: 'Connectors', description: 'Title for the connectors section' }),
+    connectorsTitle: intl.formatMessage({ id: 'ERYPWh', defaultMessage: 'Connector', description: 'Title for the connector section' }),
     detailsTitle: intl.formatMessage({ id: '1Orv4i', defaultMessage: 'Details', description: 'Title for the details section' }),
+    operationsTitle: intl.formatMessage({ id: 'FwHl49', defaultMessage: 'Operations', description: 'Title for the operations section' }),
     noConnectors: intl.formatMessage({
       id: 'xyhnsP',
       defaultMessage: 'No connectors added yet',
@@ -88,63 +90,108 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
     }),
   };
 
+  const footerContent: TemplatePanelFooterProps = useMemo(() => {
+    return {
+      buttonContents: [
+        {
+          type: 'action',
+          text: intl.formatMessage({
+            defaultMessage: 'Save',
+            id: 'ZigP3P',
+            description: 'Button text for registering the MCP server',
+          }),
+          appearance: 'primary',
+          onClick: () => {
+            handleRegisterMcpServer();
+          },
+          disabled: !logicAppName || !subscriptionId || !resourceGroup || !connection || !operation,
+        },
+        {
+          type: 'action',
+          text: intl.formatMessage({
+            defaultMessage: 'Cancel',
+            id: 'OA8qkc',
+            description: 'Button text for closing the wizard without saving',
+          }),
+          onClick: () => {
+            //TODO: what do we want here?
+          },
+        },
+      ],
+    };
+  }, [intl, handleRegisterMcpServer, logicAppName, subscriptionId, resourceGroup, connection, operation]);
+
   return (
     <div className={styles.wizardContainer}>
-      <div className={styles.header}>
-        <Text size={600} weight="semibold">
-          {INTL_TEXT.detailsTitle}
-        </Text>
+      <div className={styles.section}>
+        <div className={styles.header}>
+          <Text size={400} weight="semibold">
+            {INTL_TEXT.detailsTitle}
+          </Text>
+        </div>
+
+        <div className={styles.content}>
+          <LogicAppSelector />
+        </div>
       </div>
 
-      <div className={styles.content}>
-        <LogicAppSelector />
-      </div>
-
-      <div className={styles.header}>
-        <Text size={600} weight="semibold">
-          {INTL_TEXT.connectorsTitle}
-        </Text>
-        <Button appearance="primary" icon={<Add24Regular />} disabled={disableConfiguration} onClick={handleAddConnectors}>
-          {INTL_TEXT.addConnectorsButton}
-        </Button>
-      </div>
-
-      <div className={styles.content}>
-        {connectors.length === 0 ? (
-          <div className={styles.emptyState}>
-            <div className={styles.emptyStateIcon}>
-              <ConnectorFilled />
+      <div className={styles.section}>
+        <div className={styles.header}>
+          <Text size={400} weight="semibold">
+            {INTL_TEXT.connectorsTitle}
+          </Text>
+          <Button appearance="outline" icon={<Add16Regular />} onClick={handleAddConnectors} size="small" disabled={disableConfiguration}>
+            {INTL_TEXT.addConnectorsButton}
+          </Button>
+        </div>
+        <div className={styles.content}>
+          {connectors.length === 0 ? (
+            <div className={styles.emptyState}>
+              <div className={styles.emptyStateIcon}>
+                <ConnectorFilled />
+              </div>
+              <Text size={400} weight="semibold" style={{ marginBottom: '8px' }}>
+                {INTL_TEXT.noConnectors}
+              </Text>
+              <Text size={200} style={{ opacity: 0.7, marginBottom: '24px' }}>
+                {INTL_TEXT.addFirstConnector}
+              </Text>
             </div>
-            <Text size={500} weight="semibold" style={{ marginBottom: '8px' }}>
-              {INTL_TEXT.noConnectors}
-            </Text>
-            <Text size={300} style={{ opacity: 0.7, marginBottom: '24px' }}>
-              {INTL_TEXT.addFirstConnector}
-            </Text>
-            <Button appearance="primary" icon={<Add24Regular />} disabled={disableConfiguration} onClick={handleAddConnectors} size="large">
-              {INTL_TEXT.addConnectorsButton}
-            </Button>
+          ) : (
+            <div className={styles.connectorsList}>{/* Connector items will go here */}</div>
+          )}
+        </div>
+
+        {/* TODO: Update this condition to check if connector or operations are available */}
+        {sampleConnectorId && (
+          <div className={styles.section}>
+            <div className={styles.header}>
+              <Text size={400} weight="semibold">
+                {INTL_TEXT.operationsTitle}
+              </Text>
+            </div>
+            <div className={styles.content}>
+              <ListOperations connectorId={sampleConnectorId} />
+            </div>
           </div>
-        ) : (
-          <div className={styles.connectorsList}>{/* Connector items will go here */}</div>
         )}
       </div>
 
-      <Text size={600} weight="semibold">
-        {'Test section'}
-      </Text>
-      <div>
-        <Button onClick={handleLoadOperations}>{'Load operations'}</Button>
-        <Button onClick={handleRegisterMcpServer}>{'Register MCP Server'}</Button>
-      </div>
+      <McpPanelRoot />
+
+      {/* TO BE REMOVED */}
       <div>
         <Text size={600} weight="semibold">
-          {'Operations section'}
+          {'Test section'}
         </Text>
-        <ListOperations connectorId={sampleConnectorId} />
+        <div>
+          <Button onClick={handleLoadOperations}>{'Load operations'}</Button>
+          <Button onClick={handleRegisterMcpServer}>{'Register MCP Server'}</Button>
+        </div>
       </div>
-
-      <McpPanelRoot />
+      <div className={styles.footer}>
+        <TemplatesPanelFooter {...footerContent} />
+      </div>
     </div>
   );
 };
