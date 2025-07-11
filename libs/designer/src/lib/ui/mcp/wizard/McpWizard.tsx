@@ -1,55 +1,98 @@
 import { Text, Button } from '@fluentui/react-components';
-import { Add24Regular, ConnectorFilled } from '@fluentui/react-icons';
+import { Add24Regular, ConnectorFilled, AppGeneric24Regular } from '@fluentui/react-icons';
 import { useMcpWizardStyles } from './styles';
 import { useIntl } from 'react-intl';
-import { McpPanelView, openConnectorPanelView } from '../../../core/state/mcp/panel/mcpPanelSlice';
+import { McpPanelView, openConnectorPanelView, openOperationPanelView } from '../../../core/state/mcp/panel/mcpPanelSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../core/state/mcp/store';
 import { McpPanelRoot } from '../panel/mcpPanelRoot';
-import { initializeOperationsMetadata } from '../../../core/actions/bjsworkflow/mcp';
-import { ListOperations } from '../operations/ListOperations';
-import { serializeMcpWorkflows } from '../../../core/mcp/utils/serializer';
 import { LogicAppSelector } from '../details/logicAppSelector';
-
-const sampleConnectorId =
-  '/subscriptions/f34b22a3-2202-4fb1-b040-1332bd928c84/providers/Microsoft.Web/locations/northcentralus/managedApis/office365';
+import { ConnectorItem } from './ConnectorItem';
+import { OperationItem } from './OperationItem';
+import { useMemo, useCallback } from 'react';
+import { selectConnectorId, selectOperations } from '../../../core/state/mcp/connector/connectorSlice';
 
 export const McpWizard = () => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
   const styles = useMcpWizardStyles();
-  const connectors = [];
-  const rootState = useSelector((state: RootState) => state);
 
-  const handleAddConnectors = () => {
+  const { operationInfos } = useSelector((state: RootState) => ({
+    operationInfos: state.operation.operationInfo,
+  }));
+
+  const connectorIds = useMemo(() => {
+    const ids = Object.values(operationInfos)
+      .map((info) => info?.connectorId)
+      .filter((id): id is string => Boolean(id));
+    return [...new Set(ids)];
+  }, [operationInfos]);
+
+  const allOperations = useMemo(() => {
+    return Object.values(operationInfos).filter((info) => Boolean(info?.operationId));
+  }, [operationInfos]);
+
+  const hasConnectors = connectorIds.length > 0;
+  const hasOperations = allOperations.length > 0;
+
+  const handleAddConnectors = useCallback(() => {
     dispatch(
       openConnectorPanelView({
         panelView: McpPanelView.SelectConnector,
-        selectedConnectorId: undefined,
       })
     );
-  };
+  }, [dispatch]);
 
-  const handleLoadOperations = () => {
-    dispatch(
-      initializeOperationsMetadata({
-        operations: [
-          { connectorId: sampleConnectorId, operationId: 'SendEmailV2', type: 'apiconnection' },
-          { connectorId: sampleConnectorId, operationId: 'ForwardEmail_V2', type: 'apiconnection' },
-          { connectorId: sampleConnectorId, operationId: 'ContactGetItems_V2', type: 'apiconnection' },
-        ],
-      })
-    );
-  };
+  const handleEditConnector = useCallback(
+    (connectorId: string) => {
+      dispatch(
+        openConnectorPanelView({
+          panelView: McpPanelView.SelectConnector,
+        })
+      );
+      dispatch(selectConnectorId(connectorId));
+      dispatch(selectOperations([]));
+    },
+    [dispatch]
+  );
 
-  const handleGenerateWorkflows = async () => {
-    const result = await serializeMcpWorkflows(rootState);
-    console.log('Generated workflows:', result);
-  };
+  const handleDeleteConnector = useCallback((connectorId: string) => {
+    // TODO: Implement delete connector logic
+    console.log('Delete connector:', connectorId);
+  }, []);
+
+  const handleEditOperation = useCallback(
+    (operationId: string) => {
+      dispatch(
+        openOperationPanelView({
+          selectedOperationId: operationId,
+        })
+      );
+    },
+    [dispatch]
+  );
+
+  const handleDeleteOperation = useCallback((operationId: string) => {
+    // TODO: Implement delete operation logic
+    console.log('Delete operation:', operationId);
+  }, []);
 
   const INTL_TEXT = {
-    connectorsTitle: intl.formatMessage({ id: 'rCjtl8', defaultMessage: 'Connectors', description: 'Title for the connectors section' }),
-    detailsTitle: intl.formatMessage({ id: '1Orv4i', defaultMessage: 'Details', description: 'Title for the details section' }),
+    connectorsTitle: intl.formatMessage({
+      id: 'rCjtl8',
+      defaultMessage: 'Connectors',
+      description: 'Title for the connectors section',
+    }),
+    detailsTitle: intl.formatMessage({
+      id: '1Orv4i',
+      defaultMessage: 'Details',
+      description: 'Title for the details section',
+    }),
+    operationsTitle: intl.formatMessage({
+      id: 'FwHl49',
+      defaultMessage: 'Operations',
+      description: 'Title for the operations section',
+    }),
     noConnectors: intl.formatMessage({
       id: 'xyhnsP',
       defaultMessage: 'No connectors added yet',
@@ -65,10 +108,21 @@ export const McpWizard = () => {
       defaultMessage: 'Add Connectors',
       description: 'Button text to add connectors',
     }),
+    noOperations: intl.formatMessage({
+      id: '04idsj',
+      defaultMessage: 'No operations configured yet',
+      description: 'Message when no operations are configured',
+    }),
+    addOperationsFirst: intl.formatMessage({
+      id: 'iWZd2h',
+      defaultMessage: 'Add connectors and operations to see them here',
+      description: 'Message prompting to add operations',
+    }),
   };
 
   return (
     <div className={styles.wizardContainer}>
+      {/* Details Section */}
       <div className={styles.header}>
         <Text size={600} weight="semibold">
           {INTL_TEXT.detailsTitle}
@@ -79,6 +133,7 @@ export const McpWizard = () => {
         <LogicAppSelector />
       </div>
 
+      {/* Connectors Section */}
       <div className={styles.header}>
         <Text size={600} weight="semibold">
           {INTL_TEXT.connectorsTitle}
@@ -89,7 +144,24 @@ export const McpWizard = () => {
       </div>
 
       <div className={styles.content}>
-        {connectors.length === 0 ? (
+        {hasConnectors ? (
+          <div className={styles.connectorsList}>
+            {connectorIds.map((connectorId) => {
+              return (
+                <ConnectorItem
+                  key={connectorId}
+                  connectorId={connectorId}
+                  displayName={connectorId}
+                  connectionName="Default Connection" // Mock for now
+                  status="connected" // Mock for now
+                  icon="🔗" // Mock for now
+                  onEdit={handleEditConnector}
+                  onDelete={handleDeleteConnector}
+                />
+              );
+            })}
+          </div>
+        ) : (
           <div className={styles.emptyState}>
             <div className={styles.emptyStateIcon}>
               <ConnectorFilled />
@@ -104,23 +176,50 @@ export const McpWizard = () => {
               {INTL_TEXT.addConnectorsButton}
             </Button>
           </div>
-        ) : (
-          <div className={styles.connectorsList}>{/* Connector items will go here */}</div>
         )}
       </div>
 
-      <Text size={600} weight="semibold">
-        {'Test section'}
-      </Text>
-      <div>
-        <Button onClick={handleLoadOperations}>{'Load operations'}</Button>
-        <Button onClick={handleGenerateWorkflows}>{'Generate workflows'}</Button>
-      </div>
-      <div>
+      {/* Operations Section */}
+      <div className={styles.header}>
         <Text size={600} weight="semibold">
-          {'Operations section'}
+          {INTL_TEXT.operationsTitle}
         </Text>
-        <ListOperations connectorId={sampleConnectorId} />
+      </div>
+
+      <div className={styles.content}>
+        {hasOperations ? (
+          <div className={styles.operationsList}>
+            {allOperations.map((operationInfo) => {
+              if (!operationInfo?.operationId || !operationInfo?.connectorId) {
+                return null;
+              }
+
+              return (
+                <OperationItem
+                  key={operationInfo.operationId}
+                  operationId={operationInfo.operationId}
+                  operationName={operationInfo.operationId}
+                  connectorIcon="🔗" // Mock for now
+                  connectorName={operationInfo.connectorId}
+                  onEdit={handleEditOperation}
+                  onDelete={handleDeleteOperation}
+                />
+              );
+            })}
+          </div>
+        ) : (
+          <div className={styles.emptyState}>
+            <div className={styles.emptyOperationsIcon}>
+              <AppGeneric24Regular />
+            </div>
+            <Text size={400} weight="medium" style={{ marginBottom: '8px' }}>
+              {INTL_TEXT.noOperations}
+            </Text>
+            <Text size={300} style={{ opacity: 0.7 }}>
+              {INTL_TEXT.addOperationsFirst}
+            </Text>
+          </div>
+        )}
       </div>
 
       <McpPanelRoot />

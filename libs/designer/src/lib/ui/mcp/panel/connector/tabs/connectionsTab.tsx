@@ -36,9 +36,9 @@ export const connectionsTab = (
       {
         type: 'navigation',
         text: intl.formatMessage({
-          defaultMessage: 'Next',
-          id: 'ZWnmOv',
-          description: 'Button text for moving to the next tab in the connector panel',
+          defaultMessage: 'Save',
+          id: 'RhToWS',
+          description: 'Button text for moving to the save in the connector panel',
         }),
         onClick: () => {
           onSubmit?.();
