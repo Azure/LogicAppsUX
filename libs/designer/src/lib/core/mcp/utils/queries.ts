@@ -53,11 +53,11 @@ export const useOperationsByConnectorQuery = (connectorId: string) =>
 
 export const useEmptyLogicApps = (subscriptionId: string): UseQueryResult<LogicAppResource[], unknown> => {
   return useQuery(
-    ['mcpQueries', 'logicapps', subscriptionId],
+    ['mcp', 'logicapps', subscriptionId],
     async () => {
       return ResourceService().listLogicApps(
         subscriptionId,
-        undefined,
+        /* resourceGroup */ undefined,
         ` | join kind=leftouter (appserviceresources | where type contains "/sites/workflows" | extend appName = tostring(split(name, "/")[0]) | distinct appName) on $left.name == $right.appName | where appName == "" | distinct name, resourceGroup`
       );
     },

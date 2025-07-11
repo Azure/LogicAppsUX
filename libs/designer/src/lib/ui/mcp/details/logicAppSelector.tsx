@@ -54,13 +54,15 @@ export const LogicAppSelector = () => {
   const onLogicAppSelect = useCallback(
     (value: string) => {
       const app = logicApps?.find((app) => equals(app.name, value));
-      dispatch(
-        setLogicApp({
-          resourceGroup: app?.resourceGroup ?? '',
-          location: app?.location ?? '',
-          logicAppName: app?.name ?? '',
-        })
-      );
+      if (app) {
+        dispatch(
+          setLogicApp({
+            resourceGroup: app.resourceGroup,
+            location: app.location,
+            logicAppName: app.name,
+          })
+        );
+      }
     },
     [dispatch, logicApps]
   );
