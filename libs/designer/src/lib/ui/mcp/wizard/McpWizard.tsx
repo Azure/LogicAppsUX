@@ -259,7 +259,7 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
                     displayName={connector?.properties.displayName || connectorId}
                     connectionName="Default Connection"
                     status="connected"
-                    icon={connector?.properties.iconUri}
+                    icon={connector?.properties.iconUri ?? connector?.properties?.iconUrl}
                     onEdit={handleEditConnector}
                     onDelete={handleDeleteConnector}
                   />
@@ -311,7 +311,7 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
                   key={operationInfo.operationId}
                   operationId={operationInfo.operationId}
                   operationName={operationInfo.operationId}
-                  connectorIcon={connector?.properties.iconUri}
+                  connectorIcon={connector?.properties.iconUri ?? connector?.properties?.iconUrl}
                   connectorName={connector?.properties.displayName || operationInfo.connectorId}
                   onEdit={handleEditOperation}
                   onDelete={handleDeleteOperation}
