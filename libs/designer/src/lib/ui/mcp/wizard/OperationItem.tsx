@@ -2,6 +2,7 @@ import { Text, Button } from '@fluentui/react-components';
 import { Edit24Regular, Delete24Regular } from '@fluentui/react-icons';
 import { useOperationItemStyles } from './styles';
 import { useIntl } from 'react-intl';
+import DefaultIcon from '../../../common/images/recommendation/defaulticon.svg';
 
 interface OperationItemProps {
   operationId: string;
@@ -31,7 +32,7 @@ export const OperationItem = ({ operationId, operationName, connectorIcon, conne
     <div className={styles.operationItem}>
       <div className={styles.operationIcon}>
         <img
-          src={connectorIcon}
+          src={connectorIcon ?? DefaultIcon}
           alt={`${connectorName} icon`}
           style={{
             width: '24px',

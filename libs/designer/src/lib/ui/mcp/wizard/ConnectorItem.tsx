@@ -2,6 +2,7 @@ import { Text, Button, Badge } from '@fluentui/react-components';
 import { Edit24Regular, Delete24Regular, Checkmark24Filled } from '@fluentui/react-icons';
 import { useConnectorItemStyles } from './styles';
 import { useIntl } from 'react-intl';
+import DefaultIcon from '../../../common/images/recommendation/defaulticon.svg';
 
 interface ConnectorItemProps {
   connectorId: string;
@@ -42,7 +43,7 @@ export const ConnectorItem = ({ connectorId, displayName, connectionName, status
     <div className={styles.connectorItem}>
       <div className={styles.connectorIcon}>
         <img
-          src={icon}
+          src={icon ?? DefaultIcon}
           alt={`${displayName} icon`}
           style={{
             width: '24px',
