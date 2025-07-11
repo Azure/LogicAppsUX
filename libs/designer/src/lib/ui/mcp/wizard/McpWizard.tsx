@@ -9,9 +9,10 @@ import { McpPanelRoot } from '../panel/mcpPanelRoot';
 import { initializeOperationsMetadata } from '../../../core/actions/bjsworkflow/mcp';
 import { ListOperations } from '../operations/ListOperations';
 import { type McpWorkflowsData, serializeMcpWorkflows } from '../../../core/mcp/utils/serializer';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { resetQueriesOnRegisterMcpServer } from '../../../core/mcp/utils/queries';
 import { LogicAppSelector } from '../details/logicAppSelector';
+import { type TemplatePanelFooterProps, TemplatesPanelFooter } from '@microsoft/designer-ui';
 
 const sampleConnectorId =
   '/subscriptions/f34b22a3-2202-4fb1-b040-1332bd928c84/providers/Microsoft.Web/locations/northcentralus/managedApis/office365';
@@ -53,7 +54,7 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
     resetQueriesOnRegisterMcpServer(subscriptionId, resourceGroup, logicAppName as string);
   }, [logicAppName, resourceGroup, subscriptionId]);
 
-  const handleRegisterMcpServer = async () => {
+  const handleRegisterMcpServer = useCallback(async () => {
     const workflowsData = await serializeMcpWorkflows(
       {
         subscriptionId,
@@ -65,7 +66,7 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
     );
     console.log('Generated workflows:', workflowsData);
     await registerMcpServer(workflowsData, onRegisterCompleted);
-  };
+  }, [connection, logicAppName, operation, registerMcpServer, resourceGroup, subscriptionId, onRegisterCompleted]);
 
   const INTL_TEXT = {
     connectorsTitle: intl.formatMessage({ id: 'ERYPWh', defaultMessage: 'Connector', description: 'Title for the connector section' }),
@@ -87,6 +88,37 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
       description: 'Button text to add connectors',
     }),
   };
+
+  const footerContent: TemplatePanelFooterProps = useMemo(() => {
+    return {
+      buttonContents: [
+        {
+          type: 'action',
+          text: intl.formatMessage({
+            defaultMessage: 'Save',
+            id: 'ZigP3P',
+            description: 'Button text for registering the MCP server',
+          }),
+          appearance: 'primary',
+          onClick: () => {
+            handleRegisterMcpServer();
+          },
+          disabled: !logicAppName || !subscriptionId || !resourceGroup || !connection || !operation,
+        },
+        {
+          type: 'action',
+          text: intl.formatMessage({
+            defaultMessage: 'Cancel',
+            id: '75zXUl',
+            description: 'Button text for closing the panel',
+          }),
+          onClick: () => {
+            //TODO: what do we want here?
+          },
+        },
+      ],
+    };
+  }, [intl, handleRegisterMcpServer, logicAppName, subscriptionId, resourceGroup, connection, operation]);
 
   return (
     <div className={styles.wizardContainer}>
@@ -156,6 +188,8 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
           <Button onClick={handleRegisterMcpServer}>{'Register MCP Server'}</Button>
         </div>
       </div>
+
+      <TemplatesPanelFooter {...footerContent} />
     </div>
   );
 };
