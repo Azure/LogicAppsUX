@@ -75,7 +75,7 @@ export const LogicAppSelector = () => {
       }
 
       if (resource !== selectedResource) {
-        setSelectedResource(resource || '');
+        setSelectedResource(resource ?? '');
       }
     }
   }, [resources, logicAppName, onLogicAppSelect, isLogicAppsLoading, selectedResource]);

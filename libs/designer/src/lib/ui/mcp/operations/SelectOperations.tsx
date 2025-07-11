@@ -17,7 +17,7 @@ export const SelectOperations = () => {
 
   const { selectedConnectorId, selectedOperations } = useSelector((state: RootState) => ({
     selectedConnectorId: state.connector.selectedConnectorId,
-    selectedOperations: state.connector.selectedOperations || [],
+    selectedOperations: state.connector.selectedOperations ?? [],
   }));
 
   const selectedOperationsSet = useMemo(() => new Set(selectedOperations), [selectedOperations]);
