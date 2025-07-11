@@ -60,11 +60,13 @@ const EdgeContent = (props: EdgeContentProps) => {
           size="small"
           shape="circular"
           onClick={onClick}
-          style={{
-            '--colorBrandBackground': '#3352b9',
-            '--colorBrandBackgroundHover': '#1438ae',
-            '--colorBrandBackgroundPressed': '#0f2d8b',
-          } as any}
+          style={
+            {
+              '--colorBrandBackground': '#3352b9',
+              '--colorBrandBackgroundHover': '#1438ae',
+              '--colorBrandBackgroundPressed': '#0f2d8b',
+            } as any
+          }
         />
       </div>
     </EdgeLabelRenderer>

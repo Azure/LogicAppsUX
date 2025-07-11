@@ -13,6 +13,9 @@ export interface TimelineRepetition {
     correlation: any;
     startTime: string;
     status: string;
+    a2ametadata: {
+      taskId: number;
+    };
   };
   type: string;
 }
@@ -24,7 +27,10 @@ export const useTimelineRepetitions = (): UseQueryResult<TimelineRepetition[]> =
     async () => {
       const timelineRepetitions = await RunService().getTimelineRepetitions(run!.id);
       const parsedData: TimelineRepetition[] = JSON.parse(JSON.stringify(timelineRepetitions))?.value ?? [];
-      return parsedData.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
+      const sortedData = parsedData.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
+
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+      return sortedData;
     },
     {
       enabled: !!run?.id,
