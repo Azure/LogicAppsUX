@@ -7,7 +7,7 @@ import { useIsCreatingConnection } from '../../../core/state/panel/panelSelector
 import { setIsCreatingConnection } from '../../../core/state/panel/panelSlice';
 import { AllConnections } from './allConnections/allConnections';
 import { CreateConnectionWrapper } from './createConnection/createConnectionWrapper';
-import { SelectConnection } from './selectConnection/selectConnection';
+import { SelectConnectionWrapper } from './selectConnection/selectConnection';
 import { Button } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
 import type { CommonPanelProps } from '@microsoft/designer-ui';
@@ -91,7 +91,7 @@ export const ConnectionPanel = (props: CommonPanelProps) => {
       case 'default':
         return <AllConnections />;
       case 'select':
-        return <SelectConnection />;
+        return <SelectConnectionWrapper />;
       case 'create':
         return <CreateConnectionWrapper />;
     }

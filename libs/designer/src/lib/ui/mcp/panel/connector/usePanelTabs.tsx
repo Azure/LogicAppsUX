@@ -12,8 +12,9 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
 
-  const { currentPanelView, selectedOperations } = useSelector((state: RootState) => ({
+  const { currentPanelView, selectedOperations, selectedConnectorId } = useSelector((state: RootState) => ({
     currentPanelView: state.mcpPanel.currentPanelView,
+    selectedConnectorId: state.mcpPanel.selectedConnectorId,
     selectedOperations: state.mcpPanel.selectedOperations ?? [],
   }));
 
@@ -40,7 +41,7 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
 
   const connectionsTabItem = useMemo(
     () =>
-      connectionsTab(intl, dispatch, {
+      connectionsTab(intl, dispatch, selectedConnectorId as string, {
         isTabDisabled: false,
         isPreviousButtonDisabled: false,
         isPrimaryButtonDisabled: false,
@@ -48,7 +49,7 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
           //TODO
         },
       }),
-    [intl, dispatch]
+    [intl, dispatch, selectedConnectorId]
   );
 
   const tabs: McpPanelTabProps[] = useMemo(() => {
