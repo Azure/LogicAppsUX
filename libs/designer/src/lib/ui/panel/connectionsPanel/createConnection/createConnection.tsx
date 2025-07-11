@@ -249,6 +249,35 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     setSelectedManagedIdentity(option?.key.toString());
   }, []);
 
+  const usingLegacyGatewayAuth = useMemo(
+    () => !hasOnlyOnPremGateway && enabledCapabilities.includes(Capabilities.gateway),
+    [enabledCapabilities, hasOnlyOnPremGateway]
+  );
+
+  const hasOAuth = useMemo(
+    () => needsOAuth(isMultiAuth ? multiAuthParams : singleAuthParams) && !usingLegacyGatewayAuth,
+    [isMultiAuth, multiAuthParams, singleAuthParams, usingLegacyGatewayAuth]
+  );
+
+  const isUsingOAuth = useMemo(
+    () => hasOAuth && !servicePrincipalSelected && !legacyManagedIdentitySelected && !supportsClientCertificateConnection,
+    [hasOAuth, servicePrincipalSelected, legacyManagedIdentitySelected, supportsClientCertificateConnection]
+  );
+
+  const usingAadConnection = useMemo(() => (connector ? isUsingAadAuthentication(connector) : false), [connector]);
+
+  const showTenantIdSelection = useMemo(
+    () =>
+      isTenantServiceEnabled() &&
+      usingAadConnection &&
+      isUsingOAuth &&
+      Object.keys(connectionParameters?.['token']?.oAuthSettings?.customParameters ?? {}).some((key: string) => equals(key, 'tenantId')) &&
+      Object.keys(connectionParameters ?? {}).some((key: string) =>
+        equals(key, SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_TENANT_ID)
+      ),
+    [connectionParameters, isUsingOAuth, usingAadConnection]
+  );
+
   const isParamVisible = useCallback(
     (key: string, parameter: ParamType) => {
       const constraints = parameter?.uiDefinition?.constraints;
@@ -271,9 +300,12 @@ export const CreateConnection = (props: CreateConnectionProps) => {
       if (parameter.type === ConnectionParameterTypes.managedIdentity) {
         return false;
       }
+      if (equals(key, SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_TENANT_ID) && showTenantIdSelection) {
+        return false;
+      }
       return true;
     },
-    [parameterValues, servicePrincipalSelected, legacyManagedIdentitySelected]
+    [servicePrincipalSelected, legacyManagedIdentitySelected, parameterValues, showTenantIdSelection]
   );
 
   const unfilteredParameters: Record<string, ConnectionParameterSetParameter | ConnectionParameter> = useMemo(
@@ -323,34 +355,6 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     });
     return output ?? {};
   }, [enabledCapabilities, parametersByCapability]);
-
-  const usingLegacyGatewayAuth = useMemo(
-    () => !hasOnlyOnPremGateway && enabledCapabilities.includes(Capabilities.gateway),
-    [enabledCapabilities, hasOnlyOnPremGateway]
-  );
-
-  const hasOAuth = useMemo(
-    () => needsOAuth(isMultiAuth ? multiAuthParams : singleAuthParams) && !usingLegacyGatewayAuth,
-    [isMultiAuth, multiAuthParams, singleAuthParams, usingLegacyGatewayAuth]
-  );
-
-  const isUsingOAuth = useMemo(
-    () => hasOAuth && !servicePrincipalSelected && !legacyManagedIdentitySelected && !supportsClientCertificateConnection,
-    [hasOAuth, servicePrincipalSelected, legacyManagedIdentitySelected, supportsClientCertificateConnection]
-  );
-
-  const usingAadConnection = useMemo(() => (connector ? isUsingAadAuthentication(connector) : false), [connector]);
-  const showTenantIdSelection = useMemo(
-    () =>
-      isTenantServiceEnabled() &&
-      usingAadConnection &&
-      isUsingOAuth &&
-      Object.keys(connectionParameters?.['token']?.oAuthSettings?.customParameters ?? {}).some((key: string) => equals(key, 'tenantId')) &&
-      Object.keys(connectionParameters ?? {}).some((key: string) =>
-        equals(key, SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_TENANT_ID)
-      ),
-    [connectionParameters, isUsingOAuth, usingAadConnection]
-  );
 
   // Don't show name for simple connections
   const showNameInput = useMemo(
