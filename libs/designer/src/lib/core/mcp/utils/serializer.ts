@@ -196,7 +196,7 @@ const getConnectionsDataToSerialize = async (
   }, []);
 
   const originalConnectionsData = await getConnectionsInWorkflowApp(subscriptionId, resourceGroup, logicAppName as string, queryClient);
-  const managedApiConnections = originalConnectionsData?.managedApiConnections ?? {};
+  const managedApiConnections = { ...(originalConnectionsData?.managedApiConnections ?? {}) };
 
   await Promise.all(
     referencesToSerialize.map(async (referenceKey) => {
