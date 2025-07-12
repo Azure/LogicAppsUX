@@ -1,7 +1,7 @@
 import { XXLargeText } from '@microsoft/designer-ui';
 import type { OutletContext } from '../../run-service';
 import type { RootState } from '../../state/store';
-import './export.less';
+import { useExportStyles } from './exportStyles';
 import { Navigation } from './navigation/navigation';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
@@ -10,6 +10,7 @@ import { Outlet, useOutletContext } from 'react-router-dom';
 export const ExportApp: React.FC = () => {
   const workflowState = useSelector((state: RootState) => state.workflow);
   const intl = useIntl();
+  const styles = useExportStyles();
 
   const intlText = {
     EXPORT_LOGIC_APP: intl.formatMessage({
@@ -20,8 +21,8 @@ export const ExportApp: React.FC = () => {
   };
 
   return (
-    <div className="msla-export">
-      <XXLargeText text={intlText.EXPORT_LOGIC_APP} className="msla-export-title" style={{ display: 'block' }} />
+    <div className={styles.root}>
+      <XXLargeText text={intlText.EXPORT_LOGIC_APP} className={styles.title} style={{ display: 'block' }} />
       <Outlet
         context={{
           baseUrl: workflowState.baseUrl,
