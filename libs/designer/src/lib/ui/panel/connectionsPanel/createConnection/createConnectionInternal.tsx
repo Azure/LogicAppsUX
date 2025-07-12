@@ -16,6 +16,7 @@ import type {
   ConnectionParameterSet,
   Connector,
   ManagedIdentity,
+  ValueSegment,
 } from '@microsoft/logic-apps-shared';
 import { ConnectionService, LogEntryLevel, LoggerService, WorkflowService, getIconUriFromConnector } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo, useState } from 'react';
@@ -40,7 +41,7 @@ export const CreateConnectionInternal = (props: {
   nodeIds?: string[];
   assistedConnectionProps?: AssistedConnectionProps;
   connectionMetadata?: ConnectionMetadata;
-  isAgentServiceConnection?: boolean;
+  updateOperationParameterValues?: (values?: Record<string, ValueSegment>) => void;
 }) => {
   const {
     classes,
@@ -58,7 +59,7 @@ export const CreateConnectionInternal = (props: {
     updateConnectionInState,
     onConnectionCreated,
     onConnectionCancelled,
-    isAgentServiceConnection = false,
+    updateOperationParameterValues,
   } = props;
   const dispatch = useDispatch<AppDispatch>();
 
@@ -129,7 +130,8 @@ export const CreateConnectionInternal = (props: {
       isOAuthConnection?: boolean,
       alternativeParameterValues?: Record<string, any>,
       identitySelected?: string,
-      additionalParameterValues?: Record<string, any>
+      additionalParameterValues?: Record<string, any>,
+      operationParameterValues?: Record<string, ValueSegment>
     ) => {
       if (!connector?.id) {
         return;
@@ -213,6 +215,7 @@ export const CreateConnectionInternal = (props: {
         if (connection) {
           updateNewConnectionInCache(connection);
           applyNewConnection(connection, identitySelected);
+          updateOperationParameterValues?.(operationParameterValues);
         } else if (err) {
           setErrorMessage(String(err));
         }
@@ -237,6 +240,7 @@ export const CreateConnectionInternal = (props: {
       existingReferences,
       selectedSubResource,
       updateNewConnectionInCache,
+      updateOperationParameterValues,
     ]
   );
 
@@ -273,6 +277,7 @@ export const CreateConnectionInternal = (props: {
         operationType,
         connector.properties.capabilities
       )}
+      operationParameterSets={connector.properties.operationParameterSets}
       createButtonTexts={createButtonTexts}
       description={description}
       identity={identity}
@@ -289,7 +294,6 @@ export const CreateConnectionInternal = (props: {
       gatewayServiceConfig={gatewayServiceConfig}
       checkOAuthCallback={needsOAuth}
       resourceSelectorProps={resourceSelectorProps}
-      isAgentServiceConnection={isAgentServiceConnection}
     />
   );
 };
