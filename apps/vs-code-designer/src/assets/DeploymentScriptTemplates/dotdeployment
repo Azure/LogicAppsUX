@@ -1,2 +1,0 @@
-[config]
-command = powershell -File .\deployment\deploy.ps1

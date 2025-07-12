@@ -11,7 +11,6 @@ import { type IActionContext, callWithTelemetryAndErrorHandling, type IAzureQuic
 import type { UnitTestResult } from '@microsoft/vscode-extension-logic-apps';
 import { toPascalCase } from '@microsoft/logic-apps-shared';
 import {
-  assetsFolderName,
   dotNetBinaryPathSettingKey,
   saveUnitTestEvent,
   testMockOutputsDirectory,
@@ -260,7 +259,7 @@ export async function createCsprojFile(csprojFilePath: string): Promise<void> {
   }
   const templateFolderName = 'UnitTestTemplates';
   const csprojTemplateFileName = 'TestProjectFile';
-  const templatePath = path.join(__dirname, assetsFolderName, templateFolderName, csprojTemplateFileName);
+  const templatePath = path.join(__dirname, 'assets', templateFolderName, csprojTemplateFileName);
   const templateContent = await fse.readFile(templatePath, 'utf-8');
   await fse.writeFile(csprojFilePath, templateContent);
   ext.outputChannel.appendLog(localize('csprojFileCreated', 'Created .csproj file at: {0}', csprojFilePath));
@@ -368,7 +367,7 @@ export async function createTestCsFile(
     csTemplateFileName = 'TestClassFileWithoutActions';
   }
 
-  const templatePath = path.join(__dirname, assetsFolderName, templateFolderName, csTemplateFileName);
+  const templatePath = path.join(__dirname, 'assets', templateFolderName, csTemplateFileName);
 
   let templateContent = await fse.readFile(templatePath, 'utf-8');
 
@@ -409,7 +408,7 @@ export async function createTestCsFile(
 export async function createTestExecutorFile(logicAppTestFolderPath: string, cleanedLogicAppName: string): Promise<void> {
   const templateFolderName = 'UnitTestTemplates';
   const executorTemplateFileName = 'TestExecutorFile';
-  const templatePath = path.join(__dirname, assetsFolderName, templateFolderName, executorTemplateFileName);
+  const templatePath = path.join(__dirname, 'assets', templateFolderName, executorTemplateFileName);
 
   const csFilePath = path.join(logicAppTestFolderPath, 'TestExecutor.cs');
 
@@ -432,7 +431,7 @@ export async function createTestExecutorFile(logicAppTestFolderPath: string, cle
 export async function createTestSettingsConfigFile(unitTestFolderPath: string, workflowName: string, logicAppName: string): Promise<void> {
   const templateFolderName = 'UnitTestTemplates';
   const configTemplateFileName = 'TestSettingsConfigFile';
-  const templatePath = path.join(__dirname, assetsFolderName, templateFolderName, configTemplateFileName);
+  const templatePath = path.join(__dirname, 'assets', templateFolderName, configTemplateFileName);
   const csFilePath = path.join(unitTestFolderPath, 'testSettings.config');
 
   if (await fse.pathExists(csFilePath)) {

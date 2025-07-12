@@ -7,7 +7,6 @@ import { isPathEqual } from './fs';
 import AdmZip = require('adm-zip');
 import type { Task, WorkspaceFolder } from 'vscode';
 import { tasks as codeTasks, window } from 'vscode';
-import { localize } from '../../localize';
 
 /**
  * Gets task's file system path.
@@ -89,7 +88,7 @@ export async function unzipLogicAppArtifacts(zipContent: Buffer | Buffer[], targ
     zip.extractAllTo(targetDirectory, true);
   } catch (error) {
     const errorString = JSON.stringify(error, Object.getOwnPropertyNames(error));
-    window.showErrorMessage(localize('unzipLogicAppError', 'Failed to unzip logic app due to: {0}', errorString));
+    window.showErrorMessage(`Failed to unzip logic app due to: ${errorString}`);
     throw new Error(`Unzipping logic app failed with the following details: ${errorString}`);
   }
 }
@@ -103,8 +102,7 @@ export function showPreviewWarning(commandIdentifier: string): void {
   const targetCommand = packageJson.contributes.commands.find((command) => command.command === commandIdentifier);
   // If the command is found and it is marked as a preview, show a warning using its title
   if (targetCommand?.preview) {
-    window.showInformationMessage(
-      localize('previewFeatureWarning', 'The "{0}" command is a preview feature and might be subject to change.', targetCommand.title)
-    );
+    const commandTitle = targetCommand.title;
+    window.showInformationMessage(`The "${commandTitle}" command is a preview feature and might be subject to change.`);
   }
 }

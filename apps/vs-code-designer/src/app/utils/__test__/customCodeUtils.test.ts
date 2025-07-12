@@ -2,7 +2,7 @@ import * as fse from 'fs-extra';
 import * as path from 'path';
 import * as verifyProjectUtils from '../verifyIsProject';
 import * as workspaceUtils from '../workspace';
-import { describe, it, expect, vi, beforeEach, beforeAll } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import {
   CustomCodeFunctionsProjectMetadata,
   getCustomCodeFunctionsProjectMetadata,
@@ -14,7 +14,6 @@ import {
 } from '../customCodeUtils';
 import { TargetFramework } from '@microsoft/vscode-extension-logic-apps';
 import { ext } from '../../../extensionVariables';
-import { assetsFolderName } from '../../../constants';
 
 vi.mock('fs-extra', () => ({
   statSync: vi.fn(),
@@ -40,25 +39,93 @@ vi.mock('../../../extensionVariables', () => ({
 }));
 
 describe('customCodeUtils', () => {
-  let validNet8CsprojContent: string;
-  let validNetFxCsprojContent: string;
-  let invalidCsprojContent: string;
-
-  beforeAll(async () => {
-    const realFs = await vi.importActual<typeof import('fs-extra')>('fs-extra');
-    const assetsFolderPath = path.join(__dirname, '..', '..', '..', assetsFolderName);
-    const net8CsprojTemplatePath = path.join(assetsFolderPath, 'FunctionProjectTemplate', 'FunctionsProjNet8New');
-    const netFxCsprojTemplatePath = path.join(assetsFolderPath, 'FunctionProjectTemplate', 'FunctionsProjNetFx');
-
-    validNet8CsprojContent = await realFs.readFile(net8CsprojTemplatePath, 'utf8');
-    validNetFxCsprojContent = await realFs.readFile(netFxCsprojTemplatePath, 'utf8');
-    invalidCsprojContent = `
-      <Project>
-        <TargetFramework>net8</TargetFramework>
-        <SomeOtherTag>data</SomeOtherTag>
-      </Project>
+  const validNet8CsprojContent = String.raw`
+        <Project Sdk="Microsoft.NET.Sdk">
+            <PropertyGroup>
+                <IsPackable>false</IsPackable>
+                <TargetFramework>net8</TargetFramework>
+                <AzureFunctionsVersion>v4</AzureFunctionsVersion>
+                <OutputType>Library</OutputType>
+                <PlatformTarget>AnyCPU</PlatformTarget>
+                <LogicAppFolderToPublish>$(MSBuildProjectDirectory)\..\LogicApp</LogicAppFolderToPublish>
+                <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+                <SelfContained>false</SelfContained>
+            </PropertyGroup>
+            
+            <ItemGroup>
+                <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Abstractions" Version="1.3.0" />
+                <PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="1.15.1" />
+                <PackageReference Include="Microsoft.Azure.Workflows.Webjobs.Sdk" Version="1.2.0" />
+                <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
+                <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
+            </ItemGroup>
+            
+            <Target Name="TriggerPublishOnBuild" AfterTargets="Build">
+                <CallTarget Targets="Publish" />
+            </Target>
+        </Project>
     `;
-  });
+
+  const validNetFxCsprojContent = String.raw`
+        <Project Sdk="Microsoft.NET.Sdk">
+            <PropertyGroup>
+                <IsPackable>false</IsPackable>
+                <TargetFramework>net472</TargetFramework>
+                <AzureFunctionsVersion>v4</AzureFunctionsVersion>
+                <OutputType>Library</OutputType>
+                <PlatformTarget>x64</PlatformTarget>
+                <LogicAppFolder>LogicApp</LogicAppFolder>
+                <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+            </PropertyGroup>
+
+            <ItemGroup>
+                <PackageReference Include="Microsoft.Azure.WebJobs.Core" Version="3.0.39" />
+                <PackageReference Include="Microsoft.Azure.Workflows.WebJobs.Sdk" Version="1.1.0" />
+                <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.2.0" />
+                <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.1.1" />
+                <PackageReference Include="Microsoft.Extensions.Logging" Version="2.1.1" />
+            </ItemGroup>
+
+            <Target Name="Task" AfterTargets="Compile">
+                <ItemGroup>
+                    <DirsToClean2 Include="..\$(LogicAppFolder)\lib\custom" />
+                </ItemGroup>
+                <RemoveDir Directories="@(DirsToClean2)" />
+            </Target>
+            
+            <Target Name="CopyExtensionFiles" AfterTargets="ParameterizedFunctionJsonGenerator">
+                <ItemGroup>
+                    <CopyFiles Include="$(MSBuildProjectDirectory)\bin\$(Configuration)\net472\**\*.*" CopyToOutputDirectory="PreserveNewest" Exclude="$(MSBuildProjectDirectory)\bin\$(Configuration)\net472\*.*" />
+                <CopyFiles2 Include="$(MSBuildProjectDirectory)\bin\$(Configuration)\net472\*.*" />
+                </ItemGroup>
+                <Copy SourceFiles="@(CopyFiles)" DestinationFolder="..\$(LogicAppFolder)\lib\custom\%(RecursiveDir)" SkipUnchangedFiles="true" />
+                <Copy SourceFiles="@(CopyFiles2)" DestinationFolder="..\$(LogicAppFolder)\lib\custom\net472\" SkipUnchangedFiles="true" />
+                <ItemGroup>
+                    <MoveFiles Include="..\$(LogicAppFolder)\lib\custom\bin\*.*" />
+                </ItemGroup>
+
+            <Move SourceFiles="@(MoveFiles)" DestinationFolder="..\$(LogicAppFolder)\lib\custom\net472" />
+                <ItemGroup>
+                <DirsToClean Include="..\$(LogicAppFolder)\lib\custom\bin" />
+                </ItemGroup>
+                <RemoveDir Directories="@(DirsToClean)" />
+            </Target>
+            
+            <ItemGroup>
+                <Reference Include="Microsoft.CSharp" />
+            </ItemGroup>
+            <ItemGroup>
+                <Folder Include="bin\$(Configuration)\net472\" />
+            </ItemGroup>
+        </Project>
+    `;
+
+  const invalidCsprojContent = `
+        <Project>
+            <TargetFramework>net8</TargetFramework>
+            <SomeOtherTag>data</SomeOtherTag>
+        </Project>
+    `;
 
   beforeEach(() => {
     vi.restoreAllMocks();

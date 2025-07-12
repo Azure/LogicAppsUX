@@ -84,7 +84,6 @@ export interface IProjectWizardContext extends IActionContext {
   isWorkspaceWithFunctions?: boolean;
   logicAppName?: string;
   packagePath?: string;
-  deploymentScriptType?: DeploymentScriptType;
 }
 
 export const OpenBehavior = {
@@ -102,9 +101,3 @@ export const ProjectType = {
   rulesEngine: 'rulesEngine',
 } as const;
 export type ProjectType = (typeof ProjectType)[keyof typeof ProjectType];
-
-export const DeploymentScriptType = {
-  azureDevOpsPipeline: 'azureDevOpsPipeline',
-  azureDeploymentCenter: 'azureDeploymentCenter',
-} as const;
-export type DeploymentScriptType = (typeof DeploymentScriptType)[keyof typeof DeploymentScriptType];
