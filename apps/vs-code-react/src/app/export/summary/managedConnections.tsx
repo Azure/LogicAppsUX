@@ -6,7 +6,7 @@ import { VSCodeContext } from '../../../webviewCommunication';
 import { SearchableDropdown } from '../../components/searchableDropdown';
 import { parseResourceGroupsData } from './helper';
 import { NewResourceGroup } from './newResourceGroup';
-import { Checkbox } from '@fluentui/react-components';
+import { Checkbox } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';
 import { useContext, useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';

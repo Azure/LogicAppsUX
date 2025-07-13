@@ -4,22 +4,9 @@ import { ApiService } from '../../../run-service/export';
 import { updatePackageUrl } from '../../../state/WorkflowSlice';
 import type { AppDispatch, RootState } from '../../../state/store';
 import { VSCodeContext } from '../../../webviewCommunication';
-import { getSummaryData } from './helper';
+import { getListColumns, getSummaryData } from './helper';
 import { ManagedConnections } from './managedConnections';
-import {
-  MessageBar,
-  Button,
-  DataGrid,
-  DataGridBody,
-  DataGridRow,
-  DataGridHeader,
-  DataGridHeaderCell,
-  DataGridCell,
-  type TableColumnDefinition,
-  createTableColumn,
-  Input,
-  Label,
-} from '@fluentui/react-components';
+import { MessageBar, MessageBarType, PrimaryButton, SelectionMode, ShimmeredDetailsList, TextField } from '@fluentui/react';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { useContext, useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -122,10 +109,12 @@ export const Summary: React.FC = () => {
 
   const locationText = useMemo(() => {
     return (
-      <div className="msla-export-summary-file-location-text">
-        <Label>{intlText.EXPORT_LOCATION}</Label>
-        <Input placeholder={targetDirectory.path} disabled />
-      </div>
+      <TextField
+        label={intlText.EXPORT_LOCATION}
+        placeholder={targetDirectory.path}
+        disabled
+        className="msla-export-summary-file-location-text"
+      />
     );
   }, [targetDirectory, intlText.EXPORT_LOCATION]);
 
@@ -135,38 +124,19 @@ export const Summary: React.FC = () => {
     );
     const noDetails = exportDetails.length === 0 && !isSummaryLoading ? emptyText : null;
 
-    const columns: TableColumnDefinition<any>[] = [
-      createTableColumn<any>({
-        columnId: 'name',
-        compare: (a, b) => a.name?.localeCompare(b.name) || 0,
-      }),
-      createTableColumn<any>({
-        columnId: 'description',
-        compare: (a, b) => a.description?.localeCompare(b.description) || 0,
-      }),
-    ];
-
     return (
       <>
         <XLargeText text={intlText.AFTER_EXPORT} style={{ display: 'block' }} />
         <LargeText text={intlText.ADDITIONAL_STEPS} style={{ display: 'block' }} />
         <div className="msla-export-summary-detail-list">
-          <DataGrid items={exportDetails} columns={columns} selectionMode="none" getRowId={(item) => item.id || item.name}>
-            <DataGridHeader>
-              <DataGridRow>
-                <DataGridHeaderCell>Name</DataGridHeaderCell>
-                <DataGridHeaderCell>Description</DataGridHeaderCell>
-              </DataGridRow>
-            </DataGridHeader>
-            <DataGridBody<any>>
-              {({ item, rowId }) => (
-                <DataGridRow<any> key={rowId}>
-                  <DataGridCell>{item.name}</DataGridCell>
-                  <DataGridCell>{item.description}</DataGridCell>
-                </DataGridRow>
-              )}
-            </DataGridBody>
-          </DataGrid>
+          <ShimmeredDetailsList
+            items={exportDetails}
+            columns={getListColumns()}
+            setKey="set"
+            enableShimmer={isSummaryLoading}
+            selectionMode={SelectionMode.none}
+            compact={true}
+          />
           {noDetails}
         </div>
       </>
@@ -175,7 +145,7 @@ export const Summary: React.FC = () => {
 
   const packageWarning = useMemo(() => {
     return isError && !packageUrl ? (
-      <MessageBar className="msla-export-summary-package-warning" intent="error">
+      <MessageBar className="msla-export-summary-package-warning" messageBarType={MessageBarType.error} isMultiline={true}>
         {intlText.PACKAGE_WARNING}
         <br />
         {(summaryError as any)?.message ?? null}
@@ -190,14 +160,12 @@ export const Summary: React.FC = () => {
       {packageWarning}
       <div className="msla-export-summary-file-location">
         {locationText}
-        <Button
+        <PrimaryButton
           className="msla-export-summary-file-location-button"
-          appearance="primary"
-          aria-label={intlText.OPEN_FILE_EXPLORER}
+          text={intlText.OPEN_FILE_EXPLORER}
+          ariaLabel={intlText.OPEN_FILE_EXPLORER}
           onClick={onOpenExplorer}
-        >
-          {intlText.OPEN_FILE_EXPLORER}
-        </Button>
+        />
       </div>
       <ManagedConnections />
       {detailsList}

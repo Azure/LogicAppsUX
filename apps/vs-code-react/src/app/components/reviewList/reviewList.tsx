@@ -3,18 +3,11 @@ import ErrorICon from '../../../resources/Error.svg';
 import SuccessIcon from '../../../resources/Success.svg';
 import { ValidationStatus } from '../../../run-service';
 import type { IGroupedGroup, IGroupedItem } from '../../../run-service';
+import { getShimmerElements, getValidationListColumns } from './helper';
 import './styles.less';
-import {
-  Skeleton,
-  SkeletonItem,
-  Accordion,
-  AccordionHeader,
-  AccordionItem,
-  AccordionPanel,
-  type AccordionToggleEventHandler,
-} from '@fluentui/react-components';
-import { ChevronRightRegular } from '@fluentui/react-icons';
-import { useMemo, useState, useCallback } from 'react';
+import { DetailsRow, GroupedList, GroupHeader, SelectionMode, Shimmer } from '@fluentui/react';
+import type { IGroup } from '@fluentui/react';
+import { useMemo } from 'react';
 
 export interface IReviewListProps {
   isValidationLoading?: boolean;
@@ -23,12 +16,6 @@ export interface IReviewListProps {
 }
 
 export const ReviewList: React.FC<IReviewListProps> = ({ isValidationLoading, validationItems, validationGroups }) => {
-  const [openItems, setOpenItems] = useState<string[]>([]);
-
-  const handleToggle: AccordionToggleEventHandler<string> = useCallback((_event, data) => {
-    setOpenItems(data.openItems);
-  }, []);
-
   const getGroupIcon = (groupStatus: string): JSX.Element | null => {
     switch (groupStatus) {
       case ValidationStatus.succeeded: {
@@ -47,57 +34,77 @@ export const ReviewList: React.FC<IReviewListProps> = ({ isValidationLoading, va
   };
 
   const shimmerList = useMemo(() => {
+    const shimmerDetails = getShimmerElements();
+
     return new Array(4).fill(0).map((_element, index) => {
       return (
-        <Skeleton className="review-list-shimmer" key={index}>
-          <SkeletonItem className="review-list-shimmer-item" />
-          <SkeletonItem className="review-list-shimmer-item" />
-          <SkeletonItem className="review-list-shimmer-item" />
-        </Skeleton>
+        <div className="review-list-shimmer" key={index}>
+          <Shimmer className="review-list-shimmer-item" />
+          <Shimmer className="review-list-shimmer-item" shimmerElements={shimmerDetails.firstRow} />
+          <Shimmer className="review-list-shimmer-item" shimmerElements={shimmerDetails.secondRow} />
+        </div>
       );
     });
   }, []);
 
   const groupedList = useMemo(() => {
-    const groupedData = validationGroups.map((group) => {
-      const groupItems = validationItems.filter((item) => item.groupIndex === group.startIndex / group.count);
-      return {
-        group,
-        items: groupItems,
-      };
-    });
+    const onRenderCell = (nestingDepth?: number, item?: any, itemIndex?: number, group?: IGroup): React.ReactNode => {
+      return item && typeof itemIndex === 'number' && itemIndex > -1 ? (
+        <DetailsRow
+          columns={getValidationListColumns()}
+          groupNestingDepth={nestingDepth}
+          item={item}
+          itemIndex={itemIndex}
+          selectionMode={SelectionMode.none}
+          compact={true}
+          group={group}
+        />
+      ) : null;
+    };
+
+    const onRenderHeader = (props?: any): JSX.Element | null => {
+      if (props) {
+        const toggleCollapse = (): void => {
+          props.onToggleCollapse(props.group);
+        };
+
+        const headerCountStyle = { display: 'none' };
+        const groupIcon = getGroupIcon(props?.group?.status);
+
+        return (
+          <div className="review-list-header">
+            <GroupHeader
+              className="review-list-header-text"
+              styles={{ headerCount: headerCountStyle }}
+              {...props}
+              onToggleSelectGroup={toggleCollapse}
+              compact={true}
+            />
+            {groupIcon}
+          </div>
+        );
+      }
+
+      return null;
+    };
+
+    const groupedListProps = {
+      onRenderHeader,
+    };
 
     return (
       <div className="review-list">
-        <Accordion multiple collapsible openItems={openItems} onToggle={handleToggle}>
-          {groupedData.map((groupData, groupIndex) => {
-            const groupIcon = getGroupIcon(groupData.group.status);
-            return (
-              <AccordionItem key={groupIndex} value={groupIndex.toString()}>
-                <AccordionHeader className="review-list-header" expandIcon={<ChevronRightRegular />}>
-                  <div className="review-list-header-content">
-                    <span className="review-list-header-text">{groupData.group.name}</span>
-                    {groupIcon}
-                  </div>
-                </AccordionHeader>
-                <AccordionPanel>
-                  <div className="review-list-items">
-                    {groupData.items.map((item, itemIndex) => (
-                      <div key={itemIndex} className="review-list-item">
-                        <div className="review-list-item-name">{item.name}</div>
-                        <div className="review-list-item-description">{item.description}</div>
-                        <div className="review-list-item-status">{item.status}</div>
-                      </div>
-                    ))}
-                  </div>
-                </AccordionPanel>
-              </AccordionItem>
-            );
-          })}
-        </Accordion>
+        <GroupedList
+          items={validationItems}
+          groups={validationGroups}
+          onRenderCell={onRenderCell}
+          selectionMode={SelectionMode.none}
+          compact={true}
+          groupProps={groupedListProps}
+        />
       </div>
     );
-  }, [validationItems, validationGroups, openItems, handleToggle]);
+  }, [validationItems, validationGroups]);
 
   return isValidationLoading ? <>{shimmerList}</> : <>{groupedList}</>;
 };

@@ -4,6 +4,7 @@ export const useExportStyles = makeStyles({
   root: {
     height: '100vh',
     padding: `0 ${tokens.spacingHorizontalXL}`,
+    position: 'relative',
   },
 
   title: {

@@ -6,7 +6,7 @@ import './app.less';
 import { getDesignerServices, isMultiVariableSupport } from './servicesHelper';
 import { getRunInstanceMocks } from './utilities/runInstance';
 import { convertConnectionsDataToReferences } from './utilities/workflow';
-import { Spinner } from '@fluentui/react-components';
+import { Spinner, SpinnerSize } from '@fluentui/react';
 import type { ConnectionCreationInfo, LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import type { ConnectionReferences } from '@microsoft/logic-apps-designer';
 import {
@@ -209,7 +209,7 @@ export const DesignerApp = () => {
 
   const errorApp = <XLargeText text={`${intlText.ERROR_APP} `} className="designer--error" style={{ display: 'block' }} />;
 
-  const loadingApp = <Spinner className="designer--loading" size="large" label={intlText.LOADING_APP} />;
+  const loadingApp = <Spinner className="designer--loading" size={SpinnerSize.large} label={intlText.LOADING_APP} />;
 
   const designerCommandBar =
     readOnly && !isMonitoringView && !isUnitTest ? null : (
