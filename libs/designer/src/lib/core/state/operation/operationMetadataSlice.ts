@@ -21,6 +21,7 @@ import type { WritableDraft } from 'immer/dist/internal';
 import type { UndoRedoPartialRootState } from '../undoRedo/undoRedoTypes';
 import { deleteWorkflowData } from '../../actions/bjsworkflow/configuretemplate';
 import { delimiter } from '../../configuretemplate/utils/helper';
+import { initializeOperationsMetadata } from '../../actions/bjsworkflow/mcp';
 
 export interface ParameterGroup {
   id: string;
@@ -128,6 +129,7 @@ export interface OperationMetadataState {
 interface OperationMetadataLoadStatus {
   nodesInitialized: boolean;
   nodesAndDynamicDataInitialized: boolean;
+  isInitializingOperations: boolean;
 }
 
 export const initialState: OperationMetadataState = {
@@ -145,6 +147,7 @@ export const initialState: OperationMetadataState = {
   loadStatus: {
     nodesInitialized: false,
     nodesAndDynamicDataInitialized: false,
+    isInitializingOperations: false,
   },
 };
 
@@ -162,6 +165,8 @@ export interface NodeOperationInputsData {
   nodeInputs: NodeInputs;
   nodeDependencies: NodeDependencies;
   operationInfo: NodeOperation;
+  nodeOutputs?: NodeOutputs;
+  settings?: Settings;
 }
 
 export interface NodeData {
@@ -237,10 +242,18 @@ export const operationMetadataSlice = createSlice({
           return;
         }
 
-        const { id, nodeInputs, nodeDependencies, operationInfo } = nodeData;
+        const { id, nodeInputs, nodeOutputs, nodeDependencies, operationInfo, settings } = nodeData;
         state.inputParameters[id] = nodeInputs;
         state.dependencies[id] = nodeDependencies;
         state.operationInfo[id] = operationInfo;
+
+        if (nodeOutputs) {
+          state.outputParameters[id] = nodeOutputs;
+        }
+
+        if (settings) {
+          state.settings[id] = settings;
+        }
       }
       state.loadStatus.nodesInitialized = true;
     },
@@ -652,6 +665,15 @@ export const operationMetadataSlice = createSlice({
           delete state.operationInfo[nodeId];
         }
       }
+    });
+    builder.addCase(initializeOperationsMetadata.pending, (state) => {
+      state.loadStatus.isInitializingOperations = true;
+    });
+    builder.addCase(initializeOperationsMetadata.fulfilled, (state) => {
+      state.loadStatus.isInitializingOperations = false;
+    });
+    builder.addCase(initializeOperationsMetadata.rejected, (state) => {
+      state.loadStatus.isInitializingOperations = false;
     });
   },
 });

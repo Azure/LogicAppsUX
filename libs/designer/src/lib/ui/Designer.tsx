@@ -29,6 +29,7 @@ import { DragPanMonitor } from './common/DragPanMonitor/DragPanMonitor';
 import { CanvasSizeMonitor } from './CanvasSizeMonitor';
 import { AgentChat } from './panel/agentChat/agentChat';
 import DesignerReactFlow from './DesignerReactFlow';
+import MonitoringTimeline from './MonitoringTimeline';
 
 export interface DesignerProps {
   backgroundProps?: BackgroundProps;
@@ -88,6 +89,10 @@ export const Designer = (props: DesignerProps) => {
   const isAgenticWorkflow = useAgenticWorkflow();
   const isA2AWorkflow = useIsA2AWorkflow(); // Specifically A2A + Handoffs
 
+  const hasChat = useMemo(() => {
+    return (isA2AWorkflow || isAgenticWorkflow) && isMonitoringView;
+  }, [isA2AWorkflow, isAgenticWorkflow, isMonitoringView]);
+
   const DND_OPTIONS: any = {
     backends: [
       {
@@ -142,13 +147,12 @@ export const Designer = (props: DesignerProps) => {
             customPanelLocations={customPanelLocations}
             isResizeable={true}
           />
-          {isMonitoringView && isAgenticWorkflow ? (
-            <AgentChat panelLocation={PanelLocation.Right} panelContainerRef={designerContainerRef} />
-          ) : null}
+          {hasChat ? <AgentChat panelLocation={PanelLocation.Right} panelContainerRef={designerContainerRef} /> : null}
           <div className={css('msla-designer-tools', panelLocation === PanelLocation.Left && 'left-panel')}>
             <Controls />
             <Minimap />
           </div>
+          {isMonitoringView && isA2AWorkflow && <MonitoringTimeline />}
           <PerformanceDebugTool />
           <CanvasFinder />
           <CanvasSizeMonitor canvasRef={canvasRef} />

@@ -73,6 +73,8 @@ export const initialWorkflowState: WorkflowState = {
   hostData: {
     errorMessages: {},
   },
+  timelineRepetitionIndex: 0,
+  timelineRepetitionArray: [],
 };
 
 export const workflowSlice = createSlice({
@@ -365,6 +367,12 @@ export const workflowSlice = createSlice({
         const change = getRecordEntry(dimensionChangesById, node?.id ?? '');
         if (change && node && isWorkflowNode(node)) {
           const c = change as NodeDimensionChange;
+          if ((c.dimensions?.height ?? 0) === 0 || (c.dimensions?.width ?? 0) === 0) {
+            continue; // Skip if the dimensions are 0
+          }
+          if (node.height === c.dimensions?.height && node.width === c.dimensions?.width) {
+            continue; // Skip if the dimensions have not changed
+          }
           node.height = c.dimensions?.height ?? 0;
           node.width = c.dimensions?.width ?? 0;
         }
@@ -469,6 +477,13 @@ export const workflowSlice = createSlice({
         duration: getDurationStringPanelMode(Date.parse(runData?.endTime) - Date.parse(runData?.startTime), /* abbreviated */ true),
       };
       nodeMetadata.runData = nodeRunData as LogicAppsV2.WorkflowRunAction;
+    },
+    clearAllRepetitionRunData: (state: WorkflowState) => {
+      for (const node of Object.values(state.nodesMetadata)) {
+        if (node.runData) {
+          delete node.runData;
+        }
+      }
     },
     setSubgraphRunData: (state: WorkflowState, action: PayloadAction<{ nodeId: string; runData: LogicAppsV2.RunRepetition[] }>) => {
       const { nodeId, runData } = action.payload;
@@ -664,6 +679,12 @@ export const workflowSlice = createSlice({
         type: 'BUTTON_EDGE',
       });
     },
+    setTimelineRepetitionIndex: (state: WorkflowState, action: PayloadAction<number>) => {
+      state.timelineRepetitionIndex = action.payload;
+    },
+    setTimelineRepetitionArray: (state: WorkflowState, action: PayloadAction<string[][]>) => {
+      state.timelineRepetitionArray = action.payload;
+    },
     updateRunAfter: (
       state: WorkflowState,
       action: PayloadAction<{ childOperation: string; parentOperation: string; statuses: string[] }>
@@ -778,6 +799,8 @@ export const {
   updateRunAfter,
   addEdgeFromRunAfter,
   removeEdgeFromRunAfter,
+  setTimelineRepetitionIndex,
+  setTimelineRepetitionArray,
   clearFocusNode,
   setFocusNode,
   setCollapsedGraphIds,
@@ -785,6 +808,7 @@ export const {
   replaceId,
   setRunIndex,
   setRepetitionRunData,
+  clearAllRepetitionRunData,
   setSubgraphRunData,
   setIsWorkflowDirty,
   setHostErrorMessages,

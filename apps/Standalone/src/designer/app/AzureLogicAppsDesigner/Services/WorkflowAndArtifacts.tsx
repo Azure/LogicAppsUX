@@ -20,9 +20,9 @@ const baseUrl = 'https://management.azure.com';
 const standardApiVersion = '2020-06-01';
 const consumptionApiVersion = '2019-05-01';
 
-export const useConnectionsData = (appId?: string) => {
+export const useConnectionsData = (appId?: string, enabled = true) => {
   return useQuery(['getConnectionsData', appId], async () => getConnectionsData(appId as string), {
-    enabled: !!appId,
+    enabled: !!appId && enabled,
     refetchOnMount: false,
     refetchOnReconnect: false,
     refetchOnWindowFocus: false,
@@ -30,7 +30,7 @@ export const useConnectionsData = (appId?: string) => {
 };
 
 export const getConnectionsData = async (appId: string): Promise<ConnectionsData> => {
-  const uri = `${baseUrl}/${appId}/workflowsconfiguration/connections?api-version=2018-11-01`;
+  const uri = `${baseUrl}${appId}/workflowsconfiguration/connections?api-version=2018-11-01`;
   try {
     const response = await axios.get(uri, {
       headers: {
@@ -289,11 +289,12 @@ export const listCallbackUrl = async (
   });
 };
 
-export const useWorkflowApp = (siteResourceId: string, hostingPlan: HostingPlanTypes) => {
+export const useWorkflowApp = (siteResourceId: string, hostingPlan: HostingPlanTypes, enabled = true) => {
   return useQuery(['workflowApp', siteResourceId], async () => getWorkflowApp(siteResourceId, hostingPlan), {
     refetchOnMount: false,
     refetchOnReconnect: false,
     refetchOnWindowFocus: false,
+    enabled,
   });
 };
 

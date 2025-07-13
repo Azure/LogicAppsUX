@@ -36,6 +36,7 @@ import TelemetryReporter from '@vscode/extension-telemetry';
 import { getAllCustomCodeFunctionsProjects } from './app/utils/customCodeUtils';
 import { createVSCodeAzureSubscriptionProvider } from './app/utils/services/VSCodeAzureSubscriptionProvider';
 import { logSubscriptions } from './app/utils/telemetry';
+import { registerAzureUtilsExtensionVariables } from '@microsoft/vscode-azext-azureutils';
 
 const perfStats = {
   loadStartTime: Date.now(),
@@ -65,6 +66,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
   ext.outputChannel = createAzExtOutputChannel('Azure Logic Apps (Standard)', ext.prefix);
   registerUIExtensionVariables(ext);
+  registerAzureUtilsExtensionVariables(ext);
   registerAppServiceExtensionVariables(ext);
 
   await callWithTelemetryAndErrorHandling(extensionCommand.activate, async (activateContext: IActionContext) => {

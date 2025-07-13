@@ -3,10 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import {
-  ProjectDirectoryPath,
+  ProjectDirectoryPathKey,
   appKindSetting,
   azureWebJobsStorageKey,
   funcIgnoreFileName,
+  functionsInprocNet8Enabled,
+  functionsInprocNet8EnabledTrue,
   gitignoreFileName,
   hostFileName,
   localEmulatorConnectionString,
@@ -21,7 +23,7 @@ import { ProjectCreateStepBase } from './ProjectCreateStepBase';
 import { nonNullProp } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IHostJsonV1, IHostJsonV2, ILocalSettingsJson, IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
-import { FuncVersion } from '@microsoft/vscode-extension-logic-apps';
+import { FuncVersion, WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';
@@ -43,7 +45,8 @@ export class ScriptProjectCreateStep extends ProjectCreateStepBase {
     IsEncrypted: false,
     Values: {
       [azureWebJobsStorageKey]: localEmulatorConnectionString,
-      [workerRuntimeKey]: 'node',
+      [functionsInprocNet8Enabled]: functionsInprocNet8EnabledTrue,
+      [workerRuntimeKey]: WorkerRuntime.Dotnet,
       [appKindSetting]: logicAppKind,
     },
   };
@@ -64,7 +67,7 @@ export class ScriptProjectCreateStep extends ProjectCreateStepBase {
 
     const localSettingsJsonPath: string = path.join(context.projectPath, localSettingsFileName);
     if (await confirmOverwriteFile(context, localSettingsJsonPath)) {
-      this.localSettingsJson.Values[ProjectDirectoryPath] = path.join(context.projectPath);
+      this.localSettingsJson.Values[ProjectDirectoryPathKey] = path.join(context.projectPath);
       await writeFormattedJson(localSettingsJsonPath, this.localSettingsJson);
     }
 

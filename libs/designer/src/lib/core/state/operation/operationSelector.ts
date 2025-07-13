@@ -42,8 +42,7 @@ export const getNodeOperationData = (state: OperationMetadataState, nodeId: stri
   };
 };
 
-export const getOperationInputParameters = (rootState: RootState, nodeId: string): ParameterInfo[] => {
-  const nodeInputs = getRecordEntry(rootState.operations.inputParameters, nodeId);
+export const getOperationInputParameters = (nodeInputs: NodeInputs): ParameterInfo[] => {
   const allParameters: ParameterInfo[] = [];
 
   if (nodeInputs) {
@@ -129,12 +128,15 @@ interface TokenDependencies {
 }
 export const useTokenDependencies = (nodeId: string): TokenDependencies => {
   const operationInputParameters = useRawInputParameters(nodeId);
+  const variables = useSelector((state: RootState) => state.tokens.variables);
+
   return useMemo(() => {
     if (!operationInputParameters) {
       return { dependencies: new Set(), loopSources: new Set() };
     }
     const dependencies = new Set<string>();
     const loopSources = new Set<string>();
+
     for (const group of Object.values(operationInputParameters.parameterGroups)) {
       for (const parameter of group.parameters) {
         for (const value of parameter.value) {
@@ -144,15 +146,26 @@ export const useTokenDependencies = (nodeId: string): TokenDependencies => {
           if (value.token?.actionName) {
             dependencies.add(value.token.actionName);
           }
+          // Check for variable tokens
+          if (value.token?.tokenType === 'variable' && value.token?.name) {
+            // Find which node initializes this variable
+            for (const [nodeId, nodeVariables] of Object.entries(variables)) {
+              if (nodeVariables.some((v) => v.name === value.token?.name)) {
+                dependencies.add(nodeId);
+                break;
+              }
+            }
+          }
         }
       }
     }
     return { dependencies, loopSources };
-  }, [operationInputParameters]);
+  }, [operationInputParameters, variables]);
 };
 
 export const useNodesTokenDependencies = (nodes: Set<string>) => {
   const operationsInputsParameters = useOperationsInputParameters();
+  const variables = useSelector((state: RootState) => state.tokens.variables);
   const dependencies: Record<string, Set<string>> = {};
   if (!operationsInputsParameters) {
     return dependencies;
@@ -169,6 +182,16 @@ export const useNodesTokenDependencies = (nodes: Set<string>) => {
             }
             if (value.token?.arrayDetails?.loopSource) {
               innerDependencies.add(value.token.arrayDetails.loopSource);
+            }
+            // Check for variable tokens
+            if (value.token?.tokenType === 'variable' && value.token?.name) {
+              // Find which node initializes this variable
+              for (const [nodeId, nodeVariables] of Object.entries(variables)) {
+                if (nodeVariables.some((v) => v.name === value.token?.name)) {
+                  innerDependencies.add(nodeId);
+                  break;
+                }
+              }
             }
           }
         }

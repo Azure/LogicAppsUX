@@ -21,6 +21,7 @@ export type BrowseGridProps = {
   showConnectorName?: boolean;
   hideNoResultsText?: boolean;
   isConnector?: boolean;
+  hideFavorites?: boolean;
 };
 
 export const BrowseGrid = ({
@@ -32,6 +33,7 @@ export const BrowseGrid = ({
   showConnectorName,
   hideNoResultsText,
   isConnector,
+  hideFavorites,
 }: BrowseGridProps) => {
   const intl = useIntl();
   const [forceSingleCol, setForceSingleCol] = useState(false);
@@ -76,6 +78,7 @@ export const BrowseGrid = ({
                 connector={item as Connector}
                 onClick={onConnectorSelected}
                 displayRuntimeInfo={displayRuntimeInfo}
+                hideFavorites={hideFavorites}
               />
             </div>
           </div>
@@ -96,12 +99,13 @@ export const BrowseGrid = ({
               onOperationClick={onOperationSelected}
               showUnfilledFavoriteOnlyOnHover
               showConnectorName={showConnectorName}
+              hideFavorites={hideFavorites}
             />
           </div>
         </div>
       );
     },
-    [displayRuntimeInfo, forceSingleCol, isConnector, onConnectorSelected, onOperationSelected, showConnectorName]
+    [displayRuntimeInfo, forceSingleCol, hideFavorites, isConnector, onConnectorSelected, onOperationSelected, showConnectorName]
   );
 
   const noResultsText = intl.formatMessage({

@@ -1,30 +1,51 @@
 import type React from 'react';
-import { useContext } from 'react';
-import type { ResourceDetails } from '../state/templates/workflowSlice';
-import { McpWrappedContext } from './McpWizardContext';
+import { useEffect } from 'react';
+import type { ResourceState } from '../state/mcp/resourceSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import type { AppDispatch, RootState } from '../state/mcp/store';
+import { setInitialData } from '../state/mcp/resourceSlice';
+import { initializeMcpServices, type McpServiceOptions } from '../actions/bjsworkflow/mcp';
 
 export interface McpDataProviderProps {
-  resourceDetails: ResourceDetails; //TODO: set up the mcp store and store this.
-  // services: any;  // TODO
+  resourceDetails: ResourceState;
+  services: McpServiceOptions;
+  onResourceChange?: () => void;
   children?: React.ReactNode;
 }
 
-const DataProviderInner = ({ children }: McpDataProviderProps) => {
+const DataProviderInner = ({ children }: { children?: React.ReactNode }) => {
   return <>{children}</>;
 };
 
-export const McpDataProvider = (props: McpDataProviderProps) => {
-  const wrapped = useContext(McpWrappedContext);
+export const McpDataProvider = ({ resourceDetails, services, onResourceChange, children }: McpDataProviderProps) => {
+  const dispatch = useDispatch<AppDispatch>();
 
-  if (!wrapped) {
-    throw new Error('McpDataProvider must be used inside of a McpWrappedContext');
-  }
+  const { logicAppName, servicesInitialized } = useSelector((state: RootState) => ({
+    logicAppName: state.resource.logicAppName,
+    servicesInitialized: state.mcpOptions.servicesInitialized,
+  }));
 
-  // TODO: initialize services in useEffect
-  //  then, uncomment below
-  // if (!servicesInitialized) {
-  //   return null;
-  // }
+  useEffect(() => {
+    if (!servicesInitialized && services) {
+      dispatch(initializeMcpServices(services));
+    }
+  }, [dispatch, servicesInitialized, services]);
 
-  return <DataProviderInner {...props} />;
+  useEffect(() => {
+    dispatch(
+      setInitialData({
+        subscriptionId: resourceDetails.subscriptionId,
+        resourceGroup: resourceDetails.resourceGroup,
+        location: resourceDetails.location,
+      })
+    );
+  }, [dispatch, resourceDetails]);
+
+  useEffect(() => {
+    if (onResourceChange && logicAppName !== undefined) {
+      onResourceChange();
+    }
+  }, [logicAppName, onResourceChange, resourceDetails]);
+
+  return <DataProviderInner>{children}</DataProviderInner>;
 };

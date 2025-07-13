@@ -4,11 +4,9 @@ import { useDispatch } from 'react-redux';
 import type { ElkExtendedEdge } from 'elkjs/lib/elk-api';
 import { EdgeLabelRenderer, type EdgeProps, type XYPosition } from '@xyflow/react';
 import { css } from '@fluentui/utilities';
-import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import {
   containsIdTag,
   removeIdTag,
-  RUN_AFTER_STATUS,
   useEdgeIndex,
   guid,
   useNodeGlobalPosition,
@@ -17,14 +15,14 @@ import {
 } from '@microsoft/logic-apps-shared';
 
 import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
-import { useActionMetadata, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
-import { DropZone } from './dropzone';
+import { useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
 import { ArrowCap } from './dynamicsvgs/arrowCap';
-import { RunAfterIndicator } from './runAfterIndicator';
 import { useIsNodeSelectedInOperationPanel } from '../../core/state/panel/panelSelectors';
 import { removeEdgeFromRunAfterOperation } from '../../core/actions/bjsworkflow/runafter';
 import { EdgePathContextMenu, useContextMenu } from './edgePathContextMenu';
-import type { AppDispatch } from '../../core';
+import { changePanelNode, type AppDispatch } from '../../core';
+import { Button } from '@fluentui/react-components';
+import { HandoffIcon } from './dynamicsvgs/handoffIcon';
 
 interface EdgeContentProps {
   x: number;
@@ -36,23 +34,44 @@ interface EdgeContentProps {
   tabIndex?: number;
 }
 
-const EdgeContent = (props: EdgeContentProps) => (
-  <EdgeLabelRenderer>
-    <div
-      style={{
-        width: edgeContentWidth,
-        height: edgeContentHeight,
-        position: 'absolute',
-        left: props.x,
-        top: props.y,
-        pointerEvents: 'all',
-        zIndex: 100,
-      }}
-    >
-      <DropZone graphId={props.graphId} parentId={props.parentId} childId={props.childId} isLeaf={props.isLeaf} tabIndex={props.tabIndex} />
-    </div>
-  </EdgeLabelRenderer>
-);
+const EdgeContent = (props: EdgeContentProps) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const onClick = useCallback(() => {
+    const handoffNodeId = `handoff_from_${props.parentId}_to_${props.childId}`;
+    dispatch(changePanelNode(handoffNodeId));
+  }, [dispatch, props.parentId, props.childId]);
+
+  return (
+    <EdgeLabelRenderer>
+      <div
+        style={{
+          width: edgeContentWidth,
+          height: edgeContentHeight,
+          position: 'absolute',
+          left: props.x,
+          top: props.y,
+          pointerEvents: 'all',
+          zIndex: 100,
+        }}
+      >
+        <Button
+          icon={<HandoffIcon />}
+          appearance="primary"
+          size="small"
+          shape="circular"
+          onClick={onClick}
+          style={
+            {
+              '--colorBrandBackground': '#3352b9',
+              '--colorBrandBackgroundHover': '#1438ae',
+              '--colorBrandBackgroundPressed': '#0f2d8b',
+            } as any
+          }
+        />
+      </div>
+    </EdgeLabelRenderer>
+  );
+};
 
 export interface LogicAppsEdgeProps {
   id: string;
@@ -65,34 +84,14 @@ export interface LogicAppsEdgeProps {
 const edgeContentHeight = 24;
 const edgeContentWidth = 24;
 
-const runAfterWidth = 48;
-const runAfterHeight = 12;
-
-const BezierEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({ id, source, target, style = {} }) => {
+const HandoffEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({ id, source, target, style = {} }) => {
   const dispatch = useDispatch<AppDispatch>();
   const readOnly = useReadOnly();
-  const operationData = useActionMetadata(target) as LogicAppsV2.ActionDefinition;
 
   const nodeMetadata = useNodeMetadata(source);
   const sourceId = containsIdTag(source) ? removeIdTag(source) : source;
   const targetId = containsIdTag(target) ? removeIdTag(target) : target;
   const graphId = (containsIdTag(source) ? removeIdTag(source) : undefined) ?? nodeMetadata?.graphId ?? '';
-
-  const filteredRunAfters: Record<string, string[]> = useMemo(
-    () =>
-      Object.entries(operationData?.runAfter ?? {}).reduce((pv: Record<string, string[]>, [id, cv]) => {
-        if ((cv ?? []).some((status) => status.toUpperCase() !== RUN_AFTER_STATUS.SUCCEEDED)) {
-          pv[id] = cv;
-        }
-
-        return pv;
-      }, {}),
-    [operationData?.runAfter]
-  );
-
-  const runAfterStatuses = useMemo(() => filteredRunAfters?.[source] ?? [], [filteredRunAfters, source]);
-  const runAfterCount = Object.keys(filteredRunAfters).length;
-  const showRunAfter = runAfterStatuses.length && runAfterCount < 6;
 
   const edgeData = useEdgesData(id);
 
@@ -108,22 +107,6 @@ const BezierEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({ id, source, targe
     }));
   }, [edgeData?.data?.elkEdge, rootOffset.x, rootOffset.y]);
 
-  const firstPoint = useMemo(() => splinePoints[0] || { x: 0, y: 0 }, [splinePoints]);
-  const lastPoint = useMemo(() => splinePoints[splinePoints.length - 1] || { x: 0, y: 0 }, [splinePoints]);
-  const isInverted = useMemo(() => {
-    // If first point is below last point
-    return firstPoint.y > lastPoint.y;
-  }, [firstPoint, lastPoint]);
-
-  const statusPosition = useMemo(() => {
-    const statusX = firstPoint.x - runAfterWidth / 2;
-    let statusY = firstPoint.y - runAfterHeight;
-    if (!isInverted) {
-      statusY += runAfterHeight;
-    }
-    return { x: statusX, y: statusY };
-  }, [firstPoint.x, firstPoint.y, isInverted]);
-
   // Create an SVG path string
   const splinePath = useMemo(() => buildSvgSpline(splinePoints), [splinePoints]);
 
@@ -131,13 +114,14 @@ const BezierEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({ id, source, targe
 
   const isSourceSelected = useIsNodeSelectedInOperationPanel(sourceId);
   const isTargetSelected = useIsNodeSelectedInOperationPanel(targetId);
+  const isHandoffSelected = useIsNodeSelectedInOperationPanel(`handoff_from_${sourceId}_to_${targetId}`);
 
   const contextMenu = useContextMenu();
   const contextSelected = useMemo(() => contextMenu.isShowing, [contextMenu.isShowing]);
 
   const selected = useMemo(
-    () => isSourceSelected || isTargetSelected || contextSelected,
-    [isSourceSelected, isTargetSelected, contextSelected]
+    () => isSourceSelected || isTargetSelected || isHandoffSelected || contextSelected,
+    [isSourceSelected, isTargetSelected, isHandoffSelected, contextSelected]
   );
 
   const deleteEdge = useCallback(() => {
@@ -171,7 +155,9 @@ const BezierEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({ id, source, targe
     (percent: number) => {
       if (pathReady && !!pathRef.current) {
         const totalLength = pathRef.current.getTotalLength();
-        return pathRef.current.getPointAtLength(totalLength * percent);
+        if (totalLength > 0) {
+          return pathRef.current.getPointAtLength(totalLength * percent);
+        }
       }
       return { x: 0, y: 0 };
       // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -209,7 +195,7 @@ const BezierEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({ id, source, targe
       <defs>
         <marker
           id={markerId}
-          className={colorClass}
+          className={css('handoff', colorClass)}
           viewBox="0 0 20 20"
           refX="6"
           refY="5"
@@ -225,9 +211,10 @@ const BezierEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({ id, source, targe
         id={id}
         ref={pathRef}
         style={style}
-        className={css('react-flow__edge-path', colorClass)}
+        className={css('react-flow__edge-path', 'handoff', colorClass)}
         d={splinePath}
-        strokeDasharray={showRunAfter ? '4' : '0'}
+        strokeDasharray={'4 6'}
+        strokeLinecap={'round'}
         markerEnd={`url(#${markerId})`}
         onClick={contextMenu.handle}
         onContextMenu={contextMenu.handle}
@@ -276,21 +263,8 @@ const BezierEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({ id, source, targe
           tabIndex={tabIndex}
         />
       )}
-
-      {/* RUN AFTER INDICATOR */}
-      {showRunAfter ? (
-        <foreignObject
-          id="msla-run-after-traffic-light"
-          width={runAfterWidth}
-          height={runAfterHeight}
-          x={statusPosition.x}
-          y={statusPosition.y}
-        >
-          <RunAfterIndicator statuses={runAfterStatuses} sourceNodeId={source} />
-        </foreignObject>
-      ) : null}
     </>
   );
 };
 
-export default memo(BezierEdge);
+export default memo(HandoffEdge);
