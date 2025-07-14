@@ -1,4 +1,4 @@
-import { Button, Divider, Menu, MenuItem, MenuList, MenuPopover, MenuTrigger, MenuButton } from '@fluentui/react-components';
+import { Button, Divider, Menu, MenuItem, MenuList, MenuPopover, MenuTrigger, MenuButton, Spinner } from '@fluentui/react-components';
 import type { ReactNode } from 'react';
 
 interface TemplateFooterButtonProps {
@@ -15,6 +15,7 @@ interface TemplateFooterButtonProps {
     onClick: () => void;
     disabled?: boolean;
   }[];
+  loading?: boolean;
 }
 
 export interface TemplatePanelFooterProps {
@@ -73,6 +74,7 @@ const FooterButton = ({
   menuItems,
   icon,
   className,
+  loading,
 }: TemplateFooterButtonProps & { buttonIndex: number; style?: React.CSSProperties }) => {
   if (hide) {
     return null;
@@ -81,7 +83,7 @@ const FooterButton = ({
     return (
       <Menu positioning="below-end">
         <MenuTrigger disableButtonEnhancement>
-          <MenuButton style={style} icon={icon} appearance={appearance} disabled={disabled}>
+          <MenuButton style={style} icon={loading ? <Spinner size="tiny" /> : icon} appearance={appearance} disabled={disabled || loading}>
             {text}
           </MenuButton>
         </MenuTrigger>
@@ -106,12 +108,12 @@ const FooterButton = ({
 
   return (
     <Button
-      icon={icon}
+      icon={loading ? <Spinner size="tiny" /> : icon}
       className={className}
       style={style}
       appearance={appearance}
       onClick={onClick}
-      disabled={disabled}
+      disabled={disabled || loading}
       data-testid={`template-footer-button-${buttonIndex}`}
       data-automation-id={`template-footer-button-${buttonIndex}`}
     >

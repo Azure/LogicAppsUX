@@ -9,7 +9,7 @@ interface ConnectorItemProps {
   displayName: string;
   connectionName: string;
   status: 'connected' | 'disconnected';
-  icon: string;
+  icon?: string;
   onEdit: (connectorId: string) => void;
   onDelete: (connectorId: string) => void;
 }
