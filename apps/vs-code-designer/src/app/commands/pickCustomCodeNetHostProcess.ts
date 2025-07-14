@@ -121,7 +121,7 @@ export async function pickCustomCodeNetHostProcessInternal(
   return customCodeNetHostProcess;
 }
 
-async function pickNetHostChildProcess(taskInfo: IRunningFuncTask, isCodeless: boolean): Promise<string | undefined> {
+export async function pickNetHostChildProcess(taskInfo: IRunningFuncTask, isCodeless: boolean): Promise<string | undefined> {
   const funcPid = Number(await pickChildProcess(taskInfo));
   if (!funcPid) {
     return undefined;
