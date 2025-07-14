@@ -1,6 +1,30 @@
 import { makeStyles, tokens } from '@fluentui/react-components';
 
 export const useExportStyles = makeStyles({
+  exportWorkflowsPanel: {
+    display: 'flex',
+    maxHeight: '65%',
+  },
+
+  exportWorkflowsPanelFilters: {
+    marginTop: '15px',
+  },
+
+  exportWorkflowsPanelDivider: {
+    padding: `0 ${tokens.spacingHorizontalXL}`,
+    ':after': {
+      width: '3px',
+    },
+  },
+
+  exportWorkflowsPanelLimitInfo: {
+    marginTop: `${tokens.spacingVerticalMNudge}`,
+    '.ms-MessageBar-text': {
+      display: 'inline-flex',
+      alignItems: 'center',
+    },
+  },
+
   exportContainer: {
     height: '100vh',
     padding: ` 0 ${tokens.spacingVerticalXL}`,

@@ -1,6 +1,7 @@
 import { SearchableDropdown } from '../../components/searchableDropdown';
 import { TextField } from '@fluentui/react';
 import { useIntl } from 'react-intl';
+import '../export.less';
 
 export const Filters: React.FC<any> = ({ dropdownOptions, onChangeResourceGroup, onChangeSearch, isDataLoading }) => {
   const intl = useIntl();

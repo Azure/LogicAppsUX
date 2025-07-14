@@ -17,7 +17,7 @@ import {
   updateSelectedItems,
 } from './helper';
 import { SelectedList } from './selectedList';
-import { Separator, ShimmeredDetailsList, SelectionMode, Selection, MessageBar, MessageBarType } from '@fluentui/react';
+import { ShimmeredDetailsList, SelectionMode, Selection, MessageBar, MessageBarType } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { useMemo, useRef, useState, useEffect, useContext } from 'react';
@@ -25,10 +25,14 @@ import { useIntl } from 'react-intl';
 import { useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { LargeText, XLargeText } from '@microsoft/designer-ui';
+import { useExportStyles } from '../exportStyles';
+import { Divider } from '@fluentui/react-components';
+import '../export.less';
 
 export const WorkflowsSelection: React.FC = () => {
   const vscode = useContext(VSCodeContext);
   const workflowState = useSelector((state: RootState) => state.workflow);
+  const styles = useExportStyles();
   const { baseUrl, accessToken, exportData, cloudHost } = workflowState;
   const { selectedSubscription, selectedIse, selectedWorkflows, location } = exportData;
 
@@ -198,7 +202,7 @@ export const WorkflowsSelection: React.FC = () => {
   const limitInfo = useMemo(() => {
     return selectedWorkflows.length >= 15 ? (
       <MessageBar
-        className="msla-export-workflows-panel-limit-selection"
+        className={styles.exportWorkflowsPanelLimitInfo}
         messageBarType={MessageBarType.info}
         isMultiline={true}
         messageBarIconProps={{
@@ -212,7 +216,7 @@ export const WorkflowsSelection: React.FC = () => {
         {intlText.LIMIT_INFO}
       </MessageBar>
     ) : null;
-  }, [intlText.LIMIT_INFO, selectedWorkflows]);
+  }, [intlText.LIMIT_INFO, selectedWorkflows.length, styles.exportWorkflowsPanelLimitInfo]);
 
   const filters = useMemo(() => {
     const onChangeSearch = (_event: React.FormEvent<HTMLDivElement>, newSearchString: string) => {
@@ -288,19 +292,19 @@ export const WorkflowsSelection: React.FC = () => {
   };
 
   return (
-    <div className="msla-export-workflows">
-      <div className="msla-export-workflows-panel">
-        <div className="msla-export-workflows-panel-list">
+    <>
+      <div className={styles.exportWorkflowsPanel}>
+        <div className={styles.exportWorkflowsPanelFilters}>
           <XLargeText style={{ display: 'block' }} text={intlText.SELECT_TITLE} />
           <LargeText style={{ display: 'block' }} text={intlText.SELECT_DESCRIPTION} />
           {limitInfo}
           {filters}
           {workflowsList}
         </div>
-        <Separator vertical className="msla-export-workflows-panel-divider" />
+        <Divider vertical className={styles.exportWorkflowsPanelDivider} />
         <SelectedList isLoading={isWorkflowsLoading || renderWorkflows === null} deselectWorkflow={deselectWorkflow} />
       </div>
       <AdvancedOptions />
-    </div>
+    </>
   );
 };
