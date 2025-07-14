@@ -93,6 +93,7 @@ export interface NodeDependencies {
 export interface OperationMetadata {
   iconUri: string;
   brandColor: string;
+  description?: string;
 }
 
 export const ErrorLevel = {
@@ -628,6 +629,12 @@ export const operationMetadataSlice = createSlice({
       const { id } = action.payload;
       delete state.operationInfo[id];
     },
+    deinitializeOperationInfos: (state, action: PayloadAction<{ ids: string[] }>) => {
+      const { ids } = action.payload;
+      for (const operationId of ids) {
+        delete state.operationInfo[operationId];
+      }
+    },
     deinitializeNodes: (state, action: PayloadAction<string[]>) => {
       for (const id of action.payload) {
         delete state.inputParameters[id];
@@ -803,6 +810,7 @@ export const {
   updateRepetitionContext,
   updateErrorDetails,
   deinitializeOperationInfo,
+  deinitializeOperationInfos,
   deinitializeNodes,
   updateDynamicDataLoadStatus,
 } = operationMetadataSlice.actions;

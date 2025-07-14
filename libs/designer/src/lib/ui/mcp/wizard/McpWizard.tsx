@@ -14,6 +14,11 @@ import { OperationItem } from './OperationItem';
 import { useMemo, useCallback, useEffect, useState } from 'react';
 import { selectConnectorId, selectOperations } from '../../../core/state/mcp/connector/connectorSlice';
 import { getConnector } from '../../../core/queries/operation';
+import {
+  deinitializeNodes,
+  deinitializeOperationInfo,
+  deinitializeOperationInfos,
+} from '../../..//core/state/operation/operationMetadataSlice';
 import type { Connector } from '@microsoft/logic-apps-shared';
 import type { TemplatePanelFooterProps } from '@microsoft/designer-ui';
 import { TemplatesPanelFooter } from '@microsoft/designer-ui';
@@ -119,10 +124,25 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
     [dispatch]
   );
 
-  const handleDeleteConnector = useCallback((connectorId: string) => {
-    // TODO: Implement delete connector logic
-    console.log('Delete connector:', connectorId);
-  }, []);
+  const handleDeleteConnector = useCallback(
+    (connectorId: string) => {
+      const operationIdsToDelete = Object.entries(operationInfos)
+        .filter(([_, info]) => info?.connectorId === connectorId)
+        .map(([operationId, _]) => operationId);
+
+      if (operationIdsToDelete.length > 0) {
+        dispatch(deinitializeNodes(operationIdsToDelete));
+        dispatch(deinitializeOperationInfos({ ids: operationIdsToDelete }));
+      }
+
+      setConnectorsMap((prev) => {
+        const newMap = { ...prev };
+        delete newMap[connectorId];
+        return newMap;
+      });
+    },
+    [operationInfos, dispatch]
+  );
 
   const handleEditOperation = useCallback(
     (operationId: string) => {
@@ -135,10 +155,13 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
     [dispatch]
   );
 
-  const handleDeleteOperation = useCallback((operationId: string) => {
-    // TODO: Implement delete operation logic
-    console.log('Delete operation:', operationId);
-  }, []);
+  const handleDeleteOperation = useCallback(
+    (operationId: string) => {
+      dispatch(deinitializeOperationInfo({ id: operationId }));
+      dispatch(deinitializeNodes([operationId]));
+    },
+    [dispatch]
+  );
 
   const onRegisterCompleted = useCallback(() => {
     resetQueriesOnRegisterMcpServer(subscriptionId, resourceGroup, logicAppName as string);
