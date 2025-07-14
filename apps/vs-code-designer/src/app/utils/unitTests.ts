@@ -26,14 +26,21 @@ import { executeCommand } from './funcCoreTools/cpUtils';
 import { getGlobalSetting } from './vsCodeConfig/settings';
 
 /**
- * Saves the unit test definition for a workflow.
- * @param {string} projectPath The path of the project.
- * @param {string} workflowName The name of the workflow.
- * @param {string} unitTestName The name of the unit test.
- * @param {any} unitTestDefinition The unit test definition.
- * @returns A Promise that resolves when the unit test definition is saved.
+ * Saves a unit test definition for a workflow to the file system.
+ *
+ * Creates the necessary directory structure and writes the unit test definition as a JSON file.
+ * Displays a progress notification while saving and handles errors with user-friendly messages.
+ *
+ * @param context - The action context for telemetry and error handling
+ * @param projectPath - The absolute path to the project directory
+ * @param workflowName - The name of the workflow being tested
+ * @param unitTestName - The name of the unit test
+ * @param unitTestDefinition - The unit test definition object to be saved as JSON
+ * @returns A promise that resolves when the unit test is successfully saved
+ * @throws Will throw an error if the file cannot be written to the file system
  */
 export const saveUnitTestDefinition = async (
+  context: IActionContext,
   projectPath: string,
   workflowName: string,
   unitTestName: string,
@@ -62,10 +69,10 @@ export const saveUnitTestDefinition = async (
           { uri: testsDirectory }
         );
       } catch (error) {
-        vscode.window.showErrorMessage(
-          `${localize('saveFailure', 'Unit Test Definition not saved.')} ${error.message}`,
-          localize('OK', 'OK')
-        );
+        const errorMessage = error instanceof Error ? error.message : typeof error === 'string' ? error : 'Unknown error';
+        const localizedError = localize('saveFailure', 'Unit Test Definition not saved. ') + errorMessage;
+        context.telemetry.properties.saveUnitTestError = localizedError;
+        vscode.window.showErrorMessage(`${localizedError}`, localize('OK', 'OK'));
         throw error;
       }
     });
