@@ -173,28 +173,28 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
   private async _handleWebviewMsg(msg: any) {
     switch (msg.command) {
       case ExtensionCommand.initialize: {
+        this.sendMsgToWebview({
+          command: ExtensionCommand.initialize_frame,
+          data: {
+            project: ProjectName.designer,
+            panelMetadata: this.panelMetadata,
+            connectionData: this.connectionData,
+            baseUrl: this.baseUrl,
+            workflowRuntimeBaseUrl: this.workflowRuntimeBaseUrl,
+            apiVersion: this.apiVersion,
+            apiHubServiceDetails: this.apiHubServiceDetails,
+            readOnly: this.readOnly,
+            isLocal: this.isLocal,
+            isMonitoringView: this.isMonitoringView,
+            workflowDetails: this.workflowDetails,
+            oauthRedirectUrl: this.oauthRedirectUrl,
+            hostVersion: ext.extensionVersion,
+            isUnitTest: this.isUnitTest,
+            unitTestDefinition: this.unitTestDefinition,
+            runId: this.runId,
+          },
+        });
         await callWithTelemetryAndErrorHandling('InitializeWorkflowFromDesigner', async (activateContext: IActionContext) => {
-          this.sendMsgToWebview({
-            command: ExtensionCommand.initialize_frame,
-            data: {
-              project: ProjectName.designer,
-              panelMetadata: this.panelMetadata,
-              connectionData: this.connectionData,
-              baseUrl: this.baseUrl,
-              workflowRuntimeBaseUrl: this.workflowRuntimeBaseUrl,
-              apiVersion: this.apiVersion,
-              apiHubServiceDetails: this.apiHubServiceDetails,
-              readOnly: this.readOnly,
-              isLocal: this.isLocal,
-              isMonitoringView: this.isMonitoringView,
-              workflowDetails: this.workflowDetails,
-              oauthRedirectUrl: this.oauthRedirectUrl,
-              hostVersion: ext.extensionVersion,
-              isUnitTest: this.isUnitTest,
-              unitTestDefinition: this.unitTestDefinition,
-              runId: this.runId,
-            },
-          });
           if (!this.isUnitTest) {
             await this.validateWorkflow(activateContext, this.panelMetadata.workflowContent);
           }
