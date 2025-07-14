@@ -82,6 +82,7 @@ export abstract class InitCodeProject extends AzureWizardExecuteStep<IProjectWiz
         request: 'launch',
         funcRuntime: version === FuncVersion.v1 ? 'clr' : 'coreclr',
         customCodeRuntime: customCodeTargetFramework === TargetFramework.Net8 ? 'coreclr' : 'clr',
+        isCodeless: true,
       };
     }
 

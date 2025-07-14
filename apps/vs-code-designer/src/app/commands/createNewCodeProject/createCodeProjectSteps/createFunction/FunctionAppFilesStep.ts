@@ -228,6 +228,7 @@ export class FunctionAppFilesStep extends AzureWizardPromptStep<IProjectWizardCo
             return {
               ...debugConfig,
               customCodeRuntime: targetFramework === TargetFramework.Net8 ? 'coreclr' : 'clr',
+              isCodeless: true,
             };
           }
           return debugConfig;
@@ -239,6 +240,7 @@ export class FunctionAppFilesStep extends AzureWizardPromptStep<IProjectWizardCo
             request: 'launch',
             funcRuntime: funcVersion === FuncVersion.v1 ? 'clr' : 'coreclr',
             customCodeRuntime: targetFramework === TargetFramework.Net8 ? 'coreclr' : 'clr',
+            isCodeless: true,
           },
           ...debugConfigs.filter(
             (debugConfig) => debugConfig.request !== 'attach' || debugConfig.processId !== `\${command:${extensionCommand.pickProcess}}`
