@@ -105,6 +105,7 @@ export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionW
               ...debugConfig,
               customCodeRuntime: 'coreclr',
               funcRuntime: 'coreclr',
+              isCodeless: false,
             };
           }
           return debugConfig;
@@ -116,6 +117,7 @@ export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionW
             request: 'launch',
             funcRuntime: 'coreclr',
             customCodeRuntime: 'coreclr',
+            isCodeless: false,
           },
           ...debugConfigs.filter(
             (debugConfig) => debugConfig.request !== 'attach' || debugConfig.processId !== `\${command:${extensionCommand.pickProcess}}`

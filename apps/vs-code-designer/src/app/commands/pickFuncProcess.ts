@@ -30,11 +30,12 @@ import type { AzExtRequestPrepareOptions } from '@microsoft/vscode-azext-azureut
 import { sendRequestWithTimeout } from '@microsoft/vscode-azext-azureutils';
 import { UserCancelledError, callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { IProcessInfo } from '@microsoft/vscode-extension-logic-apps';
+import { ProjectLanguage, type IProcessInfo } from '@microsoft/vscode-extension-logic-apps';
 import unixPsTree from 'ps-tree';
 import * as vscode from 'vscode';
 import parser from 'yargs-parser';
 import { buildCustomCodeFunctionsProject } from './buildCustomCodeFunctionsProject';
+import { getProjFiles } from '../utils/dotnet/dotnet';
 
 type OSAgnosticProcess = { command: string | undefined; pid: number | string };
 type ActualUnixPS = unixPsTree.PS & { COMM?: string };
@@ -90,6 +91,8 @@ export async function pickFuncProcessInternal(
   await buildCustomCodeFunctionsProject(context, workspaceFolder.uri);
 
   await waitForPrevFuncTaskToStop(workspaceFolder);
+  const projectFiles = await getProjFiles(context, ProjectLanguage.CSharp, projectPath);
+  const isBundleProject: boolean = projectFiles.length > 0 ? false : true;
 
   const preLaunchTaskName: string | undefined = debugConfig.preLaunchTask;
   const tasks: vscode.Task[] = await vscode.tasks.fetchTasks();
@@ -109,7 +112,7 @@ export async function pickFuncProcessInternal(
 
   getPickProcessTimeout(context);
 
-  if (debugTask && !debugConfig['noDebug']) {
+  if (debugTask && !debugConfig['noDebug'] && isBundleProject) {
     await startDebugTask(debugTask, workspaceFolder);
   }
 
