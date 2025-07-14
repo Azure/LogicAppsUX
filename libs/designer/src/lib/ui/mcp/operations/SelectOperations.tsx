@@ -151,7 +151,7 @@ export const SelectOperations = () => {
           selectedOperations={selectedOperationsSet}
           onOperationToggle={handleOperationToggle}
           onSelectAll={handleSelectAll}
-          isLoading={false}
+          isLoading={isLoadingOperations}
           showConnectorName={false}
           hideNoResultsText={false}
           allowSelectAll={true}

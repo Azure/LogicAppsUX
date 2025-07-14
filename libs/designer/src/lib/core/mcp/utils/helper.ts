@@ -1,4 +1,11 @@
-import { LogEntryLevel, LoggerService, type ConnectionReferences, type ConnectionsData } from '@microsoft/logic-apps-shared';
+import {
+  getBrandColorFromConnector,
+  getIconUriFromConnector,
+  LogEntryLevel,
+  LoggerService,
+  type ConnectionReferences,
+  type ConnectionsData,
+} from '@microsoft/logic-apps-shared';
 import { getConnectorWithSwagger } from '../../queries/connections';
 import type { NodeOperation, NodeOperationInputsData } from '../../state/operation/operationMetadataSlice';
 import { getInputParametersFromSwagger, getOutputParametersFromSwagger } from '../../utils/swagger/operation';
@@ -76,6 +83,9 @@ export const initializeOperationDetails = async (
 ): Promise<NodeOperationInputsData | undefined> => {
   try {
     const { connector, parsedSwagger } = await getConnectorWithSwagger(operationInfo.connectorId);
+    const iconUri = getIconUriFromConnector(connector);
+    const brandColor = getBrandColorFromConnector(connector);
+    const swaggerResult = parsedSwagger.getOperationByOperationId(operationInfo.operationId)?.['description'];
     const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromSwagger(
       nodeId,
       /* isTrigger */ false,
@@ -107,6 +117,7 @@ export const initializeOperationDetails = async (
       operationInfo,
       nodeDependencies: { inputs: inputDependencies, outputs: outputDependencies },
       settings,
+      operationMetadata: { iconUri, brandColor, description: swaggerResult, connectorTitle: connector?.properties?.displayName },
     };
   } catch (error: any) {
     LoggerService().log({
