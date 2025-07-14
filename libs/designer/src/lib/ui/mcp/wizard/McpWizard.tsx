@@ -327,7 +327,7 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
       {/* Operations Section */}
       <div className={styles.section}>
         <div className={styles.header}>
-          <Text size={600} weight="semibold">
+          <Text size={400} weight="semibold">
             {INTL_TEXT.operationsTitle}
           </Text>
         </div>
