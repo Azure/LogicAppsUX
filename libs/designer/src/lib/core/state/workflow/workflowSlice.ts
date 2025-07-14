@@ -31,7 +31,6 @@ import {
   equals,
   getRecordEntry,
   RUN_AFTER_STATUS,
-  WORKFLOW_EDGE_TYPES,
   WORKFLOW_NODE_TYPES,
   containsIdTag,
   containsCaseTag,
@@ -61,7 +60,6 @@ export const initialWorkflowState: WorkflowState = {
   nodesMetadata: {},
   collapsedGraphIds: {},
   collapsedActionIds: {},
-  edgeIdsBySource: {},
   idReplacements: {},
   newlyAddedOperations: {},
   isDirty: false,
@@ -572,29 +570,6 @@ export const workflowSlice = createSlice({
         area: 'workflowSlice.ts',
       });
     },
-    buildEdgeIdsBySource: (state: WorkflowState) => {
-      if (!state.graph) {
-        return;
-      }
-
-      const output: Record<string, string[]> = {};
-      const traverseGraph = (graph: WorkflowNode) => {
-        const edges = graph.edges?.filter((e) => e.type !== WORKFLOW_EDGE_TYPES.HIDDEN_EDGE);
-        if (edges) {
-          edges.forEach((edge) => {
-            if (!getRecordEntry(output, edge.source)) {
-              output[edge.source] = [];
-            }
-            getRecordEntry(output, edge.source)?.push(edge.target);
-          });
-        }
-        if (graph.children) {
-          graph.children.forEach((child) => traverseGraph(child));
-        }
-      };
-      traverseGraph(state.graph);
-      state.edgeIdsBySource = output;
-    },
     removeEdgeFromRunAfter: (state: WorkflowState, action: PayloadAction<{ childOperationId: string; parentOperationId: string }>) => {
       const { childOperationId, parentOperationId } = action.payload;
       const parentOperation = getRecordEntry(state.operations, parentOperationId);
@@ -808,7 +783,6 @@ export const {
   addSwitchCase,
   addAgentTool,
   discardAllChanges,
-  buildEdgeIdsBySource,
   updateRunAfter,
   addEdgeFromRunAfter,
   removeEdgeFromRunAfter,

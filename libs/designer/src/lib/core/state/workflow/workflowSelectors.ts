@@ -13,6 +13,7 @@ import type {} from 'reselect';
 import type {} from '@tanstack/react-query';
 import { collapseFlowTree } from './helper';
 import { useTimelineRepetitionOffset } from '../../../ui/MonitoringTimeline/hooks';
+import { useEdges } from '@xyflow/react';
 
 export const getWorkflowState = (state: RootState): WorkflowState => state.workflow;
 
@@ -94,7 +95,7 @@ export const getRootWorkflowGraphForLayout = createSelector(getWorkflowState, (s
 
   let newGraph = rootNode;
 
-  newGraph = removeSingleHandoffTools(newGraph, state);
+  newGraph = handoffToolAdjustment(newGraph, state);
 
   if (Object.keys(collapsedIds).length === 0 && Object.keys(collapsedActionsIds).length === 0) {
     return newGraph;
@@ -153,7 +154,7 @@ const reduceCollapsed =
     }, []);
   };
 
-const removeSingleHandoffTools = (graph: WorkflowNode, state: WorkflowState): WorkflowNode => {
+const handoffToolAdjustment = (graph: WorkflowNode, state: WorkflowState): WorkflowNode => {
   const operations = state.operations;
 
   // Iterate over graph, if any agent action tools only have a single handoff action, log it
@@ -169,11 +170,13 @@ const removeSingleHandoffTools = (graph: WorkflowNode, state: WorkflowState): Wo
           handoffToolIds.push(tool.id);
         }
         // If the tool has a handoff action at all, add a handoff edge to the graph
-        if (toolActions?.some((action) => equals(action.type, commonConstants.NODE.TYPE.HANDOFF))) {
-          if (!graph.edges) {
-            graph.edges = [];
-          }
-          graph.edges.push(createWorkflowEdge(tool.id, child.id, WORKFLOW_EDGE_TYPES.HANDOFF));
+        const firstHandoffAction = toolActions.find((action) => equals(operations[action.id]?.type, commonConstants.NODE.TYPE.HANDOFF));
+        if (firstHandoffAction) {
+          const handoffTarget = (operations[firstHandoffAction.id] as LogicAppsV2.HandoffAction)?.inputs?.name;
+          graph = {
+            ...graph,
+            edges: [...(graph?.edges ?? []), createWorkflowEdge(child.id, handoffTarget, WORKFLOW_EDGE_TYPES.HANDOFF_EDGE)],
+          };
         }
       }
     }
@@ -265,9 +268,10 @@ export const getWorkflowNodeFromGraphState = (state: WorkflowState, actionId: st
 };
 
 export const useNodeEdgeTargets = (nodeId?: string): string[] => {
-  return useSelector(
-    createSelector(getWorkflowState, (state: WorkflowState) => getRecordEntry(state.edgeIdsBySource ?? {}, nodeId ?? '') ?? [])
-  );
+  const edges = useEdges()
+    .filter((edge) => edge.source === nodeId)
+    .filter((edge) => !edge.target.includes('-#footer'));
+  return edges.map((edge) => edge.target);
 };
 
 export const useWorkflowNode = (actionId?: string) => {

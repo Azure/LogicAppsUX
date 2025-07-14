@@ -42,6 +42,7 @@ export type ActionDefinition =
   | UntilAction
   | WaitAction
   | AgentAction
+  | HandoffAction
   | Integration.FlatFileDecodingAction
   | Integration.FlatFileEncodingAction
   | Integration.IntegrationAccountArtifactLookupAction
@@ -845,6 +846,14 @@ export interface AgentInputChannelDefinition {
 
 export interface AgentOutputChannelDefinition {
   action: OperationDefinition;
+}
+
+export interface HandoffAction extends Action {
+  inputs: HandoffActionInputs;
+}
+
+export interface HandoffActionInputs {
+  name: string;
 }
 
 export interface ConnectorAction extends Action {
