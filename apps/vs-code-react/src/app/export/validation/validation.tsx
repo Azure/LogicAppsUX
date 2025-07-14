@@ -6,12 +6,12 @@ import type { AppDispatch, RootState } from '../../../state/store';
 import { VSCodeContext } from '../../../webviewCommunication';
 import { ReviewList } from '../../components/reviewList/reviewList';
 import { getOverallValidationStatus, parseValidationData } from './helper';
-import { MessageBar, MessageBarType } from '@fluentui/react';
 import { useContext, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { LargeText, XLargeText } from '@microsoft/designer-ui';
+import { MessageBar, MessageBarBody } from '@fluentui/react-components';
 
 export const Validation: React.FC = () => {
   const vscode = useContext(VSCodeContext);
@@ -77,8 +77,8 @@ export const Validation: React.FC = () => {
 
   const validationError = useMemo(() => {
     return isError ? (
-      <MessageBar messageBarType={MessageBarType.error} isMultiline={true}>
-        {(error as any)?.message}
+      <MessageBar intent="error" layout={'multiline'}>
+        <MessageBarBody>{(error as any)?.message}</MessageBarBody>
       </MessageBar>
     ) : null;
   }, [isError, error]);

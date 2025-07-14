@@ -10,4 +10,10 @@ export const useExportStyles = makeStyles({
   navigationPanelButton: {
     margin: tokens.spacingHorizontalXL,
   },
+
+  statusItem: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    margin: `${tokens.spacingVerticalMNudge} 0`,
+  },
 });
