@@ -1,19 +1,21 @@
+import { Button } from '@fluentui/react-components';
 import { RouteName, ValidationStatus } from '../../../run-service';
 import { Status } from '../../../state/WorkflowSlice';
 import type { RootState } from '../../../state/store';
 import { VSCodeContext } from '../../../webviewCommunication';
-import { PrimaryButton } from '@fluentui/react';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { useContext } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useExportStyles } from '../exportStyles';
 
 export const Navigation: React.FC = () => {
   const intl = useIntl();
   const vscode = useContext(VSCodeContext);
   const navigate = useNavigate();
   const location = useLocation();
+  const styles = useExportStyles();
 
   const workflowState = useSelector((state: RootState) => state.workflow);
   const { exportData } = workflowState;
@@ -160,21 +162,19 @@ export const Navigation: React.FC = () => {
   const nextText = getNextText();
 
   return (
-    <div className="msla-export-navigation-panel">
-      <PrimaryButton
-        className="msla-export-navigation-panel-button"
-        text={intlText.BACK}
-        ariaLabel={intlText.BACK}
-        onClick={onClickBack}
-        disabled={isBackDisabled()}
-      />
-      <PrimaryButton
-        className="msla-export-navigation-panel-button"
-        text={nextText}
-        ariaLabel={nextText}
+    <div className={styles.navigationPanel}>
+      <Button className={styles.navigationPanelButton} aria-label={intlText.BACK} onClick={onClickBack} disabled={isBackDisabled()}>
+        {intlText.BACK}
+      </Button>
+      <Button
+        className={styles.navigationPanelButton}
+        appearance="primary"
+        aria-label={nextText}
         onClick={onClickNext}
         disabled={isNextDisabled()}
-      />
+      >
+        {nextText}
+      </Button>
     </div>
   );
 };

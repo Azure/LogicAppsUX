@@ -8,12 +8,13 @@ import type { IDropdownOption } from '@fluentui/react';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
+import { useExportStyles } from '../exportStyles';
 
 export const AdvancedOptions: React.FC = () => {
   const workflowState = useSelector((state: RootState) => state.workflow);
   const { exportData } = workflowState;
   const { selectedAdvanceOptions } = exportData;
-
+  const styles = useExportStyles();
   const intl = useIntl();
   const dispatch: AppDispatch = useDispatch();
 
@@ -95,8 +96,8 @@ export const AdvancedOptions: React.FC = () => {
   );
 
   return (
-    <div className="msla-export-workflows-advanced-options">
-      <XLargeText text={intlText.ADVANCED_OPTIONS} className="msla-export-workflows-advanced-options-title" style={{ display: 'block' }} />
+    <div>
+      <XLargeText text={intlText.ADVANCED_OPTIONS} className={styles.exportWorkflowsAdvancedOptionsTitle} style={{ display: 'block' }} />
       <LargeText text={intlText.EXPORT_CONNECTION} style={{ display: 'block' }} />
       <SearchableDropdown
         label={intlText.EXPORT_CONNECTION_DESCRIPTION}
@@ -105,7 +106,7 @@ export const AdvancedOptions: React.FC = () => {
         onChange={onChangeOptions}
         selectedKeys={selectedAdvanceOptions}
         multiSelect
-        className="msla-export-workflows-advanced-options-dropdown"
+        className={styles.exportWorkflowsAdvancedOptionsDropdown}
       />
     </div>
   );

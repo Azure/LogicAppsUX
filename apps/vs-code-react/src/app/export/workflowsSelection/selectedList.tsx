@@ -6,6 +6,7 @@ import { LargeText, MediumText, XLargeText } from '@microsoft/designer-ui';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
+import '../export.less';
 
 export interface ISelectedListProps {
   isLoading: boolean;
