@@ -99,6 +99,13 @@ export async function downloadAndExtractDependency(
         await extractDependency(dependencyFilePath, targetFolder, dependencyName);
         vscode.window.showInformationMessage(localize('successInstall', `Successfully installed ${dependencyName}`));
         if (dependencyName === funcDependencyName) {
+          // Add execute permissions for func and gozip binaries
+          if (process.platform !== Platform.windows) {
+            fs.chmodSync(`${targetFolder}/func`, 0o755);
+            fs.chmodSync(`${targetFolder}/gozip`, 0o755);
+            fs.chmodSync(`${targetFolder}/in-proc8/func`, 0o755);
+            fs.chmodSync(`${targetFolder}/in-proc6/func`, 0o755);
+          }
           await setFunctionsCommand();
           await startAllDesignTimeApis();
         }
