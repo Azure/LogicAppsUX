@@ -43,6 +43,7 @@ describe('operationMetadataSlice', () => {
       loadStatus: {
         nodesInitialized: false,
         nodesAndDynamicDataInitialized: false,
+        isInitializingOperations: false,
       },
     };
     vi.clearAllMocks();

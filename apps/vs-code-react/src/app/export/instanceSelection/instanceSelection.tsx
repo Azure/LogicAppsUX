@@ -13,13 +13,14 @@ import { useIntl } from 'react-intl';
 import { useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { LargeText, XLargeText } from '@microsoft/designer-ui';
+import { useExportStyles } from '../exportStyles';
 
 export const InstanceSelection: React.FC = () => {
   const vscode = useContext(VSCodeContext);
   const workflowState = useSelector((state: RootState) => state.workflow);
   const { baseUrl, accessToken, exportData, cloudHost } = workflowState;
   const { selectedSubscription, selectedIse, location } = exportData;
-
+  const styles = useExportStyles();
   const intl = useIntl();
   const dispatch: AppDispatch = useDispatch();
 
@@ -213,7 +214,7 @@ export const InstanceSelection: React.FC = () => {
   );
 
   return (
-    <div className="msla-export-instance-panel">
+    <div>
       <XLargeText text={intlText.SELECT_TITLE} style={{ display: 'block' }} />
       <LargeText text={intlText.SELECT_DESCRIPTION} style={{ display: 'block' }} />
       <SearchableDropdown
@@ -223,7 +224,7 @@ export const InstanceSelection: React.FC = () => {
         disabled={isSubscriptionsLoading || !subscriptions.length}
         onChange={onChangeSubscriptions}
         selectedKey={selectedSubscription !== '' ? selectedSubscription : null}
-        className="msla-export-instance-panel-dropdown"
+        className={styles.instancePanelDropdown}
         isLoading={subscriptionLoading}
         searchBoxPlaceholder={intlText.SEARCH_SUBSCRIPTION}
       />
@@ -240,7 +241,7 @@ export const InstanceSelection: React.FC = () => {
         }
         onChange={onChangeLocation}
         selectedKey={selectedIse !== '' ? `ise:${selectedIse}` : location ? `region:${location}` : null}
-        className="msla-export-instance-panel-dropdown"
+        className={styles.instancePanelDropdown}
         isLoading={iseLoading}
         searchBoxPlaceholder={intlText.SEARCH_LOCATION}
       />
