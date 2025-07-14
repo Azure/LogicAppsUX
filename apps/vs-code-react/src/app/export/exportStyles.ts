@@ -42,4 +42,32 @@ export const useExportStyles = makeStyles({
     width: '400px',
     margin: `${tokens.spacingVerticalL} 0`,
   },
+
+  exportSummaryContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    height: '75%',
+  },
+
+  exportSummaryFileLocation: {
+    marginTop: tokens.spacingVerticalMNudge,
+    display: 'flex',
+    alignItems: 'flex-end',
+  },
+
+  exportSummaryFileLocationText: {
+    width: '40%',
+  },
+
+  exportSummaryFileLocationButton: {
+    margin: `0 ${tokens.spacingHorizontalMNudge}`,
+  },
+
+  exportSummaryPackageWarning: {
+    marginTop: tokens.spacingVerticalMNudge,
+    '.ms-MessageBar-text': {
+      display: 'inline-flex',
+      alignItems: 'center',
+    },
+  },
 });

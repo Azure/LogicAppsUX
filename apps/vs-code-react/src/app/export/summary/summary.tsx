@@ -13,11 +13,13 @@ import { useIntl } from 'react-intl';
 import { useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { LargeText, XLargeText } from '@microsoft/designer-ui';
+import { useExportStyles } from '../exportStyles';
 
 export const Summary: React.FC = () => {
   const intl = useIntl();
   const vscode = useContext(VSCodeContext);
   const dispatch: AppDispatch = useDispatch();
+  const styles = useExportStyles();
   const workflowState = useSelector((state: RootState) => state.workflow);
   const { baseUrl, accessToken, exportData, cloudHost } = workflowState;
   const { selectedWorkflows, location, selectedSubscription, targetDirectory, packageUrl, selectedAdvanceOptions } = exportData;
@@ -113,10 +115,10 @@ export const Summary: React.FC = () => {
         label={intlText.EXPORT_LOCATION}
         placeholder={targetDirectory.path}
         disabled
-        className="msla-export-summary-file-location-text"
+        className={styles.exportSummaryFileLocationText}
       />
     );
-  }, [targetDirectory, intlText.EXPORT_LOCATION]);
+  }, [intlText.EXPORT_LOCATION, targetDirectory.path, styles.exportSummaryFileLocationText]);
 
   const detailsList = useMemo(() => {
     const emptyText = (
@@ -145,23 +147,23 @@ export const Summary: React.FC = () => {
 
   const packageWarning = useMemo(() => {
     return isError && !packageUrl ? (
-      <MessageBar className="msla-export-summary-package-warning" messageBarType={MessageBarType.error} isMultiline={true}>
+      <MessageBar className={styles.exportSummaryPackageWarning} messageBarType={MessageBarType.error} isMultiline={true}>
         {intlText.PACKAGE_WARNING}
         <br />
         {(summaryError as any)?.message ?? null}
       </MessageBar>
     ) : null;
-  }, [packageUrl, intlText.PACKAGE_WARNING, isError, summaryError]);
+  }, [isError, packageUrl, styles.exportSummaryPackageWarning, intlText.PACKAGE_WARNING, summaryError]);
 
   return (
-    <div className="msla-export-summary">
+    <div className={styles.exportSummaryContainer}>
       <XLargeText text={intlText.COMPLETE_EXPORT_TITLE} style={{ display: 'block' }} />
       <LargeText text={intlText.SELECT_LOCATION} style={{ display: 'block' }} />
       {packageWarning}
-      <div className="msla-export-summary-file-location">
+      <div className={styles.exportSummaryFileLocation}>
         {locationText}
         <PrimaryButton
-          className="msla-export-summary-file-location-button"
+          className={styles.exportSummaryFileLocationButton}
           text={intlText.OPEN_FILE_EXPLORER}
           ariaLabel={intlText.OPEN_FILE_EXPLORER}
           onClick={onOpenExplorer}
