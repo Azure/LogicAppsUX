@@ -2,7 +2,6 @@ import { QueryKeys } from '../../run-service';
 import type { RunDisplayItem } from '../../run-service';
 import type { RootState } from '../../state/store';
 import { VSCodeContext } from '../../webviewCommunication';
-import './overview.less';
 import { StandardRunService } from '@microsoft/logic-apps-shared';
 import { Overview, isRunError, mapToRunItem } from '@microsoft/designer-ui';
 import type { Runs } from '@microsoft/logic-apps-shared';
@@ -12,6 +11,7 @@ import { useInfiniteQuery, useMutation } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 import invariant from 'tiny-invariant';
 import { useIntl } from 'react-intl';
+import { useOverviewStyles } from './overviewStyles';
 
 export interface CallbackInfo {
   method?: string;
@@ -22,6 +22,7 @@ export const OverviewApp = () => {
   const vscode = useContext(VSCodeContext);
   const { isWorkflowRuntimeRunning } = workflowState;
   const intl = useIntl();
+  const styles = useOverviewStyles();
 
   const intlText = {
     DEBUG_PROJECT_ERROR: intl.formatMessage({
@@ -122,7 +123,7 @@ export const OverviewApp = () => {
   }, [error, runTriggerError, isWorkflowRuntimeRunning, intlText.DEBUG_PROJECT_ERROR]);
 
   return (
-    <div className="msla-overview">
+    <div className={styles.overviewContainer}>
       <Overview
         corsNotice={workflowState.corsNotice}
         errorMessage={errorMessage}
