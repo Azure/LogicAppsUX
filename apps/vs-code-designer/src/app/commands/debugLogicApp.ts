@@ -36,7 +36,12 @@ export async function debugLogicApp(
   if (debugConfig.customCodeRuntime) {
     let functionLaunchConfig: vscode.DebugConfiguration;
     if (debugConfig.customCodeRuntime === 'coreclr') {
-      const customCodeNetHostProcessId = await pickCustomCodeNetHostProcessInternal(context, workspaceFolder, projectPath);
+      const customCodeNetHostProcessId = await pickCustomCodeNetHostProcessInternal(
+        context,
+        workspaceFolder,
+        projectPath,
+        debugConfig.isCodeless
+      );
       functionLaunchConfig = {
         name: localize('attachToCustomCodeFunc', 'Debug local function'),
         type: debugConfig.customCodeRuntime,
