@@ -31,7 +31,7 @@ export const Status: React.FC = () => {
       );
 
     return (
-      <div key={`index-${finalStatus}`} className={styles.statusItem}>
+      <div key={`status-${index}-${finalStatus}`} className={styles.statusItem}>
         {icon}
         <MediumText text={status ?? ''} style={{ marginLeft: '5px' }} />
       </div>
