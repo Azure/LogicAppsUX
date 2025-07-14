@@ -162,7 +162,7 @@ export const WorkflowsSelection: React.FC = () => {
 
   const workflowsList = useMemo(() => {
     const emptyText = (
-      <LargeText text={intlText.NO_WORKFLOWS} style={{ display: 'block' }} className="msla-export-workflows-panel-list-workflows-empty" />
+      <LargeText text={intlText.NO_WORKFLOWS} style={{ display: 'block' }} className={styles.exportWorkflowsPanelListEmpty} />
     );
 
     const noWorkflows = renderWorkflows !== null && !renderWorkflows.length && !isWorkflowsLoading ? emptyText : null;
@@ -170,7 +170,9 @@ export const WorkflowsSelection: React.FC = () => {
     const enableShimmer = isWorkflowsLoading || renderWorkflows === null;
 
     return (
-      <div className={`msla-export-workflows-panel-list-workflows ${enableShimmer ? 'loading' : ''}`}>
+      <div
+        className={`${styles.exportWorkflowsPanelListWorkflows} ${enableShimmer ? styles.exportWorkflowsPanelListWorkflowsLoading : ''}`}
+      >
         <ShimmeredDetailsList
           items={renderWorkflows || []}
           columns={getListColumns(intlText.NAME, intlText.RESOURCE_GROUP)}
@@ -188,15 +190,18 @@ export const WorkflowsSelection: React.FC = () => {
       </div>
     );
   }, [
-    renderWorkflows,
-    isWorkflowsLoading,
-    selection,
-    intlText.SELECTION,
-    intlText.SELECTION_ALL,
-    intlText.SELECT_WORKFLOW,
     intlText.NO_WORKFLOWS,
     intlText.NAME,
     intlText.RESOURCE_GROUP,
+    intlText.SELECTION,
+    intlText.SELECTION_ALL,
+    intlText.SELECT_WORKFLOW,
+    styles.exportWorkflowsPanelListEmpty,
+    styles.exportWorkflowsPanelListWorkflows,
+    styles.exportWorkflowsPanelListWorkflowsLoading,
+    renderWorkflows,
+    isWorkflowsLoading,
+    selection,
   ]);
 
   const limitInfo = useMemo(() => {
@@ -294,7 +299,7 @@ export const WorkflowsSelection: React.FC = () => {
   return (
     <>
       <div className={styles.exportWorkflowsPanel}>
-        <div className={styles.exportWorkflowsPanelFilters}>
+        <div className={styles.exportWorkflowsPanelList}>
           <XLargeText style={{ display: 'block' }} text={intlText.SELECT_TITLE} />
           <LargeText style={{ display: 'block' }} text={intlText.SELECT_DESCRIPTION} />
           {limitInfo}

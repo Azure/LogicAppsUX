@@ -1,48 +1,9 @@
 .msla-export {
   &-workflows {
     &-panel {
-    
-
-      &-filters {
-        &-input {
-          margin-right: 10px;
-
-          input::placeholder {
-            font-style: normal;
-          }
-        }
-
-        &-dropdown {
-          width: 100%;
-        }
-      }
 
       &-filters > * {
         width: 30%;
-      }
-      &-list {
-        flex: 5 1 auto;
-        display: flex;
-        flex-direction: column;
-        max-width: 75%;
-
-        .loading {
-          .ms-DetailsHeader-cell {
-            pointer-events: none;
-          }
-        }
-
-        &-workflows {
-          overflow: auto;
-          margin: 15px 0;
-          flex: 1;
-
-          &-empty {
-            display: inline-flex;
-            justify-content: center;
-            width: 100%;
-          }
-        }
       }
       &-selected {
         display: flex;

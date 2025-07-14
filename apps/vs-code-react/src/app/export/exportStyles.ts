@@ -7,7 +7,43 @@ export const useExportStyles = makeStyles({
   },
 
   exportWorkflowsPanelFilters: {
+    display: 'flex',
     marginTop: '15px',
+  },
+
+  exportWorkflowsPanelFiltersInput: {
+    marginRight: tokens.spacingHorizontalMNudge,
+    ' input::placeholder': {
+      fontStyle: 'normal',
+    },
+  },
+
+  exportWorkflowsPanelListWorkflows: {
+    overflow: 'auto',
+    margin: '15px 0',
+    flex: 1,
+  },
+  exportWorkflowsPanelListWorkflowsLoading: {
+    '.ms-DetailsHeader-cell': {
+      pointerEvents: 'none',
+    },
+  },
+
+  exportWorkflowsPanelFiltersDropdown: {
+    width: '100%',
+  },
+
+  exportWorkflowsPanelList: {
+    flex: '5 1 auto',
+    display: 'flex',
+    flexDirection: 'column',
+    maxWidth: '75%',
+  },
+
+  exportWorkflowsPanelListEmpty: {
+    display: 'inline-flex',
+    justifyContent: 'center',
+    width: '100%',
   },
 
   exportWorkflowsPanelDivider: {
