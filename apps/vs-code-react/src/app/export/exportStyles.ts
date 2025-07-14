@@ -43,6 +43,14 @@ export const useExportStyles = makeStyles({
     margin: `${tokens.spacingVerticalL} 0`,
   },
 
+  exportWorkflowsAdvancedOptionsTitle: {
+    margin: '15px 0',
+  },
+  exportWorkflowsAdvancedOptionsDropdown: {
+    width: '450px',
+    margin: `${tokens.spacingVerticalL} 0`,
+  },
+
   exportSummaryContainer: {
     display: 'flex',
     flexDirection: 'column',
