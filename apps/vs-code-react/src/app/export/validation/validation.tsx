@@ -12,13 +12,14 @@ import { useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { LargeText, XLargeText } from '@microsoft/designer-ui';
 import { MessageBar, MessageBarBody } from '@fluentui/react-components';
+import { useExportStyles } from '../exportStyles';
 
 export const Validation: React.FC = () => {
   const vscode = useContext(VSCodeContext);
   const workflowState = useSelector((state: RootState) => state.workflow);
   const { baseUrl, accessToken, exportData, cloudHost } = workflowState;
   const { selectedWorkflows, location, selectedSubscription, selectedAdvanceOptions } = exportData;
-
+  const styles = useExportStyles();
   const dispatch: AppDispatch = useDispatch();
   const intl = useIntl();
 
@@ -75,19 +76,20 @@ export const Validation: React.FC = () => {
   const { validationItems = [], validationGroups = [] }: any =
     isValidationLoading || !validationData ? {} : parseValidationData(validationData?.properties, intlText.WORKFLOW_GROUP_DISPLAY_NAME);
 
-  const validationError = useMemo(() => {
-    return isError ? (
+  const validationError = useMemo(
+    () => (
       <MessageBar intent="error" layout={'multiline'}>
         <MessageBarBody>{(error as any)?.message}</MessageBarBody>
       </MessageBar>
-    ) : null;
-  }, [isError, error]);
+    ),
+    [error]
+  );
 
   return (
-    <div className="msla-export-validation">
+    <div className={styles.validationContainer}>
       <XLargeText text={intlText.REVIEW_TITLE} style={{ display: 'block' }} />
       <LargeText text={intlText.REVIEW_DESCRIPTION} style={{ display: 'block' }} />
-      <div className="msla-export-validation-list">
+      <div className={styles.validationList}>
         {isError ? validationError : null}
         <ReviewList isValidationLoading={isValidationLoading} validationItems={validationItems} validationGroups={validationGroups} />
       </div>
