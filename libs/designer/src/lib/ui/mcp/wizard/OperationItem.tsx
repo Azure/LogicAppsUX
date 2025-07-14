@@ -3,19 +3,24 @@ import { Edit24Regular, Delete24Regular } from '@fluentui/react-icons';
 import { useOperationItemStyles } from './styles';
 import { useIntl } from 'react-intl';
 import DefaultIcon from '../../../common/images/recommendation/defaulticon.svg';
+import { useConnector } from '../../../core/state/connection/connectionSelector';
+import { useMemo } from 'react';
 
 interface OperationItemProps {
   operationId: string;
+  connectorId: string;
   operationName: string;
   connectorIcon: string;
-  connectorName: string;
   onEdit: (operationId: string) => void;
   onDelete: (operationId: string) => void;
 }
 
-export const OperationItem = ({ operationId, operationName, connectorIcon, connectorName, onEdit, onDelete }: OperationItemProps) => {
+export const OperationItem = ({ operationId, connectorId, operationName, connectorIcon, onEdit, onDelete }: OperationItemProps) => {
+  const { data: connector } = useConnector(connectorId);
   const styles = useOperationItemStyles();
   const intl = useIntl();
+
+  const connectorName = useMemo(() => connector?.properties?.displayName ?? connectorId, [connector?.properties?.displayName, connectorId]);
 
   const editButtonLabel = intl.formatMessage({
     id: '7EHrJW',

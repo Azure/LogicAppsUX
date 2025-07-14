@@ -3,10 +3,11 @@ import { Edit24Regular, Delete24Regular, Checkmark24Filled } from '@fluentui/rea
 import { useConnectorItemStyles } from './styles';
 import { useIntl } from 'react-intl';
 import DefaultIcon from '../../../common/images/recommendation/defaulticon.svg';
+import { useConnector } from '../../../core/state/connection/connectionSelector';
+import { useMemo } from 'react';
 
 interface ConnectorItemProps {
   connectorId: string;
-  displayName: string;
   connectionName: string;
   status: 'connected' | 'disconnected';
   icon?: string;
@@ -14,9 +15,12 @@ interface ConnectorItemProps {
   onDelete: (connectorId: string) => void;
 }
 
-export const ConnectorItem = ({ connectorId, displayName, connectionName, status, icon, onEdit, onDelete }: ConnectorItemProps) => {
+export const ConnectorItem = ({ connectorId, connectionName, status, icon, onEdit, onDelete }: ConnectorItemProps) => {
   const styles = useConnectorItemStyles();
   const intl = useIntl();
+  const { data: connector } = useConnector(connectorId);
+
+  const connectorName = useMemo(() => connector?.properties?.displayName ?? connectorId, [connector?.properties?.displayName, connectorId]);
 
   const connectionText = intl.formatMessage(
     {
@@ -44,7 +48,7 @@ export const ConnectorItem = ({ connectorId, displayName, connectionName, status
       <div className={styles.connectorIcon}>
         <img
           src={icon ?? DefaultIcon}
-          alt={`${displayName} icon`}
+          alt={`${connectorName} icon`}
           style={{
             width: '24px',
             height: '24px',
@@ -56,7 +60,7 @@ export const ConnectorItem = ({ connectorId, displayName, connectionName, status
       <div className={styles.connectorInfo}>
         <div className={styles.connectorHeader}>
           <Text size={400} weight="semibold">
-            {displayName}
+            {connectorName}
           </Text>
           <Badge
             appearance="filled"

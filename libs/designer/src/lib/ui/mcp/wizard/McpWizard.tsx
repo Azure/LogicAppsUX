@@ -61,7 +61,6 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
     const map: Record<
       string,
       {
-        displayName?: string;
         iconUri?: string;
         connectionName?: string;
         connectionStatus: 'connected' | 'disconnected';
@@ -87,7 +86,6 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
           : 'Default Connection';
 
       map[connectorId] = {
-        displayName: metadata?.connectorTitle,
         iconUri: metadata?.iconUri,
         connectionName,
         connectionStatus,
@@ -307,7 +305,6 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
                   <ConnectorItem
                     key={connectorId}
                     connectorId={connectorId}
-                    displayName={connectorInfo?.displayName ?? connectorId}
                     connectionName={connectorInfo?.connectionName ?? 'Default Connection'}
                     status={connectorInfo?.connectionStatus}
                     icon={connectorInfo?.iconUri}
@@ -361,7 +358,7 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
                     operationId={operationInfo.operationId}
                     operationName={operationInfo.operationId}
                     connectorIcon={metadata?.iconUri}
-                    connectorName={metadata?.connectorTitle ?? operationInfo.connectorId}
+                    connectorId={operationInfo.connectorId}
                     onEdit={handleEditOperation}
                     onDelete={handleDeleteOperation}
                   />

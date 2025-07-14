@@ -94,7 +94,6 @@ export interface OperationMetadata {
   iconUri: string;
   brandColor: string;
   description?: string;
-  connectorTitle?: string;
 }
 
 export const ErrorLevel = {

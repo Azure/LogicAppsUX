@@ -117,7 +117,7 @@ export const initializeOperationDetails = async (
       operationInfo,
       nodeDependencies: { inputs: inputDependencies, outputs: outputDependencies },
       settings,
-      operationMetadata: { iconUri, brandColor, description: swaggerResult, connectorTitle: connector?.properties?.displayName },
+      operationMetadata: { iconUri, brandColor, description: swaggerResult },
     };
   } catch (error: any) {
     LoggerService().log({
