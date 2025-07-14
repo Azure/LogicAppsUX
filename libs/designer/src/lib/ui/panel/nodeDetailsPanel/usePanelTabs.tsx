@@ -24,6 +24,7 @@ import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 import { channelsTab } from './tabs/channelsTab';
+import { handoffTab } from './tabs/handoffTab';
 
 export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
   const intl = useIntl();
@@ -93,6 +94,14 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
     [intl, tabProps, isAgentNode, isA2AWorkflow]
   );
 
+  const handoffTabItem = useMemo(
+    () => ({
+      ...handoffTab(intl, tabProps),
+      visible: isAgentNode && isA2AWorkflow,
+    }),
+    [intl, tabProps, isAgentNode, isA2AWorkflow]
+  );
+
   const codeViewTabItem = useMemo(() => codeViewTab(intl, tabProps), [intl, tabProps]);
 
   const testingTabItem = useMemo(
@@ -138,6 +147,7 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
       parametersTabItem,
       settingsTabItem,
       channelsTabItem,
+      handoffTabItem,
       codeViewTabItem,
       testingTabItem,
       aboutTabItem,
@@ -152,6 +162,7 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
     isUnitTestView,
     aboutTabItem,
     channelsTabItem,
+    handoffTabItem,
     codeViewTabItem,
     monitorRetryTabItem,
     monitoringTabItem,

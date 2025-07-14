@@ -323,7 +323,19 @@ export const workflowSlice = createSlice({
       });
     },
     deleteSwitchCase: (state: WorkflowState, action: PayloadAction<{ caseId: string; nodeId: string }>) => {
-      delete (getRecordEntry(state.operations, action.payload.nodeId) as any).cases?.[action.payload.caseId];
+      const { caseId, nodeId } = action.payload;
+      delete (getRecordEntry(state.operations, nodeId) as any).cases?.[caseId];
+
+      LoggerService().log({
+        level: LogEntryLevel.Verbose,
+        area: 'Designer:Workflow Slice',
+        message: action.type,
+        args: [action.payload],
+      });
+    },
+    deleteAgentTool: (state: WorkflowState, action: PayloadAction<{ toolId: string; agentId: string }>) => {
+      const { toolId, agentId } = action.payload;
+      delete (getRecordEntry(state.operations, agentId) as any).tools?.[toolId];
 
       LoggerService().log({
         level: LogEntryLevel.Verbose,
@@ -789,6 +801,7 @@ export const {
   moveNode,
   deleteNode,
   deleteSwitchCase,
+  deleteAgentTool,
   updateNodeSizes,
   setNodeDescription,
   toggleCollapsedGraphId,

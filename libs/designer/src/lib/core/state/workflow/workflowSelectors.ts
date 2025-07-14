@@ -164,8 +164,16 @@ const removeSingleHandoffTools = (graph: WorkflowNode, state: WorkflowState): Wo
       const tools = child?.children?.filter((_child) => _child.subGraphLocation === 'tools');
       for (const tool of tools ?? []) {
         const toolActions = tool.children?.filter((child) => child.type === WORKFLOW_NODE_TYPES.OPERATION_NODE) ?? [];
+        // If the tool only has a single handoff action, add it to the list to be removed
         if (toolActions?.length === 1 && equals(operations[toolActions[0].id]?.type, commonConstants.NODE.TYPE.HANDOFF)) {
           handoffToolIds.push(tool.id);
+        }
+        // If the tool has a handoff action at all, add a handoff edge to the graph
+        if (toolActions?.some((action) => equals(action.type, commonConstants.NODE.TYPE.HANDOFF))) {
+          if (!graph.edges) {
+            graph.edges = [];
+          }
+          graph.edges.push(createWorkflowEdge(tool.id, child.id, WORKFLOW_EDGE_TYPES.HANDOFF));
         }
       }
     }
@@ -587,4 +595,52 @@ export const getAgentFromCondition = (state: WorkflowState, nodeId: string): str
   }
 
   return state.nodesMetadata[nodeId].parentNodeId;
+};
+
+export const useAllAgentIds = (): string[] => {
+  return useSelector(
+    createSelector(getWorkflowState, (state: WorkflowState) => {
+      return Object.keys(state.operations).filter((id) => equals(state.operations[id]?.type, commonConstants.NODE.TYPE.AGENT));
+    })
+  );
+};
+
+export const useHandoffToolsForAgent = (agentId: string): string[] => {
+  return useSelector(
+    createSelector(getWorkflowState, (state: WorkflowState) => {
+      const agentTools = (state.operations[agentId] as LogicAppsV2.AgentAction)?.tools;
+      const output: string[] = [];
+      for (const [toolId, tool] of Object.entries(agentTools ?? {})) {
+        // If the tool contains a handoff action, add it to the output
+        const toolActions = Object.values(tool.actions ?? {});
+        if (toolActions?.some((action) => equals(action.type, commonConstants.NODE.TYPE.HANDOFF))) {
+          output.push(toolId);
+        }
+      }
+      return output;
+    })
+  );
+};
+
+export const useHandoffActionsForAgent = (agentId: string): any[] => {
+  return useSelector(
+    createSelector(getWorkflowState, (state: WorkflowState) => {
+      const agentTools = (state.operations[agentId] as LogicAppsV2.AgentAction)?.tools;
+      const output: any[] = [];
+      for (const [toolId, tool] of Object.entries(agentTools ?? {})) {
+        // If the tool contains a handoff action, add it to the output
+        for (const [actionId, action] of Object.entries(tool.actions ?? {})) {
+          if (equals(action.type, commonConstants.NODE.TYPE.HANDOFF)) {
+            output.push({
+              ...action,
+              id: actionId,
+              toolId,
+              toolDescription: tool.description,
+            });
+          }
+        }
+      }
+      return output;
+    })
+  );
 };

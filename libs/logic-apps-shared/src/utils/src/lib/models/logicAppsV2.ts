@@ -41,6 +41,7 @@ export type ActionDefinition =
   | TableAction
   | UntilAction
   | WaitAction
+  | AgentAction
   | Integration.FlatFileDecodingAction
   | Integration.FlatFileEncodingAction
   | Integration.IntegrationAccountArtifactLookupAction
