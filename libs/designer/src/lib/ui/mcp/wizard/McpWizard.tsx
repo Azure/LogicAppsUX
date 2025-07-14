@@ -1,5 +1,5 @@
 import { Text, Button, Spinner } from '@fluentui/react-components';
-import { Add24Regular, ConnectorFilled, AppGeneric24Regular } from '@fluentui/react-icons';
+import { ConnectorFilled, AppGeneric24Regular, Add16Regular } from '@fluentui/react-icons';
 import { useMcpWizardStyles } from './styles';
 import { useIntl } from 'react-intl';
 import { McpPanelView, openConnectorPanelView, openOperationPanelView } from '../../../core/state/mcp/panel/mcpPanelSlice';
@@ -35,6 +35,7 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
     isInitializingOperations: state.operation.loadStatus.isInitializingOperations,
   }));
 
+  const disableConfiguration = useMemo(() => !logicAppName, [logicAppName]);
   const [connectorsMap, setConnectorsMap] = useState<Record<string, Connector>>({});
   const [isLoadingConnectors, setIsLoadingConnectors] = useState(false);
 
@@ -256,120 +257,127 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
 
   return (
     <div className={styles.wizardContainer}>
-      {/* Details Section */}
-      <div className={styles.header}>
-        <Text size={600} weight="semibold">
-          {INTL_TEXT.detailsTitle}
-        </Text>
-      </div>
+      <McpPanelRoot />
 
-      <div className={styles.content}>
-        <LogicAppSelector />
+      {/* Details Section */}
+      <div className={styles.section}>
+        <div className={styles.header}>
+          <Text size={400} weight="semibold">
+            {INTL_TEXT.detailsTitle}
+          </Text>
+        </div>
+
+        <div className={styles.content}>
+          <LogicAppSelector />
+        </div>
       </div>
 
       {/* Connectors Section */}
-      <div className={styles.header}>
-        <Text size={600} weight="semibold">
-          {INTL_TEXT.connectorsTitle}
-        </Text>
-        <Button appearance="primary" icon={<Add24Regular />} onClick={handleAddConnectors}>
-          {INTL_TEXT.addConnectorsButton}
-        </Button>
-      </div>
+      <div className={styles.section}>
+        <div className={styles.header}>
+          <Text size={400} weight="semibold">
+            {INTL_TEXT.connectorsTitle}
+          </Text>
+          <Button appearance="outline" icon={<Add16Regular />} onClick={handleAddConnectors} size="small" disabled={disableConfiguration}>
+            {INTL_TEXT.addConnectorsButton}
+          </Button>
+        </div>
 
-      <div className={styles.content}>
-        {hasConnectors ? (
-          <div className={styles.connectorsList}>
-            {isLoadingConnectors ? (
-              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '40px' }}>
-                <Spinner size="medium" label={INTL_TEXT.loadingConnectorsText} />
-              </div>
-            ) : (
-              connectorIds.map((connectorId) => {
-                const connector = connectorsMap[connectorId];
-                return (
-                  <ConnectorItem
-                    key={connectorId}
-                    connectorId={connectorId}
-                    displayName={connector?.properties.displayName || connectorId}
-                    connectionName="Default Connection"
-                    status="connected"
-                    icon={connector?.properties.iconUri ?? connector?.properties?.iconUrl}
-                    onEdit={handleEditConnector}
-                    onDelete={handleDeleteConnector}
-                  />
-                );
-              })
-            )}
-          </div>
-        ) : (
-          <div className={styles.emptyState}>
-            <div className={styles.emptyStateIcon}>
-              <ConnectorFilled />
+        <div className={styles.content}>
+          {hasConnectors ? (
+            <div className={styles.connectorsList}>
+              {isLoadingConnectors ? (
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '40px' }}>
+                  <Spinner size="medium" label={INTL_TEXT.loadingConnectorsText} />
+                </div>
+              ) : (
+                connectorIds.map((connectorId) => {
+                  const connector = connectorsMap[connectorId];
+                  return (
+                    <ConnectorItem
+                      key={connectorId}
+                      connectorId={connectorId}
+                      displayName={connector?.properties.displayName || connectorId}
+                      connectionName="Default Connection"
+                      status="connected"
+                      icon={connector?.properties.iconUri ?? connector?.properties?.iconUrl}
+                      onEdit={handleEditConnector}
+                      onDelete={handleDeleteConnector}
+                    />
+                  );
+                })
+              )}
             </div>
-            <Text size={500} weight="semibold" style={{ marginBottom: '8px' }}>
-              {INTL_TEXT.noConnectors}
-            </Text>
-            <Text size={300} style={{ opacity: 0.7, marginBottom: '24px' }}>
-              {INTL_TEXT.addFirstConnector}
-            </Text>
-            <Button appearance="primary" icon={<Add24Regular />} onClick={handleAddConnectors} size="large">
-              {INTL_TEXT.addConnectorsButton}
-            </Button>
-          </div>
-        )}
+          ) : (
+            <div className={styles.emptyState}>
+              <div className={styles.emptyStateIcon}>
+                <ConnectorFilled />
+              </div>
+              <Text size={400} weight="semibold" style={{ marginBottom: '8px' }}>
+                {INTL_TEXT.noConnectors}
+              </Text>
+              <Text size={200} style={{ opacity: 0.7, marginBottom: '24px' }}>
+                {INTL_TEXT.addFirstConnector}
+              </Text>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Operations Section */}
-      <div className={styles.header}>
-        <Text size={600} weight="semibold">
-          {INTL_TEXT.operationsTitle}
-        </Text>
-      </div>
+      <div className={styles.section}>
+        <div className={styles.header}>
+          <Text size={600} weight="semibold">
+            {INTL_TEXT.operationsTitle}
+          </Text>
+        </div>
 
-      <div className={styles.content}>
-        {isLoadingOperations ? (
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '40px' }}>
-            <Spinner size="medium" label={INTL_TEXT.loadingOperationsText} />
-          </div>
-        ) : hasOperations ? (
-          <div className={styles.operationsList}>
-            {allOperations.map((operationInfo) => {
-              if (!operationInfo?.operationId || !operationInfo?.connectorId) {
-                return null;
-              }
-
-              const connector = connectorsMap[operationInfo.connectorId];
-
-              return (
-                <OperationItem
-                  key={operationInfo.operationId}
-                  operationId={operationInfo.operationId}
-                  operationName={operationInfo.operationId}
-                  connectorIcon={connector?.properties.iconUri ?? connector?.properties?.iconUrl}
-                  connectorName={connector?.properties.displayName || operationInfo.connectorId}
-                  onEdit={handleEditOperation}
-                  onDelete={handleDeleteOperation}
-                />
-              );
-            })}
-          </div>
-        ) : (
-          <div className={styles.emptyState}>
-            <div className={styles.emptyOperationsIcon}>
-              <AppGeneric24Regular />
+        <div className={styles.content}>
+          {isLoadingOperations ? (
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '40px' }}>
+              <Spinner size="medium" label={INTL_TEXT.loadingOperationsText} />
             </div>
-            <Text size={400} weight="medium" style={{ marginBottom: '8px' }}>
-              {INTL_TEXT.noOperations}
-            </Text>
-            <Text size={300} style={{ opacity: 0.7 }}>
-              {INTL_TEXT.addOperationsFirst}
-            </Text>
-          </div>
-        )}
+          ) : hasOperations ? (
+            <div className={styles.operationsList}>
+              {allOperations.map((operationInfo) => {
+                if (!operationInfo?.operationId || !operationInfo?.connectorId) {
+                  return null;
+                }
+
+                const connector = connectorsMap[operationInfo.connectorId];
+
+                return (
+                  <OperationItem
+                    key={operationInfo.operationId}
+                    operationId={operationInfo.operationId}
+                    operationName={operationInfo.operationId}
+                    connectorIcon={connector?.properties.iconUri ?? connector?.properties?.iconUrl}
+                    connectorName={connector?.properties.displayName || operationInfo.connectorId}
+                    onEdit={handleEditOperation}
+                    onDelete={handleDeleteOperation}
+                  />
+                );
+              })}
+            </div>
+          ) : (
+            <div className={styles.emptyState}>
+              <div className={styles.emptyOperationsIcon}>
+                <AppGeneric24Regular />
+              </div>
+              <Text size={400} weight="medium" style={{ marginBottom: '8px' }}>
+                {INTL_TEXT.noOperations}
+              </Text>
+              <Text size={300} style={{ opacity: 0.7 }}>
+                {INTL_TEXT.addOperationsFirst}
+              </Text>
+            </div>
+          )}
+        </div>
       </div>
-      <McpPanelRoot />
-      <TemplatesPanelFooter {...footerContent} />
+
+      <div className={styles.footer}>
+        <TemplatesPanelFooter {...footerContent} />
+      </div>
     </div>
   );
 };
