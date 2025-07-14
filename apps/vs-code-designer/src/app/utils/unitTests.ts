@@ -70,7 +70,7 @@ export const saveUnitTestDefinition = async (
         );
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : typeof error === 'string' ? error : 'Unknown error';
-        const localizedError = localize('saveFailure', 'Unit Test Definition not saved. ') + errorMessage;
+        const localizedError = localize('saveFailureUnitTest', 'Unit Test Definition not saved. ') + errorMessage;
         context.telemetry.properties.saveUnitTestError = localizedError;
         vscode.window.showErrorMessage(`${localizedError}`, localize('OK', 'OK'));
         throw error;
