@@ -94,6 +94,7 @@ export interface OperationMetadata {
   iconUri: string;
   brandColor: string;
   description?: string;
+  connectorTitle?: string;
 }
 
 export const ErrorLevel = {
@@ -168,6 +169,7 @@ export interface NodeOperationInputsData {
   operationInfo: NodeOperation;
   nodeOutputs?: NodeOutputs;
   settings?: Settings;
+  operationMetadata?: OperationMetadata;
 }
 
 export interface NodeData {
@@ -243,7 +245,7 @@ export const operationMetadataSlice = createSlice({
           return;
         }
 
-        const { id, nodeInputs, nodeOutputs, nodeDependencies, operationInfo, settings } = nodeData;
+        const { id, nodeInputs, nodeOutputs, nodeDependencies, operationInfo, settings, operationMetadata } = nodeData;
         state.inputParameters[id] = nodeInputs;
         state.dependencies[id] = nodeDependencies;
         state.operationInfo[id] = operationInfo;
@@ -254,6 +256,10 @@ export const operationMetadataSlice = createSlice({
 
         if (settings) {
           state.settings[id] = settings;
+        }
+
+        if (operationMetadata) {
+          state.operationMetadata[id] = operationMetadata;
         }
       }
       state.loadStatus.nodesInitialized = true;
