@@ -121,16 +121,14 @@ export const Summary: React.FC = () => {
   }, [intlText.EXPORT_LOCATION, targetDirectory.path, styles.exportSummaryFileLocationText]);
 
   const detailsList = useMemo(() => {
-    const emptyText = (
-      <LargeText text={intlText.NO_DETAILS} className="msla-export-summary-detail-list-empty" style={{ display: 'block' }} />
-    );
+    const emptyText = <LargeText text={intlText.NO_DETAILS} className={styles.exportSummaryDetailListEmpty} style={{ display: 'block' }} />;
     const noDetails = exportDetails.length === 0 && !isSummaryLoading ? emptyText : null;
 
     return (
       <>
         <XLargeText text={intlText.AFTER_EXPORT} style={{ display: 'block' }} />
         <LargeText text={intlText.ADDITIONAL_STEPS} style={{ display: 'block' }} />
-        <div className="msla-export-summary-detail-list">
+        <div className={styles.exportSummaryDetailsList}>
           <ShimmeredDetailsList
             items={exportDetails}
             columns={getListColumns()}
@@ -143,7 +141,15 @@ export const Summary: React.FC = () => {
         </div>
       </>
     );
-  }, [exportDetails, isSummaryLoading, intlText.NO_DETAILS, intlText.ADDITIONAL_STEPS, intlText.AFTER_EXPORT]);
+  }, [
+    intlText.NO_DETAILS,
+    intlText.AFTER_EXPORT,
+    intlText.ADDITIONAL_STEPS,
+    styles.exportSummaryDetailListEmpty,
+    styles.exportSummaryDetailsList,
+    exportDetails,
+    isSummaryLoading,
+  ]);
 
   const packageWarning = useMemo(() => {
     return isError && !packageUrl ? (

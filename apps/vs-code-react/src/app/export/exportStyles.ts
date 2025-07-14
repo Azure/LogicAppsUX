@@ -70,4 +70,38 @@ export const useExportStyles = makeStyles({
       alignItems: 'center',
     },
   },
+
+  exportSummaryDetailsList: {
+    overflow: 'auto',
+    marginTop: tokens.spacingVerticalMNudge,
+    flex: 2,
+
+    '.ms-DetailsRow-fields ': {
+      display: 'flex',
+      alignItems: 'center',
+
+      '.ms-DetailsRow-cell': {
+        whiteSpace: 'normal',
+      },
+    },
+  },
+  exportSummaryDetailListEmpty: {
+    display: 'inline-flex',
+    justifyContent: 'center',
+    width: '100%',
+  },
+
+  exportSummaryConnections: {
+    margin: `${tokens.spacingVerticalXL} 0`,
+  },
+  exportSummaryConnectionsCheckbox: {
+    margin: `${tokens.spacingVerticalMNudge} 0`,
+  },
+
+  exportSummaryConnectionsDropdown: {
+    width: '30%',
+  },
+  exportSummaryConnectionsButton: {
+    margin: `${tokens.spacingVerticalXL} ${tokens.spacingVerticalXL} ${tokens.spacingVerticalXL} 0`,
+  },
 });
