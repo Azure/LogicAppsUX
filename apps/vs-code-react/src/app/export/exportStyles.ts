@@ -9,11 +9,15 @@ export const useExportStyles = makeStyles({
   exportWorkflowsPanelFilters: {
     display: 'flex',
     marginTop: '15px',
+
+    '> *': {
+      width: '30%',
+    },
   },
 
   exportWorkflowsPanelFiltersInput: {
     marginRight: tokens.spacingHorizontalMNudge,
-    ' input::placeholder': {
+    'input::placeholder': {
       fontStyle: 'normal',
     },
   },
