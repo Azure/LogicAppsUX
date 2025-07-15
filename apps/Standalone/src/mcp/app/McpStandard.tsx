@@ -88,29 +88,31 @@ export const McpStandard = () => {
     }
   }, [objectId, tenantId]);
 
-  const onRegisterMcpServer = useCallback(
-    async ({ logicAppId, workflows, connectionsData }: McpWorkflowsData, onCompleted?: () => void) => {
-      const workflowsToCreate = Object.keys(workflows).map((key) => ({
-        name: key,
-        workflow: workflows[key],
-      }));
+  const onRegisterMcpServer = useCallback(async (workflowsData: McpWorkflowsData, onCompleted?: () => void) => {
+    const { logicAppId, workflows, connectionsData } = workflowsData;
+    const workflowsToCreate = Object.keys(workflows).map((key) => ({
+      name: key,
+      workflow: workflows[key],
+    }));
 
-      console.log('Registering MCP server with workflows:', workflowsToCreate);
+    console.log('Generated workflows:', workflowsData);
 
-      await saveWorkflowStandard(
-        logicAppId,
-        workflowsToCreate,
-        connectionsData,
-        /* parametersData */ undefined,
-        /* settingsProperties */ undefined,
-        /* customCodeData */ undefined,
-        /* clearDirtyState */ () => {},
-        { skipValidation: true, throwError: true }
-      );
-      onCompleted?.();
-    },
-    []
-  );
+    await saveWorkflowStandard(
+      logicAppId,
+      workflowsToCreate,
+      connectionsData,
+      /* parametersData */ undefined,
+      /* settingsProperties */ undefined,
+      /* customCodeData */ undefined,
+      /* clearDirtyState */ () => {},
+      { skipValidation: true, throwError: true }
+    );
+    onCompleted?.();
+  }, []);
+
+  const onClose = useCallback(() => {
+    console.log('Close button clicked');
+  }, []);
 
   return (
     <McpWizardProvider locale="en-US" theme={theme}>
@@ -119,7 +121,7 @@ export const McpStandard = () => {
           <div className={styles.wizardContent}>
             <div className={styles.wizardWrapper}>
               <McpDataProvider resourceDetails={resourceDetails} onResourceChange={onResourceChange} services={services}>
-                <McpWizard registerMcpServer={onRegisterMcpServer} />
+                <McpWizard registerMcpServer={onRegisterMcpServer} onClose={onClose} />
                 <div id="mcp-layer-host" className={styles.layerHost} />
               </McpDataProvider>
             </div>
