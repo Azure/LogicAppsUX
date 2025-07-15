@@ -6,7 +6,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ComboBox, type IComboBoxOption, Spinner } from '@fluentui/react';
 import { useAllCognitiveServiceAccounts, useAllCognitiveServiceProjects } from './useCognitiveService';
 import { useStyles } from './styles';
-import { Link, tokens, Spinner as SpinnerFUI9, Field } from '@fluentui/react-components';
+import { Link, Spinner as SpinnerFUI9, Field, Button } from '@fluentui/react-components';
 import { NavigateIcon } from '@microsoft/designer-ui';
 import { ArrowClockwise16Filled, ArrowClockwise16Regular, bundleIcon } from '@fluentui/react-icons';
 import { useSubscriptions } from '../../../../../core/state/connection/connectionSelector';
@@ -158,10 +158,8 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
     [allCognitiveServiceAccounts, isFetchingAccount, isFetchingSubscription, selectedSubscriptionId]
   );
   const onRefreshServiceAccounts = useCallback(() => {
-    if (!openAIComboboxDisabled) {
-      refetchServiceAccounts();
-    }
-  }, [openAIComboboxDisabled, refetchServiceAccounts]);
+    refetchServiceAccounts();
+  }, [refetchServiceAccounts]);
 
   const serviceProjectsComboBoxDisabled = useMemo(
     () => openAIComboboxDisabled || isFetchingCognitiveServiceProjects || (cognitiveServiceProjects ?? []).length === 0,
@@ -325,12 +323,15 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
                 <CreateNewButton href="https://aka.ms/openAICreate" />
               </div>
             </div>
-            <RefreshIcon
+            <Button
+              icon={<RefreshIcon />}
+              size="small"
               style={{
-                marginTop: '4px',
-                marginLeft: '4px',
-                color: openAIComboboxDisabled ? tokens.colorBrandBackground2Pressed : tokens.colorBrandBackground,
+                margin: '0 4px',
+                height: '100%',
               }}
+              disabled={true}
+              appearance="transparent"
               onClick={onRefreshServiceAccounts}
             />
           </div>
@@ -383,11 +384,14 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
                   <CreateNewButton href="https://aka.ms/openFoundryProjectCreate" />
                 </div>
               </div>
-              <RefreshIcon
+
+              <Button
+                icon={<RefreshIcon />}
+                size="small"
+                appearance="transparent"
                 style={{
-                  marginTop: '4px',
-                  marginLeft: '4px',
-                  color: serviceProjectsComboBoxDisabled ? tokens.colorBrandBackground2Pressed : tokens.colorBrandBackground,
+                  margin: '0 4px',
+                  height: '100%',
                 }}
                 onClick={onRefreshServiceProjects}
               />
