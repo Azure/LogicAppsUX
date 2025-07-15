@@ -16,11 +16,9 @@ import {
 } from '@fluentui/react-components';
 import { Delete24Regular, Edit24Regular } from '@fluentui/react-icons';
 import { useIntl } from 'react-intl';
-import { useConnectorItemStyles } from '../wizard/styles';
+import { useConnectorSectionStyles } from '../wizard/styles';
 import { deinitializeNodes, deinitializeOperationInfo } from '../../../core/state/operation/operationMetadataSlice';
 import DefaultIcon from '../../../common/images/recommendation/defaulticon.svg';
-
-const tableCellStyles = {};
 
 const buttonGapStyles = {
   marginRight: '8px',
@@ -35,7 +33,7 @@ export const ListOperations = () => {
     operationMetadata: state.operation.operationMetadata,
   }));
 
-  const styles = useConnectorItemStyles();
+  const styles = useConnectorSectionStyles();
 
   const INTL_TEXT = {
     tableAriaLabel: intl.formatMessage({
@@ -124,43 +122,31 @@ export const ListOperations = () => {
 
   return (
     <div>
-      <Table
-        aria-label={INTL_TEXT.tableAriaLabel}
-        size="small"
-        style={{
-          width: '100%',
-          margin: '0 auto',
-          border: 'none',
-        }}
-      >
+      <Table className={styles.tableStyle} aria-label={INTL_TEXT.tableAriaLabel} size="small">
         <TableHeader>
           <TableRow style={{ border: 'none' }}>
             {columns.map((column) => (
-              <TableHeaderCell key={column.columnKey} style={tableCellStyles}>
+              <TableHeaderCell key={column.columnKey}>
                 <Text weight="semibold">{column.label}</Text>
               </TableHeaderCell>
             ))}
           </TableRow>
         </TableHeader>
-        <TableBody style={tableCellStyles}>
+        <TableBody>
           {items.map((item) => (
-            <TableRow key={item.operationId} style={tableCellStyles}>
-              <TableCell className={styles.connectorCellDefault} style={tableCellStyles}>
+            <TableRow key={item.operationId}>
+              <TableCell className={styles.iconTextCell}>
                 <img
+                  className={styles.connectorIcon}
                   src={item.connectorIconUri ?? DefaultIcon}
                   alt={`${item.connectorId} icon`}
-                  style={{
-                    width: '24px',
-                    height: '24px',
-                    objectFit: 'contain',
-                    ...buttonGapStyles,
-                  }}
+                  style={buttonGapStyles}
                 />
                 <Link as="button" onClick={() => handleEditOperation(item.operationId)}>
                   {item.operationName}
                 </Link>
               </TableCell>
-              <TableCell className={styles.iconsCell} style={tableCellStyles}>
+              <TableCell className={styles.iconsCell}>
                 <Button
                   style={buttonGapStyles}
                   appearance="subtle"

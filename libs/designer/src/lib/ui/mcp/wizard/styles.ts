@@ -60,8 +60,8 @@ export const useMcpWizardStyles = makeStyles({
   },
 });
 
-// ConnectorItem styles
-export const useConnectorItemStyles = makeStyles({
+// Connectors / Operations section styles
+export const useConnectorSectionStyles = makeStyles({
   emptyState: {
     display: 'flex',
     flexDirection: 'column',
@@ -82,44 +82,18 @@ export const useConnectorItemStyles = makeStyles({
     },
   },
 
-  connectorItem: {
-    display: 'flex',
-    alignItems: 'center',
-    padding: '16px',
-    border: `1px solid ${tokens.colorNeutralStroke2}`,
-    borderRadius: tokens.borderRadiusMedium,
-    marginBottom: '12px',
-    backgroundColor: tokens.colorNeutralBackground1,
-    transition: 'all 0.2s ease',
-    '&:hover': {
-      backgroundColor: tokens.colorNeutralBackground1Hover,
-      border: `1px solid ${tokens.colorNeutralStroke1Hover}`,
-    },
+  tableStyle: {
+    width: '100%',
+    margin: '0 auto',
   },
 
   connectorIcon: {
-    fontSize: '24px',
-    marginRight: '12px',
-    display: 'flex',
-    alignItems: 'center',
+    width: '24px',
+    height: '24px',
+    objectFit: 'contain',
   },
 
-  connectorInfo: {
-    flex: 1,
-  },
-
-  connectorHeader: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px',
-    marginBottom: '4px',
-  },
-
-  connectorSubtext: {
-    color: tokens.colorNeutralForeground2,
-  },
-
-  connectorCellDefault: {
+  iconTextCell: {
     alignItems: 'center',
     display: 'flex',
   },
@@ -127,44 +101,5 @@ export const useConnectorItemStyles = makeStyles({
   iconsCell: {
     textAlign: 'right',
     width: '1%',
-  },
-});
-
-// OperationItem styles
-export const useOperationItemStyles = makeStyles({
-  operationItem: {
-    display: 'flex',
-    alignItems: 'center',
-    padding: '12px 16px',
-    border: `1px solid ${tokens.colorNeutralStroke2}`,
-    borderRadius: tokens.borderRadiusSmall,
-    marginBottom: '8px',
-    backgroundColor: tokens.colorNeutralBackground1,
-    transition: 'all 0.2s ease',
-    '&:hover': {
-      backgroundColor: tokens.colorNeutralBackground1Hover,
-      border: `1px solid ${tokens.colorNeutralStroke1Hover}`,
-    },
-  },
-
-  operationIcon: {
-    fontSize: '20px',
-    marginRight: '12px',
-    display: 'flex',
-    alignItems: 'center',
-  },
-
-  operationInfo: {
-    flex: 1,
-  },
-
-  operationSubtext: {
-    color: tokens.colorNeutralForeground2,
-    display: 'block',
-  },
-
-  itemActions: {
-    display: 'flex',
-    gap: '8px',
   },
 });

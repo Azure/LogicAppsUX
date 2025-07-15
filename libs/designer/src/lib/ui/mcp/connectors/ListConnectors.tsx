@@ -15,14 +15,14 @@ import {
   Link,
 } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
-import { useConnectorItemStyles } from '../wizard/styles';
+import { useConnectorSectionStyles } from '../wizard/styles';
 import { deinitializeNodes, deinitializeOperationInfos } from '../../../core/state/operation/operationMetadataSlice';
 import { getResourceNameFromId } from '@microsoft/logic-apps-shared';
 import { McpPanelView, openConnectorPanelView } from '../../../core/state/mcp/panel/mcpPanelSlice';
 import { selectConnectorId, selectOperations } from '../../../core/state/mcp/connector/connectorSlice';
 import DefaultIcon from '../../../common/images/recommendation/defaulticon.svg';
 
-const tableCellStyles = {
+const connectorTableCellStyles = {
   border: 'none',
 };
 
@@ -93,7 +93,7 @@ export const ListConnectors = () => {
     }),
   };
 
-  const styles = useConnectorItemStyles();
+  const styles = useConnectorSectionStyles();
 
   const items = useMemo(() => {
     const seen = new Set<string>();
@@ -175,48 +175,36 @@ export const ListConnectors = () => {
   return (
     <div>
       {items.length ? (
-        <Table
-          aria-label={INTL_TEXT.tableAriaLabel}
-          size="small"
-          style={{
-            width: '100%',
-            margin: '0 auto',
-            border: 'none',
-          }}
-        >
-          <TableHeader style={tableCellStyles}>
-            <TableRow style={tableCellStyles}>
+        <Table className={styles.tableStyle} aria-label={INTL_TEXT.tableAriaLabel} size="small">
+          <TableHeader>
+            <TableRow style={connectorTableCellStyles}>
               {columns.map((column) => (
-                <TableHeaderCell key={column.columnKey} style={tableCellStyles}>
+                <TableHeaderCell key={column.columnKey} style={connectorTableCellStyles}>
                   <Text weight="semibold">{column.label}</Text>
                 </TableHeaderCell>
               ))}
             </TableRow>
           </TableHeader>
-          <TableBody style={tableCellStyles}>
+          <TableBody style={connectorTableCellStyles}>
             {items.map((item) => (
-              <TableRow key={item.connectorId} style={tableCellStyles}>
-                <TableCell className={styles.connectorCellDefault} style={tableCellStyles}>
+              <TableRow key={item.connectorId} style={connectorTableCellStyles}>
+                <TableCell className={styles.iconTextCell} style={connectorTableCellStyles}>
                   <img
+                    className={styles.connectorIcon}
                     src={item.iconUri ?? DefaultIcon}
                     alt={`${item.displayName} icon`}
-                    style={{
-                      width: '24px',
-                      height: '24px',
-                      objectFit: 'contain',
-                      ...buttonGapStyles,
-                    }}
+                    style={buttonGapStyles}
                   />
                   <Link as="button" onClick={() => handleEditConnector(item.connectorId)}>
                     {item.displayName}
                   </Link>
                 </TableCell>
-                <TableCell style={tableCellStyles}>{item?.connectionName}</TableCell>
-                <TableCell className={styles.connectorCellDefault} style={tableCellStyles}>
+                <TableCell style={connectorTableCellStyles}>{item?.connectionName}</TableCell>
+                <TableCell className={styles.iconTextCell} style={connectorTableCellStyles}>
                   <CheckmarkCircle20Filled style={buttonGapStyles} color={tokens.colorPaletteGreenBackground3} />
                   <Text>{item?.connectionStatus}</Text>
                 </TableCell>
-                <TableCell className={styles.iconsCell} style={tableCellStyles}>
+                <TableCell className={styles.iconsCell} style={connectorTableCellStyles}>
                   <Button
                     style={buttonGapStyles}
                     appearance="subtle"
