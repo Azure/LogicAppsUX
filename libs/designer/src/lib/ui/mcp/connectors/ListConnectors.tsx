@@ -1,8 +1,18 @@
 import { useDispatch, useSelector } from 'react-redux';
 import type { RootState, AppDispatch } from '../../../core/state/mcp/store';
 import { useCallback, useMemo } from 'react';
-import { ConnectorFilled } from '@fluentui/react-icons';
-import { Text } from '@fluentui/react-components';
+import { ConnectorFilled, Delete24Regular, Edit24Regular } from '@fluentui/react-icons';
+import {
+  Text,
+  TableCell,
+  TableRow,
+  Table,
+  TableHeader,
+  TableHeaderCell,
+  TableCellLayout,
+  Button,
+  TableBody,
+} from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 import { useMcpWizardStyles } from '../wizard/styles';
 import { deinitializeNodes, deinitializeOperationInfos } from '../../../core/state/operation/operationMetadataSlice';
@@ -10,6 +20,7 @@ import { ConnectorItem } from '../wizard/ConnectorItem';
 import { getResourceNameFromId } from '@microsoft/logic-apps-shared';
 import { McpPanelView, openConnectorPanelView } from '../../../core/state/mcp/panel/mcpPanelSlice';
 import { selectConnectorId, selectOperations } from '../../../core/state/mcp/connector/connectorSlice';
+import { ConnectorIconWithName } from '../../../ui/templates/connections/connector';
 
 export const ListConnectors = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -21,6 +32,49 @@ export const ListConnectors = () => {
     connectionReferences: state.connection.connectionReferences,
   }));
 
+  const INTL_TEXT = {
+    noConnectors: intl.formatMessage({
+      id: 'xyhnsP',
+      defaultMessage: 'No connectors added yet',
+      description: 'Message displayed when no connectors are available',
+    }),
+    addFirstConnector: intl.formatMessage({
+      id: 'i/0DrA',
+      defaultMessage: 'Add your first connector to get started',
+      description: 'Message prompting the user to add their first connector',
+    }),
+    connectorLabel: intl.formatMessage({
+      defaultMessage: 'Name',
+      id: 'T1q9LE',
+      description: 'The label for the connector column',
+    }),
+    connectionLabel: intl.formatMessage({
+      defaultMessage: 'Connection',
+      id: 'cjWC0X',
+      description: 'The label for the connection column',
+    }),
+    statusLabel: intl.formatMessage({
+      defaultMessage: 'Status',
+      id: 'ozFnEE',
+      description: 'The label for the status column',
+    }),
+    tableAriaLabel: intl.formatMessage({
+      defaultMessage: 'List of connectors with their connections',
+      id: 'd9Ooue',
+      description: 'The aria label for the connections table',
+    }),
+    editButtonLabel: intl.formatMessage({
+      defaultMessage: 'Edit connector',
+      id: 'RTfra/',
+      description: 'Label for the edit connector button',
+    }),
+    deleteButtonLabel: intl.formatMessage({
+      defaultMessage: 'Delete connector',
+      id: '8e1bKU',
+      description: 'Label for the delete connector button',
+    }),
+  };
+
   const styles = useMcpWizardStyles();
 
   const connectorIds = useMemo(() => {
@@ -30,22 +84,24 @@ export const ListConnectors = () => {
     return [...new Set(ids)];
   }, [operationInfos]);
 
-  const connectorsDisplayInfo = useMemo(() => {
-    const map: Record<
-      string,
-      {
+  const items = useMemo(() => {
+    const seen = new Set<string>();
+
+    return Object.values(operationInfos).reduce<
+      Array<{
+        connectorId: string;
         displayName?: string;
         iconUri?: string;
-        connectionName?: string;
+        connectionName: string;
         connectionStatus: 'connected' | 'disconnected';
-      }
-    > = {};
-
-    for (const info of Object.values(operationInfos)) {
+      }>
+    >((acc, info) => {
       const connectorId = info?.connectorId;
-      if (!connectorId || map[connectorId]) {
-        continue;
+      if (!connectorId || seen.has(connectorId)) {
+        return acc;
       }
+
+      seen.add(connectorId);
 
       const metadata = operationMetadata[info.operationId];
       const referenceKey = connectionsMapping[info.operationId];
@@ -59,16 +115,24 @@ export const ListConnectors = () => {
           ? 'No Connection'
           : 'Default Connection';
 
-      map[connectorId] = {
+      acc.push({
+        connectorId: connectorId,
         displayName: metadata?.connectorTitle,
         iconUri: metadata?.iconUri,
         connectionName,
         connectionStatus,
-      };
-    }
+      });
 
-    return map;
+      return acc;
+    }, []);
   }, [connectionReferences, connectionsMapping, operationInfos, operationMetadata]);
+
+  const columns = [
+    { columnKey: 'connector', label: INTL_TEXT.connectorLabel },
+    { columnKey: 'connection', label: INTL_TEXT.connectionLabel },
+    { columnKey: 'status', label: INTL_TEXT.statusLabel },
+    { columnKey: 'actions', label: '' }, // Empty label for actions column
+  ];
 
   const hasConnectors = connectorIds.length > 0;
 
@@ -99,30 +163,91 @@ export const ListConnectors = () => {
     [operationInfos, dispatch]
   );
 
-  const INTL_TEXT = {
-    noConnectors: intl.formatMessage({
-      id: 'xyhnsP',
-      defaultMessage: 'No connectors added yet',
-      description: 'Message displayed when no connectors are available',
-    }),
-    addFirstConnector: intl.formatMessage({
-      id: 'i/0DrA',
-      defaultMessage: 'Add your first connector to get started',
-      description: 'Message prompting the user to add their first connector',
-    }),
-  };
-
   return (
     <div>
+      <Table
+        aria-label={INTL_TEXT.tableAriaLabel}
+        size="small"
+        style={{
+          width: '90%',
+          margin: '0 auto',
+          border: 'none',
+        }}
+      >
+        <TableHeader style={{ border: 'none' }}>
+          <TableRow style={{ border: 'none' }}>
+            {columns.map((column) => (
+              <TableHeaderCell key={column.columnKey} style={{ border: 'none' }}>
+                <Text weight="semibold">{column.label}</Text>
+              </TableHeaderCell>
+            ))}
+          </TableRow>
+        </TableHeader>
+        <TableBody style={{ border: 'none' }}>
+          {items.map((item) => (
+            <TableRow key={item.connectorId} style={{ border: 'none' }}>
+              <TableCell style={{ border: 'none' }}>
+                {/* <div >
+                                <div>
+                                            <img
+          src={item.iconUri ?? DefaultIcon}
+          alt={`${item.displayName} icon`}
+          style={{
+            width: '24px',
+            height: '24px',
+            objectFit: 'contain',
+          }}
+        />
+                                  <Text size={400} weight="semibold">
+                                    {item.displayName}
+                                  </Text>
+                                    {item.connectionStatus === 'connected' ? <Checkmark24Filled /> : null}
+                                </div>
+                              </div> */}
+                <TableCellLayout
+                  media={
+                    <ConnectorIconWithName
+                      connectorId={item.connectorId}
+                      showProgress={true}
+                      classes={{
+                        root: 'msla-template-create-connector',
+                        icon: 'msla-template-create-connector-icon',
+                        text: 'msla-template-create-connector-text',
+                      }}
+                    />
+                  }
+                />
+              </TableCell>
+              <TableCell style={{ border: 'none' }}>{item?.connectionName}</TableCell>
+              <TableCell style={{ border: 'none' }}>{item?.connectionStatus}</TableCell>
+              <TableCell style={{ textAlign: 'right', width: '1%', border: 'none' }}>
+                <Button
+                  appearance="subtle"
+                  size="small"
+                  icon={<Edit24Regular />}
+                  onClick={() => handleEditConnector(item.connectorId)}
+                  aria-label={INTL_TEXT.editButtonLabel}
+                />
+                <Button
+                  appearance="subtle"
+                  size="small"
+                  icon={<Delete24Regular />}
+                  onClick={() => handleDeleteConnector(item.connectorId)}
+                  aria-label={INTL_TEXT.deleteButtonLabel}
+                />
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
       {hasConnectors ? (
         <div className={styles.connectorsList}>
-          {connectorIds.map((connectorId) => {
-            const connectorInfo = connectorsDisplayInfo[connectorId];
+          {items.map((connectorInfo) => {
             return (
               <ConnectorItem
-                key={connectorId}
-                connectorId={connectorId}
-                displayName={connectorInfo?.displayName ?? connectorId}
+                key={connectorInfo?.connectorId}
+                connectorId={connectorInfo?.connectorId}
+                displayName={connectorInfo?.displayName ?? connectorInfo?.connectorId}
                 connectionName={connectorInfo?.connectionName ?? 'Default Connection'}
                 status={connectorInfo?.connectionStatus}
                 icon={connectorInfo?.iconUri}
