@@ -6,15 +6,22 @@ import { LogEntryLevel, LoggerService, getResourceNameFromId, getUniqueName } fr
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { UndoRedoPartialRootState } from '../undoRedo/undoRedoTypes';
+import { initializeConnectionMappings } from '../../../core/actions/bjsworkflow/mcp';
 
 export interface ConnectionsStoreState {
   connectionsMapping: ConnectionMapping;
   connectionReferences: ConnectionReferences;
+  loading: {
+    initializeConnectionMappings: boolean;
+  };
 }
 
 export const initialConnectionsState: ConnectionsStoreState = {
   connectionsMapping: {},
   connectionReferences: {},
+  loading: {
+    initializeConnectionMappings: false,
+  },
 };
 
 type ConnectionReferenceMap = Record<string, ReferenceKey>;
@@ -106,6 +113,15 @@ export const connectionSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(resetWorkflowState, () => initialConnectionsState);
     builder.addCase(setStateAfterUndoRedo, (_, action: PayloadAction<UndoRedoPartialRootState>) => action.payload.connections);
+    builder.addCase(initializeConnectionMappings.pending, (state) => {
+      state.loading.initializeConnectionMappings = true;
+    });
+    builder.addCase(initializeConnectionMappings.fulfilled, (state) => {
+      state.loading.initializeConnectionMappings = false;
+    });
+    builder.addCase(initializeConnectionMappings.rejected, (state) => {
+      state.loading.initializeConnectionMappings = false;
+    });
   },
 });
 

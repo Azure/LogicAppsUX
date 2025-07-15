@@ -1003,6 +1003,11 @@
                 "type": "string",
                 "description": "The runtime to use for the .NET custom code host process.",
                 "enum": ["coreclr", "clr"]
+              },
+              "isCodeless": {
+                "type": "boolean",
+                "default": true,
+                "description": "Indicates whether the workflow is a codeless workflow."
               }
             }
           }
