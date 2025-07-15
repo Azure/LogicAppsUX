@@ -18,12 +18,14 @@ export function useIsAgentSubGraph(nodeId?: string): boolean | null {
     while (nodeId && nodeGraphId) {
       const nodeMetadata = getRecordEntry(nodesMetadata, nodeGraphId);
       if (!nodeMetadata) {
-        return undefined;
+        setIsAgentSubgraph(false);
+        break;
       }
 
       const isAgentCondition = nodeMetadata.subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION;
       if (isAgentCondition) {
         setIsAgentSubgraph(true);
+        break;
       }
 
       nodeGraphId = nodeMetadata.graphId;

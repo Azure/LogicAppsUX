@@ -50,7 +50,7 @@ export const CreateConnectionWrapper = () => {
       connectorId={connector?.id ?? ''}
       operationType={operationInfo?.type}
       existingReferences={existingReferences}
-      isAgentSubgraph={isAgentSubgraph}
+      isAgentSubgraph={isAgentSubgraph ?? false}
       nodeIds={nodeIds}
       assistedConnectionProps={assistedConnectionProps}
       connectionMetadata={connectionMetadata}
