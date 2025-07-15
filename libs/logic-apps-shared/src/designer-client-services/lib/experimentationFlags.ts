@@ -5,6 +5,7 @@ export const EXP_FLAGS = {
   ENABLE_ACA_SESSION: 'enable-aca-session',
   ENABLE_FOUNDRY_SERVICE_CONNECTION: 'enable-foundry-service-connection',
   ENABLE_NESTED_AGENT: 'enable-nested-agent',
+  ENABLE_DYNAMIC_CONNECTIONS: 'enable-dynamic-connections',
 };
 
 export async function enableParseDocumentWithMetadata(): Promise<boolean> {
@@ -21,4 +22,8 @@ export async function enableFoundryServiceConnection(): Promise<boolean> {
 
 export async function enableNestedAgent(): Promise<boolean> {
   return ExperimentationService().isFeatureEnabled(EXP_FLAGS.ENABLE_NESTED_AGENT);
+}
+
+export async function enableDynamicConnections(): Promise<boolean> {
+  return ExperimentationService().isFeatureEnabled(EXP_FLAGS.ENABLE_DYNAMIC_CONNECTIONS);
 }

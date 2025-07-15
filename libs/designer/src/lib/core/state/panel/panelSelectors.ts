@@ -76,7 +76,7 @@ export const useOperationPanelAlternateNodeActiveTabId = () =>
   useSelector(createSelector(getPanelState, (state) => state.operationContent.alternateSelectedNode?.activeTabId));
 
 export const useOperationPanelSelectedNodeId = () =>
-  useSelector(createSelector(getPanelState, (state) => state.operationContent.selectedNodeId ?? ''));
+  useSelector(createSelector(getPanelState, (state) => state.operationContent?.selectedNodeId ?? ''));
 
 export const useOperationPanelSelectedNodeActiveTabId = () =>
   useSelector(createSelector(getPanelState, (state) => state.operationContent.selectedNodeActiveTabId));
