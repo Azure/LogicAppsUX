@@ -1,6 +1,7 @@
 import {
   getBrandColorFromConnector,
   getIconUriFromConnector,
+  getPropertyValue,
   LogEntryLevel,
   LoggerService,
   type ConnectionReferences,
@@ -85,7 +86,7 @@ export const initializeOperationDetails = async (
     const { connector, parsedSwagger } = await getConnectorWithSwagger(operationInfo.connectorId);
     const iconUri = getIconUriFromConnector(connector);
     const brandColor = getBrandColorFromConnector(connector);
-    const swaggerResult = parsedSwagger.getOperationByOperationId(operationInfo.operationId)?.['description'];
+    const swaggerOperation = parsedSwagger.getOperationByOperationId(operationInfo.operationId);
     const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromSwagger(
       nodeId,
       /* isTrigger */ false,
@@ -117,7 +118,12 @@ export const initializeOperationDetails = async (
       operationInfo,
       nodeDependencies: { inputs: inputDependencies, outputs: outputDependencies },
       settings,
-      operationMetadata: { iconUri, brandColor, description: swaggerResult, connectorTitle: connector?.properties?.displayName },
+      operationMetadata: {
+        iconUri,
+        brandColor,
+        description: getPropertyValue(swaggerOperation, 'description'),
+        summary: getPropertyValue(swaggerOperation, 'summary'),
+      },
     };
   } catch (error: any) {
     LoggerService().log({
