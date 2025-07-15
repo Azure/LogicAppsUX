@@ -12,7 +12,7 @@ import { LogicAppSelector } from '../details/logicAppSelector';
 import { ConnectorItem } from './ConnectorItem';
 import { OperationItem } from './OperationItem';
 import { useMemo, useCallback } from 'react';
-import { selectConnectorId, selectOperations } from '../../../core/state/mcp/connector/connectorSlice';
+import { selectConnectorId, selectOperationIdToEdit, selectOperations } from '../../../core/state/mcp/connector/connectorSlice';
 import {
   deinitializeNodes,
   deinitializeOperationInfo,
@@ -21,6 +21,7 @@ import {
 import type { TemplatePanelFooterProps } from '@microsoft/designer-ui';
 import { TemplatesPanelFooter } from '@microsoft/designer-ui';
 import { getResourceNameFromId } from '@microsoft/logic-apps-shared';
+import constants from '../../../common/constants';
 
 export type RegisterMcpServerHandler = (workflowsData: McpWorkflowsData, onCompleted?: () => void) => Promise<void>;
 
@@ -109,15 +110,17 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
 
   const handleEditConnector = useCallback(
     (connectorId: string) => {
+      dispatch(selectConnectorId(connectorId));
+      const connectorOperations = allOperations.filter((op) => op.connectorId === connectorId);
+      dispatch(selectOperations(connectorOperations.map((op) => op.operationId)));
       dispatch(
         openConnectorPanelView({
           panelView: McpPanelView.SelectConnector,
+          selectedTabId: constants.MCP_PANEL_TAB_NAMES.OPERATIONS,
         })
       );
-      dispatch(selectConnectorId(connectorId));
-      dispatch(selectOperations([]));
     },
-    [dispatch]
+    [allOperations, dispatch]
   );
 
   const handleDeleteConnector = useCallback(
@@ -136,11 +139,8 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
 
   const handleEditOperation = useCallback(
     (operationId: string) => {
-      dispatch(
-        openOperationPanelView({
-          selectedOperationId: operationId,
-        })
-      );
+      dispatch(openOperationPanelView());
+      dispatch(selectOperationIdToEdit(operationId));
     },
     [dispatch]
   );
@@ -350,14 +350,11 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
                   return null;
                 }
 
-                const metadata = operationMetadata[operationInfo.operationId];
-
                 return (
                   <OperationItem
                     key={operationInfo.operationId}
                     operationId={operationInfo.operationId}
                     operationName={operationInfo.operationId}
-                    connectorIcon={metadata?.iconUri}
                     connectorId={operationInfo.connectorId}
                     onEdit={handleEditOperation}
                     onDelete={handleDeleteOperation}

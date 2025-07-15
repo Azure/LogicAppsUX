@@ -7,7 +7,7 @@ import { useMcpPanelStyles } from '../styles';
 import { useIntl } from 'react-intl';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
 import { useCallback, useMemo, useState } from 'react';
-import { EditOperation } from '../../operations/EditOperation';
+import { EditOperation } from '../../parameters/EditOperation';
 
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
@@ -19,9 +19,9 @@ export const EditOperationPanelInner = () => {
 
   const INTL_TEXT = {
     title: intl.formatMessage({
-      id: 'unVPy/',
-      defaultMessage: 'Edit Operations',
-      description: 'Title for edit operations panel',
+      id: 'KDsdC6',
+      defaultMessage: 'Edit Operation',
+      description: 'Title for edit operation panel',
     }),
     closeAriaLabel: intl.formatMessage({
       id: 'kdCuJZ',
@@ -34,13 +34,26 @@ export const EditOperationPanelInner = () => {
     dispatch(closePanel());
   }, [dispatch]);
 
-  const updateOperationData = useCallback(
-    (_operationData: any) => {
-      setIsDirty(true);
-      //TODO: update operation data logic
-    },
-    [setIsDirty]
-  );
+  const handleValueChange = useCallback(() => {
+    //TODO: Implement save logic - dispatch actions to update operation
+    console.log('Saving operation data:');
+    setIsDirty(true);
+  }, []);
+
+  const handleCancel = useCallback(() => {
+    if (isDirty) {
+      const shouldDiscard = window.confirm('You have unsaved changes. Are you sure you want to discard them?');
+      if (!shouldDiscard) {
+        return;
+      }
+    }
+    setIsDirty(false);
+    handleDismiss();
+  }, [isDirty, handleDismiss]);
+
+  const handleSave = useCallback(() => {
+    console.log('Saving operation data...');
+  }, []);
 
   const footerContent: TemplatePanelFooterProps = useMemo(() => {
     return {
@@ -48,31 +61,26 @@ export const EditOperationPanelInner = () => {
         {
           type: 'action',
           text: intl.formatMessage({
-            defaultMessage: 'Save',
-            id: 'pWivUj',
-            description: 'Button text for saving changes for operation in the edit operation panel',
+            defaultMessage: 'Save Changes',
+            id: 'AkWRBl',
+            description: 'Button text for saving operation changes',
           }),
           appearance: 'primary',
-          onClick: () => {
-            //TODO: Implement save logic
-            dispatch(closePanel());
-          },
+          onClick: handleSave,
           disabled: !isDirty,
         },
         {
           type: 'action',
           text: intl.formatMessage({
             defaultMessage: 'Cancel',
-            id: '75zXUl',
-            description: 'Button text for closing the panel',
+            id: '6u9d0D',
+            description: 'Button text for canceling changes',
           }),
-          onClick: () => {
-            handleDismiss();
-          },
+          onClick: handleCancel,
         },
       ],
     };
-  }, [dispatch, intl, isDirty, handleDismiss]);
+  }, [intl, isDirty, handleSave, handleCancel]);
 
   return (
     <div>
@@ -84,8 +92,11 @@ export const EditOperationPanelInner = () => {
           <Button appearance="subtle" icon={<CloseIcon />} onClick={handleDismiss} aria-label={INTL_TEXT.closeAriaLabel} />
         </div>
       </DrawerHeader>
-      <DrawerBody>
-        <EditOperation updateOperationData={updateOperationData} />
+      <DrawerBody
+        className={styles.body}
+        style={{ overflow: 'auto', maxHeight: /*calculated based on height of header/footer */ 'calc(100vh - 140px)' }}
+      >
+        <EditOperation onValueChange={handleValueChange} isDirty={isDirty} />
       </DrawerBody>
       <DrawerFooter className={styles.footer}>
         <TemplatesPanelFooter {...footerContent} />

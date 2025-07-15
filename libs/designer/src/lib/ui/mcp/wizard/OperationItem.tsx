@@ -3,24 +3,24 @@ import { Edit24Regular, Delete24Regular } from '@fluentui/react-icons';
 import { useOperationItemStyles } from './styles';
 import { useIntl } from 'react-intl';
 import DefaultIcon from '../../../common/images/recommendation/defaulticon.svg';
-import { useConnector } from '../../../core/state/connection/connectionSelector';
 import { useMemo } from 'react';
+import { useConnectorInfo } from '../../../core/templates/utils/queries';
 
 interface OperationItemProps {
   operationId: string;
   connectorId: string;
   operationName: string;
-  connectorIcon: string;
   onEdit: (operationId: string) => void;
   onDelete: (operationId: string) => void;
 }
 
-export const OperationItem = ({ operationId, connectorId, operationName, connectorIcon, onEdit, onDelete }: OperationItemProps) => {
-  const { data: connector } = useConnector(connectorId);
+export const OperationItem = ({ operationId, connectorId, operationName, onEdit, onDelete }: OperationItemProps) => {
+  const { data: connectorInfo } = useConnectorInfo(connectorId, operationId);
   const styles = useOperationItemStyles();
   const intl = useIntl();
 
-  const connectorName = useMemo(() => connector?.properties?.displayName ?? connectorId, [connector?.properties?.displayName, connectorId]);
+  const connectorName = useMemo(() => connectorInfo?.displayName ?? connectorId, [connectorInfo?.displayName, connectorId]);
+  const iconUrl = useMemo(() => connectorInfo?.iconUrl ?? DefaultIcon, [connectorInfo?.iconUrl]);
 
   const editButtonLabel = intl.formatMessage({
     id: '7EHrJW',
@@ -37,7 +37,7 @@ export const OperationItem = ({ operationId, connectorId, operationName, connect
     <div className={styles.operationItem}>
       <div className={styles.operationIcon}>
         <img
-          src={connectorIcon ?? DefaultIcon}
+          src={iconUrl ?? DefaultIcon}
           alt={`${connectorName} icon`}
           style={{
             width: '24px',

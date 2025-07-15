@@ -3,8 +3,8 @@ import { Edit24Regular, Delete24Regular, Checkmark24Filled } from '@fluentui/rea
 import { useConnectorItemStyles } from './styles';
 import { useIntl } from 'react-intl';
 import DefaultIcon from '../../../common/images/recommendation/defaulticon.svg';
-import { useConnector } from '../../../core/state/connection/connectionSelector';
 import { useMemo } from 'react';
+import { useConnectorInfo } from '../../../core/templates/utils/queries';
 
 interface ConnectorItemProps {
   connectorId: string;
@@ -18,9 +18,9 @@ interface ConnectorItemProps {
 export const ConnectorItem = ({ connectorId, connectionName, status, icon, onEdit, onDelete }: ConnectorItemProps) => {
   const styles = useConnectorItemStyles();
   const intl = useIntl();
-  const { data: connector } = useConnector(connectorId);
+  const { data: connectorInfo } = useConnectorInfo(connectorId, undefined);
 
-  const connectorName = useMemo(() => connector?.properties?.displayName ?? connectorId, [connector?.properties?.displayName, connectorId]);
+  const connectorName = useMemo(() => connectorInfo?.displayName ?? connectorId, [connectorInfo?.displayName, connectorId]);
 
   const connectionText = intl.formatMessage(
     {
