@@ -153,24 +153,33 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
     [setKeyValue]
   );
 
-  const openAIComboboxDisabled = useMemo(
-    () => isFetchingAccount || isFetchingSubscription || !selectedSubscriptionId || (allCognitiveServiceAccounts ?? []).length === 0,
-    [allCognitiveServiceAccounts, isFetchingAccount, isFetchingSubscription, selectedSubscriptionId]
+  const isOpenAIRefreshDisabled = useMemo(
+    () => isFetchingAccount || isFetchingSubscription || !selectedSubscriptionId,
+    [isFetchingAccount, isFetchingSubscription, selectedSubscriptionId]
   );
+
+  const openAIComboboxDisabled = useMemo(
+    () => isOpenAIRefreshDisabled || (allCognitiveServiceAccounts ?? []).length === 0,
+    [allCognitiveServiceAccounts, isOpenAIRefreshDisabled]
+  );
+
   const onRefreshServiceAccounts = useCallback(() => {
     refetchServiceAccounts();
   }, [refetchServiceAccounts]);
 
+  const isServiceProjectsRefreshDisabled = useMemo(
+    () => openAIComboboxDisabled || isFetchingCognitiveServiceProjects,
+    [isFetchingCognitiveServiceProjects, openAIComboboxDisabled]
+  );
+
   const serviceProjectsComboBoxDisabled = useMemo(
-    () => openAIComboboxDisabled || isFetchingCognitiveServiceProjects || (cognitiveServiceProjects ?? []).length === 0,
-    [cognitiveServiceProjects, isFetchingCognitiveServiceProjects, openAIComboboxDisabled]
+    () => isServiceProjectsRefreshDisabled || (cognitiveServiceProjects ?? []).length === 0,
+    [cognitiveServiceProjects, isServiceProjectsRefreshDisabled]
   );
 
   const onRefreshServiceProjects = useCallback(() => {
-    if (!serviceProjectsComboBoxDisabled) {
-      refetchServiceProjects();
-    }
-  }, [serviceProjectsComboBoxDisabled, refetchServiceProjects]);
+    refetchServiceProjects();
+  }, [refetchServiceProjects]);
 
   const onSetOpenAIValues = useCallback(
     async (newValue: string) => {
@@ -330,8 +339,8 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
                 margin: '0 4px',
                 height: '100%',
               }}
-              disabled={true}
               appearance="transparent"
+              disabled={isOpenAIRefreshDisabled}
               onClick={onRefreshServiceAccounts}
             />
           </div>
@@ -384,7 +393,6 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
                   <CreateNewButton href="https://aka.ms/openFoundryProjectCreate" />
                 </div>
               </div>
-
               <Button
                 icon={<RefreshIcon />}
                 size="small"
@@ -393,6 +401,7 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
                   margin: '0 4px',
                   height: '100%',
                 }}
+                disabled={isServiceProjectsRefreshDisabled}
                 onClick={onRefreshServiceProjects}
               />
             </div>
