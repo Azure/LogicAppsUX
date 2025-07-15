@@ -48,6 +48,7 @@ export const CreateConnectionWrapper = () => {
       connectorId={connector?.id ?? ''}
       operationType={operationInfo?.type}
       existingReferences={existingReferences}
+      selectedNodeId={nodeId}
       nodeIds={nodeIds}
       assistedConnectionProps={assistedConnectionProps}
       connectionMetadata={connectionMetadata}

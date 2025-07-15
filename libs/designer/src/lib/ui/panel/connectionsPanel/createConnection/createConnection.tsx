@@ -57,7 +57,6 @@ import { useIntl } from 'react-intl';
 import { DismissRegular } from '@fluentui/react-icons';
 import TenantPicker from './formInputs/tenantPicker';
 import { useShouldEnableDynamicConnections } from '../../../../common/hooks/experimentation';
-import { useOperationPanelSelectedNodeId } from '../../../../core';
 import { useIsAgentSubGraph } from '../../../../common/hooks/agent';
 import { useStyles } from './styles';
 
@@ -72,6 +71,7 @@ export interface CreateButtonTexts {
 
 export interface CreateConnectionProps {
   classes?: Record<string, string>;
+  selectedNodeId?: string;
   nodeIds?: string[];
   iconUri?: string;
   connector: Connector;
@@ -128,6 +128,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     gatewayServiceConfig,
     resourceSelectorProps,
     isAgentServiceConnection,
+    selectedNodeId,
   } = props;
 
   const intl = useIntl();
@@ -144,7 +145,6 @@ export const CreateConnection = (props: CreateConnectionProps) => {
 
   const [parameterValues, setParameterValues] = useState<Record<string, any>>({});
 
-  const selectedNodeId: string = useOperationPanelSelectedNodeId();
   const isAgentSubgraph = useIsAgentSubGraph(selectedNodeId);
   const shouldEnableDynamicConnections = useShouldEnableDynamicConnections();
   const [selectedParamSetIndex, setSelectedParamSetIndex] = useState<number>(0);
