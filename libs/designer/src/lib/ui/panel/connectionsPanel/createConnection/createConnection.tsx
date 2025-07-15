@@ -57,7 +57,6 @@ import { useIntl } from 'react-intl';
 import { DismissRegular } from '@fluentui/react-icons';
 import TenantPicker from './formInputs/tenantPicker';
 import { useShouldEnableDynamicConnections } from '../../../../common/hooks/experimentation';
-import { useIsAgentSubGraph } from '../../../../common/hooks/agent';
 import { useStyles } from './styles';
 
 type ParamType = ConnectionParameter | ConnectionParameterSetParameter;
@@ -71,7 +70,6 @@ export interface CreateButtonTexts {
 
 export interface CreateConnectionProps {
   classes?: Record<string, string>;
-  selectedNodeId?: string;
   nodeIds?: string[];
   iconUri?: string;
   connector: Connector;
@@ -102,6 +100,7 @@ export interface CreateConnectionProps {
   checkOAuthCallback: (parameters: Record<string, ConnectionParameter>) => boolean;
   resourceSelectorProps?: AzureResourcePickerProps;
   isAgentServiceConnection?: boolean;
+  isAgentSubgraph?: boolean;
 }
 
 export const CreateConnection = (props: CreateConnectionProps) => {
@@ -128,7 +127,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     gatewayServiceConfig,
     resourceSelectorProps,
     isAgentServiceConnection,
-    selectedNodeId,
+    isAgentSubgraph,
   } = props;
 
   const intl = useIntl();
@@ -145,7 +144,6 @@ export const CreateConnection = (props: CreateConnectionProps) => {
 
   const [parameterValues, setParameterValues] = useState<Record<string, any>>({});
 
-  const isAgentSubgraph = useIsAgentSubGraph(selectedNodeId);
   const shouldEnableDynamicConnections = useShouldEnableDynamicConnections();
   const [selectedParamSetIndex, setSelectedParamSetIndex] = useState<number>(0);
   const [isUsingDynamicConnection, setIsUsingDynamicConnection] = useState<boolean>(false);
