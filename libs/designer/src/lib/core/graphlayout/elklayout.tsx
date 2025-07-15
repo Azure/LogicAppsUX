@@ -232,9 +232,8 @@ export const LayoutProvider = ({ children }: any) => {
       }
 
       const currentLayoutRelevantData = getLayoutRelevantData(workflowGraph);
-      // If layout-relevant data hasn't changed meaningfully, skip the expensive ELK processing.
+      // If layout-relevant data hasn't changed, skip elk processing
       if (prevLayoutRelevantDataRef.current && isEqual(prevLayoutRelevantDataRef.current, currentLayoutRelevantData)) {
-        // If the data is the same, we can skip re-layout.
         prevLayoutRelevantDataRef.current = currentLayoutRelevantData;
         return;
       }
@@ -247,7 +246,7 @@ export const LayoutProvider = ({ children }: any) => {
           setNodes(n);
           setEdges(e);
           setSize(s);
-          // Store the data that is actually being processed for the next comparison.
+          // Store layout data for next comparison
           prevLayoutRelevantDataRef.current = currentLayoutRelevantData;
         })
         .catch((err) => {

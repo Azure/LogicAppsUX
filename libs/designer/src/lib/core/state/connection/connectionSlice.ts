@@ -2,19 +2,26 @@ import { getExistingReferenceKey } from '../../utils/connectors/connections';
 import type { ConnectionMapping, ConnectionReference, ConnectionReferences, NodeId, ReferenceKey } from '../../../common/models/workflow';
 import type { UpdateConnectionPayload } from '../../actions/bjsworkflow/connections';
 import { resetWorkflowState, setStateAfterUndoRedo } from '../global';
-import { LogEntryLevel, LoggerService, getUniqueName } from '@microsoft/logic-apps-shared';
+import { LogEntryLevel, LoggerService, getResourceNameFromId, getUniqueName } from '@microsoft/logic-apps-shared';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { UndoRedoPartialRootState } from '../undoRedo/undoRedoTypes';
+import { initializeConnectionMappings } from '../../../core/actions/bjsworkflow/mcp';
 
 export interface ConnectionsStoreState {
   connectionsMapping: ConnectionMapping;
   connectionReferences: ConnectionReferences;
+  loading: {
+    initializeConnectionMappings: boolean;
+  };
 }
 
 export const initialConnectionsState: ConnectionsStoreState = {
   connectionsMapping: {},
   connectionReferences: {},
+  loading: {
+    initializeConnectionMappings: false,
+  },
 };
 
 type ConnectionReferenceMap = Record<string, ReferenceKey>;
@@ -30,23 +37,13 @@ export const connectionSlice = createSlice({
       state.connectionsMapping = action.payload;
     },
     changeConnectionMapping: (state, action: PayloadAction<UpdateConnectionPayload>) => {
-      const { nodeId, connectionId, connectorId, connectionProperties, connectionRuntimeUrl, authentication } = action.payload;
-      const existingReferenceKey = getExistingReferenceKey(state.connectionReferences, action.payload);
+      const { key, reference } = getReferenceForConnection(state.connectionReferences, action.payload);
 
-      if (existingReferenceKey) {
-        state.connectionsMapping[nodeId] = existingReferenceKey;
-      } else {
-        const { name: newReferenceKey } = getUniqueName(Object.keys(state.connectionReferences), connectorId.split('/').at(-1) as string);
-        state.connectionReferences[newReferenceKey] = {
-          api: { id: connectorId },
-          connection: { id: connectionId },
-          connectionName: connectionId.split('/').at(-1) as string,
-          connectionProperties,
-          connectionRuntimeUrl,
-          authentication,
-        };
-        state.connectionsMapping[nodeId] = newReferenceKey;
+      if (reference) {
+        state.connectionReferences[key] = reference;
       }
+
+      state.connectionsMapping[action.payload.nodeId] = key;
 
       LoggerService().log({
         level: LogEntryLevel.Verbose,
@@ -55,8 +52,36 @@ export const connectionSlice = createSlice({
         args: [action.payload.nodeId, action.payload.connectorId],
       });
     },
-    initEmptyConnectionMap: (state, action: PayloadAction<NodeId>) => {
-      state.connectionsMapping[action.payload] = null;
+    changeConnectionMappingsForNodes: (
+      state,
+      action: PayloadAction<Omit<UpdateConnectionPayload, 'nodeId'> & { nodeIds: string[]; reset?: boolean }>
+    ) => {
+      const { reset, nodeIds, connectorId } = action.payload;
+      const { key, reference } = getReferenceForConnection(state.connectionReferences, action.payload);
+
+      if (reference) {
+        state.connectionReferences[key] = reference;
+      }
+
+      if (reset) {
+        state.connectionsMapping = {};
+      }
+
+      for (const nodeId of nodeIds) {
+        state.connectionsMapping[nodeId] = key;
+      }
+
+      LoggerService().log({
+        level: LogEntryLevel.Verbose,
+        area: 'Mcp:Connection Slice',
+        message: action.type,
+        args: [nodeIds, connectorId],
+      });
+    },
+    initEmptyConnectionMap: (state, action: PayloadAction<NodeId[]>) => {
+      for (const nodeId of action.payload) {
+        state.connectionsMapping[nodeId] = null;
+      }
     },
     initCopiedConnectionMap: (state, action: PayloadAction<{ connectionReferences: ConnectionReferenceMap }>) => {
       const { connectionReferences } = action.payload;
@@ -88,8 +113,42 @@ export const connectionSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(resetWorkflowState, () => initialConnectionsState);
     builder.addCase(setStateAfterUndoRedo, (_, action: PayloadAction<UndoRedoPartialRootState>) => action.payload.connections);
+    builder.addCase(initializeConnectionMappings.pending, (state) => {
+      state.loading.initializeConnectionMappings = true;
+    });
+    builder.addCase(initializeConnectionMappings.fulfilled, (state) => {
+      state.loading.initializeConnectionMappings = false;
+    });
+    builder.addCase(initializeConnectionMappings.rejected, (state) => {
+      state.loading.initializeConnectionMappings = false;
+    });
   },
 });
+
+const getReferenceForConnection = (
+  references: ConnectionReferences,
+  payload: Omit<UpdateConnectionPayload, 'nodeId'>
+): { key: string; reference?: ConnectionReference } => {
+  const { connectionId, connectorId, connectionProperties, connectionRuntimeUrl, authentication } = payload;
+  const existingReferenceKey = getExistingReferenceKey(references, payload);
+
+  if (existingReferenceKey) {
+    return { key: existingReferenceKey };
+  }
+
+  const { name: newReferenceKey } = getUniqueName(Object.keys(references), connectorId.split('/').at(-1) as string);
+  return {
+    key: newReferenceKey,
+    reference: {
+      api: { id: connectorId },
+      connection: { id: connectionId },
+      connectionName: getResourceNameFromId(connectionId),
+      connectionProperties,
+      connectionRuntimeUrl,
+      authentication,
+    },
+  };
+};
 
 // Action creators are generated for each case reducer function
 export const {
@@ -100,6 +159,7 @@ export const {
   initCopiedConnectionMap,
   initScopeCopiedConnections,
   removeNodeConnectionData,
+  changeConnectionMappingsForNodes,
 } = connectionSlice.actions;
 
 export default connectionSlice.reducer;

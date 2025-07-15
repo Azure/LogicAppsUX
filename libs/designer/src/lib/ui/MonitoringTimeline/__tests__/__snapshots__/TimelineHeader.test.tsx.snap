@@ -1,0 +1,134 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`TimelineHeader > should not render title text when collapsed 1`] = `
+<div
+  style={
+    {
+      "alignItems": "center",
+      "display": "flex",
+      "flexDirection": "row",
+      "gap": "8px",
+    }
+  }
+>
+  <svg
+    aria-hidden={true}
+    className="timeline-icon ___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+    fill="currentColor"
+    height="1em"
+    viewBox="0 0 20 20"
+    width="1em"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M3.5 3C2.67 3 2 3.67 2 4.5v4c0 .83.67 1.5 1.5 1.5h9c.83 0 1.5-.67 1.5-1.5v-4c0-.83-.67-1.5-1.5-1.5h-9ZM3 4.5c0-.28.22-.5.5-.5h9c.28 0 .5.22.5.5v4a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5v-4Zm.5 6.5c-.83 0-1.5.67-1.5 1.5v4c0 .83.67 1.5 1.5 1.5h9c.83 0 1.5-.67 1.5-1.5v-4c0-.83-.67-1.5-1.5-1.5h-9ZM3 12.5c0-.28.22-.5.5-.5h9c.28 0 .5.22.5.5v4a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5v-4Zm14-.06a2 2 0 0 1-1-3.88 2 2 0 0 1 1 3.88ZM16.5 3c.28 0 .5.22.5.5v4.04a3.02 3.02 0 0 0-1 0V3.5c0-.28.22-.5.5-.5Zm0 10.5c-.17 0-.34-.01-.5-.04v4.04a.5.5 0 0 0 1 0v-4.04c-.16.03-.33.04-.5.04Z"
+      fill="currentColor"
+    />
+  </svg>
+</div>
+`;
+
+exports[`TimelineHeader > should render when collapsed 1`] = `
+<div
+  style={
+    {
+      "alignItems": "center",
+      "display": "flex",
+      "flexDirection": "row",
+      "gap": "8px",
+    }
+  }
+>
+  <svg
+    aria-hidden={true}
+    className="timeline-icon ___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+    fill="currentColor"
+    height="1em"
+    viewBox="0 0 20 20"
+    width="1em"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M3.5 3C2.67 3 2 3.67 2 4.5v4c0 .83.67 1.5 1.5 1.5h9c.83 0 1.5-.67 1.5-1.5v-4c0-.83-.67-1.5-1.5-1.5h-9ZM3 4.5c0-.28.22-.5.5-.5h9c.28 0 .5.22.5.5v4a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5v-4Zm.5 6.5c-.83 0-1.5.67-1.5 1.5v4c0 .83.67 1.5 1.5 1.5h9c.83 0 1.5-.67 1.5-1.5v-4c0-.83-.67-1.5-1.5-1.5h-9ZM3 12.5c0-.28.22-.5.5-.5h9c.28 0 .5.22.5.5v4a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5v-4Zm14-.06a2 2 0 0 1-1-3.88 2 2 0 0 1 1 3.88ZM16.5 3c.28 0 .5.22.5.5v4.04a3.02 3.02 0 0 0-1 0V3.5c0-.28.22-.5.5-.5Zm0 10.5c-.17 0-.34-.01-.5-.04v4.04a.5.5 0 0 0 1 0v-4.04c-.16.03-.33.04-.5.04Z"
+      fill="currentColor"
+    />
+  </svg>
+</div>
+`;
+
+exports[`TimelineHeader > should render with default props when expanded 1`] = `
+<div
+  style={
+    {
+      "alignItems": "center",
+      "display": "flex",
+      "flexDirection": "row",
+      "gap": "8px",
+      "minWidth": "200px",
+    }
+  }
+>
+  <svg
+    aria-hidden={true}
+    className="timeline-icon ___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+    fill="currentColor"
+    height="1em"
+    viewBox="0 0 20 20"
+    width="1em"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M3.5 3C2.67 3 2 3.67 2 4.5v4c0 .83.67 1.5 1.5 1.5h9c.83 0 1.5-.67 1.5-1.5v-4c0-.83-.67-1.5-1.5-1.5h-9ZM3 4.5c0-.28.22-.5.5-.5h9c.28 0 .5.22.5.5v4a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5v-4Zm.5 6.5c-.83 0-1.5.67-1.5 1.5v4c0 .83.67 1.5 1.5 1.5h9c.83 0 1.5-.67 1.5-1.5v-4c0-.83-.67-1.5-1.5-1.5h-9ZM3 12.5c0-.28.22-.5.5-.5h9c.28 0 .5.22.5.5v4a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5v-4Zm14-.06a2 2 0 0 1-1-3.88 2 2 0 0 1 1 3.88ZM16.5 3c.28 0 .5.22.5.5v4.04a3.02 3.02 0 0 0-1 0V3.5c0-.28.22-.5.5-.5Zm0 10.5c-.17 0-.34-.01-.5-.04v4.04a.5.5 0 0 0 1 0v-4.04c-.16.03-.33.04-.5.04Z"
+      fill="currentColor"
+    />
+  </svg>
+  <span
+    className="fui-Text ___g0or4u0_dhwpsw0 fk6fouc fkhj508 f1i3iumi fl43uef fpgzoln f1w7gpdv f6juhto f1gl81tg f2jf649"
+    style={
+      {
+        "flexGrow": 1,
+      }
+    }
+  >
+    Task timeline
+  </span>
+  <button
+    className="fui-Button r1alrhcs ___18vzs3l_jbqu760 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f44lkw9 f1062rbf f18ktai2 fwbmr0d f44c6la"
+    onClick={[Function]}
+    type="button"
+  >
+    <span
+      className="fui-Button__icon rywnvv2"
+    >
+      <svg
+        aria-hidden={true}
+        className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+        fill="currentColor"
+        height="1em"
+        viewBox="0 0 20 20"
+        width="1em"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M10.63 2.03A8 8 0 1 0 18 9.73a.75.75 0 1 0-1.5.05c0 .25 0 .5-.02.73a6.5 6.5 0 1 1-1.56-4.75l.2.24h-2.37l-.1.01a.75.75 0 0 0 0 1.49H16.85c.33-.05.6-.31.64-.64V2.66a.75.75 0 0 0-.64-.65h-.2c-.34.05-.6.3-.65.64v2.06a7.98 7.98 0 0 0-5.37-2.68Z"
+          fill="currentColor"
+        />
+      </svg>
+      <svg
+        aria-hidden={true}
+        className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+        fill="currentColor"
+        height="1em"
+        viewBox="0 0 20 20"
+        width="1em"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M3.07 9.05a7 7 0 0 1 12.55-3.22l.13.17H12.5a.5.5 0 1 0 0 1h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 0-1 0v2.2a8 8 0 1 0 1.99 4.77.5.5 0 0 0-1 .08 7 7 0 1 1-13.92-.5Z"
+          fill="currentColor"
+        />
+      </svg>
+    </span>
+  </button>
+</div>
+`;

@@ -3,12 +3,6 @@ import type { WorkflowNode } from '../parsers/models/workflowNode';
 
 export const footerMarker = '#footer';
 
-interface LayoutRelevantEdgeData {
-  id: string;
-  source: string;
-  target: string;
-  type: string | undefined;
-}
 export interface LayoutRelevantData {
   id: string;
   height: number | undefined;
@@ -19,8 +13,16 @@ export interface LayoutRelevantData {
   hasFooter: boolean;
   hasOnlyEdge: boolean | undefined;
 }
-// Helper function to extract only data relevant to ELK layout from a WorkflowNode.
-// This is used to avoid unnecessary re-layouts when non-layout-relevant properties change.
+
+interface LayoutRelevantEdgeData {
+  id: string;
+  source: string;
+  target: string;
+  type: string | undefined;
+}
+
+// Helper function to extract only data relevant to elk layout from a WorkflowNode
+// This is used to avoid unnecessary re-layouts when non-layout-relevant properties change
 export const getLayoutRelevantData = (node: WorkflowNode | undefined): LayoutRelevantData | undefined => {
   if (!node) {
     return undefined;
@@ -38,7 +40,7 @@ export const getLayoutRelevantData = (node: WorkflowNode | undefined): LayoutRel
       type: edge.type,
     })),
     children: node.children?.map((child) => getLayoutRelevantData(child as WorkflowNode)),
-    hasFooter: node.children?.findIndex((child) => child.id.endsWith(footerMarker)) !== -1,
+    hasFooter: node.children?.some((child) => child.id.endsWith(footerMarker)) ?? false,
     hasOnlyEdge: node.edges?.some((edge) => edge.type === WORKFLOW_EDGE_TYPES.ONLY_EDGE),
   };
 };

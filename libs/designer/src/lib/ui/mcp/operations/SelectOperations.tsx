@@ -5,9 +5,10 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useAllConnectors } from '../../../core/queries/browse';
 import type { RootState, AppDispatch } from '../../../core/state/mcp/store';
 import { useOperationsByConnectorQuery } from '../../../core/mcp/utils/queries';
-import { setSelectedOperations } from '../../../core/state/mcp/panel/mcpPanelSlice';
 import { OperationSelectionGrid } from './OperationSelectionGrid';
 import { useOperationsStyles } from './styles';
+import { getResourceNameFromId } from '@microsoft/logic-apps-shared';
+import { selectOperations } from '../../../core/state/mcp/connector/connectorSlice';
 
 export const SelectOperations = () => {
   const intl = useIntl();
@@ -15,8 +16,8 @@ export const SelectOperations = () => {
   const styles = useOperationsStyles();
 
   const { selectedConnectorId, selectedOperations } = useSelector((state: RootState) => ({
-    selectedConnectorId: state.mcpPanel.selectedConnectorId,
-    selectedOperations: state.mcpPanel.selectedOperations || [],
+    selectedConnectorId: state.connector.selectedConnectorId,
+    selectedOperations: state.connector.selectedOperations ?? [],
   }));
 
   const selectedOperationsSet = useMemo(() => new Set(selectedOperations), [selectedOperations]);
@@ -37,20 +38,21 @@ export const SelectOperations = () => {
   const handleOperationToggle = useCallback(
     (operationId: string, isSelected: boolean) => {
       const newSelection = new Set(selectedOperations);
+      const operationName = getResourceNameFromId(operationId);
       if (isSelected) {
-        newSelection.add(operationId);
+        newSelection.add(operationName);
       } else {
-        newSelection.delete(operationId);
+        newSelection.delete(operationName);
       }
-      dispatch(setSelectedOperations(Array.from(newSelection)));
+      dispatch(selectOperations(Array.from(newSelection)));
     },
     [selectedOperations, dispatch]
   );
 
   const handleSelectAll = useCallback(
     (isSelected: boolean) => {
-      const newSelection = isSelected ? operations.map((op) => op.id) : [];
-      dispatch(setSelectedOperations(newSelection));
+      const newSelection = isSelected ? operations.map((op) => op.name) : [];
+      dispatch(selectOperations(newSelection));
     },
     [operations, dispatch]
   );
@@ -149,7 +151,7 @@ export const SelectOperations = () => {
           selectedOperations={selectedOperationsSet}
           onOperationToggle={handleOperationToggle}
           onSelectAll={handleSelectAll}
-          isLoading={false}
+          isLoading={isLoadingOperations}
           showConnectorName={false}
           hideNoResultsText={false}
           allowSelectAll={true}

@@ -84,6 +84,10 @@ export const Designer = (props: DesignerProps) => {
   const isAgenticWorkflow = useAgenticWorkflow();
   const isA2AWorkflow = useIsA2AWorkflow(); // Specifically A2A + Handoffs
 
+  const hasChat = useMemo(() => {
+    return (isA2AWorkflow || isAgenticWorkflow) && isMonitoringView;
+  }, [isA2AWorkflow, isAgenticWorkflow, isMonitoringView]);
+
   const DND_OPTIONS: any = {
     backends: [
       {
@@ -138,9 +142,7 @@ export const Designer = (props: DesignerProps) => {
             customPanelLocations={customPanelLocations}
             isResizeable={true}
           />
-          {isMonitoringView && isAgenticWorkflow ? (
-            <AgentChat panelLocation={PanelLocation.Right} panelContainerRef={designerContainerRef} />
-          ) : null}
+          {hasChat ? <AgentChat panelLocation={PanelLocation.Right} panelContainerRef={designerContainerRef} /> : null}
           <div className={css('msla-designer-tools', panelLocation === PanelLocation.Left && 'left-panel')}>
             <Controls />
             <Minimap />

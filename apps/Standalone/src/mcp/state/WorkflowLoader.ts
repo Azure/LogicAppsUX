@@ -23,7 +23,7 @@ const initialState: WorkflowLoadingState = {
   isLocal: false,
   theme: ThemeType.Light,
   language: 'en',
-  toolboxOpen: true,
+  toolboxOpen: false,
 };
 
 export const workflowLoaderSlice = createSlice({

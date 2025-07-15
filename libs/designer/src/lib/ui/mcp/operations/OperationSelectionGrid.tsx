@@ -194,7 +194,7 @@ export const OperationSelectionGrid = ({
           <OperationCell
             key={operation.id}
             operation={operation}
-            isSelected={selectedOperations.has(operation.id)}
+            isSelected={selectedOperations.has(operation.name)}
             showConnectorName={showConnectorName}
             onCardClick={handleCardClick}
             onCheckboxChange={handleCheckboxChange}

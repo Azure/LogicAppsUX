@@ -1,22 +1,8 @@
 import type { AppDispatch, RootState } from '../state/Store';
-import type { IDropdownOption } from '@fluentui/react';
-import { Dropdown, Stack, StackItem } from '@fluentui/react';
-import {
-  Accordion,
-  AccordionHeader,
-  AccordionItem,
-  AccordionPanel,
-  MessageBar,
-  Card,
-  CardHeader,
-  Text,
-  Badge,
-  Divider,
-} from '@fluentui/react-components';
+import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, MessageBar, Text, Badge, Switch } from '@fluentui/react-components';
 import { Theme as ThemeType } from '@microsoft/logic-apps-shared';
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { AzureStandardLogicAppSelector } from '../../designer/app/AzureLogicAppsDesigner/LogicAppSelectionSetting/AzureStandardLogicAppSelector';
 import { ThemeProvider } from '@fluentui/react';
 import { FluentProvider, webDarkTheme, webLightTheme } from '@fluentui/react-components';
 import { AzureThemeDark } from '@fluentui/azure-themes/lib/azure/AzureThemeDark';
@@ -24,11 +10,6 @@ import { AzureThemeLight } from '@fluentui/azure-themes/lib/azure/AzureThemeLigh
 import { setToolboxOpen, workflowLoaderSlice } from '../state/WorkflowLoader';
 import { environment } from '../../environments/environment';
 import { useDevToolboxStyles } from './styles';
-
-const themeDropdownOptions = [
-  { key: ThemeType.Light, text: 'Light' },
-  { key: ThemeType.Dark, text: 'Dark' },
-];
 
 export const DevToolbox = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -38,16 +19,12 @@ export const DevToolbox = () => {
   const { theme } = useSelector((state: RootState) => state.workflowLoader);
   const isLightMode = theme === ThemeType.Light;
 
-  const changeThemeCB = useCallback(
-    (_: unknown, item: IDropdownOption | undefined) => {
-      dispatch(workflowLoaderSlice.actions.changeTheme((item?.key as ThemeType) ?? ''));
+  const handleThemeToggle = useCallback(
+    (_: unknown, data: { checked: boolean }) => {
+      dispatch(workflowLoaderSlice.actions.changeTheme(data.checked ? ThemeType.Dark : ThemeType.Light));
     },
     [dispatch]
   );
-
-  const onLogicAppSelected = () => {
-    dispatch(setToolboxOpen(false));
-  };
 
   const armToken = environment.armToken;
 
@@ -83,61 +60,12 @@ export const DevToolbox = () => {
               </AccordionHeader>
 
               <AccordionPanel className={styles.accordionPanel}>
-                <Stack horizontal tokens={{ childrenGap: '20px' }} wrap className={styles.stackContainer}>
-                  <StackItem className={styles.themeCard}>
-                    <Card className={styles.transparentCard}>
-                      <CardHeader
-                        header={
-                          <Text size={400} weight="semibold">
-                            🎨 Theme Settings
-                          </Text>
-                        }
-                        description={
-                          <Text size={200} className={styles.sectionDescription}>
-                            Customize your visual experience
-                          </Text>
-                        }
-                      />
-                      <Divider className={styles.cardDivider} />
-                      <Dropdown
-                        label="Theme Mode"
-                        selectedKey={theme}
-                        onChange={changeThemeCB}
-                        placeholder="Select a theme"
-                        options={themeDropdownOptions}
-                        styles={{
-                          root: styles.dropdownRoot,
-                          dropdown: styles.dropdownField,
-                        }}
-                      />
-                    </Card>
-                  </StackItem>
-
-                  <StackItem className={styles.logicAppCard}>
-                    <Card className={styles.transparentCard}>
-                      <CardHeader
-                        header={
-                          <Text size={400} weight="semibold">
-                            ⚡ Logic App Configuration
-                          </Text>
-                        }
-                        description={
-                          <Text size={200} className={styles.sectionDescription}>
-                            Select and configure your Azure Logic App
-                          </Text>
-                        }
-                      />
-                      <Divider className={styles.cardDivider} />
-                      <div className={styles.logicAppContainer}>
-                        {armToken ? (
-                          <AzureStandardLogicAppSelector hideWorkflowSelection={true} onLogicAppSelected={onLogicAppSelected} />
-                        ) : (
-                          <Text size={200}>Please connect your ARM token to select a Logic App.</Text>
-                        )}
-                      </div>
-                    </Card>
-                  </StackItem>
-                </Stack>
+                <div className={styles.themeToggleContainer}>
+                  <Text size={400} weight="semibold">
+                    🎨 Dark Mode
+                  </Text>
+                  <Switch checked={!isLightMode} onChange={handleThemeToggle} label={isLightMode ? 'Light' : 'Dark'} />
+                </div>
               </AccordionPanel>
             </AccordionItem>
           </Accordion>
