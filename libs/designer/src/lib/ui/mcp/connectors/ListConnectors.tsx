@@ -26,10 +26,6 @@ const connectorTableCellStyles = {
   border: 'none',
 };
 
-const buttonGapStyles = {
-  marginRight: '8px',
-};
-
 export const ListConnectors = () => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
@@ -172,72 +168,67 @@ export const ListConnectors = () => {
     [operationInfos, dispatch]
   );
 
-  return (
-    <div>
-      {items.length ? (
-        <Table className={styles.tableStyle} aria-label={INTL_TEXT.tableAriaLabel} size="small">
-          <TableHeader>
-            <TableRow style={connectorTableCellStyles}>
-              {columns.map((column) => (
-                <TableHeaderCell key={column.columnKey} style={connectorTableCellStyles}>
-                  <Text weight="semibold">{column.label}</Text>
-                </TableHeaderCell>
-              ))}
-            </TableRow>
-          </TableHeader>
-          <TableBody style={connectorTableCellStyles}>
-            {items.map((item) => (
-              <TableRow key={item.connectorId} style={connectorTableCellStyles}>
-                <TableCell className={styles.iconTextCell} style={connectorTableCellStyles}>
-                  <img
-                    className={styles.connectorIcon}
-                    src={item.iconUri ?? DefaultIcon}
-                    alt={`${item.displayName} icon`}
-                    style={buttonGapStyles}
-                  />
-                  <Link as="button" onClick={() => handleEditConnector(item.connectorId)}>
-                    {item.displayName}
-                  </Link>
-                </TableCell>
-                <TableCell style={connectorTableCellStyles}>{item?.connectionName}</TableCell>
-                <TableCell className={styles.iconTextCell} style={connectorTableCellStyles}>
-                  <CheckmarkCircle20Filled style={buttonGapStyles} color={tokens.colorPaletteGreenBackground3} />
-                  <Text>{item?.connectionStatus}</Text>
-                </TableCell>
-                <TableCell className={styles.iconsCell} style={connectorTableCellStyles}>
-                  <Button
-                    style={buttonGapStyles}
-                    appearance="subtle"
-                    size="small"
-                    icon={<Edit24Regular />}
-                    onClick={() => handleEditConnector(item.connectorId)}
-                    aria-label={INTL_TEXT.editButtonLabel}
-                  />
-                  <Button
-                    appearance="subtle"
-                    size="small"
-                    icon={<Delete24Regular />}
-                    onClick={() => handleDeleteConnector(item.connectorId)}
-                    aria-label={INTL_TEXT.deleteButtonLabel}
-                  />
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      ) : (
-        <div className={styles.emptyState}>
-          <div className={styles.emptyStateIcon}>
-            <ConnectorFilled />
-          </div>
-          <Text size={400} weight="semibold" style={{ marginBottom: '8px' }}>
-            {INTL_TEXT.noConnectors}
-          </Text>
-          <Text size={200} style={{ opacity: 0.7, marginBottom: '24px' }}>
-            {INTL_TEXT.addFirstConnector}
-          </Text>
+  if (!items || items.length === 0) {
+    return (
+      <div className={styles.emptyState}>
+        <div className={styles.emptyStateIcon}>
+          <ConnectorFilled />
         </div>
-      )}
-    </div>
+        <Text size={400} weight="semibold" style={{ marginBottom: '8px' }}>
+          {INTL_TEXT.noConnectors}
+        </Text>
+        <Text size={200} style={{ opacity: 0.7, marginBottom: '24px' }}>
+          {INTL_TEXT.addFirstConnector}
+        </Text>
+      </div>
+    );
+  }
+
+  return (
+    <Table className={styles.tableStyle} aria-label={INTL_TEXT.tableAriaLabel} size="small">
+      <TableHeader>
+        <TableRow style={connectorTableCellStyles}>
+          {columns.map((column) => (
+            <TableHeaderCell key={column.columnKey} style={connectorTableCellStyles}>
+              <Text weight="semibold">{column.label}</Text>
+            </TableHeaderCell>
+          ))}
+        </TableRow>
+      </TableHeader>
+      <TableBody style={connectorTableCellStyles}>
+        {items.map((item) => (
+          <TableRow key={item.connectorId} style={connectorTableCellStyles}>
+            <TableCell className={styles.iconTextCell} style={connectorTableCellStyles}>
+              <img className={styles.connectorIcon} src={item.iconUri ?? DefaultIcon} alt={`${item.displayName} icon`} />
+              <Link as="button" onClick={() => handleEditConnector(item.connectorId)}>
+                {item.displayName}
+              </Link>
+            </TableCell>
+            <TableCell style={connectorTableCellStyles}>{item?.connectionName}</TableCell>
+            <TableCell className={styles.iconTextCell} style={connectorTableCellStyles}>
+              <CheckmarkCircle20Filled className={styles.icon} color={tokens.colorPaletteGreenBackground3} />
+              <Text>{item?.connectionStatus}</Text>
+            </TableCell>
+            <TableCell className={styles.iconsCell} style={connectorTableCellStyles}>
+              <Button
+                className={styles.icon}
+                appearance="subtle"
+                size="small"
+                icon={<Edit24Regular />}
+                onClick={() => handleEditConnector(item.connectorId)}
+                aria-label={INTL_TEXT.editButtonLabel}
+              />
+              <Button
+                appearance="subtle"
+                size="small"
+                icon={<Delete24Regular />}
+                onClick={() => handleDeleteConnector(item.connectorId)}
+                aria-label={INTL_TEXT.deleteButtonLabel}
+              />
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
   );
 };

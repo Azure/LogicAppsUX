@@ -60,6 +60,8 @@ export const useMcpWizardStyles = makeStyles({
   },
 });
 
+const connectorButtonGap = '8px';
+
 // Connectors / Operations section styles
 export const useConnectorSectionStyles = makeStyles({
   emptyState: {
@@ -91,6 +93,11 @@ export const useConnectorSectionStyles = makeStyles({
     width: '24px',
     height: '24px',
     objectFit: 'contain',
+    marginRight: connectorButtonGap,
+  },
+
+  icon: {
+    marginRight: connectorButtonGap,
   },
 
   iconTextCell: {

@@ -20,10 +20,6 @@ import { useConnectorSectionStyles } from '../wizard/styles';
 import { deinitializeNodes, deinitializeOperationInfo } from '../../../core/state/operation/operationMetadataSlice';
 import DefaultIcon from '../../../common/images/recommendation/defaulticon.svg';
 
-const buttonGapStyles = {
-  marginRight: '8px',
-};
-
 export const ListOperations = () => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
@@ -114,59 +110,52 @@ export const ListOperations = () => {
 
   if (isInitializingOperations) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '40px' }}>
+      <div className={styles.emptyState}>
         <Spinner size="medium" label={INTL_TEXT.loadingOperationsText} />
       </div>
     );
   }
 
   return (
-    <div>
-      <Table className={styles.tableStyle} aria-label={INTL_TEXT.tableAriaLabel} size="small">
-        <TableHeader>
-          <TableRow style={{ border: 'none' }}>
-            {columns.map((column) => (
-              <TableHeaderCell key={column.columnKey}>
-                <Text weight="semibold">{column.label}</Text>
-              </TableHeaderCell>
-            ))}
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {items.map((item) => (
-            <TableRow key={item.operationId}>
-              <TableCell className={styles.iconTextCell}>
-                <img
-                  className={styles.connectorIcon}
-                  src={item.connectorIconUri ?? DefaultIcon}
-                  alt={`${item.connectorId} icon`}
-                  style={buttonGapStyles}
-                />
-                <Link as="button" onClick={() => handleEditOperation(item.operationId)}>
-                  {item.operationName}
-                </Link>
-              </TableCell>
-              <TableCell className={styles.iconsCell}>
-                <Button
-                  style={buttonGapStyles}
-                  appearance="subtle"
-                  size="small"
-                  icon={<Edit24Regular />}
-                  onClick={() => handleEditOperation(item.operationId)}
-                  aria-label={INTL_TEXT.editButtonLabel}
-                />
-                <Button
-                  appearance="subtle"
-                  size="small"
-                  icon={<Delete24Regular />}
-                  onClick={() => handleDeleteOperation(item.operationId)}
-                  aria-label={INTL_TEXT.deleteButtonLabel}
-                />
-              </TableCell>
-            </TableRow>
+    <Table className={styles.tableStyle} aria-label={INTL_TEXT.tableAriaLabel} size="small">
+      <TableHeader>
+        <TableRow style={{ border: 'none' }}>
+          {columns.map((column) => (
+            <TableHeaderCell key={column.columnKey}>
+              <Text weight="semibold">{column.label}</Text>
+            </TableHeaderCell>
           ))}
-        </TableBody>
-      </Table>
-    </div>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {items.map((item) => (
+          <TableRow key={item.operationId}>
+            <TableCell className={styles.iconTextCell}>
+              <img className={styles.connectorIcon} src={item.connectorIconUri ?? DefaultIcon} alt={`${item.connectorId} icon`} />
+              <Link as="button" onClick={() => handleEditOperation(item.operationId)}>
+                {item.operationName}
+              </Link>
+            </TableCell>
+            <TableCell className={styles.iconsCell}>
+              <Button
+                className={styles.icon}
+                appearance="subtle"
+                size="small"
+                icon={<Edit24Regular />}
+                onClick={() => handleEditOperation(item.operationId)}
+                aria-label={INTL_TEXT.editButtonLabel}
+              />
+              <Button
+                appearance="subtle"
+                size="small"
+                icon={<Delete24Regular />}
+                onClick={() => handleDeleteOperation(item.operationId)}
+                aria-label={INTL_TEXT.deleteButtonLabel}
+              />
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
   );
 };
