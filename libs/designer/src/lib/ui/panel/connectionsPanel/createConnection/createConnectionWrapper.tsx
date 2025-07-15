@@ -12,14 +12,16 @@ import { getAssistedConnectionProps } from '../../../../core/utils/connectors/co
 import { getRecordEntry, type ValueSegment, type Connection, type Connector } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import type { ApiHubAuthentication } from 'lib/common/models/workflow';
+import type { ApiHubAuthentication } from '../../../../common/models/workflow';
 import { CreateConnectionInternal } from './createConnectionInternal';
 // import { updateParameterAndDependencies } from "../../../../core/utils/parameters/helper";
+import { useIsAgentSubGraph } from '../../../../common/hooks/agent';
 
 export const CreateConnectionWrapper = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const nodeId: string = useOperationPanelSelectedNodeId();
+  const isAgentSubgraph = useIsAgentSubGraph(nodeId);
   const nodeIds = useConnectionPanelSelectedNodeIds();
   const connector = useConnectorByNodeId(nodeId);
   const operationInfo = useOperationInfo(nodeId);
@@ -75,6 +77,7 @@ export const CreateConnectionWrapper = () => {
       connectorId={connector?.id ?? ''}
       operationType={operationInfo?.type}
       existingReferences={existingReferences}
+      isAgentSubgraph={isAgentSubgraph ?? false}
       nodeIds={nodeIds}
       assistedConnectionProps={assistedConnectionProps}
       connectionMetadata={connectionMetadata}

@@ -9,6 +9,7 @@ import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
+import { useExportStyles } from '../exportStyles';
 
 export const resourceGroupNamingRules: INamingRules = {
   minLength: 1,
@@ -25,6 +26,7 @@ export const NewResourceGroup: React.FC<INewResourceGroupProps> = ({ onAddNewRes
   const intl = useIntl();
   const [isCalloutVisible, { toggle: toggleIsCalloutVisible }] = useBoolean(false);
   const [name, setName] = useState<string>('');
+  const styles = useExportStyles();
   const workflowState = useSelector((state: RootState) => state.workflow);
   const { exportData } = workflowState;
   const { location } = exportData;
@@ -112,14 +114,14 @@ export const NewResourceGroup: React.FC<INewResourceGroupProps> = ({ onAddNewRes
             autoFocus={true}
           />
           <PrimaryButton
-            className="msla-export-summary-connections-button"
+            className={styles.exportSummaryConnectionsButton}
             text={intlText.OK}
             ariaLabel={intlText.OK}
             disabled={!isNameValid(name, intlText, resourceGroups).validName}
             onClick={onClickOk}
           />
           <PrimaryButton
-            className="msla-export-summary-connections-button"
+            className={styles.exportSummaryConnectionsButton}
             text={intlText.CANCEL}
             ariaLabel={intlText.CANCEL}
             onClick={toggleIsCalloutVisible}

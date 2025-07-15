@@ -359,6 +359,7 @@ export default {
       FLAT_FILE_ENCODING: 'flatfileencoding',
       FOREACH: 'foreach',
       FUNCTION: 'function',
+      HANDOFF: 'agenthandoff',
       HTTP_WEBHOOK: 'httpwebhook',
       HTTP: 'http',
       IF: 'if',
@@ -499,6 +500,11 @@ export default {
     SUMMARY: 'SUMMARY',
     SELECT_WORKFLOWS: 'SELECT_WORKFLOWS',
     CUSTOMIZE_WORKFLOWS: 'CUSTOMIZE_WORKFLOWS',
+  },
+  MCP_PANEL_TAB_NAMES: {
+    CONNECTORS: 'CONNECTORS',
+    OPERATIONS: 'OPERATIONS',
+    CONNECTIONS: 'CONNECTIONS',
   },
   ERRORS_PANEL_TAB_NAMES: {
     ERRORS: 'ERRORS',

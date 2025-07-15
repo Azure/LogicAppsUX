@@ -21,6 +21,7 @@ import type { WritableDraft } from 'immer/dist/internal';
 import type { UndoRedoPartialRootState } from '../undoRedo/undoRedoTypes';
 import { deleteWorkflowData } from '../../actions/bjsworkflow/configuretemplate';
 import { delimiter } from '../../configuretemplate/utils/helper';
+import { initializeOperationsMetadata } from '../../actions/bjsworkflow/mcp';
 
 export interface ParameterGroup {
   id: string;
@@ -92,6 +93,8 @@ export interface NodeDependencies {
 export interface OperationMetadata {
   iconUri: string;
   brandColor: string;
+  description?: string;
+  summary?: string;
 }
 
 export const ErrorLevel = {
@@ -128,6 +131,7 @@ export interface OperationMetadataState {
 interface OperationMetadataLoadStatus {
   nodesInitialized: boolean;
   nodesAndDynamicDataInitialized: boolean;
+  isInitializingOperations: boolean;
 }
 
 export const initialState: OperationMetadataState = {
@@ -145,6 +149,7 @@ export const initialState: OperationMetadataState = {
   loadStatus: {
     nodesInitialized: false,
     nodesAndDynamicDataInitialized: false,
+    isInitializingOperations: false,
   },
 };
 
@@ -162,6 +167,9 @@ export interface NodeOperationInputsData {
   nodeInputs: NodeInputs;
   nodeDependencies: NodeDependencies;
   operationInfo: NodeOperation;
+  nodeOutputs?: NodeOutputs;
+  settings?: Settings;
+  operationMetadata?: OperationMetadata;
 }
 
 export interface NodeData {
@@ -237,10 +245,22 @@ export const operationMetadataSlice = createSlice({
           return;
         }
 
-        const { id, nodeInputs, nodeDependencies, operationInfo } = nodeData;
+        const { id, nodeInputs, nodeOutputs, nodeDependencies, operationInfo, settings, operationMetadata } = nodeData;
         state.inputParameters[id] = nodeInputs;
         state.dependencies[id] = nodeDependencies;
         state.operationInfo[id] = operationInfo;
+
+        if (nodeOutputs) {
+          state.outputParameters[id] = nodeOutputs;
+        }
+
+        if (settings) {
+          state.settings[id] = settings;
+        }
+
+        if (operationMetadata) {
+          state.operationMetadata[id] = operationMetadata;
+        }
       }
       state.loadStatus.nodesInitialized = true;
     },
@@ -593,6 +613,13 @@ export const operationMetadataSlice = createSlice({
       const nodeRepetition = getRecordEntry(state.repetitionInfos, id);
       state.repetitionInfos[id] = { ...nodeRepetition, ...repetition };
     },
+    updateOperationDescription: (state, action: PayloadAction<{ id: string; description: string }>) => {
+      const { id, description } = action.payload;
+      const operationMetadata = getRecordEntry(state.operationMetadata, id);
+      if (operationMetadata) {
+        state.operationMetadata[id] = { ...operationMetadata, description };
+      }
+    },
     updateErrorDetails: (
       state,
       action: PayloadAction<{
@@ -614,6 +641,12 @@ export const operationMetadataSlice = createSlice({
     deinitializeOperationInfo: (state, action: PayloadAction<{ id: string }>) => {
       const { id } = action.payload;
       delete state.operationInfo[id];
+    },
+    deinitializeOperationInfos: (state, action: PayloadAction<{ ids: string[] }>) => {
+      const { ids } = action.payload;
+      for (const operationId of ids) {
+        delete state.operationInfo[operationId];
+      }
     },
     deinitializeNodes: (state, action: PayloadAction<string[]>) => {
       for (const id of action.payload) {
@@ -652,6 +685,15 @@ export const operationMetadataSlice = createSlice({
           delete state.operationInfo[nodeId];
         }
       }
+    });
+    builder.addCase(initializeOperationsMetadata.pending, (state) => {
+      state.loadStatus.isInitializingOperations = true;
+    });
+    builder.addCase(initializeOperationsMetadata.fulfilled, (state) => {
+      state.loadStatus.isInitializingOperations = false;
+    });
+    builder.addCase(initializeOperationsMetadata.rejected, (state) => {
+      state.loadStatus.isInitializingOperations = false;
     });
   },
 });
@@ -781,8 +823,10 @@ export const {
   updateRepetitionContext,
   updateErrorDetails,
   deinitializeOperationInfo,
+  deinitializeOperationInfos,
   deinitializeNodes,
   updateDynamicDataLoadStatus,
+  updateOperationDescription,
 } = operationMetadataSlice.actions;
 
 export default operationMetadataSlice.reducer;

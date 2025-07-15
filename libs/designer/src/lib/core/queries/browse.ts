@@ -249,7 +249,7 @@ export const usePreloadConnectorsQuery = (): any => {
   return { isLoading };
 };
 
-const useAzureConnectorsLazyQuery = () =>
+export const useAzureConnectorsLazyQuery = () =>
   useInfiniteQuery(
     ['allConnectorsLazy', 'azure'],
     async ({ pageParam = 0 }: any) => {

@@ -6,7 +6,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ComboBox, type IComboBoxOption, Spinner } from '@fluentui/react';
 import { useAllCognitiveServiceAccounts, useAllCognitiveServiceProjects } from './useCognitiveService';
 import { useStyles } from './styles';
-import { Link, tokens, Spinner as SpinnerFUI9, Field } from '@fluentui/react-components';
+import { Link, Spinner as SpinnerFUI9, Field, Button } from '@fluentui/react-components';
 import { NavigateIcon } from '@microsoft/designer-ui';
 import { ArrowClockwise16Filled, ArrowClockwise16Regular, bundleIcon } from '@fluentui/react-icons';
 import { useSubscriptions } from '../../../../../core/state/connection/connectionSelector';
@@ -153,26 +153,33 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
     [setKeyValue]
   );
 
-  const openAIComboboxDisabled = useMemo(
-    () => isFetchingAccount || isFetchingSubscription || !selectedSubscriptionId || (allCognitiveServiceAccounts ?? []).length === 0,
-    [allCognitiveServiceAccounts, isFetchingAccount, isFetchingSubscription, selectedSubscriptionId]
+  const isOpenAIRefreshDisabled = useMemo(
+    () => isFetchingAccount || isFetchingSubscription || !selectedSubscriptionId,
+    [isFetchingAccount, isFetchingSubscription, selectedSubscriptionId]
   );
+
+  const openAIComboboxDisabled = useMemo(
+    () => isOpenAIRefreshDisabled || (allCognitiveServiceAccounts ?? []).length === 0,
+    [allCognitiveServiceAccounts, isOpenAIRefreshDisabled]
+  );
+
   const onRefreshServiceAccounts = useCallback(() => {
-    if (!openAIComboboxDisabled) {
-      refetchServiceAccounts();
-    }
-  }, [openAIComboboxDisabled, refetchServiceAccounts]);
+    refetchServiceAccounts();
+  }, [refetchServiceAccounts]);
+
+  const isServiceProjectsRefreshDisabled = useMemo(
+    () => openAIComboboxDisabled || isFetchingCognitiveServiceProjects,
+    [isFetchingCognitiveServiceProjects, openAIComboboxDisabled]
+  );
 
   const serviceProjectsComboBoxDisabled = useMemo(
-    () => openAIComboboxDisabled || isFetchingCognitiveServiceProjects || (cognitiveServiceProjects ?? []).length === 0,
-    [cognitiveServiceProjects, isFetchingCognitiveServiceProjects, openAIComboboxDisabled]
+    () => isServiceProjectsRefreshDisabled || (cognitiveServiceProjects ?? []).length === 0,
+    [cognitiveServiceProjects, isServiceProjectsRefreshDisabled]
   );
 
   const onRefreshServiceProjects = useCallback(() => {
-    if (!serviceProjectsComboBoxDisabled) {
-      refetchServiceProjects();
-    }
-  }, [serviceProjectsComboBoxDisabled, refetchServiceProjects]);
+    refetchServiceProjects();
+  }, [refetchServiceProjects]);
 
   const onSetOpenAIValues = useCallback(
     async (newValue: string) => {
@@ -330,12 +337,15 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
                 <CreateNewButton href="https://aka.ms/openAICreate" />
               </div>
             </div>
-            <RefreshIcon
+            <Button
+              icon={<RefreshIcon />}
+              size="small"
               style={{
-                marginTop: '4px',
-                marginLeft: '4px',
-                color: openAIComboboxDisabled ? tokens.colorBrandBackground2Pressed : tokens.colorBrandBackground,
+                margin: '0 4px',
+                height: '100%',
               }}
+              appearance="transparent"
+              disabled={isOpenAIRefreshDisabled}
               onClick={onRefreshServiceAccounts}
             />
           </div>
@@ -392,12 +402,15 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
                   <CreateNewButton href="https://aka.ms/openFoundryProjectCreate" />
                 </div>
               </div>
-              <RefreshIcon
+              <Button
+                icon={<RefreshIcon />}
+                size="small"
+                appearance="transparent"
                 style={{
-                  marginTop: '4px',
-                  marginLeft: '4px',
-                  color: serviceProjectsComboBoxDisabled ? tokens.colorBrandBackground2Pressed : tokens.colorBrandBackground,
+                  margin: '0 4px',
+                  height: '100%',
                 }}
+                disabled={isServiceProjectsRefreshDisabled}
                 onClick={onRefreshServiceProjects}
               />
             </div>

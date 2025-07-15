@@ -1,13 +1,14 @@
 import type { WorkflowNode } from '../parsers/models/workflowNode';
 import { isWorkflowNode } from '../parsers/models/workflowNode';
 import { useReadOnly } from '../state/designerOptions/designerOptionsSelectors';
-import { getRootWorkflowGraphForLayout } from '../state/workflow/workflowSelectors';
+import { useRootWorkflowGraphForLayout } from '../state/workflow/workflowSelectors';
 import { LogEntryLevel, LoggerService, useThrottledEffect, WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES } from '@microsoft/logic-apps-shared';
 import type { ElkExtendedEdge, ElkNode } from 'elkjs/lib/elk.bundled';
 import ELK from 'elkjs/lib/elk.bundled';
-import { createContext, useState, useContext } from 'react';
-import { useSelector } from 'react-redux';
+import { createContext, useState, useContext, useRef } from 'react';
 import type { Edge, Node } from '@xyflow/react';
+import { getLayoutRelevantData, type LayoutRelevantData } from './helpers';
+import isEqual from 'lodash.isequal';
 
 export const spacing = {
   default: '64',
@@ -164,14 +165,29 @@ const convertWorkflowGraphToElkGraph = (node: WorkflowNode): ElkNode => {
       },
     };
   }
+
   const children = node.children?.map(convertWorkflowGraphToElkGraph);
+
+  // Remove edges that are pointing to nodes that don't exist
+  const childIdsSet = new Set(children?.map((child) => child.id) ?? []);
+  const filteredEdges =
+    node.edges?.filter((edge) => {
+      if (!childIdsSet.has(edge.source)) {
+        return false; // Remove edge if source does not exist
+      }
+      if (!childIdsSet.has(edge.target)) {
+        return false; // Remove edge if target does not exist
+      }
+      return true; // Keep edge if both source and target exist
+    }) ?? [];
+
   return {
     id: node.id,
     height: node.height,
     width: node.width,
     children,
     edges:
-      node.edges?.map((edge) => ({
+      filteredEdges?.map((edge) => ({
         id: edge.id,
         sources: [edge.source],
         targets: [edge.target],
@@ -183,7 +199,7 @@ const convertWorkflowGraphToElkGraph = (node: WorkflowNode): ElkNode => {
       'elk.padding': '[top=0,left=16,bottom=48,right=16]', // allow space for add buttons
       'elk.position': '(0, 0)', // See 'crossingMinimization.semiInteractive' above
       nodeType: node?.type ?? WORKFLOW_NODE_TYPES.GRAPH_NODE,
-      ...(node.edges?.some((edge) => edge.type === WORKFLOW_EDGE_TYPES.ONLY_EDGE) && {
+      ...(filteredEdges?.some((edge) => edge.type === WORKFLOW_EDGE_TYPES.ONLY_EDGE) && {
         'elk.layered.nodePlacement.strategy': 'SIMPLE',
         'elk.layered.spacing.edgeNodeBetweenLayers': spacing.onlyEdge,
         'elk.layered.spacing.nodeNodeBetweenLayers': spacing.onlyEdge,
@@ -204,12 +220,21 @@ export const LayoutProvider = ({ children }: any) => {
   const [edges, setEdges] = useState<Edge[]>([]);
   const [size, setSize] = useState<number[]>([0, 0]);
 
-  const workflowGraph = useSelector(getRootWorkflowGraphForLayout);
+  const workflowGraph = useRootWorkflowGraphForLayout();
   const readOnly = useReadOnly();
+  const prevLayoutRelevantDataRef = useRef<LayoutRelevantData>();
 
   useThrottledEffect(
     () => {
       if (!workflowGraph) {
+        prevLayoutRelevantDataRef.current = undefined;
+        return;
+      }
+
+      const currentLayoutRelevantData = getLayoutRelevantData(workflowGraph);
+      // If layout-relevant data hasn't changed, skip elk processing
+      if (prevLayoutRelevantDataRef.current && isEqual(prevLayoutRelevantDataRef.current, currentLayoutRelevantData)) {
+        prevLayoutRelevantDataRef.current = currentLayoutRelevantData;
         return;
       }
 
@@ -221,6 +246,8 @@ export const LayoutProvider = ({ children }: any) => {
           setNodes(n);
           setEdges(e);
           setSize(s);
+          // Store layout data for next comparison
+          prevLayoutRelevantDataRef.current = currentLayoutRelevantData;
         })
         .catch((err) => {
           const graphAsString = JSON.stringify(elkGraph);

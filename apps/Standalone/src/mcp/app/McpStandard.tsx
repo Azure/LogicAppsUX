@@ -1,21 +1,25 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { McpDataProvider, mcpStore, McpWizard, McpWizardProvider, resetMcpStateOnResourceChange } from '@microsoft/logic-apps-designer';
-import { Text, Badge, Spinner } from '@fluentui/react-components';
+import { useCallback, useMemo } from 'react';
+import {
+  McpDataProvider,
+  mcpStore,
+  McpWizard,
+  McpWizardProvider,
+  type McpWorkflowsData,
+  resetMcpStateOnResourceChange,
+} from '@microsoft/logic-apps-designer';
 import type { RootState } from '../state/Store';
 import { useSelector } from 'react-redux';
 import {
   getWorkflowAppFromCache,
+  saveWorkflowStandard,
   useCurrentObjectId,
   useCurrentTenantId,
-  useWorkflowApp,
 } from '../../designer/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts';
 import { ArmParser } from '../../designer/app/AzureLogicAppsDesigner/Utilities/ArmParser';
-import { WorkflowUtility } from '../../designer/app/AzureLogicAppsDesigner/Utilities/Workflow';
 import {
   BaseGatewayService,
   BaseResourceService,
   BaseTenantService,
-  equals,
   type IWorkflowService,
   StandardConnectionService,
   StandardConnectorService,
@@ -24,120 +28,37 @@ import {
 import { useMcpStandardStyles } from './styles';
 import { HttpClient } from '../../designer/app/AzureLogicAppsDesigner/Services/HttpClient';
 import type { WorkflowApp } from '../../designer/app/AzureLogicAppsDesigner/Models/WorkflowApp';
-import { CustomConnectionParameterEditorService } from '../../designer/app/AzureLogicAppsDesigner/Services/customConnectionParameterEditorService';
 import { StandaloneOAuthService } from '../../designer/app/AzureLogicAppsDesigner/Services/OAuthService';
+import { CustomConnectionParameterEditorService } from '../../designer/app/AzureLogicAppsDesigner/Services/customConnectionParameterEditorService';
+import { WorkflowUtility } from '../../designer/app/AzureLogicAppsDesigner/Utilities/Workflow';
 
 const apiVersion = '2020-06-01';
 const httpClient = new HttpClient();
 
-const McpHeader = ({
-  isConnected,
-  workflowAppData,
-  canonicalLocation,
-}: {
-  isConnected: boolean;
-  workflowAppData?: any;
-  canonicalLocation?: string;
-}) => {
-  const styles = useMcpStandardStyles();
-
-  return (
-    <div className={styles.header}>
-      <div className={styles.headerContent}>
-        <div className={styles.titleSection}>
-          <Text size={600} weight="semibold">
-            Logic App Status:
-          </Text>
-          <Badge appearance={isConnected ? 'filled' : 'outline'} color={isConnected ? 'success' : 'subtle'}>
-            {isConnected ? 'Connected' : 'Awaiting Connection'}
-          </Badge>
-        </div>
-        {isConnected && workflowAppData && (
-          <div className={styles.statusSection}>
-            <div className={styles.connectionBadge}>
-              <div className={styles.statusIndicator} />
-              <Text size={200}>{workflowAppData.name || 'Logic App'}</Text>
-            </div>
-            <Text size={200} style={{ opacity: 0.7 }}>
-              {canonicalLocation}
-            </Text>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
-
-const AwaitingConnection = () => {
-  const styles = useMcpStandardStyles();
-
-  return (
-    <div className={styles.awaitingContainer}>
-      <Spinner size="large" />
-      <Text size={500} weight="semibold" as="h2">
-        Awaiting Connection
-      </Text>
-      <Text size={300} style={{ marginTop: '12px', opacity: 0.8 }}>
-        Please select a Logic App from the Developer Toolbox to get started.
-      </Text>
-    </div>
-  );
-};
-
 export const McpStandard = () => {
   const styles = useMcpStandardStyles();
-  const { theme, appId } = useSelector((state: RootState) => ({
+  const { theme } = useSelector((state: RootState) => ({
     theme: state.workflowLoader.theme,
-    appId: state.workflowLoader.appId,
   }));
 
   const hostingPlan = 'standard';
-  const [shouldReload, setShouldReload] = useState<boolean | undefined>(undefined);
-  const hasValidAppId = !!appId && appId.trim() !== '';
-  const resourceIdValidation =
-    /^\/subscriptions\/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\/resourceGroups\/[a-zA-Z0-9](?:[a-zA-Z0-9-_.]*[a-zA-Z0-9])?\/providers\/[a-zA-Z0-9-_.]+\/[a-zA-Z0-9-_./]+$/;
-  const isValidResourceId = hasValidAppId && resourceIdValidation.test(appId);
 
-  const resourceDetails = {
-    subscriptionId: 'f34b22a3-2202-4fb1-b040-1332bd928c84',
-    resourceGroup: 'TestACSRG',
-    location: 'westus',
-  };
-  const {
-    data: workflowAppData,
-    isLoading: isWorkflowLoading,
-    error: workflowError,
-  } = useWorkflowApp(isValidResourceId ? appId : '', hostingPlan, isValidResourceId && !!appId);
-
-  const canonicalLocation = useMemo(
-    () => WorkflowUtility.convertToCanonicalFormat(workflowAppData?.location ?? 'westus'),
-    [workflowAppData]
+  const resourceDetails = useMemo(
+    () => ({
+      subscriptionId: 'f34b22a3-2202-4fb1-b040-1332bd928c84',
+      resourceGroup: 'TestACSRG',
+      location: 'westus',
+    }),
+    []
   );
-
-  const isConnected = !!(isValidResourceId && workflowAppData && resourceDetails && !workflowError && !isWorkflowLoading);
 
   const { data: tenantId } = useCurrentTenantId();
   const { data: objectId } = useCurrentObjectId();
 
   const services = useMemo(
-    () => getServices(appId as string, workflowAppData as WorkflowApp, tenantId, objectId, canonicalLocation),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [workflowAppData, tenantId, canonicalLocation, appId]
+    () => getServices(/* appId */ undefined, /* workflowApp */ undefined, tenantId, objectId, resourceDetails.location),
+    [tenantId, objectId, resourceDetails.location]
   );
-
-  useEffect(() => {
-    if (shouldReload) {
-      const logicAppId = getWorkflowAppIdFromStore();
-      if (equals(logicAppId, workflowAppData?.id)) {
-        mcpStore.dispatch(
-          resetMcpStateOnResourceChange(
-            getResourceBasedServices(logicAppId as string, workflowAppData as WorkflowApp, tenantId, objectId, canonicalLocation)
-          )
-        );
-        setShouldReload(false);
-      }
-    }
-  }, [canonicalLocation, objectId, shouldReload, tenantId, workflowAppData]);
 
   const onResourceChange = useCallback(async () => {
     const {
@@ -146,53 +67,70 @@ export const McpStandard = () => {
     console.log('onReloadServices - Resource is updated');
     if (reInitializeServices) {
       const logicAppId = getWorkflowAppIdFromStore();
-      if (logicAppId && !equals(logicAppId, appId)) {
-        try {
-          const appData = await getWorkflowAppFromCache(logicAppId, hostingPlan);
-          if (appData) {
-            setShouldReload(true);
-          }
-        } catch (error) {
-          console.log('Error fetching workflow app data', error);
+      try {
+        const appData = await getWorkflowAppFromCache(logicAppId, hostingPlan);
+        if (appData) {
+          mcpStore.dispatch(
+            resetMcpStateOnResourceChange(
+              getResourceBasedServices(
+                logicAppId as string,
+                appData as WorkflowApp,
+                tenantId,
+                objectId,
+                WorkflowUtility.convertToCanonicalFormat(appData.location)
+              )
+            )
+          );
         }
+      } catch (error) {
+        console.log('Error fetching workflow app data', error);
       }
     }
-  }, [appId, hostingPlan]);
+  }, [objectId, tenantId]);
+
+  const onRegisterMcpServer = useCallback(
+    async ({ logicAppId, workflows, connectionsData }: McpWorkflowsData, onCompleted?: () => void) => {
+      const workflowsToCreate = Object.keys(workflows).map((key) => ({
+        name: key,
+        workflow: workflows[key].definition,
+        kind: workflows[key].kind,
+      }));
+
+      await saveWorkflowStandard(
+        logicAppId,
+        workflowsToCreate,
+        connectionsData,
+        /* parametersData */ undefined,
+        /* settingsProperties */ undefined,
+        /* customCodeData */ undefined,
+        /* clearDirtyState */ () => {},
+        { skipValidation: true, throwError: true }
+      );
+      onCompleted?.();
+    },
+    []
+  );
 
   return (
     <McpWizardProvider locale="en-US" theme={theme}>
       <div className={`${styles.container} ${styles.fadeIn}`}>
-        <McpHeader isConnected={isConnected} workflowAppData={workflowAppData} canonicalLocation={canonicalLocation} />
-
-        {isConnected ? (
-          <div className={styles.wizardContainer}>
-            <div className={styles.wizardContent}>
-              <div className={styles.wizardWrapper}>
-                <McpDataProvider
-                  resourceDetails={{
-                    subscriptionId: resourceDetails!.subscriptionId,
-                    resourceGroup: resourceDetails!.resourceGroup,
-                    location: canonicalLocation,
-                  }}
-                  onResourceChange={onResourceChange}
-                  services={services}
-                >
-                  <McpWizard />
-                  <div id="mcp-layer-host" className={styles.layerHost} />
-                </McpDataProvider>
-              </div>
+        <div className={styles.wizardContainer}>
+          <div className={styles.wizardContent}>
+            <div className={styles.wizardWrapper}>
+              <McpDataProvider resourceDetails={resourceDetails} onResourceChange={onResourceChange} services={services}>
+                <McpWizard registerMcpServer={onRegisterMcpServer} />
+                <div id="mcp-layer-host" className={styles.layerHost} />
+              </McpDataProvider>
             </div>
           </div>
-        ) : (
-          <AwaitingConnection />
-        )}
+        </div>
       </div>
     </McpWizardProvider>
   );
 };
 
 const getServices = (
-  siteResourceId: string,
+  siteResourceId: string | undefined,
   workflowApp: WorkflowApp | undefined,
   tenantId: string | undefined,
   objectId: string | undefined,
@@ -216,7 +154,7 @@ const getServices = (
   const connectionParameterEditorService = new CustomConnectionParameterEditorService();
   const resourceService = new BaseResourceService({ baseUrl: armUrl, httpClient, apiVersion });
   const { connectionService, oAuthService, connectorService, workflowService, searchService } = getResourceBasedServices(
-    siteResourceId,
+    siteResourceId ?? '',
     workflowApp,
     tenantId,
     objectId,
@@ -238,7 +176,7 @@ const getServices = (
 };
 
 const getResourceBasedServices = (
-  siteResourceId: string,
+  siteResourceId: string | undefined,
   workflowApp: WorkflowApp | undefined,
   tenantId: string | undefined,
   objectId: string | undefined,

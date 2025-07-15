@@ -8,7 +8,16 @@ import LegacyMultiAuth, { LegacyMultiAuthOptions } from './formInputs/legacyMult
 import type { ConnectionParameterProps } from './formInputs/universalConnectionParameter';
 import { UniversalConnectionParameter } from './formInputs/universalConnectionParameter';
 import { css, findIndex, type IDropdownOption } from '@fluentui/react';
-import { Body1Strong, Button, Divider, MessageBar, MessageBarActions, MessageBarBody } from '@fluentui/react-components';
+import {
+  Body1Strong,
+  Button,
+  Checkbox,
+  type CheckboxOnChangeData,
+  Divider,
+  MessageBar,
+  MessageBarActions,
+  MessageBarBody,
+} from '@fluentui/react-components';
 import {
   ConnectionParameterEditorService,
   ConnectionService,
@@ -53,6 +62,8 @@ import TenantPicker from './formInputs/tenantPicker';
 import { useOperationInfo } from '../../../../core';
 import { useOperationPanelSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
 import { useOperationManifest } from '../../../../core/state/selectors/actionMetadataSelector';
+import { useShouldEnableDynamicConnections } from '../../../../common/hooks/experimentation';
+import { useStyles } from './styles';
 
 type ParamType = ConnectionParameter | ConnectionParameterSetParameter;
 
@@ -96,6 +107,8 @@ export interface CreateConnectionProps {
   gatewayServiceConfig?: Partial<GatewayServiceConfig>;
   checkOAuthCallback: (parameters: Record<string, ConnectionParameter>) => boolean;
   resourceSelectorProps?: AzureResourcePickerProps;
+  isAgentServiceConnection?: boolean;
+  isAgentSubgraph?: boolean;
 }
 
 export const CreateConnection = (props: CreateConnectionProps) => {
@@ -122,9 +135,11 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     gatewayServiceConfig,
     resourceSelectorProps,
     operationParameterSets,
+    isAgentSubgraph,
   } = props;
 
   const intl = useIntl();
+  const styles = useStyles();
 
   const connectorId = connector?.id;
   const selectedNodeId: string = useOperationPanelSelectedNodeId();
@@ -143,7 +158,9 @@ export const CreateConnection = (props: CreateConnectionProps) => {
 
   const operationParameterSetKeys = useMemo(() => Object.keys(operationParameterSets ?? {}), [operationParameterSets]);
 
+  const shouldEnableDynamicConnections = useShouldEnableDynamicConnections();
   const [selectedParamSetIndex, setSelectedParamSetIndex] = useState<number>(0);
+  const [isUsingDynamicConnection, setIsUsingDynamicConnection] = useState<boolean>(false);
   const onAuthDropdownChange = useCallback(
     (_event: FormEvent<HTMLDivElement>, item: any): void => {
       if (item.key !== selectedParamSetIndex) {
@@ -184,6 +201,10 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     [isConnectionParameterSupported]
   );
 
+  const isFirstPartyAuth = useMemo(
+    () => connector?.properties?.connectionParameters?.['token']?.oAuthSettings?.properties.IsFirstParty,
+    [connector]
+  );
   const connectionParameterSets: ConnectionParameterSets | undefined = useMemo(() => {
     if (!_connectionParameterSets) {
       return undefined;
@@ -288,6 +309,35 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     setSelectedManagedIdentity(option?.key.toString());
   }, []);
 
+  const usingLegacyGatewayAuth = useMemo(
+    () => !hasOnlyOnPremGateway && enabledCapabilities.includes(Capabilities.gateway),
+    [enabledCapabilities, hasOnlyOnPremGateway]
+  );
+
+  const hasOAuth = useMemo(
+    () => needsOAuth(isMultiAuth ? multiAuthParams : singleAuthParams) && !usingLegacyGatewayAuth,
+    [isMultiAuth, multiAuthParams, singleAuthParams, usingLegacyGatewayAuth]
+  );
+
+  const isUsingOAuth = useMemo(
+    () => hasOAuth && !servicePrincipalSelected && !legacyManagedIdentitySelected && !supportsClientCertificateConnection,
+    [hasOAuth, servicePrincipalSelected, legacyManagedIdentitySelected, supportsClientCertificateConnection]
+  );
+
+  const usingAadConnection = useMemo(() => (connector ? isUsingAadAuthentication(connector) : false), [connector]);
+
+  const showTenantIdSelection = useMemo(
+    () =>
+      isTenantServiceEnabled() &&
+      usingAadConnection &&
+      isUsingOAuth &&
+      Object.keys(connectionParameters?.['token']?.oAuthSettings?.customParameters ?? {}).some((key: string) => equals(key, 'tenantId')) &&
+      Object.keys(connectionParameters ?? {}).some((key: string) =>
+        equals(key, SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_TENANT_ID)
+      ),
+    [connectionParameters, isUsingOAuth, usingAadConnection]
+  );
+
   const isParamVisible = useCallback(
     (key: string, parameter: ParamType) => {
       const constraints = parameter?.uiDefinition?.constraints;
@@ -310,9 +360,12 @@ export const CreateConnection = (props: CreateConnectionProps) => {
       if (parameter.type === ConnectionParameterTypes.managedIdentity) {
         return false;
       }
+      if (equals(key, SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_TENANT_ID) && showTenantIdSelection) {
+        return false;
+      }
       return true;
     },
-    [parameterValues, servicePrincipalSelected, legacyManagedIdentitySelected]
+    [servicePrincipalSelected, legacyManagedIdentitySelected, parameterValues, showTenantIdSelection]
   );
 
   const unfilteredParameters: Record<string, ConnectionParameterSetParameter | ConnectionParameter> = useMemo(
@@ -363,34 +416,6 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     return output ?? {};
   }, [enabledCapabilities, parametersByCapability]);
 
-  const usingLegacyGatewayAuth = useMemo(
-    () => !hasOnlyOnPremGateway && enabledCapabilities.includes(Capabilities.gateway),
-    [enabledCapabilities, hasOnlyOnPremGateway]
-  );
-
-  const hasOAuth = useMemo(
-    () => needsOAuth(isMultiAuth ? multiAuthParams : singleAuthParams) && !usingLegacyGatewayAuth,
-    [isMultiAuth, multiAuthParams, singleAuthParams, usingLegacyGatewayAuth]
-  );
-
-  const isUsingOAuth = useMemo(
-    () => hasOAuth && !servicePrincipalSelected && !legacyManagedIdentitySelected && !supportsClientCertificateConnection,
-    [hasOAuth, servicePrincipalSelected, legacyManagedIdentitySelected, supportsClientCertificateConnection]
-  );
-
-  const usingAadConnection = useMemo(() => (connector ? isUsingAadAuthentication(connector) : false), [connector]);
-  const showTenantIdSelection = useMemo(
-    () =>
-      isTenantServiceEnabled() &&
-      usingAadConnection &&
-      isUsingOAuth &&
-      Object.keys(connectionParameters?.['token']?.oAuthSettings?.customParameters ?? {}).some((key: string) => equals(key, 'tenantId')) &&
-      Object.keys(connectionParameters ?? {}).some((key: string) =>
-        equals(key, SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_TENANT_ID)
-      ),
-    [connectionParameters, isUsingOAuth, usingAadConnection]
-  );
-
   // Don't show name for simple connections
   const showNameInput = useMemo(
     () =>
@@ -433,7 +458,11 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   const canSubmit = useMemo(() => !isLoading && validParams, [isLoading, validParams]);
 
   const submitCallback = useCallback(() => {
-    const { visibleParameterValues, additionalParameterValues } = parseParameterValues(parameterValues, capabilityEnabledParameters);
+    const { visibleParameterValues, additionalParameterValues } = parseParameterValues(
+      parameterValues,
+      capabilityEnabledParameters,
+      isUsingDynamicConnection
+    );
 
     // The OAuth tenant ID is passed a little strange, we need to manually add it here
     const oauthTenantId = additionalParameterValues?.[SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_TENANT_ID];
@@ -482,6 +511,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     servicePrincipalSelected,
     showTenantIdSelection,
     operationParameterValues,
+    isUsingDynamicConnection,
   ]);
 
   // INTL STRINGS
@@ -571,6 +601,17 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     id: 'uIgGKj',
     description: 'Dropdown text for legacy managed identity connection',
   });
+
+  const stringResources = useMemo(
+    () => ({
+      USE_DYNAMIC_CONNECTIONS: intl.formatMessage({
+        defaultMessage: 'Use as Dynamic Connection',
+        id: 'sWJGpe',
+        description: 'Dynamic connection checkbox text',
+      }),
+    }),
+    [intl]
+  );
 
   const connectorDescription = useMemo(() => {
     if (isUsingOAuth) {
@@ -873,6 +914,19 @@ export const CreateConnection = (props: CreateConnectionProps) => {
         {/* {needsAuth && <IFrameTermsOfService url={termsOfServiceUrl} />} */}
       </div>
 
+      <div className={styles.dynamicConnectionContainer}>
+        {isUsingOAuth && isAgentSubgraph && shouldEnableDynamicConnections && isFirstPartyAuth && (
+          <Checkbox
+            label={stringResources.USE_DYNAMIC_CONNECTIONS}
+            disabled={isLoading}
+            onChange={(_e, data: CheckboxOnChangeData) => {
+              setIsUsingDynamicConnection(!!data.checked);
+            }}
+            defaultChecked={false}
+          />
+        )}
+      </div>
+
       {/* Action Buttons */}
       <div className="msla-edit-connection-actions-container">
         <Button
@@ -921,7 +975,8 @@ const isServicePrincipalParameterVisible = (key: string, parameter: any): boolea
 
 export function parseParameterValues(
   parameterValues: Record<string, any>,
-  capabilityEnabledParameters: Record<string, ConnectionParameter | ConnectionParameterSetParameter>
+  capabilityEnabledParameters: Record<string, ConnectionParameter | ConnectionParameterSetParameter>,
+  isUsingDynamicConnection?: boolean
 ) {
   const visibleParameterValues = Object.fromEntries(
     Object.entries(parameterValues).filter(([key]) => Object.keys(capabilityEnabledParameters).includes(key)) ?? []
@@ -929,6 +984,11 @@ export function parseParameterValues(
   const additionalParameterValues = Object.fromEntries(
     Object.entries(parameterValues).filter(([key]) => !Object.keys(capabilityEnabledParameters).includes(key)) ?? []
   );
+
+  if (isUsingDynamicConnection) {
+    // If using dynamic connections, we need to remove the connection name from the additional parameters
+    additionalParameterValues['isDynamicConnectionAllowed'] = true;
+  }
 
   return {
     visibleParameterValues,

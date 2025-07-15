@@ -13,11 +13,13 @@ import { useIntl } from 'react-intl';
 import { useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { LargeText } from '@microsoft/designer-ui';
+import { useExportStyles } from '../exportStyles';
 
 export const ManagedConnections: React.FC = () => {
   const intl = useIntl();
   const vscode = useContext(VSCodeContext);
   const dispatch: AppDispatch = useDispatch();
+  const styles = useExportStyles();
   const [isConnectionsChecked, setConnectionsChecked] = useState(false);
   const workflowState = useSelector((state: RootState) => state.workflow);
   const { baseUrl, accessToken, exportData, cloudHost } = workflowState;
@@ -113,7 +115,7 @@ export const ManagedConnections: React.FC = () => {
           label={intlText.RESOURCE_GROUP}
           disabled={isResourceGroupsLoading || !resourceGroups.length}
           options={resourceGroups}
-          className="msla-export-summary-connections-dropdown"
+          className={styles.exportSummaryConnectionsDropdown}
           onChange={onChangeResourceGroup}
           selectedKey={selectedResourceGroup !== undefined ? selectedResourceGroup : null}
           isLoading={isResourceGroupsLoading}
@@ -123,15 +125,16 @@ export const ManagedConnections: React.FC = () => {
       </>
     ) : null;
   }, [
+    isResourceGroupsLoading,
+    resourceGroupsData,
     isConnectionsChecked,
     intlText.SELECT_OPTION,
     intlText.RESOURCE_GROUP,
     intlText.SEARCH_RESOURCE_GROUP,
-    isResourceGroupsLoading,
-    resourceGroupsData,
+    styles.exportSummaryConnectionsDropdown,
+    selectedResourceGroup,
     dispatch,
     isManaged,
-    selectedResourceGroup,
   ]);
 
   const onChangeConnections = useCallback(
@@ -150,13 +153,13 @@ export const ManagedConnections: React.FC = () => {
   );
 
   return (
-    <div className="msla-export-summary-connections">
+    <div className={styles.exportSummaryConnections}>
       <LargeText text={intlText.MANAGED_CONNECTIONS} style={{ display: 'block' }} />
       <Checkbox
         label={intlText.DEPLOY_MANAGED_CONNECTIONS}
         checked={isConnectionsChecked}
         onChange={onChangeConnections}
-        className="msla-export-summary-connections-checkbox"
+        className={styles.exportSummaryConnectionsCheckbox}
       />
       {resourceGroups}
     </div>

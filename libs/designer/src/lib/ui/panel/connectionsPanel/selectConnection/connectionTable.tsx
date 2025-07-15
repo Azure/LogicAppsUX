@@ -28,8 +28,7 @@ export interface ConnectionTableProps {
   connections: Connection[];
   currentConnectionId?: string;
   saveSelectionCallback: (connection?: Connection) => void;
-  cancelSelectionCallback: () => void;
-  createConnectionCallback: () => void;
+  cancelSelectionCallback?: () => void;
   isXrmConnectionReferenceMode: boolean;
 }
 
@@ -70,7 +69,7 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
       });
 
       if (areIdLeavesEqual(connection.id, currentConnectionId)) {
-        cancelSelectionCallback(); // User clicked the existing connection, keep selection the same and return
+        cancelSelectionCallback?.(); // User clicked the existing connection, keep selection the same and return
       } else {
         saveSelectionCallback(connection); // User clicked a different connection, save selection and return
       }
