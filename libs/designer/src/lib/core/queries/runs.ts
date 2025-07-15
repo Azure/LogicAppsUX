@@ -23,7 +23,8 @@ export const runsQueriesKeys = {
   useScopeFailedRepetitions: 'useScopeFailedRepetitions',
   useAgentRepetition: 'useAgentRepetition',
   useAgentActionsRepetition: 'useAgentActionsRepetition',
-  useChatHistory: 'useChatHistory',
+  useActionsChatHistory: 'useActionsChatHistory',
+  useRunChatHistory: 'useRunChatHistory',
   useAgentChatInvokeUri: 'useAgentChatInvokeUri',
   useRunInstance: 'useRunInstance',
   useCancelRun: 'useCancelRun',
@@ -208,13 +209,13 @@ export const useAgentActionsRepetition = (
   );
 };
 
-export const useChatHistory = (isMonitoringView: boolean, nodeIds: string[], runId: string | undefined) => {
+export const useActionsChatHistory = (isMonitoringView: boolean, nodeIds: string[], runId: string | undefined) => {
   return useQuery(
-    [runsQueriesKeys.useChatHistory, { nodeIds, runId }],
+    [runsQueriesKeys.useActionsChatHistory, { nodeIds, runId }],
     async () => {
       const allMessages: ChatHistory[] = [];
       for (const nodeId of nodeIds) {
-        const messages = await RunService().getChatHistory({ nodeId, runId });
+        const messages = await RunService().getActionChatHistory({ nodeId, runId });
         allMessages.push({ nodeId, messages });
       }
       return allMessages;
@@ -223,6 +224,34 @@ export const useChatHistory = (isMonitoringView: boolean, nodeIds: string[], run
       ...queryOpts,
       retryOnMount: false,
       enabled: isMonitoringView && runId !== undefined && nodeIds.length > 0,
+    }
+  );
+};
+
+export const useRunChatHistory = (isMonitoringView: boolean, runId: string | undefined) => {
+  return useQuery(
+    [runsQueriesKeys.useRunChatHistory, { runId }],
+    async () => {
+      if (isNullOrUndefined(runId)) {
+        return null;
+      }
+      const messages = (await RunService().getRunChatHistory(runId)) ?? [];
+      const sortedMessages = messages.sort((a: any, b: any) => {
+        const dateA = new Date(a.timestamp);
+        const dateB = new Date(b.timestamp);
+        return dateB.getTime() - dateA.getTime();
+      });
+      return [
+        {
+          nodeId: 'root',
+          messages: sortedMessages,
+        },
+      ];
+    },
+    {
+      ...queryOpts,
+      retryOnMount: false,
+      enabled: isMonitoringView && runId !== undefined,
     }
   );
 };

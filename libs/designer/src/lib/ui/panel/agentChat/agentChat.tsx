@@ -2,7 +2,7 @@ import { PanelLocation, PanelResizer, PanelSize, type ConversationItem } from '@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { defaultChatbotPanelWidth, ChatbotUI } from '@microsoft/logic-apps-chatbot';
-import { runsQueriesKeys, useAgentChatInvokeUri, useCancelRun, useChatHistory } from '../../../core/queries/runs';
+import { runsQueriesKeys, useAgentChatInvokeUri, useCancelRun, useActionsChatHistory } from '../../../core/queries/runs';
 import { useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import {
   useAgentLastOperations,
@@ -60,7 +60,7 @@ export const AgentChat = ({
     refetch: refetchChatHistory,
     isFetching: isChatHistoryFetching,
     data: chatHistoryData,
-  } = useChatHistory(!!isMonitoringView, agentOperations, runInstance?.id);
+  } = useActionsChatHistory(!!isMonitoringView, agentOperations, runInstance?.id);
   const { data: chatInvokeUri } = useAgentChatInvokeUri(!!isMonitoringView, true, agentChatSuffixUri);
   const [overrideWidth, setOverrideWidth] = useState<string | undefined>(chatbotWidth);
   const dispatch = useDispatch<AppDispatch>();
@@ -73,7 +73,7 @@ export const AgentChat = ({
   const { mutateAsync: refreshChat } = useMutation(async () => {
     const queryClient = getReactQueryClient();
     await queryClient.resetQueries([runsQueriesKeys.useRunInstance]);
-    await queryClient.resetQueries([runsQueriesKeys.useChatHistory]);
+    await queryClient.resetQueries([runsQueriesKeys.useActionsChatHistory]);
     await queryClient.resetQueries([runsQueriesKeys.useAgentActionsRepetition]);
     await queryClient.resetQueries([runsQueriesKeys.useAgentRepetition]);
     await queryClient.resetQueries([runsQueriesKeys.useNodeRepetition]);
@@ -82,7 +82,7 @@ export const AgentChat = ({
     await queryClient.refetchQueries([runsQueriesKeys.useAgentRepetition]);
     await queryClient.refetchQueries([runsQueriesKeys.useAgentActionsRepetition]);
     await queryClient.refetchQueries([runsQueriesKeys.useNodeRepetition]);
-    await queryClient.refetchQueries([runsQueriesKeys.useChatHistory]);
+    await queryClient.refetchQueries([runsQueriesKeys.useActionsChatHistory]);
   });
 
   const showStopButton = useMemo(() => {

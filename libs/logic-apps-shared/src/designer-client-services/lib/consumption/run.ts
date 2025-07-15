@@ -388,6 +388,31 @@ export class ConsumptionRunService implements IRunService {
   }
 
   /**
+   * Retrieves the chat history for a specified run.
+   * @param runId - The unique identifier of the run.
+   * @returns
+   */
+
+  async getRunChatHistory(runId: string): Promise<any> {
+    const { apiVersion, baseUrl, httpClient } = this.options;
+    const headers = this.getAccessTokenHeaders();
+    const uri = `${baseUrl}${runId}/chatHistory`;
+    try {
+      const response = await httpClient.get<any>({
+        uri,
+        headers: headers as Record<string, any>,
+        queryParameters: {
+          'api-version': apiVersion,
+          $expand: 'properties/actions,workflow/properties',
+        },
+      });
+      return response.value;
+    } catch (e: any) {
+      throw new Error(e.message);
+    }
+  }
+
+  /**
    * Retrieves the chat history for a specified action.
    *
    * This function constructs a URI based on the provided runId and nodeId, along with the
@@ -399,7 +424,7 @@ export class ConsumptionRunService implements IRunService {
    * @returns A promise that resolves with the chat history response.
    * @throws {Error} Throws an error with a message if the HTTP request fails.
    */
-  async getChatHistory(action: { nodeId: string; runId: string | undefined }): Promise<any> {
+  async getActionChatHistory(action: { nodeId: string; runId: string | undefined }): Promise<any> {
     const { apiVersion, baseUrl, httpClient } = this.options;
     const { nodeId, runId } = action;
     const headers = this.getAccessTokenHeaders();
