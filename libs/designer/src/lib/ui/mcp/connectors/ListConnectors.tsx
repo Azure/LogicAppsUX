@@ -100,7 +100,7 @@ export const ListConnectors = () => {
         displayName?: string;
         iconUri?: string;
         connectionName: string;
-        connectionStatus: string;
+        isConnected: boolean;
       }>
     >((acc, info) => {
       const connectorId = info?.connectorId;
@@ -115,7 +115,6 @@ export const ListConnectors = () => {
       const reference = referenceKey ? connectionReferences[referenceKey] : null;
 
       const isConnected = !!reference;
-      const connectionStatus = isConnected ? INTL_TEXT.connectedText : INTL_TEXT.disconnectedText;
       const connectionName = isConnected
         ? (reference.connectionName ?? getResourceNameFromId(reference.connection?.id) ?? 'Default Connection')
         : referenceKey === null
@@ -127,12 +126,12 @@ export const ListConnectors = () => {
         displayName: metadata?.connectorTitle,
         iconUri: metadata?.iconUri,
         connectionName,
-        connectionStatus,
+        isConnected,
       });
 
       return acc;
     }, []);
-  }, [connectionReferences, connectionsMapping, operationInfos, operationMetadata, INTL_TEXT.connectedText, INTL_TEXT.disconnectedText]);
+  }, [connectionReferences, connectionsMapping, operationInfos, operationMetadata]);
 
   const columns = [
     { columnKey: 'connector', label: INTL_TEXT.connectorLabel },
@@ -206,8 +205,8 @@ export const ListConnectors = () => {
             </TableCell>
             <TableCell style={connectorTableCellStyles}>{item?.connectionName}</TableCell>
             <TableCell className={styles.iconTextCell} style={connectorTableCellStyles}>
-              <CheckmarkCircle20Filled className={styles.icon} color={tokens.colorPaletteGreenBackground3} />
-              <Text>{item?.connectionStatus}</Text>
+              {item?.isConnected ? <CheckmarkCircle20Filled className={styles.icon} color={tokens.colorPaletteGreenBackground3} /> : null}
+              <Text>{item?.isConnected ? INTL_TEXT.connectedText : INTL_TEXT.disconnectedText}</Text>
             </TableCell>
             <TableCell className={styles.iconsCell} style={connectorTableCellStyles}>
               <Button
