@@ -92,9 +92,10 @@ export const McpStandard = () => {
     async ({ logicAppId, workflows, connectionsData }: McpWorkflowsData, onCompleted?: () => void) => {
       const workflowsToCreate = Object.keys(workflows).map((key) => ({
         name: key,
-        workflow: workflows[key].definition,
-        kind: workflows[key].kind,
+        workflow: workflows[key],
       }));
+
+      console.log('Registering MCP server with workflows:', workflowsToCreate);
 
       await saveWorkflowStandard(
         logicAppId,
