@@ -2,12 +2,29 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { RootState, AppDispatch } from '../../../core/state/mcp/store';
 import { openOperationPanelView } from '../../../core/state/mcp/panel/mcpPanelSlice';
 import { useCallback, useMemo } from 'react';
-import { AppGeneric24Regular } from '@fluentui/react-icons';
-import { Spinner, Text } from '@fluentui/react-components';
+import {
+  Spinner,
+  Text,
+  TableCell,
+  TableRow,
+  Table,
+  TableHeader,
+  TableHeaderCell,
+  Button,
+  TableBody,
+  Link,
+} from '@fluentui/react-components';
+import { Delete24Regular, Edit24Regular } from '@fluentui/react-icons';
 import { useIntl } from 'react-intl';
-import { OperationItem } from '../wizard/OperationItem';
-import { useMcpWizardStyles } from '../wizard/styles';
+import { useConnectorItemStyles } from '../wizard/styles';
 import { deinitializeNodes, deinitializeOperationInfo } from '../../../core/state/operation/operationMetadataSlice';
+import DefaultIcon from '../../../common/images/recommendation/defaulticon.svg';
+
+const tableCellStyles = {};
+
+const buttonGapStyles = {
+  marginRight: '8px',
+};
 
 export const ListOperations = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -18,7 +35,45 @@ export const ListOperations = () => {
     operationMetadata: state.operation.operationMetadata,
   }));
 
-  const styles = useMcpWizardStyles();
+  const styles = useConnectorItemStyles();
+
+  const INTL_TEXT = {
+    tableAriaLabel: intl.formatMessage({
+      defaultMessage: 'List of operations',
+      id: 'ztfbU8',
+      description: 'The aria label for the operations table',
+    }),
+    operationLabel: intl.formatMessage({
+      defaultMessage: 'Name',
+      id: 'x5Q5L7',
+      description: 'The label for the operations column',
+    }),
+    noOperations: intl.formatMessage({
+      defaultMessage: 'No operations configured yet',
+      id: '04idsj',
+      description: 'Message when no operations are configured',
+    }),
+    addOperationsFirst: intl.formatMessage({
+      defaultMessage: 'Add connectors and operations to see them here',
+      id: 'iWZd2h',
+      description: 'Message prompting to add operations',
+    }),
+    loadingOperationsText: intl.formatMessage({
+      defaultMessage: 'Loading operations...',
+      id: 'VFaFVs',
+      description: 'Loading message for operations',
+    }),
+    editButtonLabel: intl.formatMessage({
+      defaultMessage: 'Edit operation',
+      id: '7EHrJW',
+      description: 'Label for the edit operation button',
+    }),
+    deleteButtonLabel: intl.formatMessage({
+      defaultMessage: 'Delete operation',
+      id: 'b1odUC',
+      description: 'Label for the delete operation button',
+    }),
+  };
 
   const handleEditOperation = useCallback(
     (operationId: string) => {
@@ -39,73 +94,93 @@ export const ListOperations = () => {
     [dispatch]
   );
 
-  const allOperations = useMemo(() => {
-    return Object.values(operationInfos).filter((info) => Boolean(info?.operationId));
-  }, [operationInfos]);
+  const items = useMemo(() => {
+    return Object.values(operationInfos)
+      .filter((info) => Boolean(info?.operationId))
+      .map((info) => ({
+        operationId: info.operationId,
+        operationName: info.operationId, //TODO: use a more descriptive name if available
+        connectorIconUri: operationMetadata[info.operationId]?.iconUri,
+        connectorId: info.connectorId,
+      }));
+  }, [operationMetadata, operationInfos]);
 
-  const hasOperations = allOperations.length > 0;
-  const isLoadingOperations = isInitializingOperations;
-  //  || (connectorIds.length > 0 && allOperations.length === 0);
+  const columns = [
+    { columnKey: 'operation', label: INTL_TEXT.operationLabel },
+    { columnKey: 'actions', label: '' }, // Empty label for actions column
+  ];
 
-  const INTL_TEXT = {
-    noOperations: intl.formatMessage({
-      id: '04idsj',
-      defaultMessage: 'No operations configured yet',
-      description: 'Message when no operations are configured',
-    }),
-    addOperationsFirst: intl.formatMessage({
-      id: 'iWZd2h',
-      defaultMessage: 'Add connectors and operations to see them here',
-      description: 'Message prompting to add operations',
-    }),
-    loadingOperationsText: intl.formatMessage({
-      id: 'VFaFVs',
-      defaultMessage: 'Loading operations...',
-      description: 'Loading message for operations',
-    }),
-  };
+  if (!items.length) {
+    return null;
+  }
+
+  if (isInitializingOperations) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '40px' }}>
+        <Spinner size="medium" label={INTL_TEXT.loadingOperationsText} />
+      </div>
+    );
+  }
 
   return (
     <div>
-      {isLoadingOperations ? (
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '40px' }}>
-          <Spinner size="medium" label={INTL_TEXT.loadingOperationsText} />
-        </div>
-      ) : hasOperations ? (
-        <div className={styles.operationsList}>
-          {allOperations.map((operationInfo) => {
-            if (!operationInfo?.operationId || !operationInfo?.connectorId) {
-              return null;
-            }
-
-            const metadata = operationMetadata[operationInfo.operationId];
-
-            return (
-              <OperationItem
-                key={operationInfo.operationId}
-                operationId={operationInfo.operationId}
-                operationName={operationInfo.operationId}
-                connectorIcon={metadata?.iconUri}
-                connectorName={metadata?.connectorTitle ?? operationInfo.connectorId}
-                onEdit={handleEditOperation}
-                onDelete={handleDeleteOperation}
-              />
-            );
-          })}
-        </div>
-      ) : (
-        <div className={styles.emptyState}>
-          <div className={styles.emptyOperationsIcon}>
-            <AppGeneric24Regular />
-          </div>
-          <Text size={400} weight="medium" style={{ marginBottom: '8px' }}>
-            {INTL_TEXT.noOperations}
-          </Text>
-          <Text size={300} style={{ opacity: 0.7 }}>
-            {INTL_TEXT.addOperationsFirst}
-          </Text>
-        </div>
-      )}
+      <Table
+        aria-label={INTL_TEXT.tableAriaLabel}
+        size="small"
+        style={{
+          width: '100%',
+          margin: '0 auto',
+          border: 'none',
+        }}
+      >
+        <TableHeader>
+          <TableRow style={{ border: 'none' }}>
+            {columns.map((column) => (
+              <TableHeaderCell key={column.columnKey} style={tableCellStyles}>
+                <Text weight="semibold">{column.label}</Text>
+              </TableHeaderCell>
+            ))}
+          </TableRow>
+        </TableHeader>
+        <TableBody style={tableCellStyles}>
+          {items.map((item) => (
+            <TableRow key={item.operationId} style={tableCellStyles}>
+              <TableCell className={styles.connectorCellDefault} style={tableCellStyles}>
+                <img
+                  src={item.connectorIconUri ?? DefaultIcon}
+                  alt={`${item.connectorId} icon`}
+                  style={{
+                    width: '24px',
+                    height: '24px',
+                    objectFit: 'contain',
+                    ...buttonGapStyles,
+                  }}
+                />
+                <Link as="button" onClick={() => handleEditOperation(item.operationId)}>
+                  {item.operationName}
+                </Link>
+              </TableCell>
+              <TableCell className={styles.iconsCell} style={tableCellStyles}>
+                <Button
+                  style={buttonGapStyles}
+                  appearance="subtle"
+                  size="small"
+                  icon={<Edit24Regular />}
+                  onClick={() => handleEditOperation(item.operationId)}
+                  aria-label={INTL_TEXT.editButtonLabel}
+                />
+                <Button
+                  appearance="subtle"
+                  size="small"
+                  icon={<Delete24Regular />}
+                  onClick={() => handleDeleteOperation(item.operationId)}
+                  aria-label={INTL_TEXT.deleteButtonLabel}
+                />
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
     </div>
   );
 };
