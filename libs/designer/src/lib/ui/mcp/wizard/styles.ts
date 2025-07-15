@@ -36,26 +36,6 @@ export const useMcpWizardStyles = makeStyles({
     paddingTop: mainGap,
   },
 
-  emptyState: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    padding: '40px',
-    textAlign: 'center',
-  },
-
-  emptyStateIcon: {
-    fontSize: '64px',
-    color: tokens.colorNeutralForeground3,
-    marginBottom: '16px',
-    '& svg': {
-      width: '64px',
-      height: '64px',
-    },
-  },
-
   connectorsList: {
     flex: 1,
     padding: '24px',
@@ -82,6 +62,26 @@ export const useMcpWizardStyles = makeStyles({
 
 // ConnectorItem styles
 export const useConnectorItemStyles = makeStyles({
+  emptyState: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
+    padding: '40px',
+    textAlign: 'center',
+  },
+
+  emptyStateIcon: {
+    fontSize: '64px',
+    color: tokens.colorNeutralForeground3,
+    marginBottom: '16px',
+    '& svg': {
+      width: '64px',
+      height: '64px',
+    },
+  },
+
   connectorItem: {
     display: 'flex',
     alignItems: 'center',
@@ -119,9 +119,14 @@ export const useConnectorItemStyles = makeStyles({
     color: tokens.colorNeutralForeground2,
   },
 
-  itemActions: {
+  connectorCellDefault: {
+    alignItems: 'center',
     display: 'flex',
-    gap: '8px',
+  },
+
+  iconsCell: {
+    textAlign: 'right',
+    width: '1%',
   },
 });
 

@@ -71,7 +71,7 @@ export const ConnectorItem = ({ connectorId, displayName, connectionName, status
         </Text>
       </div>
 
-      <div className={styles.itemActions}>
+      <div>
         <Button
           appearance="subtle"
           size="small"

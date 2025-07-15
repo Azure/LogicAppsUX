@@ -156,19 +156,23 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
         </div>
 
         <div className={styles.content}>
-          <ListConnectors />
+          <div className={styles.section}>
+            <ListConnectors />
+          </div>
         </div>
 
-        {/* Operations Section */}
-        <div className={styles.section}>
-          <div className={styles.header}>
-            <Text size={400} weight="semibold">
-              {INTL_TEXT.operationsTitle}
-            </Text>
-          </div>
+        <div className={styles.content}>
+          {/* Operations Section */}
+          <div className={styles.section}>
+            <div className={styles.header}>
+              <Text size={400} weight="semibold">
+                {INTL_TEXT.operationsTitle}
+              </Text>
+            </div>
 
-          <div className={styles.content}>
-            <ListOperations />
+            <div className={styles.content}>
+              <ListOperations />
+            </div>
           </div>
         </div>
       </div>

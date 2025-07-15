@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
 import type { RootState, AppDispatch } from '../../../core/state/mcp/store';
 import { useCallback, useMemo } from 'react';
-import { CheckmarkCircleFilled, ConnectorFilled, Delete24Regular, Edit24Regular } from '@fluentui/react-icons';
+import { CheckmarkCircle20Filled, ConnectorFilled, Delete24Regular, Edit24Regular } from '@fluentui/react-icons';
 import {
   Text,
   TableCell,
@@ -15,9 +15,8 @@ import {
   Link,
 } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
-import { useMcpWizardStyles } from '../wizard/styles';
+import { useConnectorItemStyles } from '../wizard/styles';
 import { deinitializeNodes, deinitializeOperationInfos } from '../../../core/state/operation/operationMetadataSlice';
-import { ConnectorItem } from '../wizard/ConnectorItem';
 import { getResourceNameFromId } from '@microsoft/logic-apps-shared';
 import { McpPanelView, openConnectorPanelView } from '../../../core/state/mcp/panel/mcpPanelSlice';
 import { selectConnectorId, selectOperations } from '../../../core/state/mcp/connector/connectorSlice';
@@ -25,6 +24,10 @@ import DefaultIcon from '../../../common/images/recommendation/defaulticon.svg';
 
 const tableCellStyles = {
   border: 'none',
+};
+
+const buttonGapStyles = {
+  marginRight: '8px',
 };
 
 export const ListConnectors = () => {
@@ -78,16 +81,19 @@ export const ListConnectors = () => {
       id: '8e1bKU',
       description: 'Label for the delete connector button',
     }),
+    connectedText: intl.formatMessage({
+      defaultMessage: 'Connected',
+      id: 'V7NT3q',
+      description: 'Text indicating a connector is connected',
+    }),
+    disconnectedText: intl.formatMessage({
+      defaultMessage: 'Disconnected',
+      id: 'ssR+UG',
+      description: 'Text indicating a connector is disconnected',
+    }),
   };
 
-  const styles = useMcpWizardStyles();
-
-  const connectorIds = useMemo(() => {
-    const ids = Object.values(operationInfos)
-      .map((info) => info?.connectorId)
-      .filter((id): id is string => Boolean(id));
-    return [...new Set(ids)];
-  }, [operationInfos]);
+  const styles = useConnectorItemStyles();
 
   const items = useMemo(() => {
     const seen = new Set<string>();
@@ -98,7 +104,7 @@ export const ListConnectors = () => {
         displayName?: string;
         iconUri?: string;
         connectionName: string;
-        connectionStatus: 'connected' | 'disconnected';
+        connectionStatus: string;
       }>
     >((acc, info) => {
       const connectorId = info?.connectorId;
@@ -113,7 +119,7 @@ export const ListConnectors = () => {
       const reference = referenceKey ? connectionReferences[referenceKey] : null;
 
       const isConnected = !!reference;
-      const connectionStatus = isConnected ? 'connected' : 'disconnected';
+      const connectionStatus = isConnected ? INTL_TEXT.connectedText : INTL_TEXT.disconnectedText;
       const connectionName = isConnected
         ? (reference.connectionName ?? getResourceNameFromId(reference.connection?.id) ?? 'Default Connection')
         : referenceKey === null
@@ -130,7 +136,7 @@ export const ListConnectors = () => {
 
       return acc;
     }, []);
-  }, [connectionReferences, connectionsMapping, operationInfos, operationMetadata]);
+  }, [connectionReferences, connectionsMapping, operationInfos, operationMetadata, INTL_TEXT.connectedText, INTL_TEXT.disconnectedText]);
 
   const columns = [
     { columnKey: 'connector', label: INTL_TEXT.connectorLabel },
@@ -138,8 +144,6 @@ export const ListConnectors = () => {
     { columnKey: 'status', label: INTL_TEXT.statusLabel },
     { columnKey: 'actions', label: '' }, // Empty label for actions column
   ];
-
-  const hasConnectors = connectorIds.length > 0;
 
   const handleEditConnector = useCallback(
     (connectorId: string) => {
@@ -170,87 +174,69 @@ export const ListConnectors = () => {
 
   return (
     <div>
-      <Table
-        aria-label={INTL_TEXT.tableAriaLabel}
-        size="small"
-        style={{
-          width: '90%',
-          margin: '0 auto',
-          border: 'none',
-        }}
-      >
-        <TableHeader style={tableCellStyles}>
-          <TableRow style={tableCellStyles}>
-            {columns.map((column) => (
-              <TableHeaderCell key={column.columnKey} style={tableCellStyles}>
-                <Text weight="semibold">{column.label}</Text>
-              </TableHeaderCell>
-            ))}
-          </TableRow>
-        </TableHeader>
-        <TableBody style={tableCellStyles}>
-          {items.map((item) => (
-            <TableRow key={item.connectorId} style={tableCellStyles}>
-              <TableCell style={tableCellStyles}>
-                <div>
-                  <div>
-                    <img
-                      src={item.iconUri ?? DefaultIcon}
-                      alt={`${item.displayName} icon`}
-                      style={{
-                        width: '24px',
-                        height: '24px',
-                        objectFit: 'contain',
-                      }}
-                    />
-                    <Link as="button" onClick={() => {}}>
-                      {item.displayName}
-                    </Link>
-                  </div>
-                </div>
-              </TableCell>
-              <TableCell style={tableCellStyles}>{item?.connectionName}</TableCell>
-              <TableCell style={tableCellStyles}>
-                {<CheckmarkCircleFilled color={tokens.colorPaletteGreenBackground3} />}
-                {item?.connectionStatus}
-              </TableCell>
-              <TableCell style={{ ...tableCellStyles, textAlign: 'right', width: '1%' }}>
-                <Button
-                  appearance="subtle"
-                  size="small"
-                  icon={<Edit24Regular />}
-                  onClick={() => handleEditConnector(item.connectorId)}
-                  aria-label={INTL_TEXT.editButtonLabel}
-                />
-                <Button
-                  appearance="subtle"
-                  size="small"
-                  icon={<Delete24Regular />}
-                  onClick={() => handleDeleteConnector(item.connectorId)}
-                  aria-label={INTL_TEXT.deleteButtonLabel}
-                />
-              </TableCell>
+      {items.length ? (
+        <Table
+          aria-label={INTL_TEXT.tableAriaLabel}
+          size="small"
+          style={{
+            width: '100%',
+            margin: '0 auto',
+            border: 'none',
+          }}
+        >
+          <TableHeader style={tableCellStyles}>
+            <TableRow style={tableCellStyles}>
+              {columns.map((column) => (
+                <TableHeaderCell key={column.columnKey} style={tableCellStyles}>
+                  <Text weight="semibold">{column.label}</Text>
+                </TableHeaderCell>
+              ))}
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-      {hasConnectors ? (
-        <div className={styles.connectorsList}>
-          {items.map((connectorInfo) => {
-            return (
-              <ConnectorItem
-                key={connectorInfo?.connectorId}
-                connectorId={connectorInfo?.connectorId}
-                displayName={connectorInfo?.displayName ?? connectorInfo?.connectorId}
-                connectionName={connectorInfo?.connectionName ?? 'Default Connection'}
-                status={connectorInfo?.connectionStatus}
-                icon={connectorInfo?.iconUri}
-                onEdit={handleEditConnector}
-                onDelete={handleDeleteConnector}
-              />
-            );
-          })}
-        </div>
+          </TableHeader>
+          <TableBody style={tableCellStyles}>
+            {items.map((item) => (
+              <TableRow key={item.connectorId} style={tableCellStyles}>
+                <TableCell className={styles.connectorCellDefault} style={tableCellStyles}>
+                  <img
+                    src={item.iconUri ?? DefaultIcon}
+                    alt={`${item.displayName} icon`}
+                    style={{
+                      width: '24px',
+                      height: '24px',
+                      objectFit: 'contain',
+                      ...buttonGapStyles,
+                    }}
+                  />
+                  <Link as="button" onClick={() => handleEditConnector(item.connectorId)}>
+                    {item.displayName}
+                  </Link>
+                </TableCell>
+                <TableCell style={tableCellStyles}>{item?.connectionName}</TableCell>
+                <TableCell className={styles.connectorCellDefault} style={tableCellStyles}>
+                  <CheckmarkCircle20Filled style={buttonGapStyles} color={tokens.colorPaletteGreenBackground3} />
+                  <Text>{item?.connectionStatus}</Text>
+                </TableCell>
+                <TableCell className={styles.iconsCell} style={tableCellStyles}>
+                  <Button
+                    style={buttonGapStyles}
+                    appearance="subtle"
+                    size="small"
+                    icon={<Edit24Regular />}
+                    onClick={() => handleEditConnector(item.connectorId)}
+                    aria-label={INTL_TEXT.editButtonLabel}
+                  />
+                  <Button
+                    appearance="subtle"
+                    size="small"
+                    icon={<Delete24Regular />}
+                    onClick={() => handleDeleteConnector(item.connectorId)}
+                    aria-label={INTL_TEXT.deleteButtonLabel}
+                  />
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       ) : (
         <div className={styles.emptyState}>
           <div className={styles.emptyStateIcon}>
