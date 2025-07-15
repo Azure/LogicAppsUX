@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
 import type { RootState, AppDispatch } from '../../../core/state/mcp/store';
 import { useCallback, useMemo } from 'react';
-import { ConnectorFilled, Delete24Regular, Edit24Regular } from '@fluentui/react-icons';
+import { CheckmarkCircleFilled, ConnectorFilled, Delete24Regular, Edit24Regular } from '@fluentui/react-icons';
 import {
   Text,
   TableCell,
@@ -9,9 +9,10 @@ import {
   Table,
   TableHeader,
   TableHeaderCell,
-  TableCellLayout,
   Button,
   TableBody,
+  tokens,
+  Link,
 } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 import { useMcpWizardStyles } from '../wizard/styles';
@@ -20,7 +21,11 @@ import { ConnectorItem } from '../wizard/ConnectorItem';
 import { getResourceNameFromId } from '@microsoft/logic-apps-shared';
 import { McpPanelView, openConnectorPanelView } from '../../../core/state/mcp/panel/mcpPanelSlice';
 import { selectConnectorId, selectOperations } from '../../../core/state/mcp/connector/connectorSlice';
-import { ConnectorIconWithName } from '../../../ui/templates/connections/connector';
+import DefaultIcon from '../../../common/images/recommendation/defaulticon.svg';
+
+const tableCellStyles = {
+  border: 'none',
+};
 
 export const ListConnectors = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -174,53 +179,42 @@ export const ListConnectors = () => {
           border: 'none',
         }}
       >
-        <TableHeader style={{ border: 'none' }}>
-          <TableRow style={{ border: 'none' }}>
+        <TableHeader style={tableCellStyles}>
+          <TableRow style={tableCellStyles}>
             {columns.map((column) => (
-              <TableHeaderCell key={column.columnKey} style={{ border: 'none' }}>
+              <TableHeaderCell key={column.columnKey} style={tableCellStyles}>
                 <Text weight="semibold">{column.label}</Text>
               </TableHeaderCell>
             ))}
           </TableRow>
         </TableHeader>
-        <TableBody style={{ border: 'none' }}>
+        <TableBody style={tableCellStyles}>
           {items.map((item) => (
-            <TableRow key={item.connectorId} style={{ border: 'none' }}>
-              <TableCell style={{ border: 'none' }}>
-                {/* <div >
-                                <div>
-                                            <img
-          src={item.iconUri ?? DefaultIcon}
-          alt={`${item.displayName} icon`}
-          style={{
-            width: '24px',
-            height: '24px',
-            objectFit: 'contain',
-          }}
-        />
-                                  <Text size={400} weight="semibold">
-                                    {item.displayName}
-                                  </Text>
-                                    {item.connectionStatus === 'connected' ? <Checkmark24Filled /> : null}
-                                </div>
-                              </div> */}
-                <TableCellLayout
-                  media={
-                    <ConnectorIconWithName
-                      connectorId={item.connectorId}
-                      showProgress={true}
-                      classes={{
-                        root: 'msla-template-create-connector',
-                        icon: 'msla-template-create-connector-icon',
-                        text: 'msla-template-create-connector-text',
+            <TableRow key={item.connectorId} style={tableCellStyles}>
+              <TableCell style={tableCellStyles}>
+                <div>
+                  <div>
+                    <img
+                      src={item.iconUri ?? DefaultIcon}
+                      alt={`${item.displayName} icon`}
+                      style={{
+                        width: '24px',
+                        height: '24px',
+                        objectFit: 'contain',
                       }}
                     />
-                  }
-                />
+                    <Link as="button" onClick={() => {}}>
+                      {item.displayName}
+                    </Link>
+                  </div>
+                </div>
               </TableCell>
-              <TableCell style={{ border: 'none' }}>{item?.connectionName}</TableCell>
-              <TableCell style={{ border: 'none' }}>{item?.connectionStatus}</TableCell>
-              <TableCell style={{ textAlign: 'right', width: '1%', border: 'none' }}>
+              <TableCell style={tableCellStyles}>{item?.connectionName}</TableCell>
+              <TableCell style={tableCellStyles}>
+                {<CheckmarkCircleFilled color={tokens.colorPaletteGreenBackground3} />}
+                {item?.connectionStatus}
+              </TableCell>
+              <TableCell style={{ ...tableCellStyles, textAlign: 'right', width: '1%' }}>
                 <Button
                   appearance="subtle"
                   size="small"
