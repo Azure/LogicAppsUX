@@ -161,23 +161,26 @@ export abstract class BaseConnectionService implements IConnectionService {
     };
   }
 
+  private _getAdditionalPropertiesForCreateConnection(connectionInfo: ConnectionCreationInfo): Record<string, any> {
+    const additionalProperties: Record<string, any> = {};
+    if (connectionInfo?.additionalParameterValues?.['isDynamicConnectionAllowed']) {
+      additionalProperties['isDynamicConnectionAllowed'] = true;
+    }
+    return additionalProperties;
+  }
+
   protected _getRequestForCreateConnection(connectorId: string, _connectionName: string, connectionInfo: ConnectionCreationInfo): any {
     const parameterValues = connectionInfo?.connectionParameters;
     const parameterValueSet = connectionInfo?.connectionParametersSet;
     const displayName = connectionInfo?.displayName;
     const { location } = this.options;
-    const additionProperties: Record<string, any> = {};
-
-    if (connectionInfo?.additionalParameterValues?.['isDynamicConnectionAllowed']) {
-      additionProperties['isDynamicConnectionAllowed'] = true;
-    }
 
     return {
       properties: {
         api: { id: connectorId },
         ...(parameterValueSet ? { parameterValueSet } : { parameterValues }),
         displayName,
-        ...additionProperties,
+        ...this._getAdditionalPropertiesForCreateConnection(connectionInfo),
       },
       kind: this._vVersion,
       location,
@@ -192,11 +195,6 @@ export abstract class BaseConnectionService implements IConnectionService {
     const alternativeParameterValues = connectionInfo?.alternativeParameterValues ?? {};
     const displayName = connectionInfo?.displayName;
     const { location } = this.options;
-    const additionProperties: Record<string, any> = {};
-
-    if (connectionInfo?.additionalParameterValues?.['isDynamicConnectionAllowed']) {
-      additionProperties['isDynamicConnectionAllowed'] = true;
-    }
 
     return {
       properties: {
@@ -206,7 +204,7 @@ export abstract class BaseConnectionService implements IConnectionService {
         parameterValueType: 'Alternative',
         alternativeParameterValues,
         displayName,
-        ...additionProperties,
+        ...this._getAdditionalPropertiesForCreateConnection(connectionInfo),
       },
       kind: this._vVersion,
       location,
