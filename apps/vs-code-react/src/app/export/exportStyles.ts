@@ -1,6 +1,108 @@
 import { makeStyles, tokens } from '@fluentui/react-components';
 
 export const useExportStyles = makeStyles({
+  exportWorkflowsPanel: {
+    display: 'flex',
+    maxHeight: '65%',
+  },
+
+  exportWorkflowsPanelFilters: {
+    display: 'flex',
+    marginTop: '15px',
+
+    '> *': {
+      width: '30%',
+    },
+  },
+
+  exportWorkflowsPanelFiltersInput: {
+    marginRight: tokens.spacingHorizontalMNudge,
+    'input::placeholder': {
+      fontStyle: 'normal',
+    },
+  },
+
+  exportWorkflowsPanelListWorkflows: {
+    overflow: 'auto',
+    margin: '15px 0',
+    flex: 1,
+  },
+  exportWorkflowsPanelListWorkflowsLoading: {
+    '.ms-DetailsHeader-cell': {
+      pointerEvents: 'none',
+    },
+  },
+
+  exportWorkflowsPanelFiltersDropdown: {
+    width: '100%',
+  },
+
+  exportWorkflowsPanelList: {
+    flex: '5 1 auto',
+    display: 'flex',
+    flexDirection: 'column',
+    maxWidth: '75%',
+  },
+
+  exportWorkflowsPanelListEmpty: {
+    display: 'inline-flex',
+    justifyContent: 'center',
+    width: '100%',
+  },
+
+  exportWorkflowsPanelDivider: {
+    padding: `0 ${tokens.spacingHorizontalXL}`,
+    ':after': {
+      width: '3px',
+    },
+  },
+
+  exportWorkflowsPanelLimitInfo: {
+    marginTop: `${tokens.spacingVerticalMNudge}`,
+    '.ms-MessageBar-text': {
+      display: 'inline-flex',
+      alignItems: 'center',
+    },
+  },
+
+  exportWorkflowsPanelSelected: {
+    display: 'flex',
+    flexDirection: 'column',
+    maxWidth: '20%',
+    flex: '2 1 auto',
+  },
+
+  exportWorkflowsPanelSelectedTitle: {
+    padding: '0 0 16px 8px',
+  },
+
+  exportWorkflowsPanelSelectedList: {
+    display: 'flex',
+    flexDirection: 'column',
+    overflow: 'auto',
+    flex: 1,
+  },
+
+  exportWorkflowsPanelSelectedListItem: {
+    display: 'inline-flex',
+    alignItems: 'center',
+  },
+
+  exportWorkflowsPanelSelectedListItemText: {
+    maxWidth: '45%',
+  },
+
+  exportWorkflowsPanelSelectedListItemSubtext: {
+    display: 'flex',
+    maxWidth: '45%',
+    paddingLeft: '6px',
+    margin: '5px',
+  },
+
+  exportWorkflowsPanelSelectedListItemShimmer: {
+    margin: tokens.spacingVerticalMNudge,
+  },
+
   exportContainer: {
     height: '100vh',
     padding: ` 0 ${tokens.spacingVerticalXL}`,
