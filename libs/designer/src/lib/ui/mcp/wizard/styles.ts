@@ -6,11 +6,18 @@ const mainGap = '16px';
 export const useMcpWizardStyles = makeStyles({
   wizardContainer: {
     display: 'flex',
+    flexDirection: 'column',
+    background: tokens.colorNeutralBackground1,
+    height: '90vh',
+  },
+
+  scrollableContent: {
+    display: 'flex',
     flex: 1,
     flexDirection: 'column',
-    height: '100%',
-    background: tokens.colorNeutralBackground1,
     gap: '32px',
+    overflow: 'auto',
+    padding: '16px',
   },
 
   section: {
@@ -36,27 +43,10 @@ export const useMcpWizardStyles = makeStyles({
     paddingTop: mainGap,
   },
 
-  connectorsList: {
-    flex: 1,
-    padding: '24px',
-  },
-
-  operationsList: {
-    flex: 1,
-    padding: '24px',
-  },
-
-  emptyOperationsIcon: {
-    fontSize: '48px',
-    marginBottom: '16px',
-    color: tokens.colorNeutralForeground3,
-    '& svg': {
-      fontSize: '48px',
-    },
-  },
   footer: {
     padding: `${tokens.spacingVerticalM} 0px`,
     borderTop: `1px solid ${tokens.colorNeutralStroke2}`,
+    flexShrink: 0,
   },
 });
 

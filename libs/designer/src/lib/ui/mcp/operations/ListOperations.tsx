@@ -42,16 +42,6 @@ export const ListOperations = () => {
       id: 'x5Q5L7',
       description: 'The label for the operations column',
     }),
-    noOperations: intl.formatMessage({
-      defaultMessage: 'No operations configured yet',
-      id: '04idsj',
-      description: 'Message when no operations are configured',
-    }),
-    addOperationsFirst: intl.formatMessage({
-      defaultMessage: 'Add connectors and operations to see them here',
-      id: 'iWZd2h',
-      description: 'Message prompting to add operations',
-    }),
     loadingOperationsText: intl.formatMessage({
       defaultMessage: 'Loading operations...',
       id: 'VFaFVs',

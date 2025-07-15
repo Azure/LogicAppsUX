@@ -28,6 +28,7 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
   } = useSelector((state: RootState) => state);
 
   const disableConfiguration = useMemo(() => !logicAppName, [logicAppName]);
+  const connectorExists = useMemo(() => Object.keys(operation.operationInfo).length > 0, [operation.operationInfo]);
 
   const handleAddConnectors = useCallback(() => {
     dispatch(
@@ -131,52 +132,59 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
     <div className={styles.wizardContainer}>
       <McpPanelRoot />
 
-      {/* Details Section */}
-      <div className={styles.section}>
-        <div className={styles.header}>
-          <Text size={400} weight="semibold">
-            {INTL_TEXT.detailsTitle}
-          </Text>
-        </div>
+      <div className={styles.scrollableContent}>
+        {/* Details Section */}
+        <div className={styles.section}>
+          <div className={styles.header}>
+            <Text size={400} weight="semibold">
+              {INTL_TEXT.detailsTitle}
+            </Text>
+          </div>
 
-        <div className={styles.content}>
-          <LogicAppSelector />
-        </div>
-      </div>
-
-      {/* Connectors Section */}
-      <div className={styles.section}>
-        <div className={styles.header}>
-          <Text size={400} weight="semibold">
-            {INTL_TEXT.connectorsTitle}
-          </Text>
-          <Button appearance="outline" icon={<Add16Regular />} onClick={handleAddConnectors} size="small" disabled={disableConfiguration}>
-            {INTL_TEXT.addConnectorsButton}
-          </Button>
-        </div>
-
-        <div className={styles.content}>
-          <div className={styles.section}>
-            <ListConnectors />
+          <div className={styles.content}>
+            <LogicAppSelector />
           </div>
         </div>
 
-        <div className={styles.content}>
-          {/* Operations Section */}
-          <div className={styles.section}>
-            <div className={styles.header}>
-              <Text size={400} weight="semibold">
-                {INTL_TEXT.operationsTitle}
-              </Text>
-            </div>
+        {/* Connectors Section */}
+        <div className={styles.section}>
+          <div className={styles.header}>
+            <Text size={400} weight="semibold">
+              {INTL_TEXT.connectorsTitle}
+            </Text>
+            <Button
+              appearance="outline"
+              icon={<Add16Regular />}
+              onClick={handleAddConnectors}
+              size="small"
+              disabled={disableConfiguration || connectorExists}
+            >
+              {INTL_TEXT.addConnectorsButton}
+            </Button>
+          </div>
 
-            <div className={styles.content}>
-              <ListOperations />
+          <div className={styles.content}>
+            <div className={styles.section}>
+              <ListConnectors />
+            </div>
+          </div>
+
+          <div className={styles.content}>
+            {/* Operations Section */}
+            <div className={styles.section}>
+              <div className={styles.header}>
+                <Text size={400} weight="semibold">
+                  {INTL_TEXT.operationsTitle}
+                </Text>
+              </div>
+
+              <div className={styles.content}>
+                <ListOperations />
+              </div>
             </div>
           </div>
         </div>
       </div>
-
       <div className={styles.footer}>
         <TemplatesPanelFooter {...footerContent} />
       </div>
