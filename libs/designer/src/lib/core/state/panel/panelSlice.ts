@@ -221,7 +221,7 @@ export const panelSlice = createSlice({
       }>
     ) => {
       const { newCaseIdNewAdditiveSubgraphId, subGraphManifest } = action.payload;
-      state.discoveryContent.agentToolMetadata = { newCaseIdNewAdditiveSubgraphId, subGraphManifest };
+      state.discoveryContent.agentToolMetadata = { newAdditiveSubgraphId: newCaseIdNewAdditiveSubgraphId, subGraphManifest };
     },
     selectOperationGroupId: (state, action: PayloadAction<string>) => {
       state.discoveryContent.selectedOperationGroupId = cleanConnectorId(action.payload);

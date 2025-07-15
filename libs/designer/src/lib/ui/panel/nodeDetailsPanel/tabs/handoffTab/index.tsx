@@ -4,38 +4,57 @@ import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 
 import constants from '../../../../../common/constants';
-import { useHandoffToolsForAgent } from '../../../../../core/state/workflow/workflowSelectors';
-import { HandoffToolEntry } from './HandoffToolEntry';
+import { useHandoffActionsForAgent, useIsDisconnected } from '../../../../../core/state/workflow/workflowSelectors';
+import { useReadOnly } from '../../../../../core/state/designerOptions/designerOptionsSelectors';
 import { useHandoffTabStyles } from './handoffTab.styles';
+import { HandoffToolEntry } from './HandoffToolEntry';
+import { HandoffSelector } from './HandoffSelector';
 
 export const HandoffTab: React.FC<PanelTabProps> = (props) => {
   const { nodeId: selectedNodeId } = props;
   const intl = useIntl();
+  const readOnly = useReadOnly();
 
   const intlText = useMemo(
     () => ({
       handoffDescription: intl.formatMessage({
-        defaultMessage: 'Handoffs define which agents can receive control of the workflow.',
-        id: '2cnu8S',
+        defaultMessage:
+          'Handoffs define which agents can receive control of the workflow. Add descriptions to help agents understand the purpose of the handoff.',
+        id: '2LtWMp',
         description: 'Description of handoffs',
+      }),
+      noHandoffWarning: intl.formatMessage({
+        defaultMessage: 'Agent has no entrypoint. Make sure to have at least one handoff to this agent.',
+        id: 'HbjMG4',
+        description: 'Warning message when no handoff actions are defined',
       }),
     }),
     [intl]
   );
 
-  const handoffTools = useHandoffToolsForAgent(selectedNodeId);
+  const handoffActions = useHandoffActionsForAgent(selectedNodeId);
+
+  const isDisconnected = useIsDisconnected(selectedNodeId);
 
   const styles = useHandoffTabStyles();
 
   return (
     <div className={styles.handoffEntryContainer}>
-      <MessageBar>
+      <MessageBar intent="info" layout="multiline">
         <MessageBarBody>
           <Text>{intlText.handoffDescription}</Text>
         </MessageBarBody>
       </MessageBar>
-      {handoffTools.map((tool) => (
-        <HandoffToolEntry key={tool} agentId={selectedNodeId} toolId={tool} />
+      {isDisconnected && (
+        <MessageBar intent="warning" layout="multiline">
+          <MessageBarBody>
+            <Text>{intlText.noHandoffWarning}</Text>
+          </MessageBarBody>
+        </MessageBar>
+      )}
+      <HandoffSelector agentId={selectedNodeId} readOnly={!!readOnly} />
+      {handoffActions.map((action) => (
+        <HandoffToolEntry key={action.id} agentId={selectedNodeId} toolId={action.toolId} />
       ))}
     </div>
   );

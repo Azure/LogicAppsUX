@@ -1,8 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useIntl } from 'react-intl';
-import { Dropdown, Option, Button, Tooltip, Divider, Field, Textarea } from '@fluentui/react-components';
-import { labelCase } from '@microsoft/logic-apps-shared';
+import { Button, Tooltip, Divider, Field, Textarea } from '@fluentui/react-components';
 import {
   bundleIcon,
   ChevronDown24Filled,
@@ -13,15 +12,9 @@ import {
   DeleteRegular,
 } from '@fluentui/react-icons';
 
-import {
-  useAllAgentIds,
-  useHandoffActionsForAgent,
-  useNodeDisplayName,
-  useReplacedIds,
-  useWorkflowNode,
-} from '../../../../../core/state/workflow/workflowSelectors';
+import { useHandoffActionsForAgent, useNodeDisplayName, useWorkflowNode } from '../../../../../core/state/workflow/workflowSelectors';
 import { createLiteralValueSegment, type AppDispatch } from '../../../../../core';
-import { deleteAgentTool, replaceId } from '../../../../../core/state/workflow/workflowSlice';
+import { deleteAgentTool } from '../../../../../core/state/workflow/workflowSlice';
 import { updateNodeParameters } from '../../../../../core/state/operation/operationMetadataSlice';
 import { ParameterGroupKeys } from '../../../../../core/utils/parameters/helper';
 import { useHandoffTabStyles } from './handoffTab.styles';
@@ -36,30 +29,17 @@ export const HandoffToolEntry = ({ agentId, toolId }: any) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
 
-  const allAgentNames = useAllAgentIds();
-
-  const filteredAgents = allAgentNames.filter((agent) => agent !== agentId);
-
   const allHandoffActions = useHandoffActionsForAgent(agentId);
-  const existingHandoffTargets = useMemo(() => {
-    return allHandoffActions.map((action) => action.inputs.name);
-  }, [allHandoffActions]);
 
   const handoffAction = useMemo(() => {
     return allHandoffActions.find((action) => action.toolId === toolId);
   }, [allHandoffActions, toolId]);
-
-  const targetAgentId = useMemo(() => {
-    return handoffAction?.inputs.name;
-  }, [handoffAction]);
 
   const [expanded, setExpanded] = useState(true);
 
   const handleToggleExpand = () => {
     setExpanded((prev) => !prev);
   };
-
-  const replacedIds = useReplacedIds();
 
   const toolWorkflowNode = useWorkflowNode(toolId);
 
@@ -81,49 +61,6 @@ export const HandoffToolEntry = ({ agentId, toolId }: any) => {
       })
     );
   }, [agentId, dispatch, handoffAction, toolId, toolWorkflowNode]);
-
-  const targetParameter = useOperationParameterByName(handoffAction.id, 'name');
-
-  const onTargetChange = useCallback(
-    (newTargetAgentId: string | undefined) => {
-      if (!newTargetAgentId || !handoffAction) {
-        return;
-      }
-      if (newTargetAgentId === targetAgentId) {
-        return; // No change needed
-      }
-      // Update the tool and handoff action IDs
-      const newHandoffId = `handoff_from_${agentId}_to_${newTargetAgentId}`;
-      dispatch(
-        replaceId({
-          originalId: toolId,
-          newId: `${newHandoffId}_tool`,
-        })
-      );
-      dispatch(
-        replaceId({
-          originalId: `${toolId}_action`,
-          newId: `${newHandoffId}_action`,
-        })
-      );
-      // Update the handoff action "name" parameter value
-      dispatch(
-        updateNodeParameters({
-          nodeId: handoffAction.id,
-          parameters: [
-            {
-              groupId: ParameterGroupKeys.DEFAULT,
-              parameterId: targetParameter?.id ?? '',
-              propertiesToUpdate: {
-                value: [createLiteralValueSegment(newTargetAgentId)],
-              },
-            },
-          ],
-        })
-      );
-    },
-    [handoffAction, agentId, dispatch, toolId, targetParameter?.id]
-  );
 
   const descriptionParameter = useOperationParameterByName(toolId, 'description');
 
@@ -151,7 +88,7 @@ export const HandoffToolEntry = ({ agentId, toolId }: any) => {
     [handoffAction, dispatch, toolId, descriptionParameter?.id]
   );
 
-  const buttonText = useNodeDisplayName(targetAgentId);
+  const buttonText = useNodeDisplayName(handoffAction?.targetId ?? '');
 
   const intlText = useMemo(
     () => ({
@@ -160,10 +97,15 @@ export const HandoffToolEntry = ({ agentId, toolId }: any) => {
         id: 'oU4UD8',
         description: 'Label for the dropdown to select the target agent for handoff',
       }),
-      handoffDescription: intl.formatMessage({
-        defaultMessage: 'Description of the handoff',
-        id: 'OnPkop',
-        description: 'Placeholder text for the input field to enter a description of the handoff',
+      handoffDescriptionLabel: intl.formatMessage({
+        defaultMessage: 'Handoff description',
+        id: 'Aid5oX',
+        description: 'Label text for the input field to enter a description of the handoff',
+      }),
+      handoffDescriptionPlaceholder: intl.formatMessage({
+        defaultMessage: 'Enter a description for the handoff',
+        id: '+TUUxa',
+        description: 'Placeholder text for the handoff description input field',
       }),
       deleteLabel: intl.formatMessage({
         defaultMessage: 'Delete handoff',
@@ -196,26 +138,10 @@ export const HandoffToolEntry = ({ agentId, toolId }: any) => {
         <>
           <div className={styles.handoffToolEntryBody}>
             <div className={styles.handoffInput}>
-              <Field label={intlText.agentNameDropdown}>
-                <Dropdown
-                  id="handoffTargetAgentDropdown"
-                  value={targetAgentId}
-                  defaultSelectedOptions={targetAgentId ? [targetAgentId] : []}
-                  onOptionSelect={(_e, data) => onTargetChange(data.optionValue)}
-                >
-                  {filteredAgents.map((option: string) => (
-                    <Option key={option} disabled={existingHandoffTargets.includes(option) && option !== targetAgentId} value={option}>
-                      {labelCase(replacedIds[option] || option)}
-                    </Option>
-                  ))}
-                </Dropdown>
-              </Field>
-            </div>
-            <div className={styles.handoffInput}>
-              <Field label={intlText.handoffDescription} required>
+              <Field label={intlText.handoffDescriptionLabel} required>
                 <Textarea
-                  id="handoffDescription"
-                  placeholder={intlText.handoffDescription}
+                  id={`${toolId}-description`}
+                  placeholder={intlText.handoffDescriptionPlaceholder}
                   onChange={(_e, data) => onDescriptionChange(data.value)}
                   defaultValue={handoffAction?.toolDescription}
                 />

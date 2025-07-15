@@ -100,7 +100,8 @@ export const workflowSlice = createSlice({
       if (!state.graph) {
         return; // log exception
       }
-      const graph = getWorkflowNodeFromGraphState(state, action.payload.relationshipIds.graphId);
+      const relationshipIds = action.payload.relationshipIds;
+      const graph = getWorkflowNodeFromGraphState(state, relationshipIds?.subgraphId ?? relationshipIds?.graphId);
       if (!graph) {
         throw new Error('graph not set');
       }
@@ -524,12 +525,11 @@ export const workflowSlice = createSlice({
       };
       nodeMetadata.runData = nodeRunData as LogicAppsV2.WorkflowRunAction;
     },
-    addSwitchCase: (state: WorkflowState, action: PayloadAction<{ caseId: string; nodeId: string }>) => {
+    addSwitchCase: (state: WorkflowState, action: PayloadAction<{ caseId: string; graphId: string }>) => {
       if (!state.graph) {
         return; // log exception
       }
-      const { caseId, nodeId } = action.payload;
-      const graphId = getRecordEntry(state.nodesMetadata, nodeId)?.graphId ?? '';
+      const { caseId, graphId } = action.payload;
       const node = getWorkflowNodeFromGraphState(state, graphId);
       if (!node) {
         throw new Error('node not set');
@@ -543,12 +543,11 @@ export const workflowSlice = createSlice({
         args: [action.payload],
       });
     },
-    addAgentTool: (state: WorkflowState, action: PayloadAction<{ toolId: string; nodeId: string }>) => {
+    addAgentTool: (state: WorkflowState, action: PayloadAction<{ toolId: string; graphId: string }>) => {
       if (!state.graph) {
         return; // log exception
       }
-      const { toolId, nodeId } = action.payload;
-      const graphId = getRecordEntry(state.nodesMetadata, nodeId)?.graphId ?? '';
+      const { toolId, graphId } = action.payload;
       const node = getWorkflowNodeFromGraphState(state, graphId);
       if (!node) {
         throw new Error('node not set');

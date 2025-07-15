@@ -97,9 +97,9 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
   const handoffTabItem = useMemo(
     () => ({
       ...handoffTab(intl, tabProps),
-      visible: isAgentNode && isA2AWorkflow,
+      visible: isAgentNode && isA2AWorkflow && !isMonitoringView,
     }),
-    [intl, tabProps, isAgentNode, isA2AWorkflow]
+    [intl, tabProps, isAgentNode, isA2AWorkflow, isMonitoringView]
   );
 
   const codeViewTabItem = useMemo(() => codeViewTab(intl, tabProps), [intl, tabProps]);
