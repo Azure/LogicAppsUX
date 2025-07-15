@@ -1,9 +1,11 @@
 import { SearchableDropdown } from '../../components/searchableDropdown';
 import { TextField } from '@fluentui/react';
 import { useIntl } from 'react-intl';
+import { useExportStyles } from '../exportStyles';
 
 export const Filters: React.FC<any> = ({ dropdownOptions, onChangeResourceGroup, onChangeSearch, isDataLoading }) => {
   const intl = useIntl();
+  const styles = useExportStyles();
 
   const intlText = {
     SEARCH_LOGIC_APP: intl.formatMessage({
@@ -29,16 +31,16 @@ export const Filters: React.FC<any> = ({ dropdownOptions, onChangeResourceGroup,
   };
 
   return (
-    <div className="msla-export-workflows-panel-filters">
+    <div className={styles.exportWorkflowsPanelFilters}>
       <TextField
-        className="msla-export-workflows-panel-filters-input"
+        className={styles.exportWorkflowsPanelFiltersInput}
         placeholder={intlText.SEARCH}
         label={intlText.SEARCH_LOGIC_APP}
         onChange={onChangeSearch}
         disabled={isDataLoading}
       />
       <SearchableDropdown
-        className="msla-export-workflows-panel-filters-dropdown"
+        className={styles.exportWorkflowsPanelFiltersDropdown}
         placeholder={intlText.SEARCH}
         label={intlText.FILTER_RESOURCE_GROUPS}
         multiSelect
