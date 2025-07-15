@@ -6,7 +6,7 @@ import { LargeText, MediumText, XLargeText } from '@microsoft/designer-ui';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
-import '../export.less';
+import { useExportStyles } from '../exportStyles';
 
 export interface ISelectedListProps {
   isLoading: boolean;
@@ -16,6 +16,7 @@ export interface ISelectedListProps {
 export const SelectedList: React.FC<ISelectedListProps> = ({ isLoading, deselectWorkflow }) => {
   const intl = useIntl();
   const workflowState = useSelector((state: RootState) => state.workflow);
+  const styles = useExportStyles();
   const { exportData } = workflowState;
   const { selectedWorkflows } = exportData;
 
@@ -29,9 +30,9 @@ export const SelectedList: React.FC<ISelectedListProps> = ({ isLoading, deselect
 
   const shimmerList = useMemo(() => {
     return new Array(5).fill(0).map((_element, index) => {
-      return <Shimmer className="msla-export-workflows-panel-selected-list-shimmer" key={index} />;
+      return <Shimmer className={styles.exportWorkflowsPanelSelectedListItemShimmer} key={index} />;
     });
-  }, []);
+  }, [styles.exportWorkflowsPanelSelectedListItemShimmer]);
 
   const renderItems = useMemo(() => {
     const getList = (list: WorkflowsList[]) => {
@@ -41,14 +42,14 @@ export const SelectedList: React.FC<ISelectedListProps> = ({ isLoading, deselect
         const deselectButton = <IconButton iconProps={deselectIcon} aria-label="cancel" onClick={() => deselectWorkflow(workflow.key)} />;
 
         return (
-          <div key={workflow.key} className="msla-export-workflows-panel-selected-list-item">
+          <div key={workflow.key} className={styles.exportWorkflowsPanelSelectedListItem}>
             {deselectButton}
             <LargeText
               text={`${name} `}
               style={{ display: 'block', whiteSpace: 'nowrap' }}
-              className="msla-export-workflows-panel-selected-list-item-text"
+              className={styles.exportWorkflowsPanelSelectedListItemText}
             />
-            <div className="msla-export-workflows-panel-selected-list-item-subtext">
+            <div className={styles.exportWorkflowsPanelSelectedListItemSubtext}>
               <MediumText text={resourceGroup} style={{ display: 'block', whiteSpace: 'nowrap' }} />
             </div>
           </div>
@@ -57,12 +58,20 @@ export const SelectedList: React.FC<ISelectedListProps> = ({ isLoading, deselect
     };
 
     return isLoading ? shimmerList : getList(selectedWorkflows);
-  }, [isLoading, shimmerList, selectedWorkflows, deselectWorkflow]);
+  }, [
+    isLoading,
+    shimmerList,
+    selectedWorkflows,
+    styles.exportWorkflowsPanelSelectedListItem,
+    styles.exportWorkflowsPanelSelectedListItemText,
+    styles.exportWorkflowsPanelSelectedListItemSubtext,
+    deselectWorkflow,
+  ]);
 
   return (
-    <div className="msla-export-workflows-panel-selected">
-      <XLargeText text={intlText.SELECTED_APPS} style={{ display: 'block' }} className="msla-export-workflows-panel-selected-title" />
-      <div className="msla-export-workflows-panel-selected-list">{renderItems}</div>
+    <div className={styles.exportWorkflowsPanelSelected}>
+      <XLargeText text={intlText.SELECTED_APPS} style={{ display: 'block' }} className={styles.exportWorkflowsPanelSelectedTitle} />
+      <div className={styles.exportWorkflowsPanelSelectedList}>{renderItems}</div>
     </div>
   );
 };

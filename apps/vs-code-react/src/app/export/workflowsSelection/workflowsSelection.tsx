@@ -27,7 +27,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { LargeText, XLargeText } from '@microsoft/designer-ui';
 import { useExportStyles } from '../exportStyles';
 import { Divider } from '@fluentui/react-components';
-import '../export.less';
 
 export const WorkflowsSelection: React.FC = () => {
   const vscode = useContext(VSCodeContext);

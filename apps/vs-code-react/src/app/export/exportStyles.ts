@@ -65,6 +65,44 @@ export const useExportStyles = makeStyles({
     },
   },
 
+  exportWorkflowsPanelSelected: {
+    display: 'flex',
+    flexDirection: 'column',
+    maxWidth: '20%',
+    flex: '2 1 auto',
+  },
+
+  exportWorkflowsPanelSelectedTitle: {
+    padding: '0 0 16px 8px',
+  },
+
+  exportWorkflowsPanelSelectedList: {
+    display: 'flex',
+    flexDirection: 'column',
+    overflow: 'auto',
+    flex: 1,
+  },
+
+  exportWorkflowsPanelSelectedListItem: {
+    display: 'inline-flex',
+    alignItems: 'center',
+  },
+
+  exportWorkflowsPanelSelectedListItemText: {
+    maxWidth: '45%',
+  },
+
+  exportWorkflowsPanelSelectedListItemSubtext: {
+    display: 'flex',
+    maxWidth: '45%',
+    paddingLeft: '6px',
+    margin: '5px',
+  },
+
+  exportWorkflowsPanelSelectedListItemShimmer: {
+    margin: tokens.spacingVerticalMNudge,
+  },
+
   exportContainer: {
     height: '100vh',
     padding: ` 0 ${tokens.spacingVerticalXL}`,
