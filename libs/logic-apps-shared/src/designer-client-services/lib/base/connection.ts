@@ -85,7 +85,11 @@ export abstract class BaseConnectionService implements IConnectionService {
 
   async getSwaggerFromUri(uri: string): Promise<OpenAPIV2.Document> {
     const { httpClient } = this.options;
-    return httpClient.get<OpenAPIV2.Document>({ uri, noAuth: true, headers: { 'Access-Control-Allow-Origin': '*' } });
+    return httpClient.get<OpenAPIV2.Document>({
+      uri,
+      noAuth: true,
+      headers: { 'Access-Control-Allow-Origin': '*' },
+    });
   }
 
   public async getSwaggerParser(uri: string): Promise<SwaggerParser> {
@@ -142,7 +146,11 @@ export abstract class BaseConnectionService implements IConnectionService {
   protected async _getAzureConnector(connectorId: string): Promise<Connector> {
     const { apiVersion, httpClient, locale } = this.options;
     const headers = locale ? { 'Accept-Language': locale } : undefined;
-    const response = await httpClient.get<Connector>({ uri: connectorId, queryParameters: { 'api-version': apiVersion }, headers });
+    const response = await httpClient.get<Connector>({
+      uri: connectorId,
+      queryParameters: { 'api-version': apiVersion },
+      headers,
+    });
 
     return {
       ...response,
@@ -158,12 +166,18 @@ export abstract class BaseConnectionService implements IConnectionService {
     const parameterValueSet = connectionInfo?.connectionParametersSet;
     const displayName = connectionInfo?.displayName;
     const { location } = this.options;
+    const additionProperties: Record<string, any> = {};
+
+    if (connectionInfo?.additionalParameterValues?.['isDynamicConnectionAllowed']) {
+      additionProperties['isDynamicConnectionAllowed'] = true;
+    }
 
     return {
       properties: {
         api: { id: connectorId },
         ...(parameterValueSet ? { parameterValueSet } : { parameterValues }),
         displayName,
+        ...additionProperties,
       },
       kind: this._vVersion,
       location,
@@ -178,6 +192,11 @@ export abstract class BaseConnectionService implements IConnectionService {
     const alternativeParameterValues = connectionInfo?.alternativeParameterValues ?? {};
     const displayName = connectionInfo?.displayName;
     const { location } = this.options;
+    const additionProperties: Record<string, any> = {};
+
+    if (connectionInfo?.additionalParameterValues?.['isDynamicConnectionAllowed']) {
+      additionProperties['isDynamicConnectionAllowed'] = true;
+    }
 
     return {
       properties: {
@@ -187,6 +206,7 @@ export abstract class BaseConnectionService implements IConnectionService {
         parameterValueType: 'Alternative',
         alternativeParameterValues,
         displayName,
+        ...additionProperties,
       },
       kind: this._vVersion,
       location,
@@ -371,7 +391,10 @@ export abstract class BaseConnectionService implements IConnectionService {
     };
 
     try {
-      const response = await httpClient.get<ConnectionsResponse>({ uri, queryParameters });
+      const response = await httpClient.get<ConnectionsResponse>({
+        uri,
+        queryParameters,
+      });
       return response.value.filter((connection: Connection) => {
         return filterByLocation ? equals(connection.location, locale) : true;
       });

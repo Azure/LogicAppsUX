@@ -59,6 +59,7 @@ import TenantPicker from './formInputs/tenantPicker';
 import { useShouldEnableDynamicConnections } from '../../../../common/hooks/experimentation';
 import { useOperationPanelSelectedNodeId } from '../../../../core';
 import { useIsAgentSubGraph } from '../../../../common/hooks/agent';
+import { useStyles } from './styles';
 
 type ParamType = ConnectionParameter | ConnectionParameterSetParameter;
 
@@ -130,6 +131,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   } = props;
 
   const intl = useIntl();
+  const styles = useStyles();
 
   const connectorId = connector?.id;
 
@@ -821,7 +823,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
         {/* {needsAuth && <IFrameTermsOfService url={termsOfServiceUrl} />} */}
       </div>
 
-      <div>
+      <div className={styles.dynamicConnectionContainer}>
         {isUsingOAuth && isAgentSubgraph && shouldEnableDynamicConnections && isFirstPartyAuth && (
           <Checkbox
             label={stringResources.USE_DYNAMIC_CONNECTIONS}
