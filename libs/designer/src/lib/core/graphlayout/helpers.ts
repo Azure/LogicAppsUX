@@ -40,7 +40,7 @@ export const getLayoutRelevantData = (node: WorkflowNode | undefined): LayoutRel
       type: edge.type,
     })),
     children: node.children?.map((child) => getLayoutRelevantData(child as WorkflowNode)),
-    hasFooter: node.children?.findIndex((child) => child.id.endsWith(footerMarker)) !== -1,
+    hasFooter: node.children?.some((child) => child.id.endsWith(footerMarker)) ?? false,
     hasOnlyEdge: node.edges?.some((edge) => edge.type === WORKFLOW_EDGE_TYPES.ONLY_EDGE),
   };
 };
