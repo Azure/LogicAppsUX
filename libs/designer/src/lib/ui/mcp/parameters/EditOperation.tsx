@@ -1,4 +1,4 @@
-import { Text, Textarea, Field, Divider, Badge, Card, tokens } from '@fluentui/react-components';
+import { Text, Textarea, Field, Divider, Badge, Card, Label } from '@fluentui/react-components';
 import { bundleIcon, Settings24Regular, Settings24Filled, CheckmarkCircle16Regular, Edit16Regular } from '@fluentui/react-icons';
 import type { RootState } from '../../../core/state/mcp/store';
 import { useSelector } from 'react-redux';
@@ -92,7 +92,7 @@ export const EditOperation = ({ onValueChange, isDirty }: EditOperationProps) =>
         </div>
         <div className={styles.operationInfo}>
           <Text size={500} className={styles.operationTitle}>
-            {operationInfo.operationId}
+            {metadata?.summary ?? selectedOperationId}
           </Text>
           <Text className={styles.operationMeta}>
             {operationInfo.type} • {operationInfo.connectorId}
@@ -152,20 +152,22 @@ export const EditOperation = ({ onValueChange, isDirty }: EditOperationProps) =>
 
                 <div className={styles.parameterCardContent}>
                   <div className={styles.parameterList}>
-                    {group.parameters.map((param) => (
-                      <div key={param.id} className={styles.parameterField}>
-                        <Text className={styles.parameterLabel}>
-                          {param.label}
-                          {param.required && <Text style={{ color: tokens.colorPaletteRedForeground1 }}>{' *'}</Text>}
-                        </Text>
-                        <StringEditor
-                          className="msla-setting-token-editor-container"
-                          initialValue={param.value}
-                          onChange={onValueChange}
-                          placeholder={param.placeholder || `Enter ${param.label?.toLowerCase()}`}
-                        />
-                      </div>
-                    ))}
+                    {group.parameters.map((param) => {
+                      console.log(param);
+                      return (
+                        <div key={param.id} className={styles.parameterField}>
+                          <Label className={styles.parameterLabel} required={param.required} title={param.label}>
+                            {param.label}
+                          </Label>
+                          <StringEditor
+                            className="msla-setting-token-editor-container"
+                            initialValue={param.value}
+                            onChange={onValueChange}
+                            placeholder={param.placeholder ?? `Enter ${param.label?.toLowerCase()}`}
+                          />
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               </Card>

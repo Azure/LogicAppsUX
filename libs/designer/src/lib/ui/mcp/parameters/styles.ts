@@ -4,7 +4,7 @@ export const useEditOperationStyles = makeStyles({
   container: {
     display: 'flex',
     flexDirection: 'column',
-    gap: tokens.spacingVerticalXL,
+    gap: tokens.spacingVerticalXXS,
     padding: `${tokens.spacingVerticalL} 0`,
     minHeight: 'min-content',
     width: '100%',
@@ -18,7 +18,6 @@ export const useEditOperationStyles = makeStyles({
 
   sectionTitle: {
     color: tokens.colorNeutralForeground1,
-    marginBottom: tokens.spacingVerticalS,
   },
 
   operationHeader: {

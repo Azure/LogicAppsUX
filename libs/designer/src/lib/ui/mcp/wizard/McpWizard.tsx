@@ -355,7 +355,7 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
                   <OperationItem
                     key={operationInfo.operationId}
                     operationId={operationInfo.operationId}
-                    operationName={operationInfo.operationId}
+                    operationName={operationMetadata[operationInfo.operationId]?.summary ?? operationInfo.operationId}
                     connectorId={operationInfo.connectorId}
                     onEdit={handleEditOperation}
                     onDelete={handleDeleteOperation}

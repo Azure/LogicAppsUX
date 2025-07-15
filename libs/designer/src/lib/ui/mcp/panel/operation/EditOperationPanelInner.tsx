@@ -35,8 +35,7 @@ export const EditOperationPanelInner = () => {
   }, [dispatch]);
 
   const handleValueChange = useCallback(() => {
-    //TODO: Implement save logic - dispatch actions to update operation
-    console.log('Saving operation data:');
+    console.log('Value changed');
     setIsDirty(true);
   }, []);
 
