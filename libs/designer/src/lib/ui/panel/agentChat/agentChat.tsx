@@ -2,7 +2,7 @@ import { PanelLocation, PanelResizer, PanelSize, type ConversationItem } from '@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { defaultChatbotPanelWidth, ChatbotUI } from '@microsoft/logic-apps-chatbot';
-import { runsQueriesKeys, useAgentChatInvokeUri, useCancelRun, useActionsChatHistory } from '../../../core/queries/runs';
+import { runsQueriesKeys, useAgentChatInvokeUri, useCancelRun, useChatHistory } from '../../../core/queries/runs';
 import { useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import {
   useAgentLastOperations,
@@ -32,6 +32,7 @@ import { AgentChatHeader } from './agentChatHeader';
 import { parseChatHistory } from './helper';
 import { useMutation } from '@tanstack/react-query';
 import constants from '../../../common/constants';
+import { useIsA2AWorkflow } from '../../../core/state/designerView/designerViewSelectors';
 
 interface AgentChatProps {
   panelLocation?: PanelLocation;
@@ -44,36 +45,45 @@ export const AgentChat = ({
   chatbotWidth = defaultChatbotPanelWidth,
   panelContainerRef,
 }: AgentChatProps) => {
-  const intl = useIntl();
+  // State section
   const [focus, setFocus] = useState(false);
   const [conversation, setConversation] = useState<ConversationItem[]>([]);
   const [textInput, setTextInput] = useState<string>('');
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const [isWaitingForResponse, setIsWaitingForResponse] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [overrideWidth, setOverrideWidth] = useState<string | undefined>(chatbotWidth);
+
+  // Custom hooks section
   const isMonitoringView = useMonitoringView();
   const runInstance = useRunInstance();
   const agentOperations = useAgentOperations();
   const agentLastOperations = useAgentLastOperations(agentOperations);
-  const [isCollapsed, setIsCollapsed] = useState(false);
-  const panelContainerElement = panelContainerRef.current as HTMLElement;
+  const isA2AWorkflow = useIsA2AWorkflow();
   const agentChatSuffixUri = useUriForAgentChat(conversation.length > 0 ? conversation[0].metadata?.parentId : undefined);
+  const focusElement = useFocusElement();
+
+  // Query sections
   const {
     refetch: refetchChatHistory,
     isFetching: isChatHistoryFetching,
     data: chatHistoryData,
-  } = useActionsChatHistory(!!isMonitoringView, agentOperations, runInstance?.id);
+  } = useChatHistory(!!isMonitoringView, runInstance?.id, agentOperations, isA2AWorkflow);
   const { data: chatInvokeUri } = useAgentChatInvokeUri(!!isMonitoringView, true, agentChatSuffixUri);
-  const [overrideWidth, setOverrideWidth] = useState<string | undefined>(chatbotWidth);
+
+  // Miscellaneous section
+  const panelRef = useRef<HTMLDivElement>(null);
+  const intl = useIntl();
+  const panelContainerElement = panelContainerRef.current as HTMLElement;
   const dispatch = useDispatch<AppDispatch>();
   const drawerWidth = isCollapsed ? PanelSize.Auto : overrideWidth;
-  const panelRef = useRef<HTMLDivElement>(null);
-  const focusElement = useFocusElement();
   const rawAgentLastOperations = JSON.stringify(agentLastOperations);
-  const [dialogOpen, setDialogOpen] = useState(false);
 
   const { mutateAsync: refreshChat } = useMutation(async () => {
     const queryClient = getReactQueryClient();
     await queryClient.resetQueries([runsQueriesKeys.useRunInstance]);
     await queryClient.resetQueries([runsQueriesKeys.useActionsChatHistory]);
+    await queryClient.resetQueries([runsQueriesKeys.useRunChatHistory]);
     await queryClient.resetQueries([runsQueriesKeys.useAgentActionsRepetition]);
     await queryClient.resetQueries([runsQueriesKeys.useAgentRepetition]);
     await queryClient.resetQueries([runsQueriesKeys.useNodeRepetition]);
@@ -83,6 +93,7 @@ export const AgentChat = ({
     await queryClient.refetchQueries([runsQueriesKeys.useAgentActionsRepetition]);
     await queryClient.refetchQueries([runsQueriesKeys.useNodeRepetition]);
     await queryClient.refetchQueries([runsQueriesKeys.useActionsChatHistory]);
+    await queryClient.refetchQueries([runsQueriesKeys.useRunChatHistory]);
   });
 
   const showStopButton = useMemo(() => {

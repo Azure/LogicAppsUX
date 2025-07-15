@@ -209,7 +209,7 @@ export const useAgentActionsRepetition = (
   );
 };
 
-export const useActionsChatHistory = (isMonitoringView: boolean, nodeIds: string[], runId: string | undefined) => {
+export const useActionsChatHistory = (nodeIds: string[], runId: string | undefined, isEnabled: boolean) => {
   return useQuery(
     [runsQueriesKeys.useActionsChatHistory, { nodeIds, runId }],
     async () => {
@@ -223,12 +223,12 @@ export const useActionsChatHistory = (isMonitoringView: boolean, nodeIds: string
     {
       ...queryOpts,
       retryOnMount: false,
-      enabled: isMonitoringView && runId !== undefined && nodeIds.length > 0,
+      enabled: isEnabled && runId !== undefined && nodeIds.length > 0,
     }
   );
 };
 
-export const useRunChatHistory = (isMonitoringView: boolean, runId: string | undefined) => {
+export const useRunChatHistory = (runId: string | undefined, isEnabled: boolean) => {
   return useQuery(
     [runsQueriesKeys.useRunChatHistory, { runId }],
     async () => {
@@ -251,9 +251,17 @@ export const useRunChatHistory = (isMonitoringView: boolean, runId: string | und
     {
       ...queryOpts,
       retryOnMount: false,
-      enabled: isMonitoringView && runId !== undefined,
+      enabled: isEnabled && runId !== undefined,
     }
   );
+};
+
+export const useChatHistory = (isMonitoringView: boolean, runId: string | undefined, nodeIds: string[] = [], isA2AWorkflow: boolean) => {
+  const actionHistoryQuery = useActionsChatHistory(nodeIds, runId, isMonitoringView && !isA2AWorkflow);
+
+  const runHistoryQuery = useRunChatHistory(runId, isMonitoringView && isA2AWorkflow);
+
+  return isA2AWorkflow ? runHistoryQuery : actionHistoryQuery;
 };
 
 export const useAgentChatInvokeUri = (isMonitoringView: boolean, isAgenticWorkflow: boolean, id: string | undefined) => {

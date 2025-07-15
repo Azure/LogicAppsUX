@@ -162,6 +162,7 @@ export const DesignerApp = () => {
       refetch();
       const queryClient = getReactQueryClient();
       queryClient.removeQueries([runsQueriesKeys.useActionsChatHistory]);
+      queryClient.removeQueries([runsQueriesKeys.useRunChatHistory]);
       queryClient.removeQueries([runsQueriesKeys.useAgentActionsRepetition]);
       queryClient.removeQueries([runsQueriesKeys.useAgentRepetition]);
       queryClient.removeQueries([runsQueriesKeys.useNodeRepetition]);
