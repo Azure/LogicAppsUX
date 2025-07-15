@@ -94,6 +94,7 @@ export interface OperationMetadata {
   iconUri: string;
   brandColor: string;
   description?: string;
+  summary?: string;
 }
 
 export const ErrorLevel = {
@@ -612,6 +613,13 @@ export const operationMetadataSlice = createSlice({
       const nodeRepetition = getRecordEntry(state.repetitionInfos, id);
       state.repetitionInfos[id] = { ...nodeRepetition, ...repetition };
     },
+    updateOperationDescription: (state, action: PayloadAction<{ id: string; description: string }>) => {
+      const { id, description } = action.payload;
+      const operationMetadata = getRecordEntry(state.operationMetadata, id);
+      if (operationMetadata) {
+        state.operationMetadata[id] = { ...operationMetadata, description };
+      }
+    },
     updateErrorDetails: (
       state,
       action: PayloadAction<{
@@ -818,6 +826,7 @@ export const {
   deinitializeOperationInfos,
   deinitializeNodes,
   updateDynamicDataLoadStatus,
+  updateOperationDescription,
 } = operationMetadataSlice.actions;
 
 export default operationMetadataSlice.reducer;

@@ -62,6 +62,7 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
     const map: Record<
       string,
       {
+        displayName?: string;
         iconUri?: string;
         connectionName?: string;
         connectionStatus: 'connected' | 'disconnected';
