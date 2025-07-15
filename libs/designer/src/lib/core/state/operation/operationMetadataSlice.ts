@@ -93,6 +93,8 @@ export interface NodeDependencies {
 export interface OperationMetadata {
   iconUri: string;
   brandColor: string;
+  description?: string;
+  connectorTitle?: string;
 }
 
 export const ErrorLevel = {
@@ -167,6 +169,7 @@ export interface NodeOperationInputsData {
   operationInfo: NodeOperation;
   nodeOutputs?: NodeOutputs;
   settings?: Settings;
+  operationMetadata?: OperationMetadata;
 }
 
 export interface NodeData {
@@ -242,7 +245,7 @@ export const operationMetadataSlice = createSlice({
           return;
         }
 
-        const { id, nodeInputs, nodeOutputs, nodeDependencies, operationInfo, settings } = nodeData;
+        const { id, nodeInputs, nodeOutputs, nodeDependencies, operationInfo, settings, operationMetadata } = nodeData;
         state.inputParameters[id] = nodeInputs;
         state.dependencies[id] = nodeDependencies;
         state.operationInfo[id] = operationInfo;
@@ -253,6 +256,10 @@ export const operationMetadataSlice = createSlice({
 
         if (settings) {
           state.settings[id] = settings;
+        }
+
+        if (operationMetadata) {
+          state.operationMetadata[id] = operationMetadata;
         }
       }
       state.loadStatus.nodesInitialized = true;
@@ -628,6 +635,12 @@ export const operationMetadataSlice = createSlice({
       const { id } = action.payload;
       delete state.operationInfo[id];
     },
+    deinitializeOperationInfos: (state, action: PayloadAction<{ ids: string[] }>) => {
+      const { ids } = action.payload;
+      for (const operationId of ids) {
+        delete state.operationInfo[operationId];
+      }
+    },
     deinitializeNodes: (state, action: PayloadAction<string[]>) => {
       for (const id of action.payload) {
         delete state.inputParameters[id];
@@ -803,6 +816,7 @@ export const {
   updateRepetitionContext,
   updateErrorDetails,
   deinitializeOperationInfo,
+  deinitializeOperationInfos,
   deinitializeNodes,
   updateDynamicDataLoadStatus,
 } = operationMetadataSlice.actions;
