@@ -6,7 +6,7 @@ import { McpPanelView, openConnectorPanelView } from '../../../core/state/mcp/pa
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../core/state/mcp/store';
 import { McpPanelRoot } from '../panel/mcpPanelRoot';
-import { type McpWorkflowsData, serializeMcpWorkflows } from '../../../core/mcp/utils/serializer';
+import { type McpServerCreateData, serializeMcpWorkflows } from '../../../core/mcp/utils/serializer';
 import { resetQueriesOnRegisterMcpServer } from '../../../core/mcp/utils/queries';
 import { LogicAppSelector } from '../details/logicAppSelector';
 import { useMemo, useCallback } from 'react';
@@ -15,7 +15,7 @@ import { TemplatesPanelFooter } from '@microsoft/designer-ui';
 import { ListOperations } from '../operations/ListOperations';
 import { ListConnectors } from '../connectors/ListConnectors';
 
-export type RegisterMcpServerHandler = (workflowsData: McpWorkflowsData, onCompleted?: () => void) => Promise<void>;
+export type RegisterMcpServerHandler = (workflowsData: McpServerCreateData, onCompleted?: () => void) => Promise<void>;
 
 export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: RegisterMcpServerHandler; onClose: () => void }) => {
   const dispatch = useDispatch<AppDispatch>();
