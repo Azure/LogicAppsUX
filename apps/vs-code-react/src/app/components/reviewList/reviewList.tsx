@@ -23,17 +23,17 @@ export const ReviewList: React.FC<IReviewListProps> = ({ isValidationLoading, va
           return <CheckmarkCircleFilled fontSize="16px" className={styles.succeededIcon} />;
         }
         case ValidationStatus.succeeded_with_warnings: {
-          return <WarningFilled fontSize="16px" />;
+          return <WarningFilled fontSize="16px" className={styles.warningIcon} />;
         }
         case ValidationStatus.failed: {
-          return <DismissCircleFilled fontSize="16px" />;
+          return <DismissCircleFilled fontSize="16px" className={styles.failedIcon} />;
         }
         default: {
           return null;
         }
       }
     },
-    [styles.succeededIcon]
+    [styles.failedIcon, styles.succeededIcon, styles.warningIcon]
   );
 
   const shimmerList = useMemo(() => {
