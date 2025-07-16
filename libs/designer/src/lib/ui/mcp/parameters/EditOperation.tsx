@@ -47,6 +47,8 @@ export const EditOperation = forwardRef<EditOperationRef, EditOperationProps>(fu
     inputParameters: state.operation.inputParameters,
   }));
 
+  console.log(selectedOperationId);
+
   const operationInfo = selectedOperationId ? operationInfos[selectedOperationId] : null;
   const metadata = selectedOperationId ? operationMetadata[selectedOperationId] : null;
   const parameters = selectedOperationId ? inputParameters[selectedOperationId] : null;
