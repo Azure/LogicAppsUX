@@ -4,7 +4,7 @@ import {
   mcpStore,
   McpWizard,
   McpWizardProvider,
-  type McpWorkflowsData,
+  type McpServerCreateData,
   resetMcpStateOnResourceChange,
 } from '@microsoft/logic-apps-designer';
 import type { RootState } from '../state/Store';
@@ -88,14 +88,14 @@ export const McpStandard = () => {
     }
   }, [objectId, tenantId]);
 
-  const onRegisterMcpServer = useCallback(async (workflowsData: McpWorkflowsData, onCompleted?: () => void) => {
-    const { logicAppId, workflows, connectionsData } = workflowsData;
+  const onRegisterMcpServer = useCallback(async (createData: McpServerCreateData, onCompleted?: () => void) => {
+    const { logicAppId, workflows, connectionsData } = createData;
     const workflowsToCreate = Object.keys(workflows).map((key) => ({
       name: key,
       workflow: workflows[key],
     }));
 
-    console.log('Generated workflows:', workflowsData);
+    console.log('Generated server data:', createData);
 
     await saveWorkflowStandard(
       logicAppId,
