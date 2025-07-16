@@ -2,7 +2,7 @@ import { PanelLocation, PanelResizer, PanelSize, type ConversationItem } from '@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { defaultChatbotPanelWidth, ChatbotUI } from '@microsoft/logic-apps-chatbot';
-import { runsQueriesKeys, useAgentChatInvokeUri, useCancelRun, useChatHistory } from '../../../core/queries/runs';
+import { useAgentChatInvokeUri, useCancelRun, useChatHistory } from '../../../core/queries/runs';
 import { useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import {
   useAgentLastOperations,
@@ -26,11 +26,10 @@ import {
 } from '@fluentui/react-components';
 import { ChatFilled } from '@fluentui/react-icons';
 import { useDispatch } from 'react-redux';
-import { changePanelNode, getReactQueryClient, type AppDispatch } from '../../../core';
+import { changePanelNode, type AppDispatch } from '../../../core';
 import { clearFocusElement, setFocusNode, setRunIndex } from '../../../core/state/workflow/workflowSlice';
 import { AgentChatHeader } from './agentChatHeader';
-import { parseChatHistory } from './helper';
-import { useMutation } from '@tanstack/react-query';
+import { parseChatHistory, useRefreshChatMutation } from './helper';
 import constants from '../../../common/constants';
 import { useIsA2AWorkflow } from '../../../core/state/designerView/designerViewSelectors';
 
@@ -62,6 +61,7 @@ export const AgentChat = ({
   const isA2AWorkflow = useIsA2AWorkflow();
   const agentChatSuffixUri = useUriForAgentChat(conversation.length > 0 ? conversation[0].metadata?.parentId : undefined);
   const focusElement = useFocusElement();
+  const { mutateAsync: refreshChat } = useRefreshChatMutation();
 
   // Query sections
   const {
@@ -78,23 +78,6 @@ export const AgentChat = ({
   const dispatch = useDispatch<AppDispatch>();
   const drawerWidth = isCollapsed ? PanelSize.Auto : overrideWidth;
   const rawAgentLastOperations = JSON.stringify(agentLastOperations);
-
-  const { mutateAsync: refreshChat } = useMutation(async () => {
-    const queryClient = getReactQueryClient();
-    await queryClient.resetQueries([runsQueriesKeys.useRunInstance]);
-    await queryClient.resetQueries([runsQueriesKeys.useActionsChatHistory]);
-    await queryClient.resetQueries([runsQueriesKeys.useRunChatHistory]);
-    await queryClient.resetQueries([runsQueriesKeys.useAgentActionsRepetition]);
-    await queryClient.resetQueries([runsQueriesKeys.useAgentRepetition]);
-    await queryClient.resetQueries([runsQueriesKeys.useNodeRepetition]);
-
-    await queryClient.refetchQueries([runsQueriesKeys.useRunInstance]);
-    await queryClient.refetchQueries([runsQueriesKeys.useAgentRepetition]);
-    await queryClient.refetchQueries([runsQueriesKeys.useAgentActionsRepetition]);
-    await queryClient.refetchQueries([runsQueriesKeys.useNodeRepetition]);
-    await queryClient.refetchQueries([runsQueriesKeys.useActionsChatHistory]);
-    await queryClient.refetchQueries([runsQueriesKeys.useRunChatHistory]);
-  });
 
   const showStopButton = useMemo(() => {
     return runInstance?.properties?.status === constants.FLOW_STATUS.RUNNING;

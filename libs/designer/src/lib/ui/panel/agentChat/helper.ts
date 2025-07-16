@@ -1,6 +1,8 @@
 import { AgentMessageEntryType, ConversationItemType, type ConversationItem } from '@microsoft/designer-ui';
 import { guid, labelCase } from '@microsoft/logic-apps-shared';
 import type { ChatHistory } from '../../../core/queries/runs';
+import { useMutation } from '@tanstack/react-query';
+import { getReactQueryClient, runsQueriesKeys } from '../../../core';
 
 export const parseChatHistory = (
   chatHistory: ChatHistory[],
@@ -110,4 +112,28 @@ const parseMessage = (
       };
     }
   }
+};
+
+export const useRefreshChatMutation = () => {
+  return useMutation({
+    mutationFn: async () => {
+      const queryClient = getReactQueryClient();
+
+      // Reset all queries
+      await queryClient.resetQueries([runsQueriesKeys.useRunInstance]);
+      await queryClient.resetQueries([runsQueriesKeys.useActionsChatHistory]);
+      await queryClient.resetQueries([runsQueriesKeys.useRunChatHistory]);
+      await queryClient.resetQueries([runsQueriesKeys.useAgentActionsRepetition]);
+      await queryClient.resetQueries([runsQueriesKeys.useAgentRepetition]);
+      await queryClient.resetQueries([runsQueriesKeys.useNodeRepetition]);
+
+      // Refetch all queries
+      await queryClient.refetchQueries([runsQueriesKeys.useRunInstance]);
+      await queryClient.refetchQueries([runsQueriesKeys.useAgentRepetition]);
+      await queryClient.refetchQueries([runsQueriesKeys.useAgentActionsRepetition]);
+      await queryClient.refetchQueries([runsQueriesKeys.useNodeRepetition]);
+      await queryClient.refetchQueries([runsQueriesKeys.useActionsChatHistory]);
+      await queryClient.refetchQueries([runsQueriesKeys.useRunChatHistory]);
+    },
+  });
 };
