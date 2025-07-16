@@ -7,12 +7,13 @@ import { useConnectionsForConnector } from '../../../core/queries/connections';
 import { useEffect, useMemo } from 'react';
 import type { ConnectorInfo } from '../../../core/templates/utils/queries';
 import { useConnectorInfo } from '../../../core/templates/utils/queries';
-import { tokens, Tooltip, Text } from '@fluentui/react-components';
+import { tokens, Tooltip, Text, Link } from '@fluentui/react-components';
 import { isConnectionValid } from '../../../core/utils/connectors/connections';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../../core/state/templates/store';
 import { Checkmark16Filled, Dismiss16Filled } from '@fluentui/react-icons';
 import { useConnectorStatusStrings } from '../templatesStrings';
+import DefaultIcon from '../../../common/images/recommendation/defaulticon.svg';
 
 export const ConnectorIcon = ({
   connectorId,
@@ -57,12 +58,14 @@ export const ConnectorIconWithName = ({
   classes,
   showProgress,
   onConnectorLoaded,
+  onNameClick,
 }: {
   connectorId: string;
   classes: Record<string, string>;
   operationId?: string;
   showProgress?: boolean;
   onConnectorLoaded?: (connector: ConnectorInfo) => void;
+  onNameClick?: () => void;
 }) => {
   const { data: connector, isLoading } = useConnectorInfo(connectorId, operationId, /* useCachedData */ true);
 
@@ -93,8 +96,14 @@ export const ConnectorIconWithName = ({
 
   return (
     <div className={classes['root']}>
-      <img className={classes['icon']} src={connector?.iconUrl} />
-      <Text className={classes['text']}>{connector?.displayName}</Text>
+      <img className={classes['icon']} src={connector?.iconUrl ?? DefaultIcon} />
+      {onNameClick ? (
+        <Link className={classes['text']} as="button" onClick={onNameClick}>
+          {connector?.displayName}
+        </Link>
+      ) : (
+        <Text className={classes['text']}>{connector?.displayName}</Text>
+      )}
     </div>
   );
 };
