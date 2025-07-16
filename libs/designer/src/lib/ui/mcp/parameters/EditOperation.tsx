@@ -11,7 +11,7 @@ import type { RootState } from '../../../core/state/mcp/store';
 import { useSelector } from 'react-redux';
 import { useCallback, useMemo, useState, useEffect, useImperativeHandle, forwardRef } from 'react';
 import { useEditOperationStyles } from './styles';
-import type { ChangeHandler, ParameterInfo } from '@microsoft/logic-apps-shared';
+import type { ParameterInfo, ValueSegment } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 import type { SearchableDropdownOption } from '@microsoft/designer-ui';
 import { SearchableDropdownWithAddAll, StringEditor } from '@microsoft/designer-ui';
@@ -19,12 +19,14 @@ import { SearchableDropdownWithAddAll, StringEditor } from '@microsoft/designer-
 const SettingsIcon = bundleIcon(Settings24Filled, Settings24Regular);
 
 export interface EditOperationProps {
-  onValueChange: ChangeHandler;
+  setIsDirty: (b: boolean) => void;
   isDirty: boolean;
 }
 
 export interface EditOperationRef {
   getConditionalVisibilityChanges: () => Record<string, boolean>;
+  getParameterValueChanges: () => Record<string, ValueSegment[]>;
+  getDescriptionChange: () => string | null;
   resetLocalChanges: () => void;
 }
 
@@ -32,9 +34,11 @@ export const EditOperation = forwardRef<EditOperationRef, EditOperationProps>(fu
   const intl = useIntl();
   const styles = useEditOperationStyles();
 
-  // Local state for conditional visibility (not persisted to Redux until save)
   const [localConditionalVisibility, setLocalConditionalVisibility] = useState<Record<string, boolean>>({});
   const [conditionalParameterAddOrder, setConditionalParameterAddOrder] = useState<string[]>([]);
+
+  const [localParameterChanges, setLocalParameterChanges] = useState<Record<string, ValueSegment[]>>({});
+  const [localDescriptionChange, setLocalDescriptionChange] = useState<string | null>(null);
 
   const { selectedOperationId, operationInfos, operationMetadata, inputParameters } = useSelector((state: RootState) => ({
     selectedOperationId: state.connector.selectedOperationId,
@@ -53,7 +57,7 @@ export const EditOperation = forwardRef<EditOperationRef, EditOperationProps>(fu
     setConditionalParameterAddOrder([]);
   }, [selectedOperationId]);
 
-  // Initialize local state from Redux when component mounts or parameters change
+  // Initialize local state from Redux when component mounts
   useEffect(() => {
     if (!parameters?.parameterGroups) {
       setLocalConditionalVisibility({});
@@ -71,7 +75,6 @@ export const EditOperation = forwardRef<EditOperationRef, EditOperationProps>(fu
 
     setLocalConditionalVisibility(initialVisibility);
 
-    // Reset add order when parameters change
     setConditionalParameterAddOrder([]);
   }, [parameters]);
 
@@ -95,7 +98,7 @@ export const EditOperation = forwardRef<EditOperationRef, EditOperationProps>(fu
         } else {
           dropdownOptions.push({
             key: param.id,
-            text: param.label || param.parameterName,
+            text: param.label ?? param.parameterName,
             data: { groupId, param },
           });
         }
@@ -231,9 +234,26 @@ export const EditOperation = forwardRef<EditOperationRef, EditOperationProps>(fu
   };
 
   const handleFieldChange = useCallback(
-    (field: string, value: any) => {
-      console.log(`Field changed: ${field} = ${value}`);
-      // Mark as dirty with proper ChangeHandler signature
+    (field: string, value: string) => {
+      if (field === 'description') {
+        setLocalDescriptionChange(value);
+      }
+
+      onValueChange({ value: [] });
+    },
+    [onValueChange]
+  );
+
+  const handleParameterValueChange = useCallback(
+    (parameterId: string, newValue: ValueSegment[]) => {
+      setLocalParameterChanges((prev) => ({
+        ...prev,
+        [parameterId]: {
+          ...prev[parameterId],
+          value: newValue,
+        },
+      }));
+
       onValueChange({ value: [] });
     },
     [onValueChange]
@@ -241,21 +261,15 @@ export const EditOperation = forwardRef<EditOperationRef, EditOperationProps>(fu
 
   const handleOptionalParameterToggle = useCallback(
     (parameterId: string, isVisible: boolean) => {
-      // Update local state instead of Redux
       setLocalConditionalVisibility((prev) => ({
         ...prev,
         [parameterId]: isVisible,
       }));
-
-      // Add to add order when making visible
       if (isVisible) {
         setConditionalParameterAddOrder((prev) => (prev.includes(parameterId) ? prev : [...prev, parameterId]));
       } else {
-        // Remove from add order when hiding
         setConditionalParameterAddOrder((prev) => prev.filter((id) => id !== parameterId));
       }
-
-      // Mark as dirty with proper ChangeHandler signature
       onValueChange({ value: [] });
     },
     [onValueChange]
@@ -263,16 +277,11 @@ export const EditOperation = forwardRef<EditOperationRef, EditOperationProps>(fu
 
   const handleRemoveConditionalParameter = useCallback(
     (parameterId: string) => {
-      // Update local state instead of Redux
       setLocalConditionalVisibility((prev) => ({
         ...prev,
         [parameterId]: false,
       }));
-
-      // Remove from add order when hiding
       setConditionalParameterAddOrder((prev) => prev.filter((id) => id !== parameterId));
-
-      // Mark as dirty with proper ChangeHandler signature
       onValueChange({ value: [] });
     },
     [onValueChange]
@@ -316,18 +325,13 @@ export const EditOperation = forwardRef<EditOperationRef, EditOperationProps>(fu
       return;
     }
 
-    // Hide all conditional parameters
     const newVisibility = { ...localConditionalVisibility };
     conditionalIds.forEach((id) => {
       newVisibility[id] = false;
     });
 
     setLocalConditionalVisibility(newVisibility);
-
-    // Remove all conditional parameters from add order
     setConditionalParameterAddOrder((prev) => prev.filter((id) => !conditionalIds.includes(id)));
-
-    // Mark as dirty with proper ChangeHandler signature
     onValueChange({ value: [] });
   }, [localConditionalVisibility, onValueChange]);
 
@@ -353,7 +357,10 @@ export const EditOperation = forwardRef<EditOperationRef, EditOperationProps>(fu
           <StringEditor
             className="msla-setting-token-editor-container"
             initialValue={param.value}
-            onChange={onValueChange}
+            editorBlur={(changeState) => {
+              const newValue = changeState.value;
+              handleParameterValueChange(param.id, newValue);
+            }}
             placeholder={param.placeholder ?? `Enter ${param.label?.toLowerCase()}`}
           />
         </div>
@@ -361,25 +368,45 @@ export const EditOperation = forwardRef<EditOperationRef, EditOperationProps>(fu
     },
     [
       styles.parameterField,
-      styles.parameterLabel,
       styles.parameterHeader,
+      styles.parameterLabel,
       styles.removeParameterButton,
-      onValueChange,
-      handleRemoveConditionalParameter,
       INTL_TEXT.removeParameter,
+      handleRemoveConditionalParameter,
+      handleParameterValueChange,
     ]
   );
 
-  // Expose method to get conditional visibility changes for saving
   const getConditionalVisibilityChanges = useCallback(() => {
     return localConditionalVisibility;
   }, [localConditionalVisibility]);
 
-  // Expose method to reset local changes (for cancel)
+  // Methods to expose to parent component
+
+  const getParameterValueChanges = useCallback(() => {
+    const changes: Record<string, any> = {};
+
+    Object.entries(localParameterChanges).forEach(([parameterId, changeData]) => {
+      changes[parameterId] = changeData;
+    });
+
+    return changes;
+  }, [localParameterChanges]);
+
+  const getDescriptionChange = useCallback(() => {
+    // Only return the description if it actually changed
+    if (localDescriptionChange !== null && metadata?.description !== localDescriptionChange) {
+      return localDescriptionChange;
+    }
+    return null;
+  }, [localDescriptionChange, metadata?.description]);
+
   const resetLocalChanges = useCallback(() => {
     if (!parameters?.parameterGroups) {
       setLocalConditionalVisibility({});
       setConditionalParameterAddOrder([]);
+      setLocalParameterChanges({});
+      setLocalDescriptionChange(null);
       return;
     }
 
@@ -394,15 +421,20 @@ export const EditOperation = forwardRef<EditOperationRef, EditOperationProps>(fu
 
     setLocalConditionalVisibility(originalVisibility);
     setConditionalParameterAddOrder([]);
+    setLocalParameterChanges({});
+    setLocalDescriptionChange(null);
   }, [parameters]);
 
+  // Expose methods to parent component
   useImperativeHandle(
     ref,
     () => ({
       getConditionalVisibilityChanges,
+      getParameterValueChanges,
+      getDescriptionChange,
       resetLocalChanges,
     }),
-    [getConditionalVisibilityChanges, resetLocalChanges]
+    [getConditionalVisibilityChanges, getParameterValueChanges, getDescriptionChange, resetLocalChanges]
   );
 
   if (!operationInfo || !selectedOperationId) {
@@ -453,7 +485,7 @@ export const EditOperation = forwardRef<EditOperationRef, EditOperationProps>(fu
       <div className={styles.section}>
         <Field label={INTL_TEXT.descriptionLabel} className={styles.descriptionField}>
           <Textarea
-            value={metadata?.description ?? ''}
+            value={localDescriptionChange ?? metadata?.description ?? ''}
             onChange={(e) => handleFieldChange('description', e.target.value)}
             placeholder={INTL_TEXT.descriptionPlaceholder}
             rows={3}
@@ -461,7 +493,6 @@ export const EditOperation = forwardRef<EditOperationRef, EditOperationProps>(fu
           />
         </Field>
       </div>
-
       <Divider className={styles.divider} />
 
       {/* Parameters Section */}

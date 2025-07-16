@@ -1,16 +1,22 @@
-import { type TemplatePanelFooterProps, TemplatesPanelFooter } from '@microsoft/designer-ui';
+import type { ChangeState, ParameterInfo, TemplatePanelFooterProps } from '@microsoft/designer-ui';
+import { TemplatesPanelFooter } from '@microsoft/designer-ui';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../../core/state/mcp/store';
 import { closePanel } from '../../../../core/state/mcp/panel/mcpPanelSlice';
-import { updateParameterConditionalVisibility } from '../../../../core/state/operation/operationMetadataSlice';
+import type { UpdateParametersPayload } from '../../../../core/state/operation/operationMetadataSlice';
+import {
+  updateNodeParameters,
+  updateOperationDescription,
+  updateParameterConditionalVisibility,
+} from '../../../../core/state/operation/operationMetadataSlice';
 import { Button, DrawerBody, DrawerFooter, DrawerHeader, Text } from '@fluentui/react-components';
 import { useMcpPanelStyles } from '../styles';
 import { useIntl } from 'react-intl';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
 import { useCallback, useMemo, useState, useRef } from 'react';
 import { EditOperation } from '../../parameters/EditOperation';
-import type { EditOperationRef } from '../../parameters/EditOperation'; // Import the ref type
-import { LayerHost } from '@fluentui/react';
+import type { EditOperationRef } from '../../parameters/EditOperation';
+import { isNullOrUndefined, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
@@ -20,10 +26,8 @@ export const EditOperationPanelInner = () => {
   const styles = useMcpPanelStyles();
   const [isDirty, setIsDirty] = useState(false);
 
-  // Create ref for EditOperation component
   const editOperationRef = useRef<EditOperationRef>(null);
 
-  // 2. Bump the key every time the drawer is closed
   const handleDismiss = useCallback(() => {
     dispatch(closePanel());
   }, [dispatch]);
@@ -53,13 +57,11 @@ export const EditOperationPanelInner = () => {
     }),
   };
 
-  const handleValueChange = useCallback((change: { value: any[]; viewModel?: any }) => {
-    console.log('Value changed', change);
+  const handleValueChange = useCallback((_change: ChangeState) => {
     setIsDirty(true);
   }, []);
 
   const resetToOriginalState = useCallback(() => {
-    // Use the ref to reset the EditOperation component's local state
     editOperationRef.current?.resetLocalChanges();
     setIsDirty(false);
   }, []);
@@ -77,26 +79,26 @@ export const EditOperationPanelInner = () => {
   }, [isDirty, INTL_TEXT.unsavedChangesMessage, resetToOriginalState, handleDismiss]);
 
   const handleDismissWithReset = useCallback(() => {
-    // Always reset state when dismissing via X button
     resetToOriginalState();
     handleDismiss();
   }, [resetToOriginalState, handleDismiss]);
 
   const handleSave = useCallback(() => {
     if (!selectedOperationId || !parameters?.parameterGroups) {
-      console.error('Cannot save: missing operation data');
+      LoggerService().log({
+        level: LogEntryLevel.Error,
+        message: 'Cannot save: missing operation data',
+        area: 'MCP_EditOperation',
+      });
       return;
     }
 
-    console.log('Saving operation data...');
-
-    // Get the latest conditional visibility changes from the EditOperation component
+    // Get all changes from the EditOperation component
     const latestConditionalVisibilityChanges = editOperationRef.current?.getConditionalVisibilityChanges() || {};
-    console.log('Latest conditional visibility changes:', latestConditionalVisibilityChanges);
+    const parameterValueChanges = editOperationRef.current?.getParameterValueChanges() || {};
+    const descriptionChange = editOperationRef.current?.getDescriptionChange();
 
-    // Apply conditional visibility changes to Redux
     Object.entries(latestConditionalVisibilityChanges).forEach(([parameterId, isVisible]) => {
-      // Find the parameter's group
       let parameterGroupId: string | undefined;
 
       Object.entries(parameters.parameterGroups).forEach(([groupId, group]) => {
@@ -118,7 +120,52 @@ export const EditOperationPanelInner = () => {
       }
     });
 
-    // TODO: Save other parameter changes here
+    const parametersToUpdate: UpdateParametersPayload['parameters'] = Object.entries(parameterValueChanges)
+      .map(([parameterId, properties]) => {
+        let parameterGroupId: string | undefined;
+
+        Object.entries(parameters.parameterGroups).forEach(([groupId, group]) => {
+          const param = group.parameters.find((p) => p.id === parameterId);
+          if (param) {
+            parameterGroupId = groupId;
+          }
+        });
+
+        if (!parameterGroupId) {
+          LoggerService().log({
+            level: LogEntryLevel.Warning,
+            message: `Parameter ${parameterId} not found in any group`,
+            area: 'MCP_EditOperation',
+          });
+          return null;
+        }
+
+        return {
+          groupId: parameterGroupId,
+          parameterId,
+          propertiesToUpdate: properties as Partial<ParameterInfo>,
+        };
+      })
+      .filter((item): item is NonNullable<typeof item> => item !== null);
+
+    if (parametersToUpdate.length > 0) {
+      const updatePayload: UpdateParametersPayload = {
+        nodeId: selectedOperationId,
+        parameters: parametersToUpdate,
+        isUserAction: true,
+      };
+
+      dispatch(updateNodeParameters(updatePayload));
+    }
+
+    if (!isNullOrUndefined(descriptionChange)) {
+      dispatch(
+        updateOperationDescription({
+          id: selectedOperationId,
+          description: descriptionChange,
+        })
+      );
+    }
 
     setIsDirty(false);
     handleDismiss();
@@ -161,11 +208,9 @@ export const EditOperationPanelInner = () => {
           <Button appearance="subtle" icon={<CloseIcon />} onClick={handleDismissWithReset} aria-label={INTL_TEXT.closeAriaLabel} />
         </div>
       </DrawerHeader>
-      <LayerHost id="dropdown-layer-host" style={{ position: 'relative', zIndex: 1000 }}>
-        <DrawerBody className={styles.body} style={{ overflow: 'auto', maxHeight: 'calc(100vh - 170px)', minHeight: '80vh' }}>
-          <EditOperation ref={editOperationRef} onValueChange={handleValueChange} isDirty={isDirty} />
-        </DrawerBody>
-      </LayerHost>
+      <DrawerBody className={styles.body} style={{ overflow: 'auto', maxHeight: 'calc(100vh - 170px)', minHeight: '80vh' }}>
+        <EditOperation ref={editOperationRef} onValueChange={handleValueChange} isDirty={isDirty} />
+      </DrawerBody>
       <DrawerFooter className={styles.footer}>
         <TemplatesPanelFooter {...footerContent} />
       </DrawerFooter>

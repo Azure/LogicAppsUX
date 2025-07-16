@@ -65,6 +65,7 @@ export const useEditOperationStyles = makeStyles({
 
   statusBadge: {
     flexShrink: 0,
+    width: '80px',
   },
 
   divider: {
