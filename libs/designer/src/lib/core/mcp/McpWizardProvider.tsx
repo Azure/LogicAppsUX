@@ -21,7 +21,6 @@ export const McpWizardProvider = ({ locale = 'en', useExternalRedux = false, chi
     <McpWrappedContext.Provider value={{ readOnly: false }}>
       <FluentProvider theme={webTheme} style={{ height: 'inherit' }}>
         <ThemeProvider theme={isLightMode ? AzureThemeLight : AzureThemeDark}>
-          {/* Add this for v8 components */}
           <div
             data-color-scheme={theme}
             className={`msla-theme-${theme}`}

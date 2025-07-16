@@ -18,13 +18,13 @@ export const useSearchableDropdownWithAddAllStyles = makeStyles({
     display: 'flex',
     gap: '8px',
     alignItems: 'center',
-    flexShrink: 0, // Prevent buttons from shrinking
+    flexShrink: 0,
   },
 
   searchableDropdownWithButtons: {
     width: '100%',
     marginTop: '0px',
-    flex: 1, // Allow dropdown to take remaining space
+    flex: 1,
   },
 
   searchableDropdownLabel: {
