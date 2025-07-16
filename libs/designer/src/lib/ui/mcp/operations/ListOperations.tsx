@@ -12,8 +12,9 @@ import { ConnectorIconWithName } from '../../templates/connections/connector';
 export const ListOperations = () => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
-  const { operationInfos, isInitializingOperations } = useSelector((state: RootState) => ({
+  const { operationInfos, operationMetadata, isInitializingOperations } = useSelector((state: RootState) => ({
     operationInfos: state.operation.operationInfo,
+    operationMetadata: state.operation.operationMetadata,
     isInitializingOperations: state.operation.loadStatus.isInitializingOperations,
   }));
 
@@ -71,10 +72,10 @@ export const ListOperations = () => {
       .filter((info) => Boolean(info?.operationId))
       .map((info) => ({
         operationId: info.operationId,
-        operationName: info.operationId, //TODO: use a more descriptive name if available
+        operationName: operationMetadata[info.operationId]?.summary ?? info.operationId,
         connectorId: info.connectorId,
       }));
-  }, [operationInfos]);
+  }, [operationInfos, operationMetadata]);
 
   const columns = [
     { columnKey: 'operation', label: INTL_TEXT.operationLabel },
