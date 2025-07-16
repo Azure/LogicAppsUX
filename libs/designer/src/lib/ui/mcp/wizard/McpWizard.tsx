@@ -25,7 +25,7 @@ import constants from '../../../common/constants';
 
 export type RegisterMcpServerHandler = (workflowsData: McpWorkflowsData, onCompleted?: () => void) => Promise<void>;
 
-export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMcpServerHandler }) => {
+export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: RegisterMcpServerHandler; onClose: () => void }) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
   const styles = useMcpWizardStyles();
@@ -88,6 +88,7 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
           : 'Default Connection';
 
       map[connectorId] = {
+        displayName: connectorId,
         iconUri: metadata?.iconUri,
         connectionName,
         connectionStatus,
@@ -168,14 +169,8 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
       connection,
       operation
     );
-    console.log('Generated workflows:', workflowsData);
     await registerMcpServer(workflowsData, onRegisterCompleted);
   }, [connection, logicAppName, operation, registerMcpServer, resourceGroup, subscriptionId, onRegisterCompleted]);
-
-  const handleCancel = useCallback(() => {
-    // TODO: Implement cancel logic
-    console.log('Cancel clicked');
-  }, []);
 
   const INTL_TEXT = {
     connectorsTitle: intl.formatMessage({
@@ -263,11 +258,11 @@ export const McpWizard = ({ registerMcpServer }: { registerMcpServer: RegisterMc
             id: 'OA8qkc',
             description: 'Button text for closing the wizard without saving',
           }),
-          onClick: handleCancel,
+          onClick: onClose,
         },
       ],
     };
-  }, [intl, logicAppName, subscriptionId, resourceGroup, connection, operation, handleCancel, handleRegisterMcpServer]);
+  }, [intl, logicAppName, subscriptionId, resourceGroup, connection, operation, onClose, handleRegisterMcpServer]);
 
   return (
     <div className={styles.wizardContainer}>

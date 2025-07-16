@@ -38,6 +38,7 @@ export const CreateConnectionInternal = (props: {
   createButtonTexts?: CreateButtonTexts;
   description?: string;
   nodeIds?: string[];
+  isAgentSubgraph?: boolean;
   assistedConnectionProps?: AssistedConnectionProps;
   connectionMetadata?: ConnectionMetadata;
   isAgentServiceConnection?: boolean;
@@ -58,6 +59,7 @@ export const CreateConnectionInternal = (props: {
     updateConnectionInState,
     onConnectionCreated,
     onConnectionCancelled,
+    isAgentSubgraph,
     isAgentServiceConnection = false,
   } = props;
   const dispatch = useDispatch<AppDispatch>();
@@ -273,6 +275,7 @@ export const CreateConnectionInternal = (props: {
         operationType,
         connector.properties.capabilities
       )}
+      isAgentSubgraph={isAgentSubgraph}
       createButtonTexts={createButtonTexts}
       description={description}
       identity={identity}
