@@ -201,7 +201,7 @@ export const HandoffSelector = ({ agentId, readOnly }: { agentId: string; readOn
               onChange={(_, data) => setSearchText(data.value)}
             />
 
-            <div className="msla-run-after-action-menu-list">
+            <div className="msla-action-selection-menu-list">
               {(searchResults.length > 0 ? searchResults : agentActions).map((id: string) => {
                 return <ActionMenuItem id={id} key={id} readOnly={readOnly} />;
               })}
