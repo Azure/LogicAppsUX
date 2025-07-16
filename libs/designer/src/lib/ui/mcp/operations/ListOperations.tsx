@@ -2,20 +2,31 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { RootState, AppDispatch } from '../../../core/state/mcp/store';
 import { openOperationPanelView } from '../../../core/state/mcp/panel/mcpPanelSlice';
 import { useCallback, useMemo } from 'react';
-import { Spinner, Text, TableCell, TableRow, Table, TableHeader, TableHeaderCell, Button, TableBody } from '@fluentui/react-components';
+import {
+  Spinner,
+  Text,
+  TableCell,
+  TableRow,
+  Table,
+  TableHeader,
+  TableHeaderCell,
+  Button,
+  TableBody,
+  Link,
+} from '@fluentui/react-components';
 import { Delete24Regular, Edit24Regular } from '@fluentui/react-icons';
 import { useIntl } from 'react-intl';
 import { useConnectorSectionStyles } from '../wizard/styles';
 import { deinitializeNodes, deinitializeOperationInfo } from '../../../core/state/operation/operationMetadataSlice';
-import { ConnectorIconWithName } from '../../templates/connections/connector';
+import DefaultIcon from '../../../common/images/recommendation/defaulticon.svg';
 
 export const ListOperations = () => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
-  const { operationInfos, operationMetadata, isInitializingOperations } = useSelector((state: RootState) => ({
+  const { operationInfos, isInitializingOperations, operationMetadata } = useSelector((state: RootState) => ({
     operationInfos: state.operation.operationInfo,
-    operationMetadata: state.operation.operationMetadata,
     isInitializingOperations: state.operation.loadStatus.isInitializingOperations,
+    operationMetadata: state.operation.operationMetadata,
   }));
 
   const styles = useConnectorSectionStyles();
@@ -72,10 +83,11 @@ export const ListOperations = () => {
       .filter((info) => Boolean(info?.operationId))
       .map((info) => ({
         operationId: info.operationId,
-        operationName: operationMetadata[info.operationId]?.summary ?? info.operationId,
+        operationName: operationMetadata[info.operationId]?.summary || info.operationId,
+        iconUri: operationMetadata[info.operationId]?.iconUri,
         connectorId: info.connectorId,
       }));
-  }, [operationInfos, operationMetadata]);
+  }, [operationMetadata, operationInfos]);
 
   const columns = [
     { columnKey: 'operation', label: INTL_TEXT.operationLabel },
@@ -109,16 +121,10 @@ export const ListOperations = () => {
         {items.map((item) => (
           <TableRow key={item.operationId}>
             <TableCell className={styles.iconTextCell}>
-              <ConnectorIconWithName
-                classes={{
-                  root: 'msla-template-create-connector',
-                  icon: 'msla-template-create-connector-icon',
-                  text: 'msla-template-create-connector-text',
-                }}
-                connectorId={item.connectorId}
-                operationId={item.operationId}
-                onNameClick={() => handleEditOperation(item.operationId)}
-              />
+              <img className={styles.connectorIcon} src={item.iconUri ?? DefaultIcon} alt={`${item.operationId} icon`} />
+              <Link as="button" onClick={() => handleEditOperation(item.operationId)}>
+                {item.operationName}
+              </Link>
             </TableCell>
             <TableCell className={styles.iconsCell}>
               <Button
