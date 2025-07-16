@@ -6,11 +6,18 @@ const mainGap = '16px';
 export const useMcpWizardStyles = makeStyles({
   wizardContainer: {
     display: 'flex',
+    flexDirection: 'column',
+    background: tokens.colorNeutralBackground1,
+    height: '90vh',
+  },
+
+  scrollableContent: {
+    display: 'flex',
     flex: 1,
     flexDirection: 'column',
-    height: '100%',
-    background: tokens.colorNeutralBackground1,
     gap: '32px',
+    overflow: 'auto',
+    padding: '16px',
   },
 
   section: {
@@ -36,6 +43,17 @@ export const useMcpWizardStyles = makeStyles({
     paddingTop: mainGap,
   },
 
+  footer: {
+    padding: `${tokens.spacingVerticalM} 0px`,
+    borderTop: `1px solid ${tokens.colorNeutralStroke2}`,
+    flexShrink: 0,
+  },
+});
+
+const connectorButtonGap = '8px';
+
+// Connectors / Operations section styles
+export const useConnectorSectionStyles = makeStyles({
   emptyState: {
     display: 'flex',
     flexDirection: 'column',
@@ -56,110 +74,29 @@ export const useMcpWizardStyles = makeStyles({
     },
   },
 
-  connectorsList: {
-    flex: 1,
-    padding: '24px',
-  },
-
-  operationsList: {
-    flex: 1,
-    padding: '24px',
-  },
-
-  emptyOperationsIcon: {
-    fontSize: '48px',
-    marginBottom: '16px',
-    color: tokens.colorNeutralForeground3,
-    '& svg': {
-      fontSize: '48px',
-    },
-  },
-  footer: {
-    padding: `${tokens.spacingVerticalM} 0px`,
-    borderTop: `1px solid ${tokens.colorNeutralStroke2}`,
-  },
-});
-
-// ConnectorItem styles
-export const useConnectorItemStyles = makeStyles({
-  connectorItem: {
-    display: 'flex',
-    alignItems: 'center',
-    padding: '16px',
-    border: `1px solid ${tokens.colorNeutralStroke2}`,
-    borderRadius: tokens.borderRadiusMedium,
-    marginBottom: '12px',
-    backgroundColor: tokens.colorNeutralBackground1,
-    transition: 'all 0.2s ease',
-    '&:hover': {
-      backgroundColor: tokens.colorNeutralBackground1Hover,
-      border: `1px solid ${tokens.colorNeutralStroke1Hover}`,
-    },
+  tableStyle: {
+    width: '100%',
+    margin: '0 auto',
   },
 
   connectorIcon: {
-    fontSize: '24px',
-    marginRight: '12px',
-    display: 'flex',
+    width: '24px',
+    height: '24px',
+    objectFit: 'contain',
+    marginRight: connectorButtonGap,
+  },
+
+  icon: {
+    marginRight: connectorButtonGap,
+  },
+
+  iconTextCell: {
     alignItems: 'center',
-  },
-
-  connectorInfo: {
-    flex: 1,
-  },
-
-  connectorHeader: {
     display: 'flex',
-    alignItems: 'center',
-    gap: '8px',
-    marginBottom: '4px',
   },
 
-  connectorSubtext: {
-    color: tokens.colorNeutralForeground2,
-  },
-
-  itemActions: {
-    display: 'flex',
-    gap: '8px',
-  },
-});
-
-// OperationItem styles
-export const useOperationItemStyles = makeStyles({
-  operationItem: {
-    display: 'flex',
-    alignItems: 'center',
-    padding: '12px 16px',
-    border: `1px solid ${tokens.colorNeutralStroke2}`,
-    borderRadius: tokens.borderRadiusSmall,
-    marginBottom: '8px',
-    backgroundColor: tokens.colorNeutralBackground1,
-    transition: 'all 0.2s ease',
-    '&:hover': {
-      backgroundColor: tokens.colorNeutralBackground1Hover,
-      border: `1px solid ${tokens.colorNeutralStroke1Hover}`,
-    },
-  },
-
-  operationIcon: {
-    fontSize: '20px',
-    marginRight: '12px',
-    display: 'flex',
-    alignItems: 'center',
-  },
-
-  operationInfo: {
-    flex: 1,
-  },
-
-  operationSubtext: {
-    color: tokens.colorNeutralForeground2,
-    display: 'block',
-  },
-
-  itemActions: {
-    display: 'flex',
-    gap: '8px',
+  iconsCell: {
+    textAlign: 'right',
+    width: '1%',
   },
 });
