@@ -30,7 +30,7 @@ export interface EditOperationRef {
   resetLocalChanges: () => void;
 }
 
-export const EditOperation = forwardRef<EditOperationRef, EditOperationProps>(function EditOperation({ onValueChange, isDirty }, ref) {
+export const EditOperation = forwardRef<EditOperationRef, EditOperationProps>(function EditOperation({ setIsDirty, isDirty }, ref) {
   const intl = useIntl();
   const styles = useEditOperationStyles();
 
@@ -239,9 +239,9 @@ export const EditOperation = forwardRef<EditOperationRef, EditOperationProps>(fu
         setLocalDescriptionChange(value);
       }
 
-      onValueChange({ value: [] });
+      setIsDirty(true);
     },
-    [onValueChange]
+    [setIsDirty]
   );
 
   const handleParameterValueChange = useCallback(
@@ -254,9 +254,9 @@ export const EditOperation = forwardRef<EditOperationRef, EditOperationProps>(fu
         },
       }));
 
-      onValueChange({ value: [] });
+      setIsDirty(true);
     },
-    [onValueChange]
+    [setIsDirty]
   );
 
   const handleOptionalParameterToggle = useCallback(
@@ -270,9 +270,9 @@ export const EditOperation = forwardRef<EditOperationRef, EditOperationProps>(fu
       } else {
         setConditionalParameterAddOrder((prev) => prev.filter((id) => id !== parameterId));
       }
-      onValueChange({ value: [] });
+      setIsDirty(true);
     },
-    [onValueChange]
+    [setIsDirty]
   );
 
   const handleRemoveConditionalParameter = useCallback(
@@ -282,9 +282,9 @@ export const EditOperation = forwardRef<EditOperationRef, EditOperationProps>(fu
         [parameterId]: false,
       }));
       setConditionalParameterAddOrder((prev) => prev.filter((id) => id !== parameterId));
-      onValueChange({ value: [] });
+      setIsDirty(true);
     },
-    [onValueChange]
+    [setIsDirty]
   );
 
   const handleShowAllOptional = useCallback(() => {
@@ -314,9 +314,9 @@ export const EditOperation = forwardRef<EditOperationRef, EditOperationProps>(fu
 
     // Mark as dirty if any parameters were added
     if (newParameterIds.length > 0) {
-      onValueChange({ value: [] });
+      setIsDirty(true);
     }
-  }, [parameters, localConditionalVisibility, onValueChange]);
+  }, [parameters, localConditionalVisibility, setIsDirty]);
 
   const handleHideAllOptional = useCallback(() => {
     const conditionalIds = Object.keys(localConditionalVisibility).filter((id) => localConditionalVisibility[id]);
@@ -332,8 +332,8 @@ export const EditOperation = forwardRef<EditOperationRef, EditOperationProps>(fu
 
     setLocalConditionalVisibility(newVisibility);
     setConditionalParameterAddOrder((prev) => prev.filter((id) => !conditionalIds.includes(id)));
-    onValueChange({ value: [] });
-  }, [localConditionalVisibility, onValueChange]);
+    setIsDirty(true);
+  }, [localConditionalVisibility, setIsDirty]);
 
   const renderParameterField = useCallback(
     (param: ParameterInfo, isConditional = false) => {

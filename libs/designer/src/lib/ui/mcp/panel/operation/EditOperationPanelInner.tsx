@@ -1,4 +1,4 @@
-import type { ChangeState, ParameterInfo, TemplatePanelFooterProps } from '@microsoft/designer-ui';
+import type { ParameterInfo, TemplatePanelFooterProps } from '@microsoft/designer-ui';
 import { TemplatesPanelFooter } from '@microsoft/designer-ui';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../../core/state/mcp/store';
@@ -56,10 +56,6 @@ export const EditOperationPanelInner = () => {
       description: 'Confirmation message for discarding unsaved changes',
     }),
   };
-
-  const handleValueChange = useCallback((_change: ChangeState) => {
-    setIsDirty(true);
-  }, []);
 
   const resetToOriginalState = useCallback(() => {
     editOperationRef.current?.resetLocalChanges();
@@ -209,7 +205,7 @@ export const EditOperationPanelInner = () => {
         </div>
       </DrawerHeader>
       <DrawerBody className={styles.body} style={{ overflow: 'auto', maxHeight: 'calc(100vh - 170px)', minHeight: '80vh' }}>
-        <EditOperation ref={editOperationRef} onValueChange={handleValueChange} isDirty={isDirty} />
+        <EditOperation ref={editOperationRef} setIsDirty={setIsDirty} isDirty={isDirty} />
       </DrawerBody>
       <DrawerFooter className={styles.footer}>
         <TemplatesPanelFooter {...footerContent} />
