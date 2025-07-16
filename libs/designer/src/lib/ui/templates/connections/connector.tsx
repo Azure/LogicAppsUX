@@ -13,6 +13,7 @@ import { useSelector } from 'react-redux';
 import type { RootState } from '../../../core/state/templates/store';
 import { Checkmark16Filled, Dismiss16Filled } from '@fluentui/react-icons';
 import { useConnectorStatusStrings } from '../templatesStrings';
+import DefaultIcon from '../../../common/images/recommendation/defaulticon.svg';
 
 export const ConnectorIcon = ({
   connectorId,
@@ -95,7 +96,7 @@ export const ConnectorIconWithName = ({
 
   return (
     <div className={classes['root']}>
-      <img className={classes['icon']} src={connector?.iconUrl} />
+      <img className={classes['icon']} src={connector?.iconUrl ?? DefaultIcon} />
       {onNameClick ? (
         <Link className={classes['text']} as="button" onClick={onNameClick}>
           {connector?.displayName}
