@@ -1,13 +1,12 @@
-import WarningIcon from '../../../resources/Caution.svg';
-import ErrorICon from '../../../resources/Error.svg';
-import SuccessIcon from '../../../resources/Success.svg';
+import { CheckmarkCircleFilled, DismissCircleFilled, WarningFilled } from '@fluentui/react-icons';
 import { ValidationStatus } from '../../../run-service';
 import type { IGroupedGroup, IGroupedItem } from '../../../run-service';
 import { getShimmerElements, getValidationListColumns } from './helper';
 import './styles.less';
 import { DetailsRow, GroupedList, GroupHeader, SelectionMode, Shimmer } from '@fluentui/react';
 import type { IGroup } from '@fluentui/react';
-import { useMemo } from 'react';
+import { useMemo, useCallback } from 'react';
+import { useReviewListStyles } from './reviewListStyles';
 
 export interface IReviewListProps {
   isValidationLoading?: boolean;
@@ -16,22 +15,26 @@ export interface IReviewListProps {
 }
 
 export const ReviewList: React.FC<IReviewListProps> = ({ isValidationLoading, validationItems, validationGroups }) => {
-  const getGroupIcon = (groupStatus: string): JSX.Element | null => {
-    switch (groupStatus) {
-      case ValidationStatus.succeeded: {
-        return <img src={SuccessIcon} alt="Success" />;
+  const styles = useReviewListStyles();
+  const getGroupIcon = useCallback(
+    (groupStatus: string): JSX.Element | null => {
+      switch (groupStatus) {
+        case ValidationStatus.succeeded: {
+          return <CheckmarkCircleFilled fontSize="16px" className={styles.succeededIcon} />;
+        }
+        case ValidationStatus.succeeded_with_warnings: {
+          return <WarningFilled fontSize="16px" />;
+        }
+        case ValidationStatus.failed: {
+          return <DismissCircleFilled fontSize="16px" />;
+        }
+        default: {
+          return null;
+        }
       }
-      case ValidationStatus.succeeded_with_warnings: {
-        return <img src={WarningIcon} alt="Warnings" />;
-      }
-      case ValidationStatus.failed: {
-        return <img src={ErrorICon} alt="Fail" />;
-      }
-      default: {
-        return null;
-      }
-    }
-  };
+    },
+    [styles.succeededIcon]
+  );
 
   const shimmerList = useMemo(() => {
     const shimmerDetails = getShimmerElements();
@@ -104,7 +107,7 @@ export const ReviewList: React.FC<IReviewListProps> = ({ isValidationLoading, va
         />
       </div>
     );
-  }, [validationItems, validationGroups]);
+  }, [validationItems, validationGroups, getGroupIcon]);
 
   return isValidationLoading ? <>{shimmerList}</> : <>{groupedList}</>;
 };
