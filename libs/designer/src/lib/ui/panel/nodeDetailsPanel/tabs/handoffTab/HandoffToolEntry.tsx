@@ -25,7 +25,12 @@ const ExpandIcon = bundleIcon(ChevronRight24Filled, ChevronRight24Regular);
 const CollapseIcon = bundleIcon(ChevronDown24Filled, ChevronDown24Regular);
 const DeleteIcon = bundleIcon(DeleteFilled, DeleteRegular);
 
-export const HandoffToolEntry = ({ agentId, toolId }: any) => {
+interface HandoffToolEntryProps {
+  agentId: string;
+  toolId: string;
+}
+
+export const HandoffToolEntry = ({ agentId, toolId }: HandoffToolEntryProps) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
 
