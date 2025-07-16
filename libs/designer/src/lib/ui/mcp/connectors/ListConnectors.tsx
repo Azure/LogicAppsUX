@@ -2,25 +2,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { RootState, AppDispatch } from '../../../core/state/mcp/store';
 import { useCallback, useMemo } from 'react';
 import { CheckmarkCircle20Filled, ConnectorFilled, Delete24Regular, Edit24Regular } from '@fluentui/react-icons';
-import {
-  Text,
-  TableCell,
-  TableRow,
-  Table,
-  TableHeader,
-  TableHeaderCell,
-  Button,
-  TableBody,
-  tokens,
-  Link,
-} from '@fluentui/react-components';
+import { Text, TableCell, TableRow, Table, TableHeader, TableHeaderCell, Button, TableBody, tokens } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 import { useConnectorSectionStyles } from '../wizard/styles';
 import { deinitializeNodes, deinitializeOperationInfos } from '../../../core/state/operation/operationMetadataSlice';
 import { getResourceNameFromId } from '@microsoft/logic-apps-shared';
 import { McpPanelView, openConnectorPanelView } from '../../../core/state/mcp/panel/mcpPanelSlice';
 import { selectConnectorId, selectOperations } from '../../../core/state/mcp/connector/connectorSlice';
-import DefaultIcon from '../../../common/images/recommendation/defaulticon.svg';
+import { ConnectorIconWithName } from '../../templates/connections/connector';
 
 const connectorTableCellStyles = {
   border: 'none',
@@ -29,9 +18,8 @@ const connectorTableCellStyles = {
 export const ListConnectors = () => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
-  const { operationInfos, operationMetadata, connectionsMapping, connectionReferences } = useSelector((state: RootState) => ({
+  const { operationInfos, connectionsMapping, connectionReferences } = useSelector((state: RootState) => ({
     operationInfos: state.operation.operationInfo,
-    operationMetadata: state.operation.operationMetadata,
     connectionsMapping: state.connection.connectionsMapping,
     connectionReferences: state.connection.connectionReferences,
   }));
@@ -97,8 +85,6 @@ export const ListConnectors = () => {
     return Object.values(operationInfos).reduce<
       Array<{
         connectorId: string;
-        displayName?: string;
-        iconUri?: string;
         connectionName: string;
         isConnected: boolean;
       }>
@@ -110,7 +96,6 @@ export const ListConnectors = () => {
 
       seen.add(connectorId);
 
-      const metadata = operationMetadata[info.operationId];
       const referenceKey = connectionsMapping[info.operationId];
       const reference = referenceKey ? connectionReferences[referenceKey] : null;
 
@@ -123,15 +108,13 @@ export const ListConnectors = () => {
 
       acc.push({
         connectorId: connectorId,
-        displayName: metadata?.connectorTitle,
-        iconUri: metadata?.iconUri,
         connectionName,
         isConnected,
       });
 
       return acc;
     }, []);
-  }, [connectionReferences, connectionsMapping, operationInfos, operationMetadata]);
+  }, [connectionReferences, connectionsMapping, operationInfos]);
 
   const columns = [
     { columnKey: 'connector', label: INTL_TEXT.connectorLabel },
@@ -198,10 +181,15 @@ export const ListConnectors = () => {
         {items.map((item) => (
           <TableRow key={item.connectorId} style={connectorTableCellStyles}>
             <TableCell className={styles.iconTextCell} style={connectorTableCellStyles}>
-              <img className={styles.connectorIcon} src={item.iconUri ?? DefaultIcon} alt={`${item.displayName} icon`} />
-              <Link as="button" onClick={() => handleEditConnector(item.connectorId)}>
-                {item.displayName}
-              </Link>
+              <ConnectorIconWithName
+                classes={{
+                  root: 'msla-template-create-connector',
+                  icon: 'msla-template-create-connector-icon',
+                  text: 'msla-template-create-connector-text',
+                }}
+                connectorId={item.connectorId}
+                onNameClick={() => handleEditConnector(item.connectorId)}
+              />
             </TableCell>
             <TableCell style={connectorTableCellStyles}>{item?.connectionName}</TableCell>
             <TableCell className={styles.iconTextCell} style={connectorTableCellStyles}>
