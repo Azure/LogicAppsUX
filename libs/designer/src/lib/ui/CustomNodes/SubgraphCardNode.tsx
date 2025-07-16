@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import constants from '../../common/constants';
 import { useOperationInfo, type AppDispatch } from '../../core';
-import { initializeSwitchCaseFromManifest } from '../../core/actions/bjsworkflow/add';
+import { initializeSubgraphFromManifest } from '../../core/actions/bjsworkflow/add';
 import { getOperationManifest } from '../../core/queries/operation';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { setNodeContextMenuData, setShowDeleteModalNodeId } from '../../core/state/designerView/designerViewSlice';
@@ -96,19 +96,19 @@ const SubgraphCardNode = ({ id }: NodeProps) => {
     [actionCount, intl]
   );
 
-  const newCaseIdNewAdditiveSubgraphId = useNewAdditiveSubgraphId(isAgentAddTool ? stringResources.TOOL : stringResources.CASE);
+  const newAdditiveSubgraphId = useNewAdditiveSubgraphId(isAgentAddTool ? stringResources.TOOL : stringResources.CASE);
   const subgraphClick = useCallback(
     async (_id: string) => {
       if (isAddCase && graphNode) {
         if (isAgentAddTool) {
           const relationshipIds = {
-            graphId: newCaseIdNewAdditiveSubgraphId,
-            parentId: `${newCaseIdNewAdditiveSubgraphId}-#subgraph`,
-            subgraphId: subgraphId,
+            graphId,
+            subgraphId: newAdditiveSubgraphId,
+            parentId: `${newAdditiveSubgraphId}-#subgraph`,
           };
           dispatch(expandDiscoveryPanel({ nodeId: guid(), relationshipIds, isAgentTool: true }));
         } else {
-          dispatch(addSwitchCase({ caseId: newCaseIdNewAdditiveSubgraphId, nodeId: subgraphId }));
+          dispatch(addSwitchCase({ caseId: newAdditiveSubgraphId, graphId }));
         }
 
         const rootManifest = await getOperationManifest(operationInfo);
@@ -120,17 +120,17 @@ const SubgraphCardNode = ({ id }: NodeProps) => {
           properties: { ...caseManifestData, iconUri: iconUri ?? '', brandColor: '' },
         };
         if (isAgentAddTool) {
-          dispatch(addAgentToolMetadata({ newCaseIdNewAdditiveSubgraphId, subGraphManifest }));
+          dispatch(addAgentToolMetadata({ newAdditiveSubgraphId, subGraphManifest }));
         } else {
-          initializeSwitchCaseFromManifest(newCaseIdNewAdditiveSubgraphId, subGraphManifest, dispatch);
-          dispatch(changePanelNode(newCaseIdNewAdditiveSubgraphId));
+          initializeSubgraphFromManifest(newAdditiveSubgraphId, subGraphManifest, dispatch);
+          dispatch(changePanelNode(newAdditiveSubgraphId));
         }
-        dispatch(setFocusNode(newCaseIdNewAdditiveSubgraphId));
+        dispatch(setFocusNode(newAdditiveSubgraphId));
       } else {
         dispatch(changePanelNode(_id));
       }
     },
-    [isAddCase, graphNode, isAgentAddTool, operationInfo, iconUri, newCaseIdNewAdditiveSubgraphId, dispatch, subgraphId]
+    [isAddCase, graphNode, isAgentAddTool, operationInfo, iconUri, dispatch, newAdditiveSubgraphId, graphId]
   );
 
   const graphCollapsed = useIsGraphCollapsed(subgraphId);

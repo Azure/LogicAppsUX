@@ -175,7 +175,7 @@ export const RunAfterActionSelector = ({ readOnly }: { readOnly: boolean }) => {
             }}
           />
 
-          <div className="msla-run-after-action-menu-list">
+          <div className="msla-action-selection-menu-list">
             {(searchResults.length > 0 ? searchResults : actions).map((obj) => {
               return <ActionMenuItem id={obj.id} key={obj.id} readOnly={readOnly} />;
             })}
