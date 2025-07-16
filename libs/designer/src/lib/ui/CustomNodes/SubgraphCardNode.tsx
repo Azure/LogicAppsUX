@@ -120,7 +120,7 @@ const SubgraphCardNode = ({ id }: NodeProps) => {
           properties: { ...caseManifestData, iconUri: iconUri ?? '', brandColor: '' },
         };
         if (isAgentAddTool) {
-          dispatch(addAgentToolMetadata({ newCaseIdNewAdditiveSubgraphId: newAdditiveSubgraphId, subGraphManifest }));
+          dispatch(addAgentToolMetadata({ newAdditiveSubgraphId, subGraphManifest }));
         } else {
           initializeSubgraphFromManifest(newAdditiveSubgraphId, subGraphManifest, dispatch);
           dispatch(changePanelNode(newAdditiveSubgraphId));

@@ -216,12 +216,12 @@ export const panelSlice = createSlice({
     addAgentToolMetadata: (
       state,
       action: PayloadAction<{
-        newCaseIdNewAdditiveSubgraphId: string;
+        newAdditiveSubgraphId: string;
         subGraphManifest: OperationManifest;
       }>
     ) => {
-      const { newCaseIdNewAdditiveSubgraphId, subGraphManifest } = action.payload;
-      state.discoveryContent.agentToolMetadata = { newAdditiveSubgraphId: newCaseIdNewAdditiveSubgraphId, subGraphManifest };
+      const { newAdditiveSubgraphId, subGraphManifest } = action.payload;
+      state.discoveryContent.agentToolMetadata = { newAdditiveSubgraphId, subGraphManifest };
     },
     selectOperationGroupId: (state, action: PayloadAction<string>) => {
       state.discoveryContent.selectedOperationGroupId = cleanConnectorId(action.payload);
