@@ -166,13 +166,17 @@ export const useTokenDependencies = (nodeId: string): TokenDependencies => {
 export const useNodesTokenDependencies = (nodes: Set<string>) => {
   const operationsInputsParameters = useOperationsInputParameters();
   const variables = useSelector((state: RootState) => state.tokens.variables);
-  const dependencies: Record<string, Set<string>> = {};
-  if (!operationsInputsParameters) {
-    return dependencies;
-  }
-  for (const node of nodes) {
-    const operationInputParameters = getRecordEntry(operationsInputsParameters, node);
-    if (operationInputParameters) {
+  return useMemo(() => {
+    const dependencies: Record<string, Set<string>> = {};
+    if (!operationsInputsParameters) {
+      return dependencies;
+    }
+    for (const node of nodes) {
+      const operationInputParameters = getRecordEntry(operationsInputsParameters, node);
+      if (!operationInputParameters) {
+        dependencies[node] = new Set();
+        continue;
+      }
       const innerDependencies = new Set<string>();
       for (const group of Object.values(operationInputParameters.parameterGroups)) {
         for (const parameter of group.parameters) {
@@ -197,11 +201,9 @@ export const useNodesTokenDependencies = (nodes: Set<string>) => {
         }
       }
       dependencies[node] = innerDependencies;
-    } else {
-      dependencies[node] = new Set();
     }
-  }
-  return dependencies;
+    return dependencies;
+  }, [nodes, operationsInputsParameters, variables]);
 };
 
 export const useAllOperationErrors = () => useSelector(createSelector(getOperationState, (state) => state.errors));
