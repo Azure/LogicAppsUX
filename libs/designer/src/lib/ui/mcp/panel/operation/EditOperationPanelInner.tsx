@@ -162,7 +162,7 @@ export const EditOperationPanelInner = () => {
         </div>
       </DrawerHeader>
       <LayerHost id="dropdown-layer-host" style={{ position: 'relative', zIndex: 1000 }}>
-        <DrawerBody className={styles.body} style={{ overflow: 'visible', maxHeight: 'calc(100vh - 140px)' }}>
+        <DrawerBody className={styles.body} style={{ overflow: 'auto', maxHeight: 'calc(100vh - 170px)', minHeight: '80vh' }}>
           <EditOperation ref={editOperationRef} onValueChange={handleValueChange} isDirty={isDirty} />
         </DrawerBody>
       </LayerHost>

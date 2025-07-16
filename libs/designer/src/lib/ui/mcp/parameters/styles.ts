@@ -5,7 +5,6 @@ export const useEditOperationStyles = makeStyles({
     display: 'flex',
     flexDirection: 'column',
     gap: tokens.spacingVerticalM,
-    padding: `${tokens.spacingVerticalL} 0`,
     minHeight: 'min-content',
     width: '100%',
   },

@@ -13,8 +13,8 @@ import { useCallback, useMemo, useState, useEffect, useImperativeHandle, forward
 import { useEditOperationStyles } from './styles';
 import type { ChangeHandler, ParameterInfo } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
+import type { SearchableDropdownOption } from '@microsoft/designer-ui';
 import { SearchableDropdownWithAddAll, StringEditor } from '@microsoft/designer-ui';
-import type { IDropdownOption } from '@fluentui/react';
 
 const SettingsIcon = bundleIcon(Settings24Filled, Settings24Regular);
 
@@ -83,7 +83,7 @@ export const EditOperation = forwardRef<EditOperationRef, EditOperationProps>(fu
 
     const requiredParams: Array<{ groupId: string; param: ParameterInfo; isConditional: boolean }> = [];
     const conditionalParamsMap = new Map<string, { groupId: string; param: ParameterInfo; isConditional: boolean }>();
-    const dropdownOptions: IDropdownOption[] = [];
+    const dropdownOptions: SearchableDropdownOption[] = [];
 
     // Collect all parameters by type
     Object.entries(parameters.parameterGroups).forEach(([groupId, group]) => {
@@ -91,7 +91,6 @@ export const EditOperation = forwardRef<EditOperationRef, EditOperationProps>(fu
         if (param.required) {
           requiredParams.push({ groupId, param, isConditional: false });
         } else if (localConditionalVisibility[param.id]) {
-          // Use local state instead of Redux state
           conditionalParamsMap.set(param.id, { groupId, param, isConditional: true });
         } else {
           dropdownOptions.push({
@@ -119,8 +118,6 @@ export const EditOperation = forwardRef<EditOperationRef, EditOperationProps>(fu
 
     // Combine required parameters first, then conditional parameters in add order
     const allVisible = [...requiredParams, ...sortedConditionalParams];
-
-    console.log(dropdownOptions);
 
     return {
       allVisibleParameters: allVisible,
@@ -498,29 +495,25 @@ export const EditOperation = forwardRef<EditOperationRef, EditOperationProps>(fu
                 )}
 
                 {/* Optional Parameters Dropdown */}
-                {hasOptionalParameters && (
-                  <div className={styles.optionalParametersSection}>
-                    {hasVisibleParameters && <Divider className={styles.inlineParameterDivider} />}
-                    <SearchableDropdownWithAddAll
-                      key={`dropdown-${selectedOperationId}-${optionalDropdownOptions.length}`}
-                      label={INTL_TEXT.addOptionalParameters}
-                      dropdownProps={{
-                        options: optionalDropdownOptions,
-                        multiSelect: true,
-                        placeholder: INTL_TEXT.addNewParamText,
-                      }}
-                      onItemSelectionChanged={handleOptionalParameterToggle}
-                      addAllButtonText={INTL_TEXT.showAllOptional}
-                      addAllButtonTooltip={INTL_TEXT.showAllOptionalTooltip}
-                      addAllButtonEnabled={optionalDropdownOptions.length > 0}
-                      removeAllButtonText={INTL_TEXT.hideAllOptional}
-                      removeAllButtonTooltip={INTL_TEXT.hideAllOptionalTooltip}
-                      removeAllButtonEnabled={hasVisibleConditionalParameters}
-                      onShowAllClick={handleShowAllOptional}
-                      onHideAllClick={handleHideAllOptional}
-                    />
-                  </div>
-                )}
+                <div className={styles.optionalParametersSection}>
+                  {hasVisibleParameters && <Divider className={styles.inlineParameterDivider} />}
+                  <SearchableDropdownWithAddAll
+                    key={`dropdown-${selectedOperationId}-${optionalDropdownOptions.length}`}
+                    label={INTL_TEXT.addOptionalParameters}
+                    options={optionalDropdownOptions}
+                    placeholder={INTL_TEXT.addNewParamText}
+                    multiselect={true}
+                    onItemSelectionChanged={handleOptionalParameterToggle}
+                    addAllButtonText={INTL_TEXT.showAllOptional}
+                    addAllButtonTooltip={INTL_TEXT.showAllOptionalTooltip}
+                    addAllButtonEnabled={optionalDropdownOptions.length > 0}
+                    removeAllButtonText={INTL_TEXT.hideAllOptional}
+                    removeAllButtonTooltip={INTL_TEXT.hideAllOptionalTooltip}
+                    removeAllButtonEnabled={hasVisibleConditionalParameters}
+                    onShowAllClick={handleShowAllOptional}
+                    onHideAllClick={handleHideAllOptional}
+                  />
+                </div>
               </div>
             </Card>
           </div>
