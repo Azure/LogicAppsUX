@@ -111,7 +111,7 @@ function replaceIfFoundAndVerifyJson(stringifiedJson: string, searchValue: strin
     return undefined;
   }
 
-  const result = stringifiedJson.replace(searchValue, value);
+  const result = stringifiedJson.replaceAll(searchValue, value);
   try {
     JSON.parse(result);
     return result;
