@@ -2,7 +2,6 @@ import { openPanel, useNodesInitialized } from '../core';
 import { usePreloadOperationsQuery, usePreloadConnectorsQuery } from '../core/queries/browse';
 import { useMonitoringView, useReadOnly, useHostOptions, useIsVSCode } from '../core/state/designerOptions/designerOptionsSelectors';
 import { useAgenticWorkflow, useIsA2AWorkflow } from '../core/state/designerView/designerViewSelectors';
-import { buildEdgeIdsBySource } from '../core/state/workflow/workflowSlice';
 import type { AppDispatch, RootState } from '../core/store';
 import Controls from './Controls';
 import Minimap from './Minimap';
@@ -11,7 +10,6 @@ import { PanelRoot } from './panel/panelRoot';
 import { css, setLayerHostSelector } from '@fluentui/react';
 import { PanelLocation } from '@microsoft/designer-ui';
 import type { CustomPanelLocation } from '@microsoft/designer-ui';
-import { useThrottledEffect } from '@microsoft/logic-apps-shared';
 import { useEffect, useMemo, useRef } from 'react';
 import KeyboardBackendFactory, { isKeyboardDragTrigger } from 'react-dnd-accessible-backend';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -52,9 +50,6 @@ export const Designer = (props: DesignerProps) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const designerContainerRef = useRef<HTMLDivElement>(null);
-
-  const graph = useSelector((state: RootState) => state.workflow.graph);
-  useThrottledEffect(() => dispatch(buildEdgeIdsBySource()), [graph], 200);
 
   const canvasRef = useRef<HTMLDivElement>(null);
 

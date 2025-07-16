@@ -40,7 +40,7 @@ export interface DiscoveryPanelContentState {
   isAddingTrigger: boolean;
   isParallelBranch: boolean;
   isAddingAgentTool?: boolean;
-  agentToolMetadata?: { newCaseIdNewAdditiveSubgraphId: string; subGraphManifest: OperationManifest };
+  agentToolMetadata?: { newAdditiveSubgraphId: string; subGraphManifest: OperationManifest };
   panelMode: 'Discovery';
   relationshipIds: RelationshipIds;
   selectedNodeIds: string[];

@@ -405,20 +405,7 @@ export const buildGraphFromActions = (
         }
       }
     } else if (isAgentAction(action)) {
-      for (const [toolKey, toolValue] of Object.entries(action?.tools ?? {})) {
-        const toolActions = Object.values(toolValue.actions ?? {});
-        // Add edges for agent handoff actions
-        for (const toolAction of toolActions) {
-          if (equals(toolAction.type, constants.NODE.TYPE.HANDOFF)) {
-            // Create an edge for the handoff action
-            const handoffSource = actionName;
-            const handoffTarget = (toolAction as any).inputs?.name ?? '';
-            if (handoffTarget !== '' && allActionNames.includes(handoffTarget)) {
-              edges.push(createWorkflowEdge(handoffSource, handoffTarget, WORKFLOW_EDGE_TYPES.HANDOFF_EDGE));
-            }
-          }
-        }
-
+      for (const [toolKey, _toolValue] of Object.entries(action?.tools ?? {})) {
         if (!allActionNames.includes(toolKey)) {
           allActionNames.push(toolKey);
           continue;

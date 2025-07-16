@@ -1,6 +1,6 @@
 import type { NodeStaticResults } from '../../actions/bjsworkflow/staticresults';
 import type { RootState } from '../../store';
-import { shouldUseParameterInGroup } from '../../utils/parameters/helper';
+import { getParameterFromName, shouldUseParameterInGroup } from '../../utils/parameters/helper';
 import type { ErrorInfo, NodeDependencies, NodeInputs, OperationMetadataState } from './operationMetadataSlice';
 import { ErrorLevel } from './operationMetadataSlice';
 import type { NodeOutputs } from '@microsoft/logic-apps-shared';
@@ -79,6 +79,16 @@ export const useOperationInputParameters = (nodeId: string): ParameterInfo[] => 
     }
     return allParameters;
   }, [nodeInputs]);
+};
+
+export const useOperationParameterByName = (nodeId: string, parameterName: string): ParameterInfo | undefined => {
+  const nodeInputs = useSelector((rootState: RootState) => getRecordEntry(rootState.operations.inputParameters, nodeId));
+  return useMemo(() => {
+    if (!nodeInputs) {
+      return undefined;
+    }
+    return getParameterFromName(nodeInputs, parameterName);
+  }, [nodeInputs, parameterName]);
 };
 
 export const useOperationErrorInfo = (nodeId: string): ErrorInfo | undefined =>

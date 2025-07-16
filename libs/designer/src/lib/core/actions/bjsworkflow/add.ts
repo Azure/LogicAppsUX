@@ -90,12 +90,12 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
     const agentToolMetadata = (getState() as RootState).panel.discoveryContent.agentToolMetadata;
 
     if (isAddingAgentTool) {
-      const newToolSubgraphId = (getState() as RootState).panel.discoveryContent.relationshipIds.subgraphId;
-      if (newToolSubgraphId && newToolGraphId) {
-        if (agentToolMetadata?.newCaseIdNewAdditiveSubgraphId && agentToolMetadata?.subGraphManifest) {
-          initializeSwitchCaseFromManifest(agentToolMetadata.newCaseIdNewAdditiveSubgraphId, agentToolMetadata?.subGraphManifest, dispatch);
+      const newToolId = (getState() as RootState).panel.discoveryContent.relationshipIds.subgraphId;
+      if (newToolId && newToolGraphId) {
+        if (agentToolMetadata?.newAdditiveSubgraphId && agentToolMetadata?.subGraphManifest) {
+          initializeSubgraphFromManifest(agentToolMetadata.newAdditiveSubgraphId, agentToolMetadata?.subGraphManifest, dispatch);
         }
-        dispatch(addAgentTool({ toolId: newToolGraphId, nodeId: newToolSubgraphId }));
+        dispatch(addAgentTool({ toolId: newToolId, graphId: newToolGraphId }));
       }
     }
 
@@ -149,7 +149,8 @@ export const initializeOperationDetails = async (
   getState: () => RootState,
   dispatch: Dispatch,
   presetParameterValues?: Record<string, any>,
-  actionMetadata?: Record<string, any>
+  actionMetadata?: Record<string, any>,
+  openPanel = true
 ): Promise<void> => {
   const state = getState();
   const isTrigger = isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata);
@@ -159,8 +160,10 @@ export const initializeOperationDetails = async (
   const operationManifestService = OperationManifestService();
   const staticResultService = StaticResultService();
 
-  dispatch(setIsPanelLoading(true));
-  dispatch(changePanelNode(nodeId));
+  if (openPanel) {
+    dispatch(setIsPanelLoading(true));
+    dispatch(changePanelNode(nodeId));
+  }
 
   let initData: NodeData;
   let manifest: OperationManifest | undefined = undefined;
@@ -335,7 +338,7 @@ export const initializeOperationDetails = async (
   updateAllUpstreamNodes(getState() as RootState, dispatch);
 };
 
-export const initializeSwitchCaseFromManifest = async (id: string, manifest: OperationManifest, dispatch: Dispatch): Promise<void> => {
+export const initializeSubgraphFromManifest = async (id: string, manifest: OperationManifest, dispatch: Dispatch): Promise<void> => {
   const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(
     id,
     { type: '', kind: '', connectorId: '', operationId: '' },

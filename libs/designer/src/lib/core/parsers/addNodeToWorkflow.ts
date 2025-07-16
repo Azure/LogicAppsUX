@@ -30,7 +30,7 @@ export const addNodeToWorkflow = (
   state: WorkflowState
 ) => {
   const { nodeId: newNodeId, operation, isParallelBranch, relationshipIds } = payload;
-  const { graphId, parentId, childId } = relationshipIds;
+  const { graphId, subgraphId, parentId, childId } = relationshipIds;
 
   // Add Node Data
   const workflowNode: WorkflowNode = createWorkflowNode(newNodeId);
@@ -56,7 +56,7 @@ export const addNodeToWorkflow = (
 
   const isAfterTrigger = getRecordEntry(nodesMetadata, parentId ?? '')?.isRoot && graphId === 'root';
   const shouldAddRunAfters = !isRoot && !isAfterTrigger;
-  nodesMetadata[newNodeId] = { graphId, parentNodeId, isRoot };
+  nodesMetadata[newNodeId] = { graphId: subgraphId ?? graphId, parentNodeId, isRoot };
   state.operations[newNodeId] = { ...state.operations[newNodeId], type: operation.type };
   state.newlyAddedOperations[newNodeId] = newNodeId;
 

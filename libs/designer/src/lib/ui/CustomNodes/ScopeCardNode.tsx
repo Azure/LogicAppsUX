@@ -30,6 +30,7 @@ import {
   useActionTimelineRepetitionCount,
   useTimelineRepetitionIndex,
   useIsActionInSelectedTimelineRepetition,
+  useHandoffActionsForAgent,
 } from '../../core/state/workflow/workflowSelectors';
 import {
   setFocusElement,
@@ -298,7 +299,13 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     [brandColor, nodeComment]
   );
 
-  const actionCount = metadata?.actionCount ?? 0;
+  const handoffActions = useHandoffActionsForAgent(scopeId);
+  const actionCount = useMemo(() => {
+    const rawCount = metadata?.actionCount ?? 0;
+    let hiddenActionCount = 0;
+    hiddenActionCount += handoffActions.filter((action) => action.isSingleAction).length;
+    return rawCount - hiddenActionCount;
+  }, [handoffActions, metadata?.actionCount]);
 
   const intlText = useMemo(
     () => ({
