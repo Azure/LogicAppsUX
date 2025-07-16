@@ -29,7 +29,8 @@ const useStyles = makeStyles({
     fontWeight: tokens.fontWeightSemibold, // Make text more bold
     cursor: 'default', // Default cursor for non-clickable tokens
     userSelect: 'none',
-    maxWidth: '144px',
+    maxWidth: '200px',
+    minWidth: '40px',
     borderRadius: tokens.borderRadiusMedium, // Modern rounded corners
     position: 'relative',
     transition: 'all 0.1s ease', // Smooth transitions
@@ -56,17 +57,18 @@ const useStyles = makeStyles({
     backgroundSize: 'contain',
     backgroundPosition: 'center',
     borderRadius: tokens.borderRadiusSmall, // Rounded icon
+    flexShrink: 0, // Prevent icon from shrinking
   },
   tokenTitle: {
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
-    maxWidth: '100%',
     color: tokens.colorNeutralForeground1, // Ensure good contrast
     fontWeight: tokens.fontWeightSemibold, // Bold text for better legibility
     lineHeight: '20px', // Match token height for proper vertical alignment
-    display: 'inline-flex',
-    alignItems: 'center', // Center text vertically
+    display: 'block',
+    minWidth: 0,
+    flex: 1,
   },
   deleteButton: {
     fontSize: tokens.fontSizeBase200, // Match token font size for better alignment
@@ -87,6 +89,7 @@ const useStyles = makeStyles({
     height: '16px',
     position: 'relative', // Ensure button is clickable
     zIndex: 1,
+    flexShrink: 0,
     ':hover': {
       backgroundColor: tokens.colorNeutralBackground1Hover,
       color: tokens.colorNeutralForeground1Hover,
@@ -115,6 +118,7 @@ const useStyles = makeStyles({
     borderRadius: tokens.borderRadiusCircular,
     padding: '1px',
     zIndex: 1, // Ensure it appears above the regular icon
+    flexShrink: 0,
   },
 });
 
@@ -302,7 +306,9 @@ export const InputToken: React.FC<InputTokenProps> = ({ value, brandColor, icon,
     >
       <div className={styles.tokenIcon} style={iconStyle} aria-hidden="true" />
       {isSecure && <LockClosedRegular className={styles.secureIcon} aria-hidden="true" />}
-      <div className={styles.tokenTitle}>{title}</div>
+      <div className={styles.tokenTitle} style={{ maxWidth: '200px' }} title={title}>
+        {title}
+      </div>
       {renderTokenDeleteButton()}
     </span>
   );

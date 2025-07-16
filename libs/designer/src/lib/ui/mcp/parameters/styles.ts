@@ -4,7 +4,7 @@ export const useEditOperationStyles = makeStyles({
   container: {
     display: 'flex',
     flexDirection: 'column',
-    gap: tokens.spacingVerticalXXS,
+    gap: tokens.spacingVerticalM,
     padding: `${tokens.spacingVerticalL} 0`,
     minHeight: 'min-content',
     width: '100%',
@@ -13,17 +13,18 @@ export const useEditOperationStyles = makeStyles({
   section: {
     display: 'flex',
     flexDirection: 'column',
-    gap: tokens.spacingVerticalL,
+    gap: tokens.spacingVerticalM,
   },
 
   sectionTitle: {
     color: tokens.colorNeutralForeground1,
+    marginBottom: tokens.spacingVerticalS,
   },
 
   operationHeader: {
     display: 'flex',
     alignItems: 'center',
-    gap: tokens.spacingHorizontalL,
+    gap: tokens.spacingHorizontalM,
     padding: tokens.spacingVerticalM,
     backgroundColor: tokens.colorNeutralBackground2,
     borderRadius: tokens.borderRadiusLarge,
@@ -34,6 +35,9 @@ export const useEditOperationStyles = makeStyles({
   operationIcon: {
     color: tokens.colorBrandForeground1,
     fontSize: '24px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 
   operationInfo: {
@@ -41,16 +45,23 @@ export const useEditOperationStyles = makeStyles({
     flexDirection: 'column',
     gap: tokens.spacingVerticalXS,
     flex: 1,
+    minWidth: 0, // Prevents flex item from overflowing
   },
 
   operationTitle: {
     color: tokens.colorNeutralForeground1,
     fontWeight: tokens.fontWeightSemibold,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
   },
 
   operationMeta: {
     color: tokens.colorNeutralForeground3,
     fontSize: tokens.fontSizeBase200,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
   },
 
   statusBadge: {
@@ -72,9 +83,15 @@ export const useEditOperationStyles = makeStyles({
     borderRadius: tokens.borderRadiusMedium,
     backgroundColor: tokens.colorNeutralBackground1,
     transition: 'border-color 0.15s ease',
+    overflow: 'hidden', // Ensures content doesn't overflow rounded corners
 
     ':hover': {
       border: `1px solid ${tokens.colorNeutralStroke1}`,
+    },
+
+    ':focus-within': {
+      border: `1px solid ${tokens.colorBrandStroke1}`,
+      boxShadow: `0 0 0 1px ${tokens.colorBrandStroke1}`,
     },
   },
 
@@ -87,9 +104,7 @@ export const useEditOperationStyles = makeStyles({
   },
 
   parameterCardContent: {
-    padding: tokens.spacingHorizontalL,
-    paddingTop: tokens.spacingVerticalL,
-    paddingBottom: tokens.spacingVerticalL,
+    padding: tokens.spacingHorizontalS,
   },
 
   parameterList: {
@@ -101,13 +116,38 @@ export const useEditOperationStyles = makeStyles({
   parameterField: {
     display: 'flex',
     flexDirection: 'column',
-    gap: tokens.spacingVerticalS,
+  },
+
+  parameterHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: tokens.spacingHorizontalS,
   },
 
   parameterLabel: {
     fontWeight: tokens.fontWeightSemibold,
     color: tokens.colorNeutralForeground1,
     fontSize: tokens.fontSizeBase300,
+    flex: 1,
+  },
+
+  removeParameterButton: {
+    flexShrink: 0,
+    color: tokens.colorNeutralForeground3,
+
+    ':hover': {
+      backgroundColor: tokens.colorNeutralBackground1Hover,
+      color: tokens.colorNeutralForeground2,
+    },
+  },
+
+  optionalParametersSection: {
+    marginTop: tokens.spacingVerticalM,
+  },
+
+  inlineParameterDivider: {
+    margin: `${tokens.spacingVerticalM} 0`,
   },
 
   emptyParametersCard: {
