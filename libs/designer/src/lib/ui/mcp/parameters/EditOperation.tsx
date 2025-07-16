@@ -526,25 +526,27 @@ export const EditOperation = forwardRef<EditOperationRef, EditOperationProps>(fu
                 )}
 
                 {/* Optional Parameters Dropdown */}
-                <div className={styles.optionalParametersSection}>
-                  {hasVisibleParameters && <Divider className={styles.inlineParameterDivider} />}
-                  <SearchableDropdownWithAddAll
-                    key={`dropdown-${selectedOperationId}-${optionalDropdownOptions.length}`}
-                    label={INTL_TEXT.addOptionalParameters}
-                    options={optionalDropdownOptions}
-                    placeholder={INTL_TEXT.addNewParamText}
-                    multiselect={true}
-                    onItemSelectionChanged={handleOptionalParameterToggle}
-                    addAllButtonText={INTL_TEXT.showAllOptional}
-                    addAllButtonTooltip={INTL_TEXT.showAllOptionalTooltip}
-                    addAllButtonEnabled={optionalDropdownOptions.length > 0}
-                    removeAllButtonText={INTL_TEXT.hideAllOptional}
-                    removeAllButtonTooltip={INTL_TEXT.hideAllOptionalTooltip}
-                    removeAllButtonEnabled={hasVisibleConditionalParameters}
-                    onShowAllClick={handleShowAllOptional}
-                    onHideAllClick={handleHideAllOptional}
-                  />
-                </div>
+                {allConditionalSettings.length > 0 ? (
+                  <div className={styles.optionalParametersSection}>
+                    {hasVisibleParameters && <Divider className={styles.inlineParameterDivider} />}
+                    <SearchableDropdownWithAddAll
+                      key={`dropdown-${selectedOperationId}-${optionalDropdownOptions.length}`}
+                      label={INTL_TEXT.addOptionalParameters}
+                      options={optionalDropdownOptions}
+                      placeholder={INTL_TEXT.addNewParamText}
+                      multiselect={true}
+                      onItemSelectionChanged={handleOptionalParameterToggle}
+                      addAllButtonText={INTL_TEXT.showAllOptional}
+                      addAllButtonTooltip={INTL_TEXT.showAllOptionalTooltip}
+                      addAllButtonEnabled={optionalDropdownOptions.length > 0}
+                      removeAllButtonText={INTL_TEXT.hideAllOptional}
+                      removeAllButtonTooltip={INTL_TEXT.hideAllOptionalTooltip}
+                      removeAllButtonEnabled={hasVisibleConditionalParameters}
+                      onShowAllClick={handleShowAllOptional}
+                      onHideAllClick={handleHideAllOptional}
+                    />
+                  </div>
+                ) : null}
               </div>
             </Card>
           </div>
