@@ -1,6 +1,6 @@
 import type { ParametersData } from '../models/workflow';
 import type { ConnectionReferences } from '@microsoft/logic-apps-designer';
-import type { ConnectionsData } from '@microsoft/vscode-extension-logic-apps';
+import { replaceAllOccurrences, type ConnectionsData } from '@microsoft/vscode-extension-logic-apps';
 
 export const convertConnectionsDataToReferences = (connectionsData: ConnectionsData | undefined): ConnectionReferences => {
   const references: any = {};
@@ -91,31 +91,3 @@ export const resolveConnectionsReferences = (
     throw new Error('Failure in resolving connection parameterisation');
   }
 };
-
-function replaceAllOccurrences(content: string, searchValue: string, value: any): string {
-  let result = replaceIfFoundAndVerifyJson(content, `"${searchValue}"`, JSON.stringify(value));
-  if (result) {
-    return result;
-  }
-
-  result = replaceIfFoundAndVerifyJson(content, searchValue, `${value}`);
-  if (result) {
-    return result;
-  }
-
-  return content.replaceAll(searchValue, '');
-}
-
-function replaceIfFoundAndVerifyJson(stringifiedJson: string, searchValue: string, value: string): string | undefined {
-  if (!stringifiedJson.includes(searchValue)) {
-    return undefined;
-  }
-
-  const result = stringifiedJson.replaceAll(searchValue, value);
-  try {
-    JSON.parse(result);
-    return result;
-  } catch {
-    return undefined;
-  }
-}
