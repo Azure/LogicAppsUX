@@ -1,4 +1,3 @@
-import WarningIcon from '../../../resources/Caution.svg';
 import { QueryKeys } from '../../../run-service';
 import type { WorkflowsList, SelectedWorkflowsList } from '../../../run-service';
 import { ApiService } from '../../../run-service/export/index';
@@ -17,7 +16,7 @@ import {
   updateSelectedItems,
 } from './helper';
 import { SelectedList } from './selectedList';
-import { ShimmeredDetailsList, SelectionMode, Selection, MessageBar, MessageBarType } from '@fluentui/react';
+import { ShimmeredDetailsList, SelectionMode, Selection } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { useMemo, useRef, useState, useEffect, useContext } from 'react';
@@ -26,7 +25,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { LargeText, XLargeText } from '@microsoft/designer-ui';
 import { useExportStyles } from '../exportStyles';
-import { Divider } from '@fluentui/react-components';
+import { Divider, MessageBar, MessageBarBody } from '@fluentui/react-components';
 
 export const WorkflowsSelection: React.FC = () => {
   const vscode = useContext(VSCodeContext);
@@ -205,19 +204,8 @@ export const WorkflowsSelection: React.FC = () => {
 
   const limitInfo = useMemo(() => {
     return selectedWorkflows.length >= 15 ? (
-      <MessageBar
-        className={styles.exportWorkflowsPanelLimitInfo}
-        messageBarType={MessageBarType.info}
-        isMultiline={true}
-        messageBarIconProps={{
-          imageProps: {
-            src: WarningIcon,
-            width: 15,
-            height: 15,
-          },
-        }}
-      >
-        {intlText.LIMIT_INFO}
+      <MessageBar className={styles.exportWorkflowsPanelLimitInfo} intent="info" layout={'multiline'}>
+        <MessageBarBody> {intlText.LIMIT_INFO}</MessageBarBody>
       </MessageBar>
     ) : null;
   }, [intlText.LIMIT_INFO, selectedWorkflows.length, styles.exportWorkflowsPanelLimitInfo]);
