@@ -6,10 +6,11 @@ import { Text, TableCell, TableRow, Table, TableHeader, TableHeaderCell, Button,
 import { useIntl } from 'react-intl';
 import { useConnectorSectionStyles } from '../wizard/styles';
 import { deinitializeNodes, deinitializeOperationInfos } from '../../../core/state/operation/operationMetadataSlice';
-import { getResourceNameFromId } from '@microsoft/logic-apps-shared';
 import { McpPanelView, openConnectorPanelView } from '../../../core/state/mcp/panel/mcpPanelSlice';
 import { selectConnectorId, selectOperations } from '../../../core/state/mcp/connector/connectorSlice';
 import { ConnectorIconWithName } from '../../templates/connections/connector';
+import { useConnectionById } from '../../../core/queries/connections';
+import { getResourceNameFromId } from '@microsoft/logic-apps-shared';
 
 const connectorTableCellStyles = {
   border: 'none',
@@ -75,6 +76,11 @@ export const ListConnectors = () => {
       id: 'ssR+UG',
       description: 'Text indicating a connector is disconnected',
     }),
+    noConnectionText: intl.formatMessage({
+      defaultMessage: 'No Connection',
+      id: '7kyZuO',
+      description: 'Text indicating there is no connection for the connector',
+    }),
   };
 
   const styles = useConnectorSectionStyles();
@@ -85,7 +91,7 @@ export const ListConnectors = () => {
     return Object.values(operationInfos).reduce<
       Array<{
         connectorId: string;
-        connectionName: string;
+        connectionId: string;
         isConnected: boolean;
       }>
     >((acc, info) => {
@@ -100,15 +106,10 @@ export const ListConnectors = () => {
       const reference = referenceKey ? connectionReferences[referenceKey] : null;
 
       const isConnected = !!reference;
-      const connectionName = isConnected
-        ? (reference.connectionName ?? getResourceNameFromId(reference.connection?.id) ?? 'Default Connection')
-        : referenceKey === null
-          ? 'No Connection'
-          : 'Default Connection';
 
       acc.push({
-        connectorId: connectorId,
-        connectionName,
+        connectorId,
+        connectionId: reference?.connection?.id ?? '',
         isConnected,
       });
 
@@ -191,7 +192,13 @@ export const ListConnectors = () => {
                 onNameClick={() => handleEditConnector(item.connectorId)}
               />
             </TableCell>
-            <TableCell style={connectorTableCellStyles}>{item?.connectionName}</TableCell>
+            <TableCell style={connectorTableCellStyles}>
+              {item?.isConnected ? (
+                <ConnectionDisplayName connectorId={item.connectorId} connectionId={item.connectionId} />
+              ) : (
+                INTL_TEXT.noConnectionText
+              )}
+            </TableCell>
             <TableCell className={styles.iconTextCell} style={connectorTableCellStyles}>
               {item?.isConnected ? <CheckmarkCircle20Filled className={styles.icon} color={tokens.colorPaletteGreenBackground3} /> : null}
               <Text>{item?.isConnected ? INTL_TEXT.connectedText : INTL_TEXT.disconnectedText}</Text>
@@ -218,4 +225,16 @@ export const ListConnectors = () => {
       </TableBody>
     </Table>
   );
+};
+
+export const ConnectionDisplayName = ({
+  connectorId,
+  connectionId,
+}: {
+  connectorId: string;
+  connectionId: string;
+}) => {
+  const connectionInfo = useConnectionById(connectionId, connectorId);
+
+  return <Text>{connectionInfo?.result?.properties?.displayName ?? getResourceNameFromId(connectionId)}</Text>;
 };
