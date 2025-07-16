@@ -223,7 +223,7 @@ export const useActionsChatHistory = (nodeIds: string[], runId: string | undefin
     {
       ...queryOpts,
       retryOnMount: false,
-      enabled: isEnabled && runId !== undefined && nodeIds.length > 0,
+      enabled: isEnabled && runId !== undefined && nodeIds?.length > 0,
     }
   );
 };

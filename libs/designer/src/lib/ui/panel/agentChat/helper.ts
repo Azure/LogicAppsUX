@@ -6,7 +6,8 @@ export const parseChatHistory = (
   chatHistory: ChatHistory[],
   toolResultCallback: (agentName: string, toolName: string, iteration: number, subIteration: number) => void,
   toolContentCallback: (agentName: string, iteration: number) => void,
-  agentCallback: (agentName: string) => void
+  agentCallback: (agentName: string) => void,
+  isA2AWorkflow: boolean
 ): ConversationItem[] => {
   const conversations: ConversationItem[] = chatHistory.flatMap(({ nodeId, messages }) => {
     if (!messages || messages.length === 0) {
@@ -33,18 +34,19 @@ export const parseChatHistory = (
       processedMessages.push(parseMessage(message, nodeId, dataScrollTarget, toolResultCallback, toolContentCallback));
     }
 
-    // Restore original message order and append the agent header item
-    return [
-      ...processedMessages.reverse(),
-      {
-        id: guid(),
-        text: labelCase(nodeId),
-        type: ConversationItemType.AgentHeader,
-        onClick: () => agentCallback(nodeId),
-        date: new Date(),
-      },
-    ];
+    const agentHeader = {
+      id: guid(),
+      text: labelCase(nodeId),
+      type: ConversationItemType.AgentHeader,
+      onClick: () => agentCallback(nodeId),
+      date: new Date(),
+    };
+
+    // Restore original message order and conditionally append the agent header item
+    return [...processedMessages.reverse(), ...(isA2AWorkflow ? [] : [agentHeader])];
   });
+
+  console.log('charlie parseChatHistory', conversations);
 
   return conversations;
 };
@@ -64,7 +66,7 @@ const parseMessage = (
       const isUserMessage = role === 'User';
       const type = isUserMessage ? ConversationItemType.Query : ConversationItemType.Reply;
       return {
-        text: content,
+        text: labelCase(content),
         type,
         id: guid(),
         role: {
@@ -87,7 +89,7 @@ const parseMessage = (
 
       return {
         id: guid(),
-        text: toolName,
+        text: labelCase(toolName),
         type: ConversationItemType.Tool,
         onClick: () => toolResultCallback(parentId, toolName, iteration, subIteration),
         status,

@@ -173,10 +173,10 @@ export const AgentChat = ({
 
   useEffect(() => {
     if (!isNullOrUndefined(chatHistoryData)) {
-      const newConversations = parseChatHistory(chatHistoryData, toolResultCallback, toolContentCallback, agentCallback);
+      const newConversations = parseChatHistory(chatHistoryData, toolResultCallback, toolContentCallback, agentCallback, isA2AWorkflow);
       setConversation([...newConversations]);
     }
-  }, [setConversation, chatHistoryData, dispatch, toolResultCallback, toolContentCallback, agentCallback]);
+  }, [setConversation, chatHistoryData, dispatch, toolResultCallback, toolContentCallback, agentCallback, isA2AWorkflow]);
 
   const intlText = useMemo(() => {
     return {
