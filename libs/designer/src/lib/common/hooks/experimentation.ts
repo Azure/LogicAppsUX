@@ -18,8 +18,8 @@ export function useShouldEnableDynamicConnections(): boolean | null {
   return enabled;
 }
 
-export function useChannelsTabForAgentLoop(): boolean | null {
-  const [enabled, setEnabled] = useState<boolean | null>(null);
+export function useChannelsTabForAgentLoop(): boolean {
+  const [enabled, setEnabled] = useState<boolean>(false);
   useEffect(() => {
     const check = async () => {
       try {
