@@ -1,6 +1,5 @@
-import type { ParametersData } from '../models/workflow';
 import type { ConnectionReferences } from '@microsoft/logic-apps-designer';
-import { replaceAllOccurrences, type ConnectionsData } from '@microsoft/vscode-extension-logic-apps';
+import type { ConnectionsData } from '@microsoft/vscode-extension-logic-apps';
 
 export const convertConnectionsDataToReferences = (connectionsData: ConnectionsData | undefined): ConnectionReferences => {
   const references: any = {};
@@ -62,32 +61,4 @@ export const convertConnectionsDataToReferences = (connectionsData: ConnectionsD
   }
 
   return references;
-};
-
-export const resolveConnectionsReferences = (
-  content: string,
-  parameters: ParametersData | undefined,
-  appsettings?: Record<string, string> | undefined
-): any => {
-  let result = content;
-
-  if (parameters) {
-    for (const parameterName of Object.keys(parameters)) {
-      const parameterValue = parameters[parameterName].value !== undefined ? parameters[parameterName].value : '';
-      result = replaceAllOccurrences(result, `@parameters('${parameterName}')`, parameterValue);
-    }
-  }
-
-  if (appsettings) {
-    for (const settingName of Object.keys(appsettings)) {
-      const settingValue = appsettings[settingName] !== undefined ? appsettings[settingName] : '';
-      result = replaceAllOccurrences(result, `@appsetting('${settingName}')`, settingValue);
-    }
-  }
-
-  try {
-    return JSON.parse(result);
-  } catch {
-    throw new Error('Failure in resolving connection parameterisation');
-  }
 };
