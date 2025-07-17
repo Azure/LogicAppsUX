@@ -4,6 +4,7 @@ import type { AppDispatch, RootState } from '../../../core';
 import { addEdgeFromRunAfterOperation, removeEdgeFromRunAfterOperation } from '../../../core/actions/bjsworkflow/runafter';
 import { useActionMetadata, useRootTriggerId } from '../../../core/state/workflow/workflowSelectors';
 import { updateRunAfter } from '../../../core/state/workflow/workflowSlice';
+import { useIsA2AWorkflow } from '../../../core/state/designerView/designerViewSelectors';
 import type { SettingsSectionProps } from '../settingsection';
 import { SettingsSection } from '../settingsection';
 import { validateNodeSettings } from '../validation/validation';
@@ -16,6 +17,8 @@ import { useDispatch, useSelector } from 'react-redux';
 export const RunAfter = ({ nodeId, readOnly = false, expanded, validationErrors, onHeaderClick }: SectionProps): JSX.Element | null => {
   const nodeData = useActionMetadata(nodeId) as LogicAppsV2.ActionDefinition;
   const dispatch = useDispatch<AppDispatch>();
+
+  const isA2AWorkflow = useIsA2AWorkflow();
 
   const rootState = useSelector((state: RootState) => state);
 
@@ -68,7 +71,12 @@ export const RunAfter = ({ nodeId, readOnly = false, expanded, validationErrors,
 
   const GetRunAfterProps = (): RunAfterActionDetailsProps[] => {
     const items: RunAfterActionDetailsProps[] = [];
-    const runAfterValue = Object.keys(nodeData?.runAfter ?? {}).length ? (nodeData.runAfter ?? {}) : dummyTriggerRunAfterSetting;
+    const showDummyRunAfter = !isA2AWorkflow;
+    const runAfterValue = Object.keys(nodeData?.runAfter ?? {}).length
+      ? (nodeData.runAfter ?? {})
+      : showDummyRunAfter
+        ? dummyTriggerRunAfterSetting
+        : {};
     const isSingleRunAfter = Object.keys(runAfterValue).length === 1;
     const isAfterTrigger = Object.keys(runAfterValue)?.[0] === rootTriggerId;
     Object.entries(runAfterValue).forEach(([id, value], _i) => {
