@@ -1,26 +1,16 @@
 import { useCallback, useMemo, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useIntl } from 'react-intl';
 import Fuse from 'fuse.js';
 import { Button, Input, Menu, MenuButton, MenuItemCheckbox, MenuList, MenuPopover, MenuTrigger, Text } from '@fluentui/react-components';
 import { Add20Filled, Add20Regular, DismissRegular, Search24Regular, bundleIcon } from '@fluentui/react-icons';
-import type { OperationManifest } from '@microsoft/logic-apps-shared';
-import { LogEntryLevel, LoggerService, handoffOperation } from '@microsoft/logic-apps-shared';
+import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 
-import {
-  getWorkflowNodeFromGraphState,
-  useAllAgentIds,
-  useHandoffActionsForAgent,
-  useNodeDisplayName,
-} from '../../../../../core/state/workflow/workflowSelectors';
-import type { RootState, AppDispatch } from '../../../../../core';
-import { useOperationInfo, useOperationPanelSelectedNodeId } from '../../../../../core';
+import { useAllAgentIds, useHandoffActionsForAgent, useNodeDisplayName } from '../../../../../core/state/workflow/workflowSelectors';
+import type { AppDispatch } from '../../../../../core';
+import { useOperationPanelSelectedNodeId } from '../../../../../core';
 import { useOperationVisuals } from '../../../../../core/state/operation/operationSelector';
-import { initializeOperationDetails, initializeSubgraphFromManifest } from '../../../../../core/actions/bjsworkflow/add';
-import { deleteGraphNode } from '../../../../../core/actions/bjsworkflow/delete';
-import { initializeOperationInfo } from '../../../../../core/state/operation/operationMetadataSlice';
-import { addAgentTool, addNode, deleteAgentTool } from '../../../../../core/state/workflow/workflowSlice';
-import { useOperationManifest } from '../../../../../core/state/selectors/actionMetadataSelector';
+import { addAgentHandoff, removeAgentHandoff } from '../../../../../core/actions/bjsworkflow/handoff';
 
 const AddIcon = bundleIcon(Add20Filled, Add20Regular);
 
@@ -77,83 +67,19 @@ export const HandoffSelector = ({ agentId, readOnly }: { agentId: string; readOn
     return fuse.search(searchText).map(({ item }) => item);
   }, [agentActions, searchText]);
 
-  const { data: agentManifest } = useOperationManifest(useOperationInfo(agentId));
-
-  const rootState = useSelector((state: RootState) => state);
-
   const addHandoff = useCallback(
     (targetId: string) => {
-      const newHandoffId = `handoff_from_${agentId}_to_${targetId}`;
-      const newToolId = `${newHandoffId}_tool`;
-
-      // Initialize subgraph manifest
-      const caseManifestData = Object.values(agentManifest?.properties?.subGraphDetails ?? {}).find((data) => data.isAdditive);
-      const subgraphManifest: OperationManifest = {
-        properties: {
-          ...caseManifestData,
-          iconUri: agentManifest?.properties.iconUri ?? '',
-          brandColor: '',
-        },
-      };
-      initializeSubgraphFromManifest(newToolId, subgraphManifest, dispatch);
-      // Create a new tool for the handoff
-      dispatch(
-        addAgentTool({
-          toolId: newToolId,
-          graphId: agentId,
-        })
-      );
-
-      // Create the handoff action
-      dispatch(
-        addNode({
-          operation: handoffOperation,
-          nodeId: newHandoffId,
-          relationshipIds: {
-            graphId: agentId,
-            subgraphId: newToolId,
-            parentId: `${newToolId}-#subgraph`,
-          },
-        })
-      );
-
-      const nodeOperationInfo = {
-        connectorId: handoffOperation.properties.api.id,
-        operationId: handoffOperation.name,
-        type: handoffOperation.type,
-      };
-
-      dispatch(initializeOperationInfo({ id: newHandoffId, ...nodeOperationInfo }));
-      const presetParameterValues = {
-        name: targetId,
-      };
-      initializeOperationDetails(newHandoffId, nodeOperationInfo, () => rootState, dispatch, presetParameterValues, undefined, false);
+      dispatch(addAgentHandoff({ sourceId: agentId, targetId }));
     },
-    [agentId, agentManifest?.properties.iconUri, agentManifest?.properties?.subGraphDetails, dispatch, rootState]
+    [agentId, dispatch]
   );
 
   const removeHandoff = useCallback(
     (targetId: string) => {
       const toolId = handoffActions.find((action) => action.targetId === targetId)?.toolId;
-      const toolWorkflowNode = getWorkflowNodeFromGraphState(rootState.workflow, toolId);
-      if (!handoffOperation || !toolWorkflowNode) {
-        return;
-      }
-      dispatch(
-        deleteGraphNode({
-          graphId: toolId,
-          graphNode: toolWorkflowNode,
-          clearFocus: false,
-        })
-      );
-      dispatch(
-        deleteAgentTool({
-          toolId,
-          agentId,
-        })
-      );
+      dispatch(removeAgentHandoff({ agentId, toolId }));
     },
-    [agentId, dispatch, handoffActions, rootState.workflow]
+    [agentId, dispatch, handoffActions]
   );
 
   return (

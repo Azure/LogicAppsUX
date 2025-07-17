@@ -684,6 +684,34 @@ export const workflowSlice = createSlice({
       }
       childOperation.runAfter[action.payload.parentOperation] = action.payload.statuses;
     },
+    addHandoffMetadata: (state: WorkflowState, action: PayloadAction<{ sourceId: string; toolId: string; targetId: string }>) => {
+      const { sourceId, toolId, targetId } = action.payload;
+      const sourceOperation = getRecordEntry(state.nodesMetadata, sourceId);
+      if (!sourceOperation) {
+        return;
+      }
+      const currentHandoffs = (sourceOperation as any)?.handoffs ?? {};
+      currentHandoffs[toolId] = targetId;
+      (sourceOperation as any).handoffs = currentHandoffs;
+    },
+    removeHandoffMetadata: (state: WorkflowState, action: PayloadAction<{ sourceId: string; toolId?: string; targetId?: string }>) => {
+      const { sourceId, toolId, targetId } = action.payload;
+      const sourceMetadata = getRecordEntry(state.nodesMetadata, sourceId);
+      if (!sourceMetadata) {
+        return;
+      }
+      const currentHandoffs = (sourceMetadata as any)?.handoffs ?? {};
+      if (toolId) {
+        delete currentHandoffs[toolId];
+      } else if (targetId) {
+        for (const [toolId, handoffTargetId] of Object.entries(currentHandoffs)) {
+          if (handoffTargetId === targetId) {
+            delete currentHandoffs[toolId];
+          }
+        }
+      }
+      (sourceMetadata as any).handoffs = currentHandoffs;
+    },
     replaceId: (state: WorkflowState, action: PayloadAction<{ originalId: string; newId: string }>) => {
       const { originalId, newId } = action.payload;
       const normalizedId = transformOperationTitle(newId);
@@ -785,6 +813,8 @@ export const {
   updateRunAfter,
   addEdgeFromRunAfter,
   removeEdgeFromRunAfter,
+  addHandoffMetadata,
+  removeHandoffMetadata,
   setTimelineRepetitionIndex,
   setTimelineRepetitionArray,
   clearFocusNode,

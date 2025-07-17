@@ -27,7 +27,11 @@
             }
           }
         },
-        "runAfter": {},
+        "runAfter": {
+					"A2A_Trigger": [
+						"Succeeded"
+					]
+				},
         "limit": {
           "count": 100
         }
