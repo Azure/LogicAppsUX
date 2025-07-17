@@ -36,6 +36,7 @@ import {
 import { pasteOperation, pasteScopeOperation } from '../../../core/actions/bjsworkflow/copypaste';
 import { useUpstreamNodes } from '../../../core/state/tokens/tokenSelectors';
 import { useHasUpstreamAgenticLoop } from '../../../core/state/workflow/workflowSelectors';
+import { addAgentHandoff } from '../../../core/actions/bjsworkflow/handoff';
 
 const AddIcon = bundleIcon(ArrowBetweenDown24Filled, ArrowBetweenDown24Regular);
 const ParallelIcon = bundleIcon(ArrowSplit24Filled, ArrowSplit24Regular);
@@ -103,9 +104,20 @@ export const EdgeContextualMenu = () => {
     if (!graphId) {
       return;
     }
-    const relationshipIds = { graphId, childId: undefined, parentId };
-    dispatch(addOperation({ nodeId: `Agent-${customLengthGuid(4)}`, relationshipIds, operation: agentOperation }));
-  }, [dispatch, graphId, parentId]);
+
+    const newAgentId = `Agent-${customLengthGuid(4)}`;
+
+    if (isA2AWorkflow && hasUpstreamAgenticLoop && parentId) {
+      // If this is an A2A flow and the parent is an agent, don't add any relationships, instead add a handoff tool + operation
+      const relationshipIds = { graphId: 'root', childId: undefined, parentId: undefined };
+      dispatch(addOperation({ nodeId: newAgentId, relationshipIds, operation: agentOperation }));
+      dispatch(addAgentHandoff({ sourceId: parentId, targetId: newAgentId }));
+    } else {
+      // If this is not an A2A flow or the parent is not an agent, add the relationship normally
+      const relationshipIds = { graphId, childId, parentId };
+      dispatch(addOperation({ nodeId: newAgentId, relationshipIds, operation: agentOperation }));
+    }
+  }, [childId, dispatch, graphId, hasUpstreamAgenticLoop, isA2AWorkflow, parentId]);
 
   const newActionText = intl.formatMessage({
     defaultMessage: 'Add an action',
