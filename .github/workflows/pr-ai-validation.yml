@@ -2,7 +2,7 @@ name: PR AI Validation
 
 on:
   pull_request_target:
-    types: [opened, edited, synchronize]
+    types: [opened, edited, synchronize, labeled, unlabeled]
   workflow_dispatch:
 
 permissions:
