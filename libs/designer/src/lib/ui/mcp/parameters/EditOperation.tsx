@@ -159,9 +159,9 @@ export const EditOperation = () => {
     }),
   };
 
-  const handleDescriptionInputChange = (description: string) => {
+  const handleDescriptionInputChange = useCallback((description: string) => {
     setLocalDescription(description);
-  };
+  }, []);
 
   const handleDescriptionBlur = useCallback(() => {
     if (!selectedOperationId) {
@@ -334,20 +334,16 @@ export const EditOperation = () => {
   const hasOptionalParameters = optionalDropdownOptions.length > 0;
   const hasVisibleConditionalParameters = allVisibleParameters.some(({ isConditional }) => isConditional);
 
-  const addNewParamText = useMemo(
-    () =>
-      intl.formatMessage(
-        {
-          defaultMessage: 'Showing {countShowing} of {countTotal}',
-          id: 'jTHUFb',
-          description: 'Placeholder text for the number of advanced parameters showing',
-        },
-        {
-          countShowing: allConditionalSettings.length - conditionallyInvisibleSettings.length,
-          countTotal: allConditionalSettings.length,
-        }
-      ),
-    [intl, allConditionalSettings, conditionallyInvisibleSettings]
+  const addNewParamText = intl.formatMessage(
+    {
+      defaultMessage: 'Showing {countShowing} of {countTotal}',
+      id: 'jTHUFb',
+      description: 'Placeholder text for the number of advanced parameters showing',
+    },
+    {
+      countShowing: allConditionalSettings.length - conditionallyInvisibleSettings.length,
+      countTotal: allConditionalSettings.length,
+    }
   );
 
   return (
