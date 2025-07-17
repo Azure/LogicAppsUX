@@ -234,7 +234,6 @@ export abstract class BaseConnectorService implements IConnectorService {
         const pagedResponse = await this.options.httpClient.get({
           uri: nextLink,
           headers,
-          includeAuth: true,
         });
 
         pageData = this._getResponseFromDynamicApi({ response: { statusCode: 'OK', body: pagedResponse, headers } }, nextLink);
