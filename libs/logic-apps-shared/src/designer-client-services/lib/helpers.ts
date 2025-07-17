@@ -1,5 +1,7 @@
 import type { Template } from '../../utils/src';
 import { equals, getPropertyValue } from '../../utils/src';
+import { LoggerService } from './logger';
+import { LogEntryLevel } from './logging/logEntry';
 
 export function pathCombine(url: string, path: string): string {
   let pathUrl: string;
@@ -75,6 +77,13 @@ export function getTemplateManifestFromResourceManifest(resourceManifest: any): 
 
 export function unwrapPaginatedResponse(response: any): any {
   if (response && response.__usedNextPage) {
+    if (response.__paginationIncomplete) {
+      LoggerService().log({
+        message: `Pagination request unsuccessful, some values may be missing. ${response.__paginationError || ''}`,
+        level: LogEntryLevel.Error,
+        area: 'unwrapPaginatedResponse',
+      });
+    }
     return response.value;
   }
   return response;

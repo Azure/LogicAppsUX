@@ -1,6 +1,6 @@
 import { getIntl } from '../../../intl/src';
 import type { OpenAPIV2, OperationInfo } from '../../../utils/src';
-import { ArgumentException, equals, ConnectorServiceException, ConnectorServiceErrorCode } from '../../../utils/src';
+import { ArgumentException, equals, ConnectorServiceException, ConnectorServiceErrorCode, parseErrorMessage } from '../../../utils/src';
 import type {
   IConnectorService,
   ListDynamicValue,
@@ -192,8 +192,14 @@ export abstract class BaseConnectorService implements IConnectorService {
       const isArrayPagination = Array.isArray(initialResponse.value) && nextLink;
 
       if (isArrayPagination) {
-        const allValues = await this._getAllPagedValues(initialResponse, request.headers);
-        return { ...initialResponse, value: allValues, __usedNextPage: true };
+        const paginationResult = await this._getAllPagedValues(initialResponse, request.headers);
+        return {
+          ...initialResponse,
+          value: paginationResult.values,
+          __usedNextPage: true,
+          __paginationIncomplete: paginationResult.incomplete,
+          __paginationError: paginationResult.error,
+        };
       }
 
       return initialResponse;
@@ -212,30 +218,45 @@ export abstract class BaseConnectorService implements IConnectorService {
     return this._getResponseFromDynamicApi(initialResponse, baseUri);
   }
 
-  private async _getAllPagedValues(initialResponse: any, headers: Record<string, any>): Promise<any[]> {
+  private async _getAllPagedValues(
+    initialResponse: any,
+    headers: Record<string, any>
+  ): Promise<{ values: any[]; incomplete: boolean; error?: string }> {
     let pageData = initialResponse;
     const allValues: any[] = Array.isArray(pageData.value) ? [...pageData.value] : [];
 
     let nextLink: string | undefined = pageData.nextLink || pageData['@odata.nextLink'];
+    let incomplete = false;
+    let lastError: string | undefined;
 
     while (nextLink) {
-      const pagedResponse = await this.options.httpClient.get({
-        uri: nextLink,
-        headers,
-        includeAuth: true,
-      });
+      try {
+        const pagedResponse = await this.options.httpClient.get({
+          uri: nextLink,
+          headers,
+          includeAuth: true,
+        });
 
-      pageData = this._getResponseFromDynamicApi({ response: { statusCode: 'OK', body: pagedResponse, headers } }, nextLink);
+        pageData = this._getResponseFromDynamicApi({ response: { statusCode: 'OK', body: pagedResponse, headers } }, nextLink);
 
-      if (!pageData || !Array.isArray(pageData.value)) {
-        throw new Error(`Invalid response at nextLink: ${nextLink}`);
+        if (!pageData || !Array.isArray(pageData.value)) {
+          throw new Error(`Invalid response at nextLink: ${nextLink}`);
+        }
+
+        allValues.push(...pageData.value);
+        nextLink = pageData.nextLink || pageData['@odata.nextLink'];
+      } catch (error: any) {
+        incomplete = true;
+        lastError = parseErrorMessage(error);
+        break;
       }
-
-      allValues.push(...pageData.value);
-      nextLink = pageData.nextLink || pageData['@odata.nextLink'];
     }
 
-    return allValues;
+    return {
+      values: allValues,
+      incomplete,
+      error: lastError,
+    };
   }
 
   private _handleError(ex: any, intl: IntlShape, method: string, baseUri: string, path: string) {
