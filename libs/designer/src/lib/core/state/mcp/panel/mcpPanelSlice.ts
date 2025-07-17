@@ -16,12 +16,10 @@ export interface PanelState {
   isOpen: boolean;
   currentPanelView?: ConfigPanelView;
   selectedTabId?: string;
-  selectedOperationId?: string;
 }
 
 const initialState: PanelState = {
   isOpen: false,
-  selectedOperationId: undefined,
 };
 
 export const mcpPanelSlice = createSlice({
@@ -32,19 +30,15 @@ export const mcpPanelSlice = createSlice({
       state,
       action: PayloadAction<{
         panelView: ConfigPanelView;
+        selectedTabId?: string;
       }>
     ) => {
       state.currentPanelView = action.payload.panelView;
+      state.selectedTabId = action.payload.selectedTabId;
       state.isOpen = true;
     },
 
-    openOperationPanelView: (
-      state,
-      action: PayloadAction<{
-        selectedOperationId: string | undefined;
-      }>
-    ) => {
-      state.selectedOperationId = action.payload.selectedOperationId;
+    openOperationPanelView: (state) => {
       state.currentPanelView = McpPanelView.EditOperation;
       state.isOpen = true;
     },

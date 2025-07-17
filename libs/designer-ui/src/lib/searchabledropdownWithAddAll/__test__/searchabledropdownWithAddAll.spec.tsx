@@ -2,20 +2,18 @@ import React from 'react';
 import type { SearchableDropdownWithAddAllProps } from '..';
 import { SearchableDropdownWithAddAll } from '..';
 import renderer from 'react-test-renderer';
-
 import { describe, vi, it, expect } from 'vitest';
-describe('lib/searchabledropdownwithaddall', () => {
-  it('should create a dropdown with an add all and remove all buttons', () => {
+
+describe('SearchableDropdownWithAddAll', () => {
+  it('renders a dropdown with both Add All and Remove All buttons', () => {
     const props: SearchableDropdownWithAddAllProps = {
-      dropdownProps: {
-        multiSelect: true,
-        placeholder: 'Select an option',
-        options: [
-          { key: 'foo', text: 'Foo' },
-          { key: 'bar', text: 'Bar' },
-          { key: 'baz', text: 'Baz' },
-        ],
-      },
+      multiselect: true,
+      placeholder: 'Select an option',
+      options: [
+        { key: 'foo', text: 'Foo' },
+        { key: 'bar', text: 'Bar' },
+        { key: 'baz', text: 'Baz' },
+      ],
       onItemSelectionChanged: vi.fn(),
       addAllButtonText: 'Add all',
       addAllButtonTooltip: 'Add all tooltip',
@@ -26,31 +24,28 @@ describe('lib/searchabledropdownwithaddall', () => {
       onShowAllClick: vi.fn(),
       onHideAllClick: vi.fn(),
     };
-    const component = <SearchableDropdownWithAddAll {...props} />;
-    const renderedComponent = renderer.create(component).toJSON();
-    expect(renderedComponent).toMatchSnapshot();
+
+    const rendered = renderer.create(<SearchableDropdownWithAddAll {...props} />).toJSON();
+    expect(rendered).toMatchSnapshot();
   });
-});
-describe('lib/searchabledropdownwithaddall', () => {
-  it('should create a dropdown with an add all only', () => {
+
+  it('renders a dropdown with only Add All button', () => {
     const props: SearchableDropdownWithAddAllProps = {
-      dropdownProps: {
-        multiSelect: true,
-        placeholder: 'Select an option',
-        options: [
-          { key: 'foo', text: 'Foo' },
-          { key: 'bar', text: 'Bar' },
-          { key: 'baz', text: 'Baz' },
-        ],
-      },
+      multiselect: true,
+      placeholder: 'Select an option',
+      options: [
+        { key: 'foo', text: 'Foo' },
+        { key: 'bar', text: 'Bar' },
+        { key: 'baz', text: 'Baz' },
+      ],
       onItemSelectionChanged: vi.fn(),
       addAllButtonText: 'Add all',
       addAllButtonTooltip: 'Add all tooltip',
       addAllButtonEnabled: true,
       onShowAllClick: vi.fn(),
     };
-    const component = <SearchableDropdownWithAddAll {...props} />;
-    const renderedComponent = renderer.create(component).toJSON();
-    expect(renderedComponent).toMatchSnapshot();
+
+    const rendered = renderer.create(<SearchableDropdownWithAddAll {...props} />).toJSON();
+    expect(rendered).toMatchSnapshot();
   });
 });

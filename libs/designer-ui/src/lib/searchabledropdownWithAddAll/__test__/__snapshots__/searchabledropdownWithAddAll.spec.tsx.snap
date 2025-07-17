@@ -1,137 +1,153 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`lib/searchabledropdownwithaddall > should create a dropdown with an add all and remove all buttons 1`] = `
+exports[`SearchableDropdownWithAddAll > renders a dropdown with both Add All and Remove All buttons 1`] = `
 <div
-  className="ms-Stack css-109"
+  className="___17zhbte_0000000 f22iagw f1vx9l62 f19gb1f4"
 >
   <div
-    className="ms-Dropdown-container ___125m06r_xtuee40 f1lmfglv f1ujusj6 f19f4twv fcgxt0o fly5x3f"
+    className="___22p5070_0000000 f22iagw f1063pyq f19gb1f4 f6jr5hl"
   >
     <div
-      aria-expanded="false"
-      aria-haspopup="listbox"
-      className="ms-Dropdown dropdown-110"
-      data-is-focusable={true}
-      data-ktp-target={true}
-      id="Dropdown0"
-      onBlur={[Function]}
-      onChange={[Function]}
-      onClick={[Function]}
-      onFocus={[Function]}
-      onKeyDown={[Function]}
-      onKeyUp={[Function]}
-      onMouseDown={[Function]}
-      role="combobox"
-      tabIndex={0}
+      className="fui-Combobox ___34fgqg0_6prtae0 f122n59 ft85np5 f1ewtqcl f14mj54c fwk3njj fz17x9o f1869bpl f1exfvgq f10pi13n fmrv4ls f14a1fxs f3e99gv fhljsf7 f1gw3sf2 f13zj6fq f1mdlcz9 f1a7op3 f1gboi2j f1cjjd47 f145g4dw f1kp91vd f1ibwz09 f1mnjydx f13evtba f1yk9hq fhwpy7i f14ee0xe f1xhbsuh fv8e3ye ftb5wc6 fjw5xc1 f1xdyd5c fatpbeo fb7uyps f1cmft4k f1x58t8o f1ibeo51 fxugw4r f1c1zstj fhz96rm f1d2rq10 f11gcy0p fvcxoqz f1ub3y4t flmw63s f1m52nbi fvs00aa f1assf6x fqhmt4z f4ruux4 fly5x3f f1lmfglv fz7g6wx"
     >
+      <input
+        aria-expanded={false}
+        className="fui-Combobox__input ___1srlkgg_55r68t0 f1ub7u0d f1c21dwh f3bhgqh f19n0e5 fk6fouc ftqa4ok fwyc1cq f13ta7ih fkhj508 figsok6 f1i3iumi fzy81xo"
+        disabled={false}
+        onBlur={[Function]}
+        onChange={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onKeyDown={[Function]}
+        placeholder="Select an option"
+        role="combobox"
+        type="text"
+        value=""
+      />
       <span
-        aria-invalid={false}
-        className="ms-Dropdown-title ms-Dropdown-titleIsPlaceHolder title-111"
-        id="Dropdown0-option"
+        aria-expanded={false}
+        aria-label="Open"
+        className="fui-Combobox__expandIcon ___1ng6b7f_ujg4670 f1ewtqcl fxkbij4 f1k6fduh ftgm304 fe5j1ua fvc9v3g f1h9en5y"
+        onMouseDown={[Function]}
+        role="button"
       >
-        Select an option
-      </span>
-      <span
-        className="ms-Dropdown-caretDownWrapper caretDownWrapper-112"
-      >
-        <i
+        <svg
           aria-hidden={true}
-          className="ms-Dropdown-caretDown caretDown-130"
-          data-icon-name="ChevronDown"
+          className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+          fill="currentColor"
+          height="1em"
+          viewBox="0 0 20 20"
+          width="1em"
+          xmlns="http://www.w3.org/2000/svg"
         >
-          
-        </i>
+          <path
+            d="M15.85 7.65c.2.2.2.5 0 .7l-5.46 5.49a.55.55 0 0 1-.78 0L4.15 8.35a.5.5 0 1 1 .7-.7L10 12.8l5.15-5.16c.2-.2.5-.2.7 0Z"
+            fill="currentColor"
+          />
+        </svg>
       </span>
     </div>
+    <div
+      className="___akfgjl0_0000000 f22iagw f19gb1f4 f122n59 fi64zpg"
+    >
+      <button
+        aria-label="Add all tooltip"
+        className="fui-Button r1alrhcs ___4925fp0_1xt5260 f1c21dwh fjxutwb fwiml72 fh7ncta fneth5b ft85np5 fy9rknc figsok6 fwrc4pm fazmxh"
+        data-automation-id="msla-add-all-button"
+        disabled={false}
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onPointerEnter={[Function]}
+        onPointerLeave={[Function]}
+        type="button"
+      >
+        Add all
+      </button>
+      <button
+        aria-label="Remove all tooltip"
+        className="fui-Button r1alrhcs ___4925fp0_1xt5260 f1c21dwh fjxutwb fwiml72 fh7ncta fneth5b ft85np5 fy9rknc figsok6 fwrc4pm fazmxh"
+        data-automation-id="msla-remove-all-button"
+        disabled={false}
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onPointerEnter={[Function]}
+        onPointerLeave={[Function]}
+        type="button"
+      >
+        Remove all
+      </button>
+    </div>
   </div>
-  <button
-    aria-label="Add all tooltip"
-    className="fui-Button r1alrhcs ___4925fp0_1xt5260 f1c21dwh fjxutwb fwiml72 fh7ncta fneth5b ft85np5 fy9rknc figsok6 fwrc4pm fazmxh"
-    data-automation-id="msla-add-all-button"
-    disabled={false}
-    onBlur={[Function]}
-    onClick={[Function]}
-    onFocus={[Function]}
-    onPointerEnter={[Function]}
-    onPointerLeave={[Function]}
-    type="button"
-  >
-    Add all
-  </button>
-  <button
-    aria-label="Remove all tooltip"
-    className="fui-Button r1alrhcs ___4925fp0_1xt5260 f1c21dwh fjxutwb fwiml72 fh7ncta fneth5b ft85np5 fy9rknc figsok6 fwrc4pm fazmxh"
-    data-automation-id="msla-remove-all-button"
-    disabled={false}
-    onBlur={[Function]}
-    onClick={[Function]}
-    onFocus={[Function]}
-    onPointerEnter={[Function]}
-    onPointerLeave={[Function]}
-    type="button"
-  >
-    Remove all
-  </button>
 </div>
 `;
 
-exports[`lib/searchabledropdownwithaddall > should create a dropdown with an add all only 1`] = `
+exports[`SearchableDropdownWithAddAll > renders a dropdown with only Add All button 1`] = `
 <div
-  className="ms-Stack css-109"
+  className="___17zhbte_0000000 f22iagw f1vx9l62 f19gb1f4"
 >
   <div
-    className="ms-Dropdown-container ___125m06r_xtuee40 f1lmfglv f1ujusj6 f19f4twv fcgxt0o fly5x3f"
+    className="___22p5070_0000000 f22iagw f1063pyq f19gb1f4 f6jr5hl"
   >
     <div
-      aria-expanded="false"
-      aria-haspopup="listbox"
-      className="ms-Dropdown dropdown-110"
-      data-is-focusable={true}
-      data-ktp-target={true}
-      id="Dropdown1"
-      onBlur={[Function]}
-      onChange={[Function]}
-      onClick={[Function]}
-      onFocus={[Function]}
-      onKeyDown={[Function]}
-      onKeyUp={[Function]}
-      onMouseDown={[Function]}
-      role="combobox"
-      tabIndex={0}
+      className="fui-Combobox ___34fgqg0_6prtae0 f122n59 ft85np5 f1ewtqcl f14mj54c fwk3njj fz17x9o f1869bpl f1exfvgq f10pi13n fmrv4ls f14a1fxs f3e99gv fhljsf7 f1gw3sf2 f13zj6fq f1mdlcz9 f1a7op3 f1gboi2j f1cjjd47 f145g4dw f1kp91vd f1ibwz09 f1mnjydx f13evtba f1yk9hq fhwpy7i f14ee0xe f1xhbsuh fv8e3ye ftb5wc6 fjw5xc1 f1xdyd5c fatpbeo fb7uyps f1cmft4k f1x58t8o f1ibeo51 fxugw4r f1c1zstj fhz96rm f1d2rq10 f11gcy0p fvcxoqz f1ub3y4t flmw63s f1m52nbi fvs00aa f1assf6x fqhmt4z f4ruux4 fly5x3f f1lmfglv fz7g6wx"
     >
+      <input
+        aria-expanded={false}
+        className="fui-Combobox__input ___1srlkgg_55r68t0 f1ub7u0d f1c21dwh f3bhgqh f19n0e5 fk6fouc ftqa4ok fwyc1cq f13ta7ih fkhj508 figsok6 f1i3iumi fzy81xo"
+        disabled={false}
+        onBlur={[Function]}
+        onChange={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onKeyDown={[Function]}
+        placeholder="Select an option"
+        role="combobox"
+        type="text"
+        value=""
+      />
       <span
-        aria-invalid={false}
-        className="ms-Dropdown-title ms-Dropdown-titleIsPlaceHolder title-111"
-        id="Dropdown1-option"
+        aria-expanded={false}
+        aria-label="Open"
+        className="fui-Combobox__expandIcon ___1ng6b7f_ujg4670 f1ewtqcl fxkbij4 f1k6fduh ftgm304 fe5j1ua fvc9v3g f1h9en5y"
+        onMouseDown={[Function]}
+        role="button"
       >
-        Select an option
-      </span>
-      <span
-        className="ms-Dropdown-caretDownWrapper caretDownWrapper-112"
-      >
-        <i
+        <svg
           aria-hidden={true}
-          className="ms-Dropdown-caretDown caretDown-130"
-          data-icon-name="ChevronDown"
+          className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+          fill="currentColor"
+          height="1em"
+          viewBox="0 0 20 20"
+          width="1em"
+          xmlns="http://www.w3.org/2000/svg"
         >
-          
-        </i>
+          <path
+            d="M15.85 7.65c.2.2.2.5 0 .7l-5.46 5.49a.55.55 0 0 1-.78 0L4.15 8.35a.5.5 0 1 1 .7-.7L10 12.8l5.15-5.16c.2-.2.5-.2.7 0Z"
+            fill="currentColor"
+          />
+        </svg>
       </span>
     </div>
+    <div
+      className="___akfgjl0_0000000 f22iagw f19gb1f4 f122n59 fi64zpg"
+    >
+      <button
+        aria-label="Add all tooltip"
+        className="fui-Button r1alrhcs ___4925fp0_1xt5260 f1c21dwh fjxutwb fwiml72 fh7ncta fneth5b ft85np5 fy9rknc figsok6 fwrc4pm fazmxh"
+        data-automation-id="msla-add-all-button"
+        disabled={false}
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onPointerEnter={[Function]}
+        onPointerLeave={[Function]}
+        type="button"
+      >
+        Add all
+      </button>
+    </div>
   </div>
-  <button
-    aria-label="Add all tooltip"
-    className="fui-Button r1alrhcs ___4925fp0_1xt5260 f1c21dwh fjxutwb fwiml72 fh7ncta fneth5b ft85np5 fy9rknc figsok6 fwrc4pm fazmxh"
-    data-automation-id="msla-add-all-button"
-    disabled={false}
-    onBlur={[Function]}
-    onClick={[Function]}
-    onFocus={[Function]}
-    onPointerEnter={[Function]}
-    onPointerLeave={[Function]}
-    type="button"
-  >
-    Add all
-  </button>
 </div>
 `;

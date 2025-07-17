@@ -11,6 +11,7 @@ import { selectConnectorId, selectOperations } from '../../../core/state/mcp/con
 import { ConnectorIconWithName } from '../../templates/connections/connector';
 import { useConnectionById } from '../../../core/queries/connections';
 import { getResourceNameFromId } from '@microsoft/logic-apps-shared';
+import constants from '../../../common/constants';
 
 const connectorTableCellStyles = {
   border: 'none',
@@ -126,15 +127,21 @@ export const ListConnectors = () => {
 
   const handleEditConnector = useCallback(
     (connectorId: string) => {
+      // Get all operations for this specific connector
+      const connectorOperations = Object.entries(operationInfos)
+        .filter(([_, info]) => info?.connectorId === connectorId)
+        .map(([operationId, _]) => operationId);
+
+      dispatch(selectConnectorId(connectorId));
+      dispatch(selectOperations(connectorOperations)); // Pass the actual operations instead of empty array
       dispatch(
         openConnectorPanelView({
           panelView: McpPanelView.SelectConnector,
+          selectedTabId: constants.MCP_PANEL_TAB_NAMES.OPERATIONS,
         })
       );
-      dispatch(selectConnectorId(connectorId));
-      dispatch(selectOperations([]));
     },
-    [dispatch]
+    [dispatch, operationInfos] // Add operationInfos to dependencies
   );
 
   const handleDeleteConnector = useCallback(

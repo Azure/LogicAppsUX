@@ -19,6 +19,7 @@ import { useIntl } from 'react-intl';
 import { useConnectorSectionStyles } from '../wizard/styles';
 import { deinitializeNodes, deinitializeOperationInfo } from '../../../core/state/operation/operationMetadataSlice';
 import DefaultIcon from '../../../common/images/recommendation/defaulticon.svg';
+import { selectOperationIdToEdit } from '../../../core/state/mcp/connector/connectorSlice';
 
 export const ListOperations = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -61,11 +62,8 @@ export const ListOperations = () => {
 
   const handleEditOperation = useCallback(
     (operationId: string) => {
-      dispatch(
-        openOperationPanelView({
-          selectedOperationId: operationId,
-        })
-      );
+      dispatch(selectOperationIdToEdit(operationId));
+      dispatch(openOperationPanelView());
     },
     [dispatch]
   );

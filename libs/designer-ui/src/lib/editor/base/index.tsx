@@ -222,7 +222,7 @@ export const BaseEditor = ({
               ariaDescribedBy={id}
               tabIndex={0}
               title={placeholder}
-              style={{ paddingInlineEnd: '32px' }}
+              style={{ paddingInlineEnd: agentParameterButtonProps?.showAgentParameterButton ? '32px' : '0' }}
             />
           }
           placeholder={
