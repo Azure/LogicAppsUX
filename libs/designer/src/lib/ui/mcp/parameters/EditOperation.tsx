@@ -159,9 +159,9 @@ export const EditOperation = () => {
     }),
   };
 
-  const handleDescriptionInputChange = useCallback((description: string) => {
+  const handleDescriptionInputChange = (description: string) => {
     setLocalDescription(description);
-  }, []);
+  };
 
   const handleDescriptionBlur = useCallback(() => {
     if (!selectedOperationId) {
