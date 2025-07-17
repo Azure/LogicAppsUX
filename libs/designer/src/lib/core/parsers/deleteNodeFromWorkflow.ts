@@ -50,7 +50,7 @@ export const deleteNodeFromWorkflow = (
     const allAgents = Object.keys(state.operations).filter((opId) => equals(getRecordEntry(state.operations, opId)?.type, 'agent'));
     for (const sourceId of allAgents) {
       // Delete any handoff tools that are targetting the node
-      const sourceToolIds = Object.entries((state.nodesMetadata[sourceId] as any)?.handoffs)
+      const sourceToolIds = Object.entries((state.nodesMetadata[sourceId] as any)?.handoffs ?? {})
         .filter(([, targetId]) => targetId === nodeId)
         .map(([toolId, _]) => toolId);
       for (const sourceToolId of sourceToolIds) {
