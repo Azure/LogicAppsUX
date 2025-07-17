@@ -1,5 +1,5 @@
-import { Text, Textarea, Field, Divider, Badge, Card, Label, Button } from '@fluentui/react-components';
-import { bundleIcon, Settings24Regular, Settings24Filled, CheckmarkCircle16Regular, Dismiss16Regular } from '@fluentui/react-icons';
+import { Text, Textarea, Field, Divider, Card, Label, Button } from '@fluentui/react-components';
+import { Dismiss16Regular } from '@fluentui/react-icons';
 import type { RootState, AppDispatch } from '../../../core/state/mcp/store';
 import { useSelector, useDispatch } from 'react-redux';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -15,8 +15,6 @@ import {
   type UpdateParametersPayload,
 } from '../../../core/state/operation/operationMetadataSlice';
 import { getGroupIdFromParameterId } from '../../../core/utils/parameters/helper';
-
-const SettingsIcon = bundleIcon(Settings24Filled, Settings24Regular);
 
 export const EditOperation = () => {
   const intl = useIntl();
@@ -348,28 +346,6 @@ export const EditOperation = () => {
 
   return (
     <div className={styles.container}>
-      {/* Operation Header */}
-      <div className={styles.operationHeader}>
-        <div className={styles.operationIcon}>
-          <SettingsIcon />
-        </div>
-        <div className={styles.operationInfo}>
-          <Text size={500} className={styles.operationTitle}>
-            {metadata?.summary ?? selectedOperationId}
-          </Text>
-          <Text className={styles.operationMeta}>
-            {operationInfo.type} • {operationInfo.connectorId}
-          </Text>
-        </div>
-        <div className={styles.statusBadge}>
-          <Badge appearance="filled" icon={<CheckmarkCircle16Regular />} className={styles.savedBadge}>
-            {INTL_TEXT.saved}
-          </Badge>
-        </div>
-      </div>
-
-      <Divider className={styles.divider} />
-
       {/* Description Section */}
       <div className={styles.section}>
         <Field label={INTL_TEXT.descriptionLabel} className={styles.descriptionField}>
