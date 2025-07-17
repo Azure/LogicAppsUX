@@ -22,7 +22,6 @@ import { selectConnectorId, selectOperations } from '../../../core/state/mcp/con
 import { ConnectorIconWithName } from '../../templates/connections/connector';
 import { useConnectionById } from '../../../core/queries/connections';
 import { getResourceNameFromId } from '@microsoft/logic-apps-shared';
-import constants from '../../../common/constants';
 
 const connectorTableCellStyles = {
   border: 'none',
@@ -153,8 +152,7 @@ export const ListConnectors = () => {
       dispatch(selectOperations(connectorOperations)); // Pass the actual operations instead of empty array
       dispatch(
         openConnectorPanelView({
-          panelView: McpPanelView.SelectConnector,
-          selectedTabId: constants.MCP_PANEL_TAB_NAMES.OPERATIONS,
+          panelView: McpPanelView.SelectOperation,
         })
       );
     },
