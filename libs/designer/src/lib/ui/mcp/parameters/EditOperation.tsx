@@ -334,16 +334,20 @@ export const EditOperation = () => {
   const hasOptionalParameters = optionalDropdownOptions.length > 0;
   const hasVisibleConditionalParameters = allVisibleParameters.some(({ isConditional }) => isConditional);
 
-  const addNewParamText = intl.formatMessage(
-    {
-      defaultMessage: 'Showing {countShowing} of {countTotal}',
-      id: 'jTHUFb',
-      description: 'Placeholder text for the number of advanced parameters showing',
-    },
-    {
-      countShowing: allConditionalSettings.length - conditionallyInvisibleSettings.length,
-      countTotal: allConditionalSettings.length,
-    }
+  const addNewParamText = useMemo(
+    () =>
+      intl.formatMessage(
+        {
+          defaultMessage: 'Showing {countShowing} of {countTotal}',
+          id: 'jTHUFb',
+          description: 'Placeholder text for the number of advanced parameters showing',
+        },
+        {
+          countShowing: allConditionalSettings.length - conditionallyInvisibleSettings.length,
+          countTotal: allConditionalSettings.length,
+        }
+      ),
+    [intl, allConditionalSettings, conditionallyInvisibleSettings]
   );
 
   return (
