@@ -34,7 +34,7 @@ export const resolveConnectionsReferences = (
   }
 };
 
-function replaceAllOccurrences(content: string, searchValue: string, value: any): string {
+export function replaceAllOccurrences(content: string, searchValue: string, value: any): string {
   let result = replaceIfFoundAndVerifyJson(content, `"${searchValue}"`, JSON.stringify(value));
   if (result) {
     return result;
@@ -48,14 +48,12 @@ function replaceAllOccurrences(content: string, searchValue: string, value: any)
   return content.replaceAll(searchValue, '');
 }
 
-function replaceIfFoundAndVerifyJson(stringifiedJson: string, searchValue: string, value: string): string | undefined {
+export function replaceIfFoundAndVerifyJson(stringifiedJson: string, searchValue: string, value: string): string | undefined {
   if (!stringifiedJson.includes(searchValue)) {
     return undefined;
   }
 
-  const result = stringifiedJson.replace(searchValue, () => {
-    return value;
-  });
+  const result = stringifiedJson.replaceAll(searchValue, value);
 
   try {
     JSON.parse(result);
