@@ -103,8 +103,11 @@ export const useEditOperationStyles = makeStyles({
     borderTopRightRadius: tokens.borderRadiusMedium,
   },
 
-  parameterCardContent: {
-    padding: tokens.spacingHorizontalS,
+  requiredSection: {
+    padding: `0px ${tokens.spacingHorizontalM}`,
+    gap: tokens.spacingVerticalS,
+    display: 'flex',
+    flexDirection: 'column',
   },
 
   parameterList: {

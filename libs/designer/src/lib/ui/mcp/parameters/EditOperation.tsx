@@ -407,58 +407,58 @@ export const EditOperation = () => {
         {hasVisibleParameters || hasOptionalParameters ? (
           <div className={styles.parametersSection}>
             <Card className={styles.parameterCard}>
-              <Label required>
-                <Text size={400} weight="semibold" className={styles.sectionTitle}>
-                  {INTL_TEXT.required}
-                </Text>
-              </Label>
-
-              <div className={styles.parameterCardContent}>
+              <div className={styles.requiredSection}>
+                <Label required>
+                  <Text size={400} weight="semibold" className={styles.sectionTitle}>
+                    {INTL_TEXT.required}
+                  </Text>
+                </Label>
                 {hasRequiredParameters && (
                   <div className={styles.parameterList}>
                     {requiredParams.map(({ param, isConditional }) => renderParameterField(param, isConditional))}
                   </div>
                 )}
-
-                {hasVisibleParameters && <Divider className={styles.inlineParameterDivider} />}
-
-                <Accordion collapsible={true} defaultOpenItems={['optional-parameters']}>
-                  <AccordionItem value="optional-parameters">
-                    <AccordionHeader>
-                      <Text weight="semibold">{INTL_TEXT.optionalParameters}</Text>
-                    </AccordionHeader>
-                    <AccordionPanel>
-                      {/* Optional Parameters Dropdown */}
-                      {allConditionalSettings.length > 0 ? (
-                        <div className={styles.optionalParametersSection}>
-                          <SearchableDropdownWithAddAll
-                            key={`dropdown-${selectedOperationId}-${optionalDropdownOptions.length}`}
-                            label={INTL_TEXT.selectParameters}
-                            options={optionalDropdownOptions}
-                            placeholder={addNewParamText}
-                            multiselect={true}
-                            onItemSelectionChanged={handleOptionalParameterToggle}
-                            addAllButtonText={INTL_TEXT.showAllOptional}
-                            addAllButtonTooltip={INTL_TEXT.showAllOptionalTooltip}
-                            addAllButtonEnabled={optionalDropdownOptions.length > 0}
-                            removeAllButtonText={INTL_TEXT.hideAllOptional}
-                            removeAllButtonTooltip={INTL_TEXT.hideAllOptionalTooltip}
-                            removeAllButtonEnabled={hasVisibleConditionalParameters}
-                            onShowAllClick={handleShowAllOptional}
-                            onHideAllClick={handleHideAllOptional}
-                          />
-                        </div>
-                      ) : null}
-
-                      {hasVisibleConditionalParameters && (
-                        <div className={styles.parameterList}>
-                          {visibleConditionalParams.map(({ param, isConditional }) => renderParameterField(param, isConditional))}
-                        </div>
-                      )}
-                    </AccordionPanel>
-                  </AccordionItem>
-                </Accordion>
               </div>
+              {allConditionalSettings ? (
+                <div>
+                  <Accordion collapsible={true} defaultOpenItems={['optional-parameters']}>
+                    <AccordionItem value="optional-parameters">
+                      <AccordionHeader>
+                        <Text weight="semibold">{INTL_TEXT.optionalParameters}</Text>
+                      </AccordionHeader>
+                      <AccordionPanel className={styles.parameterList}>
+                        {/* Optional Parameters Dropdown */}
+                        {allConditionalSettings.length > 0 ? (
+                          <div className={styles.optionalParametersSection}>
+                            <SearchableDropdownWithAddAll
+                              key={`dropdown-${selectedOperationId}-${optionalDropdownOptions.length}`}
+                              label={INTL_TEXT.selectParameters}
+                              options={optionalDropdownOptions}
+                              placeholder={addNewParamText}
+                              multiselect={true}
+                              onItemSelectionChanged={handleOptionalParameterToggle}
+                              addAllButtonText={INTL_TEXT.showAllOptional}
+                              addAllButtonTooltip={INTL_TEXT.showAllOptionalTooltip}
+                              addAllButtonEnabled={optionalDropdownOptions.length > 0}
+                              removeAllButtonText={INTL_TEXT.hideAllOptional}
+                              removeAllButtonTooltip={INTL_TEXT.hideAllOptionalTooltip}
+                              removeAllButtonEnabled={hasVisibleConditionalParameters}
+                              onShowAllClick={handleShowAllOptional}
+                              onHideAllClick={handleHideAllOptional}
+                            />
+                          </div>
+                        ) : null}
+
+                        {hasVisibleConditionalParameters && (
+                          <div className={styles.parameterList}>
+                            {visibleConditionalParams.map(({ param, isConditional }) => renderParameterField(param, isConditional))}
+                          </div>
+                        )}
+                      </AccordionPanel>
+                    </AccordionItem>
+                  </Accordion>
+                </div>
+              ) : null}
             </Card>
           </div>
         ) : (
