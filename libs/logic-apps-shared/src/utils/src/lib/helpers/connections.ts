@@ -339,7 +339,7 @@ export const resolveConnectionsReferences = (
 
   try {
     return JSON.parse(result);
-  } catch (_error) {
+  } catch {
     throw new Error('Failure in resolving connection parameterization');
   }
 };
@@ -358,7 +358,7 @@ export function replaceAllOccurrences(content: string, searchValue: string, valu
   return content.replaceAll(searchValue, '');
 }
 
-export function replaceIfFoundAndVerifyJson(stringifiedJson: string, searchValue: string, value: string): string | undefined {
+function replaceIfFoundAndVerifyJson(stringifiedJson: string, searchValue: string, value: string): string | undefined {
   if (!stringifiedJson.includes(searchValue)) {
     return undefined;
   }
