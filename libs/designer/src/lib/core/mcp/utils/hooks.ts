@@ -34,7 +34,7 @@ export const useEditSnapshot = (operationId: string | null) => {
 
         LoggerService().log({
           level: LogEntryLevel.Verbose,
-          area: 'MCP_EditOperation',
+          area: 'MCP.EditOperation',
           message: 'Created editing snapshot',
           args: [operationId],
         });
@@ -52,7 +52,7 @@ export const useEditSnapshot = (operationId: string | null) => {
     if (!operationId || !snapshot) {
       LoggerService().log({
         level: LogEntryLevel.Warning,
-        area: 'MCP_EditOperation',
+        area: 'MCP.EditOperation',
         message: 'Cannot restore: no operation or snapshot',
         args: [operationId, !!snapshot],
       });
@@ -93,7 +93,7 @@ export const useEditSnapshot = (operationId: string | null) => {
 
     LoggerService().log({
       level: LogEntryLevel.Verbose,
-      area: 'MCP_EditOperation',
+      area: 'MCP.EditOperation',
       message: 'Restored state from snapshot',
       args: [operationId, parametersToRestore.length],
     });
@@ -105,7 +105,7 @@ export const useEditSnapshot = (operationId: string | null) => {
     if (operationId) {
       LoggerService().log({
         level: LogEntryLevel.Verbose,
-        area: 'MCP_EditOperation',
+        area: 'MCP.EditOperation',
         message: 'Cleared editing snapshot',
         args: [operationId],
       });

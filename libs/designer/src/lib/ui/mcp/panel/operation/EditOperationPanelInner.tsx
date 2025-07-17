@@ -49,7 +49,7 @@ export const EditOperationPanelInner = () => {
       LoggerService().log({
         level: LogEntryLevel.Error,
         message: 'Cannot save: missing operation data',
-        area: 'MCP_EditOperation',
+        area: 'MCP.EditOperation',
       });
       return;
     }
