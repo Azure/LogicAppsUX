@@ -17,7 +17,7 @@ import { getParametersJson, saveWorkflowParameterRecords } from './parameter';
 import { deleteCustomCode, getCustomCode, getCustomCodeAppFilesToUpdate, uploadCustomCode } from './customcode';
 import { addNewFileInCSharpProject } from './updateBuildFile';
 import type { ConnectionAndAppSetting } from '@microsoft/logic-apps-shared';
-import { HTTP_METHODS, isString } from '@microsoft/logic-apps-shared';
+import { HTTP_METHODS, isString, resolveConnectionsReferences } from '@microsoft/logic-apps-shared';
 import type { ParsedSite } from '@microsoft/vscode-azext-azureappservice';
 import { nonNullValue } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -32,7 +32,7 @@ import type {
   CustomCodeFileNameMapping,
   AllCustomCodeFiles,
 } from '@microsoft/vscode-extension-logic-apps';
-import { JwtTokenHelper, JwtTokenConstants, resolveConnectionsReferences } from '@microsoft/vscode-extension-logic-apps';
+import { JwtTokenHelper, JwtTokenConstants } from '@microsoft/vscode-extension-logic-apps';
 import axios from 'axios';
 import * as fse from 'fs-extra';
 import * as path from 'path';
