@@ -25,6 +25,7 @@ import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 import { channelsTab } from './tabs/channelsTab';
 import { handoffTab } from './tabs/handoffTab';
+import { useChannelsTabForAgentLoop } from '../../../common/hooks/experimentation';
 
 export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
   const intl = useIntl();
@@ -43,6 +44,7 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
   const isA2AWorkflow = useIsA2AWorkflow();
   const parameterValidationErrors = useParameterValidationErrors(nodeId);
   const settingValidationErrors = useSettingValidationErrors(nodeId);
+  const enableChannelsTab = useChannelsTabForAgentLoop();
 
   const tabProps: PanelTabProps = useMemo(
     () => ({
@@ -89,9 +91,10 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
   const channelsTabItem = useMemo(
     () => ({
       ...channelsTab(intl, tabProps),
-      visible: isAgentNode && !isA2AWorkflow,
+      // Note: Channels tab is disabled until we have the teams integration ready
+      visible: enableChannelsTab && isAgentNode && !isA2AWorkflow,
     }),
-    [intl, tabProps, isAgentNode, isA2AWorkflow]
+    [intl, tabProps, isAgentNode, isA2AWorkflow, enableChannelsTab]
   );
 
   const handoffTabItem = useMemo(
