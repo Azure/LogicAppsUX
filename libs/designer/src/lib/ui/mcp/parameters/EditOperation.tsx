@@ -1,4 +1,16 @@
-import { Text, Textarea, Field, Divider, Card, Label, Button } from '@fluentui/react-components';
+import {
+  Text,
+  Textarea,
+  Field,
+  Divider,
+  Card,
+  Label,
+  Button,
+  Accordion,
+  AccordionItem,
+  AccordionHeader,
+  AccordionPanel,
+} from '@fluentui/react-components';
 import { Dismiss16Regular } from '@fluentui/react-icons';
 import type { RootState, AppDispatch } from '../../../core/state/mcp/store';
 import { useSelector, useDispatch } from 'react-redux';
@@ -42,10 +54,19 @@ export const EditOperation = () => {
     }
   }, [metadata, metadata?.description, selectedOperationId]);
 
-  const { allVisibleParameters, optionalDropdownOptions, allConditionalSettings, conditionallyInvisibleSettings } = useMemo(() => {
+  const {
+    allVisibleParameters,
+    requiredParams,
+    visibleConditionalParams,
+    optionalDropdownOptions,
+    allConditionalSettings,
+    conditionallyInvisibleSettings,
+  } = useMemo(() => {
     if (!parameters?.parameterGroups) {
       return {
         allVisibleParameters: [],
+        requiredParams: [],
+        visibleConditionalParams: [],
         optionalDropdownOptions: [],
         allConditionalSettings: [],
         conditionallyInvisibleSettings: [],
@@ -83,6 +104,8 @@ export const EditOperation = () => {
 
     return {
       allVisibleParameters: allVisible,
+      requiredParams,
+      visibleConditionalParams,
       optionalDropdownOptions: dropdownOptions,
       allConditionalSettings: allConditional,
       conditionallyInvisibleSettings: invisible,
@@ -100,10 +123,20 @@ export const EditOperation = () => {
       defaultMessage: 'Parameters',
       description: 'Title for the parameters section',
     }),
-    addOptionalParameters: intl.formatMessage({
-      id: 'm+jXp8',
-      defaultMessage: 'Add optional parameters',
-      description: 'Label for the dropdown to add optional parameters',
+    required: intl.formatMessage({
+      id: 'WQT8jf',
+      defaultMessage: 'Required',
+      description: 'Title for the required section',
+    }),
+    optionalParameters: intl.formatMessage({
+      id: 'VQ1BxQ',
+      defaultMessage: 'Optional parameters',
+      description: 'Label for the section to configure optional parameters',
+    }),
+    selectParameters: intl.formatMessage({
+      id: '1h43JZ',
+      defaultMessage: 'Select parameters',
+      description: 'Label for the dropdown to select parameters',
     }),
     showAllOptional: intl.formatMessage({
       id: 'EgGZJG',
@@ -280,10 +313,19 @@ export const EditOperation = () => {
     (param: ParameterInfo, isConditional = false) => {
       return (
         <div key={param.id} className={styles.parameterField}>
-          <div className={styles.parameterHeader}>
-            <Label className={styles.parameterLabel} required={param.required} title={param.label}>
-              {param.label}
-            </Label>
+          <Label className={styles.parameterLabel} required={param.required} title={param.label}>
+            {param.label}
+          </Label>
+          <div className={styles.parameterValueSection}>
+            <StringEditor
+              className="msla-setting-token-editor-container"
+              initialValue={param.value}
+              editorBlur={(changeState) => {
+                const newValue = changeState.value;
+                handleParameterValueChange(param.id, newValue);
+              }}
+              placeholder={param.placeholder ?? `Enter ${param.label?.toLowerCase()}`}
+            />
             {isConditional && (
               <Button
                 appearance="subtle"
@@ -295,21 +337,12 @@ export const EditOperation = () => {
               />
             )}
           </div>
-          <StringEditor
-            className="msla-setting-token-editor-container"
-            initialValue={param.value}
-            editorBlur={(changeState) => {
-              const newValue = changeState.value;
-              handleParameterValueChange(param.id, newValue);
-            }}
-            placeholder={param.placeholder ?? `Enter ${param.label?.toLowerCase()}`}
-          />
         </div>
       );
     },
     [
       styles.parameterField,
-      styles.parameterHeader,
+      styles.parameterValueSection,
       styles.parameterLabel,
       styles.removeParameterButton,
       INTL_TEXT.removeParameter,
@@ -329,8 +362,9 @@ export const EditOperation = () => {
   }
 
   const hasVisibleParameters = allVisibleParameters.length > 0;
+  const hasRequiredParameters = requiredParams.length > 0;
   const hasOptionalParameters = optionalDropdownOptions.length > 0;
-  const hasVisibleConditionalParameters = allVisibleParameters.some(({ isConditional }) => isConditional);
+  const hasVisibleConditionalParameters = visibleConditionalParams.length > 0;
 
   const addNewParamText = intl.formatMessage(
     {
@@ -348,7 +382,10 @@ export const EditOperation = () => {
     <div className={styles.container}>
       {/* Description Section */}
       <div className={styles.section}>
-        <Field label={INTL_TEXT.descriptionLabel} className={styles.descriptionField}>
+        <Text size={400} weight="semibold" className={styles.descriptionField}>
+          {INTL_TEXT.descriptionLabel}
+        </Text>
+        <Field>
           <Textarea
             value={localDescription}
             onChange={(_e, data) => handleDescriptionInputChange(data.value)}
@@ -370,49 +407,57 @@ export const EditOperation = () => {
         {hasVisibleParameters || hasOptionalParameters ? (
           <div className={styles.parametersSection}>
             <Card className={styles.parameterCard}>
-              <div className={styles.parameterCardHeader}>
-                <Text size={200} style={{ opacity: 0.8, marginTop: '4px' }}>
-                  {intl.formatMessage(
-                    {
-                      id: 'EcoTuv',
-                      defaultMessage: '{count, plural, one {# parameter} other {# parameters}}',
-                      description: 'Parameter count text',
-                    },
-                    { count: allVisibleParameters.length }
-                  )}
+              <Label required>
+                <Text size={400} weight="semibold" className={styles.sectionTitle}>
+                  {INTL_TEXT.required}
                 </Text>
-              </div>
+              </Label>
 
               <div className={styles.parameterCardContent}>
-                {/* Visible Parameters */}
-                {hasVisibleParameters && (
+                {hasRequiredParameters && (
                   <div className={styles.parameterList}>
-                    {allVisibleParameters.map(({ param, isConditional }) => renderParameterField(param, isConditional))}
+                    {requiredParams.map(({ param, isConditional }) => renderParameterField(param, isConditional))}
                   </div>
                 )}
 
-                {/* Optional Parameters Dropdown */}
-                {allConditionalSettings.length > 0 ? (
-                  <div className={styles.optionalParametersSection}>
-                    {hasVisibleParameters && <Divider className={styles.inlineParameterDivider} />}
-                    <SearchableDropdownWithAddAll
-                      key={`dropdown-${selectedOperationId}-${optionalDropdownOptions.length}`}
-                      label={INTL_TEXT.addOptionalParameters}
-                      options={optionalDropdownOptions}
-                      placeholder={addNewParamText}
-                      multiselect={true}
-                      onItemSelectionChanged={handleOptionalParameterToggle}
-                      addAllButtonText={INTL_TEXT.showAllOptional}
-                      addAllButtonTooltip={INTL_TEXT.showAllOptionalTooltip}
-                      addAllButtonEnabled={optionalDropdownOptions.length > 0}
-                      removeAllButtonText={INTL_TEXT.hideAllOptional}
-                      removeAllButtonTooltip={INTL_TEXT.hideAllOptionalTooltip}
-                      removeAllButtonEnabled={hasVisibleConditionalParameters}
-                      onShowAllClick={handleShowAllOptional}
-                      onHideAllClick={handleHideAllOptional}
-                    />
-                  </div>
-                ) : null}
+                {hasVisibleParameters && <Divider className={styles.inlineParameterDivider} />}
+
+                <Accordion collapsible={true} defaultOpenItems={['optional-parameters']}>
+                  <AccordionItem value="optional-parameters">
+                    <AccordionHeader>
+                      <Text weight="semibold">{INTL_TEXT.optionalParameters}</Text>
+                    </AccordionHeader>
+                    <AccordionPanel>
+                      {/* Optional Parameters Dropdown */}
+                      {allConditionalSettings.length > 0 ? (
+                        <div className={styles.optionalParametersSection}>
+                          <SearchableDropdownWithAddAll
+                            key={`dropdown-${selectedOperationId}-${optionalDropdownOptions.length}`}
+                            label={INTL_TEXT.selectParameters}
+                            options={optionalDropdownOptions}
+                            placeholder={addNewParamText}
+                            multiselect={true}
+                            onItemSelectionChanged={handleOptionalParameterToggle}
+                            addAllButtonText={INTL_TEXT.showAllOptional}
+                            addAllButtonTooltip={INTL_TEXT.showAllOptionalTooltip}
+                            addAllButtonEnabled={optionalDropdownOptions.length > 0}
+                            removeAllButtonText={INTL_TEXT.hideAllOptional}
+                            removeAllButtonTooltip={INTL_TEXT.hideAllOptionalTooltip}
+                            removeAllButtonEnabled={hasVisibleConditionalParameters}
+                            onShowAllClick={handleShowAllOptional}
+                            onHideAllClick={handleHideAllOptional}
+                          />
+                        </div>
+                      ) : null}
+
+                      {hasVisibleConditionalParameters && (
+                        <div className={styles.parameterList}>
+                          {visibleConditionalParams.map(({ param, isConditional }) => renderParameterField(param, isConditional))}
+                        </div>
+                      )}
+                    </AccordionPanel>
+                  </AccordionItem>
+                </Accordion>
               </div>
             </Card>
           </div>

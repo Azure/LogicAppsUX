@@ -118,7 +118,7 @@ export const useEditOperationStyles = makeStyles({
     flexDirection: 'column',
   },
 
-  parameterHeader: {
+  parameterValueSection: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
