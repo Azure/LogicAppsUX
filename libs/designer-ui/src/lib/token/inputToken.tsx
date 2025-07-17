@@ -14,7 +14,6 @@ import type { TokenNode } from '../editor/base/nodes/tokenNode';
 import { useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { getBrandColorWithOpacity } from '../card/utils';
-
 const useStyles = makeStyles({
   tokenWrapper: {
     display: 'inline-flex',
@@ -29,8 +28,7 @@ const useStyles = makeStyles({
     fontWeight: tokens.fontWeightSemibold, // Make text more bold
     cursor: 'default', // Default cursor for non-clickable tokens
     userSelect: 'none',
-    maxWidth: '200px',
-    minWidth: '40px',
+    maxWidth: '144px',
     borderRadius: tokens.borderRadiusMedium, // Modern rounded corners
     position: 'relative',
     transition: 'all 0.1s ease', // Smooth transitions
@@ -57,18 +55,17 @@ const useStyles = makeStyles({
     backgroundSize: 'contain',
     backgroundPosition: 'center',
     borderRadius: tokens.borderRadiusSmall, // Rounded icon
-    flexShrink: 0, // Prevent icon from shrinking
   },
   tokenTitle: {
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
+    maxWidth: '100%',
     color: tokens.colorNeutralForeground1, // Ensure good contrast
     fontWeight: tokens.fontWeightSemibold, // Bold text for better legibility
     lineHeight: '20px', // Match token height for proper vertical alignment
-    display: 'block',
-    minWidth: 0,
-    flex: 1,
+    display: 'inline-flex',
+    alignItems: 'center', // Center text vertically
   },
   deleteButton: {
     fontSize: tokens.fontSizeBase200, // Match token font size for better alignment
@@ -89,7 +86,6 @@ const useStyles = makeStyles({
     height: '16px',
     position: 'relative', // Ensure button is clickable
     zIndex: 1,
-    flexShrink: 0,
     ':hover': {
       backgroundColor: tokens.colorNeutralBackground1Hover,
       color: tokens.colorNeutralForeground1Hover,
@@ -118,7 +114,6 @@ const useStyles = makeStyles({
     borderRadius: tokens.borderRadiusCircular,
     padding: '1px',
     zIndex: 1, // Ensure it appears above the regular icon
-    flexShrink: 0,
   },
 });
 
@@ -135,7 +130,6 @@ export interface InputTokenProps {
   nodeKey: NodeKey;
   description?: string;
 }
-
 export const DELETE = '\u00D7';
 export const InputToken: React.FC<InputTokenProps> = ({ value, brandColor, icon, isSecure, readonly, title, nodeKey }) => {
   const [hasFocus, setFocus] = useState(true);
@@ -145,18 +139,15 @@ export const InputToken: React.FC<InputTokenProps> = ({ value, brandColor, icon,
   const tokenRef = useRef<null | HTMLDivElement>(null);
   const styles = useStyles();
   const [isClickable, setIsClickable] = useState(false);
-
   useEffect(() => {
     // Check if token is clickable (FX or AGENTPARAMETER)
     editor.getEditorState().read(() => {
       const node: TokenNode | null = $getNodeByKey(nodeKey);
       const token = node?.['__data']?.token;
       const tokenType = token?.tokenType;
-
       setIsClickable(!readonly && (tokenType === TokenType.FX || tokenType === TokenType.AGENTPARAMETER));
     });
   }, [editor, nodeKey, readonly]);
-
   useEffect(() => {
     return mergeRegister(
       editor.registerCommand(
@@ -177,26 +168,21 @@ export const InputToken: React.FC<InputTokenProps> = ({ value, brandColor, icon,
       )
     );
   }, [editor]);
-
   const handleTokenClicked = (e: React.MouseEvent<HTMLSpanElement, MouseEvent> | React.KeyboardEvent<HTMLSpanElement>) => {
     if (!nodeKey) {
       return;
     }
-
     editor.getEditorState().read(() => {
       const node: TokenNode | null = $getNodeByKey(nodeKey);
       const token = node?.['__data']?.token;
       const tokenType = token?.tokenType;
-
       if (!token) {
         return;
       }
-
       if (!readonly && (tokenType === TokenType.FX || tokenType === TokenType.AGENTPARAMETER)) {
         editor.dispatchCommand(OPEN_TOKEN_PICKER, { token, nodeKey });
         return;
       }
-
       if (e.shiftKey) {
         setSelected(!isSelected);
       } else {
@@ -204,40 +190,32 @@ export const InputToken: React.FC<InputTokenProps> = ({ value, brandColor, icon,
         setSelected(true);
         editor.dispatchCommand(CLOSE_TOKENPICKER, { focusEditorAfter: true });
       }
-
       editor.focus();
     });
   };
-
   const tokenStyle = {
     backgroundColor: brandColor ? getBrandColorWithOpacity(brandColor, 0.15) : 'rgba(71, 71, 71, 0.15)',
   };
-
   const iconStyle = {
     backgroundImage: icon ?? `url(${iconSvg})`,
   };
-
   const tokenDelete = intl.formatMessage({
     defaultMessage: 'Delete',
     id: 'XqamWZ',
     description: 'Label of Delete Token Button',
   });
-
   const handleTokenDeleteClicked = () => {
     if (nodeKey) {
       editor.dispatchCommand(DELETE_TOKEN_NODE, nodeKey);
       editor.focus();
     }
   };
-
   const renderTokenDeleteButton = (): JSX.Element | null => {
     if (readonly) {
       return null;
     }
-
     // Check if we're in dark mode by looking at the theme
     const isDarkMode = document.documentElement.classList.contains('msla-theme-dark');
-
     return (
       <button
         type="button"
@@ -258,7 +236,6 @@ export const InputToken: React.FC<InputTokenProps> = ({ value, brandColor, icon,
       </button>
     );
   };
-
   // Handle keyboard events
   const handleKeyDown = (e: React.KeyboardEvent<HTMLSpanElement>) => {
     if (isClickable && (e.key === 'Enter' || e.key === ' ')) {
@@ -266,7 +243,6 @@ export const InputToken: React.FC<InputTokenProps> = ({ value, brandColor, icon,
       e.stopPropagation();
     }
   };
-
   // Prepare accessibility attributes
   const accessibilityProps = isClickable
     ? {
@@ -285,7 +261,6 @@ export const InputToken: React.FC<InputTokenProps> = ({ value, brandColor, icon,
         'aria-label': title,
         tabIndex: -1, // Not in tab order for non-clickable tokens either
       };
-
   return (
     <span
       className={mergeClasses(
@@ -306,9 +281,7 @@ export const InputToken: React.FC<InputTokenProps> = ({ value, brandColor, icon,
     >
       <div className={styles.tokenIcon} style={iconStyle} aria-hidden="true" />
       {isSecure && <LockClosedRegular className={styles.secureIcon} aria-hidden="true" />}
-      <div className={styles.tokenTitle} style={{ maxWidth: '200px' }} title={title}>
-        {title}
-      </div>
+      <div className={styles.tokenTitle}>{title}</div>
       {renderTokenDeleteButton()}
     </span>
   );
