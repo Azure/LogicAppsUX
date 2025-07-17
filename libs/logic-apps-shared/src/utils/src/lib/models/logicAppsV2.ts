@@ -533,6 +533,7 @@ export interface Parameter {
   defaultValue?: any;
   allowedValues?: any[];
   metadata?: Metadata;
+  value?: any;
 }
 
 export interface Parameters {

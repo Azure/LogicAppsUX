@@ -30,6 +30,7 @@ import {
   BaseResourceService,
   equals,
   BaseTemplateResourceService,
+  resolveConnectionsReferences,
 } from '@microsoft/logic-apps-shared';
 import {
   getConnectionStandard,
@@ -222,11 +223,7 @@ export const TemplatesStandard = () => {
 
       if (connectionInfo) {
         // TODO(psamband): Add new settings in this blade so that we do not resolve all the appsettings in the connectionInfo.
-        const resolvedConnectionInfo = WorkflowUtility.resolveConnectionsReferences(
-          JSON.stringify(connectionInfo),
-          {},
-          settingsData()?.properties
-        );
+        const resolvedConnectionInfo = resolveConnectionsReferences(JSON.stringify(connectionInfo), {}, settingsData()?.properties);
         delete resolvedConnectionInfo.displayName;
 
         return {
