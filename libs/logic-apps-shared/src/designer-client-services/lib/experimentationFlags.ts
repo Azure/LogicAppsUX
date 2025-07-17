@@ -6,6 +6,7 @@ export const EXP_FLAGS = {
   ENABLE_FOUNDRY_SERVICE_CONNECTION: 'enable-foundry-service-connection',
   ENABLE_NESTED_AGENT: 'enable-nested-agent',
   ENABLE_DYNAMIC_CONNECTIONS: 'enable-dynamic-connections',
+  ENABLE_CHANNELS_AGENT_LOOP: 'enable-channels-agentloop',
 };
 
 export async function enableParseDocumentWithMetadata(): Promise<boolean> {
@@ -26,4 +27,8 @@ export async function enableNestedAgent(): Promise<boolean> {
 
 export async function enableDynamicConnections(): Promise<boolean> {
   return ExperimentationService().isFeatureEnabled(EXP_FLAGS.ENABLE_DYNAMIC_CONNECTIONS);
+}
+
+export async function enableChannelsInAgentLoop(): Promise<boolean> {
+  return ExperimentationService().isFeatureEnabled(EXP_FLAGS.ENABLE_CHANNELS_AGENT_LOOP);
 }

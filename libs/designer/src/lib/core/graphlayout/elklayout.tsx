@@ -1,13 +1,14 @@
 import type { WorkflowNode } from '../parsers/models/workflowNode';
 import { isWorkflowNode } from '../parsers/models/workflowNode';
 import { useReadOnly } from '../state/designerOptions/designerOptionsSelectors';
-import { getRootWorkflowGraphForLayout } from '../state/workflow/workflowSelectors';
+import { useRootWorkflowGraphForLayout } from '../state/workflow/workflowSelectors';
 import { LogEntryLevel, LoggerService, useThrottledEffect, WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES } from '@microsoft/logic-apps-shared';
 import type { ElkExtendedEdge, ElkNode } from 'elkjs/lib/elk.bundled';
 import ELK from 'elkjs/lib/elk.bundled';
-import { createContext, useState, useContext } from 'react';
-import { useSelector } from 'react-redux';
+import { createContext, useState, useContext, useRef } from 'react';
 import type { Edge, Node } from '@xyflow/react';
+import { getLayoutRelevantData, type LayoutRelevantData } from './helpers';
+import isEqual from 'lodash.isequal';
 
 export const spacing = {
   default: '64',
@@ -219,12 +220,21 @@ export const LayoutProvider = ({ children }: any) => {
   const [edges, setEdges] = useState<Edge[]>([]);
   const [size, setSize] = useState<number[]>([0, 0]);
 
-  const workflowGraph = useSelector(getRootWorkflowGraphForLayout);
+  const workflowGraph = useRootWorkflowGraphForLayout();
   const readOnly = useReadOnly();
+  const prevLayoutRelevantDataRef = useRef<LayoutRelevantData>();
 
   useThrottledEffect(
     () => {
       if (!workflowGraph) {
+        prevLayoutRelevantDataRef.current = undefined;
+        return;
+      }
+
+      const currentLayoutRelevantData = getLayoutRelevantData(workflowGraph);
+      // If layout-relevant data hasn't changed, skip elk processing
+      if (prevLayoutRelevantDataRef.current && isEqual(prevLayoutRelevantDataRef.current, currentLayoutRelevantData)) {
+        prevLayoutRelevantDataRef.current = currentLayoutRelevantData;
         return;
       }
 
@@ -236,6 +246,8 @@ export const LayoutProvider = ({ children }: any) => {
           setNodes(n);
           setEdges(e);
           setSize(s);
+          // Store layout data for next comparison
+          prevLayoutRelevantDataRef.current = currentLayoutRelevantData;
         })
         .catch((err) => {
           const graphAsString = JSON.stringify(elkGraph);
