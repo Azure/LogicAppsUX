@@ -452,9 +452,11 @@ export const buildGraphFromActions = (
 
     const isRoot = Object.keys(action.runAfter ?? {}).length === 0 && parentNodeId;
     nodesMetadata[actionName] = {
+      ...nodesMetadata[actionName],
       graphId,
-      ...(parentNodeId ? { parentNodeId: parentNodeId } : {}),
+      ...(parentNodeId && { parentNodeId: parentNodeId }),
     };
+
     if (isScopeAction(action)) {
       const [scopeNodes, scopeEdges, scopeActions, scopeNodesMetadata] = processScopeActions(
         graphId,
@@ -694,6 +696,23 @@ export const processScopeActions = (
   } else if (isAgentAction(action)) {
     for (const [toolName, toolAction] of Object.entries(action.tools || {})) {
       applySubgraphActions(actionName, toolName, toolAction.actions, SUBGRAPH_TYPES.AGENT_CONDITION, 'tools');
+
+      const toolActions = Object.values(toolAction.actions ?? {});
+      // If tool is a handoff tool
+      if (toolActions.length === 1 && equals(toolActions[0]?.type, constants.NODE.TYPE.HANDOFF)) {
+        // Add handoff to metadata for easy access
+        const handoffTarget = (toolActions[0] as any).inputs?.name ?? '';
+        if (handoffTarget !== '') {
+          const existingHandoffs = nodesMetadata[actionName]?.handoffs ?? {};
+          nodesMetadata[actionName] = {
+            ...nodesMetadata[actionName],
+            handoffs: {
+              ...existingHandoffs,
+              [toolName]: handoffTarget,
+            },
+          };
+        }
+      }
     }
     if (shouldAppendAddCase) {
       applySubgraphActions(
@@ -731,6 +750,7 @@ export const processScopeActions = (
     nodesMetadata = {
       ...nodesMetadata,
       [actionName]: {
+        ...nodesMetadata[actionName],
         graphId: rootGraphId,
         actionCount: Object.entries(action.tools || {}).length,
         parentNodeId: rootGraphId === 'root' ? undefined : rootGraphId,
