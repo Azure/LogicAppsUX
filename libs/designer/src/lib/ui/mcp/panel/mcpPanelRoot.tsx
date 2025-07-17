@@ -26,7 +26,7 @@ export const McpPanelRoot = () => {
   }
 
   return (
-    <Drawer className={styles.drawer} open={isOpen} onOpenChange={(_, { open }) => !open && dismissPanel()} position="end" size="large">
+    <Drawer className={styles.drawer} open={isOpen} onOpenChange={(_, { open }) => !open && dismissPanel()} position="end" size="large" >
       {(panelMode === McpPanelView.SelectConnector ||
         panelMode === McpPanelView.SelectOperation ||
         panelMode === McpPanelView.CreateConnection) && <SelectionPanel />}
