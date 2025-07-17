@@ -1,40 +1,64 @@
-import type { IDropdownProps } from '@fluentui/react';
-import { SearchBox, DropdownMenuItemType, Dropdown } from '@fluentui/react';
-import { mergeClasses } from '@fluentui/react-components';
-import type { FC } from 'react';
-import { useState } from 'react';
+import { Combobox, Option, Text, mergeClasses } from '@fluentui/react-components';
+import type { FC, ChangeEvent } from 'react';
+import { useState, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useSearchableDropdownStyles } from './searchabledropdown.styles';
 
+export interface SearchableDropdownOption {
+  key: string;
+  text: string;
+  data?: any;
+}
+
 export interface SearchableDropdownProps {
-  dropdownProps: Pick<IDropdownProps, 'options'> & Partial<Omit<IDropdownProps, 'onChange' | 'onDismiss' | 'onRenderItem'>>;
+  options: SearchableDropdownOption[];
   onItemSelectionChanged: (id: string, isSelected: boolean) => void;
   onDismiss?: () => void;
   labelId?: string;
   searchPlaceholderText?: string;
   showSearchItemThreshold?: number;
   className?: string;
+  placeholder?: string;
+  multiselect?: boolean;
+  disabled?: boolean;
+
+  /** Optional: controlled selected keys */
+  selectedKeys?: string[];
+  /** Optional: called when internal selection changes */
+  onSelectedKeysChange?: (newKeys: string[]) => void;
 }
 
 export const SearchableDropdown: FC<SearchableDropdownProps> = ({
-  dropdownProps,
+  options: inputOptions,
   onItemSelectionChanged,
   onDismiss,
   searchPlaceholderText,
-  showSearchItemThreshold: showFilterItemThreshold,
+  showSearchItemThreshold = 4,
   className,
   labelId,
-}): JSX.Element => {
+  placeholder,
+  multiselect = true,
+  disabled = false,
+  selectedKeys: controlledSelectedKeys,
+  onSelectedKeysChange,
+}) => {
   const styles = useSearchableDropdownStyles();
-  const showFilterInputItemThreshold = showFilterItemThreshold ?? 4;
-  const headerKey = 'FilterHeader';
-
   const intl = useIntl();
 
-  const [conditionalVisibilityTempArray, setConditionalVisibilityTempArray] = useState<string[]>([]);
-  const [filterText, setFilterText] = useState('');
+  const [uncontrolledSelectedKeys, setUncontrolledSelectedKeys] = useState<string[]>([]);
+  const selectedKeys = controlledSelectedKeys ?? uncontrolledSelectedKeys;
 
-  const searchOperation =
+  const updateSelectedKeys = (newKeys: string[]) => {
+    if (controlledSelectedKeys === undefined) {
+      setUncontrolledSelectedKeys(newKeys);
+    }
+    onSelectedKeysChange?.(newKeys);
+  };
+
+  const [inputValue, setInputValue] = useState('');
+  const [isOpen, setIsOpen] = useState(false);
+
+  const searchPlaceholder =
     searchPlaceholderText ??
     intl.formatMessage({
       defaultMessage: 'Search',
@@ -42,54 +66,73 @@ export const SearchableDropdown: FC<SearchableDropdownProps> = ({
       description: 'Default placeholder for search box that searches dropdown options',
     });
 
-  const options = dropdownProps.options.filter((option) => option.text.toLowerCase().includes(filterText.toLowerCase()));
+  const noResultsText = intl.formatMessage({
+    defaultMessage: 'No results found',
+    id: '+R82zZ',
+    description: 'Text displayed when no options match the search query',
+  });
 
-  if (dropdownProps.options.length >= showFilterInputItemThreshold) {
-    options.unshift(
-      { key: headerKey, text: '', itemType: DropdownMenuItemType.Header },
-      { key: 'FilterDivider', text: '-', itemType: DropdownMenuItemType.Divider }
-    );
-  }
+  const showSearchBox = inputOptions.length >= showSearchItemThreshold;
+
+  const filteredOptions = useMemo(() => {
+    return inputOptions.filter((option) => option.text.toLowerCase().includes(inputValue.toLowerCase()));
+  }, [inputOptions, inputValue]);
+
+  const handleOpenChange = (_e: any, data: { open: boolean }) => {
+    setIsOpen(data.open);
+    if (!data.open) {
+      selectedKeys.forEach((key) => onItemSelectionChanged(key, true));
+      setInputValue('');
+      onDismiss?.();
+    }
+  };
+
+  const handleOptionSelect = (_e: any, data: { optionValue?: string }) => {
+    const key = data.optionValue;
+    if (!key) {
+      return;
+    }
+
+    if (multiselect) {
+      const newKeys = selectedKeys.includes(key) ? selectedKeys.filter((k) => k !== key) : [...selectedKeys, key];
+      updateSelectedKeys(newKeys);
+    } else {
+      updateSelectedKeys([key]);
+      onItemSelectionChanged(key, true);
+      setIsOpen(false);
+      onDismiss?.();
+    }
+  };
+
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+  };
 
   return (
-    <Dropdown
-      {...dropdownProps}
+    <Combobox
       aria-labelledby={labelId}
-      className={mergeClasses(styles.searchableDropdown, className)}
-      options={options}
-      selectedKeys={conditionalVisibilityTempArray}
-      onChange={(_e: any, item: any) => {
-        if (item?.key) {
-          setConditionalVisibilityTempArray(
-            conditionalVisibilityTempArray.includes(item.key)
-              ? conditionalVisibilityTempArray.filter((key) => key !== item.key)
-              : [...conditionalVisibilityTempArray, item.key]
-          );
-        }
-      }}
-      onDismiss={() => {
-        onDismiss?.();
-        conditionalVisibilityTempArray.forEach((parameterId) => {
-          onItemSelectionChanged(parameterId, true);
-        });
-        setConditionalVisibilityTempArray([]);
-        setFilterText('');
-      }}
-      onRenderItem={(item, defaultRenderer) => {
-        if (item?.key === headerKey) {
-          return (
-            <SearchBox
-              autoFocus={true}
-              className={styles.searchableDropdownSearch}
-              onChange={(e, newValue) => setFilterText(newValue ?? '')}
-              placeholder={searchOperation}
-              key={headerKey}
-            />
-          );
-        }
+      multiselect={multiselect}
+      disabled={disabled}
+      open={isOpen}
+      placeholder={showSearchBox ? searchPlaceholder : placeholder}
+      className={mergeClasses(styles.root, className)}
+      onOpenChange={handleOpenChange}
+      onOptionSelect={handleOptionSelect}
+      value={inputValue}
+      onChange={handleInputChange}
+      {...(multiselect ? { selectedOptions: selectedKeys } : { value: selectedKeys[0] || '' })}
+    >
+      {filteredOptions.map((option) => (
+        <Option key={option.key} value={option.key}>
+          {option.text}
+        </Option>
+      ))}
 
-        return defaultRenderer?.(item) ?? null;
-      }}
-    />
+      {filteredOptions.length === 0 && inputValue && (
+        <div className={styles.noResults}>
+          <Text size={200}>{noResultsText}</Text>
+        </div>
+      )}
+    </Combobox>
   );
 };

@@ -14,7 +14,6 @@ import type { TokenNode } from '../editor/base/nodes/tokenNode';
 import { useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { getBrandColorWithOpacity } from '../card/utils';
-
 const useStyles = makeStyles({
   tokenWrapper: {
     display: 'inline-flex',
@@ -131,7 +130,6 @@ export interface InputTokenProps {
   nodeKey: NodeKey;
   description?: string;
 }
-
 export const DELETE = '\u00D7';
 export const InputToken: React.FC<InputTokenProps> = ({ value, brandColor, icon, isSecure, readonly, title, nodeKey }) => {
   const [hasFocus, setFocus] = useState(true);
@@ -141,18 +139,15 @@ export const InputToken: React.FC<InputTokenProps> = ({ value, brandColor, icon,
   const tokenRef = useRef<null | HTMLDivElement>(null);
   const styles = useStyles();
   const [isClickable, setIsClickable] = useState(false);
-
   useEffect(() => {
     // Check if token is clickable (FX or AGENTPARAMETER)
     editor.getEditorState().read(() => {
       const node: TokenNode | null = $getNodeByKey(nodeKey);
       const token = node?.['__data']?.token;
       const tokenType = token?.tokenType;
-
       setIsClickable(!readonly && (tokenType === TokenType.FX || tokenType === TokenType.AGENTPARAMETER));
     });
   }, [editor, nodeKey, readonly]);
-
   useEffect(() => {
     return mergeRegister(
       editor.registerCommand(
@@ -173,26 +168,21 @@ export const InputToken: React.FC<InputTokenProps> = ({ value, brandColor, icon,
       )
     );
   }, [editor]);
-
   const handleTokenClicked = (e: React.MouseEvent<HTMLSpanElement, MouseEvent> | React.KeyboardEvent<HTMLSpanElement>) => {
     if (!nodeKey) {
       return;
     }
-
     editor.getEditorState().read(() => {
       const node: TokenNode | null = $getNodeByKey(nodeKey);
       const token = node?.['__data']?.token;
       const tokenType = token?.tokenType;
-
       if (!token) {
         return;
       }
-
       if (!readonly && (tokenType === TokenType.FX || tokenType === TokenType.AGENTPARAMETER)) {
         editor.dispatchCommand(OPEN_TOKEN_PICKER, { token, nodeKey });
         return;
       }
-
       if (e.shiftKey) {
         setSelected(!isSelected);
       } else {
@@ -200,40 +190,32 @@ export const InputToken: React.FC<InputTokenProps> = ({ value, brandColor, icon,
         setSelected(true);
         editor.dispatchCommand(CLOSE_TOKENPICKER, { focusEditorAfter: true });
       }
-
       editor.focus();
     });
   };
-
   const tokenStyle = {
     backgroundColor: brandColor ? getBrandColorWithOpacity(brandColor, 0.15) : 'rgba(71, 71, 71, 0.15)',
   };
-
   const iconStyle = {
     backgroundImage: icon ?? `url(${iconSvg})`,
   };
-
   const tokenDelete = intl.formatMessage({
     defaultMessage: 'Delete',
     id: 'XqamWZ',
     description: 'Label of Delete Token Button',
   });
-
   const handleTokenDeleteClicked = () => {
     if (nodeKey) {
       editor.dispatchCommand(DELETE_TOKEN_NODE, nodeKey);
       editor.focus();
     }
   };
-
   const renderTokenDeleteButton = (): JSX.Element | null => {
     if (readonly) {
       return null;
     }
-
     // Check if we're in dark mode by looking at the theme
     const isDarkMode = document.documentElement.classList.contains('msla-theme-dark');
-
     return (
       <button
         type="button"
@@ -254,7 +236,6 @@ export const InputToken: React.FC<InputTokenProps> = ({ value, brandColor, icon,
       </button>
     );
   };
-
   // Handle keyboard events
   const handleKeyDown = (e: React.KeyboardEvent<HTMLSpanElement>) => {
     if (isClickable && (e.key === 'Enter' || e.key === ' ')) {
@@ -262,7 +243,6 @@ export const InputToken: React.FC<InputTokenProps> = ({ value, brandColor, icon,
       e.stopPropagation();
     }
   };
-
   // Prepare accessibility attributes
   const accessibilityProps = isClickable
     ? {
@@ -281,7 +261,6 @@ export const InputToken: React.FC<InputTokenProps> = ({ value, brandColor, icon,
         'aria-label': title,
         tabIndex: -1, // Not in tab order for non-clickable tokens either
       };
-
   return (
     <span
       className={mergeClasses(
