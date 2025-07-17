@@ -2,7 +2,18 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { RootState, AppDispatch } from '../../../core/state/mcp/store';
 import { useCallback, useMemo } from 'react';
 import { CheckmarkCircle20Filled, ConnectorFilled, Delete24Regular, Edit24Regular } from '@fluentui/react-icons';
-import { Text, TableCell, TableRow, Table, TableHeader, TableHeaderCell, Button, TableBody, tokens } from '@fluentui/react-components';
+import {
+  Text,
+  TableCell,
+  TableRow,
+  Table,
+  TableHeader,
+  TableHeaderCell,
+  Button,
+  TableBody,
+  tokens,
+  Spinner,
+} from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 import { useConnectorSectionStyles } from '../wizard/styles';
 import { deinitializeNodes, deinitializeOperationInfos } from '../../../core/state/operation/operationMetadataSlice';
@@ -20,8 +31,9 @@ const connectorTableCellStyles = {
 export const ListConnectors = () => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
-  const { operationInfos, connectionsMapping, connectionReferences } = useSelector((state: RootState) => ({
+  const { operationInfos, isInitializingOperations, connectionsMapping, connectionReferences } = useSelector((state: RootState) => ({
     operationInfos: state.operation.operationInfo,
+    isInitializingOperations: state.operation.loadStatus.isInitializingOperations,
     connectionsMapping: state.connection.connectionsMapping,
     connectionReferences: state.connection.connectionReferences,
   }));
@@ -81,6 +93,11 @@ export const ListConnectors = () => {
       defaultMessage: 'No Connection',
       id: '7kyZuO',
       description: 'Text indicating there is no connection for the connector',
+    }),
+    loadingConnectorsText: intl.formatMessage({
+      defaultMessage: 'Loading connectors...',
+      id: 'TWeskw',
+      description: 'Loading message for connectors',
     }),
   };
 
@@ -157,6 +174,14 @@ export const ListConnectors = () => {
     },
     [operationInfos, dispatch]
   );
+
+  if (isInitializingOperations) {
+    return (
+      <div className={styles.emptyState}>
+        <Spinner size="medium" label={INTL_TEXT.loadingConnectorsText} />
+      </div>
+    );
+  }
 
   if (!items || items.length === 0) {
     return (
