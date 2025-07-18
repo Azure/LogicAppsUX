@@ -216,7 +216,7 @@ export const useExportStyles = makeStyles({
   exportSummaryConnectionsButton: {
     margin: `${tokens.spacingVerticalXL} ${tokens.spacingVerticalXL} ${tokens.spacingVerticalXL} 0`,
   },
-  exportSummaryNewResorurceGroup: {
+  exportSummaryNewResourceGroup: {
     display: 'flex',
     flexDirection: 'column',
     gap: '2px',

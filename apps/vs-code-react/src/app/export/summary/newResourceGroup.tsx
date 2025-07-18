@@ -75,7 +75,7 @@ export const NewResourceGroup: React.FC<INewResourceGroupProps> = ({ onAddNewRes
   };
 
   const onChangeName = (_ev: ChangeEvent<HTMLInputElement>, data: InputOnChangeData) => {
-    const newName = data.value?.trim();
+    const newName = typeof data.value === 'string' ? data.value.trim() : '';
     setName(newName);
   };
 
@@ -92,7 +92,7 @@ export const NewResourceGroup: React.FC<INewResourceGroupProps> = ({ onAddNewRes
 
       <PopoverSurface tabIndex={-1}>
         <MediumText text={intlText.RESOURCE_GROUP_DESCRIPTION} style={{ display: 'block' }} />
-        <div className={styles.exportSummaryNewResorurceGroup}>
+        <div className={styles.exportSummaryNewResourceGroup}>
           <Label htmlFor={resourceGroupInputId} size={'small'}>
             {intlText.NAME}
           </Label>

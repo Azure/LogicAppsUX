@@ -46,8 +46,6 @@ const perfStats = {
 const telemetryString = 'setInGitHubBuild';
 
 export async function activate(context: vscode.ExtensionContext) {
-  console.profile();
-
   // Data Mapper context
   vscode.commands.executeCommand(
     'setContext',
