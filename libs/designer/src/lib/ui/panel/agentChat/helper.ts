@@ -48,8 +48,6 @@ export const parseChatHistory = (
     return [...processedMessages.reverse(), ...(isA2AWorkflow ? [] : [agentHeader])];
   });
 
-  console.log('charlie parseChatHistory', conversations);
-
   return conversations;
 };
 

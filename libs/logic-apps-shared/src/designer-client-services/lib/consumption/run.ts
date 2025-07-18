@@ -396,15 +396,12 @@ export class ConsumptionRunService implements IRunService {
   async getRunChatHistory(runId: string): Promise<any> {
     const { apiVersion, baseUrl, httpClient } = this.options;
     const headers = this.getAccessTokenHeaders();
-    const uri = `${baseUrl}${runId}/chatHistory`;
+    const uri = `${baseUrl}${runId}/chatHistory?api-version=${apiVersion}&$expand=properties/actions,workflow/properties`;
+
     try {
       const response = await httpClient.get<any>({
         uri,
         headers: headers as Record<string, any>,
-        queryParameters: {
-          'api-version': apiVersion,
-          $expand: 'properties/actions,workflow/properties',
-        },
       });
       return response.value;
     } catch (e: any) {

@@ -431,15 +431,11 @@ export class StandardRunService implements IRunService {
 
   async getRunChatHistory(runId: string): Promise<any> {
     const { apiVersion, baseUrl, httpClient } = this.options;
-    const uri = `${baseUrl}${runId}/chatHistory`;
+    const uri = `${baseUrl}${runId}/chatHistory?api-version=${apiVersion}&$expand=properties/actions,workflow/properties`;
 
     try {
       const response = await httpClient.get<any>({
         uri,
-        queryParameters: {
-          'api-version': apiVersion,
-          $expand: 'properties/actions,workflow/properties',
-        },
       });
       return response.value;
     } catch (e: any) {
