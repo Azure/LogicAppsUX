@@ -105,7 +105,7 @@ export const EditOperationPanelInner = () => {
           <Button appearance="subtle" icon={<CloseIcon />} onClick={handleClose} aria-label={INTL_TEXT.closeAriaLabel} />
         </div>
       </DrawerHeader>
-      <DrawerBody className={styles.body} style={{ overflow: 'auto', maxHeight: 'calc(100vh - 170px)', minHeight: '80vh' }}>
+      <DrawerBody className={styles.body} style={{ overflow: 'auto', maxHeight: 'calc(100vh - 130px)', minHeight: '80vh' }}>
         <EditOperation />
       </DrawerBody>
       <DrawerFooter className={styles.footer}>
