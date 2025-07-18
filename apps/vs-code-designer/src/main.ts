@@ -11,7 +11,7 @@ import { registerCommands } from './app/commands/registerCommands';
 import { getResourceGroupsApi } from './app/resourcesExtension/getExtensionApi';
 import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTreeItemWithProjects';
 import { downloadExtensionBundle } from './app/utils/bundleFeed';
-import { stopAllDesignTimeApis } from './app/utils/codeless/startDesignTimeApi';
+import { startAllDesignTimeApis, stopAllDesignTimeApis } from './app/utils/codeless/startDesignTimeApi';
 import { UriHandler } from './app/utils/codeless/urihandler';
 import { getExtensionVersion } from './app/utils/extension';
 import { registerFuncHostTaskEvents } from './app/utils/funcCoreTools/funcHostTask';
@@ -59,6 +59,28 @@ export async function activate(context: vscode.ExtensionContext) {
   ]);
   vscode.commands.executeCommand('setContext', extensionCommand.dataMapSetDmFolders, supportedDataMapperFolders);
 
+  vscode.debug.registerDebugConfigurationProvider('logicapp', {
+    resolveDebugConfiguration: async (folder, debugConfig) => {
+      if (!debugConfig.funcRuntime) {
+        debugConfig.funcRuntime = 'coreclr';
+      }
+      const maxRetries = 3;
+      const delayMs = 5000;
+      for (let i = 0; i < maxRetries; i++) {
+        try {
+          await vscode.commands.executeCommand(extensionCommand.debugLogicApp, debugConfig, folder);
+          break;
+        } catch (error) {
+          if (i === maxRetries - 1) {
+            throw error;
+          }
+        }
+        await new Promise((resolve) => setTimeout(resolve, delayMs));
+      }
+      return undefined;
+    },
+  });
+
   ext.context = context;
   ext.telemetryReporter = new TelemetryReporter(telemetryString);
   ext.subscriptionProvider = createVSCodeAzureSubscriptionProvider();
@@ -81,28 +103,27 @@ export async function activate(context: vscode.ExtensionContext) {
 
     runPostWorkflowCreateStepsFromCache();
     runPostExtractStepsFromCache();
-    await logSubscriptions(activateContext);
+    logSubscriptions(activateContext);
 
     if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
       await convertToWorkspace(activateContext);
     }
 
+    let isBundleUpdatedPromise: Promise<boolean> = null;
     try {
-      await downloadExtensionBundle(activateContext);
+      isBundleUpdatedPromise = downloadExtensionBundle(activateContext);
     } catch (error) {
       // log the error message to telemetry.
       const errorMessage = `Error downloading and extracting the Logic Apps Standard extension bundle: ${error.message}`;
       activateContext.telemetry.properties.errorMessage = errorMessage;
     }
 
-    promptParameterizeConnections(activateContext);
+    promptParameterizeConnections(activateContext, false);
     verifyLocalConnectionKeys(activateContext);
     await startOnboarding(activateContext);
     //await prepareTestExplorer(context, activateContext);
 
     ext.extensionVersion = getExtensionVersion();
-    ext.defaultBundleVersion = activateContext.telemetry.properties.latestBundleVersion;
-    ext.latestBundleVersion = activateContext.telemetry.properties.latestBundleVersion;
 
     ext.rgApi = await getResourceGroupsApi();
     // @ts-ignore
@@ -132,19 +153,21 @@ export async function activate(context: vscode.ExtensionContext) {
     activateContext.telemetry.properties.lastStep = 'registerFuncHostTaskEvents';
     registerFuncHostTaskEvents();
 
-    vscode.debug.registerDebugConfigurationProvider('logicapp', {
-      resolveDebugConfiguration: async (folder, debugConfig) => {
-        if (!debugConfig.funcRuntime) {
-          debugConfig.funcRuntime = 'coreclr';
-        }
-        await vscode.commands.executeCommand(extensionCommand.debugLogicApp, debugConfig, folder);
-        return undefined;
-      },
-    });
-
     ext.rgApi.registerApplicationResourceResolver(getAzExtResourceType(logicAppFilter), new LogicAppResolver());
 
     vscode.window.registerUriHandler(new UriHandler());
+
+    // This is an optimization to avoid blocking extension activation on fetching the bundle feed if no update is needed.
+    if (isBundleUpdatedPromise !== null) {
+      // TODO(aeldridge): This promise resolves before bundle download is complete.
+      const isBundleUpdated = await isBundleUpdatedPromise;
+      ext.defaultBundleVersion = activateContext.telemetry.properties.latestBundleVersion;
+      ext.latestBundleVersion = activateContext.telemetry.properties.latestBundleVersion;
+      if (isBundleUpdated) {
+        stopAllDesignTimeApis();
+        startAllDesignTimeApis();
+      }
+    }
   });
 }
 
