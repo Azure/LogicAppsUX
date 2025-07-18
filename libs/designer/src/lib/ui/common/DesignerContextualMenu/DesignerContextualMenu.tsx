@@ -147,7 +147,9 @@ export const DesignerContextualMenu = () => {
         : []),
       {
         priority: NodeMenuPriorities.Delete,
-        renderCustomComponent: () => <DeleteMenuItem isTrigger={isTrigger} key={'delete'} onClick={deleteClick} showKey />,
+        renderCustomComponent: () => (
+          <DeleteMenuItem key={'delete'} isTrigger={isTrigger} operationType={operationInfo?.type} onClick={deleteClick} showKey />
+        ),
       },
       {
         priority: NodeMenuPriorities.Copy,
@@ -179,6 +181,7 @@ export const DesignerContextualMenu = () => {
     runAfter,
     deleteClick,
     isTrigger,
+    operationInfo?.type,
     isScopeNode,
     copyClick,
     pinClick,
