@@ -13,6 +13,7 @@ import {
   isScopeOperation,
   WORKFLOW_NODE_TYPES,
   getRecordEntry,
+  equals,
 } from '@microsoft/logic-apps-shared';
 
 export interface AddNodePayload {
@@ -55,7 +56,8 @@ export const addNodeToWorkflow = (
   state.isDirty = true;
 
   const isAfterTrigger = getRecordEntry(nodesMetadata, parentId ?? '')?.isRoot && graphId === 'root';
-  const shouldAddRunAfters = !isRoot && !isAfterTrigger;
+  const allowRunAfterTrigger = equals(state.workflowKind, 'agent');
+  const shouldAddRunAfters = allowRunAfterTrigger || (!isRoot && !isAfterTrigger);
   nodesMetadata[newNodeId] = { graphId: subgraphId ?? graphId, parentNodeId, isRoot };
   state.operations[newNodeId] = { ...state.operations[newNodeId], type: operation.type };
   state.newlyAddedOperations[newNodeId] = newNodeId;

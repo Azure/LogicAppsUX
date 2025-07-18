@@ -19,7 +19,7 @@ import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSel
 import { useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
 import { ArrowCap } from './dynamicsvgs/arrowCap';
 import { useIsNodeSelectedInOperationPanel } from '../../core/state/panel/panelSelectors';
-import { removeEdgeFromRunAfterOperation } from '../../core/actions/bjsworkflow/runafter';
+import { removeOperationRunAfter } from '../../core/actions/bjsworkflow/runafter';
 import { EdgePathContextMenu, useContextMenu } from './edgePathContextMenu';
 import { changePanelNode, type AppDispatch } from '../../core';
 import { HandoffIcon } from './dynamicsvgs/handoffIcon';
@@ -130,7 +130,7 @@ const HandoffEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({ id, source, targ
 
   const deleteEdge = useCallback(() => {
     dispatch(
-      removeEdgeFromRunAfterOperation({
+      removeOperationRunAfter({
         parentOperationId: sourceId,
         childOperationId: targetId,
       })

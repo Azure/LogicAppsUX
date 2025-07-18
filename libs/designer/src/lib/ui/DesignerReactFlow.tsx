@@ -5,18 +5,19 @@ import { containsIdTag, guid, removeIdTag, WORKFLOW_NODE_TYPES, type WorkflowNod
 import { useDispatch } from 'react-redux';
 import { useResizeObserver } from '@react-hookz/web';
 
-import { useIsGraphEmpty, useNodesMetadata } from '../core/state/workflow/workflowSelectors';
+import { useAllAgentIds, useIsGraphEmpty, useNodesMetadata } from '../core/state/workflow/workflowSelectors';
 import { useNodesInitialized } from '../core/state/operation/operationSelector';
 import { updateNodeSizes } from '../core/state/workflow/workflowSlice';
 import type { AppDispatch } from '../core';
 import { clearPanel, expandDiscoveryPanel } from '../core/state/panel/panelSlice';
-import { addEdgeFromRunAfterOperation } from '../core/actions/bjsworkflow/runafter';
-import { useClampPan } from '../core/state/designerView/designerViewSelectors';
+import { addOperationRunAfter } from '../core/actions/bjsworkflow/runafter';
+import { useClampPan, useIsA2AWorkflow } from '../core/state/designerView/designerViewSelectors';
 import { DEFAULT_NODE_SIZE } from '../core/utils/graph';
 import { DraftEdge } from './connections/draftEdge';
 import { useReadOnly } from '../core/state/designerOptions/designerOptionsSelectors';
 import { useLayout } from '../core/graphlayout';
 import { DesignerFlowViewPadding } from '../core/utils/designerLayoutHelpers';
+import { addAgentHandoff } from '../core/actions/bjsworkflow/handoff';
 
 import GraphNode from './CustomNodes/GraphContainerNode';
 import HiddenNode from './CustomNodes/HiddenNode';
@@ -146,6 +147,9 @@ const DesignerReactFlow = (props: any) => {
 
   const nodesMetadata = useNodesMetadata();
 
+  const isA2AWorkflow = useIsA2AWorkflow();
+  const allAgentIds = useAllAgentIds();
+
   const [isDraggingConnection, setIsDraggingConnection] = useState(false);
 
   const onConnectStart = useCallback(() => setIsDraggingConnection(true), []);
@@ -182,15 +186,25 @@ const DesignerReactFlow = (props: any) => {
       }
 
       if (isValid && parentId && targetId) {
-        dispatch(
-          addEdgeFromRunAfterOperation({
-            parentOperationId: parentId,
-            childOperationId: targetId,
-          })
-        );
+        // In A2A, create a handoff edge if both nodes are agents
+        if (isA2AWorkflow && allAgentIds.includes(parentId) && allAgentIds.includes(targetId)) {
+          dispatch(
+            addAgentHandoff({
+              sourceId: parentId,
+              targetId,
+            })
+          );
+        } else {
+          dispatch(
+            addOperationRunAfter({
+              parentOperationId: parentId,
+              childOperationId: targetId,
+            })
+          );
+        }
       }
     },
-    [nodesMetadata, dispatch]
+    [nodesMetadata, dispatch, isA2AWorkflow, allAgentIds]
   );
 
   const isValidConnection = useCallback(
