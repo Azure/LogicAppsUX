@@ -801,14 +801,18 @@ export const CreateConnection = (props: CreateConnectionProps) => {
 
           {/* Operation Parameters (Linked to operation manifest) */}
           {operationParameterSetKeys.length > 0
-            ? operationParameterSetKeys.map((parameter) => {
+            ? operationParameterSetKeys.map((parameter: string) => {
                 const keyValue = operationParameterSets?.[parameter]?.name ?? '';
                 const parameterFromManifest = getPropertyValue(operationManifest?.properties.inputs.properties, keyValue);
 
                 if (!operationParameterValues?.[parameter]) {
                   setOperationParameterValues((values) => ({
                     ...values,
-                    [parameter]: getPropertyValue(parameterFromManifest, 'default') ?? '',
+                    [parameter]: {
+                      id: customLengthGuid(5),
+                      value: getPropertyValue(parameterFromManifest, 'defaultValue') ?? '',
+                      type: 'literal',
+                    },
                   }));
                 }
 
@@ -841,7 +845,14 @@ export const CreateConnection = (props: CreateConnectionProps) => {
                     }}
                     setValue={(val: any) =>
                       setOperationParameterValues((values) => {
-                        return { ...values, [parameter]: val };
+                        return {
+                          ...values,
+                          [parameter]: {
+                            id: customLengthGuid(5),
+                            value: val ?? '',
+                            type: 'literal',
+                          },
+                        };
                       })
                     }
                     isLoading={isLoading}

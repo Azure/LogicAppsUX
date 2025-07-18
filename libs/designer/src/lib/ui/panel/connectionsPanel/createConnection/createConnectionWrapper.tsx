@@ -14,7 +14,7 @@ import { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { ApiHubAuthentication } from '../../../../common/models/workflow';
 import { CreateConnectionInternal } from './createConnectionInternal';
-// import { updateParameterAndDependencies } from "../../../../core/utils/parameters/helper";
+import { updateParameterAndDependencies } from '../../../../core/utils/parameters/helper';
 import { useIsAgentSubGraph } from '../../../../common/hooks/agent';
 
 export const CreateConnectionWrapper = () => {
@@ -28,12 +28,13 @@ export const CreateConnectionWrapper = () => {
   const { data: operationManifest } = useOperationManifest(operationInfo);
   const connectionMetadata = getConnectionMetadata(operationManifest);
   const hasExistingConnection = useSelector((state: RootState) => !!getRecordEntry(state.connections.connectionsMapping, nodeId));
-  // const { nodeInputs, dependencies } = useSelector((state: RootState) => ({
-  //   nodeInputs: state.operations.inputParameters[nodeId],
-  //   dependencies: state.operations.dependencies[nodeId],
-  // }));
+  const { nodeInputs, dependencies } = useSelector((state: RootState) => ({
+    nodeInputs: state.operations.inputParameters[nodeId],
+    dependencies: state.operations.dependencies[nodeId],
+  }));
 
   const existingReferences = useSelector((state: RootState) => Object.keys(state.connections.connectionReferences));
+  const connectionReference = useSelector((state: RootState) => state.connections.connectionReferences[nodeId]);
 
   const assistedConnectionProps = useMemo(
     () => (connector ? getAssistedConnectionProps(connector, operationManifest) : undefined),
@@ -50,27 +51,30 @@ export const CreateConnectionWrapper = () => {
     [dispatch, nodeIds]
   );
 
-  const updateOperationParameterValues = useCallback((values?: Record<string, ValueSegment>) => {
-    if (values) {
-      for (const [_key, _parameterValue] of Object.entries(values)) {
-        // dispatch(
-        //   updateParameterAndDependencies({
-        //     nodeId: nodeId,
-        //     nodeInputs,
-        //     dependencies,
-        //     groupId: "default",
-        //     isTrigger: false,
-        //     parameterId: key,
-        //     operationInfo: operationInfo,
-        //     properties: {
-        //       value: [],
-        //     },
-        //     connectionReference: {},
-        //   })
-        // );
+  const updateOperationParameterValues = useCallback(
+    (values?: Record<string, ValueSegment>) => {
+      if (values) {
+        for (const [key, parameterValue] of Object.entries(values)) {
+          dispatch(
+            updateParameterAndDependencies({
+              nodeId: nodeId,
+              nodeInputs,
+              dependencies,
+              groupId: 'default',
+              isTrigger: false,
+              parameterId: key,
+              operationInfo: operationInfo,
+              properties: {
+                value: [parameterValue],
+              },
+              connectionReference: connectionReference,
+            })
+          );
+        }
       }
-    }
-  }, []);
+    },
+    [connectionReference, dependencies, dispatch, nodeId, nodeInputs, operationInfo]
+  );
 
   return (
     <CreateConnectionInternal
