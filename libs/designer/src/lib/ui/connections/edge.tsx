@@ -13,7 +13,7 @@ import { DropZone } from './dropzone';
 import { ArrowCap } from './dynamicsvgs/arrowCap';
 import { CollapsedRunAfterIndicator, RunAfterIndicator } from './runAfterIndicator';
 import { useIsNodeSelectedInOperationPanel } from '../../core/state/panel/panelSelectors';
-import { removeEdgeFromRunAfterOperation } from '../../core/actions/bjsworkflow/runafter';
+import { removeOperationRunAfter } from '../../core/actions/bjsworkflow/runafter';
 import { EdgePathContextMenu, useContextMenu } from './edgePathContextMenu';
 import type { AppDispatch } from '../../core';
 
@@ -152,7 +152,7 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
 
   const deleteEdge = useCallback(() => {
     dispatch(
-      removeEdgeFromRunAfterOperation({
+      removeOperationRunAfter({
         parentOperationId: sourceId,
         childOperationId: targetId,
       })

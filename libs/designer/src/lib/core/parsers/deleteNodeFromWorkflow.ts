@@ -81,7 +81,8 @@ export const deleteNodeFromWorkflow = (
     const graphId = workflowGraph.id;
     const parentMetadata = getRecordEntry(nodesMetadata, parentId);
     const isAfterTrigger = parentMetadata?.isRoot && graphId === 'root';
-    const shouldAddRunAfters = !isRoot && !isAfterTrigger;
+    const allowRunAfterTrigger = equals(state.workflowKind, 'agent');
+    const shouldAddRunAfters = allowRunAfterTrigger || (!isRoot && !isAfterTrigger);
     reassignEdgeSources(state, nodeId, parentId, workflowGraph, shouldAddRunAfters);
     removeEdge(state, parentId, nodeId, workflowGraph);
   }
