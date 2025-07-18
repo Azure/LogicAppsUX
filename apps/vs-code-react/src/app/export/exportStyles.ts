@@ -20,7 +20,6 @@ export const useExportStyles = makeStyles({
     display: 'flex',
     flexDirection: 'column',
     gap: '2px',
-    // Prevent the example from taking the full width of the page (optional)
     maxWidth: '400px',
   },
 
