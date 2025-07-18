@@ -9,5 +9,8 @@ export const useMonacoStyles = makeStyles({
   },
   container: {
     // Applied to the container div
+    '& .cursor': {
+      borderLeftStyle: 'solid',
+    },
   },
 });
