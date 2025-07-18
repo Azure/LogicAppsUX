@@ -90,9 +90,22 @@
                 }
               }
             }
-          }
+          },
+					"handoff_from_WorkflowAgent_to_Another_Agent_tool": {
+						"actions": {
+							"handoff_from_WorkflowAgent_to_Another_Agent": {
+								"type": "AgentHandOff",
+								"inputs": {
+									"name": "Another_Agent"
+								}
+							}
+						},
+						"description": "Handoff from WorkflowAgent to Another_Agent"
+					}
         },
-        "runAfter": {},
+        "runAfter": {
+					"A2A_Trigger": ["SUCCEEDED"]
+				},
         "limit": {
           "count": 100,
           "timeout": "PT1H"
@@ -212,9 +225,7 @@
             }
           }
         },
-        "runAfter": {
-          "WorkflowAgent": ["SUCCEEDED"]
-        },
+        "runAfter": {},
         "limit": {
           "count": 100,
           "timeout": "PT1H"
