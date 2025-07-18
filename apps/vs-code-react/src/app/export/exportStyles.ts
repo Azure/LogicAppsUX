@@ -17,9 +17,11 @@ export const useExportStyles = makeStyles({
 
   exportWorkflowsPanelFiltersInput: {
     marginRight: tokens.spacingHorizontalMNudge,
-    'input::placeholder': {
-      fontStyle: 'normal',
-    },
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '2px',
+    // Prevent the example from taking the full width of the page (optional)
+    maxWidth: '400px',
   },
 
   exportWorkflowsPanelListWorkflows: {
