@@ -109,7 +109,7 @@ export async function activate(context: vscode.ExtensionContext) {
       await convertToWorkspace(activateContext);
     }
 
-    let isBundleUpdatedPromise: Promise<boolean> = null;
+    let isBundleUpdatedPromise: Promise<boolean> = undefined;
     try {
       isBundleUpdatedPromise = downloadExtensionBundle(activateContext);
     } catch (error) {
@@ -158,7 +158,7 @@ export async function activate(context: vscode.ExtensionContext) {
     vscode.window.registerUriHandler(new UriHandler());
 
     // This is an optimization to avoid blocking extension activation on fetching the bundle feed if no update is needed.
-    if (isBundleUpdatedPromise !== null) {
+    if (isBundleUpdatedPromise !== undefined) {
       // TODO(aeldridge): This promise resolves before bundle download is complete.
       const isBundleUpdated = await isBundleUpdatedPromise;
       ext.defaultBundleVersion = activateContext.telemetry.properties.latestBundleVersion;
