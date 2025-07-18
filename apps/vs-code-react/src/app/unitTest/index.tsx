@@ -1,7 +1,5 @@
 import type { RootState } from '../../state/store';
 import { VSCodeContext } from '../../webviewCommunication';
-import './unitTest.less';
-import { Link } from '@fluentui/react';
 import { MediumText, XLargeText, XXLargeText } from '@microsoft/designer-ui';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { useContext } from 'react';
@@ -9,11 +7,13 @@ import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 import { CheckmarkCircleFilled, CloudBeakerRegular, DismissCircleFilled } from '@fluentui/react-icons';
 import type { AssertionResults } from '@microsoft/vscode-extension-logic-apps';
-import { tokens } from '@fluentui/react-components';
+import { Link, tokens } from '@fluentui/react-components';
+import { useUnitTestStyles } from './unitTestStyles';
 
 export const UnitTestResults: React.FC = () => {
   const unitTestState = useSelector((state: RootState) => state.unitTest);
   const vscode = useContext(VSCodeContext);
+  const styles = useUnitTestStyles();
   const { unitTestName, testResult } = unitTestState;
 
   const { AssertionResults = [] } = testResult?.Results ?? {};
@@ -40,14 +40,14 @@ export const UnitTestResults: React.FC = () => {
   };
 
   return (
-    <div className="msla-unit-test-results">
-      <div className="msla-unit-test-results-header">
+    <div className={styles.unitTestResults}>
+      <div className={styles.unitTestResultsHeader}>
         <CloudBeakerRegular aria-label={intlText.TEST_ICON} fontSize={40} />
         <XXLargeText text={unitTestName ?? ''} style={{ marginLeft: '10px' }} />
       </div>
-      <div className="msla-unit-test-results-assertions-list">
+      <div className={styles.unitTestResultsAssertionsList}>
         {AssertionResults.map((result: AssertionResults, index) => (
-          <div key={index} className="msla-unit-test-results-assertions-list-item">
+          <div key={index} className={styles.unitTestResultsAssertionsListItem}>
             {result.Status ? (
               <CheckmarkCircleFilled color={tokens.colorPaletteGreenBackground3} fontSize={25} />
             ) : (
@@ -62,7 +62,7 @@ export const UnitTestResults: React.FC = () => {
         ))}
       </div>
 
-      <Link className="msla-unit-test-results-button" onClick={handleViewWorkflow}>
+      <Link className={styles.unitTestResultsButton} onClick={handleViewWorkflow}>
         {intlText.VIEW_WORKFLOW}
       </Link>
     </div>

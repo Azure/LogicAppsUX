@@ -1,11 +1,12 @@
 import { SearchableDropdown } from '../../components/searchableDropdown';
-import { TextField } from '@fluentui/react';
 import { useIntl } from 'react-intl';
 import { useExportStyles } from '../exportStyles';
+import { Input, Label, useId } from '@fluentui/react-components';
 
 export const Filters: React.FC<any> = ({ dropdownOptions, onChangeResourceGroup, onChangeSearch, isDataLoading }) => {
   const intl = useIntl();
   const styles = useExportStyles();
+  const filterInputId = useId('filter-input');
 
   const intlText = {
     SEARCH_LOGIC_APP: intl.formatMessage({
@@ -32,13 +33,13 @@ export const Filters: React.FC<any> = ({ dropdownOptions, onChangeResourceGroup,
 
   return (
     <div className={styles.exportWorkflowsPanelFilters}>
-      <TextField
-        className={styles.exportWorkflowsPanelFiltersInput}
-        placeholder={intlText.SEARCH}
-        label={intlText.SEARCH_LOGIC_APP}
-        onChange={onChangeSearch}
-        disabled={isDataLoading}
-      />
+      <div className={styles.exportWorkflowsPanelFiltersInput}>
+        <Label htmlFor={filterInputId} disabled={isDataLoading}>
+          {intlText.SEARCH_LOGIC_APP}
+        </Label>
+        <Input placeholder={intlText.SEARCH} onChange={onChangeSearch} disabled={isDataLoading} id={filterInputId} size="small" />
+      </div>
+
       <SearchableDropdown
         className={styles.exportWorkflowsPanelFiltersDropdown}
         placeholder={intlText.SEARCH}

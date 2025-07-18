@@ -25,6 +25,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { LargeText, XLargeText } from '@microsoft/designer-ui';
 import { useExportStyles } from '../exportStyles';
+import type { InputProps } from '@fluentui/react-components';
 import { Divider, MessageBar, MessageBarBody } from '@fluentui/react-components';
 
 export const WorkflowsSelection: React.FC = () => {
@@ -211,7 +212,8 @@ export const WorkflowsSelection: React.FC = () => {
   }, [intlText.LIMIT_INFO, selectedWorkflows.length, styles.exportWorkflowsPanelLimitInfo]);
 
   const filters = useMemo(() => {
-    const onChangeSearch = (_event: React.FormEvent<HTMLDivElement>, newSearchString: string) => {
+    const onChangeSearch: InputProps['onChange'] = (_event, data) => {
+      const newSearchString = data.value;
       const filteredWorkflows = filterWorkflows(allWorkflows.current, resourceGroups, newSearchString);
       allItemsSelected.current = allItemsSelected.current.map((workflow) => {
         const isWorkflowInRender = !!filteredWorkflows.find((item: WorkflowsList) => item.key === workflow.key);

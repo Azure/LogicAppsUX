@@ -1,6 +1,7 @@
 import './styles.less';
-import { Dropdown, DropdownMenuItemType, SearchBox, Spinner, SpinnerSize } from '@fluentui/react';
+import { Dropdown, DropdownMenuItemType, SearchBox } from '@fluentui/react';
 import type { IDropdownOption, IDropdownProps } from '@fluentui/react';
+import { Spinner } from '@fluentui/react-components';
 import { useState } from 'react';
 import type { ChangeEvent } from 'react';
 import { useIntl } from 'react-intl';
@@ -58,7 +59,7 @@ export const SearchableDropdown: React.FC<ISearchableDropdownProps> = (props) =>
     ];
   };
 
-  const spinnerLoader = props.isLoading ? <Spinner className="searchable-dropdown-spinner" size={SpinnerSize.xSmall} /> : null;
+  const spinnerLoader = props.isLoading ? <Spinner className="searchable-dropdown-spinner" size="extra-small" /> : null;
 
   return (
     <div className="searchable-dropdown">

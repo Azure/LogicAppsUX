@@ -6,9 +6,15 @@ import type {
   IExportDetails,
   IExportDetailsList,
   IDropDownOption,
+  INamingRules,
 } from '../../../run-service';
-import { resourceGroupNamingRules } from './newResourceGroup';
 import type { IDropdownOption } from '@fluentui/react';
+
+const resourceGroupNamingRules: INamingRules = {
+  minLength: 1,
+  maxLength: 90,
+  invalidCharsRegExp: new RegExp(/[^a-zA-Z0-9._\-()]/, 'g'),
+};
 
 const getTypeName = (typeName: string): string => {
   switch (typeName) {

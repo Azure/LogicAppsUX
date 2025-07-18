@@ -1,6 +1,6 @@
 import type { IEditorParameterInfo, IEditorProps, IEditorService } from '@microsoft/logic-apps-shared';
-import { Link } from '@fluentui/react';
 import { CustomDeploymentModelResource } from '@microsoft/logic-apps-designer';
+import { Link } from '@fluentui/react-components';
 
 export interface CustomEditorServiceOptions {
   areCustomEditorsEnabled?: boolean;
