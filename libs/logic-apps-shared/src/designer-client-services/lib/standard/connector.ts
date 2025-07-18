@@ -5,6 +5,8 @@ import type { BaseConnectorServiceOptions } from '../base';
 import { BaseConnectorService } from '../base';
 import type { ListDynamicValue, ManagedIdentityRequestProperties, TreeDynamicExtension, TreeDynamicValue } from '../connector';
 import { pathCombine, unwrapPaginatedResponse } from '../helpers';
+import { LoggerService } from '../logger';
+import { LogEntryLevel } from '../logging/logEntry';
 import { getHybridAppBaseRelativeUrl, hybridApiVersion, isHybridLogicApp } from './hybrid';
 
 type GetConfigurationFunction = (connectionId: string, manifest?: OperationManifest) => Promise<Record<string, any>>;
@@ -42,6 +44,14 @@ export class StandardConnectorService extends BaseConnectorService {
     }
 
     const result = await this._executeAzureDynamicApi(dynamicUrl, apiVersion, parameters, managedIdentityProperties);
+
+    if (result?.__paginationIncomplete) {
+      LoggerService().log({
+        message: `Pagination request unsuccessful, some values may be missing. ${result.__paginationError || ''} on ${connectorId}`,
+        level: LogEntryLevel.Error,
+        area: 'unwrapPaginatedResponse',
+      });
+    }
     return unwrapPaginatedResponse(result);
   }
 
