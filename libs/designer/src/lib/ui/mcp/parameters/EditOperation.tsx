@@ -414,7 +414,6 @@ export const EditOperation = () => {
                         <Text weight="semibold">{INTL_TEXT.advancedParameters}</Text>
                       </AccordionHeader>
                       <AccordionPanel className={styles.parameterList}>
-                        <Text size={300}>Description to help user. This is optional. Can be added down the road.</Text>
                         {/* Optional Parameters Dropdown */}
                         {allConditionalSettings.length > 0 ? (
                           <div className={styles.optionalParametersSection}>
