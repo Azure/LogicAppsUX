@@ -20,9 +20,10 @@ import type { ConnectionsData } from '@microsoft/vscode-extension-logic-apps';
 /**
  * Prompts the user to parameterize connections at project load.
  * @param {IActionContext} context - The action context.
+ * @param {boolean} [showMessage] - A flag indicating whether to show information message to the user.
  * @returns A promise that resolves when the operation is complete.
  */
-export async function promptParameterizeConnections(context: IActionContext): Promise<void> {
+export async function promptParameterizeConnections(context: IActionContext, showMessage?: boolean): Promise<void> {
   if (workspace.workspaceFolders && workspace.workspaceFolders.length > 0) {
     const message = localize('allowParameterizeConnections', 'Allow parameterization for connections when your project loads?');
     const parameterizeConnectionsSetting = getGlobalSetting(parameterizeConnectionsInProjectLoadSetting);
@@ -43,7 +44,7 @@ export async function promptParameterizeConnections(context: IActionContext): Pr
 
     if (shouldParameterizeConnections) {
       const projectPaths = await getWorkspaceLogicAppFolders();
-      await Promise.all(projectPaths.map((projectPath) => parameterizeConnections(context, projectPath)));
+      await Promise.all(projectPaths.map((projectPath) => parameterizeConnections(context, projectPath, showMessage)));
     }
   }
 }
@@ -52,9 +53,10 @@ export async function promptParameterizeConnections(context: IActionContext): Pr
  * Parameterizes the connections in the Logic Apps project.
  * @param {IActionContext} context - The action context.
  * @param {string} projectPath - The path to the Logic App project, or all Logic App projects in the workspace by default.
+ * @param {boolean} showMessage - A flag indicating whether to show information message to the user.
  * @returns A promise that resolves when the connections have been parameterized.
  */
-export async function parameterizeConnections(context: IActionContext, projectPath?: string): Promise<void> {
+export async function parameterizeConnections(context: IActionContext, projectPath?: string, showMessage = true): Promise<void> {
   if (workspace.workspaceFolders && workspace.workspaceFolders.length > 0) {
     if (!projectPath) {
       const workspaceLogicAppFolders = await getWorkspaceLogicAppFolders();
@@ -72,7 +74,9 @@ export async function parameterizeConnections(context: IActionContext, projectPa
       const localSettingsJson = (await getLocalSettingsJson(context, path.join(projectPath, localSettingsFileName))) as Record<string, any>;
 
       if (areAllConnectionsParameterized(connectionsData)) {
-        window.showInformationMessage(localize('connectionsAlreadyParameterized', 'Connections are already parameterized.'));
+        if (showMessage) {
+          window.showInformationMessage(localize('connectionsAlreadyParameterized', 'Connections are already parameterized.'));
+        }
         return;
       }
 
@@ -91,7 +95,7 @@ export async function parameterizeConnections(context: IActionContext, projectPa
       });
       await saveWorkflowParameter(context, projectPath, parametersJson);
       await saveConnectionReferences(context, projectPath, { connections: connectionsData, settings: localSettingsJson.Values });
-      window.showInformationMessage(localize('finishedParameterizingConnections', 'Finished parameterizing connections.'));
+      window.showInformationMessage(localize('connectionsParameterized', 'Successfully parameterized connections.'));
     } catch (error) {
       const errorMessage = localize(
         'errorParameterizeConnections',

@@ -155,9 +155,9 @@ async function getExtensionBundleVersionFolders(directoryPath: string): Promise<
  * Download Microsoft.Azure.Functions.ExtensionBundle.Workflows.<version>
  * Destination: C:\Users\<USERHOME>\.azure-functions-core-tools\Functions\ExtensionBundles\<version>
  * @param {IActionContext} context - Command context.
- * @returns {Promise<string>} Returns bundle extension zip url.
+ * @returns {Promise<bool>} A boolean indicating whether the bundle was updated.
  */
-export async function downloadExtensionBundle(context: IActionContext): Promise<void> {
+export async function downloadExtensionBundle(context: IActionContext): Promise<boolean> {
   let envVarVer: string | undefined = process.env.AzureFunctionsJobHost_extensionBundle_version;
   const projectPath: string | undefined = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : null;
   if (projectPath) {
@@ -165,19 +165,22 @@ export async function downloadExtensionBundle(context: IActionContext): Promise<
       ?.AzureFunctionsJobHost_extensionBundle_version;
   }
 
-  context.telemetry.properties.envVariableExtensionBundleVersion = envVarVer;
-
-  if (envVarVer) {
-    const extensionBundleUrl = await getExtensionBundleZip(context, envVarVer);
-    await downloadAndExtractDependency(context, extensionBundleUrl, defaultExtensionBundlePathValue, extensionBundleId, envVarVer);
-    return;
-  }
-
   // Check for latest version at directory.
   let latestLocalBundleVersion = '1.0.0';
   const localVersions = await getExtensionBundleVersionFolders(defaultExtensionBundlePathValue);
   for (const localVersion of localVersions) {
     latestLocalBundleVersion = semver.gt(latestLocalBundleVersion, localVersion) ? latestLocalBundleVersion : localVersion;
+  }
+
+  context.telemetry.properties.envVariableExtensionBundleVersion = envVarVer;
+  if (envVarVer) {
+    if (semver.eq(envVarVer, latestLocalBundleVersion)) {
+      return false;
+    }
+
+    const extensionBundleUrl = await getExtensionBundleZip(context, envVarVer);
+    await downloadAndExtractDependency(context, extensionBundleUrl, defaultExtensionBundlePathValue, extensionBundleId, envVarVer);
+    return true;
   }
 
   // Check the latest from feed.
@@ -200,7 +203,11 @@ export async function downloadExtensionBundle(context: IActionContext): Promise<
       extensionBundleId,
       latestFeedBundleVersion
     );
+
+    return true;
   }
+
+  return false;
 }
 
 /**
