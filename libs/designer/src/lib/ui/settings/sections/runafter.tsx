@@ -1,7 +1,7 @@
 import type { SectionProps } from '../';
 import { SettingSectionName } from '../';
 import type { AppDispatch, RootState } from '../../../core';
-import { addEdgeFromRunAfterOperation, removeEdgeFromRunAfterOperation } from '../../../core/actions/bjsworkflow/runafter';
+import { addOperationRunAfter, removeOperationRunAfter } from '../../../core/actions/bjsworkflow/runafter';
 import { useActionMetadata, useRootTriggerId } from '../../../core/state/workflow/workflowSelectors';
 import { updateRunAfter } from '../../../core/state/workflow/workflowSlice';
 import { useIsA2AWorkflow } from '../../../core/state/designerView/designerViewSelectors';
@@ -93,7 +93,7 @@ export const RunAfter = ({ nodeId, readOnly = false, expanded, validationErrors,
         },
         onDelete: () => {
           dispatch(
-            removeEdgeFromRunAfterOperation({
+            removeOperationRunAfter({
               parentOperationId: id,
               childOperationId: nodeId,
             })
@@ -120,7 +120,7 @@ export const RunAfter = ({ nodeId, readOnly = false, expanded, validationErrors,
           readOnly,
           onEdgeAddition: (parentNode: string) => {
             dispatch(
-              addEdgeFromRunAfterOperation({
+              addOperationRunAfter({
                 parentOperationId: parentNode,
                 childOperationId: nodeId,
               })

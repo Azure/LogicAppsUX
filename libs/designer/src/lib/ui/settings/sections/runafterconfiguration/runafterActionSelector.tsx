@@ -1,5 +1,5 @@
 import type { AppDispatch, RootState } from '../../../../core';
-import { addEdgeFromRunAfterOperation, removeEdgeFromRunAfterOperation } from '../../../../core/actions/bjsworkflow/runafter';
+import { addOperationRunAfter, removeOperationRunAfter } from '../../../../core/actions/bjsworkflow/runafter';
 import { useOperationVisuals } from '../../../../core/state/operation/operationSelector';
 import { useOperationPanelSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
 import { useNodeDisplayName, useRootTriggerId } from '../../../../core/state/workflow/workflowSelectors';
@@ -130,7 +130,7 @@ export const RunAfterActionSelector = ({ readOnly }: { readOnly: boolean }) => {
         const removedItems = selectedValues.actions.filter((x) => !data.checkedItems.includes(x));
         removedItems.forEach((item) => {
           dispatch(
-            removeEdgeFromRunAfterOperation({
+            removeOperationRunAfter({
               parentOperationId: item,
               childOperationId: currentNodeId,
             })
@@ -138,7 +138,7 @@ export const RunAfterActionSelector = ({ readOnly }: { readOnly: boolean }) => {
         });
         newItems.forEach((item) => {
           dispatch(
-            addEdgeFromRunAfterOperation({
+            addOperationRunAfter({
               parentOperationId: item,
               childOperationId: currentNodeId,
             })
