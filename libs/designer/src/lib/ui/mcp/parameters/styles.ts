@@ -119,6 +119,7 @@ export const useEditOperationStyles = makeStyles({
   parameterField: {
     display: 'flex',
     flexDirection: 'column',
+    width: '700px',
   },
 
   parameterValueSection: {
@@ -133,6 +134,7 @@ export const useEditOperationStyles = makeStyles({
     color: tokens.colorNeutralForeground1,
     fontSize: tokens.fontSizeBase300,
     flex: 1,
+    marginBottom: tokens.spacingVerticalS,
   },
 
   removeParameterButton: {

@@ -128,10 +128,10 @@ export const EditOperation = () => {
       defaultMessage: 'Required',
       description: 'Title for the required section',
     }),
-    optionalParameters: intl.formatMessage({
-      id: 'VQ1BxQ',
-      defaultMessage: 'Optional parameters',
-      description: 'Label for the section to configure optional parameters',
+    advancedParameters: intl.formatMessage({
+      id: 'ZP9nho',
+      defaultMessage: 'Advanced parameters',
+      description: 'Label for the section to configure advanced parameters',
     }),
     selectParameters: intl.formatMessage({
       id: '1h43JZ',
@@ -385,7 +385,7 @@ export const EditOperation = () => {
         <Text size={400} weight="semibold" className={styles.descriptionField}>
           {INTL_TEXT.descriptionLabel}
         </Text>
-        <Field>
+        <Field className={styles.parameterField}>
           <Textarea
             value={localDescription}
             onChange={(_e, data) => handleDescriptionInputChange(data.value)}
@@ -408,11 +408,12 @@ export const EditOperation = () => {
           <div className={styles.parametersSection}>
             <Card className={styles.parameterCard}>
               <div className={styles.requiredSection}>
-                <Label required>
+                {/* <Label required>
                   <Text size={400} weight="semibold" className={styles.sectionTitle}>
                     {INTL_TEXT.required}
                   </Text>
-                </Label>
+                </Label> */}
+
                 {hasRequiredParameters && (
                   <div className={styles.parameterList}>
                     {requiredParams.map(({ param, isConditional }) => renderParameterField(param, isConditional))}
@@ -424,9 +425,10 @@ export const EditOperation = () => {
                   <Accordion collapsible={true} defaultOpenItems={['optional-parameters']}>
                     <AccordionItem value="optional-parameters">
                       <AccordionHeader>
-                        <Text weight="semibold">{INTL_TEXT.optionalParameters}</Text>
+                        <Text weight="semibold">{INTL_TEXT.advancedParameters}</Text>
                       </AccordionHeader>
                       <AccordionPanel className={styles.parameterList}>
+                        <Text size={300}>Description to help user. This is optional. Can be added down the road.</Text>
                         {/* Optional Parameters Dropdown */}
                         {allConditionalSettings.length > 0 ? (
                           <div className={styles.optionalParametersSection}>
