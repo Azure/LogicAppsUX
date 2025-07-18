@@ -4,7 +4,7 @@ import type { NodesMetadata, WorkflowState } from '../state/workflow/workflowInt
 import type { WorkflowNode } from './models/workflowNode';
 import { addNewEdge, reassignEdgeSources, reassignEdgeTargets, removeEdge, applyIsRootNode } from './restructuringHelpers';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
-import { containsIdTag, getRecordEntry } from '@microsoft/logic-apps-shared';
+import { containsIdTag, equals, getRecordEntry } from '@microsoft/logic-apps-shared';
 
 export interface MoveNodePayload {
   nodeId: string;
@@ -74,7 +74,8 @@ export const moveNodeInWorkflow = (
     const graphId = oldWorkflowGraph.id;
     const parentMetadata = getRecordEntry(nodesMetadata, parentId);
     const isAfterTrigger = parentMetadata?.isRoot && graphId === 'root';
-    const shouldAddRunAfters = !isOldRoot && !isAfterTrigger;
+    const allowRunAfterTrigger = equals(state.workflowKind, 'agent');
+    const shouldAddRunAfters = allowRunAfterTrigger || (!isOldRoot && !isAfterTrigger);
     reassignEdgeSources(state, nodeId, parentId, oldWorkflowGraph, shouldAddRunAfters);
     removeEdge(state, parentId, nodeId, oldWorkflowGraph);
   }
@@ -105,7 +106,8 @@ export const moveNodeInWorkflow = (
 
   const parentMetadata = getRecordEntry(nodesMetadata, parentId);
   const isAfterTrigger = (parentMetadata?.isRoot && newGraphId === 'root') ?? false;
-  const shouldAddRunAfters = !isNewRoot && !isAfterTrigger;
+  const allowRunAfterTrigger = equals(state.workflowKind, 'agent');
+  const shouldAddRunAfters = allowRunAfterTrigger || (!isNewRoot && !isAfterTrigger);
 
   // 1 parent, 1 child
   if (parentId && childId) {
