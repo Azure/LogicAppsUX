@@ -10,6 +10,7 @@ import {
   AccordionItem,
   AccordionHeader,
   AccordionPanel,
+  mergeClasses,
 } from '@fluentui/react-components';
 import { Dismiss16Regular } from '@fluentui/react-icons';
 import type { RootState, AppDispatch } from '../../../core/state/mcp/store';
@@ -318,7 +319,7 @@ export const EditOperation = () => {
           </Label>
           <div className={styles.parameterValueSection}>
             <StringEditor
-              className="msla-setting-token-editor-container"
+              className={mergeClasses('msla-setting-token-editor-container', styles.parameterEditor)}
               initialValue={param.value}
               editorBlur={(changeState) => {
                 const newValue = changeState.value;
@@ -342,6 +343,7 @@ export const EditOperation = () => {
     },
     [
       styles.parameterField,
+      styles.parameterEditor,
       styles.parameterValueSection,
       styles.parameterLabel,
       styles.removeParameterButton,
@@ -407,20 +409,15 @@ export const EditOperation = () => {
         {hasVisibleParameters || hasOptionalParameters ? (
           <div className={styles.parametersSection}>
             <Card className={styles.parameterCard}>
-              <div className={styles.requiredSection}>
-                {/* <Label required>
-                  <Text size={400} weight="semibold" className={styles.sectionTitle}>
-                    {INTL_TEXT.required}
-                  </Text>
-                </Label> */}
-
-                {hasRequiredParameters && (
+              {hasRequiredParameters && (
+                <div className={styles.requiredSection}>
                   <div className={styles.parameterList}>
                     {requiredParams.map(({ param, isConditional }) => renderParameterField(param, isConditional))}
                   </div>
-                )}
-              </div>
-              {allConditionalSettings ? (
+                </div>
+              )}
+
+              {allConditionalSettings?.length ? (
                 <div>
                   <Accordion collapsible={true} defaultOpenItems={['optional-parameters']}>
                     <AccordionItem value="optional-parameters">

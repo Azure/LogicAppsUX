@@ -93,6 +93,9 @@ export const useEditOperationStyles = makeStyles({
       border: `1px solid ${tokens.colorBrandStroke1}`,
       boxShadow: `0 0 0 1px ${tokens.colorBrandStroke1}`,
     },
+
+    paddingTop: tokens.spacingVerticalL,
+    paddingBottom: tokens.spacingVerticalL,
   },
 
   parameterCardHeader: {
@@ -120,6 +123,12 @@ export const useEditOperationStyles = makeStyles({
     display: 'flex',
     flexDirection: 'column',
     width: '700px',
+    maxWidth: '100%',
+  },
+
+  parameterEditor: {
+    width: '700px',
+    maxWidth: '100%',
   },
 
   parameterValueSection: {
