@@ -55,63 +55,53 @@ export const EditOperation = () => {
     }
   }, [metadata, metadata?.description, selectedOperationId]);
 
-  const {
-    allVisibleParameters,
-    requiredParams,
-    visibleConditionalParams,
-    optionalDropdownOptions,
-    allConditionalSettings,
-    conditionallyInvisibleSettings,
-  } = useMemo(() => {
-    if (!parameters?.parameterGroups) {
-      return {
-        allVisibleParameters: [],
-        requiredParams: [],
-        visibleConditionalParams: [],
-        optionalDropdownOptions: [],
-        allConditionalSettings: [],
-        conditionallyInvisibleSettings: [],
-      };
-    }
+  const { requiredParams, visibleConditionalParams, optionalDropdownOptions, allConditionalSettings, conditionallyInvisibleSettings } =
+    useMemo(() => {
+      if (!parameters?.parameterGroups) {
+        return {
+          requiredParams: [],
+          visibleConditionalParams: [],
+          optionalDropdownOptions: [],
+          allConditionalSettings: [],
+          conditionallyInvisibleSettings: [],
+        };
+      }
 
-    const requiredParams: Array<{ groupId: string; param: ParameterInfo; isConditional: boolean }> = [];
-    const visibleConditionalParams: Array<{ groupId: string; param: ParameterInfo; isConditional: boolean }> = [];
-    const dropdownOptions: SearchableDropdownOption[] = [];
-    const allConditional: ParameterInfo[] = [];
-    const invisible: ParameterInfo[] = [];
+      const requiredParams: Array<{ groupId: string; param: ParameterInfo; isConditional: boolean }> = [];
+      const visibleConditionalParams: Array<{ groupId: string; param: ParameterInfo; isConditional: boolean }> = [];
+      const dropdownOptions: SearchableDropdownOption[] = [];
+      const allConditional: ParameterInfo[] = [];
+      const invisible: ParameterInfo[] = [];
 
-    Object.entries(parameters.parameterGroups).forEach(([groupId, group]) => {
-      group.parameters.forEach((param) => {
-        if (param.required) {
-          requiredParams.push({ groupId, param, isConditional: false });
-        } else {
-          allConditional.push(param);
-
-          if (param.conditionalVisibility === true) {
-            visibleConditionalParams.push({ groupId, param, isConditional: true });
+      Object.entries(parameters.parameterGroups).forEach(([groupId, group]) => {
+        group.parameters.forEach((param) => {
+          if (param.required) {
+            requiredParams.push({ groupId, param, isConditional: false });
           } else {
-            invisible.push(param);
-            dropdownOptions.push({
-              key: param.id,
-              text: param.label ?? param.parameterName,
-              data: { groupId, param },
-            });
+            allConditional.push(param);
+
+            if (param.conditionalVisibility === true) {
+              visibleConditionalParams.push({ groupId, param, isConditional: true });
+            } else {
+              invisible.push(param);
+              dropdownOptions.push({
+                key: param.id,
+                text: param.label ?? param.parameterName,
+                data: { groupId, param },
+              });
+            }
           }
-        }
+        });
       });
-    });
 
-    const allVisible = [...requiredParams, ...visibleConditionalParams];
-
-    return {
-      allVisibleParameters: allVisible,
-      requiredParams,
-      visibleConditionalParams,
-      optionalDropdownOptions: dropdownOptions,
-      allConditionalSettings: allConditional,
-      conditionallyInvisibleSettings: invisible,
-    };
-  }, [parameters]);
+      return {
+        requiredParams,
+        visibleConditionalParams,
+        optionalDropdownOptions: dropdownOptions,
+        allConditionalSettings: allConditional,
+        conditionallyInvisibleSettings: invisible,
+      };
+    }, [parameters]);
 
   const INTL_TEXT = {
     noOperationSelected: intl.formatMessage({
@@ -363,7 +353,6 @@ export const EditOperation = () => {
     );
   }
 
-  const hasVisibleParameters = allVisibleParameters.length > 0;
   const hasRequiredParameters = requiredParams.length > 0;
   const hasOptionalParameters = optionalDropdownOptions.length > 0;
   const hasVisibleConditionalParameters = visibleConditionalParams.length > 0;
@@ -406,7 +395,7 @@ export const EditOperation = () => {
           {INTL_TEXT.parameters}
         </Text>
 
-        {hasVisibleParameters || hasOptionalParameters ? (
+        {hasRequiredParameters || hasOptionalParameters ? (
           <div className={styles.parametersSection}>
             <Card className={styles.parameterCard}>
               {hasRequiredParameters && (
