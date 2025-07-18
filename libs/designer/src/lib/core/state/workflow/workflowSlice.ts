@@ -31,7 +31,6 @@ import {
   equals,
   getRecordEntry,
   RUN_AFTER_STATUS,
-  WORKFLOW_EDGE_TYPES,
   WORKFLOW_NODE_TYPES,
   containsIdTag,
   containsCaseTag,
@@ -61,7 +60,6 @@ export const initialWorkflowState: WorkflowState = {
   nodesMetadata: {},
   collapsedGraphIds: {},
   collapsedActionIds: {},
-  edgeIdsBySource: {},
   idReplacements: {},
   newlyAddedOperations: {},
   isDirty: false,
@@ -102,7 +100,8 @@ export const workflowSlice = createSlice({
       if (!state.graph) {
         return; // log exception
       }
-      const graph = getWorkflowNodeFromGraphState(state, action.payload.relationshipIds.graphId);
+      const relationshipIds = action.payload.relationshipIds;
+      const graph = getWorkflowNodeFromGraphState(state, relationshipIds?.subgraphId ?? relationshipIds?.graphId);
       if (!graph) {
         throw new Error('graph not set');
       }
@@ -323,7 +322,19 @@ export const workflowSlice = createSlice({
       });
     },
     deleteSwitchCase: (state: WorkflowState, action: PayloadAction<{ caseId: string; nodeId: string }>) => {
-      delete (getRecordEntry(state.operations, action.payload.nodeId) as any).cases?.[action.payload.caseId];
+      const { caseId, nodeId } = action.payload;
+      delete (getRecordEntry(state.operations, nodeId) as any).cases?.[caseId];
+
+      LoggerService().log({
+        level: LogEntryLevel.Verbose,
+        area: 'Designer:Workflow Slice',
+        message: action.type,
+        args: [action.payload],
+      });
+    },
+    deleteAgentTool: (state: WorkflowState, action: PayloadAction<{ toolId: string; agentId: string }>) => {
+      const { toolId, agentId } = action.payload;
+      delete (getRecordEntry(state.operations, agentId) as any).tools?.[toolId];
 
       LoggerService().log({
         level: LogEntryLevel.Verbose,
@@ -514,12 +525,11 @@ export const workflowSlice = createSlice({
       };
       nodeMetadata.runData = nodeRunData as LogicAppsV2.WorkflowRunAction;
     },
-    addSwitchCase: (state: WorkflowState, action: PayloadAction<{ caseId: string; nodeId: string }>) => {
+    addSwitchCase: (state: WorkflowState, action: PayloadAction<{ caseId: string; graphId: string }>) => {
       if (!state.graph) {
         return; // log exception
       }
-      const { caseId, nodeId } = action.payload;
-      const graphId = getRecordEntry(state.nodesMetadata, nodeId)?.graphId ?? '';
+      const { caseId, graphId } = action.payload;
       const node = getWorkflowNodeFromGraphState(state, graphId);
       if (!node) {
         throw new Error('node not set');
@@ -533,12 +543,11 @@ export const workflowSlice = createSlice({
         args: [action.payload],
       });
     },
-    addAgentTool: (state: WorkflowState, action: PayloadAction<{ toolId: string; nodeId: string }>) => {
+    addAgentTool: (state: WorkflowState, action: PayloadAction<{ toolId: string; graphId: string }>) => {
       if (!state.graph) {
         return; // log exception
       }
-      const { toolId, nodeId } = action.payload;
-      const graphId = getRecordEntry(state.nodesMetadata, nodeId)?.graphId ?? '';
+      const { toolId, graphId } = action.payload;
       const node = getWorkflowNodeFromGraphState(state, graphId);
       if (!node) {
         throw new Error('node not set');
@@ -559,29 +568,6 @@ export const workflowSlice = createSlice({
         level: LogEntryLevel.Verbose,
         area: 'workflowSlice.ts',
       });
-    },
-    buildEdgeIdsBySource: (state: WorkflowState) => {
-      if (!state.graph) {
-        return;
-      }
-
-      const output: Record<string, string[]> = {};
-      const traverseGraph = (graph: WorkflowNode) => {
-        const edges = graph.edges?.filter((e) => e.type !== WORKFLOW_EDGE_TYPES.HIDDEN_EDGE);
-        if (edges) {
-          edges.forEach((edge) => {
-            if (!getRecordEntry(output, edge.source)) {
-              output[edge.source] = [];
-            }
-            getRecordEntry(output, edge.source)?.push(edge.target);
-          });
-        }
-        if (graph.children) {
-          graph.children.forEach((child) => traverseGraph(child));
-        }
-      };
-      traverseGraph(state.graph);
-      state.edgeIdsBySource = output;
     },
     removeEdgeFromRunAfter: (state: WorkflowState, action: PayloadAction<{ childOperationId: string; parentOperationId: string }>) => {
       const { childOperationId, parentOperationId } = action.payload;
@@ -698,6 +684,34 @@ export const workflowSlice = createSlice({
       }
       childOperation.runAfter[action.payload.parentOperation] = action.payload.statuses;
     },
+    addHandoffMetadata: (state: WorkflowState, action: PayloadAction<{ sourceId: string; toolId: string; targetId: string }>) => {
+      const { sourceId, toolId, targetId } = action.payload;
+      const sourceOperation = getRecordEntry(state.nodesMetadata, sourceId);
+      if (!sourceOperation) {
+        return;
+      }
+      const currentHandoffs = (sourceOperation as any)?.handoffs ?? {};
+      currentHandoffs[toolId] = targetId;
+      (sourceOperation as any).handoffs = currentHandoffs;
+    },
+    removeHandoffMetadata: (state: WorkflowState, action: PayloadAction<{ sourceId: string; toolId?: string; targetId?: string }>) => {
+      const { sourceId, toolId, targetId } = action.payload;
+      const sourceMetadata = getRecordEntry(state.nodesMetadata, sourceId);
+      if (!sourceMetadata) {
+        return;
+      }
+      const currentHandoffs = (sourceMetadata as any)?.handoffs ?? {};
+      if (toolId) {
+        delete currentHandoffs[toolId];
+      } else if (targetId) {
+        for (const [toolId, handoffTargetId] of Object.entries(currentHandoffs)) {
+          if (handoffTargetId === targetId) {
+            delete currentHandoffs[toolId];
+          }
+        }
+      }
+      (sourceMetadata as any).handoffs = currentHandoffs;
+    },
     replaceId: (state: WorkflowState, action: PayloadAction<{ originalId: string; newId: string }>) => {
       const { originalId, newId } = action.payload;
       const normalizedId = transformOperationTitle(newId);
@@ -789,16 +803,18 @@ export const {
   moveNode,
   deleteNode,
   deleteSwitchCase,
+  deleteAgentTool,
   updateNodeSizes,
   setNodeDescription,
   toggleCollapsedGraphId,
   addSwitchCase,
   addAgentTool,
   discardAllChanges,
-  buildEdgeIdsBySource,
   updateRunAfter,
   addEdgeFromRunAfter,
   removeEdgeFromRunAfter,
+  addHandoffMetadata,
+  removeHandoffMetadata,
   setTimelineRepetitionIndex,
   setTimelineRepetitionArray,
   clearFocusNode,

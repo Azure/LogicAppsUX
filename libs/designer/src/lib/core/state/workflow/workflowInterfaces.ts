@@ -14,6 +14,7 @@ export interface NodeMetadata {
   actionMetadata?: Record<string, any>;
   subgraphRunData?: Record<string, { actionResults: LogicAppsV2.WorkflowRunAction[] }>;
   runIndex?: number;
+  handoffs?: Record<string, string>;
 }
 export interface NodesMetadata {
   [nodeId: string]: NodeMetadata;
@@ -46,7 +47,6 @@ export interface WorkflowState {
   collapsedGraphIds: Record<string, boolean>;
   collapsedActionIds: Record<string, boolean>;
   focusCollapsedNodeId?: string;
-  edgeIdsBySource: Record<string, string[]>;
   idReplacements: Record<string, string>;
   newlyAddedOperations: Record<string, string>;
   runInstance: LogicAppsV2.RunInstanceDefinition | null;

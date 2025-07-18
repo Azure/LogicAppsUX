@@ -13,8 +13,17 @@ import type {} from 'reselect';
 import type {} from '@tanstack/react-query';
 import { collapseFlowTree } from './helper';
 import { useTimelineRepetitionOffset } from '../../../ui/MonitoringTimeline/hooks';
+import { useEdges } from '@xyflow/react';
+import type { OperationMetadataState } from '../operation/operationMetadataSlice';
 
 export const getWorkflowState = (state: RootState): WorkflowState => state.workflow;
+
+export const getWorkflowAndOperationState = (state: RootState): { workflow: WorkflowState; operations: OperationMetadataState } => {
+  return {
+    workflow: state.workflow,
+    operations: state.operations,
+  };
+};
 
 export const useNodeDisplayName = (id?: string) =>
   useSelector(createSelector(getWorkflowState, (state: WorkflowState) => labelCase(getRecordEntry(state.idReplacements, id) ?? id ?? '')));
@@ -85,10 +94,12 @@ export const useIsEverythingExpanded = () =>
 
 export const useRootWorkflowGraphForLayout = () =>
   useSelector(
-    createSelector(getWorkflowState, (state) => {
-      const rootNode = state.graph;
-      const collapsedIds = state.collapsedGraphIds;
-      const collapsedActionsIds = state.collapsedActionIds;
+    createSelector(getWorkflowAndOperationState, (rootState) => {
+      const workflowState = rootState.workflow;
+
+      const rootNode = workflowState.graph;
+      const collapsedIds = workflowState.collapsedGraphIds;
+      const collapsedActionsIds = workflowState.collapsedActionIds;
 
       if (!rootNode) {
         return undefined;
@@ -96,7 +107,7 @@ export const useRootWorkflowGraphForLayout = () =>
 
       let newGraph = rootNode;
 
-      newGraph = removeSingleHandoffTools(newGraph, state);
+      newGraph = handoffToolAdjustment(newGraph, rootState);
 
       if (Object.keys(collapsedIds).length === 0 && Object.keys(collapsedActionsIds).length === 0) {
         return newGraph;
@@ -156,8 +167,11 @@ const reduceCollapsed =
     }, []);
   };
 
-const removeSingleHandoffTools = (graph: WorkflowNode, state: WorkflowState): WorkflowNode => {
-  const operations = state.operations;
+const handoffToolAdjustment = (
+  graph: WorkflowNode,
+  rootState: { workflow: WorkflowState; operations: OperationMetadataState }
+): WorkflowNode => {
+  const operations = rootState.workflow.operations;
 
   // Iterate over graph, if any agent action tools only have a single handoff action, log it
   const handoffToolIds: string[] = [];
@@ -167,8 +181,19 @@ const removeSingleHandoffTools = (graph: WorkflowNode, state: WorkflowState): Wo
       const tools = child?.children?.filter((_child) => _child.subGraphLocation === 'tools');
       for (const tool of tools ?? []) {
         const toolActions = tool.children?.filter((child) => child.type === WORKFLOW_NODE_TYPES.OPERATION_NODE) ?? [];
+        // If the tool only has a single handoff action, add it to the list to be removed
         if (toolActions?.length === 1 && equals(operations[toolActions[0].id]?.type, commonConstants.NODE.TYPE.HANDOFF)) {
           handoffToolIds.push(tool.id);
+        }
+        // If the tool has a handoff action at all, add a handoff edge to the graph
+        const firstHandoffAction = toolActions.find((action) => equals(operations[action.id]?.type, commonConstants.NODE.TYPE.HANDOFF));
+        if (firstHandoffAction) {
+          const inputParameters = rootState.operations?.inputParameters?.[firstHandoffAction.id]?.parameterGroups?.default?.parameters;
+          const handoffTarget = inputParameters?.find((param) => equals(param.parameterName, 'name'))?.value?.[0]?.value ?? '';
+          graph = {
+            ...graph,
+            edges: [...(graph?.edges ?? []), createWorkflowEdge(child.id, handoffTarget, WORKFLOW_EDGE_TYPES.HANDOFF_EDGE)],
+          };
         }
       }
     }
@@ -260,9 +285,10 @@ export const getWorkflowNodeFromGraphState = (state: WorkflowState, actionId: st
 };
 
 export const useNodeEdgeTargets = (nodeId?: string): string[] => {
-  return useSelector(
-    createSelector(getWorkflowState, (state: WorkflowState) => getRecordEntry(state.edgeIdsBySource ?? {}, nodeId ?? '') ?? [])
-  );
+  const edges = useEdges()
+    .filter((edge) => edge.source === nodeId)
+    .filter((edge) => !edge.target.includes('-#footer'));
+  return edges.map((edge) => edge.target);
 };
 
 export const useWorkflowNode = (actionId?: string) => {
@@ -281,6 +307,11 @@ export const useIsGraphEmpty = () => {
 export const useIsLeafNode = (nodeId: string): boolean => {
   const targets = useNodeEdgeTargets(nodeId);
   return useMemo(() => targets.length === 0, [targets.length]);
+};
+
+export const useIsDisconnected = (nodeId: string): boolean => {
+  const edges = useEdges().filter((edge) => edge.target === nodeId);
+  return useMemo(() => edges.length === 0, [edges]);
 };
 
 export const useNodeIds = () => {
@@ -411,6 +442,15 @@ export const useSubgraphRunData = (id: string): Record<string, { actionResults: 
 
 export const useNodesMetadata = (): NodesMetadata =>
   useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.nodesMetadata));
+
+export const getNodesWithGraphId = (graphId: string, nodesMetadata: NodesMetadata): NodesMetadata => {
+  return Object.entries(nodesMetadata).reduce((acc, [nodeId, metadata]) => {
+    if (metadata.graphId === graphId) {
+      acc[nodeId] = metadata;
+    }
+    return acc;
+  }, {} as NodesMetadata);
+};
 
 export const useParentRunIndex = (id: string | undefined): number | undefined => {
   const offset = useTimelineRepetitionOffset(id ?? '');
@@ -590,4 +630,53 @@ export const getAgentFromCondition = (state: WorkflowState, nodeId: string): str
   }
 
   return state.nodesMetadata[nodeId].parentNodeId;
+};
+
+export const useAllAgentIds = (): string[] => {
+  return useSelector(
+    createSelector(getWorkflowState, (state: WorkflowState) => {
+      return Object.keys(state.operations).filter((id) => equals(state.operations[id]?.type, commonConstants.NODE.TYPE.AGENT));
+    })
+  );
+};
+
+export const useHandoffActionsForAgent = (agentId: string): any[] => {
+  return useSelector(
+    createSelector(getWorkflowAndOperationState, (state: { workflow: WorkflowState; operations: OperationMetadataState }) => {
+      // Check the action is an agent action
+      if (!equals(state.workflow.operations[agentId]?.type, commonConstants.NODE.TYPE.AGENT)) {
+        return [];
+      }
+      const toolNodeIds = Object.keys(state.workflow.nodesMetadata[agentId]?.handoffs ?? {});
+      const output: any[] = [];
+      for (const toolId of toolNodeIds) {
+        // If the tool contains a handoff action, add it to the output
+        const toolActionIds = getNodesWithGraphId(toolId, state.workflow.nodesMetadata);
+        const isSingleAction = Object.keys(toolActionIds).length === 1;
+        for (const actionId of Object.keys(toolActionIds)) {
+          const action = state.workflow.operations[actionId];
+          if (equals(action.type, commonConstants.NODE.TYPE.HANDOFF)) {
+            const toolDescription =
+              state.operations?.inputParameters?.[toolId]?.parameterGroups?.default?.parameters?.find((param) =>
+                equals(param.parameterName, 'description')
+              )?.value?.[0]?.value ?? '';
+            const targetId =
+              state.operations?.inputParameters?.[actionId]?.parameterGroups?.default?.parameters?.find((param) =>
+                equals(param.parameterName, 'name')
+              )?.value?.[0]?.value ?? '';
+
+            const actionData = {
+              id: actionId,
+              toolId,
+              toolDescription,
+              targetId,
+              isSingleAction,
+            };
+            output.push(actionData);
+          }
+        }
+      }
+      return output;
+    })
+  );
 };

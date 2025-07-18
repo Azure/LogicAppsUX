@@ -129,7 +129,14 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
       if (nodeId !== alternateSelectedNodeId) {
         headerMenuItems.push(<PinMenuItem key={'pin'} nodeId={selectedNode} onClick={() => handlePinClick(nodeId)} />);
       }
-      headerMenuItems.push(<DeleteMenuItem key={'delete'} onClick={() => handleDeleteClick(nodeId)} isTrigger={isTriggerNode} />);
+      headerMenuItems.push(
+        <DeleteMenuItem
+          key={'delete'}
+          onClick={() => handleDeleteClick(nodeId)}
+          isTrigger={isTriggerNode}
+          operationType={operationInfo?.type}
+        />
+      );
       return headerMenuItems;
     },
     [
@@ -141,6 +148,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
       alternateSelectedNodeData,
       selectedNode,
       selectedNodeData,
+      operationInfo?.type,
     ]
   );
 

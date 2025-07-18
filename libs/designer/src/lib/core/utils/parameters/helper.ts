@@ -2967,6 +2967,16 @@ export function getGroupAndParameterFromParameterKey(
   return undefined;
 }
 
+export function getGroupIdFromParameterId(nodeInputs: NodeInputs, parameterId: string): string | undefined {
+  for (const [groupId, group] of Object.entries(nodeInputs.parameterGroups)) {
+    const parameter = group.parameters.find((param) => param.id === parameterId);
+    if (parameter) {
+      return groupId;
+    }
+  }
+  return undefined;
+}
+
 export const getCustomCodeFileNameFromParameter = (parameter: ParameterInfo): string => {
   return parameter.value?.[0].value ?? '';
 };
