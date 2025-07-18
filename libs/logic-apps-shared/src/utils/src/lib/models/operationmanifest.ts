@@ -299,6 +299,7 @@ export const RUN_AFTER_STATUS = {
   FAILED: 'FAILED',
   SKIPPED: 'SKIPPED',
   TIMEDOUT: 'TIMEDOUT',
+  HANDOFF: 'HANDEDOFF',
 };
 export type RUN_AFTER_STATUS = (typeof RUN_AFTER_STATUS)[keyof typeof RUN_AFTER_STATUS];
 

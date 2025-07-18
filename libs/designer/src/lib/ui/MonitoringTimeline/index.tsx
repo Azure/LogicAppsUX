@@ -35,11 +35,11 @@ const MonitoringTimeline = () => {
   }, [repetitionData, runInstance]);
 
   useEffect(() => {
-    const test = Array.from(repetitions).flatMap(([_taskId, repetitionList]) => {
+    const repetitionArray = Array.from(repetitions).flatMap(([_taskId, repetitionList]) => {
       const repetitionsActions = repetitionList.map((repetition) => repetition.actionIds ?? []);
       return repetitionsActions;
     });
-    dispatch(setTimelineRepetitionArray(test));
+    dispatch(setTimelineRepetitionArray(repetitionArray));
   }, [dispatch, repetitions]);
 
   useEffect(() => {

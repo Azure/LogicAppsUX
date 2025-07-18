@@ -6,3 +6,4 @@ export * from './succeeded';
 export * from './succeededwithretries';
 export * from './timedout';
 export * from './waiting';
+export * from './handoff';
