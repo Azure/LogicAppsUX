@@ -9,7 +9,7 @@ import {
 } from '../../../../core/state/panel/panelSelectors';
 import { useOperationManifest } from '../../../../core/state/selectors/actionMetadataSelector';
 import { getAssistedConnectionProps } from '../../../../core/utils/connectors/connections';
-import { getRecordEntry, type ValueSegment, type Connection, type Connector } from '@microsoft/logic-apps-shared';
+import { getRecordEntry, guid, type Connection, type Connector } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { ApiHubAuthentication } from '../../../../common/models/workflow';
@@ -52,24 +52,35 @@ export const CreateConnectionWrapper = () => {
   );
 
   const updateOperationParameterValues = useCallback(
-    (values?: Record<string, ValueSegment>) => {
+    (values?: Record<string, any>) => {
       if (values) {
+        const groupId = 'default'; // Assuming 'default' is the groupId for operation parameters
         for (const [key, parameterValue] of Object.entries(values)) {
-          dispatch(
-            updateParameterAndDependencies({
-              nodeId: nodeId,
-              nodeInputs,
-              dependencies,
-              groupId: 'default',
-              isTrigger: false,
-              parameterId: key,
-              operationInfo: operationInfo,
-              properties: {
-                value: [parameterValue],
-              },
-              connectionReference: connectionReference,
-            })
-          );
+          const parameter = nodeInputs.parameterGroups[groupId].parameters.find((param) => param.parameterName === key);
+
+          if (parameter?.id) {
+            dispatch(
+              updateParameterAndDependencies({
+                nodeId: nodeId,
+                nodeInputs,
+                dependencies,
+                groupId,
+                isTrigger: false,
+                parameterId: parameter.id,
+                operationInfo: operationInfo,
+                properties: {
+                  value: [
+                    {
+                      id: guid(),
+                      value: parameterValue,
+                      type: 'literal',
+                    },
+                  ],
+                },
+                connectionReference: connectionReference,
+              })
+            );
+          }
         }
       }
     },

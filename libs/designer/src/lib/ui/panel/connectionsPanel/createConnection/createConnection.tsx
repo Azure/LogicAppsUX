@@ -49,7 +49,6 @@ import type {
   Subscription,
   Connector,
   OperationParameterSetParameter,
-  ValueSegment,
 } from '@microsoft/logic-apps-shared';
 import type { AzureResourcePickerProps } from '@microsoft/designer-ui';
 import { AzureResourcePicker, Label } from '@microsoft/designer-ui';
@@ -93,7 +92,7 @@ export interface CreateConnectionProps {
     alternativeParameterValues?: Record<string, any>,
     identitySelected?: string,
     additionalParameterValues?: Record<string, any>,
-    operationParameterValues?: Record<string, ValueSegment>
+    operationParameterValues?: Record<string, any>
   ) => void;
   cancelCallback?: () => void;
   hideCancelButton?: boolean;
@@ -154,7 +153,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   } = connector.properties;
 
   const [parameterValues, setParameterValues] = useState<Record<string, any>>({});
-  const [operationParameterValues, setOperationParameterValues] = useState<Record<string, ValueSegment>>();
+  const [operationParameterValues, setOperationParameterValues] = useState<Record<string, any>>();
 
   const operationParameterSetKeys = useMemo(() => Object.keys(operationParameterSets ?? {}), [operationParameterSets]);
 
@@ -179,7 +178,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
         }
 
         const notSupportedConnectionParameters =
-          parameter?.uiDefinition?.constraints?.notSupportedConnectionParameters?.[operationParameterValues[key].value] ?? [];
+          parameter?.uiDefinition?.constraints?.notSupportedConnectionParameters?.[operationParameterValues[key]] ?? [];
 
         if (notSupportedConnectionParameters.length === 0) {
           return true;
@@ -733,6 +732,15 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     return renderConnectionParameter(parameterKey, parameter);
   };
 
+  const setOperationParameterValue = useCallback((key: string, val: any) => {
+    setOperationParameterValues((values) => {
+      return {
+        ...values,
+        [key]: val ?? '',
+      };
+    });
+  }, []);
+
   // RENDER
 
   return (
@@ -808,11 +816,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
                 if (!operationParameterValues?.[parameter]) {
                   setOperationParameterValues((values) => ({
                     ...values,
-                    [parameter]: {
-                      id: customLengthGuid(5),
-                      value: getPropertyValue(parameterFromManifest, 'defaultValue') ?? '',
-                      type: 'literal',
-                    },
+                    [parameter]: getPropertyValue(parameterFromManifest, 'defaultValue') ?? '',
                   }));
                 }
 
@@ -843,18 +847,9 @@ export const CreateConnection = (props: CreateConnectionProps) => {
                         },
                       },
                     }}
-                    setValue={(val: any) =>
-                      setOperationParameterValues((values) => {
-                        return {
-                          ...values,
-                          [parameter]: {
-                            id: customLengthGuid(5),
-                            value: val ?? '',
-                            type: 'literal',
-                          },
-                        };
-                      })
-                    }
+                    setValue={(val: any) => {
+                      setOperationParameterValue(parameter, val);
+                    }}
                     isLoading={isLoading}
                   />
                 );

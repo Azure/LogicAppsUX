@@ -16,7 +16,6 @@ import type {
   ConnectionParameterSet,
   Connector,
   ManagedIdentity,
-  ValueSegment,
 } from '@microsoft/logic-apps-shared';
 import { ConnectionService, LogEntryLevel, LoggerService, WorkflowService, getIconUriFromConnector } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo, useState } from 'react';
@@ -42,7 +41,7 @@ export const CreateConnectionInternal = (props: {
   isAgentSubgraph?: boolean;
   assistedConnectionProps?: AssistedConnectionProps;
   connectionMetadata?: ConnectionMetadata;
-  updateOperationParameterValues?: (values?: Record<string, ValueSegment>) => void;
+  updateOperationParameterValues?: (values?: Record<string, any>) => void;
 }) => {
   const {
     classes,
@@ -133,7 +132,7 @@ export const CreateConnectionInternal = (props: {
       alternativeParameterValues?: Record<string, any>,
       identitySelected?: string,
       additionalParameterValues?: Record<string, any>,
-      operationParameterValues?: Record<string, ValueSegment>
+      operationParameterValues?: Record<string, any>
     ) => {
       if (!connector?.id) {
         return;
