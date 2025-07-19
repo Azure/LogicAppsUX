@@ -117,7 +117,7 @@ export const NewResourceGroup: React.FC<INewResourceGroupProps> = ({ onAddNewRes
           {intlText.OK}
         </Button>
         <Button
-          appearance="primary"
+          appearance="secondary"
           className={styles.exportSummaryConnectionsButton}
           aria-label={intlText.CANCEL}
           onClick={toggleIsCalloutVisible}
