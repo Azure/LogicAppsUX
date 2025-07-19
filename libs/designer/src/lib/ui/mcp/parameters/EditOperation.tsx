@@ -395,7 +395,7 @@ export const EditOperation = () => {
           {INTL_TEXT.parameters}
         </Text>
 
-        {hasRequiredParameters || hasOptionalParameters ? (
+        {hasRequiredParameters || hasOptionalParameters || hasVisibleConditionalParameters ? (
           <div className={styles.parametersSection}>
             <Card className={styles.parameterCard}>
               {hasRequiredParameters && (
