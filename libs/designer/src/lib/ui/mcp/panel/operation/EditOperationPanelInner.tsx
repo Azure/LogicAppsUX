@@ -19,18 +19,18 @@ export const EditOperationPanelInner = () => {
   const dispatch = useDispatch<AppDispatch>();
   const styles = useMcpPanelStyles();
 
-  const { selectedOperationId } = useSelector((state: RootState) => ({
+  const { selectedOperationId, operationMetadata } = useSelector((state: RootState) => ({
     selectedOperationId: state.connector.selectedOperationId,
+    operationMetadata: state.operation.operationMetadata,
   }));
+
+  const selectedOperationSummary = useMemo(() => {
+    return operationMetadata[selectedOperationId ?? '']?.summary ?? selectedOperationId;
+  }, [selectedOperationId, operationMetadata]);
 
   const { restoreSnapshot, clearSnapshot } = useEditSnapshot(selectedOperationId ?? '');
 
   const INTL_TEXT = {
-    title: intl.formatMessage({
-      id: 'KDsdC6',
-      defaultMessage: 'Edit Operation',
-      description: 'Title for edit operation panel',
-    }),
     closeAriaLabel: intl.formatMessage({
       id: 'kdCuJZ',
       defaultMessage: 'Close panel',
@@ -89,21 +89,28 @@ export const EditOperationPanelInner = () => {
   }, [intl, handleSave, handleCancel]);
 
   return (
-    <div>
+    <>
       <DrawerHeader className={styles.header}>
         <div className={styles.headerContent}>
           <Text size={600} weight="semibold" style={{ flex: 1 }}>
-            {INTL_TEXT.title}
+            {intl.formatMessage(
+              {
+                id: '8+TVCG',
+                defaultMessage: 'Edit: {selectedOperationSummary}',
+                description: 'Title for edit operation panel',
+              },
+              { selectedOperationSummary }
+            )}
           </Text>
           <Button appearance="subtle" icon={<CloseIcon />} onClick={handleClose} aria-label={INTL_TEXT.closeAriaLabel} />
         </div>
       </DrawerHeader>
-      <DrawerBody className={styles.body} style={{ overflow: 'auto', maxHeight: 'calc(100vh - 170px)', minHeight: '80vh' }}>
+      <DrawerBody className={styles.body} style={{ overflow: 'auto', maxHeight: 'calc(100vh - 130px)', minHeight: '80vh' }}>
         <EditOperation />
       </DrawerBody>
       <DrawerFooter className={styles.footer}>
         <TemplatesPanelFooter {...footerContent} />
       </DrawerFooter>
-    </div>
+    </>
   );
 };

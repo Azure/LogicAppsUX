@@ -93,7 +93,7 @@ export const LogicAppSelector = () => {
             onOptionSelect={(e, option) => onLogicAppSelect(option?.optionValue as string)}
             disabled={isLogicAppsLoading}
             value={selectedResource}
-            size="small"
+            size="medium"
             placeholder={isLogicAppsLoading ? intlText.LOADING : ''}
           >
             {!isLogicAppsLoading && !resources.length ? (
