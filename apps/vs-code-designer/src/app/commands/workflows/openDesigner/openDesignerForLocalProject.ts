@@ -299,7 +299,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
       title: localize('azureFunctions.savingWorkflow', 'Saving Workflow...'),
     };
 
-    await window.withProgress(options, async () => {
+    await window.withProgress(options, async (progress) => {
       try {
         const { definition, connectionReferences, parameters, customCodeData } = workflowToSave;
         const definitionToSave: any = definition;
@@ -338,10 +338,10 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
         }
 
         writeFileSync(filePath, JSON.stringify(workflow, null, 4));
+        progress.report({ increment: 100, message: localize('workflowSaved', 'Workflow saved successfully.') });
 
         this.sendMsgToWebview({
-          command: ExtensionCommand.setIsWorkflowDirty,
-          data: false,
+          command: ExtensionCommand.resetDesignerDirtyState,
         });
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : typeof error === 'string' ? error : 'Unknown error';

@@ -261,6 +261,18 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
 
   const isSaveDisabled = useMemo(() => isSaving || haveErrors || !designerIsDirty, [isSaving, haveErrors, designerIsDirty]);
 
+  console.log(
+    'charlie designer command bar',
+    'isSaveDisabled:',
+    isSaveDisabled,
+    'isSaving:',
+    isSaving,
+    'haveErrors:',
+    haveErrors,
+    'designerIsDirty:',
+    designerIsDirty
+  );
+
   const baseItems = useMemo(
     () => [
       {
