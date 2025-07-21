@@ -220,56 +220,37 @@ export const EditOperation = ({ localDescription, handleDescriptionInputChange, 
     [dispatch, selectedOperationId, parameters, onParameterUpdate]
   );
 
+  const handleToggleAllOptional = useCallback(
+    (isAllVisible: boolean) => {
+      if (!selectedOperationId || !parameters) {
+        return;
+      }
+
+      for (const [groupId, group] of Object.entries(parameters.parameterGroups)) {
+        for (const param of group.parameters) {
+          if (!param.required && param.conditionalVisibility !== isAllVisible) {
+            onParameterUpdate();
+            dispatch(
+              updateParameterConditionalVisibility({
+                nodeId: selectedOperationId,
+                groupId,
+                parameterId: param.id,
+                value: isAllVisible,
+              })
+            );
+          }
+        }
+      }
+    },
+    [dispatch, selectedOperationId, parameters, onParameterUpdate]
+  );
+
   const handleRemoveConditionalParameter = useCallback(
     (parameterId: string) => {
       handleOptionalParameterToggle(parameterId, false);
     },
     [handleOptionalParameterToggle]
   );
-
-  const handleShowAllOptional = useCallback(() => {
-    if (!selectedOperationId || !parameters) {
-      return;
-    }
-
-    for (const [groupId, group] of Object.entries(parameters.parameterGroups)) {
-      for (const param of group.parameters) {
-        if (!param.required && param.conditionalVisibility !== true) {
-          onParameterUpdate();
-          dispatch(
-            updateParameterConditionalVisibility({
-              nodeId: selectedOperationId,
-              groupId,
-              parameterId: param.id,
-              value: true,
-            })
-          );
-        }
-      }
-    }
-  }, [dispatch, selectedOperationId, parameters, onParameterUpdate]);
-
-  const handleHideAllOptional = useCallback(() => {
-    if (!selectedOperationId || !parameters) {
-      return;
-    }
-
-    for (const [groupId, group] of Object.entries(parameters.parameterGroups)) {
-      for (const param of group.parameters) {
-        if (!param.required && param.conditionalVisibility === true) {
-          onParameterUpdate();
-          dispatch(
-            updateParameterConditionalVisibility({
-              nodeId: selectedOperationId,
-              groupId,
-              parameterId: param.id,
-              value: false,
-            })
-          );
-        }
-      }
-    }
-  }, [dispatch, selectedOperationId, parameters, onParameterUpdate]);
 
   if (!operationInfo || !selectedOperationId) {
     return (
@@ -366,8 +347,8 @@ export const EditOperation = ({ localDescription, handleDescriptionInputChange, 
                               removeAllButtonText={INTL_TEXT.hideAllOptional}
                               removeAllButtonTooltip={INTL_TEXT.hideAllOptionalTooltip}
                               removeAllButtonEnabled={hasVisibleConditionalParameters}
-                              onShowAllClick={handleShowAllOptional}
-                              onHideAllClick={handleHideAllOptional}
+                              onShowAllClick={() => handleToggleAllOptional(true)}
+                              onHideAllClick={() => handleToggleAllOptional(false)}
                             />
                           </div>
                         ) : null}
