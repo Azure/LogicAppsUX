@@ -4,7 +4,7 @@
 
 This document outlines a comprehensive plan to migrate 124 .less files in the LogicAppsUX monorepo to Fluent UI v9's makeStyles CSS-in-JS system. The migration will improve performance, enable better tree-shaking, provide type-safe styling, and align with modern React best practices.
 
-**Current Progress**: 33 components migrated (26.6% complete)
+**Current Progress**: 30 components migrated (24.2% complete)
 - ✅ peek component (peek.less - 6 lines)
 - ✅ error component (error.less - 29 lines)
 - ✅ tip component (tip.less - 33 lines)
@@ -33,11 +33,6 @@ This document outlines a comprehensive plan to migrate 124 .less files in the Lo
 - ✅ flyout component (flyout.less - 50 lines) - already had makeStyles, verified
 - ✅ pager component (pager.less - 84 lines)
 - ✅ staticResult component (staticResult.less - 146 lines) - styles created
-- ✅ **VS Code App**: export component (export.less - 112 lines) - **MAJOR MIGRATION** (PRs #7588, #7797)
-- ✅ **VS Code App**: overview component (overview.less - 4 lines) - migrated to overviewStyles.ts (PR #7588)
-- ✅ **VS Code App**: reviewList component - SVG icons replaced with Fluent UI icons (PR #7820)
-- ✅ **FLUENT UI v8→v9**: 16 VS Code components migrated to v9 (PR #7588)
-- ✅ **FLUENT UI v8→v9**: Enhanced export workflows with v9 components (PR #7797)
 - ⏭️ processsimple.less - SKIPPED: unused file
 - ⏭️ datetimeeditor.less - SKIPPED: no component found
 - ⏭️ connectiongatewaypicker.less - SKIPPED: no corresponding component
@@ -47,7 +42,7 @@ This document outlines a comprehensive plan to migrate 124 .less files in the Lo
 ## Current State Analysis
 
 ### Scope
-- **Total .less files**: 121 (12 completed, 109 remaining) - 3 files removed due to completed migrations
+- **Total .less files**: 124 (9 completed, 115 remaining)
 - **Main aggregator file**: `/libs/designer-ui/src/lib/styles.less` (imports 71 files)
 - **Lines of CSS**: ~5,000+ lines across all files (~400 lines migrated including foundational files)
 - **Affected packages**: 6 packages (designer-ui, designer, data-mapper, vs-code-react, Standalone, chatbot)
@@ -65,14 +60,6 @@ Establish core infrastructure and patterns
 
 ### Phase 2: Shared Resources (Week 3-4) ✅ **CORE INFRASTRUCTURE COMPLETED**
 Migrate variables, mixins, and common styles
-
-### ✅ **MILESTONE: VS Code React App Migration COMPLETED**
-**Three major PRs have successfully migrated the entire VS Code React application:**
-- **PR #7588**: Fluent UI v8 to v9 migration with LESS to makeStyles conversion
-- **PR #7797**: Export component LESS migration to makeStyles  
-- **PR #7820**: SVG icon replacement with Fluent UI React icons
-
-**Impact**: 16 components updated, 2 LESS files migrated, 3 SVG files removed, full v9 component adoption
 
 ### Phase 3: Component Migration (Week 5-12)
 Systematic component-by-component migration
@@ -245,11 +232,10 @@ For each component:
 
 ### Phase 4: Application-Specific Styles
 
-#### 4.1 VS Code React App ✅ **COMPLETED AHEAD OF SCHEDULE**
-- [x] Migrated app-specific .less files (export.less, overview.less)
-- [x] Replaced SVG icons with Fluent UI icons
-- [x] Updated 16 components from Fluent UI v8 to v9
-- [x] Comprehensive testing in VS Code environment completed
+#### 4.1 VS Code React App (Week 11)
+- [ ] Migrate 10 app-specific .less files
+- [ ] Update build configuration
+- [ ] Test in VS Code environment
 
 #### 4.2 Standalone App (Week 11)
 - [ ] Migrate 2 app-specific files
@@ -576,28 +562,16 @@ For each component migration:
 4. Begin Phase 1 implementation
 5. Schedule weekly progress reviews
 
-## ✅ **MAJOR MILESTONE**: Fluent UI v8 to v9 Component Migration
+## Fluent UI v8 to v9 Component Migration
 
-### Overview  
-Alongside the LESS to makeStyles migration, we're also migrating from Fluent UI v8 to v9 components. **MAJOR PROGRESS** achieved through recent PRs:
+### Overview
+Alongside the LESS to makeStyles migration, we're also migrating from Fluent UI v8 to v9 components. This provides additional benefits:
+- Modern component architecture with better performance
+- Built-in makeStyles support
+- Improved accessibility
+- Better theme integration
 
-### ✅ **COMPLETED: VS Code React App v8→v9 Migration**
-**PR #7588** completed comprehensive migration of 16 VS Code components:
-- ✅ **Dropdown**, **SearchBox**, **Spinner** → v9 equivalents with updated props
-- ✅ **TextField** → **Input** + **Field** pattern
-- ✅ **PrimaryButton**/**IconButton** → **Button** with `appearance`/`icon` props
-- ✅ **Shimmer** → **Skeleton**
-- ✅ **MessageBar** → **MessageBar** with `intent` prop
-- ✅ **Separator** → **Divider**
-- ✅ **Callout** → **Popover**
-- ✅ **ShimmeredDetailsList** → **DataGrid** with v9 selection patterns
-
-**Type System Updates:**
-- ✅ `IDropdownOption` → `Option`
-- ✅ Removed `DropdownMenuItemType` usage
-- ✅ Updated event handler patterns for v9 API
-
-### Previous Migration Progress (Designer Components)
+### Migration Progress
 - ✅ **SettingToggle**: Migrated from v8 `Toggle` to v9 `Switch` (includes makeStyles)
 - ✅ **TextInput & MinuteTextInput**: Migrated from v8 `TextField` to v9 `Input` + `Field` (includes makeStyles)
 - ✅ **About Component**: Migrated from v8 `Spinner` to v9 `Spinner` 
@@ -606,24 +580,7 @@ Alongside the LESS to makeStyles migration, we're also migrating from Fluent UI 
 - ✅ **SettingDictionary/SimpleDictionary**: Migrated from v8 `TextField` to v9 `Input` (includes makeStyles)
 - ✅ **Dictionary Delete Buttons**: Migrated from v8 `IconButton` to v9 `Button` with icons
 
-### ✅ **NEW**: VS Code React App Migrations (PRs #7588, #7797, #7820)
-**16 files migrated in comprehensive v8→v9 transformation:**
-
-1. **Export Components** (✅ COMPLETED - PR #7588 & #7797)
-   - Components: `instanceSelection`, `navigation`, `status`, `summary`, `validation`, `workflowsSelection`
-   - v8: Multiple v8 components → v9: Modern equivalents with makeStyles
-   - LESS migration: export.less → exportStyles.ts (102 lines)
-   
-2. **Review & Selection Components** (✅ COMPLETED - PR #7820)
-   - ReviewList component: Static SVG → Fluent UI React icons
-   - Added reviewListStyles.ts for theme-aware styling
-   - Removed 3 SVG files, improved performance and theming
-
-3. **Overview App** (✅ COMPLETED - PR #7588)
-   - overview.less (4 lines) → overviewStyles.ts
-   - Updated overview component for v9 compatibility
-
-### Previous Designer Component Migrations
+### Completed Migrations
 1. **SettingToggle** (✅ COMPLETED)
    - v8: `Toggle` → v9: `Switch`
    - Location: `/libs/designer-ui/src/lib/settings/settingsection/settingtoggle.tsx`
