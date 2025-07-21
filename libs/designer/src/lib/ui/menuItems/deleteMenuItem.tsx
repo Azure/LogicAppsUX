@@ -3,6 +3,7 @@ import { MenuItem, Tooltip } from '@fluentui/react-components';
 import { bundleIcon, Delete24Filled, Delete24Regular } from '@fluentui/react-icons';
 import { useIsA2AWorkflow } from '../../core/state/designerView/designerViewSelectors';
 import { useIntl } from 'react-intl';
+import { equals } from '@microsoft/logic-apps-shared';
 
 const DeleteIcon = bundleIcon(Delete24Filled, Delete24Regular);
 
@@ -10,12 +11,13 @@ export interface DeleteMenuItemProps {
   onClick: (e: any) => void;
   showKey?: boolean;
   isTrigger?: boolean;
+  operationType?: string;
 }
 
 export const DeleteMenuItem = (props: DeleteMenuItemProps) => {
-  const { onClick, showKey = false, isTrigger } = props;
+  const { onClick, showKey = false, isTrigger, operationType } = props;
   const isA2AWorkflow = useIsA2AWorkflow();
-  const disableDeleteTriggerForA2a = isA2AWorkflow && isTrigger;
+  const disableDeleteTriggerForA2a = isA2AWorkflow && isTrigger && equals(operationType, 'Request');
 
   const intl = useIntl();
   const readOnly = useReadOnly();

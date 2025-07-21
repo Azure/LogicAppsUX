@@ -647,9 +647,7 @@ export const useHandoffActionsForAgent = (agentId: string): any[] => {
       if (!equals(state.workflow.operations[agentId]?.type, commonConstants.NODE.TYPE.AGENT)) {
         return [];
       }
-      const toolNodeIds = Object.entries(getNodesWithGraphId(agentId, state.workflow.nodesMetadata))
-        .filter(([_, metadata]) => equals(metadata.subgraphType, SUBGRAPH_TYPES.AGENT_CONDITION))
-        .map(([toolId, _]) => toolId);
+      const toolNodeIds = Object.keys(state.workflow.nodesMetadata[agentId]?.handoffs ?? {});
       const output: any[] = [];
       for (const toolId of toolNodeIds) {
         // If the tool contains a handoff action, add it to the output

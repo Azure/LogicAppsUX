@@ -44,6 +44,7 @@ import type { NodeChange, NodeDimensionChange } from '@xyflow/system';
 import type { UndoRedoPartialRootState } from '../undoRedo/undoRedoTypes';
 import { initializeInputsOutputsBinding } from '../../actions/bjsworkflow/monitoring';
 import { updateAgenticSubgraph, type UpdateAgenticGraphPayload } from '../../parsers/updateAgenticGraph';
+import { isA2AWorkflow } from './helper';
 
 export interface AddImplicitForeachPayload {
   nodeId: string;
@@ -525,6 +526,12 @@ export const workflowSlice = createSlice({
       };
       nodeMetadata.runData = nodeRunData as LogicAppsV2.WorkflowRunAction;
     },
+    setTimelineRepetitionIndex: (state: WorkflowState, action: PayloadAction<number>) => {
+      state.timelineRepetitionIndex = action.payload;
+    },
+    setTimelineRepetitionArray: (state: WorkflowState, action: PayloadAction<string[][]>) => {
+      state.timelineRepetitionArray = action.payload;
+    },
     addSwitchCase: (state: WorkflowState, action: PayloadAction<{ caseId: string; graphId: string }>) => {
       if (!state.graph) {
         return; // log exception
@@ -569,7 +576,7 @@ export const workflowSlice = createSlice({
         area: 'workflowSlice.ts',
       });
     },
-    removeEdgeFromRunAfter: (state: WorkflowState, action: PayloadAction<{ childOperationId: string; parentOperationId: string }>) => {
+    removeRunAfter: (state: WorkflowState, action: PayloadAction<{ childOperationId: string; parentOperationId: string }>) => {
       const { childOperationId, parentOperationId } = action.payload;
       const parentOperation = getRecordEntry(state.operations, parentOperationId);
       const childOperation: LogicAppsV2.ActionDefinition | undefined = getRecordEntry(state.operations, childOperationId);
@@ -579,7 +586,8 @@ export const workflowSlice = createSlice({
       delete childOperation.runAfter?.[parentOperationId];
 
       // If there is only the trigger node left, set to empty object
-      if (Object.keys(childOperation.runAfter ?? {}).length === 1) {
+      const allowRunAfterTrigger = isA2AWorkflow(state);
+      if (!allowRunAfterTrigger && Object.keys(childOperation.runAfter ?? {}).length === 1) {
         const rootTriggerNodeId = Object.entries(state.nodesMetadata).find(
           ([_, node]) => node.graphId === 'root' && node.isRoot === true
         )?.[0];
@@ -604,7 +612,7 @@ export const workflowSlice = createSlice({
       }
       graph.edges = graph.edges?.filter((x) => x.source !== parentOperationId || x.target !== childOperationId) ?? [];
     },
-    addEdgeFromRunAfter: (state: WorkflowState, action: PayloadAction<{ childOperationId: string; parentOperationId: string }>) => {
+    addRunAfter: (state: WorkflowState, action: PayloadAction<{ childOperationId: string; parentOperationId: string }>) => {
       const { childOperationId, parentOperationId } = action.payload;
       const parentOperation = getRecordEntry(state.operations, parentOperationId);
       const childOperation: LogicAppsV2.ActionDefinition | undefined = getRecordEntry(state.operations, childOperationId);
@@ -619,7 +627,8 @@ export const workflowSlice = createSlice({
 
       // If there is no existing run after, it was running after the trigger
       // We need to add a dummy trigger node to populate the settings object and flag validation
-      if (Object.keys(childOperation.runAfter ?? {}).length === 0) {
+      const allowRunAfterTrigger = isA2AWorkflow(state);
+      if (!allowRunAfterTrigger && Object.keys(childOperation.runAfter ?? {}).length === 0) {
         const rootTriggerNodeId =
           Object.entries(state.nodesMetadata).find(([_, node]) => node.graphId === 'root' && node.isRoot === true)?.[0] ?? '';
         childOperation.runAfter = { [rootTriggerNodeId]: [RUN_AFTER_STATUS.SUCCEEDED] };
@@ -631,7 +640,7 @@ export const workflowSlice = createSlice({
       childOperation.runAfter[parentOperationId] = [RUN_AFTER_STATUS.SUCCEEDED];
 
       // Check if it only contains the trigger node, if so, set to empty object
-      if (Object.keys(childOperation.runAfter ?? {}).length === 1) {
+      if (!allowRunAfterTrigger && Object.keys(childOperation.runAfter ?? {}).length === 1) {
         const rootTriggerNodeId = Object.entries(state.nodesMetadata).find(
           ([_, node]) => node.graphId === 'root' && node.isRoot === true
         )?.[0];
@@ -665,12 +674,6 @@ export const workflowSlice = createSlice({
         type: 'BUTTON_EDGE',
       });
     },
-    setTimelineRepetitionIndex: (state: WorkflowState, action: PayloadAction<number>) => {
-      state.timelineRepetitionIndex = action.payload;
-    },
-    setTimelineRepetitionArray: (state: WorkflowState, action: PayloadAction<string[][]>) => {
-      state.timelineRepetitionArray = action.payload;
-    },
     updateRunAfter: (
       state: WorkflowState,
       action: PayloadAction<{ childOperation: string; parentOperation: string; statuses: string[] }>
@@ -683,6 +686,34 @@ export const workflowSlice = createSlice({
         childOperation.runAfter = {};
       }
       childOperation.runAfter[action.payload.parentOperation] = action.payload.statuses;
+    },
+    addHandoffMetadata: (state: WorkflowState, action: PayloadAction<{ sourceId: string; toolId: string; targetId: string }>) => {
+      const { sourceId, toolId, targetId } = action.payload;
+      const sourceOperation = getRecordEntry(state.nodesMetadata, sourceId);
+      if (!sourceOperation) {
+        return;
+      }
+      const currentHandoffs = (sourceOperation as any)?.handoffs ?? {};
+      currentHandoffs[toolId] = targetId;
+      (sourceOperation as any).handoffs = currentHandoffs;
+    },
+    removeHandoffMetadata: (state: WorkflowState, action: PayloadAction<{ sourceId: string; toolId?: string; targetId?: string }>) => {
+      const { sourceId, toolId, targetId } = action.payload;
+      const sourceMetadata = getRecordEntry(state.nodesMetadata, sourceId);
+      if (!sourceMetadata) {
+        return;
+      }
+      const currentHandoffs = (sourceMetadata as any)?.handoffs ?? {};
+      if (toolId) {
+        delete currentHandoffs[toolId];
+      } else if (targetId) {
+        for (const [toolId, handoffTargetId] of Object.entries(currentHandoffs)) {
+          if (handoffTargetId === targetId) {
+            delete currentHandoffs[toolId];
+          }
+        }
+      }
+      (sourceMetadata as any).handoffs = currentHandoffs;
     },
     replaceId: (state: WorkflowState, action: PayloadAction<{ originalId: string; newId: string }>) => {
       const { originalId, newId } = action.payload;
@@ -749,8 +780,8 @@ export const workflowSlice = createSlice({
         pasteScopeNode,
         setNodeDescription,
         updateRunAfter,
-        removeEdgeFromRunAfter,
-        addEdgeFromRunAfter,
+        removeRunAfter,
+        addRunAfter,
         replaceId,
         updateNodeConnection.fulfilled,
         updateStaticResults,
@@ -783,8 +814,10 @@ export const {
   addAgentTool,
   discardAllChanges,
   updateRunAfter,
-  addEdgeFromRunAfter,
-  removeEdgeFromRunAfter,
+  addRunAfter,
+  removeRunAfter,
+  addHandoffMetadata,
+  removeHandoffMetadata,
   setTimelineRepetitionIndex,
   setTimelineRepetitionArray,
   clearFocusNode,

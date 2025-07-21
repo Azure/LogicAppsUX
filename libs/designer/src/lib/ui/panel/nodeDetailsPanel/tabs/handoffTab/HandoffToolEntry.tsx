@@ -14,12 +14,11 @@ import {
 
 import { useHandoffActionsForAgent, useNodeDisplayName, useWorkflowNode } from '../../../../../core/state/workflow/workflowSelectors';
 import { createLiteralValueSegment, type AppDispatch } from '../../../../../core';
-import { deleteAgentTool } from '../../../../../core/state/workflow/workflowSlice';
 import { updateNodeParameters } from '../../../../../core/state/operation/operationMetadataSlice';
 import { ParameterGroupKeys } from '../../../../../core/utils/parameters/helper';
 import { useHandoffTabStyles } from './handoffTab.styles';
 import { useOperationParameterByName } from '../../../../../core/state/operation/operationSelector';
-import { deleteGraphNode } from '../../../../../core/actions/bjsworkflow/delete';
+import { removeAgentHandoff } from '../../../../../core/actions/bjsworkflow/handoff';
 
 const ExpandIcon = bundleIcon(ChevronRight24Filled, ChevronRight24Regular);
 const CollapseIcon = bundleIcon(ChevronDown24Filled, ChevronDown24Regular);
@@ -52,19 +51,7 @@ export const HandoffToolEntry = ({ agentId, toolId }: HandoffToolEntryProps) => 
     if (!handoffAction || !toolWorkflowNode) {
       return;
     }
-    dispatch(
-      deleteGraphNode({
-        graphId: toolId,
-        graphNode: toolWorkflowNode,
-        clearFocus: false,
-      })
-    );
-    dispatch(
-      deleteAgentTool({
-        toolId,
-        agentId,
-      })
-    );
+    dispatch(removeAgentHandoff({ agentId, toolId }));
   }, [agentId, dispatch, handoffAction, toolId, toolWorkflowNode]);
 
   const descriptionParameter = useOperationParameterByName(toolId, 'description');

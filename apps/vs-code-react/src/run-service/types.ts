@@ -261,9 +261,8 @@ export interface ReceiveCallbackMessage {
   data: any;
 }
 
-export interface SetIsWorkflowDirtyMessage {
-  command: typeof ExtensionCommand.setIsWorkflowDirty;
-  data: boolean;
+export interface ResetDesignerDirtyStateMessage {
+  command: typeof ExtensionCommand.resetDesignerDirtyState;
 }
 
 export interface CompleteFileSystemConnectionMessage {

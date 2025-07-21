@@ -1,8 +1,9 @@
 import type { AppDispatch, RootState } from '../../../../core';
-import { addEdgeFromRunAfterOperation, removeEdgeFromRunAfterOperation } from '../../../../core/actions/bjsworkflow/runafter';
+import { addOperationRunAfter, removeOperationRunAfter } from '../../../../core/actions/bjsworkflow/runafter';
 import { useOperationVisuals } from '../../../../core/state/operation/operationSelector';
 import { useOperationPanelSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
 import { useNodeDisplayName, useRootTriggerId } from '../../../../core/state/workflow/workflowSelectors';
+import { useIsA2AWorkflow } from '../../../../core/state/designerView/designerViewSelectors';
 import { Button, Input, Menu, MenuButton, MenuItemCheckbox, MenuList, MenuPopover, MenuTrigger, Text } from '@fluentui/react-components';
 import { Add20Filled, Add20Regular, DismissRegular, Search24Regular, bundleIcon } from '@fluentui/react-icons';
 import { LogEntryLevel, LoggerService, getRecordEntry, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
@@ -56,6 +57,8 @@ export const RunAfterActionSelector = ({ readOnly }: { readOnly: boolean }) => {
   const currentNodeId = useOperationPanelSelectedNodeId();
   const currentNodeRunAfter = useSelector((state: RootState) => getRecordEntry(state.workflow.operations, currentNodeId));
   const rootTriggerId = useRootTriggerId();
+  const isA2AWorkflow = useIsA2AWorkflow();
+
   const actions = useSelector((state: RootState) => {
     if (!currentNodeRunAfter) {
       return [];
@@ -85,7 +88,7 @@ export const RunAfterActionSelector = ({ readOnly }: { readOnly: boolean }) => {
     const actions = Object.keys((getRecordEntry(state.workflow.operations, currentNodeId) as LogicAppsV2.ActionDefinition)?.runAfter ?? {});
 
     // If running after the trigger, add the trigger id as dummy data
-    if (actions.length === 0) {
+    if (actions.length === 0 && !isA2AWorkflow) {
       actions.push(rootTriggerId);
     }
 
@@ -127,7 +130,7 @@ export const RunAfterActionSelector = ({ readOnly }: { readOnly: boolean }) => {
         const removedItems = selectedValues.actions.filter((x) => !data.checkedItems.includes(x));
         removedItems.forEach((item) => {
           dispatch(
-            removeEdgeFromRunAfterOperation({
+            removeOperationRunAfter({
               parentOperationId: item,
               childOperationId: currentNodeId,
             })
@@ -135,7 +138,7 @@ export const RunAfterActionSelector = ({ readOnly }: { readOnly: boolean }) => {
         });
         newItems.forEach((item) => {
           dispatch(
-            addEdgeFromRunAfterOperation({
+            addOperationRunAfter({
               parentOperationId: item,
               childOperationId: currentNodeId,
             })
