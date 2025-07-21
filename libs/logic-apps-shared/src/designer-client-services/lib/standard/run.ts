@@ -15,7 +15,6 @@ import {
 import { hybridApiVersion, isHybridLogicApp } from './hybrid';
 import { LogEntryLevel } from '../logging/logEntry';
 import { LoggerService } from '../logger';
-import { TimelineRepetitionsMock } from '../__test__/__mocks__/timelineRepetitionsResponse';
 
 export interface RunServiceOptions {
   apiVersion: string;
@@ -208,27 +207,29 @@ export class StandardRunService implements IRunService {
    * @returns {Promise<any>}
    */
 
-  async getTimelineRepetitions(_runId: string): Promise<any> {
-    // TODO: This is mock repetition data, should be replaced when the API is available.
-    return TimelineRepetitionsMock;
+  async getTimelineRepetitions(runId: string): Promise<any> {
+    const { apiVersion, baseUrl, httpClient, isTimelineSupported } = this.options;
 
-    // const { apiVersion, baseUrl, httpClient, isTimelineSupported } = this.options;
+    if (!isTimelineSupported) {
+      return undefined;
+    }
 
-    // if (!isTimelineSupported) {
-    // 	return undefined;
-    // }
+    const onlyRunId = runId.split('/')?.at(-1);
+    const uri = `${baseUrl}/runs/${onlyRunId}/timeline?api-version=${apiVersion}&$expand=properties/actions,workflow/properties`;
 
-    // const onlyRunId = runId.split('/')?.at(-1);
-    // const uri = `${baseUrl}/runs/${onlyRunId}/timelineRepetitions?api-version=${apiVersion}&$expand=properties/actions,workflow/properties`;
+    try {
+      const response = await httpClient.get<Run>({
+        uri,
+      });
+      // TODO: This is mock repetition data, should be replaced when the API is available.
+      //return TimelineRepetitionsMock;
 
-    // try {
-    // 	const response = await httpClient.get<Run>({
-    // 		uri,
-    // 	});
-    // 	return response;
-    // } catch (e: any) {
-    // 	throw new Error(e.message);
-    // }
+      return response;
+    } catch (e: any) {
+      // TODO: This is mock repetition data, should be replaced when the API is available.
+      // return TimelineRepetitionsMock;
+      throw new Error(e.message);
+    }
   }
 
   /**
