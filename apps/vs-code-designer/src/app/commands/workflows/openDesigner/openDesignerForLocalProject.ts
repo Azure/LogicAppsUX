@@ -338,10 +338,8 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
         }
 
         writeFileSync(filePath, JSON.stringify(workflow, null, 4));
-
         this.sendMsgToWebview({
-          command: ExtensionCommand.setIsWorkflowDirty,
-          data: false,
+          command: ExtensionCommand.resetDesignerDirtyState,
         });
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : typeof error === 'string' ? error : 'Unknown error';

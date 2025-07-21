@@ -18,7 +18,7 @@ import type {
   ShowAvailableSchemasMessageV2,
   GetTestFeatureEnablementStatus,
   GetAvailableCustomXsltPathsMessageV2,
-  SetIsWorkflowDirtyMessage,
+  ResetDesignerDirtyStateMessage,
 } from './run-service';
 import {
   changeCustomXsltPathList,
@@ -58,14 +58,14 @@ import type { ReactNode } from 'react';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { WebviewApi } from 'vscode-webview';
-import { setIsWorkflowDirty, store as DesignerStore } from '@microsoft/logic-apps-designer';
+import { store as DesignerStore, resetDesignerDirtyState } from '@microsoft/logic-apps-designer';
 
 const vscode: WebviewApi<unknown> = acquireVsCodeApi();
 export const VSCodeContext = React.createContext(vscode);
 
 type DesignerMessageType =
   | ReceiveCallbackMessage
-  | SetIsWorkflowDirtyMessage
+  | ResetDesignerDirtyStateMessage
   | CompleteFileSystemConnectionMessage
   | UpdatePanelMetadataMessage;
 type DataMapperMessageType =
@@ -114,8 +114,8 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
             dispatch(updatePanelMetadata(message.data));
             break;
           }
-          case ExtensionCommand.setIsWorkflowDirty: {
-            designerDispatch(setIsWorkflowDirty(message.data));
+          case ExtensionCommand.resetDesignerDirtyState: {
+            designerDispatch(resetDesignerDirtyState(undefined));
             break;
           }
           default:
