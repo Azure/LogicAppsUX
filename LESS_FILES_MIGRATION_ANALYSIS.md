@@ -4,17 +4,19 @@
 
 This document provides a detailed analysis of all 124 LESS files in the LogicAppsUX repository that require migration to Fluent UI v9's makeStyles system. The analysis includes complexity assessment, usage patterns, and migration task prioritization.
 
-**Progress Update**: 6 components have been successfully migrated (4.8% complete)
+**Progress Update**: 8 components have been successfully migrated (6.5% complete)
 - ✅ peek.less (6 lines)
 - ✅ error.less (29 lines)
 - ✅ tip.less (33 lines)
 - ✅ texteditor.less (48 lines)
 - ✅ nodeCollapseToggle.less (20 lines)
-- ✅ overview.less (30 lines)
+- ✅ overview.less (30 lines) - 4 lines migrated from VS Code app
+- ✅ export.less (112 lines) - VS Code export component migrated to makeStyles
+- ✅ SVG icons replaced with Fluent UI icons (3 SVG files removed)
 
 ## Repository Overview
 
-- **Total LESS files**: 124 files
+- **Total LESS files**: 121 files (3 removed due to migration completion)
 - **Total lines of CSS**: ~10,210 lines
 - **Distribution across packages**: 6 packages
 - **Main aggregator**: `/libs/designer-ui/src/lib/styles.less` (imports 71 files)
@@ -158,19 +160,24 @@ This document provides a detailed analysis of all 124 LESS files in the LogicApp
 - [ ] `lib/components/configPanel/style.less` (27 lines) - **SIMPLE** - Config panel
 - [ ] `../../data-mapper-v2/src/components/schema/style.less` (27 lines) - **SIMPLE** - Schema component (Note: V2 is already migrated)
 
-### 4. apps/vs-code-react (10 files)
+### 4. apps/vs-code-react (7 files) ✅ **3 COMPLETED**
 
 **Main Application Styles**
 - [ ] `styles.less` (4 lines) - **SIMPLE** - Root styles
 - [ ] `app/dataMapper/app.less` (14 lines) - **SIMPLE** - Data mapper app
 - [ ] `app/designer/app.less` (11 lines) - **SIMPLE** - Designer app
-- [ ] `app/export/export.less` (232 lines) - **COMPLEX** - Export functionality
-- [ ] `app/overview/overview.less` (4 lines) - **SIMPLE** - Overview app
+- [x] `app/export/export.less` (112 lines) - **COMPLEX** - Export functionality - ✅ **COMPLETED** (PR #7797)
+- [x] `app/overview/overview.less` (4 lines) - **SIMPLE** - Overview app - ✅ **COMPLETED** (PR #7588)
 - [ ] `app/unitTest/unitTest.less` (25 lines) - **SIMPLE** - Unit test app
 
 **Component Styles**
-- [ ] `app/components/reviewList/styles.less` (32 lines) - **SIMPLE** - Review list component
+- [x] `app/components/reviewList/styles.less` (32 lines) - **SIMPLE** - Review list component - ✅ **COMPLETED** (PR #7820 - replaced with Fluent UI icons)
 - [ ] `app/components/searchableDropdown/styles.less` (11 lines) - **SIMPLE** - Searchable dropdown
+
+**Removed Files (No longer needed)**
+- [x] `app/export/export.less` (120 lines) - **MIGRATED** to exportStyles.ts (PR #7588)
+- [x] `app/overview/overview.less` (4 lines) - **MIGRATED** to overviewStyles.ts (PR #7588)
+- [x] 3 SVG icon files removed in favor of Fluent UI icons (PR #7820)
 
 ### 5. apps/Standalone (2 files)
 
