@@ -13,6 +13,7 @@ import * as path from 'path';
 import * as semver from 'semver';
 import * as vscode from 'vscode';
 import { localize } from '../../localize';
+import { ext } from '../../extensionVariables';
 
 /**
  * Gets bundle extension feed.
@@ -193,6 +194,9 @@ export async function downloadExtensionBundle(context: IActionContext): Promise<
   context.telemetry.properties.latestBundleVersion = semver.gt(latestFeedBundleVersion, latestLocalBundleVersion)
     ? latestFeedBundleVersion
     : latestLocalBundleVersion;
+
+  ext.defaultBundleVersion = context.telemetry.properties.latestBundleVersion;
+  ext.latestBundleVersion = context.telemetry.properties.latestBundleVersion;
 
   if (semver.gt(latestFeedBundleVersion, latestLocalBundleVersion)) {
     const extensionBundleUrl = await getExtensionBundleZip(context, latestFeedBundleVersion);

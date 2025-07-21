@@ -11,7 +11,7 @@ import { registerCommands } from './app/commands/registerCommands';
 import { getResourceGroupsApi } from './app/resourcesExtension/getExtensionApi';
 import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTreeItemWithProjects';
 import { downloadExtensionBundle } from './app/utils/bundleFeed';
-import { startAllDesignTimeApis, stopAllDesignTimeApis } from './app/utils/codeless/startDesignTimeApi';
+import { stopAllDesignTimeApis } from './app/utils/codeless/startDesignTimeApi';
 import { UriHandler } from './app/utils/codeless/urihandler';
 import { getExtensionVersion } from './app/utils/extension';
 import { registerFuncHostTaskEvents } from './app/utils/funcCoreTools/funcHostTask';
@@ -109,9 +109,8 @@ export async function activate(context: vscode.ExtensionContext) {
       await convertToWorkspace(activateContext);
     }
 
-    let isBundleUpdatedPromise: Promise<boolean> = undefined;
     try {
-      isBundleUpdatedPromise = downloadExtensionBundle(activateContext);
+      downloadExtensionBundle(activateContext);
     } catch (error) {
       // log the error message to telemetry.
       const errorMessage = `Error downloading and extracting the Logic Apps Standard extension bundle: ${error.message}`;
@@ -156,18 +155,6 @@ export async function activate(context: vscode.ExtensionContext) {
     ext.rgApi.registerApplicationResourceResolver(getAzExtResourceType(logicAppFilter), new LogicAppResolver());
 
     vscode.window.registerUriHandler(new UriHandler());
-
-    // This is an optimization to avoid blocking extension activation on fetching the bundle feed if no update is needed.
-    if (isBundleUpdatedPromise !== undefined) {
-      // TODO(aeldridge): This promise resolves before bundle download is complete.
-      const isBundleUpdated = await isBundleUpdatedPromise;
-      ext.defaultBundleVersion = activateContext.telemetry.properties.latestBundleVersion;
-      ext.latestBundleVersion = activateContext.telemetry.properties.latestBundleVersion;
-      if (isBundleUpdated) {
-        stopAllDesignTimeApis();
-        startAllDesignTimeApis();
-      }
-    }
   });
 }
 
