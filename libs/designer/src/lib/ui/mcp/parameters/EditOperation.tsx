@@ -407,7 +407,7 @@ const EditOperationParameterField = ({
   });
 
   return (
-    <div key={parameter.id} className={styles.parameterField}>
+    <div className={styles.parameterField}>
       <Label className={styles.parameterLabel} required={parameter.required} title={parameter.label}>
         {parameter.label}
       </Label>
