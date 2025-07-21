@@ -2,8 +2,8 @@ import type { TemplatePanelFooterProps } from '@microsoft/designer-ui';
 import { TemplatesPanelFooter } from '@microsoft/designer-ui';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../../core/state/mcp/store';
-import { closePanel } from '../../../../core/state/mcp/panel/mcpPanelSlice';
-import { Button, DrawerBody, DrawerFooter, DrawerHeader, Text } from '@fluentui/react-components';
+import { closePanel, McpPanelView } from '../../../../core/state/mcp/panel/mcpPanelSlice';
+import { Button, Drawer, DrawerBody, DrawerFooter, DrawerHeader, Text } from '@fluentui/react-components';
 import { useMcpPanelStyles } from '../styles';
 import { useIntl } from 'react-intl';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
@@ -20,9 +20,11 @@ export const EditOperationPanelInner = () => {
   const dispatch = useDispatch<AppDispatch>();
   const styles = useMcpPanelStyles();
 
-  const { selectedOperationId, operationMetadata } = useSelector((state: RootState) => ({
+  const { selectedOperationId, operationMetadata, isOpen, panelMode } = useSelector((state: RootState) => ({
     selectedOperationId: state.connector.selectedOperationId,
     operationMetadata: state.operation.operationMetadata,
+    isOpen: state.mcpPanel?.isOpen ?? false,
+    panelMode: state.mcpPanel?.currentPanelView ?? null,
   }));
 
   const selectedOperationSummary = useMemo(() => {
@@ -54,9 +56,6 @@ export const EditOperationPanelInner = () => {
     setIsDirty(true);
   }, []);
 
-  // TODO: This is not being triggered on non-button close panel action.
-  // Probably should add it to "onOpenChange" of the Drawer.
-  // This means, we should probably divide the panels
   const handleCancel = useCallback(() => {
     restoreSnapshot();
     clearSnapshot();
@@ -128,7 +127,13 @@ export const EditOperationPanelInner = () => {
   }, [selectedOperationDescription]);
 
   return (
-    <>
+    <Drawer
+      className={styles.drawer}
+      open={isOpen && panelMode === McpPanelView.EditOperation}
+      onOpenChange={(_, { open }) => !open && handleClose()}
+      position="end"
+      size="large"
+    >
       <DrawerHeader className={styles.header}>
         <div className={styles.headerContent}>
           <Text size={600} weight="semibold" style={{ flex: 1 }}>
@@ -154,6 +159,6 @@ export const EditOperationPanelInner = () => {
       <DrawerFooter className={styles.footer}>
         <TemplatesPanelFooter {...footerContent} />
       </DrawerFooter>
-    </>
+    </Drawer>
   );
 };
