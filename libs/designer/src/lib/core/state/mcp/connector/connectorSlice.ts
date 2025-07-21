@@ -5,11 +5,13 @@ import { resetMcpState } from '../../global';
 export interface McpSelectionState {
   selectedConnectorId: string | undefined;
   selectedOperations: string[];
+  selectedOperationId?: string;
 }
 
 const initialSelectionState: McpSelectionState = {
   selectedConnectorId: undefined,
   selectedOperations: [],
+  selectedOperationId: undefined,
 };
 
 export const connectorSlice = createSlice({
@@ -25,6 +27,9 @@ export const connectorSlice = createSlice({
     selectOperations: (state, action: PayloadAction<string[]>) => {
       state.selectedOperations = action.payload;
     },
+    selectOperationIdToEdit: (state, action: PayloadAction<string | undefined>) => {
+      state.selectedOperationId = action.payload;
+    },
     clearSelectedOperations: (state) => {
       state.selectedOperations = [];
     },
@@ -38,6 +43,7 @@ export const connectorSlice = createSlice({
   },
 });
 
-export const { selectConnectorId, selectOperations, clearSelectedOperations, clearAllSelections } = connectorSlice.actions;
+export const { selectConnectorId, selectOperations, clearSelectedOperations, clearAllSelections, selectOperationIdToEdit } =
+  connectorSlice.actions;
 
 export default connectorSlice.reducer;

@@ -2,30 +2,19 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { RootState, AppDispatch } from '../../../core/state/mcp/store';
 import { openOperationPanelView } from '../../../core/state/mcp/panel/mcpPanelSlice';
 import { useCallback, useMemo } from 'react';
-import {
-  Spinner,
-  Text,
-  TableCell,
-  TableRow,
-  Table,
-  TableHeader,
-  TableHeaderCell,
-  Button,
-  TableBody,
-  Link,
-} from '@fluentui/react-components';
+import { Text, TableCell, TableRow, Table, TableHeader, TableHeaderCell, Button, TableBody, Link } from '@fluentui/react-components';
 import { Delete24Regular, Edit24Regular } from '@fluentui/react-icons';
 import { useIntl } from 'react-intl';
 import { useConnectorSectionStyles } from '../wizard/styles';
 import { deinitializeNodes, deinitializeOperationInfo } from '../../../core/state/operation/operationMetadataSlice';
 import DefaultIcon from '../../../common/images/recommendation/defaulticon.svg';
+import { selectOperationIdToEdit } from '../../../core/state/mcp/connector/connectorSlice';
 
 export const ListOperations = () => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
-  const { operationInfos, isInitializingOperations, operationMetadata } = useSelector((state: RootState) => ({
+  const { operationInfos, operationMetadata } = useSelector((state: RootState) => ({
     operationInfos: state.operation.operationInfo,
-    isInitializingOperations: state.operation.loadStatus.isInitializingOperations,
     operationMetadata: state.operation.operationMetadata,
   }));
 
@@ -42,11 +31,6 @@ export const ListOperations = () => {
       id: 'x5Q5L7',
       description: 'The label for the operations column',
     }),
-    loadingOperationsText: intl.formatMessage({
-      defaultMessage: 'Loading operations...',
-      id: 'VFaFVs',
-      description: 'Loading message for operations',
-    }),
     editButtonLabel: intl.formatMessage({
       defaultMessage: 'Edit operation',
       id: '7EHrJW',
@@ -61,11 +45,8 @@ export const ListOperations = () => {
 
   const handleEditOperation = useCallback(
     (operationId: string) => {
-      dispatch(
-        openOperationPanelView({
-          selectedOperationId: operationId,
-        })
-      );
+      dispatch(selectOperationIdToEdit(operationId));
+      dispatch(openOperationPanelView());
     },
     [dispatch]
   );
@@ -96,14 +77,6 @@ export const ListOperations = () => {
 
   if (!items.length) {
     return null;
-  }
-
-  if (isInitializingOperations) {
-    return (
-      <div className={styles.emptyState}>
-        <Spinner size="medium" label={INTL_TEXT.loadingOperationsText} />
-      </div>
-    );
   }
 
   return (

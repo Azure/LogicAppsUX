@@ -1,9 +1,10 @@
 import type React from 'react';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { batch, useDispatch } from 'react-redux';
 import type { ElkExtendedEdge } from 'elkjs/lib/elk-api';
 import { EdgeLabelRenderer, type EdgeProps, type XYPosition } from '@xyflow/react';
 import { css } from '@fluentui/utilities';
+import { Button } from '@fluentui/react-components';
 import {
   containsIdTag,
   removeIdTag,
@@ -18,11 +19,12 @@ import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSel
 import { useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
 import { ArrowCap } from './dynamicsvgs/arrowCap';
 import { useIsNodeSelectedInOperationPanel } from '../../core/state/panel/panelSelectors';
-import { removeEdgeFromRunAfterOperation } from '../../core/actions/bjsworkflow/runafter';
+import { removeOperationRunAfter } from '../../core/actions/bjsworkflow/runafter';
 import { EdgePathContextMenu, useContextMenu } from './edgePathContextMenu';
 import { changePanelNode, type AppDispatch } from '../../core';
-import { Button } from '@fluentui/react-components';
 import { HandoffIcon } from './dynamicsvgs/handoffIcon';
+import { setSelectedPanelActiveTab } from '../../core/state/panel/panelSlice';
+import constants from '../../common/constants';
 
 interface EdgeContentProps {
   x: number;
@@ -37,9 +39,11 @@ interface EdgeContentProps {
 const EdgeContent = (props: EdgeContentProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const onClick = useCallback(() => {
-    const handoffNodeId = `handoff_from_${props.parentId}_to_${props.childId}`;
-    dispatch(changePanelNode(handoffNodeId));
-  }, [dispatch, props.parentId, props.childId]);
+    batch(() => {
+      dispatch(changePanelNode(props.parentId ?? ''));
+      dispatch(setSelectedPanelActiveTab(constants.PANEL_TAB_NAMES.HANDOFF));
+    });
+  }, [dispatch, props.parentId]);
 
   return (
     <EdgeLabelRenderer>
@@ -126,7 +130,7 @@ const HandoffEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({ id, source, targ
 
   const deleteEdge = useCallback(() => {
     dispatch(
-      removeEdgeFromRunAfterOperation({
+      removeOperationRunAfter({
         parentOperationId: sourceId,
         childOperationId: targetId,
       })
@@ -252,7 +256,7 @@ const HandoffEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({ id, source, targ
         />
       )}
 
-      {/* ADD ACTION / BRANCH BUTTONS */}
+      {/* Handoff Indicator */}
       {readOnly ? null : (
         <EdgeContent
           x={midpoint.x - edgeContentWidth / 2}

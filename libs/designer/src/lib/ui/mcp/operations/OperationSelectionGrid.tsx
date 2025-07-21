@@ -126,8 +126,8 @@ export const OperationSelectionGrid = ({
     [onOperationToggle]
   );
   const selectableOperations = operationsData;
-  const allSelected = selectableOperations.length > 0 && selectableOperations.every((item) => selectedOperations.has(item.id));
-  const someSelected = selectableOperations.some((item) => selectedOperations.has(item.id));
+  const allSelected = selectableOperations.length > 0 && selectableOperations.every((item) => selectedOperations.has(item.name));
+  const someSelected = selectableOperations.some((item) => selectedOperations.has(item.name));
 
   const noResultsText = intl.formatMessage({
     defaultMessage: 'No operations found',

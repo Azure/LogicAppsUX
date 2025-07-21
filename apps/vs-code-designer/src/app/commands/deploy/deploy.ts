@@ -48,19 +48,14 @@ import type { IDeployContext } from '@microsoft/vscode-azext-azureappservice';
 import { ScmType } from '@microsoft/vscode-azext-azureappservice/out/src/ScmType';
 import type { AzExtParentTreeItem, IActionContext, IAzureQuickPickItem, ISubscriptionContext } from '@microsoft/vscode-azext-utils';
 import { AzureWizard, DialogResponses } from '@microsoft/vscode-azext-utils';
-import {
-  resolveConnectionsReferences,
-  type ConnectionsData,
-  type FuncVersion,
-  type IIdentityWizardContext,
-  type ProjectLanguage,
-} from '@microsoft/vscode-extension-logic-apps';
+import type { ConnectionsData, FuncVersion, IIdentityWizardContext, ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import type { Uri, MessageItem, WorkspaceFolder } from 'vscode';
 import { deployHybridLogicApp, zipDeployHybridLogicApp } from './hybridLogicApp';
 import { createContainerClient } from '../../utils/azureClients';
 import { uploadAppSettings } from '../appSettings/uploadAppSettings';
+import { resolveConnectionsReferences } from '@microsoft/logic-apps-shared';
 
 export async function deployProductionSlot(
   context: IActionContext,

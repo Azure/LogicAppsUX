@@ -1,6 +1,5 @@
 import { clientSupportedOperations } from './constants';
 import { BaseOAuthService } from './services/oAuth';
-import { resolveConnectionsReferences } from './utilities/workflow';
 import {
   StandardConnectionService,
   StandardOperationManifestService,
@@ -17,6 +16,7 @@ import {
   BaseTenantService,
   BaseCognitiveServiceService,
   BaseRoleService,
+  resolveConnectionsReferences,
 } from '@microsoft/logic-apps-shared';
 import type {
   ApiHubServiceDetails,
