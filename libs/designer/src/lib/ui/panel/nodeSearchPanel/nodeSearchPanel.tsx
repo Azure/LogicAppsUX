@@ -69,7 +69,6 @@ export const NodeSearchPanel = (props: NodeSearchPanelProps) => {
   // Set up modalizer when component mounts
   useEffect(() => {
     if (panelRef.current && modalizer) {
-      console.log('charlie renders');
       const element = panelRef.current;
 
       // Set the modalizer attribute on the element
