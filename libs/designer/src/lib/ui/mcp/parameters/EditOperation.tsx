@@ -376,7 +376,7 @@ export const EditOperation = () => {
         <Text size={400} weight="semibold" className={styles.descriptionField}>
           {INTL_TEXT.descriptionLabel}
         </Text>
-        <Field className={styles.parameterField}>
+        <Field className={styles.descriptionField} style={{ width: '100%' }}>
           <Textarea
             value={localDescription}
             onChange={(_e, data) => handleDescriptionInputChange(data.value)}
