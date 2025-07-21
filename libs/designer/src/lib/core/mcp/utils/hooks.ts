@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import type { UpdateParametersPayload, NodeInputs } from '../../../core/state/operation/operationMetadataSlice';
-import { updateNodeParameters } from '../../../core/state/operation/operationMetadataSlice';
+import type { NodeInputs } from '../../../core/state/operation/operationMetadataSlice';
+import { updateNodeParameterGroups } from '../../../core/state/operation/operationMetadataSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../core/state/mcp/store';
 import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
@@ -18,7 +18,11 @@ export const useEditSnapshot = (operationId: string | null) => {
   }));
 
   useEffect(() => {
-    if (operationId && !snapshot) {
+    if (!operationId) {
+      setSnapshot(null);
+      return;
+    }
+    if (!snapshot) {
       const currentInputParams = inputParameters[operationId];
 
       if (currentInputParams) {
@@ -55,36 +59,18 @@ export const useEditSnapshot = (operationId: string | null) => {
       return;
     }
 
-    const parametersToRestore: UpdateParametersPayload['parameters'] = [];
-
-    for (const [groupId, originalGroup] of Object.entries(snapshot.inputParameters.parameterGroups)) {
-      for (const originalParam of originalGroup.parameters) {
-        parametersToRestore.push({
-          groupId,
-          parameterId: originalParam.id,
-          propertiesToUpdate: {
-            value: originalParam.value,
-            conditionalVisibility: originalParam.conditionalVisibility,
-          },
-        });
-      }
-    }
-
-    if (parametersToRestore.length > 0) {
-      dispatch(
-        updateNodeParameters({
-          nodeId: operationId,
-          parameters: parametersToRestore,
-          isUserAction: false,
-        })
-      );
-    }
+    dispatch(
+      updateNodeParameterGroups({
+        nodeId: operationId,
+        parameterGroups: snapshot.inputParameters.parameterGroups,
+      })
+    );
 
     LoggerService().log({
       level: LogEntryLevel.Verbose,
       area: 'MCP.EditOperation',
       message: 'Restored state from snapshot',
-      args: [operationId, parametersToRestore.length],
+      args: [operationId, snapshot.inputParameters.parameterGroups.length],
     });
   }, [dispatch, operationId, snapshot]);
 
