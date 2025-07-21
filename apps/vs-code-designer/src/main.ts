@@ -99,7 +99,6 @@ export async function activate(context: vscode.ExtensionContext) {
     );
 
     activateContext.telemetry.properties.isActivationEvent = 'true';
-    activateContext.telemetry.measurements.mainFileLoad = (perfStats.loadEndTime - perfStats.loadStartTime) / 1000;
 
     runPostWorkflowCreateStepsFromCache();
     runPostExtractStepsFromCache();
@@ -155,6 +154,8 @@ export async function activate(context: vscode.ExtensionContext) {
     ext.rgApi.registerApplicationResourceResolver(getAzExtResourceType(logicAppFilter), new LogicAppResolver());
 
     vscode.window.registerUriHandler(new UriHandler());
+    perfStats.loadEndTime = Date.now();
+    activateContext.telemetry.measurements.mainFileLoad = (perfStats.loadEndTime - perfStats.loadStartTime) / 1000;
   });
 }
 
@@ -164,5 +165,3 @@ export function deactivate(): Promise<any> {
   ext.telemetryReporter.dispose();
   return undefined;
 }
-
-perfStats.loadEndTime = Date.now();
