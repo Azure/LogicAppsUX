@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux';
 import { McpPanelView } from '../../../core/state/mcp/panel/mcpPanelSlice';
 import type { RootState } from '../../../core/state/mcp/store';
 import { SelectionPanel } from './connector/SelectionPanel';
-import { EditOperationPanelInner } from './operation/EditOperationPanelInner';
+import { EditOperationPanel } from './operation/EditOperationPanel';
 
 export const McpPanelRoot = () => {
   const { isOpen, panelMode } = useSelector((state: RootState) => ({
@@ -19,7 +19,7 @@ export const McpPanelRoot = () => {
       {(panelMode === McpPanelView.SelectConnector ||
         panelMode === McpPanelView.SelectOperation ||
         panelMode === McpPanelView.CreateConnection) && <SelectionPanel />}
-      {panelMode === McpPanelView.EditOperation && <EditOperationPanelInner />}
+      {panelMode === McpPanelView.EditOperation && <EditOperationPanel />}
     </>
   );
 };

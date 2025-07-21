@@ -57,8 +57,8 @@ export const useEditSnapshot = (operationId: string | null) => {
 
     const parametersToRestore: UpdateParametersPayload['parameters'] = [];
 
-    Object.entries(snapshot.inputParameters.parameterGroups).forEach(([groupId, originalGroup]) => {
-      originalGroup.parameters.forEach((originalParam) => {
+    for (const [groupId, originalGroup] of Object.entries(snapshot.inputParameters.parameterGroups)) {
+      for (const originalParam of originalGroup.parameters) {
         parametersToRestore.push({
           groupId,
           parameterId: originalParam.id,
@@ -67,8 +67,8 @@ export const useEditSnapshot = (operationId: string | null) => {
             conditionalVisibility: originalParam.conditionalVisibility,
           },
         });
-      });
-    });
+      }
+    }
 
     if (parametersToRestore.length > 0) {
       dispatch(

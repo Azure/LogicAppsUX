@@ -66,8 +66,8 @@ export const EditOperation = ({ localDescription, handleDescriptionInputChange, 
       const allConditional: ParameterInfo[] = [];
       const invisible: ParameterInfo[] = [];
 
-      Object.entries(parameters.parameterGroups).forEach(([groupId, group]) => {
-        group.parameters.forEach((param) => {
+      for (const [groupId, group] of Object.entries(parameters.parameterGroups)) {
+        for (const param of group.parameters) {
           if (param.required) {
             requiredParams.push({ groupId, param, isConditional: false });
           } else {
@@ -84,8 +84,8 @@ export const EditOperation = ({ localDescription, handleDescriptionInputChange, 
               });
             }
           }
-        });
-      });
+        }
+      }
 
       return {
         requiredParams,
@@ -237,8 +237,8 @@ export const EditOperation = ({ localDescription, handleDescriptionInputChange, 
       return;
     }
 
-    Object.entries(parameters.parameterGroups).forEach(([groupId, group]) => {
-      group.parameters.forEach((param) => {
+    for (const [groupId, group] of Object.entries(parameters.parameterGroups)) {
+      for (const param of group.parameters) {
         if (!param.required && param.conditionalVisibility !== true) {
           onParameterUpdate();
           dispatch(
@@ -250,8 +250,8 @@ export const EditOperation = ({ localDescription, handleDescriptionInputChange, 
             })
           );
         }
-      });
-    });
+      }
+    }
   }, [dispatch, selectedOperationId, parameters, onParameterUpdate]);
 
   const handleHideAllOptional = useCallback(() => {
@@ -259,8 +259,8 @@ export const EditOperation = ({ localDescription, handleDescriptionInputChange, 
       return;
     }
 
-    Object.entries(parameters.parameterGroups).forEach(([groupId, group]) => {
-      group.parameters.forEach((param) => {
+    for (const [groupId, group] of Object.entries(parameters.parameterGroups)) {
+      for (const param of group.parameters) {
         if (!param.required && param.conditionalVisibility === true) {
           onParameterUpdate();
           dispatch(
@@ -272,8 +272,8 @@ export const EditOperation = ({ localDescription, handleDescriptionInputChange, 
             })
           );
         }
-      });
-    });
+      }
+    }
   }, [dispatch, selectedOperationId, parameters, onParameterUpdate]);
 
   const renderParameterField = useCallback(

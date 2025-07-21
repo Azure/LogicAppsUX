@@ -15,7 +15,7 @@ import { updateOperationDescription } from '../../../../core/state/operation/ope
 
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
-export const EditOperationPanelInner = () => {
+export const EditOperationPanel = () => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const styles = useMcpPanelStyles();
