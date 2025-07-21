@@ -91,19 +91,15 @@ export const BrowseGrid = ({
       loadingRef.current = true;
       setIsLoadingMore(true);
 
-      // Use requestAnimationFrame to batch the update
-      requestAnimationFrame(() => {
+      // Use setTimeout to introduce a slight delay for batching updates
+      setTimeout(() => {
         setDisplayedItemCount((prev) => {
           const newCount = Math.min(prev + batchSize, operationsData.length);
-
-          setTimeout(() => {
-            setIsLoadingMore(false);
-            loadingRef.current = false;
-          }, 50);
-
+          setIsLoadingMore(false);
+          loadingRef.current = false;
           return newCount;
         });
-      });
+      }, 50);
     }
   }, [hasMoreToShow, isLoading, batchSize, operationsData.length]);
 
