@@ -411,6 +411,11 @@ const filterOperationsByConnector = (
 };
 
 export const useOperationsByConnector = (connectorId: string, actionType?: 'triggers' | 'actions') => {
+  // Validate that connectorId is not empty
+  if (!connectorId) {
+    console.warn('useOperationsByConnector called with an empty connectorId');
+    return { data: [] }; // Return a default value
+  }
   // Use the existing cached built-in operations
   const { data: builtInOperations } = useBuiltInOperationsQuery();
   // Use the existing cached custom operations
