@@ -218,9 +218,10 @@ export const BrowseGrid = ({
         </div>
       )}
       <div className={`${classes.gridContainer} ${forceSingleCol ? '' : classes.doubleColumn}`}>
-        {displayedData.map((item, index) => (
-          <CardItem key={getItemKey(item, index)} item={item} itemKey={getItemKey(item, index)} isConnector={isConnector ?? false} />
-        ))}
+        {displayedData.map((item, index) => {
+          const itemKey = getItemKey(item, index);
+          return <CardItem key={itemKey} item={item} itemKey={itemKey} isConnector={isConnector ?? false} />;
+        })}
 
         {/* Sentinel element for intersection observer - always show when more items available */}
         {hasMoreToShow && (
