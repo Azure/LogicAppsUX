@@ -153,7 +153,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   } = connector.properties;
 
   const [parameterValues, setParameterValues] = useState<Record<string, any>>({});
-  const [operationParameterValues, setOperationParameterValues] = useState<Record<string, any>>();
+  const [operationParameterValues, setOperationParameterValues] = useState<Record<string, any>>({});
 
   const operationParameterSetKeys = useMemo(() => Object.keys(operationParameterSets ?? {}), [operationParameterSets]);
 
@@ -732,15 +732,6 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     return renderConnectionParameter(parameterKey, parameter);
   };
 
-  const setOperationParameterValue = useCallback((key: string, val: any) => {
-    setOperationParameterValues((values) => {
-      return {
-        ...values,
-        [key]: val ?? '',
-      };
-    });
-  }, []);
-
   // RENDER
 
   return (
@@ -809,7 +800,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
 
           {/* Operation Parameters (Linked to operation manifest) */}
           {operationParameterSetKeys.length > 0
-            ? operationParameterSetKeys.map((parameter: string) => {
+            ? operationParameterSetKeys.map((parameter: string, index: number) => {
                 const keyValue = operationParameterSets?.[parameter]?.name ?? '';
                 const parameterFromManifest = getPropertyValue(operationManifest?.properties.inputs.properties, keyValue);
 
@@ -821,37 +812,44 @@ export const CreateConnection = (props: CreateConnectionProps) => {
                 }
 
                 return (
-                  <UniversalConnectionParameter
-                    key={parameter}
-                    data-testId={parameter}
-                    parameterKey={parameter}
-                    value={operationParameterValues?.[parameter] ?? undefined}
-                    parameter={{
-                      ...operationParameterSets?.[parameter],
-                      type: 'dropdown',
-                      uiDefinition: {
-                        displayName: getPropertyValue(parameterFromManifest, 'title') ?? '',
-                        constraints: {
-                          ...operationParameterSets?.[parameter]?.uiDefinition?.constraints,
-                          ...parameterFromManifest,
-                          allowedValues: (getPropertyValue(parameterFromManifest, ExtensionProperties.EditorOptions)?.options ?? []).map(
-                            (option: any) => ({
-                              value: option.value,
-                              text: option.displayName,
-                            })
-                          ),
-                          required:
-                            findIndex<string>(parameterFromManifest?.properties?.inputs?.required ?? [], (item, _index) =>
-                              equals(item, keyValue, true)
-                            ) >= 0,
+                  <span key={`operation-parameter-${index}`}>
+                    <UniversalConnectionParameter
+                      key={parameter}
+                      data-testId={parameter}
+                      parameterKey={parameter}
+                      value={operationParameterValues?.[parameter] ?? undefined}
+                      parameter={{
+                        ...operationParameterSets?.[parameter],
+                        type: 'dropdown',
+                        uiDefinition: {
+                          displayName: getPropertyValue(parameterFromManifest, 'title') ?? '',
+                          constraints: {
+                            ...operationParameterSets?.[parameter]?.uiDefinition?.constraints,
+                            ...parameterFromManifest,
+                            allowedValues: (getPropertyValue(parameterFromManifest, ExtensionProperties.EditorOptions)?.options ?? []).map(
+                              (option: any) => ({
+                                value: option.value,
+                                text: option.displayName,
+                              })
+                            ),
+                            required:
+                              findIndex<string>(parameterFromManifest?.properties?.inputs?.required ?? [], (item, _index) =>
+                                equals(item, keyValue, true)
+                              ) >= 0,
+                          },
                         },
-                      },
-                    }}
-                    setValue={(val: any) => {
-                      setOperationParameterValue(parameter, val);
-                    }}
-                    isLoading={isLoading}
-                  />
+                      }}
+                      setValue={(val: any) => {
+                        setOperationParameterValues((values) => {
+                          return {
+                            ...values,
+                            [parameter]: val ?? '',
+                          };
+                        });
+                      }}
+                      isLoading={isLoading}
+                    />
+                  </span>
                 );
               })
             : null}
