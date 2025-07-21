@@ -153,7 +153,7 @@ export const NodeSearchPanel = (props: NodeSearchPanelProps) => {
         autoFocus={true}
         onChange={(_event: SearchBoxChangeEvent, data: InputOnChangeData) => setSearchTerm(data.value ?? null)}
       />
-      <div aria-label="List of operation results">
+      <div role="list" aria-label="List of operation results">
         {searchNodeNames.map((node) => (
           <NodeSearchCard key={node} node={node} />
         ))}
