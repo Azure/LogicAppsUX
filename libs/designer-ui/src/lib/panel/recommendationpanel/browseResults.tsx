@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState, useMemo } from 'react';
+import { useCallback, useEffect, useRef, useState, useMemo, memo } from 'react';
 import { useIntl } from 'react-intl';
 import { Spinner, Text } from '@fluentui/react-components';
 
@@ -42,6 +42,7 @@ export const BrowseGrid = ({
     const initialBatchSize = 50;
     return Math.min(initialBatchSize, operationsData.length);
   });
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const sentinelRef = useRef<HTMLDivElement>(null);
 
@@ -61,10 +62,25 @@ export const BrowseGrid = ({
     return () => observer.disconnect();
   }, []);
 
-  // Progressive loading - show more items as user scrolls
+  // Use stable reference to prevent re-rendering existing items
   const displayedData = useMemo(() => {
+    // Keep reference to the original array to maintain object identity
     return operationsData.slice(0, displayedItemCount);
   }, [operationsData, displayedItemCount]);
+
+  // Create stable item keys to prevent re-renders
+  const getItemKey = useCallback(
+    (item: Connector | OperationActionData | OperationGroupCardData, index: number) => {
+      if (isConnector) {
+        return (item as Connector).id;
+      }
+      if ('id' in item) {
+        return (item as OperationActionData).id;
+      }
+      return `group-${(item as OperationGroupCardData).connectorName}-${index}`;
+    },
+    [isConnector]
+  );
 
   const hasMoreToShow = displayedItemCount < operationsData.length;
   const batchSize = 50; // Load 50 items at a time for better performance
@@ -73,14 +89,18 @@ export const BrowseGrid = ({
   const loadMoreItems = useCallback(() => {
     if (hasMoreToShow && !isLoading && !loadingRef.current) {
       loadingRef.current = true;
+      setIsLoadingMore(true);
 
       // Use requestAnimationFrame to batch the update
       requestAnimationFrame(() => {
         setDisplayedItemCount((prev) => {
           const newCount = Math.min(prev + batchSize, operationsData.length);
+
           setTimeout(() => {
+            setIsLoadingMore(false);
             loadingRef.current = false;
-          }, 100); // Small delay to prevent rapid firing
+          }, 50);
+
           return newCount;
         });
       });
@@ -96,7 +116,7 @@ export const BrowseGrid = ({
 
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting && !loadingRef.current) {
+        if (entries[0].isIntersecting && !loadingRef.current && !isLoadingMore) {
           loadMoreItems();
         }
       },
@@ -108,26 +128,26 @@ export const BrowseGrid = ({
 
     observer.observe(sentinel);
     return () => observer.disconnect();
-  }, [hasMoreToShow, loadMoreItems]);
+  }, [hasMoreToShow, loadMoreItems, isLoadingMore, displayedItemCount, operationsData.length]);
 
   useEffect(() => {
     const initialBatchSize = 50;
     setDisplayedItemCount(Math.min(initialBatchSize, operationsData.length));
+    setIsLoadingMore(false);
     loadingRef.current = false;
   }, [operationsData]);
 
-  const renderCard = useCallback(
-    (item: Connector | OperationActionData | OperationGroupCardData, index: number) => {
-      const itemKey = isConnector
-        ? (item as Connector).id
-        : 'id' in item
-          ? (item as OperationActionData).id
-          : `group-${(item as OperationGroupCardData).connectorName}-${index}`;
-
+  // Memoized card component to prevent re-renders - defined outside render to maintain stable reference
+  const CardItem = useMemo(() => {
+    const MemoizedCardItem = memo<{
+      item: Connector | OperationActionData | OperationGroupCardData;
+      itemKey: string;
+      isConnector: boolean;
+    }>(({ item, isConnector: itemIsConnector }) => {
       return (
-        <div key={itemKey} className={classes.itemWrapper}>
+        <div className={classes.itemWrapper}>
           <div style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
-            {isConnector ? (
+            {itemIsConnector ? (
               <ConnectorSummaryCard
                 connector={item as Connector}
                 onClick={onConnectorSelected}
@@ -154,9 +174,11 @@ export const BrowseGrid = ({
           </div>
         </div>
       );
-    },
-    [isConnector, onConnectorSelected, onOperationSelected, displayRuntimeInfo, showConnectorName, hideFavorites, classes.itemWrapper]
-  );
+    });
+
+    MemoizedCardItem.displayName = 'BrowseGrid.CardItem';
+    return MemoizedCardItem;
+  }, [classes.itemWrapper, onConnectorSelected, onOperationSelected, displayRuntimeInfo, showConnectorName, hideFavorites]);
 
   const noResultsText = intl.formatMessage({
     defaultMessage: 'No results found for the specified filters',
@@ -165,8 +187,8 @@ export const BrowseGrid = ({
   });
 
   const loadingText = intl.formatMessage({
-    defaultMessage: 'Loading all connectors...',
-    id: 'RkQuAC',
+    defaultMessage: 'Loading more connectors...',
+    id: 'PpsKqc',
     description: 'Text displayed while connectors are being loaded in the browse grid',
   });
 
@@ -196,12 +218,14 @@ export const BrowseGrid = ({
         </div>
       )}
       <div className={`${classes.gridContainer} ${forceSingleCol ? '' : classes.doubleColumn}`}>
-        {displayedData.map((item, index) => renderCard(item, index))}
+        {displayedData.map((item, index) => (
+          <CardItem key={getItemKey(item, index)} item={item} itemKey={getItemKey(item, index)} isConnector={isConnector ?? false} />
+        ))}
 
-        {/* Sentinel element for intersection observer */}
+        {/* Sentinel element for intersection observer - always show when more items available */}
         {hasMoreToShow && (
           <div ref={sentinelRef} className={classes.loadingMoreContainer}>
-            <Spinner size="extra-small" label={showingConnectorLabel} />
+            <Spinner size="small" label={isLoadingMore ? loadingText : showingConnectorLabel} />
           </div>
         )}
       </div>
