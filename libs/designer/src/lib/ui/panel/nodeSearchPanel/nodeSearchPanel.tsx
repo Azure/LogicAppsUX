@@ -2,8 +2,9 @@ import { useOperationVisuals } from '../../../core/state/operation/operationSele
 import { changePanelNode } from '../../../core/state/panel/panelSlice';
 import { useNodeDisplayName, useNodeIds } from '../../../core/state/workflow/workflowSelectors';
 import { collapseGraphsToShowNode, setFocusNode } from '../../../core/state/workflow/workflowSlice';
-import { SearchBox, FocusTrapZone } from '@fluentui/react';
-import { Button } from '@fluentui/react-components';
+import { FocusTrapZone } from '@fluentui/react';
+import type { InputOnChangeData, SearchBoxChangeEvent } from '@fluentui/react-components';
+import { Button, SearchBox } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
 import type { CommonPanelProps } from '@microsoft/designer-ui';
 import { OperationSearchCard, XLargeText } from '@microsoft/designer-ui';
@@ -12,6 +13,7 @@ import Fuse from 'fuse.js';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
+import { useNodeSearchPanelStyles } from './nodeSearchPanelStyles';
 
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
@@ -55,6 +57,7 @@ export type NodeSearchPanelProps = {
 
 export const NodeSearchPanel = (props: NodeSearchPanelProps) => {
   const allNodeNames = useNodeIds();
+  const styles = useNodeSearchPanelStyles();
   const [searchTerm, setSearchTerm] = useState<string | null>(null);
   const intl = useIntl();
   const fuseObject = useMemo(() => {
@@ -97,9 +100,12 @@ export const NodeSearchPanel = (props: NodeSearchPanelProps) => {
         <XLargeText text={goToOperationHeader} />
         <Button aria-label={closeButtonAriaLabel} appearance="subtle" onClick={props.toggleCollapse} icon={<CloseIcon />} />
       </div>
-      <div style={{ padding: 20 }}>
-        <SearchBox placeholder={searchOperation} autoFocus={true} onChange={(_e, newValue) => setSearchTerm(newValue ?? null)} />
-      </div>
+      <SearchBox
+        className={styles.searchBox}
+        placeholder={searchOperation}
+        autoFocus={true}
+        onChange={(_event: SearchBoxChangeEvent, data: InputOnChangeData) => setSearchTerm(data.value ?? null)}
+      />
       <div aria-description={'List of operation results'}>
         {searchNodeNames.map((node) => (
           <NodeSearchCard key={node} node={node} />
