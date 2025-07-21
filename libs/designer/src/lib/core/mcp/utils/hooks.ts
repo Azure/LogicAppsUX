@@ -1,33 +1,29 @@
 import { useCallback, useEffect, useState } from 'react';
-import type { UpdateParametersPayload, NodeInputs, OperationMetadata } from '../../../core/state/operation/operationMetadataSlice';
-import { updateNodeParameters, updateOperationDescription } from '../../../core/state/operation/operationMetadataSlice';
+import type { UpdateParametersPayload, NodeInputs } from '../../../core/state/operation/operationMetadataSlice';
+import { updateNodeParameters } from '../../../core/state/operation/operationMetadataSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../core/state/mcp/store';
 import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 
 interface Snapshot {
   inputParameters: NodeInputs;
-  operationMetadata: OperationMetadata;
 }
 
 export const useEditSnapshot = (operationId: string | null) => {
   const [snapshot, setSnapshot] = useState<Snapshot | null>(null);
   const dispatch = useDispatch<AppDispatch>();
 
-  const { inputParameters, operationMetadata } = useSelector((state: RootState) => ({
+  const { inputParameters } = useSelector((state: RootState) => ({
     inputParameters: state.operation.inputParameters,
-    operationMetadata: state.operation.operationMetadata,
   }));
 
   useEffect(() => {
     if (operationId && !snapshot) {
       const currentInputParams = inputParameters[operationId];
-      const currentMetadata = operationMetadata[operationId];
 
-      if (currentInputParams && currentMetadata) {
+      if (currentInputParams) {
         const newSnapshot: Snapshot = {
           inputParameters: JSON.parse(JSON.stringify(currentInputParams)),
-          operationMetadata: JSON.parse(JSON.stringify(currentMetadata)),
         };
 
         setSnapshot(newSnapshot);
@@ -40,7 +36,7 @@ export const useEditSnapshot = (operationId: string | null) => {
         });
       }
     }
-  }, [operationId, snapshot, inputParameters, operationMetadata]);
+  }, [operationId, snapshot, inputParameters]);
 
   useEffect(() => {
     return () => {
@@ -58,13 +54,6 @@ export const useEditSnapshot = (operationId: string | null) => {
       });
       return;
     }
-
-    dispatch(
-      updateOperationDescription({
-        id: operationId,
-        description: snapshot.operationMetadata.description || '',
-      })
-    );
 
     const parametersToRestore: UpdateParametersPayload['parameters'] = [];
 

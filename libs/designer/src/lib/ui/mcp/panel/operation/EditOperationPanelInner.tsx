@@ -7,10 +7,11 @@ import { Button, DrawerBody, DrawerFooter, DrawerHeader, Text } from '@fluentui/
 import { useMcpPanelStyles } from '../styles';
 import { useIntl } from 'react-intl';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { EditOperation } from '../../parameters/EditOperation';
 import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import { useEditSnapshot } from '../../../../core/mcp/utils/hooks';
+import { updateOperationDescription } from '../../../../core/state/operation/operationMetadataSlice';
 
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
@@ -28,7 +29,13 @@ export const EditOperationPanelInner = () => {
     return operationMetadata[selectedOperationId ?? '']?.summary ?? selectedOperationId;
   }, [selectedOperationId, operationMetadata]);
 
+  const selectedOperationDescription = useMemo(() => {
+    return operationMetadata[selectedOperationId ?? '']?.description ?? '';
+  }, [selectedOperationId, operationMetadata]);
+
   const { restoreSnapshot, clearSnapshot } = useEditSnapshot(selectedOperationId ?? '');
+  const [localDescription, setLocalDescription] = useState<string>('');
+  const [isDirty, setIsDirty] = useState<boolean>(false);
 
   const INTL_TEXT = {
     closeAriaLabel: intl.formatMessage({
@@ -38,6 +45,18 @@ export const EditOperationPanelInner = () => {
     }),
   };
 
+  const handleDescriptionInputChange = useCallback((description: string) => {
+    setLocalDescription(description);
+    setIsDirty(true);
+  }, []);
+
+  const onParameterUpdate = useCallback(() => {
+    setIsDirty(true);
+  }, []);
+
+  // TODO: This is not being triggered on non-button close panel action.
+  // Probably should add it to "onOpenChange" of the Drawer.
+  // This means, we should probably divide the panels
   const handleCancel = useCallback(() => {
     restoreSnapshot();
     clearSnapshot();
@@ -54,9 +73,20 @@ export const EditOperationPanelInner = () => {
       return;
     }
 
+    const originalDescription = selectedOperationDescription;
+
+    if (localDescription !== originalDescription) {
+      dispatch(
+        updateOperationDescription({
+          id: selectedOperationId,
+          description: localDescription,
+        })
+      );
+    }
+
     clearSnapshot();
     dispatch(closePanel());
-  }, [selectedOperationId, clearSnapshot, dispatch]);
+  }, [selectedOperationId, clearSnapshot, dispatch, selectedOperationDescription, localDescription]);
 
   const handleClose = useCallback(() => {
     handleCancel();
@@ -74,6 +104,7 @@ export const EditOperationPanelInner = () => {
           }),
           appearance: 'primary',
           onClick: handleSave,
+          disabled: !isDirty,
         },
         {
           type: 'action',
@@ -86,7 +117,15 @@ export const EditOperationPanelInner = () => {
         },
       ],
     };
-  }, [intl, handleSave, handleCancel]);
+  }, [intl, isDirty, handleSave, handleCancel]);
+
+  useEffect(() => {
+    if (selectedOperationDescription) {
+      setLocalDescription(selectedOperationDescription);
+    } else {
+      setLocalDescription('');
+    }
+  }, [selectedOperationDescription]);
 
   return (
     <>
@@ -106,7 +145,11 @@ export const EditOperationPanelInner = () => {
         </div>
       </DrawerHeader>
       <DrawerBody className={styles.body} style={{ overflow: 'auto', maxHeight: 'calc(100vh - 130px)', minHeight: '80vh' }}>
-        <EditOperation />
+        <EditOperation
+          localDescription={localDescription}
+          handleDescriptionInputChange={handleDescriptionInputChange}
+          onParameterUpdate={onParameterUpdate}
+        />
       </DrawerBody>
       <DrawerFooter className={styles.footer}>
         <TemplatesPanelFooter {...footerContent} />

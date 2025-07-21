@@ -15,7 +15,7 @@ import {
 import { Dismiss16Regular } from '@fluentui/react-icons';
 import type { RootState, AppDispatch } from '../../../core/state/mcp/store';
 import { useSelector, useDispatch } from 'react-redux';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useEditOperationStyles } from './styles';
 import type { ParameterInfo, ValueSegment } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
@@ -23,37 +23,30 @@ import type { SearchableDropdownOption } from '@microsoft/designer-ui';
 import { SearchableDropdownWithAddAll, StringEditor } from '@microsoft/designer-ui';
 import {
   updateNodeParameters,
-  updateOperationDescription,
   updateParameterConditionalVisibility,
   type UpdateParametersPayload,
 } from '../../../core/state/operation/operationMetadataSlice';
 import { getGroupIdFromParameterId } from '../../../core/utils/parameters/helper';
 
-export const EditOperation = () => {
+interface EditOperationProps {
+  localDescription: string;
+  handleDescriptionInputChange: (description: string) => void;
+  onParameterUpdate: () => void;
+}
+
+export const EditOperation = ({ localDescription, handleDescriptionInputChange, onParameterUpdate }: EditOperationProps) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const styles = useEditOperationStyles();
 
-  const [localDescription, setLocalDescription] = useState<string>('');
-
-  const { selectedOperationId, operationInfos, operationMetadata, inputParameters } = useSelector((state: RootState) => ({
+  const { selectedOperationId, operationInfos, inputParameters } = useSelector((state: RootState) => ({
     selectedOperationId: state.connector.selectedOperationId,
     operationInfos: state.operation.operationInfo,
-    operationMetadata: state.operation.operationMetadata,
     inputParameters: state.operation.inputParameters,
   }));
 
   const operationInfo = selectedOperationId ? operationInfos[selectedOperationId] : null;
-  const metadata = selectedOperationId ? operationMetadata[selectedOperationId] : null;
   const parameters = selectedOperationId ? inputParameters[selectedOperationId] : null;
-
-  useEffect(() => {
-    if (metadata) {
-      setLocalDescription(metadata.description ?? '');
-    } else {
-      setLocalDescription('');
-    }
-  }, [metadata, metadata?.description, selectedOperationId]);
 
   const { requiredParams, visibleConditionalParams, optionalDropdownOptions, allConditionalSettings, conditionallyInvisibleSettings } =
     useMemo(() => {
@@ -181,26 +174,6 @@ export const EditOperation = () => {
     }),
   };
 
-  const handleDescriptionInputChange = useCallback((description: string) => {
-    setLocalDescription(description);
-  }, []);
-
-  const handleDescriptionBlur = useCallback(() => {
-    if (!selectedOperationId) {
-      return;
-    }
-
-    const originalDescription = metadata?.description ?? '';
-    if (localDescription !== originalDescription) {
-      dispatch(
-        updateOperationDescription({
-          id: selectedOperationId,
-          description: localDescription,
-        })
-      );
-    }
-  }, [dispatch, selectedOperationId, localDescription, metadata?.description]);
-
   const handleParameterValueChange = useCallback(
     (parameterId: string, newValue: ValueSegment[]) => {
       if (!selectedOperationId || !parameters?.parameterGroups) {
@@ -239,6 +212,7 @@ export const EditOperation = () => {
         return;
       }
 
+      onParameterUpdate();
       dispatch(
         updateParameterConditionalVisibility({
           nodeId: selectedOperationId,
@@ -248,7 +222,7 @@ export const EditOperation = () => {
         })
       );
     },
-    [dispatch, selectedOperationId, parameters]
+    [dispatch, selectedOperationId, parameters, onParameterUpdate]
   );
 
   const handleRemoveConditionalParameter = useCallback(
@@ -266,6 +240,7 @@ export const EditOperation = () => {
     Object.entries(parameters.parameterGroups).forEach(([groupId, group]) => {
       group.parameters.forEach((param) => {
         if (!param.required && param.conditionalVisibility !== true) {
+          onParameterUpdate();
           dispatch(
             updateParameterConditionalVisibility({
               nodeId: selectedOperationId,
@@ -277,7 +252,7 @@ export const EditOperation = () => {
         }
       });
     });
-  }, [dispatch, selectedOperationId, parameters]);
+  }, [dispatch, selectedOperationId, parameters, onParameterUpdate]);
 
   const handleHideAllOptional = useCallback(() => {
     if (!selectedOperationId || !parameters) {
@@ -287,6 +262,7 @@ export const EditOperation = () => {
     Object.entries(parameters.parameterGroups).forEach(([groupId, group]) => {
       group.parameters.forEach((param) => {
         if (!param.required && param.conditionalVisibility === true) {
+          onParameterUpdate();
           dispatch(
             updateParameterConditionalVisibility({
               nodeId: selectedOperationId,
@@ -298,7 +274,7 @@ export const EditOperation = () => {
         }
       });
     });
-  }, [dispatch, selectedOperationId, parameters]);
+  }, [dispatch, selectedOperationId, parameters, onParameterUpdate]);
 
   const renderParameterField = useCallback(
     (param: ParameterInfo, isConditional = false) => {
@@ -311,6 +287,7 @@ export const EditOperation = () => {
             <StringEditor
               className={mergeClasses('msla-setting-token-editor-container', styles.parameterEditor)}
               initialValue={param.value}
+              onChange={onParameterUpdate}
               editorBlur={(changeState) => {
                 const newValue = changeState.value;
                 handleParameterValueChange(param.id, newValue);
@@ -340,6 +317,7 @@ export const EditOperation = () => {
       INTL_TEXT.removeParameter,
       handleRemoveConditionalParameter,
       handleParameterValueChange,
+      onParameterUpdate,
     ]
   );
 
@@ -380,7 +358,6 @@ export const EditOperation = () => {
           <Textarea
             value={localDescription}
             onChange={(_e, data) => handleDescriptionInputChange(data.value)}
-            onBlur={handleDescriptionBlur}
             placeholder={INTL_TEXT.descriptionPlaceholder}
             rows={3}
             resize="vertical"
