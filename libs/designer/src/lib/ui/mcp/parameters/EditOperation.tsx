@@ -142,11 +142,6 @@ export const EditOperation = ({ localDescription, handleDescriptionInputChange, 
       defaultMessage: 'Hide all optional parameters',
       description: 'Tooltip for hide all optional parameters button',
     }),
-    removeParameter: intl.formatMessage({
-      id: '5E66mK',
-      defaultMessage: 'Remove parameter',
-      description: 'Tooltip for remove parameter button',
-    }),
     descriptionLabel: intl.formatMessage({
       id: 'LLJrOT',
       defaultMessage: 'Description',
@@ -276,51 +271,6 @@ export const EditOperation = ({ localDescription, handleDescriptionInputChange, 
     }
   }, [dispatch, selectedOperationId, parameters, onParameterUpdate]);
 
-  const renderParameterField = useCallback(
-    (param: ParameterInfo, isConditional = false) => {
-      return (
-        <div key={param.id} className={styles.parameterField}>
-          <Label className={styles.parameterLabel} required={param.required} title={param.label}>
-            {param.label}
-          </Label>
-          <div className={styles.parameterValueSection}>
-            <StringEditor
-              className={mergeClasses('msla-setting-token-editor-container', styles.parameterEditor)}
-              initialValue={param.value}
-              onChange={onParameterUpdate}
-              editorBlur={(changeState) => {
-                const newValue = changeState.value;
-                handleParameterValueChange(param.id, newValue);
-              }}
-              placeholder={param.placeholder ?? `Enter ${param.label?.toLowerCase()}`}
-            />
-            {isConditional && (
-              <Button
-                appearance="subtle"
-                size="small"
-                icon={<Dismiss16Regular />}
-                onClick={() => handleRemoveConditionalParameter(param.id)}
-                title={INTL_TEXT.removeParameter}
-                className={styles.removeParameterButton}
-              />
-            )}
-          </div>
-        </div>
-      );
-    },
-    [
-      styles.parameterField,
-      styles.parameterEditor,
-      styles.parameterValueSection,
-      styles.parameterLabel,
-      styles.removeParameterButton,
-      INTL_TEXT.removeParameter,
-      handleRemoveConditionalParameter,
-      handleParameterValueChange,
-      onParameterUpdate,
-    ]
-  );
-
   if (!operationInfo || !selectedOperationId) {
     return (
       <div className={styles.container}>
@@ -378,7 +328,16 @@ export const EditOperation = ({ localDescription, handleDescriptionInputChange, 
               {hasRequiredParameters && (
                 <div className={styles.requiredSection}>
                   <div className={styles.parameterList}>
-                    {requiredParams.map(({ param, isConditional }) => renderParameterField(param, isConditional))}
+                    {requiredParams.map(({ param, isConditional }) => (
+                      <EditOperationParameterField
+                        key={param.id}
+                        parameter={param}
+                        isConditional={isConditional}
+                        onParameterUpdate={onParameterUpdate}
+                        handleParameterValueChange={handleParameterValueChange}
+                        handleRemoveConditionalParameter={handleRemoveConditionalParameter}
+                      />
+                    ))}
                   </div>
                 </div>
               )}
@@ -415,7 +374,16 @@ export const EditOperation = ({ localDescription, handleDescriptionInputChange, 
 
                         {hasVisibleConditionalParameters && (
                           <div className={styles.parameterList}>
-                            {visibleConditionalParams.map(({ param, isConditional }) => renderParameterField(param, isConditional))}
+                            {visibleConditionalParams.map(({ param, isConditional }) => (
+                              <EditOperationParameterField
+                                key={param.id}
+                                parameter={param}
+                                isConditional={isConditional}
+                                onParameterUpdate={onParameterUpdate}
+                                handleParameterValueChange={handleParameterValueChange}
+                                handleRemoveConditionalParameter={handleRemoveConditionalParameter}
+                              />
+                            ))}
                           </div>
                         )}
                       </AccordionPanel>
@@ -429,6 +397,59 @@ export const EditOperation = ({ localDescription, handleDescriptionInputChange, 
           <div className={styles.emptyParametersCard}>
             <Text className={styles.emptyParametersText}>{INTL_TEXT.noParametersMessage}</Text>
           </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+const EditOperationParameterField = ({
+  parameter,
+  isConditional,
+  onParameterUpdate,
+  handleParameterValueChange,
+  handleRemoveConditionalParameter,
+}: {
+  parameter: ParameterInfo;
+  isConditional?: boolean;
+  onParameterUpdate: () => void;
+  handleParameterValueChange: (parameterId: string, newValue: ValueSegment[]) => void;
+  handleRemoveConditionalParameter: (parameterId: string) => void;
+}) => {
+  const intl = useIntl();
+  const styles = useEditOperationStyles();
+
+  const removeParamText = intl.formatMessage({
+    id: '5E66mK',
+    defaultMessage: 'Remove parameter',
+    description: 'Tooltip for remove parameter button',
+  });
+
+  return (
+    <div key={parameter.id} className={styles.parameterField}>
+      <Label className={styles.parameterLabel} required={parameter.required} title={parameter.label}>
+        {parameter.label}
+      </Label>
+      <div className={styles.parameterValueSection}>
+        <StringEditor
+          className={mergeClasses('msla-setting-token-editor-container', styles.parameterEditor)}
+          initialValue={parameter.value}
+          onChange={onParameterUpdate}
+          editorBlur={(changeState) => {
+            const newValue = changeState.value;
+            handleParameterValueChange(parameter.id, newValue);
+          }}
+          placeholder={parameter.placeholder ?? `Enter ${parameter.label?.toLowerCase()}`}
+        />
+        {isConditional && (
+          <Button
+            appearance="subtle"
+            size="small"
+            icon={<Dismiss16Regular />}
+            onClick={() => handleRemoveConditionalParameter(parameter.id)}
+            title={removeParamText}
+            className={styles.removeParameterButton}
+          />
         )}
       </div>
     </div>
