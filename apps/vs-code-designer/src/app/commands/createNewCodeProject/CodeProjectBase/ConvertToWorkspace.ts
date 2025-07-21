@@ -1,12 +1,10 @@
-import { extensionCommand, funcVersionSetting } from '../../../../constants';
+import { extensionCommand } from '../../../../constants';
 import { localize } from '../../../../localize';
-import { addLocalFuncTelemetry, tryGetLocalFuncVersion, tryParseFuncVersion } from '../../../utils/funcCoreTools/funcVersion';
-import { getGlobalSetting } from '../../../utils/vsCodeConfig/settings';
+import { addLocalFuncTelemetry } from '../../../utils/funcCoreTools/funcVersion';
 import { FolderListStep } from '../../createNewProject/createProjectSteps/FolderListStep';
 import { OpenFolderStepCodeProject } from './OpenFolderStepCodeProject';
 import { AzureWizard, DialogResponses } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { latestGAVersion } from '@microsoft/vscode-extension-logic-apps';
 import type { IFunctionWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import * as vscode from 'vscode';
 import { window } from 'vscode';
@@ -20,11 +18,7 @@ export async function convertToWorkspace(context: IActionContext): Promise<boole
   if (await isLogicAppProjectInRoot(workspaceFolder)) {
     addLocalFuncTelemetry(context);
 
-    const version: string = getGlobalSetting(funcVersionSetting) || (await tryGetLocalFuncVersion()) || latestGAVersion;
-    const wizardContext: Partial<IFunctionWizardContext> & IActionContext = Object.assign(context, {
-      version: tryParseFuncVersion(version),
-    });
-
+    const wizardContext = context as Partial<IFunctionWizardContext> & IActionContext;
     context.telemetry.properties.isWorkspace = 'false';
     wizardContext.workspaceCustomFilePath =
       (await getWorkspaceFile(wizardContext)) ?? (await getWorkspaceFileInParentDirectory(wizardContext));

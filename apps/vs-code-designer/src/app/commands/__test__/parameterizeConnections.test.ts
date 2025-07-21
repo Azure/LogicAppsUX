@@ -91,7 +91,7 @@ describe('parameterizeConnections', () => {
     expect(parameterUtil.saveWorkflowParameter).toHaveBeenCalledWith(testContext, testLogicAppProjectPath1, testParametersJson);
     expect(connectionUtil.saveConnectionReferences).toHaveBeenCalledOnce();
     expect(vscode.window.showInformationMessage).toHaveBeenCalledWith(
-      localizeUtil.localize('finishedParameterizingConnections', 'Finished parameterizing connections.')
+      localizeUtil.localize('finishedParameterizingConnections', 'Successfully parameterized connections.')
     );
   });
 
