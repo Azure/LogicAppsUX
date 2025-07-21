@@ -7,7 +7,6 @@ export const useMcpPanelStyles = makeStyles({
   },
   header: {
     padding: '16px 20px',
-    borderBottom: `1px solid ${tokens.colorNeutralStroke2}`,
     background: tokens.colorNeutralBackground1,
     flexShrink: 0,
   },

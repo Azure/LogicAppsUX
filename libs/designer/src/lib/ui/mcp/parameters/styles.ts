@@ -93,6 +93,9 @@ export const useEditOperationStyles = makeStyles({
       border: `1px solid ${tokens.colorBrandStroke1}`,
       boxShadow: `0 0 0 1px ${tokens.colorBrandStroke1}`,
     },
+
+    paddingTop: tokens.spacingVerticalL,
+    paddingBottom: tokens.spacingVerticalL,
   },
 
   parameterCardHeader: {
@@ -103,8 +106,11 @@ export const useEditOperationStyles = makeStyles({
     borderTopRightRadius: tokens.borderRadiusMedium,
   },
 
-  parameterCardContent: {
-    padding: tokens.spacingHorizontalS,
+  requiredSection: {
+    padding: `0px ${tokens.spacingHorizontalM}`,
+    gap: tokens.spacingVerticalS,
+    display: 'flex',
+    flexDirection: 'column',
   },
 
   parameterList: {
@@ -116,9 +122,16 @@ export const useEditOperationStyles = makeStyles({
   parameterField: {
     display: 'flex',
     flexDirection: 'column',
+    width: '700px',
+    maxWidth: '100%',
   },
 
-  parameterHeader: {
+  parameterEditor: {
+    width: '700px',
+    maxWidth: '100%',
+  },
+
+  parameterValueSection: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -130,6 +143,7 @@ export const useEditOperationStyles = makeStyles({
     color: tokens.colorNeutralForeground1,
     fontSize: tokens.fontSizeBase300,
     flex: 1,
+    marginBottom: tokens.spacingVerticalS,
   },
 
   removeParameterButton: {
