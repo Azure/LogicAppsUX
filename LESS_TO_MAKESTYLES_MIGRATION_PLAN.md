@@ -4,7 +4,7 @@
 
 This document outlines a comprehensive plan to migrate 124 .less files in the LogicAppsUX monorepo to Fluent UI v9's makeStyles CSS-in-JS system. The migration will improve performance, enable better tree-shaking, provide type-safe styling, and align with modern React best practices.
 
-**Current Progress**: 30 components migrated (24.2% complete)
+**Current Progress**: 33 components migrated (26.6% complete)
 - ✅ peek component (peek.less - 6 lines)
 - ✅ error component (error.less - 29 lines)
 - ✅ tip component (tip.less - 33 lines)
@@ -33,6 +33,10 @@ This document outlines a comprehensive plan to migrate 124 .less files in the Lo
 - ✅ flyout component (flyout.less - 50 lines) - already had makeStyles, verified
 - ✅ pager component (pager.less - 84 lines)
 - ✅ staticResult component (staticResult.less - 146 lines) - styles created
+- ✅ **VS CODE**: export component (export.less - 120 lines) → exportStyles.ts (PR #7588/#7797)
+- ✅ **VS CODE**: overview app (overview.less - 4 lines) → overviewStyles.ts (PR #7588)
+- ✅ **VS CODE**: reviewList component (styles.less - 32 lines) → reviewListStyles.ts (PR #7820)
+- ✅ **SVG MIGRATION**: 3 SVG files removed, replaced with Fluent UI icons (PR #7820)
 - ⏭️ processsimple.less - SKIPPED: unused file
 - ⏭️ datetimeeditor.less - SKIPPED: no component found
 - ⏭️ connectiongatewaypicker.less - SKIPPED: no corresponding component
@@ -233,7 +237,11 @@ For each component:
 ### Phase 4: Application-Specific Styles
 
 #### 4.1 VS Code React App (Week 11)
-- [ ] Migrate 10 app-specific .less files
+- [x] Migrate export.less → exportStyles.ts - ✅ COMPLETED (PR #7588/#7797)
+- [x] Migrate overview.less → overviewStyles.ts - ✅ COMPLETED (PR #7588)
+- [x] Migrate reviewList styles → reviewListStyles.ts - ✅ COMPLETED (PR #7820)
+- [x] Replace SVG icons with Fluent UI icons - ✅ COMPLETED (PR #7820)
+- [ ] Migrate remaining 7 app-specific .less files
 - [ ] Update build configuration
 - [ ] Test in VS Code environment
 
@@ -601,6 +609,20 @@ Alongside the LESS to makeStyles migration, we're also migrating from Fluent UI 
    - v8: `Callout` + `CommandButton` → v9: `Popover` + `Button`
    - Location: `/libs/designer-ui/src/lib/tip/index.tsx`
    - Refactored to use Popover pattern with target element positioning
+
+5. **VS Code Export Components** (✅ COMPLETED - PR #7588/#7797)
+   - Multiple v8 components → v9 equivalents with makeStyles
+   - `Dropdown`, `SearchBox`, `Spinner`, `TextField` → v9 equivalents
+   - `PrimaryButton`/`IconButton` → v9 `Button` with appearance props
+   - `MessageBar` → v9 `MessageBar` with intent prop
+   - Location: `/apps/vs-code-react/src/app/export/`
+   - Complete LESS → makeStyles migration included
+
+6. **VS Code ReviewList Component** (✅ COMPLETED - PR #7820)
+   - SVG icons → Fluent UI React icons
+   - Custom styling with makeStyles implementation
+   - Location: `/apps/vs-code-react/src/app/components/reviewList/`
+   - Removed static SVG files, added icon theming support
 
 ### Next Migration Candidates
 1. **Label Component**

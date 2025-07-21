@@ -17,9 +17,10 @@ export const useExportStyles = makeStyles({
 
   exportWorkflowsPanelFiltersInput: {
     marginRight: tokens.spacingHorizontalMNudge,
-    'input::placeholder': {
-      fontStyle: 'normal',
-    },
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '2px',
+    maxWidth: '400px',
   },
 
   exportWorkflowsPanelListWorkflows: {
@@ -213,5 +214,11 @@ export const useExportStyles = makeStyles({
   },
   exportSummaryConnectionsButton: {
     margin: `${tokens.spacingVerticalXL} ${tokens.spacingVerticalXL} ${tokens.spacingVerticalXL} 0`,
+  },
+  exportSummaryNewResourceGroup: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '2px',
+    maxWidth: '400px',
   },
 });

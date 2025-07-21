@@ -4,13 +4,16 @@
 
 This document provides a detailed analysis of all 124 LESS files in the LogicAppsUX repository that require migration to Fluent UI v9's makeStyles system. The analysis includes complexity assessment, usage patterns, and migration task prioritization.
 
-**Progress Update**: 6 components have been successfully migrated (4.8% complete)
+**Progress Update**: 9 components have been successfully migrated (7.3% complete)
 - ✅ peek.less (6 lines)
 - ✅ error.less (29 lines)
 - ✅ tip.less (33 lines)
 - ✅ texteditor.less (48 lines)
 - ✅ nodeCollapseToggle.less (20 lines)
-- ✅ overview.less (30 lines)
+- ✅ overview.less (30 lines) - apps/vs-code-react
+- ✅ export.less (120 lines) - apps/vs-code-react → exportStyles.ts
+- ✅ reviewList styles (32 lines) - apps/vs-code-react → reviewListStyles.ts
+- ✅ SVG icon migration (3 files removed) - apps/vs-code-react
 
 ## Repository Overview
 
@@ -164,12 +167,12 @@ This document provides a detailed analysis of all 124 LESS files in the LogicApp
 - [ ] `styles.less` (4 lines) - **SIMPLE** - Root styles
 - [ ] `app/dataMapper/app.less` (14 lines) - **SIMPLE** - Data mapper app
 - [ ] `app/designer/app.less` (11 lines) - **SIMPLE** - Designer app
-- [ ] `app/export/export.less` (232 lines) - **COMPLEX** - Export functionality
-- [ ] `app/overview/overview.less` (4 lines) - **SIMPLE** - Overview app
+- [x] `app/export/export.less` (120 lines) - **COMPLEX** - Export functionality - ✅ COMPLETED → exportStyles.ts
+- [x] `app/overview/overview.less` (4 lines) - **SIMPLE** - Overview app - ✅ COMPLETED → overviewStyles.ts
 - [ ] `app/unitTest/unitTest.less` (25 lines) - **SIMPLE** - Unit test app
 
 **Component Styles**
-- [ ] `app/components/reviewList/styles.less` (32 lines) - **SIMPLE** - Review list component
+- [x] `app/components/reviewList/styles.less` (32 lines) - **SIMPLE** - Review list component - ✅ COMPLETED → reviewListStyles.ts
 - [ ] `app/components/searchableDropdown/styles.less` (11 lines) - **SIMPLE** - Searchable dropdown
 
 ### 5. apps/Standalone (2 files)

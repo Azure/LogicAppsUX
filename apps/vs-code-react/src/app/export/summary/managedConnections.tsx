@@ -6,14 +6,16 @@ import { VSCodeContext } from '../../../webviewCommunication';
 import { SearchableDropdown } from '../../components/searchableDropdown';
 import { parseResourceGroupsData } from './helper';
 import { NewResourceGroup } from './newResourceGroup';
-import { Checkbox } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';
+import type { ChangeEvent } from 'react';
 import { useContext, useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { LargeText } from '@microsoft/designer-ui';
 import { useExportStyles } from '../exportStyles';
+import type { CheckboxOnChangeData } from '@fluentui/react-components';
+import { Checkbox } from '@fluentui/react-components';
 
 export const ManagedConnections: React.FC = () => {
   const intl = useIntl();
@@ -138,8 +140,8 @@ export const ManagedConnections: React.FC = () => {
   ]);
 
   const onChangeConnections = useCallback(
-    (_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, checked?: boolean): void => {
-      const isChecked = !!checked;
+    (_ev: ChangeEvent<HTMLInputElement>, data: CheckboxOnChangeData): void => {
+      const isChecked = !!data.checked;
       dispatch(
         updateManagedConnections({
           isManaged: isChecked,
@@ -149,7 +151,7 @@ export const ManagedConnections: React.FC = () => {
       );
       setConnectionsChecked(isChecked);
     },
-    [dispatch, selectedResourceGroup, resourceGroupLocation]
+    [dispatch, resourceGroupLocation, selectedResourceGroup]
   );
 
   return (

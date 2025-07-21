@@ -1,11 +1,12 @@
 import { Status as FinalStatus } from '../../../state/WorkflowSlice';
 import type { RootState } from '../../../state/store';
-import { List, Icon } from '@fluentui/react';
+import { List } from '@fluentui/react';
 import { Spinner } from '@fluentui/react-components';
 import { MediumText, XLargeText } from '@microsoft/designer-ui';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 import { useExportStyles } from '../exportStyles';
+import { CheckmarkRegular } from '@fluentui/react-icons';
 
 export const Status: React.FC = () => {
   const intl = useIntl();
@@ -23,12 +24,7 @@ export const Status: React.FC = () => {
   };
 
   const renderStatus = (status?: string, index?: number): JSX.Element => {
-    const icon =
-      index === statuses.length - 1 && finalStatus !== FinalStatus.Succeeded ? (
-        <Spinner size={'small'} />
-      ) : (
-        <Icon iconName={'SkypeCheck'} />
-      );
+    const icon = index === statuses.length - 1 && finalStatus !== FinalStatus.Succeeded ? <Spinner size={'small'} /> : <CheckmarkRegular />;
 
     return (
       <div key={`status-${index}-${finalStatus}`} className={styles.statusItem}>
@@ -72,7 +68,7 @@ const FinalStatusGadget: React.FC<FinalStatusGadgetProps> = ({ finalStatus }) =>
     case FinalStatus.Succeeded:
       return (
         <div className={styles.statusItem}>
-          <Icon iconName={'SkypeCheck'} />
+          <CheckmarkRegular />
           <MediumText text={exportNextStepsPath} style={{ marginLeft: '5px' }} />
         </div>
       );
