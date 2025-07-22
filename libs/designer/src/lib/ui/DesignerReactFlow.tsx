@@ -59,6 +59,7 @@ const DesignerReactFlow = (props: any) => {
   const [nodes, edges, flowSize] = useLayout();
 
   const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null);
+  const [containerDimensions, setContainerDimentions] = useState(canvasRef.current?.getBoundingClientRect() ?? { width: 0, height: 0 });
 
   const onInit = useCallback((instance: ReactFlowInstance) => {
     setReactFlowInstance(instance);
@@ -67,13 +68,26 @@ const DesignerReactFlow = (props: any) => {
   const hasFitViewRun = useRef(false);
 
   useEffect(() => {
-    if (!hasFitViewRun.current && nodes.length > 0 && reactFlowInstance) {
+    if (!hasFitViewRun.current && nodes.length > 0 && reactFlowInstance && isInitialized) {
       requestAnimationFrame(() => {
-        reactFlowInstance.fitView({ padding: 0.6 });
-        hasFitViewRun.current = true;
+        requestAnimationFrame(() => {
+          const defaultZoom = 1.0;
+          const topNode = nodes.reduce((top, node) => (node.position.y < top.position.y ? node : top));
+
+          const centerX = containerDimensions.width / 2;
+          const topPadding = 100;
+
+          reactFlowInstance.setViewport({
+            x: centerX - (topNode.position.x + (topNode.width || DEFAULT_NODE_SIZE.width) / 2) * defaultZoom,
+            y: topPadding - topNode.position.y * defaultZoom,
+            zoom: defaultZoom,
+          });
+
+          hasFitViewRun.current = true;
+        });
       });
     }
-  }, [nodes, reactFlowInstance]);
+  }, [nodes, reactFlowInstance, isInitialized, containerDimensions]);
 
   const onNodesChange = useCallback(
     (changes: NodeChange[]) => {
@@ -100,7 +114,6 @@ const DesignerReactFlow = (props: any) => {
 
   const clampPan = useClampPan();
 
-  const [containerDimensions, setContainerDimentions] = useState(canvasRef.current?.getBoundingClientRect() ?? { width: 0, height: 0 });
   useResizeObserver(canvasRef, (el) => setContainerDimentions(el.contentRect));
 
   const [zoom, setZoom] = useState(1);
