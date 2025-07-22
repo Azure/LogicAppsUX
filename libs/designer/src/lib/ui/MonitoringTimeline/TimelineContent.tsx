@@ -3,8 +3,8 @@ import { useIntl } from 'react-intl';
 import { useMemo } from 'react';
 import type { TimelineRepetitionWithActions } from './helpers';
 import { Slider, Spinner, Text, tokens } from '@fluentui/react-components';
-import { BorderNoneRegular, CaretLeftFilled } from '@fluentui/react-icons';
-import { equals } from '@microsoft/logic-apps-shared';
+import { BorderNoneRegular } from '@fluentui/react-icons';
+// import { equals } from '@microsoft/logic-apps-shared';
 import TimelineGroup from './TimelineGroup';
 
 interface TimelineContentProps {
@@ -108,7 +108,7 @@ const TimelineContent = ({
             style={{ transform: 'rotate(180deg)' }}
           />
           <div className={styles.errorCaretContainer}>
-            {Array.from(repetitions).flatMap(([_taskId, repetitionList]) =>
+            {/* {Array.from(repetitions).flatMap(([_taskId, repetitionList]) =>
               repetitionList.map((repetition, _index) =>
                 equals(Object.values(repetition?.data?.properties?.actions ?? {})?.[0]?.status, 'failed') ? (
                   <CaretLeftFilled key={repetition.repetitionIndex} className={styles.errorCaret} />
@@ -116,7 +116,7 @@ const TimelineContent = ({
                   <div key={repetition.repetitionIndex} />
                 )
               )
-            )}
+            )} */}
           </div>
         </>
       )}

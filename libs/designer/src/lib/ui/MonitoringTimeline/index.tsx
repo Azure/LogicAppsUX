@@ -4,7 +4,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useThrottledEffect } from '@microsoft/logic-apps-shared';
 import { useTimelineRepetitions } from './hooks';
-import { useRunInstance } from '../../core/state/workflow/workflowSelectors';
 import {
   clearAllRepetitionRunData,
   setFocusNode,
@@ -26,17 +25,18 @@ const MonitoringTimeline = () => {
   const [selectedRepetition, setSelectedRepetition] = useState<TimelineRepetitionWithActions | null>(null);
   const styles = useMonitoringTimelineStyles();
   const dispatch = useDispatch();
-  const runInstance = useRunInstance();
 
   const { data: repetitionData, isFetching: isFetchingRepetitions, refetch: refetchTimelineRepetitions } = useTimelineRepetitions();
 
   const repetitions = useMemo(() => {
-    return parseRepetitions(repetitionData, runInstance);
-  }, [repetitionData, runInstance]);
+    return parseRepetitions(repetitionData);
+  }, [repetitionData]);
 
   useEffect(() => {
     const repetitionArray = Array.from(repetitions).flatMap(([_taskId, repetitionList]) => {
-      const repetitionsActions = repetitionList.map((repetition) => repetition.actionIds ?? []);
+      const repetitionsActions = repetitionList.map((repetition) =>
+        repetition.data?.actionResult.name ? [repetition.data?.actionResult.name] : []
+      );
       return repetitionsActions;
     });
     dispatch(setTimelineRepetitionArray(repetitionArray));
@@ -52,24 +52,21 @@ const MonitoringTimeline = () => {
     () => {
       dispatch(clearAllRepetitionRunData());
 
-      const firstNodeId = selectedRepetition?.actionIds?.[0];
+      const nodeId = selectedRepetition?.data?.actionResult.name;
 
-      if (firstNodeId) {
-        for (const a of Object.entries(selectedRepetition?.data?.properties?.actions ?? {})) {
-          const [actionId, action] = a;
-          dispatch(
-            setRepetitionRunData({
-              nodeId: actionId,
-              runData: action,
-            })
-          );
-        }
+      if (nodeId) {
+        dispatch(
+          setRepetitionRunData({
+            nodeId: nodeId,
+            runData: { ...selectedRepetition.data?.actionResult } as any,
+          })
+        );
 
         dispatch(setTimelineRepetitionIndex(transitionIndex));
 
-        dispatch(setSelectedNodeId(firstNodeId));
-        dispatch(openPanel({ nodeId: firstNodeId, panelMode: 'Operation' }));
-        dispatch(setFocusNode(firstNodeId));
+        dispatch(setSelectedNodeId(nodeId));
+        dispatch(openPanel({ nodeId: nodeId, panelMode: 'Operation' }));
+        dispatch(setFocusNode(nodeId));
       }
     },
     [dispatch, selectedRepetition, transitionIndex],
