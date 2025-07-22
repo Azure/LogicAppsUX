@@ -111,7 +111,7 @@ export const EdgeContextualMenu = () => {
     if (isA2AWorkflow && hasUpstreamAgenticLoop && parentId) {
       // If this is an A2A flow and the parent is an agent, don't add any relationships, instead add a handoff tool + operation
       const relationshipIds = { graphId: 'root', childId: undefined, parentId: undefined };
-      dispatch(addOperation({ nodeId: newAgentId, relationshipIds, operation: agentOperation }));
+      dispatch(addOperation({ nodeId: newAgentId, relationshipIds, operation: agentOperation, isAddingHandoff: true }));
       dispatch(addAgentHandoff({ sourceId: parentId, targetId: newAgentId }));
     } else {
       // If this is not an A2A flow or the parent is not an agent, add the relationship normally

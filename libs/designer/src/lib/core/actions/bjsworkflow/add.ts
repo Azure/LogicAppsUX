@@ -13,13 +13,7 @@ import {
   updateNodeSettings,
 } from '../../state/operation/operationMetadataSlice';
 import type { RelationshipIds } from '../../state/panel/panelTypes';
-import {
-  changePanelNode,
-  openPanel,
-  setIsPanelLoading,
-  setAlternateSelectedNode,
-  setSelectedPanelActiveTab,
-} from '../../state/panel/panelSlice';
+import { changePanelNode, openPanel, setIsPanelLoading, setAlternateSelectedNode } from '../../state/panel/panelSlice';
 import { addResultSchema } from '../../state/staticresultschema/staticresultsSlice';
 import type { NodeTokens, VariableDeclaration } from '../../state/tokens/tokensSlice';
 import { initializeTokensAndVariables } from '../../state/tokens/tokensSlice';
@@ -70,8 +64,6 @@ import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { batch } from 'react-redux';
 import { operationSupportsSplitOn } from '../../utils/outputs';
-import { useIsA2AWorkflow } from '../../../core/state/designerView/designerViewSelectors';
-import constants from '../../../common/constants';
 
 type AddOperationPayload = {
   operation: DiscoveryOperation<DiscoveryResultTypes> | undefined;
@@ -81,11 +73,12 @@ type AddOperationPayload = {
   isTrigger?: boolean;
   presetParameterValues?: Record<string, any>;
   actionMetadata?: Record<string, any>;
+  isAddingHandoff?: boolean;
 };
 
 export const addOperation = createAsyncThunk('addOperation', async (payload: AddOperationPayload, { dispatch, getState }) => {
   batch(() => {
-    const { operation, nodeId: actionId, presetParameterValues, actionMetadata } = payload;
+    const { operation, nodeId: actionId, presetParameterValues, actionMetadata, isAddingHandoff = false } = payload;
     if (!operation) {
       throw new Error('Operation does not exist'); // Just an optional catch, should never happen
     }
@@ -96,7 +89,6 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
     const newPayload = { ...payload, nodeId };
     const newToolGraphId = (getState() as RootState).panel.discoveryContent.relationshipIds.graphId;
     const agentToolMetadata = (getState() as RootState).panel.discoveryContent.agentToolMetadata;
-    const isA2AWorkflow = useIsA2AWorkflow();
 
     if (isAddingAgentTool) {
       const newToolId = (getState() as RootState).panel.discoveryContent.relationshipIds.subgraphId;
@@ -118,7 +110,15 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
     };
 
     dispatch(initializeOperationInfo({ id: nodeId, ...nodeOperationInfo }));
-    initializeOperationDetails(nodeId, nodeOperationInfo, getState as () => RootState, dispatch, presetParameterValues, actionMetadata);
+    initializeOperationDetails(
+      nodeId,
+      nodeOperationInfo,
+      getState as () => RootState,
+      dispatch,
+      presetParameterValues,
+      actionMetadata,
+      !isAddingHandoff
+    );
 
     dispatch(setFocusNode(nodeId));
     if (isAddingAgentTool) {
@@ -129,13 +129,6 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
           panelPersistence: 'selected',
         })
       );
-    }
-
-    if (isA2AWorkflow) {
-      batch(() => {
-        dispatch(changePanelNode(nodeId));
-        dispatch(setSelectedPanelActiveTab(constants.PANEL_TAB_NAMES.HANDOFF));
-      });
     }
   });
 });
