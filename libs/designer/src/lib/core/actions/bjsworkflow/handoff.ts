@@ -89,7 +89,7 @@ export const addAgentHandoff = createAsyncThunk('addAgentHandoff', async (payloa
       false
     );
 
-    // Swtich to the parent handoff panel to setup the description
+    // Switch to the parent handoff panel to setup the description
     batch(() => {
       dispatch(changePanelNode(sourceId));
       dispatch(setSelectedPanelActiveTab(Constants.PANEL_TAB_NAMES.HANDOFF));
