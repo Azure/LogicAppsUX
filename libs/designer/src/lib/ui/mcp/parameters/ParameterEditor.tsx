@@ -21,6 +21,7 @@ export const ParameterEditor = ({ parameter, onParameterVisibilityUpdate, handle
         handleParameterValueChange(parameter.id, newValue);
       }}
       placeholder={parameter.placeholder ?? `Enter ${parameter.label?.toLowerCase()}`}
+      basePlugins={{ tokens: false }}
     />
   );
 };
