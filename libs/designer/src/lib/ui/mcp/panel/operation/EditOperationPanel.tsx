@@ -2,41 +2,59 @@ import type { TemplatePanelFooterProps } from '@microsoft/designer-ui';
 import { TemplatesPanelFooter } from '@microsoft/designer-ui';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../../core/state/mcp/store';
-import { closePanel } from '../../../../core/state/mcp/panel/mcpPanelSlice';
-import { Button, DrawerBody, DrawerFooter, DrawerHeader, Text } from '@fluentui/react-components';
+import { closePanel, McpPanelView } from '../../../../core/state/mcp/panel/mcpPanelSlice';
+import { Button, Drawer, DrawerBody, DrawerFooter, DrawerHeader, Text } from '@fluentui/react-components';
 import { useMcpPanelStyles } from '../styles';
 import { useIntl } from 'react-intl';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { EditOperation } from '../../parameters/EditOperation';
 import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import { useEditSnapshot } from '../../../../core/mcp/utils/hooks';
+import { updateOperationDescription } from '../../../../core/state/operation/operationMetadataSlice';
 
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
-export const EditOperationPanelInner = () => {
+export const EditOperationPanel = () => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const styles = useMcpPanelStyles();
 
-  const { selectedOperationId } = useSelector((state: RootState) => ({
+  const { selectedOperationId, operationMetadata, isOpen, panelMode } = useSelector((state: RootState) => ({
     selectedOperationId: state.connector.selectedOperationId,
+    operationMetadata: state.operation.operationMetadata,
+    isOpen: state.mcpPanel?.isOpen ?? false,
+    panelMode: state.mcpPanel?.currentPanelView ?? null,
   }));
 
+  const selectedOperationSummary = useMemo(() => {
+    return operationMetadata[selectedOperationId ?? '']?.summary ?? selectedOperationId;
+  }, [selectedOperationId, operationMetadata]);
+
+  const selectedOperationDescription = useMemo(() => {
+    return operationMetadata[selectedOperationId ?? '']?.description ?? '';
+  }, [selectedOperationId, operationMetadata]);
+
   const { restoreSnapshot, clearSnapshot } = useEditSnapshot(selectedOperationId ?? '');
+  const [description, setDescription] = useState<string>('');
+  const [isDirty, setIsDirty] = useState<boolean>(false);
 
   const INTL_TEXT = {
-    title: intl.formatMessage({
-      id: 'KDsdC6',
-      defaultMessage: 'Edit Operation',
-      description: 'Title for edit operation panel',
-    }),
     closeAriaLabel: intl.formatMessage({
       id: 'kdCuJZ',
       defaultMessage: 'Close panel',
       description: 'Aria label for close button',
     }),
   };
+
+  const handleDescriptionInputChange = useCallback((description: string) => {
+    setDescription(description);
+    setIsDirty(true);
+  }, []);
+
+  const onParameterVisibilityUpdate = useCallback(() => {
+    setIsDirty(true);
+  }, []);
 
   const handleCancel = useCallback(() => {
     restoreSnapshot();
@@ -54,9 +72,20 @@ export const EditOperationPanelInner = () => {
       return;
     }
 
+    const originalDescription = selectedOperationDescription;
+
+    if (description !== originalDescription) {
+      dispatch(
+        updateOperationDescription({
+          id: selectedOperationId,
+          description: description,
+        })
+      );
+    }
+
     clearSnapshot();
     dispatch(closePanel());
-  }, [selectedOperationId, clearSnapshot, dispatch]);
+  }, [selectedOperationId, clearSnapshot, dispatch, selectedOperationDescription, description]);
 
   const handleClose = useCallback(() => {
     handleCancel();
@@ -74,6 +103,7 @@ export const EditOperationPanelInner = () => {
           }),
           appearance: 'primary',
           onClick: handleSave,
+          disabled: !isDirty,
         },
         {
           type: 'action',
@@ -86,24 +116,49 @@ export const EditOperationPanelInner = () => {
         },
       ],
     };
-  }, [intl, handleSave, handleCancel]);
+  }, [intl, isDirty, handleSave, handleCancel]);
+
+  useEffect(() => {
+    if (selectedOperationDescription) {
+      setDescription(selectedOperationDescription);
+    } else {
+      setDescription('');
+    }
+  }, [selectedOperationDescription]);
 
   return (
-    <div>
+    <Drawer
+      className={styles.drawer}
+      open={isOpen && panelMode === McpPanelView.EditOperation}
+      onOpenChange={(_, { open }) => !open && handleClose()}
+      position="end"
+      size="large"
+    >
       <DrawerHeader className={styles.header}>
         <div className={styles.headerContent}>
           <Text size={600} weight="semibold" style={{ flex: 1 }}>
-            {INTL_TEXT.title}
+            {intl.formatMessage(
+              {
+                id: '8+TVCG',
+                defaultMessage: 'Edit: {selectedOperationSummary}',
+                description: 'Title for edit operation panel',
+              },
+              { selectedOperationSummary }
+            )}
           </Text>
           <Button appearance="subtle" icon={<CloseIcon />} onClick={handleClose} aria-label={INTL_TEXT.closeAriaLabel} />
         </div>
       </DrawerHeader>
-      <DrawerBody className={styles.body} style={{ overflow: 'auto', maxHeight: 'calc(100vh - 170px)', minHeight: '80vh' }}>
-        <EditOperation />
+      <DrawerBody className={styles.body} style={{ overflow: 'auto', maxHeight: 'calc(100vh - 130px)', minHeight: '80vh' }}>
+        <EditOperation
+          description={description}
+          handleDescriptionInputChange={handleDescriptionInputChange}
+          onParameterVisibilityUpdate={onParameterVisibilityUpdate}
+        />
       </DrawerBody>
       <DrawerFooter className={styles.footer}>
         <TemplatesPanelFooter {...footerContent} />
       </DrawerFooter>
-    </div>
+    </Drawer>
   );
 };

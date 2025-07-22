@@ -192,8 +192,8 @@ export const getOperationSettings = (
       value: getTimeout(nodeType, isTrigger, manifest, operation),
     },
     count: {
-      isSupported: isCountSupported(isTrigger, nodeType, manifest),
-      value: getCount(nodeType, isTrigger, manifest, operation),
+      isSupported: isCountSupported(isTrigger, nodeType, manifest, workflowKind),
+      value: getCount(nodeType, isTrigger, manifest, operation, workflowKind),
     },
     paging: {
       isSupported: isPagingSupported(isTrigger, nodeType, manifest, swagger, operationId),
@@ -665,9 +665,10 @@ const getCount = (
   nodeType: string,
   isTrigger: boolean,
   manifest?: OperationManifest,
-  definition?: LogicAppsV2.ActionDefinition
+  definition?: LogicAppsV2.ActionDefinition,
+  workflowKind?: WorkflowKind
 ): string | number | undefined => {
-  const isSupported = isCountSupported(isTrigger, nodeType, manifest);
+  const isSupported = isCountSupported(isTrigger, nodeType, manifest, workflowKind);
 
   if (isSupported) {
     const timeoutableActionDefinition = definition as LogicAppsV2.TimeoutableActionDefinition;
@@ -691,14 +692,21 @@ const isTimeoutSupported = (isTrigger: boolean, nodeType: string, manifest?: Ope
     : isTimeoutableAction(nodeType);
 };
 
-const isCountSupported = (isTrigger: boolean, _nodeType: string, manifest?: OperationManifest): boolean => {
-  return (
-    !!manifest &&
-    !!isSettingSupportedFromOperationManifest(
-      getOperationSettingFromManifest(manifest, 'count') as OperationManifestSetting<void>,
-      isTrigger
-    )
-  );
+const isCountSupported = (isTrigger: boolean, nodeType: string, manifest?: OperationManifest, workflowKind?: WorkflowKind): boolean => {
+  if (!manifest) {
+    return false;
+  }
+
+  // Agent nodes in agent workflows don't support count
+  const isAgentNode = equals(nodeType, Constants.NODE.TYPE.AGENT);
+  const isAgentWorkflow = equals(workflowKind, WorkflowKind.AGENT);
+
+  if (isAgentNode && isAgentWorkflow) {
+    return false;
+  }
+
+  const countSetting = getOperationSettingFromManifest(manifest, 'count') as OperationManifestSetting<void>;
+  return !!isSettingSupportedFromOperationManifest(countSetting, isTrigger);
 };
 
 const getOperationSettingFromManifest = (

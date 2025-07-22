@@ -1,5 +1,11 @@
 import type { Connector, DiscoveryOpArray } from '@microsoft/logic-apps-shared';
-import { SearchService, cleanConnectorId } from '@microsoft/logic-apps-shared';
+import {
+  SearchService,
+  cleanConnectorId,
+  isSharedManagedConnectorId,
+  isCustomConnectorId,
+  isManagedConnectorId,
+} from '@microsoft/logic-apps-shared';
 import { useEffect, useMemo } from 'react';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import type { ActionPanelFavoriteItem } from '../state/panel/panelTypes';
@@ -60,18 +66,6 @@ export const useAllTriggers = () => {
   );
 };
 
-// Query to return an array of api ids that have fetched triggers
-export const useAllApiIdsWithTriggers = () => {
-  const allTriggers = useAllTriggers();
-  return useMemo(
-    () => ({
-      ...allTriggers,
-      data: allTriggers.data.map((trigger) => cleanConnectorId(trigger?.properties.api.id)),
-    }),
-    [allTriggers]
-  );
-};
-
 // Query to return an array of fetched actions
 export const useAllActions = () => {
   const allOperations = useAllOperations();
@@ -83,19 +77,6 @@ export const useAllActions = () => {
     [allOperations]
   );
 };
-
-// Query to return an array of api ids that have fetched actions
-export const useAllApiIdsWithActions = () => {
-  const allActions = useAllActions();
-  return useMemo(
-    () => ({
-      ...allActions,
-      data: allActions.data.map((action) => cleanConnectorId(action?.properties.api.id)),
-    }),
-    [allActions]
-  );
-};
-
 // Intended to be used in some root component, will handle the fetching
 export const usePreloadOperationsQuery = (): any => {
   const {
@@ -396,6 +377,68 @@ export const useFavoriteOperations = (favoriteItems: ActionPanelFavoriteItem[]) 
       favoriteActionsIsFetchingNextPage,
       favoriteActionsIsFetching,
     ]
+  );
+};
+
+/// Operations by Connector ///
+
+const isManagedConnector = (connectorId: string): boolean => {
+  return isSharedManagedConnectorId(connectorId) || isManagedConnectorId(connectorId);
+};
+
+// Helper function to filter operations by connector and action type
+const filterOperationsByConnector = (
+  operations: DiscoveryOpArray,
+  connectorId: string,
+  actionType?: 'triggers' | 'actions'
+): DiscoveryOpArray => {
+  return operations.filter((operation) => {
+    const apiId = operation.properties.api.id;
+    const matchesConnector = cleanConnectorId(apiId) === cleanConnectorId(connectorId);
+    if (!matchesConnector) {
+      return false;
+    }
+
+    // Filter by action type if specified
+    if (actionType === 'triggers') {
+      return !!operation.properties?.trigger;
+    }
+    if (actionType === 'actions') {
+      return !operation.properties?.trigger;
+    }
+    return true;
+  });
+};
+
+export const useOperationsByConnector = (connectorId: string, actionType?: 'triggers' | 'actions') => {
+  // Use the existing cached built-in operations
+  const { data: builtInOperations } = useBuiltInOperationsQuery();
+  // Use the existing cached custom operations
+  const { data: customOperations } = useCustomOperationsLazyQuery();
+
+  return useQuery(
+    ['operationsByConnector', connectorId, actionType],
+    async () => {
+      // For managed/Azure connectors - use specific API call
+      if (isManagedConnector(connectorId)) {
+        const data = await SearchService().getOperationsByConnector?.(connectorId, actionType);
+        return data || [];
+      }
+
+      // For custom connectors - filter from cached custom operations
+      if (isCustomConnectorId(connectorId)) {
+        const allCustomOperations = customOperations?.pages.flatMap((page) => page.data) ?? [];
+        return filterOperationsByConnector(allCustomOperations, connectorId, actionType);
+      }
+
+      // For all built-in operations (both client and server) - filter from cached data
+      const allBuiltInOperations = (builtInOperations?.data as DiscoveryOpArray) ?? [];
+      return filterOperationsByConnector(allBuiltInOperations, connectorId, actionType);
+    },
+    {
+      ...queryOpts,
+      enabled: !!connectorId,
+    }
   );
 };
 
