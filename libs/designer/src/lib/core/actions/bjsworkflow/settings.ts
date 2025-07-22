@@ -698,8 +698,8 @@ const isCountSupported = (isTrigger: boolean, nodeType: string, manifest?: Opera
   }
 
   // Agent nodes in agent workflows don't support count
-  const isAgentNode = nodeType.toLowerCase() === Constants.NODE.TYPE.AGENT;
-  const isAgentWorkflow = workflowKind === WorkflowKind.AGENT;
+  const isAgentNode = equals(nodeType, Constants.NODE.TYPE.AGENT);
+  const isAgentWorkflow = equals(workflowKind, WorkflowKind.AGENT);
 
   if (isAgentNode && isAgentWorkflow) {
     return false;
