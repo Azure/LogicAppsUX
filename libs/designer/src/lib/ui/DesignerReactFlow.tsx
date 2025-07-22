@@ -75,7 +75,7 @@ const DesignerReactFlow = (props: any) => {
           const topNode = nodes.reduce((top, node) => (node.position.y < top.position.y ? node : top));
 
           const centerX = containerDimensions.width / 2;
-          const topPadding = 100;
+          const topPadding = 120;
 
           reactFlowInstance.setViewport({
             x: centerX - (topNode.position.x + (topNode.width || DEFAULT_NODE_SIZE.width) / 2) * defaultZoom,
