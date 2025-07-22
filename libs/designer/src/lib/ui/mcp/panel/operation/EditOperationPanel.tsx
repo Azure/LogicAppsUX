@@ -36,7 +36,7 @@ export const EditOperationPanel = () => {
   }, [selectedOperationId, operationMetadata]);
 
   const { restoreSnapshot, clearSnapshot } = useEditSnapshot(selectedOperationId ?? '');
-  const [localDescription, setLocalDescription] = useState<string>('');
+  const [description, setDescription] = useState<string>('');
   const [isDirty, setIsDirty] = useState<boolean>(false);
 
   const INTL_TEXT = {
@@ -48,7 +48,7 @@ export const EditOperationPanel = () => {
   };
 
   const handleDescriptionInputChange = useCallback((description: string) => {
-    setLocalDescription(description);
+    setDescription(description);
     setIsDirty(true);
   }, []);
 
@@ -74,18 +74,18 @@ export const EditOperationPanel = () => {
 
     const originalDescription = selectedOperationDescription;
 
-    if (localDescription !== originalDescription) {
+    if (description !== originalDescription) {
       dispatch(
         updateOperationDescription({
           id: selectedOperationId,
-          description: localDescription,
+          description: description,
         })
       );
     }
 
     clearSnapshot();
     dispatch(closePanel());
-  }, [selectedOperationId, clearSnapshot, dispatch, selectedOperationDescription, localDescription]);
+  }, [selectedOperationId, clearSnapshot, dispatch, selectedOperationDescription, description]);
 
   const handleClose = useCallback(() => {
     handleCancel();
@@ -120,9 +120,9 @@ export const EditOperationPanel = () => {
 
   useEffect(() => {
     if (selectedOperationDescription) {
-      setLocalDescription(selectedOperationDescription);
+      setDescription(selectedOperationDescription);
     } else {
-      setLocalDescription('');
+      setDescription('');
     }
   }, [selectedOperationDescription]);
 
@@ -151,7 +151,7 @@ export const EditOperationPanel = () => {
       </DrawerHeader>
       <DrawerBody className={styles.body} style={{ overflow: 'auto', maxHeight: 'calc(100vh - 130px)', minHeight: '80vh' }}>
         <EditOperation
-          description={localDescription}
+          description={description}
           handleDescriptionInputChange={handleDescriptionInputChange}
           onParameterVisibilityUpdate={onParameterVisibilityUpdate}
         />
