@@ -499,6 +499,19 @@ export const operationMetadataSlice = createSlice({
         };
       }
     },
+    updateNodeParameterGroups: (
+      state,
+      action: PayloadAction<{
+        nodeId: string;
+        parameterGroups: Record<string, ParameterGroup>;
+      }>
+    ) => {
+      const { nodeId, parameterGroups } = action.payload;
+      const nodeInputs = getRecordEntry(state.inputParameters, nodeId);
+      if (nodeInputs) {
+        nodeInputs.parameterGroups = parameterGroups;
+      }
+    },
     updateParameterConditionalVisibility: (
       state,
       action: PayloadAction<{
@@ -807,6 +820,7 @@ export const {
   initializeNodeOperationInputsData,
   initializeOperationInfo,
   updateNodeParameters,
+  updateNodeParameterGroups,
   addDynamicInputs,
   addDynamicOutputs,
   clearDynamicIO,
