@@ -52,7 +52,7 @@ export const EditOperationPanel = () => {
     setIsDirty(true);
   }, []);
 
-  const onParameterUpdate = useCallback(() => {
+  const onParameterVisibilityUpdate = useCallback(() => {
     setIsDirty(true);
   }, []);
 
@@ -151,9 +151,9 @@ export const EditOperationPanel = () => {
       </DrawerHeader>
       <DrawerBody className={styles.body} style={{ overflow: 'auto', maxHeight: 'calc(100vh - 130px)', minHeight: '80vh' }}>
         <EditOperation
-          localDescription={localDescription}
+          description={localDescription}
           handleDescriptionInputChange={handleDescriptionInputChange}
-          onParameterUpdate={onParameterUpdate}
+          onParameterVisibilityUpdate={onParameterVisibilityUpdate}
         />
       </DrawerBody>
       <DrawerFooter className={styles.footer}>
