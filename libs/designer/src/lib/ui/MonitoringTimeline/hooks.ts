@@ -25,7 +25,7 @@ export const useTimelineRepetitions = (): UseQueryResult<TimelineRepetition[]> =
   return useQuery(
     ['timelineRepetitions', run?.id ?? ''],
     async () => {
-      const timelineRepetitions = await RunService().getTimelineRepetitions(run!.id);
+      const timelineRepetitions = await RunService().getTimelineRepetitions(run?.id ?? '');
       const parsedData: TimelineRepetition[] = JSON.parse(JSON.stringify(timelineRepetitions))?.value ?? [];
       const sortedData = parsedData.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
 

@@ -207,15 +207,16 @@ export class StandardRunService implements IRunService {
    * @returns {Promise<any>}
    */
 
-  async getTimelineRepetitions(runId: string): Promise<any> {
-    const { apiVersion, baseUrl, httpClient, isTimelineSupported } = this.options;
+  async getTimelineRepetitions(_runId: string): Promise<any> {
+    // const { apiVersion, baseUrl, httpClient, isTimelineSupported } = this.options;
+    const { baseUrl, httpClient, isTimelineSupported } = this.options;
 
     if (!isTimelineSupported) {
       return undefined;
     }
 
-    const onlyRunId = runId.split('/')?.at(-1);
-    const uri = `${baseUrl}/runs/${onlyRunId}/timeline?api-version=${apiVersion}&$expand=properties/actions,workflow/properties`;
+    const onlyRunId = '08584483928267499305099684235CU00';
+    const uri = `${baseUrl}/workflows/get-weatherAgent/runs/${onlyRunId}/timeline?api-version=2024-04-01`;
 
     try {
       const response = await httpClient.get<Run>({
