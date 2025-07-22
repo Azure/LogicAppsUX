@@ -59,7 +59,7 @@ const DesignerReactFlow = (props: any) => {
   const [nodes, edges, flowSize] = useLayout();
 
   const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null);
-  const [containerDimensions, setContainerDimentions] = useState(canvasRef.current?.getBoundingClientRect() ?? { width: 0, height: 0 });
+  const [containerDimensions, setContainerDimensions] = useState(canvasRef.current?.getBoundingClientRect() ?? { width: 0, height: 0 });
 
   const onInit = useCallback((instance: ReactFlowInstance) => {
     setReactFlowInstance(instance);
@@ -114,7 +114,7 @@ const DesignerReactFlow = (props: any) => {
 
   const clampPan = useClampPan();
 
-  useResizeObserver(canvasRef, (el) => setContainerDimentions(el.contentRect));
+  useResizeObserver(canvasRef, (el) => setContainerDimensions(el.contentRect));
 
   const [zoom, setZoom] = useState(1);
 
