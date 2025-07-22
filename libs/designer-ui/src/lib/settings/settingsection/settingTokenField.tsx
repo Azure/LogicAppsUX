@@ -205,6 +205,7 @@ export const TokenField = ({
   const labelForAutomationId = useMemo(() => replaceWhiteSpaceWithUnderscore(label), [label]);
 
   switch (editor?.toLowerCase()) {
+    // No
     case constants.PARAMETER.EDITOR.AGENT_INSTRUCTION:
       return (
         <AgentInstructionEditor
@@ -226,6 +227,8 @@ export const TokenField = ({
         />
       );
 
+    // Include in Mcp
+    // Send email action in attachments?
     case constants.PARAMETER.EDITOR.ARRAY:
       return (
         <ArrayEditor
@@ -257,6 +260,8 @@ export const TokenField = ({
         />
       );
 
+    // Include in Mcp
+    // Don't worry about testing it out
     case constants.PARAMETER.EDITOR.AUTHENTICATION:
       return (
         <AuthenticationEditor
@@ -276,6 +281,7 @@ export const TokenField = ({
         />
       );
 
+    // No (don't include it)
     case constants.PARAMETER.EDITOR.CODE: {
       const { language = EditorLanguage.javascript } = editorOptions || {};
       const customCodeEditor = isCustomCode(editor, language);
@@ -304,6 +310,8 @@ export const TokenField = ({
       );
     }
 
+    // Include in Mcp
+    // Example: Any dropdown (Implemention by Priti will have this tested)
     case constants.PARAMETER.EDITOR.COMBOBOX:
       return (
         <Combobox
@@ -328,9 +336,11 @@ export const TokenField = ({
         />
       );
 
+    // No
     case constants.PARAMETER.EDITOR.COPYABLE:
       return <CopyInputControl placeholder={placeholder} text={value[0].value} />;
 
+    // No
     case constants.PARAMETER.EDITOR.CONDITION:
       return editorOptions?.isOldFormat ? (
         <SimpleQueryBuilder
@@ -361,6 +371,9 @@ export const TokenField = ({
           showDescription={true}
         />
       );
+
+    // Include in Mcp
+    // Example: Unsure :( - maybe try rendering instead of string editor?
     case constants.PARAMETER.EDITOR.DICTIONARY:
       return (
         <DictionaryEditor
@@ -381,6 +394,8 @@ export const TokenField = ({
         />
       );
 
+    // Include in Mcp
+    // Example: might not be findable. (usedCustomValue - is the difference for combobox)
     case constants.PARAMETER.EDITOR.DROPDOWN:
       return (
         <DropdownEditor
@@ -399,6 +414,7 @@ export const TokenField = ({
         />
       );
 
+    // No
     case constants.PARAMETER.EDITOR.FLOATINGACTIONMENU: {
       return editorOptions?.menuKind === FloatingActionMenuKind.outputs ? (
         <FloatingActionMenuOutputs
@@ -423,6 +439,7 @@ export const TokenField = ({
       );
     }
 
+    // No (P1: Priti will do it)
     case constants.PARAMETER.EDITOR.FILEPICKER:
       return (
         <FilePickerEditor
@@ -449,6 +466,8 @@ export const TokenField = ({
         />
       );
 
+    // Include in Mcp
+    // Example: Send email body parameter
     case constants.PARAMETER.EDITOR.HTML:
       return (
         <HTMLEditor
@@ -468,6 +487,7 @@ export const TokenField = ({
         />
       );
 
+    // No
     case constants.PARAMETER.EDITOR.INITIALIZE_VARIABLE:
       return (
         <InitializeVariableEditor
@@ -489,6 +509,7 @@ export const TokenField = ({
         />
       );
 
+    // No
     case constants.PARAMETER.EDITOR.RECURRENCE:
       return (
         <ScheduleEditor
@@ -500,9 +521,13 @@ export const TokenField = ({
         />
       );
 
+    // Include in Mcp
+    // Example: Response action
     case constants.PARAMETER.EDITOR.SCHEMA:
       return <SchemaEditor label={label} readonly={readOnly} initialValue={value} onChange={onValueChange} />;
 
+    // Include in Mcp
+    // Example: Unsure (Header column view in built-in connectors)
     case constants.PARAMETER.EDITOR.TABLE:
       return (
         <TableEditor
