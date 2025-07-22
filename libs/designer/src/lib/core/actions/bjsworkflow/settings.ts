@@ -693,7 +693,6 @@ const isTimeoutSupported = (isTrigger: boolean, nodeType: string, manifest?: Ope
 };
 
 const isCountSupported = (isTrigger: boolean, nodeType: string, manifest?: OperationManifest, workflowKind?: WorkflowKind): boolean => {
-  // Early return if no manifest - count setting requires a manifest
   if (!manifest) {
     return false;
   }
@@ -706,9 +705,8 @@ const isCountSupported = (isTrigger: boolean, nodeType: string, manifest?: Opera
     return false;
   }
 
-  // Check if the count setting is supported in the manifest
   const countSetting = getOperationSettingFromManifest(manifest, 'count') as OperationManifestSetting<void>;
-  return isSettingSupportedFromOperationManifest(countSetting, isTrigger);
+  return !!isSettingSupportedFromOperationManifest(countSetting, isTrigger);
 };
 
 const getOperationSettingFromManifest = (
