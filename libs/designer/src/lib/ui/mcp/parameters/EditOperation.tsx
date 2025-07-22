@@ -309,9 +309,11 @@ export const EditOperation = ({ description, handleDescriptionInputChange, onPar
               {hasRequiredParameters && (
                 <div className={styles.requiredSection}>
                   <div className={styles.parameterList}>
-                    {requiredParams.map(({ param, isConditional }) => (
+                    {requiredParams.map(({ param, groupId, isConditional }) => (
                       <ParameterField
                         key={param.id}
+                        operationId={selectedOperationId}
+                        groupId={groupId}
                         parameter={param}
                         isConditional={isConditional}
                         onParameterVisibilityUpdate={onParameterVisibilityUpdate}
@@ -355,9 +357,11 @@ export const EditOperation = ({ description, handleDescriptionInputChange, onPar
 
                         {hasVisibleConditionalParameters && (
                           <div className={styles.parameterList}>
-                            {visibleConditionalParams.map(({ param, isConditional }) => (
+                            {visibleConditionalParams.map(({ param, groupId, isConditional }) => (
                               <ParameterField
                                 key={param.id}
+                                operationId={selectedOperationId}
+                                groupId={groupId}
                                 parameter={param}
                                 isConditional={isConditional}
                                 onParameterVisibilityUpdate={onParameterVisibilityUpdate}
@@ -385,12 +389,16 @@ export const EditOperation = ({ description, handleDescriptionInputChange, onPar
 };
 
 const ParameterField = ({
+  operationId,
+  groupId,
   parameter,
   isConditional,
   onParameterVisibilityUpdate,
   handleParameterValueChange,
   handleRemoveConditionalParameter,
 }: {
+  operationId: string;
+  groupId: string;
   parameter: ParameterInfo;
   isConditional?: boolean;
   onParameterVisibilityUpdate: () => void;
@@ -413,6 +421,8 @@ const ParameterField = ({
       </Label>
       <div className={styles.parameterValueSection}>
         <ParameterEditor
+          operationId={operationId}
+          groupId={groupId}
           parameter={parameter}
           onParameterVisibilityUpdate={onParameterVisibilityUpdate}
           handleParameterValueChange={handleParameterValueChange}
