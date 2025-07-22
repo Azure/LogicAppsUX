@@ -2,8 +2,8 @@ import { TemplateContent, TemplatesPanelFooter, type McpPanelTabProps } from '@m
 import { useMcpConnectorPanelTabs } from './usePanelTabs';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../../core/state/mcp/store';
-import { closePanel, selectPanelTab } from '../../../../core/state/mcp/panel/mcpPanelSlice';
-import { Button, DrawerBody, DrawerFooter, DrawerHeader, Text } from '@fluentui/react-components';
+import { closePanel, McpPanelView, selectPanelTab } from '../../../../core/state/mcp/panel/mcpPanelSlice';
+import { Button, Drawer, DrawerBody, DrawerFooter, DrawerHeader, Text } from '@fluentui/react-components';
 import { useMcpPanelStyles } from '../styles';
 import { useIntl } from 'react-intl';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
@@ -15,8 +15,10 @@ export const SelectionPanel = () => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const panelTabs: McpPanelTabProps[] = useMcpConnectorPanelTabs();
-  const { selectedTabId } = useSelector((state: RootState) => ({
+  const { selectedTabId, isOpen, panelMode } = useSelector((state: RootState) => ({
     selectedTabId: state.mcpPanel.selectedTabId,
+    isOpen: state.mcpPanel?.isOpen ?? false,
+    panelMode: state.mcpPanel?.currentPanelView ?? null,
   }));
 
   const onTabSelected = (tabId: string): void => {
@@ -43,8 +45,20 @@ export const SelectionPanel = () => {
   const handleDismiss = useCallback(() => {
     dispatch(closePanel());
   }, [dispatch]);
+
   return (
-    <>
+    <Drawer
+      className={styles.drawer}
+      open={
+        isOpen &&
+        (panelMode === McpPanelView.SelectConnector ||
+          panelMode === McpPanelView.SelectOperation ||
+          panelMode === McpPanelView.CreateConnection)
+      }
+      onOpenChange={(_, { open }) => !open && handleDismiss()}
+      position="end"
+      size="large"
+    >
       <DrawerHeader className={styles.header}>
         <div className={styles.headerContent}>
           <Text size={600} weight="semibold" style={{ flex: 1 }}>
@@ -66,6 +80,6 @@ export const SelectionPanel = () => {
           <TemplatesPanelFooter {...selectedTabProps.footerContent} />
         </DrawerFooter>
       )}
-    </>
+    </Drawer>
   );
 };
