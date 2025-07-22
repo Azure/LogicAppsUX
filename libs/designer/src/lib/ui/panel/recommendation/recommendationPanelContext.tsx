@@ -1,6 +1,6 @@
 import type { AppDispatch } from '../../../core';
 import { addOperation } from '../../../core/actions/bjsworkflow/add';
-import { useAllConnectors, useAllOperations } from '../../../core/queries/browse';
+import { useAllConnectors, useAllOperations, useOperationsByConnector } from '../../../core/queries/browse';
 import { useHostOptions } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import {
   useDiscoveryPanelFavoriteOperations,
@@ -17,7 +17,7 @@ import { SearchView } from './searchView';
 import { Link, Icon } from '@fluentui/react';
 import { Button } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
-import { SearchService, equals, guid, areApiIdsEqual, LoggerService, LogEntryLevel, FavoriteContext } from '@microsoft/logic-apps-shared';
+import { SearchService, equals, guid, LoggerService, LogEntryLevel, FavoriteContext } from '@microsoft/logic-apps-shared';
 import { OperationSearchHeader, XLargeText } from '@microsoft/designer-ui';
 import type { CommonPanelProps } from '@microsoft/designer-ui';
 import type { DiscoveryOpArray, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
@@ -68,7 +68,6 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
 
   const { data: preloadedOperations, isLoading: isLoadingOperations } = useAllOperations();
   const [selectedOperation, setSelectedOperation] = useState<DiscoveryOperation<DiscoveryResultTypes> | undefined>(undefined);
-  const [isLoadingOperationGroup, setIsLoadingOperationGroup] = useState<boolean>(false);
 
   // Searched terms, so we don't search the same term twice
   const [searchedTerms, setSearchedTerms] = useState(['']);
@@ -109,6 +108,12 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   const { data: allConnectors } = useAllConnectors();
   const selectedConnector = allConnectors?.find((c) => c.id === selectedOperationGroupId);
 
+  // Use connector-specific hook to avoid loading all operations
+  const { data: operationsByConnector, isLoading: isLoadingOperationsByConnector } = useOperationsByConnector(
+    selectedOperationGroupId || '',
+    filters?.['actionType'] as 'triggers' | 'actions'
+  );
+
   // hide actions type filter if we don't have any operations for the browse view
   const hideActionTypeFilter = (!allOperations || allOperations.length === 0) && !searchTerm;
 
@@ -118,23 +123,10 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
       return;
     }
 
-    const searchResultPromise = Promise.resolve(
-      (allOperations ?? []).filter((operation) => {
-        const apiId = operation.properties.api.id;
-        return areApiIdsEqual(apiId, selectedOperationGroupId);
-      })
-    );
-
-    setIsLoadingOperationGroup(true);
-    searchResultPromise
-      .then((filteredOps) => {
-        setAllOperationsForGroup(filteredOps);
-      })
-      .finally(() => {
-        setIsLoadingOperationGroup(false);
-      });
+    // Use connector-specific operations instead of filtering all operations
+    setAllOperationsForGroup(operationsByConnector || []);
     setSelectionState(SELECTION_STATES.DETAILS);
-  }, [selectedOperationGroupId, allOperations, filters, hideActionTypeFilter]);
+  }, [selectedOperationGroupId, operationsByConnector]);
 
   const navigateBack = useCallback(() => {
     dispatch(selectOperationGroupId(''));
@@ -272,7 +264,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
               groupOperations={allOperationsForGroup}
               filters={filters}
               onOperationClick={onOperationClick}
-              isLoading={isLoadingOperations || isLoadingOperationGroup}
+              isLoading={isLoadingOperationsByConnector}
               ignoreActionsFilter={hideActionTypeFilter}
             />
           ) : null,
@@ -308,7 +300,6 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
                   />
                   <BrowseView
                     filters={filters}
-                    isLoadingOperations={isLoadingOperations}
                     setFilters={setFilters}
                     onConnectorCardSelected={onConnectorCardSelected}
                     displayRuntimeInfo={false}
