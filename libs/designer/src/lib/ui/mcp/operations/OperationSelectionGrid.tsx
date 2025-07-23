@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { Text, Checkbox, Card, CardHeader, Body1, Caption1 } from '@fluentui/react-components';
 import { useOperationSelectionGridStyles } from './styles';
-import { getResourceNameFromId, type DiscoveryOpArray } from '@microsoft/logic-apps-shared';
+import type { DiscoveryOpArray } from '@microsoft/logic-apps-shared';
 import DefaultIcon from '../../../common/images/recommendation/defaulticon.svg';
 
 export interface OperationSelectionGridProps {
@@ -26,14 +26,14 @@ interface OperationCellProps {
 }
 
 const OperationCell = ({ operation, isSelected, showConnectorName, onCardClick, onCheckboxChange, styles }: OperationCellProps) => {
-  const { properties, id } = operation;
+  const { properties, name } = operation;
   const { api, summary, description, annotation } = properties;
 
   return (
     <Card
       className={isSelected ? styles.operationCardSelected : styles.operationCard}
       appearance="subtle"
-      onClick={(event) => onCardClick(id, event)}
+      onClick={(event) => onCardClick(name, event)}
     >
       <CardHeader
         image={<img src={api?.iconUri ?? DefaultIcon} alt={api?.displayName} className={styles.connectorIcon} />}
@@ -44,7 +44,7 @@ const OperationCell = ({ operation, isSelected, showConnectorName, onCardClick, 
             </Body1>
             <Checkbox
               checked={isSelected}
-              onChange={(_, data) => onCheckboxChange(id, data.checked === true)}
+              onChange={(_, data) => onCheckboxChange(name, data.checked === true)}
               aria-label={`Select ${summary}`}
               className={styles.checkboxInCard}
             />
@@ -108,13 +108,13 @@ export const OperationSelectionGrid = ({
   }, []);
 
   const handleCardClick = useCallback(
-    (operationId: string, event: React.MouseEvent) => {
+    (operationName: string, event: React.MouseEvent) => {
       if ((event.target as HTMLElement).closest('[role="checkbox"]')) {
         return;
       }
 
-      const isCurrentlySelected = selectedOperations.has(getResourceNameFromId(operationId));
-      onOperationToggle(operationId, !isCurrentlySelected);
+      const isCurrentlySelected = selectedOperations.has(operationName);
+      onOperationToggle(operationName, !isCurrentlySelected);
     },
     [selectedOperations, onOperationToggle]
   );
@@ -126,9 +126,8 @@ export const OperationSelectionGrid = ({
     [onOperationToggle]
   );
   const selectableOperations = operationsData;
-  const allSelected =
-    selectableOperations.length > 0 && selectableOperations.every((item) => selectedOperations.has(getResourceNameFromId(item.id)));
-  const someSelected = selectableOperations.some((item) => selectedOperations.has(getResourceNameFromId(item.id)));
+  const allSelected = selectableOperations.length > 0 && selectableOperations.every((item) => selectedOperations.has(item.name));
+  const someSelected = selectableOperations.some((item) => selectedOperations.has(item.name));
 
   const noResultsText = intl.formatMessage({
     defaultMessage: 'No operations found',
@@ -195,7 +194,7 @@ export const OperationSelectionGrid = ({
           <OperationCell
             key={operation.id}
             operation={operation}
-            isSelected={selectedOperations.has(getResourceNameFromId(operation.id))}
+            isSelected={selectedOperations.has(operation.name)}
             showConnectorName={showConnectorName}
             onCardClick={handleCardClick}
             onCheckboxChange={handleCheckboxChange}
