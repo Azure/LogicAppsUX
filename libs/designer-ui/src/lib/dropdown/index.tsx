@@ -3,7 +3,7 @@ import type { ValueSegment } from '../editor';
 import { ValueSegmentType } from '../editor';
 import type { ChangeHandler } from '../editor/base';
 import { createLiteralValueSegment } from '../editor/base/utils/helper';
-import { Combobox, Option, Field } from '@fluentui/react-components';
+import { Combobox, Option } from '@fluentui/react-components';
 import { useMemo, useState } from 'react';
 import { useDropdownStyles } from './styles';
 import { useIntl } from 'react-intl';
@@ -25,6 +25,7 @@ export interface DropdownEditorProps {
   multiSelect?: boolean;
   readonly?: boolean;
   isCaseSensitive?: boolean;
+  flexibleWidth?: boolean; // Allow parent container to control width instead of forcing 100%
   // Event Handlers
   onChange?: ChangeHandler;
   customOnChangeHandler?: (optionValue: string, optionText: string) => void;
@@ -52,6 +53,7 @@ export const DropdownEditor = ({
   multiSelect,
   readonly,
   isCaseSensitive,
+  flexibleWidth = false,
   onChange,
   customOnChangeHandler,
   serialization,
@@ -144,15 +146,22 @@ export const DropdownEditor = ({
     : options.find((opt) => opt.key === selectedKey)?.displayName || '';
 
   const comboboxStyle = {
-    minHeight: height ? `${height}px` : '32px',
+    height: height ? `${height}px` : '32px',
     fontSize: fontSize ? `${fontSize}px` : '14px',
     width: '100%',
   };
 
   const comboboxProps = {
     'aria-label': label,
+    'aria-disabled': readonly ? true : undefined,
     disabled: readonly,
-    placeholder: placeholder || 'Select an option...',
+    placeholder:
+      placeholder ??
+      intl.formatMessage({
+        defaultMessage: 'Select an option',
+        id: 'WP8egw',
+        description: 'Placeholder text for dropdown editor',
+      }),
     value: searchValue || selectedValue,
     selectedOptions: multiSelect ? selectedKeys : selectedKey ? [selectedKey] : [],
     multiselect: multiSelect,
@@ -189,7 +198,7 @@ export const DropdownEditor = ({
   };
 
   const content = (
-    <div className={classes.container}>
+    <div className={flexibleWidth ? classes.containerFlexible : classes.container}>
       <Combobox {...comboboxProps}>
         {renderOptions()}
         {hasMoreOptions && <div className={classes.moreOptions}>{INTL_TEXT.moreOptions}</div>}
@@ -198,7 +207,7 @@ export const DropdownEditor = ({
     </div>
   );
 
-  return label ? <Field label={label}>{content}</Field> : content;
+  return content;
 };
 
 const getSelectedKey = (options: DropdownItem[], initialValue?: ValueSegment[], isCaseSensitive = false): string => {

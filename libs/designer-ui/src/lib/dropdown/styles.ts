@@ -9,6 +9,35 @@ export const useDropdownStyles = makeStyles({
       width: '100%',
     },
   },
+  containerFlexible: {
+    position: 'relative',
+    flex: '1',
+    overflow: 'hidden',
+    '& .fui-Combobox': {
+      minWidth: '0 !important', // Override Fluent UI's default 250px minWidth
+      width: '100%',
+      fontSize: '11px', // Smaller font for better fit
+      '& > div': {
+        minWidth: '0 !important', // Also override inner elements
+      },
+      '& input': {
+        minWidth: '0 !important', // Override input minWidth
+        fontSize: '11px !important', // Smaller font for input
+        padding: '2px 4px !important', // Tighter padding
+        textOverflow: 'ellipsis', // Truncate with ellipsis if still too long
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+      },
+      // Target specific Fluent UI internal classes that might have minWidth
+      '& [class*="fui-"]': {
+        minWidth: '0 !important',
+      },
+      // Target the combobox base element specifically
+      '& .fui-ComboboxBase': {
+        minWidth: '0 !important',
+      },
+    },
+  },
   divider: {
     margin: '4px 0',
     border: 'none',
