@@ -1,95 +1,100 @@
-import { Text, Textarea, Field, Divider, Badge, Card, Label, Button } from '@fluentui/react-components';
-import { bundleIcon, Settings24Regular, Settings24Filled, CheckmarkCircle16Regular, Dismiss16Regular } from '@fluentui/react-icons';
+import {
+  Text,
+  Textarea,
+  Field,
+  Divider,
+  Card,
+  Label,
+  Button,
+  Accordion,
+  AccordionItem,
+  AccordionHeader,
+  AccordionPanel,
+} from '@fluentui/react-components';
+import { Dismiss16Regular } from '@fluentui/react-icons';
 import type { RootState, AppDispatch } from '../../../core/state/mcp/store';
 import { useSelector, useDispatch } from 'react-redux';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useEditOperationStyles } from './styles';
 import type { ParameterInfo, ValueSegment } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 import type { SearchableDropdownOption } from '@microsoft/designer-ui';
-import { SearchableDropdownWithAddAll, StringEditor } from '@microsoft/designer-ui';
+import { SearchableDropdownWithAddAll } from '@microsoft/designer-ui';
 import {
   updateNodeParameters,
-  updateOperationDescription,
   updateParameterConditionalVisibility,
   type UpdateParametersPayload,
 } from '../../../core/state/operation/operationMetadataSlice';
 import { getGroupIdFromParameterId } from '../../../core/utils/parameters/helper';
+import { ParameterEditor } from './ParameterEditor';
 
-const SettingsIcon = bundleIcon(Settings24Filled, Settings24Regular);
+interface EditOperationProps {
+  description: string;
+  handleDescriptionInputChange: (description: string) => void;
+  onParameterVisibilityUpdate: () => void;
+}
 
-export const EditOperation = () => {
+export const EditOperation = ({ description, handleDescriptionInputChange, onParameterVisibilityUpdate }: EditOperationProps) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const styles = useEditOperationStyles();
 
-  const [localDescription, setLocalDescription] = useState<string>('');
-
-  const { selectedOperationId, operationInfos, operationMetadata, inputParameters } = useSelector((state: RootState) => ({
+  const { selectedOperationId, operationInfos, inputParameters } = useSelector((state: RootState) => ({
     selectedOperationId: state.connector.selectedOperationId,
     operationInfos: state.operation.operationInfo,
-    operationMetadata: state.operation.operationMetadata,
     inputParameters: state.operation.inputParameters,
   }));
 
   const operationInfo = selectedOperationId ? operationInfos[selectedOperationId] : null;
-  const metadata = selectedOperationId ? operationMetadata[selectedOperationId] : null;
   const parameters = selectedOperationId ? inputParameters[selectedOperationId] : null;
 
-  useEffect(() => {
-    if (metadata) {
-      setLocalDescription(metadata.description ?? '');
-    } else {
-      setLocalDescription('');
-    }
-  }, [metadata, metadata?.description, selectedOperationId]);
+  const { requiredParams, visibleConditionalParams, optionalDropdownOptions, allConditionalSettings, conditionallyInvisibleSettings } =
+    useMemo(() => {
+      if (!parameters?.parameterGroups) {
+        return {
+          requiredParams: [],
+          visibleConditionalParams: [],
+          optionalDropdownOptions: [],
+          allConditionalSettings: [],
+          conditionallyInvisibleSettings: [],
+        };
+      }
 
-  const { allVisibleParameters, optionalDropdownOptions, allConditionalSettings, conditionallyInvisibleSettings } = useMemo(() => {
-    if (!parameters?.parameterGroups) {
-      return {
-        allVisibleParameters: [],
-        optionalDropdownOptions: [],
-        allConditionalSettings: [],
-        conditionallyInvisibleSettings: [],
-      };
-    }
+      const requiredParams: Array<{ groupId: string; param: ParameterInfo; isConditional: boolean }> = [];
+      const visibleConditionalParams: Array<{ groupId: string; param: ParameterInfo; isConditional: boolean }> = [];
+      const dropdownOptions: SearchableDropdownOption[] = [];
+      const allConditional: ParameterInfo[] = [];
+      const invisible: ParameterInfo[] = [];
 
-    const requiredParams: Array<{ groupId: string; param: ParameterInfo; isConditional: boolean }> = [];
-    const visibleConditionalParams: Array<{ groupId: string; param: ParameterInfo; isConditional: boolean }> = [];
-    const dropdownOptions: SearchableDropdownOption[] = [];
-    const allConditional: ParameterInfo[] = [];
-    const invisible: ParameterInfo[] = [];
-
-    Object.entries(parameters.parameterGroups).forEach(([groupId, group]) => {
-      group.parameters.forEach((param) => {
-        if (param.required) {
-          requiredParams.push({ groupId, param, isConditional: false });
-        } else {
-          allConditional.push(param);
-
-          if (param.conditionalVisibility === true) {
-            visibleConditionalParams.push({ groupId, param, isConditional: true });
+      for (const [groupId, group] of Object.entries(parameters.parameterGroups)) {
+        for (const param of group.parameters) {
+          if (param.required) {
+            requiredParams.push({ groupId, param, isConditional: false });
           } else {
-            invisible.push(param);
-            dropdownOptions.push({
-              key: param.id,
-              text: param.label ?? param.parameterName,
-              data: { groupId, param },
-            });
+            allConditional.push(param);
+
+            if (param.conditionalVisibility === true) {
+              visibleConditionalParams.push({ groupId, param, isConditional: true });
+            } else {
+              invisible.push(param);
+              dropdownOptions.push({
+                key: param.id,
+                text: param.label ?? param.parameterName,
+                data: { groupId, param },
+              });
+            }
           }
         }
-      });
-    });
+      }
 
-    const allVisible = [...requiredParams, ...visibleConditionalParams];
-
-    return {
-      allVisibleParameters: allVisible,
-      optionalDropdownOptions: dropdownOptions,
-      allConditionalSettings: allConditional,
-      conditionallyInvisibleSettings: invisible,
-    };
-  }, [parameters]);
+      return {
+        requiredParams,
+        visibleConditionalParams,
+        optionalDropdownOptions: dropdownOptions,
+        allConditionalSettings: allConditional,
+        conditionallyInvisibleSettings: invisible,
+      };
+    }, [parameters]);
 
   const INTL_TEXT = {
     noOperationSelected: intl.formatMessage({
@@ -102,10 +107,20 @@ export const EditOperation = () => {
       defaultMessage: 'Parameters',
       description: 'Title for the parameters section',
     }),
-    addOptionalParameters: intl.formatMessage({
-      id: 'm+jXp8',
-      defaultMessage: 'Add optional parameters',
-      description: 'Label for the dropdown to add optional parameters',
+    required: intl.formatMessage({
+      id: 'WQT8jf',
+      defaultMessage: 'Required',
+      description: 'Title for the required section',
+    }),
+    advancedParameters: intl.formatMessage({
+      id: 'ZP9nho',
+      defaultMessage: 'Advanced parameters',
+      description: 'Label for the section to configure advanced parameters',
+    }),
+    selectParameters: intl.formatMessage({
+      id: '1h43JZ',
+      defaultMessage: 'Select parameters',
+      description: 'Label for the dropdown to select parameters',
     }),
     showAllOptional: intl.formatMessage({
       id: 'EgGZJG',
@@ -126,11 +141,6 @@ export const EditOperation = () => {
       id: 'r/KmCk',
       defaultMessage: 'Hide all optional parameters',
       description: 'Tooltip for hide all optional parameters button',
-    }),
-    removeParameter: intl.formatMessage({
-      id: '5E66mK',
-      defaultMessage: 'Remove parameter',
-      description: 'Tooltip for remove parameter button',
     }),
     descriptionLabel: intl.formatMessage({
       id: 'LLJrOT',
@@ -158,26 +168,6 @@ export const EditOperation = () => {
       description: 'Badge text for saved state',
     }),
   };
-
-  const handleDescriptionInputChange = useCallback((description: string) => {
-    setLocalDescription(description);
-  }, []);
-
-  const handleDescriptionBlur = useCallback(() => {
-    if (!selectedOperationId) {
-      return;
-    }
-
-    const originalDescription = metadata?.description ?? '';
-    if (localDescription !== originalDescription) {
-      dispatch(
-        updateOperationDescription({
-          id: selectedOperationId,
-          description: localDescription,
-        })
-      );
-    }
-  }, [dispatch, selectedOperationId, localDescription, metadata?.description]);
 
   const handleParameterValueChange = useCallback(
     (parameterId: string, newValue: ValueSegment[]) => {
@@ -217,6 +207,7 @@ export const EditOperation = () => {
         return;
       }
 
+      onParameterVisibilityUpdate();
       dispatch(
         updateParameterConditionalVisibility({
           nodeId: selectedOperationId,
@@ -226,7 +217,32 @@ export const EditOperation = () => {
         })
       );
     },
-    [dispatch, selectedOperationId, parameters]
+    [dispatch, selectedOperationId, parameters, onParameterVisibilityUpdate]
+  );
+
+  const handleToggleAllOptional = useCallback(
+    (isAllVisible: boolean) => {
+      if (!selectedOperationId || !parameters) {
+        return;
+      }
+
+      for (const [groupId, group] of Object.entries(parameters.parameterGroups)) {
+        for (const param of group.parameters) {
+          if (!param.required && param.conditionalVisibility !== isAllVisible) {
+            onParameterVisibilityUpdate();
+            dispatch(
+              updateParameterConditionalVisibility({
+                nodeId: selectedOperationId,
+                groupId,
+                parameterId: param.id,
+                value: isAllVisible,
+              })
+            );
+          }
+        }
+      }
+    },
+    [dispatch, selectedOperationId, parameters, onParameterVisibilityUpdate]
   );
 
   const handleRemoveConditionalParameter = useCallback(
@@ -234,90 +250,6 @@ export const EditOperation = () => {
       handleOptionalParameterToggle(parameterId, false);
     },
     [handleOptionalParameterToggle]
-  );
-
-  const handleShowAllOptional = useCallback(() => {
-    if (!selectedOperationId || !parameters) {
-      return;
-    }
-
-    Object.entries(parameters.parameterGroups).forEach(([groupId, group]) => {
-      group.parameters.forEach((param) => {
-        if (!param.required && param.conditionalVisibility !== true) {
-          dispatch(
-            updateParameterConditionalVisibility({
-              nodeId: selectedOperationId,
-              groupId,
-              parameterId: param.id,
-              value: true,
-            })
-          );
-        }
-      });
-    });
-  }, [dispatch, selectedOperationId, parameters]);
-
-  const handleHideAllOptional = useCallback(() => {
-    if (!selectedOperationId || !parameters) {
-      return;
-    }
-
-    Object.entries(parameters.parameterGroups).forEach(([groupId, group]) => {
-      group.parameters.forEach((param) => {
-        if (!param.required && param.conditionalVisibility === true) {
-          dispatch(
-            updateParameterConditionalVisibility({
-              nodeId: selectedOperationId,
-              groupId,
-              parameterId: param.id,
-              value: false,
-            })
-          );
-        }
-      });
-    });
-  }, [dispatch, selectedOperationId, parameters]);
-
-  const renderParameterField = useCallback(
-    (param: ParameterInfo, isConditional = false) => {
-      return (
-        <div key={param.id} className={styles.parameterField}>
-          <div className={styles.parameterHeader}>
-            <Label className={styles.parameterLabel} required={param.required} title={param.label}>
-              {param.label}
-            </Label>
-            {isConditional && (
-              <Button
-                appearance="subtle"
-                size="small"
-                icon={<Dismiss16Regular />}
-                onClick={() => handleRemoveConditionalParameter(param.id)}
-                title={INTL_TEXT.removeParameter}
-                className={styles.removeParameterButton}
-              />
-            )}
-          </div>
-          <StringEditor
-            className="msla-setting-token-editor-container"
-            initialValue={param.value}
-            editorBlur={(changeState) => {
-              const newValue = changeState.value;
-              handleParameterValueChange(param.id, newValue);
-            }}
-            placeholder={param.placeholder ?? `Enter ${param.label?.toLowerCase()}`}
-          />
-        </div>
-      );
-    },
-    [
-      styles.parameterField,
-      styles.parameterHeader,
-      styles.parameterLabel,
-      styles.removeParameterButton,
-      INTL_TEXT.removeParameter,
-      handleRemoveConditionalParameter,
-      handleParameterValueChange,
-    ]
   );
 
   if (!operationInfo || !selectedOperationId) {
@@ -330,9 +262,9 @@ export const EditOperation = () => {
     );
   }
 
-  const hasVisibleParameters = allVisibleParameters.length > 0;
+  const hasRequiredParameters = requiredParams.length > 0;
   const hasOptionalParameters = optionalDropdownOptions.length > 0;
-  const hasVisibleConditionalParameters = allVisibleParameters.some(({ isConditional }) => isConditional);
+  const hasVisibleConditionalParameters = visibleConditionalParams.length > 0;
 
   const addNewParamText = intl.formatMessage(
     {
@@ -348,35 +280,15 @@ export const EditOperation = () => {
 
   return (
     <div className={styles.container}>
-      {/* Operation Header */}
-      <div className={styles.operationHeader}>
-        <div className={styles.operationIcon}>
-          <SettingsIcon />
-        </div>
-        <div className={styles.operationInfo}>
-          <Text size={500} className={styles.operationTitle}>
-            {metadata?.summary ?? selectedOperationId}
-          </Text>
-          <Text className={styles.operationMeta}>
-            {operationInfo.type} • {operationInfo.connectorId}
-          </Text>
-        </div>
-        <div className={styles.statusBadge}>
-          <Badge appearance="filled" icon={<CheckmarkCircle16Regular />} className={styles.savedBadge}>
-            {INTL_TEXT.saved}
-          </Badge>
-        </div>
-      </div>
-
-      <Divider className={styles.divider} />
-
       {/* Description Section */}
       <div className={styles.section}>
-        <Field label={INTL_TEXT.descriptionLabel} className={styles.descriptionField}>
+        <Text size={400} weight="semibold" className={styles.descriptionField}>
+          {INTL_TEXT.descriptionLabel}
+        </Text>
+        <Field className={styles.descriptionField} style={{ width: '100%' }}>
           <Textarea
-            value={localDescription}
+            value={description}
             onChange={(_e, data) => handleDescriptionInputChange(data.value)}
-            onBlur={handleDescriptionBlur}
             placeholder={INTL_TEXT.descriptionPlaceholder}
             rows={3}
             resize="vertical"
@@ -391,59 +303,139 @@ export const EditOperation = () => {
           {INTL_TEXT.parameters}
         </Text>
 
-        {hasVisibleParameters || hasOptionalParameters ? (
+        {hasRequiredParameters || hasOptionalParameters || hasVisibleConditionalParameters ? (
           <div className={styles.parametersSection}>
             <Card className={styles.parameterCard}>
-              <div className={styles.parameterCardHeader}>
-                <Text size={200} style={{ opacity: 0.8, marginTop: '4px' }}>
-                  {intl.formatMessage(
-                    {
-                      id: 'EcoTuv',
-                      defaultMessage: '{count, plural, one {# parameter} other {# parameters}}',
-                      description: 'Parameter count text',
-                    },
-                    { count: allVisibleParameters.length }
-                  )}
-                </Text>
-              </div>
-
-              <div className={styles.parameterCardContent}>
-                {/* Visible Parameters */}
-                {hasVisibleParameters && (
+              {hasRequiredParameters && (
+                <div className={styles.requiredSection}>
                   <div className={styles.parameterList}>
-                    {allVisibleParameters.map(({ param, isConditional }) => renderParameterField(param, isConditional))}
+                    {requiredParams.map(({ param, groupId, isConditional }) => (
+                      <ParameterField
+                        key={param.id}
+                        operationId={selectedOperationId}
+                        groupId={groupId}
+                        parameter={param}
+                        isConditional={isConditional}
+                        onParameterVisibilityUpdate={onParameterVisibilityUpdate}
+                        handleParameterValueChange={handleParameterValueChange}
+                        handleRemoveConditionalParameter={handleRemoveConditionalParameter}
+                      />
+                    ))}
                   </div>
-                )}
+                </div>
+              )}
 
-                {/* Optional Parameters Dropdown */}
-                {allConditionalSettings.length > 0 ? (
-                  <div className={styles.optionalParametersSection}>
-                    {hasVisibleParameters && <Divider className={styles.inlineParameterDivider} />}
-                    <SearchableDropdownWithAddAll
-                      key={`dropdown-${selectedOperationId}-${optionalDropdownOptions.length}`}
-                      label={INTL_TEXT.addOptionalParameters}
-                      options={optionalDropdownOptions}
-                      placeholder={addNewParamText}
-                      multiselect={true}
-                      onItemSelectionChanged={handleOptionalParameterToggle}
-                      addAllButtonText={INTL_TEXT.showAllOptional}
-                      addAllButtonTooltip={INTL_TEXT.showAllOptionalTooltip}
-                      addAllButtonEnabled={optionalDropdownOptions.length > 0}
-                      removeAllButtonText={INTL_TEXT.hideAllOptional}
-                      removeAllButtonTooltip={INTL_TEXT.hideAllOptionalTooltip}
-                      removeAllButtonEnabled={hasVisibleConditionalParameters}
-                      onShowAllClick={handleShowAllOptional}
-                      onHideAllClick={handleHideAllOptional}
-                    />
-                  </div>
-                ) : null}
-              </div>
+              {allConditionalSettings?.length ? (
+                <div>
+                  <Accordion collapsible={true} defaultOpenItems={['optional-parameters']}>
+                    <AccordionItem value="optional-parameters">
+                      <AccordionHeader>
+                        <Text weight="semibold">{INTL_TEXT.advancedParameters}</Text>
+                      </AccordionHeader>
+                      <AccordionPanel className={styles.parameterList}>
+                        {/* Optional Parameters Dropdown */}
+                        {allConditionalSettings.length > 0 ? (
+                          <div className={styles.optionalParametersSection}>
+                            <SearchableDropdownWithAddAll
+                              key={`dropdown-${selectedOperationId}-${optionalDropdownOptions.length}`}
+                              label={INTL_TEXT.selectParameters}
+                              options={optionalDropdownOptions}
+                              placeholder={addNewParamText}
+                              multiselect={true}
+                              onItemSelectionChanged={handleOptionalParameterToggle}
+                              addAllButtonText={INTL_TEXT.showAllOptional}
+                              addAllButtonTooltip={INTL_TEXT.showAllOptionalTooltip}
+                              addAllButtonEnabled={optionalDropdownOptions.length > 0}
+                              removeAllButtonText={INTL_TEXT.hideAllOptional}
+                              removeAllButtonTooltip={INTL_TEXT.hideAllOptionalTooltip}
+                              removeAllButtonEnabled={hasVisibleConditionalParameters}
+                              onShowAllClick={() => handleToggleAllOptional(true)}
+                              onHideAllClick={() => handleToggleAllOptional(false)}
+                            />
+                          </div>
+                        ) : null}
+
+                        {hasVisibleConditionalParameters && (
+                          <div className={styles.parameterList}>
+                            {visibleConditionalParams.map(({ param, groupId, isConditional }) => (
+                              <ParameterField
+                                key={param.id}
+                                operationId={selectedOperationId}
+                                groupId={groupId}
+                                parameter={param}
+                                isConditional={isConditional}
+                                onParameterVisibilityUpdate={onParameterVisibilityUpdate}
+                                handleParameterValueChange={handleParameterValueChange}
+                                handleRemoveConditionalParameter={handleRemoveConditionalParameter}
+                              />
+                            ))}
+                          </div>
+                        )}
+                      </AccordionPanel>
+                    </AccordionItem>
+                  </Accordion>
+                </div>
+              ) : null}
             </Card>
           </div>
         ) : (
           <div className={styles.emptyParametersCard}>
             <Text className={styles.emptyParametersText}>{INTL_TEXT.noParametersMessage}</Text>
           </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+const ParameterField = ({
+  operationId,
+  groupId,
+  parameter,
+  isConditional,
+  onParameterVisibilityUpdate,
+  handleParameterValueChange,
+  handleRemoveConditionalParameter,
+}: {
+  operationId: string;
+  groupId: string;
+  parameter: ParameterInfo;
+  isConditional?: boolean;
+  onParameterVisibilityUpdate: () => void;
+  handleParameterValueChange: (parameterId: string, newValue: ValueSegment[]) => void;
+  handleRemoveConditionalParameter: (parameterId: string) => void;
+}) => {
+  const intl = useIntl();
+  const styles = useEditOperationStyles();
+
+  const removeParamText = intl.formatMessage({
+    id: '5E66mK',
+    defaultMessage: 'Remove parameter',
+    description: 'Tooltip for remove parameter button',
+  });
+
+  return (
+    <div className={styles.parameterField}>
+      <Label className={styles.parameterLabel} required={parameter.required} title={parameter.label}>
+        {parameter.label}
+      </Label>
+      <div className={styles.parameterValueSection}>
+        <ParameterEditor
+          operationId={operationId}
+          groupId={groupId}
+          parameter={parameter}
+          onParameterVisibilityUpdate={onParameterVisibilityUpdate}
+          handleParameterValueChange={handleParameterValueChange}
+        />
+        {isConditional && (
+          <Button
+            appearance="subtle"
+            size="small"
+            icon={<Dismiss16Regular />}
+            onClick={() => handleRemoveConditionalParameter(parameter.id)}
+            title={removeParamText}
+            className={styles.removeParameterButton}
+          />
         )}
       </div>
     </div>

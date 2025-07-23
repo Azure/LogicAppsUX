@@ -67,6 +67,7 @@ export const EdgeContextualMenu = () => {
   const upstreamNodesOfChild = useUpstreamNodes(removeIdTag(childId ?? newParentId ?? ''), graphId, childId);
   const hasUpstreamAgenticLoop = useHasUpstreamAgenticLoop(upstreamNodesOfChild);
 
+  const isAddAgentHandoff = isA2AWorkflow && graphId === 'root' && hasUpstreamAgenticLoop;
   const isAddActionDisabled = isA2AWorkflow && graphId === 'root' && hasUpstreamAgenticLoop;
   const isAddParallelBranchDisabled = isA2AWorkflow && graphId === 'root';
   const isPasteDisabled = isA2AWorkflow && graphId === 'root' && hasUpstreamAgenticLoop;
@@ -110,7 +111,7 @@ export const EdgeContextualMenu = () => {
     if (isA2AWorkflow && hasUpstreamAgenticLoop && parentId) {
       // If this is an A2A flow and the parent is an agent, don't add any relationships, instead add a handoff tool + operation
       const relationshipIds = { graphId: 'root', childId: undefined, parentId: undefined };
-      dispatch(addOperation({ nodeId: newAgentId, relationshipIds, operation: agentOperation }));
+      dispatch(addOperation({ nodeId: newAgentId, relationshipIds, operation: agentOperation, isAddingHandoff: true }));
       dispatch(addAgentHandoff({ sourceId: parentId, targetId: newAgentId }));
     } else {
       // If this is not an A2A flow or the parent is not an agent, add the relationship normally
@@ -135,6 +136,12 @@ export const EdgeContextualMenu = () => {
     defaultMessage: 'Add an agentic loop',
     id: 'Wq8rLF',
     description: 'Button text for adding an agentic loop',
+  });
+
+  const newHandOffAgentText = intl.formatMessage({
+    defaultMessage: 'Add a hand-off agent',
+    id: 'MbUEdr',
+    description: 'Text for button to add an agentic loop',
   });
 
   const pasteFromClipboard = intl.formatMessage({
@@ -300,7 +307,7 @@ export const EdgeContextualMenu = () => {
               ))}
             {(isAgenticWorkflow || isA2AWorkflow) && graphId === 'root' && (
               <MenuItem icon={<AgentIcon />} onClick={addAgenticLoop} data-automation-id={automationId('add-agentic-loop')}>
-                {newAgentText}
+                {isAddAgentHandoff ? newHandOffAgentText : newAgentText}
               </MenuItem>
             )}
             {isPasteEnabled &&

@@ -36,6 +36,7 @@ const connectionServiceStandard = new StandardConnectionService({
   baseUrl: '/url',
   apiVersion: '2018-11-01',
   httpClient,
+  writeConnection: () => Promise.resolve(),
   apiHubServiceDetails: {
     apiVersion: '2018-07-01-preview',
     baseUrl: '/baseUrl',

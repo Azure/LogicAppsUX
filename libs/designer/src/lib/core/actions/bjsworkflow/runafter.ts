@@ -1,4 +1,4 @@
-import { addEdgeFromRunAfter, removeEdgeFromRunAfter } from '../../state/workflow/workflowSlice';
+import { addRunAfter, removeRunAfter } from '../../state/workflow/workflowSlice';
 import type { RootState } from '../../store';
 import { updateAllUpstreamNodes } from './initialize';
 import { createAsyncThunk } from '@reduxjs/toolkit';
@@ -8,34 +8,32 @@ export interface EdgeRunAfterPayload {
   childOperationId: string;
 }
 
-export const addEdgeFromRunAfterOperation = createAsyncThunk(
-  'addEdgeFromRunAfter',
+export const addOperationRunAfter = createAsyncThunk(
+  'addOperationRunAfter',
   async (edgePayload: EdgeRunAfterPayload, { dispatch, getState }) => {
     const { parentOperationId, childOperationId } = edgePayload;
     dispatch(
-      addEdgeFromRunAfter({
+      addRunAfter({
         parentOperationId,
         childOperationId,
       })
     );
     updateAllUpstreamNodes(getState() as RootState, dispatch);
-
     return;
   }
 );
 
-export const removeEdgeFromRunAfterOperation = createAsyncThunk(
-  'removeEdgeFromRunAfter',
+export const removeOperationRunAfter = createAsyncThunk(
+  'removeOperationRunAfter',
   async (edgePayload: EdgeRunAfterPayload, { dispatch, getState }) => {
     const { parentOperationId, childOperationId } = edgePayload;
     dispatch(
-      removeEdgeFromRunAfter({
+      removeRunAfter({
         parentOperationId,
         childOperationId,
       })
     );
     updateAllUpstreamNodes(getState() as RootState, dispatch);
-
     return;
   }
 );
