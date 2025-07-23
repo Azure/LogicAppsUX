@@ -70,6 +70,7 @@ export interface ConnectionProperties {
   accountName?: string;
   api: Api;
   connectionRuntimeUrl?: string;
+  dynamicConnectionProxyUrl?: string;
 }
 
 export type Connection = ArmResource<ConnectionProperties>;
