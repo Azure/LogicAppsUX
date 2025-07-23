@@ -101,7 +101,7 @@ export class StandardRunService implements IRunService {
   async getRun(runId: string): Promise<Run> {
     const { apiVersion, baseUrl, httpClient, workflowName } = this.options;
     const onlyRunId = runId.split('/')?.at(-1);
-    let uri = `${baseUrl}/workflows/${workflowName}/runs/${onlyRunId}?api-version=${apiVersion}&$expand=properties/actions,workflow/properties`;
+    let uri = `${baseUrl}/workflows/${workflowName}/runs/${onlyRunId}?api-version=${apiVersion}`; //&$expand=properties/actions,workflow/properties`;
 
     try {
       if (isHybridLogicApp(uri)) {
@@ -214,7 +214,7 @@ export class StandardRunService implements IRunService {
       return undefined;
     }
 
-    const onlyRunId = '08584483863482268134613351524CU00'; //runId.split('/')?.at(-1);
+    const onlyRunId = '08584483778375025217541431456CU00'; //runId.split('/')?.at(-1);
     const uri = `${baseUrl}/workflows/${workflowName}/runs/${onlyRunId}/timeline?api-version=2024-04-01`;
 
     try {

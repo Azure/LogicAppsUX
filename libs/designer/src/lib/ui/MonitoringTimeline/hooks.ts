@@ -39,16 +39,13 @@ export const useTimelineRepetitionOffset = (actionId: string) => {
   const { data: repetitions } = useTimelineRepetitions();
   const timelineIndex = useTimelineRepetitionIndex();
   return useMemo(() => {
-    const lastCount = 0;
-    // for (let i = 0; i < timelineIndex - 1; i++) {
-    //   const actions = repetitions?.[i]?.properties?.actions ?? {};
-    //   for (const entry of Object.entries(actions)) {
-    //     const [_actionId, action] = entry;
-    //     if (_actionId === actionId) {
-    //       lastCount = action?.repetitionCount ?? 0;
-    //     }
-    //   }
-    // }
+    let lastCount = 0;
+    for (let i = 0; i < timelineIndex - 1; i++) {
+      const action = repetitions?.[i].actionResult;
+      if (action?.name === actionId) {
+        lastCount = action?.startingIterationIndex ?? 0;
+      }
+    }
     return lastCount;
   }, [actionId, timelineIndex, repetitions]);
 };
@@ -57,13 +54,10 @@ export const useTimelineRepetitionCount = (actionId: string) => {
   const { data: repetitions } = useTimelineRepetitions();
   const timelineIndex = useTimelineRepetitionIndex();
   return useMemo(() => {
-    // const actions = repetitions?.[timelineIndex]?.properties?.actions ?? {};
-    // for (const entry of Object.entries(actions)) {
-    //   const [_actionId, action] = entry;
-    //   if (_actionId === actionId) {
-    //     return action?.repetitionCount ?? 0;
-    //   }
-    // }
+    const action = repetitions?.[timelineIndex].actionResult;
+    if (action?.name === actionId) {
+      return action?.startingIterationIndex ?? 0;
+    }
     return 0;
   }, [actionId, timelineIndex, repetitions]);
 };
