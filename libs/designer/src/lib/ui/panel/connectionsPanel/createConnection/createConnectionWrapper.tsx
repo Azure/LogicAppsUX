@@ -14,12 +14,11 @@ import { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { ApiHubAuthentication } from '../../../../common/models/workflow';
 import { CreateConnectionInternal } from './createConnectionInternal';
-import { updateParameterAndDependencies } from '../../../../core/utils/parameters/helper';
 import { useIsAgentSubGraph } from '../../../../common/hooks/agent';
+import { updateNodeParameters } from '../../../../core/state/operation/operationMetadataSlice';
 
 export const CreateConnectionWrapper = () => {
   const dispatch = useDispatch<AppDispatch>();
-
   const nodeId: string = useOperationPanelSelectedNodeId();
   const isAgentSubgraph = useIsAgentSubGraph(nodeId);
   const nodeIds = useConnectionPanelSelectedNodeIds();
@@ -28,13 +27,12 @@ export const CreateConnectionWrapper = () => {
   const { data: operationManifest } = useOperationManifest(operationInfo);
   const connectionMetadata = getConnectionMetadata(operationManifest);
   const hasExistingConnection = useSelector((state: RootState) => !!getRecordEntry(state.connections.connectionsMapping, nodeId));
-  const { nodeInputs, dependencies } = useSelector((state: RootState) => ({
+  const { nodeInputs } = useSelector((state: RootState) => ({
     nodeInputs: state.operations.inputParameters[nodeId],
     dependencies: state.operations.dependencies[nodeId],
   }));
 
   const existingReferences = useSelector((state: RootState) => Object.keys(state.connections.connectionReferences));
-  const connectionReference = useSelector((state: RootState) => state.connections.connectionReferences[nodeId]);
 
   const assistedConnectionProps = useMemo(
     () => (connector ? getAssistedConnectionProps(connector, operationManifest) : undefined),
@@ -60,31 +58,31 @@ export const CreateConnectionWrapper = () => {
 
           if (parameter?.id) {
             dispatch(
-              updateParameterAndDependencies({
+              updateNodeParameters({
                 nodeId: nodeId,
-                nodeInputs,
-                dependencies,
-                groupId,
-                isTrigger: false,
-                parameterId: parameter.id,
-                operationInfo: operationInfo,
-                properties: {
-                  value: [
-                    {
-                      id: guid(),
-                      value: parameterValue,
-                      type: 'literal',
+                parameters: [
+                  {
+                    groupId: groupId,
+                    parameterId: parameter.id,
+                    propertiesToUpdate: {
+                      preservedValue: parameterValue,
+                      value: [
+                        {
+                          id: parameter?.value?.length > 0 ? parameter.value[0].id : guid(),
+                          value: parameterValue,
+                          type: 'literal',
+                        },
+                      ],
                     },
-                  ],
-                },
-                connectionReference: connectionReference,
+                  },
+                ],
               })
             );
           }
         }
       }
     },
-    [connectionReference, dependencies, dispatch, nodeId, nodeInputs, operationInfo]
+    [dispatch, nodeId, nodeInputs]
   );
 
   return (

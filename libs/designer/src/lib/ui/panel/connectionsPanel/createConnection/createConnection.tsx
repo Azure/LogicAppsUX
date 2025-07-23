@@ -154,7 +154,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
 
   const [parameterValues, setParameterValues] = useState<Record<string, any>>({});
   const [operationParameterValues, setOperationParameterValues] = useState<Record<string, any>>({});
-
+  const [connectionDisplayName, setConnectionDisplayName] = useState<string>(`new_conn_${customLengthGuid(5)}`.toLowerCase());
   const operationParameterSetKeys = useMemo(() => Object.keys(operationParameterSets ?? {}), [operationParameterSets]);
 
   const shouldEnableDynamicConnections = useShouldEnableDynamicConnections();
@@ -423,7 +423,6 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     [isUsingOAuth, isMultiAuth, capabilityEnabledParameters, legacyManagedIdentitySelected]
   );
 
-  const [connectionDisplayName, setConnectionDisplayName] = useState<string>(`new_conn_${customLengthGuid(5)}`.toLowerCase());
   const validParams = useMemo(() => {
     if (showNameInput && !connectionDisplayName) {
       return false;
@@ -732,6 +731,22 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     return renderConnectionParameter(parameterKey, parameter);
   };
 
+  useEffect(() => {
+    setOperationParameterValues((values) => {
+      const newValues = { ...values };
+      Object.keys(operationParameterSets ?? {}).forEach((key) => {
+        if (!newValues[key]) {
+          newValues[key] =
+            getPropertyValue(
+              getPropertyValue(operationManifest?.properties.inputs.properties, operationParameterSets?.[key]?.name ?? ''),
+              'defaultValue'
+            ) ?? '';
+        }
+      });
+      return newValues;
+    });
+  }, [operationParameterSets, setOperationParameterValues, operationManifest]);
+
   // RENDER
 
   return (
@@ -803,13 +818,6 @@ export const CreateConnection = (props: CreateConnectionProps) => {
             ? operationParameterSetKeys.map((parameter: string, index: number) => {
                 const keyValue = operationParameterSets?.[parameter]?.name ?? '';
                 const parameterFromManifest = getPropertyValue(operationManifest?.properties.inputs.properties, keyValue);
-
-                if (!operationParameterValues?.[parameter]) {
-                  setOperationParameterValues((values) => ({
-                    ...values,
-                    [parameter]: getPropertyValue(parameterFromManifest, 'defaultValue') ?? '',
-                  }));
-                }
 
                 return (
                   <span key={`operation-parameter-${index}`}>
