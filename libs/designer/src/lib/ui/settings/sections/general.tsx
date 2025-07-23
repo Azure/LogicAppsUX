@@ -269,7 +269,7 @@ export const General = ({
         settingType: 'SettingTextField',
         settingProp: {
           id: 'count',
-          value: count?.value ?? 100,
+          value: count?.value ?? '',
           customLabel: getSettingLabel(actionCountTitle, actionCountTooltipText),
           readOnly,
           onValueChange: (_, newValue) => onCountValueChange(Number(newValue)),
