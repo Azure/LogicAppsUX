@@ -216,7 +216,7 @@ export const getOperationSettings = (
       value: getRequestSchemaValidation(operation),
     },
     conditionExpressions: {
-      isSupported: isTrigger,
+      isSupported: isConditionExpressionSupported(isTrigger, operation),
       value: getConditionExpressions(operation),
     },
     runAfter: {
@@ -913,6 +913,16 @@ const getSecureOutputsSetting = (definition?: LogicAppsV2.OperationDefinition): 
     return secureData && secureData.properties.indexOf(Constants.SETTINGS.SECURE_DATA_PROPERTY_NAMES.OUTPUTS) > -1;
   }
 
+  return false;
+};
+
+const isConditionExpressionSupported = (isTrigger: boolean, definition?: LogicAppsV2.TriggerDefinition) => {
+  if (isTrigger) {
+    if (equals(definition?.type, Constants.NODE.TYPE.REQUEST) && equals(definition?.kind, Constants.NODE.KIND.AGENT)) {
+      return false;
+    }
+    return true;
+  }
   return false;
 };
 
