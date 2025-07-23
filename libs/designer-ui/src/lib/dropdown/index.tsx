@@ -8,6 +8,7 @@ import { SelectableOptionMenuItemType, Dropdown } from '@fluentui/react';
 import type { FormEvent } from 'react';
 import { useMemo, useState } from 'react';
 import { useDropdownStyles } from './styles';
+import { mergeClasses } from '@fluentui/react-components';
 
 interface SerializationOptions {
   valueType: string;
@@ -15,6 +16,7 @@ interface SerializationOptions {
 }
 
 export interface DropdownEditorProps {
+  className?: string;
   initialValue: ValueSegment[];
   options: DropdownItem[];
   // Appearance
@@ -43,6 +45,7 @@ export interface DropdownItem {
 }
 
 export const DropdownEditor = ({
+  className,
   initialValue,
   options,
   placeholder,
@@ -108,7 +111,7 @@ export const DropdownEditor = ({
   };
 
   return (
-    <div className={classes.container} data-automation-id={dataAutomationId}>
+    <div className={mergeClasses(classes.container, className ?? '')} data-automation-id={dataAutomationId}>
       <Dropdown
         ariaLabel={label}
         styles={dropdownStyles}

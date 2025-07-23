@@ -127,6 +127,7 @@ export const useEditOperationStyles = makeStyles({
   },
 
   parameterEditor: {
+    minWidth: '700px',
     width: '700px',
     maxWidth: '100%',
   },

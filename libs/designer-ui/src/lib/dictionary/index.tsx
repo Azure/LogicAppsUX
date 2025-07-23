@@ -1,3 +1,4 @@
+import { mergeClasses } from '@fluentui/react-components';
 import constants from '../constants';
 import type { ValueSegment } from '../editor';
 import { EditorCollapseToggle } from '../editor';
@@ -78,7 +79,10 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
   });
 
   return (
-    <div className="msla-dictionary-editor-container" data-automation-id={baseEditorProps.dataAutomationId}>
+    <div
+      className={mergeClasses('msla-dictionary-editor-container', baseEditorProps.className ?? '')}
+      data-automation-id={baseEditorProps.dataAutomationId}
+    >
       {collapsed && !(dictionaryType === DictionaryType.TABLE) ? (
         <CollapsedDictionary
           {...baseEditorProps}
