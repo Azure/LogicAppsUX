@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { Text, Checkbox, Card, CardHeader, Body1, Caption1 } from '@fluentui/react-components';
 import { useOperationSelectionGridStyles } from './styles';
-import type { DiscoveryOpArray } from '@microsoft/logic-apps-shared';
+import { getResourceNameFromId, type DiscoveryOpArray } from '@microsoft/logic-apps-shared';
 import DefaultIcon from '../../../common/images/recommendation/defaulticon.svg';
 
 export interface OperationSelectionGridProps {
@@ -113,7 +113,7 @@ export const OperationSelectionGrid = ({
         return;
       }
 
-      const isCurrentlySelected = selectedOperations.has(operationId);
+      const isCurrentlySelected = selectedOperations.has(getResourceNameFromId(operationId));
       onOperationToggle(operationId, !isCurrentlySelected);
     },
     [selectedOperations, onOperationToggle]
@@ -126,8 +126,9 @@ export const OperationSelectionGrid = ({
     [onOperationToggle]
   );
   const selectableOperations = operationsData;
-  const allSelected = selectableOperations.length > 0 && selectableOperations.every((item) => selectedOperations.has(item.name));
-  const someSelected = selectableOperations.some((item) => selectedOperations.has(item.name));
+  const allSelected =
+    selectableOperations.length > 0 && selectableOperations.every((item) => selectedOperations.has(getResourceNameFromId(item.id)));
+  const someSelected = selectableOperations.some((item) => selectedOperations.has(getResourceNameFromId(item.id)));
 
   const noResultsText = intl.formatMessage({
     defaultMessage: 'No operations found',
@@ -194,7 +195,7 @@ export const OperationSelectionGrid = ({
           <OperationCell
             key={operation.id}
             operation={operation}
-            isSelected={selectedOperations.has(operation.name)}
+            isSelected={selectedOperations.has(getResourceNameFromId(operation.id))}
             showConnectorName={showConnectorName}
             onCardClick={handleCardClick}
             onCheckboxChange={handleCheckboxChange}

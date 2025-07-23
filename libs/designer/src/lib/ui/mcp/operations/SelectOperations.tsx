@@ -51,7 +51,7 @@ export const SelectOperations = () => {
 
   const handleSelectAll = useCallback(
     (isSelected: boolean) => {
-      const newSelection = isSelected ? operations.map((op) => op.name) : [];
+      const newSelection = isSelected ? operations.map((op) => getResourceNameFromId(op.id)) : [];
       dispatch(selectOperations(newSelection));
     },
     [operations, dispatch]
