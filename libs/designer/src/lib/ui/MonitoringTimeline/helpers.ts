@@ -27,7 +27,7 @@ export const parseRepetitions = (repetitionData: TimelineRepetition[] | undefine
   const taskIdToRepetitionsMap = new Map<string, TimelineRepetitionWithActions[]>();
 
   repetitions.forEach((repetition) => {
-    const taskId = repetition.data?.properties.agentMetadata.taskSequenceId;
+    const taskId = repetition.data?.properties.agentMetadata?.taskSequenceId;
     if (taskId) {
       const existingRepetitions = taskIdToRepetitionsMap.get(taskId) ?? [];
       taskIdToRepetitionsMap.set(taskId, [...existingRepetitions, repetition]);

@@ -1,86 +1,67 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { parseRepetitions } from '../helpers';
 import type { TimelineRepetition } from '../hooks';
-import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 
 describe('helpers', () => {
   describe('parseRepetitions', () => {
-    let mockRunInstance: LogicAppsV2.RunInstanceDefinition;
     let mockRepetitionData: TimelineRepetition[];
 
     beforeEach(() => {
-      mockRunInstance = {
-        id: 'run-123',
-        name: 'test-run',
-        properties: {
-          trigger: {
-            name: 'manual-trigger',
-            startTime: '2024-01-01T00:00:00Z',
-            status: 'succeeded',
-            canResubmit: true,
-            correlation: 'correlation-123',
-          },
-        },
-      } as unknown as LogicAppsV2.RunInstanceDefinition;
-
       mockRepetitionData = [
         {
-          id: 'rep-1',
-          name: '1',
+          id: 'workflows/workflowId/runs/runId/repetitions/0',
+          name: '0',
           properties: {
-            actions: {
-              'action-1': {
-                status: 'succeeded',
-              },
+            agentMetadata: {
+              taskSequenceId: 'task-seq-1',
+              agentName: 'agent-1',
             },
             canResubmit: false,
-            correlation: 'correlation-1',
+            correlation: {
+              actionTrackingId: 'action-tracking-1',
+              clientTrackingId: 'client-tracking-1',
+            },
             startTime: '2024-01-01T01:00:00Z',
             status: 'succeeded',
-            a2ametadata: {
-              taskId: 1,
-            },
+            code: '200',
           },
           type: 'repetition',
         },
         {
-          id: 'rep-2',
-          name: '2',
+          id: 'workflows/workflowId/runs/runId/repetitions/1',
+          name: '1',
           properties: {
-            actions: {
-              'action-2': {
-                status: 'failed',
-              },
+            agentMetadata: {
+              taskSequenceId: 'task-seq-2',
+              agentName: 'agent-2',
             },
             canResubmit: true,
-            correlation: 'correlation-2',
+            correlation: {
+              actionTrackingId: 'action-tracking-2',
+              clientTrackingId: 'client-tracking-2',
+            },
             startTime: '2024-01-01T02:00:00Z',
             status: 'failed',
-            a2ametadata: {
-              taskId: 2,
-            },
+            code: '500',
           },
           type: 'repetition',
         },
         {
-          id: 'rep-3',
-          name: '3',
+          id: 'workflows/workflowId/runs/runId/repetitions/2',
+          name: '2',
           properties: {
-            actions: {
-              'action-3a': {
-                status: 'succeeded',
-              },
-              'action-3b': {
-                status: 'succeeded',
-              },
+            agentMetadata: {
+              taskSequenceId: 'task-seq-1', // Same taskSequenceId as first repetition
+              agentName: 'agent-1',
             },
             canResubmit: false,
-            correlation: 'correlation-3',
+            correlation: {
+              actionTrackingId: 'action-tracking-3',
+              clientTrackingId: 'client-tracking-3',
+            },
             startTime: '2024-01-01T03:00:00Z',
             status: 'succeeded',
-            a2ametadata: {
-              taskId: 1, // Same taskId as rep-1
-            },
+            code: '200',
           },
           type: 'repetition',
         },
@@ -88,164 +69,300 @@ describe('helpers', () => {
     });
 
     it('should return empty map when repetition data is undefined', () => {
-      const result = parseRepetitions(undefined, mockRunInstance);
+      const result = parseRepetitions(undefined);
       expect(result).toEqual(new Map());
     });
 
     it('should return empty map when repetition data is empty array', () => {
-      const result = parseRepetitions([], mockRunInstance);
+      const result = parseRepetitions([]);
       expect(result).toEqual(new Map());
     });
 
-    it('should create trigger entry with taskId 0', () => {
-      const result = parseRepetitions([], mockRunInstance);
-      expect(result.size).toBe(0); // Empty array should return empty map
+    it('should parse repetitions and group by taskSequenceId', () => {
+      const result = parseRepetitions(mockRepetitionData);
 
-      const resultWithData = parseRepetitions(mockRepetitionData, mockRunInstance);
-      const triggerGroup = resultWithData.get(0);
+      // Should have 2 groups: task-seq-1 and task-seq-2
+      expect(result.size).toBe(2);
 
-      expect(triggerGroup).toBeDefined();
-      expect(triggerGroup).toHaveLength(1);
-      expect(triggerGroup![0].repetitionIndex).toBe(-1);
-      expect(triggerGroup![0].actionIds).toEqual(['manual-trigger']);
-      expect(triggerGroup![0].data?.properties.a2ametadata?.taskId).toBe(0);
+      // Check first group (task-seq-1) - should have 2 repetitions (index 0 and 2)
+      const firstGroup = result.get(0);
+      expect(firstGroup).toBeDefined();
+      expect(firstGroup).toHaveLength(2);
+      expect(firstGroup![0].repetitionIndex).toBe(0);
+      expect(firstGroup![1].repetitionIndex).toBe(2);
+      expect(firstGroup![0].data?.properties.agentMetadata.taskSequenceId).toBe('task-seq-1');
+      expect(firstGroup![1].data?.properties.agentMetadata.taskSequenceId).toBe('task-seq-1');
+
+      // Check second group (task-seq-2) - should have 1 repetition (index 1)
+      const secondGroup = result.get(1);
+      expect(secondGroup).toBeDefined();
+      expect(secondGroup).toHaveLength(1);
+      expect(secondGroup![0].repetitionIndex).toBe(1);
+      expect(secondGroup![0].data?.properties.agentMetadata.taskSequenceId).toBe('task-seq-2');
     });
 
-    it('should parse repetitions and group by taskId', () => {
-      const result = parseRepetitions(mockRepetitionData, mockRunInstance);
+    it('should extract repetition index from id correctly', () => {
+      const result = parseRepetitions(mockRepetitionData);
 
-      // Should have 3 groups: trigger (taskId 0), taskId 1, taskId 2
-      expect(result.size).toBe(3);
+      const firstGroup = result.get(0)!;
+      const secondGroup = result.get(1)!;
 
-      // Check trigger group (taskId 0)
-      const triggerGroup = result.get(0);
-      expect(triggerGroup).toHaveLength(1);
-      expect(triggerGroup![0].repetitionIndex).toBe(-1);
-
-      // Check taskId 1 group (should have 2 repetitions: rep-1 and rep-3)
-      const task1Group = result.get(1);
-      expect(task1Group).toHaveLength(2);
-      expect(task1Group![0].repetitionIndex).toBe(1);
-      expect(task1Group![1].repetitionIndex).toBe(3);
-
-      // Check taskId 2 group (should have 1 repetition: rep-2)
-      const task2Group = result.get(2);
-      expect(task2Group).toHaveLength(1);
-      expect(task2Group![0].repetitionIndex).toBe(2);
+      // Check that repetition indexes are extracted from the id path
+      expect(firstGroup[0].repetitionIndex).toBe(0); // from 'workflows/.../repetitions/0'
+      expect(firstGroup[1].repetitionIndex).toBe(2); // from 'workflows/.../repetitions/2'
+      expect(secondGroup[0].repetitionIndex).toBe(1); // from 'workflows/.../repetitions/1'
     });
 
-    it('should extract action IDs correctly', () => {
-      const result = parseRepetitions(mockRepetitionData, mockRunInstance);
+    it('should preserve original data structure in parsed repetitions', () => {
+      const result = parseRepetitions(mockRepetitionData);
 
-      const task1Group = result.get(1)!;
-      expect(task1Group[0].actionIds).toEqual(['action-1']);
-      expect(task1Group[1].actionIds).toEqual(['action-3a', 'action-3b']);
+      const firstGroup = result.get(0)!;
+      const firstRepetition = firstGroup[0];
 
-      const task2Group = result.get(2)!;
-      expect(task2Group[0].actionIds).toEqual(['action-2']);
+      expect(firstRepetition.data).toEqual(mockRepetitionData[0]);
+      expect(firstRepetition.data?.id).toBe('workflows/workflowId/runs/runId/repetitions/0');
+      expect(firstRepetition.data?.name).toBe('0');
+      expect(firstRepetition.data?.type).toBe('repetition');
+      expect(firstRepetition.data?.properties.agentMetadata.agentName).toBe('agent-1');
     });
 
-    it('should handle missing trigger in run instance', () => {
-      const runInstanceNoTrigger = {
-        id: 'run-123',
-        name: 'test-run',
-        properties: {},
-      } as LogicAppsV2.RunInstanceDefinition;
-
-      const result = parseRepetitions(mockRepetitionData, runInstanceNoTrigger);
-
-      const triggerGroup = result.get(0);
-      expect(triggerGroup).toHaveLength(1);
-      expect(triggerGroup![0].actionIds).toEqual(['']);
-      expect(triggerGroup![0].data?.properties.status).toBe('Unknown');
-    });
-
-    it('should handle null run instance', () => {
-      const result = parseRepetitions(mockRepetitionData, null);
-
-      const triggerGroup = result.get(0);
-      expect(triggerGroup).toHaveLength(1);
-      expect(triggerGroup![0].actionIds).toEqual(['']);
-    });
-
-    it('should filter out repetitions with no actions', () => {
-      const repetitionsWithEmptyActions = [
-        ...mockRepetitionData,
+    it('should handle repetitions with missing taskSequenceId', () => {
+      const repetitionsWithMissingTaskId = [
         {
-          id: 'rep-empty',
-          name: '4',
+          id: 'workflows/workflowId/runs/runId/repetitions/0',
+          name: '0',
           properties: {
-            actions: {},
-            canResubmit: false,
-            correlation: 'correlation-empty',
-            startTime: '2024-01-01T04:00:00Z',
-            status: 'succeeded',
-            a2ametadata: {
-              taskId: 3,
+            agentMetadata: {
+              taskSequenceId: 'task-seq-1',
+              agentName: 'agent-1',
             },
+            canResubmit: false,
+            correlation: {
+              actionTrackingId: 'action-tracking-1',
+              clientTrackingId: 'client-tracking-1',
+            },
+            startTime: '2024-01-01T01:00:00Z',
+            status: 'succeeded',
+            code: '200',
           },
           type: 'repetition',
         },
-      ] as TimelineRepetition[];
-
-      const result = parseRepetitions(repetitionsWithEmptyActions, mockRunInstance);
-
-      // Should not include the empty actions repetition
-      expect(result.has(3)).toBe(false);
-      expect(result.size).toBe(3); // Only trigger, task1, task2
-    });
-
-    it('should handle repetitions with undefined taskId', () => {
-      const repetitionsWithUndefinedTaskId = [
         {
-          id: 'rep-no-task',
+          id: 'workflows/workflowId/runs/runId/repetitions/1',
           name: '1',
           properties: {
-            actions: {
-              'action-1': {
-                status: 'succeeded',
-              },
-            },
+            // Missing agentMetadata
             canResubmit: false,
-            correlation: 'correlation-1',
-            startTime: '2024-01-01T01:00:00Z',
+            correlation: {
+              actionTrackingId: 'action-tracking-2',
+              clientTrackingId: 'client-tracking-2',
+            },
+            startTime: '2024-01-01T02:00:00Z',
             status: 'succeeded',
-            // No a2ametadata
+            code: '200',
           },
           type: 'repetition',
         },
       ] as unknown as TimelineRepetition[];
 
-      const result = parseRepetitions(repetitionsWithUndefinedTaskId, mockRunInstance);
+      const result = parseRepetitions(repetitionsWithMissingTaskId);
 
-      // Should only have trigger group
+      // Should only include the repetition with valid taskSequenceId
       expect(result.size).toBe(1);
-      expect(result.has(0)).toBe(true); // Trigger
+      const firstGroup = result.get(0)!;
+      expect(firstGroup).toHaveLength(1);
+      expect(firstGroup[0].data?.properties.agentMetadata.taskSequenceId).toBe('task-seq-1');
     });
 
-    it('should preserve original data structure in parsed repetitions', () => {
-      const result = parseRepetitions(mockRepetitionData, mockRunInstance);
+    it('should handle repetitions with different id formats', () => {
+      const repetitionsWithDifferentIds = [
+        {
+          id: 'simple-id/5',
+          name: '5',
+          properties: {
+            agentMetadata: {
+              taskSequenceId: 'task-seq-1',
+              agentName: 'agent-1',
+            },
+            canResubmit: false,
+            correlation: {
+              actionTrackingId: 'action-tracking-1',
+              clientTrackingId: 'client-tracking-1',
+            },
+            startTime: '2024-01-01T01:00:00Z',
+            status: 'succeeded',
+            code: '200',
+          },
+          type: 'repetition',
+        },
+        {
+          id: 'no-slash-id',
+          name: 'no-slash-id',
+          properties: {
+            agentMetadata: {
+              taskSequenceId: 'task-seq-2',
+              agentName: 'agent-2',
+            },
+            canResubmit: false,
+            correlation: {
+              actionTrackingId: 'action-tracking-2',
+              clientTrackingId: 'client-tracking-2',
+            },
+            startTime: '2024-01-01T02:00:00Z',
+            status: 'succeeded',
+            code: '200',
+          },
+          type: 'repetition',
+        },
+      ] as TimelineRepetition[];
 
-      const task1Group = result.get(1)!;
-      const firstRepetition = task1Group[0];
+      const result = parseRepetitions(repetitionsWithDifferentIds);
 
-      expect(firstRepetition.data).toEqual(mockRepetitionData[0]);
-      expect(firstRepetition.data?.id).toBe('rep-1');
-      expect(firstRepetition.data?.name).toBe('1');
-      expect(firstRepetition.data?.type).toBe('repetition');
+      expect(result.size).toBe(2);
+
+      const firstGroup = result.get(0)!;
+      const secondGroup = result.get(1)!;
+
+      // Should extract '5' from 'simple-id/5'
+      expect(firstGroup[0].repetitionIndex).toBe(5);
+
+      // Should use 'no-slash-id' as is, converted to NaN then 0
+      expect(Number.isNaN(secondGroup[0].repetitionIndex)).toBe(true);
     });
 
-    it('should create trigger data structure correctly', () => {
-      const result = parseRepetitions(mockRepetitionData, mockRunInstance);
+    it('should handle multiple repetitions with the same taskSequenceId', () => {
+      const repetitionsWithSameTaskId = [
+        {
+          id: 'workflows/workflowId/runs/runId/repetitions/0',
+          name: '0',
+          properties: {
+            agentMetadata: {
+              taskSequenceId: 'shared-task-id',
+              agentName: 'agent-1',
+            },
+            canResubmit: false,
+            correlation: {
+              actionTrackingId: 'action-tracking-1',
+              clientTrackingId: 'client-tracking-1',
+            },
+            startTime: '2024-01-01T01:00:00Z',
+            status: 'succeeded',
+            code: '200',
+          },
+          type: 'repetition',
+        },
+        {
+          id: 'workflows/workflowId/runs/runId/repetitions/1',
+          name: '1',
+          properties: {
+            agentMetadata: {
+              taskSequenceId: 'shared-task-id',
+              agentName: 'agent-1',
+            },
+            canResubmit: false,
+            correlation: {
+              actionTrackingId: 'action-tracking-2',
+              clientTrackingId: 'client-tracking-2',
+            },
+            startTime: '2024-01-01T02:00:00Z',
+            status: 'failed',
+            code: '500',
+          },
+          type: 'repetition',
+        },
+        {
+          id: 'workflows/workflowId/runs/runId/repetitions/2',
+          name: '2',
+          properties: {
+            agentMetadata: {
+              taskSequenceId: 'shared-task-id',
+              agentName: 'agent-1',
+            },
+            canResubmit: false,
+            correlation: {
+              actionTrackingId: 'action-tracking-3',
+              clientTrackingId: 'client-tracking-3',
+            },
+            startTime: '2024-01-01T03:00:00Z',
+            status: 'succeeded',
+            code: '200',
+          },
+          type: 'repetition',
+        },
+      ] as TimelineRepetition[];
 
-      const triggerGroup = result.get(0)!;
-      const trigger = triggerGroup[0];
+      const result = parseRepetitions(repetitionsWithSameTaskId);
 
-      expect(trigger.data?.id).toBe('manual-trigger');
-      expect(trigger.data?.name).toBe('manual-trigger');
-      expect(trigger.data?.type).toBe('trigger');
-      expect(trigger.data?.properties.actions).toHaveProperty('manual-trigger');
-      expect(trigger.data?.properties.a2ametadata?.taskId).toBe(0);
+      // Should have only 1 group since all repetitions have the same taskSequenceId
+      expect(result.size).toBe(1);
+
+      const group = result.get(0)!;
+      expect(group).toHaveLength(3);
+      expect(group[0].repetitionIndex).toBe(0);
+      expect(group[1].repetitionIndex).toBe(1);
+      expect(group[2].repetitionIndex).toBe(2);
+
+      // All should have the same taskSequenceId
+      group.forEach((rep) => {
+        expect(rep.data?.properties.agentMetadata.taskSequenceId).toBe('shared-task-id');
+      });
+    });
+
+    it('should create sequential numbered map keys regardless of taskSequenceId values', () => {
+      const repetitionsWithRandomTaskIds = [
+        {
+          id: 'workflows/workflowId/runs/runId/repetitions/0',
+          name: '0',
+          properties: {
+            agentMetadata: {
+              taskSequenceId: 'zzz-last-alphabetically',
+              agentName: 'agent-1',
+            },
+            canResubmit: false,
+            correlation: {
+              actionTrackingId: 'action-tracking-1',
+              clientTrackingId: 'client-tracking-1',
+            },
+            startTime: '2024-01-01T01:00:00Z',
+            status: 'succeeded',
+            code: '200',
+          },
+          type: 'repetition',
+        },
+        {
+          id: 'workflows/workflowId/runs/runId/repetitions/1',
+          name: '1',
+          properties: {
+            agentMetadata: {
+              taskSequenceId: 'aaa-first-alphabetically',
+              agentName: 'agent-2',
+            },
+            canResubmit: false,
+            correlation: {
+              actionTrackingId: 'action-tracking-2',
+              clientTrackingId: 'client-tracking-2',
+            },
+            startTime: '2024-01-01T02:00:00Z',
+            status: 'succeeded',
+            code: '200',
+          },
+          type: 'repetition',
+        },
+      ] as TimelineRepetition[];
+
+      const result = parseRepetitions(repetitionsWithRandomTaskIds);
+
+      // Should have keys 0 and 1, regardless of the actual taskSequenceId values
+      expect(result.size).toBe(2);
+      expect(result.has(0)).toBe(true);
+      expect(result.has(1)).toBe(true);
+
+      // The order should be based on the order they appear in the iteration
+      const firstGroup = result.get(0)!;
+      const secondGroup = result.get(1)!;
+
+      expect(firstGroup[0].data?.properties.agentMetadata.taskSequenceId).toBe('zzz-last-alphabetically');
+      expect(secondGroup[0].data?.properties.agentMetadata.taskSequenceId).toBe('aaa-first-alphabetically');
     });
   });
 });
