@@ -216,7 +216,7 @@ export const getOperationSettings = (
       value: getRequestSchemaValidation(operation),
     },
     conditionExpressions: {
-      isSupported: isTrigger,
+      isSupported: isConditionExpressionSupported(isTrigger, operation),
       value: getConditionExpressions(operation),
     },
     runAfter: {
@@ -914,6 +914,19 @@ const getSecureOutputsSetting = (definition?: LogicAppsV2.OperationDefinition): 
   }
 
   return false;
+};
+
+const isConditionExpressionSupported = (isTrigger: boolean, operation?: LogicAppsV2.OperationDefinition): boolean => {
+  if (!isTrigger) {
+    return false;
+  }
+
+  // Agent REQUEST triggers don't support condition expressions
+  if (equals(operation?.type, Constants.NODE.TYPE.REQUEST) && equals(operation?.kind, Constants.NODE.KIND.AGENT)) {
+    return false;
+  }
+
+  return true;
 };
 
 const getConditionExpressions = (definition?: LogicAppsV2.TriggerDefinition): string[] | undefined => {
