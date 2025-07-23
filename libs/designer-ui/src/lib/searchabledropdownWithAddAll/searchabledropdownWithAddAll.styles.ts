@@ -11,7 +11,7 @@ export const useSearchableDropdownWithAddAllStyles = makeStyles({
     display: 'flex',
     flexDirection: 'row',
     gap: '8px',
-    alignItems: 'flex-start',
+    alignItems: 'center',
   },
 
   buttonGroup: {
