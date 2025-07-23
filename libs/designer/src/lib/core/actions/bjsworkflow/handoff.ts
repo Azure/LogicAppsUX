@@ -1,6 +1,6 @@
 import { agentOperation, type OperationManifest, handoffOperation } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import type { RootState } from '../..';
+import { changePanelNode, type RootState } from '../..';
 import { getOperationManifest } from '../../queries/operation';
 import { initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
 import { getWorkflowNodeFromGraphState } from '../../state/workflow/workflowSelectors';
@@ -8,6 +8,8 @@ import { addAgentTool, addNode, addHandoffMetadata, deleteAgentTool, removeHando
 import { batch } from 'react-redux';
 import { initializeSubgraphFromManifest, initializeOperationDetails } from './add';
 import { deleteGraphNode } from './delete';
+import { setSelectedPanelActiveTab } from '../../../core/state/panel/panelSlice';
+import Constants from '../../../common/constants';
 
 type AddAgentHandoffPayload = {
   sourceId: string;
@@ -86,6 +88,12 @@ export const addAgentHandoff = createAsyncThunk('addAgentHandoff', async (payloa
       undefined,
       false
     );
+
+    // Switch to the parent handoff panel to setup the description
+    batch(() => {
+      dispatch(changePanelNode(sourceId));
+      dispatch(setSelectedPanelActiveTab(Constants.PANEL_TAB_NAMES.HANDOFF));
+    });
   });
 });
 
