@@ -3,11 +3,10 @@ import type { ValueSegment } from '../editor';
 import { ValueSegmentType } from '../editor';
 import type { ChangeHandler } from '../editor/base';
 import { createLiteralValueSegment } from '../editor/base/utils/helper';
-import type { IDropdownOption, IDropdownStyles } from '@fluentui/react';
-import { SelectableOptionMenuItemType, Dropdown } from '@fluentui/react';
-import type { FormEvent } from 'react';
+import { Combobox, Option, Field } from '@fluentui/react-components';
 import { useMemo, useState } from 'react';
 import { useDropdownStyles } from './styles';
+import { useIntl } from 'react-intl';
 
 interface SerializationOptions {
   valueType: string;
@@ -28,7 +27,8 @@ export interface DropdownEditorProps {
   isCaseSensitive?: boolean;
   // Event Handlers
   onChange?: ChangeHandler;
-  customOnChangeHandler?: (event: React.FormEvent<HTMLDivElement>, option?: IDropdownOption) => void;
+  customOnChangeHandler?: (optionValue: string, optionText: string) => void;
+  virtualizeThreshold?: number; // Show virtualization when options exceed this number
   // Misc
   serialization?: SerializationOptions;
   dataAutomationId?: string;
@@ -56,92 +56,149 @@ export const DropdownEditor = ({
   customOnChangeHandler,
   serialization,
   dataAutomationId,
+  virtualizeThreshold = 100,
 }: DropdownEditorProps): JSX.Element => {
-  const [selectedKey, setSelectedKey] = useState<string | undefined>(
-    multiSelect ? undefined : getSelectedKey(options, initialValue, isCaseSensitive)
+  const intl = useIntl();
+  const [selectedKey, setSelectedKey] = useState<string>(multiSelect ? '' : getSelectedKey(options, initialValue, isCaseSensitive));
+  const [selectedKeys, setSelectedKeys] = useState<string[]>(
+    multiSelect ? getSelectedKeys(options, initialValue, serialization, isCaseSensitive) : []
   );
-  const [selectedKeys, setSelectedKeys] = useState<string[] | undefined>(
-    multiSelect ? getSelectedKeys(options, initialValue, serialization) : undefined
-  );
-  const dropdownOptions = useMemo<IDropdownOption[]>(() => getOptions(options), [options]);
+  const [searchValue, setSearchValue] = useState<string>('');
+
+  const filteredOptions = useMemo(() => {
+    if (!searchValue) {
+      return options;
+    }
+    const lowerSearch = searchValue.toLowerCase();
+    return options.filter(
+      (option) => option.displayName.toLowerCase().includes(lowerSearch) || String(option.value).toLowerCase().includes(lowerSearch)
+    );
+  }, [options, searchValue]);
+
+  // Performance optimization: limit rendered options for very large lists
+  const maxVisibleOptions = virtualizeThreshold;
+  const displayedOptions = useMemo(() => {
+    return filteredOptions.length > maxVisibleOptions ? filteredOptions.slice(0, maxVisibleOptions) : filteredOptions;
+  }, [filteredOptions, maxVisibleOptions]);
+
+  const hasMoreOptions = filteredOptions.length > displayedOptions.length;
   const classes = useDropdownStyles();
 
-  const dropdownStyles: Partial<IDropdownStyles> = {
-    root: {
-      minHeight: height ?? '30px',
-      fontSize: fontSize ?? '15px',
-    },
-    dropdown: {
-      minHeight: height ?? '30px',
-    },
-    title: {
-      height: height ?? '30px',
-      fontSize: fontSize ?? '15px',
-      lineHeight: height ?? '30px',
-    },
-    caretDownWrapper: {
-      paddingTop: '4px',
-    },
-  };
-
-  const handleOptionSelect = (_event: FormEvent<HTMLDivElement>, option?: IDropdownOption): void => {
+  const handleOptionSelect = (optionValue: string): void => {
+    const option = options.find((opt) => opt.key === optionValue);
     if (option) {
-      setSelectedKey(option.key as string);
-      onChange?.({ value: [createLiteralValueSegment(getSelectedValue(options, option.key as string))] });
+      setSelectedKey(option.key);
+      setSearchValue(''); // Clear search on selection
+      onChange?.({ value: [createLiteralValueSegment(option.value)] });
+      customOnChangeHandler?.(option.key, option.displayName);
     }
   };
 
-  const handleOptionMultiSelect = (_event: FormEvent<HTMLDivElement>, option?: IDropdownOption): void => {
-    if (option && selectedKeys) {
-      const newKeys = option.selected ? [...selectedKeys, option.key as string] : selectedKeys.filter((key: string) => key !== option.key);
+  const handleMultiSelect = (optionValue: string): void => {
+    const option = options.find((opt) => opt.key === optionValue);
+    if (option) {
+      const isSelected = selectedKeys.includes(option.key);
+      const newKeys = isSelected ? selectedKeys.filter((key) => key !== option.key) : [...selectedKeys, option.key];
+
       setSelectedKeys(newKeys);
+      setSearchValue(''); // Clear search on selection
 
       const selectedValues = newKeys.map((key) => getSelectedValue(options, key));
       onChange?.({
         value: [
           createLiteralValueSegment(
-            serialization?.valueType === 'array' ? JSON.stringify(selectedValues) : selectedValues.join(serialization?.separator)
+            serialization?.valueType === 'array' ? JSON.stringify(selectedValues) : selectedValues.join(serialization?.separator || ',')
           ),
         ],
       });
+      customOnChangeHandler?.(option.key, option.displayName);
     }
   };
 
-  return (
-    <div className={classes.container} data-automation-id={dataAutomationId}>
-      <Dropdown
-        ariaLabel={label}
-        styles={dropdownStyles}
-        disabled={readonly}
-        options={dropdownOptions}
-        multiSelect={multiSelect}
-        multiSelectDelimiter={serialization?.separator}
-        selectedKey={selectedKey}
-        selectedKeys={selectedKeys}
-        placeholder={placeholder}
-        onChange={(event: React.FormEvent<HTMLDivElement>, option?: IDropdownOption) => {
-          customOnChangeHandler?.(event, option);
-          multiSelect ? handleOptionMultiSelect(event, option) : handleOptionSelect(event, option);
-        }}
-      />
+  const renderOptions = () => {
+    return displayedOptions.map((option) => {
+      if (option.key === 'divider') {
+        return <hr key={option.key} className={classes.divider} />;
+      }
+      if (option.key === 'header') {
+        return (
+          <div key={option.key} className={classes.header}>
+            {option.displayName}
+          </div>
+        );
+      }
+
+      return (
+        <Option key={option.key} value={option.key} text={option.displayName} disabled={option.disabled}>
+          {option.displayName}
+        </Option>
+      );
+    });
+  };
+
+  const selectedValue = multiSelect
+    ? selectedKeys
+        .map((key) => options.find((opt) => opt.key === key)?.displayName)
+        .filter(Boolean)
+        .join(', ')
+    : options.find((opt) => opt.key === selectedKey)?.displayName || '';
+
+  const comboboxStyle = {
+    minHeight: height ? `${height}px` : '32px',
+    fontSize: fontSize ? `${fontSize}px` : '14px',
+    width: '100%',
+  };
+
+  const comboboxProps = {
+    'aria-label': label,
+    disabled: readonly,
+    placeholder: placeholder || 'Select an option...',
+    value: searchValue || selectedValue,
+    selectedOptions: multiSelect ? selectedKeys : selectedKey ? [selectedKey] : [],
+    multiselect: multiSelect,
+    onOptionSelect: (_event: any, data: any) => {
+      if (data.optionValue) {
+        multiSelect ? handleMultiSelect(data.optionValue) : handleOptionSelect(data.optionValue);
+      }
+    },
+    onInput: (event: any) => {
+      const value = (event.target as HTMLInputElement).value;
+      setSearchValue(value);
+    },
+    style: comboboxStyle,
+    'data-automation-id': dataAutomationId,
+  };
+
+  const INTL_TEXT = {
+    noResults: intl.formatMessage({
+      defaultMessage: 'No results found',
+      id: '+R82zZ',
+      description: 'Text displayed when no options match the search query',
+    }),
+    moreOptions: intl.formatMessage(
+      {
+        defaultMessage: 'Showing {displayedCount} of {totalCount} options. Type to search...',
+        id: '2NGCQq',
+        description: 'Text displayed when there are more options than can be shown at once',
+      },
+      {
+        displayedCount: displayedOptions.length,
+        totalCount: filteredOptions.length,
+      }
+    ),
+  };
+
+  const content = (
+    <div className={classes.container}>
+      <Combobox {...comboboxProps}>
+        {renderOptions()}
+        {hasMoreOptions && <div className={classes.moreOptions}>{INTL_TEXT.moreOptions}</div>}
+        {filteredOptions.length === 0 && searchValue && <div className={classes.noResults}>{INTL_TEXT.noResults}</div>}
+      </Combobox>
     </div>
   );
-};
 
-const getOptions = (options: DropdownItem[]): IDropdownOption[] => {
-  return [
-    ...options.map((option: DropdownItem) => {
-      const { key, displayName, disabled, type, value } = option;
-      switch (key) {
-        case 'divider':
-          return { key: key, text: displayName, itemType: SelectableOptionMenuItemType.Divider, disabled: disabled, data: type };
-        case 'header':
-          return { key: key, text: displayName, itemType: SelectableOptionMenuItemType.Header, data: type, disabed: disabled };
-        default:
-          return { key: key, text: displayName, disabled: disabled, data: type, value: value };
-      }
-    }),
-  ];
+  return label ? <Field label={label}>{content}</Field> : content;
 };
 
 const getSelectedKey = (options: DropdownItem[], initialValue?: ValueSegment[], isCaseSensitive = false): string => {
@@ -155,7 +212,12 @@ const getSelectedKey = (options: DropdownItem[], initialValue?: ValueSegment[], 
   return '';
 };
 
-const getSelectedKeys = (options: DropdownItem[], initialValue?: ValueSegment[], serialization?: SerializationOptions): string[] => {
+const getSelectedKeys = (
+  options: DropdownItem[],
+  initialValue?: ValueSegment[],
+  serialization?: SerializationOptions,
+  isCaseSensitive = false
+): string[] => {
   const returnVal: string[] = [];
   if (initialValue?.length === 1 && initialValue[0].type === ValueSegmentType.LITERAL) {
     const value = initialValue[0].value;
@@ -168,7 +230,7 @@ const getSelectedKeys = (options: DropdownItem[], initialValue?: ValueSegment[],
 
     for (const selectedValue of selectedValues) {
       const option = options.find((option) => {
-        return option.value === selectedValue;
+        return equals(String(option.value), String(selectedValue), !isCaseSensitive);
       });
 
       if (option) {

@@ -4,16 +4,14 @@ import type { BaseEditorProps, CallbackHandler } from '../editor/base';
 import { EditorWrapper } from '../editor/base/EditorWrapper';
 import { EditorChangePlugin } from '../editor/base/plugins/EditorChange';
 import { createLiteralValueSegment, notEqual } from '../editor/base/utils/helper';
-import type { IComboBox, IComboBoxOption, IComboBoxOptionStyles, IComboBoxStyles } from '@fluentui/react';
-import { SelectableOptionMenuItemType, ComboBox } from '@fluentui/react';
-import { Button, Spinner, Tooltip } from '@fluentui/react-components';
+import { Combobox as FluentCombobox, Option, Button, Spinner, Tooltip } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
 import { equals, getIntl } from '@microsoft/logic-apps-shared';
 import { isEmptySegments } from '../editor/base/utils/parsesegments';
 import { useRef, useState, useCallback, useMemo, useEffect } from 'react';
-import type { FormEvent } from 'react';
 import { useIntl } from 'react-intl';
 import { isComboboxItemMatch } from './helpers/isComboboxItemMatch';
+import { useComboboxStyles } from './styles';
 
 const ClearIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
@@ -22,35 +20,6 @@ const Mode = {
   Custom: 'Custom',
 } as const;
 type Mode = (typeof Mode)[keyof typeof Mode];
-
-const comboboxStyles: Partial<IComboBoxStyles> = {
-  root: {
-    minHeight: '30px',
-    paddingLeft: '6px',
-    fontSize: '15px',
-  },
-  divider: {
-    height: '2px',
-  },
-  input: {
-    fontSize: '14px',
-  },
-};
-
-const customValueStyles: Partial<IComboBoxOptionStyles> = {
-  label: {
-    color: 'blue',
-  },
-};
-
-const buttonStyles: any = {
-  height: '26px',
-  width: '26px',
-  margin: '2px',
-  position: 'absolute',
-  right: 0,
-  color: 'var(--colorBrandForeground1)',
-};
 
 interface SerializationOptions {
   valueType: string;
@@ -98,7 +67,7 @@ export const Combobox = ({
   ...baseEditorProps
 }: ComboboxProps): JSX.Element => {
   const intl = useIntl();
-  const comboBoxRef = useRef<IComboBox>(null);
+  const comboBoxRef = useRef<HTMLInputElement>(null);
   const optionKey = getSelectedKey(options, initialValue, isLoading, isCaseSensitive);
   const optionKeys = getSelectedKeys(options, initialValue, serialization, isCaseSensitive);
   const [value, setValue] = useState<ValueSegment[]>(initialValue);
@@ -106,8 +75,10 @@ export const Combobox = ({
   const [selectedKey, setSelectedKey] = useState<string>(optionKey);
   const [selectedKeys, setSelectedKeys] = useState<string[] | undefined>(multiSelect ? optionKeys : undefined);
   const [searchValue, setSearchValue] = useState<string>('');
+  const [debouncedSearchValue, setDebouncedSearchValue] = useState<string>('');
   const [canAutoFocus, setCanAutoFocus] = useState(false);
   const firstLoad = useRef(true);
+  const searchTimeoutRef = useRef<NodeJS.Timeout>();
 
   useEffect(() => {
     if ((firstLoad.current || !errorDetails) && !isLoading) {
@@ -117,24 +88,49 @@ export const Combobox = ({
       setSelectedKey(updatedOptionkey);
       setMode(getMode(updatedOptionkey, updatedOptionKeys, initialValue, isLoading));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoading, options]);
+  }, [errorDetails, initialValue, isCaseSensitive, isLoading, options, serialization]);
 
-  // Sort newOptions array alphabetically based on the `displayName` property.
-  useMemo(() => {
-    if (shouldSort && !isLoading) {
-      options.sort((currentItem, nextItem) => {
-        const currentName = currentItem?.displayName;
-        const nextName = nextItem?.displayName;
-        if (typeof currentName === 'number' && typeof nextName === 'number') {
-          return currentName - nextName;
-        }
-        if (typeof currentName === 'string' && typeof nextName === 'string') {
-          return currentName?.localeCompare(nextName);
-        }
-        return String(currentName).localeCompare(String(nextName));
-      });
+  // Debounce search value to prevent excessive filtering
+  useEffect(() => {
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
     }
+
+    searchTimeoutRef.current = setTimeout(() => {
+      setDebouncedSearchValue(searchValue);
+    }, 150);
+
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    };
+  }, [searchValue]);
+
+  // Sort options alphabetically based on the `displayName` property
+  const sortedOptions = useMemo(() => {
+    if (!shouldSort || isLoading) {
+      return options;
+    }
+
+    // For very large datasets, skip sorting to prevent freezing
+    if (options.length > 1000) {
+      console.warn('Skipping sort for large dataset to prevent performance issues:', options.length, 'items');
+      return options;
+    }
+
+    // Create a shallow copy to avoid mutating the original array
+    return [...options].sort((currentItem, nextItem) => {
+      const currentName = currentItem?.displayName;
+      const nextName = nextItem?.displayName;
+      if (typeof currentName === 'number' && typeof nextName === 'number') {
+        return currentName - nextName;
+      }
+      if (typeof currentName === 'string' && typeof nextName === 'string') {
+        return currentName?.localeCompare(nextName);
+      }
+      return String(currentName).localeCompare(String(nextName));
+    });
   }, [isLoading, options, shouldSort]);
 
   const comboboxOptions = useMemo(() => {
@@ -156,33 +152,87 @@ export const Combobox = ({
       displayName: errorDetails?.message ?? '',
       type: 'errorrender',
     };
-    if (searchValue && typeof searchValue === 'string') {
-      const newOptions = isLoading
-        ? [loadingOption]
-        : errorDetails
-          ? [errorOption]
-          : options.filter((option) => isComboboxItemMatch(option, searchValue));
 
-      if (newOptions.length === 0) {
+    // Handle loading and error states
+    if (isLoading) {
+      return getOptions([loadingOption]);
+    }
+    if (errorDetails) {
+      return getOptions([errorOption]);
+    }
+
+    // For very large datasets, encourage users to search
+    const isVeryLargeDataset = sortedOptions.length > 1000;
+
+    if (debouncedSearchValue && typeof debouncedSearchValue === 'string') {
+      // For large datasets, use a more performance-friendly search approach
+      let filteredOptions: ComboboxItem[] = [];
+
+      if (isVeryLargeDataset) {
+        // For very large datasets, limit search results to prevent freezing
+        let matchCount = 0;
+        const maxResults = 50; // Reduced limit for better performance
+
+        // Use requestAnimationFrame to prevent blocking the UI
+        for (let i = 0; i < sortedOptions.length && matchCount < maxResults; i++) {
+          const option = sortedOptions[i];
+          if (isComboboxItemMatch(option, debouncedSearchValue)) {
+            filteredOptions.push(option);
+            matchCount++;
+          }
+
+          // Break early if we've processed enough items without blocking for performance
+          if (i > 0 && i % 500 === 0) {
+            break;
+          }
+        }
+
+        if (filteredOptions.length === maxResults) {
+          const moreResultsLabel = intl.formatMessage(
+            {
+              defaultMessage: 'Showing first {count} matches. Type more to refine search...',
+              id: '189xYn',
+              description: 'Message when search results are limited',
+            },
+            { count: maxResults }
+          );
+          filteredOptions.unshift({
+            key: 'more_results',
+            value: moreResultsLabel,
+            disabled: true,
+            displayName: moreResultsLabel,
+            type: 'header',
+          });
+        }
+      } else {
+        filteredOptions = sortedOptions.filter((option) => isComboboxItemMatch(option, debouncedSearchValue));
+      }
+
+      if (filteredOptions.length === 0) {
         const noValuesLabel = intl.formatMessage({
           defaultMessage: 'No values match your search.',
           id: '/KRvvg',
           description: 'Label for when no values match search value.',
         });
-        newOptions.push({ key: 'header', value: noValuesLabel, disabled: true, displayName: noValuesLabel });
+        filteredOptions.push({ key: 'header', value: noValuesLabel, disabled: true, displayName: noValuesLabel });
       }
-      newOptions.push({ key: 'divider', value: '-', displayName: '-' });
-      if (options.filter((option) => option.value === searchValue).length === 0 && searchValue !== '' && useOption) {
+
+      filteredOptions.push({ key: 'divider', value: '-', displayName: '-' });
+      if (
+        sortedOptions.filter((option) => option.value === debouncedSearchValue).length === 0 &&
+        debouncedSearchValue !== '' &&
+        useOption
+      ) {
         const customValueLabel = intl.formatMessage(
           {
             defaultMessage: 'Use "{value}" as a custom value',
             id: 'VptXzY',
             description: 'Label for button to allow user to create custom value in combobox from current input',
           },
-          { value: searchValue }
+          { value: debouncedSearchValue }
         );
-        newOptions.push({
-          key: searchValue,
+        filteredOptions.push({
+          key: debouncedSearchValue,
           value: customValueLabel,
           displayName: customValueLabel,
           disabled: false,
@@ -190,44 +240,87 @@ export const Combobox = ({
         });
       }
 
-      return getOptions(newOptions);
+      return getOptions(filteredOptions);
     }
 
-    return getOptions(isLoading ? [loadingOption] : errorDetails ? [errorOption] : options);
-  }, [intl, errorDetails, searchValue, isLoading, options, useOption]);
+    // For large datasets, encourage search and show limited initial items
+    if (isVeryLargeDataset) {
+      const searchPromptLabel = intl.formatMessage(
+        {
+          defaultMessage: 'Type to search {options} items or scroll to see more...',
+          id: 'c8dbb/',
+          description: 'Prompt to encourage searching in large datasets',
+        },
+        {
+          options: sortedOptions.length.toLocaleString(),
+        }
+      );
+
+      const initialLimit = 200; // Show more items initially but still manageable
+      const limitedOptions = [
+        { key: 'search_prompt', value: searchPromptLabel, disabled: true, displayName: searchPromptLabel, type: 'header' },
+        { key: 'divider', value: '-', displayName: '-' },
+        ...sortedOptions.slice(0, initialLimit),
+      ];
+
+      // Add "show more" indicator if there are more items
+      if (sortedOptions.length > initialLimit) {
+        const remainingCount = sortedOptions.length - initialLimit;
+        const moreItemsLabel = intl.formatMessage(
+          {
+            defaultMessage: '...and {count} more items. Type to search for specific items.',
+            id: '8Ifvot',
+            description: 'Message indicating more items are available',
+          },
+          { count: remainingCount.toLocaleString() }
+        );
+        limitedOptions.push({
+          key: 'more_items',
+          value: moreItemsLabel,
+          disabled: true,
+          displayName: moreItemsLabel,
+          type: 'header',
+        });
+      }
+
+      return getOptions(limitedOptions);
+    }
+
+    return getOptions(sortedOptions);
+  }, [intl, errorDetails, debouncedSearchValue, isLoading, sortedOptions, useOption]);
 
   const toggleExpand = useCallback(() => {
-    comboBoxRef.current?.focus(true);
-    comboBoxRef.current?.dismissMenu();
+    comboBoxRef.current?.focus();
   }, []);
 
   const handleMenuOpen = (): void => {
     onMenuOpen?.();
   };
 
-  const updateOptions = (value?: string): void => {
-    comboBoxRef.current?.focus(true);
+  const updateOptions = useCallback((value?: string): void => {
+    comboBoxRef.current?.focus();
     setSelectedKey('');
     setSearchValue(value ?? '');
-  };
+  }, []);
 
-  const onRenderOption = (item?: IComboBoxOption) => {
-    switch (item?.data) {
+  const onRenderOption = (item: ComboboxItem) => {
+    switch (item?.type) {
       case 'customrender':
-        return <span className="msla-combobox-custom-option">{item?.text}</span>;
+        return <span className={classes.customOption}>{item.displayName}</span>;
       case 'loadingrender':
         return (
-          <div className="msla-combobox-loading">
-            <Spinner size={'extra-tiny'} label={item?.text} />
+          <div className={classes.loadingOption}>
+            <Spinner size={'extra-tiny'} label={item.displayName} />
           </div>
         );
       default:
-        return <span className="msla-combobox-option">{item?.text}</span>;
+        return <span>{item.displayName}</span>;
     }
   };
 
-  const handleOptionSelect = (_event: FormEvent<IComboBox>, option?: IComboBoxOption): void => {
-    if (option?.data === 'customrender') {
+  const handleOptionSelect = (optionValue: string): void => {
+    const option = comboboxOptions.find((opt) => opt.key === optionValue);
+    if (option?.type === 'customrender') {
       setValue([createLiteralValueSegment(option.key === 'customValue' ? '' : String(option.key))]);
       setMode(Mode.Custom);
       setCanAutoFocus(true);
@@ -243,13 +336,15 @@ export const Combobox = ({
     }
   };
 
-  const handleOptionMultiSelect = (_event: FormEvent<IComboBox>, option?: IComboBoxOption): void => {
-    if (option?.data === 'customrender') {
+  const handleOptionMultiSelect = (optionValue: string): void => {
+    const option = comboboxOptions.find((opt) => opt.key === optionValue);
+    if (option?.type === 'customrender') {
       setValue([createLiteralValueSegment(option.key === 'customValue' ? '' : option.key.toString())]);
       setMode(Mode.Custom);
       setCanAutoFocus(true);
     } else if (option && selectedKeys) {
-      const newKeys = option.selected ? [...selectedKeys, option.key as string] : selectedKeys.filter((key: string) => key !== option.key);
+      const isSelected = selectedKeys.includes(option.key);
+      const newKeys = isSelected ? selectedKeys.filter((key: string) => key !== option.key) : [...selectedKeys, option.key as string];
       setSelectedKeys(newKeys);
       setMode(Mode.Default);
       const selectedValues = newKeys.map((key) => getSelectedValue(options, key));
@@ -273,7 +368,7 @@ export const Combobox = ({
     setSelectedKey('');
     setSelectedKeys([]);
     setSearchValue('');
-    comboBoxRef.current?.focus(true);
+    comboBoxRef.current?.focus();
     setMode(Mode.Default);
     onChange?.({
       value: [createLiteralValueSegment('')],
@@ -290,13 +385,15 @@ export const Combobox = ({
     setSearchValue('');
   };
 
+  const classes = useComboboxStyles();
+
   return (
-    <div className="msla-combobox-container">
+    <div className={classes.container}>
       {mode === Mode.Custom ? (
-        <div className="msla-combobox-editor-container">
+        <div className={classes.editorContainer}>
           <EditorWrapper
             {...baseEditorProps}
-            className="msla-combobox-editor"
+            className={classes.editor}
             basePlugins={{ clearEditor: true, autoFocus: canAutoFocus, ...basePlugins }}
             initialValue={value}
             onBlur={handleBlur}
@@ -311,37 +408,62 @@ export const Combobox = ({
               appearance="subtle"
               onClick={() => handleClearClick()}
               icon={<ClearIcon />}
-              style={buttonStyles}
+              className={classes.clearButton}
               disabled={baseEditorProps.readonly}
             />
           </Tooltip>
         </div>
       ) : (
-        <ComboBox
-          ariaLabel={label}
-          className="msla-combobox"
-          selectedKey={multiSelect ? selectedKeys : selectedKey}
-          componentRef={comboBoxRef}
-          useComboBoxAsMenuWidth
-          allowFreeform
-          autoComplete="off"
-          options={comboboxOptions}
+        <FluentCombobox
+          aria-label={label}
+          className={classes.combobox}
+          value={searchValue || getDisplayValue(sortedOptions, selectedKey, selectedKeys || [], multiSelect)}
+          selectedOptions={multiSelect ? selectedKeys || [] : selectedKey ? [selectedKey] : []}
           disabled={baseEditorProps.readonly}
           placeholder={baseEditorProps.placeholder}
-          onInputValueChange={updateOptions}
+          freeform
+          multiselect={multiSelect}
+          onInput={(event) => updateOptions((event.target as HTMLInputElement).value)}
           onClick={toggleExpand}
-          onRenderOption={onRenderOption}
-          multiSelect={multiSelect}
-          styles={comboboxStyles}
-          onChange={multiSelect ? handleOptionMultiSelect : handleOptionSelect}
-          onMenuOpen={handleMenuOpen}
-          onBlur={handleComboBoxBlur}
-        />
+          onOptionSelect={(_event, data) => {
+            if (data.optionValue) {
+              multiSelect ? handleOptionMultiSelect(data.optionValue) : handleOptionSelect(data.optionValue);
+            }
+          }}
+          onOpenChange={(event, data) => {
+            if (data.open) {
+              handleMenuOpen();
+            } else {
+              handleComboBoxBlur();
+            }
+          }}
+          ref={comboBoxRef}
+        >
+          {comboboxOptions.map((option) => {
+            if (option.key === 'divider') {
+              return <hr key={option.key} className={classes.divider} />;
+            }
+            if (option.key === 'header') {
+              return (
+                <div key={option.key} className={classes.header}>
+                  {option.displayName}
+                </div>
+              );
+            }
+
+            return (
+              <Option key={option.key} value={option.key} text={option.displayName} disabled={option.disabled}>
+                {onRenderOption(option)}
+              </Option>
+            );
+          })}
+        </FluentCombobox>
       )}
     </div>
   );
 };
-const getOptions = (options: ComboboxItem[]): IComboBoxOption[] => {
+
+const getOptions = (options: ComboboxItem[]): ComboboxItem[] => {
   const intl = getIntl();
 
   const customValueLabel = intl.formatMessage({
@@ -358,19 +480,9 @@ const getOptions = (options: ComboboxItem[]): IComboBoxOption[] => {
 
   return [
     ...(options.length > 0
-      ? options.map((option: ComboboxItem) => {
-          const { key, displayName, disabled, type } = option;
-          switch (key) {
-            case 'divider':
-              return { key: key, text: displayName, itemType: SelectableOptionMenuItemType.Divider, disabled: disabled, data: type };
-            case 'header':
-              return { key: key, text: displayName, itemType: SelectableOptionMenuItemType.Header, data: type, disabed: disabled };
-            default:
-              return { key: key, text: displayName, disabled: disabled, data: type };
-          }
-        })
-      : [{ key: 'noOptions', text: noOptionsExists, itemType: SelectableOptionMenuItemType.Header, disabled: true }]),
-    { key: 'customValue', text: customValueLabel, styles: customValueStyles, data: 'customrender' },
+      ? options
+      : [{ key: 'noOptions', value: noOptionsExists, disabled: true, displayName: noOptionsExists, type: 'header' }]),
+    { key: 'customValue', value: customValueLabel, displayName: customValueLabel, type: 'customrender' },
   ];
 };
 
@@ -436,6 +548,21 @@ const getSelectedValue = (options: ComboboxItem[], key: string): any => {
   return options.find((option) => {
     return option.key === key;
   })?.value;
+};
+
+const getDisplayValue = (options: ComboboxItem[], selectedKey: string, selectedKeys: string[] = [], multiSelect: boolean): string => {
+  if (multiSelect && selectedKeys.length > 0) {
+    return selectedKeys
+      .map((key) => options.find((opt) => opt.key === key)?.displayName)
+      .filter(Boolean)
+      .join(', ');
+  }
+
+  if (selectedKey) {
+    return options.find((opt) => opt.key === selectedKey)?.displayName || '';
+  }
+
+  return '';
 };
 
 const normalizeValue = (value: any): string => {
