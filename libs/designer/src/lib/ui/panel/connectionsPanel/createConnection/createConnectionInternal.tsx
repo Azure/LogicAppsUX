@@ -124,7 +124,7 @@ export const CreateConnectionInternal = (props: {
         payload.connectionProperties = {
           ...(payload.connectionProperties ?? {}),
           runtimeSource: 'Dynamic',
-          dynamicConnectionProxyUrl: newConnection?.properties?.dynamicConnectionProxyUrl ?? '',
+          dynamicConnectionProxyUrl: newConnection?.properties?.dynamicConnectionProxyUrl ?? undefined,
         };
       }
 
