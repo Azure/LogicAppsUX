@@ -41,7 +41,7 @@ import {
   getRun,
   downloadDocumentAsFile,
 } from '@microsoft/logic-apps-designer';
-import { useCallback, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import LogicAppsIcon from '../../../assets/logicapp.svg';
@@ -174,9 +174,7 @@ export const DesignerCommandBar = ({
     downloadDocumentAsFile(queryResponse);
   });
 
-  const [runLoading, setRunLoading] = useState(false);
-  const runWorkflow = useCallback(async () => {
-    setRunLoading(true);
+  const { isLoading: isRunLoading, mutateAsync: runWorkflow } = useMutation(async () => {
     const designerState = DesignerStore.getState();
     const serializedWorkflow = await serializeBJSWorkflow(designerState, {
       skipValidation: false,
@@ -188,9 +186,8 @@ export const DesignerCommandBar = ({
       method: callbackInfo.method,
       url: callbackInfo.value,
     });
-    setRunLoading(false);
     return result;
-  }, []);
+  });
 
   const designerIsDirty = useIsDesignerDirty();
   const isInitialized = useNodesAndDynamicDataInitialized();
@@ -280,12 +277,12 @@ export const DesignerCommandBar = ({
       {
         key: 'run',
         text: 'Run',
-        disabled: !isDesignerView || runLoading,
+        disabled: !isDesignerView || isRunLoading,
         iconProps: { iconName: 'Play' },
         onClick: () => {
           const asyncOnClick = async () => {
             const result = await runWorkflow();
-            const runId = result.headers?.['x-ms-workflow-run-id'];
+            const runId = result?.headers?.['x-ms-workflow-run-id'];
             const fullRunId = `${id}/runs/${runId}`;
             if (fullRunId) {
               await getRun(fullRunId);
@@ -451,39 +448,39 @@ export const DesignerCommandBar = ({
       ...baseEndItems,
     ],
     [
-      id,
-      runLoading,
-      selectRun,
-      runWorkflow,
-      saveIsDisabled,
-      isSaving,
+      baseStartItems,
       isDesignerView,
-      showConnectionsPanel,
-      isSavingBlankUnitTest,
+      isRunLoading,
+      isSaving,
+      saveIsDisabled,
+      saveUnitTestIsDisabled,
       saveBlankUnitTestIsDisabled,
-      saveBlankUnitTestMutate,
+      isUnitTest,
+      showConnectionsPanel,
       haveErrors,
       isDarkMode,
+      isCopilotReady,
+      isDownloadingDocument,
       isUndoDisabled,
       isRedoDisabled,
+      baseEndItems,
+      runWorkflow,
+      id,
+      selectRun,
       saveWorkflowMutate,
       saveWorkflowFromCode,
-      discard,
       dispatch,
+      isSavingUnitTest,
+      saveUnitTestMutate,
+      isSavingBlankUnitTest,
+      saveBlankUnitTestMutate,
+      discard,
       haveWorkflowParameterErrors,
+      haveAssertionErrors,
       switchViews,
       haveConnectionErrors,
       enableCopilot,
-      isCopilotReady,
-      isUnitTest,
-      saveUnitTestMutate,
-      isSavingUnitTest,
-      saveUnitTestIsDisabled,
-      haveAssertionErrors,
-      isDownloadingDocument,
       downloadDocument,
-      baseEndItems,
-      baseStartItems,
     ]
   );
 
