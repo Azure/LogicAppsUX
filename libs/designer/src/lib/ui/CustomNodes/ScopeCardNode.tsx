@@ -61,6 +61,7 @@ import { useNodeRepetition, useAgentRepetition, useAgentActionsRepetition } from
 import { EdgeDrawTargetHandle } from './handles/EdgeDrawTargetHandle';
 import { DefaultHandle } from './handles/DefaultHandle';
 import { EdgeDrawSourceHandle } from './handles/EdgeDrawSourceHandle';
+import { useIsA2AWorkflow } from '../../core/state/designerView/designerViewSelectors';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
@@ -94,6 +95,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const runIndex = useRunIndex(scopeId);
   const scopeRepetitionName = useMemo(() => getScopeRepetitionName(runIndex), [runIndex]);
   const isTimelineRepetitionSelected = useIsActionInSelectedTimelineRepetition(scopeId);
+  const isA2AWorkflow = useIsA2AWorkflow();
 
   const repetitionName = useMemo(
     () => getRepetitionName(parentRunIndex, scopeId, nodesMetaData, operationsInfo),
@@ -111,7 +113,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   );
 
   const { isFetching: isAgentRepetitionFetching, data: agentRepetitionRunData } = useAgentRepetition(
-    !!isMonitoringView,
+    !!isMonitoringView && runIndex !== undefined && isAgent && !isA2AWorkflow,
     isAgent,
     scopeId,
     isTimelineRepetitionSelected ? runInstance?.id : undefined,

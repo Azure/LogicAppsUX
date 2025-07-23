@@ -151,7 +151,7 @@ export const useScopeFailedRepetitions = (normalizedType: string, nodeId: string
 };
 
 export const useAgentRepetition = (
-  isMonitoringView: boolean,
+  isEnabled: boolean,
   isAgent: boolean,
   nodeId: string,
   runId: string | undefined,
@@ -167,7 +167,7 @@ export const useAgentRepetition = (
     {
       ...queryOpts,
       retryOnMount: false,
-      enabled: isMonitoringView && runIndex !== undefined && isAgent,
+      enabled: isEnabled,
     }
   );
 };

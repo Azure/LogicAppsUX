@@ -62,7 +62,6 @@ const MonitoringTimeline = () => {
             runData: { ...selectedRepetition.data?.properties } as any,
           })
         );
-
         dispatch(setTimelineRepetitionIndex(transitionIndex));
 
         dispatch(setSelectedNodeId(nodeId));
