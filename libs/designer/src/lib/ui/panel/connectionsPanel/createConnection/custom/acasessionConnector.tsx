@@ -34,7 +34,7 @@ export const ACASessionConnector = (props: ConnectionParameterProps) => {
     if (isFetchingBuiltInRoleDefinitions || !Array.isArray(builltInRoleDefinitions)) {
       return undefined;
     }
-    return builltInRoleDefinitions?.find((role: any) => role?.properties?.roleName === 'Azure ContainerApps Session Executor')?.name;
+    return builltInRoleDefinitions?.find((role: any) => role?.properties?.roleName === 'Azure Container Apps Session Executor')?.name;
   }, [builltInRoleDefinitions, isFetchingBuiltInRoleDefinitions]);
 
   const comboRef = useRef<IComboBox>(null);
@@ -43,14 +43,14 @@ export const ACASessionConnector = (props: ConnectionParameterProps) => {
   const stringResources = useMemo(
     () => ({
       ACA_SESSION_POOL: intl.formatMessage({
-        defaultMessage: 'ACA Session Pool',
+        defaultMessage: 'Session Pool',
         id: 'eUGUbj',
-        description: 'Label for the ACA Session Pool',
+        description: 'Label for the Azure Container Apps session pool',
       }),
       SELECT_ACA_SESSION_POOL_ACCOUNT: intl.formatMessage({
-        defaultMessage: 'Select an ACA Session Pool',
+        defaultMessage: 'Select a session pool in Azure Container Apps',
         id: 'lbwcLk',
-        description: 'Select the ACA session pool to use for this connection',
+        description: 'Select the session pool in Azure Container Apps to use for this connection',
       }),
       LOADING_ACCOUNTS: intl.formatMessage({
         defaultMessage: 'Loading accounts...',
@@ -68,19 +68,19 @@ export const ACASessionConnector = (props: ConnectionParameterProps) => {
         description: 'Label to create a new connection',
       }),
       LEARN_MORE_CREATE_NEW: intl.formatMessage({
-        defaultMessage: 'Learn more about creating a new Azure Container App code interpreter session pool',
+        defaultMessage: 'Learn more about creating a code interpreter session pool in Azure Container Apps',
         id: 'ZsDnVT',
         description: 'info text for create',
       }),
       SELECT_SUBSCRIPTION: intl.formatMessage({
-        defaultMessage: 'Select the subscription for your ACA session pool',
+        defaultMessage: 'Select the subscription for your session pool in Azure Container Apps',
         id: 'nJI9m3',
         description: 'Message for selecting subscription',
       }),
       ASSIGN_ROLE_LINK_TEXT: intl.formatMessage({
         defaultMessage: ' Learn how to assign it',
         id: 'KwxP38',
-        description: 'Link text to learn how to assign the required role for ACA session pool',
+        description: 'Link text to learn how to assign the required role for the session pool in Azure Container Apps',
       }),
     }),
     [intl]
@@ -100,14 +100,14 @@ export const ACASessionConnector = (props: ConnectionParameterProps) => {
           LoggerService().log({
             level: LogEntryLevel.Verbose,
             area: 'aca-session-role-check',
-            message: 'The selected ACA session pool account does not have the required role: Azure ContainerApps Session Executor',
+            message: 'The selected session pool in Azure Container Apps does not have the required role: Azure Container Apps Session Executor',
           });
         }
       } catch (e: any) {
         LoggerService().log({
           level: LogEntryLevel.Error,
           area: 'aca-session-connection-account-endpoint',
-          message: 'Failed to determine if ACA session has appropriate role permissions',
+          message: 'Failed to determine if the session pool in Azure Container Apps has appropriate role permissions',
           error: e,
         });
         setHasRolePermission(null);
@@ -218,16 +218,16 @@ export const ACASessionConnector = (props: ConnectionParameterProps) => {
             <span>
               <FormattedMessage
                 id="tY1yT9"
-                defaultMessage="This ACA Session Pool is missing the <strong>{roleName}</strong> role."
+                defaultMessage="This session pool in Azure Container Apps is missing the <strong>{roleName}</strong> role."
                 values={{
-                  roleName: 'Azure ContainerApps Session Executor',
+                  roleName: 'Azure Container Apps Session Executor',
                   strong: (chunks) => <strong>{chunks}</strong>,
                 }}
-                description="Message to indicate that the ACA session pool is missing the required role"
+                description="Message to indicate that the session pool in Azure Container Apps is missing the required role"
               />
             </span>
             <Link
-              href="https://learn.microsoft.com/en-us/azure/role-based-access-control/role-assignments-portal-managed-identity"
+              href="https://learn.microsoft.com/azure/role-based-access-control/role-assignments-portal-managed-identity"
               target="_blank"
             >
               {stringResources.ASSIGN_ROLE_LINK_TEXT}
