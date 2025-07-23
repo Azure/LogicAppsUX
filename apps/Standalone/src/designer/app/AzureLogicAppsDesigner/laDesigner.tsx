@@ -168,7 +168,7 @@ const DesignerEditor = () => {
 
   const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowAppData?.location ?? '');
   const supportsStateful = !equals(workflow?.kind, 'stateless');
-  const isA2A = equals(workflow?.kind, 'Agent');
+  const isA2A = true; //equals(workflow?.kind, 'Agent');
   const services = useMemo(
     () =>
       getDesignerServices(

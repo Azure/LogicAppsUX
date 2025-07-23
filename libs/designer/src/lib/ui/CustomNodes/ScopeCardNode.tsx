@@ -35,7 +35,6 @@ import {
 import {
   setFocusElement,
   setRepetitionRunData,
-  setRunIndex,
   setSubgraphRunData,
   toggleCollapsedGraphId,
   updateAgenticGraph,
@@ -53,7 +52,7 @@ import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
-import { Position, type NodeProps } from '@xyflow/react';
+import type { NodeProps } from '@xyflow/react';
 import { copyScopeOperation } from '../../core/actions/bjsworkflow/copypaste';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { CopyTooltip } from '../common/DesignerContextualMenu/CopyTooltip';
@@ -63,8 +62,7 @@ import { DefaultHandle } from './handles/DefaultHandle';
 import { EdgeDrawSourceHandle } from './handles/EdgeDrawSourceHandle';
 import { useIsA2AWorkflow } from '../../core/state/designerView/designerViewSelectors';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
+const ScopeCardNode = ({ id }: NodeProps) => {
   const scopeId = useMemo(() => removeIdTag(id), [id]);
   const nodeComment = useNodeDescription(scopeId);
   const shouldFocus = useShouldNodeFocus(scopeId);
@@ -96,7 +94,8 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const scopeRepetitionName = useMemo(() => getScopeRepetitionName(runIndex), [runIndex]);
   const isTimelineRepetitionSelected = useIsActionInSelectedTimelineRepetition(scopeId);
   const isA2AWorkflow = useIsA2AWorkflow();
-
+  const timelineRepetitionIndex = useTimelineRepetitionIndex();
+  const timelineRepetitionCount = useActionTimelineRepetitionCount(scopeId, timelineRepetitionIndex);
   const repetitionName = useMemo(
     () => getRepetitionName(parentRunIndex, scopeId, nodesMetaData, operationsInfo),
     [nodesMetaData, operationsInfo, parentRunIndex, scopeId]
@@ -132,21 +131,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     runIndex
   );
 
-  const timelineRepetitionIndex = useTimelineRepetitionIndex();
-  const timelineRepetitionCount = useActionTimelineRepetitionCount(scopeId, timelineRepetitionIndex);
-
   useEffect(() => {
-    if (isTimelineRepetitionSelected) {
-      dispatch(setRunIndex({ page: 0, nodeId: scopeId }));
-    }
-    // We only want this to run when the timeline repetition index changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, timelineRepetitionIndex]);
-
-  useEffect(() => {
-    if (isMonitoringView && !isTimelineRepetitionSelected) {
-      return;
-    }
     if (isNullOrUndefined(agentActionsRepetitionData)) {
       return;
     }

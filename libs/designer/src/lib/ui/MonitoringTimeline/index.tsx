@@ -7,9 +7,10 @@ import { useTimelineRepetitions } from './hooks';
 import {
   clearAllRepetitionRunData,
   setFocusNode,
-  setRepetitionRunData,
+  setRunIndex,
   setTimelineRepetitionArray,
   setTimelineRepetitionIndex,
+  updateAgenticMetadata,
 } from '../../core/state/workflow/workflowSlice';
 import { useMonitoringTimelineStyles } from './monitoringTimeline.styles';
 import type { TimelineRepetitionWithActions } from './helpers';
@@ -56,17 +57,13 @@ const MonitoringTimeline = () => {
       const nodeId = selectedRepetition?.data?.properties.agentMetadata.agentName;
 
       if (nodeId) {
-        dispatch(
-          setRepetitionRunData({
-            nodeId: nodeId,
-            runData: { ...selectedRepetition.data?.properties } as any,
-          })
-        );
+        dispatch(updateAgenticMetadata({ nodeId, scopeRepetitionRunData: { ...selectedRepetition.data?.properties } }));
         dispatch(setTimelineRepetitionIndex(transitionIndex));
 
         dispatch(setSelectedNodeId(nodeId));
         dispatch(openPanel({ nodeId: nodeId, panelMode: 'Operation' }));
         dispatch(setFocusNode(nodeId));
+        dispatch(setRunIndex({ page: selectedRepetition.repetitionIndex, nodeId: nodeId }));
       }
     },
     [dispatch, selectedRepetition, transitionIndex],
