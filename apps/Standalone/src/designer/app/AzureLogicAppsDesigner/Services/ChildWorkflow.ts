@@ -3,7 +3,6 @@ import type { Workflow } from '../Models/Workflow';
 import { hybridApiVersion, HybridAppUtility } from '../Utilities/HybridAppUtilities';
 import type { HttpClient } from './HttpClient';
 import type { ListDynamicValue } from '@microsoft/logic-apps-shared';
-import { hasProperty, getPropertyValue } from '@microsoft/logic-apps-shared';
 
 export interface DynamicCallServiceOptions {
   apiVersion: string;
@@ -18,7 +17,8 @@ interface ChildWorkflowServiceOptions extends DynamicCallServiceOptions {
 }
 
 export class ChildWorkflowService {
-  private _workflowsRequestSchema: Record<string, any> | undefined;
+  private _workflowsWithRequestTrigger: Record<string, any> | undefined;
+  private _schemaCache: Record<string, any> = {};
 
   constructor(private readonly options: ChildWorkflowServiceOptions) {
     const { apiVersion, baseUrl, httpClient, siteResourceId, workflowName } = this.options;
@@ -43,11 +43,11 @@ export class ChildWorkflowService {
   public async getWorkflowsWithRequestTrigger(): Promise<ListDynamicValue[]> {
     const { workflowName } = this.options;
 
-    if (this._workflowsRequestSchema === undefined) {
-      this._workflowsRequestSchema = await this._getWorkflowsWithSingleRequestTrigger();
+    if (this._workflowsWithRequestTrigger === undefined) {
+      this._workflowsWithRequestTrigger = await this._getWorkflowsWithSingleRequestTrigger();
     }
 
-    const workflows = Object.keys(this._workflowsRequestSchema);
+    const workflows = Object.keys(this._workflowsWithRequestTrigger);
     return workflows
       .filter((workflow) => workflow.toLowerCase() !== workflowName.toLowerCase())
       .map((workflow) => ({ value: workflow, displayName: workflow }));
@@ -55,50 +55,42 @@ export class ChildWorkflowService {
 
   public async getWorkflowTriggerSchema(workflowName: string): Promise<Record<string, any>> {
     const normalizedName = workflowName.toLowerCase();
-    if (this._workflowsRequestSchema?.[normalizedName]) {
-      return this._workflowsRequestSchema[normalizedName];
-    }
 
-    try {
+    return this._getCachedSchema(normalizedName, async () => {
       const workflowUrl = `${this.options.siteResourceId}/workflows/${workflowName}`;
       const workflowContent = await this._getWorkflowContent(workflowUrl);
       const {
         definition: { triggers },
       } = workflowContent;
-      const schema = getTriggerSchema(triggers);
-
-      if (this._workflowsRequestSchema === undefined) {
-        this._workflowsRequestSchema = {};
-      }
-
-      this._workflowsRequestSchema[normalizedName] = schema;
-
-      return schema;
-    } catch {
-      // TODO(psamband): Log error but do not throw.
-      return {};
-    }
+      return getTriggerSchema(triggers);
+    });
   }
 
   public async getLogicAppSwagger(workflowId: string): Promise<Record<string, any>> {
-    if (hasProperty(this._workflowsRequestSchema ?? {}, workflowId)) {
-      return getPropertyValue(this._workflowsRequestSchema, workflowId);
-    }
-
-    try {
+    return this._getCachedSchema(workflowId, async () => {
       const { baseUrl, httpClient } = this.options;
       const workflowContent = await httpClient.get<any>({
         uri: `${baseUrl}${workflowId}`,
         queryParameters: { 'api-version': '2019-05-01' },
       });
-      const schema = getTriggerSchema(workflowContent.properties?.definition?.triggers ?? {});
+      return getTriggerSchema(workflowContent.properties?.definition?.triggers ?? {});
+    });
+  }
 
-      if (this._workflowsRequestSchema === undefined) {
-        this._workflowsRequestSchema = {};
-      }
+  private async _getCachedSchema(key: string, fetcher: () => Promise<any>): Promise<Record<string, any>> {
+    // Check general schema cache first
+    if (this._schemaCache[key]) {
+      return this._schemaCache[key];
+    }
 
-      this._workflowsRequestSchema[workflowId] = schema;
+    // Check workflows with request trigger cache
+    if (this._workflowsWithRequestTrigger?.[key]) {
+      return this._workflowsWithRequestTrigger[key];
+    }
 
+    try {
+      const schema = await fetcher();
+      this._schemaCache[key] = schema;
       return schema;
     } catch {
       // TODO(psamband): Log error but do not throw.
