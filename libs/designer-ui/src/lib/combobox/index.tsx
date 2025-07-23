@@ -6,7 +6,7 @@ import { EditorChangePlugin } from '../editor/base/plugins/EditorChange';
 import { createLiteralValueSegment, notEqual } from '../editor/base/utils/helper';
 import type { IComboBox, IComboBoxOption, IComboBoxOptionStyles, IComboBoxStyles } from '@fluentui/react';
 import { SelectableOptionMenuItemType, ComboBox } from '@fluentui/react';
-import { Button, Spinner, Tooltip } from '@fluentui/react-components';
+import { Button, mergeClasses, Spinner, Tooltip } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
 import { equals, getIntl } from '@microsoft/logic-apps-shared';
 import { isEmptySegments } from '../editor/base/utils/parsesegments';
@@ -291,7 +291,7 @@ export const Combobox = ({
   };
 
   return (
-    <div className="msla-combobox-container">
+    <div className={mergeClasses('msla-combobox-container', baseEditorProps.className)}>
       {mode === Mode.Custom ? (
         <div className="msla-combobox-editor-container">
           <EditorWrapper
