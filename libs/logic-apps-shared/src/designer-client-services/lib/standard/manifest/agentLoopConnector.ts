@@ -10,6 +10,21 @@ export default {
     brandColor: '#268bde',
     description: 'Easily integrate cutting-edge artificial intelligence capabilities into your workflows',
     capabilities: ['actions'],
+    operationParameterSets: {
+      agentModelType: {
+        name: 'agentModelType',
+        uiDefinition: {
+          displayName: 'Agent model type',
+          description: 'Type of agent model to use',
+          constraints: {
+            required: 'true',
+            notSupportedConnectionParameters: {
+              FoundryAgentService: ['Key'],
+            },
+          },
+        },
+      },
+    },
     connectionParameterSets: {
       uiDefinition: {
         displayName: 'Authentication type',
