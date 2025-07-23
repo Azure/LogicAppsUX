@@ -57,6 +57,7 @@ export const TableEditor: React.FC<TableEditorProps> = ({
   getTokenPicker,
   tokenMapping,
   loadParameterValueFromString,
+  basePlugins,
 }): JSX.Element => {
   const intl = getIntl();
   const classes = useTableStyles();
@@ -113,6 +114,7 @@ export const TableEditor: React.FC<TableEditorProps> = ({
             tokenMapping={tokenMapping}
             loadParameterValueFromString={loadParameterValueFromString}
             onChange={onItemsChange}
+            basePlugins={basePlugins}
           />
         </div>
       ) : null}
