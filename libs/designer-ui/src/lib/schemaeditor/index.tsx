@@ -16,6 +16,7 @@ import type { editor } from 'monaco-editor';
 import { useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useSchemaEditorStyles } from './schemaeditor.styles';
+import { mergeClasses } from '@fluentui/react-components';
 
 const removeStyle: IStyle = {
   border: '0',
@@ -32,6 +33,7 @@ const buttonStyles: IButtonStyles = {
 };
 
 export interface SchemaEditorProps {
+  className?: string;
   initialValue: ValueSegment[];
   label?: string;
   readonly?: boolean;
@@ -39,7 +41,7 @@ export interface SchemaEditorProps {
   onFocus?: () => void;
 }
 
-export function SchemaEditor({ readonly, label, initialValue, onChange, onFocus }: SchemaEditorProps): JSX.Element {
+export function SchemaEditor({ className, readonly, label, initialValue, onChange, onFocus }: SchemaEditorProps): JSX.Element {
   const intl = useIntl();
   const styles = useSchemaEditorStyles();
   const [errorMessage, setErrorMessage] = useState('');
@@ -131,7 +133,7 @@ export function SchemaEditor({ readonly, label, initialValue, onChange, onFocus 
   };
 
   return (
-    <div className={styles.schemaEditorBody}>
+    <div className={mergeClasses(styles.schemaEditorBody, className)}>
       <MonacoEditor
         label={label}
         height={editorHeight}

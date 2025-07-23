@@ -127,6 +127,7 @@ export const useEditOperationStyles = makeStyles({
   },
 
   parameterEditor: {
+    minWidth: '700px',
     width: '700px',
     maxWidth: '100%',
   },
@@ -136,6 +137,10 @@ export const useEditOperationStyles = makeStyles({
     alignItems: 'center',
     justifyContent: 'space-between',
     gap: tokens.spacingHorizontalS,
+  },
+
+  largeParameterSection: {
+    alignItems: 'flex-start',
   },
 
   parameterLabel: {

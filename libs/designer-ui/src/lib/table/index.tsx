@@ -43,6 +43,7 @@ export const ColumnMode = {
 export type ColumnMode = (typeof ColumnMode)[keyof typeof ColumnMode];
 
 export const TableEditor: React.FC<TableEditorProps> = ({
+  className,
   initialItems,
   initialValue,
   columnMode,
@@ -94,7 +95,7 @@ export const TableEditor: React.FC<TableEditorProps> = ({
       viewModel: { items: newState.viewModel.items, columnMode: ColumnMode.Custom },
     });
   return (
-    <div>
+    <div className={className}>
       <Dropdown styles={dropdownStyles} disabled={readonly} options={columnOptions} selectedKey={selectedKey} onChange={onOptionChange} />
       {selectedKey === ColumnMode.Custom ? (
         <div className={classes.editorContainer} data-automation-id={dataAutomationId}>
