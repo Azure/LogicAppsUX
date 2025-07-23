@@ -136,7 +136,7 @@ export const FilePickerEditor = ({
     description: 'Open folder label',
   });
   return (
-    <div className={mergeClasses('msla-filepicker-editor-container', baseEditorProps.className ?? '')}>
+    <div className={mergeClasses('msla-filepicker-editor-container', baseEditorProps.className)}>
       <EditorWrapper
         {...baseEditorProps}
         className="msla-filepicker-editor"

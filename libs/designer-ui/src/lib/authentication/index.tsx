@@ -181,7 +181,7 @@ export const AuthenticationEditor = ({
   });
 
   return (
-    <div className={mergeClasses('msla-authentication-editor-container', props.className ?? '')}>
+    <div className={mergeClasses('msla-authentication-editor-container', props.className)}>
       {expandedView ? (
         <div className="msla-authentication-editor-expanded-container">
           <AuthenticationDropdown

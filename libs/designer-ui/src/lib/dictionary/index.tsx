@@ -80,7 +80,7 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
 
   return (
     <div
-      className={mergeClasses('msla-dictionary-editor-container', baseEditorProps.className ?? '')}
+      className={mergeClasses('msla-dictionary-editor-container', baseEditorProps.className)}
       data-automation-id={baseEditorProps.dataAutomationId}
     >
       {collapsed && !(dictionaryType === DictionaryType.TABLE) ? (

@@ -133,7 +133,7 @@ export function SchemaEditor({ className, readonly, label, initialValue, onChang
   };
 
   return (
-    <div className={mergeClasses(styles.schemaEditorBody, className ?? '')}>
+    <div className={mergeClasses(styles.schemaEditorBody, className)}>
       <MonacoEditor
         label={label}
         height={editorHeight}

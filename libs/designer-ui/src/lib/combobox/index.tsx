@@ -291,7 +291,7 @@ export const Combobox = ({
   };
 
   return (
-    <div className={mergeClasses('msla-combobox-container', baseEditorProps.className ?? '')}>
+    <div className={mergeClasses('msla-combobox-container', baseEditorProps.className)}>
       {mode === Mode.Custom ? (
         <div className="msla-combobox-editor-container">
           <EditorWrapper

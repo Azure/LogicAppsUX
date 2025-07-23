@@ -111,7 +111,7 @@ export const DropdownEditor = ({
   };
 
   return (
-    <div className={mergeClasses(classes.container, className ?? '')} data-automation-id={dataAutomationId}>
+    <div className={mergeClasses(classes.container, className)} data-automation-id={dataAutomationId}>
       <Dropdown
         ariaLabel={label}
         styles={dropdownStyles}

@@ -186,7 +186,7 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
   });
 
   return (
-    <div className={mergeClasses('msla-array-editor-container', baseEditorProps.className ?? '')} data-automation-id={dataAutomationId}>
+    <div className={mergeClasses('msla-array-editor-container', baseEditorProps.className)} data-automation-id={dataAutomationId}>
       {collapsed ? (
         <CollapsedArray
           {...baseEditorProps}
