@@ -1,11 +1,19 @@
 import {
+  ArrayEditor,
+  AuthenticationEditor,
+  type AuthenticationEditorOptions,
   type ChangeState,
   Combobox,
+  DictionaryEditor,
+  DropdownEditor,
   DynamicLoadStatus,
   FilePickerEditor,
   getDropdownOptionsFromOptions,
+  HTMLEditor,
   mergeClasses,
+  SchemaEditor,
   StringEditor,
+  TableEditor,
 } from '@microsoft/designer-ui';
 import { getPropertyValue, replaceWhiteSpaceWithUnderscore, type ParameterInfo, type ValueSegment } from '@microsoft/logic-apps-shared';
 import { useEditOperationStyles } from './styles';
@@ -131,10 +139,82 @@ export const ParameterEditor = ({
   const labelForAutomationId = replaceWhiteSpaceWithUnderscore(parameter.label);
 
   switch (parameter.editor?.toLowerCase()) {
+    case constants.EDITOR.ARRAY:
+      return (
+        <ArrayEditor
+          labelId={labelForAutomationId}
+          arrayType={parameter.editorViewModel.arrayType}
+          initialMode={parameter.editorOptions?.initialMode}
+          label={parameter.label}
+          placeholder={parameter.placeholder}
+          initialValue={parameter.value}
+          // isDynamic={isDynamic}
+          basePlugins={{ tokens: false }}
+          itemSchema={parameter.editorViewModel.itemSchema}
+          onChange={onValueChange}
+          options={dropdownOptions}
+          isLoading={parameter.dynamicData?.status === DynamicLoadStatus.LOADING}
+          errorDetails={parameter.dynamicData?.error ? { message: parameter.dynamicData.error.message } : undefined}
+          onMenuOpen={onComboboxMenuOpen}
+          // loadParameterValueFromString
+          castParameter={(_, _2) => ''} // TODO: Placeholder for castParameter function
+          dataAutomationId={`msla-setting-token-editor-combobox-${labelForAutomationId}`}
+        />
+      );
+
+    case constants.EDITOR.AUTHENTICATION:
+      return (
+        <AuthenticationEditor
+          labelId={labelForAutomationId}
+          initialValue={parameter.value}
+          options={parameter.editorOptions as AuthenticationEditorOptions}
+          type={parameter.editorViewModel.type}
+          authenticationValue={parameter.editorViewModel.authenticationValue}
+          onChange={onValueChange}
+          // loadParameterValueFromString={loadParameterValueFromString}
+          basePlugins={{ tokens: false }}
+        />
+      );
+
+    case constants.EDITOR.DICTIONARY:
+      return (
+        <DictionaryEditor
+          labelId={labelForAutomationId}
+          label={parameter.label}
+          placeholder={parameter.placeholder}
+          basePlugins={{ tokens: false }}
+          readonly={parameter.editorOptions?.readOnly}
+          initialValue={parameter.value}
+          initialItems={parameter.editorViewModel.items}
+          valueType={parameter.editorOptions?.valueType}
+          onChange={onValueChange}
+          // loadParameterValueFromString={loadParameterValueFromString}
+          dataAutomationId={`msla-setting-token-editor-dictionaryeditor-${labelForAutomationId}`}
+        />
+      );
+
+    case constants.EDITOR.DROPDOWN:
+      return (
+        <DropdownEditor
+          label={parameter.label}
+          initialValue={parameter.value}
+          options={dropdownOptions.map((option: any, index: number) => ({
+            key: index.toString(),
+            ...option,
+          }))}
+          placeholder={parameter.placeholder}
+          multiSelect={!!getPropertyValue(parameter.editorOptions, 'multiSelect')}
+          serialization={parameter.editorOptions?.serialization}
+          onChange={onValueChange}
+          dataAutomationId={`msla-setting-token-editor-dropdowneditor-${labelForAutomationId}`}
+        />
+      );
+
     case constants.EDITOR.COMBOBOX:
       return (
         <Combobox
           labelId={labelForAutomationId}
+          label={parameter.label}
           placeholder={parameter.placeholder}
           basePlugins={{ tokens: false }}
           initialValue={parameter.value}
@@ -167,6 +247,39 @@ export const ParameterEditor = ({
           errorDetails={parameter.dynamicData?.error ? { message: parameter.dynamicData.error.message } : undefined}
           editorBlur={onValueChange}
           dataAutomationId={`msla-setting-token-editor-filepickereditor-${labelForAutomationId}`}
+        />
+      );
+
+    case constants.EDITOR.HTML:
+      return (
+        <HTMLEditor
+          labelId={labelForAutomationId}
+          initialValue={parameter.value}
+          placeholder={parameter.placeholder}
+          basePlugins={{ tokens: false }}
+          // loadParameterValueFromString={loadParameterValueFromString}
+          onChange={onValueChange}
+          valueType={constants.SWAGGER.TYPE.ANY}
+          dataAutomationId={`msla-setting-token-editor-htmleditor-${labelForAutomationId}`}
+        />
+      );
+
+    case constants.EDITOR.SCHEMA:
+      return <SchemaEditor label={parameter.label} initialValue={parameter.value} onChange={onValueChange} />;
+
+    case constants.EDITOR.TABLE:
+      return (
+        <TableEditor
+          labelId={labelForAutomationId}
+          initialValue={parameter.value}
+          initialItems={parameter.editorViewModel.items}
+          columnMode={parameter.editorViewModel.columnMode}
+          columns={parameter.editorOptions?.columns?.count}
+          titles={parameter.editorOptions?.columns?.titles}
+          keys={parameter.editorOptions?.columns?.keys}
+          types={parameter.editorOptions?.columns?.types}
+          onChange={onValueChange}
+          dataAutomationId={`msla-setting-token-editor-tableditor-${labelForAutomationId}`}
         />
       );
 
