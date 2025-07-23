@@ -922,7 +922,7 @@ const isConditionExpressionSupported = (isTrigger: boolean, operation?: LogicApp
   }
 
   // Agent REQUEST triggers don't support condition expressions
-  if (operation?.type === Constants.NODE.TYPE.REQUEST && operation?.kind === Constants.NODE.KIND.AGENT) {
+  if (equals(operation?.type, Constants.NODE.TYPE.REQUEST) && equals(operation?.kind, Constants.NODE.KIND.AGENT)) {
     return false;
   }
 
