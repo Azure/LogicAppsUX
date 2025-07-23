@@ -17,7 +17,7 @@ interface ChildWorkflowServiceOptions extends DynamicCallServiceOptions {
 }
 
 export class ChildWorkflowService {
-  private _workflowsWithRequestTrigger: Record<string, any> | undefined;
+  private _workflowsWithRequestTrigger: string[] | undefined;
   private _schemaCache: Record<string, any> = {};
 
   constructor(private readonly options: ChildWorkflowServiceOptions) {
@@ -47,8 +47,7 @@ export class ChildWorkflowService {
       this._workflowsWithRequestTrigger = await this._getWorkflowsWithSingleRequestTrigger();
     }
 
-    const workflows = Object.keys(this._workflowsWithRequestTrigger);
-    return workflows
+    return this._workflowsWithRequestTrigger
       .filter((workflow) => workflow.toLowerCase() !== workflowName.toLowerCase())
       .map((workflow) => ({ value: workflow, displayName: workflow }));
   }
@@ -78,14 +77,9 @@ export class ChildWorkflowService {
   }
 
   private async _getCachedSchema(key: string, fetcher: () => Promise<any>): Promise<Record<string, any>> {
-    // Check general schema cache first
+    // Check schema cache
     if (this._schemaCache[key]) {
       return this._schemaCache[key];
-    }
-
-    // Check workflows with request trigger cache
-    if (this._workflowsWithRequestTrigger?.[key]) {
-      return this._workflowsWithRequestTrigger[key];
     }
 
     try {
@@ -98,9 +92,9 @@ export class ChildWorkflowService {
     }
   }
 
-  private async _getWorkflowsWithSingleRequestTrigger(): Promise<Record<string, any>> {
+  private async _getWorkflowsWithSingleRequestTrigger(): Promise<string[]> {
     const workflowsInApp = await this._listWorkflows();
-    const workflowsWithSingleRequestTrigger: Record<string, any> = {};
+    const workflowNames: string[] = [];
 
     // Create an array of promises for all workflow content fetches
     const workflowPromises = workflowsInApp.map(async (workflow) => {
@@ -109,10 +103,9 @@ export class ChildWorkflowService {
 
       if (workflowContent !== undefined && hasSingleRequestTrigger(workflowContent?.definition?.triggers)) {
         const workflowName = id.split('/').slice(-1)[0];
-        return {
-          name: workflowName.toLowerCase(),
-          triggerSchema: getTriggerSchema(workflowContent.definition.triggers),
-        };
+        // Cache the schema while we have it
+        this._schemaCache[workflowName.toLowerCase()] = getTriggerSchema(workflowContent.definition.triggers);
+        return workflowName.toLowerCase();
       }
       return null;
     });
@@ -122,11 +115,11 @@ export class ChildWorkflowService {
 
     for (const result of results) {
       if (result.status === 'fulfilled' && result.value) {
-        workflowsWithSingleRequestTrigger[result.value.name] = result.value.triggerSchema;
+        workflowNames.push(result.value);
       }
     }
 
-    return workflowsWithSingleRequestTrigger;
+    return workflowNames;
   }
 
   private async _listWorkflows(): Promise<Workflow[]> {
