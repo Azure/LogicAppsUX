@@ -106,7 +106,7 @@ export const EdgeContextualMenu = () => {
       return;
     }
 
-    const newAgentId = `Agent-${customLengthGuid(4)}`;
+    const newAgentId = `Agent_${customLengthGuid(4)}`;
 
     if (isA2AWorkflow && hasUpstreamAgenticLoop && parentId) {
       // If this is an A2A flow and the parent is an agent, don't add any relationships, instead add a handoff tool + operation
