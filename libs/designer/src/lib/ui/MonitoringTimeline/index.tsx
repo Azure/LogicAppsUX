@@ -34,9 +34,11 @@ const MonitoringTimeline = () => {
 
   useEffect(() => {
     const repetitionArray = Array.from(repetitions).flatMap(([_taskId, repetitionList]) => {
-      const repetitionsActions = repetitionList.map((repetition) =>
-        repetition.data?.actionResult.name ? [repetition.data?.actionResult.name] : []
-      );
+      const repetitionsActions = repetitionList.map((repetition) => {
+        const actionName = repetition.data?.properties.agentMetadata?.agentName;
+
+        return actionName ? [actionName] : [];
+      });
       return repetitionsActions;
     });
     dispatch(setTimelineRepetitionArray(repetitionArray));
@@ -51,14 +53,13 @@ const MonitoringTimeline = () => {
   useThrottledEffect(
     () => {
       dispatch(clearAllRepetitionRunData());
-
-      const nodeId = selectedRepetition?.data?.actionResult.name;
+      const nodeId = selectedRepetition?.data?.properties.agentMetadata.agentName;
 
       if (nodeId) {
         dispatch(
           setRepetitionRunData({
             nodeId: nodeId,
-            runData: { ...selectedRepetition.data?.actionResult } as any,
+            runData: { ...selectedRepetition.data?.properties } as any,
           })
         );
 

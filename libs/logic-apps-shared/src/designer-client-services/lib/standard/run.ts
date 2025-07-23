@@ -207,14 +207,14 @@ export class StandardRunService implements IRunService {
    * @returns {Promise<any>}
    */
 
-  async getTimelineRepetitions(_runId: string): Promise<any> {
+  async getTimelineRepetitions(runId: string): Promise<any> {
     const { baseUrl, workflowName, httpClient, isTimelineSupported } = this.options;
 
     if (!isTimelineSupported) {
       return undefined;
     }
 
-    const onlyRunId = '08584483778375025217541431456CU00'; //runId.split('/')?.at(-1);
+    const onlyRunId = runId.split('/')?.at(-1);
     const uri = `${baseUrl}/workflows/${workflowName}/runs/${onlyRunId}/timeline?api-version=2024-04-01`;
 
     try {

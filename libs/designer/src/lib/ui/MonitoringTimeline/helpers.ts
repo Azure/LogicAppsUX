@@ -15,7 +15,7 @@ export const parseRepetitions = (repetitionData: TimelineRepetition[] | undefine
   // Add all repetitions
   repetitions.push(
     ...(repetitionData ?? []).map((repetition: TimelineRepetition) => {
-      const repetitionName = repetition.entryReference.split('/').pop();
+      const repetitionName = repetition.id.split('/').pop();
       return {
         repetitionIndex: Number(repetitionName),
         data: repetition,
@@ -27,7 +27,7 @@ export const parseRepetitions = (repetitionData: TimelineRepetition[] | undefine
   const taskIdToRepetitionsMap = new Map<string, TimelineRepetitionWithActions[]>();
 
   repetitions.forEach((repetition) => {
-    const taskId = repetition.data?.agentMetadata.taskSequenceId;
+    const taskId = repetition.data?.properties.agentMetadata.taskSequenceId;
     if (taskId) {
       const existingRepetitions = taskIdToRepetitionsMap.get(taskId) ?? [];
       taskIdToRepetitionsMap.set(taskId, [...existingRepetitions, repetition]);

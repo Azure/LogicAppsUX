@@ -17,9 +17,9 @@ const TimelineNode = ({
   isExpanded: boolean;
   data: TimelineRepetition;
 }) => {
-  const { actionResult } = data;
+  const { properties } = data;
   const styles = useMonitoringTimelineStyles();
-  const nodeId = useMemo(() => actionResult.name ?? '', [actionResult]);
+  const nodeId = useMemo(() => properties.agentMetadata.agentName, [properties]);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -39,8 +39,8 @@ const TimelineNode = ({
           {nodeText}
         </Text>
       )}
-      {isExpanded && equals(actionResult.status, 'failed') && (
-        <Tooltip relationship="description" content={actionResult?.error?.code ?? ''} withArrow>
+      {isExpanded && equals(properties.status, 'failed') && (
+        <Tooltip relationship="description" content={properties?.error?.code ?? ''} withArrow>
           <div className={styles.errorIcon}>
             <Failed />
           </div>

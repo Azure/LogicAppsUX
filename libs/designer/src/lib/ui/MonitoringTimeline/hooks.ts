@@ -4,17 +4,23 @@ import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
 export interface TimelineRepetition {
-  entryReference: string;
-  actionResult: {
-    name: string;
-    code: string;
+  properties: {
+    agentMetadata: {
+      taskSequenceId: string;
+      agentName: string;
+    };
+    canResubmit: boolean;
+    startTime: string;
+    correlation: {
+      actionTrackingId: string;
+      clientTrackingId: string;
+    };
     status: string;
-    startingIterationIndex: number;
+    code: string;
     error?: any;
   };
-  agentMetadata: {
-    taskSequenceId: string;
-  };
+  id: string;
+  name: string;
   type: string;
 }
 
@@ -25,7 +31,7 @@ export const useTimelineRepetitions = (): UseQueryResult<TimelineRepetition[]> =
     async () => {
       const timelineRepetitions = await RunService().getTimelineRepetitions(run?.id ?? '');
       const parsedData: TimelineRepetition[] = JSON.parse(JSON.stringify(timelineRepetitions))?.value ?? [];
-      const sortedData = parsedData.sort((a, b) => a.entryReference.localeCompare(b.entryReference, undefined));
+      const sortedData = parsedData.sort((a, b) => a.name.localeCompare(b.name, undefined));
 
       return sortedData;
     },
@@ -41,9 +47,9 @@ export const useTimelineRepetitionOffset = (actionId: string) => {
   return useMemo(() => {
     let lastCount = 0;
     for (let i = 0; i < timelineIndex - 1; i++) {
-      const action = repetitions?.[i].actionResult;
-      if (action?.name === actionId) {
-        lastCount = action?.startingIterationIndex ?? 0;
+      const repetition = repetitions?.[i];
+      if (repetition?.name === actionId) {
+        lastCount = Number.parseInt(repetition.name) || 0;
       }
     }
     return lastCount;
@@ -54,9 +60,9 @@ export const useTimelineRepetitionCount = (actionId: string) => {
   const { data: repetitions } = useTimelineRepetitions();
   const timelineIndex = useTimelineRepetitionIndex();
   return useMemo(() => {
-    const action = repetitions?.[timelineIndex].actionResult;
-    if (action?.name === actionId) {
-      return action?.startingIterationIndex ?? 0;
+    const repetition = repetitions?.[timelineIndex];
+    if (repetition?.name === actionId) {
+      return Number.parseInt(repetition.name) || 0;
     }
     return 0;
   }, [actionId, timelineIndex, repetitions]);
