@@ -147,7 +147,7 @@ export const ParameterEditor = ({
           ...parameter,
           value,
         } as ParameterInfo,
-        /* isDefinitionValue */ false
+        /* isDefinitionValue */ true
       ) ?? ''
     );
   };
