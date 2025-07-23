@@ -139,6 +139,10 @@ export const useEditOperationStyles = makeStyles({
     gap: tokens.spacingHorizontalS,
   },
 
+  largeParameterSection: {
+    alignItems: 'flex-start',
+  },
+
   parameterLabel: {
     fontWeight: tokens.fontWeightSemibold,
     color: tokens.colorNeutralForeground1,

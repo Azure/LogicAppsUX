@@ -154,12 +154,13 @@ export const ParameterEditor = ({
 
   const dropdownOptions = getDropdownOptionsFromOptions(parameter.editorOptions);
   const labelForAutomationId = replaceWhiteSpaceWithUnderscore(parameter.label);
+  const editorClassName = mergeClasses('msla-setting-token-editor-container', styles.parameterEditor);
 
   switch (parameter.editor?.toLowerCase()) {
     case constants.EDITOR.ARRAY:
       return (
         <ArrayEditor
-          className={mergeClasses('msla-setting-token-editor-container', styles.parameterEditor)}
+          className={editorClassName}
           labelId={labelForAutomationId}
           arrayType={parameter.editorViewModel.arrayType}
           initialMode={parameter.editorOptions?.initialMode}
@@ -179,7 +180,7 @@ export const ParameterEditor = ({
     case constants.EDITOR.AUTHENTICATION:
       return (
         <AuthenticationEditor
-          className={mergeClasses('msla-setting-token-editor-container', styles.parameterEditor)}
+          className={editorClassName}
           labelId={labelForAutomationId}
           initialValue={parameter.value}
           options={parameter.editorOptions as AuthenticationEditorOptions}
@@ -193,7 +194,7 @@ export const ParameterEditor = ({
     case constants.EDITOR.DICTIONARY:
       return (
         <DictionaryEditor
-          className={mergeClasses('msla-setting-token-editor-container', styles.parameterEditor)}
+          className={editorClassName}
           labelId={labelForAutomationId}
           label={parameter.label}
           placeholder={parameter.placeholder}
@@ -228,7 +229,7 @@ export const ParameterEditor = ({
     case constants.EDITOR.COMBOBOX:
       return (
         <Combobox
-          className={mergeClasses('msla-setting-token-editor-container', styles.parameterEditor)}
+          className={editorClassName}
           labelId={labelForAutomationId}
           label={parameter.label}
           placeholder={parameter.placeholder}
@@ -249,7 +250,7 @@ export const ParameterEditor = ({
     case constants.EDITOR.FILEPICKER:
       return (
         <FilePickerEditor
-          className={mergeClasses('msla-setting-token-editor-container', styles.parameterEditor)}
+          className={editorClassName}
           labelId={labelForAutomationId}
           placeholder={parameter.placeholder}
           basePlugins={{ ...mcpEditorsPlugin, clearEditor: true }}
@@ -305,7 +306,7 @@ export const ParameterEditor = ({
     default:
       return (
         <StringEditor
-          className={mergeClasses('msla-setting-token-editor-container', styles.parameterEditor)}
+          className={editorClassName}
           basePlugins={mcpEditorsPlugin}
           initialValue={parameter.value}
           onChange={onParameterVisibilityUpdate}
