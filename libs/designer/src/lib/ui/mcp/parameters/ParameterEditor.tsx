@@ -1,11 +1,19 @@
 import {
+  ArrayEditor,
+  AuthenticationEditor,
+  type AuthenticationEditorOptions,
   type ChangeState,
   Combobox,
+  DictionaryEditor,
+  DropdownEditor,
   DynamicLoadStatus,
   FilePickerEditor,
   getDropdownOptionsFromOptions,
+  HTMLEditor,
   mergeClasses,
+  SchemaEditor,
   StringEditor,
+  TableEditor,
 } from '@microsoft/designer-ui';
 import { getPropertyValue, replaceWhiteSpaceWithUnderscore, type ParameterInfo, type ValueSegment } from '@microsoft/logic-apps-shared';
 import { useEditOperationStyles } from './styles';
@@ -15,6 +23,7 @@ import {
   getValueFromPickerSelectedItem,
   loadDynamicTreeItemsForParameter,
   loadDynamicValuesForParameter,
+  parameterValueToString,
   updateParameterAndDependencies,
 } from '../../../core/utils/parameters/helper';
 import { useDispatch, useSelector } from 'react-redux';
@@ -29,6 +38,10 @@ interface ParameterEditorProps {
   onParameterVisibilityUpdate: () => void;
   handleParameterValueChange: (parameterId: string, newValue: ValueSegment[]) => void;
 }
+
+const mcpEditorsPlugin = {
+  tokens: false,
+};
 
 export const ParameterEditor = ({
   operationId,
@@ -127,16 +140,95 @@ export const ParameterEditor = ({
     },
   });
 
+  const onCastParameter = (value: ValueSegment[]): string => {
+    return (
+      parameterValueToString(
+        {
+          ...parameter,
+          value,
+        } as ParameterInfo,
+        /* isDefinitionValue */ true
+      ) ?? ''
+    );
+  };
+
   const dropdownOptions = getDropdownOptionsFromOptions(parameter.editorOptions);
   const labelForAutomationId = replaceWhiteSpaceWithUnderscore(parameter.label);
 
   switch (parameter.editor?.toLowerCase()) {
+    case constants.EDITOR.ARRAY:
+      return (
+        <ArrayEditor
+          labelId={labelForAutomationId}
+          arrayType={parameter.editorViewModel.arrayType}
+          initialMode={parameter.editorOptions?.initialMode}
+          label={parameter.label}
+          placeholder={parameter.placeholder}
+          initialValue={parameter.value}
+          basePlugins={mcpEditorsPlugin}
+          itemSchema={parameter.editorViewModel.itemSchema}
+          onChange={onValueChange}
+          options={dropdownOptions}
+          onMenuOpen={onComboboxMenuOpen}
+          castParameter={onCastParameter}
+          dataAutomationId={`msla-setting-token-editor-combobox-${labelForAutomationId}`}
+        />
+      );
+
+    case constants.EDITOR.AUTHENTICATION:
+      return (
+        <AuthenticationEditor
+          labelId={labelForAutomationId}
+          initialValue={parameter.value}
+          options={parameter.editorOptions as AuthenticationEditorOptions}
+          type={parameter.editorViewModel.type}
+          authenticationValue={parameter.editorViewModel.authenticationValue}
+          onChange={onValueChange}
+          basePlugins={mcpEditorsPlugin}
+        />
+      );
+
+    case constants.EDITOR.DICTIONARY:
+      return (
+        <DictionaryEditor
+          labelId={labelForAutomationId}
+          label={parameter.label}
+          placeholder={parameter.placeholder}
+          basePlugins={mcpEditorsPlugin}
+          readonly={parameter.editorOptions?.readOnly}
+          initialValue={parameter.value}
+          initialItems={parameter.editorViewModel.items}
+          valueType={parameter.editorOptions?.valueType}
+          onChange={onValueChange}
+          dataAutomationId={`msla-setting-token-editor-dictionaryeditor-${labelForAutomationId}`}
+        />
+      );
+
+    case constants.EDITOR.DROPDOWN:
+      return (
+        <DropdownEditor
+          label={parameter.label}
+          initialValue={parameter.value}
+          options={dropdownOptions.map((option: any, index: number) => ({
+            key: index.toString(),
+            ...option,
+          }))}
+          placeholder={parameter.placeholder}
+          multiSelect={!!getPropertyValue(parameter.editorOptions, 'multiSelect')}
+          serialization={parameter.editorOptions?.serialization}
+          onChange={onValueChange}
+          dataAutomationId={`msla-setting-token-editor-dropdowneditor-${labelForAutomationId}`}
+        />
+      );
+
     case constants.EDITOR.COMBOBOX:
       return (
         <Combobox
+          className="msla-setting-token-editor-container"
           labelId={labelForAutomationId}
+          label={parameter.label}
           placeholder={parameter.placeholder}
-          basePlugins={{ tokens: false }}
+          basePlugins={mcpEditorsPlugin}
           initialValue={parameter.value}
           options={dropdownOptions}
           useOption={true}
@@ -156,7 +248,7 @@ export const ParameterEditor = ({
           className="msla-setting-token-editor-container"
           labelId={labelForAutomationId}
           placeholder={parameter.placeholder}
-          basePlugins={{ clearEditor: true, tokens: false }}
+          basePlugins={{ ...mcpEditorsPlugin, clearEditor: true }}
           initialValue={parameter.value}
           displayValue={parameter.editorViewModel.displayValue}
           type={parameter.editorOptions?.pickerType}
@@ -170,11 +262,43 @@ export const ParameterEditor = ({
         />
       );
 
+    case constants.EDITOR.HTML:
+      return (
+        <HTMLEditor
+          labelId={labelForAutomationId}
+          initialValue={parameter.value}
+          placeholder={parameter.placeholder}
+          basePlugins={mcpEditorsPlugin}
+          onChange={onValueChange}
+          valueType={constants.SWAGGER.TYPE.ANY}
+          dataAutomationId={`msla-setting-token-editor-htmleditor-${labelForAutomationId}`}
+        />
+      );
+
+    case constants.EDITOR.SCHEMA:
+      return <SchemaEditor label={parameter.label} initialValue={parameter.value} onChange={onValueChange} />;
+
+    case constants.EDITOR.TABLE:
+      return (
+        <TableEditor
+          labelId={labelForAutomationId}
+          initialValue={parameter.value}
+          initialItems={parameter.editorViewModel.items}
+          columnMode={parameter.editorViewModel.columnMode}
+          columns={parameter.editorOptions?.columns?.count}
+          titles={parameter.editorOptions?.columns?.titles}
+          keys={parameter.editorOptions?.columns?.keys}
+          types={parameter.editorOptions?.columns?.types}
+          onChange={onValueChange}
+          dataAutomationId={`msla-setting-token-editor-tableditor-${labelForAutomationId}`}
+        />
+      );
+
     default:
       return (
         <StringEditor
           className={mergeClasses('msla-setting-token-editor-container', styles.parameterEditor)}
-          basePlugins={{ tokens: false }}
+          basePlugins={mcpEditorsPlugin}
           initialValue={parameter.value}
           onChange={onParameterVisibilityUpdate}
           editorBlur={onValueChange}

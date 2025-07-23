@@ -37,7 +37,7 @@ export interface ExpandedSimpleArrayProps {
   tokenPickerButtonProps?: TokenPickerButtonEditorProps;
   setItems: (newItems: SimpleArrayItem[]) => void;
   options?: ComboboxItem[];
-  getTokenPicker: GetTokenPickerHandler;
+  getTokenPicker?: GetTokenPickerHandler;
   tokenMapping?: Record<string, ValueSegment>;
   loadParameterValueFromString?: loadParameterValueFromStringHandler;
   isDynamic?: boolean;

@@ -25,7 +25,7 @@ export interface ExpandedComplexArrayProps {
   itemKey?: string;
   isNested?: boolean;
   options?: ComboboxItem[];
-  getTokenPicker: GetTokenPickerHandler;
+  getTokenPicker?: GetTokenPickerHandler;
   tokenMapping?: Record<string, ValueSegment>;
   loadParameterValueFromString?: loadParameterValueFromStringHandler;
   isDynamic?: boolean;
