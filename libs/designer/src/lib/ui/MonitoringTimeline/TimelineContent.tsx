@@ -4,8 +4,8 @@ import { useMemo } from 'react';
 import type { TimelineRepetitionWithActions } from './helpers';
 import { Slider, Spinner, Text, tokens } from '@fluentui/react-components';
 import { BorderNoneRegular, CaretLeftFilled } from '@fluentui/react-icons';
-import { equals } from '@microsoft/logic-apps-shared';
 import TimelineGroup from './TimelineGroup';
+import { equals } from '@microsoft/logic-apps-shared';
 
 interface TimelineContentProps {
   isExpanded: boolean;
@@ -110,7 +110,7 @@ const TimelineContent = ({
           <div className={styles.errorCaretContainer}>
             {Array.from(repetitions).flatMap(([_taskId, repetitionList]) =>
               repetitionList.map((repetition, _index) =>
-                equals(Object.values(repetition?.data?.properties?.actions ?? {})?.[0]?.status, 'failed') ? (
+                equals(repetition.data?.properties?.status, 'failed') ? (
                   <CaretLeftFilled key={repetition.repetitionIndex} className={styles.errorCaret} />
                 ) : (
                   <div key={repetition.repetitionIndex} />

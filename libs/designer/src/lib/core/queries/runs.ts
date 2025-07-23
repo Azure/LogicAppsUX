@@ -23,7 +23,8 @@ export const runsQueriesKeys = {
   useScopeFailedRepetitions: 'useScopeFailedRepetitions',
   useAgentRepetition: 'useAgentRepetition',
   useAgentActionsRepetition: 'useAgentActionsRepetition',
-  useChatHistory: 'useChatHistory',
+  useActionsChatHistory: 'useActionsChatHistory',
+  useRunChatHistory: 'useRunChatHistory',
   useAgentChatInvokeUri: 'useAgentChatInvokeUri',
   useRunInstance: 'useRunInstance',
   useCancelRun: 'useCancelRun',
@@ -150,7 +151,7 @@ export const useScopeFailedRepetitions = (normalizedType: string, nodeId: string
 };
 
 export const useAgentRepetition = (
-  isMonitoringView: boolean,
+  isEnabled: boolean,
   isAgent: boolean,
   nodeId: string,
   runId: string | undefined,
@@ -166,7 +167,7 @@ export const useAgentRepetition = (
     {
       ...queryOpts,
       retryOnMount: false,
-      enabled: isMonitoringView && runIndex !== undefined && isAgent,
+      enabled: isEnabled,
     }
   );
 };
@@ -208,13 +209,13 @@ export const useAgentActionsRepetition = (
   );
 };
 
-export const useChatHistory = (isMonitoringView: boolean, nodeIds: string[], runId: string | undefined) => {
+export const useActionsChatHistory = (nodeIds: string[], runId: string | undefined, isEnabled: boolean) => {
   return useQuery(
-    [runsQueriesKeys.useChatHistory, { nodeIds, runId }],
+    [runsQueriesKeys.useActionsChatHistory, { nodeIds, runId }],
     async () => {
       const allMessages: ChatHistory[] = [];
       for (const nodeId of nodeIds) {
-        const messages = await RunService().getChatHistory({ nodeId, runId });
+        const messages = await RunService().getActionChatHistory({ nodeId, runId });
         allMessages.push({ nodeId, messages });
       }
       return allMessages;
@@ -222,9 +223,45 @@ export const useChatHistory = (isMonitoringView: boolean, nodeIds: string[], run
     {
       ...queryOpts,
       retryOnMount: false,
-      enabled: isMonitoringView && runId !== undefined && nodeIds.length > 0,
+      enabled: isEnabled && runId !== undefined && nodeIds?.length > 0,
     }
   );
+};
+
+export const useRunChatHistory = (runId: string | undefined, isEnabled: boolean) => {
+  return useQuery(
+    [runsQueriesKeys.useRunChatHistory, { runId }],
+    async () => {
+      if (isNullOrUndefined(runId)) {
+        return null;
+      }
+      const messages = (await RunService().getRunChatHistory(runId)) ?? [];
+      const sortedMessages = messages.sort((a: any, b: any) => {
+        const dateA = new Date(a.timestamp);
+        const dateB = new Date(b.timestamp);
+        return dateB.getTime() - dateA.getTime();
+      });
+      return [
+        {
+          nodeId: 'root',
+          messages: sortedMessages,
+        },
+      ];
+    },
+    {
+      ...queryOpts,
+      retryOnMount: false,
+      enabled: isEnabled && runId !== undefined,
+    }
+  );
+};
+
+export const useChatHistory = (isMonitoringView: boolean, runId: string | undefined, nodeIds: string[] = [], isA2AWorkflow: boolean) => {
+  const actionHistoryQuery = useActionsChatHistory(nodeIds, runId, isMonitoringView && !isA2AWorkflow);
+
+  const runHistoryQuery = useRunChatHistory(runId, isMonitoringView && isA2AWorkflow);
+
+  return isA2AWorkflow ? runHistoryQuery : actionHistoryQuery;
 };
 
 export const useAgentChatInvokeUri = (isMonitoringView: boolean, isAgenticWorkflow: boolean, id: string | undefined) => {

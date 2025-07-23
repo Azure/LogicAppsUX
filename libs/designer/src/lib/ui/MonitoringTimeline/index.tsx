@@ -4,13 +4,13 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useThrottledEffect } from '@microsoft/logic-apps-shared';
 import { useTimelineRepetitions } from './hooks';
-import { useRunInstance } from '../../core/state/workflow/workflowSelectors';
 import {
   clearAllRepetitionRunData,
   setFocusNode,
-  setRepetitionRunData,
+  setRunIndex,
   setTimelineRepetitionArray,
   setTimelineRepetitionIndex,
+  updateAgenticMetadata,
 } from '../../core/state/workflow/workflowSlice';
 import { useMonitoringTimelineStyles } from './monitoringTimeline.styles';
 import type { TimelineRepetitionWithActions } from './helpers';
@@ -26,20 +26,23 @@ const MonitoringTimeline = () => {
   const [selectedRepetition, setSelectedRepetition] = useState<TimelineRepetitionWithActions | null>(null);
   const styles = useMonitoringTimelineStyles();
   const dispatch = useDispatch();
-  const runInstance = useRunInstance();
 
   const { data: repetitionData, isFetching: isFetchingRepetitions, refetch: refetchTimelineRepetitions } = useTimelineRepetitions();
 
   const repetitions = useMemo(() => {
-    return parseRepetitions(repetitionData, runInstance);
-  }, [repetitionData, runInstance]);
+    return parseRepetitions(repetitionData);
+  }, [repetitionData]);
 
   useEffect(() => {
-    const test = Array.from(repetitions).flatMap(([_taskId, repetitionList]) => {
-      const repetitionsActions = repetitionList.map((repetition) => repetition.actionIds ?? []);
+    const repetitionArray = Array.from(repetitions).flatMap(([_taskId, repetitionList]) => {
+      const repetitionsActions = repetitionList.map((repetition) => {
+        const actionName = repetition.data?.properties.agentMetadata?.agentName;
+
+        return actionName ? [actionName] : [];
+      });
       return repetitionsActions;
     });
-    dispatch(setTimelineRepetitionArray(test));
+    dispatch(setTimelineRepetitionArray(repetitionArray));
   }, [dispatch, repetitions]);
 
   useEffect(() => {
@@ -51,25 +54,16 @@ const MonitoringTimeline = () => {
   useThrottledEffect(
     () => {
       dispatch(clearAllRepetitionRunData());
+      const nodeId = selectedRepetition?.data?.properties.agentMetadata.agentName;
 
-      const firstNodeId = selectedRepetition?.actionIds?.[0];
-
-      if (firstNodeId) {
-        for (const a of Object.entries(selectedRepetition?.data?.properties?.actions ?? {})) {
-          const [actionId, action] = a;
-          dispatch(
-            setRepetitionRunData({
-              nodeId: actionId,
-              runData: action,
-            })
-          );
-        }
-
+      if (nodeId) {
+        dispatch(updateAgenticMetadata({ nodeId, scopeRepetitionRunData: { ...selectedRepetition.data?.properties } }));
         dispatch(setTimelineRepetitionIndex(transitionIndex));
 
-        dispatch(setSelectedNodeId(firstNodeId));
-        dispatch(openPanel({ nodeId: firstNodeId, panelMode: 'Operation' }));
-        dispatch(setFocusNode(firstNodeId));
+        dispatch(setSelectedNodeId(nodeId));
+        dispatch(openPanel({ nodeId: nodeId, panelMode: 'Operation' }));
+        dispatch(setFocusNode(nodeId));
+        dispatch(setRunIndex({ page: selectedRepetition.repetitionIndex, nodeId: nodeId }));
       }
     },
     [dispatch, selectedRepetition, transitionIndex],

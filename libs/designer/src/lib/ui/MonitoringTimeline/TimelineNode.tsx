@@ -17,31 +17,30 @@ const TimelineNode = ({
   isExpanded: boolean;
   data: TimelineRepetition;
 }) => {
+  const { properties } = data;
   const styles = useMonitoringTimelineStyles();
-  const nodeIds = useMemo(() => (data?.properties?.actions ? Object.keys(data.properties.actions) : []), [data]);
-  const firstNodeId = useMemo(() => nodeIds?.[0] ?? '', [nodeIds]);
-
+  const nodeId = useMemo(() => properties.agentMetadata.agentName, [properties]);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (selected && ref.current) {
       ref.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
-  }, [selected, firstNodeId]);
+  }, [selected, nodeId]);
 
-  const nodeText = useMemo(() => idDisplayCase(firstNodeId), [firstNodeId]);
+  const nodeText = useMemo(() => idDisplayCase(nodeId), [nodeId]);
 
   return (
     <div ref={ref} className={styles.timelineNode} onClick={onSelect}>
       {selected && <div className={styles.selectionBox} />}
-      <ConnectorIcon size="30px" nodeId={firstNodeId} />
+      <ConnectorIcon size="30px" nodeId={nodeId} />
       {isExpanded && (
         <Text weight={'semibold'} style={{ flexGrow: 1, marginRight: '8px' }}>
           {nodeText}
         </Text>
       )}
-      {isExpanded && equals(Object.values(data.properties?.actions ?? {})?.[0]?.status, 'failed') && (
-        <Tooltip relationship="description" content={Object.values(data.properties?.actions ?? {})?.[0]?.error?.code ?? ''} withArrow>
+      {isExpanded && equals(properties.status, 'failed') && (
+        <Tooltip relationship="description" content={properties?.error?.code ?? ''} withArrow>
           <div className={styles.errorIcon}>
             <Failed />
           </div>
