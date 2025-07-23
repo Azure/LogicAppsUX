@@ -73,11 +73,12 @@ type AddOperationPayload = {
   isTrigger?: boolean;
   presetParameterValues?: Record<string, any>;
   actionMetadata?: Record<string, any>;
+  isAddingHandoff?: boolean;
 };
 
 export const addOperation = createAsyncThunk('addOperation', async (payload: AddOperationPayload, { dispatch, getState }) => {
   batch(() => {
-    const { operation, nodeId: actionId, presetParameterValues, actionMetadata } = payload;
+    const { operation, nodeId: actionId, presetParameterValues, actionMetadata, isAddingHandoff = false } = payload;
     if (!operation) {
       throw new Error('Operation does not exist'); // Just an optional catch, should never happen
     }
@@ -109,7 +110,15 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
     };
 
     dispatch(initializeOperationInfo({ id: nodeId, ...nodeOperationInfo }));
-    initializeOperationDetails(nodeId, nodeOperationInfo, getState as () => RootState, dispatch, presetParameterValues, actionMetadata);
+    initializeOperationDetails(
+      nodeId,
+      nodeOperationInfo,
+      getState as () => RootState,
+      dispatch,
+      presetParameterValues,
+      actionMetadata,
+      !isAddingHandoff
+    );
 
     dispatch(setFocusNode(nodeId));
     if (isAddingAgentTool) {
