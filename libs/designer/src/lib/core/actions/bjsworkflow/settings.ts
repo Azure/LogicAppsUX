@@ -916,14 +916,17 @@ const getSecureOutputsSetting = (definition?: LogicAppsV2.OperationDefinition): 
   return false;
 };
 
-const isConditionExpressionSupported = (isTrigger: boolean, definition?: LogicAppsV2.TriggerDefinition) => {
-  if (isTrigger) {
-    if (equals(definition?.type, Constants.NODE.TYPE.REQUEST) && equals(definition?.kind, Constants.NODE.KIND.AGENT)) {
-      return false;
-    }
-    return true;
+const isConditionExpressionSupported = (isTrigger: boolean, definition?: LogicAppsV2.TriggerDefinition): boolean => {
+  if (!isTrigger) {
+    return false;
   }
-  return false;
+
+  // Agent REQUEST triggers don't support condition expressions
+  if (definition?.type === Constants.NODE.TYPE.REQUEST && definition?.kind === Constants.NODE.KIND.AGENT) {
+    return false;
+  }
+
+  return true;
 };
 
 const getConditionExpressions = (definition?: LogicAppsV2.TriggerDefinition): string[] | undefined => {
