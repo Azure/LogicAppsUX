@@ -108,7 +108,7 @@ export const CreateConnectionInternal = (props: {
   );
 
   const applyNewConnection = useCallback(
-    (newConnection: Connection, selectedIdentity?: string) => {
+    (newConnection: Connection, selectedIdentity?: string, isUsingDynamicConnection?: boolean) => {
       const payload: CreatedConnectionPayload = {
         connection: newConnection,
         connector: connector as Connector,
@@ -118,6 +118,14 @@ export const CreateConnectionInternal = (props: {
         const userAssignedIdentity = selectedIdentity !== constants.SYSTEM_ASSIGNED_MANAGED_IDENTITY ? selectedIdentity : undefined;
         payload.connectionProperties = getConnectionProperties(connector as Connector, userAssignedIdentity);
         payload.authentication = getApiHubAuthentication(userAssignedIdentity);
+      }
+
+      if (isUsingDynamicConnection) {
+        payload.connectionProperties = {
+          ...(payload.connectionProperties ?? {}),
+          runtimeSource: 'Dynamic',
+          dynamicConnectionProxyUrl: newConnection?.properties?.dynamicConnectionProxyUrl ?? '',
+        };
       }
 
       updateConnectionInState(payload);
@@ -135,7 +143,8 @@ export const CreateConnectionInternal = (props: {
       alternativeParameterValues?: Record<string, any>,
       identitySelected?: string,
       additionalParameterValues?: Record<string, any>,
-      operationParameterValues?: Record<string, any>
+      operationParameterValues?: Record<string, any>,
+      isUsingDynamicConnection?: boolean
     ) => {
       if (!connector?.id) {
         return;
@@ -218,7 +227,7 @@ export const CreateConnectionInternal = (props: {
 
         if (connection) {
           updateNewConnectionInCache(connection);
-          applyNewConnection(connection, identitySelected);
+          applyNewConnection(connection, identitySelected, isUsingDynamicConnection);
           updateOperationParameterValues?.(operationParameterValues);
         } else if (err) {
           setErrorMessage(String(err));

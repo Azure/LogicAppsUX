@@ -90,7 +90,8 @@ export interface CreateConnectionProps {
     alternativeParameterValues?: Record<string, any>,
     identitySelected?: string,
     additionalParameterValues?: Record<string, any>,
-    operationParameterValues?: Record<string, any>
+    operationParameterValues?: Record<string, any>,
+    isUsingDynamicConnection?: boolean
   ) => void;
   cancelCallback?: () => void;
   hideCancelButton?: boolean;
@@ -453,11 +454,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   const canSubmit = useMemo(() => !isLoading && validParams, [isLoading, validParams]);
 
   const submitCallback = useCallback(() => {
-    const { visibleParameterValues, additionalParameterValues } = parseParameterValues(
-      parameterValues,
-      capabilityEnabledParameters,
-      isUsingDynamicConnection
-    );
+    const { visibleParameterValues, additionalParameterValues } = parseParameterValues(parameterValues, capabilityEnabledParameters);
 
     // The OAuth tenant ID is passed a little strange, we need to manually add it here
     const oauthTenantId = additionalParameterValues?.[SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_TENANT_ID];
@@ -488,7 +485,8 @@ export const CreateConnection = (props: CreateConnectionProps) => {
       alternativeParameterValues,
       identitySelected,
       additionalParameterValues,
-      operationParameterValues
+      operationParameterValues,
+      isUsingDynamicConnection
     );
   }, [
     parameterValues,
@@ -600,8 +598,8 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   const stringResources = useMemo(
     () => ({
       USE_DYNAMIC_CONNECTIONS: intl.formatMessage({
-        defaultMessage: 'Use as Dynamic Connection',
-        id: 'sWJGpe',
+        defaultMessage: 'Create as per-user connection?',
+        id: '7Jw4KB',
         description: 'Dynamic connection checkbox text',
       }),
     }),
@@ -984,8 +982,7 @@ const isServicePrincipalParameterVisible = (key: string, parameter: any): boolea
 
 export function parseParameterValues(
   parameterValues: Record<string, any>,
-  capabilityEnabledParameters: Record<string, ConnectionParameter | ConnectionParameterSetParameter>,
-  isUsingDynamicConnection?: boolean
+  capabilityEnabledParameters: Record<string, ConnectionParameter | ConnectionParameterSetParameter>
 ) {
   const visibleParameterValues = Object.fromEntries(
     Object.entries(parameterValues).filter(([key]) => Object.keys(capabilityEnabledParameters).includes(key)) ?? []
@@ -993,11 +990,6 @@ export function parseParameterValues(
   const additionalParameterValues = Object.fromEntries(
     Object.entries(parameterValues).filter(([key]) => !Object.keys(capabilityEnabledParameters).includes(key)) ?? []
   );
-
-  if (isUsingDynamicConnection) {
-    // If using dynamic connections, we need to remove the connection name from the additional parameters
-    additionalParameterValues['isDynamicConnectionAllowed'] = true;
-  }
 
   return {
     visibleParameterValues,
