@@ -406,6 +406,7 @@ export default {
       GETFUTURETIME: 'getfuturetime',
       GETPASTTIME: 'getpasttime',
       HTTP: 'http',
+      AGENT: 'agent',
       JSON_TO_JSON: 'jsontojson',
       JSON_TO_TEXT: 'jsontotext',
       POWERAPP: 'powerapp',
