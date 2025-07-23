@@ -23,7 +23,7 @@ import {
   getValueFromPickerSelectedItem,
   loadDynamicTreeItemsForParameter,
   loadDynamicValuesForParameter,
-  parameterValueToStringWithoutCasting,
+  parameterValueToString,
   updateParameterAndDependencies,
 } from '../../../core/utils/parameters/helper';
 import { useDispatch, useSelector } from 'react-redux';
@@ -141,7 +141,15 @@ export const ParameterEditor = ({
   });
 
   const onCastParameter = (value: ValueSegment[]): string => {
-    return parameterValueToStringWithoutCasting(value);
+    return (
+      parameterValueToString(
+        {
+          ...parameter,
+          value,
+        } as ParameterInfo,
+        /* isDefinitionValue */ true
+      ) ?? ''
+    );
   };
 
   const dropdownOptions = getDropdownOptionsFromOptions(parameter.editorOptions);
@@ -162,8 +170,6 @@ export const ParameterEditor = ({
           itemSchema={parameter.editorViewModel.itemSchema}
           onChange={onValueChange}
           options={dropdownOptions}
-          isLoading={parameter.dynamicData?.status === DynamicLoadStatus.LOADING}
-          errorDetails={parameter.dynamicData?.error ? { message: parameter.dynamicData.error.message } : undefined}
           onMenuOpen={onComboboxMenuOpen}
           castParameter={onCastParameter}
           dataAutomationId={`msla-setting-token-editor-combobox-${labelForAutomationId}`}
