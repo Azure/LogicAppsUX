@@ -99,6 +99,7 @@ export const CreateConnectionWrapper = () => {
       updateConnectionInState={updateConnectionInState}
       onConnectionCreated={() => dispatch(closeConnectionsFlow({ nodeId, panelMode: referencePanelMode }))}
       updateOperationParameterValues={updateOperationParameterValues}
+      operationManifest={operationManifest}
     />
   );
 };

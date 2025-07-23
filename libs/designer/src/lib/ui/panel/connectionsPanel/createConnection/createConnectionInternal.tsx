@@ -16,6 +16,7 @@ import type {
   ConnectionParameterSet,
   Connector,
   ManagedIdentity,
+  OperationManifest,
 } from '@microsoft/logic-apps-shared';
 import { ConnectionService, LogEntryLevel, LoggerService, WorkflowService, getIconUriFromConnector } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo, useState } from 'react';
@@ -42,6 +43,7 @@ export const CreateConnectionInternal = (props: {
   assistedConnectionProps?: AssistedConnectionProps;
   connectionMetadata?: ConnectionMetadata;
   updateOperationParameterValues?: (values?: Record<string, any>) => void;
+  operationManifest?: OperationManifest;
 }) => {
   const {
     classes,
@@ -61,6 +63,7 @@ export const CreateConnectionInternal = (props: {
     onConnectionCancelled,
     updateOperationParameterValues,
     isAgentSubgraph,
+    operationManifest,
   } = props;
   const dispatch = useDispatch<AppDispatch>();
 
@@ -296,6 +299,7 @@ export const CreateConnectionInternal = (props: {
       gatewayServiceConfig={gatewayServiceConfig}
       checkOAuthCallback={needsOAuth}
       resourceSelectorProps={resourceSelectorProps}
+      operationManifest={operationManifest}
     />
   );
 };

@@ -49,6 +49,7 @@ import type {
   Subscription,
   Connector,
   OperationParameterSetParameter,
+  OperationManifest,
 } from '@microsoft/logic-apps-shared';
 import type { AzureResourcePickerProps } from '@microsoft/designer-ui';
 import { AzureResourcePicker, Label } from '@microsoft/designer-ui';
@@ -58,9 +59,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { DismissRegular } from '@fluentui/react-icons';
 import TenantPicker from './formInputs/tenantPicker';
-import { useOperationInfo } from '../../../../core';
-import { useOperationPanelSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
-import { useOperationManifest } from '../../../../core/state/selectors/actionMetadataSelector';
 import { useShouldEnableDynamicConnections } from '../../../../common/hooks/experimentation';
 import { useStyles } from './styles';
 
@@ -108,6 +106,7 @@ export interface CreateConnectionProps {
   resourceSelectorProps?: AzureResourcePickerProps;
   isAgentServiceConnection?: boolean;
   isAgentSubgraph?: boolean;
+  operationManifest?: OperationManifest;
 }
 
 export const CreateConnection = (props: CreateConnectionProps) => {
@@ -135,15 +134,13 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     resourceSelectorProps,
     operationParameterSets,
     isAgentSubgraph,
+    operationManifest,
   } = props;
 
   const intl = useIntl();
   const styles = useStyles();
 
   const connectorId = connector?.id;
-  const selectedNodeId: string = useOperationPanelSelectedNodeId();
-  const operationInfo = useOperationInfo(selectedNodeId);
-  const { data: operationManifest } = useOperationManifest(operationInfo);
 
   const {
     connectionParameters,
