@@ -84,8 +84,14 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
     () => ({
       ...settingsTab(intl, tabProps),
       hasErrors: settingValidationErrors.length > 0,
+      // Hide Settings tab for Agent REQUEST triggers
+      visible: !(
+        isTriggerNode &&
+        equals(operationInfo?.type, constants.NODE.TYPE.REQUEST) &&
+        equals(operationInfo?.kind, constants.NODE.KIND.AGENT)
+      ),
     }),
-    [intl, tabProps, settingValidationErrors]
+    [intl, tabProps, settingValidationErrors, isTriggerNode, operationInfo?.type, operationInfo?.kind]
   );
 
   const channelsTabItem = useMemo(

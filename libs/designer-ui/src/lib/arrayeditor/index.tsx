@@ -71,7 +71,7 @@ export interface ArrayEditorProps extends BaseEditorProps {
   options?: ComboboxItem[];
   // Event Handlers
   castParameter: CastHandler;
-  getTokenPicker: GetTokenPickerHandler;
+  getTokenPicker?: GetTokenPickerHandler;
   onMenuOpen?: CallbackHandler;
   // Error Handling
   errorDetails?: { message: string };
