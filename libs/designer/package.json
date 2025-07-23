@@ -38,7 +38,8 @@
     "reselect": "4.1.8",
     "to-title-case": "1.0.0",
     "util": "0.12.5",
-    "yocto-queue": "0.1.0"
+    "yocto-queue": "0.1.0",
+    "tabster": "8.5.6"
   },
   "devDependencies": {
     "@formatjs/intl": "^2.10.1",
