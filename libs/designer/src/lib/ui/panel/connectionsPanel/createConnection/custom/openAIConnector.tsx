@@ -1,4 +1,4 @@
-import { CognitiveServiceService, isUndefinedOrEmptyString, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
+import { CognitiveServiceService, equals, isUndefinedOrEmptyString, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import { type ConnectionParameterProps, UniversalConnectionParameter } from '../formInputs/universalConnectionParameter';
 import { ConnectionParameterRow } from '../connectionParameterRow';
 import { useIntl } from 'react-intl';
@@ -16,7 +16,7 @@ import { useHasRoleAssignmentsWritePermissionQuery, useHasRoleDefinitionsByNameQ
 const RefreshIcon = bundleIcon(ArrowClockwise16Regular, ArrowClockwise16Filled);
 
 export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
-  const { parameterKey, setKeyValue, setValue, parameter, isAgentServiceConnection } = props;
+  const { parameterKey, setKeyValue, setValue, parameter, operationParameterValues } = props;
   const intl = useIntl();
   const styles = useStyles();
   const [parameterValue, setParameterValue] = useState<string>('');
@@ -188,6 +188,11 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
       setLoadingAccountDetails(false);
     },
     [setAPIEndpoint, setAPIKey]
+  );
+
+  const isAgentServiceConnection = useMemo(
+    () => equals(operationParameterValues?.['agentModelType'] ?? '', 'FoundryAgentService', true),
+    [operationParameterValues]
   );
 
   const roleResourceId = useMemo(() => {
@@ -382,7 +387,11 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
                 >
                   {isFetchingCognitiveServiceProjects ? (
                     <Spinner
-                      style={{ position: 'absolute', bottom: '6px', left: '8px' }}
+                      style={{
+                        position: 'absolute',
+                        bottom: '6px',
+                        left: '8px',
+                      }}
                       labelPosition="right"
                       label={stringResources.LOADING_PROJECT}
                     />

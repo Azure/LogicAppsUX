@@ -82,6 +82,7 @@ export interface ConnectionParameterUIDefinitionBase {
       value: any;
     };
     requiresConnectionNamePrefix?: string;
+    notSupportedConnectionParameters?: Record<string, string[]>;
   };
   tooltip?: string;
   /**
@@ -198,6 +199,11 @@ export interface ConnectionParameterSets {
   values: ConnectionParameterSet[];
 }
 
+export interface OperationParameterSetParameter {
+  name: string;
+  uiDefinition?: ConnectionParameterSetParameterUIDefinition;
+}
+
 export interface ConnectorProperty {
   capabilities?: string[];
   connectionDisplayName?: string;
@@ -212,6 +218,7 @@ export interface ConnectorProperty {
   primaryRuntimeUrl?: string;
   connectionParameters?: Record<string, ConnectionParameter>;
   connectionParameterSets?: ConnectionParameterSets;
+  operationParameterSets?: Record<string, OperationParameterSetParameter>;
   connectionAlternativeParameters?: ConnectionAlternativeParameters;
   isExportSupported?: boolean;
   isSecureByDefault?: boolean;
