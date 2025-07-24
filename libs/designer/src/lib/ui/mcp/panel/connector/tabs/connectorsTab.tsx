@@ -4,7 +4,7 @@ import type { McpConnectorTabProps, McpPanelTabProps } from '@microsoft/designer
 import type { IntlShape } from 'react-intl';
 import { closePanel, selectPanelTab } from '../../../../../core/state/mcp/panel/mcpPanelSlice';
 import { SelectConnectors } from '../../../connectors/SelectConnectors';
-import { clearAllSelections } from '../../../../../core/state/mcp/connector/connectorSlice';
+import { clearAllSelections } from '../../../../../core/state/mcp/mcpselectionslice';
 
 export const connectorsTab = (
   intl: IntlShape,

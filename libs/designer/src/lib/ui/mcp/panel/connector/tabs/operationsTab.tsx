@@ -4,7 +4,7 @@ import type { McpConnectorTabProps, McpPanelTabProps } from '@microsoft/designer
 import type { IntlShape } from 'react-intl';
 import { closePanel, selectPanelTab } from '../../../../../core/state/mcp/panel/mcpPanelSlice';
 import { SelectOperations } from '../../../operations/SelectOperations';
-import { clearAllSelections } from '../../../../../core/state/mcp/connector/connectorSlice';
+import { clearAllSelections } from '../../../../../core/state/mcp/mcpselectionslice';
 
 interface OperationsTabProps extends McpConnectorTabProps {
   selectedOperationsCount: number;
