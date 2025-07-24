@@ -196,7 +196,7 @@ export const ChannelsTab: React.FC<PanelTabProps> = (props) => {
       }
 
       setIsLoading(false);
-      dispatch(initializeNodeOperationInputsData(updatedOperationsData));
+      dispatch(initializeNodeOperationInputsData({ nodesData: updatedOperationsData }));
       // TODO: Need to handle content change
       dispatch(setIsWorkflowParametersDirty(true));
     },

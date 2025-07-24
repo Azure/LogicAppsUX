@@ -91,7 +91,7 @@ export const initializeWorkflowMetadata = createAsyncThunk(
     );
 
     if (inputsPayload.length) {
-      dispatch(initializeNodeOperationInputsData(inputsPayload));
+      dispatch(initializeNodeOperationInputsData({ nodesData: inputsPayload }));
       dispatch(updateAllTemplateParameterDefinitions(templateParametersToOverride));
     }
   }
