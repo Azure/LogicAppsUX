@@ -2,8 +2,9 @@ import type { AppDispatch } from '../../../../../core/state/templates/store';
 import constants from '../../../../../common/constants';
 import type { McpConnectorTabProps, McpPanelTabProps } from '@microsoft/designer-ui';
 import type { IntlShape } from 'react-intl';
-import { selectPanelTab } from '../../../../../core/state/mcp/panel/mcpPanelSlice';
+import { closePanel, selectPanelTab } from '../../../../../core/state/mcp/panel/mcpPanelSlice';
 import { SelectConnectors } from '../../../connectors/SelectConnectors';
+import { clearAllSelections } from '../../../../../core/state/mcp/connector/connectorSlice';
 
 export const connectorsTab = (
   intl: IntlShape,
@@ -23,11 +24,14 @@ export const connectorsTab = (
       {
         type: 'navigation',
         text: intl.formatMessage({
-          defaultMessage: 'Previous',
-          id: 'sqA07R',
-          description: 'Button text for moving to the previous tab in the connector panel',
+          defaultMessage: 'Close',
+          id: 'FTrMxN',
+          description: 'Button text for closing the panel',
         }),
-        onClick: () => {},
+        onClick: () => {
+          dispatch(clearAllSelections());
+          dispatch(closePanel());
+        },
         disabled: isPreviousButtonDisabled,
       },
       {

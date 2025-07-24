@@ -2,13 +2,15 @@ import type { AppDispatch } from '../../../../../core/state/mcp/store';
 import constants from '../../../../../common/constants';
 import type { McpConnectorTabProps, McpPanelTabProps } from '@microsoft/designer-ui';
 import type { IntlShape } from 'react-intl';
-import { selectPanelTab } from '../../../../../core/state/mcp/panel/mcpPanelSlice';
+import { closePanel, selectPanelTab } from '../../../../../core/state/mcp/panel/mcpPanelSlice';
 import { SelectOperations } from '../../../operations/SelectOperations';
+import { clearAllSelections } from '../../../../../core/state/mcp/connector/connectorSlice';
 
 interface OperationsTabProps extends McpConnectorTabProps {
   selectedOperationsCount: number;
   onSelectOperations: () => void;
   isPrimaryButtonLoading?: boolean;
+  previousTabId: string | undefined;
 }
 
 export const operationsTab = (
@@ -21,6 +23,7 @@ export const operationsTab = (
     selectedOperationsCount,
     isPrimaryButtonLoading,
     onSelectOperations,
+    previousTabId,
   }: OperationsTabProps
 ): McpPanelTabProps => {
   const nextButtonText =
@@ -52,13 +55,24 @@ export const operationsTab = (
       buttonContents: [
         {
           type: 'navigation',
-          text: intl.formatMessage({
-            defaultMessage: 'Previous',
-            id: 'sqA07R',
-            description: 'Button text for moving to the previous tab in the connector panel',
-          }),
+          text: previousTabId
+            ? intl.formatMessage({
+                defaultMessage: 'Previous',
+                id: 'sqA07R',
+                description: 'Button text for moving to the previous tab in the connector panel',
+              })
+            : intl.formatMessage({
+                defaultMessage: 'Close',
+                id: 'FTrMxN',
+                description: 'Button text for closing the panel',
+              }),
           onClick: () => {
-            dispatch(selectPanelTab(constants.MCP_PANEL_TAB_NAMES.CONNECTORS));
+            if (previousTabId) {
+              dispatch(selectPanelTab(previousTabId));
+            } else {
+              dispatch(clearAllSelections());
+              dispatch(closePanel());
+            }
           },
           disabled: isPreviousButtonDisabled,
         },
