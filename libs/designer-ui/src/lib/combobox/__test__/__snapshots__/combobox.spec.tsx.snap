@@ -2,7 +2,7 @@
 
 exports[`lib/combobox > displays error state correctly 1`] = `
 <div
-  className="___2mt6br0_0000000 f10pi13n fly5x3f fmq9zdj f366tvg"
+  className="___2mt6br0_1qgtkp4 f10pi13n fly5x3f fmq9zdj f366tvg"
 >
   <div
     className="fui-Combobox ___eei2s40_6mgrki0 f122n59 ft85np5 f1ewtqcl f14mj54c fwk3njj fz17x9o f1869bpl f1exfvgq f10pi13n fmrv4ls f14a1fxs f3e99gv fhljsf7 f1gw3sf2 f13zj6fq f1mdlcz9 f1a7op3 f1gboi2j f1cjjd47 f145g4dw f1kp91vd f1ibwz09 f1mnjydx f13evtba f1yk9hq fhwpy7i f14ee0xe f1xhbsuh fv8e3ye ftb5wc6 fjw5xc1 f1xdyd5c fatpbeo fb7uyps f1cmft4k f1x58t8o f1ibeo51 fxugw4r f1c1zstj fhz96rm f1d2rq10 f11gcy0p fvcxoqz f1ub3y4t flmw63s f1m52nbi fvs00aa f1assf6x fqhmt4z f4ruux4 fly5x3f f1ba99k9 fses1vf f1e7em8b f13sea9e f11vox0t f1w3hb9s"
@@ -70,7 +70,7 @@ exports[`lib/combobox > displays error state correctly 1`] = `
 
 exports[`lib/combobox > displays loading state correctly 1`] = `
 <div
-  className="___2mt6br0_0000000 f10pi13n fly5x3f fmq9zdj f366tvg"
+  className="___2mt6br0_1qgtkp4 f10pi13n fly5x3f fmq9zdj f366tvg"
 >
   <div
     className="fui-Combobox ___eei2s40_6mgrki0 f122n59 ft85np5 f1ewtqcl f14mj54c fwk3njj fz17x9o f1869bpl f1exfvgq f10pi13n fmrv4ls f14a1fxs f3e99gv fhljsf7 f1gw3sf2 f13zj6fq f1mdlcz9 f1a7op3 f1gboi2j f1cjjd47 f145g4dw f1kp91vd f1ibwz09 f1mnjydx f13evtba f1yk9hq fhwpy7i f14ee0xe f1xhbsuh fv8e3ye ftb5wc6 fjw5xc1 f1xdyd5c fatpbeo fb7uyps f1cmft4k f1x58t8o f1ibeo51 fxugw4r f1c1zstj fhz96rm f1d2rq10 f11gcy0p fvcxoqz f1ub3y4t flmw63s f1m52nbi fvs00aa f1assf6x fqhmt4z f4ruux4 fly5x3f f1ba99k9 fses1vf f1e7em8b f13sea9e f11vox0t f1w3hb9s"
@@ -138,7 +138,7 @@ exports[`lib/combobox > displays loading state correctly 1`] = `
 
 exports[`lib/combobox > displays placeholder text 1`] = `
 <div
-  className="___2mt6br0_0000000 f10pi13n fly5x3f fmq9zdj f366tvg"
+  className="___2mt6br0_1qgtkp4 f10pi13n fly5x3f fmq9zdj f366tvg"
 >
   <div
     className="fui-Combobox ___eei2s40_6mgrki0 f122n59 ft85np5 f1ewtqcl f14mj54c fwk3njj fz17x9o f1869bpl f1exfvgq f10pi13n fmrv4ls f14a1fxs f3e99gv fhljsf7 f1gw3sf2 f13zj6fq f1mdlcz9 f1a7op3 f1gboi2j f1cjjd47 f145g4dw f1kp91vd f1ibwz09 f1mnjydx f13evtba f1yk9hq fhwpy7i f14ee0xe f1xhbsuh fv8e3ye ftb5wc6 fjw5xc1 f1xdyd5c fatpbeo fb7uyps f1cmft4k f1x58t8o f1ibeo51 fxugw4r f1c1zstj fhz96rm f1d2rq10 f11gcy0p fvcxoqz f1ub3y4t flmw63s f1m52nbi fvs00aa f1assf6x fqhmt4z f4ruux4 fly5x3f f1ba99k9 fses1vf f1e7em8b f13sea9e f11vox0t f1w3hb9s"
@@ -207,7 +207,7 @@ exports[`lib/combobox > displays placeholder text 1`] = `
 
 exports[`lib/combobox > handles large datasets efficiently 1`] = `
 <div
-  className="___2mt6br0_0000000 f10pi13n fly5x3f fmq9zdj f366tvg"
+  className="___2mt6br0_1qgtkp4 f10pi13n fly5x3f fmq9zdj f366tvg"
 >
   <div
     className="fui-Combobox ___eei2s40_6mgrki0 f122n59 ft85np5 f1ewtqcl f14mj54c fwk3njj fz17x9o f1869bpl f1exfvgq f10pi13n fmrv4ls f14a1fxs f3e99gv fhljsf7 f1gw3sf2 f13zj6fq f1mdlcz9 f1a7op3 f1gboi2j f1cjjd47 f145g4dw f1kp91vd f1ibwz09 f1mnjydx f13evtba f1yk9hq fhwpy7i f14ee0xe f1xhbsuh fv8e3ye ftb5wc6 fjw5xc1 f1xdyd5c fatpbeo fb7uyps f1cmft4k f1x58t8o f1ibeo51 fxugw4r f1c1zstj fhz96rm f1d2rq10 f11gcy0p fvcxoqz f1ub3y4t flmw63s f1m52nbi fvs00aa f1assf6x fqhmt4z f4ruux4 fly5x3f f1ba99k9 fses1vf f1e7em8b f13sea9e f11vox0t f1w3hb9s"
@@ -275,7 +275,7 @@ exports[`lib/combobox > handles large datasets efficiently 1`] = `
 
 exports[`lib/combobox > renders component with different modes 1`] = `
 <div
-  className="___2mt6br0_0000000 f10pi13n fly5x3f fmq9zdj f366tvg"
+  className="___2mt6br0_1qgtkp4 f10pi13n fly5x3f fmq9zdj f366tvg"
 >
   <div
     className="fui-Combobox ___eei2s40_6mgrki0 f122n59 ft85np5 f1ewtqcl f14mj54c fwk3njj fz17x9o f1869bpl f1exfvgq f10pi13n fmrv4ls f14a1fxs f3e99gv fhljsf7 f1gw3sf2 f13zj6fq f1mdlcz9 f1a7op3 f1gboi2j f1cjjd47 f145g4dw f1kp91vd f1ibwz09 f1mnjydx f13evtba f1yk9hq fhwpy7i f14ee0xe f1xhbsuh fv8e3ye ftb5wc6 fjw5xc1 f1xdyd5c fatpbeo fb7uyps f1cmft4k f1x58t8o f1ibeo51 fxugw4r f1c1zstj fhz96rm f1d2rq10 f11gcy0p fvcxoqz f1ub3y4t flmw63s f1m52nbi fvs00aa f1assf6x fqhmt4z f4ruux4 fly5x3f f1ba99k9 fses1vf f1e7em8b f13sea9e f11vox0t f1w3hb9s"
@@ -343,7 +343,7 @@ exports[`lib/combobox > renders component with different modes 1`] = `
 
 exports[`lib/combobox > renders component with different modes 2`] = `
 <div
-  className="___2mt6br0_0000000 f10pi13n fly5x3f fmq9zdj f366tvg"
+  className="___2mt6br0_1qgtkp4 f10pi13n fly5x3f fmq9zdj f366tvg"
 >
   <div
     className="fui-Combobox ___eei2s40_6mgrki0 f122n59 ft85np5 f1ewtqcl f14mj54c fwk3njj fz17x9o f1869bpl f1exfvgq f10pi13n fmrv4ls f14a1fxs f3e99gv fhljsf7 f1gw3sf2 f13zj6fq f1mdlcz9 f1a7op3 f1gboi2j f1cjjd47 f145g4dw f1kp91vd f1ibwz09 f1mnjydx f13evtba f1yk9hq fhwpy7i f14ee0xe f1xhbsuh fv8e3ye ftb5wc6 fjw5xc1 f1xdyd5c fatpbeo fb7uyps f1cmft4k f1x58t8o f1ibeo51 fxugw4r f1c1zstj fhz96rm f1d2rq10 f11gcy0p fvcxoqz f1ub3y4t flmw63s f1m52nbi fvs00aa f1assf6x fqhmt4z f4ruux4 fly5x3f f1ba99k9 fses1vf f1e7em8b f13sea9e f11vox0t f1w3hb9s"
@@ -411,7 +411,7 @@ exports[`lib/combobox > renders component with different modes 2`] = `
 
 exports[`lib/combobox > respects readonly prop 1`] = `
 <div
-  className="___2mt6br0_0000000 f10pi13n fly5x3f fmq9zdj f366tvg"
+  className="___2mt6br0_1qgtkp4 f10pi13n fly5x3f fmq9zdj f366tvg"
 >
   <div
     className="fui-Combobox ___1osl1x5_1dotx07 f122n59 ft85np5 f1ewtqcl f14mj54c fwk3njj fz17x9o f1869bpl f1exfvgq f10pi13n fmrv4ls f14a1fxs f3e99gv fhljsf7 f1gw3sf2 f13zj6fq f1mdlcz9 f1a7op3 f1gboi2j f1cjjd47 f145g4dw f1kp91vd f1ibwz09 f1mnjydx f13evtba f1yk9hq fhwpy7i f14ee0xe f1xhbsuh fv8e3ye ftb5wc6 fjw5xc1 f1xdyd5c fatpbeo fb7uyps f1cmft4k f1x58t8o f1ibeo51 f1c21dwh f4ikngz fy0fskl f15xbau f1jj8ep1 fhz96rm f1d2rq10 f11gcy0p fdrzuqr fg455y9 f1rvyvqg f1cwzwz f14g86mu fly5x3f f1ba99k9 fses1vf f1e7em8b f13sea9e f11vox0t f1w3hb9s"
@@ -481,7 +481,7 @@ exports[`lib/combobox > respects readonly prop 1`] = `
 
 exports[`lib/combobox > should render in Default mode initially 1`] = `
 <div
-  className="___2mt6br0_0000000 f10pi13n fly5x3f fmq9zdj f366tvg"
+  className="___2mt6br0_1qgtkp4 f10pi13n fly5x3f fmq9zdj f366tvg"
 >
   <div
     className="fui-Combobox ___eei2s40_6mgrki0 f122n59 ft85np5 f1ewtqcl f14mj54c fwk3njj fz17x9o f1869bpl f1exfvgq f10pi13n fmrv4ls f14a1fxs f3e99gv fhljsf7 f1gw3sf2 f13zj6fq f1mdlcz9 f1a7op3 f1gboi2j f1cjjd47 f145g4dw f1kp91vd f1ibwz09 f1mnjydx f13evtba f1yk9hq fhwpy7i f14ee0xe f1xhbsuh fv8e3ye ftb5wc6 fjw5xc1 f1xdyd5c fatpbeo fb7uyps f1cmft4k f1x58t8o f1ibeo51 fxugw4r f1c1zstj fhz96rm f1d2rq10 f11gcy0p fvcxoqz f1ub3y4t flmw63s f1m52nbi fvs00aa f1assf6x fqhmt4z f4ruux4 fly5x3f f1ba99k9 fses1vf f1e7em8b f13sea9e f11vox0t f1w3hb9s"
@@ -549,7 +549,7 @@ exports[`lib/combobox > should render in Default mode initially 1`] = `
 
 exports[`lib/combobox > should render with basic props 1`] = `
 <div
-  className="___2mt6br0_0000000 f10pi13n fly5x3f fmq9zdj f366tvg"
+  className="___2mt6br0_1qgtkp4 f10pi13n fly5x3f fmq9zdj f366tvg"
 >
   <div
     className="fui-Combobox ___eei2s40_6mgrki0 f122n59 ft85np5 f1ewtqcl f14mj54c fwk3njj fz17x9o f1869bpl f1exfvgq f10pi13n fmrv4ls f14a1fxs f3e99gv fhljsf7 f1gw3sf2 f13zj6fq f1mdlcz9 f1a7op3 f1gboi2j f1cjjd47 f145g4dw f1kp91vd f1ibwz09 f1mnjydx f13evtba f1yk9hq fhwpy7i f14ee0xe f1xhbsuh fv8e3ye ftb5wc6 fjw5xc1 f1xdyd5c fatpbeo fb7uyps f1cmft4k f1x58t8o f1ibeo51 fxugw4r f1c1zstj fhz96rm f1d2rq10 f11gcy0p fvcxoqz f1ub3y4t flmw63s f1m52nbi fvs00aa f1assf6x fqhmt4z f4ruux4 fly5x3f f1ba99k9 fses1vf f1e7em8b f13sea9e f11vox0t f1w3hb9s"
