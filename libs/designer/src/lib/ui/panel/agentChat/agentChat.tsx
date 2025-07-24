@@ -27,7 +27,7 @@ import {
 import { ChatFilled } from '@fluentui/react-icons';
 import { useDispatch } from 'react-redux';
 import { changePanelNode, type AppDispatch } from '../../../core';
-import { clearFocusElement, setFocusNode, setRunIndex } from '../../../core/state/workflow/workflowSlice';
+import { clearFocusElement, setFocusNode, setRunIndex, setTimelineRepetitionIndex } from '../../../core/state/workflow/workflowSlice';
 import { AgentChatHeader } from './agentChatHeader';
 import { parseChatHistory, useRefreshChatMutation } from './helper';
 import constants from '../../../common/constants';
@@ -111,11 +111,14 @@ export const AgentChat = ({
 
   const toolContentCallback = useCallback(
     (agentName: string, iteration: number) => {
+      if (isA2AWorkflow) {
+        dispatch(setTimelineRepetitionIndex(iteration));
+      }
       dispatch(setRunIndex({ page: iteration, nodeId: agentName }));
       dispatch(setFocusNode(agentName));
       dispatch(changePanelNode(agentName));
     },
-    [dispatch]
+    [dispatch, isA2AWorkflow]
   );
 
   const agentCallback = useCallback(

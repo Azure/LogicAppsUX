@@ -1,6 +1,6 @@
 import { AgentMessageEntryType, ConversationItemType, type ConversationItem } from '@microsoft/designer-ui';
+import type { ChatHistory, MessageEntry } from '@microsoft/logic-apps-shared';
 import { guid, labelCase } from '@microsoft/logic-apps-shared';
-import type { ChatHistory } from '../../../core/queries/runs';
 import { useMutation } from '@tanstack/react-query';
 import { getReactQueryClient, runsQueriesKeys } from '../../../core';
 
@@ -24,7 +24,7 @@ export const parseChatHistory = (
     for (let i = messages.length - 1; i >= 0; i--) {
       const message = messages[i];
       const { iteration, agentMetadata } = message;
-      const agentOperationId = isA2AWorkflow ? agentMetadata?.agentName : nodeId;
+      const agentOperationId = isA2AWorkflow ? (agentMetadata?.agentName ?? '') : nodeId;
 
       if (lastIteration !== iteration) {
         messageCountInIteration = 0;
@@ -55,7 +55,7 @@ export const parseChatHistory = (
 };
 
 const parseMessage = (
-  message: any,
+  message: MessageEntry,
   parentId: string,
   dataScrollTarget: string,
   toolResultCallback: (agentName: string, toolName: string, iteration: number, subIteration: number) => void,
@@ -63,7 +63,6 @@ const parseMessage = (
   isA2AWorkflow: boolean
 ): ConversationItem => {
   const { messageEntryType, messageEntryPayload, timestamp, role, iteration } = message;
-
   switch (messageEntryType) {
     case AgentMessageEntryType.Content: {
       const content = messageEntryPayload?.content || '';
@@ -106,7 +105,9 @@ const parseMessage = (
         text: '',
         type: ConversationItemType.Reply,
         id: guid(),
-        role,
+        role: {
+          text: role,
+        },
         hideFooter: true,
         metadata: { parentId },
         date: new Date(timestamp),
