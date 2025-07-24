@@ -4,7 +4,7 @@ import type { BaseEditorProps, CallbackHandler } from '../editor/base';
 import { EditorWrapper } from '../editor/base/EditorWrapper';
 import { EditorChangePlugin } from '../editor/base/plugins/EditorChange';
 import { createLiteralValueSegment, notEqual } from '../editor/base/utils/helper';
-import { Combobox as FluentCombobox, Option, Button, Spinner, Tooltip } from '@fluentui/react-components';
+import { Combobox as FluentCombobox, Option, Button, Spinner, Tooltip, mergeClasses } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
 import { equals, getIntl } from '@microsoft/logic-apps-shared';
 import { isEmptySegments } from '../editor/base/utils/parsesegments';
@@ -388,7 +388,7 @@ export const Combobox = ({
   const classes = useComboboxStyles();
 
   return (
-    <div className={classes.container}>
+    <div className={mergeClasses(classes.container, baseEditorProps.className)}>
       {mode === Mode.Custom ? (
         <div className={classes.editorContainer}>
           <EditorWrapper

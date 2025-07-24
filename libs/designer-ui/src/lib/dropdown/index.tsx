@@ -3,7 +3,7 @@ import type { ValueSegment } from '../editor';
 import { ValueSegmentType } from '../editor';
 import type { ChangeHandler } from '../editor/base';
 import { createLiteralValueSegment } from '../editor/base/utils/helper';
-import { Combobox, Option } from '@fluentui/react-components';
+import { Combobox, mergeClasses, Option } from '@fluentui/react-components';
 import { useMemo, useState } from 'react';
 import { useDropdownStyles } from './styles';
 import { useIntl } from 'react-intl';
@@ -14,6 +14,7 @@ interface SerializationOptions {
 }
 
 export interface DropdownEditorProps {
+  className?: string;
   initialValue: ValueSegment[];
   options: DropdownItem[];
   // Appearance
@@ -44,6 +45,7 @@ export interface DropdownItem {
 }
 
 export const DropdownEditor = ({
+  className,
   initialValue,
   options,
   placeholder,
@@ -198,7 +200,7 @@ export const DropdownEditor = ({
   };
 
   const content = (
-    <div className={flexibleWidth ? classes.containerFlexible : classes.container}>
+    <div className={mergeClasses(className, flexibleWidth ? classes.containerFlexible : classes.container)}>
       <Combobox {...comboboxProps}>
         {renderOptions()}
         {hasMoreOptions && <div className={classes.moreOptions}>{INTL_TEXT.moreOptions}</div>}
