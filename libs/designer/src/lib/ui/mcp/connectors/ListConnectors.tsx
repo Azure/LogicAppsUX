@@ -16,12 +16,12 @@ import {
 } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 import { useConnectorSectionStyles } from '../wizard/styles';
-import { deinitializeNodes, deinitializeOperationInfos } from '../../../core/state/operation/operationMetadataSlice';
 import { McpPanelView, openConnectorPanelView } from '../../../core/state/mcp/panel/mcpPanelSlice';
 import { selectConnectorId, selectOperations } from '../../../core/state/mcp/connector/connectorSlice';
 import { ConnectorIconWithName } from '../../templates/connections/connector';
 import { useConnectionById } from '../../../core/queries/connections';
 import { getResourceNameFromId } from '@microsoft/logic-apps-shared';
+import { deinitializeOperations } from '../../../core/actions/bjsworkflow/mcp';
 
 const connectorTableCellStyles = {
   border: 'none',
@@ -166,8 +166,7 @@ export const ListConnectors = () => {
         .map(([operationId, _]) => operationId);
 
       if (operationIdsToDelete.length > 0) {
-        dispatch(deinitializeNodes(operationIdsToDelete));
-        dispatch(deinitializeOperationInfos({ ids: operationIdsToDelete }));
+        dispatch(deinitializeOperations({ operationIds: operationIdsToDelete }));
       }
     },
     [operationInfos, dispatch]
