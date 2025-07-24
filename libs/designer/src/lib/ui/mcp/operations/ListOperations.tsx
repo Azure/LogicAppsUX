@@ -6,9 +6,9 @@ import { Text, TableCell, TableRow, Table, TableHeader, TableHeaderCell, Button,
 import { Delete24Regular, Edit24Regular } from '@fluentui/react-icons';
 import { useIntl } from 'react-intl';
 import { useConnectorSectionStyles } from '../wizard/styles';
-import { deinitializeNodes, deinitializeOperationInfo } from '../../../core/state/operation/operationMetadataSlice';
 import DefaultIcon from '../../../common/images/recommendation/defaulticon.svg';
 import { selectOperationIdToEdit } from '../../../core/state/mcp/connector/connectorSlice';
+import { deinitializeOperations } from '../../../core/actions/bjsworkflow/mcp';
 
 export const ListOperations = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -53,8 +53,7 @@ export const ListOperations = () => {
 
   const handleDeleteOperation = useCallback(
     (operationId: string) => {
-      dispatch(deinitializeOperationInfo({ id: operationId }));
-      dispatch(deinitializeNodes([operationId]));
+      dispatch(deinitializeOperations({ operationIds: [operationId] }));
     },
     [dispatch]
   );

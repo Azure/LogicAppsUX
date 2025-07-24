@@ -8,6 +8,7 @@ import { useMcpPanelStyles } from '../styles';
 import { useIntl } from 'react-intl';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
 import { useCallback } from 'react';
+import { clearAllSelections } from '../../../../core/state/mcp/connector/connectorSlice';
 
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
@@ -31,9 +32,9 @@ export const SelectionPanel = () => {
 
   const INTL_TEXT = {
     title: intl.formatMessage({
-      id: 'SH50TJ',
-      defaultMessage: 'Add Connectors',
-      description: 'Title for connector selection panel',
+      defaultMessage: 'Set up connector',
+      id: '+tw9XO',
+      description: 'The tab label for the selection panel on the connector panel',
     }),
     closeAriaLabel: intl.formatMessage({
       id: 'kdCuJZ',
@@ -43,6 +44,7 @@ export const SelectionPanel = () => {
   };
 
   const handleDismiss = useCallback(() => {
+    dispatch(clearAllSelections());
     dispatch(closePanel());
   }, [dispatch]);
 
@@ -62,7 +64,7 @@ export const SelectionPanel = () => {
       <DrawerHeader className={styles.header}>
         <div className={styles.headerContent}>
           <Text size={600} weight="semibold" style={{ flex: 1 }}>
-            {selectedTabProps?.title ?? INTL_TEXT.title}
+            {INTL_TEXT.title}
           </Text>
           <Button appearance="subtle" icon={<CloseIcon />} onClick={handleDismiss} aria-label={INTL_TEXT.closeAriaLabel} />
         </div>

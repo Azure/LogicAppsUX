@@ -3,7 +3,11 @@ import type { AppDispatch, RootState } from '../../../../core/state/mcp/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { closePanel, McpPanelView } from '../../../../core/state/mcp/panel/mcpPanelSlice';
 import { clearAllSelections } from '../../../../core/state/mcp/connector/connectorSlice';
-import { initializeOperationsMetadata, initializeConnectionMappings } from '../../../../core/actions/bjsworkflow/mcp';
+import {
+  initializeOperationsMetadata,
+  initializeConnectionMappings,
+  deinitializeOperations,
+} from '../../../../core/actions/bjsworkflow/mcp';
 import { operationsTab } from './tabs/operationsTab';
 import { useIntl } from 'react-intl';
 import { connectorsTab } from './tabs/connectorsTab';
@@ -15,15 +19,23 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
 
-  const { currentPanelView, selectedOperations, selectedConnectorId, connectionsMapping, connectionReferences, isInitializingConnections } =
-    useSelector((state: RootState) => ({
-      currentPanelView: state.mcpPanel.currentPanelView,
-      selectedConnectorId: state.connector.selectedConnectorId,
-      selectedOperations: state.connector.selectedOperations ?? [],
-      connectionsMapping: state.connection.connectionsMapping,
-      connectionReferences: state.connection.connectionReferences,
-      isInitializingConnections: state.connection.loading.initializeConnectionMappings,
-    }));
+  const {
+    currentPanelView,
+    selectedOperations,
+    selectedConnectorId,
+    connectionsMapping,
+    connectionReferences,
+    isInitializingConnections,
+    operationInfos,
+  } = useSelector((state: RootState) => ({
+    currentPanelView: state.mcpPanel.currentPanelView,
+    selectedConnectorId: state.connector.selectedConnectorId,
+    selectedOperations: state.connector.selectedOperations ?? [],
+    connectionsMapping: state.connection.connectionsMapping,
+    connectionReferences: state.connection.connectionReferences,
+    isInitializingConnections: state.connection.loading.initializeConnectionMappings,
+    operationInfos: state.operation.operationInfo,
+  }));
 
   const hasValidConnection = useMemo(() => {
     if (!selectedOperations.length) {
@@ -37,19 +49,28 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
     });
   }, [selectedOperations, connectionsMapping, connectionReferences]);
 
+  const deselectedOperationIds = useMemo(() => {
+    return Object.keys(operationInfos).filter((operationId) => !selectedOperations.includes(operationId));
+  }, [operationInfos, selectedOperations]);
+
   const handleSubmit = useCallback(() => {
     if (selectedConnectorId && selectedOperations.length > 0) {
-      const operations = selectedOperations.map((operationId) => ({
+      const selectedOperationsData = selectedOperations.map((operationId) => ({
         connectorId: selectedConnectorId,
         operationId: getResourceNameFromId(operationId),
         type: 'apiconnection' as const,
       }));
 
-      dispatch(initializeOperationsMetadata({ operations }));
+      if (deselectedOperationIds.length > 0) {
+        dispatch(deinitializeOperations({ operationIds: deselectedOperationIds }));
+      }
+
+      // Initializing selection
+      dispatch(initializeOperationsMetadata({ operations: selectedOperationsData }));
       dispatch(clearAllSelections());
       dispatch(closePanel());
     }
-  }, [dispatch, selectedConnectorId, selectedOperations]);
+  }, [dispatch, selectedConnectorId, selectedOperations, deselectedOperationIds]);
 
   const handleOnSelectOperations = useCallback(async () => {
     // This triggers the loading state and initializes connections
