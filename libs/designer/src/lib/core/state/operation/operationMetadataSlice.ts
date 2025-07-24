@@ -233,28 +233,14 @@ export interface InitializeNodesPayload {
   clearExisting?: boolean; // Optional flag to clear the existing nodes
 }
 
-export interface InitializeNodeInputsPayload {
-  nodesData: NodeOperationInputsData[];
-  clearExisting?: boolean; // Optional flag to clear the existing nodes
-}
-
 export const operationMetadataSlice = createSlice({
   name: 'operationMetadata',
   initialState: initialState,
   reducers: {
-    initializeNodeOperationInputsData: (state, action: PayloadAction<InitializeNodeInputsPayload>) => {
-      const { nodesData, clearExisting } = action.payload;
+    initializeNodeOperationInputsData: (state, action: PayloadAction<NodeOperationInputsData[]>) => {
+      const nodes = action.payload;
 
-      if (clearExisting) {
-        state.inputParameters = {};
-        state.dependencies = {};
-        state.operationInfo = {};
-        state.outputParameters = {};
-        state.settings = {};
-        state.operationMetadata = {};
-      }
-
-      for (const nodeData of nodesData) {
+      for (const nodeData of nodes) {
         if (!nodeData) {
           return;
         }

@@ -195,7 +195,7 @@ export const loadCustomTemplate = createAsyncThunk(
       allWorkflowsData as Record<string, WorkflowTemplateData>,
       normalizedConnections
     );
-    dispatch(initializeNodeOperationInputsData({ nodesData: operationsData }));
+    dispatch(initializeNodeOperationInputsData(operationsData));
 
     return {
       status: templateResource.properties?.state,
@@ -372,7 +372,7 @@ export const addWorkflowsData = createAsyncThunk(
 
     dispatch(updateAllWorkflowsData({ workflows: finalWorkflowsData, manifest: updatedTemplateManifest }));
     dispatch(updateConnectionAndParameterDefinitions({ connections: finalConnections, parameterDefinitions: finalParameterDefinitions }));
-    dispatch(initializeNodeOperationInputsData({ nodesData: operationsData }));
+    dispatch(initializeNodeOperationInputsData(operationsData));
 
     if (newState) {
       dispatch(updateEnvironment(newState));
