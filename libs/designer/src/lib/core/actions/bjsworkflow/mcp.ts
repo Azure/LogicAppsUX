@@ -33,7 +33,6 @@ import {
   initEmptyConnectionMap,
   initializeConnectionReferences,
   initializeConnectionsMappings,
-  removeNodesConnectionData,
 } from '../../state/connection/connectionSlice';
 import {
   deinitializeNodes,
@@ -172,6 +171,6 @@ export const deinitializeOperations = createAsyncThunk(
   async ({ operationIds }: { operationIds: string[] }, { dispatch }) => {
     dispatch(deinitializeOperationInfos({ ids: operationIds }));
     dispatch(deinitializeNodes(operationIds));
-    dispatch(removeNodesConnectionData({ nodeIds: operationIds }));
+    return operationIds;
   }
 );
