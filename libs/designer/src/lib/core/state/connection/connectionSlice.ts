@@ -109,6 +109,12 @@ export const connectionSlice = createSlice({
       const { nodeId } = action.payload;
       delete state.connectionsMapping[nodeId];
     },
+    removeNodesConnectionData: (state, action: PayloadAction<{ nodeIds: NodeId[] }>) => {
+      const { nodeIds } = action.payload;
+      for (const nodeId of nodeIds) {
+        delete state.connectionsMapping[nodeId];
+      }
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(resetWorkflowState, () => initialConnectionsState);
@@ -159,6 +165,7 @@ export const {
   initCopiedConnectionMap,
   initScopeCopiedConnections,
   removeNodeConnectionData,
+  removeNodesConnectionData,
   changeConnectionMappingsForNodes,
 } = connectionSlice.actions;
 

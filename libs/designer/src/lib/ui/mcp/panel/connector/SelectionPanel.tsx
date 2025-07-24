@@ -8,6 +8,7 @@ import { useMcpPanelStyles } from '../styles';
 import { useIntl } from 'react-intl';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
 import { useCallback } from 'react';
+import { clearAllSelections } from '../../../../core/state/mcp/connector/connectorSlice';
 
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
@@ -43,6 +44,7 @@ export const SelectionPanel = () => {
   };
 
   const handleDismiss = useCallback(() => {
+    dispatch(clearAllSelections());
     dispatch(closePanel());
   }, [dispatch]);
 
