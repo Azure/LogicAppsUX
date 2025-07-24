@@ -89,9 +89,9 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
     const newPayload = { ...payload, nodeId };
     const newToolGraphId = (getState() as RootState).panel.discoveryContent.relationshipIds.graphId;
     const agentToolMetadata = (getState() as RootState).panel.discoveryContent.agentToolMetadata;
+    const newToolId = (getState() as RootState).panel.discoveryContent.relationshipIds.subgraphId;
 
     if (isAddingAgentTool) {
-      const newToolId = (getState() as RootState).panel.discoveryContent.relationshipIds.subgraphId;
       if (newToolId && newToolGraphId) {
         if (agentToolMetadata?.newAdditiveSubgraphId && agentToolMetadata?.subGraphManifest) {
           initializeSubgraphFromManifest(agentToolMetadata.newAdditiveSubgraphId, agentToolMetadata?.subGraphManifest, dispatch);
@@ -121,10 +121,10 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
     );
 
     dispatch(setFocusNode(nodeId));
-    if (isAddingAgentTool) {
+    if (isAddingAgentTool && newToolId) {
       dispatch(
         setAlternateSelectedNode({
-          nodeId: newToolGraphId,
+          nodeId: newToolId,
           updatePanelOpenState: true,
           panelPersistence: 'selected',
         })
