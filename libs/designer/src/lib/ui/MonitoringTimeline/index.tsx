@@ -33,8 +33,16 @@ const MonitoringTimeline = () => {
     return parseRepetitions(repetitionData);
   }, [repetitionData]);
 
-  const flatRepetitions = useMemo(() => {
-    return Array.from(repetitions).flatMap(([_taskId, repetitionList]) => repetitionList);
+  const indexToGroupMap = useMemo(() => {
+    const indexMap: Array<{ groupIndex: number; repetitionIndex: number }> = [];
+
+    Array.from(repetitions).forEach(([groupIndex, repetitionList]) => {
+      repetitionList.forEach((_, repetitionIndex) => {
+        indexMap.push({ groupIndex, repetitionIndex });
+      });
+    });
+
+    return indexMap;
   }, [repetitions]);
 
   useEffect(() => {
@@ -76,21 +84,12 @@ const MonitoringTimeline = () => {
 
   useThrottledEffect(
     () => {
-      // Access the repetition at the flat index
-      if (timelineRepetitionIndex >= 0 && timelineRepetitionIndex < flatRepetitions.length) {
-        // Convert flat index back to group and repetition indices
-        let currentIndex = 0;
-        for (const [groupIndex, repetitionList] of repetitions) {
-          if (timelineRepetitionIndex >= currentIndex && timelineRepetitionIndex < currentIndex + repetitionList.length) {
-            const repetitionIndex = timelineRepetitionIndex - currentIndex;
-            handleSelectRepetition(groupIndex, repetitionIndex);
-            break;
-          }
-          currentIndex += repetitionList.length;
-        }
+      if (timelineRepetitionIndex >= 0 && timelineRepetitionIndex < indexToGroupMap.length) {
+        const { groupIndex, repetitionIndex } = indexToGroupMap[timelineRepetitionIndex];
+        handleSelectRepetition(groupIndex, repetitionIndex);
       }
     },
-    [timelineRepetitionIndex, handleSelectRepetition],
+    [timelineRepetitionIndex, indexToGroupMap, handleSelectRepetition],
     200
   );
 
