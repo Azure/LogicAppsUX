@@ -12,7 +12,6 @@ export const ChatEntryReaction = {
 export type ChatEntryReaction = (typeof ChatEntryReaction)[keyof typeof ChatEntryReaction];
 
 export type ConversationItem =
-  //TODO: Add other types of items
   | ToolReplyItem
   | AgentHeaderItem
   | UserQueryItem
@@ -105,9 +104,9 @@ export type AssistantReplyItem = BaseAssistantMessageItem & {
   __rawResponse?: any;
   additionalDocURL?: string | undefined;
   role?: {
-    text: string;
-    onClick: () => void;
-    agentName: string;
+    text?: string;
+    onClick?: () => void;
+    agentName?: string;
   };
   azureButtonCallback?: (prompt?: string) => void;
 };

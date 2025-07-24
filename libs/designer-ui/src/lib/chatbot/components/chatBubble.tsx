@@ -29,9 +29,9 @@ type ChatBubbleProps = {
   disabled?: boolean;
   textRef?: React.RefObject<HTMLDivElement>;
   role?: {
-    text: string;
-    onClick: () => void;
-    agentName: string;
+    text?: string;
+    onClick?: () => void;
+    agentName?: string;
   };
 };
 
@@ -145,8 +145,8 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
               {' - '}
             </>
           )}
-          <Link className="msla-bubble-footer-role--button" onClick={role.onClick}>
-            {role.agentName}
+          <Link className="msla-bubble-footer-role--button" onClick={role?.onClick}>
+            {role?.agentName}
           </Link>
         </div>
       )}

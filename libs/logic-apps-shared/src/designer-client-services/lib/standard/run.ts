@@ -23,7 +23,6 @@ export interface RunServiceOptions {
   updateCors?: () => void;
   workflowName: string;
   isDev?: boolean;
-  isTimelineSupported?: boolean;
 }
 
 export class StandardRunService implements IRunService {
@@ -208,11 +207,7 @@ export class StandardRunService implements IRunService {
    */
 
   async getTimelineRepetitions(runId: string): Promise<any> {
-    const { baseUrl, workflowName, httpClient, isTimelineSupported } = this.options;
-
-    if (!isTimelineSupported) {
-      return undefined;
-    }
+    const { baseUrl, workflowName, httpClient } = this.options;
 
     const onlyRunId = runId.split('/')?.at(-1);
     const uri = `${baseUrl}/workflows/${workflowName}/runs/${onlyRunId}/timeline?api-version=2024-04-01`;
