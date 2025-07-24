@@ -33,7 +33,6 @@ const MonitoringTimeline = () => {
     return parseRepetitions(repetitionData);
   }, [repetitionData]);
 
-  // Create a flattened array of repetitions for easy index-based access
   const flatRepetitions = useMemo(() => {
     return Array.from(repetitions).flatMap(([_taskId, repetitionList]) => repetitionList);
   }, [repetitions]);
