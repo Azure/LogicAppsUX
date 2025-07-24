@@ -24,8 +24,8 @@ export const DragPanMonitor = (props: DragPanMonitorProps) => {
 
   const [_nodes, _edges, flowSize] = useLayout();
 
-  const [containerDimensions, setContainerDimentions] = useState(canvasRef.current?.getBoundingClientRect() ?? { width: 0, height: 0 });
-  useResizeObserver(canvasRef, (el) => setContainerDimentions(el.contentRect));
+  const [containerDimensions, setContainerDimensions] = useState(canvasRef.current?.getBoundingClientRect() ?? { width: 0, height: 0 });
+  useResizeObserver(canvasRef, (el) => setContainerDimensions(el.contentRect));
 
   const [zoom, setZoom] = useState(1);
 

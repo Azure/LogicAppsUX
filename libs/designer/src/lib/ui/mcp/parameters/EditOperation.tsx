@@ -10,6 +10,7 @@ import {
   AccordionItem,
   AccordionHeader,
   AccordionPanel,
+  mergeClasses,
 } from '@fluentui/react-components';
 import { Dismiss16Regular } from '@fluentui/react-icons';
 import type { RootState, AppDispatch } from '../../../core/state/mcp/store';
@@ -27,6 +28,7 @@ import {
 } from '../../../core/state/operation/operationMetadataSlice';
 import { getGroupIdFromParameterId } from '../../../core/utils/parameters/helper';
 import { ParameterEditor } from './ParameterEditor';
+import constants from '../../../common/constants';
 
 interface EditOperationProps {
   description: string;
@@ -414,12 +416,22 @@ const ParameterField = ({
     description: 'Tooltip for remove parameter button',
   });
 
+  const isLargeParameter = useMemo(() => {
+    const editor = parameter.editor?.toLowerCase();
+    return (
+      editor === constants.EDITOR.ARRAY ||
+      editor === constants.EDITOR.DICTIONARY ||
+      editor === constants.EDITOR.HTML ||
+      editor === constants.EDITOR.TABLE
+    );
+  }, [parameter.editor]);
+
   return (
     <div className={styles.parameterField}>
       <Label className={styles.parameterLabel} required={parameter.required} title={parameter.label}>
         {parameter.label}
       </Label>
-      <div className={styles.parameterValueSection}>
+      <div className={mergeClasses(styles.parameterValueSection, isLargeParameter && styles.largeParameterSection)}>
         <ParameterEditor
           operationId={operationId}
           groupId={groupId}
