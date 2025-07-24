@@ -22,14 +22,17 @@ const comboBoxStyles: Partial<IComboBoxStyles> = {
 const resourceIdValidation =
   /^\/subscriptions\/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\/resourceGroups\/[a-zA-Z0-9](?:[a-zA-Z0-9-_.]*[a-zA-Z0-9])?\/providers\/[a-zA-Z0-9-_.]+\/[a-zA-Z0-9-_./]+$/;
 
-export const AzureStandardLogicAppSelector = () => {
+export const AzureStandardLogicAppSelector = ({
+  hideWorkflowSelection = false,
+  onLogicAppSelected,
+}: { hideWorkflowSelection?: boolean; onLogicAppSelected?: () => void }) => {
   const appId = useAppId();
   const workflowName = useWorkflowName();
   const runId = useRunId();
   const isMonitoringView = useIsMonitoringView();
   const hostingPlan = useHostingPlan();
   const standardList = useFetchStandardApps(environment.subscriptionIds);
-  const hybridList = useFetchHybridApps();
+  const hybridList = useFetchHybridApps(environment.subscriptionIds);
   const { data: appList, isLoading: isAppsLoading } = hostingPlan === 'hybrid' ? hybridList : standardList;
   const validApp = appId ? resourceIdValidation.test(appId) : false;
   const dispatch = useDispatch<AppDispatch>();
@@ -137,6 +140,7 @@ export const AzureStandardLogicAppSelector = () => {
           options={appOptions}
           onChange={(_, option) => {
             dispatch(setAppid((option?.key ?? '') as string));
+            onLogicAppSelected?.();
           }}
           styles={comboBoxStyles}
           disabled={appOptions.length === 0 || isAppsLoading}
@@ -149,37 +153,39 @@ export const AzureStandardLogicAppSelector = () => {
           />
         ) : null}
       </div>
-      <div style={{ position: 'relative' }}>
-        <Dropdown
-          placeholder={
-            isWorkflowsLoading
-              ? ''
-              : appId
-                ? workflowOptions.length > 0
-                  ? 'Select a Workflow'
-                  : 'No Workflows to Select'
-                : 'Select a Logic App First'
-          }
-          label="Workflow"
-          options={workflowOptions}
-          selectedKey={workflowName}
-          disabled={workflowOptions.length === 0 || !appId || isWorkflowsLoading}
-          defaultValue={workflowName}
-          onChange={(_, option) => {
-            dispatch(setWorkflowName(option?.key as string));
-            dispatch(
-              setResourcePath(
-                hostingPlan === 'hybrid'
-                  ? `${HybridAppUtility.getHybridAppBaseRelativeUrl(appId)}/workflows/${option?.key}`
-                  : `${appId}/workflows/${option?.key}`
-              )
-            );
-          }}
-        />
-        {isWorkflowsLoading ? (
-          <Spinner style={{ position: 'absolute', bottom: '6px', left: '8px' }} labelPosition="right" label="Loading Workflows..." />
-        ) : null}
-      </div>
+      {hideWorkflowSelection ? null : (
+        <div style={{ position: 'relative' }}>
+          <Dropdown
+            placeholder={
+              isWorkflowsLoading
+                ? ''
+                : appId
+                  ? workflowOptions.length > 0
+                    ? 'Select a Workflow'
+                    : 'No Workflows to Select'
+                  : 'Select a Logic App First'
+            }
+            label="Workflow"
+            options={workflowOptions}
+            selectedKey={workflowName}
+            disabled={workflowOptions.length === 0 || !appId || isWorkflowsLoading}
+            defaultValue={workflowName}
+            onChange={(_, option) => {
+              dispatch(setWorkflowName(option?.key as string));
+              dispatch(
+                setResourcePath(
+                  hostingPlan === 'hybrid'
+                    ? `${HybridAppUtility.getHybridAppBaseRelativeUrl(appId)}/workflows/${option?.key}`
+                    : `${appId}/workflows/${option?.key}`
+                )
+              );
+            }}
+          />
+          {isWorkflowsLoading ? (
+            <Spinner style={{ position: 'absolute', bottom: '6px', left: '8px' }} labelPosition="right" label="Loading Workflows..." />
+          ) : null}
+        </div>
+      )}
       {isMonitoringView ? (
         <div style={{ position: 'relative' }}>
           <Dropdown

@@ -14,6 +14,7 @@ export interface NodeMetadata {
   actionMetadata?: Record<string, any>;
   subgraphRunData?: Record<string, { actionResults: LogicAppsV2.WorkflowRunAction[] }>;
   runIndex?: number;
+  handoffs?: Record<string, string>;
 }
 export interface NodesMetadata {
   [nodeId: string]: NodeMetadata;
@@ -24,6 +25,7 @@ export const WorkflowKind = {
   STATEFUL: 'stateful',
   STATELESS: 'stateless',
   AGENTIC: 'agentic',
+  AGENT: 'agent',
 } as const;
 export type WorkflowKind = (typeof WorkflowKind)[keyof typeof WorkflowKind] | undefined;
 
@@ -45,7 +47,6 @@ export interface WorkflowState {
   collapsedGraphIds: Record<string, boolean>;
   collapsedActionIds: Record<string, boolean>;
   focusCollapsedNodeId?: string;
-  edgeIdsBySource: Record<string, string[]>;
   idReplacements: Record<string, string>;
   newlyAddedOperations: Record<string, string>;
   runInstance: LogicAppsV2.RunInstanceDefinition | null;
@@ -56,4 +57,6 @@ export interface WorkflowState {
     errorMessages: Partial<Record<MessageLevel, ErrorMessage[]>>;
   };
   agentsGraph: Record<string, any>;
+  timelineRepetitionIndex: number;
+  timelineRepetitionArray: string[][];
 }

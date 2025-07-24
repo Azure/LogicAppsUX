@@ -14,7 +14,6 @@ import { useIsPanelInPinnedViewMode, usePanelLocation } from '../../../../../cor
 import {
   useAllowUserToChangeConnection,
   useConnectorName,
-  useIsInlineConnection,
   useNodeConnectionName,
   useOperationInfo,
 } from '../../../../../core/state/selectors/actionMetadataSelector';
@@ -51,8 +50,7 @@ import { SettingsSection } from '../../../../settings/settingsection';
 import type { Settings } from '../../../../settings/settingsection';
 import { ConnectionDisplay } from './connectionDisplay';
 import { IdentitySelector } from './identityselector';
-import { MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/react';
-import { Divider } from '@fluentui/react-components';
+import { Divider, MessageBar, MessageBarBody, Spinner, Text } from '@fluentui/react-components';
 import {
   PanelLocation,
   TokenPicker,
@@ -136,7 +134,6 @@ export const ParametersTab: React.FC<ParametersTabProps> = (props) => {
   const connectionName = useNodeConnectionName(selectedNodeId);
   const operationInfo = useOperationInfo(selectedNodeId);
   const showConnectionDisplay = useAllowUserToChangeConnection(operationInfo);
-  const isInlineConnection = useIsInlineConnection(operationInfo);
   const showIdentitySelector = useShowIdentitySelectorQuery(selectedNodeId);
   const errorInfo = useOperationErrorInfo(selectedNodeId);
   const replacedIds = useReplacedIds();
@@ -182,7 +179,7 @@ export const ParametersTab: React.FC<ParametersTabProps> = (props) => {
   if (isLoading) {
     return (
       <div className="msla-loading-container">
-        <Spinner size={SpinnerSize.large} />
+        <Spinner size="large" />
       </div>
     );
   }
@@ -201,18 +198,27 @@ export const ParametersTab: React.FC<ParametersTabProps> = (props) => {
     <>
       {errorInfo ? (
         <MessageBar
-          messageBarType={
+          intent={
             errorInfo.level === ErrorLevel.DynamicInputs || errorInfo.level === ErrorLevel.Default
-              ? MessageBarType.severeWarning
+              ? 'warning'
               : errorInfo.level === ErrorLevel.DynamicOutputs
-                ? MessageBarType.warning
-                : MessageBarType.error
+                ? 'warning'
+                : 'error'
           }
+          layout="multiline"
         >
-          {errorInfo.message}
+          <MessageBarBody>
+            <Text>{errorInfo.message}</Text>
+          </MessageBarBody>
         </MessageBar>
       ) : null}
-      {showNoParamsMessage ? <MessageBar messageBarType={MessageBarType.info}>{emptyParametersMessage}</MessageBar> : null}
+      {showNoParamsMessage ? (
+        <MessageBar layout="multiline">
+          <MessageBarBody>
+            <Text>{emptyParametersMessage}</Text>
+          </MessageBarBody>
+        </MessageBar>
+      ) : null}
       {Object.keys(inputs?.parameterGroups ?? {}).map((sectionName) => (
         <div key={sectionName}>
           <ParameterSection
@@ -225,7 +231,7 @@ export const ParametersTab: React.FC<ParametersTabProps> = (props) => {
           />
         </div>
       ))}
-      {!isInlineConnection && operationInfo && showConnectionDisplay && connectionName.isLoading !== undefined ? (
+      {operationInfo && showConnectionDisplay && connectionName.isLoading !== undefined ? (
         <>
           <Divider style={{ padding: '16px 0px' }} />
           <ConnectionDisplay

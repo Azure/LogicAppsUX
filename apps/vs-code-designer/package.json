@@ -12,7 +12,7 @@
     "@microsoft/logic-apps-shared": "workspace:*",
     "@microsoft/vscode-azext-azureappservice": "0.8.1",
     "@microsoft/vscode-azext-azureauth": "^4.1.0",
-    "@microsoft/vscode-azext-azureutils": "^0.3.9",
+    "@microsoft/vscode-azext-azureutils": "0.3.9-beta",
     "@microsoft/vscode-azext-utils": "0.4.6",
     "@microsoft/vscode-azureresources-api": "^2.0.2",
     "@microsoft/vscode-extension-logic-apps": "workspace:*",

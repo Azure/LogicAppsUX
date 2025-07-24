@@ -109,14 +109,12 @@ import {
   UnsupportedException,
   ValidationErrorCode,
   ValidationException,
-  nthLastIndexOf,
   parseErrorMessage,
   getRecordEntry,
   replaceWhiteSpaceWithUnderscore,
   isRecordNotEmpty,
   isBodySegment,
   canStringBeConverted,
-  splitAtIndex,
 } from '@microsoft/logic-apps-shared';
 import type {
   AuthProps,
@@ -136,7 +134,6 @@ import {
   removeQuotes,
   ArrayType,
   FloatingActionMenuKind,
-  getOuterMostCommaIndex,
   RowDropdownOptions,
   GroupDropdownOptions,
   GroupType,
@@ -146,6 +143,7 @@ import {
   TokenType,
   AuthenticationOAuthType,
   validateVariables,
+  parseQueryStringToRowItemProps,
 } from '@microsoft/designer-ui';
 import type {
   DependentParameterInfo,
@@ -621,77 +619,29 @@ export const toSimpleQueryBuilderViewModel = (
   input: any
 ): {
   isOldFormat: boolean;
-  itemValue: ValueSegment[] | undefined;
+  itemValue: RowItemProps | undefined;
   isRowFormat: boolean;
 } => {
-  const advancedModeResult = {
-    isOldFormat: true,
-    isRowFormat: false,
-    itemValue: undefined,
-  };
-
-  if (!input || !input.includes('@') || !input.includes(',')) {
-    return input?.length === 0
-      ? {
-          isOldFormat: true,
-          isRowFormat: true,
-          itemValue: [createLiteralValueSegment("@equals('','')")],
-        }
-      : advancedModeResult;
-  }
-
-  try {
-    let stringValue = input;
-    let operator: string = stringValue.substring(stringValue.indexOf('@') + 1, stringValue.indexOf('('));
-    let operationLiteral: ValueSegment;
-    let endingLiteral: ValueSegment;
-    const negatory = operator === 'not';
-
-    if (negatory) {
-      stringValue = stringValue.replace('@not(', '@');
-
-      const negatedOperator = stringValue.substring(stringValue.indexOf('@') + 1, stringValue.indexOf('('));
-
-      operationLiteral = createLiteralValueSegment(`@not(${negatedOperator}(`);
-      endingLiteral = createLiteralValueSegment('))');
-      operator = `not${negatedOperator}`;
-    } else {
-      operationLiteral = createLiteralValueSegment(`@${operator}(`);
-      endingLiteral = createLiteralValueSegment(')');
-    }
-
-    if (!Object.values(RowDropdownOptions).includes(operator as RowDropdownOptions)) {
-      return advancedModeResult;
-    }
-
-    const operandSubstring: string = stringValue.substring(
-      stringValue.indexOf('(') + 1,
-      nthLastIndexOf(stringValue, ')', negatory ? 2 : 1)
-    );
-    const [operand1String, operand2String] = splitAtIndex(operandSubstring, getOuterMostCommaIndex(operandSubstring)).map(removeQuotes);
-
+  if (input?.length === 0) {
     return {
       isOldFormat: true,
       isRowFormat: true,
-      itemValue: [
-        operationLiteral,
-        loadParameterValueFromString(operand1String.trim(), {
-          removeQuotesFromExpression: true,
-          trimExpression: true,
-          convertIfContainsExpression: true,
-        })[0],
-        createLiteralValueSegment(','),
-        loadParameterValueFromString(operand2String.trim(), {
-          removeQuotesFromExpression: true,
-          trimExpression: true,
-          convertIfContainsExpression: true,
-        })[0],
-        endingLiteral,
-      ],
+      itemValue: {
+        operand1: [],
+        operand2: [],
+        operator: RowDropdownOptions.EQUALS,
+        type: GroupType.ROW,
+      },
     };
-  } catch {
-    return advancedModeResult;
   }
+
+  const itemValue = parseQueryStringToRowItemProps(input, loadParameterValueFromString);
+
+  return {
+    isOldFormat: true,
+    isRowFormat: itemValue !== undefined,
+    itemValue,
+  };
 };
 
 export const canConvertToComplexCondition = (input: any): boolean => {
@@ -2844,8 +2794,15 @@ const getStringifiedValueFromFloatingActionMenuOutputsViewModel = (
   return JSON.stringify(value);
 };
 
-const iterateSimpleQueryBuilderEditor = (
-  itemValue: ValueSegment[],
+const NEGATED_OPERATORS: Record<string, string> = {
+  notcontains: 'contains',
+  notequals: 'equals',
+  notstartswith: 'startsWith',
+  notendswith: 'endsWith',
+};
+
+export const iterateSimpleQueryBuilderEditor = (
+  itemValue: RowItemProps,
   isRowFormat: boolean,
   idReplacements?: Record<string, string>
 ): string | undefined => {
@@ -2853,15 +2810,32 @@ const iterateSimpleQueryBuilderEditor = (
   if (!isRowFormat) {
     return undefined;
   }
-  const { value: remappedItemValue } = idReplacements ? remapValueSegmentsWithNewIds(itemValue, idReplacements) : { value: itemValue };
-  // otherwise we iterate through row items and concatenate the values
-  let stringValue = '';
-  remappedItemValue.forEach((segment) => {
-    stringValue += segment.value;
-  });
-  return stringValue;
+
+  const remappedItemValue: RowItemProps = idReplacements ? remapEditorViewModelWithNewIds(itemValue, idReplacements) : itemValue;
+
+  const { operator, operand1, operand2 } = remappedItemValue;
+
+  const operand1Str = formatSegment(operand1[0]);
+  const operand2Str = formatSegment(operand2[0]);
+
+  const baseOperator = NEGATED_OPERATORS[operator.toLowerCase()];
+  if (baseOperator) {
+    return `@not(${baseOperator}(${operand1Str}, ${operand2Str}))`;
+  }
+
+  return `@${operator}(${operand1Str}, ${operand2Str})`;
 };
 
+function formatSegment(segment: ValueSegment): string {
+  if (segment.type === ValueSegmentType.TOKEN) {
+    return segment.value;
+  }
+
+  const lowerValue = segment.value.toLowerCase();
+  const isPrimitive = lowerValue === 'true' || lowerValue === 'false' || lowerValue === 'null' || !Number.isNaN(Number(segment.value));
+
+  return isPrimitive ? segment.value : `'${segment.value}'`;
+}
 export const recurseSerializeCondition = (
   parameter: ParameterInfo,
   editorViewModel: any,
@@ -2990,6 +2964,16 @@ export function getGroupAndParameterFromParameterKey(
     }
   }
 
+  return undefined;
+}
+
+export function getGroupIdFromParameterId(nodeInputs: NodeInputs, parameterId: string): string | undefined {
+  for (const [groupId, group] of Object.entries(nodeInputs.parameterGroups)) {
+    const parameter = group.parameters.find((param) => param.id === parameterId);
+    if (parameter) {
+      return groupId;
+    }
+  }
   return undefined;
 }
 

@@ -28,7 +28,7 @@ import { saveUnitTestDefinition } from '../../../utils/unitTests';
 import { createNewDataMapCmd } from '../../dataMapper/dataMapper';
 import { OpenDesignerBase } from './openDesignerBase';
 import { HTTP_METHODS } from '@microsoft/logic-apps-shared';
-import { openUrl, type IActionContext } from '@microsoft/vscode-azext-utils';
+import { callWithTelemetryAndErrorHandling, openUrl, type IActionContext } from '@microsoft/vscode-azext-utils';
 import type {
   AzureConnectorDetails,
   FileSystemConnectionInfo,
@@ -42,8 +42,8 @@ import { writeFileSync, readFileSync } from 'fs';
 import * as path from 'path';
 import { env, ProgressLocation, Uri, ViewColumn, window, workspace } from 'vscode';
 import type { WebviewPanel, ProgressOptions } from 'vscode';
-import type { IAzureConnectorsContext } from '../azureConnectorWizard';
 import { saveBlankUnitTest } from '../unitTest/saveBlankUnitTest';
+import { getBundleVersionNumber } from '../../../utils/getDebugSymbolDll';
 
 export default class OpenDesignerForLocalProject extends OpenDesignerBase {
   private readonly workflowFilePath: string;
@@ -131,6 +131,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     const callbackUri: Uri = await (env as any).asExternalUri(
       Uri.parse(`${env.uriScheme}://ms-azuretools.vscode-azurelogicapps/authcomplete`)
     );
+    this.context.telemetry.properties.extensionBundleVersion = this.panelMetadata.extensionBundleVersion;
     this.oauthRedirectUrl = callbackUri.toString(true);
 
     this.panel.webview.html = await this.getWebviewContent({
@@ -193,33 +194,44 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
             runId: this.runId,
           },
         });
-        if (!this.isUnitTest) {
-          await this.validateWorkflow(this.panelMetadata.workflowContent);
-        }
+        await callWithTelemetryAndErrorHandling('InitializeWorkflowFromDesigner', async (activateContext: IActionContext) => {
+          if (!this.isUnitTest) {
+            await this.validateWorkflow(activateContext, this.panelMetadata.workflowContent);
+          }
+        });
         break;
       }
       case ExtensionCommand.save: {
-        await this.saveWorkflow(
-          this.workflowFilePath,
-          this.panelMetadata.workflowContent,
-          msg,
-          this.panelMetadata.parametersData,
-          this.panelMetadata.azureDetails?.tenantId,
-          this.panelMetadata.azureDetails?.workflowManagementBaseUrl
-        );
-        await this.validateWorkflow(this.panelMetadata.workflowContent);
+        await callWithTelemetryAndErrorHandling('SaveWorkflowFromDesigner', async (activateContext: IActionContext) => {
+          await this.saveWorkflow(
+            activateContext,
+            this.workflowFilePath,
+            this.panelMetadata.workflowContent,
+            msg,
+            this.panelMetadata.parametersData,
+            this.panelMetadata.azureDetails?.tenantId,
+            this.panelMetadata.azureDetails?.workflowManagementBaseUrl
+          );
+          await this.validateWorkflow(activateContext, this.panelMetadata.workflowContent);
+        });
         break;
       }
       case ExtensionCommand.saveBlankUnitTest: {
-        await saveBlankUnitTest(this.context as IAzureConnectorsContext, Uri.file(this.workflowFilePath), msg.definition);
+        await callWithTelemetryAndErrorHandling('SaveBlankUnitTestFromDesigner', async (activateContext: IActionContext) => {
+          await saveBlankUnitTest(activateContext, Uri.file(this.workflowFilePath), msg.definition);
+        });
         break;
       }
       case ExtensionCommand.saveUnitTest: {
-        await saveUnitTestDefinition(this.projectPath, this.workflowName, this.unitTestName, msg.definition);
+        await callWithTelemetryAndErrorHandling('SaveUnitTestFromDesigner', async (activateContext: IActionContext) => {
+          await saveUnitTestDefinition(activateContext, this.projectPath, this.workflowName, this.unitTestName, msg.definition);
+        });
         break;
       }
       case ExtensionCommand.addConnection: {
-        await addConnectionData(this.context, this.workflowFilePath, msg.connectionAndSetting);
+        await callWithTelemetryAndErrorHandling('AddConnectionFromDesigner', async (activateContext: IActionContext) => {
+          await addConnectionData(activateContext, this.workflowFilePath, msg.connectionAndSetting);
+        });
         break;
       }
       case ExtensionCommand.openOauthLoginPopup: {
@@ -274,6 +286,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
    * @param {string} workflowBaseManagementUri - Workflow base url.
    */
   private async saveWorkflow(
+    context: IActionContext,
     filePath: string,
     workflow: any,
     workflowToSave: any,
@@ -325,23 +338,32 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
         }
 
         writeFileSync(filePath, JSON.stringify(workflow, null, 4));
-
         this.sendMsgToWebview({
-          command: ExtensionCommand.setIsWorkflowDirty,
-          data: false,
+          command: ExtensionCommand.resetDesignerDirtyState,
         });
       } catch (error) {
-        window.showErrorMessage(`${localize('saveFailure', 'Workflow not saved.')} ${error.message}`, localize('OK', 'OK'));
+        const errorMessage = error instanceof Error ? error.message : typeof error === 'string' ? error : 'Unknown error';
+        const errorLocalized = `${localize('saveFailure', 'Workflow not saved.')} ${errorMessage}`;
+        context.telemetry.properties.saveWorkflowError = errorLocalized;
+        window.showErrorMessage(errorLocalized, localize('OK', 'OK'));
         throw error;
       }
     });
   }
 
   /**
-   * Calls the validate api to validate the workflow schema.
-   * @param {any} workflow - Workflow schema to validate.
+   * Validates a workflow using the design time API.
+   *
+   * @param context - The action context for the operation
+   * @param workflow - The workflow object containing definition and kind properties
+   * @throws {Error} If design time is not running for the project
+   * @throws {Error} If design time port is not found
+   * @remarks
+   * This method sends a POST request to the local design time API to validate the workflow definition.
+   * If validation fails with a non-404 status code, an error message is displayed to the user.
+   * The validation includes the workflow definition, kind, and local app settings.
    */
-  private async validateWorkflow(workflow: any): Promise<void> {
+  private async validateWorkflow(context: IActionContext, workflow: any): Promise<void> {
     if (!ext.designTimeInstances.has(this.projectPath)) {
       throw new Error(localize('designTimeNotRunning', `Design time is not running for project ${this.projectPath}.`));
     }
@@ -349,18 +371,22 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     if (!designTimePort) {
       throw new Error(localize('designTimePortNotFound', 'Design time port not found.'));
     }
-    const url = `http://localhost:${designTimePort}${managementApiPrefix}/workflows/${this.workflowName}/validate?api-version=${this.apiVersion}`;
+    const url = `http://localhost:${designTimePort}${managementApiPrefix}/workflows/${this.workflowName}/validatePartial?api-version=${this.apiVersion}`;
     try {
       await sendRequest(this.context, {
         url,
         method: HTTP_METHODS.POST,
         headers: { ['Content-Type']: 'application/json' },
-        body: { properties: workflow },
+        body: {
+          properties: { definition: workflow.definition, kind: workflow.kind, appSettings: { values: this.panelMetadata.localSettings } },
+        },
       });
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : typeof error === 'string' ? error : 'Unknown error';
+      context.telemetry.properties.validateWorkflowError = errorMessage;
       if (error.statusCode !== 404) {
-        const errorMessage = localize('workflowValidationFailed', 'Workflow validation failed: ') + error.message;
-        window.showErrorMessage(errorMessage, localize('OK', 'OK'));
+        const errorLocalized = localize('workflowValidationFailed', 'Workflow validation failed: ') + errorMessage;
+        window.showErrorMessage(errorLocalized, localize('OK', 'OK'));
       }
     }
   }
@@ -474,6 +500,8 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     const customCodeData: Record<string, string> = await getCustomCodeFromFiles(this.workflowFilePath);
     const workflowDetails = await getManualWorkflowsInLocalProject(projectPath, this.workflowName);
     const artifacts = await getArtifactsInLocalProject(projectPath);
+    const bundleVersionNumber = await getBundleVersionNumber();
+
     let localSettings: Record<string, string>;
     let azureDetails: AzureConnectorDetails;
 
@@ -500,6 +528,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
       artifacts,
       schemaArtifacts: this.schemaArtifacts,
       mapArtifacts: this.mapArtifacts,
+      extensionBundleVersion: bundleVersionNumber,
     };
   }
 

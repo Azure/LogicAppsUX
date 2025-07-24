@@ -1,6 +1,6 @@
 import type { NodeStaticResults } from '../../actions/bjsworkflow/staticresults';
 import type { RootState } from '../../store';
-import { shouldUseParameterInGroup } from '../../utils/parameters/helper';
+import { getParameterFromName, shouldUseParameterInGroup } from '../../utils/parameters/helper';
 import type { ErrorInfo, NodeDependencies, NodeInputs, OperationMetadataState } from './operationMetadataSlice';
 import { ErrorLevel } from './operationMetadataSlice';
 import type { NodeOutputs } from '@microsoft/logic-apps-shared';
@@ -42,8 +42,7 @@ export const getNodeOperationData = (state: OperationMetadataState, nodeId: stri
   };
 };
 
-export const getOperationInputParameters = (rootState: RootState, nodeId: string): ParameterInfo[] => {
-  const nodeInputs = getRecordEntry(rootState.operations.inputParameters, nodeId);
+export const getOperationInputParameters = (nodeInputs: NodeInputs): ParameterInfo[] => {
   const allParameters: ParameterInfo[] = [];
 
   if (nodeInputs) {
@@ -80,6 +79,16 @@ export const useOperationInputParameters = (nodeId: string): ParameterInfo[] => 
     }
     return allParameters;
   }, [nodeInputs]);
+};
+
+export const useOperationParameterByName = (nodeId: string, parameterName: string): ParameterInfo | undefined => {
+  const nodeInputs = useSelector((rootState: RootState) => getRecordEntry(rootState.operations.inputParameters, nodeId));
+  return useMemo(() => {
+    if (!nodeInputs) {
+      return undefined;
+    }
+    return getParameterFromName(nodeInputs, parameterName);
+  }, [nodeInputs, parameterName]);
 };
 
 export const useOperationErrorInfo = (nodeId: string): ErrorInfo | undefined =>
@@ -129,12 +138,15 @@ interface TokenDependencies {
 }
 export const useTokenDependencies = (nodeId: string): TokenDependencies => {
   const operationInputParameters = useRawInputParameters(nodeId);
+  const variables = useSelector((state: RootState) => state.tokens.variables);
+
   return useMemo(() => {
     if (!operationInputParameters) {
       return { dependencies: new Set(), loopSources: new Set() };
     }
     const dependencies = new Set<string>();
     const loopSources = new Set<string>();
+
     for (const group of Object.values(operationInputParameters.parameterGroups)) {
       for (const parameter of group.parameters) {
         for (const value of parameter.value) {
@@ -144,22 +156,37 @@ export const useTokenDependencies = (nodeId: string): TokenDependencies => {
           if (value.token?.actionName) {
             dependencies.add(value.token.actionName);
           }
+          // Check for variable tokens
+          if (value.token?.tokenType === 'variable' && value.token?.name) {
+            // Find which node initializes this variable
+            for (const [nodeId, nodeVariables] of Object.entries(variables)) {
+              if (nodeVariables.some((v) => v.name === value.token?.name)) {
+                dependencies.add(nodeId);
+                break;
+              }
+            }
+          }
         }
       }
     }
     return { dependencies, loopSources };
-  }, [operationInputParameters]);
+  }, [operationInputParameters, variables]);
 };
 
 export const useNodesTokenDependencies = (nodes: Set<string>) => {
   const operationsInputsParameters = useOperationsInputParameters();
-  const dependencies: Record<string, Set<string>> = {};
-  if (!operationsInputsParameters) {
-    return dependencies;
-  }
-  for (const node of nodes) {
-    const operationInputParameters = getRecordEntry(operationsInputsParameters, node);
-    if (operationInputParameters) {
+  const variables = useSelector((state: RootState) => state.tokens.variables);
+  return useMemo(() => {
+    const dependencies: Record<string, Set<string>> = {};
+    if (!operationsInputsParameters) {
+      return dependencies;
+    }
+    for (const node of nodes) {
+      const operationInputParameters = getRecordEntry(operationsInputsParameters, node);
+      if (!operationInputParameters) {
+        dependencies[node] = new Set();
+        continue;
+      }
       const innerDependencies = new Set<string>();
       for (const group of Object.values(operationInputParameters.parameterGroups)) {
         for (const parameter of group.parameters) {
@@ -170,15 +197,23 @@ export const useNodesTokenDependencies = (nodes: Set<string>) => {
             if (value.token?.arrayDetails?.loopSource) {
               innerDependencies.add(value.token.arrayDetails.loopSource);
             }
+            // Check for variable tokens
+            if (value.token?.tokenType === 'variable' && value.token?.name) {
+              // Find which node initializes this variable
+              for (const [nodeId, nodeVariables] of Object.entries(variables)) {
+                if (nodeVariables.some((v) => v.name === value.token?.name)) {
+                  innerDependencies.add(nodeId);
+                  break;
+                }
+              }
+            }
           }
         }
       }
       dependencies[node] = innerDependencies;
-    } else {
-      dependencies[node] = new Set();
     }
-  }
-  return dependencies;
+    return dependencies;
+  }, [nodes, operationsInputsParameters, variables]);
 };
 
 export const useAllOperationErrors = () => useSelector(createSelector(getOperationState, (state) => state.errors));

@@ -7,7 +7,6 @@ import { RunAfter } from './sections/runafterconfiguration';
 import { CustomizableMessageBar } from './validation/errorbar';
 import type { ValidationError } from './validation/validation';
 import { ValidationErrorType } from './validation/validation';
-import type { IDropdownOption } from '@fluentui/react';
 import { Button, Divider, type MessageBarIntent, Tooltip, Badge } from '@fluentui/react-components';
 import {
   bundleIcon,
@@ -47,6 +46,7 @@ import type {
   SettingDictionaryProps,
   SettingDropdownProps,
   ChangeState,
+  SearchableDropdownOption,
 } from '@microsoft/designer-ui';
 import { guid } from '@microsoft/logic-apps-shared';
 import { type AppDispatch, storeStateToUndoRedoHistory } from '../../core';
@@ -387,16 +387,14 @@ const Setting = ({
           <Divider style={{ padding: '16px 0px' }} />
           <AdvancedSettingsMessage shouldShowMessage={isAgent} />
           <SearchableDropdownWithAddAll
-            dropdownProps={{
-              multiSelect: true,
-              options: conditionallyInvisibleSettings.map(
-                (setting): IDropdownOption => ({
-                  key: (setting.settingProp as any).id ?? guid(),
-                  text: (setting.settingProp as any).label ?? '',
-                })
-              ),
-              placeholder: addNewParamText,
-            }}
+            multiselect={true}
+            options={conditionallyInvisibleSettings.map(
+              (setting): SearchableDropdownOption => ({
+                key: (setting.settingProp as any).id ?? guid(),
+                text: (setting.settingProp as any).label ?? '',
+              })
+            )}
+            placeholder={addNewParamText}
             onItemSelectionChanged={(parameterId, value) => {
               dispatch(updateParameterConditionalVisibility({ nodeId, groupId: id ?? '', parameterId, value }));
             }}

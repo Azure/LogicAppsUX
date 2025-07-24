@@ -22,11 +22,13 @@ import { isOutputToken, isParameterToken, isTokenValueSegment, isVariableToken }
 type DeleteOperationPayload = {
   nodeId: string;
   isTrigger: boolean;
+  clearFocus?: boolean;
 };
 
 export type DeleteGraphPayload = {
   graphId: string;
   graphNode: WorkflowNode;
+  clearFocus?: boolean;
 };
 
 export const deleteWorkflowParameter = createAsyncThunk('deleteWorkflowParameter', async (parameterId: string, { getState, dispatch }) => {
@@ -37,10 +39,12 @@ export const deleteOperation = createAsyncThunk(
   'deleteOperation',
   async (deletePayload: DeleteOperationPayload, { getState, dispatch }) => {
     batch(() => {
-      const { nodeId, isTrigger } = deletePayload;
+      const { nodeId, isTrigger, clearFocus = true } = deletePayload;
 
-      dispatch(clearFocusNode());
-      dispatch(clearPanel());
+      if (clearFocus) {
+        dispatch(clearFocusNode());
+        dispatch(clearPanel());
+      }
 
       dispatch(deleteNode(deletePayload));
       deleteCustomCodeInfo(nodeId, dispatch, getState() as RootState);
@@ -141,10 +145,12 @@ const deletePinnedOperation = (nodeId: string, dispatch: Dispatch, state: RootSt
 };
 
 export const deleteGraphNode = createAsyncThunk('deleteGraph', async (deletePayload: DeleteGraphPayload, { dispatch }) => {
-  const { graphNode } = deletePayload;
+  const { graphNode, clearFocus = true } = deletePayload;
 
-  dispatch(clearFocusNode());
-  dispatch(clearPanel());
+  if (clearFocus) {
+    dispatch(clearFocusNode());
+    dispatch(clearPanel());
+  }
 
   // DELETE GRAPH
   const recursiveGraphDelete = (graph: WorkflowNode) => {
@@ -152,10 +158,10 @@ export const deleteGraphNode = createAsyncThunk('deleteGraph', async (deletePayl
       if (child.type === WORKFLOW_NODE_TYPES.GRAPH_NODE || child.type === WORKFLOW_NODE_TYPES.SUBGRAPH_NODE) {
         recursiveGraphDelete(child);
       } else {
-        dispatch(deleteOperation({ nodeId: child.id, isTrigger: false }));
+        dispatch(deleteOperation({ nodeId: child.id, isTrigger: false, clearFocus }));
       }
     });
-    dispatch(deleteOperation({ nodeId: graph.id, isTrigger: false }));
+    dispatch(deleteOperation({ nodeId: graph.id, isTrigger: false, clearFocus }));
   };
 
   recursiveGraphDelete(graphNode);

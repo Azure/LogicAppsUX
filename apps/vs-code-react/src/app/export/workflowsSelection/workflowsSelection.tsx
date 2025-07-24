@@ -1,4 +1,3 @@
-import WarningIcon from '../../../resources/Caution.svg';
 import { QueryKeys } from '../../../run-service';
 import type { WorkflowsList, SelectedWorkflowsList } from '../../../run-service';
 import { ApiService } from '../../../run-service/export/index';
@@ -17,7 +16,7 @@ import {
   updateSelectedItems,
 } from './helper';
 import { SelectedList } from './selectedList';
-import { Separator, ShimmeredDetailsList, SelectionMode, Selection, MessageBar, MessageBarType } from '@fluentui/react';
+import { ShimmeredDetailsList, SelectionMode, Selection } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { useMemo, useRef, useState, useEffect, useContext } from 'react';
@@ -25,10 +24,14 @@ import { useIntl } from 'react-intl';
 import { useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { LargeText, XLargeText } from '@microsoft/designer-ui';
+import { useExportStyles } from '../exportStyles';
+import type { InputProps } from '@fluentui/react-components';
+import { Divider, MessageBar, MessageBarBody } from '@fluentui/react-components';
 
 export const WorkflowsSelection: React.FC = () => {
   const vscode = useContext(VSCodeContext);
   const workflowState = useSelector((state: RootState) => state.workflow);
+  const styles = useExportStyles();
   const { baseUrl, accessToken, exportData, cloudHost } = workflowState;
   const { selectedSubscription, selectedIse, selectedWorkflows, location } = exportData;
 
@@ -158,7 +161,7 @@ export const WorkflowsSelection: React.FC = () => {
 
   const workflowsList = useMemo(() => {
     const emptyText = (
-      <LargeText text={intlText.NO_WORKFLOWS} style={{ display: 'block' }} className="msla-export-workflows-panel-list-workflows-empty" />
+      <LargeText text={intlText.NO_WORKFLOWS} style={{ display: 'block' }} className={styles.exportWorkflowsPanelListEmpty} />
     );
 
     const noWorkflows = renderWorkflows !== null && !renderWorkflows.length && !isWorkflowsLoading ? emptyText : null;
@@ -166,7 +169,9 @@ export const WorkflowsSelection: React.FC = () => {
     const enableShimmer = isWorkflowsLoading || renderWorkflows === null;
 
     return (
-      <div className={`msla-export-workflows-panel-list-workflows ${enableShimmer ? 'loading' : ''}`}>
+      <div
+        className={`${styles.exportWorkflowsPanelListWorkflows} ${enableShimmer ? styles.exportWorkflowsPanelListWorkflowsLoading : ''}`}
+      >
         <ShimmeredDetailsList
           items={renderWorkflows || []}
           columns={getListColumns(intlText.NAME, intlText.RESOURCE_GROUP)}
@@ -184,38 +189,31 @@ export const WorkflowsSelection: React.FC = () => {
       </div>
     );
   }, [
-    renderWorkflows,
-    isWorkflowsLoading,
-    selection,
-    intlText.SELECTION,
-    intlText.SELECTION_ALL,
-    intlText.SELECT_WORKFLOW,
     intlText.NO_WORKFLOWS,
     intlText.NAME,
     intlText.RESOURCE_GROUP,
+    intlText.SELECTION,
+    intlText.SELECTION_ALL,
+    intlText.SELECT_WORKFLOW,
+    styles.exportWorkflowsPanelListEmpty,
+    styles.exportWorkflowsPanelListWorkflows,
+    styles.exportWorkflowsPanelListWorkflowsLoading,
+    renderWorkflows,
+    isWorkflowsLoading,
+    selection,
   ]);
 
   const limitInfo = useMemo(() => {
     return selectedWorkflows.length >= 15 ? (
-      <MessageBar
-        className="msla-export-workflows-panel-limit-selection"
-        messageBarType={MessageBarType.info}
-        isMultiline={true}
-        messageBarIconProps={{
-          imageProps: {
-            src: WarningIcon,
-            width: 15,
-            height: 15,
-          },
-        }}
-      >
-        {intlText.LIMIT_INFO}
+      <MessageBar className={styles.exportWorkflowsPanelLimitInfo} intent="info" layout={'multiline'}>
+        <MessageBarBody> {intlText.LIMIT_INFO}</MessageBarBody>
       </MessageBar>
     ) : null;
-  }, [intlText.LIMIT_INFO, selectedWorkflows]);
+  }, [intlText.LIMIT_INFO, selectedWorkflows.length, styles.exportWorkflowsPanelLimitInfo]);
 
   const filters = useMemo(() => {
-    const onChangeSearch = (_event: React.FormEvent<HTMLDivElement>, newSearchString: string) => {
+    const onChangeSearch: InputProps['onChange'] = (_event, data) => {
+      const newSearchString = data.value;
       const filteredWorkflows = filterWorkflows(allWorkflows.current, resourceGroups, newSearchString);
       allItemsSelected.current = allItemsSelected.current.map((workflow) => {
         const isWorkflowInRender = !!filteredWorkflows.find((item: WorkflowsList) => item.key === workflow.key);
@@ -288,19 +286,19 @@ export const WorkflowsSelection: React.FC = () => {
   };
 
   return (
-    <div className="msla-export-workflows">
-      <div className="msla-export-workflows-panel">
-        <div className="msla-export-workflows-panel-list">
+    <>
+      <div className={styles.exportWorkflowsPanel}>
+        <div className={styles.exportWorkflowsPanelList}>
           <XLargeText style={{ display: 'block' }} text={intlText.SELECT_TITLE} />
           <LargeText style={{ display: 'block' }} text={intlText.SELECT_DESCRIPTION} />
           {limitInfo}
           {filters}
           {workflowsList}
         </div>
-        <Separator vertical className="msla-export-workflows-panel-divider" />
+        <Divider vertical className={styles.exportWorkflowsPanelDivider} />
         <SelectedList isLoading={isWorkflowsLoading || renderWorkflows === null} deselectWorkflow={deselectWorkflow} />
       </div>
       <AdvancedOptions />
-    </div>
+    </>
   );
 };

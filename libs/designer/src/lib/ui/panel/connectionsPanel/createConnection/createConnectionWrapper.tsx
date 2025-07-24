@@ -9,22 +9,28 @@ import {
 } from '../../../../core/state/panel/panelSelectors';
 import { useOperationManifest } from '../../../../core/state/selectors/actionMetadataSelector';
 import { getAssistedConnectionProps } from '../../../../core/utils/connectors/connections';
-import { getRecordEntry, type Connection, type Connector } from '@microsoft/logic-apps-shared';
+import { getRecordEntry, guid, type Connection, type Connector } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import type { ApiHubAuthentication } from 'lib/common/models/workflow';
+import type { ApiHubAuthentication } from '../../../../common/models/workflow';
 import { CreateConnectionInternal } from './createConnectionInternal';
+import { useIsAgentSubGraph } from '../../../../common/hooks/agent';
+import { updateNodeParameters } from '../../../../core/state/operation/operationMetadataSlice';
 
 export const CreateConnectionWrapper = () => {
   const dispatch = useDispatch<AppDispatch>();
-
   const nodeId: string = useOperationPanelSelectedNodeId();
+  const isAgentSubgraph = useIsAgentSubGraph(nodeId);
   const nodeIds = useConnectionPanelSelectedNodeIds();
   const connector = useConnectorByNodeId(nodeId);
   const operationInfo = useOperationInfo(nodeId);
   const { data: operationManifest } = useOperationManifest(operationInfo);
   const connectionMetadata = getConnectionMetadata(operationManifest);
   const hasExistingConnection = useSelector((state: RootState) => !!getRecordEntry(state.connections.connectionsMapping, nodeId));
+  const { nodeInputs } = useSelector((state: RootState) => ({
+    nodeInputs: state.operations.inputParameters[nodeId],
+    dependencies: state.operations.dependencies[nodeId],
+  }));
 
   const existingReferences = useSelector((state: RootState) => Object.keys(state.connections.connectionReferences));
 
@@ -43,11 +49,48 @@ export const CreateConnectionWrapper = () => {
     [dispatch, nodeIds]
   );
 
+  const updateOperationParameterValues = useCallback(
+    (values?: Record<string, any>) => {
+      if (values) {
+        const groupId = 'default'; // Assuming 'default' is the groupId for operation parameters
+        for (const [key, parameterValue] of Object.entries(values)) {
+          const parameter = nodeInputs.parameterGroups[groupId].parameters.find((param) => param.parameterName === key);
+
+          if (parameter?.id) {
+            dispatch(
+              updateNodeParameters({
+                nodeId: nodeId,
+                parameters: [
+                  {
+                    groupId: groupId,
+                    parameterId: parameter.id,
+                    propertiesToUpdate: {
+                      preservedValue: parameterValue,
+                      value: [
+                        {
+                          id: parameter?.value?.length > 0 ? parameter.value[0].id : guid(),
+                          value: parameterValue,
+                          type: 'literal',
+                        },
+                      ],
+                    },
+                  },
+                ],
+              })
+            );
+          }
+        }
+      }
+    },
+    [dispatch, nodeId, nodeInputs]
+  );
+
   return (
     <CreateConnectionInternal
       connectorId={connector?.id ?? ''}
       operationType={operationInfo?.type}
       existingReferences={existingReferences}
+      isAgentSubgraph={isAgentSubgraph ?? false}
       nodeIds={nodeIds}
       assistedConnectionProps={assistedConnectionProps}
       connectionMetadata={connectionMetadata}
@@ -55,6 +98,8 @@ export const CreateConnectionWrapper = () => {
       hideCancelButton={!hasExistingConnection}
       updateConnectionInState={updateConnectionInState}
       onConnectionCreated={() => dispatch(closeConnectionsFlow({ nodeId, panelMode: referencePanelMode }))}
+      updateOperationParameterValues={updateOperationParameterValues}
+      operationManifest={operationManifest}
     />
   );
 };

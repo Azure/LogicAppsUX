@@ -2,7 +2,7 @@ import type { Settings } from '../../actions/bjsworkflow/settings';
 import type { NodeStaticResults } from '../../actions/bjsworkflow/staticresults';
 import { StaticResultOption } from '../../actions/bjsworkflow/staticresults';
 import type { RepetitionContext } from '../../utils/parameters/helper';
-import { createTokenValueSegment, isTokenValueSegment } from '../../utils/parameters/segment';
+import { createTokenValueSegment, isTokenValueSegment, isValueSegment } from '../../utils/parameters/segment';
 import { getTokenTitle, normalizeKey } from '../../utils/tokens';
 import { resetNodesLoadStatus, resetTemplatesState, resetWorkflowState, setStateAfterUndoRedo } from '../global';
 import { LogEntryLevel, LoggerService, TokenType, filterRecord, getRecordEntry } from '@microsoft/logic-apps-shared';
@@ -21,6 +21,7 @@ import type { WritableDraft } from 'immer/dist/internal';
 import type { UndoRedoPartialRootState } from '../undoRedo/undoRedoTypes';
 import { deleteWorkflowData } from '../../actions/bjsworkflow/configuretemplate';
 import { delimiter } from '../../configuretemplate/utils/helper';
+import { initializeOperationsMetadata } from '../../actions/bjsworkflow/mcp';
 
 export interface ParameterGroup {
   id: string;
@@ -92,6 +93,8 @@ export interface NodeDependencies {
 export interface OperationMetadata {
   iconUri: string;
   brandColor: string;
+  description?: string;
+  summary?: string;
 }
 
 export const ErrorLevel = {
@@ -128,6 +131,7 @@ export interface OperationMetadataState {
 interface OperationMetadataLoadStatus {
   nodesInitialized: boolean;
   nodesAndDynamicDataInitialized: boolean;
+  isInitializingOperations: boolean;
 }
 
 export const initialState: OperationMetadataState = {
@@ -145,6 +149,7 @@ export const initialState: OperationMetadataState = {
   loadStatus: {
     nodesInitialized: false,
     nodesAndDynamicDataInitialized: false,
+    isInitializingOperations: false,
   },
 };
 
@@ -162,6 +167,9 @@ export interface NodeOperationInputsData {
   nodeInputs: NodeInputs;
   nodeDependencies: NodeDependencies;
   operationInfo: NodeOperation;
+  nodeOutputs?: NodeOutputs;
+  settings?: Settings;
+  operationMetadata?: OperationMetadata;
 }
 
 export interface NodeData {
@@ -237,10 +245,22 @@ export const operationMetadataSlice = createSlice({
           return;
         }
 
-        const { id, nodeInputs, nodeDependencies, operationInfo } = nodeData;
+        const { id, nodeInputs, nodeOutputs, nodeDependencies, operationInfo, settings, operationMetadata } = nodeData;
         state.inputParameters[id] = nodeInputs;
         state.dependencies[id] = nodeDependencies;
         state.operationInfo[id] = operationInfo;
+
+        if (nodeOutputs) {
+          state.outputParameters[id] = nodeOutputs;
+        }
+
+        if (settings) {
+          state.settings[id] = settings;
+        }
+
+        if (operationMetadata) {
+          state.operationMetadata[id] = operationMetadata;
+        }
       }
       state.loadStatus.nodesInitialized = true;
     },
@@ -479,6 +499,19 @@ export const operationMetadataSlice = createSlice({
         };
       }
     },
+    updateNodeParameterGroups: (
+      state,
+      action: PayloadAction<{
+        nodeId: string;
+        parameterGroups: Record<string, ParameterGroup>;
+      }>
+    ) => {
+      const { nodeId, parameterGroups } = action.payload;
+      const nodeInputs = getRecordEntry(state.inputParameters, nodeId);
+      if (nodeInputs) {
+        nodeInputs.parameterGroups = parameterGroups;
+      }
+    },
     updateParameterConditionalVisibility: (
       state,
       action: PayloadAction<{
@@ -593,6 +626,13 @@ export const operationMetadataSlice = createSlice({
       const nodeRepetition = getRecordEntry(state.repetitionInfos, id);
       state.repetitionInfos[id] = { ...nodeRepetition, ...repetition };
     },
+    updateOperationDescription: (state, action: PayloadAction<{ id: string; description: string }>) => {
+      const { id, description } = action.payload;
+      const operationMetadata = getRecordEntry(state.operationMetadata, id);
+      if (operationMetadata) {
+        state.operationMetadata[id] = { ...operationMetadata, description };
+      }
+    },
     updateErrorDetails: (
       state,
       action: PayloadAction<{
@@ -614,6 +654,12 @@ export const operationMetadataSlice = createSlice({
     deinitializeOperationInfo: (state, action: PayloadAction<{ id: string }>) => {
       const { id } = action.payload;
       delete state.operationInfo[id];
+    },
+    deinitializeOperationInfos: (state, action: PayloadAction<{ ids: string[] }>) => {
+      const { ids } = action.payload;
+      for (const operationId of ids) {
+        delete state.operationInfo[operationId];
+      }
     },
     deinitializeNodes: (state, action: PayloadAction<string[]>) => {
       for (const id of action.payload) {
@@ -653,32 +699,117 @@ export const operationMetadataSlice = createSlice({
         }
       }
     });
+    builder.addCase(initializeOperationsMetadata.pending, (state) => {
+      state.loadStatus.isInitializingOperations = true;
+    });
+    builder.addCase(initializeOperationsMetadata.fulfilled, (state) => {
+      state.loadStatus.isInitializingOperations = false;
+    });
+    builder.addCase(initializeOperationsMetadata.rejected, (state) => {
+      state.loadStatus.isInitializingOperations = false;
+    });
   },
 });
 
-const updateExistingInputTokenTitles = (state: OperationMetadataState, actionPayload: AddDynamicOutputsPayload) => {
+// Helper function to update token titles in any nested structure
+const updateTokenTitlesInViewModel = (viewModel: any, tokenTitles: Record<string, string>): any => {
+  if (!viewModel || typeof viewModel !== 'object') {
+    return viewModel;
+  }
+
+  // Handle ValueSegment arrays - base case for our editors
+  if (Array.isArray(viewModel) && viewModel.every((item) => isValueSegment(item))) {
+    let hasChanges = false;
+    const updatedSegments = viewModel.map((segment) => {
+      if (isTokenValueSegment(segment) && segment.token?.key) {
+        const normalizedKey = normalizeKey(segment.token.key);
+        if (normalizedKey in tokenTitles) {
+          hasChanges = true;
+          return createTokenValueSegment({ ...segment.token, title: tokenTitles[normalizedKey] }, segment.value, segment.type);
+        }
+      }
+      return segment;
+    });
+
+    return hasChanges ? updatedSegments : viewModel;
+  }
+
+  // Handle arrays - only create new array if changes made
+  if (Array.isArray(viewModel)) {
+    let hasChanges = false;
+    const updatedArray = viewModel.map((item) => {
+      const updated = updateTokenTitlesInViewModel(item, tokenTitles);
+      if (updated !== item) {
+        hasChanges = true;
+      }
+      return updated;
+    });
+
+    return hasChanges ? updatedArray : viewModel;
+  }
+
+  let hasChanges = false;
+  const updatedObject: any = {};
+
+  for (const [key, value] of Object.entries(viewModel)) {
+    const updatedValue = updateTokenTitlesInViewModel(value, tokenTitles);
+    updatedObject[key] = updatedValue;
+    if (updatedValue !== value) {
+      hasChanges = true;
+    }
+  }
+
+  return hasChanges ? updatedObject : viewModel;
+};
+
+export const updateExistingInputTokenTitles = (state: OperationMetadataState, actionPayload: AddDynamicOutputsPayload) => {
   const { outputs } = actionPayload;
 
+  if (!outputs || Object.keys(outputs).length === 0) {
+    return;
+  }
+
+  // Token titles lookup
   const tokenTitles: Record<string, string> = {};
   for (const outputValue of Object.values(outputs)) {
     const normalizedKey = normalizeKey(outputValue.key);
     tokenTitles[normalizedKey] = getTokenTitle(outputValue);
   }
 
+  if (Object.keys(tokenTitles).length === 0) {
+    return;
+  }
+
   Object.entries(state.inputParameters).forEach(([_nodeId, nodeInputs]) => {
     Object.entries(nodeInputs.parameterGroups).forEach(([_parameterId, parameterGroup]) => {
-      parameterGroup.parameters = parameterGroup.parameters.map((parameter, _parameterIndex) => ({
-        ...parameter,
-        value: parameter.value.map((segment, _segmentIndex) => {
+      parameterGroup.parameters = parameterGroup.parameters.map((parameter) => {
+        let hasValueChanges = false;
+        const updatedValue = parameter.value.map((segment) => {
           if (isTokenValueSegment(segment) && segment.token?.key) {
             const normalizedKey = normalizeKey(segment.token.key);
             if (normalizedKey in tokenTitles) {
+              hasValueChanges = true;
               return createTokenValueSegment({ ...segment.token, title: tokenTitles[normalizedKey] }, segment.value, segment.type);
             }
           }
           return segment;
-        }),
-      }));
+        });
+
+        const updatedEditorViewModel = parameter.editorViewModel
+          ? updateTokenTitlesInViewModel(parameter.editorViewModel, tokenTitles)
+          : parameter.editorViewModel;
+
+        // Only create new parameter object if there were changes
+        if (hasValueChanges || updatedEditorViewModel !== parameter.editorViewModel) {
+          return {
+            ...parameter,
+            value: hasValueChanges ? updatedValue : parameter.value,
+            editorViewModel: updatedEditorViewModel,
+          };
+        }
+
+        return parameter;
+      });
     });
   });
 };
@@ -689,6 +820,7 @@ export const {
   initializeNodeOperationInputsData,
   initializeOperationInfo,
   updateNodeParameters,
+  updateNodeParameterGroups,
   addDynamicInputs,
   addDynamicOutputs,
   clearDynamicIO,
@@ -705,8 +837,10 @@ export const {
   updateRepetitionContext,
   updateErrorDetails,
   deinitializeOperationInfo,
+  deinitializeOperationInfos,
   deinitializeNodes,
   updateDynamicDataLoadStatus,
+  updateOperationDescription,
 } = operationMetadataSlice.actions;
 
 export default operationMetadataSlice.reducer;

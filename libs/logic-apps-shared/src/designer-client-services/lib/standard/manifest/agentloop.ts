@@ -44,8 +44,8 @@ export default {
         agentModelType: {
           title: 'Agent model type',
           description: 'Type of agent model to use',
-          'x-ms-visibility': 'important',
           'x-ms-editor': 'dropdown',
+          'x-ms-visibility': 'hideInUI',
           'x-ms-editor-options': {
             options: [
               {
@@ -65,7 +65,6 @@ export default {
           type: 'string',
           title: 'Deployment Model Name',
           description: 'The deployment name of the model you want to use.',
-          'x-ms-connection-required': true,
           'x-ms-create-new-resource': true,
           'x-ms-visibility': 'important',
           'x-ms-editor': 'combobox',

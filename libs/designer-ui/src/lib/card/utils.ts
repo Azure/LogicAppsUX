@@ -1,48 +1,7 @@
 import Constants from '../constants';
-import type { IButtonStyles } from '@fluentui/react';
-import { hexToRgbA } from '@microsoft/logic-apps-shared';
-
-export function getCardStyle(brandColor?: string): React.CSSProperties {
-  return {
-    borderLeft: `4px solid ${brandColor}`,
-    borderRadius: '2px',
-  };
-}
-
-export function getCardButtonsStyle(themeColor: string): IButtonStyles {
-  return {
-    icon: {
-      color: themeColor,
-      width: 15,
-      height: 15,
-    },
-    flexContainer: {
-      width: 15,
-      height: 15,
-    },
-    root: {
-      marginTop: 11,
-      padding: 0,
-      margin: 0,
-      width: 15,
-      marginLeft: 12,
-      marginRight: 10,
-    },
-  };
-}
 
 export function getHeaderStyle(brandColor?: string): React.CSSProperties | undefined {
   return brandColor ? { backgroundColor: brandColor } : undefined;
-}
-
-// This is often unnecessary and takes ~0.5ms to run each time
-// Not an issue on small uses but with 500 operations it's 250ms * each use to run
-export function getBrandColorRgbA(brandColor = Constants.DEFAULT_BRAND_COLOR, opacity = 0.15): string {
-  try {
-    return hexToRgbA(brandColor, opacity);
-  } catch {
-    return hexToRgbA(Constants.DEFAULT_BRAND_COLOR, opacity);
-  }
 }
 
 const opacityHexValues = {

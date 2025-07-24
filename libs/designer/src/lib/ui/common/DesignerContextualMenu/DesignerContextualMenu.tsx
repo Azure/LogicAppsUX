@@ -145,7 +145,12 @@ export const DesignerContextualMenu = () => {
       ...(isUiInteractionsServiceEnabled()
         ? transformMenuItems(UiInteractionsService().getNodeContextMenuItems?.({ graphId: metadata?.graphId, nodeId: nodeId }) ?? [])
         : []),
-      { priority: NodeMenuPriorities.Delete, renderCustomComponent: () => <DeleteMenuItem key={'delete'} onClick={deleteClick} showKey /> },
+      {
+        priority: NodeMenuPriorities.Delete,
+        renderCustomComponent: () => (
+          <DeleteMenuItem key={'delete'} isTrigger={isTrigger} operationType={operationInfo?.type} onClick={deleteClick} showKey />
+        ),
+      },
       {
         priority: NodeMenuPriorities.Copy,
         renderCustomComponent: () => <CopyMenuItem key={'copy'} isTrigger={isTrigger} isScope={isScopeNode} onClick={copyClick} showKey />,
@@ -176,6 +181,7 @@ export const DesignerContextualMenu = () => {
     runAfter,
     deleteClick,
     isTrigger,
+    operationInfo?.type,
     isScopeNode,
     copyClick,
     pinClick,

@@ -359,6 +359,7 @@ export default {
       FLAT_FILE_ENCODING: 'flatfileencoding',
       FOREACH: 'foreach',
       FUNCTION: 'function',
+      HANDOFF: 'agenthandoff',
       HTTP_WEBHOOK: 'httpwebhook',
       HTTP: 'http',
       IF: 'if',
@@ -405,6 +406,7 @@ export default {
       GETFUTURETIME: 'getfuturetime',
       GETPASTTIME: 'getpasttime',
       HTTP: 'http',
+      AGENT: 'agent',
       JSON_TO_JSON: 'jsontojson',
       JSON_TO_TEXT: 'jsontotext',
       POWERAPP: 'powerapp',
@@ -482,6 +484,7 @@ export default {
     SWAGGER_ENDPOINT: 'SWAGGER_ENDPOINT',
     TESTING: 'TESTING',
     MOCK_RESULTS: 'MOCK_RESULTS',
+    HANDOFF: 'HANDOFF',
   },
   TEMPLATE_PANEL_TAB_NAMES: {
     OVERVIEW: 'OVERVIEW',
@@ -499,6 +502,11 @@ export default {
     SUMMARY: 'SUMMARY',
     SELECT_WORKFLOWS: 'SELECT_WORKFLOWS',
     CUSTOMIZE_WORKFLOWS: 'CUSTOMIZE_WORKFLOWS',
+  },
+  MCP_PANEL_TAB_NAMES: {
+    CONNECTORS: 'CONNECTORS',
+    OPERATIONS: 'OPERATIONS',
+    CONNECTIONS: 'CONNECTIONS',
   },
   ERRORS_PANEL_TAB_NAMES: {
     ERRORS: 'ERRORS',

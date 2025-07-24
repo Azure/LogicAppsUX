@@ -1,0 +1,51 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "actions": {
+      "Agent": {
+        "type": "Agent",
+        "inputs": {
+          "parameters": {
+            "agentModelType": "AzureOpenAI",
+            "deploymentId": "",
+            "messages": "",
+            "agentModelSettings": {
+              "agentHistoryReductionSettings": {
+                "agentHistoryReductionType": "maximumTokenCountReduction",
+                "maximumTokenCount": 128000
+              },
+              "deploymentModelProperties": {
+                "name": "gpt-4.1",
+                "format": "OpenAI",
+                "version": "2025-04-14"
+              }
+            }
+          },
+          "modelConfigurations": {
+            "model1": {
+              "referenceName": ""
+            }
+          }
+        },
+        "runAfter": {
+					"A2A_Trigger": [
+						"Succeeded"
+					]
+				},
+        "limit": {
+          "count": 100
+        }
+      }
+    },
+    "contentVersion": "1.0.0.0",
+    "outputs": {},
+    "parameters": {},
+    "triggers": {
+      "A2A_Trigger": {
+        "type": "Request",
+        "kind": "Agent"
+      }
+    }
+  },
+  "kind": "Agent"
+}

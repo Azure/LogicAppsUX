@@ -41,6 +41,8 @@ export type ActionDefinition =
   | TableAction
   | UntilAction
   | WaitAction
+  | AgentAction
+  | HandoffAction
   | Integration.FlatFileDecodingAction
   | Integration.FlatFileEncodingAction
   | Integration.IntegrationAccountArtifactLookupAction
@@ -531,6 +533,7 @@ export interface Parameter {
   defaultValue?: any;
   allowedValues?: any[];
   metadata?: Metadata;
+  value?: any;
 }
 
 export interface Parameters {
@@ -846,6 +849,14 @@ export interface AgentOutputChannelDefinition {
   action: OperationDefinition;
 }
 
+export interface HandoffAction extends Action {
+  inputs: HandoffActionInputs;
+}
+
+export interface HandoffActionInputs {
+  name: string;
+}
+
 export interface ConnectorAction extends Action {
   inputs: ConnectorActionInputs;
 }
@@ -984,7 +995,7 @@ export interface WorkflowRunAction {
   };
   status: string;
   code: string;
-  error: {
+  error?: {
     code: string;
     message: string;
   };

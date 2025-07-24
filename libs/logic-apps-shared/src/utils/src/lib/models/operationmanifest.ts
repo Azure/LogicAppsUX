@@ -268,6 +268,10 @@ export interface OperationManifestProperties {
   connectionReference?: ConnectionReferenceKeyFormatMapping;
 
   externalDocs?: Documentation;
+
+  dynamicContent?: {
+    payloadConfiguration?: string[];
+  };
 }
 
 export type SubgraphType =
@@ -295,6 +299,7 @@ export const RUN_AFTER_STATUS = {
   FAILED: 'FAILED',
   SKIPPED: 'SKIPPED',
   TIMEDOUT: 'TIMEDOUT',
+  HANDOFF: 'HANDEDOFF',
 };
 export type RUN_AFTER_STATUS = (typeof RUN_AFTER_STATUS)[keyof typeof RUN_AFTER_STATUS];
 

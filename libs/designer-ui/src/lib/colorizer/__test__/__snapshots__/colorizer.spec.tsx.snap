@@ -3,7 +3,7 @@
 exports[`lib/colorizer > should render 1`] = `
 <div
   aria-label="start time"
-  aria-readonly={true}
+  aria-readonly="true"
   className="msla-colorizer-wrapper"
   role="textbox"
   tabIndex={0}
@@ -11,26 +11,28 @@ exports[`lib/colorizer > should render 1`] = `
   <div
     className="buttons"
   >
-    <CustomizedIconButton
-      ariaLabel="Select all text in 'start time'"
-      iconProps={
-        {
-          "iconName": "SelectAll",
-        }
-      }
-      onClick={[Function]}
-      title="Select all text in 'start time'"
-    />
-    <CustomizedIconButton
-      ariaLabel="Copy the value of 'start time' to the clipboard"
-      iconProps={
-        {
-          "iconName": "Copy",
-        }
-      }
-      onClick={[Function]}
-      title="Copy the value of 'start time' to the clipboard"
-    />
+    <Tooltip
+      content="Select all text in 'start time'"
+      relationship="label"
+    >
+      <Button
+        appearance="subtle"
+        aria-label="Select all text in 'start time'"
+        icon={<CompoundIcon />}
+        onClick={[Function]}
+      />
+    </Tooltip>
+    <Tooltip
+      content="Copy the value of 'start time' to the clipboard"
+      relationship="label"
+    >
+      <Button
+        appearance="subtle"
+        aria-label="Copy the value of 'start time' to the clipboard"
+        icon={<CompoundIcon />}
+        onClick={[Function]}
+      />
+    </Tooltip>
   </div>
   <Highlight2
     code="12:00"
@@ -148,7 +150,7 @@ exports[`lib/colorizer > should render 1`] = `
 exports[`lib/colorizer > should render when utc time format props are given 1`] = `
 <div
   aria-label="start time"
-  aria-readonly={true}
+  aria-readonly="true"
   className="msla-colorizer-wrapper date-time"
   role="textbox"
   tabIndex={0}
@@ -156,36 +158,39 @@ exports[`lib/colorizer > should render when utc time format props are given 1`] 
   <div
     className="buttons"
   >
-    <CustomizedIconButton
-      ariaLabel="Switch 'start time' to the local time"
-      iconProps={
-        {
-          "iconName": "DateTime",
-        }
-      }
-      onClick={[Function]}
-      title="Switch 'start time' to the local time"
-    />
-    <CustomizedIconButton
-      ariaLabel="Select all text in 'start time'"
-      iconProps={
-        {
-          "iconName": "SelectAll",
-        }
-      }
-      onClick={[Function]}
-      title="Select all text in 'start time'"
-    />
-    <CustomizedIconButton
-      ariaLabel="Copy the value of 'start time' to the clipboard"
-      iconProps={
-        {
-          "iconName": "Copy",
-        }
-      }
-      onClick={[Function]}
-      title="Copy the value of 'start time' to the clipboard"
-    />
+    <Tooltip
+      content="Switch 'start time' to the local time"
+      relationship="label"
+    >
+      <Button
+        appearance="subtle"
+        aria-label="Switch 'start time' to the local time"
+        icon={<CompoundIcon />}
+        onClick={[Function]}
+      />
+    </Tooltip>
+    <Tooltip
+      content="Select all text in 'start time'"
+      relationship="label"
+    >
+      <Button
+        appearance="subtle"
+        aria-label="Select all text in 'start time'"
+        icon={<CompoundIcon />}
+        onClick={[Function]}
+      />
+    </Tooltip>
+    <Tooltip
+      content="Copy the value of 'start time' to the clipboard"
+      relationship="label"
+    >
+      <Button
+        appearance="subtle"
+        aria-label="Copy the value of 'start time' to the clipboard"
+        icon={<CompoundIcon />}
+        onClick={[Function]}
+      />
+    </Tooltip>
   </div>
   <Highlight2
     code="12:00"

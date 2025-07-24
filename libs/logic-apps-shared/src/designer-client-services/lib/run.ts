@@ -12,12 +12,15 @@ export interface IRunService {
   getScopeRepetitions(
     action: { nodeId: string; runId: string | undefined },
     status?: string
-  ): Promise<{ value: LogicAppsV2.RunRepetition[] }>;
+  ): Promise<{ value: LogicAppsV2.RunRepetition[]; nextLink?: string }>;
+  getMoreScopeRepetitions(continuationToken: string): Promise<{ value: LogicAppsV2.RunRepetition[]; nextLink?: string }>;
+  getTimelineRepetitions(runId: string): Promise<any>;
   getAgentRepetition(action: { nodeId: string; runId: string | undefined }, repetitionId: string): Promise<LogicAppsV2.RunRepetition>;
   getAgentActionsRepetition(action: { nodeId: string; runId: string | undefined }, repetitionId: string): Promise<any>;
   getMoreAgentActionsRepetition(continuationToken: string): Promise<any>;
   getRepetition(action: { nodeId: string; runId: string | undefined }, repetitionId: string): Promise<LogicAppsV2.RunRepetition>;
-  getChatHistory(action: { nodeId: string; runId: string | undefined }): Promise<any>;
+  getActionChatHistory(action: { nodeId: string; runId: string | undefined }): Promise<any>;
+  getRunChatHistory(runId: string): Promise<any>;
   getAgentChatInvokeUri(action: { idSuffix: string }): Promise<any>;
   invokeAgentChat(action: { id: string; data: any }): Promise<any>;
   cancelRun(runId: string): Promise<any>;

@@ -27,6 +27,10 @@ import {
   useNodeDescription,
   useShouldNodeFocus,
   useRunIndex,
+  useActionTimelineRepetitionCount,
+  useTimelineRepetitionIndex,
+  useIsActionInSelectedTimelineRepetition,
+  useHandoffActionsForAgent,
 } from '../../core/state/workflow/workflowSelectors';
 import {
   setFocusElement,
@@ -48,14 +52,17 @@ import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
-import { Handle, Position, type NodeProps } from '@xyflow/react';
+import type { NodeProps } from '@xyflow/react';
 import { copyScopeOperation } from '../../core/actions/bjsworkflow/copypaste';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { CopyTooltip } from '../common/DesignerContextualMenu/CopyTooltip';
 import { useNodeRepetition, useAgentRepetition, useAgentActionsRepetition } from '../../core/queries/runs';
+import { EdgeDrawTargetHandle } from './handles/EdgeDrawTargetHandle';
+import { DefaultHandle } from './handles/DefaultHandle';
+import { EdgeDrawSourceHandle } from './handles/EdgeDrawSourceHandle';
+import { useIsA2AWorkflow } from '../../core/state/designerView/designerViewSelectors';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
+const ScopeCardNode = ({ id }: NodeProps) => {
   const scopeId = useMemo(() => removeIdTag(id), [id]);
   const nodeComment = useNodeDescription(scopeId);
   const shouldFocus = useShouldNodeFocus(scopeId);
@@ -85,7 +92,10 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const isAgent = normalizedType === constants.NODE.TYPE.AGENT;
   const runIndex = useRunIndex(scopeId);
   const scopeRepetitionName = useMemo(() => getScopeRepetitionName(runIndex), [runIndex]);
-
+  const isTimelineRepetitionSelected = useIsActionInSelectedTimelineRepetition(scopeId);
+  const isA2AWorkflow = useIsA2AWorkflow();
+  const timelineRepetitionIndex = useTimelineRepetitionIndex();
+  const timelineRepetitionCount = useActionTimelineRepetitionCount(scopeId, timelineRepetitionIndex);
   const repetitionName = useMemo(
     () => getRepetitionName(parentRunIndex, scopeId, nodesMetaData, operationsInfo),
     [nodesMetaData, operationsInfo, parentRunIndex, scopeId]
@@ -101,7 +111,17 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     false
   );
 
-  const { isFetching: isScopeRepetitionFetching, data: scopeRepetitionRunData } = useAgentRepetition(
+  const { isFetching: isAgentRepetitionFetching, data: agentRepetitionRunData } = useAgentRepetition(
+    !!isMonitoringView && runIndex !== undefined && isAgent && !isA2AWorkflow,
+    isAgent,
+    scopeId,
+    isTimelineRepetitionSelected ? runInstance?.id : undefined,
+    scopeRepetitionName,
+    parentRunData?.status,
+    runIndex
+  );
+
+  const { isFetching: isAgentActionsRepetitionFetching, data: agentActionsRepetitionData } = useAgentActionsRepetition(
     !!isMonitoringView,
     isAgent,
     scopeId,
@@ -111,39 +131,51 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     runIndex
   );
 
-  const { isFetching: isActionsRepetitionFetching, data: agentActionsRepetitionData } = useAgentActionsRepetition(
-    !!isMonitoringView,
-    isAgent,
+  useEffect(() => {
+    if (isNullOrUndefined(agentActionsRepetitionData)) {
+      return;
+    }
+    const updatePayload = { nodeId: scopeId, runData: agentActionsRepetitionData } as any;
+    dispatch(setSubgraphRunData(updatePayload));
+  }, [dispatch, agentRepetitionRunData, scopeId, agentActionsRepetitionData, isMonitoringView, isTimelineRepetitionSelected]);
+
+  useEffect(() => {
+    if (isMonitoringView && !isTimelineRepetitionSelected) {
+      return;
+    }
+    if (isNullOrUndefined(agentRepetitionRunData)) {
+      return;
+    }
+    const [_, existingMetadata] = Object.entries(nodesMetaData).find(([id, _]) => id === scopeId) ?? ['', {}];
+    if (existingMetadata?.runData?.inputsLink?.uri === agentRepetitionRunData?.properties?.inputsLink?.uri) {
+      // if the inputsLink uri is the same, we don't need to update the repetition run data
+      return;
+    }
+    const updatePayload = { nodeId: scopeId, scopeRepetitionRunData: agentRepetitionRunData.properties } as any;
+    dispatch(updateAgenticGraph(updatePayload));
+    dispatch(updateAgenticMetadata(updatePayload));
+  }, [
+    dispatch,
+    agentRepetitionRunData,
     scopeId,
-    runInstance?.id,
-    scopeRepetitionName,
-    parentRunData?.status,
-    runIndex
-  );
+    selfRunData?.correlation?.actionTrackingId,
+    isMonitoringView,
+    isTimelineRepetitionSelected,
+    nodesMetaData,
+  ]);
 
   useEffect(() => {
-    if (!isNullOrUndefined(agentActionsRepetitionData)) {
-      const updatePayload = { nodeId: scopeId, runData: agentActionsRepetitionData } as any;
-      dispatch(setSubgraphRunData(updatePayload));
+    if (isMonitoringView && !isTimelineRepetitionSelected) {
+      return;
     }
-  }, [dispatch, scopeRepetitionRunData, scopeId, agentActionsRepetitionData]);
-
-  useEffect(() => {
-    if (!isNullOrUndefined(scopeRepetitionRunData)) {
-      const updatePayload = { nodeId: scopeId, scopeRepetitionRunData: scopeRepetitionRunData.properties } as any;
-      dispatch(updateAgenticGraph(updatePayload));
-      dispatch(updateAgenticMetadata(updatePayload));
+    if (isNullOrUndefined(repetitionRunData)) {
+      return;
     }
-  }, [dispatch, scopeRepetitionRunData, scopeId, selfRunData?.correlation?.actionTrackingId]);
-
-  useEffect(() => {
-    if (!isNullOrUndefined(repetitionRunData)) {
-      if (selfRunData?.correlation?.actionTrackingId === repetitionRunData?.properties?.correlation?.actionTrackingId) {
-        // if the correlation id is the same, we don't need to update the repetition run data
-        return;
-      }
-      dispatch(setRepetitionRunData({ nodeId: scopeId, runData: repetitionRunData.properties as LogicAppsV2.WorkflowRunAction }));
+    if (selfRunData?.correlation?.actionTrackingId === repetitionRunData?.properties?.correlation?.actionTrackingId) {
+      // if the correlation id is the same, we don't need to update the repetition run data
+      return;
     }
+    dispatch(setRepetitionRunData({ nodeId: scopeId, runData: repetitionRunData.properties as LogicAppsV2.WorkflowRunAction }));
   }, [dispatch, repetitionRunData, scopeId, selfRunData?.correlation?.actionTrackingId]);
 
   const { dependencies, loopSources } = useTokenDependencies(scopeId);
@@ -172,6 +204,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
         dependencies,
         loopSources,
         isScope: true,
+        isAgent: isAgent,
       },
       canDrag: !readOnly,
       collect: (monitor) => ({
@@ -232,8 +265,12 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
 
   const isLoading = useMemo(
     () =>
-      isRepetitionFetching || isScopeRepetitionFetching || isActionsRepetitionFetching || opQuery.isLoading || (!brandColor && !iconUri),
-    [brandColor, iconUri, opQuery.isLoading, isRepetitionFetching, isScopeRepetitionFetching, isActionsRepetitionFetching]
+      isRepetitionFetching ||
+      isAgentRepetitionFetching ||
+      isAgentActionsRepetitionFetching ||
+      opQuery.isLoading ||
+      (!brandColor && !iconUri),
+    [brandColor, iconUri, opQuery.isLoading, isRepetitionFetching, isAgentRepetitionFetching, isAgentActionsRepetitionFetching]
   );
 
   const comment = useMemo(
@@ -249,7 +286,13 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     [brandColor, nodeComment]
   );
 
-  const actionCount = metadata?.actionCount ?? 0;
+  const handoffActions = useHandoffActionsForAgent(scopeId);
+  const actionCount = useMemo(() => {
+    const rawCount = metadata?.actionCount ?? 0;
+    let hiddenActionCount = 0;
+    hiddenActionCount += handoffActions.filter((action) => action.isSingleAction).length;
+    return rawCount - hiddenActionCount;
+  }, [handoffActions, metadata?.actionCount]);
 
   const intlText = useMemo(
     () => ({
@@ -356,10 +399,11 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     <>
       <div className="msla-scope-card nopan" ref={ref as any}>
         <div ref={rootRef}>
-          <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
+          <EdgeDrawTargetHandle />
           <ScopeCard
             active={isCardActive}
             showStatusPill={!isAgent && isMonitoringView && isCardActive}
+            timelineRepetitionCount={timelineRepetitionCount}
             brandColor={brandColor}
             icon={iconUri}
             isLoading={isLoading}
@@ -385,7 +429,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
           />
           {showCopyCallout ? <CopyTooltip id={scopeId} targetRef={rootRef} hideTooltip={clearCopyCallout} /> : null}
           {shouldShowPager ? renderLoopsPager : null}
-          <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
+          {isFooter ? <EdgeDrawSourceHandle /> : <DefaultHandle type="source" />}
         </div>
       </div>
       {graphCollapsed && !isFooter ? (

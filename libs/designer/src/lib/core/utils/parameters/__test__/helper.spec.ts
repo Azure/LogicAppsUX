@@ -12,12 +12,20 @@ import {
   loadDynamicContentForInputsInNode,
   loadParameterValue,
   toSimpleQueryBuilderViewModel,
+  iterateSimpleQueryBuilderEditor,
 } from '../helper';
 import * as Helper from '../helper';
 import * as VariableHelper from '../../variables';
 import * as GraphHelper from '../../graph';
-import type { DictionaryEditorItemProps, ParameterInfo, ValueSegment, OutputToken } from '@microsoft/designer-ui';
-import { GroupDropdownOptions, GroupType, TokenType, ValueSegmentType } from '@microsoft/designer-ui';
+import type { DictionaryEditorItemProps, ParameterInfo, ValueSegment, OutputToken, RowItemProps } from '@microsoft/designer-ui';
+import {
+  createLiteralValueSegment,
+  GroupDropdownOptions,
+  GroupType,
+  testTokenSegment,
+  TokenType,
+  ValueSegmentType,
+} from '@microsoft/designer-ui';
 import type { DynamicListExtension, LegacyDynamicValuesExtension, InputParameter } from '@microsoft/logic-apps-shared';
 import { DynamicValuesType, ExpressionType, InitConnectorService, InitOperationManifestService } from '@microsoft/logic-apps-shared';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
@@ -3457,14 +3465,14 @@ describe('core/utils/parameters/helper', () => {
       const { isOldFormat, isRowFormat, itemValue } = toSimpleQueryBuilderViewModel(input);
       expect(isOldFormat).toEqual(true);
       expect(isRowFormat).toEqual(true);
-      expect(itemValue?.length).toEqual(5);
-      expect(itemValue?.[0].type).toEqual('literal');
-      expect(itemValue?.[0].value).toEqual('@equals(');
-      expect(itemValue?.[1].value).toEqual('test');
-      expect(itemValue?.[2].value).toEqual(',');
-      expect(itemValue?.[3].value).toEqual('test2');
-      expect(itemValue?.[4].type).toEqual('literal');
-      expect(itemValue?.[4].value).toEqual(')');
+      expect(itemValue?.operator).toEqual('equals');
+      expect(itemValue?.operand1?.length).toEqual(1);
+      expect(itemValue?.operand1?.[0].type).toEqual(ValueSegmentType.LITERAL);
+      expect(itemValue?.operand1?.[0].value).toEqual('test');
+      expect(itemValue?.operand2?.length).toEqual(1);
+      expect(itemValue?.operand2?.[0].value).toEqual('test2');
+      expect(itemValue?.operand2?.[0].type).toEqual(ValueSegmentType.LITERAL);
+      expect(itemValue?.type).toEqual(GroupType.ROW);
     });
 
     it('should handle expression tokens', () => {
@@ -3472,14 +3480,12 @@ describe('core/utils/parameters/helper', () => {
       const { isOldFormat, isRowFormat, itemValue } = toSimpleQueryBuilderViewModel(input);
       expect(isOldFormat).toEqual(true);
       expect(isRowFormat).toEqual(true);
-      expect(itemValue?.length).toEqual(5);
-      expect(itemValue?.[0].type).toEqual('literal');
-      expect(itemValue?.[0].value).toEqual('@greater(');
-      expect(itemValue?.[1].token?.value).toEqual('concat(1,2)');
-      expect(itemValue?.[2].value).toEqual(',');
-      expect(itemValue?.[3].value).toEqual('test');
-      expect(itemValue?.[4].type).toEqual('literal');
-      expect(itemValue?.[4].value).toEqual(')');
+      const { operand1, operand2, operator } = itemValue || {};
+      expect(operand1?.[0].value).toEqual('concat(1,2)');
+      expect(operand1?.[0].type).toEqual(ValueSegmentType.TOKEN);
+      expect(operand2?.[0].value).toEqual('test');
+      expect(operand2?.[0].type).toEqual(ValueSegmentType.LITERAL);
+      expect(operator).toEqual('greater');
     });
 
     it('should handle non-query builder values', () => {
@@ -3499,15 +3505,68 @@ describe('core/utils/parameters/helper', () => {
       const { isOldFormat, isRowFormat, itemValue } = toSimpleQueryBuilderViewModel(input);
       expect(isOldFormat).toEqual(true);
       expect(isRowFormat).toEqual(true);
-      expect(itemValue?.length).toEqual(5);
-      expect(itemValue?.[0].type).toEqual('literal');
-      expect(itemValue?.[0].value).toEqual('@not(contains(');
-      expect(itemValue?.[1].type).toEqual('token');
-      expect(itemValue?.[1].token?.value).toEqual("length(split(item(), '|')?[0])");
-      expect(itemValue?.[2].value).toEqual(',');
-      expect(itemValue?.[3].token?.value).toEqual("length(split(item(), '|')?[0])");
-      expect(itemValue?.[4].type).toEqual('literal');
-      expect(itemValue?.[4].value).toEqual('))');
+      expect(itemValue?.operator).toEqual('notcontains');
+      expect(itemValue?.operand1?.length).toEqual(1);
+      expect(itemValue?.operand1?.[0].type).toEqual(ValueSegmentType.TOKEN);
+      expect(itemValue?.operand1?.[0].token?.value).toEqual("length(split(item(), '|')?[0])");
+      expect(itemValue?.operand2?.length).toEqual(1);
+      expect(itemValue?.operand2?.[0].type).toEqual(ValueSegmentType.TOKEN);
+      expect(itemValue?.operand2?.[0].token?.value).toEqual("length(split(item(), '|')?[0])");
+      expect(itemValue?.type).toEqual(GroupType.ROW);
+    });
+  });
+  describe('iterateSimpleQueryBuilderEditor', () => {
+    it('returns undefined for non-row format', () => {
+      const result = iterateSimpleQueryBuilderEditor({} as RowItemProps, false);
+      expect(result).toBeUndefined();
+    });
+
+    it('serializes primitive literals correctly', () => {
+      const item: RowItemProps = {
+        type: 'row',
+        operator: 'equals',
+        operand1: [createLiteralValueSegment('true')],
+        operand2: [createLiteralValueSegment('123')],
+      };
+
+      const result = iterateSimpleQueryBuilderEditor(item, true);
+      expect(result).toBe(`@equals(true, 123)`);
+    });
+
+    it('quotes string literals', () => {
+      const item: RowItemProps = {
+        type: 'row',
+        operator: 'equals',
+        operand1: [createLiteralValueSegment('hello')],
+        operand2: [createLiteralValueSegment('world')],
+      };
+
+      const result = iterateSimpleQueryBuilderEditor(item, true);
+      expect(result).toBe(`@equals('hello', 'world')`);
+    });
+
+    it('uses tokens without quotes', () => {
+      const item: RowItemProps = {
+        type: 'row',
+        operator: 'equals',
+        operand1: [testTokenSegment],
+        operand2: [createLiteralValueSegment('ok')],
+      };
+
+      const result = iterateSimpleQueryBuilderEditor(item, true);
+      expect(result).toBe(`@equals(triggerBody(), 'ok')`);
+    });
+
+    it('wraps negated operators in @not(...)', () => {
+      const item: RowItemProps = {
+        type: 'row',
+        operator: 'notcontains',
+        operand1: [createLiteralValueSegment('foo')],
+        operand2: [createLiteralValueSegment('bar')],
+      };
+
+      const result = iterateSimpleQueryBuilderEditor(item, true);
+      expect(result).toBe(`@not(contains('foo', 'bar'))`);
     });
   });
 });

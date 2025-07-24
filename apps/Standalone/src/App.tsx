@@ -1,14 +1,16 @@
 import { Routes, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
-import { DesignerWrapper } from './designer/app/DesignerShell/designer';
 import { store as designerStore } from './designer/state/store';
 import { store as dataMapperStore } from './dataMapperV1/state/Store';
 import { store as templateStore } from './templates/state/Store';
 import { store as configureTemplateStore } from './configuretemplate/state/Store';
+import { store as mcpStore } from './mcp/state/Store';
 import { DataMapperStandaloneDesignerV1 } from './dataMapperV1/app/DataMapperStandaloneDesignerV1';
 import { DataMapperStandaloneDesignerV2 } from './dataMapperV1/app/DataMapperStandaloneDesignerV2';
 import { TemplatesWrapper } from './templates/app/TemplatesShell';
 import { ConfigureTemplateWrapper } from './configuretemplate/app/ConfigureTemplateShell';
+import { DesignerWrapper } from './designer/app/DesignerShell/designer';
+import { McpWrapper } from './mcp/app/McpShell';
 
 export const App = () => {
   return (
@@ -19,6 +21,7 @@ export const App = () => {
       <Route path="/datamapperv2" element={<DataMapperV2 />} />
       <Route path="/templates" element={<TemplatesStandalone />} />
       <Route path="/configuretemplate" element={<ConfigureTemplateStandalone />} />
+      <Route path="/mcp" element={<McpStandalone />} />
       {/* Using path="*"" means "match anything", so this route
                 acts like a catch-all for URLs that we don't have explicit
                 routes for. */}
@@ -63,6 +66,14 @@ const ConfigureTemplateStandalone = () => {
   return (
     <Provider store={configureTemplateStore}>
       <ConfigureTemplateWrapper />
+    </Provider>
+  );
+};
+
+const McpStandalone = () => {
+  return (
+    <Provider store={mcpStore}>
+      <McpWrapper />
     </Provider>
   );
 };

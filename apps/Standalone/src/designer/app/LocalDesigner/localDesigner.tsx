@@ -36,6 +36,7 @@ const connectionServiceStandard = new StandardConnectionService({
   baseUrl: '/url',
   apiVersion: '2018-11-01',
   httpClient,
+  writeConnection: () => Promise.resolve(),
   apiHubServiceDetails: {
     apiVersion: '2018-07-01-preview',
     baseUrl: '/baseUrl',
@@ -201,6 +202,7 @@ export const LocalDesigner = () => {
     language,
     areCustomEditorsEnabled,
     showConnectionsPanel,
+    showEdgeDrawing,
     hostOptions,
     suppressDefaultNodeSelect,
   } = useSelector((state: RootState) => state.workflowLoader);
@@ -232,6 +234,7 @@ export const LocalDesigner = () => {
     isDarkMode,
     useLegacyWorkflowParameters: isConsumption,
     showConnectionsPanel,
+    showEdgeDrawing,
     suppressDefaultNodeSelectFunctionality: suppressDefaultNodeSelect,
     hostOptions,
   };

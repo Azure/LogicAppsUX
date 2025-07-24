@@ -12,8 +12,18 @@ import Queue from 'yocto-queue';
 import type {} from 'reselect';
 import type {} from '@tanstack/react-query';
 import { collapseFlowTree } from './helper';
+import { useTimelineRepetitionOffset } from '../../../ui/MonitoringTimeline/hooks';
+import { useEdges } from '@xyflow/react';
+import type { OperationMetadataState } from '../operation/operationMetadataSlice';
 
 export const getWorkflowState = (state: RootState): WorkflowState => state.workflow;
+
+export const getWorkflowAndOperationState = (state: RootState): { workflow: WorkflowState; operations: OperationMetadataState } => {
+  return {
+    workflow: state.workflow,
+    operations: state.operations,
+  };
+};
 
 export const useNodeDisplayName = (id?: string) =>
   useSelector(createSelector(getWorkflowState, (state: WorkflowState) => labelCase(getRecordEntry(state.idReplacements, id) ?? id ?? '')));
@@ -39,6 +49,38 @@ export const useFocusElement = () => useSelector(createSelector(getWorkflowState
 
 export const useIsWorkflowDirty = () => useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.isDirty));
 
+export const useTimelineRepetitionIndex = () =>
+  useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.timelineRepetitionIndex));
+
+export const useTimelineRepetitionArray = () =>
+  useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.timelineRepetitionArray));
+
+export const useActionTimelineRepetitionCount = (actionId: string, index: number) =>
+  useSelector(
+    createSelector(getWorkflowState, (state: WorkflowState) => {
+      const timelineRepetitionArray = state.timelineRepetitionArray;
+      // For each timeline repetition up to the current one, add the count of action IDs that match the actionId
+      let count = 0;
+      for (let i = 0; i <= index; i++) {
+        if (timelineRepetitionArray[i]) {
+          count += timelineRepetitionArray[i].filter((id) => id === actionId).length;
+        }
+      }
+      return count;
+    })
+  );
+
+export const useIsActionInSelectedTimelineRepetition = (actionId: string) =>
+  useSelector(
+    createSelector(getWorkflowState, (state: WorkflowState) => {
+      if (!equals(state.workflowKind, 'agent')) {
+        return true; // For non-agent workflows, always return true
+      }
+      const selectedTransitionActions = state.timelineRepetitionArray[state.timelineRepetitionIndex];
+      return selectedTransitionActions ? selectedTransitionActions.includes(actionId) : false;
+    })
+  );
+
 export const useIsEverythingExpanded = () =>
   useSelector(
     createSelector(getWorkflowState, (data) => {
@@ -50,33 +92,41 @@ export const useIsEverythingExpanded = () =>
     })
   );
 
-export const getRootWorkflowGraphForLayout = createSelector(getWorkflowState, (data) => {
-  const rootNode = data.graph;
-  const collapsedIds = data.collapsedGraphIds;
-  const collapsedActionsIds = data.collapsedActionIds;
-  if (!rootNode) {
-    return undefined;
-  }
+export const useRootWorkflowGraphForLayout = () =>
+  useSelector(
+    createSelector(getWorkflowAndOperationState, (rootState) => {
+      const workflowState = rootState.workflow;
 
-  if (Object.keys(collapsedIds).length === 0 && Object.keys(collapsedActionsIds).length === 0) {
-    return rootNode;
-  }
+      const rootNode = workflowState.graph;
+      const collapsedIds = workflowState.collapsedGraphIds;
+      const collapsedActionsIds = workflowState.collapsedActionIds;
 
-  let newGraph = rootNode;
+      if (!rootNode) {
+        return undefined;
+      }
 
-  if (Object.keys(collapsedActionsIds).length !== 0) {
-    newGraph = collapseFlowTree(newGraph, collapsedActionsIds).graph;
-  }
+      let newGraph = rootNode;
 
-  if (Object.keys(collapsedIds).length !== 0) {
-    newGraph = {
-      ...newGraph,
-      children: reduceCollapsed((node: WorkflowNode) => getRecordEntry(collapsedIds, node.id))(newGraph.children ?? []),
-    };
-  }
+      newGraph = handoffToolAdjustment(newGraph, rootState);
 
-  return newGraph;
-});
+      if (Object.keys(collapsedIds).length === 0 && Object.keys(collapsedActionsIds).length === 0) {
+        return newGraph;
+      }
+
+      if (Object.keys(collapsedActionsIds).length !== 0) {
+        newGraph = collapseFlowTree(newGraph, collapsedActionsIds).graph;
+      }
+
+      if (Object.keys(collapsedIds).length !== 0) {
+        newGraph = {
+          ...newGraph,
+          children: reduceCollapsed((node: WorkflowNode) => getRecordEntry(collapsedIds, node.id))(newGraph.children ?? []),
+        };
+      }
+
+      return newGraph;
+    })
+  );
 
 export const useCollapsedMapping = () =>
   useSelector(
@@ -117,11 +167,64 @@ const reduceCollapsed =
     }, []);
   };
 
+const handoffToolAdjustment = (
+  graph: WorkflowNode,
+  rootState: { workflow: WorkflowState; operations: OperationMetadataState }
+): WorkflowNode => {
+  const operations = rootState.workflow.operations;
+
+  // Iterate over graph, if any agent action tools only have a single handoff action, log it
+  const handoffToolIds: string[] = [];
+  for (const child of graph.children ?? []) {
+    if (equals(operations[child.id]?.type, commonConstants.NODE.TYPE.AGENT)) {
+      // Check if the agent action has tools with only a handoff action
+      const tools = child?.children?.filter((_child) => _child.subGraphLocation === 'tools');
+      for (const tool of tools ?? []) {
+        const toolActions = tool.children?.filter((child) => child.type === WORKFLOW_NODE_TYPES.OPERATION_NODE) ?? [];
+        // If the tool only has a single handoff action, add it to the list to be removed
+        if (toolActions?.length === 1 && equals(operations[toolActions[0].id]?.type, commonConstants.NODE.TYPE.HANDOFF)) {
+          handoffToolIds.push(tool.id);
+        }
+        // If the tool has a handoff action at all, add a handoff edge to the graph
+        const firstHandoffAction = toolActions.find((action) => equals(operations[action.id]?.type, commonConstants.NODE.TYPE.HANDOFF));
+        if (firstHandoffAction) {
+          const inputParameters = rootState.operations?.inputParameters?.[firstHandoffAction.id]?.parameterGroups?.default?.parameters;
+          const handoffTarget = inputParameters?.find((param) => equals(param.parameterName, 'name'))?.value?.[0]?.value ?? '';
+          graph = {
+            ...graph,
+            edges: [...(graph?.edges ?? []), createWorkflowEdge(child.id, handoffTarget, WORKFLOW_EDGE_TYPES.HANDOFF_EDGE)],
+          };
+        }
+      }
+    }
+  }
+
+  // Remove handoff tools from graph
+  if (handoffToolIds.length > 0) {
+    return filterOutNodeIdsRecursive(graph, handoffToolIds);
+  }
+
+  return graph;
+};
+
+const filterOutNodeIdsRecursive = (node: WorkflowNode, idsToFilter: string[]): WorkflowNode => {
+  const filteredEdges = node.edges?.filter((edge) => !idsToFilter.includes(edge.source) && !idsToFilter.includes(edge.target)) ?? [];
+  const filteredChildren = (node.children?.filter((child) => !idsToFilter.includes(child.id)) ?? []).map((child) =>
+    filterOutNodeIdsRecursive(child, idsToFilter)
+  );
+
+  return {
+    ...node,
+    children: filteredChildren,
+    edges: filteredEdges,
+  };
+};
+
 export const useIsGraphCollapsed = (graphId: string): boolean =>
-  useSelector(createSelector(getWorkflowState, (state: WorkflowState): boolean => state.collapsedGraphIds?.[graphId]));
+  useSelector(createSelector(getWorkflowState, (state: WorkflowState): boolean => state.collapsedGraphIds?.[graphId] ?? false));
 
 export const useIsActionCollapsed = (actionId: string): boolean =>
-  useSelector(createSelector(getWorkflowState, (state: WorkflowState): boolean => state.collapsedActionIds?.[actionId]));
+  useSelector(createSelector(getWorkflowState, (state: WorkflowState): boolean => state.collapsedActionIds?.[actionId] ?? false));
 
 export const useGetSwitchOrAgentParentId = (nodeId: string): { parentId?: string; type?: string } | undefined => {
   return useSelector(
@@ -182,9 +285,10 @@ export const getWorkflowNodeFromGraphState = (state: WorkflowState, actionId: st
 };
 
 export const useNodeEdgeTargets = (nodeId?: string): string[] => {
-  return useSelector(
-    createSelector(getWorkflowState, (state: WorkflowState) => getRecordEntry(state.edgeIdsBySource ?? {}, nodeId ?? '') ?? [])
-  );
+  const edges = useEdges()
+    .filter((edge) => edge.source === nodeId)
+    .filter((edge) => !edge.target.includes('-#footer'));
+  return edges.map((edge) => edge.target);
 };
 
 export const useWorkflowNode = (actionId?: string) => {
@@ -203,6 +307,11 @@ export const useIsGraphEmpty = () => {
 export const useIsLeafNode = (nodeId: string): boolean => {
   const targets = useNodeEdgeTargets(nodeId);
   return useMemo(() => targets.length === 0, [targets.length]);
+};
+
+export const useIsDisconnected = (nodeId: string): boolean => {
+  const edges = useEdges().filter((edge) => edge.target === nodeId);
+  return useMemo(() => edges.length === 0, [edges]);
 };
 
 export const useNodeIds = () => {
@@ -334,7 +443,17 @@ export const useSubgraphRunData = (id: string): Record<string, { actionResults: 
 export const useNodesMetadata = (): NodesMetadata =>
   useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.nodesMetadata));
 
+export const getNodesWithGraphId = (graphId: string, nodesMetadata: NodesMetadata): NodesMetadata => {
+  return Object.entries(nodesMetadata).reduce((acc, [nodeId, metadata]) => {
+    if (metadata.graphId === graphId) {
+      acc[nodeId] = metadata;
+    }
+    return acc;
+  }, {} as NodesMetadata);
+};
+
 export const useParentRunIndex = (id: string | undefined): number | undefined => {
+  const offset = useTimelineRepetitionOffset(id ?? '');
   return useSelector(
     createSelector(getWorkflowState, (state: WorkflowState) => {
       if (!id) {
@@ -347,17 +466,18 @@ export const useParentRunIndex = (id: string | undefined): number | undefined =>
           operationType
         );
       });
-      return parents.length ? getRecordEntry(state.nodesMetadata, parents[0])?.runIndex : undefined;
+      return parents.length ? (getRecordEntry(state.nodesMetadata, parents[0])?.runIndex ?? 0) + offset : undefined;
     })
   );
 };
 export const useRunIndex = (id: string | undefined): number | undefined => {
+  const offset = useTimelineRepetitionOffset(id ?? '');
   return useSelector(
     createSelector(getWorkflowState, (state: WorkflowState) => {
       if (!id) {
         return undefined;
       }
-      return getRecordEntry(state.nodesMetadata, id)?.runIndex;
+      return (getRecordEntry(state.nodesMetadata, id)?.runIndex ?? 0) + offset;
     })
   );
 };
@@ -408,6 +528,20 @@ export const useIsWithinAgenticLoop = (id?: string): boolean => {
         currentId = parentId;
       }
 
+      return false;
+    })
+  );
+};
+
+export const useHasUpstreamAgenticLoop = (upstreamNodes: string[]): boolean => {
+  return useSelector(
+    createSelector(getWorkflowState, (state: WorkflowState) => {
+      for (const nodeId of upstreamNodes) {
+        const type = getRecordEntry(state.operations, nodeId)?.type;
+        if (equals(type, commonConstants.NODE.TYPE.AGENT)) {
+          return true;
+        }
+      }
       return false;
     })
   );
@@ -496,4 +630,53 @@ export const getAgentFromCondition = (state: WorkflowState, nodeId: string): str
   }
 
   return state.nodesMetadata[nodeId].parentNodeId;
+};
+
+export const useAllAgentIds = (): string[] => {
+  return useSelector(
+    createSelector(getWorkflowState, (state: WorkflowState) => {
+      return Object.keys(state.operations).filter((id) => equals(state.operations[id]?.type, commonConstants.NODE.TYPE.AGENT));
+    })
+  );
+};
+
+export const useHandoffActionsForAgent = (agentId: string): any[] => {
+  return useSelector(
+    createSelector(getWorkflowAndOperationState, (state: { workflow: WorkflowState; operations: OperationMetadataState }) => {
+      // Check the action is an agent action
+      if (!equals(state.workflow.operations[agentId]?.type, commonConstants.NODE.TYPE.AGENT)) {
+        return [];
+      }
+      const toolNodeIds = Object.keys(state.workflow.nodesMetadata[agentId]?.handoffs ?? {});
+      const output: any[] = [];
+      for (const toolId of toolNodeIds) {
+        // If the tool contains a handoff action, add it to the output
+        const toolActionIds = getNodesWithGraphId(toolId, state.workflow.nodesMetadata);
+        const isSingleAction = Object.keys(toolActionIds).length === 1;
+        for (const actionId of Object.keys(toolActionIds)) {
+          const action = state.workflow.operations[actionId];
+          if (equals(action.type, commonConstants.NODE.TYPE.HANDOFF)) {
+            const toolDescription =
+              state.operations?.inputParameters?.[toolId]?.parameterGroups?.default?.parameters?.find((param) =>
+                equals(param.parameterName, 'description')
+              )?.value?.[0]?.value ?? '';
+            const targetId =
+              state.operations?.inputParameters?.[actionId]?.parameterGroups?.default?.parameters?.find((param) =>
+                equals(param.parameterName, 'name')
+              )?.value?.[0]?.value ?? '';
+
+            const actionData = {
+              id: actionId,
+              toolId,
+              toolDescription,
+              targetId,
+              isSingleAction,
+            };
+            output.push(actionData);
+          }
+        }
+      }
+      return output;
+    })
+  );
 };

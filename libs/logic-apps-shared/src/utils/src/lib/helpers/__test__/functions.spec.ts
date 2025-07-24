@@ -49,6 +49,7 @@ import {
   sortRecord,
   splitAtIndex,
   validateRequiredServiceArguments,
+  findKeyValue,
 } from './../functions';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('lib/helpers/functions', () => {
@@ -336,7 +337,11 @@ describe('lib/helpers/functions', () => {
         ['property1', 'property2', 'property3'],
         ['property1', 'property2', 'property4'],
       ]);
-      expect(JSON.stringify(initialObject)).toBe(JSON.stringify({ property1: { property2: { property5: 'bloh' }, property6: 'bleh' } }));
+      expect(JSON.stringify(initialObject)).toBe(
+        JSON.stringify({
+          property1: { property2: { property5: 'bloh' }, property6: 'bleh' },
+        })
+      );
     });
 
     it('should delete with given path in the object for a single property', () => {
@@ -663,8 +668,13 @@ describe('lib/helpers/functions', () => {
           key3: dateTimeObject,
           key4: 123,
         },
-        copiedValueOverwrite = extend({}, complexObject, { key3: newDateTimeObject }),
-        copiedValueNew = extend({}, complexObject, { key4: 234, key5: newDateTimeObject });
+        copiedValueOverwrite = extend({}, complexObject, {
+          key3: newDateTimeObject,
+        }),
+        copiedValueNew = extend({}, complexObject, {
+          key4: 234,
+          key5: newDateTimeObject,
+        });
 
       expect(Object.keys(copiedValueOverwrite).length).toEqual(4);
       expect(complexObject.key3 === dateTimeObject).toBeTruthy();
@@ -1034,35 +1044,50 @@ describe('lib/helpers/functions', () => {
       const bookmarks = [1, 2, 3, 4, 5];
       const page = 3;
       const result = FindPreviousAndNextPage(page, bookmarks);
-      expect(result).toEqual({ nextFailedRepetition: 3, prevFailedRepetition: 3 });
+      expect(result).toEqual({
+        nextFailedRepetition: 3,
+        prevFailedRepetition: 3,
+      });
     });
 
     it('should return correct previous and next page when page is not in bookmarks', () => {
       const bookmarks = [1, 2, 4, 5];
       const page = 3;
       const result = FindPreviousAndNextPage(page, bookmarks);
-      expect(result).toEqual({ nextFailedRepetition: 4, prevFailedRepetition: 2 });
+      expect(result).toEqual({
+        nextFailedRepetition: 4,
+        prevFailedRepetition: 2,
+      });
     });
 
     it('should return -1 for both previous and next page when bookmarks is empty', () => {
       const bookmarks: number[] = [];
       const page = 3;
       const result = FindPreviousAndNextPage(page, bookmarks);
-      expect(result).toEqual({ nextFailedRepetition: -1, prevFailedRepetition: -1 });
+      expect(result).toEqual({
+        nextFailedRepetition: -1,
+        prevFailedRepetition: -1,
+      });
     });
 
     it('should return correct previous and next page when page is less than all bookmarks', () => {
       const bookmarks = [2, 3, 4, 5];
       const page = 1;
       const result = FindPreviousAndNextPage(page, bookmarks);
-      expect(result).toEqual({ nextFailedRepetition: 2, prevFailedRepetition: -1 });
+      expect(result).toEqual({
+        nextFailedRepetition: 2,
+        prevFailedRepetition: -1,
+      });
     });
 
     it('should return correct previous and next page when page is greater than all bookmarks', () => {
       const bookmarks = [1, 2, 3, 4];
       const page = 5;
       const result = FindPreviousAndNextPage(page, bookmarks);
-      expect(result).toEqual({ nextFailedRepetition: -1, prevFailedRepetition: 4 });
+      expect(result).toEqual({
+        nextFailedRepetition: -1,
+        prevFailedRepetition: 4,
+      });
     });
   });
 
@@ -1171,7 +1196,9 @@ describe('lib/helpers/functions', () => {
 
   describe('optional', () => {
     it("should set an object's property to the specified value if value is not undefined", () => {
-      expect(optional('property', 'property')).toEqual({ property: 'property' });
+      expect(optional('property', 'property')).toEqual({
+        property: 'property',
+      });
     });
 
     it("should not set an object's property if value is undefined", () => {
@@ -1351,7 +1378,11 @@ describe('lib/helpers/functions', () => {
 
     it('should update the object if the given property path does not exist.', () => {
       safeSetObjectPropertyValue(initialObject, ['Property1', 'Property4'], valueToUpdate);
-      expect(JSON.stringify(initialObject)).toBe(JSON.stringify({ property1: { property2: { property3: 'blah' }, Property4: 'bluh' } }));
+      expect(JSON.stringify(initialObject)).toBe(
+        JSON.stringify({
+          property1: { property2: { property3: 'blah' }, Property4: 'bluh' },
+        })
+      );
     });
 
     it('should create the properties automatically when needed.', () => {
@@ -1545,6 +1576,120 @@ describe('lib/helpers/functions', () => {
         expect(e).toBeInstanceOf(ArgumentException);
         expect(e.message).toBe('baseUrl is required');
       }
+    });
+  });
+  describe('findKeyValue', () => {
+    it('should return null when object is null or undefined', () => {
+      expect(findKeyValue(null as any, 'key')).toBeNull();
+      expect(findKeyValue(undefined as any, 'key')).toBeNull();
+    });
+
+    it('should return null when key is null or undefined', () => {
+      const obj = { test: 'value' };
+      expect(findKeyValue(obj, null as any)).toBeNull();
+      expect(findKeyValue(obj, undefined as any)).toBeNull();
+    });
+
+    it('should return null when key is empty string', () => {
+      const obj = { test: 'value' };
+      expect(findKeyValue(obj, '')).toBeNull();
+    });
+
+    it('should return null when object is empty', () => {
+      expect(findKeyValue({}, 'key')).toBeNull();
+    });
+
+    it('should find value with exact key match', () => {
+      const obj = { test: 'value', foo: 'bar' };
+      expect(findKeyValue(obj, 'test')).toBe('value');
+      expect(findKeyValue(obj, 'foo')).toBe('bar');
+    });
+
+    it('should find value with case-insensitive match by default', () => {
+      const obj = { Test: 'value1', FOO: 'bar1' };
+      expect(findKeyValue(obj, 'test')).toBe('value1');
+      expect(findKeyValue(obj, 'foo')).toBe('bar1');
+      expect(findKeyValue(obj, 'TEST')).toBe('value1');
+      expect(findKeyValue(obj, 'Foo')).toBe('bar1');
+    });
+
+    it('should find value with case-insensitive match when explicitly set to true', () => {
+      const obj = { Test: 'value1', FOO: 'bar1' };
+      expect(findKeyValue(obj, 'test', true)).toBe('value1');
+      expect(findKeyValue(obj, 'foo', true)).toBe('bar1');
+      expect(findKeyValue(obj, 'TEST', true)).toBe('value1');
+      expect(findKeyValue(obj, 'Foo', true)).toBe('bar1');
+    });
+
+    it('should not find value with case-sensitive match when set to false', () => {
+      const obj = { Test: 'value1', FOO: 'bar1' };
+      expect(findKeyValue(obj, 'test', false)).toBeNull();
+      expect(findKeyValue(obj, 'foo', false)).toBeNull();
+      expect(findKeyValue(obj, 'Test', false)).toBe('value1');
+      expect(findKeyValue(obj, 'FOO', false)).toBe('bar1');
+    });
+
+    it('should handle different value types', () => {
+      const obj = {
+        string: 'value',
+        number: 42,
+        boolean: true,
+        null: null,
+        undefined: undefined,
+        object: { nested: 'value' },
+        array: [1, 2, 3],
+      };
+
+      expect(findKeyValue(obj, 'string')).toBe('value');
+      expect(findKeyValue(obj, 'number')).toBe(42);
+      expect(findKeyValue(obj, 'boolean')).toBe(true);
+      expect(findKeyValue(obj, 'null')).toBeNull();
+      expect(findKeyValue(obj, 'undefined')).toBeUndefined();
+      expect(findKeyValue(obj, 'object')).toEqual({ nested: 'value' });
+      expect(findKeyValue(obj, 'array')).toEqual([1, 2, 3]);
+    });
+
+    it('should return null when key does not exist', () => {
+      const obj = { test: 'value', foo: 'bar' };
+      expect(findKeyValue(obj, 'nonexistent')).toBeNull();
+      expect(findKeyValue(obj, 'TEST1')).toBeNull();
+    });
+
+    it('should handle special characters in keys', () => {
+      const obj = {
+        'key-with-dash': 'value1',
+        'key.with.dot': 'value2',
+        key_with_underscore: 'value3',
+        'key with space': 'value4',
+      };
+
+      expect(findKeyValue(obj, 'key-with-dash')).toBe('value1');
+      expect(findKeyValue(obj, 'key.with.dot')).toBe('value2');
+      expect(findKeyValue(obj, 'key_with_underscore')).toBe('value3');
+      expect(findKeyValue(obj, 'key with space')).toBe('value4');
+    });
+
+    it('should handle unicode characters with case-insensitive search', () => {
+      const obj = {
+        ßß: 'value1',
+        ς: 'value2',
+      };
+
+      // These should match based on the equals function behavior
+      expect(findKeyValue(obj, 'SSSS')).toBe('value1');
+      expect(findKeyValue(obj, 'Σ')).toBe('value2');
+    });
+
+    it('should return the first matching key when multiple keys match (case-insensitive)', () => {
+      // This tests the implementation detail that Object.keys() order is used
+      const obj = {} as Record<string, string>;
+      obj['test'] = 'value1';
+      obj['TEST'] = 'value2';
+      obj['Test'] = 'value3';
+
+      // Should return the first one found in Object.keys() iteration
+      const result = findKeyValue(obj, 'test', true);
+      expect(['value1', 'value2', 'value3']).toContain(result);
     });
   });
 });

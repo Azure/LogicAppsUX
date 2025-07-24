@@ -1,16 +1,21 @@
+import type React from 'react';
+import { memo, useCallback, useMemo } from 'react';
+import { useDispatch } from 'react-redux';
+import type { ElkExtendedEdge } from 'elkjs/lib/elk-api';
+import { EdgeLabelRenderer, getSmoothStepPath, useReactFlow, type EdgeProps } from '@xyflow/react';
+import { css } from '@fluentui/utilities';
+import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
+import { containsIdTag, removeIdTag, getEdgeCenter, RUN_AFTER_STATUS, useEdgeIndex } from '@microsoft/logic-apps-shared';
+
 import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { useActionMetadata, useNodeEdgeTargets, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
 import { DropZone } from './dropzone';
 import { ArrowCap } from './dynamicsvgs/arrowCap';
 import { CollapsedRunAfterIndicator, RunAfterIndicator } from './runAfterIndicator';
-import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
-import { containsIdTag, removeIdTag, getEdgeCenter, RUN_AFTER_STATUS, useEdgeIndex } from '@microsoft/logic-apps-shared';
-import type { ElkExtendedEdge } from 'elkjs/lib/elk-api';
-import type React from 'react';
-import { memo, useMemo } from 'react';
-import { EdgeLabelRenderer, getSmoothStepPath, useReactFlow, type EdgeProps } from '@xyflow/react';
 import { useIsNodeSelectedInOperationPanel } from '../../core/state/panel/panelSelectors';
-import { css } from '@fluentui/utilities';
+import { removeOperationRunAfter } from '../../core/actions/bjsworkflow/runafter';
+import { EdgePathContextMenu, useContextMenu } from './edgePathContextMenu';
+import type { AppDispatch } from '../../core';
 
 interface EdgeContentProps {
   x: number;
@@ -49,7 +54,7 @@ export interface LogicAppsEdgeProps {
 }
 
 const edgeContentHeight = 24;
-const edgeContentWidth = 200;
+const edgeContentWidth = 92;
 
 const runAfterWidth = 36;
 const runAfterHeight = 12;
@@ -66,6 +71,7 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
   targetPosition,
   style = {},
 }) => {
+  const dispatch = useDispatch<AppDispatch>();
   const readOnly = useReadOnly();
   const reactFlow = useReactFlow();
   const operationData = useActionMetadata(target) as LogicAppsV2.ActionDefinition;
@@ -136,7 +142,22 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
   const isSourceSelected = useIsNodeSelectedInOperationPanel(sourceId);
   const isTargetSelected = useIsNodeSelectedInOperationPanel(targetId);
 
-  const highlighted = useMemo(() => isSourceSelected || isTargetSelected, [isSourceSelected, isTargetSelected]);
+  const contextMenu = useContextMenu();
+  const contextSelected = useMemo(() => contextMenu.isShowing, [contextMenu.isShowing]);
+
+  const highlighted = useMemo(
+    () => isSourceSelected || isTargetSelected || contextSelected,
+    [isSourceSelected, isTargetSelected, contextSelected]
+  );
+
+  const deleteEdge = useCallback(() => {
+    dispatch(
+      removeOperationRunAfter({
+        parentOperationId: sourceId,
+        childOperationId: targetId,
+      })
+    );
+  }, [dispatch, sourceId, targetId]);
 
   return (
     <>
@@ -159,9 +180,21 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
         style={style}
         className={css('react-flow__edge-path', highlighted ? 'highlighted' : '')}
         d={d}
-        strokeDasharray={showRunAfter ? '4' : '0'}
+        strokeDasharray={showRunAfter ? '4 6' : '0'}
+        strokeLinecap={'round'}
         markerEnd={`url(#arrow-end-${id})`}
+        onClick={contextMenu.handle}
+        onContextMenu={contextMenu.handle}
       />
+
+      {contextMenu.isShowing && (
+        <EdgePathContextMenu
+          contextMenuLocation={contextMenu.location}
+          open={contextMenu.isShowing}
+          setOpen={contextMenu.setIsShowing}
+          onDelete={deleteEdge}
+        />
+      )}
 
       {/* ADD ACTION / BRANCH BUTTONS */}
       {readOnly ? null : (

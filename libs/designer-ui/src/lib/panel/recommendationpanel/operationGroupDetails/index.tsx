@@ -1,10 +1,10 @@
-import { MessageBar, MessageBarType } from '@fluentui/react';
 import { BrowseGrid } from '../browseResults';
 import type { OperationActionData } from '../interfaces';
 import HybridNotice from './HybridNotice';
 import { isNullOrUndefined, type Connector } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 import { OperationGroupHeaderNew } from '../operationSearchGroup/operationGroupHeader';
+import { MessageBar } from '@fluentui/react-components';
 
 export interface OperationGroupDetailsPageProps {
   connector?: Connector;
@@ -28,10 +28,7 @@ export const OperationGroupDetailsPage: React.FC<OperationGroupDetailsPageProps>
     description: 'Message to show when no operations are found',
   });
 
-  const noOperationsContainer =
-    !isLoading && operationActionsData.length === 0 ? (
-      <MessageBar messageBarType={MessageBarType.info}>{noOperationsText}</MessageBar>
-    ) : null;
+  const noOperationsContainer = !isLoading && operationActionsData.length === 0 ? <MessageBar>{noOperationsText}</MessageBar> : null;
 
   return (
     <div className="msla-op-group-detail-page">

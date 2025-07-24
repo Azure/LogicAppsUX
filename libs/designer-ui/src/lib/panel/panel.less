@@ -87,8 +87,52 @@
   }
 
   .msla-panel-comment-container {
-    margin: 8px 0px -8px;
-    padding: 12px 32px;
+    margin: 8px 32px;
+    position: relative;
+    max-height: 25vh; // Limit container height
+    overflow: visible;
+    
+    // Inline toggle button - positioned absolutely
+    .msla-panel-comment-toggle-inline {
+      position: absolute;
+      left: 0;
+      top: 0;
+      min-width: 20px;
+      height: 20px;
+      padding: 0;
+      z-index: 1;
+      background: transparent;
+      border: none;
+      
+      i {
+        font-size: 12px;
+      }
+    }
+    
+    // Collapsed state label
+    .msla-panel-comment-collapsed-label {
+      display: inline-block;
+      margin-left: 24px;
+      font-size: 13px;
+      color: @ms-color-neutralSecondary;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: calc(~"100% - 30px");
+      line-height: 20px;
+    }
+    
+    // When collapsed, show as single line
+    &.collapsed {
+      max-height: 24px;
+      overflow: hidden;
+      border-radius: 2px;
+      display: flex;
+      
+      .ms-TextField {
+        display: none;
+      }
+    }
     .msla-card-comment {
       .ms-TextField-fieldGroup {
         outline: 0.75px solid @panel-mode-panel-border-color;
@@ -102,15 +146,6 @@
       .ms-TextField-fieldGroup {
         outline: 1.25px solid @panel-mode-panel-border-color-dark;
       }
-    }
-    .msla-comment-icon {
-      float: left;
-      font-size: @card-header-icon-size;
-      height: 20px;
-      width: 20px;
-      padding: 0px 6px;
-      margin-right: 4px;
-      text-align: center;
     }
   }
 
@@ -206,10 +241,17 @@
           flex: 1;
           padding: 15px;
           overflow-y: auto;
+          overflow-x: hidden; // Prevent horizontal scroll
+          word-wrap: break-word; // Break long words
           
           &[tabindex="0"]:focus {
             outline: 2px solid @panel-mode-panel-border-color-dark;
             outline-offset: -2px;
+          }
+          
+          // Ensure all child content respects panel width
+          * {
+            max-width: 100%;
           }
         }
       }
@@ -303,4 +345,110 @@
 
 div.msla-panel-host-container {
   z-index: auto;
+}
+
+// Ensure panel respects viewport boundaries
+.msla-panel-container {
+  // Override Fluent UI drawer to respect max-width
+  > div {
+    max-width: 100vw !important;
+  }
+}
+
+// High zoom level detection (approximates 400% zoom)
+@media (max-width: 320px) {
+  .msla-panel-container {
+    width: 100% !important;
+    
+    .msla-panel-content-container {
+      padding: 8px;
+    }
+    
+    // Ensure tabs are scrollable
+    .ms-Pivot {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+  }
+}
+
+// Responsive styles for small viewports and high zoom
+@media (max-height: 400px), (max-width: 400px) {
+  .msla-panel-comment-container {
+    max-height: 80px; // Allow reasonable height for editing
+    margin: 4px 16px;
+    
+    .msla-panel-comment-toggle-inline {
+      min-width: 16px;
+      height: 16px;
+      
+      i {
+        font-size: 10px;
+      }
+    }
+    
+    .msla-panel-comment-collapsed-label {
+      margin-left: 20px;
+      font-size: 11px;
+    }
+    
+    // When collapsed, use minimal space
+    &.collapsed {
+      max-height: 20px;
+    }
+  }
+}
+
+// Extra small viewport handling (320x256 or similar)
+@media (max-height: 300px) and (max-width: 350px) {
+  .msla-panel-comment-container {
+    margin: 2px 8px;
+    max-height: 60px;
+    
+    .msla-panel-comment-toggle-inline {
+      min-width: 16px;
+      height: 16px;
+      
+      i {
+        font-size: 10px;
+      }
+    }
+    
+    .msla-panel-comment-collapsed-label {
+      margin-left: 18px;
+      font-size: 10px;
+      line-height: 16px;
+    }
+    
+    // Collapsed state - very compact
+    &.collapsed {
+      max-height: 18px;
+    }
+    
+    // TextField adjustments for tiny viewport
+    .ms-TextField {
+      .ms-TextField-field {
+        min-height: 24px !important;
+        padding: 2px 4px 2px 20px !important;
+        font-size: 11px !important;
+        line-height: 14px !important;
+      }
+    }
+  }
+  
+  // Also reduce panel header spacing
+  .msla-panel-header {
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+  
+  // Reduce message bar spacing
+  .msla-panel-header-messages {
+    margin: 0 1rem 0.25rem;
+    
+    .ms-MessageBar {
+      min-height: auto;
+      padding: 4px 8px;
+    }
+  }
 }

@@ -34,15 +34,16 @@ import joinManifest from './manifests/join';
 import parsejsonManifest from './manifests/parsejson';
 import queryManifest from './manifests/query';
 import requestManifest from './manifests/request';
+import a2aRequestManifest from './manifests/a2arequest';
 import responseManifest from './manifests/response';
 import { delayManifest, delayUntilManifest, recurrenceManifest, slidingWindowManifest } from './manifests/schedule';
 import scopeManifest from './manifests/scope';
 import selectManifest from './manifests/select';
 import switchManifest from './manifests/switch';
 import agentloopManifest from '../standard/manifest/agentloop';
+import handoffManifest from '../standard/manifest/handoff';
 import terminateManifest from './manifests/terminate';
 import untilManifest from './manifests/until';
-import { inlinePythonManifest } from './manifests/inlinecode';
 
 const apimanagement = 'apimanagement';
 const apimanagementtrigger = 'apimanagementtrigger';
@@ -56,7 +57,6 @@ const invokefunction = 'invokefunction';
 const javascriptcode = 'javascriptcode';
 const powershellcode = 'powershellcode';
 const csharpcode = 'csharpscriptcode';
-const pythoncode = 'pythoncode';
 const compose = 'compose';
 const csvtable = 'csvtable';
 const htmltable = 'htmltable';
@@ -85,7 +85,9 @@ const foreach = 'foreach';
 const condition = 'if';
 const switchType = 'switch';
 export const agentType = 'agent';
+export const handoff = 'agenthandoff';
 const request = 'request';
+const a2arequest = 'a2arequest';
 const response = 'response';
 const table = 'table';
 const terminate = 'terminate';
@@ -180,13 +182,13 @@ export const supportedBaseManifestTypes = [
   javascriptcode,
   powershellcode,
   csharpcode,
-  pythoncode,
   join,
   liquid,
   parsejson,
   query,
   recurrence,
   request,
+  a2arequest,
   response,
   rosettanetdecode,
   rosettanetencode,
@@ -197,6 +199,7 @@ export const supportedBaseManifestTypes = [
   slidingwindow,
   switchType,
   agentType,
+  handoff,
   serviceprovider,
   table,
   workflow,
@@ -323,6 +326,7 @@ export function isBuiltInOperation(definition: any): boolean {
     case query:
     case recurrence:
     case request:
+    case a2arequest:
     case response:
     case select:
     case sendtobatch:
@@ -330,6 +334,7 @@ export function isBuiltInOperation(definition: any): boolean {
     case slidingwindow:
     case switchType:
     case agentType:
+    case handoff:
     case workflow:
     case xslt:
     case xmlcompose:
@@ -449,6 +454,11 @@ export function getBuiltInOperationInfo(definition: any, isTrigger: boolean): Op
           return {
             connectorId: 'connectionProviders/request',
             operationId: request,
+          };
+        case 'agent':
+          return {
+            connectorId: 'connectionProviders/a2a',
+            operationId: a2arequest,
           };
         default: {
           if (kind === undefined) {
@@ -598,10 +608,6 @@ const builtInOperationsMetadata: Record<string, OperationInfo> = {
     connectorId: inlineCodeConnectorId,
     operationId: csharpcode,
   },
-  [pythoncode]: {
-    connectorId: inlineCodeConnectorId,
-    operationId: pythoncode,
-  },
   [join]: {
     connectorId: dataOperationConnectorId,
     operationId: join,
@@ -637,6 +643,10 @@ const builtInOperationsMetadata: Record<string, OperationInfo> = {
   [agentType]: {
     connectorId: agentConnectorId,
     operationId: agentType,
+  },
+  [handoff]: {
+    connectorId: agentConnectorId,
+    operationId: handoff,
   },
   [workflow]: {
     connectorId: localWorkflowConnectorId,
@@ -792,6 +802,7 @@ export const supportedBaseManifestObjects = new Map<string, OperationManifest>([
   [query, queryManifest],
   [recurrence, recurrenceManifest],
   [request, requestManifest],
+  [a2arequest, a2aRequestManifest],
   [response, responseManifest],
   [scope, scopeManifest],
   [select, selectManifest],
@@ -800,9 +811,9 @@ export const supportedBaseManifestObjects = new Map<string, OperationManifest>([
   [subtractfromtime, subtractFromTimeManifest],
   [switchType, switchManifest],
   [agentType, agentloopManifest],
+  [handoff, handoffManifest],
   [terminate, terminateManifest],
   [until, untilManifest],
-  [pythoncode, inlinePythonManifest],
 ]);
 
 export const foreachOperationInfo = {

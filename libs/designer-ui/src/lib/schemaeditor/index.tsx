@@ -15,6 +15,8 @@ import { useFunctionalState } from '@react-hookz/web';
 import type { editor } from 'monaco-editor';
 import { useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
+import { useSchemaEditorStyles } from './schemaeditor.styles';
+import { mergeClasses } from '@fluentui/react-components';
 
 const removeStyle: IStyle = {
   border: '0',
@@ -31,6 +33,7 @@ const buttonStyles: IButtonStyles = {
 };
 
 export interface SchemaEditorProps {
+  className?: string;
   initialValue: ValueSegment[];
   label?: string;
   readonly?: boolean;
@@ -38,8 +41,9 @@ export interface SchemaEditorProps {
   onFocus?: () => void;
 }
 
-export function SchemaEditor({ readonly, label, initialValue, onChange, onFocus }: SchemaEditorProps): JSX.Element {
+export function SchemaEditor({ className, readonly, label, initialValue, onChange, onFocus }: SchemaEditorProps): JSX.Element {
   const intl = useIntl();
+  const styles = useSchemaEditorStyles();
   const [errorMessage, setErrorMessage] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const [getCurrentValue, setCurrentValue] = useFunctionalState(getInitialValue(initialValue));
@@ -52,6 +56,7 @@ export function SchemaEditor({ readonly, label, initialValue, onChange, onFocus 
       main: {
         display: 'inline-block',
         width: '800px',
+        maxWidth: '90vw',
       },
     };
   };
@@ -106,7 +111,7 @@ export function SchemaEditor({ readonly, label, initialValue, onChange, onFocus 
         setCurrentValue(stringifiedJsonSchema);
         setEditorHeight(getEditorHeight(stringifiedJsonSchema));
         onChange?.({ value: [createLiteralValueSegment(stringifiedJsonSchema)] });
-      } catch (ex) {
+      } catch (_ex) {
         const error = intl.formatMessage({
           defaultMessage: 'Unable to generate schema',
           id: 'jgOaTX',
@@ -128,7 +133,7 @@ export function SchemaEditor({ readonly, label, initialValue, onChange, onFocus 
   };
 
   return (
-    <div className="msla-schema-editor-body">
+    <div className={mergeClasses(styles.schemaEditorBody, className)}>
       <MonacoEditor
         label={label}
         height={editorHeight}
@@ -142,11 +147,11 @@ export function SchemaEditor({ readonly, label, initialValue, onChange, onFocus 
         onBlur={handleBlur}
         contextMenu={true}
       />
-      <div className="msla-schema-editor-operations">
-        <ActionButton className="msla-schema-card-button" disabled={readonly} styles={buttonStyles} onClick={openModal}>
+      <div className={styles.schemaEditorOperations}>
+        <ActionButton className={styles.schemaCardButton} disabled={readonly} styles={buttonStyles} onClick={openModal}>
           {schemaEditorLabel}
         </ActionButton>
-        <div className="msla-schema-editor-error-message">{errorMessage}</div>
+        <div className={styles.schemaEditorErrorMessage}>{errorMessage}</div>
       </div>
       <ModalDialog
         confirmText={DONE_TEXT}
@@ -156,13 +161,14 @@ export function SchemaEditor({ readonly, label, initialValue, onChange, onFocus 
         onConfirm={handleConfirm}
         onDismiss={closeModal}
       >
-        <div className="msla-schema-editor-modal-body">
+        <div className={styles.schemaEditorModalBody}>
           <MonacoEditor
             ref={modalEditorRef}
             fontSize={13}
             language={EditorLanguage.json}
             onContentChanged={handleSamplePayloadChanged}
             defaultValue={''}
+            height="60vh"
           />
         </div>
       </ModalDialog>

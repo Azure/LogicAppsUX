@@ -50,6 +50,7 @@ import {
   optional,
   BaseCognitiveServiceService,
   RoleService,
+  resolveConnectionsReferences,
 } from '@microsoft/logic-apps-shared';
 import type { ContentType, IHostService, IWorkflowService } from '@microsoft/logic-apps-shared';
 import type { AllCustomCodeFiles, CustomCodeFileNameMapping, Workflow } from '@microsoft/logic-apps-designer';
@@ -101,6 +102,7 @@ const DesignerEditor = () => {
     hostOptions,
     hostingPlan,
     showConnectionsPanel,
+    showEdgeDrawing,
     showPerformanceDebug,
     suppressDefaultNodeSelect,
   } = useSelector((state: RootState) => state.workflowLoader);
@@ -127,12 +129,7 @@ const DesignerEditor = () => {
   const displayCopilotChatbot = showChatBot && designerView;
 
   const connectionsData = useMemo(
-    () =>
-      WorkflowUtility.resolveConnectionsReferences(
-        JSON.stringify(clone(originalConnectionsData ?? {})),
-        parameters,
-        settingsData?.properties ?? {}
-      ),
+    () => resolveConnectionsReferences(JSON.stringify(clone(originalConnectionsData ?? {})), parameters, settingsData?.properties ?? {}),
     [originalConnectionsData, parameters, settingsData?.properties]
   );
 
@@ -152,11 +149,7 @@ const DesignerEditor = () => {
 
     if (connectionInfo) {
       // TODO(psamband): Add new settings in this blade so that we do not resolve all the appsettings in the connectionInfo.
-      const resolvedConnectionInfo = WorkflowUtility.resolveConnectionsReferences(
-        JSON.stringify(connectionInfo),
-        {},
-        settingsData?.properties
-      );
+      const resolvedConnectionInfo = resolveConnectionsReferences(JSON.stringify(connectionInfo), {}, settingsData?.properties);
       delete resolvedConnectionInfo.displayName;
 
       return {
@@ -175,12 +168,14 @@ const DesignerEditor = () => {
 
   const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowAppData?.location ?? '');
   const supportsStateful = !equals(workflow?.kind, 'stateless');
+  const isA2A = equals(workflow?.kind, 'Agent');
   const services = useMemo(
     () =>
       getDesignerServices(
         workflowId,
         supportsStateful,
         isHybridLogicApp,
+        isA2A,
         connectionsData ?? {},
         workflowAppData as WorkflowApp,
         addConnectionDataInternal,
@@ -525,6 +520,7 @@ const DesignerEditor = () => {
             ...getSKUDefaultHostOptions(Constants.SKU.STANDARD),
           },
           showConnectionsPanel,
+          showEdgeDrawing,
           showPerformanceDebug,
         }}
       >
@@ -609,6 +605,7 @@ const getDesignerServices = (
   workflowId: string,
   isStateful: boolean,
   isHybrid: boolean,
+  isA2A: boolean,
   connectionsData: ConnectionsData,
   workflowApp: WorkflowApp,
   addConnection: (data: ConnectionAndAppSetting) => Promise<void>,
@@ -657,7 +654,7 @@ const getDesignerServices = (
         }
       : { appName, identity: workflowApp?.identity as any },
     readConnections: () => {
-      return WorkflowUtility.resolveConnectionsReferences(JSON.stringify(clone(connectionsData ?? {})), undefined, appSettings);
+      return resolveConnectionsReferences(JSON.stringify(clone(connectionsData ?? {})), undefined, appSettings);
     },
     writeConnection: addConnection as any,
     connectionCreationClients: {
@@ -939,6 +936,7 @@ const getDesignerServices = (
     baseUrl,
     workflowName,
     httpClient,
+    isTimelineSupported: isA2A,
   });
 
   const roleService = new BaseRoleService({
