@@ -47,7 +47,12 @@ const MonitoringTimeline = () => {
 
   useEffect(() => {
     if (transitionIndex === -1 && repetitions.size > 0 && !isFetchingRepetitions) {
-      setTransitionIndex(0);
+      const repetitionGroup = repetitions.get(0);
+      if (repetitionGroup && repetitionGroup.length > 0) {
+        const repetition = repetitionGroup[0];
+        setSelectedRepetition(repetition);
+        setTransitionIndex(0);
+      }
     }
   }, [transitionIndex, repetitions, isFetchingRepetitions]);
 
