@@ -168,14 +168,12 @@ const DesignerEditor = () => {
 
   const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowAppData?.location ?? '');
   const supportsStateful = !equals(workflow?.kind, 'stateless');
-  const isA2A = equals(workflow?.kind, 'Agent');
   const services = useMemo(
     () =>
       getDesignerServices(
         workflowId,
         supportsStateful,
         isHybridLogicApp,
-        isA2A,
         connectionsData ?? {},
         workflowAppData as WorkflowApp,
         addConnectionDataInternal,
@@ -605,7 +603,6 @@ const getDesignerServices = (
   workflowId: string,
   isStateful: boolean,
   isHybrid: boolean,
-  isA2A: boolean,
   connectionsData: ConnectionsData,
   workflowApp: WorkflowApp,
   addConnection: (data: ConnectionAndAppSetting) => Promise<void>,
@@ -936,7 +933,6 @@ const getDesignerServices = (
     baseUrl,
     workflowName,
     httpClient,
-    isTimelineSupported: isA2A,
   });
 
   const roleService = new BaseRoleService({
