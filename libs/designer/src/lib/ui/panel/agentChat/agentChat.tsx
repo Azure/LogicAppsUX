@@ -101,12 +101,15 @@ export const AgentChat = ({
   const toolResultCallback = useCallback(
     (agentName: string, toolName: string, iteration: number, subIteration: number) => {
       const agentLastOperation = JSON.parse(rawAgentLastOperations)?.[agentName]?.[toolName];
+      if (isA2AWorkflow) {
+        dispatch(setTimelineRepetitionIndex(iteration));
+      }
       dispatch(setRunIndex({ page: iteration, nodeId: agentName }));
       dispatch(setRunIndex({ page: subIteration, nodeId: toolName }));
       dispatch(setFocusNode(agentLastOperation));
       dispatch(changePanelNode(agentLastOperation));
     },
-    [dispatch, rawAgentLastOperations]
+    [dispatch, isA2AWorkflow, rawAgentLastOperations]
   );
 
   const toolContentCallback = useCallback(

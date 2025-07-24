@@ -34,9 +34,7 @@ export const parseChatHistory = (
       }
 
       const dataScrollTarget = `${agentOperationId}-${iteration}-${messageCountInIteration}`;
-      processedMessages.push(
-        parseMessage(message, agentOperationId, dataScrollTarget, toolResultCallback, toolContentCallback, isA2AWorkflow)
-      );
+      processedMessages.push(parseMessage(message, agentOperationId, dataScrollTarget, toolResultCallback, toolContentCallback));
     }
 
     const agentHeader = {
@@ -59,8 +57,7 @@ const parseMessage = (
   parentId: string,
   dataScrollTarget: string,
   toolResultCallback: (agentName: string, toolName: string, iteration: number, subIteration: number) => void,
-  toolContentCallback: (agentName: string, iteration: number) => void,
-  isA2AWorkflow: boolean
+  toolContentCallback: (agentName: string, iteration: number) => void
 ): ConversationItem => {
   const { messageEntryType, messageEntryPayload, timestamp, role, iteration } = message;
   switch (messageEntryType) {
@@ -94,7 +91,7 @@ const parseMessage = (
         id: guid(),
         text: labelCase(toolName),
         type: ConversationItemType.Tool,
-        onClick: isA2AWorkflow ? undefined : () => toolResultCallback(parentId, toolName, iteration, subIteration),
+        onClick: () => toolResultCallback(parentId, toolName, iteration, subIteration),
         status,
         date: new Date(timestamp),
         dataScrollTarget,

@@ -29,7 +29,7 @@ export const updateAgenticSubgraph = (payload: UpdateAgenticGraphPayload, agentG
     const hidingTools: string[] = [];
 
     const filteredTools = agentTools.filter((tool) => {
-      if (tool.id.includes('#scope') || tool.id.includes('-addCase')) {
+      if (tool.id.includes('#scope') || tool.id.includes('-addCase') || tool.id.startsWith('handoff')) {
         return true;
       }
 
