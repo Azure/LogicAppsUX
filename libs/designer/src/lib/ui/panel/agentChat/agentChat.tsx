@@ -173,19 +173,19 @@ export const AgentChat = ({
   const intlText = useMemo(() => {
     return {
       agentChatHeader: intl.formatMessage({
-        defaultMessage: 'Agent chat',
-        id: 'PVT2SW',
-        description: 'Agent chat header text',
+        defaultMessage: 'Agent log',
+        id: 'WtHzoy',
+        description: 'Agent log header text',
       }),
       agentChatPanelAriaLabel: intl.formatMessage({
-        defaultMessage: 'Agent chat panel',
-        id: 'OSugtm',
-        description: 'Agent chat panel aria label text',
+        defaultMessage: 'Agent log panel',
+        id: 'MzVpzv',
+        description: 'Agent log panel aria label text',
       }),
       agentChatToggleAriaLabel: intl.formatMessage({
-        defaultMessage: 'Toggle the agent chat panel.',
-        id: 'fTpBGQ',
-        description: 'Toggle the agent chat panel aria label text',
+        defaultMessage: 'Toggle the agent log panel.',
+        id: 'QIzNzB',
+        description: 'Toggle the agent log panel aria label text',
       }),
       chatReadOnlyMessage: intl.formatMessage({
         defaultMessage: 'The chat is currently in read-only mode. Agents are unavailable for live chat.',
