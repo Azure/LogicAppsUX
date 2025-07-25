@@ -58,19 +58,21 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
   }, [operationInfos, selectedOperations]);
 
   const handleSubmit = useCallback(() => {
-    if (selectedConnectorId && newlySelectedOperationIds.length > 0) {
-      const selectedOperationsData = newlySelectedOperationIds.map((operationId) => ({
-        connectorId: selectedConnectorId,
-        operationId: getResourceNameFromId(operationId),
-        type: 'apiconnection' as const,
-      }));
-
+    if (selectedConnectorId) {
+      // Deinitializing deselected operations
       if (deselectedOperationIds.length > 0) {
         dispatch(deinitializeOperations({ operationIds: deselectedOperationIds }));
       }
 
-      // Initializing selection
-      dispatch(initializeOperationsMetadata({ operations: selectedOperationsData }));
+      // Initializing newly selected operations
+      if (newlySelectedOperationIds.length > 0) {
+        const selectedOperationsData = newlySelectedOperationIds.map((operationId) => ({
+          connectorId: selectedConnectorId,
+          operationId: getResourceNameFromId(operationId),
+          type: 'apiconnection' as const,
+        }));
+        dispatch(initializeOperationsMetadata({ operations: selectedOperationsData }));
+      }
     }
     dispatch(clearAllSelections());
     dispatch(closePanel());
