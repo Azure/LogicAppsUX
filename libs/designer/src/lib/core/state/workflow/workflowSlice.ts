@@ -494,6 +494,7 @@ export const workflowSlice = createSlice({
       for (const node of Object.values(state.nodesMetadata)) {
         if (node.runData) {
           delete node.runData;
+          delete node.runIndex;
         }
       }
     },

@@ -103,9 +103,11 @@ export const AgentChat = ({
       const agentLastOperation = JSON.parse(rawAgentLastOperations)?.[agentName]?.[toolName];
       if (isA2AWorkflow) {
         dispatch(setTimelineRepetitionIndex(iteration));
+      } else {
+        dispatch(setRunIndex({ page: iteration, nodeId: agentName }));
+        dispatch(setRunIndex({ page: subIteration, nodeId: toolName }));
       }
-      dispatch(setRunIndex({ page: iteration, nodeId: agentName }));
-      dispatch(setRunIndex({ page: subIteration, nodeId: toolName }));
+
       dispatch(setFocusNode(agentLastOperation));
       dispatch(changePanelNode(agentLastOperation));
     },
@@ -116,8 +118,9 @@ export const AgentChat = ({
     (agentName: string, iteration: number) => {
       if (isA2AWorkflow) {
         dispatch(setTimelineRepetitionIndex(iteration));
+      } else {
+        dispatch(setRunIndex({ page: iteration, nodeId: agentName }));
       }
-      dispatch(setRunIndex({ page: iteration, nodeId: agentName }));
       dispatch(setFocusNode(agentName));
       dispatch(changePanelNode(agentName));
     },
