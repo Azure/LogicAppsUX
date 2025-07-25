@@ -1,6 +1,6 @@
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
-import { resetMcpState } from '../../global';
+import { resetMcpState } from '../global';
 
 export interface McpSelectionState {
   selectedConnectorId: string | undefined;
@@ -14,8 +14,8 @@ const initialSelectionState: McpSelectionState = {
   selectedOperationId: undefined,
 };
 
-export const connectorSlice = createSlice({
-  name: 'connector',
+export const mcpSelectionSlice = createSlice({
+  name: 'mcpSelection',
   initialState: initialSelectionState,
   reducers: {
     selectConnectorId: (state, action: PayloadAction<string | undefined>) => {
@@ -44,6 +44,6 @@ export const connectorSlice = createSlice({
 });
 
 export const { selectConnectorId, selectOperations, clearSelectedOperations, clearAllSelections, selectOperationIdToEdit } =
-  connectorSlice.actions;
+  mcpSelectionSlice.actions;
 
-export default connectorSlice.reducer;
+export default mcpSelectionSlice.reducer;

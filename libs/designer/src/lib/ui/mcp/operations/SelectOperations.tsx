@@ -7,7 +7,7 @@ import type { RootState, AppDispatch } from '../../../core/state/mcp/store';
 import { useOperationsByConnectorQuery } from '../../../core/mcp/utils/queries';
 import { OperationSelectionGrid } from './OperationSelectionGrid';
 import { useOperationsStyles } from './styles';
-import { selectOperations } from '../../../core/state/mcp/connector/connectorSlice';
+import { selectOperations } from '../../../core/state/mcp/mcpselectionslice';
 
 export const SelectOperations = () => {
   const intl = useIntl();
@@ -15,8 +15,8 @@ export const SelectOperations = () => {
   const styles = useOperationsStyles();
 
   const { selectedConnectorId, selectedOperations } = useSelector((state: RootState) => ({
-    selectedConnectorId: state.connector.selectedConnectorId,
-    selectedOperations: state.connector.selectedOperations ?? [],
+    selectedConnectorId: state.mcpSelection.selectedConnectorId,
+    selectedOperations: state.mcpSelection.selectedOperations ?? [],
   }));
 
   const selectedOperationsSet = useMemo(() => new Set(selectedOperations), [selectedOperations]);

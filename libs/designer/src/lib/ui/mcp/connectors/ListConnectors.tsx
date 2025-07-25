@@ -17,7 +17,7 @@ import {
 import { useIntl } from 'react-intl';
 import { useConnectorSectionStyles } from '../wizard/styles';
 import { McpPanelView, openConnectorPanelView } from '../../../core/state/mcp/panel/mcpPanelSlice';
-import { selectConnectorId, selectOperations } from '../../../core/state/mcp/connector/connectorSlice';
+import { selectConnectorId, selectOperations } from '../../../core/state/mcp/mcpselectionslice';
 import { ConnectorIconWithName } from '../../templates/connections/connector';
 import { useConnectionById } from '../../../core/queries/connections';
 import { getResourceNameFromId } from '@microsoft/logic-apps-shared';

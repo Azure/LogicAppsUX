@@ -2,7 +2,7 @@ import { useMemo, useCallback } from 'react';
 import type { AppDispatch, RootState } from '../../../../core/state/mcp/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { closePanel, McpPanelView } from '../../../../core/state/mcp/panel/mcpPanelSlice';
-import { clearAllSelections } from '../../../../core/state/mcp/connector/connectorSlice';
+import { clearAllSelections } from '../../../../core/state/mcp/mcpselectionslice';
 import {
   initializeOperationsMetadata,
   initializeConnectionMappings,
@@ -14,6 +14,7 @@ import { connectorsTab } from './tabs/connectorsTab';
 import type { McpPanelTabProps } from '@microsoft/designer-ui';
 import { connectionsTab } from './tabs/connectionsTab';
 import { getResourceNameFromId } from '@microsoft/logic-apps-shared';
+import constants from '../../../../common/constants';
 
 export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
   const intl = useIntl();
@@ -29,13 +30,15 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
     operationInfos,
   } = useSelector((state: RootState) => ({
     currentPanelView: state.mcpPanel.currentPanelView,
-    selectedConnectorId: state.connector.selectedConnectorId,
-    selectedOperations: state.connector.selectedOperations ?? [],
+    selectedConnectorId: state.mcpSelection.selectedConnectorId,
+    selectedOperations: state.mcpSelection.selectedOperations ?? [],
     connectionsMapping: state.connection.connectionsMapping,
     connectionReferences: state.connection.connectionReferences,
     isInitializingConnections: state.connection.loading.initializeConnectionMappings,
     operationInfos: state.operation.operationInfo,
   }));
+
+  const hasSelectConnectorTab = useMemo(() => currentPanelView === McpPanelView.SelectConnector, [currentPanelView]);
 
   const hasValidConnection = useMemo(() => {
     if (!selectedOperations.length) {
@@ -61,12 +64,15 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
         type: 'apiconnection' as const,
       }));
 
+      // Deinitialize deselected operations
       if (deselectedOperationIds.length > 0) {
         dispatch(deinitializeOperations({ operationIds: deselectedOperationIds }));
       }
 
       // Initializing selection
       dispatch(initializeOperationsMetadata({ operations: selectedOperationsData }));
+
+      // Closing panel
       dispatch(clearAllSelections());
       dispatch(closePanel());
     }
@@ -101,8 +107,9 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
         selectedOperationsCount: selectedOperations.length,
         onSelectOperations: handleOnSelectOperations,
         isPrimaryButtonLoading: isInitializingConnections,
+        previousTabId: hasSelectConnectorTab ? constants.MCP_PANEL_TAB_NAMES.CONNECTORS : undefined,
       }),
-    [intl, dispatch, selectedOperations.length, handleOnSelectOperations, isInitializingConnections]
+    [intl, dispatch, selectedOperations.length, handleOnSelectOperations, isInitializingConnections, hasSelectConnectorTab]
   );
 
   const connectionsTabItem = useMemo(
@@ -118,7 +125,7 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
 
   const tabs: McpPanelTabProps[] = useMemo(() => {
     const validTabs = [];
-    if (currentPanelView === McpPanelView.SelectConnector) {
+    if (hasSelectConnectorTab) {
       validTabs.push(connectorsTabItem);
     }
     if (currentPanelView !== McpPanelView.CreateConnection) {
@@ -126,7 +133,7 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
     }
     validTabs.push(connectionsTabItem);
     return validTabs;
-  }, [currentPanelView, connectorsTabItem, operationsTabItem, connectionsTabItem]);
+  }, [currentPanelView, hasSelectConnectorTab, connectorsTabItem, operationsTabItem, connectionsTabItem]);
 
   return tabs;
 };
