@@ -7,8 +7,8 @@ import { useAllConnectors } from '../../../core/queries/browse';
 import type { RootState, AppDispatch } from '../../../core/state/mcp/store';
 import { useOperationsByConnectorQuery } from '../../../core/mcp/utils/queries';
 import { OperationSelectionGrid } from './OperationSelectionGrid';
-import { useOperationsStyles } from './styles';
 import { selectOperations } from '../../../core/state/mcp/connector/connectorSlice';
+import { useConnectorSelectionStyles } from '../connectors/styles';
 
 const fuseOptions = {
   includeScore: true,
@@ -24,7 +24,7 @@ const fuseOptions = {
 export const SelectOperations = () => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
-  const styles = useOperationsStyles();
+  const styles = useConnectorSelectionStyles();
 
   const { selectedConnectorId, selectedOperations } = useSelector((state: RootState) => ({
     selectedConnectorId: state.connector.selectedConnectorId,
@@ -183,8 +183,9 @@ export const SelectOperations = () => {
   // Main content
   return (
     <div className={styles.container}>
-      <div>
+      <div className={styles.searchSection}>
         <SearchBox
+          className={styles.searchBox}
           placeholder={intl.formatMessage({
             id: 'IRVmBd',
             defaultMessage: 'Search operations...',

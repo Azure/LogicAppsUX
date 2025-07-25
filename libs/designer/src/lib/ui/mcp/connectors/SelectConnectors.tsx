@@ -38,10 +38,10 @@ export const SelectConnectors = () => {
     <div className={styles.container}>
       <div className={styles.searchSection}>
         <SearchBox
+          className={styles.searchBox}
           placeholder={INTL_TEXT.searchPlaceholder}
           value={searchTerm}
           onChange={(_, data) => setSearchTerm(data.value)}
-          style={{ width: '100%', maxWidth: 'unset' }}
         />
       </div>
 
