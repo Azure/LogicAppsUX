@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { Text, Checkbox, Card, CardHeader, Body1, Caption1 } from '@fluentui/react-components';
 import { useOperationSelectionGridStyles } from './styles';
-import type { DiscoveryOpArray } from '@microsoft/logic-apps-shared';
+import { equals, type DiscoveryOpArray } from '@microsoft/logic-apps-shared';
 import DefaultIcon from '../../../common/images/recommendation/defaulticon.svg';
 
 export interface OperationSelectionGridProps {
@@ -56,7 +56,9 @@ const OperationCell = ({ operation, isSelected, showConnectorName, onCardClick, 
               {description}
             </Caption1>
             {showConnectorName && <Caption1 className={styles.connectorName}>{api.displayName}</Caption1>}
-            {annotation?.status && <Caption1 className={styles.operationStatus}>{annotation.status}</Caption1>}
+            {annotation?.status && !equals(annotation?.status, 'production', /* caseInsensitive */ true) && (
+              <Caption1 className={styles.operationStatus}>{annotation.status}</Caption1>
+            )}
           </div>
         }
       />
