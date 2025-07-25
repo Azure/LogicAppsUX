@@ -64,7 +64,7 @@ const DataProviderInner = ({
         extendedSourceSchema,
         extendedTargetSchema,
         fetchedFunctions
-      );
+    );
       const connections = mapDefinitionDeserializer.convertFromMapDefinition();
       const warningMessages = mapDefinitionDeserializer.getWarningMessages();
       dispatch(updateDeserializationMessages(warningMessages));

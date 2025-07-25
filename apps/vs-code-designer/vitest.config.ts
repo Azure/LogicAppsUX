@@ -1,20 +1,22 @@
-import { defineProject } from 'vitest/config';
-import packageJson from './package.json';
-import path from 'path';
+import { defineProject } from "vitest/config";
+import packageJson from "./package.json";
+import path from "path";
 
+// This config is for unit tests only
+// E2E tests are now run using Mocha
 export default defineProject({
   plugins: [],
   resolve: {
     alias: {
-      vscode: path.resolve(path.join(__dirname, 'node_modules', '@types', 'vscode', 'index.d.ts')),
-      '@microsoft/vscode-azext-azureauth/out/src/getSessionFromVSCode': '/__mocks__/vscode-azext-azureauth.ts',
+      vscode: path.resolve(
+        path.join(__dirname, "node_modules", "@types", "vscode", "index.d.ts")
+      ),
     },
   },
   test: {
     name: packageJson.name,
-    environment: 'node',
-    setupFiles: ['test-setup.ts'],
-    coverage: { enabled: true, provider: 'istanbul', include: ['src/**/*'], reporter: ['html', 'cobertura'] },
+    environment: "node",
+    globals: true,
     restoreMocks: true,
   },
 });
