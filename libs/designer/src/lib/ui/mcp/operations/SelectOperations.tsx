@@ -1,13 +1,25 @@
-import { useCallback, useMemo } from 'react';
-import { Text, Spinner } from '@fluentui/react-components';
+import { useCallback, useMemo, useState } from 'react';
+import { Text, Spinner, SearchBox } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 import { useSelector, useDispatch } from 'react-redux';
+import Fuse from 'fuse.js';
 import { useAllConnectors } from '../../../core/queries/browse';
 import type { RootState, AppDispatch } from '../../../core/state/mcp/store';
 import { useOperationsByConnectorQuery } from '../../../core/mcp/utils/queries';
 import { OperationSelectionGrid } from './OperationSelectionGrid';
 import { useOperationsStyles } from './styles';
 import { selectOperations } from '../../../core/state/mcp/connector/connectorSlice';
+
+const fuseOptions = {
+  includeScore: true,
+  threshold: 1.0, // Include all items, even very poor matches
+  ignoreLocation: true,
+  keys: [
+    { name: 'name', weight: 2.0 },
+    { name: 'properties.summary', weight: 2.0 },
+    { name: 'properties.description', weight: 1.5 },
+  ],
+};
 
 export const SelectOperations = () => {
   const intl = useIntl();
@@ -18,6 +30,7 @@ export const SelectOperations = () => {
     selectedConnectorId: state.connector.selectedConnectorId,
     selectedOperations: state.connector.selectedOperations ?? [],
   }));
+  const [searchTerm, setSearchTerm] = useState('');
 
   const selectedOperationsSet = useMemo(() => new Set(selectedOperations), [selectedOperations]);
 
@@ -31,8 +44,35 @@ export const SelectOperations = () => {
   const selectedConnector = useMemo(() => allConnectors?.find((c) => c.id === selectedConnectorId), [allConnectors, selectedConnectorId]);
 
   const operations = useMemo(() => {
-    return allOperations || [];
-  }, [allOperations]);
+    const allOps = allOperations || [];
+
+    // If no search keyword, return all operations
+    if (!searchTerm.trim()) {
+      return allOps;
+    }
+
+    const fuse = new Fuse(allOps, fuseOptions);
+
+    // Search all operations - this will return ALL operations with scores
+    const allResults = fuse.search(searchTerm, { limit: allOps.length });
+
+    // Create a map of operation scores
+    const scoreMap = new Map();
+    allResults.forEach((result) => {
+      const id = result.item.id || result.item.name;
+      scoreMap.set(id, result.score);
+    });
+
+    // Sort all operations by relevance score (lower score = more relevant)
+    return allOps.sort((a, b) => {
+      const aId = a.id || a.name;
+      const bId = b.id || b.name;
+      const aScore = scoreMap.get(aId) ?? Number.POSITIVE_INFINITY; // Items not found get worst score
+      const bScore = scoreMap.get(bId) ?? Number.POSITIVE_INFINITY;
+
+      return aScore - bScore; // Lower score = better match = higher in list
+    });
+  }, [allOperations, searchTerm]);
 
   const handleOperationToggle = useCallback(
     (operationName: string, isSelected: boolean) => {
@@ -143,6 +183,18 @@ export const SelectOperations = () => {
   // Main content
   return (
     <div className={styles.container}>
+      <div>
+        <SearchBox
+          placeholder={intl.formatMessage({
+            id: 'IRVmBd',
+            defaultMessage: 'Search operations...',
+            description: 'Placeholder text for operation search box',
+          })}
+          onChange={(_, data) => {
+            setSearchTerm(data.value.trim().toLowerCase());
+          }}
+        />
+      </div>
       <div className={styles.content}>
         <OperationSelectionGrid
           operationsData={operations}
