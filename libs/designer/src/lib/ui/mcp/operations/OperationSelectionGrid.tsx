@@ -56,7 +56,7 @@ const OperationCell = ({ operation, isSelected, showConnectorName, onCardClick, 
               {description}
             </Caption1>
             {showConnectorName && <Caption1 className={styles.connectorName}>{api.displayName}</Caption1>}
-            {annotation?.status && !equals(annotation?.status, 'production', /* caseInsensitive */ true) && (
+            {annotation?.status && !equals(annotation?.status, 'production') && (
               <Caption1 className={styles.operationStatus}>{annotation.status}</Caption1>
             )}
           </div>

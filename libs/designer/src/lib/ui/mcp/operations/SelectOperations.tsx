@@ -51,7 +51,7 @@ export const SelectOperations = () => {
 
     // If no search keyword, return all operations sorted alphabetically
     if (isUndefinedOrEmptyString(trimmedSearchTerm)) {
-      return [...allOps].sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+      return [...allOps].sort((a, b) => (a.properties.summary || '').localeCompare(b.properties.summary || ''));
     }
 
     const fuse = new Fuse(allOps, fuseOptions);
