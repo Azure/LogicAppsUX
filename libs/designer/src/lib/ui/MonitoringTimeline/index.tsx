@@ -100,7 +100,6 @@ const MonitoringTimeline = () => {
 
       if (nodeId) {
         dispatch(updateAgenticMetadata({ nodeId, scopeRepetitionRunData: { ...selectedRepetition.data?.properties } }));
-
         dispatch(setSelectedNodeId(nodeId));
         dispatch(openPanel({ nodeId: nodeId, panelMode: 'Operation' }));
         dispatch(setFocusNode(nodeId));

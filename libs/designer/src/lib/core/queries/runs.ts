@@ -174,8 +174,7 @@ export const useCancelRun = (runId: string) => {
 };
 
 export const useAgentActionsRepetition = (
-  isMonitoringView: boolean,
-  isParentAgent: boolean,
+  isEnabled: boolean,
   nodeId: string,
   runId: string | undefined,
   repetitionName: string,
@@ -199,7 +198,7 @@ export const useAgentActionsRepetition = (
     {
       ...queryOpts,
       retryOnMount: false,
-      enabled: isMonitoringView && runIndex !== undefined && isParentAgent,
+      enabled: isEnabled,
     }
   );
 };
