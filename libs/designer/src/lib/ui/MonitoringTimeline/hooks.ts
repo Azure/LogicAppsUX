@@ -41,21 +41,6 @@ export const useTimelineRepetitions = (): UseQueryResult<TimelineRepetition[]> =
   );
 };
 
-export const useTimelineRepetitionOffset = (actionId: string) => {
-  const { data: repetitions } = useTimelineRepetitions();
-  const timelineIndex = useTimelineRepetitionIndex();
-  return useMemo(() => {
-    let lastCount = 0;
-    for (let i = 0; i < timelineIndex - 1; i++) {
-      const repetition = repetitions?.[i];
-      if (repetition?.name === actionId) {
-        lastCount = Number.parseInt(repetition.name) || 0;
-      }
-    }
-    return lastCount;
-  }, [actionId, timelineIndex, repetitions]);
-};
-
 export const useTimelineRepetitionCount = (actionId: string) => {
   const { data: repetitions } = useTimelineRepetitions();
   const timelineIndex = useTimelineRepetitionIndex();

@@ -122,8 +122,7 @@ const ScopeCardNode = ({ id }: NodeProps) => {
   );
 
   const { isFetching: isAgentActionsRepetitionFetching, data: agentActionsRepetitionData } = useAgentActionsRepetition(
-    !!isMonitoringView,
-    isAgent,
+    !!isMonitoringView && runIndex !== undefined && isAgent,
     scopeId,
     runInstance?.id,
     scopeRepetitionName,
@@ -135,9 +134,9 @@ const ScopeCardNode = ({ id }: NodeProps) => {
     if (isNullOrUndefined(agentActionsRepetitionData)) {
       return;
     }
-    const updatePayload = { nodeId: scopeId, runData: agentActionsRepetitionData } as any;
+    const updatePayload = { nodeId: scopeId, runData: agentActionsRepetitionData as LogicAppsV2.RunRepetition[] };
     dispatch(setSubgraphRunData(updatePayload));
-  }, [dispatch, agentRepetitionRunData, scopeId, agentActionsRepetitionData, isMonitoringView, isTimelineRepetitionSelected]);
+  }, [dispatch, agentRepetitionRunData, scopeId, agentActionsRepetitionData, isMonitoringView]);
 
   useEffect(() => {
     if (isMonitoringView && !isTimelineRepetitionSelected) {
