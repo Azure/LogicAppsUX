@@ -180,8 +180,7 @@ describe('runs queries', () => {
       const { result } = renderHook(
         () =>
           useAgentActionsRepetition(
-            true, // isMonitoringView
-            true, // isParentAgent
+            true, // isEnabled
             'agentNode',
             'runId123',
             'rep1',
@@ -211,8 +210,7 @@ describe('runs queries', () => {
       const { result } = renderHook(
         () =>
           useAgentActionsRepetition(
-            true, // isMonitoringView
-            true, // isParentAgent
+            true, // isEnabled
             'agentNode',
             'runId123',
             'rep1',
@@ -242,8 +240,7 @@ describe('runs queries', () => {
       const { result } = renderHook(
         () =>
           useAgentActionsRepetition(
-            true, // isMonitoringView
-            true, // isParentAgent
+            true, // isEnabled
             'agentNode',
             'runId123',
             'rep1',
@@ -264,8 +261,7 @@ describe('runs queries', () => {
       renderHook(
         () =>
           useAgentActionsRepetition(
-            false, // isMonitoringView - disabled
-            true, // isParentAgent
+            false, // isEnabled - disabled
             'agentNode',
             'runId123',
             'rep1',
