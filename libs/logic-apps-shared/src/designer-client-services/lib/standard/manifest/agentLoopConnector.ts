@@ -36,6 +36,7 @@ export default {
           parameters: {
             cognitiveServiceAccountId: {
               type: 'string',
+              parameterSource: 'AppConfiguration',
               uiDefinition: {
                 displayName: 'Azure Cognitive Service Account',
                 description: 'Select the Azure Cognitive Service Account to use for this connection',
@@ -84,6 +85,7 @@ export default {
           parameters: {
             cognitiveServiceAccountId: {
               type: 'string',
+              parameterSource: 'AppConfiguration',
               managedIdentitySettings: {
                 requiredRoles: ['Azure AI Administrator', 'Cognitive Services Contributor'],
               },
