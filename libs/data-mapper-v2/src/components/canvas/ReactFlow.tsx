@@ -1,8 +1,8 @@
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import { useEffect, useRef, useCallback, useState, type MouseEvent, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import type { Connection, Edge, ConnectionLineComponent, NodeTypes, OnNodeDrag, IsValidConnection } from '@xyflow/react';
-import { PanOnScrollMode, ReactFlow, useReactFlow } from '@xyflow/react';
+import type { Connection, Edge, ConnectionLineComponent, NodeTypes, OnNodeDrag, IsValidConnection, NodeChange } from '@xyflow/react';
+import { PanOnScrollMode, ReactFlow, useReactFlow, useStore } from '@xyflow/react';
 import { reactFlowStyle, useStyles } from './styles';
 import SchemaPanelNode from '../common/reactflow/nodes/SchemaPanelNode';
 import ConnectionLine from '../common/reactflow/edges/ConnectionLine';
@@ -14,7 +14,7 @@ import { useDrop } from 'react-dnd';
 import useResizeObserver from 'use-resize-observer';
 import type { Bounds } from '../../core';
 import { splitEdgeId } from '../../utils/Edge.Utils';
-import useAutoLayout from '../../ui/hooks/useAutoLayout';
+import autoLayout from '../../ui/hooks/useAutoLayout';
 import EdgePopOver from './EdgePopOver';
 import CanvasNode from '../common/reactflow/CanvasNode';
 import { isFunctionNode, panelWidth } from '../../utils/ReactFlow.Util';
@@ -54,9 +54,22 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
   });
   const [edgePopoverBounds, setEdgePopoverBounds] = useState<Bounds>();
 
-  useAutoLayout();
+  // const elements = useStore(
+  //   (state) => ({
+  //     nodeMap: state.nodeLookup,
+  //     edgeMap: state.edgeLookup,
+  //   }));
+  const { getIntersectingNodes } = useReactFlow();
 
   const isMapStateDirty = useSelector((state: RootState) => state.dataMap.present.isDirty);
+  const needsLayout = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.needsLayout);
+  const callAutoLayout = useCallback((changes: NodeChange[]) => {
+    console.log(changes[0].type)
+    console.log("callAutoLayout called with changes:", changes);
+    if (needsLayout && changes.length >= 1) {
+      autoLayout(dispatch, getIntersectingNodes, nodes, edges);
+    }
+  }, [dispatch, getIntersectingNodes, nodes, edges, needsLayout]);
 
   const stringResources = useMemo(
     () => ({
@@ -228,6 +241,7 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
           ref={drop}
           edges={edges}
           nodes={nodes}
+          //onNodesChange={needsLayout ? callAutoLayout : () => {return}}
           className="nopan nodrag"
           nodeDragThreshold={0}
           onlyRenderVisibleElements={true}

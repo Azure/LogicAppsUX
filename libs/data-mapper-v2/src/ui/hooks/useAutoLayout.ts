@@ -4,7 +4,7 @@ import { type Node, type Edge, type XYPosition, useStore, useReactFlow } from '@
 import { isFunctionNode, panelWidth } from '../../utils/ReactFlow.Util';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import { updateFunctionNodesPosition } from '../../core/state/DataMapSlice';
+import { setNeedsLayout, updateFunctionNodesPosition } from '../../core/state/DataMapSlice';
 
 // the layout direction (T = top, R = right, B = bottom, L = left, TB = top to bottom, ...)
 export type Direction = 'DOWN' | 'RIGHT' | 'LEFT' | 'UP';
@@ -59,42 +59,63 @@ type Elements = {
   edgeMap: Map<string, Edge>;
 };
 
-function compareElements(xs: Elements, ys: Elements) {
-  return compareNodes(xs.nodeMap, ys.nodeMap);
-}
+const autoLayout = (dispatch: AppDispatch, getIntersectingNodes: (node: Node) => Node[], nodes: Node[], edges: Edge[]) => {
+  //const needsLayout = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.needsLayout);
 
-function compareNodes(xs: Map<string, Node>, ys: Map<string, Node>) {
-  const xsFunctionNodes = [...xs.values()].filter((node) => isFunctionNode(node.id));
-  const ysFunctionNodes = [...ys.values()].filter((node) => isFunctionNode(node.id));
-  if (xsFunctionNodes.length !== ysFunctionNodes.length) {
-    return false;
+  const functionNodes = nodes.filter((node) => isFunctionNode(node.id));
+
+  if (functionNodes.length === 0) {
+    // Danielle this is why layout does not run in vscode
+    console.log('useAutoLayout: No function nodes found, skipping layout.');
+    return;
   }
 
-  for (const x of xsFunctionNodes) {
-    const y = ys.get(x.id);
-
-    // the node doesn't exist in the next state so it just got added
-    if (!y) {
-      return false;
-    }
-
-    // We don't want to force a layout change while a user might be resizing a
-    // node, so we only compare the dimensions if the node is not currently
-    // being resized.
-    //
-    // We early return here instead of using a `continue` because there's no
-    // scenario where we'd want nodes to start moving around *while* a user is
-    // trying to resize a node or move it around.
-    if (x.resizing || x.dragging) {
-      return true;
-    }
-    if (x.measured?.width !== y.measured?.width || x.measured?.height !== y.measured?.height) {
-      return false;
+  let intersectingNodeCount = 0;
+  for (const node of functionNodes) {
+    const intersectingNodes = getIntersectingNodes(node);
+    intersectingNodeCount += intersectingNodes.length;
+    if (intersectingNodeCount > 1) {
+      break;
     }
   }
 
-  return true;
-}
+  console.log(`useAutoLayout: Found ${functionNodes.length} function nodes, ${intersectingNodeCount} intersecting nodes.`);
+
+  if (functionNodes.length > 0 && intersectingNodeCount === 0) {
+    console.log('functionNodes.length > 0 && intersectingNodeCount === 0');
+    return;
+  }
+
+  // The callback passed to `useEffect` cannot be `async` itself, so instead we
+  // create an async function here and call it immediately afterwards.
+  const runLayout = async (nodes: Node[], edges: Edge[]) => {
+    dispatch(setNeedsLayout(false));
+    const { nodes: nextNodes } = await elkLayout(nodes, edges, {
+      spacing: [80, 50],
+      direction: 'LEFT',
+    });
+
+    console.log('in run layout');
+
+    dispatch(
+      updateFunctionNodesPosition(
+        nextNodes
+          .filter((node) => isFunctionNode(node.id))
+          .reduce((acc: Record<string, XYPosition>, node) => {
+            const { x: currentX, y: currentY } = node.position;
+            acc[node.id] = {
+              // Todo: This is a temporary fix for the layout issue. We need to find a better solution.
+              x: currentX < panelWidth ? currentX + panelWidth : currentX,
+              y: currentY,
+            };
+            return acc;
+          }, {})
+      )
+    );
+  };
+
+  runLayout(nodes, edges);
+};
 
 const useAutoLayout = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -116,7 +137,59 @@ const useAutoLayout = () => {
     compareElements
   );
 
+  function compareElements(xs: Elements, ys: Elements) {
+    return compareNodes(xs.nodeMap, ys.nodeMap);
+  }
+
+  function compareNodes(xs: Map<string, Node>, ys: Map<string, Node>) {
+    if (needsLayout === false) {
+      console.log('compareNodes: needsLayout is false, skipping comparison');
+      return true;
+    }
+    const xsFunctionNodes = [...xs.values()].filter((node) => isFunctionNode(node.id));
+    const ysFunctionNodes = [...ys.values()].filter((node) => isFunctionNode(node.id));
+    console.log('xsFunctionNodes', xsFunctionNodes.length);
+    console.log('ysFunctionNodes', ysFunctionNodes.length);
+    if (ysFunctionNodes.length >= 2) {
+      return false;
+    }
+    if (xsFunctionNodes.length === 0 && ysFunctionNodes.length !== 0) {
+      return false;
+    }
+    if (xsFunctionNodes.length !== ysFunctionNodes.length) {
+      return false;
+    }
+
+    for (const x of xsFunctionNodes) {
+      const y = ys.get(x.id);
+
+      // the node doesn't exist in the next state so it just got added
+      if (!y) {
+        return false;
+      }
+
+      // We don't want to force a layout change while a user might be resizing a
+      // node, so we only compare the dimensions if the node is not currently
+      // being resized.
+      //
+      // We early return here instead of using a `continue` because there's no
+      // scenario where we'd want nodes to start moving around *while* a user is
+      // trying to resize a node or move it around.
+      if (x.resizing || x.dragging) {
+        return true;
+      }
+      if (x.measured?.width !== y.measured?.width || x.measured?.height !== y.measured?.height) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   useEffect(() => {
+    console.log('in useAutoLayout use effect');
+    console.log('isLayouted', isLayouted);
+    console.log('needsLayout', needsLayout);
     // Only run the layout if there are nodes and they have been initialized with
     // their dimensions
     // does not run on first node placed
@@ -130,7 +203,8 @@ const useAutoLayout = () => {
     const functionNodes = nodes.filter((node) => isFunctionNode(node.id));
 
     if (functionNodes.length === 0) {
-      console.debug('useAutoLayout: No function nodes found, skipping layout.');
+      // Danielle this is why layout does not run in vscode
+      console.log('useAutoLayout: No function nodes found, skipping layout.');
       return;
     }
 
@@ -143,20 +217,24 @@ const useAutoLayout = () => {
       }
     }
 
-    console.debug(`useAutoLayout: Found ${functionNodes.length} function nodes, ${intersectingNodeCount} intersecting nodes.`);
+    console.log(`useAutoLayout: Found ${functionNodes.length} function nodes, ${intersectingNodeCount} intersecting nodes.`);
 
     if (functionNodes.length > 0 && intersectingNodeCount === 0) {
       setIsLayouted(true);
+      console.log('functionNodes.length > 0 && intersectingNodeCount === 0');
       return;
     }
 
     // The callback passed to `useEffect` cannot be `async` itself, so instead we
     // create an async function here and call it immediately afterwards.
     const runLayout = async (nodes: Node[], edges: Edge[]) => {
+      setIsLayouted(true);
       const { nodes: nextNodes } = await elkLayout(nodes, edges, {
-        spacing: [50, 50],
+        spacing: [80, 50],
         direction: 'LEFT',
       });
+
+      console.log('in run layout');
 
       dispatch(
         updateFunctionNodesPosition(
@@ -173,11 +251,10 @@ const useAutoLayout = () => {
             }, {})
         )
       );
-      setIsLayouted(true);
     };
 
     runLayout(nodes, edges);
   }, [elements, dispatch, isLayouted, getIntersectingNodes, needsLayout]);
 };
 
-export default useAutoLayout;
+export default autoLayout;

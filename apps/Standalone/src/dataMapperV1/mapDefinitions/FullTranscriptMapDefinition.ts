@@ -11,9 +11,13 @@ $targetNamespaces:
   td: http://tempuri.org/TypeDefinition.xsd
   xs: http://www.w3.org/2001/XMLSchema
 ns0:Root:
-  CumulativeExpression:
-    PopulationSummary:
-      $for(/ns0:Root/CumulativeExpression/Population/State, $a):
-        State:
-          Name: County[$a]/Name
+  DirectTranslation:
+    Employee:
+      ID: int()
+      Name: number()
+  DataTranslation:
+    EmployeeName:
+      $@RegularFulltime: add-days()
+  ContentEnrich:
+    DateOfDemo: string()
 `;

@@ -236,6 +236,10 @@ export const dataMapSlice = createSlice({
       state.curDataMapOperation = { ...currentState };
     },
 
+    setNeedsLayout: (state, action: PayloadAction<boolean>) => {
+      state.curDataMapOperation.needsLayout = action.payload;
+    },
+
     setInitialDataMap: (state, action: PayloadAction<InitialDataMapAction>) => {
       const { sourceSchema, targetSchema, dataMapConnections, metadata } = action.payload;
       const currentState = state.curDataMapOperation;
@@ -248,10 +252,11 @@ export const dataMapSlice = createSlice({
       assignFunctionNodePositionsFromMetadata(dataMapConnections, metadata?.functionNodes ?? [], functionNodes);
 
       const needsLayout = !doesFunctionMetadataExist(metadata);
+      console.log('needsLayout', needsLayout);
 
       const newState: DataMapOperationState = {
         ...currentState,
-        needsLayout,
+        needsLayout: true,
         sourceSchema,
         targetSchema,
         flattenedSourceSchema,
@@ -657,6 +662,7 @@ export const dataMapSlice = createSlice({
 });
 
 export const {
+  setNeedsLayout,
   setXsltFilename,
   setXsltContent,
   setInitialSchema,
