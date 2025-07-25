@@ -9,6 +9,7 @@ import { useOperationsByConnectorQuery } from '../../../core/mcp/utils/queries';
 import { OperationSelectionGrid } from './OperationSelectionGrid';
 import { selectOperations } from '../../../core/state/mcp/connector/connectorSlice';
 import { useConnectorSelectionStyles } from '../connectors/styles';
+import { isUndefinedOrEmptyString } from '@microsoft/logic-apps-shared';
 
 const fuseOptions = {
   includeScore: true,
@@ -46,13 +47,15 @@ export const SelectOperations = () => {
   const operations = useMemo(() => {
     const allOps = allOperations || [];
 
+    const trimmedSearchTerm = searchTerm.trim();
+
     // If no search keyword, return all operations sorted alphabetically
-    if (!searchTerm.trim()) {
+    if (isUndefinedOrEmptyString(trimmedSearchTerm)) {
       return [...allOps].sort((a, b) => (a.name || '').localeCompare(b.name || ''));
     }
 
     const fuse = new Fuse(allOps, fuseOptions);
-    const searchResults = fuse.search(searchTerm, { limit: allOps.length });
+    const searchResults = fuse.search(trimmedSearchTerm, { limit: allOps.length });
 
     return searchResults.map((result) => result.item);
   }, [allOperations, searchTerm]);
