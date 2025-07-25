@@ -17,7 +17,7 @@ const fuseOptions = {
   keys: [
     { name: 'name', weight: 2.0 },
     { name: 'properties.summary', weight: 2.0 },
-    { name: 'properties.description', weight: 1.5 },
+    { name: 'properties.description', weight: 1 },
   ],
 };
 
@@ -46,32 +46,15 @@ export const SelectOperations = () => {
   const operations = useMemo(() => {
     const allOps = allOperations || [];
 
-    // If no search keyword, return all operations
+    // If no search keyword, return all operations sorted alphabetically
     if (!searchTerm.trim()) {
-      return allOps;
+      return [...allOps].sort((a, b) => (a.name || '').localeCompare(b.name || ''));
     }
 
     const fuse = new Fuse(allOps, fuseOptions);
+    const searchResults = fuse.search(searchTerm, { limit: allOps.length });
 
-    // Search all operations - this will return ALL operations with scores
-    const allResults = fuse.search(searchTerm, { limit: allOps.length });
-
-    // Create a map of operation scores
-    const scoreMap = new Map();
-    allResults.forEach((result) => {
-      const id = result.item.id || result.item.name;
-      scoreMap.set(id, result.score);
-    });
-
-    // Sort all operations by relevance score (lower score = more relevant)
-    return allOps.sort((a, b) => {
-      const aId = a.id || a.name;
-      const bId = b.id || b.name;
-      const aScore = scoreMap.get(aId) ?? Number.POSITIVE_INFINITY; // Items not found get worst score
-      const bScore = scoreMap.get(bId) ?? Number.POSITIVE_INFINITY;
-
-      return aScore - bScore; // Lower score = better match = higher in list
-    });
+    return searchResults.map((result) => result.item);
   }, [allOperations, searchTerm]);
 
   const handleOperationToggle = useCallback(
@@ -110,6 +93,11 @@ export const SelectOperations = () => {
       id: 'P2JpFk',
       defaultMessage: 'Please select a connector first',
       description: 'Message when no connector is selected',
+    }),
+    searchPlaceholder: intl.formatMessage({
+      id: 'IRVmBd',
+      defaultMessage: 'Search operations...',
+      description: 'Placeholder text for operation search box',
     }),
   };
 
@@ -186,11 +174,7 @@ export const SelectOperations = () => {
       <div className={styles.searchSection}>
         <SearchBox
           className={styles.searchBox}
-          placeholder={intl.formatMessage({
-            id: 'IRVmBd',
-            defaultMessage: 'Search operations...',
-            description: 'Placeholder text for operation search box',
-          })}
+          placeholder={INTL_TEXT.searchPlaceholder}
           onChange={(_, data) => {
             setSearchTerm(data.value.trim().toLowerCase());
           }}
