@@ -179,7 +179,7 @@ export const SelectOperations = () => {
           className={styles.searchBox}
           placeholder={INTL_TEXT.searchPlaceholder}
           onChange={(_, data) => {
-            setSearchTerm(data.value.trim().toLowerCase());
+            setSearchTerm(data.value);
           }}
         />
       </div>
