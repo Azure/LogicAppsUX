@@ -49,28 +49,34 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
     });
   }, [selectedOperations, connectionsMapping, connectionReferences]);
 
+  const newlySelectedOperationIds = useMemo(() => {
+    return selectedOperations.filter((operationId) => !Object.keys(operationInfos).includes(operationId));
+  }, [operationInfos, selectedOperations]);
+
   const deselectedOperationIds = useMemo(() => {
     return Object.keys(operationInfos).filter((operationId) => !selectedOperations.includes(operationId));
   }, [operationInfos, selectedOperations]);
 
   const handleSubmit = useCallback(() => {
-    if (selectedConnectorId && selectedOperations.length > 0) {
-      const selectedOperationsData = selectedOperations.map((operationId) => ({
-        connectorId: selectedConnectorId,
-        operationId: getResourceNameFromId(operationId),
-        type: 'apiconnection' as const,
-      }));
-
+    if (selectedConnectorId) {
+      // Deinitializing deselected operations
       if (deselectedOperationIds.length > 0) {
         dispatch(deinitializeOperations({ operationIds: deselectedOperationIds }));
       }
 
-      // Initializing selection
-      dispatch(initializeOperationsMetadata({ operations: selectedOperationsData }));
-      dispatch(clearAllSelections());
-      dispatch(closePanel());
+      // Initializing newly selected operations
+      if (newlySelectedOperationIds.length > 0) {
+        const selectedOperationsData = newlySelectedOperationIds.map((operationId) => ({
+          connectorId: selectedConnectorId,
+          operationId: getResourceNameFromId(operationId),
+          type: 'apiconnection' as const,
+        }));
+        dispatch(initializeOperationsMetadata({ operations: selectedOperationsData }));
+      }
     }
-  }, [dispatch, selectedConnectorId, selectedOperations, deselectedOperationIds]);
+    dispatch(clearAllSelections());
+    dispatch(closePanel());
+  }, [dispatch, selectedConnectorId, newlySelectedOperationIds, deselectedOperationIds]);
 
   const handleOnSelectOperations = useCallback(async () => {
     // This triggers the loading state and initializes connections
