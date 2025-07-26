@@ -16,7 +16,7 @@ test(
     await page.getByLabel('Initialize variables', { exact: true }).click();
     await page.getByRole('textbox', { name: 'Enter variable name' }).getByRole('paragraph').click();
     await page.getByRole('textbox', { name: 'Enter variable name' }).fill('test');
-    await page.getByText('Select variable type').click();
+    await page.getByPlaceholder('Select variable type').click();
     await page.getByRole('option', { name: 'Integer' }).click();
     await page.getByRole('textbox', { name: 'Enter initial value' }).getByRole('paragraph').click();
     await page.getByRole('textbox', { name: 'Enter initial value' }).fill('test');
@@ -38,7 +38,7 @@ test(
     expect(serialized.definition.actions.Initialize_variables.inputs.variables[0].type).toBe('integer');
     expect(serialized.definition.actions.Initialize_variables.inputs.variables[0].value).toEqual(12);
 
-    await page.getByText('Integer').click();
+    await page.getByPlaceholder('Select variable type').click();
     await page.getByRole('option', { name: 'Boolean' }).click();
     await page.getByLabel('Clear custom value').click();
     await page.getByPlaceholder('Enter initial value').click();

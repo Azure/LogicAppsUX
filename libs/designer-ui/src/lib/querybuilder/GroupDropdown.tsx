@@ -28,6 +28,8 @@ export const GroupDropdown = ({ condition, readonly, onChange }: GroupDropdownPr
         options={items}
         onChange={onChange}
         readonly={readonly}
+        flexibleWidth={true}
+        height={24}
       />
     </div>
   );
