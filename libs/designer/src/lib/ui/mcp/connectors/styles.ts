@@ -45,6 +45,8 @@ export const useConnectorSelectionStyles = makeStyles({
     paddingBottom: tokens.spacingVerticalM,
   },
 
+  searchBox: { width: '100%', maxWidth: 'unset' },
+
   footer: {
     display: 'flex',
     justifyContent: 'flex-end',
