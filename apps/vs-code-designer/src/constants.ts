@@ -121,6 +121,7 @@ export const designerApiLoadTimeout = 300000;
 // Commands
 export const extensionCommand = {
   openDesigner: 'azureLogicAppsStandard.openDesigner',
+  generateTests: 'azureLogicAppsStandard.generateTests',
   activate: 'azureLogicAppsStandard.activate',
   viewContent: 'azureLogicAppsStandard.viewContent',
   openFile: 'azureLogicAppsStandard.openFile',
