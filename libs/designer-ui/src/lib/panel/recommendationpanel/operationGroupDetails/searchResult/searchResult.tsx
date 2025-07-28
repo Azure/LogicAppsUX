@@ -123,8 +123,8 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
   );
 
   const loadingText = intl.formatMessage({
-    defaultMessage: 'Loading more results...',
-    id: 'AoalgS',
+    defaultMessage: 'Searching for results...',
+    id: 'WyH1wr',
     description: 'Message to show when loading search results',
   });
 

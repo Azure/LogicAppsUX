@@ -1,24 +1,37 @@
-import { useCallback, useMemo } from 'react';
-import { Text, Spinner } from '@fluentui/react-components';
+import { useCallback, useMemo, useState } from 'react';
+import { Text, Spinner, SearchBox } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 import { useSelector, useDispatch } from 'react-redux';
+import Fuse from 'fuse.js';
 import { useAllConnectors } from '../../../core/queries/browse';
 import type { RootState, AppDispatch } from '../../../core/state/mcp/store';
 import { useOperationsByConnectorQuery } from '../../../core/mcp/utils/queries';
 import { OperationSelectionGrid } from './OperationSelectionGrid';
-import { useOperationsStyles } from './styles';
-import { getResourceNameFromId } from '@microsoft/logic-apps-shared';
 import { selectOperations } from '../../../core/state/mcp/connector/connectorSlice';
+import { useConnectorSelectionStyles } from '../connectors/styles';
+import { isUndefinedOrEmptyString } from '@microsoft/logic-apps-shared';
+
+const fuseOptions = {
+  includeScore: true,
+  threshold: 1.0, // Include all items, even very poor matches
+  ignoreLocation: true,
+  keys: [
+    { name: 'name', weight: 2.0 },
+    { name: 'properties.summary', weight: 2.0 },
+    { name: 'properties.description', weight: 1 },
+  ],
+};
 
 export const SelectOperations = () => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
-  const styles = useOperationsStyles();
+  const styles = useConnectorSelectionStyles();
 
   const { selectedConnectorId, selectedOperations } = useSelector((state: RootState) => ({
     selectedConnectorId: state.connector.selectedConnectorId,
     selectedOperations: state.connector.selectedOperations ?? [],
   }));
+  const [searchTerm, setSearchTerm] = useState('');
 
   const selectedOperationsSet = useMemo(() => new Set(selectedOperations), [selectedOperations]);
 
@@ -32,13 +45,24 @@ export const SelectOperations = () => {
   const selectedConnector = useMemo(() => allConnectors?.find((c) => c.id === selectedConnectorId), [allConnectors, selectedConnectorId]);
 
   const operations = useMemo(() => {
-    return allOperations || [];
-  }, [allOperations]);
+    const allOps = allOperations || [];
+
+    const trimmedSearchTerm = searchTerm.trim();
+
+    // If no search keyword, return all operations sorted alphabetically
+    if (isUndefinedOrEmptyString(trimmedSearchTerm)) {
+      return [...allOps].sort((a, b) => (a.properties.summary || '').localeCompare(b.properties.summary || ''));
+    }
+
+    const fuse = new Fuse(allOps, fuseOptions);
+    const searchResults = fuse.search(trimmedSearchTerm, { limit: allOps.length });
+
+    return searchResults.map((result) => result.item);
+  }, [allOperations, searchTerm]);
 
   const handleOperationToggle = useCallback(
-    (operationId: string, isSelected: boolean) => {
+    (operationName: string, isSelected: boolean) => {
       const newSelection = new Set(selectedOperations);
-      const operationName = getResourceNameFromId(operationId);
       if (isSelected) {
         newSelection.add(operationName);
       } else {
@@ -72,6 +96,11 @@ export const SelectOperations = () => {
       id: 'P2JpFk',
       defaultMessage: 'Please select a connector first',
       description: 'Message when no connector is selected',
+    }),
+    searchPlaceholder: intl.formatMessage({
+      id: 'IRVmBd',
+      defaultMessage: 'Search operations...',
+      description: 'Placeholder text for operation search box',
     }),
   };
 
@@ -145,6 +174,15 @@ export const SelectOperations = () => {
   // Main content
   return (
     <div className={styles.container}>
+      <div className={styles.searchSection}>
+        <SearchBox
+          className={styles.searchBox}
+          placeholder={INTL_TEXT.searchPlaceholder}
+          onChange={(_, data) => {
+            setSearchTerm(data.value);
+          }}
+        />
+      </div>
       <div className={styles.content}>
         <OperationSelectionGrid
           operationsData={operations}

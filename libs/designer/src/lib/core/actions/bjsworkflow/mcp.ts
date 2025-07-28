@@ -35,6 +35,8 @@ import {
   initializeConnectionsMappings,
 } from '../../state/connection/connectionSlice';
 import {
+  deinitializeNodes,
+  deinitializeOperationInfos,
   initializeNodeOperationInputsData,
   type NodeOperation,
   type NodeOperationInputsData,
@@ -161,5 +163,14 @@ export const initializeConnectionMappings = createAsyncThunk(
     } else {
       dispatch(initEmptyConnectionMap(operations));
     }
+  }
+);
+
+export const deinitializeOperations = createAsyncThunk(
+  'deinitializeOperations',
+  async ({ operationIds }: { operationIds: string[] }, { dispatch }) => {
+    dispatch(deinitializeOperationInfos({ ids: operationIds }));
+    dispatch(deinitializeNodes(operationIds));
+    return operationIds;
   }
 );

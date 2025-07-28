@@ -80,10 +80,6 @@ export const DesignerApp = () => {
     [vscode]
   );
 
-  const isA2A = useMemo(() => {
-    return standardApp?.kind === 'Agent';
-  }, [standardApp?.kind]);
-
   const services = useMemo(() => {
     const fileSystemConnectionCreate = async (
       connectionInfo: FileSystemConnectionInfo,
@@ -104,7 +100,6 @@ export const DesignerApp = () => {
       apiVersion,
       apiHubServiceDetails ?? {},
       isLocal,
-      isA2A,
       connectionData,
       panelMetaData,
       fileSystemConnectionCreate,
@@ -120,7 +115,6 @@ export const DesignerApp = () => {
     apiVersion,
     apiHubServiceDetails,
     isLocal,
-    isA2A,
     connectionData,
     panelMetaData,
     vscode,
@@ -162,7 +156,8 @@ export const DesignerApp = () => {
     if (isMonitoringView) {
       refetch();
       const queryClient = getReactQueryClient();
-      queryClient.removeQueries([runsQueriesKeys.useChatHistory]);
+      queryClient.removeQueries([runsQueriesKeys.useActionsChatHistory]);
+      queryClient.removeQueries([runsQueriesKeys.useRunChatHistory]);
       queryClient.removeQueries([runsQueriesKeys.useAgentActionsRepetition]);
       queryClient.removeQueries([runsQueriesKeys.useAgentRepetition]);
       queryClient.removeQueries([runsQueriesKeys.useNodeRepetition]);

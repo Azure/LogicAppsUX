@@ -73,11 +73,12 @@ type AddOperationPayload = {
   isTrigger?: boolean;
   presetParameterValues?: Record<string, any>;
   actionMetadata?: Record<string, any>;
+  isAddingHandoff?: boolean;
 };
 
 export const addOperation = createAsyncThunk('addOperation', async (payload: AddOperationPayload, { dispatch, getState }) => {
   batch(() => {
-    const { operation, nodeId: actionId, presetParameterValues, actionMetadata } = payload;
+    const { operation, nodeId: actionId, presetParameterValues, actionMetadata, isAddingHandoff = false } = payload;
     if (!operation) {
       throw new Error('Operation does not exist'); // Just an optional catch, should never happen
     }
@@ -88,9 +89,9 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
     const newPayload = { ...payload, nodeId };
     const newToolGraphId = (getState() as RootState).panel.discoveryContent.relationshipIds.graphId;
     const agentToolMetadata = (getState() as RootState).panel.discoveryContent.agentToolMetadata;
+    const newToolId = (getState() as RootState).panel.discoveryContent.relationshipIds.subgraphId;
 
     if (isAddingAgentTool) {
-      const newToolId = (getState() as RootState).panel.discoveryContent.relationshipIds.subgraphId;
       if (newToolId && newToolGraphId) {
         if (agentToolMetadata?.newAdditiveSubgraphId && agentToolMetadata?.subGraphManifest) {
           initializeSubgraphFromManifest(agentToolMetadata.newAdditiveSubgraphId, agentToolMetadata?.subGraphManifest, dispatch);
@@ -109,13 +110,21 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
     };
 
     dispatch(initializeOperationInfo({ id: nodeId, ...nodeOperationInfo }));
-    initializeOperationDetails(nodeId, nodeOperationInfo, getState as () => RootState, dispatch, presetParameterValues, actionMetadata);
+    initializeOperationDetails(
+      nodeId,
+      nodeOperationInfo,
+      getState as () => RootState,
+      dispatch,
+      presetParameterValues,
+      actionMetadata,
+      !isAddingHandoff
+    );
 
     dispatch(setFocusNode(nodeId));
-    if (isAddingAgentTool) {
+    if (isAddingAgentTool && newToolId) {
       dispatch(
         setAlternateSelectedNode({
-          nodeId: newToolGraphId,
+          nodeId: newToolId,
           updatePanelOpenState: true,
           panelPersistence: 'selected',
         })

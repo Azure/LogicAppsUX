@@ -2,12 +2,7 @@ import { type Connection, ConnectionService, type Connector, parseErrorMessage }
 import { updateMcpConnection } from '../../../core/actions/bjsworkflow/connections';
 import { useConnectionsForConnector } from '../../../core/queries/connections';
 import { useConnector } from '../../../core/state/connection/connectionSelector';
-import {
-  useAllReferenceKeys,
-  useAreMappingsInitialized,
-  useConnectionReference,
-  useOperationNodeIds,
-} from '../../../core/state/mcp/selector';
+import { useAllReferenceKeys, useAreMappingsInitialized, useConnectionReference } from '../../../core/state/mcp/selector';
 import type { AppDispatch } from '../../../core/state/mcp/store';
 import { isConnectionValid } from '../../../core/utils/connectors/connections';
 import { CreateConnectionInternal } from '../../panel/connectionsPanel/createConnection/createConnectionInternal';
@@ -27,7 +22,6 @@ export const ConnectionSelection = ({ connectorId, operations }: { connectorId: 
   const connectionsQuery = useConnectionsForConnector(connectorId, /* shouldNotRefetch */ true);
   const existingReferences = useAllReferenceKeys();
   const reference = useConnectionReference();
-  const operationNodeIds = useOperationNodeIds(connectorId);
   const areMappingsInitialized = useAreMappingsInitialized(operations);
 
   const validConnections = useMemo(() => (connectionsQuery.data ?? []).filter(isConnectionValid), [connectionsQuery.data]);
@@ -53,21 +47,21 @@ export const ConnectionSelection = ({ connectorId, operations }: { connectorId: 
       }
       dispatch(
         updateMcpConnection({
-          nodeIds: operationNodeIds,
+          nodeIds: operations,
           connection,
           connector: connector as Connector,
         })
       );
       ConnectionService().setupConnectionIfNeeded(connection);
     },
-    [operationNodeIds, dispatch, connector]
+    [dispatch, operations, connector]
   );
 
   const updateConnectionInState = useCallback(
     (payload: CreatedConnectionPayload) => {
-      dispatch(updateMcpConnection({ ...payload, nodeIds: operationNodeIds }));
+      dispatch(updateMcpConnection({ ...payload, nodeIds: operations }));
     },
-    [dispatch, operationNodeIds]
+    [dispatch, operations]
   );
 
   const handleOnAdd = useCallback(() => setShowCreate(true), []);
@@ -89,7 +83,7 @@ export const ConnectionSelection = ({ connectorId, operations }: { connectorId: 
           connectorId={connector?.id ?? ''}
           operationType={'ApiConnection'}
           existingReferences={existingReferences}
-          nodeIds={operationNodeIds}
+          nodeIds={operations}
           showActionBar={false}
           hideCancelButton={!hasConnections}
           updateConnectionInState={updateConnectionInState}

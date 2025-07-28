@@ -4,13 +4,12 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useThrottledEffect } from '@microsoft/logic-apps-shared';
 import { useTimelineRepetitions } from './hooks';
-import { useRunInstance } from '../../core/state/workflow/workflowSelectors';
 import {
   clearAllRepetitionRunData,
   setFocusNode,
-  setRepetitionRunData,
+  setRunIndex,
   setTimelineRepetitionArray,
-  setTimelineRepetitionIndex,
+  updateAgenticMetadata,
 } from '../../core/state/workflow/workflowSlice';
 import { useMonitoringTimelineStyles } from './monitoringTimeline.styles';
 import type { TimelineRepetitionWithActions } from './helpers';
@@ -19,6 +18,7 @@ import { openPanel, setSelectedNodeId } from '../../core/state/panel/panelSlice'
 import TimelineHeader from './TimelineHeader';
 import TimelineButtons from './TimelineButtons';
 import TimelineContent from './TimelineContent';
+import { useTimelineRepetitionIndex } from '../../core/state/workflow/workflowSelectors';
 
 const MonitoringTimeline = () => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -26,57 +26,36 @@ const MonitoringTimeline = () => {
   const [selectedRepetition, setSelectedRepetition] = useState<TimelineRepetitionWithActions | null>(null);
   const styles = useMonitoringTimelineStyles();
   const dispatch = useDispatch();
-  const runInstance = useRunInstance();
-
+  const timelineRepetitionIndex = useTimelineRepetitionIndex();
   const { data: repetitionData, isFetching: isFetchingRepetitions, refetch: refetchTimelineRepetitions } = useTimelineRepetitions();
 
   const repetitions = useMemo(() => {
-    return parseRepetitions(repetitionData, runInstance);
-  }, [repetitionData, runInstance]);
+    return parseRepetitions(repetitionData);
+  }, [repetitionData]);
+
+  const indexToGroupMap = useMemo(() => {
+    const indexMap: Array<{ groupIndex: number; repetitionIndex: number }> = [];
+
+    Array.from(repetitions).forEach(([groupIndex, repetitionList]) => {
+      repetitionList.forEach((_, repetitionIndex) => {
+        indexMap.push({ groupIndex, repetitionIndex });
+      });
+    });
+
+    return indexMap;
+  }, [repetitions]);
 
   useEffect(() => {
-    const test = Array.from(repetitions).flatMap(([_taskId, repetitionList]) => {
-      const repetitionsActions = repetitionList.map((repetition) => repetition.actionIds ?? []);
+    const repetitionArray = Array.from(repetitions).flatMap(([_taskId, repetitionList]) => {
+      const repetitionsActions = repetitionList.map((repetition) => {
+        const actionName = repetition.data?.properties.agentMetadata?.agentName;
+
+        return actionName ? [actionName] : [];
+      });
       return repetitionsActions;
     });
-    dispatch(setTimelineRepetitionArray(test));
+    dispatch(setTimelineRepetitionArray(repetitionArray));
   }, [dispatch, repetitions]);
-
-  useEffect(() => {
-    if (transitionIndex === -1 && repetitions.size > 0 && !isFetchingRepetitions) {
-      setTransitionIndex(0);
-    }
-  }, [transitionIndex, repetitions, isFetchingRepetitions]);
-
-  useThrottledEffect(
-    () => {
-      dispatch(clearAllRepetitionRunData());
-
-      const firstNodeId = selectedRepetition?.actionIds?.[0];
-
-      if (firstNodeId) {
-        for (const a of Object.entries(selectedRepetition?.data?.properties?.actions ?? {})) {
-          const [actionId, action] = a;
-          dispatch(
-            setRepetitionRunData({
-              nodeId: actionId,
-              runData: action,
-            })
-          );
-        }
-
-        dispatch(setTimelineRepetitionIndex(transitionIndex));
-
-        dispatch(setSelectedNodeId(firstNodeId));
-        dispatch(openPanel({ nodeId: firstNodeId, panelMode: 'Operation' }));
-        dispatch(setFocusNode(firstNodeId));
-      }
-    },
-    [dispatch, selectedRepetition, transitionIndex],
-    200
-  );
-
-  const noRepetitions = useMemo(() => repetitions.size === 0, [repetitions]);
 
   const handleSelectRepetition = useCallback(
     (groupIndex: number, repetitionIndex: number) => {
@@ -91,6 +70,47 @@ const MonitoringTimeline = () => {
     },
     [repetitions]
   );
+
+  useEffect(() => {
+    if (transitionIndex === -1 && repetitions.size > 0 && !isFetchingRepetitions) {
+      const repetitionGroup = repetitions.get(0);
+      if (repetitionGroup && repetitionGroup.length > 0) {
+        const repetition = repetitionGroup[0];
+        setSelectedRepetition(repetition);
+        setTransitionIndex(0);
+      }
+    }
+  }, [transitionIndex, repetitions, isFetchingRepetitions]);
+
+  useThrottledEffect(
+    () => {
+      if (timelineRepetitionIndex >= 0 && timelineRepetitionIndex < indexToGroupMap.length) {
+        const { groupIndex, repetitionIndex } = indexToGroupMap[timelineRepetitionIndex];
+        handleSelectRepetition(groupIndex, repetitionIndex);
+      }
+    },
+    [timelineRepetitionIndex, indexToGroupMap, handleSelectRepetition],
+    200
+  );
+
+  useThrottledEffect(
+    () => {
+      dispatch(clearAllRepetitionRunData());
+      const nodeId = selectedRepetition?.data?.properties.agentMetadata.agentName;
+
+      if (nodeId) {
+        dispatch(updateAgenticMetadata({ nodeId, scopeRepetitionRunData: { ...selectedRepetition.data?.properties } }));
+        dispatch(setSelectedNodeId(nodeId));
+        dispatch(openPanel({ nodeId: nodeId, panelMode: 'Operation' }));
+        dispatch(setFocusNode(nodeId));
+        dispatch(setRunIndex({ page: selectedRepetition.repetitionIndex, nodeId: nodeId }));
+      }
+    },
+    [dispatch, selectedRepetition],
+    200
+  );
+
+  const noRepetitions = useMemo(() => repetitions.size === 0, [repetitions]);
 
   return (
     <div style={{ position: 'absolute' }}>
