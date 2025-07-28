@@ -11,9 +11,15 @@ const sortConnectors = (connectors: Connector[]): Connector[] => {
 const supportsActions = (connector: Connector): boolean => {
   const capabilities = connector.properties?.capabilities ?? [];
 
-  // If no capabilities are defined, assume it doesn't support actions
+  // If no capabilities are defined, assume it supports actions
   if (capabilities.length === 0) {
-    return false;
+    return true;
+  }
+
+  // If connector has neither actions nor triggers capabilities, assume it supports actions
+  const hasActionCapabilities = capabilities.includes('actions') || capabilities.includes('triggers');
+  if (!hasActionCapabilities) {
+    return true;
   }
 
   // Check if it explicitly supports actions
