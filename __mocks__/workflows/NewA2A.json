@@ -28,7 +28,7 @@
           }
         },
         "runAfter": {
-					"A2A_Trigger": [
+					"When_a_new_chat_session_started": [
 						"Succeeded"
 					]
 				},
@@ -41,7 +41,7 @@
     "outputs": {},
     "parameters": {},
     "triggers": {
-      "A2A_Trigger": {
+      "When_a_new_chat_session_started": {
         "type": "Request",
         "kind": "Agent"
       }
