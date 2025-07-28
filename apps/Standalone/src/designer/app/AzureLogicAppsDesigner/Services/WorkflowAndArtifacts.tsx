@@ -122,11 +122,11 @@ export const getCustomCodeAppFiles = async (
 
   // Add PowerShell version app setting only if it doesn't already exist
   if (!currentAppSettings?.['LOGIC_APPS_POWERSHELL_VERSION']) {
-    appSettings['LOGIC_APPS_POWERSHELL_VERSION'] = '7.4';
+    appSettings['LOGIC_APPS_POWERSHELL_VERSION'] = powerShellVersion;
     LoggerService().log({
       level: LogEntryLevel.Verbose,
       area: 'serializeCustomcode',
-      message: 'PowerShell files detected, adding LOGIC_APPS_POWERSHELL_VERSION app setting (7.4)',
+      message: `PowerShell files detected, adding LOGIC_APPS_POWERSHELL_VERSION app setting (${powerShellVersion})`,
     });
   }
 
