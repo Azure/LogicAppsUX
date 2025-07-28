@@ -320,7 +320,21 @@ export const initializeOperationDetails = async (
       );
     }
   } else {
-    updateDynamicDataInNode(nodeId, isTrigger, operationInfo, undefined, initData.nodeDependencies, dispatch, getState);
+    const {
+      tokens: { variables },
+      workflowParameters: { definitions },
+    } = getState() as RootState;
+    updateDynamicDataInNode(
+      nodeId,
+      isTrigger,
+      operationInfo,
+      undefined,
+      initData.nodeDependencies,
+      dispatch,
+      getState,
+      variables,
+      definitions
+    );
   }
 
   dispatch(setIsPanelLoading(false));

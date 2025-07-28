@@ -49,7 +49,6 @@ import type {
   OperationManifest,
 } from '@microsoft/logic-apps-shared';
 import {
-  OperationManifestService,
   getIntl,
   ExpressionEvaluator,
   isTemplateExpression,
@@ -89,6 +88,7 @@ import {
   map,
   copy,
   unmap,
+  TryGetOperationManifestService,
 } from '@microsoft/logic-apps-shared';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import { TokenType, ValueSegmentType } from '@microsoft/designer-ui';
@@ -263,7 +263,7 @@ export function getDynamicOutputsFromSchema(
     includeParentObject: true,
     parentProperty: parentArray ? { arrayName: parentArray, isArray: true } : undefined,
     dataKeyPrefix: '$',
-    useAliasedIndexing: OperationManifestService().isAliasingSupported(operationInfo.type, operationInfo.kind),
+    useAliasedIndexing: TryGetOperationManifestService()?.isAliasingSupported(operationInfo.type, operationInfo.kind),
   };
 
   const schemaProperties = new SchemaProcessor(processorOptions).getSchemaProperties(schema);
@@ -292,6 +292,7 @@ export async function getDynamicInputsFromSchema(
 ): Promise<InputParameter[]> {
   const isParameterNested = dynamicParameter.isNested;
   const schemaHasRequiredParameters = schema?.required && schema.required.length > 0;
+  const service = TryGetOperationManifestService();
   const processorOptions: SchemaProcessorOptions = {
     prefix: isParameterNested ? dynamicParameter.name : '',
     currentKey: isParameterNested ? undefined : dynamicParameter.name,
@@ -300,7 +301,7 @@ export async function getDynamicInputsFromSchema(
       visibility: dynamicParameter.visibility,
     },
     required: dynamicParameter.required || schemaHasRequiredParameters,
-    useAliasedIndexing: OperationManifestService().isAliasingSupported(operationInfo.type, operationInfo.kind),
+    useAliasedIndexing: service?.isAliasingSupported(operationInfo.type, operationInfo.kind),
     excludeAdvanced: false,
     excludeInternal: false,
     includeParentObject: true,
@@ -346,7 +347,7 @@ export async function getDynamicInputsFromSchema(
     dynamicInputs = [getDynamicInputParameterFromDynamicParameter(dynamicParameter)];
   }
 
-  if (OperationManifestService().isSupported(operationInfo.type, operationInfo.kind)) {
+  if (service?.isSupported(operationInfo.type, operationInfo.kind)) {
     const manifest = await getOperationManifest(operationInfo);
     const customSwagger = await getCustomSwaggerIfNeeded(manifest.properties, operationDefinition);
     return getManifestBasedInputParameters(dynamicInputs, dynamicParameter, allInputKeys, manifest, customSwagger, operationDefinition);

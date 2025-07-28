@@ -14,7 +14,7 @@ export const useEditSnapshot = (operationId: string | null) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const { inputParameters } = useSelector((state: RootState) => ({
-    inputParameters: state.operation.inputParameters,
+    inputParameters: state.operations.inputParameters,
   }));
 
   useEffect(() => {

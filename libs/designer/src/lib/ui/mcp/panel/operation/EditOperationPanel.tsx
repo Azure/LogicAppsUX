@@ -22,7 +22,7 @@ export const EditOperationPanel = () => {
 
   const { selectedOperationId, operationMetadata, isOpen, panelMode } = useSelector((state: RootState) => ({
     selectedOperationId: state.connector.selectedOperationId,
-    operationMetadata: state.operation.operationMetadata,
+    operationMetadata: state.operations.operationMetadata,
     isOpen: state.mcpPanel?.isOpen ?? false,
     panelMode: state.mcpPanel?.currentPanelView ?? null,
   }));

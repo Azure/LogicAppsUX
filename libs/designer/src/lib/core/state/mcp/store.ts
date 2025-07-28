@@ -8,7 +8,7 @@ import connectorReducer from './connector/connectorSlice';
 
 const rootReducer = combineReducers({
   resource: resourceReducer,
-  operation: operationReducer,
+  operations: operationReducer,
   connection: connectionReducer,
   mcpOptions: mcpOptionsReducer,
   mcpPanel: panelReducer,

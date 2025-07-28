@@ -23,12 +23,12 @@ export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: R
   const styles = useMcpWizardStyles();
   const {
     connection,
-    operation,
+    operations,
     resource: { subscriptionId, resourceGroup, logicAppName },
   } = useSelector((state: RootState) => state);
 
   const disableConfiguration = useMemo(() => !logicAppName, [logicAppName]);
-  const connectorExists = useMemo(() => Object.keys(operation.operationInfo).length > 0, [operation.operationInfo]);
+  const connectorExists = useMemo(() => Object.keys(operations.operationInfo).length > 0, [operations.operationInfo]);
 
   const handleAddConnectors = useCallback(() => {
     dispatch(
@@ -50,10 +50,10 @@ export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: R
         logicAppName: logicAppName as string,
       },
       connection,
-      operation
+      operations
     );
     await registerMcpServer(workflowsData, onRegisterCompleted);
-  }, [connection, logicAppName, operation, registerMcpServer, resourceGroup, subscriptionId, onRegisterCompleted]);
+  }, [connection, logicAppName, operations, registerMcpServer, resourceGroup, subscriptionId, onRegisterCompleted]);
 
   const INTL_TEXT = {
     connectorsTitle: intl.formatMessage({
@@ -107,7 +107,7 @@ export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: R
           onClick: () => {
             handleRegisterMcpServer();
           },
-          disabled: !logicAppName || !subscriptionId || !resourceGroup || !connection || !operation,
+          disabled: !logicAppName || !subscriptionId || !resourceGroup || !connection || !operations,
         },
         {
           type: 'action',
@@ -120,7 +120,7 @@ export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: R
         },
       ],
     };
-  }, [intl, logicAppName, subscriptionId, resourceGroup, connection, operation, onClose, handleRegisterMcpServer]);
+  }, [intl, logicAppName, subscriptionId, resourceGroup, connection, operations, onClose, handleRegisterMcpServer]);
 
   return (
     <div className={styles.wizardContainer}>

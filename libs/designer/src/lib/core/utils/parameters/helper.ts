@@ -61,7 +61,6 @@ import {
 import {
   LogEntryLevel,
   LoggerService,
-  OperationManifestService,
   WorkflowService,
   getIntl,
   isDynamicTreeExtension,
@@ -115,6 +114,7 @@ import {
   isRecordNotEmpty,
   isBodySegment,
   canStringBeConverted,
+  TryGetOperationManifestService,
 } from '@microsoft/logic-apps-shared';
 import type {
   AuthProps,
@@ -221,6 +221,7 @@ export interface UpdateParameterAndDependenciesPayload {
   connectionReference: ConnectionReference;
   nodeInputs: NodeInputs;
   dependencies: NodeDependencies;
+  updateTokenMetadata?: boolean;
   operationDefinition?: any;
   skipStateSave?: boolean;
 }
@@ -1827,6 +1828,7 @@ export const updateParameterAndDependencies = createAsyncThunk(
       connectionReference,
       nodeInputs,
       dependencies,
+      updateTokenMetadata = true,
       operationDefinition,
     } = actionPayload;
     const parameter = nodeInputs.parameterGroups[groupId].parameters.find((param) => param.id === parameterId) ?? {};
@@ -1919,6 +1921,7 @@ export const updateParameterAndDependencies = createAsyncThunk(
     }
 
     if (dependenciesToUpdate) {
+      const rootState = getState() as RootState;
       loadDynamicData(
         nodeId,
         isTrigger,
@@ -1927,6 +1930,9 @@ export const updateParameterAndDependencies = createAsyncThunk(
         dependenciesToUpdate,
         dispatch,
         getState as () => RootState,
+        rootState.tokens?.variables ?? {},
+        rootState.workflowParameters?.definitions ?? {},
+        updateTokenMetadata,
         operationDefinition
       );
     }
@@ -1991,11 +1997,26 @@ export const updateDynamicDataInNode = async (
   dependencies: NodeDependencies,
   dispatch: Dispatch,
   getState: () => RootState,
+  variableDeclarations: Record<string, VariableDeclaration[]> = {},
+  workflowParameterDefinitions: Record<string, WorkflowParameterDefinition> = {},
+  updateTokenMetadata = true,
   operationDefinition?: any
 ): Promise<void> => {
-  await loadDynamicData(nodeId, isTrigger, operationInfo, connectionReference, dependencies, dispatch, getState, operationDefinition);
+  await loadDynamicData(
+    nodeId,
+    isTrigger,
+    operationInfo,
+    connectionReference,
+    dependencies,
+    dispatch,
+    getState,
+    variableDeclarations,
+    workflowParameterDefinitions,
+    updateTokenMetadata,
+    operationDefinition
+  );
 
-  const { operations, workflowParameters } = getState();
+  const { operations } = getState();
   const nodeDependencies = getRecordEntry(operations.dependencies, nodeId) ?? {
     inputs: {},
     outputs: {},
@@ -2020,7 +2041,7 @@ export const updateDynamicDataInNode = async (
       nodeDependencies,
       false /* showErrorWhenNotReady */,
       undefined /* idReplacements */,
-      workflowParameters.definitions,
+      workflowParameterDefinitions,
       nodeId,
       dispatch
     );
@@ -2043,6 +2064,9 @@ async function loadDynamicData(
   dependencies: NodeDependencies,
   dispatch: Dispatch,
   getState: () => RootState,
+  variableDeclarations: Record<string, VariableDeclaration[]> = {},
+  workflowParameterDefinitions: Record<string, WorkflowParameterDefinition> = {},
+  updateTokenMetadata = true,
   operationDefinition?: any
 ): Promise<void> {
   if (Object.keys(dependencies?.outputs ?? {}).length) {
@@ -2055,7 +2079,7 @@ async function loadDynamicData(
       dependencies.outputs,
       rootState.operations.inputParameters[nodeId],
       rootState.operations.settings[nodeId],
-      rootState.workflowParameters.definitions,
+      workflowParameterDefinitions,
       dispatch
     );
   }
@@ -2069,6 +2093,9 @@ async function loadDynamicData(
       connectionReference,
       dispatch,
       getState,
+      variableDeclarations,
+      workflowParameterDefinitions,
+      updateTokenMetadata,
       operationDefinition
     );
   }
@@ -2082,6 +2109,9 @@ export const loadDynamicContentForInputsInNode = async (
   connectionReference: ConnectionReference | undefined,
   dispatch: Dispatch,
   getState: () => RootState,
+  variableDeclarations: Record<string, VariableDeclaration[]> = {},
+  workflowParameterDefinitions: Record<string, WorkflowParameterDefinition> = {},
+  updateTokenMetadata = true,
   operationDefinition?: any
 ): Promise<void> => {
   for (const [inputKey, info] of Object.entries(inputDependencies)) {
@@ -2108,7 +2138,7 @@ export const loadDynamicContentForInputsInNode = async (
     }
 
     const allInputs = rootState.operations.inputParameters[nodeId];
-    const variables = getAllVariables(rootState.tokens.variables);
+    const variables = getAllVariables(variableDeclarations);
 
     try {
       const inputSchema = await tryGetInputDynamicSchema(
@@ -2118,7 +2148,7 @@ export const loadDynamicContentForInputsInNode = async (
         allInputs,
         variables,
         connectionReference,
-        rootState.workflowParameters.definitions,
+        workflowParameterDefinitions,
         dispatch
       );
       const allInputParameters = getAllInputParameters(allInputs);
@@ -2142,16 +2172,14 @@ export const loadDynamicContentForInputsInNode = async (
             newOperationDefinition
           )
         : [];
-      const inputsWithSchema = schemaInputs.map((input) => ({
-        ...input,
-        schema: input,
-      }));
-      const inputParameters = toParameterInfoMap(inputsWithSchema, operationDefinition);
+      const inputParameters = toParameterInfoMap(schemaInputs, operationDefinition);
 
-      updateTokenMetadataInParameters(nodeId, inputParameters, getState());
+      if (updateTokenMetadata) {
+        updateTokenMetadataInParameters(nodeId, inputParameters, getState());
+      }
 
       let swagger: SwaggerParser | undefined = undefined;
-      if (!OperationManifestService().isSupported(operationInfo.type, operationInfo.kind)) {
+      if (!TryGetOperationManifestService()?.isSupported(operationInfo.type, operationInfo.kind)) {
         const { parsedSwagger } = await getConnectorWithSwagger(operationInfo.connectorId);
         swagger = parsedSwagger;
       }
@@ -2168,7 +2196,7 @@ export const loadDynamicContentForInputsInNode = async (
         }
       }
 
-      for (const input of inputsWithSchema) {
+      for (const input of schemaInputs) {
         if (input.dynamicSchema) {
           continue;
         }
@@ -2213,6 +2241,9 @@ export const loadDynamicContentForInputsInNode = async (
         { outputs: {}, inputs: dependencies },
         dispatch,
         getState,
+        variableDeclarations,
+        workflowParameterDefinitions,
+        updateTokenMetadata,
         operationDefinition
       );
     } catch (error: any) {
