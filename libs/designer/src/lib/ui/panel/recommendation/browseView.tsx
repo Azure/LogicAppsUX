@@ -30,6 +30,7 @@ const priorityConnectors = [
   '/managedApis/sql',
   '/connectionProviders/azureFunctionOperation',
   'managedApis/office365',
+  'managedApis/sharepointonline',
 ];
 const getRunTimeValue = (connector: Connector): number => {
   if (isBuiltInConnector(connector)) {
@@ -113,7 +114,13 @@ export const BrowseView = (props: BrowseViewProps) => {
         return true;
       }
 
-      // Filter based on specific action type
+      // If connector has neither actions nor triggers capabilities, show it (assume it supports both)
+      const hasActionCapabilities = capabilities.includes('actions') || capabilities.includes('triggers');
+      if (!hasActionCapabilities) {
+        return true;
+      }
+
+      // Filter based on specific action type for connectors that do have explicit capabilities
       if (actionType === 'triggers') {
         return capabilities.includes('triggers');
       }
