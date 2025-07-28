@@ -82,3 +82,37 @@ export interface CallbackInfoWithRelativePath {
 export interface CallbackInfoWithValue {
   value: string;
 }
+
+export interface ChatHistory {
+  nodeId: string;
+  messages: MessageEntry[];
+}
+
+export interface MessageEntry {
+  messageEntryType: 'Content' | 'System' | 'Tool' | 'Error' | 'ToolResult';
+  role: 'User' | 'Assistant' | 'System';
+  timestamp: string;
+  iteration: number;
+  messageEntryPayload?: MessageEntryPayload;
+  toolResultsPayload?: ToolResultPayload;
+  agentMetadata?: AgentMetadata;
+}
+
+export interface MessageEntryPayload {
+  content: string;
+  image?: string;
+  metadata?: Record<string, any>;
+}
+
+export interface AgentMetadata {
+  taskSequenceId: string;
+  agentName: string;
+}
+
+export interface ToolResultPayload {
+  toolResult: {
+    status: 'HandedOff' | 'Success' | 'Error' | 'InProgress';
+    toolName: string;
+    subIteration: number;
+  };
+}

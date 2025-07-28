@@ -67,7 +67,6 @@ export const getDesignerServices = (
   apiVersion: string,
   apiHubDetails: ApiHubServiceDetails,
   isLocal: boolean,
-  isA2A: boolean,
   connectionData: ConnectionsData,
   panelMetadata: IDesignerPanelMetadata | null,
   createFileSystemConnection: (connectionInfo: ConnectionCreationInfo, connectionName: string) => Promise<ConnectionCreationInfo>,
@@ -350,7 +349,6 @@ export const getDesignerServices = (
     baseUrl: isEmptyString(workflowRuntimeBaseUrl) ? baseUrl : workflowRuntimeBaseUrl,
     workflowName: workflowName ?? '',
     httpClient,
-    isTimelineSupported: isA2A,
   });
 
   // MSI is not supported in VS Code
