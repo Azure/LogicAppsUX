@@ -34,7 +34,7 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
     connectionsMapping: state.connection.connectionsMapping,
     connectionReferences: state.connection.connectionReferences,
     isInitializingConnections: state.connection.loading.initializeConnectionMappings,
-    operationInfos: state.operation.operationInfo,
+    operationInfos: state.operations.operationInfo,
   }));
 
   const hasValidConnection = useMemo(() => {
