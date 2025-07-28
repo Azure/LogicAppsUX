@@ -28,5 +28,11 @@ export async function generateTests(context: IActionContext, node: Uri | undefin
     localize('generateTestsPaths', 'Generated {0} execution paths for workflow: {1}', paths.length, workflowPath)
   );
 
-  // TODO(aeldridge): Implement
+  // TODO(aeldridge): Generate tests from paths using the following templates:
+  // - GenericTestClass (top-level test class template)
+  // -- TestCaseMethod[] (template for individual methods in test class, one per path)
+  // --- TestActionMock[] (template for individual action mocks in a test case, one per mockable action)
+  // --- TestActionAssertion[] (template for assertions corresponding to actions, one per action in path)
+
+  // TODO(aeldridge): We should be able to repurpose the existing saveBlankUnitTest and "getOperationMockClassContent" to create required files
 }
