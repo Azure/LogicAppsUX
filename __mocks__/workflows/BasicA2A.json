@@ -104,7 +104,7 @@
 					}
         },
         "runAfter": {
-					"A2A_Trigger": ["SUCCEEDED"]
+					"When_a_new_chat_session_started": ["SUCCEEDED"]
 				},
         "limit": {
           "count": 100,
@@ -236,7 +236,7 @@
     "outputs": {},
     "parameters": {},
     "triggers": {
-      "A2A_Trigger": {
+      "When_a_new_chat_session_started": {
         "type": "Request",
         "kind": "Agent"
       }
