@@ -19,6 +19,7 @@ import { ArmParser } from '../Utilities/ArmParser';
 const baseUrl = 'https://management.azure.com';
 const standardApiVersion = '2020-06-01';
 const consumptionApiVersion = '2019-05-01';
+const powerShellVersion = '7.4';
 
 export const useConnectionsData = (appId?: string, enabled = true) => {
   return useQuery(['getConnectionsData', appId], async () => getConnectionsData(appId as string), {
