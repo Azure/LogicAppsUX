@@ -427,7 +427,8 @@ const DesignerEditor = () => {
     const { customCodeFiles: customCodeToUpdate, appSettings: customCodeAppSettings } = await getCustomCodeToUpdate(
       originalCustomCodeData,
       customCode ?? {},
-      appId
+      appId,
+      settingsData?.properties
     );
     const parametersToUpdate = isEqual(originalParametersData, parameters) ? undefined : (parameters as ParametersData);
 
@@ -1105,13 +1106,14 @@ const getConnectionsToUpdate = (
 const getCustomCodeToUpdate = async (
   originalCustomCodeData: string[],
   customCode: CustomCodeFileNameMapping,
-  appId?: string
+  appId?: string,
+  currentAppSettings?: Record<string, string>
 ): Promise<{ customCodeFiles: AllCustomCodeFiles | undefined; appSettings: Record<string, string> }> => {
   const filteredCustomCodeMapping: CustomCodeFileNameMapping = {};
   if (!customCode || Object.keys(customCode).length === 0) {
     return { customCodeFiles: undefined, appSettings: {} };
   }
-  const { appFiles, appSettings } = await getCustomCodeAppFiles(appId, customCode);
+  const { appFiles, appSettings } = await getCustomCodeAppFiles(appId, customCode, currentAppSettings);
 
   Object.entries(customCode).forEach(([fileName, customCodeData]) => {
     const { isModified, isDeleted } = customCodeData;

@@ -105,7 +105,8 @@ interface CustomCodeAppFilesResult {
 // we want to eventually move this logic to the backend that way we don't increase save time fetching files
 export const getCustomCodeAppFiles = async (
   appId?: string,
-  customCodeFiles?: CustomCodeFileNameMapping
+  customCodeFiles?: CustomCodeFileNameMapping,
+  currentAppSettings?: Record<string, string>
 ): Promise<CustomCodeAppFilesResult> => {
   // only powershell files have custom app files
   // to reduce the number of requests, we only check if there are any modified powershell files
@@ -119,13 +120,15 @@ export const getCustomCodeAppFiles = async (
   const appFiles: Record<string, string> = {};
   const appSettings: Record<string, string> = {};
 
-  // Add PowerShell version app setting when PowerShell files are present
-  appSettings['LOGIC_APPS_POWERSHELL_VERSION'] = '7.4';
-  LoggerService().log({
-    level: LogEntryLevel.Verbose,
-    area: 'serializeCustomcode',
-    message: 'PowerShell files detected, adding LOGIC_APPS_POWERSHELL_VERSION app setting',
-  });
+  // Add PowerShell version app setting only if it doesn't already exist
+  if (!currentAppSettings?.['LOGIC_APPS_POWERSHELL_VERSION']) {
+    appSettings['LOGIC_APPS_POWERSHELL_VERSION'] = '7.4';
+    LoggerService().log({
+      level: LogEntryLevel.Verbose,
+      area: 'serializeCustomcode',
+      message: 'PowerShell files detected, adding LOGIC_APPS_POWERSHELL_VERSION app setting (7.4)',
+    });
+  }
 
   const uri = `${baseUrl}${appId}/hostruntime/admin/vfs`;
   const vfsObjects: VFSObject[] = await fetchFilesFromFolder(uri);
