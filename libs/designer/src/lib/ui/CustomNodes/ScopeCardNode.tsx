@@ -34,7 +34,6 @@ import {
 import {
   setFocusElement,
   setRepetitionRunData,
-  setRunIndex,
   setSubgraphRunData,
   toggleCollapsedGraphId,
   updateAgenticGraph,
@@ -131,14 +130,6 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
 
   const timelineRepetitionIndex = useTimelineRepetitionIndex();
   const timelineRepetitionCount = useActionTimelineRepetitionCount(scopeId, timelineRepetitionIndex);
-
-  useEffect(() => {
-    if (isTimelineRepetitionSelected) {
-      dispatch(setRunIndex({ page: 0, nodeId: scopeId }));
-    }
-    // We only want this to run when the timeline repetition index changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, timelineRepetitionIndex]);
 
   useEffect(() => {
     if (isMonitoringView && !isTimelineRepetitionSelected) {
