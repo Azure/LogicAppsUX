@@ -1,6 +1,7 @@
 import {
   ConnectionService,
   DevLogger,
+  getIntl,
   type IConnectionParameterEditorService,
   type IConnectionService,
   type IConnectorService,
@@ -22,13 +23,15 @@ import {
   type ISearchService,
   type ITenantService,
   type IWorkflowService,
+  LogEntryLevel,
+  LoggerService,
 } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { clearConnectionCaches, getConnectionsForConnector } from '../../queries/connections';
 import type { RootState } from '../../state/mcp/store';
 import { getConnectionsInWorkflowApp } from '../../configuretemplate/utils/queries';
 import { getReactQueryClient } from '../../ReactQueryProvider';
-import { convertConnectionsDataToReferences, initializeOperationDetails } from '../../mcp/utils/helper';
+import { convertConnectionsDataToReferences, getUnsupportedOperations, initializeOperationDetails } from '../../mcp/utils/helper';
 import {
   initEmptyConnectionMap,
   initializeConnectionReferences,
@@ -142,10 +145,35 @@ const initializeServices = ({
 export const initializeOperationsMetadata = createAsyncThunk(
   'initializeOperationsMetadata',
   async ({ operations }: { operations: NodeOperation[] }, { dispatch }): Promise<void> => {
+    const intl = getIntl();
     const promises: Promise<NodeOperationInputsData | undefined>[] = operations.map((operation) =>
       initializeOperationDetails(operation.operationId, operation)
     );
     const allNodeData = (await Promise.all(promises)).filter((data) => !!data) as NodeOperationInputsData[];
+    const unsupportedOperations = getUnsupportedOperations(allNodeData);
+
+    if (unsupportedOperations.length > 0) {
+      const errorMessage = intl.formatMessage(
+        {
+          defaultMessage:
+            'The following operations: "{operations}", are unsupported currently, so please unselect these operations and continue with save.',
+          id: 'vXgDEY',
+          description: 'Error message when unsupported operations are selected during initialization.',
+        },
+        {
+          operations: unsupportedOperations.join(', '),
+        }
+      );
+
+      LoggerService().log({
+        level: LogEntryLevel.Error,
+        area: 'MCP.initializeOperationsMetadata',
+        message: errorMessage,
+        args: ['Unsupported operations: ', ...unsupportedOperations],
+      });
+
+      throw new Error(errorMessage);
+    }
 
     dispatch(initializeNodeOperationInputsData(allNodeData));
   }

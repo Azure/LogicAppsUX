@@ -135,3 +135,19 @@ export const initializeOperationDetails = async (
     return undefined;
   }
 };
+
+export const getUnsupportedOperations = (nodeOperations: NodeOperationInputsData[]): string[] => {
+  const unsupportedOperations: string[] = [];
+  for (const nodeOperation of nodeOperations) {
+    const {
+      id,
+      nodeDependencies: { inputs },
+      operationMetadata,
+    } = nodeOperation;
+    if (Object.values(inputs ?? {}).some((input) => input.dependencyType === 'ApiSchema')) {
+      unsupportedOperations.push(operationMetadata?.summary ?? id);
+    }
+  }
+
+  return unsupportedOperations;
+};
