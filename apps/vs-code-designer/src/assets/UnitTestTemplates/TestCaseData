@@ -7,9 +7,9 @@
                     new object[]
                     {
                         // Mock outputs
-                        new Dictionary<string, MockOutput> { },
+                        new Dictionary<string, MockOutput>() { },
                         // Mock errors
-                        new Dictionary<string, TestErrorInfo> { }
+                        new Dictionary<string, TestErrorInfo>() { }
                     }
                 };
             }

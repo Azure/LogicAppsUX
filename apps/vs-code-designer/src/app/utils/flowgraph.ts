@@ -81,6 +81,12 @@ export class FlowGraph {
       for (const [actionName, action] of Object.entries(workflowDefinition['actions'])) {
         this.addNodeRec(actionName, action);
       }
+      for (const [actionName, actionNode] of this.nodes.entries()) {
+        if (actionName === this.triggerName) {
+          continue;
+        }
+        this.addEdgesForNodeRec(actionName, actionNode, workflowDefinition['actions'][actionName]);
+      }
     }
   }
 
@@ -333,7 +339,7 @@ export class FlowGraph {
     return paths;
   }
 
-  private addNodeRec(actionName: string, action: Record<string, any>, isChildAction = false) {
+  private addNodeRec(actionName: string, action: Record<string, any>) {
     const actionType = action['type'];
     if (unsupportedActions.has(actionType)) {
       throw new Error(localize('unsupportedAction', `Unsupported action type: "${actionType}".`));
@@ -343,7 +349,7 @@ export class FlowGraph {
       const graphDefaultCase = FlowGraph.Subgraph();
       const actionsDefaultCase = action['default']['actions'];
       for (const [childActionName, childAction] of Object.entries(actionsDefaultCase)) {
-        graphDefaultCase.addNodeRec(childActionName, childAction, true);
+        graphDefaultCase.addNodeRec(childActionName, childAction);
       }
 
       const graphCasesMap = new Map<string, FlowGraph>();
@@ -351,7 +357,7 @@ export class FlowGraph {
         const graphCase = FlowGraph.Subgraph();
         const actionsCase = caseVal['actions'];
         for (const [childActionName, childAction] of Object.entries(actionsCase)) {
-          graphCase.addNodeRec(childActionName, childAction, true);
+          graphCase.addNodeRec(childActionName, childAction);
         }
         graphCasesMap.set(caseName, graphCase);
       }
@@ -361,18 +367,50 @@ export class FlowGraph {
       const graphTrueBranch = FlowGraph.Subgraph();
       const actionsTrueBranch = action['actions'];
       for (const [childActionName, childAction] of Object.entries(actionsTrueBranch)) {
-        graphTrueBranch.addNodeRec(childActionName, childAction, true);
+        graphTrueBranch.addNodeRec(childActionName, childAction);
       }
 
       const graphFalseBranch = FlowGraph.Subgraph();
       const actionsFalseBranch = action['else']['actions'];
       for (const [childActionName, childAction] of Object.entries(actionsFalseBranch)) {
-        graphFalseBranch.addNodeRec(childActionName, childAction, true);
+        graphFalseBranch.addNodeRec(childActionName, childAction);
       }
 
       this.addNode(actionName, { type: actionType, trueBranch: graphTrueBranch, falseBranch: graphFalseBranch });
     } else {
       this.addNode(actionName, { type: actionType });
+    }
+  }
+
+  private addEdgesForNodeRec(actionName: string, actionNode: Attributes, action: Record<string, any>, isChildAction = false) {
+    const actionType = action['type'];
+    if (actionType === 'Switch') {
+      const graphDefaultCase = actionNode['default'] as FlowGraph;
+      const actionsDefaultCase = action['default']['actions'];
+      for (const [childActionName, childAction] of Object.entries(actionsDefaultCase)) {
+        graphDefaultCase.addEdgesForNodeRec(childActionName, graphDefaultCase.getNode(childActionName), childAction, true);
+      }
+
+      const graphCasesMap = actionNode['cases'] as Map<string, FlowGraph>;
+      for (const [caseName, caseVal] of Object.entries(action['cases'])) {
+        const graphCase = graphCasesMap.get(caseName)!;
+        const actionsCase = caseVal['actions'];
+        for (const [childActionName, childAction] of Object.entries(actionsCase)) {
+          graphCase.addEdgesForNodeRec(childActionName, graphCase.getNode(childActionName), childAction, true);
+        }
+      }
+    } else if (actionType === 'If') {
+      const graphTrueBranch = actionNode['trueBranch'] as FlowGraph;
+      const actionsTrueBranch = action['actions'];
+      for (const [childActionName, childAction] of Object.entries(actionsTrueBranch)) {
+        graphTrueBranch.addEdgesForNodeRec(childActionName, graphTrueBranch.getNode(childActionName), childAction, true);
+      }
+
+      const graphFalseBranch = actionNode['falseBranch'] as FlowGraph;
+      const actionsFalseBranch = action['else']['actions'];
+      for (const [childActionName, childAction] of Object.entries(actionsFalseBranch)) {
+        graphFalseBranch.addEdgesForNodeRec(childActionName, graphFalseBranch.getNode(childActionName), childAction, true);
+      }
     }
 
     if ('runAfter' in action && Object.keys(action['runAfter']).length > 0) {

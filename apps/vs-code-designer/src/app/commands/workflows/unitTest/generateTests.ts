@@ -19,10 +19,12 @@ import {
   getUnitTestPaths,
   preprocessOutputParameters,
   updateCsprojFile,
+  updateTestsSln,
   validateWorkflowPath,
 } from '../../../utils/unitTests';
 import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
 import { assetsFolderName, unitTestTemplatesFolderName } from '../../../../constants';
+import { syncCloudSettings } from '../../syncCloudSettings';
 
 /**
  * Generates unit tests for a Logic App workflow based on its execution paths.
@@ -155,6 +157,12 @@ export async function generateTests(context: IActionContext, node: Uri | undefin
 
   context.telemetry.properties.lastStep = 'ensureTestsDirectoryInWorkspace';
   await ensureDirectoryInWorkspace(testsDirectory);
+
+  context.telemetry.properties.lastStep = 'updateTestsSln';
+  await updateTestsSln(testsDirectory, csprojFilePath);
+
+  context.telemetry.properties.lastStep = 'syncCloudSettings';
+  await syncCloudSettings(context, vscode.Uri.file(projectPath));
 
   const successMessage = localize(
     'generateTestsSuccess',
