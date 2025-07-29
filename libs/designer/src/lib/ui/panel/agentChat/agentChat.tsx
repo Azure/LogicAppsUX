@@ -27,7 +27,7 @@ import {
 import { ChatFilled } from '@fluentui/react-icons';
 import { useDispatch } from 'react-redux';
 import { changePanelNode, type AppDispatch } from '../../../core';
-import { clearFocusElement, setFocusNode, setRunIndex } from '../../../core/state/workflow/workflowSlice';
+import { clearFocusElement, setFocusNode, setRunIndex, setTimelineRepetitionIndex } from '../../../core/state/workflow/workflowSlice';
 import { AgentChatHeader } from './agentChatHeader';
 import { parseChatHistory, useRefreshChatMutation } from './helper';
 import constants from '../../../common/constants';
@@ -101,21 +101,30 @@ export const AgentChat = ({
   const toolResultCallback = useCallback(
     (agentName: string, toolName: string, iteration: number, subIteration: number) => {
       const agentLastOperation = JSON.parse(rawAgentLastOperations)?.[agentName]?.[toolName];
-      dispatch(setRunIndex({ page: iteration, nodeId: agentName }));
-      dispatch(setRunIndex({ page: subIteration, nodeId: toolName }));
+      if (isA2AWorkflow) {
+        dispatch(setTimelineRepetitionIndex(iteration));
+      } else {
+        dispatch(setRunIndex({ page: iteration, nodeId: agentName }));
+        dispatch(setRunIndex({ page: subIteration, nodeId: toolName }));
+      }
+
       dispatch(setFocusNode(agentLastOperation));
       dispatch(changePanelNode(agentLastOperation));
     },
-    [dispatch, rawAgentLastOperations]
+    [dispatch, isA2AWorkflow, rawAgentLastOperations]
   );
 
   const toolContentCallback = useCallback(
     (agentName: string, iteration: number) => {
-      dispatch(setRunIndex({ page: iteration, nodeId: agentName }));
+      if (isA2AWorkflow) {
+        dispatch(setTimelineRepetitionIndex(iteration));
+      } else {
+        dispatch(setRunIndex({ page: iteration, nodeId: agentName }));
+      }
       dispatch(setFocusNode(agentName));
       dispatch(changePanelNode(agentName));
     },
-    [dispatch]
+    [dispatch, isA2AWorkflow]
   );
 
   const agentCallback = useCallback(
@@ -164,19 +173,19 @@ export const AgentChat = ({
   const intlText = useMemo(() => {
     return {
       agentChatHeader: intl.formatMessage({
-        defaultMessage: 'Agent chat',
-        id: 'PVT2SW',
-        description: 'Agent chat header text',
+        defaultMessage: 'Agent log',
+        id: 'WtHzoy',
+        description: 'Agent log header text',
       }),
       agentChatPanelAriaLabel: intl.formatMessage({
-        defaultMessage: 'Agent chat panel',
-        id: 'OSugtm',
-        description: 'Agent chat panel aria label text',
+        defaultMessage: 'Agent log panel',
+        id: 'MzVpzv',
+        description: 'Agent log panel aria label text',
       }),
       agentChatToggleAriaLabel: intl.formatMessage({
-        defaultMessage: 'Toggle the agent chat panel.',
-        id: 'fTpBGQ',
-        description: 'Toggle the agent chat panel aria label text',
+        defaultMessage: 'Toggle the agent log panel.',
+        id: 'QIzNzB',
+        description: 'Toggle the agent log panel aria label text',
       }),
       chatReadOnlyMessage: intl.formatMessage({
         defaultMessage: 'The chat is currently in read-only mode. Agents are unavailable for live chat.',

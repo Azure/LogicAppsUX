@@ -53,10 +53,10 @@ export const ParameterEditor = ({
   const styles = useEditOperationStyles();
   const dispatch = useDispatch<AppDispatch>();
   const { operationInfo, reference, nodeInputs, dependencies } = useSelector((state: RootState) => ({
-    operationInfo: state.operation.operationInfo[operationId],
+    operationInfo: state.operations.operationInfo[operationId],
     reference: state.connection.connectionReferences[state.connection.connectionsMapping[operationId] ?? ''],
-    nodeInputs: state.operation.inputParameters[operationId],
-    dependencies: state.operation.dependencies[operationId],
+    nodeInputs: state.operations.inputParameters[operationId],
+    dependencies: state.operations.dependencies[operationId],
   }));
   const displayNameResult = useConnectorName(operationInfo);
 
@@ -80,6 +80,7 @@ export const ParameterEditor = ({
           connectionReference: reference,
           nodeInputs,
           dependencies,
+          updateTokenMetadata: false,
         })
       );
       onParameterVisibilityUpdate();

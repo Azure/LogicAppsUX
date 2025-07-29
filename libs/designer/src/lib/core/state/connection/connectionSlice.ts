@@ -6,7 +6,7 @@ import { LogEntryLevel, LoggerService, getResourceNameFromId, getUniqueName } fr
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { UndoRedoPartialRootState } from '../undoRedo/undoRedoTypes';
-import { initializeConnectionMappings } from '../../../core/actions/bjsworkflow/mcp';
+import { deinitializeOperations, initializeConnectionMappings } from '../../../core/actions/bjsworkflow/mcp';
 
 export interface ConnectionsStoreState {
   connectionsMapping: ConnectionMapping;
@@ -121,6 +121,11 @@ export const connectionSlice = createSlice({
     });
     builder.addCase(initializeConnectionMappings.rejected, (state) => {
       state.loading.initializeConnectionMappings = false;
+    });
+    builder.addCase(deinitializeOperations.fulfilled, (state, action: PayloadAction<string[]>) => {
+      for (const nodeId of action.payload) {
+        delete state.connectionsMapping[nodeId];
+      }
     });
   },
 });

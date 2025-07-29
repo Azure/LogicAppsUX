@@ -178,6 +178,9 @@ const updateNodeConnectionAndProperties = async (
     dependencies,
     dispatch,
     getState,
+    newState.tokens?.variables ?? {},
+    newState.workflowParameters?.definitions ?? {},
+    !!newState.tokens /* updateTokenMetadata */,
     newlyAddedOperations ? undefined : operation
   );
 };

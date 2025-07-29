@@ -46,7 +46,7 @@ test.describe(
         await page.getByTestId('msla-setting-token-editor-initializevariableeditor-variables-name-1').click();
         await page.keyboard.type('newVariable');
 
-        await page.getByText('Select variable type').click();
+        await page.getByPlaceholder('Select variable type').nth(1).click();
         await page.getByRole('option', { name: 'Integer' }).click();
 
         await page.getByTestId('msla-setting-token-editor-initializevariableeditor-variables-value-1').click();
