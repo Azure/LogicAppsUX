@@ -90,9 +90,6 @@ export const NodeSearchPanel = (props: NodeSearchPanelProps) => {
         setTabsterAttribute(element, {});
       };
     }
-
-    // Return undefined when no cleanup is needed
-    return undefined;
   }, [modalizer]);
 
   const fuseObject = useMemo(() => {
