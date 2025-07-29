@@ -13,11 +13,15 @@ $targetNamespaces:
 ns0:Root:
   DirectTranslation:
     Employee:
-      ID: int()
-      Name: number()
+      ID: string(/ns0:Root/DataTranslation/Employee)
+      Name: >-
+        concat(/ns0:Root/DataTranslation/Employee/LastName,
+        /ns0:Root/DataTranslation/Employee/EmploymentStatus)
   DataTranslation:
     EmployeeName:
-      $@RegularFulltime: add-days()
+      $@RegularFulltime: >-
+        avg(/ns0:Root/DataTranslation/Employee,
+        /ns0:Root/DataTranslation/Employee/FirstName)
   ContentEnrich:
-    DateOfDemo: string()
+    DateOfDemo: string(/ns0:Root/DataTranslation/Employee/FirstName)
 `;
