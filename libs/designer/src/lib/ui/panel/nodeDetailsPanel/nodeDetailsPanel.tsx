@@ -23,6 +23,7 @@ import { PanelContainer, PanelScope } from '@microsoft/designer-ui';
 import {
   equals,
   getObjectPropertyValue,
+  getRecordEntry,
   HostService,
   isNullOrEmpty,
   isNullOrUndefined,
@@ -50,7 +51,8 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
 
   const runData = useRunData(selectedNode);
   const { isTriggerNode, nodesMetadata, idReplacements, operationInfo, showTriggerInfo } = useSelector((state: RootState) => {
-    const isTrigger = isRootNodeInGraph(selectedNode, 'root', state.workflow.nodesMetadata);
+    const isAgent = equals(getRecordEntry(state.workflow.operations, selectedNode)?.type, 'agent');
+    const isTrigger = isRootNodeInGraph(selectedNode, 'root', state.workflow.nodesMetadata) && !isAgent;
     const operationInfo = state.operations.operationInfo[selectedNode];
     return {
       isTriggerNode: isTrigger,
