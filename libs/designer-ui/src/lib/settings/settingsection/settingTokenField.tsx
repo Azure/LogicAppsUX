@@ -8,10 +8,10 @@ import { CodeEditor } from '../../code';
 import type { FileNameChangeHandler } from '../../code';
 import { isCustomCode } from '../../code/util';
 import { Combobox } from '../../combobox';
+import { DropdownEditor } from '../../dropdown';
 import constants from '../../constants';
 import { CopyInputControl } from '../../copyinputcontrol';
 import { DictionaryEditor } from '../../dictionary';
-import { DropdownEditor } from '../../dropdown';
 import type { ValueSegment } from '../../editor';
 import type {
   CallbackHandler,

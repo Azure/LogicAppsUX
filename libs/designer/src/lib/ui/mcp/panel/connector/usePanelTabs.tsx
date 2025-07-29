@@ -1,8 +1,7 @@
 import { useMemo, useCallback } from 'react';
 import type { AppDispatch, RootState } from '../../../../core/state/mcp/store';
 import { useDispatch, useSelector } from 'react-redux';
-import { closePanel, McpPanelView } from '../../../../core/state/mcp/panel/mcpPanelSlice';
-import { clearAllSelections } from '../../../../core/state/mcp/connector/connectorSlice';
+import { McpPanelView } from '../../../../core/state/mcp/panel/mcpPanelSlice';
 import {
   initializeOperationsMetadata,
   initializeConnectionMappings,
@@ -34,7 +33,7 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
     connectionsMapping: state.connection.connectionsMapping,
     connectionReferences: state.connection.connectionReferences,
     isInitializingConnections: state.connection.loading.initializeConnectionMappings,
-    operationInfos: state.operation.operationInfo,
+    operationInfos: state.operations.operationInfo,
   }));
 
   const hasValidConnection = useMemo(() => {
@@ -74,8 +73,6 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
         dispatch(initializeOperationsMetadata({ operations: selectedOperationsData }));
       }
     }
-    dispatch(clearAllSelections());
-    dispatch(closePanel());
   }, [dispatch, selectedConnectorId, selectedOperations, newlySelectedOperationIds, deselectedOperationIds]);
 
   const handleOnSelectOperations = useCallback(async () => {

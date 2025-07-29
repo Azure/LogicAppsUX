@@ -1,23 +1,5 @@
 import { makeStyles, tokens } from '@fluentui/react-components';
 
-export const useOperationsStyles = makeStyles({
-  container: {
-    display: 'flex',
-    flexDirection: 'column',
-    height: '100%',
-    backgroundColor: tokens.colorNeutralBackground1,
-  },
-
-  content: {
-    flex: 1,
-    overflow: 'hidden',
-    paddingLeft: tokens.spacingHorizontalL,
-    paddingRight: tokens.spacingHorizontalL,
-    paddingTop: tokens.spacingVerticalM,
-    paddingBottom: tokens.spacingVerticalM,
-  },
-});
-
 export const useOperationSelectionGridStyles = makeStyles({
   container: {
     height: '100%',
