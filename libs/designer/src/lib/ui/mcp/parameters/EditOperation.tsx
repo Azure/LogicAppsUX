@@ -43,8 +43,8 @@ export const EditOperation = ({ description, handleDescriptionInputChange, onPar
 
   const { selectedOperationId, operationInfos, inputParameters } = useSelector((state: RootState) => ({
     selectedOperationId: state.mcpSelection.selectedOperationId,
-    operationInfos: state.operation.operationInfo,
-    inputParameters: state.operation.inputParameters,
+    operationInfos: state.operations.operationInfo,
+    inputParameters: state.operations.inputParameters,
   }));
 
   const operationInfo = selectedOperationId ? operationInfos[selectedOperationId] : null;

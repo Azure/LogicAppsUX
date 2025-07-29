@@ -9,7 +9,6 @@ import {
   setFocusNode,
   setRunIndex,
   setTimelineRepetitionArray,
-  setTimelineRepetitionIndex,
   updateAgenticMetadata,
 } from '../../core/state/workflow/workflowSlice';
 import { useMonitoringTimelineStyles } from './monitoringTimeline.styles';
@@ -19,6 +18,7 @@ import { openPanel, setSelectedNodeId } from '../../core/state/panel/panelSlice'
 import TimelineHeader from './TimelineHeader';
 import TimelineButtons from './TimelineButtons';
 import TimelineContent from './TimelineContent';
+import { useTimelineRepetitionIndex } from '../../core/state/workflow/workflowSelectors';
 
 const MonitoringTimeline = () => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -26,12 +26,24 @@ const MonitoringTimeline = () => {
   const [selectedRepetition, setSelectedRepetition] = useState<TimelineRepetitionWithActions | null>(null);
   const styles = useMonitoringTimelineStyles();
   const dispatch = useDispatch();
-
+  const timelineRepetitionIndex = useTimelineRepetitionIndex();
   const { data: repetitionData, isFetching: isFetchingRepetitions, refetch: refetchTimelineRepetitions } = useTimelineRepetitions();
 
   const repetitions = useMemo(() => {
     return parseRepetitions(repetitionData);
   }, [repetitionData]);
+
+  const indexToGroupMap = useMemo(() => {
+    const indexMap: Array<{ groupIndex: number; repetitionIndex: number }> = [];
+
+    Array.from(repetitions).forEach(([groupIndex, repetitionList]) => {
+      repetitionList.forEach((_, repetitionIndex) => {
+        indexMap.push({ groupIndex, repetitionIndex });
+      });
+    });
+
+    return indexMap;
+  }, [repetitions]);
 
   useEffect(() => {
     const repetitionArray = Array.from(repetitions).flatMap(([_taskId, repetitionList]) => {
@@ -44,33 +56,6 @@ const MonitoringTimeline = () => {
     });
     dispatch(setTimelineRepetitionArray(repetitionArray));
   }, [dispatch, repetitions]);
-
-  useEffect(() => {
-    if (transitionIndex === -1 && repetitions.size > 0 && !isFetchingRepetitions) {
-      setTransitionIndex(0);
-    }
-  }, [transitionIndex, repetitions, isFetchingRepetitions]);
-
-  useThrottledEffect(
-    () => {
-      dispatch(clearAllRepetitionRunData());
-      const nodeId = selectedRepetition?.data?.properties.agentMetadata.agentName;
-
-      if (nodeId) {
-        dispatch(updateAgenticMetadata({ nodeId, scopeRepetitionRunData: { ...selectedRepetition.data?.properties } }));
-        dispatch(setTimelineRepetitionIndex(transitionIndex));
-
-        dispatch(setSelectedNodeId(nodeId));
-        dispatch(openPanel({ nodeId: nodeId, panelMode: 'Operation' }));
-        dispatch(setFocusNode(nodeId));
-        dispatch(setRunIndex({ page: selectedRepetition.repetitionIndex, nodeId: nodeId }));
-      }
-    },
-    [dispatch, selectedRepetition, transitionIndex],
-    200
-  );
-
-  const noRepetitions = useMemo(() => repetitions.size === 0, [repetitions]);
 
   const handleSelectRepetition = useCallback(
     (groupIndex: number, repetitionIndex: number) => {
@@ -85,6 +70,47 @@ const MonitoringTimeline = () => {
     },
     [repetitions]
   );
+
+  useEffect(() => {
+    if (transitionIndex === -1 && repetitions.size > 0 && !isFetchingRepetitions) {
+      const repetitionGroup = repetitions.get(0);
+      if (repetitionGroup && repetitionGroup.length > 0) {
+        const repetition = repetitionGroup[0];
+        setSelectedRepetition(repetition);
+        setTransitionIndex(0);
+      }
+    }
+  }, [transitionIndex, repetitions, isFetchingRepetitions]);
+
+  useThrottledEffect(
+    () => {
+      if (timelineRepetitionIndex >= 0 && timelineRepetitionIndex < indexToGroupMap.length) {
+        const { groupIndex, repetitionIndex } = indexToGroupMap[timelineRepetitionIndex];
+        handleSelectRepetition(groupIndex, repetitionIndex);
+      }
+    },
+    [timelineRepetitionIndex, indexToGroupMap, handleSelectRepetition],
+    200
+  );
+
+  useThrottledEffect(
+    () => {
+      dispatch(clearAllRepetitionRunData());
+      const nodeId = selectedRepetition?.data?.properties.agentMetadata.agentName;
+
+      if (nodeId) {
+        dispatch(updateAgenticMetadata({ nodeId, scopeRepetitionRunData: { ...selectedRepetition.data?.properties } }));
+        dispatch(setSelectedNodeId(nodeId));
+        dispatch(openPanel({ nodeId: nodeId, panelMode: 'Operation' }));
+        dispatch(setFocusNode(nodeId));
+        dispatch(setRunIndex({ page: selectedRepetition.repetitionIndex, nodeId: nodeId }));
+      }
+    },
+    [dispatch, selectedRepetition],
+    200
+  );
+
+  const noRepetitions = useMemo(() => repetitions.size === 0, [repetitions]);
 
   return (
     <div style={{ position: 'absolute' }}>

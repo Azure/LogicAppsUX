@@ -12,7 +12,6 @@ import Queue from 'yocto-queue';
 import type {} from 'reselect';
 import type {} from '@tanstack/react-query';
 import { collapseFlowTree } from './helper';
-import { useTimelineRepetitionOffset } from '../../../ui/MonitoringTimeline/hooks';
 import { useEdges } from '@xyflow/react';
 import type { OperationMetadataState } from '../operation/operationMetadataSlice';
 
@@ -453,7 +452,6 @@ export const getNodesWithGraphId = (graphId: string, nodesMetadata: NodesMetadat
 };
 
 export const useParentRunIndex = (id: string | undefined): number | undefined => {
-  const offset = useTimelineRepetitionOffset(id ?? '');
   return useSelector(
     createSelector(getWorkflowState, (state: WorkflowState) => {
       if (!id) {
@@ -466,18 +464,17 @@ export const useParentRunIndex = (id: string | undefined): number | undefined =>
           operationType
         );
       });
-      return parents.length ? (getRecordEntry(state.nodesMetadata, parents[0])?.runIndex ?? 0) + offset : undefined;
+      return parents.length ? (getRecordEntry(state.nodesMetadata, parents[0])?.runIndex ?? 0) : undefined;
     })
   );
 };
 export const useRunIndex = (id: string | undefined): number | undefined => {
-  const offset = useTimelineRepetitionOffset(id ?? '');
   return useSelector(
     createSelector(getWorkflowState, (state: WorkflowState) => {
       if (!id) {
         return undefined;
       }
-      return (getRecordEntry(state.nodesMetadata, id)?.runIndex ?? 0) + offset;
+      return getRecordEntry(state.nodesMetadata, id)?.runIndex ?? undefined;
     })
   );
 };

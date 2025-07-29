@@ -27,7 +27,7 @@ export interface ParameterInfo {
   placeholder?: string;
   preservedValue?: any;
   required: boolean;
-  schema?: any;
+  schema?: any; // This is the swagger schema for this parameter as it comes from operation manifest or connector swagger operation.
   showErrors?: boolean;
   showTokens?: boolean;
   suppressCasting?: boolean;

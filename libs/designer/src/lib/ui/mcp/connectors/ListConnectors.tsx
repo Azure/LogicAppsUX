@@ -31,8 +31,8 @@ export const ListConnectors = () => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
   const { operationInfos, isInitializingOperations, connectionsMapping, connectionReferences } = useSelector((state: RootState) => ({
-    operationInfos: state.operation.operationInfo,
-    isInitializingOperations: state.operation.loadStatus.isInitializingOperations,
+    operationInfos: state.operations.operationInfo,
+    isInitializingOperations: state.operations.loadStatus.isInitializingOperations,
     connectionsMapping: state.connection.connectionsMapping,
     connectionReferences: state.connection.connectionReferences,
   }));

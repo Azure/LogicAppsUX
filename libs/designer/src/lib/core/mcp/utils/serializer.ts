@@ -7,6 +7,9 @@ import {
   optional,
   type ParameterInfo,
   UnsupportedException,
+  ExtensionProperties,
+  deleteObjectProperties,
+  clone,
 } from '@microsoft/logic-apps-shared';
 import { parameterHasValue, parameterValueToString } from '../../utils/parameters/helper';
 import type { Settings } from '../../actions/bjsworkflow/settings';
@@ -154,7 +157,7 @@ const generateDefinition = (
           body: `@body('${operationName}')`,
         },
         runAfter: {
-          [operationName]: ['Succeeded'],
+          [operationName]: ['Succeeded', 'Failed', 'TimedOut'],
         },
       },
     },
@@ -174,7 +177,7 @@ const generateDefinition = (
 const generateInputsSchema = (inputs: SerializedParameter[]): any => {
   const required: string[] = [];
   const properties = inputs.reduce((result: Record<string, any>, input) => {
-    result[input.parameterName] = input.schema; // TODO: If we need to update anything in the schema.
+    result[input.parameterName] = transformSwaggerSchema(input.schema);
 
     if (input.required) {
       required.push(input.parameterName);
@@ -188,6 +191,22 @@ const generateInputsSchema = (inputs: SerializedParameter[]): any => {
     required,
     properties,
   };
+};
+
+const transformSwaggerSchema = (schema: any): any => {
+  const updatedSchema = clone(schema ?? {});
+  const title = schema[ExtensionProperties.Summary] ?? schema.title;
+
+  const properties = Object.keys(schema).filter((key) => key.startsWith('x-ms-'));
+  if (properties.length) {
+    deleteObjectProperties(
+      updatedSchema,
+      properties.map((property) => [property])
+    );
+  }
+
+  updatedSchema.title = title;
+  return updatedSchema;
 };
 
 const getWorkflowNameFromOperation = (operationSummary: string | undefined, operationId: string): string => {

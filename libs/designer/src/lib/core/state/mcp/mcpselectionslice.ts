@@ -1,17 +1,28 @@
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import { resetMcpState } from '../global';
+import { initializeOperationsMetadata } from '../../../core/actions/bjsworkflow/mcp';
 
 export interface McpSelectionState {
   selectedConnectorId: string | undefined;
   selectedOperations: string[];
   selectedOperationId?: string;
+  errors: {
+    operations?: string;
+    operationDetails?: Record<string, { general?: string; parameters?: string }>;
+  };
 }
 
 const initialSelectionState: McpSelectionState = {
   selectedConnectorId: undefined,
   selectedOperations: [],
   selectedOperationId: undefined,
+  errors: {},
+};
+
+const clearAllSelectionsReducer = (state: typeof initialSelectionState) => {
+  state.selectedConnectorId = undefined;
+  state.selectedOperations = [];
 };
 
 export const mcpSelectionSlice = createSlice({
@@ -33,13 +44,16 @@ export const mcpSelectionSlice = createSlice({
     clearSelectedOperations: (state) => {
       state.selectedOperations = [];
     },
-    clearAllSelections: (state) => {
-      state.selectedConnectorId = undefined;
-      state.selectedOperations = [];
-    },
+    clearAllSelections: clearAllSelectionsReducer,
   },
   extraReducers: (builder) => {
     builder.addCase(resetMcpState, () => initialSelectionState);
+    builder.addCase(initializeOperationsMetadata.fulfilled, clearAllSelectionsReducer);
+    builder.addCase(initializeOperationsMetadata.rejected, (state, action: PayloadAction<unknown>) => {
+      if (typeof action.payload === 'string') {
+        state.errors.operations = action.payload;
+      }
+    });
   },
 });
 

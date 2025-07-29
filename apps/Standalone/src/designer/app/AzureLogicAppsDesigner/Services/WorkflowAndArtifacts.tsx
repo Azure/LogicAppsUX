@@ -19,6 +19,7 @@ import { ArmParser } from '../Utilities/ArmParser';
 const baseUrl = 'https://management.azure.com';
 const standardApiVersion = '2020-06-01';
 const consumptionApiVersion = '2019-05-01';
+const powerShellVersion = '7.4';
 
 export const useConnectionsData = (appId?: string, enabled = true) => {
   return useQuery(['getConnectionsData', appId], async () => getConnectionsData(appId as string), {
@@ -97,17 +98,39 @@ interface HostJSON {
   };
 }
 
+interface CustomCodeAppFilesResult {
+  appFiles: Record<string, string>;
+  appSettings: Record<string, string>;
+}
+
 // we want to eventually move this logic to the backend that way we don't increase save time fetching files
 export const getCustomCodeAppFiles = async (
   appId?: string,
-  customCodeFiles?: CustomCodeFileNameMapping
-): Promise<Record<string, string>> => {
+  customCodeFiles?: CustomCodeFileNameMapping,
+  currentAppSettings?: Record<string, string>
+): Promise<CustomCodeAppFilesResult> => {
   // only powershell files have custom app files
   // to reduce the number of requests, we only check if there are any modified powershell files
-  if (!customCodeFiles || !Object.values(customCodeFiles).some((file) => file.isModified && file.fileExtension === '.ps1')) {
-    return {};
+  const hasPowerShellFiles =
+    customCodeFiles && Object.values(customCodeFiles).some((file) => file.isModified && file.fileExtension === '.ps1');
+
+  if (!hasPowerShellFiles) {
+    return { appFiles: {}, appSettings: {} };
   }
+
   const appFiles: Record<string, string> = {};
+  const appSettings: Record<string, string> = {};
+
+  // Add PowerShell version app setting only if it doesn't already exist
+  if (!currentAppSettings?.['LOGIC_APPS_POWERSHELL_VERSION']) {
+    appSettings['LOGIC_APPS_POWERSHELL_VERSION'] = powerShellVersion;
+    LoggerService().log({
+      level: LogEntryLevel.Verbose,
+      area: 'serializeCustomcode',
+      message: `PowerShell files detected, adding LOGIC_APPS_POWERSHELL_VERSION app setting (${powerShellVersion})`,
+    });
+  }
+
   const uri = `${baseUrl}${appId}/hostruntime/admin/vfs`;
   const vfsObjects: VFSObject[] = await fetchFilesFromFolder(uri);
   if (vfsObjects.find((file) => file.name === 'host.json')) {
@@ -132,7 +155,8 @@ export const getCustomCodeAppFiles = async (
   if (!vfsObjects.find((file) => file.name === 'requirements.psd1')) {
     appFiles['requirements.psd1'] = getAppFileForFileExtension('.ps1');
   }
-  return appFiles;
+
+  return { appFiles, appSettings };
 };
 
 const getAllCustomCodeFiles = async (
@@ -404,36 +428,84 @@ export const getConnectionConsumption = async (connectionId: string) => {
   return response.data;
 };
 
+interface CustomCodeOperation {
+  type: 'delete' | 'upload' | 'uploadApp';
+  fileName: string;
+  fileData?: string;
+  fileExtension?: string;
+}
+
 export const saveCustomCodeStandard = async (allCustomCodeFiles?: AllCustomCodeFiles): Promise<void> => {
   const { customCodeFiles: customCode, appFiles } = allCustomCodeFiles ?? {};
   if (!customCode || Object.keys(customCode).length === 0) {
     return;
   }
+
+  const operations: CustomCodeOperation[] = [];
+
   try {
-    // to prevent 404's we first check which custom code files are already present before deleting
+    // Prepare operations
     Object.entries(customCode).forEach(([fileName, customCodeData]) => {
       const { fileExtension, isModified, isDeleted, fileData } = customCodeData;
+
       if (isDeleted) {
-        CustomCodeService().deleteCustomCode(fileName);
-        LoggerService().log({
-          level: LogEntryLevel.Verbose,
-          area: 'serializeCustomcode',
-          message: `Deleting custom code file: ${fileName}`,
-        });
+        operations.push({ type: 'delete', fileName });
       } else if (isModified && fileData) {
-        CustomCodeService().uploadCustomCode({
-          fileData,
-          fileName,
-          fileExtension,
-        });
-        LoggerService().log({
-          level: LogEntryLevel.Verbose,
-          area: 'serializeCustomcode',
-          message: `Uploading/Updating custom code file: ${fileName}`,
-        });
+        operations.push({ type: 'upload', fileName, fileData, fileExtension });
       }
     });
-    Object.entries(appFiles ?? {}).forEach(([fileName, fileData]) => CustomCodeService().uploadCustomCodeAppFile({ fileName, fileData }));
+
+    Object.entries(appFiles ?? {}).forEach(([fileName, fileData]) => {
+      operations.push({ type: 'uploadApp', fileName, fileData });
+    });
+
+    // Execute operations in parallel
+    const operationPromises = operations.map(async (operation) => {
+      switch (operation.type) {
+        case 'delete': {
+          await CustomCodeService().deleteCustomCode(operation.fileName);
+          LoggerService().log({
+            level: LogEntryLevel.Verbose,
+            area: 'serializeCustomcode',
+            message: `Deleting custom code file: ${operation.fileName}`,
+          });
+          break;
+        }
+        case 'upload': {
+          await CustomCodeService().uploadCustomCode({
+            fileData: operation.fileData!,
+            fileName: operation.fileName,
+            fileExtension: operation.fileExtension!,
+          });
+          LoggerService().log({
+            level: LogEntryLevel.Verbose,
+            area: 'serializeCustomcode',
+            message: `Uploading/Updating custom code file: ${operation.fileName}`,
+          });
+          break;
+        }
+        case 'uploadApp': {
+          await CustomCodeService().uploadCustomCodeAppFile({
+            fileName: operation.fileName,
+            fileData: operation.fileData!,
+          });
+          LoggerService().log({
+            level: LogEntryLevel.Verbose,
+            area: 'serializeCustomcode',
+            message: `Uploading app file: ${operation.fileName}`,
+          });
+          break;
+        }
+      }
+    });
+
+    await Promise.all(operationPromises);
+
+    LoggerService().log({
+      level: LogEntryLevel.Verbose,
+      area: 'serializeCustomcode',
+      message: `Successfully processed ${operations.length} custom code operations`,
+    });
   } catch (error) {
     const errorMessage = `Failed to save custom code: ${error}`;
     LoggerService().log({
@@ -442,7 +514,7 @@ export const saveCustomCodeStandard = async (allCustomCodeFiles?: AllCustomCodeF
       message: errorMessage,
       error: error instanceof Error ? error : undefined,
     });
-    return;
+    throw error;
   }
 };
 
@@ -495,37 +567,90 @@ export const saveWorkflowStandard = async (
       }
     }
 
-    // saving custom code must happen synchronously with deploying the workflow artifacts as they both cause
-    // the host to go soft restart. We may need to look into if there's a race case where this may still happen
-    // eventually we want to move this logic to the backend to happen with deployWorkflowArtifacts
-    saveCustomCodeStandard(customCodeData);
+    // Synchronization: save custom code and workflow artifacts in proper sequence
+    // to minimize race conditions with host restarts
+    let customCodeSaved = false;
 
-    let url = null;
-    if (HybridAppUtility.isHybridLogicApp(siteResourceId)) {
-      url = `${baseUrl}${HybridAppUtility.getHybridAppBaseRelativeUrl(
-        siteResourceId
-      )}/deployWorkflowArtifacts?api-version=${hybridApiVersion}`;
-    } else {
-      url = `${baseUrl}${siteResourceId}/deployWorkflowArtifacts?api-version=${standardApiVersion}`;
+    try {
+      // Step 1: Save custom code first if present
+      if (customCodeData) {
+        await saveCustomCodeStandard(customCodeData);
+        customCodeSaved = true;
+
+        LoggerService().log({
+          level: LogEntryLevel.Verbose,
+          area: 'saveWorkflow',
+          message: 'Custom code saved successfully, proceeding with workflow artifacts',
+        });
+
+        // Brief delay to allow custom code deployment to stabilize before workflow deployment
+        // This helps reduce race conditions with host restart timing
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+      }
+
+      // Step 2: Deploy workflow artifacts
+      let url = null;
+      if (HybridAppUtility.isHybridLogicApp(siteResourceId)) {
+        url = `${baseUrl}${HybridAppUtility.getHybridAppBaseRelativeUrl(
+          siteResourceId
+        )}/deployWorkflowArtifacts?api-version=${hybridApiVersion}`;
+      } else {
+        url = `${baseUrl}${siteResourceId}/deployWorkflowArtifacts?api-version=${standardApiVersion}`;
+      }
+
+      const response = await axios.post(url, data, {
+        headers: {
+          'If-Match': '*',
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${environment.armToken}`,
+        },
+      });
+
+      if (!isSuccessResponse(response.status)) {
+        const errorMessage = `Failed to save workflow artifacts. Status: ${response.status}`;
+        LoggerService().log({
+          level: LogEntryLevel.Error,
+          area: 'saveWorkflow',
+          message: errorMessage,
+        });
+
+        alert('Failed to save workflow');
+        if (options?.throwError) {
+          throw Error(errorMessage);
+        }
+        return;
+      }
+
+      LoggerService().log({
+        level: LogEntryLevel.Verbose,
+        area: 'saveWorkflow',
+        message: 'Workflow artifacts deployed successfully',
+      });
+
+      clearDirtyState();
+    } catch (error) {
+      // Error handling: if custom code was saved but workflow deployment failed,
+      // log this state for potential recovery
+      if (customCodeSaved) {
+        LoggerService().log({
+          level: LogEntryLevel.Error,
+          area: 'saveWorkflow',
+          message: 'Custom code was saved but workflow deployment failed. Manual intervention may be required.',
+          error: error instanceof Error ? error : undefined,
+        });
+      }
+
+      throw error;
     }
-    const response = await axios.post(url, data, {
-      headers: {
-        'If-Match': '*',
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${environment.armToken}`,
-      },
+  } catch (error) {
+    const errorMessage = `Failed to save workflow: ${error}`;
+    LoggerService().log({
+      level: LogEntryLevel.Error,
+      area: 'saveWorkflow',
+      message: errorMessage,
+      error: error instanceof Error ? error : undefined,
     });
 
-    if (!isSuccessResponse(response.status)) {
-      alert('Failed to save workflow');
-      if (options?.throwError) {
-        throw Error('Failed to save workflow');
-      }
-      return;
-    }
-    clearDirtyState();
-  } catch (error) {
-    console.log(error);
     if (options?.throwError) {
       throw error;
     }

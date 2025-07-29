@@ -2,7 +2,7 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import { resetMcpState } from '../../global';
 import constants from '../../../../common/constants';
-import { initializeConnectionMappings } from '../../../actions/bjsworkflow/mcp';
+import { initializeConnectionMappings, initializeOperationsMetadata } from '../../../actions/bjsworkflow/mcp';
 
 export const McpPanelView = {
   SelectConnector: 'selectConnector',
@@ -20,6 +20,12 @@ export interface PanelState {
 
 const initialState: PanelState = {
   isOpen: false,
+};
+
+const closePanelReducer = (state: typeof initialState) => {
+  state.isOpen = false;
+  state.currentPanelView = undefined;
+  state.selectedTabId = undefined;
 };
 
 export const mcpPanelSlice = createSlice({
@@ -45,17 +51,14 @@ export const mcpPanelSlice = createSlice({
     selectPanelTab: (state, action: PayloadAction<string | undefined>) => {
       state.selectedTabId = action.payload;
     },
-    closePanel: (state: typeof initialState) => {
-      state.isOpen = false;
-      state.currentPanelView = undefined;
-      state.selectedTabId = undefined;
-    },
+    closePanel: closePanelReducer,
   },
   extraReducers: (builder) => {
     builder.addCase(resetMcpState, () => initialState);
     builder.addCase(initializeConnectionMappings.fulfilled, (state) => {
       state.selectedTabId = constants.MCP_PANEL_TAB_NAMES.CONNECTIONS;
     });
+    builder.addCase(initializeOperationsMetadata.fulfilled, closePanelReducer);
   },
 });
 

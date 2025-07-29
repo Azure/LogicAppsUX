@@ -14,8 +14,8 @@ export const ListOperations = () => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
   const { operationInfos, operationMetadata } = useSelector((state: RootState) => ({
-    operationInfos: state.operation.operationInfo,
-    operationMetadata: state.operation.operationMetadata,
+    operationInfos: state.operations.operationInfo,
+    operationMetadata: state.operations.operationMetadata,
   }));
 
   const styles = useConnectorSectionStyles();

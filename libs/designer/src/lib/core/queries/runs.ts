@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { isNullOrUndefined, type LogicAppsV2, type Run, RunService } from '@microsoft/logic-apps-shared';
+import { type ChatHistory, isNullOrUndefined, type LogicAppsV2, type Run, RunService } from '@microsoft/logic-apps-shared';
 import { getReactQueryClient } from '../ReactQueryProvider';
 import { isRunError } from '@microsoft/designer-ui';
 import constants from '../../common/constants';
@@ -10,11 +10,6 @@ const queryOpts = {
   refetchOnWindowFocus: false,
   refetchOnReconnect: false,
 };
-
-export interface ChatHistory {
-  nodeId: string;
-  messages: any[];
-}
 
 export const runsQueriesKeys = {
   runs: 'runs',
@@ -179,8 +174,7 @@ export const useCancelRun = (runId: string) => {
 };
 
 export const useAgentActionsRepetition = (
-  isMonitoringView: boolean,
-  isParentAgent: boolean,
+  isEnabled: boolean,
   nodeId: string,
   runId: string | undefined,
   repetitionName: string,
@@ -204,7 +198,7 @@ export const useAgentActionsRepetition = (
     {
       ...queryOpts,
       retryOnMount: false,
-      enabled: isMonitoringView && runIndex !== undefined && isParentAgent,
+      enabled: isEnabled,
     }
   );
 };
