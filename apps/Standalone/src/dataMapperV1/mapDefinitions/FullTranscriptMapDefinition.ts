@@ -1,4 +1,5 @@
-﻿export const fullTranscriptMapDefinitionString = `$version: 1
+﻿export const fullTranscriptMapDefinitionString = `
+$version: 1
 $input: XML
 $output: XML
 $sourceSchema: Source.xsd
@@ -13,15 +14,23 @@ $targetNamespaces:
 ns0:Root:
   DirectTranslation:
     Employee:
-      ID: string(/ns0:Root/DataTranslation/Employee)
-      Name: >-
-        concat(/ns0:Root/DataTranslation/Employee/LastName,
-        /ns0:Root/DataTranslation/Employee/EmploymentStatus)
+      ID: divide()
   DataTranslation:
     EmployeeName:
-      $@RegularFulltime: >-
-        avg(/ns0:Root/DataTranslation/Employee,
-        /ns0:Root/DataTranslation/Employee/FirstName)
+      $@RegularFulltime: is-equal()
   ContentEnrich:
-    DateOfDemo: string(/ns0:Root/DataTranslation/Employee/FirstName)
+    DateOfDemo: if-then-else()
+  CumulativeExpression:
+    PopulationSummary:
+      State:
+        Name: max()
+        SexRatio: max()
+  ConditionalMapping:
+    ItemPrice: min()
+    ItemDiscount: max(/ns0:Root/DataTranslation/Employee/FirstName)
+  Looping:
+    $for(/ns0:Root/CumulativeExpression/Population/State/County/Person):
+      Person:
+        Name: concat(Name, Age)
+        Other: lower-case(Sex/Male)
 `;

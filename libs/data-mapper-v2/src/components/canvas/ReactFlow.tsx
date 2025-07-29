@@ -14,7 +14,6 @@ import { useDrop } from 'react-dnd';
 import useResizeObserver from 'use-resize-observer';
 import type { Bounds } from '../../core';
 import { splitEdgeId } from '../../utils/Edge.Utils';
-//import autoLayout from '../../ui/hooks/useAutoLayout';
 import EdgePopOver from './EdgePopOver';
 import CanvasNode from '../common/reactflow/CanvasNode';
 import { isFunctionNode, panelWidth } from '../../utils/ReactFlow.Util';

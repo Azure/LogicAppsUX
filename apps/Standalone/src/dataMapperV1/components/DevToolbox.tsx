@@ -4,7 +4,7 @@ import {
   transcriptJsonMapDefinitionString,
   x12MapDefinitionString,
 } from '../mapDefinitions';
-//import { testMetadata } from '../mapMetadata';
+import { testMetadata } from '../mapMetadata';
 import { LoadingMethod, dataMapDataLoaderSlice, loadDataMap } from '../state/DataMapDataLoader';
 import { loadSourceSchema, loadTargetSchema, schemaDataLoaderSlice } from '../state/SchemaDataLoader';
 import type { AppDispatch, RootState } from '../state/Store';
@@ -34,7 +34,7 @@ const mapDefinitionDropdownOptions: MapDefDropdownOption[] = [
     text: 'Transcript',
     data: {
       mapDefinitionString: fullTranscriptMapDefinitionString,
-      mapMetadataString: undefined, //JSON.stringify(testMetadata),
+      mapMetadataString: JSON.stringify(testMetadata),
       associatedSchemaIdx: 1,
     },
   },

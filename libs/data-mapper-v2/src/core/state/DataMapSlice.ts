@@ -252,11 +252,10 @@ export const dataMapSlice = createSlice({
       assignFunctionNodePositionsFromMetadata(dataMapConnections, metadata?.functionNodes ?? [], functionNodes);
 
       const needsLayout = !doesFunctionMetadataExist(metadata);
-      console.log('needsLayout', needsLayout);
 
       const newState: DataMapOperationState = {
         ...currentState,
-        needsLayout: true,
+        needsLayout: needsLayout,
         sourceSchema,
         targetSchema,
         flattenedSourceSchema,
