@@ -1,2 +1,2 @@
-var actionMockOutput = new <%= ActionMockOutputClassName %>();
-var actionMock = new <%= ActionMockClassName %>(status: <%= ActionMockStatus %>, name: "<%= ActionName %>", outputs: actionMockOutput);
+            var actionMock<%= ActionNameCleaned %>Output = new <%= ActionMockOutputClassName %>();
+            var actionMock<%= ActionNameCleaned %> = new <%= ActionMockClassName %>(status: <%= ActionMockStatus %>, name: "<%= ActionName %>", outputs: actionMock<%= ActionNameCleaned %>Output);

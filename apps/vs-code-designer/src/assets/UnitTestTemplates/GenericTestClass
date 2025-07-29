@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using Microsoft.Azure.Workflows.Common.ErrorResponses;
 using Microsoft.Azure.Workflows.UnitTesting;
 using Microsoft.Azure.Workflows.UnitTesting.Definitions;
@@ -13,7 +14,7 @@ using <%= LogicAppNameCleaned %>.Tests.Mocks.<%= WorkflowNameCleaned %>;
 namespace <%= LogicAppNameCleaned %>.Tests
 {
     [TestClass]
-    public class GeneratedLogicAppWorkflowTests
+    public class Generated<%= WorkflowNameCleaned %>Tests
     {
         private TestExecutor TestExecutor { get; set; }
 
@@ -23,6 +24,6 @@ namespace <%= LogicAppNameCleaned %>.Tests
             this.TestExecutor = new TestExecutor("<%= WorkflowName %>/testSettings.config");
         }
 
-        <%= TestClassContent %>
+<%= TestClassContent %>
     }
 }

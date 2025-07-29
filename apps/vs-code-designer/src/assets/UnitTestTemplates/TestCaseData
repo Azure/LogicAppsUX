@@ -1,0 +1,22 @@
+public static IEnumerable<object[]> <%= PathName %>_TestData
+{
+    get
+    {
+        return new[]
+        {
+            new object[]
+            {
+                // Trigger parameters
+                new Dictionary<string, object>
+                {
+                    // Add trigger parameters here
+                },
+                // Action parameters
+                new Dictionary<string, Dictionary<string, object>>
+                {
+                    // Add action parameters here
+                }
+            }
+        };
+    }
+}

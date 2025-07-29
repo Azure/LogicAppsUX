@@ -1,34 +1,34 @@
-/// <summary>
-/// Test case for workflow <%= WorkflowName %> on path: <%= PathDescriptionString %>
-/// </summary>
-[TestMethod]
-[DynamicData(nameof(<%= PathName %>_TestData))]
-public async Task <%= WorkflowNameCleaned %>_<%= PathName %>_ExecuteWorkflow(
-  Dictionary<string, object> triggerParameters,
-  Dictionary<string, Dictionary<string, object>> actionParameters)
-{
-    // PREPARE
-    // Generate mock trigger and action data from parameters
-    var triggerMockOutput = new <%= TriggerMockOutputClassName %>();
-    var triggerMock = new <%= TriggerMockClassName %>(outputs: triggerMockOutput);
+        /// <summary>
+        /// Test case for workflow <%= WorkflowName %> on path: <%= PathDescriptionString %>
+        /// </summary>
+        [TestMethod]
+        public async Task ExecuteWorkflow_<%= WorkflowNameCleaned %>_<%= PathName %>()
+        {
+            // PREPARE
+            // Generate mock trigger and action data from parameters
+            var triggerMockOutput = new <%= TriggerMockOutputClassName %>();
+            var triggerMock = new <%= TriggerMockClassName %>(outputs: triggerMockOutput);
 
-    var actionMocks = new Dictionary<string, ActionMock>();
-    <%= ActionMocksContent %>
+<%= ActionMocksContent %>
+            var actionMocks = new Dictionary<string, ActionMock>()
+            {
+<%= ActionMockEntries %>
+            };
 
-    // ACT
-    // Create an instance of UnitTestExecutor, and run the workflow with the mock data
-    var testMock = new TestMockDefinition(
-        triggerMock: triggerMock,
-        actionMocks: actionMocks);
-    var testRun = await this.TestExecutor
-        .Create()
-        .RunWorkflowAsync(testMock: testMock)
-        .ConfigureAwait(continueOnCapturedContext: false);
-        
-    // ASSERT
-    // Verify that the workflow executed with expected status
-    Assert.IsNotNull(value: testRun);
-    Assert.AreEqual(expected: <%= PathOverallStatus %>, actual: testRun.Status);
-    Assert.AreEqual(expected: TestWorkflowStatus.Succeeded, actual: testRun.Trigger.Status);
-    <%= ActionAssertionsContent %>
-}
+            // ACT
+            // Create an instance of UnitTestExecutor, and run the workflow with the mock data
+            var testMock = new TestMockDefinition(
+                triggerMock: triggerMock,
+                actionMocks: actionMocks);
+            var testRun = await this.TestExecutor
+                .Create()
+                .RunWorkflowAsync(testMock: testMock)
+                .ConfigureAwait(continueOnCapturedContext: false);
+                
+            // ASSERT
+            // Verify that the workflow executed with expected status
+            Assert.IsNotNull(value: testRun);
+            Assert.AreEqual(expected: <%= PathOverallStatus %>, actual: testRun.Status);
+            Assert.AreEqual(expected: TestWorkflowStatus.Succeeded, actual: testRun.Trigger.Status);
+<%= ActionAssertionsContent %>
+        }
