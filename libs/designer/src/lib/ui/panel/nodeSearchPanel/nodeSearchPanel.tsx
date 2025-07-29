@@ -63,7 +63,8 @@ export const NodeSearchPanel = (props: NodeSearchPanelProps) => {
   const panelRef = useRef<HTMLDivElement>(null);
 
   // Get or create tabster instance and modalizer for focus trapping
-  const tabsterCoreRef = useRef(createTabster(window));
+  const tabsterInstance = useMemo(() => createTabster(window), []);
+  const tabsterCoreRef = useRef(tabsterInstance);
   const modalizer = getModalizer(tabsterCoreRef.current);
 
   // Set up modalizer when component mounts
@@ -90,6 +91,7 @@ export const NodeSearchPanel = (props: NodeSearchPanelProps) => {
         setTabsterAttribute(element, {});
       };
     }
+    return;
   }, [modalizer]);
 
   const fuseObject = useMemo(() => {
