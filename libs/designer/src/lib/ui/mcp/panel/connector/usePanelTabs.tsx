@@ -58,7 +58,7 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
   }, [operationInfos, selectedOperations]);
 
   const handleSubmit = useCallback(() => {
-    if (selectedConnectorId) {
+    if (selectedConnectorId && selectedOperations.length > 0) {
       // Deinitializing deselected operations
       if (deselectedOperationIds.length > 0) {
         dispatch(deinitializeOperations({ operationIds: deselectedOperationIds }));
@@ -76,7 +76,7 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
     }
     dispatch(clearAllSelections());
     dispatch(closePanel());
-  }, [dispatch, selectedConnectorId, newlySelectedOperationIds, deselectedOperationIds]);
+  }, [dispatch, selectedConnectorId, selectedOperations, newlySelectedOperationIds, deselectedOperationIds]);
 
   const handleOnSelectOperations = useCallback(async () => {
     // This triggers the loading state and initializes connections
