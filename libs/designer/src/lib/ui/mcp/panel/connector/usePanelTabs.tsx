@@ -1,8 +1,7 @@
 import { useMemo, useCallback } from 'react';
 import type { AppDispatch, RootState } from '../../../../core/state/mcp/store';
 import { useDispatch, useSelector } from 'react-redux';
-import { closePanel, McpPanelView } from '../../../../core/state/mcp/panel/mcpPanelSlice';
-import { clearAllSelections } from '../../../../core/state/mcp/connector/connectorSlice';
+import { McpPanelView } from '../../../../core/state/mcp/panel/mcpPanelSlice';
 import {
   initializeOperationsMetadata,
   initializeConnectionMappings,
@@ -67,8 +66,6 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
 
       // Initializing selection
       dispatch(initializeOperationsMetadata({ operations: selectedOperationsData }));
-      dispatch(clearAllSelections());
-      dispatch(closePanel());
     }
   }, [dispatch, selectedConnectorId, selectedOperations, deselectedOperationIds]);
 
