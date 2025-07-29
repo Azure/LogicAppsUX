@@ -14,7 +14,7 @@ test(
 
     await page.getByLabel('Condition operation').click();
 
-    await page.getByText('OR', { exact: true }).click();
+    await page.getByLabel('Open', { exact: true }).first().click();
     await page.getByRole('option', { name: 'AND' }).click();
 
     await expect(page.getByRole('alert')).toContainText('Enter a valid condition statement.');
