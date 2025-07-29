@@ -4,7 +4,7 @@
 
 This document outlines a comprehensive plan to migrate 124 .less files in the LogicAppsUX monorepo to Fluent UI v9's makeStyles CSS-in-JS system. The migration will improve performance, enable better tree-shaking, provide type-safe styling, and align with modern React best practices.
 
-**Current Progress**: 33 components migrated (26.6% complete)
+**Current Progress**: 34 components migrated (27.4% complete)
 - ✅ peek component (peek.less - 6 lines)
 - ✅ error component (error.less - 29 lines)
 - ✅ tip component (tip.less - 33 lines)
@@ -33,6 +33,7 @@ This document outlines a comprehensive plan to migrate 124 .less files in the Lo
 - ✅ flyout component (flyout.less - 50 lines) - already had makeStyles, verified
 - ✅ pager component (pager.less - 84 lines)
 - ✅ staticResult component (staticResult.less - 146 lines) - styles created
+- ✅ **nodeSearchPanel** - NEW makeStyles implementation with Tabster focus management (branch: ccastrotrejo/panelSearchMigration)
 - ✅ **VS CODE**: export component (export.less - 120 lines) → exportStyles.ts (PR #7588/#7797)
 - ✅ **VS CODE**: overview app (overview.less - 4 lines) → overviewStyles.ts (PR #7588)
 - ✅ **VS CODE**: reviewList component (styles.less - 32 lines) → reviewListStyles.ts (PR #7820)
@@ -624,6 +625,15 @@ Alongside the LESS to makeStyles migration, we're also migrating from Fluent UI 
    - Location: `/apps/vs-code-react/src/app/components/reviewList/`
    - Removed static SVG files, added icon theming support
 
+7. **NodeSearchPanel Component** (✅ COMPLETED - Branch: ccastrotrejo/panelSearchMigration)
+   - v8: `FocusTrapZone` → Tabster focus management system
+   - v8: `SearchBox` → v9: `SearchBox` with updated event handlers
+   - Location: `/libs/designer/src/lib/ui/panel/nodeSearchPanel/`
+   - Added new dependency: `tabster: 8.5.6` for advanced focus management
+   - Created `nodeSearchPanelStyles.ts` with makeStyles for SearchBox styling
+   - Improved keyboard navigation with Escape key handling
+   - Enhanced accessibility with proper ARIA attributes and dialog role
+
 ### Next Migration Candidates
 1. **Label Component**
    - v8: Custom wrapper → v9: Direct `Label`
@@ -645,6 +655,7 @@ v8: Toggle → v9: Switch
 v8: TextField → v9: Input + Field wrapper
 v8: Dropdown → v9: Dropdown (different API)
 v8: ComboBox → v9: Combobox
+v8: SearchBox → v9: SearchBox (updated event handlers)
 
 // Buttons
 v8: DefaultButton → v9: Button
@@ -656,6 +667,9 @@ v8: CommandButton → v9: Button appearance="subtle"
 v8: Icon → v9: Individual icon imports from @fluentui/react-icons
 v8: Callout → v9: Popover
 v8: MessageBar → v9: MessageBar (new API)
+
+// Focus Management
+v8: FocusTrapZone → Tabster (external dependency)
 
 // Layout
 v8: Stack → v9: CSS flexbox with makeStyles

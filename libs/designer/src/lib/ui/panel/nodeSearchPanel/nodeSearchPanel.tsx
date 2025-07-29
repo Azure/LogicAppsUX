@@ -2,16 +2,18 @@ import { useOperationVisuals } from '../../../core/state/operation/operationSele
 import { changePanelNode } from '../../../core/state/panel/panelSlice';
 import { useNodeDisplayName, useNodeIds } from '../../../core/state/workflow/workflowSelectors';
 import { collapseGraphsToShowNode, setFocusNode } from '../../../core/state/workflow/workflowSlice';
-import { SearchBox, FocusTrapZone } from '@fluentui/react';
-import { Button } from '@fluentui/react-components';
+import type { InputOnChangeData, SearchBoxChangeEvent } from '@fluentui/react-components';
+import { Button, SearchBox } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
 import type { CommonPanelProps } from '@microsoft/designer-ui';
 import { OperationSearchCard, XLargeText } from '@microsoft/designer-ui';
 import { labelCase } from '@microsoft/logic-apps-shared';
 import Fuse from 'fuse.js';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useRef, useEffect } from 'react';
 import { useIntl } from 'react-intl';
+import { createTabster, getModalizer, setTabsterAttribute } from 'tabster';
 import { useDispatch } from 'react-redux';
+import { useNodeSearchPanelStyles } from './nodeSearchPanelStyles';
 
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
@@ -55,8 +57,43 @@ export type NodeSearchPanelProps = {
 
 export const NodeSearchPanel = (props: NodeSearchPanelProps) => {
   const allNodeNames = useNodeIds();
+  const styles = useNodeSearchPanelStyles();
   const [searchTerm, setSearchTerm] = useState<string | null>(null);
   const intl = useIntl();
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  // Get or create tabster instance and modalizer for focus trapping
+  const tabsterInstance = useMemo(() => createTabster(window), []);
+  const tabsterCoreRef = useRef(tabsterInstance);
+  const modalizer = getModalizer(tabsterCoreRef.current);
+
+  // Set up modalizer when component mounts
+  useEffect(() => {
+    if (panelRef.current && modalizer) {
+      const element = panelRef.current;
+
+      // Set the modalizer attribute on the element
+      setTabsterAttribute(element, {
+        modalizer: {
+          id: 'node-search-panel',
+          isTrapped: true,
+        },
+      });
+
+      // Activate the modalizer
+      modalizer.activate(element);
+
+      return () => {
+        // Deactivate modalizer when component unmounts
+        modalizer.activate(undefined);
+
+        // Clear the tabster attribute
+        setTabsterAttribute(element, {});
+      };
+    }
+    return;
+  }, [modalizer]);
+
   const fuseObject = useMemo(() => {
     return new Fuse(
       allNodeNames.map((name) => ({ text: labelCase(name), id: name })),
@@ -89,22 +126,37 @@ export const NodeSearchPanel = (props: NodeSearchPanelProps) => {
     description: 'Aria label for the close button in the node search panel',
   });
 
-  const originalFocusElement = props.focusReturnElementId ? document.getElementById(props.focusReturnElementId) : undefined;
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    // Handle Escape key to close panel
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      props.toggleCollapse();
+
+      // Restore focus to the original element if specified
+      if (props.focusReturnElementId) {
+        const originalElement = document.getElementById(props.focusReturnElementId);
+        originalElement?.focus();
+      }
+    }
+  };
 
   return (
-    <FocusTrapZone elementToFocusOnDismiss={originalFocusElement ? originalFocusElement : undefined}>
+    <div ref={panelRef} role="dialog" aria-label={goToOperationHeader} onKeyDown={handleKeyDown}>
       <div className="msla-app-action-header">
         <XLargeText text={goToOperationHeader} />
         <Button aria-label={closeButtonAriaLabel} appearance="subtle" onClick={props.toggleCollapse} icon={<CloseIcon />} />
       </div>
-      <div style={{ padding: 20 }}>
-        <SearchBox placeholder={searchOperation} autoFocus={true} onChange={(_e, newValue) => setSearchTerm(newValue ?? null)} />
-      </div>
-      <div aria-description={'List of operation results'}>
+      <SearchBox
+        className={styles.searchBox}
+        placeholder={searchOperation}
+        autoFocus={true}
+        onChange={(_event: SearchBoxChangeEvent, data: InputOnChangeData) => setSearchTerm(data.value ?? null)}
+      />
+      <div role="list" aria-label="List of operation results">
         {searchNodeNames.map((node) => (
           <NodeSearchCard key={node} node={node} />
         ))}
       </div>
-    </FocusTrapZone>
+    </div>
   );
 };
