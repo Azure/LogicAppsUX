@@ -1,22 +1,16 @@
-public static IEnumerable<object[]> <%= PathName %>_TestData
-{
-    get
-    {
-        return new[]
+        public static IEnumerable<object[]> <%= PathName %>_TestData
         {
-            new object[]
+            get
             {
-                // Trigger parameters
-                new Dictionary<string, object>
+                return new[]
                 {
-                    // Add trigger parameters here
-                },
-                // Action parameters
-                new Dictionary<string, Dictionary<string, object>>
-                {
-                    // Add action parameters here
-                }
+                    new object[]
+                    {
+                        // Mock outputs
+                        new Dictionary<string, MockOutput> { },
+                        // Mock errors
+                        new Dictionary<string, TestErrorInfo> { }
+                    }
+                };
             }
-        };
-    }
-}
+        }

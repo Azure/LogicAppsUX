@@ -2,7 +2,11 @@
         /// Test case for workflow <%= WorkflowName %> on path: <%= PathDescriptionString %>
         /// </summary>
         [TestMethod]
-        public async Task ExecuteWorkflow_<%= WorkflowNameCleaned %>_<%= PathName %>()
+        [DynamicData(nameof(<%= PathName %>_TestData))]
+        public async Task ExecuteWorkflow_<%= WorkflowNameCleaned %>_<%= PathName %>(
+            Dictionary<string, MockOutput> mockOutputs,
+            Dictionary<string, TestErrorInfo> mockErrors
+        )
         {
             // PREPARE
             // Generate mock trigger and action data from parameters

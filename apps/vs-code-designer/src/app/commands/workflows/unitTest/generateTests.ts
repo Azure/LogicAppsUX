@@ -81,6 +81,7 @@ export async function generateTests(context: IActionContext, node: Uri | undefin
 
   context.telemetry.properties.lastStep = 'getTestCaseMethods';
   const testCaseMethods: string[] = [];
+  const testCaseData: string[] = [];
   for (const [index, scenario] of paths.entries()) {
     const triggerNode = scenario.path[0];
     const triggerMockOutputClassName = foundTriggerMocks[triggerNode.name];
@@ -94,17 +95,17 @@ export async function generateTests(context: IActionContext, node: Uri | undefin
     const actionMocks = (await Promise.all(pathActions.map((actionNode) => getActionMock(actionNode, foundActionMocks)))).flat();
     const actionMockEntries = (await Promise.all(pathActions.map((actionNode) => getActionMockEntry(actionNode, foundActionMocks)))).flat();
     const actionAssertions = (await Promise.all(pathActions.map((actionNode) => getActionAssertion(actionNode)))).flat();
+    const pathName = getPathName(index, scenario.overallStatus);
 
     const testCaseMethodTemplateFileName = 'TestCaseMethod';
     const testCaseMethodTemplatePath = path.join(__dirname, assetsFolderName, unitTestTemplatesFolderName, testCaseMethodTemplateFileName);
     const testCaseMethodTemplate = await fse.readFile(testCaseMethodTemplatePath, 'utf-8');
-
     testCaseMethods.push(
       testCaseMethodTemplate
         .replace(/<%= WorkflowName %>/g, workflowName)
         .replace(/<%= WorkflowNameCleaned %>/g, workflowNameCleaned)
         .replace(/<%= PathDescriptionString %>/g, getPathDescription(actionChain))
-        .replace(/<%= PathName %>/g, getPathName(index, scenario.overallStatus))
+        .replace(/<%= PathName %>/g, pathName)
         .replace(/<%= TriggerMockOutputClassName %>/g, triggerMockOutputClassName)
         .replace(/<%= TriggerMockClassName %>/g, triggerMockClassName)
         .replace(/<%= ActionMocksContent %>/g, actionMocks.join('\n\n'))
@@ -112,6 +113,11 @@ export async function generateTests(context: IActionContext, node: Uri | undefin
         .replace(/<%= ActionAssertionsContent %>/g, actionAssertions.join('\n\n'))
         .replace(/<%= PathOverallStatus %>/g, toTestWorkflowStatus(scenario.overallStatus))
     );
+
+    const testCaseDataTemplateFileName = 'TestCaseData';
+    const testCaseDataTemplatePath = path.join(__dirname, assetsFolderName, unitTestTemplatesFolderName, testCaseDataTemplateFileName);
+    const testCaseDataTemplate = await fse.readFile(testCaseDataTemplatePath, 'utf-8');
+    testCaseData.push(testCaseDataTemplate.replace(/<%= PathName %>/g, pathName));
   }
 
   context.telemetry.properties.lastStep = 'ensureTestFolders';
@@ -136,7 +142,8 @@ export async function generateTests(context: IActionContext, node: Uri | undefin
     .replace(/<%= WorkflowName %>/g, workflowName)
     .replace(/<%= LogicAppNameCleaned %>/g, logicAppNameCleaned)
     .replace(/<%= WorkflowNameCleaned %>/g, workflowNameCleaned)
-    .replace(/<%= TestClassContent %>/g, testCaseMethods.join('\n\n'));
+    .replace(/<%= TestCaseData %>/g, testCaseData.join('\n\n'))
+    .replace(/<%= TestCaseMethods %>/g, testCaseMethods.join('\n\n'));
   const csFilePath = path.join(workflowTestFolderPath, `${workflowNameCleaned}Tests.cs`);
   await fse.writeFile(csFilePath, testClassContent);
 
@@ -151,7 +158,7 @@ export async function generateTests(context: IActionContext, node: Uri | undefin
 
   const successMessage = localize(
     'generateTestsSuccess',
-    'Tests generated successfully for workflow "{0}" at: "{1}"',
+    'Tests generated successfully for workflow "{0}" at: "{1}".',
     workflowName,
     logicAppTestFolderPath
   );
@@ -285,7 +292,7 @@ function getExecutedActionChain(path: PathNode[]): PathNode[] {
  * @returns {string} - A string description of the action path.
  */
 function getPathDescription(actionChain: PathNode[]): string {
-  return actionChain.map((action) => action.name).join(' -> ');
+  return actionChain.map((action) => `[${action.status}] ${action.name}`).join(' -> ');
 }
 
 /**

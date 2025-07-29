@@ -1,2 +1,9 @@
-            var actionMock<%= ActionNameCleaned %>Output = new <%= ActionMockOutputClassName %>();
-            var actionMock<%= ActionNameCleaned %> = new <%= ActionMockClassName %>(status: <%= ActionMockStatus %>, name: "<%= ActionName %>", outputs: actionMock<%= ActionNameCleaned %>Output);
+            var actionMock<%= ActionNameCleaned %> = mockErrors != null && mockErrors.ContainsKey("<%= ActionName %>")
+                ? new <%= ActionMockClassName %>(
+                    status: <%= ActionMockStatus %>,
+                    error: mockErrors["<%= ActionName %>"])
+                : new <%= ActionMockClassName %>(
+                    status: <%= ActionMockStatus %>,
+                    outputs: mockOutputs != null && mockOutputs.ContainsKey("<%= ActionName %>")
+                        ? (<%= ActionMockOutputClassName %>)mockOutputs["<%= ActionName %>"]
+                        : new <%= ActionMockOutputClassName %>());
