@@ -424,17 +424,9 @@ const DesignerEditor = () => {
     }
 
     const connectionsToUpdate = getConnectionsToUpdate(originalConnectionsData, connectionsData ?? {});
-    const { customCodeFiles: customCodeToUpdate, appSettings: customCodeAppSettings } = await getCustomCodeToUpdate(
-      originalCustomCodeData,
-      customCode ?? {},
-      appId,
-      settingsData?.properties
-    );
+    const customCodeToUpdate = await getCustomCodeToUpdate(originalCustomCodeData, customCode ?? {}, appId);
     const parametersToUpdate = isEqual(originalParametersData, parameters) ? undefined : (parameters as ParametersData);
-
-    // Merge app settings from custom code with existing settings
-    const mergedSettings = { ...settingsData?.properties, ...customCodeAppSettings };
-    const settingsToUpdate = isEqual(mergedSettings, originalSettings) ? undefined : mergedSettings;
+    const settingsToUpdate = isEqual(settingsData?.properties, originalSettings) ? undefined : settingsData?.properties;
 
     return saveWorkflowStandard(
       siteResourceId,
@@ -1106,14 +1098,13 @@ const getConnectionsToUpdate = (
 const getCustomCodeToUpdate = async (
   originalCustomCodeData: string[],
   customCode: CustomCodeFileNameMapping,
-  appId?: string,
-  currentAppSettings?: Record<string, string>
-): Promise<{ customCodeFiles: AllCustomCodeFiles | undefined; appSettings: Record<string, string> }> => {
+  appId?: string
+): Promise<AllCustomCodeFiles | undefined> => {
   const filteredCustomCodeMapping: CustomCodeFileNameMapping = {};
   if (!customCode || Object.keys(customCode).length === 0) {
-    return { customCodeFiles: undefined, appSettings: {} };
+    return;
   }
-  const { appFiles, appSettings } = await getCustomCodeAppFiles(appId, customCode, currentAppSettings);
+  const appFiles = await getCustomCodeAppFiles(appId, customCode);
 
   Object.entries(customCode).forEach(([fileName, customCodeData]) => {
     const { isModified, isDeleted } = customCodeData;
@@ -1122,13 +1113,7 @@ const getCustomCodeToUpdate = async (
       filteredCustomCodeMapping[fileName] = { ...customCodeData };
     }
   });
-
-  const customCodeFiles =
-    Object.keys(filteredCustomCodeMapping).length > 0 || Object.keys(appFiles).length > 0
-      ? { customCodeFiles: filteredCustomCodeMapping, appFiles }
-      : undefined;
-
-  return { customCodeFiles, appSettings };
+  return { customCodeFiles: filteredCustomCodeMapping, appFiles };
 };
 
 export default DesignerEditor;
