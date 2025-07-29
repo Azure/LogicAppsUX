@@ -16,7 +16,7 @@ import {
   handleError,
   logTelemetry,
   parseErrorBeforeTelemetry,
-  parseUnitTestOutputs,
+  preprocessOutputParameters,
   getOperationMockClassContent,
   promptForUnitTestName,
   selectWorkflowNode,
@@ -40,14 +40,14 @@ import { syncCloudSettings } from '../../syncCloudSettings';
  * @param {IActionContext} context - The action context.
  * @param {vscode.Uri | undefined} node - Optional URI of the workflow node.
  * @param {string | undefined} runId - Optional run ID.
- * @param {any} unitTestDefinition - The unit test definition.
+ * @param {any} operationData - The original operation data with operationInfo and outputParameters.
  * @returns {Promise<void>} Resolves when the unit test creation process completes.
  */
 export async function createUnitTest(
   context: IActionContext,
   node: vscode.Uri | undefined,
   runId?: string,
-  unitTestDefinition?: any
+  operationData?: any
 ): Promise<void> {
   try {
     // Validate and extract Run ID
@@ -107,7 +107,7 @@ export async function createUnitTest(
     });
 
     context.telemetry.properties.lastStep = 'generateUnitTestFromRun';
-    await generateUnitTestFromRun(context, projectPath, workflowName, unitTestName, validatedRunId, unitTestDefinition, node.fsPath);
+    await generateUnitTestFromRun(context, projectPath, workflowName, unitTestName, validatedRunId, operationData, node.fsPath);
     context.telemetry.properties.result = 'Succeeded';
   } catch (error) {
     handleError(context, error, 'createUnitTest');
@@ -122,7 +122,7 @@ export async function createUnitTest(
  * @param {string} workflowName - Name of the workflow.
  * @param {string} unitTestName - Name of the unit test.
  * @param {string} runId - Run ID.
- * @param {any} unitTestDefinition - The unit test definition.
+ * @param {any} operationData - The original operation data with operationInfo and outputParameters.
  * @returns {Promise<void>} Resolves when the unit test has been generated.
  */
 async function generateUnitTestFromRun(
@@ -131,7 +131,7 @@ async function generateUnitTestFromRun(
   workflowName: string,
   unitTestName: string,
   runId: string,
-  unitTestDefinition: any,
+  operationData: any,
   workflowPath: string
 ): Promise<void> {
   // Initialize telemetry properties
@@ -147,7 +147,7 @@ async function generateUnitTestFromRun(
 
   // Get parsed outputs
   context.telemetry.properties.lastStep = 'parseUnitTestOutputs';
-  const parsedOutputs = await parseUnitTestOutputs(unitTestDefinition);
+  const parsedOutputs = await preprocessOutputParameters(operationData);
   const operationInfo = parsedOutputs['operationInfo'];
   const outputParameters = parsedOutputs['outputParameters'];
   logTelemetry(context, {

@@ -16,26 +16,28 @@ type FlowActionStatus = 'SUCCEEDED' | 'FAILED' | 'TIMEDOUT' | 'SKIPPED';
 // TODO(aeldridge): Support paths for all possible flow run statuses
 type FlowPathOverallStatus = 'SUCCEEDED' | 'FAILED';
 
-type FlowPath = {
+export type FlowPath = {
   overallStatus: FlowPathOverallStatus;
   path: PathNode[];
 };
 
-type PathNode = {
+export type PathNode = {
   name: string;
   type: string;
   status: FlowActionStatus;
 };
 
-type IfPathNode = PathNode & {
-  conditionResult: boolean;
+export type ParentPathNode = PathNode & {
   actions: PathNode[];
 };
 
-type SwitchPathNode = PathNode & {
+export type IfPathNode = ParentPathNode & {
+  conditionResult: boolean;
+};
+
+export type SwitchPathNode = ParentPathNode & {
   caseResult: string;
   isDefaultCase: boolean;
-  actions: PathNode[];
 };
 
 const unsupportedActions = new Set<string>(['Scope', 'ForEach', 'Until']);

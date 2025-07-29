@@ -1,9 +1,9 @@
 /// <summary>
-/// Test case for workflow <%= WorkflowName %> on path: <%= PathString %>
+/// Test case for workflow <%= WorkflowName %> on path: <%= PathDescriptionString %>
 /// </summary>
 [TestMethod]
 [DynamicData(nameof(<%= PathName %>_TestData))]
-public async Task <%= WorkflowName %>_<%= PathName %>_ExecuteWorkflow(
+public async Task <%= WorkflowNameCleaned %>_<%= PathName %>_ExecuteWorkflow(
   Dictionary<string, object> triggerParameters,
   Dictionary<string, Dictionary<string, object>> actionParameters)
 {

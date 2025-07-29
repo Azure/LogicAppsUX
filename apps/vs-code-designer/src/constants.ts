@@ -43,6 +43,7 @@ export const testResultsDirectoryName = '.testResults';
 export const vscodeFolderName = '.vscode';
 export const assetsFolderName = 'assets';
 export const deploymentScriptTemplatesFolderName = 'DeploymentScriptTemplates';
+export const unitTestTemplatesFolderName = 'UnitTestTemplates';
 
 export const logicAppsStandardExtensionId = 'ms-azuretools.vscode-azurelogicapps';
 
