@@ -2,7 +2,6 @@ import type { StaticResultRootSchemaType } from '..';
 import { Label, DropdownEditor } from '..';
 import { StaticResultProperty } from './staticResultProperty';
 import { formatShownProperties, getOptions, initializeShownProperties } from './util';
-import type { IDropdownOption } from '@fluentui/react';
 import type { OpenAPIV2 } from '@microsoft/logic-apps-shared';
 import type { Dispatch, SetStateAction } from 'react';
 import { useState } from 'react';
@@ -29,8 +28,8 @@ export const StaticResultProperties = ({
     initializeShownProperties(required, propertiesSchema, propertyValues)
   );
 
-  const updateShownProperties = (_event: React.FormEvent<HTMLDivElement>, option?: IDropdownOption) => {
-    const optionKey = option?.key;
+  const updateShownProperties = (optionValue: string, _optionText: string) => {
+    const optionKey = optionValue;
     if (optionKey) {
       // delete the properties if the option is unchecked
       setPropertyValues((prevState) => {

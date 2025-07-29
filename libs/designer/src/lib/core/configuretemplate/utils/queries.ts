@@ -214,7 +214,7 @@ export const getConnectionsInWorkflowApp = async (
       const response = await ResourceService().getResource(resourceId, queryParameters);
       return response.properties.files?.['connections.json'];
     } catch (error: any) {
-      if (error?.response?.status === 404) {
+      if (error?.httpStatusCode === 404 || error?.response?.status === 404) {
         return {};
       }
       throw error;
@@ -242,7 +242,7 @@ export const getParametersInWorkflowApp = async (
         return result;
       }, {});
     } catch (error: any) {
-      if (error?.response?.status === 404) {
+      if (error?.httpStatusCode === 404 || error?.response?.status === 404) {
         return {};
       }
       throw error;
