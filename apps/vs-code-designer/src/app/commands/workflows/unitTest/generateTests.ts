@@ -8,6 +8,7 @@ import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { localize } from '../../../../localize';
 import * as fse from 'fs-extra';
 import * as path from 'path';
+import * as vscode from 'vscode';
 import { FlowGraph, type ParentPathNode, type PathNode } from '../../../utils/flowgraph';
 import { ext } from '../../../../extensionVariables';
 import {
@@ -31,6 +32,7 @@ import { assetsFolderName, unitTestTemplatesFolderName } from '../../../../const
  * @returns {Promise<void>} - A Promise that resolves when the unit tests are generated.
  */
 export async function generateTests(context: IActionContext, node: Uri | undefined, operationData: any): Promise<void> {
+  context.telemetry.properties.lastStep = 'getWorkflowNode';
   const workflowNode = getWorkflowNode(node);
   if (!(workflowNode instanceof Uri)) {
     const errorMessage = 'The workflow node is undefined. A valid workflow node is required to generate tests.';
@@ -39,24 +41,33 @@ export async function generateTests(context: IActionContext, node: Uri | undefin
     throw new Error(localize('workflowNodeUndefined', errorMessage));
   }
 
+  context.telemetry.properties.lastStep = 'readWorkflowDefinition';
   const workflowPath = workflowNode.fsPath;
   const workflowContent = JSON.parse(await fse.readFile(workflowPath, 'utf8')) as Record<string, any>;
   const workflowDefinition = workflowContent.definition as Record<string, any>;
+  context.telemetry.properties.lastStep = 'createFlowGraph';
   const workflowGraph = new FlowGraph(workflowDefinition);
+  context.telemetry.properties.lastStep = 'getAllExecutionPaths';
   const paths = workflowGraph.getAllExecutionPaths();
   ext.outputChannel.appendLog(
     localize('generateTestsPaths', 'Generated {0} execution paths for workflow: {1}', paths.length, workflowPath)
   );
 
+  context.telemetry.properties.lastStep = 'preprocessOutputParameters';
   const { operationInfo, outputParameters } = await preprocessOutputParameters(operationData);
+  context.telemetry.properties.lastStep = 'getWorkspacePath';
   const workspaceFolder = getWorkspacePath(workflowNode.fsPath);
+  context.telemetry.properties.lastStep = 'tryGetLogicAppProjectRoot';
   const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
+  context.telemetry.properties.lastStep = 'validateWorkflowPath';
   validateWorkflowPath(projectPath, workflowNode.fsPath);
   const workflowName = path.basename(path.dirname(workflowNode.fsPath));
+  context.telemetry.properties.lastStep = 'getUnitTestPaths';
   const { testsDirectory, logicAppName, logicAppTestFolderPath, workflowTestFolderPath, mocksFolderPath } = getUnitTestPaths(
     projectPath,
     workflowName
   );
+  context.telemetry.properties.lastStep = 'getOperationMockClassContent';
   const { mockClassContent, foundActionMocks, foundTriggerMocks } = await getOperationMockClassContent(
     operationInfo,
     outputParameters,
@@ -68,6 +79,7 @@ export async function generateTests(context: IActionContext, node: Uri | undefin
   const workflowNameCleaned = workflowName.replace(/-/g, '_').replace(/[^a-zA-Z0-9_]/g, '');
   const logicAppNameCleaned = logicAppName.replace(/-/g, '_').replace(/[^a-zA-Z0-9_]/g, '');
 
+  context.telemetry.properties.lastStep = 'getTestCaseMethods';
   const testCaseMethods: string[] = [];
   for (const [index, scenario] of paths.entries()) {
     const triggerNode = scenario.path[0];
@@ -102,6 +114,7 @@ export async function generateTests(context: IActionContext, node: Uri | undefin
     );
   }
 
+  context.telemetry.properties.lastStep = 'ensureTestFolders';
   await Promise.all([fse.ensureDir(logicAppTestFolderPath), fse.ensureDir(workflowTestFolderPath), fse.ensureDir(mocksFolderPath)]);
 
   context.telemetry.properties.lastStep = 'createTestSettingsConfigFile';
@@ -115,6 +128,7 @@ export async function generateTests(context: IActionContext, node: Uri | undefin
     await fse.writeFile(mockFilePath, classContent, 'utf-8');
   }
 
+  context.telemetry.properties.lastStep = 'writeTestClassFile';
   const testClassTemplateFileName = 'GenericTestClass';
   const testClassTemplatePath = path.join(__dirname, assetsFolderName, unitTestTemplatesFolderName, testClassTemplateFileName);
   const testClassTemplate = await fse.readFile(testClassTemplatePath, 'utf-8');
@@ -126,6 +140,7 @@ export async function generateTests(context: IActionContext, node: Uri | undefin
   const csFilePath = path.join(workflowTestFolderPath, `${workflowNameCleaned}Tests.cs`);
   await fse.writeFile(csFilePath, testClassContent);
 
+  context.telemetry.properties.lastStep = 'ensureCsproj';
   await ensureCsproj(testsDirectory, logicAppTestFolderPath, logicAppName);
   context.telemetry.properties.lastStep = 'updateCsprojFile';
   const csprojFilePath = path.join(logicAppTestFolderPath, `${logicAppName}.csproj`);
@@ -133,6 +148,15 @@ export async function generateTests(context: IActionContext, node: Uri | undefin
 
   context.telemetry.properties.lastStep = 'ensureTestsDirectoryInWorkspace';
   await ensureDirectoryInWorkspace(testsDirectory);
+
+  const successMessage = localize(
+    'generateTestsSuccess',
+    'Tests generated successfully for workflow "{0}" at: "{1}"',
+    workflowName,
+    logicAppTestFolderPath
+  );
+  ext.outputChannel.appendLog(successMessage);
+  vscode.window.showInformationMessage(successMessage);
 }
 
 /**
@@ -204,22 +228,30 @@ async function getActionMockEntry(actionNode: PathNode, foundActionMocks: Record
 /**
  * Gets all action assertions for a given action node, including nested actions if applicable.
  * @param {PathNode} actionNode - The action node to get assertions for.
+ * @param {string} [nestedActionPath] - The nested action path on TestWorkflowRun object.
  * @returns {Promise<string[]>} - A Promise that resolves to an array of action assertion strings.
  */
-async function getActionAssertion(actionNode: PathNode): Promise<string[]> {
+async function getActionAssertion(actionNode: PathNode, nestedActionPath = ''): Promise<string[]> {
   const actionAssertionTemplateFileName = 'TestActionAssertion';
   const actionAssertionTemplatePath = path.join(__dirname, assetsFolderName, unitTestTemplatesFolderName, actionAssertionTemplateFileName);
   const actionAssertionTemplate = await fse.readFile(actionAssertionTemplatePath, 'utf-8');
 
   const childActionAssertions =
     actionNode.type === 'Switch' || actionNode.type === 'If'
-      ? (await Promise.all((actionNode as ParentPathNode).actions.map((childActionNode) => getActionAssertion(childActionNode)))).flat()
+      ? (
+          await Promise.all(
+            (actionNode as ParentPathNode).actions.map((childActionNode) =>
+              getActionAssertion(childActionNode, `${nestedActionPath}["${actionNode.name}"].ChildActions`)
+            )
+          )
+        ).flat()
       : [];
 
   return [
     actionAssertionTemplate
       .replace(/<%= ActionName %>/g, actionNode.name)
-      .replace(/<%= ActionStatus %>/g, toTestWorkflowStatus(actionNode.status)),
+      .replace(/<%= ActionStatus %>/g, toTestWorkflowStatus(actionNode.status))
+      .replace(/<%= NestedActionPath %>/g, nestedActionPath),
     ...childActionAssertions,
   ];
 }

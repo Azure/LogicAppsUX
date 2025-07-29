@@ -1,2 +1,2 @@
-            Assert.IsTrue(testRun.Actions.ContainsKey("<%= ActionName %>"));
-            Assert.AreEqual(expected: <%= ActionStatus %>, actual: testRun.Actions["<%= ActionName %>"].Status);
+            Assert.IsTrue(testRun.Actions<%= NestedActionPath %>.ContainsKey("<%= ActionName %>"));
+            Assert.AreEqual(expected: <%= ActionStatus %>, actual: testRun.Actions<%= NestedActionPath %>["<%= ActionName %>"].Status);
