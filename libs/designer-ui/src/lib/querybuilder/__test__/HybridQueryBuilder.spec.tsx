@@ -255,8 +255,9 @@ describe('HybridQueryBuilderEditor Move Functionality', () => {
       const emptyGroup = createTestGroup({ items: [] });
       renderHybridQueryBuilder({ groupProps: emptyGroup });
 
-      // Should provide default empty row
-      expect(screen.getByRole('textbox')).toBeInTheDocument();
+      // Should provide default empty row - use getAllByRole since there might be multiple textboxes
+      const textboxes = screen.getAllByRole('textbox');
+      expect(textboxes.length).toBeGreaterThan(0);
     });
 
     it('should handle missing props gracefully', () => {

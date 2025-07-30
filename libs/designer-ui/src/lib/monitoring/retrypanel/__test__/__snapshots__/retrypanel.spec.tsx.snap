@@ -255,9 +255,19 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   }
                 >
                   <span
+                    className="token number"
+                    style={
+                      {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    2
+                  </span>
+                  <span
                     className="token plain"
                   >
-                    2 days
+                     days
                   </span>
                 </div>
               </pre>
@@ -434,9 +444,114 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   }
                 >
                   <span
+                    className="token number"
+                    style={
+                      {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    2
+                  </span>
+                  <span
                     className="token plain"
                   >
-                    2/8/2022, 2:52:00 PM (Local time)
+                    /
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    8
+                  </span>
+                  <span
+                    className="token plain"
+                  >
+                    /
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    2022
+                  </span>
+                  <span
+                    className="token punctuation"
+                    style={
+                      {
+                        "color": "rgb(4, 81, 165)",
+                      }
+                    }
+                  >
+                    ,
+                  </span>
+                  <span
+                    className="token plain"
+                  >
+                     
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    2
+                  </span>
+                  <span
+                    className="token operator"
+                    style={
+                      {
+                        "color": "rgb(0, 0, 0)",
+                      }
+                    }
+                  >
+                    :
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    52
+                  </span>
+                  <span
+                    className="token operator"
+                    style={
+                      {
+                        "color": "rgb(0, 0, 0)",
+                      }
+                    }
+                  >
+                    :
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    00
+                  </span>
+                  <span
+                    className="token plain"
+                  >
+                     PM (Local time)
                   </span>
                 </div>
               </pre>
@@ -613,9 +728,114 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   }
                 >
                   <span
+                    className="token number"
+                    style={
+                      {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    2
+                  </span>
+                  <span
                     className="token plain"
                   >
-                    2/10/2022, 2:52:00 PM (Local time)
+                    /
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    10
+                  </span>
+                  <span
+                    className="token plain"
+                  >
+                    /
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    2022
+                  </span>
+                  <span
+                    className="token punctuation"
+                    style={
+                      {
+                        "color": "rgb(4, 81, 165)",
+                      }
+                    }
+                  >
+                    ,
+                  </span>
+                  <span
+                    className="token plain"
+                  >
+                     
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    2
+                  </span>
+                  <span
+                    className="token operator"
+                    style={
+                      {
+                        "color": "rgb(0, 0, 0)",
+                      }
+                    }
+                  >
+                    :
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    52
+                  </span>
+                  <span
+                    className="token operator"
+                    style={
+                      {
+                        "color": "rgb(0, 0, 0)",
+                      }
+                    }
+                  >
+                    :
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    00
+                  </span>
+                  <span
+                    className="token plain"
+                  >
+                     PM (Local time)
                   </span>
                 </div>
               </pre>
@@ -1155,9 +1375,19 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   }
                 >
                   <span
+                    className="token number"
+                    style={
+                      {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    2
+                  </span>
+                  <span
                     className="token plain"
                   >
-                    2 days
+                     days
                   </span>
                 </div>
               </pre>
@@ -1334,9 +1564,114 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   }
                 >
                   <span
+                    className="token number"
+                    style={
+                      {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    2
+                  </span>
+                  <span
                     className="token plain"
                   >
-                    2/8/2022, 2:52:00 PM (Local time)
+                    /
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    8
+                  </span>
+                  <span
+                    className="token plain"
+                  >
+                    /
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    2022
+                  </span>
+                  <span
+                    className="token punctuation"
+                    style={
+                      {
+                        "color": "rgb(4, 81, 165)",
+                      }
+                    }
+                  >
+                    ,
+                  </span>
+                  <span
+                    className="token plain"
+                  >
+                     
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    2
+                  </span>
+                  <span
+                    className="token operator"
+                    style={
+                      {
+                        "color": "rgb(0, 0, 0)",
+                      }
+                    }
+                  >
+                    :
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    52
+                  </span>
+                  <span
+                    className="token operator"
+                    style={
+                      {
+                        "color": "rgb(0, 0, 0)",
+                      }
+                    }
+                  >
+                    :
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    00
+                  </span>
+                  <span
+                    className="token plain"
+                  >
+                     PM (Local time)
                   </span>
                 </div>
               </pre>
@@ -1513,9 +1848,114 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   }
                 >
                   <span
+                    className="token number"
+                    style={
+                      {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    2
+                  </span>
+                  <span
                     className="token plain"
                   >
-                    2/10/2022, 2:52:00 PM (Local time)
+                    /
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    10
+                  </span>
+                  <span
+                    className="token plain"
+                  >
+                    /
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    2022
+                  </span>
+                  <span
+                    className="token punctuation"
+                    style={
+                      {
+                        "color": "rgb(4, 81, 165)",
+                      }
+                    }
+                  >
+                    ,
+                  </span>
+                  <span
+                    className="token plain"
+                  >
+                     
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    2
+                  </span>
+                  <span
+                    className="token operator"
+                    style={
+                      {
+                        "color": "rgb(0, 0, 0)",
+                      }
+                    }
+                  >
+                    :
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    52
+                  </span>
+                  <span
+                    className="token operator"
+                    style={
+                      {
+                        "color": "rgb(0, 0, 0)",
+                      }
+                    }
+                  >
+                    :
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    00
+                  </span>
+                  <span
+                    className="token plain"
+                  >
+                     PM (Local time)
                   </span>
                 </div>
               </pre>
@@ -2191,9 +2631,19 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   }
                 >
                   <span
+                    className="token number"
+                    style={
+                      {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    18
+                  </span>
+                  <span
                     className="token plain"
                   >
-                    18 minutes
+                     minutes
                   </span>
                 </div>
               </pre>
@@ -2370,9 +2820,114 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   }
                 >
                   <span
+                    className="token number"
+                    style={
+                      {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    2
+                  </span>
+                  <span
                     className="token plain"
                   >
-                    2/8/2022, 2:52:00 PM (Local time)
+                    /
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    8
+                  </span>
+                  <span
+                    className="token plain"
+                  >
+                    /
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    2022
+                  </span>
+                  <span
+                    className="token punctuation"
+                    style={
+                      {
+                        "color": "rgb(4, 81, 165)",
+                      }
+                    }
+                  >
+                    ,
+                  </span>
+                  <span
+                    className="token plain"
+                  >
+                     
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    2
+                  </span>
+                  <span
+                    className="token operator"
+                    style={
+                      {
+                        "color": "rgb(0, 0, 0)",
+                      }
+                    }
+                  >
+                    :
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    52
+                  </span>
+                  <span
+                    className="token operator"
+                    style={
+                      {
+                        "color": "rgb(0, 0, 0)",
+                      }
+                    }
+                  >
+                    :
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    00
+                  </span>
+                  <span
+                    className="token plain"
+                  >
+                     PM (Local time)
                   </span>
                 </div>
               </pre>
@@ -2549,9 +3104,114 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   }
                 >
                   <span
+                    className="token number"
+                    style={
+                      {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    2
+                  </span>
+                  <span
                     className="token plain"
                   >
-                    2/8/2022, 3:10:00 PM (Local time)
+                    /
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    8
+                  </span>
+                  <span
+                    className="token plain"
+                  >
+                    /
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    2022
+                  </span>
+                  <span
+                    className="token punctuation"
+                    style={
+                      {
+                        "color": "rgb(4, 81, 165)",
+                      }
+                    }
+                  >
+                    ,
+                  </span>
+                  <span
+                    className="token plain"
+                  >
+                     
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    3
+                  </span>
+                  <span
+                    className="token operator"
+                    style={
+                      {
+                        "color": "rgb(0, 0, 0)",
+                      }
+                    }
+                  >
+                    :
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    10
+                  </span>
+                  <span
+                    className="token operator"
+                    style={
+                      {
+                        "color": "rgb(0, 0, 0)",
+                      }
+                    }
+                  >
+                    :
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    00
+                  </span>
+                  <span
+                    className="token plain"
+                  >
+                     PM (Local time)
                   </span>
                 </div>
               </pre>
@@ -3134,9 +3794,19 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   }
                 >
                   <span
+                    className="token number"
+                    style={
+                      {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    2
+                  </span>
+                  <span
                     className="token plain"
                   >
-                    2 days
+                     days
                   </span>
                 </div>
               </pre>
@@ -3313,9 +3983,114 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   }
                 >
                   <span
+                    className="token number"
+                    style={
+                      {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    2
+                  </span>
+                  <span
                     className="token plain"
                   >
-                    2/8/2022, 2:52:00 PM (Local time)
+                    /
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    8
+                  </span>
+                  <span
+                    className="token plain"
+                  >
+                    /
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    2022
+                  </span>
+                  <span
+                    className="token punctuation"
+                    style={
+                      {
+                        "color": "rgb(4, 81, 165)",
+                      }
+                    }
+                  >
+                    ,
+                  </span>
+                  <span
+                    className="token plain"
+                  >
+                     
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    2
+                  </span>
+                  <span
+                    className="token operator"
+                    style={
+                      {
+                        "color": "rgb(0, 0, 0)",
+                      }
+                    }
+                  >
+                    :
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    52
+                  </span>
+                  <span
+                    className="token operator"
+                    style={
+                      {
+                        "color": "rgb(0, 0, 0)",
+                      }
+                    }
+                  >
+                    :
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    00
+                  </span>
+                  <span
+                    className="token plain"
+                  >
+                     PM (Local time)
                   </span>
                 </div>
               </pre>
@@ -3492,9 +4267,114 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   }
                 >
                   <span
+                    className="token number"
+                    style={
+                      {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    2
+                  </span>
+                  <span
                     className="token plain"
                   >
-                    2/10/2022, 2:52:00 PM (Local time)
+                    /
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    10
+                  </span>
+                  <span
+                    className="token plain"
+                  >
+                    /
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    2022
+                  </span>
+                  <span
+                    className="token punctuation"
+                    style={
+                      {
+                        "color": "rgb(4, 81, 165)",
+                      }
+                    }
+                  >
+                    ,
+                  </span>
+                  <span
+                    className="token plain"
+                  >
+                     
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    2
+                  </span>
+                  <span
+                    className="token operator"
+                    style={
+                      {
+                        "color": "rgb(0, 0, 0)",
+                      }
+                    }
+                  >
+                    :
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    52
+                  </span>
+                  <span
+                    className="token operator"
+                    style={
+                      {
+                        "color": "rgb(0, 0, 0)",
+                      }
+                    }
+                  >
+                    :
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    00
+                  </span>
+                  <span
+                    className="token plain"
+                  >
+                     PM (Local time)
                   </span>
                 </div>
               </pre>

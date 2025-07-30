@@ -7,7 +7,7 @@
     "@fluentui/react-icons": "2.0.224",
     "@microsoft/designer-ui": "workspace:*",
     "@microsoft/logic-apps-shared": "workspace:*",
-    "monaco-editor": "0.44.0",
+    "monaco-editor": "0.52.2",
     "react-intl": "6.3.0"
   },
   "devDependencies": {

@@ -271,7 +271,67 @@ exports[`ui/monitoring/values/xml > should render XML with encoded UTF-8 Chinese
           <span
             className="token plain"
           >
-            &lt;?xml version="1.0" encoding="utf-8"?&gt;&lt;root&gt;&lt;name username="JS1用户名"&gt;你好 John&lt;/name&gt;&lt;name username="MI1用户名"&gt;中文测试&lt;/name&gt;&lt;/root&gt;
+            &lt;?xml version=
+          </span>
+          <span
+            className="token string"
+            style={
+              {
+                "color": "rgb(163, 21, 21)",
+              }
+            }
+          >
+            "1.0"
+          </span>
+          <span
+            className="token plain"
+          >
+             encoding=
+          </span>
+          <span
+            className="token string"
+            style={
+              {
+                "color": "rgb(163, 21, 21)",
+              }
+            }
+          >
+            "utf-8"
+          </span>
+          <span
+            className="token plain"
+          >
+            ?&gt;&lt;root&gt;&lt;name username=
+          </span>
+          <span
+            className="token string"
+            style={
+              {
+                "color": "rgb(163, 21, 21)",
+              }
+            }
+          >
+            "JS1用户名"
+          </span>
+          <span
+            className="token plain"
+          >
+            &gt;你好 John&lt;/name&gt;&lt;name username=
+          </span>
+          <span
+            className="token string"
+            style={
+              {
+                "color": "rgb(163, 21, 21)",
+              }
+            }
+          >
+            "MI1用户名"
+          </span>
+          <span
+            className="token plain"
+          >
+            &gt;中文测试&lt;/name&gt;&lt;/root&gt;
           </span>
         </div>
       </pre>
