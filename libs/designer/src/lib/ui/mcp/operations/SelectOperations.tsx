@@ -7,7 +7,7 @@ import { useAllConnectors } from '../../../core/queries/browse';
 import type { RootState, AppDispatch } from '../../../core/state/mcp/store';
 import { useOperationsByConnectorQuery } from '../../../core/mcp/utils/queries';
 import { OperationSelectionGrid } from './OperationSelectionGrid';
-import { selectOperations } from '../../../core/state/mcp/connector/connectorSlice';
+import { selectOperations } from '../../../core/state/mcp/mcpselectionslice';
 import { useConnectorSelectionStyles } from '../connectors/styles';
 import { isUndefinedOrEmptyString } from '@microsoft/logic-apps-shared';
 
@@ -28,8 +28,8 @@ export const SelectOperations = () => {
   const styles = useConnectorSelectionStyles();
 
   const { selectedConnectorId, selectedOperations } = useSelector((state: RootState) => ({
-    selectedConnectorId: state.connector.selectedConnectorId,
-    selectedOperations: state.connector.selectedOperations ?? [],
+    selectedConnectorId: state.mcpSelection.selectedConnectorId,
+    selectedOperations: state.mcpSelection.selectedOperations ?? [],
   }));
   const [searchTerm, setSearchTerm] = useState('');
 
