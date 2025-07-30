@@ -14,6 +14,7 @@ import type { McpPanelTabProps } from '@microsoft/designer-ui';
 import { connectionsTab } from './tabs/connectionsTab';
 import { getResourceNameFromId } from '@microsoft/logic-apps-shared';
 import constants from '../../../../common/constants';
+import { clearAllSelections } from '../../../../core/state/mcp/mcpselectionslice';
 
 export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
   const intl = useIntl();
@@ -77,6 +78,7 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
       }
     }
     dispatch(closePanel());
+    dispatch(clearAllSelections());
   }, [dispatch, selectedConnectorId, selectedOperations, newlySelectedOperationIds, deselectedOperationIds]);
 
   const handleOnSelectOperations = useCallback(async () => {

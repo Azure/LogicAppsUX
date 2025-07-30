@@ -113,8 +113,6 @@ export const SearchableDropdown: FC<SearchableDropdownProps> = ({
     return [selectAllOption, ...regularOptions];
   }, [inputOptions, showSelectAll, multiselect, deselectAllText, selectAllText, inputValue, selectedKeys]);
 
-  const filteredOptions = optionsWithSelectAll;
-
   const handleOpenChange = (_e: any, data: { open: boolean }) => {
     setIsOpen(data.open);
     if (!data.open) {
@@ -132,7 +130,7 @@ export const SearchableDropdown: FC<SearchableDropdownProps> = ({
 
     // Handle "Select All"/"Deselect All" functionality
     if (key === SEARCHABLE_DROPDOWN_SELECT_ALL_KEY && multiselect) {
-      const allSelectableKeys = filteredOptions
+      const allSelectableKeys = optionsWithSelectAll
         .filter((option) => option.key !== SEARCHABLE_DROPDOWN_SELECT_ALL_KEY)
         .map((option) => option.key);
 
@@ -175,13 +173,13 @@ export const SearchableDropdown: FC<SearchableDropdownProps> = ({
       onChange={handleInputChange}
       {...(multiselect ? { selectedOptions: selectedKeys } : { value: selectedKeys[0] || '' })}
     >
-      {filteredOptions.map((option) => (
+      {optionsWithSelectAll.map((option) => (
         <Option key={option.key} value={option.key}>
           {option.text}
         </Option>
       ))}
 
-      {filteredOptions.length === 0 && inputValue && (
+      {optionsWithSelectAll.length === 0 && inputValue && (
         <div className={styles.noResults}>
           <Text size={200}>{noResultsText}</Text>
         </div>
