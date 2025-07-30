@@ -94,10 +94,10 @@ export async function generateTests(context: IActionContext, node: Uri | undefin
 
     const pathActions = scenario.path.slice(1);
     const actionChain = getExecutedActionChain(pathActions);
-    const actionMocks = (await Promise.all(pathActions.map((actionNode) => getActionMock(actionNode, foundActionMocks)))).flat();
-    const actionMockEntries = (await Promise.all(pathActions.map((actionNode) => getActionMockEntry(actionNode, foundActionMocks)))).flat();
+    const actionChainMockable = getMockableExecutedActions(actionChain, foundActionMocks);
     const actionAssertions = (await Promise.all(pathActions.map((actionNode) => getActionAssertion(actionNode)))).flat();
     const pathName = getPathName(index, scenario.overallStatus);
+    const pathDescription = getPathDescription(actionChain);
 
     const testCaseMethodTemplateFileName = 'TestCaseMethod';
     const testCaseMethodTemplatePath = path.join(__dirname, assetsFolderName, unitTestTemplatesFolderName, testCaseMethodTemplateFileName);
@@ -106,20 +106,29 @@ export async function generateTests(context: IActionContext, node: Uri | undefin
       testCaseMethodTemplate
         .replace(/<%= WorkflowName %>/g, workflowName)
         .replace(/<%= WorkflowNameCleaned %>/g, workflowNameCleaned)
-        .replace(/<%= PathDescriptionString %>/g, getPathDescription(actionChain))
+        .replace(/<%= PathDescriptionString %>/g, pathDescription)
         .replace(/<%= PathName %>/g, pathName)
-        .replace(/<%= TriggerMockOutputClassName %>/g, triggerMockOutputClassName)
-        .replace(/<%= TriggerMockClassName %>/g, triggerMockClassName)
-        .replace(/<%= ActionMocksContent %>/g, actionMocks.join('\n\n'))
-        .replace(/<%= ActionMockEntries %>/g, actionMockEntries.join(',\n'))
         .replace(/<%= ActionAssertionsContent %>/g, actionAssertions.join('\n\n'))
         .replace(/<%= PathOverallStatus %>/g, toTestWorkflowStatus(scenario.overallStatus))
     );
 
-    const testCaseDataTemplateFileName = 'TestCaseData';
-    const testCaseDataTemplatePath = path.join(__dirname, assetsFolderName, unitTestTemplatesFolderName, testCaseDataTemplateFileName);
-    const testCaseDataTemplate = await fse.readFile(testCaseDataTemplatePath, 'utf-8');
-    testCaseData.push(testCaseDataTemplate.replace(/<%= PathName %>/g, pathName));
+    testCaseData.push(`        /// <summary>
+        /// Test data for the workflow path: ${pathDescription}
+        /// </summary>
+        public static IEnumerable<object[]> ${pathName}_TestData
+        {
+            get
+            {
+                yield return new object[]
+                {
+                    new ${triggerMockClassName}(outputs: new ${triggerMockOutputClassName}()),
+                    new Dictionary<string, ActionMock>()
+                    {
+                        ${actionChainMockable.map((actionNode) => getTestDataActionMockEntry(actionNode, foundActionMocks)).join(`,\n${' '.repeat(24)}`)}
+                    }
+                };
+            }
+        }`);
   }
 
   context.telemetry.properties.lastStep = 'ensureTestFolders';
@@ -175,69 +184,51 @@ export async function generateTests(context: IActionContext, node: Uri | undefin
 }
 
 /**
- * Gets all action mocks for a given action node, including nested actions if applicable.
- * @param {PathNode} actionNode - The action node to get mocks for.
- * @param {Record<string, string>} foundActionMocks - The mockable actions.
- * @returns {Promise<string[]>} - A Promise that resolves to an array of action mock strings.
+ * Constructs the executed action chain (including nested actions in order) for a given path.
+ * @param {PathNode[]} path - The path to construct the action chain for.
+ * @returns {PathNode[]} - The constructed action chain.
  */
-async function getActionMock(actionNode: PathNode, foundActionMocks: Record<string, string>): Promise<string[]> {
-  const actionMockOutputClassName = foundActionMocks[actionNode.name];
-  const actionMockClassName = actionMockOutputClassName?.replace(/(.*)Output$/, '$1Mock');
+function getExecutedActionChain(path: PathNode[]): PathNode[] {
+  const actionChain: PathNode[] = [];
 
-  if (actionNode.type === 'Switch' || actionNode.type === 'If' || actionNode.type === 'Scope') {
-    return (
-      await Promise.all((actionNode as ParentPathNode).actions.map((childActionNode) => getActionMock(childActionNode, foundActionMocks)))
-    ).flat();
+  for (const actionNode of path) {
+    if (actionNode.type === 'Switch' || actionNode.type === 'If' || actionNode.type === 'Scope') {
+      actionChain.push(...getExecutedActionChain((actionNode as ParentPathNode).actions));
+    } else {
+      actionChain.push(actionNode);
+    }
   }
 
-  if (actionMockOutputClassName === undefined) {
-    return [];
-  }
-
-  const actionMockTemplateFileName = 'TestActionMock';
-  const actionMockTemplatePath = path.join(__dirname, assetsFolderName, unitTestTemplatesFolderName, actionMockTemplateFileName);
-  const actionMockTemplate = await fse.readFile(actionMockTemplatePath, 'utf-8');
-
-  return [
-    actionMockTemplate
-      .replace(/<%= ActionName %>/g, actionNode.name)
-      .replace(/<%= ActionNameCleaned %>/g, actionNode.name.replace(/[^a-zA-Z0-9_]/g, ''))
-      .replace(/<%= ActionMockStatus %>/g, toTestWorkflowStatus(actionNode.status))
-      .replace(/<%= ActionMockOutputClassName %>/g, actionMockOutputClassName)
-      .replace(/<%= ActionMockClassName %>/g, actionMockClassName),
-  ];
+  return actionChain;
 }
 
 /**
- * Gets all action mock dictionary entries for a given action node, including nested actions if applicable.
- * @param {PathNode} actionNode - The action node to get mock entries for.
- * @param {Record<string, string>} foundActionMocks - The mockable actions.
- * @returns {Promise<string[]>} - A Promise that resolves to an array of action mock dictionary entry strings.
+ * Filters the action chain to only include actions that are mockable.
+ * @param {PathNode[]} actionChain - The executed action chain.
+ * @param {Record<string, string>} foundActionMocks - The found action mocks.
+ * @returns {PathNode[]} - The filtered action chain containing only mockable actions.
  */
-async function getActionMockEntry(actionNode: PathNode, foundActionMocks: Record<string, string>): Promise<string[]> {
-  const actionMockOutputClassName = foundActionMocks[actionNode.name];
+function getMockableExecutedActions(actionChain: PathNode[], foundActionMocks: Record<string, string>): PathNode[] {
+  return actionChain.filter((actionNode) => actionNode.name in foundActionMocks);
+}
 
-  if (actionNode.type === 'Switch' || actionNode.type === 'If' || actionNode.type === 'Scope') {
-    return (
-      await Promise.all(
-        (actionNode as ParentPathNode).actions.map((childActionNode) => getActionMockEntry(childActionNode, foundActionMocks))
-      )
-    ).flat();
-  }
+/**
+ * Gets a string name for the action path.
+ * @param {number} index - The index of the path in the list of paths.
+ * @param {string} overallStatus - The overall status of the path.
+ * @returns {string} - A string name for the action path.
+ */
+function getPathName(index: number, overallStatus: string): string {
+  return `Path${index}_${overallStatus}`;
+}
 
-  if (actionMockOutputClassName === undefined) {
-    return [];
-  }
-
-  const actionMockEntryTemplateFileName = 'TestActionMockEntry';
-  const actionMockEntryTemplatePath = path.join(__dirname, assetsFolderName, unitTestTemplatesFolderName, actionMockEntryTemplateFileName);
-  const actionMockEntryTemplate = await fse.readFile(actionMockEntryTemplatePath, 'utf-8');
-
-  return [
-    actionMockEntryTemplate
-      .replace(/<%= ActionName %>/g, actionNode.name)
-      .replace(/<%= ActionNameCleaned %>/g, actionNode.name.replace(/[^a-zA-Z0-9_]/g, '')),
-  ];
+/**
+ * Gets a string description of the action path.
+ * @param {PathNode[]} actionChain - The executed action chain.
+ * @returns {string} - A string description of the action path.
+ */
+function getPathDescription(actionChain: PathNode[]): string {
+  return actionChain.map((action) => `[${action.status}] ${action.name}`).join(' -> ');
 }
 
 /**
@@ -271,44 +262,24 @@ async function getActionAssertion(actionNode: PathNode, nestedActionPath = ''): 
   ];
 }
 
+/**
+ * Gets a string representation of the action mock dictionary item for a given action node.
+ * @param {PathNode} actionNode - The action node to get the mock entry for.
+ * @param {Record<string, string>} foundActionMocks - The found action mocks.
+ * @returns {string} - A string representation of the action mock dictionary item.
+ */
+function getTestDataActionMockEntry(actionNode: PathNode, foundActionMocks: Record<string, string>): string {
+  const actionMockOutputClassName = foundActionMocks[actionNode.name];
+  const actionMockClassName = actionMockOutputClassName?.replace(/(.*)Output$/, '$1Mock');
+
+  return `{ "${actionNode.name}", new ${actionMockClassName}(status: ${toTestWorkflowStatus(actionNode.status)}, outputs: new ${actionMockOutputClassName}()) }`;
+}
+
+/**
+ * Converts a workflow status string to a TestWorkflowStatus enum string.
+ * @param {string} status - The workflow status to convert.
+ * @returns {string} - The corresponding TestWorkflowStatus enum string.
+ */
 function toTestWorkflowStatus(status: string): string {
   return `TestWorkflowStatus.${status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()}`;
-}
-
-/**
- * Constructs the executed action chain (including nested actions in order) for a given path.
- * @param {PathNode[]} path - The path to construct the action chain for.
- * @returns {PathNode[]} - The constructed action chain.
- */
-function getExecutedActionChain(path: PathNode[]): PathNode[] {
-  const actionChain: PathNode[] = [];
-
-  for (const actionNode of path) {
-    if (actionNode.type === 'Switch' || actionNode.type === 'If' || actionNode.type === 'Scope') {
-      actionChain.push(...getExecutedActionChain((actionNode as ParentPathNode).actions));
-    } else {
-      actionChain.push(actionNode);
-    }
-  }
-
-  return actionChain;
-}
-
-/**
- * Gets a string description of the action path.
- * @param {PathNode[]} actionChain - The executed action chain.
- * @returns {string} - A string description of the action path.
- */
-function getPathDescription(actionChain: PathNode[]): string {
-  return actionChain.map((action) => `[${action.status}] ${action.name}`).join(' -> ');
-}
-
-/**
- * Gets a string name for the action path.
- * @param {number} index - The index of the path in the list of paths.
- * @param {string} overallStatus - The overall status of the path.
- * @returns {string} - A string name for the action path.
- */
-function getPathName(index: number, overallStatus: string): string {
-  return `Path${index}_${overallStatus}`;
 }

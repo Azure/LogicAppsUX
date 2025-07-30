@@ -3,19 +3,8 @@
         /// </summary>
         [TestMethod]
         [DynamicData(nameof(<%= PathName %>_TestData))]
-        public async Task ExecuteWorkflow_<%= WorkflowNameCleaned %>_<%= PathName %>(Dictionary<string, MockOutput> mockOutputs, Dictionary<string, TestErrorInfo> mockErrors)
+        public async Task ExecuteWorkflow_<%= WorkflowNameCleaned %>_<%= PathName %>(TriggerMock triggerMock, Dictionary<string, ActionMock> actionMocks)
         {
-            // PREPARE
-            // Generate mock trigger and action data from parameters
-            var triggerMockOutput = new <%= TriggerMockOutputClassName %>();
-            var triggerMock = new <%= TriggerMockClassName %>(outputs: triggerMockOutput);
-
-<%= ActionMocksContent %>
-            var actionMocks = new Dictionary<string, ActionMock>()
-            {
-<%= ActionMockEntries %>
-            };
-
             // ACT
             // Create an instance of UnitTestExecutor, and run the workflow with the mock data
             var testMock = new TestMockDefinition(
@@ -25,11 +14,12 @@
                 .Create()
                 .RunWorkflowAsync(testMock: testMock)
                 .ConfigureAwait(continueOnCapturedContext: false);
-                
+            
             // ASSERT
             // Verify that the workflow executed with expected status
             Assert.IsNotNull(value: testRun);
             Assert.AreEqual(expected: <%= PathOverallStatus %>, actual: testRun.Status);
             Assert.AreEqual(expected: TestWorkflowStatus.Succeeded, actual: testRun.Trigger.Status);
+
 <%= ActionAssertionsContent %>
         }
