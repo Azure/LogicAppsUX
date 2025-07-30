@@ -23,7 +23,7 @@ export const EditOperationPanel = () => {
   const styles = useMcpPanelStyles();
 
   const { selectedOperationId, operationMetadata, isOpen, panelMode, inputParameters } = useSelector((state: RootState) => ({
-    selectedOperationId: state.connector.selectedOperationId,
+    selectedOperationId: state.mcpSelection.selectedOperationId,
     operationMetadata: state.operations.operationMetadata,
     isOpen: state.mcpPanel?.isOpen ?? false,
     panelMode: state.mcpPanel?.currentPanelView ?? null,

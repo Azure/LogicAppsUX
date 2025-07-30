@@ -47,7 +47,7 @@ export const EditOperation = ({
   const styles = useEditOperationStyles();
 
   const { selectedOperationId, operationInfos, inputParameters } = useSelector((state: RootState) => ({
-    selectedOperationId: state.connector.selectedOperationId,
+    selectedOperationId: state.mcpSelection.selectedOperationId,
     operationInfos: state.operations.operationInfo,
     inputParameters: state.operations.inputParameters,
   }));
