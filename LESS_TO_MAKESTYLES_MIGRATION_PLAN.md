@@ -4,7 +4,7 @@
 
 This document outlines a comprehensive plan to migrate 124 .less files in the LogicAppsUX monorepo to Fluent UI v9's makeStyles CSS-in-JS system. The migration will improve performance, enable better tree-shaking, provide type-safe styling, and align with modern React best practices.
 
-**Current Progress**: 34 components migrated (27.4% complete)
+**Current Progress**: 35 components migrated (28.2% complete)
 - ✅ peek component (peek.less - 6 lines)
 - ✅ error component (error.less - 29 lines)
 - ✅ tip component (tip.less - 33 lines)
@@ -36,7 +36,7 @@ This document outlines a comprehensive plan to migrate 124 .less files in the Lo
 - ✅ **nodeSearchPanel** - NEW makeStyles implementation with Tabster focus management (branch: ccastrotrejo/panelSearchMigration)
 - ✅ **VS CODE**: export component (export.less - 120 lines) → exportStyles.ts (PR #7588/#7797)
 - ✅ **VS CODE**: overview app (overview.less - 4 lines) → overviewStyles.ts (PR #7588)
-- ✅ **VS CODE**: reviewList component (styles.less - 32 lines) → reviewListStyles.ts (PR #7820)
+- ✅ **VS CODE**: reviewList component (styles.less - 32 lines) → reviewListStyles.ts (PR #7907) - **COMPLEX MIGRATION**
 - ✅ **SVG MIGRATION**: 3 SVG files removed, replaced with Fluent UI icons (PR #7820)
 - ⏭️ processsimple.less - SKIPPED: unused file
 - ⏭️ datetimeeditor.less - SKIPPED: no component found
@@ -240,9 +240,13 @@ For each component:
 #### 4.1 VS Code React App (Week 11)
 - [x] Migrate export.less → exportStyles.ts - ✅ COMPLETED (PR #7588/#7797)
 - [x] Migrate overview.less → overviewStyles.ts - ✅ COMPLETED (PR #7588)
-- [x] Migrate reviewList styles → reviewListStyles.ts - ✅ COMPLETED (PR #7820)
+- [x] Migrate reviewList styles → reviewListStyles.ts - ✅ COMPLETED (PR #7907) - **COMPLEX MIGRATION**
+  - Migrated from GroupedList/DetailsRow to Tree component (Fluent UI v8 → v9)
+  - Shimmer components migrated to Skeleton components
+  - Removed styles.less file completely
+  - Updated all component props to remove validationItems parameter
 - [x] Replace SVG icons with Fluent UI icons - ✅ COMPLETED (PR #7820)
-- [ ] Migrate remaining 7 app-specific .less files
+- [ ] Migrate remaining 6 app-specific .less files (reduced from 7)
 - [ ] Update build configuration
 - [ ] Test in VS Code environment
 
@@ -619,11 +623,14 @@ Alongside the LESS to makeStyles migration, we're also migrating from Fluent UI 
    - Location: `/apps/vs-code-react/src/app/export/`
    - Complete LESS → makeStyles migration included
 
-6. **VS Code ReviewList Component** (✅ COMPLETED - PR #7820)
-   - SVG icons → Fluent UI React icons
-   - Custom styling with makeStyles implementation
+6. **VS Code ReviewList Component** (✅ COMPLETED - PR #7907)
+   - v8: `GroupedList`/`DetailsRow` → v9: `Tree` component architecture
+   - v8: `Shimmer` → v9: `Skeleton` components for loading states
+   - LESS: `styles.less` (32 lines) → makeStyles: `reviewListStyles.ts`
+   - SVG icons → Fluent UI React icons with theme support
    - Location: `/apps/vs-code-react/src/app/components/reviewList/`
-   - Removed static SVG files, added icon theming support
+   - Removed validationItems parameter, simplified component API
+   - Complete removal of styles.less file (not just migration)
 
 7. **NodeSearchPanel Component** (✅ COMPLETED - Branch: ccastrotrejo/panelSearchMigration)
    - v8: `FocusTrapZone` → Tabster focus management system

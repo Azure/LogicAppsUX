@@ -1,9 +1,9 @@
 import './styles.less';
-import { Dropdown, DropdownMenuItemType, SearchBox } from '@fluentui/react';
+import { Dropdown, DropdownMenuItemType } from '@fluentui/react';
 import type { IDropdownOption, IDropdownProps } from '@fluentui/react';
-import { Spinner } from '@fluentui/react-components';
+import type { InputOnChangeData, SearchBoxChangeEvent } from '@fluentui/react-components';
+import { SearchBox, Spinner } from '@fluentui/react-components';
 import { useState } from 'react';
-import type { ChangeEvent } from 'react';
 import { useIntl } from 'react-intl';
 
 export interface ISearchableDropdownProps extends IDropdownProps {
@@ -27,17 +27,15 @@ export const SearchableDropdown: React.FC<ISearchableDropdownProps> = (props) =>
   };
 
   const renderOption = (option: any): JSX.Element => {
-    const searchString = (_event?: ChangeEvent<HTMLInputElement> | undefined, newValue?: string | undefined) => {
-      const newString = newValue as string;
+    const onSearch: (ev: SearchBoxChangeEvent, data: InputOnChangeData) => void = (_, data) => {
+      const newString = data.value;
       setSearchText(newString);
     };
 
     const isHeader = option.itemType === DropdownMenuItemType.Header && option.key === filterHeader;
 
     const searchBox = (
-      <div className="searchable-dropdown-searchbox">
-        <SearchBox showIcon underlined onChange={searchString} placeholder={props.searchBoxPlaceholder ?? intlText.SEARCH_OPTIONS} />
-      </div>
+      <SearchBox style={{ width: '100%' }} onChange={onSearch} placeholder={props.searchBoxPlaceholder ?? intlText.SEARCH_OPTIONS} />
     );
 
     return isHeader ? searchBox : <>{option.text}</>;

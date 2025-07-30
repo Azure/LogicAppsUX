@@ -167,6 +167,9 @@ export const useExportStyles = makeStyles({
   },
 
   exportSummaryFileLocationText: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '2px',
     width: '40%',
   },
 
