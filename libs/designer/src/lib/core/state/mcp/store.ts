@@ -4,7 +4,7 @@ import operationReducer from '../operation/operationMetadataSlice';
 import panelReducer from './panel/mcpPanelSlice';
 import connectionReducer from '../connection/connectionSlice';
 import resourceReducer from './resourceSlice';
-import connectorReducer from './connector/connectorSlice';
+import mcpSelectionReducer from './mcpselectionslice';
 
 const rootReducer = combineReducers({
   resource: resourceReducer,
@@ -12,7 +12,7 @@ const rootReducer = combineReducers({
   connection: connectionReducer,
   mcpOptions: mcpOptionsReducer,
   mcpPanel: panelReducer,
-  connector: connectorReducer,
+  mcpSelection: mcpSelectionReducer,
 });
 
 export const setupStore = (preloadedState?: Partial<RootState>) => {
