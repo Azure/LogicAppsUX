@@ -8,18 +8,20 @@ import {
   AccordionItem,
   AccordionHeader,
   AccordionPanel,
+  tokens,
 } from '@fluentui/react-components';
 import type { RootState, AppDispatch } from '../../../core/state/mcp/store';
 import { useSelector, useDispatch } from 'react-redux';
 import { useCallback, useMemo } from 'react';
 import { useEditOperationStyles } from './styles';
-import type { ParameterInfo } from '@microsoft/logic-apps-shared';
+import { isUndefinedOrEmptyString, type ParameterInfo } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 import type { SearchableDropdownOption } from '@microsoft/designer-ui';
 import { SearchableDropdownWithAddAll } from '@microsoft/designer-ui';
 import { updateParameterConditionalVisibility } from '../../../core/state/operation/operationMetadataSlice';
 import { getGroupIdFromParameterId } from '../../../core/utils/parameters/helper';
 import { type McpParameterInputType, ParameterField } from './parameterfield';
+import { DismissCircle20Filled } from '@fluentui/react-icons';
 
 interface EditOperationProps {
   description: string;
@@ -250,6 +252,11 @@ export const EditOperation = ({
     [setParameterErrors, parameterErrors]
   );
 
+  const parameterHasErrors = useMemo(
+    () => Object.values(parameterErrors).some((error) => !isUndefinedOrEmptyString(error)),
+    [parameterErrors]
+  );
+
   if (!operationInfo || !selectedOperationId) {
     return (
       <div className={styles.container}>
@@ -297,9 +304,12 @@ export const EditOperation = ({
 
       {/* Parameters Section */}
       <div className={styles.section}>
-        <Text size={400} weight="semibold" className={styles.sectionTitle}>
-          {INTL_TEXT.parameters}
-        </Text>
+        <div className={styles.sectionTitle}>
+          <Text size={400} weight="semibold">
+            {INTL_TEXT.parameters}
+          </Text>
+          {parameterHasErrors && <DismissCircle20Filled color={tokens.colorStatusDangerForeground1} />}
+        </div>
 
         {hasRequiredParameters || hasOptionalParameters || hasVisibleConditionalParameters ? (
           <div className={styles.parametersSection}>

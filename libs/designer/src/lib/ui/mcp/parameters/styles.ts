@@ -18,6 +18,9 @@ export const useEditOperationStyles = makeStyles({
   sectionTitle: {
     color: tokens.colorNeutralForeground1,
     marginBottom: tokens.spacingVerticalS,
+    display: 'flex',
+    alignItems: 'center',
+    gap: '5px',
   },
 
   operationHeader: {

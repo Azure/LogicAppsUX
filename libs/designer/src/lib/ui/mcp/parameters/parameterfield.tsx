@@ -1,6 +1,6 @@
 import type { ChangeState } from '@microsoft/designer-ui';
 import { Label, Button, mergeClasses, RadioGroup, Radio, Field, type RadioGroupProps, InfoLabel, Text } from '@fluentui/react-components';
-import { Dismiss16Regular } from '@fluentui/react-icons';
+import { Delete16Regular } from '@fluentui/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useEditOperationStyles } from './styles';
 import type { ParameterInfo } from '@microsoft/logic-apps-shared';
@@ -178,7 +178,7 @@ export const ParameterField = ({
           <Button
             appearance="subtle"
             size="small"
-            icon={<Dismiss16Regular />}
+            icon={<Delete16Regular />}
             onClick={() => handleRemoveConditionalParameter(parameter.id)}
             title={INTL_TEXT.removeParamText}
             className={styles.removeParameterButton}

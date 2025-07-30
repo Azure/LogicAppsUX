@@ -30,7 +30,6 @@ export const EditOperationPanel = () => {
     inputParameters: state.operations.inputParameters,
   }));
   const parameters = selectedOperationId ? inputParameters[selectedOperationId] : null;
-  const parameterGroups = selectedOperationId ? inputParameters[selectedOperationId]?.parameterGroups : null;
 
   const selectedOperationSummary = useMemo(() => {
     return operationMetadata[selectedOperationId ?? '']?.summary ?? selectedOperationId;
@@ -45,7 +44,7 @@ export const EditOperationPanel = () => {
   const [isDirty, setIsDirty] = useState<boolean>(false);
   const [getUserInputParamIds, setUserInputParamIds] = useFunctionalState<Record<string, boolean>>(() =>
     Object.fromEntries(
-      Object.values(parameterGroups ?? {})
+      Object.values(parameters?.parameterGroups ?? {})
         .flatMap((group) => group.parameters)
         .map((param) => [param.id, parameterHasValue(param)])
     )
@@ -66,47 +65,37 @@ export const EditOperationPanel = () => {
   };
 
   const userInputParamIds = getUserInputParamIds();
-  // const parameterErrors = getParameterErrors();
 
   const runValidationOnUserInput = useCallback(() => {
     if (!selectedOperationId || !parameters?.parameterGroups) {
       return;
     }
 
-    let hasUserInputEmptyValue = false;
+    let hasEmptyUserInputValue = false;
     for (const parameterId of Object.keys(userInputParamIds)) {
-      // check for each id if it's empty, then run validation.
       const parameterGroupId = getGroupIdFromParameterId(parameters, parameterId);
 
       if (!parameterGroupId) {
         return;
       }
 
-      const thisParameterHasUserInputEmptyValue =
+      const thisParameterHasEmptyUserInput =
         userInputParamIds[parameterId] &&
-        !!parameterGroups?.[parameterGroupId]?.parameters?.find((parameter) => {
+        !!parameters?.parameterGroups?.[parameterGroupId]?.parameters?.find((parameter) => {
           return equals(parameter?.id, parameterId) && !parameterHasValue(parameter);
         });
 
-      if (thisParameterHasUserInputEmptyValue) {
+      if (thisParameterHasEmptyUserInput) {
         setParameterErrors((parameterErrors) => ({
           ...parameterErrors,
           [parameterId]: INTL_TEXT.parameterEmptyErrorMessage,
         }));
-        // dispatch(
-        //   updateParameterValidation({
-        //     nodeId: selectedOperationId,
-        //     groupId: parameterGroupId,
-        //     parameterId,
-        //     validationErrors: [INTL_TEXT.parameterEmptyErrorMessage],
-        //   })
-        // );
       }
 
-      hasUserInputEmptyValue = hasUserInputEmptyValue || thisParameterHasUserInputEmptyValue;
+      hasEmptyUserInputValue = hasEmptyUserInputValue || thisParameterHasEmptyUserInput;
     }
-    return hasUserInputEmptyValue;
-  }, [userInputParamIds, parameterGroups, parameters, selectedOperationId, setParameterErrors, INTL_TEXT.parameterEmptyErrorMessage]);
+    return hasEmptyUserInputValue;
+  }, [userInputParamIds, parameters, selectedOperationId, setParameterErrors, INTL_TEXT.parameterEmptyErrorMessage]);
 
   const handleDescriptionInputChange = useCallback((description: string) => {
     setDescription(description);
@@ -133,9 +122,9 @@ export const EditOperationPanel = () => {
       return;
     }
 
-    const hasEmptyValues = runValidationOnUserInput();
-    if (hasEmptyValues) {
-      console.log('------------hasEmptyValue');
+    const hasUserInputEmptyValues = runValidationOnUserInput();
+    // If some user input values are empty, do not proceed to save
+    if (hasUserInputEmptyValues) {
       return;
     }
 
