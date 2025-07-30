@@ -106,6 +106,7 @@ import type { ParameterInfo } from '@microsoft/designer-ui';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { addOrUpdateCustomCode } from '../../state/customcode/customcodeSlice';
 import { setFavoriteOperations } from '../../state/panel/panelSlice';
+import { isA2AWorkflow } from '../../state/workflow/helper';
 
 export interface ServiceOptions {
   connectionService: IConnectionService;
@@ -633,7 +634,7 @@ export const updateAllUpstreamNodes = (state: RootState, dispatch: Dispatch): vo
   }
 
   for (const nodeId of Object.keys(allOperations)) {
-    if (!isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata)) {
+    if (!isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata) || isA2AWorkflow(state.workflow)) {
       payload[nodeId] = getTokenNodeIds(
         nodeId,
         state.workflow.graph as WorkflowNode,

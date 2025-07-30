@@ -344,7 +344,7 @@ export const dynamicallyLoadAgentConnection = createAsyncThunk(
   }
 );
 
-const ParameterSection = ({
+export const ParameterSection = ({
   nodeId,
   group,
   readOnly,
