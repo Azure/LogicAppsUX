@@ -14,6 +14,7 @@ import type { TemplatePanelFooterProps } from '@microsoft/designer-ui';
 import { TemplatesPanelFooter } from '@microsoft/designer-ui';
 import { ListOperations } from '../operations/ListOperations';
 import { ListConnectors } from '../connectors/ListConnectors';
+import { DescriptionWithLink } from '../../configuretemplate/common';
 
 export type RegisterMcpServerHandler = (workflowsData: McpServerCreateData, onCompleted?: () => void) => Promise<void>;
 
@@ -56,20 +57,53 @@ export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: R
   }, [connection, logicAppName, operations, registerMcpServer, resourceGroup, subscriptionId, onRegisterCompleted]);
 
   const INTL_TEXT = {
+    learnMore: intl.formatMessage({
+      id: 'agN54X',
+      defaultMessage: 'Learn more',
+      description: 'Text for the learn more link',
+    }),
     connectorsTitle: intl.formatMessage({
       id: 'rCjtl8',
       defaultMessage: 'Connectors',
       description: 'Title for the connectors section',
+    }),
+    connectorsDescription: intl.formatMessage({
+      id: 'dg91jv',
+      defaultMessage:
+        'Connectors allow your logic app to interact with other services. Add connectors to enable operations and parameters.',
+      description: 'Description for the connectors section',
     }),
     detailsTitle: intl.formatMessage({
       id: '1Orv4i',
       defaultMessage: 'Details',
       description: 'Title for the details section',
     }),
-    operationsTitle: intl.formatMessage({
-      id: 'FwHl49',
-      defaultMessage: 'Operations',
-      description: 'Title for the operations section',
+    detailsDescription: intl.formatMessage({
+      id: 'FVQTll',
+      defaultMessage: 'Select an existing empty logic app instance.',
+      description: 'Description for the details section',
+    }),
+    mainSectionTitle: intl.formatMessage({
+      id: 'UaGLXG',
+      defaultMessage: 'Knowledge',
+      description: 'Title for the main section',
+    }),
+    mainSectionDescription: intl.formatMessage({
+      id: 'fXzK6b',
+      defaultMessage:
+        'Connectors include operations and parameters. Add connectors to your logic app to enable it to interact with other services.',
+      description: 'Description for the main section',
+    }),
+    toolsTitle: intl.formatMessage({
+      id: 'q25VR+',
+      defaultMessage: 'Tools',
+      description: 'Title for the tools section',
+    }),
+    toolsDescription: intl.formatMessage({
+      id: 'JUgajj',
+      defaultMessage:
+        'Tools include operations from connector and its corresponding parameters. Add and customize tool and its parameters.',
+      description: 'Description for the tools section',
     }),
     addConnectorsButton: intl.formatMessage({
       id: 'Q54uLy',
@@ -128,39 +162,43 @@ export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: R
 
       <div className={styles.scrollableContent}>
         {/* Details Section */}
-        <div className={styles.section}>
+        <div className={styles.mainSection}>
           <div className={styles.header}>
-            <Text size={400} weight="semibold">
+            <Text size={400} weight="bold">
               {INTL_TEXT.detailsTitle}
             </Text>
           </div>
 
-          <div className={styles.content}>
+          <DescriptionWithLink text={INTL_TEXT.detailsDescription} linkUrl="#" linkText={INTL_TEXT.learnMore} />
+          <div className={styles.section}>
             <LogicAppSelector />
           </div>
         </div>
 
-        {/* Connectors Section */}
-        <div className={styles.section}>
+        {/* Main Section */}
+        <div className={styles.mainSection}>
           <div className={styles.header}>
-            <Text size={400} weight="semibold">
-              {INTL_TEXT.connectorsTitle}
+            <Text size={400} weight="bold">
+              {INTL_TEXT.mainSectionTitle}
             </Text>
-            <Button
-              appearance="outline"
-              icon={<Add16Regular />}
-              onClick={handleAddConnectors}
-              size="small"
-              disabled={disableConfiguration || connectorExists}
-            >
-              {INTL_TEXT.addConnectorsButton}
-            </Button>
           </div>
+          <DescriptionWithLink text={INTL_TEXT.mainSectionDescription} linkUrl="#" linkText={INTL_TEXT.learnMore} />
 
-          <div className={styles.content}>
-            <div className={styles.section}>
-              <ListConnectors />
-            </div>
+          <div className={styles.section}>
+            {connectorExists ? (
+              <>
+                <div className={styles.header}>
+                  <Text size={400} weight="semibold">
+                    {INTL_TEXT.connectorsTitle}
+                  </Text>
+                  <Button appearance="outline" icon={<Add16Regular />} onClick={handleAddConnectors} size="small" disabled={true}>
+                    {INTL_TEXT.addConnectorsButton}
+                  </Button>
+                </div>
+                <DescriptionWithLink text={INTL_TEXT.connectorsDescription} />
+              </>
+            ) : null}
+            <ListConnectors addConnectors={handleAddConnectors} addDisabled={disableConfiguration} />
           </div>
 
           {connectorExists ? (
@@ -169,13 +207,12 @@ export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: R
               <div className={styles.section}>
                 <div className={styles.header}>
                   <Text size={400} weight="semibold">
-                    {INTL_TEXT.operationsTitle}
+                    {INTL_TEXT.toolsTitle}
                   </Text>
                 </div>
+                <DescriptionWithLink text={INTL_TEXT.toolsDescription} />
 
-                <div className={styles.content}>
-                  <ListOperations />
-                </div>
+                <ListOperations />
               </div>
             </div>
           ) : null}

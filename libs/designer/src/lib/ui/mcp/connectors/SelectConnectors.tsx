@@ -7,7 +7,7 @@ import { SearchBox } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 import { useAllManagedConnectors } from '../../../core/mcp/utils/queries';
 import { useConnectorSelectionStyles } from './styles';
-import { selectConnectorId } from '../../../core/state/mcp/connector/connectorSlice';
+import { selectConnectorId } from '../../../core/state/mcp/mcpselectionslice';
 
 export const SelectConnectors = () => {
   const intl = useIntl();

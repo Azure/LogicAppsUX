@@ -13,6 +13,7 @@ import { connectorsTab } from './tabs/connectorsTab';
 import type { McpPanelTabProps } from '@microsoft/designer-ui';
 import { connectionsTab } from './tabs/connectionsTab';
 import { getResourceNameFromId } from '@microsoft/logic-apps-shared';
+import constants from '../../../../common/constants';
 
 export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
   const intl = useIntl();
@@ -28,13 +29,15 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
     operationInfos,
   } = useSelector((state: RootState) => ({
     currentPanelView: state.mcpPanel.currentPanelView,
-    selectedConnectorId: state.connector.selectedConnectorId,
-    selectedOperations: state.connector.selectedOperations ?? [],
+    selectedConnectorId: state.mcpSelection.selectedConnectorId,
+    selectedOperations: state.mcpSelection.selectedOperations ?? [],
     connectionsMapping: state.connection.connectionsMapping,
     connectionReferences: state.connection.connectionReferences,
     isInitializingConnections: state.connection.loading.initializeConnectionMappings,
     operationInfos: state.operations.operationInfo,
   }));
+
+  const hasSelectConnectorTab = useMemo(() => currentPanelView === McpPanelView.SelectConnector, [currentPanelView]);
 
   const hasValidConnection = useMemo(() => {
     if (!selectedOperations.length) {
@@ -48,26 +51,32 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
     });
   }, [selectedOperations, connectionsMapping, connectionReferences]);
 
+  const newlySelectedOperationIds = useMemo(() => {
+    return selectedOperations.filter((operationId) => !Object.keys(operationInfos).includes(operationId));
+  }, [operationInfos, selectedOperations]);
+
   const deselectedOperationIds = useMemo(() => {
     return Object.keys(operationInfos).filter((operationId) => !selectedOperations.includes(operationId));
   }, [operationInfos, selectedOperations]);
 
   const handleSubmit = useCallback(() => {
     if (selectedConnectorId && selectedOperations.length > 0) {
-      const selectedOperationsData = selectedOperations.map((operationId) => ({
-        connectorId: selectedConnectorId,
-        operationId: getResourceNameFromId(operationId),
-        type: 'apiconnection' as const,
-      }));
-
+      // Deinitializing deselected operations
       if (deselectedOperationIds.length > 0) {
         dispatch(deinitializeOperations({ operationIds: deselectedOperationIds }));
       }
 
-      // Initializing selection
-      dispatch(initializeOperationsMetadata({ operations: selectedOperationsData }));
+      // Initializing newly selected operations
+      if (newlySelectedOperationIds.length > 0) {
+        const selectedOperationsData = newlySelectedOperationIds.map((operationId) => ({
+          connectorId: selectedConnectorId,
+          operationId: getResourceNameFromId(operationId),
+          type: 'apiconnection' as const,
+        }));
+        dispatch(initializeOperationsMetadata({ operations: selectedOperationsData }));
+      }
     }
-  }, [dispatch, selectedConnectorId, selectedOperations, deselectedOperationIds]);
+  }, [dispatch, selectedConnectorId, selectedOperations, newlySelectedOperationIds, deselectedOperationIds]);
 
   const handleOnSelectOperations = useCallback(async () => {
     // This triggers the loading state and initializes connections
@@ -98,8 +107,9 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
         selectedOperationsCount: selectedOperations.length,
         onSelectOperations: handleOnSelectOperations,
         isPrimaryButtonLoading: isInitializingConnections,
+        previousTabId: hasSelectConnectorTab ? constants.MCP_PANEL_TAB_NAMES.CONNECTORS : undefined,
       }),
-    [intl, dispatch, selectedOperations.length, handleOnSelectOperations, isInitializingConnections]
+    [intl, dispatch, selectedOperations.length, handleOnSelectOperations, isInitializingConnections, hasSelectConnectorTab]
   );
 
   const connectionsTabItem = useMemo(
@@ -115,7 +125,7 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
 
   const tabs: McpPanelTabProps[] = useMemo(() => {
     const validTabs = [];
-    if (currentPanelView === McpPanelView.SelectConnector) {
+    if (hasSelectConnectorTab) {
       validTabs.push(connectorsTabItem);
     }
     if (currentPanelView !== McpPanelView.CreateConnection) {
@@ -123,7 +133,7 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
     }
     validTabs.push(connectionsTabItem);
     return validTabs;
-  }, [currentPanelView, connectorsTabItem, operationsTabItem, connectionsTabItem]);
+  }, [currentPanelView, hasSelectConnectorTab, connectorsTabItem, operationsTabItem, connectionsTabItem]);
 
   return tabs;
 };
