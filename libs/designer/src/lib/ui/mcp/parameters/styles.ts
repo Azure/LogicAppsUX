@@ -119,17 +119,28 @@ export const useEditOperationStyles = makeStyles({
     gap: tokens.spacingVerticalL,
   },
 
+  optionalParametersDescription: {
+    marginTop: tokens.spacingVerticalS,
+    fontSize: tokens.fontSizeBase300,
+  },
+
+  optionalParametersRow: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: '32px',
+    marginBottom: '16px',
+  },
+
   parameterField: {
     display: 'flex',
     flexDirection: 'column',
-    width: '700px',
+    width: '100%',
     maxWidth: '100%',
   },
 
   parameterEditor: {
-    minWidth: '700px',
-    width: '700px',
-    maxWidth: '100%',
+    width: '100%',
   },
 
   parameterValueSection: {

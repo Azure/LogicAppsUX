@@ -4,6 +4,8 @@ import { useState, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useSearchableDropdownStyles } from './searchabledropdown.styles';
 
+export const SEARCHABLE_DROPDOWN_SELECT_ALL_KEY = 'SELECT_ALL_KEY';
+
 export interface SearchableDropdownOption {
   key: string;
   text: string;
@@ -26,6 +28,8 @@ export interface SearchableDropdownProps {
   selectedKeys?: string[];
   /** Optional: called when internal selection changes */
   onSelectedKeysChange?: (newKeys: string[]) => void;
+  /** Optional: show "Select All" option when there are multiple options */
+  showSelectAll?: boolean;
 }
 
 export const SearchableDropdown: FC<SearchableDropdownProps> = ({
@@ -41,6 +45,7 @@ export const SearchableDropdown: FC<SearchableDropdownProps> = ({
   disabled = false,
   selectedKeys: controlledSelectedKeys,
   onSelectedKeysChange,
+  showSelectAll = false,
 }) => {
   const styles = useSearchableDropdownStyles();
   const intl = useIntl();
@@ -72,11 +77,43 @@ export const SearchableDropdown: FC<SearchableDropdownProps> = ({
     description: 'Text displayed when no options match the search query',
   });
 
+  const selectAllText = intl.formatMessage({
+    defaultMessage: 'Select All',
+    id: 'bS8c69',
+    description: 'Text for the "Select All" option in a multiselect dropdown',
+  });
+
+  const deselectAllText = intl.formatMessage({
+    defaultMessage: 'Deselect All',
+    id: 'UZ1Gqq',
+    description: 'Text for the "Deselect All" option in a multiselect dropdown',
+  });
+
   const showSearchBox = inputOptions.length >= showSearchItemThreshold;
 
-  const filteredOptions = useMemo(() => {
-    return inputOptions.filter((option) => option.text.toLowerCase().includes(inputValue.toLowerCase()));
-  }, [inputOptions, inputValue]);
+  // Create options with optional "Select All" at the top
+  const optionsWithSelectAll = useMemo(() => {
+    const regularOptions = inputOptions.filter((option) => option.text.toLowerCase().includes(inputValue.toLowerCase()));
+
+    if (!showSelectAll || !multiselect || regularOptions.length <= 1) {
+      return regularOptions;
+    }
+
+    // Determine Select All state and text
+    const selectableKeys = regularOptions.map((option) => option.key);
+    const allSelected = selectableKeys.length > 0 && selectableKeys.every((key) => selectedKeys.includes(key));
+    const selectOptionText = allSelected ? deselectAllText : selectAllText;
+
+    const selectAllOption: SearchableDropdownOption = {
+      key: SEARCHABLE_DROPDOWN_SELECT_ALL_KEY,
+      text: selectOptionText,
+      data: { isSelectAll: true, allSelected },
+    };
+
+    return [selectAllOption, ...regularOptions];
+  }, [inputOptions, showSelectAll, multiselect, deselectAllText, selectAllText, inputValue, selectedKeys]);
+
+  const filteredOptions = optionsWithSelectAll;
 
   const handleOpenChange = (_e: any, data: { open: boolean }) => {
     setIsOpen(data.open);
@@ -90,6 +127,22 @@ export const SearchableDropdown: FC<SearchableDropdownProps> = ({
   const handleOptionSelect = (_e: any, data: { optionValue?: string }) => {
     const key = data.optionValue;
     if (!key) {
+      return;
+    }
+
+    // Handle "Select All"/"Deselect All" functionality
+    if (key === SEARCHABLE_DROPDOWN_SELECT_ALL_KEY && multiselect) {
+      const allSelectableKeys = filteredOptions
+        .filter((option) => option.key !== SEARCHABLE_DROPDOWN_SELECT_ALL_KEY)
+        .map((option) => option.key);
+
+      const allSelected = allSelectableKeys.length > 0 && allSelectableKeys.every((optionKey) => selectedKeys.includes(optionKey));
+
+      if (allSelected) {
+        updateSelectedKeys([]);
+      } else {
+        updateSelectedKeys(allSelectableKeys);
+      }
       return;
     }
 
