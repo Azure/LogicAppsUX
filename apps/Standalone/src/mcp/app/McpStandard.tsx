@@ -189,6 +189,10 @@ const getResourceBasedServices = (
   const baseUrl = `${armUrl}${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management`;
   const { subscriptionId, resourceGroup, resourceName } = new ArmParser(siteResourceId ?? '');
 
+  if (!subscriptionId) {
+    console.warn('Subscription ID is not available in the provided resource ID: ', siteResourceId);
+  }
+
   const defaultServiceParams = { baseUrl, httpClient, apiVersion };
 
   const searchService = new StandardSearchService({

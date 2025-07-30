@@ -1,6 +1,6 @@
 import { makeStyles, tokens } from '@fluentui/react-components';
 
-const borderStyle = `1px solid ${tokens.colorNeutralStroke1}`;
+const borderStyle = `1px solid ${tokens.colorNeutralStroke3}`;
 const mainGap = '16px';
 
 export const useMcpWizardStyles = makeStyles({
@@ -22,10 +22,18 @@ export const useMcpWizardStyles = makeStyles({
     width: '80%',
   },
 
+  mainSection: {
+    borderRadius: '8px',
+    border: borderStyle,
+    padding: mainGap,
+    backgroundColor: tokens.colorNeutralBackground2,
+  },
+
   section: {
     borderRadius: '8px',
     border: borderStyle,
     padding: mainGap,
+    backgroundColor: tokens.colorNeutralBackground1,
   },
 
   header: {
@@ -69,7 +77,6 @@ export const useConnectorSectionStyles = makeStyles({
   emptyStateIcon: {
     fontSize: '64px',
     color: tokens.colorNeutralForeground3,
-    marginBottom: '16px',
     '& svg': {
       width: '64px',
       height: '64px',
@@ -90,6 +97,10 @@ export const useConnectorSectionStyles = makeStyles({
 
   icon: {
     marginRight: connectorButtonGap,
+  },
+
+  iconText: {
+    verticalAlign: 'top',
   },
 
   iconTextCell: {
