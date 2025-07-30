@@ -7,7 +7,7 @@ import { Delete24Regular, Edit24Regular } from '@fluentui/react-icons';
 import { useIntl } from 'react-intl';
 import { useConnectorSectionStyles } from '../wizard/styles';
 import DefaultIcon from '../../../common/images/recommendation/defaulticon.svg';
-import { selectOperationIdToEdit } from '../../../core/state/mcp/connector/connectorSlice';
+import { selectOperationIdToEdit } from '../../../core/state/mcp/mcpselectionslice';
 import { deinitializeOperations } from '../../../core/actions/bjsworkflow/mcp';
 
 export const ListOperations = () => {
