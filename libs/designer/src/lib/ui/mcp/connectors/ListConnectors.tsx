@@ -25,9 +25,13 @@ import { deinitializeOperations } from '../../../core/actions/bjsworkflow/mcp';
 
 const connectorTableCellStyles = {
   border: 'none',
+  paddingBottom: '8px',
+};
+const lastCellStyles = {
+  width: '8%',
 };
 
-export const ListConnectors = () => {
+export const ListConnectors = ({ addConnectors, addDisabled }: { addConnectors: () => void; addDisabled: boolean }) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
   const { operationInfos, isInitializingOperations, connectionsMapping, connectionReferences } = useSelector((state: RootState) => ({
@@ -39,14 +43,9 @@ export const ListConnectors = () => {
 
   const INTL_TEXT = {
     noConnectors: intl.formatMessage({
-      id: 'xyhnsP',
-      defaultMessage: 'No connectors added yet',
+      id: 'w39c2m',
+      defaultMessage: 'Add connectors',
       description: 'Message displayed when no connectors are available',
-    }),
-    addFirstConnector: intl.formatMessage({
-      id: 'i/0DrA',
-      defaultMessage: 'Add your first connector to get started',
-      description: 'Message prompting the user to add their first connector',
     }),
     connectorLabel: intl.formatMessage({
       defaultMessage: 'Name',
@@ -186,12 +185,9 @@ export const ListConnectors = () => {
         <div className={styles.emptyStateIcon}>
           <ConnectorFilled />
         </div>
-        <Text size={400} weight="semibold" style={{ marginBottom: '8px' }}>
+        <Button size="large" appearance="subtle" onClick={addConnectors} disabled={addDisabled}>
           {INTL_TEXT.noConnectors}
-        </Text>
-        <Text size={200} style={{ opacity: 0.7, marginBottom: '24px' }}>
-          {INTL_TEXT.addFirstConnector}
-        </Text>
+        </Button>
       </div>
     );
   }
@@ -200,8 +196,8 @@ export const ListConnectors = () => {
     <Table className={styles.tableStyle} aria-label={INTL_TEXT.tableAriaLabel} size="small">
       <TableHeader>
         <TableRow style={connectorTableCellStyles}>
-          {columns.map((column) => (
-            <TableHeaderCell key={column.columnKey} style={connectorTableCellStyles}>
+          {columns.map((column, i) => (
+            <TableHeaderCell key={column.columnKey} style={i === columns.length - 1 ? lastCellStyles : connectorTableCellStyles}>
               <Text weight="semibold">{column.label}</Text>
             </TableHeaderCell>
           ))}
@@ -230,9 +226,9 @@ export const ListConnectors = () => {
             </TableCell>
             <TableCell className={styles.iconTextCell} style={connectorTableCellStyles}>
               {item?.isConnected ? <CheckmarkCircle20Filled className={styles.icon} color={tokens.colorPaletteGreenBackground3} /> : null}
-              <Text>{item?.isConnected ? INTL_TEXT.connectedText : INTL_TEXT.disconnectedText}</Text>
+              <Text className={styles.iconText}>{item?.isConnected ? INTL_TEXT.connectedText : INTL_TEXT.disconnectedText}</Text>
             </TableCell>
-            <TableCell className={styles.iconsCell} style={connectorTableCellStyles}>
+            <TableCell className={styles.iconsCell} style={{ ...connectorTableCellStyles, verticalAlign: 'top' }}>
               <Button
                 className={styles.icon}
                 appearance="subtle"
