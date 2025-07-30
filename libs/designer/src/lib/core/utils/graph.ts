@@ -134,6 +134,7 @@ export const getNewNodeId = (state: WorkflowState, nodeId: string): string => {
 
   return newNodeId;
 };
+
 const getAllSourceNodeIds = (graph: WorkflowNode, nodeId: string, operationMap: Record<string, string>): string[] => {
   const visited: string[] = [];
   const visit = [...getImmediateSourceNodeIds(graph, nodeId)];
@@ -156,6 +157,13 @@ export const getAllParentsForNode = (nodeId: string, nodesMetadata: NodesMetadat
   while (currentParent) {
     result.push(currentParent);
     currentParent = getRecordEntry(nodesMetadata, currentParent)?.parentNodeId;
+  }
+
+  // Add any nodes that is a handoff parent of the node
+  for (const [id, metadata] of Object.entries(nodesMetadata)) {
+    if (Object.values(metadata.handoffs ?? {})?.includes(nodeId)) {
+      result.push(id);
+    }
   }
 
   return result;
