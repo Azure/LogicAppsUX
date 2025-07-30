@@ -1,20 +1,16 @@
 import { CheckmarkCircleFilled, DismissCircleFilled, WarningFilled } from '@fluentui/react-icons';
 import { ValidationStatus } from '../../../run-service';
-import type { IGroupedGroup, IGroupedItem } from '../../../run-service';
-import { getShimmerElements, getValidationListColumns } from './helper';
-import './styles.less';
-import { DetailsRow, GroupedList, GroupHeader, SelectionMode, Shimmer } from '@fluentui/react';
-import type { IGroup } from '@fluentui/react';
+import type { IGroupedGroup } from '../../../run-service';
 import { useMemo, useCallback } from 'react';
 import { useReviewListStyles } from './reviewListStyles';
+import { Skeleton, SkeletonItem, Tree, TreeItem, TreeItemLayout } from '@fluentui/react-components';
 
 export interface IReviewListProps {
   isValidationLoading?: boolean;
-  validationItems: IGroupedItem[];
   validationGroups: IGroupedGroup[];
 }
 
-export const ReviewList: React.FC<IReviewListProps> = ({ isValidationLoading, validationItems, validationGroups }) => {
+export const ReviewList: React.FC<IReviewListProps> = ({ isValidationLoading, validationGroups }) => {
   const styles = useReviewListStyles();
   const getGroupIcon = useCallback(
     (groupStatus: string): JSX.Element | null => {
@@ -37,77 +33,58 @@ export const ReviewList: React.FC<IReviewListProps> = ({ isValidationLoading, va
   );
 
   const shimmerList = useMemo(() => {
-    const shimmerDetails = getShimmerElements();
-
     return new Array(4).fill(0).map((_element, index) => {
       return (
-        <div className="review-list-shimmer" key={index}>
-          <Shimmer className="review-list-shimmer-item" />
-          <Shimmer className="review-list-shimmer-item" shimmerElements={shimmerDetails.firstRow} />
-          <Shimmer className="review-list-shimmer-item" shimmerElements={shimmerDetails.secondRow} />
+        <div className={styles.shimmerContainer} key={index}>
+          <Skeleton>
+            <SkeletonItem className={styles.shimmerItem} shape="rectangle" size={24} />
+            <SkeletonItem className={styles.shimmerItem} shape="rectangle" size={16} />
+            <SkeletonItem className={styles.shimmerItem} shape="rectangle" size={16} />
+          </Skeleton>
         </div>
       );
     });
-  }, []);
+  }, [styles]);
 
-  const groupedList = useMemo(() => {
-    const onRenderCell = (nestingDepth?: number, item?: any, itemIndex?: number, group?: IGroup): React.ReactNode => {
-      return item && typeof itemIndex === 'number' && itemIndex > -1 ? (
-        <DetailsRow
-          columns={getValidationListColumns()}
-          groupNestingDepth={nestingDepth}
-          item={item}
-          itemIndex={itemIndex}
-          selectionMode={SelectionMode.none}
-          compact={true}
-          group={group}
-        />
-      ) : null;
-    };
+  const TreeItems = useCallback(
+    ({ group }: { group?: any }): JSX.Element => {
+      const isGroup = group && group.children && group.children.length > 0;
+      const name = group ? group.name : '';
+      const status = group ? group.status : '';
+      const groupIcon = getGroupIcon(group?.status);
 
-    const onRenderHeader = (props?: any): JSX.Element | null => {
-      if (props) {
-        const toggleCollapse = (): void => {
-          props.onToggleCollapse(props.group);
-        };
-
-        const headerCountStyle = { display: 'none' };
-        const groupIcon = getGroupIcon(props?.group?.status);
-
+      if (isGroup) {
         return (
-          <div className="review-list-header">
-            <GroupHeader
-              className="review-list-header-text"
-              styles={{ headerCount: headerCountStyle }}
-              {...props}
-              onToggleSelectGroup={toggleCollapse}
-              compact={true}
-            />
-            {groupIcon}
-          </div>
+          <TreeItem itemType="branch">
+            <TreeItemLayout iconAfter={groupIcon}>{name}</TreeItemLayout>
+            <Tree>
+              {group.children.map((child: any, index: number) => (
+                <TreeItems key={index} group={child} />
+              ))}
+            </Tree>
+          </TreeItem>
         );
       }
+      return (
+        <TreeItem itemType="leaf">
+          <TreeItemLayout iconAfter={groupIcon}>
+            {name} {status}
+          </TreeItemLayout>
+        </TreeItem>
+      );
+    },
+    [getGroupIcon]
+  );
 
-      return null;
-    };
-
-    const groupedListProps = {
-      onRenderHeader,
-    };
-
+  const treeList = useMemo(() => {
     return (
-      <div className="review-list">
-        <GroupedList
-          items={validationItems}
-          groups={validationGroups}
-          onRenderCell={onRenderCell}
-          selectionMode={SelectionMode.none}
-          compact={true}
-          groupProps={groupedListProps}
-        />
-      </div>
+      <Tree className={styles.reviewTree} aria-label="validation-review-tree">
+        {validationGroups.map((group, index) => (
+          <TreeItems key={index} group={group} />
+        ))}
+      </Tree>
     );
-  }, [validationItems, validationGroups, getGroupIcon]);
+  }, [TreeItems, styles.reviewTree, validationGroups]);
 
-  return isValidationLoading ? <>{shimmerList}</> : <>{groupedList}</>;
+  return isValidationLoading ? <>{shimmerList}</> : <>{treeList}</>;
 };

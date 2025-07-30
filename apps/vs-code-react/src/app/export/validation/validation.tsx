@@ -73,7 +73,7 @@ export const Validation: React.FC = () => {
     onSuccess: onValidationSuccess,
   });
 
-  const { validationItems = [], validationGroups = [] }: any =
+  const { validationGroups = [] }: any =
     isValidationLoading || !validationData ? {} : parseValidationData(validationData?.properties, intlText.WORKFLOW_GROUP_DISPLAY_NAME);
 
   const validationError = useMemo(
@@ -91,7 +91,7 @@ export const Validation: React.FC = () => {
       <LargeText text={intlText.REVIEW_DESCRIPTION} style={{ display: 'block' }} />
       <div className={styles.validationList}>
         {isError ? validationError : null}
-        <ReviewList isValidationLoading={isValidationLoading} validationItems={validationItems} validationGroups={validationGroups} />
+        <ReviewList isValidationLoading={isValidationLoading} validationGroups={validationGroups} />
       </div>
     </div>
   );
