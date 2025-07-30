@@ -159,7 +159,7 @@ export const getAllParentsForNode = (nodeId: string, nodesMetadata: NodesMetadat
     currentParent = getRecordEntry(nodesMetadata, currentParent)?.parentNodeId;
   }
 
-  // Add any nodes that is a handoff parent of the node
+  // Add any nodes that are a handoff parent of the node
   for (const [id, metadata] of Object.entries(nodesMetadata)) {
     if (Object.values(metadata.handoffs ?? {})?.includes(nodeId)) {
       result.push(id);
