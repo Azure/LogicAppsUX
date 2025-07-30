@@ -10,6 +10,18 @@ import DefaultIcon from '../../../common/images/recommendation/defaulticon.svg';
 import { selectOperationIdToEdit } from '../../../core/state/mcp/mcpselectionslice';
 import { deinitializeOperations } from '../../../core/actions/bjsworkflow/mcp';
 
+const toolTableCellStyles = {
+  border: 'none',
+  paddingBottom: '8px',
+};
+const toolNameCellStyles = {
+  paddingTop: '6px',
+  alignItems: 'center',
+  display: 'flex',
+};
+const lastCellStyles = {
+  width: '8%',
+};
 export const ListOperations = () => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
@@ -26,10 +38,15 @@ export const ListOperations = () => {
       id: 'ztfbU8',
       description: 'The aria label for the operations table',
     }),
-    operationLabel: intl.formatMessage({
+    toolLabel: intl.formatMessage({
       defaultMessage: 'Name',
-      id: 'x5Q5L7',
-      description: 'The label for the operations column',
+      id: 'HkIZ7P',
+      description: 'The label for the tool column',
+    }),
+    toolDescriptionLabel: intl.formatMessage({
+      defaultMessage: 'Description',
+      id: '6qPgjN',
+      description: 'The label for the tool description column',
     }),
     editButtonLabel: intl.formatMessage({
       defaultMessage: 'Edit operation',
@@ -64,13 +81,15 @@ export const ListOperations = () => {
       .map((info) => ({
         operationId: info.operationId,
         operationName: operationMetadata[info.operationId]?.summary || info.operationId,
+        description: operationMetadata[info.operationId]?.description || '',
         iconUri: operationMetadata[info.operationId]?.iconUri,
         connectorId: info.connectorId,
       }));
   }, [operationMetadata, operationInfos]);
 
   const columns = [
-    { columnKey: 'operation', label: INTL_TEXT.operationLabel },
+    { columnKey: 'tool', label: INTL_TEXT.toolLabel },
+    { columnKey: 'description', label: INTL_TEXT.toolDescriptionLabel },
     { columnKey: 'actions', label: '' }, // Empty label for actions column
   ];
 
@@ -81,24 +100,29 @@ export const ListOperations = () => {
   return (
     <Table className={styles.tableStyle} aria-label={INTL_TEXT.tableAriaLabel} size="small">
       <TableHeader>
-        <TableRow style={{ border: 'none' }}>
-          {columns.map((column) => (
-            <TableHeaderCell key={column.columnKey}>
+        <TableRow style={toolTableCellStyles}>
+          {columns.map((column, i) => (
+            <TableHeaderCell key={column.columnKey} style={i === columns.length - 1 ? lastCellStyles : toolTableCellStyles}>
               <Text weight="semibold">{column.label}</Text>
             </TableHeaderCell>
           ))}
         </TableRow>
       </TableHeader>
-      <TableBody>
+      <TableBody style={toolTableCellStyles}>
         {items.map((item) => (
-          <TableRow key={item.operationId}>
-            <TableCell className={styles.iconTextCell}>
+          <TableRow key={item.operationId} style={toolTableCellStyles}>
+            <TableCell style={toolNameCellStyles}>
               <img className={styles.connectorIcon} src={item.iconUri ?? DefaultIcon} alt={`${item.operationId} icon`} />
               <Link as="button" onClick={() => handleEditOperation(item.operationId)}>
                 {item.operationName}
               </Link>
             </TableCell>
-            <TableCell className={styles.iconsCell}>
+            <TableCell>
+              <Text size={300} style={{ verticalAlign: 'top' }}>
+                {item.description}
+              </Text>
+            </TableCell>
+            <TableCell className={styles.iconsCell} style={toolTableCellStyles}>
               <Button
                 className={styles.icon}
                 appearance="subtle"
