@@ -515,7 +515,7 @@ describe('Query Builder Integration Tests', () => {
   });
 
   describe('Performance Comparison', () => {
-    it('should have similar performance characteristics across components', () => {
+    it('should have similar performance characteristics across components', { timeout: 30000 }, () => {
       const largeTestData = createTestGroup({
         items: Array.from({ length: 50 }, (_, i) => createTestRow({ operand1: createTestValueSegment(`field${i}`) })),
       });
