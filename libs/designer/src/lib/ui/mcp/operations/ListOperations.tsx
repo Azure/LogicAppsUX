@@ -13,16 +13,11 @@ import { deinitializeOperations } from '../../../core/actions/bjsworkflow/mcp';
 const toolTableCellStyles = {
   border: 'none',
   paddingBottom: '8px',
-  maxWidth: '30%',
-  verticalAlign: 'top',
 };
 const toolNameCellStyles = {
+  paddingTop: '6px',
   alignItems: 'center',
   display: 'flex',
-};
-const toolDescriptionCellStyles = {
-  verticalAlign: 'top',
-  maxWidth: '60%',
 };
 const lastCellStyles = {
   width: '8%',
@@ -122,8 +117,8 @@ export const ListOperations = () => {
                 {item.operationName}
               </Link>
             </TableCell>
-            <TableCell style={toolDescriptionCellStyles}>
-              <Text size={300} style={{ verticalAlign: 'middle' }}>
+            <TableCell>
+              <Text size={300} style={{ verticalAlign: 'top' }}>
                 {item.description}
               </Text>
             </TableCell>
