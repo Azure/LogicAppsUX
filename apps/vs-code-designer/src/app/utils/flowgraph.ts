@@ -40,7 +40,9 @@ export type SwitchPathNode = ParentPathNode & {
   isDefaultCase: boolean;
 };
 
-const unsupportedActions = new Set<string>(['Scope', 'ForEach', 'Until']);
+export type ScopePathNode = ParentPathNode;
+
+const unsupportedActions = new Set<string>(['ForEach', 'Until', 'Terminate']);
 const validStatuses = new Set<FlowActionStatus>(['SUCCEEDED', 'FAILED']);
 
 export class FlowGraph {
@@ -293,6 +295,35 @@ export class FlowGraph {
       }
     };
 
+    const dfsScope = (nodeId: string, path: PathNode[]) => {
+      const nodeData = this.getNode(nodeId)!;
+      const basePathNode = path.pop()!;
+
+      const graphScope = nodeData['scope'] as FlowGraph;
+      const pathsScope = graphScope.getAllExecutionPathsRec(graphScope.getStartNode());
+      for (const subpathScope of pathsScope) {
+        const currPathNode = {
+          ...basePathNode,
+          actions: subpathScope,
+        } as ScopePathNode;
+        path.push(currPathNode);
+
+        if (FlowGraph.isValidSubpath(subpathScope, currPathNode.status)) {
+          if (this.isTerminalNode(nodeId, currPathNode.status)) {
+            paths.push(path.slice());
+          } else {
+            for (const edge of this.getOutgoingEdges(nodeId)) {
+              if (FlowGraph.shouldExpandSucc(path, currPathNode.status, edge.to, edge.attr['runAfter'])) {
+                dfs(edge.to, path);
+              }
+            }
+          }
+        }
+
+        path.pop();
+      }
+    };
+
     const dfsInner = (nodeId: string, status: FlowActionStatus, path: PathNode[]) => {
       const nodeData = this.getNode(nodeId)!;
       const nodeType = nodeData['type'];
@@ -309,6 +340,11 @@ export class FlowGraph {
 
       if (nodeType === 'If') {
         dfsIf(nodeId, path);
+        return;
+      }
+
+      if (nodeType === 'Scope') {
+        dfsScope(nodeId, path);
         return;
       }
 
@@ -377,6 +413,13 @@ export class FlowGraph {
       }
 
       this.addNode(actionName, { type: actionType, trueBranch: graphTrueBranch, falseBranch: graphFalseBranch });
+    } else if (actionType === 'Scope') {
+      const graphScope = FlowGraph.Subgraph();
+      for (const [childActionName, childAction] of Object.entries(action['actions'])) {
+        graphScope.addNodeRec(childActionName, childAction);
+      }
+
+      this.addNode(actionName, { type: actionType, scope: graphScope });
     } else {
       this.addNode(actionName, { type: actionType });
     }
@@ -410,6 +453,11 @@ export class FlowGraph {
       const actionsFalseBranch = action['else']['actions'];
       for (const [childActionName, childAction] of Object.entries(actionsFalseBranch)) {
         graphFalseBranch.addEdgesForNodeRec(childActionName, graphFalseBranch.getNode(childActionName), childAction, true);
+      }
+    } else if (actionType === 'Scope') {
+      const graphScope = actionNode['scope'] as FlowGraph;
+      for (const [childActionName, childAction] of Object.entries(action['actions'])) {
+        graphScope.addEdgesForNodeRec(childActionName, graphScope.getNode(childActionName), childAction, true);
       }
     }
 

@@ -184,7 +184,7 @@ async function getActionMock(actionNode: PathNode, foundActionMocks: Record<stri
   const actionMockOutputClassName = foundActionMocks[actionNode.name];
   const actionMockClassName = actionMockOutputClassName?.replace(/(.*)Output$/, '$1Mock');
 
-  if (actionNode.type === 'Switch' || actionNode.type === 'If') {
+  if (actionNode.type === 'Switch' || actionNode.type === 'If' || actionNode.type === 'Scope') {
     return (
       await Promise.all((actionNode as ParentPathNode).actions.map((childActionNode) => getActionMock(childActionNode, foundActionMocks)))
     ).flat();
@@ -217,7 +217,7 @@ async function getActionMock(actionNode: PathNode, foundActionMocks: Record<stri
 async function getActionMockEntry(actionNode: PathNode, foundActionMocks: Record<string, string>): Promise<string[]> {
   const actionMockOutputClassName = foundActionMocks[actionNode.name];
 
-  if (actionNode.type === 'Switch' || actionNode.type === 'If') {
+  if (actionNode.type === 'Switch' || actionNode.type === 'If' || actionNode.type === 'Scope') {
     return (
       await Promise.all(
         (actionNode as ParentPathNode).actions.map((childActionNode) => getActionMockEntry(childActionNode, foundActionMocks))
@@ -252,7 +252,7 @@ async function getActionAssertion(actionNode: PathNode, nestedActionPath = ''): 
   const actionAssertionTemplate = await fse.readFile(actionAssertionTemplatePath, 'utf-8');
 
   const childActionAssertions =
-    actionNode.type === 'Switch' || actionNode.type === 'If'
+    actionNode.type === 'Switch' || actionNode.type === 'If' || actionNode.type === 'Scope'
       ? (
           await Promise.all(
             (actionNode as ParentPathNode).actions.map((childActionNode) =>
@@ -284,7 +284,7 @@ function getExecutedActionChain(path: PathNode[]): PathNode[] {
   const actionChain: PathNode[] = [];
 
   for (const actionNode of path) {
-    if (actionNode.type === 'Switch' || actionNode.type === 'If') {
+    if (actionNode.type === 'Switch' || actionNode.type === 'If' || actionNode.type === 'Scope') {
       actionChain.push(...getExecutedActionChain((actionNode as ParentPathNode).actions));
     } else {
       actionChain.push(actionNode);
