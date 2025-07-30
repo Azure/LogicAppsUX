@@ -27,9 +27,19 @@ interface EditOperationProps {
   onParameterVisibilityUpdate: () => void;
   userInputParamIds: Record<string, boolean>;
   setUserInputParamIds: (ids: Record<string, boolean>) => void;
+  parameterErrors: Record<string, string | undefined>;
+  setParameterErrors: (errors: Record<string, string | undefined>) => void;
 }
 
-export const EditOperation = ({ description, handleDescriptionInputChange, onParameterVisibilityUpdate, userInputParamIds, setUserInputParamIds }: EditOperationProps) => {
+export const EditOperation = ({
+  description,
+  handleDescriptionInputChange,
+  onParameterVisibilityUpdate,
+  userInputParamIds,
+  setUserInputParamIds,
+  parameterErrors,
+  setParameterErrors,
+}: EditOperationProps) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const styles = useEditOperationStyles();
@@ -43,16 +53,19 @@ export const EditOperation = ({ description, handleDescriptionInputChange, onPar
   const operationInfo = selectedOperationId ? operationInfos[selectedOperationId] : null;
   const parameters = selectedOperationId ? inputParameters[selectedOperationId] : null;
 
-  const handleParamterInputTypeChange = useCallback((parameterId: string, newType: McpParameterInputType) => {
-    const updated = { ...userInputParamIds };
-    if (newType === 'user') {
-      updated[parameterId] = true;
-    } else {
-      delete updated[parameterId];
-    }
-    onParameterVisibilityUpdate();
-    setUserInputParamIds(updated);
-  }, [userInputParamIds, setUserInputParamIds, onParameterVisibilityUpdate]);
+  const handleParamterInputTypeChange = useCallback(
+    (parameterId: string, newType: McpParameterInputType) => {
+      const updated = { ...userInputParamIds };
+      if (newType === 'user') {
+        updated[parameterId] = true;
+      } else {
+        delete updated[parameterId];
+      }
+      onParameterVisibilityUpdate();
+      setUserInputParamIds(updated);
+    },
+    [userInputParamIds, setUserInputParamIds, onParameterVisibilityUpdate]
+  );
 
   const { requiredParams, visibleConditionalParams, optionalDropdownOptions, allConditionalSettings, conditionallyInvisibleSettings } =
     useMemo(() => {
@@ -230,6 +243,13 @@ export const EditOperation = ({ description, handleDescriptionInputChange, onPar
     [handleOptionalParameterToggle]
   );
 
+  const removeParameterError = useCallback(
+    (parameterId: string) => {
+      setParameterErrors({ ...parameterErrors, [parameterId]: undefined });
+    },
+    [setParameterErrors, parameterErrors]
+  );
+
   if (!operationInfo || !selectedOperationId) {
     return (
       <div className={styles.container}>
@@ -258,7 +278,6 @@ export const EditOperation = ({ description, handleDescriptionInputChange, onPar
 
   return (
     <div className={styles.container}>
-      {"-----" + JSON.stringify(userInputParamIds)}
       {/* Description Section */}
       <div className={styles.section}>
         <Text size={400} weight="semibold" className={styles.descriptionField}>
@@ -299,6 +318,8 @@ export const EditOperation = ({ description, handleDescriptionInputChange, onPar
                         parameterInputType={userInputParamIds[param.id as string] ? 'user' : 'model'}
                         onParamterInputTypeChange={handleParamterInputTypeChange}
                         handleRemoveConditionalParameter={handleRemoveConditionalParameter}
+                        parameterError={parameterErrors[param.id as string]}
+                        removeParameterError={removeParameterError}
                       />
                     ))}
                   </div>
@@ -348,6 +369,8 @@ export const EditOperation = ({ description, handleDescriptionInputChange, onPar
                                 parameterInputType={userInputParamIds[param.id as string] ? 'user' : 'model'}
                                 onParamterInputTypeChange={handleParamterInputTypeChange}
                                 handleRemoveConditionalParameter={handleRemoveConditionalParameter}
+                                parameterError={parameterErrors[param.id as string]}
+                                removeParameterError={removeParameterError}
                               />
                             ))}
                           </div>

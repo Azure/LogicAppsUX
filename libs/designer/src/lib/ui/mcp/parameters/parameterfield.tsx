@@ -18,6 +18,19 @@ import { updateNodeParameters, type UpdateParametersPayload } from '../../../cor
 
 export type McpParameterInputType = 'model' | 'user';
 
+interface ParameterFieldProps {
+  operationId: string;
+  groupId: string;
+  parameter: ParameterInfo;
+  isConditional?: boolean;
+  onParameterVisibilityUpdate: () => void;
+  parameterInputType: McpParameterInputType;
+  onParamterInputTypeChange: (parameterId: string, newType: McpParameterInputType) => void;
+  handleRemoveConditionalParameter: (parameterId: string) => void;
+  parameterError: string | undefined;
+  removeParameterError: (parameterId: string) => void;
+}
+
 export const ParameterField = ({
   operationId,
   groupId,
@@ -27,16 +40,9 @@ export const ParameterField = ({
   parameterInputType,
   onParamterInputTypeChange,
   handleRemoveConditionalParameter,
-}: {
-  operationId: string;
-  groupId: string;
-  parameter: ParameterInfo;
-  isConditional?: boolean;
-  onParameterVisibilityUpdate: () => void;
-  parameterInputType: McpParameterInputType;
-  onParamterInputTypeChange: (parameterId: string, newType: McpParameterInputType) => void;
-  handleRemoveConditionalParameter: (parameterId: string) => void;
-}) => {
+  parameterError,
+  removeParameterError,
+}: ParameterFieldProps) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const styles = useEditOperationStyles();
@@ -47,7 +53,6 @@ export const ParameterField = ({
     nodeInputs: state.operations.inputParameters[operationId],
     dependencies: state.operations.dependencies[operationId],
   }));
-  const parameterHasErrors = useMemo(() => parameter?.validationErrors?.some(Boolean), [parameter.validationErrors]);
 
   const INTL_TEXT = {
     removeParamText: intl.formatMessage({
@@ -72,6 +77,10 @@ export const ParameterField = ({
     }),
   };
 
+  const onHandleRemoveError = useCallback(() => {
+    removeParameterError(parameter.id as string);
+  }, [parameter.id, removeParameterError]);
+
   const isLargeParameter = useMemo(() => {
     const editor = parameter.editor?.toLowerCase();
     return (
@@ -94,10 +103,8 @@ export const ParameterField = ({
       const nodeId = operationId;
       const parameterId = parameter.id as string;
 
-      const hasValue = parameterHasValue(propertiesToUpdate as ParameterInfo);
-      const toRemoveValidationErrors = parameterHasErrors && (parameterInputType === 'model' || hasValue);
-      if (toRemoveValidationErrors) {
-        propertiesToUpdate.validationErrors = [];
+      if (parameterHasValue(propertiesToUpdate as ParameterInfo)) {
+        onHandleRemoveError();
       }
 
       const updateParameterAndDependencyPayload: UpdateParameterAndDependenciesPayload = {
@@ -140,8 +147,7 @@ export const ParameterField = ({
       nodeInputs,
       dependencies,
       onParameterVisibilityUpdate,
-      parameterInputType,
-      parameterHasErrors,
+      onHandleRemoveError,
     ]
   );
 
@@ -149,7 +155,7 @@ export const ParameterField = ({
     onParamterInputTypeChange(parameter.id, data.value as McpParameterInputType);
     // Reset parameter value when model is selected
     if (data.value === 'model') {
-      // console.log("--- parameter?.value ", parameter?.value?.[0]?.id);
+      onHandleRemoveError();
       onParameterValueChange({
         value: [
           {
@@ -216,9 +222,11 @@ export const ParameterField = ({
             />
           </div>
         )}
-        <Text className={styles.validationErrorText} size={200}>
-          {parameter?.validationErrors?.join(', ')}
-        </Text>
+        {parameterError && (
+          <Text className={styles.validationErrorText} size={200}>
+            {parameterError}
+          </Text>
+        )}
       </div>
     </div>
   );

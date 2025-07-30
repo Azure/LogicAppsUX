@@ -11,7 +11,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { EditOperation } from '../../parameters/EditOperation';
 import { equals, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import { useEditSnapshot } from '../../../../core/mcp/utils/hooks';
-import { updateOperationDescription, updateParameterValidation } from '../../../../core/state/operation/operationMetadataSlice';
+import { updateOperationDescription } from '../../../../core/state/operation/operationMetadataSlice';
 import { useFunctionalState } from '@react-hookz/web';
 import { getGroupIdFromParameterId, parameterHasValue } from '../../../../core/utils/parameters/helper';
 
@@ -50,6 +50,7 @@ export const EditOperationPanel = () => {
         .map((param) => [param.id, parameterHasValue(param)])
     )
   );
+  const [getParameterErrors, setParameterErrors] = useFunctionalState<Record<string, string | undefined>>({});
 
   const INTL_TEXT = {
     closeAriaLabel: intl.formatMessage({
@@ -65,6 +66,8 @@ export const EditOperationPanel = () => {
   };
 
   const userInputParamIds = getUserInputParamIds();
+  // const parameterErrors = getParameterErrors();
+
   const runValidationOnUserInput = useCallback(() => {
     if (!selectedOperationId || !parameters?.parameterGroups) {
       return;
@@ -86,20 +89,24 @@ export const EditOperationPanel = () => {
         });
 
       if (thisParameterHasUserInputEmptyValue) {
-        dispatch(
-          updateParameterValidation({
-            nodeId: selectedOperationId,
-            groupId: parameterGroupId,
-            parameterId,
-            validationErrors: [INTL_TEXT.parameterEmptyErrorMessage],
-          })
-        );
+        setParameterErrors((parameterErrors) => ({
+          ...parameterErrors,
+          [parameterId]: INTL_TEXT.parameterEmptyErrorMessage,
+        }));
+        // dispatch(
+        //   updateParameterValidation({
+        //     nodeId: selectedOperationId,
+        //     groupId: parameterGroupId,
+        //     parameterId,
+        //     validationErrors: [INTL_TEXT.parameterEmptyErrorMessage],
+        //   })
+        // );
       }
 
       hasUserInputEmptyValue = hasUserInputEmptyValue || thisParameterHasUserInputEmptyValue;
     }
     return hasUserInputEmptyValue;
-  }, [userInputParamIds, parameterGroups, parameters, selectedOperationId, dispatch, INTL_TEXT.parameterEmptyErrorMessage]);
+  }, [userInputParamIds, parameterGroups, parameters, selectedOperationId, setParameterErrors, INTL_TEXT.parameterEmptyErrorMessage]);
 
   const handleDescriptionInputChange = useCallback((description: string) => {
     setDescription(description);
@@ -216,6 +223,8 @@ export const EditOperationPanel = () => {
           onParameterVisibilityUpdate={onParameterVisibilityUpdate}
           userInputParamIds={userInputParamIds}
           setUserInputParamIds={setUserInputParamIds}
+          parameterErrors={getParameterErrors()}
+          setParameterErrors={setParameterErrors}
         />
       </DrawerBody>
       <DrawerFooter className={styles.footer}>
