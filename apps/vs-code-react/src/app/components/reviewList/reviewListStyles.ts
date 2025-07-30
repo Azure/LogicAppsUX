@@ -16,49 +16,11 @@ export const useReviewListStyles = makeStyles({
   shimmerContainer: {
     display: 'flex',
     flexDirection: 'column',
-    gap: tokens.spacingVerticalM,
+    gap: tokens.spacingVerticalS,
     marginTop: tokens.spacingVerticalXXL,
     marginBottom: tokens.spacingVerticalXXL,
   },
   shimmerItem: {
     margin: `${tokens.spacingVerticalMNudge} 0`,
-  },
-  groupHeader: {
-    display: 'flex',
-    alignItems: 'center',
-    paddingRight: tokens.spacingHorizontalM,
-  },
-  headerContent: {
-    display: 'flex',
-    alignItems: 'center',
-    width: '100%',
-  },
-  headerText: {
-    paddingRight: tokens.spacingHorizontalM,
-    fontWeight: tokens.fontWeightSemibold,
-  },
-  itemLayout: {
-    display: 'flex',
-    alignItems: 'center',
-  },
-  itemContent: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: tokens.spacingVerticalXS,
-    width: '100%',
-  },
-  itemField: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: tokens.spacingHorizontalS,
-  },
-  fieldLabel: {
-    fontWeight: tokens.fontWeightSemibold,
-    minWidth: '80px',
-    color: tokens.colorNeutralForeground2,
-  },
-  fieldValue: {
-    flex: 1,
-    wordBreak: 'break-word',
   },
 });
