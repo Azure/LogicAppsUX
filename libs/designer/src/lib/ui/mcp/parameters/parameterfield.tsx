@@ -150,29 +150,36 @@ export const ParameterField = ({
     // Reset parameter value when model is selected
     if (data.value === 'model') {
       onParameterValueChange({ value: [], viewModel: { hideErrorMessage: true } });
-      //TODO: remove validation errors.
     }
   };
 
   return (
     <div className={styles.parameterField}>
-      <Label className={styles.parameterLabel} title={parameter.label}>
-        {parameter.label}
-      </Label>
-      <Field className={styles.parameterInputType}>
-              <InfoLabel
-              className={styles.parameterInputTypeLabel}
-                info={parameter.placeholder}
-                size={"small"}
-              >
-                {INTL_TEXT.inputLabelText}
-              </InfoLabel>
+      <div className={styles.parameterLabelSection}>
+        <Label className={styles.parameterLabel} title={parameter.label}>
+          {parameter.label}
+        </Label>
+        {isConditional && (
+          <Button
+            appearance="subtle"
+            size="small"
+            icon={<Dismiss16Regular />}
+            onClick={() => handleRemoveConditionalParameter(parameter.id)}
+            title={INTL_TEXT.removeParamText}
+            className={styles.removeParameterButton}
+          />
+        )}
+      </div>
+      <Field className={styles.parameterInputType} validationMessage={parameter?.validationErrors?.join(', ')}>
+        <InfoLabel className={styles.parameterInputTypeLabel} info={parameter.placeholder} size={'small'}>
+          {INTL_TEXT.inputLabelText}
+        </InfoLabel>
         <RadioGroup layout="horizontal" value={parameterInputType} onChange={handleSelectionChange}>
           <Radio value={'model'} key={'model'} label={INTL_TEXT.modelRadioText} />
           <Radio value={'user'} key={'user'} label={INTL_TEXT.userRadioText} />
         </RadioGroup>
       </Field>
-      {(parameterInputType === "user") && (
+      {parameterInputType === 'user' && (
         <div className={mergeClasses(styles.parameterValueSection, isLargeParameter && styles.largeParameterSection)}>
           <ParameterEditor
             operationId={operationId}
@@ -181,17 +188,8 @@ export const ParameterField = ({
             onParameterVisibilityUpdate={onParameterVisibilityUpdate}
             onParameterValueChange={onParameterValueChange}
           />
-          {isConditional && (
-            <Button
-              appearance="subtle"
-              size="small"
-              icon={<Dismiss16Regular />}
-              onClick={() => handleRemoveConditionalParameter(parameter.id)}
-              title={INTL_TEXT.removeParamText}
-              className={styles.removeParameterButton}
-            />
-          )}
-        </div>)}
+        </div>
+      )}
     </div>
   );
 };

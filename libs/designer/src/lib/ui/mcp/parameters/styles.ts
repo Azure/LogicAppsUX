@@ -129,6 +129,11 @@ export const useEditOperationStyles = makeStyles({
     flexDirection: 'row',
   },
 
+  parameterLabelSection: {
+    display: 'flex',
+    justifyContent: 'space-around',
+  },
+
   parameterField: {
     display: 'flex',
     flexDirection: 'column',

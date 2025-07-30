@@ -11,7 +11,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { EditOperation } from '../../parameters/EditOperation';
 import { equals, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import { useEditSnapshot } from '../../../../core/mcp/utils/hooks';
-import { updateOperationDescription } from '../../../../core/state/operation/operationMetadataSlice';
+import { updateOperationDescription, updateParameterValidation } from '../../../../core/state/operation/operationMetadataSlice';
 import { useFunctionalState } from '@react-hookz/web';
 import { getGroupIdFromParameterId, parameterHasValue } from '../../../../core/utils/parameters/helper';
 
@@ -43,13 +43,12 @@ export const EditOperationPanel = () => {
   const { restoreSnapshot, clearSnapshot } = useEditSnapshot(selectedOperationId ?? '');
   const [description, setDescription] = useState<string>('');
   const [isDirty, setIsDirty] = useState<boolean>(false);
-  const [getUserInputParamIds, setUserInputParamIds] = useFunctionalState<Record<string, boolean>>(
-    () =>
-      Object.fromEntries(
-        Object.values(parameterGroups ?? {})
-          .flatMap(group => group.parameters)
-          .map(param => [param.id, parameterHasValue(param)])
-      )
+  const [getUserInputParamIds, setUserInputParamIds] = useFunctionalState<Record<string, boolean>>(() =>
+    Object.fromEntries(
+      Object.values(parameterGroups ?? {})
+        .flatMap((group) => group.parameters)
+        .map((param) => [param.id, parameterHasValue(param)])
+    )
   );
 
   const INTL_TEXT = {
@@ -58,13 +57,18 @@ export const EditOperationPanel = () => {
       defaultMessage: 'Close panel',
       description: 'Aria label for close button',
     }),
+    parameterEmptyErrorMessage: intl.formatMessage({
+      id: 'nX3iRl',
+      defaultMessage: 'User input must not be empty.',
+      description: 'Error message for parameter is empty',
+    }),
   };
 
   const userInputParamIds = getUserInputParamIds();
   const runValidationOnUserInput = useCallback(() => {
-      if (!selectedOperationId || !parameters?.parameterGroups) {
-        return;
-      }
+    if (!selectedOperationId || !parameters?.parameterGroups) {
+      return;
+    }
 
     let hasUserInputEmptyValue = false;
     for (const parameterId of Object.keys(userInputParamIds)) {
@@ -75,12 +79,27 @@ export const EditOperationPanel = () => {
         return;
       }
 
-      hasUserInputEmptyValue = hasUserInputEmptyValue || (userInputParamIds[parameterId] && !!(parameterGroups?.[parameterGroupId]?.parameters?.find(parameter => {
-        return equals(parameter?.id, parameterId) && !parameterHasValue(parameter)
-      })));
+      const thisParameterHasUserInputEmptyValue =
+        userInputParamIds[parameterId] &&
+        !!parameterGroups?.[parameterGroupId]?.parameters?.find((parameter) => {
+          return equals(parameter?.id, parameterId) && !parameterHasValue(parameter);
+        });
+
+      if (thisParameterHasUserInputEmptyValue) {
+        dispatch(
+          updateParameterValidation({
+            nodeId: selectedOperationId,
+            groupId: parameterGroupId,
+            parameterId,
+            validationErrors: [INTL_TEXT.parameterEmptyErrorMessage],
+          })
+        );
+      }
+
+      hasUserInputEmptyValue = hasUserInputEmptyValue || thisParameterHasUserInputEmptyValue;
     }
     return hasUserInputEmptyValue;
-  }, [userInputParamIds, parameterGroups, parameters, selectedOperationId]);
+  }, [userInputParamIds, parameterGroups, parameters, selectedOperationId, dispatch, INTL_TEXT.parameterEmptyErrorMessage]);
 
   const handleDescriptionInputChange = useCallback((description: string) => {
     setDescription(description);
@@ -109,7 +128,7 @@ export const EditOperationPanel = () => {
 
     const hasEmptyValues = runValidationOnUserInput();
     if (hasEmptyValues) {
-      console.log("------------hasEmptyValue");
+      console.log('------------hasEmptyValue');
       return;
     }
 
