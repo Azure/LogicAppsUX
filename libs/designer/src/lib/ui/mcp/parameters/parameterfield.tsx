@@ -1,11 +1,17 @@
-import { Label, Button, mergeClasses, RadioGroup, Radio, Field } from '@fluentui/react-components';
+import type { ChangeState } from '@microsoft/designer-ui';
+import { Label, Button, mergeClasses, RadioGroup, Radio, Field, type RadioGroupProps } from '@fluentui/react-components';
 import { Dismiss16Regular } from '@fluentui/react-icons';
-import { useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useEditOperationStyles } from './styles';
 import type { ParameterInfo, ValueSegment } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 import { ParameterEditor } from './ParameterEditor';
 import constants from '../../../common/constants';
+import { parameterHasValue, updateParameterAndDependencies } from '../../../core/utils/parameters/helper';
+import { useDispatch, useSelector } from 'react-redux';
+import type { AppDispatch, RootState } from '../../../core/state/mcp/store';
+
+type InputType = 'model' | 'user';
 
 export const ParameterField = ({
   operationId,
@@ -25,7 +31,21 @@ export const ParameterField = ({
   handleRemoveConditionalParameter: (parameterId: string) => void;
 }) => {
   const intl = useIntl();
+  const dispatch = useDispatch<AppDispatch>();
   const styles = useEditOperationStyles();
+
+  const { operationInfo, reference, nodeInputs, dependencies } = useSelector((state: RootState) => ({
+    operationInfo: state.operations.operationInfo[operationId],
+    reference: state.connection.connectionReferences[state.connection.connectionsMapping[operationId] ?? ''],
+    nodeInputs: state.operations.inputParameters[operationId],
+    dependencies: state.operations.dependencies[operationId],
+  }));
+
+  const [inputType, setInputType] = useState<InputType>(parameterHasValue(parameter) ? 'model' : 'user');
+
+  useEffect(() => {
+    setInputType(parameterHasValue(parameter) ? 'model' : 'user');
+  }, [parameter]);
 
   const INTL_TEXT = {
     removeParamText: intl.formatMessage({
@@ -60,13 +80,61 @@ export const ParameterField = ({
     );
   }, [parameter.editor]);
 
+  const onParameterValueChange = useCallback(
+    (newState: ChangeState) => {
+      const { value: newValueSegments, viewModel } = newState;
+      const propertiesToUpdate = { value: newValueSegments, preservedValue: undefined } as Partial<ParameterInfo>;
+
+      if (viewModel !== undefined) {
+        propertiesToUpdate.editorViewModel = viewModel;
+      }
+
+      dispatch(
+        updateParameterAndDependencies({
+          nodeId: operationId,
+          groupId,
+          parameterId: parameter?.id as string,
+          properties: propertiesToUpdate,
+          isTrigger: false,
+          operationInfo,
+          connectionReference: reference,
+          nodeInputs,
+          dependencies,
+          updateTokenMetadata: false,
+        })
+      );
+      onParameterVisibilityUpdate();
+      handleParameterValueChange(parameter.id, newValueSegments);
+    },
+    [
+      dispatch,
+      operationId,
+      groupId,
+      parameter.id,
+      operationInfo,
+      reference,
+      nodeInputs,
+      dependencies,
+      onParameterVisibilityUpdate,
+      handleParameterValueChange,
+    ]
+  );
+
+  const handleSelectionChange: RadioGroupProps['onChange'] = (_, data) => {
+    setInputType(data.value as InputType);
+    // Reset parameter value when model is selected
+    if (data.value === 'model') {
+      onParameterValueChange({ value: [], viewModel: { hideErrorMessage: true } });
+    }
+  };
+
   return (
     <div className={styles.parameterField}>
       <Label className={styles.parameterLabel} required={parameter.required} title={parameter.label}>
         {parameter.label}
       </Label>
-      <Field className={styles.parameterValueSection} label={INTL_TEXT.inputLabelText} hint={parameter.placeholder}>
-        <RadioGroup layout="horizontal">
+      <Field label={INTL_TEXT.inputLabelText} hint={parameter.placeholder}>
+        <RadioGroup layout="horizontal" value={inputType} onChange={handleSelectionChange}>
           <Radio value={'model'} key={'model'} label={INTL_TEXT.modelRadioText} />
           <Radio value={'user'} key={'user'} label={INTL_TEXT.userRadioText} />
         </RadioGroup>
@@ -77,7 +145,7 @@ export const ParameterField = ({
           groupId={groupId}
           parameter={parameter}
           onParameterVisibilityUpdate={onParameterVisibilityUpdate}
-          handleParameterValueChange={handleParameterValueChange}
+          onParameterValueChange={onParameterValueChange}
         />
         {isConditional && (
           <Button
