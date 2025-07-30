@@ -25,7 +25,7 @@ interface ParameterFieldProps {
   isConditional?: boolean;
   onParameterVisibilityUpdate: () => void;
   parameterInputType: McpParameterInputType;
-  onParamterInputTypeChange: (parameterId: string, newType: McpParameterInputType) => void;
+  onParameterInputTypeChange: (parameterId: string, newType: McpParameterInputType) => void;
   handleRemoveConditionalParameter: (parameterId: string) => void;
   parameterError: string | undefined;
   removeParameterError: (parameterId: string) => void;
@@ -38,7 +38,7 @@ export const ParameterField = ({
   isConditional,
   onParameterVisibilityUpdate,
   parameterInputType,
-  onParamterInputTypeChange,
+  onParameterInputTypeChange,
   handleRemoveConditionalParameter,
   parameterError,
   removeParameterError,
@@ -152,7 +152,7 @@ export const ParameterField = ({
   );
 
   const handleSelectionChange: RadioGroupProps['onChange'] = (_, data) => {
-    onParamterInputTypeChange(parameter.id, data.value as McpParameterInputType);
+    onParameterInputTypeChange(parameter.id, data.value as McpParameterInputType);
     // Reset parameter value when model is selected
     if (data.value === 'model') {
       onHandleRemoveError();
