@@ -166,7 +166,6 @@ export const ParameterEditor = ({
           arrayType={parameter.editorViewModel.arrayType}
           initialMode={parameter.editorOptions?.initialMode}
           label={parameter.label}
-          placeholder={parameter.placeholder}
           initialValue={parameter.value}
           basePlugins={mcpEditorsPlugin}
           itemSchema={parameter.editorViewModel.itemSchema}
@@ -198,7 +197,6 @@ export const ParameterEditor = ({
           className={editorClassName}
           labelId={labelForAutomationId}
           label={parameter.label}
-          placeholder={parameter.placeholder}
           basePlugins={mcpEditorsPlugin}
           readonly={parameter.editorOptions?.readOnly}
           initialValue={parameter.value}
@@ -219,7 +217,6 @@ export const ParameterEditor = ({
             key: index.toString(),
             ...option,
           }))}
-          placeholder={parameter.placeholder}
           multiSelect={!!getPropertyValue(parameter.editorOptions, 'multiSelect')}
           serialization={parameter.editorOptions?.serialization}
           onChange={onValueChange}
@@ -233,7 +230,6 @@ export const ParameterEditor = ({
           className={editorClassName}
           labelId={labelForAutomationId}
           label={parameter.label}
-          placeholder={parameter.placeholder}
           basePlugins={mcpEditorsPlugin}
           initialValue={parameter.value}
           options={dropdownOptions}
@@ -253,7 +249,6 @@ export const ParameterEditor = ({
         <FilePickerEditor
           className={editorClassName}
           labelId={labelForAutomationId}
-          placeholder={parameter.placeholder}
           basePlugins={{ ...mcpEditorsPlugin, clearEditor: true }}
           initialValue={parameter.value}
           displayValue={parameter.editorViewModel.displayValue}
@@ -274,7 +269,6 @@ export const ParameterEditor = ({
           className={styles.parameterEditor}
           labelId={labelForAutomationId}
           initialValue={parameter.value}
-          placeholder={parameter.placeholder}
           basePlugins={mcpEditorsPlugin}
           onChange={onValueChange}
           valueType={constants.SWAGGER.TYPE.ANY}
@@ -312,7 +306,6 @@ export const ParameterEditor = ({
           initialValue={parameter.value}
           onChange={onParameterVisibilityUpdate}
           editorBlur={onValueChange}
-          placeholder={parameter.placeholder ?? `Enter ${parameter.label?.toLowerCase()}`}
         />
       );
   }

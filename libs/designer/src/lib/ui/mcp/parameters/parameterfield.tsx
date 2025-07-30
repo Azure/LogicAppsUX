@@ -1,4 +1,4 @@
-import { Label, Button, mergeClasses, RadioGroup, Radio } from '@fluentui/react-components';
+import { Label, Button, mergeClasses, RadioGroup, Radio, Field } from '@fluentui/react-components';
 import { Dismiss16Regular } from '@fluentui/react-icons';
 import { useMemo } from 'react';
 import { useEditOperationStyles } from './styles';
@@ -27,11 +27,28 @@ export const ParameterField = ({
   const intl = useIntl();
   const styles = useEditOperationStyles();
 
-  const removeParamText = intl.formatMessage({
-    id: '5E66mK',
-    defaultMessage: 'Remove parameter',
-    description: 'Tooltip for remove parameter button',
-  });
+  const INTL_TEXT = {
+    removeParamText: intl.formatMessage({
+      id: '5E66mK',
+      defaultMessage: 'Remove parameter',
+      description: 'Tooltip for remove parameter button',
+    }),
+    modelRadioText: intl.formatMessage({
+      id: 'LNA+DZ',
+      defaultMessage: 'Model',
+      description: 'Label for parameter to use model input type',
+    }),
+    userRadioText: intl.formatMessage({
+      id: 'gOWYv9',
+      defaultMessage: 'User',
+      description: 'Label for parameter to use user input type',
+    }),
+    inputLabelText: intl.formatMessage({
+      id: 'gwYMqA',
+      defaultMessage: 'Input',
+      description: 'Label for input field in parameter editor radio button section',
+    }),
+  };
 
   const isLargeParameter = useMemo(() => {
     const editor = parameter.editor?.toLowerCase();
@@ -48,9 +65,12 @@ export const ParameterField = ({
       <Label className={styles.parameterLabel} required={parameter.required} title={parameter.label}>
         {parameter.label}
       </Label>
-      <RadioGroup>
-        <Radio value={'model'} key={'model'} label="Model" />
-      </RadioGroup>
+      <Field className={styles.parameterValueSection} label={INTL_TEXT.inputLabelText} hint={parameter.placeholder}>
+        <RadioGroup layout="horizontal">
+          <Radio value={'model'} key={'model'} label={INTL_TEXT.modelRadioText} />
+          <Radio value={'user'} key={'user'} label={INTL_TEXT.userRadioText} />
+        </RadioGroup>
+      </Field>
       <div className={mergeClasses(styles.parameterValueSection, isLargeParameter && styles.largeParameterSection)}>
         <ParameterEditor
           operationId={operationId}
@@ -65,7 +85,7 @@ export const ParameterField = ({
             size="small"
             icon={<Dismiss16Regular />}
             onClick={() => handleRemoveConditionalParameter(parameter.id)}
-            title={removeParamText}
+            title={INTL_TEXT.removeParamText}
             className={styles.removeParameterButton}
           />
         )}
