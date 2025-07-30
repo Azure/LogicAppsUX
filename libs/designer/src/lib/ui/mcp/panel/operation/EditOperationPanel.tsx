@@ -9,9 +9,11 @@ import { useIntl } from 'react-intl';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { EditOperation } from '../../parameters/EditOperation';
-import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
+import { equals, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import { useEditSnapshot } from '../../../../core/mcp/utils/hooks';
 import { updateOperationDescription } from '../../../../core/state/operation/operationMetadataSlice';
+import { useFunctionalState } from '@react-hookz/web';
+import { getGroupIdFromParameterId, parameterHasValue } from '../../../../core/utils/parameters/helper';
 
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
@@ -20,12 +22,15 @@ export const EditOperationPanel = () => {
   const dispatch = useDispatch<AppDispatch>();
   const styles = useMcpPanelStyles();
 
-  const { selectedOperationId, operationMetadata, isOpen, panelMode } = useSelector((state: RootState) => ({
+  const { selectedOperationId, operationMetadata, isOpen, panelMode, inputParameters } = useSelector((state: RootState) => ({
     selectedOperationId: state.connector.selectedOperationId,
     operationMetadata: state.operations.operationMetadata,
     isOpen: state.mcpPanel?.isOpen ?? false,
     panelMode: state.mcpPanel?.currentPanelView ?? null,
+    inputParameters: state.operations.inputParameters,
   }));
+  const parameters = selectedOperationId ? inputParameters[selectedOperationId] : null;
+  const parameterGroups = selectedOperationId ? inputParameters[selectedOperationId]?.parameterGroups : null;
 
   const selectedOperationSummary = useMemo(() => {
     return operationMetadata[selectedOperationId ?? '']?.summary ?? selectedOperationId;
@@ -38,6 +43,14 @@ export const EditOperationPanel = () => {
   const { restoreSnapshot, clearSnapshot } = useEditSnapshot(selectedOperationId ?? '');
   const [description, setDescription] = useState<string>('');
   const [isDirty, setIsDirty] = useState<boolean>(false);
+  const [getUserInputParamIds, setUserInputParamIds] = useFunctionalState<Record<string, boolean>>(
+    () =>
+      Object.fromEntries(
+        Object.values(parameterGroups ?? {})
+          .flatMap(group => group.parameters)
+          .map(param => [param.id, parameterHasValue(param)])
+      )
+  );
 
   const INTL_TEXT = {
     closeAriaLabel: intl.formatMessage({
@@ -46,6 +59,28 @@ export const EditOperationPanel = () => {
       description: 'Aria label for close button',
     }),
   };
+
+  const userInputParamIds = getUserInputParamIds();
+  const runValidationOnUserInput = useCallback(() => {
+      if (!selectedOperationId || !parameters?.parameterGroups) {
+        return;
+      }
+
+    let hasUserInputEmptyValue = false;
+    for (const parameterId of Object.keys(userInputParamIds)) {
+      // check for each id if it's empty, then run validation.
+      const parameterGroupId = getGroupIdFromParameterId(parameters, parameterId);
+
+      if (!parameterGroupId) {
+        return;
+      }
+
+      hasUserInputEmptyValue = hasUserInputEmptyValue || (userInputParamIds[parameterId] && !!(parameterGroups?.[parameterGroupId]?.parameters?.find(parameter => {
+        return equals(parameter?.id, parameterId) && !parameterHasValue(parameter)
+      })));
+    }
+    return hasUserInputEmptyValue;
+  }, [userInputParamIds, parameterGroups, parameters, selectedOperationId]);
 
   const handleDescriptionInputChange = useCallback((description: string) => {
     setDescription(description);
@@ -72,6 +107,12 @@ export const EditOperationPanel = () => {
       return;
     }
 
+    const hasEmptyValues = runValidationOnUserInput();
+    if (hasEmptyValues) {
+      console.log("------------hasEmptyValue");
+      return;
+    }
+
     const originalDescription = selectedOperationDescription;
 
     if (description !== originalDescription) {
@@ -85,7 +126,7 @@ export const EditOperationPanel = () => {
 
     clearSnapshot();
     dispatch(closePanel());
-  }, [selectedOperationId, clearSnapshot, dispatch, selectedOperationDescription, description]);
+  }, [selectedOperationId, clearSnapshot, dispatch, selectedOperationDescription, description, runValidationOnUserInput]);
 
   const handleClose = useCallback(() => {
     handleCancel();
@@ -154,6 +195,8 @@ export const EditOperationPanel = () => {
           description={description}
           handleDescriptionInputChange={handleDescriptionInputChange}
           onParameterVisibilityUpdate={onParameterVisibilityUpdate}
+          userInputParamIds={userInputParamIds}
+          setUserInputParamIds={setUserInputParamIds}
         />
       </DrawerBody>
       <DrawerFooter className={styles.footer}>

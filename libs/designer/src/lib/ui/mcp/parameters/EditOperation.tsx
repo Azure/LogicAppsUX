@@ -19,15 +19,17 @@ import type { SearchableDropdownOption } from '@microsoft/designer-ui';
 import { SearchableDropdownWithAddAll } from '@microsoft/designer-ui';
 import { updateParameterConditionalVisibility } from '../../../core/state/operation/operationMetadataSlice';
 import { getGroupIdFromParameterId } from '../../../core/utils/parameters/helper';
-import { ParameterField } from './parameterfield';
+import { type McpParameterInputType, ParameterField } from './parameterfield';
 
 interface EditOperationProps {
   description: string;
   handleDescriptionInputChange: (description: string) => void;
   onParameterVisibilityUpdate: () => void;
+  userInputParamIds: Record<string, boolean>;
+  setUserInputParamIds: (ids: Record<string, boolean>) => void;
 }
 
-export const EditOperation = ({ description, handleDescriptionInputChange, onParameterVisibilityUpdate }: EditOperationProps) => {
+export const EditOperation = ({ description, handleDescriptionInputChange, onParameterVisibilityUpdate, userInputParamIds, setUserInputParamIds }: EditOperationProps) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const styles = useEditOperationStyles();
@@ -40,6 +42,17 @@ export const EditOperation = ({ description, handleDescriptionInputChange, onPar
 
   const operationInfo = selectedOperationId ? operationInfos[selectedOperationId] : null;
   const parameters = selectedOperationId ? inputParameters[selectedOperationId] : null;
+
+  const handleParamterInputTypeChange = useCallback((parameterId: string, newType: McpParameterInputType) => {
+    const updated = { ...userInputParamIds };
+    if (newType === 'user') {
+      updated[parameterId] = true;
+    } else {
+      delete updated[parameterId];
+    }
+    onParameterVisibilityUpdate();
+    setUserInputParamIds(updated);
+  }, [userInputParamIds, setUserInputParamIds, onParameterVisibilityUpdate]);
 
   const { requiredParams, visibleConditionalParams, optionalDropdownOptions, allConditionalSettings, conditionallyInvisibleSettings } =
     useMemo(() => {
@@ -245,6 +258,7 @@ export const EditOperation = ({ description, handleDescriptionInputChange, onPar
 
   return (
     <div className={styles.container}>
+      {"-----" + JSON.stringify(userInputParamIds)}
       {/* Description Section */}
       <div className={styles.section}>
         <Text size={400} weight="semibold" className={styles.descriptionField}>
@@ -282,6 +296,8 @@ export const EditOperation = ({ description, handleDescriptionInputChange, onPar
                         parameter={param}
                         isConditional={isConditional}
                         onParameterVisibilityUpdate={onParameterVisibilityUpdate}
+                        parameterInputType={userInputParamIds[param.id as string] ? 'user' : 'model'}
+                        onParamterInputTypeChange={handleParamterInputTypeChange}
                         handleRemoveConditionalParameter={handleRemoveConditionalParameter}
                       />
                     ))}
@@ -329,6 +345,8 @@ export const EditOperation = ({ description, handleDescriptionInputChange, onPar
                                 parameter={param}
                                 isConditional={isConditional}
                                 onParameterVisibilityUpdate={onParameterVisibilityUpdate}
+                                parameterInputType={userInputParamIds[param.id as string] ? 'user' : 'model'}
+                                onParamterInputTypeChange={handleParamterInputTypeChange}
                                 handleRemoveConditionalParameter={handleRemoveConditionalParameter}
                               />
                             ))}

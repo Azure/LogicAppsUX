@@ -119,6 +119,16 @@ export const useEditOperationStyles = makeStyles({
     gap: tokens.spacingVerticalL,
   },
 
+  parameterInputTypeLabel: {
+    textAlign: 'center',
+    alignContent: 'center',
+  },
+
+  parameterInputType: {
+    display: 'flex',
+    flexDirection: 'row',
+  },
+
   parameterField: {
     display: 'flex',
     flexDirection: 'column',
