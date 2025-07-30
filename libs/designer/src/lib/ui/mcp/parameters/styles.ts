@@ -129,6 +129,10 @@ export const useEditOperationStyles = makeStyles({
     flexDirection: 'row',
   },
 
+  parameterBodySection: {
+    marginLeft: tokens.spacingHorizontalS,
+  },
+
   parameterLabelSection: {
     display: 'flex',
     justifyContent: 'space-around',
@@ -152,6 +156,10 @@ export const useEditOperationStyles = makeStyles({
     alignItems: 'center',
     justifyContent: 'space-between',
     gap: tokens.spacingHorizontalS,
+  },
+
+  validationErrorText: {
+    color: tokens.colorPaletteRedForeground1,
   },
 
   largeParameterSection: {

@@ -1,5 +1,5 @@
 import type { ChangeState } from '@microsoft/designer-ui';
-import { Label, Button, mergeClasses, RadioGroup, Radio, Field, type RadioGroupProps, InfoLabel } from '@fluentui/react-components';
+import { Label, Button, mergeClasses, RadioGroup, Radio, Field, type RadioGroupProps, InfoLabel, Text } from '@fluentui/react-components';
 import { Dismiss16Regular } from '@fluentui/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useEditOperationStyles } from './styles';
@@ -149,16 +149,25 @@ export const ParameterField = ({
     onParamterInputTypeChange(parameter.id, data.value as McpParameterInputType);
     // Reset parameter value when model is selected
     if (data.value === 'model') {
-      onParameterValueChange({ value: [], viewModel: { hideErrorMessage: true } });
+      // console.log("--- parameter?.value ", parameter?.value?.[0]?.id);
+      onParameterValueChange({
+        value: [
+          {
+            id: parameter?.value?.[0]?.id,
+            type: 'literal',
+            value: '',
+          },
+        ],
+      });
     }
   };
 
   return (
     <div className={styles.parameterField}>
       <div className={styles.parameterLabelSection}>
-        <Label className={styles.parameterLabel} title={parameter.label}>
+        <InfoLabel className={styles.parameterLabel} info={parameter.placeholder}>
           {parameter.label}
-        </Label>
+        </InfoLabel>
         {isConditional && (
           <Button
             appearance="subtle"
@@ -170,26 +179,47 @@ export const ParameterField = ({
           />
         )}
       </div>
-      <Field className={styles.parameterInputType} validationMessage={parameter?.validationErrors?.join(', ')}>
-        <InfoLabel className={styles.parameterInputTypeLabel} info={parameter.placeholder} size={'small'}>
-          {INTL_TEXT.inputLabelText}
-        </InfoLabel>
-        <RadioGroup layout="horizontal" value={parameterInputType} onChange={handleSelectionChange}>
-          <Radio value={'model'} key={'model'} label={INTL_TEXT.modelRadioText} />
-          <Radio value={'user'} key={'user'} label={INTL_TEXT.userRadioText} />
-        </RadioGroup>
-      </Field>
-      {parameterInputType === 'user' && (
-        <div className={mergeClasses(styles.parameterValueSection, isLargeParameter && styles.largeParameterSection)}>
-          <ParameterEditor
-            operationId={operationId}
-            groupId={groupId}
-            parameter={parameter}
-            onParameterVisibilityUpdate={onParameterVisibilityUpdate}
-            onParameterValueChange={onParameterValueChange}
-          />
-        </div>
-      )}
+      <div className={styles.parameterBodySection}>
+        <Field className={styles.parameterInputType}>
+          <Label className={styles.parameterInputTypeLabel} size={'small'}>
+            {INTL_TEXT.inputLabelText}
+          </Label>
+          <RadioGroup layout="horizontal" value={parameterInputType} onChange={handleSelectionChange}>
+            <Radio
+              value={'model'}
+              key={'model'}
+              label={
+                <Label className={styles.parameterInputTypeLabel} size={'small'}>
+                  {INTL_TEXT.modelRadioText}
+                </Label>
+              }
+            />
+            <Radio
+              value={'user'}
+              key={'user'}
+              label={
+                <Label className={styles.parameterInputTypeLabel} size={'small'}>
+                  {INTL_TEXT.userRadioText}
+                </Label>
+              }
+            />
+          </RadioGroup>
+        </Field>
+        {parameterInputType === 'user' && (
+          <div className={mergeClasses(styles.parameterValueSection, isLargeParameter && styles.largeParameterSection)}>
+            <ParameterEditor
+              operationId={operationId}
+              groupId={groupId}
+              parameter={parameter}
+              onParameterVisibilityUpdate={onParameterVisibilityUpdate}
+              onParameterValueChange={onParameterValueChange}
+            />
+          </div>
+        )}
+        <Text className={styles.validationErrorText} size={200}>
+          {parameter?.validationErrors?.join(', ')}
+        </Text>
+      </div>
     </div>
   );
 };
