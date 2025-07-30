@@ -3,13 +3,18 @@ import { Label, Button, mergeClasses, RadioGroup, Radio, Field, type RadioGroupP
 import { Dismiss16Regular } from '@fluentui/react-icons';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useEditOperationStyles } from './styles';
-import type { ParameterInfo, ValueSegment } from '@microsoft/logic-apps-shared';
+import type { ParameterInfo } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 import { ParameterEditor } from './ParameterEditor';
 import constants from '../../../common/constants';
-import { parameterHasValue, updateParameterAndDependencies } from '../../../core/utils/parameters/helper';
+import {
+  parameterHasValue,
+  updateParameterAndDependencies,
+  type UpdateParameterAndDependenciesPayload,
+} from '../../../core/utils/parameters/helper';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../core/state/mcp/store';
+import { updateNodeParameters, type UpdateParametersPayload } from '../../../core/state/operation/operationMetadataSlice';
 
 type InputType = 'model' | 'user';
 
@@ -19,7 +24,6 @@ export const ParameterField = ({
   parameter,
   isConditional,
   onParameterVisibilityUpdate,
-  handleParameterValueChange,
   handleRemoveConditionalParameter,
 }: {
   operationId: string;
@@ -27,7 +31,6 @@ export const ParameterField = ({
   parameter: ParameterInfo;
   isConditional?: boolean;
   onParameterVisibilityUpdate: () => void;
-  handleParameterValueChange: (parameterId: string, newValue: ValueSegment[]) => void;
   handleRemoveConditionalParameter: (parameterId: string) => void;
 }) => {
   const intl = useIntl();
@@ -46,6 +49,8 @@ export const ParameterField = ({
   useEffect(() => {
     setInputType(parameterHasValue(parameter) ? 'model' : 'user');
   }, [parameter]);
+
+  const parameterHasErrors = useMemo(() => parameter?.validationErrors?.some(Boolean), [parameter.validationErrors]);
 
   const INTL_TEXT = {
     removeParamText: intl.formatMessage({
@@ -89,22 +94,44 @@ export const ParameterField = ({
         propertiesToUpdate.editorViewModel = viewModel;
       }
 
-      dispatch(
-        updateParameterAndDependencies({
-          nodeId: operationId,
-          groupId,
-          parameterId: parameter?.id as string,
-          properties: propertiesToUpdate,
-          isTrigger: false,
-          operationInfo,
-          connectionReference: reference,
-          nodeInputs,
-          dependencies,
-          updateTokenMetadata: false,
-        })
-      );
+      const nodeId = operationId;
+      const parameterId = parameter.id as string;
+
+      const hasValue = parameterHasValue(propertiesToUpdate as ParameterInfo);
+      const toRemoveValidationErrors = parameterHasErrors && (inputType === 'model' || hasValue);
+      if (toRemoveValidationErrors) {
+        propertiesToUpdate.validationErrors = [];
+      }
+
+      const updateParameterAndDependencyPayload: UpdateParameterAndDependenciesPayload = {
+        nodeId,
+        groupId,
+        parameterId,
+        properties: propertiesToUpdate,
+        isTrigger: false,
+        operationInfo,
+        connectionReference: reference,
+        nodeInputs,
+        dependencies,
+        updateTokenMetadata: false,
+      };
+
+      dispatch(updateParameterAndDependencies(updateParameterAndDependencyPayload));
+
+      const updateParametersPayload: UpdateParametersPayload = {
+        nodeId,
+        parameters: [
+          {
+            groupId,
+            parameterId,
+            propertiesToUpdate: { value: newValueSegments },
+          },
+        ],
+        isUserAction: true,
+      };
+      dispatch(updateNodeParameters(updateParametersPayload));
+
       onParameterVisibilityUpdate();
-      handleParameterValueChange(parameter.id, newValueSegments);
     },
     [
       dispatch,
@@ -116,7 +143,8 @@ export const ParameterField = ({
       nodeInputs,
       dependencies,
       onParameterVisibilityUpdate,
-      handleParameterValueChange,
+      inputType,
+      parameterHasErrors,
     ]
   );
 
@@ -125,6 +153,7 @@ export const ParameterField = ({
     // Reset parameter value when model is selected
     if (data.value === 'model') {
       onParameterValueChange({ value: [], viewModel: { hideErrorMessage: true } });
+      //TODO: remove validation errors.
     }
   };
 

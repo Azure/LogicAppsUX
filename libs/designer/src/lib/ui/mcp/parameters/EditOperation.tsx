@@ -13,15 +13,11 @@ import type { RootState, AppDispatch } from '../../../core/state/mcp/store';
 import { useSelector, useDispatch } from 'react-redux';
 import { useCallback, useMemo } from 'react';
 import { useEditOperationStyles } from './styles';
-import type { ParameterInfo, ValueSegment } from '@microsoft/logic-apps-shared';
+import type { ParameterInfo } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 import type { SearchableDropdownOption } from '@microsoft/designer-ui';
 import { SearchableDropdownWithAddAll } from '@microsoft/designer-ui';
-import {
-  updateNodeParameters,
-  updateParameterConditionalVisibility,
-  type UpdateParametersPayload,
-} from '../../../core/state/operation/operationMetadataSlice';
+import { updateParameterConditionalVisibility } from '../../../core/state/operation/operationMetadataSlice';
 import { getGroupIdFromParameterId } from '../../../core/utils/parameters/helper';
 import { ParameterField } from './parameterfield';
 
@@ -165,34 +161,6 @@ export const EditOperation = ({ description, handleDescriptionInputChange, onPar
       description: 'Badge text for saved state',
     }),
   };
-
-  const handleParameterValueChange = useCallback(
-    (parameterId: string, newValue: ValueSegment[]) => {
-      if (!selectedOperationId || !parameters?.parameterGroups) {
-        return;
-      }
-
-      const parameterGroupId = getGroupIdFromParameterId(parameters, parameterId);
-      if (!parameterGroupId) {
-        return;
-      }
-
-      const updatePayload: UpdateParametersPayload = {
-        nodeId: selectedOperationId,
-        parameters: [
-          {
-            groupId: parameterGroupId,
-            parameterId,
-            propertiesToUpdate: { value: newValue },
-          },
-        ],
-        isUserAction: true,
-      };
-
-      dispatch(updateNodeParameters(updatePayload));
-    },
-    [dispatch, selectedOperationId, parameters]
-  );
   const handleOptionalParameterToggle = useCallback(
     (parameterId: string, isVisible: boolean) => {
       if (!selectedOperationId || !parameters?.parameterGroups) {
@@ -314,7 +282,6 @@ export const EditOperation = ({ description, handleDescriptionInputChange, onPar
                         parameter={param}
                         isConditional={isConditional}
                         onParameterVisibilityUpdate={onParameterVisibilityUpdate}
-                        handleParameterValueChange={handleParameterValueChange}
                         handleRemoveConditionalParameter={handleRemoveConditionalParameter}
                       />
                     ))}
@@ -362,7 +329,6 @@ export const EditOperation = ({ description, handleDescriptionInputChange, onPar
                                 parameter={param}
                                 isConditional={isConditional}
                                 onParameterVisibilityUpdate={onParameterVisibilityUpdate}
-                                handleParameterValueChange={handleParameterValueChange}
                                 handleRemoveConditionalParameter={handleRemoveConditionalParameter}
                               />
                             ))}
