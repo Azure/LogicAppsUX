@@ -252,6 +252,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";+tw9XO" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Set up connector]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";+xXHdp" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[No outputs]]></Val>
@@ -1053,6 +1059,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";1GWzEL" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[No results found for the specified filters]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Tidak menemukan hasil untuk filter yang ditentukan]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";1HhCtq" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Headers]]></Val>
@@ -1149,6 +1164,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Interval tetap]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";1h43JZ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Select parameters]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -3015,6 +3036,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";7Jw4KB" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Create as per-user connection?]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";7LmpNN" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Parameter "{parameterName}" cannot be found for this operation]]></Val>
@@ -3219,6 +3246,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Nama parameter sudah ada.]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";8+TVCG" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Edit: {selectedOperationSummary}]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -4010,15 +4043,6 @@
           <Val><![CDATA[Username]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Nama pengguna]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";AoalgS" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Loading more results...]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Memuat hasil lainnya...]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5265,51 +5289,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";EcoTuv#ExpandedPlural.0.few" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[# parameters]]></Val>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";EcoTuv#ExpandedPlural.0.many" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[# parameters]]></Val>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";EcoTuv#ExpandedPlural.0.two" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[# parameters]]></Val>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";EcoTuv#ExpandedPlural.0.zero" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[# parameters]]></Val>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";EcoTuv#Plural.one" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[# parameter]]></Val>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";EcoTuv#Plural.other" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[# parameters]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[# parameter]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";EcoTuv.icu.content" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[{count, plural, one {# parameter} other {# parameters}}]]></Val>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";EdeHLs" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Switch to input entire array]]></Val>
@@ -6453,6 +6432,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";IRVmBd" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Search operations...]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";IS4vNX" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC-12:00) International Date Line West]]></Val>
@@ -6984,15 +6969,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";KDsdC6" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Edit Operation]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Edit Operasi]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";KFFF+N" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Cannot add subsequent actions below agentic loops in agent to agent workflows]]></Val>
@@ -7160,15 +7136,6 @@
           <Val><![CDATA[Stop chat]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Hentikan obrolan]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";KwxP38" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Learn how to assign it]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Pelajari cara menetapkannya]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7776,6 +7743,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";MbUEdr" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Add a hand-off agent]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";MbrpMM" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Configure channels for your agent]]></Val>
@@ -7800,6 +7773,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Tampilkan kode]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";MlhGNk" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Learn more about creating a code interpreter session pool in Azure Container Apps]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -7836,6 +7815,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Host]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";MzVpzv" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Agent log panel]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -8361,29 +8346,11 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";OOUTdW" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Loading all connectors...]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Memuat semua konektor...]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";OSP9JY" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter the audience.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Masukkan audiens.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";OSugtm" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Agent chat panel]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Panel obrolan agen]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -8748,15 +8715,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";PVT2SW" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Agent chat]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Obrolan agen]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";PXa0D4" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[False]]></Val>
@@ -8835,6 +8793,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Jelaskan cara menerima file dari server SFTP.]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";PpsKqc" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Loading more connectors...]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -9069,6 +9033,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Seret dan sambungkan node untuk mentransformasikan]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";QIzNzB" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Toggle the agent log panel.]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -9630,15 +9600,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";SH50TJ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Add Connectors]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Tambahkan Konektor]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";SHXdzU" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[AI-generated content may be incorrect]]></Val>
@@ -9996,6 +9957,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[ID permintaan klien]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";TbKWvc" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Select a session pool in Azure Container Apps]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -11016,6 +10983,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";WQT8jf" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Required]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";WR1K3z" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC+04:00) Astrakhan, Ulyanovsk]]></Val>
@@ -11058,6 +11031,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Masukkan pernyataan kondisi yang valid.]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";WU/tXB" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[This session pool in Azure Container Apps is missing the <strong>{roleName}</strong> role.]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -11169,6 +11148,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";WtHzoy" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Agent log]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";WtO4Wv" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[No connection has been selected]]></Val>
@@ -11220,6 +11205,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Tindakan ini memiliki pengujian yang dikonfigurasi.]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";WyH1wr" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Searching for results...]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -11817,6 +11808,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";YTJ78g" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Learn how to assign it]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Pelajari cara menetapkannya]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";YUbSFS" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Yes/No]]></Val>
@@ -12123,6 +12123,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";ZP9nho" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Advanced parameters]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";ZUCTVP" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Paste an action]]></Val>
@@ -12263,15 +12269,6 @@
           <Val><![CDATA[Learn more about dynamic content.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Pelajari selengkapnya tentang konten dinamis.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";ZsDnVT" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Learn more about creating a new Azure Container App code interpreter session pool]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Pelajari selengkapnya tentang membuat kumpulan sesi penerjemah kode Azure Container App baru]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -13752,15 +13749,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";eUGUbj" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[ACA Session Pool]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Kumpulan Sesi ACA]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";eUxnDx" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Status code]]></Val>
@@ -14063,15 +14051,6 @@
           <Val><![CDATA[Request options - Timeout]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Opsi permintaan - Batas Waktu]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";fTpBGQ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Toggle the agent chat panel.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Hidupkan/matikan panel obrolan agen.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -16128,15 +16107,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";lbwcLk" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Select an ACA Session Pool]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Pilih Kumpulan Sesi ACA]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";lckgnb" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The collection to reverse.]]></Val>
@@ -16259,15 +16229,6 @@
           <Val><![CDATA[Last modified]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Terakhir diubah]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";m+jXp8" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Add optional parameters]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Tambahkan parameter opsional]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -16749,15 +16710,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";nJI9m3" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Select the subscription for your ACA session pool]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Pilih langganan untuk kumpulan sesi ACA Anda]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";nJfJNU" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Please select a valid resource]]></Val>
@@ -16926,6 +16878,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Menambahkan jumlah bilangan bulat menit ke tanda waktu string yang diberikan]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";nl5/UU" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Select the subscription for your session pool in Azure Container Apps]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -18468,15 +18426,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";sWJGpe" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Use as Dynamic Connection]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Gunakan sebagai Koneksi Dinamis]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";sYQDN+" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Formatting options for font family]]></Val>
@@ -18591,6 +18540,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Sebelumnya]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";sqsHMO" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Session Pool]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -18941,15 +18896,6 @@
           <Val><![CDATA[at {times} every hour]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[pada {times} setiap jam]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";tY1yT9" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[This ACA Session Pool is missing the <strong>{roleName}</strong> role.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Kumpulan Sesi ACA ini tidak memiliki peran <strong>{roleName}</strong>.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -19854,6 +19800,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";vyddjn" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Showing {count} of {total}]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";vzXXFP" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Workflow version]]></Val>
@@ -19877,15 +19829,6 @@
           <Val><![CDATA[Select fields]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Pilih bidang]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";w0pI5M" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[No results found for the specified filters]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Tidak menemukan hasil untuk filter yang ditentukan]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />

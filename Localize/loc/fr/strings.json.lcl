@@ -252,6 +252,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";+tw9XO" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Set up connector]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";+xXHdp" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[No outputs]]></Val>
@@ -1053,6 +1059,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";1GWzEL" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[No results found for the specified filters]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Aucun résultat trouvé pour les filtres spécifiés]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";1HhCtq" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Headers]]></Val>
@@ -1149,6 +1164,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Intervalle fixe]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";1h43JZ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Select parameters]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -3015,6 +3036,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";7Jw4KB" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Create as per-user connection?]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";7LmpNN" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Parameter "{parameterName}" cannot be found for this operation]]></Val>
@@ -3219,6 +3246,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Le nom du paramètre existe déjà.]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";8+TVCG" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Edit: {selectedOperationSummary}]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -4010,15 +4043,6 @@
           <Val><![CDATA[Username]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Nom d'utilisateur]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";AoalgS" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Loading more results...]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Chargement des résultats supplémentaires...]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5271,57 +5295,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";EcoTuv#ExpandedPlural.0.few" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[# parameters]]></Val>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";EcoTuv#ExpandedPlural.0.many" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[# parameters]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[# paramètres]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";EcoTuv#ExpandedPlural.0.two" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[# parameters]]></Val>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";EcoTuv#ExpandedPlural.0.zero" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[# parameters]]></Val>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";EcoTuv#Plural.one" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[# parameter]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[# paramètre]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";EcoTuv#Plural.other" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[# parameters]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[# paramètres]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";EcoTuv.icu.content" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[{count, plural, one {# parameter} other {# parameters}}]]></Val>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";EdeHLs" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Switch to input entire array]]></Val>
@@ -6471,6 +6444,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";IRVmBd" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Search operations...]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";IS4vNX" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC-12:00) International Date Line West]]></Val>
@@ -7002,15 +6981,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";KDsdC6" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Edit Operation]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Modifier l’opération]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";KFFF+N" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Cannot add subsequent actions below agentic loops in agent to agent workflows]]></Val>
@@ -7184,15 +7154,6 @@
           <Val><![CDATA[Stop chat]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Arrêter la conversation]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";KwxP38" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Learn how to assign it]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Découvrez comment l’attribuer]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7800,6 +7761,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";MbUEdr" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Add a hand-off agent]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";MbrpMM" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Configure channels for your agent]]></Val>
@@ -7824,6 +7791,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Afficher le code]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";MlhGNk" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Learn more about creating a code interpreter session pool in Azure Container Apps]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -7860,6 +7833,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Hôte]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";MzVpzv" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Agent log panel]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -8391,29 +8370,11 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";OOUTdW" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Loading all connectors...]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Chargement de tous les connecteurs...]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";OSP9JY" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter the audience.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Entrez le public.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";OSugtm" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Agent chat panel]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Panneau de conversation de l’assistant]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -8778,15 +8739,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";PVT2SW" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Agent chat]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Conversation de l’assistant]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";PXa0D4" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[False]]></Val>
@@ -8865,6 +8817,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Expliquez comment recevoir des fichiers du serveur SFTP.]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";PpsKqc" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Loading more connectors...]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -9099,6 +9057,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Faites glisser et connectez des nœuds pour transformer]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";QIzNzB" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Toggle the agent log panel.]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -9666,15 +9630,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";SH50TJ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Add Connectors]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Ajouter des connecteurs]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";SHXdzU" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[AI-generated content may be incorrect]]></Val>
@@ -10032,6 +9987,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[ID de demande de client]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";TbKWvc" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Select a session pool in Azure Container Apps]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -11052,6 +11013,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";WQT8jf" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Required]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";WR1K3z" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC+04:00) Astrakhan, Ulyanovsk]]></Val>
@@ -11094,6 +11061,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Entrez une instruction de condition valide.]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";WU/tXB" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[This session pool in Azure Container Apps is missing the <strong>{roleName}</strong> role.]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -11205,6 +11178,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";WtHzoy" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Agent log]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";WtO4Wv" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[No connection has been selected]]></Val>
@@ -11256,6 +11235,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Des tests sont configurés pour cette action.]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";WyH1wr" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Searching for results...]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -11853,6 +11838,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";YTJ78g" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Learn how to assign it]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Découvrez comment l’attribuer]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";YUbSFS" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Yes/No]]></Val>
@@ -12159,6 +12153,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";ZP9nho" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Advanced parameters]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";ZUCTVP" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Paste an action]]></Val>
@@ -12299,15 +12299,6 @@
           <Val><![CDATA[Learn more about dynamic content.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Découvrez plus d'informations sur le contenu dynamique.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";ZsDnVT" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Learn more about creating a new Azure Container App code interpreter session pool]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Découvrez-en davantage sur la création d’un pool de sessions d’interpréteur de code Azure Container App]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -13788,15 +13779,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";eUGUbj" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[ACA Session Pool]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Pool de session ACA]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";eUxnDx" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Status code]]></Val>
@@ -14099,15 +14081,6 @@
           <Val><![CDATA[Request options - Timeout]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Options de requête – Délai d’expiration]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";fTpBGQ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Toggle the agent chat panel.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Activer/désactiver le panneau de conversation de l’assistant.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -16176,15 +16149,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";lbwcLk" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Select an ACA Session Pool]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Sélectionner un pool de sessions ACA]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";lckgnb" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The collection to reverse.]]></Val>
@@ -16307,15 +16271,6 @@
           <Val><![CDATA[Last modified]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Dernière modification]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";m+jXp8" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Add optional parameters]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Ajouter des paramètres optionnels]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -16797,15 +16752,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";nJI9m3" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Select the subscription for your ACA session pool]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Sélectionner l’abonnement pour votre pool de sessions ACA]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";nJfJNU" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Please select a valid resource]]></Val>
@@ -16974,6 +16920,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Ajoute un nombre entier de minutes à un horodateur de chaîne transmis]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";nl5/UU" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Select the subscription for your session pool in Azure Container Apps]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -18522,15 +18474,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";sWJGpe" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Use as Dynamic Connection]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Utiliser une connexion dynamique]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";sYQDN+" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Formatting options for font family]]></Val>
@@ -18645,6 +18588,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Précédent]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";sqsHMO" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Session Pool]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -18995,15 +18944,6 @@
           <Val><![CDATA[at {times} every hour]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[à {times} toutes les heures]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";tY1yT9" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[This ACA Session Pool is missing the <strong>{roleName}</strong> role.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Le rôle de <strong>{roleName}</strong> est manquant dans ce pool de sessions ACA.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -19908,6 +19848,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";vyddjn" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Showing {count} of {total}]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";vzXXFP" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Workflow version]]></Val>
@@ -19931,15 +19877,6 @@
           <Val><![CDATA[Select fields]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Sélectionner des champs]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";w0pI5M" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[No results found for the specified filters]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Aucun résultat trouvé pour les filtres spécifiés]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />

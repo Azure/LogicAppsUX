@@ -252,6 +252,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";+tw9XO" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Set up connector]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";+xXHdp" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[No outputs]]></Val>
@@ -1053,6 +1059,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";1GWzEL" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[No results found for the specified filters]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";1HhCtq" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Headers]]></Val>
@@ -1149,6 +1161,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[고정 간격]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";1h43JZ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Select parameters]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -3015,6 +3033,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";7Jw4KB" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Create as per-user connection?]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";7LmpNN" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Parameter "{parameterName}" cannot be found for this operation]]></Val>
@@ -3219,6 +3243,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[매개 변수 이름이 이미 있습니다.]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";8+TVCG" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Edit: {selectedOperationSummary}]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -4010,15 +4040,6 @@
           <Val><![CDATA[Username]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[사용자 이름]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";AoalgS" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Loading more results...]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[더 많은 결과를 로드하는 중...]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5265,51 +5286,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";EcoTuv#ExpandedPlural.0.few" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[# parameters]]></Val>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";EcoTuv#ExpandedPlural.0.many" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[# parameters]]></Val>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";EcoTuv#ExpandedPlural.0.two" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[# parameters]]></Val>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";EcoTuv#ExpandedPlural.0.zero" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[# parameters]]></Val>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";EcoTuv#Plural.one" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[# parameter]]></Val>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";EcoTuv#Plural.other" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[# parameters]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[# 매개 변수]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";EcoTuv.icu.content" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[{count, plural, one {# parameter} other {# parameters}}]]></Val>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";EdeHLs" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Switch to input entire array]]></Val>
@@ -6453,6 +6429,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";IRVmBd" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Search operations...]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";IS4vNX" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC-12:00) International Date Line West]]></Val>
@@ -6984,15 +6966,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";KDsdC6" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Edit Operation]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[편집 작업]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";KFFF+N" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Cannot add subsequent actions below agentic loops in agent to agent workflows]]></Val>
@@ -7160,15 +7133,6 @@
           <Val><![CDATA[Stop chat]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[채팅 중지]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";KwxP38" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Learn how to assign it]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[할당하는 방법 알아보기]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7776,6 +7740,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";MbUEdr" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Add a hand-off agent]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";MbrpMM" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Configure channels for your agent]]></Val>
@@ -7800,6 +7770,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[코드 표시]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";MlhGNk" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Learn more about creating a code interpreter session pool in Azure Container Apps]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -7836,6 +7812,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[호스트]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";MzVpzv" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Agent log panel]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -8361,29 +8343,11 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";OOUTdW" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Loading all connectors...]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[모든 커넥터를 로드하는 중...]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";OSP9JY" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter the audience.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[대상 그룹을 입력하세요.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";OSugtm" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Agent chat panel]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[에이전트 채팅 패널]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -8748,15 +8712,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";PVT2SW" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Agent chat]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[에이전트 채팅]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";PXa0D4" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[False]]></Val>
@@ -8835,6 +8790,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[SFTP 서버에서 파일을 받는 방법을 설명합니다.]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";PpsKqc" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Loading more connectors...]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -9069,6 +9030,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[노드를 끌어서 변환에 연결]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";QIzNzB" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Toggle the agent log panel.]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -9630,15 +9597,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";SH50TJ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Add Connectors]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[커넥터 추가]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";SHXdzU" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[AI-generated content may be incorrect]]></Val>
@@ -9996,6 +9954,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[클라이언트 요청 ID]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";TbKWvc" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Select a session pool in Azure Container Apps]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -11016,6 +10980,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";WQT8jf" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Required]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";WR1K3z" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC+04:00) Astrakhan, Ulyanovsk]]></Val>
@@ -11058,6 +11028,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[유효한 조건 문을 입력하세요.]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";WU/tXB" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[This session pool in Azure Container Apps is missing the <strong>{roleName}</strong> role.]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -11169,6 +11145,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";WtHzoy" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Agent log]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";WtO4Wv" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[No connection has been selected]]></Val>
@@ -11220,6 +11202,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[이 작업에는 테스트가 구성되어 있습니다.]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";WyH1wr" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Searching for results...]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -11817,6 +11805,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";YTJ78g" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Learn how to assign it]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[할당하는 방법 알아보기]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";YUbSFS" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Yes/No]]></Val>
@@ -12123,6 +12120,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";ZP9nho" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Advanced parameters]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";ZUCTVP" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Paste an action]]></Val>
@@ -12263,15 +12266,6 @@
           <Val><![CDATA[Learn more about dynamic content.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[동적 콘텐츠에 대해 자세히 알아보세요.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";ZsDnVT" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Learn more about creating a new Azure Container App code interpreter session pool]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[새 Azure Container App 코드 인터프리터 세션 풀을 만드는 방법에 대한 자세한 정보]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -13752,15 +13746,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";eUGUbj" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[ACA Session Pool]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[ACA 세션 풀]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";eUxnDx" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Status code]]></Val>
@@ -14063,15 +14048,6 @@
           <Val><![CDATA[Request options - Timeout]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[요청 옵션 - 시간 제한]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";fTpBGQ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Toggle the agent chat panel.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[에이전트 채팅 패널을 전환합니다.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -16128,15 +16104,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";lbwcLk" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Select an ACA Session Pool]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[ACA 세션 풀 선택]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";lckgnb" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The collection to reverse.]]></Val>
@@ -16259,15 +16226,6 @@
           <Val><![CDATA[Last modified]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[마지막 수정 날짜]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";m+jXp8" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Add optional parameters]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[선택적 매개 변수 추가]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -16749,15 +16707,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";nJI9m3" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Select the subscription for your ACA session pool]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[ACA 세션 풀에 대한 구독 선택]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";nJfJNU" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Please select a valid resource]]></Val>
@@ -16926,6 +16875,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[전달된 문자열 타임스탬프에 정수 분 수를 더합니다.]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";nl5/UU" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Select the subscription for your session pool in Azure Container Apps]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -18468,15 +18423,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";sWJGpe" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Use as Dynamic Connection]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[동적 연결로 사용]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";sYQDN+" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Formatting options for font family]]></Val>
@@ -18591,6 +18537,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[이전]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";sqsHMO" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Session Pool]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -18941,15 +18893,6 @@
           <Val><![CDATA[at {times} every hour]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[{times}시간마다]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";tY1yT9" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[This ACA Session Pool is missing the <strong>{roleName}</strong> role.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[이 ACA 세션 풀에 <strong>{roleName}</strong> 역할이 없습니다.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -19854,6 +19797,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";vyddjn" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Showing {count} of {total}]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";vzXXFP" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Workflow version]]></Val>
@@ -19877,15 +19826,6 @@
           <Val><![CDATA[Select fields]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[필드 선택]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";w0pI5M" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[No results found for the specified filters]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[지정된 필터에 대한 결과를 찾을 수 없습니다.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
