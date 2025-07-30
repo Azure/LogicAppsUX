@@ -47,11 +47,11 @@ export const ReviewList: React.FC<IReviewListProps> = ({ isValidationLoading, va
   }, [styles]);
 
   const TreeItems = useCallback(
-    ({ group }: { group?: any }): JSX.Element => {
-      const isGroup = group && group.children && group.children.length > 0;
-      const name = group ? group.name : '';
-      const status = group ? group.status : '';
-      const groupIcon = getGroupIcon(group?.status);
+    ({ group }: { group: IGroupedGroup }): JSX.Element => {
+      const isGroup = group.children && group.children.length > 0;
+      const name = group.name;
+      const status = group?.status ?? '';
+      const groupIcon = getGroupIcon(status);
 
       if (isGroup) {
         return (
@@ -67,9 +67,7 @@ export const ReviewList: React.FC<IReviewListProps> = ({ isValidationLoading, va
       }
       return (
         <TreeItem itemType="leaf">
-          <TreeItemLayout iconAfter={groupIcon}>
-            {name} {status}
-          </TreeItemLayout>
+          <TreeItemLayout iconAfter={groupIcon}>{`${name}${status ? ` - ${status}` : ''}`}</TreeItemLayout>
         </TreeItem>
       );
     },
