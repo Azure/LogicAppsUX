@@ -1,4 +1,4 @@
-import { Text, Textarea, Field, Divider, Card, Label, Button, Link, mergeClasses } from '@fluentui/react-components';
+import { Text, Textarea, Field, Label, Button, mergeClasses } from '@fluentui/react-components';
 import { Dismiss16Regular } from '@fluentui/react-icons';
 import type { RootState, AppDispatch } from '../../../core/state/mcp/store';
 import { useSelector, useDispatch } from 'react-redux';
@@ -16,6 +16,8 @@ import {
 import { getGroupIdFromParameterId } from '../../../core/utils/parameters/helper';
 import { ParameterEditor } from './ParameterEditor';
 import constants from '../../../common/constants';
+import { useMcpWizardStyles } from '../wizard/styles';
+import { DescriptionWithLink } from '../../configuretemplate/common';
 
 interface EditOperationProps {
   description: string;
@@ -27,6 +29,7 @@ export const EditOperation = ({ description, handleDescriptionInputChange, onPar
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const styles = useEditOperationStyles();
+  const otherStyles = useMcpWizardStyles();
 
   // Track the order in which parameters are selected to maintain display order
   const selectionOrderRef = useRef<Map<string, number>>(new Map());
@@ -113,14 +116,25 @@ export const EditOperation = ({ description, handleDescriptionInputChange, onPar
       description: 'Message displayed when no operation is selected in the edit operation panel',
     }),
     parameters: intl.formatMessage({
-      id: 'CCpPpu',
-      defaultMessage: 'Parameters',
+      id: '7MUyEA',
+      defaultMessage: 'Tool parameters',
       description: 'Title for the parameters section',
     }),
-    required: intl.formatMessage({
-      id: 'WQT8jf',
-      defaultMessage: 'Required',
-      description: 'Title for the required section',
+    parametersSectionDescription: intl.formatMessage({
+      id: 'LG1r6s',
+      defaultMessage:
+        "Default parameters specify the minimum inputs for this tool to work. You can add optional parameters based on your scenario's needs. By default, tool parameters get dynamic values from an AI model. You can manually provide static values instead.",
+      description: 'Description for the parameters section',
+    }),
+    parametersSectionLinkText: intl.formatMessage({
+      id: '7MP7FJ',
+      defaultMessage: 'How do values resolve at runtime?',
+      description: 'Link text for learning more about tool parameters',
+    }),
+    defaultParameters: intl.formatMessage({
+      id: 'koft/j',
+      defaultMessage: 'Default parameters',
+      description: 'Title for the default parameters section',
     }),
     optionalParameters: intl.formatMessage({
       id: 'VQ1BxQ',
@@ -136,6 +150,11 @@ export const EditOperation = ({ description, handleDescriptionInputChange, onPar
       id: 'LLJrOT',
       defaultMessage: 'Description',
       description: 'Label for the operation description field',
+    }),
+    descriptionSectionDescription: intl.formatMessage({
+      id: 'T8ioR5',
+      defaultMessage: 'Provide information about task performed by this tool.',
+      description: 'Description for the operation description field',
     }),
     descriptionPlaceholder: intl.formatMessage({
       id: 'X1TOAH',
@@ -303,10 +322,18 @@ export const EditOperation = ({ description, handleDescriptionInputChange, onPar
   return (
     <div className={styles.container}>
       {/* Description Section */}
-      <div className={styles.section}>
-        <Text size={400} weight="semibold" className={styles.descriptionField}>
-          {INTL_TEXT.descriptionLabel}
-        </Text>
+      <div className={otherStyles.section}>
+        <div className={otherStyles.header}>
+          <Text size={400} weight="semibold">
+            {INTL_TEXT.descriptionLabel}
+          </Text>
+        </div>
+        <DescriptionWithLink
+          text={INTL_TEXT.descriptionSectionDescription}
+          linkText={INTL_TEXT.learnMore}
+          linkUrl="https://go.microsoft.com/fwlink/?linkid=2330414"
+        />
+
         <Field className={styles.descriptionField} style={{ width: '100%' }}>
           <Textarea
             value={description}
@@ -317,21 +344,90 @@ export const EditOperation = ({ description, handleDescriptionInputChange, onPar
           />
         </Field>
       </div>
-      <Divider className={styles.divider} />
 
       {/* Parameters Section */}
-      <div className={styles.section}>
-        <Text size={400} weight="semibold" className={styles.sectionTitle}>
-          {INTL_TEXT.parameters}
-        </Text>
-
+      <div className={otherStyles.section}>
+        <div className={otherStyles.header}>
+          <Text size={400} weight="semibold">
+            {INTL_TEXT.parameters}
+          </Text>
+        </div>
+        <DescriptionWithLink
+          text={INTL_TEXT.parametersSectionDescription}
+          linkText={INTL_TEXT.parametersSectionLinkText}
+          linkUrl="https://go.microsoft.com/fwlink/?linkid=2330613"
+        />
+        <br />
         {hasRequiredParameters || hasOptionalParameters || hasVisibleConditionalParameters ? (
-          <div className={styles.parametersSection}>
-            <Card className={styles.parameterCard}>
-              {hasRequiredParameters && (
-                <div className={styles.requiredSection}>
+          <>
+            {hasRequiredParameters && (
+              <div>
+                <Text size={400} weight="semibold">
+                  {INTL_TEXT.defaultParameters}
+                </Text>
+                <div className={styles.parameterList}>
+                  {requiredParams.map(({ param, groupId, isConditional }) => (
+                    <ParameterField
+                      key={param.id}
+                      operationId={selectedOperationId}
+                      groupId={groupId}
+                      parameter={param}
+                      isConditional={isConditional}
+                      onParameterVisibilityUpdate={onParameterVisibilityUpdate}
+                      handleParameterValueChange={handleParameterValueChange}
+                      handleRemoveConditionalParameter={handleRemoveConditionalParameter}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+            {allConditionalSettings?.length > 0 && (
+              <div style={{ marginTop: '24px' }}>
+                {/* Advanced Parameters Title and Description */}
+                <div>
+                  <Text weight="semibold" size={400} style={{ marginBottom: '8px', display: 'block' }}>
+                    {INTL_TEXT.optionalParameters}
+                  </Text>
+                  <DescriptionWithLink
+                    text={
+                      hasVisibleConditionalParameters
+                        ? INTL_TEXT.optionalParametersDescriptionWithParams
+                        : INTL_TEXT.optionalParametersDescription
+                    }
+                    linkText={INTL_TEXT.learnMore}
+                    linkUrl={hasVisibleConditionalParameters ? undefined : 'https://go.microsoft.com/fwlink/?linkid=2330508'}
+                  />
+
+                  <Field>
+                    <div style={{ maxWidth: '400px' }}>
+                      <SearchableDropdown
+                        key={`dropdown-${selectedOperationId}-${optionalDropdownOptions.length}`}
+                        searchPlaceholderText={INTL_TEXT.optionalParametersPlaceholder}
+                        options={optionalDropdownOptions}
+                        placeholder={addNewParamText}
+                        multiselect={true}
+                        showSelectAll={true}
+                        onItemSelectionChanged={handleOptionalParameterToggle}
+                      />
+                    </div>
+                  </Field>
+
+                  {/* Parameters Added count and Remove All button */}
+                  {hasVisibleConditionalParameters && (
+                    <div className={styles.optionalParametersRow}>
+                      <Text size={200}>
+                        {INTL_TEXT.parametersAdded} {visibleConditionalParams.length}
+                      </Text>
+                      <Button appearance="subtle" size="small" onClick={handleRemoveAllParameters} style={{ fontSize: '12px' }}>
+                        {INTL_TEXT.removeAllParameters}
+                      </Button>
+                    </div>
+                  )}
+                </div>
+
+                {hasVisibleConditionalParameters && (
                   <div className={styles.parameterList}>
-                    {requiredParams.map(({ param, groupId, isConditional }) => (
+                    {visibleConditionalParams.map(({ param, groupId, isConditional }) => (
                       <ParameterField
                         key={param.id}
                         operationId={selectedOperationId}
@@ -344,84 +440,10 @@ export const EditOperation = ({ description, handleDescriptionInputChange, onPar
                       />
                     ))}
                   </div>
-                </div>
-              )}
-
-              {allConditionalSettings?.length > 0 && (
-                <div style={{ marginTop: '24px' }}>
-                  {/* Advanced Parameters Title and Description */}
-                  <div style={{ marginBottom: '16px' }}>
-                    <Text weight="semibold" size={400} style={{ marginBottom: '8px', display: 'block' }}>
-                      {INTL_TEXT.optionalParameters}
-                    </Text>
-                    <div style={{ marginBottom: '16px' }}>
-                      <Text size={300}>
-                        {hasVisibleConditionalParameters
-                          ? INTL_TEXT.optionalParametersDescriptionWithParams
-                          : INTL_TEXT.optionalParametersDescription}
-                      </Text>
-                      {!hasVisibleConditionalParameters && (
-                        <>
-                          {' '}
-                          <Link
-                            href="https://learn.microsoft.com/en-us/azure/logic-apps/create-parameters-workflows?tabs=standard#define-use-and-edit-parameters"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            {INTL_TEXT.learnMore}
-                          </Link>
-                        </>
-                      )}
-                    </div>
-
-                    <Field>
-                      <Label>{INTL_TEXT.optionalParametersLabel}</Label>
-                      <div style={{ maxWidth: '400px' }}>
-                        <SearchableDropdown
-                          key={`dropdown-${selectedOperationId}-${optionalDropdownOptions.length}`}
-                          searchPlaceholderText={INTL_TEXT.optionalParametersPlaceholder}
-                          options={optionalDropdownOptions}
-                          placeholder={addNewParamText}
-                          multiselect={true}
-                          showSelectAll={true}
-                          onItemSelectionChanged={handleOptionalParameterToggle}
-                        />
-                      </div>
-                    </Field>
-
-                    {/* Parameters Added count and Remove All button */}
-                    {hasVisibleConditionalParameters && (
-                      <div className={styles.optionalParametersRow}>
-                        <Text size={200}>
-                          {INTL_TEXT.parametersAdded} {visibleConditionalParams.length}
-                        </Text>
-                        <Button appearance="subtle" size="small" onClick={handleRemoveAllParameters} style={{ fontSize: '12px' }}>
-                          {INTL_TEXT.removeAllParameters}
-                        </Button>
-                      </div>
-                    )}
-                  </div>
-
-                  {hasVisibleConditionalParameters && (
-                    <div className={styles.parameterList}>
-                      {visibleConditionalParams.map(({ param, groupId, isConditional }) => (
-                        <ParameterField
-                          key={param.id}
-                          operationId={selectedOperationId}
-                          groupId={groupId}
-                          parameter={param}
-                          isConditional={isConditional}
-                          onParameterVisibilityUpdate={onParameterVisibilityUpdate}
-                          handleParameterValueChange={handleParameterValueChange}
-                          handleRemoveConditionalParameter={handleRemoveConditionalParameter}
-                        />
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
-            </Card>
-          </div>
+                )}
+              </div>
+            )}
+          </>
         ) : (
           <div className={styles.emptyParametersCard}>
             <Text className={styles.emptyParametersText}>{INTL_TEXT.noParametersMessage}</Text>

@@ -117,6 +117,7 @@ export const useEditOperationStyles = makeStyles({
     display: 'flex',
     flexDirection: 'column',
     gap: tokens.spacingVerticalL,
+    paddingTop: '16px',
   },
 
   optionalParametersDescription: {
@@ -128,8 +129,7 @@ export const useEditOperationStyles = makeStyles({
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: '32px',
-    marginBottom: '16px',
+    padding: '10px 0 0 0',
   },
 
   parameterField: {
