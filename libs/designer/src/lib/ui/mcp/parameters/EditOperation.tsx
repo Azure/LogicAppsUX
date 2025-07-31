@@ -1,21 +1,15 @@
-import { Text, Textarea, Field, Label, Button, mergeClasses } from '@fluentui/react-components';
-import { Dismiss16Regular } from '@fluentui/react-icons';
+import { Text, Textarea, Field, tokens, Button } from '@fluentui/react-components';
 import type { RootState, AppDispatch } from '../../../core/state/mcp/store';
 import { useSelector, useDispatch } from 'react-redux';
 import { useCallback, useMemo, useRef } from 'react';
 import { useEditOperationStyles } from './styles';
-import type { ParameterInfo, ValueSegment } from '@microsoft/logic-apps-shared';
+import { isUndefinedOrEmptyString, type ParameterInfo } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
-import type { SearchableDropdownOption } from '@microsoft/designer-ui';
-import { SEARCHABLE_DROPDOWN_SELECT_ALL_KEY, SearchableDropdown } from '@microsoft/designer-ui';
-import {
-  updateNodeParameters,
-  updateParameterConditionalVisibility,
-  type UpdateParametersPayload,
-} from '../../../core/state/operation/operationMetadataSlice';
+import { SEARCHABLE_DROPDOWN_SELECT_ALL_KEY, SearchableDropdown, type SearchableDropdownOption } from '@microsoft/designer-ui';
+import { updateParameterConditionalVisibility } from '../../../core/state/operation/operationMetadataSlice';
 import { getGroupIdFromParameterId } from '../../../core/utils/parameters/helper';
-import { ParameterEditor } from './ParameterEditor';
-import constants from '../../../common/constants';
+import { type McpParameterInputType, ParameterField } from './parameterfield';
+import { DismissCircle20Filled } from '@fluentui/react-icons';
 import { useMcpWizardStyles } from '../wizard/styles';
 import { DescriptionWithLink } from '../../configuretemplate/common';
 
@@ -23,9 +17,21 @@ interface EditOperationProps {
   description: string;
   handleDescriptionInputChange: (description: string) => void;
   onParameterVisibilityUpdate: () => void;
+  userInputParamIds: Record<string, boolean>;
+  setUserInputParamIds: (ids: Record<string, boolean>) => void;
+  parameterErrors: Record<string, string | undefined>;
+  setParameterErrors: (errors: Record<string, string | undefined>) => void;
 }
 
-export const EditOperation = ({ description, handleDescriptionInputChange, onParameterVisibilityUpdate }: EditOperationProps) => {
+export const EditOperation = ({
+  description,
+  handleDescriptionInputChange,
+  onParameterVisibilityUpdate,
+  userInputParamIds,
+  setUserInputParamIds,
+  parameterErrors,
+  setParameterErrors,
+}: EditOperationProps) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const styles = useEditOperationStyles();
@@ -43,6 +49,20 @@ export const EditOperation = ({ description, handleDescriptionInputChange, onPar
 
   const operationInfo = selectedOperationId ? operationInfos[selectedOperationId] : null;
   const parameters = selectedOperationId ? inputParameters[selectedOperationId] : null;
+
+  const handleParameterInputTypeChange = useCallback(
+    (parameterId: string, newType: McpParameterInputType) => {
+      const updated = { ...userInputParamIds };
+      if (newType === 'user') {
+        updated[parameterId] = true;
+      } else {
+        delete updated[parameterId];
+      }
+      onParameterVisibilityUpdate();
+      setUserInputParamIds(updated);
+    },
+    [userInputParamIds, setUserInputParamIds, onParameterVisibilityUpdate]
+  );
 
   const { requiredParams, visibleConditionalParams, optionalDropdownOptions, allConditionalSettings, conditionallyInvisibleSettings } =
     useMemo(() => {
@@ -212,34 +232,6 @@ export const EditOperation = ({ description, handleDescriptionInputChange, onPar
       description: 'Label showing count of added optional parameters',
     }),
   };
-
-  const handleParameterValueChange = useCallback(
-    (parameterId: string, newValue: ValueSegment[]) => {
-      if (!selectedOperationId || !parameters?.parameterGroups) {
-        return;
-      }
-
-      const parameterGroupId = getGroupIdFromParameterId(parameters, parameterId);
-      if (!parameterGroupId) {
-        return;
-      }
-
-      const updatePayload: UpdateParametersPayload = {
-        nodeId: selectedOperationId,
-        parameters: [
-          {
-            groupId: parameterGroupId,
-            parameterId,
-            propertiesToUpdate: { value: newValue },
-          },
-        ],
-        isUserAction: true,
-      };
-
-      dispatch(updateNodeParameters(updatePayload));
-    },
-    [dispatch, selectedOperationId, parameters]
-  );
   const handleOptionalParameterToggle = useCallback(
     (parameterId: string, isVisible: boolean) => {
       if (!selectedOperationId || !parameters?.parameterGroups) {
@@ -286,6 +278,17 @@ export const EditOperation = ({ description, handleDescriptionInputChange, onPar
     [handleOptionalParameterToggle]
   );
 
+  const removeParameterError = useCallback(
+    (parameterId: string) => {
+      setParameterErrors({ ...parameterErrors, [parameterId]: undefined });
+    },
+    [setParameterErrors, parameterErrors]
+  );
+
+  const parameterHasErrors = useMemo(
+    () => Object.values(parameterErrors).some((error) => !isUndefinedOrEmptyString(error)),
+    [parameterErrors]
+  );
   const handleRemoveAllParameters = useCallback(() => {
     // Remove all visible conditional parameters
     visibleConditionalParams.forEach(({ param }) => {
@@ -351,6 +354,7 @@ export const EditOperation = ({ description, handleDescriptionInputChange, onPar
           <Text size={400} weight="semibold">
             {INTL_TEXT.parameters}
           </Text>
+          {parameterHasErrors && <DismissCircle20Filled color={tokens.colorStatusDangerForeground1} />}
         </div>
         <DescriptionWithLink
           text={INTL_TEXT.parametersSectionDescription}
@@ -374,8 +378,11 @@ export const EditOperation = ({ description, handleDescriptionInputChange, onPar
                       parameter={param}
                       isConditional={isConditional}
                       onParameterVisibilityUpdate={onParameterVisibilityUpdate}
-                      handleParameterValueChange={handleParameterValueChange}
+                      parameterInputType={userInputParamIds[param.id] ? 'user' : 'model'}
+                      onParameterInputTypeChange={handleParameterInputTypeChange}
                       handleRemoveConditionalParameter={handleRemoveConditionalParameter}
+                      parameterError={parameterErrors[param.id]}
+                      removeParameterError={removeParameterError}
                     />
                   ))}
                 </div>
@@ -435,8 +442,11 @@ export const EditOperation = ({ description, handleDescriptionInputChange, onPar
                         parameter={param}
                         isConditional={isConditional}
                         onParameterVisibilityUpdate={onParameterVisibilityUpdate}
-                        handleParameterValueChange={handleParameterValueChange}
+                        parameterInputType={userInputParamIds[param.id] ? 'user' : 'model'}
+                        onParameterInputTypeChange={handleParameterInputTypeChange}
                         handleRemoveConditionalParameter={handleRemoveConditionalParameter}
+                        parameterError={parameterErrors[param.id]}
+                        removeParameterError={removeParameterError}
                       />
                     ))}
                   </div>
@@ -448,70 +458,6 @@ export const EditOperation = ({ description, handleDescriptionInputChange, onPar
           <div className={styles.emptyParametersCard}>
             <Text className={styles.emptyParametersText}>{INTL_TEXT.noParametersMessage}</Text>
           </div>
-        )}
-      </div>
-    </div>
-  );
-};
-
-const ParameterField = ({
-  operationId,
-  groupId,
-  parameter,
-  isConditional,
-  onParameterVisibilityUpdate,
-  handleParameterValueChange,
-  handleRemoveConditionalParameter,
-}: {
-  operationId: string;
-  groupId: string;
-  parameter: ParameterInfo;
-  isConditional?: boolean;
-  onParameterVisibilityUpdate: () => void;
-  handleParameterValueChange: (parameterId: string, newValue: ValueSegment[]) => void;
-  handleRemoveConditionalParameter: (parameterId: string) => void;
-}) => {
-  const intl = useIntl();
-  const styles = useEditOperationStyles();
-
-  const removeParamText = intl.formatMessage({
-    id: '5E66mK',
-    defaultMessage: 'Remove parameter',
-    description: 'Tooltip for remove parameter button',
-  });
-
-  const isLargeParameter = useMemo(() => {
-    const editor = parameter.editor?.toLowerCase();
-    return (
-      editor === constants.EDITOR.ARRAY ||
-      editor === constants.EDITOR.DICTIONARY ||
-      editor === constants.EDITOR.HTML ||
-      editor === constants.EDITOR.TABLE
-    );
-  }, [parameter.editor]);
-
-  return (
-    <div className={styles.parameterField}>
-      <Label className={styles.parameterLabel} required={parameter.required} title={parameter.label}>
-        {parameter.label}
-      </Label>
-      <div className={mergeClasses(styles.parameterValueSection, isLargeParameter && styles.largeParameterSection)}>
-        <ParameterEditor
-          operationId={operationId}
-          groupId={groupId}
-          parameter={parameter}
-          onParameterVisibilityUpdate={onParameterVisibilityUpdate}
-          handleParameterValueChange={handleParameterValueChange}
-        />
-        {isConditional && (
-          <Button
-            appearance="subtle"
-            size="small"
-            icon={<Dismiss16Regular />}
-            onClick={() => handleRemoveConditionalParameter(parameter.id)}
-            title={removeParamText}
-            className={styles.removeParameterButton}
-          />
         )}
       </div>
     </div>

@@ -18,6 +18,9 @@ export const useEditOperationStyles = makeStyles({
   sectionTitle: {
     color: tokens.colorNeutralForeground1,
     marginBottom: tokens.spacingVerticalS,
+    display: 'flex',
+    alignItems: 'center',
+    gap: '5px',
   },
 
   operationHeader: {
@@ -117,7 +120,7 @@ export const useEditOperationStyles = makeStyles({
     display: 'flex',
     flexDirection: 'column',
     gap: tokens.spacingVerticalL,
-    paddingTop: '16px',
+    paddingTop: '20px',
   },
 
   optionalParametersDescription: {
@@ -130,6 +133,26 @@ export const useEditOperationStyles = makeStyles({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: '10px 0 0 0',
+  },
+
+  parameterInputTypeLabel: {
+    textAlign: 'center',
+    alignContent: 'center',
+  },
+
+  parameterInputType: {
+    display: 'flex',
+    flexDirection: 'row',
+  },
+
+  parameterBodySection: {
+    marginTop: '-8px',
+    marginLeft: tokens.spacingHorizontalS,
+  },
+
+  parameterLabelSection: {
+    display: 'flex',
+    justifyContent: 'space-around',
   },
 
   parameterField: {
@@ -148,6 +171,10 @@ export const useEditOperationStyles = makeStyles({
     alignItems: 'center',
     justifyContent: 'space-between',
     gap: tokens.spacingHorizontalS,
+  },
+
+  validationErrorText: {
+    color: tokens.colorPaletteRedForeground1,
   },
 
   largeParameterSection: {

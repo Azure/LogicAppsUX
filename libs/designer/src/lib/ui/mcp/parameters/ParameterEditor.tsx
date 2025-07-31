@@ -24,7 +24,6 @@ import {
   loadDynamicTreeItemsForParameter,
   loadDynamicValuesForParameter,
   parameterValueToString,
-  updateParameterAndDependencies,
 } from '../../../core/utils/parameters/helper';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../core/state/mcp/store';
@@ -36,7 +35,7 @@ interface ParameterEditorProps {
   groupId: string;
   parameter: ParameterInfo;
   onParameterVisibilityUpdate: () => void;
-  handleParameterValueChange: (parameterId: string, newValue: ValueSegment[]) => void;
+  onParameterValueChange: (newState: ChangeState) => void;
 }
 
 const mcpEditorsPlugin = {
@@ -48,7 +47,7 @@ export const ParameterEditor = ({
   groupId,
   parameter,
   onParameterVisibilityUpdate,
-  handleParameterValueChange,
+  onParameterValueChange,
 }: ParameterEditorProps) => {
   const styles = useEditOperationStyles();
   const dispatch = useDispatch<AppDispatch>();
@@ -59,46 +58,6 @@ export const ParameterEditor = ({
     dependencies: state.operations.dependencies[operationId],
   }));
   const displayNameResult = useConnectorName(operationInfo);
-
-  const onValueChange = useCallback(
-    (newState: ChangeState) => {
-      const { value: newValueSegments, viewModel } = newState;
-      const propertiesToUpdate = { value: newValueSegments, preservedValue: undefined } as Partial<ParameterInfo>;
-
-      if (viewModel !== undefined) {
-        propertiesToUpdate.editorViewModel = viewModel;
-      }
-
-      dispatch(
-        updateParameterAndDependencies({
-          nodeId: operationId,
-          groupId,
-          parameterId: parameter?.id as string,
-          properties: propertiesToUpdate,
-          isTrigger: false,
-          operationInfo,
-          connectionReference: reference,
-          nodeInputs,
-          dependencies,
-          updateTokenMetadata: false,
-        })
-      );
-      onParameterVisibilityUpdate();
-      handleParameterValueChange(parameter.id, newValueSegments);
-    },
-    [
-      dispatch,
-      operationId,
-      groupId,
-      parameter.id,
-      operationInfo,
-      reference,
-      nodeInputs,
-      dependencies,
-      onParameterVisibilityUpdate,
-      handleParameterValueChange,
-    ]
-  );
 
   const onComboboxMenuOpen = useCallback((): void => {
     if (parameter?.dynamicData?.status === DynamicLoadStatus.FAILED || parameter?.dynamicData?.status === DynamicLoadStatus.NOTSTARTED) {
@@ -166,11 +125,10 @@ export const ParameterEditor = ({
           arrayType={parameter.editorViewModel.arrayType}
           initialMode={parameter.editorOptions?.initialMode}
           label={parameter.label}
-          placeholder={parameter.placeholder}
           initialValue={parameter.value}
           basePlugins={mcpEditorsPlugin}
           itemSchema={parameter.editorViewModel.itemSchema}
-          onChange={onValueChange}
+          onChange={onParameterValueChange}
           options={dropdownOptions}
           onMenuOpen={onComboboxMenuOpen}
           castParameter={onCastParameter}
@@ -187,7 +145,7 @@ export const ParameterEditor = ({
           options={parameter.editorOptions as AuthenticationEditorOptions}
           type={parameter.editorViewModel.type}
           authenticationValue={parameter.editorViewModel.authenticationValue}
-          onChange={onValueChange}
+          onChange={onParameterValueChange}
           basePlugins={mcpEditorsPlugin}
         />
       );
@@ -198,13 +156,12 @@ export const ParameterEditor = ({
           className={editorClassName}
           labelId={labelForAutomationId}
           label={parameter.label}
-          placeholder={parameter.placeholder}
           basePlugins={mcpEditorsPlugin}
           readonly={parameter.editorOptions?.readOnly}
           initialValue={parameter.value}
           initialItems={parameter.editorViewModel.items}
           valueType={parameter.editorOptions?.valueType}
-          onChange={onValueChange}
+          onChange={onParameterValueChange}
           dataAutomationId={`msla-setting-token-editor-dictionaryeditor-${labelForAutomationId}`}
         />
       );
@@ -219,10 +176,9 @@ export const ParameterEditor = ({
             key: index.toString(),
             ...option,
           }))}
-          placeholder={parameter.placeholder}
           multiSelect={!!getPropertyValue(parameter.editorOptions, 'multiSelect')}
           serialization={parameter.editorOptions?.serialization}
-          onChange={onValueChange}
+          onChange={onParameterValueChange}
           dataAutomationId={`msla-setting-token-editor-dropdowneditor-${labelForAutomationId}`}
         />
       );
@@ -233,14 +189,13 @@ export const ParameterEditor = ({
           className={editorClassName}
           labelId={labelForAutomationId}
           label={parameter.label}
-          placeholder={parameter.placeholder}
           basePlugins={mcpEditorsPlugin}
           initialValue={parameter.value}
           options={dropdownOptions}
           useOption={true}
           isLoading={parameter.dynamicData?.status === DynamicLoadStatus.LOADING}
           errorDetails={parameter.dynamicData?.error ? { message: parameter.dynamicData.error.message } : undefined}
-          onChange={onValueChange}
+          onChange={onParameterValueChange}
           onMenuOpen={onComboboxMenuOpen}
           multiSelect={getPropertyValue(parameter.editorOptions, 'multiSelect')}
           serialization={parameter.editorOptions?.serialization}
@@ -253,7 +208,6 @@ export const ParameterEditor = ({
         <FilePickerEditor
           className={editorClassName}
           labelId={labelForAutomationId}
-          placeholder={parameter.placeholder}
           basePlugins={{ ...mcpEditorsPlugin, clearEditor: true }}
           initialValue={parameter.value}
           displayValue={parameter.editorViewModel.displayValue}
@@ -263,7 +217,7 @@ export const ParameterEditor = ({
           pickerCallbacks={getPickerCallbacks()}
           isLoading={parameter.dynamicData?.status === DynamicLoadStatus.LOADING}
           errorDetails={parameter.dynamicData?.error ? { message: parameter.dynamicData.error.message } : undefined}
-          editorBlur={onValueChange}
+          editorBlur={onParameterValueChange}
           dataAutomationId={`msla-setting-token-editor-filepickereditor-${labelForAutomationId}`}
         />
       );
@@ -274,9 +228,8 @@ export const ParameterEditor = ({
           className={styles.parameterEditor}
           labelId={labelForAutomationId}
           initialValue={parameter.value}
-          placeholder={parameter.placeholder}
           basePlugins={mcpEditorsPlugin}
-          onChange={onValueChange}
+          onChange={onParameterValueChange}
           valueType={constants.SWAGGER.TYPE.ANY}
           dataAutomationId={`msla-setting-token-editor-htmleditor-${labelForAutomationId}`}
         />
@@ -284,7 +237,12 @@ export const ParameterEditor = ({
 
     case constants.EDITOR.SCHEMA:
       return (
-        <SchemaEditor className={styles.parameterEditor} label={parameter.label} initialValue={parameter.value} onChange={onValueChange} />
+        <SchemaEditor
+          className={styles.parameterEditor}
+          label={parameter.label}
+          initialValue={parameter.value}
+          onChange={onParameterValueChange}
+        />
       );
 
     case constants.EDITOR.TABLE:
@@ -299,7 +257,7 @@ export const ParameterEditor = ({
           titles={parameter.editorOptions?.columns?.titles}
           keys={parameter.editorOptions?.columns?.keys}
           types={parameter.editorOptions?.columns?.types}
-          onChange={onValueChange}
+          onChange={onParameterValueChange}
           dataAutomationId={`msla-setting-token-editor-tableditor-${labelForAutomationId}`}
         />
       );
@@ -311,8 +269,7 @@ export const ParameterEditor = ({
           basePlugins={mcpEditorsPlugin}
           initialValue={parameter.value}
           onChange={onParameterVisibilityUpdate}
-          editorBlur={onValueChange}
-          placeholder={parameter.placeholder ?? `Enter ${parameter.label?.toLowerCase()}`}
+          editorBlur={onParameterValueChange}
         />
       );
   }
