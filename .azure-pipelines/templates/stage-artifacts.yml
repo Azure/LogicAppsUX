@@ -17,6 +17,6 @@ steps:
         extension.signature.p7s
         **/*.tar.gz
         **/*.tgz
-      TargetFolder: "$(build.artifactstagingdirectory)/build/${{ parameters.publishVersion }}"
+      TargetFolder: "$(build.artifactstagingdirectory)/build/Root
     condition: succeeded()
     
