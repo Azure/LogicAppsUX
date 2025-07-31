@@ -22,6 +22,7 @@ export default {
           description: 'Agent Name',
           required: true,
           'x-ms-visibility': 'hideInUI',
+          'x-ms-is-node-id': true,
         },
         message: {
           type: 'string',
