@@ -45,7 +45,7 @@ parameters:
   # Useful to control which group of people should be required to approve the deployment.
   - name: environmentName
     type: string
-    default: AzCodeDeploy
+    default: VSCodeDeployLAUX
 
 variables:
   # Required by MicroBuild template
