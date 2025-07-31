@@ -1,26 +1,13 @@
-import {
-  Text,
-  Textarea,
-  Field,
-  Divider,
-  Card,
-  Label,
-  Button,
-  Accordion,
-  AccordionItem,
-  AccordionHeader,
-  AccordionPanel,
-  mergeClasses,
-} from '@fluentui/react-components';
+import { Text, Textarea, Field, Divider, Card, Label, Button, Link, mergeClasses } from '@fluentui/react-components';
 import { Dismiss16Regular } from '@fluentui/react-icons';
 import type { RootState, AppDispatch } from '../../../core/state/mcp/store';
 import { useSelector, useDispatch } from 'react-redux';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 import { useEditOperationStyles } from './styles';
 import type { ParameterInfo, ValueSegment } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 import type { SearchableDropdownOption } from '@microsoft/designer-ui';
-import { SearchableDropdownWithAddAll } from '@microsoft/designer-ui';
+import { SEARCHABLE_DROPDOWN_SELECT_ALL_KEY, SearchableDropdown } from '@microsoft/designer-ui';
 import {
   updateNodeParameters,
   updateParameterConditionalVisibility,
@@ -40,6 +27,10 @@ export const EditOperation = ({ description, handleDescriptionInputChange, onPar
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const styles = useEditOperationStyles();
+
+  // Track the order in which parameters are selected to maintain display order
+  const selectionOrderRef = useRef<Map<string, number>>(new Map());
+  const nextOrderRef = useRef<number>(1);
 
   const { selectedOperationId, operationInfos, inputParameters } = useSelector((state: RootState) => ({
     selectedOperationId: state.mcpSelection.selectedOperationId,
@@ -63,11 +54,13 @@ export const EditOperation = ({ description, handleDescriptionInputChange, onPar
       }
 
       const requiredParams: Array<{ groupId: string; param: ParameterInfo; isConditional: boolean }> = [];
-      const visibleConditionalParams: Array<{ groupId: string; param: ParameterInfo; isConditional: boolean }> = [];
+      const visibleConditionalParamsUnsorted: Array<{ groupId: string; param: ParameterInfo; isConditional: boolean }> = [];
       const dropdownOptions: SearchableDropdownOption[] = [];
       const allConditional: ParameterInfo[] = [];
       const invisible: ParameterInfo[] = [];
+      const orderMap = new Map<string, number>();
 
+      // First pass: collect all data
       for (const [groupId, group] of Object.entries(parameters.parameterGroups)) {
         for (const param of group.parameters) {
           if (param.required) {
@@ -76,7 +69,12 @@ export const EditOperation = ({ description, handleDescriptionInputChange, onPar
             allConditional.push(param);
 
             if (param.conditionalVisibility === true) {
-              visibleConditionalParams.push({ groupId, param, isConditional: true });
+              visibleConditionalParamsUnsorted.push({ groupId, param, isConditional: true });
+              // If this parameter doesn't have a selection order yet, it might be pre-existing
+              if (!selectionOrderRef.current.has(param.id)) {
+                selectionOrderRef.current.set(param.id, nextOrderRef.current++);
+              }
+              orderMap.set(param.id, selectionOrderRef.current.get(param.id) || 0);
             } else {
               invisible.push(param);
               dropdownOptions.push({
@@ -88,6 +86,16 @@ export const EditOperation = ({ description, handleDescriptionInputChange, onPar
           }
         }
       }
+
+      // Sort dropdown options alphabetically by text
+      dropdownOptions.sort((a, b) => (a.text || '').localeCompare(b.text || ''));
+
+      // Sort visible conditional params by their selection order (preserve order they were selected)
+      const visibleConditionalParams = visibleConditionalParamsUnsorted.sort((a, b) => {
+        const orderA = orderMap.get(a.param.id) || 0;
+        const orderB = orderMap.get(b.param.id) || 0;
+        return orderA - orderB;
+      });
 
       return {
         requiredParams,
@@ -114,35 +122,15 @@ export const EditOperation = ({ description, handleDescriptionInputChange, onPar
       defaultMessage: 'Required',
       description: 'Title for the required section',
     }),
-    advancedParameters: intl.formatMessage({
-      id: 'ZP9nho',
-      defaultMessage: 'Advanced parameters',
-      description: 'Label for the section to configure advanced parameters',
+    optionalParameters: intl.formatMessage({
+      id: 'VQ1BxQ',
+      defaultMessage: 'Optional parameters',
+      description: 'Label for the section to configure optional parameters',
     }),
     selectParameters: intl.formatMessage({
       id: '1h43JZ',
       defaultMessage: 'Select parameters',
       description: 'Label for the dropdown to select parameters',
-    }),
-    showAllOptional: intl.formatMessage({
-      id: 'EgGZJG',
-      defaultMessage: 'Show All',
-      description: 'Button text to show all optional parameters',
-    }),
-    hideAllOptional: intl.formatMessage({
-      id: 'qwjHE8',
-      defaultMessage: 'Hide All',
-      description: 'Button text to hide all optional parameters',
-    }),
-    showAllOptionalTooltip: intl.formatMessage({
-      id: 'H7xM88',
-      defaultMessage: 'Show all optional parameters',
-      description: 'Tooltip for show all optional parameters button',
-    }),
-    hideAllOptionalTooltip: intl.formatMessage({
-      id: 'r/KmCk',
-      defaultMessage: 'Hide all optional parameters',
-      description: 'Tooltip for hide all optional parameters button',
     }),
     descriptionLabel: intl.formatMessage({
       id: 'LLJrOT',
@@ -168,6 +156,41 @@ export const EditOperation = ({ description, handleDescriptionInputChange, onPar
       id: 'kuMOqt',
       defaultMessage: 'Saved',
       description: 'Badge text for saved state',
+    }),
+    optionalParametersDescription: intl.formatMessage({
+      id: 'hlSLnD',
+      defaultMessage: 'Add optional parameters you want the MCP to expose.',
+      description: 'Description text for optional parameters section when no parameters are visible',
+    }),
+    optionalParametersLabel: intl.formatMessage({
+      id: '3qDalD',
+      defaultMessage: 'Add optional parameters',
+      description: 'Label for adding new optional parameters in the dropdown',
+    }),
+    optionalParametersPlaceholder: intl.formatMessage({
+      id: 'TpWNAE',
+      defaultMessage: 'Select a parameter',
+      description: 'Placeholder text for adding new optional parameters in the dropdown',
+    }),
+    optionalParametersDescriptionWithParams: intl.formatMessage({
+      id: 'Met0rU',
+      defaultMessage: 'Add more available parameters for this tool to use.',
+      description: 'Description text for optional parameters section when parameters are already visible',
+    }),
+    learnMore: intl.formatMessage({
+      id: 'NF08ud',
+      defaultMessage: 'Learn More',
+      description: 'Learn more link text for optional parameters',
+    }),
+    removeAllParameters: intl.formatMessage({
+      id: 'BVxUsU',
+      defaultMessage: 'Remove All',
+      description: 'Button text to remove all optional parameters',
+    }),
+    parametersAdded: intl.formatMessage({
+      id: 'iOZv39',
+      defaultMessage: 'Parameters Added:',
+      description: 'Label showing count of added optional parameters',
     }),
   };
 
@@ -204,9 +227,24 @@ export const EditOperation = ({ description, handleDescriptionInputChange, onPar
         return;
       }
 
+      // Skip the Select All option - it's just for UI purposes
+      if (parameterId === SEARCHABLE_DROPDOWN_SELECT_ALL_KEY) {
+        return;
+      }
+
       const parameterGroupId = getGroupIdFromParameterId(parameters, parameterId);
       if (!parameterGroupId) {
         return;
+      }
+
+      // Track selection order for newly visible parameters
+      if (isVisible && !selectionOrderRef.current.has(parameterId)) {
+        selectionOrderRef.current.set(parameterId, nextOrderRef.current++);
+      }
+
+      // Remove from selection order when hiding parameter
+      if (!isVisible) {
+        selectionOrderRef.current.delete(parameterId);
       }
 
       onParameterVisibilityUpdate();
@@ -222,37 +260,19 @@ export const EditOperation = ({ description, handleDescriptionInputChange, onPar
     [dispatch, selectedOperationId, parameters, onParameterVisibilityUpdate]
   );
 
-  const handleToggleAllOptional = useCallback(
-    (isAllVisible: boolean) => {
-      if (!selectedOperationId || !parameters) {
-        return;
-      }
-
-      for (const [groupId, group] of Object.entries(parameters.parameterGroups)) {
-        for (const param of group.parameters) {
-          if (!param.required && param.conditionalVisibility !== isAllVisible) {
-            onParameterVisibilityUpdate();
-            dispatch(
-              updateParameterConditionalVisibility({
-                nodeId: selectedOperationId,
-                groupId,
-                parameterId: param.id,
-                value: isAllVisible,
-              })
-            );
-          }
-        }
-      }
-    },
-    [dispatch, selectedOperationId, parameters, onParameterVisibilityUpdate]
-  );
-
   const handleRemoveConditionalParameter = useCallback(
     (parameterId: string) => {
       handleOptionalParameterToggle(parameterId, false);
     },
     [handleOptionalParameterToggle]
   );
+
+  const handleRemoveAllParameters = useCallback(() => {
+    // Remove all visible conditional parameters
+    visibleConditionalParams.forEach(({ param }) => {
+      handleOptionalParameterToggle(param.id, false);
+    });
+  }, [visibleConditionalParams, handleOptionalParameterToggle]);
 
   if (!operationInfo || !selectedOperationId) {
     return (
@@ -327,57 +347,79 @@ export const EditOperation = ({ description, handleDescriptionInputChange, onPar
                 </div>
               )}
 
-              {allConditionalSettings?.length ? (
-                <div>
-                  <Accordion collapsible={true} defaultOpenItems={['optional-parameters']}>
-                    <AccordionItem value="optional-parameters">
-                      <AccordionHeader>
-                        <Text weight="semibold">{INTL_TEXT.advancedParameters}</Text>
-                      </AccordionHeader>
-                      <AccordionPanel className={styles.parameterList}>
-                        {/* Optional Parameters Dropdown */}
-                        {allConditionalSettings.length > 0 ? (
-                          <div className={styles.optionalParametersSection}>
-                            <SearchableDropdownWithAddAll
-                              key={`dropdown-${selectedOperationId}-${optionalDropdownOptions.length}`}
-                              label={INTL_TEXT.selectParameters}
-                              options={optionalDropdownOptions}
-                              placeholder={addNewParamText}
-                              multiselect={true}
-                              onItemSelectionChanged={handleOptionalParameterToggle}
-                              addAllButtonText={INTL_TEXT.showAllOptional}
-                              addAllButtonTooltip={INTL_TEXT.showAllOptionalTooltip}
-                              addAllButtonEnabled={optionalDropdownOptions.length > 0}
-                              removeAllButtonText={INTL_TEXT.hideAllOptional}
-                              removeAllButtonTooltip={INTL_TEXT.hideAllOptionalTooltip}
-                              removeAllButtonEnabled={hasVisibleConditionalParameters}
-                              onShowAllClick={() => handleToggleAllOptional(true)}
-                              onHideAllClick={() => handleToggleAllOptional(false)}
-                            />
-                          </div>
-                        ) : null}
+              {allConditionalSettings?.length > 0 && (
+                <div style={{ marginTop: '24px' }}>
+                  {/* Advanced Parameters Title and Description */}
+                  <div style={{ marginBottom: '16px' }}>
+                    <Text weight="semibold" size={400} style={{ marginBottom: '8px', display: 'block' }}>
+                      {INTL_TEXT.optionalParameters}
+                    </Text>
+                    <div style={{ marginBottom: '16px' }}>
+                      <Text size={300}>
+                        {hasVisibleConditionalParameters
+                          ? INTL_TEXT.optionalParametersDescriptionWithParams
+                          : INTL_TEXT.optionalParametersDescription}
+                      </Text>
+                      {!hasVisibleConditionalParameters && (
+                        <>
+                          {' '}
+                          <Link
+                            href="https://learn.microsoft.com/en-us/azure/logic-apps/create-parameters-workflows?tabs=standard#define-use-and-edit-parameters"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {INTL_TEXT.learnMore}
+                          </Link>
+                        </>
+                      )}
+                    </div>
 
-                        {hasVisibleConditionalParameters && (
-                          <div className={styles.parameterList}>
-                            {visibleConditionalParams.map(({ param, groupId, isConditional }) => (
-                              <ParameterField
-                                key={param.id}
-                                operationId={selectedOperationId}
-                                groupId={groupId}
-                                parameter={param}
-                                isConditional={isConditional}
-                                onParameterVisibilityUpdate={onParameterVisibilityUpdate}
-                                handleParameterValueChange={handleParameterValueChange}
-                                handleRemoveConditionalParameter={handleRemoveConditionalParameter}
-                              />
-                            ))}
-                          </div>
-                        )}
-                      </AccordionPanel>
-                    </AccordionItem>
-                  </Accordion>
+                    <Field>
+                      <Label>{INTL_TEXT.optionalParametersLabel}</Label>
+                      <div style={{ maxWidth: '400px' }}>
+                        <SearchableDropdown
+                          key={`dropdown-${selectedOperationId}-${optionalDropdownOptions.length}`}
+                          searchPlaceholderText={INTL_TEXT.optionalParametersPlaceholder}
+                          options={optionalDropdownOptions}
+                          placeholder={addNewParamText}
+                          multiselect={true}
+                          showSelectAll={true}
+                          onItemSelectionChanged={handleOptionalParameterToggle}
+                        />
+                      </div>
+                    </Field>
+
+                    {/* Parameters Added count and Remove All button */}
+                    {hasVisibleConditionalParameters && (
+                      <div className={styles.optionalParametersRow}>
+                        <Text size={200}>
+                          {INTL_TEXT.parametersAdded} {visibleConditionalParams.length}
+                        </Text>
+                        <Button appearance="subtle" size="small" onClick={handleRemoveAllParameters} style={{ fontSize: '12px' }}>
+                          {INTL_TEXT.removeAllParameters}
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+
+                  {hasVisibleConditionalParameters && (
+                    <div className={styles.parameterList}>
+                      {visibleConditionalParams.map(({ param, groupId, isConditional }) => (
+                        <ParameterField
+                          key={param.id}
+                          operationId={selectedOperationId}
+                          groupId={groupId}
+                          parameter={param}
+                          isConditional={isConditional}
+                          onParameterVisibilityUpdate={onParameterVisibilityUpdate}
+                          handleParameterValueChange={handleParameterValueChange}
+                          handleRemoveConditionalParameter={handleRemoveConditionalParameter}
+                        />
+                      ))}
+                    </div>
+                  )}
                 </div>
-              ) : null}
+              )}
             </Card>
           </div>
         ) : (
