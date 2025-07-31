@@ -88,9 +88,8 @@ export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: R
       description: 'Title for the connectors section',
     }),
     connectorsDescription: intl.formatMessage({
-      id: 'dg91jv',
-      defaultMessage:
-        'Connectors allow your logic app to interact with other services. Add connectors to enable operations and parameters.',
+      id: 'nJJHIZ',
+      defaultMessage: 'Connectors provide actions for you to create tools.',
       description: 'Description for the connectors section',
     }),
     detailsTitle: intl.formatMessage({
@@ -104,14 +103,13 @@ export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: R
       description: 'Description for the details section',
     }),
     mainSectionTitle: intl.formatMessage({
-      id: 'UaGLXG',
-      defaultMessage: 'Knowledge',
+      id: 'nvkl5y',
+      defaultMessage: 'Toolbox',
       description: 'Title for the main section',
     }),
     mainSectionDescription: intl.formatMessage({
-      id: 'fXzK6b',
-      defaultMessage:
-        'Connectors include operations and parameters. Add connectors to your logic app to enable it to interact with other services.',
+      id: 'pAtVp1',
+      defaultMessage: 'Build a tool for your MCP server by selecting a connector action.',
       description: 'Description for the main section',
     }),
     toolsTitle: intl.formatMessage({
@@ -120,9 +118,8 @@ export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: R
       description: 'Title for the tools section',
     }),
     toolsDescription: intl.formatMessage({
-      id: 'JUgajj',
-      defaultMessage:
-        'Tools include operations from connector and its corresponding parameters. Add and customize tool and its parameters.',
+      id: 'BqQLqq',
+      defaultMessage: 'Each tool uses an action that has parameters. Confirm or edit these parameter input sources.',
       description: 'Description for the tools section',
     }),
     addConnectorsButton: intl.formatMessage({
