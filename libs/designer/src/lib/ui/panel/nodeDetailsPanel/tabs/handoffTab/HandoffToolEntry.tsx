@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useIntl } from 'react-intl';
 import { Button, Tooltip, Divider, Field, Textarea } from '@fluentui/react-components';
 import {
@@ -12,13 +12,22 @@ import {
   DeleteRegular,
 } from '@fluentui/react-icons';
 
-import { useHandoffActionsForAgent, useNodeDisplayName, useWorkflowNode } from '../../../../../core/state/workflow/workflowSelectors';
-import { createLiteralValueSegment, type AppDispatch } from '../../../../../core';
+import {
+  useHandoffActionsForAgent,
+  useNodeDisplayName,
+  useReplacedIds,
+  useWorkflowNode,
+} from '../../../../../core/state/workflow/workflowSelectors';
+import { createLiteralValueSegment, getExpressionTokenSections, getOutputTokenSections } from '../../../../../core';
+import type { AppDispatch, RootState } from '../../../../../core';
 import { updateNodeParameters } from '../../../../../core/state/operation/operationMetadataSlice';
 import { ParameterGroupKeys } from '../../../../../core/utils/parameters/helper';
 import { useHandoffTabStyles } from './handoffTab.styles';
 import { useOperationParameterByName } from '../../../../../core/state/operation/operationSelector';
 import { removeAgentHandoff } from '../../../../../core/actions/bjsworkflow/handoff';
+import { ParameterSection } from '../parametersTab';
+import { useReadOnly } from '../../../../../core/state/designerOptions/designerOptionsSelectors';
+import { SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
 
 const ExpandIcon = bundleIcon(ChevronRight24Filled, ChevronRight24Regular);
 const CollapseIcon = bundleIcon(ChevronDown24Filled, ChevronDown24Regular);
@@ -30,8 +39,11 @@ interface HandoffToolEntryProps {
 }
 
 export const HandoffToolEntry = ({ agentId, toolId }: HandoffToolEntryProps) => {
+  const isReadOnly = useReadOnly();
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
+
+  const replacedIds = useReplacedIds();
 
   const allHandoffActions = useHandoffActionsForAgent(agentId);
 
@@ -110,6 +122,23 @@ export const HandoffToolEntry = ({ agentId, toolId }: HandoffToolEntryProps) => 
 
   const styles = useHandoffTabStyles();
 
+  const handoffInputs = useSelector((state: RootState) => state.operations.inputParameters[handoffAction?.id]);
+  const { tokenState, workflowParametersState, workflowState } = useSelector((state: RootState) => ({
+    tokenState: state.tokens,
+    workflowParametersState: state.workflowParameters,
+    workflowState: state.workflow,
+  }));
+
+  const tokenGroup = getOutputTokenSections(
+    agentId,
+    SUBGRAPH_TYPES.AGENT_CONDITION,
+    tokenState,
+    workflowParametersState,
+    workflowState,
+    replacedIds
+  );
+  const expressionGroup = getExpressionTokenSections();
+
   return (
     <div className={styles.handoffToolEntry}>
       <div className={styles.handoffToolEntryHeader}>
@@ -139,6 +168,18 @@ export const HandoffToolEntry = ({ agentId, toolId }: HandoffToolEntryProps) => 
                 />
               </Field>
             </div>
+            {Object.keys(handoffInputs?.parameterGroups ?? {}).map((sectionName) => (
+              <div key={sectionName}>
+                <ParameterSection
+                  key={handoffAction?.id ?? ''}
+                  nodeId={handoffAction?.id ?? ''}
+                  group={handoffInputs.parameterGroups[sectionName]}
+                  readOnly={isReadOnly}
+                  tokenGroup={tokenGroup}
+                  expressionGroup={expressionGroup}
+                />
+              </div>
+            ))}
           </div>
           <Divider />
         </>

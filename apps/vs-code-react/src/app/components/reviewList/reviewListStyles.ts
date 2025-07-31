@@ -10,4 +10,17 @@ export const useReviewListStyles = makeStyles({
   failedIcon: {
     color: tokens.colorPaletteRedForeground1,
   },
+  reviewTree: {
+    width: '100%',
+  },
+  shimmerContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: tokens.spacingVerticalS,
+    marginTop: tokens.spacingVerticalXXL,
+    marginBottom: tokens.spacingVerticalXXL,
+  },
+  shimmerItem: {
+    margin: `${tokens.spacingVerticalMNudge} 0`,
+  },
 });
