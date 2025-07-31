@@ -3807,9 +3807,12 @@ export function parameterValueToString(
   idReplacements?: Record<string, string>,
   shouldEncodeBasedOnMetadata = true
 ): string | undefined {
-  const remappedId = idReplacements?.[parameterInfo.preservedValue ?? ''];
-  if (remappedId && parameterInfo.schema?.['x-ms-is-node-id']) {
-    return remappedId;
+  if (parameterInfo.schema?.['x-ms-is-node-id']) {
+    const oldValue = parameterInfo.value?.[0]?.value ?? '';
+    const remappedValue = idReplacements?.[oldValue] ?? oldValue;
+    if (remappedValue) {
+      return remappedValue;
+    }
   }
 
   const { value: remappedValue, didRemap } = isRecordNotEmpty(idReplacements)
