@@ -7,14 +7,10 @@ import type { ParameterInfo } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 import { ParameterEditor } from './ParameterEditor';
 import constants from '../../../common/constants';
-import {
-  parameterHasValue,
-  updateParameterAndDependencies,
-  type UpdateParameterAndDependenciesPayload,
-} from '../../../core/utils/parameters/helper';
+import { parameterHasValue, updateParameterAndDependencies } from '../../../core/utils/parameters/helper';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../core/state/mcp/store';
-import { updateNodeParameters, type UpdateParametersPayload } from '../../../core/state/operation/operationMetadataSlice';
+import { createLiteralValueSegment } from '../../../core/utils/parameters/segment';
 
 export type McpParameterInputType = 'model' | 'user';
 
@@ -107,33 +103,20 @@ export const ParameterField = ({
         onHandleRemoveError();
       }
 
-      const updateParameterAndDependencyPayload: UpdateParameterAndDependenciesPayload = {
-        nodeId,
-        groupId,
-        parameterId,
-        properties: propertiesToUpdate,
-        isTrigger: false,
-        operationInfo,
-        connectionReference: reference,
-        nodeInputs,
-        dependencies,
-        updateTokenMetadata: false,
-      };
-
-      dispatch(updateParameterAndDependencies(updateParameterAndDependencyPayload));
-
-      const updateParametersPayload: UpdateParametersPayload = {
-        nodeId,
-        parameters: [
-          {
-            groupId,
-            parameterId,
-            propertiesToUpdate: { value: newValueSegments },
-          },
-        ],
-        isUserAction: true,
-      };
-      dispatch(updateNodeParameters(updateParametersPayload));
+      dispatch(
+        updateParameterAndDependencies({
+          nodeId,
+          groupId,
+          parameterId,
+          properties: propertiesToUpdate,
+          isTrigger: false,
+          operationInfo,
+          connectionReference: reference,
+          nodeInputs,
+          dependencies,
+          updateTokenMetadata: false,
+        })
+      );
 
       onParameterVisibilityUpdate();
     },
@@ -157,13 +140,7 @@ export const ParameterField = ({
     if (data.value === 'model') {
       onHandleRemoveError();
       onParameterValueChange({
-        value: [
-          {
-            id: parameter?.value?.[0]?.id,
-            type: 'literal',
-            value: '',
-          },
-        ],
+        value: [createLiteralValueSegment('')],
       });
     }
   };

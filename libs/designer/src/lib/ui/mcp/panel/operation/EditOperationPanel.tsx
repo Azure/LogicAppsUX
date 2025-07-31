@@ -29,7 +29,10 @@ export const EditOperationPanel = () => {
     panelMode: state.mcpPanel?.currentPanelView ?? null,
     inputParameters: state.operations.inputParameters,
   }));
-  const parameters = selectedOperationId ? inputParameters[selectedOperationId] : null;
+  const parameters = useMemo(
+    () => (selectedOperationId ? inputParameters[selectedOperationId] : null),
+    [selectedOperationId, inputParameters]
+  );
 
   const selectedOperationSummary = useMemo(() => {
     return operationMetadata[selectedOperationId ?? '']?.summary ?? selectedOperationId;
@@ -64,15 +67,13 @@ export const EditOperationPanel = () => {
     }),
   };
 
-  const userInputParamIds = getUserInputParamIds();
-
-  const runValidationOnUserInput = useCallback(() => {
+  const haveUserModeInputsEmptyValues = useCallback(() => {
     if (!selectedOperationId || !parameters?.parameterGroups) {
       return;
     }
 
     let hasEmptyUserInputValue = false;
-    for (const parameterId of Object.keys(userInputParamIds)) {
+    for (const parameterId of Object.keys(getUserInputParamIds())) {
       const parameterGroupId = getGroupIdFromParameterId(parameters, parameterId);
 
       if (!parameterGroupId) {
@@ -80,7 +81,7 @@ export const EditOperationPanel = () => {
       }
 
       const thisParameterHasEmptyUserInput =
-        userInputParamIds[parameterId] &&
+        getUserInputParamIds()[parameterId] &&
         !!parameters?.parameterGroups?.[parameterGroupId]?.parameters?.find((parameter) => {
           return equals(parameter?.id, parameterId) && !parameterHasValue(parameter);
         });
@@ -95,7 +96,7 @@ export const EditOperationPanel = () => {
       hasEmptyUserInputValue = hasEmptyUserInputValue || thisParameterHasEmptyUserInput;
     }
     return hasEmptyUserInputValue;
-  }, [userInputParamIds, parameters, selectedOperationId, setParameterErrors, INTL_TEXT.parameterEmptyErrorMessage]);
+  }, [getUserInputParamIds, parameters, selectedOperationId, setParameterErrors, INTL_TEXT.parameterEmptyErrorMessage]);
 
   const handleDescriptionInputChange = useCallback((description: string) => {
     setDescription(description);
@@ -122,9 +123,8 @@ export const EditOperationPanel = () => {
       return;
     }
 
-    const hasUserInputEmptyValues = runValidationOnUserInput();
     // If some user input values are empty, do not proceed to save
-    if (hasUserInputEmptyValues) {
+    if (haveUserModeInputsEmptyValues()) {
       return;
     }
 
@@ -141,7 +141,7 @@ export const EditOperationPanel = () => {
 
     clearSnapshot();
     dispatch(closePanel());
-  }, [selectedOperationId, clearSnapshot, dispatch, selectedOperationDescription, description, runValidationOnUserInput]);
+  }, [selectedOperationId, clearSnapshot, dispatch, selectedOperationDescription, description, haveUserModeInputsEmptyValues]);
 
   const handleClose = useCallback(() => {
     handleCancel();
@@ -210,7 +210,7 @@ export const EditOperationPanel = () => {
           description={description}
           handleDescriptionInputChange={handleDescriptionInputChange}
           onParameterVisibilityUpdate={onParameterVisibilityUpdate}
-          userInputParamIds={userInputParamIds}
+          userInputParamIds={getUserInputParamIds()}
           setUserInputParamIds={setUserInputParamIds}
           parameterErrors={getParameterErrors()}
           setParameterErrors={setParameterErrors}

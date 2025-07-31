@@ -11,7 +11,7 @@ import { getGroupIdFromParameterId } from '../../../core/utils/parameters/helper
 import { type McpParameterInputType, ParameterField } from './parameterfield';
 import { DismissCircle20Filled } from '@fluentui/react-icons';
 import { useMcpWizardStyles } from '../wizard/styles';
-import { DescriptionWithLink } from 'lib/ui/configuretemplate/common';
+import { DescriptionWithLink } from '../../configuretemplate/common';
 
 interface EditOperationProps {
   description: string;
