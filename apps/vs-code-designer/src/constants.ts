@@ -287,7 +287,7 @@ export const defaultExtensionBundlePathValue = path.join(
   'ExtensionBundles',
   extensionBundleId
 );
-export const defaultDataMapperVersion = 1;
+export const defaultDataMapperVersion = 2;
 
 // Fallback Dependency Versions
 export const DependencyVersion = {

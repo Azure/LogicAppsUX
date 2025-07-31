@@ -807,8 +807,8 @@
             "type": "number",
             "enum": [1, 2],
             "description": "The default version of Data Mapper to use when performing operations like \"Create data map\".",
-            "enumDescriptions": ["Version 1", "Version 2 (Preview)"],
-            "default": 1
+            "enumDescriptions": ["Version 1 (Deprecated)", "Version 2"],
+            "default": 2
           },
           "azureLogicAppsStandard.deploySubpath": {
             "scope": "resource",
