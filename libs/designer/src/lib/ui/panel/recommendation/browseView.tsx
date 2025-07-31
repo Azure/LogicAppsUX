@@ -6,7 +6,6 @@ import { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { useDiscoveryPanelRelationshipIds } from '../../../core/state/panel/panelSelectors';
 import { useAgenticWorkflow } from '../../../core/state/designerView/designerViewSelectors';
-import { useShouldEnableACASession } from './hooks';
 
 const defaultFilterConnector = (connector: Connector, runtimeFilter: string): boolean => {
   if (runtimeFilter === 'inapp' && !isBuiltInConnector(connector)) {
@@ -66,7 +65,6 @@ export const BrowseView = (props: BrowseViewProps) => {
   const { filters, displayRuntimeInfo, setFilters } = props;
   const isAgenticWorkflow = useAgenticWorkflow();
   const isRoot = useDiscoveryPanelRelationshipIds().graphId === 'root';
-  const shouldEnableACASession = useShouldEnableACASession();
 
   const dispatch = useDispatch();
 
@@ -77,13 +75,6 @@ export const BrowseView = (props: BrowseViewProps) => {
       return !((!isAgenticWorkflow || !isRoot) && connector.id === 'connectionProviders/agent');
     },
     [isAgenticWorkflow, isRoot]
-  );
-
-  const isACASessionAllowed = useCallback(
-    (connector: Connector): boolean => {
-      return !(shouldEnableACASession === false && connector.id === '/serviceProviders/acasession');
-    },
-    [shouldEnableACASession]
   );
 
   const passesRuntimeFilter = useCallback(
@@ -135,14 +126,9 @@ export const BrowseView = (props: BrowseViewProps) => {
 
   const filterItems = useCallback(
     (connector: Connector): boolean => {
-      return (
-        isAgentConnectorAllowed(connector) &&
-        isACASessionAllowed(connector) &&
-        passesRuntimeFilter(connector) &&
-        passesActionTypeFilter(connector)
-      );
+      return isAgentConnectorAllowed(connector) && passesRuntimeFilter(connector) && passesActionTypeFilter(connector);
     },
-    [isAgentConnectorAllowed, isACASessionAllowed, passesRuntimeFilter, passesActionTypeFilter]
+    [isAgentConnectorAllowed, passesRuntimeFilter, passesActionTypeFilter]
   );
 
   const sortedConnectors = useMemo(() => {
