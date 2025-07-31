@@ -1,3 +1,5 @@
+import type { TableColumnDefinition } from '@fluentui/react-components';
+import { createTableColumn } from '@fluentui/react-components';
 import { DetailCategory, StyledDetailCategory } from '../../../run-service';
 import type {
   INamingValidation,
@@ -29,6 +31,27 @@ const getTypeName = (typeName: string): string => {
     }
   }
 };
+
+export const listColumns: TableColumnDefinition<IExportDetailsList>[] = [
+  createTableColumn<IExportDetailsList>({
+    columnId: 'type',
+    renderHeaderCell: () => {
+      return 'Type';
+    },
+    renderCell: (item: IExportDetailsList) => {
+      return item.type;
+    },
+  }),
+  createTableColumn<IExportDetailsList>({
+    columnId: 'message',
+    renderHeaderCell: () => {
+      return 'Message';
+    },
+    renderCell: (item: IExportDetailsList) => {
+      return item.message;
+    },
+  }),
+];
 
 export const getListColumns = () => {
   return [
