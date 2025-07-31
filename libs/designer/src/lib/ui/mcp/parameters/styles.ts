@@ -120,6 +120,19 @@ export const useEditOperationStyles = makeStyles({
     display: 'flex',
     flexDirection: 'column',
     gap: tokens.spacingVerticalL,
+    paddingTop: '16px',
+  },
+
+  optionalParametersDescription: {
+    marginTop: tokens.spacingVerticalS,
+    fontSize: tokens.fontSizeBase300,
+  },
+
+  optionalParametersRow: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '10px 0 0 0',
   },
 
   parameterInputTypeLabel: {
@@ -144,14 +157,12 @@ export const useEditOperationStyles = makeStyles({
   parameterField: {
     display: 'flex',
     flexDirection: 'column',
-    width: '700px',
+    width: '100%',
     maxWidth: '100%',
   },
 
   parameterEditor: {
-    minWidth: '700px',
-    width: '700px',
-    maxWidth: '100%',
+    width: '100%',
   },
 
   parameterValueSection: {
