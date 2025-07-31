@@ -259,8 +259,9 @@ describe('QueryBuilderEditor Move Functionality', () => {
       const emptyGroup = createTestGroup({ items: [] });
       renderQueryBuilder({ groupProps: emptyGroup });
 
-      // Should still render with a default row
-      expect(screen.getByRole('textbox')).toBeInTheDocument();
+      // Should still render with a default row - use getAllByRole since there might be multiple textboxes
+      const textboxes = screen.getAllByRole('textbox');
+      expect(textboxes.length).toBeGreaterThan(0);
     });
 
     it('should handle deeply nested structures', () => {

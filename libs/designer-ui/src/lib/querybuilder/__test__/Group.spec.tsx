@@ -187,8 +187,9 @@ describe('Group Component Move Functionality', () => {
       const dropdown = screen.getAllByRole('combobox')[0];
       await user.click(dropdown);
 
-      // Should show dropdown options
-      expect(screen.getByRole('listbox')).toBeInTheDocument();
+      // Should show dropdown options - use getAllByRole since there might be multiple listboxes
+      const listboxes = screen.getAllByRole('listbox');
+      expect(listboxes.length).toBeGreaterThan(0);
     });
   });
 

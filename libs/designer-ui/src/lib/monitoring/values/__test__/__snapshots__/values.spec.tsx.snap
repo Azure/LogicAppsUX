@@ -182,7 +182,12 @@ exports[`ui/monitoring/values/value > should render a decimal value 1`] = `
           }
         >
           <span
-            className="token plain"
+            className="token number"
+            style={
+              {
+                "color": "rgb(9, 134, 88)",
+              }
+            }
           >
             -123.45
           </span>
@@ -680,7 +685,12 @@ exports[`ui/monitoring/values/value > should render a number value 1`] = `
           }
         >
           <span
-            className="token plain"
+            className="token number"
+            style={
+              {
+                "color": "rgb(9, 134, 88)",
+              }
+            }
           >
             -123.45
           </span>

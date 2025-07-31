@@ -24,7 +24,7 @@
     "lodash.isequal": "4.5.0",
     "lodash.merge": "4.6.2",
     "lz-string": "^1.5.0",
-    "monaco-editor": "0.44.0",
+    "monaco-editor": "0.52.2",
     "pako": "2.1.0",
     "react-dnd": "16.0.1",
     "react-dnd-accessible-backend": "1.0.1",
