@@ -57,30 +57,10 @@ export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: R
   }, [connection, logicAppName, operations, registerMcpServer, resourceGroup, subscriptionId, onRegisterCompleted]);
 
   const INTL_TEXT = {
-    title: intl.formatMessage({
-      id: '8p/J8u',
-      defaultMessage: 'Register Logic Apps',
-      description: 'Title for the MCP server registration wizard',
-    }),
-    description: intl.formatMessage({
-      id: '9LxnGv',
-      defaultMessage: 'Subscription details are pulled from API Center project details.',
-      description: 'Description for the MCP server registration wizard',
-    }),
     learnMore: intl.formatMessage({
-      id: 'JJGVdl',
+      id: 'agN54X',
       defaultMessage: 'Learn more',
-      description: 'Learn more link text.',
-    }),
-    howToSetup: intl.formatMessage({
-      id: 'H94rqk',
-      defaultMessage: 'How to set up?',
-      description: 'Title for the setup instructions link',
-    }),
-    howToSetupConnectors: intl.formatMessage({
-      id: 'Xy2H+g',
-      defaultMessage: 'How to set up your connectors?',
-      description: 'Text for the how to set up connectors link',
+      description: 'Text for the learn more link',
     }),
     connectorsTitle: intl.formatMessage({
       id: 'rCjtl8',
@@ -180,15 +160,6 @@ export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: R
     <div className={styles.wizardContainer}>
       <McpPanelRoot />
 
-      <Text size={700} weight="bold">
-        {INTL_TEXT.title}
-      </Text>
-      <DescriptionWithLink
-        text={INTL_TEXT.description}
-        linkUrl="https://go.microsoft.com/fwlink/?linkid=2330611"
-        linkText={INTL_TEXT.learnMore}
-      />
-
       <div className={styles.scrollableContent}>
         {/* Details Section */}
         <div className={styles.mainSection}>
@@ -198,11 +169,7 @@ export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: R
             </Text>
           </div>
 
-          <DescriptionWithLink
-            text={INTL_TEXT.detailsDescription}
-            linkUrl="https://go.microsoft.com/fwlink/?linkid=2330610"
-            linkText={INTL_TEXT.howToSetup}
-          />
+          <DescriptionWithLink text={INTL_TEXT.detailsDescription} linkUrl="#" linkText={INTL_TEXT.learnMore} />
           <div className={styles.section}>
             <LogicAppSelector />
           </div>
@@ -215,28 +182,22 @@ export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: R
               {INTL_TEXT.mainSectionTitle}
             </Text>
           </div>
-          <DescriptionWithLink
-            text={INTL_TEXT.mainSectionDescription}
-            linkUrl="https://go.microsoft.com/fwlink/?linkid=2330612"
-            linkText={INTL_TEXT.howToSetupConnectors}
-          />
+          <DescriptionWithLink text={INTL_TEXT.mainSectionDescription} linkUrl="#" linkText={INTL_TEXT.learnMore} />
 
           <div className={styles.section}>
-            <div className={styles.header}>
-              <Text size={400} weight="semibold">
-                {INTL_TEXT.connectorsTitle}
-              </Text>
-              <Button
-                appearance="secondary"
-                icon={<Add16Regular />}
-                onClick={handleAddConnectors}
-                size="small"
-                disabled={disableConfiguration || connectorExists}
-              >
-                {INTL_TEXT.addConnectorsButton}
-              </Button>
-            </div>
-            <DescriptionWithLink text={INTL_TEXT.connectorsDescription} />
+            {connectorExists ? (
+              <>
+                <div className={styles.header}>
+                  <Text size={400} weight="semibold">
+                    {INTL_TEXT.connectorsTitle}
+                  </Text>
+                  <Button appearance="outline" icon={<Add16Regular />} onClick={handleAddConnectors} size="small" disabled={true}>
+                    {INTL_TEXT.addConnectorsButton}
+                  </Button>
+                </div>
+                <DescriptionWithLink text={INTL_TEXT.connectorsDescription} />
+              </>
+            ) : null}
             <ListConnectors addConnectors={handleAddConnectors} addDisabled={disableConfiguration} />
           </div>
 
