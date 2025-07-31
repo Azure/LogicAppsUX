@@ -1,0 +1,32 @@
+using System;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Text.Json;
+using Microsoft.Azure.Workflows.Common.ErrorResponses;
+using Microsoft.Azure.Workflows.UnitTesting;
+using Microsoft.Azure.Workflows.UnitTesting.Definitions;
+using Microsoft.Azure.Workflows.UnitTesting.ErrorResponses;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
+using <%= LogicAppNameCleaned %>.Tests.Mocks.<%= WorkflowNameCleaned %>;
+
+namespace <%= LogicAppNameCleaned %>.Tests
+{
+    [TestClass]
+    public class <%= WorkflowNameCleaned %>Tests
+    {
+        private TestExecutor TestExecutor { get; set; }
+
+        [TestInitialize]
+        public void Initialize()
+        {
+            this.TestExecutor = new TestExecutor("<%= WorkflowName %>/testSettings.config");
+        }
+
+<%= TestCaseData %>
+
+<%= TestCaseMethods %>
+    }
+}

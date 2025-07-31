@@ -50,6 +50,11 @@
         "category": "Azure Logic Apps"
       },
       {
+        "command": "azureLogicAppsStandard.generateTests",
+        "title": "Generate tests",
+        "category": "Azure Logic Apps"
+      },
+      {
         "command": "azureLogicAppsStandard.viewContent",
         "title": "View content",
         "category": "Azure Logic Apps"
@@ -691,9 +696,19 @@
           "group": "navigation@1"
         },
         {
+          "command": "azureLogicAppsStandard.enableAzureConnectors",
+          "when": "resourceFilename==workflow.json",
+          "group": "navigation@2"
+        },
+        {
           "command": "azureLogicAppsStandard.openDesigner",
           "when": "resourceFilename==workflow.json",
           "group": "navigation@3"
+        },
+        {
+          "command": "azureLogicAppsStandard.generateTests",
+          "when": "resourceFilename==workflow.json",
+          "group": "navigation@4"
         },
         {
           "command": "azureLogicAppsStandard.switchToDotnetProject",
@@ -726,11 +741,6 @@
           "group": "zzz_appSettings@3"
         },
         {
-          "command": "azureLogicAppsStandard.enableAzureConnectors",
-          "when": "resourceFilename==workflow.json",
-          "group": "navigation@2"
-        },
-        {
           "command": "azureLogicAppsStandard.dataMap.loadDataMapFile",
           "group": "navigation",
           "when": "resourceExtname in azureLogicAppsStandard.dataMap.setSupportedDataMapDefinitionFileExts"
@@ -739,6 +749,10 @@
       "commandPalette": [
         {
           "command": "azureLogicAppsStandard.openDesigner",
+          "when": "resourceFilename==workflow.json"
+        },
+        {
+          "command": "azureLogicAppsStandard.generateTests",
           "when": "resourceFilename==workflow.json"
         },
         {
@@ -1024,6 +1038,7 @@
   ],
   "activationEvents": [
     "onCommand:azureLogicAppsStandard.openDesigner",
+    "onCommand:azureLogicAppsStandard.generateTests",
     "onCommand:azureLogicAppsStandard.viewContent",
     "onCommand:azureLogicAppsStandard.createNewProject",
     "onCommand:azureLogicAppsStandard.createNewWorkspace",

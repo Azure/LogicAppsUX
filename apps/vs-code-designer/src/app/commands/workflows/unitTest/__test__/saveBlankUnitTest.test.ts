@@ -74,7 +74,7 @@ describe('saveBlankUnitTest', () => {
     vi.spyOn(workspaceUtils, 'getWorkspacePath').mockResolvedValue(dummyWorkspaceFolder.uri.fsPath);
     vi.spyOn(workspaceUtils, 'getWorkspaceFolder').mockResolvedValue(dummyWorkspaceFolder);
     vi.spyOn(projectRootUtils, 'tryGetLogicAppProjectRoot').mockResolvedValue(dummyProjectPath);
-    vi.spyOn(unitTestUtils, 'parseUnitTestOutputs').mockResolvedValue({} as any);
+    vi.spyOn(unitTestUtils, 'preprocessOutputParameters').mockResolvedValue({} as any);
     vi.spyOn(unitTestUtils, 'selectWorkflowNode').mockResolvedValue(dummyWorkflowNodeUri);
     vi.spyOn(unitTestUtils, 'promptForUnitTestName').mockResolvedValue(dummyUnitTestName);
     vi.spyOn(unitTestUtils, 'validateWorkflowPath').mockResolvedValue();
@@ -143,7 +143,7 @@ describe('saveBlankUnitTest', () => {
 
   test('should log an error and call handleError when an exception occurs', async () => {
     const testError = new Error('Test error');
-    vi.spyOn(unitTestUtils, 'parseUnitTestOutputs').mockRejectedValueOnce(testError);
+    vi.spyOn(unitTestUtils, 'preprocessOutputParameters').mockRejectedValueOnce(testError);
 
     await saveBlankUnitTest(dummyContext, dummyNode, dummyUnitTestDefinition);
 

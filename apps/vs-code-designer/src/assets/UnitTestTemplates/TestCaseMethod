@@ -1,0 +1,25 @@
+        /// <summary>
+        /// Test case for workflow <%= WorkflowName %> on path: <%= PathDescriptionString %>
+        /// </summary>
+        [TestMethod]
+        [DynamicData(nameof(<%= PathName %>_TestData))]
+        public async Task ExecuteWorkflow_<%= WorkflowNameCleaned %>_<%= PathName %>(TriggerMock triggerMock, Dictionary<string, ActionMock> actionMocks)
+        {
+            // ACT
+            // Create an instance of UnitTestExecutor, and run the workflow with the mock data
+            var testMock = new TestMockDefinition(
+                triggerMock: triggerMock,
+                actionMocks: actionMocks);
+            var testRun = await this.TestExecutor
+                .Create()
+                .RunWorkflowAsync(testMock: testMock)
+                .ConfigureAwait(continueOnCapturedContext: false);
+            
+            // ASSERT
+            // Verify that the workflow executed with expected status
+            Assert.IsNotNull(value: testRun);
+            Assert.AreEqual(expected: <%= PathOverallStatus %>, actual: testRun.Status);
+            Assert.AreEqual(expected: TestWorkflowStatus.Succeeded, actual: testRun.Trigger.Status);
+
+<%= ActionAssertionsContent %>
+        }

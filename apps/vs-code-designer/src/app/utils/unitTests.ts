@@ -689,10 +689,10 @@ export function parseErrorBeforeTelemetry(error: any): string {
 
 /**
  * Parses and transforms raw output parameters from a unit test definition into a structured format.
- * @param unitTestDefinition - The unit test definition object.
- * @returns A Promise resolving to an object containing operationInfo and outputParameters.
+ * @param operationData - The original operation data with operationInfo and outputParameters.
+ * @returns A Promise resolving to an object containing the processed operationInfo and outputParameters.
  */
-export async function parseUnitTestOutputs(unitTestDefinition: any): Promise<{
+export async function preprocessOutputParameters(operationData: any): Promise<{
   operationInfo: any;
   outputParameters: Record<string, any>;
 }> {
@@ -741,13 +741,13 @@ export async function parseUnitTestOutputs(unitTestDefinition: any): Promise<{
   };
 
   const parsedOutputs: { operationInfo: any; outputParameters: any } = {
-    operationInfo: unitTestDefinition['operationInfo'],
+    operationInfo: operationData['operationInfo'],
     outputParameters: {},
   };
 
-  for (const parameterKey in unitTestDefinition['outputParameters']) {
+  for (const parameterKey in operationData['outputParameters']) {
     parsedOutputs.outputParameters[parameterKey] = {
-      outputs: transformRawOutputs(unitTestDefinition['outputParameters'][parameterKey].outputs),
+      outputs: transformRawOutputs(operationData['outputParameters'][parameterKey].outputs),
     };
   }
   return parsedOutputs;

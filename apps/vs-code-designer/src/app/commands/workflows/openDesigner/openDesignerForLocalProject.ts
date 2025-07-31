@@ -44,6 +44,7 @@ import { env, ProgressLocation, Uri, ViewColumn, window, workspace } from 'vscod
 import type { WebviewPanel, ProgressOptions } from 'vscode';
 import { saveBlankUnitTest } from '../unitTest/saveBlankUnitTest';
 import { getBundleVersionNumber } from '../../../utils/getDebugSymbolDll';
+import { generateTests } from '../unitTest/generateTests';
 
 export default class OpenDesignerForLocalProject extends OpenDesignerBase {
   private readonly workflowFilePath: string;
@@ -219,6 +220,12 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
       case ExtensionCommand.saveBlankUnitTest: {
         await callWithTelemetryAndErrorHandling('SaveBlankUnitTestFromDesigner', async (activateContext: IActionContext) => {
           await saveBlankUnitTest(activateContext, Uri.file(this.workflowFilePath), msg.definition);
+        });
+        break;
+      }
+      case ExtensionCommand.generateTests: {
+        await callWithTelemetryAndErrorHandling('GenerateTestsFromDesigner', async (activateContext: IActionContext) => {
+          await generateTests(activateContext, Uri.file(this.workflowFilePath), msg.operationData);
         });
         break;
       }

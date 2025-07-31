@@ -48,6 +48,7 @@ const SaveIcon = bundleIcon(SaveFilled, SaveRegular);
 const ParametersIcon = bundleIcon(MentionBracketsFilled, MentionBracketsRegular);
 const ConnectionsIcon = bundleIcon(LinkFilled, LinkRegular);
 const SaveBlankUnitTestIcon = bundleIcon(BeakerFilled, BeakerRegular);
+const GenerateTestsIcon = bundleIcon(BeakerFilled, BeakerRegular);
 
 // Base icons
 const BugIcon = bundleIcon(BugFilled, BugRegular);
@@ -148,6 +149,21 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
     });
   });
 
+  const { isLoading: isGeneratingTests, mutate: generateTestsMutate } = useMutation(async () => {
+    const designerState = DesignerStore.getState();
+    const operationData = await getNodeOutputOperations(designerState);
+
+    vscode.postMessage({
+      command: ExtensionCommand.logTelemetry,
+      data: { name: 'GenerateTests', timestamp: Date.now(), operationData: operationData },
+    });
+
+    await vscode.postMessage({
+      command: ExtensionCommand.generateTests,
+      operationData,
+    });
+  });
+
   const onResubmit = async () => {
     vscode.postMessage({
       command: ExtensionCommand.resubmitRun,
@@ -229,6 +245,11 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
       defaultMessage: 'Create unit test',
       id: 'SUX3dO',
       description: 'Button test for save blank unit test',
+    }),
+    GENERATE_UNIT_TESTS: intl.formatMessage({
+      defaultMessage: 'Generate tests',
+      id: 'UpCa6n',
+      description: 'Button text for generate tests',
     }),
   };
 
@@ -336,6 +357,17 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
       renderTextIcon: null,
       onClick: () => {
         saveBlankUnitTestMutate();
+      },
+    },
+    {
+      key: 'GenerateTests',
+      disabled: isSaveBlankUnitTestDisabled,
+      text: Resources.GENERATE_UNIT_TESTS,
+      ariaLabel: Resources.GENERATE_UNIT_TESTS,
+      icon: isGeneratingTests ? <Spinner size="extra-small" /> : <GenerateTestsIcon />,
+      renderTextIcon: null,
+      onClick: () => {
+        generateTestsMutate();
       },
     },
     ...baseItems,
