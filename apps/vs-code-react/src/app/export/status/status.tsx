@@ -1,6 +1,5 @@
 import { Status as FinalStatus } from '../../../state/WorkflowSlice';
 import type { RootState } from '../../../state/store';
-import { List } from '@fluentui/react';
 import { Spinner } from '@fluentui/react-components';
 import { MediumText, XLargeText } from '@microsoft/designer-ui';
 import { useIntl } from 'react-intl';
@@ -37,7 +36,7 @@ export const Status: React.FC = () => {
   return (
     <div>
       <XLargeText text={intlText.EXPORT_STATUS_TITLE} style={{ display: 'block' }} />
-      <List items={statuses} onRenderCell={renderStatus} />
+      <div>{statuses.map((status, index) => renderStatus(status, index))}</div>
       <FinalStatusGadget finalStatus={finalStatus} />
     </div>
   );
