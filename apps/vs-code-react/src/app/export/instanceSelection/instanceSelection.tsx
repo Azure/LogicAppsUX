@@ -3,10 +3,8 @@ import { ApiService } from '../../../run-service/export';
 import { updateSelectedLocation, updateSelectedSubscripton } from '../../../state/WorkflowSlice';
 import type { AppDispatch, RootState } from '../../../state/store';
 import { VSCodeContext } from '../../../webviewCommunication';
-import { SearchableDropdown } from '../../components/searchableDropdown';
+import { SearchableDropdown, type IDropdownOption, DropdownMenuItemType } from '../../components/searchableDropdown';
 import { getDropdownPlaceholder, parseIseList, parseRegionList, parseSubscriptionsList } from './helper';
-import { DropdownMenuItemType } from '@fluentui/react';
-import type { IDropdownOption } from '@fluentui/react';
 import { isEmptyString } from '@microsoft/logic-apps-shared';
 import { useContext, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -223,7 +221,7 @@ export const InstanceSelection: React.FC = () => {
         placeholder={subscriptionPlaceholder}
         disabled={isSubscriptionsLoading || !subscriptions.length}
         onChange={onChangeSubscriptions}
-        selectedKey={selectedSubscription !== '' ? selectedSubscription : null}
+        selectedKey={selectedSubscription !== '' ? selectedSubscription : undefined}
         className={styles.instancePanelDropdown}
         isLoading={subscriptionLoading}
         searchBoxPlaceholder={intlText.SEARCH_SUBSCRIPTION}
@@ -240,7 +238,7 @@ export const InstanceSelection: React.FC = () => {
           !(ise.length || regions.length)
         }
         onChange={onChangeLocation}
-        selectedKey={selectedIse !== '' ? `ise:${selectedIse}` : location ? `region:${location}` : null}
+        selectedKey={selectedIse !== '' ? `ise:${selectedIse}` : location ? `region:${location}` : undefined}
         className={styles.instancePanelDropdown}
         isLoading={iseLoading}
         searchBoxPlaceholder={intlText.SEARCH_LOCATION}

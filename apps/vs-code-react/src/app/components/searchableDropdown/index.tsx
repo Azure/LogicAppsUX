@@ -17,6 +17,7 @@ export interface IDropdownOption {
   hidden?: boolean;
   itemType?: DropdownMenuItemType;
   data?: any;
+  selected?: boolean; // For v8 compatibility
 }
 
 export interface ISearchableDropdownProps extends Omit<DropdownProps, 'onOptionSelect' | 'onChange' | 'children'> {
@@ -32,6 +33,7 @@ export interface ISearchableDropdownProps extends Omit<DropdownProps, 'onOptionS
   calloutProps?: any; // For v8 compatibility
   onRenderOption?: (option: IDropdownOption) => JSX.Element; // For v8 compatibility
   onDismiss?: () => void;
+  searchBoxPlaceholder?: string; // For v8 compatibility
 }
 
 const useStyles = makeStyles({

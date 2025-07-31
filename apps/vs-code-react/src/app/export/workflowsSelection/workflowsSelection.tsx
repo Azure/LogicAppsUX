@@ -1,6 +1,7 @@
 import { QueryKeys } from '../../../run-service';
 import type { WorkflowsList, SelectedWorkflowsList } from '../../../run-service';
 import { ApiService } from '../../../run-service/export/index';
+import type { IDropdownOption } from '../../components/searchableDropdown';
 import { updateSelectedWorkFlows } from '../../../state/WorkflowSlice';
 import type { AppDispatch, RootState } from '../../../state/store';
 import { VSCodeContext } from '../../../webviewCommunication';
@@ -17,7 +18,6 @@ import {
 } from './helper';
 import { SelectedList } from './selectedList';
 import { ShimmeredDetailsList, SelectionMode, Selection } from '@fluentui/react';
-import type { IDropdownOption } from '@fluentui/react';
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { useMemo, useRef, useState, useEffect, useContext } from 'react';
 import { useIntl } from 'react-intl';

@@ -10,7 +10,7 @@ import type {
   IDropDownOption,
   INamingRules,
 } from '../../../run-service';
-import type { IDropdownOption } from '@fluentui/react';
+import type { IDropdownOption } from '../../components/searchableDropdown';
 
 const resourceGroupNamingRules: INamingRules = {
   minLength: 1,

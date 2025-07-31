@@ -3,10 +3,9 @@ import { ApiService } from '../../../run-service/export';
 import { updateManagedConnections } from '../../../state/WorkflowSlice';
 import type { AppDispatch, RootState } from '../../../state/store';
 import { VSCodeContext } from '../../../webviewCommunication';
-import { SearchableDropdown } from '../../components/searchableDropdown';
+import { SearchableDropdown, type IDropdownOption } from '../../components/searchableDropdown';
 import { parseResourceGroupsData } from './helper';
 import { NewResourceGroup } from './newResourceGroup';
-import type { IDropdownOption } from '@fluentui/react';
 import type { ChangeEvent } from 'react';
 import { useContext, useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -119,7 +118,7 @@ export const ManagedConnections: React.FC = () => {
           options={resourceGroups}
           className={styles.exportSummaryConnectionsDropdown}
           onChange={onChangeResourceGroup}
-          selectedKey={selectedResourceGroup !== undefined ? selectedResourceGroup : null}
+          selectedKey={selectedResourceGroup !== undefined ? selectedResourceGroup : undefined}
           isLoading={isResourceGroupsLoading}
           searchBoxPlaceholder={intlText.SEARCH_RESOURCE_GROUP}
         />
