@@ -48,7 +48,6 @@ export const Filters: React.FC<any> = ({ dropdownOptions, onChangeResourceGroup,
         options={dropdownOptions}
         onChange={onChangeResourceGroup}
         disabled={isDataLoading || !dropdownOptions.length}
-        searchBoxPlaceholder={intlText.SEARCH_RESOURCE_GROUP}
       />
     </div>
   );
