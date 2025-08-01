@@ -548,6 +548,12 @@ importers:
 
   apps/vs-code-react:
     dependencies:
+      '@fluentui/azure-themes':
+        specifier: 8.5.70
+        version: 8.5.70(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      '@fluentui/react':
+        specifier: 8.110.2
+        version: 8.110.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@fluentui/react-components':
         specifier: 9.56.0
         version: 9.56.0(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(scheduler@0.23.2)
@@ -15774,7 +15780,7 @@ snapshots:
   '@fluentui/fluent2-theme@8.107.68(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
     dependencies:
       '@fluentui/react': 8.117.6(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      '@fluentui/set-version': 8.2.14
+      '@fluentui/set-version': 8.2.16
       tslib: 2.4.0
     transitivePeerDependencies:
       - '@types/react'
