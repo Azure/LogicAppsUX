@@ -81,16 +81,6 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
     dispatch(clearAllSelections());
   }, [dispatch, selectedConnectorId, selectedOperations, newlySelectedOperationIds, deselectedOperationIds]);
 
-  const handleOnSelectOperations = useCallback(async () => {
-    // This triggers the loading state and initializes connections
-    await dispatch(
-      initializeConnectionMappings({
-        connectorId: selectedConnectorId as string,
-        operations: selectedOperations,
-      })
-    );
-  }, [dispatch, selectedConnectorId, selectedOperations]);
-
   const connectorsTabItem = useMemo(
     () =>
       connectorsTab(intl, dispatch, {
@@ -101,29 +91,61 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
     [intl, dispatch]
   );
 
+  const isConnectionsTabDisabled = useMemo(
+    () => selectedOperations.length === 0 || isInitializingConnections,
+    [selectedOperations, isInitializingConnections]
+  );
+  const onConnectionsTabNavigation = useCallback(async () => {
+    // This triggers the loading state and initializes connections
+    await dispatch(
+      initializeConnectionMappings({
+        connectorId: selectedConnectorId as string,
+        operations: selectedOperations,
+      })
+    );
+  }, [dispatch, selectedConnectorId, selectedOperations]);
+
   const operationsTabItem = useMemo(
     () =>
       operationsTab(intl, dispatch, {
         isTabDisabled: false,
         isPreviousButtonDisabled: false,
-        isPrimaryButtonDisabled: false,
+        isPrimaryButtonDisabled: isConnectionsTabDisabled,
         selectedOperationsCount: selectedOperations.length,
-        onSelectOperations: handleOnSelectOperations,
+        onPrimaryButtonClick: onConnectionsTabNavigation,
         isPrimaryButtonLoading: isInitializingConnections,
         previousTabId: hasSelectConnectorTab ? constants.MCP_PANEL_TAB_NAMES.CONNECTORS : undefined,
       }),
-    [intl, dispatch, selectedOperations.length, handleOnSelectOperations, isInitializingConnections, hasSelectConnectorTab]
+    [
+      intl,
+      dispatch,
+      selectedOperations.length,
+      onConnectionsTabNavigation,
+      isInitializingConnections,
+      hasSelectConnectorTab,
+      isConnectionsTabDisabled,
+    ]
   );
 
   const connectionsTabItem = useMemo(
     () =>
       connectionsTab(intl, dispatch, selectedConnectorId as string, selectedOperations, {
-        isTabDisabled: isInitializingConnections,
+        isTabDisabled: isConnectionsTabDisabled,
+        onTabClick: onConnectionsTabNavigation,
         isPreviousButtonDisabled: false,
         isPrimaryButtonDisabled: !selectedConnectorId || selectedOperations.length === 0 || !hasValidConnection,
         onAddConnector: handleSubmit,
       }),
-    [intl, dispatch, selectedConnectorId, selectedOperations, hasValidConnection, handleSubmit, isInitializingConnections]
+    [
+      intl,
+      dispatch,
+      selectedConnectorId,
+      selectedOperations,
+      hasValidConnection,
+      handleSubmit,
+      onConnectionsTabNavigation,
+      isConnectionsTabDisabled,
+    ]
   );
 
   const tabs: McpPanelTabProps[] = useMemo(() => {

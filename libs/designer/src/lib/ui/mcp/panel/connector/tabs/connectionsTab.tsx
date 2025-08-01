@@ -10,7 +10,7 @@ export const connectionsTab = (
   dispatch: AppDispatch,
   connectorId: string,
   operations: string[],
-  { isTabDisabled, isPrimaryButtonDisabled, isPreviousButtonDisabled, onAddConnector: onSubmit }: McpConnectorTabProps
+  { onTabClick, isTabDisabled, isPrimaryButtonDisabled, isPreviousButtonDisabled, onAddConnector: onSubmit }: McpConnectorTabProps
 ): McpPanelTabProps => ({
   id: constants.MCP_PANEL_TAB_NAMES.CONNECTIONS,
   title: intl.formatMessage({
@@ -20,6 +20,7 @@ export const connectionsTab = (
   }),
   content: <ConnectionSelection connectorId={connectorId} operations={operations} />,
   disabled: isTabDisabled,
+  onTabClick,
   footerContent: {
     buttonContents: [
       {
