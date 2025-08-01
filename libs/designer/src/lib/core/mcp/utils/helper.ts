@@ -130,9 +130,9 @@ export const initializeOperationDetails = async (
       level: LogEntryLevel.Error,
       area: 'MCP.initializeOperationDetails',
       error,
-      message: `Error while initializing operation details for connectorId: ${operationInfo.connectorId}, nodeId: ${nodeId}`,
+      message: `Error while initializing operation details for connectorId: ${operationInfo.connectorId}, operationId: ${nodeId}`,
     });
-    return undefined;
+    throw new Error(`Operation: "${nodeId}", Error: "${error.message}".`);
   }
 };
 

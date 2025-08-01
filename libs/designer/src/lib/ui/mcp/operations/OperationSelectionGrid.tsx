@@ -1,16 +1,17 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { Text, Checkbox, Card, CardHeader, Body1, Caption1 } from '@fluentui/react-components';
 import { useOperationSelectionGridStyles } from './styles';
 import { equals, type DiscoveryOpArray } from '@microsoft/logic-apps-shared';
 import DefaultIcon from '../../../common/images/recommendation/defaulticon.svg';
+import { selectOperations } from '../../../core/state/mcp/mcpselectionslice';
+import { useDispatch, useSelector } from 'react-redux';
+import type { AppDispatch, RootState } from '../../../core/state/mcp/store';
 
 export interface OperationSelectionGridProps {
-  operationsData: DiscoveryOpArray;
-  selectedOperations: Set<string>;
-  onOperationToggle: (operationId: string, isSelected: boolean) => void;
-  onSelectAll?: (isSelected: boolean) => void;
   isLoading: boolean;
+  operationsData: DiscoveryOpArray;
+  onSelectAll?: (isSelected: boolean) => void;
   showConnectorName?: boolean;
   hideNoResultsText?: boolean;
   allowSelectAll?: boolean;
@@ -75,8 +76,6 @@ const getColumnsCount = (containerWidth: number): number => {
 
 export const OperationSelectionGrid = ({
   operationsData,
-  selectedOperations,
-  onOperationToggle,
   onSelectAll,
   isLoading,
   showConnectorName = false,
@@ -84,10 +83,15 @@ export const OperationSelectionGrid = ({
   allowSelectAll = true,
 }: OperationSelectionGridProps) => {
   const intl = useIntl();
+  const dispatch = useDispatch<AppDispatch>();
   const styles = useOperationSelectionGridStyles();
   const [columnsCount, setColumnsCount] = useState(1);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  const { selectedOperations } = useSelector((state: RootState) => ({
+    selectedOperations: state.mcpSelection.selectedOperations ?? [],
+  }));
+  const selectedOperationsSet = useMemo(() => new Set(selectedOperations), [selectedOperations]);
   useEffect(() => {
     const element = containerRef.current;
     if (!element) {
@@ -109,27 +113,40 @@ export const OperationSelectionGrid = ({
     return () => observer.disconnect();
   }, []);
 
+  const toggleOperation = useCallback(
+    (operationName: string, isSelected: boolean) => {
+      const newSelection = new Set(selectedOperations);
+      if (isSelected) {
+        newSelection.add(operationName);
+      } else {
+        newSelection.delete(operationName);
+      }
+      dispatch(selectOperations(Array.from(newSelection)));
+    },
+    [selectedOperations, dispatch]
+  );
+
   const handleCardClick = useCallback(
     (operationName: string, event: React.MouseEvent) => {
       if ((event.target as HTMLElement).closest('[role="checkbox"]')) {
         return;
       }
 
-      const isCurrentlySelected = selectedOperations.has(operationName);
-      onOperationToggle(operationName, !isCurrentlySelected);
+      const isCurrentlySelected = selectedOperationsSet.has(operationName);
+      toggleOperation(operationName, !isCurrentlySelected);
     },
-    [selectedOperations, onOperationToggle]
+    [selectedOperationsSet, toggleOperation]
   );
 
   const handleCheckboxChange = useCallback(
     (operationId: string, checked: boolean) => {
-      onOperationToggle(operationId, checked);
+      toggleOperation(operationId, checked);
     },
-    [onOperationToggle]
+    [toggleOperation]
   );
   const selectableOperations = operationsData;
-  const allSelected = selectableOperations.length > 0 && selectableOperations.every((item) => selectedOperations.has(item.name));
-  const someSelected = selectableOperations.some((item) => selectedOperations.has(item.name));
+  const allSelected = selectableOperations.length > 0 && selectableOperations.every((item) => selectedOperationsSet.has(item.name));
+  const someSelected = selectableOperations.some((item) => selectedOperationsSet.has(item.name));
 
   const noResultsText = intl.formatMessage({
     defaultMessage: 'No operations found',
@@ -155,7 +172,7 @@ export const OperationSelectionGrid = ({
       description: 'Text showing how many operations are selected out of total available',
     },
     {
-      selectedCount: selectedOperations.size,
+      selectedCount: selectedOperationsSet.size,
       totalCount: selectableOperations.length,
     }
   );
@@ -196,7 +213,7 @@ export const OperationSelectionGrid = ({
           <OperationCell
             key={operation.id}
             operation={operation}
-            isSelected={selectedOperations.has(operation.name)}
+            isSelected={selectedOperationsSet.has(operation.name)}
             showConnectorName={showConnectorName}
             onCardClick={handleCardClick}
             onCheckboxChange={handleCheckboxChange}

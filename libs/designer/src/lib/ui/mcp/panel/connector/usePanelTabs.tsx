@@ -28,6 +28,7 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
     connectionReferences,
     isInitializingConnections,
     operationInfos,
+    operationsError,
   } = useSelector((state: RootState) => ({
     currentPanelView: state.mcpPanel.currentPanelView,
     selectedConnectorId: state.mcpSelection.selectedConnectorId,
@@ -36,6 +37,7 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
     connectionReferences: state.connection.connectionReferences,
     isInitializingConnections: state.connection.loading.initializeConnectionMappings,
     operationInfos: state.operations.operationInfo,
+    operationsError: state.mcpSelection.errors.operations,
   }));
 
   const hasSelectConnectorTab = useMemo(() => currentPanelView === McpPanelView.SelectConnector, [currentPanelView]);
@@ -75,15 +77,16 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
           type: 'apiconnection' as const,
         }));
         dispatch(initializeOperationsMetadata({ operations: selectedOperationsData }));
+      } else {
+        dispatch(closePanel());
+        dispatch(clearAllSelections());
       }
     }
-    dispatch(closePanel());
-    dispatch(clearAllSelections());
   }, [dispatch, selectedConnectorId, selectedOperations, newlySelectedOperationIds, deselectedOperationIds]);
 
-  const handleOnSelectOperations = useCallback(async () => {
+  const handleOnSelectOperations = useCallback(() => {
     // This triggers the loading state and initializes connections
-    await dispatch(
+    dispatch(
       initializeConnectionMappings({
         connectorId: selectedConnectorId as string,
         operations: selectedOperations,
@@ -111,8 +114,9 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
         onSelectOperations: handleOnSelectOperations,
         isPrimaryButtonLoading: isInitializingConnections,
         previousTabId: hasSelectConnectorTab ? constants.MCP_PANEL_TAB_NAMES.CONNECTORS : undefined,
+        tabStatusIcon: operationsError ? 'error' : undefined,
       }),
-    [intl, dispatch, selectedOperations.length, handleOnSelectOperations, isInitializingConnections, hasSelectConnectorTab]
+    [intl, dispatch, selectedOperations.length, handleOnSelectOperations, isInitializingConnections, hasSelectConnectorTab, operationsError]
   );
 
   const connectionsTabItem = useMemo(

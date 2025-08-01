@@ -11,6 +11,7 @@ interface OperationsTabProps extends McpConnectorTabProps {
   onSelectOperations: () => void;
   isPrimaryButtonLoading?: boolean;
   previousTabId: string | undefined;
+  tabStatusIcon?: 'error';
 }
 
 export const operationsTab = (
@@ -24,6 +25,7 @@ export const operationsTab = (
     isPrimaryButtonLoading,
     onSelectOperations,
     previousTabId,
+    tabStatusIcon,
   }: OperationsTabProps
 ): McpPanelTabProps => {
   const nextButtonText =
@@ -51,6 +53,7 @@ export const operationsTab = (
     }),
     content: <SelectOperations />,
     disabled: isTabDisabled,
+    tabStatusIcon,
     footerContent: {
       buttonContents: [
         {
