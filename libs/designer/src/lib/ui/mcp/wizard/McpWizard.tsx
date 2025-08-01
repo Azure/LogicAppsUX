@@ -80,8 +80,8 @@ export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: R
       description: 'Learn more link text.',
     }),
     howToSetup: intl.formatMessage({
-      id: 'sBvjoY',
-      defaultMessage: 'How to set up a logic app?',
+      id: 'ZyZK46',
+      defaultMessage: 'How to set up a logic app.',
       description: 'Title for the setup instructions link',
     }),
     howToSetupConnectors: intl.formatMessage({
