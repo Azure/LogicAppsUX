@@ -15,7 +15,14 @@ interface OperationsTabProps extends McpConnectorTabProps {
 export const operationsTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
-  { isPrimaryButtonDisabled, selectedOperationsCount, isPrimaryButtonLoading, onPrimaryButtonClick, previousTabId }: OperationsTabProps
+  {
+    isTabDisabled,
+    isPrimaryButtonDisabled,
+    selectedOperationsCount,
+    isPrimaryButtonLoading,
+    onPrimaryButtonClick,
+    previousTabId,
+  }: OperationsTabProps
 ): McpPanelTabProps => {
   const nextButtonText =
     selectedOperationsCount > 0
@@ -40,6 +47,7 @@ export const operationsTab = (
       id: 'ohEtV6',
       description: 'The tab label for the select operations tab on the connector panel',
     }),
+    disabled: isTabDisabled,
     content: <SelectOperations />,
     footerContent: {
       buttonContents: [
