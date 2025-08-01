@@ -2,9 +2,8 @@ import { LargeText, XLargeText } from '@microsoft/designer-ui';
 import { AdvancedOptionsTypes } from '../../../run-service';
 import { updateSelectedAdvanceOptions } from '../../../state/WorkflowSlice';
 import type { AppDispatch, RootState } from '../../../state/store';
-import { SearchableDropdown } from '../../components/searchableDropdown';
+import { SearchableDropdown, type IDropdownOption } from '../../components/searchableDropdown';
 import { getAdvanceOptionsSelection, isCloneConnectionsAvailable } from './helper';
-import type { IDropdownOption } from '@fluentui/react';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -82,7 +81,7 @@ export const AdvancedOptions: React.FC = () => {
   ];
 
   const onChangeOptions = useCallback(
-    (_event: React.FormEvent<HTMLDivElement>, selectedOption?: IDropdownOption<any> | undefined) => {
+    (_event: React.FormEvent<HTMLDivElement>, selectedOption?: IDropdownOption | undefined) => {
       if (selectedOption) {
         const optionsSelection = getAdvanceOptionsSelection(selectedAdvanceOptions, selectedOption);
         dispatch(
