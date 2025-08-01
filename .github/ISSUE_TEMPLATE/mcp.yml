@@ -1,0 +1,124 @@
+name: '📋 Logic Apps MCP Issue'
+description: Create an issue specifically for the Logic Apps MCP UI
+labels: ['MCP', 'triage']
+assignees:
+  - preetriti1
+  # - Elaina-Lee
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for reporting an issue.
+
+        This issue tracker is for reporting bugs found in Logic Apps MCP UI (https://github.com/Azure/LogicAppsUX)
+        If you have a question about how to achieve something and are struggling with a broader LA MCP issue, please post a question
+        inside of Logic App's Discussion repo: https://github.com/Azure/logicapps/discussions
+        If it's an issue about the docs, please go to the Logic App's documentation repo (https://github.com/Azure/logicapps)
+
+        Before submitting a new bug/issue, please check the links below to see if there is a solution or question posted there already:
+         - Open Issue's tab: https://github.com/Azure/LogicAppsUX/issues?q=is%3Aissue%20state%3Aopen%20sort%3Aupdated-desc%20label%3AMCP
+         - Closed Issues tab: https://github.com/Azure/LogicAppsUX/issues?q=is%3Aissue%20state%3Aclosed%20sort%3Aupdated-desc%20label%3AMCP
+
+        The more information you fill in, the better we can help you.
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      description: How severe is this issue?
+      options:
+        - 'P1 - Critical (Blocking production)'
+        - 'P2 - High (Major functionality broken)'
+        - 'P3 - Medium (Minor functionality affected)'
+        - 'P4 - Low (Cosmetic/minor inconvenience)'
+    validations:
+      required: true
+
+  - type: dropdown
+    id: template_type
+    attributes:
+      label: Template Type
+      description: What type of template are you working with?
+      options:
+        - 'Quick Start Templates'
+        - 'Solution Accelerators'
+        - 'Custom Templates'
+        - 'Template Gallery Navigation'
+        - 'Template Creation/Export'
+        - 'Other'
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the Bug with repro steps
+      description: Provide a clear and concise description of the challenge you are running into.
+      placeholder: |
+        Expected behavior:
+        - What should happen
+        
+        Actual behavior:
+        - What actually happens
+        
+        Steps to reproduce:
+        1. Go to Templates Gallery
+        2. Select template '...'
+        3. Click on '....'
+        4. See error
+        
+        Template details (if applicable):
+        - Template name: 
+        - Template ID:
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshots_or_videos
+    attributes:
+      label: Screenshots or Videos
+      description: |
+        If applicable, add screenshots or a video to help explain your problem.
+        For more information on the supported file image/file types and the file size limits, please refer
+        to the following link: https://docs.github.com/en/github/writing-on-github/working-with-advanced-formatting/attaching-files
+      placeholder: |
+        You can drag your video or image files inside of this editor ↓
+
+  - type: dropdown
+    id: sku
+    attributes:
+      label: What type of Logic App are you using?
+      options:
+        - Consumption
+        - Standard
+        - Both
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Please provide environment details
+      placeholder: |
+        - Browser: [e.g. Chrome 120, Safari 17, Firefox 121]
+        - Portal Version: [if applicable]
+        - VS Code Version: [if applicable]
+        - Extension Version: [if applicable]
+    validations:
+      required: true
+
+  - type: input
+    id: regression
+    attributes:
+      label: Are you experiencing a regression?
+      description: If yes, please provide the last working version/date
+      placeholder: 'e.g., Worked last week or worked in previous version'
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional context
+      description: Add any other context about the problem here.
