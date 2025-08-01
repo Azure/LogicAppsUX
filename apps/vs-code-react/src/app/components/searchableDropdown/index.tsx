@@ -53,7 +53,7 @@ const useStyles = makeStyles({
 export const SearchableDropdown: React.FC<ISearchableDropdownProps> = (props) => {
   const { options = [], onChange, label, selectedKey, selectedKeys, placeholder, multiSelect, isLoading, className } = props;
   const styles = useStyles();
-  const dropdownId = useId(`dropdown-${label}`);
+  const dropdownId = useId();
 
   const handleOptionSelect = (event: SelectionEvents, data: OptionOnSelectData) => {
     const selectedOption = options.find((opt) => String(opt.key) === String(data.optionValue));
