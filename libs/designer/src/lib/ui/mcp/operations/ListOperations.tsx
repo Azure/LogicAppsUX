@@ -9,6 +9,7 @@ import { useConnectorSectionStyles } from '../wizard/styles';
 import DefaultIcon from '../../../common/images/recommendation/defaulticon.svg';
 import { selectOperationIdToEdit } from '../../../core/state/mcp/mcpselectionslice';
 import { deinitializeOperations } from '../../../core/actions/bjsworkflow/mcp';
+import { OperationProgress } from './operationprogress';
 
 const toolTableCellStyles = {
   border: 'none',
@@ -47,6 +48,11 @@ export const ListOperations = () => {
       defaultMessage: 'Description',
       id: '6qPgjN',
       description: 'The label for the tool description column',
+    }),
+    progressButtonLabel: intl.formatMessage({
+      defaultMessage: 'Progress',
+      id: '4zc6lO',
+      description: 'Label for the progress column',
     }),
     editButtonLabel: intl.formatMessage({
       defaultMessage: 'Edit operation',
@@ -90,6 +96,7 @@ export const ListOperations = () => {
   const columns = [
     { columnKey: 'tool', label: INTL_TEXT.toolLabel },
     { columnKey: 'description', label: INTL_TEXT.toolDescriptionLabel },
+    { columnKey: 'progress', label: INTL_TEXT.progressButtonLabel },
     { columnKey: 'actions', label: '' }, // Empty label for actions column
   ];
 
@@ -121,6 +128,9 @@ export const ListOperations = () => {
               <Text size={300} style={{ verticalAlign: 'top' }}>
                 {item.description}
               </Text>
+            </TableCell>
+            <TableCell style={{ alignContent: 'center' }}>
+              <OperationProgress operationId={item.operationId} />
             </TableCell>
             <TableCell className={styles.iconsCell} style={toolTableCellStyles}>
               <Button

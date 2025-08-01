@@ -12,6 +12,7 @@ import { type McpParameterInputType, ParameterField } from './parameterfield';
 import { DismissCircle20Filled } from '@fluentui/react-icons';
 import { useMcpWizardStyles } from '../wizard/styles';
 import { DescriptionWithLink } from '../../configuretemplate/common';
+import { isDependentStaticParameter } from '../../../core/mcp/utils/helper';
 
 interface EditOperationProps {
   description: string;
@@ -41,14 +42,25 @@ export const EditOperation = ({
   const selectionOrderRef = useRef<Map<string, number>>(new Map());
   const nextOrderRef = useRef<number>(1);
 
-  const { selectedOperationId, operationInfos, inputParameters } = useSelector((state: RootState) => ({
+  const { selectedOperationId, operationInfos, inputParameters, dependencies } = useSelector((state: RootState) => ({
     selectedOperationId: state.mcpSelection.selectedOperationId,
     operationInfos: state.operations.operationInfo,
     inputParameters: state.operations.inputParameters,
+    dependencies: state.operations.dependencies,
   }));
 
-  const operationInfo = selectedOperationId ? operationInfos[selectedOperationId] : null;
-  const parameters = selectedOperationId ? inputParameters[selectedOperationId] : null;
+  const operationInfo = useMemo(
+    () => (selectedOperationId ? operationInfos[selectedOperationId] : null),
+    [selectedOperationId, operationInfos]
+  );
+  const parameters = useMemo(
+    () => (selectedOperationId ? inputParameters[selectedOperationId] : null),
+    [selectedOperationId, inputParameters]
+  );
+  const inputDependencies = useMemo(
+    () => (selectedOperationId ? (dependencies[selectedOperationId].inputs ?? {}) : {}),
+    [selectedOperationId, dependencies]
+  );
 
   const handleParameterInputTypeChange = useCallback(
     (parameterId: string, newType: McpParameterInputType) => {
@@ -370,21 +382,27 @@ export const EditOperation = ({
                   {INTL_TEXT.defaultParameters}
                 </Text>
                 <div className={styles.parameterList}>
-                  {requiredParams.map(({ param, groupId, isConditional }) => (
-                    <ParameterField
-                      key={param.id}
-                      operationId={selectedOperationId}
-                      groupId={groupId}
-                      parameter={param}
-                      isConditional={isConditional}
-                      onParameterVisibilityUpdate={onParameterVisibilityUpdate}
-                      parameterInputType={userInputParamIds[param.id] ? 'user' : 'model'}
-                      onParameterInputTypeChange={handleParameterInputTypeChange}
-                      handleRemoveConditionalParameter={handleRemoveConditionalParameter}
-                      parameterError={parameterErrors[param.id]}
-                      removeParameterError={removeParameterError}
-                    />
-                  ))}
+                  {requiredParams.map(({ param, groupId, isConditional }) => {
+                    const isDependentParameter = isDependentStaticParameter(param.id, inputDependencies);
+                    const parameterInputType = userInputParamIds[param.id] ? 'user' : 'model';
+
+                    return (
+                      <ParameterField
+                        key={param.id}
+                        operationId={selectedOperationId}
+                        groupId={groupId}
+                        parameter={param}
+                        isConditional={isConditional}
+                        disableInputTypeChange={isDependentParameter}
+                        onParameterVisibilityUpdate={onParameterVisibilityUpdate}
+                        parameterInputType={parameterInputType}
+                        onParameterInputTypeChange={handleParameterInputTypeChange}
+                        handleRemoveConditionalParameter={handleRemoveConditionalParameter}
+                        parameterError={parameterErrors[param.id]}
+                        removeParameterError={removeParameterError}
+                      />
+                    );
+                  })}
                 </div>
               </div>
             )}
@@ -434,21 +452,27 @@ export const EditOperation = ({
 
                 {hasVisibleConditionalParameters && (
                   <div className={styles.parameterList}>
-                    {visibleConditionalParams.map(({ param, groupId, isConditional }) => (
-                      <ParameterField
-                        key={param.id}
-                        operationId={selectedOperationId}
-                        groupId={groupId}
-                        parameter={param}
-                        isConditional={isConditional}
-                        onParameterVisibilityUpdate={onParameterVisibilityUpdate}
-                        parameterInputType={userInputParamIds[param.id] ? 'user' : 'model'}
-                        onParameterInputTypeChange={handleParameterInputTypeChange}
-                        handleRemoveConditionalParameter={handleRemoveConditionalParameter}
-                        parameterError={parameterErrors[param.id]}
-                        removeParameterError={removeParameterError}
-                      />
-                    ))}
+                    {visibleConditionalParams.map(({ param, groupId, isConditional }) => {
+                      const isDependentParameter = isDependentStaticParameter(param.id, inputDependencies);
+                      const parameterInputType = userInputParamIds[param.id] ? 'user' : 'model';
+
+                      return (
+                        <ParameterField
+                          key={param.id}
+                          operationId={selectedOperationId}
+                          groupId={groupId}
+                          parameter={param}
+                          isConditional={isConditional}
+                          disableInputTypeChange={isDependentParameter}
+                          onParameterVisibilityUpdate={onParameterVisibilityUpdate}
+                          parameterInputType={parameterInputType}
+                          onParameterInputTypeChange={handleParameterInputTypeChange}
+                          handleRemoveConditionalParameter={handleRemoveConditionalParameter}
+                          parameterError={parameterErrors[param.id]}
+                          removeParameterError={removeParameterError}
+                        />
+                      );
+                    })}
                   </div>
                 )}
               </div>
