@@ -3,13 +3,13 @@ import { Text, Spinner, SearchBox } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 import { useSelector, useDispatch } from 'react-redux';
 import Fuse from 'fuse.js';
-import { useAllConnectors } from '../../../core/queries/browse';
 import type { RootState, AppDispatch } from '../../../core/state/mcp/store';
 import { useOperationsByConnectorQuery } from '../../../core/mcp/utils/queries';
 import { OperationSelectionGrid } from './OperationSelectionGrid';
 import { selectOperations } from '../../../core/state/mcp/mcpselectionslice';
 import { useConnectorSelectionStyles } from '../connectors/styles';
 import { isUndefinedOrEmptyString } from '@microsoft/logic-apps-shared';
+import { ErrorBar } from '../../configuretemplate/common';
 
 const fuseOptions = {
   includeScore: true,
@@ -27,22 +27,17 @@ export const SelectOperations = () => {
   const dispatch = useDispatch<AppDispatch>();
   const styles = useConnectorSelectionStyles();
 
-  const { selectedConnectorId, selectedOperations } = useSelector((state: RootState) => ({
+  const { selectedConnectorId, errorMessage } = useSelector((state: RootState) => ({
     selectedConnectorId: state.mcpSelection.selectedConnectorId,
-    selectedOperations: state.mcpSelection.selectedOperations ?? [],
+    errorMessage: state.mcpSelection.errors.operations,
   }));
   const [searchTerm, setSearchTerm] = useState('');
 
-  const selectedOperationsSet = useMemo(() => new Set(selectedOperations), [selectedOperations]);
-
-  const { data: allConnectors } = useAllConnectors();
   const {
     data: allOperations,
     isLoading: isLoadingOperations,
     error: operationsError,
   } = useOperationsByConnectorQuery(selectedConnectorId ? selectedConnectorId : '');
-
-  const selectedConnector = useMemo(() => allConnectors?.find((c) => c.id === selectedConnectorId), [allConnectors, selectedConnectorId]);
 
   const operations = useMemo(() => {
     const allOps = allOperations || [];
@@ -59,19 +54,6 @@ export const SelectOperations = () => {
 
     return searchResults.map((result) => result.item);
   }, [allOperations, searchTerm]);
-
-  const handleOperationToggle = useCallback(
-    (operationName: string, isSelected: boolean) => {
-      const newSelection = new Set(selectedOperations);
-      if (isSelected) {
-        newSelection.add(operationName);
-      } else {
-        newSelection.delete(operationName);
-      }
-      dispatch(selectOperations(Array.from(newSelection)));
-    },
-    [selectedOperations, dispatch]
-  );
 
   const handleSelectAll = useCallback(
     (isSelected: boolean) => {
@@ -102,10 +84,15 @@ export const SelectOperations = () => {
       defaultMessage: 'Search operations...',
       description: 'Placeholder text for operation search box',
     }),
+    operationsErrorTitle: intl.formatMessage({
+      id: '+7+u4y',
+      defaultMessage: 'Failed to initialize the following operations. Please try again later.',
+      description: 'Title for operations error message',
+    }),
   };
 
   // No connector selected
-  if (!selectedConnectorId || !selectedConnector) {
+  if (!selectedConnectorId) {
     return (
       <div className={styles.container}>
         <div className={styles.content}>
@@ -174,6 +161,14 @@ export const SelectOperations = () => {
   // Main content
   return (
     <div className={styles.container}>
+      {errorMessage ? (
+        <ErrorBar
+          title={INTL_TEXT.operationsErrorTitle}
+          messageInNewline={true}
+          errorMessage={errorMessage}
+          styles={{ margin: '0 16px' }}
+        />
+      ) : null}
       <div className={styles.searchSection}>
         <SearchBox
           className={styles.searchBox}
@@ -186,8 +181,6 @@ export const SelectOperations = () => {
       <div className={styles.content}>
         <OperationSelectionGrid
           operationsData={operations}
-          selectedOperations={selectedOperationsSet}
-          onOperationToggle={handleOperationToggle}
           onSelectAll={handleSelectAll}
           isLoading={isLoadingOperations}
           showConnectorName={false}

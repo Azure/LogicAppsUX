@@ -10,6 +10,7 @@ interface OperationsTabProps extends McpConnectorTabProps {
   selectedOperationsCount: number;
   onPrimaryButtonClick: () => void;
   previousTabId: string | undefined;
+  tabStatusIcon?: 'error';
 }
 
 export const operationsTab = (
@@ -22,6 +23,7 @@ export const operationsTab = (
     isPrimaryButtonLoading,
     onPrimaryButtonClick,
     previousTabId,
+    tabStatusIcon,
   }: OperationsTabProps
 ): McpPanelTabProps => {
   const nextButtonText =
@@ -48,6 +50,7 @@ export const operationsTab = (
       description: 'The tab label for the select operations tab on the connector panel',
     }),
     disabled: isTabDisabled,
+    tabStatusIcon,
     content: <SelectOperations />,
     footerContent: {
       buttonContents: [

@@ -23,6 +23,7 @@ const initialSelectionState: McpSelectionState = {
 const clearAllSelectionsReducer = (state: typeof initialSelectionState) => {
   state.selectedConnectorId = undefined;
   state.selectedOperations = [];
+  state.errors.operations = undefined;
 };
 
 export const mcpSelectionSlice = createSlice({
@@ -49,10 +50,8 @@ export const mcpSelectionSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(resetMcpState, () => initialSelectionState);
     builder.addCase(initializeOperationsMetadata.fulfilled, clearAllSelectionsReducer);
-    builder.addCase(initializeOperationsMetadata.rejected, (state, action: PayloadAction<unknown>) => {
-      if (typeof action.payload === 'string') {
-        state.errors.operations = action.payload;
-      }
+    builder.addCase(initializeOperationsMetadata.rejected, (state, action) => {
+      state.errors.operations = action.error.message ?? 'Failed to initialize operation details.';
     });
   },
 });

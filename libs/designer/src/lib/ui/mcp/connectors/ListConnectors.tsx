@@ -150,14 +150,14 @@ export const ListConnectors = ({ addConnectors, addDisabled }: { addConnectors: 
         .map(([operationId, _]) => operationId);
 
       dispatch(selectConnectorId(connectorId));
-      dispatch(selectOperations(connectorOperations)); // Pass the actual operations instead of empty array
+      dispatch(selectOperations(connectorOperations));
       dispatch(
         openConnectorPanelView({
           panelView: McpPanelView.SelectOperation,
         })
       );
     },
-    [dispatch, operationInfos] // Add operationInfos to dependencies
+    [dispatch, operationInfos]
   );
 
   const handleDeleteConnector = useCallback(
