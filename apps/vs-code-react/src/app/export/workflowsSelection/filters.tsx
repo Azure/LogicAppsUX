@@ -37,9 +37,8 @@ export const Filters: React.FC<any> = ({ dropdownOptions, onChangeResourceGroup,
         <Label htmlFor={filterInputId} disabled={isDataLoading}>
           {intlText.SEARCH_LOGIC_APP}
         </Label>
-        <Input placeholder={intlText.SEARCH} onChange={onChangeSearch} disabled={isDataLoading} id={filterInputId} size="small" />
+        <Input placeholder={intlText.SEARCH} onChange={onChangeSearch} disabled={isDataLoading} id={filterInputId} size="medium" />
       </div>
-
       <SearchableDropdown
         className={styles.exportWorkflowsPanelFiltersDropdown}
         placeholder={intlText.SEARCH}

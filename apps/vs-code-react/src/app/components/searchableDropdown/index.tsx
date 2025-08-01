@@ -22,18 +22,12 @@ export interface IDropdownOption {
 
 export interface ISearchableDropdownProps extends Omit<DropdownProps, 'onOptionSelect' | 'onChange' | 'children'> {
   options: IDropdownOption[];
+  onChange: (event: any, option: IDropdownOption) => void;
+  label?: string;
   selectedKey?: string | number;
   selectedKeys?: (string | number)[];
   multiSelect?: boolean;
-  onChanged?: (option: IDropdownOption, index?: number) => void;
-  onChange?: (event: any, option: IDropdownOption) => void; // For v8 compatibility
-  onSelectionChanged?: (event: SelectionEvents, data: OptionOnSelectData) => void;
   isLoading?: boolean;
-  label?: string;
-  calloutProps?: any; // For v8 compatibility
-  onRenderOption?: (option: IDropdownOption) => JSX.Element; // For v8 compatibility
-  onDismiss?: () => void;
-  searchBoxPlaceholder?: string; // For v8 compatibility
 }
 
 const useStyles = makeStyles({
@@ -57,19 +51,7 @@ const useStyles = makeStyles({
 });
 
 export const SearchableDropdown: React.FC<ISearchableDropdownProps> = (props) => {
-  const {
-    options = [],
-    selectedKey,
-    selectedKeys,
-    multiSelect,
-    onChanged,
-    onChange,
-    onSelectionChanged,
-    isLoading,
-    label,
-    onDismiss,
-    ...dropdownProps
-  } = props;
+  const { options = [], selectedKey, selectedKeys, multiSelect, onChange, isLoading, label, ...dropdownProps } = props;
 
   const styles = useStyles();
   const dropdownId = useId(`dropdown-${label}`);
@@ -78,25 +60,7 @@ export const SearchableDropdown: React.FC<ISearchableDropdownProps> = (props) =>
     const selectedOption = options.find((opt) => String(opt.key) === String(data.optionValue));
 
     if (selectedOption) {
-      // Call legacy onChanged handler
-      if (onChanged) {
-        const index = options.findIndex((opt) => opt.key === selectedOption.key);
-        onChanged(selectedOption, index);
-      }
-
-      // Call legacy onChange handler (v8 compatibility)
-      if (onChange) {
-        onChange(event, selectedOption);
-      }
-
-      // Call new v9 handler
-      if (onSelectionChanged) {
-        onSelectionChanged(event, data);
-      }
-    }
-
-    if (onDismiss) {
-      onDismiss();
+      onChange(event, selectedOption);
     }
   };
 

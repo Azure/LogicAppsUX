@@ -48,11 +48,6 @@ export const ManagedConnections: React.FC = () => {
       id: 'UKCoay',
       description: 'Resource group title',
     }),
-    SEARCH_RESOURCE_GROUP: intl.formatMessage({
-      defaultMessage: 'Find and select resource group',
-      id: 'xJv0H1',
-      description: 'Find and select resource group text',
-    }),
   };
 
   useEffect(() => {
@@ -120,7 +115,6 @@ export const ManagedConnections: React.FC = () => {
           onChange={onChangeResourceGroup}
           selectedKey={selectedResourceGroup !== undefined ? selectedResourceGroup : undefined}
           isLoading={isResourceGroupsLoading}
-          searchBoxPlaceholder={intlText.SEARCH_RESOURCE_GROUP}
         />
         <NewResourceGroup onAddNewResourceGroup={onAddNewResourceGroup} resourceGroups={resourceGroups} />
       </>
@@ -131,7 +125,6 @@ export const ManagedConnections: React.FC = () => {
     isConnectionsChecked,
     intlText.SELECT_OPTION,
     intlText.RESOURCE_GROUP,
-    intlText.SEARCH_RESOURCE_GROUP,
     styles.exportSummaryConnectionsDropdown,
     selectedResourceGroup,
     dispatch,

@@ -68,16 +68,6 @@ export const InstanceSelection: React.FC = () => {
       id: 'xxZDTu',
       description: 'No regions and ISE instances available text',
     }),
-    SEARCH_SUBSCRIPTION: intl.formatMessage({
-      defaultMessage: 'Find and select subscription',
-      id: 'bGPcRT',
-      description: 'Find and select subscription text',
-    }),
-    SEARCH_LOCATION: intl.formatMessage({
-      defaultMessage: 'Find and select region or integration service environment (ISE)',
-      id: 'gBRTE5',
-      description: 'Find region or ISE text',
-    }),
     LOADING: intl.formatMessage({
       defaultMessage: 'Loading...',
       id: '2EZWf6',
@@ -224,7 +214,6 @@ export const InstanceSelection: React.FC = () => {
         selectedKey={selectedSubscription !== '' ? selectedSubscription : undefined}
         className={styles.instancePanelDropdown}
         isLoading={subscriptionLoading}
-        searchBoxPlaceholder={intlText.SEARCH_SUBSCRIPTION}
       />
       <SearchableDropdown
         label={intlText.SELECTION_LOCATION}
@@ -241,7 +230,6 @@ export const InstanceSelection: React.FC = () => {
         selectedKey={selectedIse !== '' ? `ise:${selectedIse}` : location ? `region:${location}` : undefined}
         className={styles.instancePanelDropdown}
         isLoading={iseLoading}
-        searchBoxPlaceholder={intlText.SEARCH_LOCATION}
       />
     </div>
   );
