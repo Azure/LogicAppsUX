@@ -8,7 +8,7 @@ import { setLogicApp } from '../../../core/state/mcp/resourceSlice';
 import { useEmptyLogicApps } from '../../../core/mcp/utils/queries';
 import { useMcpDetailsStyles } from './styles';
 
-const NO_ITEM_VALUE = 'noitem';
+const NO_ITEM_VALUE = 'NO_ITEM_VALUE';
 
 export const LogicAppSelector = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -116,38 +116,40 @@ export const LogicAppSelector = () => {
       </div>
       <div className={styles.fieldSection}>
         <Field required={true}>
-          <Combobox
-            style={{ width: '100%' }}
-            disabled={isLogicAppsLoading}
-            value={searchTerm || selectedResource}
-            placeholder={isLogicAppsLoading ? intlText.LOADING : intlText.SEARCH_PLACEHOLDER}
-            onOpenChange={(_, data) => {
-              if (!data.open) {
-                setSearchTerm('');
-              }
-            }}
-            onOptionSelect={(_, data) => {
-              if (data.optionValue && data.optionValue !== NO_ITEM_VALUE) {
-                onLogicAppSelect(data.optionValue);
-                setSearchTerm('');
-              }
-            }}
-            onChange={(e) => {
-              setSearchTerm(e.target.value);
-            }}
-          >
-            {!isLogicAppsLoading && !filteredResources.length ? (
-              <Option key={'no-items'} value={NO_ITEM_VALUE} disabled>
-                {searchTerm.trim() ? `${intlText.NO_RESULTS} "${searchTerm}"` : intlText.NO_ITEMS}
-              </Option>
-            ) : (
-              filteredResources.map((resource) => (
-                <Option key={resource.id} value={resource.name}>
-                  {resource.displayName}
+          <div style={{ maxWidth: '800px', width: '100%', marginLeft: 'auto' }}>
+            <Combobox
+              style={{ width: '100%' }}
+              disabled={isLogicAppsLoading}
+              value={searchTerm || selectedResource}
+              placeholder={isLogicAppsLoading ? intlText.LOADING : intlText.SEARCH_PLACEHOLDER}
+              onOpenChange={(_, data) => {
+                if (!data.open) {
+                  setSearchTerm('');
+                }
+              }}
+              onOptionSelect={(_, data) => {
+                if (data.optionValue && data.optionValue !== NO_ITEM_VALUE) {
+                  onLogicAppSelect(data.optionValue);
+                  setSearchTerm('');
+                }
+              }}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+              }}
+            >
+              {!isLogicAppsLoading && !filteredResources.length ? (
+                <Option key={'no-items'} value={NO_ITEM_VALUE} disabled>
+                  {searchTerm.trim() ? `${intlText.NO_RESULTS} "${searchTerm}"` : intlText.NO_ITEMS}
                 </Option>
-              ))
-            )}
-          </Combobox>
+              ) : (
+                filteredResources.map((resource) => (
+                  <Option key={resource.id} value={resource.name}>
+                    {resource.displayName}
+                  </Option>
+                ))
+              )}
+            </Combobox>
+          </div>
         </Field>
       </div>
     </div>
