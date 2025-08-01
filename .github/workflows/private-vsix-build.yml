@@ -47,6 +47,9 @@ jobs:
   build:
     name: Build private vsix
     runs-on: ubuntu-latest
+    outputs:
+      current_version: ${{ steps.version.outputs.current_version }}
+      tag_name: ${{ steps.version.outputs.tag_name }}
 
     steps:
       # checkout the repo
@@ -66,6 +69,14 @@ jobs:
           run_install: |
             - recursive: true
               args: [--frozen-lockfile, --strict-peer-dependencies]
+
+      - name: 'Get Current Version'
+        id: version
+        run: |
+          npx tsx scripts/get-current-version.ts "${{ github.ref_name }}"
+
+      - name: 'Update Version in Package Files'
+        run: node scripts/update-versions.js ${{ steps.version.outputs.current_version }}
 
       - name: 'Set Designer Extension VSIX aiKey in package.json'
         run: echo "`jq '.aiKey="${{ env.AI_KEY }}"' apps/vs-code-designer/src/package.json`" > apps/vs-code-designer/src/package.json

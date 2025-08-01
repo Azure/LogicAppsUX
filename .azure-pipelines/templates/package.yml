@@ -1,4 +1,25 @@
 steps:
+  - script: npx tsx scripts/get-current-version.ts "$(Build.SourceBranchName)"
+    displayName: "Get Current Version"
+    workingDirectory: $(working_directory)
+    condition: succeeded()
+    name: version
+
+  - script: node scripts/update-versions.js $(version.current_version)
+    displayName: "Update Version in Package Files"
+    workingDirectory: $(working_directory)
+    condition: succeeded()
+
+  - script: echo "`jq '.aiKey="$(AI_KEY)"' apps/vs-code-designer/src/package.json`" > apps/vs-code-designer/src/package.json
+    displayName: "Set Designer Extension VSIX aiKey in package.json"
+    workingDirectory: $(working_directory)
+    condition: succeeded()
+
+  - script: sed -i 's/setInGitHubBuild/$(AI_KEY)/g' apps/vs-code-designer/src/main.ts
+    displayName: "Replace Placeholder with Telemetry Key"
+    workingDirectory: $(working_directory)
+    condition: succeeded()
+
   - script: pnpm run vscode:designer:pack
     displayName: "Package with pnpm"
     workingDirectory: $(working_directory)

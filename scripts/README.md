@@ -2,6 +2,19 @@
 
 This directory contains utility scripts for the LogicAppsUX project and their corresponding tests.
 
+## Shared Utilities
+
+### version-utils.ts
+
+A shared utility module containing common version management functions used by both `calculate-next-version.ts` and `get-current-version.ts`:
+
+- `getPackageVersion()` - Reads version from package.json
+- `getLatestVersionFromTags()` - Gets the latest version tag from git
+- `getLatestPatchTag()` - Gets the latest patch tag for a specific major.minor version
+- `parseHotfixBranch()` - Parses hotfix branch names to extract version info
+- `sortVersionTags()` - Sorts version tags in ascending order
+- `outputForGitHub()` - Outputs version information for GitHub Actions
+
 ## calculate-next-version.ts
 
 A TypeScript script that calculates the next semantic version based on release type and branch context. This script replaces the complex bash logic previously used in the GitHub Actions workflow.

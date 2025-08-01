@@ -22,7 +22,6 @@ const packagesToUpdate = [
   'libs/data-mapper/package.json',
   'libs/data-mapper-v2/package.json',
   'libs/logic-apps-shared/package.json',
-  'libs/services/designer-client-services/package.json',
   'libs/vscode-extension/package.json',
   'libs/chatbot/package.json',
   'apps/vs-code-react/package.json',
