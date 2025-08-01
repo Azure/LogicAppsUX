@@ -10,7 +10,7 @@ export const connectionsTab = (
   dispatch: AppDispatch,
   connectorId: string,
   operations: string[],
-  { onTabClick, isTabDisabled, isPrimaryButtonDisabled, isPreviousButtonDisabled, onAddConnector: onSubmit }: McpConnectorTabProps
+  { onTabClick, isTabDisabled, isPrimaryButtonDisabled, onPrimaryButtonClick }: McpConnectorTabProps
 ): McpPanelTabProps => ({
   id: constants.MCP_PANEL_TAB_NAMES.CONNECTIONS,
   title: intl.formatMessage({
@@ -33,7 +33,6 @@ export const connectionsTab = (
         onClick: () => {
           dispatch(selectPanelTab(constants.MCP_PANEL_TAB_NAMES.OPERATIONS));
         },
-        disabled: isPreviousButtonDisabled,
       },
       {
         type: 'navigation',
@@ -43,7 +42,7 @@ export const connectionsTab = (
           description: 'Button text to the save in the connector panel',
         }),
         onClick: () => {
-          onSubmit?.();
+          onPrimaryButtonClick?.();
         },
         appearance: 'primary',
         disabled: isPrimaryButtonDisabled,

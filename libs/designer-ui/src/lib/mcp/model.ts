@@ -13,6 +13,6 @@ export interface McpConnectorTabProps {
   isTabDisabled?: boolean;
   onTabClick?: () => void;
   isPrimaryButtonDisabled: boolean;
-  isPreviousButtonDisabled: boolean;
-  onAddConnector?: () => void;
+  onPrimaryButtonClick?: () => void;
+  isPrimaryButtonLoading?: boolean;
 }

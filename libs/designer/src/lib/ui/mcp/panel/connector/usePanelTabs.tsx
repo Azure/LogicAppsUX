@@ -85,7 +85,6 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
     () =>
       connectorsTab(intl, dispatch, {
         isTabDisabled: false,
-        isPreviousButtonDisabled: false,
         isPrimaryButtonDisabled: false,
       }),
     [intl, dispatch]
@@ -108,10 +107,8 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
   const operationsTabItem = useMemo(
     () =>
       operationsTab(intl, dispatch, {
-        isTabDisabled: false,
-        isPreviousButtonDisabled: false,
-        isPrimaryButtonDisabled: isConnectionsTabDisabled,
         selectedOperationsCount: selectedOperations.length,
+        isPrimaryButtonDisabled: isConnectionsTabDisabled,
         onPrimaryButtonClick: onConnectionsTabNavigation,
         isPrimaryButtonLoading: isInitializingConnections,
         previousTabId: hasSelectConnectorTab ? constants.MCP_PANEL_TAB_NAMES.CONNECTORS : undefined,
@@ -132,9 +129,8 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
       connectionsTab(intl, dispatch, selectedConnectorId as string, selectedOperations, {
         isTabDisabled: isConnectionsTabDisabled,
         onTabClick: onConnectionsTabNavigation,
-        isPreviousButtonDisabled: false,
         isPrimaryButtonDisabled: !selectedConnectorId || selectedOperations.length === 0 || !hasValidConnection,
-        onAddConnector: handleSubmit,
+        onPrimaryButtonClick: handleSubmit,
       }),
     [
       intl,
