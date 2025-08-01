@@ -1,10 +1,10 @@
 import { QueryKeys } from '../../../run-service';
-import type { ISummaryData } from '../../../run-service';
+import type { IExportDetailsList, ISummaryData } from '../../../run-service';
 import { ApiService } from '../../../run-service/export';
 import { updatePackageUrl } from '../../../state/WorkflowSlice';
 import type { AppDispatch, RootState } from '../../../state/store';
 import { VSCodeContext } from '../../../webviewCommunication';
-import { getListColumns, getSummaryData } from './helper';
+import { getSummaryData, listColumns } from './helper';
 import { ManagedConnections } from './managedConnections';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { useContext, useMemo } from 'react';
@@ -13,8 +13,19 @@ import { useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { LargeText, XLargeText } from '@microsoft/designer-ui';
 import { useExportStyles } from '../exportStyles';
-import { Button, Input, Label, MessageBar, useId } from '@fluentui/react-components';
-import { SelectionMode, ShimmeredDetailsList } from '@fluentui/react';
+import {
+  Button,
+  DataGrid,
+  DataGridBody,
+  DataGridCell,
+  DataGridHeader,
+  DataGridHeaderCell,
+  DataGridRow,
+  Input,
+  Label,
+  MessageBar,
+  useId,
+} from '@fluentui/react-components';
 
 export const Summary: React.FC = () => {
   const intl = useIntl();
@@ -129,14 +140,25 @@ export const Summary: React.FC = () => {
         <XLargeText text={intlText.AFTER_EXPORT} style={{ display: 'block' }} />
         <LargeText text={intlText.ADDITIONAL_STEPS} style={{ display: 'block' }} />
         <div className={styles.exportSummaryDetailsList}>
-          <ShimmeredDetailsList
+          <DataGrid
             items={exportDetails}
-            columns={getListColumns()}
-            setKey="set"
-            enableShimmer={isSummaryLoading}
-            selectionMode={SelectionMode.none}
-            compact={true}
-          />
+            columns={listColumns}
+            selectionMode={undefined}
+            resizableColumns
+            size="small"
+            focusMode="composite"
+          >
+            <DataGridHeader>
+              <DataGridRow>{({ renderHeaderCell }) => <DataGridHeaderCell>{renderHeaderCell()}</DataGridHeaderCell>}</DataGridRow>
+            </DataGridHeader>
+            <DataGridBody<IExportDetailsList>>
+              {({ item, rowId }) => (
+                <DataGridRow<IExportDetailsList> key={rowId}>
+                  {({ renderCell }) => <DataGridCell>{renderCell(item)}</DataGridCell>}
+                </DataGridRow>
+              )}
+            </DataGridBody>
+          </DataGrid>
           {noDetails}
         </div>
       </>

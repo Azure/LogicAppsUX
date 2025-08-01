@@ -53,9 +53,6 @@ export const useExportStyles = makeStyles({
 
   exportWorkflowsPanelDivider: {
     padding: `0 ${tokens.spacingHorizontalXL}`,
-    ':after': {
-      width: '3px',
-    },
   },
 
   exportWorkflowsPanelLimitInfo: {

@@ -1,6 +1,6 @@
 import type { RootState } from '../../../state/store';
 import { isNameValid } from './helper';
-import type { IDropdownOption } from '@fluentui/react';
+import type { IDropdownOption } from '../../components/searchableDropdown';
 import { useBoolean } from '@fluentui/react-hooks';
 import { MediumText } from '@microsoft/designer-ui';
 import { useState, useMemo } from 'react';
