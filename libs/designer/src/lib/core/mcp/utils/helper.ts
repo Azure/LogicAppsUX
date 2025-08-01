@@ -134,7 +134,8 @@ export const initializeOperationDetails = async (
       error,
       message: `Error while initializing operation details for connectorId: ${operationInfo.connectorId}, operationId: ${nodeId}`,
     });
-    throw new Error(`Operation: "${nodeId}", Error: "${error.message}".`);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    throw new Error(`Operation: "${nodeId}", Error: "${errorMessage}".`);
   }
 };
 
