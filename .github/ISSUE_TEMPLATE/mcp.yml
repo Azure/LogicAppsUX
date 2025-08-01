@@ -1,4 +1,4 @@
-name: '📋 Logic Apps MCP Issue'
+name: '📋 Logic Apps MCP Server Issue'
 description: Create an issue specifically for the Logic Apps MCP UI
 labels: ['MCP', 'triage']
 assignees:
@@ -35,16 +35,13 @@ body:
       required: true
 
   - type: dropdown
-    id: template_type
+    id: mcp_type
     attributes:
-      label: Template Type
-      description: What type of template are you working with?
+      label: MCP Server Creation Source
+      description: What type of mcp integration are you working with?
       options:
-        - 'Quick Start Templates'
-        - 'Solution Accelerators'
-        - 'Custom Templates'
-        - 'Template Gallery Navigation'
-        - 'Template Creation/Export'
+        - 'MCP Server in Api Center'
+        - 'MCP Server in Logic Apps'
         - 'Other'
     validations:
       required: true
@@ -62,14 +59,14 @@ body:
         - What actually happens
         
         Steps to reproduce:
-        1. Go to Templates Gallery
-        2. Select template '...'
-        3. Click on '....'
-        4. See error
+        1. Go to MCP Server create UI [API Center or Logic Apps]
+        2. Click on '....'
+        3. See error
         
-        Template details (if applicable):
-        - Template name: 
-        - Template ID:
+        Resource details (if applicable):
+        - Subscription Id:
+        - Logic App Id:
+        - Region:
     validations:
       required: true
 
@@ -84,17 +81,6 @@ body:
       placeholder: |
         You can drag your video or image files inside of this editor ↓
 
-  - type: dropdown
-    id: sku
-    attributes:
-      label: What type of Logic App are you using?
-      options:
-        - Consumption
-        - Standard
-        - Both
-    validations:
-      required: true
-
   - type: textarea
     id: environment
     attributes:
@@ -102,8 +88,6 @@ body:
       description: Please provide environment details
       placeholder: |
         - Browser: [e.g. Chrome 120, Safari 17, Firefox 121]
-        - Portal Version: [if applicable]
-        - VS Code Version: [if applicable]
         - Extension Version: [if applicable]
     validations:
       required: true
