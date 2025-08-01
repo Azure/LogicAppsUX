@@ -1,7 +1,6 @@
 import { Dropdown, Label, Option, OptionGroup, Spinner, makeStyles, useId } from '@fluentui/react-components';
 import type { DropdownProps, OptionOnSelectData, SelectionEvents } from '@fluentui/react-components';
 
-// Legacy v8 compatibility types
 export const DropdownMenuItemType = {
   Normal: 0,
   Divider: 1,
@@ -17,7 +16,7 @@ export interface IDropdownOption {
   hidden?: boolean;
   itemType?: DropdownMenuItemType;
   data?: any;
-  selected?: boolean; // For v8 compatibility
+  selected?: boolean;
 }
 
 export interface ISearchableDropdownProps extends Omit<DropdownProps, 'onOptionSelect' | 'onChange' | 'children'> {
@@ -28,6 +27,8 @@ export interface ISearchableDropdownProps extends Omit<DropdownProps, 'onOptionS
   selectedKeys?: (string | number)[];
   multiSelect?: boolean;
   isLoading?: boolean;
+  className?: string;
+  placeholder?: string;
 }
 
 const useStyles = makeStyles({
@@ -36,7 +37,6 @@ const useStyles = makeStyles({
     gridTemplateRows: 'repeat(1fr)',
     justifyItems: 'start',
     gap: '2px',
-    maxWidth: '400px',
   },
   dropdown: {
     width: '100%',
@@ -51,8 +51,7 @@ const useStyles = makeStyles({
 });
 
 export const SearchableDropdown: React.FC<ISearchableDropdownProps> = (props) => {
-  const { options = [], selectedKey, selectedKeys, multiSelect, onChange, isLoading, label, ...dropdownProps } = props;
-
+  const { options = [], onChange, label, selectedKey, selectedKeys, placeholder, multiSelect, isLoading, className } = props;
   const styles = useStyles();
   const dropdownId = useId(`dropdown-${label}`);
 
@@ -82,13 +81,12 @@ export const SearchableDropdown: React.FC<ISearchableDropdownProps> = (props) =>
     const groups: { [key: string]: IDropdownOption[] } = {};
     let currentGroup = 'default';
 
-    // Group options by headers
     options.forEach((option) => {
       if (option.itemType === DropdownMenuItemType.Header) {
         currentGroup = String(option.key);
         groups[currentGroup] = [];
       } else if (option.itemType === DropdownMenuItemType.Divider) {
-        // Skip dividers in v9 (handled by OptionGroup)
+        // Skip dividers - they don't get added to any group
       } else {
         if (!groups[currentGroup]) {
           groups[currentGroup] = [];
@@ -121,7 +119,6 @@ export const SearchableDropdown: React.FC<ISearchableDropdownProps> = (props) =>
       });
     }
 
-    // No groups, render options directly
     return options
       .filter((opt) => opt.itemType !== DropdownMenuItemType.Header && opt.itemType !== DropdownMenuItemType.Divider)
       .map((option) => {
@@ -134,11 +131,11 @@ export const SearchableDropdown: React.FC<ISearchableDropdownProps> = (props) =>
   };
 
   return (
-    <div className={styles.root}>
+    <div className={`${styles.root} ${className || ''}`}>
       <Label htmlFor={dropdownId}>{label}</Label>
       <Dropdown
+        placeholder={placeholder}
         id={dropdownId}
-        {...dropdownProps}
         className={styles.dropdown}
         multiselect={multiSelect}
         value={getSelectedValue()}
