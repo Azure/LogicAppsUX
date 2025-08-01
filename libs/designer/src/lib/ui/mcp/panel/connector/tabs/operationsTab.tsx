@@ -43,8 +43,8 @@ export const operationsTab = (
   return {
     id: constants.MCP_PANEL_TAB_NAMES.OPERATIONS,
     title: intl.formatMessage({
-      defaultMessage: 'Select Operation(s)',
-      id: 'ohEtV6',
+      defaultMessage: 'Choose actions',
+      id: 'hu3PQN',
       description: 'The tab label for the select operations tab on the connector panel',
     }),
     disabled: isTabDisabled,

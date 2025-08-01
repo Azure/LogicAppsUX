@@ -78,14 +78,14 @@ export const SearchableDropdown: FC<SearchableDropdownProps> = ({
   });
 
   const selectAllText = intl.formatMessage({
-    defaultMessage: 'Select All',
-    id: 'bS8c69',
+    defaultMessage: 'Select all',
+    id: 'xgV4pp',
     description: 'Text for the "Select All" option in a multiselect dropdown',
   });
 
   const deselectAllText = intl.formatMessage({
-    defaultMessage: 'Deselect All',
-    id: 'UZ1Gqq',
+    defaultMessage: 'Deselect all',
+    id: 'v6V2NA',
     description: 'Text for the "Deselect All" option in a multiselect dropdown',
   });
 

@@ -75,10 +75,11 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
           type: 'apiconnection' as const,
         }));
         dispatch(initializeOperationsMetadata({ operations: selectedOperationsData }));
+      } else {
+        dispatch(closePanel());
+        dispatch(clearAllSelections());
       }
     }
-    dispatch(closePanel());
-    dispatch(clearAllSelections());
   }, [dispatch, selectedConnectorId, selectedOperations, newlySelectedOperationIds, deselectedOperationIds]);
 
   const isOperationsTabDisabled = useMemo(() => !selectedConnectorId, [selectedConnectorId]);

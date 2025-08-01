@@ -32,8 +32,8 @@ export const SelectionPanel = () => {
 
   const INTL_TEXT = {
     title: intl.formatMessage({
-      defaultMessage: 'Set up connector',
-      id: '+tw9XO',
+      defaultMessage: 'Add connector',
+      id: 'y1VKLK',
       description: 'The tab label for the selection panel on the connector panel',
     }),
     closeAriaLabel: intl.formatMessage({

@@ -4,7 +4,7 @@
 
 This document outlines a comprehensive plan to migrate 124 .less files in the LogicAppsUX monorepo to Fluent UI v9's makeStyles CSS-in-JS system. The migration will improve performance, enable better tree-shaking, provide type-safe styling, and align with modern React best practices.
 
-**Current Progress**: 35 components migrated (28.2% complete)
+**Current Progress**: 38 components migrated (30.6% complete)
 - ✅ peek component (peek.less - 6 lines)
 - ✅ error component (error.less - 29 lines)
 - ✅ tip component (tip.less - 33 lines)
@@ -37,7 +37,13 @@ This document outlines a comprehensive plan to migrate 124 .less files in the Lo
 - ✅ **VS CODE**: export component (export.less - 120 lines) → exportStyles.ts (PR #7588/#7797)
 - ✅ **VS CODE**: overview app (overview.less - 4 lines) → overviewStyles.ts (PR #7588)
 - ✅ **VS CODE**: reviewList component (styles.less - 32 lines) → reviewListStyles.ts (PR #7907) - **COMPLEX MIGRATION**
+- ✅ **VS CODE**: root styles.less (5 lines) → **REMOVED ENTIRELY** - inline HTML styles (ccastrotrejo/FinalMigration)
 - ✅ **SVG MIGRATION**: 3 SVG files removed, replaced with Fluent UI icons (PR #7820)
+- ✅ **FLUENT UI v8 TO v9 MIGRATIONS** :
+  - ✅ SearchableDropdown: Complete v8→v9 migration with enhanced key handling and Fluent UI v9 patterns
+  - ✅ ShimmeredDetailsList → Table: Native Fluent UI v9 Table with column resizing and modern data patterns
+  - ✅ List component: Migrated from Fluent UI v8 to native React implementation with improved performance
+  - ✅ Export workflows: Enhanced table functionality, filtering, and modern Fluent UI v9 components
 - ⏭️ processsimple.less - SKIPPED: unused file
 - ⏭️ datetimeeditor.less - SKIPPED: no component found
 - ⏭️ connectiongatewaypicker.less - SKIPPED: no corresponding component
@@ -47,9 +53,9 @@ This document outlines a comprehensive plan to migrate 124 .less files in the Lo
 ## Current State Analysis
 
 ### Scope
-- **Total .less files**: 124 (9 completed, 115 remaining)
+- **Total .less files**: 124 (12 completed, 112 remaining)
 - **Main aggregator file**: `/libs/designer-ui/src/lib/styles.less` (imports 71 files)
-- **Lines of CSS**: ~5,000+ lines across all files (~400 lines migrated including foundational files)
+- **Lines of CSS**: ~10,210+ lines across all files (~1,155 lines migrated including foundational files)
 - **Affected packages**: 6 packages (designer-ui, designer, data-mapper, vs-code-react, Standalone, chatbot)
 
 ### Existing makeStyles Adoption
