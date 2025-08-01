@@ -1,4 +1,4 @@
-import { agentOperation, type OperationManifest, handoffOperation } from '@microsoft/logic-apps-shared';
+import { agentOperation, type OperationManifest, handoffOperation, customLengthGuid } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { changePanelNode, type RootState } from '../..';
 import { getOperationManifest } from '../../queries/operation';
@@ -25,7 +25,7 @@ export const addAgentHandoff = createAsyncThunk('addAgentHandoff', async (payloa
       operationId: agentOperation.id,
     });
 
-    const newHandoffId = `handoff_from_${sourceId}_to_${targetId}`;
+    const newHandoffId = `handoff_${customLengthGuid(8)}`;
     const newToolId = `${newHandoffId}_tool`;
 
     // Initialize subgraph manifest
