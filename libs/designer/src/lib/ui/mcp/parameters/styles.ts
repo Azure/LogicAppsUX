@@ -171,6 +171,7 @@ export const useEditOperationStyles = makeStyles({
     alignItems: 'center',
     justifyContent: 'space-between',
     gap: tokens.spacingHorizontalS,
+    paddingBottom: '8px',
   },
 
   validationErrorText: {
