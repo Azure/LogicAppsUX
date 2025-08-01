@@ -100,14 +100,14 @@ export const LogicAppSelector = () => {
     if (!isLogicAppsLoading) {
       const resource = resources.find((resource) => equals(resource.name, logicAppName ?? ''))?.displayName;
       if (!resource && !!logicAppName) {
-        setSelectedResource('');
+        onLogicAppSelect('');
       }
 
       if (resource !== selectedResource) {
         setSelectedResource(resource ?? '');
       }
     }
-  }, [resources, logicAppName, isLogicAppsLoading, selectedResource]);
+  }, [resources, logicAppName, isLogicAppsLoading, selectedResource, onLogicAppSelect]);
 
   return (
     <div className={styles.container}>
@@ -116,11 +116,11 @@ export const LogicAppSelector = () => {
       </div>
       <div className={styles.fieldSection}>
         <Field required={true}>
-          <div style={{ maxWidth: '800px', width: '100%', marginLeft: 'auto' }}>
+          <div className={styles.comboboxContainer}>
             <Combobox
-              style={{ width: '100%' }}
+              className={styles.combobox}
               disabled={isLogicAppsLoading}
-              value={searchTerm || selectedResource}
+              value={searchTerm !== '' ? searchTerm : selectedResource}
               placeholder={isLogicAppsLoading ? intlText.LOADING : intlText.SEARCH_PLACEHOLDER}
               onOpenChange={(_, data) => {
                 if (!data.open) {
