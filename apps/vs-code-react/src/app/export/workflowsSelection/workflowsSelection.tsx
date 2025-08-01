@@ -1,6 +1,7 @@
 import { QueryKeys } from '../../../run-service';
 import type { WorkflowsList, SelectedWorkflowsList } from '../../../run-service';
 import { ApiService } from '../../../run-service/export/index';
+import type { IDropdownOption } from '../../components/searchableDropdown';
 import { updateSelectedWorkFlows } from '../../../state/WorkflowSlice';
 import type { AppDispatch, RootState } from '../../../state/store';
 import { VSCodeContext } from '../../../webviewCommunication';
@@ -8,16 +9,12 @@ import { AdvancedOptions } from './advancedOptions';
 import { Filters } from './filters';
 import {
   filterWorkflows,
-  getListColumns,
-  getSelectedItems,
   parsePreviousSelectedWorkflows,
   parseResourceGroups,
   parseSelectedWorkflows,
   updateSelectedItems,
 } from './helper';
 import { SelectedList } from './selectedList';
-import { ShimmeredDetailsList, SelectionMode, Selection } from '@fluentui/react';
-import type { IDropdownOption } from '@fluentui/react';
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { useMemo, useRef, useState, useEffect, useContext } from 'react';
 import { useIntl } from 'react-intl';
@@ -25,8 +22,24 @@ import { useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { LargeText, XLargeText } from '@microsoft/designer-ui';
 import { useExportStyles } from '../exportStyles';
-import type { InputProps } from '@fluentui/react-components';
-import { Divider, MessageBar, MessageBarBody } from '@fluentui/react-components';
+import type { InputProps, TableColumnDefinition, TableColumnSizingOptions } from '@fluentui/react-components';
+import {
+  Divider,
+  MessageBar,
+  MessageBarBody,
+  Table,
+  TableHeader,
+  TableHeaderCell,
+  TableBody,
+  TableRow,
+  TableCell,
+  Skeleton,
+  SkeletonItem,
+  Checkbox,
+  createTableColumn,
+  useTableFeatures,
+  useTableColumnSizing_unstable,
+} from '@fluentui/react-components';
 
 export const WorkflowsSelection: React.FC = () => {
   const vscode = useContext(VSCodeContext);
@@ -132,32 +145,68 @@ export const WorkflowsSelection: React.FC = () => {
     allItemsSelected.current = updatedItems;
   }, [selectedWorkflows, renderWorkflows, allWorkflows]);
 
-  const selection: Selection = useMemo(() => {
-    const onItemsChange = () => {
-      const selectedItems = [...allItemsSelected.current.filter((item) => item.selected)];
-      if (selection && selection.getItems().length > 0) {
-        selectedItems.forEach((workflow: WorkflowsList) => {
-          selection.setKeySelected(workflow.key, true, false);
-        });
-      }
-    };
+  // DataGrid selection state
+  const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
 
-    const onSelectionChanged = () => {
-      const currentSelection = selection.getSelection() as WorkflowsList[];
-      const selectedItems = getSelectedItems(allItemsSelected.current, currentSelection);
+  // Update selected items when selectedWorkflows changes
+  useEffect(() => {
+    const newSelectedItems = new Set(selectedWorkflows.map((workflow) => workflow.key));
+    setSelectedItems(newSelectedItems);
+  }, [selectedWorkflows]);
 
-      dispatch(
-        updateSelectedWorkFlows({
-          selectedWorkflows: selectedItems,
-        })
-      );
-    };
+  // Column sizing configuration
+  const columnSizingOptions: TableColumnSizingOptions = useMemo(
+    () => ({
+      selection: {
+        minWidth: 48,
+        idealWidth: 48,
+        defaultWidth: 48,
+      },
+      name: {
+        minWidth: 150,
+        idealWidth: 250,
+        defaultWidth: 250,
+      },
+      resourceGroup: {
+        minWidth: 120,
+        idealWidth: 200,
+        defaultWidth: 200,
+      },
+    }),
+    []
+  );
 
-    return new Selection({
-      onSelectionChanged: onSelectionChanged,
-      onItemsChanged: onItemsChange,
-    });
-  }, [dispatch]);
+  // Define table columns
+  const columns: TableColumnDefinition<WorkflowsList>[] = useMemo(
+    () => [
+      createTableColumn<WorkflowsList>({
+        columnId: 'selection',
+        renderHeaderCell: () => '', // We'll render checkbox manually
+      }),
+      createTableColumn<WorkflowsList>({
+        columnId: 'name',
+        compare: (a, b) => a.name.localeCompare(b.name),
+        renderHeaderCell: () => <>{intlText.NAME}</>,
+      }),
+      createTableColumn<WorkflowsList>({
+        columnId: 'resourceGroup',
+        compare: (a, b) => a.resourceGroup.localeCompare(b.resourceGroup),
+        renderHeaderCell: () => <>{intlText.RESOURCE_GROUP}</>,
+      }),
+    ],
+    [intlText.NAME, intlText.RESOURCE_GROUP]
+  );
+
+  // Initialize table features with column sizing
+  const { getRows, columnSizing_unstable, tableRef } = useTableFeatures(
+    {
+      columns,
+      items: renderWorkflows || [],
+    },
+    [useTableColumnSizing_unstable({ columnSizingOptions })]
+  );
+
+  const rows = getRows();
 
   const workflowsList = useMemo(() => {
     const emptyText = (
@@ -165,34 +214,130 @@ export const WorkflowsSelection: React.FC = () => {
     );
 
     const noWorkflows = renderWorkflows !== null && !renderWorkflows.length && !isWorkflowsLoading ? emptyText : null;
-
     const enableShimmer = isWorkflowsLoading || renderWorkflows === null;
+    const items = renderWorkflows || [];
+
+    if (enableShimmer) {
+      // Show skeleton loading state
+      return (
+        <div className={`${styles.exportWorkflowsPanelListWorkflows} ${styles.exportWorkflowsPanelListWorkflowsLoading}`}>
+          <Table aria-label={intlText.SELECT_TITLE} ref={tableRef} {...columnSizing_unstable.getTableProps()}>
+            <TableHeader>
+              <TableRow>
+                <TableHeaderCell {...columnSizing_unstable.getTableHeaderCellProps('selection')}>
+                  <Checkbox
+                    aria-label={intlText.SELECTION_ALL}
+                    checked={selectedItems.size === items.length && items.length > 0}
+                    onChange={(_ev, data) => {
+                      if (data.checked) {
+                        // Select all
+                        const allKeys = new Set(items.map((item) => item.key));
+                        setSelectedItems(allKeys);
+                        const allItems = allItemsSelected.current.filter((item) => allKeys.has(item.key));
+                        dispatch(updateSelectedWorkFlows({ selectedWorkflows: allItems }));
+                      } else {
+                        // Deselect all
+                        setSelectedItems(new Set());
+                        dispatch(updateSelectedWorkFlows({ selectedWorkflows: [] }));
+                      }
+                    }}
+                  />
+                </TableHeaderCell>
+                {columns.slice(1).map((column) => (
+                  <TableHeaderCell key={column.columnId} {...columnSizing_unstable.getTableHeaderCellProps(column.columnId)}>
+                    {column.renderHeaderCell()}
+                  </TableHeaderCell>
+                ))}
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {[...Array(5)].map((_, index) => (
+                <TableRow key={`skeleton-${index}`}>
+                  <TableCell {...columnSizing_unstable.getTableCellProps('selection')}>
+                    <Checkbox disabled />
+                  </TableCell>
+                  <TableCell {...columnSizing_unstable.getTableCellProps('name')}>
+                    <Skeleton>
+                      <SkeletonItem style={{ width: '120px' }} />
+                    </Skeleton>
+                  </TableCell>
+                  <TableCell {...columnSizing_unstable.getTableCellProps('resourceGroup')}>
+                    <Skeleton>
+                      <SkeletonItem style={{ width: '150px' }} />
+                    </Skeleton>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      );
+    }
 
     return (
-      <div
-        className={`${styles.exportWorkflowsPanelListWorkflows} ${enableShimmer ? styles.exportWorkflowsPanelListWorkflowsLoading : ''}`}
-      >
-        <ShimmeredDetailsList
-          items={renderWorkflows || []}
-          columns={getListColumns(intlText.NAME, intlText.RESOURCE_GROUP)}
-          setKey="set"
-          enableShimmer={enableShimmer}
-          ariaLabelForSelectionColumn={intlText.SELECTION}
-          ariaLabelForSelectAllCheckbox={intlText.SELECTION_ALL}
-          checkButtonAriaLabel={intlText.SELECT_WORKFLOW}
-          selectionMode={SelectionMode.multiple}
-          selection={selection}
-          compact={true}
-          selectionPreservedOnEmptyClick={true}
-        />
+      <div className={styles.exportWorkflowsPanelListWorkflows}>
+        <Table aria-label={intlText.SELECT_TITLE} {...columnSizing_unstable.getTableProps()}>
+          <TableHeader>
+            <TableRow>
+              <TableHeaderCell {...columnSizing_unstable.getTableHeaderCellProps('selection')}>
+                <Checkbox
+                  aria-label={intlText.SELECTION_ALL}
+                  checked={selectedItems.size === items.length && items.length > 0}
+                  onChange={(_ev, data) => {
+                    if (data.checked) {
+                      // Select all
+                      const allKeys = new Set(items.map((item) => item.key));
+                      setSelectedItems(allKeys);
+                      const allItems = allItemsSelected.current.filter((item) => allKeys.has(item.key));
+                      dispatch(updateSelectedWorkFlows({ selectedWorkflows: allItems }));
+                    } else {
+                      // Deselect all
+                      setSelectedItems(new Set());
+                      dispatch(updateSelectedWorkFlows({ selectedWorkflows: [] }));
+                    }
+                  }}
+                />
+              </TableHeaderCell>
+              {columns.slice(1).map((column) => (
+                <TableHeaderCell key={column.columnId} {...columnSizing_unstable.getTableHeaderCellProps(column.columnId)}>
+                  {column.renderHeaderCell()}
+                </TableHeaderCell>
+              ))}
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {rows.map(({ item }) => (
+              <TableRow key={item.key}>
+                <TableCell {...columnSizing_unstable.getTableCellProps('selection')}>
+                  <Checkbox
+                    aria-label={intlText.SELECT_WORKFLOW}
+                    checked={selectedItems.has(item.key)}
+                    onChange={(_ev, data) => {
+                      const newSelection = new Set(selectedItems);
+                      if (data.checked) {
+                        newSelection.add(item.key);
+                      } else {
+                        newSelection.delete(item.key);
+                      }
+                      setSelectedItems(newSelection);
+
+                      const selectedWorkflowItems = allItemsSelected.current.filter((workflow) => newSelection.has(workflow.key));
+                      dispatch(updateSelectedWorkFlows({ selectedWorkflows: selectedWorkflowItems }));
+                    }}
+                  />
+                </TableCell>
+                <TableCell {...columnSizing_unstable.getTableCellProps('name')}>{item.name}</TableCell>
+                <TableCell {...columnSizing_unstable.getTableCellProps('resourceGroup')}>{item.resourceGroup}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
         {noWorkflows}
       </div>
     );
   }, [
     intlText.NO_WORKFLOWS,
-    intlText.NAME,
-    intlText.RESOURCE_GROUP,
-    intlText.SELECTION,
+    intlText.SELECT_TITLE,
     intlText.SELECTION_ALL,
     intlText.SELECT_WORKFLOW,
     styles.exportWorkflowsPanelListEmpty,
@@ -200,7 +345,12 @@ export const WorkflowsSelection: React.FC = () => {
     styles.exportWorkflowsPanelListWorkflowsLoading,
     renderWorkflows,
     isWorkflowsLoading,
-    selection,
+    selectedItems,
+    dispatch,
+    columnSizing_unstable,
+    columns,
+    tableRef,
+    rows,
   ]);
 
   const limitInfo = useMemo(() => {
@@ -223,9 +373,12 @@ export const WorkflowsSelection: React.FC = () => {
       setSearchString(newSearchString);
     };
 
-    const onChangeResourceGroup = (_event: React.FormEvent<HTMLDivElement>, _selectedOption: IDropdownOption, index: number) => {
+    const onChangeResourceGroup = (_event: React.FormEvent<HTMLDivElement>, selectedOption: IDropdownOption) => {
       const updatedResourceGroups = [...resourceGroups];
-      updatedResourceGroups[index - 2].selected = !updatedResourceGroups[index - 2].selected;
+      const resourceGroupIndex = updatedResourceGroups.findIndex((rg) => rg.key === selectedOption.key);
+      if (resourceGroupIndex !== -1) {
+        updatedResourceGroups[resourceGroupIndex].selected = !updatedResourceGroups[resourceGroupIndex].selected;
+      }
       const filteredWorkflows = filterWorkflows(allWorkflows.current, updatedResourceGroups, searchString);
       allItemsSelected.current = allItemsSelected.current.map((workflow) => {
         const isWorkflowInRender = !!filteredWorkflows.find((item: WorkflowsList) => item.key === workflow.key);
@@ -266,23 +419,11 @@ export const WorkflowsSelection: React.FC = () => {
     });
   };
 
-  const updateRenderWorkflows = () => {
-    return new Promise<void>((resolve) => {
-      const updatedRenderWorkflows = renderWorkflows?.map((workflow, index) => {
-        return { ...workflow, key: index.toString() };
-      }) as WorkflowsList[];
-      setRenderWorkflows(updatedRenderWorkflows);
-
-      resolve();
-    });
-  };
-
   const deselectWorkflow = async (itemKey: string) => {
-    const copyRenderWorkflows = [...(renderWorkflows ?? [])];
     await deselectItemKey(itemKey);
-    selection.setItems(renderWorkflows as WorkflowsList[]);
-    await updateRenderWorkflows();
-    setRenderWorkflows(copyRenderWorkflows);
+    const newSelection = new Set(selectedItems);
+    newSelection.delete(itemKey);
+    setSelectedItems(newSelection);
   };
 
   return (
