@@ -118,7 +118,7 @@ const HandoffEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({ id, source, targ
 
   const isSourceSelected = useIsNodeSelectedInOperationPanel(sourceId);
   const isTargetSelected = useIsNodeSelectedInOperationPanel(targetId);
-  const isHandoffSelected = useIsNodeSelectedInOperationPanel(`handoff_from_${sourceId}_to_${targetId}`);
+  const isHandoffSelected = useIsNodeSelectedInOperationPanel(`handoff_${sourceId}_${targetId}`);
 
   const contextMenu = useContextMenu();
   const contextSelected = useMemo(() => contextMenu.isShowing, [contextMenu.isShowing]);

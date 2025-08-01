@@ -25,7 +25,7 @@ export const addAgentHandoff = createAsyncThunk('addAgentHandoff', async (payloa
       operationId: agentOperation.id,
     });
 
-    const newHandoffId = `handoff_from_${sourceId}_to_${targetId}`;
+    const newHandoffId = `handoff_${sourceId}_${targetId}`;
     const newToolId = `${newHandoffId}_tool`;
 
     // Initialize subgraph manifest
