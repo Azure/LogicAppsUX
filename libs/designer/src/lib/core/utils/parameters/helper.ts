@@ -2137,7 +2137,7 @@ export const loadDynamicContentForInputsInNode = async (
       continue;
     }
 
-    const allInputs = rootState.operations.inputParameters[nodeId];
+    const allInputs = getState().operations.inputParameters[nodeId];
     const variables = getAllVariables(variableDeclarations);
 
     try {

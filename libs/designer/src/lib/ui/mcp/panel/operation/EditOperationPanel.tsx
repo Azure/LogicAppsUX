@@ -14,6 +14,7 @@ import { useEditSnapshot } from '../../../../core/mcp/utils/hooks';
 import { updateOperationDescription } from '../../../../core/state/operation/operationMetadataSlice';
 import { useFunctionalState } from '@react-hookz/web';
 import { getGroupIdFromParameterId, parameterHasValue } from '../../../../core/utils/parameters/helper';
+import { isDependentStaticParameter } from '../../../../core/mcp/utils/helper';
 
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
@@ -22,16 +23,21 @@ export const EditOperationPanel = () => {
   const dispatch = useDispatch<AppDispatch>();
   const styles = useMcpPanelStyles();
 
-  const { selectedOperationId, operationMetadata, isOpen, panelMode, inputParameters } = useSelector((state: RootState) => ({
+  const { selectedOperationId, operationMetadata, isOpen, panelMode, inputParameters, dependencies } = useSelector((state: RootState) => ({
     selectedOperationId: state.mcpSelection.selectedOperationId,
     operationMetadata: state.operations.operationMetadata,
     isOpen: state.mcpPanel?.isOpen ?? false,
     panelMode: state.mcpPanel?.currentPanelView ?? null,
     inputParameters: state.operations.inputParameters,
+    dependencies: state.operations.dependencies,
   }));
-  const parameters = useMemo(
+  const nodeInputs = useMemo(
     () => (selectedOperationId ? inputParameters[selectedOperationId] : null),
     [selectedOperationId, inputParameters]
+  );
+  const inputDependencies = useMemo(
+    () => (selectedOperationId ? (dependencies[selectedOperationId].inputs ?? {}) : {}),
+    [selectedOperationId, dependencies]
   );
 
   const selectedOperationSummary = useMemo(() => {
@@ -47,9 +53,9 @@ export const EditOperationPanel = () => {
   const [isDirty, setIsDirty] = useState<boolean>(false);
   const [getUserInputParamIds, setUserInputParamIds] = useFunctionalState<Record<string, boolean>>(() =>
     Object.fromEntries(
-      Object.values(parameters?.parameterGroups ?? {})
+      Object.values(nodeInputs?.parameterGroups ?? {})
         .flatMap((group) => group.parameters)
-        .map((param) => [param.id, parameterHasValue(param)])
+        .map((param) => [param.id, isDependentStaticParameter(param.id, inputDependencies) || parameterHasValue(param)])
     )
   );
   const [getParameterErrors, setParameterErrors] = useFunctionalState<Record<string, string | undefined>>({});
@@ -68,13 +74,13 @@ export const EditOperationPanel = () => {
   };
 
   const haveUserModeInputsEmptyValues = useCallback(() => {
-    if (!selectedOperationId || !parameters?.parameterGroups) {
+    if (!selectedOperationId || !nodeInputs?.parameterGroups) {
       return;
     }
 
     let hasEmptyUserInputValue = false;
     for (const parameterId of Object.keys(getUserInputParamIds())) {
-      const parameterGroupId = getGroupIdFromParameterId(parameters, parameterId);
+      const parameterGroupId = getGroupIdFromParameterId(nodeInputs, parameterId);
 
       if (!parameterGroupId) {
         return;
@@ -82,7 +88,7 @@ export const EditOperationPanel = () => {
 
       const thisParameterHasEmptyUserInput =
         getUserInputParamIds()[parameterId] &&
-        !!parameters?.parameterGroups?.[parameterGroupId]?.parameters?.find((parameter) => {
+        !!nodeInputs?.parameterGroups?.[parameterGroupId]?.parameters?.find((parameter) => {
           return equals(parameter?.id, parameterId) && !parameterHasValue(parameter);
         });
 
@@ -96,7 +102,7 @@ export const EditOperationPanel = () => {
       hasEmptyUserInputValue = hasEmptyUserInputValue || thisParameterHasEmptyUserInput;
     }
     return hasEmptyUserInputValue;
-  }, [getUserInputParamIds, parameters, selectedOperationId, setParameterErrors, INTL_TEXT.parameterEmptyErrorMessage]);
+  }, [getUserInputParamIds, nodeInputs, selectedOperationId, setParameterErrors, INTL_TEXT.parameterEmptyErrorMessage]);
 
   const handleDescriptionInputChange = useCallback((description: string) => {
     setDescription(description);

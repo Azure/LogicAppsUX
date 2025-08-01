@@ -18,7 +18,6 @@ import {
 } from './parameters/helper';
 import { convertOutputsToTokens } from './tokens';
 import {
-  OperationManifestService,
   AssertionErrorCode,
   AssertionException,
   ConnectionReferenceKeyFormat,
@@ -43,6 +42,7 @@ import {
   WorkflowService,
   LoggerService,
   LogEntryLevel,
+  TryGetOperationManifestService,
 } from '@microsoft/logic-apps-shared';
 import { ValueSegmentType, generateSchemaFromJsonString } from '@microsoft/designer-ui';
 import type {
@@ -497,7 +497,7 @@ export const loadDynamicOutputsInNode = async (
 
           let iconUri: string;
           let brandColor: string;
-          if (OperationManifestService().isSupported(operationInfo.type, operationInfo.kind)) {
+          if (TryGetOperationManifestService()?.isSupported(operationInfo.type, operationInfo.kind)) {
             const manifest = await getOperationManifest(operationInfo);
             iconUri = manifest.properties.iconUri;
             brandColor = manifest.properties.brandColor;

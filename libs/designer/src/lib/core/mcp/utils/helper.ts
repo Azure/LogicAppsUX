@@ -2,17 +2,19 @@ import {
   getBrandColorFromConnector,
   getIconUriFromConnector,
   getPropertyValue,
+  hasProperty,
   LogEntryLevel,
   LoggerService,
   type ConnectionReferences,
   type ConnectionsData,
 } from '@microsoft/logic-apps-shared';
 import { getConnectorWithSwagger } from '../../queries/connections';
-import type { NodeOperation, NodeOperationInputsData } from '../../state/operation/operationMetadataSlice';
+import type { DependencyInfo, NodeInputs, NodeOperation, NodeOperationInputsData } from '../../state/operation/operationMetadataSlice';
 import { getInputParametersFromSwagger, getOutputParametersFromSwagger } from '../../utils/swagger/operation';
 import { getOperationSettings } from '../../actions/bjsworkflow/settings';
 import { WorkflowKind } from '../../state/workflow/workflowInterfaces';
 import { addDefaultSecureSettings } from '../../actions/bjsworkflow/add';
+import { getParameterFromId, parameterHasValue } from '../../utils/parameters/helper';
 
 const workflowKind = WorkflowKind.STATEFUL;
 
@@ -136,6 +138,21 @@ export const initializeOperationDetails = async (
   }
 };
 
+export const operationHasEmptyStaticDependencies = (nodeInputs: NodeInputs, dependencies: Record<string, DependencyInfo>): boolean => {
+  const staticDependencies = getDynamicSchemaDependencies(dependencies);
+  return staticDependencies.some((dependency) => {
+    const dependentParameters = dependency.dependentParameters;
+    return Object.keys(dependentParameters).some((parameterId) => {
+      const parameter = getParameterFromId(nodeInputs, parameterId);
+      return parameter && !parameterHasValue(parameter);
+    });
+  });
+};
+
+export const isDependentStaticParameter = (parameterId: string, dependencies: Record<string, DependencyInfo>): boolean => {
+  return getDynamicSchemaDependencies(dependencies).some((dependency) => hasProperty(dependency.dependentParameters, parameterId));
+};
+
 export const getUnsupportedOperations = (nodeOperations: NodeOperationInputsData[]): string[] => {
   const unsupportedOperations: string[] = [];
   for (const nodeOperation of nodeOperations) {
@@ -150,4 +167,8 @@ export const getUnsupportedOperations = (nodeOperations: NodeOperationInputsData
   }
 
   return unsupportedOperations;
+};
+
+const getDynamicSchemaDependencies = (dependencies: Record<string, DependencyInfo>): DependencyInfo[] => {
+  return Object.values(dependencies).filter((dependency) => dependency.dependencyType === 'ApiSchema');
 };

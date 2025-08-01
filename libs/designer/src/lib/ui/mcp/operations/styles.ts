@@ -167,6 +167,12 @@ export const useOperationSelectionGridStyles = makeStyles({
     alignSelf: 'flex-start',
   },
 
+  operationProgress: {
+    width: '20px',
+    height: '20px',
+    padding: '6px 0 0 16px',
+  },
+
   noResultsContainer: {
     display: 'flex',
     flexDirection: 'column',

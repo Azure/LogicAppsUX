@@ -172,7 +172,7 @@ export const initializeOperationsMetadata = createAsyncThunk(
         args: ['Unsupported operations: ', ...unsupportedOperations],
       });
 
-      throw new Error(errorMessage);
+      // throw new Error(errorMessage);
     }
 
     dispatch(initializeNodeOperationInputsData(allNodeData));

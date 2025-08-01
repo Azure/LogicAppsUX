@@ -18,12 +18,13 @@ interface ParameterFieldProps {
   operationId: string;
   groupId: string;
   parameter: ParameterInfo;
+  parameterInputType: McpParameterInputType;
+  parameterError: string | undefined;
+  disableInputTypeChange?: boolean;
   isConditional?: boolean;
   onParameterVisibilityUpdate: () => void;
-  parameterInputType: McpParameterInputType;
   onParameterInputTypeChange: (parameterId: string, newType: McpParameterInputType) => void;
   handleRemoveConditionalParameter: (parameterId: string) => void;
-  parameterError: string | undefined;
   removeParameterError: (parameterId: string) => void;
 }
 
@@ -32,6 +33,7 @@ export const ParameterField = ({
   groupId,
   parameter,
   isConditional,
+  disableInputTypeChange = false,
   onParameterVisibilityUpdate,
   parameterInputType,
   onParameterInputTypeChange,
@@ -167,7 +169,7 @@ export const ParameterField = ({
           <Label className={styles.parameterInputTypeLabel} size={'small'}>
             {INTL_TEXT.inputLabelText}
           </Label>
-          <RadioGroup layout="horizontal" value={parameterInputType} onChange={handleSelectionChange}>
+          <RadioGroup layout="horizontal" disabled={disableInputTypeChange} value={parameterInputType} onChange={handleSelectionChange}>
             <Radio
               value={'model'}
               key={'model'}
