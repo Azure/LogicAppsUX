@@ -8,8 +8,7 @@ import { clearAllSelections } from '../../../../../core/state/mcp/mcpselectionsl
 
 interface OperationsTabProps extends McpConnectorTabProps {
   selectedOperationsCount: number;
-  onSelectOperations: () => void;
-  isPrimaryButtonLoading?: boolean;
+  onPrimaryButtonClick: () => void;
   previousTabId: string | undefined;
 }
 
@@ -19,10 +18,9 @@ export const operationsTab = (
   {
     isTabDisabled,
     isPrimaryButtonDisabled,
-    isPreviousButtonDisabled,
     selectedOperationsCount,
     isPrimaryButtonLoading,
-    onSelectOperations,
+    onPrimaryButtonClick,
     previousTabId,
   }: OperationsTabProps
 ): McpPanelTabProps => {
@@ -49,8 +47,8 @@ export const operationsTab = (
       id: 'hu3PQN',
       description: 'The tab label for the select operations tab on the connector panel',
     }),
-    content: <SelectOperations />,
     disabled: isTabDisabled,
+    content: <SelectOperations />,
     footerContent: {
       buttonContents: [
         {
@@ -74,15 +72,14 @@ export const operationsTab = (
               dispatch(closePanel());
             }
           },
-          disabled: isPreviousButtonDisabled,
         },
         {
           type: 'navigation',
           text: nextButtonText,
-          onClick: onSelectOperations,
+          onClick: onPrimaryButtonClick,
           appearance: 'primary',
-          disabled: isPrimaryButtonDisabled || selectedOperationsCount === 0,
-          loading: isPrimaryButtonLoading, // Add this line
+          disabled: isPrimaryButtonDisabled,
+          loading: isPrimaryButtonLoading,
         },
       ],
     },
