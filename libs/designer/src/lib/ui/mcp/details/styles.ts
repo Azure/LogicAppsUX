@@ -14,7 +14,6 @@ export const useMcpDetailsStyles = makeStyles({
     flex: 5,
   },
   comboboxContainer: {
-    maxWidth: '800px',
     width: '100%',
     marginLeft: 'auto',
   },
