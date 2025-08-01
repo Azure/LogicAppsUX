@@ -149,9 +149,18 @@ export const initializeOperationsMetadata = createAsyncThunk(
     const promises: Promise<NodeOperationInputsData | undefined>[] = operations.map((operation) =>
       initializeOperationDetails(operation.operationId, operation)
     );
-    const allNodeData = (await Promise.all(promises)).filter((data) => !!data) as NodeOperationInputsData[];
-    const unsupportedOperations = getUnsupportedOperations(allNodeData);
 
+    const results = await Promise.allSettled(promises);
+    const failedResults = results.filter((result) => result.status === 'rejected');
+    if (failedResults.length > 0) {
+      const errorMessage = failedResults.map((result) => (result as PromiseRejectedResult).reason.message).join('\n');
+      throw new Error(errorMessage);
+    }
+
+    const allNodeData = results
+      .filter((result) => result.status === 'fulfilled' && !!result.value)
+      .map((result) => (result as PromiseFulfilledResult<any>).value) as NodeOperationInputsData[];
+    const unsupportedOperations = getUnsupportedOperations(allNodeData);
     if (unsupportedOperations.length > 0) {
       const errorMessage = intl.formatMessage(
         {
@@ -181,14 +190,25 @@ export const initializeOperationsMetadata = createAsyncThunk(
 
 export const initializeConnectionMappings = createAsyncThunk(
   'initializeConnectionMappings',
-  async ({ operations, connectorId }: { operations: string[]; connectorId: string }, { dispatch }) => {
-    const connector = await getConnector(connectorId, /* useCachedData */ true);
-    const connections = (await getConnectionsForConnector(connectorId)).filter(isConnectionValid);
-    if (connector && connections.length > 0) {
-      const connection = (await tryGetMostRecentlyUsedConnectionId(connectorId, connections)) ?? connections[0];
-      await ConnectionService().setupConnectionIfNeeded(connection);
-      dispatch(updateMcpConnection({ nodeIds: operations, connection, connector, reset: true }));
-    } else {
+  async ({ operations, connectorId }: { operations: string[]; connectorId: string }, { dispatch }): Promise<void> => {
+    try {
+      const connector = await getConnector(connectorId, /* useCachedData */ true);
+      const connections = (await getConnectionsForConnector(connectorId)).filter(isConnectionValid);
+      if (connector && connections.length > 0) {
+        const connection = (await tryGetMostRecentlyUsedConnectionId(connectorId, connections)) ?? connections[0];
+        await ConnectionService().setupConnectionIfNeeded(connection);
+        dispatch(updateMcpConnection({ nodeIds: operations, connection, connector, reset: true }));
+      } else {
+        dispatch(initEmptyConnectionMap(operations));
+      }
+    } catch (error: any) {
+      LoggerService().log({
+        level: LogEntryLevel.Error,
+        area: 'MCP.initializeConnectionMappings',
+        message: `Cannot initialize connection mappings for connector: ${connectorId}`,
+        error,
+      });
+
       dispatch(initEmptyConnectionMap(operations));
     }
   }

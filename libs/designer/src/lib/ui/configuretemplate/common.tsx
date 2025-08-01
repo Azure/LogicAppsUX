@@ -18,11 +18,17 @@ export const DescriptionWithLink = ({
   );
 };
 
-export const ErrorBar = ({ title, errorMessage, styles }: { title?: string; errorMessage: string; styles?: React.CSSProperties }) => {
+export const ErrorBar = ({
+  title,
+  errorMessage,
+  styles,
+  messageInNewline,
+}: { title?: string; errorMessage: string; messageInNewline?: boolean; styles?: React.CSSProperties }) => {
   return (
     <MessageBar intent="error" className="msla-templates-error-message-bar" style={styles}>
       <MessageBarBody>
         {title ? <MessageBarTitle>{title}</MessageBarTitle> : null}
+        {messageInNewline ? <br /> : null}
         <Text>{errorMessage}</Text>
       </MessageBarBody>
     </MessageBar>
