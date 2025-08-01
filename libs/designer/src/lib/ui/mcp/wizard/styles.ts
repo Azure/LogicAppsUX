@@ -18,8 +18,6 @@ export const useMcpWizardStyles = makeStyles({
     gap: '32px',
     overflow: 'auto',
     padding: '16px',
-
-    width: '80%',
   },
 
   mainSection: {
