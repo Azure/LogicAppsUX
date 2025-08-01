@@ -373,9 +373,12 @@ export const WorkflowsSelection: React.FC = () => {
       setSearchString(newSearchString);
     };
 
-    const onChangeResourceGroup = (_event: React.FormEvent<HTMLDivElement>, _selectedOption: IDropdownOption, index: number) => {
+    const onChangeResourceGroup = (_event: React.FormEvent<HTMLDivElement>, selectedOption: IDropdownOption) => {
       const updatedResourceGroups = [...resourceGroups];
-      updatedResourceGroups[index - 2].selected = !updatedResourceGroups[index - 2].selected;
+      const resourceGroupIndex = updatedResourceGroups.findIndex((rg) => rg.key === selectedOption.key);
+      if (resourceGroupIndex !== -1) {
+        updatedResourceGroups[resourceGroupIndex].selected = !updatedResourceGroups[resourceGroupIndex].selected;
+      }
       const filteredWorkflows = filterWorkflows(allWorkflows.current, updatedResourceGroups, searchString);
       allItemsSelected.current = allItemsSelected.current.map((workflow) => {
         const isWorkflowInRender = !!filteredWorkflows.find((item: WorkflowsList) => item.key === workflow.key);

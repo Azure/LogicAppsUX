@@ -1,9 +1,17 @@
+import type { IDropdownOption } from '../../components/searchableDropdown';
 import { SearchableDropdown } from '../../components/searchableDropdown';
 import { useIntl } from 'react-intl';
 import { useExportStyles } from '../exportStyles';
-import { Input, Label, useId } from '@fluentui/react-components';
+import { Input, type InputOnChangeData, Label, useId } from '@fluentui/react-components';
 
-export const Filters: React.FC<any> = ({ dropdownOptions, onChangeResourceGroup, onChangeSearch, isDataLoading }) => {
+interface FiltersProps {
+  dropdownOptions: IDropdownOption[];
+  onChangeResourceGroup: (event: any, option: IDropdownOption) => void;
+  onChangeSearch: (ev: React.ChangeEvent<HTMLInputElement>, data: InputOnChangeData) => void;
+  isDataLoading: boolean;
+}
+
+export const Filters: React.FC<FiltersProps> = ({ dropdownOptions, onChangeResourceGroup, onChangeSearch, isDataLoading }) => {
   const intl = useIntl();
   const styles = useExportStyles();
   const filterInputId = useId('filter-input');
@@ -44,6 +52,7 @@ export const Filters: React.FC<any> = ({ dropdownOptions, onChangeResourceGroup,
         placeholder={intlText.SEARCH}
         label={intlText.FILTER_RESOURCE_GROUPS}
         multiSelect
+        selectedKeys={dropdownOptions.filter((option) => option.selected).map((option) => option.key)}
         options={dropdownOptions}
         onChange={onChangeResourceGroup}
         disabled={isDataLoading || !dropdownOptions.length}
