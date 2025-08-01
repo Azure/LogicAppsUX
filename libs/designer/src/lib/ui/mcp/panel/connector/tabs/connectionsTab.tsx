@@ -14,8 +14,8 @@ export const connectionsTab = (
 ): McpPanelTabProps => ({
   id: constants.MCP_PANEL_TAB_NAMES.CONNECTIONS,
   title: intl.formatMessage({
-    defaultMessage: 'Create connection',
-    id: 'Cosbik',
+    defaultMessage: 'Create connections',
+    id: '3n9+Ka',
     description: 'The tab label for the create connection tab on the connector panel',
   }),
   content: <ConnectionSelection connectorId={connectorId} operations={operations} />,

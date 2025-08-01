@@ -182,8 +182,8 @@ export const EditOperation = ({
       description: 'Placeholder text for operation description field',
     }),
     noParametersMessage: intl.formatMessage({
-      id: 'WG0K6x',
-      defaultMessage: 'No parameters configured for this operation',
+      id: '5G/VKd',
+      defaultMessage: "This action doesn't have parameters that need setup.",
       description: 'Message displayed when there are no parameters configured for the operation',
     }),
     modified: intl.formatMessage({
@@ -217,13 +217,13 @@ export const EditOperation = ({
       description: 'Description text for optional parameters section when parameters are already visible',
     }),
     learnMore: intl.formatMessage({
-      id: 'NF08ud',
-      defaultMessage: 'Learn More',
-      description: 'Learn more link text for optional parameters',
+      id: 'izS5yQ',
+      defaultMessage: 'Learn more',
+      description: 'Learn more link text',
     }),
     removeAllParameters: intl.formatMessage({
-      id: 'BVxUsU',
-      defaultMessage: 'Remove All',
+      id: 'd43IU6',
+      defaultMessage: 'Remove all',
       description: 'Button text to remove all optional parameters',
     }),
     parametersAdded: intl.formatMessage({

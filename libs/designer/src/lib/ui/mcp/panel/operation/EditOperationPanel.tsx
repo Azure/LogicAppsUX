@@ -153,8 +153,8 @@ export const EditOperationPanel = () => {
         {
           type: 'action',
           text: intl.formatMessage({
-            defaultMessage: 'Save Changes',
-            id: 'AkWRBl',
+            defaultMessage: 'Save changes',
+            id: 'XtVXqm',
             description: 'Button text for saving operation changes',
           }),
           appearance: 'primary',

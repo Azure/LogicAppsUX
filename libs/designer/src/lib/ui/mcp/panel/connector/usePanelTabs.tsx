@@ -96,9 +96,9 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
       connectorsTab(intl, dispatch, {
         isTabDisabled: false,
         isPreviousButtonDisabled: false,
-        isPrimaryButtonDisabled: false,
+        isPrimaryButtonDisabled: !selectedConnectorId,
       }),
-    [intl, dispatch]
+    [intl, dispatch, selectedConnectorId]
   );
 
   const operationsTabItem = useMemo(
