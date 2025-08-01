@@ -23,7 +23,7 @@ export interface IDropdownOption {
 export interface ISearchableDropdownProps extends Omit<DropdownProps, 'onOptionSelect' | 'onChange' | 'children'> {
   options: IDropdownOption[];
   onChange: (event: any, option: IDropdownOption) => void;
-  label?: string;
+  label: string;
   selectedKey?: string | number;
   selectedKeys?: (string | number)[];
   multiSelect?: boolean;

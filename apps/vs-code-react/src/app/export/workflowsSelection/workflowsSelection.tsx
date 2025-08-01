@@ -22,7 +22,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { LargeText, XLargeText } from '@microsoft/designer-ui';
 import { useExportStyles } from '../exportStyles';
-import type { InputProps, TableColumnDefinition } from '@fluentui/react-components';
+import type { InputProps, TableColumnDefinition, TableColumnSizingOptions } from '@fluentui/react-components';
 import {
   Divider,
   MessageBar,
@@ -37,6 +37,8 @@ import {
   SkeletonItem,
   Checkbox,
   createTableColumn,
+  useTableFeatures,
+  useTableColumnSizing_unstable,
 } from '@fluentui/react-components';
 
 export const WorkflowsSelection: React.FC = () => {
@@ -152,24 +154,59 @@ export const WorkflowsSelection: React.FC = () => {
     setSelectedItems(newSelectedItems);
   }, [selectedWorkflows]);
 
-  // DataGrid columns
+  // Column sizing configuration
+  const columnSizingOptions: TableColumnSizingOptions = useMemo(
+    () => ({
+      selection: {
+        minWidth: 48,
+        idealWidth: 48,
+        defaultWidth: 48,
+      },
+      name: {
+        minWidth: 150,
+        idealWidth: 250,
+        defaultWidth: 250,
+      },
+      resourceGroup: {
+        minWidth: 120,
+        idealWidth: 200,
+        defaultWidth: 200,
+      },
+    }),
+    []
+  );
+
+  // Define table columns
   const columns: TableColumnDefinition<WorkflowsList>[] = useMemo(
     () => [
       createTableColumn<WorkflowsList>({
+        columnId: 'selection',
+        renderHeaderCell: () => '', // We'll render checkbox manually
+      }),
+      createTableColumn<WorkflowsList>({
         columnId: 'name',
         compare: (a, b) => a.name.localeCompare(b.name),
-        renderHeaderCell: () => intlText.NAME,
-        renderCell: (item) => item.name,
+        renderHeaderCell: () => <>{intlText.NAME}</>,
       }),
       createTableColumn<WorkflowsList>({
         columnId: 'resourceGroup',
         compare: (a, b) => a.resourceGroup.localeCompare(b.resourceGroup),
-        renderHeaderCell: () => intlText.RESOURCE_GROUP,
-        renderCell: (item) => item.resourceGroup,
+        renderHeaderCell: () => <>{intlText.RESOURCE_GROUP}</>,
       }),
     ],
     [intlText.NAME, intlText.RESOURCE_GROUP]
   );
+
+  // Initialize table features with column sizing
+  const { getRows, columnSizing_unstable, tableRef } = useTableFeatures(
+    {
+      columns,
+      items: renderWorkflows || [],
+    },
+    [useTableColumnSizing_unstable({ columnSizingOptions })]
+  );
+
+  const rows = getRows();
 
   const workflowsList = useMemo(() => {
     const emptyText = (
@@ -184,10 +221,10 @@ export const WorkflowsSelection: React.FC = () => {
       // Show skeleton loading state
       return (
         <div className={`${styles.exportWorkflowsPanelListWorkflows} ${styles.exportWorkflowsPanelListWorkflowsLoading}`}>
-          <Table aria-label={intlText.SELECT_TITLE}>
+          <Table aria-label={intlText.SELECT_TITLE} ref={tableRef} {...columnSizing_unstable.getTableProps()}>
             <TableHeader>
               <TableRow>
-                <TableHeaderCell>
+                <TableHeaderCell {...columnSizing_unstable.getTableHeaderCellProps('selection')}>
                   <Checkbox
                     aria-label={intlText.SELECTION_ALL}
                     checked={selectedItems.size === items.length && items.length > 0}
@@ -206,23 +243,25 @@ export const WorkflowsSelection: React.FC = () => {
                     }}
                   />
                 </TableHeaderCell>
-                {columns.map((column) => (
-                  <TableHeaderCell key={column.columnId}>{column.renderHeaderCell()}</TableHeaderCell>
+                {columns.slice(1).map((column) => (
+                  <TableHeaderCell key={column.columnId} {...columnSizing_unstable.getTableHeaderCellProps(column.columnId)}>
+                    {column.renderHeaderCell()}
+                  </TableHeaderCell>
                 ))}
               </TableRow>
             </TableHeader>
             <TableBody>
               {[...Array(5)].map((_, index) => (
                 <TableRow key={`skeleton-${index}`}>
-                  <TableCell>
+                  <TableCell {...columnSizing_unstable.getTableCellProps('selection')}>
                     <Checkbox disabled />
                   </TableCell>
-                  <TableCell>
+                  <TableCell {...columnSizing_unstable.getTableCellProps('name')}>
                     <Skeleton>
                       <SkeletonItem style={{ width: '120px' }} />
                     </Skeleton>
                   </TableCell>
-                  <TableCell>
+                  <TableCell {...columnSizing_unstable.getTableCellProps('resourceGroup')}>
                     <Skeleton>
                       <SkeletonItem style={{ width: '150px' }} />
                     </Skeleton>
@@ -237,10 +276,10 @@ export const WorkflowsSelection: React.FC = () => {
 
     return (
       <div className={styles.exportWorkflowsPanelListWorkflows}>
-        <Table aria-label={intlText.SELECT_TITLE}>
+        <Table aria-label={intlText.SELECT_TITLE} {...columnSizing_unstable.getTableProps()}>
           <TableHeader>
             <TableRow>
-              <TableHeaderCell>
+              <TableHeaderCell {...columnSizing_unstable.getTableHeaderCellProps('selection')}>
                 <Checkbox
                   aria-label={intlText.SELECTION_ALL}
                   checked={selectedItems.size === items.length && items.length > 0}
@@ -259,15 +298,17 @@ export const WorkflowsSelection: React.FC = () => {
                   }}
                 />
               </TableHeaderCell>
-              {columns.map((column) => (
-                <TableHeaderCell key={column.columnId}>{column.renderHeaderCell()}</TableHeaderCell>
+              {columns.slice(1).map((column) => (
+                <TableHeaderCell key={column.columnId} {...columnSizing_unstable.getTableHeaderCellProps(column.columnId)}>
+                  {column.renderHeaderCell()}
+                </TableHeaderCell>
               ))}
             </TableRow>
           </TableHeader>
           <TableBody>
-            {items.map((item) => (
+            {rows.map(({ item }) => (
               <TableRow key={item.key}>
-                <TableCell>
+                <TableCell {...columnSizing_unstable.getTableCellProps('selection')}>
                   <Checkbox
                     aria-label={intlText.SELECT_WORKFLOW}
                     checked={selectedItems.has(item.key)}
@@ -285,9 +326,8 @@ export const WorkflowsSelection: React.FC = () => {
                     }}
                   />
                 </TableCell>
-                {columns.map((column) => (
-                  <TableCell key={column.columnId}>{column.renderCell(item)}</TableCell>
-                ))}
+                <TableCell {...columnSizing_unstable.getTableCellProps('name')}>{item.name}</TableCell>
+                <TableCell {...columnSizing_unstable.getTableCellProps('resourceGroup')}>{item.resourceGroup}</TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -305,9 +345,12 @@ export const WorkflowsSelection: React.FC = () => {
     styles.exportWorkflowsPanelListWorkflowsLoading,
     renderWorkflows,
     isWorkflowsLoading,
-    columns,
     selectedItems,
     dispatch,
+    columnSizing_unstable,
+    columns,
+    tableRef,
+    rows,
   ]);
 
   const limitInfo = useMemo(() => {
