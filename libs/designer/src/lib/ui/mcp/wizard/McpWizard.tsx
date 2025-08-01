@@ -149,8 +149,8 @@ export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: R
         {
           type: 'action',
           text: intl.formatMessage({
-            defaultMessage: 'Rgister',
-            id: 'RtP37y',
+            defaultMessage: 'Register',
+            id: 'YZaLxg',
             description: 'Button text for registering the MCP server',
           }),
           appearance: 'primary',
