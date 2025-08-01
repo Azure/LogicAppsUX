@@ -45,8 +45,8 @@ export const ListConnectors = ({ addConnectors, addDisabled }: { addConnectors: 
 
   const INTL_TEXT = {
     addConnector: intl.formatMessage({
-      id: 'w39c2m',
-      defaultMessage: 'Add connectors',
+      id: 'XLhNNP',
+      defaultMessage: 'Add connector',
       description: 'Message displayed when no connectors are available',
     }),
     connectorLabel: intl.formatMessage({

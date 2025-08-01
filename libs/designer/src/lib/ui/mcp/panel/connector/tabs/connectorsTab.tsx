@@ -13,9 +13,9 @@ export const connectorsTab = (
 ): McpPanelTabProps => ({
   id: constants.MCP_PANEL_TAB_NAMES.CONNECTORS,
   title: intl.formatMessage({
-    defaultMessage: 'Add Connector',
-    id: 'BimumA',
-    description: 'The tab label for the add connector tab on the connector panel',
+    defaultMessage: 'Choose connector',
+    id: 'SSwIzz',
+    description: 'The tab label for connector tab on the connector panel',
   }),
   content: <SelectConnectors />,
   disabled: isTabDisabled,

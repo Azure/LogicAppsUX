@@ -19,9 +19,9 @@ export const LogicAppSelector = () => {
   const intlText = useMemo(
     () => ({
       LOGIC_APP: intl.formatMessage({
-        defaultMessage: 'Logic app instance',
-        id: 'IpD27y',
-        description: 'Label field for logic app instance',
+        defaultMessage: 'Logic app',
+        id: 'BsZRu5',
+        description: 'Label field for logic app selector',
       }),
       LOADING: intl.formatMessage({
         defaultMessage: 'Loading logic apps ...',
