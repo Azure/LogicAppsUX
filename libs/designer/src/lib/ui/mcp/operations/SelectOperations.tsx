@@ -13,12 +13,12 @@ import { ErrorBar } from '../../configuretemplate/common';
 
 const fuseOptions = {
   includeScore: true,
-  threshold: 1.0, // Include all items, even very poor matches
+  threshold: 0.3,
   ignoreLocation: true,
   keys: [
     { name: 'name', weight: 2.0 },
     { name: 'properties.summary', weight: 2.0 },
-    { name: 'properties.description', weight: 1 },
+    { name: 'properties.description', weight: 1.0 },
   ],
 };
 

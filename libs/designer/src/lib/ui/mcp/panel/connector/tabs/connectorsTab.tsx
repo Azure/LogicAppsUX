@@ -9,13 +9,13 @@ import { clearAllSelections } from '../../../../../core/state/mcp/mcpselectionsl
 export const connectorsTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
-  { isTabDisabled, isPrimaryButtonDisabled, isPreviousButtonDisabled }: McpConnectorTabProps
+  { isTabDisabled, isPrimaryButtonDisabled }: McpConnectorTabProps
 ): McpPanelTabProps => ({
   id: constants.MCP_PANEL_TAB_NAMES.CONNECTORS,
   title: intl.formatMessage({
-    defaultMessage: 'Add Connector',
-    id: 'BimumA',
-    description: 'The tab label for the add connector tab on the connector panel',
+    defaultMessage: 'Choose connector',
+    id: 'SSwIzz',
+    description: 'The tab label for connector tab on the connector panel',
   }),
   content: <SelectConnectors />,
   disabled: isTabDisabled,
@@ -32,7 +32,6 @@ export const connectorsTab = (
           dispatch(clearAllSelections());
           dispatch(closePanel());
         },
-        disabled: isPreviousButtonDisabled,
       },
       {
         type: 'navigation',

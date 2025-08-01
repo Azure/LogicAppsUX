@@ -13,4 +13,12 @@ export const useMcpDetailsStyles = makeStyles({
   fieldSection: {
     flex: 5,
   },
+  comboboxContainer: {
+    maxWidth: '800px',
+    width: '100%',
+    marginLeft: 'auto',
+  },
+  combobox: {
+    width: '100%',
+  },
 });
