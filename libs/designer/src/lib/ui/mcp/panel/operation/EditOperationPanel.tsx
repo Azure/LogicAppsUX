@@ -208,7 +208,7 @@ export const EditOperationPanel = () => {
               { selectedOperationSummary }
             )}
           </Text>
-          <Button appearance="subtle" icon={<CloseIcon />} onClick={handleClose} aria-label={INTL_TEXT.closeAriaLabel}>
+          <Button appearance="subtle" icon={<CloseIcon />} onClick={handleClose}>
             {INTL_TEXT.closeAriaLabel}
           </Button>
         </div>
