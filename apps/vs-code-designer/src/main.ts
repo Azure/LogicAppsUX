@@ -27,7 +27,6 @@ import {
   registerEvent,
   registerReportIssueCommand,
   registerUIExtensionVariables,
-  getAzExtResourceType,
 } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
@@ -37,6 +36,7 @@ import { getAllCustomCodeFunctionsProjects } from './app/utils/customCodeUtils';
 import { createVSCodeAzureSubscriptionProvider } from './app/utils/services/VSCodeAzureSubscriptionProvider';
 import { logSubscriptions } from './app/utils/telemetry';
 import { registerAzureUtilsExtensionVariables } from '@microsoft/vscode-azext-azureutils';
+import { AzExtResourceType, getAzureResourcesExtensionApi } from '@microsoft/vscode-azureresources-api';
 
 const perfStats = {
   loadStartTime: Date.now(),
@@ -123,6 +123,8 @@ export async function activate(context: vscode.ExtensionContext) {
 
     ext.extensionVersion = getExtensionVersion();
 
+            ext.rgApi = await getResourceGroupsApi();
+
     ext.rgApi = await getResourceGroupsApi();
     // @ts-ignore
     ext.azureAccountTreeItem = ext.rgApi.appResourceTree._rootTreeItem as AzureAccountTreeItemWithProjects;
@@ -151,7 +153,9 @@ export async function activate(context: vscode.ExtensionContext) {
     activateContext.telemetry.properties.lastStep = 'registerFuncHostTaskEvents';
     registerFuncHostTaskEvents();
 
-    ext.rgApi.registerApplicationResourceResolver(getAzExtResourceType(logicAppFilter), new LogicAppResolver());
+    ext.rgApi.registerApplicationResourceResolver(AzExtResourceType.LogicApp, new LogicAppResolver());
+    const azureResourcesApi = await getAzureResourcesExtensionApi(context, '2.0.0');
+    ext.rgApiV2 = azureResourcesApi;
 
     vscode.window.registerUriHandler(new UriHandler());
     perfStats.loadEndTime = Date.now();
