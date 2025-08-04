@@ -16,6 +16,7 @@ import { ListOperations } from '../operations/ListOperations';
 import { ListConnectors } from '../connectors/ListConnectors';
 import { DescriptionWithLink } from '../../configuretemplate/common';
 import { operationHasEmptyStaticDependencies } from '../../../core/mcp/utils/helper';
+import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 
 export type RegisterMcpServerHandler = (workflowsData: McpServerCreateData, onCompleted?: () => void) => Promise<void>;
 
@@ -43,11 +44,34 @@ export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: R
         panelView: McpPanelView.SelectConnector,
       })
     );
-  }, [dispatch]);
 
-  const onRegisterCompleted = useCallback(() => {
-    resetQueriesOnRegisterMcpServer(subscriptionId, resourceGroup, logicAppName as string);
-  }, [logicAppName, resourceGroup, subscriptionId]);
+    LoggerService().log({
+      level: LogEntryLevel.Trace,
+      area: 'MCP.McpWizard',
+      message: 'Add connector button clicked',
+      args: [`subscriptionId:${subscriptionId}`, `resourceGroup:${resourceGroup}`, `logicAppName:${logicAppName}`],
+    });
+  }, [dispatch, logicAppName, resourceGroup, subscriptionId]);
+
+  const onRegisterCompleted = useCallback(
+    (workflowNames: string[]) => {
+      resetQueriesOnRegisterMcpServer(subscriptionId, resourceGroup, logicAppName as string);
+
+      LoggerService().log({
+        level: LogEntryLevel.Trace,
+        area: 'MCP.McpWizard',
+        message: 'Successfully registered MCP server',
+        args: [
+          `subscriptionId:${subscriptionId}`,
+          `resourceGroup:${resourceGroup}`,
+          `logicAppName:${logicAppName}`,
+          `workflowNames:${workflowNames.join(',')}`,
+          'isExistingLogicApp:false', // TODO: When we support create logic apps, this will need to be dynamic
+        ],
+      });
+    },
+    [logicAppName, resourceGroup, subscriptionId]
+  );
 
   const handleRegisterMcpServer = useCallback(async () => {
     const workflowsData = await serializeMcpWorkflows(
@@ -59,7 +83,8 @@ export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: R
       connection,
       operations
     );
-    await registerMcpServer(workflowsData, onRegisterCompleted);
+
+    await registerMcpServer(workflowsData, () => onRegisterCompleted(Object.keys(workflowsData.workflows)));
   }, [connection, logicAppName, operations, registerMcpServer, resourceGroup, subscriptionId, onRegisterCompleted]);
 
   const INTL_TEXT = {

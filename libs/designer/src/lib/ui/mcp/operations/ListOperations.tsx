@@ -10,6 +10,7 @@ import DefaultIcon from '../../../common/images/recommendation/defaulticon.svg';
 import { selectOperationIdToEdit } from '../../../core/state/mcp/mcpselectionslice';
 import { deinitializeOperations } from '../../../core/actions/bjsworkflow/mcp';
 import { OperationProgress } from './operationprogress';
+import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 
 const toolTableCellStyles = {
   border: 'none',
@@ -70,6 +71,13 @@ export const ListOperations = () => {
     (operationId: string) => {
       dispatch(selectOperationIdToEdit(operationId));
       dispatch(openOperationPanelView());
+
+      LoggerService().log({
+        level: LogEntryLevel.Trace,
+        area: 'MCP.ListOperations',
+        message: 'View operation details panel',
+        args: [`operationId:${operationId}`],
+      });
     },
     [dispatch]
   );

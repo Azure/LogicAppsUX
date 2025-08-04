@@ -135,8 +135,9 @@ export const EditOperationPanel = () => {
     }
 
     const originalDescription = selectedOperationDescription;
+    const hasDescriptionChanged = originalDescription !== description;
 
-    if (description !== originalDescription) {
+    if (hasDescriptionChanged) {
       dispatch(
         updateOperationDescription({
           id: selectedOperationId,
@@ -144,6 +145,13 @@ export const EditOperationPanel = () => {
         })
       );
     }
+
+    LoggerService().log({
+      level: LogEntryLevel.Trace,
+      area: 'MCP.EditOperationPanel',
+      message: 'Edit operation details',
+      args: [`operationId:${selectedOperationId}`, `hasDescriptionChanged:${hasDescriptionChanged}`],
+    });
 
     clearSnapshot();
     dispatch(closePanel());

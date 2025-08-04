@@ -12,7 +12,7 @@ import { useIntl } from 'react-intl';
 import { connectorsTab } from './tabs/connectorsTab';
 import type { McpPanelTabProps } from '@microsoft/designer-ui';
 import { connectionsTab } from './tabs/connectionsTab';
-import { getResourceNameFromId } from '@microsoft/logic-apps-shared';
+import { getResourceNameFromId, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import constants from '../../../../common/constants';
 import { clearAllSelections } from '../../../../core/state/mcp/mcpselectionslice';
 
@@ -69,6 +69,13 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
         dispatch(deinitializeOperations({ operationIds: deselectedOperationIds }));
       }
 
+      LoggerService().log({
+        level: LogEntryLevel.Trace,
+        area: 'MCP.connectionsTab',
+        message: 'Connectors, operations, and connections data are initialized',
+        args: [`connectorId:${selectedConnectorId}`, `operationIds:${selectedOperations.join(',')}`],
+      });
+
       // Initializing newly selected operations
       if (newlySelectedOperationIds.length > 0) {
         const selectedOperationsData = newlySelectedOperationIds.map((operationId) => ({
@@ -107,6 +114,13 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
         operations: selectedOperations,
       })
     );
+
+    LoggerService().log({
+      level: LogEntryLevel.Trace,
+      area: 'MCP.operationsTab',
+      message: 'Operations are selected',
+      args: [`operationIds:${selectedOperations.join(',')}`],
+    });
   }, [dispatch, selectedConnectorId, selectedOperations]);
 
   const operationsTabItem = useMemo(
