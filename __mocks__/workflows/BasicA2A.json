@@ -12,14 +12,6 @@
               {
                 "role": "System",
                 "content": "This is a system message."
-              },
-              {
-                "role": "User",
-                "content": "This is a user message."
-              },
-              {
-                "role": "User",
-                "content": "You are a helpful assistant."
               }
             ]
           },
@@ -121,14 +113,6 @@
               {
                 "role": "system",
                 "content": "This is the best system message."
-              },
-              {
-                "role": "user",
-                "content": "test user messsage"
-              },
-              {
-                "role": "user",
-                "content": "You are a helpful assistant."
               }
             ],
             "agentModelSettings": {
