@@ -1,6 +1,6 @@
 import { makeStyles, tokens } from '@fluentui/react-components';
 
-const borderStyle = `1px solid ${tokens.colorNeutralStroke3}`;
+const borderStyle = `1px solid ${tokens.colorNeutralBackground6}`;
 const mainGap = '16px';
 
 export const useMcpWizardStyles = makeStyles({

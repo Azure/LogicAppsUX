@@ -136,17 +136,25 @@ export const useEditOperationStyles = makeStyles({
   },
 
   parameterInputTypeLabel: {
-    textAlign: 'center',
     alignContent: 'center',
+    width: '121px',
   },
 
-  parameterInputType: {
+  parameterInputField: {
     display: 'flex',
     flexDirection: 'row',
   },
 
+  parameterEditorField: {
+    flex: 1,
+    width: '100%',
+  },
+
+  parameterInputTypeDropdown: {
+    width: '162px',
+  },
+
   parameterBodySection: {
-    marginTop: '-8px',
     marginLeft: tokens.spacingHorizontalS,
   },
 
@@ -158,8 +166,9 @@ export const useEditOperationStyles = makeStyles({
   parameterField: {
     display: 'flex',
     flexDirection: 'column',
-    width: '100%',
-    maxWidth: '100%',
+    border: `1px solid ${tokens.colorNeutralBackground6}`,
+    borderRadius: '8px',
+    padding: '16px',
   },
 
   parameterEditor: {
@@ -168,10 +177,10 @@ export const useEditOperationStyles = makeStyles({
 
   parameterValueSection: {
     display: 'flex',
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    gap: tokens.spacingHorizontalS,
-    paddingBottom: '8px',
+    paddingTop: '8px',
   },
 
   validationErrorText: {
