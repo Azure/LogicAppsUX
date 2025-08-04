@@ -78,7 +78,7 @@ export async function unzipLogicAppArtifacts(zipContent: Buffer | Buffer[], targ
     // Check if the zipContent is an array of buffers
     if (Array.isArray(zipContent)) {
       // Concatenate the buffers into a single buffer
-      zipContent = Buffer.concat(zipContent);
+      zipContent = Buffer.concat(zipContent as any);
     }
 
     // Initialize a new AdmZip object with the provided zip content
