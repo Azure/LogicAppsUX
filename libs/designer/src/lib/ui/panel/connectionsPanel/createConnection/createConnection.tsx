@@ -61,8 +61,6 @@ import { DismissRegular } from '@fluentui/react-icons';
 import TenantPicker from './formInputs/tenantPicker';
 import { useShouldEnableDynamicConnections } from '../../../../common/hooks/experimentation';
 import { useStyles } from './styles';
-import { useSelector } from 'react-redux';
-import type { RootState } from '../../../../core';
 
 type ParamType = ConnectionParameter | ConnectionParameterSetParameter;
 
@@ -110,6 +108,7 @@ export interface CreateConnectionProps {
   isAgentServiceConnection?: boolean;
   isAgentSubgraph?: boolean;
   operationManifest?: OperationManifest;
+  workflowKind?: string;
 }
 
 export const CreateConnection = (props: CreateConnectionProps) => {
@@ -138,6 +137,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     operationParameterSets,
     isAgentSubgraph,
     operationManifest,
+    workflowKind,
   } = props;
 
   const intl = useIntl();
@@ -158,7 +158,6 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   const operationParameterSetKeys = useMemo(() => Object.keys(operationParameterSets ?? {}), [operationParameterSets]);
 
   const shouldEnableDynamicConnections = useShouldEnableDynamicConnections();
-  const workflowKind = useSelector((state: RootState) => state.workflow.workflowKind);
   const [selectedParamSetIndex, setSelectedParamSetIndex] = useState<number>(0);
   const [isUsingDynamicConnection, setIsUsingDynamicConnection] = useState<boolean>(false);
   const onAuthDropdownChange = useCallback(
