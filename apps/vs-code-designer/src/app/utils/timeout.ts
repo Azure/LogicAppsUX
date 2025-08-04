@@ -29,7 +29,7 @@ export async function timeout(
 
     // If timeOutErrorOperation settles firsts, asyncOperation will continue to run.
     await Promise.race([asyncOperation, timeOutErrorOperation(timeoutMs)]);
-  } catch (error) {
+  } catch {
     ext.outputChannel.appendLog(`Timeout: ${asyncFunc.name}`);
     const result = await vscode.window.showWarningMessage(
       localize('asyncTimeout', `${dependencyName} timed out after ${timeoutMs} ms. Retry ${dependencyName}?`),

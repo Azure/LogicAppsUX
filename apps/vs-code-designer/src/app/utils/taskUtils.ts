@@ -100,7 +100,7 @@ export async function unzipLogicAppArtifacts(zipContent: Buffer | Buffer[], targ
  */
 export function showPreviewWarning(commandIdentifier: string): void {
   // Search for the command in the package.json "contributes.commands" array
-  const targetCommand = packageJson.contributes.commands.find((command) => command.command === commandIdentifier);
+  const targetCommand = packageJson.contributes.commands.find((command) => command.command === commandIdentifier) as any;
   // If the command is found and it is marked as a preview, show a warning using its title
   if (targetCommand?.preview) {
     window.showInformationMessage(
