@@ -10,7 +10,8 @@ steps:
     workingDirectory: $(working_directory)
     condition: succeeded()
 
-  - script: echo "`jq '.aiKey="$(AI_KEY)"' apps/vs-code-designer/src/package.json`" > apps/vs-code-designer/src/package.json
+  - pwsh: |
+      (gc apps/vs-code-designer/src/package.json -Raw) -replace '"aiKey":\s*"[^"]*"', '"aiKey": "$(AI_KEY)"' | sc apps/vs-code-designer/src/package.json -NoNewline
     displayName: "Set Designer Extension VSIX aiKey in package.json"
     workingDirectory: $(working_directory)
     condition: succeeded()
