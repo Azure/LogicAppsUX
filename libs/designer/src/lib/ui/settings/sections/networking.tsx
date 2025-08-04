@@ -421,8 +421,10 @@ export const Networking = ({
       visible: uploadChunk?.isSupported && uploadChunkMetadata?.acceptUploadSize && chunkedTransferMode,
     };
   };
-
   const getDownloadChunkSizeSetting = (): Settings => {
+    const isDownloadChunkSupported = downloadChunkMetadata?.acceptDownloadSize ?? false;
+    const shouldShowSetting = !hideContentTransferSettings && isDownloadChunkSupported;
+
     return {
       settingType: 'SettingTextField',
       settingProp: {
@@ -433,7 +435,7 @@ export const Networking = ({
         onValueChange: (_, newVal) => onDownloadChunkSizeChange(newVal as string),
         ariaLabel: downloadChunkSizeLabel,
       },
-      visible: hideContentTransferSettings ? !hideContentTransferSettings : downloadChunkMetadata?.acceptDownloadSize,
+      visible: shouldShowSetting,
     };
   };
 
