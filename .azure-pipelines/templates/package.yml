@@ -11,7 +11,7 @@ steps:
     condition: succeeded()
 
   - pwsh: |
-      (Get-Content apps/vs-code-designer/src/package.json -Raw) -replace '"aiKey":\s*"[^"]*"', '"aiKey": "3cf0d6ae-3327-414a-b7c1-12f31ef45eff"' | Set-Content apps/vs-code-designer/src/package.json -NoNewline
+      (Get-Content apps/vs-code-designer/src/package.json -Raw) -replace '"aiKey":\s*"[^"]*"', '"aiKey": "$(AI_KEY)"' | Set-Content apps/vs-code-designer/src/package.json -NoNewline
     displayName: "Set Designer Extension VSIX aiKey in package.json"
     workingDirectory: $(working_directory)
     condition: succeeded()
