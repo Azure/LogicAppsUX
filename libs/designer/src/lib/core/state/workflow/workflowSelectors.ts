@@ -506,6 +506,18 @@ export const useRootTriggerId = (): string =>
     })
   );
 
+export const useIsAgentLoop = (id?: string): boolean => {
+  return useSelector(
+    createSelector(getWorkflowState, (state: WorkflowState) => {
+      if (!id) {
+        return false;
+      }
+      const type = getRecordEntry(state.operations, id)?.type;
+      return equals(type, commonConstants.NODE.TYPE.AGENT);
+    })
+  );
+};
+
 export const useIsWithinAgenticLoop = (id?: string): boolean => {
   return useSelector(
     createSelector(getWorkflowState, (state: WorkflowState) => {

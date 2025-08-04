@@ -28,6 +28,7 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
     connectionReferences,
     isInitializingConnections,
     operationInfos,
+    operationsError,
   } = useSelector((state: RootState) => ({
     currentPanelView: state.mcpPanel.currentPanelView,
     selectedConnectorId: state.mcpSelection.selectedConnectorId,
@@ -36,6 +37,7 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
     connectionReferences: state.connection.connectionReferences,
     isInitializingConnections: state.connection.loading.initializeConnectionMappings,
     operationInfos: state.operations.operationInfo,
+    operationsError: state.mcpSelection.errors.operations,
   }));
 
   const hasSelectConnectorTab = useMemo(() => currentPanelView === McpPanelView.SelectConnector, [currentPanelView]);
@@ -116,16 +118,18 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
         onPrimaryButtonClick: onConnectionsTabNavigation,
         isPrimaryButtonLoading: isInitializingConnections,
         previousTabId: hasSelectConnectorTab ? constants.MCP_PANEL_TAB_NAMES.CONNECTORS : undefined,
+        tabStatusIcon: operationsError ? 'error' : undefined,
       }),
     [
       intl,
       dispatch,
+      isOperationsTabDisabled,
       selectedOperations.length,
+      isConnectionsTabDisabled,
       onConnectionsTabNavigation,
       isInitializingConnections,
       hasSelectConnectorTab,
-      isConnectionsTabDisabled,
-      isOperationsTabDisabled,
+      operationsError,
     ]
   );
 

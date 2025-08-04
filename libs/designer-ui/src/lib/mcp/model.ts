@@ -5,6 +5,7 @@ export interface McpPanelTabProps {
   title: string;
   onTabClick?: () => void;
   disabled?: boolean;
+  tabStatusIcon?: 'error';
   content: React.ReactElement;
   footerContent: TemplatePanelFooterProps;
 }

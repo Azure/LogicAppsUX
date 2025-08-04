@@ -35,8 +35,9 @@ import {
 } from '@fluentui/react-icons';
 import { pasteOperation, pasteScopeOperation } from '../../../core/actions/bjsworkflow/copypaste';
 import { useUpstreamNodes } from '../../../core/state/tokens/tokenSelectors';
-import { useHasUpstreamAgenticLoop } from '../../../core/state/workflow/workflowSelectors';
+import { useHasUpstreamAgenticLoop, useIsAgentLoop } from '../../../core/state/workflow/workflowSelectors';
 import { addAgentHandoff } from '../../../core/actions/bjsworkflow/handoff';
+import { removeOperationRunAfter } from '../../../core/actions/bjsworkflow/runafter';
 
 const AddIcon = bundleIcon(ArrowBetweenDown24Filled, ArrowBetweenDown24Regular);
 const ParallelIcon = bundleIcon(ArrowSplit24Filled, ArrowSplit24Regular);
@@ -101,6 +102,9 @@ export const EdgeContextualMenu = () => {
     });
   }, [dispatch, graphId, parentId]);
 
+  const parentIsAgent = useIsAgentLoop(parentId);
+  const childIsAgent = useIsAgentLoop(childId);
+
   const addAgenticLoop = useCallback(() => {
     if (!graphId) {
       return;
@@ -108,17 +112,32 @@ export const EdgeContextualMenu = () => {
 
     const newAgentId = `Agent_${customLengthGuid(4)}`;
 
-    if (isA2AWorkflow && hasUpstreamAgenticLoop && parentId) {
-      // If this is an A2A flow and the parent is an agent, don't add any relationships, instead add a handoff tool + operation
-      const relationshipIds = { graphId: 'root', childId: undefined, parentId: undefined };
-      dispatch(addOperation({ nodeId: newAgentId, relationshipIds, operation: agentOperation, isAddingHandoff: true }));
-      dispatch(addAgentHandoff({ sourceId: parentId, targetId: newAgentId }));
-    } else {
-      // If this is not an A2A flow or the parent is not an agent, add the relationship normally
-      const relationshipIds = { graphId, childId, parentId };
-      dispatch(addOperation({ nodeId: newAgentId, relationshipIds, operation: agentOperation }));
+    const relationshipIds = { graphId, childId, parentId };
+    dispatch(addOperation({ nodeId: newAgentId, relationshipIds, operation: agentOperation }));
+
+    if (isA2AWorkflow) {
+      if (parentId && parentIsAgent) {
+        // If the parent is an agent, remove the connecting edge and replace it with a handoff
+        dispatch(
+          removeOperationRunAfter({
+            parentOperationId: parentId,
+            childOperationId: newAgentId,
+          })
+        );
+        dispatch(addAgentHandoff({ sourceId: parentId, targetId: newAgentId }));
+      }
+      if (childId && childIsAgent) {
+        // If the child is an agent, remove the connecting edge and replace it with a handoff
+        dispatch(
+          removeOperationRunAfter({
+            parentOperationId: newAgentId,
+            childOperationId: childId,
+          })
+        );
+        dispatch(addAgentHandoff({ sourceId: newAgentId, targetId: childId }));
+      }
     }
-  }, [childId, dispatch, graphId, hasUpstreamAgenticLoop, isA2AWorkflow, parentId]);
+  }, [childId, childIsAgent, dispatch, graphId, isA2AWorkflow, parentId, parentIsAgent]);
 
   const newActionText = intl.formatMessage({
     defaultMessage: 'Add an action',
