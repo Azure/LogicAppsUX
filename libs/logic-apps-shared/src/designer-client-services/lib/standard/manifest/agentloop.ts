@@ -346,6 +346,7 @@ export default {
         description: 'Agent operations',
         displayName: 'Agent',
       },
+      isSecureByDefault: true,
     } as any,
 
     settings: {
