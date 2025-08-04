@@ -61,6 +61,8 @@ import { DismissRegular } from '@fluentui/react-icons';
 import TenantPicker from './formInputs/tenantPicker';
 import { useShouldEnableDynamicConnections } from '../../../../common/hooks/experimentation';
 import { useStyles } from './styles';
+import { useSelector } from 'react-redux';
+import type { RootState } from '../../../../core';
 
 type ParamType = ConnectionParameter | ConnectionParameterSetParameter;
 
@@ -156,6 +158,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   const operationParameterSetKeys = useMemo(() => Object.keys(operationParameterSets ?? {}), [operationParameterSets]);
 
   const shouldEnableDynamicConnections = useShouldEnableDynamicConnections();
+  const workflowKind = useSelector((state: RootState) => state.workflow.workflowKind);
   const [selectedParamSetIndex, setSelectedParamSetIndex] = useState<number>(0);
   const [isUsingDynamicConnection, setIsUsingDynamicConnection] = useState<boolean>(false);
   const onAuthDropdownChange = useCallback(
@@ -811,12 +814,15 @@ export const CreateConnection = (props: CreateConnectionProps) => {
                           constraints: {
                             ...operationParameterSets?.[parameter]?.uiDefinition?.constraints,
                             ...parameterFromManifest,
-                            allowedValues: (getPropertyValue(parameterFromManifest, ExtensionProperties.EditorOptions)?.options ?? []).map(
-                              (option: any) => ({
+                            allowedValues: (getPropertyValue(parameterFromManifest, ExtensionProperties.EditorOptions)?.options ?? [])
+                              .filter(
+                                (option: any) =>
+                                  !((option.unSupportedWorkflowKind ?? []) as string[]).includes((workflowKind ?? '').toLowerCase())
+                              )
+                              .map((option: any) => ({
                                 value: option.value,
                                 text: option.displayName,
-                              })
-                            ),
+                              })),
                             required:
                               findIndex<string>(parameterFromManifest?.properties?.inputs?.required ?? [], (item, _index) =>
                                 equals(item, keyValue, true)

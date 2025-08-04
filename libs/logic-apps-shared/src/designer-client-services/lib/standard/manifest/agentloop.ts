@@ -55,6 +55,7 @@ export default {
               {
                 value: 'FoundryAgentService',
                 displayName: 'Foundry Agent Service',
+                unSupportedWorkflowKind: ['agent'],
               },
             ],
           },
@@ -213,7 +214,6 @@ export default {
                   type: 'integer',
                   title: 'Message count limit',
                   description: 'The maximum number of messages to keep in the agent history',
-                  conditionalVisibility: true,
                   'x-ms-input-dependencies': {
                     type: 'visibility',
                     parameters: [
@@ -228,7 +228,6 @@ export default {
                   type: 'integer',
                   title: 'Maximum token count',
                   description: 'The maximum number of tokens to use for the agent history',
-                  conditionalVisibility: true,
                   default: 128000,
                   'x-ms-input-dependencies': {
                     type: 'visibility',
