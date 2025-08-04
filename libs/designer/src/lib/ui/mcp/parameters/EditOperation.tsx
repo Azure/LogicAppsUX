@@ -377,7 +377,7 @@ export const EditOperation = ({
         {hasRequiredParameters || hasOptionalParameters || hasVisibleConditionalParameters ? (
           <>
             {hasRequiredParameters && (
-              <div>
+              <div className={otherStyles.section}>
                 <Text size={400} weight="semibold">
                   {INTL_TEXT.defaultParameters}
                 </Text>
@@ -407,7 +407,7 @@ export const EditOperation = ({
               </div>
             )}
             {allConditionalSettings?.length > 0 && (
-              <div style={{ marginTop: '24px' }}>
+              <div className={otherStyles.section} style={{ marginTop: '24px' }}>
                 {/* Advanced Parameters Title and Description */}
                 <div>
                   <Text weight="semibold" size={400} style={{ marginBottom: '8px', display: 'block' }}>

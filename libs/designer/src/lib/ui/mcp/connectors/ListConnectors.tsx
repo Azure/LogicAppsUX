@@ -237,7 +237,7 @@ export const ListConnectors = ({ addConnectors, addDisabled }: { addConnectors: 
               {item?.isConnected ? <CheckmarkCircle20Filled className={styles.icon} color={tokens.colorPaletteGreenBackground3} /> : null}
               <Text className={styles.iconText}>{item?.isConnected ? INTL_TEXT.connectedText : INTL_TEXT.disconnectedText}</Text>
             </TableCell>
-            <TableCell className={styles.iconsCell} style={{ ...connectorTableCellStyles, verticalAlign: 'top' }}>
+            <TableCell className={styles.iconsCell} style={{ ...connectorTableCellStyles }}>
               <Button
                 className={styles.icon}
                 appearance="subtle"
