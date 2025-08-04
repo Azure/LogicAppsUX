@@ -66,11 +66,6 @@ export const useEditOperationStyles = makeStyles({
     whiteSpace: 'nowrap',
   },
 
-  statusBadge: {
-    flexShrink: 0,
-    width: '80px',
-  },
-
   divider: {
     margin: `${tokens.spacingVerticalM} 0`,
   },
@@ -197,6 +192,12 @@ export const useEditOperationStyles = makeStyles({
     fontSize: tokens.fontSizeBase300,
     flex: 1,
     marginBottom: tokens.spacingVerticalS,
+  },
+
+  rightLabelSection: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: tokens.spacingHorizontalS,
   },
 
   removeParameterButton: {

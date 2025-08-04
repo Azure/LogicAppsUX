@@ -1,5 +1,16 @@
 import type { ChangeState } from '@microsoft/designer-ui';
-import { Label, Button, mergeClasses, Dropdown, Option, Field, type DropdownProps, InfoLabel, Text } from '@fluentui/react-components';
+import {
+  Label,
+  Button,
+  mergeClasses,
+  Dropdown,
+  Option,
+  Field,
+  type DropdownProps,
+  InfoLabel,
+  Text,
+  Badge,
+} from '@fluentui/react-components';
 import { Delete16Regular } from '@fluentui/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useEditOperationStyles } from './styles';
@@ -77,6 +88,11 @@ export const ParameterField = ({
       id: '3nUf86',
       defaultMessage: 'Provided value',
       description: 'Label for input field in parameter editor',
+    }),
+    dynamicParameter: intl.formatMessage({
+      id: 'M/M9Dr',
+      defaultMessage: 'Dynamic parameter',
+      description: 'Label for dynamic parameter',
     }),
   };
 
@@ -158,16 +174,23 @@ export const ParameterField = ({
         <InfoLabel className={styles.parameterLabel} info={parameter.placeholder}>
           {parameter.label}
         </InfoLabel>
-        {isConditional && (
-          <Button
-            appearance="subtle"
-            size="small"
-            icon={<Delete16Regular />}
-            onClick={() => handleRemoveConditionalParameter(parameter.id)}
-            title={INTL_TEXT.removeParamText}
-            className={styles.removeParameterButton}
-          />
-        )}
+        <div className={styles.rightLabelSection}>
+          {parameter?.info?.isDynamic && (
+            <Badge appearance="tint" color={'brand'} size="medium">
+              {INTL_TEXT.dynamicParameter}
+            </Badge>
+          )}
+          {isConditional && (
+            <Button
+              appearance="subtle"
+              size="small"
+              icon={<Delete16Regular />}
+              onClick={() => handleRemoveConditionalParameter(parameter.id)}
+              title={INTL_TEXT.removeParamText}
+              className={styles.removeParameterButton}
+            />
+          )}
+        </div>
       </div>
       <div className={styles.parameterBodySection}>
         <Field className={styles.parameterInputField}>
