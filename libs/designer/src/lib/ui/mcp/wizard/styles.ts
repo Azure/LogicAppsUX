@@ -108,6 +108,5 @@ export const useConnectorSectionStyles = makeStyles({
 
   iconsCell: {
     textAlign: 'right',
-    width: '1%',
   },
 });

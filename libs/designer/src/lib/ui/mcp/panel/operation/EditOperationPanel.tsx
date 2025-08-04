@@ -208,7 +208,9 @@ export const EditOperationPanel = () => {
               { selectedOperationSummary }
             )}
           </Text>
-          <Button appearance="subtle" icon={<CloseIcon />} onClick={handleClose} aria-label={INTL_TEXT.closeAriaLabel} />
+          <Button appearance="subtle" icon={<CloseIcon />} onClick={handleClose} aria-label={INTL_TEXT.closeAriaLabel}>
+            {INTL_TEXT.closeAriaLabel}
+          </Button>
         </div>
       </DrawerHeader>
       <DrawerBody className={styles.body} style={{ overflow: 'auto', maxHeight: 'calc(100vh - 130px)', minHeight: '80vh' }}>
