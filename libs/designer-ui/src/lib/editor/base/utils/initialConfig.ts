@@ -26,7 +26,7 @@ export const htmlNodes = [
   HeadingNode,
   ExtentedTextNode,
   LineBreakNode,
-  { replace: TextNode, with: (node: TextNode) => new ExtentedTextNode(node.__text) },
+  { replace: TextNode, with: (node: TextNode) => new ExtentedTextNode(node.__text), withKlass: ExtentedTextNode },
 ];
 
 export const defaultNodes = [AutoLinkNode, LinkNode, TokenNode, PasswordNode];
