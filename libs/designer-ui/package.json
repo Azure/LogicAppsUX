@@ -46,15 +46,18 @@
     },
     "./package.json": "./package.json"
   },
-  "files": ["build/lib/**/*", "src"],
+  "files": [
+    "build/lib/**/*",
+    "src"
+  ],
   "license": "MIT",
   "main": "src/index.ts",
   "module": "src/index.ts",
   "peerDependencies": {
+    "@tanstack/query-sync-storage-persister": "4.36.1",
     "@tanstack/react-query": "4.36.1",
     "@tanstack/react-query-devtools": "4.36.1",
     "@tanstack/react-query-persist-client": "4.36.1",
-    "@tanstack/query-sync-storage-persister": "4.36.1",
     "react": "^16.4.0 || ^17.0.0 || ^18.0.0",
     "react-dom": "^16.4.0 || ^17.0.0 || ^18.0.0"
   },
