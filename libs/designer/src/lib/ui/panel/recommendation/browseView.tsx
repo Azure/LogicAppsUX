@@ -4,8 +4,6 @@ import { SearchService, getRecordEntry, type Connector } from '@microsoft/logic-
 import { BrowseGrid, isBuiltInConnector, isCustomConnector, RuntimeFilterTagList } from '@microsoft/designer-ui';
 import { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
-import { useDiscoveryPanelRelationshipIds } from '../../../core/state/panel/panelSelectors';
-import { useAgenticWorkflow } from '../../../core/state/designerView/designerViewSelectors';
 import { useShouldEnableACASession } from './hooks';
 
 const defaultFilterConnector = (connector: Connector, runtimeFilter: string): boolean => {
@@ -64,20 +62,15 @@ export interface BrowseViewProps {
 
 export const BrowseView = (props: BrowseViewProps) => {
   const { filters, displayRuntimeInfo, setFilters } = props;
-  const isAgenticWorkflow = useAgenticWorkflow();
-  const isRoot = useDiscoveryPanelRelationshipIds().graphId === 'root';
   const shouldEnableACASession = useShouldEnableACASession();
 
   const dispatch = useDispatch();
 
   const { data: allConnectors, isLoading } = useAllConnectors();
 
-  const isAgentConnectorAllowed = useCallback(
-    (connector: Connector): boolean => {
-      return !((!isAgenticWorkflow || !isRoot) && connector.id === 'connectionProviders/agent');
-    },
-    [isAgenticWorkflow, isRoot]
-  );
+  const isAgentConnectorAllowed = useCallback((connector: Connector): boolean => {
+    return connector.id !== 'connectionProviders/agent';
+  }, []);
 
   const isACASessionAllowed = useCallback(
     (connector: Connector): boolean => {

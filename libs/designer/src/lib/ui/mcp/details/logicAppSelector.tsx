@@ -120,17 +120,12 @@ export const LogicAppSelector = () => {
             <Combobox
               className={styles.combobox}
               disabled={isLogicAppsLoading}
-              value={searchTerm !== '' ? searchTerm : selectedResource}
+              value={searchTerm}
               placeholder={isLogicAppsLoading ? intlText.LOADING : intlText.SEARCH_PLACEHOLDER}
-              onOpenChange={(_, data) => {
-                if (!data.open) {
-                  setSearchTerm('');
-                }
-              }}
               onOptionSelect={(_, data) => {
                 if (data.optionValue && data.optionValue !== NO_ITEM_VALUE) {
                   onLogicAppSelect(data.optionValue);
-                  setSearchTerm('');
+                  setSearchTerm(data.optionValue);
                 }
               }}
               onChange={(e) => {

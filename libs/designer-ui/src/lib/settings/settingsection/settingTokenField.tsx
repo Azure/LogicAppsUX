@@ -217,6 +217,7 @@ export const TokenField = ({
           tokenPickerButtonProps={tokenpickerButtonProps}
           agentParameterButtonProps={agentParameterButtonProps}
           tokenMapping={tokenMapping}
+          hideUserInstructions={editorOptions?.hideUserInstructions}
           loadParameterValueFromString={loadParameterValueFromString}
           serializeValue={onValueChange}
           getTokenPicker={getTokenPicker}
