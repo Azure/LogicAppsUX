@@ -1,4 +1,4 @@
-import { ExtentedTextNode } from '../nodes/extendedTextNode';
+import { ExtendedTextNode } from '../nodes/extendedTextNode';
 import { TokenNode } from '../nodes/tokenNode';
 import EditorTheme from '../themes/editorTheme';
 import { AutoLinkNode, LinkNode } from '@lexical/link';
@@ -24,9 +24,9 @@ export const htmlNodes = [
   ListNode,
   ListItemNode,
   HeadingNode,
-  ExtentedTextNode,
+  ExtendedTextNode,
   LineBreakNode,
-  { replace: TextNode, with: (node: TextNode) => new ExtentedTextNode(node.__text), withKlass: ExtentedTextNode },
+  { replace: TextNode, with: (node: TextNode) => new ExtendedTextNode(node.__text), withKlass: ExtendedTextNode },
 ];
 
 export const defaultNodes = [AutoLinkNode, LinkNode, TokenNode, PasswordNode];
