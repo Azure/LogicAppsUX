@@ -159,8 +159,8 @@ export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: R
       description: 'The title for the tool information section',
     }),
     toolsInfoDescription: intl.formatMessage({
-      id: 'Npvr7S',
-      defaultMessage: 'Some parameters may need configuration. Review before proceeding.',
+      id: 'q7EhS4',
+      defaultMessage: 'Some parameters might need configuration. Review before you continue.',
       description: 'The description for the tool information section',
     }),
     addToolsButton: intl.formatMessage({

@@ -13,13 +13,13 @@ export const OperationProgress = ({ operationId }: { operationId: string }) => {
   const INTL_TEXT = {
     completeLabel: intl.formatMessage({
       defaultMessage: 'Configured',
-      id: 'VnqLwv',
-      description: 'Label indicating that the operation configuration is complete',
+      id: 'ekrQN7',
+      description: 'Label indicating that the action configuration is complete',
     }),
     incompleteLabel: intl.formatMessage({
       defaultMessage: 'Needs setup',
-      id: 'Uz9dOw',
-      description: 'Label indicating that the operation configuration is incomplete',
+      id: 'uRM2us',
+      description: 'Label indicating that the action configuration is incomplete',
     }),
   };
   const { nodeInputs, dependencies } = useSelector((state: RootState) => ({

@@ -55,14 +55,14 @@ export const ListOperations = () => {
       description: 'Label for the parameters status column',
     }),
     editButtonLabel: intl.formatMessage({
-      defaultMessage: 'Edit operation',
-      id: '7EHrJW',
-      description: 'Label for the edit operation button',
+      defaultMessage: 'Edit action',
+      id: 'nean5u',
+      description: 'Label for the edit action button',
     }),
     deleteButtonLabel: intl.formatMessage({
-      defaultMessage: 'Delete operation',
-      id: 'b1odUC',
-      description: 'Label for the delete operation button',
+      defaultMessage: 'Delete action',
+      id: 'QgMC2Q',
+      description: 'Label for the delete action button',
     }),
   };
 

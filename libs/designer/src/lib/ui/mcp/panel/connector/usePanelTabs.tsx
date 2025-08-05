@@ -113,8 +113,8 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
     if (isUpdateOperationsView) {
       return intl.formatMessage({
         defaultMessage: 'Save',
-        id: 'I4k4Bl',
-        description: 'Button text for updating operation selections',
+        id: 'Qvk1rO',
+        description: 'Button text for updating action selections',
       });
     }
 
@@ -122,8 +122,8 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
       ? intl.formatMessage(
           {
             defaultMessage: 'Next ({count} selected)',
-            id: 'DYJI/D',
-            description: 'Button text for moving to the next tab with operation count',
+            id: 'ti2c1D',
+            description: 'Button text for moving to the next tab with action count',
           },
           { count: selectedOperations.length }
         )
