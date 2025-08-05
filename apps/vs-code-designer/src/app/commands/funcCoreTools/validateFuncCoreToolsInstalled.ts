@@ -117,7 +117,7 @@ export async function isFuncToolsInstalled(): Promise<boolean> {
   try {
     await executeCommand(undefined, undefined, funcCommand, '--version');
     return true;
-  } catch (_error) {
+  } catch {
     return false;
   }
 }
