@@ -1,6 +1,14 @@
+import { useMemo } from 'react';
+import { useIntl } from 'react-intl';
+import { useSelector } from 'react-redux';
+import type { NodeMessage } from '@microsoft/designer-ui';
+import { MessageLevel, MediumText } from '@microsoft/designer-ui';
+import { getRecordEntry } from '@microsoft/logic-apps-shared';
+
 import type { RootState } from '../../../../core';
 import { useAllConnectionErrors } from '../../../../core/state/operation/operationSelector';
 import { useWorkflowParameterValidationErrors } from '../../../../core/state/workflowparameters/workflowparametersselector';
+import { useFlowErrors } from '../../../../core/state/workflow/workflowSelectors';
 import { ErrorCategory } from '../errorCategory';
 import { NodeErrors } from '../nodeErrors';
 import { WorkflowParameterErrors } from '../workflowParameterErrors';
@@ -12,12 +20,6 @@ import {
   useNumWorkflowParameterErrors,
   useTotalNumErrors,
 } from './errorsTab.hooks';
-import type { NodeMessage } from '@microsoft/designer-ui';
-import { MessageLevel, MediumText } from '@microsoft/designer-ui';
-import { getRecordEntry } from '@microsoft/logic-apps-shared';
-import { useMemo } from 'react';
-import { useIntl } from 'react-intl';
-import { useSelector } from 'react-redux';
 
 export const ErrorsTab = () => {
   const intl = useIntl();
@@ -58,6 +60,12 @@ export const ErrorsTab = () => {
     description: 'Header for the connection errors subsection',
   });
 
+  const flowErrorsSubsectionHeader = intl.formatMessage({
+    defaultMessage: 'Flow structure errors',
+    id: 'GfPnhv',
+    description: 'Header for the flow structure errors subsection',
+  });
+
   const numWorkflowParameterErrors = useNumWorkflowParameterErrors();
   const numOperationErrors = useNumOperationErrors();
   const totalNumErrors = useTotalNumErrors();
@@ -65,6 +73,7 @@ export const ErrorsTab = () => {
   const allInputErrors = useAllInputErrors();
   const allSettingErrors = useAllSettingErrors();
   const allConnectionErrors = useAllConnectionErrors();
+  const flowErrors = useFlowErrors();
   const hostCheckerErrors = useHostCheckerErrors();
 
   const workflowParameterNames: Record<string, string> = useSelector((state: RootState) =>
@@ -81,10 +90,11 @@ export const ErrorsTab = () => {
         ...Object.keys(allInputErrors ?? {}),
         ...Object.keys(allSettingErrors ?? {}),
         ...Object.keys(allConnectionErrors ?? {}),
+        ...Object.keys(flowErrors ?? {}),
         ...Object.keys(hostCheckerErrors),
       ]),
     ],
-    [allConnectionErrors, allInputErrors, allSettingErrors, hostCheckerErrors]
+    [allConnectionErrors, allInputErrors, allSettingErrors, hostCheckerErrors, flowErrors]
   );
 
   const toNodeMessageFromString = (content: string): NodeMessage => {
@@ -109,6 +119,7 @@ export const ErrorsTab = () => {
               [inputErrorsSubsectionHeader]: (getRecordEntry(allInputErrors, nodeId) || []).map(toNodeMessageFromString),
               [settingErrorsSubsectionHeader]: (getRecordEntry(allSettingErrors, nodeId) || []).map(toNodeMessageFromString),
               [connectionErrorsSubsectionHeader]: [getRecordEntry(allConnectionErrors, nodeId) ?? ''].map(toNodeMessageFromString),
+              [flowErrorsSubsectionHeader]: (getRecordEntry(flowErrors, nodeId) || []).map(toNodeMessageFromString),
               ...getRecordEntry(hostCheckerErrors, nodeId),
             }}
           />

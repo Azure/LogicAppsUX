@@ -31,6 +31,7 @@ import {
   useTimelineRepetitionIndex,
   useIsActionInSelectedTimelineRepetition,
   useHandoffActionsForAgent,
+  useFlowErrorsForNode,
 } from '../../core/state/workflow/workflowSelectors';
 import {
   setFocusElement,
@@ -310,6 +311,11 @@ const ScopeCardNode = ({ id }: NodeProps) => {
         id: 'Tmr/9e',
         description: 'Text to explain that there are invalid parameters for this node',
       }),
+      flowErrorText: intl.formatMessage({
+        defaultMessage: 'Action unreachable',
+        id: 'PoPO/T',
+        description: 'Text to explain that there are flow structure errors for this node',
+      }),
       actionString: intl.formatMessage(
         {
           defaultMessage: '{actionCount, plural, one {# Action} =0 {0 Actions} other {# Actions}}',
@@ -347,6 +353,7 @@ const ScopeCardNode = ({ id }: NodeProps) => {
 
   const settingValidationErrors = useSettingValidationErrors(scopeId);
   const parameterValidationErrors = useParameterValidationErrors(scopeId);
+  const flowErrors = useFlowErrorsForNode(scopeId);
 
   const { errorMessage, errorLevel } = useMemo(() => {
     if (opQuery?.isError) {
@@ -358,6 +365,9 @@ const ScopeCardNode = ({ id }: NodeProps) => {
     if (parameterValidationErrors?.length > 0) {
       return { errorMessage: intlText.parameterValidationErrorText, errorLevel: MessageBarType.severeWarning };
     }
+    if (flowErrors?.length > 0) {
+      return { errorMessage: intlText.flowErrorText, errorLevel: MessageBarType.severeWarning };
+    }
 
     if (isMonitoringView) {
       const { status: statusRun, error: errorRun, code: codeRun } = runData ?? {};
@@ -365,7 +375,15 @@ const ScopeCardNode = ({ id }: NodeProps) => {
     }
 
     return { errorMessage: undefined, errorLevel: undefined };
-  }, [opQuery?.isError, intlText, settingValidationErrors?.length, parameterValidationErrors?.length, isMonitoringView, runData]);
+  }, [
+    opQuery?.isError,
+    intlText,
+    settingValidationErrors?.length,
+    parameterValidationErrors?.length,
+    flowErrors?.length,
+    isMonitoringView,
+    runData,
+  ]);
 
   const renderLoopsPager = useMemo(() => {
     if (!Array.isArray(metadata?.runData) && metadata?.runData?.status && !equals(metadata.runData.status, 'InProgress')) {

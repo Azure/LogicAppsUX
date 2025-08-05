@@ -47,6 +47,7 @@ import {
   useIsWithinAgenticLoop,
   useSubgraphRunData,
   useRunIndex,
+  useFlowErrorsForNode,
 } from '../../core/state/workflow/workflowSelectors';
 import { useIsA2AWorkflow } from '../../core/state/designerView/designerViewSelectors';
 import { setRepetitionRunData } from '../../core/state/workflow/workflowSlice';
@@ -273,6 +274,13 @@ const DefaultNode = ({ id }: NodeProps) => {
     description: 'Text to explain that there are invalid parameters for this node',
   });
 
+  const flowErrors = useFlowErrorsForNode(id);
+  const flowErrorText = intl.formatMessage({
+    defaultMessage: 'Action unreachable',
+    id: 'PoPO/T',
+    description: 'Text to explain that there are flow structure errors for this node',
+  });
+
   const { errorMessage, errorLevel } = useMemo(() => {
     if (errorInfo && errorInfo.level !== ErrorLevel.DynamicOutputs) {
       const { message, level } = errorInfo;
@@ -295,6 +303,10 @@ const DefaultNode = ({ id }: NodeProps) => {
       return { errorMessage: parameterValidationErrorText, errorLevel: MessageBarType.severeWarning };
     }
 
+    if (flowErrors?.length > 0) {
+      return { errorMessage: flowErrorText, errorLevel: MessageBarType.severeWarning };
+    }
+
     if (isMonitoringView) {
       const { status: statusRun, error: errorRun, code: codeRun } = selfRunData ?? {};
       return getMonitoringError(errorRun, statusRun, codeRun);
@@ -306,9 +318,11 @@ const DefaultNode = ({ id }: NodeProps) => {
     isOperationQueryError,
     settingValidationErrors?.length,
     parameterValidationErrors?.length,
+    flowErrors?.length,
     opManifestErrorText,
     settingValidationErrorText,
     parameterValidationErrorText,
+    flowErrorText,
     isMonitoringView,
     selfRunData,
   ]);

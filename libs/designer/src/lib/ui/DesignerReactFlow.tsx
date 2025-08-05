@@ -4,10 +4,11 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { containsIdTag, guid, removeIdTag, WORKFLOW_NODE_TYPES, type WorkflowNodeType } from '@microsoft/logic-apps-shared';
 import { useDispatch } from 'react-redux';
 import { useResizeObserver } from '@react-hookz/web';
+import { useIntl } from 'react-intl';
 
-import { useAllAgentIds, useIsGraphEmpty, useNodesMetadata } from '../core/state/workflow/workflowSelectors';
+import { useAllAgentIds, useDisconnectedNodes, useIsGraphEmpty, useNodesMetadata } from '../core/state/workflow/workflowSelectors';
 import { useNodesInitialized } from '../core/state/operation/operationSelector';
-import { updateNodeSizes } from '../core/state/workflow/workflowSlice';
+import { setFlowErrors, updateNodeSizes } from '../core/state/workflow/workflowSlice';
 import type { AppDispatch } from '../core';
 import { clearPanel, expandDiscoveryPanel } from '../core/state/panel/panelSlice';
 import { addOperationRunAfter } from '../core/actions/bjsworkflow/runafter';
@@ -240,6 +241,24 @@ const DesignerReactFlow = (props: any) => {
     },
     [edges]
   );
+
+  const intl = useIntl();
+  const disconnectedNodeErrorMessage = intl.formatMessage({
+    defaultMessage: 'Action is unreachable in flow structure',
+    id: 'KmW31k',
+    description: 'Error message for disconnected nodes',
+  });
+  const disconnectedNodes = useDisconnectedNodes();
+
+  useEffect(() => {
+    const errors: Record<string, string[]> = {};
+    if (disconnectedNodes.length > 0) {
+      for (const nodeId of disconnectedNodes) {
+        errors[nodeId] = [disconnectedNodeErrorMessage];
+      }
+    }
+    dispatch(setFlowErrors({ flowErrors: errors }));
+  }, [disconnectedNodes, dispatch]);
 
   const onPaneClick = useCallback(() => {
     if (isDraggingConnection) {
