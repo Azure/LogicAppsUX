@@ -43,6 +43,7 @@ import { CustomMenu } from '../EdgeContextualMenu/customMenu';
 import { NodeMenuPriorities } from './Priorities';
 import type { DropdownMenuCustomNode } from '@microsoft/logic-apps-shared/src/utils/src/lib/models/dropdownMenuCustomNode';
 import { toggleCollapsedActionId } from '../../../core/state/workflow/workflowSlice';
+import constants from '../../../common/constants';
 
 export const DesignerContextualMenu = () => {
   const menuData = useNodeContextMenuData();
@@ -105,7 +106,7 @@ export const DesignerContextualMenu = () => {
   const operationInfo = useOperationInfo(nodeId);
   const isScopeNode = useMemo(() => isScopeOperation(operationInfo?.type), [operationInfo?.type]);
   const runAfter = shouldDisplayRunAfter(operationFromWorkflow, isTrigger);
-
+  const isAgentOperation = useMemo(() => operationInfo?.type?.toLowerCase() === constants.NODE.TYPE.AGENT, [operationInfo?.type]);
   const resubmitClick = useCallback(() => {
     WorkflowService().resubmitWorkflow?.(runInstance?.name ?? '', [nodeId]);
   }, [runInstance, nodeId]);
@@ -135,7 +136,8 @@ export const DesignerContextualMenu = () => {
 
     const collapseActionOption = {
       priority: NodeMenuPriorities.Collapse,
-      renderCustomComponent: () => (isTrigger ? null : <CollapseMenuItem key={'collapse'} nodeId={nodeId} onClick={collapseClick} />),
+      renderCustomComponent: () =>
+        isTrigger || isAgentOperation ? null : <CollapseMenuItem key={'collapse'} nodeId={nodeId} onClick={collapseClick} />,
     };
     if (isNodeCollapsed) {
       return [collapseActionOption];
@@ -175,20 +177,21 @@ export const DesignerContextualMenu = () => {
       collapseActionOption,
     ];
   }, [
+    isNodeCollapsed,
     metadata?.graphId,
     nodeId,
     runData?.canResubmit,
     runAfter,
-    deleteClick,
     isTrigger,
+    isAgentOperation,
+    collapseClick,
     operationInfo?.type,
+    deleteClick,
     isScopeNode,
     copyClick,
     pinClick,
     resubmitClick,
     runAfterClick,
-    collapseClick,
-    isNodeCollapsed,
   ]);
 
   const actionContextMenuItems: JSX.Element[] = actionContextMenuOptions
