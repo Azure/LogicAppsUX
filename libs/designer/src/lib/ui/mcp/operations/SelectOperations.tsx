@@ -80,8 +80,8 @@ export const SelectOperations = () => {
       description: 'Message when no connector is selected',
     }),
     searchPlaceholder: intl.formatMessage({
-      id: 'IRVmBd',
-      defaultMessage: 'Search operations...',
+      id: 'm037Vc',
+      defaultMessage: 'Search...',
       description: 'Placeholder text for operation search box',
     }),
     operationsErrorTitle: intl.formatMessage({

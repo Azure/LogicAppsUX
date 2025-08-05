@@ -7,7 +7,7 @@ import { SelectOperations } from '../../../operations/SelectOperations';
 import { clearAllSelections } from '../../../../../core/state/mcp/mcpselectionslice';
 
 interface OperationsTabProps extends McpConnectorTabProps {
-  selectedOperationsCount: number;
+  primaryButtonTitle: string;
   onPrimaryButtonClick: () => void;
   previousTabId: string | undefined;
   tabStatusIcon?: 'error';
@@ -19,34 +19,18 @@ export const operationsTab = (
   {
     isTabDisabled,
     isPrimaryButtonDisabled,
-    selectedOperationsCount,
+    primaryButtonTitle,
     isPrimaryButtonLoading,
     onPrimaryButtonClick,
     previousTabId,
     tabStatusIcon,
   }: OperationsTabProps
 ): McpPanelTabProps => {
-  const nextButtonText =
-    selectedOperationsCount > 0
-      ? intl.formatMessage(
-          {
-            defaultMessage: 'Next ({count} selected)',
-            id: 'DYJI/D',
-            description: 'Button text for moving to the next tab with operation count',
-          },
-          { count: selectedOperationsCount }
-        )
-      : intl.formatMessage({
-          defaultMessage: 'Next',
-          id: 'ZWnmOv',
-          description: 'Button text for moving to the next tab in the connector panel',
-        });
-
   return {
     id: constants.MCP_PANEL_TAB_NAMES.OPERATIONS,
     title: intl.formatMessage({
-      defaultMessage: 'Choose actions',
-      id: 'hu3PQN',
+      defaultMessage: 'Add actions',
+      id: 'T6kpL0',
       description: 'The tab label for the select operations tab on the connector panel',
     }),
     disabled: isTabDisabled,
@@ -78,7 +62,7 @@ export const operationsTab = (
         },
         {
           type: 'navigation',
-          text: nextButtonText,
+          text: primaryButtonTitle,
           onClick: onPrimaryButtonClick,
           appearance: 'primary',
           disabled: isPrimaryButtonDisabled,

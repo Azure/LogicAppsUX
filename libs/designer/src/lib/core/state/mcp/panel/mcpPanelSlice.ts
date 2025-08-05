@@ -7,6 +7,7 @@ import { initializeConnectionMappings, initializeOperationsMetadata } from '../.
 export const McpPanelView = {
   SelectConnector: 'selectConnector',
   SelectOperation: 'selectOperation',
+  UpdateOperation: 'updateOperation',
   CreateConnection: 'createConnection',
   EditOperation: 'editOperation',
 } as const;
@@ -43,7 +44,10 @@ export const mcpPanelSlice = createSlice({
       state.selectedTabId = action.payload.selectedTabId;
       state.isOpen = true;
     },
-
+    openOperationSelectionPanelView: (state) => {
+      state.currentPanelView = McpPanelView.UpdateOperation;
+      state.isOpen = true;
+    },
     openOperationPanelView: (state) => {
       state.currentPanelView = McpPanelView.EditOperation;
       state.isOpen = true;

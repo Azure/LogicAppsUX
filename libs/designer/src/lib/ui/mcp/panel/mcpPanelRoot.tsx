@@ -18,6 +18,7 @@ export const McpPanelRoot = () => {
     <>
       {(panelMode === McpPanelView.SelectConnector ||
         panelMode === McpPanelView.SelectOperation ||
+        panelMode === McpPanelView.UpdateOperation ||
         panelMode === McpPanelView.CreateConnection) && <SelectionPanel />}
       {panelMode === McpPanelView.EditOperation && <EditOperationPanel />}
     </>
