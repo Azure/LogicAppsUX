@@ -197,7 +197,14 @@ export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: R
           onClick: () => {
             handleRegisterMcpServer();
           },
-          disabled: !logicAppName || !subscriptionId || !resourceGroup || !connection || !operations || hasIncompleteOperationConfiguration,
+          disabled:
+            !logicAppName ||
+            !subscriptionId ||
+            !resourceGroup ||
+            !connectorExists ||
+            !connection ||
+            !operations ||
+            hasIncompleteOperationConfiguration,
         },
         {
           type: 'action',
@@ -215,6 +222,7 @@ export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: R
     logicAppName,
     subscriptionId,
     resourceGroup,
+    connectorExists,
     connection,
     operations,
     hasIncompleteOperationConfiguration,
