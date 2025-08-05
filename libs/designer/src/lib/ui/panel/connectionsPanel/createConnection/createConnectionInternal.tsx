@@ -44,6 +44,7 @@ export const CreateConnectionInternal = (props: {
   connectionMetadata?: ConnectionMetadata;
   updateOperationParameterValues?: (values?: Record<string, any>) => void;
   operationManifest?: OperationManifest;
+  workflowKind?: string;
 }) => {
   const {
     classes,
@@ -309,6 +310,7 @@ export const CreateConnectionInternal = (props: {
       checkOAuthCallback={needsOAuth}
       resourceSelectorProps={resourceSelectorProps}
       operationManifest={operationManifest}
+      workflowKind={props.workflowKind}
     />
   );
 };

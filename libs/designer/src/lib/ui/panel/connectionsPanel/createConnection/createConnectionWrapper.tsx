@@ -27,9 +27,10 @@ export const CreateConnectionWrapper = () => {
   const { data: operationManifest } = useOperationManifest(operationInfo);
   const connectionMetadata = getConnectionMetadata(operationManifest);
   const hasExistingConnection = useSelector((state: RootState) => !!getRecordEntry(state.connections.connectionsMapping, nodeId));
-  const { nodeInputs } = useSelector((state: RootState) => ({
+  const { nodeInputs, workflowKind } = useSelector((state: RootState) => ({
     nodeInputs: state.operations.inputParameters[nodeId],
     dependencies: state.operations.dependencies[nodeId],
+    workflowKind: state.workflow.workflowKind,
   }));
 
   const existingReferences = useSelector((state: RootState) => Object.keys(state.connections.connectionReferences));
@@ -100,6 +101,7 @@ export const CreateConnectionWrapper = () => {
       onConnectionCreated={() => dispatch(closeConnectionsFlow({ nodeId, panelMode: referencePanelMode }))}
       updateOperationParameterValues={updateOperationParameterValues}
       operationManifest={operationManifest}
+      workflowKind={workflowKind}
     />
   );
 };
