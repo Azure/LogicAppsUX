@@ -16,7 +16,6 @@ export interface ErrorRun {
 
 /**
  * Extracts and formats monitoring error information from a workflow run.
- *
  * @param errorRun - The error object from the run, can be wrapped in an object with 'error' property or be the ErrorRun itself
  * @param statusRun - The status of the workflow run (e.g., 'Succeeded', 'Failed', 'Skipped')
  * @param codeRun - The error code from the workflow run
@@ -25,11 +24,6 @@ export interface ErrorRun {
  *   - errorMessage: A formatted error message combining code and message
  *   - code: The extracted error code
  *   - message: The extracted error message
- *
- * @remarks
- * - Returns empty error properties if no error code is provided or if the run succeeded/is running
- * - Sets info level for skipped runs, severe warning for all other error cases
- * - Formats the error message based on available code and message content
  */
 export function getMonitoringError(
   errorRun: { error: ErrorRun } | ErrorRun | undefined,
@@ -73,7 +67,6 @@ export function getMonitoringError(
 
 /**
  * Processes monitoring error data and returns a formatted error object for display in the monitoring tab.
- *
  * @param errorRun - The error object containing code and message, or undefined if no error
  * @param errorRun.code - The error code
  * @param errorRun.message - The error message
@@ -112,7 +105,7 @@ export const getMonitoringTabError = (
  *   - code: The error code (defaults to 'error' for strings, 'unknown' for unhandled types, or codeRun if errorRun is undefined)
  *   - message: The error message (empty string if errorRun is undefined)
  */
-export const extractErrorInfo = (errorRun: { error: ErrorRun } | ErrorRun | undefined, codeRun: string | undefined) => {
+export const extractErrorInfo = (errorRun: { error: ErrorRun } | ErrorRun | undefined | string, codeRun: string | undefined) => {
   if (!errorRun) {
     return { code: codeRun, message: '' };
   }
