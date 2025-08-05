@@ -1,4 +1,4 @@
-import { Button, Toast, ToastBody, ToastTitle } from '@fluentui/react-components';
+import { Button, Toast, ToastBody, ToastTitle, Link } from '@fluentui/react-components';
 import { Warning20Regular, Dismiss20Regular } from '@fluentui/react-icons';
 import { useIntl } from 'react-intl';
 
@@ -11,16 +11,9 @@ export const DeprecationToastContent = ({ onSwitchToV2, onDismiss }: Deprecation
   const intl = useIntl();
 
   const titleLoc = intl.formatMessage({
-    defaultMessage: 'Data Mapper v1 is deprecated',
-    id: 'RIwFkk',
+    defaultMessage: 'Data Mapper v1 Deprecation',
+    id: 'nQYeGr',
     description: 'Title for Data Mapper v1 deprecation toast',
-  });
-
-  const messageLoc = intl.formatMessage({
-    defaultMessage:
-      'Data Mapper v1 is deprecated and will be removed in a future release. Switch to Data Mapper v2 for the latest features and improvements.',
-    id: 'b3uc/U',
-    description: 'Message for Data Mapper v1 deprecation toast',
   });
 
   const switchButtonLoc = intl.formatMessage({
@@ -44,7 +37,15 @@ export const DeprecationToastContent = ({ onSwitchToV2, onDismiss }: Deprecation
         {titleLoc}
       </ToastTitle>
       <ToastBody>
-        {messageLoc}
+        See{' '}
+        <Link
+          href="https://techcommunity.microsoft.com/blog/integrationsonazureblog/%F0%9F%9A%80-new--improved-data-mapper-ux-in-azure-logic-apps-%E2%80%93-now-in-public-preview/4377088"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          this announcement
+        </Link>{' '}
+        for more information. Click the button below to set default to v2, then reopen your map.
         <div style={{ marginTop: '8px', display: 'flex', gap: '8px' }}>
           <Button appearance="primary" size="small" onClick={onSwitchToV2}>
             {switchButtonLoc}
