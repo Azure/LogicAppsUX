@@ -1,4 +1,4 @@
-import { Text, Button } from '@fluentui/react-components';
+import { Text, Button, MessageBar, MessageBarBody, MessageBarTitle } from '@fluentui/react-components';
 import { Add16Regular } from '@fluentui/react-icons';
 import { useMcpWizardStyles } from './styles';
 import { useIntl } from 'react-intl';
@@ -16,6 +16,7 @@ import { ListOperations } from '../operations/ListOperations';
 import { ListConnectors } from '../connectors/ListConnectors';
 import { DescriptionWithLink } from '../../configuretemplate/common';
 import { operationHasEmptyStaticDependencies } from '../../../core/mcp/utils/helper';
+import { selectConnectorId, selectOperations } from '../../../core/state/mcp/mcpselectionslice';
 
 export type RegisterMcpServerHandler = (workflowsData: McpServerCreateData, onCompleted?: () => void) => Promise<void>;
 
@@ -45,6 +46,27 @@ export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: R
     );
   }, [dispatch]);
 
+  const handleAddOperations = useCallback(() => {
+    // Get all operations for this specific connector
+    const selectedOperations: string[] = [];
+    let selectedConnectorId: string | undefined;
+    for (const { connectorId, operationId } of Object.values(operations.operationInfo)) {
+      if (!selectedConnectorId) {
+        selectedConnectorId = connectorId;
+      }
+
+      selectedOperations.push(operationId);
+    }
+
+    dispatch(selectConnectorId(selectedConnectorId));
+    dispatch(selectOperations(selectedOperations));
+    dispatch(
+      openConnectorPanelView({
+        panelView: McpPanelView.UpdateOperation,
+      })
+    );
+  }, [dispatch, operations.operationInfo]);
+
   const onRegisterCompleted = useCallback(() => {
     resetQueriesOnRegisterMcpServer(subscriptionId, resourceGroup, logicAppName as string);
   }, [logicAppName, resourceGroup, subscriptionId]);
@@ -64,8 +86,8 @@ export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: R
 
   const INTL_TEXT = {
     title: intl.formatMessage({
-      id: 'fs3SkE',
-      defaultMessage: 'Register logic apps',
+      id: 'EjYF8U',
+      defaultMessage: 'Register an MCP server with Azure Logic Apps',
       description: 'Title for the MCP server registration wizard',
     }),
     description: intl.formatMessage({
@@ -130,6 +152,21 @@ export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: R
       defaultMessage:
         'Each tool uses an action and has parameters that accept input. Check the default input sources and make any necessary changes to meet your scenario.',
       description: 'Description for the tools section',
+    }),
+    toolsInfoTitle: intl.formatMessage({
+      id: 'yI/bxz',
+      defaultMessage: 'Tool parameters',
+      description: 'The title for the tool information section',
+    }),
+    toolsInfoDescription: intl.formatMessage({
+      id: 'q7EhS4',
+      defaultMessage: 'Some parameters might need configuration. Review before you continue.',
+      description: 'The description for the tool information section',
+    }),
+    addToolsButton: intl.formatMessage({
+      id: 'H1XCOk',
+      defaultMessage: 'Add tools',
+      description: 'Button text to add tools',
     }),
     addConnectorsButton: intl.formatMessage({
       id: 'RcyaI2',
@@ -254,8 +291,20 @@ export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: R
                   <Text size={400} weight="semibold">
                     {INTL_TEXT.toolsTitle}
                   </Text>
+                  <Button appearance="secondary" icon={<Add16Regular />} onClick={handleAddOperations} size="small">
+                    {INTL_TEXT.addToolsButton}
+                  </Button>
                 </div>
                 <DescriptionWithLink text={INTL_TEXT.toolsDescription} />
+
+                {hasIncompleteOperationConfiguration ? (
+                  <MessageBar intent="info" className="msla-templates-error-message-bar">
+                    <MessageBarBody>
+                      <MessageBarTitle>{INTL_TEXT.toolsInfoTitle}</MessageBarTitle>
+                      <Text>{INTL_TEXT.toolsInfoDescription}</Text>
+                    </MessageBarBody>
+                  </MessageBar>
+                ) : null}
 
                 <ListOperations />
               </div>

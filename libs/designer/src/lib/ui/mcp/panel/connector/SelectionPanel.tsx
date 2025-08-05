@@ -55,6 +55,7 @@ export const SelectionPanel = () => {
         isOpen &&
         (panelMode === McpPanelView.SelectConnector ||
           panelMode === McpPanelView.SelectOperation ||
+          panelMode === McpPanelView.UpdateOperation ||
           panelMode === McpPanelView.CreateConnection)
       }
       onOpenChange={(_, { open }) => !open && handleDismiss()}

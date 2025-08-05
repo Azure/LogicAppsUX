@@ -122,8 +122,8 @@ export const useConnectionRefsByConnectorId = (connectorId?: string) => {
 };
 
 export const useIsOperationMissingConnection = (nodeId: string) => {
-  const connectionsMapping = useSelector((state: RootState) => state.connections.connectionsMapping);
-  return Object.keys(connectionsMapping ?? {}).includes(nodeId) && getRecordEntry(connectionsMapping, nodeId) === null;
+  const connectionsMapping = useSelector((state: RootState) => state.connections.connectionsMapping) ?? {};
+  return getRecordEntry(connectionsMapping, nodeId) === null || getRecordEntry(connectionsMapping, nodeId) === undefined;
 };
 
 export const useShowIdentitySelectorQuery = (nodeId: string) => {
