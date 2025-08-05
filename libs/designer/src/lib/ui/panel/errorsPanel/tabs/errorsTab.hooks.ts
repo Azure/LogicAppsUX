@@ -1,11 +1,13 @@
+import { useMemo } from 'react';
+import { useSelector } from 'react-redux';
+import { MessageLevel } from '@microsoft/designer-ui';
+
 import type { RootState } from '../../../../core';
 import { useAllConnectionErrors } from '../../../../core/state/operation/operationSelector';
 import { useAllSettingsValidationErrors } from '../../../../core/state/setting/settingSelector';
 import type { ErrorMessage } from '../../../../core/state/workflow/workflowInterfaces';
 import { useWorkflowParameterValidationErrors } from '../../../../core/state/workflowparameters/workflowparametersselector';
-import { MessageLevel } from '@microsoft/designer-ui';
-import { useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import { useFlowErrors } from '../../../../core/state/workflow/workflowSelectors';
 
 /// Input Parameters
 
@@ -69,6 +71,15 @@ export const useNumWorkflowParameterErrors = () => {
   }, [workflowParameterErrors]);
 };
 
+// Flow structure errors
+
+export const useNumFlowErrors = () => {
+  const flowErrors = useFlowErrors();
+  return useMemo(() => {
+    return Object.values(flowErrors).reduce((acc, curr) => acc + curr.length, 0);
+  }, [flowErrors]);
+};
+
 // Custom errors from host
 
 export const useHostCheckerErrors = () =>
@@ -103,10 +114,11 @@ export const useNumOperationErrors = () => {
   const numInputErrors = useNumInputErrors();
   const numSettingErrors = useNumSettingErrors();
   const numConnectionErrors = useNumConnectionErrors();
+  const numFlowErrors = useNumFlowErrors();
   const numHostCheckerErrors = useNumHostCheckerErrors();
   return useMemo(
-    () => numInputErrors + numSettingErrors + numConnectionErrors + numHostCheckerErrors,
-    [numInputErrors, numSettingErrors, numConnectionErrors, numHostCheckerErrors]
+    () => numInputErrors + numSettingErrors + numConnectionErrors + numFlowErrors + numHostCheckerErrors,
+    [numInputErrors, numSettingErrors, numConnectionErrors, numFlowErrors, numHostCheckerErrors]
   );
 };
 
