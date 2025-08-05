@@ -253,8 +253,11 @@ const getMcpServerInfo = async (
   references: string[]
 ): Promise<{ displayName: string; description: string }> => {
   const { connectionReferences } = connectionState;
-  if (references.length !== 1) {
+  if (references.length > 1) {
     throw new UnsupportedException('MCP server information can only be retrieved for a single connector currently.');
+  }
+  if (references.length === 0) {
+    throw new UnsupportedException('MCP server information cannot be retrieved without any connections.');
   }
 
   const connectorId = connectionReferences[references[0]]?.api?.id;

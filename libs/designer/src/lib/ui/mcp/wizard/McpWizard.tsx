@@ -74,17 +74,32 @@ export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: R
   );
 
   const handleRegisterMcpServer = useCallback(async () => {
-    const workflowsData = await serializeMcpWorkflows(
-      {
-        subscriptionId,
-        resourceGroup,
-        logicAppName: logicAppName as string,
-      },
-      connection,
-      operations
-    );
-
-    await registerMcpServer(workflowsData, () => onRegisterCompleted(Object.keys(workflowsData.workflows)));
+    try {
+      const workflowsData = await serializeMcpWorkflows(
+        {
+          subscriptionId,
+          resourceGroup,
+          logicAppName: logicAppName as string,
+        },
+        connection,
+        operations
+      );
+      const workflowNames = Object.keys(workflowsData.workflows);
+      await registerMcpServer(workflowsData, () => onRegisterCompleted(workflowNames));
+    } catch (error: any) {
+      LoggerService().log({
+        level: LogEntryLevel.Error,
+        area: 'MCP.McpWizard',
+        message: 'Failed to register MCP server',
+        error: error instanceof Error ? error : undefined,
+        args: [
+          `subscriptionId:${subscriptionId}`,
+          `resourceGroup:${resourceGroup}`,
+          `logicAppName:${logicAppName}`,
+          'isExistingLogicApp:false', // TODO: When we support create logic apps, this will need to be dynamic
+        ],
+      });
+    }
   }, [connection, logicAppName, operations, registerMcpServer, resourceGroup, subscriptionId, onRegisterCompleted]);
 
   const INTL_TEXT = {
