@@ -10,7 +10,7 @@ export type MapDefinitionData = {
   sourceSchemaFileName: string;
   targetSchemaFileName: string;
   mapDefinitionName?: string;
-  metadata?: MapMetadata | undefined;
+  metadata?: MapMetadata;
 };
 export type XsltData = { filename: string; fileContents: string };
 
