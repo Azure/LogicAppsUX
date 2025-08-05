@@ -154,12 +154,22 @@ export const initializeOperationsMetadata = createAsyncThunk(
     const failedResults = results.filter((result) => result.status === 'rejected');
     if (failedResults.length > 0) {
       const errorMessage = failedResults.map((result) => (result as PromiseRejectedResult).reason.message).join('\n');
-      throw new Error(errorMessage);
+      const error = new Error(errorMessage);
+      LoggerService().log({
+        level: LogEntryLevel.Error,
+        area: 'MCP.initializeOperationsMetadata',
+        message: 'Failed to initialize operation metadata in one or more operations',
+        error,
+        args: [`operationIds:${operations.map((op) => op.operationId).join(',')}`],
+      });
+      throw error;
     }
 
     const allNodeData = results
       .filter((result) => result.status === 'fulfilled' && !!result.value)
       .map((result) => (result as PromiseFulfilledResult<any>).value) as NodeOperationInputsData[];
+
+    //TODO: This code can be removed once we confirm there are no more unsupported operations in the MCP
     const unsupportedOperations = getUnsupportedOperations(allNodeData);
     if (unsupportedOperations.length > 0) {
       const errorMessage = intl.formatMessage(
@@ -178,9 +188,8 @@ export const initializeOperationsMetadata = createAsyncThunk(
         level: LogEntryLevel.Error,
         area: 'MCP.initializeOperationsMetadata',
         message: errorMessage,
-        args: ['Unsupported operations: ', ...unsupportedOperations],
+        args: [`operationIds:${unsupportedOperations.join(',')}`],
       });
-
       // throw new Error(errorMessage);
     }
 
@@ -206,7 +215,8 @@ export const initializeConnectionMappings = createAsyncThunk(
         level: LogEntryLevel.Error,
         area: 'MCP.initializeConnectionMappings',
         message: `Cannot initialize connection mappings for connector: ${connectorId}`,
-        error,
+        error: error instanceof Error ? error : undefined,
+        args: [`operationIds:${operations.join(',')}`],
       });
 
       dispatch(initEmptyConnectionMap(operations));

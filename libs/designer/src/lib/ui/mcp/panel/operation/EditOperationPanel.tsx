@@ -121,11 +121,6 @@ export const EditOperationPanel = () => {
 
   const handleSave = useCallback(() => {
     if (!selectedOperationId) {
-      LoggerService().log({
-        level: LogEntryLevel.Error,
-        message: 'Cannot save: missing operation data',
-        area: 'MCP.EditOperation',
-      });
       return;
     }
 

@@ -131,8 +131,8 @@ export const initializeOperationDetails = async (
     LoggerService().log({
       level: LogEntryLevel.Error,
       area: 'MCP.initializeOperationDetails',
-      error,
       message: `Error while initializing operation details for connectorId: ${operationInfo.connectorId}, operationId: ${nodeId}`,
+      error: error instanceof Error ? error : undefined,
     });
     const errorMessage = error instanceof Error ? error.message : String(error);
     throw new Error(`Operation: "${nodeId}", Error: "${errorMessage}".`);
