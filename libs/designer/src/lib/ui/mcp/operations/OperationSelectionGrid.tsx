@@ -155,8 +155,8 @@ export const OperationSelectionGrid = ({
   });
 
   const selectAllText = intl.formatMessage({
-    defaultMessage: 'Select all operations',
-    id: 'LxB+6u',
+    defaultMessage: 'Select all',
+    id: '5GHXCP',
     description: 'Label for select all checkbox',
   });
 
