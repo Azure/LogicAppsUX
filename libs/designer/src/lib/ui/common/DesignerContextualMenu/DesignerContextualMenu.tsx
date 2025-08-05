@@ -28,6 +28,7 @@ import { RUN_AFTER_PANEL_TAB } from '../../../ui/CustomNodes/constants';
 import { shouldDisplayRunAfter } from '../../../ui/CustomNodes/helpers';
 import {
   useIsActionCollapsed,
+  useIsAgentLoop,
   useNodeDisplayName,
   useNodeMetadata,
   useRunData,
@@ -43,7 +44,6 @@ import { CustomMenu } from '../EdgeContextualMenu/customMenu';
 import { NodeMenuPriorities } from './Priorities';
 import type { DropdownMenuCustomNode } from '@microsoft/logic-apps-shared/src/utils/src/lib/models/dropdownMenuCustomNode';
 import { toggleCollapsedActionId } from '../../../core/state/workflow/workflowSlice';
-import constants from '../../../common/constants';
 
 export const DesignerContextualMenu = () => {
   const menuData = useNodeContextMenuData();
@@ -106,7 +106,7 @@ export const DesignerContextualMenu = () => {
   const operationInfo = useOperationInfo(nodeId);
   const isScopeNode = useMemo(() => isScopeOperation(operationInfo?.type), [operationInfo?.type]);
   const runAfter = shouldDisplayRunAfter(operationFromWorkflow, isTrigger);
-  const isAgentOperation = useMemo(() => operationInfo?.type?.toLowerCase() === constants.NODE.TYPE.AGENT, [operationInfo?.type]);
+  const isAgentOperation = useIsAgentLoop(nodeId);
   const resubmitClick = useCallback(() => {
     WorkflowService().resubmitWorkflow?.(runInstance?.name ?? '', [nodeId]);
   }, [runInstance, nodeId]);
