@@ -203,6 +203,7 @@ export const extensionCommand = {
   saveBlankUnitTest: 'azureLogicAppsStandard.saveBlankUnitTest',
   vscodeOpenFolder: 'vscode.openFolder',
   debugLogicApp: 'azureLogicAppsStandard.debugLogicApp',
+  setDataMapperVersion: 'azureLogicAppsStandard.setDataMapperVersion',
 } as const;
 export type extensionCommand = (typeof extensionCommand)[keyof typeof extensionCommand];
 

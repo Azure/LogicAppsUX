@@ -36,7 +36,11 @@
           "title": "Create logic app in Azure...",
           "type": "LogicApp",
           "detail": "To create and run automated workflows with little to no code."
-        }
+        },
+              {
+        "command": "azureLogicAppsStandard.setDataMapperVersion",
+        "title": "Set Data Mapper to Version 2"
+      }
       ],
       "activation": {
         "onFetch": ["microsoft.web/sites"],
@@ -356,6 +360,11 @@
         "command": "azureLogicAppsStandard.dataMap.loadDataMapFile",
         "title": "Data Mapper: Load existing data map",
         "when": "resourceExtname in azureLogicAppsStandard.dataMap.setSupportedDataMapDefinitionFileExts"
+      },
+      {
+        "command": "azureLogicAppsStandard.setDataMapperVersion",
+        "title": "Set Data Mapper to Version 2",
+        "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.parameterizeConnections",
