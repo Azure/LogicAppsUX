@@ -406,7 +406,7 @@ const DesignerEditor = () => {
     } else {
       try {
         const codeToConvert = JSON.parse(codeEditorRef.current?.getValue() ?? '');
-        if (codeEditorRef.current?.hasChanges() && !isEqual(codeToConvert, workflow)) {
+        if (codeEditorRef.current?.hasChanges() && !isEqual(codeToConvert, { definition: workflow?.definition, kind: workflow?.kind })) {
           await validateWorkflowStandard(siteResourceId, workflowName, codeToConvert);
         }
         setWorkflow((prevState) => ({
