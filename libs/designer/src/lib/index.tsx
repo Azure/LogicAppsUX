@@ -21,4 +21,5 @@ export { default as Constants } from './common/constants';
 export { serializeWorkflow as serializeBJSWorkflow } from './core/actions/bjsworkflow/serializer';
 export { updateCallbackUrl } from './core/actions/bjsworkflow/initialize';
 export { ReactQueryProvider } from './core/ReactQueryProvider';
+export { isAgenticWorkflow } from './core/state/workflow/helper';
 export { isOpenApiSchemaVersion, getSKUDefaultHostOptions } from './common/utilities/Utils';

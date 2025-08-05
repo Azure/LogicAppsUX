@@ -17,6 +17,7 @@ const CodeViewEditor = forwardRef(({ workflowKind, isConsumption }: CodeViewProp
   const dispatch = useDispatch<AppDispatch>();
   const isWorkflowIsDirty = useIsWorkflowDirty();
   const [code, setCode] = useState<string | undefined>();
+  const [changesMade, setChangesMade] = useState(false);
 
   useMount(async () => {
     const serializedWorkflowDefinition = await serializeBJSWorkflow(DesignerStore.getState(), {
@@ -47,11 +48,13 @@ const CodeViewEditor = forwardRef(({ workflowKind, isConsumption }: CodeViewProp
     }
     if (e.value !== undefined) {
       setCode(e.value);
+      setChangesMade(true);
     }
   };
 
   useImperativeHandle(ref, () => ({
     getValue: () => code,
+    hasChanges: () => changesMade,
   }));
 
   return (

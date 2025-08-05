@@ -1,6 +1,6 @@
 import { equals } from '@microsoft/logic-apps-shared';
 import type { WorkflowNode } from '../../../core/parsers/models/workflowNode';
-import type { WorkflowState } from './workflowInterfaces';
+import { WorkflowKind, type WorkflowState } from './workflowInterfaces';
 
 /**
  * Recursively clones a node while pruning (removing) any nodes that are in the nodesToRemove set.
@@ -131,4 +131,8 @@ export const collapseFlowTree = (
 
 export const isA2AWorkflow = (state: WorkflowState): boolean => {
   return equals(state.workflowKind, 'agent');
+};
+
+export const isAgenticWorkflow = (kind: string): boolean => {
+  return equals(kind, WorkflowKind.AGENTIC) || equals(kind, WorkflowKind.AGENT);
 };
