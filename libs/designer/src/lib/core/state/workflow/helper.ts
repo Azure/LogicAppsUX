@@ -133,6 +133,6 @@ export const isA2AWorkflow = (state: WorkflowState): boolean => {
   return equals(state.workflowKind, 'agent');
 };
 
-export const isAgenticWorkflow = (kind: string): boolean => {
+export const isAgentWorkflow = (kind: string): boolean => {
   return equals(kind, WorkflowKind.AGENTIC) || equals(kind, WorkflowKind.AGENT);
 };

@@ -68,7 +68,7 @@ import {
   TriggerDescriptionDialog,
   getMissingRoleDefinitions,
   roleQueryKeys,
-  isAgenticWorkflow,
+  isAgentWorkflow,
 } from '@microsoft/logic-apps-designer';
 import axios from 'axios';
 import isEqual from 'lodash.isequal';
@@ -311,7 +311,7 @@ const DesignerEditor = () => {
         ...connectionsData?.serviceProviderConnections,
         ...newServiceProviderConnections,
       };
-      if (isAgenticWorkflow(workflow?.kind ?? '')) {
+      if (isAgentWorkflow(workflow?.kind ?? '')) {
         (connectionsData as ConnectionsData).agentConnections = {
           ...connectionsData?.agentConnections,
           ...newAgentConnections,
