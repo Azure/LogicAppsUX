@@ -210,7 +210,10 @@ const transformSwaggerSchema = (schema: any): any => {
 };
 
 const getWorkflowNameFromOperation = (operationSummary: string | undefined, operationId: string): string => {
-  return operationSummary ? operationSummary.replaceAll(' ', '_') : operationId;
+  return (operationSummary ?? operationId)
+    .replace(/[^\w-]+/g, '_') // Replace invalid characters with underscores
+    .replace(/__+/g, '_') // Replace multiple underscores with a single underscore
+    .replace(/^_+|_+$/g, ''); // Trim leading and trailing underscores
 };
 
 const getConnectionsDataToSerialize = async (
