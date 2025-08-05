@@ -26,7 +26,7 @@ export async function getFuncPackageManagers(isFuncInstalled: boolean): Promise<
         ? await executeCommand(undefined, undefined, 'npm', 'ls', '-g', funcPackageName)
         : await executeCommand(undefined, undefined, 'npm', '--version');
       result.push(PackageManager.npm);
-    } catch (error) {
+    } catch {
       // an error indicates no npm
     }
   }
@@ -50,7 +50,7 @@ async function hasBrew(isFuncInstalled: boolean): Promise<boolean> {
         try {
           await executeCommand(undefined, undefined, 'brew', '--version');
           return true;
-        } catch (error) {
+        } catch {
           // an error indicates no brew
         }
       }

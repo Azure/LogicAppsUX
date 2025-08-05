@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import axios from 'axios';
+import axios, { isAxiosError } from 'axios';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import * as vscode from 'vscode';
@@ -666,8 +666,7 @@ export function removeInvalidCharacters(str: string): string {
 export function parseErrorBeforeTelemetry(error: any): string {
   let errorMessage = '';
 
-  // eslint-disable-next-line import/no-named-as-default-member
-  if (axios.isAxiosError(error) && error.response?.data) {
+  if (isAxiosError(error) && error.response?.data) {
     try {
       const responseData = JSON.parse(new TextDecoder().decode(error.response.data));
       const { message = '', code = '' } = responseData?.error ?? {};
@@ -1194,7 +1193,7 @@ export async function getMockableOperationTypes(): Promise<void> {
     response.data.forEach((mockableOperation: string) => mockableOperationTypes.add(mockableOperation.toUpperCase()));
   } catch (apiError: any) {
     ext.telemetryReporter.sendTelemetryEvent('listMockableOperations', { ...apiError });
-    if (axios.isAxiosError(apiError)) {
+    if (isAxiosError(apiError)) {
       ext.outputChannel.appendLog(
         localize(
           'errorListMockableOperationsFailed',
@@ -1231,7 +1230,7 @@ export async function getMockableHttpOperationTypes(): Promise<void> {
     response.data.forEach((mockableOperation: string) => mockableHttpOperationTypes.add(mockableOperation.toUpperCase()));
   } catch (apiError: any) {
     ext.telemetryReporter.sendTelemetryEvent('listMockableHttpOperations', { ...apiError });
-    if (axios.isAxiosError(apiError)) {
+    if (isAxiosError(apiError)) {
       ext.outputChannel.appendLog(
         localize(
           'errorListMockableOperationsFailed',

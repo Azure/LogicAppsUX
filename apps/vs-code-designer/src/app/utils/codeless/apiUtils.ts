@@ -108,7 +108,7 @@ async function getArtifactFiles(context: IActionContext, node: SlotTreeItem, fol
 export async function getAllArtifacts(context: IActionContext, node: SlotTreeItem): Promise<Artifacts> {
   const mapArtifacts = await getArtifactFiles(context, node, 'Artifacts/Maps');
   const schemaArtifacts = await getArtifactFiles(context, node, 'Artifacts/Schemas');
-  const artifacts: Artifacts = { maps: {}, schemas: [] };
+  const artifacts: Artifacts = { maps: {}, schemas: [], rules: [] };
 
   for (const map of mapArtifacts) {
     const { name: fileName, path: filePath } = map;
