@@ -14,7 +14,7 @@ import {
   logError,
   logSuccess,
   logTelemetry,
-  parseUnitTestOutputs,
+  preprocessOutputParameters,
   promptForUnitTestName,
   selectWorkflowNode,
   getOperationMockClassContent,
@@ -35,10 +35,10 @@ import { syncCloudSettings } from '../../syncCloudSettings';
  * Creates a unit test for a Logic App workflow (codeful only), with telemetry logging and error handling.
  * @param {IActionContext} context - The action context.
  * @param {vscode.Uri | undefined} node - The URI of the workflow node, if available.
- * @param {any} unitTestDefinition - The definition of the unit test.
+ * @param {any} operationData - The original operation data with operationInfo and outputParameters.
  * @returns {Promise<void>} - A Promise that resolves when the unit test is created.
  */
-export async function saveBlankUnitTest(context: IActionContext, node: vscode.Uri | undefined, unitTestDefinition: any): Promise<void> {
+export async function saveBlankUnitTest(context: IActionContext, node: vscode.Uri | undefined, operationData: any): Promise<void> {
   const startTime = Date.now();
 
   // Initialize telemetry properties
@@ -89,7 +89,7 @@ export async function saveBlankUnitTest(context: IActionContext, node: vscode.Ur
 
     // Get parsed outputs
     context.telemetry.properties.lastStep = 'parseUnitTestOutputs';
-    const parsedOutputs = await parseUnitTestOutputs(unitTestDefinition);
+    const parsedOutputs = await preprocessOutputParameters(operationData);
     const operationInfo = parsedOutputs['operationInfo'];
     const outputParameters = parsedOutputs['outputParameters'];
     logTelemetry(context, {

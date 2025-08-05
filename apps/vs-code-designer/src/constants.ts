@@ -43,6 +43,7 @@ export const testResultsDirectoryName = '.testResults';
 export const vscodeFolderName = '.vscode';
 export const assetsFolderName = 'assets';
 export const deploymentScriptTemplatesFolderName = 'DeploymentScriptTemplates';
+export const unitTestTemplatesFolderName = 'UnitTestTemplates';
 
 export const logicAppsStandardExtensionId = 'ms-azuretools.vscode-azurelogicapps';
 
@@ -121,6 +122,7 @@ export const designerApiLoadTimeout = 300000;
 // Commands
 export const extensionCommand = {
   openDesigner: 'azureLogicAppsStandard.openDesigner',
+  generateTests: 'azureLogicAppsStandard.generateTests',
   activate: 'azureLogicAppsStandard.activate',
   viewContent: 'azureLogicAppsStandard.viewContent',
   openFile: 'azureLogicAppsStandard.openFile',
