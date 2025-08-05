@@ -54,7 +54,7 @@ export interface ConnectionAuthenticatedUser {
   tenantId?: string;
 }
 
-export type ConnectionFeatureType = 'DynamicUserInvoked'; // Current only this value is supported but this can be extended in the future
+export type ConnectionFeatureType = 'DynamicUserInvoked'; // Currently only this value is supported but this can be extended in the future
 
 export interface ConnectionProperties {
   authenticatedUser?: ConnectionAuthenticatedUser;
