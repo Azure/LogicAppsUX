@@ -144,10 +144,10 @@ const initializeServices = ({
 
 export const initializeOperationsMetadata = createAsyncThunk(
   'initializeOperationsMetadata',
-  async ({ operations }: { operations: NodeOperation[] }, { dispatch }): Promise<void> => {
+  async ({ operations, area }: { operations: NodeOperation[]; area: string }, { dispatch }): Promise<void> => {
     const intl = getIntl();
     const promises: Promise<NodeOperationInputsData | undefined>[] = operations.map((operation) =>
-      initializeOperationDetails(operation.operationId, operation)
+      initializeOperationDetails(operation.operationId, operation, area)
     );
 
     const results = await Promise.allSettled(promises);
@@ -157,7 +157,7 @@ export const initializeOperationsMetadata = createAsyncThunk(
       const error = new Error(errorMessage);
       LoggerService().log({
         level: LogEntryLevel.Error,
-        area: 'MCP.initializeOperationsMetadata',
+        area: `MCP.${area}`,
         message: 'Failed to initialize operation metadata in one or more operations',
         error,
         args: [`operationIds:${operations.map((op) => op.operationId).join(',')}`],
@@ -186,7 +186,7 @@ export const initializeOperationsMetadata = createAsyncThunk(
 
       LoggerService().log({
         level: LogEntryLevel.Error,
-        area: 'MCP.initializeOperationsMetadata',
+        area: `MCP.${area}`,
         message: errorMessage,
         args: [`operationIds:${unsupportedOperations.join(',')}`],
       });
@@ -199,7 +199,7 @@ export const initializeOperationsMetadata = createAsyncThunk(
 
 export const initializeConnectionMappings = createAsyncThunk(
   'initializeConnectionMappings',
-  async ({ operations, connectorId }: { operations: string[]; connectorId: string }, { dispatch }): Promise<void> => {
+  async ({ operations, connectorId, area }: { operations: string[]; connectorId: string; area: string }, { dispatch }): Promise<void> => {
     try {
       const connector = await getConnector(connectorId, /* useCachedData */ true);
       const connections = (await getConnectionsForConnector(connectorId)).filter(isConnectionValid);
@@ -213,7 +213,7 @@ export const initializeConnectionMappings = createAsyncThunk(
     } catch (error: any) {
       LoggerService().log({
         level: LogEntryLevel.Error,
-        area: 'MCP.initializeConnectionMappings',
+        area: `MCP.${area}`,
         message: `Cannot initialize connection mappings for connector: ${connectorId}`,
         error: error instanceof Error ? error : undefined,
         args: [`operationIds:${operations.join(',')}`],

@@ -75,7 +75,7 @@ export const ListOperations = () => {
       LoggerService().log({
         level: LogEntryLevel.Trace,
         area: 'MCP.ListOperations',
-        message: 'View operation details panel',
+        message: 'Edit selected operations button clicked',
         args: [`operationId:${operationId}`],
       });
     },

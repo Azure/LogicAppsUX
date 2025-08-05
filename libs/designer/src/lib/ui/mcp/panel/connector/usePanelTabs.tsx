@@ -62,34 +62,37 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
     return Object.keys(operationInfos).filter((operationId) => !selectedOperations.includes(operationId));
   }, [operationInfos, selectedOperations]);
 
-  const handleSubmit = useCallback(() => {
-    if (selectedConnectorId && selectedOperations.length > 0) {
-      // Deinitializing deselected operations
-      if (deselectedOperationIds.length > 0) {
-        dispatch(deinitializeOperations({ operationIds: deselectedOperationIds }));
-      }
+  const handleSubmit = useCallback(
+    (submitLocation: string) => {
+      if (selectedConnectorId && selectedOperations.length > 0) {
+        // Deinitializing deselected operations
+        if (deselectedOperationIds.length > 0) {
+          dispatch(deinitializeOperations({ operationIds: deselectedOperationIds }));
+        }
 
-      LoggerService().log({
-        level: LogEntryLevel.Trace,
-        area: 'MCP.connectionsTab',
-        message: 'Connectors, operations, and connections data are initialized',
-        args: [`connectorId:${selectedConnectorId}`, `operationIds:${selectedOperations.join(',')}`],
-      });
+        LoggerService().log({
+          level: LogEntryLevel.Trace,
+          area: `MCP.${submitLocation}`,
+          message: 'Connectors, operations, and connections data are initialized',
+          args: [`connectorId:${selectedConnectorId}`, `operationIds:${selectedOperations.join(',')}`],
+        });
 
-      // Initializing newly selected operations
-      if (newlySelectedOperationIds.length > 0) {
-        const selectedOperationsData = newlySelectedOperationIds.map((operationId) => ({
-          connectorId: selectedConnectorId,
-          operationId: getResourceNameFromId(operationId),
-          type: 'apiconnection' as const,
-        }));
-        dispatch(initializeOperationsMetadata({ operations: selectedOperationsData }));
-      } else {
-        dispatch(closePanel());
-        dispatch(clearAllSelections());
+        // Initializing newly selected operations
+        if (newlySelectedOperationIds.length > 0) {
+          const selectedOperationsData = newlySelectedOperationIds.map((operationId) => ({
+            connectorId: selectedConnectorId,
+            operationId: getResourceNameFromId(operationId),
+            type: 'apiconnection' as const,
+          }));
+          dispatch(initializeOperationsMetadata({ operations: selectedOperationsData, area: submitLocation }));
+        } else {
+          dispatch(closePanel());
+          dispatch(clearAllSelections());
+        }
       }
-    }
-  }, [dispatch, selectedConnectorId, selectedOperations, newlySelectedOperationIds, deselectedOperationIds]);
+    },
+    [dispatch, selectedConnectorId, selectedOperations, newlySelectedOperationIds, deselectedOperationIds]
+  );
 
   const isOperationsTabDisabled = useMemo(() => !selectedConnectorId, [selectedConnectorId]);
 
@@ -106,22 +109,26 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
     () => selectedOperations.length === 0 || isInitializingConnections,
     [selectedOperations, isInitializingConnections]
   );
-  const onConnectionsTabNavigation = useCallback(() => {
-    // This triggers the loading state and initializes connections
-    dispatch(
-      initializeConnectionMappings({
-        connectorId: selectedConnectorId as string,
-        operations: selectedOperations,
-      })
-    );
+  const onConnectionsTabNavigation = useCallback(
+    (navLocation: string) => {
+      // This triggers the loading state and initializes connections
+      dispatch(
+        initializeConnectionMappings({
+          connectorId: selectedConnectorId as string,
+          operations: selectedOperations,
+          area: navLocation,
+        })
+      );
 
-    LoggerService().log({
-      level: LogEntryLevel.Trace,
-      area: 'MCP.operationsTab',
-      message: 'Operations are selected',
-      args: [`operationIds:${selectedOperations.join(',')}`],
-    });
-  }, [dispatch, selectedConnectorId, selectedOperations]);
+      LoggerService().log({
+        level: LogEntryLevel.Trace,
+        area: `MCP.${navLocation}`,
+        message: 'Operations are selected',
+        args: [`operationIds:${selectedOperations.join(',')}`],
+      });
+    },
+    [dispatch, selectedConnectorId, selectedOperations]
+  );
 
   const operationTabPrimaryButtonTitle = useMemo(() => {
     if (isUpdateOperationsView) {
@@ -154,7 +161,9 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
         isTabDisabled: isOperationsTabDisabled,
         primaryButtonTitle: operationTabPrimaryButtonTitle,
         isPrimaryButtonDisabled: isConnectionsTabDisabled,
-        onPrimaryButtonClick: isUpdateOperationsView ? handleSubmit : onConnectionsTabNavigation,
+        onPrimaryButtonClick: isUpdateOperationsView
+          ? () => handleSubmit('operationsTab')
+          : () => onConnectionsTabNavigation('operationsTab'),
         isPrimaryButtonLoading: isInitializingConnections,
         previousTabId: hasSelectConnectorTab ? constants.MCP_PANEL_TAB_NAMES.CONNECTORS : undefined,
         tabStatusIcon: operationsError ? 'error' : undefined,
@@ -178,9 +187,9 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
     () =>
       connectionsTab(intl, dispatch, selectedConnectorId as string, selectedOperations, {
         isTabDisabled: isConnectionsTabDisabled,
-        onTabClick: onConnectionsTabNavigation,
+        onTabClick: () => onConnectionsTabNavigation('connectionsTab'),
         isPrimaryButtonDisabled: !selectedConnectorId || selectedOperations.length === 0 || !hasValidConnection,
-        onPrimaryButtonClick: handleSubmit,
+        onPrimaryButtonClick: () => handleSubmit('connectionsTab'),
       }),
     [
       intl,
