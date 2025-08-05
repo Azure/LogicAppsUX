@@ -36,8 +36,8 @@ export const SelectConnectors = () => {
 
   const INTL_TEXT = {
     searchPlaceholder: intl.formatMessage({
-      id: 'qRqo+P',
-      defaultMessage: 'Search connectors...',
+      id: 'w3BZ0u',
+      defaultMessage: 'Search...',
       description: 'Placeholder text for connector search input',
     }),
   };

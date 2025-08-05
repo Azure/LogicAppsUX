@@ -50,20 +50,20 @@ export const ListOperations = () => {
       id: '6qPgjN',
       description: 'The label for the tool description column',
     }),
-    progressButtonLabel: intl.formatMessage({
-      defaultMessage: 'Progress',
-      id: '4zc6lO',
-      description: 'Label for the progress column',
+    parameterStatusLabel: intl.formatMessage({
+      defaultMessage: 'Parameters',
+      id: '7uQSsD',
+      description: 'Label for the parameters status column',
     }),
     editButtonLabel: intl.formatMessage({
-      defaultMessage: 'Edit operation',
-      id: '7EHrJW',
-      description: 'Label for the edit operation button',
+      defaultMessage: 'Edit action',
+      id: 'nean5u',
+      description: 'Label for the edit action button',
     }),
     deleteButtonLabel: intl.formatMessage({
-      defaultMessage: 'Delete operation',
-      id: 'b1odUC',
-      description: 'Label for the delete operation button',
+      defaultMessage: 'Delete action',
+      id: 'QgMC2Q',
+      description: 'Label for the delete action button',
     }),
   };
 
@@ -104,7 +104,7 @@ export const ListOperations = () => {
   const columns = [
     { columnKey: 'tool', label: INTL_TEXT.toolLabel },
     { columnKey: 'description', label: INTL_TEXT.toolDescriptionLabel },
-    { columnKey: 'progress', label: INTL_TEXT.progressButtonLabel },
+    { columnKey: 'parameters', label: INTL_TEXT.parameterStatusLabel },
     { columnKey: 'actions', label: '' }, // Empty label for actions column
   ];
 
