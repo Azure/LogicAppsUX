@@ -44,10 +44,6 @@ export const mcpPanelSlice = createSlice({
       state.selectedTabId = action.payload.selectedTabId;
       state.isOpen = true;
     },
-    openOperationSelectionPanelView: (state) => {
-      state.currentPanelView = McpPanelView.UpdateOperation;
-      state.isOpen = true;
-    },
     openOperationPanelView: (state) => {
       state.currentPanelView = McpPanelView.EditOperation;
       state.isOpen = true;
