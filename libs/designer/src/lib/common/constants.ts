@@ -177,6 +177,7 @@ export default {
   DEFAULT_MAX_STATE_HISTORY_SIZE: 0,
   DEFAULT_SCHEMA: SCHEMA.GA_20160601,
   EDITOR: {
+    AGENT_INSTRUCTION: 'agentinstruction',
     ARRAY: 'array',
     AUTHENTICATION: 'authentication',
     CODE: 'code',
