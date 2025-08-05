@@ -170,7 +170,7 @@ export const useOperationSelectionGridStyles = makeStyles({
   operationProgress: {
     width: '20px',
     height: '20px',
-    padding: '6px 0 0 16px',
+    paddingRight: '6px',
   },
 
   noResultsContainer: {

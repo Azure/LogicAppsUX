@@ -41,7 +41,7 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
   }));
 
   const hasSelectConnectorTab = useMemo(() => currentPanelView === McpPanelView.SelectConnector, [currentPanelView]);
-
+  const isUpdateOperationsView = useMemo(() => currentPanelView === McpPanelView.UpdateOperation, [currentPanelView]);
   const hasValidConnection = useMemo(() => {
     if (!selectedOperations.length) {
       return false;
@@ -109,13 +109,38 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
     );
   }, [dispatch, selectedConnectorId, selectedOperations]);
 
+  const operationTabPrimaryButtonTitle = useMemo(() => {
+    if (isUpdateOperationsView) {
+      return intl.formatMessage({
+        defaultMessage: 'Save',
+        id: 'Qvk1rO',
+        description: 'Button text for updating action selections',
+      });
+    }
+
+    return selectedOperations.length > 0
+      ? intl.formatMessage(
+          {
+            defaultMessage: 'Next ({count} selected)',
+            id: 'ti2c1D',
+            description: 'Button text for moving to the next tab with action count',
+          },
+          { count: selectedOperations.length }
+        )
+      : intl.formatMessage({
+          defaultMessage: 'Next',
+          id: 'ZWnmOv',
+          description: 'Button text for moving to the next tab in the connector panel',
+        });
+  }, [intl, isUpdateOperationsView, selectedOperations.length]);
+
   const operationsTabItem = useMemo(
     () =>
       operationsTab(intl, dispatch, {
         isTabDisabled: isOperationsTabDisabled,
-        selectedOperationsCount: selectedOperations.length,
+        primaryButtonTitle: operationTabPrimaryButtonTitle,
         isPrimaryButtonDisabled: isConnectionsTabDisabled,
-        onPrimaryButtonClick: onConnectionsTabNavigation,
+        onPrimaryButtonClick: isUpdateOperationsView ? handleSubmit : onConnectionsTabNavigation,
         isPrimaryButtonLoading: isInitializingConnections,
         previousTabId: hasSelectConnectorTab ? constants.MCP_PANEL_TAB_NAMES.CONNECTORS : undefined,
         tabStatusIcon: operationsError ? 'error' : undefined,
@@ -124,8 +149,10 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
       intl,
       dispatch,
       isOperationsTabDisabled,
-      selectedOperations.length,
+      operationTabPrimaryButtonTitle,
       isConnectionsTabDisabled,
+      isUpdateOperationsView,
+      handleSubmit,
       onConnectionsTabNavigation,
       isInitializingConnections,
       hasSelectConnectorTab,
@@ -161,7 +188,9 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
     if (currentPanelView !== McpPanelView.CreateConnection) {
       validTabs.push(operationsTabItem);
     }
-    validTabs.push(connectionsTabItem);
+    if (currentPanelView !== McpPanelView.UpdateOperation) {
+      validTabs.push(connectionsTabItem);
+    }
     return validTabs;
   }, [currentPanelView, hasSelectConnectorTab, connectorsTabItem, operationsTabItem, connectionsTabItem]);
 
