@@ -7,6 +7,7 @@ import type {
   ConnectionParameterSetValues,
   Connector,
   OpenAPIV2,
+  ConnectionFeatureType,
 } from '../../utils/src';
 import { AssertionErrorCode, AssertionException } from '../../utils/src';
 
@@ -20,6 +21,7 @@ export interface ConnectionCreationInfo {
   connectionParameters?: Record<string, any>;
   alternativeParameterValues?: Record<string, any>;
   displayName?: string;
+  feature?: ConnectionFeatureType;
   parameterName?: string;
   appSettings?: Record<string, string>;
   additionalParameterValues?: Record<string, string>;

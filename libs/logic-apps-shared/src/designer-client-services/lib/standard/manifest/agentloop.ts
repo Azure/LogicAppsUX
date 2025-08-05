@@ -42,8 +42,8 @@ export default {
       type: 'object',
       properties: {
         agentModelType: {
-          title: 'Agent model type',
-          description: 'Type of agent model to use',
+          title: 'Agent model source',
+          description: 'Source where your agent model is hosted.',
           'x-ms-editor': 'dropdown',
           'x-ms-visibility': 'hideInUI',
           'x-ms-editor-options': {

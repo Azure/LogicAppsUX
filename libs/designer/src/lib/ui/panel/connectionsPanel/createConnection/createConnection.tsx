@@ -798,6 +798,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
                 const keyValue = operationParameterSets?.[parameter]?.name ?? '';
                 const parameterFromManifest = getPropertyValue(operationManifest?.properties.inputs.properties, keyValue);
 
+                // TODO(krmitta): Add support for operation parameters that are not dropdowns.
                 return (
                   <span key={`operation-parameter-${index}`}>
                     <UniversalConnectionParameter
