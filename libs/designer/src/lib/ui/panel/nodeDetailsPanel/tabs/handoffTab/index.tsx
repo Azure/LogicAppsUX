@@ -24,9 +24,9 @@ export const HandoffTab: React.FC<PanelTabProps> = (props) => {
         description: 'Description of handoffs',
       }),
       noHandoffWarning: intl.formatMessage({
-        defaultMessage: 'Agent has no entrypoint. Make sure to have at least one handoff to this agent.',
-        id: 'HbjMG4',
-        description: 'Warning message when no handoff actions are defined',
+        defaultMessage: 'Agent is unreachable in flow structure',
+        id: 'gvo1S7',
+        description: 'Warning message when agent is disconnected from the flow',
       }),
     }),
     [intl]
