@@ -13,6 +13,7 @@ import { ConnectionParameterTypes, equals } from '@microsoft/logic-apps-shared';
 import LegacyManagedIdentityDropdown from './legacyManagedIdentityPicker';
 import constants from '../../../../../common/constants';
 import ClientSecretInput from './clientSecretInput';
+import { useEffect } from 'react';
 
 export interface ConnectionParameterProps {
   parameterKey: string;
@@ -51,6 +52,17 @@ export const UniversalConnectionParameter = (props: ConnectionParameterProps) =>
   const constraints = parameter?.uiDefinition?.constraints;
   let inputComponent = undefined;
 
+  // Handle default values in useEffect to avoid setState during render
+  useEffect(() => {
+    if (parameter?.type === ConnectionParameterTypes.bool && value === undefined) {
+      setValue(false);
+    }
+
+    if ((constraints?.allowedValues?.length ?? 0) > 0 && constraints?.allowedValues?.findIndex((v) => v.value === value) === -1) {
+      setValue(constraints.allowedValues[0].value);
+    }
+  }, [parameter?.type, value, constraints?.allowedValues, setValue]);
+
   // Gateway setting parameter
   if (parameter?.type === ConnectionParameterTypes.gatewaySetting) {
     inputComponent = (
@@ -79,18 +91,12 @@ export const UniversalConnectionParameter = (props: ConnectionParameterProps) =>
 
   // Boolean parameter
   else if (parameter?.type === ConnectionParameterTypes.bool) {
-    if (value === undefined) {
-      setValue(false);
-    }
     inputComponent = <Checkbox checked={value} onChange={(e: any, checked?: boolean) => setValue(checked)} label={description} />;
   }
 
   // Dropdown Parameter
   else if ((constraints?.allowedValues?.length ?? 0) > 0) {
     const selectedKey = constraints?.allowedValues?.findIndex((_value) => _value.value === value);
-    if (selectedKey === -1) {
-      setValue(constraints?.allowedValues?.[0].value);
-    }
     inputComponent = (
       <Dropdown
         id={`connection-param-${parameterKey}`}
