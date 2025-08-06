@@ -91,7 +91,7 @@ export const McpStandard = () => {
   const onRegisterMcpServer = useCallback(async (createData: McpServerCreateData, onCompleted?: () => void) => {
     const { logicAppId, workflows, connectionsData } = createData;
     const workflowsToCreate = Object.keys(workflows).map((key) => ({
-      name: key.replace(/[^\w-]/g, ''), // Replace invalid characters in workflow name
+      name: key,
       workflow: workflows[key],
     }));
 
