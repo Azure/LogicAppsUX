@@ -383,7 +383,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
       await sendRequest(this.context, {
         url,
         method: HTTP_METHODS.POST,
-        headers: headers,
+        headers,
         body: JSON.stringify({
           properties: { definition: workflow.definition, kind: workflow.kind, appSettings: { values: this.panelMetadata.localSettings } },
         }),
