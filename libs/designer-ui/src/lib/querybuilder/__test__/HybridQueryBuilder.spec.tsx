@@ -10,6 +10,7 @@ import {
   QueryBuilderTestWrapper,
   createTestValueSegment,
 } from './test-utils';
+import { ValueSegmentType } from '../../editor';
 
 describe('HybridQueryBuilderEditor Move Functionality', () => {
   let user: ReturnType<typeof userEvent.setup>;
@@ -182,7 +183,7 @@ describe('HybridQueryBuilderEditor Move Functionality', () => {
 
     it('should support token mapping', () => {
       const tokenMapping = {
-        token1: { id: '1', type: 'literal', value: 'mapped' },
+        token1: { id: '1', type: ValueSegmentType.LITERAL, value: 'mapped' },
       };
       renderHybridQueryBuilder({ tokenMapping });
 
@@ -256,7 +257,7 @@ describe('HybridQueryBuilderEditor Move Functionality', () => {
       renderHybridQueryBuilder({ groupProps: emptyGroup });
 
       // Should provide default empty row
-      expect(screen.getByRole('textbox')).toBeInTheDocument();
+      expect(screen.getAllByRole('textbox')).toHaveLength(2);
     });
 
     it('should handle missing props gracefully', () => {
@@ -268,8 +269,7 @@ describe('HybridQueryBuilderEditor Move Functionality', () => {
     });
 
     it('should recover from invalid group structures', () => {
-      // @ts-expect-error - intentionally testing invalid structure
-      const invalidGroup = { type: 'invalid', items: [] };
+      const invalidGroup = { type: 'invalid', items: [] } as any;
 
       expect(() => {
         renderHybridQueryBuilder({ groupProps: invalidGroup });

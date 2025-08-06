@@ -260,7 +260,7 @@ describe('QueryBuilderEditor Move Functionality', () => {
       renderQueryBuilder({ groupProps: emptyGroup });
 
       // Should still render with a default row
-      expect(screen.getByRole('textbox')).toBeInTheDocument();
+      expect(screen.getAllByRole('textbox')).toHaveLength(2); // Default row has 2 textboxes (operand1 and operand2)
     });
 
     it('should handle deeply nested structures', () => {

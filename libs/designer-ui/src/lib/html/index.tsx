@@ -39,6 +39,7 @@ export const HTMLEditor = ({ initialValue, onChange, ...baseEditorProps }: BaseE
       {...baseEditorProps}
       className={mergeClasses('msla-html-editor', baseEditorProps.className)}
       initialValue={initialValue}
+      spellCheck={true}
       basePlugins={{
         clearEditor: true,
         htmlEditor: isValuePlaintext ? 'raw-html' : 'rich-html',

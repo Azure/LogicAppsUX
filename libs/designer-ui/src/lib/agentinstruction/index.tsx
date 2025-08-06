@@ -93,6 +93,7 @@ export const AgentInstructionEditor = ({
           initialValue={systemMessage}
           editorBlur={(newState: ChangeState) => handleValueChange(newState, AGENT_INSTRUCTION_TYPES.SYSTEM)}
           valueType={constants.SWAGGER.TYPE.STRING}
+          spellCheck={true}
         />
         {!hideUserInstructions && (
           <>
