@@ -138,6 +138,8 @@ export const ParameterField = ({
           nodeInputs,
           dependencies,
           updateTokenMetadata: false,
+          loadDynamicOutputs: false,
+          loadDefaultValues: false,
         })
       );
 
