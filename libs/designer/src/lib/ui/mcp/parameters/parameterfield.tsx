@@ -1,5 +1,16 @@
 import type { ChangeState } from '@microsoft/designer-ui';
-import { Label, Button, mergeClasses, RadioGroup, Radio, Field, type RadioGroupProps, InfoLabel, Text } from '@fluentui/react-components';
+import {
+  Label,
+  Button,
+  mergeClasses,
+  Dropdown,
+  Option,
+  Field,
+  type DropdownProps,
+  InfoLabel,
+  Text,
+  Badge,
+} from '@fluentui/react-components';
 import { Delete16Regular } from '@fluentui/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useEditOperationStyles } from './styles';
@@ -68,10 +79,20 @@ export const ParameterField = ({
       defaultMessage: 'User',
       description: 'Label for parameter to use user input type',
     }),
-    inputLabelText: intl.formatMessage({
-      id: 'gwYMqA',
-      defaultMessage: 'Input',
-      description: 'Label for input field in parameter editor radio button section',
+    providedByLabelText: intl.formatMessage({
+      id: 'iFdKPk',
+      defaultMessage: 'Provided by',
+      description: 'Label for input type dropdown section in parameter editor',
+    }),
+    providedValueLabelText: intl.formatMessage({
+      id: '3nUf86',
+      defaultMessage: 'Provided value',
+      description: 'Label for input field in parameter editor',
+    }),
+    dynamicParameter: intl.formatMessage({
+      id: 'M/M9Dr',
+      defaultMessage: 'Dynamic parameter',
+      description: 'Label for dynamic parameter',
     }),
   };
 
@@ -117,6 +138,8 @@ export const ParameterField = ({
           nodeInputs,
           dependencies,
           updateTokenMetadata: false,
+          loadDynamicOutputs: false,
+          loadDefaultValues: false,
         })
       );
 
@@ -136,10 +159,10 @@ export const ParameterField = ({
     ]
   );
 
-  const handleSelectionChange: RadioGroupProps['onChange'] = (_, data) => {
-    onParameterInputTypeChange(parameter.id, data.value as McpParameterInputType);
+  const handleSelectionChange: DropdownProps['onOptionSelect'] = (_, data) => {
+    onParameterInputTypeChange(parameter.id, data.optionValue as McpParameterInputType);
     // Reset parameter value when model is selected
-    if (data.value === 'model') {
+    if (data.optionValue === 'model') {
       onHandleRemoveError();
       onParameterValueChange({
         value: [createLiteralValueSegment('')],
@@ -153,52 +176,57 @@ export const ParameterField = ({
         <InfoLabel className={styles.parameterLabel} info={parameter.placeholder}>
           {parameter.label}
         </InfoLabel>
-        {isConditional && (
-          <Button
-            appearance="subtle"
-            size="small"
-            icon={<Delete16Regular />}
-            onClick={() => handleRemoveConditionalParameter(parameter.id)}
-            title={INTL_TEXT.removeParamText}
-            className={styles.removeParameterButton}
-          />
-        )}
+        <div className={styles.rightLabelSection}>
+          {parameter?.info?.isDynamic && (
+            <Badge appearance="tint" color={'brand'} size="medium">
+              {INTL_TEXT.dynamicParameter}
+            </Badge>
+          )}
+          {isConditional && (
+            <Button
+              appearance="subtle"
+              size="small"
+              icon={<Delete16Regular />}
+              onClick={() => handleRemoveConditionalParameter(parameter.id)}
+              title={INTL_TEXT.removeParamText}
+              className={styles.removeParameterButton}
+            />
+          )}
+        </div>
       </div>
       <div className={styles.parameterBodySection}>
-        <Field className={styles.parameterInputType}>
-          <Label className={styles.parameterInputTypeLabel} size={'small'}>
-            {INTL_TEXT.inputLabelText}
+        <Field className={styles.parameterInputField}>
+          <Label className={styles.parameterInputTypeLabel} size={'medium'}>
+            {INTL_TEXT.providedByLabelText}
           </Label>
-          <RadioGroup layout="horizontal" disabled={disableInputTypeChange} value={parameterInputType} onChange={handleSelectionChange}>
-            <Radio
-              value={'model'}
-              key={'model'}
-              label={
-                <Label className={styles.parameterInputTypeLabel} size={'small'}>
-                  {INTL_TEXT.modelRadioText}
-                </Label>
-              }
-            />
-            <Radio
-              value={'user'}
-              key={'user'}
-              label={
-                <Label className={styles.parameterInputTypeLabel} size={'small'}>
-                  {INTL_TEXT.userRadioText}
-                </Label>
-              }
-            />
-          </RadioGroup>
+          <div className={styles.parameterEditorField}>
+            <Dropdown
+              className={styles.parameterInputTypeDropdown}
+              disabled={disableInputTypeChange}
+              value={parameterInputType === 'model' ? INTL_TEXT.modelRadioText : INTL_TEXT.userRadioText}
+              selectedOptions={[parameterInputType]}
+              onOptionSelect={handleSelectionChange}
+            >
+              <Option value="model">{INTL_TEXT.modelRadioText}</Option>
+              <Option value="user">{INTL_TEXT.userRadioText}</Option>
+            </Dropdown>
+          </div>
         </Field>
         {parameterInputType === 'user' && (
           <div className={mergeClasses(styles.parameterValueSection, isLargeParameter && styles.largeParameterSection)}>
-            <ParameterEditor
-              operationId={operationId}
-              groupId={groupId}
-              parameter={parameter}
-              onParameterVisibilityUpdate={onParameterVisibilityUpdate}
-              onParameterValueChange={onParameterValueChange}
-            />
+            <Label className={styles.parameterInputTypeLabel} size={'medium'} required={true}>
+              {INTL_TEXT.providedValueLabelText}
+            </Label>
+
+            <div className={styles.parameterEditorField}>
+              <ParameterEditor
+                operationId={operationId}
+                groupId={groupId}
+                parameter={parameter}
+                onParameterVisibilityUpdate={onParameterVisibilityUpdate}
+                onParameterValueChange={onParameterValueChange}
+              />
+            </div>
           </div>
         )}
         {parameterError && (

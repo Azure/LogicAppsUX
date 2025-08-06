@@ -1,4 +1,4 @@
-import { enableChannelsInAgentLoop, enableDynamicConnections } from '@microsoft/logic-apps-shared';
+import { disableChannelsInAgentLoop, enableDynamicConnections } from '@microsoft/logic-apps-shared';
 import { useEffect, useState } from 'react';
 
 export function useShouldEnableDynamicConnections(): boolean | null {
@@ -23,7 +23,7 @@ export function useChannelsTabForAgentLoop(): boolean {
   useEffect(() => {
     const check = async () => {
       try {
-        const result = await enableChannelsInAgentLoop();
+        const result = await disableChannelsInAgentLoop();
         setEnabled(result);
       } catch (_e) {
         // If the check fails, it is not enabled

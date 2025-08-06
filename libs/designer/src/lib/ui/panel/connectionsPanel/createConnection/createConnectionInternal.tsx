@@ -44,6 +44,7 @@ export const CreateConnectionInternal = (props: {
   connectionMetadata?: ConnectionMetadata;
   updateOperationParameterValues?: (values?: Record<string, any>) => void;
   operationManifest?: OperationManifest;
+  workflowKind?: string;
 }) => {
   const {
     classes,
@@ -125,6 +126,7 @@ export const CreateConnectionInternal = (props: {
           ...(payload.connectionProperties ?? {}),
           runtimeSource: 'Dynamic',
           dynamicConnectionProxyUrl: newConnection?.properties?.dynamicConnectionProxyUrl ?? undefined,
+          connectionRuntimeUrl: newConnection?.properties?.connectionRuntimeUrl ?? undefined,
         };
       }
 
@@ -198,6 +200,7 @@ export const CreateConnectionInternal = (props: {
           connectionParameters: outputParameterValues,
           alternativeParameterValues,
           additionalParameterValues,
+          feature: isUsingDynamicConnection ? 'DynamicUserInvoked' : undefined,
         };
 
         const parametersMetadata: ConnectionParametersMetadata = {
@@ -309,6 +312,7 @@ export const CreateConnectionInternal = (props: {
       checkOAuthCallback={needsOAuth}
       resourceSelectorProps={resourceSelectorProps}
       operationManifest={operationManifest}
+      workflowKind={props.workflowKind}
     />
   );
 };

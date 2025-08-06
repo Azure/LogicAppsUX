@@ -55,7 +55,7 @@ export const EditOperationPanel = () => {
     Object.fromEntries(
       Object.values(nodeInputs?.parameterGroups ?? {})
         .flatMap((group) => group.parameters)
-        .map((param) => [param.id, isDependentStaticParameter(param.id, inputDependencies) || parameterHasValue(param)])
+        .map((param) => [param.id, isDependentStaticParameter(param, inputDependencies) || parameterHasValue(param)])
     )
   );
   const [getParameterErrors, setParameterErrors] = useFunctionalState<Record<string, string | undefined>>({});
@@ -208,7 +208,9 @@ export const EditOperationPanel = () => {
               { selectedOperationSummary }
             )}
           </Text>
-          <Button appearance="subtle" icon={<CloseIcon />} onClick={handleClose} aria-label={INTL_TEXT.closeAriaLabel} />
+          <Button appearance="subtle" icon={<CloseIcon />} onClick={handleClose}>
+            {INTL_TEXT.closeAriaLabel}
+          </Button>
         </div>
       </DrawerHeader>
       <DrawerBody className={styles.body} style={{ overflow: 'auto', maxHeight: 'calc(100vh - 130px)', minHeight: '80vh' }}>

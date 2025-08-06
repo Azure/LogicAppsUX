@@ -68,6 +68,7 @@ import {
   TriggerDescriptionDialog,
   getMissingRoleDefinitions,
   roleQueryKeys,
+  isAgentWorkflow,
 } from '@microsoft/logic-apps-designer';
 import axios from 'axios';
 import isEqual from 'lodash.isequal';
@@ -121,7 +122,7 @@ const DesignerEditor = () => {
     id: guid(),
   });
   const [designerView, setDesignerView] = useState(true);
-  const codeEditorRef = useRef<{ getValue: () => string | undefined }>(null);
+  const codeEditorRef = useRef<{ getValue: () => string | undefined; hasChanges: () => boolean }>(null);
   const originalConnectionsData = useMemo(() => data?.properties.files[Artifact.ConnectionsFile] ?? {}, [data?.properties.files]);
   const originalCustomCodeData = useMemo(() => Object.keys(customCodeData ?? {}), [customCodeData]);
   const parameters = useMemo(() => data?.properties.files[Artifact.ParametersFile] ?? {}, [data?.properties.files]);
@@ -233,84 +234,6 @@ const DesignerEditor = () => {
     [dispatch]
   );
 
-  const workflowDefinition = useMemo(() => {
-    if (equals(workflow?.kind ?? '', 'Agentic', true)) {
-      if (workflow?.definition) {
-        const { actions, triggers, outputs, parameters } = workflow.definition;
-        if (
-          Object.keys(actions ?? {}).length === 0 &&
-          Object.keys(triggers ?? {}).length === 0 &&
-          Object.keys(outputs ?? {}).length === 0 &&
-          Object.keys(parameters ?? {}).length === 0
-        ) {
-          return {
-            ...workflow.definition,
-            actions: {
-              Default_Agent: {
-                type: 'Agent',
-                limit: {},
-                inputs: {
-                  parameters: {
-                    deploymentId: '',
-                    messages: '',
-                    agentModelType: 'AzureOpenAI',
-                    agentModelSettings: {
-                      agentHistoryReductionSettings: {
-                        agentHistoryReductionType: 'maximumTokenCountReduction',
-                        maximumTokenCount: 128000,
-                      },
-                    },
-                  },
-                  modelConfigurations: {
-                    model1: {
-                      referenceName: '',
-                    },
-                  },
-                },
-                tools: {},
-                runAfter: {},
-              },
-            },
-          };
-        }
-      } else {
-        return {
-          $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
-          contentVersion: '1.0.0.0',
-          actions: {
-            Default_Agent: {
-              type: 'Agent',
-              limit: {},
-              inputs: {
-                parameters: {
-                  deploymentId: '',
-                  messages: '',
-                  agentModelType: 'AzureOpenAI',
-                  agentModelSettings: {
-                    agentHistoryReductionSettings: {
-                      agentHistoryReductionType: 'maximumTokenCountReduction',
-                      maximumTokenCount: 128000,
-                    },
-                  },
-                },
-                modelConfigurations: {
-                  model1: {
-                    referenceName: '',
-                  },
-                },
-              },
-              tools: {},
-              runAfter: {},
-            },
-          },
-          outputs: {},
-          triggers: {},
-        };
-      }
-    }
-    return workflow?.definition;
-  }, [workflow?.definition, workflow?.kind]);
-
   if (isLoading || appLoading || settingsLoading || customCodeLoading) {
     return <></>;
   }
@@ -388,7 +311,7 @@ const DesignerEditor = () => {
         ...connectionsData?.serviceProviderConnections,
         ...newServiceProviderConnections,
       };
-      if (workflow?.kind?.toLowerCase() === 'agentic') {
+      if (isAgentWorkflow(workflow?.kind ?? '')) {
         (connectionsData as ConnectionsData).agentConnections = {
           ...connectionsData?.agentConnections,
           ...newAgentConnections,
@@ -424,17 +347,9 @@ const DesignerEditor = () => {
     }
 
     const connectionsToUpdate = getConnectionsToUpdate(originalConnectionsData, connectionsData ?? {});
-    const { customCodeFiles: customCodeToUpdate, appSettings: customCodeAppSettings } = await getCustomCodeToUpdate(
-      originalCustomCodeData,
-      customCode ?? {},
-      appId,
-      settingsData?.properties
-    );
+    const customCodeToUpdate = await getCustomCodeToUpdate(originalCustomCodeData, customCode ?? {}, appId);
     const parametersToUpdate = isEqual(originalParametersData, parameters) ? undefined : (parameters as ParametersData);
-
-    // Merge app settings from custom code with existing settings
-    const mergedSettings = { ...settingsData?.properties, ...customCodeAppSettings };
-    const settingsToUpdate = isEqual(mergedSettings, originalSettings) ? undefined : mergedSettings;
+    const settingsToUpdate = isEqual(settingsData?.properties, originalSettings) ? undefined : settingsData?.properties;
 
     return saveWorkflowStandard(
       siteResourceId,
@@ -491,7 +406,9 @@ const DesignerEditor = () => {
     } else {
       try {
         const codeToConvert = JSON.parse(codeEditorRef.current?.getValue() ?? '');
-        await validateWorkflowStandard(siteResourceId, workflowName, codeToConvert);
+        if (codeEditorRef.current?.hasChanges() && !isEqual(codeToConvert, { definition: workflow?.definition, kind: workflow?.kind })) {
+          await validateWorkflowStandard(siteResourceId, workflowName, codeToConvert);
+        }
         setWorkflow((prevState) => ({
           ...prevState,
           definition: codeToConvert.definition,
@@ -533,7 +450,7 @@ const DesignerEditor = () => {
         {workflow?.definition ? (
           <BJSWorkflowProvider
             workflow={{
-              definition: workflowDefinition,
+              definition: workflow?.definition,
               connectionReferences,
               parameters,
               kind: workflow?.kind,
@@ -1106,14 +1023,13 @@ const getConnectionsToUpdate = (
 const getCustomCodeToUpdate = async (
   originalCustomCodeData: string[],
   customCode: CustomCodeFileNameMapping,
-  appId?: string,
-  currentAppSettings?: Record<string, string>
-): Promise<{ customCodeFiles: AllCustomCodeFiles | undefined; appSettings: Record<string, string> }> => {
+  appId?: string
+): Promise<AllCustomCodeFiles | undefined> => {
   const filteredCustomCodeMapping: CustomCodeFileNameMapping = {};
   if (!customCode || Object.keys(customCode).length === 0) {
-    return { customCodeFiles: undefined, appSettings: {} };
+    return;
   }
-  const { appFiles, appSettings } = await getCustomCodeAppFiles(appId, customCode, currentAppSettings);
+  const appFiles = await getCustomCodeAppFiles(appId, customCode);
 
   Object.entries(customCode).forEach(([fileName, customCodeData]) => {
     const { isModified, isDeleted } = customCodeData;
@@ -1122,13 +1038,7 @@ const getCustomCodeToUpdate = async (
       filteredCustomCodeMapping[fileName] = { ...customCodeData };
     }
   });
-
-  const customCodeFiles =
-    Object.keys(filteredCustomCodeMapping).length > 0 || Object.keys(appFiles).length > 0
-      ? { customCodeFiles: filteredCustomCodeMapping, appFiles }
-      : undefined;
-
-  return { customCodeFiles, appSettings };
+  return { customCodeFiles: filteredCustomCodeMapping, appFiles };
 };
 
 export default DesignerEditor;

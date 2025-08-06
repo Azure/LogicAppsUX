@@ -2,7 +2,7 @@ import type { AppDispatch, RootState } from '../../../../core';
 import { addOperationRunAfter, removeOperationRunAfter } from '../../../../core/actions/bjsworkflow/runafter';
 import { useOperationVisuals } from '../../../../core/state/operation/operationSelector';
 import { useOperationPanelSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
-import { useNodeDisplayName, useRootTriggerId } from '../../../../core/state/workflow/workflowSelectors';
+import { useAllAgentIds, useNodeDisplayName, useRootTriggerId } from '../../../../core/state/workflow/workflowSelectors';
 import { useIsA2AWorkflow } from '../../../../core/state/designerView/designerViewSelectors';
 import { Button, Input, Menu, MenuButton, MenuItemCheckbox, MenuList, MenuPopover, MenuTrigger, Text } from '@fluentui/react-components';
 import { Add20Filled, Add20Regular, DismissRegular, Search24Regular, bundleIcon } from '@fluentui/react-icons';
@@ -58,20 +58,27 @@ export const RunAfterActionSelector = ({ readOnly }: { readOnly: boolean }) => {
   const currentNodeRunAfter = useSelector((state: RootState) => getRecordEntry(state.workflow.operations, currentNodeId));
   const rootTriggerId = useRootTriggerId();
   const isA2AWorkflow = useIsA2AWorkflow();
+  const allAgentActions = useAllAgentIds();
 
   const actions = useSelector((state: RootState) => {
     if (!currentNodeRunAfter) {
       return [];
     }
     const subNodes = getSuccessorNodes(state, currentNodeId);
-    return (Object.entries(state.workflow.operations) as [string, LogicAppsV2.ActionDefinition][])
+    let tempActions = (Object.entries(state.workflow.operations) as [string, LogicAppsV2.ActionDefinition][])
       .filter(
         ([key]) =>
           getRecordEntry(state.workflow.nodesMetadata, currentNodeId)?.graphId ===
           getRecordEntry(state.workflow.nodesMetadata, key)?.graphId
       )
-      .filter(([key]) => !subNodes.includes(key) && key !== currentNodeId)
-      .map(([key, value]) => ({ ...value, id: key }));
+      .filter(([key]) => !subNodes.includes(key) && key !== currentNodeId);
+
+    if (isA2AWorkflow) {
+      // Remove other agent actions from the list
+      tempActions = tempActions.filter(([id]) => !allAgentActions.includes(id));
+    }
+
+    return tempActions.map(([key, value]) => ({ ...value, id: key }));
   });
   const RUN_AFTER_CONFIGURATION_FILTER_ACTIONS = intl.formatMessage({
     defaultMessage: 'Filter actions',

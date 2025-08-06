@@ -1,6 +1,6 @@
 import type { RootState } from '../../store';
 import { useSelector } from 'react-redux';
-import { useAgenticWorkflow } from '../designerView/designerViewSelectors';
+import { useIsAgenticWorkflow } from '../designerView/designerViewSelectors';
 import { useOperationInfo } from '../selectors/actionMetadataSelector';
 import { useEffect, useState } from 'react';
 import { equals } from '@microsoft/logic-apps-shared';
@@ -71,7 +71,7 @@ export const useAreServicesInitialized = () => {
 };
 
 export const useSupportedChannels = (nodeId: string) => {
-  const isAgenticWorkflow = useAgenticWorkflow();
+  const isAgenticWorkflow = useIsAgenticWorkflow();
   const operationInfo = useOperationInfo(nodeId);
   const [supportedChannels, setSupportedChannels] = useState<any[]>([]);
 

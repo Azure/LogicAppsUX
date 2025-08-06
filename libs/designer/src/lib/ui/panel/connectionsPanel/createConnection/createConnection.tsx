@@ -108,6 +108,7 @@ export interface CreateConnectionProps {
   isAgentServiceConnection?: boolean;
   isAgentSubgraph?: boolean;
   operationManifest?: OperationManifest;
+  workflowKind?: string;
 }
 
 export const CreateConnection = (props: CreateConnectionProps) => {
@@ -136,6 +137,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     operationParameterSets,
     isAgentSubgraph,
     operationManifest,
+    workflowKind,
   } = props;
 
   const intl = useIntl();
@@ -796,6 +798,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
                 const keyValue = operationParameterSets?.[parameter]?.name ?? '';
                 const parameterFromManifest = getPropertyValue(operationManifest?.properties.inputs.properties, keyValue);
 
+                // TODO(krmitta): Add support for operation parameters that are not dropdowns.
                 return (
                   <span key={`operation-parameter-${index}`}>
                     <UniversalConnectionParameter
@@ -811,12 +814,15 @@ export const CreateConnection = (props: CreateConnectionProps) => {
                           constraints: {
                             ...operationParameterSets?.[parameter]?.uiDefinition?.constraints,
                             ...parameterFromManifest,
-                            allowedValues: (getPropertyValue(parameterFromManifest, ExtensionProperties.EditorOptions)?.options ?? []).map(
-                              (option: any) => ({
+                            allowedValues: (getPropertyValue(parameterFromManifest, ExtensionProperties.EditorOptions)?.options ?? [])
+                              .filter(
+                                (option: any) =>
+                                  !((option.unSupportedWorkflowKind ?? []) as string[]).includes((workflowKind ?? '').toLowerCase())
+                              )
+                              .map((option: any) => ({
                                 value: option.value,
                                 text: option.displayName,
-                              })
-                            ),
+                              })),
                             required:
                               findIndex<string>(parameterFromManifest?.properties?.inputs?.required ?? [], (item, _index) =>
                                 equals(item, keyValue, true)

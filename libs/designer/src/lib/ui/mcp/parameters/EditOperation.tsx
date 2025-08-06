@@ -97,7 +97,8 @@ export const EditOperation = ({
 
       // First pass: collect all data
       for (const [groupId, group] of Object.entries(parameters.parameterGroups)) {
-        for (const param of group.parameters) {
+        const nonHiddenParameters = group.parameters.filter((param) => !param.hideInUI);
+        for (const param of nonHiddenParameters) {
           if (param.required) {
             requiredParams.push({ groupId, param, isConditional: false });
           } else {
@@ -377,13 +378,13 @@ export const EditOperation = ({
         {hasRequiredParameters || hasOptionalParameters || hasVisibleConditionalParameters ? (
           <>
             {hasRequiredParameters && (
-              <div>
+              <div className={otherStyles.section}>
                 <Text size={400} weight="semibold">
                   {INTL_TEXT.defaultParameters}
                 </Text>
                 <div className={styles.parameterList}>
                   {requiredParams.map(({ param, groupId, isConditional }) => {
-                    const isDependentParameter = isDependentStaticParameter(param.id, inputDependencies);
+                    const isDependentParameter = isDependentStaticParameter(param, inputDependencies);
                     const parameterInputType = userInputParamIds[param.id] ? 'user' : 'model';
 
                     return (
@@ -407,7 +408,7 @@ export const EditOperation = ({
               </div>
             )}
             {allConditionalSettings?.length > 0 && (
-              <div style={{ marginTop: '24px' }}>
+              <div className={otherStyles.section} style={{ marginTop: '24px' }}>
                 {/* Advanced Parameters Title and Description */}
                 <div>
                   <Text weight="semibold" size={400} style={{ marginBottom: '8px', display: 'block' }}>
@@ -453,7 +454,7 @@ export const EditOperation = ({
                 {hasVisibleConditionalParameters && (
                   <div className={styles.parameterList}>
                     {visibleConditionalParams.map(({ param, groupId, isConditional }) => {
-                      const isDependentParameter = isDependentStaticParameter(param.id, inputDependencies);
+                      const isDependentParameter = isDependentStaticParameter(param, inputDependencies);
                       const parameterInputType = userInputParamIds[param.id] ? 'user' : 'model';
 
                       return (

@@ -1,5 +1,8 @@
 steps:
-  - script: npx tsx scripts/get-current-version.ts "$(Build.SourceBranchName)"
+  - script: |
+      VERSION=$(npx tsx scripts/get-current-version.ts "$(Build.SourceBranchName)")
+      echo "Current version: $VERSION"
+      echo "##vso[task.setvariable variable=current_version;isOutput=true]$VERSION"
     displayName: "Get Current Version"
     workingDirectory: $(working_directory)
     condition: succeeded()
@@ -10,7 +13,8 @@ steps:
     workingDirectory: $(working_directory)
     condition: succeeded()
 
-  - script: echo "`jq '.aiKey="$(AI_KEY)"' apps/vs-code-designer/src/package.json`" > apps/vs-code-designer/src/package.json
+  - pwsh: |
+      (Get-Content apps/vs-code-designer/src/package.json -Raw) -replace '"aiKey":\s*"[^"]*"', '"aiKey": "$(AI_KEY)"' | Set-Content apps/vs-code-designer/src/package.json -NoNewline
     displayName: "Set Designer Extension VSIX aiKey in package.json"
     workingDirectory: $(working_directory)
     condition: succeeded()
