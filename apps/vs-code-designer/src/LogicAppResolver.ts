@@ -77,8 +77,8 @@ export class LogicAppResolver implements AppResourceResolver {
             subscriptions: [subContext.subscriptionId],
           })
           .then((listOfContainerSites) => {
-            const listOfHybridSites = listOfContainerSites.data.filter(
-              (site) => site.properties.managedEnvironmentId === null && site.extendedLocation
+            const listOfHybridSites = Object.values(listOfContainerSites.data).filter(
+              (site: any) => site.properties.managedEnvironmentId === null && site.extendedLocation
             );
             listOfHybridSites.forEach((item: ContainerApp) => {
               this.subscriptionHybridLogicApps.set(item.id, item);

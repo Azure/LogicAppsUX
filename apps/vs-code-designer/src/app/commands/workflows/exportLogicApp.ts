@@ -17,7 +17,6 @@ import { cacheWebviewPanel, removeWebviewPanelFromCache, tryGetWebviewPanel } fr
 import { getAuthorizationToken, getCloudHost } from '../../utils/codeless/getAuthorizationToken';
 import { getWebViewHTML } from '../../utils/codeless/getWebViewHTML';
 import { getRandomHexString } from '../../utils/fs';
-import { delay } from '@azure/ms-rest-js';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { ExtensionCommand, ProjectName, getBaseGraphApi } from '@microsoft/vscode-extension-logic-apps';
 import axios from 'axios';
@@ -28,6 +27,7 @@ import * as vscode from 'vscode';
 
 import AdmZip = require('adm-zip');
 import { getSubscriptionContext } from '../../utils/subscription';
+import { delay } from '../../utils/delay';
 
 interface ConnectionsDeploymentOutput {
   connections: {

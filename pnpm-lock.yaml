@@ -431,12 +431,15 @@ importers:
       '@azure/arm-storage':
         specifier: ^18.1.0
         version: 18.6.0
+      '@azure/core-client':
+        specifier: ^1.7.3
+        version: 1.10.0
+      '@azure/core-rest-pipeline':
+        specifier: ^1.11.0
+        version: 1.22.0
       '@azure/identity':
         specifier: ^4.5.0
         version: 4.5.0
-      '@azure/ms-rest-js':
-        specifier: ^2.6.4
-        version: 2.7.0
       '@azure/storage-file-share':
         specifier: ^12.16.0
         version: 12.25.0
@@ -1234,11 +1237,11 @@ importers:
         specifier: workspace:*
         version: link:../logic-apps-shared
       '@microsoft/vscode-azext-azureappservice':
-        specifier: 0.8.1
-        version: 0.8.1(tslib@2.4.0)
+        specifier: ^3.6.4
+        version: 3.6.4(@azure/ms-rest-azure-env@2.0.0)(@microsoft/vscode-azext-azureappsettings@0.2.8(@azure/ms-rest-azure-env@2.0.0)(tslib@2.4.0))(tslib@2.4.0)
       '@microsoft/vscode-azext-utils':
-        specifier: 0.4.6
-        version: 0.4.6(@azure/ms-rest-azure-env@2.0.0)(tslib@2.4.0)
+        specifier: ^3.2.0
+        version: 3.3.3(@azure/ms-rest-azure-env@2.0.0)(tslib@2.4.0)
       '@tanstack/query-sync-storage-persister':
         specifier: 4.36.1
         version: 4.36.1
@@ -1417,10 +1420,6 @@ packages:
     resolution: {integrity: sha512-HqSPXptE4kdWt6BbfHaVXWKpgGZ99PYEzL8O+ahHzSn83craNo1aw4yXdT579pqrbYj7ezj2wILWaph1lMEedQ==}
     engines: {node: '>=14.0.0'}
 
-  '@azure/arm-appservice@13.0.3':
-    resolution: {integrity: sha512-Vu011o3/bikQNwtjouwmUJud+Z6Brcjij2D0omPWClRGg8i5gBfOYSpDkFGkHbhGlaky4fgvfkxD0uHGq34uYA==}
-    engines: {node: '>=14.0.0'}
-
   '@azure/arm-appservice@15.0.0':
     resolution: {integrity: sha512-huJ2uFDXB7w0cYKqxhzYOHuTsuLCY1e0xmWFF8G3KpDbQGnFDM3AVNtxWPas50OxuSWClblqSaExiS/XnWhTTg==}
     engines: {node: '>=18.0.0'}
@@ -1440,9 +1439,6 @@ packages:
   '@azure/arm-operationalinsights@8.0.1':
     resolution: {integrity: sha512-5Xo1jTotmMREtgNqrHGI1+fOTuejyHfiquK4dPgLIZ2CiQoOnX/RDqD5O0Pcaj2R10PLeMBk/DohBpw9mI2ugg==}
     engines: {node: '>=12.0.0'}
-
-  '@azure/arm-resourcegraph@4.2.1':
-    resolution: {integrity: sha512-PDuRJ6I7wpy/bu2dqX3OVvX6fpM3YzXkFLGnmYpevYFBQBgueNhHruBAk5r1xh2VRTv1M0lAdaYy6LmVHiCRTw==}
 
   '@azure/arm-resourcegraph@5.0.0-beta.3':
     resolution: {integrity: sha512-j6mj5bVHwCvSzy4jy/wMCxz1c+R5/uibS+SwLPFjrfgK1O5pGPz4ACxWjv3OflXh28UcFj+WT9NbMPFZ6wp83g==}
@@ -1464,17 +1460,9 @@ packages:
     resolution: {integrity: sha512-XZYoBWQP9BkQPde5DA7xIiOJVE+6Eeo755VfRqymN42gRn/X6GOcZ0X5x0qvLVxXZcwpFRKblRpkmxGi0FpIxg==}
     engines: {node: '>=14.0.0'}
 
-  '@azure/arm-storage@17.2.1':
-    resolution: {integrity: sha512-J2jmTPv8ZraSHDTz9l2Bx8gNL3ktfDDWo2mxWfzarn64O9Fjhb+l85YWyubGy2xUdeGuZPKzvQLltGv8bSu8eQ==}
-    engines: {node: '>=12.0.0'}
-
   '@azure/arm-storage@18.6.0':
     resolution: {integrity: sha512-dyN50fxts2xClCLIQY8qoDepYx2ql/eW5cVOy8XP+5zt9wIr1cgN2Mmv9/so2HDg6M/zOz8LhrvY+bS2blbhDQ==}
     engines: {node: '>=20.0.0'}
-
-  '@azure/arm-subscriptions@5.1.0':
-    resolution: {integrity: sha512-6BeOF2eQWNLq22ch7xP9RxYnPjtGev54OUCGggKOWoOvmesK7jUZbIyLk8JeXDT21PEl7iyYnxw78gxJ7zBxQw==}
-    engines: {node: '>=14.0.0'}
 
   '@azure/core-auth@1.7.1':
     resolution: {integrity: sha512-dyeQwvgthqs/SlPVQbZQetpslXceHd4i5a7M/7z/lGEAVwnSluabnQOjF2/dk/hhWgMISusv1Ytp4mQ8JNy62A==}
@@ -1487,14 +1475,6 @@ packages:
   '@azure/core-client@1.10.0':
     resolution: {integrity: sha512-O4aP3CLFNodg8eTHXECaH3B3CjicfzkxVtnrfLkOq0XNP7TIECGfHpK/C6vADZkWP75wzmdBnsIA8ksuJMk18g==}
     engines: {node: '>=20.0.0'}
-
-  '@azure/core-client@1.9.1':
-    resolution: {integrity: sha512-hHYFx9lz0ZpbO5W+iotU9tmIX1jPcoIjYUEUaWGuMi1628LCQ/z05TUR4P+NRtMgyoHQuyVYyGQiD3PC47kaIA==}
-    engines: {node: '>=18.0.0'}
-
-  '@azure/core-client@1.9.2':
-    resolution: {integrity: sha512-kRdry/rav3fUKHl/aDLd/pDLcB+4pOFwPPTVEExuMyaI5r+JBbMWqRbCY1pn5BniDaU3lRxO9eaQ1AmSMehl/w==}
-    engines: {node: '>=18.0.0'}
 
   '@azure/core-http-compat@2.1.2':
     resolution: {integrity: sha512-5MnV1yqzZwgNLLjlizsU3QqOeQChkIXw781Fwh1xdAqJR5AA32IUaq6xv1BICJvfbHoa+JYcaij2HFkhLbNTJQ==}
@@ -1515,14 +1495,6 @@ packages:
 
   '@azure/core-paging@1.6.2':
     resolution: {integrity: sha512-YKWi9YuCU04B55h25cnOYZHxXYtEvQEbKST5vqRga7hWY9ydd3FZHdeQF8pyh+acWZvppw13M/LMGx0LABUVMA==}
-    engines: {node: '>=18.0.0'}
-
-  '@azure/core-rest-pipeline@1.15.1':
-    resolution: {integrity: sha512-ZxS6i3eHxh86u+1eWZJiYywoN2vxvsSoAUx60Mny8cZ4nTwvt7UzVVBJO+m2PW2KIJfNiXMt59xBa59htOWL4g==}
-    engines: {node: '>=18.0.0'}
-
-  '@azure/core-rest-pipeline@1.17.0':
-    resolution: {integrity: sha512-62Vv8nC+uPId3j86XJ0WI+sBf0jlqTqPUFCBNrGtlaUeQUIXWV/D8GE5A1d+Qx8H7OQojn2WguC8kChD6v0shA==}
     engines: {node: '>=18.0.0'}
 
   '@azure/core-rest-pipeline@1.22.0':
@@ -1559,12 +1531,6 @@ packages:
 
   '@azure/ms-rest-azure-env@2.0.0':
     resolution: {integrity: sha512-dG76W7ElfLi+fbTjnZVGj+M9e0BIEJmRxU6fHaUQ12bZBe8EJKYb2GV50YWNaP2uJiVQ5+7nXEVj1VN1UQtaEw==}
-
-  '@azure/ms-rest-azure-js@2.1.0':
-    resolution: {integrity: sha512-CjZjB8apvXl5h97Ck6SbeeCmU0sk56YPozPtTyGudPp1RGoHXNjFNtoOvwOG76EdpmMpxbK10DqcygI16Lu60Q==}
-
-  '@azure/ms-rest-js@2.7.0':
-    resolution: {integrity: sha512-ngbzWbqF+NmztDOpLBVDxYM+XLcUj7nKhxGbSU9WtIsXfRB//cf2ZbAG5HkOrhU9/wd/ORRB6lM/d69RKVjiyA==}
 
   '@azure/msal-browser@3.26.1':
     resolution: {integrity: sha512-y78sr9g61aCAH9fcLO1um+oHFXc1/5Ap88RIsUSuzkm0BHzFnN+PXGaQeuM1h5Qf5dTnWNOd6JqkskkMPAhh7Q==}
@@ -4406,14 +4372,8 @@ packages:
   '@mermaid-js/parser@0.4.0':
     resolution: {integrity: sha512-wla8XOWvQAwuqy+gxiZqY+c7FokraOTHRWMsbB4AgRx9Sy7zKslNyejy7E+a77qHfey5GXw/ik3IXv/NHMJgaA==}
 
-  '@microsoft/1ds-core-js@3.2.17':
-    resolution: {integrity: sha512-S9EgWfY9NP0oiB3sdsTL41hJ71rbQzz9ziijQjHoklFADv+vKNe/TbOAgupBKAW04FaL0wmfE7HGF7mao84hUw==}
-
   '@microsoft/1ds-core-js@4.3.4':
     resolution: {integrity: sha512-3gbDUQgAO8EoyQTNcAEkxpuPnioC0May13P1l1l0NKZ128L9Ts/sj8QsfwCRTjHz0HThlA+4FptcAJXNYUy3rg==}
-
-  '@microsoft/1ds-post-js@3.2.17':
-    resolution: {integrity: sha512-YD/pGW/WqijRFEZ/1sSdlkFVM2ZWLGQIMDxRD6/o58c3cC5jzG5PlR1PLp314jFjpUrBc4cmico+WAOP548z4w==}
 
   '@microsoft/1ds-post-js@4.3.4':
     resolution: {integrity: sha512-nlKjWricDj0Tn68Dt0P8lX9a+X7LYrqJ6/iSfQwMfDhRIGLqW+wxx8gxS+iGWC/oc8zMQAeiZaemUpCwQcwpRQ==}
@@ -4505,9 +4465,6 @@ packages:
   '@microsoft/load-themed-styles@1.10.295':
     resolution: {integrity: sha512-W+IzEBw8a6LOOfRJM02dTT7BDZijxm+Z7lhtOAz1+y9vQm1Kdz9jlAO+qCEKsfxtUOmKilW8DIRqFw2aUgKeGg==}
 
-  '@microsoft/vscode-azext-azureappservice@0.8.1':
-    resolution: {integrity: sha512-rqKRL4KSGQAISBT0WX8n+6T53+qA2a/d4trekVtPeJ7ToE7ZqwunFMTrp2UDmblhjNeup+Irx5fHpsF7uQSHpw==}
-
   '@microsoft/vscode-azext-azureappservice@3.6.4':
     resolution: {integrity: sha512-K+AVwcUb3FmnBJA8HNjIakym8BlrWMyabXxd3FvxBjQiZ9vUxmAxUDhTj8rJyOWEW+JYxd0gICfE1YT70/Vbaw==}
     peerDependencies:
@@ -4520,9 +4477,6 @@ packages:
   '@microsoft/vscode-azext-azureauth@4.1.1':
     resolution: {integrity: sha512-ZHRoNBBwZBg8sqZ7/C+VMQOp7zusJxIpXzLlRpWGjrDI8PSFQk2bZloVdW877YeSLMe2464mjTlWMhEEa07Kaw==}
 
-  '@microsoft/vscode-azext-azureutils@0.3.9':
-    resolution: {integrity: sha512-lKhxSROhTBpz45f0hqYDHfdrGlNOgzfMGXbNproqwyc5qnEYBhs/qG65hcwhLzVm44lYPpBP1aka7OyDEocPOQ==}
-
   '@microsoft/vscode-azext-azureutils@3.4.6':
     resolution: {integrity: sha512-R6tuuHZhWw3br/eL8dvMfV1jeCjOcnFUYt1q54fJ9eu+F5oHGT7XnY3x8w2ClHxH9ZdHpaftWW3woVUghiGcPw==}
     peerDependencies:
@@ -4530,9 +4484,6 @@ packages:
 
   '@microsoft/vscode-azext-github@1.0.4':
     resolution: {integrity: sha512-6bZP1ZH0EJH2hF3pqjkSPhT2uQZrpwIP1pDT3s0cq6SLheExihQuxXCaidMjwgYrWQOUpnCx6PwaffCshV9fdg==}
-
-  '@microsoft/vscode-azext-utils@0.4.6':
-    resolution: {integrity: sha512-CPIIvdod95Qdz5vdGg4j7HpryjKEsDVmdir/VduJZHgdVs1iuqa/9UY0+kIg2JnsnpThAdQH36A1GVA8jQeheg==}
 
   '@microsoft/vscode-azext-utils@2.6.8':
     resolution: {integrity: sha512-CuLpk4tfBBnrfn0UPOADQ/vM969AAogwe9KaVIwRiZIi3fn/DjDydeuHwhQKXcbU0PTfIMYp4/ZdLQLJUzm3QA==}
@@ -5770,10 +5721,6 @@ packages:
 
   '@vitest/utils@3.2.4':
     resolution: {integrity: sha512-fB2V0JFrQSMsCo9HiSq3Ezpdv4iYaXRG1Sx8edX3MwxfyNn83mKiGzOcH+Fkxt4MHxr3y42fQi1oeAInqgX2QA==}
-
-  '@vscode/extension-telemetry@0.6.2':
-    resolution: {integrity: sha512-yb/wxLuaaCRcBAZtDCjNYSisAXz3FWsSqAha5nhHcYxx2ZPdQdWuZqVXGKq0ZpHVndBWWtK6XqtpCN2/HB4S1w==}
-    engines: {vscode: ^1.60.0}
 
   '@vscode/extension-telemetry@0.9.8':
     resolution: {integrity: sha512-7YcKoUvmHlIB8QYCE4FNzt3ErHi9gQPhdCM3ZWtpw1bxPT0I+lMdx52KHlzTNoJzQ2NvMX7HyzyDwBEiMgTrWQ==}
@@ -7098,9 +7045,6 @@ packages:
     resolution: {integrity: sha512-fnULvOpxnC5/Vg3NCiWelDsLiUc9bRwAPs/+LfTLNvetFCtCTN+yQz15C/fs4AwX1R9K5GLtLfn8QW+dWisaAw==}
     engines: {node: '>=0.11'}
 
-  dayjs@1.11.10:
-    resolution: {integrity: sha512-vjAczensTgRcqDERK0SR2XMwsF/tSvnvlv6VcF2GIhg6Sx4yOIt/irsr1RDJsKiIyBzJDpCoXiWWq28MqH2cnQ==}
-
   dayjs@1.11.13:
     resolution: {integrity: sha512-oaMBel6gjolK862uaPQOVTA7q3TZhuSvuMQAAglQDOWYO9A91IrAOUJEyKVlqJlHE0vq5p5UXxzdPfMH/x6xNg==}
 
@@ -7957,10 +7901,6 @@ packages:
     resolution: {integrity: sha512-1lLKB2Mu3aGP1Q/2eCOx0fNbRMe7XdwktwOruhfqqd0rIJWwN4Dh+E3hrPSlDCXnSR7UtZ1N38rVXm+6+MEhJQ==}
     engines: {node: '>= 0.12'}
 
-  form-data@2.5.1:
-    resolution: {integrity: sha512-m21N3WOmEEURgk6B9GLOE4RuWOFf28Lhh9qGYeNlGq4VDXUlJy2th2slBNU8Gp8EzloYZOibZJ7t5ecIrFSjVA==}
-    engines: {node: '>= 0.12'}
-
   form-data@4.0.0:
     resolution: {integrity: sha512-ETEklSGi5t0QMZuiXoA/Q6vcnxcLQP5vdugSpuAyi6SVGi2clPPp+xgEhuMaHC+zGgn31Kd235W35f7Hykkaww==}
     engines: {node: '>= 6'}
@@ -8071,10 +8011,6 @@ packages:
 
   github-slugger@1.5.0:
     resolution: {integrity: sha512-wIh+gKBI9Nshz2o46B0B3f5k/W+WI9ZAv6y5Dn5WJ5SK1t0TnDimB4WE5rmTD05ZAIn8HALCZVmCsvj0w0v0lw==}
-
-  glob-gitignore@1.0.14:
-    resolution: {integrity: sha512-YuAEPqL58bOQDqDF2kMv009rIjSAtPs+WPzyGbwRWK+wD0UWQVRoP34Pz6yJ6ivco65C9tZnaIt0I3JCuQ8NZQ==}
-    engines: {node: '>= 6'}
 
   glob-parent@5.1.2:
     resolution: {integrity: sha512-AOIgSQCepiJYwP3ARnGx+5VnTu2HBYdzbGP45eLw1vr3zB3vZLeyed1sC9hnbcOc9/SrMyM5RPQrkGz4aS9Zow==}
@@ -9150,9 +9086,6 @@ packages:
   lodash.debounce@4.0.8:
     resolution: {integrity: sha512-FT1yDzDYEoYWhnSGnpE/4Kj1fLZkDFyqRb7fNt6FdYOSxlUWAtp42Eh6Wb0rGIv/m9Bgo7x4GhQbm5Ys4SG5ow==}
 
-  lodash.difference@4.5.0:
-    resolution: {integrity: sha512-dS2j+W26TQ7taQBGN8Lbbq04ssV3emRw4NY58WErlTO29pIqS0HmoT5aJ9+TUQ1N3G+JOZSji4eugsWwGp9yPA==}
-
   lodash.findindex@4.6.0:
     resolution: {integrity: sha512-9er6Ccz6sEST3bHFtUrCFWk14nE8cdL/RoW1RRDV1BxqN3qsmsT56L14jhfctAqhVPVcdJw4MRxEaVoAK+JVvw==}
 
@@ -9200,9 +9133,6 @@ packages:
 
   lodash.sortby@4.7.0:
     resolution: {integrity: sha512-HDWXG8isMntAyRF5vZ7xKuEvOhT4AhlRt/3czTSjvGUxjYCBVRQY48ViDHyfYz9VIoBkW4TMGQNapx+l3RUwdA==}
-
-  lodash.union@4.6.0:
-    resolution: {integrity: sha512-c4pB2CdGrGdjMKYLA+XiRDO7Y0PRQbm/Gzg8qMj+QH+pFVAoTp5sBpO0odL3FjoPCGjK96p6qsP+yQoiLoOBcw==}
 
   lodash.uniq@4.5.0:
     resolution: {integrity: sha512-xfBaXQd9ryd9dlSDvnvI0lvxfLJlYAZzXomUYzLKtUeOQvOP5piqAWuGtrhWeqaXK9hhoM/iyJc5AV+XfsX3HQ==}
@@ -9262,10 +9192,6 @@ packages:
 
   magicast@0.3.5:
     resolution: {integrity: sha512-L0WhttDl+2BOsybvEOLK7fW3UA0OQ0IQ2d6Zl2x/a6vVRs3bAY0ECOSHHeL5jD+SbOpOCUEi0y1DgHEn9Qn1AQ==}
-
-  make-array@1.0.5:
-    resolution: {integrity: sha512-sgK2SAzxT19rWU+qxKUcn6PAh/swiIiz2F8C2cZjLc1z4iwYIfdoihqFIDQ8BDzAGtWPYJ6Sr13K1j/DXynDLA==}
-    engines: {node: '>=0.10.0'}
 
   make-dir@2.1.0:
     resolution: {integrity: sha512-LS9X+dc8KLxXCb8dni79fLIIUA5VyZoyjSMCwTluaXA0o27cCK0bhXkpgw+sTXVpPy/lSO57ilRixqk0vDmtRA==}
@@ -11949,9 +11875,6 @@ packages:
   tsconfig-paths@3.15.0:
     resolution: {integrity: sha512-2Ac2RgzDe/cn48GvOe3M+o82pEFewD3UPbyoUHHdKasHwJKjds4fLXWf/Ux5kATBKN20oaFGu+jbElp1pos0mg==}
 
-  tslib@1.14.1:
-    resolution: {integrity: sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==}
-
   tslib@2.4.0:
     resolution: {integrity: sha512-d6xOpEDfsi2CZVlPQzGeux8XMwLT9hssAsaPYExaQMuYskwb+x1x7J371tWlbBdWHroy99KnVB6qIkUbs5X3UQ==}
 
@@ -12262,10 +12185,6 @@ packages:
 
   util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
-
-  util.inherits@1.0.3:
-    resolution: {integrity: sha512-gMirHcfcq5D87nXDwbZqf5vl65S0mpMZBsHXJsXOO3Hc3G+JoQLwgaJa1h+PL7h3WhocnuLqoe8CuvMlztkyCA==}
-    engines: {node: '>=4'}
 
   util@0.12.5:
     resolution: {integrity: sha512-kZf/K6hEIrWHI6XqOFUiiMa+79wE/D8Q+NCNAWclkyg3b4d2k7s0QGepNjiABc+aR3N1PAyHL7p6UcLY6LmrnA==}
@@ -12946,10 +12865,10 @@ snapshots:
     dependencies:
       '@azure/abort-controller': 1.1.0
       '@azure/core-auth': 1.7.1
-      '@azure/core-client': 1.9.1
+      '@azure/core-client': 1.10.0
       '@azure/core-lro': 2.7.1
       '@azure/core-paging': 1.6.1
-      '@azure/core-rest-pipeline': 1.15.1
+      '@azure/core-rest-pipeline': 1.22.0
       tslib: 2.4.0
     transitivePeerDependencies:
       - supports-color
@@ -12957,21 +12876,9 @@ snapshots:
   '@azure/arm-appinsights@5.0.0-beta.7':
     dependencies:
       '@azure/core-auth': 1.7.1
-      '@azure/core-client': 1.9.1
+      '@azure/core-client': 1.10.0
       '@azure/core-paging': 1.6.1
-      '@azure/core-rest-pipeline': 1.15.1
-      tslib: 2.4.0
-    transitivePeerDependencies:
-      - supports-color
-
-  '@azure/arm-appservice@13.0.3':
-    dependencies:
-      '@azure/abort-controller': 1.1.0
-      '@azure/core-auth': 1.9.0
-      '@azure/core-client': 1.9.2
-      '@azure/core-lro': 2.7.1
-      '@azure/core-paging': 1.6.1
-      '@azure/core-rest-pipeline': 1.17.0
+      '@azure/core-rest-pipeline': 1.22.0
       tslib: 2.4.0
     transitivePeerDependencies:
       - supports-color
@@ -12980,10 +12887,10 @@ snapshots:
     dependencies:
       '@azure/abort-controller': 1.1.0
       '@azure/core-auth': 1.9.0
-      '@azure/core-client': 1.9.2
+      '@azure/core-client': 1.10.0
       '@azure/core-lro': 2.7.1
       '@azure/core-paging': 1.6.1
-      '@azure/core-rest-pipeline': 1.17.0
+      '@azure/core-rest-pipeline': 1.22.0
       tslib: 2.4.0
     transitivePeerDependencies:
       - supports-color
@@ -12991,9 +12898,9 @@ snapshots:
   '@azure/arm-authorization-profile-2020-09-01-hybrid@2.1.0':
     dependencies:
       '@azure/core-auth': 1.9.0
-      '@azure/core-client': 1.9.2
+      '@azure/core-client': 1.10.0
       '@azure/core-paging': 1.6.1
-      '@azure/core-rest-pipeline': 1.17.0
+      '@azure/core-rest-pipeline': 1.22.0
       tslib: 2.4.0
     transitivePeerDependencies:
       - supports-color
@@ -13001,9 +12908,9 @@ snapshots:
   '@azure/arm-authorization@9.0.0':
     dependencies:
       '@azure/core-auth': 1.9.0
-      '@azure/core-client': 1.9.2
+      '@azure/core-client': 1.10.0
       '@azure/core-paging': 1.6.1
-      '@azure/core-rest-pipeline': 1.17.0
+      '@azure/core-rest-pipeline': 1.22.0
       tslib: 2.4.0
     transitivePeerDependencies:
       - supports-color
@@ -13011,7 +12918,7 @@ snapshots:
   '@azure/arm-msi@2.2.0':
     dependencies:
       '@azure/core-auth': 1.9.0
-      '@azure/core-client': 1.9.2
+      '@azure/core-client': 1.10.0
       '@azure/core-paging': 1.6.2
       '@azure/core-rest-pipeline': 1.22.0
       tslib: 2.8.1
@@ -13022,29 +12929,20 @@ snapshots:
     dependencies:
       '@azure/abort-controller': 1.1.0
       '@azure/core-auth': 1.9.0
-      '@azure/core-client': 1.9.2
+      '@azure/core-client': 1.10.0
       '@azure/core-lro': 2.7.1
       '@azure/core-paging': 1.6.1
-      '@azure/core-rest-pipeline': 1.17.0
+      '@azure/core-rest-pipeline': 1.22.0
       tslib: 2.4.0
     transitivePeerDependencies:
       - supports-color
 
-  '@azure/arm-resourcegraph@4.2.1':
-    dependencies:
-      '@azure/core-auth': 1.9.0
-      '@azure/ms-rest-azure-js': 2.1.0
-      '@azure/ms-rest-js': 2.7.0
-      tslib: 1.14.1
-    transitivePeerDependencies:
-      - encoding
-
   '@azure/arm-resourcegraph@5.0.0-beta.3':
     dependencies:
       '@azure/core-auth': 1.9.0
-      '@azure/core-client': 1.9.2
+      '@azure/core-client': 1.10.0
       '@azure/core-paging': 1.6.1
-      '@azure/core-rest-pipeline': 1.17.0
+      '@azure/core-rest-pipeline': 1.22.0
       tslib: 2.4.0
     transitivePeerDependencies:
       - supports-color
@@ -13053,10 +12951,10 @@ snapshots:
     dependencies:
       '@azure/abort-controller': 1.1.0
       '@azure/core-auth': 1.9.0
-      '@azure/core-client': 1.9.2
+      '@azure/core-client': 1.10.0
       '@azure/core-lro': 2.7.1
       '@azure/core-paging': 1.6.1
-      '@azure/core-rest-pipeline': 1.17.0
+      '@azure/core-rest-pipeline': 1.22.0
       tslib: 2.4.0
     transitivePeerDependencies:
       - supports-color
@@ -13064,9 +12962,9 @@ snapshots:
   '@azure/arm-resources-subscriptions@2.1.0':
     dependencies:
       '@azure/core-auth': 1.7.1
-      '@azure/core-client': 1.9.1
+      '@azure/core-client': 1.10.0
       '@azure/core-paging': 1.6.1
-      '@azure/core-rest-pipeline': 1.15.1
+      '@azure/core-rest-pipeline': 1.22.0
       tslib: 2.4.0
     transitivePeerDependencies:
       - supports-color
@@ -13075,10 +12973,10 @@ snapshots:
     dependencies:
       '@azure/abort-controller': 1.1.0
       '@azure/core-auth': 1.9.0
-      '@azure/core-client': 1.9.2
+      '@azure/core-client': 1.10.0
       '@azure/core-lro': 2.7.1
       '@azure/core-paging': 1.6.1
-      '@azure/core-rest-pipeline': 1.17.0
+      '@azure/core-rest-pipeline': 1.22.0
       tslib: 2.4.0
     transitivePeerDependencies:
       - supports-color
@@ -13087,22 +12985,10 @@ snapshots:
     dependencies:
       '@azure/abort-controller': 1.1.0
       '@azure/core-auth': 1.9.0
-      '@azure/core-client': 1.9.2
+      '@azure/core-client': 1.10.0
       '@azure/core-lro': 2.7.1
       '@azure/core-paging': 1.6.1
-      '@azure/core-rest-pipeline': 1.17.0
-      tslib: 2.4.0
-    transitivePeerDependencies:
-      - supports-color
-
-  '@azure/arm-storage@17.2.1':
-    dependencies:
-      '@azure/abort-controller': 1.1.0
-      '@azure/core-auth': 1.9.0
-      '@azure/core-client': 1.9.2
-      '@azure/core-lro': 2.7.1
-      '@azure/core-paging': 1.6.1
-      '@azure/core-rest-pipeline': 1.17.0
+      '@azure/core-rest-pipeline': 1.22.0
       tslib: 2.4.0
     transitivePeerDependencies:
       - supports-color
@@ -13116,18 +13002,6 @@ snapshots:
       '@azure/core-paging': 1.6.2
       '@azure/core-rest-pipeline': 1.22.0
       tslib: 2.8.1
-    transitivePeerDependencies:
-      - supports-color
-
-  '@azure/arm-subscriptions@5.1.0':
-    dependencies:
-      '@azure/abort-controller': 1.1.0
-      '@azure/core-auth': 1.9.0
-      '@azure/core-client': 1.9.2
-      '@azure/core-lro': 2.7.1
-      '@azure/core-paging': 1.6.1
-      '@azure/core-rest-pipeline': 1.17.0
-      tslib: 2.4.0
     transitivePeerDependencies:
       - supports-color
 
@@ -13146,34 +13020,10 @@ snapshots:
   '@azure/core-client@1.10.0':
     dependencies:
       '@azure/abort-controller': 2.1.2
-      '@azure/core-auth': 1.9.0
+      '@azure/core-auth': 1.7.1
       '@azure/core-rest-pipeline': 1.22.0
       '@azure/core-tracing': 1.2.0
-      '@azure/core-util': 1.11.0
-      '@azure/logger': 1.1.1
-      tslib: 2.8.1
-    transitivePeerDependencies:
-      - supports-color
-
-  '@azure/core-client@1.9.1':
-    dependencies:
-      '@azure/abort-controller': 2.1.2
-      '@azure/core-auth': 1.7.1
-      '@azure/core-rest-pipeline': 1.15.1
-      '@azure/core-tracing': 1.2.0
       '@azure/core-util': 1.8.1
-      '@azure/logger': 1.1.1
-      tslib: 2.8.1
-    transitivePeerDependencies:
-      - supports-color
-
-  '@azure/core-client@1.9.2':
-    dependencies:
-      '@azure/abort-controller': 2.1.2
-      '@azure/core-auth': 1.9.0
-      '@azure/core-rest-pipeline': 1.17.0
-      '@azure/core-tracing': 1.2.0
-      '@azure/core-util': 1.11.0
       '@azure/logger': 1.1.1
       tslib: 2.8.1
     transitivePeerDependencies:
@@ -13182,8 +13032,8 @@ snapshots:
   '@azure/core-http-compat@2.1.2':
     dependencies:
       '@azure/abort-controller': 2.1.2
-      '@azure/core-client': 1.9.2
-      '@azure/core-rest-pipeline': 1.15.1
+      '@azure/core-client': 1.10.0
+      '@azure/core-rest-pipeline': 1.22.0
     transitivePeerDependencies:
       - supports-color
 
@@ -13220,32 +13070,6 @@ snapshots:
   '@azure/core-paging@1.6.2':
     dependencies:
       tslib: 2.8.1
-
-  '@azure/core-rest-pipeline@1.15.1':
-    dependencies:
-      '@azure/abort-controller': 2.1.2
-      '@azure/core-auth': 1.7.1
-      '@azure/core-tracing': 1.2.0
-      '@azure/core-util': 1.8.1
-      '@azure/logger': 1.1.1
-      http-proxy-agent: 7.0.2
-      https-proxy-agent: 7.0.4
-      tslib: 2.8.1
-    transitivePeerDependencies:
-      - supports-color
-
-  '@azure/core-rest-pipeline@1.17.0':
-    dependencies:
-      '@azure/abort-controller': 2.1.2
-      '@azure/core-auth': 1.9.0
-      '@azure/core-tracing': 1.2.0
-      '@azure/core-util': 1.11.0
-      '@azure/logger': 1.1.1
-      http-proxy-agent: 7.0.2
-      https-proxy-agent: 7.0.4
-      tslib: 2.8.1
-    transitivePeerDependencies:
-      - supports-color
 
   '@azure/core-rest-pipeline@1.22.0':
     dependencies:
@@ -13287,8 +13111,8 @@ snapshots:
     dependencies:
       '@azure/abort-controller': 2.1.2
       '@azure/core-auth': 1.9.0
-      '@azure/core-client': 1.9.2
-      '@azure/core-rest-pipeline': 1.17.0
+      '@azure/core-client': 1.10.0
+      '@azure/core-rest-pipeline': 1.22.0
       '@azure/core-tracing': 1.2.0
       '@azure/core-util': 1.11.0
       '@azure/logger': 1.1.1
@@ -13307,27 +13131,6 @@ snapshots:
       tslib: 2.8.1
 
   '@azure/ms-rest-azure-env@2.0.0': {}
-
-  '@azure/ms-rest-azure-js@2.1.0':
-    dependencies:
-      '@azure/core-auth': 1.9.0
-      '@azure/ms-rest-js': 2.7.0
-      tslib: 1.14.1
-    transitivePeerDependencies:
-      - encoding
-
-  '@azure/ms-rest-js@2.7.0':
-    dependencies:
-      '@azure/core-auth': 1.7.1
-      abort-controller: 3.0.0
-      form-data: 2.5.1
-      node-fetch: 2.7.0
-      tslib: 1.14.1
-      tunnel: 0.0.6
-      uuid: 8.3.2
-      xml2js: 0.5.0
-    transitivePeerDependencies:
-      - encoding
 
   '@azure/msal-browser@3.26.1':
     dependencies:
@@ -13358,10 +13161,10 @@ snapshots:
     dependencies:
       '@azure/abort-controller': 2.1.2
       '@azure/core-auth': 1.7.1
-      '@azure/core-client': 1.9.1
+      '@azure/core-client': 1.10.0
       '@azure/core-http-compat': 2.1.2
       '@azure/core-paging': 1.6.1
-      '@azure/core-rest-pipeline': 1.15.1
+      '@azure/core-rest-pipeline': 1.22.0
       '@azure/core-tracing': 1.2.0
       '@azure/core-util': 1.8.1
       '@azure/core-xml': 1.4.4
@@ -18164,14 +17967,6 @@ snapshots:
     dependencies:
       langium: 3.3.1
 
-  '@microsoft/1ds-core-js@3.2.17(tslib@2.4.0)':
-    dependencies:
-      '@microsoft/applicationinsights-core-js': 2.8.18(tslib@2.4.0)
-      '@microsoft/applicationinsights-shims': 2.0.2
-      '@microsoft/dynamicproto-js': 1.1.11
-    transitivePeerDependencies:
-      - tslib
-
   '@microsoft/1ds-core-js@4.3.4(tslib@2.4.0)':
     dependencies:
       '@microsoft/applicationinsights-core-js': 3.3.4(tslib@2.4.0)
@@ -18179,14 +17974,6 @@ snapshots:
       '@microsoft/dynamicproto-js': 2.0.3
       '@nevware21/ts-async': 0.5.4
       '@nevware21/ts-utils': 0.11.6
-    transitivePeerDependencies:
-      - tslib
-
-  '@microsoft/1ds-post-js@3.2.17(tslib@2.4.0)':
-    dependencies:
-      '@microsoft/1ds-core-js': 3.2.17(tslib@2.4.0)
-      '@microsoft/applicationinsights-shims': 2.0.2
-      '@microsoft/dynamicproto-js': 1.1.11
     transitivePeerDependencies:
       - tslib
 
@@ -18246,12 +18033,6 @@ snapshots:
       '@microsoft/applicationinsights-shims': 3.0.1
       '@microsoft/dynamicproto-js': 2.0.3
       '@nevware21/ts-utils': 0.11.6
-      tslib: 2.4.0
-
-  '@microsoft/applicationinsights-core-js@2.8.18(tslib@2.4.0)':
-    dependencies:
-      '@microsoft/applicationinsights-shims': 2.0.2
-      '@microsoft/dynamicproto-js': 1.1.11
       tslib: 2.4.0
 
   '@microsoft/applicationinsights-core-js@2.8.18(tslib@2.8.1)':
@@ -18337,37 +18118,6 @@ snapshots:
 
   '@microsoft/load-themed-styles@1.10.295': {}
 
-  '@microsoft/vscode-azext-azureappservice@0.8.1(tslib@2.4.0)':
-    dependencies:
-      '@azure/abort-controller': 1.1.0
-      '@azure/arm-appinsights': 5.0.0-beta.7
-      '@azure/arm-appservice': 13.0.3
-      '@azure/arm-operationalinsights': 8.0.1
-      '@azure/arm-resourcegraph': 4.2.1
-      '@azure/arm-resources': 5.2.0
-      '@azure/arm-subscriptions': 5.1.0
-      '@azure/ms-rest-azure-env': 2.0.0
-      '@azure/ms-rest-js': 2.7.0
-      '@azure/storage-blob': 12.17.0
-      '@microsoft/vscode-azext-azureutils': 0.3.9(@azure/ms-rest-azure-env@2.0.0)(tslib@2.4.0)
-      '@microsoft/vscode-azext-utils': 0.4.6(@azure/ms-rest-azure-env@2.0.0)(tslib@2.4.0)
-      dayjs: 1.11.10
-      fs-extra: 10.1.0
-      glob-gitignore: 1.0.14
-      globby: 11.1.0
-      p-retry: 3.0.1
-      pretty-bytes: 5.6.0
-      simple-git: 3.23.0
-      vscode-nls: 5.2.0
-      ws: 8.18.0
-      yazl: 2.5.1
-    transitivePeerDependencies:
-      - bufferutil
-      - encoding
-      - supports-color
-      - tslib
-      - utf-8-validate
-
   '@microsoft/vscode-azext-azureappservice@3.6.4(@azure/ms-rest-azure-env@2.0.0)(@microsoft/vscode-azext-azureappsettings@0.2.8(@azure/ms-rest-azure-env@2.0.0)(tslib@2.4.0))(tslib@2.4.0)':
     dependencies:
       '@azure/abort-controller': 1.1.0
@@ -18376,8 +18126,8 @@ snapshots:
       '@azure/arm-operationalinsights': 8.0.1
       '@azure/arm-resourcegraph': 5.0.0-beta.3
       '@azure/arm-resources-subscriptions': 2.1.0
-      '@azure/core-client': 1.9.2
-      '@azure/core-rest-pipeline': 1.17.0
+      '@azure/core-client': 1.10.0
+      '@azure/core-rest-pipeline': 1.22.0
       '@azure/ms-rest-azure-env': 2.0.0
       '@azure/storage-blob': 12.17.0
       '@microsoft/vscode-azext-azureappsettings': 0.2.8(@azure/ms-rest-azure-env@2.0.0)(tslib@2.4.0)
@@ -18408,28 +18158,11 @@ snapshots:
   '@microsoft/vscode-azext-azureauth@4.1.1':
     dependencies:
       '@azure/arm-resources-subscriptions': 2.1.0
-      '@azure/core-client': 1.9.2
-      '@azure/core-rest-pipeline': 1.17.0
+      '@azure/core-client': 1.10.0
+      '@azure/core-rest-pipeline': 1.22.0
       '@azure/ms-rest-azure-env': 2.0.0
     transitivePeerDependencies:
       - supports-color
-
-  '@microsoft/vscode-azext-azureutils@0.3.9(@azure/ms-rest-azure-env@2.0.0)(tslib@2.4.0)':
-    dependencies:
-      '@azure/arm-resources': 5.2.0
-      '@azure/arm-resources-profile-2020-09-01-hybrid': 2.1.0
-      '@azure/arm-resources-subscriptions': 2.1.0
-      '@azure/arm-storage': 17.2.1
-      '@azure/arm-storage-profile-2020-09-01-hybrid': 2.1.0
-      '@azure/ms-rest-js': 2.7.0
-      '@microsoft/vscode-azext-utils': 0.4.6(@azure/ms-rest-azure-env@2.0.0)(tslib@2.4.0)
-      semver: 7.6.0
-      vscode-nls: 5.2.0
-    transitivePeerDependencies:
-      - '@azure/ms-rest-azure-env'
-      - encoding
-      - supports-color
-      - tslib
 
   '@microsoft/vscode-azext-azureutils@3.4.6(@azure/ms-rest-azure-env@2.0.0)(tslib@2.4.0)':
     dependencies:
@@ -18441,8 +18174,8 @@ snapshots:
       '@azure/arm-resources-subscriptions': 2.1.0
       '@azure/arm-storage': 18.6.0
       '@azure/arm-storage-profile-2020-09-01-hybrid': 2.1.0
-      '@azure/core-client': 1.9.2
-      '@azure/core-rest-pipeline': 1.17.0
+      '@azure/core-client': 1.10.0
+      '@azure/core-rest-pipeline': 1.22.0
       '@azure/logger': 1.1.1
       '@azure/ms-rest-azure-env': 2.0.0
       '@microsoft/vscode-azext-utils': 3.3.3(@azure/ms-rest-azure-env@2.0.0)(tslib@2.4.0)
@@ -18456,21 +18189,6 @@ snapshots:
     dependencies:
       '@microsoft/vscode-azext-utils': 3.3.3(@azure/ms-rest-azure-env@2.0.0)(tslib@2.4.0)
       '@octokit/rest': 20.1.2
-    transitivePeerDependencies:
-      - '@azure/ms-rest-azure-env'
-      - tslib
-
-  '@microsoft/vscode-azext-utils@0.4.6(@azure/ms-rest-azure-env@2.0.0)(tslib@2.4.0)':
-    dependencies:
-      '@microsoft/vscode-azureresources-api': 2.2.0(@azure/ms-rest-azure-env@2.0.0)
-      '@vscode/extension-telemetry': 0.6.2(tslib@2.4.0)
-      dayjs: 1.11.10
-      escape-string-regexp: 2.0.0
-      html-to-text: 8.2.1
-      open: 8.4.2
-      semver: 7.6.0
-      vscode-nls: 5.2.0
-      vscode-tas-client: 0.1.84
     transitivePeerDependencies:
       - '@azure/ms-rest-azure-env'
       - tslib
@@ -19909,13 +19627,6 @@ snapshots:
       '@vitest/pretty-format': 3.2.4
       loupe: 3.1.4
       tinyrainbow: 2.0.0
-
-  '@vscode/extension-telemetry@0.6.2(tslib@2.4.0)':
-    dependencies:
-      '@microsoft/1ds-core-js': 3.2.17(tslib@2.4.0)
-      '@microsoft/1ds-post-js': 3.2.17(tslib@2.4.0)
-    transitivePeerDependencies:
-      - tslib
 
   '@vscode/extension-telemetry@0.9.8(tslib@2.4.0)':
     dependencies:
@@ -21549,8 +21260,6 @@ snapshots:
     dependencies:
       '@babel/runtime': 7.27.6
 
-  dayjs@1.11.10: {}
-
   dayjs@1.11.13: {}
 
   debounce@1.2.1: {}
@@ -22588,12 +22297,6 @@ snapshots:
       combined-stream: 1.0.8
       mime-types: 2.1.35
 
-  form-data@2.5.1:
-    dependencies:
-      asynckit: 0.4.0
-      combined-stream: 1.0.8
-      mime-types: 2.1.35
-
   form-data@4.0.0:
     dependencies:
       asynckit: 0.4.0
@@ -22694,15 +22397,6 @@ snapshots:
     optional: true
 
   github-slugger@1.5.0: {}
-
-  glob-gitignore@1.0.14:
-    dependencies:
-      glob: 7.2.3
-      ignore: 5.3.1
-      lodash.difference: 4.5.0
-      lodash.union: 4.6.0
-      make-array: 1.0.5
-      util.inherits: 1.0.3
 
   glob-parent@5.1.2:
     dependencies:
@@ -23906,8 +23600,6 @@ snapshots:
 
   lodash.debounce@4.0.8: {}
 
-  lodash.difference@4.5.0: {}
-
   lodash.findindex@4.6.0: {}
 
   lodash.frompairs@4.0.1: {}
@@ -23937,8 +23629,6 @@ snapshots:
   lodash.once@4.1.1: {}
 
   lodash.sortby@4.7.0: {}
-
-  lodash.union@4.6.0: {}
 
   lodash.uniq@4.5.0: {}
 
@@ -23995,8 +23685,6 @@ snapshots:
       '@babel/parser': 7.26.2
       '@babel/types': 7.26.0
       source-map-js: 1.2.1
-
-  make-array@1.0.5: {}
 
   make-dir@2.1.0:
     dependencies:
@@ -27417,8 +27105,6 @@ snapshots:
       minimist: 1.2.8
       strip-bom: 3.0.0
 
-  tslib@1.14.1: {}
-
   tslib@2.4.0: {}
 
   tslib@2.6.2: {}
@@ -27760,8 +27446,6 @@ snapshots:
       react: 18.3.1
 
   util-deprecate@1.0.2: {}
-
-  util.inherits@1.0.3: {}
 
   util@0.12.5:
     dependencies:

@@ -20,6 +20,8 @@ import type {
 } from '@microsoft/vscode-extension-logic-apps';
 import { ProjectSource } from '@microsoft/vscode-extension-logic-apps';
 import type { ContainerAppSecret } from '@azure/arm-appservice';
+import type { AppSettingsTreeItem } from '@microsoft/vscode-azext-azureappsettings';
+
 export class SlotTreeItem extends AzExtParentTreeItem implements IProjectTreeItem {
   public logStreamPath = '';
   public configurationsTreeItem: ConfigurationsTreeItem;
