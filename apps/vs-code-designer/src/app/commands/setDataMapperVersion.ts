@@ -21,8 +21,6 @@ export async function switchToDataMapperV2(): Promise<void> {
     const errorMessage = localize('failedToUpdateDataMapperVersion', 'Failed to update Data Mapper version: {0}', error.message ?? error);
 
     ext.outputChannel.appendLog(errorMessage);
-    // context.telemetry.properties.result = "Failed";
-    // context.telemetry.properties.error = errorMessage;
 
     throw new Error(errorMessage);
   }

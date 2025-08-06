@@ -37,15 +37,12 @@ export const DeprecationToastContent = ({ onSwitchToV2, onDismiss }: Deprecation
         {titleLoc}
       </ToastTitle>
       <ToastBody>
-        See{' '}
-        <Link
-          href="https://techcommunity.microsoft.com/blog/integrationsonazureblog/%F0%9F%9A%80-new--improved-data-mapper-ux-in-azure-logic-apps-%E2%80%93-now-in-public-preview/4377088"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        Data Mapper v2 is now in GA! Please switch to v2 or reach out if you have any issues since v1 will be retired in September 2025.{' '}
+        <br /> See{' '}
+        <Link href="https://aka.ms/datamapperga" target="_blank" rel="noopener noreferrer">
           this announcement
         </Link>{' '}
-        for more information. Click the button below to set default to v2, then reopen your map.
+        for more information. <b>Click the button below to set default to v2, then reopen your map.</b>
         <div style={{ marginTop: '8px', display: 'flex', gap: '8px' }}>
           <Button appearance="primary" size="small" onClick={onSwitchToV2}>
             {switchButtonLoc}
