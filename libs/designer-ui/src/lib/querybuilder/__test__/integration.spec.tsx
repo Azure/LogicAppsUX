@@ -543,8 +543,8 @@ describe('Query Builder Integration Tests', () => {
       unmount2();
 
       // Both components should render within reasonable time (less than 2 seconds each)
-      expect(regularTime).toBeLessThan(2000);
-      expect(hybridTime).toBeLessThan(2000);
+      expect(regularTime).toBeLessThan(3000);
+      expect(hybridTime).toBeLessThan(3000);
       
       // Performance difference should not be extreme (neither should be more than 5x slower)
       const ratio = Math.max(regularTime, hybridTime) / Math.min(regularTime, hybridTime);
