@@ -84,4 +84,7 @@ export type MessageToVsix =
     }
   | {
       command: typeof ExtensionCommand.isTestDisabledForOS;
+    }
+  | {
+      command: typeof ExtensionCommand.switchToDataMapperV2;
     };

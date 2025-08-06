@@ -184,7 +184,7 @@ describe('Group Component Move Functionality', () => {
     it('should handle group condition changes', () => {
       renderGroup();
 
-      // Group dropdown should be present and accessible  
+      // Group dropdown should be present and accessible
       const dropdowns = screen.getAllByRole('combobox');
       expect(dropdowns.length).toBeGreaterThan(0);
       expect(dropdowns[0]).toBeInTheDocument();

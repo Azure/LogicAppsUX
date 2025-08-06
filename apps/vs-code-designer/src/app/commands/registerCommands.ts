@@ -66,6 +66,7 @@ import { pickCustomCodeNetHostProcess } from './pickCustomCodeNetHostProcess';
 import { debugLogicApp } from './debugLogicApp';
 import { syncCloudSettings } from './syncCloudSettings';
 import { getDebugSymbolDll } from '../utils/getDebugSymbolDll';
+import { switchToDataMapperV2 } from './setDataMapperVersion';
 
 export function registerCommands(): void {
   registerCommandWithTreeNodeUnwrapping(extensionCommand.openDesigner, openDesigner);
@@ -153,4 +154,5 @@ export function registerCommands(): void {
   registerCommandWithTreeNodeUnwrapping(extensionCommand.buildCustomCodeFunctionsProject, buildCustomCodeFunctionsProject);
   registerCommand(extensionCommand.createCustomCodeFunction, createCustomCodeFunctionFromCommand);
   registerCommand(extensionCommand.debugLogicApp, debugLogicApp);
+  registerCommand(extensionCommand.switchToDataMapperV2, switchToDataMapperV2);
 }
