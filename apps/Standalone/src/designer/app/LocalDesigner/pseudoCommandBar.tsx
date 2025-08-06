@@ -8,14 +8,12 @@ import {
   useIsDesignerDirty,
   resetDesignerDirtyState,
   serializeWorkflow,
-  useAllConnectionErrors,
-  useAllSettingsValidationErrors,
-  useWorkflowParameterValidationErrors,
   openPanel,
   onRedoClick,
   onUndoClick,
   useCanUndo,
   useCanRedo,
+  useTotalNumErrors,
 } from '@microsoft/logic-apps-designer';
 import { EditorLanguage, RUN_AFTER_COLORS } from '@microsoft/logic-apps-shared';
 import { useMemo, useState } from 'react';
@@ -40,27 +38,8 @@ export const PseudoCommandBar = () => {
 
   const isDarkMode = useSelector((state: RootState) => state.designerOptions.isDarkMode);
 
-  const allInputErrors = useSelector((state: RootState) => {
-    return (Object.entries(state.operations.inputParameters) ?? []).filter(([_id, nodeInputs]) =>
-      Object.values(nodeInputs.parameterGroups).some((parameterGroup) =>
-        parameterGroup.parameters.some((parameter) => (parameter?.validationErrors?.length ?? 0) > 0)
-      )
-    );
-  });
-  const haveInputErrors = allInputErrors.length > 0;
-
-  const isObjEmpty = (obj: any) => Object.keys(obj ?? {}).length === 0;
-  const allWorkflowParameterErrors = useWorkflowParameterValidationErrors();
-  const haveWorkflowParameterErrors = !isObjEmpty(allWorkflowParameterErrors);
-  const allSettingsErrors = useAllSettingsValidationErrors();
-  const haveSettingsErrors = !isObjEmpty(allSettingsErrors);
-  const allConnectionErrors = useAllConnectionErrors();
-  const haveConnectionErrors = !isObjEmpty(allConnectionErrors);
-
-  const haveErrors = useMemo(
-    () => haveInputErrors || haveWorkflowParameterErrors || haveSettingsErrors || haveConnectionErrors,
-    [haveInputErrors, haveWorkflowParameterErrors, haveSettingsErrors, haveConnectionErrors]
-  );
+  const numErrors = useTotalNumErrors();
+  const haveErrors = useMemo(() => numErrors > 0, [numErrors]);
 
   const isDirty = useIsDesignerDirty();
 

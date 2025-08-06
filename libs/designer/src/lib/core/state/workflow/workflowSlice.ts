@@ -74,6 +74,7 @@ export const initialWorkflowState: WorkflowState = {
   },
   timelineRepetitionIndex: 0,
   timelineRepetitionArray: [],
+  flowErrors: {},
 };
 
 export const workflowSlice = createSlice({
@@ -735,6 +736,9 @@ export const workflowSlice = createSlice({
       }
       state.hostData.errorMessages[action.payload.level] = action.payload.errorMessages;
     },
+    setFlowErrors: (state, action: PayloadAction<{ flowErrors: Record<string, string[]> }>) => {
+      state.flowErrors = action.payload.flowErrors;
+    },
   },
   extraReducers: (builder) => {
     // Add reducers for additional action types here, and handle loading state as needed
@@ -832,6 +836,7 @@ export const {
   setSubgraphRunData,
   setIsWorkflowDirty,
   setHostErrorMessages,
+  setFlowErrors,
   setRunDataInputOutputs,
   toggleCollapsedActionId,
   clearFocusCollapsedNode,
