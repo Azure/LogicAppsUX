@@ -15,7 +15,7 @@
     "@microsoft/vscode-azext-azureauth": "^4.1.0",
     "@microsoft/vscode-azext-azureutils": "^3.4.0",
     "@microsoft/vscode-azext-azureappsettings": "^0.2.8",
-    "@microsoft/vscode-azext-utils":"^3.2.0",
+    "@microsoft/vscode-azext-utils": "^3.2.0",
     "@microsoft/vscode-azureresources-api": "^2.0.4",
     "@microsoft/vscode-extension-logic-apps": "workspace:*",
     "@types/adm-zip": "^0.5.1",

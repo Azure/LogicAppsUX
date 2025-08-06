@@ -5,7 +5,7 @@
     "@apidevtools/swagger-parser": "10.0.3",
     "@microsoft/logic-apps-shared": "workspace:*",
     "@microsoft/vscode-azext-azureappservice": "^3.6.4",
-    "@microsoft/vscode-azext-utils":"^3.2.0",
+    "@microsoft/vscode-azext-utils": "^3.2.0",
     "@azure/arm-appcontainers": "^2.0.0-beta.3",
     "@xyflow/react": "^12.3.5",
     "axios": "^1.7.7",
