@@ -52,6 +52,7 @@ export const ExtensionCommand = {
   isTestDisabledForOS: 'isTestDisabledForOS',
   fileABug: 'fileABug',
   resetDesignerDirtyState: 'resetDesignerDirtyState',
+  switchToDataMapperV2: 'switchToDataMapperV2',
 } as const;
 export type ExtensionCommand = (typeof ExtensionCommand)[keyof typeof ExtensionCommand];
 
