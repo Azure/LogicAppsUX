@@ -178,7 +178,7 @@ export const initializeOperationsMetadata = createAsyncThunk(
 
       LoggerService().log({
         level: LogEntryLevel.Error,
-        area: `MCP.${area}`,
+        area: `MCP.${area}.initializeOperationsMetadata`,
         message: errorMessage,
         args: [`operationIds:${unsupportedOperations.join(',')}`],
       });
@@ -205,10 +205,10 @@ export const initializeConnectionMappings = createAsyncThunk(
     } catch (error: any) {
       LoggerService().log({
         level: LogEntryLevel.Error,
-        area: `MCP.${area}`,
+        area: `MCP.${area}.initializeConnectionMappings`,
         message: `Cannot initialize connection mappings for connector: ${connectorId}`,
         error: error instanceof Error ? error : undefined,
-        args: [`operationIds:${operations.join(',')}`],
+        args: [`operationIds:${operations.join(',')}`, `connectorId:${connectorId}`],
       });
 
       dispatch(initEmptyConnectionMap(operations));
