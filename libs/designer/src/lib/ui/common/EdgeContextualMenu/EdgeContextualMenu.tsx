@@ -16,7 +16,7 @@ import {
 import { useIntl } from 'react-intl';
 import { useOnViewportChange } from '@xyflow/react';
 
-import { useAgenticWorkflow, useEdgeContextMenuData, useIsA2AWorkflow } from '../../../core/state/designerView/designerViewSelectors';
+import { useIsAgenticWorkflow, useEdgeContextMenuData, useIsA2AWorkflow } from '../../../core/state/designerView/designerViewSelectors';
 import { addOperation, useNodeDisplayName, useNodeMetadata, type AppDispatch } from '../../../core';
 import { expandDiscoveryPanel } from '../../../core/state/panel/panelSlice';
 import { retrieveClipboardData } from '../../../core/utils/clipboard';
@@ -48,7 +48,7 @@ export const EdgeContextualMenu = () => {
   const intl = useIntl();
 
   const menuData = useEdgeContextMenuData();
-  const isAgenticWorkflow = useAgenticWorkflow();
+  const isAgenticWorkflow = useIsAgenticWorkflow();
   const isA2AWorkflow = useIsA2AWorkflow();
   const graphId = useMemo(() => menuData?.graphId, [menuData]);
   const parentId = useMemo(() => menuData?.parentId, [menuData]);

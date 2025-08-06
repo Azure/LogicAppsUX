@@ -14,7 +14,7 @@ import type { FC } from 'react';
 import { useCallback, useEffect, useState, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { useDiscoveryPanelRelationshipIds, useIsAddingAgentTool } from '../../../core/state/panel/panelSelectors';
-import { useAgenticWorkflow } from '../../../core/state/designerView/designerViewSelectors';
+import { useIsAgenticWorkflow } from '../../../core/state/designerView/designerViewSelectors';
 import { useShouldEnableACASession, useShouldEnableNestedAgent, useShouldEnableParseDocumentWithMetadata } from './hooks';
 import { DefaultSearchOperationsService } from './SearchOpeationsService';
 import constants from '../../../common/constants';
@@ -43,7 +43,7 @@ export const SearchView: FC<SearchViewProps> = ({
   onOperationClick,
   displayRuntimeInfo,
 }) => {
-  const isAgenticWorkflow = useAgenticWorkflow();
+  const isAgenticWorkflow = useIsAgenticWorkflow();
   const shouldEnableParseDocWithMetadata = useShouldEnableParseDocumentWithMetadata();
   const shouldEnableACASession = useShouldEnableACASession();
   const shouldEnableNestedAgent = useShouldEnableNestedAgent();
