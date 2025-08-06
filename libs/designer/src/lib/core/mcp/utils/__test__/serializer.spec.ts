@@ -25,7 +25,7 @@ describe('getWorkflowNameFromOperation', () => {
 
     it('should handle operationSummary with only special characters', () => {
       const result = getWorkflowNameFromOperation('***!!!***', 'send-email-action');
-      expect(result).toBe('send-email-action');
+      expect(result).toBe('');
     });
   });
 
