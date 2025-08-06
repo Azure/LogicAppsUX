@@ -29,6 +29,12 @@ export interface IDesignerPanelMetadata {
   extensionBundleVersion?: string;
 }
 
+export interface CompleteFileSystemConnectionData {
+  connectionName: string;
+  connection: any;
+  error: string;
+}
+
 export interface StandardApp {
   statelessRunMode?: string;
   definition: LogicAppsV2.WorkflowDefinition;

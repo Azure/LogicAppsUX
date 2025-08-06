@@ -115,10 +115,12 @@ export const designerSlice = createSlice({
     },
     updateFileSystemConnection: (state, action: PayloadAction<{ connectionName: string; connection: any; error: string }>) => {
       const { connectionName, connection, error } = action.payload;
+      console.log('charlie react updateFileSystemConnection', connectionName, connection, error);
       if (connection && state.fileSystemConnections[connectionName]) {
         state.fileSystemConnections[connectionName].resolveConnection(connection);
       }
       if (error && state.fileSystemConnections[connectionName]) {
+        console.log('charlie react updateFileSystemConnection', connectionName, connection, error);
         state.fileSystemConnections[connectionName].rejectConnection(error);
       }
       delete state.fileSystemConnections[connectionName];

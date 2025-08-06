@@ -90,6 +90,7 @@ export const DesignerApp = () => {
         connectionInfo,
         connectionName,
       });
+
       return new Promise((resolve, reject) => {
         dispatch(createFileSystemConnection({ connectionName, resolve, reject }));
       });
