@@ -1,5 +1,8 @@
 steps:
-  - script: npx tsx scripts/get-current-version.ts "$(Build.SourceBranchName)"
+  - script: |
+      VERSION=$(npx tsx scripts/get-current-version.ts "$(Build.SourceBranchName)")
+      echo "Current version: $VERSION"
+      echo "##vso[task.setvariable variable=current_version;isOutput=true]$VERSION"
     displayName: "Get Current Version"
     workingDirectory: $(working_directory)
     condition: succeeded()
