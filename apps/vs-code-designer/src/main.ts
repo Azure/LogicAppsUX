@@ -119,13 +119,13 @@ export async function activate(context: vscode.ExtensionContext) {
     promptParameterizeConnections(activateContext, false);
     verifyLocalConnectionKeys(activateContext);
     await startOnboarding(activateContext);
+
+    // Removed for unit test codefull experience standby
     //await prepareTestExplorer(context, activateContext);
 
     ext.extensionVersion = getExtensionVersion();
-
-            ext.rgApi = await getResourceGroupsApi();
-
     ext.rgApi = await getResourceGroupsApi();
+    ext.rgApi.registerApplicationResourceResolver(AzExtResourceType.LogicApp, new LogicAppResolver());
     // @ts-ignore
     ext.azureAccountTreeItem = ext.rgApi.appResourceTree._rootTreeItem as AzureAccountTreeItemWithProjects;
 
@@ -153,7 +153,6 @@ export async function activate(context: vscode.ExtensionContext) {
     activateContext.telemetry.properties.lastStep = 'registerFuncHostTaskEvents';
     registerFuncHostTaskEvents();
 
-    ext.rgApi.registerApplicationResourceResolver(AzExtResourceType.LogicApp, new LogicAppResolver());
     const azureResourcesApi = await getAzureResourcesExtensionApi(context, '2.0.0');
     ext.rgApiV2 = azureResourcesApi;
 
