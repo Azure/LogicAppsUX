@@ -154,15 +154,7 @@ export const initializeOperationsMetadata = createAsyncThunk(
     const failedResults = results.filter((result) => result.status === 'rejected');
     if (failedResults.length > 0) {
       const errorMessage = failedResults.map((result) => (result as PromiseRejectedResult).reason.message).join('\n');
-      const error = new Error(errorMessage);
-      LoggerService().log({
-        level: LogEntryLevel.Error,
-        area: `MCP.${area}`,
-        message: 'Failed to initialize operation metadata in one or more operations',
-        error,
-        args: [`operationIds:${operations.map((op) => op.operationId).join(',')}`],
-      });
-      throw error;
+      throw new Error(errorMessage);
     }
 
     const allNodeData = results

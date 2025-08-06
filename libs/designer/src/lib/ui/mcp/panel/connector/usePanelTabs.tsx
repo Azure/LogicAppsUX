@@ -110,21 +110,21 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
     [selectedOperations, isInitializingConnections]
   );
   const onConnectionsTabNavigation = useCallback(
-    (navLocation: string) => {
+    (navigationLocation: string) => {
       // This triggers the loading state and initializes connections
       dispatch(
         initializeConnectionMappings({
           connectorId: selectedConnectorId as string,
           operations: selectedOperations,
-          area: navLocation,
+          area: navigationLocation,
         })
       );
 
       LoggerService().log({
         level: LogEntryLevel.Trace,
-        area: `MCP.${navLocation}`,
-        message: 'Operations are selected',
-        args: [`operationIds:${selectedOperations.join(',')}`],
+        area: `MCP.${navigationLocation}`,
+        message: 'Connector operations are selected',
+        args: [`operationIds:${selectedOperations.join(',')}`, `connectorId:${selectedConnectorId}`],
       });
     },
     [dispatch, selectedConnectorId, selectedOperations]

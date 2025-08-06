@@ -145,7 +145,7 @@ export const EditOperationPanel = () => {
       level: LogEntryLevel.Trace,
       area: 'MCP.EditOperationPanel',
       message: 'Edit operation details',
-      args: [`operationId:${selectedOperationId}`, `hasDescriptionChanged:${hasDescriptionChanged}`],
+      args: [`operationId:${selectedOperationId}`],
     });
 
     clearSnapshot();
