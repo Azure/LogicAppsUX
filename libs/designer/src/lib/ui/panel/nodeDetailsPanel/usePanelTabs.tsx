@@ -44,7 +44,7 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
   const isA2AWorkflow = useIsA2AWorkflow();
   const parameterValidationErrors = useParameterValidationErrors(nodeId);
   const settingValidationErrors = useSettingValidationErrors(nodeId);
-  const enableChannelsTab = useChannelsTabForAgentLoop();
+  const disableChannelsTab = useChannelsTabForAgentLoop();
 
   const tabProps: PanelTabProps = useMemo(
     () => ({
@@ -98,9 +98,9 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
     () => ({
       ...channelsTab(intl, tabProps),
       // Note: Channels tab is disabled until we have the teams integration ready
-      visible: enableChannelsTab && isAgentNode && !isA2AWorkflow,
+      visible: !disableChannelsTab && isAgentNode && !isA2AWorkflow,
     }),
-    [intl, tabProps, isAgentNode, isA2AWorkflow, enableChannelsTab]
+    [intl, tabProps, isAgentNode, isA2AWorkflow, disableChannelsTab]
   );
 
   const handoffTabItem = useMemo(
