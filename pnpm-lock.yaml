@@ -446,6 +446,9 @@ importers:
       '@microsoft/vscode-azext-azureappservice':
         specifier: ^3.6.4
         version: 3.6.4(@azure/ms-rest-azure-env@2.0.0)(@microsoft/vscode-azext-azureappsettings@0.2.8(@azure/ms-rest-azure-env@2.0.0)(tslib@2.4.0))(tslib@2.4.0)
+      '@microsoft/vscode-azext-azureappsettings':
+        specifier: ^0.2.8
+        version: 0.2.8(@azure/ms-rest-azure-env@2.0.0)(tslib@2.4.0)
       '@microsoft/vscode-azext-azureauth':
         specifier: ^4.1.0
         version: 4.1.1
