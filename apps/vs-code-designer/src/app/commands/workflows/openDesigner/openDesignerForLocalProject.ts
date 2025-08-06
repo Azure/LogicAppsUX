@@ -31,6 +31,7 @@ import { HTTP_METHODS } from '@microsoft/logic-apps-shared';
 import { callWithTelemetryAndErrorHandling, openUrl, type IActionContext } from '@microsoft/vscode-azext-utils';
 import type {
   AzureConnectorDetails,
+  CompleteFileSystemConnectionData,
   FileSystemConnectionInfo,
   IDesignerPanelMetadata,
   Parameter,
@@ -75,13 +76,14 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
       exec(`net use ${rootFolder} ${password} /user:${username}`, (error) => {
         if (error) {
           resolve({ errorMessage: JSON.stringify(error.message) });
+        } else {
+          resolve({
+            connection: {
+              ...connectionInfo,
+              connectionParameters: { mountPath: rootFolder },
+            },
+          });
         }
-        resolve({
-          connection: {
-            ...connectionInfo,
-            connectionParameters: { mountPath: rootFolder },
-          },
-        });
       });
     });
   };
@@ -243,13 +245,14 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
         {
           const connectionName = msg.connectionName;
           const { connection, errorMessage } = await this.createFileSystemConnection(msg.connectionInfo);
+          const completeData: CompleteFileSystemConnectionData = {
+            connectionName,
+            connection,
+            error: errorMessage,
+          };
           this.sendMsgToWebview({
             command: ExtensionCommand.completeFileSystemConnection,
-            data: {
-              connectionName,
-              connection,
-              errorMessage,
-            },
+            data: completeData,
           });
         }
         break;
