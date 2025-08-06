@@ -1,7 +1,6 @@
 import {
   ConnectionService,
   DevLogger,
-  getIntl,
   type IConnectionParameterEditorService,
   type IConnectionService,
   type IConnectorService,
@@ -31,7 +30,7 @@ import { clearConnectionCaches, getConnectionsForConnector } from '../../queries
 import type { RootState } from '../../state/mcp/store';
 import { getConnectionsInWorkflowApp } from '../../configuretemplate/utils/queries';
 import { getReactQueryClient } from '../../ReactQueryProvider';
-import { convertConnectionsDataToReferences, getUnsupportedOperations, initializeOperationDetails } from '../../mcp/utils/helper';
+import { convertConnectionsDataToReferences, initializeOperationDetails } from '../../mcp/utils/helper';
 import {
   initEmptyConnectionMap,
   initializeConnectionReferences,
@@ -145,7 +144,6 @@ const initializeServices = ({
 export const initializeOperationsMetadata = createAsyncThunk(
   'initializeOperationsMetadata',
   async ({ operations }: { operations: NodeOperation[] }, { dispatch }): Promise<void> => {
-    const intl = getIntl();
     const promises: Promise<NodeOperationInputsData | undefined>[] = operations.map((operation) =>
       initializeOperationDetails(operation.operationId, operation)
     );
@@ -160,7 +158,7 @@ export const initializeOperationsMetadata = createAsyncThunk(
     const allNodeData = results
       .filter((result) => result.status === 'fulfilled' && !!result.value)
       .map((result) => (result as PromiseFulfilledResult<any>).value) as NodeOperationInputsData[];
-    const unsupportedOperations = getUnsupportedOperations(allNodeData);
+    /* const unsupportedOperations = getUnsupportedOperations(allNodeData);
     if (unsupportedOperations.length > 0) {
       const errorMessage = intl.formatMessage(
         {
@@ -181,10 +179,12 @@ export const initializeOperationsMetadata = createAsyncThunk(
         args: ['Unsupported operations: ', ...unsupportedOperations],
       });
 
-      // throw new Error(errorMessage);
-    }
+      throw new Error(errorMessage);
+    } */
 
     dispatch(initializeNodeOperationInputsData(allNodeData));
+
+    // TODO: Initialize dynamic data without user inputs in this section.
   }
 );
 

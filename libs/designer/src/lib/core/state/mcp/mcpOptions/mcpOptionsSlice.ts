@@ -1,26 +1,18 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import { setLogicApp } from '../resourceSlice';
 import { resetMcpState } from '../../global';
-import { InitHostService, InitSearchService } from '@microsoft/logic-apps-shared';
 import { initializeMcpServices, resetMcpStateOnResourceChange } from '../../../actions/bjsworkflow/mcp';
-import type { ServiceOptions } from './mcpOptionsInterface';
 
 export interface McpOptionsState {
   servicesInitialized: boolean;
+  disableConfiguration: boolean;
   reInitializeServices?: boolean;
 }
 
 const initialState: McpOptionsState = {
   servicesInitialized: false,
+  disableConfiguration: true,
 };
-
-export const initializeServices = createAsyncThunk('initializeMCPServices', async ({ searchService, hostService }: ServiceOptions) => {
-  InitSearchService(searchService);
-  if (hostService) {
-    InitHostService(hostService);
-  }
-  return true;
-});
 
 export const mcpOptionsSlice = createSlice({
   name: 'mcpOptions',
@@ -30,6 +22,7 @@ export const mcpOptionsSlice = createSlice({
     builder.addCase(resetMcpState, () => initialState);
     builder.addCase(resetMcpStateOnResourceChange.fulfilled, (state, action) => {
       state.reInitializeServices = !action.payload;
+      state.disableConfiguration = false;
     });
     builder.addCase(initializeMcpServices.fulfilled, (state, action) => {
       state.servicesInitialized = action.payload;

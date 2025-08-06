@@ -55,7 +55,7 @@ export const EditOperationPanel = () => {
     Object.fromEntries(
       Object.values(nodeInputs?.parameterGroups ?? {})
         .flatMap((group) => group.parameters)
-        .map((param) => [param.id, isDependentStaticParameter(param.id, inputDependencies) || parameterHasValue(param)])
+        .map((param) => [param.id, isDependentStaticParameter(param, inputDependencies) || parameterHasValue(param)])
     )
   );
   const [getParameterErrors, setParameterErrors] = useFunctionalState<Record<string, string | undefined>>({});

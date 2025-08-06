@@ -288,7 +288,8 @@ export async function getDynamicInputsFromSchema(
   dynamicParameter: InputParameter,
   operationInfo: NodeOperation,
   allInputKeys: string[],
-  operationDefinition?: any
+  operationDefinition?: any,
+  loadDefaultValues = true
 ): Promise<InputParameter[]> {
   const isParameterNested = dynamicParameter.isNested;
   const schemaHasRequiredParameters = schema?.required && schema.required.length > 0;
@@ -317,7 +318,7 @@ export async function getDynamicInputsFromSchema(
   }));
 
   // TODO: This code should be removed once keys are correctly stamped for aliasing inputs since in normal parsing this does not happen.
-  // We are recieving some swagger parameters with keys in the following format, ex:
+  // We are receiving some swagger parameters with keys in the following format, ex:
   //     body.$.body/content.body/content/appId
   // We need to reformat to the below string:
   //     body.$.content.appId
@@ -339,7 +340,10 @@ export async function getDynamicInputsFromSchema(
   }
 
   if (!operationDefinition) {
-    loadParameterValuesFromDefault(map(dynamicInputs, 'key'));
+    if (loadDefaultValues) {
+      loadParameterValuesFromDefault(map(dynamicInputs, 'key'));
+    }
+
     return removeParentObjectInputsIfNotNeeded(dynamicInputs);
   }
 

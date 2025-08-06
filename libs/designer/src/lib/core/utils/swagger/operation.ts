@@ -136,7 +136,8 @@ export const getInputParametersFromSwagger = (
   isTrigger: boolean,
   swagger: SwaggerParser,
   operationInfo: NodeOperation,
-  stepDefinition?: any
+  stepDefinition?: any,
+  loadDefaultValues = true
 ): NodeInputsWithDependencies => {
   const { type, operationId } = operationInfo;
   const includeNotificationParameters = !equals(type, Constants.NODE.TYPE.API_CONNECTION);
@@ -197,7 +198,7 @@ export const getInputParametersFromSwagger = (
         inputParametersByKey = map(loadedInputParameters, 'key');
       }
     }
-  } else {
+  } else if (loadDefaultValues) {
     loadParameterValuesFromDefault(inputParametersByKey);
   }
 
