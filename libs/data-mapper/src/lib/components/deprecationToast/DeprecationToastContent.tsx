@@ -1,6 +1,6 @@
-import { Button, Toast, ToastBody, ToastTitle, Link } from '@fluentui/react-components';
+import { Button, Link, Toast, ToastBody, ToastTitle } from '@fluentui/react-components';
 import { Warning20Regular, Dismiss20Regular } from '@fluentui/react-icons';
-import { useIntl } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 export interface DeprecationToastContentProps {
   onSwitchToV2: () => void;
@@ -37,12 +37,19 @@ export const DeprecationToastContent = ({ onSwitchToV2, onDismiss }: Deprecation
         {titleLoc}
       </ToastTitle>
       <ToastBody>
-        Data Mapper v2 is now in GA! Please switch to v2 or reach out if you have any issues since v1 will be retired in September 2025.{' '}
-        <br /> See{' '}
-        <Link href="https://aka.ms/datamapperga" target="_blank" rel="noopener noreferrer">
-          this announcement
-        </Link>{' '}
-        for more information. <b>Click the button below to set default to v2, then reopen your map.</b>
+        <FormattedMessage
+          id="STkQLF"
+          defaultMessage="Data Mapper v2 is now in GA! Please switch to v2 or reach out if you have any issues since v1 will be retired in September 2025. See <link>{linkText}</link> for more information. Click the button below to set default to v2, then reopen your map."
+          values={{
+            linkText: 'this announcement',
+            link: (abc) => (
+              <Link href="https://aka.ms/datamapperga" target="_blank" rel="noopener noreferrer">
+                {abc}
+              </Link>
+            ),
+          }}
+          description="Message about new deprecation process and how to switch to v2"
+        ></FormattedMessage>
         <div style={{ marginTop: '8px', display: 'flex', gap: '8px' }}>
           <Button appearance="primary" size="small" onClick={onSwitchToV2}>
             {switchButtonLoc}
