@@ -76,13 +76,14 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
       exec(`net use ${rootFolder} ${password} /user:${username}`, (error) => {
         if (error) {
           resolve({ errorMessage: JSON.stringify(error.message) });
+        } else {
+          resolve({
+            connection: {
+              ...connectionInfo,
+              connectionParameters: { mountPath: rootFolder },
+            },
+          });
         }
-        resolve({
-          connection: {
-            ...connectionInfo,
-            connectionParameters: { mountPath: rootFolder },
-          },
-        });
       });
     });
   };
