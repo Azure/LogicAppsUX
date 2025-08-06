@@ -56,7 +56,7 @@ export async function parseDotnetTemplates(rawTemplates: object[]): Promise<ITem
   for (const rawTemplate of rawTemplates) {
     try {
       workflowTemplates.push(parseDotnetTemplate(rawTemplate as IRawTemplate));
-    } catch (error) {
+    } catch {
       // Ignore errors so that a single poorly formed template does not affect other templates
     }
   }

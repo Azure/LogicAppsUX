@@ -59,4 +59,5 @@ export interface WorkflowState {
   agentsGraph: Record<string, any>;
   timelineRepetitionIndex: number;
   timelineRepetitionArray: string[][];
+  flowErrors: Record<string, string[]>;
 }

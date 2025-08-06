@@ -91,6 +91,8 @@ export const useIsEverythingExpanded = () =>
     })
   );
 
+export const useWorkflowGraph = () => useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.graph));
+
 export const useRootWorkflowGraphForLayout = () =>
   useSelector(
     createSelector(getWorkflowAndOperationState, (rootState) => {
@@ -308,18 +310,13 @@ export const useIsLeafNode = (nodeId: string): boolean => {
   return useMemo(() => targets.length === 0, [targets.length]);
 };
 
-export const useIsDisconnected = (nodeId: string): boolean => {
-  const edges = useEdges().filter((edge) => edge.target === nodeId);
-  return useMemo(() => edges.length === 0, [edges]);
+export const useFlowErrors = () => useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.flowErrors ?? {}));
+
+export const useFlowErrorsForNode = (nodeId: string) => {
+  return useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.flowErrors?.[nodeId] ?? {}));
 };
 
-export const useNodeIds = () => {
-  return useSelector(
-    createSelector(getWorkflowState, (state: WorkflowState) => {
-      return Object.keys(state.nodesMetadata);
-    })
-  );
-};
+export const useNodeIds = () => useSelector(createSelector(getWorkflowState, (state: WorkflowState) => Object.keys(state.nodesMetadata)));
 
 export const useNewAdditiveSubgraphId = (baseId: string) =>
   useSelector(
@@ -335,6 +332,52 @@ export const useNewAdditiveSubgraphId = (baseId: string) =>
       return caseId;
     })
   );
+
+// Gets a list of all root graph children that are connected somehow to the root trigger node
+export const useConnectedRootGraphNodeIds = () => {
+  const rootTriggerId = useRootTriggerId();
+  const rootGraph = useWorkflowGraph();
+  const handoffEdges = useHandoffEdges();
+
+  return useMemo(() => {
+    const connectedNodeIds = new Set<string>([]);
+    const leafIds = [rootTriggerId];
+    const edges = rootGraph?.edges?.concat(handoffEdges) ?? [];
+    while (leafIds.length > 0) {
+      const currentLeafId = leafIds.pop();
+      if (connectedNodeIds.has(currentLeafId ?? '')) {
+        continue; // Already processed this node
+      }
+      connectedNodeIds.add(currentLeafId ?? '');
+      // Find all edges that start with the current leaf node
+      const outgoingEdges = edges.filter((edge) => edge.source === currentLeafId);
+      // Add the target nodes of those edges to the leafIds for further processing
+      for (const edge of outgoingEdges) {
+        // Ignore processed nodes
+        if (!connectedNodeIds.has(edge.target)) {
+          leafIds.push(edge.target);
+        }
+      }
+    }
+    return Array.from(connectedNodeIds);
+  }, [rootTriggerId, rootGraph, handoffEdges]);
+};
+
+export const useDisconnectedNodes = (): string[] => {
+  const rootGraph = useWorkflowGraph();
+  const rootGraphNodeIds = useMemo(() => rootGraph?.children?.map((child) => child.id) ?? [], [rootGraph]);
+  const connectedRootGraphNodeIds = useConnectedRootGraphNodeIds();
+
+  return useMemo(
+    () => rootGraphNodeIds.filter((nodeId) => !connectedRootGraphNodeIds.includes(nodeId)),
+    [connectedRootGraphNodeIds, rootGraphNodeIds]
+  );
+};
+
+export const useIsDisconnected = (nodeId: string): boolean => {
+  const disconnectedNodes = useDisconnectedNodes();
+  return useMemo(() => disconnectedNodes.includes(nodeId), [disconnectedNodes, nodeId]);
+};
 
 export const useAllGraphParents = (graphId: string): string[] => {
   return useSelector(
@@ -647,6 +690,25 @@ export const useAllAgentIds = (): string[] => {
       return Object.keys(state.operations).filter((id) => equals(state.operations[id]?.type, commonConstants.NODE.TYPE.AGENT));
     })
   );
+};
+
+// These edges are not actually present in the graph, but are used to represent handoffs between agents during graph calculations
+export const useHandoffEdges = (): WorkflowEdge[] => {
+  const nodesMetadata = useNodesMetadata();
+  return useMemo(() => {
+    const handoffEdges: WorkflowEdge[] = [];
+    for (const [nodeId, metadata] of Object.entries(nodesMetadata)) {
+      for (const agent of Object.values(metadata.handoffs ?? {})) {
+        handoffEdges.push({
+          id: `${nodeId}-${agent}`,
+          source: nodeId,
+          target: agent,
+          type: WORKFLOW_EDGE_TYPES.HANDOFF_EDGE,
+        });
+      }
+    }
+    return handoffEdges;
+  }, [nodesMetadata]);
 };
 
 export const useHandoffActionsForAgent = (agentId: string): any[] => {

@@ -28,9 +28,9 @@ export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: R
     connection,
     operations,
     resource: { subscriptionId, resourceGroup, logicAppName },
+    mcpOptions: { disableConfiguration },
   } = useSelector((state: RootState) => state);
 
-  const disableConfiguration = useMemo(() => !logicAppName, [logicAppName]);
   const connectorExists = useMemo(() => Object.keys(operations.operationInfo).length > 0, [operations.operationInfo]);
   const hasIncompleteOperationConfiguration = useMemo(() => {
     return Object.entries(operations.inputParameters).some(([operationId, nodeInputs]) =>
