@@ -82,14 +82,20 @@ export async function activate(context: vscode.ExtensionContext) {
   });
 
   ext.context = context;
+  ext.extensionVersion = getExtensionVersion();
   ext.telemetryReporter = new TelemetryReporter(telemetryString);
-  ext.subscriptionProvider = createVSCodeAzureSubscriptionProvider();
   context.subscriptions.push(ext.telemetryReporter);
 
+  ext.subscriptionProvider = createVSCodeAzureSubscriptionProvider();
   ext.outputChannel = createAzExtOutputChannel('Azure Logic Apps (Standard)', ext.prefix);
+
   registerUIExtensionVariables(ext);
   registerAzureUtilsExtensionVariables(ext);
   registerAppServiceExtensionVariables(ext);
+
+  // Suppress "Report an Issue" button for all errors in favor of the command
+  // Need to explore all capabilities of this API
+  // registerErrorHandler(c => c.errorHandling.suppressReportIssue = true);
 
   await callWithTelemetryAndErrorHandling(extensionCommand.activate, async (activateContext: IActionContext) => {
     vscode.commands.executeCommand(
@@ -123,7 +129,6 @@ export async function activate(context: vscode.ExtensionContext) {
     // Removed for unit test codefull experience standby
     //await prepareTestExplorer(context, activateContext);
 
-    ext.extensionVersion = getExtensionVersion();
     ext.rgApi = await getResourceGroupsApi();
     // @ts-ignore
     ext.azureAccountTreeItem = ext.rgApi.appResourceTree._rootTreeItem as AzureAccountTreeItemWithProjects;
