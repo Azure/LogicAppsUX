@@ -2,7 +2,7 @@ import type { AppDispatch, RootState } from '../../../../core';
 import { addOperationRunAfter, removeOperationRunAfter } from '../../../../core/actions/bjsworkflow/runafter';
 import { useOperationVisuals } from '../../../../core/state/operation/operationSelector';
 import { useOperationPanelSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
-import { useAllAgentIds, useIsAgentLoop, useNodeDisplayName, useRootTriggerId } from '../../../../core/state/workflow/workflowSelectors';
+import { useAllAgentIds, useNodeDisplayName, useRootTriggerId } from '../../../../core/state/workflow/workflowSelectors';
 import { useIsA2AWorkflow } from '../../../../core/state/designerView/designerViewSelectors';
 import { Button, Input, Menu, MenuButton, MenuItemCheckbox, MenuList, MenuPopover, MenuTrigger, Text } from '@fluentui/react-components';
 import { Add20Filled, Add20Regular, DismissRegular, Search24Regular, bundleIcon } from '@fluentui/react-icons';
@@ -58,7 +58,6 @@ export const RunAfterActionSelector = ({ readOnly }: { readOnly: boolean }) => {
   const currentNodeRunAfter = useSelector((state: RootState) => getRecordEntry(state.workflow.operations, currentNodeId));
   const rootTriggerId = useRootTriggerId();
   const isA2AWorkflow = useIsA2AWorkflow();
-  const isAgentAction = useIsAgentLoop(currentNodeId);
   const allAgentActions = useAllAgentIds();
 
   const actions = useSelector((state: RootState) => {
@@ -74,7 +73,7 @@ export const RunAfterActionSelector = ({ readOnly }: { readOnly: boolean }) => {
       )
       .filter(([key]) => !subNodes.includes(key) && key !== currentNodeId);
 
-    if (isAgentAction && isA2AWorkflow) {
+    if (isA2AWorkflow) {
       // Remove other agent actions from the list
       tempActions = tempActions.filter(([id]) => !allAgentActions.includes(id));
     }
