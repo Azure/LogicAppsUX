@@ -1,26 +1,41 @@
 import { QueryKeys } from '../../../run-service';
-import type { ISummaryData } from '../../../run-service';
+import type { IExportDetailsList, ISummaryData } from '../../../run-service';
 import { ApiService } from '../../../run-service/export';
 import { updatePackageUrl } from '../../../state/WorkflowSlice';
 import type { AppDispatch, RootState } from '../../../state/store';
 import { VSCodeContext } from '../../../webviewCommunication';
-import { getListColumns, getSummaryData } from './helper';
+import { getSummaryData, listColumns } from './helper';
 import { ManagedConnections } from './managedConnections';
-import { MessageBar, MessageBarType, PrimaryButton, SelectionMode, ShimmeredDetailsList, TextField } from '@fluentui/react';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { useContext, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { LargeText, XLargeText } from '@microsoft/designer-ui';
+import { useExportStyles } from '../exportStyles';
+import {
+  Button,
+  DataGrid,
+  DataGridBody,
+  DataGridCell,
+  DataGridHeader,
+  DataGridHeaderCell,
+  DataGridRow,
+  Input,
+  Label,
+  MessageBar,
+  useId,
+} from '@fluentui/react-components';
 
 export const Summary: React.FC = () => {
   const intl = useIntl();
   const vscode = useContext(VSCodeContext);
   const dispatch: AppDispatch = useDispatch();
+  const styles = useExportStyles();
   const workflowState = useSelector((state: RootState) => state.workflow);
   const { baseUrl, accessToken, exportData, cloudHost } = workflowState;
   const { selectedWorkflows, location, selectedSubscription, targetDirectory, packageUrl, selectedAdvanceOptions } = exportData;
+  const exportFileLocationId = useId('export-summary-file-location-input');
 
   const intlText = {
     COMPLETE_EXPORT_TITLE: intl.formatMessage({
@@ -109,63 +124,80 @@ export const Summary: React.FC = () => {
 
   const locationText = useMemo(() => {
     return (
-      <TextField
-        label={intlText.EXPORT_LOCATION}
-        placeholder={targetDirectory.path}
-        disabled
-        className="msla-export-summary-file-location-text"
-      />
+      <div className={styles.exportSummaryFileLocationText}>
+        <Label htmlFor={exportFileLocationId}>{intlText.EXPORT_LOCATION}</Label>
+        <Input disabled id={exportFileLocationId} placeholder={targetDirectory.path} />
+      </div>
     );
-  }, [targetDirectory, intlText.EXPORT_LOCATION]);
+  }, [styles.exportSummaryFileLocationText, exportFileLocationId, intlText.EXPORT_LOCATION, targetDirectory.path]);
 
   const detailsList = useMemo(() => {
-    const emptyText = (
-      <LargeText text={intlText.NO_DETAILS} className="msla-export-summary-detail-list-empty" style={{ display: 'block' }} />
-    );
+    const emptyText = <LargeText text={intlText.NO_DETAILS} className={styles.exportSummaryDetailListEmpty} style={{ display: 'block' }} />;
     const noDetails = exportDetails.length === 0 && !isSummaryLoading ? emptyText : null;
 
     return (
       <>
         <XLargeText text={intlText.AFTER_EXPORT} style={{ display: 'block' }} />
         <LargeText text={intlText.ADDITIONAL_STEPS} style={{ display: 'block' }} />
-        <div className="msla-export-summary-detail-list">
-          <ShimmeredDetailsList
+        <div className={styles.exportSummaryDetailsList}>
+          <DataGrid
             items={exportDetails}
-            columns={getListColumns()}
-            setKey="set"
-            enableShimmer={isSummaryLoading}
-            selectionMode={SelectionMode.none}
-            compact={true}
-          />
+            columns={listColumns}
+            selectionMode={undefined}
+            resizableColumns
+            size="small"
+            focusMode="composite"
+          >
+            <DataGridHeader>
+              <DataGridRow>{({ renderHeaderCell }) => <DataGridHeaderCell>{renderHeaderCell()}</DataGridHeaderCell>}</DataGridRow>
+            </DataGridHeader>
+            <DataGridBody<IExportDetailsList>>
+              {({ item, rowId }) => (
+                <DataGridRow<IExportDetailsList> key={rowId}>
+                  {({ renderCell }) => <DataGridCell>{renderCell(item)}</DataGridCell>}
+                </DataGridRow>
+              )}
+            </DataGridBody>
+          </DataGrid>
           {noDetails}
         </div>
       </>
     );
-  }, [exportDetails, isSummaryLoading, intlText.NO_DETAILS, intlText.ADDITIONAL_STEPS, intlText.AFTER_EXPORT]);
+  }, [
+    intlText.NO_DETAILS,
+    intlText.AFTER_EXPORT,
+    intlText.ADDITIONAL_STEPS,
+    styles.exportSummaryDetailListEmpty,
+    styles.exportSummaryDetailsList,
+    exportDetails,
+    isSummaryLoading,
+  ]);
 
   const packageWarning = useMemo(() => {
     return isError && !packageUrl ? (
-      <MessageBar className="msla-export-summary-package-warning" messageBarType={MessageBarType.error} isMultiline={true}>
+      <MessageBar className={styles.exportSummaryPackageWarning} intent="error" layout="multiline">
         {intlText.PACKAGE_WARNING}
         <br />
         {(summaryError as any)?.message ?? null}
       </MessageBar>
     ) : null;
-  }, [packageUrl, intlText.PACKAGE_WARNING, isError, summaryError]);
+  }, [isError, packageUrl, styles.exportSummaryPackageWarning, intlText.PACKAGE_WARNING, summaryError]);
 
   return (
-    <div className="msla-export-summary">
+    <div className={styles.exportSummaryContainer}>
       <XLargeText text={intlText.COMPLETE_EXPORT_TITLE} style={{ display: 'block' }} />
       <LargeText text={intlText.SELECT_LOCATION} style={{ display: 'block' }} />
       {packageWarning}
-      <div className="msla-export-summary-file-location">
+      <div className={styles.exportSummaryFileLocation}>
         {locationText}
-        <PrimaryButton
-          className="msla-export-summary-file-location-button"
-          text={intlText.OPEN_FILE_EXPLORER}
-          ariaLabel={intlText.OPEN_FILE_EXPLORER}
+        <Button
+          appearance="primary"
           onClick={onOpenExplorer}
-        />
+          aria-label={intlText.OPEN_FILE_EXPLORER}
+          className={styles.exportSummaryFileLocationButton}
+        >
+          {intlText.OPEN_FILE_EXPLORER}
+        </Button>
       </div>
       <ManagedConnections />
       {detailsList}

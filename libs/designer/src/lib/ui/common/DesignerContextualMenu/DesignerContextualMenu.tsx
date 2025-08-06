@@ -28,6 +28,7 @@ import { RUN_AFTER_PANEL_TAB } from '../../../ui/CustomNodes/constants';
 import { shouldDisplayRunAfter } from '../../../ui/CustomNodes/helpers';
 import {
   useIsActionCollapsed,
+  useIsAgentLoop,
   useNodeDisplayName,
   useNodeMetadata,
   useRunData,
@@ -105,7 +106,7 @@ export const DesignerContextualMenu = () => {
   const operationInfo = useOperationInfo(nodeId);
   const isScopeNode = useMemo(() => isScopeOperation(operationInfo?.type), [operationInfo?.type]);
   const runAfter = shouldDisplayRunAfter(operationFromWorkflow, isTrigger);
-
+  const isAgentOperation = useIsAgentLoop(nodeId);
   const resubmitClick = useCallback(() => {
     WorkflowService().resubmitWorkflow?.(runInstance?.name ?? '', [nodeId]);
   }, [runInstance, nodeId]);
@@ -135,7 +136,8 @@ export const DesignerContextualMenu = () => {
 
     const collapseActionOption = {
       priority: NodeMenuPriorities.Collapse,
-      renderCustomComponent: () => (isTrigger ? null : <CollapseMenuItem key={'collapse'} nodeId={nodeId} onClick={collapseClick} />),
+      renderCustomComponent: () =>
+        isTrigger || isAgentOperation ? null : <CollapseMenuItem key={'collapse'} nodeId={nodeId} onClick={collapseClick} />,
     };
     if (isNodeCollapsed) {
       return [collapseActionOption];
@@ -145,7 +147,12 @@ export const DesignerContextualMenu = () => {
       ...(isUiInteractionsServiceEnabled()
         ? transformMenuItems(UiInteractionsService().getNodeContextMenuItems?.({ graphId: metadata?.graphId, nodeId: nodeId }) ?? [])
         : []),
-      { priority: NodeMenuPriorities.Delete, renderCustomComponent: () => <DeleteMenuItem key={'delete'} onClick={deleteClick} showKey /> },
+      {
+        priority: NodeMenuPriorities.Delete,
+        renderCustomComponent: () => (
+          <DeleteMenuItem key={'delete'} isTrigger={isTrigger} operationType={operationInfo?.type} onClick={deleteClick} showKey />
+        ),
+      },
       {
         priority: NodeMenuPriorities.Copy,
         renderCustomComponent: () => <CopyMenuItem key={'copy'} isTrigger={isTrigger} isScope={isScopeNode} onClick={copyClick} showKey />,
@@ -170,19 +177,21 @@ export const DesignerContextualMenu = () => {
       collapseActionOption,
     ];
   }, [
+    isNodeCollapsed,
     metadata?.graphId,
     nodeId,
     runData?.canResubmit,
     runAfter,
-    deleteClick,
     isTrigger,
+    isAgentOperation,
+    collapseClick,
+    operationInfo?.type,
+    deleteClick,
     isScopeNode,
     copyClick,
     pinClick,
     resubmitClick,
     runAfterClick,
-    collapseClick,
-    isNodeCollapsed,
   ]);
 
   const actionContextMenuItems: JSX.Element[] = actionContextMenuOptions

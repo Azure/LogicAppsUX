@@ -1,8 +1,7 @@
 import { openPanel, useNodesInitialized } from '../core';
 import { usePreloadOperationsQuery, usePreloadConnectorsQuery } from '../core/queries/browse';
 import { useMonitoringView, useReadOnly, useHostOptions, useIsVSCode } from '../core/state/designerOptions/designerOptionsSelectors';
-import { useAgenticWorkflow } from '../core/state/designerView/designerViewSelectors';
-import { buildEdgeIdsBySource } from '../core/state/workflow/workflowSlice';
+import { useAgenticWorkflow, useIsA2AWorkflow } from '../core/state/designerView/designerViewSelectors';
 import type { AppDispatch, RootState } from '../core/store';
 import Controls from './Controls';
 import Minimap from './Minimap';
@@ -11,7 +10,6 @@ import { PanelRoot } from './panel/panelRoot';
 import { css, setLayerHostSelector } from '@fluentui/react';
 import { PanelLocation } from '@microsoft/designer-ui';
 import type { CustomPanelLocation } from '@microsoft/designer-ui';
-import { useThrottledEffect } from '@microsoft/logic-apps-shared';
 import { useEffect, useMemo, useRef } from 'react';
 import KeyboardBackendFactory, { isKeyboardDragTrigger } from 'react-dnd-accessible-backend';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -29,6 +27,7 @@ import { DragPanMonitor } from './common/DragPanMonitor/DragPanMonitor';
 import { CanvasSizeMonitor } from './CanvasSizeMonitor';
 import { AgentChat } from './panel/agentChat/agentChat';
 import DesignerReactFlow from './DesignerReactFlow';
+import MonitoringTimeline from './MonitoringTimeline';
 
 export interface DesignerProps {
   backgroundProps?: BackgroundProps;
@@ -51,9 +50,6 @@ export const Designer = (props: DesignerProps) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const designerContainerRef = useRef<HTMLDivElement>(null);
-
-  const graph = useSelector((state: RootState) => state.workflow.graph);
-  useThrottledEffect(() => dispatch(buildEdgeIdsBySource()), [graph], 200);
 
   const canvasRef = useRef<HTMLDivElement>(null);
 
@@ -86,6 +82,11 @@ export const Designer = (props: DesignerProps) => {
 
   const isMonitoringView = useMonitoringView();
   const isAgenticWorkflow = useAgenticWorkflow();
+  const isA2AWorkflow = useIsA2AWorkflow(); // Specifically A2A + Handoffs
+
+  const hasChat = useMemo(() => {
+    return (isA2AWorkflow || isAgenticWorkflow) && isMonitoringView;
+  }, [isA2AWorkflow, isAgenticWorkflow, isMonitoringView]);
 
   const DND_OPTIONS: any = {
     backends: [
@@ -128,7 +129,7 @@ export const Designer = (props: DesignerProps) => {
       <div className="msla-designer-canvas msla-panel-mode" ref={designerContainerRef}>
         <ReactFlowProvider>
           <div style={{ flexGrow: 1 }}>
-            <DesignerReactFlow canvasRef={canvasRef}>
+            <DesignerReactFlow canvasRef={canvasRef} isLooping={isA2AWorkflow}>
               {backgroundProps ? <Background {...backgroundProps} /> : null}
               <DeleteModal />
               <DesignerContextualMenu />
@@ -141,13 +142,12 @@ export const Designer = (props: DesignerProps) => {
             customPanelLocations={customPanelLocations}
             isResizeable={true}
           />
-          {isMonitoringView && isAgenticWorkflow ? (
-            <AgentChat panelLocation={PanelLocation.Right} panelContainerRef={designerContainerRef} />
-          ) : null}
+          {hasChat ? <AgentChat panelLocation={PanelLocation.Right} panelContainerRef={designerContainerRef} /> : null}
           <div className={css('msla-designer-tools', panelLocation === PanelLocation.Left && 'left-panel')}>
             <Controls />
             <Minimap />
           </div>
+          {isMonitoringView && isA2AWorkflow && <MonitoringTimeline />}
           <PerformanceDebugTool />
           <CanvasFinder />
           <CanvasSizeMonitor canvasRef={canvasRef} />

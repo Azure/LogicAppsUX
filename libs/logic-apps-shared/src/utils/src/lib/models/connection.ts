@@ -54,6 +54,8 @@ export interface ConnectionAuthenticatedUser {
   tenantId?: string;
 }
 
+export type ConnectionFeatureType = 'DynamicUserInvoked'; // Currently only this value is supported but this can be extended in the future
+
 export interface ConnectionProperties {
   authenticatedUser?: ConnectionAuthenticatedUser;
   connectionParameters?: Record<string, ConnectionParameter>;
@@ -70,6 +72,8 @@ export interface ConnectionProperties {
   accountName?: string;
   api: Api;
   connectionRuntimeUrl?: string;
+  dynamicConnectionProxyUrl?: string;
+  feature?: ConnectionFeatureType;
 }
 
 export type Connection = ArmResource<ConnectionProperties>;

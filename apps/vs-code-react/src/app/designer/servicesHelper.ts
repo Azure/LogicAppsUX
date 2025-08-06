@@ -1,6 +1,5 @@
 import { clientSupportedOperations } from './constants';
 import { BaseOAuthService } from './services/oAuth';
-import { resolveConnectionsReferences } from './utilities/workflow';
 import {
   StandardConnectionService,
   StandardOperationManifestService,
@@ -17,6 +16,7 @@ import {
   BaseTenantService,
   BaseCognitiveServiceService,
   BaseRoleService,
+  resolveConnectionsReferences,
 } from '@microsoft/logic-apps-shared';
 import type {
   ApiHubServiceDetails,
@@ -172,32 +172,45 @@ export const getDesignerServices = (
     httpClient,
     clientSupportedOperations: clientSupportedOperations,
     getConfiguration: async (connectionId: string, manifest: OperationManifest | undefined): Promise<any> => {
-      if (!connectionId) {
-        return Promise.resolve();
+      try {
+        const configuration: Record<string, any> = {};
+
+        if (shouldIncludeWorkflowAppLocation(isLocal, manifest)) {
+          configuration.workflowAppLocation = appSettings.ProjectDirectoryPath;
+        }
+
+        if (!connectionId) {
+          return configuration;
+        }
+
+        const connectionName = extractConnectionName(connectionId);
+        if (!connectionName) {
+          return configuration;
+        }
+
+        const allConnections: Record<string, any> = {
+          ...(connectionsData?.serviceProviderConnections || {}),
+          ...(connectionsData?.apiManagementConnections || {}),
+        };
+
+        const connectionInfo = allConnections[connectionName];
+        if (!connectionInfo) {
+          return configuration;
+        }
+
+        try {
+          const resolvedConnectionInfo = resolveConnectionsReferences(JSON.stringify(connectionInfo), {}, appSettings);
+
+          delete resolvedConnectionInfo.displayName;
+          configuration.connection = resolvedConnectionInfo;
+        } catch {
+          // Return configuration without connection
+        }
+
+        return configuration;
+      } catch {
+        return {};
       }
-      const shouldUseWorkflowAppLocation = !!(
-        isLocal && manifest?.properties?.dynamicContent?.payloadConfiguration?.includes('WorkflowAppLocation')
-      );
-      const defaultConfiguration: Record<string, any> = shouldUseWorkflowAppLocation
-        ? {
-            workflowAppLocation: appSettings.ProjectDirectoryPath,
-          }
-        : {};
-
-      const connectionName = connectionId.split('/').splice(-1)[0];
-      const connectionsInfo = {
-        ...connectionsData?.serviceProviderConnections,
-        ...connectionsData?.apiManagementConnections,
-      };
-      const connectionInfo = connectionsInfo[connectionName];
-
-      if (connectionInfo) {
-        const resolvedConnectionInfo = resolveConnectionsReferences(JSON.stringify(connectionInfo), {}, appSettings);
-        delete resolvedConnectionInfo.displayName;
-        defaultConfiguration.connection = resolvedConnectionInfo;
-      }
-
-      return defaultConfiguration;
     },
     schemaClient: {
       getWorkflowSwagger: (args) => {
@@ -423,4 +436,41 @@ const addOrUpdateAppSettings = (settings: Record<string, string>, originalSettin
   }
 
   return updatedSettings;
+};
+
+export const isMultiVariableSupport = (version?: string): boolean => {
+  if (!version) {
+    return false;
+  }
+
+  const [major, minor, patch] = version.split('.').map(Number);
+  if ([major, minor, patch].some(Number.isNaN)) {
+    return false;
+  }
+
+  // Compare with 1.114.22
+  if (major > 1) {
+    return true;
+  }
+  if (major === 1 && minor > 114) {
+    return true;
+  }
+  if (major === 1 && minor === 114 && patch > 22) {
+    return true;
+  }
+
+  return false;
+};
+
+const extractConnectionName = (connectionId: string): string => {
+  const parts = connectionId.split('/');
+  return parts[parts.length - 1] || '';
+};
+
+const shouldIncludeWorkflowAppLocation = (isLocal: boolean, manifest: OperationManifest | undefined): boolean => {
+  if (!isLocal || !manifest?.properties?.dynamicContent?.payloadConfiguration) {
+    return false;
+  }
+
+  return manifest.properties.dynamicContent.payloadConfiguration.includes('WorkflowAppLocation');
 };

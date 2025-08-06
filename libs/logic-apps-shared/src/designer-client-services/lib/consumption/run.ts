@@ -176,6 +176,39 @@ export class ConsumptionRunService implements IRunService {
   }
 
   /**
+   * Retrieves additional scope repetitions using a continuation token.
+   *
+   * @param continuationToken - The token used to fetch the next set of scope repetitions.
+   * @returns A promise that resolves with the response containing the scope repetitions.
+   * @throws Throws an error if the HTTP request fails.
+   */
+  async getMoreScopeRepetitions(continuationToken: string): Promise<{ value: LogicAppsV2.RunRepetition[]; nextLink?: string }> {
+    const { httpClient } = this.options;
+    const headers = this.getAccessTokenHeaders();
+
+    try {
+      const response = await httpClient.get<{ value: LogicAppsV2.RunRepetition[]; nextLink?: string }>({
+        uri: continuationToken,
+        headers: headers as Record<string, any>,
+      });
+
+      return response;
+    } catch (e: any) {
+      throw new Error(e.message);
+    }
+  }
+
+  /**
+   * Gets an array of workflow-level action repetitions for a run.
+   * @param {string} runId - The ID of the workflow run.
+   * @returns {Promise<any>}
+   */
+  async getTimelineRepetitions(_runId: string): Promise<any> {
+    // A2A is not supported in consumption
+    return undefined;
+  }
+
+  /**
    * Gets an array of scope repetition records for a node with the specified status.
    * @param {{ actionId: string, runId: string }} action - An object with nodeId and the runId of the workflow
    * @param {string} repetitionId - A string with the resource ID of a repetition record
@@ -355,6 +388,28 @@ export class ConsumptionRunService implements IRunService {
   }
 
   /**
+   * Retrieves the chat history for a specified run.
+   * @param runId - The unique identifier of the run.
+   * @returns
+   */
+
+  async getRunChatHistory(runId: string): Promise<any> {
+    const { apiVersion, baseUrl, httpClient } = this.options;
+    const headers = this.getAccessTokenHeaders();
+    const uri = `${baseUrl}${runId}/chatHistory?api-version=${apiVersion}&$expand=properties/actions,workflow/properties`;
+
+    try {
+      const response = await httpClient.get<any>({
+        uri,
+        headers: headers as Record<string, any>,
+      });
+      return response.value;
+    } catch (e: any) {
+      throw new Error(e.message);
+    }
+  }
+
+  /**
    * Retrieves the chat history for a specified action.
    *
    * This function constructs a URI based on the provided runId and nodeId, along with the
@@ -366,7 +421,7 @@ export class ConsumptionRunService implements IRunService {
    * @returns A promise that resolves with the chat history response.
    * @throws {Error} Throws an error with a message if the HTTP request fails.
    */
-  async getChatHistory(action: { nodeId: string; runId: string | undefined }): Promise<any> {
+  async getActionChatHistory(action: { nodeId: string; runId: string | undefined }): Promise<any> {
     const { apiVersion, baseUrl, httpClient } = this.options;
     const { nodeId, runId } = action;
     const headers = this.getAccessTokenHeaders();

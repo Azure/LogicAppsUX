@@ -3,23 +3,22 @@ import { ApiService } from '../../../run-service/export';
 import { updateSelectedLocation, updateSelectedSubscripton } from '../../../state/WorkflowSlice';
 import type { AppDispatch, RootState } from '../../../state/store';
 import { VSCodeContext } from '../../../webviewCommunication';
-import { SearchableDropdown } from '../../components/searchableDropdown';
+import { SearchableDropdown, type IDropdownOption, DropdownMenuItemType } from '../../components/searchableDropdown';
 import { getDropdownPlaceholder, parseIseList, parseRegionList, parseSubscriptionsList } from './helper';
-import { DropdownMenuItemType } from '@fluentui/react';
-import type { IDropdownOption } from '@fluentui/react';
 import { isEmptyString } from '@microsoft/logic-apps-shared';
 import { useContext, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { LargeText, XLargeText } from '@microsoft/designer-ui';
+import { useExportStyles } from '../exportStyles';
 
 export const InstanceSelection: React.FC = () => {
   const vscode = useContext(VSCodeContext);
   const workflowState = useSelector((state: RootState) => state.workflow);
   const { baseUrl, accessToken, exportData, cloudHost } = workflowState;
   const { selectedSubscription, selectedIse, location } = exportData;
-
+  const styles = useExportStyles();
   const intl = useIntl();
   const dispatch: AppDispatch = useDispatch();
 
@@ -68,16 +67,6 @@ export const InstanceSelection: React.FC = () => {
       defaultMessage: 'No regions and integration service environment (ISE) instances available',
       id: 'xxZDTu',
       description: 'No regions and ISE instances available text',
-    }),
-    SEARCH_SUBSCRIPTION: intl.formatMessage({
-      defaultMessage: 'Find and select subscription',
-      id: 'bGPcRT',
-      description: 'Find and select subscription text',
-    }),
-    SEARCH_LOCATION: intl.formatMessage({
-      defaultMessage: 'Find and select region or integration service environment (ISE)',
-      id: 'gBRTE5',
-      description: 'Find region or ISE text',
     }),
     LOADING: intl.formatMessage({
       defaultMessage: 'Loading...',
@@ -213,7 +202,7 @@ export const InstanceSelection: React.FC = () => {
   );
 
   return (
-    <div className="msla-export-instance-panel">
+    <div>
       <XLargeText text={intlText.SELECT_TITLE} style={{ display: 'block' }} />
       <LargeText text={intlText.SELECT_DESCRIPTION} style={{ display: 'block' }} />
       <SearchableDropdown
@@ -222,10 +211,9 @@ export const InstanceSelection: React.FC = () => {
         placeholder={subscriptionPlaceholder}
         disabled={isSubscriptionsLoading || !subscriptions.length}
         onChange={onChangeSubscriptions}
-        selectedKey={selectedSubscription !== '' ? selectedSubscription : null}
-        className="msla-export-instance-panel-dropdown"
+        selectedKey={selectedSubscription !== '' ? selectedSubscription : undefined}
+        className={styles.instancePanelDropdown}
         isLoading={subscriptionLoading}
-        searchBoxPlaceholder={intlText.SEARCH_SUBSCRIPTION}
       />
       <SearchableDropdown
         label={intlText.SELECTION_LOCATION}
@@ -239,10 +227,9 @@ export const InstanceSelection: React.FC = () => {
           !(ise.length || regions.length)
         }
         onChange={onChangeLocation}
-        selectedKey={selectedIse !== '' ? `ise:${selectedIse}` : location ? `region:${location}` : null}
-        className="msla-export-instance-panel-dropdown"
+        selectedKey={selectedIse !== '' ? `ise:${selectedIse}` : location ? `region:${location}` : undefined}
+        className={styles.instancePanelDropdown}
         isLoading={iseLoading}
-        searchBoxPlaceholder={intlText.SEARCH_LOCATION}
       />
     </div>
   );

@@ -1,10 +1,14 @@
 import Constants from '../../../common/constants';
 import type { ApiHubAuthentication } from '../../../common/models/workflow';
-import { isOpenApiSchemaVersion } from '../../../common/utilities/Utils';
+import { AgentUtils, isOpenApiSchemaVersion } from '../../../common/utilities/Utils';
 import type { DeserializedWorkflow } from '../../parsers/BJSWorkflow/BJSDeserializer';
 import { getConnection, getUniqueConnectionName, updateNewConnectionInQueryCache } from '../../queries/connections';
 import { getConnector, getOperationInfo, getOperationManifest } from '../../queries/operation';
-import { changeConnectionMapping, initializeConnectionsMappings } from '../../state/connection/connectionSlice';
+import {
+  changeConnectionMapping,
+  changeConnectionMappingsForNodes,
+  initializeConnectionsMappings,
+} from '../../state/connection/connectionSlice';
 import { changeConnectionMapping as changeTemplateConnectionMapping } from '../../state/templates/workflowSlice';
 import type { NodeOperation } from '../../state/operation/operationMetadataSlice';
 import { updateErrorDetails } from '../../state/operation/operationMetadataSlice';
@@ -65,6 +69,23 @@ export interface UpdateConnectionPayload {
   connectionParameterValues?: Record<string, any>;
 }
 
+export const updateMcpConnection = createAsyncThunk(
+  'updateMcpConnection',
+  async (payload: Omit<ConnectionPayload, 'nodeId'> & { nodeIds: string[]; reset?: boolean }, { dispatch }): Promise<void> => {
+    const { nodeIds, connector, connection, connectionProperties, authentication, reset } = payload;
+    dispatch(
+      changeConnectionMappingsForNodes({
+        reset,
+        nodeIds,
+        connectorId: connector.id,
+        connectionId: connection.id,
+        authentication: authentication ?? getApiHubAuthenticationIfRequired(),
+        connectionProperties: connectionProperties ?? getConnectionPropertiesIfRequired(connection, connector),
+      })
+    );
+  }
+);
+
 export const updateTemplateConnection = createAsyncThunk(
   'updateTemplateConnection',
   async (payload: ConnectionPayload & { connectionKey: string }, { dispatch, getState }): Promise<void> => {
@@ -102,7 +123,7 @@ export const updateNodeConnection = createAsyncThunk(
         connectionId: connection.id,
         authentication: authentication ?? getApiHubAuthenticationIfRequired(),
         connectionProperties: connectionProperties ?? getConnectionPropertiesIfRequired(connection, connector),
-        connectionRuntimeUrl: isOpenApiSchemaVersion((getState() as RootState).workflow.originalDefinition)
+        connectionRuntimeUrl: isOpenApiSchemaVersion((getState() as RootState).workflow?.originalDefinition)
           ? connection.properties.connectionRuntimeUrl
           : undefined,
       },
@@ -157,6 +178,9 @@ const updateNodeConnectionAndProperties = async (
     dependencies,
     dispatch,
     getState,
+    newState.tokens?.variables ?? {},
+    newState.workflowParameters?.definitions ?? {},
+    !!newState.tokens /* updateTokenMetadata */,
     newlyAddedOperations ? undefined : operation
   );
 };
@@ -212,7 +236,10 @@ const getApiHubAuthenticationIfRequired = (): ApiHubAuthentication | undefined =
 
 export const getApiHubAuthentication = (userAssignedIdentity: string | undefined): ApiHubAuthentication | undefined => {
   return WorkflowService().isExplicitAuthRequiredForManagedIdentity?.()
-    ? { type: 'ManagedServiceIdentity', ...optional('identity', userAssignedIdentity) }
+    ? {
+        type: 'ManagedServiceIdentity',
+        ...optional('identity', userAssignedIdentity),
+      }
     : undefined;
 };
 
@@ -260,12 +287,15 @@ export const autoCreateConnectionIfPossible = async (payload: {
 }): Promise<void> => {
   const { connector, operationInfo, referenceKeys, skipOAuth, applyNewConnection, onSuccess, onManualConnectionCreation } = payload;
 
-  if (connectorHasMultiAuth(connector)) {
+  if (connectorHasMultiAuth(connector) || AgentUtils.isConnector(connector.id)) {
     return onManualConnectionCreation();
   }
 
   const operationManifest = operationInfo
-    ? await getOperationManifest({ connectorId: connector.id, operationId: operationInfo.operationId ?? '' })
+    ? await getOperationManifest({
+        connectorId: connector.id,
+        operationId: operationInfo.operationId ?? '',
+      })
     : undefined;
 
   const connectionInfo: ConnectionCreationInfo = { connectionParameters: {} };
@@ -378,7 +408,10 @@ export async function getManifestBasedConnectionMapping(
 ): Promise<Record<string, string> | undefined> {
   try {
     const { connectorId, operationId } = await getOperationInfo(nodeId, operationDefinition, isTrigger);
-    const operationManifest = await getOperationManifest({ connectorId, operationId });
+    const operationManifest = await getOperationManifest({
+      connectorId,
+      operationId,
+    });
     const connectionReferenceKeyFormat =
       (operationManifest.properties.connectionReference && operationManifest.properties.connectionReference.referenceKeyFormat) ?? '';
     if (connectionReferenceKeyFormat === '') {

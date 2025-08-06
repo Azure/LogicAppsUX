@@ -109,6 +109,7 @@ export const WorkflowKind = {
   stateful: 'Stateful',
   stateless: 'Stateless',
   agentic: 'Agentic',
+  agent: 'Agent',
 } as const;
 export type WorkflowKind = (typeof WorkflowKind)[keyof typeof WorkflowKind];
 
@@ -263,7 +264,7 @@ export const appKindSetting = 'APP_KIND';
 export const sqlStorageConnectionStringKey = 'Workflows.Sql.ConnectionString';
 
 export const workerRuntimeKey = 'FUNCTIONS_WORKER_RUNTIME';
-export const ProjectDirectoryPath = 'ProjectDirectoryPath';
+export const ProjectDirectoryPathKey = 'ProjectDirectoryPath';
 export const extensionVersionKey = 'FUNCTIONS_EXTENSION_VERSION';
 export const azureStorageTypeSetting = 'Files';
 export const isZipDeployEnabledSetting = 'IS_ZIP_DEPLOY_ENABLED';
@@ -286,7 +287,7 @@ export const defaultExtensionBundlePathValue = path.join(
   'ExtensionBundles',
   extensionBundleId
 );
-export const defaultDataMapperVersion = 1;
+export const defaultDataMapperVersion = 2;
 
 // Fallback Dependency Versions
 export const DependencyVersion = {

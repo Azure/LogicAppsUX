@@ -450,8 +450,8 @@ importers:
         specifier: ^4.1.0
         version: 4.1.1
       '@microsoft/vscode-azext-azureutils':
-        specifier: ^0.3.9
-        version: 0.3.9(@azure/ms-rest-azure-env@2.0.0)(tslib@2.4.0)
+        specifier: 0.3.9-beta
+        version: 0.3.9-beta(@azure/ms-rest-azure-env@2.0.0)(tslib@2.4.0)
       '@microsoft/vscode-azext-utils':
         specifier: 0.4.6
         version: 0.4.6(@azure/ms-rest-azure-env@2.0.0)(tslib@2.4.0)
@@ -705,10 +705,10 @@ importers:
         version: 9.0.60(@fluentui/react-components@9.56.0(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(scheduler@0.23.2))(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@microsoft/applicationinsights-react-js':
         specifier: 3.4.0
-        version: 3.4.0(history@5.3.0)(react@18.2.0)(tslib@2.7.0)
+        version: 3.4.0(history@5.3.0)(react@18.2.0)(tslib@2.8.1)
       '@microsoft/applicationinsights-web':
         specifier: 2.8.9
-        version: 2.8.9(tslib@2.7.0)
+        version: 2.8.9(tslib@2.8.1)
       '@microsoft/designer-ui':
         specifier: workspace:*
         version: link:../designer-ui
@@ -817,10 +817,10 @@ importers:
         version: 9.0.3(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(scheduler@0.23.2)
       '@microsoft/applicationinsights-react-js':
         specifier: 3.4.0
-        version: 3.4.0(history@5.3.0)(react@18.2.0)(tslib@2.7.0)
+        version: 3.4.0(history@5.3.0)(react@18.2.0)(tslib@2.8.1)
       '@microsoft/applicationinsights-web':
         specifier: 2.8.9
-        version: 2.8.9(tslib@2.7.0)
+        version: 2.8.9(tslib@2.8.1)
       '@microsoft/designer-ui':
         specifier: workspace:*
         version: link:../designer-ui
@@ -932,7 +932,7 @@ importers:
         version: 8.15.0(@types/react@18.3.0)(react@18.2.0)
       '@microsoft/applicationinsights-core-js':
         specifier: 2.8.9
-        version: 2.8.9(tslib@2.7.0)
+        version: 2.8.9(tslib@2.8.1)
       '@microsoft/designer-ui':
         specifier: workspace:*
         version: link:../designer-ui
@@ -1032,6 +1032,9 @@ importers:
       reselect:
         specifier: 4.1.8
         version: 4.1.8
+      tabster:
+        specifier: 8.5.6
+        version: 8.5.6
       to-title-case:
         specifier: 1.0.0
         version: 1.0.0
@@ -1211,6 +1214,10 @@ importers:
       react-intl:
         specifier: 6.3.0
         version: 6.3.0(react@18.2.0)(typescript@4.9.5)
+    devDependencies:
+      tslib:
+        specifier: 2.4.0
+        version: 2.4.0
 
   libs/vscode-extension:
     dependencies:
@@ -4468,6 +4475,9 @@ packages:
   '@microsoft/vscode-azext-azureutils@0.3.9':
     resolution: {integrity: sha512-lKhxSROhTBpz45f0hqYDHfdrGlNOgzfMGXbNproqwyc5qnEYBhs/qG65hcwhLzVm44lYPpBP1aka7OyDEocPOQ==}
 
+  '@microsoft/vscode-azext-azureutils@0.3.9-beta':
+    resolution: {integrity: sha512-fm2daKKZpAWR3TTcdVXve7rAIEzDp+aj8lahsFhFPVBgra5QXMDO1nuKVgda/ehMgBeXqtieGkgO4Ua7Hx+KrA==}
+
   '@microsoft/vscode-azext-utils@0.4.6':
     resolution: {integrity: sha512-CPIIvdod95Qdz5vdGg4j7HpryjKEsDVmdir/VduJZHgdVs1iuqa/9UY0+kIg2JnsnpThAdQH36A1GVA8jQeheg==}
 
@@ -4779,6 +4789,11 @@ packages:
 
   '@rollup/rollup-linux-x64-gnu@4.27.3':
     resolution: {integrity: sha512-/6bn6pp1fsCGEY5n3yajmzZQAh+mW4QPItbiWxs69zskBzJuheb3tNynEjL+mKOsUSFK11X4LYF2BwwXnzWleA==}
+    cpu: [x64]
+    os: [linux]
+
+  '@rollup/rollup-linux-x64-gnu@4.40.0':
+    resolution: {integrity: sha512-RcDGMtqF9EFN8i2RYN2W+64CdHruJ5rPqrlYw+cgM3uOVPSsnAQps7cpjXe9be/yDp8UC7VLoCoKC8J3Kn2FkQ==}
     cpu: [x64]
     os: [linux]
 
@@ -8868,7 +8883,7 @@ packages:
     resolution: {integrity: sha512-nb4Ji1suqWqj6VXb61Jrs4ab/UWgtGph4wDch2NIZDfLBUObmLcZE0aiDjZY49ghtu03fvwxDNvS9ZB0XMz6/g==}
 
   keyborg@2.6.0:
-    resolution: {integrity: sha512-o5kvLbuTF+o326CMVYpjlaykxqYP9DphFQZ2ZpgrvBouyvOxyEB7oqe8nOLFpiV5VCtz0D3pt8gXQYWpLpBnmA==}
+    resolution: {integrity: sha1-6/yq7S9Rf5KVBY/11X0U5xlYq1o=}
 
   keytar@7.9.0:
     resolution: {integrity: sha512-VPD8mtVtm5JNtA2AErl6Chp06JBfy7diFQ7TQQhdpWOl6MrCRB+eRbvAZUsbGQS9kiMq0coJsy0W0vHpDCkWsQ==}
@@ -11573,16 +11588,13 @@ packages:
     resolution: {integrity: sha512-9QNk5KwDF+Bvz+PyObkmSYjI5ksVUYtjW7AU22r2NKcfLJcXp96hkDWU3+XndOsUb+AQ9QhfzfCT2O+CNWT5Tw==}
 
   tabster@6.1.0:
-    resolution: {integrity: sha512-wTPy2d6WVmU/YjT0ERY9jc+et1P/B8FoSQ4qhr1xi7liwTezRbRV6yA1pKx8kdPWmLdIOBA4fn07x9c0x/wnow==}
+    resolution: {integrity: sha1-bdXtzG0f7DxqBDS8cvzosAxY2XI=}
 
   tabster@7.1.2:
-    resolution: {integrity: sha512-wYG9ddAeSUxBrcPCZ+hQV5IcsyM089nTGkQ53G9/2pPDdUa3pBC4sP3qmdbvu+IoFpy62CMDxMgxQmegtCiLKg==}
+    resolution: {integrity: sha1-qy+yvGe3gFnhQGsq/DWuxp64JKU=}
 
-  tabster@8.0.1:
-    resolution: {integrity: sha512-Df8La4+IkdbHjupybEDv4rCPSOwx8L3Xh7UVbl0tzyrkiVTKvZg3IRID6KHd/tXbyerO4cXwhY9aOQ+mbEP04w==}
-
-  tabster@8.2.0:
-    resolution: {integrity: sha512-Gvplk/Yl/12aVFA6FPOqGcq31Qv8hbPfYO0N+6IxrRgRT6eSLsipT6gkZBYjyOwGsp6BD5XlZAuJgupfG/GHoA==}
+  tabster@8.5.6:
+    resolution: {integrity: sha1-JpkNf0NtFaKkeKjEwIfnWbzfSWM=}
 
   tapable@1.1.3:
     resolution: {integrity: sha512-4WK/bYZmj8xLr+HUCODHGF1ZFzsYffasLUgEiMBY4fgtltdO6B4WJtlSbPaDTLpYTcGVwM2qLnFTICEcNxs3kA==}
@@ -11818,6 +11830,9 @@ packages:
 
   tslib@2.7.0:
     resolution: {integrity: sha512-gLXCKdN1/j47AiHiOkJN69hJmcbGTHI0ImLmbYLHykhgeN0jVGola9yVjFgzCUklsZQMW55o+dW7IXv3RCXDzA==}
+
+  tslib@2.8.1:
+    resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==}
 
   tsup@8.0.2:
     resolution: {integrity: sha512-NY8xtQXdH7hDUAZwcQdY/Vzlw9johQsaqf7iwZ6g1DOUlFYQ5/AtVAjTvihhEyeRlGo4dLRVHtrRaL35M1daqQ==}
@@ -12784,11 +12799,11 @@ snapshots:
 
   '@azure/abort-controller@2.1.1':
     dependencies:
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@azure/abort-controller@2.1.2':
     dependencies:
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@azure/arm-appcontainers@2.1.0':
     dependencies:
@@ -12852,7 +12867,7 @@ snapshots:
       '@azure/core-client': 1.9.2
       '@azure/core-lro': 2.7.1
       '@azure/core-paging': 1.6.1
-      '@azure/core-rest-pipeline': 1.15.1
+      '@azure/core-rest-pipeline': 1.17.0
       tslib: 2.4.0
     transitivePeerDependencies:
       - supports-color
@@ -12870,11 +12885,11 @@ snapshots:
   '@azure/arm-resources@5.2.0':
     dependencies:
       '@azure/abort-controller': 1.1.0
-      '@azure/core-auth': 1.7.1
-      '@azure/core-client': 1.9.1
+      '@azure/core-auth': 1.9.0
+      '@azure/core-client': 1.9.2
       '@azure/core-lro': 2.7.1
       '@azure/core-paging': 1.6.1
-      '@azure/core-rest-pipeline': 1.15.1
+      '@azure/core-rest-pipeline': 1.17.0
       tslib: 2.4.0
     transitivePeerDependencies:
       - supports-color
@@ -12886,7 +12901,7 @@ snapshots:
       '@azure/core-client': 1.9.2
       '@azure/core-lro': 2.7.1
       '@azure/core-paging': 1.6.1
-      '@azure/core-rest-pipeline': 1.15.1
+      '@azure/core-rest-pipeline': 1.17.0
       tslib: 2.4.0
     transitivePeerDependencies:
       - supports-color
@@ -12919,13 +12934,13 @@ snapshots:
     dependencies:
       '@azure/abort-controller': 2.1.2
       '@azure/core-util': 1.8.1
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@azure/core-auth@1.9.0':
     dependencies:
       '@azure/abort-controller': 2.1.2
       '@azure/core-util': 1.11.0
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@azure/core-client@1.9.1':
     dependencies:
@@ -12935,7 +12950,7 @@ snapshots:
       '@azure/core-tracing': 1.2.0
       '@azure/core-util': 1.8.1
       '@azure/logger': 1.1.1
-      tslib: 2.7.0
+      tslib: 2.8.1
     transitivePeerDependencies:
       - supports-color
 
@@ -12947,7 +12962,7 @@ snapshots:
       '@azure/core-tracing': 1.2.0
       '@azure/core-util': 1.11.0
       '@azure/logger': 1.1.1
-      tslib: 2.7.0
+      tslib: 2.8.1
     transitivePeerDependencies:
       - supports-color
 
@@ -12983,11 +12998,11 @@ snapshots:
       '@azure/abort-controller': 2.1.1
       '@azure/core-util': 1.8.1
       '@azure/logger': 1.1.1
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@azure/core-paging@1.6.1':
     dependencies:
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@azure/core-rest-pipeline@1.15.1':
     dependencies:
@@ -12998,7 +13013,7 @@ snapshots:
       '@azure/logger': 1.1.1
       http-proxy-agent: 7.0.2
       https-proxy-agent: 7.0.4
-      tslib: 2.7.0
+      tslib: 2.8.1
     transitivePeerDependencies:
       - supports-color
 
@@ -13011,7 +13026,7 @@ snapshots:
       '@azure/logger': 1.1.1
       http-proxy-agent: 7.0.2
       https-proxy-agent: 7.0.4
-      tslib: 2.7.0
+      tslib: 2.8.1
     transitivePeerDependencies:
       - supports-color
 
@@ -13022,22 +13037,22 @@ snapshots:
 
   '@azure/core-tracing@1.2.0':
     dependencies:
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@azure/core-util@1.11.0':
     dependencies:
       '@azure/abort-controller': 2.1.2
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@azure/core-util@1.8.1':
     dependencies:
       '@azure/abort-controller': 2.1.2
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@azure/core-xml@1.4.4':
     dependencies:
       fast-xml-parser: 4.5.0
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@azure/identity@4.5.0':
     dependencies:
@@ -13060,7 +13075,7 @@ snapshots:
 
   '@azure/logger@1.1.1':
     dependencies:
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@azure/ms-rest-azure-env@2.0.0': {}
 
@@ -14863,7 +14878,7 @@ snapshots:
       '@docusaurus/utils': 3.6.1(esbuild@0.25.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3)
       babel-plugin-dynamic-import-node: 2.3.3
       fs-extra: 11.2.0
-      tslib: 2.7.0
+      tslib: 2.8.1
     transitivePeerDependencies:
       - '@swc/core'
       - esbuild
@@ -14897,7 +14912,7 @@ snapshots:
       postcss-loader: 7.3.4(postcss@8.4.38)(typescript@5.6.3)(webpack@5.96.1(esbuild@0.25.5))
       react-dev-utils: 12.0.1(eslint@8.57.1)(typescript@5.6.3)(webpack@5.96.1(esbuild@0.25.5))
       terser-webpack-plugin: 5.3.10(esbuild@0.25.5)(webpack@5.96.1(esbuild@0.25.5))
-      tslib: 2.7.0
+      tslib: 2.8.1
       url-loader: 4.1.1(file-loader@6.2.0(webpack@5.96.1(esbuild@0.25.5)))(webpack@5.96.1(esbuild@0.25.5))
       webpack: 5.96.1(esbuild@0.25.5)
       webpackbar: 6.0.1(webpack@5.96.1(esbuild@0.25.5))
@@ -14990,12 +15005,12 @@ snapshots:
       cssnano-preset-advanced: 6.1.2(postcss@8.4.38)
       postcss: 8.4.38
       postcss-sort-media-queries: 5.2.0(postcss@8.4.38)
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@docusaurus/logger@3.6.1':
     dependencies:
       chalk: 4.1.2
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@docusaurus/mdx-loader@3.6.1(esbuild@0.25.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3)':
     dependencies:
@@ -15019,7 +15034,7 @@ snapshots:
       remark-frontmatter: 5.0.0
       remark-gfm: 4.0.0
       stringify-object: 3.3.0
-      tslib: 2.7.0
+      tslib: 2.8.1
       unified: 11.0.4
       unist-util-visit: 5.0.0
       url-loader: 4.1.1(file-loader@6.2.0(webpack@5.96.1(esbuild@0.25.5)))(webpack@5.96.1(esbuild@0.25.5))
@@ -15070,7 +15085,7 @@ snapshots:
       react-dom: 18.3.1(react@18.3.1)
       reading-time: 1.5.0
       srcset: 4.0.0
-      tslib: 2.7.0
+      tslib: 2.8.1
       unist-util-visit: 5.0.0
       utility-types: 3.11.0
       webpack: 5.96.1(esbuild@0.25.5)
@@ -15112,7 +15127,7 @@ snapshots:
       lodash: 4.17.21
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
-      tslib: 2.7.0
+      tslib: 2.8.1
       utility-types: 3.11.0
       webpack: 5.96.1(esbuild@0.25.5)
     transitivePeerDependencies:
@@ -15145,7 +15160,7 @@ snapshots:
       fs-extra: 11.2.0
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
-      tslib: 2.7.0
+      tslib: 2.8.1
       webpack: 5.96.1(esbuild@0.25.5)
     transitivePeerDependencies:
       - '@docusaurus/faster'
@@ -15176,7 +15191,7 @@ snapshots:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
       react-json-view-lite: 1.3.0(react@18.3.1)
-      tslib: 2.7.0
+      tslib: 2.8.1
     transitivePeerDependencies:
       - '@docusaurus/faster'
       - '@mdx-js/react'
@@ -15204,7 +15219,7 @@ snapshots:
       '@docusaurus/utils-validation': 3.6.1(esbuild@0.25.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3)
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
-      tslib: 2.7.0
+      tslib: 2.8.1
     transitivePeerDependencies:
       - '@docusaurus/faster'
       - '@mdx-js/react'
@@ -15233,7 +15248,7 @@ snapshots:
       '@types/gtag.js': 0.0.12
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
-      tslib: 2.7.0
+      tslib: 2.8.1
     transitivePeerDependencies:
       - '@docusaurus/faster'
       - '@mdx-js/react'
@@ -15261,7 +15276,7 @@ snapshots:
       '@docusaurus/utils-validation': 3.6.1(esbuild@0.25.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3)
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
-      tslib: 2.7.0
+      tslib: 2.8.1
     transitivePeerDependencies:
       - '@docusaurus/faster'
       - '@mdx-js/react'
@@ -15294,7 +15309,7 @@ snapshots:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
       sitemap: 7.1.1
-      tslib: 2.7.0
+      tslib: 2.8.1
     transitivePeerDependencies:
       - '@docusaurus/faster'
       - '@mdx-js/react'
@@ -15388,7 +15403,7 @@ snapshots:
       react-dom: 18.3.1(react@18.3.1)
       react-router-dom: 5.3.4(react@18.3.1)
       rtlcss: 4.1.1
-      tslib: 2.7.0
+      tslib: 2.8.1
       utility-types: 3.11.0
     transitivePeerDependencies:
       - '@docusaurus/faster'
@@ -15425,7 +15440,7 @@ snapshots:
       prism-react-renderer: 2.4.0(react@18.3.1)
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
-      tslib: 2.7.0
+      tslib: 2.8.1
       utility-types: 3.11.0
     transitivePeerDependencies:
       - '@swc/core'
@@ -15485,7 +15500,7 @@ snapshots:
       lodash: 4.17.21
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
-      tslib: 2.7.0
+      tslib: 2.8.1
       utility-types: 3.11.0
     transitivePeerDependencies:
       - '@algolia/client-search'
@@ -15513,7 +15528,7 @@ snapshots:
   '@docusaurus/theme-translations@3.6.1':
     dependencies:
       fs-extra: 11.2.0
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@docusaurus/tsconfig@3.6.1': {}
 
@@ -15540,7 +15555,7 @@ snapshots:
   '@docusaurus/utils-common@3.6.1(esbuild@0.25.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@docusaurus/types': 3.6.1(esbuild@0.25.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      tslib: 2.7.0
+      tslib: 2.8.1
     transitivePeerDependencies:
       - '@swc/core'
       - esbuild
@@ -15559,7 +15574,7 @@ snapshots:
       joi: 17.12.2
       js-yaml: 4.1.0
       lodash: 4.17.21
-      tslib: 2.7.0
+      tslib: 2.8.1
     transitivePeerDependencies:
       - '@swc/core'
       - esbuild
@@ -15589,7 +15604,7 @@ snapshots:
       prompts: 2.4.2
       resolve-pathname: 3.0.0
       shelljs: 0.8.5
-      tslib: 2.7.0
+      tslib: 2.8.1
       url-loader: 4.1.1(file-loader@6.2.0(webpack@5.96.1(esbuild@0.25.5)))(webpack@5.96.1(esbuild@0.25.5))
       utility-types: 3.11.0
       webpack: 5.96.1(esbuild@0.25.5)
@@ -17036,7 +17051,7 @@ snapshots:
       keyborg: 2.6.0
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
-      tabster: 8.0.1
+      tabster: 8.5.6
 
   '@fluentui/react-tabster@9.23.0(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
     dependencies:
@@ -17050,7 +17065,7 @@ snapshots:
       keyborg: 2.6.0
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
-      tabster: 8.2.0
+      tabster: 8.5.6
 
   '@fluentui/react-tag-picker@9.0.0(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(scheduler@0.23.2)':
     dependencies:
@@ -17956,21 +17971,21 @@ snapshots:
     transitivePeerDependencies:
       - tslib
 
-  '@microsoft/applicationinsights-analytics-js@2.8.9(tslib@2.7.0)':
+  '@microsoft/applicationinsights-analytics-js@2.8.9(tslib@2.8.1)':
     dependencies:
-      '@microsoft/applicationinsights-common': 2.8.9(tslib@2.7.0)
-      '@microsoft/applicationinsights-core-js': 2.8.9(tslib@2.7.0)
+      '@microsoft/applicationinsights-common': 2.8.9(tslib@2.8.1)
+      '@microsoft/applicationinsights-core-js': 2.8.9(tslib@2.8.1)
       '@microsoft/applicationinsights-shims': 2.0.2
       '@microsoft/dynamicproto-js': 1.1.11
-      tslib: 2.7.0
+      tslib: 2.8.1
 
-  '@microsoft/applicationinsights-channel-js@2.8.9(tslib@2.7.0)':
+  '@microsoft/applicationinsights-channel-js@2.8.9(tslib@2.8.1)':
     dependencies:
-      '@microsoft/applicationinsights-common': 2.8.9(tslib@2.7.0)
-      '@microsoft/applicationinsights-core-js': 2.8.9(tslib@2.7.0)
+      '@microsoft/applicationinsights-common': 2.8.9(tslib@2.8.1)
+      '@microsoft/applicationinsights-core-js': 2.8.9(tslib@2.8.1)
       '@microsoft/applicationinsights-shims': 2.0.2
       '@microsoft/dynamicproto-js': 1.1.11
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@microsoft/applicationinsights-channel-js@3.3.4(tslib@2.4.0)':
     dependencies:
@@ -17982,19 +17997,19 @@ snapshots:
       '@nevware21/ts-utils': 0.11.6
       tslib: 2.4.0
 
-  '@microsoft/applicationinsights-common@2.8.18(tslib@2.7.0)':
+  '@microsoft/applicationinsights-common@2.8.18(tslib@2.8.1)':
     dependencies:
-      '@microsoft/applicationinsights-core-js': 2.8.18(tslib@2.7.0)
+      '@microsoft/applicationinsights-core-js': 2.8.18(tslib@2.8.1)
       '@microsoft/applicationinsights-shims': 2.0.2
       '@microsoft/dynamicproto-js': 1.1.11
-      tslib: 2.7.0
+      tslib: 2.8.1
 
-  '@microsoft/applicationinsights-common@2.8.9(tslib@2.7.0)':
+  '@microsoft/applicationinsights-common@2.8.9(tslib@2.8.1)':
     dependencies:
-      '@microsoft/applicationinsights-core-js': 2.8.9(tslib@2.7.0)
+      '@microsoft/applicationinsights-core-js': 2.8.9(tslib@2.8.1)
       '@microsoft/applicationinsights-shims': 2.0.2
       '@microsoft/dynamicproto-js': 1.1.11
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@microsoft/applicationinsights-common@3.3.4(tslib@2.4.0)':
     dependencies:
@@ -18010,17 +18025,17 @@ snapshots:
       '@microsoft/dynamicproto-js': 1.1.11
       tslib: 2.4.0
 
-  '@microsoft/applicationinsights-core-js@2.8.18(tslib@2.7.0)':
+  '@microsoft/applicationinsights-core-js@2.8.18(tslib@2.8.1)':
     dependencies:
       '@microsoft/applicationinsights-shims': 2.0.2
       '@microsoft/dynamicproto-js': 1.1.11
-      tslib: 2.7.0
+      tslib: 2.8.1
 
-  '@microsoft/applicationinsights-core-js@2.8.9(tslib@2.7.0)':
+  '@microsoft/applicationinsights-core-js@2.8.9(tslib@2.8.1)':
     dependencies:
       '@microsoft/applicationinsights-shims': 2.0.2
       '@microsoft/dynamicproto-js': 1.1.11
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@microsoft/applicationinsights-core-js@3.3.4(tslib@2.4.0)':
     dependencies:
@@ -18030,31 +18045,31 @@ snapshots:
       '@nevware21/ts-utils': 0.11.6
       tslib: 2.4.0
 
-  '@microsoft/applicationinsights-dependencies-js@2.8.9(tslib@2.7.0)':
+  '@microsoft/applicationinsights-dependencies-js@2.8.9(tslib@2.8.1)':
     dependencies:
-      '@microsoft/applicationinsights-common': 2.8.9(tslib@2.7.0)
-      '@microsoft/applicationinsights-core-js': 2.8.9(tslib@2.7.0)
+      '@microsoft/applicationinsights-common': 2.8.9(tslib@2.8.1)
+      '@microsoft/applicationinsights-core-js': 2.8.9(tslib@2.8.1)
       '@microsoft/applicationinsights-shims': 2.0.2
       '@microsoft/dynamicproto-js': 1.1.11
-      tslib: 2.7.0
+      tslib: 2.8.1
 
-  '@microsoft/applicationinsights-properties-js@2.8.9(tslib@2.7.0)':
+  '@microsoft/applicationinsights-properties-js@2.8.9(tslib@2.8.1)':
     dependencies:
-      '@microsoft/applicationinsights-common': 2.8.9(tslib@2.7.0)
-      '@microsoft/applicationinsights-core-js': 2.8.9(tslib@2.7.0)
+      '@microsoft/applicationinsights-common': 2.8.9(tslib@2.8.1)
+      '@microsoft/applicationinsights-core-js': 2.8.9(tslib@2.8.1)
       '@microsoft/applicationinsights-shims': 2.0.2
       '@microsoft/dynamicproto-js': 1.1.11
-      tslib: 2.7.0
+      tslib: 2.8.1
 
-  '@microsoft/applicationinsights-react-js@3.4.0(history@5.3.0)(react@18.2.0)(tslib@2.7.0)':
+  '@microsoft/applicationinsights-react-js@3.4.0(history@5.3.0)(react@18.2.0)(tslib@2.8.1)':
     dependencies:
-      '@microsoft/applicationinsights-common': 2.8.18(tslib@2.7.0)
-      '@microsoft/applicationinsights-core-js': 2.8.9(tslib@2.7.0)
+      '@microsoft/applicationinsights-common': 2.8.18(tslib@2.8.1)
+      '@microsoft/applicationinsights-core-js': 2.8.9(tslib@2.8.1)
       '@microsoft/applicationinsights-shims': 2.0.2
       '@microsoft/dynamicproto-js': 1.1.11
       history: 5.3.0
       react: 18.2.0
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@microsoft/applicationinsights-shims@2.0.2': {}
 
@@ -18073,17 +18088,17 @@ snapshots:
       '@nevware21/ts-utils': 0.11.6
       tslib: 2.4.0
 
-  '@microsoft/applicationinsights-web@2.8.9(tslib@2.7.0)':
+  '@microsoft/applicationinsights-web@2.8.9(tslib@2.8.1)':
     dependencies:
-      '@microsoft/applicationinsights-analytics-js': 2.8.9(tslib@2.7.0)
-      '@microsoft/applicationinsights-channel-js': 2.8.9(tslib@2.7.0)
-      '@microsoft/applicationinsights-common': 2.8.9(tslib@2.7.0)
-      '@microsoft/applicationinsights-core-js': 2.8.9(tslib@2.7.0)
-      '@microsoft/applicationinsights-dependencies-js': 2.8.9(tslib@2.7.0)
-      '@microsoft/applicationinsights-properties-js': 2.8.9(tslib@2.7.0)
+      '@microsoft/applicationinsights-analytics-js': 2.8.9(tslib@2.8.1)
+      '@microsoft/applicationinsights-channel-js': 2.8.9(tslib@2.8.1)
+      '@microsoft/applicationinsights-common': 2.8.9(tslib@2.8.1)
+      '@microsoft/applicationinsights-core-js': 2.8.9(tslib@2.8.1)
+      '@microsoft/applicationinsights-dependencies-js': 2.8.9(tslib@2.8.1)
+      '@microsoft/applicationinsights-properties-js': 2.8.9(tslib@2.8.1)
       '@microsoft/applicationinsights-shims': 2.0.2
       '@microsoft/dynamicproto-js': 1.1.11
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@microsoft/dynamicproto-js@1.1.11': {}
 
@@ -18134,6 +18149,23 @@ snapshots:
       - supports-color
 
   '@microsoft/vscode-azext-azureutils@0.3.9(@azure/ms-rest-azure-env@2.0.0)(tslib@2.4.0)':
+    dependencies:
+      '@azure/arm-resources': 5.2.0
+      '@azure/arm-resources-profile-2020-09-01-hybrid': 2.1.0
+      '@azure/arm-resources-subscriptions': 2.1.0
+      '@azure/arm-storage': 17.2.1
+      '@azure/arm-storage-profile-2020-09-01-hybrid': 2.1.0
+      '@azure/ms-rest-js': 2.7.0
+      '@microsoft/vscode-azext-utils': 0.4.6(@azure/ms-rest-azure-env@2.0.0)(tslib@2.4.0)
+      semver: 7.6.0
+      vscode-nls: 5.2.0
+    transitivePeerDependencies:
+      - '@azure/ms-rest-azure-env'
+      - encoding
+      - supports-color
+      - tslib
+
+  '@microsoft/vscode-azext-azureutils@0.3.9-beta(@azure/ms-rest-azure-env@2.0.0)(tslib@2.4.0)':
     dependencies:
       '@azure/arm-resources': 5.2.0
       '@azure/arm-resources-profile-2020-09-01-hybrid': 2.1.0
@@ -18435,6 +18467,9 @@ snapshots:
     optional: true
 
   '@rollup/rollup-linux-x64-gnu@4.27.3':
+    optional: true
+
+  '@rollup/rollup-linux-x64-gnu@4.40.0':
     optional: true
 
   '@rollup/rollup-linux-x64-gnu@4.44.0':
@@ -26784,15 +26819,12 @@ snapshots:
       keyborg: 2.6.0
       tslib: 2.4.0
 
-  tabster@8.0.1:
+  tabster@8.5.6:
     dependencies:
       keyborg: 2.6.0
-      tslib: 2.4.0
-
-  tabster@8.2.0:
-    dependencies:
-      keyborg: 2.6.0
-      tslib: 2.4.0
+      tslib: 2.8.1
+    optionalDependencies:
+      '@rollup/rollup-linux-x64-gnu': 4.40.0
 
   tapable@1.1.3: {}
 
@@ -27005,6 +27037,8 @@ snapshots:
   tslib@2.6.2: {}
 
   tslib@2.7.0: {}
+
+  tslib@2.8.1: {}
 
   tsup@8.0.2(postcss@8.5.6)(ts-node@10.9.2(@types/node@20.12.7)(typescript@5.7.2))(typescript@5.7.2):
     dependencies:

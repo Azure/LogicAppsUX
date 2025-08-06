@@ -49,7 +49,6 @@ import type {
   OperationManifest,
 } from '@microsoft/logic-apps-shared';
 import {
-  OperationManifestService,
   getIntl,
   ExpressionEvaluator,
   isTemplateExpression,
@@ -89,6 +88,7 @@ import {
   map,
   copy,
   unmap,
+  TryGetOperationManifestService,
 } from '@microsoft/logic-apps-shared';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import { TokenType, ValueSegmentType } from '@microsoft/designer-ui';
@@ -263,7 +263,7 @@ export function getDynamicOutputsFromSchema(
     includeParentObject: true,
     parentProperty: parentArray ? { arrayName: parentArray, isArray: true } : undefined,
     dataKeyPrefix: '$',
-    useAliasedIndexing: OperationManifestService().isAliasingSupported(operationInfo.type, operationInfo.kind),
+    useAliasedIndexing: TryGetOperationManifestService()?.isAliasingSupported(operationInfo.type, operationInfo.kind),
   };
 
   const schemaProperties = new SchemaProcessor(processorOptions).getSchemaProperties(schema);
@@ -288,10 +288,12 @@ export async function getDynamicInputsFromSchema(
   dynamicParameter: InputParameter,
   operationInfo: NodeOperation,
   allInputKeys: string[],
-  operationDefinition?: any
+  operationDefinition?: any,
+  loadDefaultValues = true
 ): Promise<InputParameter[]> {
   const isParameterNested = dynamicParameter.isNested;
   const schemaHasRequiredParameters = schema?.required && schema.required.length > 0;
+  const service = TryGetOperationManifestService();
   const processorOptions: SchemaProcessorOptions = {
     prefix: isParameterNested ? dynamicParameter.name : '',
     currentKey: isParameterNested ? undefined : dynamicParameter.name,
@@ -300,7 +302,7 @@ export async function getDynamicInputsFromSchema(
       visibility: dynamicParameter.visibility,
     },
     required: dynamicParameter.required || schemaHasRequiredParameters,
-    useAliasedIndexing: OperationManifestService().isAliasingSupported(operationInfo.type, operationInfo.kind),
+    useAliasedIndexing: service?.isAliasingSupported(operationInfo.type, operationInfo.kind),
     excludeAdvanced: false,
     excludeInternal: false,
     includeParentObject: true,
@@ -316,7 +318,7 @@ export async function getDynamicInputsFromSchema(
   }));
 
   // TODO: This code should be removed once keys are correctly stamped for aliasing inputs since in normal parsing this does not happen.
-  // We are recieving some swagger parameters with keys in the following format, ex:
+  // We are receiving some swagger parameters with keys in the following format, ex:
   //     body.$.body/content.body/content/appId
   // We need to reformat to the below string:
   //     body.$.content.appId
@@ -338,7 +340,10 @@ export async function getDynamicInputsFromSchema(
   }
 
   if (!operationDefinition) {
-    loadParameterValuesFromDefault(map(dynamicInputs, 'key'));
+    if (loadDefaultValues) {
+      loadParameterValuesFromDefault(map(dynamicInputs, 'key'));
+    }
+
     return removeParentObjectInputsIfNotNeeded(dynamicInputs);
   }
 
@@ -346,7 +351,7 @@ export async function getDynamicInputsFromSchema(
     dynamicInputs = [getDynamicInputParameterFromDynamicParameter(dynamicParameter)];
   }
 
-  if (OperationManifestService().isSupported(operationInfo.type, operationInfo.kind)) {
+  if (service?.isSupported(operationInfo.type, operationInfo.kind)) {
     const manifest = await getOperationManifest(operationInfo);
     const customSwagger = await getCustomSwaggerIfNeeded(manifest.properties, operationDefinition);
     return getManifestBasedInputParameters(dynamicInputs, dynamicParameter, allInputKeys, manifest, customSwagger, operationDefinition);

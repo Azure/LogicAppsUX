@@ -61,7 +61,6 @@ import {
 import {
   LogEntryLevel,
   LoggerService,
-  OperationManifestService,
   WorkflowService,
   getIntl,
   isDynamicTreeExtension,
@@ -115,6 +114,7 @@ import {
   isRecordNotEmpty,
   isBodySegment,
   canStringBeConverted,
+  TryGetOperationManifestService,
 } from '@microsoft/logic-apps-shared';
 import type {
   AuthProps,
@@ -221,8 +221,11 @@ export interface UpdateParameterAndDependenciesPayload {
   connectionReference: ConnectionReference;
   nodeInputs: NodeInputs;
   dependencies: NodeDependencies;
+  updateTokenMetadata?: boolean;
   operationDefinition?: any;
   skipStateSave?: boolean;
+  loadDynamicOutputs?: boolean;
+  loadDefaultValues?: boolean;
 }
 
 export function getParametersSortedByVisibility(parameters: ParameterInfo[]): ParameterInfo[] {
@@ -1827,7 +1830,10 @@ export const updateParameterAndDependencies = createAsyncThunk(
       connectionReference,
       nodeInputs,
       dependencies,
+      updateTokenMetadata = true,
       operationDefinition,
+      loadDynamicOutputs,
+      loadDefaultValues,
     } = actionPayload;
     const parameter = nodeInputs.parameterGroups[groupId].parameters.find((param) => param.id === parameterId) ?? {};
     const updatedParameter = { ...parameter, ...properties } as ParameterInfo;
@@ -1919,6 +1925,7 @@ export const updateParameterAndDependencies = createAsyncThunk(
     }
 
     if (dependenciesToUpdate) {
+      const rootState = getState() as RootState;
       loadDynamicData(
         nodeId,
         isTrigger,
@@ -1927,7 +1934,12 @@ export const updateParameterAndDependencies = createAsyncThunk(
         dependenciesToUpdate,
         dispatch,
         getState as () => RootState,
-        operationDefinition
+        rootState.tokens?.variables ?? {},
+        rootState.workflowParameters?.definitions ?? {},
+        updateTokenMetadata,
+        operationDefinition,
+        loadDynamicOutputs !== undefined ? loadDynamicOutputs : true,
+        loadDefaultValues !== undefined ? loadDefaultValues : true
       );
     }
   }
@@ -1991,11 +2003,30 @@ export const updateDynamicDataInNode = async (
   dependencies: NodeDependencies,
   dispatch: Dispatch,
   getState: () => RootState,
-  operationDefinition?: any
+  variableDeclarations: Record<string, VariableDeclaration[]> = {},
+  workflowParameterDefinitions: Record<string, WorkflowParameterDefinition> = {},
+  updateTokenMetadata = true,
+  operationDefinition?: any,
+  loadDynamicOutputs = true,
+  loadDefaultValues = true
 ): Promise<void> => {
-  await loadDynamicData(nodeId, isTrigger, operationInfo, connectionReference, dependencies, dispatch, getState, operationDefinition);
+  await loadDynamicData(
+    nodeId,
+    isTrigger,
+    operationInfo,
+    connectionReference,
+    dependencies,
+    dispatch,
+    getState,
+    variableDeclarations,
+    workflowParameterDefinitions,
+    updateTokenMetadata,
+    operationDefinition,
+    loadDynamicOutputs,
+    loadDefaultValues
+  );
 
-  const { operations, workflowParameters } = getState();
+  const { operations } = getState();
   const nodeDependencies = getRecordEntry(operations.dependencies, nodeId) ?? {
     inputs: {},
     outputs: {},
@@ -2020,7 +2051,7 @@ export const updateDynamicDataInNode = async (
       nodeDependencies,
       false /* showErrorWhenNotReady */,
       undefined /* idReplacements */,
-      workflowParameters.definitions,
+      workflowParameterDefinitions,
       nodeId,
       dispatch
     );
@@ -2043,9 +2074,14 @@ async function loadDynamicData(
   dependencies: NodeDependencies,
   dispatch: Dispatch,
   getState: () => RootState,
-  operationDefinition?: any
+  variableDeclarations: Record<string, VariableDeclaration[]> = {},
+  workflowParameterDefinitions: Record<string, WorkflowParameterDefinition> = {},
+  updateTokenMetadata = true,
+  operationDefinition?: any,
+  loadDynamicOutputs = true,
+  loadDefaultValues = true
 ): Promise<void> {
-  if (Object.keys(dependencies?.outputs ?? {}).length) {
+  if (loadDynamicOutputs && Object.keys(dependencies?.outputs ?? {}).length) {
     const rootState = getState();
     await loadDynamicOutputsInNode(
       nodeId,
@@ -2055,7 +2091,7 @@ async function loadDynamicData(
       dependencies.outputs,
       rootState.operations.inputParameters[nodeId],
       rootState.operations.settings[nodeId],
-      rootState.workflowParameters.definitions,
+      workflowParameterDefinitions,
       dispatch
     );
   }
@@ -2069,7 +2105,12 @@ async function loadDynamicData(
       connectionReference,
       dispatch,
       getState,
-      operationDefinition
+      variableDeclarations,
+      workflowParameterDefinitions,
+      updateTokenMetadata,
+      operationDefinition,
+      loadDynamicOutputs,
+      loadDefaultValues
     );
   }
 }
@@ -2082,7 +2123,12 @@ export const loadDynamicContentForInputsInNode = async (
   connectionReference: ConnectionReference | undefined,
   dispatch: Dispatch,
   getState: () => RootState,
-  operationDefinition?: any
+  variableDeclarations: Record<string, VariableDeclaration[]> = {},
+  workflowParameterDefinitions: Record<string, WorkflowParameterDefinition> = {},
+  updateTokenMetadata = true,
+  operationDefinition?: any,
+  loadDynamicOutputs = true,
+  loadDefaultValues = true
 ): Promise<void> => {
   for (const [inputKey, info] of Object.entries(inputDependencies)) {
     if (info.dependencyType !== 'ApiSchema') {
@@ -2107,8 +2153,8 @@ export const loadDynamicContentForInputsInNode = async (
       continue;
     }
 
-    const allInputs = rootState.operations.inputParameters[nodeId];
-    const variables = getAllVariables(rootState.tokens.variables);
+    const allInputs = getState().operations.inputParameters[nodeId];
+    const variables = getAllVariables(variableDeclarations);
 
     try {
       const inputSchema = await tryGetInputDynamicSchema(
@@ -2118,7 +2164,7 @@ export const loadDynamicContentForInputsInNode = async (
         allInputs,
         variables,
         connectionReference,
-        rootState.workflowParameters.definitions,
+        workflowParameterDefinitions,
         dispatch
       );
       const allInputParameters = getAllInputParameters(allInputs);
@@ -2139,19 +2185,18 @@ export const loadDynamicContentForInputsInNode = async (
             info.parameter as InputParameter,
             operationInfo,
             allInputKeys,
-            newOperationDefinition
+            newOperationDefinition,
+            loadDefaultValues
           )
         : [];
-      const inputsWithSchema = schemaInputs.map((input) => ({
-        ...input,
-        schema: input,
-      }));
-      const inputParameters = toParameterInfoMap(inputsWithSchema, operationDefinition);
+      const inputParameters = toParameterInfoMap(schemaInputs, operationDefinition);
 
-      updateTokenMetadataInParameters(nodeId, inputParameters, getState());
+      if (updateTokenMetadata) {
+        updateTokenMetadataInParameters(nodeId, inputParameters, getState());
+      }
 
       let swagger: SwaggerParser | undefined = undefined;
-      if (!OperationManifestService().isSupported(operationInfo.type, operationInfo.kind)) {
+      if (!TryGetOperationManifestService()?.isSupported(operationInfo.type, operationInfo.kind)) {
         const { parsedSwagger } = await getConnectorWithSwagger(operationInfo.connectorId);
         swagger = parsedSwagger;
       }
@@ -2168,7 +2213,7 @@ export const loadDynamicContentForInputsInNode = async (
         }
       }
 
-      for (const input of inputsWithSchema) {
+      for (const input of schemaInputs) {
         if (input.dynamicSchema) {
           continue;
         }
@@ -2213,7 +2258,12 @@ export const loadDynamicContentForInputsInNode = async (
         { outputs: {}, inputs: dependencies },
         dispatch,
         getState,
-        operationDefinition
+        variableDeclarations,
+        workflowParameterDefinitions,
+        updateTokenMetadata,
+        operationDefinition,
+        loadDynamicOutputs,
+        loadDefaultValues
       );
     } catch (error: any) {
       const message = parseErrorMessage(error);
@@ -2686,7 +2736,7 @@ function getStringifiedValueFromEditorViewModel(
   idReplacements?: Record<string, string>,
   shouldEncodeBasedOnMetadata = true
 ): string | undefined {
-  const { editor, editorOptions, editorViewModel, value } = parameter;
+  const { editor, editorOptions, editorViewModel } = parameter;
   switch (editor?.toLowerCase()) {
     case constants.EDITOR.TABLE: {
       if (editorViewModel?.columnMode === ColumnMode.Custom && editorOptions?.columns) {
@@ -2723,7 +2773,7 @@ function getStringifiedValueFromEditorViewModel(
     }
     case constants.EDITOR.CONDITION:
       return editorOptions?.isOldFormat
-        ? iterateSimpleQueryBuilderEditor(value, editorViewModel.isRowFormat, idReplacements)
+        ? iterateSimpleQueryBuilderEditor(editorViewModel.itemValue, editorViewModel.isRowFormat, idReplacements)
         : JSON.stringify(
             recurseSerializeCondition(
               parameter,
@@ -2794,8 +2844,15 @@ const getStringifiedValueFromFloatingActionMenuOutputsViewModel = (
   return JSON.stringify(value);
 };
 
-const iterateSimpleQueryBuilderEditor = (
-  value: ValueSegment[],
+const NEGATED_OPERATORS: Record<string, string> = {
+  notcontains: 'contains',
+  notequals: 'equals',
+  notstartswith: 'startsWith',
+  notendswith: 'endsWith',
+};
+
+export const iterateSimpleQueryBuilderEditor = (
+  itemValue: RowItemProps,
   isRowFormat: boolean,
   idReplacements?: Record<string, string>
 ): string | undefined => {
@@ -2803,15 +2860,32 @@ const iterateSimpleQueryBuilderEditor = (
   if (!isRowFormat) {
     return undefined;
   }
-  const { value: remappedItemValue } = idReplacements ? remapValueSegmentsWithNewIds(value, idReplacements) : { value: value };
-  // otherwise we iterate through row items and concatenate the values
-  let stringValue = '';
-  remappedItemValue.forEach((segment) => {
-    stringValue += segment.value;
-  });
-  return stringValue;
+
+  const remappedItemValue: RowItemProps = idReplacements ? remapEditorViewModelWithNewIds(itemValue, idReplacements) : itemValue;
+
+  const { operator, operand1, operand2 } = remappedItemValue;
+
+  const operand1Str = formatSegment(operand1[0]);
+  const operand2Str = formatSegment(operand2[0]);
+
+  const baseOperator = NEGATED_OPERATORS[operator.toLowerCase()];
+  if (baseOperator) {
+    return `@not(${baseOperator}(${operand1Str}, ${operand2Str}))`;
+  }
+
+  return `@${operator}(${operand1Str}, ${operand2Str})`;
 };
 
+function formatSegment(segment: ValueSegment): string {
+  if (segment.type === ValueSegmentType.TOKEN) {
+    return segment.value;
+  }
+
+  const lowerValue = segment.value.toLowerCase();
+  const isPrimitive = lowerValue === 'true' || lowerValue === 'false' || lowerValue === 'null' || !Number.isNaN(Number(segment.value));
+
+  return isPrimitive ? segment.value : `'${segment.value}'`;
+}
 export const recurseSerializeCondition = (
   parameter: ParameterInfo,
   editorViewModel: any,
@@ -2940,6 +3014,16 @@ export function getGroupAndParameterFromParameterKey(
     }
   }
 
+  return undefined;
+}
+
+export function getGroupIdFromParameterId(nodeInputs: NodeInputs, parameterId: string): string | undefined {
+  for (const [groupId, group] of Object.entries(nodeInputs.parameterGroups)) {
+    const parameter = group.parameters.find((param) => param.id === parameterId);
+    if (parameter) {
+      return groupId;
+    }
+  }
   return undefined;
 }
 
@@ -3742,6 +3826,14 @@ export function parameterValueToString(
   idReplacements?: Record<string, string>,
   shouldEncodeBasedOnMetadata = true
 ): string | undefined {
+  if (parameterInfo.schema?.['x-ms-is-node-id']) {
+    const oldValue = parameterInfo.value?.[0]?.value ?? '';
+    const remappedValue = idReplacements?.[oldValue] ?? oldValue;
+    if (remappedValue) {
+      return remappedValue;
+    }
+  }
+
   const { value: remappedValue, didRemap } = isRecordNotEmpty(idReplacements)
     ? remapValueSegmentsWithNewIds(parameterInfo.value, idReplacements ?? {})
     : { value: parameterInfo.value, didRemap: false };

@@ -14,7 +14,6 @@ import { useIsPanelInPinnedViewMode, usePanelLocation } from '../../../../../cor
 import {
   useAllowUserToChangeConnection,
   useConnectorName,
-  useIsInlineConnection,
   useNodeConnectionName,
   useOperationInfo,
 } from '../../../../../core/state/selectors/actionMetadataSelector';
@@ -26,6 +25,7 @@ import {
   useNodeMetadata,
   useReplacedIds,
 } from '../../../../../core/state/workflow/workflowSelectors';
+import { useIsA2AWorkflow } from '../../../../../core/state/designerView/designerViewSelectors';
 import type { AppDispatch, RootState } from '../../../../../core/store';
 import { getConnectionReference } from '../../../../../core/utils/connectors/connections';
 import { isRootNodeInGraph } from '../../../../../core/utils/graph';
@@ -135,7 +135,6 @@ export const ParametersTab: React.FC<ParametersTabProps> = (props) => {
   const connectionName = useNodeConnectionName(selectedNodeId);
   const operationInfo = useOperationInfo(selectedNodeId);
   const showConnectionDisplay = useAllowUserToChangeConnection(operationInfo);
-  const isInlineConnection = useIsInlineConnection(operationInfo);
   const showIdentitySelector = useShowIdentitySelectorQuery(selectedNodeId);
   const errorInfo = useOperationErrorInfo(selectedNodeId);
   const replacedIds = useReplacedIds();
@@ -233,7 +232,7 @@ export const ParametersTab: React.FC<ParametersTabProps> = (props) => {
           />
         </div>
       ))}
-      {!isInlineConnection && operationInfo && showConnectionDisplay && connectionName.isLoading !== undefined ? (
+      {operationInfo && showConnectionDisplay && connectionName.isLoading !== undefined ? (
         <>
           <Divider style={{ padding: '16px 0px' }} />
           <ConnectionDisplay
@@ -346,7 +345,7 @@ export const dynamicallyLoadAgentConnection = createAsyncThunk(
   }
 );
 
-const ParameterSection = ({
+export const ParameterSection = ({
   nodeId,
   group,
   readOnly,
@@ -388,6 +387,7 @@ const ParameterSection = ({
     });
   const nodeGraphId = getRecordEntry(nodesMetadata, nodeId)?.graphId;
   const isWithinAgenticLoop = useIsWithinAgenticLoop(nodeGraphId);
+  const isA2AWorkflow = useIsA2AWorkflow();
   const rootState = useSelector((state: RootState) => state);
   const displayNameResult = useConnectorName(operationInfo);
   const panelLocation = usePanelLocation();
@@ -851,7 +851,8 @@ const ParameterSection = ({
         param,
         upstreamNodeIds ?? [],
         variables,
-        deploymentsForCognitiveServiceAccount ?? []
+        deploymentsForCognitiveServiceAccount ?? [],
+        isA2AWorkflow
       );
 
       const createNewResourceEditorProps = getCustomEditorForNewResource(
@@ -988,7 +989,8 @@ export const getEditorAndOptions = (
   parameter: ParameterInfo,
   upstreamNodeIds: string[],
   variables: Record<string, VariableDeclaration[]>,
-  deploymentsForCognitiveServiceAccount: any[] = []
+  deploymentsForCognitiveServiceAccount: any[] = [],
+  isA2AWorkflow?: boolean
 ): { editor?: string; editorOptions?: any } => {
   const customEditor = EditorService()?.getEditor({
     operationInfo,
@@ -1029,6 +1031,17 @@ export const getEditorAndOptions = (
     return {
       editor,
       editorOptions: { options },
+    };
+  }
+
+  // Hide user instruction editor for A2A workflows
+  if (equals(editor, constants.EDITOR.AGENT_INSTRUCTION) && isA2AWorkflow) {
+    return {
+      editor,
+      editorOptions: {
+        ...editorOptions,
+        hideUserInstructions: true,
+      },
     };
   }
 

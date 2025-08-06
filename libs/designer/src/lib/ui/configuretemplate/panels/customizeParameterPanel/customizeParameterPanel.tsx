@@ -4,7 +4,7 @@ import { closePanel, TemplatePanelView } from '../../../../core/state/templates/
 import { type TemplatePanelFooterProps, TemplatesPanelFooter, TemplatesPanelHeader } from '@microsoft/designer-ui';
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { Panel, PanelType } from '@fluentui/react';
+import { Drawer, DrawerBody, DrawerHeader, DrawerFooter, makeStyles, shorthands, tokens } from '@fluentui/react-components';
 import { CustomizeParameter } from '../../../configuretemplate/parameters/customizeParameter';
 import { validateParameterDetails } from '../../../../core/state/templates/templateSlice';
 import { useFunctionalState } from '@react-hookz/web';
@@ -12,10 +12,23 @@ import { isUndefinedOrEmptyString, type Template } from '@microsoft/logic-apps-s
 import { useParameterDefinition } from '../../../../core/configuretemplate/configuretemplateselectors';
 import { updateWorkflowParameter } from '../../../../core/actions/bjsworkflow/configuretemplate';
 
-const layerProps = {
-  hostId: 'msla-layer-host',
-  eventBubblingEnabled: true,
-};
+const useStyles = makeStyles({
+  drawer: {
+    zIndex: 1000,
+    height: '100%',
+    width: '50%', // Set the width of the drawer
+  },
+  header: {
+    ...shorthands.padding('0', tokens.spacingHorizontalL),
+  },
+  body: {
+    ...shorthands.padding('0', tokens.spacingHorizontalL),
+    overflow: 'auto',
+  },
+  footer: {
+    ...shorthands.padding(tokens.spacingVerticalM, tokens.spacingHorizontalL),
+  },
+});
 
 export const CustomizeParameterPanel = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -105,27 +118,27 @@ export const CustomizeParameterPanel = () => {
     };
   }, [dispatch, intl, isDirty, parameterId, runValidation, selectedParameterDefinition]);
 
-  const onRenderFooterContent = useCallback(() => <TemplatesPanelFooter {...footerContent} />, [footerContent]);
+  const styles = useStyles();
 
   return (
-    <Panel
-      styles={{ main: { padding: '0 20px', zIndex: 1000 }, content: { paddingLeft: '0px' } }}
-      isLightDismiss={false}
-      type={PanelType.custom}
-      customWidth={'50%'}
-      isOpen={isOpen && currentPanelView === TemplatePanelView.CustomizeParameter}
-      onDismiss={dismissPanel}
-      onRenderHeader={onRenderHeaderContent}
-      onRenderFooterContent={onRenderFooterContent}
-      hasCloseButton={true}
-      layerProps={layerProps}
-      isFooterAtBottom={true}
+    <Drawer
+      className={styles.drawer}
+      modalType="non-modal"
+      open={isOpen && currentPanelView === TemplatePanelView.CustomizeParameter}
+      onOpenChange={(_, { open }) => !open && dismissPanel()}
+      position="end"
     >
-      <CustomizeParameter
-        parameterError={parameterError}
-        parameterDefinition={selectedParameterDefinition()}
-        setParameterDefinition={updateParameterDefinition}
-      />
-    </Panel>
+      <DrawerHeader className={styles.header}>{onRenderHeaderContent()}</DrawerHeader>
+      <DrawerBody className={styles.body}>
+        <CustomizeParameter
+          parameterError={parameterError}
+          parameterDefinition={selectedParameterDefinition()}
+          setParameterDefinition={updateParameterDefinition}
+        />
+      </DrawerBody>
+      <DrawerFooter className={styles.footer}>
+        <TemplatesPanelFooter {...footerContent} />
+      </DrawerFooter>
+    </Drawer>
   );
 };

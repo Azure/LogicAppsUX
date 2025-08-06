@@ -31,7 +31,6 @@ import {
   equals,
   getRecordEntry,
   RUN_AFTER_STATUS,
-  WORKFLOW_EDGE_TYPES,
   WORKFLOW_NODE_TYPES,
   containsIdTag,
   containsCaseTag,
@@ -45,6 +44,7 @@ import type { NodeChange, NodeDimensionChange } from '@xyflow/system';
 import type { UndoRedoPartialRootState } from '../undoRedo/undoRedoTypes';
 import { initializeInputsOutputsBinding } from '../../actions/bjsworkflow/monitoring';
 import { updateAgenticSubgraph, type UpdateAgenticGraphPayload } from '../../parsers/updateAgenticGraph';
+import { isA2AWorkflow } from './helper';
 
 export interface AddImplicitForeachPayload {
   nodeId: string;
@@ -61,7 +61,6 @@ export const initialWorkflowState: WorkflowState = {
   nodesMetadata: {},
   collapsedGraphIds: {},
   collapsedActionIds: {},
-  edgeIdsBySource: {},
   idReplacements: {},
   newlyAddedOperations: {},
   isDirty: false,
@@ -73,6 +72,9 @@ export const initialWorkflowState: WorkflowState = {
   hostData: {
     errorMessages: {},
   },
+  timelineRepetitionIndex: 0,
+  timelineRepetitionArray: [],
+  flowErrors: {},
 };
 
 export const workflowSlice = createSlice({
@@ -100,7 +102,8 @@ export const workflowSlice = createSlice({
       if (!state.graph) {
         return; // log exception
       }
-      const graph = getWorkflowNodeFromGraphState(state, action.payload.relationshipIds.graphId);
+      const relationshipIds = action.payload.relationshipIds;
+      const graph = getWorkflowNodeFromGraphState(state, relationshipIds?.subgraphId ?? relationshipIds?.graphId);
       if (!graph) {
         throw new Error('graph not set');
       }
@@ -321,7 +324,19 @@ export const workflowSlice = createSlice({
       });
     },
     deleteSwitchCase: (state: WorkflowState, action: PayloadAction<{ caseId: string; nodeId: string }>) => {
-      delete (getRecordEntry(state.operations, action.payload.nodeId) as any).cases?.[action.payload.caseId];
+      const { caseId, nodeId } = action.payload;
+      delete (getRecordEntry(state.operations, nodeId) as any).cases?.[caseId];
+
+      LoggerService().log({
+        level: LogEntryLevel.Verbose,
+        area: 'Designer:Workflow Slice',
+        message: action.type,
+        args: [action.payload],
+      });
+    },
+    deleteAgentTool: (state: WorkflowState, action: PayloadAction<{ toolId: string; agentId: string }>) => {
+      const { toolId, agentId } = action.payload;
+      delete (getRecordEntry(state.operations, agentId) as any).tools?.[toolId];
 
       LoggerService().log({
         level: LogEntryLevel.Verbose,
@@ -365,6 +380,12 @@ export const workflowSlice = createSlice({
         const change = getRecordEntry(dimensionChangesById, node?.id ?? '');
         if (change && node && isWorkflowNode(node)) {
           const c = change as NodeDimensionChange;
+          if ((c.dimensions?.height ?? 0) === 0 || (c.dimensions?.width ?? 0) === 0) {
+            continue; // Skip if the dimensions are 0
+          }
+          if (node.height === c.dimensions?.height && node.width === c.dimensions?.width) {
+            continue; // Skip if the dimensions have not changed
+          }
           node.height = c.dimensions?.height ?? 0;
           node.width = c.dimensions?.width ?? 0;
         }
@@ -470,6 +491,14 @@ export const workflowSlice = createSlice({
       };
       nodeMetadata.runData = nodeRunData as LogicAppsV2.WorkflowRunAction;
     },
+    clearAllRepetitionRunData: (state: WorkflowState) => {
+      for (const node of Object.values(state.nodesMetadata)) {
+        if (node.runData) {
+          delete node.runData;
+          delete node.runIndex;
+        }
+      }
+    },
     setSubgraphRunData: (state: WorkflowState, action: PayloadAction<{ nodeId: string; runData: LogicAppsV2.RunRepetition[] }>) => {
       const { nodeId, runData } = action.payload;
       const nodeMetadata = getRecordEntry(state.nodesMetadata, nodeId);
@@ -499,12 +528,17 @@ export const workflowSlice = createSlice({
       };
       nodeMetadata.runData = nodeRunData as LogicAppsV2.WorkflowRunAction;
     },
-    addSwitchCase: (state: WorkflowState, action: PayloadAction<{ caseId: string; nodeId: string }>) => {
+    setTimelineRepetitionIndex: (state: WorkflowState, action: PayloadAction<number>) => {
+      state.timelineRepetitionIndex = action.payload;
+    },
+    setTimelineRepetitionArray: (state: WorkflowState, action: PayloadAction<string[][]>) => {
+      state.timelineRepetitionArray = action.payload;
+    },
+    addSwitchCase: (state: WorkflowState, action: PayloadAction<{ caseId: string; graphId: string }>) => {
       if (!state.graph) {
         return; // log exception
       }
-      const { caseId, nodeId } = action.payload;
-      const graphId = getRecordEntry(state.nodesMetadata, nodeId)?.graphId ?? '';
+      const { caseId, graphId } = action.payload;
       const node = getWorkflowNodeFromGraphState(state, graphId);
       if (!node) {
         throw new Error('node not set');
@@ -518,12 +552,11 @@ export const workflowSlice = createSlice({
         args: [action.payload],
       });
     },
-    addAgentTool: (state: WorkflowState, action: PayloadAction<{ toolId: string; nodeId: string }>) => {
+    addAgentTool: (state: WorkflowState, action: PayloadAction<{ toolId: string; graphId: string }>) => {
       if (!state.graph) {
         return; // log exception
       }
-      const { toolId, nodeId } = action.payload;
-      const graphId = getRecordEntry(state.nodesMetadata, nodeId)?.graphId ?? '';
+      const { toolId, graphId } = action.payload;
       const node = getWorkflowNodeFromGraphState(state, graphId);
       if (!node) {
         throw new Error('node not set');
@@ -545,30 +578,7 @@ export const workflowSlice = createSlice({
         area: 'workflowSlice.ts',
       });
     },
-    buildEdgeIdsBySource: (state: WorkflowState) => {
-      if (!state.graph) {
-        return;
-      }
-
-      const output: Record<string, string[]> = {};
-      const traverseGraph = (graph: WorkflowNode) => {
-        const edges = graph.edges?.filter((e) => e.type !== WORKFLOW_EDGE_TYPES.HIDDEN_EDGE);
-        if (edges) {
-          edges.forEach((edge) => {
-            if (!getRecordEntry(output, edge.source)) {
-              output[edge.source] = [];
-            }
-            getRecordEntry(output, edge.source)?.push(edge.target);
-          });
-        }
-        if (graph.children) {
-          graph.children.forEach((child) => traverseGraph(child));
-        }
-      };
-      traverseGraph(state.graph);
-      state.edgeIdsBySource = output;
-    },
-    removeEdgeFromRunAfter: (state: WorkflowState, action: PayloadAction<{ childOperationId: string; parentOperationId: string }>) => {
+    removeRunAfter: (state: WorkflowState, action: PayloadAction<{ childOperationId: string; parentOperationId: string }>) => {
       const { childOperationId, parentOperationId } = action.payload;
       const parentOperation = getRecordEntry(state.operations, parentOperationId);
       const childOperation: LogicAppsV2.ActionDefinition | undefined = getRecordEntry(state.operations, childOperationId);
@@ -578,7 +588,8 @@ export const workflowSlice = createSlice({
       delete childOperation.runAfter?.[parentOperationId];
 
       // If there is only the trigger node left, set to empty object
-      if (Object.keys(childOperation.runAfter ?? {}).length === 1) {
+      const allowRunAfterTrigger = isA2AWorkflow(state);
+      if (!allowRunAfterTrigger && Object.keys(childOperation.runAfter ?? {}).length === 1) {
         const rootTriggerNodeId = Object.entries(state.nodesMetadata).find(
           ([_, node]) => node.graphId === 'root' && node.isRoot === true
         )?.[0];
@@ -603,7 +614,7 @@ export const workflowSlice = createSlice({
       }
       graph.edges = graph.edges?.filter((x) => x.source !== parentOperationId || x.target !== childOperationId) ?? [];
     },
-    addEdgeFromRunAfter: (state: WorkflowState, action: PayloadAction<{ childOperationId: string; parentOperationId: string }>) => {
+    addRunAfter: (state: WorkflowState, action: PayloadAction<{ childOperationId: string; parentOperationId: string }>) => {
       const { childOperationId, parentOperationId } = action.payload;
       const parentOperation = getRecordEntry(state.operations, parentOperationId);
       const childOperation: LogicAppsV2.ActionDefinition | undefined = getRecordEntry(state.operations, childOperationId);
@@ -618,7 +629,8 @@ export const workflowSlice = createSlice({
 
       // If there is no existing run after, it was running after the trigger
       // We need to add a dummy trigger node to populate the settings object and flag validation
-      if (Object.keys(childOperation.runAfter ?? {}).length === 0) {
+      const allowRunAfterTrigger = isA2AWorkflow(state);
+      if (!allowRunAfterTrigger && Object.keys(childOperation.runAfter ?? {}).length === 0) {
         const rootTriggerNodeId =
           Object.entries(state.nodesMetadata).find(([_, node]) => node.graphId === 'root' && node.isRoot === true)?.[0] ?? '';
         childOperation.runAfter = { [rootTriggerNodeId]: [RUN_AFTER_STATUS.SUCCEEDED] };
@@ -630,7 +642,7 @@ export const workflowSlice = createSlice({
       childOperation.runAfter[parentOperationId] = [RUN_AFTER_STATUS.SUCCEEDED];
 
       // Check if it only contains the trigger node, if so, set to empty object
-      if (Object.keys(childOperation.runAfter ?? {}).length === 1) {
+      if (!allowRunAfterTrigger && Object.keys(childOperation.runAfter ?? {}).length === 1) {
         const rootTriggerNodeId = Object.entries(state.nodesMetadata).find(
           ([_, node]) => node.graphId === 'root' && node.isRoot === true
         )?.[0];
@@ -677,6 +689,34 @@ export const workflowSlice = createSlice({
       }
       childOperation.runAfter[action.payload.parentOperation] = action.payload.statuses;
     },
+    addHandoffMetadata: (state: WorkflowState, action: PayloadAction<{ sourceId: string; toolId: string; targetId: string }>) => {
+      const { sourceId, toolId, targetId } = action.payload;
+      const sourceOperation = getRecordEntry(state.nodesMetadata, sourceId);
+      if (!sourceOperation) {
+        return;
+      }
+      const currentHandoffs = (sourceOperation as any)?.handoffs ?? {};
+      currentHandoffs[toolId] = targetId;
+      (sourceOperation as any).handoffs = currentHandoffs;
+    },
+    removeHandoffMetadata: (state: WorkflowState, action: PayloadAction<{ sourceId: string; toolId?: string; targetId?: string }>) => {
+      const { sourceId, toolId, targetId } = action.payload;
+      const sourceMetadata = getRecordEntry(state.nodesMetadata, sourceId);
+      if (!sourceMetadata) {
+        return;
+      }
+      const currentHandoffs = (sourceMetadata as any)?.handoffs ?? {};
+      if (toolId) {
+        delete currentHandoffs[toolId];
+      } else if (targetId) {
+        for (const [toolId, handoffTargetId] of Object.entries(currentHandoffs)) {
+          if (handoffTargetId === targetId) {
+            delete currentHandoffs[toolId];
+          }
+        }
+      }
+      (sourceMetadata as any).handoffs = currentHandoffs;
+    },
     replaceId: (state: WorkflowState, action: PayloadAction<{ originalId: string; newId: string }>) => {
       const { originalId, newId } = action.payload;
       const normalizedId = transformOperationTitle(newId);
@@ -695,6 +735,9 @@ export const workflowSlice = createSlice({
         return;
       }
       state.hostData.errorMessages[action.payload.level] = action.payload.errorMessages;
+    },
+    setFlowErrors: (state, action: PayloadAction<{ flowErrors: Record<string, string[]> }>) => {
+      state.flowErrors = action.payload.flowErrors;
     },
   },
   extraReducers: (builder) => {
@@ -742,8 +785,8 @@ export const workflowSlice = createSlice({
         pasteScopeNode,
         setNodeDescription,
         updateRunAfter,
-        removeEdgeFromRunAfter,
-        addEdgeFromRunAfter,
+        removeRunAfter,
+        addRunAfter,
         replaceId,
         updateNodeConnection.fulfilled,
         updateStaticResults,
@@ -768,16 +811,20 @@ export const {
   moveNode,
   deleteNode,
   deleteSwitchCase,
+  deleteAgentTool,
   updateNodeSizes,
   setNodeDescription,
   toggleCollapsedGraphId,
   addSwitchCase,
   addAgentTool,
   discardAllChanges,
-  buildEdgeIdsBySource,
   updateRunAfter,
-  addEdgeFromRunAfter,
-  removeEdgeFromRunAfter,
+  addRunAfter,
+  removeRunAfter,
+  addHandoffMetadata,
+  removeHandoffMetadata,
+  setTimelineRepetitionIndex,
+  setTimelineRepetitionArray,
   clearFocusNode,
   setFocusNode,
   setCollapsedGraphIds,
@@ -785,9 +832,11 @@ export const {
   replaceId,
   setRunIndex,
   setRepetitionRunData,
+  clearAllRepetitionRunData,
   setSubgraphRunData,
   setIsWorkflowDirty,
   setHostErrorMessages,
+  setFlowErrors,
   setRunDataInputOutputs,
   toggleCollapsedActionId,
   clearFocusCollapsedNode,

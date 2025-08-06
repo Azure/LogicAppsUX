@@ -50,7 +50,6 @@ import { viewProperties } from './viewProperties';
 import { configureWebhookRedirectEndpoint } from './workflows/configureWebhookRedirectEndpoint/configureWebhookRedirectEndpoint';
 import { enableAzureConnectors } from './workflows/enableAzureConnectors';
 import { exportLogicApp } from './workflows/exportLogicApp';
-import { getDebugSymbolDll } from './workflows/getDebugSymbolDll';
 import { openDesigner } from './workflows/openDesigner/openDesigner';
 import { openOverview } from './workflows/openOverview';
 import { reviewValidation } from './workflows/reviewValidation';
@@ -66,6 +65,7 @@ import type { Uri } from 'vscode';
 import { pickCustomCodeNetHostProcess } from './pickCustomCodeNetHostProcess';
 import { debugLogicApp } from './debugLogicApp';
 import { syncCloudSettings } from './syncCloudSettings';
+import { getDebugSymbolDll } from '../utils/getDebugSymbolDll';
 
 export function registerCommands(): void {
   registerCommandWithTreeNodeUnwrapping(extensionCommand.openDesigner, openDesigner);

@@ -1,8 +1,8 @@
-import { defineProject } from 'vitest/config';
+import { defineConfig } from 'vitest/config';
 import packageJson from './package.json';
 import path from 'path';
 
-export default defineProject({
+export default defineConfig({
   plugins: [],
   resolve: {
     alias: {

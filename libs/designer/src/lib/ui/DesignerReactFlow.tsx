@@ -4,19 +4,21 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { containsIdTag, guid, removeIdTag, WORKFLOW_NODE_TYPES, type WorkflowNodeType } from '@microsoft/logic-apps-shared';
 import { useDispatch } from 'react-redux';
 import { useResizeObserver } from '@react-hookz/web';
+import { useIntl } from 'react-intl';
 
-import { useIsGraphEmpty, useNodesMetadata } from '../core/state/workflow/workflowSelectors';
+import { useAllAgentIds, useDisconnectedNodes, useIsGraphEmpty, useNodesMetadata } from '../core/state/workflow/workflowSelectors';
 import { useNodesInitialized } from '../core/state/operation/operationSelector';
-import { updateNodeSizes } from '../core/state/workflow/workflowSlice';
+import { setFlowErrors, updateNodeSizes } from '../core/state/workflow/workflowSlice';
 import type { AppDispatch } from '../core';
 import { clearPanel, expandDiscoveryPanel } from '../core/state/panel/panelSlice';
-import { addEdgeFromRunAfterOperation } from '../core/actions/bjsworkflow/runafter';
-import { useClampPan } from '../core/state/designerView/designerViewSelectors';
+import { addOperationRunAfter } from '../core/actions/bjsworkflow/runafter';
+import { useClampPan, useIsA2AWorkflow } from '../core/state/designerView/designerViewSelectors';
 import { DEFAULT_NODE_SIZE } from '../core/utils/graph';
 import { DraftEdge } from './connections/draftEdge';
 import { useReadOnly } from '../core/state/designerOptions/designerOptionsSelectors';
 import { useLayout } from '../core/graphlayout';
 import { DesignerFlowViewPadding } from '../core/utils/designerLayoutHelpers';
+import { addAgentHandoff } from '../core/actions/bjsworkflow/handoff';
 
 import GraphNode from './CustomNodes/GraphContainerNode';
 import HiddenNode from './CustomNodes/HiddenNode';
@@ -26,6 +28,7 @@ import CollapsedNode from './CustomNodes/CollapsedCardNode';
 import ScopeCardNode from './CustomNodes/ScopeCardNode';
 import SubgraphCardNode from './CustomNodes/SubgraphCardNode';
 import ButtonEdge from './connections/edge';
+import HandoffEdge from './connections/handoffEdge';
 import HiddenEdge from './connections/hiddenEdge';
 
 const DesignerReactFlow = (props: any) => {
@@ -48,7 +51,8 @@ const DesignerReactFlow = (props: any) => {
 
   const edgeTypes = {
     BUTTON_EDGE: ButtonEdge,
-    HEADING_EDGE: ButtonEdge, // This is functionally the same as a button edge
+    HEADING_EDGE: ButtonEdge,
+    HANDOFF_EDGE: HandoffEdge,
     ONLY_EDGE: BezierEdge, // Setting it as default React Flow Edge, can be changed as needed
     HIDDEN_EDGE: HiddenEdge,
   } as EdgeTypes;
@@ -56,6 +60,7 @@ const DesignerReactFlow = (props: any) => {
   const [nodes, edges, flowSize] = useLayout();
 
   const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null);
+  const [containerDimensions, setContainerDimensions] = useState(canvasRef.current?.getBoundingClientRect() ?? { width: 0, height: 0 });
 
   const onInit = useCallback((instance: ReactFlowInstance) => {
     setReactFlowInstance(instance);
@@ -64,13 +69,26 @@ const DesignerReactFlow = (props: any) => {
   const hasFitViewRun = useRef(false);
 
   useEffect(() => {
-    if (!hasFitViewRun.current && nodes.length > 0 && reactFlowInstance) {
+    if (!hasFitViewRun.current && nodes.length > 0 && reactFlowInstance && isInitialized) {
       requestAnimationFrame(() => {
-        reactFlowInstance.fitView({ padding: 0.6 });
-        hasFitViewRun.current = true;
+        requestAnimationFrame(() => {
+          const defaultZoom = 1.0;
+          const topNode = nodes.reduce((top, node) => (node.position.y < top.position.y ? node : top));
+
+          const centerX = containerDimensions.width / 2;
+          const topPadding = 120;
+
+          reactFlowInstance.setViewport({
+            x: centerX - (topNode.position.x + (topNode.width || DEFAULT_NODE_SIZE.width) / 2) * defaultZoom,
+            y: topPadding - topNode.position.y * defaultZoom,
+            zoom: defaultZoom,
+          });
+
+          hasFitViewRun.current = true;
+        });
       });
     }
-  }, [nodes, reactFlowInstance]);
+  }, [nodes, reactFlowInstance, isInitialized, containerDimensions]);
 
   const onNodesChange = useCallback(
     (changes: NodeChange[]) => {
@@ -97,8 +115,7 @@ const DesignerReactFlow = (props: any) => {
 
   const clampPan = useClampPan();
 
-  const [containerDimensions, setContainerDimentions] = useState(canvasRef.current?.getBoundingClientRect() ?? { width: 0, height: 0 });
-  useResizeObserver(canvasRef, (el) => setContainerDimentions(el.contentRect));
+  useResizeObserver(canvasRef, (el) => setContainerDimensions(el.contentRect));
 
   const [zoom, setZoom] = useState(1);
 
@@ -144,6 +161,9 @@ const DesignerReactFlow = (props: any) => {
 
   const nodesMetadata = useNodesMetadata();
 
+  const isA2AWorkflow = useIsA2AWorkflow();
+  const allAgentIds = useAllAgentIds();
+
   const [isDraggingConnection, setIsDraggingConnection] = useState(false);
 
   const onConnectStart = useCallback(() => setIsDraggingConnection(true), []);
@@ -151,7 +171,7 @@ const DesignerReactFlow = (props: any) => {
   const onConnectEnd = useCallback(
     (event: any, connectionState: any) => {
       const { isValid, fromNode, toNode } = connectionState;
-      const parentId = fromNode?.id;
+      const parentId = containsIdTag(fromNode?.id) ? removeIdTag(fromNode?.id) : fromNode?.id;
       const targetId = containsIdTag(toNode?.id) ? removeIdTag(toNode?.id) : toNode?.id;
 
       if (parentId === targetId) {
@@ -180,15 +200,25 @@ const DesignerReactFlow = (props: any) => {
       }
 
       if (isValid && parentId && targetId) {
-        dispatch(
-          addEdgeFromRunAfterOperation({
-            parentOperationId: parentId,
-            childOperationId: targetId,
-          })
-        );
+        // In A2A, create a handoff edge if both nodes are agents
+        if (isA2AWorkflow && allAgentIds.includes(parentId) && allAgentIds.includes(targetId)) {
+          dispatch(
+            addAgentHandoff({
+              sourceId: parentId,
+              targetId,
+            })
+          );
+        } else {
+          dispatch(
+            addOperationRunAfter({
+              parentOperationId: parentId,
+              childOperationId: targetId,
+            })
+          );
+        }
       }
     },
-    [nodesMetadata, dispatch]
+    [nodesMetadata, dispatch, isA2AWorkflow, allAgentIds]
   );
 
   const isValidConnection = useCallback(
@@ -211,6 +241,24 @@ const DesignerReactFlow = (props: any) => {
     },
     [edges]
   );
+
+  const intl = useIntl();
+  const disconnectedNodeErrorMessage = intl.formatMessage({
+    defaultMessage: 'Action is unreachable in flow structure',
+    id: 'KmW31k',
+    description: 'Error message for disconnected nodes',
+  });
+  const disconnectedNodes = useDisconnectedNodes();
+
+  useEffect(() => {
+    const errors: Record<string, string[]> = {};
+    if (disconnectedNodes.length > 0) {
+      for (const nodeId of disconnectedNodes) {
+        errors[nodeId] = [disconnectedNodeErrorMessage];
+      }
+    }
+    dispatch(setFlowErrors({ flowErrors: errors }));
+  }, [disconnectedNodes, dispatch]);
 
   const onPaneClick = useCallback(() => {
     if (isDraggingConnection) {

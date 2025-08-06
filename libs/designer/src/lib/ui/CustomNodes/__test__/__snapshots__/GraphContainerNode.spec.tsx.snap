@@ -242,17 +242,9 @@ exports[`GraphContainerNode > should render with footer and be a subgraph 1`] = 
     data-automation-id="msla-graph-container-mockid"
   />
   <div
-    className="___rchrq50_zqh4gx0 f3bhgqh f1022m68 f6bm4uj f79hrhh f9ur42n f3mu39s fugzhns f5gq2j6 f3q69k0"
-    isConnectable={true}
-    isConnectableEnd={false}
-    isConnectableStart={true}
+    className="___ntqwa30_se4bvr0 f3bhgqh fd7fpy0 f15a45g"
+    isConnectable={false}
     position="bottom"
-    style={
-      {
-        "transform": "translate(-50%, 0)",
-        "visibility": "hidden",
-      }
-    }
     type="source"
   >
     Handle reactflow

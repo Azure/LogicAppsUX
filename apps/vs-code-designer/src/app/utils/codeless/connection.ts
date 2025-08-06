@@ -16,7 +16,8 @@ import { getAuthorizationToken, getAuthorizationTokenFromNode } from './getAutho
 import { getParametersJson, saveWorkflowParameterRecords } from './parameter';
 import { deleteCustomCode, getCustomCode, getCustomCodeAppFilesToUpdate, uploadCustomCode } from './customcode';
 import { addNewFileInCSharpProject } from './updateBuildFile';
-import { HTTP_METHODS, isString } from '@microsoft/logic-apps-shared';
+import type { ConnectionAndAppSetting } from '@microsoft/logic-apps-shared';
+import { HTTP_METHODS, isString, resolveConnectionsReferences } from '@microsoft/logic-apps-shared';
 import type { ParsedSite } from '@microsoft/vscode-azext-azureappservice';
 import { nonNullValue } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -27,12 +28,11 @@ import type {
   ConnectionReferenceModel,
   IIdentityWizardContext,
   ConnectionAcl,
-  ConnectionAndAppSetting,
   Parameter,
   CustomCodeFileNameMapping,
   AllCustomCodeFiles,
 } from '@microsoft/vscode-extension-logic-apps';
-import { JwtTokenHelper, JwtTokenConstants, resolveConnectionsReferences } from '@microsoft/vscode-extension-logic-apps';
+import { JwtTokenHelper, JwtTokenConstants } from '@microsoft/vscode-extension-logic-apps';
 import axios from 'axios';
 import * as fse from 'fs-extra';
 import * as path from 'path';
@@ -81,14 +81,14 @@ export async function getConnectionsJson(projectRoot: string): Promise<string> {
 export async function addConnectionData(
   context: IActionContext,
   filePath: string,
-  ConnectionAndAppSetting: ConnectionAndAppSetting
+  connectionAndAppSetting: ConnectionAndAppSetting<any>
 ): Promise<void> {
   const jsonParameters = await getParametersFromFile(context, filePath);
   const projectPath = await getLogicAppProjectRoot(context, filePath);
 
-  await addConnectionDataInJson(context, projectPath ?? '', ConnectionAndAppSetting, jsonParameters);
+  await addConnectionDataInJson(context, projectPath ?? '', connectionAndAppSetting, jsonParameters);
 
-  const { settings } = ConnectionAndAppSetting;
+  const { settings } = connectionAndAppSetting;
   const workflowParameterRecords = getWorkflowParameters(jsonParameters);
 
   await addOrUpdateLocalAppSettings(context, projectPath ?? '', settings);
@@ -113,7 +113,7 @@ export async function getLogicAppProjectRoot(context: IActionContext, workflowFi
 async function addConnectionDataInJson(
   context: IActionContext,
   functionAppPath: string,
-  ConnectionAndAppSetting: ConnectionAndAppSetting,
+  connectionAndAppSetting: ConnectionAndAppSetting<any>,
   parametersData: Record<string, Parameter>
 ): Promise<void> {
   const parameterizeConnectionsSetting = getGlobalSetting(parameterizeConnectionsInProjectLoadSetting);
@@ -123,7 +123,7 @@ async function addConnectionDataInJson(
   const connectionsJsonString = await getConnectionsJson(functionAppPath);
   const connectionsJson = connectionsJsonString === '' ? {} : JSON.parse(connectionsJsonString);
 
-  const { connectionData, connectionKey, pathLocation, settings } = ConnectionAndAppSetting;
+  const { connectionData, connectionKey, pathLocation, settings } = connectionAndAppSetting;
 
   let pathToSetConnectionsData = connectionsJson;
 

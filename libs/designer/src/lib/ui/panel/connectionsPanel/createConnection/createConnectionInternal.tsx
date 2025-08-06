@@ -16,6 +16,7 @@ import type {
   ConnectionParameterSet,
   Connector,
   ManagedIdentity,
+  OperationManifest,
 } from '@microsoft/logic-apps-shared';
 import { ConnectionService, LogEntryLevel, LoggerService, WorkflowService, getIconUriFromConnector } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo, useState } from 'react';
@@ -38,9 +39,12 @@ export const CreateConnectionInternal = (props: {
   createButtonTexts?: CreateButtonTexts;
   description?: string;
   nodeIds?: string[];
+  isAgentSubgraph?: boolean;
   assistedConnectionProps?: AssistedConnectionProps;
   connectionMetadata?: ConnectionMetadata;
-  isAgentServiceConnection?: boolean;
+  updateOperationParameterValues?: (values?: Record<string, any>) => void;
+  operationManifest?: OperationManifest;
+  workflowKind?: string;
 }) => {
   const {
     classes,
@@ -58,7 +62,9 @@ export const CreateConnectionInternal = (props: {
     updateConnectionInState,
     onConnectionCreated,
     onConnectionCancelled,
-    isAgentServiceConnection = false,
+    updateOperationParameterValues,
+    isAgentSubgraph,
+    operationManifest,
   } = props;
   const dispatch = useDispatch<AppDispatch>();
 
@@ -103,7 +109,7 @@ export const CreateConnectionInternal = (props: {
   );
 
   const applyNewConnection = useCallback(
-    (newConnection: Connection, selectedIdentity?: string) => {
+    (newConnection: Connection, selectedIdentity?: string, isUsingDynamicConnection?: boolean) => {
       const payload: CreatedConnectionPayload = {
         connection: newConnection,
         connector: connector as Connector,
@@ -113,6 +119,15 @@ export const CreateConnectionInternal = (props: {
         const userAssignedIdentity = selectedIdentity !== constants.SYSTEM_ASSIGNED_MANAGED_IDENTITY ? selectedIdentity : undefined;
         payload.connectionProperties = getConnectionProperties(connector as Connector, userAssignedIdentity);
         payload.authentication = getApiHubAuthentication(userAssignedIdentity);
+      }
+
+      if (isUsingDynamicConnection) {
+        payload.connectionProperties = {
+          ...(payload.connectionProperties ?? {}),
+          runtimeSource: 'Dynamic',
+          dynamicConnectionProxyUrl: newConnection?.properties?.dynamicConnectionProxyUrl ?? undefined,
+          connectionRuntimeUrl: newConnection?.properties?.connectionRuntimeUrl ?? undefined,
+        };
       }
 
       updateConnectionInState(payload);
@@ -129,7 +144,9 @@ export const CreateConnectionInternal = (props: {
       isOAuthConnection?: boolean,
       alternativeParameterValues?: Record<string, any>,
       identitySelected?: string,
-      additionalParameterValues?: Record<string, any>
+      additionalParameterValues?: Record<string, any>,
+      operationParameterValues?: Record<string, any>,
+      isUsingDynamicConnection?: boolean
     ) => {
       if (!connector?.id) {
         return;
@@ -183,6 +200,7 @@ export const CreateConnectionInternal = (props: {
           connectionParameters: outputParameterValues,
           alternativeParameterValues,
           additionalParameterValues,
+          feature: isUsingDynamicConnection ? 'DynamicUserInvoked' : undefined,
         };
 
         const parametersMetadata: ConnectionParametersMetadata = {
@@ -212,7 +230,8 @@ export const CreateConnectionInternal = (props: {
 
         if (connection) {
           updateNewConnectionInCache(connection);
-          applyNewConnection(connection, identitySelected);
+          applyNewConnection(connection, identitySelected, isUsingDynamicConnection);
+          updateOperationParameterValues?.(operationParameterValues);
         } else if (err) {
           setErrorMessage(String(err));
         }
@@ -237,6 +256,7 @@ export const CreateConnectionInternal = (props: {
       existingReferences,
       selectedSubResource,
       updateNewConnectionInCache,
+      updateOperationParameterValues,
     ]
   );
 
@@ -273,6 +293,8 @@ export const CreateConnectionInternal = (props: {
         operationType,
         connector.properties.capabilities
       )}
+      operationParameterSets={connector.properties.operationParameterSets}
+      isAgentSubgraph={isAgentSubgraph}
       createButtonTexts={createButtonTexts}
       description={description}
       identity={identity}
@@ -289,7 +311,8 @@ export const CreateConnectionInternal = (props: {
       gatewayServiceConfig={gatewayServiceConfig}
       checkOAuthCallback={needsOAuth}
       resourceSelectorProps={resourceSelectorProps}
-      isAgentServiceConnection={isAgentServiceConnection}
+      operationManifest={operationManifest}
+      workflowKind={props.workflowKind}
     />
   );
 };

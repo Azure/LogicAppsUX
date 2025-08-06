@@ -2,7 +2,7 @@ import constants from '../../../common/constants';
 import { UnsupportedException, UnsupportedExceptionCode } from '../../../common/exceptions/unsupported';
 import type { Workflow } from '../../../common/models/workflow';
 import type { OutputMock } from '../../state/unitTest/unitTestInterfaces';
-import type { Operations, NodesMetadata } from '../../state/workflow/workflowInterfaces';
+import { type Operations, type NodesMetadata, WorkflowKind } from '../../state/workflow/workflowInterfaces';
 import { createWorkflowNode, createWorkflowEdge } from '../../utils/graph';
 import { createLiteralValueSegment, isValueSegment } from '../../utils/parameters/segment';
 import type { WorkflowNode, WorkflowEdge } from '../models/workflowNode';
@@ -43,7 +43,8 @@ export type DeserializedWorkflow = {
 export const Deserialize = (
   definition: LogicAppsV2.WorkflowDefinition,
   runInstance: LogicAppsV2.RunInstanceDefinition | null,
-  shouldAppendAddCase = true
+  shouldAppendAddCase = true,
+  workflowKind: string | undefined = WorkflowKind.STATELESS
 ): DeserializedWorkflow => {
   throwIfMultipleTriggers(definition);
 
@@ -88,7 +89,7 @@ export const Deserialize = (
     children.push(triggerNode);
   }
 
-  if (definition.actions) {
+  if (definition.actions && !equals(workflowKind, 'agent')) {
     const entries = Object.entries(definition.actions);
     const parentlessChildren = entries.filter(([, value]) => isNullOrEmpty(value.runAfter));
     for (const [key] of parentlessChildren) {
@@ -404,43 +405,43 @@ export const buildGraphFromActions = (
         }
       }
     } else if (isAgentAction(action)) {
-      if (action?.tools) {
-        const toolKeys = Object.keys(action.tools);
-        for (const key of toolKeys) {
-          if (!allActionNames.includes(key)) {
-            allActionNames.push(key);
-            continue;
-          }
-          const toolAction: any = action.tools?.[key];
-          const newToolId = pasteScopeParams ? (pasteScopeParams.renamedNodes[key] ?? key) : getUniqueName(allActionNames, key).name;
-          allActionNames.push(newToolId);
-          if (toolAction) {
-            action.tools = {
-              ...action.tools,
-              [newToolId]: toolAction,
-            };
-            delete action.tools[key];
-          }
+      for (const [toolKey, _toolValue] of Object.entries(action?.tools ?? {})) {
+        if (!allActionNames.includes(toolKey)) {
+          allActionNames.push(toolKey);
+          continue;
         }
 
-        if (action?.channels) {
-          if (action.channels.in) {
-            const inputChannelKeys = Object.keys(action.channels.in);
-            for (const key of inputChannelKeys) {
-              const channelAction = action.channels.in?.[key];
-              if (channelAction && channelAction?.trigger) {
-                const id = `${actionName}${constants.CHANNELS.INPUT}${channelAction.trigger.type}`;
-                allActionNames.push(id);
-              }
-            }
+        const toolAction: any = action.tools?.[toolKey];
+        const newToolId = pasteScopeParams
+          ? (pasteScopeParams.renamedNodes[toolKey] ?? toolKey)
+          : getUniqueName(allActionNames, toolKey).name;
+        allActionNames.push(newToolId);
+        if (toolAction) {
+          action.tools = {
+            ...action.tools,
+            [newToolId]: toolAction,
+          };
+          delete action.tools[toolKey];
+        }
+      }
 
-            const outputChannelKeys = Object.keys(action.channels.out);
-            for (const key of outputChannelKeys) {
-              const channelAction = action.channels.out?.[key];
-              if (channelAction && channelAction?.action) {
-                const id = `${actionName}${constants.CHANNELS.OUTPUT}${channelAction.action.type}`;
-                allActionNames.push(id);
-              }
+      if (action?.channels) {
+        if (action.channels.in) {
+          const inputChannelKeys = Object.keys(action.channels.in);
+          for (const key of inputChannelKeys) {
+            const channelAction = action.channels.in?.[key];
+            if (channelAction && channelAction?.trigger) {
+              const id = `${actionName}${constants.CHANNELS.INPUT}${channelAction.trigger.type}`;
+              allActionNames.push(id);
+            }
+          }
+
+          const outputChannelKeys = Object.keys(action.channels.out);
+          for (const key of outputChannelKeys) {
+            const channelAction = action.channels.out?.[key];
+            if (channelAction && channelAction?.action) {
+              const id = `${actionName}${constants.CHANNELS.OUTPUT}${channelAction.action.type}`;
+              allActionNames.push(id);
             }
           }
         }
@@ -451,9 +452,11 @@ export const buildGraphFromActions = (
 
     const isRoot = Object.keys(action.runAfter ?? {}).length === 0 && parentNodeId;
     nodesMetadata[actionName] = {
+      ...nodesMetadata[actionName],
       graphId,
-      ...(parentNodeId ? { parentNodeId: parentNodeId } : {}),
+      ...(parentNodeId && { parentNodeId: parentNodeId }),
     };
+
     if (isScopeAction(action)) {
       const [scopeNodes, scopeEdges, scopeActions, scopeNodesMetadata] = processScopeActions(
         graphId,
@@ -693,6 +696,23 @@ export const processScopeActions = (
   } else if (isAgentAction(action)) {
     for (const [toolName, toolAction] of Object.entries(action.tools || {})) {
       applySubgraphActions(actionName, toolName, toolAction.actions, SUBGRAPH_TYPES.AGENT_CONDITION, 'tools');
+
+      const toolActions = Object.values(toolAction.actions ?? {});
+      // If tool is a handoff tool
+      if (toolActions.length === 1 && equals(toolActions[0]?.type, constants.NODE.TYPE.HANDOFF)) {
+        // Add handoff to metadata for easy access
+        const handoffTarget = (toolActions[0] as any).inputs?.name ?? '';
+        if (handoffTarget !== '') {
+          const existingHandoffs = nodesMetadata[actionName]?.handoffs ?? {};
+          nodesMetadata[actionName] = {
+            ...nodesMetadata[actionName],
+            handoffs: {
+              ...existingHandoffs,
+              [toolName]: handoffTarget,
+            },
+          };
+        }
+      }
     }
     if (shouldAppendAddCase) {
       applySubgraphActions(
@@ -730,6 +750,7 @@ export const processScopeActions = (
     nodesMetadata = {
       ...nodesMetadata,
       [actionName]: {
+        ...nodesMetadata[actionName],
         graphId: rootGraphId,
         actionCount: Object.entries(action.tools || {}).length,
         parentNodeId: rootGraphId === 'root' ? undefined : rootGraphId,
