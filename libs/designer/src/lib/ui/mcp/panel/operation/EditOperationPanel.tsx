@@ -24,14 +24,17 @@ export const EditOperationPanel = () => {
   const dispatch = useDispatch<AppDispatch>();
   const styles = useMcpPanelStyles();
 
-  const { selectedOperationId, operationMetadata, isOpen, panelMode, inputParameters, dependencies } = useSelector((state: RootState) => ({
-    selectedOperationId: state.mcpSelection.selectedOperationId,
-    operationMetadata: state.operations.operationMetadata,
-    isOpen: state.mcpPanel?.isOpen ?? false,
-    panelMode: state.mcpPanel?.currentPanelView ?? null,
-    inputParameters: state.operations.inputParameters,
-    dependencies: state.operations.dependencies,
-  }));
+  const { selectedOperationId, selectedConnectorId, operationMetadata, isOpen, panelMode, inputParameters, dependencies } = useSelector(
+    (state: RootState) => ({
+      selectedOperationId: state.mcpSelection.selectedOperationId,
+      selectedConnectorId: state.mcpSelection.selectedConnectorId,
+      operationMetadata: state.operations.operationMetadata,
+      isOpen: state.mcpPanel?.isOpen ?? false,
+      panelMode: state.mcpPanel?.currentPanelView ?? null,
+      inputParameters: state.operations.inputParameters,
+      dependencies: state.operations.dependencies,
+    })
+  );
   const nodeInputs = useMemo(
     () => (selectedOperationId ? inputParameters[selectedOperationId] : null),
     [selectedOperationId, inputParameters]
@@ -146,14 +149,22 @@ export const EditOperationPanel = () => {
 
     LoggerService().log({
       level: LogEntryLevel.Trace,
-      area: 'MCP.EditOperationPanel',
-      message: 'Edit operation details',
-      args: [`operationId:${selectedOperationId}`],
+      area: 'MCP.EditOperation',
+      message: 'Edit operation details saved',
+      args: [`operationId:${selectedOperationId}`, `connectorId:${selectedConnectorId}`],
     });
 
     clearSnapshot();
     dispatch(closePanel());
-  }, [selectedOperationId, clearSnapshot, dispatch, selectedOperationDescription, description, haveUserModeInputsEmptyValues]);
+  }, [
+    selectedOperationId,
+    selectedConnectorId,
+    clearSnapshot,
+    dispatch,
+    selectedOperationDescription,
+    description,
+    haveUserModeInputsEmptyValues,
+  ]);
 
   const handleClose = useCallback(() => {
     handleCancel();
