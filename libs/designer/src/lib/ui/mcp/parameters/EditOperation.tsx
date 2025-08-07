@@ -11,8 +11,9 @@ import { getGroupIdFromParameterId } from '../../../core/utils/parameters/helper
 import { type McpParameterInputType, ParameterField } from './parameterfield';
 import { DismissCircle20Filled } from '@fluentui/react-icons';
 import { useMcpWizardStyles } from '../wizard/styles';
-import { DescriptionWithLink } from '../../configuretemplate/common';
+import { DescriptionWithLink, ErrorBar } from '../../configuretemplate/common';
 import { isDependentStaticParameter } from '../../../core/mcp/utils/helper';
+import { useOperationDynamicInputsError } from '../../../core/state/operation/operationSelector';
 
 interface EditOperationProps {
   description: string;
@@ -61,6 +62,7 @@ export const EditOperation = ({
     () => (selectedOperationId ? (dependencies[selectedOperationId].inputs ?? {}) : {}),
     [selectedOperationId, dependencies]
   );
+  const dynamicInputsError = useOperationDynamicInputsError(selectedOperationId);
 
   const handleParameterInputTypeChange = useCallback(
     (parameterId: string, newType: McpParameterInputType) => {
@@ -244,6 +246,11 @@ export const EditOperation = ({
       defaultMessage: 'Parameters Added:',
       description: 'Label showing count of added optional parameters',
     }),
+    parametersErrorTitle: intl.formatMessage({
+      id: 'IjoW0x',
+      defaultMessage: 'Dynamic Parameters',
+      description: 'Title for dynamic inputs error message',
+    }),
   };
   const handleOptionalParameterToggle = useCallback(
     (parameterId: string, isVisible: boolean) => {
@@ -374,6 +381,7 @@ export const EditOperation = ({
           linkText={INTL_TEXT.parametersSectionLinkText}
           linkUrl="https://go.microsoft.com/fwlink/?linkid=2330613"
         />
+        {dynamicInputsError ? <ErrorBar title={INTL_TEXT.parametersErrorTitle} errorMessage={dynamicInputsError} /> : null}
         <br />
         {hasRequiredParameters || hasOptionalParameters || hasVisibleConditionalParameters ? (
           <>
