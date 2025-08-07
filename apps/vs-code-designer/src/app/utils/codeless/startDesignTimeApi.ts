@@ -27,7 +27,7 @@ import { writeFormattedJson } from '../fs';
 import { getFunctionsCommand } from '../funcCoreTools/funcVersion';
 import { getWorkspaceSetting, updateGlobalSetting } from '../vsCodeConfig/settings';
 import { getWorkspaceLogicAppFolders } from '../workspace';
-import { delay } from '@azure/ms-rest-js';
+import { delay } from '../delay';
 import {
   DialogResponses,
   openUrl,
