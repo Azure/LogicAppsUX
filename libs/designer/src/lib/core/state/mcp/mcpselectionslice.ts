@@ -2,6 +2,7 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import { resetMcpState } from '../global';
 import { initializeOperationsMetadata } from '../../../core/actions/bjsworkflow/mcp';
+import { ErrorLevel, updateErrorDetails } from '../operation/operationMetadataSlice';
 
 export interface McpSelectionState {
   selectedConnectorId: string | undefined;
@@ -52,6 +53,19 @@ export const mcpSelectionSlice = createSlice({
     builder.addCase(initializeOperationsMetadata.fulfilled, clearAllSelectionsReducer);
     builder.addCase(initializeOperationsMetadata.rejected, (state, action) => {
       state.errors.operations = action.error.message ?? 'Failed to initialize operation details.';
+    });
+
+    builder.addCase(updateErrorDetails, (state, action) => {
+      const { id, errorInfo } = action.payload;
+      if (id && errorInfo?.level === ErrorLevel.DynamicInputs) {
+        state.errors.operationDetails = {
+          ...state.errors.operationDetails,
+          [id]: {
+            ...state.errors.operationDetails?.[id],
+            general: errorInfo.message,
+          },
+        };
+      }
     });
   },
 });
