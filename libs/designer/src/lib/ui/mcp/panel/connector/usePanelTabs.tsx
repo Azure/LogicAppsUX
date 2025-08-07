@@ -214,7 +214,8 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
     if (hasSelectConnectorTab) {
       validTabs.push(connectorsTabItem);
     }
-    if (currentPanelView !== McpPanelView.CreateConnection) {
+    // TODO: double check this logix
+    if (currentPanelView !== McpPanelView.SelectOperation && currentPanelView !== McpPanelView.CreateConnection) {
       validTabs.push(operationsTabItem);
     }
     if (currentPanelView !== McpPanelView.UpdateOperation) {

@@ -151,14 +151,14 @@ export const EditOperation = ({
       description: 'Message displayed when no operation is selected in the edit operation panel',
     }),
     parameters: intl.formatMessage({
-      id: '7MUyEA',
-      defaultMessage: 'Tool parameters',
+      id: 'CCpPpu',
+      defaultMessage: 'Parameters',
       description: 'Title for the parameters section',
     }),
     parametersSectionDescription: intl.formatMessage({
-      id: 'LG1r6s',
+      id: 'ieY/P+',
       defaultMessage:
-        "Default parameters specify the minimum inputs for this tool to work. You can add optional parameters based on your scenario's needs. By default, tool parameters get dynamic values from an AI model. You can manually provide static values instead.",
+        "If available, default parameters specify the minimum inputs for this task. You can add optional parameters based on your scenario's needs. By default, parameters get dynamic values from an AI model. You can manually provide static values instead.",
       description: 'Description for the parameters section',
     }),
     parametersSectionLinkText: intl.formatMessage({
@@ -187,8 +187,8 @@ export const EditOperation = ({
       description: 'Label for the operation description field',
     }),
     descriptionSectionDescription: intl.formatMessage({
-      id: 'T8ioR5',
-      defaultMessage: 'Provide information about task performed by this tool.',
+      id: 'Al+oyj',
+      defaultMessage: 'Provide information about this task.',
       description: 'Description for the operation description field',
     }),
     descriptionPlaceholder: intl.formatMessage({
@@ -212,8 +212,8 @@ export const EditOperation = ({
       description: 'Badge text for saved state',
     }),
     optionalParametersDescription: intl.formatMessage({
-      id: 'hlSLnD',
-      defaultMessage: 'Add optional parameters you want the MCP to expose.',
+      id: 'JmYArJ',
+      defaultMessage: 'Add optional parameters you want the MCP server to expose.',
       description: 'Description text for optional parameters section when no parameters are visible',
     }),
     optionalParametersLabel: intl.formatMessage({

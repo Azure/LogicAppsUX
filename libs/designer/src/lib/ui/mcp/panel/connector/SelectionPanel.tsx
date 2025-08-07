@@ -32,8 +32,8 @@ export const SelectionPanel = () => {
 
   const INTL_TEXT = {
     title: intl.formatMessage({
-      defaultMessage: 'Add connector',
-      id: 'y1VKLK',
+      defaultMessage: 'Add actions',
+      id: 'wUvEwM',
       description: 'The tab label for the selection panel on the connector panel',
     }),
     closeAriaLabel: intl.formatMessage({
@@ -65,7 +65,11 @@ export const SelectionPanel = () => {
       <DrawerHeader className={styles.header}>
         <div className={styles.headerContent}>
           <Text size={600} weight="semibold" style={{ flex: 1 }}>
-            {INTL_TEXT.title}
+            {panelMode === McpPanelView.SelectConnector
+              ? 'Add connector'
+              : panelMode === McpPanelView.SelectOperation
+                ? 'Edit connection'
+                : INTL_TEXT.title}
           </Text>
           <Button appearance="subtle" icon={<CloseIcon />} onClick={handleDismiss} aria-label={INTL_TEXT.closeAriaLabel} />
         </div>
