@@ -6,7 +6,7 @@ import { EditorChangePlugin } from '../editor/base/plugins/EditorChange';
 import { createLiteralValueSegment, notEqual } from '../editor/base/utils/helper';
 import { Combobox as FluentCombobox, Option, Button, Spinner, Tooltip, mergeClasses } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
-import { equals, getIntl } from '@microsoft/logic-apps-shared';
+import { equals, getIntl, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import { isEmptySegments } from '../editor/base/utils/parsesegments';
 import { useRef, useState, useCallback, useMemo, useEffect } from 'react';
 import { useIntl } from 'react-intl';
@@ -14,6 +14,9 @@ import { isComboboxItemMatch } from './helpers/isComboboxItemMatch';
 import { useComboboxStyles } from './styles';
 
 const ClearIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
+
+const LARGE_DATASET_THRESHOLD = 5000;
+const ITEM_PERFORMANCE_THRESHOLD = 2000;
 
 const Mode = {
   Default: 'Default',
@@ -113,9 +116,14 @@ export const Combobox = ({
       return options;
     }
 
-    // For very large datasets, skip sorting to prevent freezing
-    if (options.length > 1000) {
-      console.warn('Skipping sort for large dataset to prevent performance issues:', options.length, 'items');
+    // For large datasets, skip sorting to prevent freezing
+    if (options.length > ITEM_PERFORMANCE_THRESHOLD) {
+      LoggerService().log({
+        level: LogEntryLevel.Warning,
+        area: 'Combobox:sortedOptions',
+        message: 'Skipping sort for large dataset to prevent performance issues',
+        args: [options.length],
+      });
       return options;
     }
 
@@ -161,17 +169,17 @@ export const Combobox = ({
       return getOptions([errorOption]);
     }
 
-    // For very large datasets, encourage users to search
-    const isVeryLargeDataset = sortedOptions.length > 1000;
+    // For large datasets, encourage users to search
+    const isLargeDataset = sortedOptions.length > LARGE_DATASET_THRESHOLD;
 
     if (debouncedSearchValue && typeof debouncedSearchValue === 'string') {
       // For large datasets, use a more performance-friendly search approach
       let filteredOptions: ComboboxItem[] = [];
 
-      if (isVeryLargeDataset) {
+      if (isLargeDataset) {
         // For very large datasets, limit search results to prevent freezing
         let matchCount = 0;
-        const maxResults = 50; // Reduced limit for better performance
+        const maxResults = 500; // Increased limit for better UX
 
         // Use requestAnimationFrame to prevent blocking the UI
         for (let i = 0; i < sortedOptions.length && matchCount < maxResults; i++) {
@@ -182,7 +190,7 @@ export const Combobox = ({
           }
 
           // Break early if we've processed enough items without blocking for performance
-          if (i > 0 && i % 500 === 0) {
+          if (i > 0 && i % ITEM_PERFORMANCE_THRESHOLD === 0) {
             break;
           }
         }
@@ -244,7 +252,7 @@ export const Combobox = ({
     }
 
     // For large datasets, encourage search and show limited initial items
-    if (isVeryLargeDataset) {
+    if (isLargeDataset) {
       const searchPromptLabel = intl.formatMessage(
         {
           defaultMessage: 'Type to search {options} items or scroll to see more...',
@@ -256,7 +264,7 @@ export const Combobox = ({
         }
       );
 
-      const initialLimit = 200; // Show more items initially but still manageable
+      const initialLimit = LARGE_DATASET_THRESHOLD; // Show items up to large dataset threshold
       const limitedOptions = [
         { key: 'search_prompt', value: searchPromptLabel, disabled: true, displayName: searchPromptLabel, type: 'header' },
         { key: 'divider', value: '-', displayName: '-' },
