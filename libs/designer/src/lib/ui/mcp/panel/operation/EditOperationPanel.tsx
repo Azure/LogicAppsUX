@@ -15,6 +15,7 @@ import { updateOperationDescription } from '../../../../core/state/operation/ope
 import { useFunctionalState } from '@react-hookz/web';
 import { getGroupIdFromParameterId, parameterHasValue } from '../../../../core/utils/parameters/helper';
 import { isDependentStaticParameter } from '../../../../core/mcp/utils/helper';
+import { useOperationDynamicInputsError } from '../../../../core/state/operation/operationSelector';
 
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
@@ -47,6 +48,8 @@ export const EditOperationPanel = () => {
   const selectedOperationDescription = useMemo(() => {
     return operationMetadata[selectedOperationId ?? '']?.description ?? '';
   }, [selectedOperationId, operationMetadata]);
+
+  const dynamicInputsError = useOperationDynamicInputsError(selectedOperationId);
 
   const { restoreSnapshot, clearSnapshot } = useEditSnapshot(selectedOperationId ?? '');
   const [description, setDescription] = useState<string>('');
@@ -165,7 +168,7 @@ export const EditOperationPanel = () => {
           }),
           appearance: 'primary',
           onClick: handleSave,
-          disabled: !isDirty,
+          disabled: !!dynamicInputsError || !isDirty,
         },
         {
           type: 'action',
@@ -178,7 +181,7 @@ export const EditOperationPanel = () => {
         },
       ],
     };
-  }, [intl, isDirty, handleSave, handleCancel]);
+  }, [intl, handleSave, dynamicInputsError, isDirty, handleCancel]);
 
   useEffect(() => {
     if (selectedOperationDescription) {

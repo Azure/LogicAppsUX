@@ -2165,7 +2165,8 @@ export const loadDynamicContentForInputsInNode = async (
         variables,
         connectionReference,
         workflowParameterDefinitions,
-        dispatch
+        dispatch,
+        /* throwOnError */ !loadDefaultValues
       );
       const allInputParameters = getAllInputParameters(allInputs);
 
@@ -2600,7 +2601,8 @@ async function tryGetInputDynamicSchema(
   variables: VariableDeclaration[],
   connectionReference: ConnectionReference | undefined,
   workflowParameters: Record<string, WorkflowParameterDefinition>,
-  dispatch: Dispatch
+  dispatch: Dispatch,
+  throwOnError = false
 ): Promise<OpenAPIV2.SchemaObject | null> {
   try {
     const schema = await getDynamicSchema(
@@ -2614,7 +2616,7 @@ async function tryGetInputDynamicSchema(
     );
     return schema;
   } catch (error: any) {
-    if (!dependencyInfo.parameter?.required && !(dependencyInfo.parameter as InputParameter).value) {
+    if (throwOnError || (!dependencyInfo.parameter?.required && !(dependencyInfo.parameter as InputParameter).value)) {
       throw error;
     }
 
