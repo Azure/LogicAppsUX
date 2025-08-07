@@ -9,7 +9,6 @@ import { clearAllSelections } from '../../../../../core/state/mcp/mcpselectionsl
 interface OperationsTabProps extends McpConnectorTabProps {
   primaryButtonTitle: string;
   onPrimaryButtonClick: () => void;
-  previousTabId: string | undefined;
   tabStatusIcon?: 'error';
 }
 

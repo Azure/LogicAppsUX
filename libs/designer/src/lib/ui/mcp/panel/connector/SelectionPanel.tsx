@@ -31,10 +31,20 @@ export const SelectionPanel = () => {
   const styles = useMcpPanelStyles();
 
   const INTL_TEXT = {
-    title: intl.formatMessage({
+    addActionsTitle: intl.formatMessage({
       defaultMessage: 'Add actions',
-      id: 'wUvEwM',
-      description: 'The tab label for the selection panel on the connector panel',
+      id: 'r8oULt',
+      description: 'The tab label for the selection panel on the connector panel for adding actions',
+    }),
+    addConnectorTitle: intl.formatMessage({
+      defaultMessage: 'Add connector',
+      id: 'oTmqLo',
+      description: 'The tab label for the selection panel on the connector panel for adding connector',
+    }),
+    editConnectionTitle: intl.formatMessage({
+      defaultMessage: 'Edit connection',
+      id: 'ODWD97',
+      description: 'The tab label for the selection panel on the connector panel for editing connection',
     }),
     closeAriaLabel: intl.formatMessage({
       id: 'kdCuJZ',
@@ -66,10 +76,10 @@ export const SelectionPanel = () => {
         <div className={styles.headerContent}>
           <Text size={600} weight="semibold" style={{ flex: 1 }}>
             {panelMode === McpPanelView.SelectConnector
-              ? 'Add connector'
-              : panelMode === McpPanelView.SelectOperation
-                ? 'Edit connection'
-                : INTL_TEXT.title}
+              ? INTL_TEXT.addConnectorTitle
+              : panelMode === McpPanelView.CreateConnection
+                ? INTL_TEXT.editConnectionTitle
+                : INTL_TEXT.addActionsTitle}
           </Text>
           <Button appearance="subtle" icon={<CloseIcon />} onClick={handleDismiss} aria-label={INTL_TEXT.closeAriaLabel} />
         </div>
