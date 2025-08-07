@@ -13,6 +13,7 @@ import { ConnectionParameterTypes, equals } from '@microsoft/logic-apps-shared';
 import LegacyManagedIdentityDropdown from './legacyManagedIdentityPicker';
 import constants from '../../../../../common/constants';
 import ClientSecretInput from './clientSecretInput';
+import { useEffect, useMemo } from 'react';
 
 export interface ConnectionParameterProps {
   parameterKey: string;
@@ -51,6 +52,25 @@ export const UniversalConnectionParameter = (props: ConnectionParameterProps) =>
   const constraints = parameter?.uiDefinition?.constraints;
   let inputComponent = undefined;
 
+  // Memoize the selected key lookup for dropdown parameters
+  const selectedKey = useMemo(() => {
+    if ((constraints?.allowedValues?.length ?? 0) === 0) {
+      return -1;
+    }
+    return constraints?.allowedValues?.findIndex((_value) => _value.value === value) ?? -1;
+  }, [constraints?.allowedValues, value]);
+
+  // Handle default values in useEffect to avoid setState during render
+  useEffect(() => {
+    if (parameter?.type === ConnectionParameterTypes.bool && value === undefined) {
+      setValue(false);
+    }
+
+    if ((constraints?.allowedValues?.length ?? 0) > 0 && selectedKey === -1 && constraints?.allowedValues?.[0]) {
+      setValue(constraints.allowedValues[0].value);
+    }
+  }, [parameter?.type, value, constraints?.allowedValues, setValue, selectedKey]);
+
   // Gateway setting parameter
   if (parameter?.type === ConnectionParameterTypes.gatewaySetting) {
     inputComponent = (
@@ -79,18 +99,11 @@ export const UniversalConnectionParameter = (props: ConnectionParameterProps) =>
 
   // Boolean parameter
   else if (parameter?.type === ConnectionParameterTypes.bool) {
-    if (value === undefined) {
-      setValue(false);
-    }
     inputComponent = <Checkbox checked={value} onChange={(e: any, checked?: boolean) => setValue(checked)} label={description} />;
   }
 
   // Dropdown Parameter
   else if ((constraints?.allowedValues?.length ?? 0) > 0) {
-    const selectedKey = constraints?.allowedValues?.findIndex((_value) => _value.value === value);
-    if (selectedKey === -1) {
-      setValue(constraints?.allowedValues?.[0].value);
-    }
     inputComponent = (
       <Dropdown
         id={`connection-param-${parameterKey}`}
