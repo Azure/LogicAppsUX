@@ -17,6 +17,7 @@ export async function openDesigner(context: IAzureConnectorsContext, node: Uri |
 
   const workflowNode = getWorkflowNode(node);
 
+  // throw new Error('Workflow node is undefined. Please provide a valid workflow node to open the designer.');
   if (workflowNode instanceof Uri) {
     try {
       const logicAppNode = Uri.file(path.join(workflowNode.fsPath, '../../'));

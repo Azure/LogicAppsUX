@@ -58,8 +58,16 @@ import { switchToDotnetProjectCommand } from './workflows/switchToDotnetProject'
 import { useSQLStorage } from './workflows/useSQLStorage';
 import { viewContent } from './workflows/viewContent';
 import { registerSiteCommand, type FileTreeItem } from '@microsoft/vscode-azext-azureappservice';
-import { registerCommand, registerCommandWithTreeNodeUnwrapping, unwrapTreeNodeCommandCallback } from '@microsoft/vscode-azext-utils';
-import type { AzExtTreeItem, IActionContext, AzExtParentTreeItem } from '@microsoft/vscode-azext-utils';
+import {
+  parseError,
+  registerCommand,
+  registerCommandWithTreeNodeUnwrapping,
+  registerErrorHandler,
+  registerReportIssueCommand,
+  unwrapTreeNodeCommandCallback,
+  UserCancelledError,
+} from '@microsoft/vscode-azext-utils';
+import type { AzExtTreeItem, IActionContext, AzExtParentTreeItem, IErrorHandlerContext, IParsedError } from '@microsoft/vscode-azext-utils';
 import type { Uri } from 'vscode';
 import { pickCustomCodeNetHostProcess } from './pickCustomCodeNetHostProcess';
 import { debugLogicApp } from './debugLogicApp';
@@ -155,4 +163,28 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.createCustomCodeFunction, createCustomCodeFunctionFromCommand);
   registerCommand(extensionCommand.debugLogicApp, debugLogicApp);
   registerCommand(extensionCommand.switchToDataMapperV2, switchToDataMapperV2);
+
+  // Suppress "Report an Issue" button for all errors in favor of the command
+
+  registerErrorHandler((errorContext: IErrorHandlerContext): void => {
+    // Log error even when suppressDisplay is on
+    if (errorContext.errorHandling.suppressDisplay ?? false) {
+      const errorData: IParsedError = parseError(errorContext.error);
+      console.log(`Error: ${errorData.message}${errorData.stack ? `\nStack: ${errorData.stack}` : ''}`);
+    }
+
+    if (errorContext.error instanceof UserCancelledError) {
+      errorContext.errorHandling.suppressDisplay = true;
+      errorContext.telemetry.properties.isUserCancelled = 'true';
+      errorContext.telemetry.properties.commandName = errorContext.error.name;
+    }
+
+    // c.errorHandling.suppressReportIssue = true;
+    // c.errorHandling.issueProperties = {
+    //   extensionVersion: ext.extensionVersion,
+    //   bundleVersion: ext.latestBundleVersion,
+    // }
+    // https://github.com/Azure/LogicAppsUX/issues/new?template=bug_report.yml&description=**Describe%20the%20bug**%0AThe%20app%20crashes%20when%20clicking%20save.%0A%0A**Steps%20to%20reproduce**%0A1.%20Go%20to%20...%0A2.%20Click%20...%0A
+  });
+  registerReportIssueCommand(extensionCommand.reportIssue);
 }
