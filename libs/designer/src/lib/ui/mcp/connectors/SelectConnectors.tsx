@@ -26,7 +26,7 @@ export const SelectConnectors = () => {
 
       LoggerService().log({
         level: LogEntryLevel.Trace,
-        area: 'MCP.SelectConnectors',
+        area: 'MCP.AddConnector',
         message: 'Connector is selected',
         args: [`connectorId:${connectorId}`],
       });

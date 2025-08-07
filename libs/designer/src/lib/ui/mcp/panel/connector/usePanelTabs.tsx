@@ -73,8 +73,13 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
         LoggerService().log({
           level: LogEntryLevel.Trace,
           area: `MCP.${submitLocation}`,
-          message: 'Connectors, operations, and connections data are initialized',
-          args: [`connectorId:${selectedConnectorId}`, `operationIds:${selectedOperations.join(',')}`],
+          message: 'Operations, and connections metadata are updated',
+          args: [
+            `connectorId:${selectedConnectorId}`,
+            `operationIds:${selectedOperations.join(',')}`,
+            `newlySelectedOperationIds:${newlySelectedOperationIds.join(',')}`,
+            `deselectedOperationIds:${deselectedOperationIds.join(',')}`,
+          ],
         });
 
         // Initializing newly selected operations
@@ -162,8 +167,8 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
         primaryButtonTitle: operationTabPrimaryButtonTitle,
         isPrimaryButtonDisabled: isConnectionsTabDisabled,
         onPrimaryButtonClick: isUpdateOperationsView
-          ? () => handleSubmit('operationsTab')
-          : () => onConnectionsTabNavigation('operationsTab'),
+          ? () => handleSubmit('AddActions')
+          : () => onConnectionsTabNavigation(hasSelectConnectorTab ? 'AddConnector' : 'EditConnector'),
         isPrimaryButtonLoading: isInitializingConnections,
         previousTabId: hasSelectConnectorTab ? constants.MCP_PANEL_TAB_NAMES.CONNECTORS : undefined,
         tabStatusIcon: operationsError ? 'error' : undefined,
@@ -187,9 +192,9 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
     () =>
       connectionsTab(intl, dispatch, selectedConnectorId as string, selectedOperations, {
         isTabDisabled: isConnectionsTabDisabled,
-        onTabClick: () => onConnectionsTabNavigation('connectionsTab'),
+        onTabClick: () => onConnectionsTabNavigation(hasSelectConnectorTab ? 'AddConnector' : 'EditConnector'),
         isPrimaryButtonDisabled: !selectedConnectorId || selectedOperations.length === 0 || !hasValidConnection,
-        onPrimaryButtonClick: () => handleSubmit('connectionsTab'),
+        onPrimaryButtonClick: () => handleSubmit(hasSelectConnectorTab ? 'AddConnector' : 'EditConnector'),
       }),
     [
       intl,
@@ -199,6 +204,7 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
       hasValidConnection,
       handleSubmit,
       onConnectionsTabNavigation,
+      hasSelectConnectorTab,
       isConnectionsTabDisabled,
     ]
   );

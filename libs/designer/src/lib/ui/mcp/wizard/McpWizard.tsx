@@ -28,7 +28,7 @@ export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: R
   const {
     connection,
     operations,
-    resource: { subscriptionId, resourceGroup, logicAppName },
+    resource: { subscriptionId, resourceGroup, location, logicAppName },
   } = useSelector((state: RootState) => state);
 
   const disableConfiguration = useMemo(() => !logicAppName, [logicAppName]);
@@ -50,29 +50,29 @@ export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: R
       level: LogEntryLevel.Trace,
       area: 'MCP.McpWizard',
       message: 'Add connector button clicked',
-      args: [`subscriptionId:${subscriptionId}`, `resourceGroup:${resourceGroup}`, `logicAppName:${logicAppName}`],
+      args: [`subscriptionId:${subscriptionId}`, `resourceGroup:${resourceGroup}`, `location:${location}`, `logicAppName:${logicAppName}`],
     });
-  }, [dispatch, logicAppName, resourceGroup, subscriptionId]);
+  }, [dispatch, logicAppName, resourceGroup, location, subscriptionId]);
 
-  const onRegisterCompleted = useCallback(
-    (workflowNames: string[]) => {
-      resetQueriesOnRegisterMcpServer(subscriptionId, resourceGroup, logicAppName as string);
+  const onRegisterCompleted = useCallback(() => {
+    resetQueriesOnRegisterMcpServer(subscriptionId, resourceGroup, logicAppName as string);
 
-      LoggerService().log({
-        level: LogEntryLevel.Trace,
-        area: 'MCP.McpWizard',
-        message: 'Successfully registered MCP server',
-        args: [
-          `subscriptionId:${subscriptionId}`,
-          `resourceGroup:${resourceGroup}`,
-          `logicAppName:${logicAppName}`,
-          `workflowNames:${workflowNames.join(',')}`,
-          'isExistingLogicApp:false', // TODO: When we support create logic apps, this will need to be dynamic
-        ],
-      });
-    },
-    [logicAppName, resourceGroup, subscriptionId]
-  );
+    LoggerService().log({
+      level: LogEntryLevel.Trace,
+      area: 'MCP.McpWizard',
+      message: 'Successfully registered MCP server',
+      args: [
+        `subscriptionId:${subscriptionId}`,
+        `resourceGroup:${resourceGroup}`,
+        `location:${location}`,
+        `logicAppName:${logicAppName}`,
+        `operationInfos:${Object.values(operations.operationInfo)
+          .map((info) => `${info.connectorId}:${info.operationId}`)
+          .join(',')}`,
+        'isExistingLogicApp:false', // TODO: When we support create logic apps, this will need to be dynamic
+      ],
+    });
+  }, [logicAppName, resourceGroup, location, subscriptionId, operations.operationInfo]);
   const handleAddOperations = useCallback(() => {
     // Get all operations for this specific connector
     const selectedOperations: string[] = [];
@@ -92,6 +92,13 @@ export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: R
         panelView: McpPanelView.UpdateOperation,
       })
     );
+
+    LoggerService().log({
+      level: LogEntryLevel.Trace,
+      area: 'MCP.McpWizard',
+      message: 'Add actions button clicked',
+      args: [`connectorId:${selectedConnectorId}`],
+    });
   }, [dispatch, operations.operationInfo]);
 
   const handleRegisterMcpServer = useCallback(async () => {
@@ -105,8 +112,7 @@ export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: R
         connection,
         operations
       );
-      const workflowNames = Object.keys(workflowsData.workflows);
-      await registerMcpServer(workflowsData, () => onRegisterCompleted(workflowNames));
+      await registerMcpServer(workflowsData, () => onRegisterCompleted());
     } catch (error: any) {
       LoggerService().log({
         level: LogEntryLevel.Error,
@@ -116,12 +122,16 @@ export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: R
         args: [
           `subscriptionId:${subscriptionId}`,
           `resourceGroup:${resourceGroup}`,
+          `location:${location}`,
           `logicAppName:${logicAppName}`,
+          `operationInfos:${Object.values(operations.operationInfo)
+            .map((info) => `${info.connectorId}:${info.operationId}`)
+            .join(',')}`,
           'isExistingLogicApp:false', // TODO: When we support create logic apps, this will need to be dynamic
         ],
       });
     }
-  }, [connection, logicAppName, operations, registerMcpServer, resourceGroup, subscriptionId, onRegisterCompleted]);
+  }, [connection, logicAppName, operations, registerMcpServer, resourceGroup, location, subscriptionId, onRegisterCompleted]);
 
   const INTL_TEXT = {
     title: intl.formatMessage({
