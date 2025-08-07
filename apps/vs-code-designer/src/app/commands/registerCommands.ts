@@ -75,6 +75,7 @@ import { syncCloudSettings } from './syncCloudSettings';
 import { getDebugSymbolDll } from '../utils/getDebugSymbolDll';
 import { AppSettingsTreeItem, AppSettingTreeItem } from '@microsoft/vscode-azext-azureappsettings';
 import { switchToDataMapperV2 } from './setDataMapperVersion';
+import { reportAnIssue } from '../utils/reportAnIssue';
 
 export function registerCommands(): void {
   registerCommandWithTreeNodeUnwrapping(extensionCommand.openDesigner, openDesigner);
@@ -168,8 +169,9 @@ export function registerCommands(): void {
 
   registerErrorHandler((errorContext: IErrorHandlerContext): void => {
     // Log error even when suppressDisplay is on
+    const errorData: IParsedError = parseError(errorContext.error);
+
     if (errorContext.errorHandling.suppressDisplay ?? false) {
-      const errorData: IParsedError = parseError(errorContext.error);
       console.log(`Error: ${errorData.message}${errorData.stack ? `\nStack: ${errorData.stack}` : ''}`);
     }
 
@@ -179,12 +181,18 @@ export function registerCommands(): void {
       errorContext.telemetry.properties.commandName = errorContext.error.name;
     }
 
+    errorContext.errorHandling.buttons = [
+      {
+        title: 'Open Extension',
+        callback: async () => reportAnIssue(errorContext, errorData),
+      },
+    ];
+
     // c.errorHandling.suppressReportIssue = true;
     // c.errorHandling.issueProperties = {
     //   extensionVersion: ext.extensionVersion,
     //   bundleVersion: ext.latestBundleVersion,
     // }
-    // https://github.com/Azure/LogicAppsUX/issues/new?template=bug_report.yml&description=**Describe%20the%20bug**%0AThe%20app%20crashes%20when%20clicking%20save.%0A%0A**Steps%20to%20reproduce**%0A1.%20Go%20to%20...%0A2.%20Click%20...%0A
   });
   registerReportIssueCommand(extensionCommand.reportIssue);
 }
