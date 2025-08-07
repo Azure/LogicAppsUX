@@ -5,6 +5,7 @@ import {
   hasProperty,
   LogEntryLevel,
   LoggerService,
+  type ParameterInfo,
   type ConnectionReferences,
   type ConnectionsData,
 } from '@microsoft/logic-apps-shared';
@@ -94,7 +95,9 @@ export const initializeOperationDetails = async (
       nodeId,
       /* isTrigger */ false,
       parsedSwagger,
-      operationInfo
+      operationInfo,
+      /* stepDefinition */ undefined,
+      /* loadDefaultValues */ false
     );
     const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromSwagger(
       /* isTrigger */ false,
@@ -146,13 +149,16 @@ export const operationHasEmptyStaticDependencies = (nodeInputs: NodeInputs, depe
     const dependentParameters = dependency.dependentParameters;
     return Object.keys(dependentParameters).some((parameterId) => {
       const parameter = getParameterFromId(nodeInputs, parameterId);
-      return parameter && !parameterHasValue(parameter);
+      return parameter && parameter.required && !parameterHasValue(parameter);
     });
   });
 };
 
-export const isDependentStaticParameter = (parameterId: string, dependencies: Record<string, DependencyInfo>): boolean => {
-  return getDynamicSchemaDependencies(dependencies).some((dependency) => hasProperty(dependency.dependentParameters, parameterId));
+export const isDependentStaticParameter = (parameter: ParameterInfo, dependencies: Record<string, DependencyInfo>): boolean => {
+  const isDependentParameter = getDynamicSchemaDependencies(dependencies).some((dependency) =>
+    hasProperty(dependency.dependentParameters, parameter.id)
+  );
+  return isDependentParameter && parameter.required;
 };
 
 export const getUnsupportedOperations = (nodeOperations: NodeOperationInputsData[]): string[] => {

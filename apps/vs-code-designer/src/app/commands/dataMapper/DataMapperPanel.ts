@@ -35,6 +35,7 @@ import type { WebviewPanel } from 'vscode';
 import { RelativePattern, window, workspace } from 'vscode';
 import * as vscode from 'vscode';
 import { copyOverImportedSchemas } from './DataMapperPanelUtils';
+import { switchToDataMapperV2 } from '../setDataMapperVersion';
 
 export default class DataMapperPanel {
   public panel: WebviewPanel;
@@ -198,6 +199,13 @@ export default class DataMapperPanel {
         this.sendNotification(msg.data.title, msg.data.text, msg.data.level);
         break;
       }
+      case ExtensionCommand.switchToDataMapperV2: {
+        // Execute the switchToDataMapperV2 VS Code command with telemetry
+        this.callWithTelemetryAndErrorHandlingSyncForDM(extensionCommand.switchToDataMapperV2, () => {
+          return switchToDataMapperV2();
+        });
+        break;
+      }
     }
   }
 
@@ -227,7 +235,11 @@ export default class DataMapperPanel {
       const mapMetadata = this.readMapMetadataFile();
       this.sendMsgToWebview({
         command: ExtensionCommand.loadDataMap,
-        data: { ...this.mapDefinitionData, mapDefinitionName: this.dataMapName, metadata: mapMetadata },
+        data: {
+          ...this.mapDefinitionData,
+          mapDefinitionName: this.dataMapName,
+          metadata: mapMetadata,
+        },
       });
 
       this.checkAndSetXslt();

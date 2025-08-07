@@ -2,6 +2,7 @@ import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext
 import { useEffect, useState } from 'react';
 import type { RangeSelection } from 'lexical';
 import {
+  $createRangeSelection,
   $createTextNode,
   $getNodeByKey,
   $getRoot,
@@ -9,7 +10,10 @@ import {
   $isElementNode,
   $isRangeSelection,
   $isTextNode,
+  $setSelection,
   COMMAND_PRIORITY_EDITOR,
+  COMMAND_PRIORITY_HIGH,
+  DELETE_CHARACTER_COMMAND,
   SELECTION_CHANGE_COMMAND,
   TextNode,
 } from 'lexical';
@@ -110,19 +114,21 @@ export function PasswordMaskPlugin(): JSX.Element {
 
               const existingText = passwordNode.getRealText();
 
-              const newSelection = $getSelection();
+              const newSelection = selection;
               // This logic is partially handled by PasswordNode.spliceText
               // This should be handled differently in the future, but for now... it works :)
               if ($isRangeSelection(newSelection)) {
-                const cutoff = newSelection.anchor.offset;
+                const cutoff = Math.min(newSelection.anchor.offset, newSelection.focus.offset);
+                const offset = Math.max(newSelection.anchor.offset, newSelection.focus.offset);
                 const newSelectionPosition = cutoff + newText.length;
-                const finalText = existingText.substring(0, cutoff) + newText + existingText.substring(cutoff);
+                const finalText = existingText.substring(0, cutoff) + newText + existingText.substring(offset);
 
                 passwordNode.setPassword(finalText);
-
-                newSelection.anchor.set(passwordNode.__key, newSelectionPosition, 'text');
-                newSelection.focus.set(passwordNode.__key, newSelectionPosition, 'text');
-                setSelection(newSelection);
+                const selection = $createRangeSelection();
+                selection.anchor.set(passwordNode.__key, newSelectionPosition, 'text');
+                selection.focus.set(passwordNode.__key, newSelectionPosition, 'text');
+                $setSelection(selection);
+                setSelection(selection);
               }
             } else {
               // No existing password node found, create a new one
@@ -167,9 +173,70 @@ export function PasswordMaskPlugin(): JSX.Element {
       });
     });
 
+    const unregisterDeleteCommand = editor.registerCommand(
+      DELETE_CHARACTER_COMMAND,
+      (isBackward: boolean) => {
+        const selection = $getSelection();
+
+        if (!$isRangeSelection(selection)) {
+          return false;
+        }
+
+        // Only handle collapsed selections (no text selected)
+        // Let the default handler use spliceText for text selections
+        if (!selection.isCollapsed()) {
+          return false;
+        }
+
+        const anchor = selection.anchor;
+        const node = $getNodeByKey(anchor.key);
+
+        if (!$isPasswordNode(node)) {
+          return false;
+        }
+
+        editor.update(() => {
+          const realText = node.getRealText();
+          const offset = anchor.offset;
+
+          if (isBackward) {
+            // Backspace: remove character before cursor if any
+            if (offset === 0) {
+              return;
+            }
+            const updatedText = realText.slice(0, offset - 1) + realText.slice(offset);
+            node.setPassword(updatedText);
+
+            // Move cursor one position backward
+            const newSelection = $createRangeSelection();
+            newSelection.anchor.set(node.getKey(), offset - 1, 'text');
+            newSelection.focus.set(node.getKey(), offset - 1, 'text');
+            $setSelection(newSelection);
+          } else {
+            // Delete key: remove character at cursor if any
+            if (offset >= realText.length) {
+              return;
+            }
+            const updatedText = realText.slice(0, offset) + realText.slice(offset + 1);
+            node.setPassword(updatedText);
+
+            // Cursor stays at same offset
+            const newSelection = $createRangeSelection();
+            newSelection.anchor.set(node.getKey(), offset, 'text');
+            newSelection.focus.set(node.getKey(), offset, 'text');
+            $setSelection(newSelection);
+          }
+        });
+
+        return true;
+      },
+      COMMAND_PRIORITY_HIGH
+    );
+
     return () => {
       unregisterMutationListener();
       unregisterTransform();
+      unregisterDeleteCommand();
     };
   }, [editor, selection, showPassword]);
 

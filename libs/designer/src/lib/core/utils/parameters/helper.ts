@@ -224,6 +224,8 @@ export interface UpdateParameterAndDependenciesPayload {
   updateTokenMetadata?: boolean;
   operationDefinition?: any;
   skipStateSave?: boolean;
+  loadDynamicOutputs?: boolean;
+  loadDefaultValues?: boolean;
 }
 
 export function getParametersSortedByVisibility(parameters: ParameterInfo[]): ParameterInfo[] {
@@ -1830,6 +1832,8 @@ export const updateParameterAndDependencies = createAsyncThunk(
       dependencies,
       updateTokenMetadata = true,
       operationDefinition,
+      loadDynamicOutputs,
+      loadDefaultValues,
     } = actionPayload;
     const parameter = nodeInputs.parameterGroups[groupId].parameters.find((param) => param.id === parameterId) ?? {};
     const updatedParameter = { ...parameter, ...properties } as ParameterInfo;
@@ -1933,7 +1937,9 @@ export const updateParameterAndDependencies = createAsyncThunk(
         rootState.tokens?.variables ?? {},
         rootState.workflowParameters?.definitions ?? {},
         updateTokenMetadata,
-        operationDefinition
+        operationDefinition,
+        loadDynamicOutputs !== undefined ? loadDynamicOutputs : true,
+        loadDefaultValues !== undefined ? loadDefaultValues : true
       );
     }
   }
@@ -2000,7 +2006,9 @@ export const updateDynamicDataInNode = async (
   variableDeclarations: Record<string, VariableDeclaration[]> = {},
   workflowParameterDefinitions: Record<string, WorkflowParameterDefinition> = {},
   updateTokenMetadata = true,
-  operationDefinition?: any
+  operationDefinition?: any,
+  loadDynamicOutputs = true,
+  loadDefaultValues = true
 ): Promise<void> => {
   await loadDynamicData(
     nodeId,
@@ -2013,7 +2021,9 @@ export const updateDynamicDataInNode = async (
     variableDeclarations,
     workflowParameterDefinitions,
     updateTokenMetadata,
-    operationDefinition
+    operationDefinition,
+    loadDynamicOutputs,
+    loadDefaultValues
   );
 
   const { operations } = getState();
@@ -2067,9 +2077,11 @@ async function loadDynamicData(
   variableDeclarations: Record<string, VariableDeclaration[]> = {},
   workflowParameterDefinitions: Record<string, WorkflowParameterDefinition> = {},
   updateTokenMetadata = true,
-  operationDefinition?: any
+  operationDefinition?: any,
+  loadDynamicOutputs = true,
+  loadDefaultValues = true
 ): Promise<void> {
-  if (Object.keys(dependencies?.outputs ?? {}).length) {
+  if (loadDynamicOutputs && Object.keys(dependencies?.outputs ?? {}).length) {
     const rootState = getState();
     await loadDynamicOutputsInNode(
       nodeId,
@@ -2096,7 +2108,9 @@ async function loadDynamicData(
       variableDeclarations,
       workflowParameterDefinitions,
       updateTokenMetadata,
-      operationDefinition
+      operationDefinition,
+      loadDynamicOutputs,
+      loadDefaultValues
     );
   }
 }
@@ -2112,7 +2126,9 @@ export const loadDynamicContentForInputsInNode = async (
   variableDeclarations: Record<string, VariableDeclaration[]> = {},
   workflowParameterDefinitions: Record<string, WorkflowParameterDefinition> = {},
   updateTokenMetadata = true,
-  operationDefinition?: any
+  operationDefinition?: any,
+  loadDynamicOutputs = true,
+  loadDefaultValues = true
 ): Promise<void> => {
   for (const [inputKey, info] of Object.entries(inputDependencies)) {
     if (info.dependencyType !== 'ApiSchema') {
@@ -2169,7 +2185,8 @@ export const loadDynamicContentForInputsInNode = async (
             info.parameter as InputParameter,
             operationInfo,
             allInputKeys,
-            newOperationDefinition
+            newOperationDefinition,
+            loadDefaultValues
           )
         : [];
       const inputParameters = toParameterInfoMap(schemaInputs, operationDefinition);
@@ -2244,7 +2261,9 @@ export const loadDynamicContentForInputsInNode = async (
         variableDeclarations,
         workflowParameterDefinitions,
         updateTokenMetadata,
-        operationDefinition
+        operationDefinition,
+        loadDynamicOutputs,
+        loadDefaultValues
       );
     } catch (error: any) {
       const message = parseErrorMessage(error);
