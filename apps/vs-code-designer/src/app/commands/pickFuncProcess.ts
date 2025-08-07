@@ -23,8 +23,6 @@ import { runWithDurationTelemetry } from '../utils/telemetry';
 import { tryGetLogicAppProjectRoot } from '../utils/verifyIsProject';
 import { getWorkspaceSetting } from '../utils/vsCodeConfig/settings';
 import { getWindowsProcess } from '../utils/windowsProcess';
-import type { HttpOperationResponse } from '@azure/ms-rest-js';
-import { delay } from '@azure/ms-rest-js';
 import { HTTP_METHODS } from '@microsoft/logic-apps-shared';
 import type { AzExtRequestPrepareOptions } from '@microsoft/vscode-azext-azureutils';
 import { sendRequestWithTimeout } from '@microsoft/vscode-azext-azureutils';
@@ -36,6 +34,7 @@ import * as vscode from 'vscode';
 import parser from 'yargs-parser';
 import { buildCustomCodeFunctionsProject } from './buildCustomCodeFunctionsProject';
 import { getProjFiles } from '../utils/dotnet/dotnet';
+import { delay } from '../utils/delay';
 
 type OSAgnosticProcess = { command: string | undefined; pid: number | string };
 type ActualUnixPS = unixPsTree.PS & { COMM?: string };
@@ -223,7 +222,7 @@ async function startFuncTask(
 
           try {
             // wait for status url to indicate functions host is running
-            const response: HttpOperationResponse = await sendRequestWithTimeout(context, statusRequest, statusRequestTimeout, undefined);
+            const response = await sendRequestWithTimeout(context, statusRequest, statusRequestTimeout, undefined);
             if (response.parsedBody.state.toLowerCase() === 'running') {
               funcTaskReadyEmitter.fire(workspaceFolder);
               return taskInfo;

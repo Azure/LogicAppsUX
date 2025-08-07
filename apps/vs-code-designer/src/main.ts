@@ -27,7 +27,6 @@ import {
   registerEvent,
   registerReportIssueCommand,
   registerUIExtensionVariables,
-  getAzExtResourceType,
 } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
@@ -37,6 +36,7 @@ import { getAllCustomCodeFunctionsProjects } from './app/utils/customCodeUtils';
 import { createVSCodeAzureSubscriptionProvider } from './app/utils/services/VSCodeAzureSubscriptionProvider';
 import { logSubscriptions } from './app/utils/telemetry';
 import { registerAzureUtilsExtensionVariables } from '@microsoft/vscode-azext-azureutils';
+import { getAzExtResourceType, getAzureResourcesExtensionApi } from '@microsoft/vscode-azureresources-api';
 
 const perfStats = {
   loadStartTime: Date.now(),
@@ -82,14 +82,20 @@ export async function activate(context: vscode.ExtensionContext) {
   });
 
   ext.context = context;
+  ext.extensionVersion = getExtensionVersion();
   ext.telemetryReporter = new TelemetryReporter(telemetryString);
-  ext.subscriptionProvider = createVSCodeAzureSubscriptionProvider();
   context.subscriptions.push(ext.telemetryReporter);
 
+  ext.subscriptionProvider = createVSCodeAzureSubscriptionProvider();
   ext.outputChannel = createAzExtOutputChannel('Azure Logic Apps (Standard)', ext.prefix);
+
   registerUIExtensionVariables(ext);
   registerAzureUtilsExtensionVariables(ext);
   registerAppServiceExtensionVariables(ext);
+
+  // Suppress "Report an Issue" button for all errors in favor of the command
+  // Need to explore all capabilities of this API
+  // registerErrorHandler(c => c.errorHandling.suppressReportIssue = true);
 
   await callWithTelemetryAndErrorHandling(extensionCommand.activate, async (activateContext: IActionContext) => {
     vscode.commands.executeCommand(
@@ -119,9 +125,9 @@ export async function activate(context: vscode.ExtensionContext) {
     promptParameterizeConnections(activateContext, false);
     verifyLocalConnectionKeys(activateContext);
     await startOnboarding(activateContext);
-    //await prepareTestExplorer(context, activateContext);
 
-    ext.extensionVersion = getExtensionVersion();
+    // Removed for unit test codefull experience standby
+    //await prepareTestExplorer(context, activateContext);
 
     ext.rgApi = await getResourceGroupsApi();
     // @ts-ignore
@@ -152,6 +158,8 @@ export async function activate(context: vscode.ExtensionContext) {
     registerFuncHostTaskEvents();
 
     ext.rgApi.registerApplicationResourceResolver(getAzExtResourceType(logicAppFilter), new LogicAppResolver());
+    const azureResourcesApi = await getAzureResourcesExtensionApi(context, '2.0.0');
+    ext.rgApiV2 = azureResourcesApi;
 
     vscode.window.registerUriHandler(new UriHandler());
     perfStats.loadEndTime = Date.now();
