@@ -49,7 +49,7 @@ export const DeprecationToastContent = ({ onSwitchToV2, onDismiss }: Deprecation
             ),
           }}
           description="Message about new deprecation process and how to switch to v2"
-        ></FormattedMessage>
+        />
         <div style={{ marginTop: '8px', display: 'flex', gap: '8px' }}>
           <Button appearance="primary" size="small" onClick={onSwitchToV2}>
             {switchButtonLoc}

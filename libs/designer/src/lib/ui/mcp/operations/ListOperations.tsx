@@ -10,6 +10,7 @@ import DefaultIcon from '../../../common/images/recommendation/defaulticon.svg';
 import { selectOperationIdToEdit } from '../../../core/state/mcp/mcpselectionslice';
 import { deinitializeOperations } from '../../../core/actions/bjsworkflow/mcp';
 import { OperationProgress } from './operationprogress';
+import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 
 const toolTableCellStyles = {
   border: 'none',
@@ -67,9 +68,16 @@ export const ListOperations = () => {
   };
 
   const handleEditOperation = useCallback(
-    (operationId: string) => {
+    (operationId: string, connectorId: string) => {
       dispatch(selectOperationIdToEdit(operationId));
       dispatch(openOperationPanelView());
+
+      LoggerService().log({
+        level: LogEntryLevel.Trace,
+        area: 'MCP.EditOperation',
+        message: 'Editing connection operation clicked',
+        args: [`operationId:${operationId}`, `connectorId:${connectorId}`],
+      });
     },
     [dispatch]
   );
@@ -120,7 +128,7 @@ export const ListOperations = () => {
           <TableRow key={item.operationId} style={toolTableCellStyles}>
             <TableCell style={toolNameCellStyles}>
               <img className={styles.connectorIcon} src={item.iconUri ?? DefaultIcon} alt={`${item.operationId} icon`} />
-              <Link as="button" onClick={() => handleEditOperation(item.operationId)}>
+              <Link as="button" onClick={() => handleEditOperation(item.operationId, item.connectorId)}>
                 {item.operationName}
               </Link>
             </TableCell>
@@ -138,7 +146,7 @@ export const ListOperations = () => {
                 appearance="subtle"
                 size="small"
                 icon={<Edit24Regular />}
-                onClick={() => handleEditOperation(item.operationId)}
+                onClick={() => handleEditOperation(item.operationId, item.connectorId)}
                 aria-label={INTL_TEXT.editButtonLabel}
               />
               <Button

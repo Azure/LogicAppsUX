@@ -143,9 +143,9 @@ const initializeServices = ({
 
 export const initializeOperationsMetadata = createAsyncThunk(
   'initializeOperationsMetadata',
-  async ({ operations }: { operations: NodeOperation[] }, { dispatch }): Promise<void> => {
+  async ({ operations, area }: { operations: NodeOperation[]; area: string }, { dispatch }): Promise<void> => {
     const promises: Promise<NodeOperationInputsData | undefined>[] = operations.map((operation) =>
-      initializeOperationDetails(operation.operationId, operation)
+      initializeOperationDetails(operation.operationId, operation, area)
     );
 
     const results = await Promise.allSettled(promises);
@@ -174,9 +174,9 @@ export const initializeOperationsMetadata = createAsyncThunk(
 
       LoggerService().log({
         level: LogEntryLevel.Error,
-        area: 'MCP.initializeOperationsMetadata',
+        area: `MCP.${area}.initializeOperationsMetadata`,
         message: errorMessage,
-        args: ['Unsupported operations: ', ...unsupportedOperations],
+        args: [`operationIds:${unsupportedOperations.join(',')}`],
       });
 
       throw new Error(errorMessage);
@@ -190,7 +190,7 @@ export const initializeOperationsMetadata = createAsyncThunk(
 
 export const initializeConnectionMappings = createAsyncThunk(
   'initializeConnectionMappings',
-  async ({ operations, connectorId }: { operations: string[]; connectorId: string }, { dispatch }): Promise<void> => {
+  async ({ operations, connectorId, area }: { operations: string[]; connectorId: string; area: string }, { dispatch }): Promise<void> => {
     try {
       const connector = await getConnector(connectorId, /* useCachedData */ true);
       const connections = (await getConnectionsForConnector(connectorId)).filter(isConnectionValid);
@@ -204,9 +204,10 @@ export const initializeConnectionMappings = createAsyncThunk(
     } catch (error: any) {
       LoggerService().log({
         level: LogEntryLevel.Error,
-        area: 'MCP.initializeConnectionMappings',
+        area: `MCP.${area}.initializeConnectionMappings`,
         message: `Cannot initialize connection mappings for connector: ${connectorId}`,
-        error,
+        error: error instanceof Error ? error : undefined,
+        args: [`operationIds:${operations.join(',')}`, `connectorId:${connectorId}`],
       });
 
       dispatch(initEmptyConnectionMap(operations));

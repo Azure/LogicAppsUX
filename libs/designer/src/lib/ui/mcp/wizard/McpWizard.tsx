@@ -16,6 +16,7 @@ import { ListOperations } from '../operations/ListOperations';
 import { ListConnectors } from '../connectors/ListConnectors';
 import { DescriptionWithLink } from '../../configuretemplate/common';
 import { operationHasEmptyStaticDependencies } from '../../../core/mcp/utils/helper';
+import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import { selectConnectorId, selectOperations } from '../../../core/state/mcp/mcpselectionslice';
 
 export type RegisterMcpServerHandler = (workflowsData: McpServerCreateData, onCompleted?: () => void) => Promise<void>;
@@ -27,7 +28,7 @@ export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: R
   const {
     connection,
     operations,
-    resource: { subscriptionId, resourceGroup, logicAppName },
+    resource: { subscriptionId, resourceGroup, location, logicAppName },
     mcpOptions: { disableConfiguration },
   } = useSelector((state: RootState) => state);
 
@@ -44,8 +45,34 @@ export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: R
         panelView: McpPanelView.SelectConnector,
       })
     );
-  }, [dispatch]);
 
+    LoggerService().log({
+      level: LogEntryLevel.Trace,
+      area: 'MCP.McpWizard',
+      message: 'Add connector button clicked',
+      args: [`subscriptionId:${subscriptionId}`, `resourceGroup:${resourceGroup}`, `location:${location}`, `logicAppName:${logicAppName}`],
+    });
+  }, [dispatch, logicAppName, resourceGroup, location, subscriptionId]);
+
+  const onRegisterCompleted = useCallback(() => {
+    resetQueriesOnRegisterMcpServer(subscriptionId, resourceGroup, logicAppName as string);
+
+    LoggerService().log({
+      level: LogEntryLevel.Trace,
+      area: 'MCP.McpWizard',
+      message: 'Successfully registered MCP server',
+      args: [
+        `subscriptionId:${subscriptionId}`,
+        `resourceGroup:${resourceGroup}`,
+        `location:${location}`,
+        `logicAppName:${logicAppName}`,
+        `operationInfos:${Object.values(operations.operationInfo)
+          .map((info) => `${info.connectorId}:${info.operationId}`)
+          .join(',')}`,
+        'isExistingLogicApp:false', // TODO: When we support create logic apps, this will need to be dynamic
+      ],
+    });
+  }, [logicAppName, resourceGroup, location, subscriptionId, operations.operationInfo]);
   const handleAddOperations = useCallback(() => {
     // Get all operations for this specific connector
     const selectedOperations: string[] = [];
@@ -65,24 +92,46 @@ export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: R
         panelView: McpPanelView.UpdateOperation,
       })
     );
+
+    LoggerService().log({
+      level: LogEntryLevel.Trace,
+      area: 'MCP.McpWizard',
+      message: 'Add actions button clicked',
+      args: [`connectorId:${selectedConnectorId}`],
+    });
   }, [dispatch, operations.operationInfo]);
 
-  const onRegisterCompleted = useCallback(() => {
-    resetQueriesOnRegisterMcpServer(subscriptionId, resourceGroup, logicAppName as string);
-  }, [logicAppName, resourceGroup, subscriptionId]);
-
   const handleRegisterMcpServer = useCallback(async () => {
-    const workflowsData = await serializeMcpWorkflows(
-      {
-        subscriptionId,
-        resourceGroup,
-        logicAppName: logicAppName as string,
-      },
-      connection,
-      operations
-    );
-    await registerMcpServer(workflowsData, onRegisterCompleted);
-  }, [connection, logicAppName, operations, registerMcpServer, resourceGroup, subscriptionId, onRegisterCompleted]);
+    try {
+      const workflowsData = await serializeMcpWorkflows(
+        {
+          subscriptionId,
+          resourceGroup,
+          logicAppName: logicAppName as string,
+        },
+        connection,
+        operations
+      );
+      await registerMcpServer(workflowsData, () => onRegisterCompleted());
+    } catch (error: any) {
+      LoggerService().log({
+        level: LogEntryLevel.Error,
+        area: 'MCP.McpWizard',
+        message: 'Failed to register MCP server',
+        error: error instanceof Error ? error : undefined,
+        args: [
+          `subscriptionId:${subscriptionId}`,
+          `resourceGroup:${resourceGroup}`,
+          `location:${location}`,
+          `logicAppName:${logicAppName}`,
+          `operationInfos:${Object.values(operations.operationInfo)
+            .map((info) => `${info.connectorId}:${info.operationId}`)
+            .join(',')}`,
+          'isExistingLogicApp:false', // TODO: When we support create logic apps, this will need to be dynamic
+        ],
+      });
+    }
+  }, [connection, logicAppName, operations, registerMcpServer, resourceGroup, location, subscriptionId, onRegisterCompleted]);
 
   const INTL_TEXT = {
     title: intl.formatMessage({
@@ -194,7 +243,14 @@ export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: R
           onClick: () => {
             handleRegisterMcpServer();
           },
-          disabled: !logicAppName || !subscriptionId || !resourceGroup || !connection || !operations || hasIncompleteOperationConfiguration,
+          disabled:
+            !logicAppName ||
+            !subscriptionId ||
+            !resourceGroup ||
+            !connectorExists ||
+            !connection ||
+            !operations ||
+            hasIncompleteOperationConfiguration,
         },
         {
           type: 'action',
@@ -212,6 +268,7 @@ export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: R
     logicAppName,
     subscriptionId,
     resourceGroup,
+    connectorExists,
     connection,
     operations,
     hasIncompleteOperationConfiguration,
