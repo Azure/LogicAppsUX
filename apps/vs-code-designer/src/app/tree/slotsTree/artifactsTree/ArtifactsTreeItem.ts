@@ -5,7 +5,7 @@
 import { localize } from '../../../../localize';
 import type { SlotTreeItem } from '../SlotTreeItem';
 import type { ParsedSite } from '@microsoft/vscode-azext-azureappservice';
-import { FolderTreeItem } from '@microsoft/vscode-azext-azureappservice';
+import { createSiteFilesUrl, FolderTreeItem } from '@microsoft/vscode-azext-azureappservice';
 
 export class ArtifactsTreeItem extends FolderTreeItem {
   public static contextValue = 'Artifacts';
@@ -21,7 +21,7 @@ export class ArtifactsTreeItem extends FolderTreeItem {
     super(parent, {
       site: client,
       label: localize('Artifacts', 'Artifacts'),
-      path: '/site/wwwroot/Artifacts',
+      url: createSiteFilesUrl(client, 'site/wwwroot/Artifacts/'),
       isReadOnly: true,
     });
   }

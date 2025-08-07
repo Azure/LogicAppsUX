@@ -2,13 +2,14 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { AzureWizardExecuteStep } from '@microsoft/vscode-azext-utils';
-import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
-import { OpenBehavior } from '@microsoft/vscode-extension-logic-apps';
+import { AzureWizardExecuteStepWithActivityOutput } from '@microsoft/vscode-azext-utils';
 import { commands, Uri, workspace } from 'vscode';
+import { type IProjectWizardContext, OpenBehavior } from '@microsoft/vscode-extension-logic-apps';
 import { extensionCommand } from '../../../constants';
+import { localize } from '../../../localize';
 
-export class OpenFolderStep extends AzureWizardExecuteStep<IProjectWizardContext> {
+export class OpenFolderStep extends AzureWizardExecuteStepWithActivityOutput<IProjectWizardContext> {
+  stepName: string;
   public priority = 250;
 
   public async execute(context: IProjectWizardContext): Promise<void> {
@@ -31,5 +32,18 @@ export class OpenFolderStep extends AzureWizardExecuteStep<IProjectWizardContext
 
   public shouldExecute(context: IProjectWizardContext): boolean {
     return !!context.openBehavior && context.openBehavior !== OpenBehavior.alreadyOpen && context.openBehavior !== OpenBehavior.dontOpen;
+  }
+
+  protected getTreeItemLabel(context: IProjectWizardContext): string {
+    return localize('openFolder', 'Open folder "{0}"', context.workspacePath);
+  }
+  protected getOutputLogSuccess(context: IProjectWizardContext): string {
+    return localize('openFolderSuccess', 'Opened folder "{0}"', context.workspacePath);
+  }
+  protected getOutputLogFail(context: IProjectWizardContext): string {
+    return localize('openFolderFail', 'Failed to open folder "{0}"', context.workspacePath);
+  }
+  protected getOutputLogProgress(context: IProjectWizardContext): string {
+    return localize('openingFolder', 'Opening folder "{0}..."', context.workspacePath);
   }
 }

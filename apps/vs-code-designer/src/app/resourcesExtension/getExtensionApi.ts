@@ -9,7 +9,7 @@ import type { AzureHostExtensionApi } from '@microsoft/vscode-azext-utils/hostap
 export async function getResourceGroupsApi(): Promise<AzureHostExtensionApi> {
   const rgApiProvider = await apiUtils.getExtensionExports<apiUtils.AzureExtensionApiProvider>('ms-azuretools.vscode-azureresourcegroups');
   if (rgApiProvider) {
-    return rgApiProvider.getApi<AzureHostExtensionApi>('0.0.1');
+    return rgApiProvider.getApi<AzureHostExtensionApi>('^0.0.1');
   }
   throw new Error(localize('noResourceGroupExt', 'Could not find the Azure Resource Groups extension'));
 }

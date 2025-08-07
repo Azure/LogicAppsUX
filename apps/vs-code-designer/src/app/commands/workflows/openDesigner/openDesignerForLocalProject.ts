@@ -45,6 +45,7 @@ import { env, ProgressLocation, Uri, ViewColumn, window, workspace } from 'vscod
 import type { WebviewPanel, ProgressOptions } from 'vscode';
 import { saveBlankUnitTest } from '../unitTest/saveBlankUnitTest';
 import { getBundleVersionNumber } from '../../../utils/getDebugSymbolDll';
+import { createHttpHeaders } from '@azure/core-rest-pipeline';
 
 export default class OpenDesignerForLocalProject extends OpenDesignerBase {
   private readonly workflowFilePath: string;
@@ -376,13 +377,16 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     }
     const url = `http://localhost:${designTimePort}${managementApiPrefix}/workflows/${this.workflowName}/validatePartial?api-version=${this.apiVersion}`;
     try {
+      const headers = createHttpHeaders({
+        'Content-Type': 'application/json',
+      });
       await sendRequest(this.context, {
         url,
         method: HTTP_METHODS.POST,
-        headers: { ['Content-Type']: 'application/json' },
-        body: {
+        headers,
+        body: JSON.stringify({
           properties: { definition: workflow.definition, kind: workflow.kind, appSettings: { values: this.panelMetadata.localSettings } },
-        },
+        }),
       });
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : typeof error === 'string' ? error : 'Unknown error';

@@ -11,12 +11,11 @@ import { decryptLocalSettings } from './decryptLocalSettings';
 import { encryptLocalSettings } from './encryptLocalSettings';
 import { getLocalSettingsFile } from './getLocalSettingsFile';
 import type { StringDictionary } from '@azure/arm-appservice';
-import type { IAppSettingsClient } from '@microsoft/vscode-azext-azureappservice';
-import { AppSettingsTreeItem, confirmOverwriteSettings } from '@microsoft/vscode-azext-azureappservice';
-import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import { confirmOverwriteSettings } from '@microsoft/vscode-azext-azureappservice';
 import type { ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
-import * as fse from 'fs-extra';
 import * as vscode from 'vscode';
+import { AppSettingsTreeItem, type IAppSettingsClient } from '@microsoft/vscode-azext-azureappsettings';
+import { AzExtFsExtra, type IActionContext } from '@microsoft/vscode-azext-utils';
 
 export async function downloadAppSettings(context: IActionContext, node?: AppSettingsTreeItem): Promise<void> {
   if (!node) {
@@ -44,7 +43,7 @@ export async function downloadAppSettingsInternal(context: IActionContext, clien
 
   if (isEncrypted) {
     await executeOnFunctions(decryptLocalSettings, context, localSettingsUri);
-    localSettings = (await fse.readJson(localSettingsPath)) as ILocalSettingsJson;
+    localSettings = await AzExtFsExtra.readJSON<ILocalSettingsJson>(localSettingsPath);
   }
 
   try {
@@ -59,8 +58,8 @@ export async function downloadAppSettingsInternal(context: IActionContext, clien
       await confirmOverwriteSettings(context, remoteSettings.properties, localSettings.Values, localSettingsFileName);
     }
 
-    await fse.ensureFile(localSettingsPath);
-    await fse.writeJson(localSettingsPath, localSettings, { spaces: 2 });
+    await AzExtFsExtra.ensureFile(localSettingsPath);
+    await AzExtFsExtra.writeJSON(localSettingsPath, localSettings, 2);
   } finally {
     if (isEncrypted) {
       await executeOnFunctions(encryptLocalSettings, context, localSettingsUri);
