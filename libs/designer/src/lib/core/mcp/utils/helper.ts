@@ -83,7 +83,8 @@ export const convertConnectionsDataToReferences = (connectionsData: ConnectionsD
 
 export const initializeOperationDetails = async (
   nodeId: string,
-  operationInfo: NodeOperation
+  operationInfo: NodeOperation,
+  area: string
 ): Promise<NodeOperationInputsData | undefined> => {
   try {
     const { connector, parsedSwagger } = await getConnectorWithSwagger(operationInfo.connectorId);
@@ -133,9 +134,9 @@ export const initializeOperationDetails = async (
   } catch (error: any) {
     LoggerService().log({
       level: LogEntryLevel.Error,
-      area: 'MCP.initializeOperationDetails',
-      error,
+      area: `MCP.${area}`,
       message: `Error while initializing operation details for connectorId: ${operationInfo.connectorId}, operationId: ${nodeId}`,
+      error: error instanceof Error ? error : undefined,
     });
     const errorMessage = error instanceof Error ? error.message : String(error);
     throw new Error(`Operation: "${nodeId}", Error: "${errorMessage}".`);

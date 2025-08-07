@@ -56,7 +56,7 @@ export const connectionSlice = createSlice({
       state,
       action: PayloadAction<Omit<UpdateConnectionPayload, 'nodeId'> & { nodeIds: string[]; reset?: boolean }>
     ) => {
-      const { reset, nodeIds, connectorId } = action.payload;
+      const { reset, nodeIds } = action.payload;
       const { key, reference } = getReferenceForConnection(state.connectionReferences, action.payload);
 
       if (reference) {
@@ -70,13 +70,6 @@ export const connectionSlice = createSlice({
       for (const nodeId of nodeIds) {
         state.connectionsMapping[nodeId] = key;
       }
-
-      LoggerService().log({
-        level: LogEntryLevel.Verbose,
-        area: 'Mcp:Connection Slice',
-        message: action.type,
-        args: [nodeIds, connectorId],
-      });
     },
     initEmptyConnectionMap: (state, action: PayloadAction<NodeId[]>) => {
       for (const nodeId of action.payload) {
