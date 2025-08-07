@@ -15,8 +15,8 @@ import { useComboboxStyles } from './styles';
 
 const ClearIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
-const LARGE_DATASET_THRESHOLD = 5000;
-const ITEM_PERFORMANCE_THRESHOLD = 2000;
+const LARGE_DATASET_THRESHOLD = 3000;
+const ITEM_PERFORMANCE_THRESHOLD = 1500;
 
 const Mode = {
   Default: 'Default',
