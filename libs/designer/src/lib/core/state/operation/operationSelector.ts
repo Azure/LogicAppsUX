@@ -94,6 +94,14 @@ export const useOperationParameterByName = (nodeId: string, parameterName: strin
 export const useOperationErrorInfo = (nodeId: string): ErrorInfo | undefined =>
   useSelector(createSelector(getOperationState, (state) => getTopErrorInOperation(getRecordEntry(state.errors, nodeId))));
 
+export const useOperationDynamicInputsError = (nodeId: string | undefined): string | undefined =>
+  useSelector(
+    createSelector(getOperationState, (state) => {
+      const errors = getRecordEntry(state.errors, nodeId);
+      return errors?.[ErrorLevel.DynamicInputs]?.message;
+    })
+  );
+
 export const useAllConnectionErrors = (): Record<string, string> =>
   useSelector(
     createSelector(getOperationState, (state) =>
