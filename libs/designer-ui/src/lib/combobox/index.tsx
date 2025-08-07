@@ -179,19 +179,13 @@ export const Combobox = ({
       if (isLargeDataset) {
         // For very large datasets, limit search results to prevent freezing
         let matchCount = 0;
-        const maxResults = 500; // Increased limit for better UX
-
+        const maxResults = 200;
         // Use requestAnimationFrame to prevent blocking the UI
         for (let i = 0; i < sortedOptions.length && matchCount < maxResults; i++) {
           const option = sortedOptions[i];
           if (isComboboxItemMatch(option, debouncedSearchValue)) {
             filteredOptions.push(option);
             matchCount++;
-          }
-
-          // Break early if we've processed enough items without blocking for performance
-          if (i > 0 && i % ITEM_PERFORMANCE_THRESHOLD === 0) {
-            break;
           }
         }
 
