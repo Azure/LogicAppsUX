@@ -133,7 +133,7 @@ export const ListOperations = () => {
               </Link>
             </TableCell>
             <TableCell>
-              <Text size={300} style={{ verticalAlign: 'top' }}>
+              <Text size={300} className={styles.descriptionSection} title={item.description}>
                 {item.description}
               </Text>
             </TableCell>
