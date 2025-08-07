@@ -124,11 +124,6 @@ export const EditOperationPanel = () => {
 
   const handleSave = useCallback(() => {
     if (!selectedOperationId) {
-      LoggerService().log({
-        level: LogEntryLevel.Error,
-        message: 'Cannot save: missing operation data',
-        area: 'MCP.EditOperation',
-      });
       return;
     }
 
@@ -138,8 +133,9 @@ export const EditOperationPanel = () => {
     }
 
     const originalDescription = selectedOperationDescription;
+    const hasDescriptionChanged = originalDescription !== description;
 
-    if (description !== originalDescription) {
+    if (hasDescriptionChanged) {
       dispatch(
         updateOperationDescription({
           id: selectedOperationId,
@@ -147,6 +143,13 @@ export const EditOperationPanel = () => {
         })
       );
     }
+
+    LoggerService().log({
+      level: LogEntryLevel.Trace,
+      area: 'MCP.EditOperationPanel',
+      message: 'Edit operation details',
+      args: [`operationId:${selectedOperationId}`],
+    });
 
     clearSnapshot();
     dispatch(closePanel());

@@ -8,6 +8,7 @@ import { useIntl } from 'react-intl';
 import { useAllManagedConnectors } from '../../../core/mcp/utils/queries';
 import { useConnectorSelectionStyles } from './styles';
 import { selectConnectorId } from '../../../core/state/mcp/mcpselectionslice';
+import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 
 export const SelectConnectors = () => {
   const intl = useIntl();
@@ -22,6 +23,13 @@ export const SelectConnectors = () => {
     (connectorId: string) => {
       dispatch(selectConnectorId(connectorId));
       dispatch(selectPanelTab(constants.MCP_PANEL_TAB_NAMES.OPERATIONS));
+
+      LoggerService().log({
+        level: LogEntryLevel.Trace,
+        area: 'MCP.AddConnector',
+        message: 'Connector is selected',
+        args: [`connectorId:${connectorId}`],
+      });
     },
     [dispatch]
   );
