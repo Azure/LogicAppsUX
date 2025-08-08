@@ -34,7 +34,6 @@ import {
   WORKFLOW_NODE_TYPES,
   containsIdTag,
   containsCaseTag,
-  SUBGRAPH_TYPES,
 } from '@microsoft/logic-apps-shared';
 import type { MessageLevel } from '@microsoft/designer-ui';
 import { getDurationStringPanelMode } from '@microsoft/designer-ui';
@@ -45,7 +44,7 @@ import type { NodeChange, NodeDimensionChange } from '@xyflow/system';
 import type { UndoRedoPartialRootState } from '../undoRedo/undoRedoTypes';
 import { initializeInputsOutputsBinding } from '../../actions/bjsworkflow/monitoring';
 import { updateAgenticSubgraph, type UpdateAgenticGraphPayload } from '../../parsers/updateAgenticGraph';
-import { isA2AWorkflow } from './helper';
+import { isA2AWorkflow, shouldClearNodeRunData } from './helper';
 
 export interface AddImplicitForeachPayload {
   nodeId: string;
@@ -494,7 +493,9 @@ export const workflowSlice = createSlice({
     },
     clearAllRepetitionRunData: (state: WorkflowState) => {
       for (const node of Object.values(state.nodesMetadata)) {
-        if (node.runData && (node.graphId !== 'root' || node.subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION)) {
+        // Preserve run data for root nodes, except when they are agent condition subgraphs and their children.
+        // This is because root nodes typically represent the main workflow and their run data is needed for display for a2a agents
+        if (shouldClearNodeRunData(node)) {
           delete node.runData;
           delete node.runIndex;
         }
