@@ -156,9 +156,9 @@ export const EditOperation = ({
       description: 'Title for the parameters section',
     }),
     parametersSectionDescription: intl.formatMessage({
-      id: 'ieY/P+',
+      id: 'BMCFV3',
       defaultMessage:
-        "If available, default parameters specify the minimum inputs for this task. You can add any optional parameters for your scenario. By default, parameters get dynamic values from the AI model, but you can choose to enter static values instead.",
+        'If available, default parameters specify the minimum inputs for this task. You can add any optional parameters for your scenario. By default, parameters get dynamic values from the AI model, but you can choose to enter static values instead.',
       description: 'Description for the parameters section',
     }),
     parametersSectionLinkText: intl.formatMessage({
@@ -187,7 +187,7 @@ export const EditOperation = ({
       description: 'Label for the operation description field',
     }),
     descriptionSectionDescription: intl.formatMessage({
-      id: 'Al+oyj',
+      id: 'XCuJUu',
       defaultMessage: 'Provide the purpose for this task.',
       description: 'Description for the operation description field',
     }),
@@ -212,7 +212,7 @@ export const EditOperation = ({
       description: 'Badge text for saved state',
     }),
     optionalParametersDescription: intl.formatMessage({
-      id: 'JmYArJ',
+      id: 'FhhFMY',
       defaultMessage: 'Add optional parameters for inputs accepted by this task.',
       description: 'Description text for optional parameters section when no parameters are visible',
     }),

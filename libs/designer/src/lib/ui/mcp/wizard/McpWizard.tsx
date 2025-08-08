@@ -199,12 +199,12 @@ export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: R
       description: 'Description for the actions section',
     }),
     parametersTitle: intl.formatMessage({
-      id: 'W0N7cJ',
+      id: '8f/OBl',
       defaultMessage: 'Parameters',
       description: 'The title for the action parameters section',
     }),
     toolsInfoDescription: intl.formatMessage({
-      id: 'q7EhS4',
+      id: 'EMcFck',
       defaultMessage: 'Some parameters might need configuration. Review before you continue.',
       description: 'The description for the actions information section',
     }),
