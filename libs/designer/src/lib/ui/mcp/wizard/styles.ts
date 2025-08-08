@@ -93,6 +93,15 @@ export const useConnectorSectionStyles = makeStyles({
     marginRight: connectorButtonGap,
   },
 
+  descriptionSection: {
+    verticalAlign: 'top',
+    display: '-webkit-box',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    WebkitLineClamp: 2,
+    WebkitBoxOrient: 'vertical',
+  },
+
   icon: {
     marginRight: connectorButtonGap,
   },
