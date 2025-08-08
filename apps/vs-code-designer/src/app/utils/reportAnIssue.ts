@@ -8,6 +8,7 @@ import { openUrl } from '@microsoft/vscode-azext-utils';
 import * as os from 'os';
 import * as vscode from 'vscode';
 import { ext } from '../../extensionVariables';
+import { localize } from '../../localize';
 
 // Some browsers don't have very long URLs. 2000 is a conservative threshold.
 // Ref: https://stackoverflow.com/questions/417142/what-is-the-maximum-length-of-a-url-in-different-browsers
@@ -16,6 +17,7 @@ export const maxUrlLength = 2000;
 // Internal truncation limits to keep URL size manageable while still useful.
 const MAX_INLINE_STACK_CHARS = 4000;
 const MAX_INLINE_MESSAGE_CHARS = 1000;
+const MAX_ISSUE_BODY_CHARS = 4000;
 
 // Whitelisted extension configuration settings
 const SETTINGS_WHITELIST: readonly string[] = [
@@ -58,9 +60,11 @@ export async function getReportAnIssueLink(
   }
   try {
     await vscode.env.clipboard.writeText(body);
-    return createNewIssueLinkFromBody(vscode.l10n.t('The issue text was copied to the clipboard. Please paste it into this window.'));
+    return createNewIssueLinkFromBody(
+      localize('copiedTextToClipboard', 'The issue text was copied to the clipboard. Please paste it into this window.')
+    );
   } catch {
-    const truncated = `${body.slice(0, 4000)}\n...[truncated]`;
+    const truncated = `${body.slice(0, MAX_ISSUE_BODY_CHARS)}\n...[truncated]`;
     return createNewIssueLinkFromBody(truncated);
   }
 }
@@ -75,8 +79,8 @@ export async function getReportAnIssueLink(
  * @returns A formatted multi-line string ready to be used as the body of a bug report.
  */
 function buildIssueBody(errorContext: IErrorHandlerContext, issue: IParsedError, correlationId: string): string {
-  const header = `<!-- ${vscode.l10n.t('IMPORTANT: Please be sure to remove any private information before submitting.')} -->`;
-  const repro = `${vscode.l10n.t('Does this occur consistently? <!-- TODO: Type Yes or No -->')}\nRepro steps:\n<!-- ${vscode.l10n.t('TODO: Share the steps needed to reliably reproduce the problem. Please include actual and expected results.')} -->\n\n1.\n2.`;
+  const header = `<!-- ${localize('removePrivateInfoText', 'IMPORTANT: Please be sure to remove any private information before submitting.')} -->`;
+  const repro = `${localize('stepsHeader', 'Does this occur consistently? <!-- TODO: Type Yes or No -->')}\nRepro steps:\n<!-- ${localize('stepsText', 'TODO: Share the steps needed to reliably reproduce the problem. Please include actual and expected results.')} -->\n\n1.\n2.`;
   const stack = truncateIfNeeded((issue?.stack || '').replace(/\r\n/g, '\n'), MAX_INLINE_STACK_CHARS);
   const message = truncateIfNeeded(issue?.message, MAX_INLINE_MESSAGE_CHARS);
 
