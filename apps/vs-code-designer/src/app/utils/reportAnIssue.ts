@@ -1,52 +1,3 @@
-// /*---------------------------------------------------------------------------------------------
-//  *  Copyright (c) Microsoft Corporation. All rights reserved.
-//  *  Licensed under the MIT License. See License.txt in the project root for license information.
-//  *--------------------------------------------------------------------------------------------*/
-
-// import type { ExtensionContext } from 'vscode';
-// import type { IParsedError} from '@microsoft/vscode-azext-utils';
-// import { openUrl } from '@microsoft/vscode-azext-utils';
-
-// /**
-//  * Used to open the browser to the "New Issue" page on GitHub with relevant context pre-filled in the issue body
-//  */
-// export function reportAnIssue(actionId: string, parsedError: IParsedError, extensionContext?: ExtensionContext): void {
-//     let packageJson: IPackageJson | undefined;
-//     if (extensionContext) {
-//         try {
-//             // tslint:disable-next-line:non-literal-require
-//             packageJson = require(extensionContext.asAbsolutePath('package.json')) as IPackageJson;
-//         } catch (_error) {
-//             // ignore errors
-//         }
-//     }
-
-//     // tslint:disable-next-line:strict-boolean-expressions
-//     // tslint:disable-next-line:strict-boolean-expressions
-//     const extensionVersion: string = (packageJson && packageJson.version) || 'Unknown';
-
-//     const body: string = `
-// Repro steps:
-// <Enter steps to reproduce issue>
-
-// Action: ${actionId}
-// Error type: ${parsedError.errorType}
-// Error Message: ${parsedError.message}
-
-// Version: ${extensionVersion}
-// OS: ${process.platform}
-// `;
-
-//     //
-//     // tslint:disable-next-line:no-unsafe-any
-//     openUrl(`https://github.com/Azure/LogicAppsUX/issues/new?template=bug_report.yml&description=${encodeURIComponent(body)}`);
-// }
-
-// interface IPackageJson {
-//     version?: string;
-//     name?: string;
-// }
-
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -58,95 +9,113 @@ import * as os from 'os';
 import * as vscode from 'vscode';
 import { ext } from '../../extensionVariables';
 
-// Some browsers don't have very long URLs
-// 2000 seems a reasonable number for most browsers,
-// see https://stackoverflow.com/questions/417142/what-is-the-maximum-length-of-a-url-in-different-browsers
-export const maxUrlLength: number = 2000;
+// Some browsers don't have very long URLs. 2000 is a conservative threshold.
+// Ref: https://stackoverflow.com/questions/417142/what-is-the-maximum-length-of-a-url-in-different-browsers
+export const maxUrlLength = 2000;
 
-export interface IReportableIssue {
-  callbackId: string;
-  error: IParsedError;
-  issueProperties: { [key: string]: string | undefined };
-  time: number;
-}
+// Internal truncation limits to keep URL size manageable while still useful.
+const MAX_INLINE_STACK_CHARS = 4000;
+const MAX_INLINE_MESSAGE_CHARS = 1000;
+
+// Whitelisted extension configuration settings (Addition A)
+const SETTINGS_WHITELIST: readonly string[] = [
+  'dataMapperVersion',
+  'validateFuncCoreTools',
+  'autoRuntimeDependenciesPath',
+  'autoRuntimeDependenciesValidationAndInstallation',
+  'parameterizeConnectionsInProjectLoad',
+];
 
 /**
- * Used to open the browser to the "New Issue" page on GitHub with relevant context pre-filled in the issue body
+ * Open the browser to the GitHub new issue page with pre-filled body content.
  */
-export async function reportAnIssue(errorContext: IErrorHandlerContext, issue: IParsedError | undefined): Promise<void> {
-  const link: string = await getReportAnIssueLink(errorContext, issue);
+export async function reportAnIssue(errorContext: IErrorHandlerContext, issue: IParsedError, correlationId: string): Promise<void> {
+  const link = await getReportAnIssueLink(errorContext, issue, correlationId);
   await openUrl(link);
 }
 
-export async function getReportAnIssueLink(errorContext: IErrorHandlerContext, issue: IParsedError | undefined): Promise<string> {
-  const stack: string = (issue?.stack || '').replace(/\r\n/g, '\n');
-
-  let body = `
-<!-- ${vscode.l10n.t('IMPORTANT: Please be sure to remove any private information before submitting.')} -->
-
-${vscode.l10n.t('Does this occur consistently? <!-- TODO: Type Yes or No -->')}
-Repro steps:
-<!-- ${vscode.l10n.t('TODO: Share the steps needed to reliably reproduce the problem. Please include actual and expected results.')} -->
-
-1.
-2.`;
-
-  if (issue) {
-    body += `
-
-Action: ${errorContext.callbackId}
-Error type: ${issue.errorType}
-Error Message: ${issue.message}
-`;
+/**
+ * Build the new issue link. If final URL exceeds max size, copy full body to clipboard
+ * and provide a shortened message in the link instead.
+ */
+export async function getReportAnIssueLink(
+  errorContext: IErrorHandlerContext,
+  issue: IParsedError,
+  correlationId: string
+): Promise<string> {
+  const body = buildIssueBody(errorContext, issue, correlationId);
+  const link = createNewIssueLinkFromBody(body);
+  if (link.length <= maxUrlLength) {
+    return link;
   }
+  try {
+    await vscode.env.clipboard.writeText(body);
+    return createNewIssueLinkFromBody(vscode.l10n.t('The issue text was copied to the clipboard. Please paste it into this window.'));
+  } catch {
+    const truncated = `${body.slice(0, 4000)}\n...[truncated]`;
+    return createNewIssueLinkFromBody(truncated);
+  }
+}
 
-  body += `
+function buildIssueBody(errorContext: IErrorHandlerContext, issue: IParsedError, correlationId: string): string {
+  const header = `<!-- ${vscode.l10n.t('IMPORTANT: Please be sure to remove any private information before submitting.')} -->`;
+  const repro = `${vscode.l10n.t('Does this occur consistently? <!-- TODO: Type Yes or No -->')}\nRepro steps:\n<!-- ${vscode.l10n.t('TODO: Share the steps needed to reliably reproduce the problem. Please include actual and expected results.')} -->\n\n1.\n2.`;
+  const stack = truncateIfNeeded((issue?.stack || '').replace(/\r\n/g, '\n'), MAX_INLINE_STACK_CHARS);
+  const message = truncateIfNeeded(issue?.message, MAX_INLINE_MESSAGE_CHARS);
 
-Version: ${ext.extensionVersion}
-OS: ${process.platform}
-OS Arch: ${os.arch()}
-OS Release: ${os.release()}
-Product: ${vscode.env.appName}
-Product Version: ${vscode.version}
-Language: ${vscode.env.language}
-UTC time: ${new Date().toUTCString()}`;
+  let body = `\n${header}\n\n${repro}`;
+  if (issue) {
+    body += `\n\nAction: ${errorContext.callbackId}`;
+    body += `\nError type: ${issue.errorType}`;
+    body += `\nError message: ${message}`;
+    body += `\nCorrelation Id: ${correlationId}`;
+    body += `\nSession id: ${vscode.env.sessionId}`;
+  }
+  body += `\nExtension version: ${ext.extensionVersion ?? 'unknown'}`;
+  body += `\nExtension bundle version: ${ext.latestBundleVersion ?? 'unknown'}`;
+  body += `\nOS: ${process.platform} (${os.type()} ${os.release()})`;
+  body += `\nOS arch: ${os.arch()}`;
+  body += `\nProduct: ${vscode.env.appName}`;
+  body += `\nProduct version: ${vscode.version}`;
+  body += `\nUTC time: ${new Date().toUTCString()}`;
 
-  // Add stack and any custom issue properties as individual details
+  body += createSettingsDetail();
+
   const details: { [key: string]: string | undefined } = Object.assign(
     {},
     stack ? { 'Call Stack': stack } : {},
     errorContext.errorHandling?.issueProperties
-  ); // Don't localize call stack
-  for (const propName of Object.getOwnPropertyNames(details)) {
-    const value: string | undefined = details[propName];
-    body += createBodyDetail(propName, String(value));
+  );
+  for (const name of Object.getOwnPropertyNames(details)) {
+    body += createBodyDetail(name, String(details[name]));
   }
+  return body;
+}
 
-  const simpleLink: string = createNewIssueLinkFromBody(body);
-  if (simpleLink.length <= maxUrlLength) {
-    return simpleLink;
+function createSettingsDetail(): string {
+  try {
+    const extensionConfiguration = vscode.workspace.getConfiguration(ext.prefix);
+    const settings: Record<string, unknown> = {};
+    for (const key of SETTINGS_WHITELIST) {
+      settings[key] = extensionConfiguration.get(key);
+    }
+    return createBodyDetail('Settings', JSON.stringify(settings, null, 2));
+  } catch {
+    return '';
   }
-
-  // If it's too long, paste it to the clipboard
-  await vscode.env.clipboard.writeText(body);
-  return createNewIssueLinkFromBody(vscode.l10n.t('The issue text was copied to the clipboard.  Please paste it into this window.'));
 }
 
 function createNewIssueLinkFromBody(issueBody: string): string {
-  const baseUrl: string = `https://github.com/Azure/LogicAppsUX/issues/new?template=bug_report.yml&description=${encodeURIComponent(issueBody)}`;
-  return baseUrl;
+  return `https://github.com/Azure/LogicAppsUX/issues/new?template=bug_report.yml&description=${encodeURIComponent(issueBody)}`;
 }
 
 function createBodyDetail(detailName: string, detail: string): string {
-  return `
+  return `\n\n<details>\n<summary>${detailName}</summary>\n\n\`\`\`\n${detail}\n\`\`\`\n\n</details>\n`;
+}
 
-<details>
-<summary>${detailName}</summary>
-
-\`\`\`
-${detail}
-\`\`\`
-
-</details>
-`;
+function truncateIfNeeded(value: string | undefined, max: number): string {
+  if (!value) {
+    return '';
+  }
+  return value.length > max ? `${value.slice(0, max)}\n...[truncated to ${max} characters]` : value;
 }

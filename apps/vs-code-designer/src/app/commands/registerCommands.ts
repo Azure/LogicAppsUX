@@ -76,6 +76,8 @@ import { getDebugSymbolDll } from '../utils/getDebugSymbolDll';
 import { AppSettingsTreeItem, AppSettingTreeItem } from '@microsoft/vscode-azext-azureappsettings';
 import { switchToDataMapperV2 } from './setDataMapperVersion';
 import { reportAnIssue } from '../utils/reportAnIssue';
+import { localize } from '../../localize';
+import { guid } from '@microsoft/logic-apps-shared';
 
 export function registerCommands(): void {
   registerCommandWithTreeNodeUnwrapping(extensionCommand.openDesigner, openDesigner);
@@ -165,15 +167,11 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.debugLogicApp, debugLogicApp);
   registerCommand(extensionCommand.switchToDataMapperV2, switchToDataMapperV2);
 
-  // Suppress "Report an Issue" button for all errors in favor of the command
-
   registerErrorHandler((errorContext: IErrorHandlerContext): void => {
-    // Log error even when suppressDisplay is on
+    // Suppress "Report an Issue" button for all errors since then we are going to render our custom button
+    errorContext.errorHandling.suppressReportIssue = true;
     const errorData: IParsedError = parseError(errorContext.error);
-
-    if (errorContext.errorHandling.suppressDisplay ?? false) {
-      console.log(`Error: ${errorData.message}${errorData.stack ? `\nStack: ${errorData.stack}` : ''}`);
-    }
+    const correlationId = guid();
 
     if (errorContext.error instanceof UserCancelledError) {
       errorContext.errorHandling.suppressDisplay = true;
@@ -181,18 +179,20 @@ export function registerCommands(): void {
       errorContext.telemetry.properties.commandName = errorContext.error.name;
     }
 
-    errorContext.errorHandling.buttons = [
-      {
-        title: 'Open Extension',
-        callback: async () => reportAnIssue(errorContext, errorData),
-      },
-    ];
-
-    // c.errorHandling.suppressReportIssue = true;
-    // c.errorHandling.issueProperties = {
-    //   extensionVersion: ext.extensionVersion,
-    //   bundleVersion: ext.latestBundleVersion,
-    // }
+    if (!errorContext.errorHandling.suppressDisplay) {
+      errorContext.errorHandling.buttons = [
+        {
+          title: localize('reportIssue', 'Report an issue'),
+          callback: async () => reportAnIssue(errorContext, errorData, correlationId),
+        },
+      ];
+    }
+    errorContext.telemetry.properties.handlingData = JSON.stringify({
+      message: errorData.message,
+      extensionVersion: ext.extensionVersion,
+      bundleVersion: ext.latestBundleVersion,
+      correlationId: correlationId,
+    });
   });
   registerReportIssueCommand(extensionCommand.reportIssue);
 }
