@@ -88,6 +88,8 @@ extends:
               - template: .azure-pipelines/templates/setup.yml@LogicAppsUX
               - template: .azure-pipelines/templates/build.yml@LogicAppsUX
               - template: .azure-pipelines/templates/package.yml@LogicAppsUX
+                parameters:
+                  publishVersion: ${{ parameters.publishVersion }}
               - template: .azure-pipelines/templates/sign.yml@LogicAppsUX
               - template: .azure-pipelines/templates/stage-artifacts.yml@LogicAppsUX
                 parameters:
