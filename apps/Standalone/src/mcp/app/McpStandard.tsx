@@ -92,7 +92,16 @@ export const McpStandard = () => {
     const { logicAppId, workflows, connectionsData } = createData;
     const workflowsToCreate = Object.keys(workflows).map((key) => ({
       name: key,
-      workflow: workflows[key],
+      workflow: {
+        ...workflows[key],
+        metadata: {
+          mcp: {
+            apiCenter: {
+              id: 'metadata-from-standalone',
+            },
+          },
+        },
+      },
     }));
 
     console.log('Generated server data:', createData);

@@ -75,7 +75,7 @@ export const ListOperations = () => {
       LoggerService().log({
         level: LogEntryLevel.Trace,
         area: 'MCP.EditOperation',
-        message: 'Editing connection operation clicked',
+        message: 'Edit connector operation clicked',
         args: [`operationId:${operationId}`, `connectorId:${connectorId}`],
       });
     },
@@ -133,7 +133,7 @@ export const ListOperations = () => {
               </Link>
             </TableCell>
             <TableCell>
-              <Text size={300} style={{ verticalAlign: 'top' }}>
+              <Text size={300} className={styles.descriptionSection} title={item.description}>
                 {item.description}
               </Text>
             </TableCell>

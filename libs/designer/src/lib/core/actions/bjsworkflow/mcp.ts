@@ -176,7 +176,7 @@ export const initializeOperationsMetadata = createAsyncThunk(
         level: LogEntryLevel.Error,
         area: `MCP.${area}.initializeOperationsMetadata`,
         message: errorMessage,
-        args: [`operationIds:${unsupportedOperations.join(',')}`],
+        args: [`operationIds:${unsupportedOperations.join(',')}`, `connectorId: ${connectorId}`],
       });
 
       throw new Error(errorMessage);
