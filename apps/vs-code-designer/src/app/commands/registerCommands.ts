@@ -187,6 +187,10 @@ export function registerCommands(): void {
         },
       ];
     }
+    ext.outputChannel.appendLine(localize('outputError', 'Error: {0}', errorData.message));
+    if (errorData.message.includes('\n')) {
+      ext.outputChannel.show();
+    }
     errorContext.telemetry.properties.handlingData = JSON.stringify({
       message: errorData.message,
       extensionVersion: ext.extensionVersion,
