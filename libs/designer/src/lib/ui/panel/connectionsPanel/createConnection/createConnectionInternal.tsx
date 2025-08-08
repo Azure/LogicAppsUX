@@ -200,7 +200,7 @@ export const CreateConnectionInternal = (props: {
           connectionParameters: outputParameterValues,
           alternativeParameterValues,
           additionalParameterValues,
-          feature: isUsingDynamicConnection ? 'DynamicUserInvoked' : undefined,
+          features: isUsingDynamicConnection ? 'DynamicUserInvoked' : undefined,
         };
 
         const parametersMetadata: ConnectionParametersMetadata = {

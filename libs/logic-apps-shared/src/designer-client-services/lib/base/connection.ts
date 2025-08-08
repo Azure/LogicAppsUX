@@ -173,6 +173,7 @@ export abstract class BaseConnectionService implements IConnectionService {
     const parameterValues = connectionInfo?.connectionParameters;
     const parameterValueSet = connectionInfo?.connectionParametersSet;
     const displayName = connectionInfo?.displayName;
+    const features = connectionInfo?.features;
     const { location } = this.options;
 
     return {
@@ -180,6 +181,7 @@ export abstract class BaseConnectionService implements IConnectionService {
         api: { id: connectorId },
         ...(parameterValueSet ? { parameterValueSet } : { parameterValues }),
         displayName,
+        features,
         ...this._getAdditionalPropertiesForCreateConnection(connectionInfo),
       },
       kind: this._vVersion,

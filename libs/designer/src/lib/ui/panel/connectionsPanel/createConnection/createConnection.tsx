@@ -61,6 +61,7 @@ import { DismissRegular } from '@fluentui/react-icons';
 import TenantPicker from './formInputs/tenantPicker';
 import { useShouldEnableDynamicConnections } from '../../../../common/hooks/experimentation';
 import { useStyles } from './styles';
+import { isAgentWorkflow } from '../../../../core/state/workflow/helper';
 
 type ParamType = ConnectionParameter | ConnectionParameterSetParameter;
 
@@ -910,7 +911,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
       </div>
 
       <div className={styles.dynamicConnectionContainer}>
-        {isUsingOAuth && isAgentSubgraph && shouldEnableDynamicConnections && isFirstPartyAuth && (
+        {isUsingOAuth && isAgentSubgraph && shouldEnableDynamicConnections && isFirstPartyAuth && isAgentWorkflow(workflowKind ?? '') && (
           <Checkbox
             label={stringResources.USE_DYNAMIC_CONNECTIONS}
             disabled={isLoading}
