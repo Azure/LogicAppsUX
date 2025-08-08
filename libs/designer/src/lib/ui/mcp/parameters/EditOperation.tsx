@@ -213,7 +213,7 @@ export const EditOperation = ({
     }),
     optionalParametersDescription: intl.formatMessage({
       id: 'JmYArJ',
-      defaultMessage: 'Add optional parameters you want the MCP server to expose.',
+      defaultMessage: 'Add optional parameters for inputs accepted by this task.',
       description: 'Description text for optional parameters section when no parameters are visible',
     }),
     optionalParametersLabel: intl.formatMessage({
