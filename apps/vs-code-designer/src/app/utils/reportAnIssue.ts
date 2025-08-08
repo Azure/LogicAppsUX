@@ -17,7 +17,7 @@ export const maxUrlLength = 2000;
 const MAX_INLINE_STACK_CHARS = 4000;
 const MAX_INLINE_MESSAGE_CHARS = 1000;
 
-// Whitelisted extension configuration settings (Addition A)
+// Whitelisted extension configuration settings
 const SETTINGS_WHITELIST: readonly string[] = [
   'dataMapperVersion',
   'validateFuncCoreTools',
@@ -27,7 +27,11 @@ const SETTINGS_WHITELIST: readonly string[] = [
 ];
 
 /**
- * Open the browser to the GitHub new issue page with pre-filled body content.
+ * Generates a "Report an Issue" link from the provided error context and opens it in the user's browser.
+ * @param errorContext - Contextual information about where and how the error occurred.
+ * @param issue - The parsed error details to include in the report.
+ * @param correlationId - An identifier used to correlate this issue with related logs or telemetry.
+ * @returns A promise that resolves when the issue reporting link has been opened.
  */
 export async function reportAnIssue(errorContext: IErrorHandlerContext, issue: IParsedError, correlationId: string): Promise<void> {
   const link = await getReportAnIssueLink(errorContext, issue, correlationId);
@@ -35,8 +39,12 @@ export async function reportAnIssue(errorContext: IErrorHandlerContext, issue: I
 }
 
 /**
- * Build the new issue link. If final URL exceeds max size, copy full body to clipboard
- * and provide a shortened message in the link instead.
+ * Creates a pre-filled issue creation link for the given error data.
+ * Falls back to copying the full body to the clipboard (or truncating) if the URL would exceed the maximum length.
+ * @param errorContext - Contextual information about the environment and operation when the error occurred.
+ * @param issue - Parsed error details to embed in the issue body.
+ * @param correlationId - Identifier used to correlate this issue with logs/telemetry.
+ * @returns A URL to open a new issue with either the full, copied, or truncated body content.
  */
 export async function getReportAnIssueLink(
   errorContext: IErrorHandlerContext,
@@ -57,6 +65,15 @@ export async function getReportAnIssueLink(
   }
 }
 
+/**
+ * Builds a pre-filled issue report body string containing a repro template, error metadata,
+ * environment details (extension, OS, VS Code), timestamp, optional stack trace, and any
+ * additional issue properties supplied in the error handling context.
+ * @param errorContext - Context for the error, including callback/action identifiers and optional issue properties.
+ * @param issue - The parsed error object whose message, type, and stack (if present) are incorporated.
+ * @param correlationId - Correlates this error instance with backend or telemetry events.
+ * @returns A formatted multi-line string ready to be used as the body of a bug report.
+ */
 function buildIssueBody(errorContext: IErrorHandlerContext, issue: IParsedError, correlationId: string): string {
   const header = `<!-- ${vscode.l10n.t('IMPORTANT: Please be sure to remove any private information before submitting.')} -->`;
   const repro = `${vscode.l10n.t('Does this occur consistently? <!-- TODO: Type Yes or No -->')}\nRepro steps:\n<!-- ${vscode.l10n.t('TODO: Share the steps needed to reliably reproduce the problem. Please include actual and expected results.')} -->\n\n1.\n2.`;
@@ -92,6 +109,12 @@ function buildIssueBody(errorContext: IErrorHandlerContext, issue: IParsedError,
   return body;
 }
 
+/**
+ * Builds a formatted detail section (markdown-style) listing whitelisted extension settings.
+ * Iterates over SETTINGS_WHITELIST, reads each value from the current workspace configuration,
+ * and serializes the collected key/value pairs as pretty‑printed JSON inside a "Settings" body block.
+ * @returns A formatted string containing the settings detail, or an empty string if any error occurs.
+ */
 function createSettingsDetail(): string {
   try {
     const extensionConfiguration = vscode.workspace.getConfiguration(ext.prefix);
@@ -105,14 +128,35 @@ function createSettingsDetail(): string {
   }
 }
 
+/**
+ * Builds a pre-filled GitHub “New Issue” URL for the LogicAppsUX repo using the bug report template.
+ * The provided issue body is URL-encoded and placed in the description query parameter.
+ * @param issueBody - Raw markdown/text content to seed the issue description.
+ * @returns A complete URL that opens the GitHub new issue page with the description pre-populated.
+ */
 function createNewIssueLinkFromBody(issueBody: string): string {
   return `https://github.com/Azure/LogicAppsUX/issues/new?template=bug_report.yml&description=${encodeURIComponent(issueBody)}`;
 }
 
+/**
+ * Creates a GitHub-flavored Markdown <details> section wrapping the provided text in a fenced code block.
+ * @param detailName - The text to show in the <summary> (collapsible header).
+ * @param detail - The content placed inside the code fence.
+ * @returns A formatted string (prefixed with two newlines) containing the details block.
+ */
 function createBodyDetail(detailName: string, detail: string): string {
   return `\n\n<details>\n<summary>${detailName}</summary>\n\n\`\`\`\n${detail}\n\`\`\`\n\n</details>\n`;
 }
 
+/**
+ * Truncates a string to the specified maximum length, appending a newline and
+ * a truncation notice if it exceeds that length. Returns an empty string for
+ * undefined inputs.
+ * @param value - The string to evaluate.
+ * @param max - The maximum allowed character count.
+ * @returns The original string if within limit; otherwise the truncated portion
+ * followed by a notice: "\n...[truncated to {max} characters]".
+ */
 function truncateIfNeeded(value: string | undefined, max: number): string {
   if (!value) {
     return '';
