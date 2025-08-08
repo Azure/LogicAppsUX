@@ -52,6 +52,7 @@ vi.mock('os', () => ({
   type: vi.fn(() => 'Darwin'),
   release: vi.fn(() => '23.1.0'),
   arch: vi.fn(() => 'x64'),
+  homedir: vi.fn(() => '/Users/testuser'),
 }));
 
 vi.mock('fs', () => ({
