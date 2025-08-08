@@ -11,7 +11,11 @@ import {
   deleteObjectProperties,
   clone,
 } from '@microsoft/logic-apps-shared';
-import { parameterHasValue, parameterValueToString } from '../../utils/parameters/helper';
+import {
+  parameterHasValue,
+  parameterValueToString,
+  shouldEncodeParameterValueForOperationBasedOnMetadata,
+} from '../../utils/parameters/helper';
 import type { Settings } from '../../actions/bjsworkflow/settings';
 import type { NodeOperation, NodeInputs, OperationMetadataState } from '../../state/operation/operationMetadataSlice';
 import {
@@ -107,7 +111,12 @@ const getOperationDefinitionAndTriggerInputs = async (
       }
     }
 
-    updatedInput.value = parameterValueToString(updatedInput, true /* isDefinitionValue */);
+    updatedInput.value = parameterValueToString(
+      updatedInput,
+      true /* isDefinitionValue */,
+      /* idReplacements */ {},
+      shouldEncodeParameterValueForOperationBasedOnMetadata(operationInfo)
+    );
     return updatedInput;
   });
 
