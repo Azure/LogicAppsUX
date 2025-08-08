@@ -38,6 +38,7 @@ export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: R
       operationHasEmptyStaticDependencies(nodeInputs, operations.dependencies[operationId]?.inputs ?? {})
     );
   }, [operations.dependencies, operations.inputParameters]);
+  const toolsCount = Object.values(operations?.operationInfo || {}).filter((info) => Boolean(info?.operationId)).length;
 
   const handleAddConnectors = useCallback(() => {
     dispatch(
@@ -151,8 +152,8 @@ export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: R
       description: 'Learn more link text.',
     }),
     howToSetup: intl.formatMessage({
-      id: 'ZyZK46',
-      defaultMessage: 'How to set up a logic app.',
+      id: 'sBvjoY',
+      defaultMessage: 'How to set up a logic app?',
       description: 'Title for the setup instructions link',
     }),
     howToSetupConnectors: intl.formatMessage({
@@ -181,45 +182,40 @@ export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: R
       defaultMessage: 'Select an empty logic app.',
       description: 'Description for the resources section',
     }),
-    mainSectionTitle: intl.formatMessage({
-      id: 'nvkl5y',
-      defaultMessage: 'Toolbox',
-      description: 'Title for the main section',
-    }),
     mainSectionDescription: intl.formatMessage({
       id: 'qif1I+',
       defaultMessage: 'Build tools for your MCP server by selecting connectors and their actions.',
       description: 'Description for the main section',
     }),
-    toolsTitle: intl.formatMessage({
-      id: 'q25VR+',
-      defaultMessage: 'Tools',
-      description: 'Title for the tools section',
+    actionsTitle: intl.formatMessage({
+      id: 'ao1O9z',
+      defaultMessage: 'Actions',
+      description: 'Title for the actions section',
     }),
-    toolsDescription: intl.formatMessage({
-      id: 'blSUye',
+    actionsDescription: intl.formatMessage({
+      id: 'SY9ptd',
       defaultMessage:
-        'Each tool uses an action and has parameters that accept input. Check the default input sources and make any necessary changes to meet your scenario.',
-      description: 'Description for the tools section',
+        'Each action has parameters that accept input. Check the default input sources and make any necessary changes to meet your scenario.',
+      description: 'Description for the actions section',
     }),
-    toolsInfoTitle: intl.formatMessage({
-      id: 'yI/bxz',
-      defaultMessage: 'Tool parameters',
-      description: 'The title for the tool information section',
+    parametersTitle: intl.formatMessage({
+      id: '8f/OBl',
+      defaultMessage: 'Parameters',
+      description: 'The title for the action parameters section',
     }),
     toolsInfoDescription: intl.formatMessage({
-      id: 'q7EhS4',
+      id: 'EMcFck',
       defaultMessage: 'Some parameters might need configuration. Review before you continue.',
-      description: 'The description for the tool information section',
+      description: 'The description for the actions information section',
     }),
     addToolsButton: intl.formatMessage({
-      id: 'H1XCOk',
-      defaultMessage: 'Add tools',
+      id: 'c3Ff/+',
+      defaultMessage: 'Add',
       description: 'Button text to add tools',
     }),
     addConnectorsButton: intl.formatMessage({
-      id: 'RcyaI2',
-      defaultMessage: 'Add connector',
+      id: '9III/+',
+      defaultMessage: 'Add',
       description: 'Button text to add connector',
     }),
     loadingConnectorsText: intl.formatMessage({
@@ -280,7 +276,7 @@ export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: R
     <div className={styles.wizardContainer}>
       <McpPanelRoot />
 
-      <Text size={700} weight="bold">
+      <Text size={500} weight="bold">
         {INTL_TEXT.title}
       </Text>
       <DescriptionWithLink
@@ -312,7 +308,14 @@ export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: R
         <div className={styles.mainSection}>
           <div className={styles.header}>
             <Text size={400} weight="bold">
-              {INTL_TEXT.mainSectionTitle}
+              {intl.formatMessage(
+                {
+                  id: 'VXpA1B',
+                  defaultMessage: 'Tools ({toolsCount})',
+                  description: 'Title for the main section with the count of tools',
+                },
+                { toolsCount }
+              )}
             </Text>
           </div>
           <DescriptionWithLink
@@ -346,18 +349,18 @@ export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: R
               <div className={styles.section}>
                 <div className={styles.header}>
                   <Text size={400} weight="semibold">
-                    {INTL_TEXT.toolsTitle}
+                    {INTL_TEXT.actionsTitle}
                   </Text>
                   <Button appearance="secondary" icon={<Add16Regular />} onClick={handleAddOperations} size="small">
                     {INTL_TEXT.addToolsButton}
                   </Button>
                 </div>
-                <DescriptionWithLink text={INTL_TEXT.toolsDescription} />
+                <DescriptionWithLink text={INTL_TEXT.actionsDescription} />
 
                 {hasIncompleteOperationConfiguration ? (
                   <MessageBar intent="info" className="msla-templates-error-message-bar">
                     <MessageBarBody>
-                      <MessageBarTitle>{INTL_TEXT.toolsInfoTitle}</MessageBarTitle>
+                      <MessageBarTitle>{INTL_TEXT.parametersTitle}</MessageBarTitle>
                       <Text>{INTL_TEXT.toolsInfoDescription}</Text>
                     </MessageBarBody>
                   </MessageBar>
