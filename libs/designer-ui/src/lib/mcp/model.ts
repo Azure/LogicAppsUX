@@ -16,4 +16,5 @@ export interface McpConnectorTabProps {
   isPrimaryButtonDisabled: boolean;
   onPrimaryButtonClick?: () => void;
   isPrimaryButtonLoading?: boolean;
+  previousTabId?: string;
 }

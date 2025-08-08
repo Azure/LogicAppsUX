@@ -42,6 +42,7 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
 
   const hasSelectConnectorTab = useMemo(() => currentPanelView === McpPanelView.SelectConnector, [currentPanelView]);
   const isUpdateOperationsView = useMemo(() => currentPanelView === McpPanelView.UpdateOperation, [currentPanelView]);
+  const isCreateConnectionView = useMemo(() => currentPanelView === McpPanelView.CreateConnection, [currentPanelView]);
   const hasValidConnection = useMemo(() => {
     if (!selectedOperations.length) {
       return false;
@@ -195,6 +196,7 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
         onTabClick: () => onConnectionsTabNavigation(hasSelectConnectorTab ? 'AddConnector' : 'EditConnector'),
         isPrimaryButtonDisabled: !selectedConnectorId || selectedOperations.length === 0 || !hasValidConnection,
         onPrimaryButtonClick: () => handleSubmit(hasSelectConnectorTab ? 'AddConnector' : 'EditConnector'),
+        previousTabId: isCreateConnectionView ? undefined : constants.MCP_PANEL_TAB_NAMES.OPERATIONS,
       }),
     [
       intl,
@@ -206,6 +208,7 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
       onConnectionsTabNavigation,
       hasSelectConnectorTab,
       isConnectionsTabDisabled,
+      isCreateConnectionView,
     ]
   );
 
@@ -214,14 +217,14 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
     if (hasSelectConnectorTab) {
       validTabs.push(connectorsTabItem);
     }
-    if (currentPanelView !== McpPanelView.CreateConnection) {
+    if (!isCreateConnectionView) {
       validTabs.push(operationsTabItem);
     }
-    if (currentPanelView !== McpPanelView.UpdateOperation) {
+    if (!isUpdateOperationsView) {
       validTabs.push(connectionsTabItem);
     }
     return validTabs;
-  }, [currentPanelView, hasSelectConnectorTab, connectorsTabItem, operationsTabItem, connectionsTabItem]);
+  }, [isUpdateOperationsView, isCreateConnectionView, hasSelectConnectorTab, connectorsTabItem, operationsTabItem, connectionsTabItem]);
 
   return tabs;
 };
