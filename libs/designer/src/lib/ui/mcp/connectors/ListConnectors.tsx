@@ -153,7 +153,7 @@ export const ListConnectors = ({ addConnectors, addDisabled }: { addConnectors: 
       dispatch(selectOperations(connectorOperations));
       dispatch(
         openConnectorPanelView({
-          panelView: McpPanelView.SelectOperation,
+          panelView: McpPanelView.CreateConnection,
         })
       );
     },

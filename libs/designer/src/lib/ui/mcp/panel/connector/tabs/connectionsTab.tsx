@@ -2,15 +2,16 @@ import type { AppDispatch } from '../../../../../core/state/templates/store';
 import constants from '../../../../../common/constants';
 import type { McpConnectorTabProps, McpPanelTabProps } from '@microsoft/designer-ui';
 import type { IntlShape } from 'react-intl';
-import { selectPanelTab } from '../../../../../core/state/mcp/panel/mcpPanelSlice';
+import { closePanel, selectPanelTab } from '../../../../../core/state/mcp/panel/mcpPanelSlice';
 import { ConnectionSelection } from '../../../connections/connectionselection';
+import { clearAllSelections } from '../../../../../core/state/mcp/mcpselectionslice';
 
 export const connectionsTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
   connectorId: string,
   operations: string[],
-  { onTabClick, isTabDisabled, isPrimaryButtonDisabled, onPrimaryButtonClick }: McpConnectorTabProps
+  { onTabClick, isTabDisabled, isPrimaryButtonDisabled, onPrimaryButtonClick, previousTabId }: McpConnectorTabProps
 ): McpPanelTabProps => ({
   id: constants.MCP_PANEL_TAB_NAMES.CONNECTIONS,
   title: intl.formatMessage({
@@ -25,13 +26,24 @@ export const connectionsTab = (
     buttonContents: [
       {
         type: 'navigation',
-        text: intl.formatMessage({
-          defaultMessage: 'Previous',
-          id: 'sqA07R',
-          description: 'Button text for moving to the previous tab in the connector panel',
-        }),
+        text: previousTabId
+          ? intl.formatMessage({
+              defaultMessage: 'Previous',
+              id: 'sqA07R',
+              description: 'Button text for moving to the previous tab in the connector panel',
+            })
+          : intl.formatMessage({
+              defaultMessage: 'Close',
+              id: 'FTrMxN',
+              description: 'Button text for closing the panel',
+            }),
         onClick: () => {
-          dispatch(selectPanelTab(constants.MCP_PANEL_TAB_NAMES.OPERATIONS));
+          if (previousTabId) {
+            dispatch(selectPanelTab(previousTabId));
+          } else {
+            dispatch(clearAllSelections());
+            dispatch(closePanel());
+          }
         },
       },
       {
