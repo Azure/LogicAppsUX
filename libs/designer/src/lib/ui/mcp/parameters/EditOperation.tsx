@@ -158,7 +158,7 @@ export const EditOperation = ({
     parametersSectionDescription: intl.formatMessage({
       id: 'ieY/P+',
       defaultMessage:
-        "If available, default parameters specify the minimum inputs for this task. You can add optional parameters based on your scenario's needs. By default, parameters get dynamic values from an AI model. You can manually provide static values instead.",
+        "If available, default parameters specify the minimum inputs for this task. You can add any optional parameters for your scenario. By default, parameters get dynamic values from the AI model, but you can choose to enter static values instead.",
       description: 'Description for the parameters section',
     }),
     parametersSectionLinkText: intl.formatMessage({
