@@ -188,7 +188,7 @@ export const EditOperation = ({
     }),
     descriptionSectionDescription: intl.formatMessage({
       id: 'Al+oyj',
-      defaultMessage: 'Provide information about this task.',
+      defaultMessage: 'Provide the purpose for this task.',
       description: 'Description for the operation description field',
     }),
     descriptionPlaceholder: intl.formatMessage({
