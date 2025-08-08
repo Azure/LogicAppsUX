@@ -34,6 +34,7 @@ import {
   WORKFLOW_NODE_TYPES,
   containsIdTag,
   containsCaseTag,
+  SUBGRAPH_TYPES,
 } from '@microsoft/logic-apps-shared';
 import type { MessageLevel } from '@microsoft/designer-ui';
 import { getDurationStringPanelMode } from '@microsoft/designer-ui';
@@ -493,7 +494,7 @@ export const workflowSlice = createSlice({
     },
     clearAllRepetitionRunData: (state: WorkflowState) => {
       for (const node of Object.values(state.nodesMetadata)) {
-        if (node.runData) {
+        if (node.runData && (node.graphId !== 'root' || node.subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION)) {
           delete node.runData;
           delete node.runIndex;
         }
