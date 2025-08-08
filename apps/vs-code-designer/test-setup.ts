@@ -44,8 +44,17 @@ vi.mock('@microsoft/vscode-azext-utils', () => {
     DialogResponses: vi.fn(),
     AzExtTreeItem: class AzExtTreeItem {},
     AzExtParentTreeItem: class AzExtParentTreeItem {},
+    openUrl: vi.fn(),
   };
 });
+
+vi.mock('os', () => ({
+  type: vi.fn(() => 'Darwin'),
+  release: vi.fn(() => '23.1.0'),
+  arch: vi.fn(() => 'x64'),
+  homedir: vi.fn(() => '/Users/testuser'),
+  tmpdir: vi.fn(() => '/tmp'),
+}));
 
 vi.mock('fs', () => ({
   existsSync: vi.fn(),
@@ -86,6 +95,7 @@ vi.mock('vscode', () => ({
       readFile: vi.fn(),
       readDirectory: vi.fn(),
     },
+    getConfiguration: vi.fn(),
   },
   Uri: {
     file: (p: string) => ({ fsPath: p, toString: () => p }),
@@ -100,6 +110,14 @@ vi.mock('vscode', () => ({
     File: 'file',
     Directory: 'directory',
   },
+  env: {
+    clipboard: {
+      writeText: vi.fn(),
+    },
+    sessionId: 'test-session-id',
+    appName: 'Visual Studio Code',
+  },
+  version: '1.85.0',
 }));
 
 vi.mock('./src/extensionVariables', () => ({
@@ -111,5 +129,8 @@ vi.mock('./src/extensionVariables', () => ({
     designTimeInstances: new Map(),
     pinnedBundleVersion: new Map(),
     currentBundleVersion: new Map(),
+    extensionVersion: '1.0.0',
+    latestBundleVersion: '1.2.3',
+    prefix: 'azureLogicAppsStandard',
   },
 }));

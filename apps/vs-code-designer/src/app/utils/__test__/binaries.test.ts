@@ -114,7 +114,7 @@ describe('binaries', () => {
 
   describe('getLatestDotNetVersion', () => {
     let context: IActionContext;
-    let majorVersion;
+    let majorVersion: string;
 
     beforeEach(() => {
       context = {
@@ -155,7 +155,7 @@ describe('binaries', () => {
 
   describe('getLatestFunctionCoreToolsVersion', () => {
     let context: IActionContext;
-    let majorVersion;
+    let majorVersion: string;
 
     beforeEach(() => {
       context = {
@@ -214,7 +214,7 @@ describe('binaries', () => {
 
   describe('getLatestNodeJsVersion', () => {
     let context: IActionContext;
-    let majorVersion;
+    let majorVersion: string;
 
     beforeEach(() => {
       context = {
