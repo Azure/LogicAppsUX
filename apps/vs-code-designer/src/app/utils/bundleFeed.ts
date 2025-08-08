@@ -216,6 +216,7 @@ export async function downloadExtensionBundle(context: IActionContext): Promise<
   } catch (error) {
     const errorMessage = `Error downloading and extracting the Logic Apps Standard extension bundle: ${error.message}`;
     context.telemetry.properties.errorMessage = errorMessage;
+    return false;
   }
 }
 
