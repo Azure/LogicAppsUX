@@ -1,6 +1,7 @@
 import { equals, EXP_FLAGS, ExperimentationService, SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
 import type { RootState } from '../../store';
 import { useSelector } from 'react-redux';
+import { useMemo } from 'react';
 
 export const useShowMinimap = () => {
   return useSelector((state: RootState) => state.designerView.showMinimap);
@@ -24,7 +25,13 @@ export const useEdgeContextMenuData = () => {
 
 export const useIsAgenticWorkflow = () => {
   const workflowKind = useSelector((state: RootState) => state.workflow.workflowKind);
-  const isEnabledForStateful = ExperimentationService().isFeatureEnabled(EXP_FLAGS.ENABLE_AGENTLOOP_STATEFUL);
+  const isEnabledForStateful = useMemo(() => {
+    try {
+      return ExperimentationService().isFeatureEnabled(EXP_FLAGS.ENABLE_AGENTLOOP_STATEFUL);
+    } catch (_e) {
+      return false;
+    }
+  }, []);
   return equals(workflowKind, 'agentic', true) || (equals(workflowKind, 'stateful', true) && isEnabledForStateful);
 };
 
