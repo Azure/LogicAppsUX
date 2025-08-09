@@ -18,7 +18,7 @@ export const queryKeys = {
   allBuiltInRoleDefinitions: 'allBuiltInRoleDefinitions',
 };
 
-export const useAllCognitiveServiceAccounts = (subscriptionId: string) => {
+export const useAllCognitiveServiceAccounts = (subscriptionId: string, enabled = true) => {
   return useQuery(
     [queryKeys.allCognitiveServiceAccounts, { subscriptionId }],
     async () => {
@@ -28,7 +28,7 @@ export const useAllCognitiveServiceAccounts = (subscriptionId: string) => {
     {
       ...queryOpts,
       retryOnMount: true,
-      enabled: !!subscriptionId,
+      enabled: !!subscriptionId && enabled,
     }
   );
 };
@@ -89,17 +89,17 @@ export const useCognitiveServiceAccountDeploymentsForNode = (nodeId: string, con
   );
 };
 
-export const useAllCognitiveServiceProjects = (serviceAccountId: string) => {
+export const useAllCognitiveServiceProjects = (subscriptionId: string, enabled = true) => {
   return useQuery(
-    [queryKeys.allCognitiveServiceAccounts, { serviceAccountId }],
+    [queryKeys.allCognitiveServiceAccounts, { subscriptionId }],
     async () => {
-      const allCognitiveServiceAccounts = await CognitiveServiceService().fetchAllCognitiveServiceProjects(serviceAccountId);
-      return allCognitiveServiceAccounts?.value ?? [];
+      const allCognitiveServiceAccounts = await CognitiveServiceService().fetchAllCognitiveServiceProjects(subscriptionId);
+      return allCognitiveServiceAccounts ?? [];
     },
     {
       ...queryOpts,
       retryOnMount: true,
-      enabled: !!serviceAccountId,
+      enabled: !!subscriptionId && enabled,
     }
   );
 };

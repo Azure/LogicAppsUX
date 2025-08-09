@@ -824,10 +824,11 @@ export const CreateConnection = (props: CreateConnectionProps) => {
                                 value: option.value,
                                 text: option.displayName,
                               })),
-                            required:
-                              findIndex<string>(parameterFromManifest?.properties?.inputs?.required ?? [], (item, _index) =>
+                            required: `${
+                              findIndex<string>(operationManifest?.properties?.inputs?.required ?? [], (item, _index) =>
                                 equals(item, keyValue, true)
-                              ) >= 0,
+                              ) >= 0
+                            }`,
                           },
                         },
                       }}
