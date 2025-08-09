@@ -23,13 +23,9 @@ export const useEdgeContextMenuData = () => {
 };
 
 export const useIsAgenticWorkflow = () => {
-  return useSelector((state: RootState) => {
-    const isEnabledForStateful = ExperimentationService().isFeatureEnabled(EXP_FLAGS.ENABLE_AGENTLOOP_STATEFUL);
-    return (
-      equals(state.workflow.workflowKind, 'agentic', true) ||
-      (equals(state.workflow.workflowKind, 'stateful', true) && isEnabledForStateful)
-    );
-  });
+  const workflowKind = useSelector((state: RootState) => state.workflow.workflowKind);
+  const isEnabledForStateful = ExperimentationService().isFeatureEnabled(EXP_FLAGS.ENABLE_AGENTLOOP_STATEFUL);
+  return equals(workflowKind, 'agentic', true) || (equals(workflowKind, 'stateful', true) && isEnabledForStateful);
 };
 
 export const useIsA2AWorkflow = () => {
