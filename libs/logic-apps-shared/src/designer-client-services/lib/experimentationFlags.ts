@@ -7,6 +7,7 @@ export const EXP_FLAGS = {
   ENABLE_NESTED_AGENT: 'enable-nested-agent',
   ENABLE_DYNAMIC_CONNECTIONS: 'enable-dynamic-connections',
   DISABLE_CHANNELS_AGENT_LOOP: 'disable-channels-agentloop',
+  ENABLE_AGENTLOOP_STATEFUL: 'enable-agentloop-stateful',
 };
 
 export async function enableParseDocumentWithMetadata(): Promise<boolean> {

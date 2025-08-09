@@ -1,7 +1,7 @@
 import { openPanel, useNodesInitialized } from '../core';
 import { usePreloadOperationsQuery, usePreloadConnectorsQuery } from '../core/queries/browse';
 import { useMonitoringView, useReadOnly, useHostOptions, useIsVSCode } from '../core/state/designerOptions/designerOptionsSelectors';
-import { useIsAgenticWorkflow, useIsA2AWorkflow } from '../core/state/designerView/designerViewSelectors';
+import { useIsA2AWorkflow, useWorkflowHasAgentLoop } from '../core/state/designerView/designerViewSelectors';
 import type { AppDispatch, RootState } from '../core/store';
 import Controls from './Controls';
 import Minimap from './Minimap';
@@ -81,12 +81,12 @@ export const Designer = (props: DesignerProps) => {
   );
 
   const isMonitoringView = useMonitoringView();
-  const isAgenticWorkflow = useIsAgenticWorkflow();
+  const workflowHasAgentLoop = useWorkflowHasAgentLoop();
   const isA2AWorkflow = useIsA2AWorkflow(); // Specifically A2A + Handoffs
 
   const hasChat = useMemo(() => {
-    return (isA2AWorkflow || isAgenticWorkflow) && isMonitoringView;
-  }, [isA2AWorkflow, isAgenticWorkflow, isMonitoringView]);
+    return workflowHasAgentLoop && isMonitoringView;
+  }, [isMonitoringView, workflowHasAgentLoop]);
 
   const DND_OPTIONS: any = {
     backends: [
