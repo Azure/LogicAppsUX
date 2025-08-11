@@ -25,7 +25,6 @@ import {
   callWithTelemetryAndErrorHandling,
   createAzExtOutputChannel,
   registerEvent,
-  registerReportIssueCommand,
   registerUIExtensionVariables,
 } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -93,10 +92,6 @@ export async function activate(context: vscode.ExtensionContext) {
   registerAzureUtilsExtensionVariables(ext);
   registerAppServiceExtensionVariables(ext);
 
-  // Suppress "Report an Issue" button for all errors in favor of the command
-  // Need to explore all capabilities of this API
-  // registerErrorHandler(c => c.errorHandling.suppressReportIssue = true);
-
   await callWithTelemetryAndErrorHandling(extensionCommand.activate, async (activateContext: IActionContext) => {
     vscode.commands.executeCommand(
       'setContext',
@@ -114,14 +109,7 @@ export async function activate(context: vscode.ExtensionContext) {
       await convertToWorkspace(activateContext);
     }
 
-    try {
-      downloadExtensionBundle(activateContext);
-    } catch (error) {
-      // log the error message to telemetry.
-      const errorMessage = `Error downloading and extracting the Logic Apps Standard extension bundle: ${error.message}`;
-      activateContext.telemetry.properties.errorMessage = errorMessage;
-    }
-
+    downloadExtensionBundle(activateContext);
     promptParameterizeConnections(activateContext, false);
     verifyLocalConnectionKeys(activateContext);
     await startOnboarding(activateContext);
@@ -150,8 +138,6 @@ export async function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(ext.outputChannel);
     context.subscriptions.push(ext.azureAccountTreeItem);
 
-    activateContext.telemetry.properties.lastStep = 'registerReportIssueCommand';
-    registerReportIssueCommand(extensionCommand.reportIssue);
     activateContext.telemetry.properties.lastStep = 'registerCommands';
     registerCommands();
     activateContext.telemetry.properties.lastStep = 'registerFuncHostTaskEvents';

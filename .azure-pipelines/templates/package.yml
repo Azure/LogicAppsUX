@@ -1,20 +1,12 @@
+parameters:
+  - name: publishVersion
+    type: string
+    
 steps:
-  - pwsh: |
-      $version = $(npx tsx scripts/get-current-version.ts "$(Build.SourceBranchName)")
-      Write-Host "Current version: $version"
-      Write-Host "##vso[task.setvariable variable=current_version;isOutput=true]$version"
-    displayName: "Get Current Version"
-    workingDirectory: $(working_directory)
-    condition: succeeded()
-    name: version
-    id: get_version
-
-  - script: node scripts/update-versions.js $(current_version)
+  - script: node scripts/update-versions.js ${{ parameters.publishVersion }}
     displayName: "Update Version in Package Files"
     workingDirectory: $(working_directory)
     condition: succeeded()
-    env:
-      current_version: $(get_version.current_version)
 
   - pwsh: |
       (Get-Content apps/vs-code-designer/src/package.json -Raw) -replace '"aiKey":\s*"[^"]*"', '"aiKey": "$(AI_KEY)"' | Set-Content apps/vs-code-designer/src/package.json -NoNewline

@@ -24,6 +24,7 @@ import {
   loadDynamicTreeItemsForParameter,
   loadDynamicValuesForParameter,
   parameterValueToString,
+  shouldEncodeParameterValueForOperationBasedOnMetadata,
 } from '../../../core/utils/parameters/helper';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../core/state/mcp/store';
@@ -107,7 +108,9 @@ export const ParameterEditor = ({
           ...parameter,
           value,
         } as ParameterInfo,
-        /* isDefinitionValue */ true
+        /* isDefinitionValue */ false,
+        /* idReplacements */ {},
+        shouldEncodeParameterValueForOperationBasedOnMetadata(operationInfo)
       ) ?? ''
     );
   };
