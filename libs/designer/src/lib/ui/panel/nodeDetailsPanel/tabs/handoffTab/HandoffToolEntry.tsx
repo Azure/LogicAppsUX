@@ -86,6 +86,7 @@ export const HandoffToolEntry = ({ agentId, toolId }: HandoffToolEntryProps) => 
               },
             },
           ],
+          isUserAction: true,
         })
       );
     },
