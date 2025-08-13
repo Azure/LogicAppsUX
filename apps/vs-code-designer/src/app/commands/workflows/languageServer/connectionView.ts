@@ -10,6 +10,23 @@ import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { ProjectName, RouteName } from '@microsoft/vscode-extension-logic-apps';
 import * as vscode from 'vscode';
 
+const handleWebviewMsg = (message: any, panel: vscode.WebviewPanel) => {
+  switch (message.command) {
+    case ExtensionCommand.initialize: {
+      panel.webview.postMessage({
+        command: ExtensionCommand.initialize_frame,
+        data: {
+          project: ProjectName.languageServer,
+          route: RouteName.connectionView,
+        },
+      });
+      break;
+    }
+    default:
+      break;
+  }
+};
+
 export async function openLanguageServerConnectionView(_context: IActionContext, _node: vscode.Uri): Promise<void> {
   const panelName: string = localize('connectionView', 'Connection view');
   const panelGroupKey = ext.webViewKey.languageServer;
@@ -30,32 +47,12 @@ export async function openLanguageServerConnectionView(_context: IActionContext,
   const panel: vscode.WebviewPanel = vscode.window.createWebviewPanel(
     'ConnectionView',
     `${panelName}`,
-    vscode.ViewColumn.Active,
+    vscode.ViewColumn.Beside,
     webviewOptions
   );
   panel.webview.html = await getWebViewHTML('vs-code-react', panel);
 
-  try {
-    panel.webview.onDidReceiveMessage(async (message) => {
-      switch (message.command) {
-        case ExtensionCommand.initialize: {
-          panel.webview.postMessage({
-            command: ExtensionCommand.initialize_frame,
-            data: {
-              project: ProjectName.languageServer,
-              route: RouteName.connectionView,
-            },
-          });
-          break;
-        }
-        default:
-          break;
-      }
-    }, ext.context.subscriptions);
-  } catch (error) {
-    vscode.window.showErrorMessage(`${localize('review failure', 'Error opening connection view')} ${error.message}`, localize('OK', 'OK'));
-    throw error;
-  }
+  panel.webview.onDidReceiveMessage(async (message) => await handleWebviewMsg(message, panel), ext.context.subscriptions);
 
   panel.onDidDispose(
     () => {

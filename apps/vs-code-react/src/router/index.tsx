@@ -31,7 +31,7 @@ export const Router: React.FC = () => {
         <Route path={`/${RouteName.dataMapper}`} element={<DataMapperApp />} />
         <Route path={`/${RouteName.designer}`} element={<DesignerApp />} />
         <Route path={`/${RouteName.unitTest}`} element={<UnitTestResults />} />
-        <Route path={`/${RouteName.languageServer}`}>
+        <Route path={`/${RouteName.languageServer}`} element={<LanguageServerConnectionView />}>
           <Route path={`${RouteName.connectionView}`} element={<LanguageServerConnectionView />} />
         </Route>
       </Routes>
