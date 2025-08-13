@@ -330,7 +330,7 @@ const DesignerEditor = () => {
          */
         for (const [_refKey, agentConnection] of Object.entries(newAgentConnections)) {
           if (agentConnection?.authentication?.type === 'ManagedServiceIdentity') {
-            const definitionNames = ['Azure AI Administrator', 'Cognitive Services Contributor'];
+            const definitionNames = ['Azure AI User', 'Azure AI Administrator', 'Cognitive Services Contributor'];
             const missingRoleAssignments = await getMissingRoleDefinitions(agentConnection?.resourceId, definitionNames);
             const assignmentPromises = [];
             for (const roleDefinition of missingRoleAssignments) {

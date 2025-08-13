@@ -7,7 +7,7 @@ parameters:
   - name: dryRun
     displayName: Dry run
     type: boolean
-    default: false
+    default: true
 
 resources:
   pipelines:

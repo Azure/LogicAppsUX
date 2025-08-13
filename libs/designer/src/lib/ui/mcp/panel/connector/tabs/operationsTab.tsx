@@ -9,7 +9,6 @@ import { clearAllSelections } from '../../../../../core/state/mcp/mcpselectionsl
 interface OperationsTabProps extends McpConnectorTabProps {
   primaryButtonTitle: string;
   onPrimaryButtonClick: () => void;
-  previousTabId: string | undefined;
   tabStatusIcon?: 'error';
 }
 
@@ -29,8 +28,8 @@ export const operationsTab = (
   return {
     id: constants.MCP_PANEL_TAB_NAMES.OPERATIONS,
     title: intl.formatMessage({
-      defaultMessage: 'Add actions',
-      id: 'i7OrmB',
+      defaultMessage: 'Select actions',
+      id: 'mqVL/E',
       description: 'The tab label for the add actions tab on the connector panel',
     }),
     disabled: isTabDisabled,
