@@ -7,16 +7,16 @@ import { ext } from '../../extensionVariables';
 
 const initializeServerLanguageClient = () => {
   const configuration = workspace.getConfiguration();
-  const serverDllPath = configuration.get<string>('sdkLsp.serverDllPath') || '';
-  const sdkNupkg = configuration.get<string>('sdkLsp.sdkNupkg') || '';
+  const serverDllPath = configuration.get<string>('azureLogicAppsStandard.languageServerDLLPath') || '';
+  const sdkNupkg = configuration.get<string>('azureLogicAppsStandard.languageServerNupkgPath') || '';
 
   if (!serverDllPath) {
-    window.showWarningMessage('Set "sdkLsp.serverDllPath" to your C# server DLL.');
+    window.showWarningMessage('Set "azureLogicAppsStandard.languageServerDLLPath" to your C# server DLL.');
     return;
   }
 
   if (!sdkNupkg) {
-    window.showWarningMessage('Set "sdkLsp.sdkNupkg" to your SDK NuGet package.');
+    window.showWarningMessage('Set "azureLogicAppsStandard.languageServerNupkgPath" to your SDK NuGet package.');
     return;
   }
 
