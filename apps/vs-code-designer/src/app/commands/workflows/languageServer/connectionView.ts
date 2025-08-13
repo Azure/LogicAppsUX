@@ -7,11 +7,10 @@ import { localize } from '../../../../localize';
 import { cacheWebviewPanel, removeWebviewPanelFromCache, tryGetWebviewPanel } from '../../../utils/codeless/common';
 import { getWebViewHTML } from '../../../utils/codeless/getWebViewHTML';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { ProjectName } from '@microsoft/vscode-extension-logic-apps';
-import { readFileSync } from 'fs';
+import { ProjectName, RouteName } from '@microsoft/vscode-extension-logic-apps';
 import * as vscode from 'vscode';
 
-export async function openLanguageServerConnectionView(_context: IActionContext, node: vscode.Uri): Promise<void> {
+export async function openLanguageServerConnectionView(_context: IActionContext, _node: vscode.Uri): Promise<void> {
   const panelName: string = localize('connectionView', 'Connection view');
   const panelGroupKey = ext.webViewKey.languageServer;
   const existingPanel: vscode.WebviewPanel | undefined = tryGetWebviewPanel(panelGroupKey, panelName);
@@ -37,18 +36,14 @@ export async function openLanguageServerConnectionView(_context: IActionContext,
   panel.webview.html = await getWebViewHTML('vs-code-react', panel);
 
   try {
-    const reviewFilePath = node.fsPath;
-    const reviewContent = JSON.parse(readFileSync(reviewFilePath, 'utf8'));
-
     panel.webview.onDidReceiveMessage(async (message) => {
       switch (message.command) {
         case ExtensionCommand.initialize: {
           panel.webview.postMessage({
             command: ExtensionCommand.initialize_frame,
             data: {
-              project: ProjectName.review,
-              reviewContent,
-              hostVersion: ext.extensionVersion,
+              project: ProjectName.languageServer,
+              route: RouteName.connectionView,
             },
           });
           break;

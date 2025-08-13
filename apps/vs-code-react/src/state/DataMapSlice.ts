@@ -1,6 +1,6 @@
 import type { FunctionData } from '@microsoft/logic-apps-data-mapper';
 import type { DataMapSchema, MapDefinitionEntry, MapMetadata } from '@microsoft/logic-apps-shared';
-import type { PayloadAction } from '@reduxjs/toolkit';
+import type { PayloadAction, Slice } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
 export interface DataMapState {
@@ -29,7 +29,7 @@ const initialState: DataMapState = {
   useExpandedFunctionCards: true,
 };
 
-export const dataMapSlice = createSlice({
+export const dataMapSlice: Slice<DataMapState> = createSlice({
   name: 'dataMapDataLoader',
   initialState,
   reducers: {
