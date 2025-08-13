@@ -1,6 +1,5 @@
 import type React from 'react';
-import { memo, useCallback, useMemo } from 'react';
-import { useDispatch } from 'react-redux';
+import { memo, useMemo } from 'react';
 import type { ElkExtendedEdge } from 'elkjs/lib/elk-api';
 import { EdgeLabelRenderer, getSmoothStepPath, useReactFlow, type EdgeProps } from '@xyflow/react';
 import { css } from '@fluentui/utilities';
@@ -13,10 +12,6 @@ import { DropZone } from './dropzone';
 import { ArrowCap } from './dynamicsvgs/arrowCap';
 import { CollapsedRunAfterIndicator, RunAfterIndicator } from './runAfterIndicator';
 import { useIsNodeSelectedInOperationPanel } from '../../core/state/panel/panelSelectors';
-import { removeOperationRunAfter } from '../../core/actions/bjsworkflow/runafter';
-import { EdgePathContextMenu, useContextMenu } from './edgePathContextMenu';
-import type { AppDispatch } from '../../core';
-
 interface EdgeContentProps {
   x: number;
   y: number;
@@ -71,7 +66,6 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
   targetPosition,
   style = {},
 }) => {
-  const dispatch = useDispatch<AppDispatch>();
   const readOnly = useReadOnly();
   const reactFlow = useReactFlow();
   const operationData = useActionMetadata(target) as LogicAppsV2.ActionDefinition;
@@ -142,22 +136,7 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
   const isSourceSelected = useIsNodeSelectedInOperationPanel(sourceId);
   const isTargetSelected = useIsNodeSelectedInOperationPanel(targetId);
 
-  const contextMenu = useContextMenu();
-  const contextSelected = useMemo(() => contextMenu.isShowing, [contextMenu.isShowing]);
-
-  const highlighted = useMemo(
-    () => isSourceSelected || isTargetSelected || contextSelected,
-    [isSourceSelected, isTargetSelected, contextSelected]
-  );
-
-  const deleteEdge = useCallback(() => {
-    dispatch(
-      removeOperationRunAfter({
-        parentOperationId: sourceId,
-        childOperationId: targetId,
-      })
-    );
-  }, [dispatch, sourceId, targetId]);
+  const highlighted = useMemo(() => isSourceSelected || isTargetSelected, [isSourceSelected, isTargetSelected]);
 
   return (
     <>
@@ -183,18 +162,7 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
         strokeDasharray={showRunAfter ? '4 6' : '0'}
         strokeLinecap={'round'}
         markerEnd={`url(#arrow-end-${id})`}
-        onClick={contextMenu.handle}
-        onContextMenu={contextMenu.handle}
       />
-
-      {contextMenu.isShowing && (
-        <EdgePathContextMenu
-          contextMenuLocation={contextMenu.location}
-          open={contextMenu.isShowing}
-          setOpen={contextMenu.setIsShowing}
-          onDelete={deleteEdge}
-        />
-      )}
 
       {/* ADD ACTION / BRANCH BUTTONS */}
       {readOnly ? null : (

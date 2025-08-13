@@ -281,6 +281,7 @@ const DesignerReactFlow = (props: any) => {
       nodesFocusable={false}
       edgesFocusable={false}
       edgeTypes={edgeTypes}
+      elementsSelectable={false}
       panOnScroll={true}
       deleteKeyCode={['Backspace', 'Delete']}
       zoomActivationKeyCode={['Ctrl', 'Meta', 'Alt', 'Control']}
