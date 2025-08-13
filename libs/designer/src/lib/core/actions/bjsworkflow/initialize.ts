@@ -587,7 +587,7 @@ export const updateCallbackUrlInInputs = async (
 export const updateAgentUrlInInputs = async ({ type, kind }: NodeOperation, nodeInputs: NodeInputs): Promise<ParameterInfo | undefined> => {
   if (equals(type, Constants.NODE.TYPE.REQUEST) && equals(kind, Constants.NODE.KIND.AGENT)) {
     try {
-      const agentUrlInfo = await WorkflowService().getAgentUrl();
+      const agentUrlInfo = await WorkflowService().getAgentUrl?.();
       const parameter = getParameterFromName(nodeInputs, 'agentUrl');
       if (parameter && agentUrlInfo) {
         parameter.value = [createLiteralValueSegment(agentUrlInfo.url)];

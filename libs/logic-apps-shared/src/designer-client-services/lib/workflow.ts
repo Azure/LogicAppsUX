@@ -35,7 +35,7 @@ export interface IWorkflowService {
   /**
    * Gets agent url for Agent HTTP request trigger.
    */
-  getAgentUrl(): Promise<AgentURL>;
+  getAgentUrl?(): Promise<AgentURL>;
 
   /**
    * Notifies for callback URL updates.
