@@ -1,11 +1,12 @@
+import React, { useMemo } from 'react';
 import { environment } from '../../../../environments/environment';
-import type { AgentURL, CallbackInfo, ConnectionsData, ParametersData, Workflow } from '../Models/Workflow';
+import type { CallbackInfo, ConnectionsData, ParametersData, Workflow } from '../Models/Workflow';
 import { Artifact } from '../Models/Workflow';
 import { validateResourceId } from '../Utilities/resourceUtilities';
 import { convertDesignerWorkflowToConsumptionWorkflow } from './ConsumptionSerializationHelpers';
 import { getReactQueryClient, runsQueriesKeys, type AllCustomCodeFiles } from '@microsoft/logic-apps-designer';
 import { CustomCodeService, LogEntryLevel, LoggerService, equals, getAppFileForFileExtension } from '@microsoft/logic-apps-shared';
-import type { LogicAppsV2, VFSObject } from '@microsoft/logic-apps-shared';
+import type { AgentQueryParams, LogicAppsV2, VFSObject } from '@microsoft/logic-apps-shared';
 import axios from 'axios';
 import jwt_decode from 'jwt-decode';
 import { useQuery } from '@tanstack/react-query';
@@ -289,17 +290,188 @@ export const listCallbackUrl = async (
   });
 };
 
-export const listAgentUrl = async (workflowName: string, hostName: string): Promise<AgentURL> => {
-  return getReactQueryClient().fetchQuery(['agentUrl', workflowName], async () => {
-    if (!hostName || !workflowName) {
-      return Promise.resolve(undefined);
+// Hook to get A2A authentication key
+export const useA2AKey = (siteResourceId: string, workflowName: string, keyType = 'Primary', expiryTime?: string) => {
+  return useQuery(
+    ['listA2AKeys', siteResourceId, workflowName, keyType, expiryTime],
+    async () => {
+      if (!siteResourceId || !workflowName) {
+        return null;
+      }
+      try {
+        const uri = `${baseUrl}${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/listApiKeys?api-version=2018-11-01`;
+        const response = await axios.post(
+          uri,
+          {
+            expiry: expiryTime,
+            keyType: keyType,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${environment.armToken}`,
+            },
+          }
+        );
+        return response.data;
+      } catch (error) {
+        console.error('Failed to get A2A key:', error);
+        return null;
+      }
+    },
+    {
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false,
+    }
+  );
+};
+
+// Hook to get authentication settings
+export const useAuthSettings = (siteResourceId: string) => {
+  return useQuery(
+    ['authSettings', siteResourceId],
+    async () => {
+      if (!siteResourceId) {
+        return null;
+      }
+      try {
+        const uri = `${baseUrl}${siteResourceId}/config/authsettingsV2/list?api-version=2018-11-01`;
+        const response = await axios.post(uri, null, {
+          headers: {
+            Authorization: `Bearer ${environment.armToken}`,
+          },
+        });
+        return response.data;
+      } catch (error) {
+        console.error('Failed to get auth settings:', error);
+        return null;
+      }
+    },
+    {
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false,
+    }
+  );
+};
+
+// Hook to check if authentication settings are configured
+export const useAuthSettingsConfigured = (siteResourceId: string) => {
+  const { data: authSettings, isLoading, isError, error } = useAuthSettings(siteResourceId);
+
+  const isConfigured = React.useMemo(() => {
+    return (
+      !isLoading &&
+      !isError &&
+      authSettings?.properties?.enabled &&
+      (authSettings?.properties?.issuer ?? '').startsWith('https://login.microsoftonline.com')
+    );
+  }, [isLoading, isError, authSettings]);
+
+  return {
+    isConfigured,
+    isLoading,
+    isError,
+    error,
+    authSettings,
+  };
+};
+
+// Hook to get OBO key for a specific connection
+export const useOBOKey = (connectionId: string, enabled = true) => {
+  return useQuery(
+    ['workflowOBOKey', connectionId],
+    async () => {
+      if (!connectionId) {
+        return null;
+      }
+      try {
+        const uri = `${baseUrl}${validateResourceId(connectionId)}/listDynamicConnectionKeys?api-version=${standardApiVersion}`;
+        const response = await axios.post(uri, null, {
+          headers: {
+            Authorization: `Bearer ${environment.armToken}`,
+          },
+        });
+        return response.data;
+      } catch (error) {
+        console.error('Failed to get OBO key for connection:', error);
+        return null;
+      }
+    },
+    {
+      enabled,
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false,
+    }
+  );
+};
+
+// Hook to get OBO authentication data
+export const useOBO = (siteResourceId: string) => {
+  const { data: connectionsData, isLoading: isConnectionsLoading } = useConnectionsData(siteResourceId);
+
+  const connectionId = useMemo(() => {
+    const apiConnections = (connectionsData as ConnectionsData | undefined)?.managedApiConnections ?? {};
+    for (const key of Object.keys(apiConnections)) {
+      if (equals(apiConnections[key].runtimeSource ?? '', 'Dynamic', true)) {
+        return apiConnections[key].connection.id;
+      }
+    }
+    return undefined;
+  }, [connectionsData]);
+
+  const { data: oboKeyData, isLoading: isOBOKeyLoading } = useOBOKey(connectionId ?? '', !!connectionId);
+
+  return {
+    isConnectionsLoading,
+    data: oboKeyData,
+    isOBOKeyLoading,
+  };
+};
+
+// Hook to get Agent URL with authentication tokens
+export const useAgentUrl = (siteResourceId: string, workflowName: string, hostName: string) => {
+  const { data: a2aData, isLoading: isA2ALoading, isError: isA2AError } = useA2AKey(siteResourceId, workflowName);
+  const { data: oboData, isOBOKeyLoading, isConnectionsLoading } = useOBO(siteResourceId);
+
+  const agentUrl = useMemo(() => {
+    if (!workflowName || !hostName) {
+      return undefined;
     }
 
-    return Promise.resolve({
-      url: `${hostName.startsWith('https://') ? hostName : `https://${hostName}`}/api/agentsChat/${workflowName}/IFrame`,
-      origin: hostName,
-    });
-  });
+    const baseUrl = `${hostName.startsWith('https://') ? hostName : `https://${hostName}`}/api/agentsChat/${workflowName}/IFrame`;
+
+    let queryParams: AgentQueryParams | undefined = undefined;
+
+    // Add authentication tokens if available
+    if (a2aData && !isA2ALoading && !isA2AError) {
+      const a2aKey = a2aData?.primaryKey || a2aData?.key;
+      if (a2aKey) {
+        queryParams = { apiKey: a2aKey };
+
+        // Add OBO token if available
+        if (oboData && !isOBOKeyLoading) {
+          const oboKey = oboData?.properties?.key;
+          if (oboKey) {
+            queryParams.oboToken = oboKey;
+          }
+        }
+      }
+    }
+
+    return {
+      url: baseUrl,
+      hostName,
+      queryParams,
+    };
+  }, [workflowName, hostName, a2aData, oboData, isA2ALoading, isA2AError, isOBOKeyLoading]);
+
+  return {
+    data: agentUrl,
+    isLoading: isA2ALoading || isConnectionsLoading || isOBOKeyLoading,
+    isError: isA2AError,
+  };
 };
 
 export const useWorkflowApp = (siteResourceId: string, hostingPlan: HostingPlanTypes, enabled = true) => {

@@ -21,7 +21,7 @@ export default {
             skip: true,
           },
           'x-ms-editor-options': {
-            addPopUp: true,
+            showAgentViewer: true,
           },
         },
         name: {

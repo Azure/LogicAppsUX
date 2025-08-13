@@ -106,4 +106,20 @@ export const useCopyInputControlStyles = makeStyles({
       backgroundColor: tokens.colorNeutralBackground1Selected,
     },
   },
+  apiKeyContainer: {
+    marginLeft: tokens.spacingHorizontalM,
+    marginTop: tokens.spacingVerticalS,
+    paddingLeft: tokens.spacingHorizontalM,
+    borderLeft: `2px solid ${tokens.colorNeutralStroke2}`,
+    position: 'relative',
+  },
+  apiKeyHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: tokens.spacingHorizontalS,
+    marginBottom: tokens.spacingVerticalXS,
+  },
+  apiKeyIcon: {
+    color: tokens.colorNeutralForeground2,
+  },
 });

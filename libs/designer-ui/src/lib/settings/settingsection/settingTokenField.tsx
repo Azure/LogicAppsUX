@@ -330,7 +330,14 @@ export const TokenField = ({
       );
 
     case constants.PARAMETER.EDITOR.COPYABLE:
-      return <CopyInputControlWithAgent placeholder={placeholder} text={value[0].value} showAgentViewer={editorOptions?.addPopUp} />;
+      return (
+        <CopyInputControlWithAgent
+          placeholder={placeholder}
+          text={value[0].value}
+          showAgentViewer={editorOptions?.showAgentViewer}
+          queryParams={editorOptions?.queryParams}
+        />
+      );
 
     case constants.PARAMETER.EDITOR.CONDITION:
       return editorOptions?.isOldFormat ? (

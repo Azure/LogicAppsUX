@@ -3,16 +3,19 @@ import { Window24Regular, ErrorCircle24Regular, Dismiss24Regular } from '@fluent
 import * as React from 'react';
 import { useIntl } from 'react-intl';
 import { useCopyInputControlStyles } from './styles';
+import type { AgentQueryParams } from '@microsoft/logic-apps-shared';
+import { useMemo } from 'react';
 
 export interface AgentUrlViewerProps {
   url: string;
   isOpen: boolean;
+  queryParams?: AgentQueryParams;
   onClose: () => void;
 }
 
 type IframeState = 'loading' | 'loaded' | 'error';
 
-export const AgentUrlViewer: React.FC<AgentUrlViewerProps> = ({ url, isOpen, onClose }) => {
+export const AgentUrlViewer: React.FC<AgentUrlViewerProps> = ({ url, isOpen, queryParams, onClose }) => {
   const [iframeState, setIframeState] = React.useState<IframeState>('loading');
   const [iframeError, setIframeError] = React.useState<string>('');
   const intl = useIntl();
@@ -32,14 +35,15 @@ export const AgentUrlViewer: React.FC<AgentUrlViewerProps> = ({ url, isOpen, onC
   });
 
   const DISPLAY_TEXT_ERROR = intl.formatMessage({
-    defaultMessage: 'Failed to load URL. This may be due to security restrictions in the portal environment.',
-    id: 'ix21Wi',
+    defaultMessage:
+      'The agent chat interface cannot be displayed in this environment due to security restrictions. Please use the external chat client.',
+    id: '47k6r6',
     description: 'Error message when iframe fails to load',
   });
 
   const DISPLAY_TEXT_RETRY = intl.formatMessage({
-    defaultMessage: 'Open in New Tab',
-    id: 'zZ4Z4b',
+    defaultMessage: 'Open Chat in New Tab',
+    id: 'u0xUtD',
     description: 'Button text to open URL in new tab',
   });
 
@@ -53,9 +57,13 @@ export const AgentUrlViewer: React.FC<AgentUrlViewerProps> = ({ url, isOpen, onC
     setIframeError(DISPLAY_TEXT_ERROR);
   };
 
+  const linkUrl = useMemo(() => {
+    return url + (queryParams ? `?${new URLSearchParams(queryParams).toString()}` : '');
+  }, [url, queryParams]);
+
   const handleOpenInNewTab = () => {
-    if (url) {
-      window.open(url, '_blank', 'noopener,noreferrer');
+    if (linkUrl) {
+      window.open(linkUrl, '_blank', 'noopener,noreferrer');
     }
   };
 
@@ -82,10 +90,10 @@ export const AgentUrlViewer: React.FC<AgentUrlViewerProps> = ({ url, isOpen, onC
 
     return (
       <div className={styles.iframeContainer}>
-        {url ? (
+        {linkUrl ? (
           <iframe
             ref={iframeRef}
-            src={url}
+            src={linkUrl}
             className={styles.iframe}
             title="Agent URL Preview"
             sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-modals allow-top-navigation-by-user-activation allow-storage-access-by-user-activation"
@@ -129,7 +137,7 @@ export interface AgentUrlButtonProps {
   onOpen: () => void;
 }
 
-export const AgentUrlButton: React.FC<AgentUrlButtonProps> = ({ url, onOpen }) => {
+export const AgentUrlButton = React.forwardRef<HTMLButtonElement, AgentUrlButtonProps>(({ url, onOpen }, ref) => {
   const intl = useIntl();
 
   const DISPLAY_TEXT_OPEN_POPUP = intl.formatMessage({
@@ -142,5 +150,16 @@ export const AgentUrlButton: React.FC<AgentUrlButtonProps> = ({ url, onOpen }) =
     return null;
   }
 
-  return <Button aria-label={DISPLAY_TEXT_OPEN_POPUP} icon={<Window24Regular />} appearance="transparent" size="small" onClick={onOpen} />;
-};
+  return (
+    <Button
+      ref={ref}
+      aria-label={DISPLAY_TEXT_OPEN_POPUP}
+      icon={<Window24Regular />}
+      appearance="transparent"
+      size="small"
+      onClick={onOpen}
+    />
+  );
+});
+
+AgentUrlButton.displayName = 'AgentUrlButton';

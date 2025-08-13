@@ -1,6 +1,6 @@
-import type { OpenAPIV2, ManagedIdentity, LogicAppsV2 } from '../../utils/src';
+import type { OpenAPIV2, ManagedIdentity, LogicAppsV2, AgentURL } from '../../utils/src';
 import { AssertionException, AssertionErrorCode } from '../../utils/src';
-import type { AgentURL, CallbackInfo } from './callbackInfo';
+import type { CallbackInfo } from './callbackInfo';
 
 export interface NodeOutputs {
   outputs: Record<string, OutputInfo>;

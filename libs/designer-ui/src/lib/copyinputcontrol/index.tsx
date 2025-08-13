@@ -10,12 +10,13 @@ export interface CopyInputControlProps {
   text: string;
   onCopy?(): void;
   children?: React.ReactNode;
+  copyButtonLabel?: string;
 }
 
 const CopyIcon = bundleIcon(Copy24Filled, Copy24Regular);
 
 export const CopyInputControl = React.forwardRef<Pick<HTMLElement, 'focus' | 'scrollIntoView'>, CopyInputControlProps>(
-  ({ ariaLabelledBy, placeholder, text: url, onCopy, children }, ref) => {
+  ({ ariaLabelledBy, placeholder, text: url, onCopy, children, copyButtonLabel }, ref) => {
     const [isCopied, setIsCopied] = React.useState(false);
     const disabled = React.useMemo(() => {
       try {
@@ -39,7 +40,7 @@ export const CopyInputControl = React.forwardRef<Pick<HTMLElement, 'focus' | 'sc
       },
     }));
 
-    const DISPLAY_TEXT_COPY_URL = intl.formatMessage({
+    const DEFAULT_DISPLAY_TEXT_COPY_URL = intl.formatMessage({
       defaultMessage: 'Copy URL',
       id: '7yFLpB',
       description: 'ARIA label and tooltip text for the copy button',
@@ -50,6 +51,8 @@ export const CopyInputControl = React.forwardRef<Pick<HTMLElement, 'focus' | 'sc
       id: 'IG4h5u',
       description: 'Confirmation message when URL is copied',
     });
+
+    const copyLabel = copyButtonLabel ?? DEFAULT_DISPLAY_TEXT_COPY_URL;
 
     const handleCopyClick = async () => {
       try {
@@ -99,9 +102,9 @@ export const CopyInputControl = React.forwardRef<Pick<HTMLElement, 'focus' | 'sc
           readOnly
           value={url}
         />
-        <Tooltip content={isCopied ? DISPLAY_TEXT_COPIED : DISPLAY_TEXT_COPY_URL} relationship="label">
+        <Tooltip content={isCopied ? DISPLAY_TEXT_COPIED : copyLabel} relationship="label">
           <Button
-            aria-label={isCopied ? DISPLAY_TEXT_COPIED : DISPLAY_TEXT_COPY_URL}
+            aria-label={isCopied ? DISPLAY_TEXT_COPIED : copyLabel}
             ref={buttonRef}
             disabled={disabled}
             icon={isCopied ? <Checkmark24Regular /> : <CopyIcon />}

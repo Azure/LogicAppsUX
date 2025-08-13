@@ -527,7 +527,7 @@ export const updateCallbackUrl = async (rootState: RootState, dispatch: Dispatch
   const triggerId = idReplacements[trigger] ?? trigger;
 
   const updatedParameter = await updateCallbackUrlInInputs(triggerId, operationInfo, nodeInputs);
-  const agentUpdatedParameter = await updateAgentUrlInInputs(triggerId, operationInfo, nodeInputs);
+  const agentUpdatedParameter = await updateAgentUrlInInputs(operationInfo, nodeInputs);
   const finalUpdatedParameter = updatedParameter || agentUpdatedParameter;
   if (finalUpdatedParameter) {
     notifyForCallbackUrlUpdate(rootState, trigger);
@@ -584,17 +584,16 @@ export const updateCallbackUrlInInputs = async (
   return;
 };
 
-export const updateAgentUrlInInputs = async (
-  nodeId: string,
-  { type, kind }: NodeOperation,
-  nodeInputs: NodeInputs
-): Promise<ParameterInfo | undefined> => {
+export const updateAgentUrlInInputs = async ({ type, kind }: NodeOperation, nodeInputs: NodeInputs): Promise<ParameterInfo | undefined> => {
   if (equals(type, Constants.NODE.TYPE.REQUEST) && equals(kind, Constants.NODE.KIND.AGENT)) {
     try {
-      const agentUrl = await WorkflowService().getAgentUrl();
+      const agentUrlInfo = await WorkflowService().getAgentUrl();
       const parameter = getParameterFromName(nodeInputs, 'agentUrl');
-      if (parameter && agentUrl) {
-        parameter.value = [createLiteralValueSegment(agentUrl.url)];
+      if (parameter && agentUrlInfo) {
+        parameter.value = [createLiteralValueSegment(agentUrlInfo.url)];
+        if (agentUrlInfo.queryParams) {
+          parameter.editorOptions = { ...parameter.editorOptions, queryParams: agentUrlInfo.queryParams };
+        }
         return parameter;
       }
     } catch (error) {
