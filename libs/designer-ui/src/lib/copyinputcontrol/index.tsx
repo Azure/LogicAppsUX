@@ -3,6 +3,7 @@ import { bundleIcon, Copy24Regular, Copy24Filled, Checkmark24Regular } from '@fl
 import * as React from 'react';
 import { useIntl } from 'react-intl';
 import { useCopyInputControlStyles } from './styles';
+import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 
 export interface CopyInputControlProps {
   ariaLabelledBy?: string;
@@ -76,7 +77,7 @@ export const CopyInputControl = React.forwardRef<Pick<HTMLElement, 'focus' | 'sc
 
         onCopy?.();
       } catch (error) {
-        console.error('Failed to copy text:', error);
+        LoggerService().log({ level: LogEntryLevel.Error, message: `Failed to copy text: ${error}`, area: 'CopyInputControl' });
         // Fallback to the old method
         const input = inputRef.current;
         if (input) {

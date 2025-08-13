@@ -314,7 +314,11 @@ export const useA2AKey = (siteResourceId: string, workflowName: string, keyType 
         );
         return response.data;
       } catch (error) {
-        console.error('Failed to get A2A key:', error);
+        LoggerService().log({
+          level: LogEntryLevel.Error,
+          message: `Failed to get A2A key: ${error}`,
+          area: 'useA2AKey',
+        });
         return null;
       }
     },
@@ -343,7 +347,11 @@ export const useAuthSettings = (siteResourceId: string) => {
         });
         return response.data;
       } catch (error) {
-        console.error('Failed to get auth settings:', error);
+        LoggerService().log({
+          level: LogEntryLevel.Error,
+          message: `Failed to get auth settings: ${error}`,
+          area: 'useAuthSettings',
+        });
         return null;
       }
     },
@@ -364,7 +372,15 @@ export const useAuthSettingsConfigured = (siteResourceId: string) => {
       !isLoading &&
       !isError &&
       authSettings?.properties?.enabled &&
-      (authSettings?.properties?.issuer ?? '').startsWith('https://login.microsoftonline.com')
+      (() => {
+        const issuer = authSettings?.properties?.issuer ?? '';
+        try {
+          const url = new URL(issuer);
+          return url.host === 'login.microsoftonline.com';
+        } catch {
+          return false;
+        }
+      })()
     );
   }, [isLoading, isError, authSettings]);
 
@@ -394,7 +410,11 @@ export const useOBOKey = (connectionId: string, enabled = true) => {
         });
         return response.data;
       } catch (error) {
-        console.error('Failed to get OBO key for connection:', error);
+        LoggerService().log({
+          level: LogEntryLevel.Error,
+          message: `Failed to get OBO key for connection: ${error}`,
+          area: 'useOBOKey',
+        });
         return null;
       }
     },
