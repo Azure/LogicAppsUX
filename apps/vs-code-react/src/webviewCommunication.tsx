@@ -222,6 +222,15 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
         }
         break;
       }
+      case ProjectName.languageServer: {
+        switch (message.command) {
+          case ExtensionCommand.initialize_frame: {
+            dispatch(initializeDesigner(message.data));
+            break;
+          }
+        }
+        break;
+      }
       default:
         switch (message.command) {
           case ExtensionCommand.initialize_frame: {

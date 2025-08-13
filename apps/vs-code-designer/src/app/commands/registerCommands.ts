@@ -169,7 +169,7 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.switchToDataMapperV2, switchToDataMapperV2);
 
   // Language server protocol
-  registerCommandWithTreeNodeUnwrapping(extensionCommand.openLanguageServerConnectionView, openLanguageServerConnectionView);
+  registerCommand(extensionCommand.openLanguageServerConnectionView, openLanguageServerConnectionView);
 
   // Error handler
   registerErrorHandler((errorContext: IErrorHandlerContext): void => {
