@@ -92,7 +92,7 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
   useEventListener('message', (event: MessageEvent<MessageType>) => {
     const message = event.data; // The JSON data our extension sent
     if (message.command === ExtensionCommand.initialize_frame) {
-      dispatch(initialize(message.data.project));
+      dispatch(initialize(message.data));
     }
 
     switch (projectState?.project ?? message?.data?.project) {

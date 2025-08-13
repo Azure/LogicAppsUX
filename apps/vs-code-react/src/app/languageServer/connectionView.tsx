@@ -40,8 +40,6 @@ const DOCS: Record<string, DocEntry> = {
 
 export type DocumentationProps = {
   functionName?: string;
-  // Optional: override styles if needed
-  style?: React.CSSProperties;
 };
 
 export const LanguageServerConnectionView: React.FC<DocumentationProps> = ({ functionName }) => {
@@ -108,7 +106,3 @@ export const LanguageServerConnectionView: React.FC<DocumentationProps> = ({ fun
     </div>
   );
 };
-
-/* Example usage:
-<Documentation functionName="setName" />
-*/

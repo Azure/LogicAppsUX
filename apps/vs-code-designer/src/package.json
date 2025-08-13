@@ -371,6 +371,11 @@
         "title": "Parameterize connections",
         "category": "Azure Logic Apps",
         "when": "config.myExtension.enableCommand"
+      },
+      {
+        "command": "azureLogicAppsStandard.openLanguageServerConnectionView",
+        "title": "Open language server connection view",
+        "category": "Azure Logic Apps"
       }
     ],
     "submenus": [
@@ -784,6 +789,10 @@
         },
         {
           "command": "azureLogicAppsStandard.createNewProject",
+          "when": "never"
+        },
+        {
+          "command": "azureLogicAppsStandard.openLanguageServerConnectionView",
           "when": "never"
         }
       ]
