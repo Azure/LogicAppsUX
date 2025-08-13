@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { Popover, PopoverSurface, MenuList, MenuItem, Tooltip } from '@fluentui/react-components';
+import { batch, useDispatch } from 'react-redux';
+import { Popover, PopoverSurface, MenuList, MenuItem, Tooltip, MenuDivider } from '@fluentui/react-components';
 import {
   LogEntryLevel,
   LoggerService,
@@ -18,7 +18,7 @@ import { useOnViewportChange } from '@xyflow/react';
 
 import { useIsAgenticWorkflow, useEdgeContextMenuData, useIsA2AWorkflow } from '../../../core/state/designerView/designerViewSelectors';
 import { addOperation, useNodeDisplayName, useNodeMetadata, type AppDispatch } from '../../../core';
-import { expandDiscoveryPanel } from '../../../core/state/panel/panelSlice';
+import { changePanelNode, expandDiscoveryPanel, setSelectedPanelActiveTab } from '../../../core/state/panel/panelSlice';
 import { retrieveClipboardData } from '../../../core/utils/clipboard';
 import { CustomMenu } from './customMenu';
 
@@ -31,18 +31,25 @@ import {
   ArrowSplit24Regular,
   ClipboardPasteFilled,
   ClipboardPasteRegular,
+  EditFilled,
+  EditRegular,
+  DeleteFilled,
+  DeleteRegular,
   bundleIcon,
 } from '@fluentui/react-icons';
 import { pasteOperation, pasteScopeOperation } from '../../../core/actions/bjsworkflow/copypaste';
 import { useUpstreamNodes } from '../../../core/state/tokens/tokenSelectors';
-import { useHasUpstreamAgenticLoop, useIsAgentLoop } from '../../../core/state/workflow/workflowSelectors';
-import { addAgentHandoff } from '../../../core/actions/bjsworkflow/handoff';
+import { useHandoffActionsForAgent, useHasUpstreamAgenticLoop, useIsAgentLoop } from '../../../core/state/workflow/workflowSelectors';
+import { addAgentHandoff, removeAgentHandoff } from '../../../core/actions/bjsworkflow/handoff';
 import { removeOperationRunAfter } from '../../../core/actions/bjsworkflow/runafter';
+import constants from '../../../common/constants';
 
 const AddIcon = bundleIcon(ArrowBetweenDown24Filled, ArrowBetweenDown24Regular);
 const ParallelIcon = bundleIcon(ArrowSplit24Filled, ArrowSplit24Regular);
 const ClipboardIcon = bundleIcon(ClipboardPasteFilled, ClipboardPasteRegular);
 const AgentIcon = bundleIcon(BotAdd24Filled, BotAdd24Regular);
+const EditIcon = bundleIcon(EditFilled, EditRegular);
+const DeleteIcon = bundleIcon(DeleteFilled, DeleteRegular);
 
 export const EdgeContextualMenu = () => {
   const intl = useIntl();
@@ -55,6 +62,7 @@ export const EdgeContextualMenu = () => {
   const childId = useMemo(() => menuData?.childId, [menuData]);
   const isLeaf = useMemo(() => menuData?.isLeaf, [menuData]);
   const location = useMemo(() => menuData?.location, [menuData]);
+  const isHandoff = useMemo(() => menuData?.isHandoff, [menuData]);
 
   const nodeMetadata = useNodeMetadata(removeIdTag(parentId ?? ''));
   // For subgraph nodes, we want to use the id of the scope node as the parentId to get the dependancies
@@ -105,39 +113,68 @@ export const EdgeContextualMenu = () => {
   const parentIsAgent = useIsAgentLoop(parentId);
   const childIsAgent = useIsAgentLoop(childId);
 
-  const addAgenticLoop = useCallback(() => {
-    if (!graphId) {
-      return;
-    }
-
-    const newAgentId = `Agent_${customLengthGuid(4)}`;
-
-    const relationshipIds = { graphId, childId, parentId };
-    dispatch(addOperation({ nodeId: newAgentId, relationshipIds, operation: agentOperation }));
-
-    if (isA2AWorkflow) {
-      if (parentId && parentIsAgent) {
-        // If the parent is an agent, remove the connecting edge and replace it with a handoff
-        dispatch(
-          removeOperationRunAfter({
-            parentOperationId: parentId,
-            childOperationId: newAgentId,
-          })
-        );
-        dispatch(addAgentHandoff({ sourceId: parentId, targetId: newAgentId }));
+  const addAgenticLoop = useCallback(
+    ({ parallel = false }: any) => {
+      if (!graphId) {
+        return;
       }
-      if (childId && childIsAgent) {
-        // If the child is an agent, remove the connecting edge and replace it with a handoff
-        dispatch(
-          removeOperationRunAfter({
-            parentOperationId: newAgentId,
-            childOperationId: childId,
-          })
-        );
-        dispatch(addAgentHandoff({ sourceId: newAgentId, targetId: childId }));
+
+      const newAgentId = `Agent_${customLengthGuid(4)}`;
+
+      const relationshipIds = { graphId, childId, parentId };
+      if (parallel && relationshipIds?.childId) {
+        delete relationshipIds.childId;
       }
-    }
-  }, [childId, childIsAgent, dispatch, graphId, isA2AWorkflow, parentId, parentIsAgent]);
+      dispatch(addOperation({ nodeId: newAgentId, relationshipIds, operation: agentOperation }));
+
+      if (isA2AWorkflow) {
+        if (parentId && parentIsAgent) {
+          // If the parent is an agent, remove the connecting edge and replace it with a handoff
+          dispatch(
+            removeOperationRunAfter({
+              parentOperationId: parentId,
+              childOperationId: newAgentId,
+            })
+          );
+          dispatch(addAgentHandoff({ sourceId: parentId, targetId: newAgentId }));
+        }
+        if (!parallel && childId && childIsAgent) {
+          // If the child is an agent, remove the connecting edge and replace it with a handoff
+          dispatch(
+            removeOperationRunAfter({
+              parentOperationId: newAgentId,
+              childOperationId: childId,
+            })
+          );
+          dispatch(addAgentHandoff({ sourceId: newAgentId, targetId: childId }));
+        }
+      }
+    },
+    [childId, childIsAgent, dispatch, graphId, isA2AWorkflow, parentId, parentIsAgent]
+  );
+
+  const editHandoff = useCallback(() => {
+    batch(() => {
+      dispatch(changePanelNode(parentId ?? ''));
+      dispatch(setSelectedPanelActiveTab(constants.PANEL_TAB_NAMES.HANDOFF));
+    });
+  }, [dispatch, parentId]);
+
+  const handoffActions = useHandoffActionsForAgent(parentId ?? '');
+
+  const deleteHandoff = useCallback(() => {
+    const toolId = handoffActions?.find((action) => action.targetId === childId)?.toolId;
+    dispatch(removeAgentHandoff({ agentId: parentId ?? '', toolId }));
+  }, [handoffActions, dispatch, parentId, childId]);
+
+  const deleteRunAfter = useCallback(() => {
+    dispatch(
+      removeOperationRunAfter({
+        parentOperationId: parentId ?? '',
+        childOperationId: childId ?? '',
+      })
+    );
+  }, [dispatch, parentId, childId]);
 
   const newActionText = intl.formatMessage({
     defaultMessage: 'Add an action',
@@ -191,6 +228,24 @@ export const EdgeContextualMenu = () => {
     defaultMessage: 'Cannot paste actions below agentic loops in agent to agent workflows',
     id: 'VPVCkv',
     description: 'Message shown when paste is disabled below agentic loops in A2A workflows',
+  });
+
+  const editHandoffText = intl.formatMessage({
+    defaultMessage: 'Edit handoff',
+    id: 'O4TSC3',
+    description: 'Text for button to edit a handoff',
+  });
+
+  const deleteRunAfterText = intl.formatMessage({
+    defaultMessage: 'Delete run-after',
+    id: 'GnVN11',
+    description: 'Text for button to delete a run-after',
+  });
+
+  const deleteHandoffText = intl.formatMessage({
+    defaultMessage: 'Delete handoff',
+    id: '9mjZIW',
+    description: 'Text for button to delete a handoff',
   });
 
   const openAddNodePanel = useCallback(() => {
@@ -297,6 +352,46 @@ export const EdgeContextualMenu = () => {
     </MenuItem>
   );
 
+  const addAgentMenuItem = (
+    <MenuItem icon={<AgentIcon />} onClick={addAgenticLoop} data-automation-id={automationId('add-agentic-loop')}>
+      {isAddAgentHandoff ? newHandOffAgentText : newAgentText}
+    </MenuItem>
+  );
+
+  const addParallelAgentMenuItem = (
+    <MenuItem
+      icon={<AgentIcon />}
+      onClick={() => addAgenticLoop({ parallel: true })}
+      data-automation-id={automationId('add-parallel-agentic-loop')}
+    >
+      {newHandOffAgentText}
+    </MenuItem>
+  );
+
+  const editHandoffMenuItem = (
+    <MenuItem icon={<EditIcon />} onClick={editHandoff} data-automation-id={automationId('edit-handoff')}>
+      {editHandoffText}
+    </MenuItem>
+  );
+
+  const deleteMenuItem = (
+    <>
+      <MenuDivider />
+      <MenuItem icon={<DeleteIcon />} onClick={isHandoff ? deleteHandoff : deleteRunAfter} data-automation-id={automationId('delete-edge')}>
+        {isHandoff ? deleteHandoffText : deleteRunAfterText}
+      </MenuItem>
+    </>
+  );
+
+  const customMenuItemObjects = isUiInteractionsServiceEnabled()
+    ? (UiInteractionsService()
+        .getAddButtonMenuItems?.({ graphId, parentId, childId })
+        ?.map((item) => <CustomMenu key={item.text} item={item} data-automation-id={automationId(`custom-menu-${item.text}`)} />) ?? [])
+    : [];
+
+  const customMenuItems =
+    (customMenuItemObjects?.length ?? 0) > 0 ? [<MenuDivider key={'custom-items-divider'} />, ...customMenuItemObjects] : [];
+
   return (
     <>
       <div ref={ref} style={{ position: 'fixed', top: location?.y, left: location?.x }} />
@@ -309,80 +404,83 @@ export const EdgeContextualMenu = () => {
       >
         <PopoverSurface style={{ padding: '4px' }}>
           <MenuList onClick={() => setOpen(false)}>
-            {isAddActionDisabled ? (
-              <Tooltip content={a2aAgentLoopDisabledText} relationship="description">
-                {addActionMenuItem}
-              </Tooltip>
+            {isHandoff ? (
+              <>
+                {editHandoffMenuItem}
+                {addParallelAgentMenuItem}
+                {deleteMenuItem}
+              </>
             ) : (
-              addActionMenuItem
-            )}
-            {showParallelBranchButton &&
-              (isAddParallelBranchDisabled ? (
-                <Tooltip content={a2aParallelBranchDisabledText} relationship="description">
-                  {addParallelBranchMenuItem}
-                </Tooltip>
-              ) : (
-                addParallelBranchMenuItem
-              ))}
-            {(isAgenticWorkflow || isA2AWorkflow) && graphId === 'root' && (
-              <MenuItem icon={<AgentIcon />} onClick={addAgenticLoop} data-automation-id={automationId('add-agentic-loop')}>
-                {isAddAgentHandoff ? newHandOffAgentText : newAgentText}
-              </MenuItem>
-            )}
-            {isPasteEnabled &&
-              (isPasteDisabled ? (
-                <Tooltip content={a2aPasteDisabledText} relationship="description">
-                  <CustomMenu
-                    item={{
-                      icon: <ClipboardIcon />,
-                      text: pasteFromClipboard,
-                      onClick: () => handlePasteClicked(false),
-                      dataAutomationId: automationId('paste'),
-                      disabled: true,
-                      subMenuItems: [
-                        {
+              <>
+                {isAddActionDisabled ? (
+                  <Tooltip content={a2aAgentLoopDisabledText} relationship="description">
+                    {addActionMenuItem}
+                  </Tooltip>
+                ) : (
+                  addActionMenuItem
+                )}
+                {showParallelBranchButton &&
+                  (isAddParallelBranchDisabled ? (
+                    <Tooltip content={a2aParallelBranchDisabledText} relationship="description">
+                      {addParallelBranchMenuItem}
+                    </Tooltip>
+                  ) : (
+                    addParallelBranchMenuItem
+                  ))}
+                {(isAgenticWorkflow || isA2AWorkflow) && graphId === 'root' && addAgentMenuItem}
+                {isPasteEnabled &&
+                  (isPasteDisabled ? (
+                    <Tooltip content={a2aPasteDisabledText} relationship="description">
+                      <CustomMenu
+                        item={{
+                          icon: <ClipboardIcon />,
                           text: pasteFromClipboard,
-                          ariaLabel: pasteFromClipboard,
                           onClick: () => handlePasteClicked(false),
+                          dataAutomationId: automationId('paste'),
                           disabled: true,
-                        },
-                        {
-                          text: pasteParallelFromClipboard,
-                          ariaLabel: pasteParallelFromClipboard,
-                          onClick: () => handlePasteClicked(true),
-                          disabled: true,
-                        },
-                      ],
-                    }}
-                  />
-                </Tooltip>
-              ) : (
-                <CustomMenu
-                  item={{
-                    icon: <ClipboardIcon />,
-                    text: pasteFromClipboard,
-                    onClick: () => handlePasteClicked(false),
-                    dataAutomationId: automationId('paste'),
-                    subMenuItems: [
-                      {
+                          subMenuItems: [
+                            {
+                              text: pasteFromClipboard,
+                              ariaLabel: pasteFromClipboard,
+                              onClick: () => handlePasteClicked(false),
+                              disabled: true,
+                            },
+                            {
+                              text: pasteParallelFromClipboard,
+                              ariaLabel: pasteParallelFromClipboard,
+                              onClick: () => handlePasteClicked(true),
+                              disabled: true,
+                            },
+                          ],
+                        }}
+                      />
+                    </Tooltip>
+                  ) : (
+                    <CustomMenu
+                      item={{
+                        icon: <ClipboardIcon />,
                         text: pasteFromClipboard,
-                        ariaLabel: pasteFromClipboard,
                         onClick: () => handlePasteClicked(false),
-                      },
-                      {
-                        text: pasteParallelFromClipboard,
-                        ariaLabel: pasteParallelFromClipboard,
-                        onClick: () => handlePasteClicked(true),
-                      },
-                    ],
-                  }}
-                />
-              ))}
-            {isUiInteractionsServiceEnabled()
-              ? UiInteractionsService()
-                  .getAddButtonMenuItems?.({ graphId, parentId, childId })
-                  ?.map((item) => <CustomMenu key={item.text} item={item} data-automation-id={automationId(`custom-menu-${item.text}`)} />)
-              : null}
+                        dataAutomationId: automationId('paste'),
+                        subMenuItems: [
+                          {
+                            text: pasteFromClipboard,
+                            ariaLabel: pasteFromClipboard,
+                            onClick: () => handlePasteClicked(false),
+                          },
+                          {
+                            text: pasteParallelFromClipboard,
+                            ariaLabel: pasteParallelFromClipboard,
+                            onClick: () => handlePasteClicked(true),
+                          },
+                        ],
+                      }}
+                    />
+                  ))}
+                {deleteMenuItem}
+                {customMenuItems}
+              </>
+            )}
           </MenuList>
         </PopoverSurface>
       </Popover>
