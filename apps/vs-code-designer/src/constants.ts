@@ -254,6 +254,7 @@ export const dependencyTimeoutSettingKey = 'dependencyTimeout';
 export const unitTestExplorer = 'unitTestExplorer';
 export const verifyConnectionKeysSetting = 'verifyConnectionKeys';
 export const useSmbDeployment = 'useSmbDeploymentForHybrid';
+export const onStartLanguageServerProtocol = 'onStartLanguageServerProtocol';
 
 // host.json
 export const extensionBundleId = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';
