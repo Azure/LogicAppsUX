@@ -40,7 +40,7 @@
   "private": true,
   "scripts": {
     "build": "vite build",
-    "build:extension": "vite build --outDir ../../vs-code-designer/dist/vs-code-react",
+    "build:extension": "vite build --no-minify --outDir ../../vs-code-designer/dist/vs-code-react",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "test:extension-unit": "vitest run --retry=3"
   },

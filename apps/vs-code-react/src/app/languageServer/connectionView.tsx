@@ -1,108 +1,132 @@
-type DocEntry = {
-  title: string;
-  description: string;
-  parameters: Array<{ name: string; type: string; text: string }>;
-  example: string;
-};
-
-const DOCS: Record<string, DocEntry> = {
-  setName: {
-    title: 'setName Function',
-    description: "Updates the person's name with the provided values.",
-    parameters: [
-      { name: 'firstName', type: 'string', text: 'The first name of the person' },
-      { name: 'lastName', type: 'string', text: 'The last name of the person' },
-    ],
-    example: 'setName("John", "Doe")',
-  },
-  setLastName: {
-    title: 'setLastName Function',
-    description: "Updates only the person's last name while keeping the first name unchanged.",
-    parameters: [{ name: 'lastName', type: 'string', text: 'The last name of the person' }],
-    example: 'setLastName("Smith")',
-  },
-  setAge: {
-    title: 'setAge Function',
-    description: 'Sets the age of the person.',
-    parameters: [{ name: 'age', type: 'number', text: 'The numeric age of the person' }],
-    example: 'setAge(25)',
-  },
-  greet: {
-    title: 'greet Function',
-    description: 'Returns a personalized greeting.',
-    parameters: [
-      { name: 'greeting', type: 'string', text: 'Greeting phrase (e.g. "Hello")' },
-      { name: 'punctuation', type: 'string', text: 'Optional punctuation (e.g. "!")' },
-    ],
-    example: 'greet("Hello", "!")',
-  },
-};
+import { PanelLocation, type CommonPanelProps } from '@microsoft/designer-ui';
+import { ConnectionPanel, DesignerProvider, getTheme, useThemeObserver } from '@microsoft/logic-apps-designer';
+import type { ReactNode } from 'react';
+import { useCallback, useContext, useMemo, useState } from 'react';
+import type { ConnectionCreationInfo } from '@microsoft/logic-apps-shared';
+import { Theme } from '@microsoft/logic-apps-shared';
+import { getDesignerServices } from '../designer/servicesHelper';
+import { VSCodeContext } from '../../webviewCommunication';
+import { useDispatch, useSelector } from 'react-redux';
+import { createFileSystemConnection } from '../../state/DesignerSlice';
+import type { AppDispatch, RootState } from '../../state/store';
+import { useQueryClient } from '@tanstack/react-query';
+import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
+import type { FileSystemConnectionInfo, MessageToVsix } from '@microsoft/vscode-extension-logic-apps';
 
 export type DocumentationProps = {
   functionName?: string;
 };
 
-export const LanguageServerConnectionView: React.FC<DocumentationProps> = ({ functionName }) => {
-  const doc = functionName ? DOCS[functionName] : undefined;
+export const LanguageServerWrapper = ({ children }: { children: ReactNode }) => {
+  const vscode = useContext(VSCodeContext);
+  const dispatch: AppDispatch = useDispatch();
+  const vscodeState = useSelector((state: RootState) => state.designer);
+  const {
+    panelMetaData,
+    connectionData,
+    baseUrl,
+    apiHubServiceDetails,
+    isLocal,
+    apiVersion,
+    oauthRedirectUrl,
+    hostVersion,
+    workflowRuntimeBaseUrl,
+  } = vscodeState;
 
-  const baseStyles: React.CSSProperties = {
-    fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
-    padding: 20,
-  };
+  const [theme, setTheme] = useState<Theme>(getTheme(document.body));
+  useThemeObserver(document.body, theme, setTheme, {
+    attributes: true,
+  });
+  const queryClient = useQueryClient();
 
-  const CodeInline: React.FC<React.PropsWithChildren> = ({ children }) => (
-    <code
-      style={{
-        background: '#f5f5f5',
-        padding: '2px 4px',
-        borderRadius: 3,
+  const sendMsgToVsix = useCallback(
+    (msg: MessageToVsix) => {
+      vscode.postMessage(msg);
+    },
+    [vscode]
+  );
+
+  const services = useMemo(() => {
+    const fileSystemConnectionCreate = async (
+      connectionInfo: FileSystemConnectionInfo,
+      connectionName: string
+    ): Promise<ConnectionCreationInfo> => {
+      vscode.postMessage({
+        command: ExtensionCommand.createFileSystemConnection,
+        connectionInfo,
+        connectionName,
+      });
+      return new Promise((resolve, reject) => {
+        dispatch(createFileSystemConnection({ connectionName, resolve, reject }));
+      });
+    };
+    return getDesignerServices(
+      baseUrl,
+      workflowRuntimeBaseUrl,
+      apiVersion,
+      apiHubServiceDetails ?? {},
+      isLocal,
+      connectionData,
+      panelMetaData,
+      fileSystemConnectionCreate,
+      vscode,
+      oauthRedirectUrl,
+      hostVersion,
+      queryClient,
+      sendMsgToVsix
+    );
+  }, [
+    baseUrl,
+    workflowRuntimeBaseUrl,
+    apiVersion,
+    apiHubServiceDetails,
+    isLocal,
+    connectionData,
+    panelMetaData,
+    vscode,
+    oauthRedirectUrl,
+    dispatch,
+    hostVersion,
+    queryClient,
+    sendMsgToVsix,
+  ]);
+
+  return (
+    <DesignerProvider
+      locale="en-US"
+      options={{
+        isDarkMode: theme === Theme.Dark,
+        isVSCode: true,
+        readOnly: false,
+        services: services,
+        hostOptions: {
+          displayRuntimeInfo: true,
+        },
       }}
     >
       {children}
-    </code>
+    </DesignerProvider>
   );
+};
+export const LanguageServerConnectionView: React.FC<DocumentationProps> = ({ functionName }) => {
+  console.log('charlie', functionName);
+  const dismissPanel = useCallback(() => {
+    console.log('Panel dismissed');
+  }, []);
 
-  const PreBlock: React.FC<React.PropsWithChildren> = ({ children }) => (
-    <pre
-      style={{
-        background: '#f8f8f8',
-        padding: 10,
-        borderRadius: 5,
-        overflowX: 'auto',
-        marginTop: 8,
-      }}
-    >
-      <code>{children}</code>
-    </pre>
-  );
-
-  if (!doc) {
-    return (
-      <div style={baseStyles}>
-        <h1 style={{ color: '#007acc' }}>Documentation not found</h1>
-        <p>No documentation available for this function.</p>
-      </div>
-    );
-  }
+  const commonPanelProps: CommonPanelProps = useMemo(() => {
+    return {
+      isCollapsed: false,
+      toggleCollapse: dismissPanel,
+      panelLocation: PanelLocation.Right,
+    };
+  }, [dismissPanel]);
 
   return (
-    <div style={baseStyles}>
-      <h1 style={{ color: '#007acc' }}>{doc.title}</h1>
-      <p>
-        <strong>{doc.description}</strong>
-      </p>
-
-      <h2 style={{ color: '#333', marginTop: 20 }}>Parameters</h2>
-      <ul style={{ paddingLeft: 20 }}>
-        {doc.parameters.map((p) => (
-          <li key={p.name} style={{ margin: '5px 0' }}>
-            <CodeInline>{p.name}</CodeInline> ({p.type}) – {p.text}
-          </li>
-        ))}
-      </ul>
-
-      <h2 style={{ color: '#333', marginTop: 20 }}>Example</h2>
-      <PreBlock>{doc.example}</PreBlock>
+    <div className="TEST-CLASS-FOR-CONNECTIONVIEW">
+      <LanguageServerWrapper>
+        <ConnectionPanel {...commonPanelProps} />
+      </LanguageServerWrapper>
     </div>
   );
 };
