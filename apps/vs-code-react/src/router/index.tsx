@@ -1,3 +1,4 @@
+import { LanguageServerConnectionView } from '../app/languageServer/connectionView';
 import { DataMapperApp } from '../app/dataMapper/app';
 import { DesignerApp } from '../app/designer/app';
 import { ExportApp } from '../app/export/export';
@@ -9,9 +10,9 @@ import { WorkflowsSelection } from '../app/export/workflowsSelection/workflowsSe
 import { OverviewApp } from '../app/overview/app';
 import { ReviewApp } from '../app/review';
 import { UnitTestResults } from '../app/unitTest';
-import { RouteName } from '../run-service';
 import { StateWrapper } from '../stateWrapper';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { RouteName } from '@microsoft/vscode-extension-logic-apps';
 
 export const Router: React.FC = () => {
   return (
@@ -30,6 +31,9 @@ export const Router: React.FC = () => {
         <Route path={`/${RouteName.dataMapper}`} element={<DataMapperApp />} />
         <Route path={`/${RouteName.designer}`} element={<DesignerApp />} />
         <Route path={`/${RouteName.unitTest}`} element={<UnitTestResults />} />
+        <Route path={`/${RouteName.languageServer}`}>
+          <Route path={`${RouteName.connectionView}`} element={<LanguageServerConnectionView />} />
+        </Route>
       </Routes>
     </MemoryRouter>
   );

@@ -5,7 +5,7 @@ import type {
   ICallbackUrlResponse,
   IDesignerPanelMetadata,
 } from '@microsoft/vscode-extension-logic-apps';
-import type { PayloadAction } from '@reduxjs/toolkit';
+import type { PayloadAction, Slice } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
 export interface DesignerState {
@@ -59,7 +59,7 @@ const initialState: DesignerState = {
   unitTestDefinition: null,
 };
 
-export const designerSlice = createSlice({
+export const designerSlice: Slice<DesignerState> = createSlice({
   name: 'designer',
   initialState,
   reducers: {

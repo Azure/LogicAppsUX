@@ -13,6 +13,7 @@ export const ProjectName = {
   designer: 'designer',
   dataMapper: 'dataMapper',
   unitTest: 'unitTest',
+  languageServer: 'languageServer',
 } as const;
 export type ProjectNameType = (typeof ProjectName)[keyof typeof ProjectName];
 
@@ -108,3 +109,21 @@ export const DeploymentScriptType = {
   azureDeploymentCenter: 'azureDeploymentCenter',
 } as const;
 export type DeploymentScriptType = (typeof DeploymentScriptType)[keyof typeof DeploymentScriptType];
+
+export const RouteName = {
+  export: 'export',
+  instance_selection: 'instance-selection',
+  workflows_selection: 'workflows-selection',
+  validation: 'validation',
+  overview: 'overview',
+  summary: 'summary',
+  status: 'status',
+  review: 'review',
+  designer: 'designer',
+  dataMapper: 'dataMapper',
+  unitTest: 'unitTest',
+  languageServer: 'languageServer',
+  connectionView: 'connectionView',
+};
+
+export type RouteNameType = (typeof RouteName)[keyof typeof RouteName];

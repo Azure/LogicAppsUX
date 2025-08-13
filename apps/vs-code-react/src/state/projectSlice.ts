@@ -1,9 +1,10 @@
-import type { PayloadAction } from '@reduxjs/toolkit';
+import type { PayloadAction, Slice } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
 export interface ProjectState {
   initialized: boolean;
   project?: string;
+  route?: string;
   dataMapperVersion?: number;
 }
 
@@ -11,7 +12,7 @@ const initialState: ProjectState = {
   initialized: false,
 };
 
-export const projectSlice = createSlice({
+export const projectSlice: Slice<ProjectState> = createSlice({
   name: 'project',
   initialState,
   reducers: {
