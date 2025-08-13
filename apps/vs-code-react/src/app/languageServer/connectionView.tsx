@@ -1,6 +1,6 @@
 import { PanelLocation, type CommonPanelProps } from '@microsoft/designer-ui';
-import { ConnectionPanel, DesignerProvider, getTheme, useThemeObserver } from '@microsoft/logic-apps-designer';
-import type { ReactNode } from 'react';
+import type { ConnectionReferences } from '@microsoft/logic-apps-designer';
+import { BJSWorkflowProvider, ConnectionPanel, DesignerProvider, getTheme, useThemeObserver } from '@microsoft/logic-apps-designer';
 import { useCallback, useContext, useMemo, useState } from 'react';
 import type { ConnectionCreationInfo } from '@microsoft/logic-apps-shared';
 import { Theme } from '@microsoft/logic-apps-shared';
@@ -12,12 +12,28 @@ import type { AppDispatch, RootState } from '../../state/store';
 import { useQueryClient } from '@tanstack/react-query';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import type { FileSystemConnectionInfo, MessageToVsix } from '@microsoft/vscode-extension-logic-apps';
+import { convertConnectionsDataToReferences } from '../designer/utilities/workflow';
 
 export type DocumentationProps = {
   functionName?: string;
 };
 
-export const LanguageServerWrapper = ({ children }: { children: ReactNode }) => {
+const ConnectionView = () => {
+  const dismissPanel = useCallback(() => {
+    console.log('Panel dismissed');
+  }, []);
+  const commonPanelProps: CommonPanelProps = useMemo(() => {
+    return {
+      isCollapsed: false,
+      toggleCollapse: dismissPanel,
+      panelLocation: PanelLocation.Right,
+    };
+  }, [dismissPanel]);
+  return <ConnectionPanel {...commonPanelProps} />;
+};
+
+export const LanguageServerConnectionView: React.FC<DocumentationProps> = ({ functionName }) => {
+  console.log('charkie', functionName);
   const vscode = useContext(VSCodeContext);
   const dispatch: AppDispatch = useDispatch();
   const vscodeState = useSelector((state: RootState) => state.designer);
@@ -91,42 +107,40 @@ export const LanguageServerWrapper = ({ children }: { children: ReactNode }) => 
     sendMsgToVsix,
   ]);
 
-  return (
-    <DesignerProvider
-      locale="en-US"
-      options={{
-        isDarkMode: theme === Theme.Dark,
-        isVSCode: true,
-        readOnly: false,
-        services: services,
-        hostOptions: {
-          displayRuntimeInfo: true,
-        },
-      }}
-    >
-      {children}
-    </DesignerProvider>
-  );
-};
-export const LanguageServerConnectionView: React.FC<DocumentationProps> = ({ functionName }) => {
-  console.log('charlie', functionName);
-  const dismissPanel = useCallback(() => {
-    console.log('Panel dismissed');
-  }, []);
+  const connectionReferences: ConnectionReferences = useMemo(() => {
+    return convertConnectionsDataToReferences(connectionData);
+  }, [connectionData]);
+  console.log('charlie services', services);
 
-  const commonPanelProps: CommonPanelProps = useMemo(() => {
-    return {
-      isCollapsed: false,
-      toggleCollapse: dismissPanel,
-      panelLocation: PanelLocation.Right,
-    };
-  }, [dismissPanel]);
+  const test = useMemo(() => {
+    return services ? <ConnectionView /> : <h1>Connection View</h1>;
+  }, [services]);
 
   return (
     <div className="TEST-CLASS-FOR-CONNECTIONVIEW">
-      <LanguageServerWrapper>
-        <ConnectionPanel {...commonPanelProps} />
-      </LanguageServerWrapper>
+      <DesignerProvider
+        locale="en-US"
+        options={{
+          isDarkMode: theme === Theme.Dark,
+          isVSCode: true,
+          readOnly: false,
+          services: services,
+          hostOptions: {
+            displayRuntimeInfo: true,
+          },
+        }}
+      >
+        <BJSWorkflowProvider
+          workflow={{
+            definition: {} as any,
+            connectionReferences,
+            parameters: panelMetaData?.parametersData,
+          }}
+          appSettings={panelMetaData?.localSettings}
+        >
+          {test}
+        </BJSWorkflowProvider>
+      </DesignerProvider>
     </div>
   );
 };
