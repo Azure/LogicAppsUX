@@ -11,15 +11,30 @@ export default {
     inputs: {
       type: 'object',
       properties: {
-        callbackUrl: {
+        agentUrl: {
           type: 'string',
-          title: 'HTTP URL',
+          title: 'Agent URL',
           description: 'URL will be generated after save',
           'x-ms-visiblity': 'important',
           'x-ms-editor': 'copyable',
           'x-ms-serialization': {
             skip: true,
           },
+          'x-ms-editor-options': {
+            addPopUp: true,
+          },
+        },
+        name: {
+          type: 'string',
+          title: 'Name',
+          description: 'Enter a name for this A2A request',
+          'x-ms-visibility': 'important',
+        },
+        description: {
+          type: 'string',
+          title: 'Description',
+          description: 'Enter a description for this A2A request',
+          'x-ms-visibility': 'important',
         },
       },
       required: [],

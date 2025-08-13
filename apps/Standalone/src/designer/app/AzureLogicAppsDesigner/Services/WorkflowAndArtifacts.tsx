@@ -1,5 +1,5 @@
 import { environment } from '../../../../environments/environment';
-import type { CallbackInfo, ConnectionsData, ParametersData, Workflow } from '../Models/Workflow';
+import type { AgentURL, CallbackInfo, ConnectionsData, ParametersData, Workflow } from '../Models/Workflow';
 import { Artifact } from '../Models/Workflow';
 import { validateResourceId } from '../Utilities/resourceUtilities';
 import { convertDesignerWorkflowToConsumptionWorkflow } from './ConsumptionSerializationHelpers';
@@ -286,6 +286,19 @@ export const listCallbackUrl = async (
       method: callbackInfo.method,
       value: callbackUri.toString(),
     };
+  });
+};
+
+export const listAgentUrl = async (workflowName: string, hostName: string): Promise<AgentURL> => {
+  return getReactQueryClient().fetchQuery(['agentUrl', workflowName], async () => {
+    if (!hostName || !workflowName) {
+      return Promise.resolve(undefined);
+    }
+
+    return Promise.resolve({
+      url: `${hostName.startsWith('https://') ? hostName : `https://${hostName}`}/api/agentsChat/${workflowName}/IFrame`,
+      origin: hostName,
+    });
   });
 };
 

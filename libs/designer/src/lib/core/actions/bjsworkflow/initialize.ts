@@ -527,12 +527,16 @@ export const updateCallbackUrl = async (rootState: RootState, dispatch: Dispatch
   const triggerId = idReplacements[trigger] ?? trigger;
 
   const updatedParameter = await updateCallbackUrlInInputs(triggerId, operationInfo, nodeInputs);
-  if (updatedParameter) {
+  const agentUpdatedParameter = await updateAgentUrlInInputs(triggerId, operationInfo, nodeInputs);
+  const finalUpdatedParameter = updatedParameter || agentUpdatedParameter;
+  if (finalUpdatedParameter) {
     notifyForCallbackUrlUpdate(rootState, trigger);
     dispatch(
       updateNodeParameters({
         nodeId: trigger,
-        parameters: [{ groupId: ParameterGroupKeys.DEFAULT, parameterId: updatedParameter.id, propertiesToUpdate: updatedParameter }],
+        parameters: [
+          { groupId: ParameterGroupKeys.DEFAULT, parameterId: finalUpdatedParameter.id, propertiesToUpdate: finalUpdatedParameter },
+        ],
       })
     );
   }
@@ -571,12 +575,37 @@ export const updateCallbackUrlInInputs = async (
       LoggerService().log({
         level: LogEntryLevel.Error,
         area: 'CallbackUrl_Update',
-        message: 'Unable to initialize callback url for manual trigger.',
+        message: 'Unable to initialize callback url for HTTP Request trigger.',
         error: error instanceof Error ? error : isObject(error) ? new Error(JSON.stringify(error)) : undefined,
       });
     }
   }
 
+  return;
+};
+
+export const updateAgentUrlInInputs = async (
+  nodeId: string,
+  { type, kind }: NodeOperation,
+  nodeInputs: NodeInputs
+): Promise<ParameterInfo | undefined> => {
+  if (equals(type, Constants.NODE.TYPE.REQUEST) && equals(kind, Constants.NODE.KIND.AGENT)) {
+    try {
+      const agentUrl = await WorkflowService().getAgentUrl();
+      const parameter = getParameterFromName(nodeInputs, 'agentUrl');
+      if (parameter && agentUrl) {
+        parameter.value = [createLiteralValueSegment(agentUrl.url)];
+        return parameter;
+      }
+    } catch (error) {
+      LoggerService().log({
+        level: LogEntryLevel.Error,
+        area: 'AgentUrl_Update',
+        message: 'Unable to initialize agent url for agent trigger.',
+        error: error instanceof Error ? error : isObject(error) ? new Error(JSON.stringify(error)) : undefined,
+      });
+    }
+  }
   return;
 };
 

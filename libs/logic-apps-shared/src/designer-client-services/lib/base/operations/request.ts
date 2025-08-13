@@ -12,7 +12,7 @@ export const requestOperation = {
       displayName: 'Request',
       iconUri: 'https://logicappsv2resources.blob.core.windows.net/icons/request.svg',
     },
-    summary: 'When a HTTP request is received',
+    summary: 'When an HTTP request is received',
     description: 'This is an incoming API call that could use actions in a Logic App or other API to trigger this flow.',
     visibility: 'Important',
     operationType: 'Request',

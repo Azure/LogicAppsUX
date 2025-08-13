@@ -117,7 +117,7 @@ const DesignerEditorConsumption = () => {
   const [definition, setDefinition] = useState<any>();
   const [workflowDefinitionId, setWorkflowDefinitionId] = useState(guid());
   const [designerView, setDesignerView] = useState(true);
-  const codeEditorRef = useRef<{ getValue: () => string | undefined }>(null);
+  const codeEditorRef = useRef<{ getValue: () => string | undefined; hasChanges: () => boolean }>(null);
 
   const discardAllChanges = () => {
     setDesignerID(guid());
@@ -222,7 +222,9 @@ const DesignerEditorConsumption = () => {
   const saveWorkflowFromCode = async (clearDirtyState: () => void) => {
     try {
       const codeToConvert = JSON.parse(codeEditorRef.current?.getValue() ?? '');
-      await validateWorkflowConsumption(workflowId, canonicalLocation, workflowAndArtifactsData, codeToConvert);
+      if (workflowAndArtifactsData && codeEditorRef.current?.hasChanges()) {
+        await validateWorkflowConsumption(workflowId, canonicalLocation, workflowAndArtifactsData, codeToConvert);
+      }
       saveWorkflowConsumption(workflowAndArtifactsData, codeToConvert, clearDirtyState, { shouldConvertToConsumption: false });
     } catch (error: any) {
       if (error.status !== 404) {

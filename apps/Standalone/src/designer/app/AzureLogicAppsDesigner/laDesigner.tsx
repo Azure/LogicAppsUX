@@ -13,6 +13,7 @@ import { StandaloneOAuthService } from './Services/OAuthService';
 import {
   getConnectionStandard,
   getCustomCodeAppFiles,
+  listAgentUrl,
   listCallbackUrl,
   saveWorkflowStandard,
   useAllCustomCodeFiles,
@@ -806,6 +807,7 @@ const getDesignerServices = (
 
   const workflowService: IWorkflowService = {
     getCallbackUrl: (triggerName: string) => listCallbackUrl(workflowIdWithHostRuntime, triggerName),
+    getAgentUrl: () => listAgentUrl(workflowName, workflowApp?.properties?.defaultHostName),
     getAppIdentity: () => workflowApp?.identity,
     isExplicitAuthRequiredForManagedIdentity: () => true,
     isSplitOnSupported: () => !!isStateful,
