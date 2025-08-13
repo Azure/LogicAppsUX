@@ -204,6 +204,7 @@ export const extensionCommand = {
   vscodeOpenFolder: 'vscode.openFolder',
   debugLogicApp: 'azureLogicAppsStandard.debugLogicApp',
   switchToDataMapperV2: 'azureLogicAppsStandard.dataMap.switchToDataMapperV2',
+  openLanguageServerConnectionView: 'azureLogicAppsStandard.dataMap.openLanguageServerConnectionView',
 } as const;
 export type extensionCommand = (typeof extensionCommand)[keyof typeof extensionCommand];
 
