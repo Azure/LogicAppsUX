@@ -36,6 +36,7 @@ import { createVSCodeAzureSubscriptionProvider } from './app/utils/services/VSCo
 import { logSubscriptions } from './app/utils/telemetry';
 import { registerAzureUtilsExtensionVariables } from '@microsoft/vscode-azext-azureutils';
 import { getAzExtResourceType, getAzureResourcesExtensionApi } from '@microsoft/vscode-azureresources-api';
+import { startLanguageServerProtocol } from './app/languageServer/languageServer';
 
 const perfStats = {
   loadStartTime: Date.now(),
@@ -113,6 +114,9 @@ export async function activate(context: vscode.ExtensionContext) {
     promptParameterizeConnections(activateContext, false);
     verifyLocalConnectionKeys(activateContext);
     await startOnboarding(activateContext);
+
+    // Initialize Language Server Protocol
+    startLanguageServerProtocol();
 
     // Removed for unit test codefull experience standby
     //await prepareTestExplorer(context, activateContext);

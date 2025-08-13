@@ -990,6 +990,16 @@
             "type": "boolean",
             "description": "Enable to use SMB deployment for hybrid logic apps.",
             "default": false
+          },
+          "azureLogicAppsStandard.languageServerDLLPath": {
+            "type": "string",
+            "default": "",
+            "markdownDescription": "Absolute path to the server DLL."
+          },
+          "azureLogicAppsStandard.languageServerNupkgPath": {
+            "type": "string",
+            "default": "",
+            "markdownDescription": "Absolute path to the .nupkg file."
           }
         }
       }
@@ -1037,7 +1047,9 @@
     "workspaceContains:host.json",
     "workspaceContains:*/host.json",
     "onDebugInitialConfigurations",
-    "onStartupFinished"
+    "onStartupFinished",
+    "onLanguage:csharp",
+    "onLanguage:json"
   ],
   "galleryBanner": {
     "color": "#015cda",
