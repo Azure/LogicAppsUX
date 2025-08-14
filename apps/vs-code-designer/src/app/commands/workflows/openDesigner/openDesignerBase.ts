@@ -169,6 +169,7 @@ export abstract class OpenDesignerBase {
           tenantId: azureDetails.tenantId,
           resourceGroupName: azureDetails.resourceGroupName,
           getAccessToken: () => Promise.resolve(azureDetails.accessToken),
+          apiServiceBaseUrl: `/subscriptions/${azureDetails.subscriptionId}/providers/Microsoft.Web/locations/${azureDetails.location}/managedApis/`
         }
       : undefined;
   }

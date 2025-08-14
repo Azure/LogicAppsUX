@@ -1,6 +1,5 @@
-import { PanelLocation, type CommonPanelProps } from '@microsoft/designer-ui';
 import type { ConnectionReferences } from '@microsoft/logic-apps-designer';
-import { BJSWorkflowProvider, ConnectionPanel, DesignerProvider, getTheme, useThemeObserver } from '@microsoft/logic-apps-designer';
+import { BJSWorkflowProvider, ConnectionsView, DesignerProvider, getTheme, useThemeObserver } from '@microsoft/logic-apps-designer';
 import { useCallback, useContext, useMemo, useState } from 'react';
 import type { ConnectionCreationInfo } from '@microsoft/logic-apps-shared';
 import { Theme } from '@microsoft/logic-apps-shared';
@@ -14,11 +13,7 @@ import { ExtensionCommand, type FileSystemConnectionInfo } from '@microsoft/vsco
 import { convertConnectionsDataToReferences } from '../designer/utilities/workflow';
 import { useConnectionViewStyles } from './connectionViewStyles';
 
-export type DocumentationProps = {
-  functionName?: string;
-};
-
-const ConnectionView = () => {
+const ConnectionView = ({ connectorId }: { connectorId: string }) => {
   const vscode = useContext(VSCodeContext);
   const sendMsgToVsix = useCallback(
     (msg: any) => {
@@ -31,18 +26,16 @@ const ConnectionView = () => {
     sendMsgToVsix({ command: ExtensionCommand.close_panel });
   }, [sendMsgToVsix]);
 
-  const commonPanelProps: CommonPanelProps = useMemo(() => {
+  const commonPanelProps = useMemo(() => {
     return {
-      isCollapsed: false,
       toggleCollapse: dismissPanel,
-      panelLocation: PanelLocation.Right,
+      connectorId,
     };
-  }, [dismissPanel]);
-  return <ConnectionPanel {...commonPanelProps} />;
+  }, [connectorId, dismissPanel]);
+  return <ConnectionsView {...commonPanelProps} />;
 };
 
-export const LanguageServerConnectionView: React.FC<DocumentationProps> = ({ functionName }) => {
-  console.log('charkie', functionName);
+export const LanguageServerConnectionView = () => {
   const vscode = useContext(VSCodeContext);
   const dispatch: AppDispatch = useDispatch();
   const vscodeState = useSelector((state: RootState) => state.designer);
@@ -120,11 +113,6 @@ export const LanguageServerConnectionView: React.FC<DocumentationProps> = ({ fun
   const connectionReferences: ConnectionReferences = useMemo(() => {
     return convertConnectionsDataToReferences(connectionData);
   }, [connectionData]);
-  console.log('charlie services', services);
-
-  const ConnectionPanel = useMemo(() => {
-    return services ? <ConnectionView /> : <h1>Connection View</h1>;
-  }, [services]);
 
   return (
     <div className={styles.connectionViewContainer}>
@@ -148,7 +136,7 @@ export const LanguageServerConnectionView: React.FC<DocumentationProps> = ({ fun
           }}
           appSettings={panelMetaData?.localSettings}
         >
-          {ConnectionPanel}
+          <ConnectionView connectorId={`${apiHubServiceDetails.apiServiceBaseUrl}/msnweather`} />
         </BJSWorkflowProvider>
       </DesignerProvider>
     </div>
