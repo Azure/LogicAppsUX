@@ -1,7 +1,7 @@
 import type { ConnectionReferences } from '@microsoft/logic-apps-designer';
 import { BJSWorkflowProvider, ConnectionsView, DesignerProvider, getTheme, useThemeObserver } from '@microsoft/logic-apps-designer';
 import { useCallback, useContext, useMemo, useState } from 'react';
-import type { ConnectionCreationInfo } from '@microsoft/logic-apps-shared';
+import type { Connection, ConnectionCreationInfo } from '@microsoft/logic-apps-shared';
 import { Theme } from '@microsoft/logic-apps-shared';
 import { getDesignerServices } from '../designer/servicesHelper';
 import { VSCodeContext } from '../../webviewCommunication';
@@ -26,12 +26,20 @@ const ConnectionView = ({ connectorId }: { connectorId: string }) => {
     sendMsgToVsix({ command: ExtensionCommand.close_panel });
   }, [sendMsgToVsix]);
 
+  const onConnectionSuccessful = useCallback(
+    (connection: Connection) => {
+      sendMsgToVsix({ command: ExtensionCommand.insert_connection, connection: connection });
+    },
+    [sendMsgToVsix]
+  );
+
   const commonPanelProps = useMemo(() => {
     return {
       toggleCollapse: dismissPanel,
       connectorId,
+      onConnectionSuccessful,
     };
-  }, [connectorId, dismissPanel]);
+  }, [connectorId, dismissPanel, onConnectionSuccessful]);
   return <ConnectionsView {...commonPanelProps} />;
 };
 

@@ -18,6 +18,8 @@ import { env, Uri, ViewColumn, window } from 'vscode';
 import { getBundleVersionNumber } from '../../../utils/getDebugSymbolDll';
 import { getLocalSettingsJson } from '../../../utils/appSettings/localSettings';
 import { getArtifactsInLocalProject } from '../../../utils/codeless/artifacts';
+import * as vscode from 'vscode';
+import type { Connection } from '@microsoft/logic-apps-shared';
 
 export default class OpenConnectionView extends OpenDesignerBase {
   private readonly workflowFilePath: string;
@@ -130,6 +132,11 @@ export default class OpenConnectionView extends OpenDesignerBase {
         this.panel.dispose();
         break;
       }
+      case ExtensionCommand.insert_connection: {
+        insertFunctionCallAtLocation(this.methodName, msg.connection, { documentUri: this.workflowFilePath });
+        this.panel.dispose();
+        break;
+      }
       default:
         break;
     }
@@ -166,6 +173,110 @@ export default class OpenConnectionView extends OpenDesignerBase {
       workflowDetails: {},
     };
   }
+}
+
+// Helper function to update function parameters at specific location
+function insertFunctionCallAtLocation(functionName: string, connection: Connection, insertionContext: { documentUri: string }) {
+  console.log('insertFunctionCallAtLocation called with:', functionName, connection);
+
+  // Find the document by URI
+  const targetDocument = vscode.workspace.textDocuments.find((doc) => doc.uri.toString() === insertionContext.documentUri);
+
+  if (!targetDocument) {
+    console.log('Target document not found:', insertionContext.documentUri);
+    vscode.window.showErrorMessage('Target document not found. Please ensure the file is still open.');
+    return;
+  }
+
+  // // Open the document in an editor if it's not already active
+  // vscode.window.showTextDocument(targetDocument).then(editor => {
+  //     const targetLine = insertionContext.line;
+  //     const lineText = editor.document.lineAt(targetLine).text;
+
+  //     // biome-ignore lint/style/useTemplate: <explanation>
+  //             console.log('Analyzing line', targetLine + ':', lineText);
+
+  //     // Find the function call on this line, looking for the exact function name
+  //     const functionCallRegex = new RegExp(`\\b${functionName}\\s*\\([^)]*\\)`, 'g');
+  //     const match = functionCallRegex.exec(lineText);
+
+  //     // Also try to find just the function name if there's no parentheses yet
+  //     const functionNameRegex = new RegExp(`\\b${functionName}\\b`, 'g');
+  //     const nameMatch = functionNameRegex.exec(lineText);
+
+  //     if (match) {
+  //         // Replace existing function call with updated parameters
+  //         const startPos = new vscode.Position(targetLine, match.index);
+  //         const endPos = new vscode.Position(targetLine, match.index + match[0].length);
+  //         const updatedFunctionCall = `${functionName}(${parameters.join(', ')})`;
+
+  //         console.log('Replacing existing function call:', match[0], '→', updatedFunctionCall);
+
+  //         editor.edit(editBuilder => {
+  //             editBuilder.replace(new vscode.Range(startPos, endPos), updatedFunctionCall);
+  //         }).then(success => {
+  //             if (success) {
+  //                 console.log('Function parameters updated successfully');
+  //                 // Position cursor after the updated function call
+  //                 const newCursorPos = new vscode.Position(targetLine, match.index + updatedFunctionCall.length);
+  //                 editor.selection = new vscode.Selection(newCursorPos, newCursorPos);
+  //                 vscode.window.showInformationMessage(`Updated: ${updatedFunctionCall}`);
+  //             } else {
+  //                 console.log('Failed to update function parameters');
+  //                 vscode.window.showErrorMessage('Failed to update function parameters');
+  //             }
+  //         });
+  //     } else if (nameMatch) {
+  //         // Found function name but no parentheses, add parameters after the function name
+  //         const functionCall = `${functionName}(${parameters.join(', ')})`;
+  //         const startPos = new vscode.Position(targetLine, nameMatch.index);
+  //         const endPos = new vscode.Position(targetLine, nameMatch.index + nameMatch[0].length);
+
+  //         console.log('Completing function name:', nameMatch[0], '→', functionCall);
+
+  //         editor.edit(editBuilder => {
+  //             editBuilder.replace(new vscode.Range(startPos, endPos), functionCall);
+  //         }).then(success => {
+  //             if (success) {
+  //                 console.log('Function completed successfully');
+  //                 // Position cursor after the completed function call
+  //                 const newCursorPos = new vscode.Position(targetLine, nameMatch.index + functionCall.length);
+  //                 editor.selection = new vscode.Selection(newCursorPos, newCursorPos);
+  //                 vscode.window.showInformationMessage(`Completed: ${functionCall}`);
+  //             } else {
+  //                 console.log('Failed to complete function');
+  //                 vscode.window.showErrorMessage('Failed to complete function call');
+  //             }
+  //         });
+  //     } else {
+  //         // No existing function call found, insert new one at the specified position
+  //         const functionCall = `${functionName}(${parameters.join(', ')})`;
+  //         const position = new vscode.Position(insertionContext.line, insertionContext.character);
+
+  //         console.log('No existing function found, inserting new at line', targetLine, ':', functionCall);
+
+  //         editor.edit(editBuilder => {
+  //             editBuilder.insert(position, functionCall);
+  //         }).then(success => {
+  //             if (success) {
+  //                 console.log('Function inserted successfully');
+  //                 // Move cursor to end of inserted function
+  //                 const newPosition = new vscode.Position(
+  //                     insertionContext.line,
+  //                     insertionContext.character + functionCall.length
+  //                 );
+  //                 editor.selection = new vscode.Selection(newPosition, newPosition);
+  //                 vscode.window.showInformationMessage(`Inserted: ${functionCall}`);
+  //             } else {
+  //                 console.log('Failed to insert function');
+  //                 vscode.window.showErrorMessage('Failed to insert function call');
+  //             }
+  //         });
+  //     }
+  // }, (error: any) => {
+  //     console.log('Error opening document:', error);
+  //     vscode.window.showErrorMessage('Failed to open target document');
+  // });
 }
 
 export async function openLanguageServerConnectionView(
