@@ -1,4 +1,4 @@
-import { makeStyles } from '@fluentui/react-components';
+import { makeStyles, shorthands } from '@fluentui/react-components';
 
 export const useStyles = makeStyles({
   subscriptionCombobox: {
@@ -12,8 +12,13 @@ export const useStyles = makeStyles({
     flexDirection: 'row',
   },
   openAICombobox: {
+    height: '25px',
+    fontSize: '13px',
+    borderRadius: '0px',
     width: '100%',
     overflow: 'hidden',
+    color: '#323130',
+    ...shorthands.borderColor('#838180'),
   },
   createNewButton: {
     float: 'right',
