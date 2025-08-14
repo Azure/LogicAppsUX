@@ -1,4 +1,4 @@
-import type { OpenAPIV2, ManagedIdentity, LogicAppsV2 } from '../../utils/src';
+import type { OpenAPIV2, ManagedIdentity, LogicAppsV2, AgentURL } from '../../utils/src';
 import { AssertionException, AssertionErrorCode } from '../../utils/src';
 import type { CallbackInfo } from './callbackInfo';
 
@@ -28,9 +28,14 @@ export interface OutputInfo {
 
 export interface IWorkflowService {
   /**
-   * Gets callback url for manual trigger.
+   * Gets callback url for HTTP request trigger.
    */
   getCallbackUrl(triggerName: string): Promise<CallbackInfo>;
+
+  /**
+   * Gets agent url for Agent HTTP request trigger.
+   */
+  getAgentUrl?(): Promise<AgentURL>;
 
   /**
    * Notifies for callback URL updates.

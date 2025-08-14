@@ -1,33 +1,36 @@
-import type { IButton, IIconProps, ITextField } from '@fluentui/react';
-import { IconButton, TextField, TooltipHost } from '@fluentui/react';
-import { useConst } from '@fluentui/react-hooks';
+import { Input, Button, Tooltip, mergeClasses } from '@fluentui/react-components';
+import { bundleIcon, Copy24Regular, Copy24Filled, Checkmark24Regular } from '@fluentui/react-icons';
 import * as React from 'react';
 import { useIntl } from 'react-intl';
+import { useCopyInputControlStyles } from './styles';
+import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 
 export interface CopyInputControlProps {
   ariaLabelledBy?: string;
   placeholder?: string;
   text: string;
   onCopy?(): void;
+  children?: React.ReactNode;
+  copyButtonLabel?: string;
 }
 
-const iconProps: IIconProps = {
-  iconName: 'Copy',
-};
+const CopyIcon = bundleIcon(Copy24Filled, Copy24Regular);
 
 export const CopyInputControl = React.forwardRef<Pick<HTMLElement, 'focus' | 'scrollIntoView'>, CopyInputControlProps>(
-  ({ ariaLabelledBy, placeholder, text, onCopy }, ref) => {
-    const disabled = useConst(() => {
+  ({ ariaLabelledBy, placeholder, text: url, onCopy, children, copyButtonLabel }, ref) => {
+    const [isCopied, setIsCopied] = React.useState(false);
+    const disabled = React.useMemo(() => {
       try {
-        return !document.queryCommandSupported('Copy');
+        return !navigator.clipboard;
       } catch {
         return true;
       }
-    });
+    }, []);
     const intl = useIntl();
-    const buttonRef = React.useRef<IButton | null>(null);
+    const styles = useCopyInputControlStyles();
+    const buttonRef = React.useRef<HTMLButtonElement | null>(null);
     const containerRef = React.useRef<HTMLDivElement | null>(null);
-    const textFieldRef = React.useRef<ITextField | null>(null);
+    const inputRef = React.useRef<HTMLInputElement | null>(null);
 
     React.useImperativeHandle(ref, () => ({
       focus() {
@@ -38,46 +41,90 @@ export const CopyInputControl = React.forwardRef<Pick<HTMLElement, 'focus' | 'sc
       },
     }));
 
-    const DISPLAY_TEXT_COPY_URL = intl.formatMessage({
+    const DEFAULT_DISPLAY_TEXT_COPY_URL = intl.formatMessage({
       defaultMessage: 'Copy URL',
       id: '7yFLpB',
       description: 'ARIA label and tooltip text for the copy button',
     });
 
-    const handleClick = () => {
-      const textbox = textFieldRef.current;
-      if (textbox) {
-        textbox.focus();
-        textbox.setSelectionRange(0, textbox.value?.length ?? 0);
-        document.execCommand('Copy');
-      }
+    const DISPLAY_TEXT_COPIED = intl.formatMessage({
+      defaultMessage: 'Copied!',
+      id: 'IG4h5u',
+      description: 'Confirmation message when URL is copied',
+    });
 
-      onCopy?.();
+    const copyLabel = copyButtonLabel ?? DEFAULT_DISPLAY_TEXT_COPY_URL;
+
+    const handleCopyClick = async () => {
+      try {
+        // Always select the text first for visual feedback
+        const input = inputRef.current;
+        if (input) {
+          input.focus();
+          input.setSelectionRange(0, url.length);
+        }
+
+        if (navigator.clipboard) {
+          await navigator.clipboard.writeText(url);
+        } else if (input) {
+          // Fallback for older browsers
+          document.execCommand('copy');
+        }
+
+        // Show copied feedback
+        setIsCopied(true);
+        setTimeout(() => setIsCopied(false), 2000); // Reset after 2 seconds
+
+        onCopy?.();
+      } catch (error) {
+        LoggerService().log({ level: LogEntryLevel.Error, message: `Failed to copy text: ${error}`, area: 'CopyInputControl' });
+        // Fallback to the old method
+        const input = inputRef.current;
+        if (input) {
+          input.focus();
+          input.setSelectionRange(0, url.length);
+          document.execCommand('copy');
+          // Show copied feedback even on fallback
+          setIsCopied(true);
+          setTimeout(() => setIsCopied(false), 2000);
+          onCopy?.();
+        }
+      }
     };
 
     return (
-      <div className="msla-copy-input-control" ref={(container) => (containerRef.current = container)}>
-        <TextField
+      <div className={mergeClasses(styles.container, 'msla-copy-input-control')} ref={containerRef}>
+        <Input
           data-automation-id="msla-copy-input-control-textbox"
           aria-labelledby={ariaLabelledBy}
-          className="msla-copy-input-control-textbox"
-          componentRef={(textField) => (textFieldRef.current = textField)}
+          className={isCopied ? styles.textInputSelected : styles.textInput}
+          ref={inputRef}
           placeholder={placeholder}
           readOnly
-          value={text}
+          value={url}
         />
-        <TooltipHost content={DISPLAY_TEXT_COPY_URL}>
-          <IconButton
-            ariaLabel={DISPLAY_TEXT_COPY_URL}
-            componentRef={(button) => (buttonRef.current = button)}
+        <Tooltip content={isCopied ? DISPLAY_TEXT_COPIED : copyLabel} relationship="label">
+          <Button
+            aria-label={isCopied ? DISPLAY_TEXT_COPIED : copyLabel}
+            ref={buttonRef}
             disabled={disabled}
-            iconProps={iconProps}
-            onClick={handleClick}
+            icon={isCopied ? <Checkmark24Regular /> : <CopyIcon />}
+            appearance="transparent"
+            size="small"
+            onClick={handleCopyClick}
+            className={isCopied ? styles.copiedButton : undefined}
           />
-        </TooltipHost>
+        </Tooltip>
+        {children}
       </div>
     );
   }
 );
 
 CopyInputControl.displayName = 'CopyInputControl';
+
+// Export the agent-related components
+export { AgentUrlViewer, AgentUrlButton } from './AgentUrlViewer';
+export { CopyInputControlWithAgent } from './CopyInputControlWithAgent';
+export type { AgentUrlViewerProps, AgentUrlButtonProps } from './AgentUrlViewer';
+export type { CopyInputControlWithAgentProps } from './CopyInputControlWithAgent';

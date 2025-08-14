@@ -21,6 +21,7 @@ export * from './token';
 export * from './logicAppsV2Integration';
 export * from './workflow';
 export * from './graphics';
+export * from './a2a';
 import * as LogicApps from './logicApps';
 import * as LogicAppsV2 from './logicAppsV2';
 import * as OpenAPIV2 from './openApiV2';

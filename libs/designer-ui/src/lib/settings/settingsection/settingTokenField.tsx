@@ -10,7 +10,7 @@ import { isCustomCode } from '../../code/util';
 import { Combobox } from '../../combobox';
 import { DropdownEditor } from '../../dropdown';
 import constants from '../../constants';
-import { CopyInputControl } from '../../copyinputcontrol';
+import { CopyInputControlWithAgent } from '../../copyinputcontrol/CopyInputControlWithAgent';
 import { DictionaryEditor } from '../../dictionary';
 import type { ValueSegment } from '../../editor';
 import type {
@@ -330,7 +330,14 @@ export const TokenField = ({
       );
 
     case constants.PARAMETER.EDITOR.COPYABLE:
-      return <CopyInputControl placeholder={placeholder} text={value[0].value} />;
+      return (
+        <CopyInputControlWithAgent
+          placeholder={placeholder}
+          text={value[0].value}
+          showAgentViewer={editorOptions?.showAgentViewer}
+          queryParams={editorOptions?.queryParams}
+        />
+      );
 
     case constants.PARAMETER.EDITOR.CONDITION:
       return editorOptions?.isOldFormat ? (
