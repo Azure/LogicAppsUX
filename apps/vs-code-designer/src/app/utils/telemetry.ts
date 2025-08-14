@@ -61,6 +61,11 @@ export const logExtensionSettings = async (context: IActionContext) => {
     'validateDotNetSDK',
     'stopFuncTaskPostDebug',
   ];
-  const settingsDetails = createSettingsDetails(settingsToLog);
-  context.telemetry.properties.userExtensionSettings = JSON.stringify(settingsDetails);
+  try {
+    const settingsDetails = createSettingsDetails(settingsToLog);
+    context.telemetry.properties.userExtensionSettings = JSON.stringify(settingsDetails);
+  } catch (error) {
+    context.telemetry.properties.userExtensionSettings = JSON.stringify({});
+    context.telemetry.properties.userExtensionSettingsError = error instanceof Error ? error.message : String(error);
+  }
 };

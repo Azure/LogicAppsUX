@@ -140,7 +140,7 @@ export const createSettingsDetails = (settingsList: string[]) => {
     const extensionConfiguration = workspace.getConfiguration(ext.prefix);
     const settings: Record<string, unknown> = {};
     for (const key of settingsList) {
-      settings[key] = extensionConfiguration.get(key);
+      settings[key] = extensionConfiguration.get(key) ?? false;
     }
     return settings;
   } catch {
