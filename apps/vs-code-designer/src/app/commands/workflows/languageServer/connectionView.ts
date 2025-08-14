@@ -2,12 +2,12 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { ext, ExtensionCommand } from '../../../../extensionVariables';
+import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
 import { cacheWebviewPanel, getAzureConnectorDetailsForLocalProject, removeWebviewPanelFromCache } from '../../../utils/codeless/common';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { AzureConnectorDetails, IDesignerPanelMetadata } from '@microsoft/vscode-extension-logic-apps';
-import { ProjectName, RouteName } from '@microsoft/vscode-extension-logic-apps';
+import { ExtensionCommand, ProjectName, RouteName } from '@microsoft/vscode-extension-logic-apps';
 import { OpenDesignerBase } from '../openDesigner/openDesignerBase';
 import { startDesignTimeApi } from '../../../utils/codeless/startDesignTimeApi';
 import { getConnectionsFromFile, getLogicAppProjectRoot } from '../../../utils/codeless/connection';
@@ -23,12 +23,14 @@ export default class OpenConnectionView extends OpenDesignerBase {
   private readonly workflowFilePath: string;
   private projectPath: string | undefined;
   private panelMetadata: IDesignerPanelMetadata;
+  private readonly methodName: string;
 
-  constructor(context: IActionContext, _node: Uri) {
-    const panelName: string = localize('connectionView', 'Connection view');
+  constructor(context: IActionContext, filePath: string, methodName: string) {
+    const panelName: string = `Connection view - ${methodName}`;
     const panelGroupKey = ext.webViewKey.languageServer;
     super(context, '', panelName, workflowAppApiVersion, panelGroupKey, false, true, false, '');
-    this.workflowFilePath = '/Users/carloscastrotrejo/Downloads/TESTasdlpmas/mdaksmkda/asdas/test.cs';
+    this.workflowFilePath = filePath;
+    this.methodName = methodName;
   }
 
   public async createPanel(): Promise<void> {
@@ -122,7 +124,10 @@ export default class OpenConnectionView extends OpenDesignerBase {
             workflowRuntimeBaseUrl: this.workflowRuntimeBaseUrl,
           },
         });
-
+        break;
+      }
+      case ExtensionCommand.close_panel: {
+        this.panel.dispose();
         break;
       }
       default:
@@ -163,9 +168,12 @@ export default class OpenConnectionView extends OpenDesignerBase {
   }
 }
 
-export async function openLanguageServerConnectionView(context: IActionContext, node: Uri, prop2?: any): Promise<void> {
-  console.log('charlie', context, node, prop2);
-  const connectionViewObj: OpenConnectionView = new OpenConnectionView(context, node);
-
+export async function openLanguageServerConnectionView(
+  context: IActionContext,
+  filePath: string,
+  methodName: string,
+  _className?: string
+): Promise<void> {
+  const connectionViewObj: OpenConnectionView = new OpenConnectionView(context, filePath, methodName);
   await connectionViewObj.createPanel();
 }
