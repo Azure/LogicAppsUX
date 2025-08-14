@@ -2,17 +2,27 @@ import type { CopyInputControlProps } from '..';
 import { CopyInputControl } from '..';
 import type { CopyInputControlWithAgentProps } from '../CopyInputControlWithAgent';
 import { CopyInputControlWithAgent } from '../CopyInputControlWithAgent';
-import { FluentProvider, webLightTheme } from '@fluentui/react-components';
+import { webLightTheme } from '@fluentui/react-components';
 import renderer from 'react-test-renderer';
-import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
+import { describe, vi, beforeEach, afterEach, it, expect } from 'vitest';
 import { cleanup } from '@testing-library/react';
+
+// Mock FluentProvider to avoid initializing Tabster
+vi.mock('@fluentui/react-components', async () => {
+  const actual = await vi.importActual('@fluentui/react-components');
+  return {
+    ...actual,
+    FluentProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  };
+});
 
 describe('lib/copyinputcontrol', () => {
   let minimal: CopyInputControlProps;
   let minimalWithAgent: CopyInputControlWithAgentProps;
 
   const renderWithProvider = (component: React.ReactElement) => {
-    return renderer.create(<FluentProvider theme={webLightTheme}>{component}</FluentProvider>);
+    // Render without real FluentProvider (mocked)
+    return renderer.create(component);
   };
 
   beforeEach(() => {
@@ -30,12 +40,6 @@ describe('lib/copyinputcontrol', () => {
   afterEach(() => {
     cleanup();
     vi.useRealTimers();
-
-    // Keep a dummy Node so late Tabster calls don't blow up
-    if (!global.Node) {
-      // @ts-ignore
-      global.Node = class {};
-    }
   });
 
   it('should construct the copyinputcontrol correctly', () => {

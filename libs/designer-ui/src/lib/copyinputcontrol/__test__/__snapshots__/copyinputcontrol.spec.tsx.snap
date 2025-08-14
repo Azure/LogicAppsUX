@@ -2,302 +2,282 @@
 
 exports[`lib/copyinputcontrol > should construct the copyinputcontrol correctly 1`] = `
 <div
-  className="fui-FluentProvider fui-FluentProviderr0 ___jdtuxv0_17k0bs4 f19n0e5 fxugw4r f1o700av fk6fouc fkhj508 figsok6 f1i3iumi"
-  dir="ltr"
+  className="msla-copy-input-control ___1ni9aoq_1nyxo0k f22iagw f122n59 fz5stix fkln5zr"
 >
-  <div
-    className="msla-copy-input-control ___1ni9aoq_1nyxo0k f22iagw f122n59 fz5stix fkln5zr"
+  <span
+    className="fui-Input r1oeeo9n ___y2konh0_1ark18a fvcxoqz f1ub3y4t f1l4zc64 f1m52nbi f8vnjqi fz1etlk f1klwx88 f1hc16gm f1bg9a2p f1s2aq7o fz7g6wx fbcz3rb fueae4g fgwf3nh"
+  >
+    <input
+      className="fui-Input__input r12stul0"
+      data-automation-id="msla-copy-input-control-textbox"
+      onChange={[Function]}
+      placeholder="URL goes here"
+      readOnly={true}
+      type="text"
+      value="http://test.com"
+    />
+  </span>
+  <button
+    aria-label="Copy URL"
+    className="fui-Button r1alrhcs ___1da5aff_129isy1 f1c21dwh f1p3nwhy f11589ue f1q5o8ev f1pdflbu f1s2aq7o f9ql6rf f1s2uweq fr80ssc f1ukrpxl fecsdlb fvgxktp f19vpps7 fv5swzo f3h1zc4 f1h0usnq fs4ktlq f16h9ulv fx2bmrt fcvwxyo f1ol4fw6 f1q1lw4e f1vmkb5g f1kc2mi9 f1y0svfh fb3rf2x f17fgpbq fu97m5z ft85np5 fy9rknc figsok6 fwrc4pm fdrzuqr f15x8b5r fphbwmw f1al02dq f8w4c43 f1dwjv2g f4lkoma fg455y9 f1rvyvqg f1cwzwz f14g86mu f1dcs8yz fjwq6ea f1lr3nhc fn5gmvv f1mbxvi6 f53ppgq f1663y11 f18v5270 f80fkiy fihuait fnxhupq fx507ft fyd6l6x fazmxh f1jt17bm"
+    disabled={true}
+    onBlur={[Function]}
+    onClick={[Function]}
+    onFocus={[Function]}
+    onPointerEnter={[Function]}
+    onPointerLeave={[Function]}
+    type="button"
   >
     <span
-      className="fui-Input r1oeeo9n ___y2konh0_1ark18a fvcxoqz f1ub3y4t f1l4zc64 f1m52nbi f8vnjqi fz1etlk f1klwx88 f1hc16gm f1bg9a2p f1s2aq7o fz7g6wx fbcz3rb fueae4g fgwf3nh"
+      className="fui-Button__icon rywnvv2 ___hix1za0_wgffxm0 fe5j1ua fjamq6b f64fuq3 fbaiahx"
     >
-      <input
-        className="fui-Input__input r12stul0"
-        data-automation-id="msla-copy-input-control-textbox"
-        onChange={[Function]}
-        placeholder="URL goes here"
-        readOnly={true}
-        type="text"
-        value="http://test.com"
-      />
-    </span>
-    <button
-      aria-label="Copy URL"
-      className="fui-Button r1alrhcs ___1da5aff_129isy1 f1c21dwh f1p3nwhy f11589ue f1q5o8ev f1pdflbu f1s2aq7o f9ql6rf f1s2uweq fr80ssc f1ukrpxl fecsdlb fvgxktp f19vpps7 fv5swzo f3h1zc4 f1h0usnq fs4ktlq f16h9ulv fx2bmrt fcvwxyo f1ol4fw6 f1q1lw4e f1vmkb5g f1kc2mi9 f1y0svfh fb3rf2x f17fgpbq fu97m5z ft85np5 fy9rknc figsok6 fwrc4pm fdrzuqr f15x8b5r fphbwmw f1al02dq f8w4c43 f1dwjv2g f4lkoma fg455y9 f1rvyvqg f1cwzwz f14g86mu f1dcs8yz fjwq6ea f1lr3nhc fn5gmvv f1mbxvi6 f53ppgq f1663y11 f18v5270 f80fkiy fihuait fnxhupq fx507ft fyd6l6x fazmxh f1jt17bm"
-      disabled={true}
-      onBlur={[Function]}
-      onClick={[Function]}
-      onFocus={[Function]}
-      onPointerEnter={[Function]}
-      onPointerLeave={[Function]}
-      type="button"
-    >
-      <span
-        className="fui-Button__icon rywnvv2 ___hix1za0_wgffxm0 fe5j1ua fjamq6b f64fuq3 fbaiahx"
+      <svg
+        aria-hidden={true}
+        className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+        fill="currentColor"
+        height="24"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
       >
-        <svg
-          aria-hidden={true}
-          className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+        <path
+          d="M5.5 4.63V17.25c0 1.8 1.46 3.25 3.25 3.25h8.62c-.31.88-1.15 1.5-2.13 1.5H8.75A4.75 4.75 0 0 1 4 17.25V6.75c0-.98.63-1.81 1.5-2.12ZM17.75 2C18.99 2 20 3 20 4.25v13c0 1.24-1 2.25-2.25 2.25h-9c-1.24 0-2.25-1-2.25-2.25v-13C6.5 3.01 7.5 2 8.75 2h9Z"
           fill="currentColor"
-          height="24"
-          viewBox="0 0 24 24"
-          width="24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M5.5 4.63V17.25c0 1.8 1.46 3.25 3.25 3.25h8.62c-.31.88-1.15 1.5-2.13 1.5H8.75A4.75 4.75 0 0 1 4 17.25V6.75c0-.98.63-1.81 1.5-2.12ZM17.75 2C18.99 2 20 3 20 4.25v13c0 1.24-1 2.25-2.25 2.25h-9c-1.24 0-2.25-1-2.25-2.25v-13C6.5 3.01 7.5 2 8.75 2h9Z"
-            fill="currentColor"
-          />
-        </svg>
-        <svg
-          aria-hidden={true}
-          className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+        />
+      </svg>
+      <svg
+        aria-hidden={true}
+        className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+        fill="currentColor"
+        height="24"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M5.5 4.63V17.25c0 1.8 1.46 3.25 3.25 3.25h8.62c-.31.88-1.15 1.5-2.13 1.5H8.75A4.75 4.75 0 0 1 4 17.25V6.75c0-.98.63-1.81 1.5-2.12ZM17.75 2C18.99 2 20 3 20 4.25v13c0 1.24-1 2.25-2.25 2.25h-9c-1.24 0-2.25-1-2.25-2.25v-13C6.5 3.01 7.5 2 8.75 2h9Zm0 1.5h-9a.75.75 0 0 0-.75.75v13c0 .41.34.75.75.75h9c.41 0 .75-.34.75-.75v-13a.75.75 0 0 0-.75-.75Z"
           fill="currentColor"
-          height="24"
-          viewBox="0 0 24 24"
-          width="24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M5.5 4.63V17.25c0 1.8 1.46 3.25 3.25 3.25h8.62c-.31.88-1.15 1.5-2.13 1.5H8.75A4.75 4.75 0 0 1 4 17.25V6.75c0-.98.63-1.81 1.5-2.12ZM17.75 2C18.99 2 20 3 20 4.25v13c0 1.24-1 2.25-2.25 2.25h-9c-1.24 0-2.25-1-2.25-2.25v-13C6.5 3.01 7.5 2 8.75 2h9Zm0 1.5h-9a.75.75 0 0 0-.75.75v13c0 .41.34.75.75.75h9c.41 0 .75-.34.75-.75v-13a.75.75 0 0 0-.75-.75Z"
-            fill="currentColor"
-          />
-        </svg>
-      </span>
-    </button>
-  </div>
+        />
+      </svg>
+    </span>
+  </button>
 </div>
 `;
 
 exports[`lib/copyinputcontrol > should render basic CopyInputControl without agent functionality 1`] = `
 <div
-  className="fui-FluentProvider fui-FluentProviderr9 ___jdtuxv0_17k0bs4 f19n0e5 fxugw4r f1o700av fk6fouc fkhj508 figsok6 f1i3iumi"
-  dir="ltr"
+  className="msla-copy-input-control ___1ni9aoq_1nyxo0k f22iagw f122n59 fz5stix fkln5zr"
 >
-  <div
-    className="msla-copy-input-control ___1ni9aoq_1nyxo0k f22iagw f122n59 fz5stix fkln5zr"
+  <span
+    className="fui-Input r1oeeo9n ___y2konh0_1ark18a fvcxoqz f1ub3y4t f1l4zc64 f1m52nbi f8vnjqi fz1etlk f1klwx88 f1hc16gm f1bg9a2p f1s2aq7o fz7g6wx fbcz3rb fueae4g fgwf3nh"
+  >
+    <input
+      className="fui-Input__input r12stul0"
+      data-automation-id="msla-copy-input-control-textbox"
+      onChange={[Function]}
+      placeholder="URL goes here"
+      readOnly={true}
+      type="text"
+      value="http://test.com"
+    />
+  </span>
+  <button
+    aria-label="Copy URL"
+    className="fui-Button r1alrhcs ___1da5aff_129isy1 f1c21dwh f1p3nwhy f11589ue f1q5o8ev f1pdflbu f1s2aq7o f9ql6rf f1s2uweq fr80ssc f1ukrpxl fecsdlb fvgxktp f19vpps7 fv5swzo f3h1zc4 f1h0usnq fs4ktlq f16h9ulv fx2bmrt fcvwxyo f1ol4fw6 f1q1lw4e f1vmkb5g f1kc2mi9 f1y0svfh fb3rf2x f17fgpbq fu97m5z ft85np5 fy9rknc figsok6 fwrc4pm fdrzuqr f15x8b5r fphbwmw f1al02dq f8w4c43 f1dwjv2g f4lkoma fg455y9 f1rvyvqg f1cwzwz f14g86mu f1dcs8yz fjwq6ea f1lr3nhc fn5gmvv f1mbxvi6 f53ppgq f1663y11 f18v5270 f80fkiy fihuait fnxhupq fx507ft fyd6l6x fazmxh f1jt17bm"
+    disabled={true}
+    onBlur={[Function]}
+    onClick={[Function]}
+    onFocus={[Function]}
+    onPointerEnter={[Function]}
+    onPointerLeave={[Function]}
+    type="button"
   >
     <span
-      className="fui-Input r1oeeo9n ___y2konh0_1ark18a fvcxoqz f1ub3y4t f1l4zc64 f1m52nbi f8vnjqi fz1etlk f1klwx88 f1hc16gm f1bg9a2p f1s2aq7o fz7g6wx fbcz3rb fueae4g fgwf3nh"
+      className="fui-Button__icon rywnvv2 ___hix1za0_wgffxm0 fe5j1ua fjamq6b f64fuq3 fbaiahx"
     >
-      <input
-        className="fui-Input__input r12stul0"
-        data-automation-id="msla-copy-input-control-textbox"
-        onChange={[Function]}
-        placeholder="URL goes here"
-        readOnly={true}
-        type="text"
-        value="http://test.com"
-      />
-    </span>
-    <button
-      aria-label="Copy URL"
-      className="fui-Button r1alrhcs ___1da5aff_129isy1 f1c21dwh f1p3nwhy f11589ue f1q5o8ev f1pdflbu f1s2aq7o f9ql6rf f1s2uweq fr80ssc f1ukrpxl fecsdlb fvgxktp f19vpps7 fv5swzo f3h1zc4 f1h0usnq fs4ktlq f16h9ulv fx2bmrt fcvwxyo f1ol4fw6 f1q1lw4e f1vmkb5g f1kc2mi9 f1y0svfh fb3rf2x f17fgpbq fu97m5z ft85np5 fy9rknc figsok6 fwrc4pm fdrzuqr f15x8b5r fphbwmw f1al02dq f8w4c43 f1dwjv2g f4lkoma fg455y9 f1rvyvqg f1cwzwz f14g86mu f1dcs8yz fjwq6ea f1lr3nhc fn5gmvv f1mbxvi6 f53ppgq f1663y11 f18v5270 f80fkiy fihuait fnxhupq fx507ft fyd6l6x fazmxh f1jt17bm"
-      disabled={true}
-      onBlur={[Function]}
-      onClick={[Function]}
-      onFocus={[Function]}
-      onPointerEnter={[Function]}
-      onPointerLeave={[Function]}
-      type="button"
-    >
-      <span
-        className="fui-Button__icon rywnvv2 ___hix1za0_wgffxm0 fe5j1ua fjamq6b f64fuq3 fbaiahx"
+      <svg
+        aria-hidden={true}
+        className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+        fill="currentColor"
+        height="24"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
       >
-        <svg
-          aria-hidden={true}
-          className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+        <path
+          d="M5.5 4.63V17.25c0 1.8 1.46 3.25 3.25 3.25h8.62c-.31.88-1.15 1.5-2.13 1.5H8.75A4.75 4.75 0 0 1 4 17.25V6.75c0-.98.63-1.81 1.5-2.12ZM17.75 2C18.99 2 20 3 20 4.25v13c0 1.24-1 2.25-2.25 2.25h-9c-1.24 0-2.25-1-2.25-2.25v-13C6.5 3.01 7.5 2 8.75 2h9Z"
           fill="currentColor"
-          height="24"
-          viewBox="0 0 24 24"
-          width="24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M5.5 4.63V17.25c0 1.8 1.46 3.25 3.25 3.25h8.62c-.31.88-1.15 1.5-2.13 1.5H8.75A4.75 4.75 0 0 1 4 17.25V6.75c0-.98.63-1.81 1.5-2.12ZM17.75 2C18.99 2 20 3 20 4.25v13c0 1.24-1 2.25-2.25 2.25h-9c-1.24 0-2.25-1-2.25-2.25v-13C6.5 3.01 7.5 2 8.75 2h9Z"
-            fill="currentColor"
-          />
-        </svg>
-        <svg
-          aria-hidden={true}
-          className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+        />
+      </svg>
+      <svg
+        aria-hidden={true}
+        className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+        fill="currentColor"
+        height="24"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M5.5 4.63V17.25c0 1.8 1.46 3.25 3.25 3.25h8.62c-.31.88-1.15 1.5-2.13 1.5H8.75A4.75 4.75 0 0 1 4 17.25V6.75c0-.98.63-1.81 1.5-2.12ZM17.75 2C18.99 2 20 3 20 4.25v13c0 1.24-1 2.25-2.25 2.25h-9c-1.24 0-2.25-1-2.25-2.25v-13C6.5 3.01 7.5 2 8.75 2h9Zm0 1.5h-9a.75.75 0 0 0-.75.75v13c0 .41.34.75.75.75h9c.41 0 .75-.34.75-.75v-13a.75.75 0 0 0-.75-.75Z"
           fill="currentColor"
-          height="24"
-          viewBox="0 0 24 24"
-          width="24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M5.5 4.63V17.25c0 1.8 1.46 3.25 3.25 3.25h8.62c-.31.88-1.15 1.5-2.13 1.5H8.75A4.75 4.75 0 0 1 4 17.25V6.75c0-.98.63-1.81 1.5-2.12ZM17.75 2C18.99 2 20 3 20 4.25v13c0 1.24-1 2.25-2.25 2.25h-9c-1.24 0-2.25-1-2.25-2.25v-13C6.5 3.01 7.5 2 8.75 2h9Zm0 1.5h-9a.75.75 0 0 0-.75.75v13c0 .41.34.75.75.75h9c.41 0 .75-.34.75-.75v-13a.75.75 0 0 0-.75-.75Z"
-            fill="currentColor"
-          />
-        </svg>
-      </span>
-    </button>
-  </div>
+        />
+      </svg>
+    </span>
+  </button>
 </div>
 `;
 
 exports[`lib/copyinputcontrol > should render with popup button when showAgentViewer is true 1`] = `
 <div
-  className="fui-FluentProvider fui-FluentProviderr4 ___jdtuxv0_17k0bs4 f19n0e5 fxugw4r f1o700av fk6fouc fkhj508 figsok6 f1i3iumi"
-  dir="ltr"
+  className="msla-copy-input-control ___1ni9aoq_1nyxo0k f22iagw f122n59 fz5stix fkln5zr"
 >
-  <div
-    className="msla-copy-input-control ___1ni9aoq_1nyxo0k f22iagw f122n59 fz5stix fkln5zr"
+  <span
+    className="fui-Input r1oeeo9n ___y2konh0_1ark18a fvcxoqz f1ub3y4t f1l4zc64 f1m52nbi f8vnjqi fz1etlk f1klwx88 f1hc16gm f1bg9a2p f1s2aq7o fz7g6wx fbcz3rb fueae4g fgwf3nh"
+  >
+    <input
+      className="fui-Input__input r12stul0"
+      data-automation-id="msla-copy-input-control-textbox"
+      onChange={[Function]}
+      placeholder="URL goes here"
+      readOnly={true}
+      type="text"
+      value="http://test.com"
+    />
+  </span>
+  <button
+    aria-label="Copy URL"
+    className="fui-Button r1alrhcs ___1da5aff_129isy1 f1c21dwh f1p3nwhy f11589ue f1q5o8ev f1pdflbu f1s2aq7o f9ql6rf f1s2uweq fr80ssc f1ukrpxl fecsdlb fvgxktp f19vpps7 fv5swzo f3h1zc4 f1h0usnq fs4ktlq f16h9ulv fx2bmrt fcvwxyo f1ol4fw6 f1q1lw4e f1vmkb5g f1kc2mi9 f1y0svfh fb3rf2x f17fgpbq fu97m5z ft85np5 fy9rknc figsok6 fwrc4pm fdrzuqr f15x8b5r fphbwmw f1al02dq f8w4c43 f1dwjv2g f4lkoma fg455y9 f1rvyvqg f1cwzwz f14g86mu f1dcs8yz fjwq6ea f1lr3nhc fn5gmvv f1mbxvi6 f53ppgq f1663y11 f18v5270 f80fkiy fihuait fnxhupq fx507ft fyd6l6x fazmxh f1jt17bm"
+    disabled={true}
+    onBlur={[Function]}
+    onClick={[Function]}
+    onFocus={[Function]}
+    onPointerEnter={[Function]}
+    onPointerLeave={[Function]}
+    type="button"
   >
     <span
-      className="fui-Input r1oeeo9n ___y2konh0_1ark18a fvcxoqz f1ub3y4t f1l4zc64 f1m52nbi f8vnjqi fz1etlk f1klwx88 f1hc16gm f1bg9a2p f1s2aq7o fz7g6wx fbcz3rb fueae4g fgwf3nh"
+      className="fui-Button__icon rywnvv2 ___hix1za0_wgffxm0 fe5j1ua fjamq6b f64fuq3 fbaiahx"
     >
-      <input
-        className="fui-Input__input r12stul0"
-        data-automation-id="msla-copy-input-control-textbox"
-        onChange={[Function]}
-        placeholder="URL goes here"
-        readOnly={true}
-        type="text"
-        value="http://test.com"
-      />
+      <svg
+        aria-hidden={true}
+        className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+        fill="currentColor"
+        height="24"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M5.5 4.63V17.25c0 1.8 1.46 3.25 3.25 3.25h8.62c-.31.88-1.15 1.5-2.13 1.5H8.75A4.75 4.75 0 0 1 4 17.25V6.75c0-.98.63-1.81 1.5-2.12ZM17.75 2C18.99 2 20 3 20 4.25v13c0 1.24-1 2.25-2.25 2.25h-9c-1.24 0-2.25-1-2.25-2.25v-13C6.5 3.01 7.5 2 8.75 2h9Z"
+          fill="currentColor"
+        />
+      </svg>
+      <svg
+        aria-hidden={true}
+        className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+        fill="currentColor"
+        height="24"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M5.5 4.63V17.25c0 1.8 1.46 3.25 3.25 3.25h8.62c-.31.88-1.15 1.5-2.13 1.5H8.75A4.75 4.75 0 0 1 4 17.25V6.75c0-.98.63-1.81 1.5-2.12ZM17.75 2C18.99 2 20 3 20 4.25v13c0 1.24-1 2.25-2.25 2.25h-9c-1.24 0-2.25-1-2.25-2.25v-13C6.5 3.01 7.5 2 8.75 2h9Zm0 1.5h-9a.75.75 0 0 0-.75.75v13c0 .41.34.75.75.75h9c.41 0 .75-.34.75-.75v-13a.75.75 0 0 0-.75-.75Z"
+          fill="currentColor"
+        />
+      </svg>
     </span>
-    <button
-      aria-label="Copy URL"
-      className="fui-Button r1alrhcs ___1da5aff_129isy1 f1c21dwh f1p3nwhy f11589ue f1q5o8ev f1pdflbu f1s2aq7o f9ql6rf f1s2uweq fr80ssc f1ukrpxl fecsdlb fvgxktp f19vpps7 fv5swzo f3h1zc4 f1h0usnq fs4ktlq f16h9ulv fx2bmrt fcvwxyo f1ol4fw6 f1q1lw4e f1vmkb5g f1kc2mi9 f1y0svfh fb3rf2x f17fgpbq fu97m5z ft85np5 fy9rknc figsok6 fwrc4pm fdrzuqr f15x8b5r fphbwmw f1al02dq f8w4c43 f1dwjv2g f4lkoma fg455y9 f1rvyvqg f1cwzwz f14g86mu f1dcs8yz fjwq6ea f1lr3nhc fn5gmvv f1mbxvi6 f53ppgq f1663y11 f18v5270 f80fkiy fihuait fnxhupq fx507ft fyd6l6x fazmxh f1jt17bm"
-      disabled={true}
-      onBlur={[Function]}
-      onClick={[Function]}
-      onFocus={[Function]}
-      onPointerEnter={[Function]}
-      onPointerLeave={[Function]}
-      type="button"
+  </button>
+  <button
+    aria-label="Open in popup"
+    className="fui-Button r1alrhcs ___5ap6rb0_kajqcr0 f1c21dwh f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb fjxutwb f1s2uweq fr80ssc f1ukrpxl fecsdlb f139oj5f ft1hn21 fuxngvv fwiml72 f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1fg1p5m f1dfjoow f1j98vj9 f1tme0vf f4xjyn1 f18onu3q f9ddjv3 f17fgpbq fu97m5z ft85np5 fy9rknc figsok6 fwrc4pm fazmxh f1jt17bm"
+    onClick={[Function]}
+    type="button"
+  >
+    <span
+      className="fui-Button__icon rywnvv2 ___hix1za0_wgffxm0 fe5j1ua fjamq6b f64fuq3 fbaiahx"
     >
-      <span
-        className="fui-Button__icon rywnvv2 ___hix1za0_wgffxm0 fe5j1ua fjamq6b f64fuq3 fbaiahx"
+      <svg
+        aria-hidden={true}
+        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        fill="currentColor"
+        height="24"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
       >
-        <svg
-          aria-hidden={true}
-          className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+        <path
+          d="M6.25 3A3.25 3.25 0 0 0 3 6.25v11.5C3 19.55 4.46 21 6.25 21h11.5c1.8 0 3.25-1.46 3.25-3.25V6.25C21 4.45 19.54 3 17.75 3H6.25ZM19.5 7h-15v-.75c0-.97.78-1.75 1.75-1.75h11.5c.97 0 1.75.78 1.75 1.75V7Zm-15 1.5h15v9.25c0 .97-.78 1.75-1.75 1.75H6.25c-.97 0-1.75-.78-1.75-1.75V8.5Z"
           fill="currentColor"
-          height="24"
-          viewBox="0 0 24 24"
-          width="24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M5.5 4.63V17.25c0 1.8 1.46 3.25 3.25 3.25h8.62c-.31.88-1.15 1.5-2.13 1.5H8.75A4.75 4.75 0 0 1 4 17.25V6.75c0-.98.63-1.81 1.5-2.12ZM17.75 2C18.99 2 20 3 20 4.25v13c0 1.24-1 2.25-2.25 2.25h-9c-1.24 0-2.25-1-2.25-2.25v-13C6.5 3.01 7.5 2 8.75 2h9Z"
-            fill="currentColor"
-          />
-        </svg>
-        <svg
-          aria-hidden={true}
-          className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
-          fill="currentColor"
-          height="24"
-          viewBox="0 0 24 24"
-          width="24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M5.5 4.63V17.25c0 1.8 1.46 3.25 3.25 3.25h8.62c-.31.88-1.15 1.5-2.13 1.5H8.75A4.75 4.75 0 0 1 4 17.25V6.75c0-.98.63-1.81 1.5-2.12ZM17.75 2C18.99 2 20 3 20 4.25v13c0 1.24-1 2.25-2.25 2.25h-9c-1.24 0-2.25-1-2.25-2.25v-13C6.5 3.01 7.5 2 8.75 2h9Zm0 1.5h-9a.75.75 0 0 0-.75.75v13c0 .41.34.75.75.75h9c.41 0 .75-.34.75-.75v-13a.75.75 0 0 0-.75-.75Z"
-            fill="currentColor"
-          />
-        </svg>
-      </span>
-    </button>
-    <button
-      aria-label="Open in popup"
-      className="fui-Button r1alrhcs ___5ap6rb0_kajqcr0 f1c21dwh f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb fjxutwb f1s2uweq fr80ssc f1ukrpxl fecsdlb f139oj5f ft1hn21 fuxngvv fwiml72 f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1fg1p5m f1dfjoow f1j98vj9 f1tme0vf f4xjyn1 f18onu3q f9ddjv3 f17fgpbq fu97m5z ft85np5 fy9rknc figsok6 fwrc4pm fazmxh f1jt17bm"
-      onClick={[Function]}
-      type="button"
-    >
-      <span
-        className="fui-Button__icon rywnvv2 ___hix1za0_wgffxm0 fe5j1ua fjamq6b f64fuq3 fbaiahx"
-      >
-        <svg
-          aria-hidden={true}
-          className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
-          fill="currentColor"
-          height="24"
-          viewBox="0 0 24 24"
-          width="24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M6.25 3A3.25 3.25 0 0 0 3 6.25v11.5C3 19.55 4.46 21 6.25 21h11.5c1.8 0 3.25-1.46 3.25-3.25V6.25C21 4.45 19.54 3 17.75 3H6.25ZM19.5 7h-15v-.75c0-.97.78-1.75 1.75-1.75h11.5c.97 0 1.75.78 1.75 1.75V7Zm-15 1.5h15v9.25c0 .97-.78 1.75-1.75 1.75H6.25c-.97 0-1.75-.78-1.75-1.75V8.5Z"
-            fill="currentColor"
-          />
-        </svg>
-      </span>
-    </button>
-  </div>
+        />
+      </svg>
+    </span>
+  </button>
 </div>
 `;
 
 exports[`lib/copyinputcontrol > should set the aria-labelledby attribute 1`] = `
 <div
-  className="fui-FluentProvider fui-FluentProviderr2 ___jdtuxv0_17k0bs4 f19n0e5 fxugw4r f1o700av fk6fouc fkhj508 figsok6 f1i3iumi"
-  dir="ltr"
+  className="msla-copy-input-control ___1ni9aoq_1nyxo0k f22iagw f122n59 fz5stix fkln5zr"
 >
-  <div
-    className="msla-copy-input-control ___1ni9aoq_1nyxo0k f22iagw f122n59 fz5stix fkln5zr"
+  <span
+    className="fui-Input r1oeeo9n ___y2konh0_1ark18a fvcxoqz f1ub3y4t f1l4zc64 f1m52nbi f8vnjqi fz1etlk f1klwx88 f1hc16gm f1bg9a2p f1s2aq7o fz7g6wx fbcz3rb fueae4g fgwf3nh"
+  >
+    <input
+      aria-labelledby="aria-labelledby"
+      className="fui-Input__input r12stul0"
+      data-automation-id="msla-copy-input-control-textbox"
+      onChange={[Function]}
+      placeholder="URL goes here"
+      readOnly={true}
+      type="text"
+      value="http://test.com"
+    />
+  </span>
+  <button
+    aria-label="Copy URL"
+    className="fui-Button r1alrhcs ___1da5aff_129isy1 f1c21dwh f1p3nwhy f11589ue f1q5o8ev f1pdflbu f1s2aq7o f9ql6rf f1s2uweq fr80ssc f1ukrpxl fecsdlb fvgxktp f19vpps7 fv5swzo f3h1zc4 f1h0usnq fs4ktlq f16h9ulv fx2bmrt fcvwxyo f1ol4fw6 f1q1lw4e f1vmkb5g f1kc2mi9 f1y0svfh fb3rf2x f17fgpbq fu97m5z ft85np5 fy9rknc figsok6 fwrc4pm fdrzuqr f15x8b5r fphbwmw f1al02dq f8w4c43 f1dwjv2g f4lkoma fg455y9 f1rvyvqg f1cwzwz f14g86mu f1dcs8yz fjwq6ea f1lr3nhc fn5gmvv f1mbxvi6 f53ppgq f1663y11 f18v5270 f80fkiy fihuait fnxhupq fx507ft fyd6l6x fazmxh f1jt17bm"
+    disabled={true}
+    onBlur={[Function]}
+    onClick={[Function]}
+    onFocus={[Function]}
+    onPointerEnter={[Function]}
+    onPointerLeave={[Function]}
+    type="button"
   >
     <span
-      className="fui-Input r1oeeo9n ___y2konh0_1ark18a fvcxoqz f1ub3y4t f1l4zc64 f1m52nbi f8vnjqi fz1etlk f1klwx88 f1hc16gm f1bg9a2p f1s2aq7o fz7g6wx fbcz3rb fueae4g fgwf3nh"
+      className="fui-Button__icon rywnvv2 ___hix1za0_wgffxm0 fe5j1ua fjamq6b f64fuq3 fbaiahx"
     >
-      <input
-        aria-labelledby="aria-labelledby"
-        className="fui-Input__input r12stul0"
-        data-automation-id="msla-copy-input-control-textbox"
-        onChange={[Function]}
-        placeholder="URL goes here"
-        readOnly={true}
-        type="text"
-        value="http://test.com"
-      />
-    </span>
-    <button
-      aria-label="Copy URL"
-      className="fui-Button r1alrhcs ___1da5aff_129isy1 f1c21dwh f1p3nwhy f11589ue f1q5o8ev f1pdflbu f1s2aq7o f9ql6rf f1s2uweq fr80ssc f1ukrpxl fecsdlb fvgxktp f19vpps7 fv5swzo f3h1zc4 f1h0usnq fs4ktlq f16h9ulv fx2bmrt fcvwxyo f1ol4fw6 f1q1lw4e f1vmkb5g f1kc2mi9 f1y0svfh fb3rf2x f17fgpbq fu97m5z ft85np5 fy9rknc figsok6 fwrc4pm fdrzuqr f15x8b5r fphbwmw f1al02dq f8w4c43 f1dwjv2g f4lkoma fg455y9 f1rvyvqg f1cwzwz f14g86mu f1dcs8yz fjwq6ea f1lr3nhc fn5gmvv f1mbxvi6 f53ppgq f1663y11 f18v5270 f80fkiy fihuait fnxhupq fx507ft fyd6l6x fazmxh f1jt17bm"
-      disabled={true}
-      onBlur={[Function]}
-      onClick={[Function]}
-      onFocus={[Function]}
-      onPointerEnter={[Function]}
-      onPointerLeave={[Function]}
-      type="button"
-    >
-      <span
-        className="fui-Button__icon rywnvv2 ___hix1za0_wgffxm0 fe5j1ua fjamq6b f64fuq3 fbaiahx"
+      <svg
+        aria-hidden={true}
+        className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+        fill="currentColor"
+        height="24"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
       >
-        <svg
-          aria-hidden={true}
-          className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+        <path
+          d="M5.5 4.63V17.25c0 1.8 1.46 3.25 3.25 3.25h8.62c-.31.88-1.15 1.5-2.13 1.5H8.75A4.75 4.75 0 0 1 4 17.25V6.75c0-.98.63-1.81 1.5-2.12ZM17.75 2C18.99 2 20 3 20 4.25v13c0 1.24-1 2.25-2.25 2.25h-9c-1.24 0-2.25-1-2.25-2.25v-13C6.5 3.01 7.5 2 8.75 2h9Z"
           fill="currentColor"
-          height="24"
-          viewBox="0 0 24 24"
-          width="24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M5.5 4.63V17.25c0 1.8 1.46 3.25 3.25 3.25h8.62c-.31.88-1.15 1.5-2.13 1.5H8.75A4.75 4.75 0 0 1 4 17.25V6.75c0-.98.63-1.81 1.5-2.12ZM17.75 2C18.99 2 20 3 20 4.25v13c0 1.24-1 2.25-2.25 2.25h-9c-1.24 0-2.25-1-2.25-2.25v-13C6.5 3.01 7.5 2 8.75 2h9Z"
-            fill="currentColor"
-          />
-        </svg>
-        <svg
-          aria-hidden={true}
-          className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+        />
+      </svg>
+      <svg
+        aria-hidden={true}
+        className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+        fill="currentColor"
+        height="24"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M5.5 4.63V17.25c0 1.8 1.46 3.25 3.25 3.25h8.62c-.31.88-1.15 1.5-2.13 1.5H8.75A4.75 4.75 0 0 1 4 17.25V6.75c0-.98.63-1.81 1.5-2.12ZM17.75 2C18.99 2 20 3 20 4.25v13c0 1.24-1 2.25-2.25 2.25h-9c-1.24 0-2.25-1-2.25-2.25v-13C6.5 3.01 7.5 2 8.75 2h9Zm0 1.5h-9a.75.75 0 0 0-.75.75v13c0 .41.34.75.75.75h9c.41 0 .75-.34.75-.75v-13a.75.75 0 0 0-.75-.75Z"
           fill="currentColor"
-          height="24"
-          viewBox="0 0 24 24"
-          width="24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M5.5 4.63V17.25c0 1.8 1.46 3.25 3.25 3.25h8.62c-.31.88-1.15 1.5-2.13 1.5H8.75A4.75 4.75 0 0 1 4 17.25V6.75c0-.98.63-1.81 1.5-2.12ZM17.75 2C18.99 2 20 3 20 4.25v13c0 1.24-1 2.25-2.25 2.25h-9c-1.24 0-2.25-1-2.25-2.25v-13C6.5 3.01 7.5 2 8.75 2h9Zm0 1.5h-9a.75.75 0 0 0-.75.75v13c0 .41.34.75.75.75h9c.41 0 .75-.34.75-.75v-13a.75.75 0 0 0-.75-.75Z"
-            fill="currentColor"
-          />
-        </svg>
-      </span>
-    </button>
-  </div>
+        />
+      </svg>
+    </span>
+  </button>
 </div>
 `;
