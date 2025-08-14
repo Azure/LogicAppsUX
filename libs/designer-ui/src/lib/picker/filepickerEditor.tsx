@@ -94,7 +94,16 @@ export const FilePickerEditor = ({
     }
     if (showPicker) {
       setSelectedItem(selectedItem.value);
-      setPickerDisplayValue([createLiteralValueSegment(getDisplayValueFromSelectedItem(selectedItem.value))]);
+      const displayValue = getDisplayValueFromSelectedItem(selectedItem.value);
+      setPickerDisplayValue([createLiteralValueSegment(displayValue)]);
+
+      editorBlur?.({
+        value: [createLiteralValueSegment(getValueFromSelectedItem(selectedItem.value))],
+        viewModel: {
+          displayValue: displayValue,
+          selectedItem: selectedItem.value,
+        },
+      });
       setShowPicker(false);
 
       LoggerService().log({
