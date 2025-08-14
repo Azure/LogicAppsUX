@@ -6,6 +6,7 @@ import { FluentProvider, webLightTheme } from '@fluentui/react-components';
 import renderer from 'react-test-renderer';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 import { cleanup } from '@testing-library/react';
+
 describe('lib/copyinputcontrol', () => {
   let minimal: CopyInputControlProps;
   let minimalWithAgent: CopyInputControlWithAgentProps;
@@ -27,9 +28,14 @@ describe('lib/copyinputcontrol', () => {
   });
 
   afterEach(() => {
-    // Dispose of anything that might keep jsdom alive
-    cleanup(); // unmount React trees
-    vi.useRealTimers(); // reset timers in case fake timers used
+    cleanup();
+    vi.useRealTimers();
+
+    // Keep a dummy Node so late Tabster calls don't blow up
+    if (!global.Node) {
+      // @ts-ignore
+      global.Node = class {};
+    }
   });
 
   it('should construct the copyinputcontrol correctly', () => {
