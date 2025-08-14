@@ -5,6 +5,7 @@ import { CopyInputControlWithAgent } from '../CopyInputControlWithAgent';
 import { FluentProvider, webLightTheme } from '@fluentui/react-components';
 import renderer from 'react-test-renderer';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
+import { cleanup } from '@testing-library/react';
 describe('lib/copyinputcontrol', () => {
   let minimal: CopyInputControlProps;
   let minimalWithAgent: CopyInputControlWithAgentProps;
@@ -23,6 +24,12 @@ describe('lib/copyinputcontrol', () => {
       placeholder: 'URL goes here',
       text: 'http://test.com',
     };
+  });
+
+  afterEach(() => {
+    // Dispose of anything that might keep jsdom alive
+    cleanup(); // unmount React trees
+    vi.useRealTimers(); // reset timers in case fake timers used
   });
 
   it('should construct the copyinputcontrol correctly', () => {
