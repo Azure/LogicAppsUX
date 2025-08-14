@@ -10,18 +10,27 @@ import { useDispatch, useSelector } from 'react-redux';
 import { createFileSystemConnection } from '../../state/DesignerSlice';
 import type { AppDispatch, RootState } from '../../state/store';
 import { useQueryClient } from '@tanstack/react-query';
-import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
-import type { FileSystemConnectionInfo, MessageToVsix } from '@microsoft/vscode-extension-logic-apps';
+import { ExtensionCommand, type FileSystemConnectionInfo } from '@microsoft/vscode-extension-logic-apps';
 import { convertConnectionsDataToReferences } from '../designer/utilities/workflow';
+import { useConnectionViewStyles } from './connectionViewStyles';
 
 export type DocumentationProps = {
   functionName?: string;
 };
 
 const ConnectionView = () => {
+  const vscode = useContext(VSCodeContext);
+  const sendMsgToVsix = useCallback(
+    (msg: any) => {
+      vscode.postMessage(msg);
+    },
+    [vscode]
+  );
+
   const dismissPanel = useCallback(() => {
-    console.log('Panel dismissed');
-  }, []);
+    sendMsgToVsix({ command: ExtensionCommand.close_panel });
+  }, [sendMsgToVsix]);
+
   const commonPanelProps: CommonPanelProps = useMemo(() => {
     return {
       isCollapsed: false,
@@ -37,6 +46,7 @@ export const LanguageServerConnectionView: React.FC<DocumentationProps> = ({ fun
   const vscode = useContext(VSCodeContext);
   const dispatch: AppDispatch = useDispatch();
   const vscodeState = useSelector((state: RootState) => state.designer);
+  const styles = useConnectionViewStyles();
   const {
     panelMetaData,
     connectionData,
@@ -56,7 +66,7 @@ export const LanguageServerConnectionView: React.FC<DocumentationProps> = ({ fun
   const queryClient = useQueryClient();
 
   const sendMsgToVsix = useCallback(
-    (msg: MessageToVsix) => {
+    (msg: any) => {
       vscode.postMessage(msg);
     },
     [vscode]
@@ -112,12 +122,12 @@ export const LanguageServerConnectionView: React.FC<DocumentationProps> = ({ fun
   }, [connectionData]);
   console.log('charlie services', services);
 
-  const test = useMemo(() => {
+  const ConnectionPanel = useMemo(() => {
     return services ? <ConnectionView /> : <h1>Connection View</h1>;
   }, [services]);
 
   return (
-    <div className="TEST-CLASS-FOR-CONNECTIONVIEW">
+    <div className={styles.connectionViewContainer}>
       <DesignerProvider
         locale="en-US"
         options={{
@@ -138,7 +148,7 @@ export const LanguageServerConnectionView: React.FC<DocumentationProps> = ({ fun
           }}
           appSettings={panelMetaData?.localSettings}
         >
-          {test}
+          {ConnectionPanel}
         </BJSWorkflowProvider>
       </DesignerProvider>
     </div>
