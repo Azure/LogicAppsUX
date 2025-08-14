@@ -158,9 +158,10 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   const [connectionDisplayName, setConnectionDisplayName] = useState<string>(`new_conn_${customLengthGuid(5)}`.toLowerCase());
   const operationParameterSetKeys = useMemo(() => Object.keys(operationParameterSets ?? {}), [operationParameterSets]);
 
-  const shouldEnableDynamicConnections = useShouldEnableDynamicConnections();
+  const shouldEnableDynamicConnectionsFlag = useShouldEnableDynamicConnections();
+
   const [selectedParamSetIndex, setSelectedParamSetIndex] = useState<number>(0);
-  const [isUsingDynamicConnection, setIsUsingDynamicConnection] = useState<boolean>(false);
+  const [isUsingDynamicConnection, setIsUsingDynamicConnection] = useState<boolean>(true);
   const onAuthDropdownChange = useCallback(
     (_event: FormEvent<HTMLDivElement>, item: any): void => {
       if (item.key !== selectedParamSetIndex) {
@@ -201,10 +202,6 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     [isConnectionParameterSupported]
   );
 
-  const isFirstPartyAuth = useMemo(
-    () => connector?.properties?.connectionParameters?.['token']?.oAuthSettings?.properties.IsFirstParty,
-    [connector]
-  );
   const connectionParameterSets: ConnectionParameterSets | undefined = useMemo(() => {
     if (!_connectionParameterSets) {
       return undefined;
@@ -304,6 +301,16 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   const isUsingOAuth = useMemo(
     () => hasOAuth && !servicePrincipalSelected && !legacyManagedIdentitySelected && !supportsClientCertificateConnection,
     [hasOAuth, servicePrincipalSelected, legacyManagedIdentitySelected, supportsClientCertificateConnection]
+  );
+
+  const isDynamicConnectionOptionValidForConnector = useMemo(
+    () =>
+      isUsingOAuth &&
+      isAgentSubgraph &&
+      shouldEnableDynamicConnectionsFlag &&
+      connector?.properties?.isDynamicConnectionAllowed &&
+      isAgentWorkflow(workflowKind ?? ''),
+    [connector?.properties?.isDynamicConnectionAllowed, isAgentSubgraph, isUsingOAuth, shouldEnableDynamicConnectionsFlag, workflowKind]
   );
 
   const usingAadConnection = useMemo(() => (connector ? isUsingAadAuthentication(connector) : false), [connector]);
@@ -471,7 +478,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
       identitySelected,
       additionalParameterValues,
       operationParameterValues,
-      isUsingDynamicConnection
+      isDynamicConnectionOptionValidForConnector ? isUsingDynamicConnection : undefined // NOTE: Pass in the dynamic connection value only if the scenario is valid
     );
   }, [
     parameterValues,
@@ -490,6 +497,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     showTenantIdSelection,
     operationParameterValues,
     isUsingDynamicConnection,
+    isDynamicConnectionOptionValidForConnector,
   ]);
 
   // INTL STRINGS
@@ -910,18 +918,18 @@ export const CreateConnection = (props: CreateConnectionProps) => {
         {/* {needsAuth && <IFrameTermsOfService url={termsOfServiceUrl} />} */}
       </div>
 
-      <div className={styles.dynamicConnectionContainer}>
-        {isUsingOAuth && isAgentSubgraph && shouldEnableDynamicConnections && isFirstPartyAuth && isAgentWorkflow(workflowKind ?? '') && (
+      {isDynamicConnectionOptionValidForConnector && (
+        <div className={styles.dynamicConnectionContainer}>
           <Checkbox
             label={stringResources.USE_DYNAMIC_CONNECTIONS}
             disabled={isLoading}
             onChange={(_e, data: CheckboxOnChangeData) => {
               setIsUsingDynamicConnection(!!data.checked);
             }}
-            defaultChecked={false}
+            checked={isUsingDynamicConnection}
           />
-        )}
-      </div>
+        </div>
+      )}
 
       {/* Action Buttons */}
       <div className="msla-edit-connection-actions-container">
