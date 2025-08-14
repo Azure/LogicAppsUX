@@ -243,6 +243,16 @@ const Resources = {
     id: '7aJqIH',
     description: 'Optional locale parameter to apply formatNumber function with',
   }),
+  TOKEN_FUNCTION_FUNCTION_TRIMBYTEORDERMARK: intl.formatMessage({
+    defaultMessage: 'Removes Byte Order Mark (BOM) characters from the beginning of strings or binary content.',
+    id: 'hflWi6',
+    description: 'Description for trimByteOrderMark function',
+  }),
+  TOKEN_PARAMETER_TRIMBYTEORDERMARK_CONTENT: intl.formatMessage({
+    defaultMessage: 'Required. The string or binary content from which to remove the byte order mark.',
+    id: 'L6QAIt',
+    description: 'Required content parameter for trimByteOrderMark function',
+  }),
   TOKEN_FUNCTION_SECTION_COLLECTION: intl.formatMessage({
     defaultMessage: 'Collection functions',
     id: 'P4rEwD',
@@ -1832,6 +1842,24 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
           },
         ],
         isAdvanced: true,
+      },
+      {
+        name: 'trimByteOrderMark',
+        defaultSignature: 'trimByteOrderMark(content)',
+        description: Resources.TOKEN_FUNCTION_FUNCTION_TRIMBYTEORDERMARK,
+        signatures: [
+          {
+            definition: 'trimByteOrderMark(content: string | binary)',
+            documentation: Resources.TOKEN_FUNCTION_FUNCTION_TRIMBYTEORDERMARK,
+            parameters: [
+              {
+                name: 'content',
+                documentation: Resources.TOKEN_PARAMETER_TRIMBYTEORDERMARK_CONTENT,
+              },
+            ],
+          },
+        ],
+        isAdvanced: false,
       },
     ],
   },
