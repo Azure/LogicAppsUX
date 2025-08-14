@@ -100,7 +100,7 @@ export const FilePickerEditor = ({
       editorBlur?.({
         value: [createLiteralValueSegment(getValueFromSelectedItem(selectedItem.value))],
         viewModel: {
-          displayValue: displayValue,
+          displayValue,
           selectedItem: selectedItem.value,
         },
       });
