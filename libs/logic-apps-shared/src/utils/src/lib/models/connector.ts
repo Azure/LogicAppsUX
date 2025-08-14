@@ -221,6 +221,7 @@ export interface ConnectorProperty {
   operationParameterSets?: Record<string, OperationParameterSetParameter>;
   connectionAlternativeParameters?: ConnectionAlternativeParameters;
   isExportSupported?: boolean;
+  isDynamicConnectionAllowed?: boolean;
   isSecureByDefault?: boolean;
   swagger?: any;
   wadlUrl?: string;
