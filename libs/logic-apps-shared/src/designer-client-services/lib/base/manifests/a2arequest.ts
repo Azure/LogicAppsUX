@@ -15,7 +15,6 @@ export default {
           type: 'string',
           title: 'Agent URL',
           description: 'URL will be generated after save',
-          'x-ms-visiblity': 'important',
           'x-ms-editor': 'copyable',
           'x-ms-serialization': {
             skip: true,
@@ -23,6 +22,7 @@ export default {
           'x-ms-editor-options': {
             showAgentViewer: true,
           },
+          'x-ms-visibility': 'important',
         },
         name: {
           type: 'string',

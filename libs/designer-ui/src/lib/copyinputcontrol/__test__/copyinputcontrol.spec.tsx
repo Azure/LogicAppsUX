@@ -6,13 +6,15 @@ import renderer from 'react-test-renderer';
 import { describe, vi, beforeEach, afterEach, it, expect } from 'vitest';
 import { cleanup } from '@testing-library/react';
 
-vi.mock('tabster', () => {
-  return {
-    getTabster: () => ({}),
-    disposeTabster: () => {},
-    Types: {},
-  };
-});
+vi.mock('tabster', () => ({
+  getTabster: () => ({
+    dispose: vi.fn(),
+  }),
+  disposeTabster: () => {},
+  Types: {},
+  // Prevent internal polling
+  createTabster: () => ({}),
+}));
 
 vi.mock('@fluentui/react-components', async () => {
   const actual = await vi.importActual('@fluentui/react-components');
@@ -45,6 +47,7 @@ describe('lib/copyinputcontrol', () => {
   afterEach(() => {
     cleanup();
     vi.useRealTimers();
+    vi.clearAllTimers();
   });
 
   it('should construct the copyinputcontrol correctly', () => {
@@ -58,9 +61,7 @@ describe('lib/copyinputcontrol', () => {
   });
 
   it('should render with popup button when showAgentViewer is true', () => {
-    const tree = renderWithProvider(
-      <CopyInputControlWithAgent {...minimalWithAgent} showAgentViewer={true} />
-    ).toJSON();
+    const tree = renderWithProvider(<CopyInputControlWithAgent {...minimalWithAgent} showAgentViewer={true} />).toJSON();
     expect(tree).toMatchSnapshot();
   });
 
