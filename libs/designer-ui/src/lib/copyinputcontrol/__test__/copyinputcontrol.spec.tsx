@@ -2,12 +2,18 @@ import type { CopyInputControlProps } from '..';
 import { CopyInputControl } from '..';
 import type { CopyInputControlWithAgentProps } from '../CopyInputControlWithAgent';
 import { CopyInputControlWithAgent } from '../CopyInputControlWithAgent';
-import { webLightTheme } from '@fluentui/react-components';
 import renderer from 'react-test-renderer';
 import { describe, vi, beforeEach, afterEach, it, expect } from 'vitest';
 import { cleanup } from '@testing-library/react';
 
-// Mock FluentProvider to avoid initializing Tabster
+vi.mock('tabster', () => {
+  return {
+    getTabster: () => ({}),
+    disposeTabster: () => {},
+    Types: {},
+  };
+});
+
 vi.mock('@fluentui/react-components', async () => {
   const actual = await vi.importActual('@fluentui/react-components');
   return {
@@ -21,7 +27,6 @@ describe('lib/copyinputcontrol', () => {
   let minimalWithAgent: CopyInputControlWithAgentProps;
 
   const renderWithProvider = (component: React.ReactElement) => {
-    // Render without real FluentProvider (mocked)
     return renderer.create(component);
   };
 
@@ -53,7 +58,9 @@ describe('lib/copyinputcontrol', () => {
   });
 
   it('should render with popup button when showAgentViewer is true', () => {
-    const tree = renderWithProvider(<CopyInputControlWithAgent {...minimalWithAgent} showAgentViewer={true} />).toJSON();
+    const tree = renderWithProvider(
+      <CopyInputControlWithAgent {...minimalWithAgent} showAgentViewer={true} />
+    ).toJSON();
     expect(tree).toMatchSnapshot();
   });
 
