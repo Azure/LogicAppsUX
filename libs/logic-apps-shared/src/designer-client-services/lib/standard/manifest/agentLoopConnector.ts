@@ -86,7 +86,7 @@ export default {
             cognitiveServiceAccountId: {
               type: 'string',
               managedIdentitySettings: {
-                requiredRoles: ['Azure AI Administrator', 'Cognitive Services Contributor'],
+                requiredRoles: ['Azure AI User', 'Azure AI Administrator', 'Cognitive Services Contributor'],
               },
               uiDefinition: {
                 displayName: 'Azure Cognitive Service Account',
