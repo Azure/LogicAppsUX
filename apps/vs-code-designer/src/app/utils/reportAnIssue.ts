@@ -9,6 +9,7 @@ import * as os from 'os';
 import * as vscode from 'vscode';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
+import { createSettingsDetails } from './vsCodeConfig/settings';
 
 // Some browsers don't have very long URLs. 2000 is a conservative threshold.
 // Ref: https://stackoverflow.com/questions/417142/what-is-the-maximum-length-of-a-url-in-different-browsers
@@ -20,7 +21,7 @@ const MAX_INLINE_MESSAGE_CHARS = 1000;
 const MAX_ISSUE_BODY_CHARS = 4000;
 
 // Whitelisted extension configuration settings
-const SETTINGS_WHITELIST: readonly string[] = [
+const SETTINGS_WHITELIST: string[] = [
   'dataMapperVersion',
   'validateFuncCoreTools',
   'autoRuntimeDependenciesPath',
@@ -100,7 +101,7 @@ function buildIssueBody(errorContext: IErrorHandlerContext, issue: IParsedError,
   body += `\nProduct version: ${vscode.version}`;
   body += `\nUTC time: ${new Date().toUTCString()}`;
 
-  body += createSettingsDetail();
+  body += createBodyDetail('Settings', JSON.stringify(createSettingsDetails(SETTINGS_WHITELIST), null, 2));
 
   const details: { [key: string]: string | undefined } = Object.assign(
     {},
@@ -111,25 +112,6 @@ function buildIssueBody(errorContext: IErrorHandlerContext, issue: IParsedError,
     body += createBodyDetail(name, String(details[name]));
   }
   return body;
-}
-
-/**
- * Builds a formatted detail section (markdown-style) listing whitelisted extension settings.
- * Iterates over SETTINGS_WHITELIST, reads each value from the current workspace configuration,
- * and serializes the collected key/value pairs as pretty‑printed JSON inside a "Settings" body block.
- * @returns A formatted string containing the settings detail, or an empty string if any error occurs.
- */
-function createSettingsDetail(): string {
-  try {
-    const extensionConfiguration = vscode.workspace.getConfiguration(ext.prefix);
-    const settings: Record<string, unknown> = {};
-    for (const key of SETTINGS_WHITELIST) {
-      settings[key] = extensionConfiguration.get(key);
-    }
-    return createBodyDetail('Settings', JSON.stringify(settings, null, 2));
-  } catch {
-    return '';
-  }
 }
 
 /**
