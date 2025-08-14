@@ -28,6 +28,7 @@ export interface ApiHubServiceDetails {
   locale?: string;
   filterByLocation?: boolean;
   tenantId?: string;
+  apiServiceBaseUrl?: string;
 }
 
 export type getAccessTokenType = () => Promise<string>;
