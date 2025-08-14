@@ -215,7 +215,7 @@ describe('reportAnIssue', () => {
     });
   });
 
-  describe('createSettingsDetails', () => {
+  describe('createSettingsDetail', () => {
     test('should include whitelisted settings in issue body', async () => {
       const link = await getReportAnIssueLink(mockErrorContext, mockIssue, mockCorrelationId);
       const decodedLink = decodeURIComponent(link);
