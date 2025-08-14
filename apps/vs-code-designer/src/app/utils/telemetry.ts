@@ -5,6 +5,7 @@
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { ext } from '../../extensionVariables';
 import { isString } from '@microsoft/logic-apps-shared';
+import { createSettingsDetails } from './vsCodeConfig/settings';
 
 /**
  * Executes function and logs duration in telemetry.
@@ -48,4 +49,18 @@ export const logSubscriptions = async (context: IActionContext) => {
     context.telemetry.properties.logSubscriptionsError = errorMessage;
   }
   context.telemetry.properties.subscriptions = JSON.stringify(azureSubscriptions);
+};
+
+export const logExtensionSettings = async (context: IActionContext) => {
+  const settingsToLog = [
+    'autoRuntimeDependenciesValidationAndInstallation',
+    'autoStartAzurite',
+    'autoStartDesignTime',
+    'parameterizeConnectionsInProjectLoad',
+    'showStartDesignTimeMessage',
+    'validateDotNetSDK',
+    'stopFuncTaskPostDebug',
+  ];
+  const settingsDetails = createSettingsDetails(settingsToLog);
+  context.telemetry.properties.userExtensionSettings = JSON.stringify(settingsDetails);
 };

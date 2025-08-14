@@ -134,3 +134,16 @@ export async function promptForFuncVersion(context: IActionContext, message?: st
     return version;
   }
 }
+
+export const createSettingsDetails = (settingsList: string[]) => {
+  try {
+    const extensionConfiguration = workspace.getConfiguration(ext.prefix);
+    const settings: Record<string, unknown> = {};
+    for (const key of settingsList) {
+      settings[key] = extensionConfiguration.get(key);
+    }
+    return settings;
+  } catch {
+    return {};
+  }
+};
