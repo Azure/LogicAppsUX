@@ -58,9 +58,9 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
     description: 'Select a Swagger Function App resource',
   });
   const manualWorkflowTitleText = intl.formatMessage({
-    defaultMessage: `Select workflow with 'manual' trigger`,
-    id: 'q4ChjK',
-    description: "Select workflow with 'manual' trigger",
+    defaultMessage: `Select workflow with 'An HTTP Request' trigger`,
+    id: 'DXwS7e',
+    description: "Select workflow with 'An HTTP Request' trigger",
   });
   const batchWorkflowTitleText = intl.formatMessage({
     defaultMessage: 'Select a Batch Workflow resource',
