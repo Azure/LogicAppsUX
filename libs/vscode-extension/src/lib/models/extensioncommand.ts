@@ -54,6 +54,7 @@ export const ExtensionCommand = {
   resetDesignerDirtyState: 'resetDesignerDirtyState',
   switchToDataMapperV2: 'switchToDataMapperV2',
   close_panel: 'close-panel',
+  insert_connection: 'insert-connection',
 } as const;
 export type ExtensionCommand = (typeof ExtensionCommand)[keyof typeof ExtensionCommand];
 

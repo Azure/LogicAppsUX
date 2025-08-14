@@ -22,6 +22,7 @@ const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 interface ConnectionsViewProps {
   toggleCollapse: () => void;
   connectorId: string;
+  onConnectionSuccessful: (connection: Connection) => void;
 }
 
 
@@ -86,9 +87,9 @@ export const ConnectionsView = (props: ConnectionsViewProps) => {
       case 'select':
         return <SelectConnectionWrapper />;
       case 'create':
-        return <CreateConnectionWrapper />;
+        return <CreateConnectionWrapper connectorId={connectorId} onConnectionSuccessful={props.onConnectionSuccessful} />;
     }
-  }, [panelStatus]);
+  }, [connectorId, panelStatus, props.onConnectionSuccessful]);
 
   return (
     <>
