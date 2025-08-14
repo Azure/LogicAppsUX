@@ -3,26 +3,13 @@ import { CopyInputControl } from '..';
 import type { CopyInputControlWithAgentProps } from '../CopyInputControlWithAgent';
 import { CopyInputControlWithAgent } from '../CopyInputControlWithAgent';
 import renderer from 'react-test-renderer';
-import { describe, vi, beforeEach, afterEach, it, expect } from 'vitest';
-import { cleanup } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-vi.mock('tabster', () => ({
-  getTabster: () => ({
-    dispose: vi.fn(),
-  }),
-  disposeTabster: () => {},
-  Types: {},
-  // Prevent internal polling
-  createTabster: () => ({}),
+
+vi.mock('../AgentUrlViewer', () => ({
+  AgentUrlViewer: () => null,
+  AgentUrlButton: () => null,
 }));
-
-vi.mock('@fluentui/react-components', async () => {
-  const actual = await vi.importActual('@fluentui/react-components');
-  return {
-    ...actual,
-    FluentProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-  };
-});
 
 describe('lib/copyinputcontrol', () => {
   let minimal: CopyInputControlProps;
@@ -42,12 +29,6 @@ describe('lib/copyinputcontrol', () => {
       placeholder: 'URL goes here',
       text: 'http://test.com',
     };
-  });
-
-  afterEach(() => {
-    cleanup();
-    vi.useRealTimers();
-    vi.clearAllTimers();
   });
 
   it('should construct the copyinputcontrol correctly', () => {
