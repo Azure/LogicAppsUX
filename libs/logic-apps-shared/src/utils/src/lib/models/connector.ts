@@ -186,6 +186,7 @@ export interface ConnectionParameterSetParameter {
   oAuthSettings?: OAuthSetting;
   gateway?: GatewaySetting;
   parameterSource?: ConnectionParameterSource;
+  allowedValues?: { value: string }[];
 }
 
 export interface ConnectionParameterSet {
