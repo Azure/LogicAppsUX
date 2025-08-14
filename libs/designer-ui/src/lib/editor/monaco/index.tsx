@@ -63,6 +63,14 @@ type SupportedEditorOptions = Pick<
   | 'overviewRulerBorder'
   | 'wrappingIndent'
   | 'automaticLayout'
+  | 'parameterHints'
+  | 'suggest'
+  | 'hover'
+  | 'quickSuggestions'
+  | 'suggestOnTriggerCharacters'
+  | 'acceptSuggestionOnEnter'
+  | 'tabCompletion'
+  | 'fixedOverflowWidgets'
 > &
   Pick<editor.IGlobalEditorOptions, 'tabSize' | 'insertSpaces'>;
 
@@ -278,6 +286,22 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
               ariaLabel: label,
               wordWrap,
               language,
+              // Enhanced signature help and parameter hints behavior
+              parameterHints: {
+                enabled: true,
+                cycle: true,
+              },
+              suggest: {
+                showStatusBar: true,
+                preview: true,
+                previewMode: 'prefix',
+              },
+              // // Better autocomplete behavior
+              quickSuggestions: {
+                other: true,
+                comments: false,
+                strings: false,
+              },
               ...options,
             }}
             value={value}
