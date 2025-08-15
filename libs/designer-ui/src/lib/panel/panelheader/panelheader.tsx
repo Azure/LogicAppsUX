@@ -60,6 +60,7 @@ export interface PanelHeaderProps {
   showLogicAppRun?: () => void;
   showTriggerInfo?: boolean;
   isTrigger?: boolean;
+  hideComment?: boolean;
 }
 
 const DismissIcon = bundleIcon(ChevronDoubleRightFilled, ChevronDoubleRightRegular);
@@ -163,6 +164,7 @@ export const PanelHeader = (props: PanelHeaderProps): JSX.Element => {
     showLogicAppRun,
     showTriggerInfo,
     isTrigger,
+    hideComment,
   } = props;
 
   const { comment, displayName: title, iconUri: cardIcon, isError, isLoading, nodeId } = nodeData;
@@ -282,7 +284,7 @@ export const PanelHeader = (props: PanelHeaderProps): JSX.Element => {
           </MessageBar>
         </div>
       ) : null}
-      {isTrigger || (!isNullOrUndefined(comment) && !noNodeOnCardLevel && !isCollapsed) ? (
+      {(isTrigger || (!isNullOrUndefined(comment) && !noNodeOnCardLevel && !isCollapsed)) && !hideComment ? (
         <PanelHeaderComment
           comment={comment}
           isCollapsed={isCollapsed}
