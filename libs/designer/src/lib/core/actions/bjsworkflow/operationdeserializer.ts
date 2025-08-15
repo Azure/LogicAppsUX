@@ -53,6 +53,7 @@ import {
   getOutputParametersFromManifest,
   getSupportedChannelsFromManifest,
   updateCallbackUrlInInputs,
+  updateAgentUrlInInputs,
   updateCustomCodeInInputs,
   updateInvokerSettings,
 } from './initialize';
@@ -263,6 +264,7 @@ export const initializeOperationDetailsForManifest = async (
 
     if (isTrigger) {
       await updateCallbackUrlInInputs(nodeId, nodeOperationInfo, nodeInputs);
+      await updateAgentUrlInInputs(nodeOperationInfo, nodeInputs);
     }
 
     const customCodeParameter = getParameterFromName(nodeInputs, Constants.DEFAULT_CUSTOM_CODE_INPUT);

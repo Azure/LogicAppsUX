@@ -186,6 +186,7 @@ export interface ConnectionParameterSetParameter {
   oAuthSettings?: OAuthSetting;
   gateway?: GatewaySetting;
   parameterSource?: ConnectionParameterSource;
+  allowedValues?: { value: string }[];
 }
 
 export interface ConnectionParameterSet {
@@ -221,6 +222,7 @@ export interface ConnectorProperty {
   operationParameterSets?: Record<string, OperationParameterSetParameter>;
   connectionAlternativeParameters?: ConnectionAlternativeParameters;
   isExportSupported?: boolean;
+  isDynamicConnectionAllowed?: boolean;
   isSecureByDefault?: boolean;
   swagger?: any;
   wadlUrl?: string;

@@ -1,3 +1,4 @@
+import { useIsA2AWorkflow } from '../../../../core/state/designerView/designerViewSelectors';
 import { useOperationInfo, type AppDispatch } from '../../../../core';
 import { autoCreateConnectionIfPossible, updateNodeConnection } from '../../../../core/actions/bjsworkflow/connections';
 import { useConnectionsForConnector } from '../../../../core/queries/connections';
@@ -10,6 +11,7 @@ import { ConnectionTable, type ConnectionTableProps } from './connectionTable';
 import { Body1Strong, Button, Divider, Spinner, MessageBar, MessageBarTitle, MessageBarBody, Text } from '@fluentui/react-components';
 import {
   ConnectionService,
+  equals,
   getIconUriFromConnector,
   parseErrorMessage,
   type Connection,
@@ -24,6 +26,7 @@ export const SelectConnectionWrapper = () => {
 
   const intl = useIntl();
   const selectedNodeIds = useConnectionPanelSelectedNodeIds();
+  const isA2A = useIsA2AWorkflow();
   const currentConnectionId = useNodeConnectionId(selectedNodeIds?.[0]); // only need to grab first one, they should all be the same
   const isXrmConnectionReferenceMode = useIsXrmConnectionReferenceMode();
   const referencePanelMode = usePreviousPanelMode();
@@ -39,7 +42,16 @@ export const SelectConnectionWrapper = () => {
   const connector = useConnectorByNodeId(selectedNodeIds?.[0]); // only need to grab first one, they should all be the same
   const connectorIconUri = useMemo(() => getIconUriFromConnector(connector), [connector]);
   const connectionQuery = useConnectionsForConnector(connector?.id ?? '');
-  const connections = useMemo(() => connectionQuery?.data ?? [], [connectionQuery]);
+  const connections = useMemo(() => {
+    const connectionData = connectionQuery?.data ?? [];
+
+    if (!isA2A) {
+      // Filter out dynamic connections
+      return connectionData.filter((c) => !equals(c.properties.feature ?? '', 'DynamicUserInvoked', true));
+    }
+
+    return connectionData;
+  }, [connectionQuery, isA2A]);
   const references = useConnectionRefs();
 
   const saveSelectionCallback = useCallback(
