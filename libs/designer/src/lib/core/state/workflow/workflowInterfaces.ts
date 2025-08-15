@@ -10,6 +10,7 @@ export interface NodeMetadata {
   subgraphType?: SubgraphType;
   actionCount?: number;
   isRoot?: boolean;
+  isTrigger?: boolean;
   runData?: LogicAppsV2.WorkflowRunAction | LogicAppsV2.WorkflowRunTrigger;
   actionMetadata?: Record<string, any>;
   subgraphRunData?: Record<string, { actionResults: LogicAppsV2.WorkflowRunAction[] }>;

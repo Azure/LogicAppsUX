@@ -57,7 +57,7 @@ export const General = ({
   const nodesMetadata = useNodeMetadata(nodeId);
   const operationInfo = useOperationInfo(nodeId);
   const nodeOutputs = useOutputParameters(nodeId);
-  const isTrigger = nodesMetadata?.isRoot ?? false;
+  const isTrigger = nodesMetadata?.isTrigger ?? false;
   const generalTitle = intl.formatMessage({
     defaultMessage: 'General',
     id: 'V+/c21',

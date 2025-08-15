@@ -232,7 +232,7 @@ export const expectedSwitchWorkflowDefinitionOutput: { graph: WorkflowNode; acti
     },
   },
   nodesMetadata: {
-    HTTP_TRIGGER: { graphId: 'root', isRoot: true },
+    HTTP_TRIGGER: { graphId: 'root', isRoot: true, isTrigger: true },
     Switch_1: { graphId: 'root', actionCount: 2, parentNodeId: undefined },
     Compose_5: { graphId: 'Case 2', parentNodeId: 'Switch_1', isRoot: true },
     'Case 2': {
@@ -417,7 +417,7 @@ export const expectedSwitchWorkflowDefinitionOutputWithoutAddCase: {
     },
   },
   nodesMetadata: {
-    HTTP_TRIGGER: { graphId: 'root', isRoot: true },
+    HTTP_TRIGGER: { graphId: 'root', isRoot: true, isTrigger: true },
     Switch_1: { graphId: 'root', actionCount: 2, parentNodeId: undefined },
     Compose_5: { graphId: 'Case 2', parentNodeId: 'Switch_1', isRoot: true },
     'Case 2': {
