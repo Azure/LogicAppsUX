@@ -385,7 +385,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
         method: HTTP_METHODS.POST,
         headers,
         body: JSON.stringify({
-          properties: { definition: workflow.definition },
+          properties: { definition: workflow },
         }),
       });
     } catch (error) {
