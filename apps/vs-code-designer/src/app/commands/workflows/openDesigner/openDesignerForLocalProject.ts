@@ -375,7 +375,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     if (!designTimePort) {
       throw new Error(localize('designTimePortNotFound', 'Design time port not found.'));
     }
-    const url = `http://localhost:${designTimePort}${managementApiPrefix}/workflows/${this.workflowName}/validatePartial?api-version=${this.apiVersion}`;
+    const url = `http://localhost:${designTimePort}${managementApiPrefix}/workflows/${this.workflowName}/validate?api-version=${this.apiVersion}`;
     try {
       const headers = createHttpHeaders({
         'Content-Type': 'application/json',
@@ -512,7 +512,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     let localSettings: Record<string, string>;
     let azureDetails: AzureConnectorDetails;
 
-    if (projectPath) {
+    if (projectPath) { 
       azureDetails = await getAzureConnectorDetailsForLocalProject(this.context, projectPath);
       localSettings = (await getLocalSettingsJson(this.context, path.join(projectPath, localSettingsFileName))).Values;
     } else {
