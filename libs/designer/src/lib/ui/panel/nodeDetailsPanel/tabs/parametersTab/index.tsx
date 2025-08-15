@@ -28,7 +28,7 @@ import {
 import { useIsA2AWorkflow } from '../../../../../core/state/designerView/designerViewSelectors';
 import type { AppDispatch, RootState } from '../../../../../core/store';
 import { getConnectionReference } from '../../../../../core/utils/connectors/connections';
-import { isRootNodeInGraph } from '../../../../../core/utils/graph';
+import { isTriggerNode } from '../../../../../core/utils/graph';
 import {
   getDisplayValueFromPickerSelectedItem,
   getTypeForTokenFiltering,
@@ -360,7 +360,7 @@ export const ParameterSection = ({
 }) => {
   const dispatch = useDispatch<AppDispatch>();
   const [sectionExpanded, setSectionExpanded] = useState<boolean>(false);
-  const isTrigger = useSelector((state: RootState) => isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata));
+  const isTrigger = useSelector((state: RootState) => isTriggerNode(nodeId, state.workflow.nodesMetadata));
   const operationInfo = useOperationInfo(nodeId);
   const dependencies = useDependencies(nodeId);
   const isFoundryServiceConnectionEnabled = useShouldEnableFoundryServiceConnection();

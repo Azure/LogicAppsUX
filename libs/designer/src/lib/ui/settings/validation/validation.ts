@@ -125,7 +125,7 @@ export const validateNodeSettings = (
         const runAfterKeys = Object.keys((state.workflow?.operations?.[selectedNode] as any)?.runAfter ?? {}) ?? [];
         let rootTriggerId = '';
         for (const [id, node] of Object.entries(state.workflow.nodesMetadata)) {
-          if (node.graphId === 'root' && node.isRoot === true) {
+          if (node?.isTrigger ?? false) {
             rootTriggerId = id;
           }
         }
