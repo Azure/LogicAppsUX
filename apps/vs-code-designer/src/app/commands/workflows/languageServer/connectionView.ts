@@ -26,13 +26,15 @@ export default class OpenConnectionView extends OpenDesignerBase {
   private projectPath: string | undefined;
   private panelMetadata: IDesignerPanelMetadata;
   private readonly methodName: string;
+  private readonly range?: any;
 
-  constructor(context: IActionContext, filePath: string, methodName: string) {
+  constructor(context: IActionContext, filePath: string, methodName: string, range?: any) {
     const panelName: string = `Connection view - ${methodName}`;
     const panelGroupKey = ext.webViewKey.languageServer;
     super(context, '', panelName, workflowAppApiVersion, panelGroupKey, false, true, false, '');
     this.workflowFilePath = filePath;
     this.methodName = methodName;
+    this.range = range;
   }
 
   public async createPanel(): Promise<void> {
@@ -133,7 +135,10 @@ export default class OpenConnectionView extends OpenDesignerBase {
         break;
       }
       case ExtensionCommand.insert_connection: {
-        insertFunctionCallAtLocation(this.methodName, msg.connection, { documentUri: this.workflowFilePath });
+        insertFunctionCallAtLocation(this.methodName, msg.connection, {
+          documentUri: this.workflowFilePath,
+          range: this.range,
+        });
         this.panel.dispose();
         break;
       }
@@ -176,115 +181,85 @@ export default class OpenConnectionView extends OpenDesignerBase {
 }
 
 // Helper function to update function parameters at specific location
-function insertFunctionCallAtLocation(functionName: string, connection: Connection, insertionContext: { documentUri: string }) {
-  console.log('insertFunctionCallAtLocation called with:', functionName, connection);
-
+function insertFunctionCallAtLocation(
+  _functionName: string,
+  connection: Connection,
+  insertionContext: { documentUri: string; range?: any }
+) {
   // Find the document by URI
-  const targetDocument = vscode.workspace.textDocuments.find((doc) => doc.uri.toString() === insertionContext.documentUri);
+  const targetDocument = vscode.workspace.textDocuments.find((doc) => doc.uri.fsPath.toString() === insertionContext.documentUri);
 
   if (!targetDocument) {
-    console.log('Target document not found:', insertionContext.documentUri);
     vscode.window.showErrorMessage('Target document not found. Please ensure the file is still open.');
     return;
   }
 
-  // // Open the document in an editor if it's not already active
-  // vscode.window.showTextDocument(targetDocument).then(editor => {
-  //     const targetLine = insertionContext.line;
-  //     const lineText = editor.document.lineAt(targetLine).text;
+  // Open the document in an editor if it's not already active
+  vscode.window.showTextDocument(targetDocument).then(
+    (editor) => {
+      if (insertionContext.range) {
+        // Normalize the range format - handle both Start/Line and start/line formats
+        const range = insertionContext.range;
+        let startLine: number;
+        let startChar: number;
+        let endLine: number;
+        let endChar: number;
 
-  //     // biome-ignore lint/style/useTemplate: <explanation>
-  //             console.log('Analyzing line', targetLine + ':', lineText);
+        if (range.Start && range.End) {
+          // Handle { Start: { Line: 55, Character: 85 }, End: { Line: 55, Character: 99 } } format
+          startLine = range.Start.Line;
+          startChar = range.Start.Character;
+          endLine = range.End.Line;
+          endChar = range.End.Character;
+        } else if (range.start && range.end) {
+          // Handle VS Code standard { start: { line: 55, character: 85 }, end: { line: 55, character: 99 } } format
+          startLine = range.start.line;
+          startChar = range.start.character;
+          endLine = range.end.line;
+          endChar = range.end.character;
+        } else {
+          vscode.window.showErrorMessage('Invalid range format provided');
+          return;
+        }
 
-  //     // Find the function call on this line, looking for the exact function name
-  //     const functionCallRegex = new RegExp(`\\b${functionName}\\s*\\([^)]*\\)`, 'g');
-  //     const match = functionCallRegex.exec(lineText);
+        // Use the normalized range to replace the text with the connection.id
+        const startPos = new vscode.Position(startLine, startChar);
+        const endPos = new vscode.Position(endLine, endChar);
+        const rangeToReplace = new vscode.Range(startPos, endPos);
 
-  //     // Also try to find just the function name if there's no parentheses yet
-  //     const functionNameRegex = new RegExp(`\\b${functionName}\\b`, 'g');
-  //     const nameMatch = functionNameRegex.exec(lineText);
-
-  //     if (match) {
-  //         // Replace existing function call with updated parameters
-  //         const startPos = new vscode.Position(targetLine, match.index);
-  //         const endPos = new vscode.Position(targetLine, match.index + match[0].length);
-  //         const updatedFunctionCall = `${functionName}(${parameters.join(', ')})`;
-
-  //         console.log('Replacing existing function call:', match[0], '→', updatedFunctionCall);
-
-  //         editor.edit(editBuilder => {
-  //             editBuilder.replace(new vscode.Range(startPos, endPos), updatedFunctionCall);
-  //         }).then(success => {
-  //             if (success) {
-  //                 console.log('Function parameters updated successfully');
-  //                 // Position cursor after the updated function call
-  //                 const newCursorPos = new vscode.Position(targetLine, match.index + updatedFunctionCall.length);
-  //                 editor.selection = new vscode.Selection(newCursorPos, newCursorPos);
-  //                 vscode.window.showInformationMessage(`Updated: ${updatedFunctionCall}`);
-  //             } else {
-  //                 console.log('Failed to update function parameters');
-  //                 vscode.window.showErrorMessage('Failed to update function parameters');
-  //             }
-  //         });
-  //     } else if (nameMatch) {
-  //         // Found function name but no parentheses, add parameters after the function name
-  //         const functionCall = `${functionName}(${parameters.join(', ')})`;
-  //         const startPos = new vscode.Position(targetLine, nameMatch.index);
-  //         const endPos = new vscode.Position(targetLine, nameMatch.index + nameMatch[0].length);
-
-  //         console.log('Completing function name:', nameMatch[0], '→', functionCall);
-
-  //         editor.edit(editBuilder => {
-  //             editBuilder.replace(new vscode.Range(startPos, endPos), functionCall);
-  //         }).then(success => {
-  //             if (success) {
-  //                 console.log('Function completed successfully');
-  //                 // Position cursor after the completed function call
-  //                 const newCursorPos = new vscode.Position(targetLine, nameMatch.index + functionCall.length);
-  //                 editor.selection = new vscode.Selection(newCursorPos, newCursorPos);
-  //                 vscode.window.showInformationMessage(`Completed: ${functionCall}`);
-  //             } else {
-  //                 console.log('Failed to complete function');
-  //                 vscode.window.showErrorMessage('Failed to complete function call');
-  //             }
-  //         });
-  //     } else {
-  //         // No existing function call found, insert new one at the specified position
-  //         const functionCall = `${functionName}(${parameters.join(', ')})`;
-  //         const position = new vscode.Position(insertionContext.line, insertionContext.character);
-
-  //         console.log('No existing function found, inserting new at line', targetLine, ':', functionCall);
-
-  //         editor.edit(editBuilder => {
-  //             editBuilder.insert(position, functionCall);
-  //         }).then(success => {
-  //             if (success) {
-  //                 console.log('Function inserted successfully');
-  //                 // Move cursor to end of inserted function
-  //                 const newPosition = new vscode.Position(
-  //                     insertionContext.line,
-  //                     insertionContext.character + functionCall.length
-  //                 );
-  //                 editor.selection = new vscode.Selection(newPosition, newPosition);
-  //                 vscode.window.showInformationMessage(`Inserted: ${functionCall}`);
-  //             } else {
-  //                 console.log('Failed to insert function');
-  //                 vscode.window.showErrorMessage('Failed to insert function call');
-  //             }
-  //         });
-  //     }
-  // }, (error: any) => {
-  //     console.log('Error opening document:', error);
-  //     vscode.window.showErrorMessage('Failed to open target document');
-  // });
+        editor
+          .edit((editBuilder) => {
+            editBuilder.replace(rangeToReplace, `"${connection.id}"`);
+          })
+          .then((success) => {
+            if (success) {
+              console.log('Connection ID inserted successfully');
+              // Position cursor after the inserted connection ID
+              const newCursorPos = new vscode.Position(startLine, startChar + connection.id.length);
+              editor.selection = new vscode.Selection(newCursorPos, newCursorPos);
+              vscode.window.showInformationMessage(`Inserted connection ID: ${connection.id}`);
+            } else {
+              vscode.window.showErrorMessage('Failed to insert connection ID');
+            }
+          });
+      } else {
+        vscode.window.showErrorMessage('No range provided for connection ID insertion');
+      }
+    },
+    (error: any) => {
+      const errorMessage = error instanceof Error ? error.message : typeof error === 'string' ? error : 'Unknown error';
+      vscode.window.showErrorMessage(`Failed to open target document: ${errorMessage}`);
+    }
+  );
 }
 
 export async function openLanguageServerConnectionView(
   context: IActionContext,
   filePath: string,
   methodName: string,
-  _className?: string
+  _className?: string,
+  range?: any
 ): Promise<void> {
-  const connectionViewObj: OpenConnectionView = new OpenConnectionView(context, filePath, methodName);
+  const connectionViewObj: OpenConnectionView = new OpenConnectionView(context, filePath, methodName, range);
   await connectionViewObj.createPanel();
 }
