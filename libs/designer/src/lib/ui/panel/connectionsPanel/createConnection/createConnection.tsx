@@ -36,6 +36,8 @@ import {
   isEmptyString,
   customLengthGuid,
   ExtensionProperties,
+  LoggerService,
+  LogEntryLevel,
 } from '@microsoft/logic-apps-shared';
 import type {
   GatewayServiceConfig,
@@ -456,7 +458,18 @@ export const CreateConnection = (props: CreateConnectionProps) => {
       const servicePrincipalValue = SERVICE_PRINCIPLE_CONSTANTS.GRANT_TYPE_VALUES.CLIENT_CREDENTIALS;
       let outputGrantType = oauthValue;
       if (isMultiAuth) {
-        const allowedValue = (grantTypeParameter as ConnectionParameterSetParameter)?.allowedValues?.[0];
+        const allowedValues = (grantTypeParameter as ConnectionParameterSetParameter)?.allowedValues;
+        const allowedValue = allowedValues?.[0];
+
+        if (allowedValues?.length !== 1) {
+          LoggerService().log({
+            level: LogEntryLevel.Warning,
+            area: 'createConnection.onCreate',
+            message: 'grantTypeParameter allowedValue is not a single value',
+            args: [`connectorId:${connectorId}`, `allowedValues:${allowedValues?.map((v) => v.value)?.join(',')}`],
+          });
+        }
+
         if (allowedValue) {
           outputGrantType = allowedValue?.value;
         }
@@ -498,6 +511,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     showTenantIdSelection,
     operationParameterValues,
     isUsingDynamicConnection,
+    connectorId,
   ]);
 
   // INTL STRINGS
