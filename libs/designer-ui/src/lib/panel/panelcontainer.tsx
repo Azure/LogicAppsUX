@@ -52,6 +52,7 @@ export type PanelContainerProps = {
   showLogicAppRun?: () => void;
   showTriggerInfo?: boolean;
   isTrigger?: boolean;
+  hideComment?: boolean;
 } & CommonPanelProps;
 
 export const PanelContainer = ({
@@ -81,6 +82,7 @@ export const PanelContainer = ({
   showLogicAppRun,
   showTriggerInfo,
   isTrigger,
+  hideComment,
   ...rest
 }: PanelContainerProps) => {
   const intl = useIntl();
@@ -177,11 +179,13 @@ export const PanelContainer = ({
           handleTitleUpdate={handleTitleUpdate}
           showTriggerInfo={showTriggerInfo}
           isTrigger={isTrigger}
+          hideComment={hideComment}
         />
       );
     },
     [
       alternateSelectedNode,
+      rest.alternateSelectedNode?.nodeId,
       onUnpinAction,
       alternateSelectedNodePersistence,
       isCollapsed,
@@ -200,9 +204,9 @@ export const PanelContainer = ({
       handleTitleUpdate,
       showTriggerInfo,
       isTrigger,
+      hideComment,
       resubmitOperation,
       onCommentChange,
-      rest.alternateSelectedNode,
     ]
   );
 
