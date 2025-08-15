@@ -60,6 +60,7 @@ export interface IConnectionService {
   setupConnectionIfNeeded(connection: Connection, identityId?: string): Promise<void>;
   getUniqueConnectionName(connectorId: string, connectionNames: string[], connectorName: string): Promise<string>;
   getAuthSetHideKeys?(): string[];
+  getSubscriptionLocationWebUrl?(): string;
 }
 
 let service: IConnectionService;

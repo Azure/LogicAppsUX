@@ -8,6 +8,7 @@ import { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { ApiHubAuthentication } from '../../../../common/models/workflow';
 import { CreateConnectionInternal } from './createConnectionInternal';
+import { useConnectionsForConnector } from '../../../../core/queries/connections';
 
 export const CreateConnectionWrapper = ({
   connectorId,
@@ -17,7 +18,9 @@ export const CreateConnectionWrapper = ({
   const isAgentSubgraph = false;
   const nodeIds = useConnectionPanelSelectedNodeIds();
   const { data: connector } = useConnector(connectorId);
-  const hasExistingConnection = false; //useSelector((state: RootState) => !!getRecordEntry(state.connections.connectionsMapping, nodeId));
+  const connectionQuery = useConnectionsForConnector(connector?.id ?? '');
+  const connections = useMemo(() => connectionQuery?.data ?? [], [connectionQuery]);
+  const hasExistingConnection = connections.length > 0;
   const existingReferences = useSelector((state: RootState) => Object.keys(state.connections.connectionReferences));
   const assistedConnectionProps = useMemo(() => (connector ? getAssistedConnectionProps(connector) : undefined), [connector]);
 

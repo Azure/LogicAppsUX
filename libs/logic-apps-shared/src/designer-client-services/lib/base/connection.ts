@@ -28,7 +28,6 @@ export interface ApiHubServiceDetails {
   locale?: string;
   filterByLocation?: boolean;
   tenantId?: string;
-  apiServiceBaseUrl?: string;
 }
 
 export type getAccessTokenType = () => Promise<string>;
@@ -47,6 +46,7 @@ export abstract class BaseConnectionService implements IConnectionService {
   protected _connections: Record<string, Connection> = {};
   protected _subscriptionResourceGroupWebUrl = '';
   protected _allConnectionsInitialized = false;
+  protected _subscriptionLocationsWebUrl = '';
 
   protected _vVersion: 'V1' | 'V2' = 'V1';
 
@@ -63,6 +63,11 @@ export abstract class BaseConnectionService implements IConnectionService {
     }
 
     this._subscriptionResourceGroupWebUrl = `/subscriptions/${options.subscriptionId}/resourceGroups/${options.resourceGroup}/providers/Microsoft.Web`;
+    this._subscriptionLocationsWebUrl = `/subscriptions/${options.subscriptionId}/providers/Microsoft.Web/locations/${options.location}/managedApis`;
+  }
+
+  public getSubscriptionLocationWebUrl(): string {
+    return this._subscriptionLocationsWebUrl;
   }
 
   async getSwaggerFromConnector(connectorId: string): Promise<OpenAPIV2.Document> {
