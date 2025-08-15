@@ -4,6 +4,7 @@ import type { AppDispatch, RootState } from '../../../core';
 import { clearPanel, collapsePanel, updateParameterValidation, validateParameter } from '../../../core';
 import { useReadOnly, useSuppressDefaultNodeSelectFunctionality } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { setShowDeleteModalNodeId } from '../../../core/state/designerView/designerViewSlice';
+import { useIsA2AWorkflow } from '../../../core/state/designerView/designerViewSelectors';
 import {
   useIsPanelCollapsed,
   useOperationAlternateSelectedNode,
@@ -44,6 +45,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
   const collapsed = useIsPanelCollapsed();
 
   const alternateSelectedNode = useOperationAlternateSelectedNode();
+  const isA2AWorkflow = useIsA2AWorkflow();
   const alternateSelectedNodeId = alternateSelectedNode?.nodeId ?? '';
   const alternateSelectedNodePersistence = alternateSelectedNode?.persistence ?? 'selected';
 
@@ -59,7 +61,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
       nodesMetadata: state.workflow.nodesMetadata,
       idReplacements: state.workflow.idReplacements,
       operationInfo,
-      showTriggerInfo: isTrigger && operationInfo.type === constants.SERIALIZED_TYPE.REQUEST,
+      showTriggerInfo: isTrigger && operationInfo.type === constants.SERIALIZED_TYPE.REQUEST && !isA2AWorkflow,
     };
   });
 
@@ -279,6 +281,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
       }}
       showTriggerInfo={showTriggerInfo && !readOnly}
       isTrigger={isTrigger}
+      hideComment={isA2AWorkflow && isTrigger}
       trackEvent={handleTrackEvent}
       onCommentChange={onCommentChange}
       onTitleChange={onTitleChange}
