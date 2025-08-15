@@ -275,7 +275,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     [isMultiAuth, supportsServicePrincipalConnection, supportsLegacyManagedIdentityConnection]
   );
 
-  const servicePrincipalSelected = useMemo(
+  const legacyServicePrincipalSelected = useMemo(
     () => showLegacyMultiAuth && selectedParamSetIndex === LegacyMultiAuthOptions.servicePrincipal,
     [selectedParamSetIndex, showLegacyMultiAuth]
   );
@@ -302,8 +302,8 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   );
 
   const isUsingOAuth = useMemo(
-    () => hasOAuth && !servicePrincipalSelected && !legacyManagedIdentitySelected && !supportsClientCertificateConnection,
-    [hasOAuth, servicePrincipalSelected, legacyManagedIdentitySelected, supportsClientCertificateConnection]
+    () => hasOAuth && !legacyServicePrincipalSelected && !legacyManagedIdentitySelected && !supportsClientCertificateConnection,
+    [hasOAuth, legacyServicePrincipalSelected, legacyManagedIdentitySelected, supportsClientCertificateConnection]
   );
 
   const usingAadConnection = useMemo(() => (connector ? isUsingAadAuthentication(connector) : false), [connector]);
@@ -323,7 +323,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   const isParamVisible = useCallback(
     (key: string, parameter: ParamType) => {
       const constraints = parameter?.uiDefinition?.constraints;
-      if (servicePrincipalSelected) {
+      if (legacyServicePrincipalSelected) {
         return isServicePrinicipalConnectionParameter(key) && isServicePrincipalParameterVisible(key, parameter);
       }
       if (legacyManagedIdentitySelected) {
@@ -347,7 +347,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
       }
       return true;
     },
-    [servicePrincipalSelected, legacyManagedIdentitySelected, parameterValues, showTenantIdSelection]
+    [legacyServicePrincipalSelected, legacyManagedIdentitySelected, parameterValues, showTenantIdSelection]
   );
 
   const unfilteredParameters: Record<string, ConnectionParameterSetParameter | ConnectionParameter> = useMemo(
@@ -448,15 +448,22 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     }
 
     // This value needs to be passed conditionally but the parameter is hidden, so we're manually inputting it here
-    if (
-      supportsServicePrincipalConnection &&
-      Object.keys(unfilteredParameters).includes(SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_GRANT_TYPE)
-    ) {
+    const grantTypeParameter = Object.entries(unfilteredParameters).find(
+      ([key]) => key === SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_GRANT_TYPE
+    )?.[1];
+    if (supportsServicePrincipalConnection && grantTypeParameter) {
       const oauthValue = SERVICE_PRINCIPLE_CONSTANTS.GRANT_TYPE_VALUES.CODE;
       const servicePrincipalValue = SERVICE_PRINCIPLE_CONSTANTS.GRANT_TYPE_VALUES.CLIENT_CREDENTIALS;
-      visibleParameterValues[SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_GRANT_TYPE] = servicePrincipalSelected
-        ? servicePrincipalValue
-        : oauthValue;
+      let outputGrantType = oauthValue;
+      if (isMultiAuth) {
+        const allowedValue = (grantTypeParameter as ConnectionParameterSetParameter)?.allowedValues?.[0];
+        if (allowedValue) {
+          outputGrantType = allowedValue?.value;
+        }
+      } else if (legacyServicePrincipalSelected) {
+        outputGrantType = servicePrincipalValue;
+      }
+      visibleParameterValues[SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_GRANT_TYPE] = outputGrantType;
     }
 
     const alternativeParameterValues = legacyManagedIdentitySelected ? {} : undefined;
@@ -474,6 +481,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
       isUsingDynamicConnection
     );
   }, [
+    isMultiAuth,
     parameterValues,
     supportsServicePrincipalConnection,
     unfilteredParameters,
@@ -486,7 +494,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     selectedParamSetIndex,
     isUsingOAuth,
     capabilityEnabledParameters,
-    servicePrincipalSelected,
+    legacyServicePrincipalSelected,
     showTenantIdSelection,
     operationParameterValues,
     isUsingDynamicConnection,
