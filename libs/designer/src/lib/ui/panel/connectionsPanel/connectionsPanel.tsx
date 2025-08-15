@@ -103,7 +103,9 @@ export const ConnectionPanel = (props: CommonPanelProps) => {
         <XLargeText text={panelHeaderText} />
         <Button aria-label={closeButtonAriaLabel} appearance="subtle" onClick={props.toggleCollapse} icon={<CloseIcon />} />
       </div>
-      <div className="msla-connections-panel-body">{renderContent()}</div>
+      <div className="msla-connections-panel-body" style={{ margin: '10px' }}>
+        {renderContent()}
+      </div>
     </>
   );
 };
