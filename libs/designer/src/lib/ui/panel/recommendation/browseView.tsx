@@ -1,10 +1,21 @@
 import { useAllConnectors } from '../../../core/queries/browse';
 import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
-import { SearchService, getRecordEntry, type Connector } from '@microsoft/logic-apps-shared';
+import { getRecordEntry, type Connector } from '@microsoft/logic-apps-shared';
 import { BrowseGrid, isBuiltInConnector, isCustomConnector, RuntimeFilterTagList } from '@microsoft/designer-ui';
 import { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { useShouldEnableACASession } from './hooks';
+
+const priorityConnectors = [
+  'connectionproviders/request',
+  'connectionProviders/http',
+  'connectionProviders/inlineCode',
+  'serviceProviders/serviceBus',
+  '/managedApis/sql',
+  '/connectionProviders/azureFunctionOperation',
+  'managedApis/office365',
+  'managedApis/sharepointonline',
+];
 
 const defaultFilterConnector = (connector: Connector, runtimeFilter: string): boolean => {
   if (runtimeFilter === 'inapp' && !isBuiltInConnector(connector)) {
@@ -20,16 +31,7 @@ const defaultFilterConnector = (connector: Connector, runtimeFilter: string): bo
   }
   return true;
 };
-const priorityConnectors = [
-  'connectionproviders/request',
-  'connectionProviders/http',
-  'connectionProviders/inlineCode',
-  'serviceProviders/serviceBus',
-  '/managedApis/sql',
-  '/connectionProviders/azureFunctionOperation',
-  'managedApis/office365',
-  'managedApis/sharepointonline',
-];
+
 const getRunTimeValue = (connector: Connector): number => {
   if (isBuiltInConnector(connector)) {
     return 100;
@@ -39,10 +41,12 @@ const getRunTimeValue = (connector: Connector): number => {
   }
   return 300;
 };
+
 const getPriorityValue = (connector: Connector): number => {
   const t = priorityConnectors.findIndex((p) => connector.id.toLowerCase().endsWith(p.toLowerCase()));
   return t !== -1 ? 200 - t : 100;
 };
+
 const defaultSortConnectors = (connectors: Connector[]): Connector[] => {
   return connectors.sort((a, b) => {
     return (
@@ -86,8 +90,7 @@ export const BrowseView = (props: BrowseViewProps) => {
         return true;
       }
 
-      const filterMethod = SearchService().filterConnector?.bind(SearchService()) || defaultFilterConnector;
-      return filterMethod(connector, runtimeFilter);
+      return defaultFilterConnector(connector, runtimeFilter);
     },
     [filters]
   );
@@ -140,8 +143,7 @@ export const BrowseView = (props: BrowseViewProps) => {
 
   const sortedConnectors = useMemo(() => {
     const connectors = allConnectors?.filter(filterItems) ?? [];
-    const sortMethod = SearchService().sortConnectors?.bind(SearchService()) || defaultSortConnectors;
-    return sortMethod(connectors);
+    return defaultSortConnectors(connectors);
   }, [allConnectors, filterItems]);
 
   const onConnectorCardSelected = useCallback(

@@ -1,13 +1,7 @@
 import type { AppDispatch } from '../../../core';
 import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
 import { useIsWithinAgenticLoop } from '../../../core/state/workflow/workflowSelectors';
-import {
-  equals,
-  SearchService,
-  type DiscoveryOpArray,
-  type DiscoveryOperation,
-  type DiscoveryResultTypes,
-} from '@microsoft/logic-apps-shared';
+import { equals, type DiscoveryOpArray, type DiscoveryOperation, type DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
 import { SearchResultsGrid } from '@microsoft/designer-ui';
 import { useDebouncedEffect } from '@react-hookz/web';
 import type { FC } from 'react';
@@ -68,12 +62,12 @@ export const SearchView: FC<SearchViewProps> = ({
       const { type, id } = operation;
 
       // Exclude handoff operations from search results
-      if (equals(type, 'AgentHandoff')) {
+      if (equals(type, constants.NODE.TYPE.HANDOFF)) {
         return false;
       }
 
       // Exclude agent operations unless it's the root of an agentic workflow
-      if ((!isAgenticWorkflow || !isRoot) && type === 'Agent') {
+      if ((!isAgenticWorkflow || !isRoot) && equals(type, constants.NODE.TYPE.AGENT)) {
         return false;
       }
 
@@ -95,7 +89,7 @@ export const SearchView: FC<SearchViewProps> = ({
         return false;
       }
 
-      if (type === constants.NODE.TYPE.NESTED_AGENT && id === 'invokeNestedAgent') {
+      if (equals(type, constants.NODE.TYPE.NESTED_AGENT) && id === 'invokeNestedAgent') {
         if (!shouldEnableNestedAgent) {
           return false;
         }
@@ -112,15 +106,11 @@ export const SearchView: FC<SearchViewProps> = ({
 
   useDebouncedEffect(
     () => {
-      const searchOperations = SearchService().searchOperations?.bind(SearchService());
-
-      const searchResultsPromise = searchOperations
-        ? searchOperations(searchTerm, filters['actionType'], filters['runtime'], filterAgenticLoops)
-        : new DefaultSearchOperationsService(
-            allOperations,
-            shouldEnableParseDocWithMetadata ?? false,
-            shouldEnableACASession ?? false
-          ).searchOperations(searchTerm, filters['actionType'], filters['runtime'], filterAgenticLoops);
+      const searchResultsPromise = new DefaultSearchOperationsService(
+        allOperations,
+        shouldEnableParseDocWithMetadata ?? false,
+        shouldEnableACASession ?? false
+      ).searchOperations(searchTerm, filters['actionType'], filters['runtime'], filterAgenticLoops);
 
       searchResultsPromise.then((results) => {
         setSearchResults(results);
