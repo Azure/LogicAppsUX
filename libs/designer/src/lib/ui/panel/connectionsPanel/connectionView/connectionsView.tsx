@@ -5,7 +5,7 @@ import { useConnectionRefs, useConnector } from '../../../../core/state/connecti
 import { useIsCreatingConnection } from '../../../../core/state/panel/panelSelectors';
 import { setIsCreatingConnection } from '../../../../core/state/panel/panelSlice';
 import { CreateConnectionWrapper } from '../createConnection/createConnectionWrapperFromConnector';
-import { SelectConnectionWrapper } from '../selectConnection/selectConnection';
+import { SelectConnectionWrapper } from '../selectConnection/selectConnectionFromConnector';
 import { Button } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
 import { useCallback, useEffect, useMemo } from 'react';
@@ -79,11 +79,17 @@ export const ConnectionsView = (props: ConnectionsViewProps) => {
   const renderContent = useCallback(() => {
     switch (panelStatus) {
       case 'select':
-        return <SelectConnectionWrapper />;
+        return (
+          <SelectConnectionWrapper
+            connectorId={connectorId}
+            onConnectionSuccessful={props.onConnectionSuccessful}
+            onConnectionClose={props.closeView}
+          />
+        );
       case 'create':
         return <CreateConnectionWrapper connectorId={connectorId} onConnectionSuccessful={props.onConnectionSuccessful} />;
     }
-  }, [connectorId, panelStatus, props.onConnectionSuccessful]);
+  }, [connectorId, panelStatus, props.closeView, props.onConnectionSuccessful]);
 
   return (
     <>
