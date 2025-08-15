@@ -4,7 +4,7 @@ import type { AppDispatch, RootState } from '../../../core';
 import { clearPanel, collapsePanel, updateParameterValidation, validateParameter } from '../../../core';
 import { useReadOnly, useSuppressDefaultNodeSelectFunctionality } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { setShowDeleteModalNodeId } from '../../../core/state/designerView/designerViewSlice';
-import { useIsA2AWorkflow } from '../../..//core/state/designerView/designerViewSelectors';
+import { useIsA2AWorkflow } from '../../../core/state/designerView/designerViewSelectors';
 import {
   useIsPanelCollapsed,
   useOperationAlternateSelectedNode,
