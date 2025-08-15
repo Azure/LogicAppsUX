@@ -47,7 +47,9 @@ import {
   useIsWithinAgenticLoop,
   useSubgraphRunData,
   useRunIndex,
+  useFlowErrorsForNode,
 } from '../../core/state/workflow/workflowSelectors';
+import { useIsA2AWorkflow } from '../../core/state/designerView/designerViewSelectors';
 import { setRepetitionRunData } from '../../core/state/workflow/workflowSlice';
 import { getRepetitionName } from '../common/LoopsPager/helper';
 import { DropZone } from '../connections/dropzone';
@@ -59,11 +61,13 @@ import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
-import { Handle, Position, type NodeProps } from '@xyflow/react';
+import type { NodeProps } from '@xyflow/react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { CopyTooltip } from '../common/DesignerContextualMenu/CopyTooltip';
+import { EdgeDrawSourceHandle } from './handles/EdgeDrawSourceHandle';
+import { EdgeDrawTargetHandle } from './handles/EdgeDrawTargetHandle';
 
-const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
+const DefaultNode = ({ id }: NodeProps) => {
   const readOnly = useReadOnly();
   const isMonitoringView = useMonitoringView();
   const isUnitTest = useUnitTest();
@@ -98,6 +102,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const selfRunData = useRunData(id);
   const parentSubgraphRunData = useSubgraphRunData(parentNodeId ?? '');
   const toolRunIndex = useRunIndex(graphId);
+  const isA2AWorkflow = useIsA2AWorkflow();
 
   const { isFetching: isRepetitionFetching, data: repetitionRunData } = useNodeRepetition(
     !!isMonitoringView,
@@ -269,6 +274,13 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     description: 'Text to explain that there are invalid parameters for this node',
   });
 
+  const flowErrors = useFlowErrorsForNode(id);
+  const flowErrorText = intl.formatMessage({
+    defaultMessage: 'Action unreachable',
+    id: 'PoPO/T',
+    description: 'Text to explain that there are flow structure errors for this node',
+  });
+
   const { errorMessage, errorLevel } = useMemo(() => {
     if (errorInfo && errorInfo.level !== ErrorLevel.DynamicOutputs) {
       const { message, level } = errorInfo;
@@ -291,6 +303,10 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
       return { errorMessage: parameterValidationErrorText, errorLevel: MessageBarType.severeWarning };
     }
 
+    if (flowErrors?.length > 0) {
+      return { errorMessage: flowErrorText, errorLevel: MessageBarType.severeWarning };
+    }
+
     if (isMonitoringView) {
       const { status: statusRun, error: errorRun, code: codeRun } = selfRunData ?? {};
       return getMonitoringError(errorRun, statusRun, codeRun);
@@ -302,9 +318,11 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     isOperationQueryError,
     settingValidationErrors?.length,
     parameterValidationErrors?.length,
+    flowErrors?.length,
     opManifestErrorText,
     settingValidationErrorText,
     parameterValidationErrorText,
+    flowErrorText,
     isMonitoringView,
     selfRunData,
   ]);
@@ -318,7 +336,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   return (
     <>
       <div className="nopan" ref={ref as any}>
-        <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
+        <EdgeDrawTargetHandle />
         <Card
           active={isCardActive}
           showStatusPill={isMonitoringView && isCardActive}
@@ -352,9 +370,10 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
           isSecureInputsOutputs={isSecureInputsOutputs}
           isLoadingDynamicData={isLoadingDynamicData}
           nodeIndex={nodeIndex}
+          subtleBackground={isA2AWorkflow && isTrigger}
         />
         {showCopyCallout ? <CopyTooltip id={id} targetRef={ref} hideTooltip={clearCopyTooltip} /> : null}
-        <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
+        <EdgeDrawSourceHandle />
       </div>
       {showLeafComponents ? (
         <div className={'edge-drop-zone-container'}>

@@ -7,9 +7,10 @@ import { AddActionCard, ADD_CARD_TYPE, NoActionCard } from '@microsoft/designer-
 import { guid } from '@microsoft/logic-apps-shared';
 import { memo, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
-import { Handle, Position, type NodeProps } from '@xyflow/react';
+import type { NodeProps } from '@xyflow/react';
+import { DefaultHandle } from './handles/DefaultHandle';
 
-const PlaceholderNode = ({ targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
+const PlaceholderNode = ({ id }: NodeProps) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const selected = useIsNodeSelectedInOperationPanel(id);
@@ -23,9 +24,9 @@ const PlaceholderNode = ({ targetPosition = Position.Top, sourcePosition = Posit
 
   return (
     <div>
-      <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
+      <DefaultHandle type="target" />
       {isReadOnly ? <NoActionCard /> : <AddActionCard addCardType={ADD_CARD_TYPE.TRIGGER} onClick={openAddNodePanel} selected={selected} />}
-      <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
+      <DefaultHandle type="source" />
     </div>
   );
 };

@@ -1,4 +1,24 @@
+parameters:
+  - name: publishVersion
+    type: string
+    
 steps:
+  - script: node scripts/update-versions.js ${{ parameters.publishVersion }}
+    displayName: "Update Version in Package Files"
+    workingDirectory: $(working_directory)
+    condition: succeeded()
+
+  - pwsh: |
+      (Get-Content apps/vs-code-designer/src/package.json -Raw) -replace '"aiKey":\s*"[^"]*"', '"aiKey": "$(AI_KEY)"' | Set-Content apps/vs-code-designer/src/package.json -NoNewline
+    displayName: "Set Designer Extension VSIX aiKey in package.json"
+    workingDirectory: $(working_directory)
+    condition: succeeded()
+
+  - script: npx replace-in-file setInGitHubBuild $(AI_KEY) apps/vs-code-designer/src/main.ts
+    displayName: "Replace Placeholder with Telemetry Key"
+    workingDirectory: $(working_directory)
+    condition: succeeded()
+
   - script: pnpm run vscode:designer:pack
     displayName: "Package with pnpm"
     workingDirectory: $(working_directory)

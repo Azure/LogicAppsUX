@@ -8,10 +8,10 @@ import { CodeEditor } from '../../code';
 import type { FileNameChangeHandler } from '../../code';
 import { isCustomCode } from '../../code/util';
 import { Combobox } from '../../combobox';
-import constants from '../../constants';
-import { CopyInputControl } from '../../copyinputcontrol';
-import { DictionaryEditor } from '../../dictionary';
 import { DropdownEditor } from '../../dropdown';
+import constants from '../../constants';
+import { CopyInputControlWithAgent } from '../../copyinputcontrol/CopyInputControlWithAgent';
+import { DictionaryEditor } from '../../dictionary';
 import type { ValueSegment } from '../../editor';
 import type {
   CallbackHandler,
@@ -30,12 +30,11 @@ import { FloatingActionMenuInputs } from '../../floatingactionmenu/floatingactio
 import { FloatingActionMenuOutputs } from '../../floatingactionmenu/floatingactionmenuoutputs';
 import { HTMLEditor } from '../../html';
 import { Label } from '../../label';
-import { MixedInputEditor } from '../../mixedinputeditor/mixedinputeditor';
 import type { PickerCallbackHandlers } from '../../picker/filepickerEditor';
 import { FilePickerEditor } from '../../picker/filepickerEditor';
 import { QueryBuilderEditor } from '../../querybuilder';
-import { HybridQueryBuilderEditor } from '../../querybuilder/HybridQueryBuilder';
 import { SimpleQueryBuilder } from '../../querybuilder/SimpleQueryBuilder';
+import { HybridQueryBuilderEditor } from '../../querybuilder/HybridQueryBuilder';
 import { ScheduleEditor } from '../../recurrence';
 import { SchemaEditor } from '../../schemaeditor';
 import type { SettingProps } from './';
@@ -218,6 +217,7 @@ export const TokenField = ({
           tokenPickerButtonProps={tokenpickerButtonProps}
           agentParameterButtonProps={agentParameterButtonProps}
           tokenMapping={tokenMapping}
+          hideUserInstructions={editorOptions?.hideUserInstructions}
           loadParameterValueFromString={loadParameterValueFromString}
           serializeValue={onValueChange}
           getTokenPicker={getTokenPicker}
@@ -330,13 +330,22 @@ export const TokenField = ({
       );
 
     case constants.PARAMETER.EDITOR.COPYABLE:
-      return <CopyInputControl placeholder={placeholder} text={value[0].value} />;
+      return (
+        <CopyInputControlWithAgent
+          placeholder={placeholder}
+          text={value[0].value}
+          showAgentViewer={editorOptions?.showAgentViewer}
+          queryParams={editorOptions?.queryParams}
+        />
+      );
 
     case constants.PARAMETER.EDITOR.CONDITION:
-      return editorViewModel.isOldFormat ? (
+      return editorOptions?.isOldFormat ? (
         <SimpleQueryBuilder
           readonly={readOnly}
-          itemValue={editorViewModel.itemValue ?? value}
+          itemValue={editorViewModel?.itemValue}
+          rowFormat={editorViewModel?.isRowFormat}
+          initialValue={value}
           tokenMapping={tokenMapping}
           loadParameterValueFromString={loadParameterValueFromString}
           getTokenPicker={getTokenPicker}
@@ -463,6 +472,7 @@ export const TokenField = ({
           getTokenPicker={getTokenPicker}
           onChange={onValueChange}
           dataAutomationId={`msla-setting-token-editor-htmleditor-${labelForAutomationId}`}
+          valueType={constants.SWAGGER.TYPE.ANY}
         />
       );
 
@@ -522,18 +532,6 @@ export const TokenField = ({
           loadParameterValueFromString={loadParameterValueFromString}
         />
       );
-
-    case constants.PARAMETER.EDITOR.MIXEDINPUTEDITOR: {
-      return (
-        <MixedInputEditor
-          supportedTypes={editorOptions?.supportedTypes}
-          useStaticInputs={editorOptions?.useStaticInputs}
-          initialValue={value}
-          isRequestApiConnectionTrigger={editorOptions?.isRequestApiConnectionTrigger}
-          onChange={onValueChange ?? (() => {})}
-        />
-      );
-    }
 
     default:
       return (

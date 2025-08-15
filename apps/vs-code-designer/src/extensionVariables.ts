@@ -23,6 +23,7 @@ import {
   type TestController,
   type MessageOptions,
 } from 'vscode';
+import type { AzureResourcesExtensionApi } from '@microsoft/vscode-azureresources-api';
 
 /**
  * Namespace for common variables used throughout the extension. They must be initialized in the activate() method of extension.ts
@@ -66,6 +67,7 @@ export namespace ext {
 
   // Resource group API
   export let rgApi: AzureHostExtensionApi;
+  export let rgApiV2: AzureResourcesExtensionApi;
 
   // Data Mapper panel
   export const dataMapPanelManagers: DataMapperPanelDictionary = {};

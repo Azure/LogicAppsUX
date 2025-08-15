@@ -1,14 +1,20 @@
 import type { AppDispatch } from '../../../core';
 import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
 import { useIsWithinAgenticLoop } from '../../../core/state/workflow/workflowSelectors';
-import { SearchService, type DiscoveryOpArray, type DiscoveryOperation, type DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
+import {
+  equals,
+  SearchService,
+  type DiscoveryOpArray,
+  type DiscoveryOperation,
+  type DiscoveryResultTypes,
+} from '@microsoft/logic-apps-shared';
 import { SearchResultsGrid } from '@microsoft/designer-ui';
 import { useDebouncedEffect } from '@react-hookz/web';
 import type { FC } from 'react';
 import { useCallback, useEffect, useState, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { useDiscoveryPanelRelationshipIds, useIsAddingAgentTool } from '../../../core/state/panel/panelSelectors';
-import { useAgenticWorkflow } from '../../../core/state/designerView/designerViewSelectors';
+import { useIsAgenticWorkflow } from '../../../core/state/designerView/designerViewSelectors';
 import { useShouldEnableACASession, useShouldEnableNestedAgent, useShouldEnableParseDocumentWithMetadata } from './hooks';
 import { DefaultSearchOperationsService } from './SearchOpeationsService';
 import constants from '../../../common/constants';
@@ -37,7 +43,7 @@ export const SearchView: FC<SearchViewProps> = ({
   onOperationClick,
   displayRuntimeInfo,
 }) => {
-  const isAgenticWorkflow = useAgenticWorkflow();
+  const isAgenticWorkflow = useIsAgenticWorkflow();
   const shouldEnableParseDocWithMetadata = useShouldEnableParseDocumentWithMetadata();
   const shouldEnableACASession = useShouldEnableACASession();
   const shouldEnableNestedAgent = useShouldEnableNestedAgent();
@@ -60,6 +66,11 @@ export const SearchView: FC<SearchViewProps> = ({
   const filterAgenticLoops = useCallback(
     (operation: DiscoveryOperation<DiscoveryResultTypes>): boolean => {
       const { type, id } = operation;
+
+      // Exclude handoff operations from search results
+      if (equals(type, 'AgentHandoff')) {
+        return false;
+      }
 
       // Exclude agent operations unless it's the root of an agentic workflow
       if ((!isAgenticWorkflow || !isRoot) && type === 'Agent') {
@@ -88,7 +99,7 @@ export const SearchView: FC<SearchViewProps> = ({
         if (!shouldEnableNestedAgent) {
           return false;
         }
-        if (!isWithinAgenticLoop) {
+        if (!(isWithinAgenticLoop || isAgentTool)) {
           return false;
         }
         return true;

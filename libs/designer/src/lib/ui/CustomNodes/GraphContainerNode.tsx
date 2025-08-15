@@ -12,9 +12,11 @@ import { css } from '@fluentui/react';
 import { GraphContainer } from '@microsoft/designer-ui';
 import { SUBGRAPH_TYPES, useNodeSize, useNodeLeafIndex, isNullOrUndefined, removeIdTag } from '@microsoft/logic-apps-shared';
 import { memo } from 'react';
-import { Handle, Position, type NodeProps } from '@xyflow/react';
+import type { NodeProps } from '@xyflow/react';
+import { EdgeDrawSourceHandle } from './handles/EdgeDrawSourceHandle';
+import { DefaultHandle } from './handles/DefaultHandle';
 
-const GraphContainerNode = ({ targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
+const GraphContainerNode = ({ id }: NodeProps) => {
   const readOnly = useReadOnly();
 
   const selected = useIsNodeSelectedInOperationPanel(id);
@@ -40,9 +42,9 @@ const GraphContainerNode = ({ targetPosition = Position.Top, sourcePosition = Po
           height: nodeSize?.height ?? 0,
         }}
       >
-        <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
+        <DefaultHandle type="target" />
         <GraphContainer id={id} active={isMonitoringView ? !isNullOrUndefined(runData?.status) : true} selected={selected} />
-        <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
+        {isSubgraphContainer ? <DefaultHandle type="source" /> : <EdgeDrawSourceHandle />}
       </div>
       {showLeafComponents && (
         <div className="edge-drop-zone-container">

@@ -7,6 +7,7 @@ import * as monaco from 'monaco-editor';
 import type { IScrollEvent, editor } from 'monaco-editor';
 import type { MutableRefObject } from 'react';
 import { useState, useEffect, forwardRef, useRef, useCallback } from 'react';
+import { useMonacoStyles } from './monaco.styles';
 
 loader.config({ monaco });
 
@@ -62,6 +63,14 @@ type SupportedEditorOptions = Pick<
   | 'overviewRulerBorder'
   | 'wrappingIndent'
   | 'automaticLayout'
+  | 'parameterHints'
+  | 'suggest'
+  | 'hover'
+  | 'quickSuggestions'
+  | 'suggestOnTriggerCharacters'
+  | 'acceptSuggestionOnEnter'
+  | 'tabCompletion'
+  | 'fixedOverflowWidgets'
 > &
   Pick<editor.IGlobalEditorOptions, 'tabSize' | 'insertSpaces'>;
 
@@ -73,7 +82,7 @@ export type MonacoOptions = SupportedEditorOptions & {
 export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps>(
   (
     {
-      className = 'msla-monaco',
+      className,
       contextMenu = false,
       defaultValue = '',
       readOnly = false,
@@ -112,6 +121,7 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
     ref
   ) => {
     const { isInverted } = useTheme();
+    const styles = useMonacoStyles();
     const [canRender, setCanRender] = useState(false);
     const currentRef = useRef<editor.IStandaloneCodeEditor>();
 
@@ -251,11 +261,11 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
     };
 
     return (
-      <div className="msla-monaco-container" style={options.monacoContainerStyle} data-automation-id={`monaco-editor-${label}`}>
+      <div className={styles.container} style={options.monacoContainerStyle} data-automation-id={`monaco-editor-${label}`}>
         {canRender ? (
           <Editor
             keepCurrentModel={true}
-            className={className}
+            className={className || styles.root}
             options={{
               bracketPairColorization: {
                 enabled: true,
@@ -276,6 +286,22 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
               ariaLabel: label,
               wordWrap,
               language,
+              // Enhanced signature help and parameter hints behavior
+              parameterHints: {
+                enabled: true,
+                cycle: true,
+              },
+              suggest: {
+                showStatusBar: true,
+                preview: true,
+                previewMode: 'prefix',
+              },
+              // // Better autocomplete behavior
+              quickSuggestions: {
+                other: true,
+                comments: false,
+                strings: false,
+              },
               ...options,
             }}
             value={value}

@@ -11,7 +11,7 @@ import {
   azureWebJobsStorageKey,
   cloudSettingsFileName,
   localSettingsFileName,
-  ProjectDirectoryPath,
+  ProjectDirectoryPathKey,
   webhookRedirectHostUri,
 } from '../../constants';
 import { isString } from '@microsoft/logic-apps-shared';
@@ -52,7 +52,7 @@ export async function syncCloudSettings(context: IActionContext, node: vscode.Ur
 
   // Exclude managed API connection keys from cloud settings
   // TODO: REMOTEDEBUGGINGVERSION should not be in local.settings.json
-  const settingsToExclude: string[] = [webhookRedirectHostUri, azureWebJobsStorageKey, ProjectDirectoryPath, 'REMOTEDEBUGGINGVERSION'];
+  const settingsToExclude: string[] = [webhookRedirectHostUri, azureWebJobsStorageKey, ProjectDirectoryPathKey, 'REMOTEDEBUGGINGVERSION'];
   const cloudSettingValues = {};
   const connectionsJson = await getConnectionsJson(logicAppProjectPath);
   if (connectionsJson) {

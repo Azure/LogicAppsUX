@@ -16,6 +16,7 @@ import {
   nodeJsBinaryPathSettingKey,
   funcCoreToolsBinaryPathSettingKey,
   funcDependencyName,
+  extensionBundleId,
 } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
@@ -36,7 +37,7 @@ import * as vscode from 'vscode';
 import AdmZip = require('adm-zip');
 import { isNullOrUndefined, isString } from '@microsoft/logic-apps-shared';
 import { setFunctionsCommand } from './funcCoreTools/funcVersion';
-import { startAllDesignTimeApis } from './codeless/startDesignTimeApi';
+import { startAllDesignTimeApis, stopAllDesignTimeApis } from './codeless/startDesignTimeApi';
 
 /**
  * Download and Extracts dependency zip.
@@ -96,10 +97,22 @@ export async function downloadAndExtractDependency(
             )
           : await executeCommand(ext.outputChannel, undefined, dependencyFilePath, '-InstallDir', targetFolder, '-Channel', `${version}.0`);
       } else {
+        if (dependencyName === funcDependencyName || dependencyName === extensionBundleId) {
+          stopAllDesignTimeApis();
+        }
         await extractDependency(dependencyFilePath, targetFolder, dependencyName);
         vscode.window.showInformationMessage(localize('successInstall', `Successfully installed ${dependencyName}`));
         if (dependencyName === funcDependencyName) {
+          // Add execute permissions for func and gozip binaries
+          if (process.platform !== Platform.windows) {
+            fs.chmodSync(`${targetFolder}/func`, 0o755);
+            fs.chmodSync(`${targetFolder}/gozip`, 0o755);
+            fs.chmodSync(`${targetFolder}/in-proc8/func`, 0o755);
+            fs.chmodSync(`${targetFolder}/in-proc6/func`, 0o755);
+          }
           await setFunctionsCommand();
+          await startAllDesignTimeApis();
+        } else if (dependencyName === extensionBundleId) {
           await startAllDesignTimeApis();
         }
       }
@@ -329,6 +342,7 @@ function cleanDirectory(targetFolder: string): void {
 
 async function extractDependency(dependencyFilePath: string, targetFolder: string, dependencyName: string): Promise<void> {
   // Clear targetFolder's contents without deleting the folder itself
+  // TODO(aeldridge): It is possible there is a lock on a file in targetFolder, should be handled.
   cleanDirectory(targetFolder);
   await executeCommand(ext.outputChannel, undefined, 'echo', `Extracting ${dependencyFilePath}`);
   try {

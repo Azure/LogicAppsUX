@@ -12,9 +12,9 @@ test(
     await GoToMockWorkflow(page, 'Panel');
 
     await page.getByTestId('card-http').click();
-    await page.getByText('Showing 0 of').click();
-    await page.getByText('Authentication').click();
-    await page.getByLabel('Operation details panel').getByText('Authentication').click();
+    await page.getByPlaceholder('Showing 0 of').click();
+    await page.getByRole('menuitemcheckbox', { name: 'Authentication' }).click();
+    await page.getByPlaceholder('Showing 0 of').click();
 
     await page.getByText('None').click();
     await page.getByRole('option', { name: 'Basic' }).click();

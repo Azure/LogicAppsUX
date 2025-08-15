@@ -192,10 +192,15 @@ export const Networking = ({
     id: 'hMf2TA',
     description: 'sublabel for content transfer setting',
   });
-  const chunkedTransferNodeSizeLabel = intl.formatMessage({
-    defaultMessage: 'Chunk size',
-    id: 'STWbak',
-    description: 'label for chunked transfer node size',
+  const uploadChunkSizeLabel = intl.formatMessage({
+    defaultMessage: 'Upload chunk size',
+    id: 'Lu+3Y4',
+    description: 'label for upload chunk size',
+  });
+  const downloadChunkSizeLabel = intl.formatMessage({
+    defaultMessage: 'Download chunk size',
+    id: '0bqihO',
+    description: 'label for download chunk size',
   });
   const uploadChunkSizePlaceholder = intl.formatMessage(
     {
@@ -301,7 +306,6 @@ export const Networking = ({
         checked: !disableAsyncPattern?.value,
         onToggleInputChange: (_, checked) => onAsyncPatternToggle(!checked),
         customLabel: getSettingLabel(asyncPatternTitle, asyncPatternTooltipText),
-        inlineLabel: true,
         ariaLabel: asyncPatternTitle,
       },
       visible: disableAsyncPattern?.isSupported,
@@ -410,31 +414,28 @@ export const Networking = ({
         readOnly,
         value: uploadChunk?.value?.uploadChunkSize?.toString() ?? '',
         placeholder: uploadChunkSizePlaceholder,
-        customLabel: getSettingLabel('', /* infoTooltipText */ undefined, /* SettingDescription */ undefined, chunkedTransferNodeSizeLabel),
+        customLabel: getSettingLabel('', /* infoTooltipText */ undefined, /* SettingDescription */ undefined, uploadChunkSizeLabel),
         onValueChange: (_, newVal) => onUploadChunkSizeChange(newVal as string),
-        ariaLabel: chunkedTransferNodeSizeLabel,
+        ariaLabel: uploadChunkSizeLabel,
       },
       visible: uploadChunk?.isSupported && uploadChunkMetadata?.acceptUploadSize && chunkedTransferMode,
     };
   };
-
   const getDownloadChunkSizeSetting = (): Settings => {
+    const isDownloadChunkSupported = downloadChunkMetadata?.acceptDownloadSize ?? false;
+    const shouldShowSetting = !hideContentTransferSettings && isDownloadChunkSupported;
+
     return {
       settingType: 'SettingTextField',
       settingProp: {
         readOnly,
         value: downloadChunkSize?.value?.toString() ?? '',
         placeholder: downloadChunkSizePlaceholder,
-        customLabel: getSettingLabel(
-          contentTransferTitle,
-          /* infoTooltipText */ undefined,
-          downloadContentTransferDescription,
-          chunkedTransferNodeSizeLabel
-        ),
+        customLabel: getSettingLabel('', /* infoTooltipText */ undefined, downloadContentTransferDescription, downloadChunkSizeLabel),
         onValueChange: (_, newVal) => onDownloadChunkSizeChange(newVal as string),
-        ariaLabel: chunkedTransferNodeSizeLabel,
+        ariaLabel: downloadChunkSizeLabel,
       },
-      visible: hideContentTransferSettings ? !hideContentTransferSettings : downloadChunkMetadata?.acceptDownloadSize,
+      visible: shouldShowSetting,
     };
   };
 

@@ -39,7 +39,7 @@ type RowProps = {
   isBottom: boolean;
   tokenMapping?: Record<string, ValueSegment>;
   loadParameterValueFromString?: loadParameterValueFromStringHandler;
-  getTokenPicker: GetTokenPickerHandler;
+  getTokenPicker?: GetTokenPickerHandler;
   readonly?: boolean;
   handleMove?: (childIndex: number, moveOption: MoveOption, itemToMove?: GroupItemProps | RowItemProps) => void;
   handleDeleteChild?: (indexToDelete: number | number[]) => void;
@@ -270,7 +270,7 @@ export const Row = ({
           editorBlur={handleKeySave}
           tokenPickerButtonProps={{
             location: TokenPickerButtonLocation.Left,
-            newlineVerticalOffset: isSimpleQueryBuilder ? 16.5 : 16,
+            newlineVerticalOffset: 16.5,
             horizontalOffSet: isSimpleQueryBuilder ? undefined /* uses default of 38*/ : 33,
           }}
           {...baseEditorProps}
@@ -287,7 +287,7 @@ export const Row = ({
           clearEditorOnTokenInsertion={clearEditorOnTokenInsertion}
           tokenPickerButtonProps={{
             location: TokenPickerButtonLocation.Left,
-            newlineVerticalOffset: isSimpleQueryBuilder ? 16.5 : 16,
+            newlineVerticalOffset: 16.5,
             horizontalOffSet: 33,
           }}
           {...baseEditorProps}

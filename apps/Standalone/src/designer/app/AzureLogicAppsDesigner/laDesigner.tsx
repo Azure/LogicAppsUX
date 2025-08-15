@@ -15,6 +15,7 @@ import {
   getCustomCodeAppFiles,
   listCallbackUrl,
   saveWorkflowStandard,
+  useAgentUrl,
   useAllCustomCodeFiles,
   useAppSettings,
   useCurrentObjectId,
@@ -50,8 +51,9 @@ import {
   optional,
   BaseCognitiveServiceService,
   RoleService,
+  resolveConnectionsReferences,
 } from '@microsoft/logic-apps-shared';
-import type { ContentType, IHostService, IWorkflowService } from '@microsoft/logic-apps-shared';
+import type { AgentQueryParams, ContentType, IHostService, IWorkflowService } from '@microsoft/logic-apps-shared';
 import type { AllCustomCodeFiles, CustomCodeFileNameMapping, Workflow } from '@microsoft/logic-apps-designer';
 import {
   DesignerProvider,
@@ -67,6 +69,7 @@ import {
   TriggerDescriptionDialog,
   getMissingRoleDefinitions,
   roleQueryKeys,
+  isAgentWorkflow,
 } from '@microsoft/logic-apps-designer';
 import axios from 'axios';
 import isEqual from 'lodash.isequal';
@@ -101,6 +104,7 @@ const DesignerEditor = () => {
     hostOptions,
     hostingPlan,
     showConnectionsPanel,
+    showEdgeDrawing,
     showPerformanceDebug,
     suppressDefaultNodeSelect,
   } = useSelector((state: RootState) => state.workflowLoader);
@@ -111,6 +115,7 @@ const DesignerEditor = () => {
   const { data, isLoading, isError, error } = useWorkflowAndArtifactsStandard(workflowId);
   const { data: settingsData, isLoading: settingsLoading, isError: settingsIsError, error: settingsError } = useAppSettings(siteResourceId);
   const { data: workflowAppData, isLoading: appLoading } = useWorkflowApp(siteResourceId, useHostingPlan());
+  const { data: agentUrlData } = useAgentUrl(siteResourceId, workflowName, workflowAppData?.properties?.defaultHostName ?? '');
   const { data: tenantId } = useCurrentTenantId();
   const { data: objectId } = useCurrentObjectId();
   const [designerID, setDesignerID] = useState(guid());
@@ -119,7 +124,7 @@ const DesignerEditor = () => {
     id: guid(),
   });
   const [designerView, setDesignerView] = useState(true);
-  const codeEditorRef = useRef<{ getValue: () => string | undefined }>(null);
+  const codeEditorRef = useRef<{ getValue: () => string | undefined; hasChanges: () => boolean }>(null);
   const originalConnectionsData = useMemo(() => data?.properties.files[Artifact.ConnectionsFile] ?? {}, [data?.properties.files]);
   const originalCustomCodeData = useMemo(() => Object.keys(customCodeData ?? {}), [customCodeData]);
   const parameters = useMemo(() => data?.properties.files[Artifact.ParametersFile] ?? {}, [data?.properties.files]);
@@ -127,12 +132,7 @@ const DesignerEditor = () => {
   const displayCopilotChatbot = showChatBot && designerView;
 
   const connectionsData = useMemo(
-    () =>
-      WorkflowUtility.resolveConnectionsReferences(
-        JSON.stringify(clone(originalConnectionsData ?? {})),
-        parameters,
-        settingsData?.properties ?? {}
-      ),
+    () => resolveConnectionsReferences(JSON.stringify(clone(originalConnectionsData ?? {})), parameters, settingsData?.properties ?? {}),
     [originalConnectionsData, parameters, settingsData?.properties]
   );
 
@@ -152,11 +152,7 @@ const DesignerEditor = () => {
 
     if (connectionInfo) {
       // TODO(psamband): Add new settings in this blade so that we do not resolve all the appsettings in the connectionInfo.
-      const resolvedConnectionInfo = WorkflowUtility.resolveConnectionsReferences(
-        JSON.stringify(connectionInfo),
-        {},
-        settingsData?.properties
-      );
+      const resolvedConnectionInfo = resolveConnectionsReferences(JSON.stringify(connectionInfo), {}, settingsData?.properties);
       delete resolvedConnectionInfo.displayName;
 
       return {
@@ -183,6 +179,7 @@ const DesignerEditor = () => {
         isHybridLogicApp,
         connectionsData ?? {},
         workflowAppData as WorkflowApp,
+        agentUrlData,
         addConnectionDataInternal,
         getConnectionConfiguration,
         tenantId,
@@ -239,84 +236,6 @@ const DesignerEditor = () => {
     },
     [dispatch]
   );
-
-  const workflowDefinition = useMemo(() => {
-    if (equals(workflow?.kind ?? '', 'Agentic', true)) {
-      if (workflow?.definition) {
-        const { actions, triggers, outputs, parameters } = workflow.definition;
-        if (
-          Object.keys(actions ?? {}).length === 0 &&
-          Object.keys(triggers ?? {}).length === 0 &&
-          Object.keys(outputs ?? {}).length === 0 &&
-          Object.keys(parameters ?? {}).length === 0
-        ) {
-          return {
-            ...workflow.definition,
-            actions: {
-              Default_Agent: {
-                type: 'Agent',
-                limit: {},
-                inputs: {
-                  parameters: {
-                    deploymentId: '',
-                    messages: '',
-                    agentModelType: 'AzureOpenAI',
-                    agentModelSettings: {
-                      agentHistoryReductionSettings: {
-                        agentHistoryReductionType: 'maximumTokenCountReduction',
-                        maximumTokenCount: 128000,
-                      },
-                    },
-                  },
-                  modelConfigurations: {
-                    model1: {
-                      referenceName: '',
-                    },
-                  },
-                },
-                tools: {},
-                runAfter: {},
-              },
-            },
-          };
-        }
-      } else {
-        return {
-          $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
-          contentVersion: '1.0.0.0',
-          actions: {
-            Default_Agent: {
-              type: 'Agent',
-              limit: {},
-              inputs: {
-                parameters: {
-                  deploymentId: '',
-                  messages: '',
-                  agentModelType: 'AzureOpenAI',
-                  agentModelSettings: {
-                    agentHistoryReductionSettings: {
-                      agentHistoryReductionType: 'maximumTokenCountReduction',
-                      maximumTokenCount: 128000,
-                    },
-                  },
-                },
-                modelConfigurations: {
-                  model1: {
-                    referenceName: '',
-                  },
-                },
-              },
-              tools: {},
-              runAfter: {},
-            },
-          },
-          outputs: {},
-          triggers: {},
-        };
-      }
-    }
-    return workflow?.definition;
-  }, [workflow?.definition, workflow?.kind]);
 
   if (isLoading || appLoading || settingsLoading || customCodeLoading) {
     return <></>;
@@ -395,7 +314,7 @@ const DesignerEditor = () => {
         ...connectionsData?.serviceProviderConnections,
         ...newServiceProviderConnections,
       };
-      if (workflow?.kind?.toLowerCase() === 'agentic') {
+      if (isAgentWorkflow(workflow?.kind ?? '')) {
         (connectionsData as ConnectionsData).agentConnections = {
           ...connectionsData?.agentConnections,
           ...newAgentConnections,
@@ -413,7 +332,7 @@ const DesignerEditor = () => {
          */
         for (const [_refKey, agentConnection] of Object.entries(newAgentConnections)) {
           if (agentConnection?.authentication?.type === 'ManagedServiceIdentity') {
-            const definitionNames = ['Azure AI Administrator', 'Cognitive Services Contributor'];
+            const definitionNames = ['Azure AI User', 'Azure AI Administrator', 'Cognitive Services Contributor'];
             const missingRoleAssignments = await getMissingRoleDefinitions(agentConnection?.resourceId, definitionNames);
             const assignmentPromises = [];
             for (const roleDefinition of missingRoleAssignments) {
@@ -490,7 +409,9 @@ const DesignerEditor = () => {
     } else {
       try {
         const codeToConvert = JSON.parse(codeEditorRef.current?.getValue() ?? '');
-        await validateWorkflowStandard(siteResourceId, workflowName, codeToConvert);
+        if (codeEditorRef.current?.hasChanges() && !isEqual(codeToConvert, { definition: workflow?.definition, kind: workflow?.kind })) {
+          await validateWorkflowStandard(siteResourceId, workflowName, codeToConvert);
+        }
         setWorkflow((prevState) => ({
           ...prevState,
           definition: codeToConvert.definition,
@@ -525,13 +446,14 @@ const DesignerEditor = () => {
             ...getSKUDefaultHostOptions(Constants.SKU.STANDARD),
           },
           showConnectionsPanel,
+          showEdgeDrawing,
           showPerformanceDebug,
         }}
       >
         {workflow?.definition ? (
           <BJSWorkflowProvider
             workflow={{
-              definition: workflowDefinition,
+              definition: workflow?.definition,
               connectionReferences,
               parameters,
               kind: workflow?.kind,
@@ -611,6 +533,7 @@ const getDesignerServices = (
   isHybrid: boolean,
   connectionsData: ConnectionsData,
   workflowApp: WorkflowApp,
+  agentUrlData: { url: string; hostName: string; queryParams?: AgentQueryParams } | undefined,
   addConnection: (data: ConnectionAndAppSetting) => Promise<void>,
   getConfiguration: (connectionId: string) => Promise<any>,
   tenantId: string | undefined,
@@ -657,7 +580,7 @@ const getDesignerServices = (
         }
       : { appName, identity: workflowApp?.identity as any },
     readConnections: () => {
-      return WorkflowUtility.resolveConnectionsReferences(JSON.stringify(clone(connectionsData ?? {})), undefined, appSettings);
+      return resolveConnectionsReferences(JSON.stringify(clone(connectionsData ?? {})), undefined, appSettings);
     },
     writeConnection: addConnection as any,
     connectionCreationClients: {
@@ -701,7 +624,6 @@ const getDesignerServices = (
     ...defaultServiceParams,
     clientSupportedOperations: [
       ['connectionProviders/localWorkflowOperation', 'invokeWorkflow'],
-      ['connectionProviders/localWorkflowOperation', 'invokeNestedAgent'],
       ['connectionProviders/xmlOperations', 'xmlValidation'],
       ['connectionProviders/xmlOperations', 'xmlTransform'],
       ['connectionProviders/liquidOperations', 'liquidJsonToJson'],
@@ -888,6 +810,7 @@ const getDesignerServices = (
 
   const workflowService: IWorkflowService = {
     getCallbackUrl: (triggerName: string) => listCallbackUrl(workflowIdWithHostRuntime, triggerName),
+    getAgentUrl: () => Promise.resolve(agentUrlData || { url: '', hostName: '' }),
     getAppIdentity: () => workflowApp?.identity,
     isExplicitAuthRequiredForManagedIdentity: () => true,
     isSplitOnSupported: () => !!isStateful,

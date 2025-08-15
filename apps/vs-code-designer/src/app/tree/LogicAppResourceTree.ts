@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import type { ContainerApp } from '@azure/arm-appcontainers';
-import { localSettingsFileName } from '../../constants';
+import { contextValuePrefix, localSettingsFileName } from '../../constants';
 import { localize } from '../../localize';
 import { parseHostJson } from '../funcConfig/host';
 import { getLocalSettingsJson } from '../utils/appSettings/localSettings';
@@ -16,7 +16,7 @@ import { RemoteWorkflowsTreeItem } from './remoteWorkflowsTree/RemoteWorkflowsTr
 import type { SlotTreeItem } from './slotsTree/SlotTreeItem';
 import { SlotsTreeItem } from './slotsTree/SlotsTreeItem';
 import { ArtifactsTreeItem } from './slotsTree/artifactsTree/ArtifactsTreeItem';
-import type { ContainerAppSecret, Site, SiteConfig, SiteSourceControl, StringDictionary } from '@azure/arm-appservice';
+import type { ContainerAppSecret, Site, StringDictionary } from '@azure/arm-appservice';
 import { isString } from '@microsoft/logic-apps-shared';
 import {
   DeleteLastServicePlanStep,
@@ -25,7 +25,6 @@ import {
   DeploymentTreeItem,
   getFile,
   ParsedSite,
-  AppSettingsTreeItem,
   LogFilesTreeItem,
   SiteFilesTreeItem,
 } from '@microsoft/vscode-azext-azureappservice';
@@ -42,6 +41,8 @@ import type {
   IParsedHostJson,
 } from '@microsoft/vscode-extension-logic-apps';
 import * as path from 'path';
+import { AppSettingsTreeItem } from '@microsoft/vscode-azext-azureappsettings';
+import { ext } from '../../extensionVariables';
 
 export function isLogicAppResourceTree(ti: unknown): ti is ResolvedAppResourceBase {
   return (ti as unknown as LogicAppResourceTree).instance === LogicAppResourceTree.instance;
@@ -90,8 +91,9 @@ export class LogicAppResourceTree implements ResolvedAppResourceBase {
       this.data = this.site.rawSite;
       this._subscription = subscription;
       this.contextValuesToAdd = [this.site.isSlot ? LogicAppResourceTree.slotContextValue : LogicAppResourceTree.productionContextValue];
-      this.appSettingsTreeItem = new AppSettingsTreeItem(this as unknown as SlotTreeItem, this.site, {
-        contextValuesToAdd: ['azLogicApps'],
+
+      this.appSettingsTreeItem = new AppSettingsTreeItem(this as unknown as SlotTreeItem, this.site, ext.prefix, {
+        contextValuesToAdd: [contextValuePrefix],
       });
 
       const valuesToMask = [
@@ -245,34 +247,24 @@ export class LogicAppResourceTree implements ResolvedAppResourceBase {
   }
 
   public async loadMoreChildrenImpl(_clearCache: boolean, context: IActionContext): Promise<AzExtTreeItem[]> {
-    const client = await this.site.createClient(context);
-    const siteConfig: SiteConfig = await client.getSiteConfig();
-    const sourceControl: SiteSourceControl = await client.getSourceControl();
     const proxyTree: SlotTreeItem = this as unknown as SlotTreeItem;
 
     this.deploymentsNode = new DeploymentsTreeItem(proxyTree, {
       site: this.site,
-      siteConfig: siteConfig,
-      sourceControl: sourceControl,
+      contextValuesToAdd: [contextValuePrefix],
     });
 
-    this.deploymentsNode = new DeploymentsTreeItem(proxyTree, {
-      site: this.site,
-      siteConfig,
-      sourceControl,
-      contextValuesToAdd: ['azLogicApps'],
-    });
-    this.appSettingsTreeItem = new AppSettingsTreeItem(proxyTree, this.site, {
-      contextValuesToAdd: ['azLogicApps'],
+    this.appSettingsTreeItem = new AppSettingsTreeItem(this as unknown as SlotTreeItem, this.site, ext.prefix, {
+      contextValuesToAdd: [contextValuePrefix],
     });
     this._siteFilesTreeItem = new SiteFilesTreeItem(proxyTree, {
       site: this.site,
       isReadOnly: true,
-      contextValuesToAdd: ['azLogicApps'],
+      contextValuesToAdd: [contextValuePrefix],
     });
     this._logFilesTreeItem = new LogFilesTreeItem(proxyTree, {
       site: this.site,
-      contextValuesToAdd: ['azLogicApps'],
+      contextValuesToAdd: [contextValuePrefix],
     });
 
     if (!this._workflowsTreeItem) {

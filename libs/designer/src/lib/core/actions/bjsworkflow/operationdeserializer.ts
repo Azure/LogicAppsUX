@@ -53,6 +53,7 @@ import {
   getOutputParametersFromManifest,
   getSupportedChannelsFromManifest,
   updateCallbackUrlInInputs,
+  updateAgentUrlInInputs,
   updateCustomCodeInInputs,
   updateInvokerSettings,
 } from './initialize';
@@ -263,6 +264,7 @@ export const initializeOperationDetailsForManifest = async (
 
     if (isTrigger) {
       await updateCallbackUrlInInputs(nodeId, nodeOperationInfo, nodeInputs);
+      await updateAgentUrlInInputs(nodeOperationInfo, nodeInputs);
     }
 
     const customCodeParameter = getParameterFromName(nodeInputs, Constants.DEFAULT_CUSTOM_CODE_INPUT);
@@ -643,7 +645,23 @@ const updateDynamicDataForValidConnection = async (
   const isValidConnection = await isConnectionReferenceValid(operationInfo, reference);
 
   if (isValidConnection) {
-    await updateDynamicDataInNode(nodeId, isTrigger, operationInfo, reference, dependencies, dispatch, getState, operation);
+    const {
+      tokens: { variables },
+      workflowParameters: { definitions },
+    } = getState() as RootState;
+    await updateDynamicDataInNode(
+      nodeId,
+      isTrigger,
+      operationInfo,
+      reference,
+      dependencies,
+      dispatch,
+      getState,
+      variables,
+      definitions,
+      true /* updateTokenMetadata */,
+      operation
+    );
   } else if (!isFreshCreatedAgent) {
     LoggerService().log({
       level: LogEntryLevel.Warning,

@@ -1,0 +1,929 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`lib/dropdown > applies custom height and fontSize 1`] = `
+<div
+  className="___1drhqsw_1tak26z f10pi13n fly5x3f fha3vce"
+>
+  <div
+    className="fui-Combobox ___1yjse2u_ky0fe70 f122n59 ft85np5 f1ewtqcl f14mj54c fwk3njj fz17x9o f1869bpl f1exfvgq f10pi13n fmrv4ls f14a1fxs f3e99gv fhljsf7 f1gw3sf2 f13zj6fq f1mdlcz9 f1a7op3 f1gboi2j f1cjjd47 f145g4dw f1kp91vd f1ibwz09 f1mnjydx f13evtba f1yk9hq fhwpy7i f14ee0xe f1xhbsuh fv8e3ye ftb5wc6 fjw5xc1 f1xdyd5c fatpbeo fb7uyps f1cmft4k f1x58t8o f1ibeo51 fxugw4r f1c1zstj fhz96rm f1d2rq10 f11gcy0p fvcxoqz f1ub3y4t flmw63s f1m52nbi fvs00aa f1assf6x fqhmt4z f4ruux4"
+    style={
+      {
+        "fontSize": "16px",
+        "height": "40px",
+        "width": "100%",
+      }
+    }
+  >
+    <input
+      aria-expanded={false}
+      aria-label="Test Dropdown"
+      className="fui-Combobox__input ___1srlkgg_55r68t0 f1ub7u0d f1c21dwh f3bhgqh f19n0e5 fk6fouc ftqa4ok fwyc1cq f13ta7ih fkhj508 figsok6 f1i3iumi fzy81xo"
+      onBlur={[Function]}
+      onChange={[Function]}
+      onClick={[Function]}
+      onFocus={[Function]}
+      onInput={[Function]}
+      onKeyDown={[Function]}
+      placeholder="Select an option"
+      role="combobox"
+      type="text"
+      value=""
+    />
+    <span
+      aria-hidden="true"
+      className="fui-Combobox__clearIcon ___185jhcm_12uys63 f1ewtqcl fxkbij4 f1k6fduh fjseox fe5j1ua fvc9v3g f1h9en5y"
+      onClick={[Function]}
+      onMouseDown={[Function]}
+    >
+      <svg
+        aria-hidden={true}
+        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        fill="currentColor"
+        height="1em"
+        viewBox="0 0 20 20"
+        width="1em"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="m4.09 4.22.06-.07a.5.5 0 0 1 .63-.06l.07.06L10 9.29l5.15-5.14a.5.5 0 0 1 .63-.06l.07.06c.18.17.2.44.06.63l-.06.07L10.71 10l5.14 5.15c.18.17.2.44.06.63l-.06.07a.5.5 0 0 1-.63.06l-.07-.06L10 10.71l-5.15 5.14a.5.5 0 0 1-.63.06l-.07-.06a.5.5 0 0 1-.06-.63l.06-.07L9.29 10 4.15 4.85a.5.5 0 0 1-.06-.63l.06-.07-.06.07Z"
+          fill="currentColor"
+        />
+      </svg>
+    </span>
+    <span
+      aria-expanded={false}
+      aria-label="Open Test Dropdown"
+      className="fui-Combobox__expandIcon ___1ng6b7f_ujg4670 f1ewtqcl fxkbij4 f1k6fduh ftgm304 fe5j1ua fvc9v3g f1h9en5y"
+      onMouseDown={[Function]}
+      role="button"
+    >
+      <svg
+        aria-hidden={true}
+        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        fill="currentColor"
+        height="1em"
+        viewBox="0 0 20 20"
+        width="1em"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M15.85 7.65c.2.2.2.5 0 .7l-5.46 5.49a.55.55 0 0 1-.78 0L4.15 8.35a.5.5 0 1 1 .7-.7L10 12.8l5.15-5.16c.2-.2.5-.2.7 0Z"
+          fill="currentColor"
+        />
+      </svg>
+    </span>
+  </div>
+</div>
+`;
+
+exports[`lib/dropdown > displays placeholder text 1`] = `
+<div
+  className="___1drhqsw_1tak26z f10pi13n fly5x3f fha3vce"
+>
+  <div
+    className="fui-Combobox ___1yjse2u_ky0fe70 f122n59 ft85np5 f1ewtqcl f14mj54c fwk3njj fz17x9o f1869bpl f1exfvgq f10pi13n fmrv4ls f14a1fxs f3e99gv fhljsf7 f1gw3sf2 f13zj6fq f1mdlcz9 f1a7op3 f1gboi2j f1cjjd47 f145g4dw f1kp91vd f1ibwz09 f1mnjydx f13evtba f1yk9hq fhwpy7i f14ee0xe f1xhbsuh fv8e3ye ftb5wc6 fjw5xc1 f1xdyd5c fatpbeo fb7uyps f1cmft4k f1x58t8o f1ibeo51 fxugw4r f1c1zstj fhz96rm f1d2rq10 f11gcy0p fvcxoqz f1ub3y4t flmw63s f1m52nbi fvs00aa f1assf6x fqhmt4z f4ruux4"
+    style={
+      {
+        "fontSize": "14px",
+        "height": "32px",
+        "width": "100%",
+      }
+    }
+  >
+    <input
+      aria-expanded={false}
+      aria-label="Test Dropdown"
+      className="fui-Combobox__input ___1srlkgg_55r68t0 f1ub7u0d f1c21dwh f3bhgqh f19n0e5 fk6fouc ftqa4ok fwyc1cq f13ta7ih fkhj508 figsok6 f1i3iumi fzy81xo"
+      onBlur={[Function]}
+      onChange={[Function]}
+      onClick={[Function]}
+      onFocus={[Function]}
+      onInput={[Function]}
+      onKeyDown={[Function]}
+      placeholder="Choose an option"
+      role="combobox"
+      type="text"
+      value=""
+    />
+    <span
+      aria-hidden="true"
+      className="fui-Combobox__clearIcon ___185jhcm_12uys63 f1ewtqcl fxkbij4 f1k6fduh fjseox fe5j1ua fvc9v3g f1h9en5y"
+      onClick={[Function]}
+      onMouseDown={[Function]}
+    >
+      <svg
+        aria-hidden={true}
+        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        fill="currentColor"
+        height="1em"
+        viewBox="0 0 20 20"
+        width="1em"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="m4.09 4.22.06-.07a.5.5 0 0 1 .63-.06l.07.06L10 9.29l5.15-5.14a.5.5 0 0 1 .63-.06l.07.06c.18.17.2.44.06.63l-.06.07L10.71 10l5.14 5.15c.18.17.2.44.06.63l-.06.07a.5.5 0 0 1-.63.06l-.07-.06L10 10.71l-5.15 5.14a.5.5 0 0 1-.63.06l-.07-.06a.5.5 0 0 1-.06-.63l.06-.07L9.29 10 4.15 4.85a.5.5 0 0 1-.06-.63l.06-.07-.06.07Z"
+          fill="currentColor"
+        />
+      </svg>
+    </span>
+    <span
+      aria-expanded={false}
+      aria-label="Open Test Dropdown"
+      className="fui-Combobox__expandIcon ___1ng6b7f_ujg4670 f1ewtqcl fxkbij4 f1k6fduh ftgm304 fe5j1ua fvc9v3g f1h9en5y"
+      onMouseDown={[Function]}
+      role="button"
+    >
+      <svg
+        aria-hidden={true}
+        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        fill="currentColor"
+        height="1em"
+        viewBox="0 0 20 20"
+        width="1em"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M15.85 7.65c.2.2.2.5 0 .7l-5.46 5.49a.55.55 0 0 1-.78 0L4.15 8.35a.5.5 0 1 1 .7-.7L10 12.8l5.15-5.16c.2-.2.5-.2.7 0Z"
+          fill="currentColor"
+        />
+      </svg>
+    </span>
+  </div>
+</div>
+`;
+
+exports[`lib/dropdown > handles case insensitive comparison when isCaseSensitive is false 1`] = `
+<div
+  className="___1drhqsw_1tak26z f10pi13n fly5x3f fha3vce"
+>
+  <div
+    className="fui-Combobox ___1yjse2u_ky0fe70 f122n59 ft85np5 f1ewtqcl f14mj54c fwk3njj fz17x9o f1869bpl f1exfvgq f10pi13n fmrv4ls f14a1fxs f3e99gv fhljsf7 f1gw3sf2 f13zj6fq f1mdlcz9 f1a7op3 f1gboi2j f1cjjd47 f145g4dw f1kp91vd f1ibwz09 f1mnjydx f13evtba f1yk9hq fhwpy7i f14ee0xe f1xhbsuh fv8e3ye ftb5wc6 fjw5xc1 f1xdyd5c fatpbeo fb7uyps f1cmft4k f1x58t8o f1ibeo51 fxugw4r f1c1zstj fhz96rm f1d2rq10 f11gcy0p fvcxoqz f1ub3y4t flmw63s f1m52nbi fvs00aa f1assf6x fqhmt4z f4ruux4"
+    style={
+      {
+        "fontSize": "14px",
+        "height": "32px",
+        "width": "100%",
+      }
+    }
+  >
+    <input
+      aria-expanded={false}
+      aria-label="Test Dropdown"
+      className="fui-Combobox__input ___1srlkgg_55r68t0 f1ub7u0d f1c21dwh f3bhgqh f19n0e5 fk6fouc ftqa4ok fwyc1cq f13ta7ih fkhj508 figsok6 f1i3iumi fzy81xo"
+      onBlur={[Function]}
+      onChange={[Function]}
+      onClick={[Function]}
+      onFocus={[Function]}
+      onInput={[Function]}
+      onKeyDown={[Function]}
+      placeholder="Select an option"
+      role="combobox"
+      type="text"
+      value="Option One"
+    />
+    <span
+      aria-hidden="true"
+      className="fui-Combobox__clearIcon ___185jhcm_12uys63 f1ewtqcl fxkbij4 f1k6fduh fjseox fe5j1ua fvc9v3g f1h9en5y"
+      onClick={[Function]}
+      onMouseDown={[Function]}
+    >
+      <svg
+        aria-hidden={true}
+        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        fill="currentColor"
+        height="1em"
+        viewBox="0 0 20 20"
+        width="1em"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="m4.09 4.22.06-.07a.5.5 0 0 1 .63-.06l.07.06L10 9.29l5.15-5.14a.5.5 0 0 1 .63-.06l.07.06c.18.17.2.44.06.63l-.06.07L10.71 10l5.14 5.15c.18.17.2.44.06.63l-.06.07a.5.5 0 0 1-.63.06l-.07-.06L10 10.71l-5.15 5.14a.5.5 0 0 1-.63.06l-.07-.06a.5.5 0 0 1-.06-.63l.06-.07L9.29 10 4.15 4.85a.5.5 0 0 1-.06-.63l.06-.07-.06.07Z"
+          fill="currentColor"
+        />
+      </svg>
+    </span>
+    <span
+      aria-expanded={false}
+      aria-label="Open Test Dropdown"
+      className="fui-Combobox__expandIcon ___1ng6b7f_ujg4670 f1ewtqcl fxkbij4 f1k6fduh ftgm304 fe5j1ua fvc9v3g f1h9en5y"
+      onMouseDown={[Function]}
+      role="button"
+    >
+      <svg
+        aria-hidden={true}
+        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        fill="currentColor"
+        height="1em"
+        viewBox="0 0 20 20"
+        width="1em"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M15.85 7.65c.2.2.2.5 0 .7l-5.46 5.49a.55.55 0 0 1-.78 0L4.15 8.35a.5.5 0 1 1 .7-.7L10 12.8l5.15-5.16c.2-.2.5-.2.7 0Z"
+          fill="currentColor"
+        />
+      </svg>
+    </span>
+  </div>
+</div>
+`;
+
+exports[`lib/dropdown > handles case sensitive comparison when isCaseSensitive is true 1`] = `
+<div
+  className="___1drhqsw_1tak26z f10pi13n fly5x3f fha3vce"
+>
+  <div
+    className="fui-Combobox ___1yjse2u_ky0fe70 f122n59 ft85np5 f1ewtqcl f14mj54c fwk3njj fz17x9o f1869bpl f1exfvgq f10pi13n fmrv4ls f14a1fxs f3e99gv fhljsf7 f1gw3sf2 f13zj6fq f1mdlcz9 f1a7op3 f1gboi2j f1cjjd47 f145g4dw f1kp91vd f1ibwz09 f1mnjydx f13evtba f1yk9hq fhwpy7i f14ee0xe f1xhbsuh fv8e3ye ftb5wc6 fjw5xc1 f1xdyd5c fatpbeo fb7uyps f1cmft4k f1x58t8o f1ibeo51 fxugw4r f1c1zstj fhz96rm f1d2rq10 f11gcy0p fvcxoqz f1ub3y4t flmw63s f1m52nbi fvs00aa f1assf6x fqhmt4z f4ruux4"
+    style={
+      {
+        "fontSize": "14px",
+        "height": "32px",
+        "width": "100%",
+      }
+    }
+  >
+    <input
+      aria-expanded={false}
+      aria-label="Test Dropdown"
+      className="fui-Combobox__input ___1srlkgg_55r68t0 f1ub7u0d f1c21dwh f3bhgqh f19n0e5 fk6fouc ftqa4ok fwyc1cq f13ta7ih fkhj508 figsok6 f1i3iumi fzy81xo"
+      onBlur={[Function]}
+      onChange={[Function]}
+      onClick={[Function]}
+      onFocus={[Function]}
+      onInput={[Function]}
+      onKeyDown={[Function]}
+      placeholder="Select an option"
+      role="combobox"
+      type="text"
+      value=""
+    />
+    <span
+      aria-hidden="true"
+      className="fui-Combobox__clearIcon ___185jhcm_12uys63 f1ewtqcl fxkbij4 f1k6fduh fjseox fe5j1ua fvc9v3g f1h9en5y"
+      onClick={[Function]}
+      onMouseDown={[Function]}
+    >
+      <svg
+        aria-hidden={true}
+        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        fill="currentColor"
+        height="1em"
+        viewBox="0 0 20 20"
+        width="1em"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="m4.09 4.22.06-.07a.5.5 0 0 1 .63-.06l.07.06L10 9.29l5.15-5.14a.5.5 0 0 1 .63-.06l.07.06c.18.17.2.44.06.63l-.06.07L10.71 10l5.14 5.15c.18.17.2.44.06.63l-.06.07a.5.5 0 0 1-.63.06l-.07-.06L10 10.71l-5.15 5.14a.5.5 0 0 1-.63.06l-.07-.06a.5.5 0 0 1-.06-.63l.06-.07L9.29 10 4.15 4.85a.5.5 0 0 1-.06-.63l.06-.07-.06.07Z"
+          fill="currentColor"
+        />
+      </svg>
+    </span>
+    <span
+      aria-expanded={false}
+      aria-label="Open Test Dropdown"
+      className="fui-Combobox__expandIcon ___1ng6b7f_ujg4670 f1ewtqcl fxkbij4 f1k6fduh ftgm304 fe5j1ua fvc9v3g f1h9en5y"
+      onMouseDown={[Function]}
+      role="button"
+    >
+      <svg
+        aria-hidden={true}
+        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        fill="currentColor"
+        height="1em"
+        viewBox="0 0 20 20"
+        width="1em"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M15.85 7.65c.2.2.2.5 0 .7l-5.46 5.49a.55.55 0 0 1-.78 0L4.15 8.35a.5.5 0 1 1 .7-.7L10 12.8l5.15-5.16c.2-.2.5-.2.7 0Z"
+          fill="currentColor"
+        />
+      </svg>
+    </span>
+  </div>
+</div>
+`;
+
+exports[`lib/dropdown > renders in multiSelect mode 1`] = `
+<div
+  className="___1drhqsw_1tak26z f10pi13n fly5x3f fha3vce"
+>
+  <div
+    className="fui-Combobox ___1yjse2u_ky0fe70 f122n59 ft85np5 f1ewtqcl f14mj54c fwk3njj fz17x9o f1869bpl f1exfvgq f10pi13n fmrv4ls f14a1fxs f3e99gv fhljsf7 f1gw3sf2 f13zj6fq f1mdlcz9 f1a7op3 f1gboi2j f1cjjd47 f145g4dw f1kp91vd f1ibwz09 f1mnjydx f13evtba f1yk9hq fhwpy7i f14ee0xe f1xhbsuh fv8e3ye ftb5wc6 fjw5xc1 f1xdyd5c fatpbeo fb7uyps f1cmft4k f1x58t8o f1ibeo51 fxugw4r f1c1zstj fhz96rm f1d2rq10 f11gcy0p fvcxoqz f1ub3y4t flmw63s f1m52nbi fvs00aa f1assf6x fqhmt4z f4ruux4"
+    style={
+      {
+        "fontSize": "14px",
+        "height": "32px",
+        "width": "100%",
+      }
+    }
+  >
+    <input
+      aria-expanded={false}
+      aria-label="Test Dropdown"
+      className="fui-Combobox__input ___1srlkgg_55r68t0 f1ub7u0d f1c21dwh f3bhgqh f19n0e5 fk6fouc ftqa4ok fwyc1cq f13ta7ih fkhj508 figsok6 f1i3iumi fzy81xo"
+      onBlur={[Function]}
+      onChange={[Function]}
+      onClick={[Function]}
+      onFocus={[Function]}
+      onInput={[Function]}
+      onKeyDown={[Function]}
+      placeholder="Select an option"
+      role="combobox"
+      type="text"
+      value=""
+    />
+    <span
+      aria-expanded={false}
+      aria-label="Open Test Dropdown"
+      className="fui-Combobox__expandIcon ___1ng6b7f_ujg4670 f1ewtqcl fxkbij4 f1k6fduh ftgm304 fe5j1ua fvc9v3g f1h9en5y"
+      onMouseDown={[Function]}
+      role="button"
+    >
+      <svg
+        aria-hidden={true}
+        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        fill="currentColor"
+        height="1em"
+        viewBox="0 0 20 20"
+        width="1em"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M15.85 7.65c.2.2.2.5 0 .7l-5.46 5.49a.55.55 0 0 1-.78 0L4.15 8.35a.5.5 0 1 1 .7-.7L10 12.8l5.15-5.16c.2-.2.5-.2.7 0Z"
+          fill="currentColor"
+        />
+      </svg>
+    </span>
+  </div>
+</div>
+`;
+
+exports[`lib/dropdown > renders with array serialization for multiSelect 1`] = `
+<div
+  className="___1drhqsw_1tak26z f10pi13n fly5x3f fha3vce"
+>
+  <div
+    className="fui-Combobox ___1yjse2u_ky0fe70 f122n59 ft85np5 f1ewtqcl f14mj54c fwk3njj fz17x9o f1869bpl f1exfvgq f10pi13n fmrv4ls f14a1fxs f3e99gv fhljsf7 f1gw3sf2 f13zj6fq f1mdlcz9 f1a7op3 f1gboi2j f1cjjd47 f145g4dw f1kp91vd f1ibwz09 f1mnjydx f13evtba f1yk9hq fhwpy7i f14ee0xe f1xhbsuh fv8e3ye ftb5wc6 fjw5xc1 f1xdyd5c fatpbeo fb7uyps f1cmft4k f1x58t8o f1ibeo51 fxugw4r f1c1zstj fhz96rm f1d2rq10 f11gcy0p fvcxoqz f1ub3y4t flmw63s f1m52nbi fvs00aa f1assf6x fqhmt4z f4ruux4"
+    style={
+      {
+        "fontSize": "14px",
+        "height": "32px",
+        "width": "100%",
+      }
+    }
+  >
+    <input
+      aria-expanded={false}
+      aria-label="Test Dropdown"
+      className="fui-Combobox__input ___1srlkgg_55r68t0 f1ub7u0d f1c21dwh f3bhgqh f19n0e5 fk6fouc ftqa4ok fwyc1cq f13ta7ih fkhj508 figsok6 f1i3iumi fzy81xo"
+      onBlur={[Function]}
+      onChange={[Function]}
+      onClick={[Function]}
+      onFocus={[Function]}
+      onInput={[Function]}
+      onKeyDown={[Function]}
+      placeholder="Select an option"
+      role="combobox"
+      type="text"
+      value=""
+    />
+    <span
+      aria-expanded={false}
+      aria-label="Open Test Dropdown"
+      className="fui-Combobox__expandIcon ___1ng6b7f_ujg4670 f1ewtqcl fxkbij4 f1k6fduh ftgm304 fe5j1ua fvc9v3g f1h9en5y"
+      onMouseDown={[Function]}
+      role="button"
+    >
+      <svg
+        aria-hidden={true}
+        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        fill="currentColor"
+        height="1em"
+        viewBox="0 0 20 20"
+        width="1em"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M15.85 7.65c.2.2.2.5 0 .7l-5.46 5.49a.55.55 0 0 1-.78 0L4.15 8.35a.5.5 0 1 1 .7-.7L10 12.8l5.15-5.16c.2-.2.5-.2.7 0Z"
+          fill="currentColor"
+        />
+      </svg>
+    </span>
+  </div>
+</div>
+`;
+
+exports[`lib/dropdown > renders with custom onChange handler 1`] = `
+<div
+  className="___1drhqsw_1tak26z f10pi13n fly5x3f fha3vce"
+>
+  <div
+    className="fui-Combobox ___1yjse2u_ky0fe70 f122n59 ft85np5 f1ewtqcl f14mj54c fwk3njj fz17x9o f1869bpl f1exfvgq f10pi13n fmrv4ls f14a1fxs f3e99gv fhljsf7 f1gw3sf2 f13zj6fq f1mdlcz9 f1a7op3 f1gboi2j f1cjjd47 f145g4dw f1kp91vd f1ibwz09 f1mnjydx f13evtba f1yk9hq fhwpy7i f14ee0xe f1xhbsuh fv8e3ye ftb5wc6 fjw5xc1 f1xdyd5c fatpbeo fb7uyps f1cmft4k f1x58t8o f1ibeo51 fxugw4r f1c1zstj fhz96rm f1d2rq10 f11gcy0p fvcxoqz f1ub3y4t flmw63s f1m52nbi fvs00aa f1assf6x fqhmt4z f4ruux4"
+    style={
+      {
+        "fontSize": "14px",
+        "height": "32px",
+        "width": "100%",
+      }
+    }
+  >
+    <input
+      aria-expanded={false}
+      aria-label="Test Dropdown"
+      className="fui-Combobox__input ___1srlkgg_55r68t0 f1ub7u0d f1c21dwh f3bhgqh f19n0e5 fk6fouc ftqa4ok fwyc1cq f13ta7ih fkhj508 figsok6 f1i3iumi fzy81xo"
+      onBlur={[Function]}
+      onChange={[Function]}
+      onClick={[Function]}
+      onFocus={[Function]}
+      onInput={[Function]}
+      onKeyDown={[Function]}
+      placeholder="Select an option"
+      role="combobox"
+      type="text"
+      value=""
+    />
+    <span
+      aria-hidden="true"
+      className="fui-Combobox__clearIcon ___185jhcm_12uys63 f1ewtqcl fxkbij4 f1k6fduh fjseox fe5j1ua fvc9v3g f1h9en5y"
+      onClick={[Function]}
+      onMouseDown={[Function]}
+    >
+      <svg
+        aria-hidden={true}
+        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        fill="currentColor"
+        height="1em"
+        viewBox="0 0 20 20"
+        width="1em"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="m4.09 4.22.06-.07a.5.5 0 0 1 .63-.06l.07.06L10 9.29l5.15-5.14a.5.5 0 0 1 .63-.06l.07.06c.18.17.2.44.06.63l-.06.07L10.71 10l5.14 5.15c.18.17.2.44.06.63l-.06.07a.5.5 0 0 1-.63.06l-.07-.06L10 10.71l-5.15 5.14a.5.5 0 0 1-.63.06l-.07-.06a.5.5 0 0 1-.06-.63l.06-.07L9.29 10 4.15 4.85a.5.5 0 0 1-.06-.63l.06-.07-.06.07Z"
+          fill="currentColor"
+        />
+      </svg>
+    </span>
+    <span
+      aria-expanded={false}
+      aria-label="Open Test Dropdown"
+      className="fui-Combobox__expandIcon ___1ng6b7f_ujg4670 f1ewtqcl fxkbij4 f1k6fduh ftgm304 fe5j1ua fvc9v3g f1h9en5y"
+      onMouseDown={[Function]}
+      role="button"
+    >
+      <svg
+        aria-hidden={true}
+        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        fill="currentColor"
+        height="1em"
+        viewBox="0 0 20 20"
+        width="1em"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M15.85 7.65c.2.2.2.5 0 .7l-5.46 5.49a.55.55 0 0 1-.78 0L4.15 8.35a.5.5 0 1 1 .7-.7L10 12.8l5.15-5.16c.2-.2.5-.2.7 0Z"
+          fill="currentColor"
+        />
+      </svg>
+    </span>
+  </div>
+</div>
+`;
+
+exports[`lib/dropdown > renders with separator serialization for multiSelect 1`] = `
+<div
+  className="___1drhqsw_1tak26z f10pi13n fly5x3f fha3vce"
+>
+  <div
+    className="fui-Combobox ___1yjse2u_ky0fe70 f122n59 ft85np5 f1ewtqcl f14mj54c fwk3njj fz17x9o f1869bpl f1exfvgq f10pi13n fmrv4ls f14a1fxs f3e99gv fhljsf7 f1gw3sf2 f13zj6fq f1mdlcz9 f1a7op3 f1gboi2j f1cjjd47 f145g4dw f1kp91vd f1ibwz09 f1mnjydx f13evtba f1yk9hq fhwpy7i f14ee0xe f1xhbsuh fv8e3ye ftb5wc6 fjw5xc1 f1xdyd5c fatpbeo fb7uyps f1cmft4k f1x58t8o f1ibeo51 fxugw4r f1c1zstj fhz96rm f1d2rq10 f11gcy0p fvcxoqz f1ub3y4t flmw63s f1m52nbi fvs00aa f1assf6x fqhmt4z f4ruux4"
+    style={
+      {
+        "fontSize": "14px",
+        "height": "32px",
+        "width": "100%",
+      }
+    }
+  >
+    <input
+      aria-expanded={false}
+      aria-label="Test Dropdown"
+      className="fui-Combobox__input ___1srlkgg_55r68t0 f1ub7u0d f1c21dwh f3bhgqh f19n0e5 fk6fouc ftqa4ok fwyc1cq f13ta7ih fkhj508 figsok6 f1i3iumi fzy81xo"
+      onBlur={[Function]}
+      onChange={[Function]}
+      onClick={[Function]}
+      onFocus={[Function]}
+      onInput={[Function]}
+      onKeyDown={[Function]}
+      placeholder="Select an option"
+      role="combobox"
+      type="text"
+      value=""
+    />
+    <span
+      aria-expanded={false}
+      aria-label="Open Test Dropdown"
+      className="fui-Combobox__expandIcon ___1ng6b7f_ujg4670 f1ewtqcl fxkbij4 f1k6fduh ftgm304 fe5j1ua fvc9v3g f1h9en5y"
+      onMouseDown={[Function]}
+      role="button"
+    >
+      <svg
+        aria-hidden={true}
+        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        fill="currentColor"
+        height="1em"
+        viewBox="0 0 20 20"
+        width="1em"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M15.85 7.65c.2.2.2.5 0 .7l-5.46 5.49a.55.55 0 0 1-.78 0L4.15 8.35a.5.5 0 1 1 .7-.7L10 12.8l5.15-5.16c.2-.2.5-.2.7 0Z"
+          fill="currentColor"
+        />
+      </svg>
+    </span>
+  </div>
+</div>
+`;
+
+exports[`lib/dropdown > respects readonly prop 1`] = `
+<div
+  className="___1drhqsw_1tak26z f10pi13n fly5x3f fha3vce"
+>
+  <div
+    className="fui-Combobox ___zdpiax0_1uchae0 f122n59 ft85np5 f1ewtqcl f14mj54c fwk3njj fz17x9o f1869bpl f1exfvgq f10pi13n fmrv4ls f14a1fxs f3e99gv fhljsf7 f1gw3sf2 f13zj6fq f1mdlcz9 f1a7op3 f1gboi2j f1cjjd47 f145g4dw f1kp91vd f1ibwz09 f1mnjydx f13evtba f1yk9hq fhwpy7i f14ee0xe f1xhbsuh fv8e3ye ftb5wc6 fjw5xc1 f1xdyd5c fatpbeo fb7uyps f1cmft4k f1x58t8o f1ibeo51 f1c21dwh f4ikngz fy0fskl f15xbau f1jj8ep1 fhz96rm f1d2rq10 f11gcy0p fdrzuqr fg455y9 f1rvyvqg f1cwzwz f14g86mu"
+    style={
+      {
+        "fontSize": "14px",
+        "height": "32px",
+        "width": "100%",
+      }
+    }
+  >
+    <input
+      aria-disabled={true}
+      aria-expanded={false}
+      aria-label="Test Dropdown"
+      className="fui-Combobox__input ___g4dclp0_e8x08p0 f1ub7u0d f1c21dwh f3bhgqh f1s2aq7o fk6fouc ftqa4ok fahhnxm f13ta7ih fkhj508 figsok6 f1i3iumi fzy81xo fdrzuqr"
+      disabled={true}
+      onBlur={[Function]}
+      onChange={[Function]}
+      onClick={[Function]}
+      onFocus={[Function]}
+      onInput={[Function]}
+      onKeyDown={[Function]}
+      placeholder="Select an option"
+      role="combobox"
+      type="text"
+      value=""
+    />
+    <span
+      aria-hidden="true"
+      className="fui-Combobox__clearIcon ___1hoi7bi_17nqfqd f1ewtqcl f1s2aq7o fdrzuqr fjseox fe5j1ua fvc9v3g f1h9en5y"
+      onClick={[Function]}
+      onMouseDown={[Function]}
+    >
+      <svg
+        aria-hidden={true}
+        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        fill="currentColor"
+        height="1em"
+        viewBox="0 0 20 20"
+        width="1em"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="m4.09 4.22.06-.07a.5.5 0 0 1 .63-.06l.07.06L10 9.29l5.15-5.14a.5.5 0 0 1 .63-.06l.07.06c.18.17.2.44.06.63l-.06.07L10.71 10l5.14 5.15c.18.17.2.44.06.63l-.06.07a.5.5 0 0 1-.63.06l-.07-.06L10 10.71l-5.15 5.14a.5.5 0 0 1-.63.06l-.07-.06a.5.5 0 0 1-.06-.63l.06-.07L9.29 10 4.15 4.85a.5.5 0 0 1-.06-.63l.06-.07-.06.07Z"
+          fill="currentColor"
+        />
+      </svg>
+    </span>
+    <span
+      aria-disabled="true"
+      aria-expanded={false}
+      aria-label="Open Test Dropdown"
+      className="fui-Combobox__expandIcon ___121ds11_1hqmsuj f1ewtqcl f1s2aq7o fdrzuqr ftgm304 fe5j1ua fvc9v3g f1h9en5y"
+      onMouseDown={[Function]}
+      role="button"
+    >
+      <svg
+        aria-hidden={true}
+        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        fill="currentColor"
+        height="1em"
+        viewBox="0 0 20 20"
+        width="1em"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M15.85 7.65c.2.2.2.5 0 .7l-5.46 5.49a.55.55 0 0 1-.78 0L4.15 8.35a.5.5 0 1 1 .7-.7L10 12.8l5.15-5.16c.2-.2.5-.2.7 0Z"
+          fill="currentColor"
+        />
+      </svg>
+    </span>
+  </div>
+</div>
+`;
+
+exports[`lib/dropdown > sets data-automation-id attribute 1`] = `
+<div
+  className="___1drhqsw_1tak26z f10pi13n fly5x3f fha3vce"
+>
+  <div
+    className="fui-Combobox ___1yjse2u_ky0fe70 f122n59 ft85np5 f1ewtqcl f14mj54c fwk3njj fz17x9o f1869bpl f1exfvgq f10pi13n fmrv4ls f14a1fxs f3e99gv fhljsf7 f1gw3sf2 f13zj6fq f1mdlcz9 f1a7op3 f1gboi2j f1cjjd47 f145g4dw f1kp91vd f1ibwz09 f1mnjydx f13evtba f1yk9hq fhwpy7i f14ee0xe f1xhbsuh fv8e3ye ftb5wc6 fjw5xc1 f1xdyd5c fatpbeo fb7uyps f1cmft4k f1x58t8o f1ibeo51 fxugw4r f1c1zstj fhz96rm f1d2rq10 f11gcy0p fvcxoqz f1ub3y4t flmw63s f1m52nbi fvs00aa f1assf6x fqhmt4z f4ruux4"
+    style={
+      {
+        "fontSize": "14px",
+        "height": "32px",
+        "width": "100%",
+      }
+    }
+  >
+    <input
+      aria-expanded={false}
+      aria-label="Test Dropdown"
+      className="fui-Combobox__input ___1srlkgg_55r68t0 f1ub7u0d f1c21dwh f3bhgqh f19n0e5 fk6fouc ftqa4ok fwyc1cq f13ta7ih fkhj508 figsok6 f1i3iumi fzy81xo"
+      data-automation-id="test-dropdown"
+      onBlur={[Function]}
+      onChange={[Function]}
+      onClick={[Function]}
+      onFocus={[Function]}
+      onInput={[Function]}
+      onKeyDown={[Function]}
+      placeholder="Select an option"
+      role="combobox"
+      type="text"
+      value=""
+    />
+    <span
+      aria-hidden="true"
+      className="fui-Combobox__clearIcon ___185jhcm_12uys63 f1ewtqcl fxkbij4 f1k6fduh fjseox fe5j1ua fvc9v3g f1h9en5y"
+      onClick={[Function]}
+      onMouseDown={[Function]}
+    >
+      <svg
+        aria-hidden={true}
+        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        fill="currentColor"
+        height="1em"
+        viewBox="0 0 20 20"
+        width="1em"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="m4.09 4.22.06-.07a.5.5 0 0 1 .63-.06l.07.06L10 9.29l5.15-5.14a.5.5 0 0 1 .63-.06l.07.06c.18.17.2.44.06.63l-.06.07L10.71 10l5.14 5.15c.18.17.2.44.06.63l-.06.07a.5.5 0 0 1-.63.06l-.07-.06L10 10.71l-5.15 5.14a.5.5 0 0 1-.63.06l-.07-.06a.5.5 0 0 1-.06-.63l.06-.07L9.29 10 4.15 4.85a.5.5 0 0 1-.06-.63l.06-.07-.06.07Z"
+          fill="currentColor"
+        />
+      </svg>
+    </span>
+    <span
+      aria-expanded={false}
+      aria-label="Open Test Dropdown"
+      className="fui-Combobox__expandIcon ___1ng6b7f_ujg4670 f1ewtqcl fxkbij4 f1k6fduh ftgm304 fe5j1ua fvc9v3g f1h9en5y"
+      onMouseDown={[Function]}
+      role="button"
+    >
+      <svg
+        aria-hidden={true}
+        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        fill="currentColor"
+        height="1em"
+        viewBox="0 0 20 20"
+        width="1em"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M15.85 7.65c.2.2.2.5 0 .7l-5.46 5.49a.55.55 0 0 1-.78 0L4.15 8.35a.5.5 0 1 1 .7-.7L10 12.8l5.15-5.16c.2-.2.5-.2.7 0Z"
+          fill="currentColor"
+        />
+      </svg>
+    </span>
+  </div>
+</div>
+`;
+
+exports[`lib/dropdown > should render with basic props 1`] = `
+<div
+  className="___1drhqsw_1tak26z f10pi13n fly5x3f fha3vce"
+>
+  <div
+    className="fui-Combobox ___1yjse2u_ky0fe70 f122n59 ft85np5 f1ewtqcl f14mj54c fwk3njj fz17x9o f1869bpl f1exfvgq f10pi13n fmrv4ls f14a1fxs f3e99gv fhljsf7 f1gw3sf2 f13zj6fq f1mdlcz9 f1a7op3 f1gboi2j f1cjjd47 f145g4dw f1kp91vd f1ibwz09 f1mnjydx f13evtba f1yk9hq fhwpy7i f14ee0xe f1xhbsuh fv8e3ye ftb5wc6 fjw5xc1 f1xdyd5c fatpbeo fb7uyps f1cmft4k f1x58t8o f1ibeo51 fxugw4r f1c1zstj fhz96rm f1d2rq10 f11gcy0p fvcxoqz f1ub3y4t flmw63s f1m52nbi fvs00aa f1assf6x fqhmt4z f4ruux4"
+    style={
+      {
+        "fontSize": "14px",
+        "height": "32px",
+        "width": "100%",
+      }
+    }
+  >
+    <input
+      aria-expanded={false}
+      aria-label="Test Dropdown"
+      className="fui-Combobox__input ___1srlkgg_55r68t0 f1ub7u0d f1c21dwh f3bhgqh f19n0e5 fk6fouc ftqa4ok fwyc1cq f13ta7ih fkhj508 figsok6 f1i3iumi fzy81xo"
+      onBlur={[Function]}
+      onChange={[Function]}
+      onClick={[Function]}
+      onFocus={[Function]}
+      onInput={[Function]}
+      onKeyDown={[Function]}
+      placeholder="Select an option"
+      role="combobox"
+      type="text"
+      value=""
+    />
+    <span
+      aria-hidden="true"
+      className="fui-Combobox__clearIcon ___185jhcm_12uys63 f1ewtqcl fxkbij4 f1k6fduh fjseox fe5j1ua fvc9v3g f1h9en5y"
+      onClick={[Function]}
+      onMouseDown={[Function]}
+    >
+      <svg
+        aria-hidden={true}
+        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        fill="currentColor"
+        height="1em"
+        viewBox="0 0 20 20"
+        width="1em"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="m4.09 4.22.06-.07a.5.5 0 0 1 .63-.06l.07.06L10 9.29l5.15-5.14a.5.5 0 0 1 .63-.06l.07.06c.18.17.2.44.06.63l-.06.07L10.71 10l5.14 5.15c.18.17.2.44.06.63l-.06.07a.5.5 0 0 1-.63.06l-.07-.06L10 10.71l-5.15 5.14a.5.5 0 0 1-.63.06l-.07-.06a.5.5 0 0 1-.06-.63l.06-.07L9.29 10 4.15 4.85a.5.5 0 0 1-.06-.63l.06-.07-.06.07Z"
+          fill="currentColor"
+        />
+      </svg>
+    </span>
+    <span
+      aria-expanded={false}
+      aria-label="Open Test Dropdown"
+      className="fui-Combobox__expandIcon ___1ng6b7f_ujg4670 f1ewtqcl fxkbij4 f1k6fduh ftgm304 fe5j1ua fvc9v3g f1h9en5y"
+      onMouseDown={[Function]}
+      role="button"
+    >
+      <svg
+        aria-hidden={true}
+        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        fill="currentColor"
+        height="1em"
+        viewBox="0 0 20 20"
+        width="1em"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M15.85 7.65c.2.2.2.5 0 .7l-5.46 5.49a.55.55 0 0 1-.78 0L4.15 8.35a.5.5 0 1 1 .7-.7L10 12.8l5.15-5.16c.2-.2.5-.2.7 0Z"
+          fill="currentColor"
+        />
+      </svg>
+    </span>
+  </div>
+</div>
+`;
+
+exports[`lib/dropdown > should render with label when provided 1`] = `
+<div
+  className="___1drhqsw_1tak26z f10pi13n fly5x3f fha3vce"
+>
+  <div
+    className="fui-Combobox ___1yjse2u_ky0fe70 f122n59 ft85np5 f1ewtqcl f14mj54c fwk3njj fz17x9o f1869bpl f1exfvgq f10pi13n fmrv4ls f14a1fxs f3e99gv fhljsf7 f1gw3sf2 f13zj6fq f1mdlcz9 f1a7op3 f1gboi2j f1cjjd47 f145g4dw f1kp91vd f1ibwz09 f1mnjydx f13evtba f1yk9hq fhwpy7i f14ee0xe f1xhbsuh fv8e3ye ftb5wc6 fjw5xc1 f1xdyd5c fatpbeo fb7uyps f1cmft4k f1x58t8o f1ibeo51 fxugw4r f1c1zstj fhz96rm f1d2rq10 f11gcy0p fvcxoqz f1ub3y4t flmw63s f1m52nbi fvs00aa f1assf6x fqhmt4z f4ruux4"
+    style={
+      {
+        "fontSize": "14px",
+        "height": "32px",
+        "width": "100%",
+      }
+    }
+  >
+    <input
+      aria-expanded={false}
+      aria-label="Test Label"
+      className="fui-Combobox__input ___1srlkgg_55r68t0 f1ub7u0d f1c21dwh f3bhgqh f19n0e5 fk6fouc ftqa4ok fwyc1cq f13ta7ih fkhj508 figsok6 f1i3iumi fzy81xo"
+      onBlur={[Function]}
+      onChange={[Function]}
+      onClick={[Function]}
+      onFocus={[Function]}
+      onInput={[Function]}
+      onKeyDown={[Function]}
+      placeholder="Select an option"
+      role="combobox"
+      type="text"
+      value=""
+    />
+    <span
+      aria-hidden="true"
+      className="fui-Combobox__clearIcon ___185jhcm_12uys63 f1ewtqcl fxkbij4 f1k6fduh fjseox fe5j1ua fvc9v3g f1h9en5y"
+      onClick={[Function]}
+      onMouseDown={[Function]}
+    >
+      <svg
+        aria-hidden={true}
+        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        fill="currentColor"
+        height="1em"
+        viewBox="0 0 20 20"
+        width="1em"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="m4.09 4.22.06-.07a.5.5 0 0 1 .63-.06l.07.06L10 9.29l5.15-5.14a.5.5 0 0 1 .63-.06l.07.06c.18.17.2.44.06.63l-.06.07L10.71 10l5.14 5.15c.18.17.2.44.06.63l-.06.07a.5.5 0 0 1-.63.06l-.07-.06L10 10.71l-5.15 5.14a.5.5 0 0 1-.63.06l-.07-.06a.5.5 0 0 1-.06-.63l.06-.07L9.29 10 4.15 4.85a.5.5 0 0 1-.06-.63l.06-.07-.06.07Z"
+          fill="currentColor"
+        />
+      </svg>
+    </span>
+    <span
+      aria-expanded={false}
+      aria-label="Open Test Label"
+      className="fui-Combobox__expandIcon ___1ng6b7f_ujg4670 f1ewtqcl fxkbij4 f1k6fduh ftgm304 fe5j1ua fvc9v3g f1h9en5y"
+      onMouseDown={[Function]}
+      role="button"
+    >
+      <svg
+        aria-hidden={true}
+        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        fill="currentColor"
+        height="1em"
+        viewBox="0 0 20 20"
+        width="1em"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M15.85 7.65c.2.2.2.5 0 .7l-5.46 5.49a.55.55 0 0 1-.78 0L4.15 8.35a.5.5 0 1 1 .7-.7L10 12.8l5.15-5.16c.2-.2.5-.2.7 0Z"
+          fill="currentColor"
+        />
+      </svg>
+    </span>
+  </div>
+</div>
+`;
+
+exports[`lib/dropdown > should render without label when not provided 1`] = `
+<div
+  className="___1drhqsw_1tak26z f10pi13n fly5x3f fha3vce"
+>
+  <div
+    className="fui-Combobox ___1yjse2u_ky0fe70 f122n59 ft85np5 f1ewtqcl f14mj54c fwk3njj fz17x9o f1869bpl f1exfvgq f10pi13n fmrv4ls f14a1fxs f3e99gv fhljsf7 f1gw3sf2 f13zj6fq f1mdlcz9 f1a7op3 f1gboi2j f1cjjd47 f145g4dw f1kp91vd f1ibwz09 f1mnjydx f13evtba f1yk9hq fhwpy7i f14ee0xe f1xhbsuh fv8e3ye ftb5wc6 fjw5xc1 f1xdyd5c fatpbeo fb7uyps f1cmft4k f1x58t8o f1ibeo51 fxugw4r f1c1zstj fhz96rm f1d2rq10 f11gcy0p fvcxoqz f1ub3y4t flmw63s f1m52nbi fvs00aa f1assf6x fqhmt4z f4ruux4"
+    style={
+      {
+        "fontSize": "14px",
+        "height": "32px",
+        "width": "100%",
+      }
+    }
+  >
+    <input
+      aria-expanded={false}
+      className="fui-Combobox__input ___1srlkgg_55r68t0 f1ub7u0d f1c21dwh f3bhgqh f19n0e5 fk6fouc ftqa4ok fwyc1cq f13ta7ih fkhj508 figsok6 f1i3iumi fzy81xo"
+      onBlur={[Function]}
+      onChange={[Function]}
+      onClick={[Function]}
+      onFocus={[Function]}
+      onInput={[Function]}
+      onKeyDown={[Function]}
+      placeholder="Select an option"
+      role="combobox"
+      type="text"
+      value=""
+    />
+    <span
+      aria-hidden="true"
+      className="fui-Combobox__clearIcon ___185jhcm_12uys63 f1ewtqcl fxkbij4 f1k6fduh fjseox fe5j1ua fvc9v3g f1h9en5y"
+      onClick={[Function]}
+      onMouseDown={[Function]}
+    >
+      <svg
+        aria-hidden={true}
+        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        fill="currentColor"
+        height="1em"
+        viewBox="0 0 20 20"
+        width="1em"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="m4.09 4.22.06-.07a.5.5 0 0 1 .63-.06l.07.06L10 9.29l5.15-5.14a.5.5 0 0 1 .63-.06l.07.06c.18.17.2.44.06.63l-.06.07L10.71 10l5.14 5.15c.18.17.2.44.06.63l-.06.07a.5.5 0 0 1-.63.06l-.07-.06L10 10.71l-5.15 5.14a.5.5 0 0 1-.63.06l-.07-.06a.5.5 0 0 1-.06-.63l.06-.07L9.29 10 4.15 4.85a.5.5 0 0 1-.06-.63l.06-.07-.06.07Z"
+          fill="currentColor"
+        />
+      </svg>
+    </span>
+    <span
+      aria-expanded={false}
+      aria-label="Open"
+      className="fui-Combobox__expandIcon ___1ng6b7f_ujg4670 f1ewtqcl fxkbij4 f1k6fduh ftgm304 fe5j1ua fvc9v3g f1h9en5y"
+      onMouseDown={[Function]}
+      role="button"
+    >
+      <svg
+        aria-hidden={true}
+        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        fill="currentColor"
+        height="1em"
+        viewBox="0 0 20 20"
+        width="1em"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M15.85 7.65c.2.2.2.5 0 .7l-5.46 5.49a.55.55 0 0 1-.78 0L4.15 8.35a.5.5 0 1 1 .7-.7L10 12.8l5.15-5.16c.2-.2.5-.2.7 0Z"
+          fill="currentColor"
+        />
+      </svg>
+    </span>
+  </div>
+</div>
+`;

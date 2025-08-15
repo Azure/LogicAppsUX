@@ -1,49 +1,33 @@
 import { openPanel, useNodesInitialized } from '../core';
-import { useLayout } from '../core/graphlayout';
 import { usePreloadOperationsQuery, usePreloadConnectorsQuery } from '../core/queries/browse';
 import { useMonitoringView, useReadOnly, useHostOptions, useIsVSCode } from '../core/state/designerOptions/designerOptionsSelectors';
-import { useAgenticWorkflow, useClampPan } from '../core/state/designerView/designerViewSelectors';
-import { clearPanel } from '../core/state/panel/panelSlice';
-import { useIsGraphEmpty } from '../core/state/workflow/workflowSelectors';
-import { buildEdgeIdsBySource, updateNodeSizes } from '../core/state/workflow/workflowSlice';
+import { useIsA2AWorkflow, useWorkflowHasAgentLoop } from '../core/state/designerView/designerViewSelectors';
 import type { AppDispatch, RootState } from '../core/store';
-import { DEFAULT_NODE_SIZE } from '../core/utils/graph';
 import Controls from './Controls';
-import GraphNode from './CustomNodes/GraphContainerNode';
-import HiddenNode from './CustomNodes/HiddenNode';
-import OperationNode from './CustomNodes/OperationCardNode';
-import PlaceholderNode from './CustomNodes/PlaceholderNode';
-import CollapsedNode from './CustomNodes/CollapsedCardNode';
-import ScopeCardNode from './CustomNodes/ScopeCardNode';
-import SubgraphCardNode from './CustomNodes/SubgraphCardNode';
 import Minimap from './Minimap';
 import DeleteModal from './common/DeleteModal/DeleteModal';
-import ButtonEdge from './connections/edge';
-import HiddenEdge from './connections/hiddenEdge';
 import { PanelRoot } from './panel/panelRoot';
 import { css, setLayerHostSelector } from '@fluentui/react';
 import { PanelLocation } from '@microsoft/designer-ui';
 import type { CustomPanelLocation } from '@microsoft/designer-ui';
-import type { WorkflowNodeType } from '@microsoft/logic-apps-shared';
-import { WORKFLOW_NODE_TYPES, useThrottledEffect } from '@microsoft/logic-apps-shared';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import KeyboardBackendFactory, { isKeyboardDragTrigger } from 'react-dnd-accessible-backend';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { DndProvider, createTransition, MouseTransition } from 'react-dnd-multi-backend';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
-import { Background, ReactFlow, ReactFlowProvider, BezierEdge } from '@xyflow/react';
-import type { BackgroundProps, EdgeTypes, NodeChange, ReactFlowInstance } from '@xyflow/react';
+import { Background, ReactFlowProvider } from '@xyflow/react';
+import type { BackgroundProps } from '@xyflow/react';
 import { PerformanceDebugTool } from './common/PerformanceDebug/PerformanceDebug';
 import { CanvasFinder } from './CanvasFinder';
 import { DesignerContextualMenu } from './common/DesignerContextualMenu/DesignerContextualMenu';
 import { EdgeContextualMenu } from './common/EdgeContextualMenu/EdgeContextualMenu';
 import { DragPanMonitor } from './common/DragPanMonitor/DragPanMonitor';
 import { CanvasSizeMonitor } from './CanvasSizeMonitor';
-import { useResizeObserver } from '@react-hookz/web';
 import { AgentChat } from './panel/agentChat/agentChat';
-import { DesignerFlowViewPadding } from '../core/utils/designerLayoutHelpers';
+import DesignerReactFlow from './DesignerReactFlow';
+import MonitoringTimeline from './MonitoringTimeline';
 
 export interface DesignerProps {
   backgroundProps?: BackgroundProps;
@@ -51,25 +35,6 @@ export interface DesignerProps {
   customPanelLocations?: CustomPanelLocation[];
   displayRuntimeInfo?: boolean;
 }
-
-type NodeTypesObj = Record<WorkflowNodeType, React.ComponentType<any>>;
-const nodeTypes: NodeTypesObj = {
-  OPERATION_NODE: OperationNode,
-  GRAPH_NODE: GraphNode,
-  SUBGRAPH_NODE: GraphNode,
-  SCOPE_CARD_NODE: ScopeCardNode,
-  SUBGRAPH_CARD_NODE: SubgraphCardNode,
-  HIDDEN_NODE: HiddenNode,
-  PLACEHOLDER_NODE: PlaceholderNode,
-  COLLAPSED_NODE: CollapsedNode,
-};
-
-const edgeTypes = {
-  BUTTON_EDGE: ButtonEdge,
-  HEADING_EDGE: ButtonEdge, // This is functionally the same as a button edge
-  ONLY_EDGE: BezierEdge, // Setting it as default React Flow Edge, can be changed as needed
-  HIDDEN_EDGE: HiddenEdge,
-} as EdgeTypes;
 
 export const SearchPreloader = () => {
   usePreloadOperationsQuery();
@@ -80,74 +45,13 @@ export const SearchPreloader = () => {
 export const Designer = (props: DesignerProps) => {
   const { backgroundProps, panelLocation = PanelLocation.Right, customPanelLocations } = props;
 
-  const [nodes, edges, flowSize] = useLayout();
-
-  const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null);
-
-  const onInit = useCallback((instance: ReactFlowInstance) => {
-    setReactFlowInstance(instance);
-  }, []);
-
-  const hasFitViewRun = useRef(false);
-
-  useEffect(() => {
-    if (!hasFitViewRun.current && nodes.length > 0 && reactFlowInstance) {
-      requestAnimationFrame(() => {
-        reactFlowInstance.fitView({ padding: 0.6 });
-        hasFitViewRun.current = true;
-      });
-    }
-  }, [nodes, reactFlowInstance]);
-
-  const isEmpty = useIsGraphEmpty();
   const isVSCode = useIsVSCode();
   const isReadOnly = useReadOnly();
   const dispatch = useDispatch<AppDispatch>();
-  const onNodesChange = useCallback(
-    (changes: NodeChange[]) => {
-      dispatch(updateNodeSizes(changes));
-    },
-    [dispatch]
-  );
 
   const designerContainerRef = useRef<HTMLDivElement>(null);
 
-  const emptyWorkflowPlaceholderNodes = [
-    {
-      id: 'newWorkflowTrigger',
-      position: { x: 0, y: 0 },
-      data: { label: 'newWorkflowTrigger' },
-      parentId: undefined,
-      type: WORKFLOW_NODE_TYPES.PLACEHOLDER_NODE,
-      style: DEFAULT_NODE_SIZE,
-    },
-  ];
-
-  const nodesWithPlaceholder = isEmpty ? (isReadOnly ? [] : emptyWorkflowPlaceholderNodes) : nodes;
-
-  const graph = useSelector((state: RootState) => state.workflow.graph);
-  useThrottledEffect(() => dispatch(buildEdgeIdsBySource()), [graph], 200);
-
-  const clampPan = useClampPan();
-
   const canvasRef = useRef<HTMLDivElement>(null);
-  const [containerDimensions, setContainerDimentions] = useState(canvasRef.current?.getBoundingClientRect() ?? { width: 0, height: 0 });
-  useResizeObserver(canvasRef, (el) => setContainerDimentions(el.contentRect));
-
-  const [zoom, setZoom] = useState(1);
-
-  const translateExtent = useMemo((): [[number, number], [number, number]] => {
-    const padding = DesignerFlowViewPadding;
-    const [flowWidth, flowHeight] = flowSize;
-
-    const xVal = containerDimensions.width / zoom - padding - DEFAULT_NODE_SIZE.width;
-    const yVal = containerDimensions.height / zoom - padding - DEFAULT_NODE_SIZE.height;
-
-    return [
-      [-xVal, -yVal],
-      [xVal + flowWidth, yVal + flowHeight - 30],
-    ];
-  }, [flowSize, containerDimensions, zoom]);
 
   useEffect(() => setLayerHostSelector('#msla-layer-host'), []);
   const KeyboardTransition = createTransition('keydown', (event) => {
@@ -177,7 +81,12 @@ export const Designer = (props: DesignerProps) => {
   );
 
   const isMonitoringView = useMonitoringView();
-  const isAgenticWorkflow = useAgenticWorkflow();
+  const workflowHasAgentLoop = useWorkflowHasAgentLoop();
+  const isA2AWorkflow = useIsA2AWorkflow(); // Specifically A2A + Handoffs
+
+  const hasChat = useMemo(() => {
+    return workflowHasAgentLoop && isMonitoringView;
+  }, [isMonitoringView, workflowHasAgentLoop]);
 
   const DND_OPTIONS: any = {
     backends: [
@@ -214,70 +123,18 @@ export const Designer = (props: DesignerProps) => {
   // This delayes the query until the workflowKind is available
   useQuery({ queryKey: ['workflowKind'], initialData: undefined, enabled: !!workflowKind, queryFn: () => workflowKind });
 
-  // Our "onlyRenderVisibleElements" prop makes offscreen nodes inaccessible to tab navigation.
-  // In order to maintain accessibility, we are disabling this prop for tab navigation users
-  // We are inferring tab nav users if they press the tab key 5 times within the first 10 seconds
-  // This is not exact but should cover most cases
-  const [userInferredTabNavigation, setUserInferredTabNavigation] = useState(false);
-  useEffect(() => {
-    if (!isInitialized) {
-      return;
-    }
-    const tabCountTimeout = 10;
-    const tabCountThreshold = 4;
-    let tabCount = 0;
-    const tabListener = (e: KeyboardEvent) => {
-      if (e.key === 'Tab') {
-        tabCount++;
-        if (tabCount > tabCountThreshold) {
-          document.removeEventListener('keydown', tabListener);
-          setUserInferredTabNavigation(true);
-        }
-      }
-    };
-    document.addEventListener('keydown', tabListener);
-    setTimeout(() => {
-      document.removeEventListener('keydown', tabListener);
-    }, tabCountTimeout * 1000);
-  }, [isInitialized]);
-
   return (
     <DndProvider options={DND_OPTIONS}>
       {preloadSearch ? <SearchPreloader /> : null}
       <div className="msla-designer-canvas msla-panel-mode" ref={designerContainerRef}>
         <ReactFlowProvider>
           <div style={{ flexGrow: 1 }}>
-            <ReactFlow
-              ref={canvasRef}
-              onInit={onInit}
-              nodeTypes={nodeTypes}
-              nodes={nodesWithPlaceholder}
-              edges={edges}
-              onNodesChange={onNodesChange}
-              nodesConnectable={false}
-              nodesDraggable={false}
-              nodesFocusable={false}
-              edgesFocusable={false}
-              edgeTypes={edgeTypes}
-              panOnScroll={true}
-              deleteKeyCode={['Backspace', 'Delete']}
-              zoomActivationKeyCode={['Ctrl', 'Meta', 'Alt', 'Control']}
-              translateExtent={clampPan ? translateExtent : undefined}
-              onMove={(_e, viewport) => setZoom(viewport.zoom)}
-              minZoom={0.05}
-              onPaneClick={() => dispatch(clearPanel())}
-              disableKeyboardA11y={true}
-              onlyRenderVisibleElements={!userInferredTabNavigation}
-              proOptions={{
-                account: 'paid-sponsor',
-                hideAttribution: true,
-              }}
-            >
+            <DesignerReactFlow canvasRef={canvasRef} isLooping={isA2AWorkflow}>
               {backgroundProps ? <Background {...backgroundProps} /> : null}
               <DeleteModal />
               <DesignerContextualMenu />
               <EdgeContextualMenu />
-            </ReactFlow>
+            </DesignerReactFlow>
           </div>
           <PanelRoot
             panelContainerRef={designerContainerRef}
@@ -285,13 +142,12 @@ export const Designer = (props: DesignerProps) => {
             customPanelLocations={customPanelLocations}
             isResizeable={true}
           />
-          {isMonitoringView && isAgenticWorkflow ? (
-            <AgentChat panelLocation={PanelLocation.Right} panelContainerRef={designerContainerRef} />
-          ) : null}
+          {hasChat ? <AgentChat panelLocation={PanelLocation.Right} panelContainerRef={designerContainerRef} /> : null}
           <div className={css('msla-designer-tools', panelLocation === PanelLocation.Left && 'left-panel')}>
             <Controls />
             <Minimap />
           </div>
+          {isMonitoringView && isA2AWorkflow && <MonitoringTimeline />}
           <PerformanceDebugTool />
           <CanvasFinder />
           <CanvasSizeMonitor canvasRef={canvasRef} />

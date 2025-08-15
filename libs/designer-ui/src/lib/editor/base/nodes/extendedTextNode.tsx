@@ -15,13 +15,13 @@ export type SerializedExtendedTextNode = Spread<
   SerializedTextNode
 >;
 
-export class ExtentedTextNode extends TextNode {
+export class ExtendedTextNode extends TextNode {
   static getType(): string {
     return 'extended-text';
   }
 
-  static clone(node: ExtentedTextNode): ExtentedTextNode {
-    return new ExtentedTextNode(node.__text, node.__key);
+  static clone(node: ExtendedTextNode): ExtendedTextNode {
+    return new ExtendedTextNode(node.__text, node.__key);
   }
 
   static importDOM(): DOMConversionMap | null {
@@ -117,7 +117,7 @@ function patchStyleConversion(
 }
 
 export function $createExtendedTextNode(text: string, styles?: string, format?: number) {
-  const newNode = new ExtentedTextNode(text);
+  const newNode = new ExtendedTextNode(text);
   newNode.setStyle(styles ?? '');
   newNode.setFormat(format ?? 0);
   return newNode;

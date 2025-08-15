@@ -7,7 +7,7 @@ import { getIconPath } from '../../utils/tree/assets';
 import { LogicAppResourceTree } from '../LogicAppResourceTree';
 import type { ConfigurationsTreeItem } from '../configurationsTree/ConfigurationsTreeItem';
 import type { RemoteWorkflowTreeItem } from '../remoteWorkflowsTree/RemoteWorkflowTreeItem';
-import type { AppSettingsTreeItem, DeploymentsTreeItem, IDeployContext, ParsedSite } from '@microsoft/vscode-azext-azureappservice';
+import type { DeploymentsTreeItem, IDeployContext, ParsedSite } from '@microsoft/vscode-azext-azureappservice';
 import { AzExtParentTreeItem } from '@microsoft/vscode-azext-utils';
 import type { AzExtTreeItem, IActionContext } from '@microsoft/vscode-azext-utils';
 import type {
@@ -20,6 +20,8 @@ import type {
 } from '@microsoft/vscode-extension-logic-apps';
 import { ProjectSource } from '@microsoft/vscode-extension-logic-apps';
 import type { ContainerAppSecret } from '@azure/arm-appservice';
+import type { AppSettingsTreeItem } from '@microsoft/vscode-azext-azureappsettings';
+
 export class SlotTreeItem extends AzExtParentTreeItem implements IProjectTreeItem {
   public logStreamPath = '';
   public configurationsTreeItem: ConfigurationsTreeItem;

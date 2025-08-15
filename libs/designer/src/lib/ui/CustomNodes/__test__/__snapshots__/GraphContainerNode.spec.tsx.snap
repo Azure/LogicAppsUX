@@ -11,7 +11,7 @@ exports[`GraphContainerNode > should apply correct styles based on node size 1`]
   }
 >
   <div
-    className="node-handle top"
+    className="___1jzzvj1_8dxafd0 f3bhgqh f15a45g f113wtx2 fly5x3f f1l02sjl fl4tsp0 f2imlf6 f1ewtqcl fj25m7a"
     isConnectable={false}
     position="top"
     type="target"
@@ -19,13 +19,21 @@ exports[`GraphContainerNode > should apply correct styles based on node size 1`]
     Handle reactflow
   </div>
   <div
-    className="___1ai772d_15eae7l fly5x3f f1l02sjl f10pi13n f1dmdbja f1ewtqcl f1erghxr f1ehz9de f1spoy8 fmb70yw ftac7j7 f1w0yd9v fdwcyh7 f1h0xgbp fzkkow9 fcdblym fg706s2 fjik90z fj3muxo f1akhkt f1aperda f1lxtadh fcw4hzm f73gjfx fqf7may f1tzzr66 f1475uvo fzw26dj fei6c6s fd8fhxq fenhr2i fokv5x4 f162m1m7 fg5psxl"
+    className="___12cglbp_5g59060 fly5x3f f1l02sjl f10pi13n f1dmdbja f1ewtqcl f1erghxr f1ehz9de f1spoy8 fmb70yw ftac7j7 f1w0yd9v fdwcyh7 f1h0xgbp fzkkow9 fcdblym fg706s2 fjik90z fj3muxo f1akhkt f1aperda f1lxtadh"
     data-automation-id="msla-graph-container-mockid"
   />
   <div
-    className="node-handle bottom"
-    isConnectable={false}
+    className="___rchrq50_zqh4gx0 f3bhgqh f1022m68 f6bm4uj f79hrhh f9ur42n f3mu39s fugzhns f5gq2j6 f3q69k0"
+    isConnectable={true}
+    isConnectableEnd={false}
+    isConnectableStart={true}
     position="bottom"
+    style={
+      {
+        "transform": "translate(-50%, 0)",
+        "visibility": "hidden",
+      }
+    }
     type="source"
   >
     Handle reactflow
@@ -44,7 +52,7 @@ exports[`GraphContainerNode > should not render DropZone when showLeafComponents
   }
 >
   <div
-    className="node-handle top"
+    className="___1jzzvj1_8dxafd0 f3bhgqh f15a45g f113wtx2 fly5x3f f1l02sjl fl4tsp0 f2imlf6 f1ewtqcl fj25m7a"
     isConnectable={false}
     position="top"
     type="target"
@@ -52,13 +60,21 @@ exports[`GraphContainerNode > should not render DropZone when showLeafComponents
     Handle reactflow
   </div>
   <div
-    className="___1ai772d_15eae7l fly5x3f f1l02sjl f10pi13n f1dmdbja f1ewtqcl f1erghxr f1ehz9de f1spoy8 fmb70yw ftac7j7 f1w0yd9v fdwcyh7 f1h0xgbp fzkkow9 fcdblym fg706s2 fjik90z fj3muxo f1akhkt f1aperda f1lxtadh fcw4hzm f73gjfx fqf7may f1tzzr66 f1475uvo fzw26dj fei6c6s fd8fhxq fenhr2i fokv5x4 f162m1m7 fg5psxl"
+    className="___12cglbp_5g59060 fly5x3f f1l02sjl f10pi13n f1dmdbja f1ewtqcl f1erghxr f1ehz9de f1spoy8 fmb70yw ftac7j7 f1w0yd9v fdwcyh7 f1h0xgbp fzkkow9 fcdblym fg706s2 fjik90z fj3muxo f1akhkt f1aperda f1lxtadh"
     data-automation-id="msla-graph-container-mockid"
   />
   <div
-    className="node-handle bottom"
-    isConnectable={false}
+    className="___rchrq50_zqh4gx0 f3bhgqh f1022m68 f6bm4uj f79hrhh f9ur42n f3mu39s fugzhns f5gq2j6 f3q69k0"
+    isConnectable={true}
+    isConnectableEnd={false}
+    isConnectableStart={true}
     position="bottom"
+    style={
+      {
+        "transform": "translate(-50%, 0)",
+        "visibility": "hidden",
+      }
+    }
     type="source"
   >
     Handle reactflow
@@ -78,7 +94,7 @@ exports[`GraphContainerNode > should render DropZone when showLeafComponents is 
     }
   >
     <div
-      className="node-handle top"
+      className="___1jzzvj1_8dxafd0 f3bhgqh f15a45g f113wtx2 fly5x3f f1l02sjl fl4tsp0 f2imlf6 f1ewtqcl fj25m7a"
       isConnectable={false}
       position="top"
       type="target"
@@ -86,13 +102,21 @@ exports[`GraphContainerNode > should render DropZone when showLeafComponents is 
       Handle reactflow
     </div>
     <div
-      className="___1ai772d_15eae7l fly5x3f f1l02sjl f10pi13n f1dmdbja f1ewtqcl f1erghxr f1ehz9de f1spoy8 fmb70yw ftac7j7 f1w0yd9v fdwcyh7 f1h0xgbp fzkkow9 fcdblym fg706s2 fjik90z fj3muxo f1akhkt f1aperda f1lxtadh fcw4hzm f73gjfx fqf7may f1tzzr66 f1475uvo fzw26dj fei6c6s fd8fhxq fenhr2i fokv5x4 f162m1m7 fg5psxl"
+      className="___12cglbp_5g59060 fly5x3f f1l02sjl f10pi13n f1dmdbja f1ewtqcl f1erghxr f1ehz9de f1spoy8 fmb70yw ftac7j7 f1w0yd9v fdwcyh7 f1h0xgbp fzkkow9 fcdblym fg706s2 fjik90z fj3muxo f1akhkt f1aperda f1lxtadh"
       data-automation-id="msla-graph-container-mockid"
     />
     <div
-      className="node-handle bottom"
-      isConnectable={false}
+      className="___rchrq50_zqh4gx0 f3bhgqh f1022m68 f6bm4uj f79hrhh f9ur42n f3mu39s fugzhns f5gq2j6 f3q69k0"
+      isConnectable={true}
+      isConnectableEnd={false}
+      isConnectableStart={true}
       position="bottom"
+      style={
+        {
+          "transform": "translate(-50%, 0)",
+          "visibility": "hidden",
+        }
+      }
       type="source"
     >
       Handle reactflow
@@ -124,7 +148,7 @@ exports[`GraphContainerNode > should render graph container as inactive when is 
   }
 >
   <div
-    className="node-handle top"
+    className="___1jzzvj1_8dxafd0 f3bhgqh f15a45g f113wtx2 fly5x3f f1l02sjl fl4tsp0 f2imlf6 f1ewtqcl fj25m7a"
     isConnectable={false}
     position="top"
     type="target"
@@ -132,13 +156,21 @@ exports[`GraphContainerNode > should render graph container as inactive when is 
     Handle reactflow
   </div>
   <div
-    className="msla-card-inactive ___1ai772d_15eae7l fly5x3f f1l02sjl f10pi13n f1dmdbja f1ewtqcl f1erghxr f1ehz9de f1spoy8 fmb70yw ftac7j7 f1w0yd9v fdwcyh7 f1h0xgbp fzkkow9 fcdblym fg706s2 fjik90z fj3muxo f1akhkt f1aperda f1lxtadh fcw4hzm f73gjfx fqf7may f1tzzr66 f1475uvo fzw26dj fei6c6s fd8fhxq fenhr2i fokv5x4 f162m1m7 fg5psxl"
+    className="___12cglbp_5g59060 fly5x3f f1l02sjl f10pi13n f1dmdbja f1ewtqcl f1erghxr f1ehz9de f1spoy8 fmb70yw ftac7j7 f1w0yd9v fdwcyh7 f1h0xgbp fzkkow9 fcdblym fg706s2 fjik90z fj3muxo f1akhkt f1aperda f1lxtadh"
     data-automation-id="msla-graph-container-mockid"
   />
   <div
-    className="node-handle bottom"
-    isConnectable={false}
+    className="___rchrq50_zqh4gx0 f3bhgqh f1022m68 f6bm4uj f79hrhh f9ur42n f3mu39s fugzhns f5gq2j6 f3q69k0"
+    isConnectable={true}
+    isConnectableEnd={false}
+    isConnectableStart={true}
     position="bottom"
+    style={
+      {
+        "transform": "translate(-50%, 0)",
+        "visibility": "hidden",
+      }
+    }
     type="source"
   >
     Handle reactflow
@@ -157,7 +189,7 @@ exports[`GraphContainerNode > should render graph container as normal when in mo
   }
 >
   <div
-    className="node-handle top"
+    className="___1jzzvj1_8dxafd0 f3bhgqh f15a45g f113wtx2 fly5x3f f1l02sjl fl4tsp0 f2imlf6 f1ewtqcl fj25m7a"
     isConnectable={false}
     position="top"
     type="target"
@@ -165,46 +197,21 @@ exports[`GraphContainerNode > should render graph container as normal when in mo
     Handle reactflow
   </div>
   <div
-    className="___1ai772d_15eae7l fly5x3f f1l02sjl f10pi13n f1dmdbja f1ewtqcl f1erghxr f1ehz9de f1spoy8 fmb70yw ftac7j7 f1w0yd9v fdwcyh7 f1h0xgbp fzkkow9 fcdblym fg706s2 fjik90z fj3muxo f1akhkt f1aperda f1lxtadh fcw4hzm f73gjfx fqf7may f1tzzr66 f1475uvo fzw26dj fei6c6s fd8fhxq fenhr2i fokv5x4 f162m1m7 fg5psxl"
+    className="___12cglbp_5g59060 fly5x3f f1l02sjl f10pi13n f1dmdbja f1ewtqcl f1erghxr f1ehz9de f1spoy8 fmb70yw ftac7j7 f1w0yd9v fdwcyh7 f1h0xgbp fzkkow9 fcdblym fg706s2 fjik90z fj3muxo f1akhkt f1aperda f1lxtadh"
     data-automation-id="msla-graph-container-mockid"
   />
   <div
-    className="node-handle bottom"
-    isConnectable={false}
+    className="___rchrq50_zqh4gx0 f3bhgqh f1022m68 f6bm4uj f79hrhh f9ur42n f3mu39s fugzhns f5gq2j6 f3q69k0"
+    isConnectable={true}
+    isConnectableEnd={false}
+    isConnectableStart={true}
     position="bottom"
-    type="source"
-  >
-    Handle reactflow
-  </div>
-</div>
-`;
-
-exports[`GraphContainerNode > should render the top and bottom handles 1`] = `
-<div
-  className="msla-graph-container-wrapper"
-  style={
-    {
-      "height": 100,
-      "width": 100,
+    style={
+      {
+        "transform": "translate(-50%, 0)",
+        "visibility": "hidden",
+      }
     }
-  }
->
-  <div
-    className="node-handle top"
-    isConnectable={false}
-    position="top"
-    type="target"
-  >
-    Handle reactflow
-  </div>
-  <div
-    className="___1ai772d_15eae7l fly5x3f f1l02sjl f10pi13n f1dmdbja f1ewtqcl f1erghxr f1ehz9de f1spoy8 fmb70yw ftac7j7 f1w0yd9v fdwcyh7 f1h0xgbp fzkkow9 fcdblym fg706s2 fjik90z fj3muxo f1akhkt f1aperda f1lxtadh fcw4hzm f73gjfx fqf7may f1tzzr66 f1475uvo fzw26dj fei6c6s fd8fhxq fenhr2i fokv5x4 f162m1m7 fg5psxl"
-    data-automation-id="msla-graph-container-mockid"
-  />
-  <div
-    className="node-handle bottom"
-    isConnectable={false}
-    position="bottom"
     type="source"
   >
     Handle reactflow
@@ -223,7 +230,7 @@ exports[`GraphContainerNode > should render with footer and be a subgraph 1`] = 
   }
 >
   <div
-    className="node-handle top"
+    className="___1jzzvj1_8dxafd0 f3bhgqh f15a45g f113wtx2 fly5x3f f1l02sjl fl4tsp0 f2imlf6 f1ewtqcl fj25m7a"
     isConnectable={false}
     position="top"
     type="target"
@@ -231,11 +238,11 @@ exports[`GraphContainerNode > should render with footer and be a subgraph 1`] = 
     Handle reactflow
   </div>
   <div
-    className="___1ai772d_15eae7l fly5x3f f1l02sjl f10pi13n f1dmdbja f1ewtqcl f1erghxr f1ehz9de f1spoy8 fmb70yw ftac7j7 f1w0yd9v fdwcyh7 f1h0xgbp fzkkow9 fcdblym fg706s2 fjik90z fj3muxo f1akhkt f1aperda f1lxtadh fcw4hzm f73gjfx fqf7may f1tzzr66 f1475uvo fzw26dj fei6c6s fd8fhxq fenhr2i fokv5x4 f162m1m7 fg5psxl"
+    className="___12cglbp_5g59060 fly5x3f f1l02sjl f10pi13n f1dmdbja f1ewtqcl f1erghxr f1ehz9de f1spoy8 fmb70yw ftac7j7 f1w0yd9v fdwcyh7 f1h0xgbp fzkkow9 fcdblym fg706s2 fjik90z fj3muxo f1akhkt f1aperda f1lxtadh"
     data-automation-id="msla-graph-container-mockid"
   />
   <div
-    className="node-handle bottom"
+    className="___ntqwa30_se4bvr0 f3bhgqh fd7fpy0 f15a45g"
     isConnectable={false}
     position="bottom"
     type="source"
@@ -256,7 +263,7 @@ exports[`GraphContainerNode > should render without crashing 1`] = `
   }
 >
   <div
-    className="node-handle top"
+    className="___1jzzvj1_8dxafd0 f3bhgqh f15a45g f113wtx2 fly5x3f f1l02sjl fl4tsp0 f2imlf6 f1ewtqcl fj25m7a"
     isConnectable={false}
     position="top"
     type="target"
@@ -264,13 +271,21 @@ exports[`GraphContainerNode > should render without crashing 1`] = `
     Handle reactflow
   </div>
   <div
-    className="___1ai772d_15eae7l fly5x3f f1l02sjl f10pi13n f1dmdbja f1ewtqcl f1erghxr f1ehz9de f1spoy8 fmb70yw ftac7j7 f1w0yd9v fdwcyh7 f1h0xgbp fzkkow9 fcdblym fg706s2 fjik90z fj3muxo f1akhkt f1aperda f1lxtadh fcw4hzm f73gjfx fqf7may f1tzzr66 f1475uvo fzw26dj fei6c6s fd8fhxq fenhr2i fokv5x4 f162m1m7 fg5psxl"
+    className="___12cglbp_5g59060 fly5x3f f1l02sjl f10pi13n f1dmdbja f1ewtqcl f1erghxr f1ehz9de f1spoy8 fmb70yw ftac7j7 f1w0yd9v fdwcyh7 f1h0xgbp fzkkow9 fcdblym fg706s2 fjik90z fj3muxo f1akhkt f1aperda f1lxtadh"
     data-automation-id="msla-graph-container-mockid"
   />
   <div
-    className="node-handle bottom"
-    isConnectable={false}
+    className="___rchrq50_zqh4gx0 f3bhgqh f1022m68 f6bm4uj f79hrhh f9ur42n f3mu39s fugzhns f5gq2j6 f3q69k0"
+    isConnectable={true}
+    isConnectableEnd={false}
+    isConnectableStart={true}
     position="bottom"
+    style={
+      {
+        "transform": "translate(-50%, 0)",
+        "visibility": "hidden",
+      }
+    }
     type="source"
   >
     Handle reactflow

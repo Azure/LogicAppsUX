@@ -61,7 +61,6 @@ import {
 import {
   LogEntryLevel,
   LoggerService,
-  OperationManifestService,
   WorkflowService,
   getIntl,
   isDynamicTreeExtension,
@@ -109,14 +108,13 @@ import {
   UnsupportedException,
   ValidationErrorCode,
   ValidationException,
-  nthLastIndexOf,
   parseErrorMessage,
   getRecordEntry,
   replaceWhiteSpaceWithUnderscore,
   isRecordNotEmpty,
   isBodySegment,
   canStringBeConverted,
-  splitAtIndex,
+  TryGetOperationManifestService,
 } from '@microsoft/logic-apps-shared';
 import type {
   AuthProps,
@@ -136,7 +134,6 @@ import {
   removeQuotes,
   ArrayType,
   FloatingActionMenuKind,
-  getOuterMostCommaIndex,
   RowDropdownOptions,
   GroupDropdownOptions,
   GroupType,
@@ -146,6 +143,7 @@ import {
   TokenType,
   AuthenticationOAuthType,
   validateVariables,
+  parseQueryStringToRowItemProps,
 } from '@microsoft/designer-ui';
 import type {
   DependentParameterInfo,
@@ -223,8 +221,11 @@ export interface UpdateParameterAndDependenciesPayload {
   connectionReference: ConnectionReference;
   nodeInputs: NodeInputs;
   dependencies: NodeDependencies;
+  updateTokenMetadata?: boolean;
   operationDefinition?: any;
   skipStateSave?: boolean;
+  loadDynamicOutputs?: boolean;
+  loadDefaultValues?: boolean;
 }
 
 export function getParametersSortedByVisibility(parameters: ParameterInfo[]): ParameterInfo[] {
@@ -621,77 +622,29 @@ export const toSimpleQueryBuilderViewModel = (
   input: any
 ): {
   isOldFormat: boolean;
-  itemValue: ValueSegment[] | undefined;
+  itemValue: RowItemProps | undefined;
   isRowFormat: boolean;
 } => {
-  const advancedModeResult = {
-    isOldFormat: true,
-    isRowFormat: false,
-    itemValue: undefined,
-  };
-
-  if (!input || !input.includes('@') || !input.includes(',')) {
-    return input?.length === 0
-      ? {
-          isOldFormat: true,
-          isRowFormat: true,
-          itemValue: [createLiteralValueSegment("@equals('','')")],
-        }
-      : advancedModeResult;
-  }
-
-  try {
-    let stringValue = input;
-    let operator: string = stringValue.substring(stringValue.indexOf('@') + 1, stringValue.indexOf('('));
-    let operationLiteral: ValueSegment;
-    let endingLiteral: ValueSegment;
-    const negatory = operator === 'not';
-
-    if (negatory) {
-      stringValue = stringValue.replace('@not(', '@');
-
-      const negatedOperator = stringValue.substring(stringValue.indexOf('@') + 1, stringValue.indexOf('('));
-
-      operationLiteral = createLiteralValueSegment(`@not(${negatedOperator}(`);
-      endingLiteral = createLiteralValueSegment('))');
-      operator = `not${negatedOperator}`;
-    } else {
-      operationLiteral = createLiteralValueSegment(`@${operator}(`);
-      endingLiteral = createLiteralValueSegment(')');
-    }
-
-    if (!Object.values(RowDropdownOptions).includes(operator as RowDropdownOptions)) {
-      return advancedModeResult;
-    }
-
-    const operandSubstring: string = stringValue.substring(
-      stringValue.indexOf('(') + 1,
-      nthLastIndexOf(stringValue, ')', negatory ? 2 : 1)
-    );
-    const [operand1String, operand2String] = splitAtIndex(operandSubstring, getOuterMostCommaIndex(operandSubstring)).map(removeQuotes);
-
+  if (input?.length === 0) {
     return {
       isOldFormat: true,
       isRowFormat: true,
-      itemValue: [
-        operationLiteral,
-        loadParameterValueFromString(operand1String.trim(), {
-          removeQuotesFromExpression: true,
-          trimExpression: true,
-          convertIfContainsExpression: true,
-        })[0],
-        createLiteralValueSegment(','),
-        loadParameterValueFromString(operand2String.trim(), {
-          removeQuotesFromExpression: true,
-          trimExpression: true,
-          convertIfContainsExpression: true,
-        })[0],
-        endingLiteral,
-      ],
+      itemValue: {
+        operand1: [],
+        operand2: [],
+        operator: RowDropdownOptions.EQUALS,
+        type: GroupType.ROW,
+      },
     };
-  } catch {
-    return advancedModeResult;
   }
+
+  const itemValue = parseQueryStringToRowItemProps(input, loadParameterValueFromString);
+
+  return {
+    isOldFormat: true,
+    isRowFormat: itemValue !== undefined,
+    itemValue,
+  };
 };
 
 export const canConvertToComplexCondition = (input: any): boolean => {
@@ -1877,7 +1830,10 @@ export const updateParameterAndDependencies = createAsyncThunk(
       connectionReference,
       nodeInputs,
       dependencies,
+      updateTokenMetadata = true,
       operationDefinition,
+      loadDynamicOutputs,
+      loadDefaultValues,
     } = actionPayload;
     const parameter = nodeInputs.parameterGroups[groupId].parameters.find((param) => param.id === parameterId) ?? {};
     const updatedParameter = { ...parameter, ...properties } as ParameterInfo;
@@ -1969,6 +1925,7 @@ export const updateParameterAndDependencies = createAsyncThunk(
     }
 
     if (dependenciesToUpdate) {
+      const rootState = getState() as RootState;
       loadDynamicData(
         nodeId,
         isTrigger,
@@ -1977,7 +1934,12 @@ export const updateParameterAndDependencies = createAsyncThunk(
         dependenciesToUpdate,
         dispatch,
         getState as () => RootState,
-        operationDefinition
+        rootState.tokens?.variables ?? {},
+        rootState.workflowParameters?.definitions ?? {},
+        updateTokenMetadata,
+        operationDefinition,
+        loadDynamicOutputs !== undefined ? loadDynamicOutputs : true,
+        loadDefaultValues !== undefined ? loadDefaultValues : true
       );
     }
   }
@@ -2041,11 +2003,30 @@ export const updateDynamicDataInNode = async (
   dependencies: NodeDependencies,
   dispatch: Dispatch,
   getState: () => RootState,
-  operationDefinition?: any
+  variableDeclarations: Record<string, VariableDeclaration[]> = {},
+  workflowParameterDefinitions: Record<string, WorkflowParameterDefinition> = {},
+  updateTokenMetadata = true,
+  operationDefinition?: any,
+  loadDynamicOutputs = true,
+  loadDefaultValues = true
 ): Promise<void> => {
-  await loadDynamicData(nodeId, isTrigger, operationInfo, connectionReference, dependencies, dispatch, getState, operationDefinition);
+  await loadDynamicData(
+    nodeId,
+    isTrigger,
+    operationInfo,
+    connectionReference,
+    dependencies,
+    dispatch,
+    getState,
+    variableDeclarations,
+    workflowParameterDefinitions,
+    updateTokenMetadata,
+    operationDefinition,
+    loadDynamicOutputs,
+    loadDefaultValues
+  );
 
-  const { operations, workflowParameters } = getState();
+  const { operations } = getState();
   const nodeDependencies = getRecordEntry(operations.dependencies, nodeId) ?? {
     inputs: {},
     outputs: {},
@@ -2070,7 +2051,7 @@ export const updateDynamicDataInNode = async (
       nodeDependencies,
       false /* showErrorWhenNotReady */,
       undefined /* idReplacements */,
-      workflowParameters.definitions,
+      workflowParameterDefinitions,
       nodeId,
       dispatch
     );
@@ -2093,9 +2074,14 @@ async function loadDynamicData(
   dependencies: NodeDependencies,
   dispatch: Dispatch,
   getState: () => RootState,
-  operationDefinition?: any
+  variableDeclarations: Record<string, VariableDeclaration[]> = {},
+  workflowParameterDefinitions: Record<string, WorkflowParameterDefinition> = {},
+  updateTokenMetadata = true,
+  operationDefinition?: any,
+  loadDynamicOutputs = true,
+  loadDefaultValues = true
 ): Promise<void> {
-  if (Object.keys(dependencies?.outputs ?? {}).length) {
+  if (loadDynamicOutputs && Object.keys(dependencies?.outputs ?? {}).length) {
     const rootState = getState();
     await loadDynamicOutputsInNode(
       nodeId,
@@ -2105,7 +2091,7 @@ async function loadDynamicData(
       dependencies.outputs,
       rootState.operations.inputParameters[nodeId],
       rootState.operations.settings[nodeId],
-      rootState.workflowParameters.definitions,
+      workflowParameterDefinitions,
       dispatch
     );
   }
@@ -2119,7 +2105,12 @@ async function loadDynamicData(
       connectionReference,
       dispatch,
       getState,
-      operationDefinition
+      variableDeclarations,
+      workflowParameterDefinitions,
+      updateTokenMetadata,
+      operationDefinition,
+      loadDynamicOutputs,
+      loadDefaultValues
     );
   }
 }
@@ -2132,7 +2123,12 @@ export const loadDynamicContentForInputsInNode = async (
   connectionReference: ConnectionReference | undefined,
   dispatch: Dispatch,
   getState: () => RootState,
-  operationDefinition?: any
+  variableDeclarations: Record<string, VariableDeclaration[]> = {},
+  workflowParameterDefinitions: Record<string, WorkflowParameterDefinition> = {},
+  updateTokenMetadata = true,
+  operationDefinition?: any,
+  loadDynamicOutputs = true,
+  loadDefaultValues = true
 ): Promise<void> => {
   for (const [inputKey, info] of Object.entries(inputDependencies)) {
     if (info.dependencyType !== 'ApiSchema') {
@@ -2157,8 +2153,8 @@ export const loadDynamicContentForInputsInNode = async (
       continue;
     }
 
-    const allInputs = rootState.operations.inputParameters[nodeId];
-    const variables = getAllVariables(rootState.tokens.variables);
+    const allInputs = getState().operations.inputParameters[nodeId];
+    const variables = getAllVariables(variableDeclarations);
 
     try {
       const inputSchema = await tryGetInputDynamicSchema(
@@ -2168,8 +2164,9 @@ export const loadDynamicContentForInputsInNode = async (
         allInputs,
         variables,
         connectionReference,
-        rootState.workflowParameters.definitions,
-        dispatch
+        workflowParameterDefinitions,
+        dispatch,
+        /* throwOnError */ !loadDefaultValues
       );
       const allInputParameters = getAllInputParameters(allInputs);
 
@@ -2189,19 +2186,18 @@ export const loadDynamicContentForInputsInNode = async (
             info.parameter as InputParameter,
             operationInfo,
             allInputKeys,
-            newOperationDefinition
+            newOperationDefinition,
+            loadDefaultValues
           )
         : [];
-      const inputsWithSchema = schemaInputs.map((input) => ({
-        ...input,
-        schema: input,
-      }));
-      const inputParameters = toParameterInfoMap(inputsWithSchema, operationDefinition);
+      const inputParameters = toParameterInfoMap(schemaInputs, operationDefinition);
 
-      updateTokenMetadataInParameters(nodeId, inputParameters, getState());
+      if (updateTokenMetadata) {
+        updateTokenMetadataInParameters(nodeId, inputParameters, getState());
+      }
 
       let swagger: SwaggerParser | undefined = undefined;
-      if (!OperationManifestService().isSupported(operationInfo.type, operationInfo.kind)) {
+      if (!TryGetOperationManifestService()?.isSupported(operationInfo.type, operationInfo.kind)) {
         const { parsedSwagger } = await getConnectorWithSwagger(operationInfo.connectorId);
         swagger = parsedSwagger;
       }
@@ -2218,7 +2214,7 @@ export const loadDynamicContentForInputsInNode = async (
         }
       }
 
-      for (const input of inputsWithSchema) {
+      for (const input of schemaInputs) {
         if (input.dynamicSchema) {
           continue;
         }
@@ -2263,7 +2259,12 @@ export const loadDynamicContentForInputsInNode = async (
         { outputs: {}, inputs: dependencies },
         dispatch,
         getState,
-        operationDefinition
+        variableDeclarations,
+        workflowParameterDefinitions,
+        updateTokenMetadata,
+        operationDefinition,
+        loadDynamicOutputs,
+        loadDefaultValues
       );
     } catch (error: any) {
       const message = parseErrorMessage(error);
@@ -2600,7 +2601,8 @@ async function tryGetInputDynamicSchema(
   variables: VariableDeclaration[],
   connectionReference: ConnectionReference | undefined,
   workflowParameters: Record<string, WorkflowParameterDefinition>,
-  dispatch: Dispatch
+  dispatch: Dispatch,
+  throwOnError = false
 ): Promise<OpenAPIV2.SchemaObject | null> {
   try {
     const schema = await getDynamicSchema(
@@ -2614,7 +2616,7 @@ async function tryGetInputDynamicSchema(
     );
     return schema;
   } catch (error: any) {
-    if (!dependencyInfo.parameter?.required && !(dependencyInfo.parameter as InputParameter).value) {
+    if (throwOnError || (!dependencyInfo.parameter?.required && !(dependencyInfo.parameter as InputParameter).value)) {
       throw error;
     }
 
@@ -2844,8 +2846,15 @@ const getStringifiedValueFromFloatingActionMenuOutputsViewModel = (
   return JSON.stringify(value);
 };
 
-const iterateSimpleQueryBuilderEditor = (
-  itemValue: ValueSegment[],
+const NEGATED_OPERATORS: Record<string, string> = {
+  notcontains: 'contains',
+  notequals: 'equals',
+  notstartswith: 'startsWith',
+  notendswith: 'endsWith',
+};
+
+export const iterateSimpleQueryBuilderEditor = (
+  itemValue: RowItemProps,
   isRowFormat: boolean,
   idReplacements?: Record<string, string>
 ): string | undefined => {
@@ -2853,15 +2862,32 @@ const iterateSimpleQueryBuilderEditor = (
   if (!isRowFormat) {
     return undefined;
   }
-  const { value: remappedItemValue } = idReplacements ? remapValueSegmentsWithNewIds(itemValue, idReplacements) : { value: itemValue };
-  // otherwise we iterate through row items and concatenate the values
-  let stringValue = '';
-  remappedItemValue.forEach((segment) => {
-    stringValue += segment.value;
-  });
-  return stringValue;
+
+  const remappedItemValue: RowItemProps = idReplacements ? remapEditorViewModelWithNewIds(itemValue, idReplacements) : itemValue;
+
+  const { operator, operand1, operand2 } = remappedItemValue;
+
+  const operand1Str = formatSegment(operand1[0]);
+  const operand2Str = formatSegment(operand2[0]);
+
+  const baseOperator = NEGATED_OPERATORS[operator.toLowerCase()];
+  if (baseOperator) {
+    return `@not(${baseOperator}(${operand1Str}, ${operand2Str}))`;
+  }
+
+  return `@${operator}(${operand1Str}, ${operand2Str})`;
 };
 
+function formatSegment(segment: ValueSegment): string {
+  if (segment.type === ValueSegmentType.TOKEN) {
+    return segment.value;
+  }
+
+  const lowerValue = segment.value.toLowerCase();
+  const isPrimitive = lowerValue === 'true' || lowerValue === 'false' || lowerValue === 'null' || !Number.isNaN(Number(segment.value));
+
+  return isPrimitive ? segment.value : `'${segment.value}'`;
+}
 export const recurseSerializeCondition = (
   parameter: ParameterInfo,
   editorViewModel: any,
@@ -2990,6 +3016,16 @@ export function getGroupAndParameterFromParameterKey(
     }
   }
 
+  return undefined;
+}
+
+export function getGroupIdFromParameterId(nodeInputs: NodeInputs, parameterId: string): string | undefined {
+  for (const [groupId, group] of Object.entries(nodeInputs.parameterGroups)) {
+    const parameter = group.parameters.find((param) => param.id === parameterId);
+    if (parameter) {
+      return groupId;
+    }
+  }
   return undefined;
 }
 
@@ -3792,6 +3828,14 @@ export function parameterValueToString(
   idReplacements?: Record<string, string>,
   shouldEncodeBasedOnMetadata = true
 ): string | undefined {
+  if (parameterInfo.schema?.['x-ms-is-node-id']) {
+    const oldValue = parameterInfo.value?.[0]?.value ?? '';
+    const remappedValue = idReplacements?.[oldValue] ?? oldValue;
+    if (remappedValue) {
+      return remappedValue;
+    }
+  }
+
   const { value: remappedValue, didRemap } = isRecordNotEmpty(idReplacements)
     ? remapValueSegmentsWithNewIds(parameterInfo.value, idReplacements ?? {})
     : { value: parameterInfo.value, didRemap: false };

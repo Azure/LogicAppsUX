@@ -1,3 +1,4 @@
+import { mergeClasses } from '@fluentui/react-components';
 import type { ComboboxItem } from '../combobox';
 import type { ValueSegment } from '../editor';
 import { EditorCollapseToggle } from '../editor';
@@ -71,7 +72,7 @@ export interface ArrayEditorProps extends BaseEditorProps {
   options?: ComboboxItem[];
   // Event Handlers
   castParameter: CastHandler;
-  getTokenPicker: GetTokenPickerHandler;
+  getTokenPicker?: GetTokenPickerHandler;
   onMenuOpen?: CallbackHandler;
   // Error Handling
   errorDetails?: { message: string };
@@ -185,7 +186,7 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
   });
 
   return (
-    <div className="msla-array-editor-container" data-automation-id={dataAutomationId}>
+    <div className={mergeClasses('msla-array-editor-container', baseEditorProps.className)} data-automation-id={dataAutomationId}>
       {collapsed ? (
         <CollapsedArray
           {...baseEditorProps}

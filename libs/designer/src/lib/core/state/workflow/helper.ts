@@ -1,4 +1,6 @@
+import { equals, SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
 import type { WorkflowNode } from '../../../core/parsers/models/workflowNode';
+import { WorkflowKind, type NodeMetadata, type WorkflowState } from './workflowInterfaces';
 
 /**
  * Recursively clones a node while pruning (removing) any nodes that are in the nodesToRemove set.
@@ -125,4 +127,16 @@ export const collapseFlowTree = (
   });
 
   return { graph: prunedTree, collapsedMapping: collapsedMappingArrays };
+};
+
+export const isA2AWorkflow = (state: WorkflowState): boolean => {
+  return equals(state.workflowKind, 'agent');
+};
+
+export const isAgentWorkflow = (kind: string): boolean => {
+  return equals(kind, WorkflowKind.AGENTIC) || equals(kind, WorkflowKind.AGENT);
+};
+
+export const shouldClearNodeRunData = (node: NodeMetadata) => {
+  return node?.runData && (node.graphId !== 'root' || node.subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION);
 };

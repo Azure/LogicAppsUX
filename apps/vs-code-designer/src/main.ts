@@ -25,9 +25,7 @@ import {
   callWithTelemetryAndErrorHandling,
   createAzExtOutputChannel,
   registerEvent,
-  registerReportIssueCommand,
   registerUIExtensionVariables,
-  getAzExtResourceType,
 } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
@@ -35,7 +33,9 @@ import { convertToWorkspace } from './app/commands/createNewCodeProject/CodeProj
 import TelemetryReporter from '@vscode/extension-telemetry';
 import { getAllCustomCodeFunctionsProjects } from './app/utils/customCodeUtils';
 import { createVSCodeAzureSubscriptionProvider } from './app/utils/services/VSCodeAzureSubscriptionProvider';
-import { logSubscriptions } from './app/utils/telemetry';
+import { logExtensionSettings, logSubscriptions } from './app/utils/telemetry';
+import { registerAzureUtilsExtensionVariables } from '@microsoft/vscode-azext-azureutils';
+import { getAzExtResourceType, getAzureResourcesExtensionApi } from '@microsoft/vscode-azureresources-api';
 
 const perfStats = {
   loadStartTime: Date.now(),
@@ -58,13 +58,38 @@ export async function activate(context: vscode.ExtensionContext) {
   ]);
   vscode.commands.executeCommand('setContext', extensionCommand.dataMapSetDmFolders, supportedDataMapperFolders);
 
+  vscode.debug.registerDebugConfigurationProvider('logicapp', {
+    resolveDebugConfiguration: async (folder, debugConfig) => {
+      if (!debugConfig.funcRuntime) {
+        debugConfig.funcRuntime = 'coreclr';
+      }
+      const maxRetries = 3;
+      const delayMs = 5000;
+      for (let i = 0; i < maxRetries; i++) {
+        try {
+          await vscode.commands.executeCommand(extensionCommand.debugLogicApp, debugConfig, folder);
+          break;
+        } catch (error) {
+          if (i === maxRetries - 1) {
+            throw error;
+          }
+        }
+        await new Promise((resolve) => setTimeout(resolve, delayMs));
+      }
+      return undefined;
+    },
+  });
+
   ext.context = context;
+  ext.extensionVersion = getExtensionVersion();
   ext.telemetryReporter = new TelemetryReporter(telemetryString);
-  ext.subscriptionProvider = createVSCodeAzureSubscriptionProvider();
   context.subscriptions.push(ext.telemetryReporter);
 
+  ext.subscriptionProvider = createVSCodeAzureSubscriptionProvider();
   ext.outputChannel = createAzExtOutputChannel('Azure Logic Apps (Standard)', ext.prefix);
+
   registerUIExtensionVariables(ext);
+  registerAzureUtilsExtensionVariables(ext);
   registerAppServiceExtensionVariables(ext);
 
   await callWithTelemetryAndErrorHandling(extensionCommand.activate, async (activateContext: IActionContext) => {
@@ -75,32 +100,23 @@ export async function activate(context: vscode.ExtensionContext) {
     );
 
     activateContext.telemetry.properties.isActivationEvent = 'true';
-    activateContext.telemetry.measurements.mainFileLoad = (perfStats.loadEndTime - perfStats.loadStartTime) / 1000;
 
     runPostWorkflowCreateStepsFromCache();
     runPostExtractStepsFromCache();
-    await logSubscriptions(activateContext);
+    logSubscriptions(activateContext);
+    logExtensionSettings(activateContext);
 
     if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
       await convertToWorkspace(activateContext);
     }
 
-    try {
-      await downloadExtensionBundle(activateContext);
-    } catch (error) {
-      // log the error message to telemetry.
-      const errorMessage = `Error downloading and extracting the Logic Apps Standard extension bundle: ${error.message}`;
-      activateContext.telemetry.properties.errorMessage = errorMessage;
-    }
-
-    promptParameterizeConnections(activateContext);
+    downloadExtensionBundle(activateContext);
+    promptParameterizeConnections(activateContext, false);
     verifyLocalConnectionKeys(activateContext);
     await startOnboarding(activateContext);
-    //await prepareTestExplorer(context, activateContext);
 
-    ext.extensionVersion = getExtensionVersion();
-    ext.defaultBundleVersion = activateContext.telemetry.properties.latestBundleVersion;
-    ext.latestBundleVersion = activateContext.telemetry.properties.latestBundleVersion;
+    // Removed for unit test codefull experience standby
+    //await prepareTestExplorer(context, activateContext);
 
     ext.rgApi = await getResourceGroupsApi();
     // @ts-ignore
@@ -123,26 +139,18 @@ export async function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(ext.outputChannel);
     context.subscriptions.push(ext.azureAccountTreeItem);
 
-    activateContext.telemetry.properties.lastStep = 'registerReportIssueCommand';
-    registerReportIssueCommand(extensionCommand.reportIssue);
     activateContext.telemetry.properties.lastStep = 'registerCommands';
     registerCommands();
     activateContext.telemetry.properties.lastStep = 'registerFuncHostTaskEvents';
     registerFuncHostTaskEvents();
 
-    vscode.debug.registerDebugConfigurationProvider('logicapp', {
-      resolveDebugConfiguration: async (folder, debugConfig) => {
-        if (!debugConfig.funcRuntime) {
-          debugConfig.funcRuntime = 'coreclr';
-        }
-        await vscode.commands.executeCommand(extensionCommand.debugLogicApp, debugConfig, folder);
-        return undefined;
-      },
-    });
-
     ext.rgApi.registerApplicationResourceResolver(getAzExtResourceType(logicAppFilter), new LogicAppResolver());
+    const azureResourcesApi = await getAzureResourcesExtensionApi(context, '2.0.0');
+    ext.rgApiV2 = azureResourcesApi;
 
     vscode.window.registerUriHandler(new UriHandler());
+    perfStats.loadEndTime = Date.now();
+    activateContext.telemetry.measurements.mainFileLoad = (perfStats.loadEndTime - perfStats.loadStartTime) / 1000;
   });
 }
 
@@ -152,5 +160,3 @@ export function deactivate(): Promise<any> {
   ext.telemetryReporter.dispose();
   return undefined;
 }
-
-perfStats.loadEndTime = Date.now();

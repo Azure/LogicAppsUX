@@ -9,6 +9,7 @@ import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import type { Progress } from 'vscode';
+import { workflowCodeTypeForTelemetry } from '../../../utils/codeful/utils';
 
 export abstract class ProjectCreateStepBase extends AzureWizardExecuteStep<IProjectWizardContext> {
   public priority = 10;
@@ -37,6 +38,7 @@ export abstract class ProjectCreateStepBase extends AzureWizardExecuteStep<IProj
 
     // OpenFolderStep sometimes restarts the extension host. Adding a second event here to see if we're losing any telemetry
     await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.createNewProjectStarted', (startedContext: IActionContext) => {
+      context.telemetry.properties.workflowCodeType = workflowCodeTypeForTelemetry(context.isCodeless);
       Object.assign(startedContext, context);
     });
   }

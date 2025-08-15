@@ -106,6 +106,7 @@ import type { ParameterInfo } from '@microsoft/designer-ui';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { addOrUpdateCustomCode } from '../../state/customcode/customcodeSlice';
 import { setFavoriteOperations } from '../../state/panel/panelSlice';
+import { isA2AWorkflow } from '../../state/workflow/helper';
 
 export interface ServiceOptions {
   connectionService: IConnectionService;
@@ -526,12 +527,16 @@ export const updateCallbackUrl = async (rootState: RootState, dispatch: Dispatch
   const triggerId = idReplacements[trigger] ?? trigger;
 
   const updatedParameter = await updateCallbackUrlInInputs(triggerId, operationInfo, nodeInputs);
-  if (updatedParameter) {
+  const agentUpdatedParameter = await updateAgentUrlInInputs(operationInfo, nodeInputs);
+  const finalUpdatedParameter = updatedParameter || agentUpdatedParameter;
+  if (finalUpdatedParameter) {
     notifyForCallbackUrlUpdate(rootState, trigger);
     dispatch(
       updateNodeParameters({
         nodeId: trigger,
-        parameters: [{ groupId: ParameterGroupKeys.DEFAULT, parameterId: updatedParameter.id, propertiesToUpdate: updatedParameter }],
+        parameters: [
+          { groupId: ParameterGroupKeys.DEFAULT, parameterId: finalUpdatedParameter.id, propertiesToUpdate: finalUpdatedParameter },
+        ],
       })
     );
   }
@@ -570,12 +575,36 @@ export const updateCallbackUrlInInputs = async (
       LoggerService().log({
         level: LogEntryLevel.Error,
         area: 'CallbackUrl_Update',
-        message: 'Unable to initialize callback url for manual trigger.',
+        message: 'Unable to initialize callback url for HTTP Request trigger.',
         error: error instanceof Error ? error : isObject(error) ? new Error(JSON.stringify(error)) : undefined,
       });
     }
   }
 
+  return;
+};
+
+export const updateAgentUrlInInputs = async ({ type, kind }: NodeOperation, nodeInputs: NodeInputs): Promise<ParameterInfo | undefined> => {
+  if (equals(type, Constants.NODE.TYPE.REQUEST) && equals(kind, Constants.NODE.KIND.AGENT)) {
+    try {
+      const agentUrlInfo = await WorkflowService().getAgentUrl?.();
+      const parameter = getParameterFromName(nodeInputs, 'agentUrl');
+      if (parameter && agentUrlInfo) {
+        parameter.value = [createLiteralValueSegment(agentUrlInfo.url)];
+        if (agentUrlInfo.queryParams) {
+          parameter.editorOptions = { ...parameter.editorOptions, queryParams: agentUrlInfo.queryParams };
+        }
+        return parameter;
+      }
+    } catch (error) {
+      LoggerService().log({
+        level: LogEntryLevel.Error,
+        area: 'AgentUrl_Update',
+        message: 'Unable to initialize agent url for agent trigger.',
+        error: error instanceof Error ? error : isObject(error) ? new Error(JSON.stringify(error)) : undefined,
+      });
+    }
+  }
   return;
 };
 
@@ -633,7 +662,7 @@ export const updateAllUpstreamNodes = (state: RootState, dispatch: Dispatch): vo
   }
 
   for (const nodeId of Object.keys(allOperations)) {
-    if (!isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata)) {
+    if (!isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata) || isA2AWorkflow(state.workflow)) {
       payload[nodeId] = getTokenNodeIds(
         nodeId,
         state.workflow.graph as WorkflowNode,

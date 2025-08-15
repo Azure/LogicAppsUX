@@ -1,12 +1,12 @@
 import { directAccessPseudoFunctionKey, functionMock, ifPseudoFunctionKey, indexPseudoFunctionKey } from '../../models';
-import type { Connection, ConnectionDictionary, ConnectionUnit, CustomValueConnection } from '../../models/Connection';
+import type { Connection, ConnectionDictionary, CustomValueConnection, NodeConnection } from '../../models/Connection';
 import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
 import { MapDefinitionDeserializer, getLoopTargetNodeWithJson } from '../MapDefinitionDeserializer';
 import {
+  InitLoggerService,
   map,
   type DataMapSchema,
   type MapDefinitionEntry,
-  type Schema,
   type SchemaExtended,
   type SchemaNodeExtended,
 } from '@microsoft/logic-apps-shared';
@@ -23,11 +23,23 @@ import {
 } from '../../__mocks__/schemas';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 import { isCustomValueConnection } from '../../utils/Connection.Utils';
+import type { ILoggerService } from '@microsoft/logic-apps-shared';
+import { isEqualToCustomValue } from './MapHandlingTestUtilis';
+
+// Mock LoggerService
+const createMockLoggerService = (): ILoggerService => {
+  return {
+    log: vi.fn(),
+    startTrace: vi.fn().mockReturnValue('mock-trace-id'),
+    endTrace: vi.fn(),
+    logErrorWithFormatting: vi.fn(),
+  };
+};
 
 describe('mapDefinitions/MapDefinitionDeserializer', () => {
+  InitLoggerService([createMockLoggerService()]);
   describe('XML', () => {
     let simpleMap: MapDefinitionEntry = {};
-
     const extendedSource = convertSchemaToSchemaExtended(sourceMockSchema as any as DataMapSchema);
     const extendedTarget = convertSchemaToSchemaExtended(targetMockSchema as any as DataMapSchema);
 
@@ -127,7 +139,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[1][0]).toEqual('target-/ns0:Root/DirectTranslation/Employee/Name');
         expect(resultEntries[1][1]).toBeTruthy();
-        expect((resultEntries[1][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/DirectTranslation/EmployeeName');
+        expect((resultEntries[1][1].inputs[0] as NodeConnection).reactFlowKey).toEqual('source-/ns0:Root/DirectTranslation/EmployeeName');
       });
 
       it('creates a connection between one source and target node with leading @', () => {
@@ -152,7 +164,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[1][0]).toEqual('target-/ns0:Root/DataTranslation/EmployeeName/@RegularFulltime');
         expect(resultEntries[1][1]).toBeTruthy();
-        expect((resultEntries[1][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual(
+        expect((resultEntries[1][1].inputs[0] as NodeConnection).reactFlowKey).toEqual(
           'source-/ns0:Root/DataTranslation/Employee/EmploymentStatus'
         );
       });
@@ -178,7 +190,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[1][0]).toEqual('target-/ns0:Root/DataTranslation/EmployeeName');
         expect(resultEntries[1][1]).toBeTruthy();
-        expect((resultEntries[1][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual(
+        expect((resultEntries[1][1].inputs[0] as NodeConnection).reactFlowKey).toEqual(
           'source-/ns0:Root/DataTranslation/Employee/FirstName'
         );
       });
@@ -202,11 +214,11 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[0][0]).toEqual('target-/ns0:Root/DirectTranslation/Employee/ID');
         expect(resultEntries[0][1]).toBeTruthy();
-        expect(resultEntries[0][1].inputs[0].value).toEqual('10');
+        expect((resultEntries[0][1].inputs[0] as CustomValueConnection).value).toEqual('10');
 
         expect(resultEntries[1][0]).toEqual('target-/ns0:Root/DirectTranslation/Employee/Name');
         expect(resultEntries[1][1]).toBeTruthy();
-        expect(resultEntries[1][1].inputs[0].value).toEqual('"Steve"');
+        expect((resultEntries[1][1].inputs[0] as CustomValueConnection).value).toEqual('"Steve"');
       });
 
       it('creates a simple connection between one source, one function and one target', () => {
@@ -229,7 +241,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[0][0]).toEqual(concatId);
         expect(resultEntries[0][1]).toBeTruthy();
-        expect((resultEntries[0][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/DirectTranslation/EmployeeName');
+        expect((resultEntries[0][1].inputs[0] as NodeConnection).reactFlowKey).toEqual('source-/ns0:Root/DirectTranslation/EmployeeName');
         expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/DirectTranslation/Employee/Name');
 
         expect(resultEntries[1][0]).toEqual('source-/ns0:Root/DirectTranslation/EmployeeName');
@@ -238,7 +250,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[2][0]).toEqual('target-/ns0:Root/DirectTranslation/Employee/Name');
         expect(resultEntries[2][1]).toBeTruthy();
-        expect((resultEntries[2][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual(concatId);
+        expect((resultEntries[2][1].inputs[0] as NodeConnection).reactFlowKey).toEqual(concatId);
       });
 
       it('creates a connection between one source, one function and two targets', () => {
@@ -262,7 +274,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[0][0]).toEqual(concatId);
         expect(resultEntries[0][1]).toBeTruthy();
-        expect((resultEntries[0][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/DirectTranslation/EmployeeName');
+        expect((resultEntries[0][1].inputs[0] as NodeConnection).reactFlowKey).toEqual('source-/ns0:Root/DirectTranslation/EmployeeName');
         expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/DirectTranslation/Employee/Name');
 
         expect(resultEntries[1][0]).toEqual('source-/ns0:Root/DirectTranslation/EmployeeName');
@@ -271,11 +283,11 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[2][0]).toEqual('target-/ns0:Root/DirectTranslation/Employee/ID');
         expect(resultEntries[2][1]).toBeTruthy();
-        expect((resultEntries[2][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual(concatId);
+        expect((resultEntries[2][1].inputs[0] as NodeConnection).reactFlowKey).toEqual(concatId);
 
         expect(resultEntries[3][0]).toEqual('target-/ns0:Root/DirectTranslation/Employee/Name');
         expect(resultEntries[3][1]).toBeTruthy();
-        expect((resultEntries[3][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual(concatId);
+        expect((resultEntries[3][1].inputs[0] as NodeConnection).reactFlowKey).toEqual(concatId);
       });
 
       it('creates a connection between a content enricher function and target', () => {
@@ -300,7 +312,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[1][0]).toEqual('target-/ns0:Root/ContentEnrich/DateOfDemo');
         expect(resultEntries[1][1]).toBeTruthy();
-        expect((resultEntries[1][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual(currentDateId);
+        expect((resultEntries[1][1].inputs[0] as NodeConnection).reactFlowKey).toEqual(currentDateId);
       });
 
       it('creates a connection between a source, a function with custom value and a target', () => {
@@ -324,7 +336,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect(resultEntries[0][0]).toEqual(concatId);
         expect(resultEntries[0][1]).toBeTruthy();
         expect((resultEntries[0][1].inputs[0] as CustomValueConnection).value).toEqual('"Employee Name: "');
-        expect((resultEntries[0][1].inputs[1] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/DirectTranslation/EmployeeName');
+        expect((resultEntries[0][1].inputs[1] as NodeConnection).reactFlowKey).toEqual('source-/ns0:Root/DirectTranslation/EmployeeName');
         expect((resultEntries[0][1].inputs[2] as CustomValueConnection).value).toEqual('", Esq"');
         expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/DirectTranslation/Employee/Name');
 
@@ -334,7 +346,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[2][0]).toEqual('target-/ns0:Root/DirectTranslation/Employee/Name');
         expect(resultEntries[2][1]).toBeTruthy();
-        expect((resultEntries[2][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual(concatId);
+        expect((resultEntries[2][1].inputs[0] as NodeConnection).reactFlowKey).toEqual(concatId);
       });
 
       it('creates connections for nested functions no loop', () => {
@@ -357,15 +369,15 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[0][0]).toEqual(concatId);
         expect(resultEntries[0][1]).toBeTruthy();
-        expect((resultEntries[0][1].inputs[0] as ConnectionUnit).reactFlowKey.includes('Count')).toBeTruthy();
-        expect((resultEntries[0][1].inputs[1] as ConnectionUnit).reactFlowKey.includes('Max')).toBeTruthy();
+        expect((resultEntries[0][1].inputs[0] as NodeConnection).reactFlowKey.includes('Count')).toBeTruthy();
+        expect((resultEntries[0][1].inputs[1] as NodeConnection).reactFlowKey.includes('Max')).toBeTruthy();
         expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/DirectTranslation/Employee/Name');
 
         expect(resultEntries[1][0].includes('Count')).toBeTruthy();
-        expect((resultEntries[1][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/DirectTranslation/EmployeeName');
+        expect((resultEntries[1][1].inputs[0] as NodeConnection).reactFlowKey).toEqual('source-/ns0:Root/DirectTranslation/EmployeeName');
 
         expect(resultEntries[2][0].includes('Max')).toBeTruthy();
-        expect((resultEntries[2][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/DirectTranslation/EmployeeID');
+        expect((resultEntries[2][1].inputs[0] as NodeConnection).reactFlowKey).toEqual('source-/ns0:Root/DirectTranslation/EmployeeID');
       });
 
       it('creates connections for nested functions within a loop', () => {
@@ -384,26 +396,26 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedSource, extendedTarget, functionMock);
         const result = mapDefinitionDeserializer.convertFromMapDefinition();
 
-        expect((result['target-/ns0:Root/CumulativeExpression/PopulationSummary/State'].inputs[0] as ConnectionUnit).reactFlowKey).toEqual(
+        expect((result['target-/ns0:Root/CumulativeExpression/PopulationSummary/State'].inputs[0] as NodeConnection).reactFlowKey).toEqual(
           'source-/ns0:Root/CumulativeExpression/Population/State'
         );
         expect(
-          (result['target-/ns0:Root/CumulativeExpression/PopulationSummary/State/Name'].inputs[0] as ConnectionUnit).reactFlowKey
+          (result['target-/ns0:Root/CumulativeExpression/PopulationSummary/State/Name'].inputs[0] as NodeConnection).reactFlowKey
         ).toEqual('source-/ns0:Root/CumulativeExpression/Population/State/Name');
 
-        const divideRfKey = (result['target-/ns0:Root/CumulativeExpression/PopulationSummary/State/SexRatio'].inputs[0] as ConnectionUnit)
+        const divideRfKey = (result['target-/ns0:Root/CumulativeExpression/PopulationSummary/State/SexRatio'].inputs[0] as NodeConnection)
           .reactFlowKey;
         expect(divideRfKey).toContain('Divide');
 
-        const count1RfKey = (result[divideRfKey].inputs[0] as ConnectionUnit).reactFlowKey;
+        const count1RfKey = (result[divideRfKey].inputs[0] as NodeConnection).reactFlowKey;
         expect(count1RfKey).toContain('Count');
-        expect((result[count1RfKey].inputs[0] as ConnectionUnit).reactFlowKey).toEqual(
+        expect((result[count1RfKey].inputs[0] as NodeConnection).reactFlowKey).toEqual(
           'source-/ns0:Root/CumulativeExpression/Population/State/County/Person/Sex/Male'
         );
 
-        const count2RfKey = (result[divideRfKey].inputs[1] as ConnectionUnit).reactFlowKey;
+        const count2RfKey = (result[divideRfKey].inputs[1] as NodeConnection).reactFlowKey;
         expect(count2RfKey).toContain('Count-');
-        const count2Input = (result[count2RfKey].inputs[0] as ConnectionUnit).reactFlowKey;
+        const count2Input = (result[count2RfKey].inputs[0] as NodeConnection).reactFlowKey;
         expect(count2Input).toEqual('source-/ns0:Root/CumulativeExpression/Population/State/County/Person/Sex/Female');
       });
 
@@ -464,8 +476,8 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[0][0]).toContain(ifPseudoFunctionKey);
         expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/ConditionalMapping/ItemDiscount');
-        expect((resultEntries[0][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/ConditionalMapping/ItemQuantity');
-        expect((resultEntries[0][1].inputs[1] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/ConditionalMapping/ItemPrice');
+        expect((resultEntries[0][1].inputs[0] as NodeConnection).reactFlowKey).toEqual('source-/ns0:Root/ConditionalMapping/ItemQuantity');
+        expect((resultEntries[0][1].inputs[1] as NodeConnection).reactFlowKey).toEqual('source-/ns0:Root/ConditionalMapping/ItemPrice');
       });
 
       it('creates two conditionals under the same object', () => {
@@ -486,8 +498,8 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[0][0]).toContain(ifPseudoFunctionKey);
         expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/ConditionalMapping/ItemDiscount');
-        expect((resultEntries[0][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/ConditionalMapping/ItemQuantity');
-        expect((resultEntries[0][1].inputs[1] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/ConditionalMapping/ItemPrice');
+        expect((resultEntries[0][1].inputs[0] as NodeConnection).reactFlowKey).toEqual('source-/ns0:Root/ConditionalMapping/ItemQuantity');
+        expect((resultEntries[0][1].inputs[1] as NodeConnection).reactFlowKey).toEqual('source-/ns0:Root/ConditionalMapping/ItemPrice');
       });
 
       it('creates a conditional property connection with function', () => {
@@ -511,7 +523,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect(resultEntries[0][0]).toContain('IsGreater');
         expect(resultEntries[0][1]).toBeTruthy();
         expect(resultEntries[0][1].outputs[0].reactFlowKey).toContain(ifPseudoFunctionKey);
-        expect((resultEntries[0][1].inputs[0] as ConnectionUnit).reactFlowKey).toContain('Multiply');
+        expect((resultEntries[0][1].inputs[0] as NodeConnection).reactFlowKey).toContain('Multiply');
         expect((resultEntries[0][1].inputs[1] as CustomValueConnection).value).toEqual('200');
 
         // Non-deterministic about which Multiply will come first
@@ -526,8 +538,8 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect(resultEntries[3][0]).toContain(ifPseudoFunctionKey);
         expect(resultEntries[3][1]).toBeTruthy();
         expect(resultEntries[3][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/ConditionalMapping/ItemDiscount');
-        expect((resultEntries[3][1].inputs[0] as ConnectionUnit).reactFlowKey).toContain('IsGreater');
-        expect((resultEntries[3][1].inputs[1] as ConnectionUnit).reactFlowKey).toContain('Multiply');
+        expect((resultEntries[3][1].inputs[0] as NodeConnection).reactFlowKey).toContain('IsGreater');
+        expect((resultEntries[3][1].inputs[1] as NodeConnection).reactFlowKey).toContain('Multiply');
 
         expect(resultEntries[4][0]).toEqual('source-/ns0:Root/ConditionalMapping/ItemPrice');
         expect(resultEntries[4][1]).toBeTruthy();
@@ -542,11 +554,11 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[6][0]).toEqual('target-/ns0:Root/ConditionalMapping/ItemDiscount');
         expect(resultEntries[6][1]).toBeTruthy();
-        expect((resultEntries[6][1].inputs[0] as ConnectionUnit).reactFlowKey).toContain(ifPseudoFunctionKey);
+        expect((resultEntries[6][1].inputs[0] as NodeConnection).reactFlowKey).toContain(ifPseudoFunctionKey);
 
         expect(resultEntries[7][0]).toEqual('target-/ns0:Root/ConditionalMapping/ItemPrice');
         expect(resultEntries[7][1]).toBeTruthy();
-        expect((resultEntries[7][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/ConditionalMapping/ItemPrice');
+        expect((resultEntries[7][1].inputs[0] as NodeConnection).reactFlowKey).toEqual('source-/ns0:Root/ConditionalMapping/ItemPrice');
       });
 
       it('creates a conditional property connection with function', () => {
@@ -570,7 +582,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect(resultEntries[0][0]).toContain('IsGreater');
         expect(resultEntries[0][1]).toBeTruthy();
         expect(resultEntries[0][1].outputs[0].reactFlowKey).toContain(ifPseudoFunctionKey);
-        expect((resultEntries[0][1].inputs[0] as ConnectionUnit).reactFlowKey).toContain('Multiply');
+        expect((resultEntries[0][1].inputs[0] as NodeConnection).reactFlowKey).toContain('Multiply');
         isEqualToCustomValue('200', resultEntries[0][1].inputs[1]);
 
         // Non-deterministic about which Multiply will come first
@@ -585,8 +597,8 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect(resultEntries[3][0]).toContain(ifPseudoFunctionKey);
         expect(resultEntries[3][1]).toBeTruthy();
         expect(resultEntries[3][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/ConditionalMapping/ItemDiscount');
-        expect((resultEntries[3][1].inputs[0] as ConnectionUnit).reactFlowKey).toContain('IsGreater');
-        expect((resultEntries[3][1].inputs[1] as ConnectionUnit).reactFlowKey).toContain('Multiply');
+        expect((resultEntries[3][1].inputs[0] as NodeConnection).reactFlowKey).toContain('IsGreater');
+        expect((resultEntries[3][1].inputs[1] as NodeConnection).reactFlowKey).toContain('Multiply');
 
         expect(resultEntries[4][0]).toEqual('source-/ns0:Root/ConditionalMapping/ItemPrice');
         expect(resultEntries[4][1]).toBeTruthy();
@@ -601,11 +613,11 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[6][0]).toEqual('target-/ns0:Root/ConditionalMapping/ItemDiscount');
         expect(resultEntries[6][1]).toBeTruthy();
-        expect((resultEntries[6][1].inputs[0] as ConnectionUnit).reactFlowKey).toContain(ifPseudoFunctionKey);
+        expect((resultEntries[6][1].inputs[0] as NodeConnection).reactFlowKey).toContain(ifPseudoFunctionKey);
 
         expect(resultEntries[7][0]).toEqual('target-/ns0:Root/ConditionalMapping/ItemPrice');
         expect(resultEntries[7][1]).toBeTruthy();
-        expect((resultEntries[7][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/ConditionalMapping/ItemPrice');
+        expect((resultEntries[7][1].inputs[0] as NodeConnection).reactFlowKey).toEqual('source-/ns0:Root/ConditionalMapping/ItemPrice');
       });
 
       it.skip('creates two conditional property connections with two separate if functions', () => {
@@ -628,23 +640,23 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect(resultEntries[0][0]).toContain('IsGreater');
         expect(resultEntries[0][1]).toBeTruthy();
         expect(resultEntries[0][1].outputs[0].reactFlowKey).toContain(ifPseudoFunctionKey);
-        expect((resultEntries[0][1].inputs[0] as ConnectionUnit).reactFlowKey).toContain('Multiply');
+        expect((resultEntries[0][1].inputs[0] as NodeConnection).reactFlowKey).toContain('Multiply');
         expect(resultEntries[0][1].inputs[1]).toEqual('200');
 
         // Non-deterministic about which Multiply will come first
         expect(resultEntries[1][0]).toContain('Multiply');
         expect(resultEntries[1][1]).toBeTruthy();
-        expect(resultEntries[1][1].inputs[0].length).toBeGreaterThan(1);
+        expect(resultEntries[1][1].inputs.length).toBeGreaterThan(1);
 
         expect(resultEntries[2][0]).toContain('Multiply');
         expect(resultEntries[2][1]).toBeTruthy();
-        expect(resultEntries[2][1].inputs[0].length).toBeGreaterThan(1);
+        expect(resultEntries[2][1].inputs.length).toBeGreaterThan(1);
 
         expect(resultEntries[3][0]).toContain(ifPseudoFunctionKey);
         expect(resultEntries[3][1]).toBeTruthy();
         expect(resultEntries[3][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/ConditionalMapping/ItemDiscount');
-        expect((resultEntries[3][1].inputs[0] as ConnectionUnit).reactFlowKey).toContain('IsGreater');
-        expect((resultEntries[3][1].inputs[1] as ConnectionUnit).reactFlowKey).toContain('Multiply');
+        expect((resultEntries[3][1].inputs[0] as NodeConnection).reactFlowKey).toContain('IsGreater');
+        expect((resultEntries[3][1].inputs[1] as NodeConnection).reactFlowKey).toContain('Multiply');
 
         expect(resultEntries[4][0]).toEqual('source-/ns0:Root/ConditionalMapping/ItemPrice');
         expect(resultEntries[4][1]).toBeTruthy();
@@ -659,11 +671,11 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[6][0]).toEqual('target-/ns0:Root/ConditionalMapping/ItemDiscount');
         expect(resultEntries[6][1]).toBeTruthy();
-        expect((resultEntries[6][1].inputs[0] as ConnectionUnit).reactFlowKey).toContain(ifPseudoFunctionKey);
+        expect((resultEntries[6][1].inputs[0] as NodeConnection).reactFlowKey).toContain(ifPseudoFunctionKey);
 
         expect(resultEntries[7][0]).toEqual('target-/ns0:Root/ConditionalMapping/ItemPrice');
         expect(resultEntries[7][1]).toBeTruthy();
-        expect((resultEntries[7][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/ConditionalMapping/ItemPrice');
+        expect((resultEntries[7][1].inputs[0] as NodeConnection).reactFlowKey).toEqual('source-/ns0:Root/ConditionalMapping/ItemPrice');
       });
 
       it('creates a simple conditional object connection', () => {
@@ -684,14 +696,14 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[0][0]).toContain('IsGreater');
         expect(resultEntries[0][1]).toBeTruthy();
-        expect((resultEntries[0][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/ConditionalMapping/ItemQuantity');
+        expect((resultEntries[0][1].inputs[0] as NodeConnection).reactFlowKey).toEqual('source-/ns0:Root/ConditionalMapping/ItemQuantity');
         isEqualToCustomValue('200', resultEntries[0][1].inputs[1]);
         expect(resultEntries[0][1].outputs[0].reactFlowKey).toContain(ifPseudoFunctionKey);
 
         expect(resultEntries[1][0]).toContain(ifPseudoFunctionKey);
         expect(resultEntries[1][1]).toBeTruthy();
-        expect((resultEntries[1][1].inputs[0] as ConnectionUnit).reactFlowKey).toContain('IsGreater');
-        expect((resultEntries[1][1].inputs[1] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/ConditionalMapping');
+        expect((resultEntries[1][1].inputs[0] as NodeConnection).reactFlowKey).toContain('IsGreater');
+        expect((resultEntries[1][1].inputs[1] as NodeConnection).reactFlowKey).toEqual('source-/ns0:Root/ConditionalMapping');
         expect(resultEntries[1][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/ConditionalMapping');
 
         expect(resultEntries[2][0]).toEqual('source-/ns0:Root/ConditionalMapping');
@@ -708,11 +720,11 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[5][0]).toEqual('target-/ns0:Root/ConditionalMapping');
         expect(resultEntries[5][1]).toBeTruthy();
-        expect((resultEntries[5][1].inputs[0] as ConnectionUnit).reactFlowKey).toContain(ifPseudoFunctionKey);
+        expect((resultEntries[5][1].inputs[0] as NodeConnection).reactFlowKey).toContain(ifPseudoFunctionKey);
 
         expect(resultEntries[6][0]).toEqual('target-/ns0:Root/ConditionalMapping/ItemPrice');
         expect(resultEntries[6][1]).toBeTruthy();
-        expect((resultEntries[6][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/ConditionalMapping/ItemPrice');
+        expect((resultEntries[6][1].inputs[0] as NodeConnection).reactFlowKey).toEqual('source-/ns0:Root/ConditionalMapping/ItemPrice');
       });
 
       it('creates a conditional object connection', () => {
@@ -735,7 +747,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[0][0]).toContain('IsGreater');
         expect(resultEntries[0][1]).toBeTruthy();
-        expect((resultEntries[0][1].inputs[0] as ConnectionUnit).reactFlowKey).toContain('Multiply');
+        expect((resultEntries[0][1].inputs[0] as NodeConnection).reactFlowKey).toContain('Multiply');
         isEqualToCustomValue('200', resultEntries[0][1].inputs[1]);
         expect(resultEntries[0][1].outputs[0].reactFlowKey).toContain(ifPseudoFunctionKey);
 
@@ -752,8 +764,8 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[3][0]).toContain(ifPseudoFunctionKey);
         expect(resultEntries[3][1]).toBeTruthy();
-        expect((resultEntries[3][1].inputs[0] as ConnectionUnit).reactFlowKey).toContain('IsGreater');
-        expect((resultEntries[3][1].inputs[1] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/ConditionalMapping');
+        expect((resultEntries[3][1].inputs[0] as NodeConnection).reactFlowKey).toContain('IsGreater');
+        expect((resultEntries[3][1].inputs[1] as NodeConnection).reactFlowKey).toEqual('source-/ns0:Root/ConditionalMapping');
         expect(resultEntries[3][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/ConditionalMapping');
 
         expect(resultEntries[4][0]).toEqual('source-/ns0:Root/ConditionalMapping');
@@ -773,15 +785,15 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[7][0]).toEqual('target-/ns0:Root/ConditionalMapping');
         expect(resultEntries[7][1]).toBeTruthy();
-        expect((resultEntries[7][1].inputs[0] as ConnectionUnit).reactFlowKey).toContain(ifPseudoFunctionKey);
+        expect((resultEntries[7][1].inputs[0] as NodeConnection).reactFlowKey).toContain(ifPseudoFunctionKey);
 
         expect(resultEntries[8][0]).toEqual('target-/ns0:Root/ConditionalMapping/ItemDiscount');
         expect(resultEntries[8][1]).toBeTruthy();
-        expect((resultEntries[8][1].inputs[0] as ConnectionUnit).reactFlowKey).toContain('Multiply');
+        expect((resultEntries[8][1].inputs[0] as NodeConnection).reactFlowKey).toContain('Multiply');
 
         expect(resultEntries[9][0]).toEqual('target-/ns0:Root/ConditionalMapping/ItemPrice');
         expect(resultEntries[9][1]).toBeTruthy();
-        expect((resultEntries[9][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/ConditionalMapping/ItemPrice');
+        expect((resultEntries[9][1].inputs[0] as NodeConnection).reactFlowKey).toEqual('source-/ns0:Root/ConditionalMapping/ItemPrice');
       });
 
       it('creates a loop connection', () => {
@@ -912,9 +924,9 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect(resultEntries[0][0]).toContain('IsNull');
         expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/Looping/Person/Name');
         expect(resultEntries[0][1].outputs[1].reactFlowKey).toEqual('target-/ns0:Root/Looping/Person/Address');
-        expect((resultEntries[0][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/Looping/Employee/TelephoneNumber');
+        expect((resultEntries[0][1].inputs[0] as NodeConnection).reactFlowKey).toEqual('source-/ns0:Root/Looping/Employee/TelephoneNumber');
 
-        expect((resultEntries[4][1].inputs[0] as ConnectionUnit).node).toBeDefined();
+        expect((resultEntries[4][1].inputs[0] as NodeConnection).node).toBeDefined();
 
         // loop connection
         expect(resultEntries[1][0]).toEqual('source-/ns0:Root/Looping/Employee');
@@ -970,7 +982,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[0][0]).toEqual(indexId);
         expect(resultEntries[0][1]).toBeTruthy();
-        expect((resultEntries[0][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/Looping/VehicleTrips/Trips');
+        expect((resultEntries[0][1].inputs[0] as NodeConnection).reactFlowKey).toEqual('source-/ns0:Root/Looping/VehicleTrips/Trips');
         expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/Looping/Trips/Trip');
         expect(resultEntries[0][1].outputs[1].reactFlowKey).toEqual('target-/ns0:Root/Looping/Trips/Trip/VehicleRegistration');
 
@@ -980,11 +992,11 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[2][0]).toEqual('target-/ns0:Root/Looping/Trips/Trip');
         expect(resultEntries[2][1]).toBeTruthy();
-        expect((resultEntries[2][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual(indexId);
+        expect((resultEntries[2][1].inputs[0] as NodeConnection).reactFlowKey).toEqual(indexId);
 
         expect(resultEntries[3][0]).toEqual('target-/ns0:Root/Looping/Trips/Trip/VehicleRegistration');
         expect(resultEntries[3][1]).toBeTruthy();
-        expect((resultEntries[3][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual(indexId);
+        expect((resultEntries[3][1].inputs[0] as NodeConnection).reactFlowKey).toEqual(indexId);
       });
 
       it('creates a looping conditional connection', () => {
@@ -1011,13 +1023,13 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[0][0]).toContain('IsEqual');
         expect(resultEntries[0][1]).toBeTruthy();
-        expect((resultEntries[0][1].inputs[0] as ConnectionUnit).reactFlowKey).toContain('SubString');
+        expect((resultEntries[0][1].inputs[0] as NodeConnection).reactFlowKey).toContain('SubString');
         isEqualToCustomValue('"1"', resultEntries[0][1].inputs[1]);
         expect(resultEntries[0][1].outputs[0].reactFlowKey).toContain(ifPseudoFunctionKey);
 
         expect(resultEntries[1][0]).toContain('SubString');
         expect(resultEntries[1][1]).toBeTruthy();
-        expect((resultEntries[1][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual(
+        expect((resultEntries[1][1].inputs[0] as NodeConnection).reactFlowKey).toEqual(
           'source-/ns0:Root/ConditionalLooping/FlatterCatalog/ns0:Product/SKU'
         );
         isEqualToCustomValue('1', resultEntries[1][1].inputs[1]);
@@ -1026,8 +1038,8 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[2][0]).toContain(ifPseudoFunctionKey);
         expect(resultEntries[2][1]).toBeTruthy();
-        expect((resultEntries[2][1].inputs[0] as ConnectionUnit).reactFlowKey).toContain('IsEqual');
-        expect((resultEntries[2][1].inputs[1] as ConnectionUnit).reactFlowKey).toEqual(
+        expect((resultEntries[2][1].inputs[0] as NodeConnection).reactFlowKey).toContain('IsEqual');
+        expect((resultEntries[2][1].inputs[1] as NodeConnection).reactFlowKey).toEqual(
           'source-/ns0:Root/ConditionalLooping/FlatterCatalog/ns0:Product'
         );
         expect(resultEntries[2][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/ConditionalLooping/CategorizedCatalog/PetProduct');
@@ -1048,17 +1060,17 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[6][0]).toEqual('target-/ns0:Root/ConditionalLooping/CategorizedCatalog');
         expect(resultEntries[6][1]).toBeTruthy();
-        expect((resultEntries[6][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual(
+        expect((resultEntries[6][1].inputs[0] as NodeConnection).reactFlowKey).toEqual(
           'source-/ns0:Root/ConditionalLooping/FlatterCatalog/ns0:Product'
         );
 
         expect(resultEntries[7][0]).toEqual('target-/ns0:Root/ConditionalLooping/CategorizedCatalog/PetProduct');
         expect(resultEntries[7][1]).toBeTruthy();
-        expect((resultEntries[7][1].inputs[0] as ConnectionUnit).reactFlowKey).toContain(ifPseudoFunctionKey);
+        expect((resultEntries[7][1].inputs[0] as NodeConnection).reactFlowKey).toContain(ifPseudoFunctionKey);
 
         expect(resultEntries[8][0]).toEqual('target-/ns0:Root/ConditionalLooping/CategorizedCatalog/PetProduct/Name');
         expect(resultEntries[8][1]).toBeTruthy();
-        expect((resultEntries[8][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual(
+        expect((resultEntries[8][1].inputs[0] as NodeConnection).reactFlowKey).toEqual(
           'source-/ns0:Root/ConditionalLooping/FlatterCatalog/ns0:Product/Name'
         );
       });
@@ -1088,23 +1100,23 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         const day2NameConnection = result['target-/ns0:Root/LoopingWithIndex/WeatherSummary/Day2/Name'].inputs[0];
         isEqualToCustomValue('"Day 2"', day2NameConnection);
 
-        const directAccess1Key = (result['target-/ns0:Root/LoopingWithIndex/WeatherSummary/Day1/Pressure'].inputs[0] as ConnectionUnit)
+        const directAccess1Key = (result['target-/ns0:Root/LoopingWithIndex/WeatherSummary/Day1/Pressure'].inputs[0] as NodeConnection)
           .reactFlowKey;
-        const directAccess2Key = (result['target-/ns0:Root/LoopingWithIndex/WeatherSummary/Day2/Temperature'].inputs[0] as ConnectionUnit)
+        const directAccess2Key = (result['target-/ns0:Root/LoopingWithIndex/WeatherSummary/Day2/Temperature'].inputs[0] as NodeConnection)
           .reactFlowKey;
 
         expect(directAccess1Key).toContain(directAccessPseudoFunctionKey);
         expect(directAccess2Key).toContain(directAccessPseudoFunctionKey);
 
         expect((result[directAccess1Key].inputs[0] as CustomValueConnection).value).toBe('1');
-        expect((result[directAccess1Key].inputs[1] as ConnectionUnit).reactFlowKey).toBe('source-/ns0:Root/LoopingWithIndex/WeatherReport');
-        expect((result[directAccess1Key].inputs[2] as ConnectionUnit).reactFlowKey).toBe(
+        expect((result[directAccess1Key].inputs[1] as NodeConnection).reactFlowKey).toBe('source-/ns0:Root/LoopingWithIndex/WeatherReport');
+        expect((result[directAccess1Key].inputs[2] as NodeConnection).reactFlowKey).toBe(
           'source-/ns0:Root/LoopingWithIndex/WeatherReport/@Pressure'
         );
 
         expect((result[directAccess2Key].inputs[0] as CustomValueConnection).value).toBe('2');
-        expect((result[directAccess2Key].inputs[1] as ConnectionUnit).reactFlowKey).toBe('source-/ns0:Root/LoopingWithIndex/WeatherReport');
-        expect((result[directAccess2Key].inputs[2] as ConnectionUnit).reactFlowKey).toBe(
+        expect((result[directAccess2Key].inputs[1] as NodeConnection).reactFlowKey).toBe('source-/ns0:Root/LoopingWithIndex/WeatherReport');
+        expect((result[directAccess2Key].inputs[2] as NodeConnection).reactFlowKey).toBe(
           'source-/ns0:Root/LoopingWithIndex/WeatherReport/@Temperature'
         );
       });
@@ -1137,23 +1149,23 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
           '"Day 2"'
         );
 
-        const directAccess1Key = (result['target-/ns0:Root/LoopingWithIndex/WeatherSummary/Day1/Pressure'].inputs[0] as ConnectionUnit)
+        const directAccess1Key = (result['target-/ns0:Root/LoopingWithIndex/WeatherSummary/Day1/Pressure'].inputs[0] as NodeConnection)
           .reactFlowKey;
-        const directAccess2Key = (result['target-/ns0:Root/LoopingWithIndex/WeatherSummary/Day2/Temperature'].inputs[0] as ConnectionUnit)
+        const directAccess2Key = (result['target-/ns0:Root/LoopingWithIndex/WeatherSummary/Day2/Temperature'].inputs[0] as NodeConnection)
           .reactFlowKey;
 
         expect(directAccess1Key).toContain(directAccessPseudoFunctionKey);
         expect(directAccess2Key).toContain(directAccessPseudoFunctionKey);
 
         expect((result[directAccess1Key].inputs[0] as CustomValueConnection).value).toBe('1');
-        expect((result[directAccess1Key].inputs[1] as ConnectionUnit).reactFlowKey).toBe('source-/ns0:Root/LoopingWithIndex/WeatherReport');
-        expect((result[directAccess1Key].inputs[2] as ConnectionUnit).reactFlowKey).toBe(
+        expect((result[directAccess1Key].inputs[1] as NodeConnection).reactFlowKey).toBe('source-/ns0:Root/LoopingWithIndex/WeatherReport');
+        expect((result[directAccess1Key].inputs[2] as NodeConnection).reactFlowKey).toBe(
           'source-/ns0:Root/LoopingWithIndex/WeatherReport/@Pressure'
         );
 
         expect((result[directAccess2Key].inputs[0] as CustomValueConnection).value).toBe('2');
-        expect((result[directAccess2Key].inputs[1] as ConnectionUnit).reactFlowKey).toBe('source-/ns0:Root/LoopingWithIndex/WeatherReport');
-        expect((result[directAccess2Key].inputs[2] as ConnectionUnit).reactFlowKey).toBe(
+        expect((result[directAccess2Key].inputs[1] as NodeConnection).reactFlowKey).toBe('source-/ns0:Root/LoopingWithIndex/WeatherReport');
+        expect((result[directAccess2Key].inputs[2] as NodeConnection).reactFlowKey).toBe(
           'source-/ns0:Root/LoopingWithIndex/WeatherReport/@Temperature'
         );
       });
@@ -1178,36 +1190,36 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(Object.entries(result).length).toEqual(12);
 
-        const indexRfKey = (result['target-/ns0:Root/Looping/Trips/Trip'].inputs[0] as ConnectionUnit).reactFlowKey;
+        const indexRfKey = (result['target-/ns0:Root/Looping/Trips/Trip'].inputs[0] as NodeConnection).reactFlowKey;
         expect(indexRfKey).toContain(indexPseudoFunctionKey);
-        expect((result[indexRfKey].inputs[0] as ConnectionUnit).reactFlowKey).toBe('source-/ns0:Root/Looping/VehicleTrips/Trips');
+        expect((result[indexRfKey].inputs[0] as NodeConnection).reactFlowKey).toBe('source-/ns0:Root/Looping/VehicleTrips/Trips');
 
-        const directAccessRfKey1 = (result['target-/ns0:Root/Looping/Trips/Trip/VehicleRegistration'].inputs[0] as ConnectionUnit)
+        const directAccessRfKey1 = (result['target-/ns0:Root/Looping/Trips/Trip/VehicleRegistration'].inputs[0] as NodeConnection)
           .reactFlowKey;
         expect(directAccessRfKey1).toContain(directAccessPseudoFunctionKey);
-        const isEqualRfKey = (result[directAccessRfKey1].inputs[0] as ConnectionUnit).reactFlowKey;
+        const isEqualRfKey = (result[directAccessRfKey1].inputs[0] as NodeConnection).reactFlowKey;
         expect(isEqualRfKey).toContain('IsEqual');
-        expect((result[directAccessRfKey1].inputs[1] as ConnectionUnit).reactFlowKey).toBe('source-/ns0:Root/Looping/VehicleTrips/Vehicle');
-        expect((result[directAccessRfKey1].inputs[2] as ConnectionUnit).reactFlowKey).toBe(
+        expect((result[directAccessRfKey1].inputs[1] as NodeConnection).reactFlowKey).toBe('source-/ns0:Root/Looping/VehicleTrips/Vehicle');
+        expect((result[directAccessRfKey1].inputs[2] as NodeConnection).reactFlowKey).toBe(
           'source-/ns0:Root/Looping/VehicleTrips/Vehicle/VehicleRegistration'
         );
 
-        const directAccessRfKey2 = (result['target-/ns0:Root/Looping/Trips/Trip/Distance'].inputs[0] as ConnectionUnit).reactFlowKey;
+        const directAccessRfKey2 = (result['target-/ns0:Root/Looping/Trips/Trip/Distance'].inputs[0] as NodeConnection).reactFlowKey;
         expect(directAccessRfKey2).toContain(directAccessPseudoFunctionKey);
-        expect((result[directAccessRfKey2].inputs[0] as ConnectionUnit).reactFlowKey).toBe(indexRfKey);
-        expect((result[directAccessRfKey2].inputs[1] as ConnectionUnit).reactFlowKey).toBe('source-/ns0:Root/Looping/VehicleTrips/Vehicle');
-        expect((result[directAccessRfKey2].inputs[2] as ConnectionUnit).reactFlowKey).toBe(
+        expect((result[directAccessRfKey2].inputs[0] as NodeConnection).reactFlowKey).toBe(indexRfKey);
+        expect((result[directAccessRfKey2].inputs[1] as NodeConnection).reactFlowKey).toBe('source-/ns0:Root/Looping/VehicleTrips/Vehicle');
+        expect((result[directAccessRfKey2].inputs[2] as NodeConnection).reactFlowKey).toBe(
           'source-/ns0:Root/Looping/VehicleTrips/Vehicle/VehicleRegistration'
         );
 
-        expect((result[isEqualRfKey].inputs[0] as ConnectionUnit).reactFlowKey).toBe(
+        expect((result[isEqualRfKey].inputs[0] as NodeConnection).reactFlowKey).toBe(
           'source-/ns0:Root/Looping/VehicleTrips/Trips/VehicleId'
         );
-        const directAccessRfKey3 = (result[isEqualRfKey].inputs[1] as ConnectionUnit).reactFlowKey;
+        const directAccessRfKey3 = (result[isEqualRfKey].inputs[1] as NodeConnection).reactFlowKey;
         expect(directAccessRfKey3).toContain(directAccessPseudoFunctionKey);
-        expect((result[directAccessRfKey3].inputs[0] as ConnectionUnit).reactFlowKey).toBe(indexRfKey);
-        expect((result[directAccessRfKey3].inputs[1] as ConnectionUnit).reactFlowKey).toBe('source-/ns0:Root/Looping/VehicleTrips/Trips');
-        expect((result[directAccessRfKey3].inputs[2] as ConnectionUnit).reactFlowKey).toBe(
+        expect((result[directAccessRfKey3].inputs[0] as NodeConnection).reactFlowKey).toBe(indexRfKey);
+        expect((result[directAccessRfKey3].inputs[1] as NodeConnection).reactFlowKey).toBe('source-/ns0:Root/Looping/VehicleTrips/Trips');
+        expect((result[directAccessRfKey3].inputs[2] as NodeConnection).reactFlowKey).toBe(
           'source-/ns0:Root/Looping/VehicleTrips/Trips/VehicleId'
         );
       });
@@ -1233,28 +1245,28 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(Object.entries(result).length).toEqual(9);
 
-        const indexFnRfKey = (result['target-/ns0:Root/LoopingWithIndex/WeatherSummary/Day'].inputs[0] as ConnectionUnit).reactFlowKey;
+        const indexFnRfKey = (result['target-/ns0:Root/LoopingWithIndex/WeatherSummary/Day'].inputs[0] as NodeConnection).reactFlowKey;
         expect(indexFnRfKey).toContain(indexPseudoFunctionKey);
-        expect((result[indexFnRfKey].inputs[0] as ConnectionUnit).reactFlowKey).toBe('source-/ns0:Root/LoopingWithIndex/WeatherReport');
+        expect((result[indexFnRfKey].inputs[0] as NodeConnection).reactFlowKey).toBe('source-/ns0:Root/LoopingWithIndex/WeatherReport');
 
-        const conditionalFnRfKey = (result['target-/ns0:Root/LoopingWithIndex/WeatherSummary/Day'].inputs[1] as ConnectionUnit)
+        const conditionalFnRfKey = (result['target-/ns0:Root/LoopingWithIndex/WeatherSummary/Day'].inputs[1] as NodeConnection)
           .reactFlowKey;
         expect(conditionalFnRfKey).toContain(ifPseudoFunctionKey);
-        expect((result[conditionalFnRfKey].inputs[1] as ConnectionUnit).reactFlowKey).toBe(
+        expect((result[conditionalFnRfKey].inputs[1] as NodeConnection).reactFlowKey).toBe(
           'source-/ns0:Root/LoopingWithIndex/WeatherReport'
         );
-        const greaterFnRfKey = (result[conditionalFnRfKey].inputs[0] as ConnectionUnit).reactFlowKey;
+        const greaterFnRfKey = (result[conditionalFnRfKey].inputs[0] as NodeConnection).reactFlowKey;
         expect(greaterFnRfKey).toContain('IsGreater');
-        expect((result[greaterFnRfKey].inputs[0] as ConnectionUnit).reactFlowKey).toBe(indexFnRfKey);
+        expect((result[greaterFnRfKey].inputs[0] as NodeConnection).reactFlowKey).toBe(indexFnRfKey);
         expect((result[greaterFnRfKey].inputs[1] as CustomValueConnection).value).toBe('2');
 
-        const concatFnRfKey = (result['target-/ns0:Root/LoopingWithIndex/WeatherSummary/Day/Name'].inputs[0] as ConnectionUnit)
+        const concatFnRfKey = (result['target-/ns0:Root/LoopingWithIndex/WeatherSummary/Day/Name'].inputs[0] as NodeConnection)
           .reactFlowKey;
         expect(concatFnRfKey).toContain('Concat');
         expect((result[concatFnRfKey].inputs[0] as CustomValueConnection).value).toBe('"Day "');
-        expect((result[concatFnRfKey].inputs[1] as ConnectionUnit).reactFlowKey).toBe(indexFnRfKey);
+        expect((result[concatFnRfKey].inputs[1] as NodeConnection).reactFlowKey).toBe(indexFnRfKey);
 
-        expect((result['target-/ns0:Root/LoopingWithIndex/WeatherSummary/Day/Pressure'].inputs[0] as ConnectionUnit).reactFlowKey).toBe(
+        expect((result['target-/ns0:Root/LoopingWithIndex/WeatherSummary/Day/Pressure'].inputs[0] as NodeConnection).reactFlowKey).toBe(
           'source-/ns0:Root/LoopingWithIndex/WeatherReport/@Pressure'
         );
       });
@@ -1286,24 +1298,24 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         const result = mapDefinitionDeserializer.convertFromMapDefinition();
         expect(Object.entries(result).length).toEqual(8);
 
-        expect((result['target-/ns0:TargetSchemaRoot/Looping/ManyToMany/Simple'].inputs[0] as ConnectionUnit).reactFlowKey).toEqual(
+        expect((result['target-/ns0:TargetSchemaRoot/Looping/ManyToMany/Simple'].inputs[0] as NodeConnection).reactFlowKey).toEqual(
           'source-/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple'
         );
         expect(
-          (result['target-/ns0:TargetSchemaRoot/Looping/ManyToMany/Simple/SimpleChild'].inputs[0] as ConnectionUnit).reactFlowKey
+          (result['target-/ns0:TargetSchemaRoot/Looping/ManyToMany/Simple/SimpleChild'].inputs[0] as NodeConnection).reactFlowKey
         ).toEqual('source-/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild');
         expect(
-          (result['target-/ns0:TargetSchemaRoot/Looping/ManyToMany/Simple/SimpleChild/SimpleChildChild'].inputs[0] as ConnectionUnit)
+          (result['target-/ns0:TargetSchemaRoot/Looping/ManyToMany/Simple/SimpleChild/SimpleChildChild'].inputs[0] as NodeConnection)
             .reactFlowKey
         ).toEqual('source-/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild/SourceSimpleChildChild');
 
         expect(
-          (result['target-/ns0:TargetSchemaRoot/Looping/ManyToMany/Simple/SimpleChild/SimpleChildChild/Direct'].inputs[0] as ConnectionUnit)
+          (result['target-/ns0:TargetSchemaRoot/Looping/ManyToMany/Simple/SimpleChild/SimpleChildChild/Direct'].inputs[0] as NodeConnection)
             .reactFlowKey
         ).toEqual('source-/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild/SourceSimpleChildChild/SourceDirect');
       });
 
-      it.skip('creates a many-to-one loop connections', () => {
+      it('creates a many-to-one loop connections', () => {
         const extendedComprehensiveSourceSchema = convertSchemaToSchemaExtended(comprehensiveSourceSchema);
         const extendedComprehensiveTargetSchema = convertSchemaToSchemaExtended(comprehensiveTargetSchema);
         simpleMap['ns0:TargetSchemaRoot'] = {
@@ -1358,24 +1370,24 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect(resultEntries[4][1]).toBeTruthy();
 
         const loopInputs = resultEntries[4][1].inputs.sort((conn1, conn2) =>
-          (conn2 as ConnectionUnit).reactFlowKey.localeCompare((conn1 as ConnectionUnit).reactFlowKey)
+          (conn2 as NodeConnection).reactFlowKey.localeCompare((conn1 as NodeConnection).reactFlowKey)
         );
-        expect((loopInputs[0] as ConnectionUnit).reactFlowKey).toEqual(
+        expect((loopInputs[0] as NodeConnection).reactFlowKey).toEqual(
           'source-/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild/SourceSimpleChildChild'
         );
-        expect((loopInputs[1] as ConnectionUnit).reactFlowKey).toEqual(
+        expect((loopInputs[1] as NodeConnection).reactFlowKey).toEqual(
           'source-/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild'
         );
-        expect((loopInputs[2] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple');
+        expect((loopInputs[2] as NodeConnection).reactFlowKey).toEqual('source-/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple');
 
         expect(resultEntries[5][0]).toEqual('target-/ns0:TargetSchemaRoot/Looping/ManyToOne/Simple/Direct');
         expect(resultEntries[5][1]).toBeTruthy();
-        expect((resultEntries[5][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual(
+        expect((resultEntries[5][1].inputs[0] as NodeConnection).reactFlowKey).toEqual(
           'source-/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild/SourceSimpleChildChild/SourceDirect'
         );
       });
 
-      it.skip('creates a many-to-one loop connection with nested index variables', () => {
+      it('creates a many-to-one loop connection with nested index variables', () => {
         const extendedComprehensiveSourceSchema = convertSchemaToSchemaExtended(comprehensiveSourceSchema);
         const extendedComprehensiveTargetSchema = convertSchemaToSchemaExtended(comprehensiveTargetSchema);
         simpleMap['ns0:TargetSchemaRoot'] = {
@@ -1404,32 +1416,32 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(Object.entries(result).length).toEqual(10);
 
-        const indexRfKey1 = (result['target-/ns0:TargetSchemaRoot/Looping/ManyToOne/Simple'].inputs[0] as ConnectionUnit).reactFlowKey;
+        const indexRfKey1 = (result['target-/ns0:TargetSchemaRoot/Looping/ManyToOne/Simple'].inputs[0] as NodeConnection).reactFlowKey;
         expect(indexRfKey1).toContain(indexPseudoFunctionKey);
-        expect((result[indexRfKey1].inputs[0] as ConnectionUnit).reactFlowKey).toBe(
-          'source-/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild/SourceSimpleChildChild'
-        );
-
-        const indexRfKey2 = (result['target-/ns0:TargetSchemaRoot/Looping/ManyToOne/Simple'].inputs[1] as ConnectionUnit).reactFlowKey;
-        expect(indexRfKey2).toContain(indexPseudoFunctionKey);
-        expect((result[indexRfKey2].inputs[0] as ConnectionUnit).reactFlowKey).toBe(
-          'source-/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild'
-        );
-
-        const indexRfKey3 = (result['target-/ns0:TargetSchemaRoot/Looping/ManyToOne/Simple'].inputs[2] as ConnectionUnit).reactFlowKey;
-        expect(indexRfKey3).toContain(indexPseudoFunctionKey);
-        expect((result[indexRfKey3].inputs[0] as ConnectionUnit).reactFlowKey).toBe(
+        expect((result[indexRfKey1].inputs[0] as NodeConnection).reactFlowKey).toBe(
           'source-/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple'
         );
 
-        const directAccessRfKey = (result['target-/ns0:TargetSchemaRoot/Looping/ManyToOne/Simple/Direct'].inputs[0] as ConnectionUnit)
-          .reactFlowKey;
-        expect(directAccessRfKey).toContain(directAccessPseudoFunctionKey);
-        expect((result[directAccessRfKey].inputs[0] as ConnectionUnit).reactFlowKey).toBe(indexRfKey2);
-        expect((result[directAccessRfKey].inputs[1] as ConnectionUnit).reactFlowKey).toBe(
+        const indexRfKey2 = (result['target-/ns0:TargetSchemaRoot/Looping/ManyToOne/Simple'].inputs[1] as NodeConnection).reactFlowKey;
+        expect(indexRfKey2).toContain(indexPseudoFunctionKey);
+        expect((result[indexRfKey2].inputs[0] as NodeConnection).reactFlowKey).toBe(
+          'source-/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild'
+        );
+
+        const indexRfKey3 = (result['target-/ns0:TargetSchemaRoot/Looping/ManyToOne/Simple'].inputs[2] as NodeConnection).reactFlowKey;
+        expect(indexRfKey3).toContain(indexPseudoFunctionKey);
+        expect((result[indexRfKey3].inputs[0] as NodeConnection).reactFlowKey).toBe(
           'source-/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild/SourceSimpleChildChild'
         );
-        expect((result[directAccessRfKey].inputs[2] as ConnectionUnit).reactFlowKey).toBe(
+
+        const directAccessRfKey = (result['target-/ns0:TargetSchemaRoot/Looping/ManyToOne/Simple/Direct'].inputs[0] as NodeConnection)
+          .reactFlowKey;
+        expect(directAccessRfKey).toContain(directAccessPseudoFunctionKey);
+        expect((result[directAccessRfKey].inputs[0] as NodeConnection).reactFlowKey).toBe(indexRfKey2);
+        expect((result[directAccessRfKey].inputs[1] as NodeConnection).reactFlowKey).toBe(
+          'source-/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild/SourceSimpleChildChild'
+        );
+        expect((result[directAccessRfKey].inputs[2] as NodeConnection).reactFlowKey).toBe(
           'source-/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild/SourceSimpleChildChild/SourceDirect'
         );
       });
@@ -1454,18 +1466,18 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(Object.entries(result).length).toEqual(3);
 
-        expect((result['target-/ns0:Root/NameValueTransforms/PO_Status/Product'].inputs[0] as ConnectionUnit).reactFlowKey).toBe(
+        expect((result['target-/ns0:Root/NameValueTransforms/PO_Status/Product'].inputs[0] as NodeConnection).reactFlowKey).toBe(
           'source-/ns0:Root/NameValueTransforms/PurchaseOrderStatus/ns0:LineItem'
         );
         expect(
-          (result['target-/ns0:Root/NameValueTransforms/PO_Status/Product/ProductIdentifier'].inputs[0] as ConnectionUnit).reactFlowKey
+          (result['target-/ns0:Root/NameValueTransforms/PO_Status/Product/ProductIdentifier'].inputs[0] as NodeConnection).reactFlowKey
         ).toBe('source-/ns0:Root/NameValueTransforms/PurchaseOrderStatus/ns0:LineItem');
       });
 
       it('creates a loop connection with backout access', () => {
-        const mockNestedTestSchema: Schema = deepNestedSequenceAndObject;
+        const mockNestedTestSchema: DataMapSchema = deepNestedSequenceAndObject;
         const extendedComprehensiveSourceSchema: SchemaExtended = convertSchemaToSchemaExtended(mockNestedTestSchema);
-        const mockComprehensiveTargetSchema: Schema = targetMockSchema;
+        const mockComprehensiveTargetSchema: DataMapSchema = targetMockSchema;
         const extendedComprehensiveTargetSchema: SchemaExtended = convertSchemaToSchemaExtended(mockComprehensiveTargetSchema);
         simpleMap['ns0:Root'] = {
           Looping: {
@@ -1491,11 +1503,11 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         const resultEntries = Object.entries(result);
 
         // target-/ns0:Root/Looping/Person/Address
-        expect((resultEntries[4][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual(
+        expect((resultEntries[4][1].inputs[0] as NodeConnection).reactFlowKey).toEqual(
           'source-/ns0:bookstore/ns0:book/ns0:book2/ns0:book3/ns0:name'
         );
         // target-/ns0:Root/Looping/Person/Name
-        expect((resultEntries[6][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual(
+        expect((resultEntries[6][1].inputs[0] as NodeConnection).reactFlowKey).toEqual(
           'source-/ns0:bookstore/ns0:book/ns0:book2/ns0:author/ns0:first-name'
         );
       });
@@ -1518,14 +1530,14 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[0][0]).toContain('IfElse');
         expect(resultEntries[0][1]).toBeTruthy();
-        expect((resultEntries[0][1].inputs[0] as ConnectionUnit).reactFlowKey).toContain('IsGreater');
-        expect((resultEntries[0][1].inputs[1] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/DirectTranslation/EmployeeName');
+        expect((resultEntries[0][1].inputs[0] as NodeConnection).reactFlowKey).toContain('IsGreater');
+        expect((resultEntries[0][1].inputs[1] as NodeConnection).reactFlowKey).toEqual('source-/ns0:Root/DirectTranslation/EmployeeName');
         isEqualToCustomValue('"Custom"', resultEntries[0][1].inputs[2]);
         expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/DirectTranslation/Employee/Name');
 
         expect(resultEntries[1][0]).toContain('IsGreater');
         expect(resultEntries[1][1]).toBeTruthy();
-        expect((resultEntries[1][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/DirectTranslation/EmployeeID');
+        expect((resultEntries[1][1].inputs[0] as NodeConnection).reactFlowKey).toEqual('source-/ns0:Root/DirectTranslation/EmployeeID');
         isEqualToCustomValue('10', resultEntries[1][1].inputs[1]);
         expect(resultEntries[1][1].outputs[0].reactFlowKey).toContain('IfElse');
 
@@ -1539,10 +1551,10 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[4][0]).toEqual('target-/ns0:Root/DirectTranslation/Employee/Name');
         expect(resultEntries[4][1]).toBeTruthy();
-        expect((resultEntries[4][1].inputs[0] as ConnectionUnit).reactFlowKey).toContain('IfElse');
+        expect((resultEntries[4][1].inputs[0] as NodeConnection).reactFlowKey).toContain('IfElse');
       });
 
-      it.skip('Everything test', () => {
+      it('Everything test', () => {
         const extendedSource = convertSchemaToSchemaExtended(comprehensiveSourceSchema);
         const extendedTarget = convertSchemaToSchemaExtended(comprehensiveTargetSchema);
         simpleMap['ns0:TargetSchemaRoot'] = {
@@ -1573,40 +1585,40 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[0][0]).toEqual(isGreaterId);
         expect(resultEntries[0][1]).toBeTruthy();
-        expect((resultEntries[0][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual(indexId);
-        expect(resultEntries[0][1].inputs[1]).toEqual('3');
+        expect((resultEntries[0][1].inputs[0] as NodeConnection).reactFlowKey).toEqual(indexId);
+        expect(isEqualToCustomValue('3', resultEntries[0][1].inputs[1]));
         expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual(ifId);
 
         expect(resultEntries[1][0]).toEqual(directAccessId);
         expect(resultEntries[1][1]).toBeTruthy();
-        expect((resultEntries[1][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual(indexId);
-        expect((resultEntries[1][1].inputs[1] as ConnectionUnit).reactFlowKey).toEqual(
+        expect((resultEntries[1][1].inputs[0] as NodeConnection).reactFlowKey).toEqual(indexId);
+        expect((resultEntries[1][1].inputs[1] as NodeConnection).reactFlowKey).toEqual(
           'source-/ns0:SourceSchemaRoot/Looping/OneToOne/StressTest'
         );
-        expect((resultEntries[1][1].inputs[2] as ConnectionUnit).reactFlowKey).toEqual(
+        expect((resultEntries[1][1].inputs[2] as NodeConnection).reactFlowKey).toEqual(
           'source-/ns0:SourceSchemaRoot/Looping/OneToOne/StressTest/SourceDirect'
         );
         expect(resultEntries[1][1].outputs[0].reactFlowKey).toEqual(ifId);
 
         expect(resultEntries[2][0]).toEqual(ifId);
         expect(resultEntries[2][1]).toBeTruthy();
-        expect((resultEntries[2][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual(isGreaterId);
-        expect((resultEntries[2][1].inputs[1] as ConnectionUnit).reactFlowKey).toEqual(directAccessId);
+        expect((resultEntries[2][1].inputs[0] as NodeConnection).reactFlowKey).toEqual(isGreaterId);
+        expect((resultEntries[2][1].inputs[1] as NodeConnection).reactFlowKey).toEqual(directAccessId);
         expect(resultEntries[2][1].outputs[0].reactFlowKey).toEqual('target-/ns0:TargetSchemaRoot/Looping/OneToOne/StressTest/Direct');
 
         expect(resultEntries[3][0]).toEqual(indexId);
         expect(resultEntries[3][1]).toBeTruthy();
-        expect((resultEntries[3][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual(
+        expect((resultEntries[3][1].inputs[0] as NodeConnection).reactFlowKey).toEqual(
           'source-/ns0:SourceSchemaRoot/Looping/OneToOne/StressTest'
         );
-        expect(resultEntries[3][1].outputs[0].reactFlowKey).toEqual(isGreaterId);
-        expect(resultEntries[3][1].outputs[1].reactFlowKey).toEqual(directAccessId);
-        expect(resultEntries[3][1].outputs[2].reactFlowKey).toEqual('target-/ns0:TargetSchemaRoot/Looping/OneToOne/StressTest');
+        expect(resultEntries[3][1].outputs[0].reactFlowKey).toEqual('target-/ns0:TargetSchemaRoot/Looping/OneToOne/StressTest');
+        expect(resultEntries[3][1].outputs[1].reactFlowKey).toEqual(isGreaterId);
+        expect(resultEntries[3][1].outputs[2].reactFlowKey).toEqual(directAccessId);
 
         expect(resultEntries[4][0]).toEqual('source-/ns0:SourceSchemaRoot/Looping/OneToOne/StressTest');
         expect(resultEntries[4][1]).toBeTruthy();
-        expect(resultEntries[4][1].outputs[0].reactFlowKey).toEqual(directAccessId);
-        expect(resultEntries[4][1].outputs[1].reactFlowKey).toEqual(indexId);
+        expect(resultEntries[4][1].outputs[1].reactFlowKey).toEqual(directAccessId);
+        expect(resultEntries[4][1].outputs[0].reactFlowKey).toEqual(indexId);
 
         expect(resultEntries[5][0]).toEqual('source-/ns0:SourceSchemaRoot/Looping/OneToOne/StressTest/SourceDirect');
         expect(resultEntries[5][1]).toBeTruthy();
@@ -1614,11 +1626,11 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[6][0]).toEqual('target-/ns0:TargetSchemaRoot/Looping/OneToOne/StressTest');
         expect(resultEntries[6][1]).toBeTruthy();
-        expect((resultEntries[6][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual(indexId);
+        expect((resultEntries[6][1].inputs[0] as NodeConnection).reactFlowKey).toEqual(indexId);
 
         expect(resultEntries[7][0]).toEqual('target-/ns0:TargetSchemaRoot/Looping/OneToOne/StressTest/Direct');
         expect(resultEntries[7][1]).toBeTruthy();
-        expect((resultEntries[7][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual(ifId);
+        expect((resultEntries[7][1].inputs[0] as NodeConnection).reactFlowKey).toEqual(ifId);
       });
     });
 
@@ -1657,7 +1669,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[1][0]).toEqual('target-/ns0:Root/DirectTranslation/Employee/Name');
         expect(resultEntries[1][1]).toBeTruthy();
-        expect((resultEntries[1][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/DirectTranslation/EmployeeName');
+        expect((resultEntries[1][1].inputs[0] as NodeConnection).reactFlowKey).toEqual('source-/ns0:Root/DirectTranslation/EmployeeName');
 
         expect(mapDefinitionDeserializer.getWarningMessages().length).toEqual(1);
       });
@@ -1685,7 +1697,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[1][0]).toEqual('target-/ns0:Root/DirectTranslation/Employee/Name');
         expect(resultEntries[1][1]).toBeTruthy();
-        expect((resultEntries[1][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/DirectTranslation/EmployeeName');
+        expect((resultEntries[1][1].inputs[0] as NodeConnection).reactFlowKey).toEqual('source-/ns0:Root/DirectTranslation/EmployeeName');
 
         expect(mapDefinitionDeserializer.getWarningMessages().length).toEqual(1);
       });
@@ -1719,7 +1731,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[1][0]).toEqual('target-/ns0:Root/DirectTranslation/Employee/Name');
         expect(resultEntries[1][1]).toBeTruthy();
-        expect((resultEntries[1][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/DirectTranslation/EmployeeName');
+        expect((resultEntries[1][1].inputs[0] as NodeConnection).reactFlowKey).toEqual('source-/ns0:Root/DirectTranslation/EmployeeName');
 
         expect(mapDefinitionDeserializer.getWarningMessages().length).toEqual(1);
       });
@@ -1753,7 +1765,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[1][0]).toEqual('source-/ns0:Root/Looping/Employee');
         expect(resultEntries[1][1]).toBeTruthy();
-        expect((resultEntries[1][1].outputs[0] as ConnectionUnit).reactFlowKey).toEqual('target-/ns0:Root/Looping/Person');
+        expect((resultEntries[1][1].outputs[0] as NodeConnection).reactFlowKey).toEqual('target-/ns0:Root/Looping/Person');
 
         expect(mapDefinitionDeserializer.getWarningMessages().length).toEqual(1);
       });
@@ -1811,14 +1823,14 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[1][0]).toEqual('target-/ns0:Root/DirectTranslation/Employee/Name');
         expect(resultEntries[1][1]).toBeTruthy();
-        expect((resultEntries[1][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/DirectTranslation/EmployeeName');
+        expect((resultEntries[1][1].inputs[0] as NodeConnection).reactFlowKey).toEqual('source-/ns0:Root/DirectTranslation/EmployeeName');
 
         expect(mapDefinitionDeserializer.getWarningMessages().length).toEqual(1);
       });
     });
 
-    const getFirstInputReactFlowKey = (conn: Connection) => (conn.inputs[0] as ConnectionUnit).reactFlowKey;
-    const getSecondInputReactFlowKey = (conn: Connection) => (conn.inputs[1] as ConnectionUnit).reactFlowKey;
+    const getFirstInputReactFlowKey = (conn: Connection) => (conn.inputs[0] as NodeConnection).reactFlowKey;
+    const getSecondInputReactFlowKey = (conn: Connection) => (conn.inputs[1] as NodeConnection).reactFlowKey;
 
     describe('sequences', () => {
       it('creates a simple sequence function', () => {
@@ -1918,12 +1930,13 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect(getFirstInputReactFlowKey(resultEntries[6][1])).toEqual('source-/ns0:Root/Looping/Employee/TelephoneNumber');
       });
 
-      it.skip('creates a simple sequence function with mapped children with functions', () => {
+      it('creates a simple sequence function with mapped children with functions', () => {
         simpleMap['ns0:Root'] = {
           Looping: {
             '$for(reverse(/ns0:Root/Looping/Employee))': {
               Person: {
                 Name: 'Name',
+                Other: 'TelephoneNumber',
               },
             },
           },
@@ -2019,7 +2032,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[1][0]).toEqual('target-/root/String1');
         expect(resultEntries[1][1]).toBeTruthy();
-        expect((resultEntries[1][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/OrderNo');
+        expect((resultEntries[1][1].inputs[0] as NodeConnection).reactFlowKey).toEqual('source-/root/OrderNo');
       });
 
       it('creates a connection between a custom value and target node', () => {
@@ -2055,7 +2068,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[0][0]).toEqual(concatId);
         expect(resultEntries[0][1]).toBeTruthy();
-        expect((resultEntries[0][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/OrderNo');
+        expect((resultEntries[0][1].inputs[0] as NodeConnection).reactFlowKey).toEqual('source-/root/OrderNo');
         expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/root/String1');
 
         expect(resultEntries[1][0]).toEqual('source-/root/OrderNo');
@@ -2064,7 +2077,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[2][0]).toEqual('target-/root/String1');
         expect(resultEntries[2][1]).toBeTruthy();
-        expect((resultEntries[2][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual(concatId);
+        expect((resultEntries[2][1].inputs[0] as NodeConnection).reactFlowKey).toEqual(concatId);
       });
 
       it('creates a connection between a content enricher function and target', () => {
@@ -2088,12 +2101,12 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[1][0]).toEqual(toStringId);
         expect(resultEntries[1][1]).toBeTruthy();
-        expect((resultEntries[1][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual(currentDateId);
+        expect((resultEntries[1][1].inputs[0] as NodeConnection).reactFlowKey).toEqual(currentDateId);
         expect(resultEntries[1][1].outputs[0].reactFlowKey).toEqual('target-/root/String1');
 
         expect(resultEntries[2][0]).toEqual('target-/root/String1');
         expect(resultEntries[2][1]).toBeTruthy();
-        expect((resultEntries[2][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual(toStringId);
+        expect((resultEntries[2][1].inputs[0] as NodeConnection).reactFlowKey).toEqual(toStringId);
       });
 
       it('creates a connection between a source, a function with custom value and a target', () => {
@@ -2113,7 +2126,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect(resultEntries[0][0]).toEqual(concatId);
         expect(resultEntries[0][1]).toBeTruthy();
         isEqualToCustomValue('"Order Number: "', resultEntries[0][1].inputs[0]);
-        expect((resultEntries[0][1].inputs[1] as ConnectionUnit).reactFlowKey).toEqual('source-/root/OrderNo');
+        expect((resultEntries[0][1].inputs[1] as NodeConnection).reactFlowKey).toEqual('source-/root/OrderNo');
         expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/root/String1');
 
         expect(resultEntries[1][0]).toEqual('source-/root/OrderNo');
@@ -2122,7 +2135,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[2][0]).toEqual('target-/root/String1');
         expect(resultEntries[2][1]).toBeTruthy();
-        expect((resultEntries[2][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual(concatId);
+        expect((resultEntries[2][1].inputs[0] as NodeConnection).reactFlowKey).toEqual(concatId);
       });
 
       it('creates a simple conditional property connection', () => {
@@ -2145,14 +2158,14 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[0][0]).toEqual(isGreaterId);
         expect(resultEntries[0][1]).toBeTruthy();
-        expect((resultEntries[0][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/Num');
+        expect((resultEntries[0][1].inputs[0] as NodeConnection).reactFlowKey).toEqual('source-/root/Num');
         isEqualToCustomValue('10', resultEntries[0][1].inputs[1]);
         expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual(ifId);
 
         expect(resultEntries[1][0]).toEqual(ifId);
         expect(resultEntries[1][1]).toBeTruthy();
-        expect((resultEntries[1][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual(isGreaterId);
-        expect((resultEntries[1][1].inputs[1] as ConnectionUnit).reactFlowKey).toEqual('source-/root/Num');
+        expect((resultEntries[1][1].inputs[0] as NodeConnection).reactFlowKey).toEqual(isGreaterId);
+        expect((resultEntries[1][1].inputs[1] as NodeConnection).reactFlowKey).toEqual('source-/root/Num');
         expect(resultEntries[1][1].outputs[0].reactFlowKey).toEqual('target-/root/T2');
 
         expect(resultEntries[2][0]).toEqual('source-/root/Num');
@@ -2165,11 +2178,11 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[4][0]).toEqual('target-/root/String1');
         expect(resultEntries[4][1]).toBeTruthy();
-        expect((resultEntries[4][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/OrderNo');
+        expect((resultEntries[4][1].inputs[0] as NodeConnection).reactFlowKey).toEqual('source-/root/OrderNo');
 
         expect(resultEntries[5][0]).toEqual('target-/root/T2');
         expect(resultEntries[5][1]).toBeTruthy();
-        expect((resultEntries[5][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual(ifId);
+        expect((resultEntries[5][1].inputs[0] as NodeConnection).reactFlowKey).toEqual(ifId);
       });
 
       it('creates a simple conditional object connection', () => {
@@ -2194,14 +2207,14 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[0][0]).toEqual(isGreaterId);
         expect(resultEntries[0][1]).toBeTruthy();
-        expect((resultEntries[0][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/Num');
+        expect((resultEntries[0][1].inputs[0] as NodeConnection).reactFlowKey).toEqual('source-/root/Num');
         isEqualToCustomValue('10', resultEntries[0][1].inputs[1]);
         expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual(ifId);
 
         expect(resultEntries[1][0]).toEqual(ifId);
         expect(resultEntries[1][1]).toBeTruthy();
-        expect((resultEntries[1][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual(isGreaterId);
-        expect((resultEntries[1][1].inputs[1] as ConnectionUnit).reactFlowKey).toEqual('source-/root');
+        expect((resultEntries[1][1].inputs[0] as NodeConnection).reactFlowKey).toEqual(isGreaterId);
+        expect((resultEntries[1][1].inputs[1] as NodeConnection).reactFlowKey).toEqual('source-/root');
         expect(resultEntries[1][1].outputs[0].reactFlowKey).toEqual('target-/root/Object1');
 
         expect(resultEntries[2][0]).toEqual('source-/root');
@@ -2218,15 +2231,15 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[5][0]).toEqual('target-/root/Object1');
         expect(resultEntries[5][1]).toBeTruthy();
-        expect((resultEntries[5][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual(ifId);
+        expect((resultEntries[5][1].inputs[0] as NodeConnection).reactFlowKey).toEqual(ifId);
 
         expect(resultEntries[6][0]).toEqual('target-/root/Object1/Num1');
         expect(resultEntries[6][1]).toBeTruthy();
-        expect((resultEntries[6][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/Num');
+        expect((resultEntries[6][1].inputs[0] as NodeConnection).reactFlowKey).toEqual('source-/root/Num');
 
         expect(resultEntries[7][0]).toEqual('target-/root/Object1/String1');
         expect(resultEntries[7][1]).toBeTruthy();
-        expect((resultEntries[7][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/OrderNo');
+        expect((resultEntries[7][1].inputs[0] as NodeConnection).reactFlowKey).toEqual('source-/root/OrderNo');
       });
 
       it('creates a loop connection for json', () => {
@@ -2255,11 +2268,11 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[2][0]).toEqual('target-/root/ComplexArray1/*');
         expect(resultEntries[2][1]).toBeTruthy();
-        expect((resultEntries[2][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/Nums/*');
+        expect((resultEntries[2][1].inputs[0] as NodeConnection).reactFlowKey).toEqual('source-/root/Nums/*');
 
         expect(resultEntries[3][0]).toEqual('target-/root/ComplexArray1/*/F1');
         expect(resultEntries[3][1]).toBeTruthy();
-        expect((resultEntries[3][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/Nums/*/Num');
+        expect((resultEntries[3][1].inputs[0] as NodeConnection).reactFlowKey).toEqual('source-/root/Nums/*/Num');
       });
 
       it('creates a index loop and index is used', () => {
@@ -2282,7 +2295,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[0][0]).toEqual(indexId);
         expect(resultEntries[0][1]).toBeTruthy();
-        expect((resultEntries[0][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/Nums/*');
+        expect((resultEntries[0][1].inputs[0] as NodeConnection).reactFlowKey).toEqual('source-/root/Nums/*');
         expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/root/ComplexArray1/*');
         expect(resultEntries[0][1].outputs[1].reactFlowKey).toEqual('target-/root/ComplexArray1/*/F1');
 
@@ -2292,11 +2305,11 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[2][0]).toEqual('target-/root/ComplexArray1/*');
         expect(resultEntries[2][1]).toBeTruthy();
-        expect((resultEntries[2][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual(indexId);
+        expect((resultEntries[2][1].inputs[0] as NodeConnection).reactFlowKey).toEqual(indexId);
 
         expect(resultEntries[3][0]).toEqual('target-/root/ComplexArray1/*/F1');
         expect(resultEntries[3][1]).toBeTruthy();
-        expect((resultEntries[3][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual(indexId);
+        expect((resultEntries[3][1].inputs[0] as NodeConnection).reactFlowKey).toEqual(indexId);
       });
 
       it('creates a index loop and index is unused', () => {
@@ -2319,7 +2332,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[0][0]).toEqual(indexId);
         expect(resultEntries[0][1]).toBeTruthy();
-        expect((resultEntries[0][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/Nums/*');
+        expect((resultEntries[0][1].inputs[0] as NodeConnection).reactFlowKey).toEqual('source-/root/Nums/*');
         expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/root/ComplexArray1/*');
 
         expect(resultEntries[1][0]).toEqual('source-/root/Nums/*');
@@ -2332,11 +2345,11 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[3][0]).toEqual('target-/root/ComplexArray1/*');
         expect(resultEntries[3][1]).toBeTruthy();
-        expect((resultEntries[3][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual(indexId);
+        expect((resultEntries[3][1].inputs[0] as NodeConnection).reactFlowKey).toEqual(indexId);
 
         expect(resultEntries[4][0]).toEqual('target-/root/ComplexArray1/*/F1');
         expect(resultEntries[4][1]).toBeTruthy();
-        expect((resultEntries[4][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/Nums/*/Num');
+        expect((resultEntries[4][1].inputs[0] as NodeConnection).reactFlowKey).toEqual('source-/root/Nums/*/Num');
       });
 
       it('creates connections for nested functions within a loop', () => {
@@ -2360,13 +2373,13 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[0][0]).toEqual(countId);
         expect(resultEntries[0][1]).toBeTruthy();
-        expect((resultEntries[0][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/Nums/*/Num');
+        expect((resultEntries[0][1].inputs[0] as NodeConnection).reactFlowKey).toEqual('source-/root/Nums/*/Num');
         expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual(multiplyId);
 
         expect(resultEntries[1][0]).toEqual(multiplyId);
         expect(resultEntries[1][1]).toBeTruthy();
-        expect((resultEntries[1][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual(countId);
-        expect((resultEntries[1][1].inputs[1] as ConnectionUnit).reactFlowKey).toEqual('source-/root/Num');
+        expect((resultEntries[1][1].inputs[0] as NodeConnection).reactFlowKey).toEqual(countId);
+        expect((resultEntries[1][1].inputs[1] as NodeConnection).reactFlowKey).toEqual('source-/root/Num');
         expect(resultEntries[1][1].outputs[0].reactFlowKey).toEqual('target-/root/ComplexArray1/*/F1');
 
         expect(resultEntries[2][0]).toEqual('source-/root/Num');
@@ -2383,11 +2396,11 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[5][0]).toEqual('target-/root/ComplexArray1/*');
         expect(resultEntries[5][1]).toBeTruthy();
-        expect((resultEntries[5][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/Nums/*');
+        expect((resultEntries[5][1].inputs[0] as NodeConnection).reactFlowKey).toEqual('source-/root/Nums/*');
 
         expect(resultEntries[6][0]).toEqual('target-/root/ComplexArray1/*/F1');
         expect(resultEntries[6][1]).toBeTruthy();
-        expect((resultEntries[6][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual(multiplyId);
+        expect((resultEntries[6][1].inputs[0] as NodeConnection).reactFlowKey).toEqual(multiplyId);
       });
 
       it.skip('creates a looping conditional connection', () => {
@@ -2413,14 +2426,14 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[0][0]).toEqual(isGreaterId);
         expect(resultEntries[0][1]).toBeTruthy();
-        expect(resultEntries[0][1].inputs[0]).toEqual('10');
-        expect(resultEntries[0][1].inputs[1]).toEqual('20');
+        isEqualToCustomValue('10', resultEntries[0][1].inputs[0]);
+        isEqualToCustomValue('20', resultEntries[0][1].inputs[1]);
         expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual(ifId);
 
         expect(resultEntries[1][0]).toEqual(ifId);
         expect(resultEntries[1][1]).toBeTruthy();
-        expect((resultEntries[1][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual(isGreaterId);
-        expect((resultEntries[1][1].inputs[1] as ConnectionUnit).reactFlowKey).toEqual('source-/root/Nums/*');
+        expect((resultEntries[1][1].inputs[0] as NodeConnection).reactFlowKey).toEqual(isGreaterId);
+        expect((resultEntries[1][1].inputs[1] as NodeConnection).reactFlowKey).toEqual('source-/root/Nums/*');
         expect(resultEntries[1][1].outputs[0].reactFlowKey).toEqual('target-/root/ComplexArray1/*');
 
         expect(resultEntries[2][0]).toEqual('source-/root/Nums/*');
@@ -2433,11 +2446,11 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[4][0]).toEqual('target-/root/ComplexArray1/*');
         expect(resultEntries[4][1]).toBeTruthy();
-        expect((resultEntries[4][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual(ifId);
+        expect((resultEntries[4][1].inputs[0] as NodeConnection).reactFlowKey).toEqual(ifId);
 
         expect(resultEntries[5][0]).toEqual('target-/root/ComplexArray1/*/F1');
         expect(resultEntries[5][1]).toBeTruthy();
-        expect((resultEntries[5][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/Nums/*/Num');
+        expect((resultEntries[5][1].inputs[0] as NodeConnection).reactFlowKey).toEqual('source-/root/Nums/*/Num');
       });
 
       it('creates a custom value direct access connection', () => {
@@ -2457,8 +2470,8 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect(resultEntries[0][0]).toEqual(directAccessId);
         expect(resultEntries[0][1]).toBeTruthy();
         isEqualToCustomValue('1', resultEntries[0][1].inputs[0]);
-        expect((resultEntries[0][1].inputs[1] as ConnectionUnit).reactFlowKey).toEqual('source-/root/Strings/*');
-        expect((resultEntries[0][1].inputs[2] as ConnectionUnit).reactFlowKey).toEqual('source-/root/Strings/*/String');
+        expect((resultEntries[0][1].inputs[1] as NodeConnection).reactFlowKey).toEqual('source-/root/Strings/*');
+        expect((resultEntries[0][1].inputs[2] as NodeConnection).reactFlowKey).toEqual('source-/root/Strings/*/String');
         expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/root/String1');
 
         expect(resultEntries[1][0]).toEqual('source-/root/Strings/*');
@@ -2471,7 +2484,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[3][0]).toEqual('target-/root/String1');
         expect(resultEntries[3][1]).toBeTruthy();
-        expect((resultEntries[3][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual(directAccessId);
+        expect((resultEntries[3][1].inputs[0] as NodeConnection).reactFlowKey).toEqual(directAccessId);
       });
 
       it('creates a looping connection w/ index variable and direct access', () => {
@@ -2495,14 +2508,14 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[0][0]).toEqual(directAccessId);
         expect(resultEntries[0][1]).toBeTruthy();
-        expect((resultEntries[0][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual(indexId);
-        expect((resultEntries[0][1].inputs[1] as ConnectionUnit).reactFlowKey).toEqual('source-/root/Nums/*');
-        expect((resultEntries[0][1].inputs[2] as ConnectionUnit).reactFlowKey).toEqual('source-/root/Nums/*/Num');
+        expect((resultEntries[0][1].inputs[0] as NodeConnection).reactFlowKey).toEqual(indexId);
+        expect((resultEntries[0][1].inputs[1] as NodeConnection).reactFlowKey).toEqual('source-/root/Nums/*');
+        expect((resultEntries[0][1].inputs[2] as NodeConnection).reactFlowKey).toEqual('source-/root/Nums/*/Num');
         expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/root/ComplexArray1/*/F1');
 
         expect(resultEntries[1][0]).toEqual(indexId);
         expect(resultEntries[1][1]).toBeTruthy();
-        expect((resultEntries[1][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/Nums/*');
+        expect((resultEntries[1][1].inputs[0] as NodeConnection).reactFlowKey).toEqual('source-/root/Nums/*');
         expect(resultEntries[1][1].outputs[0].reactFlowKey).toEqual('target-/root/ComplexArray1/*');
         expect(resultEntries[1][1].outputs[1].reactFlowKey).toEqual(directAccessId);
 
@@ -2516,11 +2529,11 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[4][0]).toEqual('target-/root/ComplexArray1/*');
         expect(resultEntries[4][1]).toBeTruthy();
-        expect((resultEntries[4][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual(indexId);
+        expect((resultEntries[4][1].inputs[0] as NodeConnection).reactFlowKey).toEqual(indexId);
 
         expect(resultEntries[5][0]).toEqual('target-/root/ComplexArray1/*/F1');
         expect(resultEntries[5][1]).toBeTruthy();
-        expect((resultEntries[5][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual(directAccessId);
+        expect((resultEntries[5][1].inputs[0] as NodeConnection).reactFlowKey).toEqual(directAccessId);
       });
 
       it.skip('creates a looping connection w/ index variable and conditional', () => {
@@ -2553,24 +2566,24 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect(resultEntries[0][1]).toBeTruthy();
         expect(resultEntries[0][1].inputs[0]).toEqual('"Ext"');
         expect(resultEntries[0][1].inputs[1]).toEqual('" "');
-        expect((resultEntries[0][1].inputs[2] as ConnectionUnit).reactFlowKey).toEqual(indexId);
+        expect((resultEntries[0][1].inputs[2] as NodeConnection).reactFlowKey).toEqual(indexId);
         expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/root/ForLoop/*/prop1/TEL_EXTENS');
 
         expect(resultEntries[1][0]).toEqual(isGreaterId);
         expect(resultEntries[1][1]).toBeTruthy();
-        expect((resultEntries[1][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual(indexId);
+        expect((resultEntries[1][1].inputs[0] as NodeConnection).reactFlowKey).toEqual(indexId);
         expect(resultEntries[1][1].inputs[1]).toEqual('2');
         expect(resultEntries[1][1].outputs[0].reactFlowKey).toEqual(ifId);
 
         expect(resultEntries[2][0]).toEqual(ifId);
         expect(resultEntries[2][1]).toBeTruthy();
-        expect((resultEntries[2][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual(isGreaterId);
-        expect((resultEntries[2][1].inputs[1] as ConnectionUnit).reactFlowKey).toEqual('source-/root/text/*');
+        expect((resultEntries[2][1].inputs[0] as NodeConnection).reactFlowKey).toEqual(isGreaterId);
+        expect((resultEntries[2][1].inputs[1] as NodeConnection).reactFlowKey).toEqual('source-/root/text/*');
         expect(resultEntries[2][1].outputs[0].reactFlowKey).toEqual('target-/root/ForLoop/*/prop1');
 
         expect(resultEntries[3][0]).toEqual(indexId);
         expect(resultEntries[3][1]).toBeTruthy();
-        expect((resultEntries[3][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/text/*');
+        expect((resultEntries[3][1].inputs[0] as NodeConnection).reactFlowKey).toEqual('source-/root/text/*');
         expect(resultEntries[3][1].outputs[0].reactFlowKey).toEqual(isGreaterId);
         expect(resultEntries[3][1].outputs[1].reactFlowKey).toEqual('target-/root/ForLoop/*');
         expect(resultEntries[3][1].outputs[2].reactFlowKey).toEqual(concatId);
@@ -2585,19 +2598,19 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[6][0]).toEqual('target-/root/ForLoop/*');
         expect(resultEntries[6][1]).toBeTruthy();
-        expect((resultEntries[6][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual(indexId);
+        expect((resultEntries[6][1].inputs[0] as NodeConnection).reactFlowKey).toEqual(indexId);
 
         expect(resultEntries[7][0]).toEqual('target-/root/ForLoop/*/prop1');
         expect(resultEntries[7][1]).toBeTruthy();
-        expect((resultEntries[7][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual(ifId);
+        expect((resultEntries[7][1].inputs[0] as NodeConnection).reactFlowKey).toEqual(ifId);
 
         expect(resultEntries[8][0]).toEqual('target-/root/ForLoop/*/prop1/TEL_EXTENS');
         expect(resultEntries[8][1]).toBeTruthy();
-        expect((resultEntries[8][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual(concatId);
+        expect((resultEntries[8][1].inputs[0] as NodeConnection).reactFlowKey).toEqual(concatId);
 
         expect(resultEntries[9][0]).toEqual('target-/root/ForLoop/*/prop1/TEL_NUMBER');
         expect(resultEntries[9][1]).toBeTruthy();
-        expect((resultEntries[9][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/text/*/itemNumber');
+        expect((resultEntries[9][1].inputs[0] as NodeConnection).reactFlowKey).toEqual('source-/root/text/*/itemNumber');
       });
 
       it.skip('creates a many-to-one loop connections', () => {
@@ -2634,12 +2647,12 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[3][0]).toEqual('target-/root/TargetMadeUp/ManySingleArray/*');
         expect(resultEntries[3][1]).toBeTruthy();
-        expect((resultEntries[3][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/SourceMadeUp/ManySingleArray/*/*');
-        expect((resultEntries[3][1].inputs[1] as ConnectionUnit).reactFlowKey).toEqual('source-/root/SourceMadeUp/ManySingleArray/*');
+        expect((resultEntries[3][1].inputs[0] as NodeConnection).reactFlowKey).toEqual('source-/root/SourceMadeUp/ManySingleArray/*/*');
+        expect((resultEntries[3][1].inputs[1] as NodeConnection).reactFlowKey).toEqual('source-/root/SourceMadeUp/ManySingleArray/*');
 
         expect(resultEntries[4][0]).toEqual('target-/root/TargetMadeUp/ManySingleArray/*/TargetMadeUp_NeedAProp');
         expect(resultEntries[4][1]).toBeTruthy();
-        expect((resultEntries[4][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual(
+        expect((resultEntries[4][1].inputs[0] as NodeConnection).reactFlowKey).toEqual(
           'source-/root/SourceMadeUp/ManySingleArray/*/*/SourceMadeUp_NeedAProp'
         );
       });
@@ -2678,12 +2691,12 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[3][0]).toEqual('target-/root/TargetMadeUp/ManyManyArray/*');
         expect(resultEntries[3][1]).toBeTruthy();
-        expect((resultEntries[3][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/SourceMadeUp/ManyManyArray/*/*');
-        expect((resultEntries[3][1].inputs[1] as ConnectionUnit).reactFlowKey).toEqual('source-/root/SourceMadeUp/ManyManyArray/*');
+        expect((resultEntries[3][1].inputs[0] as NodeConnection).reactFlowKey).toEqual('source-/root/SourceMadeUp/ManyManyArray/*/*');
+        expect((resultEntries[3][1].inputs[1] as NodeConnection).reactFlowKey).toEqual('source-/root/SourceMadeUp/ManyManyArray/*');
 
         expect(resultEntries[4][0]).toEqual('target-/root/TargetMadeUp/ManyManyArray/*/TargetMadeUp_NeedAProp');
         expect(resultEntries[4][1]).toBeTruthy();
-        expect((resultEntries[4][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual(
+        expect((resultEntries[4][1].inputs[0] as NodeConnection).reactFlowKey).toEqual(
           'source-/root/SourceMadeUp/ManyManyArray/*/*/SourceMadeUp_NeedAProp'
         );
       });
@@ -2717,32 +2730,32 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(Object.entries(result).length).toEqual(10);
 
-        const indexRfKey1 = (result['target-/ns0:TargetSchemaRoot/Looping/ManyToOne/Simple'].inputs[0] as ConnectionUnit).reactFlowKey;
+        const indexRfKey1 = (result['target-/ns0:TargetSchemaRoot/Looping/ManyToOne/Simple'].inputs[0] as NodeConnection).reactFlowKey;
         expect(indexRfKey1).toContain(indexPseudoFunctionKey);
-        expect((result[indexRfKey1].inputs[0] as ConnectionUnit).reactFlowKey).toBe(
+        expect((result[indexRfKey1].inputs[0] as NodeConnection).reactFlowKey).toBe(
           'source-/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild/SourceSimpleChildChild'
         );
 
-        const indexRfKey2 = (result['target-/ns0:TargetSchemaRoot/Looping/ManyToOne/Simple'].inputs[1] as ConnectionUnit).reactFlowKey;
+        const indexRfKey2 = (result['target-/ns0:TargetSchemaRoot/Looping/ManyToOne/Simple'].inputs[1] as NodeConnection).reactFlowKey;
         expect(indexRfKey2).toContain(indexPseudoFunctionKey);
-        expect((result[indexRfKey2].inputs[0] as ConnectionUnit).reactFlowKey).toBe(
+        expect((result[indexRfKey2].inputs[0] as NodeConnection).reactFlowKey).toBe(
           'source-/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild'
         );
 
-        const indexRfKey3 = (result['target-/ns0:TargetSchemaRoot/Looping/ManyToOne/Simple'].inputs[2] as ConnectionUnit).reactFlowKey;
+        const indexRfKey3 = (result['target-/ns0:TargetSchemaRoot/Looping/ManyToOne/Simple'].inputs[2] as NodeConnection).reactFlowKey;
         expect(indexRfKey3).toContain(indexPseudoFunctionKey);
-        expect((result[indexRfKey3].inputs[0] as ConnectionUnit).reactFlowKey).toBe(
+        expect((result[indexRfKey3].inputs[0] as NodeConnection).reactFlowKey).toBe(
           'source-/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple'
         );
 
-        const directAccessRfKey = (result['target-/ns0:TargetSchemaRoot/Looping/ManyToOne/Simple/Direct'].inputs[0] as ConnectionUnit)
+        const directAccessRfKey = (result['target-/ns0:TargetSchemaRoot/Looping/ManyToOne/Simple/Direct'].inputs[0] as NodeConnection)
           .reactFlowKey;
         expect(directAccessRfKey).toContain(directAccessPseudoFunctionKey);
-        expect((result[directAccessRfKey].inputs[0] as ConnectionUnit).reactFlowKey).toBe(indexRfKey2);
-        expect((result[directAccessRfKey].inputs[1] as ConnectionUnit).reactFlowKey).toBe(
+        expect((result[directAccessRfKey].inputs[0] as NodeConnection).reactFlowKey).toBe(indexRfKey2);
+        expect((result[directAccessRfKey].inputs[1] as NodeConnection).reactFlowKey).toBe(
           'source-/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild/SourceSimpleChildChild'
         );
-        expect((result[directAccessRfKey].inputs[2] as ConnectionUnit).reactFlowKey).toBe(
+        expect((result[directAccessRfKey].inputs[2] as NodeConnection).reactFlowKey).toBe(
           'source-/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild/SourceSimpleChildChild/SourceDirect'
         );
       });
@@ -2772,11 +2785,11 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[1][0]).toEqual('target-/root/ForLoop/*');
         expect(resultEntries[1][1]).toBeTruthy();
-        expect((resultEntries[1][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/generalData/address/telephone/*');
+        expect((resultEntries[1][1].inputs[0] as NodeConnection).reactFlowKey).toEqual('source-/root/generalData/address/telephone/*');
 
         expect(resultEntries[2][0]).toEqual('target-/root/ForLoop/*/prop1/TEL_NUMBER');
         expect(resultEntries[2][1]).toBeTruthy();
-        expect((resultEntries[2][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/generalData/address/telephone/*');
+        expect((resultEntries[2][1].inputs[0] as NodeConnection).reactFlowKey).toEqual('source-/root/generalData/address/telephone/*');
       });
     });
   });
@@ -2792,6 +2805,36 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
     const extendedSource = convertSchemaToSchemaExtended(sourceMockSchema);
     const extendedTarget = convertSchemaToSchemaExtended(targetMockJsonSchema);
+
+    it('maps a looping XSD to JSON with nested if', () => {
+      simpleMap['root'] = {
+        ComplexArray1: {
+          '$for(/ns0:Root/Looping/Employee)': {
+            '$if(Name)': {
+              F1: 'TelephoneNumber',
+            },
+          },
+        },
+      };
+
+      const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedSource, extendedTarget, functionMock);
+      const result = mapDefinitionDeserializer.convertFromMapDefinition();
+      const resultEntries = Object.entries(result);
+      resultEntries.sort();
+
+      expect(resultEntries.length).toEqual(6);
+
+      // if
+      expect(resultEntries[0][0]).toContain(ifPseudoFunctionKey);
+      expect((resultEntries[0][1].inputs[0] as NodeConnection).reactFlowKey).toEqual('source-/ns0:Root/Looping/Employee/Name');
+      expect((resultEntries[0][1].inputs[1] as NodeConnection).reactFlowKey).toEqual('source-/ns0:Root/Looping/Employee/TelephoneNumber');
+      expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/root/ComplexArray1/*/F1');
+
+      // looping
+      expect(resultEntries[1][0]).toEqual('source-/ns0:Root/Looping/Employee');
+      expect(resultEntries[1][1]).toBeTruthy();
+      expect(resultEntries[1][1].outputs[0].reactFlowKey).toEqual('target-/root/ComplexArray1/*');
+    });
 
     it('maps a looping XSD to JSON', () => {
       simpleMap['root'] = {
@@ -2818,37 +2861,33 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       expect(resultEntries[1][1].outputs[0].reactFlowKey).toEqual('target-/root/ComplexArray1/*/F1');
     });
   });
+});
 
-  describe('getLowestCommonParentForConditional', () => {
-    let simpleMap: MapDefinitionEntry = {};
+describe('getLowestCommonParentForConditional', () => {
+  let simpleMap: MapDefinitionEntry = {};
 
-    const extendedSource = convertSchemaToSchemaExtended(sourceMockSchema as any as DataMapSchema);
-    const extendedTarget = convertSchemaToSchemaExtended(targetMockSchema as any as DataMapSchema);
-    const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedSource, extendedTarget, functionMock);
+  const extendedSource = convertSchemaToSchemaExtended(sourceMockSchema as any as DataMapSchema);
+  const extendedTarget = convertSchemaToSchemaExtended(targetMockSchema as any as DataMapSchema);
+  const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedSource, extendedTarget, functionMock);
 
-    it('gets correct lowest common parent for two nodes', () => {
-      const children = ['/ns0:Root/ConditionalMapping/ItemQuantity', '/ns0:Root/ConditionalMapping/ItemPrice'];
-      const lowestCommonParent = mapDefinitionDeserializer.getLowestCommonParentForConditional(children);
-      expect(lowestCommonParent).toEqual('/ns0:Root/ConditionalMapping');
-    });
-
-    it('gets correct lowest common parent when parent is an input', () => {
-      const children = ['/ns0:Root/idk/ConditionalMapping/ItemQuantity', '/ns0:Root/idk/ConditionalMapping/ItemPrice', '/ns0:Root/idk'];
-
-      const lowestCommonParent = mapDefinitionDeserializer.getLowestCommonParentForConditional(children);
-      expect(lowestCommonParent).toEqual('/ns0:Root/idk');
-    });
+  it('gets correct lowest common parent for two nodes', () => {
+    const children = ['/ns0:Root/ConditionalMapping/ItemQuantity', '/ns0:Root/ConditionalMapping/ItemPrice'];
+    const lowestCommonParent = mapDefinitionDeserializer.getLowestCommonParentForConditional(children);
+    expect(lowestCommonParent).toEqual('/ns0:Root/ConditionalMapping');
   });
 
-  it('gets correct target node for json schema', () => {
-    const extendedTarget = convertSchemaToSchemaExtended(targetMockJsonSchema as any as DataMapSchema);
-    const root = extendedTarget.schemaTreeRoot;
-    const matchingTarget = getLoopTargetNodeWithJson('root/ComplexArray1/F1', root);
+  it('gets correct lowest common parent when parent is an input', () => {
+    const children = ['/ns0:Root/idk/ConditionalMapping/ItemQuantity', '/ns0:Root/idk/ConditionalMapping/ItemPrice', '/ns0:Root/idk'];
 
-    expect((matchingTarget as SchemaNodeExtended).name).toEqual('<ArrayItem>');
+    const lowestCommonParent = mapDefinitionDeserializer.getLowestCommonParentForConditional(children);
+    expect(lowestCommonParent).toEqual('/ns0:Root/idk');
   });
 });
 
-const isEqualToCustomValue = (value: string, customConnection: ConnectionUnit) => {
-  isCustomValueConnection(customConnection) && expect(customConnection.value).toEqual(value);
-};
+it('gets correct target node for json schema', () => {
+  const extendedTarget = convertSchemaToSchemaExtended(targetMockJsonSchema as any as DataMapSchema);
+  const root = extendedTarget.schemaTreeRoot;
+  const matchingTarget = getLoopTargetNodeWithJson('root/ComplexArray1/F1', root);
+
+  expect((matchingTarget as SchemaNodeExtended).name).toEqual('<ArrayItem>');
+});

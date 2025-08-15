@@ -13,6 +13,7 @@ import * as path from 'path';
 import * as semver from 'semver';
 import * as vscode from 'vscode';
 import { localize } from '../../localize';
+import { ext } from '../../extensionVariables';
 
 /**
  * Gets bundle extension feed.
@@ -155,51 +156,67 @@ async function getExtensionBundleVersionFolders(directoryPath: string): Promise<
  * Download Microsoft.Azure.Functions.ExtensionBundle.Workflows.<version>
  * Destination: C:\Users\<USERHOME>\.azure-functions-core-tools\Functions\ExtensionBundles\<version>
  * @param {IActionContext} context - Command context.
- * @returns {Promise<string>} Returns bundle extension zip url.
+ * @returns {Promise<bool>} A boolean indicating whether the bundle was updated.
  */
-export async function downloadExtensionBundle(context: IActionContext): Promise<void> {
-  let envVarVer: string | undefined = process.env.AzureFunctionsJobHost_extensionBundle_version;
-  const projectPath: string | undefined = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : null;
-  if (projectPath) {
-    envVarVer = (await getLocalSettingsJson(context, path.join(projectPath, localSettingsFileName)))?.Values
-      ?.AzureFunctionsJobHost_extensionBundle_version;
-  }
+export async function downloadExtensionBundle(context: IActionContext): Promise<boolean> {
+  try {
+    let envVarVer: string | undefined = process.env.AzureFunctionsJobHost_extensionBundle_version;
+    const projectPath: string | undefined = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : null;
+    if (projectPath) {
+      envVarVer = (await getLocalSettingsJson(context, path.join(projectPath, localSettingsFileName)))?.Values
+        ?.AzureFunctionsJobHost_extensionBundle_version;
+    }
 
-  context.telemetry.properties.envVariableExtensionBundleVersion = envVarVer;
+    // Check for latest version at directory.
+    let latestLocalBundleVersion = '1.0.0';
+    const localVersions = await getExtensionBundleVersionFolders(defaultExtensionBundlePathValue);
+    for (const localVersion of localVersions) {
+      latestLocalBundleVersion = semver.gt(latestLocalBundleVersion, localVersion) ? latestLocalBundleVersion : localVersion;
+    }
 
-  if (envVarVer) {
-    const extensionBundleUrl = await getExtensionBundleZip(context, envVarVer);
-    await downloadAndExtractDependency(context, extensionBundleUrl, defaultExtensionBundlePathValue, extensionBundleId, envVarVer);
-    return;
-  }
+    context.telemetry.properties.envVariableExtensionBundleVersion = envVarVer;
+    if (envVarVer) {
+      if (semver.eq(envVarVer, latestLocalBundleVersion)) {
+        return false;
+      }
 
-  // Check for latest version at directory.
-  let latestLocalBundleVersion = '1.0.0';
-  const localVersions = await getExtensionBundleVersionFolders(defaultExtensionBundlePathValue);
-  for (const localVersion of localVersions) {
-    latestLocalBundleVersion = semver.gt(latestLocalBundleVersion, localVersion) ? latestLocalBundleVersion : localVersion;
-  }
+      const extensionBundleUrl = await getExtensionBundleZip(context, envVarVer);
+      await downloadAndExtractDependency(context, extensionBundleUrl, defaultExtensionBundlePathValue, extensionBundleId, envVarVer);
+      return true;
+    }
 
-  // Check the latest from feed.
-  let latestFeedBundleVersion = '1.0.0';
-  const feed: IBundleFeed = await getWorkflowBundleFeed(context);
-  for (const bundleVersion in feed.bundleVersions) {
-    latestFeedBundleVersion = semver.gt(latestFeedBundleVersion, bundleVersion) ? latestFeedBundleVersion : bundleVersion;
-  }
+    // Check the latest from feed.
+    let latestFeedBundleVersion = '1.0.0';
+    const feed: IBundleFeed = await getWorkflowBundleFeed(context);
+    for (const bundleVersion in feed.bundleVersions) {
+      latestFeedBundleVersion = semver.gt(latestFeedBundleVersion, bundleVersion) ? latestFeedBundleVersion : bundleVersion;
+    }
 
-  context.telemetry.properties.latestBundleVersion = semver.gt(latestFeedBundleVersion, latestLocalBundleVersion)
-    ? latestFeedBundleVersion
-    : latestLocalBundleVersion;
+    context.telemetry.properties.latestBundleVersion = semver.gt(latestFeedBundleVersion, latestLocalBundleVersion)
+      ? latestFeedBundleVersion
+      : latestLocalBundleVersion;
 
-  if (semver.gt(latestFeedBundleVersion, latestLocalBundleVersion)) {
-    const extensionBundleUrl = await getExtensionBundleZip(context, latestFeedBundleVersion);
-    await downloadAndExtractDependency(
-      context,
-      extensionBundleUrl,
-      defaultExtensionBundlePathValue,
-      extensionBundleId,
-      latestFeedBundleVersion
-    );
+    ext.defaultBundleVersion = context.telemetry.properties.latestBundleVersion;
+    ext.latestBundleVersion = context.telemetry.properties.latestBundleVersion;
+
+    if (semver.gt(latestFeedBundleVersion, latestLocalBundleVersion)) {
+      const extensionBundleUrl = await getExtensionBundleZip(context, latestFeedBundleVersion);
+      await downloadAndExtractDependency(
+        context,
+        extensionBundleUrl,
+        defaultExtensionBundlePathValue,
+        extensionBundleId,
+        latestFeedBundleVersion
+      );
+
+      return true;
+    }
+
+    return false;
+  } catch (error) {
+    const errorMessage = `Error downloading and extracting the Logic Apps Standard extension bundle: ${error.message}`;
+    context.telemetry.properties.errorMessage = errorMessage;
+    return false;
   }
 }
 

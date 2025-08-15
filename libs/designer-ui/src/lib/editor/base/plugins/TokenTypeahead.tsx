@@ -24,11 +24,10 @@ class TokenOption extends MenuOption {
       icon: (selected: boolean, inverted: boolean) => ReactNode;
     }
   ) {
-    super(title);
+    super(key);
     this.title = title;
     this.keywords = options.keywords ?? [];
     this.icon = options.icon;
-    this.key = key;
   }
 }
 function TokenMenuItem({

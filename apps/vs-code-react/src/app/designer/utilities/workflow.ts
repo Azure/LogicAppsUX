@@ -1,4 +1,3 @@
-import type { ParametersData } from '../models/workflow';
 import type { ConnectionReferences } from '@microsoft/logic-apps-designer';
 import type { ConnectionsData } from '@microsoft/vscode-extension-logic-apps';
 
@@ -63,59 +62,3 @@ export const convertConnectionsDataToReferences = (connectionsData: ConnectionsD
 
   return references;
 };
-
-export const resolveConnectionsReferences = (
-  content: string,
-  parameters: ParametersData | undefined,
-  appsettings?: Record<string, string> | undefined
-): any => {
-  let result = content;
-
-  if (parameters) {
-    for (const parameterName of Object.keys(parameters)) {
-      const parameterValue = parameters[parameterName].value !== undefined ? parameters[parameterName].value : '';
-      result = replaceAllOccurrences(result, `@parameters('${parameterName}')`, parameterValue);
-    }
-  }
-
-  if (appsettings) {
-    for (const settingName of Object.keys(appsettings)) {
-      const settingValue = appsettings[settingName] !== undefined ? appsettings[settingName] : '';
-      result = replaceAllOccurrences(result, `@appsetting('${settingName}')`, settingValue);
-    }
-  }
-
-  try {
-    return JSON.parse(result);
-  } catch {
-    throw new Error('Failure in resolving connection parameterisation');
-  }
-};
-
-function replaceAllOccurrences(content: string, searchValue: string, value: any): string {
-  let result = replaceIfFoundAndVerifyJson(content, `"${searchValue}"`, JSON.stringify(value));
-  if (result) {
-    return result;
-  }
-
-  result = replaceIfFoundAndVerifyJson(content, searchValue, `${value}`);
-  if (result) {
-    return result;
-  }
-
-  return content.replaceAll(searchValue, '');
-}
-
-function replaceIfFoundAndVerifyJson(stringifiedJson: string, searchValue: string, value: string): string | undefined {
-  if (!stringifiedJson.includes(searchValue)) {
-    return undefined;
-  }
-
-  const result = stringifiedJson.replace(searchValue, value);
-  try {
-    JSON.parse(result);
-    return result;
-  } catch {
-    return undefined;
-  }
-}

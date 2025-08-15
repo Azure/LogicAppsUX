@@ -45,7 +45,7 @@ parameters:
   # Useful to control which group of people should be required to approve the deployment.
   - name: environmentName
     type: string
-    default: AzCodeDeploy
+    default: VSCodeDeployLAUX
 
 variables:
   # Required by MicroBuild template
@@ -80,14 +80,16 @@ extends:
                   zipSources: false
               outputs:
                 - output: pipelineArtifact
-                  targetPath: $(build.artifactstagingdirectory)/build/${{ parameters.publishVersion }}
-                  artifactName: Build ${{ parameters.publishVersion }}
+                  targetPath: $(build.artifactstagingdirectory)/build/Root
+                  artifactName: Build Root
             steps:
               - script: git checkout v${{ parameters.publishVersion }} # Replace with your desired version to release
                 displayName: 'Checkout to specific branch'
               - template: .azure-pipelines/templates/setup.yml@LogicAppsUX
               - template: .azure-pipelines/templates/build.yml@LogicAppsUX
               - template: .azure-pipelines/templates/package.yml@LogicAppsUX
+                parameters:
+                  publishVersion: ${{ parameters.publishVersion }}
               - template: .azure-pipelines/templates/sign.yml@LogicAppsUX
               - template: .azure-pipelines/templates/stage-artifacts.yml@LogicAppsUX
                 parameters:

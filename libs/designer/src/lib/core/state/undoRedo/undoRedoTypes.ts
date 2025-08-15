@@ -4,13 +4,13 @@ import { updateParameterAndDependencies } from '../../utils/parameters/helper';
 import { updateStaticResults } from '../operation/operationMetadataSlice';
 import {
   addAgentTool,
-  addEdgeFromRunAfter,
+  addRunAfter,
   addNode,
   addSwitchCase,
   moveNode,
   pasteNode,
   pasteScopeNode,
-  removeEdgeFromRunAfter,
+  removeRunAfter,
   replaceId,
   updateRunAfter,
 } from '../workflow/workflowSlice';
@@ -47,8 +47,8 @@ export const undoableWorkflowActionTypes = [
   pasteNode,
   pasteScopeNode,
   updateRunAfter,
-  removeEdgeFromRunAfter,
-  addEdgeFromRunAfter,
+  removeRunAfter,
+  addRunAfter,
   /**
    * Following operations trigger state save outside of middleware:
    * 1. Delete node operations are tracked through DeleteModal since there are different delete actions for different node types

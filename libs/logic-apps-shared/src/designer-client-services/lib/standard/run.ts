@@ -156,7 +156,7 @@ export class StandardRunService implements IRunService {
 
     const queryParameters: Record<string, string> = {};
     if (status) {
-      queryParameters['$filter'] = `status eq '${status}`;
+      queryParameters['$filter'] = `status eq '${status}'`;
     }
     const uri = `${baseUrl}${runId}/actions/${nodeId}/scopeRepetitions`;
 
@@ -171,6 +171,50 @@ export class StandardRunService implements IRunService {
           ...queryParameters,
           'api-version': apiVersion,
         },
+      });
+
+      return response;
+    } catch (e: any) {
+      throw new Error(e.message);
+    }
+  }
+
+  /**
+   * Retrieves additional scope repetitions for a Logic App run using a continuation token.
+   *
+   * @param continuationToken - The token used to fetch the next set of scope repetitions.
+   * @returns A promise that resolves to the response containing the scope repetitions.
+   * @throws Throws an error if the HTTP request fails.
+   */
+  async getMoreScopeRepetitions(continuationToken: string): Promise<{ value: LogicAppsV2.RunRepetition[]; nextLink?: string }> {
+    const { httpClient } = this.options;
+
+    try {
+      const response = await httpClient.get<{ value: LogicAppsV2.RunRepetition[] }>({
+        uri: continuationToken,
+      });
+
+      return response;
+    } catch (e: any) {
+      throw new Error(e.message);
+    }
+  }
+
+  /**
+   * Gets an array of workflow-level action repetitions for a run.
+   * @param {string} runId - The ID of the workflow run.
+   * @returns {Promise<any>}
+   */
+
+  async getTimelineRepetitions(runId: string): Promise<any> {
+    const { baseUrl, workflowName, httpClient } = this.options;
+
+    const onlyRunId = runId.split('/')?.at(-1);
+    const uri = `${baseUrl}/workflows/${workflowName}/runs/${onlyRunId}/timeline?api-version=2024-04-01`;
+
+    try {
+      const response = await httpClient.get<Run>({
+        uri,
       });
 
       return response;
@@ -372,6 +416,26 @@ export class StandardRunService implements IRunService {
   }
 
   /**
+   * Retrieves the chat history for a specified run.
+   * @param runId - The unique identifier of the run.
+   * @returns
+   */
+
+  async getRunChatHistory(runId: string): Promise<any> {
+    const { apiVersion, baseUrl, httpClient } = this.options;
+    const uri = `${baseUrl}${runId}/chatHistory?api-version=${apiVersion}&$expand=properties/actions,workflow/properties`;
+
+    try {
+      const response = await httpClient.get<any>({
+        uri,
+      });
+      return response.value;
+    } catch (e: any) {
+      throw new Error(e.message);
+    }
+  }
+
+  /**
    * Retrieves the chat history for a specified action.
    *
    * This function constructs a URI based on the provided runId and nodeId, along with the
@@ -383,7 +447,7 @@ export class StandardRunService implements IRunService {
    * @returns A promise that resolves with the chat history response.
    * @throws {Error} Throws an error with a message if the HTTP request fails.
    */
-  async getChatHistory(action: { nodeId: string; runId: string | undefined }): Promise<any> {
+  async getActionChatHistory(action: { nodeId: string; runId: string | undefined }): Promise<any> {
     const { apiVersion, baseUrl, httpClient } = this.options;
     const { nodeId, runId } = action;
     const uri = `${baseUrl}${runId}/actions/${nodeId}/chatHistory`;

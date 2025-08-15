@@ -1,3 +1,4 @@
+import { useIsA2AWorkflow } from '../../../../core/state/designerView/designerViewSelectors';
 import { useOperationInfo, type AppDispatch } from '../../../../core';
 import { autoCreateConnectionIfPossible, updateNodeConnection } from '../../../../core/actions/bjsworkflow/connections';
 import { useConnectionsForConnector } from '../../../../core/queries/connections';
@@ -6,10 +7,11 @@ import { useIsXrmConnectionReferenceMode } from '../../../../core/state/designer
 import { useConnectionPanelSelectedNodeIds, usePreviousPanelMode } from '../../../../core/state/panel/panelSelectors';
 import { openPanel, setIsCreatingConnection } from '../../../../core/state/panel/panelSlice';
 import { ActionList } from '../actionList/actionList';
-import { ConnectionTable } from './connectionTable';
+import { ConnectionTable, type ConnectionTableProps } from './connectionTable';
 import { Body1Strong, Button, Divider, Spinner, MessageBar, MessageBarTitle, MessageBarBody, Text } from '@fluentui/react-components';
 import {
   ConnectionService,
+  equals,
   getIconUriFromConnector,
   parseErrorMessage,
   type Connection,
@@ -19,11 +21,12 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 
-export const SelectConnection = () => {
+export const SelectConnectionWrapper = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const intl = useIntl();
   const selectedNodeIds = useConnectionPanelSelectedNodeIds();
+  const isA2A = useIsA2AWorkflow();
   const currentConnectionId = useNodeConnectionId(selectedNodeIds?.[0]); // only need to grab first one, they should all be the same
   const isXrmConnectionReferenceMode = useIsXrmConnectionReferenceMode();
   const referencePanelMode = usePreviousPanelMode();
@@ -39,7 +42,16 @@ export const SelectConnection = () => {
   const connector = useConnectorByNodeId(selectedNodeIds?.[0]); // only need to grab first one, they should all be the same
   const connectorIconUri = useMemo(() => getIconUriFromConnector(connector), [connector]);
   const connectionQuery = useConnectionsForConnector(connector?.id ?? '');
-  const connections = useMemo(() => connectionQuery?.data ?? [], [connectionQuery]);
+  const connections = useMemo(() => {
+    const connectionData = connectionQuery?.data ?? [];
+
+    if (!isA2A) {
+      // Filter out dynamic connections
+      return connectionData.filter((c) => !equals(c.properties.feature ?? '', 'DynamicUserInvoked', true));
+    }
+
+    return connectionData;
+  }, [connectionQuery, isA2A]);
   const references = useConnectionRefs();
 
   const saveSelectionCallback = useCallback(
@@ -72,7 +84,7 @@ export const SelectConnection = () => {
       applyNewConnection: saveSelectionCallback,
       onSuccess: closeConnectionsFlow,
       onManualConnectionCreation: () => {
-        setIsCreatingConnection(false);
+        setIsInlineCreatingConnection(false);
         dispatch(setIsCreatingConnection(true));
       },
     });
@@ -84,23 +96,19 @@ export const SelectConnection = () => {
     }
   }, [connectionQuery.isError, connectionQuery.isLoading, connections, connector, createConnectionCallback]);
 
+  const actionBar = useMemo(() => {
+    return (
+      <>
+        <ActionList nodeIds={selectedNodeIds} iconUri={connectorIconUri} />
+        <Divider />
+      </>
+    );
+  }, [connectorIconUri, selectedNodeIds]);
   const loadingText = intl.formatMessage({
     defaultMessage: 'Loading connection data...',
     id: 'faUrud',
     description: 'Message to show under the loading icon when loading connection parameters',
   });
-
-  const componentDescription = isXrmConnectionReferenceMode
-    ? intl.formatMessage({
-        defaultMessage: 'Select an existing connection reference or create a new one',
-        id: 'ZAdaBl',
-        description: 'Select an existing connection reference or create a new one.',
-      })
-    : intl.formatMessage({
-        defaultMessage: 'Select an existing connection or create a new one',
-        id: 'DfXxoX',
-        description: 'Select an existing connection or create a new one.',
-      });
 
   const buttonAddText = intl.formatMessage({
     defaultMessage: 'Add new',
@@ -114,12 +122,76 @@ export const SelectConnection = () => {
     description: 'Button text for adding a new connection',
   });
 
+  if (connectionQuery.isLoading) {
+    return (
+      <div className="msla-loading-container">
+        <Spinner size={'large'} label={loadingText} />
+      </div>
+    );
+  }
+
+  return (
+    <SelectConnection
+      connections={connections}
+      currentConnectionId={currentConnectionId}
+      saveSelectionCallback={saveSelectionCallback}
+      cancelSelectionCallback={closeConnectionsFlow}
+      isXrmConnectionReferenceMode={!!isXrmConnectionReferenceMode}
+      addButton={{
+        text: isInlineCreatingConnection ? buttonAddingText : buttonAddText,
+        disabled: isInlineCreatingConnection,
+        onAdd: createConnectionCallback,
+      }}
+      cancelButton={{ onCancel: closeConnectionsFlow }}
+      actionBar={actionBar}
+      errorMessage={connectionQuery.isError ? parseErrorMessage(connectionQuery.error) : undefined}
+    />
+  );
+};
+
+export const SelectConnection = ({
+  addButton,
+  cancelButton,
+  actionBar,
+  errorMessage,
+  connections,
+  currentConnectionId,
+  saveSelectionCallback,
+  cancelSelectionCallback,
+  isXrmConnectionReferenceMode,
+}: ConnectionTableProps & {
+  addButton: {
+    text: string;
+    disabled?: boolean;
+    onAdd: () => void;
+  };
+  cancelButton?: { onCancel: () => void };
+  actionBar?: JSX.Element;
+  errorMessage?: string;
+}) => {
+  const intl = useIntl();
+  const connectionLoadErrorTitle = intl.formatMessage({
+    defaultMessage: 'Error loading connections',
+    id: 'HQ/HhZ',
+    description: 'Title for error message when loading connections',
+  });
+  const description = isXrmConnectionReferenceMode
+    ? intl.formatMessage({
+        defaultMessage: 'Select an existing connection reference or create a new one',
+        id: 'ZAdaBl',
+        description: 'Select an existing connection reference or create a new one.',
+      })
+    : intl.formatMessage({
+        defaultMessage: 'Select an existing connection or create a new one',
+        id: 'DfXxoX',
+        description: 'Select an existing connection or create a new one.',
+      });
+
   const buttonAddAria = intl.formatMessage({
     defaultMessage: 'Add a new connection',
     id: '4Q7WzU',
     description: 'Aria label description for add button',
   });
-
   const buttonCancelText = intl.formatMessage({
     defaultMessage: 'Cancel',
     id: 'wF7C+h',
@@ -131,54 +203,39 @@ export const SelectConnection = () => {
     id: 'GtDOFg',
     description: 'Aria label description for cancel button',
   });
-
-  const connectionLoadErrorTitle = intl.formatMessage({
-    defaultMessage: 'Error loading connections',
-    id: 'HQ/HhZ',
-    description: 'Title for error message when loading connections',
-  });
-
-  if (connectionQuery.isLoading) {
-    return (
-      <div className="msla-loading-container">
-        <Spinner size={'large'} label={loadingText} />
-      </div>
-    );
-  }
-
   return (
     <div className="msla-edit-connection-container">
-      <ActionList nodeIds={selectedNodeIds} iconUri={connectorIconUri} />
-      <Divider />
+      {actionBar ? actionBar : null}
 
-      {connectionQuery.isError ? (
+      {errorMessage ? (
         <MessageBar intent={'error'}>
           <MessageBarBody>
             <MessageBarTitle>{connectionLoadErrorTitle}</MessageBarTitle>
-            <Text>{parseErrorMessage(connectionQuery.error)}</Text>
+            <Text>{errorMessage}</Text>
           </MessageBarBody>
         </MessageBar>
       ) : (
         <>
-          <Body1Strong>{componentDescription}</Body1Strong>
+          <Body1Strong>{description}</Body1Strong>
           <ConnectionTable
             connections={connections}
             currentConnectionId={currentConnectionId}
             saveSelectionCallback={saveSelectionCallback}
-            cancelSelectionCallback={closeConnectionsFlow}
-            createConnectionCallback={createConnectionCallback}
+            cancelSelectionCallback={cancelSelectionCallback}
             isXrmConnectionReferenceMode={!!isXrmConnectionReferenceMode}
           />
         </>
       )}
 
       <div className="msla-edit-connection-actions-container">
-        <Button aria-label={buttonAddAria} disabled={isInlineCreatingConnection} onClick={createConnectionCallback}>
-          {isInlineCreatingConnection ? buttonAddingText : buttonAddText}
+        <Button aria-label={buttonAddAria} disabled={addButton.disabled} onClick={addButton.onAdd}>
+          {addButton.text}
         </Button>
-        <Button aria-label={buttonCancelAria} onClick={closeConnectionsFlow}>
-          {buttonCancelText}
-        </Button>
+        {cancelButton ? (
+          <Button aria-label={buttonCancelAria} onClick={cancelButton.onCancel}>
+            {buttonCancelText}
+          </Button>
+        ) : null}
       </div>
     </div>
   );
