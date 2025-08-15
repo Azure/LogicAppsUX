@@ -144,6 +144,8 @@ export interface ConnectionReferenceModel {
   connectionRuntimeUrl: string;
   connectionProperties?: Record<string, unknown>;
   authentication?: ApihubAuthentication;
+  runtimeSource?: string;
+  dynamicConnectionProxyUrl?: string;
 }
 
 export interface ApihubAuthentication {
@@ -191,4 +193,9 @@ interface ConnectionStatus {
 export interface CallbackInfo {
   method?: string;
   value: string;
+}
+
+export interface AgentURL {
+  url: string;
+  hostName: string;
 }

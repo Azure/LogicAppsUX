@@ -1,6 +1,6 @@
 import type React from 'react';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { batch, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import type { ElkExtendedEdge } from 'elkjs/lib/elk-api';
 import { EdgeLabelRenderer, type EdgeProps, type XYPosition } from '@xyflow/react';
 import { css } from '@fluentui/utilities';
@@ -19,12 +19,9 @@ import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSel
 import { useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
 import { ArrowCap } from './dynamicsvgs/arrowCap';
 import { useIsNodeSelectedInOperationPanel } from '../../core/state/panel/panelSelectors';
-import { removeOperationRunAfter } from '../../core/actions/bjsworkflow/runafter';
-import { EdgePathContextMenu, useContextMenu } from './edgePathContextMenu';
-import { changePanelNode, type AppDispatch } from '../../core';
+import type { AppDispatch } from '../../core';
 import { HandoffIcon } from './dynamicsvgs/handoffIcon';
-import { setSelectedPanelActiveTab } from '../../core/state/panel/panelSlice';
-import constants from '../../common/constants';
+import { setEdgeContextMenuData } from '../../core/state/designerView/designerViewSlice';
 
 interface EdgeContentProps {
   x: number;
@@ -37,23 +34,42 @@ interface EdgeContentProps {
 }
 
 const EdgeContent = (props: EdgeContentProps) => {
+  const { x, y, graphId, parentId, childId, isLeaf } = props;
   const dispatch = useDispatch<AppDispatch>();
-  const onClick = useCallback(() => {
-    batch(() => {
-      dispatch(changePanelNode(props.parentId ?? ''));
-      dispatch(setSelectedPanelActiveTab(constants.PANEL_TAB_NAMES.HANDOFF));
-    });
-  }, [dispatch, props.parentId]);
+
+  const onClick = useCallback(
+    async (e: React.MouseEvent<HTMLButtonElement>) => {
+      const rect = buttonRef.current?.getBoundingClientRect();
+      e.preventDefault();
+      dispatch(
+        setEdgeContextMenuData({
+          graphId,
+          parentId,
+          childId,
+          isLeaf,
+          location: {
+            x: (rect?.left ?? 0) + (rect?.width ?? 0),
+            y: (rect?.top ?? 0) + (rect?.height ?? 0) / 2,
+          },
+          isHandoff: true,
+        })
+      );
+    },
+    [dispatch, graphId, parentId, childId, isLeaf]
+  );
+
+  const buttonRef = useRef<HTMLDivElement>(null);
 
   return (
     <EdgeLabelRenderer>
       <div
+        ref={buttonRef}
         style={{
           width: edgeContentWidth,
           height: edgeContentHeight,
           position: 'absolute',
-          left: props.x,
-          top: props.y,
+          left: x,
+          top: y,
           pointerEvents: 'all',
           zIndex: 100,
         }}
@@ -64,6 +80,7 @@ const EdgeContent = (props: EdgeContentProps) => {
           size="small"
           shape="circular"
           onClick={onClick}
+          onContextMenu={onClick}
           style={
             {
               '--colorBrandBackground': '#3352b9',
@@ -89,7 +106,6 @@ const edgeContentHeight = 24;
 const edgeContentWidth = 24;
 
 const HandoffEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({ id, source, target, style = {} }) => {
-  const dispatch = useDispatch<AppDispatch>();
   const readOnly = useReadOnly();
 
   const nodeMetadata = useNodeMetadata(source);
@@ -119,22 +135,7 @@ const HandoffEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({ id, source, targ
   const isSourceSelected = useIsNodeSelectedInOperationPanel(sourceId);
   const isTargetSelected = useIsNodeSelectedInOperationPanel(targetId);
 
-  const contextMenu = useContextMenu();
-  const contextSelected = useMemo(() => contextMenu.isShowing, [contextMenu.isShowing]);
-
-  const selected = useMemo(
-    () => isSourceSelected || isTargetSelected || contextSelected,
-    [isSourceSelected, isTargetSelected, contextSelected]
-  );
-
-  const deleteEdge = useCallback(() => {
-    dispatch(
-      removeOperationRunAfter({
-        parentOperationId: sourceId,
-        childOperationId: targetId,
-      })
-    );
-  }, [dispatch, sourceId, targetId]);
+  const selected = useMemo(() => isSourceSelected || isTargetSelected, [isSourceSelected, isTargetSelected]);
 
   const colorClass = useMemo(() => {
     if (selected) {
@@ -219,8 +220,6 @@ const HandoffEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({ id, source, targ
         strokeDasharray={'4 6'}
         strokeLinecap={'round'}
         markerEnd={`url(#${markerId})`}
-        onClick={contextMenu.handle}
-        onContextMenu={contextMenu.handle}
       />
 
       {/* KEEP: This is for edge id testing */}
@@ -245,15 +244,6 @@ const HandoffEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({ id, source, targ
 					/>
 				</>
 			))} */}
-
-      {contextMenu.isShowing && (
-        <EdgePathContextMenu
-          contextMenuLocation={contextMenu.location}
-          open={contextMenu.isShowing}
-          setOpen={contextMenu.setIsShowing}
-          onDelete={deleteEdge}
-        />
-      )}
 
       {/* Handoff Indicator */}
       {readOnly ? null : (

@@ -33,7 +33,7 @@ import { convertToWorkspace } from './app/commands/createNewCodeProject/CodeProj
 import TelemetryReporter from '@vscode/extension-telemetry';
 import { getAllCustomCodeFunctionsProjects } from './app/utils/customCodeUtils';
 import { createVSCodeAzureSubscriptionProvider } from './app/utils/services/VSCodeAzureSubscriptionProvider';
-import { logSubscriptions } from './app/utils/telemetry';
+import { logExtensionSettings, logSubscriptions } from './app/utils/telemetry';
 import { registerAzureUtilsExtensionVariables } from '@microsoft/vscode-azext-azureutils';
 import { getAzExtResourceType, getAzureResourcesExtensionApi } from '@microsoft/vscode-azureresources-api';
 import { startLanguageServerProtocol } from './app/languageServer/languageServer';
@@ -105,6 +105,7 @@ export async function activate(context: vscode.ExtensionContext) {
     runPostWorkflowCreateStepsFromCache();
     runPostExtractStepsFromCache();
     logSubscriptions(activateContext);
+    logExtensionSettings(activateContext);
 
     if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
       await convertToWorkspace(activateContext);

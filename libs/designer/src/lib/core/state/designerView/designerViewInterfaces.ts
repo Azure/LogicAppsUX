@@ -17,4 +17,5 @@ export interface EdgeContextMenuObject {
   childId?: string;
   isLeaf?: boolean;
   location: { x: number; y: number };
+  isHandoff?: boolean;
 }
