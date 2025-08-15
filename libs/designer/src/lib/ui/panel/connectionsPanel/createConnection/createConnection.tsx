@@ -511,6 +511,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     showTenantIdSelection,
     operationParameterValues,
     isUsingDynamicConnection,
+    connectorId,
   ]);
 
   // INTL STRINGS
