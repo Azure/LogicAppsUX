@@ -92,12 +92,12 @@ export const ConnectionsView = (props: ConnectionsViewProps) => {
   }, [connectorId, panelStatus, props.closeView, props.onConnectionSuccessful]);
 
   return (
-    <>
+    <div style={{ padding: '10px' }}>
       <div className="msla-app-action-header">
         <XLargeText text={panelHeaderText} />
         <Button aria-label={closeButtonAriaLabel} appearance="subtle" onClick={props.closeView} icon={<CloseIcon />} />
       </div>
       <div className="msla-connections-panel-body">{renderContent()}</div>
-    </>
+    </div>
   );
 };
