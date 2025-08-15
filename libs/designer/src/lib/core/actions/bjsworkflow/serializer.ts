@@ -200,22 +200,16 @@ const getActions = async (rootState: RootState, options?: SerializeOptions): Pro
     promises.push(serializeOperation(rootState, action.id, options));
   }
 
-  const outputs = (await Promise.all(promises)).reduce(
+  return (await Promise.all(promises)).reduce(
     (actions: LogicAppsV2.Actions, action: LogicAppsV2.ActionDefinition | null, index: number) => {
       const originalId = actionsInRootGraph[index].id;
       if (!isNullOrEmpty(action)) {
         actions[getRecordEntry(idReplacements, originalId) ?? originalId] = action as LogicAppsV2.ActionDefinition;
-        return actions;
       }
-
       return actions;
     },
     {}
   );
-
-  console.log('#> GetActions', outputs);
-
-  return outputs;
 };
 
 const getTrigger = async (rootState: RootState, options?: SerializeOptions): Promise<LogicAppsV2.Triggers> => {
