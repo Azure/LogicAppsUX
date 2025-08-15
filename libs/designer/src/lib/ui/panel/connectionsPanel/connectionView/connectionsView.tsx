@@ -12,19 +12,21 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 import { autoCreateConnectionIfPossible } from '../../../../core/actions/bjsworkflow/connections';
-import type { Connection, Connector } from '@microsoft/logic-apps-shared';
+import { ConnectionService, type Connection, type Connector } from '@microsoft/logic-apps-shared';
 
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
 interface ConnectionsViewProps {
   closeView: () => void;
-  connectorId: string;
+  connectorName: string;
   onConnectionSuccessful: (connection: Connection) => void;
 }
 
 export const ConnectionsView = (props: ConnectionsViewProps) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { connectorId } = props;
+  const { connectorName } = props;
+  const connectionService = ConnectionService();
+  const connectorId = `${connectionService?.getSubscriptionLocationWebUrl?.() ?? ''}/${connectorName}`;
   const { data: connector } = useConnector(connectorId);
   const references = useConnectionRefs();
   const connectionQuery = useConnectionsForConnector(connector?.id ?? '');

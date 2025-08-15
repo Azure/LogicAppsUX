@@ -70,11 +70,11 @@ export const SelectConnectionWrapper = ({
   const actionBar = useMemo(() => {
     return (
       <>
-        <ActionList nodeIds={[]} iconUri={connectorIconUri} />
+        <ActionList nodeIds={[connectorId]} iconUri={connectorIconUri} />
         <Divider />
       </>
     );
-  }, [connectorIconUri]);
+  }, [connectorIconUri, connectorId]);
   const loadingText = intl.formatMessage({
     defaultMessage: 'Loading connection data...',
     id: 'faUrud',

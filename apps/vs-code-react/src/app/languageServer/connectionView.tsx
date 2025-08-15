@@ -13,7 +13,7 @@ import { ExtensionCommand, type FileSystemConnectionInfo } from '@microsoft/vsco
 import { convertConnectionsDataToReferences } from '../designer/utilities/workflow';
 import { useConnectionViewStyles } from './connectionViewStyles';
 
-const ConnectionView = ({ connectorId }: { connectorId: string }) => {
+const ConnectionView = ({ connectorName }: { connectorName: string }) => {
   const vscode = useContext(VSCodeContext);
   const sendMsgToVsix = useCallback(
     (msg: any) => {
@@ -33,14 +33,7 @@ const ConnectionView = ({ connectorId }: { connectorId: string }) => {
     [sendMsgToVsix]
   );
 
-  const commonPanelProps = useMemo(() => {
-    return {
-      closeView: closeView,
-      connectorId,
-      onConnectionSuccessful,
-    };
-  }, [connectorId, closeView, onConnectionSuccessful]);
-  return <ConnectionsView {...commonPanelProps} />;
+  return <ConnectionsView closeView={closeView} connectorName={connectorName} onConnectionSuccessful={onConnectionSuccessful} />;
 };
 
 export const LanguageServerConnectionView = () => {
@@ -129,7 +122,6 @@ export const LanguageServerConnectionView = () => {
         options={{
           isDarkMode: theme === Theme.Dark,
           isVSCode: true,
-          readOnly: false,
           services: services,
           hostOptions: {
             displayRuntimeInfo: true,
@@ -144,7 +136,7 @@ export const LanguageServerConnectionView = () => {
           }}
           appSettings={panelMetaData?.localSettings}
         >
-          <ConnectionView connectorId={`${apiHubServiceDetails.apiServiceBaseUrl}/msnweather`} />
+          <ConnectionView connectorName={'msnweather'} />
         </BJSWorkflowProvider>
       </DesignerProvider>
     </div>
