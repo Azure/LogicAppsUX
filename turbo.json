@@ -4,6 +4,12 @@
   "dangerouslyDisablePackageManagerCheck": true,
 
   "tasks": {
+    "test:vscode:run": {
+      "cache": false
+    },
+    "vscode-designer#test:vscode:run": {
+      "cache": false
+    },
     "e2e": {
       "cache": false,
       "persistent": true
@@ -46,6 +52,9 @@
     "vscode:designer:pack": {
       "cache": false,
       "dependsOn": ["vscode-react#build:extension"]
+    },
+    "e2e-setup": {
+      "cache": false
     }
   }
 }
