@@ -1,4 +1,4 @@
-import { createWorkflowEdge, createWorkflowNode, isRootNode, getAllNodesInsideNode, getUpstreamNodeIds, isRootNodeInGraph } from '../graph';
+import { createWorkflowEdge, createWorkflowNode, isRootNode, getAllNodesInsideNode, getUpstreamNodeIds, isTriggerNode } from '../graph';
 import { WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('Graph Utilities', () => {
@@ -63,7 +63,7 @@ describe('Graph Utilities', () => {
   };
 
   const nodesMetadata = {
-    manual: { graphId: 'root', isRoot: true },
+    manual: { graphId: 'root', isRoot: true, isTrigger: true },
     Compose: { graphId: 'root' },
     Compose_11: { graphId: 'root' },
     Compose_2: { graphId: 'root' },
@@ -115,15 +115,15 @@ describe('Graph Utilities', () => {
     });
   });
 
-  describe('isRootNodeInGraph', () => {
+  describe('isTriggerNodeInGraph', () => {
     it('should return true for a trigger node in root graph', () => {
-      expect(isRootNodeInGraph('manual', 'root', nodesMetadata)).toBeTruthy();
+      expect(isTriggerNode('manual', nodesMetadata)).toBeTruthy();
     });
 
     it('should return false for any action node in root graph or any root node in nested graph', () => {
-      expect(isRootNodeInGraph('Compose_2', 'root', nodesMetadata)).toBeFalsy();
-      expect(isRootNodeInGraph('Compose_10', 'root', nodesMetadata)).toBeFalsy();
-      expect(isRootNodeInGraph('Compose_3', 'root', nodesMetadata)).toBeFalsy();
+      expect(isTriggerNode('Compose_2', nodesMetadata)).toBeFalsy();
+      expect(isTriggerNode('Compose_10', nodesMetadata)).toBeFalsy();
+      expect(isTriggerNode('Compose_3', nodesMetadata)).toBeFalsy();
     });
   });
 

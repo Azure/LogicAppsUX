@@ -5,7 +5,7 @@ import type { WorkflowTemplateData } from '../../actions/bjsworkflow/templates';
 import type { OperationDetails } from '../../templates/utils/parametershelper';
 import { initializeOperationDetails } from '../../templates/utils/parametershelper';
 import { replaceAllStringInWorkflowDefinition } from '../../templates/utils/createhelper';
-import { isRootNodeInGraph } from '../../utils/graph';
+import { isTriggerNode } from '../../utils/graph';
 import type { NodeOperationInputsData } from '../../state/operation/operationMetadataSlice';
 import type { ConnectionReferences } from '../../../common/models/workflow';
 import type { Token, ValueSegment } from '@microsoft/designer-ui';
@@ -110,7 +110,7 @@ export const getOperationDataInDefinitions = async (
     const { actionData: operations, nodesMetadata } = deserializedWorkflow;
 
     for (const operationId of Object.keys(operations)) {
-      const isTrigger = isRootNodeInGraph(operationId, 'root', nodesMetadata);
+      const isTrigger = isTriggerNode(operationId, nodesMetadata);
       const operation = operations[operationId];
       const nodeId = `${id.toLowerCase()}${delimiter}${operationId}`;
       promises.push(initializeOperationDetails(nodeId, operation, /* connectorId */ undefined, isTrigger, [], references));

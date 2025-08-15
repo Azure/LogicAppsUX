@@ -236,7 +236,7 @@ export const workflowSlice = createSlice({
         deleteNodeFromWorkflow(action.payload, graph, state.nodesMetadata, state);
 
         graph.children = [...(graph?.children ?? []), placeholderNode];
-        state.nodesMetadata[constants.NODE.TYPE.PLACEHOLDER_TRIGGER] = { graphId, isRoot: true };
+        state.nodesMetadata[constants.NODE.TYPE.PLACEHOLDER_TRIGGER] = { graphId, isRoot: true, isTrigger: true };
         state.operations[constants.NODE.TYPE.PLACEHOLDER_TRIGGER] = createWorkflowNode(
           constants.NODE.TYPE.PLACEHOLDER_TRIGGER,
           WORKFLOW_NODE_TYPES.PLACEHOLDER_NODE
@@ -592,10 +592,8 @@ export const workflowSlice = createSlice({
       // If there is only the trigger node left, set to empty object
       const allowRunAfterTrigger = isA2AWorkflow(state);
       if (!allowRunAfterTrigger && Object.keys(childOperation.runAfter ?? {}).length === 1) {
-        const rootTriggerNodeId = Object.entries(state.nodesMetadata).find(
-          ([_, node]) => node.graphId === 'root' && node.isRoot === true
-        )?.[0];
-        if (Object.keys(childOperation.runAfter ?? {})[0] === rootTriggerNodeId) {
+        const triggerNodeId = Object.entries(state.nodesMetadata).find(([_, node]) => node?.isTrigger ?? false)?.[0];
+        if (Object.keys(childOperation.runAfter ?? {})[0] === triggerNodeId) {
           childOperation.runAfter = {};
         }
       }
@@ -633,9 +631,8 @@ export const workflowSlice = createSlice({
       // We need to add a dummy trigger node to populate the settings object and flag validation
       const allowRunAfterTrigger = isA2AWorkflow(state);
       if (!allowRunAfterTrigger && Object.keys(childOperation.runAfter ?? {}).length === 0) {
-        const rootTriggerNodeId =
-          Object.entries(state.nodesMetadata).find(([_, node]) => node.graphId === 'root' && node.isRoot === true)?.[0] ?? '';
-        childOperation.runAfter = { [rootTriggerNodeId]: [RUN_AFTER_STATUS.SUCCEEDED] };
+        const triggerNodeId = Object.entries(state.nodesMetadata).find(([_, node]) => node?.isTrigger ?? false)?.[0] ?? '';
+        childOperation.runAfter = { [triggerNodeId]: [RUN_AFTER_STATUS.SUCCEEDED] };
       }
 
       if (!childOperation.runAfter) {
@@ -645,10 +642,8 @@ export const workflowSlice = createSlice({
 
       // Check if it only contains the trigger node, if so, set to empty object
       if (!allowRunAfterTrigger && Object.keys(childOperation.runAfter ?? {}).length === 1) {
-        const rootTriggerNodeId = Object.entries(state.nodesMetadata).find(
-          ([_, node]) => node.graphId === 'root' && node.isRoot === true
-        )?.[0];
-        if (Object.keys(childOperation.runAfter ?? {})[0] === rootTriggerNodeId) {
+        const triggerNodeId = Object.entries(state.nodesMetadata).find(([_, node]) => node?.isTrigger ?? false)?.[0];
+        if (Object.keys(childOperation.runAfter ?? {})[0] === triggerNodeId) {
           childOperation.runAfter = {};
         }
       }

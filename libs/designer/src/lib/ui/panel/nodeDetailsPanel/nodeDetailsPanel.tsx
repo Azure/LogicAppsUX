@@ -14,7 +14,7 @@ import { expandPanel, setAlternateSelectedNode, updatePanelLocation } from '../.
 import { useUndoRedoClickToggle } from '../../../core/state/undoRedo/undoRedoSelectors';
 import { useActionMetadata, useRunData, useRunInstance } from '../../../core/state/workflow/workflowSelectors';
 import { replaceId, setNodeDescription } from '../../../core/state/workflow/workflowSlice';
-import { isOperationNameValid, isRootNodeInGraph } from '../../../core/utils/graph';
+import { isOperationNameValid, isTriggerNode } from '../../../core/utils/graph';
 import { CommentMenuItem } from '../../menuItems/commentMenuItem';
 import { DeleteMenuItem } from '../../menuItems/deleteMenuItem';
 import { PinMenuItem } from '../../menuItems/pinMenuItem';
@@ -52,12 +52,12 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
   const selectedNode = useOperationPanelSelectedNodeId();
 
   const runData = useRunData(selectedNode);
-  const { isTriggerNode, nodesMetadata, idReplacements, operationInfo, showTriggerInfo } = useSelector((state: RootState) => {
+  const { isTrigger, nodesMetadata, idReplacements, operationInfo, showTriggerInfo } = useSelector((state: RootState) => {
     const isAgent = equals(getRecordEntry(state.workflow.operations, selectedNode)?.type, 'agent');
-    const isTrigger = isRootNodeInGraph(selectedNode, 'root', state.workflow.nodesMetadata) && !isAgent;
+    const isTrigger = isTriggerNode(selectedNode, state.workflow.nodesMetadata) && !isAgent;
     const operationInfo = state.operations.operationInfo[selectedNode];
     return {
-      isTriggerNode: isTrigger,
+      isTrigger,
       nodesMetadata: state.workflow.nodesMetadata,
       idReplacements: state.workflow.idReplacements,
       operationInfo,
@@ -125,7 +125,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
       // Removing the 'add a description' button for subgraph nodes
       const isSubgraphContainer = nodeData?.subgraphType === SUBGRAPH_TYPES.SWITCH_CASE;
       const headerMenuItems: JSX.Element[] = [];
-      if (!isSubgraphContainer && !isTriggerNode) {
+      if (!isSubgraphContainer && !isTrigger) {
         headerMenuItems.push(
           <CommentMenuItem key={'comment'} onClick={() => handleCommentMenuClick(nodeId)} hasComment={!isNullOrUndefined(comment)} />
         );
@@ -137,7 +137,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
         <DeleteMenuItem
           key={'delete'}
           onClick={() => handleDeleteClick(nodeId)}
-          isTrigger={isTriggerNode}
+          isTrigger={isTrigger}
           operationType={operationInfo?.type}
         />
       );
@@ -147,7 +147,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
       handleCommentMenuClick,
       handleDeleteClick,
       handlePinClick,
-      isTriggerNode,
+      isTrigger,
       alternateSelectedNodeId,
       alternateSelectedNodeData,
       selectedNode,
@@ -157,7 +157,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
   );
 
   const onTitleChange = (originalId: string, newId: string): { valid: boolean; oldValue?: string; message: string } => {
-    const validation = isOperationNameValid(originalId, newId, isTriggerNode, nodesMetadata, idReplacements, intl);
+    const validation = isOperationNameValid(originalId, newId, isTrigger, nodesMetadata, idReplacements, intl);
     return { valid: validation.isValid, oldValue: validation.isValid ? newId : originalId, message: validation.message };
   };
 
@@ -280,8 +280,8 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
         togglePanel();
       }}
       showTriggerInfo={showTriggerInfo && !readOnly}
-      isTrigger={isTriggerNode}
-      hideComment={isA2AWorkflow && isTriggerNode}
+      isTrigger={isTrigger}
+      hideComment={isA2AWorkflow && isTrigger}
       trackEvent={handleTrackEvent}
       onCommentChange={onCommentChange}
       onTitleChange={onTitleChange}

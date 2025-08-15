@@ -16,7 +16,7 @@ import {
   updateActionResultSuccess,
 } from '../../../../../core/state/unitTest/unitTestSlice';
 import type { AppDispatch, RootState } from '../../../../../core/store';
-import { isRootNodeInGraph } from '../../../../../core/utils/graph';
+import { isTriggerNode } from '../../../../../core/utils/graph';
 import { getParameterEditorProps } from '../../../../../core/utils/parameters/helper';
 import {
   OutputMocks,
@@ -33,7 +33,7 @@ import { getFilteredOutputs } from './helper';
 
 const MockResultsTab = () => {
   const nodeId = useOperationPanelSelectedNodeId();
-  const isTrigger = useSelector((state: RootState) => isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata));
+  const isTrigger = useSelector((state: RootState) => isTriggerNode(nodeId, state.workflow.nodesMetadata));
   const nodeType = useNodeType(nodeId);
   const isMockSupported = useIsMockSupported(nodeId, isTrigger);
   const nodeName = isTrigger ? `&${nodeId}` : nodeId;
