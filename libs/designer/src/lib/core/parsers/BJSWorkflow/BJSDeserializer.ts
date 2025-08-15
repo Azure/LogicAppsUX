@@ -67,6 +67,7 @@ export const Deserialize = (
     nodesMetadata[tID] = {
       graphId: 'root',
       isRoot: true,
+      isTrigger: true,
       ...(trigger?.metadata && { actionMetadata: trigger?.metadata }),
       ...addTriggerInstanceMetaData(runInstance),
     };
@@ -79,6 +80,7 @@ export const Deserialize = (
     nodesMetadata[tID] = {
       graphId: 'root',
       isRoot: true,
+      isTrigger: true,
     };
     allActionNames.push(tID);
   }
