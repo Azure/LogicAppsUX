@@ -1,57 +1,51 @@
 import { XLargeText } from '@microsoft/designer-ui';
 import type { AppDispatch } from '../../../../core';
-import { updateNodeConnection, useOperationInfo, useOperationPanelSelectedNodeId } from '../../../../core';
 import { useConnectionsForConnector } from '../../../../core/queries/connections';
-import { useConnectionRefs, useConnector, useConnectorByNodeId } from '../../../../core/state/connection/connectionSelector';
+import { useConnectionRefs, useConnector } from '../../../../core/state/connection/connectionSelector';
 import { useIsCreatingConnection } from '../../../../core/state/panel/panelSelectors';
 import { setIsCreatingConnection } from '../../../../core/state/panel/panelSlice';
-import { AllConnections } from '../allConnections/allConnections';
 import { CreateConnectionWrapper } from '../createConnection/createConnectionWrapperFromConnector';
 import { SelectConnectionWrapper } from '../selectConnection/selectConnection';
 import { Button } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
-import type { CommonPanelProps } from '@microsoft/designer-ui';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
-import { autoCreateConnectionIfPossible, closeConnectionsFlow } from '../../../../core/actions/bjsworkflow/connections';
+import { autoCreateConnectionIfPossible } from '../../../../core/actions/bjsworkflow/connections';
 import type { Connection, Connector } from '@microsoft/logic-apps-shared';
 
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
 interface ConnectionsViewProps {
-  toggleCollapse: () => void;
+  closeView: () => void;
   connectorId: string;
   onConnectionSuccessful: (connection: Connection) => void;
 }
-
 
 export const ConnectionsView = (props: ConnectionsViewProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const { connectorId } = props;
   const { data: connector } = useConnector(connectorId);
-  // const operationInfo = useOperationInfo(selectedNodeId);
-  // const references = useConnectionRefs();
+  const references = useConnectionRefs();
   const connectionQuery = useConnectionsForConnector(connector?.id ?? '');
   const connections = useMemo(() => connectionQuery.data ?? [], [connectionQuery.data]);
   const intl = useIntl();
 
-  const isCreatingConnection = true //useIsCreatingConnection();
+  const isCreatingConnection = useIsCreatingConnection();
 
-  // useEffect(() => {
-  //   if (connector && !connectionQuery.isLoading && !connectionQuery.isError && connections.length === 0) {
-  //     autoCreateConnectionIfPossible({
-  //       connector: connector as Connector,
-  //       referenceKeys: Object.keys(references),
-  //       operationInfo,
-  //       skipOAuth: true,
-  //       applyNewConnection: (connection: Connection) =>
-  //         dispatch(updateNodeConnection({ nodeId: selectedNodeId, connection, connector: connector as Connector })),
-  //       onSuccess: () => dispatch(closeConnectionsFlow({ nodeId: selectedNodeId })),
-  //       onManualConnectionCreation: () => dispatch(setIsCreatingConnection(true)),
-  //     });
-  //   }
-  // }, [connectionQuery.isError, connectionQuery.isLoading, connections, connector, dispatch, operationInfo, references, selectedNodeId]);
+  useEffect(() => {
+    if (connector && !connectionQuery.isLoading && !connectionQuery.isError && connections.length === 0) {
+      autoCreateConnectionIfPossible({
+        connector: connector as Connector,
+        referenceKeys: Object.keys(references),
+        operationInfo: undefined,
+        skipOAuth: true,
+        applyNewConnection: (connection: Connection) => props.onConnectionSuccessful(connection),
+        onSuccess: () => props.closeView(),
+        onManualConnectionCreation: () => dispatch(setIsCreatingConnection(true)),
+      });
+    }
+  }, [connectionQuery.isError, connectionQuery.isLoading, connections, connector, dispatch, props, references]);
 
   const panelStatus = useMemo(() => {
     return isCreatingConnection ? 'create' : 'select';
@@ -95,7 +89,7 @@ export const ConnectionsView = (props: ConnectionsViewProps) => {
     <>
       <div className="msla-app-action-header">
         <XLargeText text={panelHeaderText} />
-        <Button aria-label={closeButtonAriaLabel} appearance="subtle" onClick={props.toggleCollapse} icon={<CloseIcon />} />
+        <Button aria-label={closeButtonAriaLabel} appearance="subtle" onClick={props.closeView} icon={<CloseIcon />} />
       </div>
       <div className="msla-connections-panel-body">{renderContent()}</div>
     </>

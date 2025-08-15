@@ -22,7 +22,7 @@ const ConnectionView = ({ connectorId }: { connectorId: string }) => {
     [vscode]
   );
 
-  const dismissPanel = useCallback(() => {
+  const closeView = useCallback(() => {
     sendMsgToVsix({ command: ExtensionCommand.close_panel });
   }, [sendMsgToVsix]);
 
@@ -35,11 +35,11 @@ const ConnectionView = ({ connectorId }: { connectorId: string }) => {
 
   const commonPanelProps = useMemo(() => {
     return {
-      toggleCollapse: dismissPanel,
+      closeView: closeView,
       connectorId,
       onConnectionSuccessful,
     };
-  }, [connectorId, dismissPanel, onConnectionSuccessful]);
+  }, [connectorId, closeView, onConnectionSuccessful]);
   return <ConnectionsView {...commonPanelProps} />;
 };
 

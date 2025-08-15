@@ -45,7 +45,6 @@ export const CreateConnectionInternal = (props: {
   updateOperationParameterValues?: (values?: Record<string, any>) => void;
   operationManifest?: OperationManifest;
   workflowKind?: string;
-  onConnectionSuccessful?: (connection: Connection) => void;
 }) => {
   const {
     classes,
@@ -66,7 +65,6 @@ export const CreateConnectionInternal = (props: {
     updateOperationParameterValues,
     isAgentSubgraph,
     operationManifest,
-    onConnectionSuccessful,
   } = props;
   const dispatch = useDispatch<AppDispatch>();
 
@@ -234,7 +232,6 @@ export const CreateConnectionInternal = (props: {
           updateNewConnectionInCache(connection);
           applyNewConnection(connection, identitySelected, isUsingDynamicConnection);
           updateOperationParameterValues?.(operationParameterValues);
-          onConnectionSuccessful?.(connection);
         } else if (err) {
           setErrorMessage(String(err));
         }
@@ -250,7 +247,17 @@ export const CreateConnectionInternal = (props: {
       }
       setIsCreating(false);
     },
-    [applyNewConnection, assistedConnectionProps, connectionMetadata, connectionName, connector, existingReferences, onConnectionSuccessful, selectedSubResource, updateNewConnectionInCache, updateOperationParameterValues]
+    [
+      applyNewConnection,
+      assistedConnectionProps,
+      connectionMetadata,
+      connectionName,
+      connector,
+      existingReferences,
+      selectedSubResource,
+      updateNewConnectionInCache,
+      updateOperationParameterValues,
+    ]
   );
 
   const cancelCallback = useCallback(() => {

@@ -1,7 +1,6 @@
-import type { ApiHubServiceDetails, ListDynamicValue, UnitTestDefinition } from '@microsoft/logic-apps-shared';
+import type { ApiHubServiceDetails, ConnectionsData, ListDynamicValue, UnitTestDefinition } from '@microsoft/logic-apps-shared';
 import type {
   CompleteFileSystemConnectionData,
-  ConnectionsData,
   ICallbackUrlResponse,
   IDesignerPanelMetadata,
 } from '@microsoft/vscode-extension-logic-apps';
