@@ -276,7 +276,9 @@ export const EdgeContextualMenu = () => {
   }, [open, isPasteDisabled]);
 
   const parentName = useNodeDisplayName(removeIdTag(parentId ?? ''));
-  const childName = useNodeDisplayName(childId);
+  const childName = useNodeDisplayName(childId ?? '');
+
+  const hasParentAndChild = useMemo(() => !!parentId && !!childId, [parentId, childId]);
 
   const automationId = useCallback(
     (buttonName: string) =>
@@ -408,7 +410,7 @@ export const EdgeContextualMenu = () => {
               <>
                 {editHandoffMenuItem}
                 {addParallelAgentMenuItem}
-                {deleteMenuItem}
+                {hasParentAndChild && deleteMenuItem}
               </>
             ) : (
               <>
@@ -477,7 +479,7 @@ export const EdgeContextualMenu = () => {
                       }}
                     />
                   ))}
-                {deleteMenuItem}
+                {hasParentAndChild && deleteMenuItem}
                 {customMenuItems}
               </>
             )}
