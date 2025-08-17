@@ -41,7 +41,7 @@ export class ApiService implements IApiService {
     }
 
     return new Headers({
-      Authorization: accessToken,
+      Authorization: `Bearer ${accessToken}`,
       Accept: 'application/json',
       'Content-Type': 'application/json',
     });

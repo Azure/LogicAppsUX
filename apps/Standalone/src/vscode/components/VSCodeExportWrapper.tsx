@@ -16,12 +16,14 @@ import { IntlProvider } from 'react-intl';
 import { ThemeProvider } from '../../../../vs-code-react/src/themeProvider';
 import '../utils/mockVSCodeApi';
 import { MockApiService } from '../services/MockApiService';
+import { loadToken, environment } from '../../environments/environment';
+import { useQuery } from '@tanstack/react-query';
 
 // Mock data for testing
 const mockInitialData = {
   apiVersion: '2018-07-01-preview',
   baseUrl: 'https://management.azure.com',
-  accessToken: 'mock-access-token',
+  accessToken: 'mock-access-token', // This will be replaced with the real token
   workflowProperties: {
     name: 'test-workflow',
     stateType: 'Stateful',
@@ -30,12 +32,33 @@ const mockInitialData = {
   isLocal: true,
 };
 
-export const VSCodeExportWrapper: React.FC = () => {
+const LoadWhenArmTokenIsLoaded = () => {
+  const { isLoading, data: token } = useQuery(['armToken'], loadToken);
+
+  if (isLoading) {
+    return null;
+  }
+
+  // Pass the loaded token to ExportContent
+  return <ExportContent token={token} />;
+};
+
+interface ExportContentProps {
+  token?: string | null;
+}
+
+const ExportContent: React.FC<ExportContentProps> = ({ token }) => {
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
-    // Initialize with mock data for standalone development
-    dispatch(initializeWorkflow(mockInitialData));
+    // Initialize with data using the loaded token or fallback to mock
+    const initialData = {
+      ...mockInitialData,
+      accessToken: token || environment.armToken || mockInitialData.accessToken,
+    };
+
+    console.log('Initializing export with token:', token ? 'Real token from armToken.json' : 'Using mock token');
+    dispatch(initializeWorkflow(initialData));
 
     // Set up global mock API service for standalone
     if (typeof window !== 'undefined') {
@@ -49,8 +72,24 @@ export const VSCodeExportWrapper: React.FC = () => {
       // Clean up on unmount
       document.body.classList.remove('vscode-light', 'vscode-dark');
     };
-  }, [dispatch]);
+  }, [dispatch, token]);
 
+  return (
+    <Routes>
+      <Route path="/" element={<ExportApp />}>
+        <Route index element={<Navigate to="instance-selection" replace />} />
+        <Route path="instance-selection" element={<InstanceSelection />} />
+        <Route path="workflows-selection" element={<WorkflowsSelection />} />
+        <Route path="validation" element={<Validation />} />
+        <Route path="summary" element={<Summary />} />
+        <Route path="status" element={<Status />} />
+        <Route path="*" element={<Navigate to="instance-selection" replace />} />
+      </Route>
+    </Routes>
+  );
+};
+
+export const VSCodeExportWrapper: React.FC = () => {
   return (
     <ThemeProvider>
       <IntlProvider
@@ -65,17 +104,7 @@ export const VSCodeExportWrapper: React.FC = () => {
       >
         <ReactQueryProvider>
           <VSCodeContextProvider>
-            <Routes>
-              <Route path="/" element={<ExportApp />}>
-                <Route index element={<Navigate to="instance-selection" replace />} />
-                <Route path="instance-selection" element={<InstanceSelection />} />
-                <Route path="workflows-selection" element={<WorkflowsSelection />} />
-                <Route path="validation" element={<Validation />} />
-                <Route path="summary" element={<Summary />} />
-                <Route path="status" element={<Status />} />
-                <Route path="*" element={<Navigate to="instance-selection" replace />} />
-              </Route>
-            </Routes>
+            <LoadWhenArmTokenIsLoaded />
           </VSCodeContextProvider>
         </ReactQueryProvider>
       </IntlProvider>
