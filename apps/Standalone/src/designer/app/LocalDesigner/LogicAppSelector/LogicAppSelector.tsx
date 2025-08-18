@@ -29,7 +29,6 @@ const fileOptions = [
   { key: 'A2AHeader', text: 'A2A Workflows', itemType: DropdownMenuItemType.Header },
   { key: 'NewA2A.json', text: 'New A2A Agent' },
   { key: 'BasicA2A.json', text: 'Basic A2A' },
-  { key: 'LoopingA2A.json', text: 'Looping A2A' },
   { key: 'HandoffA2A.json', text: 'Handoff A2A' },
 
   // Scope Nodes
