@@ -369,7 +369,7 @@ export const fetchAgentUrl = (siteResourceId: string, workflowName: string, host
       let queryParams: AgentQueryParams | undefined = undefined;
 
       // Add authentication tokens if available
-      const a2aKey = a2aData?.primaryKey || a2aData?.key;
+      const a2aKey = a2aData?.key;
       if (a2aKey) {
         queryParams = { apiKey: a2aKey };
 

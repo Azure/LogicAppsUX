@@ -60,8 +60,8 @@ export const CopyInputControlWithAgent = React.forwardRef<Pick<HTMLElement, 'foc
             <CopyInputControl text={queryParams.apiKey} copyButtonLabel={COPY_API_KEY} />
           </div>
         ) : null}
-        {showAgentViewer && text ? (
-          <AgentUrlViewer isOpen={isAgentViewerOpen} onClose={handleAgentViewerClose} queryParams={queryParams} url={chatUrl ?? ''} />
+        {showAgentViewer && chatUrl ? (
+          <AgentUrlViewer isOpen={isAgentViewerOpen} onClose={handleAgentViewerClose} queryParams={queryParams} url={chatUrl} />
         ) : null}
       </>
     );
