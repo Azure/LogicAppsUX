@@ -98,7 +98,8 @@ export const ListOperations = () => {
         description: operationMetadata[info.operationId]?.description || '',
         iconUri: operationMetadata[info.operationId]?.iconUri,
         connectorId: info.connectorId,
-      }));
+      }))
+      .sort((a, b) => a.operationName.localeCompare(b.operationName));
   }, [operationMetadata, operationInfos]);
 
   const columns = [
