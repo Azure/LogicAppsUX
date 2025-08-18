@@ -1,6 +1,8 @@
 import { useAllConnectors } from '../../../core/queries/browse';
 import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
-import { SearchService, getRecordEntry, type Connector } from '@microsoft/logic-apps-shared';
+import { useDiscoveryPanelRelationshipIds } from '../../../core/state/panel/panelSelectors';
+import { useIsA2AWorkflow } from '../../../core/state/designerView/designerViewSelectors';
+import { SearchService, equals, getRecordEntry, type Connector } from '@microsoft/logic-apps-shared';
 import { BrowseGrid, isBuiltInConnector, isCustomConnector, RuntimeFilterTagList } from '@microsoft/designer-ui';
 import { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
@@ -63,6 +65,8 @@ export interface BrowseViewProps {
 export const BrowseView = (props: BrowseViewProps) => {
   const { filters, displayRuntimeInfo, setFilters } = props;
   const shouldEnableACASession = useShouldEnableACASession();
+  const isA2AWorkflow = useIsA2AWorkflow();
+  const isAddingToGraph = useDiscoveryPanelRelationshipIds().graphId === 'root';
 
   const dispatch = useDispatch();
 
@@ -126,16 +130,47 @@ export const BrowseView = (props: BrowseViewProps) => {
     [filters]
   );
 
+  const allowedA2AConnectorNamesSet = useMemo(
+    () => new Set(['http', 'dataOperationNew', 'variable', 'xmlOperations', 'inlineCode', 'as2Operations']),
+    []
+  );
+
+  const passesA2AWorkflowFilter = useCallback(
+    (connector: Connector): boolean => {
+      // Only apply this filter if it's A2A workflow and adding to root
+      if (!isA2AWorkflow || !isAddingToGraph) {
+        return true;
+      }
+
+      const connectorType = connector.type;
+      const connectorName = connector.name;
+
+      if (connectorName && allowedA2AConnectorNamesSet.has(connectorName)) {
+        return true;
+      }
+
+      // Allow APIConnection or ServiceProvider types
+      if (connectorType) {
+        return equals(connectorType, 'Microsoft.Web/locations/managedApis') || equals(connectorType, 'serviceProvider');
+      }
+
+      return false;
+    },
+    [isA2AWorkflow, isAddingToGraph, allowedA2AConnectorNamesSet]
+  );
+
   const filterItems = useCallback(
     (connector: Connector): boolean => {
+      console.log(connector);
       return (
         isAgentConnectorAllowed(connector) &&
         isACASessionAllowed(connector) &&
         passesRuntimeFilter(connector) &&
-        passesActionTypeFilter(connector)
+        passesActionTypeFilter(connector) &&
+        passesA2AWorkflowFilter(connector)
       );
     },
-    [isAgentConnectorAllowed, isACASessionAllowed, passesRuntimeFilter, passesActionTypeFilter]
+    [isAgentConnectorAllowed, isACASessionAllowed, passesRuntimeFilter, passesActionTypeFilter, passesA2AWorkflowFilter]
   );
 
   const sortedConnectors = useMemo(() => {
