@@ -65,7 +65,7 @@ export const SearchView: FC<SearchViewProps> = ({
   }, [searchTerm]);
 
   const allowedA2AConnectorNamesSet = useMemo(
-    () => new Set(['http', 'dataOperationNew', 'variable', 'xmlOperations', 'inlineCode', 'as2Operations']),
+    () => new Set(['http', 'dataOperationNew', 'variable', 'xmlOperations', 'inlineCode', 'as2Operations', 'datetime']),
     []
   );
 
