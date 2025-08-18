@@ -112,7 +112,22 @@ export class MockApiService implements IApiService {
     return mockRegions;
   }
 
-  async validateWorkflows(selectedWorkflows: WorkflowsList[]): Promise<any> {
+  async validateWorkflows(
+    selectedWorkflows: WorkflowsList[],
+    selectedSubscription: string,
+    selectedLocation: string,
+    selectedAdvanceOptions: any[]
+  ): Promise<any> {
+    console.log(
+      'Validating workflows:',
+      selectedWorkflows,
+      'for subscription:',
+      selectedSubscription,
+      'at location:',
+      selectedLocation,
+      'with options:',
+      selectedAdvanceOptions
+    );
     // Simulate network delay
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
@@ -149,6 +164,16 @@ export class MockApiService implements IApiService {
     selectedLocation: string,
     selectedAdvanceOptions: AdvancedOptionsTypes[]
   ): Promise<ISummaryData> {
+    console.log(
+      'Exporting workflows:',
+      selectedWorkflows,
+      'for subscription:',
+      selectedSubscription,
+      'at location:',
+      selectedLocation,
+      'with options:',
+      selectedAdvanceOptions
+    );
     // Simulate network delay for export
     await new Promise((resolve) => setTimeout(resolve, 2000));
 

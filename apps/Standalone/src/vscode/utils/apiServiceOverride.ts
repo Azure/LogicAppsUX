@@ -1,5 +1,5 @@
+import type { IApiService } from '../../../../vs-code-react/src/run-service/types';
 import { MockApiService } from '../services/MockApiService';
-import type { IApiService } from '../../../../../vs-code-react/src/run-service/types';
 
 // Create a mock service instance
 const mockService = new MockApiService();
