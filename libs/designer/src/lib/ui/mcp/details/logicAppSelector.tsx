@@ -57,6 +57,8 @@ export const LogicAppSelector = () => {
   const [selectedResource, setSelectedResource] = useState<string>('');
   const [searchTerm, setSearchTerm] = useState<string>('');
 
+  const controlValue = useMemo(() => (searchTerm ? searchTerm : selectedResource) ?? '', [selectedResource, searchTerm]);
+
   const resources = useMemo(() => {
     if (!logicApps?.length) {
       return [];
@@ -120,12 +122,12 @@ export const LogicAppSelector = () => {
             <Combobox
               className={styles.combobox}
               disabled={isLogicAppsLoading}
-              value={searchTerm}
+              value={controlValue}
               placeholder={isLogicAppsLoading ? intlText.LOADING : intlText.SEARCH_PLACEHOLDER}
               onOptionSelect={(_, data) => {
                 if (data.optionValue && data.optionValue !== NO_ITEM_VALUE) {
                   onLogicAppSelect(data.optionValue);
-                  setSearchTerm(data.optionValue);
+                  setSearchTerm('');
                 }
               }}
               onChange={(e) => {
