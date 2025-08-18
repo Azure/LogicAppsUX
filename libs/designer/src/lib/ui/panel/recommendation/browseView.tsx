@@ -161,7 +161,6 @@ export const BrowseView = (props: BrowseViewProps) => {
 
   const filterItems = useCallback(
     (connector: Connector): boolean => {
-      console.log(connector);
       return (
         isAgentConnectorAllowed(connector) &&
         isACASessionAllowed(connector) &&
