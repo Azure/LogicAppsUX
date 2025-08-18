@@ -1,13 +1,13 @@
 import * as React from 'react';
-import { Tooltip } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 import type { CopyInputControlProps } from './index';
 import { CopyInputControl } from './index';
-import { AgentUrlViewer, AgentUrlButton } from './AgentUrlViewer';
+import { AgentUrlViewer } from './AgentUrlViewer';
 import type { AgentQueryParams } from '@microsoft/logic-apps-shared';
 import { Label } from '../label';
 import { Key20Regular } from '@fluentui/react-icons';
 import { useCopyInputControlStyles } from './styles';
+import { AgentUrlButton } from './AgentUrlButton';
 
 export interface CopyInputControlWithAgentProps extends Omit<CopyInputControlProps, 'children'> {
   /**
@@ -25,11 +25,11 @@ export const CopyInputControlWithAgent = React.forwardRef<Pick<HTMLElement, 'foc
     const intl = useIntl();
     const styles = useCopyInputControlStyles();
 
-    const DISPLAY_TEXT_OPEN_POPUP = intl.formatMessage({
-      defaultMessage: 'Open in popup',
-      id: 'l9TY/4',
-      description: 'ARIA label and tooltip text for the popup button',
-    });
+    // const DISPLAY_TEXT_OPEN_POPUP = intl.formatMessage({
+    //   defaultMessage: 'Open in popup',
+    //   id: 'l9TY/4',
+    //   description: 'ARIA label and tooltip text for the popup button',
+    // });
 
     const DISPLAY_TEXT_API_KEY = intl.formatMessage({
       defaultMessage: 'API Key',
@@ -54,11 +54,7 @@ export const CopyInputControlWithAgent = React.forwardRef<Pick<HTMLElement, 'foc
     return (
       <>
         <CopyInputControl ref={ref} text={text} {...props}>
-          {showAgentViewer && text ? (
-            <Tooltip content={DISPLAY_TEXT_OPEN_POPUP} relationship="label">
-              <AgentUrlButton url={text} onOpen={handleAgentViewerOpen} />
-            </Tooltip>
-          ) : null}
+          {showAgentViewer && text ? <AgentUrlButton url={text} onOpen={handleAgentViewerOpen} /> : null}
         </CopyInputControl>
 
         {queryParams?.apiKey ? (
