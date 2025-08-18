@@ -199,13 +199,15 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
         });
         await callWithTelemetryAndErrorHandling('InitializeWorkflowFromDesigner', async (activateContext: IActionContext) => {
           if (!this.isUnitTest) {
-            await this.validateWorkflow(activateContext, this.panelMetadata.workflowContent);
+            await this.validateWorkflow(activateContext, this.panelMetadata.workflowContent, this.panelMetadata.localSettings);
           }
         });
         break;
       }
       case ExtensionCommand.save: {
         await callWithTelemetryAndErrorHandling('SaveWorkflowFromDesigner', async (activateContext: IActionContext) => {
+          const projectPath = await getLogicAppProjectRoot(activateContext, this.workflowFilePath);
+          const localSettingsPath: string = path.join(projectPath, localSettingsFileName);
           await this.saveWorkflow(
             activateContext,
             this.workflowFilePath,
@@ -215,7 +217,8 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
             this.panelMetadata.azureDetails?.tenantId,
             this.panelMetadata.azureDetails?.workflowManagementBaseUrl
           );
-          await this.validateWorkflow(activateContext, this.panelMetadata.workflowContent);
+          const localSettingsValues = (await getLocalSettingsJson(activateContext, localSettingsPath, true)).Values || {};
+          await this.validateWorkflow(activateContext, JSON.parse(readFileSync(this.workflowFilePath, 'utf8')), localSettingsValues);
         });
         break;
       }
@@ -367,7 +370,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
    * If validation fails with a non-404 status code, an error message is displayed to the user.
    * The validation includes the workflow definition, kind, and local app settings.
    */
-  private async validateWorkflow(context: IActionContext, workflow: any): Promise<void> {
+  private async validateWorkflow(context: IActionContext, workflow: any, localSettings: any): Promise<void> {
     if (!ext.designTimeInstances.has(this.projectPath)) {
       throw new Error(localize('designTimeNotRunning', `Design time is not running for project ${this.projectPath}.`));
     }
@@ -385,13 +388,13 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
         method: HTTP_METHODS.POST,
         headers,
         body: JSON.stringify({
-          properties: { definition: workflow.definition, kind: workflow.kind, appSettings: { values: this.panelMetadata.localSettings } },
+          properties: { definition: workflow.definition, kind: workflow.kind, appSettings: { values: localSettings } },
         }),
       });
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : typeof error === 'string' ? error : 'Unknown error';
       context.telemetry.properties.validateWorkflowError = errorMessage;
-      if (error.statusCode && error.statusCode !== 404) {
+      if (error.statusCode !== 404) {
         const errorLocalized = localize('workflowValidationFailed', 'Workflow validation failed: ') + errorMessage;
         window.showErrorMessage(errorLocalized, localize('OK', 'OK'));
       }
