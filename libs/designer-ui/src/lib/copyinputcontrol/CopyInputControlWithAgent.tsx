@@ -25,12 +25,6 @@ export const CopyInputControlWithAgent = React.forwardRef<Pick<HTMLElement, 'foc
     const intl = useIntl();
     const styles = useCopyInputControlStyles();
 
-    // const DISPLAY_TEXT_OPEN_POPUP = intl.formatMessage({
-    //   defaultMessage: 'Open in popup',
-    //   id: 'l9TY/4',
-    //   description: 'ARIA label and tooltip text for the popup button',
-    // });
-
     const DISPLAY_TEXT_API_KEY = intl.formatMessage({
       defaultMessage: 'API Key',
       id: 'KqqiLm',
