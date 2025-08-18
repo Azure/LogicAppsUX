@@ -302,6 +302,9 @@ importers:
       '@microsoft/logic-apps-shared':
         specifier: workspace:*
         version: link:../../libs/logic-apps-shared
+      '@microsoft/vscode-extension-logic-apps':
+        specifier: workspace:*
+        version: link:../../libs/vscode-extension
       '@monaco-editor/react':
         specifier: 4.6.0
         version: 4.6.0(monaco-editor@0.44.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -347,6 +350,9 @@ importers:
       react-dom:
         specifier: 18.3.1
         version: 18.3.1(react@18.3.1)
+      react-intl:
+        specifier: 6.3.0
+        version: 6.3.0(react@18.3.1)(typescript@4.9.5)
       react-redux:
         specifier: 8.0.2
         version: 8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(redux@4.2.1)
@@ -737,7 +743,7 @@ importers:
         version: 22.0.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@reduxjs/toolkit':
         specifier: 1.9.7
-        version: 1.9.7(react-redux@8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(redux@5.0.1))(react@18.3.1)
+        version: 1.9.7(react-redux@8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(redux@4.2.1))(react@18.3.1)
       '@tanstack/react-query':
         specifier: 4.36.1
         version: 4.36.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -776,13 +782,13 @@ importers:
         version: 6.3.0(react@18.3.1)(typescript@4.9.5)
       react-redux:
         specifier: 8.0.2
-        version: 8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(redux@5.0.1)
+        version: 8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(redux@4.2.1)
       reactflow:
         specifier: ^11.11.4
         version: 11.11.4(@types/react@18.3.0)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       redux-thunk:
         specifier: 2.4.2
-        version: 2.4.2(redux@5.0.1)
+        version: 2.4.2(redux@4.2.1)
       redux-undo:
         specifier: 1.1.0
         version: 1.1.0
@@ -846,7 +852,7 @@ importers:
         version: 22.0.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@reduxjs/toolkit':
         specifier: 1.9.7
-        version: 1.9.7(react-redux@8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(redux@5.0.1))(react@18.3.1)
+        version: 1.9.7(react-redux@8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(redux@4.2.1))(react@18.3.1)
       '@tanstack/react-query':
         specifier: 4.36.1
         version: 4.36.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -900,13 +906,13 @@ importers:
         version: 6.3.0(react@18.3.1)(typescript@4.9.5)
       react-redux:
         specifier: 8.0.2
-        version: 8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(redux@5.0.1)
+        version: 8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(redux@4.2.1)
       react-virtualized-tree:
         specifier: ^3.4.1
         version: 3.4.1(react-dom@18.3.1(react@18.3.1))(react-virtualized@9.22.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
       redux-thunk:
         specifier: 2.4.2
-        version: 2.4.2(redux@5.0.1)
+        version: 2.4.2(redux@4.2.1)
       redux-undo:
         specifier: 1.1.0
         version: 1.1.0
@@ -961,7 +967,7 @@ importers:
         version: 22.0.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@reduxjs/toolkit':
         specifier: 1.9.7
-        version: 1.9.7(react-redux@8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(redux@5.0.1))(react@18.3.1)
+        version: 1.9.7(react-redux@8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(redux@4.2.1))(react@18.3.1)
       '@tanstack/query-sync-storage-persister':
         specifier: 4.36.1
         version: 4.36.1
@@ -1039,10 +1045,10 @@ importers:
         version: 8.0.5(@types/react@18.3.0)(react@18.3.1)
       react-redux:
         specifier: 8.0.2
-        version: 8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(redux@5.0.1)
+        version: 8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(redux@4.2.1)
       redux-thunk:
         specifier: 2.4.2
-        version: 2.4.2(redux@5.0.1)
+        version: 2.4.2(redux@4.2.1)
       reselect:
         specifier: 4.1.8
         version: 4.1.8
@@ -10897,9 +10903,6 @@ packages:
   redux@4.2.1:
     resolution: {integrity: sha512-LAUYz4lc+Do8/g7aeRa8JkyDErK6ekstQaqWQrNRW//MY1TvCEpMtpTWvlQ+FPbWCx+Xixu/6SHt5N0HR+SB4w==}
 
-  redux@5.0.1:
-    resolution: {integrity: sha512-M9/ELqF6fy8FwmkpnF0S3YKOqMyoWJ4+CS5Efg2ct3oY9daQvd/Pc71FpGZsVsbl3Cpb+IIcjBDUnnyBdQbq4w==}
-
   reflect.getprototypeof@1.0.6:
     resolution: {integrity: sha512-fmfw4XgoDke3kdI6h4xcUz1dG8uaiv5q9gcEwLS4Pnth2kxT+GZ7YehS1JTMGBQmtV7Y4GFGbs2re2NqhdozUg==}
     engines: {node: '>= 0.4'}
@@ -18502,16 +18505,6 @@ snapshots:
       react: 18.3.1
       react-redux: 8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(redux@4.2.1)
 
-  '@reduxjs/toolkit@1.9.7(react-redux@8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(redux@5.0.1))(react@18.3.1)':
-    dependencies:
-      immer: 9.0.21
-      redux: 4.2.1
-      redux-thunk: 2.4.2(redux@4.2.1)
-      reselect: 4.1.8
-    optionalDependencies:
-      react: 18.3.1
-      react-redux: 8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(redux@5.0.1)
-
   '@remix-run/router@1.15.3': {}
 
   '@rolldown/pluginutils@1.0.0-beta.19': {}
@@ -25706,21 +25699,6 @@ snapshots:
       react-dom: 18.3.1(react@18.3.1)
       redux: 4.2.1
 
-  react-redux@8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(redux@5.0.1):
-    dependencies:
-      '@babel/runtime': 7.27.6
-      '@types/hoist-non-react-statics': 3.3.5
-      '@types/use-sync-external-store': 0.0.3
-      hoist-non-react-statics: 3.3.2
-      react: 18.3.1
-      react-is: 18.3.1
-      use-sync-external-store: 1.2.0(react@18.3.1)
-    optionalDependencies:
-      '@types/react': 18.3.0
-      '@types/react-dom': 18.3.0
-      react-dom: 18.3.1(react@18.3.1)
-      redux: 5.0.1
-
   react-refresh@0.17.0: {}
 
   react-router-config@5.1.1(react-router@5.3.4(react@18.3.1))(react@18.3.1):
@@ -25929,17 +25907,11 @@ snapshots:
     dependencies:
       redux: 4.2.1
 
-  redux-thunk@2.4.2(redux@5.0.1):
-    dependencies:
-      redux: 5.0.1
-
   redux-undo@1.1.0: {}
 
   redux@4.2.1:
     dependencies:
       '@babel/runtime': 7.27.6
-
-  redux@5.0.1: {}
 
   reflect.getprototypeof@1.0.6:
     dependencies:
