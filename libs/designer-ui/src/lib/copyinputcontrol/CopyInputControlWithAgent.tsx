@@ -16,10 +16,11 @@ export interface CopyInputControlWithAgentProps extends Omit<CopyInputControlPro
   showAgentViewer?: boolean;
 
   queryParams?: AgentQueryParams;
+  chatUrl?: string;
 }
 
 export const CopyInputControlWithAgent = React.forwardRef<Pick<HTMLElement, 'focus' | 'scrollIntoView'>, CopyInputControlWithAgentProps>(
-  ({ showAgentViewer = false, text, queryParams, ...props }, ref) => {
+  ({ showAgentViewer = false, text, queryParams, chatUrl, ...props }, ref) => {
     const [isAgentViewerOpen, setIsAgentViewerOpen] = React.useState(false);
     const intl = useIntl();
     const styles = useCopyInputControlStyles();
@@ -70,7 +71,7 @@ export const CopyInputControlWithAgent = React.forwardRef<Pick<HTMLElement, 'foc
           </div>
         ) : null}
         {showAgentViewer && text ? (
-          <AgentUrlViewer url={text} isOpen={isAgentViewerOpen} onClose={handleAgentViewerClose} queryParams={queryParams} />
+          <AgentUrlViewer isOpen={isAgentViewerOpen} onClose={handleAgentViewerClose} queryParams={queryParams} url={chatUrl ?? ''} />
         ) : null}
       </>
     );

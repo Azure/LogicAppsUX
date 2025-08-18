@@ -53,7 +53,7 @@ import {
   RoleService,
   resolveConnectionsReferences,
 } from '@microsoft/logic-apps-shared';
-import type { AgentQueryParams, ContentType, IHostService, IWorkflowService } from '@microsoft/logic-apps-shared';
+import type { AgentURL, ContentType, IHostService, IWorkflowService } from '@microsoft/logic-apps-shared';
 import type { AllCustomCodeFiles, CustomCodeFileNameMapping, Workflow } from '@microsoft/logic-apps-designer';
 import {
   DesignerProvider,
@@ -533,7 +533,7 @@ const getDesignerServices = (
   isHybrid: boolean,
   connectionsData: ConnectionsData,
   workflowApp: WorkflowApp,
-  agentUrlData: { url: string; hostName: string; queryParams?: AgentQueryParams } | undefined,
+  agentUrlData: AgentURL | undefined,
   addConnection: (data: ConnectionAndAppSetting) => Promise<void>,
   getConfiguration: (connectionId: string) => Promise<any>,
   tenantId: string | undefined,
@@ -810,7 +810,7 @@ const getDesignerServices = (
 
   const workflowService: IWorkflowService = {
     getCallbackUrl: (triggerName: string) => listCallbackUrl(workflowIdWithHostRuntime, triggerName),
-    getAgentUrl: () => Promise.resolve(agentUrlData || { url: '', hostName: '' }),
+    getAgentUrl: () => Promise.resolve(agentUrlData || { agentUrl: '', chatUrl: '', hostName: '' }),
     getAppIdentity: () => workflowApp?.identity,
     isExplicitAuthRequiredForManagedIdentity: () => true,
     isSplitOnSupported: () => !!isStateful,

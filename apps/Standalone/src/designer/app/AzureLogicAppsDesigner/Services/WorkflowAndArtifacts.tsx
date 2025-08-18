@@ -460,7 +460,9 @@ export const useAgentUrl = (siteResourceId: string, workflowName: string, hostNa
       return undefined;
     }
 
-    const baseUrl = `${hostName.startsWith('https://') ? hostName : `https://${hostName}`}/api/agentsChat/${workflowName}/IFrame`;
+    const baseUrl = hostName.startsWith('https://') ? hostName : `https://${hostName}`;
+    const agentUrl = `${baseUrl}/api/Agents/${workflowName}`;
+    const chatUrl = `${baseUrl}/api/agentsChat/${workflowName}/IFrame`;
 
     let queryParams: AgentQueryParams | undefined = undefined;
 
@@ -481,9 +483,10 @@ export const useAgentUrl = (siteResourceId: string, workflowName: string, hostNa
     }
 
     return {
-      url: baseUrl,
-      hostName,
+      agentUrl,
+      chatUrl,
       queryParams,
+      hostName,
     };
   }, [workflowName, hostName, a2aData, oboData, isA2ALoading, isA2AError, isOBOKeyLoading]);
 
