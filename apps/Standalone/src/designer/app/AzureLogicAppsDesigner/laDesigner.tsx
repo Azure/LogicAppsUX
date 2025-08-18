@@ -15,7 +15,7 @@ import {
   getCustomCodeAppFiles,
   listCallbackUrl,
   saveWorkflowStandard,
-  useAgentUrl,
+  fetchAgentUrl,
   useAllCustomCodeFiles,
   useAppSettings,
   useCurrentObjectId,
@@ -53,7 +53,7 @@ import {
   RoleService,
   resolveConnectionsReferences,
 } from '@microsoft/logic-apps-shared';
-import type { AgentQueryParams, ContentType, IHostService, IWorkflowService } from '@microsoft/logic-apps-shared';
+import type { ContentType, IHostService, IWorkflowService } from '@microsoft/logic-apps-shared';
 import type { AllCustomCodeFiles, CustomCodeFileNameMapping, Workflow } from '@microsoft/logic-apps-designer';
 import {
   DesignerProvider,
@@ -115,7 +115,6 @@ const DesignerEditor = () => {
   const { data, isLoading, isError, error } = useWorkflowAndArtifactsStandard(workflowId);
   const { data: settingsData, isLoading: settingsLoading, isError: settingsIsError, error: settingsError } = useAppSettings(siteResourceId);
   const { data: workflowAppData, isLoading: appLoading } = useWorkflowApp(siteResourceId, useHostingPlan());
-  const { data: agentUrlData } = useAgentUrl(siteResourceId, workflowName, workflowAppData?.properties?.defaultHostName ?? '');
   const { data: tenantId } = useCurrentTenantId();
   const { data: objectId } = useCurrentObjectId();
   const [designerID, setDesignerID] = useState(guid());
@@ -179,7 +178,6 @@ const DesignerEditor = () => {
         isHybridLogicApp,
         connectionsData ?? {},
         workflowAppData as WorkflowApp,
-        agentUrlData,
         addConnectionDataInternal,
         getConnectionConfiguration,
         tenantId,
@@ -533,7 +531,6 @@ const getDesignerServices = (
   isHybrid: boolean,
   connectionsData: ConnectionsData,
   workflowApp: WorkflowApp,
-  agentUrlData: { url: string; hostName: string; queryParams?: AgentQueryParams } | undefined,
   addConnection: (data: ConnectionAndAppSetting) => Promise<void>,
   getConfiguration: (connectionId: string) => Promise<any>,
   tenantId: string | undefined,
@@ -810,7 +807,7 @@ const getDesignerServices = (
 
   const workflowService: IWorkflowService = {
     getCallbackUrl: (triggerName: string) => listCallbackUrl(workflowIdWithHostRuntime, triggerName),
-    getAgentUrl: () => Promise.resolve(agentUrlData || { url: '', hostName: '' }),
+    getAgentUrl: () => fetchAgentUrl(siteResourceId, workflowName, workflowApp?.properties?.defaultHostName ?? ''),
     getAppIdentity: () => workflowApp?.identity,
     isExplicitAuthRequiredForManagedIdentity: () => true,
     isSplitOnSupported: () => !!isStateful,
