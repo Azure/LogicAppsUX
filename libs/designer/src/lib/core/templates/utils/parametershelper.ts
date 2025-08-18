@@ -11,7 +11,7 @@ import type { WorkflowTemplateData } from '../../actions/bjsworkflow/templates';
 import { Deserialize } from '../../parsers/BJSWorkflow/BJSDeserializer';
 import { getSwaggerForConnector } from '../../queries/connections';
 import { getOperationInfo, getOperationManifest } from '../../queries/operation';
-import { isRootNodeInGraph } from '../../utils/graph';
+import { isTriggerNode } from '../../utils/graph';
 import { getInputParametersFromSwagger, getOperationInfo as getSwaggerOperationInfo } from '../../utils/swagger/operation';
 import type { DependencyInfo, NodeInputs, NodeOperation, NodeOperationInputsData } from '../../state/operation/operationMetadataSlice';
 import { convertToValueSegments } from '../../utils/parameters/helper';
@@ -71,7 +71,7 @@ export const initializeParametersMetadata = async (
 
     for (const operationId of Object.keys(operationsToInitialize)) {
       const parametersToInitialize = operationsToInitialize[operationId];
-      const isTrigger = isRootNodeInGraph(operationId, 'root', nodesMetadata);
+      const isTrigger = isTriggerNode(operationId, nodesMetadata);
       const operation = getPropertyValue(operations, operationId);
       const nodeId = `${templateId}-${workflowId}-${operationId}`;
       const templateConnectionKey = parametersToInitialize[0].dynamicData?.connection;

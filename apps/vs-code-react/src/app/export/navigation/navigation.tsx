@@ -70,7 +70,7 @@ export const Navigation: React.FC = () => {
    */
   const logLastStep = (pageName: string) => {
     vscode.postMessage({
-      command: ExtensionCommand.log_telemtry,
+      command: ExtensionCommand.logTelemetry,
       key: 'lastStep',
       value: pageName,
     });
@@ -78,26 +78,29 @@ export const Navigation: React.FC = () => {
 
   const onClickNext = () => {
     const { pathname } = location;
+    // Extract the current step from pathname - handle both absolute and relative paths
+    const pathSegments = pathname.split('/');
+    const currentStep = pathSegments[pathSegments.length - 1];
 
-    switch (pathname) {
-      case `/${RouteName.export}/${RouteName.instance_selection}`: {
+    switch (currentStep) {
+      case RouteName.instance_selection: {
         logLastStep(RouteName.workflows_selection);
-        navigate(`/${RouteName.export}/${RouteName.workflows_selection}`);
+        navigate(RouteName.workflows_selection);
         break;
       }
-      case `/${RouteName.export}/${RouteName.workflows_selection}`: {
+      case RouteName.workflows_selection: {
         logLastStep(RouteName.validation);
-        navigate(`/${RouteName.export}/${RouteName.validation}`);
+        navigate(RouteName.validation);
         break;
       }
-      case `/${RouteName.export}/${RouteName.validation}`: {
+      case RouteName.validation: {
         logLastStep(RouteName.summary);
-        navigate(`/${RouteName.export}/${RouteName.summary}`);
+        navigate(RouteName.summary);
         break;
       }
-      case `/${RouteName.export}/${RouteName.summary}`: {
+      case RouteName.summary: {
         logLastStep(RouteName.status);
-        navigate(`/${RouteName.export}/${RouteName.status}`);
+        navigate(RouteName.status);
         vscode.postMessage({
           command: ExtensionCommand.export_package,
           targetDirectory,
@@ -113,26 +116,30 @@ export const Navigation: React.FC = () => {
 
   const isBackDisabled = (): boolean => {
     const { pathname } = location;
+    const pathSegments = pathname.split('/');
+    const currentStep = pathSegments[pathSegments.length - 1];
     return (
-      pathname === `/${RouteName.export}/${RouteName.instance_selection}` ||
-      (pathname === `/${RouteName.export}/${RouteName.status}` && finalStatus !== Status.Succeeded && finalStatus !== Status.Failed)
+      currentStep === RouteName.instance_selection ||
+      (currentStep === RouteName.status && finalStatus !== Status.Succeeded && finalStatus !== Status.Failed)
     );
   };
 
   const isNextDisabled = (): boolean => {
     const { pathname } = location;
+    const pathSegments = pathname.split('/');
+    const currentStep = pathSegments[pathSegments.length - 1];
 
-    switch (pathname) {
-      case `/${RouteName.export}/${RouteName.instance_selection}`: {
+    switch (currentStep) {
+      case RouteName.instance_selection: {
         return selectedSubscription === '' || (selectedIse === '' && selectedLocation === '');
       }
-      case `/${RouteName.export}/${RouteName.workflows_selection}`: {
+      case RouteName.workflows_selection: {
         return selectedWorkflows.length === 0;
       }
-      case `/${RouteName.export}/${RouteName.validation}`: {
+      case RouteName.validation: {
         return validationState === '' || validationState === ValidationStatus.failed;
       }
-      case `/${RouteName.export}/${RouteName.summary}`: {
+      case RouteName.summary: {
         return !packageUrl || targetDirectory.path === '' || (targetDirectory.path !== '' && isManaged && resourceGroup === undefined);
       }
       default: {
@@ -143,12 +150,14 @@ export const Navigation: React.FC = () => {
 
   const getNextText = (): string => {
     const { pathname } = location;
+    const pathSegments = pathname.split('/');
+    const currentStep = pathSegments[pathSegments.length - 1];
 
-    switch (pathname) {
-      case `/${RouteName.export}/${RouteName.validation}`: {
+    switch (currentStep) {
+      case RouteName.validation: {
         return validationState === ValidationStatus.succeeded_with_warnings ? intlText.EXPORT_WITH_WARNINGS : intlText.EXPORT;
       }
-      case `/${RouteName.export}/${RouteName.summary}`: {
+      case RouteName.summary: {
         const validationText =
           validationState === ValidationStatus.succeeded_with_warnings ? intlText.EXPORT_WITH_WARNINGS : intlText.EXPORT;
         return `${validationText} and ${intlText.FINISH}`;

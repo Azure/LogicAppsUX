@@ -77,7 +77,7 @@ describe('Loops Utility', () => {
       workflow: {
         idReplacements: {},
         nodesMetadata: {
-          manual: { graphId: 'root', isRoot: true },
+          manual: { graphId: 'root', isRoot: true, isTrigger: true },
           nodeId: { graphId: 'root', isRoot: false },
         },
       },

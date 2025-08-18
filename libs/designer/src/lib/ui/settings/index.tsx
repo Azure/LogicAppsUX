@@ -12,7 +12,7 @@ import { setExpandedSections } from '../../core/state/setting/settingSlice';
 import { updateTokenSecureStatus } from '../../core/state/tokens/tokensSlice';
 import { useRootTriggerId } from '../../core/state/workflow/workflowSelectors';
 import type { AppDispatch, RootState } from '../../core/store';
-import { isRootNodeInGraph } from '../../core/utils/graph';
+import { isTriggerNode } from '../../core/utils/graph';
 import { isSecureOutputsLinkedToInputs } from '../../core/utils/setting';
 import { DataHandling } from './sections/datahandling';
 import { General } from './sections/general';
@@ -237,7 +237,7 @@ function GeneralSettings({
   dispatch,
   updateSettings,
 }: SettingSectionProps): JSX.Element | null {
-  const isTrigger = useSelector((state: RootState) => isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata));
+  const isTrigger = useSelector((state: RootState) => isTriggerNode(nodeId, state.workflow.nodesMetadata));
   const maximumWaitingRunsMetadata = useHostOptions().maxWaitingRuns;
   const operationInfo = useOperationInfo(nodeId) ?? ({} as any);
   const nodeInputs = useRawInputParameters(nodeId) ?? ({} as any);

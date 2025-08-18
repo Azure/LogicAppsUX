@@ -80,7 +80,7 @@ const DefaultNode = ({ id }: NodeProps) => {
   const metadata = useNodeMetadata(id);
   const operationInfo = useOperationInfo(id);
   const connectorName = useConnectorName(operationInfo);
-  const isTrigger = useMemo(() => metadata?.graphId === 'root' && metadata?.isRoot, [metadata]);
+  const isTrigger = useMemo(() => metadata?.isTrigger ?? false, [metadata]);
   const parentRunIndex = useParentRunIndex(id);
   const runInstance = useRunInstance();
   const parentNodeId = useParentNodeId(id);

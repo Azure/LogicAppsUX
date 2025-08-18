@@ -19,7 +19,7 @@ import {
   isConnectionMultiAuthManagedIdentityType,
   isConnectionSingleAuthManagedIdentityType,
 } from '../../utils/connectors/connections';
-import { isRootNodeInGraph } from '../../utils/graph';
+import { isTriggerNode } from '../../utils/graph';
 import { updateDynamicDataInNode } from '../../utils/parameters/helper';
 import type {
   IOperationManifestService,
@@ -172,7 +172,7 @@ const updateNodeConnectionAndProperties = async (
 
   return updateDynamicDataInNode(
     nodeId,
-    isRootNodeInGraph(nodeId, 'root', newState.workflow.nodesMetadata),
+    isTriggerNode(nodeId, newState.workflow.nodesMetadata),
     operationInfo,
     getConnectionReference(newState.connections, nodeId),
     dependencies,
@@ -337,7 +337,7 @@ export async function getConnectionsMappingForNodes(deserializedWorkflow: Deseri
   const tasks: Promise<Record<string, string> | undefined>[] = [];
 
   for (const [nodeId, operation] of Object.entries(actionData)) {
-    const isTrigger = getRecordEntry(nodesMetadata, nodeId)?.isRoot ?? false;
+    const isTrigger = getRecordEntry(nodesMetadata, nodeId)?.isTrigger ?? false;
     tasks.push(getConnectionMappingForNode(operation, nodeId, isTrigger, operationManifestService));
   }
 

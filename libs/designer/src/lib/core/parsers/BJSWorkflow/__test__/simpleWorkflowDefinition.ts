@@ -93,7 +93,7 @@ export const expectedSimpleWorkflowDefinitionOutput: { graph: WorkflowNode; acti
     },
   },
   nodesMetadata: {
-    manual: { graphId: 'root', isRoot: true },
+    manual: { graphId: 'root', isRoot: true, isTrigger: true },
     Increment_variable: { graphId: 'root' },
     Initialize_variable: { graphId: 'root' },
     Response: { graphId: 'root' },

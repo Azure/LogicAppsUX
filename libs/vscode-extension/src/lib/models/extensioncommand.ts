@@ -14,7 +14,6 @@ export const ExtensionCommand = {
   update_export_path: 'update-export-path',
   update_panel_metadata: 'update-panel-metadata',
   export_package: 'export-package',
-  log_telemtry: 'log-telemetry',
   getFunctionDisplayExpanded: 'getFunctionDisplayExpanded',
   getDataMapperVersion: 'getDataMapperVersion',
   add_status: 'add-status',
