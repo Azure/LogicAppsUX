@@ -1,4 +1,4 @@
-import { Dropdown, Label, Option, OptionGroup, Spinner, makeStyles, useId } from '@fluentui/react-components';
+import { Dropdown, Label, Option, OptionGroup, makeStyles, useId } from '@fluentui/react-components';
 import type { DropdownProps, OptionOnSelectData, SelectionEvents } from '@fluentui/react-components';
 
 export const DropdownMenuItemType = {
@@ -51,7 +51,7 @@ const useStyles = makeStyles({
 });
 
 export const SearchableDropdown: React.FC<ISearchableDropdownProps> = (props) => {
-  const { options = [], onChange, label, selectedKey, selectedKeys, placeholder, multiSelect, isLoading, className } = props;
+  const { options = [], onChange, label, selectedKey, selectedKeys, placeholder, multiSelect, className } = props;
   const styles = useStyles();
   const dropdownId = useId();
 
@@ -145,7 +145,6 @@ export const SearchableDropdown: React.FC<ISearchableDropdownProps> = (props) =>
       >
         {renderDropdownContent()}
       </Dropdown>
-      {isLoading && <Spinner className={styles.spinner} size="extra-small" />}
     </div>
   );
 };
