@@ -7,6 +7,7 @@ import { BrowseGrid, isBuiltInConnector, isCustomConnector, RuntimeFilterTagList
 import { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { useShouldEnableACASession } from './hooks';
+import { ALLOWED_A2A_CONNECTOR_NAMES } from './helpers';
 
 const defaultFilterConnector = (connector: Connector, runtimeFilter: string): boolean => {
   if (runtimeFilter === 'inapp' && !isBuiltInConnector(connector)) {
@@ -130,11 +131,6 @@ export const BrowseView = (props: BrowseViewProps) => {
     [filters]
   );
 
-  const allowedA2AConnectorNamesSet = useMemo(
-    () => new Set(['http', 'dataOperationNew', 'variable', 'xmlOperations', 'inlineCode', 'as2Operations', 'datetime']),
-    []
-  );
-
   const passesA2AWorkflowFilter = useCallback(
     (connector: Connector): boolean => {
       // Only apply this filter if it's A2A workflow and adding to root
@@ -145,7 +141,7 @@ export const BrowseView = (props: BrowseViewProps) => {
       const connectorType = connector.type;
       const connectorName = connector.name;
 
-      if (connectorName && allowedA2AConnectorNamesSet.has(connectorName)) {
+      if (connectorName && ALLOWED_A2A_CONNECTOR_NAMES.has(connectorName)) {
         return true;
       }
 
@@ -156,7 +152,7 @@ export const BrowseView = (props: BrowseViewProps) => {
 
       return false;
     },
-    [isA2AWorkflow, isAddingToGraph, allowedA2AConnectorNamesSet]
+    [isA2AWorkflow, isAddingToGraph]
   );
 
   const filterItems = useCallback(

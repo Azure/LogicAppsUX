@@ -18,6 +18,7 @@ import { useIsA2AWorkflow, useIsAgenticWorkflow } from '../../../core/state/desi
 import { useShouldEnableACASession, useShouldEnableNestedAgent, useShouldEnableParseDocumentWithMetadata } from './hooks';
 import { DefaultSearchOperationsService } from './SearchOpeationsService';
 import constants from '../../../common/constants';
+import { ALLOWED_A2A_CONNECTOR_NAMES } from './helpers';
 
 type SearchViewProps = {
   searchTerm: string;
@@ -64,11 +65,6 @@ export const SearchView: FC<SearchViewProps> = ({
     }
   }, [searchTerm]);
 
-  const allowedA2AConnectorNamesSet = useMemo(
-    () => new Set(['http', 'dataOperationNew', 'variable', 'xmlOperations', 'inlineCode', 'as2Operations', 'datetime']),
-    []
-  );
-
   const passesA2AWorkflowFilter = useCallback(
     (operation: DiscoveryOperation<DiscoveryResultTypes>): boolean => {
       // Only apply this filter if it's A2A workflow and adding to root
@@ -79,7 +75,7 @@ export const SearchView: FC<SearchViewProps> = ({
       const operationType = operation.properties?.api?.type;
       const connectorName = operation.properties?.api?.name;
 
-      if (connectorName && allowedA2AConnectorNamesSet.has(connectorName)) {
+      if (connectorName && ALLOWED_A2A_CONNECTOR_NAMES.has(connectorName)) {
         return true;
       }
 
@@ -90,7 +86,7 @@ export const SearchView: FC<SearchViewProps> = ({
 
       return false;
     },
-    [isA2AWorkflow, isRoot, allowedA2AConnectorNamesSet]
+    [isA2AWorkflow, isRoot]
   );
 
   const filterAgenticLoops = useCallback(
