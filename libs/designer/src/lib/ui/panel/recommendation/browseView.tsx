@@ -151,7 +151,7 @@ export const BrowseView = (props: BrowseViewProps) => {
 
       // Allow APIConnection or ServiceProvider types
       if (connectorType) {
-        return equals(connectorType, 'Microsoft.Web/locations/managedApis') || equals(connectorType, 'serviceProvider');
+        return equals(connectorType, 'Microsoft.Web/locations/managedApis') || equals(connectorType, 'ServiceProvider');
       }
 
       return false;
