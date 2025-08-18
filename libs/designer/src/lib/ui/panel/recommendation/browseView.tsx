@@ -147,7 +147,7 @@ export const BrowseView = (props: BrowseViewProps) => {
 
       // Allow APIConnection or ServiceProvider types
       if (connectorType) {
-        return equals(connectorType, 'Microsoft.Web/locations/managedApis') || equals(connectorType, 'serviceProvider');
+        return equals(connectorType, 'Microsoft.Web/locations/managedApis') || equals(connectorType, 'ServiceProvider');
       }
 
       return false;
@@ -157,7 +157,6 @@ export const BrowseView = (props: BrowseViewProps) => {
 
   const filterItems = useCallback(
     (connector: Connector): boolean => {
-      console.log(connector);
       return (
         isAgentConnectorAllowed(connector) &&
         isACASessionAllowed(connector) &&
