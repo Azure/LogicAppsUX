@@ -189,6 +189,35 @@ exports[`lib/copyinputcontrol > should render with popup button when showAgentVi
       </svg>
     </span>
   </button>
+  <button
+    aria-label="Open in popup"
+    className="fui-Button r1alrhcs ___5ap6rb0_kajqcr0 f1c21dwh f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb fjxutwb f1s2uweq fr80ssc f1ukrpxl fecsdlb f139oj5f ft1hn21 fuxngvv fwiml72 f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1fg1p5m f1dfjoow f1j98vj9 f1tme0vf f4xjyn1 f18onu3q f9ddjv3 f17fgpbq fu97m5z ft85np5 fy9rknc figsok6 fwrc4pm fazmxh f1jt17bm"
+    onBlur={[Function]}
+    onClick={[Function]}
+    onFocus={[Function]}
+    onPointerEnter={[Function]}
+    onPointerLeave={[Function]}
+    type="button"
+  >
+    <span
+      className="fui-Button__icon rywnvv2 ___hix1za0_wgffxm0 fe5j1ua fjamq6b f64fuq3 fbaiahx"
+    >
+      <svg
+        aria-hidden={true}
+        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        fill="currentColor"
+        height="24"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M6.25 3A3.25 3.25 0 0 0 3 6.25v11.5C3 19.55 4.46 21 6.25 21h11.5c1.8 0 3.25-1.46 3.25-3.25V6.25C21 4.45 19.54 3 17.75 3H6.25ZM19.5 7h-15v-.75c0-.97.78-1.75 1.75-1.75h11.5c.97 0 1.75.78 1.75 1.75V7Zm-15 1.5h15v9.25c0 .97-.78 1.75-1.75 1.75H6.25c-.97 0-1.75-.78-1.75-1.75V8.5Z"
+          fill="currentColor"
+        />
+      </svg>
+    </span>
+  </button>
 </div>
 `;
 

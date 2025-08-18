@@ -590,9 +590,9 @@ export const updateAgentUrlInInputs = async ({ type, kind }: NodeOperation, node
       const agentUrlInfo = await WorkflowService().getAgentUrl?.();
       const parameter = getParameterFromName(nodeInputs, 'agentUrl');
       if (parameter && agentUrlInfo) {
-        parameter.value = [createLiteralValueSegment(agentUrlInfo.url)];
+        parameter.value = [createLiteralValueSegment(agentUrlInfo.agentUrl)];
         if (agentUrlInfo.queryParams) {
-          parameter.editorOptions = { ...parameter.editorOptions, queryParams: agentUrlInfo.queryParams };
+          parameter.editorOptions = { ...parameter.editorOptions, chatUrl: agentUrlInfo.chatUrl, queryParams: agentUrlInfo.queryParams };
         }
         return parameter;
       }
