@@ -392,7 +392,7 @@ export const fetchAgentUrl = (siteResourceId: string, workflowName: string, host
         message: `Failed to get agent URL: ${error}`,
         area: 'fetchAgentUrl',
       });
-      return { agentUrl: '', chatUrl: '', hostName: '' };
+      return { agentUrl: '', chatUrl: '', hostName };
     }
   });
 };
