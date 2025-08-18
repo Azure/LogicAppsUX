@@ -1,3 +1,5 @@
+import { ExtensionCommand } from '../../../../../libs/vscode-extension/src';
+
 // Mock VS Code API for browser environment
 export interface VSCodeApi {
   postMessage(message: any): void;
@@ -20,7 +22,7 @@ export const mockVSCodeApi: VSCodeApi = {
     }
 
     // Mock telemetry logging
-    if (message.command === 'log_telemtry') {
+    if (message.command === ExtensionCommand.logTelemetry) {
       console.log('Mock Telemetry:', message.key, message.value);
     }
   },

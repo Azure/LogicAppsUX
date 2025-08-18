@@ -70,7 +70,7 @@ export const Navigation: React.FC = () => {
    */
   const logLastStep = (pageName: string) => {
     vscode.postMessage({
-      command: ExtensionCommand.log_telemtry,
+      command: ExtensionCommand.logTelemetry,
       key: 'lastStep',
       value: pageName,
     });

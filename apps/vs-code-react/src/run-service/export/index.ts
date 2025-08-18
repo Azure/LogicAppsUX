@@ -330,7 +330,7 @@ export class ApiService implements IApiService {
 
   private logTelemetryError = (error: any) => {
     this.vscodeContext.postMessage({
-      command: ExtensionCommand.log_telemtry,
+      command: ExtensionCommand.logTelemetry,
       key: 'error',
       value: error,
     });
