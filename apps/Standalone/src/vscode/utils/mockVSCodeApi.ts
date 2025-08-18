@@ -1,4 +1,4 @@
-import { ExtensionCommand } from '../../../../../libs/vscode-extension/src';
+import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 
 // Mock VS Code API for browser environment
 export interface VSCodeApi {
@@ -14,7 +14,7 @@ export const mockVSCodeApi: VSCodeApi = {
     // For now, we'll just log it for debugging
 
     // We can simulate some responses here for development
-    if (message.command === 'initialize_frame') {
+    if (message.command === ExtensionCommand.initialize_frame) {
       // Mock initialization response
       setTimeout(() => {
         console.log('Mock: Initialized frame');

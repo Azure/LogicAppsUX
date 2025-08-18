@@ -54,7 +54,7 @@ const ExportContent: React.FC<ExportContentProps> = ({ token }) => {
     // Initialize with data using the loaded token or fallback to mock
     const initialData = {
       ...mockInitialData,
-      accessToken: token || environment.armToken || mockInitialData.accessToken,
+      accessToken: `Bearer ${token || environment.armToken || mockInitialData.accessToken}`,
     };
 
     console.log('Initializing export with token:', token ? 'Real token from armToken.json' : 'Using mock token');

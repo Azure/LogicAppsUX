@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { makeStyles } from '@fluentui/react-components';
+import { makeStyles, Text } from '@fluentui/react-components';
 
 const useStyles = makeStyles({
   nav: {
@@ -27,12 +27,6 @@ const useStyles = makeStyles({
       backgroundColor: '#106ebe',
     },
   },
-  title: {
-    fontSize: '16px',
-    fontWeight: '600',
-    marginRight: '24px',
-    color: '#323130',
-  },
 });
 
 export const VSCodeNavigationWrapper = () => {
@@ -44,14 +38,14 @@ export const VSCodeNavigationWrapper = () => {
   };
 
   return (
-    <nav className={styles.nav}>
-      <div className={styles.title}>VS Code Components</div>
+    <div className={styles.nav}>
+      <Text>VS Code Components</Text>
       <Link to="/vscode/export" className={`${styles.navLink} ${isActiveLink('/export') ? styles.activeLink : ''}`}>
         Export
       </Link>
       <Link to="/vscode/overview" className={`${styles.navLink} ${isActiveLink('/overview') ? styles.activeLink : ''}`}>
         Overview
       </Link>
-    </nav>
+    </div>
   );
 };
