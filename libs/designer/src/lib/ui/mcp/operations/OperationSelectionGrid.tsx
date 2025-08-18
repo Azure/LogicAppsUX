@@ -21,20 +21,31 @@ interface OperationCellProps {
   operation: DiscoveryOpArray[number];
   isSelected: boolean;
   showConnectorName: boolean;
+  disabled?: boolean;
   onCardClick: (operationId: string, event: React.MouseEvent) => void;
   onCheckboxChange: (operationId: string, checked: boolean) => void;
   styles: ReturnType<typeof useOperationSelectionGridStyles>;
 }
 
-const OperationCell = ({ operation, isSelected, showConnectorName, onCardClick, onCheckboxChange, styles }: OperationCellProps) => {
+const OperationCell = ({
+  operation,
+  isSelected,
+  showConnectorName,
+  disabled,
+  onCardClick,
+  onCheckboxChange,
+  styles,
+}: OperationCellProps) => {
   const { properties, name } = operation;
   const { api, summary, description, annotation } = properties;
 
   return (
     <Card
       className={isSelected ? styles.operationCardSelected : styles.operationCard}
+      focusMode={disabled ? 'off' : undefined}
       appearance="subtle"
-      onClick={(event) => onCardClick(name, event)}
+      onClick={disabled ? undefined : (event) => onCardClick(name, event)}
+      style={{ opacity: disabled ? 0.5 : 1 }}
     >
       <CardHeader
         image={<img src={api?.iconUri ?? DefaultIcon} alt={api?.displayName} className={styles.connectorIcon} />}
@@ -45,6 +56,7 @@ const OperationCell = ({ operation, isSelected, showConnectorName, onCardClick, 
             </Body1>
             <Checkbox
               checked={isSelected}
+              disabled={disabled}
               onChange={(_, data) => onCheckboxChange(name, data.checked === true)}
               aria-label={`Select ${summary}`}
               className={styles.checkboxInCard}
@@ -88,10 +100,19 @@ export const OperationSelectionGrid = ({
   const [columnsCount, setColumnsCount] = useState(1);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const { selectedOperations } = useSelector((state: RootState) => ({
+  const { selectedConnectorId, selectedOperations, operationInfos } = useSelector((state: RootState) => ({
+    selectedConnectorId: state.mcpSelection.selectedConnectorId,
     selectedOperations: state.mcpSelection.selectedOperations ?? [],
+    operationInfos: state.operations.operationInfo,
   }));
   const selectedOperationsSet = useMemo(() => new Set(selectedOperations), [selectedOperations]);
+  const currentOperations = useMemo(() => {
+    return new Set(
+      Object.values(operationInfos)
+        .filter((info) => equals(info.connectorId, selectedConnectorId))
+        .map((info) => info.operationId.toLowerCase())
+    );
+  }, [operationInfos, selectedConnectorId]);
   useEffect(() => {
     const element = containerRef.current;
     if (!element) {
@@ -214,6 +235,7 @@ export const OperationSelectionGrid = ({
             key={operation.id}
             operation={operation}
             isSelected={selectedOperationsSet.has(operation.name)}
+            disabled={currentOperations.has(operation.name.toLowerCase())}
             showConnectorName={showConnectorName}
             onCardClick={handleCardClick}
             onCheckboxChange={handleCheckboxChange}

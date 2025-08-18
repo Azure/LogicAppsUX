@@ -375,7 +375,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     if (!designTimePort) {
       throw new Error(localize('designTimePortNotFound', 'Design time port not found.'));
     }
-    const url = `http://localhost:${designTimePort}${managementApiPrefix}/workflows/${this.workflowName}/validatePartial?api-version=${this.apiVersion}`;
+    const url = `http://localhost:${designTimePort}${managementApiPrefix}/workflows/${this.workflowName}/validate?api-version=${this.apiVersion}`;
     try {
       const headers = createHttpHeaders({
         'Content-Type': 'application/json',
@@ -385,13 +385,13 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
         method: HTTP_METHODS.POST,
         headers,
         body: JSON.stringify({
-          properties: { definition: workflow.definition, kind: workflow.kind, appSettings: { values: this.panelMetadata.localSettings } },
+          properties: { definition: workflow },
         }),
       });
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : typeof error === 'string' ? error : 'Unknown error';
       context.telemetry.properties.validateWorkflowError = errorMessage;
-      if (error.statusCode !== 404) {
+      if (error.statusCode && error.statusCode !== 404) {
         const errorLocalized = localize('workflowValidationFailed', 'Workflow validation failed: ') + errorMessage;
         window.showErrorMessage(errorLocalized, localize('OK', 'OK'));
       }

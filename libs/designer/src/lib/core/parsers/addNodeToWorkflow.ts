@@ -49,16 +49,16 @@ export const addNodeToWorkflow = (
   const isTrigger = !!operation.properties?.trigger;
   const isRoot = isTrigger || (parentId ? removeIdTag(parentId) === graphId : false);
   const parentNodeId = graphId !== 'root' ? graphId : undefined;
-  nodesMetadata[newNodeId] = { graphId, parentNodeId, isRoot };
+  nodesMetadata[newNodeId] = { graphId, parentNodeId, isRoot, isTrigger };
 
   state.operations[newNodeId] = { ...state.operations[newNodeId], type: operation.type };
   state.newlyAddedOperations[newNodeId] = newNodeId;
   state.isDirty = true;
 
-  const isAfterTrigger = getRecordEntry(nodesMetadata, parentId ?? '')?.isRoot && graphId === 'root';
+  const isAfterTrigger = getRecordEntry(nodesMetadata, parentId ?? '')?.isTrigger;
   const allowRunAfterTrigger = equals(state.workflowKind, 'agent');
   const shouldAddRunAfters = allowRunAfterTrigger || (!isRoot && !isAfterTrigger);
-  nodesMetadata[newNodeId] = { graphId: subgraphId ?? graphId, parentNodeId, isRoot };
+  nodesMetadata[newNodeId] = { graphId: subgraphId ?? graphId, parentNodeId, isRoot, isTrigger };
   state.operations[newNodeId] = { ...state.operations[newNodeId], type: operation.type };
   state.newlyAddedOperations[newNodeId] = newNodeId;
 

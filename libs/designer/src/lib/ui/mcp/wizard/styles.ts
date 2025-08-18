@@ -43,6 +43,17 @@ export const useMcpWizardStyles = makeStyles({
     borderBottom: borderStyle,
   },
 
+  sectionHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    position: 'relative',
+  },
+
+  sectionDescription: {
+    marginTop: '8px',
+  },
+
   content: {
     flex: 1,
     display: 'flex',

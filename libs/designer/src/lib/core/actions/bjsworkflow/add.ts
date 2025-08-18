@@ -21,7 +21,7 @@ import type { NodesMetadata, WorkflowState } from '../../state/workflow/workflow
 import { addAgentTool, addNode, setFocusNode } from '../../state/workflow/workflowSlice';
 import type { AppDispatch, RootState } from '../../store';
 import { getBrandColorFromManifest, getIconUriFromManifest } from '../../utils/card';
-import { getTriggerNodeId, isRootNodeInGraph } from '../../utils/graph';
+import { getTriggerNodeId, isTriggerNode } from '../../utils/graph';
 import { getParameterFromName, updateDynamicDataInNode } from '../../utils/parameters/helper';
 import { getInputParametersFromSwagger, getOutputParametersFromSwagger } from '../../utils/swagger/operation';
 import { convertOutputsToTokens, getBuiltInTokens, getTokenNodeIds } from '../../utils/tokens';
@@ -162,7 +162,7 @@ export const initializeOperationDetails = async (
   openPanel = true
 ): Promise<void> => {
   const state = getState();
-  const isTrigger = isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata);
+  const isTrigger = isTriggerNode(nodeId, state.workflow.nodesMetadata);
   const { type, kind, connectorId, operationId } = operationInfo;
   let isConnectionRequired = true;
   let connector: Connector | undefined;
@@ -456,7 +456,7 @@ export const addTokensAndVariables = (
   outputTokens.push(...getBuiltInTokens(manifest));
   outputTokens.push(
     ...convertOutputsToTokens(
-      isRootNodeInGraph(nodeId, 'root', nodesMetadata) ? undefined : nodeId,
+      isTriggerNode(nodeId, nodesMetadata) ? undefined : nodeId,
       operationType,
       nodeOutputs.outputs ?? {},
       { iconUri, brandColor },

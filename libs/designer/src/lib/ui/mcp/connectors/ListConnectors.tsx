@@ -12,7 +12,6 @@ import {
   Button,
   TableBody,
   tokens,
-  Spinner,
   Image,
 } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
@@ -36,9 +35,8 @@ const lastCellStyles = {
 export const ListConnectors = ({ addConnectors, addDisabled }: { addConnectors: () => void; addDisabled: boolean }) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
-  const { operationInfos, isInitializingOperations, connectionsMapping, connectionReferences } = useSelector((state: RootState) => ({
+  const { operationInfos, connectionsMapping, connectionReferences } = useSelector((state: RootState) => ({
     operationInfos: state.operations.operationInfo,
-    isInitializingOperations: state.operations.loadStatus.isInitializingOperations,
     connectionsMapping: state.connection.connectionsMapping,
     connectionReferences: state.connection.connectionReferences,
   }));
@@ -172,14 +170,6 @@ export const ListConnectors = ({ addConnectors, addDisabled }: { addConnectors: 
     },
     [operationInfos, dispatch]
   );
-
-  if (isInitializingOperations) {
-    return (
-      <div className={styles.emptyState}>
-        <Spinner size="medium" label={INTL_TEXT.loadingConnectorsText} />
-      </div>
-    );
-  }
 
   if (!items || items.length === 0) {
     return (

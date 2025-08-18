@@ -36,6 +36,7 @@ describe('workflow slice reducers', () => {
       '123': {
         graphId: 'root',
         isRoot: true,
+        isTrigger: true,
       },
     });
   });

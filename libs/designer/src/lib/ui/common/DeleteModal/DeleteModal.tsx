@@ -19,7 +19,7 @@ const DeleteModal = () => {
   const metadata = useNodeMetadata(nodeId);
   const graphId = useMemo(() => metadata?.graphId ?? '', [metadata]);
 
-  const isTrigger = useMemo(() => !!(metadata?.graphId === 'root' && metadata?.isRoot), [metadata]);
+  const isTrigger = useMemo(() => metadata?.isTrigger ?? false, [metadata]);
 
   const onDismiss = useCallback(() => dispatch(setShowDeleteModalNodeId(undefined)), [dispatch]);
 
