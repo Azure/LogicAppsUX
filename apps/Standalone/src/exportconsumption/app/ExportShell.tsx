@@ -3,6 +3,7 @@ import { ReactQueryProvider } from '@microsoft/logic-apps-designer';
 import { useQuery } from '@tanstack/react-query';
 import { DevToolbox } from '../components/DevToolbox';
 import { loadToken } from '../../environments/environment';
+import { ExportConsumption } from './ExportConsumption';
 const LoadWhenArmTokenIsLoaded = ({ children }: { children: ReactNode }) => {
   const { isLoading } = useQuery(['armToken'], loadToken);
   return isLoading ? null : <>{children}</>;
@@ -12,7 +13,9 @@ export const ExportConsumptionWrapper = () => {
     <ReactQueryProvider>
       <LoadWhenArmTokenIsLoaded>
         <DevToolbox />
-        <div style={{ height: '100vh' }}>Placeholder</div>
+        <div style={{ height: '100vh' }}>
+          <ExportConsumption />
+        </div>
       </LoadWhenArmTokenIsLoaded>
     </ReactQueryProvider>
   );

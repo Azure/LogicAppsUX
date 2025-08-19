@@ -1,11 +1,11 @@
 import type React from 'react';
 import { useEffect } from 'react';
-import type { ResourceState } from '../state/mcp/resourceSlice';
+import type { ResourceState } from '../state/exportconsumption/resourceSlice';
 import { useDispatch } from 'react-redux';
-import type { AppDispatch } from '../state/mcp/store';
-import { setInitialData } from '../state/mcp/resourceSlice';
+import type { AppDispatch } from '../state/exportconsumption/store';
+import { setResourceData } from '../state/exportconsumption/resourceSlice';
 
-export interface McpDataProviderProps {
+export interface ExportDataProviderProps {
   resourceDetails: ResourceState;
   children?: React.ReactNode;
 }
@@ -14,21 +14,16 @@ const DataProviderInner = ({ children }: { children?: React.ReactNode }) => {
   return <>{children}</>;
 };
 
-export const ExportConsumptionProvider = ({ resourceDetails, children }: McpDataProviderProps) => {
+export const ExportDataProvider = ({ resourceDetails, children }: ExportDataProviderProps) => {
   const dispatch = useDispatch<AppDispatch>();
-
-  // const { logicAppName } = useSelector((state: RootState) => ({
-  //   logicAppName: state.resource.logicAppName,
-  //   servicesInitialized: state.mcpOptions.servicesInitialized,
-  // }));
 
   useEffect(() => {
     dispatch(
-      setInitialData({
+      setResourceData({
         subscriptionId: resourceDetails.subscriptionId,
         resourceGroup: resourceDetails.resourceGroup,
         location: resourceDetails.location,
-        // logicAppName: logicAppName //TODO: do this
+        logicAppName: resourceDetails.logicAppName,
       })
     );
   }, [dispatch, resourceDetails]);

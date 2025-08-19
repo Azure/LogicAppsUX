@@ -1,23 +1,18 @@
-import { useMemo } from 'react';
-import { McpWizardProvider, ExportConsumptionProvider } from '@microsoft/logic-apps-designer';
+import { ExportDataProvider, ExportWizardProvider } from '@microsoft/logic-apps-designer';
 import type { RootState } from '../state/Store';
 import { useSelector } from 'react-redux';
 import { useMcpStandardStyles } from './styles';
+import { ArmParser } from '../../designer/app/AzureLogicAppsDesigner/Utilities/ArmParser';
+import { useWorkflowAndArtifactsConsumption } from '../../designer/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts';
+import { WorkflowUtility } from '../../designer/app/AzureLogicAppsDesigner/Utilities/Workflow';
 
 export const ExportConsumption = () => {
   const styles = useMcpStandardStyles();
-  const { theme } = useSelector((state: RootState) => ({
-    theme: state.workflowLoader.theme,
-  }));
+  const { resourcePath: workflowId, theme } = useSelector((state: RootState) => state.workflowLoader);
+  const { data: workflowData } = useWorkflowAndArtifactsConsumption(workflowId!);
+  const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowData?.location ?? 'westus');
 
-  const resourceDetails = useMemo(
-    () => ({
-      subscriptionId: 'f34b22a3-2202-4fb1-b040-1332bd928c84',
-      resourceGroup: 'TestACSRG',
-      location: 'westus',
-    }),
-    []
-  );
+  const resourceDetails = new ArmParser(workflowId ?? '');
 
   //TODO: pass onto ExportConsumptionWizard
   // const onExportCall = useCallback(async (createData: McpServerCreateData, onCompleted?: () => void) => {
@@ -30,20 +25,27 @@ export const ExportConsumption = () => {
   // }, []);
 
   return (
-    <McpWizardProvider locale="en-US" theme={theme}>
+    <ExportWizardProvider locale="en-US" theme={theme}>
       <div className={`${styles.container} ${styles.fadeIn}`}>
         <div className={styles.wizardContainer}>
           <div className={styles.wizardContent}>
             <div className={styles.wizardWrapper}>
-              <ExportConsumptionProvider resourceDetails={resourceDetails}>
+              <ExportDataProvider
+                resourceDetails={{
+                  subscriptionId: resourceDetails.subscriptionId,
+                  resourceGroup: resourceDetails.resourceGroup,
+                  logicAppName: resourceDetails.resourceName,
+                  location: canonicalLocation,
+                }}
+              >
                 {/* ExportConsumptionWizard */}
                 <div id="mcp-layer-host" className={styles.layerHost} />
-              </ExportConsumptionProvider>
+              </ExportDataProvider>
             </div>
           </div>
         </div>
       </div>
-    </McpWizardProvider>
+    </ExportWizardProvider>
   );
 };
 
