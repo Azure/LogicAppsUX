@@ -393,8 +393,9 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
       });
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : typeof error === 'string' ? error : 'Unknown error';
+      const invalidRouteMessage = 'flow extension request route'; // remove when validatePartial is reimplemented in backend
       context.telemetry.properties.validateWorkflowError = errorMessage;
-      if (error.statusCode !== 404) {
+      if (!errorMessage.includes(invalidRouteMessage) && error.statusCode !== 404) {
         const errorLocalized = localize('workflowValidationFailed', 'Workflow validation failed: ') + errorMessage;
         window.showErrorMessage(errorLocalized, localize('OK', 'OK'));
       }
