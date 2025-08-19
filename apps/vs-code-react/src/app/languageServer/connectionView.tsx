@@ -22,7 +22,6 @@ import { useConnectionViewStyles } from './connectionViewStyles';
 
 const ConnectionView = ({ connectorName }: { connectorName: string; connectionReferences: ConnectionReferences }) => {
   const vscode = useContext(VSCodeContext);
-  const designerState = DesignerStore.getState();
 
   const sendMsgToVsix = useCallback(
     (msg: any) => {
@@ -35,25 +34,21 @@ const ConnectionView = ({ connectorName }: { connectorName: string; connectionRe
     sendMsgToVsix({ command: ExtensionCommand.close_panel });
   }, [sendMsgToVsix]);
 
-  const onConnectionSuccessful = useCallback(
-    (connection: Connection) => {
-      const { connectionsMapping, connectionReferences: referencesObject } = designerState.connections;
-      const connectionReferences = Object.keys(connectionsMapping ?? {}).reduce((references: ConnectionReferences, nodeId: string) => {
-        const referenceKey = getRecordEntry(connectionsMapping, nodeId);
-        if (!referenceKey || !referencesObject[referenceKey]) {
-          return references;
-        }
-
-        references[referenceKey] = referencesObject[referenceKey];
+  const onConnectionSuccessful = (connection: Connection) => {
+    const designerState = DesignerStore.getState();
+    const { connectionsMapping, connectionReferences: referencesObject } = designerState.connections;
+    const connectionReferences = Object.keys(connectionsMapping ?? {}).reduce((references: ConnectionReferences, nodeId: string) => {
+      const referenceKey = getRecordEntry(connectionsMapping, nodeId);
+      if (!referenceKey || !referencesObject[referenceKey]) {
         return references;
-      }, {});
+      }
 
-      console.log('charlie', connectionReferences);
+      references[referenceKey] = referencesObject[referenceKey];
+      return references;
+    }, {});
 
-      sendMsgToVsix({ command: ExtensionCommand.insert_connection, connection: connection, connectionReferences });
-    },
-    [designerState.connections, sendMsgToVsix]
-  );
+    sendMsgToVsix({ command: ExtensionCommand.insert_connection, connection: connection, connectionReferences });
+  };
 
   return <ConnectionsView closeView={closeView} connectorName={connectorName} onConnectionSuccessful={onConnectionSuccessful} />;
 };

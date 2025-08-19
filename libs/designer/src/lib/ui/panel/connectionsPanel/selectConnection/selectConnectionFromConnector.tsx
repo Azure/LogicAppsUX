@@ -1,6 +1,5 @@
-import { changeConnectionMapping } from '../../../../core/state/connection/connectionSlice';
 import type { AppDispatch } from '../../../../core';
-import { autoCreateConnectionIfPossible } from '../../../../core/actions/bjsworkflow/connections';
+import { autoCreateConnectionIfPossible, updateNodeConnection } from '../../../../core/actions/bjsworkflow/connections';
 import { useConnectionsForConnector } from '../../../../core/queries/connections';
 import { useConnectionRefs, useConnector } from '../../../../core/state/connection/connectionSelector';
 import { useIsXrmConnectionReferenceMode } from '../../../../core/state/designerOptions/designerOptionsSelectors';
@@ -42,10 +41,10 @@ export const SelectConnectionWrapper = ({
       }
       for (const nodeId of ['temp-node-id']) {
         dispatch(
-          changeConnectionMapping({
+          updateNodeConnection({
             nodeId,
-            connectionId: connection.id,
-            connectorId: connector?.id ?? '',
+            connection,
+            connector: connector as Connector,
           })
         );
 
@@ -60,17 +59,17 @@ export const SelectConnectionWrapper = ({
     setIsInlineCreatingConnection(true);
     autoCreateConnectionIfPossible({
       connector: connector as Connector,
-      operationInfo: undefined,
+      operationInfo: undefined, // Needs to be updated
       referenceKeys: Object.keys(references),
       skipOAuth: true,
       applyNewConnection: saveSelectionCallback,
-      onSuccess: onConnectionSuccessful,
+      onSuccess: () => {},
       onManualConnectionCreation: () => {
         setIsInlineCreatingConnection(false);
         dispatch(setIsCreatingConnection(true));
       },
     });
-  }, [connector, dispatch, onConnectionSuccessful, references, saveSelectionCallback]);
+  }, [connector, dispatch, references, saveSelectionCallback]);
 
   useEffect(() => {
     if (!connectionQuery.isLoading && !connectionQuery.isError && connections.length === 0) {

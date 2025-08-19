@@ -45,8 +45,6 @@ export const initializeGraphState = createAsyncThunk<
     const { workflow, designerOptions } = getState() as RootState;
     const spec = workflow.workflowSpec;
 
-    console.log('charlie initialgraphState:', spec);
-
     if (spec === undefined) {
       throw new Error('Trying to import workflow without specifying the workflow type');
     }
