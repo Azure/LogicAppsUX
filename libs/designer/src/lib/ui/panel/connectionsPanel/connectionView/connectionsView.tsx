@@ -94,7 +94,7 @@ export const ConnectionsView = (props: ConnectionsViewProps) => {
   }, [connectorId, panelStatus, props.closeView, props.onConnectionSuccessful]);
 
   return (
-    <div style={{ padding: '10px' }}>
+    <div style={{ padding: '0 10px', overflowY: 'auto' }}>
       <div className="msla-app-action-header">
         <XLargeText text={panelHeaderText} />
         <Button aria-label={closeButtonAriaLabel} appearance="subtle" onClick={props.closeView} icon={<CloseIcon />} />

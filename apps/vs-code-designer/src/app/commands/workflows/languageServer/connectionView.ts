@@ -247,6 +247,17 @@ function insertFunctionCallAtLocation(
     vscode.window.showTextDocument(existingEditor.document, existingEditor.viewColumn, false).then(
       (editor) => {
         performTextReplacement(editor, connection, insertionContext);
+        // Save the document after successful insertion
+        existingEditor.document.save().then(
+          () => {
+            vscode.window.showInformationMessage('File saved successfully');
+          },
+          (saveError: any) => {
+            const errorMessage =
+              saveError instanceof Error ? saveError.message : typeof saveError === 'string' ? saveError : 'Unknown error';
+            vscode.window.showWarningMessage(`Text inserted but failed to save file: ${errorMessage}`);
+          }
+        );
       },
       (error: any) => {
         const errorMessage = error instanceof Error ? error.message : typeof error === 'string' ? error : 'Unknown error';
