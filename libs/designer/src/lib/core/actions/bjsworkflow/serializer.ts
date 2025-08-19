@@ -74,6 +74,7 @@ import type {
 import merge from 'lodash.merge';
 import { createTokenValueSegment } from '../../utils/parameters/segment';
 import { ConnectorManifest } from './agent';
+import { isA2AWorkflow } from '../../../core/state/workflow/helper';
 
 export interface SerializeOptions {
   skipValidation: boolean;
@@ -314,6 +315,14 @@ export const serializeOperation = async (
       ...serializedOperation.metadata,
       ...actionMetadata,
     };
+  }
+
+  // This is temporary for A2A until backend supports actions running after the trigger
+  if (isA2AWorkflow(rootState.workflow)) {
+    const triggerId = getTriggerNodeId(rootState.workflow);
+    const replacedTriggerId = getRecordEntry(rootState.workflow.idReplacements, triggerId) ?? triggerId;
+    // Remove any runAfter properties pointing to the trigger, EXCEPT for agent actions
+    removeRunAfterTriggerFromOperation(serializedOperation, replacedTriggerId);
   }
 
   return serializedOperation;
@@ -1270,6 +1279,14 @@ const getSplitOn = (
     splitOn: splitOn.value.value as string,
     ...(splitOnConfiguration ? { splitOnConfiguration } : {}),
   };
+};
+
+const removeRunAfterTriggerFromOperation = (operation: LogicAppsV2.ActionDefinition, triggerId: string): void => {
+  // If the action has a runAfter property pointing to the trigger, remove it
+  //   (only for non-agent actions)
+  if (operation?.runAfter?.[triggerId] && !equals(operation.type, 'agent')) {
+    delete operation?.runAfter[triggerId];
+  }
 };
 
 /**
