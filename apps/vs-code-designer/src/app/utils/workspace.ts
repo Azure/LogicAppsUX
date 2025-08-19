@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { workflowFileName } from '../../constants';
 import { localize } from '../../localize';
+import type { RemoteWorkflowTreeItem } from '../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem';
 import { isPathEqual, isSubpath } from './fs';
 import {
   isLogicAppProject,
@@ -300,11 +301,11 @@ async function selectLogicAppWorkspaceFolderWithoutCustomCode(
  * @param {vscode.Uri | undefined} node - Workflow node.
  * @returns {vscode.Uri | undefined} Workflow node.
  */
-export const getWorkflowNode = <T>(node: T): T => {
+export const getWorkflowNode = (node: vscode.Uri | RemoteWorkflowTreeItem | undefined): vscode.Uri | RemoteWorkflowTreeItem | undefined => {
   if (isNullOrUndefined(node)) {
     const activeFile = vscode?.window?.activeTextEditor?.document;
     if (activeFile?.fileName.endsWith(workflowFileName)) {
-      return activeFile.uri as T;
+      return activeFile.uri;
     }
   }
 
