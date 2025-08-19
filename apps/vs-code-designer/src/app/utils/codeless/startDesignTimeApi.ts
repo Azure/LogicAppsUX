@@ -53,14 +53,20 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
   await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.startDesignTimeApi', async (actionContext: IActionContext) => {
     actionContext.telemetry.properties.startDesignTimeApi = 'false';
 
+    let isNewDesignTime = false;
     if (!ext.designTimeInstances.has(projectPath)) {
       ext.designTimeInstances.set(projectPath, {
         port: await portfinder.getPortPromise(),
+        isStarting: true,
       });
+      isNewDesignTime = true;
     }
 
     const designTimeInst = ext.designTimeInstances.get(projectPath);
     const url = `http://localhost:${designTimeInst.port}${designerStartApi}`;
+    if (designTimeInst.isStarting && !isNewDesignTime) {
+      await waitForDesignTimeStartUp(projectPath, url, new Date().getTime());
+    }
 
     if (await isDesignTimeUp(url)) {
       actionContext.telemetry.properties.isDesignTimeUp = 'true';
@@ -114,7 +120,7 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
         const cwd: string = designTimeDirectory.fsPath;
         const portArgs = `--port ${designTimeInst.port}`;
         startDesignTimeProcess(ext.outputChannel, cwd, getFunctionsCommand(), 'host', 'start', portArgs);
-        await waitForDesignTimeStartUp(projectPath, url, new Date().getTime());
+        await waitForDesignTimeStartUp(projectPath, url, new Date().getTime(), true);
         ext.pinnedBundleVersion.set(projectPath, false);
         const hostfilepath: Uri = Uri.file(path.join(cwd, hostFileName));
         const data = JSON.parse(fs.readFileSync(hostfilepath.fsPath, 'utf-8'));
@@ -161,17 +167,23 @@ function extractPinnedVersion(input: string): string | null {
 
 export async function checkFuncProcessId(projectPath: string): Promise<boolean> {
   let correctId = false;
-  const { process, childFuncPid } = ext.designTimeInstances.get(projectPath);
+  let { process, childFuncPid } = ext.designTimeInstances.get(projectPath);
+  const retries = 0;
+  while (!childFuncPid && retries < 3) {
+    await delay(1000);
+    ({ process, childFuncPid } = ext.designTimeInstances.get(projectPath));
+  }
+  if (!childFuncPid) {
+    return false;
+  }
 
   if (os.platform() === Platform.windows) {
-    await pstree(process.pid, (_err, children) => {
-      children.forEach((p) => {
-        if (p.PID === childFuncPid && (p.COMMAND || p.COMM) === 'func.exe') {
-          correctId = true;
-        }
+    await new Promise<void>((resolve) => {
+      pstree(process.pid, (_err: Error | null, children: Array<{ PID: string; COMMAND?: string; COMM?: string }>) => {
+        correctId = children.some((p) => p.PID === childFuncPid && (p.COMMAND || p.COMM) === 'func.exe');
+        resolve();
       });
     });
-    await delay(1000);
   } else {
     await find_process('pid', process.pid).then((list) => {
       if (list.length > 0) {
@@ -197,7 +209,12 @@ export async function getOrCreateDesignTimeDirectory(designTimeDirectory: string
   return designTimeDirectoryUri;
 }
 
-export async function waitForDesignTimeStartUp(projectPath: string, url: string, initialTime: number): Promise<void> {
+export async function waitForDesignTimeStartUp(
+  projectPath: string,
+  url: string,
+  initialTime: number,
+  setDesignTimeInst = false
+): Promise<void> {
   while (!(await isDesignTimeUp(url)) && new Date().getTime() - initialTime < designerApiLoadTimeout) {
     await delay(2000);
   }
@@ -205,8 +222,11 @@ export async function waitForDesignTimeStartUp(projectPath: string, url: string,
     if (!ext.designTimeInstances.has(projectPath)) {
       return Promise.reject();
     }
-    const designTimeInst = ext.designTimeInstances.get(projectPath);
-    designTimeInst.childFuncPid = await findChildProcess(designTimeInst.process.pid);
+    if (setDesignTimeInst) {
+      const designTimeInst = ext.designTimeInstances.get(projectPath);
+      designTimeInst.childFuncPid = await findChildProcess(designTimeInst.process.pid);
+      designTimeInst.isStarting = false;
+    }
     return Promise.resolve();
   }
   return Promise.reject();
