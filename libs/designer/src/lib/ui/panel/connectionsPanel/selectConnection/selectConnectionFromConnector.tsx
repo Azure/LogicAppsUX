@@ -1,3 +1,4 @@
+import { changeConnectionMapping } from '../../../../core/state/connection/connectionSlice';
 import type { AppDispatch } from '../../../../core';
 import { autoCreateConnectionIfPossible } from '../../../../core/actions/bjsworkflow/connections';
 import { useConnectionsForConnector } from '../../../../core/queries/connections';
@@ -39,10 +40,20 @@ export const SelectConnectionWrapper = ({
       if (!connection) {
         return;
       }
-      ConnectionService().setupConnectionIfNeeded(connection);
+      for (const nodeId of ['temp-node-id']) {
+        dispatch(
+          changeConnectionMapping({
+            nodeId,
+            connectionId: connection.id,
+            connectorId: connector?.id ?? '',
+          })
+        );
+
+        ConnectionService().setupConnectionIfNeeded(connection);
+      }
       onConnectionSuccessful(connection);
     },
-    [onConnectionSuccessful]
+    [onConnectionSuccessful, dispatch, connector]
   );
 
   const createConnectionCallback = useCallback(() => {

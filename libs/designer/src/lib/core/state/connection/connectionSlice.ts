@@ -1,12 +1,12 @@
-import { getExistingReferenceKey } from '../../utils/connectors/connections';
 import type { ConnectionMapping, ConnectionReference, ConnectionReferences, NodeId, ReferenceKey } from '../../../common/models/workflow';
 import type { UpdateConnectionPayload } from '../../actions/bjsworkflow/connections';
 import { resetWorkflowState, setStateAfterUndoRedo } from '../global';
-import { LogEntryLevel, LoggerService, getResourceNameFromId, getUniqueName } from '@microsoft/logic-apps-shared';
+import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { UndoRedoPartialRootState } from '../undoRedo/undoRedoTypes';
 import { deinitializeOperations, initializeConnectionMappings } from '../../../core/actions/bjsworkflow/mcp';
+import { getReferenceForConnection } from './helpers';
 
 export interface ConnectionsStoreState {
   connectionsMapping: ConnectionMapping;
@@ -122,31 +122,6 @@ export const connectionSlice = createSlice({
     });
   },
 });
-
-const getReferenceForConnection = (
-  references: ConnectionReferences,
-  payload: Omit<UpdateConnectionPayload, 'nodeId'>
-): { key: string; reference?: ConnectionReference } => {
-  const { connectionId, connectorId, connectionProperties, connectionRuntimeUrl, authentication } = payload;
-  const existingReferenceKey = getExistingReferenceKey(references, payload);
-
-  if (existingReferenceKey) {
-    return { key: existingReferenceKey };
-  }
-
-  const { name: newReferenceKey } = getUniqueName(Object.keys(references), connectorId.split('/').at(-1) as string);
-  return {
-    key: newReferenceKey,
-    reference: {
-      api: { id: connectorId },
-      connection: { id: connectionId },
-      connectionName: getResourceNameFromId(connectionId),
-      connectionProperties,
-      connectionRuntimeUrl,
-      authentication,
-    },
-  };
-};
 
 // Action creators are generated for each case reducer function
 export const {

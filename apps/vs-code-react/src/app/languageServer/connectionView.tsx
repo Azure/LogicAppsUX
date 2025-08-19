@@ -20,7 +20,7 @@ import { ExtensionCommand, type FileSystemConnectionInfo } from '@microsoft/vsco
 import { convertConnectionsDataToReferences } from '../designer/utilities/workflow';
 import { useConnectionViewStyles } from './connectionViewStyles';
 
-const ConnectionView = ({ connectorName }: { connectorName: string }) => {
+const ConnectionView = ({ connectorName }: { connectorName: string; connectionReferences: ConnectionReferences }) => {
   const vscode = useContext(VSCodeContext);
   const designerState = DesignerStore.getState();
 
@@ -136,6 +136,7 @@ export const LanguageServerConnectionView = () => {
   const connectionReferences: ConnectionReferences = useMemo(() => {
     return convertConnectionsDataToReferences(connectionData);
   }, [connectionData]);
+  console.log('Charlie onnection References initial:', connectionReferences, 'data: ', connectionData);
 
   return (
     <div className={styles.connectionViewContainer}>
@@ -158,7 +159,7 @@ export const LanguageServerConnectionView = () => {
           }}
           appSettings={panelMetaData?.localSettings}
         >
-          <ConnectionView connectorName={'msnweather'} />
+          <ConnectionView connectorName={'msnweather'} connectionReferences={connectionReferences} />
         </BJSWorkflowProvider>
       </DesignerProvider>
     </div>
