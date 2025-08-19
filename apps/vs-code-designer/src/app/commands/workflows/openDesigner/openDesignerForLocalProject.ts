@@ -217,8 +217,16 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
             this.panelMetadata.azureDetails?.tenantId,
             this.panelMetadata.azureDetails?.workflowManagementBaseUrl
           );
-          const localSettingsValues = (await getLocalSettingsJson(activateContext, localSettingsPath, true)).Values || {};
-          await this.validateWorkflow(activateContext, JSON.parse(readFileSync(this.workflowFilePath, 'utf8')), localSettingsValues);
+          const savedLocalSettingsValues = (await getLocalSettingsJson(activateContext, localSettingsPath, true)).Values || {};
+          let savedWorkflow: any;
+
+          try {
+            savedWorkflow = JSON.parse(readFileSync(this.workflowFilePath, 'utf8'));
+          } catch (error) {
+            window.showErrorMessage(`Failed to parse workflow file as JSON: ${(error as Error).message}`);
+          }
+
+          await this.validateWorkflow(activateContext, savedWorkflow, savedLocalSettingsValues);
         });
         break;
       }
