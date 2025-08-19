@@ -16,6 +16,7 @@ export function Peek({ input }: PeekProps): JSX.Element {
     scrollBeyondLastLine: false,
     wordWrap: 'on',
     defaultValue: '',
+    folding: true,
   };
 
   return (
@@ -25,6 +26,7 @@ export function Peek({ input }: PeekProps): JSX.Element {
         value={input}
         fontSize={options.fontSize}
         readOnly={options.readOnly}
+        folding={options.folding}
         language={EditorLanguage.json}
         monacoContainerStyle={{ height: '100%' }}
       />

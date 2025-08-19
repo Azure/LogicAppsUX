@@ -74,7 +74,8 @@ export const EdgeContextualMenu = () => {
   }, [nodeMetadata, parentId]);
 
   const upstreamNodesOfChild = useUpstreamNodes(removeIdTag(childId ?? newParentId ?? ''), graphId, childId);
-  const hasUpstreamAgenticLoop = useHasUpstreamAgenticLoop(upstreamNodesOfChild);
+  const upstreamNodesOfParent = useUpstreamNodes(removeIdTag(newParentId ?? ''), graphId, newParentId);
+  const hasUpstreamAgenticLoop = useHasUpstreamAgenticLoop(upstreamNodesOfParent);
 
   const isAddAgentHandoff = isA2AWorkflow && graphId === 'root' && hasUpstreamAgenticLoop;
   const isAddActionDisabled = isA2AWorkflow && graphId === 'root' && hasUpstreamAgenticLoop;
@@ -167,14 +168,14 @@ export const EdgeContextualMenu = () => {
     dispatch(removeAgentHandoff({ agentId: parentId ?? '', toolId }));
   }, [handoffActions, dispatch, parentId, childId]);
 
-  const deleteRunAfter = useCallback(() => {
-    dispatch(
-      removeOperationRunAfter({
-        parentOperationId: parentId ?? '',
-        childOperationId: childId ?? '',
-      })
-    );
-  }, [dispatch, parentId, childId]);
+  // const deleteRunAfter = useCallback(() => {
+  //   dispatch(
+  //     removeOperationRunAfter({
+  //       parentOperationId: parentId ?? '',
+  //       childOperationId: childId ?? '',
+  //     })
+  //   );
+  // }, [dispatch, parentId, childId]);
 
   const newActionText = intl.formatMessage({
     defaultMessage: 'Add an action',
@@ -236,11 +237,11 @@ export const EdgeContextualMenu = () => {
     description: 'Text for button to edit a handoff',
   });
 
-  const deleteRunAfterText = intl.formatMessage({
-    defaultMessage: 'Delete run-after',
-    id: 'GnVN11',
-    description: 'Text for button to delete a run-after',
-  });
+  // const deleteRunAfterText = intl.formatMessage({
+  //   defaultMessage: 'Delete run-after',
+  //   id: 'GnVN11',
+  //   description: 'Text for button to delete a run-after',
+  // });
 
   const deleteHandoffText = intl.formatMessage({
     defaultMessage: 'Delete handoff',
@@ -376,11 +377,20 @@ export const EdgeContextualMenu = () => {
     </MenuItem>
   );
 
-  const deleteMenuItem = (
+  // const deleteRunAfterMenuItem = (
+  //   <>
+  //     <MenuDivider />
+  //     <MenuItem icon={<DeleteIcon />} onClick={deleteRunAfter} data-automation-id={automationId('delete-run-after')}>
+  //       {deleteRunAfterText}
+  //     </MenuItem>
+  //   </>
+  // );
+
+  const deleteHandoffMenuItem = (
     <>
       <MenuDivider />
-      <MenuItem icon={<DeleteIcon />} onClick={isHandoff ? deleteHandoff : deleteRunAfter} data-automation-id={automationId('delete-edge')}>
-        {isHandoff ? deleteHandoffText : deleteRunAfterText}
+      <MenuItem icon={<DeleteIcon />} onClick={deleteHandoff} data-automation-id={automationId('delete-handoff')}>
+        {deleteHandoffText}
       </MenuItem>
     </>
   );
@@ -410,7 +420,7 @@ export const EdgeContextualMenu = () => {
               <>
                 {editHandoffMenuItem}
                 {addParallelAgentMenuItem}
-                {hasParentAndChild && deleteMenuItem}
+                {hasParentAndChild && deleteHandoffMenuItem}
               </>
             ) : (
               <>
@@ -479,7 +489,7 @@ export const EdgeContextualMenu = () => {
                       }}
                     />
                   ))}
-                {hasParentAndChild && deleteMenuItem}
+                {/* {hasParentAndChild && deleteRunAfterMenuItem} */}
                 {customMenuItems}
               </>
             )}

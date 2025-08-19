@@ -129,7 +129,7 @@ export const Designer = (props: DesignerProps) => {
       <div className="msla-designer-canvas msla-panel-mode" ref={designerContainerRef}>
         <ReactFlowProvider>
           <div style={{ flexGrow: 1 }}>
-            <DesignerReactFlow canvasRef={canvasRef} isLooping={isA2AWorkflow}>
+            <DesignerReactFlow canvasRef={canvasRef}>
               {backgroundProps ? <Background {...backgroundProps} /> : null}
               <DeleteModal />
               <DesignerContextualMenu />

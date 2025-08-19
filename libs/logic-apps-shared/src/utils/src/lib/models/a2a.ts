@@ -4,7 +4,8 @@ export interface AgentQueryParams {
 }
 
 export interface AgentURL {
-  url: string;
+  agentUrl: string;
+  chatUrl: string;
   hostName: string;
   queryParams?: AgentQueryParams;
 }

@@ -122,9 +122,3 @@ export const CopyInputControl = React.forwardRef<Pick<HTMLElement, 'focus' | 'sc
 );
 
 CopyInputControl.displayName = 'CopyInputControl';
-
-// Export the agent-related components
-export { AgentUrlViewer, AgentUrlButton } from './AgentUrlViewer';
-export { CopyInputControlWithAgent } from './CopyInputControlWithAgent';
-export type { AgentUrlViewerProps, AgentUrlButtonProps } from './AgentUrlViewer';
-export type { CopyInputControlWithAgentProps } from './CopyInputControlWithAgent';

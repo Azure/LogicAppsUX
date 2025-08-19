@@ -66,9 +66,9 @@ const parseMessage = (
       const isUserMessage = role === 'User';
       const type = isUserMessage ? ConversationItemType.Query : ConversationItemType.Reply;
       return {
-        text: labelCase(content),
-        type,
         id: guid(),
+        text: content,
+        type,
         role: {
           text: isUserMessage ? undefined : role,
           agentName: labelCase(parentId),

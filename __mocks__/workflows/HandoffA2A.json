@@ -20,11 +20,7 @@
 						}
 					]
 				},
-				"runAfter": {
-					"When_a_HTTP_request_is_received": [
-						"SUCCEEDED"
-					]
-				}
+				"runAfter": {}
 			},
 			"TriageAgent": {
 				"type": "Agent",
@@ -274,9 +270,9 @@
 		"contentVersion": "1.0.0.0",
 		"outputs": {},
 		"triggers": {
-			"When_a_HTTP_request_is_received": {
+			"When_a_new_chat_session_started": {
 				"type": "Request",
-				"kind": "Http"
+				"kind": "Agent"
 			}
 		}
 	},

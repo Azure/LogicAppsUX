@@ -2,7 +2,7 @@ import type { SectionProps } from '../';
 import { SettingSectionName } from '../';
 import type { AppDispatch, RootState } from '../../../core';
 import { addOperationRunAfter, removeOperationRunAfter } from '../../../core/actions/bjsworkflow/runafter';
-import { useActionMetadata, useRootTriggerId } from '../../../core/state/workflow/workflowSelectors';
+import { useActionMetadata, useIsAgentLoop, useRootTriggerId } from '../../../core/state/workflow/workflowSelectors';
 import { updateRunAfter } from '../../../core/state/workflow/workflowSlice';
 import { useIsA2AWorkflow } from '../../../core/state/designerView/designerViewSelectors';
 import type { SettingsSectionProps } from '../settingsection';
@@ -19,6 +19,8 @@ export const RunAfter = ({ nodeId, readOnly = false, expanded, validationErrors,
   const dispatch = useDispatch<AppDispatch>();
 
   const isA2AWorkflow = useIsA2AWorkflow();
+
+  const isAgentAction = useIsAgentLoop(nodeId);
 
   const rootState = useSelector((state: RootState) => state);
 
@@ -71,12 +73,12 @@ export const RunAfter = ({ nodeId, readOnly = false, expanded, validationErrors,
 
   const GetRunAfterProps = (): RunAfterActionDetailsProps[] => {
     const items: RunAfterActionDetailsProps[] = [];
-    const showDummyRunAfter = !isA2AWorkflow;
+    const allowRunAfterTrigger = isA2AWorkflow && isAgentAction;
     const runAfterValue = Object.keys(nodeData?.runAfter ?? {}).length
       ? (nodeData.runAfter ?? {})
-      : showDummyRunAfter
-        ? dummyTriggerRunAfterSetting
-        : {};
+      : allowRunAfterTrigger
+        ? {}
+        : dummyTriggerRunAfterSetting;
     const isSingleRunAfter = Object.keys(runAfterValue).length === 1;
     const isAfterTrigger = Object.keys(runAfterValue)?.[0] === rootTriggerId;
     Object.entries(runAfterValue).forEach(([id, value], _i) => {
@@ -84,7 +86,7 @@ export const RunAfter = ({ nodeId, readOnly = false, expanded, validationErrors,
         collapsible: true,
         expanded: false,
         id: id,
-        disableDelete: isSingleRunAfter && !isA2AWorkflow,
+        disableDelete: isSingleRunAfter && !allowRunAfterTrigger,
         disableStatusChange: isAfterTrigger,
         readOnly: readOnly,
         statuses: value,
