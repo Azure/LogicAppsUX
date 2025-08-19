@@ -5,12 +5,17 @@
 import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
 import { cacheWebviewPanel, getAzureConnectorDetailsForLocalProject, removeWebviewPanelFromCache } from '../../../utils/codeless/common';
-import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
 import type { AzureConnectorDetails, IDesignerPanelMetadata } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand, ProjectName, RouteName } from '@microsoft/vscode-extension-logic-apps';
 import { OpenDesignerBase } from '../openDesigner/openDesignerBase';
 import { startDesignTimeApi } from '../../../utils/codeless/startDesignTimeApi';
-import { getConnectionsFromFile, getLogicAppProjectRoot } from '../../../utils/codeless/connection';
+import {
+  getConnectionsAndSettingsToUpdate,
+  getConnectionsFromFile,
+  getLogicAppProjectRoot,
+  saveConnectionReferences,
+} from '../../../utils/codeless/connection';
 import path from 'path';
 import { localSettingsFileName, managementApiPrefix, workflowAppApiVersion } from '../../../../constants';
 import type { WebviewPanel } from 'vscode';
@@ -109,8 +114,8 @@ export default class OpenConnectionView extends OpenDesignerBase {
     ext.context.subscriptions.push(this.panel);
   }
 
-  private async _handleWebviewMsg(msg: any) {
-    switch (msg.command) {
+  private async _handleWebviewMsg(message: any) {
+    switch (message.command) {
       case ExtensionCommand.initialize: {
         this.sendMsgToWebview({
           command: ExtensionCommand.initialize_frame,
@@ -135,16 +140,54 @@ export default class OpenConnectionView extends OpenDesignerBase {
         break;
       }
       case ExtensionCommand.insert_connection: {
-        insertFunctionCallAtLocation(this.methodName, msg.connection, {
-          documentUri: this.workflowFilePath,
-          range: this.range,
+        await callWithTelemetryAndErrorHandling('InsertConnectionView', async () => {
+          const { connection, connectionReferences } = message;
+
+          await this.saveConnection(
+            this.methodName,
+            connection,
+            {
+              documentUri: this.workflowFilePath,
+              range: this.range,
+            },
+            connectionReferences,
+            this.panelMetadata.azureDetails?.tenantId,
+            this.panelMetadata.azureDetails?.workflowManagementBaseUrl
+          );
+          this.panel.dispose();
         });
-        this.panel.dispose();
         break;
       }
       default:
         break;
     }
+  }
+
+  private async saveConnection(
+    functionName: string,
+    connection: Connection,
+    insertionContext: { documentUri: string; range?: any },
+    connectionReferences: any,
+    azureTenantId?: string,
+    workflowBaseManagementUri?: string
+  ) {
+    const projectPath = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
+    const parametersFromDefinition = this.panelMetadata.parametersData || {};
+
+    if (connectionReferences) {
+      const connectionsAndSettingsToUpdate = await getConnectionsAndSettingsToUpdate(
+        this.context,
+        projectPath,
+        connectionReferences,
+        azureTenantId,
+        workflowBaseManagementUri,
+        parametersFromDefinition
+      );
+
+      await saveConnectionReferences(this.context, projectPath, connectionsAndSettingsToUpdate);
+    }
+
+    insertFunctionCallAtLocation(functionName, connection, insertionContext);
   }
 
   private async _getDesignerPanelMetadata(): Promise<any> {
@@ -193,65 +236,80 @@ function insertFunctionCallAtLocation(
     vscode.window.showErrorMessage('Target document not found. Please ensure the file is still open.');
     return;
   }
+  // Check if the document is already visible in an active editor
+  const visibleEditors = vscode.window.visibleTextEditors;
 
-  // Open the document in an editor if it's not already active
-  vscode.window.showTextDocument(targetDocument).then(
-    (editor) => {
-      if (insertionContext.range) {
-        // Normalize the range format - handle both Start/Line and start/line formats
-        const range = insertionContext.range;
-        let startLine: number;
-        let startChar: number;
-        let endLine: number;
-        let endChar: number;
+  // Check if the target document is already open in any visible editor
+  const existingEditor = visibleEditors.find((editor) => editor.document.uri.fsPath === targetDocument.uri.fsPath);
 
-        if (range.Start && range.End) {
-          // Handle { Start: { Line: 55, Character: 85 }, End: { Line: 55, Character: 99 } } format
-          startLine = range.Start.Line;
-          startChar = range.Start.Character;
-          endLine = range.End.Line;
-          endChar = range.End.Character;
-        } else if (range.start && range.end) {
-          // Handle VS Code standard { start: { line: 55, character: 85 }, end: { line: 55, character: 99 } } format
-          startLine = range.start.line;
-          startChar = range.start.character;
-          endLine = range.end.line;
-          endChar = range.end.character;
-        } else {
-          vscode.window.showErrorMessage('Invalid range format provided');
-          return;
-        }
-
-        // Use the normalized range to replace the text with the connection.id
-        const startPos = new vscode.Position(startLine, startChar);
-        const endPos = new vscode.Position(endLine, endChar);
-        const rangeToReplace = new vscode.Range(startPos, endPos);
-
-        editor
-          .edit((editBuilder) => {
-            editBuilder.replace(rangeToReplace, `"${connection.id}"`);
-          })
-          .then((success) => {
-            if (success) {
-              console.log('Connection ID inserted successfully');
-              // Position cursor after the inserted connection ID
-              const newCursorPos = new vscode.Position(startLine, startChar + connection.id.length);
-              editor.selection = new vscode.Selection(newCursorPos, newCursorPos);
-              vscode.window.showInformationMessage(`Inserted connection ID: ${connection.id}`);
-            } else {
-              vscode.window.showErrorMessage('Failed to insert connection ID');
-            }
-          });
-      } else {
-        vscode.window.showErrorMessage('No range provided for connection ID insertion');
+  if (existingEditor) {
+    // Document is already open, just focus on it
+    vscode.window.showTextDocument(existingEditor.document, existingEditor.viewColumn, false).then(
+      (editor) => {
+        performTextReplacement(editor, connection, insertionContext);
+      },
+      (error: any) => {
+        const errorMessage = error instanceof Error ? error.message : typeof error === 'string' ? error : 'Unknown error';
+        vscode.window.showErrorMessage(`Failed to open target document: ${errorMessage}`);
       }
-    },
-    (error: any) => {
-      const errorMessage = error instanceof Error ? error.message : typeof error === 'string' ? error : 'Unknown error';
-      vscode.window.showErrorMessage(`Failed to open target document: ${errorMessage}`);
-    }
-  );
+    );
+    return;
+  }
 }
+
+const performTextReplacement = (
+  editor: vscode.TextEditor,
+  connection: Connection,
+  insertionContext: { documentUri: string; range?: any }
+) => {
+  if (insertionContext.range) {
+    // Normalize the range format - handle both Start/Line and start/line formats
+    const range = insertionContext.range;
+    let startLine: number;
+    let startChar: number;
+    let endLine: number;
+    let endChar: number;
+
+    if (range.Start && range.End) {
+      // Handle { Start: { Line: 55, Character: 85 }, End: { Line: 55, Character: 99 } } format
+      startLine = range.Start.Line;
+      startChar = range.Start.Character;
+      endLine = range.End.Line;
+      endChar = range.End.Character;
+    } else if (range.start && range.end) {
+      // Handle VS Code standard { start: { line: 55, character: 85 }, end: { line: 55, character: 99 } } format
+      startLine = range.start.line;
+      startChar = range.start.character;
+      endLine = range.end.line;
+      endChar = range.end.character;
+    } else {
+      vscode.window.showErrorMessage('Invalid range format provided');
+      return;
+    }
+
+    // Use the normalized range to replace the text with the connection.id
+    const startPos = new vscode.Position(startLine, startChar);
+    const endPos = new vscode.Position(endLine, endChar);
+    const rangeToReplace = new vscode.Range(startPos, endPos);
+
+    editor
+      .edit((editBuilder) => {
+        editBuilder.replace(rangeToReplace, `"${connection.name}"`);
+      })
+      .then((success) => {
+        if (success) {
+          // Position cursor after the inserted connection ID
+          const newCursorPos = new vscode.Position(startLine, startChar + connection.name.length);
+          editor.selection = new vscode.Selection(newCursorPos, newCursorPos);
+          vscode.window.showInformationMessage(`Inserted connection ID: ${connection.name}`);
+        } else {
+          vscode.window.showErrorMessage('Failed to insert connection ID');
+        }
+      });
+  } else {
+    vscode.window.showErrorMessage('No range provided for connection ID insertion');
+  }
+};
 
 export async function openLanguageServerConnectionView(
   context: IActionContext,
