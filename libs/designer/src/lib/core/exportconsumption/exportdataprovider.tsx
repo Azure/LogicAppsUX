@@ -1,9 +1,8 @@
 import type React from 'react';
 import { useEffect } from 'react';
-import type { ResourceState } from '../state/exportconsumption/resourceSlice';
 import { useDispatch } from 'react-redux';
 import type { AppDispatch } from '../state/exportconsumption/store';
-import { setResourceData } from '../state/exportconsumption/resourceSlice';
+import { type ResourceState, setResourceData } from '../state/exportconsumption/resourceslice';
 
 export interface ExportDataProviderProps {
   resourceDetails: ResourceState;
@@ -18,14 +17,7 @@ export const ExportDataProvider = ({ resourceDetails, children }: ExportDataProv
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
-    dispatch(
-      setResourceData({
-        subscriptionId: resourceDetails.subscriptionId,
-        resourceGroup: resourceDetails.resourceGroup,
-        location: resourceDetails.location,
-        logicAppName: resourceDetails.logicAppName,
-      })
-    );
+    dispatch(setResourceData(resourceDetails));
   }, [dispatch, resourceDetails]);
 
   return <DataProviderInner>{children}</DataProviderInner>;

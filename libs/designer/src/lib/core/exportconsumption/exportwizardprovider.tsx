@@ -2,18 +2,18 @@ import type { Theme as ThemeType } from '@microsoft/logic-apps-shared';
 import { IntlProvider } from '@microsoft/logic-apps-shared';
 import type React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
-import { mcpStore } from '../state/mcp/store';
+import { exportConsumptionStore } from '../state/exportconsumption/store';
 import { FluentProvider, webDarkTheme, webLightTheme } from '@fluentui/react-components';
 import { ExportWizardContextContext } from './exportwizardcontext';
 
-export interface McpWizardProviderProps {
+export interface ExportWizardProviderProps {
   theme?: ThemeType;
   locale?: string;
   useExternalRedux?: boolean;
   children: React.ReactNode;
 }
 
-export const ExportWizardProvider = ({ locale = 'en', useExternalRedux = false, children, theme }: McpWizardProviderProps) => {
+export const ExportWizardProvider = ({ locale = 'en', useExternalRedux = false, children, theme }: ExportWizardProviderProps) => {
   const webTheme = theme === 'light' ? webLightTheme : webDarkTheme;
   const content = (
     <ExportWizardContextContext.Provider value={{ readOnly: false }}>
@@ -40,5 +40,5 @@ export const ExportWizardProvider = ({ locale = 'en', useExternalRedux = false, 
     </ExportWizardContextContext.Provider>
   );
 
-  return useExternalRedux ? content : <ReduxProvider store={mcpStore}>{content}</ReduxProvider>;
+  return useExternalRedux ? content : <ReduxProvider store={exportConsumptionStore}>{content}</ReduxProvider>;
 };
