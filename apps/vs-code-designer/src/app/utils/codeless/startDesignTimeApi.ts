@@ -168,10 +168,11 @@ function extractPinnedVersion(input: string): string | null {
 export async function checkFuncProcessId(projectPath: string): Promise<boolean> {
   let correctId = false;
   let { process, childFuncPid } = ext.designTimeInstances.get(projectPath);
-  const retries = 0;
+  let retries = 0;
   while (!childFuncPid && retries < 3) {
     await delay(1000);
     ({ process, childFuncPid } = ext.designTimeInstances.get(projectPath));
+    retries++;
   }
   if (!childFuncPid) {
     return false;
