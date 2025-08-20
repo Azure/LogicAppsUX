@@ -1,7 +1,7 @@
 import constants from '../../../common/constants';
 import type { RootState } from '../../../core';
 import { useNodeMetadata, useOperationInfo } from '../../../core';
-import { useIsA2AWorkflow } from '../../../core/state/designerView/designerViewSelectors';
+import { useIsA2AWorkflow, useIsAgenticWorkflowOnly } from '../../../core/state/designerView/designerViewSelectors';
 import { usePanelTabHideKeys, useUnitTest, useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { useParameterValidationErrors } from '../../../core/state/operation/operationSelector';
 import { useIsNodePinnedToOperationPanel } from '../../../core/state/panel/panelSelectors';
@@ -25,7 +25,6 @@ import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 import { channelsTab } from './tabs/channelsTab';
 import { handoffTab } from './tabs/handoffTab';
-import { useChannelsTabForAgentLoop } from '../../../common/hooks/experimentation';
 
 export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
   const intl = useIntl();
@@ -42,9 +41,9 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
   const isScopeNode = operationInfo?.type.toLowerCase() === constants.NODE.TYPE.SCOPE;
   const isAgentNode = useMemo(() => equals(operationInfo?.type ?? '', constants.NODE.TYPE.AGENT, true), [operationInfo?.type]);
   const isA2AWorkflow = useIsA2AWorkflow();
+  const isAgenticWorkflowOnly = useIsAgenticWorkflowOnly();
   const parameterValidationErrors = useParameterValidationErrors(nodeId);
   const settingValidationErrors = useSettingValidationErrors(nodeId);
-  const disableChannelsTab = useChannelsTabForAgentLoop();
 
   const tabProps: PanelTabProps = useMemo(
     () => ({
@@ -98,9 +97,9 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
     () => ({
       ...channelsTab(intl, tabProps),
       // Note: Channels tab is disabled until we have the teams integration ready
-      visible: !disableChannelsTab && isAgentNode && !isA2AWorkflow,
+      visible: isAgentNode && isAgenticWorkflowOnly,
     }),
-    [intl, tabProps, isAgentNode, isA2AWorkflow, disableChannelsTab]
+    [intl, tabProps, isAgentNode, isAgenticWorkflowOnly]
   );
 
   const handoffTabItem = useMemo(
