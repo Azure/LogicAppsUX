@@ -336,6 +336,7 @@ export const TokenField = ({
           text={value[0].value}
           showAgentViewer={editorOptions?.showAgentViewer}
           queryParams={editorOptions?.queryParams}
+          chatUrl={editorOptions?.chatUrl}
         />
       );
 

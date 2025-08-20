@@ -1,5 +1,5 @@
 import { Button, Dialog, DialogSurface, DialogContent, DialogBody, Spinner, Text } from '@fluentui/react-components';
-import { Window24Regular, ErrorCircle24Regular, Dismiss24Regular } from '@fluentui/react-icons';
+import { ErrorCircle24Regular, Dismiss24Regular } from '@fluentui/react-icons';
 import * as React from 'react';
 import { useIntl } from 'react-intl';
 import { useCopyInputControlStyles } from './styles';
@@ -131,35 +131,3 @@ export const AgentUrlViewer: React.FC<AgentUrlViewerProps> = ({ url, isOpen, que
     </Dialog>
   );
 };
-
-export interface AgentUrlButtonProps {
-  url: string;
-  onOpen: () => void;
-}
-
-export const AgentUrlButton = React.forwardRef<HTMLButtonElement, AgentUrlButtonProps>(({ url, onOpen }, ref) => {
-  const intl = useIntl();
-
-  const DISPLAY_TEXT_OPEN_POPUP = intl.formatMessage({
-    defaultMessage: 'Open in popup',
-    id: 'l9TY/4',
-    description: 'ARIA label and tooltip text for the popup button',
-  });
-
-  if (!url) {
-    return null;
-  }
-
-  return (
-    <Button
-      ref={ref}
-      aria-label={DISPLAY_TEXT_OPEN_POPUP}
-      icon={<Window24Regular />}
-      appearance="transparent"
-      size="small"
-      onClick={onOpen}
-    />
-  );
-});
-
-AgentUrlButton.displayName = 'AgentUrlButton';
