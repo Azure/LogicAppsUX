@@ -51,20 +51,31 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
   const [resultsSorting, setResultsSorting] = React.useState<SearchResultSortOption>(SearchResultSortOptions.unsorted);
 
   const apiIds = useMemo(
-    () =>
-      Array.from(new Set(operationSearchResults.filter((r) => r !== undefined).map((res) => res.properties.api.id))).sort((a, b) => {
+    () => {
+      const apiMap = new Map<string, { displayName?: string; name?: string }>();
+      
+      operationSearchResults
+        .filter((r) => r !== undefined)
+        .forEach((res) => {
+          const api = res.properties.api;
+          if (!apiMap.has(api.id)) {
+            apiMap.set(api.id, { displayName: api.displayName, name: api.name });
+          }
+        });
+
+      return Array.from(apiMap.keys()).sort((a, b) => {
         if (resultsSorting === SearchResultSortOptions.unsorted) {
           return 0;
         }
 
-        // Get display names for sorting
-        const aApi = operationSearchResults.find((res) => res.properties.api.id === a)?.properties.api;
-        const bApi = operationSearchResults.find((res) => res.properties.api.id === b)?.properties.api;
+        const aApi = apiMap.get(a);
+        const bApi = apiMap.get(b);
         const aName = aApi?.displayName ?? aApi?.name ?? a;
         const bName = bApi?.displayName ?? bApi?.name ?? b;
 
         return resultsSorting === SearchResultSortOptions.ascending ? aName.localeCompare(bName) : bName.localeCompare(aName);
-      }),
+      });
+    },
     [operationSearchResults, resultsSorting]
   );
 
