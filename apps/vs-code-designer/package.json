@@ -81,6 +81,8 @@
     "test:extension-unit": "vitest run --retry=3",
     "vscode:designer:e2e:ui": "pnpm run test:ui:setup && pnpm run build:ui && extest run-tests out/test/**/*.js",
     "vscode:designer:e2e:headless": "pnpm run test:ui:setup && pnpm run build:ui && cp .extester.headless.json .extester.json && extest run-tests out/test/**/*.js && cp .extester.ui.json .extester.json",
-    "test:ui:setup": "extest setup-tests"
+    "test:ui:setup": "extest setup-tests",
+    "test:ui": "pnpm run test:ui:setup && pnpm run build:ui && extest run-tests out/test/**/*.js",
+    "test:ui:headless": "pnpm run test:ui:setup && pnpm run build:ui && cp .extester.headless.json .extester.json && extest run-tests out/test/**/*.js && cp .extester.ui.json .extester.json"
   }
 }
