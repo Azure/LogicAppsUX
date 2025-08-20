@@ -62,9 +62,8 @@
     "vscode:designer:pack:step2": "cd ./dist && vsce package",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "test:extension-unit": "vitest run --retry=3",
-    "pretest": "pnpm run build:e2e",
     "test:vscode": "node ./dist/e2e/runTest.js",
-    "test:vscode:run": "pnpm run pretest",
+    "test:vscode:run": "pnpm run build:e2e",
     "test:e2e": "pnpm run build:e2e && node ./dist/e2e/runTest.js"
   }
 }
