@@ -156,11 +156,9 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
 
   const onOperationClick = useCallback(
     (id: string, apiId?: string) => {
-      const searchOperation = SearchService().getOperationById?.bind(SearchService());
-
-      const searchResultPromise = searchOperation
-        ? searchOperation(id)
-        : Promise.resolve((allOperations ?? []).find((o) => (apiId ? o.id === id && o.properties?.api?.id === apiId : o.id === id)));
+      const searchResultPromise = Promise.resolve(
+        (allOperations ?? []).find((o) => (apiId ? o.id === id && o.properties?.api?.id === apiId : o.id === id))
+      );
 
       searchResultPromise.then((operation) => {
         if (!operation) {
