@@ -14,7 +14,7 @@
     "setupTimeout": 120000
   },
   "runTests": {
-    "headless": false,
+    "headless": true,
     "logLevel": "info"
   }
 }

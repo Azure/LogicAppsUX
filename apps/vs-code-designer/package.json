@@ -73,20 +73,14 @@
     "build:main": "tsup --config tsup.main.config.ts",
     "build:e2e": "tsup --config tsup.e2e.config.ts",
     "build:ui": "tsup --config tsup.ui.config.ts",
-    "build:all": "pnpm run build:main && pnpm run build:e2e && pnpm run build:ui",
     "copyFiles": "node extension-copy-svgs.js",
     "vscode:designer:pack": "pnpm run vscode:designer:pack:step1 && pnpm run vscode:designer:pack:step2",
     "vscode:designer:pack:step1": "cd ./dist && npm install",
     "vscode:designer:pack:step2": "cd ./dist && vsce package",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "test:extension-unit": "vitest run --retry=3",
-    "test:vscode": "node ./dist/e2e/runTest.js",
-    "test:vscode:run": "pnpm run build:e2e",
-    "test:e2e": "pnpm run build:e2e && node ./dist/e2e/runTest.js",
-    "test:ui": "pnpm run build:ui && extest run-tests out/test/**/*.js",
-    "test:ui:headless": "pnpm run build:ui && cp .extester.headless.json .extester.json && extest run-tests out/test/**/*.js && cp .extester.ui.json .extester.json",
-    "test:ui:setup": "extest setup-tests",
-    "test:ui:run": "extest run-tests out/test/**/*.js",
-    "test:ui:run:headless": "cp .extester.headless.json .extester.json && extest run-tests out/test/**/*.js && cp .extester.ui.json .extester.json"
+    "vscode:designer:e2e:ui": "pnpm run test:ui:setup && pnpm run build:ui && extest run-tests out/test/**/*.js",
+    "vscode:designer:e2e:headless": "pnpm run test:ui:setup && pnpm run build:ui && cp .extester.headless.json .extester.json && extest run-tests out/test/**/*.js && cp .extester.ui.json .extester.json",
+    "test:ui:setup": "extest setup-tests"
   }
 }
