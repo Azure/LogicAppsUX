@@ -12,6 +12,7 @@ import {
   tryGetLogicAppCustomCodeFunctionsProjects,
 } from '../utils/customCodeUtils';
 import * as vscode from 'vscode';
+import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 
 /**
  * Builds a custom code functions project.
@@ -20,11 +21,22 @@ import * as vscode from 'vscode';
  * @returns {Promise<void>} - A promise that resolves when the build process is complete.
  */
 export async function buildCustomCodeFunctionsProject(context: IActionContext, node: vscode.Uri): Promise<void> {
+  const workspaceFolderPath = await getWorkspaceRoot(context);
+
+  const nodePath = node?.fsPath || workspaceFolderPath;
+  if (isNullOrUndefined(nodePath)) {
+    const errorMessage = localize('noProjectPathBuildCustomCode', 'No project path found to build custom code functions project.');
+    context.telemetry.properties.result = 'Failed';
+    context.telemetry.properties.error = errorMessage;
+    ext.outputChannel.appendLog(errorMessage);
+    return;
+  }
+
   context.telemetry.properties.lastStep = 'isCustomCodeFunctionsProject';
-  if (await isCustomCodeFunctionsProject(node.fsPath)) {
+  if (await isCustomCodeFunctionsProject(nodePath)) {
     try {
       context.telemetry.properties.lastStep = 'buildCustomCodeProject';
-      await buildCustomCodeProject(node.fsPath);
+      await buildCustomCodeProject(nodePath);
       context.telemetry.properties.result = 'Succeeded';
     } catch (error) {
       context.telemetry.properties.result = 'Failed';
@@ -34,12 +46,12 @@ export async function buildCustomCodeFunctionsProject(context: IActionContext, n
   }
 
   context.telemetry.properties.lastStep = 'tryGetLogicAppCustomCodeFunctionsProjects';
-  const customCodeProjectPaths = await tryGetLogicAppCustomCodeFunctionsProjects(node.fsPath);
+  const customCodeProjectPaths = await tryGetLogicAppCustomCodeFunctionsProjects(nodePath);
   if (!customCodeProjectPaths || customCodeProjectPaths.length === 0) {
     const errorMessage = 'No custom code functions projects found for the logic app folder "{0}".';
     context.telemetry.properties.result = 'Failed';
-    context.telemetry.properties.error = errorMessage.replace('{0}', node.fsPath);
-    ext.outputChannel.appendLog(localize('azureLogicAppsStandard.noCustomCodeFunctionsProjectsFound', errorMessage, node.fsPath));
+    context.telemetry.properties.error = errorMessage.replace('{0}', nodePath);
+    ext.outputChannel.appendLog(localize('azureLogicAppsStandard.noCustomCodeFunctionsProjectsFound', errorMessage, nodePath));
     return;
   }
 
