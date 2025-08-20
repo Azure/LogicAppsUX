@@ -1,13 +1,13 @@
 import { useAllConnectors } from '../../../core/queries/browse';
 import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
+import { useDiscoveryPanelRelationshipIds } from '../../../core/state/panel/panelSelectors';
+import { useIsA2AWorkflow } from '../../../core/state/designerView/designerViewSelectors';
 import { equals, getRecordEntry, type Connector } from '@microsoft/logic-apps-shared';
 import { BrowseGrid, isBuiltInConnector, isCustomConnector, RuntimeFilterTagList } from '@microsoft/designer-ui';
 import { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { useShouldEnableACASession } from './hooks';
 import { ALLOWED_A2A_CONNECTOR_NAMES } from './helpers';
-import { useIsA2AWorkflow } from '../../../core/state/designerView/designerViewSelectors';
-import { useDiscoveryPanelRelationshipIds } from '../../../core/state/panel/panelSelectors';
 
 const priorityConnectors = [
   'connectionproviders/request',
