@@ -61,6 +61,8 @@ export { initializeServices } from './state/designerOptions/designerOptionsSlice
 export { resetWorkflowState, resetNodesLoadStatus } from './state/global';
 export { TemplatesDataProvider } from './templates/TemplatesDataProvider';
 export { TemplatesDesignerProvider } from './templates/TemplatesDesignerProvider';
+export { ExportDataProvider } from './exportconsumption/exportdataprovider';
+export { ExportWizardProvider } from './exportconsumption/exportwizardprovider';
 export { ConfigureTemplateDataProvider } from './configuretemplate/ConfigureTemplateDataProvider';
 export { McpDataProvider } from './mcp/McpDataProvider';
 export { McpWizardProvider } from './mcp/McpWizardProvider';
