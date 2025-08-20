@@ -20,9 +20,15 @@ import { useDispatch } from 'react-redux';
 
 export const SelectConnectionWrapper = ({
   connectorId,
+  connectorName,
   onConnectionSuccessful,
   onConnectionClose,
-}: { connectorId: string; onConnectionSuccessful: (connection: Connection) => void; onConnectionClose: () => void }) => {
+}: {
+  connectorId: string;
+  connectorName: string;
+  onConnectionSuccessful: (connection: Connection) => void;
+  onConnectionClose: () => void;
+}) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
   const isXrmConnectionReferenceMode = useIsXrmConnectionReferenceMode();
@@ -80,11 +86,11 @@ export const SelectConnectionWrapper = ({
   const actionBar = useMemo(() => {
     return (
       <>
-        <ActionList nodeIds={[connectorId]} iconUri={connectorIconUri} />
+        <ActionList nodeIds={[connectorName]} iconUri={connectorIconUri} />
         <Divider />
       </>
     );
-  }, [connectorIconUri, connectorId]);
+  }, [connectorIconUri, connectorName]);
   const loadingText = intl.formatMessage({
     defaultMessage: 'Loading connection data...',
     id: 'faUrud',
