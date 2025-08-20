@@ -1,4 +1,4 @@
-import type { AppDispatch, RootState } from '../state/Store';
+import type { AppDispatch, RootState } from '../state/store';
 import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, MessageBar, Text, Badge, Switch } from '@fluentui/react-components';
 import { Theme as ThemeType } from '@microsoft/logic-apps-shared';
 import { useCallback } from 'react';
@@ -7,7 +7,7 @@ import { ThemeProvider } from '@fluentui/react';
 import { FluentProvider, webDarkTheme, webLightTheme } from '@fluentui/react-components';
 import { AzureThemeDark } from '@fluentui/azure-themes/lib/azure/AzureThemeDark';
 import { AzureThemeLight } from '@fluentui/azure-themes/lib/azure/AzureThemeLight';
-import { setToolboxOpen, workflowLoaderSlice } from '../state/WorkflowLoader';
+import { setToolboxOpen, workflowLoaderSlice } from '../state/workflowloader';
 import { environment } from '../../environments/environment';
 import { useDevToolboxStyles } from './styles';
 import { AzureConsumptionLogicAppSelector } from '../../designer/app/AzureLogicAppsDesigner/LogicAppSelectionSetting/AzureConsumptionLogicAppSelector';

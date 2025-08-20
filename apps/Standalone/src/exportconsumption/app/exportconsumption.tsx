@@ -1,5 +1,5 @@
 import { ExportDataProvider, ExportWizard, ExportWizardProvider } from '@microsoft/logic-apps-designer';
-import type { RootState } from '../state/Store';
+import type { RootState } from '../state/store';
 import { useSelector } from 'react-redux';
 import { useMcpStandardStyles } from './styles';
 import { ArmParser } from '../../designer/app/AzureLogicAppsDesigner/Utilities/ArmParser';

@@ -1,4 +1,4 @@
-import { workflowLoaderSlice } from './WorkflowLoader';
+import { workflowLoaderSlice } from './workflowloader';
 import { configureStore } from '@reduxjs/toolkit';
 
 export const store = configureStore({
