@@ -7,7 +7,7 @@ import { SearchResultSortOptions } from '../../../types';
 import { OperationSearchGroup } from '../../operationSearchGroup';
 import { List } from '@fluentui/react';
 import { Spinner, Text } from '@fluentui/react-components';
-import type { DiscoveryOpArray, OperationApi } from '@microsoft/logic-apps-shared';
+import type { DiscoveryOpArray } from '@microsoft/logic-apps-shared';
 import type { PropsWithChildren } from 'react';
 import React, { useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -50,35 +50,41 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
 
   const [resultsSorting, setResultsSorting] = React.useState<SearchResultSortOption>(SearchResultSortOptions.unsorted);
 
-  const getApiNameWithFallback = (api: OperationApi): string => {
-    return api.name ?? api.id;
-  };
+  const apiIds = useMemo(
+    () => {
+      const apiMap = new Map<string, { displayName?: string; name?: string }>();
+      
+      operationSearchResults
+        .filter((r) => r !== undefined)
+        .forEach((res) => {
+          const api = res.properties.api;
+          if (!apiMap.has(api.id)) {
+            apiMap.set(api.id, { displayName: api.displayName, name: api.name });
+          }
+        });
 
-  const apiNames = useMemo(
-    () =>
-      Array.from(
-        new Set(
-          operationSearchResults
-            .filter((r) => r !== undefined)
-            .map((res) => getApiNameWithFallback(res.properties.api))
-            .sort((a, b) =>
-              resultsSorting === SearchResultSortOptions.unsorted
-                ? 0
-                : resultsSorting === SearchResultSortOptions.ascending
-                  ? a.localeCompare(b)
-                  : b.localeCompare(a)
-            )
-        )
-      ),
+      return Array.from(apiMap.keys()).sort((a, b) => {
+        if (resultsSorting === SearchResultSortOptions.unsorted) {
+          return 0;
+        }
+
+        const aApi = apiMap.get(a);
+        const bApi = apiMap.get(b);
+        const aName = aApi?.displayName ?? aApi?.name ?? a;
+        const bName = bApi?.displayName ?? bApi?.name ?? b;
+
+        return resultsSorting === SearchResultSortOptions.ascending ? aName.localeCompare(bName) : bName.localeCompare(aName);
+      });
+    },
     [operationSearchResults, resultsSorting]
   );
 
   const onRenderOperationGroup = React.useCallback(
-    (apiName: string | undefined, _index: number | undefined) => {
-      if (!apiName) {
+    (apiId: string | undefined, _index: number | undefined) => {
+      if (!apiId) {
         return;
       }
-      const operations = operationSearchResults.filter((res) => res?.properties.api.name === apiName);
+      const operations = operationSearchResults.filter((res) => res?.properties.api.id === apiId);
       if (operations.length === 0) {
         return null;
       }
@@ -86,7 +92,7 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
       return (
         <div style={{ marginBottom: '24px' }}>
           <OperationSearchGroup
-            key={apiName}
+            key={apiId}
             operationApi={api}
             operationActionsData={operations.map((operation) => getOperationCardDataFromOperation(operation))}
             onConnectorClick={onConnectorClick}
@@ -186,8 +192,8 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
       )}
       {groupByConnector ? (
         <>
-          <AriaSearchResultsAlert resultCount={apiNames.length} resultDescription={connectorText} />
-          <List items={apiNames} onRenderCell={onRenderOperationGroup} />
+          <AriaSearchResultsAlert resultCount={apiIds.length} resultDescription={connectorText} />
+          <List items={apiIds} onRenderCell={onRenderOperationGroup} />
         </>
       ) : (
         <>
