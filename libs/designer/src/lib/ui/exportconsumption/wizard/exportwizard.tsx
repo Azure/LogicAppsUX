@@ -6,7 +6,7 @@ export const ExportWizard = ({
   onExportCall,
   onClose,
 }: {
-  onExportCall: () => {};
+  onExportCall: () => void;
   onClose: () => void;
 }) => {
   const {
