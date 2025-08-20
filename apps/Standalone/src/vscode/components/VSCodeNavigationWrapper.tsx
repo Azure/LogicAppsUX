@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { makeStyles, Text } from '@fluentui/react-components';
+import { makeStyles, Title3 } from '@fluentui/react-components';
 
 const useStyles = makeStyles({
   nav: {
@@ -39,7 +39,7 @@ export const VSCodeNavigationWrapper = () => {
 
   return (
     <div className={styles.nav}>
-      <Text>VS Code Components</Text>
+      <Title3>VS Code Components</Title3>
       <Link to="/vscode/export" className={`${styles.navLink} ${isActiveLink('/export') ? styles.activeLink : ''}`}>
         Export
       </Link>
