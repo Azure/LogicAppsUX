@@ -288,13 +288,14 @@ export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: R
       <div className={styles.scrollableContent}>
         {/* Details Section */}
         <div className={styles.mainSection}>
-          <div className={styles.header}>
+          <div className={styles.sectionHeader}>
             <Text size={400} weight="bold">
               {INTL_TEXT.resourcesTitle}
             </Text>
           </div>
 
           <DescriptionWithLink
+            className={styles.sectionDescription}
             text={INTL_TEXT.resourcesDescription}
             linkUrl="https://go.microsoft.com/fwlink/?linkid=2330610"
             linkText={INTL_TEXT.howToSetup}
@@ -306,7 +307,7 @@ export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: R
 
         {/* Main Section */}
         <div className={styles.mainSection}>
-          <div className={styles.header}>
+          <div className={styles.sectionHeader}>
             <Text size={400} weight="bold">
               {intl.formatMessage(
                 {
@@ -319,6 +320,7 @@ export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: R
             </Text>
           </div>
           <DescriptionWithLink
+            className={styles.sectionDescription}
             text={INTL_TEXT.mainSectionDescription}
             linkUrl="https://go.microsoft.com/fwlink/?linkid=2330612"
             linkText={INTL_TEXT.howToSetupConnectors}

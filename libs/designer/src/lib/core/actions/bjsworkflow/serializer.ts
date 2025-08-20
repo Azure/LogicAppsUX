@@ -74,6 +74,7 @@ import type {
 import merge from 'lodash.merge';
 import { createTokenValueSegment } from '../../utils/parameters/segment';
 import { ConnectorManifest } from './agent';
+import { isA2AWorkflow } from '../../../core/state/workflow/helper';
 
 export interface SerializeOptions {
   skipValidation: boolean;
@@ -316,6 +317,14 @@ export const serializeOperation = async (
     };
   }
 
+  // This is temporary for A2A until backend supports actions running after the trigger
+  if (isA2AWorkflow(rootState.workflow)) {
+    const triggerId = getTriggerNodeId(rootState.workflow);
+    const replacedTriggerId = getRecordEntry(rootState.workflow.idReplacements, triggerId) ?? triggerId;
+    // Remove any runAfter properties pointing to the trigger, EXCEPT for agent actions
+    removeRunAfterTriggerFromOperation(serializedOperation, replacedTriggerId);
+  }
+
   return serializedOperation;
 };
 
@@ -450,11 +459,12 @@ const serializeSwaggerBasedOperation = async (rootState: RootState, operationId:
   const operationInfo = getRecordEntry(rootState.operations.operationInfo, operationId) as NodeOperation;
   const { type, kind } = operationInfo;
   const isTrigger = isTriggerNode(operationId, rootState.workflow.nodesMetadata);
+  const isRoot = isRootNode(operationId, rootState.workflow.nodesMetadata);
   const inputsToSerialize = getOperationInputsToSerialize(rootState, operationId);
   const nodeSettings = getRecordEntry(rootState.operations.settings, operationId) ?? {};
   const nodeStaticResults = getRecordEntry(rootState.operations.staticResults, operationId) ?? ({} as NodeStaticResults);
   const operationFromWorkflow = getRecordEntry(rootState.workflow.operations, operationId) as LogicAppsV2.OperationDefinition;
-  const runAfter = isTrigger ? undefined : getRunAfter(operationFromWorkflow, idReplacements);
+  const runAfter = isRoot ? undefined : getRunAfter(operationFromWorkflow, idReplacements);
   const recurrence =
     isTrigger && equals(type, Constants.NODE.TYPE.API_CONNECTION)
       ? constructInputValues('recurrence.$.recurrence', inputsToSerialize, false /* encodePathComponents */)
@@ -1270,6 +1280,14 @@ const getSplitOn = (
     splitOn: splitOn.value.value as string,
     ...(splitOnConfiguration ? { splitOnConfiguration } : {}),
   };
+};
+
+const removeRunAfterTriggerFromOperation = (operation: LogicAppsV2.ActionDefinition, triggerId: string): void => {
+  // If the action has a runAfter property pointing to the trigger, remove it
+  //   (only for non-agent actions)
+  if (operation?.runAfter?.[triggerId] && !equals(operation.type, 'agent')) {
+    delete operation?.runAfter[triggerId];
+  }
 };
 
 /**

@@ -188,9 +188,8 @@ export class BaseCognitiveServiceService implements ICognitiveServiceService {
   async createNewDeployment(deploymentName: string, model: string, openAIResourceId: string): Promise<any> {
     const { httpClient, baseUrl } = this.options;
     const uri = `${baseUrl}${openAIResourceId}/deployments/${deploymentName}`;
-
     try {
-      const response = await httpClient.put({
+      return httpClient.put({
         uri,
         queryParameters: {
           'api-version': '2023-10-01-preview',
@@ -211,9 +210,8 @@ export class BaseCognitiveServiceService implements ICognitiveServiceService {
           },
         },
       });
-      return response;
     } catch (e: any) {
-      throw new Error(e?.message ?? e);
+      throw new Error(e);
     }
   }
 }

@@ -1,23 +1,18 @@
 import type { AppDispatch } from '../../../core';
 import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
 import { useIsWithinAgenticLoop } from '../../../core/state/workflow/workflowSelectors';
-import {
-  equals,
-  SearchService,
-  type DiscoveryOpArray,
-  type DiscoveryOperation,
-  type DiscoveryResultTypes,
-} from '@microsoft/logic-apps-shared';
+import { equals, type DiscoveryOpArray, type DiscoveryOperation, type DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
 import { SearchResultsGrid } from '@microsoft/designer-ui';
 import { useDebouncedEffect } from '@react-hookz/web';
 import type { FC } from 'react';
 import { useCallback, useEffect, useState, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { useDiscoveryPanelRelationshipIds, useIsAddingAgentTool } from '../../../core/state/panel/panelSelectors';
-import { useIsAgenticWorkflow } from '../../../core/state/designerView/designerViewSelectors';
+import { useIsA2AWorkflow, useIsAgenticWorkflow } from '../../../core/state/designerView/designerViewSelectors';
 import { useShouldEnableACASession, useShouldEnableNestedAgent, useShouldEnableParseDocumentWithMetadata } from './hooks';
 import { DefaultSearchOperationsService } from './SearchOpeationsService';
 import constants from '../../../common/constants';
+import { ALLOWED_A2A_CONNECTOR_NAMES } from './helpers';
 
 type SearchViewProps = {
   searchTerm: string;
@@ -51,6 +46,7 @@ export const SearchView: FC<SearchViewProps> = ({
   const isWithinAgenticLoop = useIsWithinAgenticLoop(parentGraphId);
   const isAgentTool = useIsAddingAgentTool();
   const isRoot = useMemo(() => parentGraphId === 'root', [parentGraphId]);
+  const isA2AWorkflow = useIsA2AWorkflow();
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -63,17 +59,46 @@ export const SearchView: FC<SearchViewProps> = ({
     }
   }, [searchTerm]);
 
+  const passesA2AWorkflowFilter = useCallback(
+    (operation: DiscoveryOperation<DiscoveryResultTypes>): boolean => {
+      // Only apply this filter if it's A2A workflow and adding to root
+      if (!isA2AWorkflow || !isRoot) {
+        return true;
+      }
+
+      const operationType = operation.properties?.api?.type;
+      const connectorName = operation.properties?.api?.name;
+
+      if (connectorName && ALLOWED_A2A_CONNECTOR_NAMES.has(connectorName)) {
+        return true;
+      }
+
+      // Allow APIConnection or ServiceProvider types
+      if (operationType) {
+        return equals(operationType, 'Microsoft.Web/locations/managedApis') || equals(operationType, 'ServiceProvider');
+      }
+
+      return false;
+    },
+    [isA2AWorkflow, isRoot]
+  );
+
   const filterAgenticLoops = useCallback(
     (operation: DiscoveryOperation<DiscoveryResultTypes>): boolean => {
       const { type, id } = operation;
 
+      // Apply A2A workflow filter first
+      if (!passesA2AWorkflowFilter(operation)) {
+        return false;
+      }
+
       // Exclude handoff operations from search results
-      if (equals(type, 'AgentHandoff')) {
+      if (equals(type, constants.NODE.TYPE.HANDOFF)) {
         return false;
       }
 
       // Exclude agent operations unless it's the root of an agentic workflow
-      if ((!isAgenticWorkflow || !isRoot) && type === 'Agent') {
+      if ((!isAgenticWorkflow || !isRoot) && equals(type, constants.NODE.TYPE.AGENT)) {
         return false;
       }
 
@@ -95,7 +120,7 @@ export const SearchView: FC<SearchViewProps> = ({
         return false;
       }
 
-      if (type === constants.NODE.TYPE.NESTED_AGENT && id === 'invokeNestedAgent') {
+      if (equals(type, constants.NODE.TYPE.NESTED_AGENT) && id === 'invokeNestedAgent') {
         if (!shouldEnableNestedAgent) {
           return false;
         }
@@ -107,20 +132,16 @@ export const SearchView: FC<SearchViewProps> = ({
 
       return true;
     },
-    [isAgentTool, isAgenticWorkflow, isRoot, isWithinAgenticLoop, shouldEnableNestedAgent]
+    [isAgentTool, isAgenticWorkflow, isRoot, isWithinAgenticLoop, shouldEnableNestedAgent, passesA2AWorkflowFilter]
   );
 
   useDebouncedEffect(
     () => {
-      const searchOperations = SearchService().searchOperations?.bind(SearchService());
-
-      const searchResultsPromise = searchOperations
-        ? searchOperations(searchTerm, filters['actionType'], filters['runtime'], filterAgenticLoops)
-        : new DefaultSearchOperationsService(
-            allOperations,
-            shouldEnableParseDocWithMetadata ?? false,
-            shouldEnableACASession ?? false
-          ).searchOperations(searchTerm, filters['actionType'], filters['runtime'], filterAgenticLoops);
+      const searchResultsPromise = new DefaultSearchOperationsService(
+        allOperations,
+        shouldEnableParseDocWithMetadata ?? false,
+        shouldEnableACASession ?? false
+      ).searchOperations(searchTerm, filters['actionType'], filters['runtime'], filterAgenticLoops);
 
       searchResultsPromise.then((results) => {
         setSearchResults(results);
