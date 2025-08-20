@@ -55,6 +55,12 @@
     },
     "e2e-setup": {
       "cache": false
+    },
+    "vscode-designer#test:ui": {
+      "cache": false
+    },
+    "vscode-designer#test:ui:headless": {
+      "cache": false
     }
   }
 }

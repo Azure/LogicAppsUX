@@ -43,32 +43,32 @@ describe('Logic Apps Extension - Basic Smoke Tests', function () {
 
   it('should be able to open and close command palette', async () => {
     // Open command palette
-    const commandPalette = await workbench.openCommandPalette();
-    expect(commandPalette).to.not.be.undefined;
+    const commandPrompt = await workbench.openCommandPrompt();
+    expect(commandPrompt).to.not.be.undefined;
 
     // Verify command palette is open
-    const isDisplayed = await commandPalette.isDisplayed();
+    const isDisplayed = await commandPrompt.isDisplayed();
     expect(isDisplayed).to.be.true;
 
     // Close command palette
-    await commandPalette.cancel();
+    await commandPrompt.cancel();
   });
 
   it('should be able to search for commands in command palette', async () => {
     // Open command palette and search for basic commands
-    const commandPalette = await workbench.openCommandPalette();
-    await commandPalette.setText('Help');
+    const commandPrompt = await workbench.openCommandPrompt();
+    await commandPrompt.setText('Help');
 
     // Wait for suggestions to appear
     await VSBrowser.instance.driver.sleep(1000);
 
     // Get quick picks
-    const suggestions = await commandPalette.getQuickPicks();
+    const suggestions = await commandPrompt.getQuickPicks();
     expect(suggestions.length).to.be.greaterThan(0, 'Should find Help-related commands');
 
     console.log(`Found ${suggestions.length} Help commands`);
 
-    await commandPalette.cancel();
+    await commandPrompt.cancel();
   });
 
   it('should be able to open explorer view', async () => {

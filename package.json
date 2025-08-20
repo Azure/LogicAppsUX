@@ -94,7 +94,9 @@
     "vscode:designer:pack": "turbo run vscode:designer:pack",
     "templates": "ts-node downloadTemplates.js",
     "e2e-setup": "turbo run e2e-setup",
-    "vscode-e2e": "turbo run test:vscode:run"
+    "vscode-e2e": "turbo run test:vscode:run",
+    "test:ui": "turbo run vscode-designer#test:ui",
+    "test:ui:headless": "turbo run vscode-designer#test:ui:headless"
   },
   "type": "module",
   "dependencies": {

@@ -36,12 +36,15 @@ describe('Logic Apps Extension Basic UI Tests', () => {
   it('should be able to open command palette', async () => {
     const workbench = new Workbench();
 
-    // Open command palette
-    const commandPalette = await workbench.openCommandPalette();
-    expect(commandPalette).to.not.be.undefined;
+    // Open command palette using the correct method
+    const commandPrompt = await workbench.openCommandPrompt();
+    expect(commandPrompt).to.not.be.undefined;
 
-    // Close command palette
-    await commandPalette.cancel();
+    // Wait a moment for the command palette to be fully rendered
+    await driver.sleep(500);
+
+    // Close command palette using Escape key (more reliable)
+    await workbench.executeCommand('workbench.action.closeQuickOpen');
   });
 
   it('should have Azure view in activity bar', async () => {
@@ -77,20 +80,20 @@ describe('Logic Apps Extension Basic UI Tests', () => {
     const workbench = new Workbench();
 
     // Open command palette and search for Logic Apps commands
-    const commandPalette = await workbench.openCommandPalette();
-    await commandPalette.setText('Logic Apps');
+    const commandPrompt = await workbench.openCommandPrompt();
+    await commandPrompt.setText('Logic Apps');
 
     // Wait a moment for suggestions to appear
     await driver.sleep(1000);
 
     // Get suggestions (this will vary based on available commands)
-    const suggestions = await commandPalette.getQuickPicks();
+    const suggestions = await commandPrompt.getQuickPicks();
 
     // We expect at least some suggestions when typing "Logic Apps"
     // Even if the extension isn't fully activated, VS Code should show some results
     expect(suggestions.length).to.be.greaterThanOrEqual(0);
 
-    await commandPalette.cancel();
+    await commandPrompt.cancel();
   });
 
   it('should be able to open file explorer', async () => {

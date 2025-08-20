@@ -15,14 +15,14 @@ describe('Logic Apps Extension - Commands Test', function () {
   });
 
   it('should find Logic Apps related commands', async () => {
-    const commandPalette = await workbench.openCommandPalette();
-    await commandPalette.setText('Azure Logic Apps');
+    const commandPrompt = await workbench.openCommandPrompt();
+    await commandPrompt.setText('Azure Logic Apps');
 
     // Wait for suggestions
     await VSBrowser.instance.driver.sleep(2000);
 
     try {
-      const suggestions = await commandPalette.getQuickPicks();
+      const suggestions = await commandPrompt.getQuickPicks();
       console.log(`Found ${suggestions.length} Azure Logic Apps commands`);
 
       // Even if no specific commands are found, this shouldn't fail the test
@@ -46,17 +46,17 @@ describe('Logic Apps Extension - Commands Test', function () {
       // Don't fail the test if we can't get suggestions
     }
 
-    await commandPalette.cancel();
+    await commandPrompt.cancel();
   });
 
   it('should find Create Logic App command', async () => {
-    const commandPalette = await workbench.openCommandPalette();
-    await commandPalette.setText('Create logic app');
+    const commandPrompt = await workbench.openCommandPrompt();
+    await commandPrompt.setText('Create logic app');
 
     await VSBrowser.instance.driver.sleep(2000);
 
     try {
-      const suggestions = await commandPalette.getQuickPicks();
+      const suggestions = await commandPrompt.getQuickPicks();
       console.log(`Found ${suggestions.length} Create Logic App commands`);
 
       // Look for commands that might contain "logic app" or "create"
@@ -81,17 +81,17 @@ describe('Logic Apps Extension - Commands Test', function () {
       console.log('Error checking Create Logic App commands:', error);
     }
 
-    await commandPalette.cancel();
+    await commandPrompt.cancel();
   });
 
   it('should find general Azure commands', async () => {
-    const commandPalette = await workbench.openCommandPalette();
-    await commandPalette.setText('Azure');
+    const commandPrompt = await workbench.openCommandPrompt();
+    await commandPrompt.setText('Azure');
 
     await VSBrowser.instance.driver.sleep(2000);
 
     try {
-      const suggestions = await commandPalette.getQuickPicks();
+      const suggestions = await commandPrompt.getQuickPicks();
       console.log(`Found ${suggestions.length} Azure commands`);
 
       // We expect at least some Azure-related commands in VS Code
@@ -113,6 +113,6 @@ describe('Logic Apps Extension - Commands Test', function () {
       console.log('Error getting Azure commands:', error);
     }
 
-    await commandPalette.cancel();
+    await commandPrompt.cancel();
   });
 });
