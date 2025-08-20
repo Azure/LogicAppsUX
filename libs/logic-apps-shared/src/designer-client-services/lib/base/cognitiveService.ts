@@ -189,32 +189,27 @@ export class BaseCognitiveServiceService implements ICognitiveServiceService {
     const { httpClient, baseUrl } = this.options;
     const uri = `${baseUrl}${openAIResourceId}/deployments/${deploymentName}`;
     try {
-      return httpClient
-        .put({
-          uri,
-          queryParameters: {
-            'api-version': '2023-10-01-preview',
-          },
-          content: {
-            properties: {
-              model: {
-                name: model,
-                version: '2025-04-14',
-                format: 'OpenAI',
-              },
-              raiPolicyName: 'Microsoft.DefaultV2',
-              versionUpgradeOption: 'OnceNewDefaultVersionAvailable',
+      return httpClient.put({
+        uri,
+        queryParameters: {
+          'api-version': '2023-10-01-preview',
+        },
+        content: {
+          properties: {
+            model: {
+              name: model,
+              version: '2025-04-14',
+              format: 'OpenAI',
             },
-            sku: {
-              name: 'GlobalStandard',
-              capacity: 100,
-            },
+            raiPolicyName: 'Microsoft.DefaultV2',
+            versionUpgradeOption: 'OnceNewDefaultVersionAvailable',
           },
-        })
-        .then((r) => r)
-        .catch((e) => {
-          throw new Error(e);
-        });
+          sku: {
+            name: 'GlobalStandard',
+            capacity: 100,
+          },
+        },
+      });
     } catch (e: any) {
       throw new Error(e);
     }
