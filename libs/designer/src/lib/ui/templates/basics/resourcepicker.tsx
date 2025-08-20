@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useIntl } from 'react-intl';
 import { Option, Field, Dropdown } from '@fluentui/react-components';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useLocations, useLogicApps, useResourceGroups, useSubscriptions } from '../../../core/templates/utils/queries';
+import { useLocations, useLogicApps, useResourceGroups, useSubscriptions } from '../../../core/queries/resource';
 import {
   setLocation,
   setLogicAppDetails,
