@@ -26,20 +26,33 @@ import { getArtifactsInLocalProject } from '../../../utils/codeless/artifacts';
 import * as vscode from 'vscode';
 import type { Connection } from '@microsoft/logic-apps-shared';
 
+type Range = {
+  Start: {
+    Line: number;
+    Character: number;
+  };
+  End: {
+    Line: number;
+    Character: number;
+  };
+};
+
 export default class OpenConnectionView extends OpenDesignerBase {
   private readonly workflowFilePath: string;
   private projectPath: string | undefined;
   private panelMetadata: IDesignerPanelMetadata;
   private readonly methodName: string;
-  private readonly range?: any;
+  private readonly connectorName: string;
+  private readonly range: Range;
 
-  constructor(context: IActionContext, filePath: string, methodName: string, range?: any) {
-    const panelName: string = `Connection view - ${methodName}`;
+  constructor(context: IActionContext, filePath: string, methodName: string, connectorName: string, range: Range) {
+    const panelName: string = `Connection view - ${connectorName} - ${methodName}`;
     const panelGroupKey = ext.webViewKey.languageServer;
     super(context, '', panelName, workflowAppApiVersion, panelGroupKey, false, true, false, '');
     this.workflowFilePath = filePath;
     this.methodName = methodName;
     this.range = range;
+    this.connectorName = connectorName;
   }
 
   public async createPanel(): Promise<void> {
@@ -126,11 +139,13 @@ export default class OpenConnectionView extends OpenDesignerBase {
             connectionData: this.connectionData,
             baseUrl: this.baseUrl,
             apiHubServiceDetails: this.apiHubServiceDetails,
-            isLocal: this.isLocal,
             apiVersion: this.apiVersion,
             oauthRedirectUrl: this.oauthRedirectUrl,
             hostVersion: ext.extensionVersion,
             workflowRuntimeBaseUrl: this.workflowRuntimeBaseUrl,
+            connector: {
+              name: this.connectorName,
+            },
           },
         });
         break;
@@ -166,7 +181,7 @@ export default class OpenConnectionView extends OpenDesignerBase {
   private async saveConnection(
     functionName: string,
     connection: Connection,
-    insertionContext: { documentUri: string; range?: any },
+    insertionContext: { documentUri: string; range: Range },
     connectionReferences: any,
     azureTenantId?: string,
     workflowBaseManagementUri?: string
@@ -227,7 +242,7 @@ export default class OpenConnectionView extends OpenDesignerBase {
 function insertFunctionCallAtLocation(
   _functionName: string,
   connection: Connection,
-  insertionContext: { documentUri: string; range?: any }
+  insertionContext: { documentUri: string; range: Range }
 ) {
   // Find the document by URI
   const targetDocument = vscode.workspace.textDocuments.find((doc) => doc.uri.fsPath.toString() === insertionContext.documentUri);
@@ -271,7 +286,7 @@ function insertFunctionCallAtLocation(
 const performTextReplacement = (
   editor: vscode.TextEditor,
   connection: Connection,
-  insertionContext: { documentUri: string; range?: any }
+  insertionContext: { documentUri: string; range: Range }
 ) => {
   if (insertionContext.range) {
     // Normalize the range format - handle both Start/Line and start/line formats
@@ -287,12 +302,6 @@ const performTextReplacement = (
       startChar = range.Start.Character;
       endLine = range.End.Line;
       endChar = range.End.Character;
-    } else if (range.start && range.end) {
-      // Handle VS Code standard { start: { line: 55, character: 85 }, end: { line: 55, character: 99 } } format
-      startLine = range.start.line;
-      startChar = range.start.character;
-      endLine = range.end.line;
-      endChar = range.end.character;
     } else {
       vscode.window.showErrorMessage('Invalid range format provided');
       return;
@@ -326,9 +335,9 @@ export async function openLanguageServerConnectionView(
   context: IActionContext,
   filePath: string,
   methodName: string,
-  _className?: string,
-  range?: any
+  connectorName: string,
+  range: Range
 ): Promise<void> {
-  const connectionViewObj: OpenConnectionView = new OpenConnectionView(context, filePath, methodName, range);
+  const connectionViewObj: OpenConnectionView = new OpenConnectionView(context, filePath, methodName, connectorName, range);
   await connectionViewObj.createPanel();
 }

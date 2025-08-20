@@ -20,9 +20,8 @@ import { ExtensionCommand, type FileSystemConnectionInfo } from '@microsoft/vsco
 import { convertConnectionsDataToReferences } from '../designer/utilities/workflow';
 import { useConnectionViewStyles } from './connectionViewStyles';
 
-const ConnectionView = ({ connectorName }: { connectorName: string; connectionReferences: ConnectionReferences }) => {
+const ConnectionView = ({ connectorName }: { connectorName: string }) => {
   const vscode = useContext(VSCodeContext);
-
   const sendMsgToVsix = useCallback(
     (msg: any) => {
       vscode.postMessage(msg);
@@ -56,7 +55,7 @@ const ConnectionView = ({ connectorName }: { connectorName: string; connectionRe
 export const LanguageServerConnectionView = () => {
   const vscode = useContext(VSCodeContext);
   const dispatch: AppDispatch = useDispatch();
-  const vscodeState = useSelector((state: RootState) => state.designer);
+  const vscodeDesigner = useSelector((state: RootState) => state.languageServer);
   const styles = useConnectionViewStyles();
   const {
     panelMetaData,
@@ -68,7 +67,10 @@ export const LanguageServerConnectionView = () => {
     oauthRedirectUrl,
     hostVersion,
     workflowRuntimeBaseUrl,
-  } = vscodeState;
+    connector,
+  } = vscodeDesigner;
+
+  const { name: connectorName } = connector;
 
   const [theme, setTheme] = useState<Theme>(getTheme(document.body));
   useThemeObserver(document.body, theme, setTheme, {
@@ -131,7 +133,6 @@ export const LanguageServerConnectionView = () => {
   const connectionReferences: ConnectionReferences = useMemo(() => {
     return convertConnectionsDataToReferences(connectionData);
   }, [connectionData]);
-  console.log('Charlie onnection References initial:', connectionReferences, 'data: ', connectionData);
 
   return (
     <div className={styles.connectionViewContainer}>
@@ -154,7 +155,7 @@ export const LanguageServerConnectionView = () => {
           }}
           appSettings={panelMetaData?.localSettings}
         >
-          <ConnectionView connectorName={'msnweather'} connectionReferences={connectionReferences} />
+          <ConnectionView connectorName={connectorName} />
         </BJSWorkflowProvider>
       </DesignerProvider>
     </div>

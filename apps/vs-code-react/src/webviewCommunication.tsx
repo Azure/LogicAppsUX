@@ -59,6 +59,7 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { WebviewApi } from 'vscode-webview';
 import { store as DesignerStore, resetDesignerDirtyState } from '@microsoft/logic-apps-designer';
+import { initializeLanguageServer } from './state/LanguageServerSlice';
 
 const vscode: WebviewApi<unknown> = acquireVsCodeApi();
 export const VSCodeContext = React.createContext(vscode);
@@ -225,7 +226,7 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
       case ProjectName.languageServer: {
         switch (message.command) {
           case ExtensionCommand.initialize_frame: {
-            dispatch(initializeDesigner(message.data));
+            dispatch(initializeLanguageServer(message.data));
             break;
           }
         }

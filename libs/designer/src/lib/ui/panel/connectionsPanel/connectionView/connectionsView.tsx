@@ -85,6 +85,7 @@ export const ConnectionsView = (props: ConnectionsViewProps) => {
         return (
           <SelectConnectionWrapper
             connectorId={connectorId}
+            connectorName={connectorName}
             onConnectionSuccessful={props.onConnectionSuccessful}
             onConnectionClose={props.closeView}
           />
@@ -92,7 +93,7 @@ export const ConnectionsView = (props: ConnectionsViewProps) => {
       case 'create':
         return <CreateConnectionWrapper connectorId={connectorId} onConnectionSuccessful={props.onConnectionSuccessful} />;
     }
-  }, [connectorId, panelStatus, props.closeView, props.onConnectionSuccessful]);
+  }, [connectorId, panelStatus, connectorName, props.closeView, props.onConnectionSuccessful]);
 
   return (
     <div style={{ padding: '0 10px', overflowY: 'auto' }}>
