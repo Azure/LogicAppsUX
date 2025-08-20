@@ -427,8 +427,10 @@ export async function exportLogicApp(context: IActionContext): Promise<void> {
         engine.export();
         break;
       }
-      case ExtensionCommand.log_telemtry: {
-        ext.logTelemetry(context, message.key, message.value);
+      case ExtensionCommand.logTelemetry: {
+        const eventName = message.key;
+        ext.telemetryReporter.sendTelemetryEvent(eventName, { value: message.value });
+        ext.logTelemetry(context, eventName, message.value);
         break;
       }
       default:

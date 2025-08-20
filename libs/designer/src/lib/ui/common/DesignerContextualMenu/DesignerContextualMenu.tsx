@@ -102,7 +102,7 @@ export const DesignerContextualMenu = () => {
 
   const operationFromWorkflow = getRecordEntry(rootState.workflow.operations, nodeId) as LogicAppsV2.OperationDefinition;
   const metadata = useNodeMetadata(nodeId);
-  const isTrigger = useMemo(() => metadata?.graphId === 'root' && metadata?.isRoot, [metadata]);
+  const isTrigger = useMemo(() => metadata?.isTrigger ?? false, [metadata]);
   const operationInfo = useOperationInfo(nodeId);
   const isScopeNode = useMemo(() => isScopeOperation(operationInfo?.type), [operationInfo?.type]);
   const runAfter = shouldDisplayRunAfter(operationFromWorkflow, isTrigger);

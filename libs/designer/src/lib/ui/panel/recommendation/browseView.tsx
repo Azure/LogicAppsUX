@@ -1,10 +1,24 @@
 import { useAllConnectors } from '../../../core/queries/browse';
 import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
-import { SearchService, getRecordEntry, type Connector } from '@microsoft/logic-apps-shared';
+import { useDiscoveryPanelRelationshipIds } from '../../../core/state/panel/panelSelectors';
+import { useIsA2AWorkflow } from '../../../core/state/designerView/designerViewSelectors';
+import { equals, getRecordEntry, type Connector } from '@microsoft/logic-apps-shared';
 import { BrowseGrid, isBuiltInConnector, isCustomConnector, RuntimeFilterTagList } from '@microsoft/designer-ui';
 import { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { useShouldEnableACASession } from './hooks';
+import { ALLOWED_A2A_CONNECTOR_NAMES } from './helpers';
+
+const priorityConnectors = [
+  'connectionproviders/request',
+  'connectionProviders/http',
+  'connectionProviders/inlineCode',
+  'serviceProviders/serviceBus',
+  '/managedApis/sql',
+  '/connectionProviders/azureFunctionOperation',
+  'managedApis/office365',
+  'managedApis/sharepointonline',
+];
 
 const defaultFilterConnector = (connector: Connector, runtimeFilter: string): boolean => {
   if (runtimeFilter === 'inapp' && !isBuiltInConnector(connector)) {
@@ -20,16 +34,7 @@ const defaultFilterConnector = (connector: Connector, runtimeFilter: string): bo
   }
   return true;
 };
-const priorityConnectors = [
-  'connectionproviders/request',
-  'connectionProviders/http',
-  'connectionProviders/inlineCode',
-  'serviceProviders/serviceBus',
-  '/managedApis/sql',
-  '/connectionProviders/azureFunctionOperation',
-  'managedApis/office365',
-  'managedApis/sharepointonline',
-];
+
 const getRunTimeValue = (connector: Connector): number => {
   if (isBuiltInConnector(connector)) {
     return 100;
@@ -39,10 +44,12 @@ const getRunTimeValue = (connector: Connector): number => {
   }
   return 300;
 };
+
 const getPriorityValue = (connector: Connector): number => {
   const t = priorityConnectors.findIndex((p) => connector.id.toLowerCase().endsWith(p.toLowerCase()));
   return t !== -1 ? 200 - t : 100;
 };
+
 const defaultSortConnectors = (connectors: Connector[]): Connector[] => {
   return connectors.sort((a, b) => {
     return (
@@ -63,6 +70,8 @@ export interface BrowseViewProps {
 export const BrowseView = (props: BrowseViewProps) => {
   const { filters, displayRuntimeInfo, setFilters } = props;
   const shouldEnableACASession = useShouldEnableACASession();
+  const isA2AWorkflow = useIsA2AWorkflow();
+  const isAddingToGraph = useDiscoveryPanelRelationshipIds().graphId === 'root';
 
   const dispatch = useDispatch();
 
@@ -86,8 +95,7 @@ export const BrowseView = (props: BrowseViewProps) => {
         return true;
       }
 
-      const filterMethod = SearchService().filterConnector?.bind(SearchService()) || defaultFilterConnector;
-      return filterMethod(connector, runtimeFilter);
+      return defaultFilterConnector(connector, runtimeFilter);
     },
     [filters]
   );
@@ -126,22 +134,46 @@ export const BrowseView = (props: BrowseViewProps) => {
     [filters]
   );
 
+  const passesA2AWorkflowFilter = useCallback(
+    (connector: Connector): boolean => {
+      // Only apply this filter if it's A2A workflow and adding to root
+      if (!isA2AWorkflow || !isAddingToGraph) {
+        return true;
+      }
+
+      const connectorType = connector.type;
+      const connectorName = connector.name;
+
+      if (connectorName && ALLOWED_A2A_CONNECTOR_NAMES.has(connectorName)) {
+        return true;
+      }
+
+      // Allow APIConnection or ServiceProvider types
+      if (connectorType) {
+        return equals(connectorType, 'Microsoft.Web/locations/managedApis') || equals(connectorType, 'ServiceProvider');
+      }
+
+      return false;
+    },
+    [isA2AWorkflow, isAddingToGraph]
+  );
+
   const filterItems = useCallback(
     (connector: Connector): boolean => {
       return (
         isAgentConnectorAllowed(connector) &&
         isACASessionAllowed(connector) &&
         passesRuntimeFilter(connector) &&
-        passesActionTypeFilter(connector)
+        passesActionTypeFilter(connector) &&
+        passesA2AWorkflowFilter(connector)
       );
     },
-    [isAgentConnectorAllowed, isACASessionAllowed, passesRuntimeFilter, passesActionTypeFilter]
+    [isAgentConnectorAllowed, isACASessionAllowed, passesRuntimeFilter, passesActionTypeFilter, passesA2AWorkflowFilter]
   );
 
   const sortedConnectors = useMemo(() => {
     const connectors = allConnectors?.filter(filterItems) ?? [];
-    const sortMethod = SearchService().sortConnectors?.bind(SearchService()) || defaultSortConnectors;
-    return sortMethod(connectors);
+    return defaultSortConnectors(connectors);
   }, [allConnectors, filterItems]);
 
   const onConnectorCardSelected = useCallback(

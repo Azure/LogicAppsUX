@@ -9,7 +9,7 @@ import { getOperationInputParameters } from '../../state/operation/operationSele
 import type { OutputMock } from '../../state/unitTest/unitTestInterfaces';
 import type { WorkflowParameterDefinition } from '../../state/workflowparameters/workflowparametersSlice';
 import type { RootState } from '../../store';
-import { getNode, getTriggerNodeId, isRootNode, isRootNodeInGraph } from '../../utils/graph';
+import { getNode, getTriggerNodeId, isRootNode, isTriggerNode } from '../../utils/graph';
 import {
   castValueSegments,
   encodePathValue,
@@ -74,6 +74,7 @@ import type {
 import merge from 'lodash.merge';
 import { createTokenValueSegment } from '../../utils/parameters/segment';
 import { ConnectorManifest } from './agent';
+import { isA2AWorkflow } from '../../../core/state/workflow/helper';
 
 export interface SerializeOptions {
   skipValidation: boolean;
@@ -192,7 +193,7 @@ const getActions = async (rootState: RootState, options?: SerializeOptions): Pro
   const idReplacements = rootState.workflow.idReplacements;
   const rootGraph = rootState.workflow.graph as WorkflowNode;
   const actionsInRootGraph = rootGraph.children?.filter(
-    (child) => !isRootNode(child.id, rootState.workflow.nodesMetadata)
+    (child) => !isTriggerNode(child.id, rootState.workflow.nodesMetadata)
   ) as WorkflowNode[];
   const promises: Promise<LogicAppsV2.ActionDefinition | null>[] = [];
 
@@ -205,9 +206,7 @@ const getActions = async (rootState: RootState, options?: SerializeOptions): Pro
       const originalId = actionsInRootGraph[index].id;
       if (!isNullOrEmpty(action)) {
         actions[getRecordEntry(idReplacements, originalId) ?? originalId] = action as LogicAppsV2.ActionDefinition;
-        return actions;
       }
-
       return actions;
     },
     {}
@@ -318,6 +317,14 @@ export const serializeOperation = async (
     };
   }
 
+  // This is temporary for A2A until backend supports actions running after the trigger
+  if (isA2AWorkflow(rootState.workflow)) {
+    const triggerId = getTriggerNodeId(rootState.workflow);
+    const replacedTriggerId = getRecordEntry(rootState.workflow.idReplacements, triggerId) ?? triggerId;
+    // Remove any runAfter properties pointing to the trigger, EXCEPT for agent actions
+    removeRunAfterTriggerFromOperation(serializedOperation, replacedTriggerId);
+  }
+
   return serializedOperation;
 };
 
@@ -408,7 +415,7 @@ const serializeManifestBasedOperation = async (rootState: RootState, operationId
     throw new AssertionException(AssertionErrorCode.OPERATION_NOT_FOUND, `Operation with id ${operationId} not found`);
   }
   const manifest = await getOperationManifest(operation);
-  const isTrigger = isRootNodeInGraph(operationId, 'root', rootState.workflow.nodesMetadata);
+  const isTrigger = isTriggerNode(operationId, rootState.workflow.nodesMetadata);
   const inputsToSerialize = getOperationInputsToSerialize(rootState, operationId);
   const nodeSettings = getRecordEntry(rootState.operations.settings, operationId) ?? {};
   const nodeStaticResults = getRecordEntry(rootState.operations.staticResults, operationId) ?? ({} as NodeStaticResults);
@@ -451,7 +458,7 @@ const serializeSwaggerBasedOperation = async (rootState: RootState, operationId:
   const idReplacements = rootState.workflow.idReplacements;
   const operationInfo = getRecordEntry(rootState.operations.operationInfo, operationId) as NodeOperation;
   const { type, kind } = operationInfo;
-  const isTrigger = isRootNode(operationId, rootState.workflow.nodesMetadata);
+  const isTrigger = isTriggerNode(operationId, rootState.workflow.nodesMetadata);
   const inputsToSerialize = getOperationInputsToSerialize(rootState, operationId);
   const nodeSettings = getRecordEntry(rootState.operations.settings, operationId) ?? {};
   const nodeStaticResults = getRecordEntry(rootState.operations.staticResults, operationId) ?? ({} as NodeStaticResults);
@@ -1272,6 +1279,14 @@ const getSplitOn = (
     splitOn: splitOn.value.value as string,
     ...(splitOnConfiguration ? { splitOnConfiguration } : {}),
   };
+};
+
+const removeRunAfterTriggerFromOperation = (operation: LogicAppsV2.ActionDefinition, triggerId: string): void => {
+  // If the action has a runAfter property pointing to the trigger, remove it
+  //   (only for non-agent actions)
+  if (operation?.runAfter?.[triggerId] && !equals(operation.type, 'agent')) {
+    delete operation?.runAfter[triggerId];
+  }
 };
 
 /**

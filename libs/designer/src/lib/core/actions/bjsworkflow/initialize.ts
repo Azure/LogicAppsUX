@@ -26,7 +26,7 @@ import { updateTokens, updateUpstreamNodes } from '../../state/tokens/tokensSlic
 import type { WorkflowParameterDefinition } from '../../state/workflowparameters/workflowparametersSlice';
 import { initializeParameters } from '../../state/workflowparameters/workflowparametersSlice';
 import type { RootState } from '../../store';
-import { getTriggerNodeId, isRootNodeInGraph } from '../../utils/graph';
+import { getTriggerNodeId, isTriggerNode } from '../../utils/graph';
 import {
   getSplitOnOptions,
   getUpdatedManifestForSchemaDependency,
@@ -590,9 +590,9 @@ export const updateAgentUrlInInputs = async ({ type, kind }: NodeOperation, node
       const agentUrlInfo = await WorkflowService().getAgentUrl?.();
       const parameter = getParameterFromName(nodeInputs, 'agentUrl');
       if (parameter && agentUrlInfo) {
-        parameter.value = [createLiteralValueSegment(agentUrlInfo.url)];
+        parameter.value = [createLiteralValueSegment(agentUrlInfo.agentUrl)];
         if (agentUrlInfo.queryParams) {
-          parameter.editorOptions = { ...parameter.editorOptions, queryParams: agentUrlInfo.queryParams };
+          parameter.editorOptions = { ...parameter.editorOptions, chatUrl: agentUrlInfo.chatUrl, queryParams: agentUrlInfo.queryParams };
         }
         return parameter;
       }
@@ -662,7 +662,7 @@ export const updateAllUpstreamNodes = (state: RootState, dispatch: Dispatch): vo
   }
 
   for (const nodeId of Object.keys(allOperations)) {
-    if (!isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata) || isA2AWorkflow(state.workflow)) {
+    if (!isTriggerNode(nodeId, state.workflow.nodesMetadata) || isA2AWorkflow(state.workflow)) {
       payload[nodeId] = getTokenNodeIds(
         nodeId,
         state.workflow.graph as WorkflowNode,

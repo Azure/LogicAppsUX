@@ -67,6 +67,7 @@ export const Deserialize = (
     nodesMetadata[tID] = {
       graphId: 'root',
       isRoot: true,
+      isTrigger: true,
       ...(trigger?.metadata && { actionMetadata: trigger?.metadata }),
       ...addTriggerInstanceMetaData(runInstance),
     };
@@ -79,6 +80,7 @@ export const Deserialize = (
     nodesMetadata[tID] = {
       graphId: 'root',
       isRoot: true,
+      isTrigger: true,
     };
     allActionNames.push(tID);
   }
@@ -89,10 +91,14 @@ export const Deserialize = (
     children.push(triggerNode);
   }
 
-  if (definition.actions && !equals(workflowKind, 'agent')) {
+  if (definition.actions) {
     const entries = Object.entries(definition.actions);
     const parentlessChildren = entries.filter(([, value]) => isNullOrEmpty(value.runAfter));
-    for (const [key] of parentlessChildren) {
+    for (const [key, action] of parentlessChildren) {
+      // Don't add root edges for agent actions in A2A
+      if (equals(workflowKind, 'agent') && isAgentAction(action)) {
+        continue;
+      }
       rootEdges.push(createWorkflowEdge(triggerNode?.id ?? '', key));
     }
   }

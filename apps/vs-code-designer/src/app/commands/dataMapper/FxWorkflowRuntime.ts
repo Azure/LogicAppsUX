@@ -73,7 +73,7 @@ export async function startBackendRuntime(projectPath: string, context: IActionC
         const portArgs = `--port ${designTimeInst.port}`;
         startDesignTimeProcess(ext.outputChannel, cwd, getFunctionsCommand(), 'host', 'start', portArgs);
 
-        await waitForDesignTimeStartUp(projectPath, url, new Date().getTime());
+        await waitForDesignTimeStartUp(projectPath, url, new Date().getTime(), true);
       } else {
         throw new Error("Workflow folder doesn't exist");
       }

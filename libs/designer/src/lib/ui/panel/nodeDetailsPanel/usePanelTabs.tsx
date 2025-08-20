@@ -8,7 +8,7 @@ import { useIsNodePinnedToOperationPanel } from '../../../core/state/panel/panel
 import { useSettingValidationErrors } from '../../../core/state/setting/settingSelector';
 import { useHasSchema } from '../../../core/state/staticresultschema/staitcresultsSelector';
 import { useRetryHistory } from '../../../core/state/workflow/workflowSelectors';
-import { isRootNodeInGraph } from '../../../core/utils/graph';
+import { isTriggerNode } from '../../../core/utils/graph';
 import { aboutTab } from './tabs/aboutTab';
 import { codeViewTab } from './tabs/codeViewTab';
 import { mockResultsTab } from './tabs/mockResultsTab/mockResultsTab';
@@ -33,7 +33,7 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
   const isUnitTestView = useUnitTest();
   const panelTabHideKeys = usePanelTabHideKeys();
   const isPinnedNode = useIsNodePinnedToOperationPanel(nodeId);
-  const isTriggerNode = useSelector((state: RootState) => isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata));
+  const isTrigger = useSelector((state: RootState) => isTriggerNode(nodeId, state.workflow.nodesMetadata));
   const operationInfo = useOperationInfo(nodeId);
   const nodeMetaData = useNodeMetadata(nodeId);
   const hasSchema = useHasSchema(operationInfo?.connectorId, operationInfo?.operationId);
@@ -85,12 +85,12 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
       hasErrors: settingValidationErrors.length > 0,
       // Hide Settings tab for Agent REQUEST triggers
       visible: !(
-        isTriggerNode &&
+        isTrigger &&
         equals(operationInfo?.type, constants.NODE.TYPE.REQUEST) &&
         equals(operationInfo?.kind, constants.NODE.KIND.AGENT)
       ),
     }),
-    [intl, tabProps, settingValidationErrors, isTriggerNode, operationInfo?.type, operationInfo?.kind]
+    [intl, tabProps, settingValidationErrors.length, isTrigger, operationInfo?.type, operationInfo?.kind]
   );
 
   const channelsTabItem = useMemo(
