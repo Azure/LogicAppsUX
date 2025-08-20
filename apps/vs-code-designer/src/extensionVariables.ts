@@ -36,6 +36,7 @@ type DesignTimeInstance = {
   process?: cp.ChildProcess;
   childFuncPid?: string;
   port?: number;
+  isStarting?: boolean;
 };
 
 // biome-ignore lint/style/noNamespace:
