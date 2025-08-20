@@ -26,14 +26,14 @@ export const CopyInputControlWithAgent = React.forwardRef<Pick<HTMLElement, 'foc
     const styles = useCopyInputControlStyles();
 
     const DISPLAY_TEXT_API_KEY = intl.formatMessage({
-      defaultMessage: 'API Key',
-      id: 'KqqiLm',
+      defaultMessage: 'Developer A2A API Key',
+      id: 'EjviAh',
       description: 'Label for API key copyable field',
     });
 
     const COPY_API_KEY = intl.formatMessage({
-      defaultMessage: 'Copy API Key',
-      id: 'A8xkL1',
+      defaultMessage: 'Copy Developer A2A API Key',
+      id: 'ffdpxo',
       description: 'Label for API key copy button',
     });
 
