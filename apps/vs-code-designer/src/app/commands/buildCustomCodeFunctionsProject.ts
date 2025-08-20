@@ -25,6 +25,10 @@ export async function buildCustomCodeFunctionsProject(context: IActionContext, n
 
   const nodePath = node?.fsPath || workspaceFolderPath;
   if (isNullOrUndefined(nodePath)) {
+    const errorMessage = localize('noProjectPathBuildCustomCode', 'No project path found to build custom code functions project.');
+    context.telemetry.properties.result = 'Failed';
+    context.telemetry.properties.error = errorMessage;
+    ext.outputChannel.appendLog(errorMessage);
     return;
   }
 
