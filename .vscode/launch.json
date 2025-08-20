@@ -14,32 +14,6 @@
       "env": {
         "DEBUGTELEMETRY": "v"
       }
-    },
-            {
-      "name": "VSCode E2E",
-      "type": "node",
-      "request": "launch",
-      "trace": false,
-      "program": "${workspaceFolder}/apps/vs-code-designer/dist/e2e/runTest.js",
-      "preLaunchTask": "npm: vscode-e2e",
-      "env": {
-        "DEBUGTELEMETRY": "v"
-      }
-    },
-        {
-      "name": "VSCode E2E extensionhost",
-      "type": "extensionHost",
-      "request": "launch",
-      "trace": false,
-      "runtimeExecutable": "${execPath}",
-      "preLaunchTask": "npm: vscode-e2e",
-      "env": {
-        "DEBUGTELEMETRY": "v"
-      },
-      "args": [
-        "--extensionDevelopmentPath=${workspaceFolder}/apps/vs-code-designer/dist",
-        "--extensionTestsPath=${workspaceFolder}/apps/vs-code-designer/dist/e2e/suite"
-      ]
     }
   ]
 }
