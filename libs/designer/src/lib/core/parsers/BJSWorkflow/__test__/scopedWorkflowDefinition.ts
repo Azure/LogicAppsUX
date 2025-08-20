@@ -204,7 +204,7 @@ export const expectedScopedWorkflowDefinitionOutput: { graph: WorkflowNode; acti
     },
   },
   nodesMetadata: {
-    manual: { graphId: 'root', isRoot: true },
+    manual: { graphId: 'root', isRoot: true, isTrigger: true },
     Initialize_variable: { graphId: 'root' },
     Increment_variable: { graphId: 'root' },
     ActionIf: { graphId: 'root', actionCount: 2 },

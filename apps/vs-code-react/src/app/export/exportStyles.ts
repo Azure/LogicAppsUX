@@ -29,7 +29,7 @@ export const useExportStyles = makeStyles({
     flex: 1,
   },
   exportWorkflowsPanelListWorkflowsLoading: {
-    '.ms-DetailsHeader-cell': {
+    '& .ms-DetailsHeader-cell': {
       pointerEvents: 'none',
     },
   },
@@ -57,7 +57,7 @@ export const useExportStyles = makeStyles({
 
   exportWorkflowsPanelLimitInfo: {
     marginTop: `${tokens.spacingVerticalMNudge}`,
-    '.ms-MessageBar-text': {
+    '& .ms-MessageBar-text': {
       display: 'inline-flex',
       alignItems: 'center',
     },
@@ -176,7 +176,7 @@ export const useExportStyles = makeStyles({
 
   exportSummaryPackageWarning: {
     marginTop: tokens.spacingVerticalMNudge,
-    '.ms-MessageBar-text': {
+    '& .ms-MessageBar-text': {
       display: 'inline-flex',
       alignItems: 'center',
     },
@@ -187,11 +187,11 @@ export const useExportStyles = makeStyles({
     marginTop: tokens.spacingVerticalMNudge,
     flex: 2,
 
-    '.ms-DetailsRow-fields ': {
+    '& .ms-DetailsRow-fields': {
       display: 'flex',
       alignItems: 'center',
 
-      '.ms-DetailsRow-cell': {
+      '& .ms-DetailsRow-cell': {
         whiteSpace: 'normal',
       },
     },

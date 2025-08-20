@@ -102,6 +102,7 @@ export const PseudoCommandBar = () => {
             language={EditorLanguage.json}
             value={JSON.stringify(serializedWorkflow, null, 2)}
             readOnly
+            folding
             lineNumbers="on"
             scrollbar={{ horizontal: 'auto', vertical: 'auto' }}
             wordWrap="on"

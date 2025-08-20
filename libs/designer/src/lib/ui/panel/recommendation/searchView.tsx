@@ -14,10 +14,11 @@ import type { FC } from 'react';
 import { useCallback, useEffect, useState, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { useDiscoveryPanelRelationshipIds, useIsAddingAgentTool } from '../../../core/state/panel/panelSelectors';
-import { useIsAgenticWorkflow } from '../../../core/state/designerView/designerViewSelectors';
+import { useIsA2AWorkflow, useIsAgenticWorkflow } from '../../../core/state/designerView/designerViewSelectors';
 import { useShouldEnableACASession, useShouldEnableNestedAgent, useShouldEnableParseDocumentWithMetadata } from './hooks';
 import { DefaultSearchOperationsService } from './SearchOpeationsService';
 import constants from '../../../common/constants';
+import { ALLOWED_A2A_CONNECTOR_NAMES } from './helpers';
 
 type SearchViewProps = {
   searchTerm: string;
@@ -51,6 +52,7 @@ export const SearchView: FC<SearchViewProps> = ({
   const isWithinAgenticLoop = useIsWithinAgenticLoop(parentGraphId);
   const isAgentTool = useIsAddingAgentTool();
   const isRoot = useMemo(() => parentGraphId === 'root', [parentGraphId]);
+  const isA2AWorkflow = useIsA2AWorkflow();
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -63,9 +65,38 @@ export const SearchView: FC<SearchViewProps> = ({
     }
   }, [searchTerm]);
 
+  const passesA2AWorkflowFilter = useCallback(
+    (operation: DiscoveryOperation<DiscoveryResultTypes>): boolean => {
+      // Only apply this filter if it's A2A workflow and adding to root
+      if (!isA2AWorkflow || !isRoot) {
+        return true;
+      }
+
+      const operationType = operation.properties?.api?.type;
+      const connectorName = operation.properties?.api?.name;
+
+      if (connectorName && ALLOWED_A2A_CONNECTOR_NAMES.has(connectorName)) {
+        return true;
+      }
+
+      // Allow APIConnection or ServiceProvider types
+      if (operationType) {
+        return equals(operationType, 'Microsoft.Web/locations/managedApis') || equals(operationType, 'ServiceProvider');
+      }
+
+      return false;
+    },
+    [isA2AWorkflow, isRoot]
+  );
+
   const filterAgenticLoops = useCallback(
     (operation: DiscoveryOperation<DiscoveryResultTypes>): boolean => {
       const { type, id } = operation;
+
+      // Apply A2A workflow filter first
+      if (!passesA2AWorkflowFilter(operation)) {
+        return false;
+      }
 
       // Exclude handoff operations from search results
       if (equals(type, 'AgentHandoff')) {
@@ -107,7 +138,7 @@ export const SearchView: FC<SearchViewProps> = ({
 
       return true;
     },
-    [isAgentTool, isAgenticWorkflow, isRoot, isWithinAgenticLoop, shouldEnableNestedAgent]
+    [isAgentTool, isAgenticWorkflow, isRoot, isWithinAgenticLoop, shouldEnableNestedAgent, passesA2AWorkflowFilter]
   );
 
   useDebouncedEffect(

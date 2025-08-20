@@ -71,9 +71,8 @@ export const moveNodeInWorkflow = (
     }
   } else {
     const parentId = (oldWorkflowGraph.edges ?? []).find((edge) => edge.target === nodeId)?.source ?? '';
-    const graphId = oldWorkflowGraph.id;
     const parentMetadata = getRecordEntry(nodesMetadata, parentId);
-    const isAfterTrigger = parentMetadata?.isRoot && graphId === 'root';
+    const isAfterTrigger = parentMetadata?.isTrigger;
     const allowRunAfterTrigger = equals(state.workflowKind, 'agent');
     const shouldAddRunAfters = allowRunAfterTrigger || (!isOldRoot && !isAfterTrigger);
     reassignEdgeSources(state, nodeId, parentId, oldWorkflowGraph, shouldAddRunAfters);
