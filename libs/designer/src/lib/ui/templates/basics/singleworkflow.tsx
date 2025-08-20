@@ -7,7 +7,7 @@ import { useMemo } from 'react';
 import { useExistingWorkflowNames } from '../../../core/queries/template';
 import { useWorkflowBasicsEditable, useWorkflowTemplate } from '../../../core/state/templates/templateselectors';
 import { validateWorkflowName } from '../../../core/actions/bjsworkflow/templates';
-import { ResourcePicker } from './resourcepicker';
+import { TemplateResourcePicker } from './resourcepicker';
 import { useTemplatesStrings } from '../templatesStrings';
 import { TemplatesSection } from '@microsoft/designer-ui';
 
@@ -92,7 +92,7 @@ export const SingleWorkflowBasics = ({ workflowId }: { workflowId: string }) => 
 
   return (
     <div className="msla-templates-tab msla-panel-no-description-tab">
-      {enableResourceSelection ? <ResourcePicker lockField={viewTemplateDetails?.lockResourceField} /> : null}
+      {enableResourceSelection ? <TemplateResourcePicker lockField={viewTemplateDetails?.lockResourceField} /> : null}
       <TemplatesSection
         title={resources.WORKFLOW_NAME}
         isTitleRequired={true}

@@ -2,7 +2,7 @@ import type { RootState } from '../../../core/state/templates/store';
 import { TemplatesSection } from '@microsoft/designer-ui';
 import { useIntl } from 'react-intl';
 import { useWorkflowsInApp } from '../../../core/configuretemplate/utils/queries';
-import { ResourcePicker } from '../../templates';
+import { TemplateResourcePicker } from '../../templates';
 import { useSelector } from 'react-redux';
 import { useCallback, useMemo } from 'react';
 import { type ArmResource, equals, type LogicAppResource } from '@microsoft/logic-apps-shared';
@@ -209,7 +209,7 @@ export const SelectWorkflows = ({
             <MessageBarBody>{intlText.INFO_TEXT}</MessageBarBody>
           </MessageBar>
         </div>
-        <ResourcePicker
+        <TemplateResourcePicker
           viewMode={'alllogicapps'}
           onSelectApp={onLogicAppSelected}
           lockField={Object.keys(workflowsInTemplate).length ? 'resource' : undefined}
