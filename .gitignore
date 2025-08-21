@@ -43,6 +43,7 @@ debug.log
 /apps/vs-code-designer/test-resources
 test-resources
 /apps/vs-code-designer/out
+/apps/vs-code-designer/*.vsix
 
 # System Files
 .DS_Store
