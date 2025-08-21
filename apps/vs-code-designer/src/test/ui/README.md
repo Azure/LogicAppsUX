@@ -103,7 +103,7 @@ src/test/ui/
 
 ### Build Configuration
 
-Tests are built using `tsup.ui.config.ts` which:
+Tests are built using `tsup.e2e.test.config.ts` which:
 - Compiles TypeScript to CommonJS (Mocha requirement)
 - Outputs to `out/test/` directory
 - Handles ExTester dependencies properly

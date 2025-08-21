@@ -70,7 +70,7 @@
   "private": true,
   "scripts": {
     "build:extension": "tsup && pnpm run copyFiles",
-    "build:ui": "tsup --config tsup.ui.config.ts",
+    "build:ui": "tsup --config tsup.e2e.test.config.ts",
     "copyFiles": "node extension-copy-svgs.js",
     "vscode:designer:pack": "pnpm run vscode:designer:pack:step1 && pnpm run vscode:designer:pack:step2",
     "vscode:designer:pack:step1": "cd ./dist && npm install",
