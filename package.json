@@ -93,8 +93,8 @@
     "testgen": "playwright codegen https://localhost:4200",
     "vscode:designer:pack": "turbo run vscode:designer:pack",
     "templates": "ts-node downloadTemplates.js",
-    "vscode:designer:e2e:ui":"turbo run vscode:designer:e2e:ui",
-    "vscode:designer:e2e:headless":"turbo run vscode:designer:e2e:headless"
+    "vscode:designer:e2e:ui": "turbo run vscode:designer:e2e:ui",
+    "vscode:designer:e2e:headless": "turbo run vscode:designer:e2e:headless"
   },
   "type": "module",
   "dependencies": {

@@ -3,7 +3,8 @@
   "ui": "tui",
   "dangerouslyDisablePackageManagerCheck": true,
 
-  "tasks": {    "e2e": {
+  "tasks": {
+    "e2e": {
       "cache": false,
       "persistent": true
     },
@@ -46,11 +47,11 @@
       "cache": false,
       "dependsOn": ["vscode-react#build:extension"]
     },
-    "vscode:designer:e2e:ui":{
+    "vscode:designer:e2e:ui": {
       "cache": false,
       "dependsOn": ["vscode-react#build:extension", "vscode-designer#build:extension"]
     },
-     "vscode:designer:e2e:headless":{
+    "vscode:designer:e2e:headless": {
       "cache": false,
       "dependsOn": ["vscode-react#build:extension", "vscode-designer#build:extension"]
     }
