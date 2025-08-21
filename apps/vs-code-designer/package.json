@@ -1,19 +1,6 @@
 {
   "name": "vscode-designer",
   "version": "3.3.0",
-  "publisher": "Microsoft",
-  "displayName": "Logic Apps Designer",
-  "description": "VS Code extension for Logic Apps Designer",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/Azure/LogicAppsUX"
-  },
-  "engines": {
-    "vscode": "^1.76.0"
-  },
-  "categories": ["Other"],
-  "activationEvents": ["*"],
-  "main": "./dist/main.js",
   "devDependencies": {
     "@azure/arm-appcontainers": "^2.0.0-beta.3",
     "@azure/arm-appinsights": "^5.0.0-beta.7",
