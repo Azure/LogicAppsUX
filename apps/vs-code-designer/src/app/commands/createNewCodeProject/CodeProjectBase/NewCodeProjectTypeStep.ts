@@ -2,8 +2,10 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import { ext } from '../../../../extensionVariables';
 import { WorkflowStateTypeStep } from '../../createCodeless/createCodelessSteps/WorkflowStateTypeStep';
 import { WorkflowProjectCreateStep } from '../../createNewProject/createProjectSteps/WorkflowProjectCreateStep';
+import { WorkflowCodeTypeStep } from '../../createWorkflow/WorkflowCodeTypeStep';
 // import { WorkflowCodeTypeStep } from '../../createWorkflow/WorkflowCodeTypeStep';
 import { addInitVSCodeSteps } from '../../initProjectForVSCode/InitVSCodeLanguageStep';
 import { FunctionAppFilesStep } from '../createCodeProjectSteps/createFunction/FunctionAppFilesStep';
@@ -137,15 +139,19 @@ export class NewCodeProjectTypeStep extends AzureWizardPromptStep<IProjectWizard
     await addInitVSCodeSteps(context, executeSteps, false);
 
     if (!this.skipWorkflowStateTypeStep) {
-      context.isCodeless = true; // default to codeless workflow, disabling codeful option
-      // promptSteps.push(
-      //   // disabling in main
-      //   await WorkflowCodeTypeStep.create(context, {
-      //     isProjectWizard: true,
-      //     templateId: this.templateId,
-      //     triggerSettings: this.functionSettings,
-      //   })
-      // );
+      if (ext.codefulEnabled) {
+        promptSteps.push(
+          //   disabling in main
+          await WorkflowCodeTypeStep.create(context, {
+            isProjectWizard: true,
+            templateId: this.templateId,
+            triggerSettings: this.functionSettings,
+          })
+        );
+      } else {
+        context.isCodeless = true; // default to codeless workflow, disabling codeful option
+      }
+
       promptSteps.push(
         await WorkflowStateTypeStep.create(context, {
           isProjectWizard: true,
