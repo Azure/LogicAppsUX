@@ -249,7 +249,12 @@ export class StandardConnectionService extends BaseConnectionService implements 
         ? await this._createConnectionInApiHub(connectionName, connector.id, connectionInfo, shouldTestConnection)
         : await this.createConnectionInLocal(connectionName, connector, connectionInfo, parametersMetadata as ConnectionParametersMetadata);
 
-      LoggerService().endTrace(logId, { status: Status.Success });
+      LoggerService().endTrace(logId, {
+        status: Status.Success,
+        data: {
+          connectorId: connector.id,
+        },
+      });
       return connection;
     } catch (error) {
       this.deleteConnection(connectionId);
@@ -261,7 +266,12 @@ export class StandardConnectionService extends BaseConnectionService implements 
         error: error instanceof Error ? error : undefined,
         traceId: logId,
       });
-      LoggerService().endTrace(logId, { status: Status.Failure });
+      LoggerService().endTrace(logId, {
+        status: Status.Failure,
+        data: {
+          connectorId: connector.id,
+        },
+      });
       return Promise.reject(errorMessage);
     }
   }
@@ -502,6 +512,12 @@ export class StandardConnectionService extends BaseConnectionService implements 
     connectionInfo: ConnectionCreationInfo,
     parametersMetadata?: ConnectionParametersMetadata
   ): Promise<CreateConnectionResult> {
+    const logId = LoggerService().startTrace({
+      action: 'createConnectionOauth',
+      name: 'Creating OAuth Connection',
+      source: 'connection.ts',
+    });
+
     const connector = await this.getConnector(connectorId);
     const connection = await this.createConnection(
       connectionId,
@@ -534,6 +550,13 @@ export class StandardConnectionService extends BaseConnectionService implements 
       const fetchedConnection = await this.getConnection(connection.id);
       await this.testConnection(fetchedConnection);
 
+      LoggerService().endTrace(logId, {
+        status: Status.Success,
+        data: {
+          connectorId,
+        },
+      });
+
       return { connection: fetchedConnection };
     } catch (error: any) {
       this.deleteConnection(connectionId);
@@ -543,6 +566,12 @@ export class StandardConnectionService extends BaseConnectionService implements 
         area: 'create oauth connection',
         message: errorMessage,
         error: error instanceof Error ? error : undefined,
+      });
+      LoggerService().endTrace(logId, {
+        status: Status.Failure,
+        data: {
+          connectorId,
+        },
       });
       return { errorMessage: this.tryParseErrorMessage(error) };
     }

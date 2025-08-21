@@ -58,7 +58,12 @@ export class ConsumptionConnectionService extends BaseConnectionService {
       if (shouldTestConnection) {
         await this.testConnection(connection);
       }
-      LoggerService().endTrace(logId, { status: Status.Success });
+      LoggerService().endTrace(logId, {
+        status: Status.Success,
+        data: {
+          connectorId: connector.id,
+        },
+      });
       return connection;
     } catch (error) {
       this.deleteConnection(connectionId);
@@ -70,7 +75,12 @@ export class ConsumptionConnectionService extends BaseConnectionService {
         error: error instanceof Error ? error : undefined,
         traceId: logId,
       });
-      LoggerService().endTrace(logId, { status: Status.Failure });
+      LoggerService().endTrace(logId, {
+        status: Status.Failure,
+        data: {
+          connectorId: connector.id,
+        },
+      });
       return Promise.reject(errorMessage);
     }
   }
@@ -81,6 +91,12 @@ export class ConsumptionConnectionService extends BaseConnectionService {
     connectionInfo: ConnectionCreationInfo,
     parametersMetadata?: ConnectionParametersMetadata
   ): Promise<CreateConnectionResult> {
+    const logId = LoggerService().startTrace({
+      action: 'createConnectionOauth',
+      name: 'Creating OAuth Connection',
+      source: 'connection.ts',
+    });
+
     try {
       const connector = await this.getConnector(connectorId);
       const connection = await this.createConnection(
@@ -110,6 +126,13 @@ export class ConsumptionConnectionService extends BaseConnectionService {
       const fetchedConnection = await this.getConnection(connection.id);
       await this.testConnection(fetchedConnection);
 
+      LoggerService().endTrace(logId, {
+        status: Status.Success,
+        data: {
+          connectorId,
+        },
+      });
+
       return { connection: fetchedConnection };
     } catch (error: any) {
       try {
@@ -123,6 +146,12 @@ export class ConsumptionConnectionService extends BaseConnectionService {
         area: 'create oauth connection',
         message: errorMessage,
         error: error instanceof Error ? error : undefined,
+      });
+      LoggerService().endTrace(logId, {
+        status: Status.Failure,
+        data: {
+          connectorId,
+        },
       });
       return { errorMessage: this.tryParseErrorMessage(error) };
     }
