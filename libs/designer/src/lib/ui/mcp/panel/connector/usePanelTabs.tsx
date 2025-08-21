@@ -136,6 +136,11 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
     [dispatch, selectedConnectorId, selectedOperations]
   );
 
+  const handleAddActions = useCallback(() => {
+    onConnectionsTabNavigation('AddActions');
+    handleSubmit('AddActions');
+  }, [onConnectionsTabNavigation, handleSubmit]);
+
   const operationTabPrimaryButtonTitle = useMemo(() => {
     if (isUpdateOperationsView) {
       return intl.formatMessage({
@@ -168,7 +173,7 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
         primaryButtonTitle: operationTabPrimaryButtonTitle,
         isPrimaryButtonDisabled: isConnectionsTabDisabled,
         onPrimaryButtonClick: isUpdateOperationsView
-          ? () => handleSubmit('AddActions')
+          ? handleAddActions
           : () => onConnectionsTabNavigation(hasSelectConnectorTab ? 'AddConnector' : 'EditConnector'),
         isPrimaryButtonLoading: isInitializingConnections,
         previousTabId: hasSelectConnectorTab ? constants.MCP_PANEL_TAB_NAMES.CONNECTORS : undefined,
@@ -181,11 +186,11 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
       operationTabPrimaryButtonTitle,
       isConnectionsTabDisabled,
       isUpdateOperationsView,
-      handleSubmit,
-      onConnectionsTabNavigation,
+      handleAddActions,
       isInitializingConnections,
       hasSelectConnectorTab,
       operationsError,
+      onConnectionsTabNavigation,
     ]
   );
 
