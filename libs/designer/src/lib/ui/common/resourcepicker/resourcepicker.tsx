@@ -6,10 +6,13 @@ import { useAllLogicApps } from '../../../core/configuretemplate/utils/queries';
 import { useTemplatesStrings } from './../../templates/templatesStrings';
 import { ResourceField } from './resourcefield';
 
-export interface ResourcePickerProps {
+export interface BaseResourcePickerProps {
   viewMode?: 'default' | 'alllogicapps';
   onSelectApp?: (value: LogicAppResource) => void;
   lockField?: Template.ResourceFieldId;
+}
+
+export interface ResourcePickerProps extends BaseResourcePickerProps {
   resourceState: {
     subscriptionId: string;
     resourceGroup: string;

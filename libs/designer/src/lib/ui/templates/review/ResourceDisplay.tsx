@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { useTemplatesStrings } from '../templatesStrings';
 import type { RootState } from '../../../core/state/templates/store';
-import { useSubscriptions } from '../../../core/templates/utils/queries';
+import { useSubscriptions } from '../../../core/queries/resource';
 
 export type ResourceDisplayProps = {
   invertBolds?: boolean;
