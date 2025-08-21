@@ -1,4 +1,4 @@
-import { Button, Text } from '@fluentui/react-components';
+import { Button, Field, Text } from '@fluentui/react-components';
 import type { RootState } from '../../../core/state/exportconsumption/store';
 import { useSelector } from 'react-redux';
 
@@ -10,17 +10,27 @@ export const ExportWizard = ({
   onClose: () => void;
 }) => {
   const {
-    resource: { subscriptionId, resourceGroup, location, logicAppName },
+    resource: { subscriptionId, logicAppName },
   } = useSelector((state: RootState) => state);
   return (
     <div>
       placeholder
-      <Text>subscriptionId: {subscriptionId}</Text>
-      <Text>resourceGroup: {resourceGroup}</Text>
-      <Text>location: {location}</Text>
-      <Text>logicAppName: {logicAppName}</Text>
-      <Button onClick={onExportCall}>On Export</Button>
-      <Button onClick={onClose}>On Close</Button>
+      <div>
+        <Field>Subscription</Field>
+        <Text>{subscriptionId}</Text>
+      </div>
+      <div>
+        <Field>Source (Consumption)</Field>
+        <Text>{logicAppName}</Text>
+      </div>
+      <div>
+        <Field>Destination (Standard)</Field>
+        <Text>{logicAppName}</Text>
+      </div>
+      <div>
+        <Button onClick={onExportCall}>On Export</Button>
+        <Button onClick={onClose}>On Close</Button>
+      </div>
     </div>
   );
 };
