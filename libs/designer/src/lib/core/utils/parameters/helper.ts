@@ -2197,7 +2197,8 @@ export const loadDynamicContentForInputsInNode = async (
       }
 
       let swagger: SwaggerParser | undefined = undefined;
-      if (!TryGetOperationManifestService()?.isSupported(operationInfo.type, operationInfo.kind)) {
+      const isManifestSupportedOperation = TryGetOperationManifestService()?.isSupported(operationInfo.type, operationInfo.kind);
+      if (!isManifestSupportedOperation) {
         const { parsedSwagger } = await getConnectorWithSwagger(operationInfo.connectorId);
         swagger = parsedSwagger;
       }
@@ -2238,7 +2239,7 @@ export const loadDynamicContentForInputsInNode = async (
         },
       };
 
-      const dependencies = getInputDependencies(newNodeInputs, schemaInputs, swagger);
+      const dependencies = getInputDependencies(newNodeInputs, schemaInputs, !isManifestSupportedOperation, swagger);
 
       dispatch(
         addDynamicInputs({
