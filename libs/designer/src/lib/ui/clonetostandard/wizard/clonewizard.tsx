@@ -1,8 +1,8 @@
 import { Button, Field, Text } from '@fluentui/react-components';
-import type { RootState } from '../../../core/state/exportconsumption/store';
+import type { RootState } from '../../../core/state/clonetostandard/store';
 import { useSelector } from 'react-redux';
 
-export const ExportWizard = ({
+export const CloneWizard = ({
   onExportCall,
   onClose,
 }: {

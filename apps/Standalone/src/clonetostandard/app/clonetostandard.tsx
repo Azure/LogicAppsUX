@@ -1,4 +1,4 @@
-import { ExportDataProvider, ExportWizard, ExportWizardProvider } from '@microsoft/logic-apps-designer';
+import { CloneDataProvider, CloneWizard, CloneWizardProvider } from '@microsoft/logic-apps-designer';
 import type { RootState } from '../state/store';
 import { useSelector } from 'react-redux';
 import { useMcpStandardStyles } from './styles';
@@ -7,7 +7,7 @@ import { useWorkflowAndArtifactsConsumption } from '../../designer/app/AzureLogi
 import { WorkflowUtility } from '../../designer/app/AzureLogicAppsDesigner/Utilities/Workflow';
 import { useCallback } from 'react';
 
-export const ExportConsumption = () => {
+export const CloneToStandard = () => {
   const styles = useMcpStandardStyles();
   const { resourcePath: workflowId, theme } = useSelector((state: RootState) => state.workflowLoader);
   const { data: workflowData } = useWorkflowAndArtifactsConsumption(workflowId!);
@@ -25,12 +25,12 @@ export const ExportConsumption = () => {
   }, []);
 
   return (
-    <ExportWizardProvider locale="en-US" theme={theme}>
+    <CloneWizardProvider locale="en-US" theme={theme}>
       <div className={`${styles.container} ${styles.fadeIn}`}>
         <div className={styles.wizardContainer}>
           <div className={styles.wizardContent}>
             <div className={styles.wizardWrapper}>
-              <ExportDataProvider
+              <CloneDataProvider
                 resourceDetails={{
                   subscriptionId: resourceDetails.subscriptionId,
                   resourceGroup: resourceDetails.resourceGroup,
@@ -38,13 +38,13 @@ export const ExportConsumption = () => {
                   location: canonicalLocation,
                 }}
               >
-                <ExportWizard onExportCall={onExportCall} onClose={onClose} />
+                <CloneWizard onExportCall={onExportCall} onClose={onClose} />
                 <div id="mcp-layer-host" className={styles.layerHost} />
-              </ExportDataProvider>
+              </CloneDataProvider>
             </div>
           </div>
         </div>
       </div>
-    </ExportWizardProvider>
+    </CloneWizardProvider>
   );
 };

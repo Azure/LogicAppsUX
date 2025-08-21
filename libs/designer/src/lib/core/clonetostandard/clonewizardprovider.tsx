@@ -2,9 +2,9 @@ import type { Theme as ThemeType } from '@microsoft/logic-apps-shared';
 import { IntlProvider } from '@microsoft/logic-apps-shared';
 import type React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
-import { exportConsumptionStore } from '../state/exportconsumption/store';
+import { exportConsumptionStore } from '../state/clonetostandard/store';
 import { FluentProvider, webDarkTheme, webLightTheme } from '@fluentui/react-components';
-import { ExportWizardContextContext } from './exportwizardcontext';
+import { ExportWizardContextContext } from './clonewizardcontext';
 
 export interface ExportWizardProviderProps {
   theme?: ThemeType;
@@ -13,7 +13,7 @@ export interface ExportWizardProviderProps {
   children: React.ReactNode;
 }
 
-export const ExportWizardProvider = ({ locale = 'en', useExternalRedux = false, children, theme }: ExportWizardProviderProps) => {
+export const CloneWizardProvider = ({ locale = 'en', useExternalRedux = false, children, theme }: ExportWizardProviderProps) => {
   const webTheme = theme === 'light' ? webLightTheme : webDarkTheme;
   const content = (
     <ExportWizardContextContext.Provider value={{ readOnly: false }}>
