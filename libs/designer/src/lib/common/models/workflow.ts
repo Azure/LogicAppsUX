@@ -17,6 +17,7 @@ export interface ConnectionReference {
   connectionRuntimeUrl?: string;
   authentication?: ApiHubAuthentication;
   impersonation?: Impersonation;
+  resourceId?: string;
 }
 
 export interface ApiHubAuthentication {
