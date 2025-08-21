@@ -4,7 +4,7 @@ import { setupStore } from '../../../../core/state/templates/store';
 import { InitResourceService } from '@microsoft/logic-apps-shared';
 import { renderWithProviders } from '../../../../__test__/template-test-utils';
 import { screen, waitFor } from '@testing-library/react';
-import { ResourcePicker } from '../resourcepicker';
+import { TemplateResourcePicker } from '../resourcepicker';
 import { ReactQueryProvider } from '../../../../core/ReactQueryProvider';
 // biome-ignore lint/correctness/noUnusedImports: <explanation>
 import React from 'react';
@@ -84,7 +84,7 @@ describe('ui/templates/basics/resourcepicker', () => {
     const store = setupStore(minimalStoreData);
     renderWithProviders(
       <ReactQueryProvider>
-        <ResourcePicker />
+        <TemplateResourcePicker />
       </ReactQueryProvider>,
       { store }
     );
@@ -103,7 +103,7 @@ describe('ui/templates/basics/resourcepicker', () => {
     const store = setupStore({ ...minimalStoreData, workflow: { ...minimalStoreData.workflow, isConsumption: true } });
     renderWithProviders(
       <ReactQueryProvider>
-        <ResourcePicker />
+        <TemplateResourcePicker />
       </ReactQueryProvider>,
       { store }
     );
@@ -136,7 +136,7 @@ describe('ui/templates/basics/resourcepicker', () => {
     const store = setupStore(minimalStoreData);
     renderWithProviders(
       <ReactQueryProvider>
-        <ResourcePicker />
+        <TemplateResourcePicker />
       </ReactQueryProvider>,
       { store }
     );
