@@ -625,7 +625,7 @@ export const toSimpleQueryBuilderViewModel = (
   itemValue: RowItemProps | undefined;
   isRowFormat: boolean;
 } => {
-  if (!input || input?.length === 0) {
+  if (!input?.length) {
     return {
       isOldFormat: true,
       isRowFormat: true,
