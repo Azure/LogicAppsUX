@@ -39,15 +39,10 @@ testem.log
 **/dist
 debug.log
 
-# vscode e2e
-/apps/vs-code-designer/.vscode-test
-.vscode-test
-
-# ExTester artifacts
+# vscode e2e exTester artifacts
 /apps/vs-code-designer/test-resources
 test-resources
 /apps/vs-code-designer/out
-out
 
 # System Files
 .DS_Store
