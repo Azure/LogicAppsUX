@@ -2,7 +2,7 @@ import type { Theme as ThemeType } from '@microsoft/logic-apps-shared';
 import { IntlProvider } from '@microsoft/logic-apps-shared';
 import type React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
-import { exportConsumptionStore } from '../state/clonetostandard/store';
+import { cloneStandardStore } from '../state/clonetostandard/store';
 import { FluentProvider, webDarkTheme, webLightTheme } from '@fluentui/react-components';
 import { ExportWizardContextContext } from './clonewizardcontext';
 
@@ -40,5 +40,5 @@ export const CloneWizardProvider = ({ locale = 'en', useExternalRedux = false, c
     </ExportWizardContextContext.Provider>
   );
 
-  return useExternalRedux ? content : <ReduxProvider store={exportConsumptionStore}>{content}</ReduxProvider>;
+  return useExternalRedux ? content : <ReduxProvider store={cloneStandardStore}>{content}</ReduxProvider>;
 };

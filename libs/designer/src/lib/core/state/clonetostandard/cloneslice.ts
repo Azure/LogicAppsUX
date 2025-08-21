@@ -39,11 +39,12 @@ export const cloneSlice = createSlice({
     setDestinationResourceGroup: (state, action: PayloadAction<string>) => {
       state.destinationApp.resourceGroup = action.payload;
     },
-    setDestinationLogicAppName: (state, action: PayloadAction<string>) => {
-      state.destinationApp.logicAppName = action.payload;
+    setDestinationWorkflowAppDetails: (state, action: PayloadAction<{ name: string; location: string }>) => {
+      state.destinationApp.workflowAppName = action.payload.name;
+      state.destinationApp.location = action.payload.location;
     },
   },
 });
 
-export const { setDestinationSubscription, setDestinationResourceGroup, setDestinationLogicAppName } = cloneSlice.actions;
+export const { setDestinationSubscription, setDestinationResourceGroup, setDestinationWorkflowAppDetails } = cloneSlice.actions;
 export default cloneSlice.reducer;

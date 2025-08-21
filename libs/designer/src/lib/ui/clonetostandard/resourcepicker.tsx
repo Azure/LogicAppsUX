@@ -1,31 +1,34 @@
-// import { useDispatch, useSelector } from "react-redux";
-// import { ResourcePicker } from "../common/resourcepicker/resourcepicker";
-// import type { AppDispatch, RootState } from "../../core/state/exportconsumption/store";
+import { useDispatch, useSelector } from 'react-redux';
+import { ResourcePicker } from '../common/resourcepicker/resourcepicker';
+import type { AppDispatch, RootState } from '../../core/state/clonetostandard/store';
+import {
+  setDestinationWorkflowAppDetails,
+  setDestinationResourceGroup,
+  setDestinationSubscription,
+} from '../../core/state/clonetostandard/cloneslice';
 
 export const CloneResourcePicker = () => {
-  //   const dispatch = useDispatch<AppDispatch>();
-  //   const { subscriptionId: resourceSubscriptionId, } = useSelector(
-  //     (state: RootState) => state.resource
-  //   );
+  const dispatch = useDispatch<AppDispatch>();
+  const { subscriptionId: resourceSubscriptionId } = useSelector((state: RootState) => state.resource);
+  const { resourceGroup, location, workflowAppName, logicAppName } = useSelector((state: RootState) => state.clone.destinationApp);
 
-  return <div />;
-  //   return (
-  //     <ResourcePicker
-  //         viewMode={'alllogicapps'}
-  //         lockField={'subscription'}
-  //       resourceState={{
-  //         subscriptionId: resourceSubscriptionId,
-  //         resourceGroup,
-  //         location,
-  //         workflowAppName,
-  //         logicAppName,
-  //         isConsumption,
-  //       }}
-  //       onSubscriptionSelect={(value) => dispatch(setSubscription(value))}
-  //       onResourceGroupSelect={(value) => dispatch(setResourceGroup(value))}
-  //       onLocationSelect={(value) => dispatch(setLocation(value))}
-  //       onLogicAppSelect={(value) => dispatch(setWorkflowAppDetails(value))}
-  //       onLogicAppInstanceSelect={(value) => dispatch(setLogicAppDetails(value))}
-  //     />
-  //   );
+  return (
+    <ResourcePicker
+      viewMode={'alllogicapps'}
+      lockField={'subscription'}
+      resourceState={{
+        subscriptionId: resourceSubscriptionId,
+        resourceGroup,
+        location,
+        workflowAppName,
+        logicAppName,
+        isConsumption: false,
+      }}
+      onSubscriptionSelect={(value) => dispatch(setDestinationSubscription(value))}
+      onResourceGroupSelect={(value) => dispatch(setDestinationResourceGroup(value))}
+      onLocationSelect={(_value) => {}}
+      onLogicAppSelect={(value) => dispatch(setDestinationWorkflowAppDetails(value))}
+      onLogicAppInstanceSelect={(_value) => {}}
+    />
+  );
 };
