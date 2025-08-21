@@ -6,7 +6,6 @@ import { ext } from '../../../../extensionVariables';
 import { WorkflowStateTypeStep } from '../../createCodeless/createCodelessSteps/WorkflowStateTypeStep';
 import { WorkflowProjectCreateStep } from '../../createNewProject/createProjectSteps/WorkflowProjectCreateStep';
 import { WorkflowCodeTypeStep } from '../../createWorkflow/WorkflowCodeTypeStep';
-// import { WorkflowCodeTypeStep } from '../../createWorkflow/WorkflowCodeTypeStep';
 import { addInitVSCodeSteps } from '../../initProjectForVSCode/InitVSCodeLanguageStep';
 import { FunctionAppFilesStep } from '../createCodeProjectSteps/createFunction/FunctionAppFilesStep';
 import { FunctionAppNameStep } from '../createCodeProjectSteps/createFunction/FunctionAppNameStep';
