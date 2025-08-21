@@ -77,8 +77,7 @@
     "vscode:designer:pack:step2": "cd ./dist && vsce package",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "test:extension-unit": "vitest run --retry=3",
-    "vscode:designer:e2e:ui": "pnpm run test:ui:setup && pnpm run build:ui && extest run-tests out/test/**/*.js",
-    "vscode:designer:e2e:headless": "pnpm run test:ui:setup && pnpm run build:ui && cp .extester.headless.json .extester.json && extest run-tests out/test/**/*.js && cp .extester.ui.json .extester.json",
-    "test:ui:setup": "extest setup-tests"
+    "vscode:designer:e2e:ui": "pnpm run build:ui && extest setup-and-run out/test/**/*.js --coverage",
+    "vscode:designer:e2e:headless": "pnpm run build:ui && extest setup-and-run out/test/**/*.js --coverage"
   }
 }
