@@ -73,11 +73,14 @@ vi.mock('fs-extra', () => ({
   ensureDir: vi.fn(() => Promise.resolve()),
   readFile: vi.fn(() => Promise.resolve()),
   pathExists: vi.fn(() => Promise.resolve()),
-  readdir: vi.fn(() => Promise.resolve()),
   existsSync: vi.fn(() => {}),
+  readdir: vi.fn(),
+  stat: vi.fn(),
 }));
 
-vi.mock('child_process');
+vi.mock('child_process', () => ({
+  execSync: vi.fn(),
+}));
 
 vi.mock('util');
 
@@ -90,7 +93,7 @@ vi.mock('vscode', () => ({
   },
   workspace: {
     workspaceFolders: [],
-    updateWorkspaceFolders: vi.fn(), // <-- This ensures the method exists.
+    updateWorkspaceFolders: vi.fn(),
     fs: {
       readFile: vi.fn(),
       readDirectory: vi.fn(),

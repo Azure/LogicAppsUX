@@ -1,149 +1,149 @@
-import { getBundleVersionNumber } from '../debug';
+import { getDebugConfiguration } from '../debug';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import * as fse from 'fs-extra';
-import * as path from 'path';
-import * as cp from 'child_process';
-import { extensionBundleId } from '../../../constants';
+import { extensionCommand } from '../../../constants';
+import { FuncVersion, TargetFramework } from '@microsoft/vscode-extension-logic-apps';
 
-// Mock VS Code
-vi.mock('vscode', () => ({
-  workspace: {
-    getConfiguration: vi.fn(),
-    workspaceFolders: [],
-  },
-}));
-
-// Mock fs-extra
-vi.mock('fs-extra', () => ({
-  readdir: vi.fn(),
-  stat: vi.fn(),
-}));
-
-// Mock child_process
-vi.mock('child_process', () => ({
-  execSync: vi.fn(),
-}));
-
-// Mock localize
-vi.mock('../../localize', () => ({
-  localize: vi.fn((key: string, defaultValue: string) => defaultValue),
-}));
-
-// Mock extension variables
-vi.mock('../../extensionVariables', () => ({
-  ext: {
-    outputChannel: {
-      appendLog: vi.fn(),
-    },
-  },
-}));
-
-// Mock funcVersion
-vi.mock('../funcCoreTools/funcVersion', () => ({
-  getFunctionsCommand: vi.fn(() => 'func'),
-}));
-
-const mockedFse = vi.mocked(fse);
-const mockedExecSync = vi.mocked(cp.execSync);
-
-describe('getBundleVersionNumber', () => {
-  const mockBundleFolderRoot = '/mock/bundle/root';
-  const mockBundleFolder = path.join(mockBundleFolderRoot, extensionBundleId);
-
-  beforeEach(() => {
-    vi.clearAllMocks();
-    mockedExecSync.mockReturnValue(`${mockBundleFolderRoot}Microsoft.Azure.Functions.ExtensionBundle\n`);
-  });
-
-  it('should return the highest version number from available bundle folders', async () => {
-    const mockFolders = ['1.0.0', '2.1.0', '1.5.0', 'some-file.txt'];
-    mockedFse.readdir.mockResolvedValue(mockFolders as any);
-    mockedFse.stat.mockImplementation((filePath: any) => {
-      const fileName = path.basename(filePath.toString());
-      return Promise.resolve({
-        isDirectory: () => fileName !== 'some-file.txt',
-      } as any);
+describe('debug', () => {
+  describe('getDebugConfiguration', () => {
+    beforeEach(() => {
+      vi.clearAllMocks();
     });
 
-    const result = await getBundleVersionNumber();
+    describe('with custom code target framework', () => {
+      it('should return launch configuration for .NET 8 custom code with v4 function runtime', () => {
+        const result = getDebugConfiguration(FuncVersion.v4, 'TestLogicApp', TargetFramework.Net8);
+        expect(result).toEqual({
+          name: 'Run/debug logic app with local function TestLogicApp',
+          type: 'logicapp',
+          request: 'launch',
+          funcRuntime: 'coreclr',
+          customCodeRuntime: 'coreclr',
+          isCodeless: true,
+        });
+      });
 
-    expect(result).toBe('2.1.0');
-    expect(mockedFse.readdir).toHaveBeenCalledWith(mockBundleFolder);
-  });
+      it('should return launch configuration for .NET Framework custom code with v1 function runtime', () => {
+        const result = getDebugConfiguration(FuncVersion.v1, 'TestLogicApp', TargetFramework.NetFx);
 
-  it('should handle version numbers with different digit counts', async () => {
-    const mockFolders = ['1.0.0', '10.2.1', '2.15.3'];
-    mockedFse.readdir.mockResolvedValue(mockFolders as any);
-    mockedFse.stat.mockImplementation(() => {
-      return Promise.resolve({
-        isDirectory: () => true,
-      } as any);
+        expect(result).toEqual({
+          name: 'Run/debug logic app with local function TestLogicApp',
+          type: 'logicapp',
+          request: 'launch',
+          funcRuntime: 'clr',
+          customCodeRuntime: 'clr',
+          isCodeless: true,
+        });
+      });
+
+      it('should return launch configuration for .NET Framework custom code with v3 function runtime', () => {
+        const result = getDebugConfiguration(FuncVersion.v3, 'TestLogicApp', TargetFramework.NetFx);
+
+        expect(result).toEqual({
+          name: 'Run/debug logic app with local function TestLogicApp',
+          type: 'logicapp',
+          request: 'launch',
+          funcRuntime: 'coreclr',
+          customCodeRuntime: 'clr',
+          isCodeless: true,
+        });
+      });
+
+      it('should return launch configuration for .NET 8 custom code with v2 function runtime', () => {
+        const result = getDebugConfiguration(FuncVersion.v2, 'MyApp', TargetFramework.Net8);
+
+        expect(result).toEqual({
+          name: 'Run/debug logic app with local function MyApp',
+          type: 'logicapp',
+          request: 'launch',
+          funcRuntime: 'coreclr',
+          customCodeRuntime: 'coreclr',
+          isCodeless: true,
+        });
+      });
     });
 
-    const result = await getBundleVersionNumber();
+    describe('without custom code target framework', () => {
+      it('should return attach configuration for v1 function runtime', () => {
+        const result = getDebugConfiguration(FuncVersion.v1, 'TestLogicApp');
 
-    expect(result).toBe('10.2.1');
-  });
+        expect(result).toEqual({
+          name: 'Run/debug logic app TestLogicApp',
+          type: 'clr',
+          request: 'attach',
+          processId: `\${command:${extensionCommand.pickProcess}}`,
+        });
+      });
 
-  it('should return default version when only non-directory files exist', async () => {
-    const mockFolders = ['file1.txt', 'file2.log'];
-    mockedFse.readdir.mockResolvedValue(mockFolders as any);
-    mockedFse.stat.mockImplementation(() => {
-      return Promise.resolve({
-        isDirectory: () => false,
-      } as any);
+      it('should return attach configuration for v2 function runtime', () => {
+        const result = getDebugConfiguration(FuncVersion.v2, 'TestLogicApp');
+
+        expect(result).toEqual({
+          name: 'Run/debug logic app TestLogicApp',
+          type: 'coreclr',
+          request: 'attach',
+          processId: `\${command:${extensionCommand.pickProcess}}`,
+        });
+      });
+
+      it('should return attach configuration for v3 function runtime', () => {
+        const result = getDebugConfiguration(FuncVersion.v3, 'TestLogicApp');
+
+        expect(result).toEqual({
+          name: 'Run/debug logic app TestLogicApp',
+          type: 'coreclr',
+          request: 'attach',
+          processId: `\${command:${extensionCommand.pickProcess}}`,
+        });
+      });
+
+      it('should return attach configuration for v4 function runtime', () => {
+        const result = getDebugConfiguration(FuncVersion.v4, 'MyLogicApp');
+
+        expect(result).toEqual({
+          name: 'Run/debug logic app MyLogicApp',
+          type: 'coreclr',
+          request: 'attach',
+          processId: `\${command:${extensionCommand.pickProcess}}`,
+        });
+      });
     });
 
-    const result = await getBundleVersionNumber();
+    describe('edge cases', () => {
+      it('should handle empty logic app name with custom code', () => {
+        const result = getDebugConfiguration(FuncVersion.v4, '', TargetFramework.Net8);
 
-    expect(result).toBe('0.0.0');
-  });
+        expect(result).toEqual({
+          name: 'Run/debug logic app with local function ',
+          type: 'logicapp',
+          request: 'launch',
+          funcRuntime: 'coreclr',
+          customCodeRuntime: 'coreclr',
+          isCodeless: true,
+        });
+      });
 
-  it('should handle single version folder', async () => {
-    const mockFolders = ['1.2.3'];
-    mockedFse.readdir.mockResolvedValue(mockFolders as any);
-    mockedFse.stat.mockImplementation(() => {
-      return Promise.resolve({
-        isDirectory: () => true,
-      } as any);
+      it('should handle empty logic app name without custom code', () => {
+        const result = getDebugConfiguration(FuncVersion.v3, '');
+
+        expect(result).toEqual({
+          name: 'Run/debug logic app ',
+          type: 'coreclr',
+          request: 'attach',
+          processId: `\${command:${extensionCommand.pickProcess}}`,
+        });
+      });
+
+      it('should handle special characters in logic app name', () => {
+        const logicAppName = 'Test-App_With.Special@Characters';
+        const result = getDebugConfiguration(FuncVersion.v4, logicAppName);
+
+        expect(result).toEqual({
+          name: `Run/debug logic app ${logicAppName}`,
+          type: 'coreclr',
+          request: 'attach',
+          processId: `\${command:${extensionCommand.pickProcess}}`,
+        });
+      });
     });
-
-    const result = await getBundleVersionNumber();
-
-    expect(result).toBe('1.2.3');
-  });
-
-  it('should throw error when no bundle folders found', async () => {
-    mockedFse.readdir.mockResolvedValue([] as any);
-
-    await expect(getBundleVersionNumber()).rejects.toThrow('Extension bundle could not be found.');
-  });
-
-  it('should handle mixed version formats correctly', async () => {
-    const mockFolders = ['1.0', '1.0.0', '1.0.0.1'];
-    mockedFse.readdir.mockResolvedValue(mockFolders as any);
-    mockedFse.stat.mockImplementation(() => {
-      return Promise.resolve({
-        isDirectory: () => true,
-      } as any);
-    });
-
-    const result = await getBundleVersionNumber();
-
-    expect(result).toBe('1.0.0.1');
-  });
-
-  it('should call execSync to get the bundle root path', async () => {
-    const mockFolders = ['1.0.0'];
-    mockedFse.readdir.mockResolvedValue(mockFolders as any);
-    mockedFse.stat.mockImplementation(() => {
-      return Promise.resolve({
-        isDirectory: () => true,
-      } as any);
-    });
-
-    await getBundleVersionNumber();
-
-    expect(mockedExecSync).toHaveBeenCalledWith('func GetExtensionBundlePath', { encoding: 'utf8' });
   });
 });
