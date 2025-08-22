@@ -9,12 +9,12 @@ import { WorkflowCodeTypeStep } from '../../createWorkflow/WorkflowCodeTypeStep'
 import { addInitVSCodeSteps } from '../../initProjectForVSCode/InitVSCodeLanguageStep';
 import { FunctionAppFilesStep } from '../createCodeProjectSteps/createFunction/FunctionAppFilesStep';
 import { FunctionAppNameStep } from '../createCodeProjectSteps/createFunction/FunctionAppNameStep';
-import { FunctionAppNamespaceStep } from '../createCodeProjectSteps/createFunction/FunctionAppNamespaceStep';
+import { AppNamespaceStep } from '../createCodeProjectSteps/createFunction/AppNamespaceStep';
 import { CodeProjectWorkflowStateTypeStep } from '../createCodeProjectSteps/createLogicApp/CodeProjectWorkflowStateTypeStep';
 import { WorkflowCodeProjectCreateStep } from './WorkflowCodeProjectCreateStep';
 import type { AzureWizardExecuteStep, IWizardOptions } from '@microsoft/vscode-azext-utils';
 import { AzureWizardPromptStep, nonNullProp } from '@microsoft/vscode-azext-utils';
-import { type IProjectWizardContext, ProjectLanguage, WorkflowProjectType } from '@microsoft/vscode-extension-logic-apps';
+import { type IProjectWizardContext, ProjectLanguage, ProjectType, WorkflowProjectType } from '@microsoft/vscode-extension-logic-apps';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 
@@ -106,20 +106,22 @@ export class NewCodeProjectTypeStep extends AzureWizardPromptStep<IProjectWizard
     executeSteps: AzureWizardExecuteStep<IProjectWizardContext>[],
     promptSteps: AzureWizardPromptStep<IProjectWizardContext>[]
   ): Promise<void> {
-    promptSteps.push(new FunctionAppNameStep(), new FunctionAppNamespaceStep(), new FunctionAppFilesStep());
+    promptSteps.push(new FunctionAppNameStep(), new AppNamespaceStep(), new FunctionAppFilesStep());
 
     if (context.shouldCreateLogicAppProject) {
       const projectPath = nonNullProp(context, 'logicAppFolderPath');
       executeSteps.push(new WorkflowCodeProjectCreateStep(projectPath));
       await addInitVSCodeSteps(context, executeSteps, true);
 
-      promptSteps.push(
-        await CodeProjectWorkflowStateTypeStep.create(context, {
-          isProjectWizard: true,
-          templateId: this.templateId,
-          triggerSettings: this.functionSettings,
-        })
-      );
+      if (context.projectType !== ProjectType.agentCodeful) {
+        promptSteps.push(
+          await CodeProjectWorkflowStateTypeStep.create(context, {
+            isProjectWizard: true,
+            templateId: this.templateId,
+            triggerSettings: this.functionSettings,
+          })
+        );
+      }
     }
   }
 
