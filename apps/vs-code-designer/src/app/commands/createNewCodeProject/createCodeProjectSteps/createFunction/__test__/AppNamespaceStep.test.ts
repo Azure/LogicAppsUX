@@ -1,18 +1,18 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { FunctionAppNamespaceStep } from '../FunctionAppNamespaceStep';
+import { AppNamespaceStep } from '../AppNamespaceStep';
 import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import { ext } from '../../../../../../extensionVariables';
 
-describe('FunctionAppNamespaceStep', () => {
+describe('AppNamespaceStep', () => {
   const validFunctionAppNamespace = 'Valid_Namespace1';
   const invalidFunctionAppNamespace = 'Invalid-Namespace';
 
-  let functionAppNamespaceStep: FunctionAppNamespaceStep;
+  let appNamespaceStep: AppNamespaceStep;
   let testContext: any;
   let appendLogSpy: any;
 
   beforeEach(() => {
-    functionAppNamespaceStep = new FunctionAppNamespaceStep();
+    appNamespaceStep = new AppNamespaceStep();
     testContext = {
       projectType: ProjectType.customCode,
       ui: {
@@ -45,7 +45,7 @@ describe('FunctionAppNamespaceStep', () => {
         });
       });
 
-      await functionAppNamespaceStep.prompt(testContext);
+      await appNamespaceStep.prompt(testContext);
       expect(testContext.functionAppNamespace).toBe(validFunctionAppNamespace);
       expect(appendLogSpy).toHaveBeenCalledWith(`Function App project namespace set to ${validFunctionAppNamespace}`);
     });
@@ -62,12 +62,12 @@ describe('FunctionAppNamespaceStep', () => {
         });
       });
 
-      await expect(functionAppNamespaceStep.prompt(testContext)).rejects.toThrowError(`Can't have an empty namespace.`);
+      await expect(appNamespaceStep.prompt(testContext)).rejects.toThrowError(`Can't have an empty namespace.`);
     });
   });
 
   describe('validateNamespace', () => {
-    const callValidateNamespace = (name: string | undefined) => (functionAppNamespaceStep as any).validateNamespace(name);
+    const callValidateNamespace = (name: string | undefined) => (appNamespaceStep as any).validateNamespace(name);
 
     it('returns error for empty namespace', async () => {
       const result = await callValidateNamespace('');

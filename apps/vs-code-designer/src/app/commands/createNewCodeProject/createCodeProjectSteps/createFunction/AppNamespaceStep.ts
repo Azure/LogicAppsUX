@@ -8,7 +8,7 @@ import { localize } from '../../../../../localize';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 
-export class FunctionAppNamespaceStep extends AzureWizardPromptStep<IProjectWizardContext> {
+export class AppNamespaceStep extends AzureWizardPromptStep<IProjectWizardContext> {
   public hideStepCount = true;
 
   public async prompt(context: IProjectWizardContext): Promise<void> {

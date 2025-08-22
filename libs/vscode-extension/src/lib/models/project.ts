@@ -101,6 +101,7 @@ export const ProjectType = {
   logicApp: 'logicApp',
   customCode: 'customCode',
   rulesEngine: 'rulesEngine',
+  agentCodeful: 'agentCodeful',
 } as const;
 export type ProjectType = (typeof ProjectType)[keyof typeof ProjectType];
 
