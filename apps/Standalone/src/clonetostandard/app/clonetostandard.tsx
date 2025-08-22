@@ -5,7 +5,9 @@ import { useMcpStandardStyles } from './styles';
 import { ArmParser } from '../../designer/app/AzureLogicAppsDesigner/Utilities/ArmParser';
 import { useWorkflowAndArtifactsConsumption } from '../../designer/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts';
 import { WorkflowUtility } from '../../designer/app/AzureLogicAppsDesigner/Utilities/Workflow';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
+import { BaseResourceService } from '@microsoft/logic-apps-shared';
+import { HttpClient } from '../../designer/app/AzureLogicAppsDesigner/Services/HttpClient';
 
 export const CloneToStandard = () => {
   const styles = useMcpStandardStyles();
@@ -24,6 +26,8 @@ export const CloneToStandard = () => {
     console.log('Close button clicked');
   }, []);
 
+  const services = useMemo(() => getServices(), []);
+
   return (
     <CloneWizardProvider locale="en-US" theme={theme}>
       <div className={`${styles.container} ${styles.fadeIn}`}>
@@ -37,6 +41,7 @@ export const CloneToStandard = () => {
                   logicAppName: resourceDetails.resourceName,
                   location: canonicalLocation,
                 }}
+                services={services}
               >
                 <CloneWizard onExportCall={onExportCall} onClose={onClose} />
                 <div id="mcp-layer-host" className={styles.layerHost} />
@@ -47,4 +52,17 @@ export const CloneToStandard = () => {
       </div>
     </CloneWizardProvider>
   );
+};
+
+const apiVersion = '2020-06-01';
+const httpClient = new HttpClient();
+
+const getServices = (): any => {
+  const armUrl = 'https://management.azure.com';
+
+  const resourceService = new BaseResourceService({ baseUrl: armUrl, httpClient, apiVersion });
+
+  return {
+    resourceService,
+  };
 };
