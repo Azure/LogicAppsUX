@@ -291,10 +291,12 @@ export const listCallbackUrl = async (
 
 // Helper function to fetch A2A authentication key
 const fetchA2AAuthKey = async (siteResourceId: string, workflowName: string) => {
+  const currentDate: Date = new Date();
+
   const response = await axios.post(
     `${baseUrl}${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/listApiKeys?api-version=2018-11-01`,
     {
-      expiry: undefined,
+      expiry: new Date(currentDate.getTime() + 86400000).toISOString(),
       keyType: 'Primary',
     },
     {
@@ -327,7 +329,7 @@ const fetchOBOData = async (siteResourceId: string) => {
     }
 
     if (connectionId) {
-      const oboResponse = await axios.post(`${baseUrl}${connectionId}/listDynamicConnectionKeys?api-version=2020-06-01`, null, {
+      const oboResponse = await axios.post(`${baseUrl}${connectionId}/listDynamicConnectionKeys?api-version=2015-08-01-preview`, null, {
         headers: {
           Authorization: `Bearer ${environment.armToken}`,
         },

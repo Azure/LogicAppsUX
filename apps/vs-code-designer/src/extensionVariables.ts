@@ -43,6 +43,7 @@ type DesignTimeInstance = {
 // biome-ignore lint/style/noNamespace:
 export namespace ext {
   export let context: ExtensionContext;
+  export let codefulEnabled: boolean;
   export const designTimeInstances: Map<string, DesignTimeInstance> = new Map();
   export let workflowDotNetProcess: cp.ChildProcess | undefined;
   export let workflowNodeProcess: cp.ChildProcess | undefined;

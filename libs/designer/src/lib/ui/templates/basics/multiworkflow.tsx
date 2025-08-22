@@ -11,7 +11,7 @@ import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import { getCurrentWorkflowNames } from '../../../core/templates/utils/helper';
-import { ResourcePicker } from './resourcepicker';
+import { TemplateResourcePicker } from './resourcepicker';
 import { useTemplatesStrings } from '../templatesStrings';
 
 interface WorkflowItem {
@@ -234,7 +234,7 @@ export const MultiWorkflowBasics = () => {
 
   return (
     <div className="msla-templates-basics-tab">
-      {enableResourceSelection ? <ResourcePicker lockField={viewTemplateDetails?.lockResourceField} /> : null}
+      {enableResourceSelection ? <TemplateResourcePicker lockField={viewTemplateDetails?.lockResourceField} /> : null}
       <div>
         <Text>{resources.general_line1}</Text>
         <br />

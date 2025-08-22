@@ -4,6 +4,8 @@
   "devDependencies": {
     "@azure/arm-appcontainers": "^2.0.0-beta.3",
     "@azure/arm-appinsights": "^5.0.0-beta.7",
+    "@azure/identity": "^4.5.0",
+    "@azure/ms-rest-js": "^2.6.4",
     "@azure/arm-appservice": "^15.0.0",
     "@azure/arm-resourcegraph": "^5.0.0-beta.3",
     "@azure/arm-storage": "^18.1.0",
@@ -20,19 +22,24 @@
     "@microsoft/vscode-extension-logic-apps": "workspace:*",
     "@types/adm-zip": "^0.5.1",
     "@types/fs-extra": "^11.0.4",
+    "@types/mocha": "^10.0.10",
+    "@types/chai": "^4.3.5",
     "@types/vscode": "1.76.0",
     "@types/vscode-webview": "1.57.1",
     "@vscode/extension-telemetry": "^0.9.8",
-    "@vscode/test-electron": "2.3.0",
     "vscode-languageclient": "^9.0.1",
+    "@vscode/test-electron": "^2.5.2",
+    "vscode-extension-tester": "^8.17.0",
     "@vscode/vsce": "^3.1.1",
     "adm-zip": "^0.5.10",
     "axios": "^1.7.7",
     "azure-storage": "^2.10.3",
+    "chai": "^4.3.7",
     "fs-extra": "^11.2.0",
     "globby": "^11.0.2",
     "js-yaml": "4.1.0",
     "jsonc-parser": "2.3.1",
+    "mocha": "^11.7.1",
     "portfinder": "1.0.32",
     "process": "^0.11.10",
     "process-tree": "^1.0.3",
@@ -46,17 +53,19 @@
     "yaml": "^2.7.0",
     "yaml-types": "^0.4.0",
     "yargs-parser": "21.1.1",
-    "@azure/identity": "^4.5.0",
-    "yazl": "^3.3.1"
+    "yazl": "^2.5.1"
   },
   "private": true,
   "scripts": {
     "build:extension": "tsup && pnpm run copyFiles",
+    "build:ui": "tsup --config tsup.e2e.test.config.ts",
     "copyFiles": "node extension-copy-svgs.js",
     "vscode:designer:pack": "pnpm run vscode:designer:pack:step1 && pnpm run vscode:designer:pack:step2",
     "vscode:designer:pack:step1": "cd ./dist && npm install",
     "vscode:designer:pack:step2": "cd ./dist && vsce package",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "test:extension-unit": "vitest run --retry=3"
+    "test:extension-unit": "vitest run --retry=3",
+    "vscode:designer:e2e:ui": "pnpm run build:ui && cd dist && extest setup-and-run ../out/test/**/*.js --coverage",
+    "vscode:designer:e2e:headless": "pnpm run build:ui && cd dist && extest setup-and-run ../out/test/**/*.js --coverage"
   }
 }

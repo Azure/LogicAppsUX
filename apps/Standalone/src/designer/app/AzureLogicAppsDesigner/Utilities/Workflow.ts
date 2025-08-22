@@ -62,6 +62,7 @@ export class WorkflowUtility {
         connection: { id: `/${agentConnectorId}/connections/${connectionKey}` },
         connectionName: connectionKey, // updated to use connectionKey directly
         api: { id: `/${agentConnectorId}` },
+        resourceId: agentConnections[connectionKey].resourceId,
       };
     }
 

@@ -46,6 +46,14 @@
     "vscode:designer:pack": {
       "cache": false,
       "dependsOn": ["vscode-react#build:extension"]
+    },
+    "vscode:designer:e2e:ui": {
+      "cache": false,
+      "dependsOn": ["vscode-react#build:extension", "vscode-designer#build:extension"]
+    },
+    "vscode:designer:e2e:headless": {
+      "cache": false,
+      "dependsOn": ["vscode-react#build:extension", "vscode-designer#build:extension"]
     }
   }
 }

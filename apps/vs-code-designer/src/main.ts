@@ -82,6 +82,7 @@ export async function activate(context: vscode.ExtensionContext) {
   });
 
   ext.context = context;
+  ext.codefulEnabled = true; // flag that prevents codeful use until public preview
   ext.extensionVersion = getExtensionVersion();
   ext.telemetryReporter = new TelemetryReporter(telemetryString);
   context.subscriptions.push(ext.telemetryReporter);
