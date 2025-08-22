@@ -25,7 +25,9 @@ describe('DeleteNodeModal', () => {
     renderComponent({ nodeType: 'OPERATION_NODE' });
 
     expect(screen.findByText('Delete workflow action')).toBeDefined();
-    expect(screen.findByText('Are you sure you want to delete')).toBeDefined();
+    expect(screen.findByText((content, node) => {
+      return content.includes('Are you sure you want to delete') && content.includes('Test Node');
+    })).toBeDefined();
     expect(screen.findByText('This step will be removed from the Logic App.')).toBeDefined();
   });
 
