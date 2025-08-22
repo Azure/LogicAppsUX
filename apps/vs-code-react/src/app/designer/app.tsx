@@ -161,6 +161,8 @@ export const DesignerApp = () => {
       queryClient.removeQueries([runsQueriesKeys.useAgentActionsRepetition]);
       queryClient.removeQueries([runsQueriesKeys.useAgentRepetition]);
       queryClient.removeQueries([runsQueriesKeys.useNodeRepetition]);
+      queryClient.removeQueries();
+      queryClient.refetchQueries();
     }
   }, [isMonitoringView, refetch]);
 
