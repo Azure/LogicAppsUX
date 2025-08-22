@@ -17,7 +17,7 @@ import { Field, Tab, TabList, Dropdown, Option, mergeClasses } from '@fluentui/r
 import { type SelectTabData, type SelectTabEvent, SearchBox, Text } from '@fluentui/react-components';
 import { useTemplateSearchFiltersStyles } from './templatesearchfilters.styles';
 import type { Template } from '@microsoft/logic-apps-shared';
-import { useSubscriptions } from '../../../core/templates/utils/queries';
+import { useSubscriptions } from '../../../core/queries/resource';
 
 type TemplateDetailFilterValue = {
   displayName: string;

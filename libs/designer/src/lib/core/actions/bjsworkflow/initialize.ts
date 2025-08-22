@@ -212,7 +212,7 @@ export const getInputParametersFromManifest = (
   defaultParameterGroup.parameters = getParametersSortedByVisibility(defaultParameterGroup.parameters);
 
   const nodeInputs = { dynamicLoadStatus: dynamicInput ? DynamicLoadStatus.NOTSTARTED : undefined, parameterGroups };
-  return { inputs: nodeInputs, dependencies: getInputDependencies(nodeInputs, allInputParameters) };
+  return { inputs: nodeInputs, dependencies: getInputDependencies(nodeInputs, allInputParameters, /* supportsLegacyExtension */ false) };
 };
 
 export const getSupportedChannelsFromManifest = (_nodeId: string, operationInfo: NodeOperation, manifest: OperationManifest) => {
@@ -459,13 +459,14 @@ const updateSplitOnSetting = (
 export const getInputDependencies = (
   nodeInputs: NodeInputs,
   allInputs: InputParameter[],
+  supportsLegacyExtension: boolean,
   swagger?: SwaggerParser
 ): Record<string, DependencyInfo> => {
   const dependencies: Record<string, DependencyInfo> = {};
   for (const inputParameter of allInputs) {
     const { dynamicValues, dynamicSchema } = inputParameter;
     if (dynamicValues) {
-      if (isLegacyDynamicValuesTreeExtension(dynamicValues) && !!swagger?.api['x-ms-capabilities']) {
+      if (supportsLegacyExtension && isLegacyDynamicValuesTreeExtension(dynamicValues) && !!swagger?.api['x-ms-capabilities']) {
         const pickerCapability = swagger.api['x-ms-capabilities'][Constants.PROPERTY.FILE_PICKER];
         dependencies[inputParameter.key] = {
           definition: dynamicValues,
@@ -483,7 +484,7 @@ export const getInputDependencies = (
           },
           parameter: inputParameter,
         };
-      } else if (isDynamicTreeExtension(dynamicValues)) {
+      } else if (!supportsLegacyExtension && isDynamicTreeExtension(dynamicValues)) {
         dependencies[inputParameter.key] = {
           definition: dynamicValues,
           dependencyType: 'TreeNavigation',
@@ -496,7 +497,14 @@ export const getInputDependencies = (
           },
           parameter: inputParameter,
         };
-      } else if (isLegacyDynamicValuesExtension(dynamicValues) || isDynamicListExtension(dynamicValues)) {
+      } else if (supportsLegacyExtension && isLegacyDynamicValuesExtension(dynamicValues)) {
+        dependencies[inputParameter.key] = {
+          definition: dynamicValues,
+          dependencyType: 'ListValues',
+          dependentParameters: getDependentParameters(nodeInputs, dynamicValues.extension.parameters ?? {}),
+          parameter: inputParameter,
+        };
+      } else if (!supportsLegacyExtension && isDynamicListExtension(dynamicValues)) {
         dependencies[inputParameter.key] = {
           definition: dynamicValues,
           dependencyType: 'ListValues',
@@ -505,7 +513,14 @@ export const getInputDependencies = (
         };
       }
     } else if (dynamicSchema) {
-      if (isDynamicSchemaExtension(dynamicSchema) || isDynamicPropertiesExtension(dynamicSchema)) {
+      if (supportsLegacyExtension && isDynamicSchemaExtension(dynamicSchema)) {
+        dependencies[inputParameter.key] = {
+          definition: dynamicSchema,
+          dependencyType: 'ApiSchema',
+          dependentParameters: getDependentParameters(nodeInputs, dynamicSchema.extension.parameters ?? {}),
+          parameter: inputParameter,
+        };
+      } else if (!supportsLegacyExtension && isDynamicPropertiesExtension(dynamicSchema)) {
         dependencies[inputParameter.key] = {
           definition: dynamicSchema,
           dependencyType: 'ApiSchema',

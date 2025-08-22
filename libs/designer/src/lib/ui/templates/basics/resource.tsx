@@ -1,5 +1,5 @@
 import { Field, InfoLabel, Input, makeStyles, Textarea } from '@fluentui/react-components';
-import { ResourcePicker } from './resourcepicker';
+import { TemplateResourcePicker } from './resourcepicker';
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { useWorkflowTemplate } from '../../../core/state/templates/templateselectors';
@@ -90,7 +90,7 @@ export const ResourceSection = (props: ResourceSectionProps) => {
       ) : null}
       {showResourceFirst ? workflowName : null}
       {showTriggerDescription ? triggerDescription : null}
-      {enableResourceSelection ? <ResourcePicker /> : null}
+      {enableResourceSelection ? <TemplateResourcePicker /> : null}
       {showResourceFirst ? null : workflowName}
     </>
   );

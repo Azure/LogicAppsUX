@@ -24,12 +24,12 @@ export default {
           'x-ms-visibility': 'hideInUI',
           'x-ms-is-node-id': true,
         },
-        message: {
-          type: 'string',
-          title: 'Message',
-          description: 'Message to send to the agent',
-          'x-ms-visibility': 'important',
-        },
+        // message: {
+        //   type: 'string',
+        //   title: 'Message',
+        //   description: 'Message to send to the agent',
+        //   'x-ms-visibility': 'important',
+        // },
       },
     },
     isInputsOptional: false,

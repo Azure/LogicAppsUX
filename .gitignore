@@ -39,6 +39,12 @@ testem.log
 **/dist
 debug.log
 
+# vscode e2e exTester artifacts
+/apps/vs-code-designer/test-resources
+test-resources
+/apps/vs-code-designer/out
+/apps/vs-code-designer/*.vsix
+
 # System Files
 .DS_Store
 Thumbs.db
