@@ -39,7 +39,7 @@ export async function validateAndInstallBinaries(context: IActionContext) {
       context.telemetry.properties.lastStep = 'getGlobalSetting';
       progress.report({ increment: 10, message: 'Get Settings' });
 
-      const dependencyTimeout = (await getDependencyTimeout()) * 1000;
+      const dependencyTimeout = getDependencyTimeout() * 1000;
 
       context.telemetry.properties.dependencyTimeout = `${dependencyTimeout} milliseconds`;
       if (!getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey)) {
