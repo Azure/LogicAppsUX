@@ -78,9 +78,7 @@ vi.mock('fs-extra', () => ({
   stat: vi.fn(),
 }));
 
-vi.mock('child_process', () => ({
-  execSync: vi.fn(),
-}));
+vi.mock('child_process');
 
 vi.mock('util');
 
