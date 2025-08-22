@@ -5832,6 +5832,9 @@ packages:
   '@types/whatwg-mimetype@3.0.2':
     resolution: {integrity: sha1-5eBtzT6S1OYi7wEpY3cH1mwo1qQ=}
 
+  '@types/whatwg-mimetype@3.0.2':
+    resolution: {integrity: sha512-c2AKvDT8ToxLIOUlN51gTiHXflsfIFisS4pO7pDPoKouJCESkhZnEy623gwP9laCy5lnLDAw1vAzu2vM2YLOrA==}
+
   '@types/ws@8.5.10':
     resolution: {integrity: sha1-Ss+1F5cIU/pldKOmiGeR0Eo5Z4c=}
 
@@ -8687,6 +8690,10 @@ packages:
     resolution: {integrity: sha1-j4ohmUYoQt62dfVOQFr1XztnRUA=}
     engines: {node: '>=20.0.0'}
 
+  happy-dom@18.0.1:
+    resolution: {integrity: sha512-qn+rKOW7KWpVTtgIUi6RVmTBZJSe2k0Db0vh1f7CWrWclkkc7/Q+FrOfkZIb2eiErLyqu5AXEzE7XthO9JVxRA==}
+    engines: {node: '>=20.0.0'}
+
   har-schema@2.0.0:
     resolution: {integrity: sha1-qUwiJOvKwEeCoNkDVSHyRzW37JI=}
     engines: {node: '>=4'}
@@ -9572,7 +9579,7 @@ packages:
     resolution: {integrity: sha1-BpATbs+nXi8kW2f2W9sr4pb1c1o=}
 
   keyborg@2.6.0:
-    resolution: {integrity: sha1-6/yq7S9Rf5KVBY/11X0U5xlYq1o=}
+    resolution: {integrity: sha512-o5kvLbuTF+o326CMVYpjlaykxqYP9DphFQZ2ZpgrvBouyvOxyEB7oqe8nOLFpiV5VCtz0D3pt8gXQYWpLpBnmA==}
 
   keytar@7.9.0:
     resolution: {integrity: sha1-TGIlcI9RtQy/d8Wq6BchlkwpGMs=}
