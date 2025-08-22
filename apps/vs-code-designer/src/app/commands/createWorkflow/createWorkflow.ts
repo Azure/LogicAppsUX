@@ -17,7 +17,7 @@ import type { IFunctionWizardContext, FuncVersion } from '@microsoft/vscode-exte
 import { ProjectLanguage, WorkflowProjectType } from '@microsoft/vscode-extension-logic-apps';
 import type { WorkspaceFolder } from 'vscode';
 import { WorkflowStateTypeStep } from '../createCodeless/createCodelessSteps/WorkflowStateTypeStep';
-import { WorkflowCodeTypeStep } from './WorkflowCodeTypeStep';
+// import { WorkflowCodeTypeStep } from './WorkflowCodeTypeStep';
 
 export async function createWorkflow(
   context: IActionContext,
@@ -70,11 +70,11 @@ export async function createWorkflow(
     projectTemplateKey,
   });
 
-  // wizardContext.isCodeless = true; // default to codeless workflow, disabling codeful option until Public Preview
+  wizardContext.isCodeless = true; // default to codeless workflow, disabling codeful option until Public Preview
 
   const wizard: AzureWizard<IFunctionWizardContext> = new AzureWizard(wizardContext, {
     promptSteps: [
-      await WorkflowCodeTypeStep.create(wizardContext, { templateId, triggerSettings, isProjectWizard: false }),
+      // await WorkflowCodeTypeStep.create(wizardContext, { templateId, triggerSettings, isProjectWizard: false }),
       await WorkflowStateTypeStep.create(wizardContext, { templateId, triggerSettings, isProjectWizard: false }),
     ],
   });
