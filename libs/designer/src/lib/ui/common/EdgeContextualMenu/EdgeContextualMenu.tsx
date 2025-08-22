@@ -74,11 +74,9 @@ export const EdgeContextualMenu = () => {
   }, [nodeMetadata, parentId]);
 
   const upstreamNodesOfChild = useUpstreamNodes(removeIdTag(childId ?? newParentId ?? ''), graphId, childId);
-  const upstreamNodesOfParent = useUpstreamNodes(removeIdTag(newParentId ?? ''), graphId, newParentId);
   const hasUpstreamAgenticLoop = useHasUpstreamAgenticLoop(upstreamNodesOfChild);
-  const parentHasUpstreamAgenticLoop = useHasUpstreamAgenticLoop(upstreamNodesOfParent);
 
-  const isAddAgentHandoff = isA2AWorkflow && graphId === 'root' && parentHasUpstreamAgenticLoop;
+  const isAddAgentHandoff = isA2AWorkflow && graphId === 'root' && hasUpstreamAgenticLoop;
   const isAddActionDisabled = isA2AWorkflow && graphId === 'root' && hasUpstreamAgenticLoop;
   const isAddParallelBranchDisabled = isA2AWorkflow && graphId === 'root';
   const isPasteDisabled = isA2AWorkflow && graphId === 'root' && hasUpstreamAgenticLoop;
