@@ -24,13 +24,13 @@ export default {
           },
           'x-ms-visibility': 'important',
         },
-        name: {
+        agentName: {
           type: 'string',
           title: 'Name',
           description: 'Enter a name for this A2A request',
           'x-ms-visibility': 'important',
         },
-        description: {
+        agentDescription: {
           type: 'string',
           title: 'Description',
           description: 'Enter a description for this A2A request',
