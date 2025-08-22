@@ -1,4 +1,4 @@
-import { getBundleVersionNumber } from '../getDebugSymbolDll';
+import { getBundleVersionNumber } from '../debug';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as fse from 'fs-extra';
 import * as path from 'path';

@@ -32,7 +32,7 @@ import type { WebviewPanel } from 'vscode';
 import { Uri, ViewColumn } from 'vscode';
 import { getArtifactsInLocalProject } from '../../../utils/codeless/artifacts';
 import { saveBlankUnitTest } from '../unitTest/saveBlankUnitTest';
-import { getBundleVersionNumber } from '../../../utils/getDebugSymbolDll';
+import { getBundleVersionNumber } from '../../../utils/debug';
 
 export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
   private projectPath: string | undefined;

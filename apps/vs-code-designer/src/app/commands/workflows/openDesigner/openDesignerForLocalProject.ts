@@ -44,7 +44,7 @@ import * as path from 'path';
 import { env, ProgressLocation, Uri, ViewColumn, window, workspace } from 'vscode';
 import type { WebviewPanel, ProgressOptions } from 'vscode';
 import { saveBlankUnitTest } from '../unitTest/saveBlankUnitTest';
-import { getBundleVersionNumber } from '../../../utils/getDebugSymbolDll';
+import { getBundleVersionNumber } from '../../../utils/debug';
 import { createHttpHeaders } from '@azure/core-rest-pipeline';
 
 export default class OpenDesignerForLocalProject extends OpenDesignerBase {
