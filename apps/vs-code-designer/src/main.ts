@@ -60,6 +60,8 @@ export async function activate(context: vscode.ExtensionContext) {
   vscode.commands.executeCommand('setContext', extensionCommand.dataMapSetDmFolders, supportedDataMapperFolders);
 
   ext.context = context;
+  ext.codefulEnabled = true; // flag that prevents codeful use until public preview
+  ext.extensionVersion = getExtensionVersion();
   ext.telemetryReporter = new TelemetryReporter(telemetryString);
   ext.subscriptionProvider = createVSCodeAzureSubscriptionProvider();
   context.subscriptions.push(ext.telemetryReporter);
