@@ -12417,13 +12417,13 @@ packages:
     engines: {node: '>=10.0.0'}
 
   tabster@6.1.0:
-    resolution: {integrity: sha1-bdXtzG0f7DxqBDS8cvzosAxY2XI=}
+    resolution: {integrity: sha512-wTPy2d6WVmU/YjT0ERY9jc+et1P/B8FoSQ4qhr1xi7liwTezRbRV6yA1pKx8kdPWmLdIOBA4fn07x9c0x/wnow==}
 
   tabster@7.1.2:
-    resolution: {integrity: sha1-qy+yvGe3gFnhQGsq/DWuxp64JKU=}
+    resolution: {integrity: sha512-wYG9ddAeSUxBrcPCZ+hQV5IcsyM089nTGkQ53G9/2pPDdUa3pBC4sP3qmdbvu+IoFpy62CMDxMgxQmegtCiLKg==}
 
   tabster@8.5.6:
-    resolution: {integrity: sha1-JpkNf0NtFaKkeKjEwIfnWbzfSWM=}
+    resolution: {integrity: sha512-2vfrRGrx8O9BjdrtSlVA5fvpmbq5HQBRN13XFRg6LAvZ1Fr3QdBnswgT4YgFS5Bhoo5nxwgjRaRueI2Us/dv7g==}
 
   tapable@1.1.3:
     resolution: {integrity: sha1-ofzMBrWNth/XpF2i2kT186Pme6I=}
