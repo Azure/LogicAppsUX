@@ -17,10 +17,15 @@ export const CloneToStandard = () => {
 
   const resourceDetails = new ArmParser(workflowId ?? '');
 
-  //TODO: props passed in will be defined to be defined later on api integration
-  const onExportCall = useCallback(async () => {
-    console.log('TODO: on submit');
-  }, []);
+  const onExportCall = useCallback(
+    async (
+      sourceApps: { subscriptionId: string; resourceGroup: string; logicAppName: string }[],
+      destinationApp: { subscriptionId: string; resourceGroup: string; logicAppName: string }
+    ) => {
+      console.log('TODO: on submit', sourceApps, destinationApp);
+    },
+    []
+  );
 
   const onClose = useCallback(() => {
     console.log('Close button clicked');
@@ -43,7 +48,7 @@ export const CloneToStandard = () => {
                 }}
                 services={services}
               >
-                <CloneWizard onExportCall={onExportCall} onClose={onClose} />
+                <CloneWizard onCloneCall={onExportCall} onClose={onClose} />
                 <div id="mcp-layer-host" className={styles.layerHost} />
               </CloneDataProvider>
             </div>
