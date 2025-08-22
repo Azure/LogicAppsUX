@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { projectTemplateKeySetting } from '../../../constants';
+import { ext } from '../../../extensionVariables';
 import { getProjFiles } from '../../utils/dotnet/dotnet';
 import { addLocalFuncTelemetry, checkSupportedFuncVersion } from '../../utils/funcCoreTools/funcVersion';
 import { verifyAndPromptToCreateProject } from '../../utils/verifyIsProject';
@@ -70,7 +71,16 @@ export async function createWorkflow(
     projectTemplateKey,
   });
 
-  // wizardContext.isCodeless = true; // default to codeless workflow, disabling codeful option until Public Preview
+  // default to codeless workflow, disabling codeful option until Public Preview
+  // Check if codeful is enabled
+  if (ext.codefulEnabled) {
+    // Codeful workflows are enabled
+    context.telemetry.properties.codefulEnabled = 'true';
+  } else {
+    // Default to codeless workflow
+    wizardContext.isCodeless = true;
+    context.telemetry.properties.codefulEnabled = 'false';
+  }
 
   const wizard: AzureWizard<IFunctionWizardContext> = new AzureWizard(wizardContext, {
     promptSteps: [
