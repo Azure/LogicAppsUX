@@ -40,7 +40,7 @@ export const cloneSlice = createSlice({
       state.destinationApp.resourceGroup = action.payload;
     },
     setDestinationWorkflowAppDetails: (state, action: PayloadAction<{ name: string; location: string }>) => {
-      state.destinationApp.workflowAppName = action.payload.name;
+      state.destinationApp.logicAppName = action.payload.name;
       state.destinationApp.location = action.payload.location;
     },
   },

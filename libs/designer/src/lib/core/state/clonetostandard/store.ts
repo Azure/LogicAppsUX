@@ -1,10 +1,12 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import resourceReducer from './resourceslice';
 import cloneReducer from './cloneslice';
+import cloneOptionsReducer from './cloneoptionsslice';
 
 const rootReducer = combineReducers({
   resource: resourceReducer,
   clone: cloneReducer,
+  cloneOptions: cloneOptionsReducer,
 });
 
 export const setupStore = (preloadedState?: Partial<RootState>) => {

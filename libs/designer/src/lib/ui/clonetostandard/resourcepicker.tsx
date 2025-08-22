@@ -27,8 +27,8 @@ export const CloneResourcePicker = () => {
       onSubscriptionSelect={(value) => dispatch(setDestinationSubscription(value))}
       onResourceGroupSelect={(value) => dispatch(setDestinationResourceGroup(value))}
       onLocationSelect={(_value) => {}}
-      onLogicAppSelect={(value) => dispatch(setDestinationWorkflowAppDetails(value))}
-      onLogicAppInstanceSelect={(_value) => {}}
+      onLogicAppSelect={(_value) => {}}
+      onLogicAppInstanceSelect={(value) => dispatch(setDestinationWorkflowAppDetails(value))}
     />
   );
 };

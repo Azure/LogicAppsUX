@@ -11,6 +11,7 @@ export const resetNodesLoadStatus = createAction('resetNodesLoadStatus');
 export const setStateAfterUndoRedo = createAction<UndoRedoPartialRootState>('setStateAfterUndoRedo');
 export const resetTemplatesState = createAction('resetTemplatesState');
 export const resetMcpState = createAction('resetMcpState');
+export const resetCloneState = createAction('resetCloneState');
 
 export const useIsDesignerDirty = () => {
   const isWorkflowDirty = useIsWorkflowDirty();
