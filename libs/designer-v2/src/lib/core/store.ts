@@ -50,7 +50,7 @@ export const store = configureStore({
 });
 
 if (process.env.NODE_ENV === 'development') {
-  (window as any).DesignerStore = store;
+  (window as any).DesignerStoreV2 = store;
 }
 
 // Log actions for testing purposes

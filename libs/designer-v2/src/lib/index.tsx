@@ -5,7 +5,7 @@ import * as UI from './ui/index';
 
 if (process.env.NODE_ENV === 'development') {
   if (process.env) {
-    (window as any).DesignerModule = {
+    (window as any).DesignerModuleV2 = {
       UI,
       Core,
       Models,
