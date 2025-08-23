@@ -6,7 +6,7 @@ import { store as dataMapperStore } from './dataMapperV1/state/Store';
 import { store as templateStore } from './templates/state/Store';
 import { store as configureTemplateStore } from './configuretemplate/state/Store';
 import { store as mcpStore } from './mcp/state/Store';
-import { store as exportConsumptionStore } from './exportconsumption/state/store';
+import { store as cloneToStandardStore } from './clonetostandard/state/store';
 import { store as vscodeStore } from '../../vs-code-react/src/state/store';
 import { DataMapperStandaloneDesignerV1 } from './dataMapperV1/app/DataMapperStandaloneDesignerV1';
 import { DataMapperStandaloneDesignerV2 } from './dataMapperV1/app/DataMapperStandaloneDesignerV2';
@@ -14,7 +14,7 @@ import { TemplatesWrapper } from './templates/app/TemplatesShell';
 import { ConfigureTemplateWrapper } from './configuretemplate/app/ConfigureTemplateShell';
 import { DesignerWrapper } from './designer/app/DesignerShell/designer';
 import { McpWrapper } from './mcp/app/McpShell';
-import { ExportConsumptionWrapper } from './exportconsumption/app/exportshell';
+import { CloneToStandardWrapper } from './clonetostandard/app/cloneshell';
 import { VSCodeWrapper } from './vscode/VSCodeWrapper';
 
 export const App = () => {
@@ -27,7 +27,7 @@ export const App = () => {
       <Route path="/templates" element={<TemplatesStandalone />} />
       <Route path="/configuretemplate" element={<ConfigureTemplateStandalone />} />
       <Route path="/mcp" element={<McpStandalone />} />
-      <Route path="/exportconsumption" element={<ExportConsumption />} />
+      <Route path="/clonetostandard" element={<CloneToStandard />} />
       <Route path="/vscode/*" element={<VSCodeStandalone />} />
       {/* Using path="*"" means "match anything", so this route
                 acts like a catch-all for URLs that we don't have explicit
@@ -85,10 +85,10 @@ const McpStandalone = () => {
   );
 };
 
-const ExportConsumption = () => {
+const CloneToStandard = () => {
   return (
-    <Provider store={exportConsumptionStore}>
-      <ExportConsumptionWrapper />
+    <Provider store={cloneToStandardStore}>
+      <CloneToStandardWrapper />
     </Provider>
   );
 };

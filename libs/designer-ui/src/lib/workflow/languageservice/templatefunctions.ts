@@ -253,6 +253,83 @@ const Resources = {
     id: 'L6QAIt',
     description: 'Required content parameter for trimByteOrderMark function',
   }),
+  TOKEN_FUNCTION_FUNCTION_ENCODEXMLVALUE: intl.formatMessage({
+    defaultMessage:
+      'Encodes a string to ensure it is a valid XML element value by converting characters that are not allowed in XML element values.',
+    id: 'y+0ylO',
+    description: 'Label for description of custom encodeXmlValue Function',
+  }),
+  TOKEN_FUNCTION_FUNCTION_DECODEXMLVALUE: intl.formatMessage({
+    defaultMessage: 'Decodes a string that has been encoded as an XML element value back to its original form.',
+    id: 'v3Xc8p',
+    description: 'Label for description of custom decodeXmlValue Function',
+  }),
+  TOKEN_FUNCTION_FUNCTION_ENCODEXMLNAME: intl.formatMessage({
+    defaultMessage: 'Encodes a string to ensure it is a valid XML element or attribute name.',
+    id: 'h4mWGw',
+    description: 'Label for description of custom encodeXmlName Function',
+  }),
+  TOKEN_FUNCTION_FUNCTION_DECODEXMLNAME: intl.formatMessage({
+    defaultMessage: 'Decodes a string that has been encoded as an XML element or attribute name back to its original form.',
+    id: '6pHhCD',
+    description: 'Label for description of custom decodeXmlName Function',
+  }),
+  TOKEN_FUNCTION_MANIPULATION_MERGEOBJECTS: intl.formatMessage({
+    defaultMessage:
+      'Returns a single object containing all properties from the input objects. If both objects have the same property, the property from the second object appears in the final result.',
+    id: '5td/Ux',
+    description: 'Label for description of custom mergeObjects Function',
+  }),
+  TOKEN_FUNCTION_DATETIME_FORMATTIMESPAN: intl.formatMessage({
+    defaultMessage: 'Formats a timespan value according to the specified format string and optional culture.',
+    id: 'j/Pssm',
+    description: 'Label for description of custom formatTimeSpan Function',
+  }),
+  TOKEN_PARAMETER_ENCODEXMLVALUE_VALUE: intl.formatMessage({
+    defaultMessage: 'Required. The string to be encoded as a valid XML element value.',
+    id: 'zeVnUJ',
+    description: 'Required parameter for value in encodeXmlValue function',
+  }),
+  TOKEN_PARAMETER_DECODEXMLVALUE_VALUE: intl.formatMessage({
+    defaultMessage: 'Required. The XML-encoded string to be decoded.',
+    id: 'NNEtny',
+    description: 'Required parameter for value in decodeXmlValue function',
+  }),
+  TOKEN_PARAMETER_ENCODEXMLNAME_NAME: intl.formatMessage({
+    defaultMessage: 'Required. The string to be encoded as a valid XML element or attribute name.',
+    id: 'm6vIDU',
+    description: 'Required parameter for name in encodeXmlName function',
+  }),
+  TOKEN_PARAMETER_DECODEXMLNAME_NAME: intl.formatMessage({
+    defaultMessage: 'Required. The XML-encoded name string to be decoded.',
+    id: '8A0GFO',
+    description: 'Required parameter for name in decodeXmlName function',
+  }),
+  TOKEN_PARAMETER_MERGEOBJECTS_OBJECT1: intl.formatMessage({
+    defaultMessage: 'Required. The first object to merge.',
+    id: 'ocbhrj',
+    description: 'Required parameter for object1 in mergeObjects function',
+  }),
+  TOKEN_PARAMETER_MERGEOBJECTS_OBJECT2: intl.formatMessage({
+    defaultMessage: 'Required. The second object to merge.',
+    id: 'bLxgKC',
+    description: 'Required parameter for object2 in mergeObjects function',
+  }),
+  TOKEN_PARAMETER_FORMATTIMESPAN_TIMESPAN: intl.formatMessage({
+    defaultMessage: 'Required. A string representation of a timespan value.',
+    id: 'c2Vm2s',
+    description: 'Required parameter for timespan in formatTimeSpan function',
+  }),
+  TOKEN_PARAMETER_FORMATTIMESPAN_FORMAT: intl.formatMessage({
+    defaultMessage: 'Required. The format string to apply to the timespan value.',
+    id: 'saR5aa',
+    description: 'Required parameter for format in formatTimeSpan function',
+  }),
+  TOKEN_PARAMETER_FORMATTIMESPAN_CULTURE: intl.formatMessage({
+    defaultMessage: 'Optional. The culture to use for formatting (defaults to InvariantCulture).',
+    id: 'pkPSjh',
+    description: 'Optional parameter for culture in formatTimeSpan function',
+  }),
   TOKEN_FUNCTION_SECTION_COLLECTION: intl.formatMessage({
     defaultMessage: 'Collection functions',
     id: 'P4rEwD',
@@ -1855,6 +1932,78 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
               {
                 name: 'content',
                 documentation: Resources.TOKEN_PARAMETER_TRIMBYTEORDERMARK_CONTENT,
+              },
+            ],
+          },
+        ],
+        isAdvanced: false,
+      },
+      {
+        name: 'encodeXmlValue',
+        defaultSignature: 'encodeXmlValue(value)',
+        description: Resources.TOKEN_FUNCTION_FUNCTION_ENCODEXMLVALUE,
+        signatures: [
+          {
+            definition: 'encodeXmlValue(value: string)',
+            documentation: Resources.TOKEN_FUNCTION_FUNCTION_ENCODEXMLVALUE,
+            parameters: [
+              {
+                name: 'value',
+                documentation: Resources.TOKEN_PARAMETER_ENCODEXMLVALUE_VALUE,
+              },
+            ],
+          },
+        ],
+        isAdvanced: false,
+      },
+      {
+        name: 'decodeXmlValue',
+        defaultSignature: 'decodeXmlValue(value)',
+        description: Resources.TOKEN_FUNCTION_FUNCTION_DECODEXMLVALUE,
+        signatures: [
+          {
+            definition: 'decodeXmlValue(value: string)',
+            documentation: Resources.TOKEN_FUNCTION_FUNCTION_DECODEXMLVALUE,
+            parameters: [
+              {
+                name: 'value',
+                documentation: Resources.TOKEN_PARAMETER_DECODEXMLVALUE_VALUE,
+              },
+            ],
+          },
+        ],
+        isAdvanced: false,
+      },
+      {
+        name: 'encodeXmlName',
+        defaultSignature: 'encodeXmlName(name)',
+        description: Resources.TOKEN_FUNCTION_FUNCTION_ENCODEXMLNAME,
+        signatures: [
+          {
+            definition: 'encodeXmlName(name: string)',
+            documentation: Resources.TOKEN_FUNCTION_FUNCTION_ENCODEXMLNAME,
+            parameters: [
+              {
+                name: 'name',
+                documentation: Resources.TOKEN_PARAMETER_ENCODEXMLNAME_NAME,
+              },
+            ],
+          },
+        ],
+        isAdvanced: false,
+      },
+      {
+        name: 'decodeXmlName',
+        defaultSignature: 'decodeXmlName(name)',
+        description: Resources.TOKEN_FUNCTION_FUNCTION_DECODEXMLNAME,
+        signatures: [
+          {
+            definition: 'decodeXmlName(name: string)',
+            documentation: Resources.TOKEN_FUNCTION_FUNCTION_DECODEXMLNAME,
+            parameters: [
+              {
+                name: 'name',
+                documentation: Resources.TOKEN_PARAMETER_DECODEXMLNAME_NAME,
               },
             ],
           },
@@ -3775,6 +3924,32 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         ],
         isAdvanced: true,
       },
+      {
+        name: 'formatTimeSpan',
+        defaultSignature: 'formatTimeSpan(timeSpan, format, culture?)',
+        description: Resources.TOKEN_FUNCTION_DATETIME_FORMATTIMESPAN,
+        signatures: [
+          {
+            definition: 'formatTimeSpan(timeSpan: string, format: string, culture?: string)',
+            documentation: Resources.TOKEN_FUNCTION_DATETIME_FORMATTIMESPAN,
+            parameters: [
+              {
+                name: 'timeSpan',
+                documentation: Resources.TOKEN_PARAMETER_FORMATTIMESPAN_TIMESPAN,
+              },
+              {
+                name: 'format',
+                documentation: Resources.TOKEN_PARAMETER_FORMATTIMESPAN_FORMAT,
+              },
+              {
+                name: 'culture',
+                documentation: Resources.TOKEN_PARAMETER_FORMATTIMESPAN_CULTURE,
+              },
+            ],
+          },
+        ],
+        isAdvanced: false,
+      },
     ],
   },
   {
@@ -4264,6 +4439,28 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
               {
                 name: 'xpath',
                 documentation: Resources.TOKEN_PARAMETER_XPATH_XPATH,
+              },
+            ],
+          },
+        ],
+        isAdvanced: false,
+      },
+      {
+        name: 'mergeObjects',
+        defaultSignature: 'mergeObjects(object1, object2)',
+        description: Resources.TOKEN_FUNCTION_MANIPULATION_MERGEOBJECTS,
+        signatures: [
+          {
+            definition: 'mergeObjects(object1: object, object2: object)',
+            documentation: Resources.TOKEN_FUNCTION_MANIPULATION_MERGEOBJECTS,
+            parameters: [
+              {
+                name: 'object1',
+                documentation: Resources.TOKEN_PARAMETER_MERGEOBJECTS_OBJECT1,
+              },
+              {
+                name: 'object2',
+                documentation: Resources.TOKEN_PARAMETER_MERGEOBJECTS_OBJECT2,
               },
             ],
           },

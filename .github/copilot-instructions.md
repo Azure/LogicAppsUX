@@ -33,6 +33,12 @@ pnpm run test:lib  # or pnpm turbo run test:lib
 # Run VS Code extension unit tests
 pnpm run test:extension-unit
 
+# Run VS Code extension e2e tests in UI mode
+pnpm run vscode:designer:e2e:ui
+
+# Run VS Code extension e2e tests in headless mode
+pnpm run vscode:designer:e2e:headless
+
 # Run E2E tests (mock API)
 pnpm run test:e2e --grep @mock
 
