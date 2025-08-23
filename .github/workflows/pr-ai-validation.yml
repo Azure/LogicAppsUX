@@ -62,8 +62,9 @@ jobs:
                 })
               });
               
+              console.log('#> Response Status:', response.status);
               if (!response.ok) {
-                if(response.status === '502' || response.status === 502) {
+                if(response.status == '502' || response.status == 502) {
                   console.log('PR_VALIDATION Bad Gateway - The AI service is currently unavailable. Skipping AI validation.');
                   return;
                 }
