@@ -230,7 +230,7 @@ describe('lib/combobox', () => {
 
   it('handles search with result limiting correctly', async () => {
     // Simplify the test to just verify that large datasets work with search - smaller for faster testing
-    const largeOptions = Array.from({ length: 3000 }, (_, i) => ({
+    const largeOptions = Array.from({ length: 2000 }, (_, i) => ({
       key: `${i}`,
       value: `value-${i}`,
       displayName: `Option${i}`,
