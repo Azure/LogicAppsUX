@@ -17,28 +17,20 @@ export const CloneWizard = ({
   onClose: () => void;
 }) => {
   const {
-    resource: { subscriptionId, resourceGroup, location, logicAppName },
+    resource: { subscriptionId, resourceGroup, logicAppName },
     clone: {
+      sourceApps,
       destinationApp: { resourceGroup: destResourceGroup, logicAppName: destLogicAppName },
     },
   } = useSelector((state: RootState) => state);
 
   const onCloneClick = useCallback(async () => {
-    await onCloneCall(
-      [
-        {
-          subscriptionId,
-          resourceGroup,
-          logicAppName,
-        },
-      ],
-      {
-        subscriptionId,
-        resourceGroup: destResourceGroup,
-        logicAppName: destLogicAppName,
-      }
-    );
-  }, [onCloneCall, subscriptionId, resourceGroup, logicAppName, destResourceGroup, destLogicAppName]);
+    await onCloneCall(sourceApps, {
+      subscriptionId,
+      resourceGroup: destResourceGroup,
+      logicAppName: destLogicAppName,
+    });
+  }, [onCloneCall, subscriptionId, sourceApps, destResourceGroup, destLogicAppName]);
 
   return (
     <div>
@@ -55,10 +47,6 @@ export const CloneWizard = ({
         <div>
           <Field>Resource Group</Field>
           <Text>{resourceGroup}</Text>
-        </div>
-        <div>
-          <Field>Location</Field>
-          <Text>{location}</Text>
         </div>
         <div>
           <Field>Logic App</Field>
