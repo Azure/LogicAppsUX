@@ -4,6 +4,7 @@ exports[`DeleteNodeModal Snapshots > should match snapshot for graph node 1`] = 
 {
   "asFragment": [Function],
   "baseElement": <body
+    class=""
     data-tabster="{"root":{}}"
   >
     <div>
@@ -140,6 +141,7 @@ exports[`DeleteNodeModal Snapshots > should match snapshot for operation node 1`
 {
   "asFragment": [Function],
   "baseElement": <body
+    class=""
     data-tabster="{"root":{}}"
   >
     <div>
@@ -276,6 +278,7 @@ exports[`DeleteNodeModal Snapshots > should match snapshot for other node types 
 {
   "asFragment": [Function],
   "baseElement": <body
+    class=""
     data-tabster="{"root":{}}"
   >
     <div>
@@ -412,6 +415,7 @@ exports[`DeleteNodeModal Snapshots > should match snapshot for switch case node 
 {
   "asFragment": [Function],
   "baseElement": <body
+    class=""
     data-tabster="{"root":{}}"
   >
     <div>
@@ -548,6 +552,7 @@ exports[`DeleteNodeModal Snapshots > should match snapshot when nodeId is not pr
 {
   "asFragment": [Function],
   "baseElement": <body
+    class=""
     data-tabster="{"root":{}}"
   >
     <div>

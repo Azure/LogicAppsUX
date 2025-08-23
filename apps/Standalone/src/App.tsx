@@ -13,6 +13,7 @@ import { DataMapperStandaloneDesignerV2 } from './dataMapperV1/app/DataMapperSta
 import { TemplatesWrapper } from './templates/app/TemplatesShell';
 import { ConfigureTemplateWrapper } from './configuretemplate/app/ConfigureTemplateShell';
 import { DesignerWrapper } from './designer/app/DesignerShell/designer';
+import { DesignerWrapper as DesignerWrapperV2 } from './designer/app/DesignerShell/designerV2';
 import { McpWrapper } from './mcp/app/McpShell';
 import { CloneToStandardWrapper } from './clonetostandard/app/cloneshell';
 import { VSCodeWrapper } from './vscode/VSCodeWrapper';
@@ -22,6 +23,7 @@ export const App = () => {
     <Routes>
       <Route index element={<DesignerStandalone />} />
       <Route path="/" element={<DesignerStandalone />} />
+      <Route path="/v2" element={<DesignerStandaloneV2 />} />
       <Route path="/datamapperv1" element={<DataMapperV1 />} />
       <Route path="/datamapperv2" element={<DataMapperV2 />} />
       <Route path="/templates" element={<TemplatesStandalone />} />
@@ -37,53 +39,47 @@ export const App = () => {
   );
 };
 
-const DesignerStandalone = () => {
-  return (
-    <Provider store={designerStore}>
-      <DesignerWrapper />
-    </Provider>
-  );
-};
+const DesignerStandalone = () => (
+  <Provider store={designerStore}>
+    <DesignerWrapper />
+  </Provider>
+);
 
-const DataMapperV1 = () => {
-  return (
-    <Provider store={dataMapperStore}>
-      <DataMapperStandaloneDesignerV1 />
-    </Provider>
-  );
-};
+const DesignerStandaloneV2 = () => (
+  <Provider store={designerStore}>
+    <DesignerWrapperV2 />
+  </Provider>
+);
 
-const DataMapperV2 = () => {
-  return (
-    <Provider store={dataMapperStore}>
-      <DataMapperStandaloneDesignerV2 />
-    </Provider>
-  );
-};
+const DataMapperV1 = () => (
+  <Provider store={dataMapperStore}>
+    <DataMapperStandaloneDesignerV1 />
+  </Provider>
+);
 
-const TemplatesStandalone = () => {
-  return (
-    <Provider store={templateStore}>
-      <TemplatesWrapper />
-    </Provider>
-  );
-};
+const DataMapperV2 = () => (
+  <Provider store={dataMapperStore}>
+    <DataMapperStandaloneDesignerV2 />
+  </Provider>
+);
 
-const ConfigureTemplateStandalone = () => {
-  return (
-    <Provider store={configureTemplateStore}>
-      <ConfigureTemplateWrapper />
-    </Provider>
-  );
-};
+const TemplatesStandalone = () => (
+  <Provider store={templateStore}>
+    <TemplatesWrapper />
+  </Provider>
+);
 
-const McpStandalone = () => {
-  return (
-    <Provider store={mcpStore}>
-      <McpWrapper />
-    </Provider>
-  );
-};
+const ConfigureTemplateStandalone = () => (
+  <Provider store={configureTemplateStore}>
+    <ConfigureTemplateWrapper />
+  </Provider>
+);
+
+const McpStandalone = () => (
+  <Provider store={mcpStore}>
+    <McpWrapper />
+  </Provider>
+);
 
 const CloneToStandard = () => {
   return (
@@ -93,10 +89,8 @@ const CloneToStandard = () => {
   );
 };
 
-const VSCodeStandalone = () => {
-  return (
-    <Provider store={vscodeStore}>
-      <VSCodeWrapper />
-    </Provider>
-  );
-};
+const VSCodeStandalone = () => (
+  <Provider store={vscodeStore}>
+    <VSCodeWrapper />
+  </Provider>
+);

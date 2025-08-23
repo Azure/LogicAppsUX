@@ -17,6 +17,7 @@ if (!version) {
 const packagesToUpdate = [
   'package.json',
   'libs/designer/package.json',
+  'libs/designer-v2/package.json',
   'libs/designer-ui/package.json',
   'apps/vs-code-designer/src/package.json',
   'libs/data-mapper/package.json',
