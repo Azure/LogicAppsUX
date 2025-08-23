@@ -3,7 +3,10 @@ import type { RootState } from '../state/store';
 import { useSelector } from 'react-redux';
 import { useMcpStandardStyles } from './styles';
 import { ArmParser } from '../../designer/app/AzureLogicAppsDesigner/Utilities/ArmParser';
-import { useWorkflowAndArtifactsConsumption } from '../../designer/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts';
+import {
+  cloneConsumptionToStandard,
+  useWorkflowAndArtifactsConsumption,
+} from '../../designer/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts';
 import { WorkflowUtility } from '../../designer/app/AzureLogicAppsDesigner/Utilities/Workflow';
 import { useCallback, useMemo } from 'react';
 import { BaseResourceService } from '@microsoft/logic-apps-shared';
@@ -23,6 +26,7 @@ export const CloneToStandard = () => {
       destinationApp: { subscriptionId: string; resourceGroup: string; logicAppName: string }
     ) => {
       console.log('TODO: on submit', sourceApps, destinationApp);
+      await cloneConsumptionToStandard(sourceApps, destinationApp);
     },
     []
   );
