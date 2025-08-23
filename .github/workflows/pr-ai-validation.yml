@@ -63,6 +63,10 @@ jobs:
               });
               
               if (!response.ok) {
+                if(response.status === '502') {
+                  console.log('PR_VALIDATION Bad Gateway - The AI service is currently unavailable. Skipping AI validation.');
+                  return;
+                }
                 throw new Error(`API request failed with status ${response.status}`);
               }
               
@@ -173,7 +177,5 @@ jobs:
                 body: `## ❌ PR Validation Error\n\nAn error occurred while validating your PR. Please try again later or contact the maintainers.\n\nError: ${error.message}`
               });
               
-              console.log('PR_VALIDATION_LOGIC_APP_URL secret not configured. Skipping AI validation.');
-              return;
-              //core.setFailed(`PR validation error: ${error.message}`);
+              core.setFailed(`PR validation error: ${error.message}`);
             }
