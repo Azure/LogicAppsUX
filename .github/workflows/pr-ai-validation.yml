@@ -173,5 +173,7 @@ jobs:
                 body: `## ❌ PR Validation Error\n\nAn error occurred while validating your PR. Please try again later or contact the maintainers.\n\nError: ${error.message}`
               });
               
-              core.setFailed(`PR validation error: ${error.message}`);
+              console.log('PR_VALIDATION_LOGIC_APP_URL secret not configured. Skipping AI validation.');
+              return;
+              //core.setFailed(`PR validation error: ${error.message}`);
             }

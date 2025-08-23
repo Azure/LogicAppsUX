@@ -378,7 +378,7 @@ export const fetchAgentUrl = (siteResourceId: string, workflowName: string, host
         // Add OBO token if available
         const oboKey = oboData?.properties?.key;
         if (oboKey) {
-          queryParams.oboToken = oboKey;
+          queryParams.oboUserToken = oboKey;
         }
       }
 
