@@ -9,6 +9,7 @@ export default defineProject({
     environment: 'happy-dom',
     setupFiles: ['test-setup.ts'],
     globalSetup: './test-globals.ts',
+    root: './',
     include: ['src/**/*.{test,spec}.{ts,tsx}'],
     exclude: ['node_modules', 'build'],
     coverage: { enabled: true, provider: 'istanbul', include: ['src/**/*'], reporter: ['html', 'cobertura'] },

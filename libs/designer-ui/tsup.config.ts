@@ -1,5 +1,6 @@
 import { defineConfig } from 'tsup';
 import { lessLoader } from 'esbuild-plugin-less';
+
 export default defineConfig({
   entry: ['src/index.ts'],
   treeshake: true,

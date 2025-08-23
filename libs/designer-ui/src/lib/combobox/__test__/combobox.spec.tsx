@@ -1,9 +1,8 @@
 import { Combobox } from '../index';
-import { setIconOptions } from '@fluentui/react';
 import { render, fireEvent, act, waitFor } from '@testing-library/react';
 import { IntlProvider } from 'react-intl';
 import renderer from 'react-test-renderer';
-import { describe, vi, beforeEach, beforeAll, it, expect } from 'vitest';
+import { describe, vi, beforeEach, it, expect } from 'vitest';
 import { createLiteralValueSegment } from '../..';
 
 // Mock the helper function
@@ -44,12 +43,6 @@ describe('lib/combobox', () => {
     onChange: vi.fn(),
     label: 'Test Combobox',
   };
-
-  beforeAll(() => {
-    setIconOptions({
-      disableWarnings: true,
-    });
-  });
 
   beforeEach(() => {
     vi.clearAllMocks();
