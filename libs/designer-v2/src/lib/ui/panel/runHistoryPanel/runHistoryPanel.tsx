@@ -33,9 +33,8 @@ import { useIntervalEffect } from '@react-hookz/web';
 import { RunPopover } from './runPopover';
 import { parseErrorMessage } from '@microsoft/logic-apps-shared';
 
-import { bundleIcon, DismissFilled, DismissRegular, ArrowClockwiseFilled, ArrowClockwiseRegular } from '@fluentui/react-icons';
+import { bundleIcon, ArrowClockwiseFilled, ArrowClockwiseRegular } from '@fluentui/react-icons';
 
-const DismissIcon = bundleIcon(DismissFilled, DismissRegular);
 const RefreshIcon = bundleIcon(ArrowClockwiseFilled, ArrowClockwiseRegular);
 
 const runIdRegex = /^\d{29}CU\d{2,8}$/;
@@ -257,11 +256,9 @@ export const RunHistoryPanel = (props: RunHistoryPanelProps) => {
   const [searchError, setSearchError] = useState<string | null>(null);
 
   return (
-    <Drawer open={!props.collapsed} type={'inline'} separator style={{ height: 'inherit', width: '460px' }}>
+    <Drawer open={!props.collapsed} type={'inline'} separator style={{ height: 'inherit', maxWidth: '460px' }}>
       <DrawerHeader>
-        <DrawerHeaderTitle action={<Button appearance="subtle" aria-label="Close" icon={<DismissIcon />} onClick={props.onClose} />}>
-          Run History
-        </DrawerHeaderTitle>
+        <DrawerHeaderTitle>Run History</DrawerHeaderTitle>
         <Field label={searchLabelText} validationState={searchError ? 'error' : 'none'} validationMessage={searchError}>
           <SearchBox
             onChange={(_e, data) => {
