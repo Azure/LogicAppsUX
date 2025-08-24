@@ -77,7 +77,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { QueryClient } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHostingPlan } from '../../state/workflowLoadingSelectors';
-import CodeViewEditor from './CodeView';
+import CodeViewEditor from './CodeViewV2';
 import { CustomConnectionParameterEditorService } from './Services/customConnectionParameterEditorService';
 import { CustomEditorService } from './Services/customEditorService';
 
@@ -213,6 +213,10 @@ const DesignerEditor = () => {
       });
     }
   }, [isMonitoringView, runInstanceData]);
+
+  useEffect(() => {
+    setWorkflow(data?.properties.files[Artifact.WorkflowFile]);
+  }, [data?.properties.files]);
 
   // RUN HISTORY
 
@@ -453,7 +457,6 @@ const DesignerEditor = () => {
         }));
         setIsDesignerView(true);
         setIsCodeView(false);
-        // hideMonitoringV
       } catch (error: any) {
         if (error.status !== 404) {
           alert(`Error converting code to workflow ${error}`);
@@ -549,7 +552,7 @@ const DesignerEditor = () => {
                       onClose={() => dispatch(setRunHistoryEnabled(false))}
                       onRunSelected={onRunSelected}
                     />
-                    <div style={{ flexGrow: 1, height: 'inherit' }}>
+                    <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
                       <Designer />
                     </div>
                   </div>

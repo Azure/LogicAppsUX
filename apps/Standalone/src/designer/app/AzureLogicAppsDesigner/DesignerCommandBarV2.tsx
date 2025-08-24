@@ -1,5 +1,6 @@
 import {
   Button,
+  Card,
   Menu,
   MenuDivider,
   MenuItem,
@@ -229,11 +230,23 @@ export const DesignerCommandBar = ({
   const isRedoDisabled = !useCanRedo();
 
   const ViewModeSelect = () => (
-    <>
+    <Card
+      style={{
+        display: 'flex',
+        flexDirection: 'row',
+        gap: '4px',
+        padding: '4px',
+        borderRadius: '6px',
+        position: 'absolute',
+        bottom: '-16px',
+        left: '50%',
+        transform: 'translate(-50%, 0)',
+        zIndex: 1,
+      }}
+    >
       <Button
         appearance={isDesignerView ? 'primary' : 'subtle'}
         size="small"
-        disabled={isDesignerView}
         onClick={() => {
           showDesignerView();
           dispatch(collapsePanel());
@@ -245,7 +258,6 @@ export const DesignerCommandBar = ({
       <Button
         appearance={isCodeView ? 'primary' : 'subtle'}
         size="small"
-        disabled={isCodeView}
         onClick={() => {
           showCodeView();
           dispatch(collapsePanel());
@@ -257,7 +269,6 @@ export const DesignerCommandBar = ({
       <Button
         appearance={isMonitoringView ? 'primary' : 'subtle'}
         size="small"
-        disabled={isMonitoringView}
         onClick={() => {
           showMonitoringView();
           dispatch(collapsePanel());
@@ -266,13 +277,13 @@ export const DesignerCommandBar = ({
       >
         Run history
       </Button>
-    </>
+    </Card>
   );
 
   const RunButton = () => (
     <ToolbarButton
       appearance="subtle"
-      disabled={!isDesignerView || isRunLoading}
+      disabled={isRunLoading}
       onClick={() => {
         const asyncOnClick = async () => {
           const result = await runWorkflow();
@@ -309,7 +320,12 @@ export const DesignerCommandBar = ({
   );
 
   const DiscardButton = () => (
-    <ToolbarButton aria-label="Discard changes" icon={<UndoIcon />} onClick={discard} disabled={isSaving || isMonitoringView} />
+    <ToolbarButton
+      aria-label="Discard changes"
+      icon={<UndoIcon />}
+      onClick={discard}
+      disabled={isSaving || isMonitoringView || !designerIsDirty}
+    />
   );
 
   const OverflowMenu = () => (
