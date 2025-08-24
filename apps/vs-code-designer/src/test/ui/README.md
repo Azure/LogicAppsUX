@@ -123,20 +123,24 @@ npx mocha out/test/standalone.test.js --timeout 10000
 ### Test Files Location
 ```
 src/test/ui/
-├── demo.test.ts          # Basic VS Code functionality tests
-├── smoke.test.ts         # Extension smoke tests  
-├── commands.test.ts      # Logic Apps command tests
-├── basic.test.ts         # Extended UI interaction tests
-└── standalone.test.ts    # Framework validation tests
+├── demo.test.ts                    # Basic VS Code functionality tests
+├── smoke.test.ts                   # Extension smoke tests  
+├── commands.test.ts                # Logic Apps command tests
+├── basic.test.ts                   # Extended UI interaction tests
+├── logic-apps-integration.test.ts  # Logic Apps extension integration tests
+├── sql-storage-workflow.test.ts    # Comprehensive SQL Storage workflow test
+└── standalone.test.ts              # Framework validation tests
 ```
 
 ### Built Test Files
 ```
 out/test/
-├── demo.test.js         # Compiled test files
+├── demo.test.js                    # Compiled test files
 ├── smoke.test.js        
 ├── commands.test.js     
-├── basic.test.js        
+├── basic.test.js
+├── logic-apps-integration.test.js
+├── sql-storage-workflow.test.js        
 └── standalone.test.js   
 ```
 
@@ -158,11 +162,23 @@ out/test/
    - Azure views and panels
    - File explorer interaction
 
-4. **Demo Tests** (`demo.test.ts`)
+4. **Logic Apps Integration Tests** (`logic-apps-integration.test.ts`)
+   - Logic Apps extension availability
+   - Azure view accessibility
+   - Basic extension functionality
+
+5. **SQL Storage Workflow Tests** (`sql-storage-workflow.test.ts`)
+   - Complete end-to-end workflow testing
+   - Azure sign-in simulation
+   - Project creation and workflow authoring
+   - Local development and deployment testing
+   - Based on ADO Test Case #10089920
+
+6. **Demo Tests** (`demo.test.ts`)
    - Basic VS Code functionality tests
    - Framework validation
 
-5. **Standalone Tests** (`standalone.test.ts`)
+7. **Standalone Tests** (`standalone.test.ts`)
    - Framework validation tests (no VS Code required)
 
 ### 🔍 What Each Test File Does

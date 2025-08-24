@@ -2,7 +2,7 @@
   "version": "2.0.0",
   "configurations": [
     {
-      "name": "Run Designer Extension in Dev Mode",
+      "name": "Run designer vscode extension in dev mode",
       "type": "extensionHost",
       "request": "launch",
       "runtimeExecutable": "${execPath}",
@@ -14,6 +14,15 @@
       "env": {
         "DEBUGTELEMETRY": "v"
       }
+    },
+    {
+      "name": "Debug e2e vscode extension tests",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/node_modules/.bin/extest",
+      "args": ["setup-and-run", "${workspaceFolder}/out/ui-test/*.js", ],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
     }
   ]
 }

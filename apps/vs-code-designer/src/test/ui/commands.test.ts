@@ -21,7 +21,7 @@ describe('Logic Apps Extension - Commands Test', function () {
       // Wait for command prompt to be fully ready
       await VSBrowser.instance.driver.sleep(1000);
 
-      await commandPrompt.setText('Azure Logic Apps');
+      await commandPrompt.setText('> Azure Logic Apps');
 
       // Wait for suggestions
       await VSBrowser.instance.driver.sleep(2000);
