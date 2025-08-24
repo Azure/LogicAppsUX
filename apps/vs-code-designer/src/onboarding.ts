@@ -21,7 +21,7 @@ import * as vscode from 'vscode';
  * @param {IActionContext} activateContext - Activation context.
  */
 export const onboardBinaries = async (activateContext: IActionContext) => {
-  callWithTelemetryAndErrorHandling(extensionCommand.validateAndInstallBinaries, async (actionContext: IActionContext) => {
+  await callWithTelemetryAndErrorHandling(extensionCommand.validateAndInstallBinaries, async (actionContext: IActionContext) => {
     await runWithDurationTelemetry(actionContext, extensionCommand.validateAndInstallBinaries, async () => {
       const binariesInstallation = useBinariesDependencies();
       if (binariesInstallation) {
