@@ -41,12 +41,13 @@ export const RunHistoryPanel = (props: RunHistoryPanelProps) => {
 
   const styles = useRunHistoryPanelStyles();
 
-  const runs = useRuns(!props.collapsed);
+  const runsQuery = useRuns(!props.collapsed);
+  const runs = useMemo(() => (runsQuery.data?.pages ?? []).flatMap((p: any) => p.runs ?? []), [runsQuery?.data]);
 
   // Refetch the runs when the panel is expanded
   useEffect(() => {
     if (!props.collapsed) {
-      runs.refetch();
+      runsQuery.refetch();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.collapsed]);
@@ -57,7 +58,7 @@ export const RunHistoryPanel = (props: RunHistoryPanelProps) => {
   const [filters, setFilters] = useState<Partial<Record<FilterTypes, string | null>>>({});
   const filteredRuns = useMemo(() => {
     return (
-      runs.data?.filter((run) => {
+      runs?.filter((run) => {
         if (filters?.['runId'] && run.name !== filters['runId']) {
           return false;
         }
@@ -70,7 +71,7 @@ export const RunHistoryPanel = (props: RunHistoryPanelProps) => {
         return true;
       }) ?? []
     );
-  }, [filters, runs.data]);
+  }, [filters, runs]);
 
   const addFilterCallback = useCallback(({ key, value }: { key: FilterTypes; value: string | undefined }) => {
     setFilters((prev) => {
@@ -140,6 +141,12 @@ export const RunHistoryPanel = (props: RunHistoryPanelProps) => {
     id: 'aKf/r+',
   });
 
+  const loadMoreText = intl.formatMessage({
+    defaultMessage: 'Load more',
+    description: 'Load more button text',
+    id: '5z0Zdm',
+  });
+
   const getFilterKeyText = useCallback(
     (key: FilterTypes) => {
       switch (key) {
@@ -159,9 +166,9 @@ export const RunHistoryPanel = (props: RunHistoryPanelProps) => {
   const RefreshButton = () => (
     <Button
       appearance="subtle"
-      disabled={runs.isFetching}
-      onClick={() => runs.refetch()}
-      icon={runs.isRefetching ? <Spinner size={'tiny'} /> : <RefreshIcon />}
+      disabled={runsQuery.isFetching}
+      onClick={() => runsQuery.refetch()}
+      icon={runsQuery.isRefetching ? <Spinner size={'tiny'} /> : <RefreshIcon />}
       aria-label={refreshAria}
     />
   );
@@ -178,7 +185,7 @@ export const RunHistoryPanel = (props: RunHistoryPanelProps) => {
               if (data.value === '') {
                 setSearchError(null);
               } else if (runIdRegex.test(data.value)) {
-                if (runs.data?.some((run) => run.name === data.value)) {
+                if (runs?.some((run) => run.name === data.value)) {
                   props.onRunSelected(data.value);
                   setSearchError(null);
                 } else {
@@ -204,33 +211,48 @@ export const RunHistoryPanel = (props: RunHistoryPanelProps) => {
             ))}
           </TagGroup>
         ) : null}
-        {runs.error ? (
+        {runsQuery.error ? (
           <MessageBar intent={'error'} layout={'multiline'}>
             <MessageBarBody>
               <MessageBarTitle>{runsErrorMessageTitle}</MessageBarTitle>
-              {parseErrorMessage(runs.error)}
+              {parseErrorMessage(runsQuery.error)}
             </MessageBarBody>
           </MessageBar>
         ) : null}
       </DrawerHeader>
 
       <DrawerBody>
-        <div style={{ margin: '0 -16px' }}>
-          {filteredRuns.map((run) => (
-            <RunHistoryEntry
-              key={run.id}
-              run={run}
-              isSelected={selectedRunInstance?.id === run.id}
-              onRunSelected={props.onRunSelected}
-              addFilterCallback={addFilterCallback}
-            />
-          ))}
-          {filteredRuns?.length === 0 && (
+        <div style={{ margin: '4px -16px' }}>
+          {!runsQuery.isFetching && filteredRuns?.length === 0 ? (
             <Text className={styles.noRunsText} align={'center'}>
               {noRunsText}
             </Text>
+          ) : (
+            <>
+              {filteredRuns.map((run) => (
+                <RunHistoryEntry
+                  key={run.id}
+                  run={run}
+                  isSelected={selectedRunInstance?.id === run.id}
+                  onRunSelected={props.onRunSelected}
+                  addFilterCallback={addFilterCallback}
+                />
+              ))}
+              {!runsQuery.isFetching && runsQuery.hasNextPage && (
+                <Button
+                  onClick={() => runsQuery.fetchNextPage()}
+                  appearance="subtle"
+                  style={{
+                    margin: '16px auto',
+                    display: 'block',
+                  }}
+                >
+                  {loadMoreText}
+                </Button>
+              )}
+            </>
           )}
-          {runs.isLoading && <Spinner style={{ padding: '16px' }} />}
+          {runsQuery.isFetching && <Spinner style={{ padding: '16px' }} />}
         </div>
       </DrawerBody>
     </Drawer>

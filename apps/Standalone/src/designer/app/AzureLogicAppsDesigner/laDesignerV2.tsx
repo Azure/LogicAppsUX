@@ -65,11 +65,13 @@ import {
   Constants,
   getSKUDefaultHostOptions,
   RunHistoryPanel,
+  RunHistoryEntryInfo,
   CombineInitializeVariableDialog,
   TriggerDescriptionDialog,
   getMissingRoleDefinitions,
   roleQueryKeys,
   isAgentWorkflow,
+  useRun,
 } from '@microsoft/logic-apps-designer-v2';
 import axios from 'axios';
 import isEqual from 'lodash.isequal';
@@ -240,8 +242,12 @@ const DesignerEditor = () => {
   const hideMonitoringView = useCallback(() => {
     if (isMonitoringView) {
       toggleMonitoringView();
+      setWorkflow({
+        ...data?.properties.files[Artifact.WorkflowFile],
+        id: guid(),
+      });
     }
-  }, [isMonitoringView, toggleMonitoringView]);
+  }, [data?.properties.files, isMonitoringView, toggleMonitoringView]);
 
   const onRunSelected = useCallback(
     (runId: string) => {
@@ -249,6 +255,8 @@ const DesignerEditor = () => {
     },
     [dispatch]
   );
+
+  const { data: selectedRun } = useRun(runId);
 
   if (isLoading || appLoading || settingsLoading || customCodeLoading) {
     return <></>;
@@ -273,6 +281,8 @@ const DesignerEditor = () => {
       ...workflow,
       definition,
     };
+
+    delete workflowToSave.id;
 
     const newManagedApiConnections = {
       ...(connectionsData?.managedApiConnections ?? {}),
@@ -468,7 +478,7 @@ const DesignerEditor = () => {
   return (
     <div key={designerID} style={{ height: 'inherit', width: 'inherit' }}>
       <DesignerProvider
-        id={designerID}
+        id={workflow.id}
         key={designerID}
         locale={language}
         options={{
@@ -552,8 +562,13 @@ const DesignerEditor = () => {
                       onClose={() => dispatch(setRunHistoryEnabled(false))}
                       onRunSelected={onRunSelected}
                     />
-                    <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column', position: 'relative' }}>
                       <Designer />
+                      {selectedRun && (
+                        <div style={{ position: 'absolute', top: '16px', left: '16px', zIndex: 1 }}>
+                          <RunHistoryEntryInfo run={selectedRun} showId />
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}

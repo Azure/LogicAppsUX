@@ -1,4 +1,4 @@
-import { Tooltip, InteractionTag, InteractionTagSecondary, Body1Strong, Tag } from '@fluentui/react-components';
+import { Tooltip, InteractionTag, InteractionTagSecondary, Body1Strong, InteractionTagPrimary } from '@fluentui/react-components';
 import { useCallback, useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -61,7 +61,7 @@ export const RunProperty = (props: {
       <Body1Strong>{props.label}</Body1Strong>
       <Tooltip visible={showingTooltip} content={tooltipText} relationship={'inaccessible'} withArrow positioning={'before'}>
         <InteractionTag>
-          <Tag>{props.text}</Tag>
+          <InteractionTagPrimary hasSecondaryAction>{props.text}</InteractionTagPrimary>
           {props.copyable ? (
             <InteractionTagSecondary onClick={onCopyClick}>
               <CopyIcon />

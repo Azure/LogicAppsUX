@@ -648,6 +648,9 @@ export const operationMetadataSlice = createSlice({
         delete state.errors[id];
       }
     },
+    clearAllErrors: (state) => {
+      state.errors = {};
+    },
     deinitializeOperationInfo: (state, action: PayloadAction<{ id: string }>) => {
       const { id } = action.payload;
       delete state.operationInfo[id];
@@ -824,6 +827,7 @@ export const {
   updateActionMetadata,
   updateRepetitionContext,
   updateErrorDetails,
+  clearAllErrors,
   deinitializeOperationInfo,
   deinitializeOperationInfos,
   deinitializeNodes,
