@@ -52,8 +52,6 @@ export interface DesignerOptionsState {
     enableMultiVariable?: boolean; // prevent creating multiple variables in one action
   };
   nodeSelectAdditionalCallback?: (nodeId: string) => any;
-  showConnectionsPanel?: boolean;
-  showEdgeDrawing?: boolean;
   panelTabHideKeys?: PANEL_TAB_NAMES[];
   showPerformanceDebug?: boolean;
 }

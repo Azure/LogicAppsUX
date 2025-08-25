@@ -7,5 +7,5 @@ export * from './connectionsPanel/createConnection/createConnection';
 export * from './connectionsPanel/createConnection/custom/openAIConnector';
 export * from './connectionsPanel/createConnection/custom/acasessionConnector';
 export * from './nodeDetailsPanel/tabs/parametersTab/custom/deploymentModelResource';
-export * from './runHistoryPanel/runHistoryPanel';
+export * from './runHistoryPanel';
 export * from './errorsPanel/tabs/errorsTab.hooks';

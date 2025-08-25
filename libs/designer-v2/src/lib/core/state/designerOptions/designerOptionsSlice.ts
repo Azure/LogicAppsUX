@@ -40,8 +40,6 @@ export const initialDesignerOptionsState: DesignerOptionsState = {
   designerOptionsInitialized: false,
   useLegacyWorkflowParameters: false,
   isXrmConnectionReferenceMode: false,
-  showConnectionsPanel: false,
-  showEdgeDrawing: false,
   panelTabHideKeys: [],
   hostOptions: {
     displayRuntimeInfo: true,
@@ -166,8 +164,6 @@ export const designerOptionsSlice = createSlice({
       state.isXrmConnectionReferenceMode = action.payload.isXrmConnectionReferenceMode;
       state.suppressDefaultNodeSelectFunctionality = action.payload.suppressDefaultNodeSelectFunctionality;
       state.nodeSelectAdditionalCallback = action.payload.nodeSelectAdditionalCallback;
-      state.showConnectionsPanel = action.payload.showConnectionsPanel;
-      state.showEdgeDrawing = action.payload.showEdgeDrawing;
       state.panelTabHideKeys = action.payload.panelTabHideKeys;
       state.hostOptions = {
         ...state.hostOptions,
