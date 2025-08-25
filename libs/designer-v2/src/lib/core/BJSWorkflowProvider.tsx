@@ -17,6 +17,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useDispatch } from 'react-redux';
 import { initRunInPanel } from './state/panel/panelSlice';
 import { initializeDiscoveryPanelFavoriteOperations } from './actions/bjsworkflow/initialize';
+import { clearAllErrors } from './state/operation/operationMetadataSlice';
 
 export interface BJSWorkflowProviderProps {
   // used to force a workflow rerender when switching from code view
@@ -43,6 +44,7 @@ const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({
   const dispatch = useDispatch<AppDispatch>();
 
   useDeepCompareEffect(() => {
+    dispatch(clearAllErrors());
     dispatch(initWorkflowSpec('BJS'));
     dispatch(initWorkflowKind(parseWorkflowKind(workflow?.kind)));
     dispatch(initRunInstance(runInstance ?? null));
