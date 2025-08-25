@@ -82,11 +82,11 @@ const McpStandalone = () => (
 );
 
 const CloneToStandard = () => {
-	return (
-		<Provider store={cloneToStandardStore}>
-			<CloneToStandardWrapper />
-		</Provider>
-	);
+  return (
+    <Provider store={cloneToStandardStore}>
+      <CloneToStandardWrapper />
+    </Provider>
+  );
 };
 
 const VSCodeStandalone = () => (
