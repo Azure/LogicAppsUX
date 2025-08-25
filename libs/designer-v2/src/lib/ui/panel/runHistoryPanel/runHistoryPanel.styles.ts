@@ -30,6 +30,9 @@ export const useRunHistoryPanelStyles = makeStyles({
     ':hover': {
       backgroundColor: tokens.colorNeutralBackground1Hover,
     },
+    ':active': {
+      backgroundColor: tokens.colorNeutralBackground1Pressed,
+    },
   },
 
   runEntryContent: {
@@ -56,9 +59,6 @@ export const useRunHistoryPanelStyles = makeStyles({
   },
 
   runEntrySelected: {
-    backgroundColor: tokens.colorBrandBackground2,
-    '&:hover': {
-      backgroundColor: tokens.colorBrandBackground2Hover,
-    },
+    backgroundColor: tokens.colorNeutralBackground1Selected,
   },
 });

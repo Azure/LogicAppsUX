@@ -478,7 +478,7 @@ const DesignerEditor = () => {
   return (
     <div key={designerID} style={{ height: 'inherit', width: 'inherit' }}>
       <DesignerProvider
-        id={workflow.id}
+        id={workflow?.id}
         key={designerID}
         locale={language}
         options={{

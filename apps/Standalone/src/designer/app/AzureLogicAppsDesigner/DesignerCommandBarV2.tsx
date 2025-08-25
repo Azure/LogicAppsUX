@@ -1,6 +1,7 @@
 import {
   Button,
   Card,
+  makeStyles,
   Menu,
   MenuDivider,
   MenuItem,
@@ -8,6 +9,7 @@ import {
   MenuPopover,
   MenuTrigger,
   Spinner,
+  tokens,
   Toolbar,
   ToolbarButton,
 } from '@fluentui/react-components';
@@ -72,6 +74,13 @@ const ParametersIcon = bundleIcon(MentionBracketsFilled, MentionBracketsRegular)
 const ConnectionsIcon = bundleIcon(LinkFilled, LinkRegular);
 const ErrorsIcon = bundleIcon(ErrorCircleFilled, ErrorCircleRegular);
 
+const useStyles = makeStyles({
+  selectedButton: {
+    background: `${tokens.colorNeutralForeground1} !important`,
+    color: tokens.colorNeutralForegroundInverted,
+  },
+});
+
 export const DesignerCommandBar = ({
   id,
   discard,
@@ -105,6 +114,8 @@ export const DesignerCommandBar = ({
   showDesignerView: () => void;
   showCodeView: () => void;
 }) => {
+  const styles = useStyles();
+
   const dispatch = useDispatch<AppDispatch>();
   const isCopilotReady = useNodesInitialized();
   const { isLoading: isSaving, mutate: saveWorkflowMutate } = useMutation(async () => {
@@ -246,6 +257,7 @@ export const DesignerCommandBar = ({
     >
       <Button
         appearance={isDesignerView ? 'primary' : 'subtle'}
+        className={isDesignerView ? styles.selectedButton : ''}
         size="small"
         onClick={() => {
           showDesignerView();
@@ -257,6 +269,7 @@ export const DesignerCommandBar = ({
       </Button>
       <Button
         appearance={isCodeView ? 'primary' : 'subtle'}
+        className={isCodeView ? styles.selectedButton : ''}
         size="small"
         onClick={() => {
           showCodeView();
@@ -268,6 +281,7 @@ export const DesignerCommandBar = ({
       </Button>
       <Button
         appearance={isMonitoringView ? 'primary' : 'subtle'}
+        className={isMonitoringView ? styles.selectedButton : ''}
         size="small"
         onClick={() => {
           showMonitoringView();
