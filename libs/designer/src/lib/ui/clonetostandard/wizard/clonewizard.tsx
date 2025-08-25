@@ -36,7 +36,7 @@ export const CloneWizard = ({
         logicAppName: destLogicAppName,
       });
     } catch (e: any) {
-      dispatch(updateErrorMessage(e.message));
+      dispatch(updateErrorMessage(e?.response?.data?.message ?? e.message));
     }
   }, [onCloneCall, subscriptionId, sourceApps, destResourceGroup, destLogicAppName, dispatch]);
 
