@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../state/clonetostandard/store';
 import { type ResourceState, setResourceData } from '../state/clonetostandard/resourceslice';
 import { initializeCloneServices, type CloneServiceOptions } from '../actions/bjsworkflow/clone';
+import { initializeSourceWithResource } from '../state/clonetostandard/cloneslice';
 
 export interface ExportDataProviderProps {
   resourceDetails: ResourceState;
@@ -29,6 +30,7 @@ export const CloneDataProvider = ({ resourceDetails, services, children }: Expor
 
   useEffect(() => {
     dispatch(setResourceData(resourceDetails));
+    dispatch(initializeSourceWithResource(resourceDetails));
   }, [dispatch, resourceDetails]);
 
   if (!servicesInitialized) {
