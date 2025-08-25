@@ -10,25 +10,25 @@ import {
 export const CloneResourcePicker = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { subscriptionId: resourceSubscriptionId } = useSelector((state: RootState) => state.resource);
-  const { resourceGroup, logicAppName } = useSelector((state: RootState) => state.clone.destinationApp);
+  const { resourceGroup, logicAppName: workflowAppName } = useSelector((state: RootState) => state.clone.destinationApp);
 
   return (
     <ResourcePicker
-      viewMode={'alllogicapps'}
+      viewMode={'default'}
       lockField={'subscription'}
       resourceState={{
         subscriptionId: resourceSubscriptionId,
         resourceGroup,
         location: '',
-        workflowAppName: undefined,
-        logicAppName,
+        workflowAppName,
+        logicAppName: undefined,
         isConsumption: false,
       }}
       onSubscriptionSelect={(value) => dispatch(setDestinationSubscription(value))}
       onResourceGroupSelect={(value) => dispatch(setDestinationResourceGroup(value))}
       onLocationSelect={(_value) => {}}
-      onLogicAppSelect={(_value) => {}}
-      onLogicAppInstanceSelect={(value) => dispatch(setDestinationWorkflowAppDetails(value))}
+      onLogicAppSelect={(value) => dispatch(setDestinationWorkflowAppDetails(value))}
+      onLogicAppInstanceSelect={(_value) => {}}
     />
   );
 };
