@@ -130,11 +130,22 @@ export const Designer = (props: DesignerProps) => {
         <ReactFlowProvider>
           <div style={{ flexGrow: 1 }}>
             <DesignerReactFlow canvasRef={canvasRef}>
-              <Background
-                size={1.5}
-                gap={[19.9, 20.3333]} // I don't know why, but it renders not exact by default
-                offset={[10, 10]}
-              />
+              {isReadOnly ? (
+                <Background
+                  bgColor={'#80808010'}
+                  color={'#00000000'}
+                  size={1.5}
+                  gap={[19.9, 20.3333]} // I don't know why, but it renders not exact by default
+                  offset={[10, 10]}
+                />
+              ) : (
+                <Background
+                  size={1.5}
+                  color={'#80808080'}
+                  gap={[19.9, 20.3333]} // I don't know why, but it renders not exact by default
+                  offset={[10, 10]}
+                />
+              )}
               {/* {backgroundProps ? <Background {...backgroundProps} /> : null} */}
               <DeleteModal />
               <DesignerContextualMenu />

@@ -6,6 +6,7 @@ import { bundleIcon, MoreHorizontalFilled, MoreHorizontalRegular } from '@fluent
 import { RunProperty } from './runProperty';
 import { useCallback } from 'react';
 import type { FilterTypes } from './runHistoryPanel';
+import { useRunHistoryPanelStyles } from './runHistoryPanel.styles';
 
 const MoreIcon = bundleIcon(MoreHorizontalFilled, MoreHorizontalRegular);
 
@@ -16,6 +17,8 @@ export const RunPopover = (props: {
   const { run } = props;
 
   const intl = useIntl();
+
+  const styles = useRunHistoryPanelStyles();
 
   const runIdentifierText = intl.formatMessage({
     defaultMessage: 'Run identifier',
@@ -29,12 +32,6 @@ export const RunPopover = (props: {
     id: '1tmN2o',
   });
 
-  const workflowRunStatusText = intl.formatMessage({
-    defaultMessage: 'Workflow run status',
-    description: 'Workflow run status text',
-    id: 'd9RCuq',
-  });
-
   const filterVersionCallback = useCallback(() => {
     const version = (run.properties.workflow as any)?.name;
     props.addFilterCallback({ key: 'workflowVersion', value: version });
@@ -43,11 +40,10 @@ export const RunPopover = (props: {
   return (
     <Popover withArrow positioning={'after'}>
       <PopoverTrigger disableButtonEnhancement>
-        <Button icon={<MoreIcon />} appearance={'subtle'} onClick={(e) => e.stopPropagation()} />
+        <Button icon={<MoreIcon />} appearance={'transparent'} onClick={(e) => e.stopPropagation()} />
       </PopoverTrigger>
 
-      <PopoverSurface tabIndex={-1} className={'run-actions-popover'}>
-        <RunProperty label={workflowRunStatusText} text={run.properties.status} />
+      <PopoverSurface tabIndex={-1} className={styles.runActionsPopover}>
         <RunProperty label={runIdentifierText} text={run.id.split('/').at(-1) ?? ''} copyable />
         <RunProperty
           label={workflowVersionText}

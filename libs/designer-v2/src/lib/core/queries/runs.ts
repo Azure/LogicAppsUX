@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useInfiniteQuery } from '@tanstack/react-query';
 import { type ChatHistory, isNullOrUndefined, type LogicAppsV2, type Run, RunService } from '@microsoft/logic-apps-shared';
 import { getReactQueryClient } from '../ReactQueryProvider';
 import { isRunError } from '@microsoft/designer-ui';
@@ -26,23 +26,56 @@ export const runsQueriesKeys = {
 };
 
 export const useRuns = (enabled = false) => {
-  return useQuery(
+  return useInfiniteQuery(
     [runsQueriesKeys.runs],
-    async () => {
-      const allRuns: Run[] = [];
-      const firstRuns = await RunService().getRuns();
-      allRuns.push(...firstRuns.runs);
-      let nextLink = firstRuns.nextLink;
-      while (nextLink) {
-        const moreRuns = await RunService().getMoreRuns(nextLink);
-        allRuns.push(...moreRuns.runs);
-        nextLink = moreRuns.nextLink;
+    async ({ pageParam }: { pageParam?: string }) => {
+      // pageParam is the nextLink when provided
+      if (!pageParam) {
+        const firstRuns = await RunService().getRuns();
+        return { runs: firstRuns.runs ?? [], nextLink: firstRuns.nextLink };
       }
-      return allRuns;
+      const moreRuns = await RunService().getMoreRuns(pageParam);
+      return { runs: moreRuns.runs ?? [], nextLink: moreRuns.nextLink };
     },
     {
       enabled,
       ...queryOpts,
+      getNextPageParam: (lastPage) => lastPage.nextLink ?? undefined,
+      // Seed flattened runs and per-run cache entries so `useRun` can read
+      // them without an extra fetch when available.
+      onSuccess: (data) => {
+        try {
+          const queryClient = getReactQueryClient();
+          const allRuns: Run[] = (data?.pages ?? []).flatMap((p: any) => p.runs ?? []);
+          allRuns.forEach((run) => {
+            if (run?.name) {
+              queryClient.setQueryData([runsQueriesKeys.run, run.name], run);
+            }
+          });
+        } catch {
+          // best-effort
+        }
+      },
+    }
+  );
+};
+
+export const useRun = (runId: string | undefined) => {
+  return useQuery(
+    [runsQueriesKeys.run, runId],
+    async () => {
+      if (!runId) {
+        throw new Error('Run ID is required');
+      }
+      const fetchedRun = await RunService().getRun(runId);
+      if (isRunError(fetchedRun)) {
+        throw new Error('Run not found');
+      }
+      return fetchedRun;
+    },
+    {
+      ...queryOpts,
+      enabled: !!runId,
     }
   );
 };

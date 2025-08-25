@@ -1,8 +1,9 @@
-import { Tooltip, InteractionTag, InteractionTagSecondary, Body1Strong, Tag } from '@fluentui/react-components';
+import { Tooltip, InteractionTag, InteractionTagSecondary, Body1Strong, InteractionTagPrimary } from '@fluentui/react-components';
 import { useCallback, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 import { bundleIcon, CopyFilled, CopyRegular, FilterAddFilled, FilterAddRegular } from '@fluentui/react-icons';
+import { useRunHistoryPanelStyles } from './runHistoryPanel.styles';
 
 const CopyIcon = bundleIcon(CopyFilled, CopyRegular);
 const AddFilterIcon = bundleIcon(FilterAddFilled, FilterAddRegular);
@@ -14,6 +15,8 @@ export const RunProperty = (props: {
   addFilterCallback?: () => void;
 }) => {
   const intl = useIntl();
+
+  const styles = useRunHistoryPanelStyles();
 
   const [showingTooltip, setShowTooltip] = useState(false);
   const [tooltipText, setTooltipText] = useState('');
@@ -54,11 +57,11 @@ export const RunProperty = (props: {
   );
 
   return (
-    <div className={'run-property'}>
+    <div className={styles.runProperty}>
       <Body1Strong>{props.label}</Body1Strong>
       <Tooltip visible={showingTooltip} content={tooltipText} relationship={'inaccessible'} withArrow positioning={'before'}>
         <InteractionTag>
-          <Tag>{props.text}</Tag>
+          <InteractionTagPrimary hasSecondaryAction>{props.text}</InteractionTagPrimary>
           {props.copyable ? (
             <InteractionTagSecondary onClick={onCopyClick}>
               <CopyIcon />

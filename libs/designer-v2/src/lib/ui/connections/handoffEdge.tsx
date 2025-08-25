@@ -9,10 +9,10 @@ import {
   containsIdTag,
   removeIdTag,
   useEdgeIndex,
-  guid,
   useNodeGlobalPosition,
   buildSvgSpline,
   useEdgesData,
+  useGuid,
 } from '@microsoft/logic-apps-shared';
 
 import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
@@ -144,8 +144,6 @@ const HandoffEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({ id, source, targ
     return '';
   }, [selected]);
 
-  const markerId = useMemo(() => `arrow-end-${guid()}`, []);
-
   const pathRef = useRef<SVGPathElement>(null);
 
   const [pathReady, setPathReady] = useState(false);
@@ -190,6 +188,8 @@ const HandoffEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({ id, source, targ
     setMarkerAngle(angle - 90);
   }, [getPointOnPath, pathReady, pathRef]);
 
+  const capGuid = useGuid();
+
   if (!id) {
     return null;
   }
@@ -198,7 +198,7 @@ const HandoffEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({ id, source, targ
     <>
       <defs>
         <marker
-          id={markerId}
+          id={capGuid}
           className={css('handoff', colorClass)}
           viewBox="0 0 20 20"
           refX="6"
@@ -219,7 +219,7 @@ const HandoffEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({ id, source, targ
         d={splinePath}
         strokeDasharray={'4 6'}
         strokeLinecap={'round'}
-        markerEnd={`url(#${markerId})`}
+        markerEnd={`url(#${capGuid})`}
       />
 
       {/* KEEP: This is for edge id testing */}

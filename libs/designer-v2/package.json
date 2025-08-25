@@ -34,21 +34,22 @@
     "react-intl": "6.3.0",
     "react-markdown": "8.0.5",
     "react-redux": "8.0.2",
+    "react-window": "^1.8.11",
     "redux-thunk": "2.4.2",
     "reselect": "4.1.8",
+    "tabster": "8.5.6",
     "to-title-case": "1.0.0",
     "util": "0.12.5",
-    "yocto-queue": "0.1.0",
-    "tabster": "8.5.6"
+    "yocto-queue": "0.1.0"
   },
   "devDependencies": {
     "@formatjs/intl": "^2.10.1",
+    "@types/file-saver": "^2.0.5",
     "@types/lodash.frompairs": "^4.0.9",
     "@types/lodash.isequal": "^4.5.8",
     "@types/lodash.merge": "^4.6.9",
     "@types/pako": "^2.0.3",
-    "@types/to-title-case": "^1.0.2",
-    "@types/file-saver": "^2.0.5"
+    "@types/to-title-case": "^1.0.2"
   },
   "engines": {
     "node": ">=12"
@@ -61,7 +62,10 @@
     },
     "./package.json": "./package.json"
   },
-  "files": ["build/lib/**/*", "src"],
+  "files": [
+    "build/lib/**/*",
+    "src"
+  ],
   "license": "MIT",
   "main": "src/index.ts",
   "module": "src/index.ts",
