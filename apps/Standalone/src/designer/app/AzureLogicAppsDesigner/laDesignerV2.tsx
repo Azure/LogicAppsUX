@@ -566,7 +566,7 @@ const DesignerEditor = () => {
                       <Designer />
                       {selectedRun && (
                         <div style={{ position: 'absolute', top: '16px', left: '16px', zIndex: 1 }}>
-                          <RunHistoryEntryInfo run={selectedRun} showId />
+                          <RunHistoryEntryInfo run={selectedRun} />
                         </div>
                       )}
                     </div>

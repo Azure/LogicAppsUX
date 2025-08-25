@@ -8,6 +8,7 @@ import {
   MenuList,
   MenuPopover,
   MenuTrigger,
+  mergeClasses,
   Spinner,
   tokens,
   Toolbar,
@@ -75,6 +76,21 @@ const ConnectionsIcon = bundleIcon(LinkFilled, LinkRegular);
 const ErrorsIcon = bundleIcon(ErrorCircleFilled, ErrorCircleRegular);
 
 const useStyles = makeStyles({
+  viewModeContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: '4px',
+    padding: '4px',
+    borderRadius: '6px',
+    position: 'absolute',
+    bottom: '-16px',
+    left: '50%',
+    transform: 'translate(-50%, 0)',
+    zIndex: 1,
+  },
+  viewButton: {
+    padding: '3px 12px',
+  },
   selectedButton: {
     background: `${tokens.colorNeutralForeground1} !important`,
     color: tokens.colorNeutralForegroundInverted,
@@ -241,23 +257,10 @@ export const DesignerCommandBar = ({
   const isRedoDisabled = !useCanRedo();
 
   const ViewModeSelect = () => (
-    <Card
-      style={{
-        display: 'flex',
-        flexDirection: 'row',
-        gap: '4px',
-        padding: '4px',
-        borderRadius: '6px',
-        position: 'absolute',
-        bottom: '-16px',
-        left: '50%',
-        transform: 'translate(-50%, 0)',
-        zIndex: 1,
-      }}
-    >
+    <Card className={styles.viewModeContainer}>
       <Button
         appearance={isDesignerView ? 'primary' : 'subtle'}
-        className={isDesignerView ? styles.selectedButton : ''}
+        className={mergeClasses(styles.viewButton, isDesignerView ? styles.selectedButton : '')}
         size="small"
         onClick={() => {
           showDesignerView();
@@ -269,7 +272,7 @@ export const DesignerCommandBar = ({
       </Button>
       <Button
         appearance={isCodeView ? 'primary' : 'subtle'}
-        className={isCodeView ? styles.selectedButton : ''}
+        className={mergeClasses(styles.viewButton, isCodeView ? styles.selectedButton : '')}
         size="small"
         onClick={() => {
           showCodeView();
@@ -281,7 +284,7 @@ export const DesignerCommandBar = ({
       </Button>
       <Button
         appearance={isMonitoringView ? 'primary' : 'subtle'}
-        className={isMonitoringView ? styles.selectedButton : ''}
+        className={mergeClasses(styles.viewButton, isMonitoringView ? styles.selectedButton : '')}
         size="small"
         onClick={() => {
           showMonitoringView();

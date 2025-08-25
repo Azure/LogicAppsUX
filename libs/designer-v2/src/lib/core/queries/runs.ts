@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useInfiniteQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import { type ChatHistory, isNullOrUndefined, type LogicAppsV2, type Run, RunService } from '@microsoft/logic-apps-shared';
 import { getReactQueryClient } from '../ReactQueryProvider';
 import { isRunError } from '@microsoft/designer-ui';
@@ -25,7 +25,7 @@ export const runsQueriesKeys = {
   useCancelRun: 'useCancelRun',
 };
 
-export const useRuns = (enabled = false) => {
+export const useRunsInfiniteQuery = (enabled = false) => {
   return useInfiniteQuery(
     [runsQueriesKeys.runs],
     async ({ pageParam }: { pageParam?: string }) => {
@@ -58,6 +58,19 @@ export const useRuns = (enabled = false) => {
       },
     }
   );
+};
+
+export const useAllRuns = () => {
+  const queryClient = useQueryClient();
+  const queries = queryClient.getQueriesData<Run>([runsQueriesKeys.run]);
+  const runs = queries
+    .map(([_, data]) => data)
+    .filter((run): run is Run => run !== undefined && run !== null)
+    .sort((a, b) => {
+      const toMillis = (v: any) => (typeof v === 'number' ? v : v ? Date.parse(String(v)) : 0);
+      return toMillis(b.properties.startTime) - toMillis(a.properties.startTime);
+    });
+  return runs;
 };
 
 export const useRun = (runId: string | undefined) => {

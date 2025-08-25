@@ -14,7 +14,7 @@ import {
   TagGroup,
   Text,
 } from '@fluentui/react-components';
-import { useRuns } from '../../../core/queries/runs';
+import { useAllRuns, useRunsInfiniteQuery } from '../../../core/queries/runs';
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import { useRunInstance } from '../../../core/state/workflow/workflowSelectors';
 import { useIntl } from 'react-intl';
@@ -41,8 +41,8 @@ export const RunHistoryPanel = (props: RunHistoryPanelProps) => {
 
   const styles = useRunHistoryPanelStyles();
 
-  const runsQuery = useRuns(!props.collapsed);
-  const runs = useMemo(() => (runsQuery.data?.pages ?? []).flatMap((p: any) => p.runs ?? []), [runsQuery?.data]);
+  const runsQuery = useRunsInfiniteQuery(!props.collapsed);
+  const runs = useAllRuns();
 
   // Refetch the runs when the panel is expanded
   useEffect(() => {
@@ -73,6 +73,12 @@ export const RunHistoryPanel = (props: RunHistoryPanelProps) => {
     );
   }, [filters, runs]);
 
+  const filtersWithoutRunId = useMemo(() => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { runId, ...rest } = filters;
+    return rest;
+  }, [filters]);
+
   const addFilterCallback = useCallback(({ key, value }: { key: FilterTypes; value: string | undefined }) => {
     setFilters((prev) => {
       const newFilters = { ...prev };
@@ -86,6 +92,12 @@ export const RunHistoryPanel = (props: RunHistoryPanelProps) => {
   }, []);
 
   // //
+
+  const title = intl.formatMessage({
+    defaultMessage: 'Run history',
+    description: 'Run history panel title',
+    id: 'qs+f1b',
+  });
 
   const statusText = intl.formatMessage({
     defaultMessage: 'Status',
@@ -123,22 +135,16 @@ export const RunHistoryPanel = (props: RunHistoryPanelProps) => {
     id: 'bPyWVY',
   });
 
-  const searchLabelText = intl.formatMessage({
-    defaultMessage: 'Search by run identifier',
-    description: 'Search by run identifier label',
-    id: 'J8G55j',
+  const searchPlaceholder = intl.formatMessage({
+    defaultMessage: 'Search',
+    description: 'Search by run identifier placeholder',
+    id: '6jJvtY',
   });
 
   const invalidRunId = intl.formatMessage({
     defaultMessage: 'Enter a valid run identifier',
     description: 'Invalid run identifier error message',
     id: 'SwWaHa',
-  });
-
-  const runIdNotFound = intl.formatMessage({
-    defaultMessage: 'Specified run identifier not found',
-    description: 'Run identifier not found error message',
-    id: 'aKf/r+',
   });
 
   const loadMoreText = intl.formatMessage({
@@ -168,7 +174,7 @@ export const RunHistoryPanel = (props: RunHistoryPanelProps) => {
       appearance="subtle"
       disabled={runsQuery.isFetching}
       onClick={() => runsQuery.refetch()}
-      icon={runsQuery.isRefetching ? <Spinner size={'tiny'} /> : <RefreshIcon />}
+      icon={runsQuery.isRefetching && !runsQuery.isLoading ? <Spinner size={'tiny'} /> : <RefreshIcon />}
       aria-label={refreshAria}
     />
   );
@@ -178,33 +184,32 @@ export const RunHistoryPanel = (props: RunHistoryPanelProps) => {
   return (
     <Drawer open={!props.collapsed} type={'inline'} separator style={{ width: '320px' }}>
       <DrawerHeader>
-        <DrawerHeaderTitle action={<RefreshButton />}>Run History</DrawerHeaderTitle>
-        <Field label={searchLabelText} validationState={searchError ? 'error' : 'none'} validationMessage={searchError}>
+        <DrawerHeaderTitle action={<RefreshButton />}>{title}</DrawerHeaderTitle>
+        <Field validationState={searchError ? 'error' : 'none'} validationMessage={searchError}>
           <SearchBox
+            placeholder={searchPlaceholder}
             onChange={(_e, data) => {
+              addFilterCallback({ key: 'runId', value: undefined });
               if (data.value === '') {
                 setSearchError(null);
               } else if (runIdRegex.test(data.value)) {
-                if (runs?.some((run) => run.name === data.value)) {
-                  props.onRunSelected(data.value);
-                  setSearchError(null);
-                } else {
-                  setSearchError(runIdNotFound);
-                }
+                addFilterCallback({ key: 'runId', value: data.value });
+                props.onRunSelected(data.value);
+                setSearchError(null);
               } else {
                 setSearchError(invalidRunId);
               }
             }}
           />
         </Field>
-        {Object.keys(filters).length > 0 ? (
+        {Object.keys(filtersWithoutRunId).length > 0 ? (
           <TagGroup
             onDismiss={(_e, data) => {
               addFilterCallback({ key: data.value as FilterTypes, value: undefined });
             }}
             style={{ flexWrap: 'wrap', gap: '4px' }}
           >
-            {Object.entries(filters).map(([key, value]) => (
+            {Object.entries(filtersWithoutRunId).map(([key, value]) => (
               <Tag dismissible dismissIcon={{ 'aria-label': 'remove' }} shape={'circular'} appearance={'brand'} key={key} value={key ?? ''}>
                 {getFilterKeyText(key as FilterTypes)}: {value}
               </Tag>
@@ -252,7 +257,7 @@ export const RunHistoryPanel = (props: RunHistoryPanelProps) => {
               )}
             </>
           )}
-          {runsQuery.isFetching && <Spinner style={{ padding: '16px' }} />}
+          {(runsQuery.isLoading || runsQuery.isFetchingNextPage) && <Spinner style={{ padding: '16px' }} />}
         </div>
       </DrawerBody>
     </Drawer>
