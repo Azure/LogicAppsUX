@@ -14,6 +14,7 @@ export interface SourceWorkflowState extends WorkflowState {
 export interface CloneState {
   sourceApps: SourceWorkflowState[];
   destinationApp: WorkflowState;
+  errorMessage: string | undefined;
 }
 
 const initialState: CloneState = {
@@ -23,6 +24,7 @@ const initialState: CloneState = {
     resourceGroup: '',
     logicAppName: '',
   },
+  errorMessage: undefined,
 };
 
 export const cloneSlice = createSlice({
@@ -48,9 +50,17 @@ export const cloneSlice = createSlice({
     setDestinationWorkflowAppDetails: (state, action: PayloadAction<{ name: string }>) => {
       state.destinationApp.logicAppName = action.payload.name;
     },
+    updateErrorMessage: (state, action: PayloadAction<string | undefined>) => {
+      state.errorMessage = action.payload;
+    },
   },
 });
 
-export const { initializeSourceWithResource, setDestinationSubscription, setDestinationResourceGroup, setDestinationWorkflowAppDetails } =
-  cloneSlice.actions;
+export const {
+  initializeSourceWithResource,
+  setDestinationSubscription,
+  setDestinationResourceGroup,
+  setDestinationWorkflowAppDetails,
+  updateErrorMessage,
+} = cloneSlice.actions;
 export default cloneSlice.reducer;

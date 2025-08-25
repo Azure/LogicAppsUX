@@ -1,8 +1,10 @@
 import { Button, Field, Text } from '@fluentui/react-components';
-import type { RootState } from '../../../core/state/clonetostandard/store';
-import { useSelector } from 'react-redux';
+import type { AppDispatch, RootState } from '../../../core/state/clonetostandard/store';
+import { useDispatch, useSelector } from 'react-redux';
 import { CloneResourcePicker } from '../resourcepicker';
 import { useCallback } from 'react';
+import { updateErrorMessage } from '../../../core/state/clonetostandard/cloneslice';
+import { isUndefinedOrEmptyString } from '@microsoft/logic-apps-shared';
 
 export type CloneCallHandler = (
   sourceApps: { subscriptionId: string; resourceGroup: string; logicAppName: string }[],
@@ -16,21 +18,27 @@ export const CloneWizard = ({
   onCloneCall: CloneCallHandler;
   onClose: () => void;
 }) => {
+  const dispatch = useDispatch<AppDispatch>();
   const {
     resource: { subscriptionId, resourceGroup, logicAppName },
     clone: {
       sourceApps,
       destinationApp: { resourceGroup: destResourceGroup, logicAppName: destLogicAppName },
+      errorMessage,
     },
   } = useSelector((state: RootState) => state);
 
   const onCloneClick = useCallback(async () => {
-    await onCloneCall(sourceApps, {
-      subscriptionId,
-      resourceGroup: destResourceGroup,
-      logicAppName: destLogicAppName,
-    });
-  }, [onCloneCall, subscriptionId, sourceApps, destResourceGroup, destLogicAppName]);
+    try {
+      await onCloneCall(sourceApps, {
+        subscriptionId,
+        resourceGroup: destResourceGroup,
+        logicAppName: destLogicAppName,
+      });
+    } catch (e: any) {
+      dispatch(updateErrorMessage(e.message));
+    }
+  }, [onCloneCall, subscriptionId, sourceApps, destResourceGroup, destLogicAppName, dispatch]);
 
   return (
     <div>
@@ -61,6 +69,7 @@ export const CloneWizard = ({
       <br />
       <div>
         <Text size={500}>Test section</Text>
+        {!isUndefinedOrEmptyString(errorMessage) && <Text size={400}>Error message: {errorMessage}</Text>}
         <Button onClick={onCloneClick}>On Export</Button>
         <Button onClick={onClose}>On Close</Button>
       </div>

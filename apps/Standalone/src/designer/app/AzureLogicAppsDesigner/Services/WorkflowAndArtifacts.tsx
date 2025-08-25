@@ -767,13 +767,6 @@ export const cloneConsumptionToStandard = async (
 ): Promise<any> => {
   try {
     for (const sourceApp of sourceApps) {
-      // try {
-      //   await validateCloneConsumption(sourceApp.subscriptionId, sourceApp.resourceGroup, sourceApp.logicAppName);
-      // } catch (error: any) {
-      //   if (error.status !== 404) {
-      //     return;
-      //   }
-      // }
       await validateCloneConsumption(sourceApp.subscriptionId, sourceApp.resourceGroup, sourceApp.logicAppName);
     }
 
