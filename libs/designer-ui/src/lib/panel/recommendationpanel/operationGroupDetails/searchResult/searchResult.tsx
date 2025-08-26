@@ -50,34 +50,31 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
 
   const [resultsSorting, setResultsSorting] = React.useState<SearchResultSortOption>(SearchResultSortOptions.unsorted);
 
-  const apiIds = useMemo(
-    () => {
-      const apiMap = new Map<string, { displayName?: string; name?: string }>();
-      
-      operationSearchResults
-        .filter((r) => r !== undefined)
-        .forEach((res) => {
-          const api = res.properties.api;
-          if (!apiMap.has(api.id)) {
-            apiMap.set(api.id, { displayName: api.displayName, name: api.name });
-          }
-        });
+  const apiIds = useMemo(() => {
+    const apiMap = new Map<string, { displayName?: string; name?: string }>();
 
-      return Array.from(apiMap.keys()).sort((a, b) => {
-        if (resultsSorting === SearchResultSortOptions.unsorted) {
-          return 0;
+    operationSearchResults
+      .filter((r) => r !== undefined)
+      .forEach((res) => {
+        const api = res.properties.api;
+        if (!apiMap.has(api.id)) {
+          apiMap.set(api.id, { displayName: api.displayName, name: api.name });
         }
-
-        const aApi = apiMap.get(a);
-        const bApi = apiMap.get(b);
-        const aName = aApi?.displayName ?? aApi?.name ?? a;
-        const bName = bApi?.displayName ?? bApi?.name ?? b;
-
-        return resultsSorting === SearchResultSortOptions.ascending ? aName.localeCompare(bName) : bName.localeCompare(aName);
       });
-    },
-    [operationSearchResults, resultsSorting]
-  );
+
+    return Array.from(apiMap.keys()).sort((a, b) => {
+      if (resultsSorting === SearchResultSortOptions.unsorted) {
+        return 0;
+      }
+
+      const aApi = apiMap.get(a);
+      const bApi = apiMap.get(b);
+      const aName = aApi?.displayName ?? aApi?.name ?? a;
+      const bName = bApi?.displayName ?? bApi?.name ?? b;
+
+      return resultsSorting === SearchResultSortOptions.ascending ? aName.localeCompare(bName) : bName.localeCompare(aName);
+    });
+  }, [operationSearchResults, resultsSorting]);
 
   const onRenderOperationGroup = React.useCallback(
     (apiId: string | undefined, _index: number | undefined) => {
