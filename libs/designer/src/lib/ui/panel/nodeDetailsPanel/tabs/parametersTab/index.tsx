@@ -107,7 +107,6 @@ import {
   isAgentConnectorAndDeploymentId,
 } from './helpers';
 import { useShouldEnableFoundryServiceConnection } from './hooks';
-import { AgentUtils } from '../../../../../common/utilities/Utils';
 import type { AnyAction, ThunkDispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { getConnectionsForConnector } from '../../../../../core/queries/connections';
@@ -866,18 +865,12 @@ export const ParameterSection = ({
 
       const isCodeEditor = editor?.toLowerCase() === constants.EDITOR.CODE;
 
-      // Control is disabled if it is DeploymentId parameter in Agentic Loop and a connection has not been setup yet
-      const isReadOnlyForAgenticScenario =
-        AgentUtils.isConnector(operationInfo?.connectorId) &&
-        AgentUtils.isDeploymentIdParameter(param?.parameterName) &&
-        !cognitiveServiceAccountId;
-
       const { subMenu, subComponent } = getConnectionElements(param);
       return {
         settingType: 'SettingTokenField',
         settingProp: {
           ...paramSubset,
-          readOnly: editorOptions?.readOnly || readOnly || isReadOnlyForAgenticScenario,
+          readOnly: editorOptions?.readOnly || readOnly,
           value: remappedValues,
           editor,
           editorOptions,
