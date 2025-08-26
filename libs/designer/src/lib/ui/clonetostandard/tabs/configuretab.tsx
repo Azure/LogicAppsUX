@@ -1,4 +1,4 @@
-import type { AppDispatch } from '../../../core/state/templates/store';
+import type { AppDispatch } from '../../../core/state/clonetostandard/store';
 import type { TemplateTabProps } from '@microsoft/designer-ui';
 import constants from '../../../common/constants';
 import type { IntlShape } from 'react-intl';
