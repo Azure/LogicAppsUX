@@ -378,7 +378,7 @@ export const fetchAgentUrl = (siteResourceId: string, workflowName: string, host
         // Add OBO token if available
         const oboKey = oboData?.properties?.key;
         if (oboKey) {
-          queryParams.oboToken = oboKey;
+          queryParams.oboUserToken = oboKey;
         }
       }
 
@@ -748,6 +748,61 @@ export const validateWorkflowConsumption = async (
   const response = await axios.post(
     `${baseUrl}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Logic/locations/${location}/workflows/${topResourceName}/validate?api-version=2016-10-01`,
     logicApp,
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${environment.armToken}`,
+      },
+    }
+  );
+
+  if (response.status !== 200) {
+    return Promise.reject(response);
+  }
+};
+
+export const cloneConsumptionToStandard = async (
+  sourceApps: { subscriptionId: string; resourceGroup: string; logicAppName: string }[],
+  destinationApp: { subscriptionId: string; resourceGroup: string; logicAppName: string }
+): Promise<any> => {
+  try {
+    for (const sourceApp of sourceApps) {
+      await validateCloneConsumption(sourceApp.subscriptionId, sourceApp.resourceGroup, sourceApp.logicAppName);
+    }
+
+    for (const sourceApp of sourceApps) {
+      const url = `${baseUrl}/subscriptions/${sourceApp.subscriptionId}/resourceGroups/${sourceApp.resourceGroup}/providers/Microsoft.Logic/workflows/${sourceApp.logicAppName}/clone?api-version=${consumptionApiVersion}`;
+      const data = {
+        target: {
+          workflow: {
+            //TODO: check if sourceApp.logicAppName exists first before this.
+            id: `/subscriptions/${destinationApp.subscriptionId}/resourceGroups/${destinationApp.resourceGroup}/providers/Microsoft.Web/sites/${destinationApp.logicAppName}/workflows/${sourceApp.logicAppName}`,
+          },
+          kind: 'stateful',
+        },
+      };
+      const response = await axios.post(url, data, {
+        headers: {
+          'If-Match': '*',
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${environment.armToken}`,
+        },
+      });
+      if (!isSuccessResponse(response.status)) {
+        alert('Failed to clone the logic app');
+        throw Error('Failed to clone the logic app');
+      }
+    }
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+export const validateCloneConsumption = async (subscriptionId: string, resourceGroup: string, logicAppName: string): Promise<any> => {
+  const response = await axios.post(
+    `${baseUrl}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Logic/workflows/${logicAppName}/validateClone?api-version=${consumptionApiVersion}`,
+    {},
     {
       headers: {
         'Content-Type': 'application/json',

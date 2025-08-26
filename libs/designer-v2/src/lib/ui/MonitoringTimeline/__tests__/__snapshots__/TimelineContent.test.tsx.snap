@@ -1,0 +1,508 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`TimelineContent > should render collapsed (not expanded) 1`] = `
+<div
+  className="timeline-main-content"
+>
+  <div
+    className="timeline-node-container"
+    style={
+      {
+        "scrollbarWidth": "none",
+      }
+    }
+  >
+    <div
+      data-testid="timeline-group-0"
+    >
+      <div
+        data-testid="repetition-0"
+      >
+        Repetition 
+        0
+      </div>
+      <div
+        data-testid="repetition-1"
+      >
+        Repetition 
+        1
+      </div>
+    </div>
+    <div
+      data-testid="timeline-group-1"
+    >
+      <div
+        data-testid="repetition-2"
+      >
+        Repetition 
+        2
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`TimelineContent > should render error carets for failed repetitions 1`] = `
+<div
+  className="timeline-main-content"
+>
+  <div
+    className="timeline-node-container"
+    style={
+      {
+        "scrollbarColor": "grey transparent",
+      }
+    }
+  >
+    <div
+      data-testid="timeline-group-0"
+    >
+      <div
+        data-testid="repetition-0"
+      >
+        Repetition 
+        0
+      </div>
+    </div>
+    <div
+      data-testid="timeline-group-1"
+    >
+      <div
+        data-testid="repetition-1"
+      >
+        Repetition 
+        1
+      </div>
+    </div>
+  </div>
+  <div
+    className="fui-Slider ___13bkkjq_w68bbx0 f10pi13n fwk3njj f1sdsnyy f122n59 f1oiokrs ftqa4ok f2hkw1w f1b1k54r f4ne723 fh7aioi fqqcjud f1k55ka9 fgclinu fycbxed f16pcs8n ffht0p2 f1p0ul1q f1c901ms f1alokd7 fmj8fco f1iwowo3 f1hxpdv8 fm5xmfm f1dmxpeg femsgmt f1a78h9h fuok0yf f1pzv1zu fktlcaf fiadc6h f4l8x3l f671q34 fvfzmw5 faw1t00 fxdgx5 fii04fa f36hzz8 f1volkfw f1xddb6 fcdikl fhpzgm6 f1q6pm3h"
+    style={
+      {
+        "--fui-Slider--direction": "0deg",
+        "--fui-Slider--progress": "0%",
+        "--fui-Slider--steps-percent": "100%",
+        "transform": "rotate(180deg)",
+      }
+    }
+  >
+    <input
+      className="fui-Slider__input ___adw2kq0_3dha4n0 f1k6fduh fk73vx1 f16hsg94 f1nzqi2z fwpfdsa fuur7zz f1mk8lai f1s184ao f1l02sjl f174ca62 f1r9mf01"
+      id="slider-r7"
+      max={1}
+      min={0}
+      onChange={[Function]}
+      orient="vertical"
+      step={1}
+      type="range"
+      value={0}
+    />
+    <div
+      className="fui-Slider__rail ___qnotkj0_1hvujaz f1kijzfu f1aehjj5 faunodf f88nxoq fd46tj4 f1e2fz10 f10pi13n fdgv6k0 fizngqt fpvhumw f1yog68k f13sgyd8 fzhtfnv f1j7ml58 fx36ao7 fux3rle fqxfnkd f1l02sjl f1rik0od f14xwovp febq2dz"
+    />
+    <div
+      className="fui-Slider__thumb ___43lhpn0_1ar0uxf faunodf f88nxoq fd46tj4 f1e2fz10 f1euv43f f174ca62 f1yfdkfd f1aehjj5 f1s6fcnf fdgv6k0 f44lkw9 fof7hq0 foksa45 f1j7ml58 f14u7mkt f5zrw40 fto0uou f1ks5ppg fielpny fyl8oag fzhtfnv f1fsco4d f5cv5a3 feeniun"
+    />
+  </div>
+  <div
+    className="error-caret-container"
+  >
+    <svg
+      aria-hidden={true}
+      className="error-caret ___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+      fill="currentColor"
+      height="1em"
+      viewBox="0 0 20 20"
+      width="1em"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M13 14.2a1 1 0 0 1-1.63.78l-4.72-3.81a1.5 1.5 0 0 1 0-2.34l4.72-3.81A1 1 0 0 1 13 5.8v8.4Z"
+        fill="currentColor"
+      />
+    </svg>
+    <div />
+  </div>
+</div>
+`;
+
+exports[`TimelineContent > should render loading state 1`] = `
+<div
+  className="loading-container"
+>
+  <div
+    aria-labelledby="spinnerr1"
+    className="fui-Spinner r82apo5"
+    role="progressbar"
+    style={
+      {
+        "gap": "8px",
+      }
+    }
+  >
+    <span
+      className="fui-Spinner__spinner rvgcg50 ___t1gitu0_y9674x0 frvgh55 fq4mcun f1v3ph3m"
+    >
+      <span
+        className="fui-Spinner__spinnerTail rxov3xa"
+      />
+    </span>
+    <label
+      className="fui-Label fui-Spinner__label ___izgteq0_oxks400 fk6fouc f19n0e5 fkhj508 f1i3iumi figsok6"
+      id="spinnerr1"
+    >
+      Loading...
+    </label>
+  </div>
+</div>
+`;
+
+exports[`TimelineContent > should render loading state when collapsed 1`] = `
+<div
+  className="loading-container"
+>
+  <div
+    aria-labelledby="spinnerr2"
+    className="fui-Spinner r82apo5"
+    role="progressbar"
+    style={
+      {
+        "gap": "0px",
+      }
+    }
+  >
+    <span
+      className="fui-Spinner__spinner rvgcg50 ___t1gitu0_y9674x0 frvgh55 fq4mcun f1v3ph3m"
+    >
+      <span
+        className="fui-Spinner__spinnerTail rxov3xa"
+      />
+    </span>
+    <label
+      className="fui-Label fui-Spinner__label ___izgteq0_oxks400 fk6fouc f19n0e5 fkhj508 f1i3iumi figsok6"
+      id="spinnerr2"
+    />
+  </div>
+</div>
+`;
+
+exports[`TimelineContent > should render no repetitions state 1`] = `
+<div
+  style={
+    {
+      "alignItems": "center",
+      "display": "flex",
+      "flexDirection": "row",
+      "gap": "8px",
+      "minWidth": "200px",
+    }
+  }
+>
+  <svg
+    aria-hidden={true}
+    className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+    fill="currentColor"
+    height="1em"
+    style={
+      {
+        "color": "var(--colorNeutralForeground3)",
+        "height": "30px",
+        "width": "30px",
+      }
+    }
+    viewBox="0 0 20 20"
+    width="1em"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M8 3.5c0-.28.22-.5.5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5Zm-2.46.55a2 2 0 0 0-1.5 1.55.5.5 0 0 1-.59.4.5.5 0 0 1-.38-.66 3 3 0 0 1 2.34-2.29.5.5 0 0 1 .6.4.5.5 0 0 1-.47.6Zm0 11.9a2 2 0 0 1-1.5-1.55.5.5 0 0 0-.59-.4.5.5 0 0 0-.38.66 3 3 0 0 0 2.34 2.29.5.5 0 0 0 .6-.4.5.5 0 0 0-.47-.6Zm9.05-12.9a3 3 0 0 1 2.36 2.36.5.5 0 0 1-.4.6.5.5 0 0 1-.6-.47 2 2 0 0 0-1.55-1.5.5.5 0 0 1-.4-.59.5.5 0 0 1 .6-.4Zm-.13 12.9a2 2 0 0 0 1.5-1.55.5.5 0 0 1 .59-.4.5.5 0 0 1 .38.66 3 3 0 0 1-2.34 2.29.5.5 0 0 1-.6-.4.5.5 0 0 1 .47-.6ZM16 11.5a.5.5 0 0 0 1 0v-3a.5.5 0 0 0-1 0v3ZM3.5 12a.5.5 0 0 1-.5-.5v-3a.5.5 0 0 1 1 0v3a.5.5 0 0 1-.5.5Zm5 4a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1h-3Z"
+      fill="currentColor"
+    />
+  </svg>
+  <span
+    className="fui-Text ___g0or4u0_dhwpsw0 fk6fouc fkhj508 f1i3iumi fl43uef fpgzoln f1w7gpdv f6juhto f1gl81tg f2jf649"
+    style={
+      {
+        "color": "var(--colorNeutralForeground3)",
+      }
+    }
+  >
+    No tasks
+  </span>
+</div>
+`;
+
+exports[`TimelineContent > should render no repetitions state when collapsed 1`] = `
+<div
+  style={
+    {
+      "alignItems": "center",
+      "display": "flex",
+      "flexDirection": "row",
+      "gap": "8px",
+    }
+  }
+>
+  <svg
+    aria-hidden={true}
+    className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+    fill="currentColor"
+    height="1em"
+    style={
+      {
+        "color": "var(--colorNeutralForeground3)",
+        "height": "30px",
+        "width": "30px",
+      }
+    }
+    viewBox="0 0 20 20"
+    width="1em"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M8 3.5c0-.28.22-.5.5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5Zm-2.46.55a2 2 0 0 0-1.5 1.55.5.5 0 0 1-.59.4.5.5 0 0 1-.38-.66 3 3 0 0 1 2.34-2.29.5.5 0 0 1 .6.4.5.5 0 0 1-.47.6Zm0 11.9a2 2 0 0 1-1.5-1.55.5.5 0 0 0-.59-.4.5.5 0 0 0-.38.66 3 3 0 0 0 2.34 2.29.5.5 0 0 0 .6-.4.5.5 0 0 0-.47-.6Zm9.05-12.9a3 3 0 0 1 2.36 2.36.5.5 0 0 1-.4.6.5.5 0 0 1-.6-.47 2 2 0 0 0-1.55-1.5.5.5 0 0 1-.4-.59.5.5 0 0 1 .6-.4Zm-.13 12.9a2 2 0 0 0 1.5-1.55.5.5 0 0 1 .59-.4.5.5 0 0 1 .38.66 3 3 0 0 1-2.34 2.29.5.5 0 0 1-.6-.4.5.5 0 0 1 .47-.6ZM16 11.5a.5.5 0 0 0 1 0v-3a.5.5 0 0 0-1 0v3ZM3.5 12a.5.5 0 0 1-.5-.5v-3a.5.5 0 0 1 1 0v3a.5.5 0 0 1-.5.5Zm5 4a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1h-3Z"
+      fill="currentColor"
+    />
+  </svg>
+</div>
+`;
+
+exports[`TimelineContent > should render with default props 1`] = `
+<div
+  className="timeline-main-content"
+>
+  <div
+    className="timeline-node-container"
+    style={
+      {
+        "scrollbarColor": "grey transparent",
+      }
+    }
+  >
+    <div
+      data-testid="timeline-group-0"
+    >
+      <div
+        data-testid="repetition-0"
+      >
+        Repetition 
+        0
+      </div>
+      <div
+        data-testid="repetition-1"
+      >
+        Repetition 
+        1
+      </div>
+    </div>
+    <div
+      data-testid="timeline-group-1"
+    >
+      <div
+        data-testid="repetition-2"
+      >
+        Repetition 
+        2
+      </div>
+    </div>
+  </div>
+  <div
+    className="fui-Slider ___13bkkjq_w68bbx0 f10pi13n fwk3njj f1sdsnyy f122n59 f1oiokrs ftqa4ok f2hkw1w f1b1k54r f4ne723 fh7aioi fqqcjud f1k55ka9 fgclinu fycbxed f16pcs8n ffht0p2 f1p0ul1q f1c901ms f1alokd7 fmj8fco f1iwowo3 f1hxpdv8 fm5xmfm f1dmxpeg femsgmt f1a78h9h fuok0yf f1pzv1zu fktlcaf fiadc6h f4l8x3l f671q34 fvfzmw5 faw1t00 fxdgx5 fii04fa f36hzz8 f1volkfw f1xddb6 fcdikl fhpzgm6 f1q6pm3h"
+    style={
+      {
+        "--fui-Slider--direction": "0deg",
+        "--fui-Slider--progress": "0%",
+        "--fui-Slider--steps-percent": "100%",
+        "transform": "rotate(180deg)",
+      }
+    }
+  >
+    <input
+      className="fui-Slider__input ___adw2kq0_3dha4n0 f1k6fduh fk73vx1 f16hsg94 f1nzqi2z fwpfdsa fuur7zz f1mk8lai f1s184ao f1l02sjl f174ca62 f1r9mf01"
+      id="slider-r0"
+      max={1}
+      min={0}
+      onChange={[Function]}
+      orient="vertical"
+      step={1}
+      type="range"
+      value={0}
+    />
+    <div
+      className="fui-Slider__rail ___qnotkj0_1hvujaz f1kijzfu f1aehjj5 faunodf f88nxoq fd46tj4 f1e2fz10 f10pi13n fdgv6k0 fizngqt fpvhumw f1yog68k f13sgyd8 fzhtfnv f1j7ml58 fx36ao7 fux3rle fqxfnkd f1l02sjl f1rik0od f14xwovp febq2dz"
+    />
+    <div
+      className="fui-Slider__thumb ___43lhpn0_1ar0uxf faunodf f88nxoq fd46tj4 f1e2fz10 f1euv43f f174ca62 f1yfdkfd f1aehjj5 f1s6fcnf fdgv6k0 f44lkw9 fof7hq0 foksa45 f1j7ml58 f14u7mkt f5zrw40 fto0uou f1ks5ppg fielpny fyl8oag fzhtfnv f1fsco4d f5cv5a3 feeniun"
+    />
+  </div>
+  <div
+    className="error-caret-container"
+  >
+    <div />
+    <div />
+    <svg
+      aria-hidden={true}
+      className="error-caret ___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+      fill="currentColor"
+      height="1em"
+      viewBox="0 0 20 20"
+      width="1em"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M13 14.2a1 1 0 0 1-1.63.78l-4.72-3.81a1.5 1.5 0 0 1 0-2.34l4.72-3.81A1 1 0 0 1 13 5.8v8.4Z"
+        fill="currentColor"
+      />
+    </svg>
+  </div>
+</div>
+`;
+
+exports[`TimelineContent > should render with empty repetitions map 1`] = `
+<div
+  className="timeline-main-content"
+>
+  <div
+    className="timeline-node-container"
+    style={
+      {
+        "scrollbarColor": "grey transparent",
+      }
+    }
+  />
+  <div
+    className="fui-Slider ___13bkkjq_w68bbx0 f10pi13n fwk3njj f1sdsnyy f122n59 f1oiokrs ftqa4ok f2hkw1w f1b1k54r f4ne723 fh7aioi fqqcjud f1k55ka9 fgclinu fycbxed f16pcs8n ffht0p2 f1p0ul1q f1c901ms f1alokd7 fmj8fco f1iwowo3 f1hxpdv8 fm5xmfm f1dmxpeg femsgmt f1a78h9h fuok0yf f1pzv1zu fktlcaf fiadc6h f4l8x3l f671q34 fvfzmw5 faw1t00 fxdgx5 fii04fa f36hzz8 f1volkfw f1xddb6 fcdikl fhpzgm6 f1q6pm3h"
+    style={
+      {
+        "--fui-Slider--direction": "0deg",
+        "--fui-Slider--progress": "0%",
+        "--fui-Slider--steps-percent": "100%",
+        "transform": "rotate(180deg)",
+      }
+    }
+  >
+    <input
+      className="fui-Slider__input ___adw2kq0_3dha4n0 f1k6fduh fk73vx1 f16hsg94 f1nzqi2z fwpfdsa fuur7zz f1mk8lai f1s184ao f1l02sjl f174ca62 f1r9mf01"
+      id="slider-r3"
+      max={1}
+      min={0}
+      onChange={[Function]}
+      orient="vertical"
+      step={1}
+      type="range"
+      value={0}
+    />
+    <div
+      className="fui-Slider__rail ___qnotkj0_1hvujaz f1kijzfu f1aehjj5 faunodf f88nxoq fd46tj4 f1e2fz10 f10pi13n fdgv6k0 fizngqt fpvhumw f1yog68k f13sgyd8 fzhtfnv f1j7ml58 fx36ao7 fux3rle fqxfnkd f1l02sjl f1rik0od f14xwovp febq2dz"
+    />
+    <div
+      className="fui-Slider__thumb ___43lhpn0_1ar0uxf faunodf f88nxoq fd46tj4 f1e2fz10 f1euv43f f174ca62 f1yfdkfd f1aehjj5 f1s6fcnf fdgv6k0 f44lkw9 fof7hq0 foksa45 f1j7ml58 f14u7mkt f5zrw40 fto0uou f1ks5ppg fielpny fyl8oag fzhtfnv f1fsco4d f5cv5a3 feeniun"
+    />
+  </div>
+  <div
+    className="error-caret-container"
+  />
+</div>
+`;
+
+exports[`TimelineContent > should render with multiple task groups 1`] = `
+<div
+  className="timeline-main-content"
+>
+  <div
+    className="timeline-node-container"
+    style={
+      {
+        "scrollbarColor": "grey transparent",
+      }
+    }
+  >
+    <div
+      data-testid="timeline-group-0"
+    >
+      <div
+        data-testid="repetition-0"
+      >
+        Repetition 
+        0
+      </div>
+      <div
+        data-testid="repetition-1"
+      >
+        Repetition 
+        1
+      </div>
+    </div>
+    <div
+      data-testid="timeline-group-1"
+    >
+      <div
+        data-testid="repetition-2"
+      >
+        Repetition 
+        2
+      </div>
+    </div>
+    <div
+      data-testid="timeline-group-2"
+    >
+      <div
+        data-testid="repetition-3"
+      >
+        Repetition 
+        3
+      </div>
+    </div>
+  </div>
+  <div
+    className="fui-Slider ___13bkkjq_w68bbx0 f10pi13n fwk3njj f1sdsnyy f122n59 f1oiokrs ftqa4ok f2hkw1w f1b1k54r f4ne723 fh7aioi fqqcjud f1k55ka9 fgclinu fycbxed f16pcs8n ffht0p2 f1p0ul1q f1c901ms f1alokd7 fmj8fco f1iwowo3 f1hxpdv8 fm5xmfm f1dmxpeg femsgmt f1a78h9h fuok0yf f1pzv1zu fktlcaf fiadc6h f4l8x3l f671q34 fvfzmw5 faw1t00 fxdgx5 fii04fa f36hzz8 f1volkfw f1xddb6 fcdikl fhpzgm6 f1q6pm3h"
+    style={
+      {
+        "--fui-Slider--direction": "0deg",
+        "--fui-Slider--progress": "0%",
+        "--fui-Slider--steps-percent": "50%",
+        "transform": "rotate(180deg)",
+      }
+    }
+  >
+    <input
+      className="fui-Slider__input ___adw2kq0_3dha4n0 f1k6fduh fk73vx1 f16hsg94 f1nzqi2z fwpfdsa fuur7zz f1mk8lai f1s184ao f1l02sjl f174ca62 f1r9mf01"
+      id="slider-r4"
+      max={2}
+      min={0}
+      onChange={[Function]}
+      orient="vertical"
+      step={1}
+      type="range"
+      value={0}
+    />
+    <div
+      className="fui-Slider__rail ___qnotkj0_1hvujaz f1kijzfu f1aehjj5 faunodf f88nxoq fd46tj4 f1e2fz10 f10pi13n fdgv6k0 fizngqt fpvhumw f1yog68k f13sgyd8 fzhtfnv f1j7ml58 fx36ao7 fux3rle fqxfnkd f1l02sjl f1rik0od f14xwovp febq2dz"
+    />
+    <div
+      className="fui-Slider__thumb ___43lhpn0_1ar0uxf faunodf f88nxoq fd46tj4 f1e2fz10 f1euv43f f174ca62 f1yfdkfd f1aehjj5 f1s6fcnf fdgv6k0 f44lkw9 fof7hq0 foksa45 f1j7ml58 f14u7mkt f5zrw40 fto0uou f1ks5ppg fielpny fyl8oag fzhtfnv f1fsco4d f5cv5a3 feeniun"
+    />
+  </div>
+  <div
+    className="error-caret-container"
+  >
+    <div />
+    <div />
+    <div />
+    <svg
+      aria-hidden={true}
+      className="error-caret ___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+      fill="currentColor"
+      height="1em"
+      viewBox="0 0 20 20"
+      width="1em"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M13 14.2a1 1 0 0 1-1.63.78l-4.72-3.81a1.5 1.5 0 0 1 0-2.34l4.72-3.81A1 1 0 0 1 13 5.8v8.4Z"
+        fill="currentColor"
+      />
+    </svg>
+  </div>
+</div>
+`;
