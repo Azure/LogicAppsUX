@@ -11,7 +11,7 @@ interface ConfigureTabProps extends CloneWizardTabProps {
 }
 
 export const configureTab = (intl: IntlShape, dispatch: AppDispatch, { tabStatusIcon, onCancel }: ConfigureTabProps): TemplateTabProps => ({
-  id: constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.PROFILE,
+  id: constants.CLONE_TO_STANDARD_TAB_NAMES.CONFIGURE,
   title: intl.formatMessage({
     defaultMessage: 'Configure',
     id: '6OCUKm',

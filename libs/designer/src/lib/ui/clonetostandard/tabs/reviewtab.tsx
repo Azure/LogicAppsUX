@@ -11,11 +11,11 @@ interface ReviewTabProps extends CloneWizardTabProps {
 }
 
 export const reviewTab = (intl: IntlShape, dispatch: AppDispatch, { tabStatusIcon, onClone }: ReviewTabProps): TemplateTabProps => ({
-  id: constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.PROFILE,
+  id: constants.CLONE_TO_STANDARD_TAB_NAMES.REVIEW,
   title: intl.formatMessage({
-    defaultMessage: 'Configure',
-    id: '6OCUKm',
-    description: 'Tab label for configure tab in clone to standard experience',
+    defaultMessage: 'Review',
+    id: '944VBM',
+    description: 'Tab label for review tab in clone to standard experience',
   }),
   tabStatusIcon,
   content: <CloneReviewList />,
