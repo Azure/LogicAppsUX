@@ -8,13 +8,14 @@ import { downloadAndExtractDependency } from './binaries';
 import { getJsonFeed } from './feed';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IBundleDependencyFeed, IBundleFeed, IBundleMetadata, IHostJsonV2 } from '@microsoft/vscode-extension-logic-apps';
-import * as fse from 'fs-extra';
 import * as path from 'path';
 import * as semver from 'semver';
 import * as vscode from 'vscode';
 import { localize } from '../../localize';
 import { ext } from '../../extensionVariables';
-
+import { getFunctionsCommand } from './funcCoreTools/funcVersion';
+import * as cp from 'child_process';
+import * as fse from 'fs-extra';
 /**
  * Gets bundle extension feed.
  * @param {IActionContext} context - Command context.
@@ -282,4 +283,65 @@ function getMaxVersion(version1, version2): string {
     }
   }
   return maxVersion;
+}
+
+/**
+ * Retrieves the highest version number of the extension bundle available in the bundle folder.
+ *
+ * This function locates the extension bundle folder, enumerates its subdirectories,
+ * and determines the maximum version number present among them. If no bundle is found,
+ * it throws an error.
+ *
+ * @returns {Promise<string>} A promise that resolves to the highest bundle version number as a string (e.g., "1.2.3").
+ * @throws {Error} If the extension bundle folder is missing or contains no subdirectories.
+ */
+export async function getBundleVersionNumber(): Promise<string> {
+  const bundleFolderRoot = await getExtensionBundleFolder();
+  const bundleFolder = path.join(bundleFolderRoot, extensionBundleId);
+  let bundleVersionNumber = '0.0.0';
+
+  const bundleFolders = await fse.readdir(bundleFolder);
+  if (bundleFolders.length === 0) {
+    throw new Error(localize('bundleMissingError', 'Extension bundle could not be found.'));
+  }
+
+  for (const file of bundleFolders) {
+    const filePath: string = path.join(bundleFolder, file);
+    if (await (await fse.stat(filePath)).isDirectory()) {
+      bundleVersionNumber = getMaxVersion(bundleVersionNumber, file);
+    }
+  }
+
+  return bundleVersionNumber;
+}
+
+/**
+ * Gets extension bundle folder path.
+ * @returns {string} Extension bundle folder path.
+ */
+export async function getExtensionBundleFolder(): Promise<string> {
+  const command = `${getFunctionsCommand()} GetExtensionBundlePath`;
+  const outputChannel = ext.outputChannel;
+
+  if (outputChannel) {
+    outputChannel.appendLog(localize('runningCommand', 'Running command: "{0}"...', command));
+  }
+
+  let extensionBundlePath = '';
+  try {
+    extensionBundlePath = await cp.execSync(command, { encoding: 'utf8' });
+  } catch (error) {
+    if (outputChannel) {
+      outputChannel.appendLog(localize('bundleCommandError', 'Could not find path to extension bundle'));
+      outputChannel.appendLog(JSON.stringify(error));
+    }
+    throw new Error(localize('bundlePathError', 'Could not find path to extension bundle.'));
+  }
+
+  extensionBundlePath = extensionBundlePath.trim().split('Microsoft.Azure.Functions.ExtensionBundle')[0];
+
+  if (outputChannel) {
+    outputChannel.appendLog(localize('extensionBundlePath', 'Extension bundle path: "{0}"...', extensionBundlePath));
+  }
+  return extensionBundlePath;
 }
