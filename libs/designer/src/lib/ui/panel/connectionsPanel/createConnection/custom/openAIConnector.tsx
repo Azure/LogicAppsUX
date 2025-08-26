@@ -326,9 +326,14 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
                     if (option?.optionValue) {
                       const serviceProjectId = option?.optionValue as string;
                       const idSplitValues = serviceProjectId.split('/');
-                      const serviceProjectName = idSplitValues[idSplitValues.length - 1];
-                      const cognitiveServiceAccountName = idSplitValues.length >= 3 ? idSplitValues[serviceProjectId.length - 3] : '';
+                      const splitLength = idSplitValues.length;
+
+                      // Id is of the form - /sub/<>/resourceGroups/<>/providers/Microsoft.CognitiveServices/accounts/<>/projects/<>
+                      const serviceProjectName = idSplitValues[splitLength - 1];
+                      const cognitiveServiceAccountName = splitLength >= 3 ? idSplitValues[splitLength - 3] : '';
                       const openAIEndpoint = `https://${cognitiveServiceAccountName}.services.ai.azure.com/api/projects/${serviceProjectName}`;
+
+                      // Set all the relevant values
                       setSelectedCognitiveServiceProject(serviceProjectId);
                       setParameterValue(serviceProjectId);
                       setKeyValue?.('openAIEndpoint', openAIEndpoint);

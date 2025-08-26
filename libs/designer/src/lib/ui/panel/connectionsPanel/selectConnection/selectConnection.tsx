@@ -53,21 +53,32 @@ export const SelectConnectionWrapper = () => {
   const connections = useMemo(() => {
     const connectionData = connectionQuery?.data ?? [];
 
+    if (AgentUtils.isConnector(connector?.id)) {
+      return connectionData.filter((c) => {
+        const connectionReference = connectionReferencesForConnector.find((ref) => equals(ref.connection.id, c?.id, true));
+        let isAzureOpenAI = true;
+        if (connectionReference?.resourceId) {
+          if (foundryServiceConnectionRegex.test(connectionReference.resourceId ?? '')) {
+            isAzureOpenAI = false;
+          }
+        }
+
+        // Add a tag for Foundry Service/OpenAI
+        c.properties.connectionParameters = {
+          ...(c.properties.connectionParameters ?? {}),
+          agentModelType: {
+            type: isAzureOpenAI ? AgentUtils.ModelType.AzureOpenAI : AgentUtils.ModelType.FoundryService,
+          },
+        };
+
+        // For A2A, hide the foundry connection from the list
+        return isA2A ? isAzureOpenAI : true;
+      });
+    }
+
     if (!isA2A) {
       // Filter out dynamic connections
       return connectionData.filter((c) => !equals(c.properties.feature ?? '', 'DynamicUserInvoked', true));
-    }
-
-    if (isA2A && AgentUtils.isConnector(connector?.id)) {
-      // For A2A, hide the foundry connection from the list
-      return connectionData.filter((c) => {
-        const connectionReference = connectionReferencesForConnector.find((ref) => equals(ref.connection.id, c?.id, true));
-        if (connectionReference?.resourceId) {
-          return !foundryServiceConnectionRegex.test(connectionReference.resourceId ?? '');
-        }
-
-        return true;
-      });
     }
 
     return connectionData;
