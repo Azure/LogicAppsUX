@@ -4,6 +4,7 @@ import constants from '../../../common/constants';
 import type { IntlShape } from 'react-intl';
 import type { CloneWizardTabProps } from './model';
 import { selectWizardTab } from '../../../core/state/clonetostandard/tabslice';
+import { ConfigureLogicApps } from '../logicapps/configurelogicapps';
 
 interface ConfigureTabProps extends CloneWizardTabProps {
   onCancel: () => void;
@@ -17,7 +18,7 @@ export const configureTab = (intl: IntlShape, dispatch: AppDispatch, { tabStatus
     description: 'Tab label for configure tab in clone to standard experience',
   }),
   tabStatusIcon,
-  content: <div />,
+  content: <ConfigureLogicApps />,
   footerContent: {
     buttonContents: [
       {

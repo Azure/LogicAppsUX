@@ -4,12 +4,13 @@ import constants from '../../../common/constants';
 import type { IntlShape } from 'react-intl';
 import type { CloneWizardTabProps } from './model';
 import { selectWizardTab } from '../../../core/state/clonetostandard/tabslice';
+import { CloneReviewList } from '../review/clonereviewlist';
 
-interface ConfigureTabProps extends CloneWizardTabProps {
+interface ReviewTabProps extends CloneWizardTabProps {
   onClone: () => Promise<void>;
 }
 
-export const reviewTab = (intl: IntlShape, dispatch: AppDispatch, { tabStatusIcon, onClone }: ConfigureTabProps): TemplateTabProps => ({
+export const reviewTab = (intl: IntlShape, dispatch: AppDispatch, { tabStatusIcon, onClone }: ReviewTabProps): TemplateTabProps => ({
   id: constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.PROFILE,
   title: intl.formatMessage({
     defaultMessage: 'Configure',
@@ -17,7 +18,7 @@ export const reviewTab = (intl: IntlShape, dispatch: AppDispatch, { tabStatusIco
     description: 'Tab label for configure tab in clone to standard experience',
   }),
   tabStatusIcon,
-  content: <div />,
+  content: <CloneReviewList />,
   footerContent: {
     buttonContents: [
       {

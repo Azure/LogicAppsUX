@@ -1,11 +1,11 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { ResourcePicker } from '../common/resourcepicker/resourcepicker';
-import type { AppDispatch, RootState } from '../../core/state/clonetostandard/store';
+import { ResourcePicker } from '../../common/resourcepicker/resourcepicker';
+import type { AppDispatch, RootState } from '../../../core/state/clonetostandard/store';
 import {
   setDestinationWorkflowAppDetails,
   setDestinationResourceGroup,
   setDestinationSubscription,
-} from '../../core/state/clonetostandard/cloneslice';
+} from '../../../core/state/clonetostandard/cloneslice';
 
 export const CloneResourcePicker = () => {
   const dispatch = useDispatch<AppDispatch>();
