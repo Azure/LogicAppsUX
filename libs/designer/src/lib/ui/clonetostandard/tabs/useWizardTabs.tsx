@@ -21,24 +21,16 @@ export const useCloneWizardTabs = ({
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const {
-    resource: { subscriptionId },
-    clone: {
-      sourceApps,
-      destinationApp: { resourceGroup: destResourceGroup, logicAppName: destLogicAppName },
-    },
+    clone: { sourceApps, destinationApp },
   } = useSelector((state: RootState) => state);
 
   const handleOnClone = useCallback(async () => {
     try {
-      await onCloneCall(sourceApps, {
-        subscriptionId,
-        resourceGroup: destResourceGroup,
-        logicAppName: destLogicAppName,
-      });
+      await onCloneCall(sourceApps, destinationApp);
     } catch (e: any) {
       dispatch(updateErrorMessage(e?.response?.data?.message ?? e.message));
     }
-  }, [onCloneCall, subscriptionId, sourceApps, destResourceGroup, destLogicAppName, dispatch]);
+  }, [onCloneCall, sourceApps, destinationApp, dispatch]);
 
   return [
     configureTab(intl, dispatch, {
