@@ -72,7 +72,7 @@ import type { Uri } from 'vscode';
 import { pickCustomCodeNetHostProcess } from './pickCustomCodeNetHostProcess';
 import { debugLogicApp } from './debugLogicApp';
 import { syncCloudSettings } from './syncCloudSettings';
-import { getDebugSymbolDll } from '../utils/getDebugSymbolDll';
+import { getDebugSymbolDll } from '../utils/debug';
 import { AppSettingsTreeItem, AppSettingTreeItem } from '@microsoft/vscode-azext-azureappsettings';
 import { switchToDataMapperV2 } from './setDataMapperVersion';
 import { reportAnIssue } from '../utils/reportAnIssue';

@@ -1,41 +1,13 @@
-import { getBundleVersionNumber } from '../getDebugSymbolDll';
+import { getBundleVersionNumber } from '../bundleFeed';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import * as cp from 'child_process';
 import { extensionBundleId } from '../../../constants';
 
-// Mock VS Code
-vi.mock('vscode', () => ({
-  workspace: {
-    getConfiguration: vi.fn(),
-    workspaceFolders: [],
-  },
-}));
-
-// Mock fs-extra
-vi.mock('fs-extra', () => ({
-  readdir: vi.fn(),
-  stat: vi.fn(),
-}));
-
-// Mock child_process
-vi.mock('child_process', () => ({
-  execSync: vi.fn(),
-}));
-
 // Mock localize
 vi.mock('../../localize', () => ({
   localize: vi.fn((key: string, defaultValue: string) => defaultValue),
-}));
-
-// Mock extension variables
-vi.mock('../../extensionVariables', () => ({
-  ext: {
-    outputChannel: {
-      appendLog: vi.fn(),
-    },
-  },
 }));
 
 // Mock funcVersion
