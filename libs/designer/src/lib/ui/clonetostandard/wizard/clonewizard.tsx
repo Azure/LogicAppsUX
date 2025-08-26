@@ -1,8 +1,10 @@
 import { Button, Field, Text } from '@fluentui/react-components';
-import type { RootState } from '../../../core/state/clonetostandard/store';
-import { useSelector } from 'react-redux';
+import type { AppDispatch, RootState } from '../../../core/state/clonetostandard/store';
+import { useDispatch, useSelector } from 'react-redux';
 import { CloneResourcePicker } from '../resourcepicker';
 import { useCallback } from 'react';
+import { updateErrorMessage } from '../../../core/state/clonetostandard/cloneslice';
+import { isUndefinedOrEmptyString } from '@microsoft/logic-apps-shared';
 
 export type CloneCallHandler = (
   sourceApps: { subscriptionId: string; resourceGroup: string; logicAppName: string }[],
@@ -16,29 +18,27 @@ export const CloneWizard = ({
   onCloneCall: CloneCallHandler;
   onClose: () => void;
 }) => {
+  const dispatch = useDispatch<AppDispatch>();
   const {
-    resource: { subscriptionId, resourceGroup, location, logicAppName },
+    resource: { subscriptionId, resourceGroup, logicAppName },
     clone: {
+      sourceApps,
       destinationApp: { resourceGroup: destResourceGroup, logicAppName: destLogicAppName },
+      errorMessage,
     },
   } = useSelector((state: RootState) => state);
 
   const onCloneClick = useCallback(async () => {
-    await onCloneCall(
-      [
-        {
-          subscriptionId,
-          resourceGroup,
-          logicAppName,
-        },
-      ],
-      {
+    try {
+      await onCloneCall(sourceApps, {
         subscriptionId,
         resourceGroup: destResourceGroup,
         logicAppName: destLogicAppName,
-      }
-    );
-  }, [onCloneCall, subscriptionId, resourceGroup, logicAppName, destResourceGroup, destLogicAppName]);
+      });
+    } catch (e: any) {
+      dispatch(updateErrorMessage(e?.response?.data?.message ?? e.message));
+    }
+  }, [onCloneCall, subscriptionId, sourceApps, destResourceGroup, destLogicAppName, dispatch]);
 
   return (
     <div>
@@ -57,10 +57,6 @@ export const CloneWizard = ({
           <Text>{resourceGroup}</Text>
         </div>
         <div>
-          <Field>Location</Field>
-          <Text>{location}</Text>
-        </div>
-        <div>
           <Field>Logic App</Field>
           <Text>{logicAppName}</Text>
         </div>
@@ -73,6 +69,7 @@ export const CloneWizard = ({
       <br />
       <div>
         <Text size={500}>Test section</Text>
+        {!isUndefinedOrEmptyString(errorMessage) && <Text size={400}>Error message: {errorMessage}</Text>}
         <Button onClick={onCloneClick}>On Export</Button>
         <Button onClick={onClose}>On Close</Button>
       </div>
