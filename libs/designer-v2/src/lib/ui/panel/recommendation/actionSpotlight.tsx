@@ -1,166 +1,27 @@
-import { Link } from '@fluentui/react';
-import { Accordion, type AccordionToggleEventHandler, makeStyles, tokens } from '@fluentui/react-components';
-import { useAllConnectors, useFavoriteOperations } from '../../../core/queries/browse';
-import {
-  useDiscoveryPanelFavoriteOperations,
-  useDiscoveryPanelRelationshipIds,
-  useIsAddingAgentTool,
-} from '../../../core/state/panel/panelSelectors';
-import { useIsWithinAgenticLoop } from '../../../core/state/workflow/workflowSelectors';
-import { useMemo, useState } from 'react';
-import { equals, LOCAL_STORAGE_KEYS, type Connector, type DiscoveryOpArray } from '@microsoft/logic-apps-shared';
-import { getOperationCardDataFromOperation, getOperationGroupCardDataFromConnector } from './helpers';
+import { useCallback, useMemo, useState } from 'react';
+import { Button } from '@fluentui/react-components';
+import { ArrowLeft24Regular } from '@fluentui/react-icons';
+import { getLogicalCategories } from '@microsoft/designer-ui';
+import type { OperationRuntimeCategory } from '@microsoft/logic-apps-shared';
+import { CategoryCard } from './categoryCard';
+import { Favorites } from './categories/Favorites';
+import { useActionSpotlightStyles } from './styles/ActionSpotlight.styles';
 import { useIntl } from 'react-intl';
-import { SpotlightCategoryType, SpotlightSection } from '@microsoft/designer-ui';
-import { useIsAgenticWorkflow } from '../../../core/state/designerView/designerViewSelectors';
+import { useDiscoveryPanelFavoriteOperations } from '../../../core/state/panel/panelSelectors';
 export interface ActionSpotlightProps {
   onConnectorSelected: (connectorId: string, origin?: string) => void;
   onOperationSelected: (operationId: string, apiId?: string) => void;
   filters?: Record<string, string>;
-  allOperations: DiscoveryOpArray;
 }
-
-const useActionSpotlightStyles = makeStyles({
-  accordion: {
-    marginBottom: tokens.spacingVerticalL,
-  },
-  favoriteLoadMoreLink: {
-    marginLeft: 'auto',
-    display: 'flex',
-    marginRight: tokens.spacingHorizontalM,
-    fontSize: tokens.fontSizeBase300,
-    paddingTop: tokens.spacingVerticalS,
-  },
-});
 
 export const ActionSpotlight = (props: ActionSpotlightProps) => {
   const intl = useIntl();
-  const { filters, allOperations, onConnectorSelected, onOperationSelected } = props;
-  const { data: allConnectors, isLoading: isLoadingConnectors } = useAllConnectors();
-  const parentGraphId = useDiscoveryPanelRelationshipIds().graphId;
-  const isWithinAgenticLoop = useIsWithinAgenticLoop(parentGraphId);
-
-  const isAgentTool = useIsAddingAgentTool();
-  const isAgenticWorkflow = useIsAgenticWorkflow();
-
+  const { onConnectorSelected, onOperationSelected } = props;
+  const classes = useActionSpotlightStyles();
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const favoriteOperationIds = useDiscoveryPanelFavoriteOperations();
-  const {
-    favoriteConnectorsData,
-    isLoadingFavoriteConnectors,
-    favoriteActionsData,
-    favoriteActionsFetchNextPage,
-    favoriteActionsHasNextPage,
-    favoriteActionsIsFetching,
-    favoriteActionsIsFetchingNextPage,
-  } = useFavoriteOperations(favoriteOperationIds);
 
-  const getInitialOpenItems = (): SpotlightCategoryType[] => {
-    try {
-      const stored = localStorage.getItem(LOCAL_STORAGE_KEYS.ACTION_SPOTLIGHT_OPEN_ITEMS);
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed)) {
-          return parsed;
-        }
-      }
-    } catch {
-      // Fail silently and fall back to default
-    }
-
-    // First-time default
-    const defaultItems: SpotlightCategoryType[] = [
-      SpotlightCategoryType.BuiltIns,
-      SpotlightCategoryType.KnowledgeBase,
-      ...(favoriteOperationIds.length > 0 ? [SpotlightCategoryType.Favorites] : []),
-    ];
-    return defaultItems;
-  };
-
-  const [openItems, setOpenItems] = useState<SpotlightCategoryType[]>(getInitialOpenItems);
-
-  const handleToggle: AccordionToggleEventHandler<SpotlightCategoryType> = (_event, data) => {
-    setOpenItems(data.openItems);
-    localStorage.setItem(LOCAL_STORAGE_KEYS.ACTION_SPOTLIGHT_OPEN_ITEMS, JSON.stringify(data.openItems));
-  };
-
-  const classNames = useActionSpotlightStyles();
-
-  const builtInActions = useMemo(() => {
-    let allowedIds: string[] = [];
-
-    if (filters?.['actionType'] === 'triggers') {
-      allowedIds = ['connectionProviders/request', 'connectionProviders/schedule', 'connectionProviders/http'];
-    } else {
-      const commonIds = ['connectionProviders/dataOperationNew', 'connectionProviders/datetime', 'connectionProviders/http'];
-
-      allowedIds = isAgentTool ? commonIds : ['connectionProviders/control', ...commonIds];
-    }
-
-    return allConnectors.filter((connector: Connector) => allowedIds.includes(connector.id)).map(getOperationGroupCardDataFromConnector);
-  }, [allConnectors, filters, isAgentTool]);
-
-  const aiActions = useMemo(() => {
-    if (filters?.['actionType'] === 'triggers') {
-      return [];
-    }
-
-    const baseIds = ['managedApis/azureopenai', '/serviceProviders/openai'];
-
-    return allConnectors.filter((connector) => baseIds.some((id) => connector.id.includes(id))).map(getOperationGroupCardDataFromConnector);
-  }, [filters, allConnectors]);
-
-  const knowledgeBaseActions = useMemo(() => {
-    const allowedSuffixes = new Set([
-      'httpaction',
-      'managedApis/sharepointonline/apiOperations/GetFileItem',
-      'managedApis/sharepointonline/apiOperations/GetFileContent',
-      'managedApis/sharepointonline/apiOperations/GetFileContentByPath',
-      'managedApis/onedriveforbusiness/apiOperations/GetFileMetadata',
-      'managedApis/onedriveforbusiness/apiOperations/GetFileMetadataByPath',
-      'managedApis/onedriveforbusiness/apiOperations/GetFileContent',
-      'managedApis/onedriveforbusiness/apiOperations/GetFileContentByPath',
-      'managedApis/onedrive/apiOperations/GetFileMetadata',
-      'managedApis/onedrive/apiOperations/GetFileMetadataByPath',
-      'managedApis/onedrive/apiOperations/GetFileContent',
-      'managedApis/onedrive/apiOperations/GetFileContentByPath',
-      'managedApis/amazons3/apiOperations/ListObjects',
-      'managedApis/amazons3/apiOperations/GetObjectMetadata',
-      'managedApis/amazons3/apiOperations/GetObjectContent',
-      'managedApis/dropbox/apiOperations/GetFileMetadata',
-      'managedApis/dropbox/apiOperations/GetFileMetadataByPath',
-      'managedApis/dropbox/apiOperations/GetFileContent',
-      'managedApis/dropbox/apiOperations/GetFileContentByPath',
-      'managedApis/service-now/apiOperations/GetKnowledgeArticles',
-      'managedApis/service-now/apiOperations/GetRecords',
-      'managedApis/service-now/apiOperations/GetRecord',
-    ]);
-    const AzureBlobServiceProviderIds = ['getBlobMetadata', 'readBlob', 'readBlobFromUri'];
-
-    return allOperations
-      .filter((operation) => {
-        if (operation?.properties?.api?.id === '/serviceProviders/AzureBlob') {
-          for (const id of AzureBlobServiceProviderIds) {
-            if (equals(operation.id, id)) {
-              return true;
-            }
-          }
-        }
-        for (const suffix of allowedSuffixes) {
-          if (operation.id.endsWith(suffix)) {
-            return true;
-          }
-        }
-        return false;
-      })
-      .map(getOperationCardDataFromOperation);
-  }, [allOperations]);
-  const favoriteOperations = useMemo(() => {
-    const favorites = [
-      ...favoriteConnectorsData.map(getOperationGroupCardDataFromConnector),
-      ...favoriteActionsData.map(getOperationCardDataFromOperation),
-    ];
-    return isAgenticWorkflow ? favorites : favorites.filter((f) => f.apiId !== 'connectionProviders/agent');
-  }, [favoriteConnectorsData, favoriteActionsData, isAgenticWorkflow]);
+  const categories = getLogicalCategories().filter((cat: OperationRuntimeCategory) => cat.key !== 'all');
 
   const favoritesLabel = intl.formatMessage({
     defaultMessage: 'Favorites',
@@ -168,90 +29,127 @@ export const ActionSpotlight = (props: ActionSpotlightProps) => {
     description: 'Favorites label',
   });
 
-  const loadingMoreText = intl.formatMessage({
-    defaultMessage: 'Loading more...',
-    id: 'QecW1y',
-    description: 'Loading more text',
+  const favoritesDescription = intl.formatMessage({
+    defaultMessage: 'Your starred actions and connectors',
+    id: 'YbOYXS',
+    description: 'Favorites category description',
   });
 
-  const loadMoreText = intl.formatMessage({
-    defaultMessage: 'Load more',
-    id: 'fGKmXs',
-    description: 'Load more text',
+  const aiAgentDescription = intl.formatMessage({
+    defaultMessage: 'AI and machine learning capabilities',
+    id: 'GR5+k2',
+    description: 'AI Agent category description',
   });
 
-  const builtInLabel = intl.formatMessage({
-    defaultMessage: 'Built-in tools',
-    id: 'TuSLAk',
-    description: 'Built-in tools label',
-  });
-  const aiCapabilitiesLabel = intl.formatMessage({
-    defaultMessage: 'AI capabilities',
-    id: 'TfDH7O',
-    description: 'AI capabilities label',
-  });
-  const knowledgeBaseLabel = intl.formatMessage({
-    defaultMessage: 'Knowledge Sources',
-    id: 'UQ5Zn2',
-    description: 'Knowledge base label',
+  const actionInAppDescription = intl.formatMessage({
+    defaultMessage: 'Connect to external services and applications',
+    id: 'YqKlGx',
+    description: 'Action in an app category description',
   });
 
-  const noOperationDescription = intl.formatMessage({
-    defaultMessage: 'No Favorite actions or connectors found. Use the Star icon next to existing actions to add them to your favorites.',
-    id: 'rPw0Hp',
-    description: 'No actions available text',
+  const dataTransformationDescription = intl.formatMessage({
+    defaultMessage: 'Transform, parse, and manipulate data',
+    id: 'Om9qyd',
+    description: 'Data transformation category description',
   });
+
+  const simpleOperationsDescription = intl.formatMessage({
+    defaultMessage: 'Basic workflow controls and operations',
+    id: 'VWd29W',
+    description: 'Simple Operations category description',
+  });
+
+  const humanInTheLoopDescription = intl.formatMessage({
+    defaultMessage: 'Manual approvals and user interactions',
+    id: 'DT+e2k',
+    description: 'Human in the loop category description',
+  });
+
+  const getCategoryDescription = useCallback(
+    (categoryKey: string) => {
+      switch (categoryKey) {
+        case 'favorites':
+          return favoritesDescription;
+        case 'aiAgent':
+          return aiAgentDescription;
+        case 'actionInApp':
+          return actionInAppDescription;
+        case 'dataTransformation':
+          return dataTransformationDescription;
+        case 'simpleOperations':
+          return simpleOperationsDescription;
+        case 'humanInTheLoop':
+          return humanInTheLoopDescription;
+        default:
+          return '';
+      }
+    },
+    [
+      favoritesDescription,
+      aiAgentDescription,
+      actionInAppDescription,
+      dataTransformationDescription,
+      simpleOperationsDescription,
+      humanInTheLoopDescription,
+    ]
+  );
+
+  // Add favorites as a category if user has favorites
+  const allCategories = useMemo(() => {
+    const categoryList = [...categories];
+
+    // Add favorites category at the beginning if user has favorites
+    if (favoriteOperationIds.length > 0) {
+      categoryList.unshift({
+        key: 'favorites',
+        text: favoritesLabel,
+      });
+    }
+
+    return categoryList;
+  }, [categories, favoriteOperationIds.length, favoritesLabel]);
+
+  const onCategoryClick = useCallback((categoryKey: string) => {
+    setSelectedCategory(categoryKey);
+  }, []);
+
+  const handleBackToCategories = useCallback(() => {
+    setSelectedCategory(null);
+  }, []);
+
+  const backToCategoriesText = intl.formatMessage({
+    defaultMessage: 'Back to categories',
+    id: 'ixQuxT',
+    description: 'Back to categories button text',
+  });
+
+  // Show category details when a category is selected
+  if (selectedCategory) {
+    return (
+      <div className={classes.container}>
+        <Button className={classes.backButton} appearance="subtle" icon={<ArrowLeft24Regular />} onClick={handleBackToCategories}>
+          {backToCategoriesText}
+        </Button>
+
+        {selectedCategory === 'favorites' && (
+          <Favorites onConnectorSelected={onConnectorSelected} onOperationSelected={onOperationSelected} />
+        )}
+      </div>
+    );
+  }
+
+  // Show category cards when no category is selected
   return (
-    <Accordion className={classNames.accordion} multiple={true} collapsible={true} openItems={openItems} onToggle={handleToggle}>
-      <SpotlightSection
-        index={SpotlightCategoryType.Favorites}
-        title={favoritesLabel}
-        operationsData={favoriteOperations}
-        isLoading={isLoadingFavoriteConnectors || (favoriteActionsIsFetching && !favoriteActionsIsFetchingNextPage)}
-        isOpen={openItems.includes(SpotlightCategoryType.Favorites)}
-        onConnectorSelected={onConnectorSelected}
-        onOperationSelected={onOperationSelected}
-        filters={filters}
-        noOperationDescription={noOperationDescription}
-      >
-        {favoriteActionsHasNextPage || favoriteActionsIsFetchingNextPage ? (
-          <Link className={classNames.favoriteLoadMoreLink} onClick={() => favoriteActionsFetchNextPage()}>
-            {favoriteActionsIsFetchingNextPage ? loadingMoreText : loadMoreText}
-          </Link>
-        ) : null}
-      </SpotlightSection>
-      {isAgenticWorkflow && (isWithinAgenticLoop || isAgentTool) ? (
-        <SpotlightSection
-          index={SpotlightCategoryType.KnowledgeBase}
-          title={knowledgeBaseLabel}
-          operationsData={knowledgeBaseActions}
-          isLoading={isLoadingConnectors}
-          isOpen={openItems.includes(SpotlightCategoryType.KnowledgeBase)}
-          onConnectorSelected={onConnectorSelected}
-          onOperationSelected={onOperationSelected}
-          filters={filters}
+    <div className={classes.container}>
+      {allCategories.map((category: OperationRuntimeCategory) => (
+        <CategoryCard
+          key={category.key}
+          categoryKey={category.key}
+          categoryTitle={category.text}
+          categoryDescription={getCategoryDescription(category.key)}
+          onCategoryClick={onCategoryClick}
         />
-      ) : null}
-      <SpotlightSection
-        index={SpotlightCategoryType.AICapabilities}
-        title={aiCapabilitiesLabel}
-        operationsData={aiActions}
-        isLoading={isLoadingConnectors}
-        isOpen={openItems.includes(SpotlightCategoryType.AICapabilities)}
-        onConnectorSelected={onConnectorSelected}
-        onOperationSelected={onOperationSelected}
-        filters={filters}
-      />
-      <SpotlightSection
-        index={SpotlightCategoryType.BuiltIns}
-        title={builtInLabel}
-        operationsData={builtInActions}
-        isLoading={isLoadingConnectors}
-        isOpen={openItems.includes(SpotlightCategoryType.BuiltIns)}
-        onConnectorSelected={onConnectorSelected}
-        onOperationSelected={onOperationSelected}
-        filters={filters}
-      />
-    </Accordion>
+      ))}
+    </div>
   );
 };

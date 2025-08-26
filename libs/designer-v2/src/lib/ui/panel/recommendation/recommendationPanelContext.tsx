@@ -14,9 +14,8 @@ import { AzureResourceSelection } from './azureResourceSelection';
 import { CustomSwaggerSelection } from './customSwaggerSelection';
 import { OperationGroupDetailView } from './operationGroupDetailView';
 import { SearchView } from './searchView';
-import { Link, Icon } from '@fluentui/react';
-import { Button } from '@fluentui/react-components';
-import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
+import { Button, Link } from '@fluentui/react-components';
+import { bundleIcon, Dismiss24Filled, Dismiss24Regular, ArrowLeft24Regular } from '@fluentui/react-icons';
 import { SearchService, equals, guid, LoggerService, LogEntryLevel, FavoriteContext } from '@microsoft/logic-apps-shared';
 import { OperationSearchHeader, XLargeText } from '@microsoft/designer-ui';
 import type { CommonPanelProps } from '@microsoft/designer-ui';
@@ -26,7 +25,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 import { ActionSpotlight } from './actionSpotlight';
-import { BrowseView } from './browseView';
 import { useOnFavoriteClick } from './hooks';
 
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
@@ -247,7 +245,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
       {selectionState !== SELECTION_STATES.SEARCH || selectedOperationGroupId ? (
         <div className={'msla-sub-heading-container'}>
           <Link onClick={navigateBack} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Icon iconName="Back" />
+            <ArrowLeft24Regular />
             {returnToSearchText}
           </Link>
         </div>
@@ -289,21 +287,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
                   displayRuntimeInfo={displayRuntimeInfo}
                 />
               ) : (
-                <>
-                  <ActionSpotlight
-                    onConnectorSelected={onConnectorCardSelected}
-                    onOperationSelected={onOperationClick}
-                    filters={filters}
-                    allOperations={allOperations}
-                  />
-                  <BrowseView
-                    filters={filters}
-                    setFilters={setFilters}
-                    onConnectorCardSelected={onConnectorCardSelected}
-                    displayRuntimeInfo={false}
-                  />
-                  {/* <ScrollToTop scrollToRef={recommendationPanelRef} /> */}
-                </>
+                <ActionSpotlight onConnectorSelected={onConnectorCardSelected} onOperationSelected={onOperationClick} filters={filters} />
               )}
             </>
           ),

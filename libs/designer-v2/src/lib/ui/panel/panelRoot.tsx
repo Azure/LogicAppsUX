@@ -51,8 +51,8 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
   const [width, setWidth] = useState<PanelSize | string>(PanelSize.Auto);
 
   useEffect(() => {
-    setWidth(collapsed ? PanelSize.Auto : PanelSize.Medium);
-  }, [collapsed]);
+    setWidth(collapsed ? PanelSize.Auto : currentPanelMode === 'Discovery' ? PanelSize.Small : PanelSize.Medium);
+  }, [collapsed, currentPanelMode]);
 
   const dismissPanel = useCallback(() => dispatch(clearPanel()), [dispatch]);
 
@@ -112,7 +112,7 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
     [currentPanelMode]
   );
 
-  const nonBlockingPanels = useMemo(() => ['Connection', 'Assertions'], []);
+  const nonBlockingPanels = useMemo(() => ['Connection', 'Assertions', 'Discovery'], []);
 
   const isLoadingPanel = useIsPanelLoading();
 

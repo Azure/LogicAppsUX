@@ -51,6 +51,73 @@ export const getDefaultRuntimeCategories = (): OperationRuntimeCategory[] => {
   ];
 };
 
+export const getLogicalCategories = (): OperationRuntimeCategory[] => {
+  const intl = getIntl();
+
+  const all = intl.formatMessage({
+    defaultMessage: 'All',
+    id: '4mxRH9',
+    description: 'Filter by All category of connectors',
+  });
+
+  const aiAgent = intl.formatMessage({
+    defaultMessage: 'AI Agent',
+    id: 'cQ/Ocu',
+    description: 'Filter by AI Agent category of connectors',
+  });
+
+  const actionInApp = intl.formatMessage({
+    defaultMessage: 'Action in an app',
+    id: 'FF5p6Q',
+    description: 'Filter by Action in an app category of connectors',
+  });
+
+  const dataTransformation = intl.formatMessage({
+    defaultMessage: 'Data transformation',
+    id: 'tfuHEQ',
+    description: 'Filter by Data transformation category of connectors',
+  });
+
+  const simpleOperations = intl.formatMessage({
+    defaultMessage: 'Simple Operations',
+    id: 'uTTO2H',
+    description: 'Filter by Simple Operations category of connectors',
+  });
+
+  const humanInTheLoop = intl.formatMessage({
+    defaultMessage: 'Human in the loop',
+    id: 'SbIePr',
+    description: 'Filter by Human in the loop category of connectors',
+  });
+
+  return [
+    {
+      key: 'all',
+      text: all,
+    },
+    {
+      key: 'aiAgent',
+      text: aiAgent,
+    },
+    {
+      key: 'actionInApp',
+      text: actionInApp,
+    },
+    {
+      key: 'dataTransformation',
+      text: dataTransformation,
+    },
+    {
+      key: 'simpleOperations',
+      text: simpleOperations,
+    },
+    {
+      key: 'humanInTheLoop',
+      text: humanInTheLoop,
+    },
+  ];
+};
+
 export const getShouldUseSingleColumn = (clientWidth?: number): boolean => (clientWidth ?? 0) < 400;
 
 export const getListHeight = (isSingleColumn: boolean): number => (isSingleColumn ? 800 : 400);
