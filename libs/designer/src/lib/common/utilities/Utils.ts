@@ -21,6 +21,10 @@ export const getSKUDefaultHostOptions = (sku: string) => {
 };
 
 export class AgentUtils {
+  public static ModelType = {
+    AzureOpenAI: 'Azure OpenAI',
+    FoundryService: 'Foundry Agent Service',
+  };
   public static isConnector = (connectorId?: string): boolean => {
     return equals(connectorId ?? '', 'connectionProviders/agent', true) || equals(connectorId ?? '', '/connectionProviders/agent', true);
   };
