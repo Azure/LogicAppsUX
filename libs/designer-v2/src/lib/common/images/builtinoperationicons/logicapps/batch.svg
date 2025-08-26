@@ -1,0 +1,17 @@
+<svg width="32" height="32" enable-background="new 0 0 50 50" version="1.1" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+ <rect width="100%" height="100%" fill="#2280cc"/>
+ <g transform="matrix(.41026 0 0 .41026 5.5385 13.128)" fill="#fff">
+  <path d="m36 18v6h-16v-8h-5v9c0 1.657 1.343 3 3 3h19c1.657 0 3-1.343 3-3v-10h-4z"/>
+  <polygon transform="translate(0,-18)" points="33.5 33 42.5 33 38 27"/>
+  <rect x="6" y="-14" width="22" height="2"/>
+  <rect x="6" y="12" width="22" height="2"/>
+  <rect x="6" y="-14" width="2" height="28"/>
+  <rect x="26" y="-14" width="2" height="28"/>
+  <rect x="10" y="-8" width="14" height="2"/>
+  <rect x="10" y="-2" width="14" height="2"/>
+  <rect x="10" y="4" width="14" height="2"/>
+  <rect x="31" y="4" width="14" height="2"/>
+  <rect x="31" y="-2" width="14" height="2"/>
+  <rect x="31" y="-8" width="14" height="2"/>
+ </g>
+</svg>

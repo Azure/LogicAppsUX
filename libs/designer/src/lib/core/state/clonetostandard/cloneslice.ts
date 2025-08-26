@@ -4,8 +4,6 @@ import { createSlice } from '@reduxjs/toolkit';
 export interface WorkflowState {
   subscriptionId: string;
   resourceGroup: string;
-  location: string;
-  workflowAppName: string;
   logicAppName: string;
 }
 
@@ -16,6 +14,7 @@ export interface SourceWorkflowState extends WorkflowState {
 export interface CloneState {
   sourceApps: SourceWorkflowState[];
   destinationApp: WorkflowState;
+  errorMessage: string | undefined;
 }
 
 const initialState: CloneState = {
@@ -23,28 +22,45 @@ const initialState: CloneState = {
   destinationApp: {
     subscriptionId: '',
     resourceGroup: '',
-    location: '',
-    workflowAppName: '',
     logicAppName: '',
   },
+  errorMessage: undefined,
 };
 
 export const cloneSlice = createSlice({
   name: 'clone',
   initialState,
   reducers: {
+    initializeSourceWithResource: (
+      state,
+      action: PayloadAction<{
+        subscriptionId: string;
+        resourceGroup: string;
+        logicAppName: string;
+      }>
+    ) => {
+      state.sourceApps = [action.payload];
+    },
     setDestinationSubscription: (state, action: PayloadAction<string>) => {
       state.destinationApp.subscriptionId = action.payload;
     },
     setDestinationResourceGroup: (state, action: PayloadAction<string>) => {
       state.destinationApp.resourceGroup = action.payload;
     },
-    setDestinationWorkflowAppDetails: (state, action: PayloadAction<{ name: string; location: string }>) => {
-      state.destinationApp.workflowAppName = action.payload.name;
-      state.destinationApp.location = action.payload.location;
+    setDestinationWorkflowAppDetails: (state, action: PayloadAction<{ name: string }>) => {
+      state.destinationApp.logicAppName = action.payload.name;
+    },
+    updateErrorMessage: (state, action: PayloadAction<string | undefined>) => {
+      state.errorMessage = action.payload;
     },
   },
 });
 
-export const { setDestinationSubscription, setDestinationResourceGroup, setDestinationWorkflowAppDetails } = cloneSlice.actions;
+export const {
+  initializeSourceWithResource,
+  setDestinationSubscription,
+  setDestinationResourceGroup,
+  setDestinationWorkflowAppDetails,
+  updateErrorMessage,
+} = cloneSlice.actions;
 export default cloneSlice.reducer;

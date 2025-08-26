@@ -1,0 +1,138 @@
+@import './cards/templateCard.less';
+@import '../panel/templatePanel/panel.less';
+
+
+.msla-templates-wizard-tab-content {
+    height: 82vh;
+    overflow: auto;
+    position: relative;
+    justify-content: flex-start;
+    padding: 10px 20px;
+}
+
+.msla-templates-error-message-bar {
+    margin: 8px 0px;
+}
+.msla-templates-agent-filters-tabs {
+    margin-top: 12px;
+}
+
+.msla-template-connection-name {
+    display: flex;
+
+    .msla-template-connection-key {
+        padding: 0 4px;
+        margin-top: 2px;
+    }
+}
+
+.msla-templates-basics-tab {
+    display: flex;
+    flex-direction: column;
+    padding-top: 24px;
+
+    .msla-templates-basics-list {
+        width: 100%;
+    }
+
+    .msla-templates-basics-description {
+        padding-top: 6px;
+        vertical-align: middle;
+    }
+
+    .msla-templates-basics-name, .msla-templates-basics-state {
+        padding: 8px 0;
+    }
+}
+
+.msla-templates-parameters-tab {
+    .msla-templates-parameters-values {
+        font-size: 14px;
+
+        &.link {
+            color: var(--colorBrandForegroundLink);
+            cursor: pointer;
+        }
+    }
+    .ms-DetailsRow {
+        border-bottom: none;
+    }
+}
+
+.msla-templates-parameters-callout {
+    width: 343px;
+    padding: 20px 24px;
+
+    .msla-templates-parameter-callout-title {
+        font-size: 20px;
+        margin-bottom: 24px;
+    }
+
+    .msla-templates-parameter-callout-subtitle {
+				color: var(--colorNeutralForeground2);
+        height: 32px;
+    }
+
+    .msla-templates-parameter-callout-associatedWorkflow {
+        margin-top: 24px;
+    }
+
+    .msla-templates-parameter-callout-body {
+        font-weight: bold;
+
+        &.list {
+            text-indent: 10px;
+            list-style-type: circle;
+
+        }
+    }
+}
+
+.msla-template-connection-grid-cell {
+    display: flex;
+
+    .msla-template-connection-cell-content {
+        margin-top: 12px;
+    }
+}
+
+.msla-template-connection-compact {
+    display: flex;
+    flex-direction: row;
+
+    .msla-template-connection-compact-image {
+        border: 1px solid var(--colorNeutralStroke1);
+        border-radius: 4px;
+        padding: 10px 0 0 10px;
+        width: 40px;
+        height: 40px;
+    }
+
+    .msla-template-connection-compact-text {
+        display: flex;
+        flex-direction: column;
+        padding-left: 10px;
+        margin-top: 8px;
+
+        .msla-template-connection-compact-connector {
+            font-weight: 500;
+        }
+
+        .msla-template-connection-compact-status {
+            font-size: 12px;
+        }
+    }
+}
+
+.msla-connection-status-compact {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+
+	.msla-connection-status-compact-icon {
+		width: 16px;
+		height: 16px;
+		border-radius: 2px;
+		overflow: hidden;
+	}
+}

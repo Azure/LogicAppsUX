@@ -67,7 +67,11 @@
   },
   "license": "MIT",
   "lint-staged": {
-    "*.{js,ts,tsx}": ["npm run extract", "eslint --cache --fix", "biome check --write"]
+    "*.{js,ts,tsx}": [
+      "npm run extract",
+      "eslint --cache --fix",
+      "biome check --write"
+    ]
   },
   "private": true,
   "scripts": {
@@ -101,6 +105,7 @@
     "dotenv": "^16.4.5",
     "find-process": "^1.4.7",
     "fs-extra": "^11.2.0",
+    "happy-dom": "^18.0.1",
     "ts-node": "^10.9.2"
   },
   "pnpm": {
