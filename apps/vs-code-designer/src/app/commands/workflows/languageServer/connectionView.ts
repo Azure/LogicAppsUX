@@ -20,11 +20,11 @@ import path from 'path';
 import { localSettingsFileName, managementApiPrefix, workflowAppApiVersion } from '../../../../constants';
 import type { WebviewPanel } from 'vscode';
 import { env, Uri, ViewColumn, window } from 'vscode';
-import { getBundleVersionNumber } from '../../../utils/getDebugSymbolDll';
 import { getLocalSettingsJson } from '../../../utils/appSettings/localSettings';
 import { getArtifactsInLocalProject } from '../../../utils/codeless/artifacts';
 import * as vscode from 'vscode';
 import type { Connection } from '@microsoft/logic-apps-shared';
+import { getBundleVersionNumber } from '../../../utils/bundleFeed';
 
 type Range = {
   Start: {

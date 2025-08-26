@@ -5,7 +5,7 @@ import {
   TemplatePromptResult,
   type StandardApp,
 } from '@microsoft/vscode-extension-logic-apps';
-import { WorkflowKind, WorkflowType } from '../../../constants';
+import { assetsFolderName, WorkflowKind, WorkflowType } from '../../../constants';
 import { localize } from '../../../localize';
 import type { IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
 import * as fs from 'fs-extra';
@@ -230,7 +230,7 @@ export const getWorkflowTemplatePickItems = (language: string, isProjectWizard: 
  * @returns The codeful workflow template.
  */
 export const getCodefulWorkflowTemplate = async () => {
-  const templatePath = path.join(__dirname, 'assets', 'CodefulWorkflowTemplate', 'codefulTemplate.cs');
+  const templatePath = path.join(__dirname, assetsFolderName, 'CodefulWorkflowTemplate', 'codefulTemplate.cs');
   const templateContent = await fs.readFile(templatePath, 'utf-8');
 
   return templateContent;
