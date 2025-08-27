@@ -8,17 +8,20 @@ import { useResourceStrings } from '../../common/resourcepicker/resourcestrings'
 import type { ResourceState } from '../../../core/state/clonetostandard/resourceslice';
 import { useCloneStrings } from '../../../core/clonetostandard/utils/cloneStrings';
 import { updateClonedWorkflowName, updateClonedWorkflowNameValidationError } from '../../../core/state/clonetostandard/cloneslice';
-import { useExistingWorkflowNames } from '../../../core';
 import { validateWorkflowName } from '../../../core/actions/bjsworkflow/templates';
+import { useExistingWorkflowNamesOfResource } from '../../../core';
 
 export const ConfigureLogicApps = () => {
-  const { sourceApps } = useSelector((state: RootState) => state.clone);
+  const {
+    sourceApps,
+    destinationApp: { subscriptionId: destSubscriptionId, resourceGroup: destResourceGroup, logicAppName: destLogicAppName },
+  } = useSelector((state: RootState) => state.clone);
 
   const styles = useCloneTabStyles();
   const resourceStrings = useResourceStrings();
   const cloneStrings = useCloneStrings();
 
-  const { data: existingWorkflowNames } = useExistingWorkflowNames();
+  const { data: existingWorkflowNames } = useExistingWorkflowNamesOfResource(destSubscriptionId, destResourceGroup, destLogicAppName);
   const sourceItems: TemplatesSectionItem[] = useSourceItems(resourceStrings, sourceApps?.[0]);
   const clonedWorkflowItem: TemplatesSectionItem = useCloneWorkflowItem(cloneStrings, existingWorkflowNames ?? []);
 
