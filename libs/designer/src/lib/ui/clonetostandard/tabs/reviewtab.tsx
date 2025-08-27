@@ -7,14 +7,13 @@ import { selectWizardTab } from '../../../core/state/clonetostandard/tabslice';
 import { CloneReviewList } from '../review/clonereviewlist';
 
 interface ReviewTabProps extends CloneWizardTabProps {
-  onClone: () => Promise<void>;
   isSuccessfullyCloned: boolean;
 }
 
 export const reviewTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
-  { tabStatusIcon, disabled, onClone, onClose, isPrimaryButtonDisabled, isSuccessfullyCloned }: ReviewTabProps
+  { tabStatusIcon, disabled, onPrimaryButtonClick, onClose, isPrimaryButtonDisabled, isSuccessfullyCloned }: ReviewTabProps
 ): TemplateTabProps => ({
   id: constants.CLONE_TO_STANDARD_TAB_NAMES.REVIEW,
   title: intl.formatMessage({
@@ -36,7 +35,7 @@ export const reviewTab = (
         }),
         appearance: 'primary',
         disabled: isPrimaryButtonDisabled,
-        onClick: onClone,
+        onClick: onPrimaryButtonClick,
       },
       {
         type: 'navigation',

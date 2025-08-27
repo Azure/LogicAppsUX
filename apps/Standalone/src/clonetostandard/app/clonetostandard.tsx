@@ -5,7 +5,7 @@ import { useMcpStandardStyles } from './styles';
 import { ArmParser } from '../../designer/app/AzureLogicAppsDesigner/Utilities/ArmParser';
 import { cloneConsumptionToStandard } from '../../designer/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts';
 import { useCallback, useMemo } from 'react';
-import { BaseResourceService } from '@microsoft/logic-apps-shared';
+import { BaseCloneService, BaseResourceService } from '@microsoft/logic-apps-shared';
 import { HttpClient } from '../../designer/app/AzureLogicAppsDesigner/Services/HttpClient';
 
 export const CloneToStandard = () => {
@@ -61,8 +61,16 @@ const getServices = (): any => {
   const armUrl = 'https://management.azure.com';
 
   const resourceService = new BaseResourceService({ baseUrl: armUrl, httpClient, apiVersion });
+  const cloneService = new BaseCloneService({
+    baseUrl: armUrl,
+    httpClient,
+    apiVersions: {
+      gateway: '2018-11-01',
+    },
+  });
 
   return {
     resourceService,
+    cloneService,
   };
 };

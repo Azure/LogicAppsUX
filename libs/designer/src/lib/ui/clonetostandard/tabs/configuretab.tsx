@@ -1,15 +1,12 @@
-import type { AppDispatch } from '../../../core/state/clonetostandard/store';
 import type { TemplateTabProps } from '@microsoft/designer-ui';
 import constants from '../../../common/constants';
 import type { IntlShape } from 'react-intl';
-import type { CloneWizardTabProps } from './model';
-import { selectWizardTab } from '../../../core/state/clonetostandard/tabslice';
 import { ConfigureLogicApps } from '../logicapps/configurelogicapps';
+import type { CloneWizardTabProps } from './model';
 
 export const configureTab = (
   intl: IntlShape,
-  dispatch: AppDispatch,
-  { tabStatusIcon, disabled, onClose, isPrimaryButtonDisabled }: CloneWizardTabProps
+  { tabStatusIcon, disabled, onClose, onPrimaryButtonClick, isPrimaryButtonDisabled }: CloneWizardTabProps
 ): TemplateTabProps => ({
   id: constants.CLONE_TO_STANDARD_TAB_NAMES.CONFIGURE,
   title: intl.formatMessage({
@@ -31,9 +28,7 @@ export const configureTab = (
         }),
         appearance: 'primary',
         disabled: isPrimaryButtonDisabled,
-        onClick: () => {
-          dispatch(selectWizardTab(constants.CLONE_TO_STANDARD_TAB_NAMES.REVIEW));
-        },
+        onClick: onPrimaryButtonClick,
       },
       {
         type: 'navigation',
