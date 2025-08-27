@@ -4,8 +4,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../core/state/clonetostandard/store';
 import { reviewTab } from './reviewtab';
 import { useCallback, useMemo } from 'react';
-import { updateErrorMessage } from '../../../core/state/clonetostandard/cloneslice';
+import { updateClonedWorkflowNameValidationError, updateErrorMessage } from '../../../core/state/clonetostandard/cloneslice';
 import { isUndefinedOrEmptyString } from '@microsoft/logic-apps-shared';
+import { validateWorkflowName } from '../../../core/actions/bjsworkflow/templates';
+import { useExistingWorkflowNamesOfResource } from '../../../core';
+import { selectWizardTab } from '../../../core/state/clonetostandard/tabslice';
+import constants from '../../../common/constants';
 
 export type CloneCallHandler = (
   sourceApps: { subscriptionId: string; resourceGroup: string; logicAppName: string }[],
@@ -25,6 +29,27 @@ export const useCloneWizardTabs = ({
     clone: { sourceApps, destinationApp, errorMessage },
   } = useSelector((state: RootState) => state);
 
+  const { data: existingWorkflowNames } = useExistingWorkflowNamesOfResource(
+    destinationApp.subscriptionId,
+    destinationApp.resourceGroup,
+    destinationApp.logicAppName
+  );
+
+  const handleOnConfigureNext = useCallback(async () => {
+    // Note: temporary while only supporting single case, to-be-changed once supporting multi.
+    const validationError = await validateWorkflowName(sourceApps?.[0]?.clonedWorkflowName, false, {
+      subscriptionId: sourceApps?.[0]?.subscriptionId,
+      resourceGroupName: sourceApps?.[0]?.resourceGroup,
+      existingWorkflowNames: existingWorkflowNames ?? [],
+    });
+    dispatch(updateClonedWorkflowNameValidationError(validationError));
+
+    if (validationError) {
+      return;
+    }
+    dispatch(selectWizardTab(constants.CLONE_TO_STANDARD_TAB_NAMES.REVIEW));
+  }, [sourceApps, dispatch, existingWorkflowNames]);
+
   const handleOnClone = useCallback(async () => {
     try {
       await onCloneCall(sourceApps, destinationApp);
@@ -37,6 +62,7 @@ export const useCloneWizardTabs = ({
     () =>
       sourceApps.length < 1 ||
       sourceApps.some((app) => !app.logicAppName) ||
+      sourceApps.some((app) => !isUndefinedOrEmptyString(app.clonedWorkflowNameValidationError)) ||
       !destinationApp.subscriptionId ||
       !destinationApp.resourceGroup ||
       !destinationApp.logicAppName,
@@ -46,16 +72,17 @@ export const useCloneWizardTabs = ({
   const failedCloneValidation = useMemo(() => !isUndefinedOrEmptyString(errorMessage), [errorMessage]);
 
   return [
-    configureTab(intl, dispatch, {
+    configureTab(intl, {
       tabStatusIcon: missingInfoInConfigure ? undefined : 'success',
       onCancel: onClose,
       isPrimaryButtonDisabled: missingInfoInConfigure,
+      onPrimaryButtonClick: handleOnConfigureNext,
     }),
     reviewTab(intl, dispatch, {
       tabStatusIcon: failedCloneValidation ? 'error' : undefined,
-      onClone: handleOnClone,
       disabled: missingInfoInConfigure,
       isPrimaryButtonDisabled: failedCloneValidation,
+      onPrimaryButtonClick: handleOnClone,
     }),
   ];
 };

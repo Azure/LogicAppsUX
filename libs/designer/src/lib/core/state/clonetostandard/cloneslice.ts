@@ -10,6 +10,7 @@ export interface WorkflowState {
 export interface SourceWorkflowState extends WorkflowState {
   lockField?: boolean; // Indicates if this field is locked & cannot be modified/removed
   clonedWorkflowName: string;
+  clonedWorkflowNameValidationError?: string;
 }
 
 export interface CloneState {
@@ -61,6 +62,13 @@ export const cloneSlice = createSlice({
         clonedWorkflow.clonedWorkflowName = action.payload;
       }
     },
+    // Note: temporary while only supporting single case, to-be-changed once supporting multi.
+    updateClonedWorkflowNameValidationError: (state, action: PayloadAction<string | undefined>) => {
+      const clonedWorkflow = state.sourceApps[0];
+      if (clonedWorkflow) {
+        clonedWorkflow.clonedWorkflowNameValidationError = action.payload;
+      }
+    },
   },
 });
 
@@ -71,5 +79,6 @@ export const {
   setDestinationWorkflowAppDetails,
   updateErrorMessage,
   updateClonedWorkflowName,
+  updateClonedWorkflowNameValidationError,
 } = cloneSlice.actions;
 export default cloneSlice.reducer;
