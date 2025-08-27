@@ -84,11 +84,16 @@ const useSourceItems = (resourceStrings: Record<string, string>, sourceResources
 };
 
 const useDestinationItems = (resourceStrings: Record<string, string>, destinationResources: ResourceState, clonedWorkflowName: string) => {
-  const { subscriptionId, logicAppName } = destinationResources;
+  const { subscriptionId, resourceGroup, logicAppName } = destinationResources;
   const items: TemplatesSectionItem[] = [
     {
       label: resourceStrings.SUBSCRIPTION,
       value: subscriptionId || '',
+      type: 'text',
+    },
+    {
+      label: resourceStrings.RESOURCE_GROUP,
+      value: resourceGroup || '',
       type: 'text',
     },
     {
