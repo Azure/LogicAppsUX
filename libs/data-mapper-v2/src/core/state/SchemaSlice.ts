@@ -26,4 +26,7 @@ export const schemaSlice = createSlice({
 
 export const { setAvailableSchemas } = schemaSlice.actions;
 
+// Alias for compatibility
+export const loadCurrentSchemaOptions = setAvailableSchemas;
+
 export default schemaSlice.reducer;

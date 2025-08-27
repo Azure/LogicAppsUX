@@ -4,8 +4,10 @@ import {
   DataMapperDesigner as DataMapperDesignerV2,
   DataMapDataProvider as DataMapDataProviderV2,
   DataMapperDesignerProvider as DataMapperDesignerProviderV2,
-  type IDataMapperFileService,
-  type SchemaFile,
+  MockDataMapperFileService,
+  MockDataMapperApiService,
+  InitDataMapperFileService,
+  XsltTestHelper,
 } from '@microsoft/logic-apps-data-mapper-v2';
 import type { AppDispatch, RootState } from '../state/Store';
 import { AzureThemeDark } from '@fluentui/azure-themes/lib/azure/AzureThemeDark';
@@ -13,11 +15,16 @@ import { AzureThemeLight } from '@fluentui/azure-themes/lib/azure/AzureThemeLigh
 import { ThemeProvider } from '@fluentui/react';
 import { FluentProvider, webDarkTheme, webLightTheme } from '@fluentui/react-components';
 import { PortalCompatProvider } from '@fluentui/react-portal-compat';
-import { InitDataMapperApiService, defaultDataMapperApiServiceOptions, getFunctions } from '@microsoft/logic-apps-data-mapper-v2';
+import {
+  InitDataMapperApiService,
+  InitOtherDMService,
+  defaultDataMapperApiServiceOptions,
+  getFunctions,
+} from '@microsoft/logic-apps-data-mapper-v2';
 import { Theme as ThemeType } from '@microsoft/logic-apps-shared';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import type { IFileSysTreeItem, MapMetadataV2, SchemaType } from '@microsoft/logic-apps-shared';
+import type { IFileSysTreeItem, MapMetadataV2 } from '@microsoft/logic-apps-shared';
 
 const mockFileItems: IFileSysTreeItem[] = [
   {
@@ -43,52 +50,8 @@ const mockFileItems: IFileSysTreeItem[] = [
   },
 ];
 
-class DataMapperFileService implements IDataMapperFileService {
-  private verbose: boolean;
-
-  constructor(verbose: boolean) {
-    this.verbose = verbose;
-  }
-
-  public getSchemaFromFile(schemaType: SchemaType): void {
-    console.log(`getSchemaFromFile: ${schemaType}`);
-  }
-
-  public isTestDisabledForOS = () => {
-    return;
-  };
-
-  public sendNotification(title: string, text: string, level: number) {
-    console.log(`Notification: ${title}, data: ${text}, level: ${level}`);
-  }
-
-  public saveMapDefinitionCall = (dataMapDefinition: string, mapMetadata: string) => {
-    if (this.verbose) {
-      console.log('Saved definition: ', dataMapDefinition);
-      console.log('Saved metadata: ', mapMetadata);
-    }
-  };
-
-  public saveDraftStateCall(_dataMapDefinition: string): void {
-    return;
-  }
-
-  public readCurrentSchemaOptions = () => {
-    return;
-  };
-
-  public saveXsltCall = (_xslt: string) => {
-    return;
-  };
-
-  public readCurrentCustomXsltPathOptions = () => {
-    return;
-  };
-
-  public addSchemaFromFile = (_selectedSchemaFile: SchemaFile) => {
-    return;
-  };
-}
+// Using MockDataMapperFileService with test schema functionality
+// This enables test schemas to appear in the "Select existing" dropdown
 
 const customXsltPath: IFileSysTreeItem[] = [
   {
@@ -128,7 +91,15 @@ export const DataMapperStandaloneDesignerV2 = () => {
     accessToken: armToken,
   });
 
-  const dataMapperFileService = new DataMapperFileService(true);
+  // Initialize MockDataMapperFileService with test schema functionality
+  const dataMapperFileService = new MockDataMapperFileService();
+
+  // Initialize the service globally so components can access it
+  InitDataMapperFileService(dataMapperFileService);
+
+  // Initialize MockDataMapperApiService to handle schema loading without HTTP calls
+  const mockApiService = new MockDataMapperApiService();
+  InitOtherDMService(mockApiService);
 
   useEffect(() => {
     const fetchFunctionList = async () => {
@@ -188,6 +159,7 @@ export const DataMapperStandaloneDesignerV2 = () => {
             theme={theme}
           >
             <DataMapperDesignerV2 fileService={dataMapperFileService} />
+            <XsltTestHelper />
           </DataMapDataProviderV2>
         </DataMapperDesignerProviderV2>
       </div>

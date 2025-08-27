@@ -14,10 +14,11 @@ import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import { generateMapMetadata } from '../../mapHandling/MapMetadataSerializer';
 import { DataMapperFileService, generateDataMapXslt } from '../../core';
-import { saveDataMap, updateDataMapLML } from '../../core/state/DataMapSlice';
+import { saveDataMap, updateDataMapLML, setMappingMode, type MappingMode } from '../../core/state/DataMapSlice';
 import { LogCategory } from '../../utils/Logging.Utils';
 import type { MetaMapDefinition } from '../../mapHandling/MapDefinitionSerializer';
 import { convertToMapDefinition } from '../../mapHandling/MapDefinitionSerializer';
+import { convertConnectionsToXslt } from '../../core/queries/datamap';
 import { toggleCodeView, toggleMapChecker, toggleTestPanel } from '../../core/state/PanelSlice';
 import { useStyles } from './styles';
 import { emptyCanvasRect, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
@@ -34,7 +35,7 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
   const undoStack = useSelector((state: RootState) => state.dataMap.past);
   const redoStack = useSelector((state: RootState) => state.dataMap.future);
   const isCodeViewOpen = useSelector((state: RootState) => state.panel.codeViewPanel.isOpen);
-  const { sourceSchema, targetSchema } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
+  const { sourceSchema, targetSchema, mappingMode } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
 
   const xsltFilename = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.xsltFilename);
 
@@ -63,6 +64,12 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
   const dataMapDefinition = useMemo<MetaMapDefinition>(() => {
     if (sourceSchema && targetSchema) {
       try {
+        if (mappingMode === 'XSLT') {
+          // For XSLT mode, convert connections to XSLT
+          const xsltResult = convertConnectionsToXslt(currentConnections, sourceSchema, targetSchema);
+          return { isSuccess: true, definition: xsltResult };
+        }
+        // For LML mode, use existing conversion
         const result = convertToMapDefinition(currentConnections, sourceSchema, targetSchema, targetSchemaSortArray);
         return result;
       } catch (error) {
@@ -71,7 +78,7 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
       }
     }
     return { isSuccess: false, errorNodes: [] };
-  }, [sourceSchema, targetSchema, currentConnections, targetSchemaSortArray]);
+  }, [sourceSchema, targetSchema, currentConnections, targetSchemaSortArray, mappingMode]);
 
   const onTestClick = useCallback(() => {
     dispatch(toggleTestPanel());
@@ -84,6 +91,13 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
   const onMapCheckerClick = useCallback(() => {
     dispatch(toggleMapChecker());
   }, [dispatch]);
+
+  const onMappingModeChange = useCallback(
+    (newMode: MappingMode) => {
+      dispatch(setMappingMode(newMode));
+    },
+    [dispatch]
+  );
 
   const onSaveClick = useCallback(() => {
     if (!canvasRect || !canvasRect.width || !canvasRect.height) {
@@ -276,6 +290,12 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
           <ToolbarButton disabled={disabledState.mapChecker} icon={mapCheckerIcon} onClick={onMapCheckerClick}>
             {Resources.VIEW_MAP_CHECKER}
           </ToolbarButton>
+          <Switch
+            label={`Mode: ${mappingMode}`}
+            onChange={() => onMappingModeChange(mappingMode === 'LML' ? 'XSLT' : 'LML')}
+            checked={mappingMode === 'XSLT'}
+            disabled={sourceInEditState || targetInEditState}
+          />
           <Switch disabled={disabledState.codeView} label={Resources.VIEW_CODE} onChange={onCodeViewClick} checked={isCodeViewOpen} />
         </ToolbarGroup>
       </Toolbar>

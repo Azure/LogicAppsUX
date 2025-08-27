@@ -1,0 +1,60 @@
+{
+  "type": "object",
+  "properties": {
+    "TargetRoot": {
+      "type": "object",
+      "properties": {
+        "CustomerInfo": {
+          "type": "object",
+          "properties": {
+            "Name": {
+              "type": "string",
+              "description": "Transformed customer name"
+            },
+            "Email": {
+              "type": "string",
+              "format": "email",
+              "description": "Transformed customer email"
+            }
+          },
+          "required": ["Name", "Email"]
+        },
+        "Orders": {
+          "type": "object",
+          "properties": {
+            "OrderItem": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "OrderId": {
+                    "type": "string",
+                    "description": "Transformed order ID"
+                  },
+                  "Product": {
+                    "type": "string",
+                    "description": "Product name"
+                  },
+                  "Quantity": {
+                    "type": "number",
+                    "description": "Order quantity"
+                  },
+                  "HighValue": {
+                    "type": "boolean",
+                    "description": "Flag for high-value orders"
+                  }
+                },
+                "required": ["OrderId", "Product", "Quantity"]
+              }
+            }
+          }
+        },
+        "ProcessedDate": {
+          "type": "string",
+          "description": "Date when the transformation was processed"
+        }
+      },
+      "required": ["CustomerInfo", "Orders", "ProcessedDate"]
+    }
+  }
+}

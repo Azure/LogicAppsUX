@@ -1,0 +1,56 @@
+{
+  "type": "object",
+  "properties": {
+    "SourceRoot": {
+      "type": "object",
+      "properties": {
+        "Customer": {
+          "type": "object",
+          "properties": {
+            "Name": {
+              "type": "string",
+              "description": "Customer's full name"
+            },
+            "Email": {
+              "type": "string",
+              "format": "email",
+              "description": "Customer's email address"
+            },
+            "Orders": {
+              "type": "object",
+              "properties": {
+                "Order": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "Order ID attribute"
+                      },
+                      "ProductName": {
+                        "type": "string",
+                        "description": "Name of the product"
+                      },
+                      "Quantity": {
+                        "type": "number",
+                        "description": "Quantity ordered"
+                      },
+                      "Price": {
+                        "type": "number",
+                        "description": "Price per unit"
+                      }
+                    },
+                    "required": ["id", "ProductName", "Quantity", "Price"]
+                  }
+                }
+              }
+            }
+          },
+          "required": ["Name", "Email", "Orders"]
+        }
+      },
+      "required": ["Customer"]
+    }
+  }
+}

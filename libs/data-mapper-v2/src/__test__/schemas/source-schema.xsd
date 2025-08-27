@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           elementFormDefault="qualified">
+
+  <!-- Root element definition -->
+  <xs:element name="SourceRoot" type="SourceRootType"/>
+
+  <!-- Complex type for SourceRoot -->
+  <xs:complexType name="SourceRootType">
+    <xs:sequence>
+      <xs:element name="Customer" type="CustomerType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Complex type for Customer -->
+  <xs:complexType name="CustomerType">
+    <xs:sequence>
+      <xs:element name="Name" type="xs:string"/>
+      <xs:element name="Email" type="xs:string"/>
+      <xs:element name="Orders" type="OrdersType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Complex type for Orders -->
+  <xs:complexType name="OrdersType">
+    <xs:sequence>
+      <xs:element name="Order" type="OrderType" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Complex type for Order -->
+  <xs:complexType name="OrderType">
+    <xs:sequence>
+      <xs:element name="ProductName" type="xs:string"/>
+      <xs:element name="Quantity" type="xs:int"/>
+      <xs:element name="Price" type="xs:decimal"/>
+    </xs:sequence>
+    <xs:attribute name="id" type="xs:string" use="required"/>
+  </xs:complexType>
+
+</xs:schema>

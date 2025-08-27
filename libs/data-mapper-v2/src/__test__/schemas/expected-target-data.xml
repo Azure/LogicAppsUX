@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TargetRoot>
+  <CustomerInfo>
+    <Name>John Smith</Name>
+    <Email>john.smith@example.com</Email>
+  </CustomerInfo>
+  <Orders>
+    <OrderItem>
+      <OrderId>ORD-001</OrderId>
+      <Product>Laptop Computer</Product>
+      <Quantity>1</Quantity>
+      <HighValue>true</HighValue>
+    </OrderItem>
+    <OrderItem>
+      <OrderId>ORD-002</OrderId>
+      <Product>Wireless Mouse</Product>
+      <Quantity>2</Quantity>
+    </OrderItem>
+    <OrderItem>
+      <OrderId>ORD-003</OrderId>
+      <Product>External Monitor</Product>
+      <Quantity>1</Quantity>
+      <HighValue>true</HighValue>
+    </OrderItem>
+  </Orders>
+  <ProcessedDate>2024-01-01</ProcessedDate>
+</TargetRoot>

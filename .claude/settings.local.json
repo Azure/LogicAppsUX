@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": ["Bash(npx tsc:*)", "Bash(pnpm run:*)"],
+    "deny": [],
+    "ask": []
+  }
+}

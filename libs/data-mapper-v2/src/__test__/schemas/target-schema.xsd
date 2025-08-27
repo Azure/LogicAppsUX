@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           elementFormDefault="qualified">
+
+  <!-- Root element definition -->
+  <xs:element name="TargetRoot" type="TargetRootType"/>
+
+  <!-- Complex type for TargetRoot -->
+  <xs:complexType name="TargetRootType">
+    <xs:sequence>
+      <xs:element name="CustomerInfo" type="CustomerInfoType"/>
+      <xs:element name="Orders" type="TargetOrdersType"/>
+      <xs:element name="ProcessedDate" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Complex type for CustomerInfo -->
+  <xs:complexType name="CustomerInfoType">
+    <xs:sequence>
+      <xs:element name="Name" type="xs:string"/>
+      <xs:element name="Email" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Complex type for Orders -->
+  <xs:complexType name="TargetOrdersType">
+    <xs:sequence>
+      <xs:element name="OrderItem" type="OrderItemType" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Complex type for OrderItem -->
+  <xs:complexType name="OrderItemType">
+    <xs:sequence>
+      <xs:element name="OrderId" type="xs:string"/>
+      <xs:element name="Product" type="xs:string"/>
+      <xs:element name="Quantity" type="xs:int"/>
+      <xs:element name="HighValue" type="xs:boolean" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+</xs:schema>

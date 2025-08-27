@@ -27,6 +27,7 @@ import { createReactFlowFunctionKey, isFunctionNode, isSourceNode, isTargetNode 
 import { UnboundedInput } from '../../constants/FunctionConstants';
 import { splitEdgeId } from '../../utils/Edge.Utils';
 import { doesFunctionMetadataExist } from '../../utils/Metadata.utils';
+import { XsltDefinitionDeserializer } from '../../mapHandling/XsltDefinitionDeserializer';
 
 export interface DataMapState {
   curDataMapOperation: DataMapOperationState;
@@ -67,9 +68,12 @@ export interface SchemaTreeDataProps {
   endIndex: number;
 }
 
+export type MappingMode = 'LML' | 'XSLT';
+
 export interface DataMapOperationState {
   dataMapConnections: ConnectionDictionary;
   dataMapLML: string;
+  mappingMode: MappingMode;
   needsLayout?: boolean;
   sourceSchema?: SchemaExtended;
   flattenedSourceSchema: SchemaNodeDictionary;
@@ -100,6 +104,7 @@ export interface DataMapOperationState {
 const emptyPristineState: DataMapOperationState = {
   dataMapConnections: {},
   dataMapLML: '',
+  mappingMode: 'LML',
   functionNodes: {},
   flattenedSourceSchema: {},
   flattenedTargetSchema: {},
@@ -142,6 +147,14 @@ export interface InitialDataMapAction {
   sourceSchema: SchemaExtended;
   targetSchema: SchemaExtended;
   dataMapConnections: ConnectionDictionary;
+  metadata: MapMetadataV2 | undefined;
+}
+
+export interface InitialXsltDataMapAction {
+  sourceSchema: SchemaExtended;
+  targetSchema: SchemaExtended;
+  xsltContent: string;
+  functions: FunctionData[];
   metadata: MapMetadataV2 | undefined;
 }
 
@@ -188,6 +201,12 @@ export const dataMapSlice = createSlice({
     setXsltContent: (state, action: PayloadAction<string>) => {
       state.curDataMapOperation.xsltContent = action.payload;
       state.pristineDataMap.xsltContent = action.payload;
+    },
+
+    setMappingMode: (state, action: PayloadAction<MappingMode>) => {
+      state.curDataMapOperation.mappingMode = action.payload;
+      state.pristineDataMap.mappingMode = action.payload;
+      state.lastAction = `Set mapping mode to ${action.payload}`;
     },
 
     setInitialSchema: (state, action: PayloadAction<InitialSchemaAction>) => {
@@ -282,6 +301,62 @@ export const dataMapSlice = createSlice({
       state.targetInEditState = false;
       state.pristineDataMap = newState;
       state.lastAction = 'Set initial data map';
+    },
+
+    setInitialXsltDataMap: (state, action: PayloadAction<InitialXsltDataMapAction>) => {
+      const { sourceSchema, targetSchema, xsltContent, functions, metadata } = action.payload;
+      const currentState = state.curDataMapOperation;
+
+      try {
+        // Create XSLT deserializer and convert to connections
+        const xsltDeserializer = new XsltDefinitionDeserializer(xsltContent, sourceSchema, targetSchema, functions);
+        const dataMapConnections = xsltDeserializer.convertFromXsltDefinition();
+
+        const flattenedSourceSchema = flattenSchemaIntoDictionary(sourceSchema, SchemaType.Source);
+        const flattenedTargetSchema = flattenSchemaIntoDictionary(targetSchema, SchemaType.Target);
+        const targetSchemaSortArray = flattenSchemaIntoSortArray(targetSchema.schemaTreeRoot);
+
+        const functionNodes: FunctionDictionary = createFunctionDictionary(dataMapConnections, flattenedTargetSchema);
+
+        assignFunctionNodePositionsFromMetadata(dataMapConnections, metadata?.functionNodes ?? [], functionNodes);
+
+        const needsLayout = !doesFunctionMetadataExist(metadata);
+
+        const newState: DataMapOperationState = {
+          ...currentState,
+          needsLayout: needsLayout,
+          sourceSchema,
+          targetSchema,
+          flattenedSourceSchema,
+          flattenedTargetSchema,
+          functionNodes,
+          targetSchemaOrdering: targetSchemaSortArray,
+          dataMapConnections: dataMapConnections ?? {},
+          loadedMapMetadata: metadata,
+          mappingMode: 'XSLT',
+          xsltContent: xsltContent,
+          sourceSchemaTreeData: {
+            startIndex: -1,
+            endIndex: -1,
+            visibleNodes: [],
+          },
+          targetSchemaTreeData: {
+            startIndex: -1,
+            endIndex: -1,
+            visibleNodes: [],
+          },
+        };
+
+        state.curDataMapOperation = newState;
+        state.isDirty = false;
+        state.sourceInEditState = false;
+        state.targetInEditState = false;
+        state.pristineDataMap = newState;
+        state.lastAction = 'Set initial XSLT data map';
+      } catch (error) {
+        console.error('Failed to load XSLT data map:', error);
+        state.lastAction = 'Failed to load XSLT data map';
+      }
     },
     createInputSlotForUnboundedInput: (state, action: PayloadAction<string>) => {
       const newState: DataMapState = {
@@ -664,8 +739,10 @@ export const {
   setNeedsLayout,
   setXsltFilename,
   setXsltContent,
+  setMappingMode,
   setInitialSchema,
   setInitialDataMap,
+  setInitialXsltDataMap,
   setSelectedItem,
   makeConnectionFromMap,
   updateDataMapLML,
