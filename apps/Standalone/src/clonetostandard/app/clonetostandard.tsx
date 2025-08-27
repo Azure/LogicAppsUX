@@ -3,8 +3,7 @@ import type { RootState } from '../state/store';
 import { useSelector } from 'react-redux';
 import { useMcpStandardStyles } from './styles';
 import { ArmParser } from '../../designer/app/AzureLogicAppsDesigner/Utilities/ArmParser';
-import { useWorkflowAndArtifactsConsumption } from '../../designer/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts';
-import { WorkflowUtility } from '../../designer/app/AzureLogicAppsDesigner/Utilities/Workflow';
+import { cloneConsumptionToStandard } from '../../designer/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts';
 import { useCallback, useMemo } from 'react';
 import { BaseResourceService } from '@microsoft/logic-apps-shared';
 import { HttpClient } from '../../designer/app/AzureLogicAppsDesigner/Services/HttpClient';
@@ -12,17 +11,16 @@ import { HttpClient } from '../../designer/app/AzureLogicAppsDesigner/Services/H
 export const CloneToStandard = () => {
   const styles = useMcpStandardStyles();
   const { resourcePath: workflowId, theme } = useSelector((state: RootState) => state.workflowLoader);
-  const { data: workflowData } = useWorkflowAndArtifactsConsumption(workflowId!);
-  const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowData?.location ?? 'westus');
 
   const resourceDetails = new ArmParser(workflowId ?? '');
 
-  const onExportCall = useCallback(
+  const onCloneCall = useCallback(
     async (
       sourceApps: { subscriptionId: string; resourceGroup: string; logicAppName: string }[],
       destinationApp: { subscriptionId: string; resourceGroup: string; logicAppName: string }
     ) => {
       console.log('TODO: on submit', sourceApps, destinationApp);
+      await cloneConsumptionToStandard(sourceApps, destinationApp);
     },
     []
   );
@@ -35,25 +33,22 @@ export const CloneToStandard = () => {
 
   return (
     <CloneWizardProvider locale="en-US" theme={theme}>
-      <div className={`${styles.container} ${styles.fadeIn}`}>
-        <div className={styles.wizardContainer}>
-          <div className={styles.wizardContent}>
-            <div className={styles.wizardWrapper}>
-              <CloneDataProvider
-                resourceDetails={{
-                  subscriptionId: resourceDetails.subscriptionId,
-                  resourceGroup: resourceDetails.resourceGroup,
-                  logicAppName: resourceDetails.resourceName,
-                  location: canonicalLocation,
-                }}
-                services={services}
-              >
-                <CloneWizard onCloneCall={onExportCall} onClose={onClose} />
-                <div id="mcp-layer-host" className={styles.layerHost} />
-              </CloneDataProvider>
-            </div>
-          </div>
-        </div>
+      <div
+        style={{
+          margin: '20px',
+        }}
+      >
+        <CloneDataProvider
+          resourceDetails={{
+            subscriptionId: resourceDetails.subscriptionId,
+            resourceGroup: resourceDetails.resourceGroup,
+            logicAppName: resourceDetails.resourceName,
+          }}
+          services={services}
+        >
+          <CloneWizard onCloneCall={onCloneCall} onClose={onClose} />
+          <div id="mcp-layer-host" className={styles.layerHost} />
+        </CloneDataProvider>
       </div>
     </CloneWizardProvider>
   );

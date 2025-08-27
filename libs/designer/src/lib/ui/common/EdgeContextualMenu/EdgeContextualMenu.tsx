@@ -189,8 +189,8 @@ export const EdgeContextualMenu = () => {
   });
 
   const newAgentText = intl.formatMessage({
-    defaultMessage: 'Add an agentic loop',
-    id: 'Wq8rLF',
+    defaultMessage: 'Add an agent',
+    id: 'tjg2VO',
     description: 'Button text for adding an agentic loop',
   });
 

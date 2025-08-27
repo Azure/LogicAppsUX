@@ -37,13 +37,18 @@ export const CopyInputControlWithAgent = React.forwardRef<Pick<HTMLElement, 'foc
       description: 'Label for API key copy button',
     });
 
-    const handleAgentViewerOpen = () => {
-      setIsAgentViewerOpen(true);
-    };
+    const handleAgentViewerOpen = React.useCallback(() => {
+      // If there are no query params, easy auth is enabled so chat cannot be opened as Iframe in portal
+      if (queryParams) {
+        setIsAgentViewerOpen(true);
+      } else {
+        window.open(chatUrl, '_blank', 'noopener,noreferrer');
+      }
+    }, [chatUrl, queryParams]);
 
-    const handleAgentViewerClose = () => {
+    const handleAgentViewerClose = React.useCallback(() => {
       setIsAgentViewerOpen(false);
-    };
+    }, []);
 
     return (
       <>
