@@ -19,8 +19,8 @@ export const HandoffTab: React.FC<PanelTabProps> = (props) => {
     () => ({
       handoffDescription: intl.formatMessage({
         defaultMessage:
-          'Handoffs define which agents can receive control of the workflow. Add descriptions to help agents understand the purpose of the handoff.',
-        id: '2LtWMp',
+          'Handoffs specify which agents can control the workflow after the current agent. Add a description to help the next agent understand the handoff purpose. You can send optional extra content or data to the next agent.',
+        id: 'owpAI/',
         description: 'Description of handoffs',
       }),
       noHandoffWarning: intl.formatMessage({
