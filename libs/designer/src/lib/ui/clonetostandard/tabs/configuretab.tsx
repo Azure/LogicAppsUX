@@ -10,7 +10,11 @@ interface ConfigureTabProps extends CloneWizardTabProps {
   onCancel: () => void;
 }
 
-export const configureTab = (intl: IntlShape, dispatch: AppDispatch, { tabStatusIcon, onCancel }: ConfigureTabProps): TemplateTabProps => ({
+export const configureTab = (
+  intl: IntlShape,
+  dispatch: AppDispatch,
+  { tabStatusIcon, onCancel, isPrimaryButtonDisabled }: ConfigureTabProps
+): TemplateTabProps => ({
   id: constants.CLONE_TO_STANDARD_TAB_NAMES.CONFIGURE,
   title: intl.formatMessage({
     defaultMessage: 'Configure',
@@ -29,6 +33,7 @@ export const configureTab = (intl: IntlShape, dispatch: AppDispatch, { tabStatus
           description: 'Button text for moving to the next tab in the create workflow panel',
         }),
         appearance: 'primary',
+        disabled: isPrimaryButtonDisabled,
         onClick: () => {
           dispatch(selectWizardTab(constants.CLONE_TO_STANDARD_TAB_NAMES.REVIEW));
         },
