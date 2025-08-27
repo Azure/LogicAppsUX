@@ -37,6 +37,7 @@ export const useCloneWizardTabs = ({
     () =>
       sourceApps.length < 1 ||
       sourceApps.some((app) => !app.logicAppName) ||
+      sourceApps.some((app) => !isUndefinedOrEmptyString(app.clonedWorkflowNameValidationError)) ||
       !destinationApp.subscriptionId ||
       !destinationApp.resourceGroup ||
       !destinationApp.logicAppName,

@@ -7,7 +7,9 @@ import { TemplatesSection, type TemplatesSectionItem } from '@microsoft/designer
 import { useResourceStrings } from '../../common/resourcepicker/resourcestrings';
 import type { ResourceState } from '../../../core/state/clonetostandard/resourceslice';
 import { useCloneStrings } from '../../../core/clonetostandard/utils/cloneStrings';
-import { updateClonedWorkflowName } from '../../../core/state/clonetostandard/cloneslice';
+import { updateClonedWorkflowName, updateClonedWorkflowNameValidationError } from '../../../core/state/clonetostandard/cloneslice';
+import { useExistingWorkflowNames } from '../../../core';
+import { validateWorkflowName } from '../../../core/actions/bjsworkflow/templates';
 
 export const ConfigureLogicApps = () => {
   const { sourceApps } = useSelector((state: RootState) => state.clone);
@@ -16,8 +18,9 @@ export const ConfigureLogicApps = () => {
   const resourceStrings = useResourceStrings();
   const cloneStrings = useCloneStrings();
 
+  const { data: existingWorkflowNames } = useExistingWorkflowNames();
   const sourceItems: TemplatesSectionItem[] = useSourceItems(resourceStrings, sourceApps?.[0]);
-  const clonedWorkflowItem: TemplatesSectionItem = useCloneWorkflowItem(cloneStrings);
+  const clonedWorkflowItem: TemplatesSectionItem = useCloneWorkflowItem(cloneStrings, existingWorkflowNames ?? []);
 
   return (
     <div className={styles.tabContainer}>
@@ -82,17 +85,28 @@ const useSourceItems = (resourceStrings: Record<string, string>, resources: Reso
   return items;
 };
 
-const useCloneWorkflowItem = (cloneStrings: Record<string, string>) => {
+const useCloneWorkflowItem = (cloneStrings: Record<string, string>, existingWorkflowNames: string[]) => {
   const dispatch = useDispatch<AppDispatch>();
   const { sourceApps } = useSelector((state: RootState) => state.clone);
+  const sourceApp = sourceApps?.[0];
 
   const items: TemplatesSectionItem = {
     label: cloneStrings.clonedWorkflowName,
-    value: sourceApps?.[0]?.clonedWorkflowName || '',
+    value: sourceApp?.clonedWorkflowName || '',
     type: 'textfield',
     onChange: (newValue) => {
       dispatch(updateClonedWorkflowName(newValue));
     },
+    onBlur: async () => {
+      const validationError = await validateWorkflowName(sourceApp?.clonedWorkflowName, false, {
+        subscriptionId: sourceApp?.subscriptionId,
+        resourceGroupName: sourceApp?.resourceGroup,
+        existingWorkflowNames: existingWorkflowNames ?? [],
+      });
+      dispatch(updateClonedWorkflowNameValidationError(validationError));
+    },
+    errorMessage: sourceApp?.clonedWorkflowNameValidationError,
+    hint: cloneStrings.workflowNameDescription,
   };
 
   return items;

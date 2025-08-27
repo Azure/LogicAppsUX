@@ -29,5 +29,10 @@ export const useCloneStrings = () => {
       id: 'snGySi',
       description: 'Label for cloned workflow name',
     }),
+    workflowNameDescription: intl.formatMessage({
+      defaultMessage: 'Avoid spaces and the following symbols in your workflow name: \\ / : * ? " < > | @, #, $, %, &',
+      id: 'ZbeL1D',
+      description: 'Description for workflow name field and the expected format of the name.',
+    }),
   };
 };
