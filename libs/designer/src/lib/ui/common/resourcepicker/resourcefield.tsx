@@ -4,6 +4,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { type Resource, equals } from '@microsoft/logic-apps-shared';
 import { FieldSectionItem } from '@microsoft/designer-ui';
 
+export type ResourceFieldRenderType = 'section' | 'default';
+
 interface ResourceFieldProps {
   id: string;
   label: string;
@@ -13,7 +15,7 @@ interface ResourceFieldProps {
   isLoading?: boolean;
   errorMessage?: string;
   lockField: boolean;
-  renderType?: 'section' | 'default';
+  renderType?: ResourceFieldRenderType;
 }
 
 export const ResourceField = (props: ResourceFieldProps) => {
