@@ -102,7 +102,7 @@ const useDestinationItems = (resourceStrings: Record<string, string>, destinatio
       type: 'text',
     },
     {
-      label: resourceStrings.clonedWorkflowName,
+      label: resourceStrings.WORKFLOW_NAME,
       value: clonedWorkflowName || '',
       type: 'text',
     },
