@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../core/state/clonetostandard/store';
 import { reviewTab } from './reviewtab';
 import { useCallback, useMemo } from 'react';
-import { updateErrorMessage } from '../../../core/state/clonetostandard/cloneslice';
+import { setSuccessfullyCloned, updateErrorMessage } from '../../../core/state/clonetostandard/cloneslice';
 import { isUndefinedOrEmptyString } from '@microsoft/logic-apps-shared';
 
 export type CloneCallHandler = (
@@ -22,12 +22,13 @@ export const useCloneWizardTabs = ({
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const {
-    clone: { sourceApps, destinationApp, errorMessage },
+    clone: { sourceApps, destinationApp, errorMessage, isSuccessfullyCloned },
   } = useSelector((state: RootState) => state);
 
   const handleOnClone = useCallback(async () => {
     try {
       await onCloneCall(sourceApps, destinationApp);
+      dispatch(setSuccessfullyCloned());
     } catch (e: any) {
       dispatch(updateErrorMessage(e?.response?.data?.message ?? e.message));
     }
@@ -48,14 +49,17 @@ export const useCloneWizardTabs = ({
   return [
     configureTab(intl, dispatch, {
       tabStatusIcon: missingInfoInConfigure ? undefined : 'success',
-      onCancel: onClose,
+      onClose,
+      disabled: isSuccessfullyCloned,
       isPrimaryButtonDisabled: missingInfoInConfigure,
     }),
     reviewTab(intl, dispatch, {
-      tabStatusIcon: failedCloneValidation ? 'error' : undefined,
+      tabStatusIcon: failedCloneValidation ? 'error' : isSuccessfullyCloned ? 'success' : undefined,
       onClone: handleOnClone,
+      onClose,
+      isSuccessfullyCloned,
       disabled: missingInfoInConfigure,
-      isPrimaryButtonDisabled: failedCloneValidation,
+      isPrimaryButtonDisabled: failedCloneValidation || isSuccessfullyCloned,
     }),
   ];
 };

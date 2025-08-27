@@ -7,9 +7,11 @@ import { useResourceStrings } from '../../common/resourcepicker/resourcestrings'
 import type { ResourceState } from '../../../core/state/clonetostandard/resourceslice';
 import { useCloneTabStyles } from '../logicapps/styles';
 import { useCloneStrings } from '../../../core/clonetostandard/utils/cloneStrings';
+import { useIntl } from 'react-intl';
 
 export const CloneReviewList = () => {
-  const { sourceApps, destinationApp, errorMessage } = useSelector((state: RootState) => state.clone);
+  const intl = useIntl();
+  const { sourceApps, destinationApp, errorMessage, isSuccessfullyCloned } = useSelector((state: RootState) => state.clone);
 
   const styles = useCloneTabStyles();
 
@@ -27,6 +29,15 @@ export const CloneReviewList = () => {
 
   return (
     <div className={styles.tabContainer}>
+      {isSuccessfullyCloned ? (
+        <MessageBar intent="success">
+          {intl.formatMessage({
+            defaultMessage: 'Successfully cloned',
+            id: '4tpK/6',
+            description: 'Label to indicate the successfully cloned workflow',
+          })}
+        </MessageBar>
+      ) : null}
       {!isUndefinedOrEmptyString(errorMessage) && <MessageBar intent="error">{errorMessage}</MessageBar>}
 
       <div className={styles.mainSection}>
