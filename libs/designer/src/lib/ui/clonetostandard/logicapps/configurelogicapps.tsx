@@ -3,32 +3,40 @@ import type { AppDispatch, RootState } from '../../../core/state/clonetostandard
 import { useDispatch, useSelector } from 'react-redux';
 import { CloneResourcePicker } from './resourcepicker';
 import { useCloneTabStyles } from './styles';
-import { TemplatesSection, type TemplatesSectionItem } from '@microsoft/designer-ui';
+import { FieldSectionItem, TemplatesSection, type TemplatesSectionItem } from '@microsoft/designer-ui';
 import { useResourceStrings } from '../../common/resourcepicker/resourcestrings';
 import type { ResourceState } from '../../../core/state/clonetostandard/resourceslice';
 import { useCloneStrings } from '../../../core/clonetostandard/utils/cloneStrings';
-import { updateClonedWorkflowName } from '../../../core/state/clonetostandard/cloneslice';
+import { updateClonedWorkflowName, updateClonedWorkflowNameValidationError } from '../../../core/state/clonetostandard/cloneslice';
+import { validateWorkflowName } from '../../../core/actions/bjsworkflow/templates';
+import { useExistingWorkflowNamesOfResource } from '../../../core';
 
 export const ConfigureLogicApps = () => {
-  const { sourceApps } = useSelector((state: RootState) => state.clone);
+  const {
+    sourceApps,
+    destinationApp: { subscriptionId: destSubscriptionId, resourceGroup: destResourceGroup, logicAppName: destLogicAppName },
+  } = useSelector((state: RootState) => state.clone);
 
   const styles = useCloneTabStyles();
-  const resourceStrings = useResourceStrings();
-  const cloneStrings = useCloneStrings();
+  const resourceStrings = {
+    ...useResourceStrings(),
+    ...useCloneStrings(),
+  };
 
+  const { data: existingWorkflowNames } = useExistingWorkflowNamesOfResource(destSubscriptionId, destResourceGroup, destLogicAppName);
   const sourceItems: TemplatesSectionItem[] = useSourceItems(resourceStrings, sourceApps?.[0]);
-  const clonedWorkflowItem: TemplatesSectionItem = useCloneWorkflowItem(cloneStrings);
+  const clonedWorkflowItem: TemplatesSectionItem = useCloneWorkflowItem(resourceStrings, existingWorkflowNames ?? []);
 
   return (
     <div className={styles.tabContainer}>
       <div className={styles.mainSectionWithBorder}>
         <div className={styles.sectionHeader}>
           <Text size={400} weight="medium">
-            {cloneStrings.sourceSectionTitle}
+            {resourceStrings.sourceSectionTitle}
           </Text>
         </div>
         <div className={styles.sectionDescription}>
-          <Text>{cloneStrings.sourceDescription}</Text>
+          <Text>{resourceStrings.sourceDescription}</Text>
         </div>
         <div className={styles.content}>
           <TemplatesSection items={sourceItems} />
@@ -38,15 +46,15 @@ export const ConfigureLogicApps = () => {
       <div className={styles.mainSectionWithBorder}>
         <div className={styles.sectionHeader}>
           <Text size={400} weight="medium">
-            {cloneStrings.destinationSectionTitle}
+            {resourceStrings.destinationSectionTitle}
           </Text>
         </div>
         <div className={styles.sectionDescription}>
-          <Text>{cloneStrings.destinationDescription}</Text>
+          <Text>{resourceStrings.destinationDescription}</Text>
         </div>
         <div className={styles.content}>
           <CloneResourcePicker />
-          <TemplatesSection items={[clonedWorkflowItem]} />
+          <FieldSectionItem item={clonedWorkflowItem} />
         </div>
       </div>
     </div>
@@ -82,17 +90,28 @@ const useSourceItems = (resourceStrings: Record<string, string>, resources: Reso
   return items;
 };
 
-const useCloneWorkflowItem = (cloneStrings: Record<string, string>) => {
+const useCloneWorkflowItem = (resourceStrings: Record<string, string>, existingWorkflowNames: string[]) => {
   const dispatch = useDispatch<AppDispatch>();
   const { sourceApps } = useSelector((state: RootState) => state.clone);
+  const sourceApp = sourceApps?.[0];
 
   const items: TemplatesSectionItem = {
-    label: cloneStrings.clonedWorkflowName,
-    value: sourceApps?.[0]?.clonedWorkflowName || '',
+    label: resourceStrings.WORKFLOW_NAME,
+    value: sourceApp?.clonedWorkflowName || '',
     type: 'textfield',
     onChange: (newValue) => {
       dispatch(updateClonedWorkflowName(newValue));
     },
+    onBlur: async () => {
+      const validationError = await validateWorkflowName(sourceApp?.clonedWorkflowName, false, {
+        subscriptionId: sourceApp?.subscriptionId,
+        resourceGroupName: sourceApp?.resourceGroup,
+        existingWorkflowNames: existingWorkflowNames ?? [],
+      });
+      dispatch(updateClonedWorkflowNameValidationError(validationError));
+    },
+    errorMessage: sourceApp?.clonedWorkflowNameValidationError,
+    hint: resourceStrings.workflowNameDescription,
   };
 
   return items;
