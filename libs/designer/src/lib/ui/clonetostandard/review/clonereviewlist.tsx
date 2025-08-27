@@ -1,12 +1,107 @@
-import { Text } from '@fluentui/react-components';
+import { MessageBar, Text } from '@fluentui/react-components';
 import type { RootState } from '../../../core/state/clonetostandard/store';
 import { useSelector } from 'react-redux';
 import { isUndefinedOrEmptyString } from '@microsoft/logic-apps-shared';
+import { TemplatesSection, type TemplatesSectionItem } from '@microsoft/designer-ui';
+import { useResourceStrings } from '../../common/resourcepicker/resourcestrings';
+import type { ResourceState } from '../../../core/state/clonetostandard/resourceslice';
+import { useCloneTabStyles } from '../logicapps/styles';
+import { useCloneStrings } from '../../../core/clonetostandard/utils/cloneStrings';
 
 export const CloneReviewList = () => {
-  const {
-    clone: { errorMessage },
-  } = useSelector((state: RootState) => state);
+  const { sourceApps, destinationApp, errorMessage } = useSelector((state: RootState) => state.clone);
 
-  return <div>{!isUndefinedOrEmptyString(errorMessage) && <Text size={400}>Error message: {errorMessage}</Text>}</div>;
+  const styles = useCloneTabStyles();
+
+  const resourceStrings = {
+    ...useResourceStrings(),
+    ...useCloneStrings(),
+  };
+
+  const sourceItems: TemplatesSectionItem[] = useSourceItems(resourceStrings, sourceApps?.[0]);
+  const destinationItems: TemplatesSectionItem[] = useDestinationItems(
+    resourceStrings,
+    destinationApp,
+    sourceApps?.[0]?.clonedWorkflowName || ''
+  );
+
+  return (
+    <div className={styles.tabContainer}>
+      {!isUndefinedOrEmptyString(errorMessage) && <MessageBar intent="error">{errorMessage}</MessageBar>}
+
+      <div className={styles.mainSection}>
+        <div className={styles.sectionHeader}>
+          <Text size={400} weight="medium">
+            {resourceStrings.sourceSectionTitle}
+          </Text>
+        </div>
+        <div className={styles.sectionDescription}>
+          <Text>{resourceStrings.sourceDescription}</Text>
+        </div>
+        <div className={styles.content}>
+          <TemplatesSection items={sourceItems} />
+        </div>
+      </div>
+
+      <div className={styles.mainSection}>
+        <div className={styles.sectionHeader}>
+          <Text size={400} weight="medium">
+            {resourceStrings.destinationSectionTitle}
+          </Text>
+        </div>
+        <div className={styles.sectionDescription}>
+          <Text>{resourceStrings.destinationDescription}</Text>
+        </div>
+        <div className={styles.content}>
+          <TemplatesSection items={destinationItems} />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const useSourceItems = (resourceStrings: Record<string, string>, sourceResources: ResourceState) => {
+  const { subscriptionId, logicAppName } = sourceResources;
+  const items: TemplatesSectionItem[] = [
+    {
+      label: resourceStrings.SUBSCRIPTION,
+      value: subscriptionId || '',
+      type: 'text',
+    },
+    {
+      label: resourceStrings.LOGIC_APP,
+      value: logicAppName || '',
+      type: 'text',
+    },
+    {
+      label: resourceStrings.WORKFLOW_NAME,
+      value: logicAppName || '',
+      type: 'text',
+    },
+  ];
+
+  return items;
+};
+
+const useDestinationItems = (resourceStrings: Record<string, string>, destinationResources: ResourceState, clonedWorkflowName: string) => {
+  const { subscriptionId, logicAppName } = destinationResources;
+  const items: TemplatesSectionItem[] = [
+    {
+      label: resourceStrings.SUBSCRIPTION,
+      value: subscriptionId || '',
+      type: 'text',
+    },
+    {
+      label: resourceStrings.LOGIC_APP,
+      value: logicAppName || '',
+      type: 'text',
+    },
+    {
+      label: resourceStrings.clonedWorkflowName,
+      value: clonedWorkflowName || '',
+      type: 'text',
+    },
+  ];
+
+  return items;
 };
