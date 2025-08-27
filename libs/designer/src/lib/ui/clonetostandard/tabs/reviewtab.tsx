@@ -10,13 +10,18 @@ interface ReviewTabProps extends CloneWizardTabProps {
   onClone: () => Promise<void>;
 }
 
-export const reviewTab = (intl: IntlShape, dispatch: AppDispatch, { tabStatusIcon, onClone }: ReviewTabProps): TemplateTabProps => ({
+export const reviewTab = (
+  intl: IntlShape,
+  dispatch: AppDispatch,
+  { tabStatusIcon, disabled, onClone, isPrimaryButtonDisabled }: ReviewTabProps
+): TemplateTabProps => ({
   id: constants.CLONE_TO_STANDARD_TAB_NAMES.REVIEW,
   title: intl.formatMessage({
     defaultMessage: 'Review',
     id: '944VBM',
     description: 'Tab label for review tab in clone to standard experience',
   }),
+  disabled,
   tabStatusIcon,
   content: <CloneReviewList />,
   footerContent: {
@@ -29,6 +34,7 @@ export const reviewTab = (intl: IntlShape, dispatch: AppDispatch, { tabStatusIco
           description: 'Button text to trigger clone in the create workflow panel',
         }),
         appearance: 'primary',
+        disabled: isPrimaryButtonDisabled,
         onClick: onClone,
       },
       {
