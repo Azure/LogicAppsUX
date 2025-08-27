@@ -108,8 +108,8 @@ export const HandoffToolEntry = ({ agentId, toolId }: HandoffToolEntryProps) => 
         description: 'Label text for the input field to enter a description of the handoff',
       }),
       handoffDescriptionPlaceholder: intl.formatMessage({
-        defaultMessage: 'Enter a description for the handoff',
-        id: '+TUUxa',
+        defaultMessage: 'Enter the handoff purpose.',
+        id: 'pRJny7',
         description: 'Placeholder text for the handoff description input field',
       }),
       deleteLabel: intl.formatMessage({
