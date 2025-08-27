@@ -108,8 +108,8 @@ export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
   const stringResources = useMemo(
     () => ({
       CREATE_NEW: intl.formatMessage({
-        defaultMessage: 'Create New',
-        id: '+nh6WG',
+        defaultMessage: 'Create new',
+        id: 'UcVYwq',
         description: 'Label for creating a new resource in the token field.',
       }),
     }),
