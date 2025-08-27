@@ -3,8 +3,8 @@ import { useCallback, useMemo } from 'react';
 import { useLocations, useLogicApps, useResourceGroups, useSubscriptions } from '../../../core/queries/resource';
 import { type LogicAppResource, type Template, equals } from '@microsoft/logic-apps-shared';
 import { useAllLogicApps } from '../../../core/configuretemplate/utils/queries';
-import { useTemplatesStrings } from './../../templates/templatesStrings';
 import { ResourceField } from './resourcefield';
+import { useResourceStrings } from './resourcestrings';
 
 export interface BaseResourcePickerProps {
   viewMode?: 'default' | 'alllogicapps';
@@ -77,7 +77,7 @@ export const ResourcePicker = ({
     [intl]
   );
 
-  const { resourceStrings } = useTemplatesStrings();
+  const resourceStrings = useResourceStrings();
   const handleLogicAppSelect = useCallback(
     (value: string) => {
       const app = logicApps?.find((app) => equals(app.name, value));

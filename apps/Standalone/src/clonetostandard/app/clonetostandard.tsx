@@ -33,24 +33,22 @@ export const CloneToStandard = () => {
 
   return (
     <CloneWizardProvider locale="en-US" theme={theme}>
-      <div className={`${styles.container} ${styles.fadeIn}`}>
-        <div className={styles.wizardContainer}>
-          <div className={styles.wizardContent}>
-            <div className={styles.wizardWrapper}>
-              <CloneDataProvider
-                resourceDetails={{
-                  subscriptionId: resourceDetails.subscriptionId,
-                  resourceGroup: resourceDetails.resourceGroup,
-                  logicAppName: resourceDetails.resourceName,
-                }}
-                services={services}
-              >
-                <CloneWizard onCloneCall={onCloneCall} onClose={onClose} />
-                <div id="mcp-layer-host" className={styles.layerHost} />
-              </CloneDataProvider>
-            </div>
-          </div>
-        </div>
+      <div
+        style={{
+          margin: '20px',
+        }}
+      >
+        <CloneDataProvider
+          resourceDetails={{
+            subscriptionId: resourceDetails.subscriptionId,
+            resourceGroup: resourceDetails.resourceGroup,
+            logicAppName: resourceDetails.resourceName,
+          }}
+          services={services}
+        >
+          <CloneWizard onCloneCall={onCloneCall} onClose={onClose} />
+          <div id="mcp-layer-host" className={styles.layerHost} />
+        </CloneDataProvider>
       </div>
     </CloneWizardProvider>
   );
