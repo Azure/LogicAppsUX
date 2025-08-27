@@ -42,14 +42,14 @@ export const reviewTab = (
         type: 'navigation',
         text: isSuccessfullyCloned
           ? intl.formatMessage({
-              defaultMessage: 'Previous',
-              id: 'kuzT1s',
-              description: 'Button text for moving back to configure tab in the clone wizard',
-            })
-          : intl.formatMessage({
               defaultMessage: 'Close',
               id: 'BP+WUL',
               description: 'Button text for exiting the blade in the clone wizard',
+            })
+          : intl.formatMessage({
+              defaultMessage: 'Previous',
+              id: 'kuzT1s',
+              description: 'Button text for moving back to configure tab in the clone wizard',
             }),
         onClick: () => {
           if (isSuccessfullyCloned) {

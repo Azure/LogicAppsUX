@@ -32,8 +32,8 @@ export const CloneReviewList = () => {
       {isSuccessfullyCloned ? (
         <MessageBar intent="success">
           {intl.formatMessage({
-            defaultMessage: 'Successfully cloned',
-            id: '4tpK/6',
+            defaultMessage: 'Successfully cloned.',
+            id: 'ILKpNE',
             description: 'Label to indicate the successfully cloned workflow',
           })}
         </MessageBar>
