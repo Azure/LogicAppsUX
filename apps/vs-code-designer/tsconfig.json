@@ -6,8 +6,33 @@
     "resolveJsonModule": true,
     "outDir": "../../dist/out-tsc",
     "module": "commonjs",
-    "types": ["node"]
+    "types": ["node", "vscode"],
+    
+    // Enhanced type checking
+    "strict": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": false,
+    "noUncheckedIndexedAccess": false,
+    "exactOptionalPropertyTypes": false,
+    
+    // Enhanced module resolution
+    "moduleResolution": "node",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    
+    // Path mapping for better imports
+    "baseUrl": ".",
+    "paths": {
+      "@/commands/*": ["src/app/commands/*"],
+      "@/utils/*": ["src/app/utils/*"],
+      "@/tree/*": ["src/app/tree/*"],
+      "@/types/*": ["src/types/*"],
+      "@/constants": ["src/constants"]
+    }
   },
-  "exclude": ["**/*.spec.ts", "**/*.test.ts", "jest.config.ts"],
-  "include": ["**/*.ts"]
+  "exclude": ["**/*.spec.ts", "**/*.test.ts", "jest.config.ts", "dist/**/*", "out/**/*"],
+  "include": ["src/**/*.ts"]
 }
