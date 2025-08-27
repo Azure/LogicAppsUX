@@ -7,17 +7,23 @@ import { useResourceStrings } from '../../common/resourcepicker/resourcestrings'
 import type { ResourceState } from '../../../core/state/clonetostandard/resourceslice';
 import { useCloneTabStyles } from '../logicapps/styles';
 import { useCloneStrings } from '../../../core/clonetostandard/utils/cloneStrings';
-import { useIntl } from 'react-intl';
 
 export const CloneReviewList = () => {
   const { sourceApps, destinationApp, errorMessage } = useSelector((state: RootState) => state.clone);
 
   const styles = useCloneTabStyles();
-  const resourceStrings = useResourceStrings();
-  const cloneStrings = useCloneStrings();
+
+  const resourceStrings = {
+    ...useResourceStrings(),
+    ...useCloneStrings(),
+  };
 
   const sourceItems: TemplatesSectionItem[] = useSourceItems(resourceStrings, sourceApps?.[0]);
-  const destinationItems: TemplatesSectionItem[] = useDestinationItems(resourceStrings, destinationApp);
+  const destinationItems: TemplatesSectionItem[] = useDestinationItems(
+    resourceStrings,
+    destinationApp,
+    sourceApps?.[0]?.clonedWorkflowName || ''
+  );
 
   return (
     <div className={styles.tabContainer}>
@@ -26,11 +32,11 @@ export const CloneReviewList = () => {
       <div className={styles.mainSection}>
         <div className={styles.sectionHeader}>
           <Text size={400} weight="medium">
-            {cloneStrings.sourceSectionTitle}
+            {resourceStrings.sourceSectionTitle}
           </Text>
         </div>
         <div className={styles.sectionDescription}>
-          <Text>{cloneStrings.sourceDescription}</Text>
+          <Text>{resourceStrings.sourceDescription}</Text>
         </div>
         <div className={styles.content}>
           <TemplatesSection items={sourceItems} />
@@ -40,11 +46,11 @@ export const CloneReviewList = () => {
       <div className={styles.mainSection}>
         <div className={styles.sectionHeader}>
           <Text size={400} weight="medium">
-            {cloneStrings.destinationSectionTitle}
+            {resourceStrings.destinationSectionTitle}
           </Text>
         </div>
         <div className={styles.sectionDescription}>
-          <Text>{cloneStrings.destinationDescription}</Text>
+          <Text>{resourceStrings.destinationDescription}</Text>
         </div>
         <div className={styles.content}>
           <TemplatesSection items={destinationItems} />
@@ -54,8 +60,8 @@ export const CloneReviewList = () => {
   );
 };
 
-const useSourceItems = (resourceStrings: Record<string, string>, resources: ResourceState) => {
-  const { subscriptionId, logicAppName } = resources;
+const useSourceItems = (resourceStrings: Record<string, string>, sourceResources: ResourceState) => {
+  const { subscriptionId, logicAppName } = sourceResources;
   const items: TemplatesSectionItem[] = [
     {
       label: resourceStrings.SUBSCRIPTION,
@@ -77,9 +83,8 @@ const useSourceItems = (resourceStrings: Record<string, string>, resources: Reso
   return items;
 };
 
-const useDestinationItems = (resourceStrings: Record<string, string>, resources: ResourceState) => {
-  const intl = useIntl();
-  const { subscriptionId, logicAppName } = resources;
+const useDestinationItems = (resourceStrings: Record<string, string>, destinationResources: ResourceState, clonedWorkflowName: string) => {
+  const { subscriptionId, logicAppName } = destinationResources;
   const items: TemplatesSectionItem[] = [
     {
       label: resourceStrings.SUBSCRIPTION,
@@ -92,12 +97,8 @@ const useDestinationItems = (resourceStrings: Record<string, string>, resources:
       type: 'text',
     },
     {
-      label: intl.formatMessage({
-        defaultMessage: 'Cloned workflow name',
-        id: 'snGySi',
-        description: 'Label for cloned workflow name',
-      }),
-      value: logicAppName || '',
+      label: resourceStrings.clonedWorkflowName,
+      value: clonedWorkflowName || '',
       type: 'text',
     },
   ];

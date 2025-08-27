@@ -1,12 +1,13 @@
 import { Text } from '@fluentui/react-components';
-import type { RootState } from '../../../core/state/clonetostandard/store';
-import { useSelector } from 'react-redux';
+import type { AppDispatch, RootState } from '../../../core/state/clonetostandard/store';
+import { useDispatch, useSelector } from 'react-redux';
 import { CloneResourcePicker } from './resourcepicker';
 import { useCloneTabStyles } from './styles';
 import { TemplatesSection, type TemplatesSectionItem } from '@microsoft/designer-ui';
 import { useResourceStrings } from '../../common/resourcepicker/resourcestrings';
 import type { ResourceState } from '../../../core/state/clonetostandard/resourceslice';
 import { useCloneStrings } from '../../../core/clonetostandard/utils/cloneStrings';
+import { updateClonedWorkflowName } from '../../../core/state/clonetostandard/cloneslice';
 
 export const ConfigureLogicApps = () => {
   const { sourceApps } = useSelector((state: RootState) => state.clone);
@@ -16,6 +17,7 @@ export const ConfigureLogicApps = () => {
   const cloneStrings = useCloneStrings();
 
   const sourceItems: TemplatesSectionItem[] = useSourceItems(resourceStrings, sourceApps?.[0]);
+  const clonedWorkflowItem: TemplatesSectionItem = useCloneWorkflowItem(cloneStrings);
 
   return (
     <div className={styles.tabContainer}>
@@ -44,6 +46,7 @@ export const ConfigureLogicApps = () => {
         </div>
         <div className={styles.content}>
           <CloneResourcePicker />
+          <TemplatesSection items={[clonedWorkflowItem]} />
         </div>
       </div>
     </div>
@@ -75,6 +78,22 @@ const useSourceItems = (resourceStrings: Record<string, string>, resources: Reso
       onChange: () => {},
     },
   ];
+
+  return items;
+};
+
+const useCloneWorkflowItem = (cloneStrings: Record<string, string>) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const { sourceApps } = useSelector((state: RootState) => state.clone);
+
+  const items: TemplatesSectionItem = {
+    label: cloneStrings.clonedWorkflowName,
+    value: sourceApps?.[0]?.clonedWorkflowName || '',
+    type: 'textfield',
+    onChange: (newValue) => {
+      dispatch(updateClonedWorkflowName(newValue));
+    },
+  };
 
   return items;
 };

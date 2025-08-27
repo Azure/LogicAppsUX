@@ -24,5 +24,10 @@ export const useCloneStrings = () => {
       id: 'GtXpHi',
       description: 'Description for the destination section',
     }),
+    clonedWorkflowName: intl.formatMessage({
+      defaultMessage: 'Cloned workflow name',
+      id: 'snGySi',
+      description: 'Label for cloned workflow name',
+    }),
   };
 };
