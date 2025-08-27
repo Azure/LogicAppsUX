@@ -50,7 +50,15 @@ export const ResourceField = (props: ResourceFieldProps) => {
   );
 };
 
-const ResourceFieldDropdown = ({ id, resources, defaultKey, isLoading, onSelect, lockField, renderType }: ResourceFieldProps) => {
+const ResourceFieldDropdown = ({
+  id,
+  resources,
+  defaultKey,
+  isLoading,
+  onSelect,
+  lockField,
+  renderType = 'default',
+}: ResourceFieldProps) => {
   const intl = useIntl();
   const texts = {
     LOADING: intl.formatMessage({
