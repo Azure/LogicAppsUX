@@ -1,10 +1,12 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import resourceReducer from './resourceslice';
+import tabReducer from './tabslice';
 import cloneReducer from './cloneslice';
 import cloneOptionsReducer from './cloneoptionsslice';
 
 const rootReducer = combineReducers({
   resource: resourceReducer,
+  tab: tabReducer,
   clone: cloneReducer,
   cloneOptions: cloneOptionsReducer,
 });
