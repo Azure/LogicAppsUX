@@ -41,7 +41,6 @@ export const useCategoryCardStyles = makeStyles({
     width: '32px',
     height: '32px',
     borderRadius: tokens.borderRadiusSmall,
-    backgroundColor: tokens.colorNeutralBackground3,
   },
   icon: {
     color: tokens.colorNeutralForeground2,

@@ -4,6 +4,7 @@ export const useFavoritesStyles = makeStyles({
   container: {
     display: 'flex',
     flexDirection: 'column',
+    paddingTop: tokens.spacingVerticalL,
   },
   categoryTitle: {
     fontSize: tokens.fontSizeBase500,

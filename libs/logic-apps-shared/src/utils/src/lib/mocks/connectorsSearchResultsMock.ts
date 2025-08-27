@@ -656,10 +656,10 @@ export const connectorsSearchResultsMock: Connector[] = [
     name: 'dataOperationNew',
     id: 'connectionProviders/dataOperationNew',
     properties: {
-      displayName: 'Data Operations new',
+      displayName: 'Data Operations',
       iconUri: 'https://logicapps.azureedge.net/icons/compose.svg',
       brandColor: '#8c6cff',
-      description: 'Data Operations new',
+      description: 'Data Operations',
       isSecureByDefault: false,
     },
   } as Connector,

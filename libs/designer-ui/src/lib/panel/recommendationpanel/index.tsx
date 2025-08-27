@@ -11,3 +11,6 @@ export * from './operationSearchGroup';
 export * from './operationSearchHeader';
 export * from './helpers';
 export * from './recommendationPanelCard';
+export * from './operationSearchHeader/OperationSearchHeaderV2';
+export * from './operationGroupDetails/searchResult/searchResultV2';
+export * from './browseResultsV2';

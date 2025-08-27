@@ -48,7 +48,9 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
 
   const panelContainerElement = panelContainerRef.current;
 
-  const [width, setWidth] = useState<PanelSize | string>(PanelSize.Auto);
+  const [width, setWidth] = useState<PanelSize | string>(() =>
+    collapsed ? PanelSize.Auto : currentPanelMode === 'Discovery' ? PanelSize.Small : PanelSize.Medium
+  );
 
   useEffect(() => {
     setWidth(collapsed ? PanelSize.Auto : currentPanelMode === 'Discovery' ? PanelSize.Small : PanelSize.Medium);
@@ -142,6 +144,34 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
         footer: {
           backgroundColor: theme?.semanticColors.bodyBackground,
           borderTop: 0,
+        },
+        main:
+          currentPanelMode === 'Discovery'
+            ? {
+                right: 0,
+                position: 'absolute',
+              }
+            : undefined,
+        content: {
+          // Hide scrollbar while keeping scrolling functionality
+          scrollbarWidth: 'none', // Firefox
+          msOverflowStyle: 'none', // Internet Explorer and Edge
+          '&::-webkit-scrollbar': {
+            display: 'none', // Chrome, Safari, and Opera
+          },
+          // Ensure smooth scrolling
+          scrollBehavior: 'smooth',
+          padding: currentPanelMode === 'Discovery' ? '0 8px' : undefined,
+        },
+        scrollableContent: {
+          // Hide scrollbar while keeping scrolling functionality
+          scrollbarWidth: 'none', // Firefox
+          msOverflowStyle: 'none', // Internet Explorer and Edge
+          '&::-webkit-scrollbar': {
+            display: 'none', // Chrome, Safari, and Opera
+          },
+          // Ensure smooth scrolling
+          scrollBehavior: 'smooth',
         },
       })}
       popupProps={{

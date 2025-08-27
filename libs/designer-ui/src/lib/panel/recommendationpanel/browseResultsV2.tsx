@@ -64,22 +64,8 @@ export const Grid = ({
       itemKey: string;
       isConnector: boolean;
     }>(({ item, isConnector: itemIsConnector }) => {
-      const handleClick = () => {
-        if (itemIsConnector) {
-          onConnectorSelected?.((item as Connector).id);
-        } else if ('id' in item) {
-          // Operation
-          const operation = item as OperationActionData;
-          onOperationSelected?.(operation.id, operation.apiId);
-        } else {
-          // Operation Group
-          const group = item as OperationGroupCardData;
-          onConnectorSelected?.(group.apiId);
-        }
-      };
-
       return (
-        <div className={classes.itemWrapper} onClick={handleClick}>
+        <div className={classes.itemWrapper}>
           <div className={classes.itemContent}>
             {itemIsConnector ? (
               <ConnectorSummaryCard

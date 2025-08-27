@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Link, Text } from '@fluentui/react-components';
+import { Link } from '@fluentui/react-components';
 import { useFavoriteOperations } from '../../../../core/queries/browse';
 import { useDiscoveryPanelFavoriteOperations } from '../../../../core/state/panel/panelSelectors';
 import { getOperationCardDataFromOperation, getOperationGroupCardDataFromConnector } from '../helpers';
@@ -37,12 +37,6 @@ export const Favorites = ({ onConnectorSelected, onOperationSelected }: Favorite
     return isAgenticWorkflow ? favorites : favorites.filter((f) => f.apiId !== 'connectionProviders/agent');
   }, [favoriteConnectorsData, favoriteActionsData, isAgenticWorkflow]);
 
-  const favoritesLabel = intl.formatMessage({
-    defaultMessage: 'Favorites',
-    id: 'h4r8HJ',
-    description: 'Favorites label',
-  });
-
   const loadingMoreText = intl.formatMessage({
     defaultMessage: 'Loading more...',
     id: 'QecW1y',
@@ -63,8 +57,6 @@ export const Favorites = ({ onConnectorSelected, onOperationSelected }: Favorite
 
   return (
     <div className={classes.container}>
-      <Text className={classes.categoryTitle}>{favoritesLabel}</Text>
-
       <Grid
         items={favoriteOperations}
         isLoading={isLoadingFavoriteConnectors || favoriteActionsIsFetching}

@@ -1,6 +1,6 @@
 import { makeStyles, tokens } from '@fluentui/react-components';
 
-export const useActionSpotlightStyles = makeStyles({
+export const useActionBrowseStyles = makeStyles({
   container: {
     display: 'flex',
     flexDirection: 'column',

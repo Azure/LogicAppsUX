@@ -25,6 +25,7 @@ export const useGridStyles = makeStyles({
     backgroundColor: tokens.colorNeutralBackground1,
     position: 'relative',
     transition: 'all 0.2s ease',
+    marginRight: tokens.spacingHorizontalM,
     '&:hover': {
       backgroundColor: tokens.colorNeutralBackground1Hover,
       '&::before': {
