@@ -940,10 +940,22 @@ export const ParameterSection = ({
 };
 
 const getConnectionElements = (parameter: ParameterInfo) => {
-  const hasConnectionInline = getPropertyValue(parameter.schema, ExtensionProperties.InlineConncetion);
+  const hasConnectionInline = getPropertyValue(parameter.schema, ExtensionProperties.InlineConnection);
+
+  if (hasConnectionInline) {
+    const connectionOptions = getPropertyValue(parameter.schema, ExtensionProperties.InlineConnectionOptions);
+    const visibility = getPropertyValue(connectionOptions ?? {}, ExtensionProperties.Visibility);
+    const subLabelOnly = equals(visibility ?? '', 'subLabelOnly', true);
+
+    return {
+      subComponent: <ConnectionInline subLabelOnly={subLabelOnly} />,
+      subMenu: subLabelOnly ? null : <ConnectionsSubMenu />,
+    };
+  }
+
   return {
-    subComponent: hasConnectionInline ? <ConnectionInline /> : null,
-    subMenu: hasConnectionInline ? <ConnectionsSubMenu /> : null,
+    subComponent: null,
+    subMenu: null,
   };
 };
 
