@@ -45,7 +45,7 @@ export default {
           title: 'Agent model source',
           description: 'Source where your agent model is hosted.',
           'x-ms-editor': 'dropdown',
-          'x-ms-visibility': 'important',
+          'x-ms-visibility': 'hideInUI',
           'x-ms-editor-options': {
             readOnly: true,
             options: [
@@ -70,6 +70,10 @@ export default {
           'x-ms-create-new-resource': true,
           'x-ms-visibility': 'important',
           'x-ms-editor': 'combobox',
+          'x-ms-connection-required': true,
+          'x-ms-connection-options': {
+            'x-ms-visibility': 'subLabelOnly',
+          },
         },
         messages: {
           title: 'Instructions for agent',
