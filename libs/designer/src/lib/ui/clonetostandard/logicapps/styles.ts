@@ -31,9 +31,13 @@ export const useCloneTabStyles = makeStyles({
   },
 
   mainSection: {
+    padding: mainGap,
+  },
+
+  mainSectionWithBorder: {
+    padding: mainGap,
     borderRadius: '8px',
     border: borderStyle,
-    padding: mainGap,
   },
 
   section: {

@@ -3,67 +3,44 @@ import type { RootState } from '../../../core/state/clonetostandard/store';
 import { useSelector } from 'react-redux';
 import { CloneResourcePicker } from './resourcepicker';
 import { useCloneTabStyles } from './styles';
-import { useIntl } from 'react-intl';
 import { TemplatesSection, type TemplatesSectionItem } from '@microsoft/designer-ui';
 import { useResourceStrings } from '../../common/resourcepicker/resourcestrings';
 import type { ResourceState } from '../../../core/state/clonetostandard/resourceslice';
+import { useCloneStrings } from '../../../core/clonetostandard/utils/cloneStrings';
 
 export const ConfigureLogicApps = () => {
-  const { resource } = useSelector((state: RootState) => state);
+  const { sourceApps } = useSelector((state: RootState) => state.clone);
 
-  const intl = useIntl();
   const styles = useCloneTabStyles();
   const resourceStrings = useResourceStrings();
+  const cloneStrings = useCloneStrings();
 
-  const INTL_TEXT = {
-    sourceSectionTitle: intl.formatMessage({
-      defaultMessage: 'Source: Logic Apps Consumption',
-      id: '3+rUhW',
-      description: 'Title for the source section',
-    }),
-    sourceDescription: intl.formatMessage({
-      defaultMessage: 'Source specifications are automatically populated based on your consumption resource.',
-      id: 'ql/lcC',
-      description: 'Description for the source section',
-    }),
-    destinationSectionTitle: intl.formatMessage({
-      defaultMessage: 'Destination: Logic Apps Standard',
-      id: 'Pnedy5',
-      description: 'Title for the destination section',
-    }),
-    destinationDescription: intl.formatMessage({
-      defaultMessage: 'Select the destination to clone your consumption resources to.',
-      id: 'GtXpHi',
-      description: 'Description for the destination section',
-    }),
-  };
-
-  const sourceItems: TemplatesSectionItem[] = useSourceItems(resourceStrings, resource);
+  const sourceItems: TemplatesSectionItem[] = useSourceItems(resourceStrings, sourceApps?.[0]);
 
   return (
     <div className={styles.tabContainer}>
-      <div className={styles.mainSection}>
+      <div className={styles.mainSectionWithBorder}>
         <div className={styles.sectionHeader}>
           <Text size={400} weight="medium">
-            {INTL_TEXT.sourceSectionTitle}
+            {cloneStrings.sourceSectionTitle}
           </Text>
         </div>
         <div className={styles.sectionDescription}>
-          <Text>{INTL_TEXT.sourceDescription}</Text>
+          <Text>{cloneStrings.sourceDescription}</Text>
         </div>
         <div className={styles.content}>
           <TemplatesSection items={sourceItems} />
         </div>
       </div>
 
-      <div className={styles.mainSection}>
+      <div className={styles.mainSectionWithBorder}>
         <div className={styles.sectionHeader}>
           <Text size={400} weight="medium">
-            {INTL_TEXT.destinationSectionTitle}
+            {cloneStrings.destinationSectionTitle}
           </Text>
         </div>
         <div className={styles.sectionDescription}>
-          <Text>{INTL_TEXT.destinationDescription}</Text>
+          <Text>{cloneStrings.destinationDescription}</Text>
         </div>
         <div className={styles.content}>
           <CloneResourcePicker />
