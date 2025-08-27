@@ -107,7 +107,6 @@ import {
   isAgentConnectorAndDeploymentId,
 } from './helpers';
 import { useShouldEnableFoundryServiceConnection } from './hooks';
-import { AgentUtils } from '../../../../../common/utilities/Utils';
 import type { AnyAction, ThunkDispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { getConnectionsForConnector } from '../../../../../core/queries/connections';
@@ -866,18 +865,12 @@ export const ParameterSection = ({
 
       const isCodeEditor = editor?.toLowerCase() === constants.EDITOR.CODE;
 
-      // Control is disabled if it is DeploymentId parameter in Agentic Loop and a connection has not been setup yet
-      const isReadOnlyForAgenticScenario =
-        AgentUtils.isConnector(operationInfo?.connectorId) &&
-        AgentUtils.isDeploymentIdParameter(param?.parameterName) &&
-        !cognitiveServiceAccountId;
-
       const { subMenu, subComponent } = getConnectionElements(param);
       return {
         settingType: 'SettingTokenField',
         settingProp: {
           ...paramSubset,
-          readOnly: editorOptions?.readOnly || readOnly || isReadOnlyForAgenticScenario,
+          readOnly: editorOptions?.readOnly || readOnly,
           value: remappedValues,
           editor,
           editorOptions,
@@ -947,10 +940,22 @@ export const ParameterSection = ({
 };
 
 const getConnectionElements = (parameter: ParameterInfo) => {
-  const hasConnectionInline = getPropertyValue(parameter.schema, ExtensionProperties.InlineConncetion);
+  const hasConnectionInline = getPropertyValue(parameter.schema, ExtensionProperties.InlineConnection);
+
+  if (hasConnectionInline) {
+    const connectionOptions = getPropertyValue(parameter.schema, ExtensionProperties.InlineConnectionOptions);
+    const visibility = getPropertyValue(connectionOptions ?? {}, ExtensionProperties.Visibility);
+    const subLabelOnly = equals(visibility ?? '', 'subLabelOnly', true);
+
+    return {
+      subComponent: <ConnectionInline subLabelOnly={subLabelOnly} />,
+      subMenu: subLabelOnly ? null : <ConnectionsSubMenu />,
+    };
+  }
+
   return {
-    subComponent: hasConnectionInline ? <ConnectionInline /> : null,
-    subMenu: hasConnectionInline ? <ConnectionsSubMenu /> : null,
+    subComponent: null,
+    subMenu: null,
   };
 };
 

@@ -1,12 +1,4 @@
-import type {
-  Connector,
-  DiscoveryOpArray,
-  ArmResource,
-  DiscoveryWorkflow,
-  DiscoveryWorkflowTrigger,
-  DiscoveryOperation,
-  DiscoveryResultTypes,
-} from '../../utils/src';
+import type { Connector, DiscoveryOpArray, ArmResource, DiscoveryWorkflow, DiscoveryWorkflowTrigger } from '../../utils/src';
 import { AssertionException, AssertionErrorCode } from '../../utils/src';
 
 export type OperationRuntimeCategory = {
@@ -28,17 +20,7 @@ export interface ISearchService {
   getActiveSearchOperations?(searchTerm: string, actionType?: string, runtimeFilter?: string): Promise<DiscoveryOpArray>;
   getAgentConnectorOperation?(connectorId: string): Promise<DiscoveryOpArray>;
   getBuiltInOperations(): Promise<DiscoveryOpArray>;
-  searchOperations?(
-    searchTerm: string,
-    actionType?: string,
-    runtimeFilter?: string,
-    additionalFilter?: (operation: DiscoveryOperation<DiscoveryResultTypes>) => boolean
-  ): Promise<DiscoveryOpArray>;
-  getRuntimeCategories?(): OperationRuntimeCategory[];
-  filterConnector?(connector: Connector, runtimeFilter: string): boolean;
-  getOperationById?(operationId: string): Promise<DiscoveryOperation<DiscoveryResultTypes> | undefined>;
   getOperationsByConnector?(connectorId: string, actionType?: string): Promise<DiscoveryOpArray>;
-  sortConnectors?(connectors: Connector[]): Connector[];
 }
 
 let service: ISearchService;

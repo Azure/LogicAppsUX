@@ -172,8 +172,8 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
 
   const arrayItemLabel = intl.formatMessage(
     {
-      defaultMessage: '{label} Item',
-      id: 'fBUCrA',
+      defaultMessage: '{label} item',
+      id: 'oeQQ8q',
       description: 'Label for array item',
     },
     { label }

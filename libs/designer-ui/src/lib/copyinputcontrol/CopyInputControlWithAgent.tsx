@@ -26,24 +26,29 @@ export const CopyInputControlWithAgent = React.forwardRef<Pick<HTMLElement, 'foc
     const styles = useCopyInputControlStyles();
 
     const DISPLAY_TEXT_API_KEY = intl.formatMessage({
-      defaultMessage: 'API Key',
-      id: 'KqqiLm',
+      defaultMessage: 'Agent API key (valid for 24 hours)',
+      id: 'rDQmGU',
       description: 'Label for API key copyable field',
     });
 
     const COPY_API_KEY = intl.formatMessage({
-      defaultMessage: 'Copy API Key',
-      id: 'A8xkL1',
+      defaultMessage: 'Copy your agent api key',
+      id: 'ZIEl3/',
       description: 'Label for API key copy button',
     });
 
-    const handleAgentViewerOpen = () => {
-      setIsAgentViewerOpen(true);
-    };
+    const handleAgentViewerOpen = React.useCallback(() => {
+      // If there are no query params, easy auth is enabled so chat cannot be opened as Iframe in portal
+      if (queryParams) {
+        setIsAgentViewerOpen(true);
+      } else {
+        window.open(chatUrl, '_blank', 'noopener,noreferrer');
+      }
+    }, [chatUrl, queryParams]);
 
-    const handleAgentViewerClose = () => {
+    const handleAgentViewerClose = React.useCallback(() => {
       setIsAgentViewerOpen(false);
-    };
+    }, []);
 
     return (
       <>

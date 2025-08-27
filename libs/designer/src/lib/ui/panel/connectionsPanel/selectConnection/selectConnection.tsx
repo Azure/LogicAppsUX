@@ -2,7 +2,12 @@ import { useIsA2AWorkflow } from '../../../../core/state/designerView/designerVi
 import { useOperationInfo, type AppDispatch } from '../../../../core';
 import { autoCreateConnectionIfPossible, updateNodeConnection } from '../../../../core/actions/bjsworkflow/connections';
 import { useConnectionsForConnector } from '../../../../core/queries/connections';
-import { useConnectionRefs, useConnectorByNodeId, useNodeConnectionId } from '../../../../core/state/connection/connectionSelector';
+import {
+  useConnectionRefs,
+  useConnectionRefsByConnectorId,
+  useConnectorByNodeId,
+  useNodeConnectionId,
+} from '../../../../core/state/connection/connectionSelector';
 import { useIsXrmConnectionReferenceMode } from '../../../../core/state/designerOptions/designerOptionsSelectors';
 import { useConnectionPanelSelectedNodeIds, usePreviousPanelMode } from '../../../../core/state/panel/panelSelectors';
 import { openPanel, setIsCreatingConnection } from '../../../../core/state/panel/panelSlice';
@@ -12,6 +17,7 @@ import { Body1Strong, Button, Divider, Spinner, MessageBar, MessageBarTitle, Mes
 import {
   ConnectionService,
   equals,
+  foundryServiceConnectionRegex,
   getIconUriFromConnector,
   parseErrorMessage,
   type Connection,
@@ -20,6 +26,7 @@ import {
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
+import { AgentUtils } from '../../../../common/utilities/Utils';
 
 export const SelectConnectionWrapper = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -42,8 +49,32 @@ export const SelectConnectionWrapper = () => {
   const connector = useConnectorByNodeId(selectedNodeIds?.[0]); // only need to grab first one, they should all be the same
   const connectorIconUri = useMemo(() => getIconUriFromConnector(connector), [connector]);
   const connectionQuery = useConnectionsForConnector(connector?.id ?? '');
+  const connectionReferencesForConnector = useConnectionRefsByConnectorId(connector?.id ?? '');
   const connections = useMemo(() => {
     const connectionData = connectionQuery?.data ?? [];
+
+    if (AgentUtils.isConnector(connector?.id)) {
+      return connectionData.filter((c) => {
+        const connectionReference = connectionReferencesForConnector.find((ref) => equals(ref.connection.id, c?.id, true));
+        let isAzureOpenAI = true;
+        if (connectionReference?.resourceId) {
+          if (foundryServiceConnectionRegex.test(connectionReference.resourceId ?? '')) {
+            isAzureOpenAI = false;
+          }
+        }
+
+        // Add a tag for Foundry Service/OpenAI
+        c.properties.connectionParameters = {
+          ...(c.properties.connectionParameters ?? {}),
+          agentModelType: {
+            type: isAzureOpenAI ? AgentUtils.ModelType.AzureOpenAI : AgentUtils.ModelType.FoundryService,
+          },
+        };
+
+        // For A2A, hide the foundry connection from the list
+        return isA2A ? isAzureOpenAI : true;
+      });
+    }
 
     if (!isA2A) {
       // Filter out dynamic connections
@@ -51,7 +82,7 @@ export const SelectConnectionWrapper = () => {
     }
 
     return connectionData;
-  }, [connectionQuery, isA2A]);
+  }, [connectionQuery?.data, connector?.id, isA2A, connectionReferencesForConnector]);
   const references = useConnectionRefs();
 
   const saveSelectionCallback = useCallback(

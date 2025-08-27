@@ -1,8 +1,8 @@
-import type { DiscoveryOpArray, DiscoveryOperation, DiscoveryResultTypes, ISearchService } from '@microsoft/logic-apps-shared';
+import type { DiscoveryOpArray, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
 import { isBuiltInConnector, isCustomConnector } from '@microsoft/designer-ui';
 import Fuse from 'fuse.js';
 
-export class DefaultSearchOperationsService implements Pick<ISearchService, 'searchOperations'> {
+export class DefaultSearchOperationsService {
   constructor(
     private allOperations: DiscoveryOpArray,
     private showParseDocWithMetadata: boolean,

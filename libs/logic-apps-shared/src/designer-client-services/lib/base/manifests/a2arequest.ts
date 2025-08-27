@@ -27,13 +27,13 @@ export default {
         agentName: {
           type: 'string',
           title: 'Name',
-          description: 'Enter a name for this A2A request',
+          description: 'Enter a name for this A2A Agent.',
           'x-ms-visibility': 'important',
         },
         agentDescription: {
           type: 'string',
           title: 'Description',
-          description: 'Enter a description for this A2A request',
+          description: 'Enter a description for this A2A Agent.',
           'x-ms-visibility': 'important',
         },
       },
