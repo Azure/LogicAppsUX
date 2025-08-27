@@ -50,7 +50,7 @@ export const ResourceField = (props: ResourceFieldProps) => {
   );
 };
 
-const ResourceFieldDropdown = ({ id, resources, defaultKey, isLoading, onSelect, lockField }: ResourceFieldProps) => {
+const ResourceFieldDropdown = ({ id, resources, defaultKey, isLoading, onSelect, lockField, renderType }: ResourceFieldProps) => {
   const intl = useIntl();
   const texts = {
     LOADING: intl.formatMessage({
@@ -64,6 +64,7 @@ const ResourceFieldDropdown = ({ id, resources, defaultKey, isLoading, onSelect,
       description: 'No items to select text',
     }),
   };
+  const isDropdownSizeSmall = renderType === 'default';
 
   const sortedResources = useMemo(() => resources.sort((a, b) => a.displayName.localeCompare(b.displayName)), [resources]);
   const [selectedResource, setSelectedResource] = useState<string | undefined>('');
@@ -88,7 +89,7 @@ const ResourceFieldDropdown = ({ id, resources, defaultKey, isLoading, onSelect,
       disabled={isLoading || (lockField && !!selectedResource)}
       value={selectedResource}
       selectedOptions={[defaultKey]}
-      size="small"
+      size={isDropdownSizeSmall ? 'small' : 'medium'}
       placeholder={isLoading ? texts.LOADING : ''}
     >
       {!isLoading && !sortedResources.length ? (
