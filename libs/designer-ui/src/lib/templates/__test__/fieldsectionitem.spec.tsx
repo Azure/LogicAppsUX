@@ -1,18 +1,10 @@
 import { FieldSectionItem } from '../fieldsectionitem';
 import * as React from 'react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
-import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
+import { describe, vi, beforeEach, afterEach, it, expect } from 'vitest';
 import type { TemplatesSectionItem } from '../templatesSectionModel';
 
-describe('ui/templates/fieldsectionitem', () => {
-  const classNames = {
-    sectionItem: 'msla-templates-section-item',
-    sectionItemLabel: 'msla-templates-section-item-label',
-    sectionItemValue: 'msla-templates-section-item-value',
-    sectionItemText: 'msla-templates-section-item-text',
-    sectionItemDivider: 'msla-templates-section-item-divider',
-  };
-
+describe('ui/templates/FieldSectionItem', () => {
   let renderer: ReactShallowRenderer.ShallowRenderer;
 
   beforeEach(() => {
@@ -26,309 +18,398 @@ describe('ui/templates/fieldsectionitem', () => {
   it('should render', () => {
     const textItem: TemplatesSectionItem = {
       type: 'text',
-      value: 'test value',
-    };
-
-    renderer.render(<FieldSectionItem item={textItem} />);
-
-    const component = renderer.getRenderOutput();
-    expect(component).toBeDefined();
-  });
-
-  it('should render text item with correct structure', () => {
-    const textItem: TemplatesSectionItem = {
-      type: 'text',
-      value: 'test value',
+      value: 'Test text value',
       label: 'Test Label',
     };
 
     renderer.render(<FieldSectionItem item={textItem} />);
 
     const component = renderer.getRenderOutput();
-    expect(component.props.className).toBe(classNames.sectionItem);
-
-    const [labelComponent, valueComponent]: any[] = React.Children.toArray(component.props.children);
-    expect(labelComponent.type.name).toBe('SectionLabel');
-    expect(labelComponent.props.item).toBe(textItem);
-
-    expect(valueComponent.props.className).toBe(classNames.sectionItemValue);
-    const innerComponent = valueComponent.props.children;
-    expect(innerComponent.type.name).toBe('SectionItemInner');
-    expect(innerComponent.props.item).toBe(textItem);
+    expect(component).toBeDefined();
+    expect(component.type).toBe('div');
   });
 
-  it('should render text item without label', () => {
+  it('should have correct class structure', () => {
     const textItem: TemplatesSectionItem = {
       type: 'text',
-      value: 'test value',
+      value: 'Test text value',
+      label: 'Test Label',
     };
 
     renderer.render(<FieldSectionItem item={textItem} />);
 
     const component = renderer.getRenderOutput();
-    expect(component.props.className).toBe(classNames.sectionItem);
-
     const [labelComponent, valueComponent]: any[] = React.Children.toArray(component.props.children);
-    expect(labelComponent.type.name).toBe('SectionLabel');
-    expect(labelComponent.props.item).toBe(textItem);
-    expect(valueComponent.props.className).toBe(classNames.sectionItemValue);
+
+    // Check that we have a label component and value wrapper
+    expect(labelComponent).toBeDefined();
+    expect(valueComponent).toBeDefined();
+    expect(valueComponent.type).toBe('div');
   });
 
-  it('should render divider item', () => {
-    const dividerItem: TemplatesSectionItem = {
-      type: 'divider',
-      value: undefined,
-    };
+  describe('Text item', () => {
+    it('should render text item with label', () => {
+      const textItem: TemplatesSectionItem = {
+        type: 'text',
+        value: 'Test text value',
+        label: 'Test Label',
+      };
 
-    renderer.render(<FieldSectionItem item={dividerItem} />);
+      renderer.render(<FieldSectionItem item={textItem} />);
 
-    const component = renderer.getRenderOutput();
-    expect(component.props.className).toBe(classNames.sectionItem);
+      const component = renderer.getRenderOutput();
+      const [labelComponent, valueComponent]: any[] = React.Children.toArray(component.props.children);
+      const innerComponent = valueComponent.props.children;
 
-    const [labelComponent, valueComponent]: any[] = React.Children.toArray(component.props.children);
-    expect(labelComponent.type.name).toBe('SectionLabel');
-    expect(valueComponent.props.className).toBe(classNames.sectionItemValue);
+      // Check that we have a SectionItemInner component inside
+      expect(innerComponent.type.name).toBe('SectionItemInner');
+      expect(innerComponent.props.item).toBe(textItem);
+    });
   });
 
-  it('should render switch item', () => {
-    const onChangeMock = vi.fn();
-    const switchItem: TemplatesSectionItem = {
-      type: 'switch',
-      value: true,
-      onChange: onChangeMock,
-      label: 'Switch Label',
-    };
+  describe('Switch item', () => {
+    it('should render switch item', () => {
+      const onChangeMock = vi.fn();
+      const switchItem: TemplatesSectionItem = {
+        type: 'switch',
+        value: false,
+        onChange: onChangeMock,
+        label: 'Switch Label',
+      };
 
-    renderer.render(<FieldSectionItem item={switchItem} />);
+      renderer.render(<FieldSectionItem item={switchItem} />);
 
-    const component = renderer.getRenderOutput();
-    expect(component.props.className).toBe(classNames.sectionItem);
+      const component = renderer.getRenderOutput();
+      const [, valueComponent]: any[] = React.Children.toArray(component.props.children);
+      const innerComponent = valueComponent.props.children;
 
-    const [labelComponent, valueComponent]: any[] = React.Children.toArray(component.props.children);
-    expect(labelComponent.type.name).toBe('SectionLabel');
-    expect(labelComponent.props.item).toBe(switchItem);
-    expect(valueComponent.props.className).toBe(classNames.sectionItemValue);
+      expect(innerComponent.type.name).toBe('SectionItemInner');
+      expect(innerComponent.props.item).toBe(switchItem);
+    });
+
+    it('should render checked switch', () => {
+      const onChangeMock = vi.fn();
+      const switchItem: TemplatesSectionItem = {
+        type: 'switch',
+        value: true,
+        onChange: onChangeMock,
+        label: 'Switch Label',
+      };
+
+      renderer.render(<FieldSectionItem item={switchItem} />);
+
+      const component = renderer.getRenderOutput();
+      const [, valueComponent]: any[] = React.Children.toArray(component.props.children);
+      const innerComponent = valueComponent.props.children;
+
+      expect(innerComponent.type.name).toBe('SectionItemInner');
+      expect(innerComponent.props.item.value).toBe(true);
+    });
   });
 
-  it('should render textfield item', () => {
-    const onChangeMock = vi.fn();
-    const textfieldItem: TemplatesSectionItem = {
-      type: 'textfield',
-      value: 'input value',
-      onChange: onChangeMock,
-      label: 'Input Label',
-      id: 'test-input',
-    };
+  describe('Divider item', () => {
+    it('should render divider', () => {
+      const dividerItem: TemplatesSectionItem = {
+        type: 'divider',
+        value: undefined,
+      };
 
-    renderer.render(<FieldSectionItem item={textfieldItem} />);
+      renderer.render(<FieldSectionItem item={dividerItem} />);
 
-    const component = renderer.getRenderOutput();
-    expect(component.props.className).toBe(classNames.sectionItem);
+      const component = renderer.getRenderOutput();
+      const [, valueComponent]: any[] = React.Children.toArray(component.props.children);
+      const innerComponent = valueComponent.props.children;
 
-    const [labelComponent, valueComponent]: any[] = React.Children.toArray(component.props.children);
-    expect(labelComponent.type.name).toBe('SectionLabel');
-    expect(labelComponent.props.item).toBe(textfieldItem);
-    expect(valueComponent.props.className).toBe(classNames.sectionItemValue);
+      expect(innerComponent.type.name).toBe('SectionItemInner');
+      expect(innerComponent.props.item.type).toBe('divider');
+    });
   });
 
-  it('should render textarea item', () => {
-    const onChangeMock = vi.fn();
-    const textareaItem: TemplatesSectionItem = {
-      type: 'textarea',
-      value: 'textarea value',
-      onChange: onChangeMock,
-      label: 'Textarea Label',
-      id: 'test-textarea',
-    };
+  describe('Text field item', () => {
+    it('should render text field with label', () => {
+      const onChangeMock = vi.fn();
+      const textFieldItem: TemplatesSectionItem = {
+        type: 'textfield',
+        value: 'initial value',
+        onChange: onChangeMock,
+        label: 'Text Field Label',
+        id: 'test-textfield',
+      };
 
-    renderer.render(<FieldSectionItem item={textareaItem} />);
+      renderer.render(<FieldSectionItem item={textFieldItem} />);
 
-    const component = renderer.getRenderOutput();
-    expect(component.props.className).toBe(classNames.sectionItem);
+      const component = renderer.getRenderOutput();
+      const [labelComponent, valueComponent]: any[] = React.Children.toArray(component.props.children);
+      const innerComponent = valueComponent.props.children;
 
-    const [labelComponent, valueComponent]: any[] = React.Children.toArray(component.props.children);
-    expect(labelComponent.type.name).toBe('SectionLabel');
-    expect(labelComponent.props.item).toBe(textareaItem);
-    expect(valueComponent.props.className).toBe(classNames.sectionItemValue);
+      // Should have a SectionLabel component
+      expect(labelComponent.type.name).toBe('SectionLabel');
+      expect(labelComponent.props.item.label).toBe('Text Field Label');
+
+      // Should have a SectionItemInner component
+      expect(innerComponent.type.name).toBe('SectionItemInner');
+      expect(innerComponent.props.item).toBe(textFieldItem);
+    });
+
+    it('should render disabled text field', () => {
+      const onChangeMock = vi.fn();
+      const textFieldItem: TemplatesSectionItem = {
+        type: 'textfield',
+        value: 'test value',
+        onChange: onChangeMock,
+        disabled: true,
+        id: 'test-textfield',
+      };
+
+      renderer.render(<FieldSectionItem item={textFieldItem} />);
+
+      const component = renderer.getRenderOutput();
+      const [, valueComponent]: any[] = React.Children.toArray(component.props.children);
+      const innerComponent = valueComponent.props.children;
+
+      expect(innerComponent.type.name).toBe('SectionItemInner');
+      expect(innerComponent.props.item.disabled).toBe(true);
+    });
+
+    it('should render required text field with error', () => {
+      const onChangeMock = vi.fn();
+      const textFieldItem: TemplatesSectionItem = {
+        type: 'textfield',
+        value: '',
+        onChange: onChangeMock,
+        label: 'Required Field',
+        required: true,
+        errorMessage: 'This field is required',
+        id: 'test-required',
+      };
+
+      renderer.render(<FieldSectionItem item={textFieldItem} />);
+
+      const component = renderer.getRenderOutput();
+      const [labelComponent, valueComponent]: any[] = React.Children.toArray(component.props.children);
+      const innerComponent = valueComponent.props.children;
+
+      // Label should receive the item with required property
+      expect(labelComponent.props.item.required).toBe(true);
+
+      // SectionItemInner should receive the item with error message
+      expect(innerComponent.props.item.errorMessage).toBe('This field is required');
+      expect(innerComponent.props.item.required).toBe(true);
+    });
   });
 
-  it('should render dropdown item', () => {
-    const onOptionSelectMock = vi.fn();
-    const dropdownItem: TemplatesSectionItem = {
-      type: 'dropdown',
-      value: 'option1',
-      onOptionSelect: onOptionSelectMock,
-      selectedOptions: ['option1'],
-      options: [
-        { id: '1', label: 'Option 1', value: 'option1' },
-        { id: '2', label: 'Option 2', value: 'option2' },
-      ],
-      label: 'Dropdown Label',
-      id: 'test-dropdown',
-    };
+  describe('Textarea item', () => {
+    it('should render textarea with label', () => {
+      const onChangeMock = vi.fn();
+      const textAreaItem: TemplatesSectionItem = {
+        type: 'textarea',
+        value: 'initial textarea value',
+        onChange: onChangeMock,
+        label: 'Textarea Label',
+        id: 'test-textarea',
+      };
 
-    renderer.render(<FieldSectionItem item={dropdownItem} />);
+      renderer.render(<FieldSectionItem item={textAreaItem} />);
 
-    const component = renderer.getRenderOutput();
-    expect(component.props.className).toBe(classNames.sectionItem);
+      const component = renderer.getRenderOutput();
+      const [, valueComponent]: any[] = React.Children.toArray(component.props.children);
+      const innerComponent = valueComponent.props.children;
 
-    const [labelComponent, valueComponent]: any[] = React.Children.toArray(component.props.children);
-    expect(labelComponent.type.name).toBe('SectionLabel');
-    expect(labelComponent.props.item).toBe(dropdownItem);
-    expect(valueComponent.props.className).toBe(classNames.sectionItemValue);
+      expect(innerComponent.type.name).toBe('SectionItemInner');
+      expect(innerComponent.props.item.type).toBe('textarea');
+      expect(innerComponent.props.item.value).toBe('initial textarea value');
+      expect(innerComponent.props.item.id).toBe('test-textarea');
+    });
   });
 
-  it('should render radiogroup item', () => {
-    const onOptionSelectMock = vi.fn();
-    const radiogroupItem: TemplatesSectionItem = {
-      type: 'radiogroup',
-      value: 'option1',
-      onOptionSelect: onOptionSelectMock,
-      options: [
-        { id: '1', label: 'Option 1', value: 'option1' },
-        { id: '2', label: 'Option 2', value: 'option2' },
-      ],
-      label: 'Radio Group Label',
-      id: 'test-radiogroup',
-    };
+  describe('Dropdown item', () => {
+    it('should render dropdown with options', () => {
+      const onOptionSelectMock = vi.fn();
+      const dropdownItem: TemplatesSectionItem = {
+        type: 'dropdown',
+        value: 'option1',
+        onOptionSelect: onOptionSelectMock,
+        selectedOptions: ['option1'],
+        options: [
+          { id: '1', label: 'Option 1', value: 'option1' },
+          { id: '2', label: 'Option 2', value: 'option2' },
+          { id: '3', label: 'Option 3', value: 'option3' },
+        ],
+        label: 'Dropdown Label',
+        id: 'test-dropdown',
+      };
 
-    renderer.render(<FieldSectionItem item={radiogroupItem} />);
+      renderer.render(<FieldSectionItem item={dropdownItem} />);
 
-    const component = renderer.getRenderOutput();
-    expect(component.props.className).toBe(classNames.sectionItem);
+      const component = renderer.getRenderOutput();
+      const [, valueComponent]: any[] = React.Children.toArray(component.props.children);
+      const innerComponent = valueComponent.props.children;
 
-    const [labelComponent, valueComponent]: any[] = React.Children.toArray(component.props.children);
-    expect(labelComponent.type.name).toBe('SectionLabel');
-    expect(labelComponent.props.item).toBe(radiogroupItem);
-    expect(valueComponent.props.className).toBe(classNames.sectionItemValue);
+      expect(innerComponent.type.name).toBe('SectionItemInner');
+      expect(innerComponent.props.item.type).toBe('dropdown');
+      expect(innerComponent.props.item.value).toBe('option1');
+      expect(innerComponent.props.item.options).toHaveLength(3);
+      expect(innerComponent.props.item.selectedOptions).toEqual(['option1']);
+    });
+
+    it('should render multiselect dropdown', () => {
+      const onOptionSelectMock = vi.fn();
+      const dropdownItem: TemplatesSectionItem = {
+        type: 'dropdown',
+        value: ['option1', 'option2'],
+        onOptionSelect: onOptionSelectMock,
+        selectedOptions: ['option1', 'option2'],
+        multiselect: true,
+        options: [
+          { id: '1', label: 'Option 1', value: 'option1' },
+          { id: '2', label: 'Option 2', value: 'option2' },
+        ],
+        label: 'Multiselect Dropdown',
+        id: 'test-multiselect',
+      };
+
+      renderer.render(<FieldSectionItem item={dropdownItem} />);
+
+      const component = renderer.getRenderOutput();
+      const [, valueComponent]: any[] = React.Children.toArray(component.props.children);
+      const innerComponent = valueComponent.props.children;
+
+      expect(innerComponent.props.item.multiselect).toBe(true);
+      expect(innerComponent.props.item.value).toEqual(['option1', 'option2']);
+    });
   });
 
-  it('should render custom item', () => {
-    const onRenderItemMock = vi.fn().mockReturnValue(<div>Custom Component</div>);
-    const customItem: TemplatesSectionItem = {
-      type: 'custom',
-      value: 'custom value',
-      onRenderItem: onRenderItemMock,
-      label: 'Custom Label',
-      id: 'test-custom',
-    };
+  describe('Radio group item', () => {
+    it('should render radio group with options', () => {
+      const onOptionSelectMock = vi.fn();
+      const radioGroupItem: TemplatesSectionItem = {
+        type: 'radiogroup',
+        value: 'option1',
+        onOptionSelect: onOptionSelectMock,
+        options: [
+          { id: '1', label: 'Option 1', value: 'option1' },
+          { id: '2', label: 'Option 2', value: 'option2' },
+          { id: '3', label: 'Option 3', value: 'option3' },
+        ],
+        label: 'Radio Group Label',
+        id: 'test-radiogroup',
+      };
 
-    renderer.render(<FieldSectionItem item={customItem} />);
+      renderer.render(<FieldSectionItem item={radioGroupItem} />);
 
-    const component = renderer.getRenderOutput();
-    expect(component.props.className).toBe(classNames.sectionItem);
+      const component = renderer.getRenderOutput();
+      const [, valueComponent]: any[] = React.Children.toArray(component.props.children);
+      const innerComponent = valueComponent.props.children;
 
-    const [labelComponent, valueComponent]: any[] = React.Children.toArray(component.props.children);
-    expect(labelComponent.type.name).toBe('SectionLabel');
-    expect(labelComponent.props.item).toBe(customItem);
-    expect(valueComponent.props.className).toBe(classNames.sectionItemValue);
+      expect(innerComponent.type.name).toBe('SectionItemInner');
+      expect(innerComponent.props.item.type).toBe('radiogroup');
+      expect(innerComponent.props.item.value).toBe('option1');
+      expect(innerComponent.props.item.options).toHaveLength(3);
+      expect(innerComponent.props.item.onOptionSelect).toBe(onOptionSelectMock);
+    });
   });
 
-  it('should render item with required field', () => {
-    const onChangeMock = vi.fn();
-    const requiredItem: TemplatesSectionItem = {
-      type: 'textfield',
-      value: 'input value',
-      onChange: onChangeMock,
-      label: 'Required Field',
-      id: 'test-required',
-      required: true,
-    };
+  describe('Custom item', () => {
+    it('should render custom component', () => {
+      const customRenderMock = vi.fn().mockReturnValue(<div data-testid="custom-component">Custom Component Content</div>);
+      const customItem: TemplatesSectionItem = {
+        type: 'custom',
+        value: undefined,
+        onRenderItem: customRenderMock,
+        label: 'Custom Label',
+      };
 
-    renderer.render(<FieldSectionItem item={requiredItem} />);
+      renderer.render(<FieldSectionItem item={customItem} />);
 
-    const component = renderer.getRenderOutput();
-    expect(component.props.className).toBe(classNames.sectionItem);
+      const component = renderer.getRenderOutput();
+      const [, valueComponent]: any[] = React.Children.toArray(component.props.children);
+      const innerComponent = valueComponent.props.children;
 
-    const [labelComponent, valueComponent]: any[] = React.Children.toArray(component.props.children);
-    expect(labelComponent.type.name).toBe('SectionLabel');
-    expect(labelComponent.props.item).toBe(requiredItem);
-    expect(valueComponent.props.className).toBe(classNames.sectionItemValue);
+      expect(innerComponent.type.name).toBe('SectionItemInner');
+      expect(innerComponent.props.item.type).toBe('custom');
+      expect(innerComponent.props.item.onRenderItem).toBe(customRenderMock);
+    });
   });
 
-  it('should render item with error message', () => {
-    const onChangeMock = vi.fn();
-    const errorItem: TemplatesSectionItem = {
-      type: 'textfield',
-      value: '',
-      onChange: onChangeMock,
-      label: 'Error Field',
-      id: 'test-error',
-      required: true,
-      errorMessage: 'This field is required',
-    };
+  describe('Labels and descriptions', () => {
+    it('should render InfoLabel when description is provided', () => {
+      const textFieldItem: TemplatesSectionItem = {
+        type: 'textfield',
+        value: 'test value',
+        onChange: vi.fn(),
+        label: 'Field with Description',
+        description: 'This is a helpful description',
+        id: 'test-description',
+      };
 
-    renderer.render(<FieldSectionItem item={errorItem} />);
+      renderer.render(<FieldSectionItem item={textFieldItem} />);
 
-    const component = renderer.getRenderOutput();
-    expect(component.props.className).toBe(classNames.sectionItem);
+      const component = renderer.getRenderOutput();
+      const [labelComponent]: any[] = React.Children.toArray(component.props.children);
 
-    const [labelComponent, valueComponent]: any[] = React.Children.toArray(component.props.children);
-    expect(labelComponent.type.name).toBe('SectionLabel');
-    expect(labelComponent.props.item).toBe(errorItem);
-    expect(valueComponent.props.className).toBe(classNames.sectionItemValue);
+      expect(labelComponent.type.name).toBe('SectionLabel');
+      expect(labelComponent.props.item.description).toBe('This is a helpful description');
+      expect(labelComponent.props.item.label).toBe('Field with Description');
+    });
+
+    it('should render regular Label when no description is provided', () => {
+      const textFieldItem: TemplatesSectionItem = {
+        type: 'textfield',
+        value: 'test value',
+        onChange: vi.fn(),
+        label: 'Simple Field',
+        id: 'test-simple',
+      };
+
+      renderer.render(<FieldSectionItem item={textFieldItem} />);
+
+      const component = renderer.getRenderOutput();
+      const [labelComponent]: any[] = React.Children.toArray(component.props.children);
+
+      expect(labelComponent.type.name).toBe('SectionLabel');
+      expect(labelComponent.props.item.label).toBe('Simple Field');
+      expect(labelComponent.props.item.description).toBeUndefined();
+    });
   });
 
-  it('should render item with disabled state', () => {
-    const onChangeMock = vi.fn();
-    const disabledItem: TemplatesSectionItem = {
-      type: 'textfield',
-      value: 'disabled value',
-      onChange: onChangeMock,
-      label: 'Disabled Field',
-      id: 'test-disabled',
-      disabled: true,
-    };
+  describe('Field properties', () => {
+    it('should handle hint text', () => {
+      const textFieldItem: TemplatesSectionItem = {
+        type: 'textfield',
+        value: 'test value',
+        onChange: vi.fn(),
+        label: 'Field with Hint',
+        hint: 'Enter your information here',
+        id: 'test-hint',
+      };
 
-    renderer.render(<FieldSectionItem item={disabledItem} />);
+      renderer.render(<FieldSectionItem item={textFieldItem} />);
 
-    const component = renderer.getRenderOutput();
-    expect(component.props.className).toBe(classNames.sectionItem);
+      const component = renderer.getRenderOutput();
+      const [, valueComponent]: any[] = React.Children.toArray(component.props.children);
+      const innerComponent = valueComponent.props.children;
 
-    const [labelComponent, valueComponent]: any[] = React.Children.toArray(component.props.children);
-    expect(labelComponent.type.name).toBe('SectionLabel');
-    expect(labelComponent.props.item).toBe(disabledItem);
-    expect(valueComponent.props.className).toBe(classNames.sectionItemValue);
-  });
+      expect(innerComponent.props.item.hint).toBe('Enter your information here');
+    });
 
-  it('should render item with non-string label', () => {
-    const customLabel = <span>Custom Label Component</span>;
-    const itemWithCustomLabel: TemplatesSectionItem = {
-      type: 'text',
-      value: 'test value',
-      label: customLabel,
-    };
+    it('should handle placeholder text', () => {
+      const dropdownItem: TemplatesSectionItem = {
+        type: 'dropdown',
+        value: '',
+        onOptionSelect: vi.fn(),
+        selectedOptions: [],
+        placeholder: 'Select an option...',
+        options: [{ id: '1', label: 'Option 1', value: 'option1' }],
+        id: 'test-dropdown-placeholder',
+      };
 
-    renderer.render(<FieldSectionItem item={itemWithCustomLabel} />);
+      renderer.render(<FieldSectionItem item={dropdownItem} />);
 
-    const component = renderer.getRenderOutput();
-    expect(component.props.className).toBe(classNames.sectionItem);
+      const component = renderer.getRenderOutput();
+      const [, valueComponent]: any[] = React.Children.toArray(component.props.children);
+      const innerComponent = valueComponent.props.children;
 
-    const [labelComponent, valueComponent]: any[] = React.Children.toArray(component.props.children);
-    expect(labelComponent.type.name).toBe('SectionLabel');
-    expect(labelComponent.props.item).toBe(itemWithCustomLabel);
-    expect(valueComponent.props.className).toBe(classNames.sectionItemValue);
-  });
-
-  it('should render item with description', () => {
-    const onChangeMock = vi.fn();
-    const itemWithDescription: TemplatesSectionItem = {
-      type: 'textfield',
-      value: 'input value',
-      onChange: onChangeMock,
-      label: 'Field with Description',
-      description: 'This is a helpful description',
-      id: 'test-description',
-    };
-
-    renderer.render(<FieldSectionItem item={itemWithDescription} />);
-
-    const component = renderer.getRenderOutput();
-    expect(component.props.className).toBe(classNames.sectionItem);
-
-    const [labelComponent, valueComponent]: any[] = React.Children.toArray(component.props.children);
-    expect(labelComponent.type.name).toBe('SectionLabel');
-    expect(labelComponent.props.item).toBe(itemWithDescription);
-    expect(valueComponent.props.className).toBe(classNames.sectionItemValue);
+      expect(innerComponent.props.item.placeholder).toBe('Select an option...');
+    });
   });
 });

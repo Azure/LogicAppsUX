@@ -13,16 +13,19 @@ import {
   Textarea,
 } from '@fluentui/react-components';
 import type { BaseFieldItem, TemplatesSectionItem } from './templatesSectionModel';
+import { useTemplatesStyles } from './styles';
 
 interface FieldSectionItemProps {
   item: TemplatesSectionItem;
 }
 
 export const FieldSectionItem = ({ item }: FieldSectionItemProps) => {
+  const styles = useTemplatesStyles();
+
   return (
-    <div className="msla-templates-section-item">
+    <div className={styles.fieldSectionItem}>
       <SectionLabel item={item} />
-      <div className="msla-templates-section-item-value">
+      <div className={styles.fieldSectionItemValue}>
         <SectionItemInner item={item} />
       </div>
     </div>
@@ -30,20 +33,22 @@ export const FieldSectionItem = ({ item }: FieldSectionItemProps) => {
 };
 
 const SectionLabel = ({ item }: { item: TemplatesSectionItem }) => {
+  const styles = useTemplatesStyles();
+
   if (!item.label) {
     return null;
   }
 
   if (typeof item.label !== 'string') {
-    return <div className="msla-templates-section-item-label">{item.label}</div>;
+    return <div className={styles.fieldSectionItemLabel}>{item.label}</div>;
   }
 
   return item.description ? (
-    <InfoLabel info={item.description} className="msla-templates-section-item-label" required={(item as BaseFieldItem)?.required ?? false}>
+    <InfoLabel info={item.description} className={styles.fieldSectionItemLabel} required={(item as BaseFieldItem)?.required ?? false}>
       {item.label}
     </InfoLabel>
   ) : (
-    <Label className="msla-templates-section-item-label" required={(item as BaseFieldItem)?.required ?? false}>
+    <Label className={styles.fieldSectionItemLabel} required={(item as BaseFieldItem)?.required ?? false}>
       {item.label}
     </Label>
   );
@@ -51,11 +56,11 @@ const SectionLabel = ({ item }: { item: TemplatesSectionItem }) => {
 
 const SectionItemInner = ({ item }: { item: TemplatesSectionItem }) => {
   if (item.type === 'divider') {
-    return <Divider className="msla-templates-section-item-divider" />;
+    return <Divider />;
   }
 
   if (item.type === 'text') {
-    return <Text className="msla-templates-section-item-text">{item.value}</Text>;
+    return <Text>{item.value}</Text>;
   }
 
   if (item.type === 'switch') {
