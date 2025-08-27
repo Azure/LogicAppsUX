@@ -308,6 +308,16 @@ const fetchA2AAuthKey = async (siteResourceId: string, workflowName: string) => 
   return response.data;
 };
 
+// Helper function to fetch EasyAuth
+const fetchAuthentication = async (siteResourceId: string) => {
+  const response = await axios.post(`${baseUrl}${siteResourceId}/config/authsettings/list?api-version=${standardApiVersion}`, {
+    headers: {
+      Authorization: `Bearer ${environment.armToken}`,
+    },
+  });
+  return response.data;
+};
+
 // Helper function to fetch OBO (On-Behalf-Of) data
 const fetchOBOData = async (siteResourceId: string) => {
   try {
@@ -358,27 +368,29 @@ export const fetchAgentUrl = (siteResourceId: string, workflowName: string, host
     }
 
     try {
-      // Get A2A authentication key
-      const a2aData = await fetchA2AAuthKey(siteResourceId, workflowName);
-
-      // Get OBO data if available
-      const oboData = await fetchOBOData(siteResourceId);
-
       const agentBaseUrl = hostName.startsWith('https://') ? hostName : `https://${hostName}`;
       const agentUrl = `${agentBaseUrl}/api/Agents/${workflowName}`;
       const chatUrl = `${agentBaseUrl}/api/agentsChat/${workflowName}/IFrame`;
-
       let queryParams: AgentQueryParams | undefined = undefined;
+      const authentication = await fetchAuthentication(siteResourceId);
 
-      // Add authentication tokens if available
-      const a2aKey = a2aData?.key;
-      if (a2aKey) {
-        queryParams = { apiKey: a2aKey };
+      if (authentication?.properties?.enabled) {
+        // Get A2A authentication key
+        const a2aData = await fetchA2AAuthKey(siteResourceId, workflowName);
 
-        // Add OBO token if available
-        const oboKey = oboData?.properties?.key;
-        if (oboKey) {
-          queryParams.oboToken = oboKey;
+        // Get OBO data if available
+        const oboData = await fetchOBOData(siteResourceId);
+
+        // Add authentication tokens if available
+        const a2aKey = a2aData?.key;
+        if (a2aKey) {
+          queryParams = { apiKey: a2aKey };
+
+          // Add OBO token if available
+          const oboKey = oboData?.properties?.key;
+          if (oboKey) {
+            queryParams.oboUserToken = oboKey;
+          }
         }
       }
 
