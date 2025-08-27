@@ -7,7 +7,7 @@ import { TemplatesSection, type TemplatesSectionItem } from '@microsoft/designer
 import { useResourceStrings } from '../../common/resourcepicker/resourcestrings';
 import type { ResourceState } from '../../../core/state/clonetostandard/resourceslice';
 import { useCloneStrings } from '../../../core/clonetostandard/utils/cloneStrings';
-import { updateClonedWorkflowName } from '../../../core/state/clonetostandard/cloneslice';
+import { updateTargetWorkflowName } from '../../../core/state/clonetostandard/cloneslice';
 
 export const ConfigureLogicApps = () => {
   const { sourceApps } = useSelector((state: RootState) => state.clone);
@@ -88,10 +88,10 @@ const useCloneWorkflowItem = (cloneStrings: Record<string, string>) => {
 
   const items: TemplatesSectionItem = {
     label: cloneStrings.clonedWorkflowName,
-    value: sourceApps?.[0]?.clonedWorkflowName || '',
+    value: sourceApps?.[0]?.targetWorkflowName || '',
     type: 'textfield',
     onChange: (newValue) => {
-      dispatch(updateClonedWorkflowName(newValue));
+      dispatch(updateTargetWorkflowName(newValue));
     },
   };
 

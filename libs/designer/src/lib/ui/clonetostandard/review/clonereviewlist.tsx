@@ -24,7 +24,7 @@ export const CloneReviewList = () => {
   const destinationItems: TemplatesSectionItem[] = useDestinationItems(
     resourceStrings,
     destinationApp,
-    sourceApps?.[0]?.clonedWorkflowName || ''
+    sourceApps?.[0]?.targetWorkflowName || ''
   );
 
   return (
@@ -94,7 +94,7 @@ const useSourceItems = (resourceStrings: Record<string, string>, sourceResources
   return items;
 };
 
-const useDestinationItems = (resourceStrings: Record<string, string>, destinationResources: ResourceState, clonedWorkflowName: string) => {
+const useDestinationItems = (resourceStrings: Record<string, string>, destinationResources: ResourceState, targetWorkflowName: string) => {
   const { subscriptionId, resourceGroup, logicAppName } = destinationResources;
   const items: TemplatesSectionItem[] = [
     {
@@ -114,7 +114,7 @@ const useDestinationItems = (resourceStrings: Record<string, string>, destinatio
     },
     {
       label: resourceStrings.clonedWorkflowName,
-      value: clonedWorkflowName || '',
+      value: targetWorkflowName || '',
       type: 'text',
     },
   ];

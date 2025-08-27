@@ -8,7 +8,7 @@ import { setSuccessfullyCloned, updateErrorMessage } from '../../../core/state/c
 import { isUndefinedOrEmptyString } from '@microsoft/logic-apps-shared';
 
 export type CloneCallHandler = (
-  sourceApps: { subscriptionId: string; resourceGroup: string; logicAppName: string }[],
+  sourceApps: { subscriptionId: string; resourceGroup: string; logicAppName: string; targetWorkflowName: string }[],
   destinationApp: { subscriptionId: string; resourceGroup: string; logicAppName: string }
 ) => Promise<void>;
 

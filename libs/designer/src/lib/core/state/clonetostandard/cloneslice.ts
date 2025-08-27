@@ -9,7 +9,7 @@ export interface WorkflowState {
 
 export interface SourceWorkflowState extends WorkflowState {
   lockField?: boolean; // Indicates if this field is locked & cannot be modified/removed
-  clonedWorkflowName: string;
+  targetWorkflowName: string;
 }
 
 export interface CloneState {
@@ -42,7 +42,7 @@ export const cloneSlice = createSlice({
         logicAppName: string;
       }>
     ) => {
-      state.sourceApps = [{ ...action.payload, clonedWorkflowName: action.payload.logicAppName }];
+      state.sourceApps = [{ ...action.payload, targetWorkflowName: action.payload.logicAppName }];
     },
     setDestinationSubscription: (state, action: PayloadAction<string>) => {
       state.destinationApp.subscriptionId = action.payload;
@@ -57,10 +57,10 @@ export const cloneSlice = createSlice({
       state.errorMessage = action.payload;
     },
     // Note: temporary while only supporting single case, to-be-changed once supporting multi.
-    updateClonedWorkflowName: (state, action: PayloadAction<string>) => {
+    updateTargetWorkflowName: (state, action: PayloadAction<string>) => {
       const clonedWorkflow = state.sourceApps[0];
       if (clonedWorkflow) {
-        clonedWorkflow.clonedWorkflowName = action.payload;
+        clonedWorkflow.targetWorkflowName = action.payload;
       }
     },
     // Note: also temporary to indicate shutdown of experience, to-be-changed once design pattern is set with API change
@@ -76,7 +76,7 @@ export const {
   setDestinationResourceGroup,
   setDestinationWorkflowAppDetails,
   updateErrorMessage,
-  updateClonedWorkflowName,
+  updateTargetWorkflowName,
   setSuccessfullyCloned,
 } = cloneSlice.actions;
 export default cloneSlice.reducer;
