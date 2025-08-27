@@ -39,7 +39,7 @@ import { getAzExtResourceType, getAzureResourcesExtensionApi } from '@microsoft/
 
 const perfStats = {
   loadStartTime: Date.now(),
-  loadEndTime: undefined,
+  loadEndTime: undefined as number | undefined,
 };
 
 const telemetryString = 'setInGitHubBuild';
@@ -120,8 +120,8 @@ export async function activate(context: vscode.ExtensionContext) {
     //await prepareTestExplorer(context, activateContext);
 
     ext.rgApi = await getResourceGroupsApi();
-    // @ts-ignore
-    ext.azureAccountTreeItem = ext.rgApi.appResourceTree._rootTreeItem as AzureAccountTreeItemWithProjects;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ext.azureAccountTreeItem = (ext.rgApi.appResourceTree as any)._rootTreeItem as AzureAccountTreeItemWithProjects;
 
     activateContext.telemetry.properties.lastStep = 'verifyVSCodeConfigOnActivate';
     callWithTelemetryAndErrorHandling(extensionCommand.validateLogicAppProjects, async (actionContext: IActionContext) => {
@@ -145,19 +145,23 @@ export async function activate(context: vscode.ExtensionContext) {
     activateContext.telemetry.properties.lastStep = 'registerFuncHostTaskEvents';
     registerFuncHostTaskEvents();
 
-    ext.rgApi.registerApplicationResourceResolver(getAzExtResourceType(logicAppFilter), new LogicAppResolver());
+    const resourceType = getAzExtResourceType(logicAppFilter);
+    if (resourceType) {
+      ext.rgApi.registerApplicationResourceResolver(resourceType, new LogicAppResolver());
+    }
     const azureResourcesApi = await getAzureResourcesExtensionApi(context, '2.0.0');
     ext.rgApiV2 = azureResourcesApi;
 
     vscode.window.registerUriHandler(new UriHandler());
     perfStats.loadEndTime = Date.now();
-    activateContext.telemetry.measurements.mainFileLoad = (perfStats.loadEndTime - perfStats.loadStartTime) / 1000;
+    const loadTime = perfStats.loadEndTime - perfStats.loadStartTime;
+    activateContext.telemetry.measurements.mainFileLoad = loadTime / 1000;
   });
 }
 
-export function deactivate(): Promise<any> {
+export function deactivate(): Promise<void> {
   stopAllDesignTimeApis();
   ext.unitTestController?.dispose();
   ext.telemetryReporter.dispose();
-  return undefined;
+  return Promise.resolve();
 }

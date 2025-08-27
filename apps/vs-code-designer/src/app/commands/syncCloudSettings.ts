@@ -30,7 +30,7 @@ import type { ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps'
  * @returns {Promise<void>} - A promise that resolves when the sync is complete.
  */
 export async function syncCloudSettings(context: IActionContext, node: vscode.Uri): Promise<void> {
-  if (!node || !node.fsPath) {
+  if (!node?.fsPath) {
     throw new Error(localize('noProjectSelected', 'No project selected.'));
   }
 

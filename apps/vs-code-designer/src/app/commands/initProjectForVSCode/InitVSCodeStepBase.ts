@@ -124,7 +124,7 @@ export abstract class InitVSCodeStepBase extends AzureWizardExecuteStep<IProject
     const newTasks: TaskDefinition[] = this.getTasks();
 
     for (const task of newTasks) {
-      let cwd: string = (task.options && task.options.cwd) || '.';
+      let cwd: string = (task.options?.cwd) || '.';
       cwd = await this.addSubDir(context, cwd);
       if (!isPathEqual(cwd, '.')) {
         task.options = task.options || {};

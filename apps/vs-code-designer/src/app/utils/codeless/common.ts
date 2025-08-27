@@ -37,10 +37,10 @@ import * as os from 'os';
 import * as path from 'path';
 import type { MessageItem, WebviewPanel } from 'vscode';
 
-export type File = {
+export interface File {
   path: string;
   name: string;
-};
+}
 
 export function tryGetWebviewPanel(category: string, name: string): WebviewPanel | undefined {
   const currentPanels = ext.openWebviewPanels[category];
@@ -330,7 +330,7 @@ export function getRequestTriggerSchema(workflowContent: IWorkflowFileContent): 
   if (triggerNames.length === 1) {
     const trigger = triggers[triggerNames[0]];
     if (trigger.type.toLowerCase() === 'request') {
-      return trigger.inputs && trigger.inputs.schema ? trigger.inputs.schema : {};
+      return trigger.inputs?.schema ? trigger.inputs.schema : {};
     }
   }
 

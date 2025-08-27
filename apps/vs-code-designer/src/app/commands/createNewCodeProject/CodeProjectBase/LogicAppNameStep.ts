@@ -57,7 +57,7 @@ export class LogicAppNameStep extends AzureWizardPromptStep<IProjectWizardContex
       const workspaceFileContent = await vscode.workspace.fs.readFile(vscode.Uri.file(context.workspaceCustomFilePath));
       const workspaceFileJson = JSON.parse(workspaceFileContent.toString());
 
-      if (workspaceFileJson.folders && workspaceFileJson.folders.some((folder: { name: string }) => folder.name === name)) {
+      if (workspaceFileJson.folders?.some((folder: { name: string }) => folder.name === name)) {
         return localize('logicAppNameExists', 'A project with this name already exists in the workspace');
       }
     }

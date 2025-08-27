@@ -165,7 +165,7 @@ export async function getAzureWebJobsStorage(context: IActionContext, projectPat
   }
 
   const settings: ILocalSettingsJson = await getLocalSettingsJson(context, path.join(projectPath, localSettingsFileName));
-  return settings.Values && settings.Values[azureWebJobsStorageKey];
+  return settings.Values?.[azureWebJobsStorageKey];
 }
 
 /**
@@ -193,7 +193,7 @@ export async function removeAppKindFromLocalSettings(logicAppPath: string, conte
   const localSettingsPath: string = path.join(logicAppPath, localSettingsFileName);
   const settings: ILocalSettingsJson = await getLocalSettingsJson(context, localSettingsPath);
 
-  if (settings.Values && settings.Values[appKindSetting]) {
+  if (settings.Values?.[appKindSetting]) {
     delete settings.Values[appKindSetting];
     await writeFormattedJson(localSettingsPath, settings);
   }

@@ -48,7 +48,7 @@ export async function isLogicAppProject(folderPath: string): Promise<boolean> {
         const workflowJsonData = await fse.readFile(workflowJsonPath, 'utf-8');
         const workflowJson = JSON.parse(workflowJsonData);
         const schema = workflowJson?.definition?.$schema;
-        isJsonWorkflow = schema && schema.includes('Microsoft.Logic') && schema.includes('workflowdefinition.json');
+        isJsonWorkflow = schema?.includes('Microsoft.Logic') && schema.includes('workflowdefinition.json');
       }
       const workflowCsPaths = subpaths.map((subpath) => path.join(folderPath, subpath, codefulWorkflowFileName));
       const validWorkflowCsPaths = await Promise.all(

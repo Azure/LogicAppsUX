@@ -22,7 +22,7 @@ export class SelectPackageStep extends AzureWizardPromptStep<IFunctionWizardCont
     packagePicks.push({ label: localize('browse', '$(file-directory) Browse...'), description: '', data: undefined });
     const packageFile: IAzureQuickPickItem<string | undefined> | undefined = await context.ui.showQuickPick(packagePicks, { placeHolder });
 
-    return packageFile && packageFile.data ? packageFile.data : (await context.ui.showOpenDialog(options))[0].fsPath;
+    return packageFile?.data ? packageFile.data : (await context.ui.showOpenDialog(options))[0].fsPath;
   }
 
   /**

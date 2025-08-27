@@ -63,7 +63,7 @@ export async function generateDeploymentScripts(context: IActionContext, node?: 
     }
 
     context.telemetry.properties.lastStep = 'isLogicAppProject';
-    if (node && node.fsPath && (await isLogicAppProject(node.fsPath))) {
+    if (node?.fsPath && (await isLogicAppProject(node.fsPath))) {
       projectPath = node.fsPath;
     } else {
       const workspaceFolder = await getWorkspaceFolder(context);

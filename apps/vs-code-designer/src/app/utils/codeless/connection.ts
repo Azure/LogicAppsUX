@@ -135,7 +135,7 @@ async function addConnectionDataInJson(
     pathToSetConnectionsData = pathToSetConnectionsData[path];
   }
 
-  if (pathToSetConnectionsData && pathToSetConnectionsData[connectionKey]) {
+  if (pathToSetConnectionsData?.[connectionKey]) {
     const message: string = localize('ConnectionKeyAlreadyExist', "Connection key '{0}' already exists.", connectionKey);
     await vscode.window.showErrorMessage(message, localize('OK', 'OK'));
     return;
@@ -443,7 +443,7 @@ export async function createAclInConnectionIfNeeded(
   node: SlotTreeItem
 ): Promise<void> {
   const site = node.site;
-  if ((!site || !site.rawSite.identity || site.rawSite.identity.type !== 'SystemAssigned') && !identityWizardContext?.useAdvancedIdentity) {
+  if ((!site?.rawSite.identity || site.rawSite.identity.type !== 'SystemAssigned') && !identityWizardContext?.useAdvancedIdentity) {
     return;
   }
 

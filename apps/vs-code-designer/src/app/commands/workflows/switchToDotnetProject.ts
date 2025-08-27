@@ -165,7 +165,7 @@ export async function switchToDotnetProject(
   const wizardOptions = {
     projectPath,
     workspaceFolder,
-    workspacePath: (workspaceFolder && workspaceFolder.uri.fsPath) || target.fsPath,
+    workspacePath: (workspaceFolder?.uri.fsPath) || target.fsPath,
     language: ProjectLanguage.CSharp,
     version,
   };

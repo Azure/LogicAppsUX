@@ -1,10 +1,103 @@
 {
   "extends": ["../../.eslintrc.json"],
-  "ignorePatterns": ["!**/*", "**/node_modules/**", "**/build/**", "**/__test__/**", "**/__tests__/**"],
+  "ignorePatterns": ["!**/*", "**/node_modules/**", "**/build/**", "**/__test__/**", "**/__tests__/**", "**/test/**", "**/dist/**", "**/coverage/**"],
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
-      "rules": {}
+      "rules": {
+        "@typescript-eslint/prefer-readonly": "off",
+        "@typescript-eslint/prefer-readonly-parameter-types": "off",
+        "@typescript-eslint/explicit-function-return-type": "off",
+        "@typescript-eslint/explicit-member-accessibility": "off",
+        "@typescript-eslint/no-explicit-any": "warn",
+        "@typescript-eslint/no-unused-vars": "error",
+        "@typescript-eslint/prefer-nullish-coalescing": "off",
+        "@typescript-eslint/prefer-optional-chain": "off",
+        "@typescript-eslint/consistent-type-definitions": ["error", "interface"],
+        "@typescript-eslint/consistent-type-imports": "off",
+        "@typescript-eslint/no-floating-promises": "off",
+        "@typescript-eslint/await-thenable": "off",
+        "@typescript-eslint/no-misused-promises": "off",
+        "@typescript-eslint/require-await": "off",
+        "@typescript-eslint/naming-convention": [
+          "warn",
+          {
+            "selector": "default",
+            "format": ["camelCase", "PascalCase"],
+            "leadingUnderscore": "forbid",
+            "trailingUnderscore": "forbid"
+          },
+          {
+            "selector": "variable",
+            "format": ["camelCase", "UPPER_CASE", "PascalCase"],
+            "leadingUnderscore": "forbid",
+            "trailingUnderscore": "forbid"
+          },
+          {
+            "selector": "import",
+            "format": ["camelCase", "PascalCase"]
+          },
+          {
+            "selector": "parameter",
+            "format": ["camelCase"],
+            "leadingUnderscore": "allow"
+          },
+          {
+            "selector": "memberLike",
+            "modifiers": ["private"],
+            "format": ["camelCase"],
+            "leadingUnderscore": "allow"
+          },
+          {
+            "selector": "typeLike",
+            "format": ["PascalCase"]
+          },
+          {
+            "selector": "class",
+            "format": ["PascalCase"]
+          },
+          {
+            "selector": "interface",
+            "format": ["PascalCase"]
+          },
+          {
+            "selector": "typeAlias",
+            "format": ["PascalCase", "camelCase", "UPPER_CASE"]
+          },
+          {
+            "selector": "enum",
+            "format": ["PascalCase"]
+          },
+          {
+            "selector": "enumMember",
+            "format": ["PascalCase"]
+          },
+          {
+            "selector": "function",
+            "format": ["camelCase"]
+          },
+          {
+            "selector": "method",
+            "format": ["camelCase"]
+          },
+          {
+            "selector": "property",
+            "format": ["camelCase", "UPPER_CASE"],
+            "leadingUnderscore": "forbid",
+            "trailingUnderscore": "forbid"
+          },
+          {
+            "selector": "objectLiteralProperty",
+            "format": null
+          }
+        ],
+        "prefer-const": "error",
+        "no-var": "error",
+        "no-console": "warn",
+        "eqeqeq": ["error", "always", { "null": "ignore" }],
+        "curly": ["error", "all"],
+        "no-throw-literal": "error"
+      }
     },
     {
       "files": ["*.ts", "*.tsx"],
@@ -15,6 +108,14 @@
     {
       "files": ["*.js", "*.jsx"],
       "rules": {}
+    },
+    {
+      "files": ["*.config.ts", "**/test-setup.ts", "**/*.config.js"],
+      "rules": {
+        "no-console": "off",
+        "@typescript-eslint/explicit-member-accessibility": "off",
+        "@typescript-eslint/explicit-function-return-type": "off"
+      }
     }
   ]
 }

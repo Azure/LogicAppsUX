@@ -24,7 +24,7 @@ export class SelectFolderForNewWorkspaceStep extends AzureWizardPromptStep<IProj
     folderPicks.push({ label: localize('browse', '$(file-directory) Browse...'), description: '', data: undefined });
     const packageFile: IAzureQuickPickItem<string | undefined> | undefined = await context.ui.showQuickPick(folderPicks, { placeHolder });
 
-    return packageFile && packageFile.data ? packageFile.data : (await context.ui.showOpenDialog(options))[0].fsPath;
+    return packageFile?.data ? packageFile.data : (await context.ui.showOpenDialog(options))[0].fsPath;
   }
 
   public async prompt(context: IProjectWizardContext): Promise<void> {
@@ -33,7 +33,7 @@ export class SelectFolderForNewWorkspaceStep extends AzureWizardPromptStep<IProj
     context.projectPath = projectPath;
     context.projectType = ProjectType.logicApp;
     context.workspaceFolder = getContainingWorkspace(projectPath);
-    context.workspacePath = (context.workspaceFolder && context.workspaceFolder.uri.fsPath) || projectPath;
+    context.workspacePath = (context.workspaceFolder?.uri.fsPath) || projectPath;
     if (context.workspaceFolder) {
       context.openBehavior = OpenBehavior.alreadyOpen;
     }

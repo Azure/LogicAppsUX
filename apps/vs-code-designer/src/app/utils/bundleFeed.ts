@@ -22,7 +22,7 @@ import { ext } from '../../extensionVariables';
  * @returns {Promise<IBundleFeed>} Returns bundle extension object.
  */
 async function getBundleFeed(context: IActionContext, bundleMetadata: IBundleMetadata | undefined): Promise<IBundleFeed> {
-  const bundleId: string = (bundleMetadata && bundleMetadata.id) || extensionBundleId;
+  const bundleId: string = (bundleMetadata?.id) || extensionBundleId;
 
   const envVarUri: string | undefined = process.env.FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI;
   // Only use an aka.ms link for the most common case, otherwise we will dynamically construct the url
@@ -61,7 +61,7 @@ async function getBundleDependencyFeed(
   context: IActionContext,
   bundleMetadata: IBundleMetadata | undefined
 ): Promise<IBundleDependencyFeed> {
-  const bundleId: string = (bundleMetadata && bundleMetadata?.id) || extensionBundleId;
+  const bundleId: string = (bundleMetadata?.id) || extensionBundleId;
   const projectPath: string | undefined = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : null;
   let envVarUri: string | undefined = process.env.FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI;
   if (projectPath) {

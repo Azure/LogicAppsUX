@@ -11,7 +11,7 @@ export function getRemoteDebugLanguage(siteConfig: SiteConfig): RemoteDebugLangu
   //   If the Function App is running on Linux consumption, it will be empty
   //   If the Function App is running on a Linux App Service plan, it will contain Docker registry information, e.g. "DOCKER|repo.azurecr.io/image:tag"
   //      The blessed Node.js Docker image will be something like "DOCKER|mcr.microsoft.com/azure-functions/node:2.0-node8-appservice"
-  if (siteConfig.linuxFxVersion && siteConfig.linuxFxVersion.startsWith('DOCKER|mcr.microsoft.com/azure-functions/node')) {
+  if (siteConfig.linuxFxVersion?.startsWith('DOCKER|mcr.microsoft.com/azure-functions/node')) {
     return RemoteDebugLanguage.Node;
   }
 

@@ -36,7 +36,7 @@ import { buildCustomCodeFunctionsProject } from './buildCustomCodeFunctionsProje
 import { getProjFiles } from '../utils/dotnet/dotnet';
 import { delay } from '../utils/delay';
 
-type OSAgnosticProcess = { command: string | undefined; pid: number | string };
+interface OSAgnosticProcess { command: string | undefined; pid: number | string }
 type ActualUnixPS = unixPsTree.PS & { COMM?: string };
 
 /**

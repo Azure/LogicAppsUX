@@ -29,15 +29,15 @@ import type { AzureResourcesExtensionApi } from '@microsoft/vscode-azureresource
  * Namespace for common variables used throughout the extension. They must be initialized in the activate() method of extension.ts
  */
 
-type DataMapperPanelDictionary = { [key: string]: DataMapperPanel }; // key == dataMapName
+interface DataMapperPanelDictionary { [key: string]: DataMapperPanel } // key == dataMapName
 type LogicAppMap = Map<string, Site>;
 type SubscriptionMap = Map<string, LogicAppMap>;
-type DesignTimeInstance = {
+interface DesignTimeInstance {
   process?: cp.ChildProcess;
   childFuncPid?: string;
   port?: number;
   isStarting?: boolean;
-};
+}
 
 // biome-ignore lint/style/noNamespace:
 export namespace ext {
@@ -119,7 +119,7 @@ export namespace ext {
 
   export const showError = (errMsg: string, options?: MessageOptions) => {
     ext.log(errMsg);
-    if (options && options.detail) {
+    if (options?.detail) {
       ext.log(options.detail);
     }
     window.showErrorMessage(errMsg, options);

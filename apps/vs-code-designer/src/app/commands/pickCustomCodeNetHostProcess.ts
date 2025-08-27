@@ -13,7 +13,7 @@ import { getUnixChildren, getWindowsChildren, pickChildProcess } from './pickFun
 import { localize } from '../../localize';
 import { tryGetLogicAppProjectRoot } from '../utils/verifyIsProject';
 
-type OSAgnosticProcess = { command: string | undefined; pid: number | string };
+interface OSAgnosticProcess { command: string | undefined; pid: number | string }
 
 /**
  * Picks the .NET host child process for the custom code project by polling the running function tasks for the workspace folder.

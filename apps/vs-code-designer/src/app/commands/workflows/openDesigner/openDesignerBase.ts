@@ -144,10 +144,10 @@ export abstract class OpenDesignerBase {
 
     managedApiConnections?.forEach((apiConnection: any) => {
       const connectionValue = parseConnectionsData?.managedApiConnections[apiConnection] as any;
-      if (connectionValue.api && connectionValue.api.id) {
+      if (connectionValue.api?.id) {
         connectionValue.api.id = this.addCurlyBraces(connectionValue.api.id);
       }
-      if (connectionValue.connection && connectionValue.connection.id) {
+      if (connectionValue.connection?.id) {
         connectionValue.connection.id = this.addCurlyBraces(connectionValue.connection.id);
       }
     });

@@ -40,7 +40,7 @@ export async function verifyTargetFramework(
       const settingsResult: IVerifyFrameworkResult | undefined = verifySettingsFramework(folder.uri.fsPath, targetFramework);
 
       const mismatchTargetFramework: string | undefined =
-        (tasksResult && tasksResult.mismatchTargetFramework) || (settingsResult && settingsResult.mismatchTargetFramework);
+        (tasksResult?.mismatchTargetFramework) || (settingsResult?.mismatchTargetFramework);
       if (mismatchTargetFramework) {
         context.telemetry.properties.verifyConfigPrompt = 'updateTargetFramework';
 
@@ -78,7 +78,7 @@ function verifyTasksFramework(folder: WorkspaceFolder, projTargetFramework: stri
 
   const tasks: ITask[] = getTasks(folder);
   for (const task of tasks) {
-    if (task.options && task.options.cwd) {
+    if (task.options?.cwd) {
       const matches: RegExpMatchArray | null = task.options.cwd.match(targetFrameworkRegExp);
       const targetFramework: string | null = matches && matches[0];
       if (targetFramework && targetFramework.toLowerCase() !== projTargetFramework.toLowerCase()) {

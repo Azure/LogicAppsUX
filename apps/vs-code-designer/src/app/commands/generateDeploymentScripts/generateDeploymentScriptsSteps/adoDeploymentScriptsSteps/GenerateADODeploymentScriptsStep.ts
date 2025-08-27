@@ -40,7 +40,7 @@ export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IAz
     }
 
     context.deploymentFolderPath = deploymentFolderPath;
-    context.workspacePath = (context.workspaceFolder && context.workspaceFolder.uri.fsPath) || context.customWorkspaceFolderPath;
+    context.workspacePath = (context.workspaceFolder?.uri.fsPath) || context.customWorkspaceFolderPath;
     if (context.workspaceFolder) {
       context.openBehavior = OpenBehavior.alreadyOpen;
     }

@@ -95,8 +95,7 @@ export const getWorkspaceFileInParentDirectory = async (actionContext: IActionCo
           const workspaceFileJson = JSON.parse(workspaceFileContent.toString());
 
           if (
-            workspaceFileJson.folders &&
-            workspaceFileJson.folders.some((folder: { path: string }) => folder.path === relativeFolderPath)
+            workspaceFileJson.folders?.some((folder: { path: string }) => folder.path === relativeFolderPath)
           ) {
             return workspaceFilePath;
           }
@@ -344,7 +343,7 @@ export async function selectWorkspaceItem(
     folder = await context.ui.showQuickPick(folderPicks, { placeHolder });
   }
 
-  return folder && folder.data ? folder.data : (await context.ui.showOpenDialog(options))[0].fsPath;
+  return folder?.data ? folder.data : (await context.ui.showOpenDialog(options))[0].fsPath;
 }
 
 /**

@@ -381,7 +381,7 @@ export async function exportLogicApp(context: IActionContext): Promise<void> {
       }
       case ExtensionCommand.select_folder: {
         vscode.window.showOpenDialog(exportDialogOptions).then((fileUri) => {
-          if (fileUri && fileUri[0]) {
+          if (fileUri?.[0]) {
             panel.webview.postMessage({
               command: ExtensionCommand.update_export_path,
               data: {

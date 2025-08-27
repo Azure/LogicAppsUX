@@ -46,7 +46,7 @@ export class FunctionAppNameStep extends AzureWizardPromptStep<IProjectWizardCon
       const workspaceFileContent = await vscode.workspace.fs.readFile(vscode.Uri.file(context.workspaceCustomFilePath));
       const workspaceFileJson = JSON.parse(workspaceFileContent.toString());
 
-      if (workspaceFileJson.folders && workspaceFileJson.folders.some((folder: { name: string }) => folder.name === name)) {
+      if (workspaceFileJson.folders?.some((folder: { name: string }) => folder.name === name)) {
         return localize('functionNameExistsInWorkspaceError', 'A function with this name already exists in the workspace.');
       }
     }

@@ -14,14 +14,15 @@ export interface IResourceResult {
 }
 
 /**
- * Gets the IDs involed in the azure resource ID.
- * @param {string} id - Azure resource ID.
- * @returns {RegExpMatchArray} Array with IDs.
+ * Gets the IDs involved in the azure resource ID.
+ * @param id - Azure resource ID.
+ * @returns Array with IDs.
+ * @throws Error when the resource ID format is invalid
  */
 function parseResourceId(id: string): RegExpMatchArray {
   const matches: RegExpMatchArray | null = id.match(/\/subscriptions\/(.*)\/resourceGroups\/(.*)\/providers\/(.*)\/(.*)/);
 
-  if (matches === null || matches.length < 3) {
+  if (matches === null || matches.length < 5) {
     throw new Error(localize('InvalidResourceId', 'Invalid Azure Resource Id'));
   }
 
@@ -30,17 +31,18 @@ function parseResourceId(id: string): RegExpMatchArray {
 
 /**
  * Gets the resource group from storage account id.
- * @param {string} id - Storage account ID.
- * @returns {string} Resource group ID.
+ * @param id - Storage account ID.
+ * @returns Resource group ID.
  */
 export function getResourceGroupFromId(id: string): string {
-  return parseResourceId(id)[2];
+  const matches = parseResourceId(id);
+  return matches[2] ?? '';
 }
 
 /**
  * Gets storage account resource.
- * @param {IStorageAccountWizardContext} context - Commmand context.
- * @returns {Promise<IResourceResult>} Returns the connection resource.
+ * @param context - Command context.
+ * @returns Returns the connection resource.
  */
 export async function getStorageConnectionString(context: IStorageAccountWizardContext): Promise<IResourceResult> {
   const client: StorageManagementClient = await createStorageClient(context);
@@ -54,7 +56,7 @@ export async function getStorageConnectionString(context: IStorageAccountWizardC
   let endpointSuffix: string = nonNullProp(context.environment, 'storageEndpointSuffix');
 
   if (endpointSuffix.startsWith('.')) {
-    endpointSuffix = endpointSuffix.substr(1);
+    endpointSuffix = endpointSuffix.substring(1);
   }
 
   return {

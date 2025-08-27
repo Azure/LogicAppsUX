@@ -284,7 +284,7 @@ const getAccessTokenForZipDeploy = async (node: SlotTreeItem, context: ILogicApp
   // Get the access token for the application
   const tokenResponse = await credential.getToken(`api://${clientId}/.default`);
 
-  if (!tokenResponse || !tokenResponse.token) {
+  if (!tokenResponse?.token) {
     const errorMessage = 'Failed to retrieve access token for zip deploy API';
     context.telemetry.properties.getAccessTokenError = errorMessage;
     throw new Error(localize('errorFetchingAccessToken', errorMessage));

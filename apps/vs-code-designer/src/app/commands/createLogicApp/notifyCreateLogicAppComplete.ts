@@ -24,7 +24,7 @@ export async function notifyCreateLogicAppComplete(node: SlotTreeItem): Promise<
 
   window.showInformationMessage(deployComplete, viewOutput).then(async (result) => {
     await callWithTelemetryAndErrorHandling('postCreation', async (postDeployContext: IActionContext) => {
-      postDeployContext.telemetry.properties.dialogResult = result && result.title;
+      postDeployContext.telemetry.properties.dialogResult = result?.title;
       if (result === viewOutput) {
         ext.outputChannel.show();
       }

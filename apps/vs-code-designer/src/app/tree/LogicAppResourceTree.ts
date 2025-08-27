@@ -183,7 +183,7 @@ export class LogicAppResourceTree implements ResolvedAppResourceBase {
       try {
         const client = await this.site.createClient(context);
         const appSettings: StringDictionary = await client.listApplicationSettings();
-        version = tryParseFuncVersion(appSettings.properties && appSettings.properties.FUNCTIONS_EXTENSION_VERSION);
+        version = tryParseFuncVersion(appSettings.properties?.FUNCTIONS_EXTENSION_VERSION);
       } catch {
         // ignore and use default
       }

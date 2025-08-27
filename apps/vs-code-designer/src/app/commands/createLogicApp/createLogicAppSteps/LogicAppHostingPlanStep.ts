@@ -27,7 +27,7 @@ export class LogicAppHostingPlanStep extends AzureWizardPromptStep<ILogicAppWiza
     ).data;
 
     wizardContext.telemetry.properties.useHybrid = wizardContext.useHybrid ? 'true' : 'false';
-    wizardContext.telemetry.properties.planSkuFamilyFilter = wizardContext.planSkuFamilyFilter && wizardContext.planSkuFamilyFilter.source;
+    wizardContext.telemetry.properties.planSkuFamilyFilter = wizardContext.planSkuFamilyFilter?.source;
     wizardContext.telemetry.properties.suppressCreate = wizardContext.suppressCreate ? 'true' : 'false';
 
     setSiteOS(wizardContext);

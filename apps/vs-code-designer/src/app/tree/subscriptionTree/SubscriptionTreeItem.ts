@@ -239,7 +239,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
 
       if (wizardContext.newResourceGroupName) {
         resourceGroupName = wizardContext.newResourceGroupName;
-      } else if (wizardContext.resourceGroup && wizardContext.resourceGroup.name) {
+      } else if (wizardContext.resourceGroup?.name) {
         resourceGroupName = wizardContext.resourceGroup.name;
       }
 

@@ -34,7 +34,7 @@ export async function notifyDeployComplete(node: SlotTreeItem, isHybridLogiApp: 
 
   window.showInformationMessage(deployComplete, ...items).then(async (result) => {
     await callWithTelemetryAndErrorHandling('postDeploy', async (postDeployContext: IActionContext) => {
-      postDeployContext.telemetry.properties.dialogResult = result && result.title;
+      postDeployContext.telemetry.properties.dialogResult = result?.title;
       if (result === viewOutput) {
         ext.outputChannel.show();
       } else if (result === streamLogs) {
