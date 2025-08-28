@@ -6,7 +6,7 @@ import type { AzExtParentTreeItem, IActionContext, ISubscriptionContext } from '
 import { ext } from '../../extensionVariables';
 import { isString } from '@microsoft/logic-apps-shared';
 import { localize } from '../../localize';
-import { SubscriptionTreeItem } from '../tree/subscriptionTree/SubscriptionTreeItem';
+import { SubscriptionTreeItem } from '../tree/subscriptionTree/subscriptionTreeItem';
 
 /**
  * Retrieves the subscription context based on the provided subscription ID or prompts the user to select a subscription node.

@@ -9,7 +9,7 @@ import { tryGetLocalFuncVersion } from '../../utils/funcCoreTools/funcVersion';
 import { verifyAndPromptToCreateProject } from '../../utils/verifyIsProject';
 import { getGlobalSetting } from '../../utils/vsCodeConfig/settings';
 import { getContainingWorkspace } from '../../utils/workspace';
-import { InitVSCodeLanguageStep } from './InitVSCodeLanguageStep';
+import { InitProjectLanguageStep } from './initProjectLanguageStep';
 import { type IActionContext, AzureWizard, UserCancelledError } from '@microsoft/vscode-azext-utils';
 import {
   latestGAVersion,
@@ -55,7 +55,7 @@ export async function initProjectForVSCode(context: IActionContext, fsPath?: str
     workspaceFolder,
     projectTemplateKey,
   });
-  const wizard: AzureWizard<IProjectWizardContext> = new AzureWizard(wizardContext, { promptSteps: [new InitVSCodeLanguageStep()] });
+  const wizard: AzureWizard<IProjectWizardContext> = new AzureWizard(wizardContext, { promptSteps: [new InitProjectLanguageStep()] });
   await wizard.prompt();
   await wizard.execute();
 

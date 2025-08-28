@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import * as fse from 'fs-extra';
 import * as vscode from 'vscode';
 import * as path from 'path';
-import { FunctionNameStep } from '../FunctionNameStep';
+import { FunctionNameStep } from '../functionNameStep';
 import { ext } from '../../../../../extensionVariables';
 import { localize } from '../../../../../localize';
 import { IProjectWizardContext, ProjectType } from '@microsoft/vscode-extension-logic-apps';

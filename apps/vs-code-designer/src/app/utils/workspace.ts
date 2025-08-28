@@ -232,7 +232,7 @@ async function selectLogicAppWorkspaceFolder(
  * @param {string} message - The message to display to the user if workspace is not open.
  * @returns {Promise<WorkspaceFolder | string | undefined>} Returns either the selected logic app or undefined for a new logic app.
  */
-export async function getLogicAppWithoutCustomCode(
+export async function promptForLogicAppWithoutCustomCode(
   context: IActionContext,
   message?: string
 ): Promise<vscode.WorkspaceFolder | string | undefined> {
