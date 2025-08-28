@@ -237,7 +237,7 @@ export const RunHistoryPanel = (props: RunHistoryPanelProps) => {
               {filteredRuns.map((run) => (
                 <RunHistoryEntry
                   key={run.id}
-                  run={run}
+                  runId={run.id}
                   isSelected={selectedRunInstance?.id === run.id}
                   onRunSelected={props.onRunSelected}
                   addFilterCallback={addFilterCallback}

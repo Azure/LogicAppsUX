@@ -22,6 +22,7 @@ export const runsQueriesKeys = {
   useRunChatHistory: 'useRunChatHistory',
   useAgentChatInvokeUri: 'useAgentChatInvokeUri',
   useRunInstance: 'useRunInstance',
+  useResubmitRun: 'useResubmitRun',
   useCancelRun: 'useCancelRun',
 };
 
@@ -49,7 +50,7 @@ export const useRunsInfiniteQuery = (enabled = false) => {
           const allRuns: Run[] = (data?.pages ?? []).flatMap((p: any) => p.runs ?? []);
           allRuns.forEach((run) => {
             if (run?.name) {
-              queryClient.setQueryData([runsQueriesKeys.run, run.name], run);
+              queryClient.setQueryData([runsQueriesKeys.run, run.id], run);
             }
           });
         } catch {
@@ -102,22 +103,6 @@ export const getRun = (runId: string) => {
       if (isRunError(fetchedRun)) {
         throw new Error('Run not found');
       }
-
-      await queryClient.cancelQueries({ queryKey: ['runs'] });
-      queryClient.setQueryData<Run[]>(['runs'], (oldRuns) => {
-        let updatedExisting = false;
-        const newRuns = (oldRuns ?? []).map((run) => {
-          if (run.id === fetchedRun.id) {
-            updatedExisting = true;
-            return fetchedRun;
-          }
-          return run;
-        });
-        if (!updatedExisting) {
-          newRuns.unshift(fetchedRun);
-        }
-        return newRuns;
-      });
       return fetchedRun;
     },
     {
@@ -211,6 +196,12 @@ export const useAgentRepetition = (
       enabled: isEnabled,
     }
   );
+};
+
+export const useResubmitRun = (runId: string, triggerName: string) => {
+  return useMutation([runsQueriesKeys.useResubmitRun, { runId }], async () => {
+    return await RunService().resubmitRun?.(runId, triggerName);
+  });
 };
 
 export const useCancelRun = (runId: string) => {
