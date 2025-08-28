@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { FunctionAppNamespaceStep } from '../FunctionAppNamespaceStep';
+import { FunctionAppNamespaceStep } from '../functionAppNamespaceStep';
 import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
-import { ext } from '../../../../../../extensionVariables';
+import { ext } from '../../../../../extensionVariables';
 
 describe('FunctionAppNamespaceStep', () => {
   const validFunctionAppNamespace = 'Valid_Namespace1';
