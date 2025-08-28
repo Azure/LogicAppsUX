@@ -20,7 +20,7 @@ import { ExtensionCommand, type FileSystemConnectionInfo } from '@microsoft/vsco
 import { convertConnectionsDataToReferences } from '../designer/utilities/workflow';
 import { useConnectionViewStyles } from './connectionViewStyles';
 
-const ConnectionView = ({ connectorName }: { connectorName: string }) => {
+const ConnectionView = ({ connectorName, connectorType }: { connectorName: string; connectorType: string }) => {
   const vscode = useContext(VSCodeContext);
   const sendMsgToVsix = useCallback(
     (msg: any) => {
@@ -49,7 +49,14 @@ const ConnectionView = ({ connectorName }: { connectorName: string }) => {
     sendMsgToVsix({ command: ExtensionCommand.insert_connection, connection: connection, connectionReferences });
   };
 
-  return <ConnectionsView closeView={closeView} connectorName={connectorName} onConnectionSuccessful={onConnectionSuccessful} />;
+  return (
+    <ConnectionsView
+      closeView={closeView}
+      connectorName={connectorName}
+      connectorType={connectorType}
+      onConnectionSuccessful={onConnectionSuccessful}
+    />
+  );
 };
 
 export const LanguageServerConnectionView = () => {
@@ -70,7 +77,7 @@ export const LanguageServerConnectionView = () => {
     connector,
   } = vscodeDesigner;
 
-  const { name: connectorName } = connector;
+  const { name: connectorName, type: connectorType } = connector;
 
   const [theme, setTheme] = useState<Theme>(getTheme(document.body));
   useThemeObserver(document.body, theme, setTheme, {
@@ -155,7 +162,7 @@ export const LanguageServerConnectionView = () => {
           }}
           appSettings={panelMetaData?.localSettings}
         >
-          <ConnectionView connectorName={connectorName} />
+          <ConnectionView connectorName={connectorName} connectorType={connectorType} />
         </BJSWorkflowProvider>
       </DesignerProvider>
     </div>

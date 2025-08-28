@@ -13,7 +13,8 @@ import { useConnectionsForConnector } from '../../../../core/queries/connections
 export const CreateConnectionWrapper = ({
   connectorId,
   onConnectionSuccessful,
-}: { connectorId: string; onConnectionSuccessful: (connection: Connection) => void }) => {
+  connectorType,
+}: { connectorId: string; connectorType: string; onConnectionSuccessful: (connection: Connection) => void }) => {
   const dispatch = useDispatch<AppDispatch>();
   const isAgentSubgraph = false;
   const nodeIds = useConnectionPanelSelectedNodeIds();
@@ -36,7 +37,7 @@ export const CreateConnectionWrapper = ({
   return (
     <CreateConnectionInternal
       connectorId={connector?.id ?? ''}
-      operationType={'managedApiConnections'} // need to do this
+      operationType={connectorType}
       existingReferences={existingReferences}
       isAgentSubgraph={isAgentSubgraph ?? false}
       nodeIds={nodeIds}
@@ -45,7 +46,7 @@ export const CreateConnectionWrapper = ({
       hideCancelButton={!hasExistingConnection}
       updateConnectionInState={updateConnectionInState}
       onConnectionCreated={() => onConnectionSuccessful}
-      workflowKind={'stateful'} //need to update this
+      workflowKind={'stateful'} // TODO (ccastrotrejo) - Need to update this onece its clear
     />
   );
 };

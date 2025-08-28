@@ -16,6 +16,7 @@ export interface LanguageServerState {
   hostVersion: string;
   connector: {
     name: string;
+    type: string;
   };
 }
 
@@ -40,6 +41,7 @@ const initialState: LanguageServerState = {
   hostVersion: '',
   connector: {
     name: '',
+    type: '',
   },
 };
 

@@ -44,8 +44,9 @@ export default class OpenConnectionView extends OpenDesignerBase {
   private readonly methodName: string;
   private readonly connectorName: string;
   private readonly range: Range;
+  private readonly connectorType: string;
 
-  constructor(context: IActionContext, filePath: string, methodName: string, connectorName: string, range: Range) {
+  constructor(context: IActionContext, filePath: string, methodName: string, connectorName: string, connectorType: string, range: Range) {
     const panelName: string = `Connection view - ${connectorName} - ${methodName}`;
     const panelGroupKey = ext.webViewKey.languageServer;
     super(context, '', panelName, workflowAppApiVersion, panelGroupKey, false, true, false, '');
@@ -53,6 +54,7 @@ export default class OpenConnectionView extends OpenDesignerBase {
     this.methodName = methodName;
     this.range = range;
     this.connectorName = connectorName;
+    this.connectorType = connectorType;
   }
 
   public async createPanel(): Promise<void> {
@@ -145,6 +147,7 @@ export default class OpenConnectionView extends OpenDesignerBase {
             workflowRuntimeBaseUrl: this.workflowRuntimeBaseUrl,
             connector: {
               name: this.connectorName,
+              type: this.connectorType,
             },
           },
         });
@@ -321,7 +324,6 @@ const performTextReplacement = (
           // Position cursor after the inserted connection ID
           const newCursorPos = new vscode.Position(startLine, startChar + connection.name.length);
           editor.selection = new vscode.Selection(newCursorPos, newCursorPos);
-          vscode.window.showInformationMessage(`Inserted connection ID: ${connection.name}`);
         } else {
           vscode.window.showErrorMessage('Failed to insert connection ID');
         }
@@ -336,8 +338,9 @@ export async function openLanguageServerConnectionView(
   filePath: string,
   methodName: string,
   connectorName: string,
+  connectorType: string,
   range: Range
 ): Promise<void> {
-  const connectionViewObj: OpenConnectionView = new OpenConnectionView(context, filePath, methodName, connectorName, range);
+  const connectionViewObj: OpenConnectionView = new OpenConnectionView(context, filePath, methodName, connectorName, connectorType, range);
   await connectionViewObj.createPanel();
 }
