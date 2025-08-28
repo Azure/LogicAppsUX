@@ -1,12 +1,11 @@
 import { Handle, Position } from '@xyflow/react';
-import { useReadOnly, useShowEdgeDrawing } from '../../../core/state/designerOptions/designerOptionsSelectors';
+import { useReadOnly } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { useHandleStyles } from './handles.styles';
 import { mergeClasses } from '@fluentui/react-components';
 
 export const EdgeDrawSourceHandle = () => {
   const styles = useHandleStyles();
   const readOnly = useReadOnly();
-  const showEdgeDrawing = useShowEdgeDrawing();
 
   return (
     <Handle
@@ -17,7 +16,7 @@ export const EdgeDrawSourceHandle = () => {
       isConnectableStart={true}
       isConnectableEnd={false}
       style={
-        readOnly || !showEdgeDrawing
+        readOnly
           ? {
               visibility: 'hidden',
               transform: 'translate(-50%, 0)',

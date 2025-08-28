@@ -37,7 +37,7 @@ import { createConnectionsJson } from '../../../../utils/codeless/connection';
 import { createEmptyParametersJson } from '../../../../utils/codeless/parameter';
 import { getDebugConfigs, updateDebugConfigs } from '../../../../utils/vsCodeConfig/launch';
 import { getWorkspaceFolder, isMultiRootWorkspace } from '../../../../utils/workspace';
-import { localize } from '../../../../../localize';
+import { getDebugConfiguration } from '../../../../utils/debug';
 
 export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionWizardContext> {
   private constructor() {
@@ -110,14 +110,7 @@ export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionW
           return debugConfig;
         })
       : [
-          {
-            name: localize('debugLogicApp', `Run/Debug logic app ${logicAppName}`),
-            type: 'logicapp',
-            request: 'launch',
-            funcRuntime: 'coreclr',
-            customCodeRuntime: 'coreclr',
-            isCodeless: false,
-          },
+          getDebugConfiguration(funcVersion, logicAppName, targetFramework),
           ...debugConfigs.filter(
             (debugConfig) => debugConfig.request !== 'attach' || debugConfig.processId !== `\${command:${extensionCommand.pickProcess}}`
           ),

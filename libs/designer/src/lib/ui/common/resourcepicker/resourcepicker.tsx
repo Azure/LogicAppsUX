@@ -3,8 +3,8 @@ import { useCallback, useMemo } from 'react';
 import { useLocations, useLogicApps, useResourceGroups, useSubscriptions } from '../../../core/queries/resource';
 import { type LogicAppResource, type Template, equals } from '@microsoft/logic-apps-shared';
 import { useAllLogicApps } from '../../../core/configuretemplate/utils/queries';
-import { useTemplatesStrings } from './../../templates/templatesStrings';
-import { ResourceField } from './resourcefield';
+import { ResourceField, type ResourceFieldRenderType } from './resourcefield';
+import { useResourceStrings } from './resourcestrings';
 
 export interface BaseResourcePickerProps {
   viewMode?: 'default' | 'alllogicapps';
@@ -26,6 +26,7 @@ export interface ResourcePickerProps extends BaseResourcePickerProps {
   onLocationSelect: (value: string) => void;
   onLogicAppSelect: (value: { name: string; location: string }) => void;
   onLogicAppInstanceSelect: (value: { name: string; location: string; plan: string }) => void;
+  renderType?: ResourceFieldRenderType;
 }
 
 export const ResourcePicker = ({
@@ -38,6 +39,7 @@ export const ResourcePicker = ({
   onLocationSelect,
   onLogicAppSelect,
   onLogicAppInstanceSelect,
+  renderType,
 }: ResourcePickerProps) => {
   const isDefaultMode = viewMode === 'default';
   const { subscriptionId, resourceGroup, location, workflowAppName, logicAppName, isConsumption } = resourceState;
@@ -77,7 +79,7 @@ export const ResourcePicker = ({
     [intl]
   );
 
-  const { resourceStrings } = useTemplatesStrings();
+  const resourceStrings = useResourceStrings();
   const handleLogicAppSelect = useCallback(
     (value: string) => {
       const app = logicApps?.find((app) => equals(app.name, value));
@@ -109,6 +111,7 @@ export const ResourcePicker = ({
         resources={subscriptions ?? []}
         errorMessage={subscriptionId ? '' : intlText.VALIDATION_ERROR}
         lockField={lockField === 'subscription' || lockField === 'resourcegroup' || lockField === 'resource'}
+        renderType={renderType}
       />
       <ResourceField
         id="resourceGroupName"
@@ -119,6 +122,7 @@ export const ResourcePicker = ({
         resources={resourceGroups ?? []}
         errorMessage={resourceGroup ? '' : intlText.VALIDATION_ERROR}
         lockField={lockField === 'resourcegroup' || lockField === 'resource'}
+        renderType={renderType}
       />
       {isDefaultMode && isConsumption ? (
         <ResourceField
@@ -130,6 +134,7 @@ export const ResourcePicker = ({
           resources={locations ?? []}
           errorMessage={location ? '' : intlText.VALIDATION_ERROR}
           lockField={lockField === 'location' || lockField === 'resource'}
+          renderType={renderType}
         />
       ) : null}
       {isDefaultMode && !isConsumption ? (
@@ -146,6 +151,7 @@ export const ResourcePicker = ({
           }))}
           errorMessage={workflowAppName ? '' : intlText.VALIDATION_ERROR}
           lockField={lockField === 'resource'}
+          renderType={renderType}
         />
       ) : null}
       {isDefaultMode ? null : (
@@ -162,6 +168,7 @@ export const ResourcePicker = ({
           }))}
           errorMessage={logicAppName ? '' : intlText.VALIDATION_ERROR}
           lockField={lockField === 'resource'}
+          renderType={renderType}
         />
       )}
     </div>

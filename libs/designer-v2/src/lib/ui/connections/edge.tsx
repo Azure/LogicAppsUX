@@ -4,7 +4,7 @@ import type { ElkExtendedEdge } from 'elkjs/lib/elk-api';
 import { EdgeLabelRenderer, getSmoothStepPath, useReactFlow, type EdgeProps } from '@xyflow/react';
 import { css } from '@fluentui/utilities';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
-import { containsIdTag, removeIdTag, getEdgeCenter, RUN_AFTER_STATUS, useEdgeIndex } from '@microsoft/logic-apps-shared';
+import { containsIdTag, removeIdTag, getEdgeCenter, RUN_AFTER_STATUS, useEdgeIndex, useGuid } from '@microsoft/logic-apps-shared';
 
 import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { useActionMetadata, useNodeEdgeTargets, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
@@ -138,11 +138,13 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
 
   const highlighted = useMemo(() => isSourceSelected || isTargetSelected, [isSourceSelected, isTargetSelected]);
 
+  const capGuid = useGuid();
+
   return (
     <>
       <defs>
         <marker
-          id={`arrow-end-${id}`}
+          id={capGuid}
           className={css(highlighted ? 'highlighted' : '')}
           viewBox="0 0 20 20"
           refX="6"
@@ -161,7 +163,7 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
         d={d}
         strokeDasharray={showRunAfter ? '4 6' : '0'}
         strokeLinecap={'round'}
-        markerEnd={`url(#arrow-end-${id})`}
+        markerEnd={`url(#${capGuid})`}
       />
 
       {/* ADD ACTION / BRANCH BUTTONS */}

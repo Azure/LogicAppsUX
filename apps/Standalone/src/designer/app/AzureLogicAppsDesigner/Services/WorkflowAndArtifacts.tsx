@@ -308,6 +308,16 @@ const fetchA2AAuthKey = async (siteResourceId: string, workflowName: string) => 
   return response.data;
 };
 
+// Helper function to fetch EasyAuth
+const fetchAuthentication = async (siteResourceId: string) => {
+  const response = await axios.post(`${baseUrl}${siteResourceId}/config/authsettings/list?api-version=${standardApiVersion}`, {
+    headers: {
+      Authorization: `Bearer ${environment.armToken}`,
+    },
+  });
+  return response.data;
+};
+
 // Helper function to fetch OBO (On-Behalf-Of) data
 const fetchOBOData = async (siteResourceId: string) => {
   try {
@@ -358,27 +368,29 @@ export const fetchAgentUrl = (siteResourceId: string, workflowName: string, host
     }
 
     try {
-      // Get A2A authentication key
-      const a2aData = await fetchA2AAuthKey(siteResourceId, workflowName);
-
-      // Get OBO data if available
-      const oboData = await fetchOBOData(siteResourceId);
-
       const agentBaseUrl = hostName.startsWith('https://') ? hostName : `https://${hostName}`;
       const agentUrl = `${agentBaseUrl}/api/Agents/${workflowName}`;
       const chatUrl = `${agentBaseUrl}/api/agentsChat/${workflowName}/IFrame`;
-
       let queryParams: AgentQueryParams | undefined = undefined;
+      const authentication = await fetchAuthentication(siteResourceId);
 
-      // Add authentication tokens if available
-      const a2aKey = a2aData?.key;
-      if (a2aKey) {
-        queryParams = { apiKey: a2aKey };
+      if (authentication?.properties?.enabled) {
+        // Get A2A authentication key
+        const a2aData = await fetchA2AAuthKey(siteResourceId, workflowName);
 
-        // Add OBO token if available
-        const oboKey = oboData?.properties?.key;
-        if (oboKey) {
-          queryParams.oboUserToken = oboKey;
+        // Get OBO data if available
+        const oboData = await fetchOBOData(siteResourceId);
+
+        // Add authentication tokens if available
+        const a2aKey = a2aData?.key;
+        if (a2aKey) {
+          queryParams = { apiKey: a2aKey };
+
+          // Add OBO token if available
+          const oboKey = oboData?.properties?.key;
+          if (oboKey) {
+            queryParams.oboUserToken = oboKey;
+          }
         }
       }
 
@@ -748,6 +760,70 @@ export const validateWorkflowConsumption = async (
   const response = await axios.post(
     `${baseUrl}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Logic/locations/${location}/workflows/${topResourceName}/validate?api-version=2016-10-01`,
     logicApp,
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${environment.armToken}`,
+      },
+    }
+  );
+
+  if (response.status !== 200) {
+    return Promise.reject(response);
+  }
+};
+
+export const cloneConsumptionToStandard = async (
+  sourceApps: { subscriptionId: string; resourceGroup: string; logicAppName: string; targetWorkflowName: string }[],
+  destinationApp: { subscriptionId: string; resourceGroup: string; logicAppName: string }
+): Promise<any> => {
+  try {
+    for (const sourceApp of sourceApps) {
+      await validateCloneConsumption(sourceApp, destinationApp);
+    }
+
+    for (const sourceApp of sourceApps) {
+      const url = `${baseUrl}/subscriptions/${sourceApp.subscriptionId}/resourceGroups/${sourceApp.resourceGroup}/providers/Microsoft.Logic/workflows/${sourceApp.logicAppName}/clone?api-version=${consumptionApiVersion}`;
+      const data = {
+        target: {
+          workflow: {
+            id: `/subscriptions/${destinationApp.subscriptionId}/resourceGroups/${destinationApp.resourceGroup}/providers/Microsoft.Web/sites/${destinationApp.logicAppName}/workflows/${sourceApp.targetWorkflowName}`,
+          },
+          kind: 'stateful',
+        },
+      };
+      const response = await axios.post(url, data, {
+        headers: {
+          'If-Match': '*',
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${environment.armToken}`,
+        },
+      });
+      if (!isSuccessResponse(response.status)) {
+        alert('Failed to clone the logic app');
+        throw Error('Failed to clone the logic app');
+      }
+    }
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+export const validateCloneConsumption = async (
+  sourceApp: { subscriptionId: string; resourceGroup: string; logicAppName: string; targetWorkflowName: string },
+  destinationApp: { subscriptionId: string; resourceGroup: string; logicAppName: string }
+): Promise<any> => {
+  const response = await axios.post(
+    `${baseUrl}/subscriptions/${sourceApp.subscriptionId}/resourceGroups/${sourceApp.resourceGroup}/providers/Microsoft.Logic/workflows/${sourceApp.logicAppName}/validateClone?api-version=${consumptionApiVersion}`,
+    {
+      target: {
+        workflow: {
+          id: `/subscriptions/${destinationApp.subscriptionId}/resourceGroups/${destinationApp.resourceGroup}/providers/Microsoft.Web/sites/${destinationApp.logicAppName}/workflows/${sourceApp.targetWorkflowName}`,
+        },
+        kind: 'stateful',
+      },
+    },
     {
       headers: {
         'Content-Type': 'application/json',

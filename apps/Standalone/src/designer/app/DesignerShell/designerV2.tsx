@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { loadSubscriptionIds, loadToken } from '../../../environments/environment';
 import { SettingsBox } from '../../components/settings_box';
 import { useHostingPlan, useIsLocal, useQueryCachePersist, useResourcePath } from '../../state/workflowLoadingSelectors';
-import LogicAppsDesignerStandard from '../AzureLogicAppsDesigner/laDesigner';
+import LogicAppsDesignerStandard from '../AzureLogicAppsDesigner/laDesignerV2';
 import LogicAppsDesignerConsumption from '../AzureLogicAppsDesigner/laDesignerConsumption';
 import { LocalDesigner } from '../LocalDesigner/localDesignerV2';
 import { ReactQueryProvider } from '@microsoft/logic-apps-designer-v2';

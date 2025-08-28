@@ -47,6 +47,7 @@ export default {
           'x-ms-editor': 'dropdown',
           'x-ms-visibility': 'hideInUI',
           'x-ms-editor-options': {
+            readOnly: true,
             options: [
               {
                 value: 'AzureOpenAI',
@@ -64,11 +65,15 @@ export default {
         },
         deploymentId: {
           type: 'string',
-          title: 'Deployment Model Name',
-          description: 'The deployment name of the model you want to use.',
+          title: 'Deployment model name',
+          description: 'The deployment name for the model to use.',
           'x-ms-create-new-resource': true,
           'x-ms-visibility': 'important',
           'x-ms-editor': 'combobox',
+          'x-ms-connection-required': true,
+          'x-ms-connection-options': {
+            'x-ms-visibility': 'subLabelOnly',
+          },
         },
         messages: {
           title: 'Instructions for agent',
@@ -184,7 +189,7 @@ export default {
               properties: {
                 agentHistoryReductionType: {
                   type: 'string',
-                  title: 'Agent history reduction type (Experimental)',
+                  title: 'Agent history reduction type (experimental)',
                   default: 'maximumTokenCountReduction',
                   description: 'Type of agent history reduction to use',
                   'x-ms-input-dependencies': {
@@ -212,7 +217,7 @@ export default {
                 },
                 messageCountLimit: {
                   type: 'integer',
-                  title: 'Message count limit',
+                  title: 'Message token count',
                   description: 'The maximum number of messages to keep in the agent history',
                   'x-ms-input-dependencies': {
                     type: 'visibility',

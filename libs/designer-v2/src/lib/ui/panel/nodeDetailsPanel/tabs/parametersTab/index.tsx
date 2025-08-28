@@ -947,7 +947,7 @@ export const ParameterSection = ({
 };
 
 const getConnectionElements = (parameter: ParameterInfo) => {
-  const hasConnectionInline = getPropertyValue(parameter.schema, ExtensionProperties.InlineConncetion);
+  const hasConnectionInline = getPropertyValue(parameter.schema, ExtensionProperties.InlineConnection);
   return {
     subComponent: hasConnectionInline ? <ConnectionInline /> : null,
     subMenu: hasConnectionInline ? <ConnectionsSubMenu /> : null,

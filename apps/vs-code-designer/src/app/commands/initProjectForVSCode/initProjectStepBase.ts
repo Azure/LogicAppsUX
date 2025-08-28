@@ -14,7 +14,6 @@ import {
   preDeployTaskSetting,
   launchFileName,
   extensionsFileName,
-  extensionCommand,
   vscodeFolderName,
   logicAppsStandardExtensionId,
   designTimeDirectoryName,
@@ -44,14 +43,16 @@ import type {
   ITasksJson,
   ILaunchJson,
   IExtensionsJson,
+  FuncVersion,
 } from '@microsoft/vscode-extension-logic-apps';
-import { WorkflowProjectType, FuncVersion } from '@microsoft/vscode-extension-logic-apps';
+import { WorkflowProjectType } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import type { TaskDefinition, DebugConfiguration, WorkspaceFolder } from 'vscode';
 import { isLogicAppProjectInRoot } from '../../utils/verifyIsProject';
 import { getOrCreateDesignTimeDirectory } from '../../utils/codeless/startDesignTimeApi';
+import { getDebugConfiguration } from '../../utils/debug';
 
 export abstract class InitProjectStepBase extends AzureWizardExecuteStep<IProjectWizardContext> {
   public priority = 20;
@@ -62,15 +63,6 @@ export abstract class InitProjectStepBase extends AzureWizardExecuteStep<IProjec
   protected abstract getTasks(): TaskDefinition[];
   protected getTaskInputs?(): ITaskInputs[];
   protected getWorkspaceSettings?(): ISettingToAdd[];
-
-  protected getDebugConfiguration(version: FuncVersion, logicAppName: string): DebugConfiguration {
-    return {
-      name: localize('attachToNetFunc', `Run/Debug logic app ${logicAppName}`),
-      type: version === FuncVersion.v1 ? 'clr' : 'coreclr',
-      request: 'attach',
-      processId: `\${command:${extensionCommand.pickProcess}}`,
-    };
-  }
 
   protected getRecommendedExtensions?(language: ProjectLanguage): string[];
 
@@ -226,8 +218,8 @@ export abstract class InitProjectStepBase extends AzureWizardExecuteStep<IProjec
     version: FuncVersion,
     logicAppName: string
   ): Promise<void> {
-    if (this.getDebugConfiguration && context.isCodeless !== false) {
-      const newDebugConfig: DebugConfiguration = this.getDebugConfiguration(version, logicAppName);
+    if (context.isCodeless !== false) {
+      const newDebugConfig: DebugConfiguration = getDebugConfiguration(version, logicAppName);
       const versionMismatchError: Error = new Error(
         localize(
           'versionMismatchError',

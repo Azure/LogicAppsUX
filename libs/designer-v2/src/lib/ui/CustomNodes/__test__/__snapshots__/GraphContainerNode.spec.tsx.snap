@@ -28,12 +28,7 @@ exports[`GraphContainerNode > should apply correct styles based on node size 1`]
     isConnectableEnd={false}
     isConnectableStart={true}
     position="bottom"
-    style={
-      {
-        "transform": "translate(-50%, 0)",
-        "visibility": "hidden",
-      }
-    }
+    style={{}}
     type="source"
   >
     Handle reactflow
@@ -69,12 +64,7 @@ exports[`GraphContainerNode > should not render DropZone when showLeafComponents
     isConnectableEnd={false}
     isConnectableStart={true}
     position="bottom"
-    style={
-      {
-        "transform": "translate(-50%, 0)",
-        "visibility": "hidden",
-      }
-    }
+    style={{}}
     type="source"
   >
     Handle reactflow
@@ -111,12 +101,7 @@ exports[`GraphContainerNode > should render DropZone when showLeafComponents is 
       isConnectableEnd={false}
       isConnectableStart={true}
       position="bottom"
-      style={
-        {
-          "transform": "translate(-50%, 0)",
-          "visibility": "hidden",
-        }
-      }
+      style={{}}
       type="source"
     >
       Handle reactflow
@@ -165,12 +150,7 @@ exports[`GraphContainerNode > should render graph container as inactive when is 
     isConnectableEnd={false}
     isConnectableStart={true}
     position="bottom"
-    style={
-      {
-        "transform": "translate(-50%, 0)",
-        "visibility": "hidden",
-      }
-    }
+    style={{}}
     type="source"
   >
     Handle reactflow
@@ -206,12 +186,7 @@ exports[`GraphContainerNode > should render graph container as normal when in mo
     isConnectableEnd={false}
     isConnectableStart={true}
     position="bottom"
-    style={
-      {
-        "transform": "translate(-50%, 0)",
-        "visibility": "hidden",
-      }
-    }
+    style={{}}
     type="source"
   >
     Handle reactflow
@@ -280,12 +255,7 @@ exports[`GraphContainerNode > should render without crashing 1`] = `
     isConnectableEnd={false}
     isConnectableStart={true}
     position="bottom"
-    style={
-      {
-        "transform": "translate(-50%, 0)",
-        "visibility": "hidden",
-      }
-    }
+    style={{}}
     type="source"
   >
     Handle reactflow

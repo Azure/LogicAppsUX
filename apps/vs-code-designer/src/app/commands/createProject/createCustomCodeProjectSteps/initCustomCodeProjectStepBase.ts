@@ -13,7 +13,6 @@ import {
   preDeployTaskSetting,
   launchFileName,
   extensionsFileName,
-  extensionCommand,
   logicAppsStandardExtensionId,
   vscodeFolderName,
 } from '../../../../constants';
@@ -24,6 +23,7 @@ import {
   getCustomCodeFunctionsProjectMetadata,
   tryGetLogicAppCustomCodeFunctionsProjects,
 } from '../../../utils/customCodeUtils';
+import { getDebugConfiguration } from '../../../utils/debug';
 import { isSubpath, confirmEditJsonFile, confirmOverwriteFile } from '../../../utils/fs';
 import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
 import {
@@ -47,8 +47,10 @@ import type {
   ITasksJson,
   ILaunchJson,
   IExtensionsJson,
+  FuncVersion,
+  TargetFramework,
 } from '@microsoft/vscode-extension-logic-apps';
-import { WorkflowProjectType, FuncVersion, TargetFramework } from '@microsoft/vscode-extension-logic-apps';
+import { WorkflowProjectType } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import type { TaskDefinition, DebugConfiguration, WorkspaceFolder } from 'vscode';
@@ -62,30 +64,6 @@ export abstract class InitCustomCodeProjectStepBase extends AzureWizardExecuteSt
   protected abstract getTasks(): TaskDefinition[];
   protected getTaskInputs?(): ITaskInputs[];
   protected getWorkspaceSettings?(): ISettingToAdd[];
-
-  protected getDebugConfiguration(
-    version: FuncVersion,
-    logicAppName: string,
-    customCodeTargetFramework?: TargetFramework
-  ): DebugConfiguration {
-    if (customCodeTargetFramework) {
-      return {
-        name: localize('debugLogicApp', `Run/Debug logic app with local function ${logicAppName}`),
-        type: 'logicapp',
-        request: 'launch',
-        funcRuntime: version === FuncVersion.v1 ? 'clr' : 'coreclr',
-        customCodeRuntime: customCodeTargetFramework === TargetFramework.Net8 ? 'coreclr' : 'clr',
-        isCodeless: true,
-      };
-    }
-
-    return {
-      name: localize('attachToNetFunc', `Run/debug logic app ${logicAppName}`),
-      type: version === FuncVersion.v1 ? 'clr' : 'coreclr',
-      request: 'attach',
-      processId: `\${command:${extensionCommand.pickProcess}}`,
-    };
-  }
 
   protected getRecommendedExtensions?(language: ProjectLanguage): string[];
 
@@ -285,53 +263,46 @@ export abstract class InitCustomCodeProjectStepBase extends AzureWizardExecuteSt
     logicAppName: string,
     customCodeTargetFramework?: TargetFramework
   ): Promise<void> {
-    if (this.getDebugConfiguration) {
-      if (!customCodeTargetFramework) {
-        const logicAppFolderPath = await tryGetLogicAppProjectRoot(context, folder);
-        const customCodeProjectPaths = await tryGetLogicAppCustomCodeFunctionsProjects(logicAppFolderPath);
-        let customCodeProjectsMetadata: CustomCodeFunctionsProjectMetadata[];
-        if (customCodeProjectPaths && customCodeProjectPaths.length > 0) {
-          customCodeProjectsMetadata = await Promise.all(customCodeProjectPaths.map(getCustomCodeFunctionsProjectMetadata));
-        }
-        // Currently only support one custom code functions project per logic app
-        customCodeTargetFramework = customCodeProjectsMetadata ? customCodeProjectsMetadata[0].targetFramework : undefined;
+    if (!customCodeTargetFramework) {
+      const logicAppFolderPath = await tryGetLogicAppProjectRoot(context, folder);
+      const customCodeProjectPaths = await tryGetLogicAppCustomCodeFunctionsProjects(logicAppFolderPath);
+      let customCodeProjectsMetadata: CustomCodeFunctionsProjectMetadata[];
+      if (customCodeProjectPaths && customCodeProjectPaths.length > 0) {
+        customCodeProjectsMetadata = await Promise.all(customCodeProjectPaths.map(getCustomCodeFunctionsProjectMetadata));
       }
+      // Currently only support one custom code functions project per logic app
+      customCodeTargetFramework = customCodeProjectsMetadata ? customCodeProjectsMetadata[0].targetFramework : undefined;
+    }
 
-      const newDebugConfig: DebugConfiguration = this.getDebugConfiguration(version, logicAppName, customCodeTargetFramework);
-      const versionMismatchError: Error = new Error(
-        localize(
-          'versionMismatchError',
-          'The version in your {0} must be "{1}" to work with Azure Functions.',
-          launchFileName,
-          launchVersion
-        )
-      );
+    const newDebugConfig: DebugConfiguration = getDebugConfiguration(version, logicAppName, customCodeTargetFramework);
+    const versionMismatchError: Error = new Error(
+      localize('versionMismatchError', 'The version in your {0} must be "{1}" to work with Azure Functions.', launchFileName, launchVersion)
+    );
 
-      // Use the Visual Studio Code API to update config, if the folder is open and isn't a multi-root workspace (https://github.com/Microsoft/vscode-azurefunctions/issues/1235).
-      // The Visual Studio Code API is better for several reasons:
-      // - The API handles comments in JSON files.
-      // - The API sends the 'onDidChangeConfiguration' event.
-      if (folder && !isMultiRootWorkspace()) {
-        const currentVersion: string | undefined = getLaunchVersion(folder);
-        if (!currentVersion) {
-          updateLaunchVersion(folder, launchVersion);
-        } else if (currentVersion !== launchVersion) {
+    // Use the Visual Studio Code API to update config, if the folder is open and isn't a multi-root workspace (https://github.com/Microsoft/vscode-azurefunctions/issues/1235).
+    // The Visual Studio Code API is better for several reasons:
+    // - The API handles comments in JSON files.
+    // - The API sends the 'onDidChangeConfiguration' event.
+    if (folder && !isMultiRootWorkspace()) {
+      const currentVersion: string | undefined = getLaunchVersion(folder);
+      if (!currentVersion) {
+        updateLaunchVersion(folder, launchVersion);
+      } else if (currentVersion !== launchVersion) {
+        throw versionMismatchError;
+      }
+      updateDebugConfigs(folder, this.insertLaunchConfig(getDebugConfigs(folder), newDebugConfig));
+    } else {
+      // otherwise manually edit json
+      const launchJsonPath: string = path.join(vscodePath, launchFileName);
+      await confirmEditJsonFile(context, launchJsonPath, (data: ILaunchJson): ILaunchJson => {
+        if (!data.version) {
+          data.version = launchVersion;
+        } else if (data.version !== launchVersion) {
           throw versionMismatchError;
         }
-        updateDebugConfigs(folder, this.insertLaunchConfig(getDebugConfigs(folder), newDebugConfig));
-      } else {
-        // otherwise manually edit json
-        const launchJsonPath: string = path.join(vscodePath, launchFileName);
-        await confirmEditJsonFile(context, launchJsonPath, (data: ILaunchJson): ILaunchJson => {
-          if (!data.version) {
-            data.version = launchVersion;
-          } else if (data.version !== launchVersion) {
-            throw versionMismatchError;
-          }
-          data.configurations = this.insertLaunchConfig(data.configurations, newDebugConfig);
-          return data;
-        });
-      }
+        data.configurations = this.insertLaunchConfig(data.configurations, newDebugConfig);
+        return data;
+      });
     }
   }
 

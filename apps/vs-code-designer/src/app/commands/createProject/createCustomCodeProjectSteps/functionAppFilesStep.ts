@@ -13,14 +13,14 @@ import {
   extensionCommand,
 } from '../../../../constants';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
-import { FuncVersion, type IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
+import type { FuncVersion, IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import { TargetFramework, ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import { getDebugConfigs, updateDebugConfigs } from '../../../utils/vsCodeConfig/launch';
 import { getContainingWorkspace, isMultiRootWorkspace } from '../../../utils/workspace';
-import { localize } from '../../../../localize';
 import { tryGetLocalFuncVersion } from '../../../utils/funcCoreTools/funcVersion';
+import { getDebugConfiguration } from '../../../utils/debug';
 
 /**
  * This class represents a prompt step that allows the user to set up an Azure Function project.
@@ -234,14 +234,7 @@ export class FunctionAppFilesStep extends AzureWizardPromptStep<IProjectWizardCo
           return debugConfig;
         })
       : [
-          {
-            name: localize('debugLogicApp', `Run/Debug logic app with local function ${logicAppName}`),
-            type: 'logicapp',
-            request: 'launch',
-            funcRuntime: funcVersion === FuncVersion.v1 ? 'clr' : 'coreclr',
-            customCodeRuntime: targetFramework === TargetFramework.Net8 ? 'coreclr' : 'clr',
-            isCodeless: true,
-          },
+          getDebugConfiguration(funcVersion, logicAppName, targetFramework),
           ...debugConfigs.filter(
             (debugConfig) => debugConfig.request !== 'attach' || debugConfig.processId !== `\${command:${extensionCommand.pickProcess}}`
           ),
