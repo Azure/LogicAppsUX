@@ -14,6 +14,7 @@ export const CloneResourcePicker = () => {
   return (
     <ResourcePicker
       viewMode={'default'}
+      renderType={'section'}
       resourceState={{
         subscriptionId,
         resourceGroup,

@@ -4,4 +4,6 @@ export interface CloneWizardTabProps {
   disabled?: boolean;
   tabStatusIcon?: TemplateTabStatusType;
   isPrimaryButtonDisabled: boolean;
+  onClose: () => void;
+  onPrimaryButtonClick: () => void;
 }

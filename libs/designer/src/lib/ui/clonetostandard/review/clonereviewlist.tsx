@@ -7,9 +7,11 @@ import { useResourceStrings } from '../../common/resourcepicker/resourcestrings'
 import type { ResourceState } from '../../../core/state/clonetostandard/resourceslice';
 import { useCloneTabStyles } from '../logicapps/styles';
 import { useCloneStrings } from '../../../core/clonetostandard/utils/cloneStrings';
+import { useIntl } from 'react-intl';
 
 export const CloneReviewList = () => {
-  const { sourceApps, destinationApp, errorMessage } = useSelector((state: RootState) => state.clone);
+  const intl = useIntl();
+  const { sourceApps, destinationApp, errorMessage, isSuccessfullyCloned } = useSelector((state: RootState) => state.clone);
 
   const styles = useCloneTabStyles();
 
@@ -22,11 +24,20 @@ export const CloneReviewList = () => {
   const destinationItems: TemplatesSectionItem[] = useDestinationItems(
     resourceStrings,
     destinationApp,
-    sourceApps?.[0]?.clonedWorkflowName || ''
+    sourceApps?.[0]?.targetWorkflowName || ''
   );
 
   return (
     <div className={styles.tabContainer}>
+      {isSuccessfullyCloned ? (
+        <MessageBar intent="success">
+          {intl.formatMessage({
+            defaultMessage: 'Successfully cloned.',
+            id: 'ILKpNE',
+            description: 'Label to indicate the successfully cloned workflow',
+          })}
+        </MessageBar>
+      ) : null}
       {!isUndefinedOrEmptyString(errorMessage) && <MessageBar intent="error">{errorMessage}</MessageBar>}
 
       <div className={styles.mainSection}>
@@ -83,12 +94,17 @@ const useSourceItems = (resourceStrings: Record<string, string>, sourceResources
   return items;
 };
 
-const useDestinationItems = (resourceStrings: Record<string, string>, destinationResources: ResourceState, clonedWorkflowName: string) => {
-  const { subscriptionId, logicAppName } = destinationResources;
+const useDestinationItems = (resourceStrings: Record<string, string>, destinationResources: ResourceState, targetWorkflowName: string) => {
+  const { subscriptionId, resourceGroup, logicAppName } = destinationResources;
   const items: TemplatesSectionItem[] = [
     {
       label: resourceStrings.SUBSCRIPTION,
       value: subscriptionId || '',
+      type: 'text',
+    },
+    {
+      label: resourceStrings.RESOURCE_GROUP,
+      value: resourceGroup || '',
       type: 'text',
     },
     {
@@ -97,8 +113,8 @@ const useDestinationItems = (resourceStrings: Record<string, string>, destinatio
       type: 'text',
     },
     {
-      label: resourceStrings.clonedWorkflowName,
-      value: clonedWorkflowName || '',
+      label: resourceStrings.WORKFLOW_NAME,
+      value: targetWorkflowName || '',
       type: 'text',
     },
   ];

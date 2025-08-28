@@ -1,6 +1,7 @@
 import * as React from 'react';
 import StatusSucceededIcon from '../../../../lib/common/images/status_success.svg';
 import StatusFailedIcon from '../../../../lib/common/images/status_failure.svg';
+import StatusCancelledIcon from '../../../../lib/common/images/status_cancelled.svg';
 import { Text, Spinner } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 
@@ -39,8 +40,14 @@ const StatusIndicator = (props: { status: string }) => {
           id: 'jenxD4',
           description: 'Indicates that the run is currently resuming',
         });
+      case 'Cancelled':
+        return intl.formatMessage({
+          defaultMessage: 'Cancelled',
+          id: 'thY2eZ',
+          description: 'Indicates that the run was cancelled',
+        });
       default:
-        return null;
+        return props.status;
     }
   }, [props.status, intl]);
 
@@ -50,6 +57,8 @@ const StatusIndicator = (props: { status: string }) => {
         return <img src={StatusSucceededIcon} />;
       case 'Failed':
         return <img src={StatusFailedIcon} />;
+      case 'Cancelled':
+        return <img src={StatusCancelledIcon} />;
       case 'Running':
       case 'Waiting':
       case 'Resuming':
@@ -60,7 +69,7 @@ const StatusIndicator = (props: { status: string }) => {
   }, [props.status]);
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
       {icon}
       <Text>{text}</Text>
     </div>

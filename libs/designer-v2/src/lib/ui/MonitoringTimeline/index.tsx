@@ -113,31 +113,29 @@ const MonitoringTimeline = () => {
   const noRepetitions = useMemo(() => repetitions.size === 0, [repetitions]);
 
   return (
-    <div style={{ position: 'absolute' }}>
-      <Card className={styles.monitoringTimelineRoot} onMouseOver={() => setIsExpanded(true)} onMouseOut={() => setIsExpanded(false)}>
-        <TimelineHeader isExpanded={isExpanded} refetchTimelineRepetitions={refetchTimelineRepetitions} />
-        <Divider />
-        <TimelineContent
-          isExpanded={isExpanded}
-          isFetchingRepetitions={isFetchingRepetitions}
-          noRepetitions={noRepetitions}
-          transitionIndex={transitionIndex}
-          repetitions={repetitions}
-          tasksNumber={repetitions.size}
-          selectedRepetition={selectedRepetition}
-          handleSelectRepetition={handleSelectRepetition}
-        />
-        <Divider />
-        <TimelineButtons
-          tasksNumber={repetitions.size}
-          isFetchingRepetitions={isFetchingRepetitions}
-          isExpanded={isExpanded}
-          transitionIndex={transitionIndex}
-          noRepetitions={noRepetitions}
-          handleSelectRepetition={handleSelectRepetition}
-        />
-      </Card>
-    </div>
+    <Card className={styles.monitoringTimelineRoot} onMouseOver={() => setIsExpanded(true)} onMouseOut={() => setIsExpanded(false)}>
+      <TimelineHeader isExpanded={isExpanded} refetchTimelineRepetitions={refetchTimelineRepetitions} />
+      <Divider />
+      <TimelineContent
+        isExpanded={isExpanded}
+        isFetchingRepetitions={isFetchingRepetitions}
+        noRepetitions={noRepetitions}
+        transitionIndex={transitionIndex}
+        repetitions={repetitions}
+        tasksNumber={repetitions.size}
+        selectedRepetition={selectedRepetition}
+        handleSelectRepetition={handleSelectRepetition}
+      />
+      <Divider />
+      <TimelineButtons
+        tasksNumber={repetitions.size}
+        isFetchingRepetitions={isFetchingRepetitions}
+        isExpanded={isExpanded}
+        transitionIndex={transitionIndex}
+        noRepetitions={noRepetitions}
+        handleSelectRepetition={handleSelectRepetition}
+      />
+    </Card>
   );
 };
 

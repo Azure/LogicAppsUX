@@ -518,6 +518,30 @@ export class StandardRunService implements IRunService {
     }
   }
 
+  async resubmitRun(runId: string, triggerName: string): Promise<any> {
+    const { apiVersion, baseUrl, workflowName, httpClient } = this.options;
+
+    try {
+      const isHybrid = isHybridLogicApp(baseUrl);
+      const resubmitUrl = isHybrid
+        ? `${baseUrl}/invoke?api-version=${hybridApiVersion}`
+        : `${baseUrl}/workflows/${workflowName}/triggers/${triggerName}/histories/${runId}/resubmit?api-version=${apiVersion}`;
+      const hybridHeaders = {
+        'x-ms-logicapps-proxy-path': `/runtime/webhooks/workflow/api/management/workflows/${workflowName}/triggers/${triggerName}/histories/${runId}/resubmit`,
+        'x-ms-logicapps-proxy-method': 'POST',
+      };
+      const headers = isHybrid ? hybridHeaders : { 'If-Match': '*' };
+
+      const response = await httpClient.post({
+        uri: resubmitUrl,
+        headers,
+      });
+      return response;
+    } catch (e: any) {
+      return new Error(e.message);
+    }
+  }
+
   async cancelRun(runId: string): Promise<any> {
     const { apiVersion, baseUrl, httpClient } = this.options;
 

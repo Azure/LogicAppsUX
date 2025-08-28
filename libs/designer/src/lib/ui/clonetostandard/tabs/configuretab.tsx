@@ -1,19 +1,12 @@
-import type { AppDispatch } from '../../../core/state/clonetostandard/store';
 import type { TemplateTabProps } from '@microsoft/designer-ui';
 import constants from '../../../common/constants';
 import type { IntlShape } from 'react-intl';
-import type { CloneWizardTabProps } from './model';
-import { selectWizardTab } from '../../../core/state/clonetostandard/tabslice';
 import { ConfigureLogicApps } from '../logicapps/configurelogicapps';
-
-interface ConfigureTabProps extends CloneWizardTabProps {
-  onCancel: () => void;
-}
+import type { CloneWizardTabProps } from './model';
 
 export const configureTab = (
   intl: IntlShape,
-  dispatch: AppDispatch,
-  { tabStatusIcon, onCancel, isPrimaryButtonDisabled }: ConfigureTabProps
+  { tabStatusIcon, disabled, onClose, onPrimaryButtonClick, isPrimaryButtonDisabled }: CloneWizardTabProps
 ): TemplateTabProps => ({
   id: constants.CLONE_TO_STANDARD_TAB_NAMES.CONFIGURE,
   title: intl.formatMessage({
@@ -21,6 +14,7 @@ export const configureTab = (
     id: '6OCUKm',
     description: 'Tab label for configure tab in clone to standard experience',
   }),
+  disabled,
   tabStatusIcon,
   content: <ConfigureLogicApps />,
   footerContent: {
@@ -34,18 +28,16 @@ export const configureTab = (
         }),
         appearance: 'primary',
         disabled: isPrimaryButtonDisabled,
-        onClick: () => {
-          dispatch(selectWizardTab(constants.CLONE_TO_STANDARD_TAB_NAMES.REVIEW));
-        },
+        onClick: onPrimaryButtonClick,
       },
       {
         type: 'navigation',
         text: intl.formatMessage({
-          defaultMessage: 'Cancel',
-          id: 'cMePXi',
+          defaultMessage: 'Close',
+          id: 'BP+WUL',
           description: 'Button text for exiting the blade in the clone wizard',
         }),
-        onClick: onCancel,
+        onClick: onClose,
       },
     ],
   },

@@ -49,6 +49,6 @@ export const useCloneTabStyles = makeStyles({
     flexDirection: 'column',
     overflow: 'hidden',
     paddingTop: mainGap,
-    maxWidth: '50%',
+    maxWidth: '70%',
   },
 });

@@ -23,6 +23,7 @@ export interface IRunService {
   getRunChatHistory(runId: string): Promise<MessageEntry[]>;
   getAgentChatInvokeUri(action: { idSuffix: string }): Promise<any>;
   invokeAgentChat(action: { id: string; data: any }): Promise<any>;
+  resubmitRun(runId: string, triggerName: string): Promise<void>;
   cancelRun(runId: string): Promise<any>;
 }
 
