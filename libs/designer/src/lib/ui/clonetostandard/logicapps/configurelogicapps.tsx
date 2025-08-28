@@ -7,7 +7,7 @@ import { FieldSectionItem, TemplatesSection, type TemplatesSectionItem } from '@
 import { useResourceStrings } from '../../common/resourcepicker/resourcestrings';
 import type { ResourceState } from '../../../core/state/clonetostandard/resourceslice';
 import { useCloneStrings } from '../../../core/clonetostandard/utils/cloneStrings';
-import { updateClonedWorkflowName, updateClonedWorkflowNameValidationError } from '../../../core/state/clonetostandard/cloneslice';
+import { updateTargetWorkflowName, updateTargetWorkflowNameValidationError } from '../../../core/state/clonetostandard/cloneslice';
 import { validateWorkflowName } from '../../../core/actions/bjsworkflow/templates';
 import { useExistingWorkflowNamesOfResource } from '../../../core';
 
@@ -97,20 +97,20 @@ const useCloneWorkflowItem = (resourceStrings: Record<string, string>, existingW
 
   const items: TemplatesSectionItem = {
     label: resourceStrings.WORKFLOW_NAME,
-    value: sourceApp?.clonedWorkflowName || '',
+    value: sourceApp?.targetWorkflowName || '',
     type: 'textfield',
     onChange: (newValue) => {
-      dispatch(updateClonedWorkflowName(newValue));
+      dispatch(updateTargetWorkflowName(newValue));
     },
     onBlur: async () => {
-      const validationError = await validateWorkflowName(sourceApp?.clonedWorkflowName, false, {
+      const validationError = await validateWorkflowName(sourceApp?.targetWorkflowName, false, {
         subscriptionId: sourceApp?.subscriptionId,
         resourceGroupName: sourceApp?.resourceGroup,
         existingWorkflowNames: existingWorkflowNames ?? [],
       });
-      dispatch(updateClonedWorkflowNameValidationError(validationError));
+      dispatch(updateTargetWorkflowNameValidationError(validationError));
     },
-    errorMessage: sourceApp?.clonedWorkflowNameValidationError,
+    errorMessage: sourceApp?.targetWorkflowNameValidationError,
     hint: resourceStrings.workflowNameDescription,
   };
 

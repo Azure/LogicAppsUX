@@ -6,10 +6,14 @@ import type { CloneWizardTabProps } from './model';
 import { selectWizardTab } from '../../../core/state/clonetostandard/tabslice';
 import { CloneReviewList } from '../review/clonereviewlist';
 
+interface ReviewTabProps extends CloneWizardTabProps {
+  isSuccessfullyCloned: boolean;
+}
+
 export const reviewTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
-  { tabStatusIcon, disabled, onPrimaryButtonClick, isPrimaryButtonDisabled }: CloneWizardTabProps
+  { tabStatusIcon, disabled, onPrimaryButtonClick, onClose, isPrimaryButtonDisabled, isSuccessfullyCloned }: ReviewTabProps
 ): TemplateTabProps => ({
   id: constants.CLONE_TO_STANDARD_TAB_NAMES.REVIEW,
   title: intl.formatMessage({
@@ -35,13 +39,23 @@ export const reviewTab = (
       },
       {
         type: 'navigation',
-        text: intl.formatMessage({
-          defaultMessage: 'Previous',
-          id: 'kuzT1s',
-          description: 'Button text for moving back to configure tab in the clone wizard',
-        }),
+        text: isSuccessfullyCloned
+          ? intl.formatMessage({
+              defaultMessage: 'Close',
+              id: 'BP+WUL',
+              description: 'Button text for exiting the blade in the clone wizard',
+            })
+          : intl.formatMessage({
+              defaultMessage: 'Previous',
+              id: 'kuzT1s',
+              description: 'Button text for moving back to configure tab in the clone wizard',
+            }),
         onClick: () => {
-          dispatch(selectWizardTab(constants.CLONE_TO_STANDARD_TAB_NAMES.CONFIGURE));
+          if (isSuccessfullyCloned) {
+            onClose();
+          } else {
+            dispatch(selectWizardTab(constants.CLONE_TO_STANDARD_TAB_NAMES.CONFIGURE));
+          }
         },
       },
     ],
