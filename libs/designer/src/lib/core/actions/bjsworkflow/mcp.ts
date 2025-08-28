@@ -84,11 +84,19 @@ export const resetMcpStateOnResourceChange = createAsyncThunk(
 
     const {
       resource: { subscriptionId, resourceGroup, logicAppName },
+      connection: { connectionsMapping },
     } = getState() as RootState;
     const connectionsData = await getConnectionsInWorkflowApp(subscriptionId, resourceGroup, logicAppName as string, getReactQueryClient());
     const references = convertConnectionsDataToReferences(connectionsData);
     dispatch(initializeConnectionReferences(references));
-    dispatch(initializeConnectionsMappings({}));
+    dispatch(
+      initializeConnectionsMappings(
+        Object.keys(connectionsMapping).reduce((result: Record<string, string | null>, key: string) => {
+          result[key] = null;
+          return result;
+        }, {})
+      )
+    );
     return true;
   }
 );
