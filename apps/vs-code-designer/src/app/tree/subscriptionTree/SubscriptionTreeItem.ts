@@ -17,11 +17,11 @@ import {
   AdvancedIdentityClientIdStep,
   AdvancedIdentityTenantIdStep,
   AdvancedIdentityClientSecretStep,
-} from '../../commands/createLogicApp/createLogicAppSteps/AdvancedIdentityPromptSteps';
-import { ConnectEnvironmentStep } from '../../commands/createLogicApp/createLogicAppSteps/HybridLogicAppsSteps/ConnectEnvironmentStep';
-import { HybridAppCreateStep } from '../../commands/createLogicApp/createLogicAppSteps/HybridLogicAppsSteps/HybridAppCreateStep';
-import { LogicAppCreateStep } from '../../commands/createLogicApp/createLogicAppSteps/LogicAppCreateStep';
-import { LogicAppHostingPlanStep } from '../../commands/createLogicApp/createLogicAppSteps/LogicAppHostingPlanStep';
+} from '../../commands/createLogicApp/createLogicAppSteps/advancedIdentityPromptSteps';
+import { ConnectEnvironmentStep } from '../../commands/createLogicApp/createLogicAppSteps/createHybridLogicAppSteps/connectEnvironmentStep';
+import { HybridAppCreateStep } from '../../commands/createLogicApp/createLogicAppSteps/createHybridLogicAppSteps/hybridAppCreateStep';
+import { LogicAppCreateStep } from '../../commands/createLogicApp/createLogicAppSteps/logicAppCreateStep';
+import { LogicAppHostingPlanStep } from '../../commands/createLogicApp/createLogicAppSteps/logicAppHostingPlanStep';
 import { AzureStorageAccountStep } from '../../commands/deploy/storageAccountSteps/AzureStorageAccountStep';
 import { enableFileLogging } from '../../commands/logstream/enableFileLogging';
 import { createActivityContext } from '../../utils/activityUtils';

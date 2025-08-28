@@ -44,7 +44,7 @@ describe('GenerateDeploymentCenterScriptsStep', () => {
       logicAppName: 'test-logic-app',
       localLogicAppName: 'test-local-logic-app',
       uamiClientId: 'test-uami-client-id',
-      customWorkspaceFolderPath: '/test/workspace',
+      workspacePath: '/test/workspace',
       projectPath: '/test/project',
     } as IAzureDeploymentScriptsContext;
 
@@ -70,7 +70,7 @@ describe('GenerateDeploymentCenterScriptsStep', () => {
     expect(fse.readFile).toHaveBeenCalledWith(expect.stringContaining('dotdeployment'), 'utf-8');
     expect(fse.readFile).toHaveBeenCalledWith(expect.stringContaining('DeploymentCenterReadme'), 'utf-8');
 
-    const deploymentDirectoryPath = path.join(context.customWorkspaceFolderPath as string, 'deployment');
+    const deploymentDirectoryPath = path.join(context.workspacePath as string, 'deployment');
     expect(fse.ensureDir).toHaveBeenCalledWith(deploymentDirectoryPath);
     expect(writeFileSpy).toHaveBeenCalledWith(path.join(deploymentDirectoryPath, 'deploy.ps1'), expect.any(String));
 
@@ -85,7 +85,7 @@ describe('GenerateDeploymentCenterScriptsStep', () => {
     expect(writeDeploymentScriptCall[1]).not.toContain('<%=');
     expect(writeDeploymentScriptCall[1]).not.toContain('%>');
 
-    expect(writeFileSpy).toHaveBeenCalledWith(path.join(context.customWorkspaceFolderPath as string, '.deployment'), dotDeploymentContent);
+    expect(writeFileSpy).toHaveBeenCalledWith(path.join(context.workspacePath as string, '.deployment'), dotDeploymentContent);
     expect(writeFileSpy).toHaveBeenCalledWith(path.join(deploymentDirectoryPath, 'README.md'), readmeContent);
 
     expect(vscode.workspace.updateWorkspaceFolders).toHaveBeenCalledWith(0, undefined, {

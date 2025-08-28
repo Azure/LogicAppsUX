@@ -18,9 +18,9 @@ import { buildCustomCodeFunctionsProject } from './buildCustomCodeFunctionsProje
 import { configureDeploymentSource } from './configureDeploymentSource';
 import { createChildNode } from './createChildNode';
 import { createLogicApp, createLogicAppAdvanced } from './createLogicApp/createLogicApp';
-import { cloudToLocalCommand } from './createNewCodeProject/cloudToLocal';
-import { createNewCodeProjectFromCommand } from './createNewCodeProject/createNewCodeProject';
-import { createNewProjectFromCommand } from './createNewProject/createNewProject';
+import { cloudToLocal } from './cloudToLocal/cloudToLocal';
+import { createWorkspace } from './createWorkspace/createWorkspace';
+import { createProject } from './createProject/createProject';
 import { createCustomCodeFunctionFromCommand } from './createCustomCodeFunction/createCustomCodeFunction';
 import { createSlot } from './createSlot';
 import { createWorkflow } from './createWorkflow/createWorkflow';
@@ -85,9 +85,9 @@ export function registerCommands(): void {
     executeOnFunctions(openFile, context, context, node)
   );
   registerCommandWithTreeNodeUnwrapping(extensionCommand.viewContent, viewContent);
-  registerCommand(extensionCommand.createNewProject, createNewProjectFromCommand);
-  registerCommand(extensionCommand.createNewWorkspace, createNewCodeProjectFromCommand);
-  registerCommand(extensionCommand.cloudToLocal, cloudToLocalCommand);
+  registerCommand(extensionCommand.createProject, createProject);
+  registerCommand(extensionCommand.createWorkspace, createWorkspace);
+  registerCommand(extensionCommand.cloudToLocal, cloudToLocal);
   registerCommand(extensionCommand.createWorkflow, createWorkflow);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.createLogicApp, createLogicApp);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.createLogicAppAdvanced, createLogicAppAdvanced);

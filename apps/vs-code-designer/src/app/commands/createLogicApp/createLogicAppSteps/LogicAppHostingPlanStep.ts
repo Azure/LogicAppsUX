@@ -4,15 +4,15 @@
  *--------------------------------------------------------------------------------------------*/
 import type { ILogicAppWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import { localize } from '../../../../localize';
-import { setSiteOS } from '../../../tree/subscriptionTree/SubscriptionTreeItem';
+import { setSiteOS } from '../../../tree/subscriptionTree/subscriptionTreeItem';
 import { AppServicePlanListStep, CustomLocationListStep } from '@microsoft/vscode-azext-azureappservice';
 import { AzureWizardPromptStep, type IAzureQuickPickItem, type IWizardOptions } from '@microsoft/vscode-azext-utils';
-import { ConnectedEnvironmentStep } from './HybridLogicAppsSteps/ConnectedEnvironmentStep';
+import { ConnectedEnvironmentStep } from './createHybridLogicAppSteps/connectedEnvironmentStep';
 import { ResourceGroupListStep } from '@microsoft/vscode-azext-azureutils';
 import { sendAzureRequest } from '../../../utils/requestUtils';
 import { HTTP_METHODS } from '@microsoft/logic-apps-shared';
 import { workflowAppApiVersion } from '../../../../constants';
-import { ContainerAppNameStep } from './HybridLogicAppsSteps/ContainerAppNameStep';
+import { ContainerAppNameStep } from './createHybridLogicAppSteps/containerAppNameStep';
 
 export class LogicAppHostingPlanStep extends AzureWizardPromptStep<ILogicAppWizardContext> {
   public async prompt(wizardContext: ILogicAppWizardContext): Promise<void> {
