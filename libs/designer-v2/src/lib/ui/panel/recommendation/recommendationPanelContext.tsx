@@ -1,6 +1,6 @@
 import type { AppDispatch } from '../../../core';
 import { addOperation } from '../../../core/actions/bjsworkflow/add';
-import { useAllConnectors, useAllOperations, useOperationsByConnector } from '../../../core/queries/browse';
+import { useAllConnectors, useAllOperations } from '../../../core/queries/browse';
 import { useHostOptions } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import {
   useDiscoveryPanelFavoriteOperations,
@@ -13,11 +13,11 @@ import {
 import { selectOperationGroupId, selectOperationId, selectBrowseCategory } from '../../../core/state/panel/panelSlice';
 import { AzureResourceSelection } from './azureResourceSelection';
 import { CustomSwaggerSelection } from './customSwaggerSelection';
-import { ConnectorDetailsView } from './connectorDetailsView';
+import { ConnectorDetailsView } from './details/connectorDetailsView';
 import { SearchView } from './searchView';
 import { Button } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular, ArrowLeft24Regular } from '@fluentui/react-icons';
-import { SearchService, equals, LoggerService, LogEntryLevel, FavoriteContext, requestOperation } from '@microsoft/logic-apps-shared';
+import { SearchService, equals, FavoriteContext, requestOperation } from '@microsoft/logic-apps-shared';
 import { MediumText, OperationSearchHeaderV2, XLargeText } from '@microsoft/designer-ui';
 import type { CommonPanelProps } from '@microsoft/designer-ui';
 import type { DiscoveryOpArray, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
@@ -26,8 +26,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 import { useOnFavoriteClick } from './hooks';
-import { ActionBrowse } from './actionBrowse';
-import { TriggerBrowse } from './triggerBrowse';
+import { BrowseView } from './browse/browseView';
 import { useRecommendationPanelContextStyles } from './styles/RecommendationPanelContext.styles';
 import { getNodeId } from './helpers';
 
@@ -48,7 +47,6 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   const classes = useRecommendationPanelContextStyles();
   const isTrigger = useDiscoveryPanelIsAddingTrigger();
   const [searchTerm, setSearchTerm] = useState('');
-  const [allOperationsForGroup, setAllOperationsForGroup] = useState<DiscoveryOpArray>([]);
 
   // Track subcategory navigation using Redux
   const selectedBrowseCategory = useDiscoveryPanelSelectedBrowseCategory();
@@ -109,36 +107,26 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   const { data: allConnectors } = useAllConnectors();
   const selectedConnector = allConnectors?.find((c) => c.id === selectedOperationGroupId);
 
-  // Use connector-specific hook to avoid loading all operations
-  const { data: operationsByConnector, isLoading: isLoadingOperationsByConnector } = useOperationsByConnector(
-    selectedOperationGroupId || ''
-  );
-
-  // hide actions type filter if we don't have any operations for the browse view
-  const hideActionTypeFilter = (!allOperations || allOperations.length === 0) && !searchTerm;
-
   // effect to set the current list of operations by group
   useEffect(() => {
     if (!selectedOperationGroupId) {
       // Reset to search state when no operation group is selected
       setSelectionState(SELECTION_STATES.SEARCH);
-      setAllOperationsForGroup([]);
       return;
     }
-
-    // Use connector-specific operations instead of filtering all operations
-    console.log(operationsByConnector);
-    setAllOperationsForGroup(operationsByConnector || []);
     setSelectionState(SELECTION_STATES.DETAILS);
-  }, [selectedOperationGroupId, operationsByConnector]);
+  }, [selectedOperationGroupId]);
 
   const navigateBack = useCallback(() => {
     dispatch(selectOperationGroupId(''));
     dispatch(selectOperationId(''));
-    setAllOperationsForGroup([]);
-    dispatch(selectBrowseCategory(undefined));
-    setSelectionState(SELECTION_STATES.SEARCH);
-  }, [dispatch]);
+    // Don't clear browse category when navigating back from connector details
+    // This allows us to stay in the ConnectorBrowse view for the selected category
+    if (!selectedBrowseCategory) {
+      dispatch(selectBrowseCategory(undefined));
+    }
+    // Let the useEffect handle setting the selection state based on selectedOperationGroupId
+  }, [dispatch, selectedBrowseCategory]);
 
   const handleBackToCategories = useCallback(() => {
     dispatch(selectBrowseCategory(undefined));
@@ -332,19 +320,6 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
     ]
   );
 
-  const onConnectorCardSelected = useCallback(
-    (id: string, origin?: string): void => {
-      LoggerService().log({
-        area: 'recommendationPanelContext.onConnectorCardSelected',
-        level: LogEntryLevel.Verbose,
-        message: 'Connector card selected from RecommendationPanel',
-        args: [`connectorId: ${id}`, `origin: ${origin}`],
-      });
-      dispatch(selectOperationGroupId(id));
-    },
-    [dispatch]
-  );
-
   const intl = useIntl();
   const returnToSearchText = intl.formatMessage({
     defaultMessage: 'Return to search',
@@ -353,10 +328,14 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   });
 
   // Show category title when in subcategory, otherwise show main heading
-  const isInSubcategory = selectedBrowseCategory || selectedOperationGroupId;
-
+  const isInSubcategory = selectedBrowseCategory ?? selectedOperationGroupId;
   const headingText = isInSubcategory
-    ? selectedBrowseCategory?.title || selectedConnector?.properties?.displayName || 'Details'
+    ? (selectedBrowseCategory?.title ??
+      intl.formatMessage({
+        defaultMessage: 'Action Details',
+        id: 'h2OdHF',
+        description: 'Text for the Action Details header',
+      }))
     : isTrigger
       ? intl.formatMessage({
           defaultMessage: 'What triggers this workflow?',
@@ -393,7 +372,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
               <Button
                 aria-label={returnToSearchText}
                 appearance="subtle"
-                onClick={selectedBrowseCategory ? handleBackToCategories : navigateBack}
+                onClick={selectedOperationGroupId ? navigateBack : handleBackToCategories}
                 icon={<ArrowLeft24Regular />}
                 className={classes.backButton}
               />
@@ -403,24 +382,17 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
           <Button aria-label={closeButtonAriaLabel} appearance="subtle" onClick={toggleCollapse} icon={<CloseIcon />} />
         </div>
         {headingDescription && <MediumText text={headingDescription} className={classes.description} />}
+        <OperationSearchHeaderV2 searchCallback={setSearchTerm} searchTerm={searchTerm} isTriggerNode={isTrigger} />
       </div>
       {
         {
           [SELECTION_STATES.AZURE_RESOURCE]: selectedOperation ? <AzureResourceSelection operation={selectedOperation} /> : null,
           [SELECTION_STATES.CUSTOM_SWAGGER]: selectedOperation ? <CustomSwaggerSelection operation={selectedOperation} /> : null,
           [SELECTION_STATES.DETAILS]: selectedOperationGroupId ? (
-            <ConnectorDetailsView
-              connector={selectedConnector}
-              groupOperations={allOperationsForGroup}
-              onTriggerClick={onTriggerClick}
-              onActionClick={onActionClick}
-              isLoading={isLoadingOperationsByConnector}
-              ignoreActionsFilter={hideActionTypeFilter}
-            />
+            <ConnectorDetailsView connector={selectedConnector} onTriggerClick={onTriggerClick} onActionClick={onActionClick} />
           ) : null,
           [SELECTION_STATES.SEARCH]: (
             <>
-              <OperationSearchHeaderV2 searchCallback={setSearchTerm} searchTerm={searchTerm} isTriggerNode={isTrigger} />
               {searchTerm ? (
                 <SearchView
                   searchTerm={searchTerm}
@@ -432,10 +404,8 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
                   onOperationClick={onOperationClick}
                   displayRuntimeInfo={displayRuntimeInfo}
                 />
-              ) : isTrigger ? (
-                <TriggerBrowse />
               ) : (
-                <ActionBrowse onConnectorSelected={onConnectorCardSelected} onOperationSelected={onOperationClick} />
+                <BrowseView isTrigger={isTrigger} />
               )}
             </>
           ),

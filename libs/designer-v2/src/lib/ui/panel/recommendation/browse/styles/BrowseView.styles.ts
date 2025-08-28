@@ -1,6 +1,6 @@
 import { makeStyles, tokens } from '@fluentui/react-components';
 
-export const useActionBrowseStyles = makeStyles({
+export const useBrowseViewStyles = makeStyles({
   container: {
     display: 'flex',
     flexDirection: 'column',

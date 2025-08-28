@@ -12,6 +12,11 @@ export const useConnectorBrowseStyles = makeStyles({
     color: tokens.colorNeutralForeground2,
   },
   connectorGrid: {
-    marginTop: '16px',
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    overflow: 'hidden',
+    minHeight: 0,
+    height: 'calc(100% - 120px)',
   },
 });

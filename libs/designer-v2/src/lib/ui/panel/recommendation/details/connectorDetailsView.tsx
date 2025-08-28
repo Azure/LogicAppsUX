@@ -1,36 +1,32 @@
 import { useMemo } from 'react';
-import { Text } from '@fluentui/react-components';
+import { Text, Spinner } from '@fluentui/react-components';
 import type { OperationActionData } from '@microsoft/designer-ui';
-import { OperationActionDataFromOperation } from '@microsoft/designer-ui';
-import { isNullOrUndefined, type Connector, type DiscoveryOpArray } from '@microsoft/logic-apps-shared';
-import { useDiscoveryPanelIsAddingTrigger, useIsAddingAgentTool } from '../../../core/state/panel/panelSelectors';
-import { useIsWithinAgenticLoop } from '../../../core/state/workflow/workflowSelectors';
-import { useShouldEnableNestedAgent, useShouldEnableParseDocumentWithMetadata } from './hooks';
-import constants from '../../../common/constants';
+import { OperationActionDataFromOperation, FavoriteButton } from '@microsoft/designer-ui';
+import { isNullOrUndefined, type Connector } from '@microsoft/logic-apps-shared';
+import { useDiscoveryPanelIsAddingTrigger, useIsAddingAgentTool } from '../../../../core/state/panel/panelSelectors';
+import { useIsWithinAgenticLoop } from '../../../../core/state/workflow/workflowSelectors';
+import { useOperationsByConnector } from '../../../../core/queries/browse';
+import { useShouldEnableNestedAgent, useShouldEnableParseDocumentWithMetadata } from '../hooks';
+import constants from '../../../../common/constants';
 import { useConnectorDetailsViewStyles } from './styles/ConnectorDetailsView.styles';
 import { OperationsAccordion } from './operationsAccordion';
 
 type ConnectorDetailsViewProps = {
   connector?: Connector;
-  groupOperations: DiscoveryOpArray;
   onTriggerClick: (id: string, apiId?: string) => void;
   onActionClick: (id: string, apiId?: string) => void;
-  isLoading: boolean;
-  ignoreActionsFilter: boolean;
 };
 
-export const ConnectorDetailsView = ({
-  connector,
-  groupOperations,
-  onTriggerClick,
-  onActionClick,
-  isLoading,
-}: ConnectorDetailsViewProps) => {
+export const ConnectorDetailsView = ({ connector, onTriggerClick, onActionClick }: ConnectorDetailsViewProps) => {
   const classes = useConnectorDetailsViewStyles();
   const isTrigger = useDiscoveryPanelIsAddingTrigger();
   const isAgentTool = useIsAddingAgentTool();
   const shouldEnableParseDocWithMetadata = useShouldEnableParseDocumentWithMetadata();
   const shouldEnableNestedAgent = useShouldEnableNestedAgent();
+
+  // Fetch operations for this connector
+  const connectorId = connector?.id || '';
+  const { data: groupOperations, isLoading } = useOperationsByConnector(connectorId);
 
   // Get graph context for filtering
   const graphId = 'root'; // Simplified since we only need basic filtering
@@ -71,6 +67,10 @@ export const ConnectorDetailsView = ({
   );
 
   const allOperations: OperationActionData[] = useMemo(() => {
+    if (!groupOperations) {
+      return [];
+    }
+
     return groupOperations
       .map((operation) => OperationActionDataFromOperation(operation))
       .filter(filterItems)
@@ -90,7 +90,35 @@ export const ConnectorDetailsView = ({
   const connectorIcon = connector?.properties?.iconUri;
   const brandColor = connector?.properties?.brandColor || '#0078d4';
 
-  if (isNullOrUndefined(connector) && isLoading) {
+  // Show loading state
+  if (isLoading || (!groupOperations && !isNullOrUndefined(connector))) {
+    return (
+      <div className={classes.container}>
+        <div className={classes.header}>
+          {connectorIcon && <img src={connectorIcon} alt={connectorName} className={classes.connectorIcon} />}
+          <div className={classes.headerContent}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Text weight="semibold" size={400} className={classes.connectorName} style={{ color: brandColor }}>
+                {connectorName}
+              </Text>
+              <FavoriteButton connectorId={connectorId} />
+            </div>
+            {connectorDescription && (
+              <Text size={300} className={classes.connectorDescription}>
+                {connectorDescription}
+              </Text>
+            )}
+          </div>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'center', padding: '20px' }}>
+          <Spinner size="medium" label="Loading operations..." />
+        </div>
+      </div>
+    );
+  }
+
+  // Show empty state if no connector
+  if (isNullOrUndefined(connector)) {
     return null;
   }
 
@@ -100,9 +128,12 @@ export const ConnectorDetailsView = ({
       <div className={classes.header}>
         {connectorIcon && <img src={connectorIcon} alt={connectorName} className={classes.connectorIcon} />}
         <div className={classes.headerContent}>
-          <Text weight="semibold" size={400} className={classes.connectorName} style={{ color: brandColor }}>
-            {connectorName}
-          </Text>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Text weight="semibold" size={400} className={classes.connectorName} style={{ color: brandColor }}>
+              {connectorName}
+            </Text>
+            <FavoriteButton connectorId={connectorId} />
+          </div>
           {connectorDescription && (
             <Text size={300} className={classes.connectorDescription}>
               {connectorDescription}

@@ -4,7 +4,7 @@ import { ChevronRight12Regular } from '@fluentui/react-icons';
 import type { Connector } from '@microsoft/logic-apps-shared';
 import { getDisplayNameFromConnector, getDescriptionFromConnector, getIconUriFromConnector } from '@microsoft/logic-apps-shared';
 import { isBuiltInConnector } from '@microsoft/designer-ui';
-import { useCompactConnectorCardStyles } from './styles/CompactConnectorCard.styles';
+import { useConnectorCardStyles } from './styles/ConnectorCard.styles';
 
 export interface ConnectorCardProps {
   connector: Connector;
@@ -13,7 +13,7 @@ export interface ConnectorCardProps {
 }
 
 export const ConnectorCard = ({ connector, onClick, displayRuntimeInfo }: ConnectorCardProps) => {
-  const classes = useCompactConnectorCardStyles();
+  const classes = useConnectorCardStyles();
   const connectorName = getDisplayNameFromConnector(connector);
   const description = getDescriptionFromConnector(connector);
   const iconUrl = getIconUriFromConnector(connector);
@@ -25,7 +25,7 @@ export const ConnectorCard = ({ connector, onClick, displayRuntimeInfo }: Connec
 
   return (
     <div className={classes.card} onClick={handleClick}>
-      {/* Connector Icon */}
+      {/* Icon */}
       <div className={classes.iconContainer}>
         <img src={iconUrl} alt={connectorName} className={classes.icon} />
       </div>
@@ -33,17 +33,10 @@ export const ConnectorCard = ({ connector, onClick, displayRuntimeInfo }: Connec
       {/* Connector Info */}
       <div className={classes.content}>
         <div className={classes.titleRow}>
-          <Text weight="semibold" size={300} className={classes.title}>
-            {connectorName}
-          </Text>
+          <Text className={classes.title}>{connectorName}</Text>
           {displayRuntimeInfo && isBuiltIn && <div className={classes.builtInBadge}>Built-in</div>}
         </div>
-
-        {description && (
-          <Text size={200} className={classes.description}>
-            {description}
-          </Text>
-        )}
+        {description && <Text className={classes.description}>{description}</Text>}
       </div>
 
       {/* Chevron */}

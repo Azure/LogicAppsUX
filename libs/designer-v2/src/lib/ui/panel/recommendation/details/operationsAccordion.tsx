@@ -2,8 +2,8 @@ import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 import { Accordion } from '@fluentui/react-components';
-import { addOperation, type AppDispatch } from '../../../core';
-import { useDiscoveryPanelRelationshipIds } from '../../../core/state/panel/panelSelectors';
+import { addOperation, type AppDispatch } from '../../../../core';
+import { useDiscoveryPanelRelationshipIds } from '../../../../core/state/panel/panelSelectors';
 import { useOperationsAccordionStyles } from './styles/OperationsAccordion.styles';
 import { recurrenceOperation, requestOperation } from '@microsoft/logic-apps-shared';
 import { OperationAccordionItem } from './operationAccordionItem';
@@ -117,14 +117,16 @@ export const OperationsAccordion = ({
       items.push('triggers');
       items.push('suggested-triggers');
       // Also open actions accordion when we're in trigger mode - helps users see what actions are available
-      items.push('actions');
+      if (triggers.length === 0) {
+        items.push('actions');
+      }
     } else {
       // In action mode, always open actions
       items.push('actions');
     }
 
     return items;
-  }, [isTrigger]); // Only depend on the mode, not on data length
+  }, [isTrigger, triggers.length]); // Only depend on the mode, not on data length
 
   return (
     <div className={classes.container}>

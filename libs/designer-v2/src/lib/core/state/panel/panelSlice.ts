@@ -229,10 +229,8 @@ export const panelSlice = createSlice({
     },
     selectOperationGroupId: (state, action: PayloadAction<string>) => {
       state.discoveryContent.selectedOperationGroupId = cleanConnectorId(action.payload);
-      // Clear browse category when selecting an operation group
-      if (action.payload) {
-        state.discoveryContent.selectedBrowseCategory = undefined;
-      }
+      // Don't clear browse category when selecting an operation group
+      // This allows proper navigation back to the category browse view
 
       LoggerService().log({
         level: LogEntryLevel.Verbose,
