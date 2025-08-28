@@ -5,7 +5,7 @@ import { IActionContext, UserCancelledError } from '@microsoft/vscode-azext-util
 import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
 import { addLocalFuncTelemetry } from '../../../utils/funcCoreTools/funcVersion';
-import { convertToWorkspace } from '../../createNewCodeProject/CodeProjectBase/ConvertToWorkspace';
+import { convertToWorkspace } from '../../createWorkspace/createWorkspaceSteps/convertToWorkspace';
 import { getWorkspaceFolder, isMultiRootWorkspace } from '../../../utils/workspace';
 import { isLogicAppProject, tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
 import { AzureWizard } from '@microsoft/vscode-azext-utils';
@@ -49,7 +49,7 @@ vi.mock('../../../utils/funcCoreTools/funcVersion', () => ({
   addLocalFuncTelemetry: vi.fn(),
 }));
 
-vi.mock('../../createNewCodeProject/CodeProjectBase/ConvertToWorkspace', () => ({
+vi.mock('../../createWorkspace/createWorkspaceSteps/convertToWorkspace', () => ({
   convertToWorkspace: vi.fn(),
 }));
 

@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { parametersFileName } from '../../../constants';
 import { localize } from '../../../localize';
-import { isCSharpProject } from '../../commands/initProjectForVSCode/detectProjectLanguage';
+import { isCSharpProject } from '../detectProjectLanguage';
 import { writeFormattedJson } from '../fs';
 import { parseJson } from '../parseJson';
 import { createJsonFileIfDoesNotExist } from './common';

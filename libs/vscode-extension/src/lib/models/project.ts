@@ -66,9 +66,8 @@ export interface IProjectWizardContext extends IActionContext {
   projectPath: string;
   version: FuncVersion;
   workspacePath: string;
-  workspaceCustomFilePath?: string;
+  workspaceFilePath?: string;
   workspaceFolder: WorkspaceFolder | undefined;
-  customWorkspaceFolderPath?: string;
   projectTemplateKey: string | undefined;
   isCodeless?: boolean;
   language?: ProjectLanguage;
