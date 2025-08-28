@@ -52,11 +52,9 @@ const initializeServerLanguageClient = () => {
 
   const generalMiddleware: Middleware = {
     sendRequest: (type, param, token, next) => {
-      console.log(`Request sent: ${type}`);
       return next(type, param, token);
     },
     sendNotification: (type, next, params) => {
-      console.log(`Notification sent: ${type}`);
       return next(type, params);
     },
   };
