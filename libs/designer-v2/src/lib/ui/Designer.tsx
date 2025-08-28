@@ -28,6 +28,9 @@ import { CanvasSizeMonitor } from './CanvasSizeMonitor';
 import { AgentChat } from './panel/agentChat/agentChat';
 import DesignerReactFlow from './DesignerReactFlow';
 import MonitoringTimeline from './MonitoringTimeline';
+import { useRunInstance } from '../core/state/workflow/workflowSelectors';
+import { RunHistoryEntryInfo } from './panel';
+import { useDesignerStyles } from './Designer.styles';
 
 export interface DesignerProps {
   backgroundProps?: BackgroundProps;
@@ -43,11 +46,15 @@ export const SearchPreloader = () => {
 };
 
 export const Designer = (props: DesignerProps) => {
-  const { panelLocation = PanelLocation.Right, customPanelLocations } = props;
+  const { backgroundProps, panelLocation = PanelLocation.Right, customPanelLocations } = props;
 
   const isVSCode = useIsVSCode();
   const isReadOnly = useReadOnly();
   const dispatch = useDispatch<AppDispatch>();
+
+  const styles = useDesignerStyles();
+
+  const selectedRun = useRunInstance();
 
   const designerContainerRef = useRef<HTMLDivElement>(null);
 
@@ -130,23 +137,17 @@ export const Designer = (props: DesignerProps) => {
         <ReactFlowProvider>
           <div style={{ flexGrow: 1 }}>
             <DesignerReactFlow canvasRef={canvasRef}>
-              {isReadOnly ? (
-                <Background
-                  bgColor={'#80808010'}
-                  color={'#00000000'}
-                  size={1.5}
-                  gap={[19.9, 20.3333]} // I don't know why, but it renders not exact by default
-                  offset={[10, 10]}
-                />
+              {backgroundProps ? (
+                <Background {...backgroundProps} />
               ) : (
                 <Background
+                  bgColor={isReadOnly ? '#80808010' : undefined}
+                  color={isReadOnly ? '#00000000' : '#80808080'}
                   size={1.5}
-                  color={'#80808080'}
                   gap={[19.9, 20.3333]} // I don't know why, but it renders not exact by default
                   offset={[10, 10]}
                 />
               )}
-              {/* {backgroundProps ? <Background {...backgroundProps} /> : null} */}
               <DeleteModal />
               <DesignerContextualMenu />
               <EdgeContextualMenu />
@@ -163,20 +164,16 @@ export const Designer = (props: DesignerProps) => {
             <Controls />
             <Minimap />
           </div>
-          {isMonitoringView && isA2AWorkflow && <MonitoringTimeline />}
+          <div className={styles.topLeftContainer}>
+            {selectedRun && <RunHistoryEntryInfo run={selectedRun as any} />}
+            {isMonitoringView && isA2AWorkflow && <MonitoringTimeline />}
+          </div>
           <PerformanceDebugTool />
           <CanvasFinder />
           <CanvasSizeMonitor canvasRef={canvasRef} />
           <DragPanMonitor canvasRef={canvasRef} />
         </ReactFlowProvider>
-        <div
-          id={'msla-layer-host'}
-          style={{
-            position: 'absolute',
-            inset: '0px',
-            visibility: 'hidden',
-          }}
-        />
+        <div id={'msla-layer-host'} className={styles.layerHost} />
       </div>
     </DndProvider>
   );
