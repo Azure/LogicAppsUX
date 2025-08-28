@@ -16,7 +16,7 @@ export const CloneToStandard = () => {
 
   const onCloneCall = useCallback(
     async (
-      sourceApps: { subscriptionId: string; resourceGroup: string; logicAppName: string }[],
+      sourceApps: { subscriptionId: string; resourceGroup: string; logicAppName: string; targetWorkflowName: string }[],
       destinationApp: { subscriptionId: string; resourceGroup: string; logicAppName: string }
     ) => {
       console.log('TODO: on submit', sourceApps, destinationApp);

@@ -9,14 +9,15 @@ export interface WorkflowState {
 
 export interface SourceWorkflowState extends WorkflowState {
   lockField?: boolean; // Indicates if this field is locked & cannot be modified/removed
-  clonedWorkflowName: string;
-  clonedWorkflowNameValidationError?: string;
+  targetWorkflowName: string;
+  targetWorkflowNameValidationError?: string;
 }
 
 export interface CloneState {
   sourceApps: SourceWorkflowState[];
   destinationApp: WorkflowState;
   errorMessage: string | undefined;
+  isSuccessfullyCloned: boolean;
 }
 
 const initialState: CloneState = {
@@ -27,6 +28,7 @@ const initialState: CloneState = {
     logicAppName: '',
   },
   errorMessage: undefined,
+  isSuccessfullyCloned: false,
 };
 
 export const cloneSlice = createSlice({
@@ -41,7 +43,7 @@ export const cloneSlice = createSlice({
         logicAppName: string;
       }>
     ) => {
-      state.sourceApps = [{ ...action.payload, clonedWorkflowName: action.payload.logicAppName }];
+      state.sourceApps = [{ ...action.payload, targetWorkflowName: action.payload.logicAppName }];
     },
     setDestinationSubscription: (state, action: PayloadAction<string>) => {
       state.destinationApp.subscriptionId = action.payload;
@@ -56,18 +58,22 @@ export const cloneSlice = createSlice({
       state.errorMessage = action.payload;
     },
     // Note: temporary while only supporting single case, to-be-changed once supporting multi.
-    updateClonedWorkflowName: (state, action: PayloadAction<string>) => {
-      const clonedWorkflow = state.sourceApps[0];
-      if (clonedWorkflow) {
-        clonedWorkflow.clonedWorkflowName = action.payload;
+    updateTargetWorkflowName: (state, action: PayloadAction<string>) => {
+      const targetWorkflow = state.sourceApps[0];
+      if (targetWorkflow) {
+        targetWorkflow.targetWorkflowName = action.payload;
       }
     },
     // Note: temporary while only supporting single case, to-be-changed once supporting multi.
-    updateClonedWorkflowNameValidationError: (state, action: PayloadAction<string | undefined>) => {
-      const clonedWorkflow = state.sourceApps[0];
-      if (clonedWorkflow) {
-        clonedWorkflow.clonedWorkflowNameValidationError = action.payload;
+    updateTargetWorkflowNameValidationError: (state, action: PayloadAction<string | undefined>) => {
+      const targetWorkflow = state.sourceApps[0];
+      if (targetWorkflow) {
+        targetWorkflow.targetWorkflowNameValidationError = action.payload;
       }
+    },
+    // Note: also temporary to indicate shutdown of experience, to-be-changed once design pattern is set with API change
+    setSuccessfullyCloned: (state) => {
+      state.isSuccessfullyCloned = true;
     },
   },
 });
@@ -78,7 +84,8 @@ export const {
   setDestinationResourceGroup,
   setDestinationWorkflowAppDetails,
   updateErrorMessage,
-  updateClonedWorkflowName,
-  updateClonedWorkflowNameValidationError,
+  updateTargetWorkflowName,
+  updateTargetWorkflowNameValidationError,
+  setSuccessfullyCloned,
 } = cloneSlice.actions;
 export default cloneSlice.reducer;
