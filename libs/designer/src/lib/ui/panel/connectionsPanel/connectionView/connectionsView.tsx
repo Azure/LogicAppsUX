@@ -13,6 +13,7 @@ import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 import { autoCreateConnectionIfPossible } from '../../../../core/actions/bjsworkflow/connections';
 import { ConnectionService, type Connection, type Connector } from '@microsoft/logic-apps-shared';
+import { useConnectionViewStyles } from './styles';
 
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
@@ -26,6 +27,8 @@ interface ConnectionsViewProps {
 export const ConnectionsView = (props: ConnectionsViewProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const { connectorName, connectorType } = props;
+
+  const styles = useConnectionViewStyles();
 
   // ccastrotrejo - need to check whether its manifest based before this
   const connectorId = `${ConnectionService()?.getSubscriptionLocationWebUrl?.() ?? ''}/${connectorName}`;
@@ -104,7 +107,7 @@ export const ConnectionsView = (props: ConnectionsViewProps) => {
 
   return (
     <div style={{ padding: '0 10px', overflowY: 'auto' }}>
-      <div className="msla-app-action-header">
+      <div className={styles.appActionHeader}>
         <XLargeText text={panelHeaderText} />
         <Button aria-label={closeButtonAriaLabel} appearance="subtle" onClick={props.closeView} icon={<CloseIcon />} />
       </div>
