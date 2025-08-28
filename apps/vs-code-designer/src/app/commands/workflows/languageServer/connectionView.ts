@@ -11,6 +11,7 @@ import { ExtensionCommand, ProjectName, RouteName } from '@microsoft/vscode-exte
 import { OpenDesignerBase } from '../openDesigner/openDesignerBase';
 import { startDesignTimeApi } from '../../../utils/codeless/startDesignTimeApi';
 import {
+  addConnectionData,
   getConnectionsAndSettingsToUpdate,
   getConnectionsFromFile,
   getLogicAppProjectRoot,
@@ -173,6 +174,21 @@ export default class OpenConnectionView extends OpenDesignerBase {
             this.panelMetadata.azureDetails?.workflowManagementBaseUrl
           );
           this.panel.dispose();
+        });
+        break;
+      }
+      case ExtensionCommand.openOauthLoginPopup: {
+        await env.openExternal(message.url);
+        break;
+      }
+      case ExtensionCommand.logTelemetry: {
+        const eventName = message.data.name ?? message.data.area;
+        ext.telemetryReporter.sendTelemetryEvent(eventName, { ...message.data });
+        break;
+      }
+      case ExtensionCommand.addConnection: {
+        await callWithTelemetryAndErrorHandling('AddConnectionFromDesigner', async (activateContext: IActionContext) => {
+          await addConnectionData(activateContext, this.workflowFilePath, message.connectionAndSetting);
         });
         break;
       }
