@@ -17,7 +17,7 @@ import { getWorkspaceFolder, isMultiRootWorkspace } from '../../utils/workspace'
 import { AzureWizard, UserCancelledError, type IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import { DeploymentScriptTypeStep } from './generateDeploymentScriptsSteps/DeploymentScriptTypeStep';
-import { convertToWorkspace } from '../createNewCodeProject/CodeProjectBase/ConvertToWorkspace';
+import { convertToWorkspace } from '../createWorkspace/createWorkspaceSteps/convertToWorkspace';
 import type { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
 import type * as vscode from 'vscode';
 import * as path from 'path';
@@ -119,7 +119,7 @@ export async function generateDeploymentScripts(context: IActionContext, node?: 
  */
 async function getDeploymentScriptsWizardContext(context: IActionContext, projectPath: string): Promise<IAzureDeploymentScriptsContext> {
   const wizardContext = context as IAzureDeploymentScriptsContext;
-  wizardContext.customWorkspaceFolderPath = path.normalize(path.dirname(projectPath)); // TODO - why are we overriding the existing context.customWorkspaceFolderPath?
+  wizardContext.workspacePath = path.normalize(path.dirname(projectPath));
   wizardContext.projectPath = path.normalize(projectPath);
   wizardContext.isValidWorkspace = isMultiRootWorkspace();
 

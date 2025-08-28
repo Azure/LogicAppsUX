@@ -253,14 +253,19 @@ export async function verifyAndPromptToCreateProject(context: IActionContext, fs
  * @throws {NoWorkspaceError} - If the user cancels the operation.
  */
 export const promptOpenProjectOrWorkspace = async (context: IActionContext, message: string): Promise<void> => {
-  const newWorkspace: vscode.MessageItem = { title: localize('createNewWorkspace', 'Create new workspace') };
+  const createWorkspacePrompt: vscode.MessageItem = { title: localize('createWorkspace', 'Create new workspace') };
   const openExistingWorkspace: vscode.MessageItem = { title: localize('openExistingWorkspace', 'Open existing workspace') };
 
-  const result: vscode.MessageItem = await context.ui.showWarningMessage(message, { modal: true }, newWorkspace, openExistingWorkspace);
+  const result: vscode.MessageItem = await context.ui.showWarningMessage(
+    message,
+    { modal: true },
+    createWorkspacePrompt,
+    openExistingWorkspace
+  );
 
-  if (result === newWorkspace) {
-    vscode.commands.executeCommand(extensionCommand.createNewWorkspace);
-    context.telemetry.properties.noWorkspaceResult = 'createNewWorkspace';
+  if (result === createWorkspacePrompt) {
+    vscode.commands.executeCommand(extensionCommand.createWorkspace);
+    context.telemetry.properties.noWorkspaceResult = 'createWorkspace';
   } else if (result === openExistingWorkspace) {
     vscode.commands.executeCommand('workbench.action.openWorkspace');
     context.telemetry.properties.noWorkspaceResult = 'openExistingWorkspace';

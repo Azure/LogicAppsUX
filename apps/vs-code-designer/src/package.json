@@ -59,7 +59,7 @@
         "category": "Azure Logic Apps"
       },
       {
-        "command": "azureLogicAppsStandard.createNewProject",
+        "command": "azureLogicAppsStandard.createProject",
         "title": "Create new project...",
         "category": "Azure Logic Apps",
         "icon": {
@@ -68,12 +68,12 @@
         }
       },
       {
-        "command": "azureLogicAppsStandard.createNewWorkspace",
+        "command": "azureLogicAppsStandard.createWorkspace",
         "title": "Create new logic app workspace...",
         "category": "Azure Logic Apps",
         "icon": {
-          "light": "assets/light/CreateNewCodeProject.svg",
-          "dark": "assets/dark/CreateNewCodeProject.svg"
+          "light": "assets/light/CreateNewWorkspace.svg",
+          "dark": "assets/dark/CreateNewWorkspace.svg"
         }
       },
       {
@@ -400,11 +400,11 @@
     "menus": {
       "azureLogicAppsStandard.submenus.workspaceActions": [
         {
-          "command": "azureLogicAppsStandard.createNewWorkspace",
+          "command": "azureLogicAppsStandard.createWorkspace",
           "group": "1_create@1"
         },
         {
-          "command": "azureLogicAppsStandard.createNewProject",
+          "command": "azureLogicAppsStandard.createProject",
           "group": "1_create@2"
         },
         {
@@ -675,7 +675,7 @@
           "group": "zzz_LogicApptools@1"
         },
         {
-          "command": "azureLogicAppsStandard.createNewProject",
+          "command": "azureLogicAppsStandard.createProject",
           "when": "explorerResourceIsRoot == true",
           "group": "zzz_LogicApptools@1"
         },
@@ -783,7 +783,7 @@
           "when": "never"
         },
         {
-          "command": "azureLogicAppsStandard.createNewProject",
+          "command": "azureLogicAppsStandard.createProject",
           "when": "never"
         }
       ]

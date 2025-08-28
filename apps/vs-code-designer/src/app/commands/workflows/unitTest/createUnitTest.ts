@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { localize } from '../../../../localize';
-import { convertToWorkspace } from '../../createNewCodeProject/CodeProjectBase/ConvertToWorkspace';
+import { convertToWorkspace } from '../../createWorkspace/createWorkspaceSteps/convertToWorkspace';
 import {
   createTestCsFile,
   createTestExecutorFile,
