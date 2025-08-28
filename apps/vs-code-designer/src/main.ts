@@ -1,6 +1,6 @@
 import { LogicAppResolver } from './LogicAppResolver';
-import { runPostWorkflowCreateStepsFromCache } from './app/commands/createCodeless/createCodelessSteps/WorkflowCreateStepBase';
-import { runPostExtractStepsFromCache } from './app/commands/createNewCodeProject/CodeProjectBase/ProcessPackageStep';
+import { runPostWorkflowCreateStepsFromCache } from './app/commands/createWorkflow/createCodelessWorkflow/createCodelessWorkflowSteps/workflowCreateStepBase';
+import { runPostExtractStepsFromCache } from './app/commands/cloudToLocal/cloudToLocalSteps/processPackageStep';
 import {
   supportedDataMapDefinitionFileExts,
   supportedDataMapperFolders,
@@ -29,7 +29,7 @@ import {
 } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
-import { convertToWorkspace } from './app/commands/createNewCodeProject/CodeProjectBase/ConvertToWorkspace';
+import { convertToWorkspace } from './app/commands/createWorkspace/createWorkspaceSteps/convertToWorkspace';
 import TelemetryReporter from '@vscode/extension-telemetry';
 import { getAllCustomCodeFunctionsProjects } from './app/utils/customCodeUtils';
 import { createVSCodeAzureSubscriptionProvider } from './app/utils/services/VSCodeAzureSubscriptionProvider';

@@ -5,7 +5,7 @@ import {
   parameterizeConnectionsInProjectLoadSetting,
 } from '../../../constants';
 import { localize } from '../../../localize';
-import { isCSharpProject } from '../../commands/initProjectForVSCode/detectProjectLanguage';
+import { isCSharpProject } from '../detectProjectLanguage';
 import { addOrUpdateLocalAppSettings, getLocalSettingsJson } from '../appSettings/localSettings';
 import { writeFormattedJson } from '../fs';
 import { sendAzureRequest } from '../requestUtils';

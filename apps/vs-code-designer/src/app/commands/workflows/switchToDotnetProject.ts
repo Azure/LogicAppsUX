@@ -35,7 +35,7 @@ import { wrapArgInQuotes } from '../../utils/funcCoreTools/cpUtils';
 import { tryGetMajorVersion, tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
 import { getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
 import { getContainingWorkspace, getWorkspaceFolder } from '../../utils/workspace';
-import { DotnetInitVSCodeStep } from '../initProjectForVSCode/DotnetInitVSCodeStep';
+import { InitDotnetProjectStep } from '../initProjectForVSCode/initDotnetProjectStep';
 import { DialogResponses, nonNullOrEmptyValue } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IProjectWizardContext, ITemplates } from '@microsoft/vscode-extension-logic-apps';
@@ -171,7 +171,7 @@ export async function switchToDotnetProject(
   };
   const wizardContext: IProjectWizardContext = Object.assign(context, wizardOptions);
 
-  const dotnetInitVSCodeStep = new DotnetInitVSCodeStep();
+  const dotnetInitVSCodeStep = new InitDotnetProjectStep();
   dotnetInitVSCodeStep.execute(wizardContext);
 
   vscode.window.showInformationMessage(

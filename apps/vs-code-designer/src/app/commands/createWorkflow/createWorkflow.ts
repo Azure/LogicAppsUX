@@ -17,8 +17,8 @@ import { AzureWizard } from '@microsoft/vscode-azext-utils';
 import type { IFunctionWizardContext, FuncVersion } from '@microsoft/vscode-extension-logic-apps';
 import { ProjectLanguage, WorkflowProjectType } from '@microsoft/vscode-extension-logic-apps';
 import type { WorkspaceFolder } from 'vscode';
-import { WorkflowStateTypeStep } from '../createCodeless/createCodelessSteps/WorkflowStateTypeStep';
-import { WorkflowCodeTypeStep } from './WorkflowCodeTypeStep';
+import { WorkflowKindStep } from './createCodelessWorkflow/createCodelessWorkflowSteps/workflowKindStep';
+import { WorkflowCodeTypeStep } from './createWorkflowSteps/workflowCodeTypeStep';
 
 export async function createWorkflow(
   context: IActionContext,
@@ -85,7 +85,7 @@ export async function createWorkflow(
   const wizard: AzureWizard<IFunctionWizardContext> = new AzureWizard(wizardContext, {
     promptSteps: [
       await WorkflowCodeTypeStep.create(wizardContext, { templateId, triggerSettings, isProjectWizard: false }),
-      await WorkflowStateTypeStep.create(wizardContext, { templateId, triggerSettings, isProjectWizard: false }),
+      await WorkflowKindStep.create(wizardContext, { templateId, triggerSettings, isProjectWizard: false }),
     ],
   });
 
