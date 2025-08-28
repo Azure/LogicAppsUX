@@ -19,12 +19,13 @@ const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 interface ConnectionsViewProps {
   closeView: () => void;
   connectorName: string;
+  connectorType: string;
   onConnectionSuccessful: (connection: Connection) => void;
 }
 
 export const ConnectionsView = (props: ConnectionsViewProps) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { connectorName } = props;
+  const { connectorName, connectorType } = props;
 
   // ccastrotrejo - need to check whether its manifest based before this
   const connectorId = `${ConnectionService()?.getSubscriptionLocationWebUrl?.() ?? ''}/${connectorName}`;
@@ -91,9 +92,15 @@ export const ConnectionsView = (props: ConnectionsViewProps) => {
           />
         );
       case 'create':
-        return <CreateConnectionWrapper connectorId={connectorId} onConnectionSuccessful={props.onConnectionSuccessful} />;
+        return (
+          <CreateConnectionWrapper
+            connectorId={connectorId}
+            connectorType={connectorType}
+            onConnectionSuccessful={props.onConnectionSuccessful}
+          />
+        );
     }
-  }, [connectorId, panelStatus, connectorName, props.closeView, props.onConnectionSuccessful]);
+  }, [connectorId, panelStatus, connectorName, connectorType, props.closeView, props.onConnectionSuccessful]);
 
   return (
     <div style={{ padding: '0 10px', overflowY: 'auto' }}>

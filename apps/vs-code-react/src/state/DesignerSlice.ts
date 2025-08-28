@@ -62,7 +62,6 @@ export const designerSlice: Slice<DesignerState> = createSlice({
   name: 'designer',
   initialState,
   reducers: {
-    /// TODO(ccastrotrejo): Update missing types
     initializeDesigner: (state, action: PayloadAction<any>) => {
       const {
         panelMetadata,
