@@ -55,9 +55,9 @@ export const LogicAppSelector = () => {
   );
 
   const [selectedResource, setSelectedResource] = useState<string>('');
-  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [searchTerm, setSearchTerm] = useState<string | undefined>('');
 
-  const controlValue = useMemo(() => (searchTerm ? searchTerm : selectedResource) ?? '', [selectedResource, searchTerm]);
+  const controlValue = useMemo(() => (searchTerm !== undefined ? searchTerm : selectedResource) ?? '', [selectedResource, searchTerm]);
 
   const resources = useMemo(() => {
     if (!logicApps?.length) {
@@ -74,7 +74,7 @@ export const LogicAppSelector = () => {
   }, [logicApps]);
 
   const filteredResources = useMemo(() => {
-    if (!searchTerm.trim()) {
+    if (!searchTerm?.trim()) {
       return resources;
     }
 
@@ -127,7 +127,7 @@ export const LogicAppSelector = () => {
               onOptionSelect={(_, data) => {
                 if (data.optionValue && data.optionValue !== NO_ITEM_VALUE) {
                   onLogicAppSelect(data.optionValue);
-                  setSearchTerm('');
+                  setSearchTerm(undefined);
                 }
               }}
               onChange={(e) => {
@@ -136,7 +136,7 @@ export const LogicAppSelector = () => {
             >
               {!isLogicAppsLoading && !filteredResources.length ? (
                 <Option key={'no-items'} value={NO_ITEM_VALUE} disabled>
-                  {searchTerm.trim() ? `${intlText.NO_RESULTS} "${searchTerm}"` : intlText.NO_ITEMS}
+                  {searchTerm?.trim() ? `${intlText.NO_RESULTS} "${searchTerm}"` : intlText.NO_ITEMS}
                 </Option>
               ) : (
                 filteredResources.map((resource) => (

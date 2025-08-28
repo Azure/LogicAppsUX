@@ -6,6 +6,7 @@ export const useCloneWizardStyles = makeStyles({
     flexDirection: 'column',
     background: tokens.colorNeutralBackground1,
     height: '90vh',
+    width: '70%',
   },
 
   scrollableContent: {

@@ -484,6 +484,22 @@ export class ConsumptionRunService implements IRunService {
     }
   }
 
+  async resubmitRun(runId: string, triggerName: string): Promise<any> {
+    const { apiVersion, baseUrl, httpClient } = this.options;
+
+    try {
+      const resubmitUrl = `${baseUrl}/triggers/${triggerName}/histories/${runId}/resubmit?api-version=${apiVersion}`;
+      const headers = { 'If-Match': '*' };
+      const response = await httpClient.post({
+        uri: resubmitUrl,
+        headers,
+      });
+      return response;
+    } catch (e: any) {
+      return new Error(e.message);
+    }
+  }
+
   async cancelRun(runId: string): Promise<any> {
     const { apiVersion, baseUrl, httpClient } = this.options;
 

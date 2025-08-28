@@ -65,13 +65,11 @@ import {
   Constants,
   getSKUDefaultHostOptions,
   RunHistoryPanel,
-  RunHistoryEntryInfo,
   CombineInitializeVariableDialog,
   TriggerDescriptionDialog,
   getMissingRoleDefinitions,
   roleQueryKeys,
   isAgentWorkflow,
-  useRun,
 } from '@microsoft/logic-apps-designer-v2';
 import axios from 'axios';
 import isEqual from 'lodash.isequal';
@@ -255,8 +253,6 @@ const DesignerEditor = () => {
     },
     [dispatch]
   );
-
-  const { data: selectedRun } = useRun(runId);
 
   if (isLoading || appLoading || settingsLoading || customCodeLoading) {
     return <></>;
@@ -556,7 +552,7 @@ const DesignerEditor = () => {
                   showCodeView={showCodeView}
                 />
                 {!isCodeView && (
-                  <div style={{ display: 'flex', flexDirection: 'row', flexGrow: 1, height: 'inherit' }}>
+                  <div style={{ display: 'flex', flexDirection: 'row', flexGrow: 1, height: '80%' }}>
                     <RunHistoryPanel
                       collapsed={!showRunHistory}
                       onClose={() => dispatch(setRunHistoryEnabled(false))}
@@ -564,11 +560,6 @@ const DesignerEditor = () => {
                     />
                     <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column', position: 'relative' }}>
                       <Designer />
-                      {selectedRun && (
-                        <div style={{ position: 'absolute', top: '16px', left: '16px', zIndex: 1 }}>
-                          <RunHistoryEntryInfo run={selectedRun} />
-                        </div>
-                      )}
                     </div>
                   </div>
                 )}

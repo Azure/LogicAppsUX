@@ -2,7 +2,6 @@ import { makeStyles, tokens } from '@fluentui/react-components';
 
 export const useMonitoringTimelineStyles = makeStyles({
   monitoringTimelineRoot: {
-    margin: '20px',
     borderRadius: '28px',
     gap: '8px',
 
