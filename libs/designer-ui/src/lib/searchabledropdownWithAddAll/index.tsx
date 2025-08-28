@@ -73,7 +73,7 @@ export const SearchableDropdownWithAddAll: FC<SearchableDropdownWithAddAllProps>
           {label}
         </Label>
       )}
-      {children ? children : null}
+      {children}
       <div className={styles.dropdownWithButtons}>
         <SearchableDropdown
           {...searchableDropdownProps}
