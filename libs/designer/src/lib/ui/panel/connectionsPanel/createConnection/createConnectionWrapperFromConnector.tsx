@@ -45,7 +45,7 @@ export const CreateConnectionWrapper = ({
       showActionBar={true}
       hideCancelButton={!hasExistingConnection}
       updateConnectionInState={updateConnectionInState}
-      onConnectionCreated={() => onConnectionSuccessful}
+      onConnectionCreated={onConnectionSuccessful}
       workflowKind={'stateful'} // TODO (ccastrotrejo) - Need to update this onece its clear
     />
   );

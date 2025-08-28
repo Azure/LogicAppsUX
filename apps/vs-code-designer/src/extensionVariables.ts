@@ -103,6 +103,7 @@ export namespace ext {
     [webViewKey.monitoring]: {},
     [webViewKey.export]: {},
     [webViewKey.overview]: {},
+    [webViewKey.languageServer]: {},
   };
 
   export const log = (text: string) => {
