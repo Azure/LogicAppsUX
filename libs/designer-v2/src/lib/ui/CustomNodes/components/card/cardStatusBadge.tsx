@@ -76,7 +76,6 @@ export const CardStatusBadge = ({ status, duration }: any) => {
   }, [status]);
 
   const color = React.useMemo(() => {
-    console.log('#> Status', status);
     switch (status) {
       case 'Succeeded':
         return styles.badgeSuccess;
