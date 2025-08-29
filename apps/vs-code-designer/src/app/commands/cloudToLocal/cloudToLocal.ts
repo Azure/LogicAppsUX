@@ -1,12 +1,16 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
 import { funcVersionSetting, projectLanguageSetting, projectOpenBehaviorSetting, projectTemplateKeySetting } from '../../../constants';
 import { localize } from '../../../localize';
 import { addLocalFuncTelemetry, tryGetLocalFuncVersion, tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
 import { getGlobalSetting, getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
 import { OpenBehaviorStep } from '../createWorkspace/createWorkspaceSteps/openBehaviorStep';
-import { ProjectTypeStep } from '../createWorkspace/createWorkspaceSteps/projectTypeStep';
+import { ProjectTypeStep } from '../createProject/createProjectSteps/projectTypeStep';
 import { SelectPackageStep } from './cloudToLocalSteps/selectPackageStep';
 import { OpenFolderStep } from '../createWorkspace/createWorkspaceSteps/openFolderStep';
-import { LogicAppNameStep } from '../createWorkspace/createWorkspaceSteps/logicAppNameStep';
+import { LogicAppNameStep } from '../createProject/createProjectSteps/logicAppNameStep';
 import { WorkspaceNameStep } from '../createWorkspace/createWorkspaceSteps/workspaceNameStep';
 import { AzureWizard } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -17,8 +21,6 @@ import { SelectFolderForNewWorkspaceStep } from './cloudToLocalSteps/selectFolde
 import { ExtractPackageStep } from './cloudToLocalSteps/extractPackageStep';
 import { WorkspaceSettingsStep } from '../createWorkspace/createWorkspaceSteps/workspaceSettingsStep';
 
-const openFolder = true;
-
 export async function cloudToLocal(
   context: IActionContext,
   options: ICreateFunctionOptions = {
@@ -28,7 +30,7 @@ export async function cloudToLocal(
     templateId: undefined,
     functionName: undefined,
     functionSettings: undefined,
-    suppressOpenFolder: !openFolder,
+    suppressOpenFolder: false,
   }
 ): Promise<void> {
   addLocalFuncTelemetry(context);
@@ -54,10 +56,11 @@ export async function cloudToLocal(
     title: localize('createLogicAppWorkspaceFromPackage', 'Create new logic app workspace from package'),
     promptSteps: [
       new SelectPackageStep(),
+      // TODO(aeldridge): Can we just use WorkspaceFolderStep instead?
       new SelectFolderForNewWorkspaceStep(),
       new WorkspaceNameStep(),
       new LogicAppNameStep(),
-      new ProjectTypeStep(options.templateId, options.functionSettings, true),
+      await ProjectTypeStep.create(context, options.templateId, options.functionSettings, true),
       new WorkspaceSettingsStep(),
       new ExtractPackageStep(),
       new OpenBehaviorStep(),

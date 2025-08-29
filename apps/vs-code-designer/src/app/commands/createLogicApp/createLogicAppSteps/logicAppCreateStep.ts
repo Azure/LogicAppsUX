@@ -36,6 +36,10 @@ import type { Progress } from 'vscode';
 export class LogicAppCreateStep extends AzureWizardExecuteStep<ILogicAppWizardContext> {
   public priority = 140;
 
+  public shouldExecute(wizardContext: ILogicAppWizardContext): boolean {
+    return !wizardContext.useHybrid && !wizardContext.site;
+  }
+
   public async execute(context: ILogicAppWizardContext, progress: Progress<{ message?: string; increment?: number }>): Promise<void> {
     context.telemetry.properties.newSiteOS = context.newSiteOS;
     context.telemetry.properties.newSiteRuntime = context.newSiteRuntime;
@@ -50,10 +54,6 @@ export class LogicAppCreateStep extends AzureWizardExecuteStep<ILogicAppWizardCo
     const rgName: string = nonNullProp(nonNullProp(context, 'resourceGroup'), 'name');
 
     context.site = await client.webApps.beginCreateOrUpdateAndWait(rgName, siteName, await this.getNewSite(context));
-  }
-
-  public shouldExecute(wizardContext: ILogicAppWizardContext): boolean {
-    return !wizardContext.useHybrid && !wizardContext.site;
   }
 
   private async getNewSite(context: ILogicAppWizardContext): Promise<modelSite> {

@@ -9,16 +9,25 @@ import { uiUtils } from '@microsoft/vscode-azext-azureutils';
 import type { IWizardOptions, IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type { ILogicAppWizardContext } from '@microsoft/vscode-extension-logic-apps';
-import { HostNameStep } from './fileShareSteps/HostNameStep';
-import { FileSharePathStep } from './fileShareSteps/FileSharePathStep';
-import { UserNameStep } from './fileShareSteps/UserNameStep';
-import { PasswordStep } from './fileShareSteps/PasswordStep';
-import { SQLStringNameStep } from '../../../deploy/storageAccountSteps/SQLStringNameStep';
+import { HostNameStep } from './fileShareSteps/hostNameStep';
+import { FileSharePathStep } from './fileShareSteps/fileSharePathStep';
+import { UserNameStep } from './fileShareSteps/userNameStep';
+import { PasswordStep } from './fileShareSteps/passwordStep';
+import { SQLConnectionStringNameStep } from '../../../deploy/storageAccountSteps/sqlConnectionStringNameStep';
 
 /**
  * Represents a step in the Logic App creation wizard for selecting a connected environment.
  */
 export class ConnectedEnvironmentStep extends AzureWizardPromptStep<ILogicAppWizardContext> {
+  /**
+   * Determines whether this step should be prompted based on the wizard context.
+   * @param {ILogicAppWizardContext} wizardContext - The Logic App wizard context.
+   * @returns {boolean} - True if this step should be prompted, false otherwise.
+   */
+  public shouldPrompt(): boolean {
+    return true;
+  }
+
   /**
    * Prompts the user to select a connected environment and sets it in the wizard context.
    * @param {ILogicAppWizardContext} wizardContext - The Logic App wizard context.
@@ -31,13 +40,11 @@ export class ConnectedEnvironmentStep extends AzureWizardPromptStep<ILogicAppWiz
     wizardContext.telemetry.properties.connectedEnvironment = wizardContext.connectedEnvironment.name;
   }
 
-  /**
-   * Determines whether this step should be prompted based on the wizard context.
-   * @param {ILogicAppWizardContext} wizardContext - The Logic App wizard context.
-   * @returns {boolean} - True if this step should be prompted, false otherwise.
-   */
-  public shouldPrompt(): boolean {
-    return true;
+  public async getSubWizard(wizardContext: ILogicAppWizardContext): Promise<IWizardOptions<ILogicAppWizardContext> | undefined> {
+    wizardContext.fileShare = {};
+    return {
+      promptSteps: [new SQLConnectionStringNameStep(), new HostNameStep(), new FileSharePathStep(), new UserNameStep(), new PasswordStep()],
+    };
   }
 
   /**
@@ -59,12 +66,5 @@ export class ConnectedEnvironmentStep extends AzureWizardPromptStep<ILogicAppWiz
     picks.sort((a, b) => a.label.localeCompare(b.label));
 
     return picks;
-  }
-
-  public async getSubWizard(wizardContext: ILogicAppWizardContext): Promise<IWizardOptions<ILogicAppWizardContext> | undefined> {
-    wizardContext.fileShare = {};
-    return {
-      promptSteps: [new SQLStringNameStep(), new HostNameStep(), new FileSharePathStep(), new UserNameStep(), new PasswordStep()],
-    };
   }
 }

@@ -2,7 +2,6 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type { ILogicAppWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import { localize } from '../../../../../localize';
@@ -11,6 +10,10 @@ import type { ContainerAppsAPIClient } from '@azure/arm-appcontainers';
 
 const containerNameValidation = /^[a-z][a-z0-9]*(-[a-z0-9]+)*$/;
 export class ContainerAppNameStep extends AzureWizardPromptStep<ILogicAppWizardContext> {
+  public shouldPrompt(): boolean {
+    return true;
+  }
+
   public async prompt(context: ILogicAppWizardContext): Promise<void> {
     const nameAvailabiltyValidationError = await this.validateNameAvailable(context, context.newSiteName);
     const nameValidationError = ContainerAppNameStep.validateInput(context.newSiteName);
@@ -33,10 +36,6 @@ export class ContainerAppNameStep extends AzureWizardPromptStep<ILogicAppWizardC
         asyncValidationTask: (name: string) => this.validateNameAvailable(context, name),
       })
     ).trim();
-  }
-
-  public shouldPrompt(): boolean {
-    return true;
   }
 
   public static validateInput(name: string | undefined): string | undefined {

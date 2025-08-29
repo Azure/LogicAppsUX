@@ -156,7 +156,7 @@ export function getCodelessWorkflowTemplate(projectType: ProjectType, workflowTy
  * @returns {Promise<string>} - A promise that resolves to the codeful workflow template string.
  */
 export async function getCodefulWorkflowTemplate(): Promise<string> {
-  const templatePath = path.join(__dirname, 'assets', 'CodefulWorkflowTemplate', 'codefulTemplate.cs');
+  const templatePath = path.join(__dirname, 'assets', 'codefulTemplates', 'codefulWorkflowTemplate.cs');
   const templateContent = await fs.readFile(templatePath, 'utf-8');
 
   return templateContent;

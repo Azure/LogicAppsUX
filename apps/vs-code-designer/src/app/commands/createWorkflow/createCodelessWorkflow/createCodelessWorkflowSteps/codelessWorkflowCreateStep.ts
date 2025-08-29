@@ -25,7 +25,7 @@ import {
 } from '../../../../utils/codeless/updateBuildFile';
 import { getFramework, validateDotnetInstalled } from '../../../../utils/dotnet/executeDotnetTemplateCommand';
 import { writeFormattedJson } from '../../../../utils/fs';
-import { WorkflowCreateStepBase } from './workflowCreateStepBase';
+import { WorkflowCreateStepBase } from '../../createWorkflowSteps/workflowCreateStepBase';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { nonNullProp } from '@microsoft/vscode-azext-utils';
 import { WorkflowProjectType, MismatchBehavior } from '@microsoft/vscode-extension-logic-apps';
@@ -38,7 +38,7 @@ export class CodelessWorkflowCreateStep extends WorkflowCreateStepBase<IFunction
     super();
   }
 
-  public static async createStep(context: IActionContext): Promise<CodelessWorkflowCreateStep> {
+  public static async create(context: IActionContext): Promise<CodelessWorkflowCreateStep> {
     await validateDotnetInstalled(context);
     return new CodelessWorkflowCreateStep();
   }

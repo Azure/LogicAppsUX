@@ -6,9 +6,9 @@ import { sqlStorageConnectionStringKey } from '../../../constants';
 import { localize } from '../../../localize';
 import { addOrUpdateLocalAppSettings } from '../../utils/appSettings/localSettings';
 import { getLogicAppProjectRoot } from '../../utils/codeless/connection';
+import { validateSQLConnectionString } from '../../utils/sql';
 import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
 import { getWorkspaceFolder } from '../../utils/workspace';
-import { validateSQLConnectionString } from '../deploy/storageAccountSteps/SQLStringNameStep';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
 

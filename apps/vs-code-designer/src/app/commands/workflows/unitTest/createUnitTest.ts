@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { localize } from '../../../../localize';
-import { convertToWorkspace } from '../../createWorkspace/createWorkspaceSteps/convertToWorkspace';
+import { convertToWorkspace } from '../../convertToWorkspace';
 import {
   createTestCsFile,
   createTestExecutorFile,

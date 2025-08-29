@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { WorkflowCodeTypeStep } from '../workflowCodeTypeStep';
 import { IFunctionWizardContext } from '@microsoft/vscode-extension-logic-apps';
-import { WorkflowNameStep } from '../../createCodelessWorkflow/createCodelessWorkflowSteps/workflowNameStep';
+import { WorkflowNameStep } from '../workflowNameStep';
 import { CodefulWorkflowCreateStep } from '../../createCodefulWorkflow/createCodefulWorkflowSteps/codefulWorkflowCreateStep';
 import { workflowCodeType } from '../../../../../constants';
 
@@ -16,11 +16,7 @@ describe('WorkflowCodeTypeStep', () => {
           }),
         },
       };
-      const step = await WorkflowCodeTypeStep.create(wizardContext as any as IFunctionWizardContext, {
-        isProjectWizard: false,
-        triggerSettings: {},
-        templateId: '123',
-      });
+      const step = new WorkflowCodeTypeStep();
       const prompt = await step.prompt(wizardContext as any);
       expect(wizardContext.isCodeless).toBeFalsy();
     });
@@ -33,11 +29,7 @@ describe('WorkflowCodeTypeStep', () => {
           }),
         },
       };
-      const step = await WorkflowCodeTypeStep.create(wizardContext as any as IFunctionWizardContext, {
-        isProjectWizard: false,
-        triggerSettings: {},
-        templateId: '123',
-      });
+      const step = new WorkflowCodeTypeStep();
       const prompt = await step.prompt(wizardContext as any);
       expect(wizardContext.isCodeless).toBeTruthy();
     });
@@ -46,11 +38,7 @@ describe('WorkflowCodeTypeStep', () => {
   describe('shouldPrompt', () => {
     it('returns true to prompt when context.isCodeless is undefined', async () => {
       const context = { isCodeless: undefined };
-      const step = await WorkflowCodeTypeStep.create(context as any as IFunctionWizardContext, {
-        isProjectWizard: false,
-        triggerSettings: {},
-        templateId: '123',
-      });
+      const step = new WorkflowCodeTypeStep();
       expect(step.shouldPrompt(context as any)).toBe(true);
     });
   });
@@ -58,21 +46,13 @@ describe('WorkflowCodeTypeStep', () => {
   describe('getSubWizard', () => {
     it('returns undefined to continue to next step when context.isCodeless is true', async () => {
       const context = { isCodeless: true };
-      const step = await WorkflowCodeTypeStep.create(context as any as IFunctionWizardContext, {
-        isProjectWizard: false,
-        triggerSettings: {},
-        templateId: '123',
-      });
+      const step = new WorkflowCodeTypeStep();
       expect(await step.getSubWizard(context as any)).toBe(undefined);
     });
 
     it('returns next steps when context.isCodeless is false', async () => {
       const context = { isCodeless: false };
-      const step = await WorkflowCodeTypeStep.create(context as any as IFunctionWizardContext, {
-        isProjectWizard: false,
-        triggerSettings: {},
-        templateId: '123',
-      });
+      const step = new WorkflowCodeTypeStep();
       const subWizard = await step.getSubWizard(context as any);
       expect(subWizard).toBeDefined();
       if (subWizard !== undefined) {

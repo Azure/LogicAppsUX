@@ -22,7 +22,7 @@ import { ConnectEnvironmentStep } from '../../commands/createLogicApp/createLogi
 import { HybridAppCreateStep } from '../../commands/createLogicApp/createLogicAppSteps/createHybridLogicAppSteps/hybridAppCreateStep';
 import { LogicAppCreateStep } from '../../commands/createLogicApp/createLogicAppSteps/logicAppCreateStep';
 import { LogicAppHostingPlanStep } from '../../commands/createLogicApp/createLogicAppSteps/logicAppHostingPlanStep';
-import { AzureStorageAccountStep } from '../../commands/deploy/storageAccountSteps/AzureStorageAccountStep';
+import { AzureStorageAccountStep } from '../../commands/deploy/storageAccountSteps/azureStorageAccountStep';
 import { enableFileLogging } from '../../commands/logstream/enableFileLogging';
 import { createActivityContext } from '../../utils/activityUtils';
 import { createWebSiteClient } from '../../utils/azureClients';

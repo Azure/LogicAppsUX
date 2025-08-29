@@ -13,7 +13,7 @@ import type {
   ProjectLanguage,
 } from '@microsoft/vscode-extension-logic-apps';
 import { TemplateCategory, TemplatePromptResult } from '@microsoft/vscode-extension-logic-apps';
-import { WorkflowNameStep } from './workflowNameStep';
+import { WorkflowNameStep } from '../../createWorkflowSteps/workflowNameStep';
 import { WorkflowType } from '../../../../../constants';
 
 export class WorkflowKindStep extends AzureWizardPromptStep<IFunctionWizardContext> {
@@ -32,26 +32,8 @@ export class WorkflowKindStep extends AzureWizardPromptStep<IFunctionWizardConte
     return new WorkflowKindStep(options.triggerSettings, options.isProjectWizard);
   }
 
-  public async getSubWizard(context: IFunctionWizardContext): Promise<IWizardOptions<IFunctionWizardContext> | undefined> {
-    const template: IWorkflowTemplate | undefined = context.functionTemplate;
-
-    // TODO(aeldridge): Why do we skip the workflow name step for codeful workflows here?
-    // TODO(aeldridge): Ensure that context.isCodeless is always set before getting here (createCodelessWorkflow?)
-    if (template && context.isCodeless) {
-      const promptSteps: AzureWizardPromptStep<IFunctionWizardContext>[] = [];
-      const executeSteps: AzureWizardExecuteStep<IFunctionWizardContext>[] = [];
-      const title: string = localize('createCodeless', 'Create new {0}', template.name);
-
-      promptSteps.push(new WorkflowNameStep());
-      executeSteps.push(await CodelessWorkflowCreateStep.createStep(context));
-
-      for (const key of Object.keys(this.triggerSettings)) {
-        context[key.toLowerCase()] = this.triggerSettings[key];
-      }
-
-      return { promptSteps, executeSteps, title };
-    }
-    return undefined;
+  public shouldPrompt(context: IFunctionWizardContext): boolean {
+    return !context.functionTemplate && context.isCodeless;
   }
 
   public async prompt(context: IFunctionWizardContext): Promise<void> {
@@ -71,8 +53,26 @@ export class WorkflowKindStep extends AzureWizardPromptStep<IFunctionWizardConte
     }
   }
 
-  public shouldPrompt(context: IFunctionWizardContext): boolean {
-    return !context.functionTemplate && context.isCodeless;
+  public async getSubWizard(context: IFunctionWizardContext): Promise<IWizardOptions<IFunctionWizardContext> | undefined> {
+    const template: IWorkflowTemplate | undefined = context.functionTemplate;
+
+    // TODO(aeldridge): Why do we skip the workflow name step for codeful workflows here?
+    // TODO(aeldridge): Ensure that context.isCodeless is always set before getting here (createCodelessWorkflow?)
+    if (template && context.isCodeless) {
+      const promptSteps: AzureWizardPromptStep<IFunctionWizardContext>[] = [];
+      const executeSteps: AzureWizardExecuteStep<IFunctionWizardContext>[] = [];
+      const title: string = localize('createCodeless', 'Create new {0}', template.name);
+
+      promptSteps.push(new WorkflowNameStep());
+      executeSteps.push(await CodelessWorkflowCreateStep.create(context));
+
+      for (const key of Object.keys(this.triggerSettings)) {
+        context[key.toLowerCase()] = this.triggerSettings[key];
+      }
+
+      return { promptSteps, executeSteps, title };
+    }
+    return undefined;
   }
 
   private getPicks(context: IFunctionWizardContext): IAzureQuickPickItem<IWorkflowTemplate | TemplatePromptResult>[] {

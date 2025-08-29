@@ -1,3 +1,7 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
 import { AzureWizardExecuteStep, callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IFunctionWizardContext, ILocalSettingsJson, IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import { parameterizeConnectionsInProjectLoadSetting } from '../../../../constants';
@@ -9,7 +13,7 @@ import {
   mergeAppSettings,
   parameterizeConnectionsDuringImport,
   updateConnectionKeys,
-} from '../cloudToLocalHelper';
+} from '../../../utils/cloudToLocalUtils';
 import { getGlobalSetting } from '../../../utils/vsCodeConfig/settings';
 import { writeFormattedJson } from '../../../utils/fs';
 import { getConnectionsJson } from '../../../utils/codeless/connection';
@@ -42,6 +46,15 @@ export function runPostExtractStepsFromCache(): void {
 
 export class ProcessPackageStep extends AzureWizardExecuteStep<IProjectWizardContext> {
   public priority = 200;
+
+  /**
+   * Determines whether this step should be executed based on the user's input.
+   * @param context The context object for the project wizard.
+   * @returns A boolean value indicating whether this step should be executed.
+   */
+  public shouldExecute(context: IFunctionWizardContext): boolean {
+    return context.packagePath !== undefined;
+  }
 
   /**
    * Executes the step to integrate the package into the new Logic App workspace
@@ -103,15 +116,6 @@ export class ProcessPackageStep extends AzureWizardExecuteStep<IProjectWizardCon
     } catch (error) {
       context.telemetry.properties.error = error.message;
     }
-  }
-
-  /**
-   * Determines whether this step should be executed based on the user's input.
-   * @param context The context object for the project wizard.
-   * @returns A boolean value indicating whether this step should be executed.
-   */
-  public shouldExecute(context: IFunctionWizardContext): boolean {
-    return context.packagePath !== undefined;
   }
 
   private async getPackageEntries(zipFilePath: string) {

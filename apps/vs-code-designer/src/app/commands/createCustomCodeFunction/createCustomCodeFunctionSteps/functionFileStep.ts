@@ -12,7 +12,7 @@ import { window } from 'vscode';
 import { localize } from '../../../../localize';
 
 /**
- * Sets up a new function in an Azure Functions project.
+ * Create a new function file in an Azure Functions project.
  */
 export class FunctionFileStep extends AzureWizardPromptStep<IProjectWizardContext> {
   public hideStepCount = true;
@@ -21,6 +21,14 @@ export class FunctionFileStep extends AzureWizardPromptStep<IProjectWizardContex
     [TargetFramework.NetFx]: 'FunctionsFileNetFx',
     [TargetFramework.Net8]: 'FunctionsFileNet8',
   };
+
+  /**
+   * Determines whether the prompt should be displayed.
+   * @returns {boolean} True if the prompt should be displayed, false otherwise.
+   */
+  public shouldPrompt(): boolean {
+    return true;
+  }
 
   /**
    * Prompts to set up a function.
@@ -36,14 +44,6 @@ export class FunctionFileStep extends AzureWizardPromptStep<IProjectWizardContex
     }
 
     await this.createCsFile(functionsFolderPath, context.customCodeFunctionName, context.functionAppNamespace, context.targetFramework);
-  }
-
-  /**
-   * Determines whether the prompt should be displayed.
-   * @returns {boolean} True if the prompt should be displayed, false otherwise.
-   */
-  public shouldPrompt(): boolean {
-    return true;
   }
 
   /**

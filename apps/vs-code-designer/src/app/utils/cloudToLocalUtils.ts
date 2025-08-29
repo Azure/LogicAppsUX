@@ -19,38 +19,6 @@ import { addNewFileInCSharpProject } from './codeless/updateBuildFile';
 import { writeFormattedJson } from './fs';
 import { window } from 'vscode';
 
-export async function extractConnectionDetails(connections: any): Promise<any> {
-  const SUBSCRIPTION_INDEX = 2;
-  const MANAGED_API_LOCATION_INDEX = 6;
-  const MANAGED_CONNECTION_RESOURCE_GROUP_INDEX = 4;
-
-  const details = [];
-  const managedApiConnections = connections['managedApiConnections'];
-  if (managedApiConnections) {
-    for (const connKey in managedApiConnections) {
-      if (Object.prototype.hasOwnProperty.call(managedApiConnections, connKey)) {
-        const api = managedApiConnections[connKey]['api'];
-        const connection = managedApiConnections[connKey]['connection'];
-        if (api?.id && connection?.id) {
-          const idPath = api['id'];
-          const connectionIdPath = connection['id'];
-          const apiIdParts = idPath.split('/');
-          const connectionIdParts = connectionIdPath.split('/');
-          if (apiIdParts) {
-            const detail = {
-              WORKFLOWS_SUBSCRIPTION_ID: apiIdParts[SUBSCRIPTION_INDEX],
-              WORKFLOWS_LOCATION_NAME: apiIdParts[MANAGED_API_LOCATION_INDEX],
-              WORKFLOWS_RESOURCE_GROUP_NAME: connectionIdParts[MANAGED_CONNECTION_RESOURCE_GROUP_INDEX],
-            };
-            details.push(detail);
-          }
-        }
-      }
-    }
-    return details;
-  }
-}
-
 export async function extractConnectionSettings(context: IFunctionWizardContext): Promise<Record<string, any>> {
   const logicAppPath = path.join(context.workspacePath, context.logicAppName || 'LogicApp');
   const localSettingsPath = path.join(logicAppPath, 'local.settings.json');
@@ -82,6 +50,38 @@ export async function extractConnectionSettings(context: IFunctionWizardContext)
       context.telemetry.properties.error = error.message;
       console.error('Error encountered while extracting connection details:', error);
     }
+  }
+}
+
+export async function extractConnectionDetails(connections: any): Promise<any> {
+  const SUBSCRIPTION_INDEX = 2;
+  const MANAGED_API_LOCATION_INDEX = 6;
+  const MANAGED_CONNECTION_RESOURCE_GROUP_INDEX = 4;
+
+  const details = [];
+  const managedApiConnections = connections['managedApiConnections'];
+  if (managedApiConnections) {
+    for (const connKey in managedApiConnections) {
+      if (Object.prototype.hasOwnProperty.call(managedApiConnections, connKey)) {
+        const api = managedApiConnections[connKey]['api'];
+        const connection = managedApiConnections[connKey]['connection'];
+        if (api?.id && connection?.id) {
+          const idPath = api['id'];
+          const connectionIdPath = connection['id'];
+          const apiIdParts = idPath.split('/');
+          const connectionIdParts = connectionIdPath.split('/');
+          if (apiIdParts) {
+            const detail = {
+              WORKFLOWS_SUBSCRIPTION_ID: apiIdParts[SUBSCRIPTION_INDEX],
+              WORKFLOWS_LOCATION_NAME: apiIdParts[MANAGED_API_LOCATION_INDEX],
+              WORKFLOWS_RESOURCE_GROUP_NAME: connectionIdParts[MANAGED_CONNECTION_RESOURCE_GROUP_INDEX],
+            };
+            details.push(detail);
+          }
+        }
+      }
+    }
+    return details;
   }
 }
 

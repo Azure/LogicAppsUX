@@ -2,7 +2,6 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-
 import { AzureWizardExecuteStep } from '@microsoft/vscode-azext-utils';
 import type { ILogicAppWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import type { Progress } from 'vscode';
@@ -16,6 +15,15 @@ import { getAuthorizationToken } from '../../../../utils/codeless/getAuthorizati
  */
 export class ConnectEnvironmentStep extends AzureWizardExecuteStep<ILogicAppWizardContext> {
   public priority = 100;
+
+  /**
+   * Determines whether this step should be executed based on the wizard context.
+   * @param wizardContext The logic app wizard context.
+   * @returns A boolean indicating whether this step should be executed.
+   */
+  public shouldExecute(wizardContext: ILogicAppWizardContext): boolean {
+    return !!wizardContext.connectedEnvironment && !!wizardContext.fileShare && !!wizardContext.useHybrid;
+  }
 
   /**
    * Executes the step to connect to the environment.
@@ -39,14 +47,5 @@ export class ConnectEnvironmentStep extends AzureWizardExecuteStep<ILogicAppWiza
     } catch (error) {
       throw new Error(error);
     }
-  }
-
-  /**
-   * Determines whether this step should be executed based on the wizard context.
-   * @param wizardContext The logic app wizard context.
-   * @returns A boolean indicating whether this step should be executed.
-   */
-  public shouldExecute(wizardContext: ILogicAppWizardContext): boolean {
-    return !!wizardContext.connectedEnvironment && !!wizardContext.fileShare && !!wizardContext.useHybrid;
   }
 }

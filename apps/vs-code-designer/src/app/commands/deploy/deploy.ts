@@ -52,7 +52,7 @@ import type { ConnectionsData, FuncVersion, IIdentityWizardContext, ProjectLangu
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import type { Uri, MessageItem, WorkspaceFolder } from 'vscode';
-import { deployHybridLogicApp, zipDeployHybridLogicApp } from './hybridLogicApp';
+import { deployHybridLogicApp, zipDeployHybridLogicApp } from './hybridLogicApp/deployHybridLogicApp';
 import { createContainerClient } from '../../utils/azureClients';
 import { uploadAppSettings } from '../appSettings/uploadAppSettings';
 import { resolveConnectionsReferences } from '@microsoft/logic-apps-shared';
@@ -447,7 +447,7 @@ async function checkAADDetailsExistsInAppSettings(node: SlotTreeItem, identityWi
   return false;
 }
 
-const canUseZipDeployForHybrid = (node: SlotTreeItem): boolean => {
+function canUseZipDeployForHybrid(node: SlotTreeItem): boolean {
   const requiredEnvVars = [
     workflowAppAADClientId,
     workflowAppAADClientSecret,
@@ -465,4 +465,4 @@ const canUseZipDeployForHybrid = (node: SlotTreeItem): boolean => {
     requiredEnvVars.every((varName) => envVars.includes(varName)) &&
     node.hybridSite.template.containers[0].env.some((env: any) => env.name === isZipDeployEnabledSetting && env.value === 'true')
   );
-};
+}

@@ -84,7 +84,7 @@ export async function createWorkflow(
 
   const wizard: AzureWizard<IFunctionWizardContext> = new AzureWizard(wizardContext, {
     promptSteps: [
-      await WorkflowCodeTypeStep.create(wizardContext, { templateId, triggerSettings, isProjectWizard: false }),
+      new WorkflowCodeTypeStep(),
       await WorkflowKindStep.create(wizardContext, { templateId, triggerSettings, isProjectWizard: false }),
     ],
   });

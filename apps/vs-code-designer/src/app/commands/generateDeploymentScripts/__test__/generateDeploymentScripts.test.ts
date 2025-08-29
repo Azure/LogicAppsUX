@@ -5,7 +5,7 @@ import { IActionContext, UserCancelledError } from '@microsoft/vscode-azext-util
 import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
 import { addLocalFuncTelemetry } from '../../../utils/funcCoreTools/funcVersion';
-import { convertToWorkspace } from '../../createWorkspace/createWorkspaceSteps/convertToWorkspace';
+import { convertToWorkspace } from '../../convertToWorkspace';
 import { getWorkspaceFolder, isMultiRootWorkspace } from '../../../utils/workspace';
 import { isLogicAppProject, tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
 import { AzureWizard } from '@microsoft/vscode-azext-utils';
@@ -49,7 +49,7 @@ vi.mock('../../../utils/funcCoreTools/funcVersion', () => ({
   addLocalFuncTelemetry: vi.fn(),
 }));
 
-vi.mock('../../createWorkspace/createWorkspaceSteps/convertToWorkspace', () => ({
+vi.mock('../../convertToWorkspace', () => ({
   convertToWorkspace: vi.fn(),
 }));
 
@@ -63,7 +63,7 @@ vi.mock('../../../utils/verifyIsProject', () => ({
   isLogicAppProject: vi.fn(),
 }));
 
-vi.mock('../generateDeploymentScriptsSteps/DeploymentScriptTypeStep', () => ({
+vi.mock('../generateDeploymentScriptsSteps/deploymentScriptTypeStep', () => ({
   DeploymentScriptTypeStep: vi.fn(),
 }));
 
