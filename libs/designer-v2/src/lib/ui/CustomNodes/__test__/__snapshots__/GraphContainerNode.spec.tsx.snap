@@ -23,7 +23,7 @@ exports[`GraphContainerNode > should apply correct styles based on node size 1`]
     data-automation-id="msla-graph-container-mockid"
   />
   <div
-    className="___rchrq50_zqh4gx0 f3bhgqh f1022m68 f6bm4uj f79hrhh f9ur42n f3mu39s fugzhns f5gq2j6 f3q69k0"
+    className="___14c3ofx_13aa1x8 f3bhgqh f1022m68 f6bm4uj frscl27 fpd43o0 f30q22z fugzhns f5gq2j6 f3q69k0 f1lns4je"
     isConnectable={true}
     isConnectableEnd={false}
     isConnectableStart={true}
@@ -59,7 +59,7 @@ exports[`GraphContainerNode > should not render DropZone when showLeafComponents
     data-automation-id="msla-graph-container-mockid"
   />
   <div
-    className="___rchrq50_zqh4gx0 f3bhgqh f1022m68 f6bm4uj f79hrhh f9ur42n f3mu39s fugzhns f5gq2j6 f3q69k0"
+    className="___14c3ofx_13aa1x8 f3bhgqh f1022m68 f6bm4uj frscl27 fpd43o0 f30q22z fugzhns f5gq2j6 f3q69k0 f1lns4je"
     isConnectable={true}
     isConnectableEnd={false}
     isConnectableStart={true}
@@ -96,7 +96,7 @@ exports[`GraphContainerNode > should render DropZone when showLeafComponents is 
       data-automation-id="msla-graph-container-mockid"
     />
     <div
-      className="___rchrq50_zqh4gx0 f3bhgqh f1022m68 f6bm4uj f79hrhh f9ur42n f3mu39s fugzhns f5gq2j6 f3q69k0"
+      className="___14c3ofx_13aa1x8 f3bhgqh f1022m68 f6bm4uj frscl27 fpd43o0 f30q22z fugzhns f5gq2j6 f3q69k0 f1lns4je"
       isConnectable={true}
       isConnectableEnd={false}
       isConnectableStart={true}
@@ -145,7 +145,7 @@ exports[`GraphContainerNode > should render graph container as inactive when is 
     data-automation-id="msla-graph-container-mockid"
   />
   <div
-    className="___rchrq50_zqh4gx0 f3bhgqh f1022m68 f6bm4uj f79hrhh f9ur42n f3mu39s fugzhns f5gq2j6 f3q69k0"
+    className="___14c3ofx_13aa1x8 f3bhgqh f1022m68 f6bm4uj frscl27 fpd43o0 f30q22z fugzhns f5gq2j6 f3q69k0 f1lns4je"
     isConnectable={true}
     isConnectableEnd={false}
     isConnectableStart={true}
@@ -181,7 +181,7 @@ exports[`GraphContainerNode > should render graph container as normal when in mo
     data-automation-id="msla-graph-container-mockid"
   />
   <div
-    className="___rchrq50_zqh4gx0 f3bhgqh f1022m68 f6bm4uj f79hrhh f9ur42n f3mu39s fugzhns f5gq2j6 f3q69k0"
+    className="___14c3ofx_13aa1x8 f3bhgqh f1022m68 f6bm4uj frscl27 fpd43o0 f30q22z fugzhns f5gq2j6 f3q69k0 f1lns4je"
     isConnectable={true}
     isConnectableEnd={false}
     isConnectableStart={true}
@@ -250,7 +250,7 @@ exports[`GraphContainerNode > should render without crashing 1`] = `
     data-automation-id="msla-graph-container-mockid"
   />
   <div
-    className="___rchrq50_zqh4gx0 f3bhgqh f1022m68 f6bm4uj f79hrhh f9ur42n f3mu39s fugzhns f5gq2j6 f3q69k0"
+    className="___14c3ofx_13aa1x8 f3bhgqh f1022m68 f6bm4uj frscl27 fpd43o0 f30q22z fugzhns f5gq2j6 f3q69k0 f1lns4je"
     isConnectable={true}
     isConnectableEnd={false}
     isConnectableStart={true}
