@@ -4,8 +4,8 @@
   "dependencies": {
     "@apidevtools/swagger-parser": "10.0.3",
     "@microsoft/logic-apps-shared": "workspace:*",
-    "@microsoft/vscode-azext-azureappservice": "^3.6.4",
-    "@microsoft/vscode-azext-utils": "^3.4.0",
+    "@microsoft/vscode-azext-azureappservice": "^3.6.6",
+    "@microsoft/vscode-azext-utils": "^3.4.1",
     "@azure/arm-appcontainers": "^2.0.0-beta.3",
     "@xyflow/react": "^12.3.5",
     "axios": "^1.7.7",
@@ -13,7 +13,7 @@
     "tslib": "2.4.0"
   },
   "devDependencies": {
-    "@types/vscode": "1.76.0",
+    "@types/vscode": "1.103.0",
     "@types/vscode-webview": "1.57.1"
   },
   "peerDependencies": {
