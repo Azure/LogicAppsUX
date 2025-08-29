@@ -18,6 +18,6 @@
     "types": ["vitest/globals"]
   },
   "files": [],
-  "include": ["**/src/**/*.ts", "**/src/**/*.tsx"],
+  "include": ["**/src/**/*.ts", "**/src/**/*.tsx", "../designer-ui/src/lib/panel/recommendationpanel/operationSearchHeader/Grid.styles.ts"],
   "exclude": ["**/__test__/**", "**/__tests__/**", "**/build/**", "jest.config.ts"]
 }

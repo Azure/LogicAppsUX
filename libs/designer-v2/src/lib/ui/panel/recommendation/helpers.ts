@@ -41,3 +41,7 @@ export const ALLOWED_A2A_CONNECTOR_NAMES = new Set([
   'as2Operations',
   'datetime',
 ]);
+
+export const getNodeId = (operation: DiscoveryOperation<DiscoveryResultTypes> | undefined): string => {
+  return `${operation?.properties?.summary ?? operation?.name}`.replaceAll(' ', '_');
+};
