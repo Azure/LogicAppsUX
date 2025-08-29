@@ -5,7 +5,6 @@
     "@azure/arm-appcontainers": "^2.0.0-beta.3",
     "@azure/arm-appinsights": "^5.0.0-beta.7",
     "@azure/identity": "^4.5.0",
-    "@azure/ms-rest-js": "^2.6.4",
     "@azure/arm-appservice": "^15.0.0",
     "@azure/arm-resourcegraph": "^5.0.0-beta.3",
     "@azure/arm-storage": "^18.1.0",
