@@ -48,7 +48,6 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   const isTrigger = useDiscoveryPanelIsAddingTrigger();
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Track subcategory navigation using Redux
   const selectedBrowseCategory = useDiscoveryPanelSelectedBrowseCategory();
 
   const [isGrouped, setIsGrouped] = useState(true);
@@ -110,7 +109,6 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   // effect to set the current list of operations by group
   useEffect(() => {
     if (!selectedOperationGroupId) {
-      // Reset to search state when no operation group is selected
       setSelectionState(SELECTION_STATES.SEARCH);
       return;
     }
@@ -120,8 +118,6 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   const navigateBack = useCallback(() => {
     dispatch(selectOperationGroupId(''));
     dispatch(selectOperationId(''));
-    // Don't clear browse category when navigating back from connector details
-    // This allows us to stay in the ConnectorBrowse view for the selected category
     if (!selectedBrowseCategory) {
       dispatch(selectBrowseCategory(undefined));
     }
@@ -151,55 +147,9 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
     setSelectionState(SELECTION_STATES.CUSTOM_SWAGGER);
   }, []);
 
-  // Handler for triggers - always adds as trigger regardless of mode
-  const onTriggerClick = useCallback(
-    (id: string, apiId?: string) => {
-      const searchResultPromise = Promise.resolve(
-        (allOperations ?? []).find((o) => (apiId ? o.id === id && o.properties?.api?.id === apiId : o.id === id))
-      );
-
-      searchResultPromise.then((operation) => {
-        if (!operation) {
-          return;
-        }
-        dispatch(selectOperationId(operation.id));
-        setSelectedOperation(operation);
-        dispatch(selectOperationGroupId(''));
-        if (hasAzureResourceSelection(operation)) {
-          startAzureResourceSelection();
-          return;
-        }
-        if (hasSwaggerSelection(operation)) {
-          startSwaggerSelection();
-          return;
-        }
-        const newNodeId = getNodeId(operation);
-        dispatch(
-          addOperation({
-            operation,
-            relationshipIds,
-            nodeId: newNodeId,
-            isParallelBranch,
-            isTrigger: true, // Always add as trigger
-          })
-        );
-      });
-    },
-    [
-      allOperations,
-      dispatch,
-      hasAzureResourceSelection,
-      hasSwaggerSelection,
-      isParallelBranch,
-      relationshipIds,
-      startAzureResourceSelection,
-      startSwaggerSelection,
-    ]
-  );
-
-  // Handler for actions - follows special logic based on mode
-  const onActionClick = useCallback(
-    (id: string, apiId?: string) => {
+  // Combined handler for both triggers and actions
+  const onOperationClick = useCallback(
+    (id: string, apiId?: string, forceAsTrigger?: boolean) => {
       const searchResultPromise = Promise.resolve(
         (allOperations ?? []).find((o) => (apiId ? o.id === id && o.properties?.api?.id === apiId : o.id === id))
       );
@@ -220,7 +170,21 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
           return;
         }
 
-        if (isTrigger) {
+        const shouldAddAsTrigger = forceAsTrigger ?? false;
+
+        if (shouldAddAsTrigger) {
+          // Always add as trigger when explicitly requested (for trigger operations)
+          const newNodeId = getNodeId(operation);
+          dispatch(
+            addOperation({
+              operation,
+              relationshipIds,
+              nodeId: newNodeId,
+              isParallelBranch,
+              isTrigger: true,
+            })
+          );
+        } else if (isTrigger) {
           // In trigger mode: first add request trigger, then add the action
           const requestTriggerNodeId = getNodeId(requestOperation);
           dispatch(
@@ -259,52 +223,6 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
             })
           );
         }
-      });
-    },
-    [
-      allOperations,
-      dispatch,
-      hasAzureResourceSelection,
-      hasSwaggerSelection,
-      isParallelBranch,
-      isTrigger,
-      relationshipIds,
-      startAzureResourceSelection,
-      startSwaggerSelection,
-    ]
-  );
-
-  const onOperationClick = useCallback(
-    (id: string, apiId?: string) => {
-      const searchResultPromise = Promise.resolve(
-        (allOperations ?? []).find((o) => (apiId ? o.id === id && o.properties?.api?.id === apiId : o.id === id))
-      );
-
-      searchResultPromise.then((operation) => {
-        if (!operation) {
-          return;
-        }
-        dispatch(selectOperationId(operation.id));
-        setSelectedOperation(operation);
-        dispatch(selectOperationGroupId(''));
-        if (hasAzureResourceSelection(operation)) {
-          startAzureResourceSelection();
-          return;
-        }
-        if (hasSwaggerSelection(operation)) {
-          startSwaggerSelection();
-          return;
-        }
-        const newNodeId = getNodeId(operation);
-        dispatch(
-          addOperation({
-            operation,
-            relationshipIds,
-            nodeId: newNodeId,
-            isParallelBranch,
-            isTrigger,
-          })
-        );
       });
     },
     [
@@ -389,7 +307,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
           [SELECTION_STATES.AZURE_RESOURCE]: selectedOperation ? <AzureResourceSelection operation={selectedOperation} /> : null,
           [SELECTION_STATES.CUSTOM_SWAGGER]: selectedOperation ? <CustomSwaggerSelection operation={selectedOperation} /> : null,
           [SELECTION_STATES.DETAILS]: selectedOperationGroupId ? (
-            <ConnectorDetailsView connector={selectedConnector} onTriggerClick={onTriggerClick} onActionClick={onActionClick} />
+            <ConnectorDetailsView connector={selectedConnector} onOperationClick={onOperationClick} />
           ) : null,
           [SELECTION_STATES.SEARCH]: (
             <>
@@ -405,7 +323,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
                   displayRuntimeInfo={displayRuntimeInfo}
                 />
               ) : (
-                <BrowseView isTrigger={isTrigger} />
+                <BrowseView isTrigger={isTrigger} onOperationClick={onOperationClick} />
               )}
             </>
           ),

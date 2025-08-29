@@ -206,7 +206,6 @@ export const panelSlice = createSlice({
       state.discoveryContent.relationshipIds = relationshipIds;
       state.discoveryContent.selectedNodeIds = [nodeId];
       state.discoveryContent.isAddingAgentTool = isAgentTool;
-      // Clear browse category and operation group when switching modes to return to main browse view
       state.discoveryContent.selectedBrowseCategory = undefined;
       state.discoveryContent.selectedOperationGroupId = '';
 
@@ -229,8 +228,6 @@ export const panelSlice = createSlice({
     },
     selectOperationGroupId: (state, action: PayloadAction<string>) => {
       state.discoveryContent.selectedOperationGroupId = cleanConnectorId(action.payload);
-      // Don't clear browse category when selecting an operation group
-      // This allows proper navigation back to the category browse view
 
       LoggerService().log({
         level: LogEntryLevel.Verbose,

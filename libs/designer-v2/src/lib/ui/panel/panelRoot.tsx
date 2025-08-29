@@ -153,24 +153,22 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
               }
             : undefined,
         content: {
-          // Hide scrollbar while keeping scrolling functionality
-          scrollbarWidth: 'none', // Firefox
-          msOverflowStyle: 'none', // Internet Explorer and Edge
+          // Hide scrollbar
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none',
           '&::-webkit-scrollbar': {
-            display: 'none', // Chrome, Safari, and Opera
+            display: 'none',
           },
-          // Ensure smooth scrolling
           scrollBehavior: 'smooth',
           padding: currentPanelMode === 'Discovery' ? '0 8px' : undefined,
         },
         scrollableContent: {
-          // Hide scrollbar while keeping scrolling functionality
-          scrollbarWidth: 'none', // Firefox
-          msOverflowStyle: 'none', // Internet Explorer and Edge
+          // Hide scrollbar
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none',
           '&::-webkit-scrollbar': {
-            display: 'none', // Chrome, Safari, and Opera
+            display: 'none',
           },
-          // Ensure smooth scrolling
           scrollBehavior: 'smooth',
         },
       })}

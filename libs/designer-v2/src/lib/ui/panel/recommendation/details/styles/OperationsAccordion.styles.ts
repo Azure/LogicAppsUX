@@ -6,21 +6,20 @@ export const useOperationsAccordionStyles = makeStyles({
     overflow: 'auto',
   },
   accordionHeader: {
-    // Fix border cutoff issue by ensuring proper border handling
     borderBottom: `1px solid ${tokens.colorNeutralStroke2}`,
     '&[data-expand-state="expanded"]': {
-      borderBottom: 'none', // Remove border when expanded to prevent cutoff
+      borderBottom: 'none',
     },
   },
   accordionPanel: {
     padding: '0',
     margin: '0',
-    borderTop: 'none', // Prevent double border with header
+    borderTop: 'none',
   },
   accordionPanelWithMessage: {
     padding: '8px',
     margin: '0',
-    borderTop: 'none', // Prevent double border with header
+    borderTop: 'none',
   },
   messageBar: {
     marginBottom: '16px',

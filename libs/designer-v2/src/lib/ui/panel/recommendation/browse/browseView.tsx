@@ -18,9 +18,10 @@ import { getTriggerCategories, getActionCategories, BrowseCategoryType } from '.
 
 interface BrowseViewProps {
   isTrigger?: boolean;
+  onOperationClick: (operationId: string, apiId?: string) => void;
 }
 
-export const BrowseView = ({ isTrigger = false }: BrowseViewProps) => {
+export const BrowseView = ({ isTrigger = false, onOperationClick }: BrowseViewProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const classes = useBrowseViewStyles();
   const selectedBrowseCategory = useDiscoveryPanelSelectedBrowseCategory();
@@ -53,11 +54,12 @@ export const BrowseView = ({ isTrigger = false }: BrowseViewProps) => {
     [dispatch]
   );
 
-  const onOperationSelected = useCallback((operationId: string, apiId?: string) => {
-    // This should trigger adding the operation - we'll need to implement this
-    // For now, just log it
-    console.log('Operation selected:', operationId, apiId);
-  }, []);
+  const onOperationSelected = useCallback(
+    (operationId: string, apiId?: string) => {
+      onOperationClick(operationId, apiId);
+    },
+    [onOperationClick]
+  );
 
   const onCategoryClick = useCallback(
     (categoryKey: string) => {

@@ -13,11 +13,10 @@ import { OperationsAccordion } from './operationsAccordion';
 
 type ConnectorDetailsViewProps = {
   connector?: Connector;
-  onTriggerClick: (id: string, apiId?: string) => void;
-  onActionClick: (id: string, apiId?: string) => void;
+  onOperationClick: (id: string, apiId?: string, forceAsTrigger?: boolean) => void;
 };
 
-export const ConnectorDetailsView = ({ connector, onTriggerClick, onActionClick }: ConnectorDetailsViewProps) => {
+export const ConnectorDetailsView = ({ connector, onOperationClick }: ConnectorDetailsViewProps) => {
   const classes = useConnectorDetailsViewStyles();
   const isTrigger = useDiscoveryPanelIsAddingTrigger();
   const isAgentTool = useIsAddingAgentTool();
@@ -75,8 +74,7 @@ export const ConnectorDetailsView = ({ connector, onTriggerClick, onActionClick 
       .map((operation) => OperationActionDataFromOperation(operation))
       .filter(filterItems)
       .sort((a, b) => {
-        // Sort alphabetically by title
-        const aTitle = a.title || '';
+        const aTitle = a.title ?? '';
         const bTitle = b.title || '';
         return aTitle.localeCompare(bTitle);
       });
@@ -103,11 +101,11 @@ export const ConnectorDetailsView = ({ connector, onTriggerClick, onActionClick 
               </Text>
               <FavoriteButton connectorId={connectorId} />
             </div>
-            {connectorDescription && (
+            {connectorDescription ? (
               <Text size={300} className={classes.connectorDescription}>
                 {connectorDescription}
               </Text>
-            )}
+            ) : null}
           </div>
         </div>
         <div style={{ display: 'flex', justifyContent: 'center', padding: '20px' }}>
@@ -117,14 +115,12 @@ export const ConnectorDetailsView = ({ connector, onTriggerClick, onActionClick 
     );
   }
 
-  // Show empty state if no connector
   if (isNullOrUndefined(connector)) {
     return null;
   }
 
   return (
     <div className={classes.container}>
-      {/* Connector Header Info */}
       <div className={classes.header}>
         {connectorIcon && <img src={connectorIcon} alt={connectorName} className={classes.connectorIcon} />}
         <div className={classes.headerContent}>
@@ -142,14 +138,13 @@ export const ConnectorDetailsView = ({ connector, onTriggerClick, onActionClick 
         </div>
       </div>
 
-      {/* Operations Content */}
       <OperationsAccordion
         triggers={triggers}
         actions={actions}
         isTrigger={isTrigger}
         isLoading={isLoading}
-        onTriggerClick={onTriggerClick}
-        onActionClick={onActionClick}
+        onTriggerClick={(id: string, apiId?: string) => onOperationClick(id, apiId, true)}
+        onActionClick={(id: string, apiId?: string) => onOperationClick(id, apiId, false)}
       />
     </div>
   );

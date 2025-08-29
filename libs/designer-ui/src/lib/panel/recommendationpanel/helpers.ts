@@ -4,11 +4,6 @@ import { getConnectorCategoryString } from '../../utils';
 import { isBuiltInConnector, isCustomConnector } from '../../connectors';
 import type { OperationActionData } from './interfaces';
 
-export interface EnhancedOperationRuntimeCategory extends OperationRuntimeCategory {
-  description: string;
-  icon: React.ReactNode;
-}
-
 export const getDefaultRuntimeCategories = (): OperationRuntimeCategory[] => {
   const intl = getIntl();
 

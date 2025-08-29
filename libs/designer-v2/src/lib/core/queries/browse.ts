@@ -358,7 +358,7 @@ export const useFavoriteOperations = (favoriteItems: ActionPanelFavoriteItem[]) 
     [favoriteActionsPages]
   );
 
-  // Smart loading states - only show loading for initial loads, not for data changes
+  // only show loading for initial loads, not for data changes
   const hasAnyData = (favoriteConnectorsData?.length ?? 0) > 0 || (favoriteActionsData?.length ?? 0) > 0;
   const isInitialConnectorLoad = connectorsLoading && !hasAnyData;
   const isInitialActionsLoad = favoriteActionsIsFetching && !hasAnyData && !favoriteActionsIsFetchingNextPage;

@@ -7,10 +7,11 @@ import { useDiscoveryPanelRelationshipIds } from '../../../../core/state/panel/p
 import { useOperationsAccordionStyles } from './styles/OperationsAccordion.styles';
 import { recurrenceOperation, requestOperation } from '@microsoft/logic-apps-shared';
 import { OperationAccordionItem } from './operationAccordionItem';
+import type { OperationActionData } from '@microsoft/designer-ui';
 
 export interface OperationsAccordionProps {
-  triggers: any[];
-  actions: any[];
+  triggers: OperationActionData[];
+  actions: OperationActionData[];
   isTrigger: boolean;
   isLoading: boolean;
   onTriggerClick: (id: string, apiId?: string) => void;
@@ -107,16 +108,14 @@ export const OperationsAccordion = ({
     [handleSuggestedTriggerClick]
   );
 
-  // Stable default open items calculation - only changes when mode changes
   const defaultOpenItems = useMemo(() => {
     const items: string[] = [];
 
-    // Base the default on the mode and ensure consistency
     if (isTrigger) {
       // In trigger mode, always try to open triggers first, but fallback to suggested
       items.push('triggers');
       items.push('suggested-triggers');
-      // Also open actions accordion when we're in trigger mode - helps users see what actions are available
+      // Also open actions accordion when no triggers - helps users see what actions are available
       if (triggers.length === 0) {
         items.push('actions');
       }
@@ -126,7 +125,7 @@ export const OperationsAccordion = ({
     }
 
     return items;
-  }, [isTrigger, triggers.length]); // Only depend on the mode, not on data length
+  }, [isTrigger, triggers.length]);
 
   return (
     <div className={classes.container}>

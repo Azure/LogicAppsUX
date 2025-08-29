@@ -25,12 +25,10 @@ export const ConnectorCard = ({ connector, onClick, displayRuntimeInfo }: Connec
 
   return (
     <div className={classes.card} onClick={handleClick}>
-      {/* Icon */}
       <div className={classes.iconContainer}>
         <img src={iconUrl} alt={connectorName} className={classes.icon} />
       </div>
 
-      {/* Connector Info */}
       <div className={classes.content}>
         <div className={classes.titleRow}>
           <Text className={classes.title}>{connectorName}</Text>
@@ -39,7 +37,6 @@ export const ConnectorCard = ({ connector, onClick, displayRuntimeInfo }: Connec
         {description && <Text className={classes.description}>{description}</Text>}
       </div>
 
-      {/* Chevron */}
       <div className={classes.chevron}>
         <ChevronRight12Regular />
       </div>
