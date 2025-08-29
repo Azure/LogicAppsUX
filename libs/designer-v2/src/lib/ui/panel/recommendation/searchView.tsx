@@ -2,7 +2,7 @@ import type { AppDispatch } from '../../../core';
 import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
 import { useIsWithinAgenticLoop } from '../../../core/state/workflow/workflowSelectors';
 import { equals, type DiscoveryOpArray, type DiscoveryOperation, type DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
-import { SearchResultsGrid } from '@microsoft/designer-ui';
+import { SearchResultsGridV2 } from '@microsoft/designer-ui';
 import { useDebouncedEffect } from '@react-hookz/web';
 import type { FC } from 'react';
 import { useCallback, useEffect, useState, useMemo } from 'react';
@@ -21,8 +21,6 @@ type SearchViewProps = {
   groupByConnector: boolean;
   setGroupByConnector: (groupedByConnector: boolean) => void;
   isLoading: boolean;
-  filters: Record<string, string>;
-  setFilters: (filters: Record<string, string>) => void;
   onOperationClick: (id: string, apiId?: string) => void;
   displayRuntimeInfo: boolean;
 };
@@ -33,8 +31,6 @@ export const SearchView: FC<SearchViewProps> = ({
   groupByConnector,
   setGroupByConnector,
   isLoading,
-  filters,
-  setFilters,
   onOperationClick,
   displayRuntimeInfo,
 }) => {
@@ -141,14 +137,14 @@ export const SearchView: FC<SearchViewProps> = ({
         allOperations,
         shouldEnableParseDocWithMetadata ?? false,
         shouldEnableACASession ?? false
-      ).searchOperations(searchTerm, filters['actionType'], filters['runtime'], filterAgenticLoops);
+      ).searchOperations(searchTerm, filterAgenticLoops);
 
       searchResultsPromise.then((results) => {
         setSearchResults(results);
         setIsLoadingSearchResults(false);
       });
     },
-    [searchTerm, allOperations, filters, filterAgenticLoops, shouldEnableParseDocWithMetadata, shouldEnableACASession],
+    [searchTerm, allOperations, filterAgenticLoops, shouldEnableParseDocWithMetadata, shouldEnableACASession],
     200
   );
 
@@ -157,7 +153,7 @@ export const SearchView: FC<SearchViewProps> = ({
   };
 
   return (
-    <SearchResultsGrid
+    <SearchResultsGridV2
       isLoadingSearch={isLoadingSearchResults}
       isLoadingMore={isLoading}
       searchTerm={searchTerm}
@@ -166,8 +162,6 @@ export const SearchView: FC<SearchViewProps> = ({
       operationSearchResults={searchResults}
       groupByConnector={groupByConnector}
       setGroupByConnector={setGroupByConnector}
-      filters={filters}
-      setFilters={setFilters}
       displayRuntimeInfo={displayRuntimeInfo}
     />
   );
