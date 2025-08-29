@@ -51,8 +51,19 @@ const defaultFilterConnector = (connector: Connector, runtimeFilter: string): bo
   return true;
 };
 
-const getRunTimeValue = (connector: Connector): number => (isBuiltInConnector(connector) ? 100 : isCustomConnector(connector) ? 200 : 300);
+const RUNTIME_VALUE_BUILTIN = 100;
+const RUNTIME_VALUE_CUSTOM = 200;
+const RUNTIME_VALUE_SHARED = 300;
 
+const getRunTimeValue = (connector: Connector): number => {
+  if (isBuiltInConnector(connector)) {
+    return RUNTIME_VALUE_BUILTIN;
+  } else if (isCustomConnector(connector)) {
+    return RUNTIME_VALUE_CUSTOM;
+  } else {
+    return RUNTIME_VALUE_SHARED;
+  }
+};
 const getPriorityValue = (connector: Connector): number => {
   const idx = priorityConnectors.findIndex((p) => connector.id.toLowerCase().endsWith(p.toLowerCase()));
   return idx !== -1 ? 200 - idx : 100;
