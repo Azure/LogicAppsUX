@@ -1,4 +1,4 @@
-import { makeStyles } from '@fluentui/react-components';
+import { makeStyles, tokens } from '@fluentui/react-components';
 
 export const useRecommendationPanelContextStyles = makeStyles({
   container: {
@@ -9,6 +9,9 @@ export const useRecommendationPanelContextStyles = makeStyles({
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
+    backgroundColor: tokens.colorNeutralBackground2,
+    padding: '12px',
+    borderBottom: `1px solid ${tokens.colorNeutralStroke2}`,
   },
   headerLeft: {
     display: 'flex',

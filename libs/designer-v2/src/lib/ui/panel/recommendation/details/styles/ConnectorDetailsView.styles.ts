@@ -23,6 +23,11 @@ export const useConnectorDetailsViewStyles = makeStyles({
   headerContent: {
     flex: '1',
   },
+  connectorNameContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+  },
   connectorName: {
     fontWeight: tokens.fontWeightSemibold,
     fontSize: tokens.fontSizeBase400,
@@ -32,5 +37,10 @@ export const useConnectorDetailsViewStyles = makeStyles({
     color: tokens.colorNeutralForeground2,
     display: 'block',
     marginTop: '2px',
+  },
+  loadingContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    padding: '20px',
   },
 });

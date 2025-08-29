@@ -83,10 +83,9 @@ export const ConnectorDetailsView = ({ connector, onOperationClick }: ConnectorD
   const triggers = useMemo(() => allOperations.filter((op) => op.isTrigger), [allOperations]);
   const actions = useMemo(() => allOperations.filter((op) => !op.isTrigger), [allOperations]);
 
-  const connectorName = connector?.properties?.displayName || 'Connector';
+  const connectorName = connector?.properties?.displayName ?? 'Connector';
   const connectorDescription = connector?.properties?.description;
   const connectorIcon = connector?.properties?.iconUri;
-  const brandColor = connector?.properties?.brandColor || '#0078d4';
 
   // Show loading state
   if (isLoading || (!groupOperations && !isNullOrUndefined(connector))) {
@@ -95,8 +94,8 @@ export const ConnectorDetailsView = ({ connector, onOperationClick }: ConnectorD
         <div className={classes.header}>
           {connectorIcon && <img src={connectorIcon} alt={connectorName} className={classes.connectorIcon} />}
           <div className={classes.headerContent}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Text weight="semibold" size={400} className={classes.connectorName} style={{ color: brandColor }}>
+            <div className={classes.connectorNameContainer}>
+              <Text weight="semibold" size={400} className={classes.connectorName}>
                 {connectorName}
               </Text>
               <FavoriteButton connectorId={connectorId} />
@@ -108,7 +107,7 @@ export const ConnectorDetailsView = ({ connector, onOperationClick }: ConnectorD
             ) : null}
           </div>
         </div>
-        <div style={{ display: 'flex', justifyContent: 'center', padding: '20px' }}>
+        <div className={classes.loadingContainer}>
           <Spinner size="medium" label="Loading operations..." />
         </div>
       </div>
@@ -124,8 +123,8 @@ export const ConnectorDetailsView = ({ connector, onOperationClick }: ConnectorD
       <div className={classes.header}>
         {connectorIcon && <img src={connectorIcon} alt={connectorName} className={classes.connectorIcon} />}
         <div className={classes.headerContent}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Text weight="semibold" size={400} className={classes.connectorName} style={{ color: brandColor }}>
+          <div className={classes.connectorNameContainer}>
+            <Text weight="semibold" size={400} className={classes.connectorName}>
               {connectorName}
             </Text>
             <FavoriteButton connectorId={connectorId} />
