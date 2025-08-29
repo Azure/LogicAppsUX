@@ -8,7 +8,7 @@ import { guid } from '@microsoft/logic-apps-shared';
 import { memo, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import type { NodeProps } from '@xyflow/react';
-import { DefaultHandle } from './handles/DefaultHandle';
+import { DefaultHandle } from './components/handles/DefaultHandle';
 
 const PlaceholderNode = ({ id }: NodeProps) => {
   const dispatch = useDispatch<AppDispatch>();
