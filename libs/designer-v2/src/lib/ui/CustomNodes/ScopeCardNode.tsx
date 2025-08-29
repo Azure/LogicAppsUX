@@ -58,9 +58,9 @@ import { copyScopeOperation } from '../../core/actions/bjsworkflow/copypaste';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { CopyTooltip } from '../common/DesignerContextualMenu/CopyTooltip';
 import { useNodeRepetition, useAgentRepetition, useAgentActionsRepetition } from '../../core/queries/runs';
-import { EdgeDrawTargetHandle } from './handles/EdgeDrawTargetHandle';
-import { DefaultHandle } from './handles/DefaultHandle';
-import { EdgeDrawSourceHandle } from './handles/EdgeDrawSourceHandle';
+import { EdgeDrawTargetHandle } from './components/handles/EdgeDrawTargetHandle';
+import { DefaultHandle } from './components/handles/DefaultHandle';
+import { EdgeDrawSourceHandle } from './components/handles/EdgeDrawSourceHandle';
 import { useIsA2AWorkflow } from '../../core/state/designerView/designerViewSelectors';
 
 const ScopeCardNode = ({ id }: NodeProps) => {

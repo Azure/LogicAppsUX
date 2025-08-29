@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useCollapsedMapping, useIsActionCollapsed, useShouldNodeFocus } from '../../core/state/workflow/workflowSelectors';
 import { isNullOrUndefined, useNodeIndex } from '@microsoft/logic-apps-shared';
 import { useOperationsVisuals } from '../../core/state/operation/operationSelector';
-import { DefaultHandle } from './handles/DefaultHandle';
+import { DefaultHandle } from './components/handles/DefaultHandle';
 
 const CollapsedNode = ({ id }: NodeProps) => {
   const dispatch = useDispatch<AppDispatch>();

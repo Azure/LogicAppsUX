@@ -1,5 +1,5 @@
 import { Handle, Position } from '@xyflow/react';
-import { useReadOnly } from '../../../core/state/designerOptions/designerOptionsSelectors';
+import { useReadOnly } from '../../../../core/state/designerOptions/designerOptionsSelectors';
 import { useHandleStyles } from './handles.styles';
 import { mergeClasses } from '@fluentui/react-components';
 
