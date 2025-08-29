@@ -5,11 +5,11 @@
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import type { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
-import { SubscriptionTreeItem } from '../../tree/subscriptionTree/SubscriptionTreeItem';
-import { notifyCreateLogicAppComplete } from './notifyCreateLogicAppComplete';
+import { SubscriptionTreeItem } from '../../tree/subscriptionTree/subscriptionTreeItem';
 import { isString } from '@microsoft/logic-apps-shared';
-import type { AzExtParentTreeItem, IActionContext } from '@microsoft/vscode-azext-utils';
+import { callWithTelemetryAndErrorHandling, type AzExtParentTreeItem, type IActionContext } from '@microsoft/vscode-azext-utils';
 import type { ICreateLogicAppContext } from '@microsoft/vscode-extension-logic-apps';
+import { type MessageItem, window } from 'vscode';
 
 export async function createLogicApp(
   context: IActionContext & Partial<ICreateLogicAppContext>,
@@ -50,4 +50,26 @@ export async function createLogicAppAdvanced(
   nodesOrNewResourceGroupName?: string | (string | AzExtParentTreeItem)[]
 ): Promise<SlotTreeItem> {
   return await createLogicApp({ ...context, advancedCreation: true }, subscription, nodesOrNewResourceGroupName);
+}
+
+/**
+ * Shows information message after the creation of Logic app has been completed and let user select post actions.
+ * @param {SlotTreeItem} node - Logic app node structure.
+ */
+async function notifyCreateLogicAppComplete(node: SlotTreeItem): Promise<void> {
+  const deployComplete: string = localize(
+    'creationComplete',
+    'Creation of "{0}" completed.',
+    node.isHybridLogicApp ? node.hybridSite.name : node.site.fullName
+  );
+  const viewOutput: MessageItem = { title: localize('viewOutput', 'View output') };
+
+  window.showInformationMessage(deployComplete, viewOutput).then(async (result) => {
+    await callWithTelemetryAndErrorHandling('postCreation', async (postDeployContext: IActionContext) => {
+      postDeployContext.telemetry.properties.dialogResult = result && result.title;
+      if (result === viewOutput) {
+        ext.outputChannel.show();
+      }
+    });
+  });
 }

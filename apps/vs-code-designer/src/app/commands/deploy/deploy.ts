@@ -25,7 +25,7 @@ import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { LogicAppResourceTree } from '../../tree/LogicAppResourceTree';
 import { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
-import { SubscriptionTreeItem } from '../../tree/subscriptionTree/SubscriptionTreeItem';
+import { SubscriptionTreeItem } from '../../tree/subscriptionTree/subscriptionTreeItem';
 import { createAclInConnectionIfNeeded, getConnectionsJson } from '../../utils/codeless/connection';
 import { getParametersJson } from '../../utils/codeless/parameter';
 import { isPathEqual, writeFormattedJson } from '../../utils/fs';
@@ -38,7 +38,7 @@ import {
   AdvancedIdentityClientIdStep,
   AdvancedIdentityTenantIdStep,
   AdvancedIdentityClientSecretStep,
-} from '../createLogicApp/createLogicAppSteps/AdvancedIdentityPromptSteps';
+} from '../createLogicApp/createLogicAppSteps/advancedIdentityPromptSteps';
 import { notifyDeployComplete } from './notifyDeployComplete';
 import { updateAppSettingsWithIdentityDetails } from './updateAppSettings';
 import { verifyAppSettings } from './verifyAppSettings';

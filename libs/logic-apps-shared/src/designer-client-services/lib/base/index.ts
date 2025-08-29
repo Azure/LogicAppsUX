@@ -40,6 +40,9 @@ export * from './operations';
 // Chatbot
 export { BaseChatbotService } from './chatbot';
 export type { ChatbotServiceOptions } from './chatbot';
+// Clone
+export { BaseCloneService } from './clone';
+export type { BaseCloneServiceOptions } from './clone';
 // Template
 export { BaseTemplateService } from './template';
 export type { BaseTemplateServiceOptions } from './template';

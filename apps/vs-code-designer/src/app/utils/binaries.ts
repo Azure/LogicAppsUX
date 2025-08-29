@@ -414,7 +414,7 @@ export function getDependencyTimeout(): number {
 }
 
 /**
- * Propmts warning message to decide the auto validation/installation of dependency binaries.
+ * Prompts warning message to decide the auto validation/installation of dependency binaries.
  * @param {IActionContext} context - Activation context.
  */
 export async function installBinaries(context: IActionContext) {

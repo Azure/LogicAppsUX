@@ -55,7 +55,7 @@ export class GenerateDeploymentCenterScriptsStep extends AzureWizardExecuteStep<
 
     // Ensure deployment directory, clear existing files if exist, and create new files
     context.telemetry.properties.lastStep = 'generateDeploymentCenterFiles';
-    const deploymentDirectoryPath = path.join(context.customWorkspaceFolderPath, deploymentDirectory);
+    const deploymentDirectoryPath = path.join(context.workspacePath, deploymentDirectory);
     await fse.ensureDir(deploymentDirectoryPath);
 
     const deploymentScriptFileName = 'deploy.ps1';
@@ -63,7 +63,7 @@ export class GenerateDeploymentCenterScriptsStep extends AzureWizardExecuteStep<
     await fse.writeFile(deploymentScriptPath, deploymentScriptContent);
 
     const dotDeploymentFileName = '.deployment';
-    const dotDeploymentPath = path.join(context.customWorkspaceFolderPath, dotDeploymentFileName);
+    const dotDeploymentPath = path.join(context.workspacePath, dotDeploymentFileName);
     await fse.writeFile(dotDeploymentPath, dotDeploymentContent);
 
     const readmeFileName = 'README.md';

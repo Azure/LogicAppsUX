@@ -385,7 +385,6 @@ const Setting = ({
       {allConditionalSettings.length > 0 && !readOnly ? (
         <div style={{ padding: '24px 0px 16px' }}>
           <Divider style={{ padding: '16px 0px' }} />
-          <AdvancedSettingsMessage shouldShowMessage={isAgent} />
           <SearchableDropdownWithAddAll
             multiselect={true}
             options={conditionallyInvisibleSettings.map(
@@ -434,7 +433,9 @@ const Setting = ({
             removeAllButtonTooltip={removeAllButtonTooltip}
             removeAllButtonEnabled={conditionallyInvisibleSettings.length !== allConditionalSettings.length}
             label={advancedParametersLabel}
-          />
+          >
+            <AdvancedSettingsMessage shouldShowMessage={isAgent} />
+          </SearchableDropdownWithAddAll>
         </div>
       ) : null}
       {/* Render all advanced parameters that are conditionally visible */}

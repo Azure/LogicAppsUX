@@ -7,12 +7,6 @@ export const useRunHistoryPanelStyles = makeStyles({
     display: 'block !important',
   },
 
-  runActionsPopover: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '6px',
-  },
-
   runProperty: {
     display: 'flex',
     flexDirection: 'column',

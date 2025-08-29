@@ -774,12 +774,12 @@ export const validateWorkflowConsumption = async (
 };
 
 export const cloneConsumptionToStandard = async (
-  sourceApps: { subscriptionId: string; resourceGroup: string; logicAppName: string }[],
+  sourceApps: { subscriptionId: string; resourceGroup: string; logicAppName: string; targetWorkflowName: string }[],
   destinationApp: { subscriptionId: string; resourceGroup: string; logicAppName: string }
 ): Promise<any> => {
   try {
     for (const sourceApp of sourceApps) {
-      await validateCloneConsumption(sourceApp.subscriptionId, sourceApp.resourceGroup, sourceApp.logicAppName);
+      await validateCloneConsumption(sourceApp, destinationApp);
     }
 
     for (const sourceApp of sourceApps) {
@@ -787,8 +787,7 @@ export const cloneConsumptionToStandard = async (
       const data = {
         target: {
           workflow: {
-            //TODO: check if sourceApp.logicAppName exists first before this.
-            id: `/subscriptions/${destinationApp.subscriptionId}/resourceGroups/${destinationApp.resourceGroup}/providers/Microsoft.Web/sites/${destinationApp.logicAppName}/workflows/${sourceApp.logicAppName}`,
+            id: `/subscriptions/${destinationApp.subscriptionId}/resourceGroups/${destinationApp.resourceGroup}/providers/Microsoft.Web/sites/${destinationApp.logicAppName}/workflows/${sourceApp.targetWorkflowName}`,
           },
           kind: 'stateful',
         },
@@ -811,10 +810,20 @@ export const cloneConsumptionToStandard = async (
   }
 };
 
-export const validateCloneConsumption = async (subscriptionId: string, resourceGroup: string, logicAppName: string): Promise<any> => {
+export const validateCloneConsumption = async (
+  sourceApp: { subscriptionId: string; resourceGroup: string; logicAppName: string; targetWorkflowName: string },
+  destinationApp: { subscriptionId: string; resourceGroup: string; logicAppName: string }
+): Promise<any> => {
   const response = await axios.post(
-    `${baseUrl}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Logic/workflows/${logicAppName}/validateClone?api-version=${consumptionApiVersion}`,
-    {},
+    `${baseUrl}/subscriptions/${sourceApp.subscriptionId}/resourceGroups/${sourceApp.resourceGroup}/providers/Microsoft.Logic/workflows/${sourceApp.logicAppName}/validateClone?api-version=${consumptionApiVersion}`,
+    {
+      target: {
+        workflow: {
+          id: `/subscriptions/${destinationApp.subscriptionId}/resourceGroups/${destinationApp.resourceGroup}/providers/Microsoft.Web/sites/${destinationApp.logicAppName}/workflows/${sourceApp.targetWorkflowName}`,
+        },
+        kind: 'stateful',
+      },
+    },
     {
       headers: {
         'Content-Type': 'application/json',

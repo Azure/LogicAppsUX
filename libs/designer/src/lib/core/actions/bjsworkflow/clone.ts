@@ -5,10 +5,13 @@ import {
   InitLoggerService,
   InitResourceService,
   type IResourceService,
+  type ICloneService,
+  InitCloneService,
 } from '@microsoft/logic-apps-shared';
 
 export interface CloneServiceOptions {
   resourceService?: IResourceService;
+  cloneService?: ICloneService;
   loggerService?: ILoggerService;
 }
 
@@ -25,8 +28,11 @@ export const initializeCloneServices = createAsyncThunk('initializeCloneServices
   return true;
 });
 
-const initializeServices = ({ resourceService }: CloneServiceOptions) => {
+const initializeServices = ({ resourceService, cloneService }: CloneServiceOptions) => {
   if (resourceService) {
     InitResourceService(resourceService);
+  }
+  if (cloneService) {
+    InitCloneService(cloneService);
   }
 };

@@ -74,6 +74,7 @@ export const ConnectorDetailsView = ({ connector, onOperationClick }: ConnectorD
       .map((operation) => OperationActionDataFromOperation(operation))
       .filter(filterItems)
       .sort((a, b) => {
+        const aTitle = a.title ?? '';
         const bTitle = b.title ?? '';
         return aTitle.localeCompare(bTitle);
       });
