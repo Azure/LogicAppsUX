@@ -43,7 +43,7 @@ export const cloneSlice = createSlice({
         logicAppName: string;
       }>
     ) => {
-      state.sourceApps = [{ ...action.payload, targetWorkflowName: action.payload.logicAppName }];
+      state.sourceApps = [{ ...action.payload, targetWorkflowName: `${action.payload.logicAppName}_clone` }];
     },
     setDestinationSubscription: (state, action: PayloadAction<string>) => {
       state.destinationApp.subscriptionId = action.payload;

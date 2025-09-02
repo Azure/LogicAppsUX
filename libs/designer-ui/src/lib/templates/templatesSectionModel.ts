@@ -38,6 +38,7 @@ interface BaseTextInputFieldItem extends BaseFieldItem {
 interface TextFieldItem extends BaseTextInputFieldItem {
   type: 'textfield';
   onChange: (value: string) => void;
+  contentAfter?: Slot<'span'>;
 }
 
 interface TextAreaItem extends BaseTextInputFieldItem {
