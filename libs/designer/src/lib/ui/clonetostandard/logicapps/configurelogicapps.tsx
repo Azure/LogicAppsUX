@@ -1,4 +1,4 @@
-import { Text } from '@fluentui/react-components';
+import { Field, Input, Text, tokens } from '@fluentui/react-components';
 import type { AppDispatch, RootState } from '../../../core/state/clonetostandard/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { CloneResourcePicker } from './resourcepicker';
@@ -10,6 +10,7 @@ import { useCloneStrings } from '../../../core/clonetostandard/utils/cloneString
 import { updateTargetWorkflowName, updateTargetWorkflowNameValidationError } from '../../../core/state/clonetostandard/cloneslice';
 import { validateWorkflowName } from '../../../core/actions/bjsworkflow/templates';
 import { useExistingWorkflowNamesOfResource } from '../../../core';
+import { Checkmark16Filled } from '@fluentui/react-icons';
 
 export const ConfigureLogicApps = () => {
   const {
@@ -91,28 +92,58 @@ const useSourceItems = (resourceStrings: Record<string, string>, resources: Reso
 };
 
 const useCloneWorkflowItem = (resourceStrings: Record<string, string>, existingWorkflowNames: string[]) => {
-  const dispatch = useDispatch<AppDispatch>();
+  // const dispatch = useDispatch<AppDispatch>();
   const { sourceApps } = useSelector((state: RootState) => state.clone);
   const sourceApp = sourceApps?.[0];
 
   const items: TemplatesSectionItem = {
-    label: resourceStrings.WORKFLOW_NAME,
+    label: resourceStrings.newWorkflowName,
     value: sourceApp?.targetWorkflowName || '',
-    type: 'textfield',
-    onChange: (newValue) => {
-      dispatch(updateTargetWorkflowName(newValue));
-    },
-    onBlur: async () => {
-      const validationError = await validateWorkflowName(sourceApp?.targetWorkflowName, false, {
-        subscriptionId: sourceApp?.subscriptionId,
-        resourceGroupName: sourceApp?.resourceGroup,
-        existingWorkflowNames: existingWorkflowNames ?? [],
-      });
-      dispatch(updateTargetWorkflowNameValidationError(validationError));
-    },
-    errorMessage: sourceApp?.targetWorkflowNameValidationError,
-    hint: resourceStrings.workflowNameDescription,
+    type: 'custom',
+    onRenderItem: () => <NewWorkflowNameInput existingWorkflowNames={existingWorkflowNames} />,
+    // type: 'textfield',
+    // onChange: (newValue) => {
+    //   dispatch(updateTargetWorkflowName(newValue));
+    // },
+    // onBlur: async () => {
+    //   const validationError = await validateWorkflowName(sourceApp?.targetWorkflowName, false, {
+    //     subscriptionId: sourceApp?.subscriptionId,
+    //     resourceGroupName: sourceApp?.resourceGroup,
+    //     existingWorkflowNames: existingWorkflowNames ?? [],
+    //   });
+    //   dispatch(updateTargetWorkflowNameValidationError(validationError));
+    // },
+    // errorMessage: sourceApp?.targetWorkflowNameValidationError,
+    // hint: resourceStrings.workflowNameDescription,
   };
 
   return items;
+};
+
+const NewWorkflowNameInput = ({ existingWorkflowNames }: { existingWorkflowNames: string[] }) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const { sourceApps } = useSelector((state: RootState) => state.clone);
+  const sourceApp = sourceApps?.[0];
+
+  return (
+    <Field
+      validationMessage={sourceApp?.targetWorkflowNameValidationError}
+      validationState={sourceApp?.targetWorkflowNameValidationError ? 'error' : undefined}
+    >
+      <Input
+        aria-label={''}
+        value={sourceApp?.targetWorkflowName || ''}
+        onChange={(_event, data) => dispatch(updateTargetWorkflowName(data.value ?? ''))}
+        onBlur={async () => {
+          const validationError = await validateWorkflowName(sourceApp?.targetWorkflowName, false, {
+            subscriptionId: sourceApp?.subscriptionId,
+            resourceGroupName: sourceApp?.resourceGroup,
+            existingWorkflowNames: existingWorkflowNames ?? [],
+          });
+          dispatch(updateTargetWorkflowNameValidationError(validationError));
+        }}
+        contentAfter={<Checkmark16Filled color={tokens.colorPaletteGreenBackground3} />}
+      />
+    </Field>
+  );
 };
