@@ -6,6 +6,7 @@ import { localize } from '../../../../localize';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type { IIdentityWizardContext } from '@microsoft/vscode-extension-logic-apps';
 
+// TODO(aeldridge): There should be some input validation on these steps
 export class AdvancedIdentityObjectIdStep extends AzureWizardPromptStep<IIdentityWizardContext> {
   public shouldPrompt(wizardContext: IIdentityWizardContext): boolean {
     return wizardContext.objectId === undefined;
