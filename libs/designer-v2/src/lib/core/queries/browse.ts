@@ -358,24 +358,29 @@ export const useFavoriteOperations = (favoriteItems: ActionPanelFavoriteItem[]) 
     [favoriteActionsPages]
   );
 
+  // only show loading for initial loads, not for data changes
+  const hasAnyData = (favoriteConnectorsData?.length ?? 0) > 0 || (favoriteActionsData?.length ?? 0) > 0;
+  const isInitialConnectorLoad = connectorsLoading && !hasAnyData;
+  const isInitialActionsLoad = favoriteActionsIsFetching && !hasAnyData && !favoriteActionsIsFetchingNextPage;
+
   return useMemo(
     () => ({
       favoriteConnectorsData: favoriteConnectorsData ?? [],
       favoriteActionsData: favoriteActionsData ?? [],
-      isLoadingFavoriteConnectors: connectorsLoading,
+      isLoadingFavoriteConnectors: isInitialConnectorLoad,
       favoriteActionsFetchNextPage,
       favoriteActionsHasNextPage,
       favoriteActionsIsFetchingNextPage,
-      favoriteActionsIsFetching,
+      favoriteActionsIsFetching: isInitialActionsLoad,
     }),
     [
       favoriteConnectorsData,
       favoriteActionsData,
-      connectorsLoading,
+      isInitialConnectorLoad,
+      isInitialActionsLoad,
       favoriteActionsFetchNextPage,
       favoriteActionsHasNextPage,
       favoriteActionsIsFetchingNextPage,
-      favoriteActionsIsFetching,
     ]
   );
 };
