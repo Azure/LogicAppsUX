@@ -11,6 +11,7 @@ import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
+import { getNodeId } from './helpers';
 
 interface CustomSwaggerSelectionProps {
   operation: DiscoveryOperation<DiscoveryResultTypes>;
@@ -30,7 +31,7 @@ export const CustomSwaggerSelection = (props: CustomSwaggerSelectionProps) => {
   const [swaggerUrl, setSwaggerUrl] = useState('');
 
   const submitCallback = useCallback(() => {
-    const newNodeId = (operation?.properties?.summary ?? operation.name).replaceAll(' ', '_');
+    const newNodeId = getNodeId(operation);
     dispatch(
       addOperation({
         operation,

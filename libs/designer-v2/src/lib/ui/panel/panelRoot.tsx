@@ -48,11 +48,13 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
 
   const panelContainerElement = panelContainerRef.current;
 
-  const [width, setWidth] = useState<PanelSize | string>(PanelSize.Auto);
+  const [width, setWidth] = useState<PanelSize | string>(() =>
+    collapsed ? PanelSize.Auto : currentPanelMode === 'Discovery' ? PanelSize.Small : PanelSize.Medium
+  );
 
   useEffect(() => {
-    setWidth(collapsed ? PanelSize.Auto : PanelSize.Medium);
-  }, [collapsed]);
+    setWidth(collapsed ? PanelSize.Auto : currentPanelMode === 'Discovery' ? PanelSize.Small : PanelSize.Medium);
+  }, [collapsed, currentPanelMode]);
 
   const dismissPanel = useCallback(() => dispatch(clearPanel()), [dispatch]);
 
@@ -112,7 +114,7 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
     [currentPanelMode]
   );
 
-  const nonBlockingPanels = useMemo(() => ['Connection', 'Assertions'], []);
+  const nonBlockingPanels = useMemo(() => ['Connection', 'Assertions', 'Discovery'], []);
 
   const isLoadingPanel = useIsPanelLoading();
 
@@ -142,6 +144,32 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
         footer: {
           backgroundColor: theme?.semanticColors.bodyBackground,
           borderTop: 0,
+        },
+        main:
+          currentPanelMode === 'Discovery'
+            ? {
+                right: 0,
+                position: 'absolute',
+              }
+            : undefined,
+        content: {
+          // Hide scrollbar
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none',
+          '&::-webkit-scrollbar': {
+            display: 'none',
+          },
+          scrollBehavior: 'smooth',
+          padding: currentPanelMode === 'Discovery' ? '0 8px' : undefined,
+        },
+        scrollableContent: {
+          // Hide scrollbar
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none',
+          '&::-webkit-scrollbar': {
+            display: 'none',
+          },
+          scrollBehavior: 'smooth',
         },
       })}
       popupProps={{
