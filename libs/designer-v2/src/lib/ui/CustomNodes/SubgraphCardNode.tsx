@@ -29,7 +29,7 @@ import { memo, useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 import type { NodeProps } from '@xyflow/react';
-import { DefaultHandle } from './handles/DefaultHandle';
+import { DefaultHandle } from './components/handles/DefaultHandle';
 
 const SubgraphCardNode = ({ id }: NodeProps) => {
   const subgraphId = removeIdTag(id);

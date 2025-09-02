@@ -12,6 +12,7 @@ export interface SearchableDropdownWithAddAllProps extends SearchableDropdownPro
   removeAllButtonTooltip?: string;
   removeAllButtonEnabled?: boolean;
   label?: string;
+  children?: React.ReactNode;
   onShowAllClick?: () => void;
   onHideAllClick?: () => void;
 }
@@ -26,6 +27,7 @@ export const SearchableDropdownWithAddAll: FC<SearchableDropdownWithAddAllProps>
   label,
   onShowAllClick,
   onHideAllClick,
+  children,
   ...searchableDropdownProps
 }): JSX.Element => {
   const styles = useSearchableDropdownWithAddAllStyles();
@@ -71,6 +73,7 @@ export const SearchableDropdownWithAddAll: FC<SearchableDropdownWithAddAllProps>
           {label}
         </Label>
       )}
+      {children}
       <div className={styles.dropdownWithButtons}>
         <SearchableDropdown
           {...searchableDropdownProps}

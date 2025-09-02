@@ -66,7 +66,7 @@ export const useMonitoringTimelineStyles = makeStyles({
     left: '0',
     width: 'calc(100% - 4px)',
     height: 'calc(100% - 4px)',
-    border: '2px solid #1f85ff',
+    border: '2px solid var(--colorSelection)',
     borderRadius: '8px',
   },
 

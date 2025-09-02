@@ -1,5 +1,4 @@
 import type { DiscoveryOpArray, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
-import { isBuiltInConnector, isCustomConnector } from '@microsoft/designer-ui';
 import Fuse from 'fuse.js';
 
 export class DefaultSearchOperationsService {
@@ -53,8 +52,6 @@ export class DefaultSearchOperationsService {
   // Search operation method with various filters
   public async searchOperations(
     searchTerm: string,
-    actionType?: string,
-    runtimeFilter?: string,
     additionalFilter?: (operation: DiscoveryOperation<DiscoveryResultTypes>) => boolean
   ): Promise<DiscoveryOpArray> {
     if (!this.allOperations) {
@@ -72,25 +69,6 @@ export class DefaultSearchOperationsService {
 
       if (!this.showACASession && api.id === '/serviceProviders/acasession') {
         return false;
-      }
-
-      // Apply runtime filters
-      if (runtimeFilter) {
-        if (
-          (runtimeFilter === 'inapp' && !isBuiltInConnector(api)) ||
-          (runtimeFilter === 'custom' && !isCustomConnector(api)) ||
-          (runtimeFilter === 'shared' && (isBuiltInConnector(api) || isCustomConnector(api)))
-        ) {
-          return false;
-        }
-      }
-
-      // Apply action type filters (actions vs triggers)
-      if (actionType) {
-        const isTrigger = item.properties?.trigger !== undefined;
-        if ((actionType.toLowerCase() === 'actions' && isTrigger) || (actionType.toLowerCase() === 'triggers' && !isTrigger)) {
-          return false;
-        }
       }
 
       // Apply any additional filter provided

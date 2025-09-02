@@ -46,6 +46,7 @@ export interface DiscoveryPanelContentState {
   selectedNodeIds: string[];
   selectedOperationGroupId: string;
   selectedOperationId: string;
+  selectedBrowseCategory?: { key: string; title: string };
 }
 
 export interface ErrorPanelContentState {

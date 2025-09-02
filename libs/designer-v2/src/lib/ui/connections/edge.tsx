@@ -2,7 +2,6 @@ import type React from 'react';
 import { memo, useMemo } from 'react';
 import type { ElkExtendedEdge } from 'elkjs/lib/elk-api';
 import { EdgeLabelRenderer, getSmoothStepPath, useReactFlow, type EdgeProps } from '@xyflow/react';
-import { css } from '@fluentui/utilities';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { containsIdTag, removeIdTag, getEdgeCenter, RUN_AFTER_STATUS, useEdgeIndex, useGuid } from '@microsoft/logic-apps-shared';
 
@@ -11,7 +10,6 @@ import { useActionMetadata, useNodeEdgeTargets, useNodeMetadata } from '../../co
 import { DropZone } from './dropzone';
 import { ArrowCap } from './dynamicsvgs/arrowCap';
 import { CollapsedRunAfterIndicator, RunAfterIndicator } from './runAfterIndicator';
-import { useIsNodeSelectedInOperationPanel } from '../../core/state/panel/panelSelectors';
 interface EdgeContentProps {
   x: number;
   y: number;
@@ -72,8 +70,6 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
   const edgeSources = Object.keys(operationData?.runAfter ?? {});
   const edgeTargets = useNodeEdgeTargets(source);
   const nodeMetadata = useNodeMetadata(source);
-  const sourceId = containsIdTag(source) ? removeIdTag(source) : source;
-  const targetId = containsIdTag(target) ? removeIdTag(target) : target;
   const graphId = (containsIdTag(source) ? removeIdTag(source) : undefined) ?? nodeMetadata?.graphId ?? '';
   const [centerX, centerY] = getEdgeCenter({
     sourceX,
@@ -133,25 +129,12 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
 
   const tabIndex = useEdgeIndex(id);
 
-  const isSourceSelected = useIsNodeSelectedInOperationPanel(sourceId);
-  const isTargetSelected = useIsNodeSelectedInOperationPanel(targetId);
-
-  const highlighted = useMemo(() => isSourceSelected || isTargetSelected, [isSourceSelected, isTargetSelected]);
-
   const capGuid = useGuid();
 
   return (
     <>
       <defs>
-        <marker
-          id={capGuid}
-          className={css(highlighted ? 'highlighted' : '')}
-          viewBox="0 0 20 20"
-          refX="6"
-          refY="4"
-          markerWidth="10"
-          markerHeight="10"
-        >
+        <marker id={capGuid} viewBox="0 0 20 20" refX="6" refY="8" markerWidth="12" markerHeight="10">
           <ArrowCap />
         </marker>
       </defs>
@@ -159,9 +142,10 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
       <path
         id={id}
         style={style}
-        className={css('react-flow__edge-path', highlighted ? 'highlighted' : '')}
+        className={'react-flow__edge-path'}
         d={d}
         strokeDasharray={showRunAfter ? '4 6' : '0'}
+        strokeWidth={2}
         strokeLinecap={'round'}
         markerEnd={`url(#${capGuid})`}
       />

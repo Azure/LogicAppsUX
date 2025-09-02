@@ -1,4 +1,3 @@
-import { getMonitoringError } from '../../common/utilities/error';
 import { useNodeRepetition, type AppDispatch } from '../../core';
 import { copyOperation } from '../../core/actions/bjsworkflow/copypaste';
 import { moveOperation } from '../../core/actions/bjsworkflow/move';
@@ -14,27 +13,18 @@ import { setNodeContextMenuData, setShowDeleteModalNodeId } from '../../core/sta
 import { ErrorLevel } from '../../core/state/operation/operationMetadataSlice';
 import {
   useOperationErrorInfo,
-  useSecureInputsOutputs,
   useParameterStaticResult,
   useParameterValidationErrors,
   useTokenDependencies,
   useOperationVisuals,
   useIsNodeLoadingDynamicData,
 } from '../../core/state/operation/operationSelector';
-import { useIsNodePinnedToOperationPanel, useIsNodeSelectedInOperationPanel } from '../../core/state/panel/panelSelectors';
+import { useIsNodeSelectedInOperationPanel } from '../../core/state/panel/panelSelectors';
 import { changePanelNode, setSelectedNodeId } from '../../core/state/panel/panelSlice';
-import {
-  useAllOperations,
-  useConnectorName,
-  useIsConnectionRequired,
-  useNodeConnectionName,
-  useOperationInfo,
-  useOperationQuery,
-} from '../../core/state/selectors/actionMetadataSelector';
+import { useAllOperations, useConnectorName, useOperationInfo, useOperationQuery } from '../../core/state/selectors/actionMetadataSelector';
 import { useSettingValidationErrors } from '../../core/state/setting/settingSelector';
 import { useIsMockSupported, useMocksByOperation } from '../../core/state/unitTest/unitTestSelectors';
 import {
-  useNodeDescription,
   useNodeDisplayName,
   useNodeMetadata,
   useNodesMetadata,
@@ -53,10 +43,8 @@ import { useIsA2AWorkflow } from '../../core/state/designerView/designerViewSele
 import { setRepetitionRunData } from '../../core/state/workflow/workflowSlice';
 import { getRepetitionName } from '../common/LoopsPager/helper';
 import { DropZone } from '../connections/dropzone';
-import { MessageBarType } from '@fluentui/react';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { isNullOrUndefined, useNodeIndex } from '@microsoft/logic-apps-shared';
-import { Card } from '@microsoft/designer-ui';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';
@@ -64,8 +52,9 @@ import { useDispatch } from 'react-redux';
 import type { NodeProps } from '@xyflow/react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { CopyTooltip } from '../common/DesignerContextualMenu/CopyTooltip';
-import { EdgeDrawSourceHandle } from './handles/EdgeDrawSourceHandle';
-import { EdgeDrawTargetHandle } from './handles/EdgeDrawTargetHandle';
+import { EdgeDrawSourceHandle } from './components/handles/EdgeDrawSourceHandle';
+import { EdgeDrawTargetHandle } from './components/handles/EdgeDrawTargetHandle';
+import { Card } from './components/card';
 
 const DefaultNode = ({ id }: NodeProps) => {
   const readOnly = useReadOnly();
@@ -92,7 +81,6 @@ const DefaultNode = ({ id }: NodeProps) => {
     () => getRepetitionName(parentRunIndex, id, nodesMetaData, operationsInfo),
     [id, nodesMetaData, operationsInfo, parentRunIndex]
   );
-  const isSecureInputsOutputs = useSecureInputsOutputs(id);
   const isLoadingDynamicData = useIsNodeLoadingDynamicData(id);
 
   const suppressDefaultNodeSelect = useSuppressDefaultNodeSelectFunctionality();
@@ -175,30 +163,13 @@ const DefaultNode = ({ id }: NodeProps) => {
     [readOnly, metadata, dependencies]
   );
 
-  const selected = useIsNodeSelectedInOperationPanel(id);
-  const isPinned = useIsNodePinnedToOperationPanel(id);
-  const nodeComment = useNodeDescription(id);
-  const connectionResult = useNodeConnectionName(id);
-  const isConnectionRequired = useIsConnectionRequired(operationInfo);
+  const isSelected = useIsNodeSelectedInOperationPanel(id);
   const isLeaf = useIsLeafNode(id);
   const label = useNodeDisplayName(id);
 
   const showLeafComponents = useMemo(() => !readOnly && isLeaf, [readOnly, isLeaf]);
 
-  const { brandColor, iconUri } = useOperationVisuals(id);
-
-  const comment = useMemo(
-    () =>
-      nodeComment
-        ? {
-            brandColor,
-            comment: nodeComment,
-            isDismissed: false,
-            isEditing: false,
-          }
-        : undefined,
-    [brandColor, nodeComment]
-  );
+  const { iconUri } = useOperationVisuals(id);
 
   const handleNodeSelection = useCallback(() => {
     if (nodeSelectCallbackOverride) {
@@ -281,38 +252,31 @@ const DefaultNode = ({ id }: NodeProps) => {
     description: 'Text to explain that there are flow structure errors for this node',
   });
 
-  const { errorMessage, errorLevel } = useMemo(() => {
+  const { errorMessages } = useMemo(() => {
+    const allMessages: string[] = [];
+
     if (errorInfo && errorInfo.level !== ErrorLevel.DynamicOutputs) {
-      const { message, level } = errorInfo;
-      return {
-        errorMessage: message,
-        errorLevel:
-          level !== ErrorLevel.Default && level !== ErrorLevel.DynamicInputs ? MessageBarType.error : MessageBarType.severeWarning,
-      };
+      const { message } = errorInfo;
+      allMessages.push(message);
     }
 
     if (isOperationQueryError) {
-      return { errorMessage: opManifestErrorText, errorLevel: MessageBarType.error };
+      allMessages.push(opManifestErrorText);
     }
 
     if (settingValidationErrors?.length > 0) {
-      return { errorMessage: settingValidationErrorText, errorLevel: MessageBarType.severeWarning };
+      allMessages.push(settingValidationErrorText);
     }
 
     if (parameterValidationErrors?.length > 0) {
-      return { errorMessage: parameterValidationErrorText, errorLevel: MessageBarType.severeWarning };
+      allMessages.push(parameterValidationErrorText);
     }
 
     if (flowErrors?.length > 0) {
-      return { errorMessage: flowErrorText, errorLevel: MessageBarType.severeWarning };
+      allMessages.push(flowErrorText);
     }
 
-    if (isMonitoringView) {
-      const { status: statusRun, error: errorRun, code: codeRun } = selfRunData ?? {};
-      return getMonitoringError(errorRun, statusRun, codeRun);
-    }
-
-    return { errorMessage: undefined, errorLevel: undefined };
+    return { errorMessages: allMessages };
   }, [
     errorInfo,
     isOperationQueryError,
@@ -323,8 +287,6 @@ const DefaultNode = ({ id }: NodeProps) => {
     settingValidationErrorText,
     parameterValidationErrorText,
     flowErrorText,
-    isMonitoringView,
-    selfRunData,
   ]);
 
   const shouldFocus = useShouldNodeFocus(id);
@@ -338,23 +300,17 @@ const DefaultNode = ({ id }: NodeProps) => {
       <div className="nopan" ref={ref as any}>
         <EdgeDrawTargetHandle />
         <Card
+          id={id}
           active={isCardActive}
-          showStatusPill={isMonitoringView && isCardActive}
           title={label}
           icon={iconUri}
-          draggable={!readOnly && !isTrigger}
-          brandColor={brandColor}
-          id={id}
-          connectionRequired={isConnectionRequired}
-          connectionDisplayName={connectionResult.isLoading ? '...' : connectionResult.result}
           connectorName={connectorName?.result}
-          commentBox={comment}
           drag={drag}
           dragPreview={dragPreview}
-          errorMessage={errorMessage}
-          errorLevel={errorLevel}
+          errorMessages={errorMessages}
           isDragging={isDragging}
           isLoading={isLoading}
+          isSelected={isSelected}
           isUnitTest={isUnitTest}
           nodeMockResults={nodeMockResults}
           isMockSupported={isMockSupported}
@@ -364,10 +320,8 @@ const DefaultNode = ({ id }: NodeProps) => {
           onContextMenu={onContextMenu}
           onDeleteClick={deleteClick}
           onCopyClick={copyClick}
-          selectionMode={selected ? 'selected' : isPinned ? 'pinned' : false}
           setFocus={shouldFocus}
           staticResultsEnabled={!!staticResults && staticResults.staticResultOptions === StaticResultOption.ENABLED}
-          isSecureInputsOutputs={isSecureInputsOutputs}
           isLoadingDynamicData={isLoadingDynamicData}
           nodeIndex={nodeIndex}
           subtleBackground={isA2AWorkflow && isTrigger}

@@ -3,7 +3,7 @@ import { memo, useCallback, useMemo, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { useIntl } from 'react-intl';
-import { ActionButtonV2 } from '@microsoft/designer-ui';
+import { AddButton } from './addButton';
 import {
   containsIdTag,
   normalizeAutomationId,
@@ -209,7 +209,7 @@ export const DropZone: React.FC<DropZoneProps> = memo(({ graphId, parentId, chil
       ) : (
         <div className={'msla-drop-zone-viewmanager'}>
           <div ref={buttonRef}>
-            <ActionButtonV2
+            <AddButton
               id={buttonId}
               dataAutomationId={automationId('plus')}
               tabIndex={tabIndex}

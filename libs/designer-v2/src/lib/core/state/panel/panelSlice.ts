@@ -87,6 +87,7 @@ export const panelSlice = createSlice({
     collapsePanel: (state) => {
       state.isCollapsed = true;
       state.discoveryContent.selectedOperationGroupId = '';
+      state.discoveryContent.selectedBrowseCategory = undefined;
       state.discoveryContent.isAddingTrigger = false;
     },
     clearPanel: (state, action: PayloadAction<{ clearPinnedState?: boolean } | undefined>) => {
@@ -205,6 +206,8 @@ export const panelSlice = createSlice({
       state.discoveryContent.relationshipIds = relationshipIds;
       state.discoveryContent.selectedNodeIds = [nodeId];
       state.discoveryContent.isAddingAgentTool = isAgentTool;
+      state.discoveryContent.selectedBrowseCategory = undefined;
+      state.discoveryContent.selectedOperationGroupId = '';
 
       LoggerService().log({
         level: LogEntryLevel.Verbose,
@@ -235,6 +238,9 @@ export const panelSlice = createSlice({
     },
     selectOperationId: (state, action: PayloadAction<string>) => {
       state.discoveryContent.selectedOperationId = action.payload;
+    },
+    selectBrowseCategory: (state, action: PayloadAction<{ key: string; title: string } | undefined>) => {
+      state.discoveryContent.selectedBrowseCategory = action.payload;
     },
     setFavoriteOperations: (state, action: PayloadAction<ActionPanelFavoriteItem[]>) => {
       state.discoveryContent.favoriteOperations = action.payload;
@@ -342,6 +348,7 @@ export const {
   selectErrorsPanelTab,
   selectOperationGroupId,
   selectOperationId,
+  selectBrowseCategory,
   setFavoriteOperations,
   setPinnedPanelActiveTab,
   setSelectedPanelActiveTab,

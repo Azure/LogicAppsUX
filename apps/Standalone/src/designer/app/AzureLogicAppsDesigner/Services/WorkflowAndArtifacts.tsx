@@ -310,12 +310,21 @@ const fetchA2AAuthKey = async (siteResourceId: string, workflowName: string) => 
 
 // Helper function to fetch EasyAuth
 const fetchAuthentication = async (siteResourceId: string) => {
-  const response = await axios.post(`${baseUrl}${siteResourceId}/config/authsettings/list?api-version=${standardApiVersion}`, {
-    headers: {
-      Authorization: `Bearer ${environment.armToken}`,
-    },
-  });
-  return response.data;
+  try {
+    const response = await axios.post(`${baseUrl}${siteResourceId}/config/authsettings/list?api-version=${standardApiVersion}`, {
+      headers: {
+        Authorization: `Bearer ${environment.armToken}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    LoggerService().log({
+      level: LogEntryLevel.Error,
+      message: `Failed to get authentication settings: ${error}`,
+      area: 'fetchAuthentication',
+    });
+    return null;
+  }
 };
 
 // Helper function to fetch OBO (On-Behalf-Of) data
@@ -374,7 +383,7 @@ export const fetchAgentUrl = (siteResourceId: string, workflowName: string, host
       let queryParams: AgentQueryParams | undefined = undefined;
       const authentication = await fetchAuthentication(siteResourceId);
 
-      if (authentication?.properties?.enabled) {
+      if (!authentication?.properties?.enabled) {
         // Get A2A authentication key
         const a2aData = await fetchA2AAuthKey(siteResourceId, workflowName);
 

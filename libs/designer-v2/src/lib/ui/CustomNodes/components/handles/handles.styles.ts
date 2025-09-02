@@ -23,12 +23,16 @@ export const useHandleStyles = makeStyles({
 
   edgeDrawStart: {
     visibility: 'visible',
-    background: '#1f85ff',
-    width: '18px',
-    height: '6px',
+    background: 'var(--colorEdge)',
+    width: '10px',
+    height: '10px',
     borderRadius: '32px',
     transform: 'translate(-50%, 50)',
     bottom: '0px',
     zIndex: '3',
+
+    '&:active, &:hover': {
+      background: 'var(--colorSelection)',
+    },
   },
 });

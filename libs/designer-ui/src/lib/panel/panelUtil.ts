@@ -19,7 +19,7 @@ export type PanelScope = (typeof PanelScope)[keyof typeof PanelScope];
 
 export const PanelSize = {
   Auto: 'auto',
-  Small: '300px',
+  Small: '400px',
   Medium: '630px',
   DualView: `${340 * 2}px`,
 } as const;

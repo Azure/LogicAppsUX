@@ -7,6 +7,7 @@ export * from './authentication';
 export * from './azureResourcePicker';
 export * from './card';
 export * from './card/addActionCard';
+export * from './card/addActionCard/AddActionCardV2';
 export * from './card/cardcontextmenu';
 export * from './card/collapsedCard';
 export * from './card/graphContainer';

@@ -30,6 +30,9 @@ export const useDiscoveryPanelRelationshipIds = () =>
 export const useDiscoveryPanelFavoriteOperations = () =>
   useSelector(createSelector(getPanelState, (state) => state.discoveryContent.favoriteOperations));
 
+export const useDiscoveryPanelSelectedBrowseCategory = () =>
+  useSelector(createSelector(getPanelState, (state) => state.discoveryContent.selectedBrowseCategory));
+
 export const useDiscoveryPanelIsOperationFavorited = (connectorId: string, operationId?: string) =>
   useDiscoveryPanelFavoriteOperations().some((favorite) => favorite.connectorId === connectorId && favorite.operationId === operationId);
 
