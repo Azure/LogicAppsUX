@@ -20,7 +20,7 @@ import { getCustomCodeFunctionsProjectMetadata, isCustomCodeFunctionsProject } f
  * @param folderPath - The path to the functions app folder.
  * @returns
  */
-export async function createCustomCodeFunctionFromCommand(context: IActionContext, folderPath?: Uri | string | undefined): Promise<void> {
+export async function createCustomCodeFunction(context: IActionContext, folderPath?: Uri | string | undefined): Promise<void> {
   if (await convertToWorkspace(context)) {
     addLocalFuncTelemetry(context);
 

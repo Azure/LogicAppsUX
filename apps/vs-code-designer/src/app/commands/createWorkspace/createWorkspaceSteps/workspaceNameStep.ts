@@ -14,6 +14,10 @@ import { workspaceNameValidation } from '../../../../constants';
 export class WorkspaceNameStep extends AzureWizardPromptStep<IProjectWizardContext> {
   public hideStepCount = true;
 
+  public shouldPrompt(): boolean {
+    return true;
+  }
+
   public async prompt(context: IProjectWizardContext): Promise<void> {
     context.workspaceName = await context.ui.showInputBox({
       placeHolder: localize('setWorkspaceName', 'Workspace name'),
@@ -34,10 +38,6 @@ export class WorkspaceNameStep extends AzureWizardPromptStep<IProjectWizardConte
     if (context.workspaceFolder) {
       context.openBehavior = OpenBehavior.alreadyOpen;
     }
-  }
-
-  public shouldPrompt(): boolean {
-    return true;
   }
 
   private async validateWorkspaceName(name: string | undefined): Promise<string | undefined> {

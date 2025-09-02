@@ -19,10 +19,14 @@ import { LogicAppNameStep } from './adoDeploymentScriptsSteps/LogicAppNameStep';
 import { StorageAccountNameStep } from './adoDeploymentScriptsSteps/StorageAccountNameStep';
 import { AppServicePlanNameStep } from './adoDeploymentScriptsSteps/AppServicePlanNameStep';
 import { LogicAppStep } from './deploymentCenterScriptsSteps/LogicAppStep';
-import { LogicAppUAMIStep } from './deploymentCenterScriptsSteps/LogicAppUAMIStep';
+import { LogicAppMSIStep } from './deploymentCenterScriptsSteps/LogicAppMSIStep';
 
 export class DeploymentScriptTypeStep extends AzureWizardPromptStep<IAzureDeploymentScriptsContext> {
   public hideStepCount = true;
+
+  public shouldPrompt(): boolean {
+    return true;
+  }
 
   /**
    * Prompts the user for a deployment script type.
@@ -57,14 +61,10 @@ export class DeploymentScriptTypeStep extends AzureWizardPromptStep<IAzureDeploy
     } else {
       context.telemetry.properties.deploymentScriptType = 'azureDeploymentCenter';
       context.localLogicAppName = path.basename(context.projectPath);
-      promptSteps = [new SubscriptionAndResourceGroupStep(), new LogicAppStep(), new LogicAppUAMIStep()];
+      promptSteps = [new SubscriptionAndResourceGroupStep(), new LogicAppStep(), new LogicAppMSIStep()];
       executeSteps = [new GenerateDeploymentCenterScriptsStep()];
     }
 
     return { promptSteps, executeSteps };
-  }
-
-  public shouldPrompt(): boolean {
-    return true;
   }
 }

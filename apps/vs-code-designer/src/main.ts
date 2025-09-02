@@ -1,5 +1,5 @@
 import { LogicAppResolver } from './LogicAppResolver';
-import { runPostWorkflowCreateStepsFromCache } from './app/commands/createWorkflow/createCodelessWorkflow/createCodelessWorkflowSteps/workflowCreateStepBase';
+import { runPostWorkflowCreateStepsFromCache } from './app/commands/createWorkflow/createWorkflowSteps/workflowCreateStepBase';
 import { runPostExtractStepsFromCache } from './app/commands/cloudToLocal/cloudToLocalSteps/processPackageStep';
 import {
   supportedDataMapDefinitionFileExts,

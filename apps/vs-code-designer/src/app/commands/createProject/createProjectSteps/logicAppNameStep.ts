@@ -14,6 +14,10 @@ import { promptForLogicAppWithoutCustomCode } from '../../../utils/workspace';
 import { isString } from '@microsoft/logic-apps-shared';
 
 export class LogicAppNameStep extends AzureWizardPromptStep<IProjectWizardContext> {
+  public shouldPrompt(context: IProjectWizardContext): boolean {
+    return context.projectType !== undefined;
+  }
+
   public async prompt(context: IProjectWizardContext): Promise<void> {
     if (context.projectType === ProjectType.logicApp || context.shouldCreateLogicAppProject) {
       // For new workspaces or new logic app projects, prompt for a new logic app name
@@ -34,10 +38,6 @@ export class LogicAppNameStep extends AzureWizardPromptStep<IProjectWizardContex
     }
 
     ext.outputChannel.appendLog(localize('logicAppNameSet', `Logic App project name set to ${context.logicAppName}`));
-  }
-
-  public shouldPrompt(context: IProjectWizardContext): boolean {
-    return context.projectType !== undefined;
   }
 
   private async getLogicAppName(context: IProjectWizardContext): Promise<string | undefined> {

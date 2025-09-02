@@ -38,7 +38,7 @@ export interface IAzureDeploymentScriptsContext extends IProjectWizardContext, I
   appServicePlan: string;
   isValidWorkspace: boolean;
   logicAppNode?: SlotTreeItem;
-  uamiClientId?: string;
+  msiClientId?: string;
 }
 
 /**
