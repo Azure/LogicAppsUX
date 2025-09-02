@@ -1,80 +1,79 @@
-//------------------------------------------------------------
-// Copyright (c) Microsoft Corporation. All rights reserved.
-//------------------------------------------------------------
+// -----------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// -----------------------------------------------------------
 
 namespace <%= namespace %>
 {
     using System;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-    using Microsoft.Azure.Functions.Extensions.Workflows;
-    using Microsoft.Azure.Functions.Worker;
-    using Microsoft.Extensions.Logging;
+    using Microsoft.Azure.Workflows.Sdk.Agents;
 
     /// <summary>
-    /// Represents the <%= methodName %> flow invoked function.
+    /// Workflow definition
     /// </summary>
-    public class <%= methodName %>
+    public static class <%= methodName %>
     {
-        private readonly ILogger<<%= methodName %>> logger;
-
-        public <%= methodName %>(ILoggerFactory loggerFactory)
-        {
-            logger = loggerFactory.CreateLogger<<%= methodName %>>();
-        }
-
         /// <summary>
-        /// Executes the logic app workflow.
+        /// Initializes workflow.
         /// </summary>
-        /// <param name="zipCode">The zip code.</param>
-        /// <param name="temperatureScale">The temperature scale (e.g., Celsius or Fahrenheit).</param>
-        [Function("<%= methodName %>")]
-        public Task<Weather> Run([WorkflowActionTrigger] int zipCode, string temperatureScale)
+        [WorkflowInitialization]
+        public static void InitializeCodefulWorkflows()
         {
-            this.logger.LogInformation("Starting <%= methodName %> with Zip Code: " + zipCode + " and Scale: " + temperatureScale);
-            
-            // Generate random temperature within a range based on the temperature scale
-            Random rnd = new Random();
-            var currentTemp = temperatureScale == "Celsius" ? rnd.Next(1, 30) : rnd.Next(40, 90);
-            var lowTemp = currentTemp - 10;
-            var highTemp = currentTemp + 10;
+            Console.WriteLine("Creating a workflow definition InitializeCodefulWorkflows net8");
 
-            // Create a Weather object with the temperature information
-            var weather = new Weather()
+            var workflowBuilder = WorkflowAgentBuilderFactory.CreateWorkflowAgentBuilder("newFlow");
+            var agent = new AgentBuilder
             {
-                ZipCode = zipCode,
-                CurrentWeather = $"The current weather is {currentTemp} {temperatureScale}",
-                DayLow = $"The low for the day is {lowTemp} {temperatureScale}",
-                DayHigh = $"The high for the day is {highTemp} {temperatureScale}"
+                AgentModelType = AgentModelType.AzureOpenAI,
+                DeploymentId = "gpt-4.1",
+                AgentModelSettings = new AgentModelSettings
+                {
+                    AgentChatCompletionSettings = new AgentChatCompletionSettings
+                    {
+                        MaxTokens = 1000,
+                        Temperature = 0.7,
+                    },
+                    DeploymentModelProperties = new AgentDeploymentModelProperties
+                    {
+                        Format = "OpenAI",
+                        Version = "2025-04-14",
+                        Name = "gpt-4.1",
+                    }
+                },
+                Messages = new AgentPromptMessage[]
+                    {
+                    new AgentPromptMessage
+                    {
+                        Role = MessageRole.System,
+                        Content = "You are a helpful assistant that sends a message to service bus."
+                    }
+                    },
+                ConnectionName = "agent-2",
             };
+            var toolBuilder = new AgentTool<MyObject>();
 
-            return Task.FromResult(weather);
+            agent.AddTool(b =>
+            {
+                var action = b.GetManagedConnectors().Msnweather.CurrentWeatherAsync("connectionid", location => "WA", units: b1 => "Celsius");
+                b.AddAction(action);
+            },
+            description: "Test",
+            parameters: new MyObject());
+
+            workflowBuilder.AddAgent(() => agent);
+            workflowBuilder.BuildConversationalFlow();
+
+            Console.WriteLine("Workflow Template (JSON):\n" + workflowBuilder.GetFlowDefinition().Kind);
         }
 
         /// <summary>
-        /// Represents the weather information for <%= methodName %>.
+        /// My object class.
         /// </summary>
-        public class Weather
+        public class MyObject
         {
             /// <summary>
-            /// Gets or sets the zip code.
+            /// x property.
             /// </summary>
-            public int ZipCode { get; set; }
-
-            /// <summary>
-            /// Gets or sets the current weather.
-            /// </summary>
-            public string CurrentWeather { get; set; }
-
-            /// <summary>
-            /// Gets or sets the low temperature for the day.
-            /// </summary>
-            public string DayLow { get; set; }
-
-            /// <summary>
-            /// Gets or sets the high temperature for the day.
-            /// </summary>
-            public string DayHigh { get; set; }
+            public int X { get; set; }
         }
     }
 }
