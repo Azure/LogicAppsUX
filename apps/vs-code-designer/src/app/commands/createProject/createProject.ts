@@ -12,7 +12,7 @@ import { WorkspaceSettingsStep } from '../createWorkspace/createWorkspaceSteps/w
 import { isString } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { ProjectLanguage, ProjectVersion } from '@microsoft/vscode-extension-logic-apps';
-import { convertToWorkspace } from '../createWorkspace/createWorkspaceSteps/convertToWorkspace';
+import { convertToWorkspace } from '../convertToWorkspace';
 
 // TODO(aeldridge): TargetFrameworkStep should be in a subwizard on LogicAppTemplateStep
 export async function createProject(

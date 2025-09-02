@@ -29,7 +29,7 @@ import {
 } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
-import { convertToWorkspace } from './app/commands/createWorkspace/createWorkspaceSteps/convertToWorkspace';
+import { convertToWorkspace } from './app/commands/convertToWorkspace';
 import TelemetryReporter from '@vscode/extension-telemetry';
 import { getAllCustomCodeFunctionsProjects } from './app/utils/customCodeUtils';
 import { createVSCodeAzureSubscriptionProvider } from './app/utils/services/VSCodeAzureSubscriptionProvider';
