@@ -30,7 +30,7 @@ export class WorkspaceSettingsStep extends AzureWizardPromptStep<IProjectWizardC
     context.language = ProjectLanguage.JavaScript;
 
     // Create directories based on user choices
-    if (context.workspacePath && context.workspaceFilePath.endsWith('.code-workspace')) {
+    if (context.workspacePath && context.workspaceFilePath.endsWith('.code-workspace') && fs.existsSync(context.workspaceFilePath)) {
       await this.updateWorkspaceFile(context);
       context.openBehavior = OpenBehavior.addToWorkspace;
     } else {

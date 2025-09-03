@@ -28,10 +28,8 @@ export class WorkspaceNameStep extends AzureWizardPromptStep<IProjectWizardConte
     context.shouldCreateLogicAppProject = true;
 
     // save uri variable for open project folder command
-    // TODO(aeldridge): assignments do not look correct here
-    context.workspaceFilePath = path.join(context.projectPath, context.workspaceName);
+    context.workspacePath = path.join(context.projectPath, context.workspaceName);
     await fs.ensureDir(context.workspacePath);
-    context.workspacePath = context.workspaceFilePath;
     context.workspaceFolder = getContainingWorkspace(context.workspacePath);
     context.workspaceFilePath = path.join(context.workspacePath, `${context.workspaceName}.code-workspace`);
 
