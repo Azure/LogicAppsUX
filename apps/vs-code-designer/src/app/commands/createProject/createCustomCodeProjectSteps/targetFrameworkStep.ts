@@ -14,6 +14,15 @@ export class TargetFrameworkStep extends AzureWizardPromptStep<IProjectWizardCon
   public hideStepCount = true;
 
   /**
+   * Determines whether this step should be prompted based on the project wizard context.
+   * @param {IProjectWizardContext} context - The project wizard context.
+   * @returns True if this step should be prompted, false otherwise.
+   */
+  public shouldPrompt(context: IProjectWizardContext): boolean {
+    return context.projectType === ProjectType.customCode;
+  }
+
+  /**
    * Prompts the user to select a target framework.
    * @param {IProjectWizardContext} context - The project wizard context.
    */
@@ -24,14 +33,5 @@ export class TargetFrameworkStep extends AzureWizardPromptStep<IProjectWizardCon
       picks.unshift({ label: localize('NetFx', '.NET Framework'), data: TargetFramework.NetFx });
     }
     context.targetFramework = (await context.ui.showQuickPick(picks, { placeHolder })).data;
-  }
-
-  /**
-   * Determines whether this step should be prompted based on the project wizard context.
-   * @param {IProjectWizardContext} context - The project wizard context.
-   * @returns True if this step should be prompted, false otherwise.
-   */
-  public shouldPrompt(context: IProjectWizardContext): boolean {
-    return context.projectType === ProjectType.customCode;
   }
 }

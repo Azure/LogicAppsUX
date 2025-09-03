@@ -12,6 +12,10 @@ import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-ap
 export class FunctionAppNameStep extends AzureWizardPromptStep<IProjectWizardContext> {
   public hideStepCount = true;
 
+  public shouldPrompt(): boolean {
+    return true;
+  }
+
   public async prompt(context: IProjectWizardContext): Promise<void> {
     context.functionAppName = await context.ui.showInputBox({
       placeHolder: localize('setFunctionName', 'Function name'),
@@ -20,10 +24,6 @@ export class FunctionAppNameStep extends AzureWizardPromptStep<IProjectWizardCon
     });
 
     ext.outputChannel.appendLog(localize('functionAppNameSet', `Function App project name set to ${context.functionAppName}`));
-  }
-
-  public shouldPrompt(): boolean {
-    return true;
   }
 
   private async validateFunctionName(name: string | undefined, context: IProjectWizardContext): Promise<string | undefined> {

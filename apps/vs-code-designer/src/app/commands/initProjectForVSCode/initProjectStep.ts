@@ -4,11 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 import { binariesExist } from '../../utils/binaries';
 import { extensionCommand, func, funcDependencyName, funcWatchProblemMatcher, hostStartCommand } from '../../../constants';
-import { initScriptProjectStep } from './initScriptProjectStep';
+import { InitScriptProjectStep } from './initScriptProjectStep';
 import type { ITaskInputs, ISettingToAdd } from '@microsoft/vscode-extension-logic-apps';
 import type { TaskDefinition } from 'vscode';
 
-export class InitProjectStep extends initScriptProjectStep {
+export class InitProjectStep extends InitScriptProjectStep {
   protected getTasks(): TaskDefinition[] {
     const funcBinariesExist = binariesExist(funcDependencyName);
     const binariesOptions = funcBinariesExist

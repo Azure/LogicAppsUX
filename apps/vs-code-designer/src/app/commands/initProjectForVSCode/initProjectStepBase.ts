@@ -66,6 +66,10 @@ export abstract class InitProjectStepBase extends AzureWizardExecuteStep<IProjec
 
   protected getRecommendedExtensions?(language: ProjectLanguage): string[];
 
+  public shouldExecute(): boolean {
+    return true;
+  }
+
   public async execute(context: IProjectWizardContext): Promise<void> {
     await this.executeCore(context);
 
@@ -87,10 +91,6 @@ export abstract class InitProjectStepBase extends AzureWizardExecuteStep<IProjec
 
     // Remove '.vscode' from gitignore if applicable
     await removeFromGitIgnore(context.workspacePath, /^\.vscode(\/|\\)?\s*$/gm);
-  }
-
-  public shouldExecute(): boolean {
-    return true;
   }
 
   protected async setDeploySubpath(context: IProjectWizardContext, deploySubpath: string): Promise<string> {

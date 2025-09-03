@@ -14,6 +14,10 @@ import { getAuthorizationToken } from '../../../../utils/codeless/getAuthorizati
 export class HybridAppCreateStep extends AzureWizardExecuteStep<ILogicAppWizardContext> {
   public priority = 120;
 
+  public shouldExecute(wizardContext: ILogicAppWizardContext): boolean {
+    return !!wizardContext.connectedEnvironment && !!wizardContext.fileShare;
+  }
+
   public async execute(context: ILogicAppWizardContext, progress: Progress<{ message?: string; increment?: number }>): Promise<void> {
     try {
       const message: string = localize('creatingNewHybridApp', 'Creating hybrid app "{0}"...', context.newSiteName);
@@ -38,9 +42,5 @@ export class HybridAppCreateStep extends AzureWizardExecuteStep<ILogicAppWizardC
     } catch (error) {
       throw new Error(error);
     }
-  }
-
-  public shouldExecute(wizardContext: ILogicAppWizardContext): boolean {
-    return !!wizardContext.connectedEnvironment && !!wizardContext.fileShare;
   }
 }

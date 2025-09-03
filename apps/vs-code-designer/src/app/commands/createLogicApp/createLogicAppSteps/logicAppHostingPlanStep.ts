@@ -15,6 +15,10 @@ import { workflowAppApiVersion } from '../../../../constants';
 import { ContainerAppNameStep } from './createHybridLogicAppSteps/containerAppNameStep';
 
 export class LogicAppHostingPlanStep extends AzureWizardPromptStep<ILogicAppWizardContext> {
+  public shouldPrompt(): boolean {
+    return true;
+  }
+
   public async prompt(wizardContext: ILogicAppWizardContext): Promise<void> {
     const placeHolder: string = localize('selectHostingPlan', 'Select a hosting plan.');
     const picks: IAzureQuickPickItem<[boolean, boolean, RegExp | undefined]>[] = [
@@ -31,10 +35,6 @@ export class LogicAppHostingPlanStep extends AzureWizardPromptStep<ILogicAppWiza
     wizardContext.telemetry.properties.suppressCreate = wizardContext.suppressCreate ? 'true' : 'false';
 
     setSiteOS(wizardContext);
-  }
-
-  public shouldPrompt(): boolean {
-    return true;
   }
 
   public async getSubWizard(wizardContext: ILogicAppWizardContext): Promise<IWizardOptions<ILogicAppWizardContext> | undefined> {
