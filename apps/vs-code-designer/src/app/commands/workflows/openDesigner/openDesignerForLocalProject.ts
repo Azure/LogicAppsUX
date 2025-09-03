@@ -28,7 +28,7 @@ import { saveUnitTestDefinition } from '../../../utils/unitTests';
 import { createNewDataMapCmd } from '../../dataMapper/dataMapper';
 import { OpenDesignerBase } from './openDesignerBase';
 import { HTTP_METHODS } from '@microsoft/logic-apps-shared';
-import { openUrl, type IActionContext } from '@microsoft/vscode-azext-utils';
+import { callWithTelemetryAndErrorHandling, openUrl, type IActionContext } from '@microsoft/vscode-azext-utils';
 import type {
   AzureConnectorDetails,
   CompleteFileSystemConnectionData,
@@ -197,21 +197,37 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
             runId: this.runId,
           },
         });
-        if (!this.isUnitTest) {
-          await this.validateWorkflow(this.panelMetadata.workflowContent);
-        }
+        await callWithTelemetryAndErrorHandling('InitializeWorkflowFromDesigner', async (activateContext: IActionContext) => {
+          if (!this.isUnitTest) {
+            await this.validateWorkflow(activateContext, this.panelMetadata.workflowContent, this.panelMetadata.localSettings);
+          }
+        });
         break;
       }
       case ExtensionCommand.save: {
-        await this.saveWorkflow(
-          this.workflowFilePath,
-          this.panelMetadata.workflowContent,
-          msg,
-          this.panelMetadata.parametersData,
-          this.panelMetadata.azureDetails?.tenantId,
-          this.panelMetadata.azureDetails?.workflowManagementBaseUrl
-        );
-        await this.validateWorkflow(this.panelMetadata.workflowContent);
+        await callWithTelemetryAndErrorHandling('SaveWorkflowFromDesigner', async (activateContext: IActionContext) => {
+          const projectPath = await getLogicAppProjectRoot(activateContext, this.workflowFilePath);
+          const localSettingsPath: string = path.join(projectPath, localSettingsFileName);
+          await this.saveWorkflow(
+            activateContext,
+            this.workflowFilePath,
+            this.panelMetadata.workflowContent,
+            msg,
+            this.panelMetadata.parametersData,
+            this.panelMetadata.azureDetails?.tenantId,
+            this.panelMetadata.azureDetails?.workflowManagementBaseUrl
+          );
+          const savedLocalSettingsValues = (await getLocalSettingsJson(activateContext, localSettingsPath, true)).Values || {};
+          let savedWorkflow: any;
+
+          try {
+            savedWorkflow = JSON.parse(readFileSync(this.workflowFilePath, 'utf8'));
+          } catch (error) {
+            window.showErrorMessage(`Failed to parse workflow file as JSON: ${(error as Error).message}`);
+          }
+
+          await this.validateWorkflow(activateContext, savedWorkflow, savedLocalSettingsValues);
+        });
         break;
       }
       case ExtensionCommand.saveBlankUnitTest: {
@@ -279,6 +295,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
    * @param {string} workflowBaseManagementUri - Workflow base url.
    */
   private async saveWorkflow(
+    context: IActionContext,
     filePath: string,
     workflow: any,
     workflowToSave: any,
@@ -346,7 +363,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
    * Calls the validate api to validate the workflow schema.
    * @param {any} workflow - Workflow schema to validate.
    */
-  private async validateWorkflow(workflow: any): Promise<void> {
+  private async validateWorkflow(context: IActionContext, workflow: any, localSettings: any): Promise<void> {
     if (!ext.designTimeInstances.has(this.projectPath)) {
       throw new Error(localize('designTimeNotRunning', `Design time is not running for project ${this.projectPath}.`));
     }
@@ -360,14 +377,17 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
         url,
         method: HTTP_METHODS.POST,
         headers: { ['Content-Type']: 'application/json' },
-        body: {
-          properties: { definition: workflow.definition, kind: workflow.kind, appSettings: { values: this.panelMetadata.localSettings } },
-        },
+        body: JSON.stringify({
+          properties: { definition: workflow.definition, kind: workflow.kind, appSettings: { values: localSettings } },
+        }),
       });
     } catch (error) {
-      if (error.statusCode !== 404) {
-        const errorMessage = localize('workflowValidationFailed', 'Workflow validation failed: ') + error.message;
-        window.showErrorMessage(errorMessage, localize('OK', 'OK'));
+      const errorMessage = error instanceof Error ? error.message : typeof error === 'string' ? error : 'Unknown error';
+      const invalidRouteMessage = 'flow extension request route'; // remove when validatePartial is reimplemented in backend
+      context.telemetry.properties.validateWorkflowError = errorMessage;
+      if (!errorMessage.includes(invalidRouteMessage) && error.statusCode !== 404) {
+        const errorLocalized = localize('workflowValidationFailed', 'Workflow validation failed: ') + errorMessage;
+        window.showErrorMessage(errorLocalized, localize('OK', 'OK'));
       }
     }
   }
