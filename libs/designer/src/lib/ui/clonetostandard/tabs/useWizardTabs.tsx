@@ -14,6 +14,7 @@ import { validateWorkflowName } from '../../../core/actions/bjsworkflow/template
 import { useExistingWorkflowNamesOfResource } from '../../../core';
 import { selectWizardTab } from '../../../core/state/clonetostandard/tabslice';
 import constants from '../../../common/constants';
+import { useMutation } from '@tanstack/react-query';
 
 export type CloneCallHandler = (
   sourceApps: { subscriptionId: string; resourceGroup: string; logicAppName: string; targetWorkflowName: string }[],
@@ -54,14 +55,14 @@ export const useCloneWizardTabs = ({
     dispatch(selectWizardTab(constants.CLONE_TO_STANDARD_TAB_NAMES.REVIEW));
   }, [sourceApps, dispatch, existingWorkflowNames]);
 
-  const handleOnClone = useCallback(async () => {
+  const { isLoading: isCloning, mutate: handleOnClone } = useMutation(async () => {
     try {
       await onCloneCall(sourceApps, destinationApp);
       dispatch(setSuccessfullyCloned());
     } catch (e: any) {
       dispatch(updateErrorMessage(e?.response?.data?.message ?? e.message));
     }
-  }, [onCloneCall, sourceApps, destinationApp, dispatch]);
+  });
 
   const missingInfoInConfigure = useMemo(
     () =>
@@ -88,8 +89,9 @@ export const useCloneWizardTabs = ({
       tabStatusIcon: failedCloneValidation ? 'error' : isSuccessfullyCloned ? 'success' : undefined,
       onClose,
       isSuccessfullyCloned,
+      isCloning,
       disabled: missingInfoInConfigure,
-      isPrimaryButtonDisabled: failedCloneValidation || isSuccessfullyCloned,
+      isPrimaryButtonDisabled: isCloning || failedCloneValidation || isSuccessfullyCloned,
       onPrimaryButtonClick: handleOnClone,
     }),
   ];
