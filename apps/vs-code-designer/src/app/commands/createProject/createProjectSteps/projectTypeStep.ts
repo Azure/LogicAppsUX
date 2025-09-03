@@ -4,14 +4,14 @@
  *--------------------------------------------------------------------------------------------*/
 import { ext } from '../../../../extensionVariables';
 import { WorkflowKindStep } from '../../createWorkflow/createCodelessWorkflow/createCodelessWorkflowSteps/workflowKindStep';
-import { ProjectCreateStep } from '../../createProject/createProjectSteps/projectCreateStep';
+import { ProjectCreateStep } from './projectCreateStep';
 import { WorkflowCodeTypeStep } from '../../createWorkflow/createWorkflowSteps/workflowCodeTypeStep';
 import { addInitVSCodeSteps } from '../../initProjectForVSCode/initProjectLanguageStep';
-import { FunctionAppFilesStep } from '../../createProject/createCustomCodeProjectSteps/functionAppFilesStep';
-import { FunctionAppNameStep } from '../../createProject/createCustomCodeProjectSteps/functionAppNameStep';
-import { FunctionAppNamespaceStep } from '../../createProject/createCustomCodeProjectSteps/functionAppNamespaceStep';
-import { CustomCodeProjectCreateStep } from './customCodeProjectCreateStep';
-import type { AzureWizardExecuteStep, IWizardOptions } from '@microsoft/vscode-azext-utils';
+import { FunctionAppFilesStep } from '../createCustomCodeProjectSteps/functionAppFilesStep';
+import { FunctionAppNameStep } from '../createCustomCodeProjectSteps/functionAppNameStep';
+import { FunctionAppNamespaceStep } from '../createCustomCodeProjectSteps/functionAppNamespaceStep';
+import { CustomCodeProjectCreateStep } from '../createCustomCodeProjectSteps/customCodeProjectCreateStep';
+import type { AzureWizardExecuteStep, IActionContext, IWizardOptions } from '@microsoft/vscode-azext-utils';
 import { AzureWizardPromptStep, nonNullProp } from '@microsoft/vscode-azext-utils';
 import { type IProjectWizardContext, ProjectLanguage, WorkflowProjectType } from '@microsoft/vscode-extension-logic-apps';
 import * as fs from 'fs-extra';
@@ -19,26 +19,46 @@ import * as path from 'path';
 
 // TODO(aeldridge): Move subwizard steps here into a separate "SetupProjectStep" or subwizard of LogicAppTemplateStep
 export class ProjectTypeStep extends AzureWizardPromptStep<IProjectWizardContext> {
-  // Hide the step count in the wizard UI
   public hideStepCount = true;
+
   private readonly templateId?: string;
   private readonly functionSettings?: { [key: string]: string | undefined };
   private readonly skipWorkflowStateTypeStep: boolean;
 
   /**
-   * The constructor initializes the NewWorkspaceProjectTypeStep object with optional templateId and functionSettings parameters.
+   * Initializes the ProjectTypeStep object with optional templateId and functionSettings parameters.
    * @param templateId - The ID of the template for the code project.
    * @param functionSettings - The settings for the functions in the code project.
+   * @param isImportedProject - A boolean indicating whether the project is imported (cloud to local).
    */
-  public constructor(
+  private constructor(
     templateId: string | undefined,
     functionSettings: { [key: string]: string | undefined } | undefined,
-    skipWorkflowStateTypeStep: boolean
+    isImportedProject: boolean
   ) {
     super();
     this.templateId = templateId;
     this.functionSettings = functionSettings;
-    this.skipWorkflowStateTypeStep = skipWorkflowStateTypeStep;
+    // TODO(aeldridge): Remove this (should use context)
+    this.skipWorkflowStateTypeStep = isImportedProject;
+  }
+
+  public static async create(
+    _context: IActionContext,
+    templateId: string | undefined,
+    functionSettings: { [key: string]: string | undefined } | undefined,
+    isImportedProject: boolean
+  ): Promise<ProjectTypeStep> {
+    return new ProjectTypeStep(templateId, functionSettings, isImportedProject);
+  }
+
+  /**
+   * Checks if this step should prompt the user
+   * @param context - Project wizard context containing user selections and settings
+   * @returns True if user should be prompted, otherwise false
+   */
+  public shouldPrompt(): boolean {
+    return true;
   }
 
   /**
@@ -51,15 +71,6 @@ export class ProjectTypeStep extends AzureWizardPromptStep<IProjectWizardContext
     context.workflowProjectType = WorkflowProjectType.Bundle;
     context.language = ProjectLanguage.JavaScript;
     await this.setPaths(context);
-  }
-
-  /**
-   * Checks if this step should prompt the user
-   * @param context - Project wizard context containing user selections and settings
-   * @returns True if user should be prompted, otherwise false
-   */
-  public shouldPrompt(): boolean {
-    return true;
   }
 
   /**
@@ -138,14 +149,7 @@ export class ProjectTypeStep extends AzureWizardPromptStep<IProjectWizardContext
 
     if (!this.skipWorkflowStateTypeStep) {
       if (ext.codefulEnabled) {
-        promptSteps.push(
-          //   disabling in main
-          await WorkflowCodeTypeStep.create(context, {
-            isProjectWizard: true,
-            templateId: this.templateId,
-            triggerSettings: this.functionSettings,
-          })
-        );
+        promptSteps.push(new WorkflowCodeTypeStep());
       } else {
         context.isCodeless = true; // default to codeless workflow, disabling codeful option
       }

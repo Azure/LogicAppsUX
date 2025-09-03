@@ -11,6 +11,10 @@ import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-ap
 export class FunctionAppNamespaceStep extends AzureWizardPromptStep<IProjectWizardContext> {
   public hideStepCount = true;
 
+  public shouldPrompt(_context: IProjectWizardContext): boolean {
+    return true;
+  }
+
   public async prompt(context: IProjectWizardContext): Promise<void> {
     context.functionAppNamespace = await context.ui.showInputBox({
       placeHolder: localize('setNamespace', 'Namespace'),
@@ -21,10 +25,6 @@ export class FunctionAppNamespaceStep extends AzureWizardPromptStep<IProjectWiza
     ext.outputChannel.appendLog(
       localize('functionAppNamespaceSet', `Function App project namespace set to ${context.functionAppNamespace}`)
     );
-  }
-
-  public shouldPrompt(_context: IProjectWizardContext): boolean {
-    return true;
   }
 
   private async validateNamespace(namespace: string | undefined): Promise<string | undefined> {

@@ -2,12 +2,16 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { localize } from '../../../../localize';
-import type { IWebhookContext } from './webhookWizard';
+import { localize } from '../../../../../localize';
+import type { IWebhookContext } from '../configureWebhookRedirectEndpoint';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import { window } from 'vscode';
 
 export class ConfigureRedirectEndpointStep extends AzureWizardPromptStep<IWebhookContext> {
+  public shouldPrompt(): boolean {
+    return true;
+  }
+
   public async prompt(context: IWebhookContext): Promise<void> {
     try {
       context.redirectEndpoint = await context.ui.showInputBox({
@@ -27,9 +31,5 @@ export class ConfigureRedirectEndpointStep extends AzureWizardPromptStep<IWebhoo
         'OK'
       );
     }
-  }
-
-  public shouldPrompt(): boolean {
-    return true;
   }
 }

@@ -8,6 +8,10 @@ import type { IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
 import { ProjectType, TargetFramework, type IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 
 export class LogicAppTemplateStep extends AzureWizardPromptStep<IProjectWizardContext> {
+  public shouldPrompt(context: IProjectWizardContext): boolean {
+    return context.projectType === undefined;
+  }
+
   public async prompt(context: IProjectWizardContext): Promise<void> {
     const picks: IAzureQuickPickItem<ProjectType>[] = [
       { label: localize('logicApp', 'Logic app'), data: ProjectType.logicApp },
@@ -21,9 +25,5 @@ export class LogicAppTemplateStep extends AzureWizardPromptStep<IProjectWizardCo
     if (context.projectType === ProjectType.rulesEngine) {
       context.targetFramework = TargetFramework.NetFx;
     }
-  }
-
-  public shouldPrompt(context: IProjectWizardContext): boolean {
-    return context.projectType === undefined;
   }
 }

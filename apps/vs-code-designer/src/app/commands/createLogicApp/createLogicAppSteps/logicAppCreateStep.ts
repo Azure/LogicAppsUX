@@ -36,6 +36,10 @@ import type { Progress } from 'vscode';
 export class LogicAppCreateStep extends AzureWizardExecuteStep<ILogicAppWizardContext> {
   public priority = 140;
 
+  public shouldExecute(wizardContext: ILogicAppWizardContext): boolean {
+    return !wizardContext.useHybrid && !wizardContext.site;
+  }
+
   public async execute(context: ILogicAppWizardContext, progress: Progress<{ message?: string; increment?: number }>): Promise<void> {
     context.telemetry.properties.newSiteOS = context.newSiteOS;
     context.telemetry.properties.newSiteRuntime = context.newSiteRuntime;
@@ -52,15 +56,11 @@ export class LogicAppCreateStep extends AzureWizardExecuteStep<ILogicAppWizardCo
     context.site = await client.webApps.beginCreateOrUpdateAndWait(rgName, siteName, await this.getNewSite(context));
   }
 
-  public shouldExecute(wizardContext: ILogicAppWizardContext): boolean {
-    return !wizardContext.useHybrid && !wizardContext.site;
-  }
-
   private async getNewSite(context: ILogicAppWizardContext): Promise<modelSite> {
     const locationName: string = (await LocationListStep.getLocation(context))?.name;
     const site: modelSite = {
       name: context.newSiteName,
-      kind: getSiteKind(context),
+      kind: this.getSiteKind(context),
       location: locationName,
       serverFarmId: context?.plan ? context.plan?.id : null,
       clientAffinityEnabled: false,
@@ -74,6 +74,20 @@ export class LogicAppCreateStep extends AzureWizardExecuteStep<ILogicAppWizardCo
     }
 
     return site;
+  }
+
+  private getSiteKind(context: ILogicAppWizardContext): string {
+    const kinds = [logicAppKind, functionAppKind];
+
+    if (context.newSiteOS === WebsiteOS.linux) {
+      kinds.push('linux');
+    }
+
+    if (context.customLocation) {
+      kinds.push('kubernetes');
+    }
+
+    return kinds.join(',');
   }
 
   private addCustomLocationProperties(site: modelSite, customLocation: CustomLocation): void {
@@ -118,9 +132,9 @@ export class LogicAppCreateStep extends AzureWizardExecuteStep<ILogicAppWizardCo
 
   private async getAppSettings(context: ILogicAppWizardContext): Promise<NameValuePair[]> {
     const runtime: string = nonNullProp(context, 'newSiteRuntime');
-    const runtimeWithoutVersion: string = getRuntimeWithoutVersion(runtime);
+    const runtimeWithoutVersion: string = this.getRuntimeWithoutVersion(runtime);
 
-    const storageConnectionString: ConnectionStrings = await getStorageConnectionStrings(context);
+    const storageConnectionString: ConnectionStrings = await this.getStorageConnectionStrings(context);
 
     const appSettings: NameValuePair[] = [
       {
@@ -193,7 +207,7 @@ export class LogicAppCreateStep extends AzureWizardExecuteStep<ILogicAppWizardCo
       // v1 doesn't need this because it only supports one version of Node
       appSettings.push({
         name: 'WEBSITE_NODE_DEFAULT_VERSION',
-        value: `~${getRuntimeVersion(runtime)}`,
+        value: `~${this.getRuntimeVersion(runtime)}`,
       });
     }
 
@@ -208,7 +222,7 @@ export class LogicAppCreateStep extends AzureWizardExecuteStep<ILogicAppWizardCo
       });
       appSettings.push({
         name: 'WEBSITE_CONTENTSHARE',
-        value: getNewFileShareName(nonNullProp(context, 'newSiteName')),
+        value: this.getNewFileShareName(nonNullProp(context, 'newSiteName')),
       });
     }
 
@@ -221,68 +235,54 @@ export class LogicAppCreateStep extends AzureWizardExecuteStep<ILogicAppWizardCo
 
     return appSettings;
   }
-}
 
-function getSiteKind(context: ILogicAppWizardContext): string {
-  const kinds = [logicAppKind, functionAppKind];
+  private async getStorageConnectionStrings(context: ILogicAppWizardContext): Promise<ConnectionStrings> {
+    const connectionStrings: ConnectionStrings = {
+      sqlConnectionStringValue: '',
+      azureWebJobsStorageKeyValue: '',
+      azureWebJobsDashboardValue: '',
+      websiteContentAzureFileValue: '',
+    };
 
-  if (context.newSiteOS === WebsiteOS.linux) {
-    kinds.push('linux');
-  }
+    const azureStorageConnectionString = (await getStorageConnectionString(context)).connectionString;
 
-  if (context.customLocation) {
-    kinds.push('kubernetes');
-  }
-
-  return kinds.join(',');
-}
-
-function getRuntimeWithoutVersion(runtime: string): string {
-  return runtime.split('|')[0].trim();
-}
-
-function getRuntimeVersion(runtime: string): string {
-  return nonNullOrEmptyValue(runtime.split('|')[1].trim(), 'runtimeVersion');
-}
-
-export function getNewFileShareName(siteName: string): string {
-  const randomLetters = 6;
-  const maxFileShareNameLength = 63;
-  return siteName.toLowerCase().substr(0, maxFileShareNameLength - randomLetters) + getRandomHexString(randomLetters);
-}
-
-async function getStorageConnectionStrings(context: ILogicAppWizardContext): Promise<ConnectionStrings> {
-  const connectionStrings: ConnectionStrings = {
-    sqlConnectionStringValue: '',
-    azureWebJobsStorageKeyValue: '',
-    azureWebJobsDashboardValue: '',
-    websiteContentAzureFileValue: '',
-  };
-
-  const azureStorageConnectionString = (await getStorageConnectionString(context)).connectionString;
-
-  if (context.customLocation) {
-    if (context.storageType === StorageOptions.SQL) {
+    if (context.customLocation) {
+      if (context.storageType === StorageOptions.SQL) {
+        connectionStrings.sqlConnectionStringValue = context.sqlConnectionString;
+        connectionStrings.azureWebJobsStorageKeyValue = azureStorageConnectionString;
+        connectionStrings.azureWebJobsDashboardValue = context.sqlConnectionString;
+        connectionStrings.websiteContentAzureFileValue = context.sqlConnectionString;
+      } else {
+        connectionStrings.sqlConnectionStringValue = azureStorageConnectionString;
+        connectionStrings.azureWebJobsStorageKeyValue = azureStorageConnectionString;
+        connectionStrings.azureWebJobsDashboardValue = azureStorageConnectionString;
+        connectionStrings.websiteContentAzureFileValue = azureStorageConnectionString;
+      }
+    } else if (context.storageType === StorageOptions.SQL) {
       connectionStrings.sqlConnectionStringValue = context.sqlConnectionString;
       connectionStrings.azureWebJobsStorageKeyValue = azureStorageConnectionString;
-      connectionStrings.azureWebJobsDashboardValue = context.sqlConnectionString;
-      connectionStrings.websiteContentAzureFileValue = context.sqlConnectionString;
+      connectionStrings.azureWebJobsDashboardValue = azureStorageConnectionString;
+      connectionStrings.websiteContentAzureFileValue = azureStorageConnectionString;
     } else {
-      connectionStrings.sqlConnectionStringValue = azureStorageConnectionString;
+      connectionStrings.sqlConnectionStringValue = context.sqlConnectionString;
       connectionStrings.azureWebJobsStorageKeyValue = azureStorageConnectionString;
       connectionStrings.azureWebJobsDashboardValue = azureStorageConnectionString;
       connectionStrings.websiteContentAzureFileValue = azureStorageConnectionString;
     }
-  } else if (context.storageType === StorageOptions.SQL) {
-    connectionStrings.sqlConnectionStringValue = context.sqlConnectionString;
-    connectionStrings.azureWebJobsStorageKeyValue = azureStorageConnectionString;
-    connectionStrings.azureWebJobsDashboardValue = azureStorageConnectionString;
-    connectionStrings.websiteContentAzureFileValue = azureStorageConnectionString;
-  } else {
-    connectionStrings.sqlConnectionStringValue = context.sqlConnectionString;
-    connectionStrings.azureWebJobsStorageKeyValue = azureStorageConnectionString;
-    connectionStrings.azureWebJobsDashboardValue = azureStorageConnectionString;
-    connectionStrings.websiteContentAzureFileValue = azureStorageConnectionString;
+    return connectionStrings;
   }
-  return connectionStrings;
+
+  private getRuntimeWithoutVersion(runtime: string): string {
+    return runtime.split('|')[0].trim();
+  }
+
+  private getRuntimeVersion(runtime: string): string {
+    return nonNullOrEmptyValue(runtime.split('|')[1].trim(), 'runtimeVersion');
+  }
+
+  private getNewFileShareName(siteName: string): string {
+    const randomLetters = 6;
+    const maxFileShareNameLength = 63;
+    return siteName.toLowerCase().substr(0, maxFileShareNameLength - randomLetters) + getRandomHexString(randomLetters);
+  }
 }

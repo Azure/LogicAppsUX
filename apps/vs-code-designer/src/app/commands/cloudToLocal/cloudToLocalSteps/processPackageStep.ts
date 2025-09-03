@@ -9,7 +9,7 @@ import {
   mergeAppSettings,
   parameterizeConnectionsDuringImport,
   updateConnectionKeys,
-} from '../cloudToLocalHelper';
+} from '../../../utils/cloudToLocalUtils';
 import { getGlobalSetting } from '../../../utils/vsCodeConfig/settings';
 import { writeFormattedJson } from '../../../utils/fs';
 import { getConnectionsJson } from '../../../utils/codeless/connection';
@@ -42,6 +42,15 @@ export function runPostExtractStepsFromCache(): void {
 
 export class ProcessPackageStep extends AzureWizardExecuteStep<IProjectWizardContext> {
   public priority = 200;
+
+  /**
+   * Determines whether this step should be executed based on the user's input.
+   * @param context The context object for the project wizard.
+   * @returns A boolean value indicating whether this step should be executed.
+   */
+  public shouldExecute(context: IFunctionWizardContext): boolean {
+    return context.packagePath !== undefined;
+  }
 
   /**
    * Executes the step to integrate the package into the new Logic App workspace
@@ -103,15 +112,6 @@ export class ProcessPackageStep extends AzureWizardExecuteStep<IProjectWizardCon
     } catch (error) {
       context.telemetry.properties.error = error.message;
     }
-  }
-
-  /**
-   * Determines whether this step should be executed based on the user's input.
-   * @param context The context object for the project wizard.
-   * @returns A boolean value indicating whether this step should be executed.
-   */
-  public shouldExecute(context: IFunctionWizardContext): boolean {
-    return context.packagePath !== undefined;
   }
 
   private async getPackageEntries(zipFilePath: string) {

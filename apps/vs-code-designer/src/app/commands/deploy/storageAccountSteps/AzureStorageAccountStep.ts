@@ -14,15 +14,15 @@ import type { QuickPickItem, QuickPickOptions } from 'vscode';
 export class AzureStorageAccountStep extends AzureWizardPromptStep<ILogicAppWizardContext> {
   private sqlStrorage: boolean;
 
+  public shouldPrompt(wizardContext: ILogicAppWizardContext): boolean {
+    return wizardContext.storageType === undefined;
+  }
+
   public async prompt(wizardContext: IAppServiceWizardContext): Promise<void> {
     const storagePicks: QuickPickItem[] = [{ label: localize('yes', 'Yes') }, { label: localize('no', 'No') }];
 
     const options: QuickPickOptions = { placeHolder: localize('selectStorageType', 'Do you want to use SQL storage for your Logic App?') };
     this.sqlStrorage = (await wizardContext.ui.showQuickPick(storagePicks, options)).label === 'Yes';
-  }
-
-  public shouldPrompt(wizardContext: ILogicAppWizardContext): boolean {
-    return wizardContext.storageType === undefined;
   }
 
   public async getSubWizard(wizardContext: ILogicAppWizardContext): Promise<IWizardOptions<ILogicAppWizardContext> | undefined> {

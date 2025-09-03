@@ -2,14 +2,18 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { localize } from '../../../../../localize';
+import { localize } from '../../../../localize';
 import { AzureWizardPromptStep, nonNullProp } from '@microsoft/vscode-azext-utils';
 import type { IWorkflowTemplate, IFunctionWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
-import { workflowNameValidation } from '../../../../../constants';
+import { workflowNameValidation } from '../../../../constants';
 
 export class WorkflowNameStep extends AzureWizardPromptStep<IFunctionWizardContext> {
+  public shouldPrompt(context: IFunctionWizardContext): boolean {
+    return !context.functionName;
+  }
+
   public async prompt(context: IFunctionWizardContext): Promise<void> {
     const template: IWorkflowTemplate = nonNullProp(context, 'functionTemplate');
     const uniqueWorkflowName: string | undefined = await this.getUniqueFunctionName(context);
@@ -22,11 +26,12 @@ export class WorkflowNameStep extends AzureWizardPromptStep<IFunctionWizardConte
     });
   }
 
-  public shouldPrompt(context: IFunctionWizardContext): boolean {
-    return !context.functionName;
+  private async getUniqueFunctionName(context: IFunctionWizardContext): Promise<string | undefined> {
+    const template: IWorkflowTemplate = nonNullProp(context, 'functionTemplate');
+    return await this.getUniqueFsPath(context.projectPath, template.defaultFunctionName);
   }
 
-  protected async getUniqueFsPath(folderPath: string, defaultValue: string, fileExtension?: string): Promise<string | undefined> {
+  private async getUniqueFsPath(folderPath: string, defaultValue: string, fileExtension?: string): Promise<string | undefined> {
     let count = 1;
     const maxCount = 1024;
 
@@ -52,11 +57,6 @@ export class WorkflowNameStep extends AzureWizardPromptStep<IFunctionWizardConte
       );
     }
     return await this.validateNameCore(context, name);
-  }
-
-  private async getUniqueFunctionName(context: IFunctionWizardContext): Promise<string | undefined> {
-    const template: IWorkflowTemplate = nonNullProp(context, 'functionTemplate');
-    return await this.getUniqueFsPath(context.projectPath, template.defaultFunctionName);
   }
 
   private async validateNameCore(context: IFunctionWizardContext, name: string): Promise<string | undefined> {

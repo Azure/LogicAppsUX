@@ -10,7 +10,7 @@ import { isSuccessResponse } from '@microsoft/vscode-extension-logic-apps';
  * @param context - The context object containing the necessary information for creating the hybrid app.
  * @returns A Promise that resolves when the hybrid app is created.
  */
-export const cleanSMB = async (connectedEnvironmentId: string, storageName: string, accessToken: string): Promise<void> => {
+export async function cleanSMB(connectedEnvironmentId: string, storageName: string, accessToken: string): Promise<void> {
   const url = `${azurePublicBaseUrl}/${connectedEnvironmentId}/storages/${storageName}?api-version=${hybridAppApiVersion}`;
   try {
     const response = await axios.delete(url, {
@@ -23,9 +23,9 @@ export const cleanSMB = async (connectedEnvironmentId: string, storageName: stri
   } catch (error) {
     console.error(`${localize('errorCleaningSMB', 'Error in deleting  SMB storage in connected environment')} - ${error.message}`);
   }
-};
+}
 
-export const deleteSMBFolder = async (mountDrive: string, smbFolderName: string) => {
+export async function deleteSMBFolder(mountDrive: string, smbFolderName: string): Promise<void> {
   try {
     const smbFolderPath = path.join(mountDrive, smbFolderName);
 
@@ -33,9 +33,9 @@ export const deleteSMBFolder = async (mountDrive: string, smbFolderName: string)
   } catch (error) {
     console.error(`${localize('errorDeletingSMBFolder', 'Error deleting SMB folder')} - ${error.message}`);
   }
-};
+}
 
-export const unMountSMB = async (mountDrive: string) => {
+export async function unMountSMB(mountDrive: string): Promise<void> {
   let unMountCommand: string;
 
   try {
@@ -50,4 +50,4 @@ export const unMountSMB = async (mountDrive: string) => {
   } catch (error) {
     console.error(`${localize('errorUnmountingSMB', 'Error unmounting SMB')} - ${error.message}`);
   }
-};
+}

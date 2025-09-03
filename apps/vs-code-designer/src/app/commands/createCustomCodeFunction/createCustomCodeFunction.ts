@@ -5,7 +5,7 @@
 import { ExistingWorkspaceStep } from '../createProject/createProjectSteps/existingWorkspaceStep';
 import { isString } from '@microsoft/logic-apps-shared';
 import { type IFunctionWizardContext, ProjectType } from '@microsoft/vscode-extension-logic-apps';
-import { convertToWorkspace } from '../createWorkspace/createWorkspaceSteps/convertToWorkspace';
+import { convertToWorkspace } from '../convertToWorkspace';
 import { addLocalFuncTelemetry } from '../../utils/funcCoreTools/funcVersion';
 import { type IActionContext, AzureWizard, UserCancelledError } from '@microsoft/vscode-azext-utils';
 import { localize } from '../../../localize';
@@ -20,7 +20,7 @@ import { getCustomCodeFunctionsProjectMetadata, isCustomCodeFunctionsProject } f
  * @param folderPath - The path to the functions app folder.
  * @returns
  */
-export async function createCustomCodeFunctionFromCommand(context: IActionContext, folderPath?: Uri | string | undefined): Promise<void> {
+export async function createCustomCodeFunction(context: IActionContext, folderPath?: Uri | string | undefined): Promise<void> {
   if (await convertToWorkspace(context)) {
     addLocalFuncTelemetry(context);
 
