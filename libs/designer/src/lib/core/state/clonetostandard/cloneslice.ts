@@ -1,5 +1,6 @@
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
+import { getCloneWorkflowName } from '../../../core/clonetostandard/utils/helper';
 
 export interface WorkflowState {
   subscriptionId: string;
@@ -43,7 +44,7 @@ export const cloneSlice = createSlice({
         logicAppName: string;
       }>
     ) => {
-      state.sourceApps = [{ ...action.payload, targetWorkflowName: `${action.payload.logicAppName}_clone` }];
+      state.sourceApps = [{ ...action.payload, targetWorkflowName: getCloneWorkflowName(action.payload.logicAppName) }];
     },
     setDestinationSubscription: (state, action: PayloadAction<string>) => {
       state.destinationApp.subscriptionId = action.payload;
