@@ -15,7 +15,7 @@ export const testTokenSegment: ValueSegment = {
     title: 'TEST_TOKEN',
     value: 'triggerBody()',
   },
-  value: 'TEST_TOKEN',
+  value: 'triggerBody()',
 };
 
 export const outputToken: OutputToken = {

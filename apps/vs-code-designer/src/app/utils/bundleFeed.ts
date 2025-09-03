@@ -8,12 +8,14 @@ import { downloadAndExtractDependency } from './binaries';
 import { getJsonFeed } from './feed';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IBundleDependencyFeed, IBundleFeed, IBundleMetadata, IHostJsonV2 } from '@microsoft/vscode-extension-logic-apps';
-import * as fse from 'fs-extra';
 import * as path from 'path';
 import * as semver from 'semver';
 import * as vscode from 'vscode';
 import { localize } from '../../localize';
-
+import { ext } from '../../extensionVariables';
+import { getFunctionsCommand } from './funcCoreTools/funcVersion';
+import * as cp from 'child_process';
+import * as fse from 'fs-extra';
 /**
  * Gets bundle extension feed.
  * @param {IActionContext} context - Command context.
@@ -155,51 +157,67 @@ async function getExtensionBundleVersionFolders(directoryPath: string): Promise<
  * Download Microsoft.Azure.Functions.ExtensionBundle.Workflows.<version>
  * Destination: C:\Users\<USERHOME>\.azure-functions-core-tools\Functions\ExtensionBundles\<version>
  * @param {IActionContext} context - Command context.
- * @returns {Promise<string>} Returns bundle extension zip url.
+ * @returns {Promise<bool>} A boolean indicating whether the bundle was updated.
  */
-export async function downloadExtensionBundle(context: IActionContext): Promise<void> {
-  let envVarVer: string | undefined = process.env.AzureFunctionsJobHost_extensionBundle_version;
-  const projectPath: string | undefined = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : null;
-  if (projectPath) {
-    envVarVer = (await getLocalSettingsJson(context, path.join(projectPath, localSettingsFileName)))?.Values
-      ?.AzureFunctionsJobHost_extensionBundle_version;
-  }
+export async function downloadExtensionBundle(context: IActionContext): Promise<boolean> {
+  try {
+    let envVarVer: string | undefined = process.env.AzureFunctionsJobHost_extensionBundle_version;
+    const projectPath: string | undefined = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : null;
+    if (projectPath) {
+      envVarVer = (await getLocalSettingsJson(context, path.join(projectPath, localSettingsFileName)))?.Values
+        ?.AzureFunctionsJobHost_extensionBundle_version;
+    }
 
-  context.telemetry.properties.envVariableExtensionBundleVersion = envVarVer;
+    // Check for latest version at directory.
+    let latestLocalBundleVersion = '1.0.0';
+    const localVersions = await getExtensionBundleVersionFolders(defaultExtensionBundlePathValue);
+    for (const localVersion of localVersions) {
+      latestLocalBundleVersion = semver.gt(latestLocalBundleVersion, localVersion) ? latestLocalBundleVersion : localVersion;
+    }
 
-  if (envVarVer) {
-    const extensionBundleUrl = await getExtensionBundleZip(context, envVarVer);
-    await downloadAndExtractDependency(context, extensionBundleUrl, defaultExtensionBundlePathValue, extensionBundleId, envVarVer);
-    return;
-  }
+    context.telemetry.properties.envVariableExtensionBundleVersion = envVarVer;
+    if (envVarVer) {
+      if (semver.eq(envVarVer, latestLocalBundleVersion)) {
+        return false;
+      }
 
-  // Check for latest version at directory.
-  let latestLocalBundleVersion = '1.0.0';
-  const localVersions = await getExtensionBundleVersionFolders(defaultExtensionBundlePathValue);
-  for (const localVersion of localVersions) {
-    latestLocalBundleVersion = semver.gt(latestLocalBundleVersion, localVersion) ? latestLocalBundleVersion : localVersion;
-  }
+      const extensionBundleUrl = await getExtensionBundleZip(context, envVarVer);
+      await downloadAndExtractDependency(context, extensionBundleUrl, defaultExtensionBundlePathValue, extensionBundleId, envVarVer);
+      return true;
+    }
 
-  // Check the latest from feed.
-  let latestFeedBundleVersion = '1.0.0';
-  const feed: IBundleFeed = await getWorkflowBundleFeed(context);
-  for (const bundleVersion in feed.bundleVersions) {
-    latestFeedBundleVersion = semver.gt(latestFeedBundleVersion, bundleVersion) ? latestFeedBundleVersion : bundleVersion;
-  }
+    // Check the latest from feed.
+    let latestFeedBundleVersion = '1.0.0';
+    const feed: IBundleFeed = await getWorkflowBundleFeed(context);
+    for (const bundleVersion in feed.bundleVersions) {
+      latestFeedBundleVersion = semver.gt(latestFeedBundleVersion, bundleVersion) ? latestFeedBundleVersion : bundleVersion;
+    }
 
-  context.telemetry.properties.latestBundleVersion = semver.gt(latestFeedBundleVersion, latestLocalBundleVersion)
-    ? latestFeedBundleVersion
-    : latestLocalBundleVersion;
+    context.telemetry.properties.latestBundleVersion = semver.gt(latestFeedBundleVersion, latestLocalBundleVersion)
+      ? latestFeedBundleVersion
+      : latestLocalBundleVersion;
 
-  if (semver.gt(latestFeedBundleVersion, latestLocalBundleVersion)) {
-    const extensionBundleUrl = await getExtensionBundleZip(context, latestFeedBundleVersion);
-    await downloadAndExtractDependency(
-      context,
-      extensionBundleUrl,
-      defaultExtensionBundlePathValue,
-      extensionBundleId,
-      latestFeedBundleVersion
-    );
+    ext.defaultBundleVersion = context.telemetry.properties.latestBundleVersion;
+    ext.latestBundleVersion = context.telemetry.properties.latestBundleVersion;
+
+    if (semver.gt(latestFeedBundleVersion, latestLocalBundleVersion)) {
+      const extensionBundleUrl = await getExtensionBundleZip(context, latestFeedBundleVersion);
+      await downloadAndExtractDependency(
+        context,
+        extensionBundleUrl,
+        defaultExtensionBundlePathValue,
+        extensionBundleId,
+        latestFeedBundleVersion
+      );
+
+      return true;
+    }
+
+    return false;
+  } catch (error) {
+    const errorMessage = `Error downloading and extracting the Logic Apps Standard extension bundle: ${error.message}`;
+    context.telemetry.properties.errorMessage = errorMessage;
+    return false;
   }
 }
 
@@ -265,4 +283,65 @@ function getMaxVersion(version1, version2): string {
     }
   }
   return maxVersion;
+}
+
+/**
+ * Retrieves the highest version number of the extension bundle available in the bundle folder.
+ *
+ * This function locates the extension bundle folder, enumerates its subdirectories,
+ * and determines the maximum version number present among them. If no bundle is found,
+ * it throws an error.
+ *
+ * @returns {Promise<string>} A promise that resolves to the highest bundle version number as a string (e.g., "1.2.3").
+ * @throws {Error} If the extension bundle folder is missing or contains no subdirectories.
+ */
+export async function getBundleVersionNumber(): Promise<string> {
+  const bundleFolderRoot = await getExtensionBundleFolder();
+  const bundleFolder = path.join(bundleFolderRoot, extensionBundleId);
+  let bundleVersionNumber = '0.0.0';
+
+  const bundleFolders = await fse.readdir(bundleFolder);
+  if (bundleFolders.length === 0) {
+    throw new Error(localize('bundleMissingError', 'Extension bundle could not be found.'));
+  }
+
+  for (const file of bundleFolders) {
+    const filePath: string = path.join(bundleFolder, file);
+    if (await (await fse.stat(filePath)).isDirectory()) {
+      bundleVersionNumber = getMaxVersion(bundleVersionNumber, file);
+    }
+  }
+
+  return bundleVersionNumber;
+}
+
+/**
+ * Gets extension bundle folder path.
+ * @returns {string} Extension bundle folder path.
+ */
+export async function getExtensionBundleFolder(): Promise<string> {
+  const command = `${getFunctionsCommand()} GetExtensionBundlePath`;
+  const outputChannel = ext.outputChannel;
+
+  if (outputChannel) {
+    outputChannel.appendLog(localize('runningCommand', 'Running command: "{0}"...', command));
+  }
+
+  let extensionBundlePath = '';
+  try {
+    extensionBundlePath = await cp.execSync(command, { encoding: 'utf8' });
+  } catch (error) {
+    if (outputChannel) {
+      outputChannel.appendLog(localize('bundleCommandError', 'Could not find path to extension bundle'));
+      outputChannel.appendLog(JSON.stringify(error));
+    }
+    throw new Error(localize('bundlePathError', 'Could not find path to extension bundle.'));
+  }
+
+  extensionBundlePath = extensionBundlePath.trim().split('Microsoft.Azure.Functions.ExtensionBundle')[0];
+
+  if (outputChannel) {
+    outputChannel.appendLog(localize('extensionBundlePath', 'Extension bundle path: "{0}"...', extensionBundlePath));
+  }
+  return extensionBundlePath;
 }

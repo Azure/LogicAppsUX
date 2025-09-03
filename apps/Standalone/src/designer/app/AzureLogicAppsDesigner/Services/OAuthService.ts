@@ -8,7 +8,7 @@ export interface LoginResult {
 export interface IOAuthService {
   openLoginPopup(options: OAuthPopupOptions): IOAuthPopup;
 
-  fetchConsentUrlForConnection: (connectionId: string) => Promise<string>;
+  fetchConsentUrlForConnection: (connectionId: string, oauthKey?: string) => Promise<string>;
   confirmConsentCodeForConnection: (connectionId: string, code: string) => Promise<any>;
 }
 
@@ -173,7 +173,7 @@ export class StandaloneOAuthService implements IOAuthService {
     });
   }
 
-  public async fetchConsentUrlForConnection(connectionName: string) {
+  public async fetchConsentUrlForConnection(connectionName: string, oauthKey?: string) {
     const { baseUrl, httpClient, apiVersion, tenantId, objectId } = this.options;
     const hostName = baseUrl.split('/subscriptions')[0];
     const uri = `${hostName}${this.getConnectionRequestPath(connectionName)}/listConsentLinks`;
@@ -181,7 +181,7 @@ export class StandaloneOAuthService implements IOAuthService {
     const requestBody: ConsentLinkRequest = {
       parameters: [
         {
-          parameterName: 'token',
+          parameterName: oauthKey ?? 'token',
           redirectUrl,
           tenantId,
           objectId,

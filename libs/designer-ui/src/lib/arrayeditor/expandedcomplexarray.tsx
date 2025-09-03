@@ -1,7 +1,7 @@
 import type { ComboboxItem, ComplexArrayItems, DropdownItem, TokenPickerButtonEditorProps, ValueSegment } from '..';
 import { Combobox, DropdownEditor, StringEditor } from '..';
 import constants from '../constants';
-import type { ChangeState, GetTokenPickerHandler, loadParameterValueFromStringHandler } from '../editor/base';
+import type { BasePlugins, ChangeState, GetTokenPickerHandler, loadParameterValueFromStringHandler } from '../editor/base';
 import { ItemMenuButton } from './expandedsimplearray';
 import { getBooleanDropdownOptions, getComoboxEnumOptions, hideComplexArray } from './util/util';
 import type { ItemSchemaItemProps } from './util/util';
@@ -25,10 +25,11 @@ export interface ExpandedComplexArrayProps {
   itemKey?: string;
   isNested?: boolean;
   options?: ComboboxItem[];
-  getTokenPicker: GetTokenPickerHandler;
+  getTokenPicker?: GetTokenPickerHandler;
   tokenMapping?: Record<string, ValueSegment>;
   loadParameterValueFromString?: loadParameterValueFromStringHandler;
   isDynamic?: boolean;
+  basePlugins?: BasePlugins;
 }
 
 export const ExpandedComplexArray = ({

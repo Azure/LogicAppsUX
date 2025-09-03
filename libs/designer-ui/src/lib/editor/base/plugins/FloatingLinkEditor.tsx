@@ -17,7 +17,6 @@ import {
 } from 'lexical';
 import type { Dispatch } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import type * as React from 'react';
 import { createPortal } from 'react-dom';
 
 const buttonStyles: Partial<IButtonStyles> = {

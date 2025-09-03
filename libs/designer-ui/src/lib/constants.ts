@@ -471,7 +471,6 @@ export default {
       SCHEMA: 'schema',
       STRING: 'string',
       TABLE: 'table',
-      MIXEDINPUTEDITOR: 'mixedinputeditor',
       CUSTOM: 'custom', // To align with back-end types, not used to render editor
       CUSTOMEDITORNAME: 'internal-custom-editor', // Overridden custom editors are identified by this name internally.
     },

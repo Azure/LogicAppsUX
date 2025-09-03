@@ -1,6 +1,10 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
 import { WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
 import {
-  ProjectDirectoryPath,
+  ProjectDirectoryPathKey,
   appKindSetting,
   designTimeDirectoryName,
   designerStartApi,
@@ -64,8 +68,8 @@ export async function startBackendRuntime(projectPath: string, context: IActionC
           designTimeDirectory.fsPath,
           {
             [appKindSetting]: logicAppKind,
-            [ProjectDirectoryPath]: projectPath,
-            [workerRuntimeKey]: WorkerRuntime.Node,
+            [ProjectDirectoryPathKey]: projectPath,
+            [workerRuntimeKey]: WorkerRuntime.Dotnet,
           },
           true
         );
@@ -73,7 +77,7 @@ export async function startBackendRuntime(projectPath: string, context: IActionC
         const portArgs = `--port ${designTimeInst.port}`;
         startDesignTimeProcess(ext.outputChannel, cwd, getFunctionsCommand(), 'host', 'start', portArgs);
 
-        await waitForDesignTimeStartUp(projectPath, url, new Date().getTime());
+        await waitForDesignTimeStartUp(projectPath, url, new Date().getTime(), true);
       } else {
         throw new Error("Workflow folder doesn't exist");
       }

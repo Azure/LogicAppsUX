@@ -6,6 +6,7 @@ import { convertSegmentsToString } from '../editor/base/utils/parsesegments';
 import { HTMLChangePlugin } from './plugins/toolbar/helper/HTMLChangePlugin';
 import { isHtmlStringValueSafeForLexical } from './plugins/toolbar/helper/util';
 import { useState } from 'react';
+import { mergeClasses } from '@fluentui/react-components';
 
 const isValueSafeForLexical = (value: ValueSegment[]) => {
   const blankNodeMap = new Map<string, ValueSegment>();
@@ -36,8 +37,9 @@ export const HTMLEditor = ({ initialValue, onChange, ...baseEditorProps }: BaseE
   return (
     <EditorWrapper
       {...baseEditorProps}
-      className="msla-html-editor"
+      className={mergeClasses('msla-html-editor', baseEditorProps.className)}
       initialValue={initialValue}
+      spellCheck={true}
       basePlugins={{
         clearEditor: true,
         htmlEditor: isValuePlaintext ? 'raw-html' : 'rich-html',

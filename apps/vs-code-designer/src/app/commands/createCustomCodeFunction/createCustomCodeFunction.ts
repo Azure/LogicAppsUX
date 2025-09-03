@@ -2,16 +2,16 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { ExistingWorkspaceStep } from '../createNewProject/createProjectSteps/ExistingWorkspaceStep';
+import { ExistingWorkspaceStep } from '../createProject/createProjectSteps/existingWorkspaceStep';
 import { isString } from '@microsoft/logic-apps-shared';
 import { type IFunctionWizardContext, ProjectType } from '@microsoft/vscode-extension-logic-apps';
-import { convertToWorkspace } from '../createNewCodeProject/CodeProjectBase/ConvertToWorkspace';
+import { convertToWorkspace } from '../convertToWorkspace';
 import { addLocalFuncTelemetry } from '../../utils/funcCoreTools/funcVersion';
 import { type IActionContext, AzureWizard, UserCancelledError } from '@microsoft/vscode-azext-utils';
 import { localize } from '../../../localize';
 import { type Uri, window } from 'vscode';
-import { FunctionNameStep } from './createCustomCodeFunctionSteps/FunctionNameStep';
-import { FunctionFilesStep } from './createCustomCodeFunctionSteps/FunctionFilesStep';
+import { FunctionNameStep } from './createCustomCodeFunctionSteps/functionNameStep';
+import { FunctionFileStep } from './createCustomCodeFunctionSteps/functionFileStep';
 import { getCustomCodeFunctionsProjectMetadata, isCustomCodeFunctionsProject } from '../../utils/customCodeUtils';
 
 /**
@@ -20,7 +20,7 @@ import { getCustomCodeFunctionsProjectMetadata, isCustomCodeFunctionsProject } f
  * @param folderPath - The path to the functions app folder.
  * @returns
  */
-export async function createCustomCodeFunctionFromCommand(context: IActionContext, folderPath?: Uri | string | undefined): Promise<void> {
+export async function createCustomCodeFunction(context: IActionContext, folderPath?: Uri | string | undefined): Promise<void> {
   if (await convertToWorkspace(context)) {
     addLocalFuncTelemetry(context);
 
@@ -82,7 +82,7 @@ export async function createCustomCodeFunctionFromCommand(context: IActionContex
 
     const title = 'createCustomCodeFunction';
     const message = 'Create new custom code function';
-    const promptSteps = [new ExistingWorkspaceStep(), new FunctionNameStep(), new FunctionFilesStep()];
+    const promptSteps = [new ExistingWorkspaceStep(), new FunctionNameStep(), new FunctionFileStep()];
 
     const wizard: AzureWizard<IFunctionWizardContext> = new AzureWizard(wizardContext, {
       title: localize(title, message),

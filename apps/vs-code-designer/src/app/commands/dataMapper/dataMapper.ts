@@ -1,3 +1,7 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
 import { extensionCommand } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
@@ -12,7 +16,7 @@ import { Uri, window } from 'vscode';
 import { getWorkspaceFolder } from '../../utils/workspace';
 import { verifyAndPromptToCreateProject } from '../../utils/verifyIsProject';
 
-export const createNewDataMapCmd = async (context: IActionContext) => {
+export async function createNewDataMapCmd(context: IActionContext): Promise<void> {
   if (isNullOrUndefined(ext.defaultLogicAppPath)) {
     const workspaceFolder = await getWorkspaceFolder(
       context,
@@ -26,9 +30,9 @@ export const createNewDataMapCmd = async (context: IActionContext) => {
     ext.defaultLogicAppPath = projectPath;
   }
   DataMapperExt.openDataMapperPanel(context);
-};
+}
 
-export const loadDataMapFileCmd = async (context: IActionContext, uri: Uri) => {
+export async function loadDataMapFileCmd(context: IActionContext, uri: Uri): Promise<void> {
   let mapDefinitionPath: string | undefined = uri?.fsPath;
   let draftFileIsFoundAndShouldBeUsed = false;
   if (isNullOrUndefined(ext.defaultLogicAppPath)) {
@@ -181,6 +185,5 @@ export const loadDataMapFileCmd = async (context: IActionContext, uri: Uri) => {
     mapDefinition,
     sourceSchemaFileName: path.basename(srcSchemaPath),
     targetSchemaFileName: path.basename(tgtSchemaPath),
-    metadata: undefined,
   });
-};
+}

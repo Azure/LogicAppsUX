@@ -2,7 +2,7 @@ name: PR AI Validation
 
 on:
   pull_request_target:
-    types: [opened, edited, synchronize]
+    types: [opened, edited, synchronize, labeled, unlabeled]
   workflow_dispatch:
 
 permissions:
@@ -63,6 +63,10 @@ jobs:
               });
               
               if (!response.ok) {
+                if(response.status === 502) {
+                  console.log('PR_VALIDATION Bad Gateway - The AI service is currently unavailable. Skipping AI validation.');
+                  return;
+                }
                 throw new Error(`API request failed with status ${response.status}`);
               }
               

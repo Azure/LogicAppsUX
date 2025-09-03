@@ -20,6 +20,7 @@ export const CollapsedDictionary = ({
   setIsValid,
   setCollapsedValue,
   onBlur,
+  basePlugins,
   ...props
 }: CollapsedDictionaryProps): JSX.Element => {
   const intl = useIntl();
@@ -39,6 +40,7 @@ export const CollapsedDictionary = ({
           className="msla-collapsed-editor-container"
           basePlugins={{
             tabbable: true,
+            ...basePlugins,
           }}
           initialValue={initialValue?.length > 0 ? initialValue : ([] as ValueSegment[])}
           tokenPickerButtonProps={{ verticalOffSet: 17 }}

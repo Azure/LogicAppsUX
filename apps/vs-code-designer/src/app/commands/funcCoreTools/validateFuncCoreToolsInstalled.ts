@@ -57,13 +57,27 @@ export async function validateFuncCoreToolsInstalled(context: IActionContext, me
   return installed;
 }
 
-const validateFuncCoreToolsInstalledBinaries = async (
+/**
+ * Check is functions core tools is installed.
+ * @returns {Promise<boolean>} Returns true if installed, otherwise returns false.
+ */
+async function isFuncToolsInstalled(): Promise<boolean> {
+  const funcCommand = getFunctionsCommand();
+  try {
+    await executeCommand(undefined, undefined, funcCommand, '--version');
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+async function validateFuncCoreToolsInstalledBinaries(
   innerContext: IActionContext,
   message: string,
   install: MessageItem,
   input: MessageItem | undefined,
   installed: boolean
-) => {
+): Promise<boolean> {
   const items: MessageItem[] = [install, DialogResponses.learnMore];
   input = await innerContext.ui.showWarningMessage(message, { modal: true }, ...items);
   innerContext.telemetry.properties.dialogResult = input.title;
@@ -76,16 +90,16 @@ const validateFuncCoreToolsInstalledBinaries = async (
   }
 
   return installed;
-};
+}
 
-const validateFuncCoreToolsInstalledSystem = async (
+async function validateFuncCoreToolsInstalledSystem(
   innerContext: IActionContext,
   message: string,
   install: MessageItem,
   input: MessageItem | undefined,
   installed: boolean,
   fsPath: string
-) => {
+): Promise<boolean> {
   const items: MessageItem[] = [];
   const packageManagers: PackageManager[] = await getFuncPackageManagers(false /* isFuncInstalled */);
   if (packageManagers.length > 0) {
@@ -106,18 +120,4 @@ const validateFuncCoreToolsInstalledSystem = async (
     await openUrl('https://aka.ms/Dqur4e');
   }
   return installed;
-};
-
-/**
- * Check is functions core tools is installed.
- * @returns {Promise<boolean>} Returns true if installed, otherwise returns false.
- */
-export async function isFuncToolsInstalled(): Promise<boolean> {
-  const funcCommand = getFunctionsCommand();
-  try {
-    await executeCommand(undefined, undefined, funcCommand, '--version');
-    return true;
-  } catch (error) {
-    return false;
-  }
 }

@@ -25,14 +25,14 @@ jobs:
   validation:
     runs-on: ubuntu-latest
     steps:
-      - name: Check branch and release type
+      - name: 'Check branch and release type'
         id: validate
         run: |
           BRANCH_NAME="${{ github.ref_name }}"
           RELEASE_TYPE="${{ github.event.inputs.release_type || 'minor' }}"
           echo "Branch: $BRANCH_NAME"
           echo "Release Type: $RELEASE_TYPE"
-          
+
           if [[ "$BRANCH_NAME" == "main" && "$RELEASE_TYPE" == "patch" ]]; then
             echo "Patch releases are not allowed on the main branch."
             exit 1
@@ -90,23 +90,55 @@ jobs:
         run: |
           # Get the previous tag
           PREV_TAG=$(git describe --tags --abbrev=0 ${{ steps.version.outputs.tag_name }}^ 2>/dev/null || echo "")
-          
+
           if [ -z "$PREV_TAG" ]; then
             echo "No previous tag found, this is the first release"
             RELEASE_NOTES="Initial release"
           else
             echo "Previous tag: $PREV_TAG"
+            echo "Current tag: ${{ steps.version.outputs.tag_name }}"
+            
             # Generate release notes using GitHub API
-            RELEASE_NOTES=$(gh api \
+            API_RESPONSE=$(gh api \
               --method POST \
               -H "Accept: application/vnd.github+json" \
               -H "X-GitHub-Api-Version: 2022-11-28" \
               /repos/${{ github.repository }}/releases/generate-notes \
               -f tag_name="${{ steps.version.outputs.tag_name }}" \
               -f target_commitish="${{ github.ref_name }}" \
-              -f previous_tag_name="$PREV_TAG" | jq -r .body)
+              -f previous_tag_name="$PREV_TAG" 2>/dev/null || echo '{"body": null}')
+            
+            echo "API Response: $API_RESPONSE"
+            
+            # Extract the body, with fallback for null values
+            RELEASE_NOTES=$(echo "$API_RESPONSE" | jq -r '.body // empty')
+            
+            # If the API didn't return meaningful notes, generate our own
+            if [ -z "$RELEASE_NOTES" ] || [ "$RELEASE_NOTES" = "null" ]; then
+              echo "API returned empty/null body, generating custom release notes"
+              
+              # Get commit messages between tags
+              COMMITS=$(git log $PREV_TAG..${{ steps.version.outputs.tag_name }} --oneline --pretty=format:"* %s (%h)" 2>/dev/null || echo "")
+              
+              if [ -n "$COMMITS" ]; then
+                RELEASE_NOTES="## What's Changed
+
+          $COMMITS
+
+          **Full Changelog**: https://github.com/${{ github.repository }}/compare/$PREV_TAG...${{ steps.version.outputs.tag_name }}"
+              else
+                RELEASE_NOTES="## Release ${{ steps.version.outputs.tag_name }}
+
+          This release includes updates and improvements.
+
+          **Full Changelog**: https://github.com/${{ github.repository }}/compare/$PREV_TAG...${{ steps.version.outputs.tag_name }}"
+              fi
+            fi
           fi
-          
+
+          echo "Final release notes:"
+          echo "$RELEASE_NOTES"
+
           # Save to file to handle multi-line content
           echo "$RELEASE_NOTES" > release-notes.md
 
@@ -134,7 +166,7 @@ jobs:
           ref: ${{ needs.create-release.outputs.tag_name }}
           fetch-depth: 0
 
-      - name: Set up Node.js
+      - name: 'Set up Node.js'
         uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -154,13 +186,13 @@ jobs:
           jq --arg key "${{ env.AI_KEY }}" '.aiKey = $key' apps/vs-code-designer/src/package.json > tmp.json
           mv tmp.json apps/vs-code-designer/src/package.json
 
-      - name: Replace Placeholder with Telemetry Key
+      - name: 'Replace Placeholder with Telemetry Key'
         run: sed -i "s/setInGitHubBuild/${{ env.AI_KEY }}/g" apps/vs-code-designer/src/main.ts
 
       - name: 'Pack VSCode Designer Extension'
         run: pnpm run vscode:designer:pack
 
-      - name: Archive VSIX
+      - name: 'Archive VSIX'
         uses: actions/upload-artifact@v4
         with:
           name: vscode-extension
@@ -174,7 +206,7 @@ jobs:
           gh release upload ${{ needs.create-release.outputs.tag_name }} apps/vs-code-designer/dist/*.vsix --clobber
 
       # NPM Publishing
-      - name: Azure login
+      - name: 'Azure login'
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_TESTING_CLIENT_ID }}

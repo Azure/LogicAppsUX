@@ -5,10 +5,9 @@
 import type { ContainerAppsAPIClient } from '@azure/arm-appcontainers';
 import type { WebSiteManagementClient } from '@azure/arm-appservice';
 import type { StorageManagementClient } from '@azure/arm-storage';
-import { createAzureClient } from '@microsoft/vscode-azext-azureutils';
-import type { AzExtClientContext } from '@microsoft/vscode-azext-azureutils';
+import { createAzureClient, type AzExtClientContext } from '@microsoft/vscode-azext-azureutils';
 
-export async function createStorageClient<T extends AzExtClientContext>(context: T): Promise<StorageManagementClient> {
+export async function createStorageClient(context: AzExtClientContext): Promise<StorageManagementClient> {
   return createAzureClient(context, (await import('@azure/arm-storage')).StorageManagementClient);
 }
 

@@ -20,7 +20,7 @@ export async function getWindowsProcess(pid: number): Promise<IProcessInfo[]> {
         resolve(children);
       });
     });
-  } catch (e) {
+  } catch {
     return [];
   }
 }

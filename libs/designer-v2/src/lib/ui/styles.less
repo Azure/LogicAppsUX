@@ -1,0 +1,253 @@
+@import (css) '@xyflow/react/dist/style.css';
+@import '../../../../designer-ui/src/styles.less';
+@import './settings/sections/runafterconfiguration/runafterconfiguration.less';
+@import './connections/runAfterIndicator/styles.less';
+@import './panel/connectionsPanel/connectionsPanel.less';
+@import './templates/styles.less';
+
+.react-flow__edge {
+  cursor: grab;
+
+	&.no-interaction {
+		pointer-events: none;
+	}
+}
+
+.msla-theme-provider {
+  height: 100%;
+  overflow: hidden;
+}
+
+.edgebutton-foreignobject {
+  overflow: visible;
+}
+
+.react-flow__handle {
+	&.valid {
+		border: 2px solid #0078d4;
+	}
+}
+
+.edge-drop-zone-container {
+  margin: 8px auto;
+  position: absolute;
+  width: 100%;
+}
+
+.msla-graph-container-wrapper {
+  width: 100%;
+  height: 100%;
+  padding-top: 20px;
+  display: flex;
+  box-sizing: border-box;
+  pointer-events: none !important;
+
+  &.has-footer {
+    padding-bottom: 20px;
+  }
+
+  &.is-subgraph {
+    padding-top: 14px;
+  }
+}
+
+.no-actions-text {
+  position: absolute;
+  width: 100%;
+  color: grey;
+  text-align: center;
+}
+
+.msla-designer-tools {
+  position: absolute;
+  left: 20px;
+  bottom: 20px;
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+  box-sizing: border-box;
+
+  &.left-panel {
+    left: 52px; // Add extra 32px taken from the collapsed panel
+  }
+}
+
+.react-flow__node {
+  transition: transform 0.1s ease-in-out, width 0.1s ease-in-out, height 0.1s ease-in-out;
+}
+
+.react-flow__panel {
+  margin: 0px !important;
+  z-index: 0 !important;
+}
+
+.react-flow__minimap {
+  position: relative !important;
+  left: 0px !important;
+  bottom: 0px !important;
+  width: 300px;
+  height: 225px;
+	background: var(--colorNeutralBackground1);
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0px 3.2px 7.2px rgba(0, 0, 0, 0.132), 0px 0.6px 1.8px rgba(0, 0, 0, 0.108) !important;
+
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.react-flow__minimap-mask {
+  stroke: var(--colorBrandStroke1);
+  stroke-width: 6px;
+  stroke-linejoin: round;
+  fill: #ffffffb3; // white, 70% opacity
+}
+
+.react-flow__minimap-node {
+  stroke-width: 1px;
+  stroke-linejoin: round;
+}
+
+.react-flow__controls {
+  position: relative !important;
+  left: 0px !important;
+  bottom: 0px !important;
+  background: var(--colorNeutralBackground1);
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0px 3.2px 7.2px rgba(0, 0, 0, 0.132), 0px 0.6px 1.8px rgba(0, 0, 0, 0.108) !important;
+}
+
+.react-flow__controls-button {
+  width: 20px !important;
+  height: 20px !important;
+  font-size: 30px;
+  border-bottom: 1px solid var(--colorNeutralStroke1);
+  padding: 12px !important;
+	fill: var(--colorNeutralForeground1);
+	box-sizing: content-box;
+
+  svg {
+    height: 100%;
+    width: 100%;
+    max-width: 20px !important;
+    max-height: 20px !important;
+  }
+
+	&:hover {
+		background-color: var(--colorNeutralBackground1Hover);
+	}
+	&:active {
+		background-color: var(--colorNeutralBackground1Pressed);
+	}
+
+}
+
+.react-flow__edge-path {
+	stroke: var(--colorEdge);
+  stroke-width: 2 !important;
+
+	&.handoff {
+		stroke: var(--colorHandoff);
+	}
+
+  &.highlighted {
+    stroke: var(--colorSelection);
+  }
+}
+
+.react-flow__edge {
+  marker>path {
+    fill: var(--colorEdge);
+  }
+
+	marker.handoff>path {
+		fill: var(--colorHandoff);
+	}
+
+  marker.highlighted>path {
+    fill: var(--colorSelection);
+  }
+}
+
+.msla-add-context-menu {
+  display: flex;
+  flex-direction: column;
+  min-width: 180px;
+
+  .ms-Button {
+    border: 0px !important;
+  }
+}
+
+.msla-loading-container {
+  margin: 32px 0;
+}
+
+.msla-flex-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.msla-azure-resource-selection {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+
+  *.ms-Button {
+    border: none;
+    height: 32px;
+    font-size: 14px;
+  }
+}
+
+.msla-theme-dark {
+
+  .react-flow__minimap-mask {
+    fill: #323130b3; // nodeBackground, 70% opacity
+  }
+
+  .react-flow__edge-path {
+		stroke: var(--colorEdge);
+
+		&.handoff {
+			stroke: var(--colorHandoff);
+		}
+
+    &.highlighted {
+      stroke: var(--colorSelection);
+    }
+  }
+
+  .react-flow__edge {
+    marker>path {
+      fill: var(--colorEdge);
+    }
+
+		marker.handoff>path {
+			fill: var(--colorHandoff);
+		}
+
+    marker.highlighted>path {
+      fill: var(--colorSelection);
+    }
+  }
+
+  .ms-Pivot-link {
+    background: none;
+  }
+}
+
+[data-color-scheme='dark'] {
+  color-scheme: dark;
+}
+
+[data-color-scheme='light'] {
+  color-scheme: light;
+}

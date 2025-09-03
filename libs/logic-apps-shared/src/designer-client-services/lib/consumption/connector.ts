@@ -4,6 +4,8 @@ import type { BaseConnectorServiceOptions } from '../base';
 import { BaseConnectorService } from '../base';
 import type { ListDynamicValue, ManagedIdentityRequestProperties, TreeDynamicExtension, TreeDynamicValue } from '../connector';
 import { pathCombine, unwrapPaginatedResponse } from '../helpers';
+import { LoggerService } from '../logger';
+import { LogEntryLevel } from '../logging/logEntry';
 
 interface ConsumptionConnectorServiceOptions extends BaseConnectorServiceOptions {
   workflowReferenceId: string;
@@ -32,6 +34,14 @@ export class ConsumptionConnectorService extends BaseConnectorService {
       parameters,
       managedIdentityProperties ? { workflowReference: { id: workflowReferenceId } } : undefined
     );
+
+    if (result?.__paginationIncomplete) {
+      LoggerService().log({
+        message: `Pagination request unsuccessful, some values may be missing. ${result.__paginationError || ''} on ${connectorId}`,
+        level: LogEntryLevel.Error,
+        area: 'unwrapPaginatedResponse',
+      });
+    }
 
     return unwrapPaginatedResponse(result);
   }

@@ -1,8 +1,8 @@
-import { defineProject } from 'vitest/config';
+import { defineConfig } from 'vitest/config';
 import packageJson from './package.json';
 import path from 'path';
 
-export default defineProject({
+export default defineConfig({
   plugins: [],
   resolve: {
     alias: {
@@ -16,5 +16,15 @@ export default defineProject({
     setupFiles: ['test-setup.ts'],
     coverage: { enabled: true, provider: 'istanbul', include: ['src/**/*'], reporter: ['html', 'cobertura'] },
     restoreMocks: true,
+    // Exclude E2E tests that use Mocha instead of Vitest
+    exclude: [
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/cypress/**',
+      '**/.{idea,git,cache,output,temp}/**',
+      '**/{karma,rollup,webpack,vite,vitest,jest,ava,babel,nyc,cypress,tsup,build}.config.*',
+      // Exclude E2E tests in src/test/ui/ that use Mocha
+      'src/test/ui/**',
+    ],
   },
 });

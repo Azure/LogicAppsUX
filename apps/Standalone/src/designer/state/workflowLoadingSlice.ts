@@ -27,6 +27,7 @@ export interface WorkflowLoadingState {
   showRunHistory?: boolean;
   parameters: Record<string, WorkflowParameter>;
   showConnectionsPanel?: boolean;
+  showEdgeDrawing?: boolean; // show edge drawing
   workflowKind?: string;
   language: string;
   areCustomEditorsEnabled?: boolean;
@@ -188,6 +189,9 @@ export const workflowLoadingSlice = createSlice({
     setShowConnectionsPanel: (state, action: PayloadAction<boolean>) => {
       state.showConnectionsPanel = action.payload;
     },
+    setShowEdgeDrawing: (state, action: PayloadAction<boolean>) => {
+      state.showEdgeDrawing = action.payload;
+    },
     loadLastWorkflow: (state) => {
       const lastWorkflow = getStateHistory() as WorkflowLoadingState;
       if (!lastWorkflow) {
@@ -273,6 +277,7 @@ export const {
   setIsChatBotEnabled,
   setRunHistoryEnabled,
   setShowConnectionsPanel,
+  setShowEdgeDrawing,
   changeRunId,
   setLanguage,
   loadLastWorkflow,

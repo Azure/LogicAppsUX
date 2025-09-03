@@ -39,11 +39,25 @@
         line-height: 20px;
         padding-inline-start: 6px;
         padding-inline-end: 15px;
+        border-radius: 4px;
         &.readonly {
           background-color: rgba(128, 128, 128, 0.1);
         }
         &:focus {
-          border: 1px solid @primary_border_blue;
+          border-bottom: 1px solid @primary_border_blue;
+        }
+        &:focus::after {
+          content: "";
+          position: absolute;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          height: 4px;
+          border-left: 1px solid @primary_border_blue;
+          border-right: 1px solid @primary_border_blue;
+          border-bottom-left-radius: 4px; /* Match parent radius */
+          border-bottom-right-radius: 4px;
+          pointer-events: none;
         }
         p {
           padding-top: 2px;
@@ -64,8 +78,7 @@
       }
     }
     .msla-querybuilder-row-dropdown-container {
-      outline: 1px solid @panel-mode-panel-border-color;
-      border-radius: 0px;
+      border-radius: 4px;
     }
   }
 }

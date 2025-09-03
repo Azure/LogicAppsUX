@@ -16,6 +16,7 @@ export const NavigateIcon = bundleIcon(Open12Regular, Open12Filled);
 interface AgentInstructionEditorProps extends BaseEditorProps {
   serializeValue?: ChangeHandler;
   onCastParameter: CastHandler;
+  hideUserInstructions?: boolean;
 }
 
 export const AgentInstructionEditor = ({
@@ -23,6 +24,7 @@ export const AgentInstructionEditor = ({
   className,
   onCastParameter,
   serializeValue,
+  hideUserInstructions = false,
   ...props
 }: AgentInstructionEditorProps): JSX.Element => {
   const intl = useIntl();
@@ -31,11 +33,17 @@ export const AgentInstructionEditor = ({
   const { systemMessage, userMessage } = useMemo(() => {
     return parseAgentInstruction(initialValue, setErrorMessage);
   }, [initialValue]);
-  const description = intl.formatMessage({
+  const systemInstructionDescription = intl.formatMessage({
     defaultMessage:
       'Add instructions so the agent understands its role and tasks. Include helpful information about workflow structure, restrictions, tools, and interactions in specific scenarios.',
     description: 'Description for agent instruction editor',
     id: 'hRLAFg',
+  });
+  const userInstructionDescription = intl.formatMessage({
+    defaultMessage:
+      'Add optional prompts or questions for the agent. For better results, focus each item on a single specific prompt or question.',
+    description: 'Description for agent instruction editor',
+    id: 'Z3Ak88',
   });
   const descriptionLink = intl.formatMessage({
     defaultMessage: 'Tips for writing agent instructions',
@@ -48,20 +56,20 @@ export const AgentInstructionEditor = ({
     id: 'dlLxEo',
   });
   const userPlaceholder = intl.formatMessage({
-    defaultMessage: 'Enter instructions for the user',
+    defaultMessage: 'Enter a user prompt or question.',
     description: 'Agent user placeholder',
-    id: 'SPaCir',
+    id: '4SDpHu',
   });
   const userItemLabel = intl.formatMessage({
-    defaultMessage: 'User Instructions',
+    defaultMessage: 'User instructions',
     description: 'User instructions label',
-    id: 'Ly65mM',
+    id: '9Mu4CV',
   });
 
   const systemPromptLabel = intl.formatMessage({
-    defaultMessage: 'System Instructions',
+    defaultMessage: 'System instructions',
     description: 'System instructions label',
-    id: 'YT3ZMc',
+    id: 'GcOgsC',
   });
   const warningInstructionBody = intl.formatMessage({
     defaultMessage: 'This could mean that the instruction schema is set up incorrectly.',
@@ -77,13 +85,13 @@ export const AgentInstructionEditor = ({
 
   return (
     <div className="msla-agent-instruction-editor-container">
-      <Text style={{ fontSize: 12 }}>{description} </Text>
-      <Link href="https://aka.ms/LogicApps/Agents" target="_blank" style={{ fontSize: 12, fontStyle: 'italic' }}>
-        {descriptionLink}
-        <NavigateIcon style={{ position: 'relative', top: '2px', left: '2px' }} />
-      </Link>
       <div className={mergeClasses(styles.editors)}>
         <Label text={systemPromptLabel} isRequiredField />
+        <Text style={{ fontSize: 12 }}>{systemInstructionDescription} </Text>
+        <Link href="https://aka.ms/LogicApps/Agents" target="_blank" style={{ fontSize: 12, fontStyle: 'italic' }}>
+          {descriptionLink}
+          <NavigateIcon style={{ position: 'relative', top: '2px', left: '2px' }} />
+        </Link>
         <StringEditor
           {...props}
           className={mergeClasses(styles.systemEditor, css(className, 'msla-agent-instruction-system-editor editor-custom'))}
@@ -91,20 +99,26 @@ export const AgentInstructionEditor = ({
           initialValue={systemMessage}
           editorBlur={(newState: ChangeState) => handleValueChange(newState, AGENT_INSTRUCTION_TYPES.SYSTEM)}
           valueType={constants.SWAGGER.TYPE.STRING}
+          spellCheck={true}
         />
-        <Label text={userItemLabel} />
-        <ArrayEditor
-          {...props}
-          isRequired={false}
-          label={userItemLabel}
-          placeholder={userPlaceholder}
-          itemSchema={{ key: 'userMessage', type: 'string' }}
-          arrayType={ArrayType.SIMPLE}
-          castParameter={onCastParameter}
-          initialValue={userMessage}
-          getTokenPicker={props.getTokenPicker as GetTokenPickerHandler}
-          onChange={(newState: ChangeState) => handleValueChange(newState, AGENT_INSTRUCTION_TYPES.USER)}
-        />
+        {!hideUserInstructions && (
+          <>
+            <Label text={userItemLabel} />
+            <Text style={{ fontSize: 12 }}>{userInstructionDescription} </Text>
+            <ArrayEditor
+              {...props}
+              isRequired={false}
+              label={userItemLabel}
+              placeholder={userPlaceholder}
+              itemSchema={{ key: 'userMessage', type: 'string' }}
+              arrayType={ArrayType.SIMPLE}
+              castParameter={onCastParameter}
+              initialValue={userMessage}
+              getTokenPicker={props.getTokenPicker as GetTokenPickerHandler}
+              onChange={(newState: ChangeState) => handleValueChange(newState, AGENT_INSTRUCTION_TYPES.USER)}
+            />
+          </>
+        )}
       </div>
       {errorMessage ? (
         <MessageBar key={'warning'} intent={'warning'} className={styles.editorWarning}>

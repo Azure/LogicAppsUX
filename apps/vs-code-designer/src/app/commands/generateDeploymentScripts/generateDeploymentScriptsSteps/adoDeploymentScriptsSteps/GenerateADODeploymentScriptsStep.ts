@@ -27,6 +27,14 @@ export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IAz
   public priority = 250;
 
   /**
+   * Determines whether this step should be executed based on the user's input.
+   * @returns {boolean} - A boolean value indicating whether this step should be executed.
+   */
+  public shouldExecute(): boolean {
+    return true;
+  }
+
+  /**
    * Executes the step to generate deployment scripts for Azure DevOps Pipeline.
    * @param {IAzureDeploymentScriptsContext} context - The Azure deployment scripts context.
    * @returns {Promise<void>} - A Promise that resolves when the scripts are generated.
@@ -34,13 +42,13 @@ export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IAz
   public async execute(context: IAzureDeploymentScriptsContext): Promise<void> {
     context.telemetry.properties.lastStep = 'GenerateADODeploymentScriptsStep';
 
-    const deploymentFolderPath = path.join(context.customWorkspaceFolderPath, deploymentDirectory);
+    const deploymentFolderPath = path.join(context.workspacePath, deploymentDirectory);
     if (!fs.existsSync(deploymentFolderPath)) {
       fs.mkdirSync(deploymentFolderPath);
     }
 
     context.deploymentFolderPath = deploymentFolderPath;
-    context.workspacePath = (context.workspaceFolder && context.workspaceFolder.uri.fsPath) || context.customWorkspaceFolderPath;
+    context.workspacePath = (context.workspaceFolder && context.workspaceFolder.uri.fsPath) || context.workspacePath;
     if (context.workspaceFolder) {
       context.openBehavior = OpenBehavior.alreadyOpen;
     }
@@ -110,14 +118,6 @@ export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IAz
     workflowFiles.forEach((filePath) =>
       GenerateADODeploymentScriptsStep.updateMetadata(filePath, context.projectPath, correlationId, currentDateTime)
     );
-  }
-
-  /**
-   * Determines whether this step should be executed based on the user's input.
-   * @returns {boolean} - A boolean value indicating whether this step should be executed.
-   */
-  public shouldExecute(): boolean {
-    return true;
   }
 
   private static getWorkflowFilePaths(source: string): string[] {

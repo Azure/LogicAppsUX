@@ -16,23 +16,17 @@ import {
 } from '../../utils/Connection.Utils';
 import type { UnknownNode } from '../../utils/DataMap.Utils';
 import { addParentConnectionForRepeatingElementsNested, getParentId } from '../../utils/DataMap.Utils';
-import { createFunctionDictionary, isFunctionData } from '../../utils/Function.Utils';
+import { assignFunctionNodePositionsFromMetadata, createFunctionDictionary, isFunctionData } from '../../utils/Function.Utils';
 import { flattenSchemaIntoDictionary, flattenSchemaNode, isSchemaNodeExtended, flattenSchemaIntoSortArray } from '../../utils/Schema.Utils';
-import type {
-  FunctionMetadata,
-  MapMetadataV2,
-  SchemaExtended,
-  SchemaNodeDictionary,
-  SchemaNodeExtended,
-} from '@microsoft/logic-apps-shared';
+import type { MapMetadataV2, SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { emptyCanvasRect, guid, SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
-import { convertConnectionShorthandToId, generateFunctionConnectionMetadata } from '../../mapHandling/MapMetadataSerializer';
 import type { Rect, XYPosition } from '@xyflow/react';
 import { createReactFlowFunctionKey, isFunctionNode, isSourceNode, isTargetNode } from '../../utils/ReactFlow.Util';
 import { UnboundedInput } from '../../constants/FunctionConstants';
 import { splitEdgeId } from '../../utils/Edge.Utils';
+import { doesFunctionMetadataExist } from '../../utils/Metadata.utils';
 
 export interface DataMapState {
   curDataMapOperation: DataMapOperationState;
@@ -76,6 +70,7 @@ export interface SchemaTreeDataProps {
 export interface DataMapOperationState {
   dataMapConnections: ConnectionDictionary;
   dataMapLML: string;
+  needsLayout?: boolean;
   sourceSchema?: SchemaExtended;
   flattenedSourceSchema: SchemaNodeDictionary;
   targetSchema?: SchemaExtended;
@@ -241,6 +236,10 @@ export const dataMapSlice = createSlice({
       state.curDataMapOperation = { ...currentState };
     },
 
+    setNeedsLayout: (state, action: PayloadAction<boolean>) => {
+      state.curDataMapOperation.needsLayout = action.payload;
+    },
+
     setInitialDataMap: (state, action: PayloadAction<InitialDataMapAction>) => {
       const { sourceSchema, targetSchema, dataMapConnections, metadata } = action.payload;
       const currentState = state.curDataMapOperation;
@@ -252,8 +251,11 @@ export const dataMapSlice = createSlice({
 
       assignFunctionNodePositionsFromMetadata(dataMapConnections, metadata?.functionNodes ?? [], functionNodes);
 
+      const needsLayout = !doesFunctionMetadataExist(metadata);
+
       const newState: DataMapOperationState = {
         ...currentState,
+        needsLayout: needsLayout,
         sourceSchema,
         targetSchema,
         flattenedSourceSchema,
@@ -659,6 +661,7 @@ export const dataMapSlice = createSlice({
 });
 
 export const {
+  setNeedsLayout,
   setXsltFilename,
   setXsltContent,
   setInitialSchema,
@@ -857,24 +860,4 @@ export const handleDirectAccessConnection = (
       }
     });
   }
-};
-
-export const assignFunctionNodePositionsFromMetadata = (
-  connections: ConnectionDictionary,
-  metadata: FunctionMetadata[],
-  functions: FunctionDictionary
-) => {
-  Object.keys(functions).forEach((key) => {
-    // find matching metadata
-    const generatedMetadata = generateFunctionConnectionMetadata(key, connections);
-    const id = convertConnectionShorthandToId(generatedMetadata);
-    const matchingMetadata = metadata.find((meta) => meta.connectionShorthand === id);
-
-    // assign position data to function in store
-    functions[key] = {
-      ...functions[key],
-      position: matchingMetadata?.position,
-    };
-  });
-  return functions;
 };

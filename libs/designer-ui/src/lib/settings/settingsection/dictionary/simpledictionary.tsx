@@ -5,6 +5,7 @@ import type { SimpleDictionaryRowModel, SimpleDictionaryChangeModel } from './si
 import type React from 'react';
 import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
+import { useStyles } from './simpledictionary.styles';
 
 export interface SimpleDictionaryProps {
   disabled?: boolean;
@@ -69,6 +70,7 @@ export const SimpleDictionary: React.FC<SimpleDictionaryProps> = ({
   };
 
   const dictionaryFieldID = useId('anInput');
+  const styles = useStyles();
 
   const indexItem = intl.formatMessage({
     defaultMessage: 'item',
@@ -79,7 +81,7 @@ export const SimpleDictionary: React.FC<SimpleDictionaryProps> = ({
   return (
     <>
       {customLabel ? customLabel : null}
-      <div id={dictionaryFieldID}>
+      <div id={dictionaryFieldID} className={styles.container}>
         {values.map((x) => (
           <SimpleDictionaryItem
             item={{ key: x.key, value: x.value, index: x.index }}

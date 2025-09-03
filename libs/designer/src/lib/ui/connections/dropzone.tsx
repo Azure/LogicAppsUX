@@ -1,10 +1,8 @@
 /* eslint-disable react/display-name */
 import { memo, useCallback, useMemo, useRef } from 'react';
 import { useDispatch } from 'react-redux';
-import { useDrop } from 'react-dnd';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { useIntl } from 'react-intl';
-import { css } from '@fluentui/utilities';
 import { ActionButtonV2 } from '@microsoft/designer-ui';
 import {
   containsIdTag,
@@ -15,23 +13,20 @@ import {
   LoggerService,
 } from '@microsoft/logic-apps-shared';
 
-import { useNodesTokenDependencies } from '../../core/state/operation/operationSelector';
 import type { AppDispatch } from '../../core';
 import { pasteOperation, pasteScopeOperation } from '../../core/actions/bjsworkflow/copypaste';
 import { useUpstreamNodes } from '../../core/state/tokens/tokenSelectors';
 import {
-  useAllGraphParents,
-  useGetAllOperationNodesWithin,
+  useHasUpstreamAgenticLoop,
+  useIsWithinAgenticLoop,
   useNodeDisplayName,
   useNodeMetadata,
 } from '../../core/state/workflow/workflowSelectors';
-import { AllowDropTarget } from './dynamicsvgs/allowdroptarget';
-import { BlockDropTarget } from './dynamicsvgs/blockdroptarget';
 import { retrieveClipboardData } from '../../core/utils/clipboard';
 import { setEdgeContextMenuData } from '../../core/state/designerView/designerViewSlice';
-import { canDropItem } from './helpers';
+import { useIsA2AWorkflow } from '../../core/state/designerView/designerViewSelectors';
 import { useIsDraggingNode } from '../../core/hooks/useIsDraggingNode';
-import { useIsDarkMode } from '../../core/state/designerOptions/designerOptionsSelectors';
+import { DropTarget } from './dropTarget';
 
 export interface DropZoneProps {
   graphId: string;
@@ -44,7 +39,7 @@ export interface DropZoneProps {
 export const DropZone: React.FC<DropZoneProps> = memo(({ graphId, parentId, childId, isLeaf = false, tabIndex = 0 }) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
-  const isDarkMode = useIsDarkMode();
+  const isA2AWorkflow = useIsA2AWorkflow();
 
   const nodeMetadata = useNodeMetadata(removeIdTag(parentId ?? ''));
   // For subgraph nodes, we want to use the id of the scope node as the parentId to get the dependancies
@@ -56,11 +51,22 @@ export const DropZone: React.FC<DropZoneProps> = memo(({ graphId, parentId, chil
   }, [nodeMetadata, parentId]);
 
   const upstreamNodesOfChild = useUpstreamNodes(removeIdTag(childId ?? newParentId ?? ''), graphId, childId);
-  const immediateAncestor = useGetAllOperationNodesWithin(parentId && !containsIdTag(parentId) ? parentId : '');
-  const upstreamNodes = useMemo(() => new Set([...upstreamNodesOfChild, ...immediateAncestor]), [immediateAncestor, upstreamNodesOfChild]);
-  const upstreamNodesDependencies = useNodesTokenDependencies(upstreamNodes);
-  const upstreamScopeArr = useAllGraphParents(graphId);
-  const upstreamScopes = useMemo(() => new Set(upstreamScopeArr), [upstreamScopeArr]);
+  const hasUpstreamAgenticLoop = useHasUpstreamAgenticLoop(Array.from(upstreamNodesOfChild));
+
+  const isWithinAgenticLoop = useIsWithinAgenticLoop(graphId);
+
+  const preventDropItemInA2A = useMemo(() => {
+    if (!isA2AWorkflow) {
+      return false;
+    }
+    // If there's an upstream agentic loop
+    if (hasUpstreamAgenticLoop) {
+      // Allow drop only if we're within a different agentic loop (subgraph)
+      return !isWithinAgenticLoop;
+    }
+    // No upstream agentic loop, allow drop
+    return false;
+  }, [hasUpstreamAgenticLoop, isA2AWorkflow, isWithinAgenticLoop]);
 
   const handlePasteClicked = useCallback(async () => {
     const relationshipIds = { graphId, childId, parentId };
@@ -101,6 +107,9 @@ export const DropZone: React.FC<DropZoneProps> = memo(({ graphId, parentId, chil
   const hotkeyRef = useHotkeys(
     ['meta+v', 'ctrl+v'],
     async () => {
+      if (preventDropItemInA2A) {
+        return;
+      }
       const copiedNode = await retrieveClipboardData();
       const pasteEnabled = !!copiedNode;
       if (pasteEnabled) {
@@ -111,24 +120,6 @@ export const DropZone: React.FC<DropZoneProps> = memo(({ graphId, parentId, chil
   );
 
   const isDragging = useIsDraggingNode();
-
-  const [{ canDrop }, drop] = useDrop(
-    () => ({
-      accept: 'BOX',
-      drop: () => ({ graphId, parentId, childId }),
-      canDrop: (item: {
-        id: string;
-        dependencies?: string[];
-        loopSources?: string[];
-        graphId?: string;
-        isScope?: boolean;
-      }) => canDropItem(item, upstreamNodes, upstreamNodesDependencies, upstreamScopes, childId, parentId),
-      collect: (monitor) => ({
-        canDrop: monitor.canDrop(),
-      }),
-    }),
-    [graphId, parentId, childId, upstreamNodes, upstreamNodesDependencies]
-  );
 
   const parentName = useNodeDisplayName(removeIdTag(parentId ?? ''));
   const childName = useNodeDisplayName(childId);
@@ -205,27 +196,27 @@ export const DropZone: React.FC<DropZoneProps> = memo(({ graphId, parentId, chil
   const buttonRef = useRef<HTMLDivElement>(null);
 
   return (
-    <div
-      ref={(node) => {
-        drop(node);
-        hotkeyRef.current = node;
-      }}
-      className={css('msla-drop-zone-viewmanager', isDragging && (canDrop ? 'canDrop' : 'cannotDrop'))}
-    >
-      {isDragging && (
-        <div style={{ display: 'grid', placeItems: 'center' }}>
-          {canDrop ? <AllowDropTarget fill="#0078D4" /> : <BlockDropTarget fill={isDarkMode ? '#252423' : '#edebe9'} />}
-        </div>
-      )}
-      {!isDragging && (
-        <div ref={buttonRef}>
-          <ActionButtonV2
-            id={buttonId}
-            dataAutomationId={automationId('plus')}
-            tabIndex={tabIndex}
-            title={tooltipText}
-            onClick={actionButtonClick}
-          />
+    <div ref={(node) => (hotkeyRef.current = node)}>
+      {isDragging ? (
+        <DropTarget
+          graphId={graphId}
+          parentId={parentId}
+          childId={childId}
+          upstreamNodesOfChild={upstreamNodesOfChild}
+          preventDropItemInA2A={preventDropItemInA2A}
+          isWithinAgenticLoop={isWithinAgenticLoop}
+        />
+      ) : (
+        <div className={'msla-drop-zone-viewmanager'}>
+          <div ref={buttonRef}>
+            <ActionButtonV2
+              id={buttonId}
+              dataAutomationId={automationId('plus')}
+              tabIndex={tabIndex}
+              title={tooltipText}
+              onClick={actionButtonClick}
+            />
+          </div>
         </div>
       )}
     </div>

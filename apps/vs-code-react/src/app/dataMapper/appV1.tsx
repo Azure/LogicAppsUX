@@ -107,6 +107,12 @@ export const DataMapperAppV1 = () => {
     });
   };
 
+  const onSwitchToV2 = () => {
+    sendMsgToVsix({
+      command: ExtensionCommand.switchToDataMapperV2,
+    });
+  };
+
   const setFunctionDisplayExpanded = (isFunctionDisplaySimple: boolean) => {
     dispatch(changeUseExpandedFunctionCards(isFunctionDisplaySimple));
   };
@@ -220,6 +226,7 @@ export const DataMapperAppV1 = () => {
             setIsMapStateDirty={setIsMapStateDirty}
             setFunctionDisplayExpanded={setFunctionDisplayExpanded}
             useExpandedFunctionCards={useExpandedFunctionCards}
+            onSwitchToV2={onSwitchToV2}
           />
         </div>
       </DataMapDataProvider>

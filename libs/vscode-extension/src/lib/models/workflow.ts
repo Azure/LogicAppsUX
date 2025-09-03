@@ -26,6 +26,13 @@ export interface IDesignerPanelMetadata {
   accessToken?: string;
   schemaArtifacts: FileDetails[];
   mapArtifacts: Record<string, FileDetails[]>;
+  extensionBundleVersion?: string;
+}
+
+export interface CompleteFileSystemConnectionData {
+  connectionName: string;
+  connection: any;
+  error: string;
 }
 
 export interface StandardApp {

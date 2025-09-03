@@ -110,7 +110,6 @@ const getIndexStart = (workflowsGroups: IGroupedGroup[], children: IGroupedGroup
 export const parseValidationData = (validationData: IValidationData | undefined, workflowGroupDisplayName?: string) => {
   const workflowsSchema: Record<string, IWorkflowValidation> = validationData?.workflows ?? {};
   const workflowsGroups: IGroupedGroup[] = [];
-  const workflowsItems: IGroupedItem[] = [];
 
   const workflowsIds: string[] = Object.keys(workflowsSchema);
 
@@ -120,7 +119,6 @@ export const parseValidationData = (validationData: IValidationData | undefined,
     const children: IGroupedGroup[] = [];
 
     if (workflowSchema.details) {
-      workflowsItems.push({ action: workflowId, status: workflowSchema.validationState, message: workflowSchema.details.error?.message });
       children.push(
         getValidationGroup(workflowSchema, workflowGroupDisplayName ?? workflowId, 1, getIndexStart(workflowsGroups, [], 0), 1, [])
       );
@@ -140,8 +138,6 @@ export const parseValidationData = (validationData: IValidationData | undefined,
 
       const innerValidationGroup = getValidationGroup(action, workflowSchemaKey, 1, indexStart, validationGroups.length, validationGroups);
       children.push(innerValidationGroup);
-
-      workflowsItems.push(...items);
     });
 
     const workflowsGroupsLength = workflowsGroups.length;
@@ -153,7 +149,7 @@ export const parseValidationData = (validationData: IValidationData | undefined,
     workflowsGroups.push(workflowGroup);
   });
 
-  return { validationItems: workflowsItems, validationGroups: workflowsGroups };
+  return { validationGroups: workflowsGroups };
 };
 
 export const getOverallValidationStatus = (validationData: IValidationData): string => {

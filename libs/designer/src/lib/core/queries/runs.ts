@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { isNullOrUndefined, type LogicAppsV2, type Run, RunService } from '@microsoft/logic-apps-shared';
+import { type ChatHistory, isNullOrUndefined, type LogicAppsV2, type Run, RunService } from '@microsoft/logic-apps-shared';
 import { getReactQueryClient } from '../ReactQueryProvider';
 import { isRunError } from '@microsoft/designer-ui';
 import constants from '../../common/constants';
@@ -11,11 +11,6 @@ const queryOpts = {
   refetchOnReconnect: false,
 };
 
-export interface ChatHistory {
-  nodeId: string;
-  messages: any[];
-}
-
 export const runsQueriesKeys = {
   runs: 'runs',
   run: 'run',
@@ -23,7 +18,8 @@ export const runsQueriesKeys = {
   useScopeFailedRepetitions: 'useScopeFailedRepetitions',
   useAgentRepetition: 'useAgentRepetition',
   useAgentActionsRepetition: 'useAgentActionsRepetition',
-  useChatHistory: 'useChatHistory',
+  useActionsChatHistory: 'useActionsChatHistory',
+  useRunChatHistory: 'useRunChatHistory',
   useAgentChatInvokeUri: 'useAgentChatInvokeUri',
   useRunInstance: 'useRunInstance',
   useCancelRun: 'useCancelRun',
@@ -127,18 +123,20 @@ export const useScopeFailedRepetitions = (normalizedType: string, nodeId: string
     async () => {
       let failedRunRepetitions: LogicAppsV2.RunRepetition[] = [];
       try {
-        const { value } = await RunService().getScopeRepetitions({ nodeId, runId }, constants.FLOW_STATUS.FAILED);
-        failedRunRepetitions = value;
+        const firstFailedActions = await RunService().getScopeRepetitions({ nodeId, runId }, constants.FLOW_STATUS.FAILED);
+        failedRunRepetitions.push(...(firstFailedActions?.value ?? []));
+        let nextLink = firstFailedActions?.nextLink;
+
+        while (nextLink) {
+          const moreActions = await RunService().getMoreScopeRepetitions(nextLink);
+          failedRunRepetitions.push(...(moreActions?.value ?? []));
+          nextLink = moreActions?.nextLink;
+        }
       } catch {
         failedRunRepetitions = [];
       }
-      const _failedRepetitions: number[] = failedRunRepetitions.reduce((acc: number[], current: LogicAppsV2.RunRepetition) => {
-        const scopeObject = current.properties?.repetitionIndexes?.find((item) => item.scopeName === nodeId);
-        const indexOfFail = isNullOrUndefined(scopeObject) ? undefined : scopeObject.itemIndex;
-        acc.push(indexOfFail ?? []);
-        return acc;
-      }, []);
-      return _failedRepetitions.sort((a, b) => a - b);
+
+      return parseFailedRepetitions(failedRunRepetitions, nodeId);
     },
     {
       ...queryOpts,
@@ -148,7 +146,7 @@ export const useScopeFailedRepetitions = (normalizedType: string, nodeId: string
 };
 
 export const useAgentRepetition = (
-  isMonitoringView: boolean,
+  isEnabled: boolean,
   isAgent: boolean,
   nodeId: string,
   runId: string | undefined,
@@ -164,7 +162,7 @@ export const useAgentRepetition = (
     {
       ...queryOpts,
       retryOnMount: false,
-      enabled: isMonitoringView && runIndex !== undefined && isAgent,
+      enabled: isEnabled,
     }
   );
 };
@@ -176,8 +174,7 @@ export const useCancelRun = (runId: string) => {
 };
 
 export const useAgentActionsRepetition = (
-  isMonitoringView: boolean,
-  isParentAgent: boolean,
+  isEnabled: boolean,
   nodeId: string,
   runId: string | undefined,
   repetitionName: string,
@@ -201,18 +198,18 @@ export const useAgentActionsRepetition = (
     {
       ...queryOpts,
       retryOnMount: false,
-      enabled: isMonitoringView && runIndex !== undefined && isParentAgent,
+      enabled: isEnabled,
     }
   );
 };
 
-export const useChatHistory = (isMonitoringView: boolean, nodeIds: string[], runId: string | undefined) => {
+export const useActionsChatHistory = (nodeIds: string[], runId: string | undefined, isEnabled: boolean) => {
   return useQuery(
-    [runsQueriesKeys.useChatHistory, { nodeIds, runId }],
+    [runsQueriesKeys.useActionsChatHistory, { nodeIds, runId }],
     async () => {
       const allMessages: ChatHistory[] = [];
       for (const nodeId of nodeIds) {
-        const messages = await RunService().getChatHistory({ nodeId, runId });
+        const messages = await RunService().getActionChatHistory({ nodeId, runId });
         allMessages.push({ nodeId, messages });
       }
       return allMessages;
@@ -220,9 +217,45 @@ export const useChatHistory = (isMonitoringView: boolean, nodeIds: string[], run
     {
       ...queryOpts,
       retryOnMount: false,
-      enabled: isMonitoringView && runId !== undefined && nodeIds.length > 0,
+      enabled: isEnabled && runId !== undefined && nodeIds?.length > 0,
     }
   );
+};
+
+export const useRunChatHistory = (runId: string | undefined, isEnabled: boolean) => {
+  return useQuery(
+    [runsQueriesKeys.useRunChatHistory, { runId }],
+    async () => {
+      if (isNullOrUndefined(runId)) {
+        return null;
+      }
+      const messages = (await RunService().getRunChatHistory(runId)) ?? [];
+      const sortedMessages = messages.sort((a: any, b: any) => {
+        const dateA = new Date(a.timestamp);
+        const dateB = new Date(b.timestamp);
+        return dateB.getTime() - dateA.getTime();
+      });
+      return [
+        {
+          nodeId: 'root',
+          messages: sortedMessages,
+        },
+      ];
+    },
+    {
+      ...queryOpts,
+      retryOnMount: false,
+      enabled: isEnabled && runId !== undefined,
+    }
+  );
+};
+
+export const useChatHistory = (isMonitoringView: boolean, runId: string | undefined, nodeIds: string[] = [], isA2AWorkflow: boolean) => {
+  const actionHistoryQuery = useActionsChatHistory(nodeIds, runId, isMonitoringView && !isA2AWorkflow);
+
+  const runHistoryQuery = useRunChatHistory(runId, isMonitoringView && isA2AWorkflow);
+
+  return isA2AWorkflow ? runHistoryQuery : actionHistoryQuery;
 };
 
 export const useAgentChatInvokeUri = (isMonitoringView: boolean, isAgenticWorkflow: boolean, id: string | undefined) => {
@@ -243,4 +276,26 @@ export const useAgentChatInvokeUri = (isMonitoringView: boolean, isAgenticWorkfl
       enabled: isMonitoringView && isAgenticWorkflow && id !== undefined,
     }
   );
+};
+
+export const parseFailedRepetitions = (failedRunRepetitions: LogicAppsV2.RunRepetition[], nodeId: string): number[] => {
+  // Early return for empty input
+  if (!failedRunRepetitions?.length) {
+    return [];
+  }
+
+  // Extract and filter valid indices in a single pass
+  const failedIndices = failedRunRepetitions
+    .map((repetition) => {
+      // Use optional chaining for safer property access
+      const scopeObject = repetition.properties?.repetitionIndexes?.find((item) => item.scopeName === nodeId);
+
+      // Return the itemIndex if found, otherwise undefined
+      return scopeObject?.itemIndex;
+    })
+    // Filter out undefined values and ensure we have numbers
+    .filter((index): index is number => index !== undefined && index !== null && typeof index === 'number');
+
+  // Sort in ascending order
+  return failedIndices.sort((a, b) => a - b);
 };

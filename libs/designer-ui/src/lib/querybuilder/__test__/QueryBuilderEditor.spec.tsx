@@ -11,6 +11,7 @@ import {
   QueryBuilderTestWrapper,
   createTestValueSegment,
 } from './test-utils';
+import { ValueSegmentType } from '../../editor';
 
 describe('QueryBuilderEditor Move Functionality', () => {
   let user: ReturnType<typeof userEvent.setup>;
@@ -259,7 +260,7 @@ describe('QueryBuilderEditor Move Functionality', () => {
       renderQueryBuilder({ groupProps: emptyGroup });
 
       // Should still render with a default row
-      expect(screen.getByRole('textbox')).toBeInTheDocument();
+      expect(screen.getAllByRole('textbox')).toHaveLength(2); // Default row has 2 textboxes (operand1 and operand2)
     });
 
     it('should handle deeply nested structures', () => {
@@ -297,7 +298,7 @@ describe('QueryBuilderEditor Move Functionality', () => {
 
     it('should pass token mapping to child components', () => {
       const tokenMapping = {
-        token1: { id: '1', type: 'literal', value: 'test' },
+        token1: { id: '1', type: ValueSegmentType.LITERAL, value: 'test' },
       };
       renderQueryBuilder({ tokenMapping });
 

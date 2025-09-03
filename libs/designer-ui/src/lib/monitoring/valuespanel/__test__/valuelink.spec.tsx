@@ -25,23 +25,10 @@ describe('lib/monitoring/valuespanel/valuelink', () => {
     const link = renderer.getRenderOutput();
     expect(link.props).toEqual(
       expect.objectContaining({
+        appearance: 'subtle',
+        children: 'link-text',
         className: 'msla-show-raw-button',
-        iconProps: {
-          iconName: 'ChevronRightSmall',
-        },
-        styles: {
-          flexContainer: {
-            flexDirection: 'row-reverse',
-          },
-          root: {
-            border: 'none',
-            marginRight: '8px',
-          },
-          rootHovered: {
-            border: 'none',
-          },
-        },
-        text: minimal.linkText,
+        iconPosition: 'after',
       })
     );
   });

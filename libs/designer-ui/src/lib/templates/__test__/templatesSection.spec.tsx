@@ -87,13 +87,15 @@ describe('ui/templates/templatesSection', () => {
     const [_first, _second, third]: any[] = React.Children.toArray(callout.props.children);
     expect(third.props.className).toBe(classNames.sectionItems);
     const [firstText, secondText]: any[] = React.Children.toArray(third.props.children);
-    expect(firstText.props.className).toBe(classNames.sectionItem);
-    expect(secondText.props.className).toBe(classNames.sectionItem);
-    const [firstLabel, firstValue]: any[] = React.Children.toArray(firstText.props.children);
-    expect(firstLabel.props.className).toBe(classNames.sectionItemLabel);
-    expect(firstValue.props.className).toBe(classNames.sectionItemValue);
 
-    const [secondValue]: any[] = React.Children.toArray(secondText.props.children);
-    expect(secondValue.props.className).toBe(classNames.sectionItemValue);
+    // The shallow renderer only goes one level deep, so FieldSectionItem components
+    // are not fully rendered. We need to check the component type instead.
+    expect(firstText.type.name).toBe('FieldSectionItem');
+    expect(secondText.type.name).toBe('FieldSectionItem');
+    expect(firstText.props.item.type).toBe('text');
+    expect(firstText.props.item.label).toBe('label1');
+    expect(firstText.props.item.value).toBe('value 1');
+    expect(secondText.props.item.type).toBe('text');
+    expect(secondText.props.item.value).toBe('value 2');
   });
 });

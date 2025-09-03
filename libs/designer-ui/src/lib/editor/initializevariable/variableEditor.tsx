@@ -121,15 +121,18 @@ const FieldEditor = ({
   editor: React.ElementType;
   editorProps: Record<string, any>;
   errorMessage?: string;
-}) => (
-  <div className="msla-input-parameter-field">
-    <div className="msla-input-parameter-label">
-      <Label id={id} isRequiredField={isRequired} text={label} />
+}) => {
+  const { key, ...restEditorProps } = editorProps;
+  return (
+    <div className="msla-input-parameter-field">
+      <div className="msla-input-parameter-label">
+        <Label id={id} isRequiredField={isRequired} text={label} />
+      </div>
+      <EditorComponent key={key} {...restEditorProps} labelId={`${label} - ${index}`} />
+      {errorMessage ? <div className="msla-input-parameter-error">{errorMessage}</div> : null}
     </div>
-    <EditorComponent {...editorProps} labelId={`${label} - ${index}`} />
-    {errorMessage ? <div className="msla-input-parameter-error">{errorMessage}</div> : null}
-  </div>
-);
+  );
+};
 
 export const VariableEditor = ({
   variable,

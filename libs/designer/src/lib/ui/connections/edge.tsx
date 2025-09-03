@@ -1,17 +1,17 @@
+import type React from 'react';
+import { memo, useMemo } from 'react';
+import type { ElkExtendedEdge } from 'elkjs/lib/elk-api';
+import { EdgeLabelRenderer, getSmoothStepPath, useReactFlow, type EdgeProps } from '@xyflow/react';
+import { css } from '@fluentui/utilities';
+import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
+import { containsIdTag, removeIdTag, getEdgeCenter, RUN_AFTER_STATUS, useEdgeIndex } from '@microsoft/logic-apps-shared';
+
 import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { useActionMetadata, useNodeEdgeTargets, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
 import { DropZone } from './dropzone';
 import { ArrowCap } from './dynamicsvgs/arrowCap';
 import { CollapsedRunAfterIndicator, RunAfterIndicator } from './runAfterIndicator';
-import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
-import { containsIdTag, removeIdTag, getEdgeCenter, RUN_AFTER_STATUS, useEdgeIndex } from '@microsoft/logic-apps-shared';
-import type { ElkExtendedEdge } from 'elkjs/lib/elk-api';
-import type React from 'react';
-import { memo, useMemo } from 'react';
-import { EdgeLabelRenderer, getSmoothStepPath, useReactFlow, type EdgeProps } from '@xyflow/react';
 import { useIsNodeSelectedInOperationPanel } from '../../core/state/panel/panelSelectors';
-import { css } from '@fluentui/utilities';
-
 interface EdgeContentProps {
   x: number;
   y: number;
@@ -49,7 +49,7 @@ export interface LogicAppsEdgeProps {
 }
 
 const edgeContentHeight = 24;
-const edgeContentWidth = 200;
+const edgeContentWidth = 92;
 
 const runAfterWidth = 36;
 const runAfterHeight = 12;
@@ -159,7 +159,8 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
         style={style}
         className={css('react-flow__edge-path', highlighted ? 'highlighted' : '')}
         d={d}
-        strokeDasharray={showRunAfter ? '4' : '0'}
+        strokeDasharray={showRunAfter ? '4 6' : '0'}
+        strokeLinecap={'round'}
         markerEnd={`url(#arrow-end-${id})`}
       />
 

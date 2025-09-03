@@ -2,16 +2,17 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import { AppSettingsTreeItem } from '@microsoft/vscode-azext-azureappsettings';
 import { localize } from '../../../localize';
 import { getThemedIconPath } from '../../utils/tree/assets';
 import { getProjectContextValue } from '../../utils/tree/projectContextValues';
 import type { SlotTreeItem } from '../slotsTree/SlotTreeItem';
 import { ConnectionsTreeItem } from './connectionsTree/ConnectionsTreeItem';
 import { ParametersTreeItem } from './parametersTree/ParametersTreeItem';
-import { AppSettingsTreeItem } from '@microsoft/vscode-azext-azureappservice';
 import { AzExtParentTreeItem } from '@microsoft/vscode-azext-utils';
 import type { AzExtTreeItem, IActionContext, TreeItemIconPath } from '@microsoft/vscode-azext-utils';
 import { ProjectAccess, ProjectResource } from '@microsoft/vscode-extension-logic-apps';
+import { ext } from '../../../extensionVariables';
 
 export class ConfigurationsTreeItem extends AzExtParentTreeItem {
   public static contextValue = 'azLogicAppsConfigurations';
@@ -25,7 +26,9 @@ export class ConfigurationsTreeItem extends AzExtParentTreeItem {
 
   private constructor(parent: SlotTreeItem) {
     super(parent);
-    this.appSettingsTreeItem = new AppSettingsTreeItem(this, this.parent.site);
+    this.appSettingsTreeItem = new AppSettingsTreeItem(this, this.parent.site, ext.prefix, {
+      contextValuesToAdd: [ConfigurationsTreeItem.contextValue],
+    });
   }
 
   public static async createConfigurationsTreeItem(parent: SlotTreeItem, context: IActionContext): Promise<ConfigurationsTreeItem> {

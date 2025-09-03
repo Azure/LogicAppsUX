@@ -2,48 +2,42 @@ import React from 'react';
 import type { SearchableDropdownProps } from '..';
 import { SearchableDropdown } from '..';
 import renderer from 'react-test-renderer';
+import { describe, vi, it, expect } from 'vitest';
 
-// vi.mock('@fluentui/react', () => ({
-//   ...vi.requireActual('@fluentui/react'),
-//   Dropdown: 'Dropdown',
-// }));
-import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
-describe('lib/searchabledropdown', () => {
-  it('should create a dropdown without a search box for 3 options', () => {
+describe('SearchableDropdown', () => {
+  it('should render dropdown without a search box when options.length < threshold', () => {
     const props: SearchableDropdownProps = {
-      dropdownProps: {
-        multiSelect: true,
-        placeholder: 'Select an option',
-        options: [
-          { key: 'foo', text: 'Foo' },
-          { key: 'bar', text: 'Bar' },
-          { key: 'baz', text: 'Baz' },
-        ],
-      },
+      multiselect: true,
+      placeholder: 'Select an option',
+      options: [
+        { key: 'foo', text: 'Foo' },
+        { key: 'bar', text: 'Bar' },
+        { key: 'baz', text: 'Baz' },
+      ],
       onItemSelectionChanged: vi.fn(),
+      showSearchItemThreshold: 4, // default anyway, but explicit here
     };
-    const component = <SearchableDropdown {...props} />;
-    const renderedComponent = renderer.create(component).toJSON();
-    expect(renderedComponent).toMatchSnapshot();
+
+    const tree = renderer.create(<SearchableDropdown {...props} />).toJSON();
+    expect(tree).toMatchSnapshot();
   });
 
-  it('should create a dropdown with a search box for 5 options', () => {
+  it('should render dropdown with a search box when options.length >= threshold', () => {
     const props: SearchableDropdownProps = {
-      dropdownProps: {
-        multiSelect: true,
-        placeholder: 'Select an option',
-        options: [
-          { key: 'foo', text: 'Foo' },
-          { key: 'bar', text: 'Bar' },
-          { key: 'baz', text: 'Baz' },
-          { key: 'qux', text: 'Qux' },
-          { key: 'qoz', text: 'Qoz' },
-        ],
-      },
+      multiselect: true,
+      placeholder: 'Select an option',
+      options: [
+        { key: 'foo', text: 'Foo' },
+        { key: 'bar', text: 'Bar' },
+        { key: 'baz', text: 'Baz' },
+        { key: 'qux', text: 'Qux' },
+        { key: 'qoz', text: 'Qoz' },
+      ],
       onItemSelectionChanged: vi.fn(),
+      showSearchItemThreshold: 4,
     };
-    const component = <SearchableDropdown {...props} />;
-    const renderedComponent = renderer.create(component).toJSON();
-    expect(renderedComponent).toMatchSnapshot();
+
+    const tree = renderer.create(<SearchableDropdown {...props} />).toJSON();
+    expect(tree).toMatchSnapshot();
   });
 });

@@ -18,10 +18,10 @@ import { buildCustomCodeFunctionsProject } from './buildCustomCodeFunctionsProje
 import { configureDeploymentSource } from './configureDeploymentSource';
 import { createChildNode } from './createChildNode';
 import { createLogicApp, createLogicAppAdvanced } from './createLogicApp/createLogicApp';
-import { cloudToLocalCommand } from './createNewCodeProject/cloudToLocal';
-import { createNewCodeProjectFromCommand } from './createNewCodeProject/createNewCodeProject';
-import { createNewProjectFromCommand } from './createNewProject/createNewProject';
-import { createCustomCodeFunctionFromCommand } from './createCustomCodeFunction/createCustomCodeFunction';
+import { cloudToLocal } from './cloudToLocal/cloudToLocal';
+import { createWorkspace } from './createWorkspace/createWorkspace';
+import { createProject } from './createProject/createProject';
+import { createCustomCodeFunction } from './createCustomCodeFunction/createCustomCodeFunction';
 import { createSlot } from './createSlot';
 import { createWorkflow } from './createWorkflow/createWorkflow';
 import { createNewDataMapCmd, loadDataMapFileCmd } from './dataMapper/dataMapper';
@@ -50,7 +50,6 @@ import { viewProperties } from './viewProperties';
 import { configureWebhookRedirectEndpoint } from './workflows/configureWebhookRedirectEndpoint/configureWebhookRedirectEndpoint';
 import { enableAzureConnectors } from './workflows/enableAzureConnectors';
 import { exportLogicApp } from './workflows/exportLogicApp';
-import { getDebugSymbolDll } from './workflows/getDebugSymbolDll';
 import { openDesigner } from './workflows/openDesigner/openDesigner';
 import { openOverview } from './workflows/openOverview';
 import { reviewValidation } from './workflows/reviewValidation';
@@ -58,14 +57,27 @@ import { switchDebugMode } from './workflows/switchDebugMode/switchDebugMode';
 import { switchToDotnetProjectCommand } from './workflows/switchToDotnetProject';
 import { useSQLStorage } from './workflows/useSQLStorage';
 import { viewContent } from './workflows/viewContent';
-import { AppSettingsTreeItem, AppSettingTreeItem, registerSiteCommand } from '@microsoft/vscode-azext-azureappservice';
-import type { FileTreeItem } from '@microsoft/vscode-azext-azureappservice';
-import { registerCommand, registerCommandWithTreeNodeUnwrapping, unwrapTreeNodeCommandCallback } from '@microsoft/vscode-azext-utils';
-import type { AzExtTreeItem, IActionContext, AzExtParentTreeItem } from '@microsoft/vscode-azext-utils';
+import { registerSiteCommand, type FileTreeItem } from '@microsoft/vscode-azext-azureappservice';
+import {
+  parseError,
+  registerCommand,
+  registerCommandWithTreeNodeUnwrapping,
+  registerErrorHandler,
+  registerReportIssueCommand,
+  unwrapTreeNodeCommandCallback,
+  UserCancelledError,
+} from '@microsoft/vscode-azext-utils';
+import type { AzExtTreeItem, IActionContext, AzExtParentTreeItem, IErrorHandlerContext, IParsedError } from '@microsoft/vscode-azext-utils';
 import type { Uri } from 'vscode';
 import { pickCustomCodeNetHostProcess } from './pickCustomCodeNetHostProcess';
 import { debugLogicApp } from './debugLogicApp';
 import { syncCloudSettings } from './syncCloudSettings';
+import { getDebugSymbolDll } from '../utils/debug';
+import { AppSettingsTreeItem, AppSettingTreeItem } from '@microsoft/vscode-azext-azureappsettings';
+import { switchToDataMapperV2 } from './setDataMapperVersion';
+import { reportAnIssue } from '../utils/reportAnIssue';
+import { localize } from '../../localize';
+import { guid } from '@microsoft/logic-apps-shared';
 
 export function registerCommands(): void {
   registerCommandWithTreeNodeUnwrapping(extensionCommand.openDesigner, openDesigner);
@@ -73,9 +85,9 @@ export function registerCommands(): void {
     executeOnFunctions(openFile, context, context, node)
   );
   registerCommandWithTreeNodeUnwrapping(extensionCommand.viewContent, viewContent);
-  registerCommand(extensionCommand.createNewProject, createNewProjectFromCommand);
-  registerCommand(extensionCommand.createNewWorkspace, createNewCodeProjectFromCommand);
-  registerCommand(extensionCommand.cloudToLocal, cloudToLocalCommand);
+  registerCommand(extensionCommand.createProject, createProject);
+  registerCommand(extensionCommand.createWorkspace, createWorkspace);
+  registerCommand(extensionCommand.cloudToLocal, cloudToLocal);
   registerCommand(extensionCommand.createWorkflow, createWorkflow);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.createLogicApp, createLogicApp);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.createLogicAppAdvanced, createLogicAppAdvanced);
@@ -151,6 +163,40 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.loadDataMapFile, (context: IActionContext, uri: Uri) => loadDataMapFileCmd(context, uri));
   // Custom code commands
   registerCommandWithTreeNodeUnwrapping(extensionCommand.buildCustomCodeFunctionsProject, buildCustomCodeFunctionsProject);
-  registerCommand(extensionCommand.createCustomCodeFunction, createCustomCodeFunctionFromCommand);
+  registerCommand(extensionCommand.createCustomCodeFunction, createCustomCodeFunction);
   registerCommand(extensionCommand.debugLogicApp, debugLogicApp);
+  registerCommand(extensionCommand.switchToDataMapperV2, switchToDataMapperV2);
+
+  registerErrorHandler((errorContext: IErrorHandlerContext): void => {
+    // Suppress "Report an Issue" button for all errors since then we are going to render our custom button
+    errorContext.errorHandling.suppressReportIssue = true;
+    const errorData: IParsedError = parseError(errorContext.error);
+    const correlationId = guid();
+
+    if (errorContext.error instanceof UserCancelledError) {
+      errorContext.errorHandling.suppressDisplay = true;
+      errorContext.telemetry.properties.isUserCancelled = 'true';
+      errorContext.telemetry.properties.commandName = errorContext.error.name;
+    }
+
+    if (!errorContext.errorHandling.suppressDisplay) {
+      errorContext.errorHandling.buttons = [
+        {
+          title: localize('reportIssue', 'Report an issue'),
+          callback: async () => reportAnIssue(errorContext, errorData, correlationId),
+        },
+      ];
+    }
+    ext.outputChannel.appendLine(localize('outputError', 'Error: {0}', errorData.message));
+    if (errorData.message.includes('\n')) {
+      ext.outputChannel.show();
+    }
+    errorContext.telemetry.properties.handlingData = JSON.stringify({
+      message: errorData.message,
+      extensionVersion: ext.extensionVersion,
+      bundleVersion: ext.latestBundleVersion,
+      correlationId: correlationId,
+    });
+  });
+  registerReportIssueCommand(extensionCommand.reportIssue);
 }

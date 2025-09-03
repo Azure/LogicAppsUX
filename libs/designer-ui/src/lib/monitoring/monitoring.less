@@ -1,9 +1,7 @@
 @import (reference) '../variables.less';
 
 .msla-trace-inputs-outputs {
-  background-color: #fff;
-  border: @defaultBorder;
-  margin-bottom: 20px;
+  margin: 16px 0px;
 
   &:last-child {
     margin-bottom: 0;
@@ -12,6 +10,7 @@
   .msla-trace-inputs-outputs-header {
     align-items: center;
     display: flex;
+		gap: 6px;
 
     .msla-trace-inputs-outputs-header-text {
       border-left-style: solid;
@@ -21,17 +20,16 @@
       font-weight: 600;
       margin: 0;
       padding: 1em;
-      text-transform: uppercase;
       line-height: inherit;
     }
+
   }
 
   .msla-trace-values {
-    padding: 1em;
-    border-top: @defaultBorder;
+    padding: 16px;
 
     .msla-trace-download-link {
-      padding: 0.75em 1.25em 0;
+      padding: 8px;
 
       a {
         &:link {
@@ -46,10 +44,10 @@
 
     .msla-trace-value-label {
       display: block;
+			margin-bottom: 12px;
 
       .msla-trace-value-display-name {
         font-weight: 600;
-        padding: 0.75em 1.25em 0;
       }
 
       .msla-trace-value-text {
@@ -116,6 +114,10 @@
   }
 }
 
+.msla-value-list {
+	padding: 8px 16px;
+}
+
 .msla-card-body.msla-has-errors {
   > .msla-monitoring-parameters-card-body {
     margin: 0;
@@ -149,8 +151,6 @@
 
 .msla-theme-dark {
   .msla-trace-inputs-outputs {
-    background-color: @ms-color-white;
-
     .msla-trace-values {
       .msla-trace-value-label {
         .msla-trace-value-text {

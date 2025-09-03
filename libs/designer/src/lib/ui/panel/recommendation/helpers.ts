@@ -31,3 +31,13 @@ export const getOperationCardDataFromOperation = (operation: DiscoveryOperation<
   apiId: operation.properties.api.id,
   releaseStatus: operation.properties.annotation?.status,
 });
+
+export const ALLOWED_A2A_CONNECTOR_NAMES = new Set([
+  'http',
+  'dataOperationNew',
+  'variable',
+  'xmlOperations',
+  'inlineCode',
+  'as2Operations',
+  'datetime',
+]);

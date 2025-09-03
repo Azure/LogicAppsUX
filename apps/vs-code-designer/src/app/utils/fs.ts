@@ -93,7 +93,7 @@ export async function confirmEditJsonFile(
   if (await fse.pathExists(fsPath)) {
     try {
       newData = editJson((await fse.readJson(fsPath)) as Record<string, any>);
-    } catch (error) {
+    } catch {
       // If we failed to parse or edit the existing file, just ask to overwrite the file completely
       if (await confirmOverwriteFile(context, fsPath)) {
         newData = editJson({});

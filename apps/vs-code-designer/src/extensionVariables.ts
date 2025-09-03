@@ -23,6 +23,7 @@ import {
   type TestController,
   type MessageOptions,
 } from 'vscode';
+import type { AzureResourcesExtensionApi } from '@microsoft/vscode-azureresources-api';
 
 /**
  * Namespace for common variables used throughout the extension. They must be initialized in the activate() method of extension.ts
@@ -35,11 +36,13 @@ type DesignTimeInstance = {
   process?: cp.ChildProcess;
   childFuncPid?: string;
   port?: number;
+  isStarting?: boolean;
 };
 
 // biome-ignore lint/style/noNamespace:
 export namespace ext {
   export let context: ExtensionContext;
+  export let codefulEnabled: boolean;
   export const designTimeInstances: Map<string, DesignTimeInstance> = new Map();
   export let workflowDotNetProcess: cp.ChildProcess | undefined;
   export let workflowNodeProcess: cp.ChildProcess | undefined;
@@ -66,6 +69,7 @@ export namespace ext {
 
   // Resource group API
   export let rgApi: AzureHostExtensionApi;
+  export let rgApiV2: AzureResourcesExtensionApi;
 
   // Data Mapper panel
   export const dataMapPanelManagers: DataMapperPanelDictionary = {};

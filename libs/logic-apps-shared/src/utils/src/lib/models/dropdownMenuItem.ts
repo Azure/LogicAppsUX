@@ -4,4 +4,5 @@ export interface DropdownMenuItem {
   onClick: () => void;
   text: string;
   dataAutomationId?: string;
+  disabled?: boolean;
 }

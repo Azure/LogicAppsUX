@@ -1,10 +1,17 @@
 import type { SettingProps } from './';
-import { Dropdown } from '@fluentui/react';
-import type { IDropdownOption } from '@fluentui/react';
+import { Dropdown, Option, type DropdownProps } from '@fluentui/react-components';
+import { useStyles } from './settingdropdown.styles';
 
 export interface SelectionChangedEvent {
   currentTarget: any;
   value: string;
+}
+
+// Backward compatibility interface similar to v8 IDropdownOption
+export interface IDropdownOption {
+  key: string;
+  text: string;
+  disabled?: boolean;
 }
 
 export type DropdownSelectionChangeHandler = (option: IDropdownOption) => void;
@@ -44,25 +51,40 @@ export const SettingDropdown = ({
   customLabel,
   ariaLabel,
 }: SettingDropdownProps): JSX.Element | null => {
-  const mapDropdownItemsToIDropdownOptions = (items: DropdownItem[]): IDropdownOption[] => {
-    return items.map(({ disabled, title: text, value: key }: DropdownItem) => ({
-      disabled,
-      key,
-      text,
-    }));
+  const styles = useStyles();
+
+  const handleSelectionChange: DropdownProps['onOptionSelect'] = (_, data) => {
+    const selectedItem = items.find((item) => item.value === data.optionValue);
+    if (selectedItem && onSelectionChanged) {
+      // Convert to v8-compatible format for backward compatibility
+      onSelectionChanged({
+        key: selectedItem.value,
+        text: selectedItem.title,
+        disabled: selectedItem.disabled,
+      });
+    }
   };
+
+  const selectedOption = items.find((item) => item.value === selectedValue);
+
   return (
-    <>
+    <div className={styles.root}>
       {customLabel ? customLabel : null}
       <Dropdown
-        className="msla-setting-section-dropdown"
+        className={styles.dropdown}
         id={id}
-        ariaLabel={ariaLabel}
+        aria-label={ariaLabel}
         disabled={readOnly}
-        options={mapDropdownItemsToIDropdownOptions(items)}
-        selectedKey={selectedValue}
-        onChange={(_, option) => onSelectionChanged?.(option as IDropdownOption)}
-      />
-    </>
+        value={selectedOption?.title || ''}
+        selectedOptions={selectedValue ? [selectedValue] : []}
+        onOptionSelect={handleSelectionChange}
+      >
+        {items.map((item) => (
+          <Option key={item.value} value={item.value} disabled={item.disabled}>
+            {item.title}
+          </Option>
+        ))}
+      </Dropdown>
+    </div>
   );
 };

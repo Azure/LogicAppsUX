@@ -1,7 +1,8 @@
+import { mergeClasses } from '@fluentui/react-components';
 import constants from '../constants';
 import type { ValueSegment } from '../editor';
 import { EditorCollapseToggle } from '../editor';
-import type { BaseEditorProps, GetTokenPickerHandler } from '../editor/base';
+import type { BaseEditorProps } from '../editor/base';
 import { convertKeyValueItemToSegments } from '../editor/base/utils/keyvalueitem';
 import { CollapsedDictionary } from './collapsedDictionary';
 import { ExpandedDictionary } from './expandeddictionary';
@@ -27,7 +28,6 @@ export interface DictionaryEditorProps extends BaseEditorProps {
   valueTitle?: string;
   keyType?: string;
   dictionaryType?: DictionaryType;
-  getTokenPicker: GetTokenPickerHandler;
 }
 
 export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
@@ -79,7 +79,10 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
   });
 
   return (
-    <div className="msla-dictionary-editor-container" data-automation-id={baseEditorProps.dataAutomationId}>
+    <div
+      className={mergeClasses('msla-dictionary-editor-container', baseEditorProps.className)}
+      data-automation-id={baseEditorProps.dataAutomationId}
+    >
       {collapsed && !(dictionaryType === DictionaryType.TABLE) ? (
         <CollapsedDictionary
           {...baseEditorProps}

@@ -72,6 +72,7 @@ export interface BaseEditorProps {
   isSwitchFromPlaintextBlocked?: boolean;
   valueType?: string;
   tokenMapping?: Record<string, ValueSegment>;
+  spellCheck?: boolean;
   // Plugins & Extensions
   agentParameterButtonProps?: Partial<AgentParameterButtonProps>;
   basePlugins?: BasePlugins;
@@ -122,6 +123,7 @@ export const BaseEditor = ({
   getTokenPicker,
   setIsValuePlaintext,
   style,
+  spellCheck = false,
 }: BaseEditorProps) => {
   const editorId = useId('msla-tokenpicker-callout-location');
   const intl = useIntl();
@@ -215,14 +217,14 @@ export const BaseEditor = ({
           contentEditable={
             <ContentEditable
               data-testid={`${labelId} contenteditable`}
-              spellCheck={false}
+              spellCheck={spellCheck}
               className={css('editor-input', readonly && 'readonly')}
               ariaLabel={ariaLabel}
               ariaLabelledBy={labelId}
               ariaDescribedBy={id}
               tabIndex={0}
               title={placeholder}
-              style={{ paddingInlineEnd: '32px' }}
+              style={{ paddingInlineEnd: agentParameterButtonProps?.showAgentParameterButton ? '32px' : '0' }}
             />
           }
           placeholder={

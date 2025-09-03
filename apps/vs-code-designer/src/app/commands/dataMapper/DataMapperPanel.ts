@@ -1,3 +1,7 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
 import { dataMapperVersionSetting, defaultDataMapperVersion, extensionCommand, Platform, vscodeFolderName } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
@@ -35,14 +39,15 @@ import type { WebviewPanel } from 'vscode';
 import { RelativePattern, window, workspace } from 'vscode';
 import * as vscode from 'vscode';
 import { copyOverImportedSchemas } from './DataMapperPanelUtils';
+import { switchToDataMapperV2 } from '../setDataMapperVersion';
 
 export default class DataMapperPanel {
   public panel: WebviewPanel;
-
   public dataMapVersion: number;
   public dataMapName: string;
   public dataMapStateIsDirty: boolean;
   public mapDefinitionData: MapDefinitionData | undefined;
+
   private telemetryPrefix = 'data-mapper-vscode-extension';
 
   constructor(panel: WebviewPanel, dataMapName: string) {
@@ -198,6 +203,13 @@ export default class DataMapperPanel {
         this.sendNotification(msg.data.title, msg.data.text, msg.data.level);
         break;
       }
+      case ExtensionCommand.switchToDataMapperV2: {
+        // Execute the switchToDataMapperV2 VS Code command with telemetry
+        this.callWithTelemetryAndErrorHandlingSyncForDM(extensionCommand.switchToDataMapperV2, () => {
+          return switchToDataMapperV2();
+        });
+        break;
+      }
     }
   }
 
@@ -227,7 +239,11 @@ export default class DataMapperPanel {
       const mapMetadata = this.readMapMetadataFile();
       this.sendMsgToWebview({
         command: ExtensionCommand.loadDataMap,
-        data: { ...this.mapDefinitionData, mapDefinitionName: this.dataMapName, metadata: mapMetadata },
+        data: {
+          ...this.mapDefinitionData,
+          mapDefinitionName: this.dataMapName,
+          metadata: mapMetadata,
+        },
       });
 
       this.checkAndSetXslt();

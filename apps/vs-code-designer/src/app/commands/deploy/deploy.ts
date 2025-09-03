@@ -25,7 +25,7 @@ import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { LogicAppResourceTree } from '../../tree/LogicAppResourceTree';
 import { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
-import { SubscriptionTreeItem } from '../../tree/subscriptionTree/SubscriptionTreeItem';
+import { SubscriptionTreeItem } from '../../tree/subscriptionTree/subscriptionTreeItem';
 import { createAclInConnectionIfNeeded, getConnectionsJson } from '../../utils/codeless/connection';
 import { getParametersJson } from '../../utils/codeless/parameter';
 import { isPathEqual, writeFormattedJson } from '../../utils/fs';
@@ -38,7 +38,7 @@ import {
   AdvancedIdentityClientIdStep,
   AdvancedIdentityTenantIdStep,
   AdvancedIdentityClientSecretStep,
-} from '../createLogicApp/createLogicAppSteps/AdvancedIdentityPromptSteps';
+} from '../createLogicApp/createLogicAppSteps/advancedIdentityPromptSteps';
 import { notifyDeployComplete } from './notifyDeployComplete';
 import { updateAppSettingsWithIdentityDetails } from './updateAppSettings';
 import { verifyAppSettings } from './verifyAppSettings';
@@ -48,19 +48,14 @@ import type { IDeployContext } from '@microsoft/vscode-azext-azureappservice';
 import { ScmType } from '@microsoft/vscode-azext-azureappservice/out/src/ScmType';
 import type { AzExtParentTreeItem, IActionContext, IAzureQuickPickItem, ISubscriptionContext } from '@microsoft/vscode-azext-utils';
 import { AzureWizard, DialogResponses } from '@microsoft/vscode-azext-utils';
-import {
-  resolveConnectionsReferences,
-  type ConnectionsData,
-  type FuncVersion,
-  type IIdentityWizardContext,
-  type ProjectLanguage,
-} from '@microsoft/vscode-extension-logic-apps';
+import type { ConnectionsData, FuncVersion, IIdentityWizardContext, ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import type { Uri, MessageItem, WorkspaceFolder } from 'vscode';
 import { deployHybridLogicApp, zipDeployHybridLogicApp } from './hybridLogicApp';
 import { createContainerClient } from '../../utils/azureClients';
 import { uploadAppSettings } from '../appSettings/uploadAppSettings';
+import { resolveConnectionsReferences } from '@microsoft/logic-apps-shared';
 
 export async function deployProductionSlot(
   context: IActionContext,
@@ -216,8 +211,8 @@ async function deploy(
       if (deployProjectPathForWorkflowApp !== undefined && !isHybridLogicApp) {
         await cleanAndRemoveDeployFolder(deployProjectPathForWorkflowApp);
         await node.loadAllChildren(context);
-        await uploadAppSettings(context, node.resourceTree.appSettingsTreeItem, workspaceFolder, settingsToExclude);
       }
+      await uploadAppSettings(context, node.resourceTree.appSettingsTreeItem, workspaceFolder, settingsToExclude);
     }
   });
 
@@ -452,7 +447,7 @@ async function checkAADDetailsExistsInAppSettings(node: SlotTreeItem, identityWi
   return false;
 }
 
-const canUseZipDeployForHybrid = (node: SlotTreeItem): boolean => {
+function canUseZipDeployForHybrid(node: SlotTreeItem): boolean {
   const requiredEnvVars = [
     workflowAppAADClientId,
     workflowAppAADClientSecret,
@@ -470,4 +465,4 @@ const canUseZipDeployForHybrid = (node: SlotTreeItem): boolean => {
     requiredEnvVars.every((varName) => envVars.includes(varName)) &&
     node.hybridSite.template.containers[0].env.some((env: any) => env.name === isZipDeployEnabledSetting && env.value === 'true')
   );
-};
+}

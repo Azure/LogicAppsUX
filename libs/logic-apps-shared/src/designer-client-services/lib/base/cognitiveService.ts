@@ -73,6 +73,24 @@ export class BaseCognitiveServiceService implements ICognitiveServiceService {
     return response;
   }
 
+  async fetchAllCognitiveServiceProjects(subscriptionId: string): Promise<any> {
+    const { httpClient, baseUrl } = this.options;
+
+    const uri = `${baseUrl}/providers/Microsoft.ResourceGraph/resources?api-version=2021-03-01`;
+
+    const response = await fetchAppsByQuery(
+      httpClient,
+      uri,
+      `Resources
+    | where type == "microsoft.cognitiveservices/accounts/projects"
+    | where kind in ("AIServices")
+    | order by ['name'] asc`,
+      [subscriptionId]
+    );
+
+    return response;
+  }
+
   async fetchAllCognitiveServiceAccountDeployments(accountId: string): Promise<any[]> {
     const { httpClient, baseUrl, apiVersion } = this.options;
     const uri = `${baseUrl}${accountId}/deployments`;
@@ -166,29 +184,12 @@ export class BaseCognitiveServiceService implements ICognitiveServiceService {
       return false;
     }
   }
-  async fetchAllCognitiveServiceProjects(serviceAccountId: string): Promise<any> {
-    const { httpClient, baseUrl } = this.options;
-    const uri = `${baseUrl}${serviceAccountId}/projects`;
-
-    try {
-      const response = await httpClient.get({
-        uri,
-        queryParameters: {
-          'api-version': '2025-04-01-preview',
-        },
-      });
-      return response;
-    } catch (e: any) {
-      return new Error(e?.message ?? e);
-    }
-  }
 
   async createNewDeployment(deploymentName: string, model: string, openAIResourceId: string): Promise<any> {
     const { httpClient, baseUrl } = this.options;
     const uri = `${baseUrl}${openAIResourceId}/deployments/${deploymentName}`;
-
     try {
-      const response = await httpClient.put({
+      return httpClient.put({
         uri,
         queryParameters: {
           'api-version': '2023-10-01-preview',
@@ -209,9 +210,8 @@ export class BaseCognitiveServiceService implements ICognitiveServiceService {
           },
         },
       });
-      return response;
     } catch (e: any) {
-      throw new Error(e?.message ?? e);
+      throw new Error(e);
     }
   }
 }

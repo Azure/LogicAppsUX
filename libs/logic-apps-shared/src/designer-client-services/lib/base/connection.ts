@@ -11,6 +11,7 @@ import {
   UserErrorCode,
   isCustomConnectorId,
   getUniqueName,
+  findKeyValue,
 } from '../../../utils/src';
 import type { HttpResponse } from '../common/exceptions/service';
 import type { ConnectionCreationInfo, ConnectionParametersMetadata, CreateConnectionResult, IConnectionService } from '../connection';
@@ -84,7 +85,11 @@ export abstract class BaseConnectionService implements IConnectionService {
 
   async getSwaggerFromUri(uri: string): Promise<OpenAPIV2.Document> {
     const { httpClient } = this.options;
-    return httpClient.get<OpenAPIV2.Document>({ uri, noAuth: true, headers: { 'Access-Control-Allow-Origin': '*' } });
+    return httpClient.get<OpenAPIV2.Document>({
+      uri,
+      noAuth: true,
+      headers: { 'Access-Control-Allow-Origin': '*' },
+    });
   }
 
   public async getSwaggerParser(uri: string): Promise<SwaggerParser> {
@@ -100,10 +105,10 @@ export abstract class BaseConnectionService implements IConnectionService {
       return this.getConnectionInApiHub(connectionId);
     }
 
-    let connection = this._connections[connectionId];
+    let connection = findKeyValue<Connection>(this._connections, connectionId);
     if (!connection) {
       await this.getConnections();
-      connection = this._connections[connectionId];
+      connection = findKeyValue<Connection>(this._connections, connectionId);
     }
 
     return connection;
@@ -141,7 +146,11 @@ export abstract class BaseConnectionService implements IConnectionService {
   protected async _getAzureConnector(connectorId: string): Promise<Connector> {
     const { apiVersion, httpClient, locale } = this.options;
     const headers = locale ? { 'Accept-Language': locale } : undefined;
-    const response = await httpClient.get<Connector>({ uri: connectorId, queryParameters: { 'api-version': apiVersion }, headers });
+    const response = await httpClient.get<Connector>({
+      uri: connectorId,
+      queryParameters: { 'api-version': apiVersion },
+      headers,
+    });
 
     return {
       ...response,
@@ -152,10 +161,19 @@ export abstract class BaseConnectionService implements IConnectionService {
     };
   }
 
+  private _getAdditionalPropertiesForCreateConnection(connectionInfo: ConnectionCreationInfo): Record<string, any> {
+    const additionalProperties: Record<string, any> = {};
+    if (connectionInfo?.additionalParameterValues?.['isDynamicConnectionAllowed']) {
+      additionalProperties['isDynamicConnectionAllowed'] = true;
+    }
+    return additionalProperties;
+  }
+
   protected _getRequestForCreateConnection(connectorId: string, _connectionName: string, connectionInfo: ConnectionCreationInfo): any {
     const parameterValues = connectionInfo?.connectionParameters;
     const parameterValueSet = connectionInfo?.connectionParametersSet;
     const displayName = connectionInfo?.displayName;
+    const features = connectionInfo?.features;
     const { location } = this.options;
 
     return {
@@ -163,6 +181,8 @@ export abstract class BaseConnectionService implements IConnectionService {
         api: { id: connectorId },
         ...(parameterValueSet ? { parameterValueSet } : { parameterValues }),
         displayName,
+        features,
+        ...this._getAdditionalPropertiesForCreateConnection(connectionInfo),
       },
       kind: this._vVersion,
       location,
@@ -186,6 +206,7 @@ export abstract class BaseConnectionService implements IConnectionService {
         parameterValueType: 'Alternative',
         alternativeParameterValues,
         displayName,
+        ...this._getAdditionalPropertiesForCreateConnection(connectionInfo),
       },
       kind: this._vVersion,
       location,
@@ -370,7 +391,10 @@ export abstract class BaseConnectionService implements IConnectionService {
     };
 
     try {
-      const response = await httpClient.get<ConnectionsResponse>({ uri, queryParameters });
+      const response = await httpClient.get<ConnectionsResponse>({
+        uri,
+        queryParameters,
+      });
       return response.value.filter((connection: Connection) => {
         return filterByLocation ? equals(connection.location, locale) : true;
       });

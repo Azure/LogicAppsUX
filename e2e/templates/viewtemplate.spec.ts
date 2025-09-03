@@ -23,7 +23,7 @@ test.describe(
       await expect(page.getByRole('radio', { name: 'Stateful' })).toBeDisabled();
 
       await expect(page.getByText('Create a new workflow from template', {})).toBeVisible();
-      expect(await page.getByRole('button', { name: 'Close' }).isDisabled()).toBeTruthy();
+      expect(await page.getByRole('button', { name: 'Close' }).first().isDisabled()).toBeTruthy();
       await page.getByRole('tab', { name: 'Review + create' }).click();
       await expect(page.getByText('----', { exact: true })).not.toBeVisible();
       await expect(page.getByText('overriden-name', { exact: true })).toBeVisible();
@@ -38,13 +38,13 @@ test.describe(
       await page.getByText('Simple Parameters', { exact: true }).click();
       await page.waitForTimeout(10);
 
-      expect(await page.getByRole('button', { name: 'Close' }).isDisabled()).toBeTruthy();
+      expect(await page.getByRole('button', { name: 'Close' }).first().isDisabled()).toBeTruthy();
       expect(await page.getByRole('tab', { name: 'Workflow' })).toBeVisible();
       expect(await page.getByRole('tab', { name: 'Summary' })).toBeVisible();
       await page.getByRole('button', { name: 'Use this template' }).click();
 
       await expect(page.getByText('Create a new workflow from template', {})).toBeVisible();
-      expect(await page.getByRole('button', { name: 'Close' }).isDisabled()).toBeTruthy();
+      expect(await page.getByRole('button', { name: 'Close' }).first().isDisabled()).toBeTruthy();
 
       expect(await page.locator('[data-testid="msla-templates-workflowName"]').isDisabled()).toBeTruthy();
       await expect(await page.locator('[data-testid="msla-templates-workflowName"]')).toHaveValue('overriden-name');

@@ -17,7 +17,7 @@ export async function isGitInstalled(workingDirectory: string): Promise<boolean>
   try {
     await executeCommand(undefined, workingDirectory, gitCommand, '--version');
     return true;
-  } catch (error) {
+  } catch {
     return false;
   }
 }
@@ -39,7 +39,7 @@ export async function isInsideRepo(workingDirectory: string): Promise<boolean> {
   try {
     await executeCommand(undefined, workingDirectory, gitCommand, 'rev-parse', '--git-dir');
     return true;
-  } catch (error) {
+  } catch {
     return false;
   }
 }

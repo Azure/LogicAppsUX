@@ -1,6 +1,6 @@
 import type { SimpleArrayItem, ComplexArrayItems, ArrayItemSchema } from '.';
 import type { ValueSegment } from '../editor';
-import type { GetTokenPickerHandler, loadParameterValueFromStringHandler } from '../editor/base';
+import type { BasePlugins, GetTokenPickerHandler, loadParameterValueFromStringHandler } from '../editor/base';
 import { EditorWrapper } from '../editor/base/EditorWrapper';
 import type { TokenPickerButtonEditorProps } from '../editor/base/plugins/tokenpickerbutton';
 import { Label, RequiredMarkerSide } from '../label';
@@ -20,9 +20,10 @@ export interface CollapsedArrayProps {
   setItems: ((simpleItems: SimpleArrayItem[]) => void) | ((complexItems: ComplexArrayItems[]) => void);
   setIsValid: (b: boolean) => void;
   onBlur?: () => void;
-  getTokenPicker: GetTokenPickerHandler;
+  getTokenPicker?: GetTokenPickerHandler;
   tokenMapping?: Record<string, ValueSegment>;
   loadParameterValueFromString?: loadParameterValueFromStringHandler;
+  basePlugins?: BasePlugins;
 }
 
 export const CollapsedArray = ({
@@ -34,6 +35,7 @@ export const CollapsedArray = ({
   setIsValid,
   onBlur,
   setCollapsedValue,
+  basePlugins,
   ...props
 }: CollapsedArrayProps): JSX.Element => {
   const intl = useIntl();
@@ -64,6 +66,7 @@ export const CollapsedArray = ({
           className="msla-collapsed-editor-container"
           basePlugins={{
             tabbable: true,
+            ...basePlugins,
           }}
           tokenPickerButtonProps={{ verticalOffSet: 17 }}
           placeholder={editorPlaceHolder}

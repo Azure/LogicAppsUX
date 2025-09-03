@@ -1,5 +1,5 @@
 export * from './errorsection';
-export * from './requestpanel';
+export * from './secureDataSection';
 export * from './retrypanel';
 export * from './statuspill';
 export * from './statuspill/statusicon';

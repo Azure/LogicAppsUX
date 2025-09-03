@@ -14,10 +14,11 @@ export interface ConnectorSummaryCardProps {
   displayRuntimeInfo: boolean;
   onClick?: (id: string) => void;
   isCard?: boolean;
+  hideFavorites?: boolean;
 }
 
 export const ConnectorSummaryCard = (props: ConnectorSummaryCardProps) => {
-  const { connector, onClick, isCard = true, displayRuntimeInfo } = props;
+  const { connector, onClick, isCard = true, displayRuntimeInfo, hideFavorites } = props;
   const { id } = connector;
 
   const connectorName = getDisplayNameFromConnector(connector);
@@ -44,12 +45,14 @@ export const ConnectorSummaryCard = (props: ConnectorSummaryCardProps) => {
           innerAriaHidden="true"
           className={mergeClasses('msla-recommendation-panel-card-visible-on-hover', 'info-dot-visible-on-hover')}
         />
-        <FavoriteButton
-          connectorId={connector.id}
-          operationId={undefined}
-          showFilledFavoriteOnlyOnHover={false}
-          showUnfilledFavoriteOnlyOnHover={true}
-        />
+        {hideFavorites ? null : (
+          <FavoriteButton
+            connectorId={connector.id}
+            operationId={undefined}
+            showFilledFavoriteOnlyOnHover={false}
+            showUnfilledFavoriteOnlyOnHover={true}
+          />
+        )}
         <ChevronRight12Regular />
       </div>
       {displayRuntimeInfo ? (

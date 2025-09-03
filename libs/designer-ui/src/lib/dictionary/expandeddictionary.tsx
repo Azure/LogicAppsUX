@@ -30,6 +30,7 @@ export const ExpandedDictionary = ({
   valueType,
   setItems,
   label,
+  basePlugins,
   ...props
 }: ExpandedDictionaryProps): JSX.Element => {
   const intl = useIntl();
@@ -100,7 +101,7 @@ export const ExpandedDictionary = ({
                 className="msla-dictionary-editor-container-expanded"
                 placeholder={keyPlaceholder}
                 initialValue={item.key ?? []}
-                basePlugins={{ tokens: true, clearEditor: true, autoFocus: false }}
+                basePlugins={{ tokens: true, clearEditor: true, autoFocus: false, ...basePlugins }}
                 onFocus={() => addItem(index)}
                 valueType={keyType}
                 editorBlur={(newState: ChangeState) => handleBlur(newState, index, ExpandedDictionaryEditorType.KEY)}
@@ -114,7 +115,7 @@ export const ExpandedDictionary = ({
                 className="msla-dictionary-editor-container-expanded"
                 placeholder={valuePlaceholder}
                 initialValue={item.value ?? []}
-                basePlugins={{ tokens: true, autoFocus: false }}
+                basePlugins={{ tokens: true, autoFocus: false, ...basePlugins }}
                 onFocus={() => addItem(index)}
                 valueType={valueType}
                 editorBlur={(newState: ChangeState) => handleBlur(newState, index, ExpandedDictionaryEditorType.VALUE)}

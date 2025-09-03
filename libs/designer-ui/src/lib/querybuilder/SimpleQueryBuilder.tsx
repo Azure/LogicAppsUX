@@ -1,8 +1,8 @@
 import type { GroupItems, RowItemProps } from '.';
 import { RowDropdownOptions, GroupType } from '.';
 import type { ValueSegment } from '../editor';
-import { ValueSegmentType, removeQuotes } from '../editor';
-import type { ChangeHandler, ChangeState, GetTokenPickerHandler, loadParameterValueFromStringHandler } from '../editor/base';
+import { removeQuotes } from '../editor';
+import type { BaseEditorProps, ChangeState } from '../editor/base';
 import { createLiteralValueSegment } from '../editor/base/utils/helper';
 import { isEmptySegments } from '../editor/base/utils/parsesegments';
 import { StringEditor } from '../editor/string';
@@ -10,21 +10,19 @@ import { Row } from './Row';
 import { getOperationValue, getOuterMostCommaIndex } from './helper';
 import type { IButtonStyles, IStyle } from '@fluentui/react';
 import { ActionButton, FontSizes } from '@fluentui/react';
-import { nthLastIndexOf } from '@microsoft/logic-apps-shared';
+import { nthLastIndexOf, splitAtIndex } from '@microsoft/logic-apps-shared';
 import { useFunctionalState } from '@react-hookz/web';
-import { useEffect, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
+import constants from '../constants';
+import { useId } from '@fluentui/react-components';
 
 export * from './helper';
 
-export interface SimpleQueryBuilderProps {
+export interface SimpleQueryBuilderProps extends BaseEditorProps {
   readonly?: boolean;
-  itemValue: ValueSegment[];
-  isRowFormat?: boolean;
-  tokenMapping?: Record<string, ValueSegment>;
-  loadParameterValueFromString?: loadParameterValueFromStringHandler;
-  getTokenPicker: GetTokenPickerHandler;
-  onChange?: ChangeHandler;
+  itemValue?: RowItemProps;
+  rowFormat?: boolean;
 }
 
 const removeStyle: IStyle = {
@@ -41,12 +39,21 @@ const buttonStyles: IButtonStyles = {
   rootPressed: removeStyle,
 };
 
-export const SimpleQueryBuilder = ({ getTokenPicker, itemValue, readonly, onChange, ...baseEditorProps }: SimpleQueryBuilderProps) => {
+export const SimpleQueryBuilder = ({
+  getTokenPicker,
+  itemValue,
+  readonly,
+  initialValue,
+  onChange,
+  rowFormat,
+  ...baseEditorProps
+}: SimpleQueryBuilderProps) => {
   const intl = useIntl();
+  const labelId = useId('Advanced-editor-label');
 
-  const [getRootProp, setRootProp] = useFunctionalState<RowItemProps | undefined>(convertAdvancedValueToRootProp(itemValue));
-  const [advancedValue, setAdvancedValue] = useState<ValueSegment[]>(itemValue);
-  const [isRowFormat, setIsRowFormat] = useState(convertAdvancedValueToRootProp(itemValue) !== undefined);
+  const [getRootProp, setRootProp] = useFunctionalState<RowItemProps | undefined>(itemValue);
+  const [advancedValue, setAdvancedValue] = useState<ValueSegment[]>(itemValue ? convertRootPropToValue(itemValue) : initialValue || []);
+  const [isRowFormat, setIsRowFormat] = useState(rowFormat);
 
   const advancedButtonLabel = intl.formatMessage({
     defaultMessage: 'Edit in advanced mode',
@@ -66,30 +73,52 @@ export const SimpleQueryBuilder = ({ getTokenPicker, itemValue, readonly, onChan
     description: 'Error message when unable to switch to basic mode',
   });
 
-  useEffect(() => {
-    const rootPropValue = convertAdvancedValueToRootProp(itemValue);
-    setAdvancedValue(itemValue);
-    setRootProp(rootPropValue);
-  }, [itemValue, setRootProp]);
-
   const handleUpdateParent = (newProps: GroupItems) => {
-    const updatedAdvancedValue = convertRootPropToValue(newProps as RowItemProps);
+    const updatedRowProps = newProps as RowItemProps;
+    const updatedAdvancedValue = convertRootPropToValue(updatedRowProps);
     setAdvancedValue(updatedAdvancedValue);
-    setRootProp(newProps as RowItemProps);
+    setRootProp(updatedRowProps);
     onChange?.({
       value: updatedAdvancedValue,
-      viewModel: { isOldFormat: true, itemValue: updatedAdvancedValue, isRowFormat: true },
+      viewModel: { isOldFormat: true, itemValue: updatedRowProps, isRowFormat: true },
     });
   };
 
   const handleUpdateRootProps = (newState: ChangeState) => {
     const updatedAdvancedValue = newState.value;
+    const convertedRowProps = convertAdvancedValueToRootProp(updatedAdvancedValue, baseEditorProps.loadParameterValueFromString);
     setAdvancedValue(updatedAdvancedValue);
-    setRootProp(convertAdvancedValueToRootProp(updatedAdvancedValue));
+    setRootProp(convertedRowProps);
     onChange?.({
       value: updatedAdvancedValue,
-      viewModel: { isOldFormat: true, itemValue: updatedAdvancedValue, isRowFormat: !!getRootProp() },
+      viewModel: { isOldFormat: true, itemValue: convertedRowProps, isRowFormat: convertedRowProps !== undefined },
     });
+  };
+
+  const canConvertToBasicMode = useCallback(() => {
+    if (isRowFormat) {
+      return true;
+    }
+
+    const convertedRowProps = convertAdvancedValueToRootProp(advancedValue, baseEditorProps.loadParameterValueFromString);
+    return convertedRowProps !== undefined;
+  }, [advancedValue, baseEditorProps.loadParameterValueFromString, isRowFormat]);
+
+  const isButtonDisabled = useMemo(() => {
+    return readonly || (!getRootProp() && !advancedValue?.length) || (!isRowFormat && !canConvertToBasicMode());
+  }, [advancedValue?.length, canConvertToBasicMode, getRootProp, isRowFormat, readonly]);
+
+  const getButtonTitle = (): string => {
+    if (readonly) {
+      return invalidRowFormat;
+    }
+    if (!getRootProp() && !advancedValue?.length) {
+      return invalidRowFormat;
+    }
+    if (!isRowFormat && !canConvertToBasicMode()) {
+      return invalidRowFormat;
+    }
+    return isRowFormat ? advancedButtonLabel : basicButtonLabel;
   };
 
   return (
@@ -117,19 +146,24 @@ export const SimpleQueryBuilder = ({ getTokenPicker, itemValue, readonly, onChan
           initialValue={advancedValue}
           getTokenPicker={getTokenPicker}
           onChange={handleUpdateRootProps}
+          valueType={constants.SWAGGER.TYPE.ANY}
+          labelId={labelId}
           {...baseEditorProps}
         />
       )}
       <ActionButton
         className="msla-simple-querybuilder-advanced-button"
-        disabled={readonly || !getRootProp()}
-        title={readonly || !getRootProp() ? invalidRowFormat : isRowFormat ? advancedButtonLabel : basicButtonLabel}
+        disabled={isButtonDisabled}
+        title={getButtonTitle()}
         styles={buttonStyles}
         onClick={() => {
           if (isRowFormat) {
             setAdvancedValue(convertRootPropToValue(getRootProp() as RowItemProps));
           } else {
-            setRootProp(convertAdvancedValueToRootProp(advancedValue));
+            const convertedProps = convertAdvancedValueToRootProp(advancedValue, baseEditorProps.loadParameterValueFromString);
+            if (convertedProps) {
+              setRootProp(convertedProps);
+            }
           }
           setIsRowFormat(!isRowFormat);
         }}
@@ -140,7 +174,7 @@ export const SimpleQueryBuilder = ({ getTokenPicker, itemValue, readonly, onChan
   );
 };
 
-const convertRootPropToValue = (rootProps: RowItemProps): ValueSegment[] => {
+export const convertRootPropToValue = (rootProps: RowItemProps): ValueSegment[] => {
   const { operator, operand1, operand2 } = rootProps;
   const negatory = operator.includes('not');
   const op1: ValueSegment = getOperationValue(operand1[0]) ?? createLiteralValueSegment('');
@@ -157,43 +191,98 @@ const convertRootPropToValue = (rootProps: RowItemProps): ValueSegment[] => {
   return [operatorLiteral, op1, separatorLiteral, op2, endingLiteral];
 };
 
-const convertAdvancedValueToRootProp = (value: ValueSegment[]): RowItemProps | undefined => {
-  if (isEmptySegments(value)) {
-    return { operator: 'equals', operand1: [], operand2: [], type: GroupType.ROW };
-  }
-  const nodeMap = new Map<string, ValueSegment>();
-  let stringValue = '';
-  value.forEach((segment) => {
-    if (segment.type === ValueSegmentType.TOKEN) {
-      nodeMap?.set(segment.value, segment);
-    }
-    stringValue += segment.value;
-  });
-  // cannot be converted into row format
-  if (!stringValue.includes('@') || !stringValue.includes(',')) {
+// Common parsing logic used to convert between advanced and row item
+// also used when deserializing from initial deserialization
+export const parseQueryStringToRowItemProps = (
+  stringValue: string,
+  loadParameterValueFromString?: (value: string, options: any) => ValueSegment[],
+  nodeMap?: Map<string, ValueSegment>
+): RowItemProps | undefined => {
+  if (!stringValue || !stringValue.includes('@') || !stringValue.includes(',')) {
     return undefined;
   }
-  let operator: string;
-  let operand1: ValueSegment[];
-  let operand2: ValueSegment[];
+
   try {
-    operator = stringValue.substring(stringValue.indexOf('@') + 1, stringValue.indexOf('('));
+    let workingString = stringValue;
+    let operator: string = workingString.substring(workingString.indexOf('@') + 1, workingString.indexOf('('));
     const negatory = operator === 'not';
+
+    // Handle negation
     if (negatory) {
-      stringValue = stringValue.replace('@not(', '@');
-      operator = `not${stringValue.substring(stringValue.indexOf('@') + 1, stringValue.indexOf('('))}`;
+      workingString = workingString.replace('@not(', '@');
+      const negatedOperator = workingString.substring(workingString.indexOf('@') + 1, workingString.indexOf('('));
+      operator = `not${negatedOperator}`;
     }
-    // if operator is not of the dropdownlist, it cannot be converted into row format
+
+    // Validate operator exists in dropdown options
     if (!Object.values(RowDropdownOptions).includes(operator as RowDropdownOptions)) {
       return undefined;
     }
-    const operandSubstring = stringValue.substring(stringValue.indexOf('(') + 1, nthLastIndexOf(stringValue, ')', negatory ? 2 : 1));
-    const operand1String = removeQuotes(operandSubstring.substring(0, getOuterMostCommaIndex(operandSubstring)).trim());
-    const operand2String = removeQuotes(operandSubstring.substring(getOuterMostCommaIndex(operandSubstring) + 1).trim());
-    operand1 = [nodeMap.get(operand1String) ?? createLiteralValueSegment(operand1String)];
-    operand2 = [nodeMap.get(operand2String) ?? createLiteralValueSegment(operand2String)];
+
+    const operandSubstring = workingString.substring(workingString.indexOf('(') + 1, nthLastIndexOf(workingString, ')', negatory ? 2 : 1));
+    const [operand1String, operand2String] = splitAtIndex(operandSubstring, getOuterMostCommaIndex(operandSubstring)).map((s) =>
+      removeQuotes(s.trim())
+    );
+
+    // Helper function to get operand segments with nodeMap fallback
+    const getOperandSegments = (operandString: string): ValueSegment[] => {
+      // First try to get from nodeMap if available
+      if (nodeMap) {
+        const tokenFromMap = nodeMap.get(operandString);
+        if (tokenFromMap) {
+          return [tokenFromMap];
+        }
+      }
+
+      // Fallback to loadParameterValueFromString if available
+      if (loadParameterValueFromString) {
+        return loadParameterValueFromString(operandString, {
+          removeQuotesFromExpression: true,
+          trimExpression: true,
+          convertIfContainsExpression: true,
+        });
+      }
+
+      // Final fallback to literal segment
+      return [createLiteralValueSegment(operandString)];
+    };
+
+    const operand1ValueSegments = getOperandSegments(operand1String);
+    const operand2ValueSegments = getOperandSegments(operand2String);
+
+    return {
+      operator: operator as RowDropdownOptions,
+      operand1: operand1ValueSegments,
+      operand2: operand2ValueSegments,
+      type: GroupType.ROW,
+    };
   } catch {
     return undefined;
   }
-  return { operator, operand1, operand2, type: GroupType.ROW };
+};
+
+// Converting Advanced Value to Row Editor Props
+const convertAdvancedValueToRootProp = (
+  value: ValueSegment[],
+  loadParameterValueFromString?: (value: string, options: any) => ValueSegment[]
+): RowItemProps | undefined => {
+  if (isEmptySegments(value)) {
+    return {
+      operator: RowDropdownOptions.EQUALS,
+      operand1: [],
+      operand2: [],
+      type: GroupType.ROW,
+    };
+  }
+
+  const nodeMap = new Map<string, ValueSegment>();
+  let stringValue = '';
+  value.forEach((segment) => {
+    if (segment?.token) {
+      nodeMap.set(segment.value, segment);
+    }
+    stringValue += segment.value;
+  });
+
+  return parseQueryStringToRowItemProps(stringValue, loadParameterValueFromString, nodeMap);
 };

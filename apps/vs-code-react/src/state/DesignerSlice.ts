@@ -1,5 +1,10 @@
 import type { ApiHubServiceDetails, ListDynamicValue, UnitTestDefinition } from '@microsoft/logic-apps-shared';
-import type { ConnectionsData, ICallbackUrlResponse, IDesignerPanelMetadata } from '@microsoft/vscode-extension-logic-apps';
+import type {
+  CompleteFileSystemConnectionData,
+  ConnectionsData,
+  ICallbackUrlResponse,
+  IDesignerPanelMetadata,
+} from '@microsoft/vscode-extension-logic-apps';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
@@ -113,13 +118,13 @@ export const designerSlice = createSlice({
       const { connectionName, resolve, reject } = action.payload;
       state.fileSystemConnections[connectionName] = { resolveConnection: resolve, rejectConnection: reject };
     },
-    updateFileSystemConnection: (state, action: PayloadAction<{ connectionName: string; connection: any; error: string }>) => {
+    updateFileSystemConnection: (state, action: PayloadAction<CompleteFileSystemConnectionData>) => {
       const { connectionName, connection, error } = action.payload;
       if (connection && state.fileSystemConnections[connectionName]) {
         state.fileSystemConnections[connectionName].resolveConnection(connection);
       }
       if (error && state.fileSystemConnections[connectionName]) {
-        state.fileSystemConnections[connectionName].rejectConnection(error);
+        state.fileSystemConnections[connectionName].rejectConnection({ message: error });
       }
       delete state.fileSystemConnections[connectionName];
     },

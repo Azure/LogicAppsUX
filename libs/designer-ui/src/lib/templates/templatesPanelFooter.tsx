@@ -1,4 +1,4 @@
-import { Button, Divider, Menu, MenuItem, MenuList, MenuPopover, MenuTrigger, MenuButton } from '@fluentui/react-components';
+import { Button, Divider, Menu, MenuItem, MenuList, MenuPopover, MenuTrigger, MenuButton, Spinner } from '@fluentui/react-components';
 import type { ReactNode } from 'react';
 
 interface TemplateFooterButtonProps {
@@ -15,6 +15,7 @@ interface TemplateFooterButtonProps {
     onClick: () => void;
     disabled?: boolean;
   }[];
+  loading?: boolean;
 }
 
 export interface TemplatePanelFooterProps {
@@ -32,7 +33,12 @@ export const TemplatesPanelFooter = ({ buttonContents }: TemplatePanelFooterProp
   return (
     <div className="msla-templates-panel-footer">
       {navigationButtons?.map((buttonContent, index) => (
-        <FooterButton key={index} style={index < navigationButtons.length ? templateFooterItemStyle : {}} {...buttonContent} />
+        <FooterButton
+          key={index}
+          buttonIndex={index}
+          style={index < navigationButtons.length ? templateFooterItemStyle : {}}
+          {...buttonContent}
+        />
       ))}
       {showDivider ? (
         <Divider
@@ -46,14 +52,19 @@ export const TemplatesPanelFooter = ({ buttonContents }: TemplatePanelFooterProp
         />
       ) : null}
       {actionButtons?.map((buttonContent, index) => (
-        <FooterButton key={index} style={index < actionButtons.length ? templateFooterItemStyle : {}} {...buttonContent} />
+        <FooterButton
+          key={index}
+          buttonIndex={index}
+          style={index < actionButtons.length ? templateFooterItemStyle : {}}
+          {...buttonContent}
+        />
       ))}
     </div>
   );
 };
 
 const FooterButton = ({
-  key,
+  buttonIndex,
   style,
   text,
   onClick,
@@ -63,51 +74,48 @@ const FooterButton = ({
   menuItems,
   icon,
   className,
-}: TemplateFooterButtonProps & { key: number; style: any | undefined }) => {
+  loading,
+}: TemplateFooterButtonProps & { buttonIndex: number; style?: React.CSSProperties }) => {
   if (hide) {
     return null;
   }
-  if (menuItems && menuItems.length) {
+  if (menuItems?.length) {
     return (
-      <Menu key={key} positioning="below-end">
+      <Menu positioning="below-end">
         <MenuTrigger disableButtonEnhancement>
-          <MenuButton style={style} icon={icon} appearance={appearance} disabled={disabled}>
+          <MenuButton style={style} icon={loading ? <Spinner size="tiny" /> : icon} appearance={appearance} disabled={disabled || loading}>
             {text}
           </MenuButton>
         </MenuTrigger>
-
         <MenuPopover>
           <MenuList>
-            {menuItems.map((item, index) => {
-              const { text, onClick, disabled } = item;
-              return (
-                <MenuItem
-                  key={index}
-                  onClick={onClick}
-                  disabled={disabled}
-                  data-testid={`template-footer-menu-item-${index}`}
-                  data-automation-id={`template-footer-menu-item-${index}`}
-                >
-                  {text}
-                </MenuItem>
-              );
-            })}
+            {menuItems.map((item, index) => (
+              <MenuItem
+                key={index}
+                onClick={item.onClick}
+                disabled={item.disabled}
+                data-testid={`template-footer-menu-item-${index}`}
+                data-automation-id={`template-footer-menu-item-${index}`}
+              >
+                {item.text}
+              </MenuItem>
+            ))}
           </MenuList>
         </MenuPopover>
       </Menu>
     );
   }
+
   return (
     <Button
-      key={key}
-      icon={icon}
+      icon={loading ? <Spinner size="tiny" /> : icon}
       className={className}
       style={style}
       appearance={appearance}
       onClick={onClick}
-      disabled={disabled}
-      data-testid={`template-footer-button-${key}`}
-      data-automation-id={`template-footer-button-${key}`}
+      disabled={disabled || loading}
+      data-testid={`template-footer-button-${buttonIndex}`}
+      data-automation-id={`template-footer-button-${buttonIndex}`}
     >
       {text}
     </Button>

@@ -7,7 +7,7 @@ parameters:
   - name: dryRun
     displayName: Dry run
     type: boolean
-    default: false
+    default: true
 
 resources:
   pipelines:
@@ -33,4 +33,4 @@ extends:
     runID: $(resources.pipeline.build.runID)
     publishVersion: ${{ parameters.publishVersion }}
     dryRun: ${{ parameters.dryRun }}
-    environmentName: AzCodeDeploy
+    environmentName: VSCodeDeployLAUX

@@ -1,11 +1,12 @@
-import { makeStyles, shorthands } from '@fluentui/react-components';
+import { makeStyles, tokens } from '@fluentui/react-components';
 
 export const useSearchableDropdownStyles = makeStyles({
-  searchableDropdown: {
-    ...shorthands.margin('24px', 'auto', '0', 'auto'),
+  root: {
+    width: '100%',
   },
-
-  searchableDropdownSearch: {
-    ...shorthands.margin('10px'),
+  noResults: {
+    padding: '8px',
+    fontStyle: 'italic',
+    color: tokens.colorNeutralForeground3,
   },
 });

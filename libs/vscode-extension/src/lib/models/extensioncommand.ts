@@ -14,7 +14,6 @@ export const ExtensionCommand = {
   update_export_path: 'update-export-path',
   update_panel_metadata: 'update-panel-metadata',
   export_package: 'export-package',
-  log_telemtry: 'log-telemetry',
   getFunctionDisplayExpanded: 'getFunctionDisplayExpanded',
   getDataMapperVersion: 'getDataMapperVersion',
   add_status: 'add-status',
@@ -51,7 +50,8 @@ export const ExtensionCommand = {
   sendNotification: 'sendNotification',
   isTestDisabledForOS: 'isTestDisabledForOS',
   fileABug: 'fileABug',
-  setIsWorkflowDirty: 'setIsWorkflowDirty',
+  resetDesignerDirtyState: 'resetDesignerDirtyState',
+  switchToDataMapperV2: 'switchToDataMapperV2',
 } as const;
 export type ExtensionCommand = (typeof ExtensionCommand)[keyof typeof ExtensionCommand];
 

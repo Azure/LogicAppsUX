@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import {
   Platform,
-  ProjectDirectoryPath,
+  ProjectDirectoryPathKey,
   autoStartDesignTimeSetting,
   defaultVersionRange,
   designTimeDirectoryName,
@@ -27,7 +27,7 @@ import { writeFormattedJson } from '../fs';
 import { getFunctionsCommand } from '../funcCoreTools/funcVersion';
 import { getWorkspaceSetting, updateGlobalSetting } from '../vsCodeConfig/settings';
 import { getWorkspaceLogicAppFolders } from '../workspace';
-import { delay } from '@azure/ms-rest-js';
+import { delay } from '../delay';
 import {
   DialogResponses,
   openUrl,
@@ -53,30 +53,31 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
   await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.startDesignTimeApi', async (actionContext: IActionContext) => {
     actionContext.telemetry.properties.startDesignTimeApi = 'false';
 
+    let isNewDesignTime = false;
     if (!ext.designTimeInstances.has(projectPath)) {
       ext.designTimeInstances.set(projectPath, {
         port: await portfinder.getPortPromise(),
+        isStarting: true,
       });
+      isNewDesignTime = true;
     }
 
     const designTimeInst = ext.designTimeInstances.get(projectPath);
     const url = `http://localhost:${designTimeInst.port}${designerStartApi}`;
-
-    if (await isDesignTimeUp(url)) {
+    if (designTimeInst.isStarting && !isNewDesignTime) {
+      await waitForDesignTimeStartUp(projectPath, url, new Date().getTime());
       actionContext.telemetry.properties.isDesignTimeUp = 'true';
-      const correctFuncProcess = await checkFuncProcessId(projectPath);
-      if (!correctFuncProcess) {
-        stopDesignTimeApi(projectPath);
-        await startDesignTimeApi(projectPath);
-      }
+      await validateRunningFuncProcess(projectPath);
+      return;
+    }
+
+    if (!isNewDesignTime && (await isDesignTimeUp(url))) {
+      actionContext.telemetry.properties.isDesignTimeUp = 'true';
+      await validateRunningFuncProcess(projectPath);
       return;
     }
 
     try {
-      window.showInformationMessage(
-        localize('azureFunctions.designTimeApi', 'Starting workflow design-time API, which might take a few seconds.'),
-        'OK'
-      );
       ext.outputChannel.appendLog('Starting Design Time Api');
 
       const designTimeDirectory: Uri | undefined = await getOrCreateDesignTimeDirectory(designTimeDirectoryName, projectPath);
@@ -97,41 +98,44 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
         },
       };
 
-      if (designTimeDirectory) {
-        await createJsonFile(designTimeDirectory, hostFileName, hostFileContent);
-        await createJsonFile(designTimeDirectory, localSettingsFileName, settingsFileContent);
-        await addOrUpdateLocalAppSettings(
-          actionContext,
-          designTimeDirectory.fsPath,
-          {
-            [appKindSetting]: logicAppKind,
-            [ProjectDirectoryPath]: projectPath,
-            [workerRuntimeKey]: WorkerRuntime.Node,
-          },
-          true
-        );
-        await updateFuncIgnore(projectPath, [`${designTimeDirectoryName}/`]);
-        const cwd: string = designTimeDirectory.fsPath;
-        const portArgs = `--port ${designTimeInst.port}`;
-        startDesignTimeProcess(ext.outputChannel, cwd, getFunctionsCommand(), 'host', 'start', portArgs);
-        await waitForDesignTimeStartUp(projectPath, url, new Date().getTime());
-        ext.pinnedBundleVersion.set(projectPath, false);
-        const hostfilepath: Uri = Uri.file(path.join(cwd, hostFileName));
-        const data = JSON.parse(fs.readFileSync(hostfilepath.fsPath, 'utf-8'));
-        if (data.extensionBundle) {
-          const versionWithoutSpaces = data.extensionBundle.version.replace(/\s+/g, '');
-          const rangeWithoutSpaces = defaultVersionRange.replace(/\s+/g, '');
-          if (data.extensionBundle.id === extensionBundleId && versionWithoutSpaces === rangeWithoutSpaces) {
-            ext.currentBundleVersion.set(projectPath, ext.latestBundleVersion);
-          } else if (data.extensionBundle.id === extensionBundleId && versionWithoutSpaces !== rangeWithoutSpaces) {
-            ext.currentBundleVersion.set(projectPath, extractPinnedVersion(data.extensionBundle.version) ?? data.extensionBundle.version);
-            ext.pinnedBundleVersion.set(projectPath, true);
-          }
-        }
-        actionContext.telemetry.properties.startDesignTimeApi = 'true';
-      } else {
+      if (!designTimeDirectory) {
         throw new Error(localize('DesignTimeDirectoryError', 'Failed to create design-time directory.'));
       }
+
+      await createJsonFile(designTimeDirectory, hostFileName, hostFileContent);
+      await createJsonFile(designTimeDirectory, localSettingsFileName, settingsFileContent);
+      await addOrUpdateLocalAppSettings(
+        actionContext,
+        designTimeDirectory.fsPath,
+        {
+          [appKindSetting]: logicAppKind,
+          [ProjectDirectoryPathKey]: projectPath,
+          [workerRuntimeKey]: WorkerRuntime.Node,
+        },
+        true
+      );
+      const cwd: string = designTimeDirectory.fsPath;
+      const portArgs = `--port ${designTimeInst.port}`;
+
+      startDesignTimeProcess(ext.outputChannel, cwd, getFunctionsCommand(), 'host', 'start', portArgs);
+      await waitForDesignTimeStartUp(projectPath, url, new Date().getTime(), true);
+      actionContext.telemetry.properties.isDesignTimeUp = 'true';
+
+      ext.pinnedBundleVersion.set(projectPath, false);
+      const hostfilepath: Uri = Uri.file(path.join(cwd, hostFileName));
+      const data = JSON.parse(fs.readFileSync(hostfilepath.fsPath, 'utf-8'));
+      if (data.extensionBundle) {
+        const versionWithoutSpaces = data.extensionBundle.version.replace(/\s+/g, '');
+        const rangeWithoutSpaces = defaultVersionRange.replace(/\s+/g, '');
+        if (data.extensionBundle.id === extensionBundleId && versionWithoutSpaces === rangeWithoutSpaces) {
+          ext.currentBundleVersion.set(projectPath, ext.latestBundleVersion);
+        } else if (data.extensionBundle.id === extensionBundleId && versionWithoutSpaces !== rangeWithoutSpaces) {
+          ext.currentBundleVersion.set(projectPath, extractPinnedVersion(data.extensionBundle.version) ?? data.extensionBundle.version);
+          ext.pinnedBundleVersion.set(projectPath, true);
+        }
+      }
+      actionContext.telemetry.properties.startDesignTimeApi = 'true';
+      updateFuncIgnore(projectPath, [`${designTimeDirectoryName}/`]);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : error;
       const viewOutput: MessageItem = { title: localize('viewOutput', 'View output') };
@@ -159,19 +163,41 @@ function extractPinnedVersion(input: string): string | null {
   return null;
 }
 
-export async function checkFuncProcessId(projectPath: string): Promise<boolean> {
+async function validateRunningFuncProcess(projectPath: string): Promise<void> {
+  const correctFuncProcess = await checkFuncProcessId(projectPath);
+  if (!correctFuncProcess) {
+    ext.outputChannel.appendLog(
+      localize(
+        'invalidChildFuncPid',
+        'Invalid func child process PID set for project at "{0}". Restarting workflow design-time API.',
+        projectPath
+      )
+    );
+    stopDesignTimeApi(projectPath);
+    await startDesignTimeApi(projectPath);
+  }
+}
+
+async function checkFuncProcessId(projectPath: string): Promise<boolean> {
   let correctId = false;
-  const { process, childFuncPid } = ext.designTimeInstances.get(projectPath);
+  let { process, childFuncPid } = ext.designTimeInstances.get(projectPath);
+  let retries = 0;
+  while (!childFuncPid && retries < 3) {
+    await delay(1000);
+    ({ process, childFuncPid } = ext.designTimeInstances.get(projectPath));
+    retries++;
+  }
+  if (!childFuncPid) {
+    return false;
+  }
 
   if (os.platform() === Platform.windows) {
-    await pstree(process.pid, (_err, children) => {
-      children.forEach((p) => {
-        if (p.PID === childFuncPid && (p.COMMAND || p.COMM) === 'func.exe') {
-          correctId = true;
-        }
+    await new Promise<void>((resolve) => {
+      pstree(process.pid, (_err: Error | null, children: Array<{ PID: string; COMMAND?: string; COMM?: string }>) => {
+        correctId = children.some((p) => p.PID === childFuncPid && (p.COMMAND || p.COMM) === 'func.exe');
+        resolve();
       });
     });
-    await delay(1000);
   } else {
     await find_process('pid', process.pid).then((list) => {
       if (list.length > 0) {
@@ -197,16 +223,29 @@ export async function getOrCreateDesignTimeDirectory(designTimeDirectory: string
   return designTimeDirectoryUri;
 }
 
-export async function waitForDesignTimeStartUp(projectPath: string, url: string, initialTime: number): Promise<void> {
-  while (!(await isDesignTimeUp(url)) && new Date().getTime() - initialTime < designerApiLoadTimeout) {
-    await delay(2000);
+export async function waitForDesignTimeStartUp(
+  projectPath: string,
+  url: string,
+  initialTime: number,
+  setDesignTimeInst = false
+): Promise<void> {
+  let isDesignTimeStarted = false;
+  while (new Date().getTime() - initialTime < designerApiLoadTimeout) {
+    if (await isDesignTimeUp(url)) {
+      isDesignTimeStarted = true;
+      break;
+    }
+    await delay(1000);
   }
-  if (await isDesignTimeUp(url)) {
+  if (isDesignTimeStarted) {
     if (!ext.designTimeInstances.has(projectPath)) {
       return Promise.reject();
     }
-    const designTimeInst = ext.designTimeInstances.get(projectPath);
-    designTimeInst.childFuncPid = await findChildProcess(designTimeInst.process.pid);
+    if (setDesignTimeInst) {
+      const designTimeInst = ext.designTimeInstances.get(projectPath);
+      designTimeInst.childFuncPid = await findChildProcess(designTimeInst.process.pid);
+      designTimeInst.isStarting = false;
+    }
     return Promise.resolve();
   }
   return Promise.reject();

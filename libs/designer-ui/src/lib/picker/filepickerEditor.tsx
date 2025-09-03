@@ -9,7 +9,7 @@ import { EditorValueChange } from './plugins/EditorValueChange';
 import { UpdateEditorFromFilePicker } from './plugins/UpdateEditorFromFilePicker';
 import type { FilePickerBreadcrumb } from './types';
 import { PickerItemType } from './types';
-import { Button, Popover, PopoverTrigger, Tooltip } from '@fluentui/react-components';
+import { Button, mergeClasses, Popover, PopoverTrigger, Tooltip } from '@fluentui/react-components';
 import { Folder28Regular } from '@fluentui/react-icons';
 import type { TreeDynamicValue } from '@microsoft/logic-apps-shared';
 import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
@@ -94,7 +94,16 @@ export const FilePickerEditor = ({
     }
     if (showPicker) {
       setSelectedItem(selectedItem.value);
-      setPickerDisplayValue([createLiteralValueSegment(getDisplayValueFromSelectedItem(selectedItem.value))]);
+      const displayValue = getDisplayValueFromSelectedItem(selectedItem.value);
+      setPickerDisplayValue([createLiteralValueSegment(displayValue)]);
+
+      editorBlur?.({
+        value: [createLiteralValueSegment(getValueFromSelectedItem(selectedItem.value))],
+        viewModel: {
+          displayValue,
+          selectedItem: selectedItem.value,
+        },
+      });
       setShowPicker(false);
 
       LoggerService().log({
@@ -136,7 +145,7 @@ export const FilePickerEditor = ({
     description: 'Open folder label',
   });
   return (
-    <div className="msla-filepicker-editor-container">
+    <div className={mergeClasses('msla-filepicker-editor-container', baseEditorProps.className)}>
       <EditorWrapper
         {...baseEditorProps}
         className="msla-filepicker-editor"

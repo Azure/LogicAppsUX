@@ -4,17 +4,23 @@ import type { TemplateTabProps, TemplateTabStatusType } from './model';
 import { CheckmarkCircleFilled, CircleHintHalfVerticalFilled, DismissCircleFilled } from '@fluentui/react-icons';
 
 export interface TemplateContentProps {
+  containerClassName?: string;
   className?: string;
   tabs: TemplateTabProps[];
   selectedTab?: string;
   selectTab: (tabId: string) => void;
 }
-export const TemplateContent = ({ tabs = [], selectedTab, selectTab, className }: TemplateContentProps): JSX.Element => {
+export const TemplateContent = ({
+  tabs = [],
+  selectedTab,
+  selectTab,
+  className,
+  containerClassName,
+}: TemplateContentProps): JSX.Element => {
   const selectedTabId = selectedTab ?? tabs[0]?.id;
-
   const selectedTabProps = tabs?.find((tab) => tab.id === selectedTabId);
 
-  const onTabSelected = (e?: SelectTabEvent, data?: SelectTabData): void => {
+  const onTabSelected = (_e?: SelectTabEvent, data?: SelectTabData): void => {
     if (data) {
       const itemKey = data.value as string;
       selectTab(itemKey);
@@ -22,8 +28,9 @@ export const TemplateContent = ({ tabs = [], selectedTab, selectTab, className }
   };
 
   const tabClass = className ?? 'msla-templates-panel-tabs';
+
   return (
-    <div className="msla-templates-panel">
+    <div className={containerClassName ?? 'msla-templates-panel'}>
       {tabs.length > 1 && (
         <>
           <TabList selectedValue={selectedTabId} onTabSelect={onTabSelected} className={tabClass}>

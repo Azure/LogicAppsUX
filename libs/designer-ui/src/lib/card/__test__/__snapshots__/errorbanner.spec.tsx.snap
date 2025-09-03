@@ -15,11 +15,9 @@ exports[`lib/card/errorbanner > should render 1`] = `
   >
     <i
       aria-hidden={true}
-      className="msla-panel-card-error-icon root-112"
+      className="msla-panel-card-error-icon root-110"
       data-icon-name="Warning"
-    >
-      
-    </i>
+    />
     <div
       className="msla-panel-card-error-text"
     >

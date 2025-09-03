@@ -23,18 +23,18 @@ import { runWithDurationTelemetry } from '../utils/telemetry';
 import { tryGetLogicAppProjectRoot } from '../utils/verifyIsProject';
 import { getWorkspaceSetting } from '../utils/vsCodeConfig/settings';
 import { getWindowsProcess } from '../utils/windowsProcess';
-import type { HttpOperationResponse } from '@azure/ms-rest-js';
-import { delay } from '@azure/ms-rest-js';
 import { HTTP_METHODS } from '@microsoft/logic-apps-shared';
 import type { AzExtRequestPrepareOptions } from '@microsoft/vscode-azext-azureutils';
 import { sendRequestWithTimeout } from '@microsoft/vscode-azext-azureutils';
 import { UserCancelledError, callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { IProcessInfo } from '@microsoft/vscode-extension-logic-apps';
+import { ProjectLanguage, type IProcessInfo } from '@microsoft/vscode-extension-logic-apps';
 import unixPsTree from 'ps-tree';
 import * as vscode from 'vscode';
 import parser from 'yargs-parser';
 import { buildCustomCodeFunctionsProject } from './buildCustomCodeFunctionsProject';
+import { getProjFiles } from '../utils/dotnet/dotnet';
+import { delay } from '../utils/delay';
 
 type OSAgnosticProcess = { command: string | undefined; pid: number | string };
 type ActualUnixPS = unixPsTree.PS & { COMM?: string };
@@ -90,6 +90,8 @@ export async function pickFuncProcessInternal(
   await buildCustomCodeFunctionsProject(context, workspaceFolder.uri);
 
   await waitForPrevFuncTaskToStop(workspaceFolder);
+  const projectFiles = await getProjFiles(context, ProjectLanguage.CSharp, projectPath);
+  const isBundleProject: boolean = projectFiles.length > 0 ? false : true;
 
   const preLaunchTaskName: string | undefined = debugConfig.preLaunchTask;
   const tasks: vscode.Task[] = await vscode.tasks.fetchTasks();
@@ -109,12 +111,74 @@ export async function pickFuncProcessInternal(
 
   getPickProcessTimeout(context);
 
-  if (debugTask && !debugConfig['noDebug']) {
+  if (debugTask && !debugConfig['noDebug'] && (isBundleProject || !debugConfig.isCodeless)) {
     await startDebugTask(debugTask, workspaceFolder);
   }
 
   const taskInfo = await startFuncTask(context, workspaceFolder, funcTask);
   return await pickChildProcess(taskInfo);
+}
+
+/**
+ * Waits for functions tasks to stop.
+ * @param {vscode.WorkspaceFolder} workspaceFolder - Workspace path.
+ */
+async function waitForPrevFuncTaskToStop(workspaceFolder: vscode.WorkspaceFolder): Promise<void> {
+  const timeoutInSeconds = 30;
+  const maxTime: number = Date.now() + timeoutInSeconds * 1000;
+  while (Date.now() < maxTime) {
+    if (!runningFuncTaskMap.has(workspaceFolder)) {
+      return;
+    }
+    await delay(1000);
+  }
+  throw new Error(
+    localize(
+      'failedToFindFuncHost',
+      'Failed to stop previous running Functions host within "{0}" seconds. Make sure the task has stopped before you debug again.',
+      timeoutInSeconds
+    )
+  );
+}
+
+/**
+ * Gets functions runtime port.
+ * @param {vscode.Task} funcTask - Function task.
+ * @returns {number} Returns specified port in tasks.json or the default function port.
+ */
+function getFunctionRuntimePort(funcTask: vscode.Task): number {
+  const { command } = funcTask.definition;
+  try {
+    const args = parser(command);
+    const port = args['port'] || args['p'] || undefined;
+    return port ?? Number(defaultFuncPort);
+  } catch {
+    // Returning the default port in case of error in parsing.
+    return Number(defaultFuncPort);
+  }
+}
+
+/**
+ * Gets pick process timeout setting value from workspace settings.
+ * @param {IActionContext} context - Command context.
+ * @returns {number} Timeout value in seconds.
+ */
+function getPickProcessTimeout(context: IActionContext): number {
+  const pickProcessTimeoutValue: number | undefined = getWorkspaceSetting<number>(pickProcessTimeoutSetting);
+  const timeoutInSeconds = Number(pickProcessTimeoutValue);
+  if (Number.isNaN(timeoutInSeconds)) {
+    throw new Error(
+      localize(
+        'invalidSettingValue',
+        'The setting "{0}" must be a number, but instead found "{1}".',
+        pickProcessTimeoutSetting,
+        pickProcessTimeoutValue
+      )
+    );
+  }
+  context.telemetry.properties.timeoutInSeconds = timeoutInSeconds.toString();
+
+  return timeoutInSeconds;
 }
 
 /**
@@ -138,28 +202,6 @@ async function startDebugTask(debugTask: vscode.Task, workspaceFolder: vscode.Wo
       }
     });
   });
-}
-
-/**
- * Waits for functions tasks to stop.
- * @param {vscode.WorkspaceFolder} workspaceFolder - Workspace path.
- */
-async function waitForPrevFuncTaskToStop(workspaceFolder: vscode.WorkspaceFolder): Promise<void> {
-  const timeoutInSeconds = 30;
-  const maxTime: number = Date.now() + timeoutInSeconds * 1000;
-  while (Date.now() < maxTime) {
-    if (!runningFuncTaskMap.has(workspaceFolder)) {
-      return;
-    }
-    await delay(1000);
-  }
-  throw new Error(
-    localize(
-      'failedToFindFuncHost',
-      'Failed to stop previous running Functions host within "{0}" seconds. Make sure the task has stopped before you debug again.',
-      timeoutInSeconds
-    )
-  );
 }
 
 /**
@@ -220,7 +262,7 @@ async function startFuncTask(
 
           try {
             // wait for status url to indicate functions host is running
-            const response: HttpOperationResponse = await sendRequestWithTimeout(context, statusRequest, statusRequestTimeout, undefined);
+            const response = await sendRequestWithTimeout(context, statusRequest, statusRequestTimeout, undefined);
             if (response.parsedBody.state.toLowerCase() === 'running') {
               funcTaskReadyEmitter.fire(workspaceFolder);
               return taskInfo;
@@ -253,6 +295,13 @@ async function startFuncTask(
   }
 }
 
+export async function findChildProcess(processId: number): Promise<string | undefined> {
+  const children: OSAgnosticProcess[] =
+    process.platform === Platform.windows ? await getWindowsChildren(processId) : await getUnixChildren(processId);
+  const child: OSAgnosticProcess | undefined = children.reverse().find((c) => /(dotnet|func)(\.exe|)$/i.test(c.command || ''));
+  return child ? child.pid.toString() : String(processId);
+}
+
 /**
  * Picks the child process that we want to use. Scenarios to keep in mind:
  * 1. On Windows, the rootPid is almost always the parent PowerShell process
@@ -275,11 +324,20 @@ export async function pickChildProcess(taskInfo: IRunningFuncTask): Promise<stri
   return child ? child.pid.toString() : String(taskInfo.processId);
 }
 
-export async function findChildProcess(processId: number): Promise<string | undefined> {
-  const children: OSAgnosticProcess[] =
-    process.platform === Platform.windows ? await getWindowsChildren(processId) : await getUnixChildren(processId);
-  const child: OSAgnosticProcess | undefined = children.reverse().find((c) => /(dotnet|func)(\.exe|)$/i.test(c.command || ''));
-  return child ? child.pid.toString() : String(processId);
+/**
+ * Returns wheter the task with the specific pid is running.
+ * This method will throw an error if the target pid does not exist. As a special case, a signal of 0 can be used to test for the existence of a process.
+ * Even though the name of this function is process.kill(), it is really just a signal sender, like the kill system call.
+ * @param {number} pid - Task pid.
+ * @returns {number} Returns true if the task is running, otherwise returns false.
+ */
+function isRunning(pid: number): boolean {
+  try {
+    process.kill(pid, 0);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 export async function getUnixChildren(pid: number): Promise<OSAgnosticProcess[]> {
@@ -302,60 +360,4 @@ export async function getWindowsChildren(pid: number): Promise<OSAgnosticProcess
   return (processes || []).map((c) => {
     return { command: c.name, pid: c.pid };
   });
-}
-
-/**
- * Gets functions runtime port.
- * @param {vscode.Task} funcTask - Function task.
- * @returns {number} Returns specified port in tasks.json or the default function port.
- */
-function getFunctionRuntimePort(funcTask: vscode.Task): number {
-  const { command } = funcTask.definition;
-  try {
-    const args = parser(command);
-    const port = args['port'] || args['p'] || undefined;
-    return port ?? Number(defaultFuncPort);
-  } catch {
-    // Returning the default port in case of error in parsing.
-    return Number(defaultFuncPort);
-  }
-}
-
-/**
- * Returns wheter the task with the specific pid is running.
- * This method will throw an error if the target pid does not exist. As a special case, a signal of 0 can be used to test for the existence of a process.
- * Even though the name of this function is process.kill(), it is really just a signal sender, like the kill system call.
- * @param {number} pid - Task pid.
- * @returns {number} Returns true if the task is running, otherwise returns false.
- */
-function isRunning(pid: number): boolean {
-  try {
-    process.kill(pid, 0);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-/**
- * Gets pick process timeout setting value from workspace settings.
- * @param {IActionContext} context - Command context.
- * @returns {number} Timeout value in seconds.
- */
-function getPickProcessTimeout(context: IActionContext): number {
-  const pickProcessTimeoutValue: number | undefined = getWorkspaceSetting<number>(pickProcessTimeoutSetting);
-  const timeoutInSeconds = Number(pickProcessTimeoutValue);
-  if (Number.isNaN(timeoutInSeconds)) {
-    throw new Error(
-      localize(
-        'invalidSettingValue',
-        'The setting "{0}" must be a number, but instead found "{1}".',
-        pickProcessTimeoutSetting,
-        pickProcessTimeoutValue
-      )
-    );
-  }
-  context.telemetry.properties.timeoutInSeconds = timeoutInSeconds.toString();
-
-  return timeoutInSeconds;
 }

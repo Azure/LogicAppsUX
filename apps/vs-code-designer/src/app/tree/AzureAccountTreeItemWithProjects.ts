@@ -6,7 +6,7 @@ import { funcVersionSetting, projectLanguageSetting, projectSubpathSetting } fro
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { isLocalProjectCV, isProjectCV, isRemoteProjectCV } from '../utils/tree/projectContextValues';
-import { SubscriptionTreeItem } from './subscriptionTree/SubscriptionTreeItem';
+import { SubscriptionTreeItem } from './subscriptionTree/subscriptionTreeItem';
 import { AzureAccountTreeItemBase } from '@microsoft/vscode-azext-azureutils';
 import type { AzExtTreeItem, IActionContext, ISubscriptionContext } from '@microsoft/vscode-azext-utils';
 import { callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';

@@ -1,3 +1,4 @@
+import { mergeClasses } from '@fluentui/react-components';
 import type { ValueSegment } from '../editor';
 import { EditorCollapseToggle } from '../editor';
 import type { BaseEditorProps } from '../editor/base';
@@ -180,7 +181,7 @@ export const AuthenticationEditor = ({
   });
 
   return (
-    <div className="msla-authentication-editor-container">
+    <div className={mergeClasses('msla-authentication-editor-container', props.className)}>
       {expandedView ? (
         <div className="msla-authentication-editor-expanded-container">
           <AuthenticationDropdown

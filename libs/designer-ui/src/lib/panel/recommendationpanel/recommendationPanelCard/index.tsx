@@ -22,6 +22,7 @@ export interface BaseRecommendationPanelCardProps {
   showConnectorName?: boolean;
   showFilledFavoriteOnlyOnHover?: boolean;
   showUnfilledFavoriteOnlyOnHover?: boolean;
+  hideFavorites?: boolean;
 }
 
 export type RecommendationPanelCardProps = BaseRecommendationPanelCardProps & {
@@ -35,6 +36,7 @@ export const RecommendationPanelCard = ({
   showFilledFavoriteOnlyOnHover,
   showUnfilledFavoriteOnlyOnHover,
   showConnectorName,
+  hideFavorites = false,
 }: RecommendationPanelCardProps) => {
   const { data } = operationData;
   const { apiId = '', connectorName, description, iconUri, brandColor, isCustom } = data;
@@ -94,12 +96,14 @@ export const RecommendationPanelCard = ({
           description={description}
           innerAriaHidden="true"
         />
-        <FavoriteButton
-          connectorId={apiId}
-          operationId={isOperationAction ? operationData.data.id : undefined}
-          showFilledFavoriteOnlyOnHover={showFilledFavoriteOnlyOnHover}
-          showUnfilledFavoriteOnlyOnHover={showUnfilledFavoriteOnlyOnHover}
-        />
+        {hideFavorites ? null : (
+          <FavoriteButton
+            connectorId={apiId}
+            operationId={isOperationAction ? operationData.data.id : undefined}
+            showFilledFavoriteOnlyOnHover={showFilledFavoriteOnlyOnHover}
+            showUnfilledFavoriteOnlyOnHover={showUnfilledFavoriteOnlyOnHover}
+          />
+        )}
         {isOperationAction ? null : <ChevronRight12Regular />}
       </div>
     </Card>

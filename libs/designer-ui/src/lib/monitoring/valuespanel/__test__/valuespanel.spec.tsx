@@ -3,6 +3,7 @@ import { ValuesPanel } from '../index';
 import React from 'react';
 import ShallowRenderer from 'react-test-renderer/shallow';
 import { describe, beforeEach, afterEach, it, expect } from 'vitest';
+
 describe('lib/monitoring/valuespanel', () => {
   let minimal: ValuesPanelProps, renderer: ShallowRenderer.ShallowRenderer;
 
@@ -26,8 +27,8 @@ describe('lib/monitoring/valuespanel', () => {
 
     const section = renderer.getRenderOutput();
     expect(section.props.className).toBe('msla-trace-inputs-outputs');
-
-    const [headerContainer, valueList]: any[] = React.Children.toArray(section.props.children);
+    const [headerContainer, valueListContainer]: any[] = React.Children.toArray(section.props.children);
+    const [valueList]: any[] = React.Children.toArray(valueListContainer.props.children);
     expect(headerContainer.props.className).toBe('msla-trace-inputs-outputs-header');
     expect(valueList.props).toEqual(
       expect.objectContaining({
@@ -38,12 +39,8 @@ describe('lib/monitoring/valuespanel', () => {
       })
     );
 
-    const [header]: any[] = React.Children.toArray(headerContainer.props.children);
+    const [_, header]: any[] = React.Children.toArray(headerContainer.props.children);
     expect(header.props.children).toBe(minimal.headerText);
-    expect(header.props.id).toBe(minimal.labelledBy);
-    expect(header.props.style).toEqual({
-      borderColor: '#474747B3',
-    });
   });
 
   it('should render with a brand color when specified', () => {
@@ -51,10 +48,12 @@ describe('lib/monitoring/valuespanel', () => {
 
     const section = renderer.getRenderOutput();
     const [headerContainer]: any[] = React.Children.toArray(section.props.children);
-    const [header]: any[] = React.Children.toArray(headerContainer.props.children);
-    expect(header.props.style).toEqual({
-      borderColor: '#1f6e43B3',
-    });
+    const [brandIndicator]: any[] = React.Children.toArray(headerContainer.props.children);
+    expect(brandIndicator.props.style).toEqual(
+      expect.objectContaining({
+        background: '#1f6e43',
+      })
+    );
   });
 
   it('should render a link when available', () => {
@@ -62,11 +61,12 @@ describe('lib/monitoring/valuespanel', () => {
     renderer.render(<ValuesPanel {...minimal} linkText={linkText} showLink={true} />);
 
     const section = renderer.getRenderOutput();
-    const [headerContainer]: any[] = React.Children.toArray(section.props.children);
+    expect(section.props.className).toBe('msla-trace-inputs-outputs');
+    const [headerContainer, valueListContainer]: any[] = React.Children.toArray(section.props.children);
+    const [valueList]: any[] = React.Children.toArray(valueListContainer.props.children);
     expect(headerContainer.props.className).toBe('msla-trace-inputs-outputs-header');
-
-    const [, link]: any[] = React.Children.toArray(headerContainer.props.children);
-    expect(link.props).toEqual(
+    const [_, headerButton, linkButton]: any[] = React.Children.toArray(headerContainer.props.children);
+    expect(linkButton.props).toEqual(
       expect.objectContaining({
         linkText,
         visible: true,
@@ -78,7 +78,8 @@ describe('lib/monitoring/valuespanel', () => {
     renderer.render(<ValuesPanel {...minimal} showMore={true} />);
 
     const section = renderer.getRenderOutput();
-    const [, valueList]: any[] = React.Children.toArray(section.props.children);
+    const [, valueListContainer]: any[] = React.Children.toArray(section.props.children);
+    const [valueList]: any[] = React.Children.toArray(valueListContainer.props.children);
     expect(valueList.props).toEqual(
       expect.objectContaining({
         showMore: true,

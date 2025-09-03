@@ -48,12 +48,18 @@ export class BaseResourceService implements IResourceService {
     }
   }
 
-  async listLogicApps(subscriptionId: string, resourceGroup: string): Promise<LogicAppResource[]> {
+  async listLogicApps(subscriptionId: string, resourceGroup?: string, optionalQuery?: string): Promise<LogicAppResource[]> {
     const { baseUrl, httpClient } = this.options;
     const uri = `${baseUrl}/providers/Microsoft.ResourceGraph/resources?api-version=2019-04-01`;
-    const query = `resources | where type == "microsoft.web/sites" and kind contains "workflowapp" and resourceGroup =~ "${resourceGroup.toLowerCase()}"`;
+    const query = `resources | where type == "microsoft.web/sites" and kind contains "workflowapp"${resourceGroup ? ` and resourceGroup =~ "${resourceGroup.toLowerCase()}"` : ''}${optionalQuery ?? ''}`;
     const response = await fetchAppsByQuery(httpClient, uri, query, [subscriptionId]);
-    return response.map((item) => ({ id: item.id, name: item.name, location: item.location, plan: 'Standard' }));
+    return response.map((item) => ({
+      id: item.id,
+      name: item.name,
+      location: item.location,
+      resourceGroup: item.resourceGroup,
+      plan: 'Standard',
+    }));
   }
 
   async listAllLogicApps(subscriptionId: string, resourceGroup: string): Promise<LogicAppResource[]> {
@@ -61,7 +67,13 @@ export class BaseResourceService implements IResourceService {
     const uri = `${baseUrl}/providers/Microsoft.ResourceGraph/resources?api-version=2019-04-01`;
     const query = `resources | where type =~ 'microsoft.logic/workflows' or (type =~ 'microsoft.web/sites' and kind contains 'workflowapp') | where resourceGroup =~ '${resourceGroup.toLowerCase()}' | extend plan = case(kind contains 'workflowapp', 'Standard', 'Consumption')`;
     const response = await fetchAppsByQuery(httpClient, uri, query, [subscriptionId]);
-    return response.map((item) => ({ id: item.id, name: item.name, location: item.location, plan: item.plan }));
+    return response.map((item) => ({
+      id: item.id,
+      name: item.name,
+      location: item.location,
+      resourceGroup: item.resourceGroup,
+      plan: item.plan,
+    }));
   }
 
   async listWorkflowsInApp(

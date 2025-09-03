@@ -68,7 +68,7 @@ describe('getParameterValue', () => {
 
     const result = getParameterValue('ignored', VARIABLE_TYPE.STRING, nodeMap, () => [mockSegment]);
 
-    expect(result[0].value).toBe('TEST_TOKEN');
+    expect(result[0].value).toBe('triggerBody()');
   });
 });
 
@@ -307,7 +307,6 @@ describe('validateVariables', () => {
       },
     ];
     const errors = validateVariables(variables);
-    console.log(errors);
     expect(errors[0].value).toBe(`'Value' must be a valid JSON array`);
     expect(errors[1].value).toBe(`'Value' must be a valid JSON array`);
   });

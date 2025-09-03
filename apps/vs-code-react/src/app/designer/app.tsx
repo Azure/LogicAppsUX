@@ -2,11 +2,9 @@ import { createFileSystemConnection, updateUnitTestDefinition } from '../../stat
 import type { AppDispatch, RootState } from '../../state/store';
 import { VSCodeContext } from '../../webviewCommunication';
 import { DesignerCommandBar } from './DesignerCommandBar';
-import './app.less';
-import { getDesignerServices } from './servicesHelper';
+import { getDesignerServices, isMultiVariableSupport } from './servicesHelper';
 import { getRunInstanceMocks } from './utilities/runInstance';
 import { convertConnectionsDataToReferences } from './utilities/workflow';
-import { Spinner, SpinnerSize } from '@fluentui/react';
 import type { ConnectionCreationInfo, LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import type { ConnectionReferences } from '@microsoft/logic-apps-designer';
 import {
@@ -26,11 +24,14 @@ import { useIntl } from 'react-intl';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { XLargeText } from '@microsoft/designer-ui';
+import { Spinner } from '@fluentui/react-components';
+import { useAppStyles } from './appStyles';
 
 export const DesignerApp = () => {
   const vscode = useContext(VSCodeContext);
   const dispatch: AppDispatch = useDispatch();
   const vscodeState = useSelector((state: RootState) => state.designer);
+  const styles = useAppStyles();
   const {
     panelMetaData,
     connectionData,
@@ -128,6 +129,11 @@ export const DesignerApp = () => {
     return convertConnectionsDataToReferences(connectionData);
   }, [connectionData]);
 
+  const isMultiVariableSupportEnabled = useMemo(
+    () => isMultiVariableSupport(panelMetaData?.extensionBundleVersion),
+    [panelMetaData?.extensionBundleVersion]
+  );
+
   const getRunInstance = () => {
     return services.runService.getRun(runId);
   };
@@ -150,7 +156,8 @@ export const DesignerApp = () => {
     if (isMonitoringView) {
       refetch();
       const queryClient = getReactQueryClient();
-      queryClient.removeQueries([runsQueriesKeys.useChatHistory]);
+      queryClient.removeQueries([runsQueriesKeys.useActionsChatHistory]);
+      queryClient.removeQueries([runsQueriesKeys.useRunChatHistory]);
       queryClient.removeQueries([runsQueriesKeys.useAgentActionsRepetition]);
       queryClient.removeQueries([runsQueriesKeys.useAgentRepetition]);
       queryClient.removeQueries([runsQueriesKeys.useNodeRepetition]);
@@ -196,9 +203,9 @@ export const DesignerApp = () => {
     setCustomCode(panelMetaData?.customCodeData);
   }, [panelMetaData]);
 
-  const errorApp = <XLargeText text={`${intlText.ERROR_APP} `} className="designer--error" style={{ display: 'block' }} />;
+  const errorApp = <XLargeText text={`${intlText.ERROR_APP} `} className={styles.designerError} style={{ display: 'block' }} />;
 
-  const loadingApp = <Spinner className="designer--loading" size={SpinnerSize.large} label={intlText.LOADING_APP} />;
+  const loadingApp = <Spinner className={styles.designerLoading} size="large" label={intlText.LOADING_APP} />;
 
   const designerCommandBar =
     readOnly && !isMonitoringView && !isUnitTest ? null : (
@@ -245,6 +252,7 @@ export const DesignerApp = () => {
           services: services,
           hostOptions: {
             displayRuntimeInfo: true,
+            enableMultiVariable: isMultiVariableSupportEnabled,
           },
         }}
       >
