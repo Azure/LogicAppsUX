@@ -1,7 +1,10 @@
 import { AssertionErrorCode, AssertionException } from '../../utils/src';
 
 export interface ICloneService {
-  getExistingWorkflowNames: (resourceDetails: { subscriptionId: string; resourceGroup: string; logicAppName: string }) => Promise<string[]>;
+  getExistingWorkflowNames?: (resourceDetails: { subscriptionId: string; resourceGroup: string; logicAppName: string }) => Promise<
+    string[]
+  >;
+  openBladeAfterCreate?: (workflowId: string) => void;
 }
 
 let service: ICloneService;
