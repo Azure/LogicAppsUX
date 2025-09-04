@@ -18,7 +18,7 @@ export class BaseCloneService implements ICloneService {
     return;
   }
 
-  public openBladeAfterCreate = (workflowId: string, location: string): void => this.options.openBladeAfterCreate?.(workflowId, location);
+  public openBladeAfterCreate = (workflowId: string, location: string): void => this.options.openBladeAfterCreate(workflowId, location);
 
   public getExistingWorkflowNames = async (resourceDetails: { subscriptionId: string; resourceGroup: string; logicAppName: string }) => {
     try {
