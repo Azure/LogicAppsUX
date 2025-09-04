@@ -34,7 +34,7 @@ export const CloneReviewList = () => {
   const handleOpenBlade = useCallback(() => {
     //TODO: to be replaced by back-end given back resourceId (same value)
     const resourceId = `/subscriptions/${destinationApp.subscriptionId}/resourceGroups/${destinationApp.resourceGroup}/providers/Microsoft.Web/sites/${destinationApp.logicAppName}`;
-    CloneService()?.openBladeAfterCreate?.(resourceId, '');
+    CloneService()?.openBladeAfterCreate?.(resourceId, destinationApp.location);
   }, [destinationApp]);
 
   return (

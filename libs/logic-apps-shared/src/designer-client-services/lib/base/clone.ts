@@ -4,7 +4,7 @@ import type { IHttpClient } from '../httpClient';
 export interface BaseCloneServiceOptions {
   httpClient: IHttpClient;
   baseUrl: string;
-  openBladeAfterCreate?: (workflowId: string) => void;
+  openBladeAfterCreate: (workflowId: string, location: string) => void;
   apiVersions: {
     gateway: string;
   };
@@ -18,7 +18,7 @@ export class BaseCloneService implements ICloneService {
     return;
   }
 
-  public openBladeAfterCreate = (workflowId: string): void => this.options.openBladeAfterCreate?.(workflowId);
+  public openBladeAfterCreate = (workflowId: string, location: string): void => this.options.openBladeAfterCreate?.(workflowId, location);
 
   public getExistingWorkflowNames = async (resourceDetails: { subscriptionId: string; resourceGroup: string; logicAppName: string }) => {
     try {
