@@ -14,9 +14,13 @@ export interface SourceWorkflowState extends WorkflowState {
   targetWorkflowNameValidationError?: string;
 }
 
+export interface TargetWorkflowState extends WorkflowState {
+  location: string;
+}
+
 export interface CloneState {
   sourceApps: SourceWorkflowState[];
-  destinationApp: WorkflowState;
+  destinationApp: TargetWorkflowState;
   errorMessage: string | undefined;
   isSuccessfullyCloned: boolean;
 }
@@ -26,6 +30,7 @@ const initialState: CloneState = {
   destinationApp: {
     subscriptionId: '',
     resourceGroup: '',
+    location: '',
     logicAppName: '',
   },
   errorMessage: undefined,
@@ -52,8 +57,9 @@ export const cloneSlice = createSlice({
     setDestinationResourceGroup: (state, action: PayloadAction<string>) => {
       state.destinationApp.resourceGroup = action.payload;
     },
-    setDestinationWorkflowAppDetails: (state, action: PayloadAction<{ name: string }>) => {
+    setDestinationWorkflowAppDetails: (state, action: PayloadAction<{ name: string; location: string }>) => {
       state.destinationApp.logicAppName = action.payload.name;
+      state.destinationApp.location = action.payload.location;
     },
     updateErrorMessage: (state, action: PayloadAction<string | undefined>) => {
       state.errorMessage = action.payload;
