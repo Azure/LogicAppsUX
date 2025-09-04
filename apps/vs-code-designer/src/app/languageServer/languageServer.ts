@@ -1,14 +1,21 @@
+import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
-import { onStartLanguageServerProtocol } from '../../constants';
+import { connectionsFileName, onStartLanguageServerProtocol } from '../../constants';
 import { workspace, window, MarkdownString } from 'vscode';
 import type { Executable, ServerOptions, LanguageClientOptions, HoverMiddleware, Middleware } from 'vscode-languageclient/node';
 import { LanguageClient } from 'vscode-languageclient/node';
 import { ext } from '../../extensionVariables';
+import { getWorkspaceFolderPath } from '../commands/workflows/switchDebugMode/switchDebugMode';
+import { tryGetLogicAppProjectRoot } from '../utils/verifyIsProject';
+import path from 'path';
 
-const initializeServerLanguageClient = () => {
+const initializeServerLanguageClient = async (context: IActionContext) => {
   const configuration = workspace.getConfiguration();
   const serverDllPath = configuration.get<string>('azureLogicAppsStandard.languageServerDLLPath') || '';
   const sdkNupkg = configuration.get<string>('azureLogicAppsStandard.languageServerNupkgPath') || '';
+  const workspaceFolder = await getWorkspaceFolderPath(context);
+  const projectPath: string | undefined = await tryGetLogicAppProjectRoot(context, workspaceFolder, true /* suppressPrompt */);
+  const connectionFilePath: string = path.join(projectPath, connectionsFileName);
 
   if (!serverDllPath) {
     window.showWarningMessage('Set "azureLogicAppsStandard.languageServerDLLPath" to your C# server DLL.');
@@ -22,7 +29,7 @@ const initializeServerLanguageClient = () => {
 
   const run: Executable = {
     command: 'dotnet',
-    args: [serverDllPath, '--sdk', sdkNupkg],
+    args: [serverDllPath, '--sdk', sdkNupkg, '--connections', connectionFilePath],
   };
 
   const serverOptions: ServerOptions = { run, debug: run };
@@ -34,7 +41,6 @@ const initializeServerLanguageClient = () => {
       if (!response) {
         return;
       }
-      console.log(`Hover response: ${JSON.stringify(response)}`);
 
       response.contents = response.contents.map((content) => {
         if (content instanceof MarkdownString) {
@@ -76,7 +82,7 @@ const initializeServerLanguageClient = () => {
 };
 
 export const startLanguageServerProtocol = async () => {
-  await callWithTelemetryAndErrorHandling(onStartLanguageServerProtocol, async () => {
-    initializeServerLanguageClient();
+  await callWithTelemetryAndErrorHandling(onStartLanguageServerProtocol, async (context: IActionContext) => {
+    initializeServerLanguageClient(context);
   });
 };
