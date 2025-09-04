@@ -23,7 +23,7 @@ import {
 } from '../../../../constants';
 import type { SlotTreeItem } from '../../../tree/slotsTree/SlotTreeItem';
 
-export const connectToSMB = async (context: IActionContext, node: SlotTreeItem, smbFolderName: string, mountDrive: string) => {
+export async function connectToSMB(context: IActionContext, node: SlotTreeItem, smbFolderName: string, mountDrive: string): Promise<void> {
   const message: string = localize('connectingToMSB', 'Connecting to logic app SMB storage...');
   ext.outputChannel.appendLog(message);
 
@@ -41,9 +41,9 @@ export const connectToSMB = async (context: IActionContext, node: SlotTreeItem, 
   } catch (error) {
     throw new Error(`Error uploading files to SMB: ${error.message}`);
   }
-};
+}
 
-const mountSMB = async (hostName: string, fileSharePath: string, userName: string, password: string, mountDrive: string) => {
+async function mountSMB(hostName: string, fileSharePath: string, userName: string, password: string, mountDrive: string): Promise<void> {
   let mountCommand: string;
   let sanitizedCommandForLogging: string;
   if (process.platform === Platform.windows) {
@@ -57,15 +57,15 @@ const mountSMB = async (hostName: string, fileSharePath: string, userName: strin
     sanitizedCommandForLogging = `mount -t cifs //${hostName}/${fileSharePath} /mnt/test -o username=${userName},dir_mode=0777,file_mode=0777,serverino,nosharesock,actimeo=30`;
   }
   await executeCommandWithSanityLogging(undefined, undefined, sanitizedCommandForLogging, mountCommand);
-};
+}
 
-const uploadFiles = async (files: File[], smbFolderPath: string) => {
+async function uploadFiles(files: File[], smbFolderPath: string): Promise<void> {
   for (const file of files) {
     await fse.copy(file.path, path.join(smbFolderPath, file.name), { overwrite: true });
   }
-};
+}
 
-const uploadRootFiles = async (projectPath: string | undefined, smbFolderPath: string) => {
+async function uploadRootFiles(projectPath: string | undefined, smbFolderPath: string): Promise<void> {
   const hostJsonPath: string = path.join(projectPath, hostFileName);
   const parametersJsonPath: string = path.join(projectPath, parametersFileName);
   const connectionsJsonPath: string = path.join(projectPath, connectionsFileName);
@@ -81,16 +81,16 @@ const uploadRootFiles = async (projectPath: string | undefined, smbFolderPath: s
       await uploadFiles([{ path: rootFile.path, name: rootFile.name }], smbFolderPath);
     }
   }
-};
+}
 
-const uploadWorkflowsFiles = async (projectPath: string | undefined, smbFolderPath: string) => {
+async function uploadWorkflowsFiles(projectPath: string | undefined, smbFolderPath: string): Promise<void> {
   const workflowFiles = await getWorkflowsPathInLocalProject(projectPath);
   for (const workflowFile of workflowFiles) {
     await uploadFiles([{ ...workflowFile, name: path.join(workflowFile.name, workflowFileName) }], smbFolderPath);
   }
-};
+}
 
-const uploadArtifactsFiles = async (projectPath: string | undefined, smbFolderPath: string) => {
+async function uploadArtifactsFiles(projectPath: string | undefined, smbFolderPath: string): Promise<void> {
   const artifactsFiles = await getArtifactsPathInLocalProject(projectPath);
 
   if (artifactsFiles.maps.length > 0) {
@@ -104,13 +104,13 @@ const uploadArtifactsFiles = async (projectPath: string | undefined, smbFolderPa
   if (artifactsFiles.rules.length > 0) {
     await uploadFiles(artifactsFiles.rules, path.join(smbFolderPath, artifactsDirectory, rulesDirectory));
   }
-};
+}
 
-const uploadLibFolderFiles = async (projectPath: string, smbFolderPath: string) => {
+async function uploadLibFolderFiles(projectPath: string, smbFolderPath: string): Promise<void> {
   const libFolderPath = path.join(projectPath, libDirectory);
   const remoteFolderPath = path.join(smbFolderPath, libDirectory);
 
   if (await fse.pathExists(libFolderPath)) {
     await fse.copy(libFolderPath, remoteFolderPath, { overwrite: true });
   }
-};
+}

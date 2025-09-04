@@ -15,7 +15,8 @@ describe('Template Validation Tests', () => {
 
     test('Acceptable names for workflow should pass with undefined', async () => {
       const nameDoesNotMath = intl.formatMessage({
-        defaultMessage: "Name can only contain letters, numbers, and '-', '(', ')', '_' or '.",
+        defaultMessage:
+          "Workflow name must start with a letter and can contain letters, numbers (0-9), dashes ('-'), and underscores ('_').",
         id: 'zMKxg9',
         description: 'Error message when the workflow name is invalid regex.',
       });

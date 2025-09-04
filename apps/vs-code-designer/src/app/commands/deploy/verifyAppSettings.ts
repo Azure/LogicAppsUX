@@ -50,7 +50,7 @@ export async function verifyAppSettings(
  * @param {ProjectLanguage} localLanguage - Project local language.
  * @param {Record<string,string>} remoteProperties - List of remote logic app local.settings properties.
  */
-export async function verifyVersionAndLanguage(
+async function verifyVersionAndLanguage(
   context: IActionContext,
   siteName: string,
   localVersion: FuncVersion,
@@ -105,11 +105,7 @@ export async function verifyVersionAndLanguage(
  * @param {SlotTreeItem} node - Logic app node structure.
  * @param {string} originalDeployFsPath - Workflow path to deploy.
  */
-export async function verifyConnectionResourceGroup(
-  context: IActionContext,
-  node: SlotTreeItem,
-  originalDeployFsPath: string
-): Promise<void> {
+async function verifyConnectionResourceGroup(context: IActionContext, node: SlotTreeItem, originalDeployFsPath: string): Promise<void> {
   const workflowResourceGroupRemote = node.site.resourceGroup;
   await verifyDeploymentResourceGroup(context, workflowResourceGroupRemote, originalDeployFsPath);
 }

@@ -5,8 +5,8 @@
 import { localize } from '../../../../localize';
 import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
 import { selectWorkspaceFile } from '../../../utils/workspace';
-import { StatelessWorkflowsListStep } from './StatelessWorkflowsListStep';
-import { UpdateDebugModeStep } from './UpdateDebugModeStep';
+import { StatelessWorkflowsListStep } from './switchDebugModeSteps/StatelessWorkflowsListStep';
+import { UpdateDebugModeStep } from './switchDebugModeSteps/UpdateDebugModeStep';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { AzureWizard } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';

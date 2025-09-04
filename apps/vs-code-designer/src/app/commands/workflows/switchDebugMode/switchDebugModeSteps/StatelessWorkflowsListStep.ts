@@ -2,8 +2,8 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { workflowFileName } from '../../../../constants';
-import { localize } from '../../../../localize';
+import { workflowFileName } from '../../../../../constants';
+import { localize } from '../../../../../localize';
 import type { IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type { IDebugModeContext } from '@microsoft/vscode-extension-logic-apps';
@@ -11,6 +11,10 @@ import { lstat, pathExists, readdir, readFileSync } from 'fs-extra';
 import * as path from 'path';
 
 export class StatelessWorkflowsListStep extends AzureWizardPromptStep<IDebugModeContext> {
+  public shouldPrompt(): boolean {
+    return true;
+  }
+
   public async prompt(context: IDebugModeContext): Promise<void> {
     const placeHolder: string = localize('debugMode.selectWorkflow', 'Select a stateless workflow to change debug mode.');
     const workflowPicks = await this.getStatelessWorkflows(context.projectPath);
@@ -25,10 +29,6 @@ export class StatelessWorkflowsListStep extends AzureWizardPromptStep<IDebugMode
       context.enableDebugMode = (await context.ui.showQuickPick(picks, { placeHolder })).data;
       context.workflowName = workflowName;
     }
-  }
-
-  public shouldPrompt(): boolean {
-    return true;
   }
 
   private async getStatelessWorkflows(projectPath: string): Promise<IAzureQuickPickItem<string>[]> {

@@ -14,6 +14,7 @@ import * as vscode from 'vscode';
 
 /**
  * Edits a unit test for a Logic App workflow.
+ * TODO(aeldridge): Unused
  * @param {IActionContext} context - The action context.
  * @param {vscode.Uri} node - The URI of the unit test file to edit. If not provided, the user will be prompted to select a unit test file.
  * @returns A Promise that resolves when the unit test has been edited.

@@ -14,6 +14,15 @@ export class OpenFolderStep extends AzureWizardExecuteStep<IProjectWizardContext
   public priority = 250;
 
   /**
+   * Determines whether this step should be executed based on the user's input.
+   * @param context The context object for the project wizard.
+   * @returns A boolean value indicating whether this step should be executed.
+   */
+  public shouldExecute(context: IProjectWizardContext): boolean {
+    return !!context.openBehavior && context.openBehavior !== OpenBehavior.alreadyOpen && context.openBehavior !== OpenBehavior.dontOpen;
+  }
+
+  /**
    * Executes the step to open the folder in Visual Studio Code.
    * @param context The context object for the project wizard.
    * @returns A Promise that resolves to void.
@@ -48,14 +57,5 @@ export class OpenFolderStep extends AzureWizardExecuteStep<IProjectWizardContext
         context.openBehavior === OpenBehavior.openInNewWindow /* forceNewWindow */
       );
     }
-  }
-
-  /**
-   * Determines whether this step should be executed based on the user's input.
-   * @param context The context object for the project wizard.
-   * @returns A boolean value indicating whether this step should be executed.
-   */
-  public shouldExecute(context: IProjectWizardContext): boolean {
-    return !!context.openBehavior && context.openBehavior !== OpenBehavior.alreadyOpen && context.openBehavior !== OpenBehavior.dontOpen;
   }
 }

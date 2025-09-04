@@ -27,7 +27,6 @@ import { getDebugConfiguration } from '../../../utils/debug';
  * This class represents a prompt step that allows the user to set up an Azure Function project.
  */
 export class FunctionAppFilesStep extends AzureWizardPromptStep<IProjectWizardContext> {
-  // Hide the step count in the wizard UI
   public hideStepCount = true;
 
   private csTemplateFileName = {
@@ -49,6 +48,14 @@ export class FunctionAppFilesStep extends AzureWizardPromptStep<IProjectWizardCo
     [ProjectType.rulesEngine]: 'RuleSetProjectTemplate',
     [ProjectType.agentCodeful]: 'AgentCodefulProjectTemplate',
   };
+
+  /**
+   * Determines whether the prompt should be displayed.
+   * @returns {boolean} True if the prompt should be displayed, false otherwise.
+   */
+  public shouldPrompt(): boolean {
+    return true;
+  }
 
   /**
    * Prompts the user to set up an Azure Function project.
@@ -83,14 +90,6 @@ export class FunctionAppFilesStep extends AzureWizardPromptStep<IProjectWizardCo
     // Generate the Visual Studio Code configuration files in the specified folder.
     const isNewLogicAppProject = context.shouldCreateLogicAppProject;
     await this.createVscodeConfigFiles(functionFolderPath, targetFramework, funcVersion, logicAppName, isNewLogicAppProject);
-  }
-
-  /**
-   * Determines whether the prompt should be displayed.
-   * @returns {boolean} True if the prompt should be displayed, false otherwise.
-   */
-  public shouldPrompt(): boolean {
-    return true;
   }
 
   /**

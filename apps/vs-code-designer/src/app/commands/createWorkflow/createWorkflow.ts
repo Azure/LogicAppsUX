@@ -10,7 +10,6 @@ import { verifyAndPromptToCreateProject } from '../../utils/verifyIsProject';
 import { getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
 import { verifyInitForVSCode } from '../../utils/vsCodeConfig/verifyInitForVSCode';
 import { getContainingWorkspace, getWorkspaceFolder } from '../../utils/workspace';
-
 import { isNullOrUndefined, isString } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { AzureWizard } from '@microsoft/vscode-azext-utils';
@@ -84,7 +83,7 @@ export async function createWorkflow(
 
   const wizard: AzureWizard<IFunctionWizardContext> = new AzureWizard(wizardContext, {
     promptSteps: [
-      await WorkflowCodeTypeStep.create(wizardContext, { templateId, triggerSettings, isProjectWizard: false }),
+      new WorkflowCodeTypeStep(),
       await WorkflowKindStep.create(wizardContext, { templateId, triggerSettings, isProjectWizard: false }),
     ],
   });

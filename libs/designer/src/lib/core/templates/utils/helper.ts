@@ -274,8 +274,8 @@ export const checkWorkflowNameWithRegex = (intl: IntlShape, workflowName: string
   const regex = /^[A-Za-z][A-Za-z0-9]*(?:[_-][A-Za-z0-9]+)*$/;
   if (!regex.test(workflowName)) {
     return intl.formatMessage({
-      defaultMessage: "Name can only contain letters, numbers, and '-', '(', ')', '_' or '.",
-      id: 'TwBRcg',
+      defaultMessage: "Workflow name must start with a letter and can contain letters, numbers (0-9), dashes ('-'), and underscores ('_').",
+      id: '/21RuK',
       description: 'Error message when the workflow name is invalid regex.',
     });
   }

@@ -6,6 +6,10 @@ import { deployedStorageAccountNameValidation } from '../../../../../constants';
 export class StorageAccountNameStep extends AzureWizardPromptStep<IAzureDeploymentScriptsContext> {
   public hideStepCount = true;
 
+  public shouldPrompt(): boolean {
+    return true;
+  }
+
   public async prompt(context: IAzureDeploymentScriptsContext): Promise<void> {
     context.telemetry.properties.lastStep = 'StorageAccountNameStep';
     context.storageAccountName = await context.ui.showInputBox({
@@ -13,10 +17,6 @@ export class StorageAccountNameStep extends AzureWizardPromptStep<IAzureDeployme
       prompt: localize('storageAccountNamePrompt', 'Provide a unique name for the storage account.'),
       validateInput: (input: string): string | undefined => this.validateStorageAccountName(input),
     });
-  }
-
-  public shouldPrompt(): boolean {
-    return true;
   }
 
   private validateStorageAccountName(name: string | undefined): string | undefined {

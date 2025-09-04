@@ -16,6 +16,10 @@ import { LogicAppResolver } from '../../../../../LogicAppResolver';
 export class LogicAppStep extends AzureWizardPromptStep<IAzureDeploymentScriptsContext> {
   public hideStepCount = true;
 
+  public shouldPrompt(): boolean {
+    return true;
+  }
+
   public async prompt(context: IAzureDeploymentScriptsContext): Promise<void> {
     context.telemetry.properties.lastStep = 'LogicAppStep';
     const placeHolder: string = localize('selectLogicApp', 'Select Logic App (Standard) in Azure');
@@ -36,10 +40,6 @@ export class LogicAppStep extends AzureWizardPromptStep<IAzureDeploymentScriptsC
 
     context.logicAppNode = new SlotTreeItem(subscriptionNode as AzExtParentTreeItem, resourceTree);
     context.logicAppName = context.logicAppNode.site.siteName;
-  }
-
-  public shouldPrompt(): boolean {
-    return true;
   }
 
   private static async getLogicAppsPicks(

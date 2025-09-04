@@ -2,9 +2,9 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { webhookRedirectHostUri } from '../../../../constants';
-import { addOrUpdateLocalAppSettings } from '../../../utils/appSettings/localSettings';
-import type { IWebhookContext } from './webhookWizard';
+import { webhookRedirectHostUri } from '../../../../../constants';
+import { addOrUpdateLocalAppSettings } from '../../../../utils/appSettings/localSettings';
+import type { IWebhookContext } from '../configureWebhookRedirectEndpoint';
 import { AzureWizardExecuteStep } from '@microsoft/vscode-azext-utils';
 import type { Progress } from 'vscode';
 
@@ -19,6 +19,10 @@ export class SaveWebhookContextStep extends AzureWizardExecuteStep<IWebhookConte
     this.originalRedirectEndpoint = originalRedirectEndpoint;
   }
 
+  public shouldExecute(): boolean {
+    return true;
+  }
+
   public async execute(
     context: IWebhookContext,
     _progress: Progress<{ message?: string | undefined; increment?: number | undefined }>
@@ -27,9 +31,5 @@ export class SaveWebhookContextStep extends AzureWizardExecuteStep<IWebhookConte
     if (this.originalRedirectEndpoint !== redirectEndpoint) {
       await addOrUpdateLocalAppSettings(context, this.projectPath, { [webhookRedirectHostUri]: redirectEndpoint });
     }
-  }
-
-  public shouldExecute(): boolean {
-    return true;
   }
 }

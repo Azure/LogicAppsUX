@@ -32,7 +32,7 @@ export async function downloadAppSettings(context: IActionContext, node?: AppSet
   });
 }
 
-export async function downloadAppSettingsInternal(context: IActionContext, client: IAppSettingsClient): Promise<void> {
+async function downloadAppSettingsInternal(context: IActionContext, client: IAppSettingsClient): Promise<void> {
   const message: string = localize('selectLocalSettings', 'Select the destination file for your downloaded settings.');
   const localSettingsPath: string = await getLocalSettingsFile(context, message);
   const localSettingsUri: vscode.Uri = vscode.Uri.file(localSettingsPath);

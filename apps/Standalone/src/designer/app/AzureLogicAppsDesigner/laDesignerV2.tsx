@@ -99,7 +99,6 @@ const DesignerEditor = () => {
     runId,
     appId,
     showChatBot,
-    showRunHistory,
     language,
     hostOptions,
     hostingPlan,
@@ -480,7 +479,7 @@ const DesignerEditor = () => {
         options={{
           services,
           isDarkMode,
-          readOnly: isReadOnly,
+          readOnly: isReadOnly || isMonitoringView,
           isMonitoringView,
           isUnitTest,
           suppressDefaultNodeSelectFunctionality: suppressDefaultNodeSelect,
@@ -553,11 +552,7 @@ const DesignerEditor = () => {
                 />
                 {!isCodeView && (
                   <div style={{ display: 'flex', flexDirection: 'row', flexGrow: 1, height: '80%' }}>
-                    <RunHistoryPanel
-                      collapsed={!showRunHistory}
-                      onClose={() => dispatch(setRunHistoryEnabled(false))}
-                      onRunSelected={onRunSelected}
-                    />
+                    <RunHistoryPanel collapsed={!isMonitoringView} onRunSelected={onRunSelected} />
                     <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column', position: 'relative' }}>
                       <Designer />
                     </div>

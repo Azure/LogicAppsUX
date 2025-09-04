@@ -1,3 +1,7 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
 import { ext } from '../../../extensionVariables';
 import DataMapperPanel from './DataMapperPanel';
 import { startBackendRuntime } from './FxWorkflowRuntime';
@@ -12,7 +16,11 @@ import { localize } from '../../../localize';
 import { dataMapNameValidation } from '../../../constants';
 
 export default class DataMapperExt {
-  public static async openDataMapperPanel(context: IActionContext, dataMapName?: string, mapDefinitionData?: MapDefinitionData) {
+  public static async openDataMapperPanel(
+    context: IActionContext,
+    dataMapName?: string,
+    mapDefinitionData?: MapDefinitionData
+  ): Promise<void> {
     await startBackendRuntime(ext.defaultLogicAppPath, context);
     const name =
       dataMapName ??
@@ -22,6 +30,30 @@ export default class DataMapperExt {
         validateInput: async (input: string): Promise<string | undefined> => await DataMapperExt.validateDataMapName(input),
       }));
     DataMapperExt.createOrShow(name, mapDefinitionData);
+  }
+
+  /*
+  Note: This method is copied from the MapDefinition.Utils.ts file in the @microsoft/logic-apps-data-mapper package
+  if this method gets updated, both need to be updated to keep them in sync. This exists as a copy to avoid a
+  package import issue.
+  */
+  public static loadMapDefinition(mapDefinitionString: string | undefined, ext: any): MapDefinitionEntry {
+    if (mapDefinitionString) {
+      try {
+        // Add extra escapes around custom string values, so that we don't lose which ones are which
+        let modifiedMapDefinitionString = mapDefinitionString.replaceAll('"', `\\"`);
+        modifiedMapDefinitionString = modifiedMapDefinitionString.replaceAll('$for', () => `${guid()}-$for`);
+        modifiedMapDefinitionString = modifiedMapDefinitionString.replaceAll('$if', () => `${guid()}-$if`);
+
+        const mapDefinition = parse(modifiedMapDefinitionString, { strict: false, uniqueKeys: false }) as MapDefinitionEntry;
+        // Now that we've parsed the yml, remove the extra escaped quotes to restore the values
+        DataMapperExt.fixMapDefinitionCustomValues(mapDefinition);
+        return mapDefinition;
+      } catch (e) {
+        ext.showError('Exception while parsing LML file!', { detail: e.message, modal: true });
+      }
+    }
+    return {};
   }
 
   private static async validateDataMapName(name: string | undefined): Promise<string | undefined> {
@@ -38,7 +70,7 @@ export default class DataMapperExt {
     return undefined;
   }
 
-  public static createOrShow(dataMapName: string, mapDefinitionData?: MapDefinitionData) {
+  private static createOrShow(dataMapName: string, mapDefinitionData?: MapDefinitionData) {
     // If a panel has already been created, re-show it
     if (ext.dataMapPanelManagers[dataMapName]) {
       // NOTE: Shouldn't need to re-send runtime port if webview has already been loaded/set up
@@ -71,31 +103,7 @@ export default class DataMapperExt {
     // From here, VSIX will handle any other initial-load-time events once receive webviewLoaded msg
   }
 
-  /*
-  Note: This method is copied from the MapDefinition.Utils.ts file in the @microsoft/logic-apps-data-mapper package
-  if this method gets updated, both need to be updated to keep them in sync. This exists as a copy to avoid a
-  package import issue.
-  */
-  public static loadMapDefinition = (mapDefinitionString: string | undefined, ext: any): MapDefinitionEntry => {
-    if (mapDefinitionString) {
-      try {
-        // Add extra escapes around custom string values, so that we don't lose which ones are which
-        let modifiedMapDefinitionString = mapDefinitionString.replaceAll('"', `\\"`);
-        modifiedMapDefinitionString = modifiedMapDefinitionString.replaceAll('$for', () => `${guid()}-$for`);
-        modifiedMapDefinitionString = modifiedMapDefinitionString.replaceAll('$if', () => `${guid()}-$if`);
-
-        const mapDefinition = parse(modifiedMapDefinitionString, { strict: false, uniqueKeys: false }) as MapDefinitionEntry;
-        // Now that we've parsed the yml, remove the extra escaped quotes to restore the values
-        DataMapperExt.fixMapDefinitionCustomValues(mapDefinition);
-        return mapDefinition;
-      } catch (e) {
-        ext.showError('Exception while parsing LML file!', { detail: e.message, modal: true });
-      }
-    }
-    return {};
-  };
-
-  static fixMapDefinitionCustomValues = (mapDefinition: MapDefinitionEntry) => {
+  private static fixMapDefinitionCustomValues(mapDefinition: MapDefinitionEntry) {
     for (const key in mapDefinition) {
       const curElement = mapDefinition[key];
       if (typeof curElement === 'object' && curElement !== null) {
@@ -110,5 +118,5 @@ export default class DataMapperExt {
         mapDefinition[key] = curElement.replaceAll('\\"', '"');
       }
     }
-  };
+  }
 }
