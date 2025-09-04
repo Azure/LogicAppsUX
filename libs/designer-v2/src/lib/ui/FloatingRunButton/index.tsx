@@ -1,9 +1,17 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useMutation } from '@tanstack/react-query';
-import { Button, type PositioningImperativeRef, SplitButton } from '@fluentui/react-components';
+import { Button, SplitButton } from '@fluentui/react-components';
 
-import { bundleIcon, FlashFilled, FlashRegular, FlashSettingsFilled, FlashSettingsRegular } from '@fluentui/react-icons';
+import {
+  bundleIcon,
+  Chat24Filled,
+  Chat24Regular,
+  FlashFilled,
+  FlashRegular,
+  FlashSettingsFilled,
+  FlashSettingsRegular,
+} from '@fluentui/react-icons';
 import type { Workflow } from '@microsoft/logic-apps-shared';
 import { canRunBeInvokedWithPayload, isNullOrEmpty, RunService, WorkflowService } from '@microsoft/logic-apps-shared';
 import { useDispatch, useSelector } from 'react-redux';
@@ -17,20 +25,24 @@ import {
 } from '../../core';
 import { serializeBJSWorkflow } from '../..';
 import { PayloadPopover } from './payloadPopover';
+import { useIsA2AWorkflow } from '../../core/state/designerView/designerViewSelectors';
 
+const ChatIcon = bundleIcon(Chat24Filled, Chat24Regular);
 const RunIcon = bundleIcon(FlashFilled, FlashRegular);
 const RunWithPayloadIcon = bundleIcon(FlashSettingsFilled, FlashSettingsRegular);
 
 export interface FloatingRunButtonProps {
   id?: string;
   saveDraftWorkflow: (workflowDefinition: Workflow, customCodeData: any, onSuccess: () => void) => Promise<any>;
-  onRun: (runId: string) => void;
+  onRun?: (runId: string) => void;
 }
 
 export const FloatingRunButton = ({ id: _id, saveDraftWorkflow, onRun }: FloatingRunButtonProps) => {
   const intl = useIntl();
 
   const dispatch = useDispatch();
+
+  const isA2AWorkflow = useIsA2AWorkflow();
 
   const operationState = useSelector((state: RootState) => state.operations);
 
@@ -86,9 +98,11 @@ export const FloatingRunButton = ({ id: _id, saveDraftWorkflow, onRun }: Floatin
       const callbackInfo = await WorkflowService().getCallbackUrl(triggerId);
       const method = saveResponse?.definition?.triggers?.[triggerId]?.inputs?.method || 'POST';
       callbackInfo.method = method;
+      // Wait 0.5 seconds, running too fast after saving causes 500 error
+      await new Promise((resolve) => setTimeout(resolve, 500));
       const runResponse = await RunService().runTrigger(callbackInfo);
       const runId = runResponse?.headers?.['x-ms-workflow-run-id'];
-      onRun(runId);
+      onRun?.(runId);
     } catch (_error: any) {
       return;
     }
@@ -107,13 +121,19 @@ export const FloatingRunButton = ({ id: _id, saveDraftWorkflow, onRun }: Floatin
       }
       const callbackInfo = await WorkflowService().getCallbackUrl(triggerId);
       callbackInfo.method = payload?.method;
+      // Wait 0.5 seconds, running too fast after saving causes 500 error
+      await new Promise((resolve) => setTimeout(resolve, 500));
       const runWithPayloadResponse = await RunService().runTrigger(callbackInfo, payload);
       const runId = runWithPayloadResponse?.headers?.['x-ms-workflow-run-id'];
-      onRun(runId);
+      onRun?.(runId);
     } catch (_error: any) {
       return;
     }
   });
+
+  const openChatPanel = useCallback(() => {
+    console.log('#> TODO: Open chat panel');
+  }, []);
 
   const buttonCommonProps: any = {
     appearance: 'primary',
@@ -128,21 +148,23 @@ export const FloatingRunButton = ({ id: _id, saveDraftWorkflow, onRun }: Floatin
     },
   };
 
+  const chatText = intl.formatMessage({
+    defaultMessage: 'Chat',
+    id: '9VbsXx',
+    description: 'Chat button text',
+  });
+
   const runText = intl.formatMessage({
     defaultMessage: 'Run',
     id: 'd8JU5h',
     description: 'Run button text',
   });
 
-  const buttonRef = useRef<HTMLButtonElement>(null);
-  const positioningRef = useRef<PositioningImperativeRef>(null);
-  useEffect(() => {
-    if (buttonRef.current) {
-      positioningRef.current?.setTarget(buttonRef.current);
-    }
-  }, [buttonRef, positioningRef]);
+  const buttonRef = useRef(null);
 
   const [popoverOpen, setPopoverOpen] = useState(false);
+
+  const icon = isA2AWorkflow ? <ChatIcon /> : <RunIcon />;
 
   if (canBeRunWithPayload) {
     return (
@@ -165,8 +187,16 @@ export const FloatingRunButton = ({ id: _id, saveDraftWorkflow, onRun }: Floatin
         >
           {runText}
         </SplitButton>
-        <PayloadPopover open={popoverOpen} setOpen={setPopoverOpen} positioningRef={positioningRef} onSubmit={runWithPayloadMutate} />
+        <PayloadPopover open={popoverOpen} setOpen={setPopoverOpen} buttonRef={buttonRef} onSubmit={runWithPayloadMutate} />
       </>
+    );
+  }
+
+  if (isA2AWorkflow) {
+    return (
+      <Button {...buttonCommonProps} icon={icon} onClick={openChatPanel}>
+        {chatText}
+      </Button>
     );
   }
 

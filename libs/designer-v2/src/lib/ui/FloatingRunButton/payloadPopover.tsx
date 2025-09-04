@@ -5,7 +5,7 @@ import { useCallback, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { usePayloadPopoverStyles } from './styles';
 
-export const PayloadPopover = ({ open, setOpen, positioningRef, onSubmit }: any) => {
+export const PayloadPopover = ({ open, setOpen, buttonRef, onSubmit }: any) => {
   const styles = usePayloadPopoverStyles();
 
   const intl = useIntl();
@@ -60,7 +60,14 @@ export const PayloadPopover = ({ open, setOpen, positioningRef, onSubmit }: any)
   }, [onSubmit, method, headersValue, queriesValue, bodyValue, setOpen]);
 
   return (
-    <Popover onOpenChange={(e, data) => setOpen(data.open)} trapFocus withArrow open={open} inline positioning={{ positioningRef }}>
+    <Popover
+      onOpenChange={(e, data) => setOpen(data.open)}
+      trapFocus
+      withArrow
+      open={open}
+      inline
+      positioning={{ target: buttonRef.current }}
+    >
       <PopoverSurface>
         <div className={styles.root}>
           {/* Method */}
