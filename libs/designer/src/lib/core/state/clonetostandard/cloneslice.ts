@@ -22,6 +22,7 @@ export interface CloneState {
   sourceApps: SourceWorkflowState[];
   destinationApp: TargetWorkflowState;
   errorMessage: string | undefined;
+  runValidation: boolean;
   isSuccessfullyCloned: boolean;
 }
 
@@ -34,6 +35,7 @@ const initialState: CloneState = {
     logicAppName: '',
   },
   errorMessage: undefined,
+  runValidation: false,
   isSuccessfullyCloned: false,
 };
 
@@ -78,6 +80,9 @@ export const cloneSlice = createSlice({
         targetWorkflow.targetWorkflowNameValidationError = action.payload;
       }
     },
+    setRunValidation: (state) => {
+      state.runValidation = true;
+    },
     // Note: also temporary to indicate shutdown of experience, to-be-changed once design pattern is set with API change
     setSuccessfullyCloned: (state) => {
       state.isSuccessfullyCloned = true;
@@ -93,6 +98,7 @@ export const {
   updateErrorMessage,
   updateTargetWorkflowName,
   updateTargetWorkflowNameValidationError,
+  setRunValidation,
   setSuccessfullyCloned,
 } = cloneSlice.actions;
 export default cloneSlice.reducer;
