@@ -67,6 +67,10 @@ export abstract class InitCustomCodeProjectStepBase extends AzureWizardExecuteSt
 
   protected getRecommendedExtensions?(language: ProjectLanguage): string[];
 
+  public shouldExecute(_context: IProjectWizardContext): boolean {
+    return true;
+  }
+
   public async execute(context: IProjectWizardContext): Promise<void> {
     await this.executeCore(context);
 
@@ -105,10 +109,6 @@ export abstract class InitCustomCodeProjectStepBase extends AzureWizardExecuteSt
       gitignoreContents = gitignoreContents.replace(/^\.vscode(\/|\\)?\s*$/gm, '');
       await fse.writeFile(gitignorePath, gitignoreContents);
     }
-  }
-
-  public shouldExecute(_context: IProjectWizardContext): boolean {
-    return true;
   }
 
   /**

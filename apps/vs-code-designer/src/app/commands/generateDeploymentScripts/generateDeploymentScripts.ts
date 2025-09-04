@@ -17,7 +17,7 @@ import { getWorkspaceFolder, isMultiRootWorkspace } from '../../utils/workspace'
 import { AzureWizard, UserCancelledError, type IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import { DeploymentScriptTypeStep } from './generateDeploymentScriptsSteps/DeploymentScriptTypeStep';
-import { convertToWorkspace } from '../createWorkspace/createWorkspaceSteps/convertToWorkspace';
+import { convertToWorkspace } from '../convertToWorkspace';
 import type { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
 import type * as vscode from 'vscode';
 import * as path from 'path';
@@ -38,7 +38,7 @@ export interface IAzureDeploymentScriptsContext extends IProjectWizardContext, I
   appServicePlan: string;
   isValidWorkspace: boolean;
   logicAppNode?: SlotTreeItem;
-  uamiClientId?: string;
+  msiClientId?: string;
 }
 
 /**

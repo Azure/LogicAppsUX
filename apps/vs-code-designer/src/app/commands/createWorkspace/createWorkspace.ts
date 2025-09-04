@@ -2,12 +2,12 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { createProjectInternal } from './createWorkspaceSteps/createProjectInternal';
+import { createProjectInternal } from '../createProject/createProjectInternal';
 import { OpenBehaviorStep } from './createWorkspaceSteps/openBehaviorStep';
 import { WorkspaceFolderStep } from './createWorkspaceSteps/workspaceFolderStep';
-import { ProjectTypeStep } from './createWorkspaceSteps/projectTypeStep';
+import { ProjectTypeStep } from '../createProject/createProjectSteps/projectTypeStep';
 import { WorkspaceSettingsStep } from './createWorkspaceSteps/workspaceSettingsStep';
-import { LogicAppNameStep } from './createWorkspaceSteps/logicAppNameStep';
+import { LogicAppNameStep } from '../createProject/createProjectSteps/logicAppNameStep';
 import { WorkspaceNameStep } from './createWorkspaceSteps/workspaceNameStep';
 import { isString } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -45,7 +45,7 @@ export async function createWorkspace(
       new LogicAppTemplateStep(),
       new TargetFrameworkStep(),
       new LogicAppNameStep(),
-      new ProjectTypeStep(templateId, functionSettings, false),
+      await ProjectTypeStep.create(context, templateId, functionSettings, false),
       new WorkspaceSettingsStep(),
       new OpenBehaviorStep(),
     ]

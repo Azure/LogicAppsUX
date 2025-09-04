@@ -5,8 +5,13 @@
 import { localize } from '../../../../localize';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type { ILogicAppWizardContext } from '@microsoft/vscode-extension-logic-apps';
+import { validateSQLConnectionString } from '../../../utils/sql';
 
 export class SQLStringNameStep extends AzureWizardPromptStep<ILogicAppWizardContext> {
+  public shouldPrompt(context: ILogicAppWizardContext): boolean {
+    return !context.sqlConnectionString;
+  }
+
   public async prompt(wizardContext: ILogicAppWizardContext): Promise<void> {
     wizardContext.sqlConnectionString = await wizardContext.ui.showInputBox({
       placeHolder: localize('sqlConnectionPlaceholder', 'SQL connection string'),
@@ -15,15 +20,4 @@ export class SQLStringNameStep extends AzureWizardPromptStep<ILogicAppWizardCont
       validateInput: async (connectionString: string): Promise<string | undefined> => await validateSQLConnectionString(connectionString),
     });
   }
-
-  public shouldPrompt(context: ILogicAppWizardContext): boolean {
-    return !context.sqlConnectionString;
-  }
-}
-
-export async function validateSQLConnectionString(connectionString: string): Promise<string | undefined> {
-  if (!connectionString) {
-    return localize('emptySqlConnectionString', 'The SQL connection string value cannot be empty');
-  }
-  return undefined;
 }
