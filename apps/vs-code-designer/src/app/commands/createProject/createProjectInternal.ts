@@ -1,17 +1,21 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
 import {
   extensionCommand,
   funcVersionSetting,
   projectLanguageSetting,
   projectOpenBehaviorSetting,
   projectTemplateKeySetting,
-} from '../../../../constants';
-import { localize } from '../../../../localize';
-import { createArtifactsFolder } from '../../../utils/codeless/artifacts';
-import { getAllCustomCodeFunctionsProjects } from '../../../utils/customCodeUtils';
-import { addLocalFuncTelemetry, tryGetLocalFuncVersion, tryParseFuncVersion } from '../../../utils/funcCoreTools/funcVersion';
-import { getGlobalSetting, getWorkspaceSetting } from '../../../utils/vsCodeConfig/settings';
-import { WorkspaceFolderStep } from './workspaceFolderStep';
-import { OpenFolderStep } from './openFolderStep';
+} from '../../../constants';
+import { localize } from '../../../localize';
+import { createArtifactsFolder } from '../../utils/codeless/artifacts';
+import { getAllCustomCodeFunctionsProjects } from '../../utils/customCodeUtils';
+import { addLocalFuncTelemetry, tryGetLocalFuncVersion, tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
+import { getGlobalSetting, getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
+import { WorkspaceFolderStep } from '../createWorkspace/createWorkspaceSteps/workspaceFolderStep';
+import { OpenFolderStep } from '../createWorkspace/createWorkspaceSteps/openFolderStep';
 import { AzureWizard } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { latestGAVersion, OpenBehavior, ProjectType } from '@microsoft/vscode-extension-logic-apps';

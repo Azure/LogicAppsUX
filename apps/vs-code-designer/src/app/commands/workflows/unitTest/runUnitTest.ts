@@ -20,68 +20,8 @@ import { TestWorkspace } from '../../../tree/unitTestTree/testWorkspace';
 import { findInitialFiles, getWorkspaceTestPatterns } from '../../../tree/unitTestTree';
 
 /**
- * Initializes the test blade with the initial test files.
- * @param controller - The unit test controller.
- */
-async function initTestBlade(controller: vscode.TestController): Promise<void> {
-  const workspaceFolders = await Promise.all(getWorkspaceTestPatterns().map(({ pattern }) => findInitialFiles(controller, pattern)));
-  await Promise.all(
-    workspaceFolders.map(async (workspaceTestItems) => {
-      await Promise.all(
-        workspaceTestItems.map(async ({ data }) => {
-          await data.createChild(controller);
-        })
-      );
-    })
-  );
-}
-
-/**
- * Creates a test file for a given URI associated with unit test controller.
- * @param controller - The unit test controller.
- * @param uri - The URI representing the test file.
- */
-function createTestFile(controller: vscode.TestController, uri: vscode.Uri) {
-  const workspaceName = uri.fsPath.split(path.sep).slice(-5)[0];
-  const workflowName = path.basename(path.dirname(uri.fsPath));
-
-  let existingWorkspaceTestItem = controller.items.get(workspaceName);
-  if (!existingWorkspaceTestItem) {
-    const workspaceUri = vscode.Uri.file(uri.fsPath.split(path.sep).slice(0, -4).join(path.sep));
-    const workspaceTestItem = controller.createTestItem(workspaceName, workspaceName, workspaceUri);
-    workspaceTestItem.canResolveChildren = true;
-    controller.items.add(workspaceTestItem);
-
-    const testWorkspace = new TestWorkspace(workspaceName, [uri], workspaceTestItem);
-    testWorkspace.createChild(controller);
-    ext.testData.set(workspaceTestItem, testWorkspace);
-    existingWorkspaceTestItem = workspaceTestItem;
-  }
-
-  let existingWorkflowTestItem = existingWorkspaceTestItem.children.get(`${workspaceName}/${workflowName}`);
-  if (!existingWorkflowTestItem) {
-    const workflowTestItem = controller.createTestItem(`${workspaceName}/${workflowName}`, workflowName, uri);
-    workflowTestItem.canResolveChildren = true;
-    controller.items.add(workflowTestItem);
-
-    const testWorkflow = new TestWorkflow(`${workspaceName}/${workflowName}`, [uri], workflowTestItem);
-    testWorkflow.createChild(controller);
-    ext.testData.set(workflowTestItem, testWorkflow);
-    existingWorkspaceTestItem.children.add(workflowTestItem);
-    existingWorkflowTestItem = workflowTestItem;
-  }
-
-  const testName = getUnitTestName(uri.fsPath);
-  const unitTestFileName = path.basename(uri.fsPath);
-  const fileTestItem = controller.createTestItem(`${workspaceName}/${workflowName}/${unitTestFileName}`, testName, uri);
-  controller.items.add(fileTestItem);
-  const data = new TestFile();
-  ext.testData.set(fileTestItem, data);
-  existingWorkflowTestItem.children.add(fileTestItem);
-}
-
-/**
  * Runs a unit test for a given node in the Logic Apps designer.
+ * TODO(aeldridge): Unused
  * @param context - The action context.
  * @param node - The URI representing the node to run the unit test for.
  */
@@ -244,4 +184,65 @@ export async function runUnitTestFromPath(context: IActionContext, unitTestPath:
       }
     });
   });
+}
+
+/**
+ * Initializes the test blade with the initial test files.
+ * @param controller - The unit test controller.
+ */
+async function initTestBlade(controller: vscode.TestController): Promise<void> {
+  const workspaceFolders = await Promise.all(getWorkspaceTestPatterns().map(({ pattern }) => findInitialFiles(controller, pattern)));
+  await Promise.all(
+    workspaceFolders.map(async (workspaceTestItems) => {
+      await Promise.all(
+        workspaceTestItems.map(async ({ data }) => {
+          await data.createChild(controller);
+        })
+      );
+    })
+  );
+}
+
+/**
+ * Creates a test file for a given URI associated with unit test controller.
+ * @param controller - The unit test controller.
+ * @param uri - The URI representing the test file.
+ */
+function createTestFile(controller: vscode.TestController, uri: vscode.Uri) {
+  const workspaceName = uri.fsPath.split(path.sep).slice(-5)[0];
+  const workflowName = path.basename(path.dirname(uri.fsPath));
+
+  let existingWorkspaceTestItem = controller.items.get(workspaceName);
+  if (!existingWorkspaceTestItem) {
+    const workspaceUri = vscode.Uri.file(uri.fsPath.split(path.sep).slice(0, -4).join(path.sep));
+    const workspaceTestItem = controller.createTestItem(workspaceName, workspaceName, workspaceUri);
+    workspaceTestItem.canResolveChildren = true;
+    controller.items.add(workspaceTestItem);
+
+    const testWorkspace = new TestWorkspace(workspaceName, [uri], workspaceTestItem);
+    testWorkspace.createChild(controller);
+    ext.testData.set(workspaceTestItem, testWorkspace);
+    existingWorkspaceTestItem = workspaceTestItem;
+  }
+
+  let existingWorkflowTestItem = existingWorkspaceTestItem.children.get(`${workspaceName}/${workflowName}`);
+  if (!existingWorkflowTestItem) {
+    const workflowTestItem = controller.createTestItem(`${workspaceName}/${workflowName}`, workflowName, uri);
+    workflowTestItem.canResolveChildren = true;
+    controller.items.add(workflowTestItem);
+
+    const testWorkflow = new TestWorkflow(`${workspaceName}/${workflowName}`, [uri], workflowTestItem);
+    testWorkflow.createChild(controller);
+    ext.testData.set(workflowTestItem, testWorkflow);
+    existingWorkspaceTestItem.children.add(workflowTestItem);
+    existingWorkflowTestItem = workflowTestItem;
+  }
+
+  const testName = getUnitTestName(uri.fsPath);
+  const unitTestFileName = path.basename(uri.fsPath);
+  const fileTestItem = controller.createTestItem(`${workspaceName}/${workflowName}/${unitTestFileName}`, testName, uri);
+  controller.items.add(fileTestItem);
+  const data = new TestFile();
+  ext.testData.set(fileTestItem, data);
+  existingWorkflowTestItem.children.add(fileTestItem);
 }

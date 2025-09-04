@@ -11,6 +11,14 @@ import type { ILogicAppWizardContext } from '@microsoft/vscode-extension-logic-a
  */
 export class PasswordStep extends AzureWizardPromptStep<ILogicAppWizardContext> {
   /**
+   * Determines whether this step should be prompted.
+   * @returns True if this step should be prompted, false otherwise.
+   */
+  public shouldPrompt(): boolean {
+    return true;
+  }
+
+  /**
    * Prompts the user for a password and sets the password in the wizard context.
    * @param {ILogicAppWizardContext} wizardContext The wizard context.
    */
@@ -23,14 +31,6 @@ export class PasswordStep extends AzureWizardPromptStep<ILogicAppWizardContext> 
     });
 
     wizardContext.fileShare.password = passwordFileShare;
-  }
-
-  /**
-   * Determines whether this step should be prompted.
-   * @returns True if this step should be prompted, false otherwise.
-   */
-  public shouldPrompt(): boolean {
-    return true;
   }
 
   /**

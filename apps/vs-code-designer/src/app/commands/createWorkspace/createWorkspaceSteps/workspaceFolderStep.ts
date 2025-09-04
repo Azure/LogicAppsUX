@@ -11,13 +11,8 @@ import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-ap
 export class WorkspaceFolderStep extends AzureWizardPromptStep<IProjectWizardContext> {
   public hideStepCount = true;
 
-  public static setProjectPath(context: Partial<IProjectWizardContext>, projectPath: string): void {
-    context.projectPath = projectPath;
-    context.workspaceFolder = getContainingWorkspace(projectPath);
-    context.workspacePath = (context.workspaceFolder && context.workspaceFolder.uri.fsPath) || projectPath;
-    if (context.workspaceFolder) {
-      context.openBehavior = OpenBehavior.alreadyOpen;
-    }
+  public shouldPrompt(context: IProjectWizardContext): boolean {
+    return !context.projectPath;
   }
 
   public async prompt(context: IProjectWizardContext): Promise<void> {
@@ -25,7 +20,12 @@ export class WorkspaceFolderStep extends AzureWizardPromptStep<IProjectWizardCon
     WorkspaceFolderStep.setProjectPath(context, await selectWorkspaceFolder(context, placeHolder));
   }
 
-  public shouldPrompt(context: IProjectWizardContext): boolean {
-    return !context.projectPath;
+  public static setProjectPath(context: Partial<IProjectWizardContext>, projectPath: string): void {
+    context.projectPath = projectPath;
+    context.workspaceFolder = getContainingWorkspace(projectPath);
+    context.workspacePath = (context.workspaceFolder && context.workspaceFolder.uri.fsPath) || projectPath;
+    if (context.workspaceFolder) {
+      context.openBehavior = OpenBehavior.alreadyOpen;
+    }
   }
 }

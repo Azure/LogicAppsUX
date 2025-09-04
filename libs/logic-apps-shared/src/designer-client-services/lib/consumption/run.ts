@@ -316,7 +316,7 @@ export class ConsumptionRunService implements IRunService {
    * Triggers a workflow run
    * @param {CallbackInfo} callbackInfo - Information to call Api to trigger workflow.
    */
-  async runTrigger(callbackInfo: CallbackInfo): Promise<void> {
+  async runTrigger(callbackInfo: CallbackInfo): Promise<any> {
     const { httpClient } = this.options;
     const method = isCallbackInfoWithRelativePath(callbackInfo) ? callbackInfo.method : HTTP_METHODS.POST;
     const uri = getCallbackUrl(callbackInfo);
@@ -325,7 +325,7 @@ export class ConsumptionRunService implements IRunService {
     }
 
     try {
-      await this.getHttpRequestByMethod(httpClient, method, { uri });
+      return await this.getHttpRequestByMethod(httpClient, method, { uri, returnHeaders: true });
     } catch (e: any) {
       throw new Error(`${e.status} ${e?.data?.error?.message}`);
     }

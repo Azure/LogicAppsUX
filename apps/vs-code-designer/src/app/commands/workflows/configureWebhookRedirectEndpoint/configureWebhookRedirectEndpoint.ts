@@ -6,12 +6,17 @@ import { localSettingsFileName, webhookRedirectHostUri } from '../../../../const
 import { getLocalSettingsJson } from '../../../utils/appSettings/localSettings';
 import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
 import { getContainingWorkspace, getWorkspaceFolder } from '../../../utils/workspace';
-import { createWebhookWizard } from './webhookWizard';
+import { ConfigureRedirectEndpointStep } from './configureWebhookRedirectEndpointSteps/ConfigureRedirectEndpointStep';
+import { SaveWebhookContextStep } from './configureWebhookRedirectEndpointSteps/SaveWebhookContextStep';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { nonNullValue } from '@microsoft/vscode-azext-utils';
+import { AzureWizard, nonNullValue } from '@microsoft/vscode-azext-utils';
 import type { ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
 import * as path from 'path';
 import type { Uri, WorkspaceFolder } from 'vscode';
+
+export interface IWebhookContext extends IActionContext {
+  redirectEndpoint: string;
+}
 
 export async function configureWebhookRedirectEndpoint(context: IActionContext, data: Uri): Promise<void> {
   let workspaceFolder: WorkspaceFolder;
@@ -26,7 +31,14 @@ export async function configureWebhookRedirectEndpoint(context: IActionContext, 
   const projectPath = (await tryGetLogicAppProjectRoot(context, workspacePath)) || workspacePath;
   const localSettings: ILocalSettingsJson = await getLocalSettingsJson(context, path.join(projectPath, localSettingsFileName));
   const redirectEndpoint: string = localSettings.Values[webhookRedirectHostUri] || '';
-  const wizard = createWebhookWizard({ ...context, redirectEndpoint }, projectPath);
+  const wizardContext = {
+    ...context,
+    redirectEndpoint,
+  } as IWebhookContext;
+  const wizard = new AzureWizard(wizardContext, {
+    promptSteps: [new ConfigureRedirectEndpointStep()],
+    executeSteps: [new SaveWebhookContextStep(projectPath, wizardContext.redirectEndpoint)],
+  });
 
   await wizard.prompt();
   await wizard.execute();

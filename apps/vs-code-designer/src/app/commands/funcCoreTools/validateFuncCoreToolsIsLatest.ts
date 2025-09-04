@@ -31,7 +31,7 @@ export async function validateFuncCoreToolsIsLatest(majorVersion?: string): Prom
   }
 }
 
-export async function validateFuncCoreToolsIsLatestBinaries(majorVersion?: string): Promise<void> {
+async function validateFuncCoreToolsIsLatestBinaries(majorVersion?: string): Promise<void> {
   await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.validateFuncCoreToolsIsLatest', async (context: IActionContext) => {
     context.errorHandling.suppressDisplay = true;
     context.telemetry.properties.isActivationEvent = 'true';
@@ -61,7 +61,7 @@ export async function validateFuncCoreToolsIsLatestBinaries(majorVersion?: strin
   });
 }
 
-export async function validateFuncCoreToolsIsLatestSystem(): Promise<void> {
+async function validateFuncCoreToolsIsLatestSystem(): Promise<void> {
   await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.validateFuncCoreToolsIsLatest', async (context: IActionContext) => {
     context.errorHandling.suppressDisplay = true;
     context.telemetry.properties.isActivationEvent = 'true';

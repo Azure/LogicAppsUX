@@ -28,7 +28,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import * as fse from 'fs-extra';
 import { ext } from '../../../../extensionVariables';
-import { convertToWorkspace } from '../../createWorkspace/createWorkspaceSteps/convertToWorkspace';
+import { convertToWorkspace } from '../../convertToWorkspace';
 import { syncCloudSettings } from '../../syncCloudSettings';
 
 /**

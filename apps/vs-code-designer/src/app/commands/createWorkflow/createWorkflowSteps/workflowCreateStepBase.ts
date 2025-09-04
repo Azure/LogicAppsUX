@@ -2,18 +2,18 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { ext } from '../../../../../extensionVariables';
-import { localize } from '../../../../../localize';
-import { getContainingWorkspace } from '../../../../utils/workspace';
+import { ext } from '../../../../extensionVariables';
+import { localize } from '../../../../localize';
+import { getContainingWorkspace } from '../../../utils/workspace';
 import { AzureWizardExecuteStep, callWithTelemetryAndErrorHandling, DialogResponses, parseError } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IFunctionWizardContext, IHostJsonV2, IWorkflowTemplate } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import { Uri, window, workspace } from 'vscode';
 import type { MessageItem, Progress } from 'vscode';
-import { parseJson } from '../../../../utils/parseJson';
-import { localSettingsFileName } from '../../../../../constants';
-import { workflowCodeTypeForTelemetry } from '../../../../utils/codeful/utils';
+import { parseJson } from '../../../utils/parseJson';
+import { localSettingsFileName } from '../../../../constants';
+import { workflowCodeTypeForTelemetry } from '../../../utils/codeful/utils';
 
 interface ICachedWorkflow {
   projectPath: string;
@@ -44,12 +44,10 @@ export abstract class WorkflowCreateStepBase<T extends IFunctionWizardContext> e
 
   public abstract executeCore(context: T): Promise<string>;
 
-  private addTelemetryProperties(context: T, template: IWorkflowTemplate): void {
-    context.telemetry.properties.workflowCodeType = workflowCodeTypeForTelemetry(context.isCodeless);
-    context.telemetry.properties.projectLanguage = context.language;
-    context.telemetry.properties.projectRuntime = context.version;
-    context.telemetry.properties.templateId = template.id;
+  public shouldExecute(context: T): boolean {
+    return !!context.functionTemplate;
   }
+
   public async execute(context: T, progress: Progress<WorkflowCreateProgress>): Promise<void> {
     const template: IWorkflowTemplate = context.functionTemplate;
     if (!template) {
@@ -119,8 +117,11 @@ export abstract class WorkflowCreateStepBase<T extends IFunctionWizardContext> e
     return defaultValue;
   }
 
-  public shouldExecute(context: T): boolean {
-    return !!context.functionTemplate;
+  private addTelemetryProperties(context: T, template: IWorkflowTemplate): void {
+    context.telemetry.properties.workflowCodeType = workflowCodeTypeForTelemetry(context.isCodeless);
+    context.telemetry.properties.projectLanguage = context.language;
+    context.telemetry.properties.projectRuntime = context.version;
+    context.telemetry.properties.templateId = template.id;
   }
 }
 

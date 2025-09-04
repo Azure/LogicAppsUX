@@ -1,5 +1,6 @@
 import type { ConnectionReferences } from '@microsoft/logic-apps-designer';
 import type { ConnectionsData } from '@microsoft/vscode-extension-logic-apps';
+import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 
 export const convertConnectionsDataToReferences = (connectionsData: ConnectionsData | undefined): ConnectionReferences => {
   const references: any = {};
@@ -61,4 +62,22 @@ export const convertConnectionsDataToReferences = (connectionsData: ConnectionsD
   }
 
   return references;
+};
+
+/**
+ * Retrieves the name of the trigger from the workflow definition.
+ * @param workflowJson - The workflow JSON containing the definition.
+ * @returns The name of the trigger, or undefined if not found.
+ */
+export const getTriggerName = (workflowJson?: { definition: LogicAppsV2.WorkflowDefinition }): string | undefined => {
+  const definition = workflowJson?.definition;
+  if (!definition) {
+    return undefined;
+  }
+  for (const trigger in definition?.triggers) {
+    if (trigger) {
+      return trigger;
+    }
+  }
+  return undefined;
 };

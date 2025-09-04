@@ -19,16 +19,17 @@ import type { ILogicAppWizardContext } from '@microsoft/vscode-extension-logic-a
 import { StorageOptions } from '@microsoft/vscode-extension-logic-apps';
 import type { QuickPickItem, QuickPickOptions } from 'vscode';
 
+// TODO(aeldridge): Unused
 export class CustomLocationStorageAccountStep extends AzureWizardPromptStep<ILogicAppWizardContext> {
+  public shouldPrompt(wizardContext: ILogicAppWizardContext): boolean {
+    return wizardContext.useHybrid && wizardContext.storageType === undefined;
+  }
+
   public async prompt(wizardContext: ILogicAppWizardContext): Promise<void> {
     const storagePicks: QuickPickItem[] = [{ label: StorageOptions.AzureStorage }, { label: StorageOptions.SQL }];
 
     const options: QuickPickOptions = { placeHolder: localize('selectStorageType', 'Select your preferred Storage Provider') };
     wizardContext.storageType = (await wizardContext.ui.showQuickPick(storagePicks, options)).label as StorageOptions;
-  }
-
-  public shouldPrompt(wizardContext: ILogicAppWizardContext): boolean {
-    return wizardContext.useHybrid && wizardContext.storageType === undefined;
   }
 
   public async getSubWizard(wizardContext: ILogicAppWizardContext): Promise<IWizardOptions<ILogicAppWizardContext> | undefined> {

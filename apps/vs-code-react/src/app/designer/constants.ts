@@ -62,3 +62,9 @@ export const clientSupportedOperations = [
 ];
 
 export const integrationAccount = 'IntegrationAccount';
+
+export const DesignerViewType = {
+  Workflow: 'workflow',
+  Code: 'code',
+  Monitoring: 'monitoring',
+};

@@ -31,6 +31,7 @@ import type { IActionContext } from '@microsoft/vscode-azext-utils';
  * Opens the unit test results for a given context and node.
  * If a specific node is provided, it opens the unit test results for that node.
  * If no node is provided, it prompts the user to select a unit test and opens the results for that test.
+ * TODO(aeldridge): Unused
  * @param {IActionContext} context - The action context.
  * @param {Uri | TestItem} node - The Uri or TestItem representing the node for which to open the unit test results.
  * @returns A Promise that resolves when the unit test results are opened.
@@ -77,7 +78,7 @@ export async function openUnitTestResults(context: IActionContext, node: Uri | T
  * @param {UnitTestResult} testResult - The unit test result.
  * @returns A Promise that resolves when the webview is opened.
  */
-export async function openResultsWebview(
+async function openResultsWebview(
   workflowName: string,
   unitTestName: string,
   workflowPath: string,

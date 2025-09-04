@@ -15,33 +15,10 @@ import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
 
 /**
- * Resets the path settings for auto runtime dependencies, dotnet binary, node js binary, and func core tools binary.
- * @param {vscode.Progress} progress - The progress object to report the progress of the reset operation.
- */
-const resetBinariesPathSettings = async (
-  progress: vscode.Progress<{
-    message?: string;
-    increment?: number;
-  }>
-) => {
-  await updateGlobalSetting(autoRuntimeDependenciesPathSettingKey, undefined);
-  progress.report({ increment: 40, message: localize('resetDependenciesPath', 'Reset auto runtime dependencies path') });
-
-  await updateGlobalSetting(dotNetBinaryPathSettingKey, undefined);
-  progress.report({ increment: 60, message: localize('resetDotnet', 'Reset dotnet binary path') });
-
-  await updateGlobalSetting(nodeJsBinaryPathSettingKey, undefined);
-  progress.report({ increment: 80, message: localize('resetNodeJs', 'Reset node js binary path') });
-
-  await updateGlobalSetting(funcCoreToolsBinaryPathSettingKey, undefined);
-  progress.report({ increment: 100, message: localize('resetFuncCoreTools', 'Reset func core tools binary path') });
-};
-
-/**
  * Resets the auto validation and installation of binaries dependencies.
  * @param {IActionContext} context The action context.
  */
-export const resetValidateAndInstallBinaries = async (context: IActionContext) => {
+export async function resetValidateAndInstallBinaries(context: IActionContext): Promise<void> {
   await vscode.window.withProgress(
     {
       location: vscode.ProgressLocation.Notification, // Location of the progress indicator
@@ -55,13 +32,13 @@ export const resetValidateAndInstallBinaries = async (context: IActionContext) =
       context.telemetry.properties.resetBinariesDependencies = 'true';
     }
   );
-};
+}
 
 /**
  * Disables the auto validation and installation of binaries dependencies.
  * @param {IActionContext} context The action context.
  */
-export const disableValidateAndInstallBinaries = async (context: IActionContext) => {
+export async function disableValidateAndInstallBinaries(context: IActionContext): Promise<void> {
   await vscode.window.withProgress(
     {
       location: vscode.ProgressLocation.Notification, // Location of the progress indicator
@@ -75,4 +52,22 @@ export const disableValidateAndInstallBinaries = async (context: IActionContext)
       context.telemetry.properties.disableBinariesDependencies = 'true';
     }
   );
-};
+}
+
+/**
+ * Resets the path settings for auto runtime dependencies, dotnet binary, node js binary, and func core tools binary.
+ * @param {vscode.Progress} progress - The progress object to report the progress of the reset operation.
+ */
+async function resetBinariesPathSettings(progress: vscode.Progress<{ message?: string; increment?: number }>): Promise<void> {
+  await updateGlobalSetting(autoRuntimeDependenciesPathSettingKey, undefined);
+  progress.report({ increment: 40, message: localize('resetDependenciesPath', 'Reset auto runtime dependencies path') });
+
+  await updateGlobalSetting(dotNetBinaryPathSettingKey, undefined);
+  progress.report({ increment: 60, message: localize('resetDotnet', 'Reset dotnet binary path') });
+
+  await updateGlobalSetting(nodeJsBinaryPathSettingKey, undefined);
+  progress.report({ increment: 80, message: localize('resetNodeJs', 'Reset node js binary path') });
+
+  await updateGlobalSetting(funcCoreToolsBinaryPathSettingKey, undefined);
+  progress.report({ increment: 100, message: localize('resetFuncCoreTools', 'Reset func core tools binary path') });
+}

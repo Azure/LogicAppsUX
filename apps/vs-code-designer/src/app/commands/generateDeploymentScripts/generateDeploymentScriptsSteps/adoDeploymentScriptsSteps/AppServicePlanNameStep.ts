@@ -6,6 +6,10 @@ import { deployedAppServicePlanNameValidation } from '../../../../../constants';
 export class AppServicePlanNameStep extends AzureWizardPromptStep<IAzureDeploymentScriptsContext> {
   public hideStepCount = true;
 
+  public shouldPrompt(): boolean {
+    return true;
+  }
+
   public async prompt(context: IAzureDeploymentScriptsContext): Promise<void> {
     context.telemetry.properties.lastStep = 'AppServicePlanNameStep';
     context.appServicePlan = await context.ui.showInputBox({
@@ -13,10 +17,6 @@ export class AppServicePlanNameStep extends AzureWizardPromptStep<IAzureDeployme
       prompt: localize('appPlanNamePrompt', 'Provide a unique name for the App Service plan.'),
       validateInput: (input: string): string | undefined => this.validateAppServicePlanName(input),
     });
-  }
-
-  public shouldPrompt(): boolean {
-    return true;
   }
 
   private validateAppServicePlanName(name: string | undefined): string | undefined {

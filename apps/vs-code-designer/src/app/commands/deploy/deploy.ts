@@ -447,7 +447,7 @@ async function checkAADDetailsExistsInAppSettings(node: SlotTreeItem, identityWi
   return false;
 }
 
-const canUseZipDeployForHybrid = (node: SlotTreeItem): boolean => {
+function canUseZipDeployForHybrid(node: SlotTreeItem): boolean {
   const requiredEnvVars = [
     workflowAppAADClientId,
     workflowAppAADClientSecret,
@@ -465,4 +465,4 @@ const canUseZipDeployForHybrid = (node: SlotTreeItem): boolean => {
     requiredEnvVars.every((varName) => envVars.includes(varName)) &&
     node.hybridSite.template.containers[0].env.some((env: any) => env.name === isZipDeployEnabledSetting && env.value === 'true')
   );
-};
+}

@@ -6,6 +6,10 @@ import { deployedLogicAppNameValidation } from '../../../../../constants';
 export class LogicAppNameStep extends AzureWizardPromptStep<IAzureDeploymentScriptsContext> {
   public hideStepCount = true;
 
+  public shouldPrompt(): boolean {
+    return true;
+  }
+
   public async prompt(context: IAzureDeploymentScriptsContext): Promise<void> {
     context.telemetry.properties.lastStep = 'LogicAppNameStep';
     context.logicAppName = await context.ui.showInputBox({
@@ -13,10 +17,6 @@ export class LogicAppNameStep extends AzureWizardPromptStep<IAzureDeploymentScri
       prompt: localize('logicAppNamePrompt', 'Enter a name for your Logic App'),
       validateInput: (input: string): string | undefined => this.validateLogicAppName(input),
     });
-  }
-
-  public shouldPrompt(): boolean {
-    return true;
   }
 
   private validateLogicAppName(name: string | undefined): string | undefined {

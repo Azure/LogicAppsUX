@@ -91,6 +91,7 @@ const CustomFieldInput = (item: TemplatesSectionItem): JSX.Element | null => {
           disabled={item.disabled}
           onChange={(_event, data) => item.onChange(data.value ?? '')}
           onBlur={item.onBlur}
+          contentAfter={item.contentAfter}
         />
       );
 

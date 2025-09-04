@@ -31,9 +31,10 @@ const runIdRegex = /^\d{29}CU\d{2,8}$/;
 export type FilterTypes = 'runId' | 'workflowVersion' | 'status';
 
 export interface RunHistoryPanelProps {
-  collapsed: boolean;
+  collapsed?: boolean;
   onRunSelected: (runId: string) => void;
-  onClose: () => void;
+  onClose?: () => void;
+  onRefresh?: () => void;
 }
 
 export const RunHistoryPanel = (props: RunHistoryPanelProps) => {
@@ -43,6 +44,7 @@ export const RunHistoryPanel = (props: RunHistoryPanelProps) => {
 
   const runsQuery = useRunsInfiniteQuery(!props.collapsed);
   const runs = useAllRuns();
+  const selectedRunInstance = useRunInstance();
 
   // Refetch the runs when the panel is expanded
   useEffect(() => {
@@ -50,9 +52,7 @@ export const RunHistoryPanel = (props: RunHistoryPanelProps) => {
       runsQuery.refetch();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.collapsed]);
-
-  const selectedRunInstance = useRunInstance();
+  }, [props.collapsed, selectedRunInstance]);
 
   // FILTERING
   const [filters, setFilters] = useState<Partial<Record<FilterTypes, string | null>>>({});
@@ -173,7 +173,10 @@ export const RunHistoryPanel = (props: RunHistoryPanelProps) => {
     <Button
       appearance="subtle"
       disabled={runsQuery.isFetching}
-      onClick={() => runsQuery.refetch()}
+      onClick={() => {
+        runsQuery.refetch();
+        props.onRefresh?.();
+      }}
       icon={runsQuery.isRefetching && !runsQuery.isLoading ? <Spinner size={'tiny'} /> : <RefreshIcon />}
       aria-label={refreshAria}
     />

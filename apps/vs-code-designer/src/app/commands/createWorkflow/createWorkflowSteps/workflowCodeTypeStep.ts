@@ -5,29 +5,17 @@
 import { workflowCodeType } from '../../../../constants';
 import type { AzureWizardExecuteStep, IAzureQuickPickItem, IWizardOptions } from '@microsoft/vscode-azext-utils';
 import { nonNullProp, AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
-import type {
-  IWorkflowStateTypeStepOptions,
-  IWorkflowTemplate,
-  IFunctionWizardContext,
-  ProjectLanguage,
-} from '@microsoft/vscode-extension-logic-apps';
+import type { IWorkflowTemplate, IFunctionWizardContext, ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
 import { TemplateCategory } from '@microsoft/vscode-extension-logic-apps';
 import { localize } from '../../../../localize';
 import { CodefulWorkflowCreateStep } from '../createCodefulWorkflow/createCodefulWorkflowSteps/codefulWorkflowCreateStep';
-import { WorkflowNameStep } from '../createCodelessWorkflow/createCodelessWorkflowSteps/workflowNameStep';
+import { WorkflowNameStep } from './workflowNameStep';
 
 export class WorkflowCodeTypeStep extends AzureWizardPromptStep<IFunctionWizardContext> {
   public hideStepCount = true;
 
-  private readonly triggerSettings: { [key: string]: string | undefined };
-
-  private constructor(triggerSettings: { [key: string]: string | undefined } | undefined) {
-    super();
-    this.triggerSettings = triggerSettings || {};
-  }
-
-  public static async create(_context: IFunctionWizardContext, options: IWorkflowStateTypeStepOptions): Promise<WorkflowCodeTypeStep> {
-    return new WorkflowCodeTypeStep(options.triggerSettings);
+  public shouldPrompt(context: IFunctionWizardContext): boolean {
+    return context.isCodeless === undefined;
   }
 
   public async prompt(context: IFunctionWizardContext): Promise<void> {
@@ -50,19 +38,14 @@ export class WorkflowCodeTypeStep extends AzureWizardPromptStep<IFunctionWizardC
       const title: string = localize('createCodeless', 'Create new');
 
       promptSteps.push(new WorkflowNameStep());
-      executeSteps.push(await CodefulWorkflowCreateStep.createStep(context));
+      executeSteps.push(new CodefulWorkflowCreateStep());
       return { promptSteps, executeSteps, title };
     }
     return undefined; // codeless workflows move onto next step
   }
 
-  public shouldPrompt(context: IFunctionWizardContext): boolean {
-    return context.isCodeless === undefined;
-  }
-
   private async getPicks(context: IFunctionWizardContext): Promise<IAzureQuickPickItem<IWorkflowTemplate>[]> {
     const language: ProjectLanguage = nonNullProp(context, 'language');
-    const picks: IAzureQuickPickItem<IWorkflowTemplate>[] = [];
 
     const codeful: IWorkflowTemplate = {
       id: workflowCodeType.codeful,
@@ -86,16 +69,15 @@ export class WorkflowCodeTypeStep extends AzureWizardPromptStep<IFunctionWizardC
       categories: [TemplateCategory.Core],
     };
 
-    picks.push({
-      label: codeful.name,
-      data: codeful,
-    });
-
-    picks.push({
-      label: codeless.name,
-      data: codeless,
-    });
-
-    return picks;
+    return [
+      {
+        label: codeful.name,
+        data: codeful,
+      },
+      {
+        label: codeless.name,
+        data: codeless,
+      },
+    ];
   }
 }

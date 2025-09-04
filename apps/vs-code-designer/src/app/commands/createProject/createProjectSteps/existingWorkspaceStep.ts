@@ -10,6 +10,10 @@ import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-ap
 export class ExistingWorkspaceStep extends AzureWizardPromptStep<IProjectWizardContext> {
   public hideStepCount = true;
 
+  public shouldPrompt(): boolean {
+    return true;
+  }
+
   public async prompt(context: IProjectWizardContext): Promise<void> {
     context.workspaceFilePath = await getWorkspaceFile(context);
     //save uri variable for open project folder command
@@ -17,9 +21,5 @@ export class ExistingWorkspaceStep extends AzureWizardPromptStep<IProjectWizardC
     await fs.ensureDir(context.workspacePath);
     // reset flag in case previously set when creating workspace
     context.shouldCreateLogicAppProject = false;
-  }
-
-  public shouldPrompt(): boolean {
-    return true;
   }
 }

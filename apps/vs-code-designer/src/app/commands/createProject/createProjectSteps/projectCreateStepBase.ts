@@ -19,6 +19,10 @@ export abstract class ProjectCreateStepBase extends AzureWizardExecuteStep<IProj
     progress: Progress<{ message?: string | undefined; increment?: number | undefined }>
   ): Promise<void>;
 
+  public shouldExecute(_context: IProjectWizardContext): boolean {
+    return true;
+  }
+
   public async execute(
     context: IProjectWizardContext,
     progress: Progress<{ message?: string | undefined; increment?: number | undefined }>
@@ -41,9 +45,5 @@ export abstract class ProjectCreateStepBase extends AzureWizardExecuteStep<IProj
       context.telemetry.properties.workflowCodeType = workflowCodeTypeForTelemetry(context.isCodeless);
       Object.assign(startedContext, context);
     });
-  }
-
-  public shouldExecute(_context: IProjectWizardContext): boolean {
-    return true;
   }
 }

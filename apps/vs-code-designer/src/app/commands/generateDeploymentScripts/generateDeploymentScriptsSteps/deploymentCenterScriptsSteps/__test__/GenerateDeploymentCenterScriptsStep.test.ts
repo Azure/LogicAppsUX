@@ -43,16 +43,16 @@ describe('GenerateDeploymentCenterScriptsStep', () => {
       resourceGroup: { name: 'test-resource-group', location: 'test-location' },
       logicAppName: 'test-logic-app',
       localLogicAppName: 'test-local-logic-app',
-      uamiClientId: 'test-uami-client-id',
+      msiClientId: 'test-msi-client-id',
       workspacePath: '/test/workspace',
       projectPath: '/test/project',
     } as IAzureDeploymentScriptsContext;
 
     vi.clearAllMocks();
     vi.spyOn(fse, 'readFile').mockImplementation(async (p: string) => {
-      if (p.includes('DeploymentCenterScript')) return deploymentScriptTemplate;
-      if (p.includes('dotdeployment')) return dotDeploymentContent;
-      if (p.includes('DeploymentCenterReadme')) return readmeContent;
+      if (p.endsWith('DeploymentCenterScript')) return deploymentScriptTemplate;
+      if (p.endsWith('dotdeployment')) return dotDeploymentContent;
+      if (p.endsWith('DeploymentCenterReadme')) return readmeContent;
       throw new Error(`File not found: ${p}`);
     });
     vi.spyOn(fse, 'ensureDir').mockResolvedValue(undefined);
@@ -81,7 +81,7 @@ describe('GenerateDeploymentCenterScriptsStep', () => {
     expect(writeDeploymentScriptCall[1]).toContain(`$location = "${context.resourceGroup.location}"`);
     expect(writeDeploymentScriptCall[1]).toContain(`$logicAppName = "${context.logicAppName}"`);
     expect(writeDeploymentScriptCall[1]).toContain(`$localLogicAppName = "${context.localLogicAppName}"`);
-    expect(writeDeploymentScriptCall[1]).toContain(`$clientId = "${context.uamiClientId}"`);
+    expect(writeDeploymentScriptCall[1]).toContain(`$clientId = "${context.msiClientId}"`);
     expect(writeDeploymentScriptCall[1]).not.toContain('<%=');
     expect(writeDeploymentScriptCall[1]).not.toContain('%>');
 

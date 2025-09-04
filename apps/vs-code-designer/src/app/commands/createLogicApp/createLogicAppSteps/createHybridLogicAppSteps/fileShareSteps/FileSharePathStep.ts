@@ -11,6 +11,14 @@ import type { ILogicAppWizardContext } from '@microsoft/vscode-extension-logic-a
  */
 export class FileSharePathStep extends AzureWizardPromptStep<ILogicAppWizardContext> {
   /**
+   * Determines whether this step should be prompted.
+   * @returns A boolean indicating whether this step should be prompted.
+   */
+  public shouldPrompt(): boolean {
+    return true;
+  }
+
+  /**
    * Prompts the user to provide the path of the SMB file share.
    * @param wizardContext The wizard context.
    */
@@ -22,14 +30,6 @@ export class FileSharePathStep extends AzureWizardPromptStep<ILogicAppWizardCont
     });
 
     wizardContext.fileShare.path = fileSharePath;
-  }
-
-  /**
-   * Determines whether this step should be prompted.
-   * @returns A boolean indicating whether this step should be prompted.
-   */
-  public shouldPrompt(): boolean {
-    return true;
   }
 
   /**

@@ -9,8 +9,16 @@ import { OpenBehavior } from '@microsoft/vscode-extension-logic-apps';
 import { testsDirectoryName } from '../../../../constants';
 
 export class WorkspaceSettingsStep extends AzureWizardPromptStep<IProjectWizardContext> {
-  // Hide the step count in the wizard UI
   public hideStepCount = true;
+
+  /**
+   * Checks if this step should prompt the user
+   * @param context - Project wizard context containing user selections and settings
+   * @returns True if user should be prompted, otherwise false
+   */
+  public shouldPrompt(): boolean {
+    return true;
+  }
 
   /**
    * Prompts the user for project information and sets up directories
@@ -22,21 +30,12 @@ export class WorkspaceSettingsStep extends AzureWizardPromptStep<IProjectWizardC
     context.language = ProjectLanguage.JavaScript;
 
     // Create directories based on user choices
-    if (context.workspacePath && context.workspaceFilePath.endsWith('.code-workspace')) {
+    if (context.workspacePath && context.workspaceFilePath.endsWith('.code-workspace') && fs.existsSync(context.workspaceFilePath)) {
       await this.updateWorkspaceFile(context);
       context.openBehavior = OpenBehavior.addToWorkspace;
     } else {
       await this.createWorkspaceFile(context);
     }
-  }
-
-  /**
-   * Checks if this step should prompt the user
-   * @param context - Project wizard context containing user selections and settings
-   * @returns True if user should be prompted, otherwise false
-   */
-  public shouldPrompt(): boolean {
-    return true;
   }
 
   /**

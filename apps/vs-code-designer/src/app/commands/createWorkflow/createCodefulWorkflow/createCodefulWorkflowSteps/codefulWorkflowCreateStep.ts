@@ -2,15 +2,13 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-
-import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { nonNullProp } from '@microsoft/vscode-azext-utils';
 import { WorkflowProjectType, MismatchBehavior, WorkerRuntime, FuncVersion } from '@microsoft/vscode-extension-logic-apps';
 import type { IFunctionWizardContext, IHostJsonV2, TargetFramework } from '@microsoft/vscode-extension-logic-apps';
 import { writeFileSync } from 'fs';
 import * as fse from 'fs-extra';
 import * as path from 'path';
-import { WorkflowCreateStepBase } from '../../createCodelessWorkflow/createCodelessWorkflowSteps/workflowCreateStepBase';
+import { WorkflowCreateStepBase } from '../../createWorkflowSteps/workflowCreateStepBase';
 import { getCodefulWorkflowTemplate } from '../../../../utils/codeless/templates';
 import { writeFormattedJson } from '../../../../utils/fs';
 import {
@@ -40,14 +38,6 @@ import { getWorkspaceFolder, isMultiRootWorkspace } from '../../../../utils/work
 import { getDebugConfiguration } from '../../../../utils/debug';
 
 export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionWizardContext> {
-  private constructor() {
-    super();
-  }
-
-  public static async createStep(_context: IActionContext): Promise<CodefulWorkflowCreateStep> {
-    return new CodefulWorkflowCreateStep();
-  }
-
   public async executeCore(context: IFunctionWizardContext): Promise<string> {
     await validateDotnetInstalled(context);
     const logicAppName = context.logicAppName || 'LogicApp';
@@ -61,7 +51,7 @@ export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionW
 
     await createConnectionsJson(context.projectPath);
     await createEmptyParametersJson(context.projectPath);
-    addNugetConfig(context.projectPath);
+    this.addNugetConfig(context.projectPath);
 
     await this.createSystemArtifacts(context);
 
@@ -185,11 +175,10 @@ export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionW
 
     await this.updateAppSettings(context);
   }
-}
 
-// temporarily add nuget.config until we publish codeful packages
-const addNugetConfig = (projectPath: string) => {
-  const getNugetConfigTemplate = `<?xml version="1.0" encoding="utf-8"?>
+  private addNugetConfig(projectPath: string) {
+    // Temporarily add nuget.config until we publish codeful packages
+    const getNugetConfigTemplate = `<?xml version="1.0" encoding="utf-8"?>
 <configuration>
   <packageSources>
     <add key="nuget.org" value="https://api.nuget.org/v3/index.json" protocolVersion="3" />
@@ -200,7 +189,8 @@ const addNugetConfig = (projectPath: string) => {
     <add key="disabled" value="False" />
   </packageManagement>
 </configuration>`;
-  const nugetConfigPath: string = path.join(projectPath, 'nuget.config');
 
-  writeFileSync(nugetConfigPath, getNugetConfigTemplate);
-};
+    const nugetConfigPath: string = path.join(projectPath, 'nuget.config');
+    writeFileSync(nugetConfigPath, getNugetConfigTemplate);
+  }
+}

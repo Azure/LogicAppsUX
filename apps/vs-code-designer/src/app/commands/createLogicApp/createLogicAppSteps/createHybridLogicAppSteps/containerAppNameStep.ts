@@ -2,7 +2,6 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type { ILogicAppWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import { localize } from '../../../../../localize';
@@ -11,9 +10,13 @@ import type { ContainerAppsAPIClient } from '@azure/arm-appcontainers';
 
 const containerNameValidation = /^[a-z][a-z0-9]*(-[a-z0-9]+)*$/;
 export class ContainerAppNameStep extends AzureWizardPromptStep<ILogicAppWizardContext> {
+  public shouldPrompt(): boolean {
+    return true;
+  }
+
   public async prompt(context: ILogicAppWizardContext): Promise<void> {
     const nameAvailabiltyValidationError = await this.validateNameAvailable(context, context.newSiteName);
-    const nameValidationError = ContainerAppNameStep.validateInput(context.newSiteName);
+    const nameValidationError = this.validateInput(context.newSiteName);
 
     if (!nameAvailabiltyValidationError && !nameValidationError) {
       return;
@@ -29,17 +32,13 @@ export class ContainerAppNameStep extends AzureWizardPromptStep<ILogicAppWizardC
     context.newSiteName = (
       await context.ui.showInputBox({
         prompt,
-        validateInput: ContainerAppNameStep.validateInput,
+        validateInput: this.validateInput,
         asyncValidationTask: (name: string) => this.validateNameAvailable(context, name),
       })
     ).trim();
   }
 
-  public shouldPrompt(): boolean {
-    return true;
-  }
-
-  public static validateInput(name: string | undefined): string | undefined {
+  private validateInput(name: string | undefined): string | undefined {
     name = name ? name.trim() : '';
 
     const { minLength, maxLength } = { minLength: 1, maxLength: 32 };
@@ -58,17 +57,13 @@ export class ContainerAppNameStep extends AzureWizardPromptStep<ILogicAppWizardC
 
   private async validateNameAvailable(context: ILogicAppWizardContext, name: string): Promise<string | undefined> {
     const resourceGroupName: string = context?.resourceGroup?.name ?? context?.newResourceGroupName;
-    if (!(await ContainerAppNameStep.isNameAvailable(context, resourceGroupName, name))) {
+    if (!(await this.isNameAvailable(context, resourceGroupName, name))) {
       return localize('containerAppExists', 'The container app "{0}" already exists in resource group "{1}".', name, resourceGroupName);
     }
     return undefined;
   }
 
-  public static async isNameAvailable(
-    context: ILogicAppWizardContext,
-    resourceGroupName: string,
-    containerAppName: string
-  ): Promise<boolean> {
+  private async isNameAvailable(context: ILogicAppWizardContext, resourceGroupName: string, containerAppName: string): Promise<boolean> {
     const client: ContainerAppsAPIClient = await createContainerClient(context);
     try {
       await client.containerApps.get(resourceGroupName, containerAppName);

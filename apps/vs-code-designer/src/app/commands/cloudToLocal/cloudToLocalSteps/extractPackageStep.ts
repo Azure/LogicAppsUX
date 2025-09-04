@@ -6,6 +6,15 @@ import * as fse from 'fs-extra';
 
 export class ExtractPackageStep extends AzureWizardPromptStep<IFunctionWizardContext> {
   /**
+   * Checks if this step should prompt the user
+   * @param context - Project wizard context containing user selections and settings
+   * @returns True if user should be prompted, otherwise false
+   */
+  public shouldPrompt(context: IProjectWizardContext): boolean {
+    return context.packagePath !== undefined && context.projectPath !== undefined;
+  }
+
+  /**
    * Unzips package contents to logic app path and removes unnecessary files. Then creates a README.md file.
    * @param context - Project wizard context containing user selections and settings
    */
@@ -46,14 +55,5 @@ export class ExtractPackageStep extends AzureWizardPromptStep<IFunctionWizardCon
       context.telemetry.properties.error = error.message;
       console.error(`Failed to extract contents of package to ${logicAppPath}`, error);
     }
-  }
-
-  /**
-   * Checks if this step should prompt the user
-   * @param context - Project wizard context containing user selections and settings
-   * @returns True if user should be prompted, otherwise false
-   */
-  public shouldPrompt(context: IProjectWizardContext): boolean {
-    return context.packagePath !== undefined && context.projectPath !== undefined;
   }
 }

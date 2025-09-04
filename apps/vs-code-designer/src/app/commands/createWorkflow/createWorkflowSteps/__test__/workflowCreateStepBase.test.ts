@@ -2,12 +2,11 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { WorkflowCreateProgress, WorkflowCreateStepBase } from '../workflowCreateStepBase';
 import { FuncVersion, IFunctionWizardContext, ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
-import { workflowCodeTypeForTelemetry } from '../../../../../utils/codeful/utils';
+import { workflowCodeTypeForTelemetry } from '../../../../utils/codeful/utils';
 import { Progress } from 'vscode';
-import * as parseJson from '../../../../../utils/parseJson';
+import * as parseJson from '../../../../utils/parseJson';
 
-// Mock modules at the top level
-vi.mock('../../../../../utils/parseJson');
+vi.mock('../../../../utils/parseJson');
 vi.mock('fs-extra');
 
 describe('WorkflowCreateStepBase', async () => {

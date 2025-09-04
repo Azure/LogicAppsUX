@@ -18,6 +18,15 @@ export class ConnectEnvironmentStep extends AzureWizardExecuteStep<ILogicAppWiza
   public priority = 100;
 
   /**
+   * Determines whether this step should be executed based on the wizard context.
+   * @param wizardContext The logic app wizard context.
+   * @returns A boolean indicating whether this step should be executed.
+   */
+  public shouldExecute(wizardContext: ILogicAppWizardContext): boolean {
+    return !!wizardContext.connectedEnvironment && !!wizardContext.fileShare && !!wizardContext.useHybrid;
+  }
+
+  /**
    * Executes the step to connect to the environment.
    * @param {ILogicAppWizardContext} context - The logic app wizard context.
    * @param {Progress} progress - The progress object to report progress and messages.
@@ -39,14 +48,5 @@ export class ConnectEnvironmentStep extends AzureWizardExecuteStep<ILogicAppWiza
     } catch (error) {
       throw new Error(error);
     }
-  }
-
-  /**
-   * Determines whether this step should be executed based on the wizard context.
-   * @param wizardContext The logic app wizard context.
-   * @returns A boolean indicating whether this step should be executed.
-   */
-  public shouldExecute(wizardContext: ILogicAppWizardContext): boolean {
-    return !!wizardContext.connectedEnvironment && !!wizardContext.fileShare && !!wizardContext.useHybrid;
   }
 }

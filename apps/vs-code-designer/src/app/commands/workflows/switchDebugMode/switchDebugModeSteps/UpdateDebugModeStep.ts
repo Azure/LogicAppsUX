@@ -2,13 +2,17 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { addOrUpdateLocalAppSettings } from '../../../utils/appSettings/localSettings';
+import { addOrUpdateLocalAppSettings } from '../../../../utils/appSettings/localSettings';
 import { AzureWizardExecuteStep } from '@microsoft/vscode-azext-utils';
 import type { IDebugModeContext } from '@microsoft/vscode-extension-logic-apps';
 import type { Progress } from 'vscode';
 
 export class UpdateDebugModeStep extends AzureWizardExecuteStep<IDebugModeContext> {
   public priority = 100;
+
+  public shouldExecute(): boolean {
+    return true;
+  }
 
   public execute(
     context: IDebugModeContext,
@@ -18,9 +22,5 @@ export class UpdateDebugModeStep extends AzureWizardExecuteStep<IDebugModeContex
     return addOrUpdateLocalAppSettings(context, projectPath, {
       [`Workflows.${workflowName}.OperationOptions`]: enableDebugMode ? 'WithStatelessRunHistory' : 'None',
     });
-  }
-
-  public shouldExecute(): boolean {
-    return true;
   }
 }

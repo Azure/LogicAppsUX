@@ -19,7 +19,7 @@ Write-Output "Getting access token"
 
 $identityEndpoint = $env:IDENTITY_ENDPOINT
 $identityHeader = $env:IDENTITY_HEADER
-$clientId = "<%= uamiClientId %>"
+$clientId = "<%= msiClientId %>"
 $resource = "https://management.azure.com/"
 
 $uriBuilder = New-Object System.UriBuilder($identityEndpoint)
