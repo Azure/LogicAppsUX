@@ -1,9 +1,10 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useMutation } from '@tanstack/react-query';
-import { Button, SplitButton } from '@fluentui/react-components';
+import { Button, type PositioningImperativeRef, SplitButton } from '@fluentui/react-components';
 
 import { bundleIcon, FlashFilled, FlashRegular, FlashSettingsFilled, FlashSettingsRegular } from '@fluentui/react-icons';
+import type { Workflow } from '@microsoft/logic-apps-shared';
 import { canRunBeInvokedWithPayload, isNullOrEmpty, RunService, WorkflowService } from '@microsoft/logic-apps-shared';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -15,11 +16,18 @@ import {
   type RootState,
 } from '../../core';
 import { serializeBJSWorkflow } from '../..';
+import { PayloadPopover } from './payloadPopover';
 
 const RunIcon = bundleIcon(FlashFilled, FlashRegular);
 const RunWithPayloadIcon = bundleIcon(FlashSettingsFilled, FlashSettingsRegular);
 
-export const FloatingRunButton = ({ id: _id, saveDraftWorkflow, onRun }: any) => {
+export interface FloatingRunButtonProps {
+  id?: string;
+  saveDraftWorkflow: (workflowDefinition: Workflow, customCodeData: any, onSuccess: () => void) => Promise<any>;
+  onRun: (runId: string) => void;
+}
+
+export const FloatingRunButton = ({ id: _id, saveDraftWorkflow, onRun }: FloatingRunButtonProps) => {
   const intl = useIntl();
 
   const dispatch = useDispatch();
@@ -90,7 +98,7 @@ export const FloatingRunButton = ({ id: _id, saveDraftWorkflow, onRun }: any) =>
     mutate: runWithPayloadMutate,
     isLoading: runWithPayloadIsLoading,
     // error: runWithPayloadError,
-  } = useMutation(async () => {
+  } = useMutation(async (payload: any) => {
     try {
       const saveResponse = await saveWorkflow();
       const triggerId = Object.keys(saveResponse?.definition?.triggers || {})?.[0];
@@ -98,9 +106,8 @@ export const FloatingRunButton = ({ id: _id, saveDraftWorkflow, onRun }: any) =>
         return;
       }
       const callbackInfo = await WorkflowService().getCallbackUrl(triggerId);
-      const method = saveResponse?.definition?.triggers?.[triggerId]?.inputs?.method || 'POST';
-      callbackInfo.method = method;
-      const runWithPayloadResponse = await RunService().runTrigger(callbackInfo);
+      callbackInfo.method = payload?.method;
+      const runWithPayloadResponse = await RunService().runTrigger(callbackInfo, payload);
       const runId = runWithPayloadResponse?.headers?.['x-ms-workflow-run-id'];
       onRun(runId);
     } catch (_error: any) {
@@ -127,25 +134,39 @@ export const FloatingRunButton = ({ id: _id, saveDraftWorkflow, onRun }: any) =>
     description: 'Run button text',
   });
 
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const positioningRef = useRef<PositioningImperativeRef>(null);
+  useEffect(() => {
+    if (buttonRef.current) {
+      positioningRef.current?.setTarget(buttonRef.current);
+    }
+  }, [buttonRef, positioningRef]);
+
+  const [popoverOpen, setPopoverOpen] = useState(false);
+
   if (canBeRunWithPayload) {
     return (
-      <SplitButton
-        {...buttonCommonProps}
-        primaryActionButton={{
-          icon: <RunIcon />,
-          onClick: runMutate,
-        }}
-        menuButton={
-          canBeRunWithPayload
-            ? {
-                icon: <RunWithPayloadIcon />,
-                onClick: runWithPayloadMutate,
-              }
-            : undefined
-        }
-      >
-        {runText}
-      </SplitButton>
+      <>
+        <SplitButton
+          {...buttonCommonProps}
+          primaryActionButton={{
+            icon: <RunIcon />,
+            onClick: runMutate,
+          }}
+          menuButton={
+            canBeRunWithPayload
+              ? {
+                  icon: <RunWithPayloadIcon />,
+                  onClick: () => setPopoverOpen(true),
+                  ref: buttonRef,
+                }
+              : undefined
+          }
+        >
+          {runText}
+        </SplitButton>
+        <PayloadPopover open={popoverOpen} setOpen={setPopoverOpen} positioningRef={positioningRef} onSubmit={runWithPayloadMutate} />
+      </>
     );
   }
 

@@ -1,6 +1,7 @@
 import {
   Button,
   Card,
+  Divider,
   makeStyles,
   Menu,
   MenuDivider,
@@ -14,7 +15,7 @@ import {
   Toolbar,
   ToolbarButton,
 } from '@fluentui/react-components';
-import { isNullOrEmpty, ChatbotService, WorkflowService } from '@microsoft/logic-apps-shared';
+import { isNullOrEmpty, ChatbotService } from '@microsoft/logic-apps-shared';
 import type { AppDispatch, CustomCodeFileNameMapping, RootState, Workflow } from '@microsoft/logic-apps-designer-v2';
 import {
   store as DesignerStore,
@@ -41,7 +42,6 @@ import {
   serializeWorkflow,
   getDocumentationMetadata,
   resetDesignerView,
-  getRun,
   downloadDocumentAsFile,
   useNodesAndDynamicDataInitialized,
 } from '@microsoft/logic-apps-designer-v2';
@@ -50,7 +50,6 @@ import { useMutation } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { environment } from '../../../environments/environment';
 import { isSuccessResponse } from './Services/HttpClient';
-import axios from 'axios';
 
 import {
   bundleIcon,
@@ -98,7 +97,7 @@ const useStyles = makeStyles({
 });
 
 export const DesignerCommandBar = ({
-  id,
+  id: _id,
   discard,
   saveWorkflow,
   saveWorkflowFromCode,
@@ -108,7 +107,6 @@ export const DesignerCommandBar = ({
   isDarkMode,
   isUnitTest,
   enableCopilot,
-  selectRun,
   showMonitoringView,
   showDesignerView,
   showCodeView,
@@ -125,7 +123,6 @@ export const DesignerCommandBar = ({
   isDarkMode: boolean;
   isUnitTest: boolean;
   enableCopilot?: () => void;
-  selectRun?: (runId: string) => void;
   showMonitoringView: () => void;
   showDesignerView: () => void;
   showCodeView: () => void;
@@ -209,21 +206,6 @@ export const DesignerCommandBar = ({
     downloadDocumentAsFile(queryResponse);
   });
 
-  const { isLoading: isRunLoading, mutateAsync: runWorkflow } = useMutation(async () => {
-    const designerState = DesignerStore.getState();
-    const serializedWorkflow = await serializeBJSWorkflow(designerState, {
-      skipValidation: false,
-      ignoreNonCriticalErrors: true,
-    });
-    const triggerId = Object.keys(serializedWorkflow.definition?.triggers ?? {})?.[0];
-    const callbackInfo = await WorkflowService().getCallbackUrl(triggerId);
-    const result = await axios.create().request({
-      method: callbackInfo.method,
-      url: callbackInfo.value,
-    });
-    return result;
-  });
-
   const designerIsDirty = useIsDesignerDirty();
   const isInitialized = useNodesAndDynamicDataInitialized();
 
@@ -295,28 +277,6 @@ export const DesignerCommandBar = ({
         Run history
       </Button>
     </Card>
-  );
-
-  const RunButton = () => (
-    <ToolbarButton
-      appearance="subtle"
-      disabled={isRunLoading}
-      onClick={() => {
-        const asyncOnClick = async () => {
-          const result = await runWorkflow();
-          const runId = result?.headers?.['x-ms-workflow-run-id'];
-          const fullRunId = `${id}/runs/${runId}`;
-          if (fullRunId) {
-            await getRun(fullRunId);
-            selectRun?.(runId);
-          }
-        };
-        asyncOnClick();
-      }}
-      icon={isRunLoading ? <Spinner size={'extra-tiny'} /> : undefined}
-    >
-      Run
-    </ToolbarButton>
   );
 
   const SaveButton = () => (
@@ -423,10 +383,9 @@ export const DesignerCommandBar = ({
       >
         <ViewModeSelect />
         <div style={{ flexGrow: 1 }} />
-        <RunButton />
         <SaveButton />
         <DiscardButton />
-        {/* <Divider vertical /> */}
+        <Divider vertical style={{ flexGrow: 0 }} />
         <OverflowMenu />
       </Toolbar>
       <div

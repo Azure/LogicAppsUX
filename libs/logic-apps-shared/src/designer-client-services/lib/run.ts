@@ -7,7 +7,7 @@ export interface IRunService {
   getMoreRuns(continuationToken: string): Promise<Runs>;
   getRun(runId: string): Promise<Run | RunError>;
   getRuns(): Promise<Runs>;
-  runTrigger(callbackInfo: CallbackInfo): Promise<any>;
+  runTrigger(callbackInfo: CallbackInfo, options?: any): Promise<any>;
   getActionLinks(action: any, nodeId: string): Promise<any>;
   getScopeRepetitions(
     action: { nodeId: string; runId: string | undefined },
