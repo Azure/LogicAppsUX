@@ -58,11 +58,11 @@ const RUNTIME_VALUE_SHARED = 300;
 const getRunTimeValue = (connector: Connector): number => {
   if (isBuiltInConnector(connector)) {
     return RUNTIME_VALUE_BUILTIN;
-  } else if (isCustomConnector(connector)) {
-    return RUNTIME_VALUE_CUSTOM;
-  } else {
-    return RUNTIME_VALUE_SHARED;
   }
+  if (isCustomConnector(connector)) {
+    return RUNTIME_VALUE_CUSTOM;
+  }
+  return RUNTIME_VALUE_SHARED;
 };
 const getPriorityValue = (connector: Connector): number => {
   const idx = priorityConnectors.findIndex((p) => connector.id.toLowerCase().endsWith(p.toLowerCase()));
