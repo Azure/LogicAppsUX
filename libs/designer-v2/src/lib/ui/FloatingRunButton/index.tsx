@@ -72,14 +72,17 @@ export const FloatingRunButton = ({ id: _id, saveDraftWorkflow, onRun }: any) =>
     try {
       const saveResponse = await saveWorkflow();
       const triggerId = Object.keys(saveResponse?.definition?.triggers || {})?.[0];
+      if (!triggerId) {
+        return;
+      }
       const callbackInfo = await WorkflowService().getCallbackUrl(triggerId);
       const method = saveResponse?.definition?.triggers?.[triggerId]?.inputs?.method || 'POST';
       callbackInfo.method = method;
       const runResponse = await RunService().runTrigger(callbackInfo);
       const runId = runResponse?.headers?.['x-ms-workflow-run-id'];
       onRun(runId);
-    } catch (error: any) {
-      console.error('Error running:', error);
+    } catch (_error: any) {
+      return;
     }
   });
 
@@ -91,14 +94,17 @@ export const FloatingRunButton = ({ id: _id, saveDraftWorkflow, onRun }: any) =>
     try {
       const saveResponse = await saveWorkflow();
       const triggerId = Object.keys(saveResponse?.definition?.triggers || {})?.[0];
+      if (!triggerId) {
+        return;
+      }
       const callbackInfo = await WorkflowService().getCallbackUrl(triggerId);
       const method = saveResponse?.definition?.triggers?.[triggerId]?.inputs?.method || 'POST';
       callbackInfo.method = method;
       const runWithPayloadResponse = await RunService().runTrigger(callbackInfo);
       const runId = runWithPayloadResponse?.headers?.['x-ms-workflow-run-id'];
       onRun(runId);
-    } catch (error: any) {
-      console.error('Error running with payload:', error);
+    } catch (_error: any) {
+      return;
     }
   });
 

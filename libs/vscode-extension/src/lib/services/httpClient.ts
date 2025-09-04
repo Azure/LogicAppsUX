@@ -40,17 +40,7 @@ export class HttpClient implements IHttpClient {
       ...request,
     });
 
-    let responseData: any;
-    try {
-      responseData = typeof response.data === 'string' ? JSON.parse(response.data) : response.data;
-    } catch {
-      responseData = { data: response.data as any };
-    }
-
-    return {
-      headers: options?.returnHeaders ? response.headers : undefined,
-      ...responseData,
-    };
+    return parseResponse(response, options);
   }
 
   async patch<ReturnType, BodyType>(options: HttpRequestOptions<BodyType>): Promise<ReturnType> {
@@ -76,17 +66,7 @@ export class HttpClient implements IHttpClient {
       return Promise.reject(response);
     }
 
-    let responseData: any;
-    try {
-      responseData = typeof response.data === 'string' ? JSON.parse(response.data) : response.data;
-    } catch {
-      responseData = { data: response.data as any };
-    }
-
-    return {
-      headers: options?.returnHeaders ? response.headers : undefined,
-      ...responseData,
-    };
+    return parseResponse(response, options);
   }
 
   async post<ReturnType, BodyType>(options: HttpRequestOptions<BodyType>): Promise<ReturnType> {
@@ -114,17 +94,7 @@ export class HttpClient implements IHttpClient {
         throw response;
       }
 
-      let responseData: any;
-      try {
-        responseData = typeof response.data === 'string' ? JSON.parse(response.data) : response.data;
-      } catch {
-        responseData = { data: response.data as any };
-      }
-
-      return {
-        headers: options?.returnHeaders ? response.headers : undefined,
-        ...responseData,
-      };
+      return parseResponse(response, options);
     } catch (error: any) {
       throw error?.response?.data ?? error?.response ?? error;
     }
@@ -158,17 +128,7 @@ export class HttpClient implements IHttpClient {
       return Promise.reject(response);
     }
 
-    let responseData: any;
-    try {
-      responseData = typeof response.data === 'string' ? JSON.parse(response.data) : response.data;
-    } catch {
-      responseData = { data: response.data as any };
-    }
-
-    return {
-      headers: options?.returnHeaders ? response.headers : undefined,
-      ...responseData,
-    };
+    return parseResponse(response, options);
   }
 
   async delete<ReturnType>(options: HttpRequestOptions<unknown>): Promise<ReturnType> {
@@ -230,4 +190,18 @@ function isUrl(uri: string): boolean {
 
 export function isSuccessResponse(statusCode: number): boolean {
   return statusCode >= 200 && statusCode <= 299;
+}
+
+function parseResponse(response: any, options: HttpRequestOptions<any>) {
+  let responseData: any;
+  try {
+    responseData = typeof response?.data === 'string' ? JSON.parse(response?.data) : response?.data;
+  } catch {
+    responseData = { data: response?.data as any };
+  }
+
+  return {
+    headers: options?.returnHeaders ? response?.headers : undefined,
+    ...responseData,
+  };
 }
