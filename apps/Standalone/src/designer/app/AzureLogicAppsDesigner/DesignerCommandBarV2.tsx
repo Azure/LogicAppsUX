@@ -101,13 +101,13 @@ export const DesignerCommandBar = ({
   id,
   discard,
   saveWorkflow,
+  saveWorkflowFromCode,
   isDesignerView,
   isMonitoringView,
   isCodeView,
   isDarkMode,
   isUnitTest,
   enableCopilot,
-  saveWorkflowFromCode,
   selectRun,
   showMonitoringView,
   showDesignerView,
@@ -118,13 +118,13 @@ export const DesignerCommandBar = ({
   isReadOnly: boolean;
   discard: () => unknown;
   saveWorkflow: (workflow: Workflow, customCodeData: CustomCodeFileNameMapping | undefined, clearDirtyState: () => void) => Promise<void>;
+  saveWorkflowFromCode: (clearDirtyState: () => void) => void;
   isDesignerView?: boolean;
   isMonitoringView?: boolean;
   isCodeView?: boolean;
   isDarkMode: boolean;
   isUnitTest: boolean;
   enableCopilot?: () => void;
-  saveWorkflowFromCode: (clearDirtyState: () => void) => void;
   selectRun?: (runId: string) => void;
   showMonitoringView: () => void;
   showDesignerView: () => void;

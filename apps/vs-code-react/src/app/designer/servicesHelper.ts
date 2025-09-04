@@ -309,12 +309,15 @@ export const getDesignerServices = (
 
   // Workflow service needs to be implemented to get the callback url for azure resources
   const workflowService: IWorkflowService = {
-    getCallbackUrl: async () => {
+    getCallbackUrl: async (triggerId: string) => {
       if (isLocal) {
-        return Promise.resolve({
-          method: HTTP_METHODS.POST,
-          value: 'Url not available during authoring in local project. Check Overview page.',
-        });
+        try {
+          const url = `${workflowRuntimeBaseUrl}/workflows/${workflowName}/triggers/${triggerId}/listCallbackUrl?api-version=${apiVersion}`;
+          return (await httpClient.post({ uri: url })) as any;
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        } catch (error) {
+          return undefined;
+        }
       }
       return Promise.resolve({
         method: HTTP_METHODS.POST,

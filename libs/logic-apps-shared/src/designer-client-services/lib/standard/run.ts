@@ -344,7 +344,7 @@ export class StandardRunService implements IRunService {
    * Triggers a workflow run
    * @param {CallbackInfo} callbackInfo - Information to call Api to trigger workflow.
    */
-  async runTrigger(callbackInfo: CallbackInfo): Promise<void> {
+  async runTrigger(callbackInfo: CallbackInfo): Promise<any> {
     const { httpClient } = this.options;
     const method = isCallbackInfoWithRelativePath(callbackInfo) ? callbackInfo.method : HTTP_METHODS.POST;
     const uri = getCallbackUrl(callbackInfo);
@@ -353,7 +353,7 @@ export class StandardRunService implements IRunService {
     }
 
     try {
-      await this.getHttpRequestByMethod(httpClient, method, { uri, noAuth: true });
+      return await this.getHttpRequestByMethod(httpClient, method, { uri, noAuth: true, returnHeaders: true });
     } catch (e: any) {
       throw new Error(`${e.status} ${e?.data?.error?.message}`);
     }
