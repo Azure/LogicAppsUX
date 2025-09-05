@@ -655,6 +655,8 @@ export const saveWorkflowStandard = async (
       return;
     }
     clearDirtyState();
+
+    return data;
   } catch (error) {
     console.log(error);
     if (options?.throwError) {
