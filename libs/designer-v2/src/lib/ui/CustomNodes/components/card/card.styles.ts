@@ -22,7 +22,7 @@ export const useCardStyles = makeStyles({
     display: 'flex',
     alignItems: 'center',
     gap: '12px',
-    boxShadow: tokens.shadow4,
+    boxShadow: '0 0 2px rgba(0,0,0,0.24), 0 2px 4px rgba(0,0,0,0.28)',
 
     '&:hover': {
       background: tokens.colorNeutralBackground1Hover,
