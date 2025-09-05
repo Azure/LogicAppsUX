@@ -5,7 +5,7 @@ export const useCloneWizardStyles = makeStyles({
     display: 'flex',
     flexDirection: 'column',
     background: tokens.colorNeutralBackground1,
-    height: '90vh',
+    height: '95vh',
     width: '70%',
   },
 

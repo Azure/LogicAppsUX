@@ -67,8 +67,8 @@ const getServices = (): any => {
     apiVersions: {
       gateway: '2018-11-01',
     },
-    openBladeAfterCreate: (workflowId: string | undefined) => {
-      window.alert(`Open blade after create, workflowId is: ${workflowId}`);
+    openBladeAfterCreate: (workflowId: string, location: string) => {
+      window.alert(`Open blade after create, workflowId is: ${workflowId}, location is: ${location}`);
     },
   });
 
