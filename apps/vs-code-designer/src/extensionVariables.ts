@@ -92,6 +92,7 @@ export namespace ext {
     export: 'export',
     overview: 'overview',
     unitTest: 'unitTest',
+    chat: 'chat',
   } as const;
   export type webViewKey = keyof typeof webViewKey;
 

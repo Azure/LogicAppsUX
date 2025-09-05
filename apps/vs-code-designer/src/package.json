@@ -148,6 +148,11 @@
         "category": "Azure Logic Apps"
       },
       {
+        "command": "azureLogicAppsStandard.openChat",
+        "title": "Open chat",
+        "category": "Azure Logic Apps"
+      },
+      {
         "command": "azureLogicAppsStandard.cloudToLocal",
         "title": "Create new logic app workspace from package...",
         "category": "Azure Logic Apps"
@@ -696,6 +701,11 @@
         },
         {
           "command": "azureLogicAppsStandard.openOverview",
+          "when": "resourceFilename==workflow.json",
+          "group": "navigation@1"
+        },
+        {
+          "command": "azureLogicAppsStandard.openChat",
           "when": "resourceFilename==workflow.json",
           "group": "navigation@1"
         },

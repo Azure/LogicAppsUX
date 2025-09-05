@@ -78,6 +78,7 @@ import { switchToDataMapperV2 } from './setDataMapperVersion';
 import { reportAnIssue } from '../utils/reportAnIssue';
 import { localize } from '../../localize';
 import { guid } from '@microsoft/logic-apps-shared';
+import { openChat } from './workflows/openChat';
 
 export function registerCommands(): void {
   registerCommandWithTreeNodeUnwrapping(extensionCommand.openDesigner, openDesigner);
@@ -106,6 +107,7 @@ export function registerCommands(): void {
   registerCommandWithTreeNodeUnwrapping(extensionCommand.getDebugSymbolDll, getDebugSymbolDll);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.deleteLogicApp, deleteLogicApp);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.openOverview, openOverview);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.openChat, openChat);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.exportLogicApp, exportLogicApp);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.reviewValidation, reviewValidation);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.switchToDotnetProject, switchToDotnetProjectCommand);
