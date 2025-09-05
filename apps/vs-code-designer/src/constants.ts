@@ -22,6 +22,7 @@ export const codefulWorkflowFileName = 'workflow.cs';
 export const funcIgnoreFileName = '.funcignore';
 export const unitTestsFileName = '.unit-test.json';
 export const powershellRequirementsFileName = 'requirements.psd1';
+export const sdkLspServer = 'SdkLspServer';
 
 // Directories names
 export const deploymentDirectory = 'deployment';
@@ -33,6 +34,7 @@ export const libDirectory = 'lib';
 export const mapsDirectory = 'Maps';
 export const schemasDirectory = 'Schemas';
 export const rulesDirectory = 'Rules';
+export const lspDirectory = 'LanguageServerLogicApps';
 
 // Extension Id
 // Folder names

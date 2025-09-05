@@ -1,6 +1,6 @@
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
-import { connectionsFileName, onStartLanguageServerProtocol } from '../../constants';
+import { connectionsFileName, lspDirectory, onStartLanguageServerProtocol, sdkLspServer } from '../../constants';
 import { workspace, window, MarkdownString } from 'vscode';
 import type { Executable, ServerOptions, LanguageClientOptions, HoverMiddleware, Middleware } from 'vscode-languageclient/node';
 import { LanguageClient } from 'vscode-languageclient/node';
@@ -8,28 +8,40 @@ import { ext } from '../../extensionVariables';
 import { getWorkspaceFolderPath } from '../commands/workflows/switchDebugMode/switchDebugMode';
 import { tryGetLogicAppProjectRoot } from '../utils/verifyIsProject';
 import path from 'path';
+import * as fse from 'fs-extra';
 
-const initializeServerLanguageClient = async (context: IActionContext) => {
-  const configuration = workspace.getConfiguration();
-  const serverDllPath = configuration.get<string>('azureLogicAppsStandard.languageServerDLLPath') || '';
-  const sdkNupkg = configuration.get<string>('azureLogicAppsStandard.languageServerNupkgPath') || '';
+const getSDKPaths = async (context: IActionContext) => {
   const workspaceFolder = await getWorkspaceFolderPath(context);
   const projectPath: string | undefined = await tryGetLogicAppProjectRoot(context, workspaceFolder, true /* suppressPrompt */);
-  const connectionFilePath: string = path.join(projectPath, connectionsFileName);
+  const sdkFolderPath = path.join(projectPath, lspDirectory);
+  const lspServerPath = path.join(sdkFolderPath, sdkLspServer); // configuration.get<string>('azureLogicAppsStandard.languageServerDLLPath') || '';
+  const files = await fse.readdir(sdkFolderPath);
+  const sdkNupkgFile = files.find((file) => {
+    return file.startsWith('Microsoft.Azure.Workflows.Agents.Sdk.') && file.endsWith('.nupkg');
+  });
 
-  if (!serverDllPath) {
+  const sdkNupkgPath = path.join(sdkFolderPath, sdkNupkgFile);
+
+  const connectionFilePath: string = path.join(projectPath, connectionsFileName);
+  return { lspServerPath, sdkNupkgPath, connectionFilePath };
+};
+
+const initializeServerLanguageClient = async (context: IActionContext) => {
+  const { lspServerPath, sdkNupkgPath, connectionFilePath } = await getSDKPaths(context);
+
+  if (!lspServerPath) {
     window.showWarningMessage('Set "azureLogicAppsStandard.languageServerDLLPath" to your C# server DLL.');
     return;
   }
 
-  if (!sdkNupkg) {
+  if (!sdkNupkgPath) {
     window.showWarningMessage('Set "azureLogicAppsStandard.languageServerNupkgPath" to your SDK NuGet package.');
     return;
   }
 
   const run: Executable = {
     command: 'dotnet',
-    args: [serverDllPath, '--sdk', sdkNupkg, '--connections', connectionFilePath],
+    args: [lspServerPath, '--sdk', sdkNupkgPath, '--connections', connectionFilePath],
   };
 
   const serverOptions: ServerOptions = { run, debug: run };
