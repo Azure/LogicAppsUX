@@ -701,7 +701,7 @@
         },
         {
           "command": "azureLogicAppsStandard.openOverview",
-          "when": "resourceFilename==workflow.json",
+          "when": "resourceFilename==workflow.json || resourceExtname==.cs",
           "group": "navigation@1"
         },
         {
