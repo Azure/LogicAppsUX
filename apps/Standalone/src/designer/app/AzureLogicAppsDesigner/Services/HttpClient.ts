@@ -152,15 +152,11 @@ function isArmResourceId(resourceId: string): boolean {
 }
 
 function parseResponse(response: any, options: HttpRequestOptions<any>) {
-  let responseData: any;
-  try {
-    responseData = typeof response?.data === 'string' ? JSON.parse(response?.data) : response?.data;
-  } catch {
-    responseData = { data: response?.data as any };
+  if (options?.returnHeaders) {
+    return {
+      headers: response?.headers,
+      ...response.data,
+    };
   }
-
-  return {
-    headers: options?.returnHeaders ? response?.headers : undefined,
-    ...responseData,
-  };
+  return response.data;
 }
