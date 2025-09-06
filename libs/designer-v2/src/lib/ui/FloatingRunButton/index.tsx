@@ -113,12 +113,6 @@ export const FloatingRunButton = ({ id: _id, saveDraftWorkflow, onRun }: any) =>
     shape: 'circular',
     size: 'large',
     disabled: runIsLoading || runWithPayloadIsLoading,
-    style: {
-      position: 'absolute',
-      bottom: '16px',
-      left: '50%',
-      transform: 'translate(-50%, 0)',
-    },
   };
 
   const runText = intl.formatMessage({

@@ -1,5 +1,5 @@
 import { DataMapperApp } from '../app/dataMapper/app';
-import { DesignerApp } from '../app/designer/app';
+import { DesignerApp } from '../app/designer/appV2';
 // import { DesignerApp } from '../app/designer/appV2';
 import { ExportApp } from '../app/export/export';
 import { InstanceSelection } from '../app/export/instanceSelection/instanceSelection';
