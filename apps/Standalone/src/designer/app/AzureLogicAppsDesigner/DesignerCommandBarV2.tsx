@@ -88,7 +88,8 @@ const useStyles = makeStyles({
     zIndex: 1,
   },
   viewButton: {
-    padding: '3px 12px',
+    padding: '3px 16px',
+    fontWeight: 600,
   },
   selectedButton: {
     background: `${tokens.colorNeutralForeground1} !important`,
