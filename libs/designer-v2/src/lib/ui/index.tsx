@@ -8,6 +8,5 @@ export * from './exportconsumption/wizard/exportwizard';
 export * from './dialog/combineVariableDialog';
 export * from './dialog/triggerDescriptionDialog';
 export * from './FloatingRunButton';
-
 export { getLogicAppsCategories } from './configuretemplate/resources';
 export { TemplateInfoToast, type TemplateInfoToasterProps } from './configuretemplate/toasters';
