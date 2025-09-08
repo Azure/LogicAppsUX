@@ -374,7 +374,7 @@ export const DesignerApp = () => {
                     style={{
                       position: 'absolute',
                       bottom: '16px',
-                      left: '47%',
+                      left: '44%%',
                       display: 'flex',
                       gap: '6%',
                     }}

@@ -50,10 +50,10 @@ export const FloatinChatButton = ({ id: _id }: any) => {
           {runText}
         </Button>
       </DialogTrigger>
-      <DialogSurface>
+      <DialogSurface style={{ width: '70vw', maxWidth: '70vw' }}>
         <DialogBody>
           <DialogTitle>Chat</DialogTitle>
-          <DialogContent style={{ height: '80vh', padding: 0 }}>
+          <DialogContent style={{ height: '70vh', padding: 0 }}>
             <iframe
               src={`${data?.chatUrl}?apiKey=${data?.queryParams?.apiKey}`}
               title="Telecom Agents Chat"
