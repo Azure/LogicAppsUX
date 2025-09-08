@@ -36,7 +36,7 @@ export const useAgentUrl = (): UseQueryResult<AgentURL> => {
   );
 };
 
-export const FloatingChatButton = (buttonCommonProps: any) => {
+export const FloatingChatButton = (buttonCommonProps: any, isDarkMode: boolean) => {
   const intl = useIntl();
   const { isLoading, data } = useAgentUrl();
 
@@ -67,12 +67,12 @@ export const FloatingChatButton = (buttonCommonProps: any) => {
     }
     return (
       <iframe
-        src={`${data?.chatUrl}?apiKey=${data?.queryParams?.apiKey}`}
+        src={`${data?.chatUrl}?apiKey=${data?.queryParams?.apiKey}${isDarkMode ? '&mode=dark' : ''}`}
         title={IntlText.TITLE}
         style={{ width: '100%', height: '99%', border: 'none', borderRadius: tokens.borderRadiusXLarge }}
       />
     );
-  }, [isLoading, data, IntlText]);
+  }, [isLoading, data, IntlText, isDarkMode]);
 
   return (
     <Dialog modalType="non-modal" surfaceMotion={null}>
