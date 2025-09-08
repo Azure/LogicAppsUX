@@ -17,7 +17,7 @@ import {
 import { serializeBJSWorkflow } from '../..';
 import { PayloadPopover } from './payloadPopover';
 import { useIsA2AWorkflow } from '../../core/state/designerView/designerViewSelectors';
-import { FloatinChatButton } from './floatingChat';
+import { FloatingChatButton } from './floatingChat';
 
 const RunIcon = bundleIcon(FlashFilled, FlashRegular);
 const RunWithPayloadIcon = bundleIcon(FlashSettingsFilled, FlashSettingsRegular);
@@ -172,7 +172,7 @@ export const FloatingRunButton = ({ id: _id, saveDraftWorkflow, onRun }: Floatin
   }
 
   if (isA2AWorkflow) {
-    return <FloatinChatButton {...buttonCommonProps} />;
+    return <FloatingChatButton {...buttonCommonProps} />;
   }
 
   return (
