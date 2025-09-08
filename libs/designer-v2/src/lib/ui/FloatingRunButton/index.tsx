@@ -127,6 +127,12 @@ export const FloatingRunButton = ({ id: _id, saveDraftWorkflow, onRun }: Floatin
     shape: 'circular',
     size: 'large',
     disabled: runIsLoading || runWithPayloadIsLoading,
+    style: {
+      position: 'absolute',
+      bottom: '16px',
+      left: '50%',
+      transform: 'translate(-50%, 0)',
+    },
   };
 
   const runText = intl.formatMessage({
@@ -166,7 +172,7 @@ export const FloatingRunButton = ({ id: _id, saveDraftWorkflow, onRun }: Floatin
   }
 
   if (isA2AWorkflow) {
-    return <FloatinChatButton />;
+    return <FloatinChatButton {...buttonCommonProps} />;
   }
 
   return (

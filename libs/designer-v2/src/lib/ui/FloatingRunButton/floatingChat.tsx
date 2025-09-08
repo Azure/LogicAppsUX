@@ -12,7 +12,7 @@ const ChatIcon = bundleIcon(Chat24Filled, Chat24Regular);
 
 export const useAgentUrl = (): UseQueryResult<AgentURL> => {
   return useQuery(
-    ['agenUrl'],
+    ['agentUrl'],
     async () => {
       return WorkflowService().getAgentUrl?.();
     },
@@ -25,15 +25,9 @@ export const useAgentUrl = (): UseQueryResult<AgentURL> => {
   );
 };
 
-export const FloatinChatButton = () => {
+export const FloatinChatButton = (buttonCommonProps: any) => {
   const intl = useIntl();
   const { isLoading, data } = useAgentUrl();
-
-  const buttonCommonProps: any = {
-    appearance: 'primary',
-    shape: 'circular',
-    size: 'large',
-  };
 
   const IntlText = useMemo(
     () => ({
@@ -78,7 +72,7 @@ export const FloatinChatButton = () => {
       </DialogTrigger>
       <DialogSurface style={{ width: '70vw', maxWidth: '70vw' }}>
         <DialogBody>
-          <DialogTitle>Chat</DialogTitle>
+          <DialogTitle />
           <DialogContent style={{ height: '70vh', padding: 0 }}>{chatContent}</DialogContent>
         </DialogBody>
       </DialogSurface>
