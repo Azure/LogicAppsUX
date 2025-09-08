@@ -387,7 +387,7 @@ export const DesignerApp = () => {
                         setRunId(newRunId ?? '');
                       }}
                     />
-                    <FloatinChatButton id={workflowDefinitionId} />
+                    <FloatinChatButton />
                   </div>
                 </div>
               </div>
