@@ -13,12 +13,13 @@ import {
   tokens,
 } from '@fluentui/react-components';
 
-import { bundleIcon, Chat24Filled, Chat24Regular } from '@fluentui/react-icons';
+import { bundleIcon, Chat24Filled, Chat24Regular, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
 import type { AgentURL } from '@microsoft/logic-apps-shared';
 import { WorkflowService } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 
 const ChatIcon = bundleIcon(Chat24Filled, Chat24Regular);
+const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
 export const useAgentUrl = (): UseQueryResult<AgentURL> => {
   return useQuery(
@@ -82,7 +83,13 @@ export const FloatingChatButton = (buttonCommonProps: any) => {
       </DialogTrigger>
       <DialogSurface style={{ width: '70vw', maxWidth: '70vw' }}>
         <DialogBody>
-          <DialogTitle />
+          <DialogTitle
+            action={
+              <DialogTrigger action="close">
+                <Button appearance="subtle" aria-label="close" icon={<CloseIcon />} />
+              </DialogTrigger>
+            }
+          />
           <DialogContent style={{ height: '70vh', padding: 0 }}>{chatContent}</DialogContent>
         </DialogBody>
       </DialogSurface>
