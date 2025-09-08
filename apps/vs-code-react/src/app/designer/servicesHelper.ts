@@ -84,7 +84,8 @@ export const getDesignerServices = (
   let isStateful = false;
   let connectionsData: ConnectionsData = { ...connectionData };
   let workflowName = '';
-
+  let clientId = '';
+  let tenantId = '';
   const { subscriptionId = 'subscriptionId', resourceGroup, location } = apiHubDetails;
 
   const armUrl = 'https://management.azure.com';
@@ -98,6 +99,8 @@ export const getDesignerServices = (
     workflowName = panelMetadata.workflowName;
     appSettings = panelMetadata.localSettings;
     isStateful = panelMetadata.standardApp?.stateful ?? false;
+    tenantId = panelMetadata.azureDetails.tenantId ?? '';
+    clientId = panelMetadata.azureDetails.clientId ?? '';
   }
 
   const addConnectionData = async (connectionAndSetting: ConnectionAndAppSetting<LocalConnectionModel>): Promise<void> => {
@@ -333,7 +336,8 @@ export const getDesignerServices = (
       } as ManagedIdentity;
     },
     isExplicitAuthRequiredForManagedIdentity: () => true,
-    getAgentUrl: () => fetchAgentUrl(workflowName, isEmptyString(workflowRuntimeBaseUrl) ? baseUrl : workflowRuntimeBaseUrl, httpClient),
+    getAgentUrl: () =>
+      fetchAgentUrl(workflowName, isEmptyString(workflowRuntimeBaseUrl) ? baseUrl : workflowRuntimeBaseUrl, httpClient, clientId, tenantId),
   };
 
   const hostService: IHostService = {
