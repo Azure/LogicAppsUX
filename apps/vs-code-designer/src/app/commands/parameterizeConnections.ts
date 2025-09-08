@@ -24,6 +24,7 @@ import type { ConnectionsData } from '@microsoft/vscode-extension-logic-apps';
  * @returns A promise that resolves when the operation is complete.
  */
 export async function promptParameterizeConnections(context: IActionContext, showMessage?: boolean): Promise<void> {
+  const parameterizeConnectionsStartTime = Date.now();
   if (workspace.workspaceFolders && workspace.workspaceFolders.length > 0) {
     const message = localize('allowParameterizeConnections', 'Allow parameterization for connections when your project loads?');
     const parameterizeConnectionsSetting = getGlobalSetting(parameterizeConnectionsInProjectLoadSetting);
@@ -47,6 +48,7 @@ export async function promptParameterizeConnections(context: IActionContext, sho
       await Promise.all(projectPaths.map((projectPath) => parameterizeConnections(context, projectPath, showMessage)));
     }
   }
+  context.telemetry.measurements.parameterizeConnectionsDuration = (Date.now() - parameterizeConnectionsStartTime) / 1000;
 }
 
 /**

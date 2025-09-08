@@ -51,6 +51,7 @@ export interface AzureConnectorDetails {
   resourceGroupName?: string;
   subscriptionId?: string;
   tenantId?: string;
+  clientId?: string;
   workflowManagementBaseUrl?: string;
 }
 

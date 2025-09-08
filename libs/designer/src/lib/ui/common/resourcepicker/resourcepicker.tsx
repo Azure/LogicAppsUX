@@ -27,6 +27,7 @@ export interface ResourcePickerProps extends BaseResourcePickerProps {
   onLogicAppSelect: (value: { name: string; location: string }) => void;
   onLogicAppInstanceSelect: (value: { name: string; location: string; plan: string }) => void;
   renderType?: ResourceFieldRenderType;
+  showErrorMessage?: boolean;
 }
 
 export const ResourcePicker = ({
@@ -40,6 +41,7 @@ export const ResourcePicker = ({
   onLogicAppSelect,
   onLogicAppInstanceSelect,
   renderType,
+  showErrorMessage = true,
 }: ResourcePickerProps) => {
   const isDefaultMode = viewMode === 'default';
   const { subscriptionId, resourceGroup, location, workflowAppName, logicAppName, isConsumption } = resourceState;
@@ -109,7 +111,7 @@ export const ResourcePicker = ({
         defaultKey={subscriptionId}
         isLoading={isLoading}
         resources={subscriptions ?? []}
-        errorMessage={subscriptionId ? '' : intlText.VALIDATION_ERROR}
+        errorMessage={!showErrorMessage || subscriptionId ? '' : intlText.VALIDATION_ERROR}
         lockField={lockField === 'subscription' || lockField === 'resourcegroup' || lockField === 'resource'}
         renderType={renderType}
       />
@@ -120,7 +122,7 @@ export const ResourcePicker = ({
         defaultKey={resourceGroup}
         isLoading={isResourceGroupLoading}
         resources={resourceGroups ?? []}
-        errorMessage={resourceGroup ? '' : intlText.VALIDATION_ERROR}
+        errorMessage={!showErrorMessage || resourceGroup ? '' : intlText.VALIDATION_ERROR}
         lockField={lockField === 'resourcegroup' || lockField === 'resource'}
         renderType={renderType}
       />
@@ -132,7 +134,7 @@ export const ResourcePicker = ({
           defaultKey={location}
           isLoading={islocationLoading}
           resources={locations ?? []}
-          errorMessage={location ? '' : intlText.VALIDATION_ERROR}
+          errorMessage={!showErrorMessage || location ? '' : intlText.VALIDATION_ERROR}
           lockField={lockField === 'location' || lockField === 'resource'}
           renderType={renderType}
         />
@@ -149,7 +151,7 @@ export const ResourcePicker = ({
             name: app.name,
             displayName: app.name,
           }))}
-          errorMessage={workflowAppName ? '' : intlText.VALIDATION_ERROR}
+          errorMessage={!showErrorMessage || workflowAppName ? '' : intlText.VALIDATION_ERROR}
           lockField={lockField === 'resource'}
           renderType={renderType}
         />
@@ -166,7 +168,7 @@ export const ResourcePicker = ({
             name: app.name,
             displayName: equals(app.plan, 'consumption') ? `${app.name} (Consumption)` : `${app.name} (Standard)`,
           }))}
-          errorMessage={logicAppName ? '' : intlText.VALIDATION_ERROR}
+          errorMessage={!showErrorMessage || logicAppName ? '' : intlText.VALIDATION_ERROR}
           lockField={lockField === 'resource'}
           renderType={renderType}
         />

@@ -161,6 +161,7 @@ async function getExtensionBundleVersionFolders(directoryPath: string): Promise<
  */
 export async function downloadExtensionBundle(context: IActionContext): Promise<boolean> {
   try {
+    const downloadExtensionBundleStartTime = Date.now();
     let envVarVer: string | undefined = process.env.AzureFunctionsJobHost_extensionBundle_version;
     const projectPath: string | undefined = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : null;
     if (projectPath) {
@@ -183,6 +184,8 @@ export async function downloadExtensionBundle(context: IActionContext): Promise<
 
       const extensionBundleUrl = await getExtensionBundleZip(context, envVarVer);
       await downloadAndExtractDependency(context, extensionBundleUrl, defaultExtensionBundlePathValue, extensionBundleId, envVarVer);
+      context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;
+      context.telemetry.properties.didUpdateExtensionBundle = 'true';
       return true;
     }
 
@@ -210,9 +213,13 @@ export async function downloadExtensionBundle(context: IActionContext): Promise<
         latestFeedBundleVersion
       );
 
+      context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;
+      context.telemetry.properties.didUpdateExtensionBundle = 'true';
       return true;
     }
 
+    context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;
+    context.telemetry.properties.didUpdateExtensionBundle = 'false';
     return false;
   } catch (error) {
     const errorMessage = `Error downloading and extracting the Logic Apps Standard extension bundle: ${error.message}`;

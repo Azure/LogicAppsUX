@@ -33,7 +33,7 @@ import { ProgressLocation, type Uri, window } from 'vscode';
 // NOTE: LA Standard ext does this in workflowFolder/workflow-designtime
 // For now at least, DM is just going to do everything in workflowFolder
 
-export async function startBackendRuntime(projectPath: string, context: IActionContext): Promise<void> {
+export async function startBackendRuntime(context: IActionContext, projectPath: string): Promise<void> {
   const designTimeDirectory: Uri | undefined = await getOrCreateDesignTimeDirectory(designTimeDirectoryName, projectPath);
   if (!ext.designTimeInstances.has(projectPath)) {
     ext.designTimeInstances.set(projectPath, {
@@ -77,7 +77,7 @@ export async function startBackendRuntime(projectPath: string, context: IActionC
         const portArgs = `--port ${designTimeInst.port}`;
         startDesignTimeProcess(ext.outputChannel, cwd, getFunctionsCommand(), 'host', 'start', portArgs);
 
-        await waitForDesignTimeStartUp(projectPath, url, new Date().getTime(), true);
+        await waitForDesignTimeStartUp(context, projectPath, url, true);
       } else {
         throw new Error("Workflow folder doesn't exist");
       }
