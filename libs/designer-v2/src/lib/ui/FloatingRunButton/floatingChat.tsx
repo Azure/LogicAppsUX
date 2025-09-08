@@ -1,7 +1,17 @@
 import { useIntl } from 'react-intl';
 import type { UseQueryResult } from '@tanstack/react-query';
 import { useQuery } from '@tanstack/react-query';
-import { Button, Dialog, DialogBody, DialogContent, DialogSurface, DialogTitle, DialogTrigger, Spinner } from '@fluentui/react-components';
+import {
+  Button,
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogSurface,
+  DialogTitle,
+  DialogTrigger,
+  Spinner,
+  tokens,
+} from '@fluentui/react-components';
 
 import { bundleIcon, Chat24Filled, Chat24Regular } from '@fluentui/react-icons';
 import type { AgentURL } from '@microsoft/logic-apps-shared';
@@ -58,7 +68,7 @@ export const FloatinChatButton = (buttonCommonProps: any) => {
       <iframe
         src={`${data?.chatUrl}?apiKey=${data?.queryParams?.apiKey}`}
         title={IntlText.TITLE}
-        style={{ width: '100%', height: '100%', border: 'none' }}
+        style={{ width: '100%', height: '99%', border: 'none', borderRadius: tokens.borderRadiusXLarge }}
       />
     );
   }, [isLoading, data, IntlText]);

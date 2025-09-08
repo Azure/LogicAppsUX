@@ -36,7 +36,7 @@ export const fetchAgentUrl = (workflowName: string, runtimeUrl: string, httpClie
       LoggerService().log({
         level: LogEntryLevel.Error,
         message: `Failed to get agent URL: ${error}`,
-        area: 'fetchAgentUrl',
+        area: 'vscode: fetchAgentUrl',
       });
       return { agentUrl: '', chatUrl: '', hostName: runtimeUrl };
     }
