@@ -45,7 +45,12 @@ describe('verifyLocalConnectionKeys', () => {
   ];
 
   beforeEach(() => {
-    testContext = { telemetry: { properties: {} } };
+    testContext = {
+      telemetry: {
+        properties: {},
+        measurements: {},
+      },
+    };
     (vscode.workspace as any).workspaceFolders = testWorkspaceFolders;
     ext.outputChannel.appendLog = vi.fn();
   });

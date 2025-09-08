@@ -46,7 +46,10 @@ describe('convertToWorkspace', () => {
 
   beforeEach(() => {
     context = {
-      telemetry: { properties: {} },
+      telemetry: {
+        properties: {},
+        measurements: {},
+      },
     };
     vi.spyOn(funcCoreTools, 'addLocalFuncTelemetry').mockImplementation(() => {});
     vi.spyOn(settingsUtils, 'getGlobalSetting').mockReturnValue('4.0.5907');
