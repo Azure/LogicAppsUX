@@ -381,7 +381,6 @@ export const DesignerApp = () => {
                   >
                     <FloatingRunButton
                       id={workflowDefinitionId}
-                      kind={workflow?.kind}
                       saveDraftWorkflow={saveWorkflowFromDesigner}
                       onRun={(newRunId: string | undefined) => {
                         switchToMonitoringView();
