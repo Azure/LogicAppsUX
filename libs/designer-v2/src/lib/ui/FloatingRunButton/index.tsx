@@ -2,16 +2,7 @@ import { useCallback, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useMutation } from '@tanstack/react-query';
 import { Button, SplitButton } from '@fluentui/react-components';
-
-import {
-  bundleIcon,
-  Chat24Filled,
-  Chat24Regular,
-  FlashFilled,
-  FlashRegular,
-  FlashSettingsFilled,
-  FlashSettingsRegular,
-} from '@fluentui/react-icons';
+import { bundleIcon, FlashFilled, FlashRegular, FlashSettingsFilled, FlashSettingsRegular } from '@fluentui/react-icons';
 import type { Workflow } from '@microsoft/logic-apps-shared';
 import { canRunBeInvokedWithPayload, isNullOrEmpty, RunService, WorkflowService } from '@microsoft/logic-apps-shared';
 import { useDispatch, useSelector } from 'react-redux';
@@ -26,8 +17,8 @@ import {
 import { serializeBJSWorkflow } from '../..';
 import { PayloadPopover } from './payloadPopover';
 import { useIsA2AWorkflow } from '../../core/state/designerView/designerViewSelectors';
+import { FloatinChatButton } from './floatingChat';
 
-const ChatIcon = bundleIcon(Chat24Filled, Chat24Regular);
 const RunIcon = bundleIcon(FlashFilled, FlashRegular);
 const RunWithPayloadIcon = bundleIcon(FlashSettingsFilled, FlashSettingsRegular);
 
@@ -131,22 +122,12 @@ export const FloatingRunButton = ({ id: _id, saveDraftWorkflow, onRun }: Floatin
     }
   });
 
-  const openChatPanel = useCallback(() => {
-    console.log('#> TODO: Open chat panel');
-  }, []);
-
   const buttonCommonProps: any = {
     appearance: 'primary',
     shape: 'circular',
     size: 'large',
     disabled: runIsLoading || runWithPayloadIsLoading,
   };
-
-  const chatText = intl.formatMessage({
-    defaultMessage: 'Chat',
-    id: '9VbsXx',
-    description: 'Chat button text',
-  });
 
   const runText = intl.formatMessage({
     defaultMessage: 'Run',
@@ -157,8 +138,6 @@ export const FloatingRunButton = ({ id: _id, saveDraftWorkflow, onRun }: Floatin
   const buttonRef = useRef(null);
 
   const [popoverOpen, setPopoverOpen] = useState(false);
-
-  const icon = isA2AWorkflow ? <ChatIcon /> : <RunIcon />;
 
   if (canBeRunWithPayload) {
     return (
@@ -187,11 +166,7 @@ export const FloatingRunButton = ({ id: _id, saveDraftWorkflow, onRun }: Floatin
   }
 
   if (isA2AWorkflow) {
-    return (
-      <Button {...buttonCommonProps} icon={icon} onClick={openChatPanel}>
-        {chatText}
-      </Button>
-    );
+    return <FloatinChatButton />;
   }
 
   return (

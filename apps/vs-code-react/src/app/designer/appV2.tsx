@@ -16,7 +16,6 @@ import {
   RunHistoryPanel,
   FloatingRunButton,
   useRun,
-  FloatinChatButton,
 } from '@microsoft/logic-apps-designer-v2';
 import { guid, isNullOrUndefined, Theme } from '@microsoft/logic-apps-shared';
 import type { FileSystemConnectionInfo, MessageToVsix, StandardApp } from '@microsoft/vscode-extension-logic-apps';
@@ -370,25 +369,14 @@ export const DesignerApp = () => {
                 />
                 <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column', position: 'relative' }}>
                   <Designer />
-                  <div
-                    style={{
-                      position: 'absolute',
-                      bottom: '16px',
-                      left: '44%%',
-                      display: 'flex',
-                      gap: '6%',
+                  <FloatingRunButton
+                    id={workflowDefinitionId}
+                    saveDraftWorkflow={saveWorkflowFromDesigner}
+                    onRun={(newRunId: string | undefined) => {
+                      switchToMonitoringView();
+                      setRunId(newRunId ?? '');
                     }}
-                  >
-                    <FloatingRunButton
-                      id={workflowDefinitionId}
-                      saveDraftWorkflow={saveWorkflowFromDesigner}
-                      onRun={(newRunId: string | undefined) => {
-                        switchToMonitoringView();
-                        setRunId(newRunId ?? '');
-                      }}
-                    />
-                    <FloatinChatButton />
-                  </div>
+                  />
                 </div>
               </div>
             )}
