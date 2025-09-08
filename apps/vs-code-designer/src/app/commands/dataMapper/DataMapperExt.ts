@@ -21,7 +21,7 @@ export default class DataMapperExt {
     dataMapName?: string,
     mapDefinitionData?: MapDefinitionData
   ): Promise<void> {
-    await startBackendRuntime(ext.defaultLogicAppPath, context);
+    await startBackendRuntime(context, ext.defaultLogicAppPath);
     const name =
       dataMapName ??
       (await context.ui.showInputBox({
