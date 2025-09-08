@@ -78,6 +78,7 @@ type AddOperationPayload = {
 
 export const addOperation = createAsyncThunk('addOperation', async (payload: AddOperationPayload, { dispatch, getState }) => {
   batch(() => {
+		console.log('#> Adding operation:', payload);
     const { operation, nodeId: actionId, presetParameterValues, actionMetadata, isAddingHandoff = false } = payload;
     if (!operation) {
       throw new Error('Operation does not exist'); // Just an optional catch, should never happen

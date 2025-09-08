@@ -1,0 +1,88 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "actions": {
+      "Initialize_ArrayVariable": {
+        "type": "InitializeVariable",
+				"metadata": {
+					"position": {
+						"x": 100,
+						"y": 200
+					}
+				},
+        "inputs": {
+          "variables": [
+            {
+              "name": "ArrayVariable",
+              "type": "array",
+              "value": [
+                {
+                  "document": "A",
+                  "min": 7500001,
+                  "policy": "X"
+                },
+                {
+                  "document": "B",
+                  "min": 7500001,
+                  "policy": "Y"
+                },
+                {
+                  "document": "C",
+                  "min": 7500001,
+                  "policy": "Z"
+                }
+              ]
+            }
+          ]
+        },
+        "runAfter": {}
+      }
+    },
+    "contentVersion": "1.0.0.0",
+    "outputs": {},
+    "triggers": {
+      "manual": {
+        "type": "Request",
+        "kind": "Http",
+				"metadata": {
+					"position": {
+						"x": 0,
+						"y": 0
+					}
+				},
+        "inputs": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "array": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "item1": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["item1"]
+                }
+              },
+              "string": {
+                "type": "string"
+              },
+              "number": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "connectionReferences": {},
+  "parameters": {
+    "EILCO Admin Nominations-OCSA List (cr773_EILCOAdminNominations_OCSA_L2)": {
+      "type": "String",
+      "value": "test"
+    }
+  }
+}

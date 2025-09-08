@@ -1,7 +1,7 @@
 import type React from 'react';
 import { memo, useMemo } from 'react';
 import type { ElkExtendedEdge } from 'elkjs/lib/elk-api';
-import { EdgeLabelRenderer, getSmoothStepPath, useReactFlow, type EdgeProps } from '@xyflow/react';
+import { EdgeLabelRenderer, getSimpleBezierPath, useReactFlow, type EdgeProps } from '@xyflow/react';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { containsIdTag, removeIdTag, getEdgeCenter, RUN_AFTER_STATUS, useEdgeIndex, useGuid } from '@microsoft/logic-apps-shared';
 
@@ -115,15 +115,15 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
   const runAfterY = targetY - runAfterHeight;
 
   const [d] = useMemo(() => {
-    return getSmoothStepPath({
+		return getSimpleBezierPath({
       sourceX,
       sourceY,
       sourcePosition,
       targetX,
       targetY: (numRunAfters !== 0 ? targetY - runAfterHeight : targetY) - 2, // move up to allow space for run after indicator
       targetPosition,
-      borderRadius: 8,
-      centerY,
+      // borderRadius: 8,
+      // centerY,
     });
   }, [numRunAfters, sourcePosition, sourceX, sourceY, targetPosition, targetX, targetY, centerY]);
 

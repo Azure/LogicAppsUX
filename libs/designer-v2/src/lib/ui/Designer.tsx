@@ -17,9 +17,6 @@ import { css, setLayerHostSelector } from '@fluentui/react';
 import { mergeClasses, PanelLocation } from '@microsoft/designer-ui';
 import type { CustomPanelLocation } from '@microsoft/designer-ui';
 import { useEffect, useMemo, useRef } from 'react';
-import KeyboardBackendFactory, { isKeyboardDragTrigger } from 'react-dnd-accessible-backend';
-import { HTML5Backend } from 'react-dnd-html5-backend';
-import { DndProvider, createTransition, MouseTransition } from 'react-dnd-multi-backend';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
@@ -29,7 +26,6 @@ import { PerformanceDebugTool } from './common/PerformanceDebug/PerformanceDebug
 import { CanvasFinder } from './CanvasFinder';
 import { DesignerContextualMenu } from './common/DesignerContextualMenu/DesignerContextualMenu';
 import { EdgeContextualMenu } from './common/EdgeContextualMenu/EdgeContextualMenu';
-import { DragPanMonitor } from './common/DragPanMonitor/DragPanMonitor';
 import { CanvasSizeMonitor } from './CanvasSizeMonitor';
 import { AgentChat } from './panel/agentChat/agentChat';
 import DesignerReactFlow from './DesignerReactFlow';
@@ -69,13 +65,6 @@ export const Designer = (props: DesignerProps) => {
   const canvasRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => setLayerHostSelector('#msla-layer-host'), []);
-  const KeyboardTransition = createTransition('keydown', (event) => {
-    if (!isKeyboardDragTrigger(event as KeyboardEvent)) {
-      return false;
-    }
-    event.preventDefault();
-    return true;
-  });
 
   useHotkeys(
     ['meta+shift+p', 'ctrl+shift+p'],
@@ -103,23 +92,6 @@ export const Designer = (props: DesignerProps) => {
     return workflowHasAgentLoop && isMonitoringView;
   }, [isMonitoringView, workflowHasAgentLoop]);
 
-  const DND_OPTIONS: any = {
-    backends: [
-      {
-        id: 'html5',
-        backend: HTML5Backend,
-        transition: MouseTransition,
-      },
-      {
-        id: 'keyboard',
-        backend: KeyboardBackendFactory,
-        context: { window, document },
-        preview: true,
-        transition: KeyboardTransition,
-      },
-    ],
-  };
-
   const isInitialized = useNodesInitialized();
   const preloadSearch = useMemo(() => !(isMonitoringView || isReadOnly) && isInitialized, [isMonitoringView, isReadOnly, isInitialized]);
 
@@ -139,7 +111,7 @@ export const Designer = (props: DesignerProps) => {
   useQuery({ queryKey: ['workflowKind'], initialData: undefined, enabled: !!workflowKind, queryFn: () => workflowKind });
 
   return (
-    <DndProvider options={DND_OPTIONS}>
+    <>
       {preloadSearch ? <SearchPreloader /> : null}
       <div
         ref={designerContainerRef}
@@ -155,7 +127,7 @@ export const Designer = (props: DesignerProps) => {
                   bgColor={isReadOnly ? '#80808010' : undefined}
                   color={isReadOnly ? '#00000000' : '#80808080'}
                   size={1.5}
-                  gap={[19.9, 20.3333]} // I don't know why, but it renders not exact by default
+                  gap={[20, 20]} // I don't know why, but it renders not exact by default
                   offset={[10, 10]}
                 />
               )}
@@ -182,10 +154,9 @@ export const Designer = (props: DesignerProps) => {
           <PerformanceDebugTool />
           <CanvasFinder />
           <CanvasSizeMonitor canvasRef={canvasRef} />
-          <DragPanMonitor canvasRef={canvasRef} />
         </ReactFlowProvider>
         <div id={'msla-layer-host'} className={styles.layerHost} />
       </div>
-    </DndProvider>
+    </>
   );
 };

@@ -1,5 +1,4 @@
 import constants from '../../common/constants';
-import { moveOperation } from '../../core/actions/bjsworkflow/move';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { setNodeContextMenuData, setShowDeleteModalNodeId } from '../../core/state/designerView/designerViewSlice';
 import {
@@ -7,7 +6,6 @@ import {
   useIconUri,
   useOperationErrorInfo,
   useParameterValidationErrors,
-  useTokenDependencies,
 } from '../../core/state/operation/operationSelector';
 import { useIsNodeSelectedInOperationPanel } from '../../core/state/panel/panelSelectors';
 import { changePanelNode } from '../../core/state/panel/panelSlice';
@@ -45,7 +43,6 @@ import { DropZone } from '../connections/dropzone';
 import { equals, isNullOrUndefined, removeIdTag, useNodeIndex } from '@microsoft/logic-apps-shared';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 import type { NodeProps } from '@xyflow/react';
@@ -173,42 +170,6 @@ const ScopeCardNode = ({ id }: NodeProps) => {
     }
     dispatch(setRepetitionRunData({ nodeId: scopeId, runData: repetitionRunData.properties as LogicAppsV2.WorkflowRunAction }));
   }, [dispatch, repetitionRunData, scopeId, selfRunData?.correlation?.actionTrackingId]);
-
-  const { dependencies, loopSources } = useTokenDependencies(scopeId);
-  const [{ isDragging }, drag, dragPreview] = useDrag(
-    () => ({
-      type: 'BOX',
-      end: (item, monitor) => {
-        const dropResult = monitor.getDropResult<{
-          graphId: string;
-          parentId: string;
-          childId: string;
-        }>();
-        if (item && dropResult) {
-          dispatch(
-            moveOperation({
-              nodeId: scopeId,
-              oldGraphId: metadata?.graphId ?? 'root',
-              newGraphId: dropResult.graphId,
-              relationshipIds: dropResult,
-            })
-          );
-        }
-      },
-      item: {
-        id: id,
-        dependencies,
-        loopSources,
-        isScope: true,
-        isAgent: isAgent,
-      },
-      canDrag: !readOnly,
-      collect: (monitor) => ({
-        isDragging: monitor.isDragging(),
-      }),
-    }),
-    [readOnly, metadata]
-  );
 
   const nodeClick = useCallback(() => {
     dispatch(changePanelNode(scopeId));
@@ -414,10 +375,7 @@ const ScopeCardNode = ({ id }: NodeProps) => {
             title={label}
             icon={iconUri}
             connectorName={connectorName?.result}
-            drag={drag}
-            dragPreview={dragPreview}
             errorMessages={errorMessages}
-            isDragging={isDragging}
             isLoading={isLoading}
             isSelected={selected}
             runData={runData}

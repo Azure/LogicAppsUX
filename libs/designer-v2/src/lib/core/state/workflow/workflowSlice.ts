@@ -6,7 +6,6 @@ import { addSwitchCaseToWorkflow, addNodeToWorkflow, addAgentToolToWorkflow } fr
 import type { DeleteNodePayload } from '../../parsers/deleteNodeFromWorkflow';
 import { deleteWorkflowNode, deleteNodeFromWorkflow } from '../../parsers/deleteNodeFromWorkflow';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
-import { isWorkflowNode } from '../../parsers/models/workflowNode';
 import type { MoveNodePayload } from '../../parsers/moveNodeInWorkflow';
 import { moveNodeInWorkflow } from '../../parsers/moveNodeInWorkflow';
 import { pasteScopeInWorkflow } from '../../parsers/pasteScopeInWorkflow';
@@ -40,11 +39,12 @@ import { getDurationStringPanelMode } from '@microsoft/designer-ui';
 import type * as LogicAppsV2 from '@microsoft/logic-apps-shared/src/utils/src/lib/models/logicAppsV2';
 import { createSlice, isAnyOf } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import type { NodeChange, NodeDimensionChange } from '@xyflow/system';
+import type { NodeChange } from '@xyflow/system';
 import type { UndoRedoPartialRootState } from '../undoRedo/undoRedoTypes';
 import { initializeInputsOutputsBinding } from '../../actions/bjsworkflow/monitoring';
 import { updateAgenticSubgraph, type UpdateAgenticGraphPayload } from '../../parsers/updateAgenticGraph';
 import { isA2AWorkflow, shouldClearNodeRunData } from './helper';
+import type { XYPosition } from '@xyflow/react';
 
 export interface AddImplicitForeachPayload {
   nodeId: string;
@@ -62,6 +62,7 @@ export const initialWorkflowState: WorkflowState = {
   collapsedGraphIds: {},
   collapsedActionIds: {},
   idReplacements: {},
+	nodePositions: {},
   newlyAddedOperations: {},
   isDirty: false,
   originalDefinition: {
@@ -360,38 +361,25 @@ export const workflowSlice = createSlice({
     clearFocusCollapsedNode: (state: WorkflowState) => {
       state.focusCollapsedNodeId = undefined;
     },
-    updateNodeSizes: (state: WorkflowState, action: PayloadAction<NodeChange[]>) => {
-      const dimensionChanges = action.payload.filter((x) => x.type === 'dimensions');
-      if (!state.graph) {
-        return;
-      }
-      const stack: WorkflowNode[] = [state.graph];
-
-      const dimensionChangesById: Record<string, NodeDimensionChange> = {};
-      for (const val of dimensionChanges) {
-        if (val.type !== 'dimensions') {
-          continue;
-        }
-        dimensionChangesById[val.id] = val as NodeDimensionChange;
-      }
-
-      while (stack.length) {
-        const node = stack.shift();
-        const change = getRecordEntry(dimensionChangesById, node?.id ?? '');
-        if (change && node && isWorkflowNode(node)) {
-          const c = change as NodeDimensionChange;
-          if ((c.dimensions?.height ?? 0) === 0 || (c.dimensions?.width ?? 0) === 0) {
-            continue; // Skip if the dimensions are 0
-          }
-          if (node.height === c.dimensions?.height && node.width === c.dimensions?.width) {
-            continue; // Skip if the dimensions have not changed
-          }
-          node.height = c.dimensions?.height ?? 0;
-          node.width = c.dimensions?.width ?? 0;
-        }
-        !!node?.children?.length && stack.push(...node.children);
-      }
-    },
+		updateNodePositions: (state: WorkflowState, action: PayloadAction<NodeChange[]>) => {
+			const positionChanges = action.payload.filter((x) => x.type === 'position');
+			if (!state.graph) {
+				return;
+			}
+			const positionChangesById: Record<string, XYPosition> = {};
+			for (const val of positionChanges) {
+				if (val.type !== 'position') {
+					continue;
+				}
+				if (isNaN(val.position?.x ?? 0) || isNaN(val.position?.y ?? 0)) {
+					continue;
+				}
+				positionChangesById[val.id] = val.position as XYPosition;
+			}
+			for (const nodeId of Object.keys(positionChangesById)) {
+				state.nodePositions[nodeId] = positionChangesById[nodeId];
+			}
+		},
     setCollapsedGraphIds: (state: WorkflowState, action: PayloadAction<string[]>) => {
       const idArray = action.payload;
       const idRecord = idArray.reduce(
@@ -809,7 +797,7 @@ export const {
   deleteNode,
   deleteSwitchCase,
   deleteAgentTool,
-  updateNodeSizes,
+	updateNodePositions,
   setNodeDescription,
   toggleCollapsedGraphId,
   addSwitchCase,

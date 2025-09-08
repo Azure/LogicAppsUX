@@ -12,7 +12,7 @@ import Queue from 'yocto-queue';
 import type {} from 'reselect';
 import type {} from '@tanstack/react-query';
 import { collapseFlowTree } from './helper';
-import { useEdges } from '@xyflow/react';
+import { useEdges, type XYPosition } from '@xyflow/react';
 import type { OperationMetadataState } from '../operation/operationMetadataSlice';
 
 export const getWorkflowState = (state: RootState): WorkflowState => state.workflow;
@@ -751,3 +751,9 @@ export const useHandoffActionsForAgent = (agentId: string): any[] => {
     })
   );
 };
+
+export const useNodePositions = (): Record<string, XYPosition> =>
+	useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.nodePositions));
+
+export const useNodePosition = (nodeId: string): XYPosition =>
+	useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.nodePositions?.[nodeId] ?? { x: 0, y: 0 }));

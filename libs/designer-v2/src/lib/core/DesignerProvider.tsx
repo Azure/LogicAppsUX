@@ -12,7 +12,6 @@ import { IntlProvider } from '@microsoft/logic-apps-shared';
 import type React from 'react';
 import { useCallback, useEffect, useMemo } from 'react';
 import { Provider as ReduxProvider, useDispatch } from 'react-redux';
-import { LayoutProvider } from './graphlayout';
 
 export interface DesignerProviderProps {
   key?: string;
@@ -52,23 +51,21 @@ export const DesignerProvider = ({ id, locale = 'en', options, children }: Desig
         <ProviderWrappedContext.Provider value={options.services}>
           <ThemeProvider theme={azTheme} style={{ height: 'inherit' }}>
             <FluentProvider theme={webTheme} style={{ height: 'inherit' }}>
-              <LayoutProvider>
-                <div
-                  data-color-scheme={themeName}
-                  className={`msla-theme-${themeName}`}
-                  style={{ display: 'flex', flexDirection: 'column', height: 'inherit', overflow: 'hidden' }}
-                >
-                  <IntlProvider
-                    locale={locale}
-                    defaultLocale={locale}
-                    stringOverrides={options.hostOptions.stringOverrides}
-                    onError={onError}
-                  >
-                    <ReduxReset id={id} />
-                    {children}
-                  </IntlProvider>
+							<div
+								data-color-scheme={themeName}
+								className={`msla-theme-${themeName}`}
+								style={{ display: 'flex', flexDirection: 'column', height: 'inherit', overflow: 'hidden' }}
+							>
+								<IntlProvider
+									locale={locale}
+									defaultLocale={locale}
+									stringOverrides={options.hostOptions.stringOverrides}
+									onError={onError}
+								>
+									<ReduxReset id={id} />
+									{children}
+								</IntlProvider>
                 </div>
-              </LayoutProvider>
             </FluentProvider>
           </ThemeProvider>
         </ProviderWrappedContext.Provider>

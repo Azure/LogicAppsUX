@@ -13,9 +13,9 @@ const fileOptions = [
   { key: 'Panel.json', text: 'Panel' },
   { key: 'Recurrence.json', text: 'Recurrence' },
   { key: 'MultiVariable.json', text: 'Multi Variable' },
-  // { key: 'straightLine.json', text: 'Straight Line' },
   { key: 'simpleBigworkflow.json', text: 'Simple Big Workflow' },
   { key: 'UnicodeKeys.json', text: 'Unicode Keys' },
+	{ key: 'UserLayout.json', text: 'User Layout' },
 
   // Agent
   { key: 'divider_1', text: '-', itemType: DropdownMenuItemType.Divider },

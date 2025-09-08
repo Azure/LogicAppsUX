@@ -1,6 +1,7 @@
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import type { MessageLevel } from '@microsoft/designer-ui';
 import type { LogicAppsV2, SubgraphType } from '@microsoft/logic-apps-shared';
+import type { XYPosition } from '@xyflow/react';
 
 export type SpecTypes = 'BJS' | 'CNCF';
 
@@ -49,6 +50,7 @@ export interface WorkflowState {
   collapsedActionIds: Record<string, boolean>;
   focusCollapsedNodeId?: string;
   idReplacements: Record<string, string>;
+	nodePositions: Record<string, XYPosition>;
   newlyAddedOperations: Record<string, string>;
   runInstance: LogicAppsV2.RunInstanceDefinition | null;
   isDirty: boolean;

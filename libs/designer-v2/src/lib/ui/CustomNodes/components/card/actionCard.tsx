@@ -5,24 +5,21 @@ import type { OutputMock } from '../../../../core/state/unitTest/unitTestInterfa
 import { useKeyboardInteraction } from './keyboardInteraction';
 import type { MouseEventHandler } from 'react';
 import { useEffect, useMemo, useRef } from 'react';
-import type { ConnectDragPreview, ConnectDragSource } from 'react-dnd';
 import { useIntl } from 'react-intl';
 import { useCardStyles } from './card.styles';
 import { CardRunStatusBadge } from './cardRunStatusBadge';
 import { CardErrorBadge } from './cardErrorBadge';
 import { CollapseToggle } from './collapseToggle';
 
+
 export interface ActionCardProps {
   active?: boolean;
   brandColor?: string;
   cloned?: boolean;
   connectorName?: string;
-  drag: ConnectDragSource;
-  dragPreview: ConnectDragPreview;
   errorMessages?: string[];
   icon?: string;
   id: string;
-  isDragging?: boolean;
   isUnitTest?: boolean;
   isLoading?: boolean;
   isSelected?: boolean;
@@ -51,7 +48,6 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   active = true,
   brandColor,
   connectorName,
-  drag,
   errorMessages = [],
   icon,
   // isUnitTest,
@@ -139,8 +135,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
     <div
       {...restoreFocusTargetAttribute}
       ref={(node) => {
-        focusRef.current = node;
-        drag(node);
+				focusRef.current = node;
       }}
       role="button"
       id={`msla-node-${id}`}

@@ -63,6 +63,7 @@ export const Deserialize = (
   if (definition.triggers && !isNullOrEmpty(definition.triggers)) {
     const [[tID, trigger]] = Object.entries(definition.triggers);
     triggerNode = createWorkflowNode(tID);
+		triggerNode.position = trigger?.metadata?.position
     allActions[tID] = { ...trigger };
     nodesMetadata[tID] = {
       graphId: 'root',
@@ -392,6 +393,8 @@ export const buildGraphFromActions = (
       isScopeAction(action) ? WORKFLOW_NODE_TYPES.GRAPH_NODE : WORKFLOW_NODE_TYPES.OPERATION_NODE
     );
 
+		node.position = action?.metadata?.position
+
     if (isSwitchAction(action) && action?.cases) {
       const caseKeys = Object.keys(action.cases);
       for (const key of caseKeys) {
@@ -524,6 +527,7 @@ export const processScopeActions = (
 
   const headerId = `${actionName}-#scope`;
   const scopeCardNode = createWorkflowNode(headerId, WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE);
+	scopeCardNode.position = action?.metadata?.position;
   nodes.push(scopeCardNode);
 
   let allActions: Operations = {};

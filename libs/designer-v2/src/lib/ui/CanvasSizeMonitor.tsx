@@ -1,7 +1,7 @@
 import React from 'react';
 import { useResizeObserver } from '@react-hookz/web';
 import { useReactFlow } from '@xyflow/react';
-import { useLayout } from '../core/graphlayout';
+import { useUserLayout } from '../core/graphlayout';
 import { DEFAULT_NODE_SIZE } from '../core/utils/graph';
 import { clamp } from '@microsoft/logic-apps-shared';
 
@@ -19,7 +19,7 @@ export const CanvasSizeMonitor = (props: CanvasSizeMonitorProps) => {
   const { canvasRef } = props;
 
   const { getViewport, setViewport } = useReactFlow();
-  const [_nodes, _edges, flowSize] = useLayout();
+	const { size } = useUserLayout();
   const [prevSize, setPrevSize] = React.useState(canvasRef.current?.getBoundingClientRect() ?? { width: 0, height: 0 });
 
   const getTranslateExtent = React.useCallback(
@@ -32,7 +32,7 @@ export const CanvasSizeMonitor = (props: CanvasSizeMonitorProps) => {
       y: { min: number; max: number };
     } => {
       const padding = 64 * zoom;
-      const [flowWidth, flowHeight] = flowSize;
+			const [flowWidth, flowHeight] = size;
 
       return {
         x: {
@@ -45,7 +45,7 @@ export const CanvasSizeMonitor = (props: CanvasSizeMonitorProps) => {
         },
       };
     },
-    [flowSize]
+		[size]
   );
 
   const updateCanvas = React.useCallback(

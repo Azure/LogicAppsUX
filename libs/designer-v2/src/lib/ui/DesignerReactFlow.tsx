@@ -1,4 +1,4 @@
-import type { Connection, Edge, EdgeTypes, NodeChange, ReactFlowInstance } from '@xyflow/react';
+import type { Connection, Edge, EdgeTypes, NodeChange, ReactFlowInstance, XYPosition } from '@xyflow/react';
 import { BezierEdge, ReactFlow } from '@xyflow/react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { containsIdTag, guid, removeIdTag, WORKFLOW_NODE_TYPES, type WorkflowNodeType } from '@microsoft/logic-apps-shared';
@@ -8,16 +8,15 @@ import { useIntl } from 'react-intl';
 
 import { useAllAgentIds, useDisconnectedNodes, useIsGraphEmpty, useNodesMetadata } from '../core/state/workflow/workflowSelectors';
 import { useNodesInitialized } from '../core/state/operation/operationSelector';
-import { setFlowErrors, updateNodeSizes } from '../core/state/workflow/workflowSlice';
+import { setFlowErrors, updateNodePositions } from '../core/state/workflow/workflowSlice';
 import type { AppDispatch } from '../core';
 import { clearPanel, expandDiscoveryPanel } from '../core/state/panel/panelSlice';
 import { addOperationRunAfter } from '../core/actions/bjsworkflow/runafter';
-import { useClampPan, useIsA2AWorkflow } from '../core/state/designerView/designerViewSelectors';
+import { useIsA2AWorkflow } from '../core/state/designerView/designerViewSelectors';
 import { DEFAULT_NODE_SIZE } from '../core/utils/graph';
 import { DraftEdge } from './connections/draftEdge';
 import { useReadOnly } from '../core/state/designerOptions/designerOptionsSelectors';
-import { useLayout } from '../core/graphlayout';
-import { DesignerFlowViewPadding } from '../core/utils/designerLayoutHelpers';
+import { useUserLayout } from '../core/graphlayout';
 import { addAgentHandoff } from '../core/actions/bjsworkflow/handoff';
 
 import GraphNode from './CustomNodes/GraphContainerNode';
@@ -57,7 +56,10 @@ const DesignerReactFlow = (props: any) => {
     HIDDEN_EDGE: HiddenEdge,
   } as EdgeTypes;
 
-  const [nodes, edges, flowSize] = useLayout();
+  const {
+		nodes, 
+		edges,
+	} = useUserLayout();
 
   const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null);
   const [containerDimensions, setContainerDimensions] = useState(canvasRef.current?.getBoundingClientRect() ?? { width: 0, height: 0 });
@@ -68,34 +70,61 @@ const DesignerReactFlow = (props: any) => {
 
   const hasFitViewRun = useRef(false);
 
-  useEffect(() => {
-    if (!hasFitViewRun.current && nodes.length > 0 && reactFlowInstance && isInitialized) {
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          const defaultZoom = 1.0;
-          const topNode = nodes.reduce((top, node) => (node.position.y < top.position.y ? node : top));
+  // useEffect(() => {
+  //   if (!hasFitViewRun.current && nodes.length > 0 && reactFlowInstance && isInitialized) {
+  //     requestAnimationFrame(() => {
+  //       requestAnimationFrame(() => {
+  //         const defaultZoom = 1.0;
+  //         const topNode = nodes.reduce((top, node) => (node.position.y < top.position.y ? node : top));
 
-          const centerX = containerDimensions.width / 2;
-          const topPadding = 120;
+  //         const centerX = containerDimensions.width / 2;
+  //         const topPadding = 120;
 
-          reactFlowInstance.setViewport({
-            x: centerX - (topNode.position.x + (topNode.width || DEFAULT_NODE_SIZE.width) / 2) * defaultZoom,
-            y: topPadding - topNode.position.y * defaultZoom,
-            zoom: defaultZoom,
-          });
+  //         reactFlowInstance.setViewport({
+  //           x: centerX - (topNode.position.x + (topNode.width || DEFAULT_NODE_SIZE.width) / 2) * defaultZoom,
+  //           y: topPadding - topNode.position.y * defaultZoom,
+  //           zoom: defaultZoom,
+  //         });
 
-          hasFitViewRun.current = true;
-        });
-      });
-    }
-  }, [nodes, reactFlowInstance, isInitialized, containerDimensions]);
+  //         hasFitViewRun.current = true;
+  //       });
+  //     });
+  //   }
+  // }, [nodes, reactFlowInstance, isInitialized, containerDimensions]);
+
+	const [nodePositions, setNodePositions] = useState<Record<string, XYPosition> | undefined>({});
 
   const onNodesChange = useCallback(
     (changes: NodeChange[]) => {
-      dispatch(updateNodeSizes(changes));
-    },
-    [dispatch]
+			// dispatch(updateNodePositions(changes));
+			setNodePositions((positions) => {
+				const newPositions = { ...positions };
+				changes.forEach((change) => {
+					if (change.type === 'position' && change.position && change.id) {
+						if (isNaN(change?.position.x) || isNaN(change?.position.y)) {
+							// Ignore invalid positions
+							return;
+						}
+						// console.log('#> Updating position for node', change.id, change.position);
+						// const id = containsIdTag(change.id) ? removeIdTag(change.id) : change.id;
+						newPositions[change.id] = change.position;
+					}
+				});
+				return newPositions;
+			});
+		},
+    []
   );
+
+	const nodesWithPositions = useMemo(() => {
+		return nodes.map((n) => {
+			const pos = nodePositions?.[n.id];
+			if (pos) {
+				return { ...n, position: pos };
+			}
+			return n;
+		});
+	}, [nodes, nodePositions]);
 
   const emptyWorkflowPlaceholderNodes = [
     {
@@ -111,26 +140,11 @@ const DesignerReactFlow = (props: any) => {
   const isReadOnly = useReadOnly();
   const isEmpty = useIsGraphEmpty();
 
-  const nodesWithPlaceholder = isEmpty ? (isReadOnly ? [] : emptyWorkflowPlaceholderNodes) : nodes;
-
-  const clampPan = useClampPan();
+	const nodesWithPlaceholder = isEmpty ? (isReadOnly ? [] : emptyWorkflowPlaceholderNodes) : nodesWithPositions;
 
   useResizeObserver(canvasRef, (el) => setContainerDimensions(el.contentRect));
 
-  const [zoom, setZoom] = useState(1);
-
-  const translateExtent = useMemo((): [[number, number], [number, number]] => {
-    const padding = DesignerFlowViewPadding;
-    const [flowWidth, flowHeight] = flowSize;
-
-    const xVal = containerDimensions.width / zoom - padding - DEFAULT_NODE_SIZE.width;
-    const yVal = containerDimensions.height / zoom - padding - DEFAULT_NODE_SIZE.height;
-
-    return [
-      [-xVal, -yVal],
-      [xVal + flowWidth, yVal + flowHeight - 30],
-    ];
-  }, [flowSize, containerDimensions, zoom]);
+  const [_zoom, setZoom] = useState(1);
 
   // Our "onlyRenderVisibleElements" prop makes offscreen nodes inaccessible to tab navigation.
   // In order to maintain accessibility, we are disabling this prop for tab navigation users
@@ -258,7 +272,7 @@ const DesignerReactFlow = (props: any) => {
       }
     }
     dispatch(setFlowErrors({ flowErrors: errors }));
-  }, [disconnectedNodes, dispatch]);
+  }, [disconnectedNodeErrorMessage, disconnectedNodes, dispatch]);
 
   const onPaneClick = useCallback(() => {
     if (isDraggingConnection) {
@@ -277,15 +291,12 @@ const DesignerReactFlow = (props: any) => {
       edges={edges}
       onNodesChange={onNodesChange}
       nodesConnectable={true}
-      nodesDraggable={false}
-      nodesFocusable={false}
       edgesFocusable={false}
       edgeTypes={edgeTypes}
       elementsSelectable={false}
       panOnScroll={true}
       deleteKeyCode={['Backspace', 'Delete']}
       zoomActivationKeyCode={['Ctrl', 'Meta', 'Alt', 'Control']}
-      translateExtent={clampPan ? translateExtent : undefined}
       onMove={(_e, viewport) => setZoom(viewport.zoom)}
       connectionLineComponent={DraftEdge}
       onConnectStart={onConnectStart}
@@ -293,8 +304,8 @@ const DesignerReactFlow = (props: any) => {
       isValidConnection={isValidConnection}
       connectionRadius={0}
       minZoom={0.05}
-      snapGrid={[20, 20]}
-      snapToGrid={true}
+      // snapGrid={[20, 20]}
+      // snapToGrid={true}
       onPaneClick={onPaneClick}
       disableKeyboardA11y={true}
       onlyRenderVisibleElements={!userInferredTabNavigation}

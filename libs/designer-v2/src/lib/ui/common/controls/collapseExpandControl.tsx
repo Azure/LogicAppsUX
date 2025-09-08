@@ -6,7 +6,7 @@ import { ArrowMaximizeVerticalRegular, ArrowMinimizeVerticalRegular } from '@flu
 import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 
 import { ControlButton } from '@xyflow/react';
-import { useLayout } from '../../../core/graphlayout';
+import { useUserLayout } from '../../../core/graphlayout';
 // import { useDesignerNodesExpanded } from '../../../core/state/designerView/designerViewSelectors';
 // import { toggleExpand } from '../../../core/state/designerView/designerViewSlice';
 import { setCollapsedGraphIds } from '../../../core/state/workflow/workflowSlice';
@@ -21,7 +21,7 @@ const CollapseExpandControl = () => {
   const intl = useIntl();
   const dispatch = useDispatch();
   const designerNodesExpanded = useIsEverythingExpanded();
-  const [nodes] = useLayout();
+  const { nodes } = useUserLayout();
 
   const controlLabel = designerNodesExpanded
     ? intl.formatMessage({

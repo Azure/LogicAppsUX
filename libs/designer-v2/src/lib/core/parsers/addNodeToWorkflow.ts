@@ -186,7 +186,6 @@ const handleExtraScopeNodeSetup = (
   }
 
   // Handle Agent Loops
-
   if (operation.type.toLowerCase() === CONSTANTS.NODE.TYPE.AGENT) {
     // Add Case Graph
     const addCaseGraphId = `${node.id}-addCase`;

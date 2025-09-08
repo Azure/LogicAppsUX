@@ -1,5 +1,6 @@
 import type { WorkflowEdgeType, WorkflowNodeType } from '@microsoft/logic-apps-shared';
 import { WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
+import type { XYPosition } from '@xyflow/react';
 
 export interface WorkflowNode {
   id: string;
@@ -9,6 +10,7 @@ export interface WorkflowNode {
   edges?: WorkflowEdge[]; // Graph nodes only
   height?: number; // Action nodes only
   width?: number; // Action Nodes only
+	position?: XYPosition
 }
 
 export interface WorkflowEdge {

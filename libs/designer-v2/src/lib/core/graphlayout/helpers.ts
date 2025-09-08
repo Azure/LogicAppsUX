@@ -1,7 +1,14 @@
 import { WORKFLOW_EDGE_TYPES } from '@microsoft/logic-apps-shared';
 import type { WorkflowNode } from '../parsers/models/workflowNode';
+import type { Node, Edge } from '@xyflow/react';
 
 export const footerMarker = '#footer';
+
+export interface LayoutType {
+	nodes: Node[],
+	edges: Edge[],
+	size: number[],
+}
 
 export interface LayoutRelevantData {
   id: string;

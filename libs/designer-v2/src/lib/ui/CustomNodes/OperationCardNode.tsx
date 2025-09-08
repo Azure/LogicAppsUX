@@ -1,6 +1,5 @@
 import { useNodeRepetition, type AppDispatch } from '../../core';
 import { copyOperation } from '../../core/actions/bjsworkflow/copypaste';
-import { moveOperation } from '../../core/actions/bjsworkflow/move';
 import { StaticResultOption } from '../../core/actions/bjsworkflow/staticresults';
 import {
   useMonitoringView,
@@ -15,7 +14,6 @@ import {
   useOperationErrorInfo,
   useParameterStaticResult,
   useParameterValidationErrors,
-  useTokenDependencies,
   useOperationVisuals,
   useIsNodeLoadingDynamicData,
 } from '../../core/state/operation/operationSelector';
@@ -46,7 +44,6 @@ import { DropZone } from '../connections/dropzone';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { isNullOrUndefined, useNodeIndex } from '@microsoft/logic-apps-shared';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
-import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 import type { NodeProps } from '@xyflow/react';
@@ -126,42 +123,6 @@ const DefaultNode = ({ id }: NodeProps) => {
       }
     }
   }, [isWithinAgenticLoop, id, dispatch, toolRunIndex, parentSubgraphRunData]);
-
-  const { dependencies, loopSources } = useTokenDependencies(id);
-
-  const [{ isDragging }, drag, dragPreview] = useDrag(
-    () => ({
-      type: 'BOX',
-      end: (item, monitor) => {
-        const dropResult = monitor.getDropResult<{
-          graphId: string;
-          parentId: string;
-          childId: string;
-        }>();
-        if (item && dropResult) {
-          dispatch(
-            moveOperation({
-              nodeId: id,
-              oldGraphId: metadata?.graphId ?? 'root',
-              newGraphId: dropResult.graphId,
-              relationshipIds: dropResult,
-            })
-          );
-        }
-      },
-      item: {
-        id: id,
-        dependencies,
-        loopSources,
-        graphId: metadata?.graphId,
-      },
-      canDrag: !readOnly && !isTrigger,
-      collect: (monitor) => ({
-        isDragging: monitor.isDragging(),
-      }),
-    }),
-    [readOnly, metadata, dependencies]
-  );
 
   const isSelected = useIsNodeSelectedInOperationPanel(id);
   const isLeaf = useIsLeafNode(id);
@@ -305,10 +266,7 @@ const DefaultNode = ({ id }: NodeProps) => {
           title={label}
           icon={iconUri}
           connectorName={connectorName?.result}
-          drag={drag}
-          dragPreview={dragPreview}
           errorMessages={errorMessages}
-          isDragging={isDragging}
           isLoading={isLoading}
           isSelected={isSelected}
           isUnitTest={isUnitTest}

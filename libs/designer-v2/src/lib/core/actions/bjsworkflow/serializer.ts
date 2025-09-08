@@ -441,6 +441,8 @@ const serializeManifestBasedOperation = async (rootState: RootState, operationId
 
   setRetryPolicy(inputsObject, nodeSettings);
 
+	// TODO: Add metadata serialization
+
   return {
     type: operation.type,
     ...optional('description', operationFromWorkflow?.description),

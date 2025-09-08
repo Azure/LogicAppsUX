@@ -25,8 +25,6 @@ import {
 import { retrieveClipboardData } from '../../core/utils/clipboard';
 import { setEdgeContextMenuData } from '../../core/state/designerView/designerViewSlice';
 import { useIsA2AWorkflow } from '../../core/state/designerView/designerViewSelectors';
-import { useIsDraggingNode } from '../../core/hooks/useIsDraggingNode';
-import { DropTarget } from './dropTarget';
 
 export interface DropZoneProps {
   graphId: string;
@@ -119,8 +117,6 @@ export const DropZone: React.FC<DropZoneProps> = memo(({ graphId, parentId, chil
     { preventDefault: true }
   );
 
-  const isDragging = useIsDraggingNode();
-
   const parentName = useNodeDisplayName(removeIdTag(parentId ?? ''));
   const childName = useNodeDisplayName(childId);
   const parentSubgraphName = useNodeDisplayName(parentId && containsIdTag(parentId) ? removeIdTag(parentId) : '');
@@ -197,28 +193,17 @@ export const DropZone: React.FC<DropZoneProps> = memo(({ graphId, parentId, chil
 
   return (
     <div ref={(node) => (hotkeyRef.current = node)}>
-      {isDragging ? (
-        <DropTarget
-          graphId={graphId}
-          parentId={parentId}
-          childId={childId}
-          upstreamNodesOfChild={upstreamNodesOfChild}
-          preventDropItemInA2A={preventDropItemInA2A}
-          isWithinAgenticLoop={isWithinAgenticLoop}
-        />
-      ) : (
-        <div className={'msla-drop-zone-viewmanager'}>
-          <div ref={buttonRef}>
-            <AddButton
-              id={buttonId}
-              dataAutomationId={automationId('plus')}
-              tabIndex={tabIndex}
-              title={tooltipText}
-              onClick={actionButtonClick}
-            />
-          </div>
-        </div>
-      )}
+			<div className={'msla-drop-zone-viewmanager'}>
+				<div ref={buttonRef}>
+					<AddButton
+						id={buttonId}
+						dataAutomationId={automationId('plus')}
+						tabIndex={tabIndex}
+						title={tooltipText}
+						onClick={actionButtonClick}
+					/>
+				</div>
+			</div>
     </div>
   );
 });
