@@ -2,10 +2,15 @@ import { getSessionFromVSCode } from '@microsoft/vscode-azext-azureauth/out/src/
 import { getConfiguredAzureEnv } from '@microsoft/vscode-azext-azureauth';
 import { localize } from '../../../localize';
 import type { AzExtTreeItem } from '@microsoft/vscode-azext-utils';
+import type { AuthenticationSession } from 'vscode';
+
+export async function getAuthData(tenantId?: string): Promise<AuthenticationSession> {
+  return await getSessionFromVSCode(undefined, tenantId, { createIfNone: true });
+}
 
 export async function getAuthorizationToken(tenantId?: string): Promise<string> {
-  const session = await getSessionFromVSCode(undefined, tenantId, { createIfNone: true });
-  return `Bearer ${session?.accessToken}`;
+  const authData = await getAuthData(tenantId);
+  return `Bearer ${authData?.accessToken}`;
 }
 
 /**

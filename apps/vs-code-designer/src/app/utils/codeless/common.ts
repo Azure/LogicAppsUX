@@ -20,7 +20,7 @@ import type { IAzureConnectorsContext } from '../../commands/workflows/azureConn
 import type { RemoteWorkflowTreeItem } from '../../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem';
 import { getLocalSettingsJson } from '../appSettings/localSettings';
 import { writeFormattedJson } from '../fs';
-import { getAuthorizationToken } from './getAuthorizationToken';
+import { getAuthData } from './getAuthorizationToken';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { DialogResponses } from '@microsoft/vscode-azext-utils';
 import type {
@@ -197,9 +197,11 @@ export async function getAzureConnectorDetailsForLocalProject(
   let subscriptionId = localSettings.Values[workflowSubscriptionIdKey];
   let resourceGroupName = localSettings.Values[workflowResourceGroupNameKey];
   let location = localSettings.Values[workflowLocationKey];
-
+  let accessToken = undefined;
+  let clientId = undefined;
   // Set default for customers who created Logic Apps before sovereign cloud support was added.
   let workflowManagementBaseUrl = localSettings.Values[workflowManagementBaseURIKey] ?? `${azurePublicBaseUrl}/`;
+  const enabled = !!subscriptionId;
 
   if (subscriptionId === undefined) {
     const wizard = createAzureWizard(connectorsContext, projectPath);
@@ -211,17 +213,22 @@ export async function getAzureConnectorDetailsForLocalProject(
     resourceGroupName = connectorsContext.resourceGroup?.name || '';
     location = connectorsContext.resourceGroup?.location || '';
     workflowManagementBaseUrl = connectorsContext.environment?.resourceManagerEndpointUrl;
+  } else {
+    const authData = await getAuthData(tenantId);
+    accessToken = enabled ? `Bearer ${authData?.accessToken}` : undefined;
+    const [parsedClientId, parsedTenantId] = authData.account.id.split('.');
+    tenantId = parsedTenantId;
+    clientId = parsedClientId;
   }
-
-  const enabled = !!subscriptionId;
 
   return {
     enabled,
-    accessToken: enabled ? await getAuthorizationToken(tenantId) : undefined,
+    accessToken: accessToken,
     subscriptionId: enabled ? subscriptionId : undefined,
     resourceGroupName: enabled ? resourceGroupName : undefined,
     location: enabled ? location : undefined,
     tenantId: enabled ? tenantId : undefined,
+    clientId: enabled ? clientId : undefined,
     workflowManagementBaseUrl: enabled ? workflowManagementBaseUrl : undefined,
   };
 }
