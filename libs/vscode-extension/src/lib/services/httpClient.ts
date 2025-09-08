@@ -40,7 +40,14 @@ export class HttpClient implements IHttpClient {
       ...request,
     });
 
-    return parseResponse(response, options);
+    if (options.returnHeaders) {
+      return {
+        headers: response.headers,
+        ...response.data,
+      };
+    }
+
+    return response.data;
   }
 
   async patch<ReturnType, BodyType>(options: HttpRequestOptions<BodyType>): Promise<ReturnType> {
@@ -200,8 +207,12 @@ function parseResponse(response: any, options: HttpRequestOptions<any>) {
     responseData = { data: response?.data as any };
   }
 
-  return {
-    headers: options?.returnHeaders ? response?.headers : undefined,
-    ...responseData,
-  };
+  if (options?.returnHeaders) {
+    return {
+      headers: response?.headers,
+      ...responseData,
+    };
+  }
+
+  return responseData;
 }

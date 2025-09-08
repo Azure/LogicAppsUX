@@ -17,7 +17,13 @@ export const CloneResourcePicker = () => {
   const dispatch = useDispatch<AppDispatch>();
   const {
     sourceApps,
-    destinationApp: { subscriptionId: destSubscriptionId, resourceGroup: destResourceGroup, logicAppName: destLogicAppName },
+    destinationApp: {
+      subscriptionId: destSubscriptionId,
+      resourceGroup: destResourceGroup,
+      location: destLocation,
+      logicAppName: destLogicAppName,
+    },
+    runValidation,
   } = useSelector((state: RootState) => state.clone);
   const sourceApp = sourceApps?.[0];
 
@@ -49,7 +55,7 @@ export const CloneResourcePicker = () => {
       resourceState={{
         subscriptionId: destSubscriptionId,
         resourceGroup: destResourceGroup,
-        location: '',
+        location: destLocation,
         workflowAppName: destLogicAppName,
         logicAppName: undefined,
         isConsumption: false,
@@ -59,6 +65,7 @@ export const CloneResourcePicker = () => {
       onLocationSelect={(_value) => {}}
       onLogicAppSelect={handleOnLogicAppSelect}
       onLogicAppInstanceSelect={(_value) => {}}
+      showErrorMessage={runValidation}
     />
   );
 };

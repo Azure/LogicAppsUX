@@ -11,7 +11,9 @@ import { updateTargetWorkflowName, updateTargetWorkflowNameValidationError } fro
 import { validateWorkflowName } from '../../../core/actions/bjsworkflow/templates';
 import { useExistingWorkflowNamesOfResource } from '../../../core';
 import { Checkmark16Filled } from '@fluentui/react-icons';
-import { isUndefinedOrEmptyString } from '@microsoft/logic-apps-shared';
+import { equals, getResourceNameFromId, isUndefinedOrEmptyString } from '@microsoft/logic-apps-shared';
+import { useSubscriptions } from '../../../core/queries/resource';
+import { useMemo } from 'react';
 
 export const ConfigureLogicApps = () => {
   const { sourceApps } = useSelector((state: RootState) => state.clone);
@@ -61,10 +63,16 @@ export const ConfigureLogicApps = () => {
 
 const useSourceItems = (resourceStrings: Record<string, string>, resources: ResourceState) => {
   const { subscriptionId, logicAppName } = resources;
+  const { data: subscriptions } = useSubscriptions();
+  const subscriptionDisplayName = useMemo(
+    () => subscriptions?.find((sub) => equals(getResourceNameFromId(sub.id), subscriptionId))?.displayName,
+    [subscriptions, subscriptionId]
+  );
+
   const items: TemplatesSectionItem[] = [
     {
       label: resourceStrings.SUBSCRIPTION,
-      value: subscriptionId || '',
+      value: subscriptionDisplayName || '',
       type: 'textfield',
       disabled: true,
       onChange: () => {},

@@ -11,7 +11,7 @@ export const useAddButtonStyles = makeStyles({
     alignItems: 'center',
     justifyContent: 'center',
     ...shorthands.padding('0px'),
-    boxShadow: tokens.shadow8,
+    boxShadow: '0 0 2px rgba(0,0,0,0.24), 0 2px 4px rgba(0,0,0,0.28)',
 
     '&::after': {
       outline: 'transparent !important',
