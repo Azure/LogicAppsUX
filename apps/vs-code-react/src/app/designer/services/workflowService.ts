@@ -58,7 +58,6 @@ const fetchA2AAuthKey = async (workflowName: string, baseUrl: string, httpClient
       expiry: new Date(currentDate.getTime() + 86400000).toISOString(),
       keyType: 'Primary',
     },
-    includeAuth: true,
     headers: {
       'x-ms-client-object-id': clientId,
       'x-ms-client-tenant-id': tenantId,
