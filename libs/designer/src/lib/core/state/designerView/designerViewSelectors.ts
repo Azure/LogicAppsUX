@@ -32,7 +32,7 @@ export const useIsAgenticWorkflow = () => {
       return false;
     }
   }, []);
-  return equals(workflowKind, 'agentic', true) || (equals(workflowKind, 'stateful', true) && isEnabledForStateful);
+  return !workflowKind || equals(workflowKind, 'agentic', true) || (equals(workflowKind, 'stateful', true) && isEnabledForStateful);
 };
 
 // Temporary hook for backwards compatibility with agentic wf, TODO: delete once stateful is merged in
