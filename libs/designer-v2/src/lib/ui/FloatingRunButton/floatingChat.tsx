@@ -67,12 +67,12 @@ export const FloatingChatButton = (buttonCommonProps: any) => {
     }
     return (
       <iframe
-        src={`${data?.chatUrl}?apiKey=${data?.queryParams?.apiKey}`}
+        src={`${data?.chatUrl}?apiKey=${data?.queryParams?.apiKey}${buttonCommonProps.isDarkMode ? '&mode=dark' : ''}`}
         title={IntlText.TITLE}
         style={{ width: '100%', height: '99%', border: 'none', borderRadius: tokens.borderRadiusXLarge }}
       />
     );
-  }, [isLoading, data, IntlText]);
+  }, [isLoading, data, IntlText, buttonCommonProps.isDarkMode]);
 
   return (
     <Dialog modalType="non-modal" surfaceMotion={null}>
