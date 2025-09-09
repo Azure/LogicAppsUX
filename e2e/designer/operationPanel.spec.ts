@@ -182,7 +182,7 @@ test.describe(
       await expect(page.getByRole('tab', { name: 'Parameters' })).toBeVisible();
       await expect(page.getByRole('tab', { name: 'Testing' })).not.toBeVisible();
       // Left-click on 'Initialize ArrayVariable' node.
-      await page.getByTestId('card-initialize_http').click();
+      await page.getByTestId('card-http').click();
       await expect(page.getByRole('tab', { name: 'Parameters' })).toBeVisible();
       await expect(page.getByRole('tab', { name: 'Testing' })).toBeVisible();
     });
