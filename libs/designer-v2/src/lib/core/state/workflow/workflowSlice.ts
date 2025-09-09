@@ -39,7 +39,6 @@ import { getDurationStringPanelMode } from '@microsoft/designer-ui';
 import type * as LogicAppsV2 from '@microsoft/logic-apps-shared/src/utils/src/lib/models/logicAppsV2';
 import { createSlice, isAnyOf } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import type { NodeChange } from '@xyflow/system';
 import type { UndoRedoPartialRootState } from '../undoRedo/undoRedoTypes';
 import { initializeInputsOutputsBinding } from '../../actions/bjsworkflow/monitoring';
 import { updateAgenticSubgraph, type UpdateAgenticGraphPayload } from '../../parsers/updateAgenticGraph';
@@ -62,7 +61,6 @@ export const initialWorkflowState: WorkflowState = {
   collapsedGraphIds: {},
   collapsedActionIds: {},
   idReplacements: {},
-	nodePositions: {},
   newlyAddedOperations: {},
   isDirty: false,
   originalDefinition: {
@@ -361,25 +359,11 @@ export const workflowSlice = createSlice({
     clearFocusCollapsedNode: (state: WorkflowState) => {
       state.focusCollapsedNodeId = undefined;
     },
-		updateNodePositions: (state: WorkflowState, action: PayloadAction<NodeChange[]>) => {
-			const positionChanges = action.payload.filter((x) => x.type === 'position');
-			if (!state.graph) {
-				return;
-			}
-			const positionChangesById: Record<string, XYPosition> = {};
-			for (const val of positionChanges) {
-				if (val.type !== 'position') {
-					continue;
-				}
-				if (isNaN(val.position?.x ?? 0) || isNaN(val.position?.y ?? 0)) {
-					continue;
-				}
-				positionChangesById[val.id] = val.position as XYPosition;
-			}
-			for (const nodeId of Object.keys(positionChangesById)) {
-				state.nodePositions[nodeId] = positionChangesById[nodeId];
-			}
-		},
+    updateNodePositions: (state: WorkflowState, action: PayloadAction<Record<string, XYPosition>>) => {
+      for (const [nodeId, position] of Object.entries(action.payload)) {
+        state.nodesMetadata[nodeId].actionMetadata = { ...state.nodesMetadata[nodeId].actionMetadata, position };
+      }
+    },
     setCollapsedGraphIds: (state: WorkflowState, action: PayloadAction<string[]>) => {
       const idArray = action.payload;
       const idRecord = idArray.reduce(
@@ -797,7 +781,7 @@ export const {
   deleteNode,
   deleteSwitchCase,
   deleteAgentTool,
-	updateNodePositions,
+  updateNodePositions,
   setNodeDescription,
   toggleCollapsedGraphId,
   addSwitchCase,

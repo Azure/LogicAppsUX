@@ -18,7 +18,6 @@ export const useCardStyles = makeStyles({
     webkitUserSelect: 'none',
     userSelect: 'none',
     backgroundColor: tokens.colorNeutralBackground1,
-    cursor: 'default',
     display: 'flex',
     alignItems: 'center',
     gap: '10px',
@@ -26,9 +25,11 @@ export const useCardStyles = makeStyles({
 
     '&:hover': {
       background: tokens.colorNeutralBackground1Hover,
+      cursor: 'pointer',
     },
     '&:active': {
       background: tokens.colorNeutralBackground1Pressed,
+      cursor: 'grabbing',
     },
   },
   scope: {

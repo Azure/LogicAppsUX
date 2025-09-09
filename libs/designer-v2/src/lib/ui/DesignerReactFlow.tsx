@@ -1,9 +1,9 @@
-import type { Connection, Edge, EdgeTypes, NodeChange, ReactFlowInstance, XYPosition } from '@xyflow/react';
+import type { Connection, Edge, EdgeTypes, NodeChange, NodePositionChange, ReactFlowInstance, XYPosition } from '@xyflow/react';
 import { BezierEdge, ReactFlow } from '@xyflow/react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { containsIdTag, guid, removeIdTag, WORKFLOW_NODE_TYPES, type WorkflowNodeType } from '@microsoft/logic-apps-shared';
 import { useDispatch } from 'react-redux';
-import { useResizeObserver } from '@react-hookz/web';
+import { useDebouncedEffect, useResizeObserver } from '@react-hookz/web';
 import { useIntl } from 'react-intl';
 
 import { useAllAgentIds, useDisconnectedNodes, useIsGraphEmpty, useNodesMetadata } from '../core/state/workflow/workflowSelectors';
@@ -56,10 +56,7 @@ const DesignerReactFlow = (props: any) => {
     HIDDEN_EDGE: HiddenEdge,
   } as EdgeTypes;
 
-  const {
-		nodes, 
-		edges,
-	} = useUserLayout();
+  const { nodes, edges } = useUserLayout();
 
   const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null);
   const [containerDimensions, setContainerDimensions] = useState(canvasRef.current?.getBoundingClientRect() ?? { width: 0, height: 0 });
@@ -68,63 +65,71 @@ const DesignerReactFlow = (props: any) => {
     setReactFlowInstance(instance);
   }, []);
 
-  const hasFitViewRun = useRef(false);
+  const hasFitView = useRef(false);
 
-  // useEffect(() => {
-  //   if (!hasFitViewRun.current && nodes.length > 0 && reactFlowInstance && isInitialized) {
-  //     requestAnimationFrame(() => {
-  //       requestAnimationFrame(() => {
-  //         const defaultZoom = 1.0;
-  //         const topNode = nodes.reduce((top, node) => (node.position.y < top.position.y ? node : top));
+  // Fits view on initialization
+  useEffect(() => {
+    if (!hasFitView.current && nodes.length > 0 && reactFlowInstance && isInitialized) {
+      requestAnimationFrame(() => {
+        const defaultZoom = 1.0;
+        const topNode = nodes.reduce((top, node) => (node.position.y < top.position.y ? node : top));
 
-  //         const centerX = containerDimensions.width / 2;
-  //         const topPadding = 120;
+        const centerX = containerDimensions.width / 2;
+        const topPadding = 120;
 
-  //         reactFlowInstance.setViewport({
-  //           x: centerX - (topNode.position.x + (topNode.width || DEFAULT_NODE_SIZE.width) / 2) * defaultZoom,
-  //           y: topPadding - topNode.position.y * defaultZoom,
-  //           zoom: defaultZoom,
-  //         });
+        reactFlowInstance.setViewport({
+          x: centerX - (topNode.position.x + (topNode.width || DEFAULT_NODE_SIZE.width) / 2) * defaultZoom,
+          y: topPadding - topNode.position.y * defaultZoom,
+          zoom: defaultZoom,
+        });
 
-  //         hasFitViewRun.current = true;
-  //       });
-  //     });
-  //   }
-  // }, [nodes, reactFlowInstance, isInitialized, containerDimensions]);
+        hasFitView.current = true;
+      });
+    }
+  }, [nodes, reactFlowInstance, isInitialized, containerDimensions]);
 
-	const [nodePositions, setNodePositions] = useState<Record<string, XYPosition> | undefined>({});
+  const [nodePositions, setNodePositions] = useState<Record<string, XYPosition> | undefined>({});
 
-  const onNodesChange = useCallback(
-    (changes: NodeChange[]) => {
-			// dispatch(updateNodePositions(changes));
-			setNodePositions((positions) => {
-				const newPositions = { ...positions };
-				changes.forEach((change) => {
-					if (change.type === 'position' && change.position && change.id) {
-						if (isNaN(change?.position.x) || isNaN(change?.position.y)) {
-							// Ignore invalid positions
-							return;
-						}
-						// console.log('#> Updating position for node', change.id, change.position);
-						// const id = containsIdTag(change.id) ? removeIdTag(change.id) : change.id;
-						newPositions[change.id] = change.position;
-					}
-				});
-				return newPositions;
-			});
-		},
-    []
+  const onNodesChange = useCallback((changes: NodeChange[]) => {
+    const validChanges = changes.filter(
+      (change) =>
+        change.type === 'position' &&
+        change?.id &&
+        change?.position &&
+        !Number.isNaN(change?.position.x) &&
+        !Number.isNaN(change?.position.y)
+    ) as NodePositionChange[];
+    if (validChanges.length === 0) {
+      return;
+    }
+    setNodePositions((positions) => {
+      const newPositions = { ...positions };
+      validChanges.forEach((change) => {
+        newPositions[change.id] = change.position!;
+      });
+      return newPositions;
+    });
+  }, []);
+
+  useDebouncedEffect(
+    () => {
+      if (nodePositions && Object.keys(nodePositions).length > 0) {
+        dispatch(updateNodePositions(nodePositions));
+      }
+    },
+    [nodePositions, dispatch],
+    500
   );
 
-	const nodesWithPositions = useMemo(() => {
-		return nodes.map((n) => {
-			const pos = nodePositions?.[n.id];
-			if (pos) {
-				return { ...n, position: pos };
-			}
-			return n;
-		});
-	}, [nodes, nodePositions]);
+  const nodesWithPositions = useMemo(() => {
+    return nodes.map((n) => {
+      const pos = nodePositions?.[n.id];
+      if (pos) {
+        return { ...n, position: pos };
+      }
+      return n;
+    });
+  }, [nodes, nodePositions]);
 
   const emptyWorkflowPlaceholderNodes = [
     {
@@ -140,7 +145,7 @@ const DesignerReactFlow = (props: any) => {
   const isReadOnly = useReadOnly();
   const isEmpty = useIsGraphEmpty();
 
-	const nodesWithPlaceholder = isEmpty ? (isReadOnly ? [] : emptyWorkflowPlaceholderNodes) : nodesWithPositions;
+  const nodesWithPlaceholder = isEmpty ? (isReadOnly ? [] : emptyWorkflowPlaceholderNodes) : nodesWithPositions;
 
   useResizeObserver(canvasRef, (el) => setContainerDimensions(el.contentRect));
 
@@ -304,8 +309,8 @@ const DesignerReactFlow = (props: any) => {
       isValidConnection={isValidConnection}
       connectionRadius={0}
       minZoom={0.05}
-      // snapGrid={[20, 20]}
-      // snapToGrid={true}
+      snapGrid={[20, 20]}
+      snapToGrid={true}
       onPaneClick={onPaneClick}
       disableKeyboardA11y={true}
       onlyRenderVisibleElements={!userInferredTabNavigation}
