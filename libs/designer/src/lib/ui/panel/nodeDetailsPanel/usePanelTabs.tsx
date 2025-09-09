@@ -115,9 +115,9 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
   const testingTabItem = useMemo(
     () => ({
       ...testingTab(intl, tabProps),
-      visible: !isTriggerNode && hasSchema && !isMonitoringView,
+			visible: !isTrigger && hasSchema && !isMonitoringView,
     }),
-    [intl, isTriggerNode, hasSchema, isMonitoringView, tabProps]
+		[intl, isTrigger, hasSchema, isMonitoringView, tabProps]
   );
 
   const aboutTabItem = useMemo(() => aboutTab(intl, tabProps), [intl, tabProps]);
