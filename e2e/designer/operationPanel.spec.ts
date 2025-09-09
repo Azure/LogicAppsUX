@@ -173,5 +173,18 @@ test.describe(
       await expect(page.locator('.msla-panel-card-header input#Initialize_ArrayVariable-title')).toBeVisible();
       await expect(page.getByTestId('msla-panel-header-trigger-info')).not.toBeVisible();
     });
+
+    test('Should show proper operation panel tabs', async ({ page }) => {
+      await page.goto('/');
+      await GoToMockWorkflow(page, 'Panel');
+      // Left-click on 'manual' trigger.
+      await page.getByTestId('card-manual').click();
+      await expect(page.getByRole('tab', { name: 'Parameters' })).toBeVisible();
+      await expect(page.getByRole('tab', { name: 'Testing' })).not.toBeVisible();
+      // Left-click on 'Initialize ArrayVariable' node.
+      await page.getByTestId('card-initialize_http').click();
+      await expect(page.getByRole('tab', { name: 'Parameters' })).toBeVisible();
+      await expect(page.getByRole('tab', { name: 'Testing' })).toBeVisible();
+    });
   }
 );
