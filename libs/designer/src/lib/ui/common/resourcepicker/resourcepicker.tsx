@@ -12,6 +12,15 @@ export interface BaseResourcePickerProps {
   lockField?: Template.ResourceFieldId;
 }
 
+export const ResourceKind = {
+  SubscriptionId: 'subscriptionId',
+  ResourceGroupName: 'resourceGroupName',
+  Location: 'location',
+  LogicApp: 'logicapp',
+  AllLogicApp: 'alllogicapp',
+} as const;
+export type ResourceKind = (typeof ResourceKind)[keyof typeof ResourceKind];
+
 export interface ResourcePickerProps extends BaseResourcePickerProps {
   resourceState: {
     subscriptionId: string;
@@ -28,6 +37,7 @@ export interface ResourcePickerProps extends BaseResourcePickerProps {
   onLogicAppInstanceSelect: (value: { name: string; location: string; plan: string }) => void;
   renderType?: ResourceFieldRenderType;
   showErrorMessage?: boolean;
+  hintTooltips?: Partial<Record<ResourceKind, string>>;
 }
 
 export const ResourcePicker = ({
@@ -42,6 +52,7 @@ export const ResourcePicker = ({
   onLogicAppInstanceSelect,
   renderType,
   showErrorMessage = true,
+  hintTooltips,
 }: ResourcePickerProps) => {
   const isDefaultMode = viewMode === 'default';
   const { subscriptionId, resourceGroup, location, workflowAppName, logicAppName, isConsumption } = resourceState;
@@ -105,7 +116,7 @@ export const ResourcePicker = ({
   return (
     <div>
       <ResourceField
-        id="subscriptionId"
+        id={ResourceKind.SubscriptionId}
         label={resourceStrings.SUBSCRIPTION}
         onSelect={onSubscriptionSelect}
         defaultKey={subscriptionId}
@@ -114,9 +125,10 @@ export const ResourcePicker = ({
         errorMessage={!showErrorMessage || subscriptionId ? '' : intlText.VALIDATION_ERROR}
         lockField={lockField === 'subscription' || lockField === 'resourcegroup' || lockField === 'resource'}
         renderType={renderType}
+        hintTooltip={hintTooltips?.subscriptionId}
       />
       <ResourceField
-        id="resourceGroupName"
+        id={ResourceKind.ResourceGroupName}
         label={resourceStrings.RESOURCE_GROUP}
         onSelect={onResourceGroupSelect}
         defaultKey={resourceGroup}
@@ -125,10 +137,11 @@ export const ResourcePicker = ({
         errorMessage={!showErrorMessage || resourceGroup ? '' : intlText.VALIDATION_ERROR}
         lockField={lockField === 'resourcegroup' || lockField === 'resource'}
         renderType={renderType}
+        hintTooltip={hintTooltips?.resourceGroupName}
       />
       {isDefaultMode && isConsumption ? (
         <ResourceField
-          id="location"
+          id={ResourceKind.Location}
           label={resourceStrings.LOCATION}
           onSelect={onLocationSelect}
           defaultKey={location}
@@ -137,11 +150,12 @@ export const ResourcePicker = ({
           errorMessage={!showErrorMessage || location ? '' : intlText.VALIDATION_ERROR}
           lockField={lockField === 'location' || lockField === 'resource'}
           renderType={renderType}
+          hintTooltip={hintTooltips?.location}
         />
       ) : null}
       {isDefaultMode && !isConsumption ? (
         <ResourceField
-          id="logicapp"
+          id={ResourceKind.LogicApp}
           label={resourceStrings.LOGIC_APP}
           onSelect={handleLogicAppSelect}
           defaultKey={workflowAppName ?? ''}
@@ -154,11 +168,12 @@ export const ResourcePicker = ({
           errorMessage={!showErrorMessage || workflowAppName ? '' : intlText.VALIDATION_ERROR}
           lockField={lockField === 'resource'}
           renderType={renderType}
+          hintTooltip={hintTooltips?.logicapp}
         />
       ) : null}
       {isDefaultMode ? null : (
         <ResourceField
-          id="alllogicapp"
+          id={ResourceKind.AllLogicApp}
           label={intlText.ALL_LOGIC_APPS}
           onSelect={handleLogicAppInstanceSelect}
           defaultKey={logicAppName ?? ''}
@@ -171,6 +186,7 @@ export const ResourcePicker = ({
           errorMessage={!showErrorMessage || logicAppName ? '' : intlText.VALIDATION_ERROR}
           lockField={lockField === 'resource'}
           renderType={renderType}
+          hintTooltip={hintTooltips?.alllogicapp}
         />
       )}
     </div>
