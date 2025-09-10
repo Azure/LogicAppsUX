@@ -14,6 +14,11 @@ export const configureTab = (
     id: '6OCUKm',
     description: 'Tab label for configure tab in clone to standard experience',
   }),
+  description: intl.formatMessage({
+    defaultMessage: 'Review details for the source Consumption logic app. Provide details for the destination Standard logic app.',
+    id: 'A0Kk9V',
+    description: 'Tab label for configure tab in clone to standard experience',
+  }),
   disabled,
   tabStatusIcon,
   content: <ConfigureLogicApps />,
