@@ -65,14 +65,8 @@ export abstract class BaseConnectionService implements IConnectionService {
   }
 
   isAgenticConsumption(connector: Connector): boolean {
-    // Match by name and/or id
     return connector?.name === 'agent' || connector?.id === '/subscriptions/agentic/connector/agent';
   }
-  // protected isAgenticConsumption(connector?: Connector): boolean {
-  //   return (
-  //     (!connector || connector.type === 'AgentConnection')
-  //   );
-  // }
 
   async getSwaggerFromConnector(connectorId: string): Promise<OpenAPIV2.Document> {
     if (!isArmResourceId(connectorId)) {
