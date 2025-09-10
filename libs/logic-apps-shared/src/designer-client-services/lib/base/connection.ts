@@ -106,7 +106,6 @@ export abstract class BaseConnectionService implements IConnectionService {
 
   async getConnection(connectionId: string, connector?: Connector): Promise<Connection> {
     if (!connector || this.isAgenticConsumption(connector)) {
-      // Return a stub connection for agentic consumption
       return {
         id: 'agentic-consumption-connection',
         name: 'Agentic Consumption Connection',
