@@ -185,9 +185,6 @@ export const extensionCommand = {
   startRemoteDebug: 'azureLogicAppsStandard.startRemoteDebug',
   validateLogicAppProjects: 'azureLogicAppsStandard.validateFunctionProjects',
   reportIssue: 'azureLogicAppsStandard.reportIssue',
-  validateAndInstallBinaries: 'azureLogicAppsStandard.validateAndInstallBinaries',
-  resetValidateAndInstallBinaries: 'azureLogicAppsStandard.resetValidateAndInstallBinaries',
-  disableValidateAndInstallBinaries: 'azureLogicAppsStandard.disableValidateAndInstallBinaries',
   azureAzuriteStart: 'azurite.start',
   parameterizeConnections: 'azureLogicAppsStandard.parameterizeConnections',
   loadDataMapFile: 'azureLogicAppsStandard.dataMap.loadDataMapFile',
@@ -240,13 +237,11 @@ export const showProjectWarningSetting = 'showProjectWarning';
 export const showTargetFrameworkWarningSetting = 'showTargetFrameworkWarning';
 export const showStartDesignTimeMessageSetting = 'showStartDesignTimeMessage';
 export const autoStartDesignTimeSetting = 'autoStartDesignTime';
-export const autoRuntimeDependenciesValidationAndInstallationSetting = 'autoRuntimeDependenciesValidationAndInstallation';
 export const azuriteBinariesLocationSetting = 'azuriteLocationSetting';
 export const driveLetterSMBSetting = 'driveLetterSMB';
 export const parameterizeConnectionsInProjectLoadSetting = 'parameterizeConnectionsInProjectLoad';
 export const showAutoStartAzuriteWarning = 'showAutoStartAzuriteWarning';
 export const autoStartAzuriteSetting = 'autoStartAzurite';
-export const autoRuntimeDependenciesPathSettingKey = 'autoRuntimeDependenciesPath';
 export const dotNetBinaryPathSettingKey = 'dotnetBinaryPath';
 export const nodeJsBinaryPathSettingKey = 'nodeJsBinaryPath';
 export const funcCoreToolsBinaryPathSettingKey = 'funcCoreToolsBinaryPath';
@@ -254,6 +249,11 @@ export const dependencyTimeoutSettingKey = 'dependencyTimeout';
 export const unitTestExplorer = 'unitTestExplorer';
 export const verifyConnectionKeysSetting = 'verifyConnectionKeys';
 export const useSmbDeployment = 'useSmbDeploymentForHybrid';
+
+// TODO (ccastrotrejo): To be removed
+export const autoRuntimeDependenciesPathSettingKey = 'autoRuntimeDependenciesPath';
+export const defaultLogicAppsFolder = '.azurelogicapps';
+export const defaultDependencyPathValue = path.join(os.homedir(), defaultLogicAppsFolder, 'dependencies');
 
 // host.json
 export const extensionBundleId = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';
@@ -277,10 +277,8 @@ export const extInstallTaskName = `${func}: ${extInstallCommand}`;
 export const tasksVersion = '2.0.0';
 export const launchVersion = '0.2.0';
 export const dotnetPublishTaskLabel = 'publish';
-export const defaultLogicAppsFolder = '.azurelogicapps';
 export const defaultFunctionCoreToolsFolder = '.azure-functions-core-tools';
 export const defaultAzuritePathValue = path.join(os.homedir(), defaultLogicAppsFolder, '.azurite');
-export const defaultDependencyPathValue = path.join(os.homedir(), defaultLogicAppsFolder, 'dependencies');
 export const defaultExtensionBundlePathValue = path.join(
   os.homedir(),
   defaultFunctionCoreToolsFolder,

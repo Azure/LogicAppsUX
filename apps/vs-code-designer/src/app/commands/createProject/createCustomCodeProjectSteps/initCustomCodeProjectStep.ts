@@ -2,15 +2,15 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { binariesExist } from '../../../utils/binaries';
-import { extensionCommand, func, funcDependencyName, funcWatchProblemMatcher, hostStartCommand } from '../../../../constants';
+import { extensionCommand, func, funcWatchProblemMatcher, hostStartCommand } from '../../../../constants';
 import { InitCustomCodeScriptProjectStep } from './initCustomCodeScriptProjectStep';
 import type { ITaskInputs, ISettingToAdd } from '@microsoft/vscode-extension-logic-apps';
 import type { TaskDefinition } from 'vscode';
 
 export class InitCustomCodeProjectStep extends InitCustomCodeScriptProjectStep {
   protected getTasks(): TaskDefinition[] {
-    const funcBinariesExist = binariesExist(funcDependencyName);
+    // TODO (ccastrotrejo) - remove
+    const funcBinariesExist = true;
     const binariesOptions = funcBinariesExist
       ? {
           options: {

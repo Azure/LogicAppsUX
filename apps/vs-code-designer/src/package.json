@@ -336,21 +336,6 @@
         "category": "Azure Logic Apps"
       },
       {
-        "command": "azureLogicAppsStandard.validateAndInstallBinaries",
-        "title": "Validate and install dependency binaries",
-        "category": "Azure Logic Apps"
-      },
-      {
-        "command": "azureLogicAppsStandard.resetValidateAndInstallBinaries",
-        "title": "Reset binaries dependency settings",
-        "category": "Azure Logic Apps"
-      },
-      {
-        "command": "azureLogicAppsStandard.disableValidateAndInstallBinaries",
-        "title": "Disable binaries dependency settings",
-        "category": "Azure Logic Apps"
-      },
-      {
         "command": "azureLogicAppsStandard.dataMap.createNewDataMap",
         "title": "Create Data Map",
         "category": "Azure Logic Apps",

@@ -2,21 +2,13 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import {
-  autoRuntimeDependenciesPathSettingKey,
-  funcCoreToolsBinaryPathSettingKey,
-  funcDependencyName,
-  funcVersionSetting,
-} from '../../../constants';
-import { ext } from '../../../extensionVariables';
+import { funcCoreToolsBinaryPathSettingKey, funcVersionSetting } from '../../../constants';
 import { localize } from '../../../localize';
-import { getGlobalSetting, getWorkspaceSettingFromAnyFolder, updateGlobalSetting } from '../vsCodeConfig/settings';
+import { getGlobalSetting, getWorkspaceSettingFromAnyFolder } from '../vsCodeConfig/settings';
 import { executeCommand } from './cpUtils';
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { FuncVersion, latestGAVersion } from '@microsoft/vscode-extension-logic-apps';
-import * as fs from 'fs';
-import * as path from 'path';
 import * as semver from 'semver';
 
 /**
@@ -154,22 +146,4 @@ export function getFunctionsCommand(): string {
     throw Error('Functions Core Tools Binary Path Setting is empty');
   }
   return command;
-}
-
-export async function setFunctionsCommand(): Promise<void> {
-  const binariesLocation = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
-  const funcBinariesPath = path.join(binariesLocation, funcDependencyName);
-  const binariesExist = fs.existsSync(funcBinariesPath);
-  let command = ext.funcCliPath;
-  if (binariesExist) {
-    command = path.join(funcBinariesPath, ext.funcCliPath);
-    fs.chmodSync(funcBinariesPath, 0o777);
-
-    const funcExist = await fs.existsSync(command);
-    if (funcExist) {
-      fs.chmodSync(command, 0o777);
-    }
-  }
-
-  await updateGlobalSetting<string>(funcCoreToolsBinaryPathSettingKey, command);
 }

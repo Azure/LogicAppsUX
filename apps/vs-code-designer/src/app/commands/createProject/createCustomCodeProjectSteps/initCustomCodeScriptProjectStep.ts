@@ -2,8 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { binariesExist } from '../../../utils/binaries';
-import { extInstallTaskName, func, funcDependencyName, funcWatchProblemMatcher, hostStartCommand } from '../../../../constants';
+import { extInstallTaskName, func, funcWatchProblemMatcher, hostStartCommand } from '../../../../constants';
 import { getLocalFuncCoreToolsVersion } from '../../../utils/funcCoreTools/funcVersion';
 import { InitCustomCodeProjectStepBase } from './initCustomCodeProjectStepBase';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
@@ -48,7 +47,8 @@ export class InitCustomCodeScriptProjectStep extends InitCustomCodeProjectStepBa
   }
 
   protected getTasks(): TaskDefinition[] {
-    const funcBinariesExist = binariesExist(funcDependencyName);
+    // TODO (ccastrotrejo) - remove
+    const funcBinariesExist = true;
     const binariesOptions = funcBinariesExist
       ? {
           options: {

@@ -11,7 +11,6 @@ import {
   Platform,
 } from '../../constants';
 import { localize } from '../../localize';
-import { validateFuncCoreToolsInstalled } from '../commands/funcCoreTools/validateFuncCoreToolsInstalled';
 import { getAzureWebJobsStorage, setLocalAppSetting } from '../utils/appSettings/localSettings';
 import { getDebugConfigs, isDebugConfigEqual } from '../utils/vsCodeConfig/launch';
 import { getWorkspaceSetting, getFunctionsWorkerRuntime } from '../utils/vsCodeConfig/settings';
@@ -38,11 +37,6 @@ export async function preDebugValidate(
 
   try {
     context.telemetry.properties.lastValidateStep = 'funcInstalled';
-    const message: string = localize(
-      'installFuncTools',
-      'You must have the Azure Functions Core Tools installed to debug your local functions.'
-    );
-    shouldContinue = await validateFuncCoreToolsInstalled(context, message, projectPath);
 
     if (shouldContinue) {
       const projectLanguage: string | undefined = getWorkspaceSetting(projectLanguageSetting, projectPath);

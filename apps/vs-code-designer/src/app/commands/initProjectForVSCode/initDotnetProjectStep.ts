@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 import {
   dotnetPublishTaskLabel,
-  funcDependencyName,
   dotnetExtensionId,
   func,
   funcWatchProblemMatcher,
@@ -12,7 +11,6 @@ import {
   show64BitWarningSetting,
 } from '../../../constants';
 import { localize } from '../../../localize';
-import { binariesExist } from '../../utils/binaries';
 import { getProjFiles, getTargetFramework, getDotnetDebugSubpath, tryGetFuncVersion } from '../../utils/dotnet/dotnet';
 import type { ProjectFile } from '../../utils/dotnet/dotnet';
 import { tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
@@ -108,7 +106,8 @@ export class InitDotnetProjectStep extends InitProjectStepBase {
   protected getTasks(): TaskDefinition[] {
     const commonArgs: string[] = ['/property:GenerateFullPaths=true', '/consoleloggerparameters:NoSummary'];
     const releaseArgs: string[] = ['--configuration', 'Release'];
-    const funcBinariesExist = binariesExist(funcDependencyName);
+    // TODO (ccastrotrejo)-remove
+    const funcBinariesExist = true;
     const binariesOptions = funcBinariesExist
       ? {
           options: {
