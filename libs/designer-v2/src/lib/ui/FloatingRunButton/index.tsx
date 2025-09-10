@@ -26,9 +26,10 @@ export interface FloatingRunButtonProps {
   id?: string;
   saveDraftWorkflow: (workflowDefinition: Workflow, customCodeData: any, onSuccess: () => void) => Promise<any>;
   onRun?: (runId: string) => void;
+  isDarkMode: boolean;
 }
 
-export const FloatingRunButton = ({ id: _id, saveDraftWorkflow, onRun }: FloatingRunButtonProps) => {
+export const FloatingRunButton = ({ id: _id, saveDraftWorkflow, onRun, isDarkMode }: FloatingRunButtonProps) => {
   const intl = useIntl();
 
   const dispatch = useDispatch();
@@ -172,7 +173,7 @@ export const FloatingRunButton = ({ id: _id, saveDraftWorkflow, onRun }: Floatin
   }
 
   if (isA2AWorkflow) {
-    return <FloatingChatButton {...buttonCommonProps} />;
+    return <FloatingChatButton {...buttonCommonProps} isDarkMode={isDarkMode} />;
   }
 
   return (
