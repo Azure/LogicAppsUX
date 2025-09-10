@@ -20,19 +20,14 @@ export const useCloneStrings = () => {
       description: 'Title for the destination section',
     }),
     destinationDescription: intl.formatMessage({
-      defaultMessage: 'Provide details for the destination Standard logic app.',
-      id: '0L+QZU',
+      defaultMessage: 'Provide details for the destination Standard logic app resource.',
+      id: 'UPk1dq',
       description: 'Description for the destination section',
     }),
     workflowNameDescription: intl.formatMessage({
       defaultMessage: 'Avoid spaces and the following symbols in your workflow name: \\ / : * ? " < > | @, #, $, %, &',
       id: 'ZbeL1D',
       description: 'Description for workflow name field and the expected format of the name.',
-    }),
-    sourceLogicAppDescription: intl.formatMessage({
-      defaultMessage: 'Keep or edit the default name for the destination Standard logic app.',
-      id: '0eiHJa',
-      description: 'Description for the source logic app',
     }),
     newWorkflowNameDescription: intl.formatMessage({
       defaultMessage: 'Keep or edit the default name for the destination workflow in the Standard logic app.',

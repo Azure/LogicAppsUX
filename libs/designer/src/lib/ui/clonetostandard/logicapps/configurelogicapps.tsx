@@ -90,7 +90,6 @@ const useSourceItems = (resourceStrings: Record<string, string>, resources: Reso
       type: 'textfield',
       disabled: true,
       onChange: () => {},
-      description: resourceStrings.sourceLogicAppDescription,
     },
   ];
 
