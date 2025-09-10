@@ -1,4 +1,4 @@
-import { Text } from '@fluentui/react-components';
+import { Text, tokens } from '@fluentui/react-components';
 import type { AppDispatch, RootState } from '../../../core/state/clonetostandard/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { CloneResourcePicker } from './resourcepicker';
@@ -10,12 +10,13 @@ import { useCloneStrings } from '../../../core/clonetostandard/utils/cloneString
 import { updateTargetWorkflowName, updateTargetWorkflowNameValidationError } from '../../../core/state/clonetostandard/cloneslice';
 import { validateWorkflowName } from '../../../core/actions/bjsworkflow/templates';
 import { useExistingWorkflowNamesOfResource } from '../../../core';
+import { Checkmark16Filled } from '@fluentui/react-icons';
+import { equals, getResourceNameFromId, isUndefinedOrEmptyString } from '@microsoft/logic-apps-shared';
+import { useSubscriptions } from '../../../core/queries/resource';
+import { useMemo } from 'react';
 
 export const ConfigureLogicApps = () => {
-  const {
-    sourceApps,
-    destinationApp: { subscriptionId: destSubscriptionId, resourceGroup: destResourceGroup, logicAppName: destLogicAppName },
-  } = useSelector((state: RootState) => state.clone);
+  const { sourceApps } = useSelector((state: RootState) => state.clone);
 
   const styles = useCloneTabStyles();
   const resourceStrings = {
@@ -23,9 +24,8 @@ export const ConfigureLogicApps = () => {
     ...useCloneStrings(),
   };
 
-  const { data: existingWorkflowNames } = useExistingWorkflowNamesOfResource(destSubscriptionId, destResourceGroup, destLogicAppName);
   const sourceItems: TemplatesSectionItem[] = useSourceItems(resourceStrings, sourceApps?.[0]);
-  const clonedWorkflowItem: TemplatesSectionItem = useCloneWorkflowItem(resourceStrings, existingWorkflowNames ?? []);
+  const clonedWorkflowItem: TemplatesSectionItem = useCloneWorkflowItem(resourceStrings);
 
   return (
     <div className={styles.tabContainer}>
@@ -63,10 +63,16 @@ export const ConfigureLogicApps = () => {
 
 const useSourceItems = (resourceStrings: Record<string, string>, resources: ResourceState) => {
   const { subscriptionId, logicAppName } = resources;
+  const { data: subscriptions } = useSubscriptions();
+  const subscriptionDisplayName = useMemo(
+    () => subscriptions?.find((sub) => equals(getResourceNameFromId(sub.id), subscriptionId))?.displayName,
+    [subscriptions, subscriptionId]
+  );
+
   const items: TemplatesSectionItem[] = [
     {
       label: resourceStrings.SUBSCRIPTION,
-      value: subscriptionId || '',
+      value: subscriptionDisplayName || '',
       type: 'textfield',
       disabled: true,
       onChange: () => {},
@@ -90,14 +96,20 @@ const useSourceItems = (resourceStrings: Record<string, string>, resources: Reso
   return items;
 };
 
-const useCloneWorkflowItem = (resourceStrings: Record<string, string>, existingWorkflowNames: string[]) => {
+const useCloneWorkflowItem = (resourceStrings: Record<string, string>) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { sourceApps } = useSelector((state: RootState) => state.clone);
+  const {
+    sourceApps,
+    destinationApp: { subscriptionId: destSubscriptionId, resourceGroup: destResourceGroup, logicAppName: destLogicAppName },
+  } = useSelector((state: RootState) => state.clone);
   const sourceApp = sourceApps?.[0];
 
+  const { data: existingWorkflowNames } = useExistingWorkflowNamesOfResource(destSubscriptionId, destResourceGroup, destLogicAppName);
+
   const items: TemplatesSectionItem = {
-    label: resourceStrings.WORKFLOW_NAME,
+    label: resourceStrings.newWorkflowName,
     value: sourceApp?.targetWorkflowName || '',
+    required: true,
     type: 'textfield',
     onChange: (newValue) => {
       dispatch(updateTargetWorkflowName(newValue));
@@ -112,6 +124,10 @@ const useCloneWorkflowItem = (resourceStrings: Record<string, string>, existingW
     },
     errorMessage: sourceApp?.targetWorkflowNameValidationError,
     hint: resourceStrings.workflowNameDescription,
+    contentAfter:
+      sourceApp?.targetWorkflowNameValidationError || isUndefinedOrEmptyString(sourceApp?.targetWorkflowName) ? null : (
+        <Checkmark16Filled color={tokens.colorPaletteGreenBackground3} />
+      ),
   };
 
   return items;

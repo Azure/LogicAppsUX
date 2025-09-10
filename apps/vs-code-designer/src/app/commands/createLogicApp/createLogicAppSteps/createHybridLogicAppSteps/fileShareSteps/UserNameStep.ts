@@ -11,6 +11,14 @@ import type { ILogicAppWizardContext } from '@microsoft/vscode-extension-logic-a
  */
 export class UserNameStep extends AzureWizardPromptStep<ILogicAppWizardContext> {
   /**
+   * Determines whether this step should be prompted.
+   * @returns A boolean indicating whether this step should be prompted.
+   */
+  public shouldPrompt(): boolean {
+    return true;
+  }
+
+  /**
    * Prompts the user to enter the user name for File share authentication.
    * @param {ILogicAppWizardContext} wizardContext The wizard context.
    */
@@ -22,14 +30,6 @@ export class UserNameStep extends AzureWizardPromptStep<ILogicAppWizardContext> 
     });
 
     wizardContext.fileShare.userName = userName;
-  }
-
-  /**
-   * Determines whether this step should be prompted.
-   * @returns A boolean indicating whether this step should be prompted.
-   */
-  public shouldPrompt(): boolean {
-    return true;
   }
 
   /**

@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, Mock } from 'vitest';
 import { CodefulWorkflowCreateStep } from '../codefulWorkflowCreateStep';
 import { IFunctionWizardContext, WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
-import { IActionContext } from '@microsoft/vscode-azext-utils';
 import { setLocalAppSetting } from '../../../../../utils/appSettings/localSettings';
 import {
   appKindSetting,
@@ -17,8 +16,7 @@ describe('CodefulWorkflowCreateStep', async () => {
   describe('updateAppSettings', async () => {
     it('update app settings with mock setLocalAppSetting', async () => {
       const mockContext: Partial<IFunctionWizardContext> = { projectPath: 'testPath' };
-      const mockActionContext: IActionContext = {} as IActionContext;
-      const testCodefulWorkflowCreateStep = await CodefulWorkflowCreateStep.createStep(mockActionContext);
+      const testCodefulWorkflowCreateStep = new CodefulWorkflowCreateStep();
 
       vi.mock('../../../../../utils/appSettings/localSettings', () => ({
         setLocalAppSetting: vi.fn().mockReturnValue(Promise.resolve()),

@@ -8,12 +8,14 @@ import {
   setSuccessfullyCloned,
   updateTargetWorkflowNameValidationError,
   updateErrorMessage,
+  setRunValidation,
 } from '../../../core/state/clonetostandard/cloneslice';
 import { isUndefinedOrEmptyString } from '@microsoft/logic-apps-shared';
 import { validateWorkflowName } from '../../../core/actions/bjsworkflow/templates';
 import { useExistingWorkflowNamesOfResource } from '../../../core';
 import { selectWizardTab } from '../../../core/state/clonetostandard/tabslice';
 import constants from '../../../common/constants';
+import { useMutation } from '@tanstack/react-query';
 
 export type CloneCallHandler = (
   sourceApps: { subscriptionId: string; resourceGroup: string; logicAppName: string; targetWorkflowName: string }[],
@@ -29,9 +31,7 @@ export const useCloneWizardTabs = ({
 }) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
-  const {
-    clone: { sourceApps, destinationApp, errorMessage, isSuccessfullyCloned },
-  } = useSelector((state: RootState) => state);
+  const { sourceApps, destinationApp, errorMessage, isSuccessfullyCloned } = useSelector((state: RootState) => state.clone);
 
   const { data: existingWorkflowNames } = useExistingWorkflowNamesOfResource(
     destinationApp.subscriptionId,
@@ -40,6 +40,8 @@ export const useCloneWizardTabs = ({
   );
 
   const handleOnConfigureNext = useCallback(async () => {
+    dispatch(setRunValidation());
+
     // Note: temporary while only supporting single case, to-be-changed once supporting multi.
     const validationError = await validateWorkflowName(sourceApps?.[0]?.targetWorkflowName, false, {
       subscriptionId: sourceApps?.[0]?.subscriptionId,
@@ -54,14 +56,14 @@ export const useCloneWizardTabs = ({
     dispatch(selectWizardTab(constants.CLONE_TO_STANDARD_TAB_NAMES.REVIEW));
   }, [sourceApps, dispatch, existingWorkflowNames]);
 
-  const handleOnClone = useCallback(async () => {
+  const { isLoading: isCloning, mutate: handleOnClone } = useMutation(async () => {
     try {
       await onCloneCall(sourceApps, destinationApp);
       dispatch(setSuccessfullyCloned());
     } catch (e: any) {
       dispatch(updateErrorMessage(e?.response?.data?.message ?? e.message));
     }
-  }, [onCloneCall, sourceApps, destinationApp, dispatch]);
+  });
 
   const missingInfoInConfigure = useMemo(
     () =>
@@ -88,8 +90,9 @@ export const useCloneWizardTabs = ({
       tabStatusIcon: failedCloneValidation ? 'error' : isSuccessfullyCloned ? 'success' : undefined,
       onClose,
       isSuccessfullyCloned,
+      isCloning,
       disabled: missingInfoInConfigure,
-      isPrimaryButtonDisabled: failedCloneValidation || isSuccessfullyCloned,
+      isPrimaryButtonDisabled: isCloning || failedCloneValidation || isSuccessfullyCloned,
       onPrimaryButtonClick: handleOnClone,
     }),
   ];

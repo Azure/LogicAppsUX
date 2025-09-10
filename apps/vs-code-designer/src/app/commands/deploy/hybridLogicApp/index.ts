@@ -27,7 +27,7 @@ import * as yazl from 'yazl';
 import * as os from 'os';
 import { createContainerClient } from '../../../utils/azureClients';
 
-export const deployHybridLogicApp = async (context: IActionContext, node: SlotTreeItem) => {
+export async function deployHybridLogicApp(context: IActionContext, node: SlotTreeItem): Promise<void> {
   const mountDrive: string = getWorkspaceSetting<string>(driveLetterSMBSetting);
 
   try {
@@ -99,9 +99,9 @@ export const deployHybridLogicApp = async (context: IActionContext, node: SlotTr
   } finally {
     await unMountSMB(mountDrive);
   }
-};
+}
 
-export const zipDeployHybridLogicApp = async (context: IActionContext, node: SlotTreeItem, effectiveDeployFsPath: string) => {
+export async function zipDeployHybridLogicApp(context: IActionContext, node: SlotTreeItem, effectiveDeployFsPath: string): Promise<void> {
   try {
     const logicAppsContext = context as ILogicAppWizardContext;
     await window.withProgress(
@@ -168,9 +168,9 @@ export const zipDeployHybridLogicApp = async (context: IActionContext, node: Slo
     context.telemetry.properties.errorDeployingHybridLogicAppV2 = error instanceof Error ? error.message : String(error);
     throw new Error(`${localize('errorDeployingHybridLogicAppV2', 'Error deploying hybrid logic app (v2)')} - ${error.message}`);
   }
-};
+}
 
-const waitForContainerAppProvisioning = async (fqdn: string, context, progress): Promise<void> => {
+async function waitForContainerAppProvisioning(fqdn: string, context, progress): Promise<void> {
   progress.report({ increment: 40, message: `Waiting for logic app to be ready: ${fqdn}` });
   const maxRetries = 40; // Maximum number of retries
   const delay = 3000; // Delay between retries in milliseconds (3 seconds)
@@ -191,15 +191,15 @@ const waitForContainerAppProvisioning = async (fqdn: string, context, progress):
   const errorMessage = 'Logic app is not ready to serve traffic after waiting.';
   context.telemetry.properties.logicAppNotProvisionedError = errorMessage;
   throw new Error(localize('logicAppNotReadyError', errorMessage));
-};
+}
 
-const waitForIngressFqdn = async (
+async function waitForIngressFqdn(
   node: SlotTreeItem,
   context: IActionContext,
   clientContainer: any,
   maxRetries = 30,
   delay = 3000
-): Promise<void> => {
+): Promise<void> {
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     if (node.hybridSite.configuration?.ingress?.fqdn !== null) {
       return;
@@ -217,9 +217,9 @@ const waitForIngressFqdn = async (
   const errorMessage = 'Failed to retrieve ingress FQDN after waiting.';
   context.telemetry.properties.ingressFqdnError = errorMessage;
   throw new Error(localize('errorRetrievingIngressFqdn', errorMessage));
-};
+}
 
-const createZipFileOnDisk = async (sourceDir: string): Promise<string> => {
+async function createZipFileOnDisk(sourceDir: string): Promise<string> {
   const tempDir = os.tmpdir();
   const zipFilePath = path.join(tempDir, `logicapp-deploy-${Date.now()}.zip`);
   const zipFile = new yazl.ZipFile();
@@ -258,9 +258,9 @@ const createZipFileOnDisk = async (sourceDir: string): Promise<string> => {
     output.on('error', (err) => reject(err));
     zipFile.end();
   });
-};
+}
 
-const getAccessTokenForZipDeploy = async (node: SlotTreeItem, context: ILogicAppWizardContext): Promise<string> => {
+async function getAccessTokenForZipDeploy(node: SlotTreeItem, context: ILogicAppWizardContext): Promise<string> {
   const envVars = node.hybridSite.template?.containers?.[0]?.env || [];
   const tenantId = envVars.find((e) => e.name === workflowAppAADTenantId)?.value;
   const clientId = envVars.find((e) => e.name === workflowAppAADClientId)?.value;
@@ -291,9 +291,9 @@ const getAccessTokenForZipDeploy = async (node: SlotTreeItem, context: ILogicApp
   }
 
   return tokenResponse.token;
-};
+}
 
-const getSMBDetails = async (context: IActionContext, node: SlotTreeItem) => {
+async function getSMBDetails(context: IActionContext, node: SlotTreeItem): Promise<void> {
   const smbError = new Error(
     localize('errorDeployingHybridLogicApp', `The logic app ${node.hybridSite.name} is not configured to use SMB`)
   );
@@ -312,9 +312,14 @@ const getSMBDetails = async (context: IActionContext, node: SlotTreeItem) => {
     context.telemetry.properties.smbConfig = 'false';
     throw smbError;
   }
-};
+}
 
-const getStorageInfoForConnectedEnv = async (connectedEnvId: string, storageName: string, context: IActionContext, node: SlotTreeItem) => {
+async function getStorageInfoForConnectedEnv(
+  connectedEnvId: string,
+  storageName: string,
+  context: IActionContext,
+  node: SlotTreeItem
+): Promise<void> {
   const accessToken = await getAuthorizationTokenFromNode(node);
 
   const url = `${azurePublicBaseUrl}/${connectedEnvId}/storages/${storageName}?api-version=${hybridAppApiVersion}`;
@@ -334,28 +339,28 @@ const getStorageInfoForConnectedEnv = async (connectedEnvId: string, storageName
     node.fileShare.userName = await context.ui.showInputBox({
       placeHolder: localize('userNameFileShare', `User name for ${fileSharePath}`),
       prompt: localize('userNamePrompt', 'Provide the user name for SMB authentication.'),
-      validateInput: async (input: string): Promise<string | undefined> => await validateUserName(input),
+      validateInput: async (input: string): Promise<string | undefined> => validateUserName(input),
     });
 
     node.fileShare.password = await context.ui.showInputBox({
       placeHolder: localize('passwordFileShare', `Password for ${fileSharePath}`),
       prompt: localize('passwordPrompt', 'Provide the password for SMB authentication.'),
       password: true,
-      validateInput: async (input: string): Promise<string | undefined> => await validatePassword(input),
+      validateInput: async (input: string): Promise<string | undefined> => validatePassword(input),
     });
   } catch (error) {
     throw new Error(`${localize('errorGettingSMBDetails', 'Error fetching SMB details')} - ${error.message}`);
   }
-};
+}
 
-const validateUserName = async (userName: string | undefined): Promise<string | undefined> => {
+function validateUserName(userName: string | undefined): string | undefined {
   if (!userName) {
     return localize('emptyUserNameError', 'The user name cannot be empty.');
   }
-};
+}
 
-const validatePassword = async (password: string | undefined): Promise<string | undefined> => {
+function validatePassword(password: string | undefined): string | undefined {
   if (!password) {
     return localize('emptyPasswordError', 'The password cannot be empty.');
   }
-};
+}

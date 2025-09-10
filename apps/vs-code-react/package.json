@@ -12,6 +12,7 @@
     "@microsoft/logic-apps-data-mapper": "workspace:*",
     "@microsoft/logic-apps-data-mapper-v2": "workspace:*",
     "@microsoft/logic-apps-designer": "workspace:*",
+    "@microsoft/logic-apps-designer-v2": "workspace:*",
     "@microsoft/logic-apps-shared": "workspace:*",
     "@microsoft/vscode-extension-logic-apps": "workspace:*",
     "@reduxjs/toolkit": "1.8.5",

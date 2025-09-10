@@ -6,7 +6,7 @@ import SuccessIcon from './svgs/success.svg';
 import FailureIcon from './svgs/failure.svg';
 import SkipIcon from './svgs/skip.svg';
 
-export const CardStatusBadge = ({ status, duration }: any) => {
+export const CardRunStatusBadge = ({ status, duration }: any) => {
   const styles = useCardStyles();
 
   const intl = useIntl();
@@ -91,7 +91,7 @@ export const CardStatusBadge = ({ status, duration }: any) => {
   }, [status]);
 
   return (
-    <Tooltip relationship={'label'} content={text} positioning={'after'}>
+    <Tooltip relationship={'label'} content={text} positioning={'after'} withArrow>
       <div className={mergeClasses(styles.badge, color)}>{icon}</div>
     </Tooltip>
   );

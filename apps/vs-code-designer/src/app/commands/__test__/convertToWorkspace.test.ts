@@ -1,17 +1,17 @@
-import { describe, it, expect, vi, beforeEach, test, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { convertToWorkspace } from '../convertToWorkspace';
 import * as vscode from 'vscode';
-import * as workspaceUtils from '../../../../utils/workspace';
-import * as verifyProject from '../../../../utils/verifyIsProject';
-import * as funcCoreTools from '../../../../utils/funcCoreTools/funcVersion';
-import * as settingsUtils from '../../../../utils/vsCodeConfig/settings';
+import * as workspaceUtils from '../../utils/workspace';
+import * as verifyProject from '../../utils/verifyIsProject';
+import * as funcCoreTools from '../../utils/funcCoreTools/funcVersion';
+import * as settingsUtils from '../../utils/vsCodeConfig/settings';
 import * as path from 'path';
 import * as fse from 'fs-extra';
 import * as azextUtils from '@microsoft/vscode-azext-utils';
 import { FuncVersion } from '@microsoft/vscode-extension-logic-apps';
 import { DialogResponses } from '@microsoft/vscode-azext-utils';
-import { localize } from '../../../../../localize';
-import { extensionCommand } from '../../../../../constants';
+import { localize } from '../../../localize';
+import { extensionCommand } from '../../../constants';
 
 class MockDirent {
   constructor(
@@ -23,7 +23,7 @@ class MockDirent {
   }
 }
 
-vi.mock('../../../../utils/verifyIsProject', () => ({
+vi.mock('../../utils/verifyIsProject', () => ({
   isLogicAppProject: vi.fn(),
   isLogicAppProjectInRoot: vi.fn(),
   tryGetLogicAppProjectRoot: vi.fn(),
@@ -46,7 +46,10 @@ describe('convertToWorkspace', () => {
 
   beforeEach(() => {
     context = {
-      telemetry: { properties: {} },
+      telemetry: {
+        properties: {},
+        measurements: {},
+      },
     };
     vi.spyOn(funcCoreTools, 'addLocalFuncTelemetry').mockImplementation(() => {});
     vi.spyOn(settingsUtils, 'getGlobalSetting').mockReturnValue('4.0.5907');

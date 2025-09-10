@@ -8,7 +8,7 @@ import { addOrUpdateLocalAppSettings } from '../../utils/appSettings/localSettin
 import { getLogicAppProjectRoot } from '../../utils/codeless/connection';
 import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
 import { getWorkspaceFolder } from '../../utils/workspace';
-import { validateSQLConnectionString } from '../deploy/storageAccountSteps/SQLStringNameStep';
+import { validateSQLConnectionString } from '../../utils/sql';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
 

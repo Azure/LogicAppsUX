@@ -11,8 +11,16 @@ import * as vscode from 'vscode';
 import { isLogicAppProject } from '../../../utils/verifyIsProject';
 
 export class WorkspaceFileStep extends AzureWizardPromptStep<IProjectWizardContext> {
-  // Hide the step count in the wizard UI
   public hideStepCount = true;
+
+  /**
+   * Checks if this step should prompt the user
+   * @param context - Project wizard context containing user selections and settings
+   * @returns True if user should be prompted, otherwise false
+   */
+  public shouldPrompt(): boolean {
+    return true;
+  }
 
   /**
    * Prompts the user for project information and sets up directories
@@ -23,15 +31,6 @@ export class WorkspaceFileStep extends AzureWizardPromptStep<IProjectWizardConte
     context.workflowProjectType = WorkflowProjectType.Bundle;
     context.language = ProjectLanguage.JavaScript;
     await this.createWorkspaceFile(context);
-  }
-
-  /**
-   * Checks if this step should prompt the user
-   * @param context - Project wizard context containing user selections and settings
-   * @returns True if user should be prompted, otherwise false
-   */
-  public shouldPrompt(): boolean {
-    return true;
   }
 
   /**

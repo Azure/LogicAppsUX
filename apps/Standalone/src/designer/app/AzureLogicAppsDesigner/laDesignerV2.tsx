@@ -20,7 +20,6 @@ import {
   useAppSettings,
   useCurrentObjectId,
   useCurrentTenantId,
-  useRunInstanceStandard,
   useWorkflowAndArtifactsStandard,
   useWorkflowApp,
   validateWorkflowStandard,
@@ -70,6 +69,7 @@ import {
   getMissingRoleDefinitions,
   roleQueryKeys,
   isAgentWorkflow,
+  useRun,
 } from '@microsoft/logic-apps-designer-v2';
 import axios from 'axios';
 import isEqual from 'lodash.isequal';
@@ -80,6 +80,7 @@ import { useHostingPlan } from '../../state/workflowLoadingSelectors';
 import CodeViewEditor from './CodeViewV2';
 import { CustomConnectionParameterEditorService } from './Services/customConnectionParameterEditorService';
 import { CustomEditorService } from './Services/customEditorService';
+import { FloatingRunButton } from '../../../../../../libs/designer-v2/src/lib/ui/FloatingRunButton';
 
 const apiVersion = '2020-06-01';
 const httpClient = new HttpClient();
@@ -99,7 +100,6 @@ const DesignerEditor = () => {
     runId,
     appId,
     showChatBot,
-    showRunHistory,
     language,
     hostOptions,
     hostingPlan,
@@ -201,14 +201,14 @@ const DesignerEditor = () => {
     }
   }, []);
 
-  const { data: runInstanceData } = useRunInstanceStandard(workflowName, appId, runId);
+  const { data: runInstanceData } = useRun(runId);
 
   useEffect(() => {
     if (isMonitoringView && runInstanceData) {
       setWorkflow((previousWorkflow: Workflow) => {
         return {
           ...previousWorkflow,
-          definition: runInstanceData.properties.workflow.properties.definition,
+          definition: (runInstanceData.properties.workflow as any).properties.definition,
         };
       });
     }
@@ -254,6 +254,14 @@ const DesignerEditor = () => {
     [dispatch]
   );
 
+  const onRun = useCallback(
+    (runId: string | undefined) => {
+      showMonitoringView();
+      dispatch(changeRunId(runId));
+    },
+    [dispatch, showMonitoringView]
+  );
+
   if (isLoading || appLoading || settingsLoading || customCodeLoading) {
     return <></>;
   }
@@ -271,7 +279,7 @@ const DesignerEditor = () => {
     workflowFromDesigner: Workflow,
     customCode: CustomCodeFileNameMapping | undefined,
     clearDirtyState: () => void
-  ): Promise<void> => {
+  ): Promise<any> => {
     const { definition, connectionReferences, parameters } = workflowFromDesigner;
     const workflowToSave = {
       ...workflow,
@@ -373,7 +381,7 @@ const DesignerEditor = () => {
     const parametersToUpdate = isEqual(originalParametersData, parameters) ? undefined : (parameters as ParametersData);
     const settingsToUpdate = isEqual(settingsData?.properties, originalSettings) ? undefined : settingsData?.properties;
 
-    return saveWorkflowStandard(
+    await saveWorkflowStandard(
       siteResourceId,
       [{ name: workflowName, workflow: workflowToSave }],
       connectionsToUpdate,
@@ -382,6 +390,8 @@ const DesignerEditor = () => {
       customCodeToUpdate,
       clearDirtyState
     );
+
+    return workflowToSave;
   };
 
   const saveWorkflowFromCode = async (clearDirtyState: () => void) => {
@@ -480,7 +490,7 @@ const DesignerEditor = () => {
         options={{
           services,
           isDarkMode,
-          readOnly: isReadOnly,
+          readOnly: isReadOnly || isMonitoringView,
           isMonitoringView,
           isUnitTest,
           suppressDefaultNodeSelectFunctionality: suppressDefaultNodeSelect,
@@ -501,7 +511,7 @@ const DesignerEditor = () => {
             }}
             workflowId={workflow?.id}
             customCode={customCodeData}
-            runInstance={runInstanceData}
+            runInstance={runInstanceData as any}
             appSettings={settingsData?.properties}
             isMultiVariableEnabled={hostOptions.enableMultiVariable}
           >
@@ -542,10 +552,6 @@ const DesignerEditor = () => {
                   isDesignerView={isDesignerView}
                   isCodeView={isCodeView}
                   enableCopilot={() => dispatch(setIsChatBotEnabled(!showChatBot))}
-                  selectRun={(runId: string) => {
-                    showMonitoringView();
-                    dispatch(changeRunId(runId));
-                  }}
                   saveWorkflowFromCode={saveWorkflowFromCode}
                   showMonitoringView={showMonitoringView}
                   showDesignerView={showDesignerView}
@@ -553,13 +559,10 @@ const DesignerEditor = () => {
                 />
                 {!isCodeView && (
                   <div style={{ display: 'flex', flexDirection: 'row', flexGrow: 1, height: '80%' }}>
-                    <RunHistoryPanel
-                      collapsed={!showRunHistory}
-                      onClose={() => dispatch(setRunHistoryEnabled(false))}
-                      onRunSelected={onRunSelected}
-                    />
+                    <RunHistoryPanel collapsed={!isMonitoringView} onRunSelected={onRunSelected} />
                     <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column', position: 'relative' }}>
                       <Designer />
+                      <FloatingRunButton id={workflowId} saveDraftWorkflow={saveWorkflowFromDesigner} onRun={onRun} />
                     </div>
                   </div>
                 )}

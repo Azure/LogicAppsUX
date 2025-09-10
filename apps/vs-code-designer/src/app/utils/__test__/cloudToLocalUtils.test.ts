@@ -1,4 +1,4 @@
-import { extractConnectionDetails } from '../cloudToLocalHelper';
+import { extractConnectionDetails } from '../cloudToLocalUtils';
 import type { ConnectionReferenceModel } from '@microsoft/vscode-extension-logic-apps';
 import { describe, it, expect, vi } from 'vitest';
 import { beforeEach } from 'vitest';
