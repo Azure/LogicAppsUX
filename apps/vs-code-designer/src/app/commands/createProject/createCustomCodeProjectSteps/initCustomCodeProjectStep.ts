@@ -23,14 +23,14 @@ export class InitCustomCodeProjectStep extends InitCustomCodeScriptProjectStep {
     return [
       {
         label: 'generateDebugSymbols',
-        command: '${config:azureLogicAppsStandard.dotnetBinaryPath}',
+        command: 'dotnet',
         args: ['${input:getDebugSymbolDll}'],
         type: 'process',
         problemMatcher: '$msCompile',
       },
       {
         type: funcBinariesExist ? 'shell' : func,
-        command: funcBinariesExist ? '${config:azureLogicAppsStandard.funcCoreToolsBinaryPath}' : hostStartCommand,
+        command: funcBinariesExist ? 'func' : hostStartCommand,
         args: funcBinariesExist ? ['host', 'start'] : undefined,
         ...binariesOptions,
         problemMatcher: funcWatchProblemMatcher,

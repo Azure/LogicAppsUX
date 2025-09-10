@@ -64,7 +64,7 @@ export class InitScriptProjectStep extends InitProjectStepBase {
       {
         label: 'func: host start',
         type: funcBinariesExist ? 'shell' : func,
-        command: funcBinariesExist ? '${config:azureLogicAppsStandard.funcCoreToolsBinaryPath}' : hostStartCommand,
+        command: funcBinariesExist ? 'func' : hostStartCommand,
         args: funcBinariesExist ? ['host', 'start'] : undefined,
         ...binariesOptions,
         problemMatcher: funcWatchProblemMatcher,

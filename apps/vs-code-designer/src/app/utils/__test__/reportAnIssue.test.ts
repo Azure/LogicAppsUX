@@ -43,9 +43,6 @@ describe('reportAnIssue', () => {
       get: vi.fn((key: string) => {
         const settings = {
           dataMapperVersion: '1.0.0',
-          validateFuncCoreTools: true,
-          autoRuntimeDependenciesPath: '/path/to/deps',
-          autoRuntimeDependenciesValidationAndInstallation: false,
           parameterizeConnectionsInProjectLoad: true,
         };
         return settings[key as keyof typeof settings];
@@ -222,9 +219,6 @@ describe('reportAnIssue', () => {
 
       expect(decodedLink).toContain('Settings');
       expect(decodedLink).toContain('dataMapperVersion');
-      expect(decodedLink).toContain('validateFuncCoreTools');
-      expect(decodedLink).toContain('autoRuntimeDependenciesPath');
-      expect(decodedLink).toContain('autoRuntimeDependenciesValidationAndInstallation');
       expect(decodedLink).toContain('parameterizeConnectionsInProjectLoad');
     });
 

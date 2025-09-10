@@ -2,9 +2,9 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { funcCoreToolsBinaryPathSettingKey, funcVersionSetting } from '../../../constants';
+import { funcVersionSetting } from '../../../constants';
 import { localize } from '../../../localize';
-import { getGlobalSetting, getWorkspaceSettingFromAnyFolder } from '../vsCodeConfig/settings';
+import { getWorkspaceSettingFromAnyFolder } from '../vsCodeConfig/settings';
 import { executeCommand } from './cpUtils';
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -82,7 +82,7 @@ export async function tryGetLocalFuncVersion(): Promise<FuncVersion | undefined>
  */
 export async function getLocalFuncCoreToolsVersion(): Promise<string | null> {
   try {
-    const output: string = await executeCommand(undefined, undefined, `${getFunctionsCommand()}`, '--version');
+    const output: string = await executeCommand(undefined, undefined, 'func', '--version');
     const version: string | null = semver.clean(output);
     if (version) {
       return version;
@@ -135,15 +135,4 @@ export function checkSupportedFuncVersion(version: FuncVersion) {
       )
     );
   }
-}
-
-/**
- * Get the functions binaries executable or use the system functions executable.
- */
-export function getFunctionsCommand(): string {
-  const command = getGlobalSetting<string>(funcCoreToolsBinaryPathSettingKey);
-  if (!command) {
-    throw Error('Functions Core Tools Binary Path Setting is empty');
-  }
-  return command;
 }
