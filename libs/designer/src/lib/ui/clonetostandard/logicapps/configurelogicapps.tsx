@@ -62,7 +62,7 @@ export const ConfigureLogicApps = () => {
 };
 
 const useSourceItems = (resourceStrings: Record<string, string>, resources: ResourceState) => {
-  const { subscriptionId, logicAppName } = resources;
+  const { subscriptionId, resourceGroup, logicAppName } = resources;
   const { data: subscriptions } = useSubscriptions();
   const subscriptionDisplayName = useMemo(
     () => subscriptions?.find((sub) => equals(getResourceNameFromId(sub.id), subscriptionId))?.displayName,
@@ -78,18 +78,19 @@ const useSourceItems = (resourceStrings: Record<string, string>, resources: Reso
       onChange: () => {},
     },
     {
-      label: resourceStrings.LOGIC_APP,
-      value: logicAppName || '',
+      label: resourceStrings.RESOURCE_GROUP,
+      value: resourceGroup || '',
       type: 'textfield',
       disabled: true,
       onChange: () => {},
     },
     {
-      label: resourceStrings.WORKFLOW_NAME,
+      label: resourceStrings.LOGIC_APP,
       value: logicAppName || '',
       type: 'textfield',
       disabled: true,
       onChange: () => {},
+      description: resourceStrings.sourceLogicAppDescription,
     },
   ];
 
@@ -107,7 +108,7 @@ const useCloneWorkflowItem = (resourceStrings: Record<string, string>) => {
   const { data: existingWorkflowNames } = useExistingWorkflowNamesOfResource(destSubscriptionId, destResourceGroup, destLogicAppName);
 
   const items: TemplatesSectionItem = {
-    label: resourceStrings.newWorkflowName,
+    label: resourceStrings.WORKFLOW_NAME,
     value: sourceApp?.targetWorkflowName || '',
     required: true,
     type: 'textfield',
@@ -128,6 +129,7 @@ const useCloneWorkflowItem = (resourceStrings: Record<string, string>) => {
       sourceApp?.targetWorkflowNameValidationError || isUndefinedOrEmptyString(sourceApp?.targetWorkflowName) ? null : (
         <Checkmark16Filled color={tokens.colorPaletteGreenBackground3} />
       ),
+    description: resourceStrings.newWorkflowNameDescription,
   };
 
   return items;
