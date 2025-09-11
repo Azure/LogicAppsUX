@@ -14,7 +14,7 @@ import {
   useAllConnectionErrors,
   getCustomCodeFilesWithData,
 } from '@microsoft/logic-apps-designer';
-import { RUN_AFTER_COLORS, isNullOrEmpty } from '@microsoft/logic-apps-shared';
+import { RUN_AFTER_COLORS, equals, isNullOrEmpty } from '@microsoft/logic-apps-shared';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { useContext, useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -42,6 +42,7 @@ import {
   ReplayFilled,
 } from '@fluentui/react-icons';
 import { TrafficLightDot } from '@microsoft/designer-ui';
+import { FloatingChatButton } from '@microsoft/logic-apps-designer-v2';
 
 // Designer icons
 const SaveIcon = bundleIcon(SaveFilled, SaveRegular);
@@ -67,6 +68,7 @@ export interface DesignerCommandBarProps {
   isUnitTest: boolean;
   isLocal: boolean;
   runId: string;
+  kind?: string;
 }
 
 export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
@@ -77,11 +79,16 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
   isUnitTest,
   isLocal,
   runId,
+  kind,
 }) => {
   const intl = useIntl();
   const vscode = useContext(VSCodeContext);
   const dispatch = DesignerStore.dispatch;
   const designerState = DesignerStore.getState();
+  const isA2AWorkflow = useMemo(() => {
+    console.log('charlie', kind);
+    return equals(kind, 'agent', false);
+  }, [kind]);
 
   const isMonitoringView = designerState.designerOptions.isMonitoringView;
   const designerIsDirty = useIsDesignerDirty();
@@ -261,6 +268,10 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
 
   const isSaveDisabled = useMemo(() => isSaving || haveErrors || !designerIsDirty, [isSaving, haveErrors, designerIsDirty]);
 
+  const buttonCommonProps: any = {
+    appearance: 'transparent',
+  };
+
   const baseItems = useMemo(
     () => [
       {
@@ -439,6 +450,8 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
           {buttonProps.renderTextIcon}
         </ToolbarButton>
       ))}
+
+      {isA2AWorkflow && !isUnitTest && !isMonitoringView ? <FloatingChatButton {...buttonCommonProps} isDarkMode={isDarkMode} /> : null}
     </Toolbar>
   );
 };

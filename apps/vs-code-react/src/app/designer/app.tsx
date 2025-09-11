@@ -217,6 +217,7 @@ export const DesignerApp = () => {
         isUnitTest={isUnitTest}
         isLocal={isLocal}
         runId={runId}
+        kind={standardApp?.kind}
       />
     );
 
