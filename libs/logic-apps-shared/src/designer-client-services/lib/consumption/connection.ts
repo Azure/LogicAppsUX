@@ -88,7 +88,12 @@ export class ConsumptionConnectionService extends BaseConnectionService {
       if (shouldTestConnection) {
         await this.testConnection(connection);
       }
-      LoggerService().endTrace(logId, { status: Status.Success });
+      LoggerService().endTrace(logId, {
+        status: Status.Success,
+        data: {
+          connectorId: connector.id,
+        },
+      });
       return connection;
     } catch (error) {
       this.deleteConnection(connectionId);

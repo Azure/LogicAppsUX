@@ -43,16 +43,16 @@ export const CloneReviewList = () => {
         <MessageBar intent="success">
           <MessageBarBody>
             {intl.formatMessage({
-              defaultMessage: 'Successfully cloned.',
-              id: 'ILKpNE',
+              defaultMessage: 'Cloned successfully.',
+              id: 'G979pE',
               description: 'Label to indicate the successfully cloned workflow',
             })}
           </MessageBarBody>
           <MessageBarActions>
             <Button onClick={handleOpenBlade}>
               {intl.formatMessage({
-                defaultMessage: 'Go to destination workflow',
-                id: '83HCUb',
+                defaultMessage: 'Go to workflow',
+                id: 'Kasmd1',
                 description: 'Label to indicate go to the workflow',
               })}
             </Button>
@@ -93,7 +93,7 @@ export const CloneReviewList = () => {
 };
 
 const useSourceItems = (resourceStrings: Record<string, string>, subscriptions: Resource[], sourceResources: ResourceState) => {
-  const { subscriptionId, logicAppName } = sourceResources;
+  const { subscriptionId, resourceGroup, logicAppName } = sourceResources;
   const sourceSubscriptionDisplayName = useMemo(
     () => subscriptions?.find((sub) => equals(getResourceNameFromId(sub.id), subscriptionId))?.displayName,
     [subscriptions, subscriptionId]
@@ -106,12 +106,12 @@ const useSourceItems = (resourceStrings: Record<string, string>, subscriptions: 
       type: 'text',
     },
     {
-      label: resourceStrings.LOGIC_APP,
-      value: logicAppName || '',
+      label: resourceStrings.RESOURCE_GROUP,
+      value: resourceGroup || '',
       type: 'text',
     },
     {
-      label: resourceStrings.WORKFLOW_NAME,
+      label: resourceStrings.LOGIC_APP,
       value: logicAppName || '',
       type: 'text',
     },
@@ -149,7 +149,7 @@ const useDestinationItems = (
       type: 'text',
     },
     {
-      label: resourceStrings.newWorkflowName,
+      label: resourceStrings.WORKFLOW_NAME,
       value: targetWorkflowName || '',
       type: 'text',
     },
