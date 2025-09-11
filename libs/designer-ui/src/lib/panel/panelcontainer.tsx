@@ -15,7 +15,6 @@ import constants from '../constants';
 import { TeachingPopup } from '../teachingPopup';
 
 export type PanelContainerProps = {
-  noNodeSelected: boolean;
   panelScope: PanelScope;
   suppressDefaultNodeSelectFunctionality?: boolean;
   pivotDisabled?: boolean;
@@ -31,7 +30,7 @@ export type PanelContainerProps = {
   resubmitOperation?: (nodeId: string) => void;
   onUnpinAction?: () => void;
   trackEvent(data: PageActionTelemetryData): void;
-  toggleCollapse: () => void;
+  onClose: () => void;
   onCommentChange: (nodeId: string, panelCommentChangeEvent?: string) => void;
   onTitleChange: TitleChangeHandler;
   handleTitleUpdate: (originalId: string, newId: string) => void;
@@ -46,7 +45,6 @@ export type PanelContainerProps = {
 export const PanelContainer = ({
   isCollapsed,
   panelLocation,
-  noNodeSelected,
   panelScope,
   suppressDefaultNodeSelectFunctionality,
   canResubmit,
@@ -57,7 +55,7 @@ export const PanelContainer = ({
   nodeHeaderItems,
   alternateSelectedNodeHeaderItems,
   alternateSelectedNodePersistence,
-  toggleCollapse,
+  onClose,
   trackEvent,
   onCommentChange,
   onTitleChange,
@@ -147,11 +145,9 @@ export const PanelContainer = ({
       return (
         <PanelHeader
           nodeData={headerNode}
-          isCollapsed={isCollapsed}
           isOutermostPanel={!panelHasAlternateNode || !isAlternateNode}
           headerItems={isAlternateNode ? alternateSelectedNodeHeaderItems : nodeHeaderItems}
           headerLocation={panelLocation}
-          noNodeSelected={noNodeSelected}
           panelScope={panelScope}
           suppressDefaultNodeSelectFunctionality={suppressDefaultNodeSelectFunctionality}
           readOnlyMode={readOnlyMode}
@@ -161,7 +157,7 @@ export const PanelContainer = ({
           onUnpinAction={canUnpin ? onUnpinAction : undefined}
           resubmitOperation={() => resubmitOperation?.(nodeId)}
           commentChange={(newValue) => onCommentChange(nodeId, newValue)}
-          toggleCollapse={toggleCollapse}
+          onClose={onClose}
           onTitleChange={onTitleChange}
           handleTitleUpdate={handleTitleUpdate}
           showTriggerInfo={showTriggerInfo}
@@ -175,18 +171,16 @@ export const PanelContainer = ({
       rest.alternateSelectedNode?.nodeId,
       onUnpinAction,
       alternateSelectedNodePersistence,
-      isCollapsed,
       alternateSelectedNodeHeaderItems,
       nodeHeaderItems,
       panelLocation,
-      noNodeSelected,
       panelScope,
       suppressDefaultNodeSelectFunctionality,
       readOnlyMode,
       canResubmit,
       canShowLogicAppRun,
       showLogicAppRun,
-      toggleCollapse,
+      onClose,
       onTitleChange,
       handleTitleUpdate,
       showTriggerInfo,
@@ -265,7 +259,7 @@ export const PanelContainer = ({
     return null;
   }
 
-  if (isCollapsed) {
+  if (isCollapsed || !node) {
     return null;
   }
 

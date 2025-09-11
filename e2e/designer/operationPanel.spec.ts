@@ -24,11 +24,11 @@ test.describe(
       await validatePanel('closed');
 
       // Expand the panel and verify.
-      await page.getByTestId('msla-panel-header-collapse-nav').click();
+      await page.getByTestId('msla-panel-header-close-nav').click();
       await validatePanel('open');
 
       // Collapse the panel and verify.
-      await page.getByTestId('msla-panel-header-collapse-nav').click();
+      await page.getByTestId('msla-panel-header-close-nav').click();
       await validatePanel('closed');
     });
 
@@ -54,11 +54,11 @@ test.describe(
       await validatePanel('open');
 
       // Collapse the panel and verify.
-      await page.getByTestId('msla-panel-header-collapse-nav').click();
+      await page.getByTestId('msla-panel-header-close-nav').click();
       await validatePanel('closed');
 
       // Expand the panel and verify.
-      await page.getByTestId('msla-panel-header-collapse-nav').click();
+      await page.getByTestId('msla-panel-header-close-nav').click();
       await validatePanel('open');
     });
 
@@ -85,11 +85,11 @@ test.describe(
       await validatePanel('open');
 
       // Collapse the panel and verify.
-      await page.getByTestId('msla-panel-header-collapse-nav').click();
+      await page.getByTestId('msla-panel-header-close-nav').click();
       await validatePanel('closed');
 
       // Expand the panel and verify.
-      await page.getByTestId('msla-panel-header-collapse-nav').click();
+      await page.getByTestId('msla-panel-header-close-nav').click();
       await validatePanel('open');
     });
 
@@ -128,11 +128,11 @@ test.describe(
       await validatePanel('open');
 
       // Collapse the panel and verify.
-      await page.getByTestId('msla-panel-header-collapse-nav').click();
+      await page.getByTestId('msla-panel-header-close-nav').click();
       await validatePanel('closed');
 
       // Expand the panel and verify.
-      await page.getByTestId('msla-panel-header-collapse-nav').click();
+      await page.getByTestId('msla-panel-header-close-nav').click();
       await validatePanel('open');
     });
 
