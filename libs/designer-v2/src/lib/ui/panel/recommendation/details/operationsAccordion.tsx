@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 import { Accordion } from '@fluentui/react-components';
 import { addOperation, type AppDispatch } from '../../../../core';
-import { useDiscoveryPanelRelationshipIds } from '../../../../core/state/panel/panelSelectors';
+import { useDiscoveryPanelNewNodePosition, useDiscoveryPanelRelationshipIds } from '../../../../core/state/panel/panelSelectors';
 import { useOperationsAccordionStyles } from './styles/OperationsAccordion.styles';
 import { recurrenceOperation, requestOperation } from '@microsoft/logic-apps-shared';
 import { OperationAccordionItem } from './operationAccordionItem';
@@ -29,6 +29,8 @@ export const OperationsAccordion = ({
   const classes = useOperationsAccordionStyles();
   const dispatch = useDispatch<AppDispatch>();
   const relationshipIds = useDiscoveryPanelRelationshipIds();
+  const newNodePosition = useDiscoveryPanelNewNodePosition();
+
   const intl = useIntl();
 
   const handleSuggestedTriggerClick = useCallback(
@@ -42,10 +44,11 @@ export const OperationsAccordion = ({
           nodeId,
           isParallelBranch: false,
           isTrigger: true,
+          newNodePosition,
         })
       );
     },
-    [dispatch, relationshipIds]
+    [dispatch, relationshipIds, newNodePosition]
   );
 
   const noTriggersText = intl.formatMessage({

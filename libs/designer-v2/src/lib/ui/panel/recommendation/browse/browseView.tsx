@@ -5,6 +5,7 @@ import {
   useDiscoveryPanelRelationshipIds,
   useDiscoveryPanelIsParallelBranch,
   useDiscoveryPanelSelectedBrowseCategory,
+  useDiscoveryPanelNewNodePosition,
 } from '../../../../core/state/panel/panelSelectors';
 import { selectOperationGroupId, selectBrowseCategory } from '../../../../core/state/panel/panelSlice';
 import { CategoryCard } from './categoryCard';
@@ -28,6 +29,7 @@ export const BrowseView = ({ isTrigger = false, onOperationClick }: BrowseViewPr
 
   const relationshipIds = useDiscoveryPanelRelationshipIds();
   const isParallelBranch = useDiscoveryPanelIsParallelBranch();
+  const newNodePosition = useDiscoveryPanelNewNodePosition();
 
   const categories = isTrigger ? getTriggerCategories() : getActionCategories();
 
@@ -41,10 +43,11 @@ export const BrowseView = ({ isTrigger = false, onOperationClick }: BrowseViewPr
           nodeId,
           isParallelBranch,
           isTrigger,
+          newNodePosition,
         })
       );
     },
-    [dispatch, relationshipIds, isParallelBranch, isTrigger]
+    [dispatch, relationshipIds, isParallelBranch, isTrigger, newNodePosition]
   );
 
   const onConnectorSelected = useCallback(

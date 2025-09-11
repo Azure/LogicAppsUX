@@ -4,6 +4,7 @@ import { addOperation } from '../../../core/actions/bjsworkflow/add';
 import {
   useDiscoveryPanelIsAddingTrigger,
   useDiscoveryPanelIsParallelBranch,
+  useDiscoveryPanelNewNodePosition,
   useDiscoveryPanelRelationshipIds,
 } from '../../../core/state/panel/panelSelectors';
 import { Button, Text } from '@fluentui/react-components';
@@ -87,6 +88,7 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
   const isTrigger = useDiscoveryPanelIsAddingTrigger();
   const relationshipIds = useDiscoveryPanelRelationshipIds();
   const isParallelBranch = useDiscoveryPanelIsParallelBranch();
+  const newNodePosition = useDiscoveryPanelNewNodePosition();
 
   const addResourceOperation = useCallback(
     (props: AddResourceOperationParameters) => {
@@ -101,10 +103,11 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
           isTrigger,
           presetParameterValues,
           actionMetadata,
+          newNodePosition,
         })
       );
     },
-    [dispatch, operation, relationshipIds, isParallelBranch, isTrigger]
+    [dispatch, operation, relationshipIds, isParallelBranch, isTrigger, newNodePosition]
   );
 
   // Parses the swagger object to get the paths and methods in an array

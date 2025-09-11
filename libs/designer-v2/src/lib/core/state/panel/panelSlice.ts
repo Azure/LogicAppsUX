@@ -17,6 +17,7 @@ import type {
   WorkflowParametersPanelContentState,
 } from './panelTypes';
 import type { UndoRedoPartialRootState } from '../undoRedo/undoRedoTypes';
+import type { XYPosition } from '@xyflow/react';
 
 const getInitialConnectionContentState = (): ConnectionPanelContentState => ({
   isCreatingConnection: false,
@@ -36,6 +37,7 @@ const getInitialDiscoveryContentState = (): DiscoveryPanelContentState => ({
   selectedOperationGroupId: '',
   selectedOperationId: '',
   favoriteOperations: [],
+  newNodePosition: undefined,
 });
 
 const getInitialErrorContentState = (): ErrorPanelContentState => ({
@@ -194,9 +196,11 @@ export const panelSlice = createSlice({
         isAgentTool?: boolean;
         nodeId: string;
         relationshipIds: RelationshipIds;
+        newNodePosition?: XYPosition;
       }>
     ) => {
-      const { addingTrigger, focusReturnElementId, isParallelBranch, nodeId, relationshipIds, isAgentTool } = action.payload;
+      const { addingTrigger, focusReturnElementId, isParallelBranch, nodeId, relationshipIds, isAgentTool, newNodePosition } =
+        action.payload;
 
       state.currentPanelMode = 'Discovery';
       state.focusReturnElementId = focusReturnElementId;
@@ -208,6 +212,7 @@ export const panelSlice = createSlice({
       state.discoveryContent.isAddingAgentTool = isAgentTool;
       state.discoveryContent.selectedBrowseCategory = undefined;
       state.discoveryContent.selectedOperationGroupId = '';
+      state.discoveryContent.newNodePosition = newNodePosition;
 
       LoggerService().log({
         level: LogEntryLevel.Verbose,

@@ -22,6 +22,7 @@ import { addDynamicTokens } from '../../state/tokens/tokensSlice';
 import { getConnectionReferenceForNodeId } from '../../state/connection/connectionSelector';
 import { getStaticResultForNodeId } from '../../state/staticresultschema/staitcresultsSelector';
 import { initScopeCopiedStaticResultProperties } from '../../state/staticresultschema/staticresultsSlice';
+import type { XYPosition } from '@xyflow/react';
 
 type CopyOperationPayload = {
   nodeId: string;
@@ -115,10 +116,21 @@ interface PasteOperationPayload {
   connectionData?: ReferenceKey;
   comment?: string;
   isParallelBranch?: boolean;
+  newNodePosition?: XYPosition;
 }
 
 export const pasteOperation = createAsyncThunk('pasteOperation', async (payload: PasteOperationPayload, { dispatch, getState }) => {
-  const { nodeId: actionId, relationshipIds, nodeData, nodeTokenData, operationInfo, connectionData, comment, isParallelBranch } = payload;
+  const {
+    nodeId: actionId,
+    relationshipIds,
+    nodeData,
+    nodeTokenData,
+    operationInfo,
+    connectionData,
+    comment,
+    isParallelBranch,
+    newNodePosition,
+  } = payload;
   if (!actionId || !relationshipIds || !nodeData) {
     throw new Error('Operation does not exist');
   }
@@ -134,6 +146,7 @@ export const pasteOperation = createAsyncThunk('pasteOperation', async (payload:
       relationshipIds: relationshipIds,
       operation: operationInfo,
       isParallelBranch,
+      newNodePosition,
     })
   );
 
@@ -180,6 +193,7 @@ interface PasteScopeOperationPayload {
   staticResults: Record<string, any>;
   upstreamNodeIds: string[];
   isParallelBranch?: boolean;
+  newNodePosition?: XYPosition;
 }
 
 export const pasteScopeOperation = createAsyncThunk(
@@ -193,6 +207,7 @@ export const pasteScopeOperation = createAsyncThunk(
       allConnectionData,
       staticResults,
       isParallelBranch,
+      newNodePosition,
     } = payload;
     if (!actionId || !relationshipIds || !serializedValue) {
       throw new Error('Operation does not exist');
@@ -230,6 +245,7 @@ export const pasteScopeOperation = createAsyncThunk(
         nodesMetadata: actionNodesMetadata,
         allActions: allActionNames,
         isParallelBranch,
+        newNodePosition,
       })
     );
 

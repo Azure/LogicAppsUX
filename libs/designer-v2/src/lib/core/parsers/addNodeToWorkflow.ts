@@ -2,7 +2,7 @@
 import CONSTANTS from '../../common/constants';
 import type { RelationshipIds } from '../state/panel/panelTypes';
 import type { NodesMetadata, WorkflowState } from '../state/workflow/workflowInterfaces';
-import { createWorkflowNode, createWorkflowEdge } from '../utils/graph';
+import { createWorkflowNode, createWorkflowEdge, getNewNodePosition } from '../utils/graph';
 import type { WorkflowEdge, WorkflowNode } from './models/workflowNode';
 import { reassignEdgeSources, reassignEdgeTargets, addNewEdge, applyIsRootNode, removeEdge } from './restructuringHelpers';
 import type { DiscoveryOperation, DiscoveryResultTypes, LogicAppsV2, SubgraphType } from '@microsoft/logic-apps-shared';
@@ -15,6 +15,7 @@ import {
   getRecordEntry,
   equals,
 } from '@microsoft/logic-apps-shared';
+import type { XYPosition } from '@xyflow/react';
 
 export interface AddNodePayload {
   operation: DiscoveryOperation<DiscoveryResultTypes>;
@@ -22,6 +23,7 @@ export interface AddNodePayload {
   relationshipIds: RelationshipIds;
   isParallelBranch?: boolean;
   isTrigger?: boolean;
+  newNodePosition?: XYPosition;
 }
 
 export const addNodeToWorkflow = (
@@ -30,7 +32,7 @@ export const addNodeToWorkflow = (
   nodesMetadata: NodesMetadata,
   state: WorkflowState
 ) => {
-  const { nodeId: newNodeId, operation, isParallelBranch, relationshipIds } = payload;
+  const { nodeId: newNodeId, operation, isParallelBranch, relationshipIds, newNodePosition } = payload;
   const { graphId, subgraphId, parentId, childId } = relationshipIds;
 
   // Add Node Data
@@ -58,7 +60,15 @@ export const addNodeToWorkflow = (
   const isAfterTrigger = getRecordEntry(nodesMetadata, parentId ?? '')?.isTrigger;
   const allowRunAfterTrigger = equals(state.workflowKind, 'agent');
   const shouldAddRunAfters = allowRunAfterTrigger || (!isRoot && !isAfterTrigger);
-  nodesMetadata[newNodeId] = { graphId: subgraphId ?? graphId, parentNodeId, isRoot, isTrigger };
+  nodesMetadata[newNodeId] = {
+    graphId: subgraphId ?? graphId,
+    parentNodeId,
+    isRoot,
+    isTrigger,
+    actionMetadata: {
+      position: getNewNodePosition(newNodePosition),
+    },
+  };
   state.operations[newNodeId] = { ...state.operations[newNodeId], type: operation.type };
   state.newlyAddedOperations[newNodeId] = newNodeId;
 

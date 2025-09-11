@@ -3,6 +3,7 @@ import { addOperation } from '../../../core/actions/bjsworkflow/add';
 import {
   useDiscoveryPanelIsAddingTrigger,
   useDiscoveryPanelIsParallelBranch,
+  useDiscoveryPanelNewNodePosition,
   useDiscoveryPanelRelationshipIds,
 } from '../../../core/state/panel/panelSelectors';
 import { TextField } from '@fluentui/react';
@@ -27,6 +28,7 @@ export const CustomSwaggerSelection = (props: CustomSwaggerSelectionProps) => {
   const isTrigger = useDiscoveryPanelIsAddingTrigger();
   const relationshipIds = useDiscoveryPanelRelationshipIds();
   const isParallelBranch = useDiscoveryPanelIsParallelBranch();
+  const newNodePosition = useDiscoveryPanelNewNodePosition();
 
   const [swaggerUrl, setSwaggerUrl] = useState('');
 
@@ -43,9 +45,10 @@ export const CustomSwaggerSelection = (props: CustomSwaggerSelectionProps) => {
           'metadata.apiDefinitionUrl': swaggerUrl,
           'metadata.swaggerSource': 'custom',
         },
+        newNodePosition,
       })
     );
-  }, [dispatch, isParallelBranch, isTrigger, operation, relationshipIds, swaggerUrl]);
+  }, [dispatch, isParallelBranch, isTrigger, operation, relationshipIds, swaggerUrl, newNodePosition]);
 
   const inputLabel = intl.formatMessage({
     defaultMessage: 'Swagger endpoint',

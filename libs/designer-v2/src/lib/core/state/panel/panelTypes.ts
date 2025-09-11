@@ -1,5 +1,6 @@
 import type { PanelLocation } from '@microsoft/designer-ui';
 import type { OperationManifest } from '@microsoft/logic-apps-shared';
+import type { XYPosition } from '@xyflow/react';
 
 export interface PanelState {
   connectionContent: ConnectionPanelContentState;
@@ -47,6 +48,7 @@ export interface DiscoveryPanelContentState {
   selectedOperationGroupId: string;
   selectedOperationId: string;
   selectedBrowseCategory?: { key: string; title: string };
+  newNodePosition?: XYPosition;
 }
 
 export interface ErrorPanelContentState {

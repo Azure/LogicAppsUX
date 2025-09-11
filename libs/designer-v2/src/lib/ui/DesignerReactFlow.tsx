@@ -1,5 +1,5 @@
 import type { Connection, Edge, EdgeTypes, NodeChange, NodePositionChange, ReactFlowInstance, XYPosition } from '@xyflow/react';
-import { BezierEdge, ReactFlow } from '@xyflow/react';
+import { BezierEdge, ReactFlow, useReactFlow } from '@xyflow/react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { containsIdTag, guid, removeIdTag, WORKFLOW_NODE_TYPES, type WorkflowNodeType } from '@microsoft/logic-apps-shared';
 import { useDispatch } from 'react-redux';
@@ -61,6 +61,8 @@ const DesignerReactFlow = (props: any) => {
   const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null);
   const [containerDimensions, setContainerDimensions] = useState(canvasRef.current?.getBoundingClientRect() ?? { width: 0, height: 0 });
 
+  const nodesMetadata = useNodesMetadata();
+
   const onInit = useCallback((instance: ReactFlowInstance) => {
     setReactFlowInstance(instance);
   }, []);
@@ -91,6 +93,7 @@ const DesignerReactFlow = (props: any) => {
   const [nodePositions, setNodePositions] = useState<Record<string, XYPosition> | undefined>({});
 
   const onNodesChange = useCallback((changes: NodeChange[]) => {
+    console.log('#> onNodesChange', changes);
     const validChanges = changes.filter(
       (change) =>
         change.type === 'position' &&
@@ -111,6 +114,7 @@ const DesignerReactFlow = (props: any) => {
     });
   }, []);
 
+  // Update redux on debounced node position changes
   useDebouncedEffect(
     () => {
       if (nodePositions && Object.keys(nodePositions).length > 0) {
@@ -121,15 +125,30 @@ const DesignerReactFlow = (props: any) => {
     500
   );
 
+  // Update positions when node metadata changes (e.g. on removal)
+  useEffect(() => {
+    setNodePositions((positions) => {
+      const newPositions = { ...positions };
+      let hasChanges = false;
+      Object.keys(positions || {}).forEach((id) => {
+        if (!nodesMetadata[id]) {
+          delete newPositions[id];
+          hasChanges = true;
+        }
+      });
+      return hasChanges ? newPositions : positions;
+    });
+  }, [nodesMetadata]);
+
   const nodesWithPositions = useMemo(() => {
     return nodes.map((n) => {
-      const pos = nodePositions?.[n.id];
+      const pos = nodePositions?.[n.id] ?? nodesMetadata[n.id]?.actionMetadata?.position;
       if (pos) {
         return { ...n, position: pos };
       }
       return n;
     });
-  }, [nodes, nodePositions]);
+  }, [nodes, nodePositions, nodesMetadata]);
 
   const emptyWorkflowPlaceholderNodes = [
     {
@@ -178,10 +197,10 @@ const DesignerReactFlow = (props: any) => {
     }, tabCountTimeout * 1000);
   }, [isInitialized]);
 
-  const nodesMetadata = useNodesMetadata();
-
   const isA2AWorkflow = useIsA2AWorkflow();
   const allAgentIds = useAllAgentIds();
+
+  const { screenToFlowPosition } = useReactFlow();
 
   const [isDraggingConnection, setIsDraggingConnection] = useState(false);
 
@@ -207,11 +226,13 @@ const DesignerReactFlow = (props: any) => {
           parentId,
           childId: undefined,
         };
+        const clickPos = 'changedTouches' in event ? event.changedTouches[0] : event;
         dispatch(
           expandDiscoveryPanel({
             nodeId: newId,
             relationshipIds,
             isParallelBranch: true,
+            newNodePosition: screenToFlowPosition({ x: clickPos.clientX, y: clickPos.clientY }),
           })
         );
       } else {
@@ -237,7 +258,7 @@ const DesignerReactFlow = (props: any) => {
         }
       }
     },
-    [nodesMetadata, dispatch, isA2AWorkflow, allAgentIds]
+    [nodesMetadata, dispatch, isA2AWorkflow, allAgentIds, screenToFlowPosition]
   );
 
   const isValidConnection = useCallback(
@@ -295,6 +316,9 @@ const DesignerReactFlow = (props: any) => {
       nodes={nodesWithPlaceholder}
       edges={edges}
       onNodesChange={onNodesChange}
+      onNodesDelete={(nodes) => {
+        console.log('#> onNodesDelete', nodes);
+      }}
       nodesConnectable={true}
       edgesFocusable={false}
       edgeTypes={edgeTypes}

@@ -9,6 +9,7 @@ import {
   useDiscoveryPanelRelationshipIds,
   useDiscoveryPanelSelectedOperationGroupId,
   useDiscoveryPanelSelectedBrowseCategory,
+  useDiscoveryPanelNewNodePosition,
 } from '../../../core/state/panel/panelSelectors';
 import { selectOperationGroupId, selectOperationId, selectBrowseCategory } from '../../../core/state/panel/panelSlice';
 import { AzureResourceSelection } from './azureResourceSelection';
@@ -130,6 +131,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
 
   const relationshipIds = useDiscoveryPanelRelationshipIds();
   const isParallelBranch = useDiscoveryPanelIsParallelBranch();
+  const newNodePosition = useDiscoveryPanelNewNodePosition();
 
   const hasAzureResourceSelection = useCallback((operation: DiscoveryOperation<DiscoveryResultTypes>) => {
     return operation.properties.capabilities?.some((capability) => equals(capability, 'azureResourceSelection'));
@@ -182,6 +184,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
               nodeId: newNodeId,
               isParallelBranch,
               isTrigger: true,
+              newNodePosition,
             })
           );
         } else if (isTrigger) {
@@ -194,6 +197,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
               nodeId: requestTriggerNodeId,
               isParallelBranch: false,
               isTrigger: true,
+              newNodePosition,
             })
           );
 
@@ -207,6 +211,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
                 nodeId: actionNodeId,
                 isParallelBranch: false,
                 isTrigger: false,
+                newNodePosition,
               })
             );
           }, 100);
@@ -220,6 +225,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
               nodeId: newNodeId,
               isParallelBranch,
               isTrigger: false,
+              newNodePosition,
             })
           );
         }
@@ -235,6 +241,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
       relationshipIds,
       startAzureResourceSelection,
       startSwaggerSelection,
+      newNodePosition,
     ]
   );
 

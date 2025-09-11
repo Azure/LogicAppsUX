@@ -158,7 +158,13 @@ export const workflowSlice = createSlice({
     },
     pasteNode: (
       state: WorkflowState,
-      action: PayloadAction<{ nodeId: string; relationshipIds: RelationshipIds; operation: NodeOperation; isParallelBranch?: boolean }>
+      action: PayloadAction<{
+        nodeId: string;
+        relationshipIds: RelationshipIds;
+        operation: NodeOperation;
+        isParallelBranch?: boolean;
+        newNodePosition?: XYPosition;
+      }>
     ) => {
       const graph = getWorkflowNodeFromGraphState(state, action.payload.relationshipIds.graphId);
       if (!graph) {
@@ -171,6 +177,7 @@ export const workflowSlice = createSlice({
           nodeId: action.payload.nodeId,
           relationshipIds: action.payload.relationshipIds,
           isParallelBranch: action.payload.isParallelBranch,
+          newNodePosition: action.payload.newNodePosition,
         },
         graph,
         state.nodesMetadata,
@@ -178,12 +185,22 @@ export const workflowSlice = createSlice({
       );
     },
     pasteScopeNode: (state: WorkflowState, action: PayloadAction<PasteScopeNodePayload>) => {
-      const { relationshipIds, scopeNode, operations, nodesMetadata, allActions, isParallelBranch } = action.payload;
+      const { relationshipIds, scopeNode, operations, nodesMetadata, allActions, isParallelBranch, newNodePosition } = action.payload;
       const graph = getWorkflowNodeFromGraphState(state, relationshipIds.graphId);
       if (!graph) {
         throw new Error('graph not set');
       }
-      pasteScopeInWorkflow(scopeNode, graph, relationshipIds, operations, nodesMetadata, allActions, state, isParallelBranch);
+      pasteScopeInWorkflow(
+        scopeNode,
+        graph,
+        relationshipIds,
+        operations,
+        nodesMetadata,
+        allActions,
+        state,
+        isParallelBranch,
+        newNodePosition
+      );
     },
     moveNode: (state: WorkflowState, action: PayloadAction<MoveNodePayload>) => {
       if (!state.graph) {

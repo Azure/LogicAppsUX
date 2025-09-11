@@ -24,6 +24,9 @@ export const useDiscoveryPanelIsAddingTrigger = () =>
 export const useDiscoveryPanelIsParallelBranch = () =>
   useSelector(createSelector(getPanelState, (state) => state.discoveryContent.isParallelBranch));
 
+export const useDiscoveryPanelNewNodePosition = () =>
+  useSelector(createSelector(getPanelState, (state) => state.discoveryContent.newNodePosition));
+
 export const useDiscoveryPanelRelationshipIds = () =>
   useSelector(createSelector(getPanelState, (state) => state.discoveryContent.relationshipIds));
 

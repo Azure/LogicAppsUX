@@ -3,6 +3,7 @@ import type { NodesMetadata, Operations, WorkflowState } from '../state/workflow
 import type { WorkflowNode } from './models/workflowNode';
 import { addNewEdge, reassignEdgeSources, reassignEdgeTargets, removeEdge, applyIsRootNode } from './restructuringHelpers';
 import { containsIdTag, equals, getRecordEntry } from '@microsoft/logic-apps-shared';
+import type { XYPosition } from '@xyflow/react';
 
 export interface PasteScopeNodePayload {
   relationshipIds: RelationshipIds;
@@ -11,6 +12,7 @@ export interface PasteScopeNodePayload {
   nodesMetadata: NodesMetadata;
   allActions: string[];
   isParallelBranch?: boolean;
+  newNodePosition?: XYPosition;
 }
 
 export const pasteScopeInWorkflow = (
@@ -21,7 +23,8 @@ export const pasteScopeInWorkflow = (
   nodesMetadata: NodesMetadata,
   allActions: string[],
   state: WorkflowState,
-  isParallelBranch?: boolean
+  isParallelBranch?: boolean,
+  newNodePosition?: XYPosition
 ) => {
   const nodeId = scopeNode.id;
 
@@ -49,7 +52,16 @@ export const pasteScopeInWorkflow = (
   const isNewRoot = containsIdTag(parentId ?? '');
   const parentNodeId = newGraphId !== 'root' ? newGraphId : undefined;
 
-  nodesMetadata[nodeId] = { ...getRecordEntry(nodesMetadata, nodeId), graphId: newGraphId, parentNodeId, isRoot: isNewRoot };
+  nodesMetadata[nodeId] = {
+    ...getRecordEntry(nodesMetadata, nodeId),
+    graphId: newGraphId,
+    parentNodeId,
+    isRoot: isNewRoot,
+    actionMetadata: {
+      ...getRecordEntry(nodesMetadata, nodeId)?.actionMetadata,
+      position: newNodePosition,
+    },
+  };
   if (getRecordEntry(nodesMetadata, nodeId)?.isRoot === false) {
     delete nodesMetadata[nodeId].isRoot;
   }

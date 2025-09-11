@@ -13,6 +13,7 @@ import {
 } from '@microsoft/logic-apps-shared';
 import type { WorkflowEdgeType, WorkflowNodeType } from '@microsoft/logic-apps-shared';
 import type { ElkExtendedEdge, ElkNode } from 'elkjs';
+import type { XYPosition } from '@xyflow/react';
 
 export const isRootNode = (nodeId: string, nodesMetadata: NodesMetadata) => {
   return !!getRecordEntry(nodesMetadata, nodeId)?.isRoot;
@@ -41,6 +42,11 @@ export const DEFAULT_NODE_SIZE = {
   width: 200,
   height: 40,
 };
+
+export const getNewNodePosition = (pos: XYPosition = { x: 0, y: 0 }): XYPosition => ({
+  x: pos.x - DEFAULT_NODE_SIZE.width / 2,
+  y: pos.y - DEFAULT_NODE_SIZE.height / 2,
+});
 
 // Creating generic layout nodes and edges below
 
