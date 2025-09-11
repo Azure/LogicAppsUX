@@ -5,51 +5,6 @@ exports[`lib/panel/panelHeader/main > should render 1`] = `
   className="msla-panel-header"
   id="Node Title"
 >
-  <button
-    aria-label="Collapse"
-    className="fui-Button r1alrhcs collapse-toggle right ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
-    data-automation-id="msla-panel-header-collapse-nav"
-    id="msla-panel-header-collapse-nav"
-    onBlur={[Function]}
-    onClick={[Function]}
-    onFocus={[Function]}
-    onPointerEnter={[Function]}
-    onPointerLeave={[Function]}
-    type="button"
-  >
-    <span
-      className="fui-Button__icon rywnvv2"
-    >
-      <svg
-        aria-hidden={true}
-        className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
-        fill="currentColor"
-        height="1em"
-        viewBox="0 0 20 20"
-        width="1em"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M8.73 4.2a.75.75 0 0 1 1.06.03l5 5.25c.28.3.28.75 0 1.04l-5 5.25a.75.75 0 1 1-1.08-1.04L13.2 10l-4.5-4.73a.75.75 0 0 1 .02-1.06Zm-4 0a.75.75 0 0 1 1.06.03l5 5.25c.28.3.28.75 0 1.04l-5 5.25a.75.75 0 1 1-1.08-1.04L9.2 10l-4.5-4.73a.75.75 0 0 1 .02-1.06Z"
-          fill="currentColor"
-        />
-      </svg>
-      <svg
-        aria-hidden={true}
-        className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
-        fill="currentColor"
-        height="1em"
-        viewBox="0 0 20 20"
-        width="1em"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M8.65 4.15c.2-.2.5-.2.7 0l5.49 5.46c.21.22.21.57 0 .78l-5.49 5.46a.5.5 0 0 1-.7-.7L13.8 10 8.65 4.85a.5.5 0 0 1 0-.7Zm-4 0c.2-.2.5-.2.7 0l5.49 5.46c.21.22.21.57 0 .78l-5.49 5.46a.5.5 0 0 1-.7-.7L9.8 10 4.65 4.85a.5.5 0 0 1 0-.7Z"
-          fill="currentColor"
-        />
-      </svg>
-    </span>
-  </button>
   <div
     className="msla-panel-card-header"
   >
@@ -101,7 +56,7 @@ exports[`lib/panel/panelHeader/main > should render 1`] = `
       className="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
       data-automation-id="msla-panel-header-more-options"
       data-tabster="{"restorer":{"type":1}}"
-      id="menur2"
+      id="menur1"
       onBlur={[Function]}
       onClick={[Function]}
       onContextMenu={[Function]}
@@ -150,21 +105,11 @@ exports[`lib/panel/panelHeader/main > should render 1`] = `
         </svg>
       </span>
     </button>
-  </div>
-</div>
-`;
-
-exports[`lib/panel/panelHeader/main > should render with panel header buttons 1`] = `
-[
-  <div
-    className="msla-panel-header"
-    id="Node Title"
-  >
     <button
-      aria-label="Collapse"
-      className="fui-Button r1alrhcs collapse-toggle right ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
-      data-automation-id="msla-panel-header-collapse-nav"
-      id="msla-panel-header-collapse-nav"
+      aria-label="Close"
+      className="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
+      data-automation-id="msla-panel-header-close-nav"
+      id="msla-panel-header-close-nav"
       onBlur={[Function]}
       onClick={[Function]}
       onFocus={[Function]}
@@ -185,7 +130,7 @@ exports[`lib/panel/panelHeader/main > should render with panel header buttons 1`
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            d="M8.73 4.2a.75.75 0 0 1 1.06.03l5 5.25c.28.3.28.75 0 1.04l-5 5.25a.75.75 0 1 1-1.08-1.04L13.2 10l-4.5-4.73a.75.75 0 0 1 .02-1.06Zm-4 0a.75.75 0 0 1 1.06.03l5 5.25c.28.3.28.75 0 1.04l-5 5.25a.75.75 0 1 1-1.08-1.04L9.2 10l-4.5-4.73a.75.75 0 0 1 .02-1.06Z"
+            d="m3.9 4.05.07-.08a.75.75 0 0 1 .98-.07l.08.07L10 8.94l4.97-4.97a.75.75 0 0 1 .98-.07l.08.07c.27.27.3.68.07.98l-.07.08L11.06 10l4.97 4.97c.27.27.3.68.07.98l-.07.08a.75.75 0 0 1-.98.07l-.08-.07L10 11.06l-4.97 4.97a.75.75 0 0 1-.98.07l-.08-.07a.75.75 0 0 1-.07-.98l.07-.08L8.94 10 3.97 5.03a.75.75 0 0 1-.07-.98l.07-.08-.07.08Z"
             fill="currentColor"
           />
         </svg>
@@ -199,12 +144,22 @@ exports[`lib/panel/panelHeader/main > should render with panel header buttons 1`
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            d="M8.65 4.15c.2-.2.5-.2.7 0l5.49 5.46c.21.22.21.57 0 .78l-5.49 5.46a.5.5 0 0 1-.7-.7L13.8 10 8.65 4.85a.5.5 0 0 1 0-.7Zm-4 0c.2-.2.5-.2.7 0l5.49 5.46c.21.22.21.57 0 .78l-5.49 5.46a.5.5 0 0 1-.7-.7L9.8 10 4.65 4.85a.5.5 0 0 1 0-.7Z"
+            d="m4.09 4.22.06-.07a.5.5 0 0 1 .63-.06l.07.06L10 9.29l5.15-5.14a.5.5 0 0 1 .63-.06l.07.06c.18.17.2.44.06.63l-.06.07L10.71 10l5.14 5.15c.18.17.2.44.06.63l-.06.07a.5.5 0 0 1-.63.06l-.07-.06L10 10.71l-5.15 5.14a.5.5 0 0 1-.63.06l-.07-.06a.5.5 0 0 1-.06-.63l.06-.07L9.29 10 4.15 4.85a.5.5 0 0 1-.06-.63l.06-.07-.06.07Z"
             fill="currentColor"
           />
         </svg>
       </span>
     </button>
+  </div>
+</div>
+`;
+
+exports[`lib/panel/panelHeader/main > should render with panel header buttons 1`] = `
+[
+  <div
+    className="msla-panel-header"
+    id="Node Title"
+  >
     <div
       className="msla-panel-card-header"
     >
@@ -256,7 +211,7 @@ exports[`lib/panel/panelHeader/main > should render with panel header buttons 1`
         className="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
         data-automation-id="msla-panel-header-more-options"
         data-tabster="{"restorer":{"type":1}}"
-        id="menura"
+        id="menur9"
         onBlur={[Function]}
         onClick={[Function]}
         onContextMenu={[Function]}
@@ -300,6 +255,51 @@ exports[`lib/panel/panelHeader/main > should render with panel header buttons 1`
           >
             <path
               d="M12 7.75a1.75 1.75 0 1 1 0-3.5 1.75 1.75 0 0 1 0 3.5Zm0 6a1.75 1.75 0 1 1 0-3.5 1.75 1.75 0 0 1 0 3.5ZM10.25 18a1.75 1.75 0 1 0 3.5 0 1.75 1.75 0 0 0-3.5 0Z"
+              fill="currentColor"
+            />
+          </svg>
+        </span>
+      </button>
+      <button
+        aria-label="Close"
+        className="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
+        data-automation-id="msla-panel-header-close-nav"
+        id="msla-panel-header-close-nav"
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onPointerEnter={[Function]}
+        onPointerLeave={[Function]}
+        type="button"
+      >
+        <span
+          className="fui-Button__icon rywnvv2"
+        >
+          <svg
+            aria-hidden={true}
+            className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+            fill="currentColor"
+            height="1em"
+            viewBox="0 0 20 20"
+            width="1em"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m3.9 4.05.07-.08a.75.75 0 0 1 .98-.07l.08.07L10 8.94l4.97-4.97a.75.75 0 0 1 .98-.07l.08.07c.27.27.3.68.07.98l-.07.08L11.06 10l4.97 4.97c.27.27.3.68.07.98l-.07.08a.75.75 0 0 1-.98.07l-.08-.07L10 11.06l-4.97 4.97a.75.75 0 0 1-.98.07l-.08-.07a.75.75 0 0 1-.07-.98l.07-.08L8.94 10 3.97 5.03a.75.75 0 0 1-.07-.98l.07-.08-.07.08Z"
+              fill="currentColor"
+            />
+          </svg>
+          <svg
+            aria-hidden={true}
+            className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+            fill="currentColor"
+            height="1em"
+            viewBox="0 0 20 20"
+            width="1em"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m4.09 4.22.06-.07a.5.5 0 0 1 .63-.06l.07.06L10 9.29l5.15-5.14a.5.5 0 0 1 .63-.06l.07.06c.18.17.2.44.06.63l-.06.07L10.71 10l5.14 5.15c.18.17.2.44.06.63l-.06.07a.5.5 0 0 1-.63.06l-.07-.06L10 10.71l-5.15 5.14a.5.5 0 0 1-.63.06l-.07-.06a.5.5 0 0 1-.06-.63l.06-.07L9.29 10 4.15 4.85a.5.5 0 0 1-.06-.63l.06-.07-.06.07Z"
               fill="currentColor"
             />
           </svg>
@@ -355,51 +355,6 @@ exports[`lib/panel/panelHeader/main > should render with panel header menu 1`] =
   className="msla-panel-header"
   id="Node Title"
 >
-  <button
-    aria-label="Collapse"
-    className="fui-Button r1alrhcs collapse-toggle right ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
-    data-automation-id="msla-panel-header-collapse-nav"
-    id="msla-panel-header-collapse-nav"
-    onBlur={[Function]}
-    onClick={[Function]}
-    onFocus={[Function]}
-    onPointerEnter={[Function]}
-    onPointerLeave={[Function]}
-    type="button"
-  >
-    <span
-      className="fui-Button__icon rywnvv2"
-    >
-      <svg
-        aria-hidden={true}
-        className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
-        fill="currentColor"
-        height="1em"
-        viewBox="0 0 20 20"
-        width="1em"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M8.73 4.2a.75.75 0 0 1 1.06.03l5 5.25c.28.3.28.75 0 1.04l-5 5.25a.75.75 0 1 1-1.08-1.04L13.2 10l-4.5-4.73a.75.75 0 0 1 .02-1.06Zm-4 0a.75.75 0 0 1 1.06.03l5 5.25c.28.3.28.75 0 1.04l-5 5.25a.75.75 0 1 1-1.08-1.04L9.2 10l-4.5-4.73a.75.75 0 0 1 .02-1.06Z"
-          fill="currentColor"
-        />
-      </svg>
-      <svg
-        aria-hidden={true}
-        className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
-        fill="currentColor"
-        height="1em"
-        viewBox="0 0 20 20"
-        width="1em"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M8.65 4.15c.2-.2.5-.2.7 0l5.49 5.46c.21.22.21.57 0 .78l-5.49 5.46a.5.5 0 0 1-.7-.7L13.8 10 8.65 4.85a.5.5 0 0 1 0-.7Zm-4 0c.2-.2.5-.2.7 0l5.49 5.46c.21.22.21.57 0 .78l-5.49 5.46a.5.5 0 0 1-.7-.7L9.8 10 4.65 4.85a.5.5 0 0 1 0-.7Z"
-          fill="currentColor"
-        />
-      </svg>
-    </span>
-  </button>
   <div
     className="msla-panel-card-header"
   >
@@ -451,7 +406,7 @@ exports[`lib/panel/panelHeader/main > should render with panel header menu 1`] =
       className="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
       data-automation-id="msla-panel-header-more-options"
       data-tabster="{"restorer":{"type":1}}"
-      id="menur6"
+      id="menur5"
       onBlur={[Function]}
       onClick={[Function]}
       onContextMenu={[Function]}
@@ -500,21 +455,11 @@ exports[`lib/panel/panelHeader/main > should render with panel header menu 1`] =
         </svg>
       </span>
     </button>
-  </div>
-</div>
-`;
-
-exports[`lib/panel/panelHeader/main > should render with panel header trigger info message 1`] = `
-[
-  <div
-    className="msla-panel-header"
-    id="Node Title"
-  >
     <button
-      aria-label="Collapse"
-      className="fui-Button r1alrhcs collapse-toggle right ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
-      data-automation-id="msla-panel-header-collapse-nav"
-      id="msla-panel-header-collapse-nav"
+      aria-label="Close"
+      className="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
+      data-automation-id="msla-panel-header-close-nav"
+      id="msla-panel-header-close-nav"
       onBlur={[Function]}
       onClick={[Function]}
       onFocus={[Function]}
@@ -535,7 +480,7 @@ exports[`lib/panel/panelHeader/main > should render with panel header trigger in
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            d="M8.73 4.2a.75.75 0 0 1 1.06.03l5 5.25c.28.3.28.75 0 1.04l-5 5.25a.75.75 0 1 1-1.08-1.04L13.2 10l-4.5-4.73a.75.75 0 0 1 .02-1.06Zm-4 0a.75.75 0 0 1 1.06.03l5 5.25c.28.3.28.75 0 1.04l-5 5.25a.75.75 0 1 1-1.08-1.04L9.2 10l-4.5-4.73a.75.75 0 0 1 .02-1.06Z"
+            d="m3.9 4.05.07-.08a.75.75 0 0 1 .98-.07l.08.07L10 8.94l4.97-4.97a.75.75 0 0 1 .98-.07l.08.07c.27.27.3.68.07.98l-.07.08L11.06 10l4.97 4.97c.27.27.3.68.07.98l-.07.08a.75.75 0 0 1-.98.07l-.08-.07L10 11.06l-4.97 4.97a.75.75 0 0 1-.98.07l-.08-.07a.75.75 0 0 1-.07-.98l.07-.08L8.94 10 3.97 5.03a.75.75 0 0 1-.07-.98l.07-.08-.07.08Z"
             fill="currentColor"
           />
         </svg>
@@ -549,12 +494,22 @@ exports[`lib/panel/panelHeader/main > should render with panel header trigger in
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            d="M8.65 4.15c.2-.2.5-.2.7 0l5.49 5.46c.21.22.21.57 0 .78l-5.49 5.46a.5.5 0 0 1-.7-.7L13.8 10 8.65 4.85a.5.5 0 0 1 0-.7Zm-4 0c.2-.2.5-.2.7 0l5.49 5.46c.21.22.21.57 0 .78l-5.49 5.46a.5.5 0 0 1-.7-.7L9.8 10 4.65 4.85a.5.5 0 0 1 0-.7Z"
+            d="m4.09 4.22.06-.07a.5.5 0 0 1 .63-.06l.07.06L10 9.29l5.15-5.14a.5.5 0 0 1 .63-.06l.07.06c.18.17.2.44.06.63l-.06.07L10.71 10l5.14 5.15c.18.17.2.44.06.63l-.06.07a.5.5 0 0 1-.63.06l-.07-.06L10 10.71l-5.15 5.14a.5.5 0 0 1-.63.06l-.07-.06a.5.5 0 0 1-.06-.63l.06-.07L9.29 10 4.15 4.85a.5.5 0 0 1-.06-.63l.06-.07-.06.07Z"
             fill="currentColor"
           />
         </svg>
       </span>
     </button>
+  </div>
+</div>
+`;
+
+exports[`lib/panel/panelHeader/main > should render with panel header trigger info message 1`] = `
+[
+  <div
+    className="msla-panel-header"
+    id="Node Title"
+  >
     <div
       className="msla-panel-card-header"
     >
@@ -606,7 +561,7 @@ exports[`lib/panel/panelHeader/main > should render with panel header trigger in
         className="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
         data-automation-id="msla-panel-header-more-options"
         data-tabster="{"restorer":{"type":1}}"
-        id="menure"
+        id="menurd"
         onBlur={[Function]}
         onClick={[Function]}
         onContextMenu={[Function]}
@@ -650,6 +605,51 @@ exports[`lib/panel/panelHeader/main > should render with panel header trigger in
           >
             <path
               d="M12 7.75a1.75 1.75 0 1 1 0-3.5 1.75 1.75 0 0 1 0 3.5Zm0 6a1.75 1.75 0 1 1 0-3.5 1.75 1.75 0 0 1 0 3.5ZM10.25 18a1.75 1.75 0 1 0 3.5 0 1.75 1.75 0 0 0-3.5 0Z"
+              fill="currentColor"
+            />
+          </svg>
+        </span>
+      </button>
+      <button
+        aria-label="Close"
+        className="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
+        data-automation-id="msla-panel-header-close-nav"
+        id="msla-panel-header-close-nav"
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onPointerEnter={[Function]}
+        onPointerLeave={[Function]}
+        type="button"
+      >
+        <span
+          className="fui-Button__icon rywnvv2"
+        >
+          <svg
+            aria-hidden={true}
+            className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+            fill="currentColor"
+            height="1em"
+            viewBox="0 0 20 20"
+            width="1em"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m3.9 4.05.07-.08a.75.75 0 0 1 .98-.07l.08.07L10 8.94l4.97-4.97a.75.75 0 0 1 .98-.07l.08.07c.27.27.3.68.07.98l-.07.08L11.06 10l4.97 4.97c.27.27.3.68.07.98l-.07.08a.75.75 0 0 1-.98.07l-.08-.07L10 11.06l-4.97 4.97a.75.75 0 0 1-.98.07l-.08-.07a.75.75 0 0 1-.07-.98l.07-.08L8.94 10 3.97 5.03a.75.75 0 0 1-.07-.98l.07-.08-.07.08Z"
+              fill="currentColor"
+            />
+          </svg>
+          <svg
+            aria-hidden={true}
+            className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+            fill="currentColor"
+            height="1em"
+            viewBox="0 0 20 20"
+            width="1em"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m4.09 4.22.06-.07a.5.5 0 0 1 .63-.06l.07.06L10 9.29l5.15-5.14a.5.5 0 0 1 .63-.06l.07.06c.18.17.2.44.06.63l-.06.07L10.71 10l5.14 5.15c.18.17.2.44.06.63l-.06.07a.5.5 0 0 1-.63.06l-.07-.06L10 10.71l-5.15 5.14a.5.5 0 0 1-.63.06l-.07-.06a.5.5 0 0 1-.06-.63l.06-.07L9.29 10 4.15 4.85a.5.5 0 0 1-.06-.63l.06-.07-.06.07Z"
               fill="currentColor"
             />
           </svg>
