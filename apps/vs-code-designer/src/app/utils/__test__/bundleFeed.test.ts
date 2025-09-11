@@ -10,11 +10,6 @@ vi.mock('../../localize', () => ({
   localize: vi.fn((key: string, defaultValue: string) => defaultValue),
 }));
 
-// Mock funcVersion
-vi.mock('../funcCoreTools/funcVersion', () => ({
-  getFunctionsCommand: vi.fn(() => 'func'),
-}));
-
 const mockedFse = vi.mocked(fse);
 const mockedExecSync = vi.mocked(cp.execSync);
 

@@ -241,11 +241,6 @@ export const unitTestExplorer = 'unitTestExplorer';
 export const verifyConnectionKeysSetting = 'verifyConnectionKeys';
 export const useSmbDeployment = 'useSmbDeploymentForHybrid';
 
-// TODO (ccastrotrejo): To be removed
-export const autoRuntimeDependenciesPathSettingKey = 'autoRuntimeDependenciesPath';
-export const defaultLogicAppsFolder = '.azurelogicapps';
-export const defaultDependencyPathValue = path.join(os.homedir(), defaultLogicAppsFolder, 'dependencies');
-
 // host.json
 export const extensionBundleId = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';
 export const targetBundleKey = 'FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI';
@@ -263,13 +258,12 @@ export const isZipDeployEnabledSetting = 'IS_ZIP_DEPLOY_ENABLED';
 // Project
 export const defaultVersionRange = '[1.*, 2.0.0)'; // Might need to be changed
 export const funcWatchProblemMatcher = '$func-watch';
-export const extInstallCommand = 'extensions install';
-export const extInstallTaskName = `${func}: ${extInstallCommand}`;
+export const extInstallTaskName = `${func}: extensions install`;
 export const tasksVersion = '2.0.0';
 export const launchVersion = '0.2.0';
 export const dotnetPublishTaskLabel = 'publish';
 export const defaultFunctionCoreToolsFolder = '.azure-functions-core-tools';
-export const defaultAzuritePathValue = path.join(os.homedir(), defaultLogicAppsFolder, '.azurite');
+export const defaultAzuritePathValue = path.join(os.homedir(), '.azurite');
 export const defaultExtensionBundlePathValue = path.join(
   os.homedir(),
   defaultFunctionCoreToolsFolder,
@@ -278,14 +272,6 @@ export const defaultExtensionBundlePathValue = path.join(
   extensionBundleId
 );
 export const defaultDataMapperVersion = 2;
-
-// Fallback Dependency Versions
-export const DependencyVersion = {
-  dotnet6: '6.0.413',
-  funcCoreTools: '4.0.7030',
-  nodeJs: '18.17.1',
-} as const;
-export type DependencyVersion = (typeof DependencyVersion)[keyof typeof DependencyVersion];
 
 export const hostFileContent = {
   version: '2.0',
@@ -302,12 +288,6 @@ export const hostFileContent = {
   },
 };
 
-export const DependencyDefaultPath = {
-  dotnet: 'dotnet',
-  funcCoreTools: 'func',
-  node: 'node',
-} as const;
-export type DependencyDefaultPath = (typeof DependencyDefaultPath)[keyof typeof DependencyDefaultPath];
 // .NET
 export const DotnetVersion = {
   net8: 'net8.0',
@@ -320,12 +300,6 @@ export type DotnetVersion = (typeof DotnetVersion)[keyof typeof DotnetVersion];
 
 export const dotnetExtensionId = 'ms-dotnettools.csharp';
 
-// Packages Manager
-export const PackageManager = {
-  npm: 'npm',
-  brew: 'brew',
-} as const;
-export type PackageManager = (typeof PackageManager)[keyof typeof PackageManager];
 // Operating System Platforms
 export const Platform = {
   windows: 'win32',

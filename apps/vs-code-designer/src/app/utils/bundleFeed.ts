@@ -12,7 +12,6 @@ import * as semver from 'semver';
 import * as vscode from 'vscode';
 import { localize } from '../../localize';
 import { ext } from '../../extensionVariables';
-import { getFunctionsCommand } from './funcCoreTools/funcVersion';
 import * as cp from 'child_process';
 import * as fse from 'fs-extra';
 /**
@@ -290,7 +289,7 @@ export async function getBundleVersionNumber(): Promise<string> {
  * @returns {string} Extension bundle folder path.
  */
 export async function getExtensionBundleFolder(): Promise<string> {
-  const command = `${getFunctionsCommand()} GetExtensionBundlePath`;
+  const command = 'func GetExtensionBundlePath';
   const outputChannel = ext.outputChannel;
 
   if (outputChannel) {
