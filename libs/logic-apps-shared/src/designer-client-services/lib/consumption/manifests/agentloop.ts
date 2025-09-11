@@ -65,7 +65,7 @@ export default {
           'x-ms-create-new-resource': true,
           'x-ms-visibility': 'important',
           'x-ms-editor': 'combobox',
-          'x-ms-connection-required': true,
+          'x-ms-connection-required': false,
           'x-ms-connection-options': {
             'x-ms-visibility': 'subLabelOnly',
           },
