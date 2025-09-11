@@ -79,19 +79,18 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
   isUnitTest,
   isLocal,
   runId,
-  kind,
 }) => {
   const intl = useIntl();
   const vscode = useContext(VSCodeContext);
   const dispatch = DesignerStore.dispatch;
   const designerState = DesignerStore.getState();
-  const isA2AWorkflow = useMemo(() => {
-    console.log('charlie', kind);
-    return equals(kind, 'agent', false);
-  }, [kind]);
-
   const isMonitoringView = designerState.designerOptions.isMonitoringView;
   const designerIsDirty = useIsDesignerDirty();
+
+  const shouldRenderChatButton = useMemo(() => {
+    const isA2AWorkflow = equals(designerState.workflow.workflowKind, 'agent', false);
+    return isA2AWorkflow && !isUnitTest && !isMonitoringView;
+  }, [designerState.workflow.workflowKind, isMonitoringView, isUnitTest]);
 
   const { isLoading: isSaving, mutate: saveWorkflowMutate } = useMutation(async () => {
     const { definition, parameters, connectionReferences } = await serializeBJSWorkflow(designerState, {
@@ -267,10 +266,6 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
   );
 
   const isSaveDisabled = useMemo(() => isSaving || haveErrors || !designerIsDirty, [isSaving, haveErrors, designerIsDirty]);
-
-  const buttonCommonProps: any = {
-    appearance: 'transparent',
-  };
 
   const baseItems = useMemo(
     () => [
@@ -450,8 +445,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
           {buttonProps.renderTextIcon}
         </ToolbarButton>
       ))}
-
-      {isA2AWorkflow && !isUnitTest && !isMonitoringView ? <FloatingChatButton {...buttonCommonProps} isDarkMode={isDarkMode} /> : null}
+      {shouldRenderChatButton ? <FloatingChatButton appearance="transparent" isDarkMode={isDarkMode} /> : null}
     </Toolbar>
   );
 };
