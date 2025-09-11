@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 import {
   dotnetPublishTaskLabel,
-  funcDependencyName,
   dotnetExtensionId,
   func,
   funcWatchProblemMatcher,
@@ -12,7 +11,6 @@ import {
   show64BitWarningSetting,
 } from '../../../constants';
 import { localize } from '../../../localize';
-import { binariesExist } from '../../utils/binaries';
 import { getProjFiles, getTargetFramework, getDotnetDebugSubpath, tryGetFuncVersion } from '../../utils/dotnet/dotnet';
 import type { ProjectFile } from '../../utils/dotnet/dotnet';
 import { tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
@@ -108,7 +106,8 @@ export class InitDotnetProjectStep extends InitProjectStepBase {
   protected getTasks(): TaskDefinition[] {
     const commonArgs: string[] = ['/property:GenerateFullPaths=true', '/consoleloggerparameters:NoSummary'];
     const releaseArgs: string[] = ['--configuration', 'Release'];
-    const funcBinariesExist = binariesExist(funcDependencyName);
+    // TODO (ccastrotrejo)-remove
+    const funcBinariesExist = true;
     const binariesOptions = funcBinariesExist
       ? {
           options: {
@@ -122,14 +121,14 @@ export class InitDotnetProjectStep extends InitProjectStepBase {
     return [
       {
         label: 'clean',
-        command: '${config:azureLogicAppsStandard.dotnetBinaryPath}',
+        command: 'dotnet',
         args: ['clean', ...commonArgs],
         type: 'process',
         problemMatcher: '$msCompile',
       },
       {
         label: 'build',
-        command: '${config:azureLogicAppsStandard.dotnetBinaryPath}',
+        command: 'dotnet',
         args: ['build', ...commonArgs],
         type: 'process',
         dependsOn: 'clean',
@@ -141,14 +140,14 @@ export class InitDotnetProjectStep extends InitProjectStepBase {
       },
       {
         label: 'clean release',
-        command: '${config:azureLogicAppsStandard.dotnetBinaryPath}',
+        command: 'dotnet',
         args: ['clean', ...releaseArgs, ...commonArgs],
         type: 'process',
         problemMatcher: '$msCompile',
       },
       {
         label: dotnetPublishTaskLabel,
-        command: '${config:azureLogicAppsStandard.dotnetBinaryPath}',
+        command: 'dotnet',
         args: ['publish', ...releaseArgs, ...commonArgs],
         type: 'process',
         dependsOn: 'clean release',
@@ -159,7 +158,7 @@ export class InitDotnetProjectStep extends InitProjectStepBase {
         type: funcBinariesExist ? 'shell' : func,
         dependsOn: 'build',
         ...binariesOptions,
-        command: funcBinariesExist ? '${config:azureLogicAppsStandard.funcCoreToolsBinaryPath}' : hostStartCommand,
+        command: funcBinariesExist ? 'func' : hostStartCommand,
         args: funcBinariesExist ? ['host', 'start'] : undefined,
         isBackground: true,
         problemMatcher: funcWatchProblemMatcher,

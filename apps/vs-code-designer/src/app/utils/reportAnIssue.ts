@@ -21,13 +21,7 @@ const MAX_INLINE_MESSAGE_CHARS = 1000;
 const MAX_ISSUE_BODY_CHARS = 4000;
 
 // Whitelisted extension configuration settings
-const SETTINGS_WHITELIST: string[] = [
-  'dataMapperVersion',
-  'validateFuncCoreTools',
-  'autoRuntimeDependenciesPath',
-  'autoRuntimeDependenciesValidationAndInstallation',
-  'parameterizeConnectionsInProjectLoad',
-];
+const SETTINGS_WHITELIST: string[] = ['dataMapperVersion', 'parameterizeConnectionsInProjectLoad'];
 
 /**
  * Generates a "Report an Issue" link from the provided error context and opens it in the user's browser.

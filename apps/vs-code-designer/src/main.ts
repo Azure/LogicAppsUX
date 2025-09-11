@@ -11,14 +11,13 @@ import { registerCommands } from './app/commands/registerCommands';
 import { getResourceGroupsApi } from './app/resourcesExtension/getExtensionApi';
 import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTreeItemWithProjects';
 import { downloadExtensionBundle } from './app/utils/bundleFeed';
-import { stopAllDesignTimeApis } from './app/utils/codeless/startDesignTimeApi';
+import { promptStartDesignTimeOption, stopAllDesignTimeApis } from './app/utils/codeless/startDesignTimeApi';
 import { UriHandler } from './app/utils/codeless/urihandler';
 import { getExtensionVersion } from './app/utils/extension';
 import { registerFuncHostTaskEvents } from './app/utils/funcCoreTools/funcHostTask';
 import { verifyVSCodeConfigOnActivate } from './app/utils/vsCodeConfig/verifyVSCodeConfigOnActivate';
-import { extensionCommand, logicAppFilter } from './constants';
+import { autoStartDesignTimeSetting, extensionCommand, logicAppFilter, showStartDesignTimeMessageSetting } from './constants';
 import { ext } from './extensionVariables';
-import { startOnboarding } from './onboarding';
 import { registerAppServiceExtensionVariables } from '@microsoft/vscode-azext-azureappservice';
 import { verifyLocalConnectionKeys } from './app/utils/appSettings/connectionKeys';
 import {
@@ -33,9 +32,10 @@ import { convertToWorkspace } from './app/commands/convertToWorkspace';
 import TelemetryReporter from '@vscode/extension-telemetry';
 import { getAllCustomCodeFunctionsProjects } from './app/utils/customCodeUtils';
 import { createVSCodeAzureSubscriptionProvider } from './app/utils/services/VSCodeAzureSubscriptionProvider';
-import { logExtensionSettings, logSubscriptions } from './app/utils/telemetry';
+import { logExtensionSettings, logSubscriptions, runWithDurationTelemetry } from './app/utils/telemetry';
 import { registerAzureUtilsExtensionVariables } from '@microsoft/vscode-azext-azureutils';
 import { getAzExtResourceType, getAzureResourcesExtensionApi } from '@microsoft/vscode-azureresources-api';
+import { validateTasksJson } from './app/utils/vsCodeConfig/tasks';
 
 const perfStats = {
   loadStartTime: Date.now(),
@@ -112,7 +112,14 @@ export async function activate(context: vscode.ExtensionContext) {
     downloadExtensionBundle(activateContext);
     promptParameterizeConnections(activateContext, false);
     verifyLocalConnectionKeys(activateContext);
-    await startOnboarding(activateContext);
+
+    // TODO (ccastrotrjeo): Move to somewhere else
+    await callWithTelemetryAndErrorHandling(autoStartDesignTimeSetting, async (actionContext: IActionContext) => {
+      await runWithDurationTelemetry(actionContext, showStartDesignTimeMessageSetting, async () => {
+        await validateTasksJson(actionContext, vscode.workspace.workspaceFolders);
+        await promptStartDesignTimeOption(activateContext);
+      });
+    });
 
     // Removed for unit test codefull experience standby
     //await prepareTestExplorer(context, activateContext);

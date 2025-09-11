@@ -4,9 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
-import { useBinariesDependencies } from '../binaries';
 import { executeCommand, wrapArgInQuotes } from '../funcCoreTools/cpUtils';
-import { getDotNetCommand, getLocalDotNetVersionFromBinaries } from './dotnet';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { FuncVersion } from '@microsoft/vscode-extension-logic-apps';
 import * as path from 'path';
@@ -41,7 +39,7 @@ export async function executeDotnetTemplateCommand(
   return await executeCommand(
     undefined,
     workingDirectory,
-    getDotNetCommand(),
+    'dotnet',
     wrapArgInQuotes(jsonDllPath),
     '--templateDir',
     wrapArgInQuotes(getDotnetTemplateDir(version, projTemplateKey)),
@@ -86,22 +84,7 @@ export async function validateDotnetInstalled(context: IActionContext): Promise<
  */
 export async function getFramework(context: IActionContext, workingDirectory: string | undefined, isCodeful = false): Promise<string> {
   if (!cachedFramework || isCodeful) {
-    let versions = '';
-    const dotnetBinariesLocation = getDotNetCommand();
-
-    versions = useBinariesDependencies() ? await getLocalDotNetVersionFromBinaries() : versions;
-
-    try {
-      versions += await executeCommand(undefined, workingDirectory, dotnetBinariesLocation, '--version');
-    } catch {
-      // ignore
-    }
-
-    try {
-      versions += await executeCommand(undefined, workingDirectory, dotnetBinariesLocation, '--list-sdks');
-    } catch {
-      // ignore
-    }
+    const versions = '8';
 
     // Prioritize "LTS", then "Current", then "Preview"
     const netVersions: string[] = ['8', '6', '3', '2', '9', '10'];

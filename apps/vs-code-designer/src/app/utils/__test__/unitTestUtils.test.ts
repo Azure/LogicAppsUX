@@ -1928,14 +1928,13 @@ namespace <%= LogicAppName %>.Tests
   });
 
   describe('updateSolutionWithProject', () => {
-    const testDotnetBinaryPath = path.join('test', 'path', 'to', 'dotnet');
     let pathExistsSpy: any;
     let executeCommandSpy: any;
 
     beforeEach(() => {
       vi.spyOn(ext.outputChannel, 'appendLog').mockImplementation(() => {});
       vi.spyOn(util, 'promisify').mockImplementation((fn) => fn);
-      vi.spyOn(vscodeConfigSettings, 'getGlobalSetting').mockReturnValue(testDotnetBinaryPath);
+      vi.spyOn(vscodeConfigSettings, 'getGlobalSetting').mockReturnValue('dotnet');
       executeCommandSpy = vi.spyOn(cpUtils, 'executeCommand').mockResolvedValue('');
     });
 
@@ -1955,7 +1954,7 @@ namespace <%= LogicAppName %>.Tests
       expect(executeCommandSpy).toHaveBeenCalledWith(
         ext.outputChannel,
         testsDirectory,
-        `${testDotnetBinaryPath} sln "${path.join(testsDirectory, 'Tests.sln')}" add "${fakeLogicAppName}.csproj"`
+        `${'dotnet'} sln "${path.join(testsDirectory, 'Tests.sln')}" add "${fakeLogicAppName}.csproj"`
       );
     });
 
@@ -1968,11 +1967,11 @@ namespace <%= LogicAppName %>.Tests
       await updateTestsSln(testsDirectory, logicAppCsprojPath);
 
       expect(executeCommandSpy).toHaveBeenCalledTimes(2);
-      expect(executeCommandSpy).toHaveBeenCalledWith(ext.outputChannel, testsDirectory, `${testDotnetBinaryPath} new sln -n Tests`);
+      expect(executeCommandSpy).toHaveBeenCalledWith(ext.outputChannel, testsDirectory, `${'dotnet'} new sln -n Tests`);
       expect(executeCommandSpy).toHaveBeenCalledWith(
         ext.outputChannel,
         testsDirectory,
-        `${testDotnetBinaryPath} sln "${path.join(testsDirectory, 'Tests.sln')}" add "${fakeLogicAppName}.csproj"`
+        `${'dotnet'} sln "${path.join(testsDirectory, 'Tests.sln')}" add "${fakeLogicAppName}.csproj"`
       );
     });
   });
