@@ -29,7 +29,7 @@ test.describe(
       await validatePanel('open');
 
       // Collapse the panel and verify.
-      await page.getByTestId('msla-panel-header-close-nav').click();
+      await page.getByTestId('msla-panel-header-close-nav').first().click();
       await validatePanel('closed');
     });
 
@@ -56,11 +56,11 @@ test.describe(
       await validatePanel('open');
 
       // Collapse the panel and verify.
-      await page.getByTestId('msla-panel-header-close-nav').click();
+      await page.getByTestId('msla-panel-header-close-nav').first().click();
       await validatePanel('closed');
     });
 
-    test('Can have both selected and pinned operations open, and collapse & expand the panel', async ({ page }) => {
+    test('Can have both selected and pinned operations open, and close the panel', async ({ page }) => {
       const validatePanel = async (state: 'open' | 'closed') => {
         if (state === 'open') {
           // Node panel tab should be open with 'Parse JSON' node.
@@ -95,7 +95,7 @@ test.describe(
       await validatePanel('open');
 
       // Collapse the panel and verify.
-      await page.getByTestId('msla-panel-header-close-nav').click();
+      await page.getByTestId('msla-panel-header-close-nav').first().click();
       await validatePanel('closed');
     });
 
