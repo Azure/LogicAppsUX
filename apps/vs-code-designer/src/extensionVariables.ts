@@ -6,7 +6,6 @@ import type { VSCodeAzureSubscriptionProvider } from '@microsoft/vscode-azext-az
 import type DataMapperPanel from './app/commands/dataMapper/DataMapperPanel';
 import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTreeItemWithProjects';
 import type { TestData } from './app/tree/unitTestTree';
-import { dotnet, func, node, npm } from './constants';
 import type { ContainerApp, Site } from '@azure/arm-appservice';
 import type { IActionContext, IAzExtOutputChannel } from '@microsoft/vscode-azext-utils';
 import type { AzureHostExtensionApi } from '@microsoft/vscode-azext-utils/hostapi';
@@ -73,16 +72,6 @@ export namespace ext {
 
   // Data Mapper panel
   export const dataMapPanelManagers: DataMapperPanelDictionary = {};
-
-  // Functions
-  export const funcCliPath: string = func;
-
-  // DotNet
-  export const dotNetCliPath: string = dotnet;
-
-  // Node Js
-  export const nodeJsCliPath: string = node;
-  export const npmCliPath: string = npm;
 
   // WebViews
   export const webViewKey = {

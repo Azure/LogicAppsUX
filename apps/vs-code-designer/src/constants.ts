@@ -67,8 +67,6 @@ export const dotnetDependencyName = 'DotNetSDK';
 
 // Node
 export const node = 'node';
-export const npm = 'npm';
-export const nodeJsDependencyName = 'NodeJs';
 
 // Workflow
 export const workflowLocationKey = 'WORKFLOWS_LOCATION_NAME';
