@@ -7,32 +7,7 @@ test.describe(
     tag: '@mock',
   },
   () => {
-    test('Can collapse and expand panel with no node selected or pinned', async ({ page }) => {
-      const validatePanel = async (state: 'open' | 'closed') => {
-        if (state === 'open') {
-          await expect(page.locator('.msla-panel-container-nested .msla-panel-select-card-container-empty')).toBeVisible();
-          return;
-        }
-
-        await expect(page.locator('.msla-panel-container-nested')).not.toBeVisible();
-      };
-
-      await page.goto('/');
-      await GoToMockWorkflow(page, 'Panel');
-
-      // Panel should be closed.
-      await validatePanel('closed');
-
-      // Expand the panel and verify.
-      await page.getByTestId('msla-panel-header-close-nav').click();
-      await validatePanel('open');
-
-      // Collapse the panel and verify.
-      await page.getByTestId('msla-panel-header-close-nav').click();
-      await validatePanel('closed');
-    });
-
-    test('Can select a node, and collapse & expand the panel', async ({ page }) => {
+    test('Can select a node, and close the panel', async ({ page }) => {
       const validatePanel = async (state: 'open' | 'closed') => {
         if (state === 'open') {
           await expect(page.locator('.msla-panel-container-nested .msla-panel-border-selected')).toBeVisible();
@@ -56,13 +31,9 @@ test.describe(
       // Collapse the panel and verify.
       await page.getByTestId('msla-panel-header-close-nav').click();
       await validatePanel('closed');
-
-      // Expand the panel and verify.
-      await page.getByTestId('msla-panel-header-close-nav').click();
-      await validatePanel('open');
     });
 
-    test('Can pin a node, and collapse & expand the panel', async ({ page }) => {
+    test('Can pin a node, and close the panel', async ({ page }) => {
       const validatePanel = async (state: 'open' | 'closed') => {
         if (state === 'open') {
           await expect(page.locator('.msla-panel-container-nested .msla-panel-border-selected')).toBeVisible();
@@ -87,10 +58,6 @@ test.describe(
       // Collapse the panel and verify.
       await page.getByTestId('msla-panel-header-close-nav').click();
       await validatePanel('closed');
-
-      // Expand the panel and verify.
-      await page.getByTestId('msla-panel-header-close-nav').click();
-      await validatePanel('open');
     });
 
     test('Can have both selected and pinned operations open, and collapse & expand the panel', async ({ page }) => {
@@ -130,10 +97,6 @@ test.describe(
       // Collapse the panel and verify.
       await page.getByTestId('msla-panel-header-close-nav').click();
       await validatePanel('closed');
-
-      // Expand the panel and verify.
-      await page.getByTestId('msla-panel-header-close-nav').click();
-      await validatePanel('open');
     });
 
     test('Can switch between different tabs independently in selected/pinned panels', async ({ page }) => {

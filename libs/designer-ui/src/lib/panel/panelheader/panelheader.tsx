@@ -14,6 +14,7 @@ import {
   MessageBarBody,
   Spinner,
   Tooltip,
+  useRestoreFocusSource,
   useRestoreFocusTarget,
 } from '@fluentui/react-components';
 import {
@@ -37,7 +38,6 @@ export const handleOnEscapeDown = (e: React.KeyboardEvent<HTMLInputElement | HTM
 
 export interface PanelHeaderProps {
   nodeData: PanelNodeData;
-  isOutermostPanel?: boolean;
   headerItems: JSX.Element[];
   headerLocation: PanelLocation;
   panelScope: PanelScope;
@@ -63,7 +63,7 @@ const DismissIcon = bundleIcon(DismissFilled, DismissRegular);
 const OverflowIcon = bundleIcon(MoreVertical24Filled, MoreVertical24Regular);
 
 const CloseButton = (props: PanelHeaderProps & { nodeId: string }): JSX.Element => {
-  const { isOutermostPanel, nodeId, onClose } = props;
+  const { nodeId, onClose } = props;
 
   const intl = useIntl();
 
@@ -77,16 +77,19 @@ const CloseButton = (props: PanelHeaderProps & { nodeId: string }): JSX.Element 
   const buttonText = panelCloseTitle;
 
   useEffect(() => {
-    if (!isOutermostPanel || !nodeId) {
+    if (!nodeId) {
       return;
     }
 
     menuButtonRef.current?.focus();
-  }, [isOutermostPanel, nodeId]);
+  }, [nodeId]);
+
+  const restoreFocusSourceAttribute = useRestoreFocusSource();
 
   return (
     <Tooltip relationship="label" positioning={'before'} content={buttonText}>
       <Button
+        {...restoreFocusSourceAttribute}
         id="msla-panel-header-close-nav"
         ref={menuButtonRef}
         appearance="subtle"

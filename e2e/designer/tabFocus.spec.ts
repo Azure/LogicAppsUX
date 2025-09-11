@@ -16,8 +16,8 @@ test.describe(
 
       // Find element with text 'Recurrence'
       await page.getByText('Recurrence', { exact: true }).click();
-      // Focus should be on the collapse button
-      expect(await page.locator('*:focus').getAttribute('aria-label')).toBe('Collapse');
+      // Focus should be on the close button
+      expect(await page.locator('*:focus').getAttribute('aria-label')).toBe('Close');
       // Close node panel
       await page.locator('body').press('Enter');
       // Focus should be on the first node again
@@ -27,8 +27,8 @@ test.describe(
       // Focus should be on the switch node
       expect(await page.locator('*:focus').innerText()).toBe('Switch');
       await tab();
-      // Focus should be on the switch collapse button
-      expect(await page.locator('*:focus').getAttribute('aria-label')).toBe('Collapse');
+      // Focus should be on the switch close button
+      expect(await page.locator('*:focus').getAttribute('aria-label')).toBe('Close');
       await tab();
       // Focus should be on the first switch case
       expect(await page.locator('*:focus').innerText()).toBe('Conditional Case');
@@ -57,8 +57,8 @@ test.describe(
 
       // Find element with text 'manual'
       await page.getByText('manual', { exact: true }).click();
-      // Focus should be on the collapse button
-      expect(await page.locator('*:focus').getAttribute('aria-label')).toBe('Collapse');
+      // Focus should be on the close button
+      expect(await page.locator('*:focus').getAttribute('aria-label')).toBe('Close');
       await tab();
       // Focus should be on the node name textfield
       expect(await page.locator('*:focus').getAttribute('value')).toBe('manual');
@@ -68,8 +68,8 @@ test.describe(
       // Focus should be on the node name textfield
       expect(await page.locator('*:focus').getAttribute('value')).toBe('manua');
       await backTab();
-      // Focus should be on the collapse button
-      expect(await page.locator('*:focus').getAttribute('aria-label')).toBe('Collapse');
+      // Focus should be on the close button
+      expect(await page.locator('*:focus').getAttribute('aria-label')).toBe('Close');
       // Close node panel
       await page.locator('body').press('Enter');
     });

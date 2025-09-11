@@ -138,14 +138,12 @@ export const PanelContainer = ({
   const renderHeader = useCallback(
     (headerNode: PanelNodeData): JSX.Element => {
       const { nodeId } = headerNode;
-      const panelHasAlternateNode = !!alternateSelectedNode;
       const isAlternateNode = rest.alternateSelectedNode?.nodeId === nodeId;
       const canUnpin = !!onUnpinAction && isAlternateNode && alternateSelectedNodePersistence === 'pinned';
 
       return (
         <PanelHeader
           nodeData={headerNode}
-          isOutermostPanel={!panelHasAlternateNode || !isAlternateNode}
           headerItems={isAlternateNode ? alternateSelectedNodeHeaderItems : nodeHeaderItems}
           headerLocation={panelLocation}
           panelScope={panelScope}
@@ -167,7 +165,6 @@ export const PanelContainer = ({
       );
     },
     [
-      alternateSelectedNode,
       rest.alternateSelectedNode?.nodeId,
       onUnpinAction,
       alternateSelectedNodePersistence,
@@ -267,6 +264,7 @@ export const PanelContainer = ({
     <Drawer
       aria-label={panelLabel}
       className="msla-panel-container"
+      type="inline"
       modalType="non-modal"
       mountNode={{
         className: 'msla-panel-host-container',
