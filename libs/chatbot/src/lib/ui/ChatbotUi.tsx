@@ -1,5 +1,5 @@
 import { type ITextField, Panel, PanelType, useTheme } from '@fluentui/react';
-import { MessageBar, MessageBarBody, mergeClasses } from '@fluentui/react-components';
+import { mergeClasses } from '@fluentui/react-components';
 import { ShieldCheckmarkRegular } from '@fluentui/react-icons';
 import {
   ChatInput,
@@ -33,7 +33,6 @@ interface ChatbotUIProps {
     onChange?: (value: string) => void;
     onSubmit: (value: string) => void;
     readOnly?: boolean;
-    readOnlyText?: string;
   };
   data?: {
     isSaving?: boolean;
@@ -69,7 +68,7 @@ export const ChatbotUI = (props: ChatbotUIProps) => {
   const {
     panel: { header },
     body: { messages, focus, answerGenerationInProgress, setFocus, focusMessageId, clearFocusMessageId },
-    inputBox: { disabled, placeholder, value = '', onChange, onSubmit, readOnly, readOnlyText },
+    inputBox: { disabled, placeholder, value = '', onChange, onSubmit, readOnly },
     data: { isSaving, canSave, canTest, test, save, abort } = {},
     string: { test: testString, save: saveString, submit: submitString, progressState, progressStop, progressSave, protectedMessage },
   } = props;
@@ -81,20 +80,23 @@ export const ChatbotUI = (props: ChatbotUIProps) => {
   const styles = useChatbotStyles();
   const darkStyles = useChatbotDarkStyles();
 
-  const inputIconButtonStyles = {
-    enabled: {
-      root: {
-        backgroundColor: 'transparent',
-        color: isInverted ? 'rgb(200, 200, 200)' : 'rgb(51, 51, 51)',
+  const inputIconButtonStyles = useMemo(
+    () => ({
+      enabled: {
+        root: {
+          backgroundColor: 'transparent',
+          color: isInverted ? 'rgb(200, 200, 200)' : 'rgb(51, 51, 51)',
+        },
       },
-    },
-    disabled: {
-      root: {
-        backgroundColor: 'transparent',
-        color: isInverted ? 'rgb(79, 79, 79)' : 'rgb(200, 200, 200)',
+      disabled: {
+        root: {
+          backgroundColor: 'transparent',
+          color: isInverted ? 'rgb(79, 79, 79)' : 'rgb(200, 200, 200)',
+        },
       },
-    },
-  };
+    }),
+    [isInverted]
+  );
 
   useEffect(() => {
     if (focus) {
@@ -139,6 +141,11 @@ export const ChatbotUI = (props: ChatbotUIProps) => {
     };
   }, [intl]);
 
+  const inputDisabled = !!(answerGenerationInProgress || disabled);
+  const trimmedLength = value.trim().length;
+  const submitDisabled = answerGenerationInProgress || trimmedLength < QUERY_MIN_LENGTH;
+  const resolvedPlaceholder = placeholder ?? intlText.inputPlaceHolder;
+
   return (
     <div className={mergeClasses(styles.container, isInverted && darkStyles.container)}>
       {header}
@@ -159,31 +166,22 @@ export const ChatbotUI = (props: ChatbotUIProps) => {
           {canSave && <ChatSuggestion text={saveString ?? intlText.saveButton} iconName={'Save'} onClick={() => save?.()} />}
           {canTest && <ChatSuggestion text={testString ?? intlText.testButton} iconName={'TestBeaker'} onClick={() => test?.()} />}
         </ChatSuggestionGroup>
-        {readOnly ? (
-          <MessageBar intent={'info'} layout="multiline">
-            <MessageBarBody>{readOnlyText}</MessageBarBody>
-          </MessageBar>
-        ) : (
+        {readOnly ? null : (
           <ChatInput
             textFieldRef={textInputRef}
-            disabled={answerGenerationInProgress || disabled}
-            isMultiline={true}
+            disabled={inputDisabled}
+            isMultiline
             maxQueryLength={QUERY_MAX_LENGTH}
-            onQueryChange={(_ev, newValue) => {
-              onChange?.(newValue ?? '');
-            }}
-            placeholder={placeholder ?? intlText.inputPlaceHolder}
+            onQueryChange={(_ev, newValue) => onChange?.(newValue ?? '')}
+            placeholder={resolvedPlaceholder}
             query={value}
-            showCharCount={true}
+            showCharCount
             submitButtonProps={{
               title: submitString ?? intlText.submitButton,
-              disabled: answerGenerationInProgress || value.length < QUERY_MIN_LENGTH,
+              disabled: submitDisabled,
               iconProps: {
                 iconName: 'Send',
-                styles:
-                  answerGenerationInProgress || value.length < QUERY_MIN_LENGTH
-                    ? inputIconButtonStyles.disabled
-                    : inputIconButtonStyles.enabled,
+                styles: submitDisabled ? inputIconButtonStyles.disabled : inputIconButtonStyles.enabled,
               },
               onClick: () => onSubmit(value),
             }}

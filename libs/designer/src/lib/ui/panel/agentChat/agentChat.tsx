@@ -187,11 +187,6 @@ export const AgentChat = ({
         id: 'QIzNzB',
         description: 'Toggle the agent log panel aria label text',
       }),
-      chatReadOnlyMessage: intl.formatMessage({
-        defaultMessage: 'The chat is currently in read-only mode. Agents are unavailable for live chat.',
-        id: '7c50FE',
-        description: 'Agent chat read-only message',
-      }),
       protectedMessage: intl.formatMessage({
         defaultMessage: 'Your personal and company data are protected in this chat',
         id: 'Yrw/Qt',
@@ -305,7 +300,6 @@ export const AgentChat = ({
               onChange: setTextInput,
               value: textInput,
               readOnly: !chatInvokeUri,
-              readOnlyText: intlText.chatReadOnlyMessage,
             }}
             string={{
               submit: intlText.submitButtonTitle,
