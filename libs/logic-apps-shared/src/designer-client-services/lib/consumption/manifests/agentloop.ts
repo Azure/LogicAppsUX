@@ -65,7 +65,7 @@ export default {
           'x-ms-create-new-resource': true,
           'x-ms-visibility': 'important',
           'x-ms-editor': 'combobox',
-          'x-ms-connection-required': true,
+          'x-ms-connection-required': false,
           'x-ms-connection-options': {
             'x-ms-visibility': 'subLabelOnly',
           },
@@ -80,6 +80,85 @@ export default {
           type: 'object',
           'x-ms-visibility': 'advanced',
           properties: {
+            maxTokens: {
+              title: 'Max tokens',
+              description: 'Max tokens to use (value should be between 1 and 8192)',
+              type: 'integer',
+              format: 'int32',
+              minimum: 1,
+              maximum: 8192,
+              'x-ms-input-dependencies': {
+                type: 'visibility',
+                parameters: [
+                  {
+                    name: 'agentModelType',
+                    values: ['AzureOpenAI'],
+                  },
+                ],
+              },
+            },
+            agentHistoryReductionSettings: {
+              type: 'object',
+              properties: {
+                agentHistoryReductionType: {
+                  type: 'string',
+                  title: 'Agent history reduction type (experimental)',
+                  default: 'maximumTokenCountReduction',
+                  description: 'Type of agent history reduction to use',
+                  'x-ms-input-dependencies': {
+                    type: 'visibility',
+                    parameters: [
+                      {
+                        name: 'agentModelType',
+                        values: ['AzureOpenAI'],
+                      },
+                    ],
+                  },
+                  'x-ms-editor': 'dropdown',
+                  'x-ms-editor-options': {
+                    options: [
+                      {
+                        value: 'messageCountReduction',
+                        displayName: 'Message count reduction',
+                      },
+                      {
+                        value: 'maximumTokenCountReduction',
+                        displayName: 'Token count reduction',
+                      },
+                    ],
+                  },
+                },
+                messageCountLimit: {
+                  type: 'integer',
+                  title: 'Message token count',
+                  description: 'The maximum number of messages to keep in the agent history',
+                  'x-ms-input-dependencies': {
+                    type: 'visibility',
+                    parameters: [
+                      {
+                        name: 'agentModelSettings.agentHistoryReductionSettings.agentHistoryReductionType',
+                        values: ['messageCountReduction'],
+                      },
+                    ],
+                  },
+                },
+                maximumTokenCount: {
+                  type: 'integer',
+                  title: 'Maximum token count',
+                  description: 'The maximum number of tokens to use for the agent history',
+                  default: 128000,
+                  'x-ms-input-dependencies': {
+                    type: 'visibility',
+                    parameters: [
+                      {
+                        name: 'agentModelSettings.agentHistoryReductionSettings.agentHistoryReductionType',
+                        values: ['maximumTokenCountReduction'],
+                      },
+                    ],
+                  },
+                },
+              },
+            },
             agentChatCompletionSettings: {
               type: 'object',
               properties: {
