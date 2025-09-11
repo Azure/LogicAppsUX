@@ -6,7 +6,7 @@
   "repository": "https://github.com/Azure/LogicAppsUX",
   "main": "main.js",
   "engines": {
-    "vscode": "^1.76.0"
+    "vscode": "^1.104.0"
   },
   "contributes": {
     "breakpoints": [
@@ -1031,6 +1031,7 @@
     "ms-dotnettools.csharp",
     "ms-dotnettools.csdevkit"
   ],
+  "enabledApiProposals": ["authenticationChallenges"],
   "activationEvents": [
     "onView:azureWorkspace",
     "onView:azureResourceGroups",
