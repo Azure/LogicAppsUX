@@ -1,6 +1,5 @@
 import { type ITextField, Panel, PanelType, useTheme } from '@fluentui/react';
 import { mergeClasses } from '@fluentui/react-components';
-import { ShieldCheckmarkRegular } from '@fluentui/react-icons';
 import {
   ChatInput,
   ChatSuggestion,
@@ -49,7 +48,6 @@ interface ChatbotUIProps {
     progressState: string;
     progressStop?: string;
     progressSave: string;
-    protectedMessage: string;
   };
   body: {
     messages: ConversationItem[];
@@ -70,7 +68,7 @@ export const ChatbotUI = (props: ChatbotUIProps) => {
     body: { messages, focus, answerGenerationInProgress, setFocus, focusMessageId, clearFocusMessageId },
     inputBox: { disabled, placeholder, value = '', onChange, onSubmit, readOnly },
     data: { isSaving, canSave, canTest, test, save, abort } = {},
-    string: { test: testString, save: saveString, submit: submitString, progressState, progressStop, progressSave, protectedMessage },
+    string: { test: testString, save: saveString, submit: submitString, progressState, progressStop, progressSave },
   } = props;
   const intl = useIntl();
   const { isInverted } = useTheme();
@@ -159,9 +157,6 @@ export const ChatbotUI = (props: ChatbotUIProps) => {
         ))}
       </div>
       <div className={styles.footer}>
-        <div className={styles.protectedFooter}>
-          <ShieldCheckmarkRegular className={styles.shieldCheckmarkRegular} /> {protectedMessage}
-        </div>
         <ChatSuggestionGroup>
           {canSave && <ChatSuggestion text={saveString ?? intlText.saveButton} iconName={'Save'} onClick={() => save?.()} />}
           {canTest && <ChatSuggestion text={testString ?? intlText.testButton} iconName={'TestBeaker'} onClick={() => test?.()} />}

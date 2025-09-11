@@ -187,11 +187,6 @@ export const AgentChat = ({
         id: 'QIzNzB',
         description: 'Toggle the agent log panel aria label text',
       }),
-      protectedMessage: intl.formatMessage({
-        defaultMessage: 'Your personal and company data are protected in this chat',
-        id: 'Yrw/Qt',
-        description: 'Letting user know that their data is protected in the chatbot',
-      }),
       submitButtonTitle: intl.formatMessage({
         defaultMessage: 'Submit',
         id: 'Oep6va',
@@ -305,7 +300,6 @@ export const AgentChat = ({
               submit: intlText.submitButtonTitle,
               progressState: intlText.progressCardText,
               progressSave: intlText.progressCardSaveText,
-              protectedMessage: intlText.protectedMessage,
             }}
             body={{
               messages: conversation,
