@@ -43,7 +43,7 @@ export interface DiscoveryPanelContentState {
   isAddingAgentTool?: boolean;
   agentToolMetadata?: { newAdditiveSubgraphId: string; subGraphManifest: OperationManifest };
   panelMode: 'Discovery';
-  relationshipIds: RelationshipIds;
+  relationshipIds?: RelationshipIds;
   selectedNodeIds: string[];
   selectedOperationGroupId: string;
   selectedOperationId: string;

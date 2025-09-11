@@ -14,7 +14,7 @@ import {
   replaceWhiteSpaceWithUnderscore,
 } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
-import { useOnViewportChange } from '@xyflow/react';
+import { useOnViewportChange, useReactFlow } from '@xyflow/react';
 
 import { useIsAgenticWorkflow, useEdgeContextMenuData, useIsA2AWorkflow } from '../../../core/state/designerView/designerViewSelectors';
 import { addOperation, useNodeDisplayName, useNodeMetadata, type AppDispatch } from '../../../core';
@@ -249,19 +249,35 @@ export const EdgeContextualMenu = () => {
     description: 'Text for button to delete a handoff',
   });
 
+  const { screenToFlowPosition } = useReactFlow();
+
+  const newNodePosition = useMemo(() => {
+    if (!location) {
+      return undefined;
+    }
+    // Small x offset to center on the button
+    return screenToFlowPosition({ x: location.x - 12, y: location.y });
+  }, [location, screenToFlowPosition]);
+
   const openAddNodePanel = useCallback(() => {
     const newId = guid();
     if (!graphId) {
       return;
     }
     const relationshipIds = { graphId, childId, parentId };
-    dispatch(expandDiscoveryPanel({ nodeId: newId, relationshipIds }));
+    dispatch(
+      expandDiscoveryPanel({
+        nodeId: newId,
+        relationshipIds,
+        newNodePosition,
+      })
+    );
     LoggerService().log({
       area: 'DropZone:openAddNodePanel',
       level: LogEntryLevel.Verbose,
       message: 'Side-panel opened to add a new node.',
     });
-  }, [dispatch, graphId, childId, parentId]);
+  }, [graphId, childId, parentId, dispatch, newNodePosition]);
 
   const showParallelBranchButton = !isLeaf && parentId;
 

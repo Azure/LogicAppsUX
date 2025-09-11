@@ -4,3 +4,4 @@ export * from './deleteMenuItem';
 export * from './resubmitMenuItem';
 export * from './collapseMenuItem';
 export * from './expandCollapseMenuItem';
+export * from './addActionMenuItem';

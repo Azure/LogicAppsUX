@@ -7,12 +7,20 @@ import {
   UiInteractionsService,
   WorkflowService,
   getRecordEntry,
+  guid,
   isScopeOperation,
   isUiInteractionsServiceEnabled,
 } from '@microsoft/logic-apps-shared';
 
 import { useNodeContextMenuData } from '../../../core/state/designerView/designerViewSelectors';
-import { DeleteMenuItem, CopyMenuItem, ResubmitMenuItem, ExpandCollapseMenuItem, CollapseMenuItem } from '../../../ui/menuItems';
+import {
+  DeleteMenuItem,
+  CopyMenuItem,
+  ResubmitMenuItem,
+  ExpandCollapseMenuItem,
+  CollapseMenuItem,
+  AddMenuItem,
+} from '../../../ui/menuItems';
 import { PinMenuItem } from '../../../ui/menuItems/pinMenuItem';
 import { RunAfterMenuItem } from '../../../ui/menuItems/runAfterMenuItem';
 import { useOperationInfo, type AppDispatch, type RootState } from '../../../core';
@@ -23,6 +31,7 @@ import {
   setSelectedPanelActiveTab,
   setAlternateSelectedNode,
   setSelectedNodeId,
+  expandDiscoveryPanel,
 } from '../../../core/state/panel/panelSlice';
 import { RUN_AFTER_PANEL_TAB } from '../../../ui/CustomNodes/constants';
 import { shouldDisplayRunAfter } from '../../../ui/CustomNodes/helpers';
@@ -44,6 +53,7 @@ import { CustomMenu } from '../EdgeContextualMenu/customMenu';
 import { NodeMenuPriorities } from './Priorities';
 import type { DropdownMenuCustomNode } from '@microsoft/logic-apps-shared/src/utils/src/lib/models/dropdownMenuCustomNode';
 import { toggleCollapsedActionId } from '../../../core/state/workflow/workflowSlice';
+import { useReactFlow } from '@xyflow/react';
 
 export const DesignerContextualMenu = () => {
   const menuData = useNodeContextMenuData();
@@ -123,6 +133,25 @@ export const DesignerContextualMenu = () => {
     copyCalloutTimeout && clearTimeout(copyCalloutTimeout);
     setShowCopyCallout(false);
   }, [copyCalloutTimeout]);
+
+  const { screenToFlowPosition } = useReactFlow();
+
+  const onAddClick = useCallback(() => {
+    dispatch(
+      expandDiscoveryPanel({
+        nodeId: guid(),
+        newNodePosition: screenToFlowPosition({
+          x: menuData?.location.x ?? 0,
+          y: menuData?.location.y ?? 0,
+        }),
+        relationshipIds: {
+          graphId: 'root',
+        },
+      })
+    );
+  }, [dispatch, menuData?.location, screenToFlowPosition]);
+
+  ///
 
   const transformMenuItems = (items: TopLevelDropdownMenuItem[]): DropdownMenuCustomNode[] => {
     return items.map((item) => ({
@@ -212,8 +241,16 @@ export const DesignerContextualMenu = () => {
     [nodeId]
   );
 
+  const canvasMenuItems: JSX.Element[] = useMemo(() => [<AddMenuItem onClick={onAddClick} key={'add'} />], [onAddClick]);
+
   const menuItems = useMemo(() => {
     const items: JSX.Element[] = [];
+
+    if (!nodeId) {
+      items.push(...canvasMenuItems);
+      return items;
+    }
+
     if (metadata?.subgraphType === SUBGRAPH_TYPES.UNTIL_DO) {
       // Do-Until is a special case, we show normal action context menu items
       items.push(...actionContextMenuItems);
@@ -228,7 +265,7 @@ export const DesignerContextualMenu = () => {
     }
 
     return items;
-  }, [metadata?.subgraphType, isScopeNode, actionContextMenuItems, subgraphMenuItems, graphMenuItems]);
+  }, [nodeId, metadata?.subgraphType, isScopeNode, actionContextMenuItems, subgraphMenuItems, graphMenuItems, canvasMenuItems]);
 
   return (
     <>

@@ -18,6 +18,7 @@ import { DraftEdge } from './connections/draftEdge';
 import { useReadOnly } from '../core/state/designerOptions/designerOptionsSelectors';
 import { useUserLayout } from '../core/graphlayout';
 import { addAgentHandoff } from '../core/actions/bjsworkflow/handoff';
+import { setNodeContextMenuData } from '../core/state/designerView/designerViewSlice';
 
 import GraphNode from './CustomNodes/GraphContainerNode';
 import HiddenNode from './CustomNodes/HiddenNode';
@@ -93,7 +94,6 @@ const DesignerReactFlow = (props: any) => {
   const [nodePositions, setNodePositions] = useState<Record<string, XYPosition> | undefined>({});
 
   const onNodesChange = useCallback((changes: NodeChange[]) => {
-    console.log('#> onNodesChange', changes);
     const validChanges = changes.filter(
       (change) =>
         change.type === 'position' &&
@@ -119,26 +119,13 @@ const DesignerReactFlow = (props: any) => {
     () => {
       if (nodePositions && Object.keys(nodePositions).length > 0) {
         dispatch(updateNodePositions(nodePositions));
+        // Clear local positions after dispatching to redux
+        setNodePositions({});
       }
     },
     [nodePositions, dispatch],
     500
   );
-
-  // Update positions when node metadata changes (e.g. on removal)
-  useEffect(() => {
-    setNodePositions((positions) => {
-      const newPositions = { ...positions };
-      let hasChanges = false;
-      Object.keys(positions || {}).forEach((id) => {
-        if (!nodesMetadata[id]) {
-          delete newPositions[id];
-          hasChanges = true;
-        }
-      });
-      return hasChanges ? newPositions : positions;
-    });
-  }, [nodesMetadata]);
 
   const nodesWithPositions = useMemo(() => {
     return nodes.map((n) => {
@@ -308,6 +295,21 @@ const DesignerReactFlow = (props: any) => {
     }
   }, [isDraggingConnection, dispatch]);
 
+  const onPaneContextMenu = useCallback(
+    (e: React.MouseEvent | MouseEvent) => {
+      e.preventDefault();
+      dispatch(
+        setNodeContextMenuData({
+          location: {
+            x: e.clientX,
+            y: e.clientY,
+          },
+        })
+      );
+    },
+    [dispatch]
+  );
+
   return (
     <ReactFlow
       ref={canvasRef}
@@ -316,9 +318,6 @@ const DesignerReactFlow = (props: any) => {
       nodes={nodesWithPlaceholder}
       edges={edges}
       onNodesChange={onNodesChange}
-      onNodesDelete={(nodes) => {
-        console.log('#> onNodesDelete', nodes);
-      }}
       nodesConnectable={true}
       edgesFocusable={false}
       edgeTypes={edgeTypes}
@@ -336,6 +335,7 @@ const DesignerReactFlow = (props: any) => {
       snapGrid={[20, 20]}
       snapToGrid={true}
       onPaneClick={onPaneClick}
+      onPaneContextMenu={onPaneContextMenu}
       disableKeyboardA11y={true}
       onlyRenderVisibleElements={!userInferredTabNavigation}
       proOptions={{
