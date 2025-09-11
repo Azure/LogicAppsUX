@@ -1,26 +1,14 @@
 import type { ILayerProps } from '@fluentui/react';
-import {
-  Button,
-  Divider,
-  mergeClasses,
-  MessageBar,
-  MessageBarBody,
-  Text,
-  Drawer,
-  Spinner,
-  MessageBarTitle,
-} from '@fluentui/react-components';
-import { ChevronDoubleRightFilled } from '@fluentui/react-icons';
+import { Divider, mergeClasses, MessageBar, MessageBarBody, Text, Drawer, Spinner, MessageBarTitle } from '@fluentui/react-components';
 import { useCallback, useMemo, useRef, useState, useEffect } from 'react';
 import { useIntl } from 'react-intl';
-import { EmptyContent } from '../card/emptycontent';
 import type { PageActionTelemetryData } from '../telemetry/models';
 import { PanelContent } from './panelcontent';
 import { PanelHeader } from './panelheader/panelheader';
 import type { TitleChangeHandler } from './panelheader/panelheadertitle';
 import { PanelResizer } from './panelResizer';
-import type { CommonPanelProps } from './panelUtil';
-import { PanelLocation, PanelScope, PanelSize } from './panelUtil';
+import type { CommonPanelProps, PanelScope } from './panelUtil';
+import { PanelLocation, PanelSize } from './panelUtil';
 import type { PanelNodeData } from './types';
 import { equals, guid, SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
 import constants from '../constants';
@@ -87,7 +75,6 @@ export const PanelContainer = ({
 }: PanelContainerProps) => {
   const intl = useIntl();
   const canResize = !!(isResizeable && setOverrideWidth);
-  const isEmptyPanel = noNodeSelected && panelScope === PanelScope.CardLevel;
   const isRight = panelLocation === PanelLocation.Right;
   const alternateSelectedNode = useMemo(
     () => (rest.alternateSelectedNode && rest.alternateSelectedNode.nodeId !== node?.nodeId ? rest.alternateSelectedNode : undefined),
@@ -228,12 +215,6 @@ export const PanelContainer = ({
     description: 'label for panel error',
   });
 
-  const panelCollapseTitle = intl.formatMessage({
-    defaultMessage: 'Collapse',
-    id: 'lX30/R',
-    description: 'Text of Tooltip to collapse',
-  });
-
   const toolBranchTitle = intl.formatMessage({
     defaultMessage: 'Tool branch for the Agent',
     id: 'TgtIUN',
@@ -284,6 +265,10 @@ export const PanelContainer = ({
     return null;
   }
 
+  if (isCollapsed) {
+    return null;
+  }
+
   return (
     <Drawer
       aria-label={panelLabel}
@@ -303,54 +288,34 @@ export const PanelContainer = ({
         height: '100%',
       }}
     >
-      {isEmptyPanel || isCollapsed ? (
-        <Button
-          appearance="subtle"
-          aria-label={panelCollapseTitle}
-          className={mergeClasses('collapse-toggle', isRight ? 'right' : 'left', isCollapsed && 'collapsed', 'empty')}
-          icon={<ChevronDoubleRightFilled />}
-          onClick={toggleCollapse}
-          data-automation-id="msla-panel-header-collapse-nav"
-        />
-      ) : null}
-      {isCollapsed ? null : (
-        <>
-          <div
-            className={mergeClasses(
-              'msla-panel-container-nested',
-              `msla-panel-container-nested-${panelLocation.toLowerCase()}`,
-              !isEmptyPanel && alternateSelectedNode && 'msla-panel-container-nested-dual'
-            )}
-          >
-            {isEmptyPanel ? (
-              <EmptyContent />
-            ) : (
-              <>
-                {node ? renderPanelContents(node, 'selected', false) : null}
-                {alternateSelectedNode ? (
-                  <>
-                    <Divider vertical={true} />
-                    {renderPanelContents(alternateSelectedNode, alternateSelectedNodePersistence, true)}
-                    {shouldDisplayPopup && targetElement ? (
-                      <TeachingPopup
-                        targetElement={targetElement}
-                        title={toolBranchTitle}
-                        message={toolBranchMessage}
-                        withArrow={true}
-                        handlePopupPrimaryOnClick={() => {
-                          localStorage.setItem(constants.TEACHING_POPOVER_ID.agentToolPanel, 'true');
-                          setShouldDisplayPopup(false);
-                        }}
-                      />
-                    ) : null}
-                  </>
-                ) : null}
-              </>
-            )}
-          </div>
-          {canResize ? <PanelResizer minWidth={minWidth} panelRef={panelRef} updatePanelWidth={setOverrideWidth} /> : null}
-        </>
-      )}
+      <div
+        className={mergeClasses(
+          'msla-panel-container-nested',
+          `msla-panel-container-nested-${panelLocation.toLowerCase()}`,
+          alternateSelectedNode && 'msla-panel-container-nested-dual'
+        )}
+      >
+        {node ? renderPanelContents(node, 'selected', false) : null}
+        {alternateSelectedNode ? (
+          <>
+            <Divider vertical={true} />
+            {renderPanelContents(alternateSelectedNode, alternateSelectedNodePersistence, true)}
+            {shouldDisplayPopup && targetElement ? (
+              <TeachingPopup
+                targetElement={targetElement}
+                title={toolBranchTitle}
+                message={toolBranchMessage}
+                withArrow={true}
+                handlePopupPrimaryOnClick={() => {
+                  localStorage.setItem(constants.TEACHING_POPOVER_ID.agentToolPanel, 'true');
+                  setShouldDisplayPopup(false);
+                }}
+              />
+            ) : null}
+          </>
+        ) : null}
+      </div>
+      {canResize ? <PanelResizer minWidth={minWidth} panelRef={panelRef} updatePanelWidth={setOverrideWidth} /> : null}
     </Drawer>
   );
 };
