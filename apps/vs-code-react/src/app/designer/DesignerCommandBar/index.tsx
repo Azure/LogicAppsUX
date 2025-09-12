@@ -14,7 +14,7 @@ import {
   useAllConnectionErrors,
   getCustomCodeFilesWithData,
 } from '@microsoft/logic-apps-designer';
-import { RUN_AFTER_COLORS, isNullOrEmpty } from '@microsoft/logic-apps-shared';
+import { RUN_AFTER_COLORS, equals, isNullOrEmpty } from '@microsoft/logic-apps-shared';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { useContext, useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -42,6 +42,7 @@ import {
   ReplayFilled,
 } from '@fluentui/react-icons';
 import { TrafficLightDot } from '@microsoft/designer-ui';
+import { ChatButton } from '@microsoft/logic-apps-designer-v2';
 
 // Designer icons
 const SaveIcon = bundleIcon(SaveFilled, SaveRegular);
@@ -67,6 +68,7 @@ export interface DesignerCommandBarProps {
   isUnitTest: boolean;
   isLocal: boolean;
   runId: string;
+  kind?: string;
 }
 
 export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
@@ -82,9 +84,13 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
   const vscode = useContext(VSCodeContext);
   const dispatch = DesignerStore.dispatch;
   const designerState = DesignerStore.getState();
-
   const isMonitoringView = designerState.designerOptions.isMonitoringView;
   const designerIsDirty = useIsDesignerDirty();
+
+  const shouldRenderChatButton = useMemo(() => {
+    const isA2AWorkflow = equals(designerState.workflow.workflowKind, 'agent', false);
+    return isA2AWorkflow && !isUnitTest && !isMonitoringView;
+  }, [designerState.workflow.workflowKind, isMonitoringView, isUnitTest]);
 
   const { isLoading: isSaving, mutate: saveWorkflowMutate } = useMutation(async () => {
     const { definition, parameters, connectionReferences } = await serializeBJSWorkflow(designerState, {
@@ -439,6 +445,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
           {buttonProps.renderTextIcon}
         </ToolbarButton>
       ))}
+      {shouldRenderChatButton ? <ChatButton appearance="transparent" isDarkMode={isDarkMode} /> : null}
     </Toolbar>
   );
 };
