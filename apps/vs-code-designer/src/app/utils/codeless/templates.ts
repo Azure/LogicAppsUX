@@ -12,7 +12,7 @@ import { equals } from '@microsoft/logic-apps-shared';
  * @returns {StandardApp} - The codeless workflow template.
  */
 export function getCodelessWorkflowTemplate(projectType: ProjectType, workflowType: WorkflowType, functionName?: string): StandardApp {
-  const workflowKind = getWorkflowStateType(workflowType); //workflowType === WorkflowType.stateful ? WorkflowKind.stateful : WorkflowKind.stateless;
+  const workflowKind = getWorkflowStateType(workflowType);
 
   if (projectType === ProjectType.customCode) {
     return {

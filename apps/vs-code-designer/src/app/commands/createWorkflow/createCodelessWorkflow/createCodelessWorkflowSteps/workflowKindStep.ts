@@ -112,7 +112,7 @@ export class WorkflowKindStep extends AzureWizardPromptStep<IFunctionWizardConte
       categories: [TemplateCategory.Core],
     };
 
-    // Converstational agent
+    // Conversational agent
     const agent: IWorkflowTemplate = {
       id: WorkflowType.agent,
       name: localize('Agent', 'Conversational agent'),
