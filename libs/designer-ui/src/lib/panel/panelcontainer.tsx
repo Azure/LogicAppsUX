@@ -110,7 +110,7 @@ export const PanelContainer = ({
   // Calculate responsive panel width
   const getResponsiveWidth = () => {
     if (isCollapsed) {
-      return PanelSize.Auto;
+      return '0px';
     }
 
     // If manually resized, use that width but constrain to viewport
@@ -265,7 +265,6 @@ export const PanelContainer = ({
       aria-label={panelLabel}
       className="msla-panel-container"
       type="inline"
-      modalType="non-modal"
       mountNode={{
         className: 'msla-panel-host-container',
         element: mountNode,

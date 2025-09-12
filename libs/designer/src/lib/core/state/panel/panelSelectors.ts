@@ -40,7 +40,7 @@ export const useFocusReturnElementId = () => useSelector(createSelector(getPanel
 export const useIsCreatingConnection = () =>
   useSelector(createSelector(getPanelState, (state) => state.connectionContent.isCreatingConnection));
 
-export const useIsPanelCollapsed = () => useSelector(createSelector(getPanelState, (state) => state.isCollapsed));
+export const useIsPanelCollapsed = () => useSelector(createSelector(getPanelState, (state) => state.isCollapsed ?? true));
 
 export const useIsPanelLoading = () => useSelector(createSelector(getPanelState, (state) => state.isLoading));
 
