@@ -37,7 +37,7 @@ const layerProps = {
   eventBubblingEnabled: true,
 };
 
-export const PanelRoot = (props: PanelRootProps): JSX.Element => {
+export const PanelRoot = (props: PanelRootProps): JSX.Element | null => {
   const { panelContainerRef, panelLocation, customPanelLocations, isResizeable } = props;
   const dispatch = useDispatch<AppDispatch>();
   const isDarkMode = useIsDarkMode();
@@ -122,7 +122,11 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
     </div>
   );
 
-  return !isLoadingPanel && (isUndefined(currentPanelMode) || currentPanelMode === 'Operation') ? (
+  if (isUndefined(currentPanelMode)) {
+    return null;
+  }
+
+  return !isLoadingPanel && currentPanelMode === 'Operation' ? (
     <NodeDetailsPanel {...commonPanelProps} />
   ) : (
     <Panel
