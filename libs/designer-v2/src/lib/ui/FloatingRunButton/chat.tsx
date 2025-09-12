@@ -36,7 +36,7 @@ export const useAgentUrl = (): UseQueryResult<AgentURL> => {
   );
 };
 
-export const FloatingChatButton = (buttonCommonProps: any) => {
+export const ChatButton = (buttonCommonProps: any) => {
   const intl = useIntl();
   const { isLoading, data } = useAgentUrl();
 

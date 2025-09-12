@@ -17,7 +17,7 @@ import {
 import { serializeBJSWorkflow } from '../..';
 import { PayloadPopover } from './payloadPopover';
 import { useIsA2AWorkflow } from '../../core/state/designerView/designerViewSelectors';
-import { FloatingChatButton } from './floatingChat';
+import { ChatButton } from './chat';
 
 const RunIcon = bundleIcon(FlashFilled, FlashRegular);
 const RunWithPayloadIcon = bundleIcon(FlashSettingsFilled, FlashSettingsRegular);
@@ -173,7 +173,7 @@ export const FloatingRunButton = ({ id: _id, saveDraftWorkflow, onRun, isDarkMod
   }
 
   if (isA2AWorkflow) {
-    return <FloatingChatButton {...buttonCommonProps} isDarkMode={isDarkMode} />;
+    return <ChatButton {...buttonCommonProps} isDarkMode={isDarkMode} />;
   }
 
   return (
