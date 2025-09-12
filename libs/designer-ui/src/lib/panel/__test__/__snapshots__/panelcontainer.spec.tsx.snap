@@ -21,51 +21,13 @@ exports[`ui/panel/panelContainer > should construct 1`] = `
       "width": "614.4px",
     }
   }
-  type="inline"
 >
-  <div
-    className="msla-panel-container-nested msla-panel-container-nested-right"
-  >
+  <React.Fragment>
     <div
-      className="msla-panel-layout msla-panel-border-selected"
+      className="msla-panel-container-nested msla-panel-container-nested-right"
     >
-      <PanelHeader
-        commentChange={[Function]}
-        handleTitleUpdate={[MockFunction spy]}
-        headerItems={[]}
-        headerLocation="RIGHT"
-        nodeData={
-          {
-            "comment": undefined,
-            "displayName": "Node Title",
-            "errorMessage": undefined,
-            "iconUri": "",
-            "isError": false,
-            "isLoading": false,
-            "nodeId": "nodeId",
-            "onSelectTab": [MockFunction spy],
-            "runData": undefined,
-            "selectedTab": undefined,
-            "subgraphType": undefined,
-            "tabs": [],
-          }
-        }
-        onClose={[MockFunction spy]}
-        onTitleChange={[MockFunction spy]}
-        panelScope="CARD_LEVEL"
-        resubmitOperation={[Function]}
-      />
-      <div
-        className="msla-panel-contents"
-      >
-        <PanelContent
-          nodeId="nodeId"
-          selectTab={[MockFunction spy]}
-          tabs={[]}
-          trackEvent={[MockFunction spy]}
-        />
-      </div>
+      <React.Fragment />
     </div>
-  </div>
+  </React.Fragment>
 </Drawer>
 `;

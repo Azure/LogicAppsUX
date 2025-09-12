@@ -1,20 +1,33 @@
 import type { ILayerProps } from '@fluentui/react';
-import { Divider, mergeClasses, MessageBar, MessageBarBody, Text, Drawer, Spinner, MessageBarTitle } from '@fluentui/react-components';
+import {
+  Button,
+  Divider,
+  mergeClasses,
+  MessageBar,
+  MessageBarBody,
+  Text,
+  Drawer,
+  Spinner,
+  MessageBarTitle,
+} from '@fluentui/react-components';
+import { ChevronDoubleRightFilled } from '@fluentui/react-icons';
 import { useCallback, useMemo, useRef, useState, useEffect } from 'react';
 import { useIntl } from 'react-intl';
+import { EmptyContent } from '../card/emptycontent';
 import type { PageActionTelemetryData } from '../telemetry/models';
 import { PanelContent } from './panelcontent';
 import { PanelHeader } from './panelheader/panelheader';
 import type { TitleChangeHandler } from './panelheader/panelheadertitle';
 import { PanelResizer } from './panelResizer';
-import type { CommonPanelProps, PanelScope } from './panelUtil';
-import { PanelLocation, PanelSize } from './panelUtil';
+import type { CommonPanelProps } from './panelUtil';
+import { PanelLocation, PanelScope, PanelSize } from './panelUtil';
 import type { PanelNodeData } from './types';
 import { equals, guid, SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
 import constants from '../constants';
 import { TeachingPopup } from '../teachingPopup';
 
 export type PanelContainerProps = {
+  noNodeSelected: boolean;
   panelScope: PanelScope;
   suppressDefaultNodeSelectFunctionality?: boolean;
   pivotDisabled?: boolean;
@@ -30,7 +43,7 @@ export type PanelContainerProps = {
   resubmitOperation?: (nodeId: string) => void;
   onUnpinAction?: () => void;
   trackEvent(data: PageActionTelemetryData): void;
-  onClose: () => void;
+  toggleCollapse: () => void;
   onCommentChange: (nodeId: string, panelCommentChangeEvent?: string) => void;
   onTitleChange: TitleChangeHandler;
   handleTitleUpdate: (originalId: string, newId: string) => void;
@@ -45,6 +58,7 @@ export type PanelContainerProps = {
 export const PanelContainer = ({
   isCollapsed,
   panelLocation,
+  noNodeSelected,
   panelScope,
   suppressDefaultNodeSelectFunctionality,
   canResubmit,
@@ -55,7 +69,7 @@ export const PanelContainer = ({
   nodeHeaderItems,
   alternateSelectedNodeHeaderItems,
   alternateSelectedNodePersistence,
-  onClose,
+  toggleCollapse,
   trackEvent,
   onCommentChange,
   onTitleChange,
@@ -73,6 +87,7 @@ export const PanelContainer = ({
 }: PanelContainerProps) => {
   const intl = useIntl();
   const canResize = !!(isResizeable && setOverrideWidth);
+  const isEmptyPanel = noNodeSelected && panelScope === PanelScope.CardLevel;
   const isRight = panelLocation === PanelLocation.Right;
   const alternateSelectedNode = useMemo(
     () => (rest.alternateSelectedNode && rest.alternateSelectedNode.nodeId !== node?.nodeId ? rest.alternateSelectedNode : undefined),
@@ -138,14 +153,18 @@ export const PanelContainer = ({
   const renderHeader = useCallback(
     (headerNode: PanelNodeData): JSX.Element => {
       const { nodeId } = headerNode;
+      const panelHasAlternateNode = !!alternateSelectedNode;
       const isAlternateNode = rest.alternateSelectedNode?.nodeId === nodeId;
       const canUnpin = !!onUnpinAction && isAlternateNode && alternateSelectedNodePersistence === 'pinned';
 
       return (
         <PanelHeader
           nodeData={headerNode}
+          isCollapsed={isCollapsed}
+          isOutermostPanel={!panelHasAlternateNode || !isAlternateNode}
           headerItems={isAlternateNode ? alternateSelectedNodeHeaderItems : nodeHeaderItems}
           headerLocation={panelLocation}
+          noNodeSelected={noNodeSelected}
           panelScope={panelScope}
           suppressDefaultNodeSelectFunctionality={suppressDefaultNodeSelectFunctionality}
           readOnlyMode={readOnlyMode}
@@ -155,7 +174,7 @@ export const PanelContainer = ({
           onUnpinAction={canUnpin ? onUnpinAction : undefined}
           resubmitOperation={() => resubmitOperation?.(nodeId)}
           commentChange={(newValue) => onCommentChange(nodeId, newValue)}
-          onClose={onClose}
+          toggleCollapse={toggleCollapse}
           onTitleChange={onTitleChange}
           handleTitleUpdate={handleTitleUpdate}
           showTriggerInfo={showTriggerInfo}
@@ -165,19 +184,22 @@ export const PanelContainer = ({
       );
     },
     [
+      alternateSelectedNode,
       rest.alternateSelectedNode?.nodeId,
       onUnpinAction,
       alternateSelectedNodePersistence,
+      isCollapsed,
       alternateSelectedNodeHeaderItems,
       nodeHeaderItems,
       panelLocation,
+      noNodeSelected,
       panelScope,
       suppressDefaultNodeSelectFunctionality,
       readOnlyMode,
       canResubmit,
       canShowLogicAppRun,
       showLogicAppRun,
-      onClose,
+      toggleCollapse,
       onTitleChange,
       handleTitleUpdate,
       showTriggerInfo,
@@ -204,6 +226,12 @@ export const PanelContainer = ({
     defaultMessage: 'Error loading operation data',
     id: '62Ypnr',
     description: 'label for panel error',
+  });
+
+  const panelCollapseTitle = intl.formatMessage({
+    defaultMessage: 'Collapse',
+    id: 'lX30/R',
+    description: 'Text of Tooltip to collapse',
   });
 
   const toolBranchTitle = intl.formatMessage({
@@ -256,15 +284,10 @@ export const PanelContainer = ({
     return null;
   }
 
-  if (isCollapsed || !node) {
-    return null;
-  }
-
   return (
     <Drawer
       aria-label={panelLabel}
       className="msla-panel-container"
-      type="inline"
       modalType="non-modal"
       mountNode={{
         className: 'msla-panel-host-container',
@@ -280,34 +303,54 @@ export const PanelContainer = ({
         height: '100%',
       }}
     >
-      <div
-        className={mergeClasses(
-          'msla-panel-container-nested',
-          `msla-panel-container-nested-${panelLocation.toLowerCase()}`,
-          alternateSelectedNode && 'msla-panel-container-nested-dual'
-        )}
-      >
-        {node ? renderPanelContents(node, 'selected', false) : null}
-        {alternateSelectedNode ? (
-          <>
-            <Divider vertical={true} />
-            {renderPanelContents(alternateSelectedNode, alternateSelectedNodePersistence, true)}
-            {shouldDisplayPopup && targetElement ? (
-              <TeachingPopup
-                targetElement={targetElement}
-                title={toolBranchTitle}
-                message={toolBranchMessage}
-                withArrow={true}
-                handlePopupPrimaryOnClick={() => {
-                  localStorage.setItem(constants.TEACHING_POPOVER_ID.agentToolPanel, 'true');
-                  setShouldDisplayPopup(false);
-                }}
-              />
-            ) : null}
-          </>
-        ) : null}
-      </div>
-      {canResize ? <PanelResizer minWidth={minWidth} panelRef={panelRef} updatePanelWidth={setOverrideWidth} /> : null}
+      {isEmptyPanel || isCollapsed ? (
+        <Button
+          appearance="subtle"
+          aria-label={panelCollapseTitle}
+          className={mergeClasses('collapse-toggle', isRight ? 'right' : 'left', isCollapsed && 'collapsed', 'empty')}
+          icon={<ChevronDoubleRightFilled />}
+          onClick={toggleCollapse}
+          data-automation-id="msla-panel-header-collapse-nav"
+        />
+      ) : null}
+      {isCollapsed ? null : (
+        <>
+          <div
+            className={mergeClasses(
+              'msla-panel-container-nested',
+              `msla-panel-container-nested-${panelLocation.toLowerCase()}`,
+              !isEmptyPanel && alternateSelectedNode && 'msla-panel-container-nested-dual'
+            )}
+          >
+            {isEmptyPanel ? (
+              <EmptyContent />
+            ) : (
+              <>
+                {node ? renderPanelContents(node, 'selected', false) : null}
+                {alternateSelectedNode ? (
+                  <>
+                    <Divider vertical={true} />
+                    {renderPanelContents(alternateSelectedNode, alternateSelectedNodePersistence, true)}
+                    {shouldDisplayPopup && targetElement ? (
+                      <TeachingPopup
+                        targetElement={targetElement}
+                        title={toolBranchTitle}
+                        message={toolBranchMessage}
+                        withArrow={true}
+                        handlePopupPrimaryOnClick={() => {
+                          localStorage.setItem(constants.TEACHING_POPOVER_ID.agentToolPanel, 'true');
+                          setShouldDisplayPopup(false);
+                        }}
+                      />
+                    ) : null}
+                  </>
+                ) : null}
+              </>
+            )}
+          </div>
+          {canResize ? <PanelResizer minWidth={minWidth} panelRef={panelRef} updatePanelWidth={setOverrideWidth} /> : null}
+        </>
+      )}
     </Drawer>
   );
 };

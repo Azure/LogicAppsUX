@@ -21,7 +21,8 @@
 
   .msla-panel-header {
     border-top: 3px solid transparent;
-    padding: 15px 15px 8px;
+    padding-top: 12px;
+    padding-bottom: 12px;
     display: flex;
 
     .msla-panel-card-header {
@@ -82,11 +83,11 @@
   }
 
   .msla-panel-header-messages {
-    margin: 0 15px 4px;
+    margin: 0 2rem 0.5rem;
   }
 
   .msla-panel-comment-container {
-    margin: 8px 15px;
+    margin: 8px 32px;
     position: relative;
     max-height: 25vh; // Limit container height
     overflow: visible;
@@ -375,7 +376,7 @@ div.msla-panel-host-container {
 @media (max-height: 400px), (max-width: 400px) {
   .msla-panel-comment-container {
     max-height: 80px; // Allow reasonable height for editing
-    margin: 4px 15px;
+    margin: 4px 16px;
     
     .msla-panel-comment-toggle-inline {
       min-width: 16px;
@@ -443,6 +444,7 @@ div.msla-panel-host-container {
   
   // Reduce message bar spacing
   .msla-panel-header-messages {
+    margin: 0 1rem 0.25rem;
     
     .ms-MessageBar {
       min-height: auto;

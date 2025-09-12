@@ -11,6 +11,8 @@ import { useIntl } from 'react-intl';
 
 export interface PanelHeaderCommentProps {
   comment?: string;
+  isCollapsed: boolean;
+  noNodeSelected?: boolean;
   readOnlyMode?: boolean;
   commentChange: (panelCommentChangeEvent?: string) => void;
   isTrigger?: boolean;
@@ -36,7 +38,14 @@ const getCommentTextFieldStyle = (isSmallViewport: boolean, isCommentCollapsed: 
   },
 });
 
-export const PanelHeaderComment = ({ comment, readOnlyMode, commentChange, isTrigger }: PanelHeaderCommentProps): JSX.Element | null => {
+export const PanelHeaderComment = ({
+  comment,
+  isCollapsed,
+  noNodeSelected,
+  readOnlyMode,
+  commentChange,
+  isTrigger,
+}: PanelHeaderCommentProps): JSX.Element | null => {
   const intl = useIntl();
 
   const [commentHasFocus, setCommentHasFocus] = useState(false);
@@ -73,10 +82,10 @@ export const PanelHeaderComment = ({ comment, readOnlyMode, commentChange, isTri
 
   // Autofocusing when opened for a node (skip on small viewports)
   useEffect(() => {
-    if (!readOnlyMode && !comment && !isTrigger && !isSmallViewport) {
+    if (!isCollapsed && !readOnlyMode && !comment && !isTrigger && !isSmallViewport) {
       commentTextFieldRef.current?.focus();
     }
-  }, [comment, commentTextFieldRef, readOnlyMode, isTrigger, isSmallViewport]);
+  }, [comment, commentTextFieldRef, isCollapsed, readOnlyMode, isTrigger, isSmallViewport]);
   const getCommentEditor = (): JSX.Element => {
     const commentClassName = commentHasFocus ? 'msla-card-comment-focused' : 'msla-card-comment';
     const commentTitle = intl.formatMessage({
@@ -143,6 +152,10 @@ export const PanelHeaderComment = ({ comment, readOnlyMode, commentChange, isTri
         id: 'zWxKLk',
         description: 'Toggle button label to hide comment section',
       });
+
+  if (isCollapsed || noNodeSelected) {
+    return null;
+  }
 
   return (
     <div className={css('msla-panel-comment-container', isCommentCollapsed && 'collapsed')}>
