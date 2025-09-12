@@ -32,6 +32,9 @@ export const useIsAgenticWorkflow = () => {
       return false;
     }
   }, []);
+  if (isEnabledForStateful) {
+    return !workflowKind || equals(workflowKind, 'agentic', true) || (equals(workflowKind, 'stateful', true) && isEnabledForStateful);
+  }
   return equals(workflowKind, 'agentic', true) || (equals(workflowKind, 'stateful', true) && isEnabledForStateful);
 };
 
