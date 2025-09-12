@@ -7,7 +7,7 @@ describe('ui/panel/panelheadercomment', () => {
   let minimal: PanelHeaderCommentProps, renderer: ReactShallowRenderer.ShallowRenderer;
 
   beforeEach(() => {
-    minimal = { commentChange: vi.fn() };
+    minimal = { isCollapsed: false, commentChange: vi.fn() };
     renderer = ReactShallowRenderer.createRenderer();
   });
 

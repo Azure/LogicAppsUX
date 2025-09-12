@@ -24,7 +24,7 @@ test.describe(
       await page.getByRole('code').click();
       await page.keyboard.type('.toUpperCase();');
       await page.getByText('code*', { exact: true }).click();
-      await page.getByTestId('msla-panel-header-close-nav').click();
+      await page.getByTestId('msla-panel-header-collapse-nav').click();
       await page.getByTestId('card-response').click();
       await page.getByTestId('msla-setting-token-editor-stringeditor-body').click();
       await page.getByTestId('msla-token-picker-entrypoint-button-dynamic-content').click();
