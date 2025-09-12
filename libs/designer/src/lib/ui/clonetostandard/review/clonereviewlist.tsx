@@ -13,7 +13,9 @@ import { useSubscriptions } from '../../../core/queries/resource';
 
 export const CloneReviewList = () => {
   const intl = useIntl();
-  const { sourceApps, destinationApp, errorMessage, isSuccessfullyCloned } = useSelector((state: RootState) => state.clone);
+  const { sourceApps, destinationApp, errorMessage, showReportErrorButton, isSuccessfullyCloned } = useSelector(
+    (state: RootState) => state.clone
+  );
 
   const styles = useCloneTabStyles();
   const { data: subscriptions } = useSubscriptions();
@@ -59,7 +61,22 @@ export const CloneReviewList = () => {
           </MessageBarActions>
         </MessageBar>
       ) : null}
-      {!isUndefinedOrEmptyString(errorMessage) && <MessageBar intent="error">{errorMessage}</MessageBar>}
+      {!isUndefinedOrEmptyString(errorMessage) && (
+        <MessageBar intent="error">
+          <MessageBarBody>{errorMessage}</MessageBarBody>
+          {showReportErrorButton && (
+            <MessageBarActions>
+              <Button href="https://github.com/Azure/LogicAppsUX/issues/new?template=clone.yml" as="a" target="_blank">
+                {intl.formatMessage({
+                  defaultMessage: 'Report error',
+                  id: 'CcuFEN',
+                  description: 'Label to report error',
+                })}
+              </Button>
+            </MessageBarActions>
+          )}
+        </MessageBar>
+      )}
 
       <div className={styles.mainSection}>
         <div className={styles.sectionHeader}>
