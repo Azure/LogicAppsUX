@@ -8,6 +8,18 @@ import renderer from 'react-test-renderer';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 
+// Mock react-intl
+vi.mock('react-intl', async () => {
+  const actualIntl = await vi.importActual('react-intl');
+  return {
+    ...actualIntl,
+    useIntl: () => ({
+      formatMessage: vi.fn(({ defaultMessage }) => defaultMessage),
+      formatDate: vi.fn((date) => `Formatted: ${date}`),
+    }),
+  };
+});
+
 describe('lib/panel/panelHeader/main', () => {
   let minimal: PanelHeaderProps;
   let minimalWithHeader: PanelHeaderProps;
@@ -30,12 +42,11 @@ describe('lib/panel/panelHeader/main', () => {
         subgraphType: undefined,
         tabs: [],
       },
-      isCollapsed: false,
       isOutermostPanel: true,
       headerItems: [],
       headerLocation: PanelLocation.Right,
       panelScope: PanelScope.CardLevel,
-      toggleCollapse: vi.fn(),
+      onClose: vi.fn(),
       onTitleChange: vi.fn(),
       commentChange: vi.fn(),
       handleTitleUpdate: vi.fn(),
@@ -87,7 +98,6 @@ describe('lib/panel/panelHeader/main', () => {
         displayName: 'sample title',
         iconUri: 'sample icon url',
       },
-      noNodeSelected: false,
       readOnlyMode: false,
       renameTitleDisabled: false,
       isOutermostPanel: true,
@@ -97,12 +107,10 @@ describe('lib/panel/panelHeader/main', () => {
     const comment = shallow.getRenderOutput().props.children[2];
     expect(panelHeader.props.className).toBe('msla-panel-header');
 
-    const [, fragment]: any[] = React.Children.toArray(panelHeader.props.children);
-
-    const [cardHeader]: any[] = React.Children.toArray(fragment.props.children);
-
+    const [cardHeader]: any[] = React.Children.toArray(panelHeader.props.children);
     expect(cardHeader.props.className).toBe('msla-panel-card-header');
-    const [, titleContainer]: any[] = React.Children.toArray(cardHeader.props.children);
+
+    const [_, titleContainer]: any[] = React.Children.toArray(cardHeader.props.children);
 
     expect(titleContainer.props.className).toBe('msla-panel-card-title-container');
 
@@ -113,8 +121,6 @@ describe('lib/panel/panelHeader/main', () => {
     expect(title.props.titleValue).toBe(props.nodeData.displayName);
 
     expect(comment.props.comment).toBe(props.nodeData.comment);
-    expect(comment.props.isCollapsed).toBe(props.isCollapsed);
-    expect(comment.props.noNodeSelected).toBe(props.noNodeSelected);
     expect(comment.props.readOnlyMode).toBe(props.readOnlyMode);
   });
 

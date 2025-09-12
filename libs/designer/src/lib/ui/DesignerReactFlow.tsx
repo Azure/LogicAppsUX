@@ -62,30 +62,38 @@ const DesignerReactFlow = (props: any) => {
   const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null);
   const [containerDimensions, setContainerDimensions] = useState(canvasRef.current?.getBoundingClientRect() ?? { width: 0, height: 0 });
 
+  // Ensure the container dimensions are set
+  useEffect(() => {
+    setContainerDimensions(canvasRef.current?.getBoundingClientRect() ?? { width: 0, height: 0 });
+  }, [canvasRef]);
+
   const onInit = useCallback((instance: ReactFlowInstance) => {
     setReactFlowInstance(instance);
   }, []);
 
   const hasFitViewRun = useRef(false);
 
+  // Fit view to nodes on initial load
   useEffect(() => {
+    if (containerDimensions.width === 0 || containerDimensions.height === 0) {
+      return;
+    }
+
     if (!hasFitViewRun.current && nodes.length > 0 && reactFlowInstance && isInitialized) {
       requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          const defaultZoom = 1.0;
-          const topNode = nodes.reduce((top, node) => (node.position.y < top.position.y ? node : top));
+        const defaultZoom = 1.0;
+        const topNode = nodes.reduce((top, node) => (node.position.y < top.position.y ? node : top));
 
-          const centerX = containerDimensions.width / 2;
-          const topPadding = 120;
+        const centerX = containerDimensions.width / 2;
+        const topPadding = 120;
 
-          reactFlowInstance.setViewport({
-            x: centerX - (topNode.position.x + (topNode.width || DEFAULT_NODE_SIZE.width) / 2) * defaultZoom,
-            y: topPadding - topNode.position.y * defaultZoom,
-            zoom: defaultZoom,
-          });
-
-          hasFitViewRun.current = true;
+        reactFlowInstance.setViewport({
+          x: centerX - (topNode.position.x + (topNode.width || DEFAULT_NODE_SIZE.width) / 2) * defaultZoom,
+          y: topPadding - topNode.position.y * defaultZoom,
+          zoom: defaultZoom,
         });
+
+        hasFitViewRun.current = true;
       });
     }
   }, [nodes, reactFlowInstance, isInitialized, containerDimensions]);
@@ -120,6 +128,13 @@ const DesignerReactFlow = (props: any) => {
   const [zoom, setZoom] = useState(1);
 
   const translateExtent = useMemo((): [[number, number], [number, number]] => {
+    if (containerDimensions.width === 0 || containerDimensions.height === 0) {
+      return [
+        [Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY],
+        [Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY],
+      ];
+    }
+
     const padding = DesignerFlowViewPadding;
     const [flowWidth, flowHeight] = flowSize;
 
