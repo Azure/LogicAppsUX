@@ -2,6 +2,7 @@ import { ProjectType, type StandardApp } from '@microsoft/vscode-extension-logic
 import { WorkflowKind, WorkflowType } from '../../../constants';
 import * as fs from 'fs-extra';
 import * as path from 'path';
+import { equals } from '@microsoft/logic-apps-shared';
 
 /**
  * Gets the codeless workflow template.
@@ -11,8 +12,7 @@ import * as path from 'path';
  * @returns {StandardApp} - The codeless workflow template.
  */
 export function getCodelessWorkflowTemplate(projectType: ProjectType, workflowType: WorkflowType, functionName?: string): StandardApp {
-  // TODO(aeldridge): This uses 'Stateless' workflow kind for Agentic workflows. Is this correct?
-  const workflowKind = workflowType === WorkflowType.stateful ? WorkflowKind.stateful : WorkflowKind.stateless;
+  const workflowKind = getWorkflowStateType(workflowType); //workflowType === WorkflowType.stateful ? WorkflowKind.stateful : WorkflowKind.stateless;
 
   if (projectType === ProjectType.customCode) {
     return {
@@ -112,7 +112,7 @@ export function getCodelessWorkflowTemplate(projectType: ProjectType, workflowTy
     kind: workflowKind,
   };
 
-  if (workflowType === WorkflowType.agentic) {
+  if (workflowType === WorkflowType.agentic || workflowType === WorkflowType.agent) {
     return {
       ...baseDefinition,
       definition: {
@@ -140,11 +140,25 @@ export function getCodelessWorkflowTemplate(projectType: ProjectType, workflowTy
             },
             limit: {},
             tools: {},
-            runAfter: {},
+            runAfter:
+              workflowKind === WorkflowKind.agent
+                ? {
+                    When_a_new_chat_session_started: ['Succeeded'],
+                  }
+                : {},
           },
         },
+        triggers:
+          workflowKind === WorkflowKind.agent
+            ? {
+                When_a_new_chat_session_starts: {
+                  type: 'Request',
+                  kind: 'Agent',
+                },
+              }
+            : baseDefinition.definition.triggers,
       },
-      kind: WorkflowKind.agentic,
+      kind: workflowKind,
     };
   }
 
@@ -161,3 +175,24 @@ export async function getCodefulWorkflowTemplate(): Promise<string> {
 
   return templateContent;
 }
+
+/**
+ * Determines the workflow kind based on the provided workflow type.
+ * @param workflowType - The type of workflow to evaluate
+ * @returns The corresponding WorkflowKind enum value. Returns WorkflowKind.stateful as the default
+ */
+const getWorkflowStateType = (workflowType: WorkflowType): WorkflowKind => {
+  if (equals(workflowType, WorkflowType.stateful, true)) {
+    return WorkflowKind.stateful;
+  }
+  if (equals(workflowType, WorkflowType.stateless, true)) {
+    return WorkflowKind.stateless;
+  }
+  if (equals(workflowType, WorkflowType.agentic, true)) {
+    return WorkflowKind.stateful;
+  }
+  if (equals(workflowType, WorkflowType.agent, true)) {
+    return WorkflowKind.agent;
+  }
+  return WorkflowKind.stateful;
+};

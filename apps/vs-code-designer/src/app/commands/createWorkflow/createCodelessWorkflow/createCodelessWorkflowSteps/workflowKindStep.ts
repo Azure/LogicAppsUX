@@ -103,10 +103,22 @@ export class WorkflowKindStep extends AzureWizardPromptStep<IFunctionWizardConte
 
     const agentic: IWorkflowTemplate = {
       id: WorkflowType.agentic,
-      name: localize('Agentic', 'Agentic workflow'),
+      name: localize('Agentic', 'Autonomous agent'),
       defaultFunctionName: 'Agentic',
       language: language,
       isHttpTrigger: true,
+      isTimerTrigger: false,
+      userPromptedSettings: [],
+      categories: [TemplateCategory.Core],
+    };
+
+    // Converstational agent
+    const agent: IWorkflowTemplate = {
+      id: WorkflowType.agent,
+      name: localize('Agent', 'Conversational agent'),
+      defaultFunctionName: 'Agent',
+      language: language,
+      isHttpTrigger: false,
       isTimerTrigger: false,
       userPromptedSettings: [],
       categories: [TemplateCategory.Core],
@@ -124,6 +136,10 @@ export class WorkflowKindStep extends AzureWizardPromptStep<IFunctionWizardConte
       {
         label: agentic.name,
         data: agentic,
+      },
+      {
+        label: agent.name,
+        data: agent,
       },
     ];
 
