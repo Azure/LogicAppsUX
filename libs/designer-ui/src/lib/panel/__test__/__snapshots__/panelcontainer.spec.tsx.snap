@@ -21,6 +21,7 @@ exports[`ui/panel/panelContainer > should construct 1`] = `
       "width": "614.4px",
     }
   }
+  type="inline"
 >
   <div
     className="msla-panel-container-nested msla-panel-container-nested-right"
@@ -33,7 +34,6 @@ exports[`ui/panel/panelContainer > should construct 1`] = `
         handleTitleUpdate={[MockFunction spy]}
         headerItems={[]}
         headerLocation="RIGHT"
-        isOutermostPanel={true}
         nodeData={
           {
             "comment": undefined,
