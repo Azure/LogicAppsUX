@@ -11,7 +11,6 @@ import * as vscode from 'vscode';
 import * as cp from 'child_process';
 import * as path from 'path';
 import { getWorkspacePath, isMultiRootWorkspace } from '../../../utils/workspace';
-import { getLatestBundleVersion } from '../../../utils/bundleFeed';
 import { activateAzurite } from '../../../utils/azurite/activateAzurite';
 import { TestFile } from '../../../tree/unitTestTree/testFile';
 import type { UnitTestExecutionResult } from '@microsoft/vscode-extension-logic-apps';
@@ -104,7 +103,7 @@ export async function runUnitTestFromPath(context: IActionContext, unitTestPath:
         const logicAppName = path.relative(testDirectory, unitTestPath).split(path.sep)[0];
         const workflowName = path.basename(path.dirname(unitTestPath));
         const unitTestName = getUnitTestName(path.basename(unitTestPath));
-        const bundleVersionNumber = await getLatestBundleVersion(defaultExtensionBundlePathValue);
+        const bundleVersionNumber = '1.138.54'; // TODO (ccastrotrejo): Need to get the value from the docker container
         const pathToExe = path.join(
           defaultExtensionBundlePathValue,
           bundleVersionNumber,
