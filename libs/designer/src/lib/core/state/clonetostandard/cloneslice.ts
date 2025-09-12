@@ -22,6 +22,7 @@ export interface CloneState {
   sourceApps: SourceWorkflowState[];
   destinationApp: TargetWorkflowState;
   errorMessage: string | undefined;
+  showReportErrorButton: boolean;
   runValidation: boolean;
   isSuccessfullyCloned: boolean;
 }
@@ -35,6 +36,7 @@ const initialState: CloneState = {
     logicAppName: '',
   },
   errorMessage: undefined,
+  showReportErrorButton: false,
   runValidation: false,
   isSuccessfullyCloned: false,
 };
@@ -63,8 +65,9 @@ export const cloneSlice = createSlice({
       state.destinationApp.logicAppName = action.payload.name;
       state.destinationApp.location = action.payload.location;
     },
-    updateErrorMessage: (state, action: PayloadAction<string | undefined>) => {
-      state.errorMessage = action.payload;
+    updateErrorMessage: (state, action: PayloadAction<{ errorMessage: string | undefined; showReportErrorButton: boolean }>) => {
+      state.errorMessage = action.payload.errorMessage;
+      state.showReportErrorButton = action.payload.showReportErrorButton;
     },
     // Note: temporary while only supporting single case, to-be-changed once supporting multi.
     updateTargetWorkflowName: (state, action: PayloadAction<string>) => {
