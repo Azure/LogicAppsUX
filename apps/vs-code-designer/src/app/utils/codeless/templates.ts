@@ -143,7 +143,7 @@ export function getCodelessWorkflowTemplate(projectType: ProjectType, workflowTy
             runAfter:
               workflowKind === WorkflowKind.agent
                 ? {
-                    When_a_new_chat_session_started: ['Succeeded'],
+                    When_a_new_chat_session_starts: ['Succeeded'],
                   }
                 : {},
           },
