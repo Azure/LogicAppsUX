@@ -60,7 +60,7 @@ describe('utils/codeless/templates', () => {
     expect(workflowDefinition.definition.triggers).toHaveProperty('When_a_new_chat_session_starts');
     expect(workflowDefinition.definition.triggers?.When_a_new_chat_session_starts.type).toBe('Request');
     expect(workflowDefinition.definition.triggers?.When_a_new_chat_session_starts.kind).toBe('Agent');
-    expect(workflowDefinition.definition.actions?.Default_Agent.runAfter).toHaveProperty('When_a_new_chat_session_started');
+    expect(workflowDefinition.definition.actions?.Default_Agent.runAfter).toHaveProperty('When_a_new_chat_session_starts');
   });
 
   it('Should return agentic workflow with empty triggers', () => {
