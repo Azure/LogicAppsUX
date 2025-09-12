@@ -61,7 +61,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { DismissRegular } from '@fluentui/react-icons';
 import TenantPicker from './formInputs/tenantPicker';
-import { useShouldEnableDynamicConnections } from '../../../../common/hooks/experimentation';
 import { useStyles } from './styles';
 import { isAgentWorkflow } from '../../../../core/state/workflow/helper';
 
@@ -159,8 +158,6 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   const [operationParameterValues, setOperationParameterValues] = useState<Record<string, any>>({});
   const [connectionDisplayName, setConnectionDisplayName] = useState<string>(`new_conn_${customLengthGuid(5)}`.toLowerCase());
   const operationParameterSetKeys = useMemo(() => Object.keys(operationParameterSets ?? {}), [operationParameterSets]);
-
-  const shouldEnableDynamicConnectionsFlag = useShouldEnableDynamicConnections();
 
   const [selectedParamSetIndex, setSelectedParamSetIndex] = useState<number>(0);
   const [isUsingDynamicConnection, setIsUsingDynamicConnection] = useState<boolean>(true);
@@ -306,13 +303,8 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   );
 
   const isDynamicConnectionOptionValidForConnector = useMemo(
-    () =>
-      isUsingOAuth &&
-      isAgentSubgraph &&
-      shouldEnableDynamicConnectionsFlag &&
-      connector?.properties?.isDynamicConnectionAllowed &&
-      isAgentWorkflow(workflowKind ?? ''),
-    [connector?.properties?.isDynamicConnectionAllowed, isAgentSubgraph, isUsingOAuth, shouldEnableDynamicConnectionsFlag, workflowKind]
+    () => isUsingOAuth && isAgentSubgraph && connector?.properties?.isDynamicConnectionAllowed && isAgentWorkflow(workflowKind ?? ''),
+    [connector?.properties?.isDynamicConnectionAllowed, isAgentSubgraph, isUsingOAuth, workflowKind]
   );
 
   const usingAadConnection = useMemo(() => (connector ? isUsingAadAuthentication(connector) : false), [connector]);

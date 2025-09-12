@@ -1,7 +1,6 @@
-import { equals, EXP_FLAGS, ExperimentationService } from '@microsoft/logic-apps-shared';
+import { equals } from '@microsoft/logic-apps-shared';
 import type { RootState } from '../../store';
 import { useSelector } from 'react-redux';
-import { useMemo } from 'react';
 
 export const useShowMinimap = () => {
   return useSelector((state: RootState) => state.designerView.showMinimap);
@@ -25,14 +24,7 @@ export const useEdgeContextMenuData = () => {
 
 export const useIsAgenticWorkflow = () => {
   const workflowKind = useSelector((state: RootState) => state.workflow.workflowKind);
-  const isEnabledForStateful = useMemo(() => {
-    try {
-      return ExperimentationService().isFeatureEnabled(EXP_FLAGS.ENABLE_AGENTLOOP_STATEFUL);
-    } catch (_e) {
-      return false;
-    }
-  }, []);
-  return equals(workflowKind, 'agentic', true) || (equals(workflowKind, 'stateful', true) && isEnabledForStateful);
+  return equals(workflowKind, 'agentic', true) || equals(workflowKind, 'stateful', true);
 };
 
 // Temporary hook for backwards compatibility with agentic wf, TODO: delete once stateful is merged in

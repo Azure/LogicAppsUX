@@ -7,7 +7,7 @@ import { useIsWithinAgenticLoop } from '../../../core/state/workflow/workflowSel
 import { useDispatch } from 'react-redux';
 import { addConnectorAsOperation, type AppDispatch } from '../../../core';
 import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
-import { useShouldEnableNestedAgent, useShouldEnableParseDocumentWithMetadata } from './hooks';
+import { useShouldEnableParseDocumentWithMetadata } from './hooks';
 import constants from '../../../common/constants';
 
 type OperationGroupDetailViewProps = {
@@ -27,7 +27,6 @@ export const OperationGroupDetailView = (props: OperationGroupDetailViewProps) =
   const isWithinAgenticLoop = useIsWithinAgenticLoop(graphId);
   const isAgentTool = useIsAddingAgentTool();
   const shouldEnableParseDocWithMetadata = useShouldEnableParseDocumentWithMetadata();
-  const shouldEnableNestedAgent = useShouldEnableNestedAgent();
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -49,7 +48,7 @@ export const OperationGroupDetailView = (props: OperationGroupDetailViewProps) =
       }
 
       if (data.id === 'invokeNestedAgent') {
-        if (!shouldEnableNestedAgent || !(isWithinAgenticLoop || isAgentTool)) {
+        if (!(isWithinAgenticLoop || isAgentTool)) {
           return false;
         }
       }
@@ -64,7 +63,7 @@ export const OperationGroupDetailView = (props: OperationGroupDetailViewProps) =
         (filters?.['actionType'] === 'triggers' && data.isTrigger)
       );
     },
-    [filters, ignoreActionsFilter, isAgentTool, isRoot, isWithinAgenticLoop, shouldEnableNestedAgent, shouldEnableParseDocWithMetadata]
+    [filters, ignoreActionsFilter, isAgentTool, isRoot, isWithinAgenticLoop, shouldEnableParseDocWithMetadata]
   );
   const operationGroupActions: OperationActionData[] = groupOperations
     .map((operation) => OperationActionDataFromOperation(operation))

@@ -106,7 +106,6 @@ import {
   isAgentConnectorAndAgentServiceModel,
   isAgentConnectorAndDeploymentId,
 } from './helpers';
-import { useShouldEnableFoundryServiceConnection } from './hooks';
 import type { AnyAction, ThunkDispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { getConnectionsForConnector } from '../../../../../core/queries/connections';
@@ -362,7 +361,6 @@ export const ParameterSection = ({
   const isTrigger = useSelector((state: RootState) => isTriggerNode(nodeId, state.workflow.nodesMetadata));
   const operationInfo = useOperationInfo(nodeId);
   const dependencies = useDependencies(nodeId);
-  const isFoundryServiceConnectionEnabled = useShouldEnableFoundryServiceConnection();
 
   // Specific for agentic scenarios
   const cognitiveServiceAccountId = useCognitiveServiceAccountId(nodeId, operationInfo?.connectorId);
@@ -824,9 +822,6 @@ export const ParameterSection = ({
 
   const settings: Settings[] = group?.parameters
     .filter((x) => !x.hideInUI && shouldUseParameterInGroup(x, group.parameters))
-    .filter((param) => {
-      return param.parameterName !== 'agentModelType' || isFoundryServiceConnectionEnabled;
-    })
     .map((param) => {
       const { id, label, value, required, showTokens, placeholder, editorViewModel, dynamicData, conditionalVisibility, validationErrors } =
         param;
