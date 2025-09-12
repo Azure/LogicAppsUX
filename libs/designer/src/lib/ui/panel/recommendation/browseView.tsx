@@ -6,7 +6,6 @@ import { equals, getRecordEntry, type Connector } from '@microsoft/logic-apps-sh
 import { BrowseGrid, isBuiltInConnector, isCustomConnector, RuntimeFilterTagList } from '@microsoft/designer-ui';
 import { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
-import { useShouldEnableACASession } from './hooks';
 import { ALLOWED_A2A_CONNECTOR_NAMES } from './helpers';
 
 const priorityConnectors = [
@@ -69,7 +68,6 @@ export interface BrowseViewProps {
 
 export const BrowseView = (props: BrowseViewProps) => {
   const { filters, displayRuntimeInfo, setFilters } = props;
-  const shouldEnableACASession = useShouldEnableACASession();
   const isA2AWorkflow = useIsA2AWorkflow();
   const isAddingToGraph = useDiscoveryPanelRelationshipIds().graphId === 'root';
 
@@ -81,12 +79,9 @@ export const BrowseView = (props: BrowseViewProps) => {
     return connector.id !== 'connectionProviders/agent';
   }, []);
 
-  const isACASessionAllowed = useCallback(
-    (connector: Connector): boolean => {
-      return !(shouldEnableACASession === false && connector.id === '/serviceProviders/acasession');
-    },
-    [shouldEnableACASession]
-  );
+  const isACASessionAllowed = useCallback((connector: Connector): boolean => {
+    return connector.id !== '/serviceProviders/acasession';
+  }, []);
 
   const passesRuntimeFilter = useCallback(
     (connector: Connector): boolean => {
