@@ -5,7 +5,6 @@
 import { FuncVersion, TargetFramework } from '@microsoft/vscode-extension-logic-apps';
 import type { DebugConfiguration } from 'vscode';
 import { debugSymbolDll, extensionBundleId, extensionCommand } from '../../constants';
-import { localize } from '../../localize';
 
 import * as path from 'path';
 import { getBundleVersionNumber, getExtensionBundleFolder } from './bundleFeed';
@@ -35,7 +34,7 @@ export const getDebugConfiguration = (
 ): DebugConfiguration => {
   if (customCodeTargetFramework) {
     return {
-      name: localize('debugLogicAppFunction', `Run/debug logic app with local function ${logicAppName}`),
+      name: `Run/Debug logic app with local function ${logicAppName}`,
       type: 'logicapp',
       request: 'launch',
       funcRuntime: version === FuncVersion.v1 ? 'clr' : 'coreclr',
@@ -45,7 +44,7 @@ export const getDebugConfiguration = (
   }
 
   return {
-    name: localize('debugLogicApp', `Run/debug logic app ${logicAppName}`),
+    name: `Run/Debug logic app ${logicAppName}`,
     type: version === FuncVersion.v1 ? 'clr' : 'coreclr',
     request: 'attach',
     processId: `\${command:${extensionCommand.pickProcess}}`,
