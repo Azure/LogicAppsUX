@@ -42,7 +42,7 @@ import {
   ReplayFilled,
 } from '@fluentui/react-icons';
 import { TrafficLightDot } from '@microsoft/designer-ui';
-import { FloatingChatButton } from '@microsoft/logic-apps-designer-v2';
+import { ChatButton } from '@microsoft/logic-apps-designer-v2';
 
 // Designer icons
 const SaveIcon = bundleIcon(SaveFilled, SaveRegular);
@@ -445,7 +445,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
           {buttonProps.renderTextIcon}
         </ToolbarButton>
       ))}
-      {shouldRenderChatButton ? <FloatingChatButton appearance="transparent" isDarkMode={isDarkMode} /> : null}
+      {shouldRenderChatButton ? <ChatButton appearance="transparent" isDarkMode={isDarkMode} /> : null}
     </Toolbar>
   );
 };
