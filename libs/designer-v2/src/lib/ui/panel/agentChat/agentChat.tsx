@@ -266,7 +266,7 @@ export const AgentChat = ({
           className={mergeClasses('collapse-toggle', 'right', 'empty')}
           icon={<ChatFilled />}
           onClick={() => setIsCollapsed(false)}
-          data-automation-id="msla-panel-header-close-nav"
+          data-automation-id="msla-panel-header-collapse-nav"
         />
       ) : null}
       {isCollapsed ? null : (

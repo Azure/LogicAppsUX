@@ -1,4 +1,4 @@
-import type { PanelLocation, PanelScope } from '../panelUtil';
+import { PanelLocation, PanelScope } from '../panelUtil';
 import type { PanelNodeData } from '../types';
 import { PanelHeaderComment } from './panelheadercomment';
 import type { TitleChangeHandler } from './panelheadertitle';
@@ -14,18 +14,19 @@ import {
   MessageBarBody,
   Spinner,
   Tooltip,
-  useRestoreFocusSource,
   useRestoreFocusTarget,
 } from '@fluentui/react-components';
 import {
   bundleIcon,
-  DismissFilled,
+  ChevronDoubleRightFilled,
+  ChevronDoubleRightRegular,
   DismissRegular,
   MoreVertical24Filled,
   MoreVertical24Regular,
   PinOffRegular,
 } from '@fluentui/react-icons';
 import { Icon } from '@fluentui/react/lib/Icon';
+import { css } from '@fluentui/react/lib/Utilities';
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -38,8 +39,11 @@ export const handleOnEscapeDown = (e: React.KeyboardEvent<HTMLInputElement | HTM
 
 export interface PanelHeaderProps {
   nodeData: PanelNodeData;
+  isCollapsed: boolean;
+  isOutermostPanel?: boolean;
   headerItems: JSX.Element[];
   headerLocation: PanelLocation;
+  noNodeSelected?: boolean;
   panelScope: PanelScope;
   suppressDefaultNodeSelectFunctionality?: boolean;
   readOnlyMode?: boolean;
@@ -49,7 +53,7 @@ export interface PanelHeaderProps {
   onUnpinAction?: () => void;
   commentChange(newValue?: string): void;
   onRenderWarningMessage?(): JSX.Element;
-  onClose: () => void;
+  toggleCollapse: () => void;
   onTitleChange: TitleChangeHandler;
   handleTitleUpdate: (originalId: string, newId: string) => void;
   canShowLogicAppRun?: boolean;
@@ -59,44 +63,49 @@ export interface PanelHeaderProps {
   hideComment?: boolean;
 }
 
-const DismissIcon = bundleIcon(DismissFilled, DismissRegular);
+const DismissIcon = bundleIcon(ChevronDoubleRightFilled, ChevronDoubleRightRegular);
 const OverflowIcon = bundleIcon(MoreVertical24Filled, MoreVertical24Regular);
 
-const CloseButton = (props: PanelHeaderProps & { nodeId: string }): JSX.Element => {
-  const { nodeId, onClose } = props;
+const CollapseButton = (props: PanelHeaderProps & { isRight: boolean; nodeId: string }): JSX.Element => {
+  const { isCollapsed, isOutermostPanel, isRight, nodeId, toggleCollapse } = props;
 
   const intl = useIntl();
 
   const menuButtonRef = useRef<HTMLButtonElement>(null);
 
-  const panelCloseTitle = intl.formatMessage({
-    defaultMessage: 'Close',
-    id: 'ZYSWRU',
-    description: 'Text of Tooltip to close',
+  const panelCollapseTitle = intl.formatMessage({
+    defaultMessage: 'Collapse',
+    id: 'lX30/R',
+    description: 'Text of Tooltip to collapse',
   });
-  const buttonText = panelCloseTitle;
+  const panelExpandTitle = intl.formatMessage({
+    defaultMessage: 'Expand',
+    id: 'oZMhX/',
+    description: 'Text of Tooltip to expand',
+  });
+  const buttonText = isCollapsed ? panelExpandTitle : panelCollapseTitle;
+
+  const className: string = css('collapse-toggle', isRight ? 'right' : 'left', isCollapsed && 'collapsed');
 
   useEffect(() => {
-    if (!nodeId) {
+    if (isCollapsed || !isOutermostPanel || !nodeId) {
       return;
     }
 
     menuButtonRef.current?.focus();
-  }, [nodeId]);
-
-  const restoreFocusSourceAttribute = useRestoreFocusSource();
+  }, [isCollapsed, isOutermostPanel, nodeId]);
 
   return (
     <Tooltip relationship="label" positioning={'before'} content={buttonText}>
       <Button
-        {...restoreFocusSourceAttribute}
-        id="msla-panel-header-close-nav"
+        id="msla-panel-header-collapse-nav"
         ref={menuButtonRef}
         appearance="subtle"
         icon={<DismissIcon />}
+        className={className}
         aria-label={buttonText}
-        onClick={onClose}
-        data-automation-id="msla-panel-header-close-nav"
+        onClick={toggleCollapse}
+        data-automation-id="msla-panel-header-collapse-nav"
       />
     </Tooltip>
   );
@@ -136,6 +145,11 @@ const OverflowButton = (props: PanelHeaderProps): JSX.Element => {
 export const PanelHeader = (props: PanelHeaderProps): JSX.Element => {
   const {
     nodeData,
+    isCollapsed,
+    isOutermostPanel,
+    headerLocation,
+    noNodeSelected,
+    panelScope,
     suppressDefaultNodeSelectFunctionality,
     readOnlyMode,
     renameTitleDisabled,
@@ -189,13 +203,15 @@ export const PanelHeader = (props: PanelHeaderProps): JSX.Element => {
     }),
   };
 
-  const shouldHideCloseButton = suppressDefaultNodeSelectFunctionality;
+  const isRight = headerLocation === PanelLocation.Right;
+  const noNodeOnCardLevel = noNodeSelected && panelScope === PanelScope.CardLevel;
+  const shouldHideCollapseButton = !isOutermostPanel || (isCollapsed && suppressDefaultNodeSelectFunctionality);
   const titleId = `${nodeId}-title`;
 
-  // loading -> connector icon -> error -> backup loading
+  // collapsed -> loading -> connector icon -> error -> backup loading
   const iconComponent = useMemo(
     () =>
-      isLoading ? (
+      isCollapsed ? null : isLoading ? (
         <div className="msla-panel-card-icon">
           <Spinner size={'tiny'} style={{ padding: '6px' }} />
         </div>
@@ -208,34 +224,38 @@ export const PanelHeader = (props: PanelHeaderProps): JSX.Element => {
       ) : (
         <Spinner className="msla-card-header-spinner" size={'tiny'} />
       ),
-    [isLoading, cardIcon, isError]
+    [isLoading, cardIcon, isCollapsed, isError]
   );
 
   return (
     <>
-      <div className="msla-panel-header" id={title}>
-        <div className={'msla-panel-card-header'}>
-          {iconComponent}
-          <div className={'msla-panel-card-title-container'}>
-            <PanelHeaderTitle
-              key={nodeId}
-              titleId={titleId}
-              readOnlyMode={readOnlyMode}
-              renameTitleDisabled={renameTitleDisabled}
-              titleValue={title}
-              onChange={(newId) => onTitleChange(nodeId, newId)}
-              handleTitleUpdate={(newId) => handleTitleUpdate(nodeId, newId)}
-            />
-          </div>
-          {onUnpinAction ? (
-            <Tooltip content={unpinButtonText} relationship="label">
-              <Button appearance="subtle" icon={<PinOffRegular />} onClick={onUnpinAction} />
-            </Tooltip>
-          ) : null}
-          <OverflowButton {...props} />
-          {shouldHideCloseButton ? undefined : <CloseButton {...props} nodeId={nodeId} />}
-        </div>
-        {onRenderWarningMessage ? onRenderWarningMessage() : null}
+      <div className="msla-panel-header" id={noNodeOnCardLevel ? titleId : title}>
+        {shouldHideCollapseButton ? undefined : <CollapseButton {...props} isRight={isRight} nodeId={nodeId} />}
+        {!noNodeOnCardLevel && !isCollapsed ? (
+          <>
+            <div className={'msla-panel-card-header'}>
+              {iconComponent}
+              <div className={'msla-panel-card-title-container'}>
+                <PanelHeaderTitle
+                  key={nodeId}
+                  titleId={titleId}
+                  readOnlyMode={readOnlyMode}
+                  renameTitleDisabled={renameTitleDisabled}
+                  titleValue={title}
+                  onChange={(newId) => onTitleChange(nodeId, newId)}
+                  handleTitleUpdate={(newId) => handleTitleUpdate(nodeId, newId)}
+                />
+              </div>
+              {onUnpinAction ? (
+                <Tooltip content={unpinButtonText} relationship="label">
+                  <Button appearance="subtle" icon={<PinOffRegular />} onClick={onUnpinAction} />
+                </Tooltip>
+              ) : null}
+              <OverflowButton {...props} />
+            </div>
+            {onRenderWarningMessage ? onRenderWarningMessage() : null}
+          </>
+        ) : null}
       </div>
       {showTriggerInfo && !isTriggerInfoDismissed ? (
         <div className="msla-panel-header-messages">
@@ -264,8 +284,15 @@ export const PanelHeader = (props: PanelHeaderProps): JSX.Element => {
           </MessageBar>
         </div>
       ) : null}
-      {(isTrigger || !isNullOrUndefined(comment)) && !hideComment ? (
-        <PanelHeaderComment comment={comment} readOnlyMode={readOnlyMode} commentChange={commentChange} isTrigger={isTrigger} />
+      {(isTrigger || (!isNullOrUndefined(comment) && !noNodeOnCardLevel && !isCollapsed)) && !hideComment ? (
+        <PanelHeaderComment
+          comment={comment}
+          isCollapsed={isCollapsed}
+          noNodeSelected={noNodeOnCardLevel}
+          readOnlyMode={readOnlyMode}
+          commentChange={commentChange}
+          isTrigger={isTrigger}
+        />
       ) : null}
       {canResubmit || canShowLogicAppRun ? (
         <div className="msla-panel-header-buttons">

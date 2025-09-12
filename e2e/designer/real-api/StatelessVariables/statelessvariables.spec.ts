@@ -27,7 +27,7 @@ test.describe(
       await page.getByRole('option', { name: 'Array' }).click();
       await page.getByTestId('msla-setting-token-editor-stringeditor-value').click();
       await page.keyboard.type('[1,2]');
-      await page.getByTestId('msla-panel-header-close-nav').click();
+      await page.getByTestId('msla-panel-header-collapse-nav').click();
 
       await page.getByTestId('msla-plus-button-initialize_variable-response').click();
       await page.getByTestId('msla-add-button-initialize_variable-response').click({ force: true });
@@ -54,7 +54,7 @@ test.describe(
       await page.getByRole('option', { name: 'String' }).click();
       await page.getByTestId('msla-setting-token-editor-stringeditor-value').click();
       await page.keyboard.type('foo');
-      await page.getByTestId('msla-panel-header-close-nav').click();
+      await page.getByTestId('msla-panel-header-collapse-nav').click();
 
       await page.getByTestId('msla-plus-button-initialize_variable_1-response').click();
       await page.getByTestId('msla-add-button-initialize_variable_1-response').click();
@@ -65,7 +65,7 @@ test.describe(
       await page.getByRole('option', { name: 'v2' }).click();
       await page.getByTestId('msla-setting-token-editor-stringeditor-value').click();
       await page.keyboard.type(browserName);
-      await page.getByTestId('msla-panel-header-close-nav').click();
+      await page.getByTestId('msla-panel-header-collapse-nav').click();
 
       await page.getByTestId('card-response').click();
       await page.getByTestId('msla-setting-token-editor-stringeditor-body').click();
@@ -73,7 +73,7 @@ test.describe(
       await page.getByRole('button', { name: 'v1' }).click();
       await page.getByTestId('msla-token-picker-entrypoint-button-dynamic-content').click();
       await page.getByRole('button', { name: 'v2' }).click();
-      await page.getByTestId('msla-panel-header-close-nav').click();
+      await page.getByTestId('msla-panel-header-collapse-nav').click();
       await realDataApi.saveWorkflow();
       await realDataApi.verifyWorkflowSaveWithRequest(200, `[1,2,3]foo${browserName}`, 'When_a_HTTP_request_is_received');
     });

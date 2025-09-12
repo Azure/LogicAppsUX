@@ -16,7 +16,7 @@ test.describe(
       await page.getByTestId('card-when_a_http_request_is_received').click();
       await page.getByRole('combobox', { name: 'Method' }).click();
       await page.getByRole('option', { name: 'GET' }).click();
-      await page.getByTestId('msla-panel-header-close-nav').click();
+      await page.getByTestId('msla-panel-header-collapse-nav').click();
       await page.getByTestId('msla-plus-button-when_a_http_request_is_received-undefined').click();
       await page.getByTestId('msla-add-button-when_a_http_request_is_received-undefined').click({ force: true });
       await page.getByTestId('msla-search-box').fill('response');
