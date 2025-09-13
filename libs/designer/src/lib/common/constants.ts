@@ -984,6 +984,7 @@ export default {
     OUTPUT: '-outputchannel-',
   },
   SUPPORTED_AGENT_MODELS: ['gpt-5-chat', 'gpt-4.1', 'gpt-4', 'gpt-4o', 'gpt-35-turbo', 'gpt-4.1-mini', 'gpt-4.1-nano', 'gpt-4o-mini'],
+  HANDOFF_TOOL_NAME_MAX_LENGTH: 64,
   CONNECTION_IDS: {
     ACA_SESSION: '/serviceProviders/acasession',
     AGENT: '/connectionProviders/agent',
