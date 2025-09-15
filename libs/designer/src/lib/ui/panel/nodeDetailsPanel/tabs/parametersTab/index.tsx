@@ -1022,7 +1022,10 @@ export const getEditorAndOptions = (
   const isAgent = isAgentConnectorAndDeploymentId(operationInfo?.connectorId, parameter.parameterName);
   if (equals(editor, 'combobox') && isAgent) {
     const options = deploymentsForCognitiveServiceAccount
-      .filter((deployment) => constants.SUPPORTED_AGENT_MODELS.includes((deployment.properties?.model?.name ?? '').toLowerCase()))
+      .filter((deployment) => {
+        const modelName = (deployment.properties?.model?.name ?? '').toLowerCase();
+        return constants.SUPPORTED_AGENT_MODELS.includes(modelName);
+      })
       .map((deployment) => ({
         value: deployment.name,
         displayName: `${deployment.name}${deployment.properties?.model?.name ? ` (${deployment.properties.model.name})` : ''}`,
