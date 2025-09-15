@@ -29,7 +29,7 @@ import constants from '../../../../../common/constants';
 import { removeAgentHandoff } from '../../../../../core/actions/bjsworkflow/handoff';
 import { ParameterSection } from '../parametersTab';
 import { useReadOnly } from '../../../../../core/state/designerOptions/designerOptionsSelectors';
-import { SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
+import { SUBGRAPH_TYPES, equals } from '@microsoft/logic-apps-shared';
 
 const ExpandIcon = bundleIcon(ChevronRight24Filled, ChevronRight24Regular);
 const CollapseIcon = bundleIcon(ChevronDown24Filled, ChevronDown24Regular);
@@ -55,6 +55,9 @@ export const HandoffToolEntry = ({ agentId, toolId }: HandoffToolEntryProps) => 
 
   const defaultToolName = useNodeDisplayName(toolId);
   const targetAgentName = useNodeDisplayName(handoffAction?.targetId ?? '');
+
+  // Get all workflow operations to check for naming conflicts
+  const workflowOperations = useSelector((state: RootState) => state.workflow.operations);
 
   const [expanded, setExpanded] = useState(true);
   const [toolNameError, setToolNameError] = useState('');
@@ -131,6 +134,11 @@ export const HandoffToolEntry = ({ agentId, toolId }: HandoffToolEntryProps) => 
         id: 'hTjAB+',
         description: 'Error message when tool name exceeds maximum characters',
       }),
+      toolNameConflictError: intl.formatMessage({
+        defaultMessage: 'Tool name already exists in the workflow',
+        id: 'xWmpDI',
+        description: 'Error message when tool name conflicts with existing action names',
+      }),
       deleteLabel: intl.formatMessage({
         defaultMessage: 'Delete handoff',
         id: 'RIky6p',
@@ -152,6 +160,15 @@ export const HandoffToolEntry = ({ agentId, toolId }: HandoffToolEntryProps) => 
         return;
       }
 
+      // Check for naming conflicts with existing workflow operations (case-insensitive)
+      // Exclude the current tool ID from conflict checking
+      const existingOperationIds = Object.keys(workflowOperations).filter((id) => id !== toolId);
+      const hasConflict = existingOperationIds.some((id) => equals(id, newToolName, true));
+      if (hasConflict) {
+        setToolNameError(intlText.toolNameConflictError);
+        return;
+      }
+
       // Clear error if validation passes
       setToolNameError('');
 
@@ -164,7 +181,7 @@ export const HandoffToolEntry = ({ agentId, toolId }: HandoffToolEntryProps) => 
         })
       );
     },
-    [toolId, dispatch, intlText.toolNameRequiredError, intlText.toolNameLengthError]
+    [toolId, dispatch, workflowOperations, intlText.toolNameRequiredError, intlText.toolNameLengthError, intlText.toolNameConflictError]
   );
 
   const styles = useHandoffTabStyles();
