@@ -27,4 +27,5 @@ RUN echo "Downloading Azure Functions Core Tools version: $FUNCTIONS_CORE_TOOLS_
     rm -f /$FUNCTIONS_CORE_TOOLS_FILENAME
 
 RUN chmod -R 755 /.${FUNCTIONS_CORE_TOOLS_FOLDER_PATH}/ && \
-    chmod 755 /.${FUNCTIONS_CORE_TOOLS_FOLDER_PATH}/func
+    chmod 755 /.${FUNCTIONS_CORE_TOOLS_FOLDER_PATH}/func && \
+    ln -s /.${FUNCTIONS_CORE_TOOLS_FOLDER_PATH}/func /usr/local/bin/func

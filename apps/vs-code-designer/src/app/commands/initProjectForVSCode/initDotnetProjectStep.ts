@@ -2,14 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import {
-  dotnetPublishTaskLabel,
-  dotnetExtensionId,
-  func,
-  funcWatchProblemMatcher,
-  hostStartCommand,
-  show64BitWarningSetting,
-} from '../../../constants';
+import { dotnetPublishTaskLabel, dotnetExtensionId, funcWatchProblemMatcher, show64BitWarningSetting } from '../../../constants';
 import { localize } from '../../../localize';
 import { getProjFiles, getTargetFramework, getDotnetDebugSubpath, tryGetFuncVersion } from '../../utils/dotnet/dotnet';
 import type { ProjectFile } from '../../utils/dotnet/dotnet';
@@ -106,18 +99,6 @@ export class InitDotnetProjectStep extends InitProjectStepBase {
   protected getTasks(): TaskDefinition[] {
     const commonArgs: string[] = ['/property:GenerateFullPaths=true', '/consoleloggerparameters:NoSummary'];
     const releaseArgs: string[] = ['--configuration', 'Release'];
-    // TODO (ccastrotrejo)-remove
-    const funcBinariesExist = true;
-    const binariesOptions = funcBinariesExist
-      ? {
-          options: {
-            cwd: this.debugSubpath,
-            env: {
-              PATH: '${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}\\NodeJs;${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}\\DotNetSDK;$env:PATH',
-            },
-          },
-        }
-      : {};
     return [
       {
         label: 'clean',
@@ -155,11 +136,10 @@ export class InitDotnetProjectStep extends InitProjectStepBase {
       },
       {
         label: 'func: host start',
-        type: funcBinariesExist ? 'shell' : func,
+        type: 'shell',
         dependsOn: 'build',
-        ...binariesOptions,
-        command: funcBinariesExist ? 'func' : hostStartCommand,
-        args: funcBinariesExist ? ['host', 'start'] : undefined,
+        command: 'func',
+        args: ['host', 'start'],
         isBackground: true,
         problemMatcher: funcWatchProblemMatcher,
       },

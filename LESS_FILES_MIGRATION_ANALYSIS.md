@@ -15,7 +15,7 @@ This document provides a detailed analysis of all 124 LESS files in the LogicApp
 - ✅ **reviewList styles.less (32 lines) - REMOVED ENTIRELY** - apps/vs-code-react → reviewListStyles.ts (PR #7907)
 - ✅ **VS Code styles.less (5 lines) - REMOVED ENTIRELY** - apps/vs-code-react → inline HTML styles
 - ✅ SVG icon migration (3 files removed) - apps/vs-code-react
-- ✅ **nodeSearchPanel** - NEW makeStyles implementation with Tabster focus management (branch: ccastrotrejo/panelSearchMigration)
+- ✅ **nodeSearchPanel** - NEW makeStyles implementation with Tabster focus management
 - ✅ **Fluent UI v8 to v9 Component Migrations**:
   - SearchableDropdown: Complete migration with proper key handling and Fluent UI v9 patterns
   - ShimmeredDetailsList → Table: Native Fluent UI v9 table with column resizing

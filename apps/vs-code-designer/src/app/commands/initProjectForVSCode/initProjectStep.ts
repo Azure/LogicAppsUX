@@ -2,24 +2,13 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { extensionCommand, func, funcWatchProblemMatcher, hostStartCommand } from '../../../constants';
+import { extensionCommand, funcWatchProblemMatcher } from '../../../constants';
 import { InitScriptProjectStep } from './initScriptProjectStep';
 import type { ITaskInputs, ISettingToAdd } from '@microsoft/vscode-extension-logic-apps';
 import type { TaskDefinition } from 'vscode';
 
 export class InitProjectStep extends InitScriptProjectStep {
   protected getTasks(): TaskDefinition[] {
-    // TODO (ccastrotrejo) - Remove
-    const funcBinariesExist = true;
-    const binariesOptions = funcBinariesExist
-      ? {
-          options: {
-            env: {
-              PATH: '${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}\\NodeJs;${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}\\DotNetSDK;$env:PATH',
-            },
-          },
-        }
-      : {};
     return [
       {
         label: 'generateDebugSymbols',
@@ -29,10 +18,9 @@ export class InitProjectStep extends InitScriptProjectStep {
         problemMatcher: '$msCompile',
       },
       {
-        type: funcBinariesExist ? 'shell' : func,
-        command: funcBinariesExist ? 'func' : hostStartCommand,
-        args: funcBinariesExist ? ['host', 'start'] : undefined,
-        ...binariesOptions,
+        type: 'shell',
+        command: 'func',
+        args: ['host', 'start'],
         problemMatcher: funcWatchProblemMatcher,
         isBackground: true,
         label: 'func: host start',

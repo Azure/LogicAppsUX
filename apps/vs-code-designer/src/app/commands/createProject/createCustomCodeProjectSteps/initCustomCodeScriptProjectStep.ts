@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { extInstallTaskName, func, funcWatchProblemMatcher, hostStartCommand } from '../../../../constants';
+import { extInstallTaskName, funcWatchProblemMatcher } from '../../../../constants';
 import { getLocalFuncCoreToolsVersion } from '../../../utils/funcCoreTools/funcVersion';
 import { InitCustomCodeProjectStepBase } from './initCustomCodeProjectStepBase';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
@@ -47,24 +47,12 @@ export class InitCustomCodeScriptProjectStep extends InitCustomCodeProjectStepBa
   }
 
   protected getTasks(): TaskDefinition[] {
-    // TODO (ccastrotrejo) - remove
-    const funcBinariesExist = true;
-    const binariesOptions = funcBinariesExist
-      ? {
-          options: {
-            env: {
-              PATH: '${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}\\NodeJs;${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}\\DotNetSDK;$env:PATH',
-            },
-          },
-        }
-      : {};
     return [
       {
         label: 'func: host start',
-        type: funcBinariesExist ? 'shell' : func,
-        command: funcBinariesExist ? 'func' : hostStartCommand,
-        args: funcBinariesExist ? ['host', 'start'] : undefined,
-        ...binariesOptions,
+        type: 'shell',
+        command: 'func',
+        args: ['host', 'start'],
         problemMatcher: funcWatchProblemMatcher,
         dependsOn: this.useFuncExtensionsInstall ? extInstallTaskName : undefined,
         isBackground: true,
