@@ -48,7 +48,7 @@
       }
     }
   },
-
+  "postStartCommand": "azurite --silent --location /home/vscode/.azurite --debug /home/vscode/.azurite/debug.log &",
   "otherPortsAttributes": {
     "onAutoForward": "silent"
   }
