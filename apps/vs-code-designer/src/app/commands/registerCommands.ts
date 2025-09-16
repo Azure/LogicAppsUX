@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { extensionCommand } from '../../constants';
+import { EXTENSION_BUNDLE_VERSION, extensionCommand } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { executeOnFunctions } from '../functionsExtension/executeOnFunctionsExt';
 import { LogicAppResourceTree } from '../tree/LogicAppResourceTree';
@@ -189,7 +189,7 @@ export function registerCommands(): void {
     errorContext.telemetry.properties.handlingData = JSON.stringify({
       message: errorData.message,
       extensionVersion: ext.extensionVersion,
-      bundleVersion: ext.latestBundleVersion,
+      bundleVersion: EXTENSION_BUNDLE_VERSION,
       correlationId: correlationId,
     });
   });
