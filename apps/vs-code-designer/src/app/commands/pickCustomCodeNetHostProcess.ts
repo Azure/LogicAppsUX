@@ -6,7 +6,7 @@ import { Platform } from '../../constants';
 import { getMatchingWorkspaceFolder } from '../debug/validatePreDebug';
 import { runningFuncTaskMap } from '../utils/funcCoreTools/funcHostTask';
 import type { IRunningFuncTask } from '../utils/funcCoreTools/funcHostTask';
-import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import { parseError, type IActionContext } from '@microsoft/vscode-azext-utils';
 import type * as vscode from 'vscode';
 import * as path from 'path';
 import { getUnixChildren, getWindowsChildren, pickChildProcess } from './pickFuncProcess';
@@ -66,7 +66,13 @@ export async function pickCustomCodeNetHostProcess(
   context.telemetry.properties.lastStep = 'pickNetHostChildProcess';
   let customCodeNetHostProcess: string | undefined;
   for (let i = 0; i < maxRetries; i++) {
-    customCodeNetHostProcess = await pickNetHostChildProcess(taskInfo, debugConfig.isCodeless);
+    try {
+      customCodeNetHostProcess = await pickNetHostChildProcess(taskInfo, debugConfig.isCodeless);
+    } catch (error) {
+      context.telemetry.properties.result = 'Failed';
+      context.telemetry.properties.error = parseError(error).message;
+      throw error;
+    }
     if (customCodeNetHostProcess) {
       break;
     }
@@ -109,7 +115,14 @@ export async function pickCustomCodeNetHostProcessInternal(
   }
 
   context.telemetry.properties.lastStep = 'pickNetHostChildProcess';
-  const customCodeNetHostProcess = await pickNetHostChildProcess(taskInfo, isCodeless);
+  let customCodeNetHostProcess: string | undefined;
+  try {
+    customCodeNetHostProcess = await pickNetHostChildProcess(taskInfo, isCodeless);
+  } catch (error) {
+    context.telemetry.properties.result = 'Failed';
+    context.telemetry.properties.error = parseError(error).message;
+    throw error;
+  }
   if (!customCodeNetHostProcess) {
     const errorMessage = 'Failed to find the .NET host child process for the functions project for logic app "{0}".';
     context.telemetry.properties.result = 'Failed';

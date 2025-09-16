@@ -88,7 +88,6 @@ function buildIssueBody(errorContext: IErrorHandlerContext, issue: IParsedError,
     body += `\nSession id: ${vscode.env.sessionId}`;
   }
   body += `\nExtension version: ${ext.extensionVersion ?? 'unknown'}`;
-  body += `\nExtension bundle version: ${ext.latestBundleVersion ?? 'unknown'}`;
   body += `\nOS: ${process.platform} (${os.type()} ${os.release()})`;
   body += `\nOS arch: ${os.arch()}`;
   body += `\nProduct: ${vscode.env.appName}`;

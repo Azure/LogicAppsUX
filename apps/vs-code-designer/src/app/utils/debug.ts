@@ -4,17 +4,15 @@
  *--------------------------------------------------------------------------------------------*/
 import { FuncVersion, TargetFramework } from '@microsoft/vscode-extension-logic-apps';
 import type { DebugConfiguration } from 'vscode';
-import { debugSymbolDll, extensionBundleId, extensionCommand } from '../../constants';
-
+import { debugSymbolDll, EXTENSION_BUNDLE_VERSION, extensionBundleId, extensionCommand } from '../../constants';
 import * as path from 'path';
-import { getBundleVersionNumber, getExtensionBundleFolder } from './bundleFeed';
+import { getExtensionBundleFolder } from './bundleFeed';
 
 export async function getDebugSymbolDll(): Promise<string> {
   const bundleFolderRoot = await getExtensionBundleFolder();
   const bundleFolder = path.join(bundleFolderRoot, extensionBundleId);
-  const bundleVersionNumber = await getBundleVersionNumber();
 
-  return path.join(bundleFolder, bundleVersionNumber, 'bin', debugSymbolDll);
+  return path.join(bundleFolder, EXTENSION_BUNDLE_VERSION, 'bin', debugSymbolDll);
 }
 
 /**

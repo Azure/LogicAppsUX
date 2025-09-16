@@ -256,8 +256,10 @@ export const ProjectDirectoryPathKey = 'ProjectDirectoryPath';
 export const extensionVersionKey = 'FUNCTIONS_EXTENSION_VERSION';
 export const azureStorageTypeSetting = 'Files';
 export const isZipDeployEnabledSetting = 'IS_ZIP_DEPLOY_ENABLED';
+
 // Project
-export const defaultVersionRange = '[1.*, 2.0.0)'; // Might need to be changed
+export const EXTENSION_BUNDLE_VERSION = '1.131.9';
+export const defaultVersionRange = '[1.*, 2.0.0)';
 export const funcWatchProblemMatcher = '$func-watch';
 export const extInstallTaskName = `${func}: extensions install`;
 export const tasksVersion = '2.0.0';

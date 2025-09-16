@@ -1,4 +1,4 @@
-import { localSettingsFileName, managementApiPrefix, workflowAppApiVersion } from '../../../../constants';
+import { EXTENSION_BUNDLE_VERSION, localSettingsFileName, managementApiPrefix, workflowAppApiVersion } from '../../../../constants';
 import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
 import { getLocalSettingsJson } from '../../../utils/appSettings/localSettings';
@@ -45,7 +45,6 @@ import { env, ProgressLocation, Uri, ViewColumn, window, workspace } from 'vscod
 import type { WebviewPanel, ProgressOptions } from 'vscode';
 import { saveBlankUnitTest } from '../unitTest/saveBlankUnitTest';
 import { createHttpHeaders } from '@azure/core-rest-pipeline';
-import { getBundleVersionNumber } from '../../../utils/bundleFeed';
 import { pickFuncProcess } from '../../pickFuncProcess';
 
 export default class OpenDesignerForLocalProject extends OpenDesignerBase {
@@ -531,7 +530,6 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     const customCodeData: Record<string, string> = await getCustomCodeFromFiles(this.workflowFilePath);
     const workflowDetails = await getManualWorkflowsInLocalProject(projectPath, this.workflowName);
     const artifacts = await getArtifactsInLocalProject(projectPath);
-    const bundleVersionNumber = await getBundleVersionNumber();
 
     let localSettings: Record<string, string>;
     let azureDetails: AzureConnectorDetails;
@@ -559,7 +557,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
       artifacts,
       schemaArtifacts: this.schemaArtifacts,
       mapArtifacts: this.mapArtifacts,
-      extensionBundleVersion: bundleVersionNumber,
+      extensionBundleVersion: EXTENSION_BUNDLE_VERSION,
     };
   }
 

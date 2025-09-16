@@ -6,6 +6,8 @@ import {
   ProjectDirectoryPathKey,
   appKindSetting,
   azureWebJobsStorageKey,
+  defaultVersionRange,
+  extensionBundleId,
   funcIgnoreFileName,
   functionsInprocNet8Enabled,
   functionsInprocNet8EnabledTrue,
@@ -17,11 +19,9 @@ import {
   vscodeFolderName,
   workerRuntimeKey,
 } from '../../../../constants';
-import { addDefaultBundle } from '../../../utils/bundleFeed';
 import { confirmOverwriteFile, writeFormattedJson } from '../../../utils/fs';
 import { ProjectCreateStepBase } from './projectCreateStepBase';
 import { nonNullProp } from '@microsoft/vscode-azext-utils';
-import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IHostJsonV1, IHostJsonV2, ILocalSettingsJson, IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import { FuncVersion, WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
@@ -61,7 +61,7 @@ export class ProjectCreateStep extends ProjectCreateStepBase {
     const hostJsonPath: string = path.join(context.projectPath, hostFileName);
 
     if (await confirmOverwriteFile(context, hostJsonPath)) {
-      const hostJson: IHostJsonV2 | IHostJsonV1 = version === FuncVersion.v1 ? {} : await this.getHostContent(context);
+      const hostJson: IHostJsonV2 | IHostJsonV1 = version === FuncVersion.v1 ? {} : await this.getHostContent();
       await writeFormattedJson(hostJsonPath, hostJson);
     }
 
@@ -82,7 +82,7 @@ export class ProjectCreateStep extends ProjectCreateStepBase {
     }
   }
 
-  protected async getHostContent(context: IActionContext): Promise<IHostJsonV2> {
+  protected async getHostContent(): Promise<IHostJsonV2> {
     const hostJson: IHostJsonV2 = {
       version: '2.0',
       logging: {
@@ -95,7 +95,10 @@ export class ProjectCreateStep extends ProjectCreateStepBase {
       },
     };
 
-    await addDefaultBundle(context, hostJson);
+    hostJson.extensionBundle = {
+      id: extensionBundleId,
+      version: defaultVersionRange,
+    };
 
     return hostJson;
   }

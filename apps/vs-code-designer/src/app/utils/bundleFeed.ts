@@ -2,31 +2,9 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { defaultVersionRange, extensionBundleId } from '../../constants';
-import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { localize } from '../../localize';
 import { ext } from '../../extensionVariables';
 import * as cp from 'child_process';
-import type { IHostJsonV2 } from '@microsoft/vscode-extension-logic-apps';
-
-/**
- * Add bundle extension version to host.json configuration.
- * @param {IActionContext} context - Command context.
- * @param {IHostJsonV2} hostJson - Host.json configuration.
- */
-export async function addDefaultBundle(context: IActionContext, hostJson: IHostJsonV2): Promise<void> {
-  let versionRange: string;
-  try {
-    versionRange = '[1.*, 2.0.0)'; // TODO (ccastrotrejo): Set the range from defaul
-  } catch {
-    versionRange = defaultVersionRange;
-  }
-
-  hostJson.extensionBundle = {
-    id: extensionBundleId,
-    version: versionRange,
-  };
-}
 
 /**
  * Gets extension bundle folder path.

@@ -53,8 +53,6 @@ export namespace ext {
   export const prefix = 'azureLogicAppsStandard';
   export const currentBundleVersion: Map<string, string> = new Map();
   export const pinnedBundleVersion: Map<string, boolean> = new Map();
-  export let defaultBundleVersion: string;
-  export let latestBundleVersion: string;
 
   // Services
   export let subscriptionProvider: VSCodeAzureSubscriptionProvider;

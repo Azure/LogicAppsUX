@@ -127,9 +127,7 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
       if (data.extensionBundle) {
         const versionWithoutSpaces = data.extensionBundle.version.replace(/\s+/g, '');
         const rangeWithoutSpaces = defaultVersionRange.replace(/\s+/g, '');
-        if (data.extensionBundle.id === extensionBundleId && versionWithoutSpaces === rangeWithoutSpaces) {
-          ext.currentBundleVersion.set(projectPath, ext.latestBundleVersion);
-        } else if (data.extensionBundle.id === extensionBundleId && versionWithoutSpaces !== rangeWithoutSpaces) {
+        if (data.extensionBundle.id === extensionBundleId && versionWithoutSpaces !== rangeWithoutSpaces) {
           ext.currentBundleVersion.set(projectPath, extractPinnedVersion(data.extensionBundle.version) ?? data.extensionBundle.version);
           ext.pinnedBundleVersion.set(projectPath, true);
         }
