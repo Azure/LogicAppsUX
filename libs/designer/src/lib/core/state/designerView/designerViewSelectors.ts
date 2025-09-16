@@ -27,7 +27,7 @@ export const useIsAgenticWorkflow = () => {
   const workflowKind = useSelector((state: RootState) => state.workflow.workflowKind);
   const isEnabledForStateful = useMemo(() => {
     try {
-      return ExperimentationService().isFeatureEnabled(EXP_FLAGS.ENABLE_AGENTLOOP_CONSUMPTION);
+      return ExperimentationService().isFeatureEnabled(EXP_FLAGS.ENABLE_AGENTLOOP_STATEFUL);
     } catch (_e) {
       return false;
     }
