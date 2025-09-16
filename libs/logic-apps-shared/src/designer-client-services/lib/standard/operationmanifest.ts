@@ -5,6 +5,7 @@ import type { BaseOperationManifestServiceOptions } from '../base/operationmanif
 import { getBuiltInOperationInfo, isBuiltInOperation, supportedBaseManifestObjects } from '../base/operationmanifest';
 import { getHybridAppBaseRelativeUrl, hybridApiVersion, isHybridLogicApp } from './hybrid';
 import { getClientBuiltInConnectors } from '../base/search';
+import { aiOperationsGroup } from './operations/operationgroups';
 
 export interface StandardOperationManifestServiceOptions extends BaseOperationManifestServiceOptions {
   getCachedOperation?: (connectorName: string, operationName: string) => Promise<any>;
@@ -23,7 +24,31 @@ export class StandardOperationManifestService extends BaseOperationManifestServi
 
   override async getOperationInfo(definition: any, isTrigger: boolean): Promise<OperationInfo> {
     if (isBuiltInOperation(definition)) {
-      return getBuiltInOperationInfo(definition, isTrigger);
+      const normalizedOperationType = definition.type?.toLowerCase();
+      switch (normalizedOperationType) {
+        case 'chunktext':
+          return {
+            connectorId: aiOperationsGroup.id,
+            operationId: 'chunktext',
+          };
+        case 'parsedocument':
+          return {
+            connectorId: aiOperationsGroup.id,
+            operationId: 'parsedocument',
+          };
+        case 'parsedocumentwithmetadata':
+          return {
+            connectorId: aiOperationsGroup.id,
+            operationId: 'parsedocumentwithmetadata',
+          };
+        case 'chunktextwithmetadata':
+          return {
+            connectorId: aiOperationsGroup.id,
+            operationId: 'chunktextwithmetadata',
+          };
+        default:
+          return getBuiltInOperationInfo(definition, isTrigger);
+      }
     }
     if (isServiceProviderOperation(definition.type)) {
       return {
