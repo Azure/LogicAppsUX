@@ -51,8 +51,17 @@ RUN set -eux; \
     unzip -q "/tmp/${FILENAME}" -d "/${FUNCTIONS_CORE_TOOLS_FOLDER_PATH}"; \
     rm -f "/tmp/${FILENAME}"; \
     chmod -R a+rX "/${FUNCTIONS_CORE_TOOLS_FOLDER_PATH}"; \
-    chmod 755 "/${FUNCTIONS_CORE_TOOLS_FOLDER_PATH}/func"; \
-    ln -sf "/${FUNCTIONS_CORE_TOOLS_FOLDER_PATH}/func" /usr/local/bin/func
+    for executable in \
+      "func" \
+      "gozip" \
+      "in-proc8/func" \
+      "in-proc6/func"; do \
+        if [ -f "/${FUNCTIONS_CORE_TOOLS_FOLDER_PATH}/${executable}" ]; then \
+          chmod 755 "/${FUNCTIONS_CORE_TOOLS_FOLDER_PATH}/${executable}"; \
+        fi; \
+      done; \
+    ln -sf "/${FUNCTIONS_CORE_TOOLS_FOLDER_PATH}/func" /usr/local/bin/func; \
+    ln -sf "/${FUNCTIONS_CORE_TOOLS_FOLDER_PATH}/func" /usr/bin/func
 
 # -----------------------------
 # Verify CLI is on PATH
@@ -60,3 +69,6 @@ RUN set -eux; \
 RUN set -eux; \
     which func; \
     func --version
+
+# Ensure Core Tools are discoverable for all users
+ENV PATH=/${FUNCTIONS_CORE_TOOLS_FOLDER_PATH}:$PATH
