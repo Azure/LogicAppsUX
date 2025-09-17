@@ -65,7 +65,6 @@ export class ConsumptionConnectionService extends BaseConnectionService {
     _parametersMetadata?: ConnectionParametersMetadata,
     shouldTestConnection = true
   ): Promise<Connection> {
-    console.log('connector:', connector);
     if (this.isAgenticConsumption(connector)) {
       return {
         id: 'agentic-consumption-connection',
