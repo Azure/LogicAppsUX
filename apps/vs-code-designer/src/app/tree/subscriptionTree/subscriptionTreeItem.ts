@@ -234,7 +234,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
       wizardContext.newAppInsightsName = newName;
     }
 
-    // TODO (ccastrotrejo): Revisit this as the azureappservice library gets updated on the future
+    // TODO (ccastrotrejo): Revisit this as the azureappservice library gets updated in the future
     // Patch: Ensure newAppInsightsName is not null/undefined to prevent nonNullProp errors
     if (!wizardContext.newAppInsightsName) {
       wizardContext.newAppInsightsName = '';
