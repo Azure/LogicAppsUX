@@ -3,6 +3,7 @@ import { McpPanelView } from '../../../core/state/mcp/panel/mcpPanelSlice';
 import type { RootState } from '../../../core/state/mcp/store';
 import { SelectionPanel } from './connector/SelectionPanel';
 import { EditOperationPanel } from './operation/EditOperationPanel';
+import { CreateAppPanel } from './logicapp/createpanel';
 
 export const McpPanelRoot = () => {
   const { isOpen, panelMode } = useSelector((state: RootState) => ({
@@ -21,6 +22,7 @@ export const McpPanelRoot = () => {
         panelMode === McpPanelView.UpdateOperation ||
         panelMode === McpPanelView.CreateConnection) && <SelectionPanel />}
       {panelMode === McpPanelView.EditOperation && <EditOperationPanel />}
+      {panelMode === McpPanelView.CreateLogicApp && <CreateAppPanel />}
     </>
   );
 };

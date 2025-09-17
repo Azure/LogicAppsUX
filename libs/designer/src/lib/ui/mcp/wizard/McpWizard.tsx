@@ -2,7 +2,7 @@ import { Text, Button, MessageBar, MessageBarBody, MessageBarTitle } from '@flue
 import { Add16Regular } from '@fluentui/react-icons';
 import { useMcpWizardStyles } from './styles';
 import { useIntl } from 'react-intl';
-import { McpPanelView, openConnectorPanelView } from '../../../core/state/mcp/panel/mcpPanelSlice';
+import { McpPanelView, openMcpPanelView } from '../../../core/state/mcp/panel/mcpPanelSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../core/state/mcp/store';
 import { McpPanelRoot } from '../panel/mcpPanelRoot';
@@ -42,7 +42,7 @@ export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: R
 
   const handleAddConnectors = useCallback(() => {
     dispatch(
-      openConnectorPanelView({
+      openMcpPanelView({
         panelView: McpPanelView.SelectConnector,
       })
     );
@@ -89,7 +89,7 @@ export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: R
     dispatch(selectConnectorId(selectedConnectorId));
     dispatch(selectOperations(selectedOperations));
     dispatch(
-      openConnectorPanelView({
+      openMcpPanelView({
         panelView: McpPanelView.UpdateOperation,
       })
     );

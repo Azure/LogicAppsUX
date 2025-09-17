@@ -20,4 +20,8 @@ export const useMcpDetailsStyles = makeStyles({
   combobox: {
     width: '100%',
   },
+  linkSection: {
+    paddingTop: tokens.spacingVerticalS,
+    paddingLeft: tokens.spacingHorizontalXXS,
+  },
 });

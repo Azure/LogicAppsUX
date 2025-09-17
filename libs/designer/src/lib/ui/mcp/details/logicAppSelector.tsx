@@ -1,18 +1,20 @@
 import type { AppDispatch, RootState } from '../../../core/state/mcp/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { useIntl } from 'react-intl';
-import { Field, Text, Combobox, Option } from '@fluentui/react-components';
+import { Field, Text, Combobox, Option, Link } from '@fluentui/react-components';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { equals } from '@microsoft/logic-apps-shared';
 import { setLogicApp } from '../../../core/state/mcp/resourceSlice';
 import { useEmptyLogicApps } from '../../../core/mcp/utils/queries';
 import { useMcpDetailsStyles } from './styles';
+import { getLogicAppId } from '../../../core/configuretemplate/utils/helper';
+import { McpPanelView, openMcpPanelView } from '../../../core/state/mcp/panel/mcpPanelSlice';
 
 const NO_ITEM_VALUE = 'NO_ITEM_VALUE';
 
 export const LogicAppSelector = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { subscriptionId, logicAppName } = useSelector((state: RootState) => state.resource);
+  const { subscriptionId, resourceGroup, logicAppName, newLogicAppDetails } = useSelector((state: RootState) => state.resource);
   const { data: logicApps, isLoading: isLogicAppsLoading } = useEmptyLogicApps(subscriptionId ?? '');
 
   const intl = useIntl();
@@ -24,6 +26,11 @@ export const LogicAppSelector = () => {
         defaultMessage: 'Logic app',
         id: 'BsZRu5',
         description: 'Label field for logic app selector',
+      }),
+      CREATE_NEW: intl.formatMessage({
+        defaultMessage: 'Create new',
+        id: 'UJ/l5b',
+        description: 'Create new logic app link',
       }),
       LOADING: intl.formatMessage({
         defaultMessage: 'Loading logic apps ...',
@@ -60,18 +67,28 @@ export const LogicAppSelector = () => {
   const controlValue = useMemo(() => (searchTerm !== undefined ? searchTerm : selectedResource) ?? '', [selectedResource, searchTerm]);
 
   const resources = useMemo(() => {
-    if (!logicApps?.length) {
-      return [];
-    }
+    const result = newLogicAppDetails?.appName
+      ? [
+          {
+            id: getLogicAppId(subscriptionId, resourceGroup, newLogicAppDetails.appName),
+            name: newLogicAppDetails.appName,
+            displayName: `${newLogicAppDetails.appName} (new)`,
+          },
+        ]
+      : [];
 
-    return logicApps
-      .map((app) => ({
-        id: app.id,
-        name: app.name,
-        displayName: app.name,
-      }))
-      .sort((a, b) => a.displayName.localeCompare(b.displayName));
-  }, [logicApps]);
+    result.push(
+      ...(logicApps ?? [])
+        .map((app) => ({
+          id: app.id,
+          name: app.name,
+          displayName: app.name,
+        }))
+        .sort((a, b) => a.displayName.localeCompare(b.displayName))
+    );
+
+    return result;
+  }, [logicApps, newLogicAppDetails?.appName, resourceGroup, subscriptionId]);
 
   const filteredResources = useMemo(() => {
     if (!searchTerm?.trim()) {
@@ -111,6 +128,10 @@ export const LogicAppSelector = () => {
     }
   }, [resources, logicAppName, isLogicAppsLoading, selectedResource, onLogicAppSelect]);
 
+  const handleNewAppCreate = useCallback(() => {
+    dispatch(openMcpPanelView({ panelView: McpPanelView.CreateLogicApp }));
+  }, [dispatch]);
+
   return (
     <div className={styles.container}>
       <div className={styles.labelSection}>
@@ -147,6 +168,9 @@ export const LogicAppSelector = () => {
               )}
             </Combobox>
           </div>
+          <Link className={styles.linkSection} disabled={!!newLogicAppDetails?.appName} onClick={handleNewAppCreate}>
+            {intlText.CREATE_NEW}
+          </Link>
         </Field>
       </div>
     </div>

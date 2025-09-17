@@ -2,11 +2,30 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import { resetMcpState } from '../global';
 
+interface CreateDetails {
+  createStatus?: 'inprogress' | 'failed' | 'succeeded';
+  errorMessage?: string;
+}
+
+interface ResourceDetails extends CreateDetails {
+  id: string;
+  isNew?: boolean;
+}
+
+export interface LogicAppConfigDetails extends CreateDetails {
+  isValid: boolean;
+  appName: string;
+  appServicePlan: ResourceDetails;
+  storageAccount: ResourceDetails;
+  appInsights?: ResourceDetails;
+}
+
 export interface ResourceState {
   subscriptionId: string;
   resourceGroup: string;
   location: string;
   logicAppName?: string;
+  newLogicAppDetails?: LogicAppConfigDetails;
 }
 
 const initialState: ResourceState = {
@@ -38,11 +57,20 @@ export const resourceSlice = createSlice({
       state.location = location;
       state.logicAppName = logicAppName;
     },
+    setNewLogicAppDetails: (state, action: PayloadAction<Partial<LogicAppConfigDetails>>) => {
+      state.newLogicAppDetails = {
+        ...state.newLogicAppDetails,
+        ...action.payload,
+      } as LogicAppConfigDetails;
+    },
+    clearNewLogicAppDetails: (state) => {
+      state.newLogicAppDetails = undefined;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(resetMcpState, () => initialState);
   },
 });
 
-export const { setInitialData, setLogicApp } = resourceSlice.actions;
+export const { setInitialData, setLogicApp, setNewLogicAppDetails, clearNewLogicAppDetails } = resourceSlice.actions;
 export default resourceSlice.reducer;

@@ -18,3 +18,7 @@ export interface McpConnectorTabProps {
   isPrimaryButtonLoading?: boolean;
   previousTabId?: string;
 }
+
+export interface McpCreateAppTabProps extends McpConnectorTabProps {
+  tabStatusIcon?: 'error';
+}
