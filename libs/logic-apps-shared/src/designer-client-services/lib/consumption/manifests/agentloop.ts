@@ -58,12 +58,23 @@ export default {
           type: 'string',
           default: 'AzureOpenAI',
         },
+        // TODO: Replace hardcoded model IDs with dynamic values fetched from backend API once available.
+        modelId: {
+          title: 'Model',
+          description: 'Select the model to use.',
+          type: 'string',
+          'x-ms-editor': 'dropdown',
+          'x-ms-editor-options': {
+            options: [{ value: 'gpt-4o', displayName: 'gpt-4o' }],
+          },
+          'x-ms-visibility': 'important',
+        },
         deploymentId: {
           type: 'string',
           title: 'Deployment model name',
           description: 'The deployment name for the model to use.',
           'x-ms-create-new-resource': true,
-          'x-ms-visibility': 'important',
+          'x-ms-visibility': 'hideInUI',
           'x-ms-editor': 'combobox',
           'x-ms-connection-required': false,
           'x-ms-connection-options': {
@@ -175,7 +186,7 @@ export default {
           },
         },
       },
-      required: ['agentModelType', 'deploymentId', 'messages'],
+      required: ['agentModelType', 'deploymentId', 'modelId', 'messages'],
     },
     outputs: {
       type: 'object',
