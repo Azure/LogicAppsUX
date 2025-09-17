@@ -113,6 +113,12 @@ export class NewCodeProjectTypeStep extends AzureWizardPromptStep<IProjectWizard
       executeSteps.push(new WorkflowCodeProjectCreateStep(projectPath));
       await addInitVSCodeSteps(context, executeSteps, true);
 
+      if (ext.codefulEnabled) {
+        promptSteps.push(new WorkflowCodeTypeStep());
+      } else {
+        context.isCodeless = true; // default to codeless workflow, disabling codeful option
+      }
+
       promptSteps.push(
         await CodeProjectWorkflowStateTypeStep.create(context, {
           isProjectWizard: true,
