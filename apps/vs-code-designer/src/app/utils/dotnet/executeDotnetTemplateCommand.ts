@@ -68,15 +68,6 @@ export function getDotnetTemplateDir(version: FuncVersion, projTemplateKey: stri
 }
 
 /**
- * Validates .NET is installed.
- * @param {IActionContext} context - Command context.
- */
-export async function validateDotnetInstalled(context: IActionContext): Promise<void> {
-  // NOTE: Doesn't feel obvious that `getFramework` would validate dotnet is installed, hence creating a separate function named `validateDotnetInstalled` to export from this file
-  await getFramework(context, undefined);
-}
-
-/**
  * Gets .NET framework version.
  * @param {IActionContext} context - Command context.
  * @param {string | undefined} workingDirectory - Workspace path.

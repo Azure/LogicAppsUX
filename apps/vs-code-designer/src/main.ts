@@ -34,7 +34,6 @@ import { createVSCodeAzureSubscriptionProvider } from './app/utils/services/VSCo
 import { logExtensionSettings, logSubscriptions, runWithDurationTelemetry } from './app/utils/telemetry';
 import { registerAzureUtilsExtensionVariables } from '@microsoft/vscode-azext-azureutils';
 import { getAzExtResourceType, getAzureResourcesExtensionApi } from '@microsoft/vscode-azureresources-api';
-import { validateTasksJson } from './app/utils/vsCodeConfig/tasks';
 
 const perfStats = {
   loadStartTime: Date.now(),
@@ -114,7 +113,8 @@ export async function activate(context: vscode.ExtensionContext) {
     // TODO (ccastrotrjeo): Move to somewhere else
     await callWithTelemetryAndErrorHandling(autoStartDesignTimeSetting, async (actionContext: IActionContext) => {
       await runWithDurationTelemetry(actionContext, showStartDesignTimeMessageSetting, async () => {
-        await validateTasksJson(actionContext, vscode.workspace.workspaceFolders);
+        // TODO (ccastrotrejo): Need to revert validate to support container
+        // await validateTasksJson(actionContext, vscode.workspace.workspaceFolders);
         await promptStartDesignTimeOption(activateContext);
       });
     });
