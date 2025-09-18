@@ -3,18 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { ext } from '../../extensionVariables';
-import { localize } from '../../localize';
 import { NotImplementedError } from '../utils/errors';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { ITemplates } from '@microsoft/vscode-extension-logic-apps';
-import { FuncVersion, TemplateType } from '@microsoft/vscode-extension-logic-apps';
+import type { ITemplates, FuncVersion } from '@microsoft/vscode-extension-logic-apps';
+import { TemplateType } from '@microsoft/vscode-extension-logic-apps';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { Disposable } from 'vscode';
-
-const v3BackupTemplatesVersion = '3.4.1';
-const v2BackupTemplatesVersion = '2.47.1';
-const v1BackupTemplatesVersion = '1.11.0';
 
 export abstract class TemplateProviderBase implements Disposable {
   protected static templateVersionCacheKey = 'templateVersion';
@@ -102,19 +97,6 @@ export abstract class TemplateProviderBase implements Disposable {
     await this.updateCachedValue(TemplateProviderBase.projTemplateKeyCacheKey, this._sessionProjKey);
   }
 
-  public getBackupTemplateVersion(): string {
-    switch (this.version) {
-      case FuncVersion.v1:
-        return v1BackupTemplatesVersion;
-      case FuncVersion.v2:
-        return v2BackupTemplatesVersion;
-      case FuncVersion.v3:
-        return v3BackupTemplatesVersion;
-      default:
-        throw new RangeError(localize('invalidVersion', 'Invalid version "{0}".', this.version));
-    }
-  }
-
   protected async getCacheKeySuffix(): Promise<string> {
     return '';
   }
@@ -125,10 +107,6 @@ export abstract class TemplateProviderBase implements Disposable {
    */
   private async getCacheKey(key: string): Promise<string> {
     key = key + (await this.getCacheKeySuffix());
-
-    if (this.version !== FuncVersion.v1) {
-      key = `${key}.${this.version}`;
-    }
 
     if (this.templateType !== TemplateType.Script) {
       key = `${key}.${this.templateType}`;

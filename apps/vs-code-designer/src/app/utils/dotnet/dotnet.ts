@@ -118,18 +118,6 @@ export async function getTemplateKeyFromProjFile(
       targetFramework = DotnetVersion.net8;
       break;
     }
-    case FuncVersion.v3: {
-      targetFramework = DotnetVersion.net3;
-      break;
-    }
-    case FuncVersion.v2: {
-      targetFramework = DotnetVersion.net2;
-      break;
-    }
-    case FuncVersion.v1: {
-      targetFramework = DotnetVersion.net48;
-      break;
-    }
   }
 
   if (projectPath && (await AzExtFsExtra.pathExists(projectPath))) {

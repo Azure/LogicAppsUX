@@ -3,13 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { extInstallTaskName, funcWatchProblemMatcher } from '../../../constants';
-import { getLocalFuncCoreToolsVersion } from '../../utils/funcCoreTools/funcVersion';
 import { InitProjectStepBase } from './initProjectStepBase';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
-import { FuncVersion } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
-import * as semver from 'semver';
 import type { TaskDefinition } from 'vscode';
 
 /**
@@ -25,11 +22,6 @@ export class InitScriptProjectStep extends InitProjectStepBase {
       if (await fse.pathExists(extensionsCsprojPath)) {
         this.useFuncExtensionsInstall = true;
         context.telemetry.properties.hasExtensionsCsproj = 'true';
-      } else if (context.version === FuncVersion.v2) {
-        // no need to check v1 or v3+
-        const currentVersion: string | null = await getLocalFuncCoreToolsVersion();
-        // Starting after this version, projects can use extension bundle instead of running "func extensions install"
-        this.useFuncExtensionsInstall = !!currentVersion && semver.lte(currentVersion, '2.5.553');
       }
     } catch {
       // use default of false

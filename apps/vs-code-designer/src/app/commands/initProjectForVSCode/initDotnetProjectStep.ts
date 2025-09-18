@@ -2,18 +2,17 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { dotnetPublishTaskLabel, dotnetExtensionId, funcWatchProblemMatcher, show64BitWarningSetting } from '../../../constants';
+import { dotnetPublishTaskLabel, dotnetExtensionId, funcWatchProblemMatcher } from '../../../constants';
 import { localize } from '../../../localize';
 import { getProjFiles, getTargetFramework, getDotnetDebugSubpath, tryGetFuncVersion } from '../../utils/dotnet/dotnet';
 import type { ProjectFile } from '../../utils/dotnet/dotnet';
 import { tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
-import { getWorkspaceSetting, updateGlobalSetting } from '../../utils/vsCodeConfig/settings';
 import { InitProjectStepBase } from './initProjectStepBase';
-import { DialogResponses, nonNullProp, openUrl, parseError } from '@microsoft/vscode-azext-utils';
-import { FuncVersion, ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
+import { nonNullProp } from '@microsoft/vscode-azext-utils';
+import { ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import * as path from 'path';
-import type { MessageItem, TaskDefinition } from 'vscode';
+import type { TaskDefinition } from 'vscode';
 
 export class InitDotnetProjectStep extends InitProjectStepBase {
   protected preDeployTask: string = dotnetPublishTaskLabel;
@@ -62,35 +61,6 @@ export class InitDotnetProjectStep extends InitProjectStepBase {
 
     // The version from the proj file takes precedence over whatever was set in `context` before this
     context.version = tryParseFuncVersion(versionInProjFile) || context.version;
-
-    if (context.version === FuncVersion.v1) {
-      if (getWorkspaceSetting<boolean>(show64BitWarningSetting)) {
-        const message: string = localize(
-          '64BitWarning',
-          'In order to debug .NET Framework functions in VS Code, you must install a 64-bit version of the Azure Functions Core Tools.'
-        );
-
-        try {
-          const result: MessageItem = await context.ui.showWarningMessage(
-            message,
-            DialogResponses.learnMore,
-            DialogResponses.dontWarnAgain
-          );
-
-          if (result === DialogResponses.learnMore) {
-            await openUrl('https://aka.ms/azFunc64bit');
-          } else if (result === DialogResponses.dontWarnAgain) {
-            await updateGlobalSetting(show64BitWarningSetting, false);
-          }
-        } catch (err) {
-          // swallow cancellations (aka if they clicked the 'x' button to dismiss the warning) and proceed to create project
-          if (!parseError(err).isUserCancelledError) {
-            throw err;
-          }
-        }
-      }
-    }
-
     const targetFramework: string = await getTargetFramework(projFile);
     await this.setDeploySubpath(context, path.posix.join('bin', 'Release', targetFramework, 'publish'));
     this.debugSubpath = getDotnetDebugSubpath(targetFramework);

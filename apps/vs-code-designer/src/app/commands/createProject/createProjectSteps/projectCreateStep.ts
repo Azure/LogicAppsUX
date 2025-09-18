@@ -21,9 +21,8 @@ import {
 } from '../../../../constants';
 import { confirmOverwriteFile, writeFormattedJson } from '../../../utils/fs';
 import { ProjectCreateStepBase } from './projectCreateStepBase';
-import { nonNullProp } from '@microsoft/vscode-azext-utils';
-import type { IHostJsonV1, IHostJsonV2, ILocalSettingsJson, IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
-import { FuncVersion, WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
+import type { IHostJsonV2, ILocalSettingsJson, IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
+import { WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';
@@ -57,11 +56,10 @@ export class ProjectCreateStep extends ProjectCreateStepBase {
     context: IProjectWizardContext,
     _progress: Progress<{ message?: string | undefined; increment?: number | undefined }>
   ): Promise<void> {
-    const version: FuncVersion = nonNullProp(context, 'version');
     const hostJsonPath: string = path.join(context.projectPath, hostFileName);
 
     if (await confirmOverwriteFile(context, hostJsonPath)) {
-      const hostJson: IHostJsonV2 | IHostJsonV1 = version === FuncVersion.v1 ? {} : await this.getHostContent();
+      const hostJson: IHostJsonV2 = await this.getHostContent();
       await writeFormattedJson(hostJsonPath, hostJson);
     }
 

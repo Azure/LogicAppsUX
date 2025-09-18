@@ -785,9 +785,9 @@
           "azureLogicAppsStandard.projectRuntime": {
             "scope": "resource",
             "type": "string",
-            "enum": ["~4", "~3"],
+            "enum": ["~4"],
             "description": "The default version of the Azure Functions runtime to use when performing operations like \"Create new logic app\".",
-            "enumDescriptions": ["Azure Functions v4", "Azure Functions v3 (.NET Core)"]
+            "enumDescriptions": ["Azure Functions v4"]
           },
           "azureLogicAppsStandard.projectLanguage": {
             "scope": "resource",
@@ -858,16 +858,6 @@
             "type": "string",
             "enum": ["AddToWorkspace", "OpenInNewWindow", "OpenInCurrentWindow"],
             "description": "The behavior to use after creating a new project. The options are \"AddToWorkspace\", \"OpenInNewWindow\", or \"OpenInCurrentWindow\"."
-          },
-          "azureLogicAppsStandard.show64BitWarning": {
-            "type": "boolean",
-            "description": "Show a warning to install a 64-bit version of the Azure Functions Core Tools when you create a .NET Framework project.",
-            "default": true
-          },
-          "azureLogicAppsStandard.showDeploySubpathWarning": {
-            "type": "boolean",
-            "description": "Show a warning when the \"deploySubpath\" setting does not match the selected folder for deploying.",
-            "default": true
           },
           "azureLogicAppsStandard.showProjectWarning": {
             "type": "boolean",

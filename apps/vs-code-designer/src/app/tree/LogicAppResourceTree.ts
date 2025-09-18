@@ -204,8 +204,7 @@ export class LogicAppResourceTree implements ResolvedAppResourceBase {
       } catch {
         // ignore and use default
       }
-      const version: FuncVersion = await this.getVersion(context);
-      result = parseHostJson(data, version);
+      result = parseHostJson(data);
       this._cachedHostJson = result;
     }
 

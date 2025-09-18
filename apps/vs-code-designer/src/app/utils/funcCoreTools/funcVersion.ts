@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { funcVersionSetting } from '../../../constants';
-import { localize } from '../../../localize';
 import { getWorkspaceSettingFromAnyFolder } from '../vsCodeConfig/settings';
 import { executeCommand } from './cpUtils';
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
@@ -118,21 +117,4 @@ export function addLocalFuncTelemetry(context: IActionContext): void {
     .catch(() => {
       context.telemetry.properties.funcCliVersion = 'none';
     });
-}
-
-/**
- * Checks installed functions core tools version is supported.
- * @param {string} version - Placeholder for input.
- */
-export function checkSupportedFuncVersion(version: FuncVersion) {
-  if (version !== FuncVersion.v2 && version !== FuncVersion.v3 && version !== FuncVersion.v4) {
-    throw new Error(
-      localize(
-        'versionNotSupported',
-        'Functions core tools version "{0}" not supported. Only version "{1}" is currently supported for Codeless.',
-        version,
-        FuncVersion.v2
-      )
-    );
-  }
 }
