@@ -158,10 +158,8 @@ jobs:
     runs-on: ubuntu-latest
     environment: E2ETesting
     permissions:
-      contents: read
+      contents: write
       id-token: write # for Azure login
-      packages: write
-      deployments: write
     steps:
       - name: 'Checkout Github Action'
         uses: actions/checkout@v4
