@@ -49,6 +49,7 @@ jobs:
     outputs:
       new_version: ${{ steps.version.outputs.new_version }}
       tag_name: ${{ steps.version.outputs.tag_name }}
+    permissions: write-all
     steps:
       - name: 'Checkout Github Action'
         uses: actions/checkout@v4
