@@ -29,6 +29,7 @@ import { xmlTransformManifest, xmlValidationManifest } from './manifests/xml';
 import { functionGroup, functionOperation, invokeWorkflowGroup, invokeWorkflowOperation, swaggerFunctionOperation } from './operations';
 import { getBuiltInConnectorsInConsumption } from './search';
 import agentloop from './manifests/agentloop';
+import a2arequestManifest from './manifests/a2aRequest';
 
 interface ConsumptionOperationManifestServiceOptions extends BaseOperationManifestServiceOptions {
   subscriptionId: string;
@@ -229,4 +230,5 @@ const supportedConsumptionManifestObjects = new Map<string, OperationManifest>([
   [parsedocument, parseDocumentManifest],
   [parsedocumentwithmetadata, parseDocumentWithMetadataManifest],
   [agentType, agentloop],
+  ['Request', a2arequestManifest],
 ]);
