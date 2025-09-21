@@ -13,6 +13,7 @@ import undoRedoReducer from './state/undoRedo/undoRedoSlice';
 import workflowReducer from './state/workflow/workflowSlice';
 import workflowParametersReducer from './state/workflowparameters/workflowparametersSlice';
 import modalReducer from './state/modal/modalSlice';
+import notesReducer from './state/notes/notesSlice';
 
 import { configureStore } from '@reduxjs/toolkit';
 import type {} from 'redux-thunk';
@@ -40,6 +41,7 @@ export const store = configureStore({
     customCode: customCodeReducer,
     undoRedo: undoRedoReducer,
     modal: modalReducer,
+		notes: notesReducer,
     // if is in dev environment, add devSlice to store
     ...(process.env.NODE_ENV === 'development' ? { dev: devReducer } : {}),
   },
