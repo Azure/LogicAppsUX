@@ -1,13 +1,13 @@
-import type { 
-	Node, 
-	Connection, 
-	Edge, 
-	EdgeTypes, 
-	NodeChange, 
-	ReactFlowInstance, 
-	NodeDimensionChange, 
-	NodePositionChange,
-	XYPosition,
+import type {
+  Node,
+  Connection,
+  Edge,
+  EdgeTypes,
+  NodeChange,
+  ReactFlowInstance,
+  NodeDimensionChange,
+  NodePositionChange,
+  XYPosition,
 } from '@xyflow/react';
 import { BezierEdge, ReactFlow } from '@xyflow/react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -51,8 +51,8 @@ const DesignerReactFlow = (props: any) => {
   const dispatch = useDispatch<AppDispatch>();
   const isInitialized = useNodesInitialized();
 
-	const isReadOnly = useReadOnly();
-	const isEmpty = useIsGraphEmpty();
+  const isReadOnly = useReadOnly();
+  const isEmpty = useIsGraphEmpty();
 
   type NodeTypesObj = Record<WorkflowNodeType, React.ComponentType<any>>;
   const nodeTypes: NodeTypesObj = {
@@ -64,7 +64,7 @@ const DesignerReactFlow = (props: any) => {
     HIDDEN_NODE: HiddenNode,
     PLACEHOLDER_NODE: PlaceholderNode,
     COLLAPSED_NODE: CollapsedNode,
-		NOTE_NODE: NoteNode,
+    NOTE_NODE: NoteNode,
   };
 
   const edgeTypes = {
@@ -126,42 +126,52 @@ const DesignerReactFlow = (props: any) => {
     },
   ];
 
-	/// Position dispatch debounce (Only applicable for notes currently)
+  /// Position dispatch debounce (Only applicable for notes currently)
 
-	const [nodePositions, setNodePositions] = useState<Record<string, XYPosition> | undefined>(undefined);
-	useDebouncedEffect(() => {
-		if (nodePositions && Object.keys(nodePositions).length > 0) {
-			for (const [id, position] of Object.entries(nodePositions)) {
-				dispatch(updateNote({
-					id,
-					note: {
-						metadata: {
-							position,
-						}
-					}
-				}));
-			}
-			setNodePositions(undefined);
-		}
-	}, [dispatch, nodePositions], 500);
+  const [nodePositions, setNodePositions] = useState<Record<string, XYPosition> | undefined>(undefined);
+  useDebouncedEffect(
+    () => {
+      if (nodePositions && Object.keys(nodePositions).length > 0) {
+        for (const [id, position] of Object.entries(nodePositions)) {
+          dispatch(
+            updateNote({
+              id,
+              note: {
+                metadata: {
+                  position,
+                },
+              },
+            })
+          );
+        }
+        setNodePositions(undefined);
+      }
+    },
+    [dispatch, nodePositions],
+    500
+  );
 
-	/// Notes as nodes
+  /// Notes as nodes
 
-	const notes = useNotes();
-	const noteNodes: Node[] = useMemo(() => {
-		return Object.entries(notes).map(([id, note]) => ({
-			id,
-			type: WORKFLOW_NODE_TYPES.NOTE_NODE,
-			position: nodePositions?.[id] ?? note.metadata.position,
-			draggable: true,
-		} as Node));
-	}, [notes, nodePositions]);
+  const notes = useNotes();
+  const noteNodes: Node[] = useMemo(() => {
+    return Object.entries(notes).map(
+      ([id, note]) =>
+        ({
+          id,
+          type: WORKFLOW_NODE_TYPES.NOTE_NODE,
+          position: nodePositions?.[id] ?? note.metadata.position,
+          draggable: !isReadOnly,
+          dragHandle: '.note-drag-handle',
+        }) as Node
+    );
+  }, [notes, nodePositions, isReadOnly]);
 
-	///
+  ///
 
   const nodesWithPlaceholder = isEmpty ? (isReadOnly ? [] : emptyWorkflowPlaceholderNodes) : actionNodes;
 
-	const allNodes = [...nodesWithPlaceholder, ...noteNodes];
+  const allNodes = [...nodesWithPlaceholder, ...noteNodes];
 
   const clampPan = useClampPan();
 
@@ -325,87 +335,96 @@ const DesignerReactFlow = (props: any) => {
     }
   }, [isDraggingConnection, dispatch]);
 
-	const onPaneContextMenu = useCallback(
-		(e: React.MouseEvent | MouseEvent) => {
-			e.preventDefault();
-			dispatch(setNodeContextMenuData({
-				location: {
-					x: e.clientX,
-					y: e.clientY,
-				}
-			}))
-		},
-		[]
-	);
+  const onPaneContextMenu = useCallback((e: React.MouseEvent | MouseEvent) => {
+    e.preventDefault();
+    dispatch(
+      setNodeContextMenuData({
+        location: {
+          x: e.clientX,
+          y: e.clientY,
+        },
+      })
+    );
+  }, []);
 
-	// Handle node changes (position, size)
+  // Handle node changes (position, size)
 
-	const handSizeChanges = useCallback((changes: NodeChange[]) => {
-		const validChanges = changes.filter((change) =>
-			change.type === 'dimensions'
-			&& change?.id
-			&& change?.dimensions
-			&& !Number.isNaN(change.dimensions.width)
-			&& !Number.isNaN(change.dimensions.height)
-		) as NodeDimensionChange[];
-		if (validChanges.length === 0) {
-			return;
-		}
-		const actionChanges = [];
-		for (const change of validChanges) {
-			const note = notes?.[change.id];
-			if (note) {
-				dispatch(updateNote({ 
-					id: change.id, 
-					note: {
-						metadata: change.dimensions
-					} }));
-			} else {
-				actionChanges.push(change);
-			}
-		}
-		dispatch(updateNodeSizes(actionChanges));
-	}, [dispatch, notes]);
+  const handSizeChanges = useCallback(
+    (changes: NodeChange[]) => {
+      const validChanges = changes.filter(
+        (change) =>
+          change.type === 'dimensions' &&
+          change?.id &&
+          change?.dimensions &&
+          !Number.isNaN(change.dimensions.width) &&
+          !Number.isNaN(change.dimensions.height)
+      ) as NodeDimensionChange[];
+      if (validChanges.length === 0) {
+        return;
+      }
+      const actionChanges = [];
+      for (const change of validChanges) {
+        const note = notes?.[change.id];
+        if (note) {
+          dispatch(
+            updateNote({
+              id: change.id,
+              note: {
+                metadata: change.dimensions,
+              },
+            })
+          );
+        } else {
+          actionChanges.push(change);
+        }
+      }
+      dispatch(updateNodeSizes(actionChanges));
+    },
+    [dispatch, notes]
+  );
 
-	const handlePositionChanges = useCallback((changes: NodeChange[]) => {
-		const validChanges = changes.filter((change) =>
-			change.type === 'position'
-			&& change?.id
-			&& change?.position
-			&& !Number.isNaN(change.position.x)
-			&& !Number.isNaN(change.position.y)
-		) as NodePositionChange[];
-		if (validChanges.length === 0) {
-			return;
-		}
-		console.log('#> onNodesChange', validChanges);
-		for (const change of validChanges) {
-			const note = notes?.[change.id];
-			if (note) {
-				setNodePositions((prev) => ({
-					...prev,
-					[change.id]: change.position!,
-				}))
-			} else {
-				// Non-note nodes position changes are not handled currently
-			}
-		}
-	}, [notes]);
+  const handlePositionChanges = useCallback(
+    (changes: NodeChange[]) => {
+      const validChanges = changes.filter(
+        (change) =>
+          change.type === 'position' &&
+          change?.id &&
+          change?.position &&
+          !Number.isNaN(change.position.x) &&
+          !Number.isNaN(change.position.y)
+      ) as NodePositionChange[];
+      if (validChanges.length === 0) {
+        return;
+      }
+      for (const change of validChanges) {
+        const note = notes?.[change.id];
+        if (note) {
+          setNodePositions((prev) => ({
+            ...prev,
+            [change.id]: change.position!,
+          }));
+        } else {
+          // Non-note nodes position changes are not handled currently
+        }
+      }
+    },
+    [notes]
+  );
 
-	const onNodesChange = useCallback(
-		(changes: NodeChange[]) => {
-			handSizeChanges(changes);
-			handlePositionChanges(changes);
-		},
-		[handSizeChanges, handlePositionChanges]
-	);
+  const onNodesChange = useCallback(
+    (changes: NodeChange[]) => {
+      handSizeChanges(changes);
+      handlePositionChanges(changes);
+    },
+    [handSizeChanges, handlePositionChanges]
+  );
 
   return (
     <ReactFlow
       ref={canvasRef}
       onInit={onInit}
       nodeTypes={nodeTypes}
-			nodes={allNodes}
+      nodes={allNodes}
       edges={edges}
       onNodesChange={onNodesChange}
       nodesConnectable={true}
@@ -428,7 +447,7 @@ const DesignerReactFlow = (props: any) => {
       snapGrid={[20, 20]}
       snapToGrid={true}
       onPaneClick={onPaneClick}
-			onPaneContextMenu={onPaneContextMenu}
+      onPaneContextMenu={onPaneContextMenu}
       disableKeyboardA11y={true}
       onlyRenderVisibleElements={!userInferredTabNavigation}
       proOptions={{
