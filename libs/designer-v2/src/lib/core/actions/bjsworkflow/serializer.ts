@@ -309,13 +309,14 @@ export const serializeOperation = async (
     }
   }
 
-  const actionMetadata = getRecordEntry(rootState.operations.actionMetadata, operationId);
-  if (actionMetadata) {
-    serializedOperation.metadata = {
-      ...serializedOperation.metadata,
-      ...actionMetadata,
-    };
-  }
+  const operationActionMetadata = getRecordEntry(rootState.operations.actionMetadata, operationId);
+  const workflowActionMetadata = getRecordEntry(rootState.workflow.nodesMetadata, operationId)?.actionMetadata;
+  const newMetadata = {
+    ...serializedOperation.metadata,
+    ...operationActionMetadata,
+    ...workflowActionMetadata,
+  };
+  serializedOperation.metadata = isNullOrUndefined(newMetadata) ? undefined : newMetadata;
 
   // This is temporary for A2A until backend supports actions running after the trigger
   if (isA2AWorkflow(rootState.workflow)) {

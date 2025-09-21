@@ -16,6 +16,7 @@ const fileOptions = [
   { key: 'simpleBigworkflow.json', text: 'Simple Big Workflow' },
   { key: 'UnicodeKeys.json', text: 'Unicode Keys' },
 	{ key: 'UserLayout.json', text: 'User Layout' },
+  { key: 'UserScope.json', text: 'User Scope' },
 
   // Agent
   { key: 'divider_1', text: '-', itemType: DropdownMenuItemType.Divider },

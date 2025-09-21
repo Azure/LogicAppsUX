@@ -6,6 +6,7 @@ export type WorkflowNodeType =
   | 'SUBGRAPH_CARD_NODE'
   | 'HIDDEN_NODE'
   | 'PLACEHOLDER_NODE'
+  | 'GHOST_NODE'
   | 'COLLAPSED_NODE';
 export const WORKFLOW_NODE_TYPES: Record<string, WorkflowNodeType> = {
   GRAPH_NODE: 'GRAPH_NODE',
@@ -15,6 +16,7 @@ export const WORKFLOW_NODE_TYPES: Record<string, WorkflowNodeType> = {
   SUBGRAPH_CARD_NODE: 'SUBGRAPH_CARD_NODE',
   HIDDEN_NODE: 'HIDDEN_NODE',
   PLACEHOLDER_NODE: 'PLACEHOLDER_NODE',
+  GHOST_NODE: 'GHOST_NODE',
   COLLAPSED_NODE: 'COLLAPSED_NODE',
 };
 

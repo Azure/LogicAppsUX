@@ -36,7 +36,7 @@ export const SearchView: FC<SearchViewProps> = ({
 }) => {
   const isAgenticWorkflow = useIsAgenticWorkflow();
   const shouldEnableParseDocWithMetadata = useShouldEnableParseDocumentWithMetadata();
-  const parentGraphId = useDiscoveryPanelRelationshipIds().graphId;
+  const parentGraphId = useDiscoveryPanelRelationshipIds()?.graphId;
   const isWithinAgenticLoop = useIsWithinAgenticLoop(parentGraphId);
   const isAgentTool = useIsAddingAgentTool();
   const isRoot = useMemo(() => parentGraphId === 'root', [parentGraphId]);

@@ -1,15 +1,15 @@
 
 import { useRootWorkflowGraphForLayout } from '../state/workflow/workflowSelectors';
 import { useEffect, useState } from 'react';
-import type { Node, Edge, XYPosition } from '@xyflow/react';
+import { type Node, type Edge, type XYPosition } from '@xyflow/react';
 import { autoLayoutWorkflow } from './elklayout';
 import type { LayoutType } from './helpers';
 import type { WorkflowNode } from '../parsers/models/workflowNode';
+import { DEFAULT_NODE_ORIGIN } from '../utils/graph';
 
 
 export const useUserLayout = (): LayoutType => {
 	const workflowGraph = useRootWorkflowGraphForLayout();
-	
 	const [graphResult, setGraphResult] = useState<LayoutType | undefined>();
 	useEffect(() => {
 		let active = true;
@@ -21,11 +21,12 @@ export const useUserLayout = (): LayoutType => {
 			if (!workflowGraph?.children?.[0]?.position) {
 				const res = await autoLayoutWorkflow(workflowGraph);
 				if (!active) {
-					return;
+          return;
 				}
 				setGraphResult(res);
 			} else {
-				setGraphResult(convertWorkflowGraphToReactFlow(workflowGraph));
+        const res = convertWorkflowGraphToReactFlow(workflowGraph);
+				setGraphResult(res);
 			}
 		}
 	}, [workflowGraph]);
@@ -64,7 +65,6 @@ export const convertWorkflowGraphToReactFlow = (rootNode: WorkflowNode | undefin
 
 		const pos = (node: WorkflowNode): XYPosition => {
 			return node.position ?? { x: 0, y: 0 };
-			// return nodePositions?.[node.id] ?? { x: 0, y: 0 };
 		}
 
 		if (node.children) {
@@ -76,25 +76,28 @@ export const convertWorkflowGraphToReactFlow = (rootNode: WorkflowNode | undefin
 			// 		: pos(a).y - pos(b).y
 			// ));
 
-			for (const n of node.children) {
+      for (const n of node.children) {
 				const position = pos(n);
+        const canExpandParent = !n.id.endsWith('-#scope');
 				const nodeObject: Node = {
 					id: n.id,
 					position,
 					type: n.type,
+          origin: DEFAULT_NODE_ORIGIN,
+          draggable: (n.children?.length ?? 0) === 0,
+          selectable: (n.children?.length ?? 0) === 0,
 					data: {
 						label: n.id,
 						nodeIndex: nodeIndex++,
+						childIds: n.children?.map(c => c.id),
+            size: {
+              width: n.width,
+              height: n.height,
+            },
 					},
 					parentId: node.id !== 'root' ? node.id : undefined,
+          expandParent: canExpandParent,
 				};
-
-				if (n?.children && n.width && n.height) {
-					nodeObject.data.size = {
-						width: n.width,
-						height: n.height,
-					};
-				}
 
 				const nodeArrayIndex = nodes.push(nodeObject);
 
@@ -108,7 +111,7 @@ export const convertWorkflowGraphToReactFlow = (rootNode: WorkflowNode | undefin
 				}
 
 				if (n?.children) {
-					processChildren(n);
+          processChildren(n);
 				}
 
 				// Add edges to the edges array
@@ -124,6 +127,7 @@ export const convertWorkflowGraphToReactFlow = (rootNode: WorkflowNode | undefin
 				// Add leaf index to the node data
 				nodes[nodeArrayIndex - 1].data['nodeLeafIndex'] = nodeIndex++;
 			}
+      
 		}
 	};
 

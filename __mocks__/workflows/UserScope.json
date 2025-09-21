@@ -1,0 +1,85 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "actions": {
+      "Scope": {
+        "type": "Scope",
+				"metadata": {
+					"position": {
+						"x": 40,
+						"y": 160
+					}
+				},
+        "actions": {
+          "NestedScope": {
+            "type": "Scope",
+            "metadata": {
+              "position": {
+                "x": 40,
+                "y": 160
+              }
+            },
+            "actions": {
+              "HTTP": {
+                "type": "Http",
+                "metadata": {
+                  "position": {
+                    "x": 40,
+                    "y": 160
+                  }
+                },
+                "inputs": {
+                  "method": "GET",
+                  "uri": "https://jsonplaceholder.typicode.com/todos/1"
+                }
+              }
+            },
+            "runAfter": {}
+          }
+        },
+        "runAfter": {}
+      }
+    },
+    "contentVersion": "1.0.0.0",
+    "outputs": {},
+    "triggers": {
+      "manual": {
+        "type": "Request",
+        "kind": "Http",
+				"metadata": {
+					"position": {
+						"x": 0,
+						"y": 0
+					}
+				},
+        "inputs": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "array": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "item1": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["item1"]
+                }
+              },
+              "string": {
+                "type": "string"
+              },
+              "number": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "connectionReferences": {},
+  "parameters": {}
+}

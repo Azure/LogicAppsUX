@@ -5,7 +5,7 @@ import type { AddNodePayload } from '../../parsers/addNodeToWorkflow';
 import { addSwitchCaseToWorkflow, addNodeToWorkflow, addAgentToolToWorkflow } from '../../parsers/addNodeToWorkflow';
 import type { DeleteNodePayload } from '../../parsers/deleteNodeFromWorkflow';
 import { deleteWorkflowNode, deleteNodeFromWorkflow } from '../../parsers/deleteNodeFromWorkflow';
-import type { WorkflowNode } from '../../parsers/models/workflowNode';
+import { type WorkflowNode } from '../../parsers/models/workflowNode';
 import type { MoveNodePayload } from '../../parsers/moveNodeInWorkflow';
 import { moveNodeInWorkflow } from '../../parsers/moveNodeInWorkflow';
 import { pasteScopeInWorkflow } from '../../parsers/pasteScopeInWorkflow';
@@ -43,7 +43,7 @@ import type { UndoRedoPartialRootState } from '../undoRedo/undoRedoTypes';
 import { initializeInputsOutputsBinding } from '../../actions/bjsworkflow/monitoring';
 import { updateAgenticSubgraph, type UpdateAgenticGraphPayload } from '../../parsers/updateAgenticGraph';
 import { isA2AWorkflow, shouldClearNodeRunData } from './helper';
-import type { XYPosition } from '@xyflow/react';
+import type { NodeChange, NodeDimensionChange, XYPosition } from '@xyflow/react';
 
 export interface AddImplicitForeachPayload {
   nodeId: string;
@@ -376,9 +376,71 @@ export const workflowSlice = createSlice({
     clearFocusCollapsedNode: (state: WorkflowState) => {
       state.focusCollapsedNodeId = undefined;
     },
-    updateNodePositions: (state: WorkflowState, action: PayloadAction<Record<string, XYPosition>>) => {
-      for (const [nodeId, position] of Object.entries(action.payload)) {
-        state.nodesMetadata[nodeId].actionMetadata = { ...state.nodesMetadata[nodeId].actionMetadata, position };
+    updateNodeSize: (state: WorkflowState, action: PayloadAction<{ nodeId: string; width: number; height: number }>) => {
+      const { nodeId, width, height } = action.payload;
+      const node = getWorkflowNodeFromGraphState(state, nodeId);
+      if (!node) {
+        return;
+      }
+      if (node.width === width && node.height === height) {
+        return;
+      }
+      node.width = width;
+      node.height = height;
+    },
+    updateNodeSizes: (state: WorkflowState, action: PayloadAction<NodeChange[]>) => {
+      const dimensionChanges = action.payload.filter((x) => x.type === 'dimensions');
+      if (!state.graph) {
+        return;
+      }
+      const stack: WorkflowNode[] = [state.graph];
+
+      const dimensionChangesById: Record<string, NodeDimensionChange> = {};
+      for (const val of dimensionChanges) {
+        if (val.type !== 'dimensions') {
+          continue;
+        }
+        dimensionChangesById[val.id] = val as NodeDimensionChange;
+      }
+
+      while (stack.length) {
+        const node = stack.shift();
+        const change = getRecordEntry(dimensionChangesById, node?.id ?? '');
+        if (change && node) {
+          const c = change as NodeDimensionChange;
+          if ((c.dimensions?.height ?? 0) === 0 || (c.dimensions?.width ?? 0) === 0) {
+            continue; // Skip if the dimensions are 0
+          }
+          if (node.height === c.dimensions?.height && node.width === c.dimensions?.width) {
+            continue; // Skip if the dimensions have not changed
+          }
+          node.height = c.dimensions?.height ?? 0;
+          node.width = c.dimensions?.width ?? 0;
+        }
+        !!node?.children?.length && stack.push(...node.children);
+      }
+    },
+    updateNodePositions: (state: WorkflowState, action: PayloadAction<{
+      positions: Record<string, XYPosition>
+      additive?: boolean;
+    }>) => {
+      for (const [nodeId, position] of Object.entries(action.payload.positions)) {
+        if (!state.nodesMetadata[nodeId]) {
+          state.nodesMetadata[nodeId] = {
+            graphId: 'root',
+            actionMetadata: { position }
+          } as NodeMetadata;
+        } else {
+          state.nodesMetadata[nodeId].actionMetadata = { 
+            ...state.nodesMetadata[nodeId].actionMetadata,
+            position: action.payload.additive
+              ? {
+                  x: (state.nodesMetadata[nodeId].actionMetadata?.position?.x ?? 0) + position.x,
+                  y: (state.nodesMetadata[nodeId].actionMetadata?.position?.y ?? 0) + position.y,
+                }
+              : position
+          };
+        }
       }
     },
     setCollapsedGraphIds: (state: WorkflowState, action: PayloadAction<string[]>) => {
@@ -798,6 +860,8 @@ export const {
   deleteNode,
   deleteSwitchCase,
   deleteAgentTool,
+  updateNodeSize,
+  updateNodeSizes,
   updateNodePositions,
   setNodeDescription,
   toggleCollapsedGraphId,

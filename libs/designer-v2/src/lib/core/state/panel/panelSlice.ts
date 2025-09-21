@@ -173,6 +173,7 @@ export const panelSlice = createSlice({
 
       state.isCollapsed = false;
       state.currentPanelMode = 'Operation';
+      state.discoveryContent = getInitialDiscoveryContentState();
       state.connectionContent.selectedNodeIds = selectedNodes;
       state.operationContent.selectedNodeId = selectedNodes[0];
       state.operationContent.selectedNodeActiveTabId = undefined;

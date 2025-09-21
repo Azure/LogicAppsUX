@@ -1,8 +1,11 @@
-import { useNodesData, useInternalNode } from '@xyflow/react';
+import type { NodeOrigin, Box, Rect } from '@xyflow/react';
+import { useNodesData, useInternalNode, useNodes } from '@xyflow/react';
 import type { MutableRefObject } from 'react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useEdgesData } from './useEdgesData';
 import type { Size } from '../models/graphics';
+import type { InternalNodeBase, NodeBase } from '@xyflow/system';
+import { boxToRect, getBoundsOfBoxes, getNodePositionWithOrigin, isInternalNodeBase } from '@xyflow/system';
 
 export const useThrottledEffect = (effect: () => void, deps: any[], delay: number) => {
   const timestamp = useRef(Date.now());
@@ -83,6 +86,39 @@ export const useNodeLeafIndex = (nodeId?: string) => {
   return (useNodesData(nodeId ?? '')?.data?.['nodeLeafIndex'] as number) ?? 0;
 };
 
-export function useNodeGlobalPosition(nodeId: string) {
+export function useNodeGlobalPosition(nodeId: string = '') {
   return useInternalNode(nodeId)?.internals?.positionAbsolute ?? { x: 0, y: 0 };
 }
+
+export function useGraphNodeBounds(nodeId: string = ''): Rect {
+  const nodes = useNodes();
+  const nodeData = useNodesData(nodeId);
+  const childIds: string[] = useMemo(() => (nodeData?.data as any)?.childIds ?? [], [nodeData?.data]);
+  const childNodes = useMemo(() => nodes.filter((n) => childIds.includes(n.id)), [nodes, childIds]);
+  
+  return useMemo(() => {
+    if (childNodes.length === 0) {
+      return { x: 0, y: 0, width: 0, height: 0 };
+    }
+  
+    const box = childNodes.reduce(
+      (currBox, node) => getBoundsOfBoxes(currBox, node ? nodeToBox(node) : { x: 0, y: 0, x2: 0, y2: 0 }),
+      { x: Infinity, y: Infinity, x2: -Infinity, y2: -Infinity }
+    );
+  
+    return boxToRect(box);
+  }, [childNodes]);
+}
+
+export const nodeToBox = (node: InternalNodeBase | NodeBase, nodeOrigin: NodeOrigin = [0, 0]): Box => {
+  const { x, y } = isInternalNodeBase(node)
+    ? node.internals.positionAbsolute
+    : getNodePositionWithOrigin(node, nodeOrigin);
+
+  return {
+    x,
+    y,
+    x2: x + ((node.data?.['width'] as number) ?? node.measured?.width ?? node.width ?? node.initialWidth ?? 0),
+    y2: y + ((node.data?.['height'] as number) ?? node.measured?.height ?? node.height ?? node.initialHeight ?? 0),
+  };
+};

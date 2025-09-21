@@ -12,6 +12,7 @@ import {
   normalizeAutomationId,
   removeIdTag,
   replaceWhiteSpaceWithUnderscore,
+  useNodeGlobalPosition,
 } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 import { useOnViewportChange, useReactFlow } from '@xyflow/react';
@@ -43,6 +44,7 @@ import { useHandoffActionsForAgent, useHasUpstreamAgenticLoop, useIsAgentLoop } 
 import { addAgentHandoff, removeAgentHandoff } from '../../../core/actions/bjsworkflow/handoff';
 import { removeOperationRunAfter } from '../../../core/actions/bjsworkflow/runafter';
 import constants from '../../../common/constants';
+import { spacing } from '../../../core/graphlayout';
 
 const AddIcon = bundleIcon(ArrowBetweenDown24Filled, ArrowBetweenDown24Regular);
 const ParallelIcon = bundleIcon(ArrowSplit24Filled, ArrowSplit24Regular);
@@ -89,6 +91,27 @@ export const EdgeContextualMenu = () => {
     onStart: useCallback(() => open && setOpen?.(false), [open, setOpen]),
   });
 
+  const { screenToFlowPosition } = useReactFlow();
+
+  const parentOffset = useNodeGlobalPosition(graphId);
+  const newNodePosition = useMemo(() => {
+    if (!location) {
+      return undefined;
+    }
+
+    const flowPosition = screenToFlowPosition({
+      // Small x offset to center on the button
+      x: location.x  - 12,
+      // If leaf, add some space between the parent and the new node
+      y: isLeaf ? location.y + Number(spacing.default) : location.y
+    });
+
+    return parentOffset ? { 
+      x: flowPosition.x - parentOffset.x,
+      y: flowPosition.y - parentOffset.y
+    } : flowPosition;
+  }, [isLeaf, location, screenToFlowPosition, parentOffset]);
+
   const dispatch = useDispatch<AppDispatch>();
 
   const addParallelBranch = useCallback(() => {
@@ -126,7 +149,7 @@ export const EdgeContextualMenu = () => {
       if (parallel && relationshipIds?.childId) {
         delete relationshipIds.childId;
       }
-      dispatch(addOperation({ nodeId: newAgentId, relationshipIds, operation: agentOperation }));
+      dispatch(addOperation({ nodeId: newAgentId, relationshipIds, operation: agentOperation, newNodePosition }));
 
       if (isA2AWorkflow) {
         if (parentId && parentIsAgent) {
@@ -151,7 +174,7 @@ export const EdgeContextualMenu = () => {
         }
       }
     },
-    [childId, childIsAgent, dispatch, graphId, isA2AWorkflow, parentId, parentIsAgent]
+    [childId, childIsAgent, dispatch, graphId, isA2AWorkflow, parentId, parentIsAgent, newNodePosition]
   );
 
   const editHandoff = useCallback(() => {
@@ -168,14 +191,14 @@ export const EdgeContextualMenu = () => {
     dispatch(removeAgentHandoff({ agentId: parentId ?? '', toolId }));
   }, [handoffActions, dispatch, parentId, childId]);
 
-  // const deleteRunAfter = useCallback(() => {
-  //   dispatch(
-  //     removeOperationRunAfter({
-  //       parentOperationId: parentId ?? '',
-  //       childOperationId: childId ?? '',
-  //     })
-  //   );
-  // }, [dispatch, parentId, childId]);
+  const deleteRunAfter = useCallback(() => {
+    dispatch(
+      removeOperationRunAfter({
+        parentOperationId: parentId ?? '',
+        childOperationId: childId ?? '',
+      })
+    );
+  }, [dispatch, parentId, childId]);
 
   const newActionText = intl.formatMessage({
     defaultMessage: 'Add an action',
@@ -237,27 +260,17 @@ export const EdgeContextualMenu = () => {
     description: 'Text for button to edit a handoff',
   });
 
-  // const deleteRunAfterText = intl.formatMessage({
-  //   defaultMessage: 'Delete run-after',
-  //   id: 'GnVN11',
-  //   description: 'Text for button to delete a run-after',
-  // });
+  const deleteRunAfterText = intl.formatMessage({
+    defaultMessage: 'Delete run-after',
+    id: 'GnVN11',
+    description: 'Text for button to delete a run-after',
+  });
 
   const deleteHandoffText = intl.formatMessage({
     defaultMessage: 'Delete handoff',
     id: '9mjZIW',
     description: 'Text for button to delete a handoff',
   });
-
-  const { screenToFlowPosition } = useReactFlow();
-
-  const newNodePosition = useMemo(() => {
-    if (!location) {
-      return undefined;
-    }
-    // Small x offset to center on the button
-    return screenToFlowPosition({ x: location.x - 12, y: location.y });
-  }, [location, screenToFlowPosition]);
 
   const openAddNodePanel = useCallback(() => {
     const newId = guid();
@@ -393,14 +406,14 @@ export const EdgeContextualMenu = () => {
     </MenuItem>
   );
 
-  // const deleteRunAfterMenuItem = (
-  //   <>
-  //     <MenuDivider />
-  //     <MenuItem icon={<DeleteIcon />} onClick={deleteRunAfter} data-automation-id={automationId('delete-run-after')}>
-  //       {deleteRunAfterText}
-  //     </MenuItem>
-  //   </>
-  // );
+  const deleteRunAfterMenuItem = (
+    <>
+      <MenuDivider />
+      <MenuItem icon={<DeleteIcon />} onClick={deleteRunAfter} data-automation-id={automationId('delete-run-after')}>
+        {deleteRunAfterText}
+      </MenuItem>
+    </>
+  );
 
   const deleteHandoffMenuItem = (
     <>
@@ -505,7 +518,7 @@ export const EdgeContextualMenu = () => {
                       }}
                     />
                   ))}
-                {/* {hasParentAndChild && deleteRunAfterMenuItem} */}
+                {hasParentAndChild && deleteRunAfterMenuItem}
                 {customMenuItems}
               </>
             )}

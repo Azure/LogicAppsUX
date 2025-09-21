@@ -10,11 +10,16 @@ import {
 import { DropZone } from '../connections/dropzone';
 import { css } from '@fluentui/react';
 import { GraphContainer } from '@microsoft/designer-ui';
-import { SUBGRAPH_TYPES, useNodeSize, useNodeLeafIndex, isNullOrUndefined, removeIdTag } from '@microsoft/logic-apps-shared';
-import { memo } from 'react';
+import { SUBGRAPH_TYPES, useNodeLeafIndex, isNullOrUndefined, removeIdTag, useNodeSize } from '@microsoft/logic-apps-shared';
+import { memo, useMemo } from 'react';
 import type { NodeProps } from '@xyflow/react';
 import { EdgeDrawSourceHandle } from './components/handles/EdgeDrawSourceHandle';
 import { DefaultHandle } from './components/handles/DefaultHandle';
+import { DEFAULT_NODE_SIZE } from '../../core/utils/graph';
+
+
+const groupPadding = 20;
+
 
 const GraphContainerNode = ({ id }: NodeProps) => {
   const readOnly = useReadOnly();
@@ -30,27 +35,44 @@ const GraphContainerNode = ({ id }: NodeProps) => {
   const graphContainerId = isSubgraphContainer ? removeIdTag(id) : id;
   const parentNodeId = useParentNodeId(graphContainerId);
   const runData = useRunData(isSubgraphContainer ? (parentNodeId ?? graphContainerId) : graphContainerId);
-  const nodeSize = useNodeSize(id);
   const nodeLeafIndex = useNodeLeafIndex(id);
+  const nodeSize = useNodeSize(id);
+
+  const groupSize = useMemo(() => {
+    const width = nodeSize?.width ?? DEFAULT_NODE_SIZE.width;
+    const height = nodeSize?.height ?? DEFAULT_NODE_SIZE.height;
+    return {
+      width: width,
+      height: height,
+    };
+  }, [nodeSize]);
 
   return (
     <>
+      <div style={{
+        position: 'absolute',
+        width: groupSize?.width,
+        top: `${groupPadding}px`,
+        bottom: `-${groupPadding}px`,
+      }}>
+        <GraphContainer id={id} active={isMonitoringView ? !isNullOrUndefined(runData?.status) : true} selected={selected} />
+        {isSubgraphContainer ? <DefaultHandle type="source" /> : <EdgeDrawSourceHandle />}
+        {showLeafComponents && (
+          <div className="edge-drop-zone-container">
+            <DropZone graphId={nodeMetadata?.graphId ?? ''} parentId={id} isLeaf={isLeaf} tabIndex={nodeLeafIndex} />
+          </div>
+        )}
+      </div>
       <div
-        className={css('msla-graph-container-wrapper', hasFooter && 'has-footer', isSubgraphContainer && 'is-subgraph')}
+        className={css(hasFooter && 'has-footer', isSubgraphContainer && 'is-subgraph')}
         style={{
-          width: nodeSize?.width ?? 0,
-          height: nodeSize?.height ?? 0,
+          width: groupSize?.width,
+          height: groupSize?.height,
+          border: '1px solid red',
         }}
       >
         <DefaultHandle type="target" />
-        <GraphContainer id={id} active={isMonitoringView ? !isNullOrUndefined(runData?.status) : true} selected={selected} />
-        {isSubgraphContainer ? <DefaultHandle type="source" /> : <EdgeDrawSourceHandle />}
       </div>
-      {showLeafComponents && (
-        <div className="edge-drop-zone-container">
-          <DropZone graphId={nodeMetadata?.graphId ?? ''} parentId={id} isLeaf={isLeaf} tabIndex={nodeLeafIndex} />
-        </div>
-      )}
     </>
   );
 };

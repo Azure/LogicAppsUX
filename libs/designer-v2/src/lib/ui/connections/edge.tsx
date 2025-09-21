@@ -30,7 +30,6 @@ const EdgeContent = (props: EdgeContentProps) => (
         left: props.x,
         top: props.y,
         pointerEvents: 'all',
-        zIndex: 100,
       }}
     >
       <DropZone graphId={props.graphId} parentId={props.parentId} childId={props.childId} isLeaf={props.isLeaf} tabIndex={props.tabIndex} />

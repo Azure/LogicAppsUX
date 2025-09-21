@@ -89,9 +89,9 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
     const isAddingAgentTool = (getState() as RootState).panel.discoveryContent.isAddingAgentTool;
     const nodeId = getNonDuplicateNodeId(workflowState.nodesMetadata, actionId, workflowState.idReplacements);
     const newPayload = { ...payload, nodeId };
-    const newToolGraphId = (getState() as RootState).panel.discoveryContent.relationshipIds.graphId;
+    const newToolGraphId = (getState() as RootState).panel.discoveryContent.relationshipIds?.graphId;
     const agentToolMetadata = (getState() as RootState).panel.discoveryContent.agentToolMetadata;
-    const newToolId = (getState() as RootState).panel.discoveryContent.relationshipIds.subgraphId;
+    const newToolId = (getState() as RootState).panel.discoveryContent.relationshipIds?.subgraphId;
 
     if (isAddingAgentTool) {
       if (newToolId && newToolGraphId) {

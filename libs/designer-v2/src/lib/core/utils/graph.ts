@@ -40,13 +40,15 @@ export const isLeafNodeFromEdges = (edges: WorkflowEdge[]) => {
 // This is the starting size for all nodes
 export const DEFAULT_NODE_SIZE = {
   width: 200,
-  height: 40,
+  height: 44,
 };
 
 export const getNewNodePosition = (pos: XYPosition = { x: 0, y: 0 }): XYPosition => ({
   x: pos.x - DEFAULT_NODE_SIZE.width / 2,
   y: pos.y - DEFAULT_NODE_SIZE.height / 2,
 });
+
+export const DEFAULT_NODE_ORIGIN: [number, number] = [0, 0];
 
 // Creating generic layout nodes and edges below
 

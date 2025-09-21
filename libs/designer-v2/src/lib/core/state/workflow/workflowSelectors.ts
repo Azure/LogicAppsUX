@@ -14,6 +14,7 @@ import type {} from '@tanstack/react-query';
 import { collapseFlowTree } from './helper';
 import { useEdges, type XYPosition } from '@xyflow/react';
 import type { OperationMetadataState } from '../operation/operationMetadataSlice';
+import isEqual from 'lodash.isequal';
 
 export const getWorkflowState = (state: RootState): WorkflowState => state.workflow;
 
@@ -126,7 +127,8 @@ export const useRootWorkflowGraphForLayout = () =>
       }
 
       return newGraph;
-    })
+    }),
+    isEqual
   );
 
 export const useCollapsedMapping = () =>
@@ -751,9 +753,3 @@ export const useHandoffActionsForAgent = (agentId: string): any[] => {
     })
   );
 };
-
-export const useNodePositions = (): Record<string, XYPosition> =>
-	useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.nodePositions));
-
-export const useNodePosition = (nodeId: string): XYPosition =>
-	useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.nodePositions?.[nodeId] ?? { x: 0, y: 0 }));
