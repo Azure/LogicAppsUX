@@ -1,5 +1,5 @@
 import { environment } from '../../../../environments/environment';
-import type { CallbackInfo, ConnectionsData, ParametersData, Workflow } from '../Models/Workflow';
+import type { CallbackInfo, ConnectionsData, Note, ParametersData, Workflow } from '../Models/Workflow';
 import { Artifact } from '../Models/Workflow';
 import { validateResourceId } from '../Utilities/resourceUtilities';
 import { convertDesignerWorkflowToConsumptionWorkflow } from './ConsumptionSerializationHelpers';
@@ -577,6 +577,24 @@ export const saveCustomCodeStandard = async (allCustomCodeFiles?: AllCustomCodeF
   }
 };
 
+export const saveNotesStandard = async (notesData?: Record<string, Note>): Promise<void> => {
+  if (!notesData) {
+    return;
+  }
+  try {
+    CustomCodeService().uploadCustomCode({ fileName: 'notes.json', fileData: JSON.stringify(notesData), fileExtension: '.json' });
+  } catch (error) {
+    const errorMessage = `Failed to save notes: ${error}`;
+    LoggerService().log({
+      level: LogEntryLevel.Error,
+      area: 'serializeNotes',
+      message: errorMessage,
+      error: error instanceof Error ? error : undefined,
+    });
+    return;
+  }
+};
+
 export const saveWorkflowStandard = async (
   siteResourceId: string,
   workflows: {
@@ -587,6 +605,7 @@ export const saveWorkflowStandard = async (
   parametersData: ParametersData | undefined,
   settings: Record<string, string> | undefined,
   customCodeData: AllCustomCodeFiles | undefined,
+  notesData: Record<string, Note> | undefined,
   clearDirtyState: () => void,
   options?: {
     skipValidation?: boolean;
@@ -630,6 +649,8 @@ export const saveWorkflowStandard = async (
     // the host to go soft restart. We may need to look into if there's a race case where this may still happen
     // eventually we want to move this logic to the backend to happen with deployWorkflowArtifacts
     saveCustomCodeStandard(customCodeData);
+
+    saveNotesStandard(notesData);
 
     let url = null;
     if (HybridAppUtility.isHybridLogicApp(siteResourceId)) {
