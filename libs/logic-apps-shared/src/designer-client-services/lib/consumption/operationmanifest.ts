@@ -29,7 +29,7 @@ import { xmlTransformManifest, xmlValidationManifest } from './manifests/xml';
 import { functionGroup, functionOperation, invokeWorkflowGroup, invokeWorkflowOperation, swaggerFunctionOperation } from './operations';
 import { getBuiltInConnectorsInConsumption } from './search';
 import agentloop from './manifests/agentloop';
-import a2arequestManifest from './manifests/a2aRequest';
+import a2arequestManifest from './manifests/a2arequest';
 
 interface ConsumptionOperationManifestServiceOptions extends BaseOperationManifestServiceOptions {
   subscriptionId: string;

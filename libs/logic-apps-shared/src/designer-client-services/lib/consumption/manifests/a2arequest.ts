@@ -1,4 +1,5 @@
 import type { OperationManifest } from '../../../../utils/src';
+import { coreBadge, previewBadge } from '../../badges';
 
 export default {
   type: 'Request',
@@ -8,6 +9,9 @@ export default {
     brandColor: '#709727',
     summary: 'When a new chat session started',
     description: 'Triggers the flow when an HTTP request is received from a trusted agent or system as part of an A2A integration.',
+
+    statusBadge: previewBadge,
+    environmentBadge: coreBadge,
 
     inputs: {
       type: 'object',
