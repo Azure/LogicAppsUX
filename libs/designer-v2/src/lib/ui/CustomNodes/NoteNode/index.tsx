@@ -1,89 +1,25 @@
 import { memo, useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import type { NodeProps } from '@xyflow/react';
-import {
-  Button,
-  Card,
-  ColorSwatch,
-  makeStyles,
-  mergeClasses,
-  Popover,
-  PopoverSurface,
-  PopoverTrigger,
-  SwatchPicker,
-  Textarea,
-  tokens,
-} from '@fluentui/react-components';
+import { Button, Card, mergeClasses, Textarea } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 import ReactMarkdown from 'react-markdown';
 import { isUndefinedOrEmptyString } from '@microsoft/logic-apps-shared';
 
-import type { AppDispatch } from '../../core';
-import { deleteNote, updateNote } from '../../core/state/notes/notesSlice';
-import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
-import { useNote } from '../../core/state/notes/notesSelectors';
+import type { AppDispatch } from '../../../core';
+import { deleteNote, updateNote } from '../../../core/state/notes/notesSlice';
+import { useReadOnly } from '../../../core/state/designerOptions/designerOptionsSelectors';
+import { useNote } from '../../../core/state/notes/notesSelectors';
 
-import { bundleIcon, DeleteFilled, DeleteRegular, ColorFilled, ColorRegular } from '@fluentui/react-icons';
+import { bundleIcon, DeleteFilled, DeleteRegular } from '@fluentui/react-icons';
+import ColorButton from './ColorButton';
+import { useNoteNodeStyles } from './NoteNode.styles';
 
 const DeleteIcon = bundleIcon(DeleteFilled, DeleteRegular);
-const ColorIcon = bundleIcon(ColorFilled, ColorRegular);
-
-const useStyles = makeStyles({
-  noteCard: {
-    position: 'relative',
-    boxShadow: '0 0 2px rgba(0,0,0,0.24), 0 2px 4px rgba(0,0,0,0.28)',
-    minWidth: '100px',
-    minHeight: '44px',
-    height: '100%',
-    color: 'black',
-    transition: 'background-color 0.2s ease',
-  },
-  noteTextarea: {
-    margin: '-8px',
-    height: '100%',
-    maxHeight: 'none',
-    '& > textarea': {
-      padding: '7px 7px 5px',
-      fieldSizing: 'content',
-    },
-  },
-  reactMarkdown: {
-    whiteSpace: 'pre-wrap',
-  },
-  markdownContainer: {
-    height: '100%',
-    overflow: 'auto',
-    borderRadius: '4px',
-  },
-  markdownImage: {
-    borderRadius: '4px',
-    maxWidth: '100%',
-  },
-  markdownParagraph: {
-    margin: 0,
-  },
-  dragHandle: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: '100%',
-    height: '100%',
-    zIndex: 1,
-  },
-  noteToolbar: {
-    position: 'absolute',
-    bottom: '-32px',
-    left: '0',
-    margin: '-2px',
-    display: 'flex',
-    justifyContent: 'flex-end',
-    gap: '4px',
-  },
-});
 
 const NoteNode = ({ id }: NodeProps) => {
   const intl = useIntl();
-  const styles = useStyles();
+  const styles = useNoteNodeStyles();
   const dispatch = useDispatch<AppDispatch>();
 
   const isReadOnly = useReadOnly();
@@ -171,42 +107,3 @@ const NoteNode = ({ id }: NodeProps) => {
 NoteNode.displayName = 'NoteNode';
 
 export default memo(NoteNode);
-
-const ColorButton = ({ id, selectedColor }: any) => {
-  const dispatch = useDispatch<AppDispatch>();
-  const isReadOnly = useReadOnly();
-  const colorSelectCallback = useCallback(
-    (_: any, e: any) => {
-      if (isReadOnly) {
-        return;
-      }
-      console.log('Selected color:', e);
-      dispatch(updateNote({ id, note: { color: e.selectedValue } }));
-    },
-    [dispatch, id, isReadOnly]
-  );
-
-  const swatchColors = [
-    '#FFFBCC', // Yellow
-    '#CCE5FF', // Blue
-    '#CCFFCC', // Green
-    '#FFCCCC', // Red
-    '#E0CCFF', // Purple
-    '#FFFFFF', // White
-  ];
-
-  return (
-    <Popover withArrow size="small" positioning="after">
-      <PopoverTrigger>
-        <Button icon={<ColorIcon />} appearance="transparent" size="small" />
-      </PopoverTrigger>
-      <PopoverSurface>
-        <SwatchPicker shape="rounded" selectedValue={selectedColor} onSelectionChange={colorSelectCallback}>
-          {swatchColors.map((color) => (
-            <ColorSwatch key={color} color={color} value={color} borderColor={tokens.colorNeutralStroke1} />
-          ))}
-        </SwatchPicker>
-      </PopoverSurface>
-    </Popover>
-  );
-};
