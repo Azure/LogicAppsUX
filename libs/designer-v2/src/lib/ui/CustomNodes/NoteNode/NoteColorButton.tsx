@@ -17,7 +17,6 @@ const ColorButton = ({ id, selectedColor }: any) => {
       if (isReadOnly) {
         return;
       }
-      console.log('Selected color:', e);
       dispatch(updateNote({ id, note: { color: e.selectedValue } }));
     },
     [dispatch, id, isReadOnly]
