@@ -1,9 +1,8 @@
-import { memo, useCallback, useState } from 'react';
+import { memo, useCallback, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import type { NodeProps } from '@xyflow/react';
 import { Button, Card, mergeClasses, Textarea } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
-import ReactMarkdown from 'react-markdown';
 import { isUndefinedOrEmptyString } from '@microsoft/logic-apps-shared';
 
 import type { AppDispatch } from '../../../core';
@@ -14,10 +13,11 @@ import { useNote } from '../../../core/state/notes/notesSelectors';
 import { bundleIcon, DeleteFilled, DeleteRegular } from '@fluentui/react-icons';
 import ColorButton from './ColorButton';
 import { useNoteNodeStyles } from './NoteNode.styles';
+import MarkdownRenderer from './MarkdownRenderer';
 
 const DeleteIcon = bundleIcon(DeleteFilled, DeleteRegular);
 
-const NoteNode = ({ id }: NodeProps) => {
+const NoteNode = ({ id, dragging }: NodeProps) => {
   const intl = useIntl();
   const styles = useNoteNodeStyles();
   const dispatch = useDispatch<AppDispatch>();
@@ -41,15 +41,31 @@ const NoteNode = ({ id }: NodeProps) => {
     description: 'Placeholder text for an empty note node',
   });
 
-  const markdownRenderers = {
-    img: (props: any) => <img {...props} className={styles.markdownImage} />,
-    p: (props: any) => <p {...props} className={styles.markdownParagraph} />,
-  };
+  const editClick = useCallback(
+    (e: any) => {
+      if (e.target.tagName === 'A') {
+        return;
+      }
+
+      e.preventDefault();
+      e.stopPropagation();
+      if (isReadOnly) {
+        return;
+      }
+      setIsEditing(true);
+    },
+    [isReadOnly]
+  );
+
+  const markdownContent = useMemo(
+    () => (isUndefinedOrEmptyString(noteData?.content) ? `*${placeholderText}*` : noteData?.content || ''),
+    [noteData?.content, placeholderText]
+  );
 
   return (
     <div style={{ zIndex: '-1' }}>
       <Card
-        className={styles.noteCard}
+        className={mergeClasses(styles.noteCard, dragging && styles.draggingNote)}
         style={{
           backgroundColor: noteData?.color || '#FFFBCC',
           width: noteData?.metadata?.width ?? 200,
@@ -72,28 +88,12 @@ const NoteNode = ({ id }: NodeProps) => {
             onBlur={() => setIsEditing(false)}
           />
         ) : (
-          <div className={styles.markdownContainer}>
-            <ReactMarkdown className={styles.reactMarkdown} components={markdownRenderers}>
-              {isUndefinedOrEmptyString(noteData?.content) ? `*${placeholderText}*` : noteData?.content}
-            </ReactMarkdown>
+          <div className={mergeClasses(styles.markdownContainer, 'note-drag-handle')} onClick={editClick}>
+            <MarkdownRenderer content={markdownContent} />
           </div>
         )}
-        {/* Drag handle */}
-        {!isEditing && !isReadOnly && (
-          <div
-            className={mergeClasses(styles.dragHandle, 'note-drag-handle')}
-            onClick={(e: any) => {
-              e.preventDefault();
-              e.stopPropagation();
-              if (isReadOnly) {
-                return;
-              }
-              setIsEditing(true);
-            }}
-          />
-        )}
-        {/* Buttons */}
       </Card>
+      {/* Note Action Buttons */}
       {!isReadOnly && (
         <div className={styles.noteToolbar}>
           <ColorButton id={id} selectedColor={noteData?.color} />

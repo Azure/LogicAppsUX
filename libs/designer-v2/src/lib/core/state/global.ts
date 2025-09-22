@@ -5,6 +5,7 @@ import { setIsWorkflowParametersDirty } from './workflowparameters/workflowparam
 import { useIsWorkflowParametersDirty } from './workflowparameters/workflowparametersselector';
 import { createAction, createAsyncThunk } from '@reduxjs/toolkit';
 import type { UndoRedoPartialRootState } from './undoRedo/undoRedoTypes';
+import { useIsNotesDirty } from './notes/notesSelectors';
 
 export const resetWorkflowState = createAction('resetWorkflowState');
 export const resetNodesLoadStatus = createAction('resetNodesLoadStatus');
@@ -15,7 +16,8 @@ export const resetMcpState = createAction('resetMcpState');
 export const useIsDesignerDirty = () => {
   const isWorkflowDirty = useIsWorkflowDirty();
   const isWorkflowParametersDirty = useIsWorkflowParametersDirty();
-  return isWorkflowDirty || isWorkflowParametersDirty;
+  const isNotesDirty = useIsNotesDirty();
+  return isWorkflowDirty || isWorkflowParametersDirty || isNotesDirty;
 };
 
 export const resetDesignerDirtyState = createAsyncThunk('resetDesignerDirtyState', async (_: unknown, thunkAPI: any) => {

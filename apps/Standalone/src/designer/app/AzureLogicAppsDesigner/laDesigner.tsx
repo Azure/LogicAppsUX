@@ -359,6 +359,7 @@ const DesignerEditor = () => {
       parametersToUpdate,
       settingsToUpdate,
       customCodeToUpdate,
+      undefined,
       clearDirtyState
     );
   };
@@ -374,6 +375,7 @@ const DesignerEditor = () => {
         /*parameters*/ undefined,
         /*settings*/ undefined,
         /*customcode*/ undefined,
+        /*notes*/ undefined,
         clearDirtyState
       );
     } catch (error: any) {

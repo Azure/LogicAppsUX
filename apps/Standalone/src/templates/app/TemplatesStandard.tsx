@@ -192,6 +192,7 @@ export const TemplatesStandard = () => {
           updatedParametersData,
           updatedSettingProperties,
           undefined,
+          undefined,
           () => {},
           { skipValidation: true, throwError: true }
         );
