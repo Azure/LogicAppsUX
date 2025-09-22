@@ -40,6 +40,7 @@ import packagejson from '../../../package.json';
 import { LoggerService } from '../services/Logger';
 import { CustomConnectionParameterEditorService } from './services/customConnectionParameterEditorService';
 import { StandardVSCodeConnectorService } from './services/connector';
+import { fetchAgentUrl } from './services/workflowService';
 
 export interface IDesignerServices {
   connectionService: StandardConnectionService;
@@ -83,7 +84,8 @@ export const getDesignerServices = (
   let isStateful = false;
   let connectionsData: ConnectionsData = { ...connectionData };
   let workflowName = '';
-
+  let clientId = '';
+  let tenantId = '';
   const { subscriptionId = 'subscriptionId', resourceGroup, location } = apiHubDetails;
 
   const armUrl = 'https://management.azure.com';
@@ -97,6 +99,8 @@ export const getDesignerServices = (
     workflowName = panelMetadata.workflowName;
     appSettings = panelMetadata.localSettings;
     isStateful = panelMetadata.standardApp?.stateful ?? false;
+    tenantId = panelMetadata.azureDetails.tenantId ?? '';
+    clientId = panelMetadata.azureDetails.clientId ?? '';
   }
 
   const addConnectionData = async (connectionAndSetting: ConnectionAndAppSetting<LocalConnectionModel>): Promise<void> => {
@@ -309,12 +313,15 @@ export const getDesignerServices = (
 
   // Workflow service needs to be implemented to get the callback url for azure resources
   const workflowService: IWorkflowService = {
-    getCallbackUrl: async () => {
+    getCallbackUrl: async (triggerId: string) => {
       if (isLocal) {
-        return Promise.resolve({
-          method: HTTP_METHODS.POST,
-          value: 'Url not available during authoring in local project. Check Overview page.',
-        });
+        try {
+          const url = `${workflowRuntimeBaseUrl}/workflows/${workflowName}/triggers/${triggerId}/listCallbackUrl?api-version=${apiVersion}`;
+          return (await httpClient.post({ uri: url })) as any;
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        } catch (error) {
+          return undefined;
+        }
       }
       return Promise.resolve({
         method: HTTP_METHODS.POST,
@@ -329,6 +336,8 @@ export const getDesignerServices = (
       } as ManagedIdentity;
     },
     isExplicitAuthRequiredForManagedIdentity: () => true,
+    getAgentUrl: () =>
+      fetchAgentUrl(workflowName, isEmptyString(workflowRuntimeBaseUrl) ? baseUrl : workflowRuntimeBaseUrl, httpClient, clientId, tenantId),
   };
 
   const hostService: IHostService = {

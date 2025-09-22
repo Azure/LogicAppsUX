@@ -43,3 +43,17 @@ export const getTriggerType = (triggerType: string): string => {
       return detailTriggerStrings.Other;
   }
 };
+
+export const canRunBeInvokedWithPayload = (triggers: Record<string, any> | undefined): boolean => {
+  if (!triggers || Object.keys(triggers).length === 0) {
+    return false;
+  }
+
+  const trigger = triggers[Object.keys(triggers)[0]];
+
+  if (trigger && trigger.type.toUpperCase() === 'REQUEST' && trigger.kind && trigger.kind.toUpperCase() === 'HTTP') {
+    return true;
+  }
+
+  return false;
+};

@@ -51,6 +51,7 @@ import find_process from 'find-process';
 
 export async function startDesignTimeApi(projectPath: string): Promise<void> {
   await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.startDesignTimeApi', async (actionContext: IActionContext) => {
+    const loadDesignTimeStart = Date.now();
     actionContext.telemetry.properties.startDesignTimeApi = 'false';
 
     let isNewDesignTime = false;
@@ -65,7 +66,7 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
     const designTimeInst = ext.designTimeInstances.get(projectPath);
     const url = `http://localhost:${designTimeInst.port}${designerStartApi}`;
     if (designTimeInst.isStarting && !isNewDesignTime) {
-      await waitForDesignTimeStartUp(projectPath, url, new Date().getTime());
+      await waitForDesignTimeStartUp(actionContext, projectPath, url);
       actionContext.telemetry.properties.isDesignTimeUp = 'true';
       await validateRunningFuncProcess(projectPath);
       return;
@@ -118,7 +119,7 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
       const portArgs = `--port ${designTimeInst.port}`;
 
       startDesignTimeProcess(ext.outputChannel, cwd, getFunctionsCommand(), 'host', 'start', portArgs);
-      await waitForDesignTimeStartUp(projectPath, url, new Date().getTime(), true);
+      await waitForDesignTimeStartUp(actionContext, projectPath, url, true);
       actionContext.telemetry.properties.isDesignTimeUp = 'true';
 
       ext.pinnedBundleVersion.set(projectPath, false);
@@ -136,6 +137,7 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
       }
       actionContext.telemetry.properties.startDesignTimeApi = 'true';
       updateFuncIgnore(projectPath, [`${designTimeDirectoryName}/`]);
+      actionContext.telemetry.measurements.startDesignTimeApiDuration = (Date.now() - loadDesignTimeStart) / 1000;
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : error;
       const viewOutput: MessageItem = { title: localize('viewOutput', 'View output') };
@@ -224,13 +226,14 @@ export async function getOrCreateDesignTimeDirectory(designTimeDirectory: string
 }
 
 export async function waitForDesignTimeStartUp(
+  context: IActionContext,
   projectPath: string,
   url: string,
-  initialTime: number,
   setDesignTimeInst = false
 ): Promise<void> {
+  const initialTime = Date.now();
   let isDesignTimeStarted = false;
-  while (new Date().getTime() - initialTime < designerApiLoadTimeout) {
+  while (Date.now() - initialTime < designerApiLoadTimeout) {
     if (await isDesignTimeUp(url)) {
       isDesignTimeStarted = true;
       break;
@@ -246,6 +249,7 @@ export async function waitForDesignTimeStartUp(
       designTimeInst.childFuncPid = await findChildProcess(designTimeInst.process.pid);
       designTimeInst.isStarting = false;
     }
+    context.telemetry.measurements.waitForDesignTimeStartupDuration = (Date.now() - initialTime) / 1000;
     return Promise.resolve();
   }
   return Promise.reject();

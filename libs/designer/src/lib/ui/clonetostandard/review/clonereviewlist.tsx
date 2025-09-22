@@ -1,44 +1,82 @@
-import { MessageBar, Text } from '@fluentui/react-components';
+import { Button, MessageBar, MessageBarActions, MessageBarBody, Text } from '@fluentui/react-components';
 import type { RootState } from '../../../core/state/clonetostandard/store';
 import { useSelector } from 'react-redux';
-import { isUndefinedOrEmptyString } from '@microsoft/logic-apps-shared';
+import { CloneService, equals, getResourceNameFromId, isUndefinedOrEmptyString, type Resource } from '@microsoft/logic-apps-shared';
 import { TemplatesSection, type TemplatesSectionItem } from '@microsoft/designer-ui';
 import { useResourceStrings } from '../../common/resourcepicker/resourcestrings';
 import type { ResourceState } from '../../../core/state/clonetostandard/resourceslice';
 import { useCloneTabStyles } from '../logicapps/styles';
 import { useCloneStrings } from '../../../core/clonetostandard/utils/cloneStrings';
 import { useIntl } from 'react-intl';
+import { useCallback, useMemo } from 'react';
+import { useSubscriptions } from '../../../core/queries/resource';
 
 export const CloneReviewList = () => {
   const intl = useIntl();
-  const { sourceApps, destinationApp, errorMessage, isSuccessfullyCloned } = useSelector((state: RootState) => state.clone);
+  const { sourceApps, destinationApp, errorMessage, showReportErrorButton, isSuccessfullyCloned } = useSelector(
+    (state: RootState) => state.clone
+  );
 
   const styles = useCloneTabStyles();
+  const { data: subscriptions } = useSubscriptions();
 
   const resourceStrings = {
     ...useResourceStrings(),
     ...useCloneStrings(),
   };
 
-  const sourceItems: TemplatesSectionItem[] = useSourceItems(resourceStrings, sourceApps?.[0]);
+  const sourceItems: TemplatesSectionItem[] = useSourceItems(resourceStrings, subscriptions ?? [], sourceApps?.[0]);
   const destinationItems: TemplatesSectionItem[] = useDestinationItems(
     resourceStrings,
+    subscriptions ?? [],
     destinationApp,
     sourceApps?.[0]?.targetWorkflowName || ''
   );
+
+  const handleOpenBlade = useCallback(() => {
+    //TODO: to be replaced by back-end given back resourceId (same value)
+    const resourceId = `/subscriptions/${destinationApp.subscriptionId}/resourceGroups/${destinationApp.resourceGroup}/providers/Microsoft.Web/sites/${destinationApp.logicAppName}/workflows/${sourceApps?.[0]?.targetWorkflowName}`;
+    CloneService()?.openBladeAfterCreate?.(resourceId, destinationApp.location);
+  }, [destinationApp, sourceApps]);
 
   return (
     <div className={styles.tabContainer}>
       {isSuccessfullyCloned ? (
         <MessageBar intent="success">
-          {intl.formatMessage({
-            defaultMessage: 'Successfully cloned.',
-            id: 'ILKpNE',
-            description: 'Label to indicate the successfully cloned workflow',
-          })}
+          <MessageBarBody>
+            {intl.formatMessage({
+              defaultMessage: 'Cloned successfully.',
+              id: 'G979pE',
+              description: 'Label to indicate the successfully cloned workflow',
+            })}
+          </MessageBarBody>
+          <MessageBarActions>
+            <Button onClick={handleOpenBlade}>
+              {intl.formatMessage({
+                defaultMessage: 'Go to workflow',
+                id: 'Kasmd1',
+                description: 'Label to indicate go to the workflow',
+              })}
+            </Button>
+          </MessageBarActions>
         </MessageBar>
       ) : null}
-      {!isUndefinedOrEmptyString(errorMessage) && <MessageBar intent="error">{errorMessage}</MessageBar>}
+      {!isUndefinedOrEmptyString(errorMessage) && (
+        <MessageBar intent="error">
+          <MessageBarBody>{errorMessage}</MessageBarBody>
+          {showReportErrorButton && (
+            <MessageBarActions>
+              <Button href="https://github.com/Azure/LogicAppsUX/issues/new?template=clone.yml" as="a" target="_blank">
+                {intl.formatMessage({
+                  defaultMessage: 'Report error',
+                  id: 'CcuFEN',
+                  description: 'Label to report error',
+                })}
+              </Button>
+            </MessageBarActions>
+          )}
+        </MessageBar>
+      )}
 
       <div className={styles.mainSection}>
         <div className={styles.sectionHeader}>
@@ -71,21 +109,26 @@ export const CloneReviewList = () => {
   );
 };
 
-const useSourceItems = (resourceStrings: Record<string, string>, sourceResources: ResourceState) => {
-  const { subscriptionId, logicAppName } = sourceResources;
+const useSourceItems = (resourceStrings: Record<string, string>, subscriptions: Resource[], sourceResources: ResourceState) => {
+  const { subscriptionId, resourceGroup, logicAppName } = sourceResources;
+  const sourceSubscriptionDisplayName = useMemo(
+    () => subscriptions?.find((sub) => equals(getResourceNameFromId(sub.id), subscriptionId))?.displayName,
+    [subscriptions, subscriptionId]
+  );
+
   const items: TemplatesSectionItem[] = [
     {
       label: resourceStrings.SUBSCRIPTION,
-      value: subscriptionId || '',
+      value: sourceSubscriptionDisplayName || '',
+      type: 'text',
+    },
+    {
+      label: resourceStrings.RESOURCE_GROUP,
+      value: resourceGroup || '',
       type: 'text',
     },
     {
       label: resourceStrings.LOGIC_APP,
-      value: logicAppName || '',
-      type: 'text',
-    },
-    {
-      label: resourceStrings.WORKFLOW_NAME,
       value: logicAppName || '',
       type: 'text',
     },
@@ -94,12 +137,22 @@ const useSourceItems = (resourceStrings: Record<string, string>, sourceResources
   return items;
 };
 
-const useDestinationItems = (resourceStrings: Record<string, string>, destinationResources: ResourceState, targetWorkflowName: string) => {
+const useDestinationItems = (
+  resourceStrings: Record<string, string>,
+  subscriptions: Resource[],
+  destinationResources: ResourceState,
+  targetWorkflowName: string
+) => {
   const { subscriptionId, resourceGroup, logicAppName } = destinationResources;
+  const destinationSubscriptionDisplayName = useMemo(
+    () => subscriptions?.find((sub) => equals(getResourceNameFromId(sub.id), subscriptionId))?.displayName,
+    [subscriptions, subscriptionId]
+  );
+
   const items: TemplatesSectionItem[] = [
     {
       label: resourceStrings.SUBSCRIPTION,
-      value: subscriptionId || '',
+      value: destinationSubscriptionDisplayName || '',
       type: 'text',
     },
     {

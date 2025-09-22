@@ -14,6 +14,7 @@ import type { MessageItem } from 'vscode';
 
 /**
  * Checks if node is installed, and installs it if needed.
+ * TODO(aeldridge): Unused
  * @param {IActionContext} context - Workflow file path.
  * @param {string} message - Message for warning.
  * @param {string} fsPath - Workspace file system path.

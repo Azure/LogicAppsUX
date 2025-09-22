@@ -64,7 +64,7 @@ export async function validateDotNetIsInstalled(context: IActionContext, fsPath:
  * Check is dotnet is installed.
  * @returns {Promise<boolean>} Returns true if installed, otherwise returns false.
  */
-export async function isDotNetInstalled(): Promise<boolean> {
+async function isDotNetInstalled(): Promise<boolean> {
   try {
     await executeCommand(undefined, undefined, getDotNetCommand(), '--version');
     return true;

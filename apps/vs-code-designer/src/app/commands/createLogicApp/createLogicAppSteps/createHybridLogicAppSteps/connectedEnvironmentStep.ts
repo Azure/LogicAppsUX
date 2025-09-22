@@ -20,6 +20,15 @@ import { SQLStringNameStep } from '../../../deploy/storageAccountSteps/SQLString
  */
 export class ConnectedEnvironmentStep extends AzureWizardPromptStep<ILogicAppWizardContext> {
   /**
+   * Determines whether this step should be prompted based on the wizard context.
+   * @param {ILogicAppWizardContext} wizardContext - The Logic App wizard context.
+   * @returns {boolean} - True if this step should be prompted, false otherwise.
+   */
+  public shouldPrompt(): boolean {
+    return true;
+  }
+
+  /**
    * Prompts the user to select a connected environment and sets it in the wizard context.
    * @param {ILogicAppWizardContext} wizardContext - The Logic App wizard context.
    */
@@ -31,13 +40,11 @@ export class ConnectedEnvironmentStep extends AzureWizardPromptStep<ILogicAppWiz
     wizardContext.telemetry.properties.connectedEnvironment = wizardContext.connectedEnvironment.name;
   }
 
-  /**
-   * Determines whether this step should be prompted based on the wizard context.
-   * @param {ILogicAppWizardContext} wizardContext - The Logic App wizard context.
-   * @returns {boolean} - True if this step should be prompted, false otherwise.
-   */
-  public shouldPrompt(): boolean {
-    return true;
+  public async getSubWizard(wizardContext: ILogicAppWizardContext): Promise<IWizardOptions<ILogicAppWizardContext> | undefined> {
+    wizardContext.fileShare = {};
+    return {
+      promptSteps: [new SQLStringNameStep(), new HostNameStep(), new FileSharePathStep(), new UserNameStep(), new PasswordStep()],
+    };
   }
 
   /**
@@ -59,12 +66,5 @@ export class ConnectedEnvironmentStep extends AzureWizardPromptStep<ILogicAppWiz
     picks.sort((a, b) => a.label.localeCompare(b.label));
 
     return picks;
-  }
-
-  public async getSubWizard(wizardContext: ILogicAppWizardContext): Promise<IWizardOptions<ILogicAppWizardContext> | undefined> {
-    wizardContext.fileShare = {};
-    return {
-      promptSteps: [new SQLStringNameStep(), new HostNameStep(), new FileSharePathStep(), new UserNameStep(), new PasswordStep()],
-    };
   }
 }

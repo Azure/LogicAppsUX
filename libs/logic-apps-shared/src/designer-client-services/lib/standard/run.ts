@@ -343,8 +343,9 @@ export class StandardRunService implements IRunService {
   /**
    * Triggers a workflow run
    * @param {CallbackInfo} callbackInfo - Information to call Api to trigger workflow.
+   * @param {any} options - Options for the trigger call including headers, queries and body.
    */
-  async runTrigger(callbackInfo: CallbackInfo): Promise<void> {
+  async runTrigger(callbackInfo: CallbackInfo, options?: any): Promise<any> {
     const { httpClient } = this.options;
     const method = isCallbackInfoWithRelativePath(callbackInfo) ? callbackInfo.method : HTTP_METHODS.POST;
     const uri = getCallbackUrl(callbackInfo);
@@ -353,7 +354,25 @@ export class StandardRunService implements IRunService {
     }
 
     try {
-      await this.getHttpRequestByMethod(httpClient, method, { uri, noAuth: true });
+      // Parse query params from uri
+      const [baseUri, queryString] = uri.split('?');
+      const urlSearchParams = new URLSearchParams(queryString ?? '');
+      const uriParams: Record<string, string> = {};
+      urlSearchParams.forEach((value, key) => {
+        uriParams[key] = value;
+      });
+
+      // Merge with options?.queries (options take precedence)
+      const mergedParams = { ...uriParams, ...(options?.queries ?? {}) };
+
+      return await this.getHttpRequestByMethod(httpClient, method, {
+        uri: baseUri,
+        noAuth: true,
+        returnHeaders: true,
+        headers: options?.headers,
+        queryParameters: mergedParams,
+        content: options?.body,
+      });
     } catch (e: any) {
       throw new Error(`${e.status} ${e?.data?.error?.message}`);
     }

@@ -20,8 +20,8 @@ export const useResourceStrings = () => {
       description: 'Label for location field',
     }),
     LOGIC_APP: intl.formatMessage({
-      defaultMessage: 'Logic App',
-      id: 'CYe4FG',
+      defaultMessage: 'Logic app',
+      id: 'bB4Gld',
       description: 'Label for logic app instance field',
     }),
     WORKFLOW_NAME: intl.formatMessage({
