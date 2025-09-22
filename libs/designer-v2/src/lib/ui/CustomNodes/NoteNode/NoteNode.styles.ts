@@ -30,7 +30,7 @@ export const useNoteNodeStyles = makeStyles({
     flexDirection: 'column',
     height: '100%',
     gap: '20px',
-    wordBreak: 'break-all',
+    wordBreak: 'break-word',
   },
   markdownContainer: {
     height: '100%',

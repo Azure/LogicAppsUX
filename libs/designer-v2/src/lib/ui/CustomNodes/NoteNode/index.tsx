@@ -11,9 +11,9 @@ import { useReadOnly } from '../../../core/state/designerOptions/designerOptions
 import { useNote } from '../../../core/state/notes/notesSelectors';
 
 import { bundleIcon, DeleteFilled, DeleteRegular } from '@fluentui/react-icons';
-import ColorButton from './ColorButton';
+import ColorButton from './NoteColorButton';
 import { useNoteNodeStyles } from './NoteNode.styles';
-import MarkdownRenderer from './MarkdownRenderer';
+import MarkdownRenderer from './NoteMarkdownRenderer';
 
 const DeleteIcon = bundleIcon(DeleteFilled, DeleteRegular);
 
