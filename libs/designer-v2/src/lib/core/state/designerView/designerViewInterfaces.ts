@@ -7,7 +7,7 @@ export interface DesignerViewState {
 }
 
 export interface NodeContextMenuObject {
-  nodeId: string;
+  nodeId?: string;
   location: { x: number; y: number };
 }
 

@@ -1,9 +1,11 @@
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
+import type { XYPosition } from '@xyflow/react';
 
 export interface Workflow {
   definition: LogicAppsV2.WorkflowDefinition;
   connectionReferences: ConnectionReferences;
   parameters?: Record<string, WorkflowParameter>;
+  notes?: Record<string, Note>;
   kind?: string;
   id?: string;
 }
@@ -50,3 +52,13 @@ export interface WorkflowParameter {
   description?: string;
   allowedValues?: any[];
 }
+
+export type Note = {
+  content: string;
+  color: string;
+  metadata: {
+    position: XYPosition;
+    width: number;
+    height: number;
+  };
+};

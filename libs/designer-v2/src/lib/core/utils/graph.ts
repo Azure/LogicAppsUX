@@ -42,6 +42,11 @@ export const DEFAULT_NODE_SIZE = {
   height: 40,
 };
 
+export const DEFAULT_NOTE_SIZE = {
+	width: 200,
+	height: 140,
+};
+
 // Creating generic layout nodes and edges below
 
 export const createWorkflowNode = (id: string, type?: WorkflowNodeType): WorkflowNode => ({

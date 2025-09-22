@@ -154,9 +154,10 @@ export const Designer = (props: DesignerProps) => {
                 <Background
                   bgColor={isReadOnly ? '#80808010' : undefined}
                   color={isReadOnly ? '#00000000' : '#80808080'}
-                  size={1.5}
-                  gap={[19.9, 20.3333]} // I don't know why, but it renders not exact by default
-                  offset={[10, 10]}
+                  size={2}
+                  // gap={[19.9, 20.3333]} // I don't know why, but it renders not exact by default
+                  gap={[20, 20]}
+									offset={[10, 10]}
                 />
               )}
               <DeleteModal />

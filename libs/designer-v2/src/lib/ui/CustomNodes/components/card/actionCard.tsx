@@ -1,6 +1,6 @@
 import { mergeClasses, Text, Spinner, useRestoreFocusTarget } from '@fluentui/react-components';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
-import { replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
+import { isUndefinedOrEmptyString, replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
 import type { OutputMock } from '../../../../core/state/unitTest/unitTestInterfaces';
 import { useKeyboardInteraction } from './keyboardInteraction';
 import type { MouseEventHandler } from 'react';
@@ -162,7 +162,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
       tabIndex={nodeIndex}
       style={
         {
-          '--action-brand-color': brandColor,
+          '--action-brand-color': isUndefinedOrEmptyString(brandColor) ? '#808080' : brandColor,
         } as React.CSSProperties
       }
     >

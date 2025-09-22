@@ -37,7 +37,7 @@ const DesignerReactFlow = (props: any) => {
   const dispatch = useDispatch<AppDispatch>();
   const isInitialized = useNodesInitialized();
 
-  type NodeTypesObj = Record<WorkflowNodeType, React.ComponentType<any>>;
+  type NodeTypesObj = Partial<Record<WorkflowNodeType, React.ComponentType<any>>>;
   const nodeTypes: NodeTypesObj = {
     OPERATION_NODE: OperationNode,
     GRAPH_NODE: GraphNode,
