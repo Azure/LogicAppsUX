@@ -951,7 +951,8 @@
     "azurite.azurite",
     "ms-azuretools.vscode-azureresourcegroups",
     "ms-dotnettools.csharp",
-    "ms-dotnettools.csdevkit"
+    "ms-dotnettools.csdevkit",
+    "ms-vscode-remote.remote-containers"
   ],
   "enabledApiProposals": ["authenticationChallenges"],
   "activationEvents": [
