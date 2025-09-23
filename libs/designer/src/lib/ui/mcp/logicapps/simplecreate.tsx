@@ -4,13 +4,13 @@ import { DescriptionWithLink, ErrorBar } from '../../configuretemplate/common';
 import { useCallback, useMemo, useState } from 'react';
 import type { AppDispatch, RootState } from '../../../core/state/mcp/store';
 import { useDispatch, useSelector } from 'react-redux';
-import { useLocation, useSubscription } from '../../../core/queries/resource';
 import { getResourceNameFromId, ResourceService } from '@microsoft/logic-apps-shared';
 import { AppPlanSelector } from './resources/appplanselector';
 import { StorageAccountSelector } from './resources/storageselector';
 import { AppInsightsSelector } from './resources/appinsightsselector';
 import { type LogicAppConfigDetails, setNewLogicAppDetails } from '../../../core/state/mcp/resourceSlice';
 import { useCreateDetailsStyles } from './styles';
+import { useDefaultSettingsItems } from './common';
 
 export const SimpleCreate = ({ showValidationErrors }: { showValidationErrors: boolean }) => {
   const styles = useCreateDetailsStyles();
@@ -50,20 +50,24 @@ export const SimpleCreate = ({ showValidationErrors }: { showValidationErrors: b
   };
   const defaultSettingsSectionItems = useDefaultSettingsItems();
   const detailsSectionItems = useDetailsSectionItems();
-  const errorMessage = useSelector((state: RootState) => state.resource.newLogicAppDetails?.errorMessage);
+  const newLogicAppDetails = useSelector((state: RootState) => state.resource.newLogicAppDetails);
 
   return (
     <div className={styles.container}>
       <DescriptionWithLink
-        className={styles.description}
         text={intlTexts.description}
         linkText={intlTexts.linkText}
         linkUrl="https://docs.microsoft.com/en-us/azure/logic-apps/logic-apps-overview"
       />
 
-      {showValidationErrors ? (
-        <ErrorBar title={intlTexts.errorTitle} errorMessage={errorMessage ?? intlTexts.errorDescription} styles={{ marginLeft: '-1px' }} />
+      {showValidationErrors && (!newLogicAppDetails?.isValid || newLogicAppDetails?.errorMessage) ? (
+        <ErrorBar
+          title={intlTexts.errorTitle}
+          errorMessage={newLogicAppDetails?.errorMessage ?? intlTexts.errorDescription}
+          styles={{ marginLeft: '-1px' }}
+        />
       ) : null}
+      <br />
       <TemplatesSection
         title={intlTexts.defaultSettingsTitle}
         titleHtmlFor={'defaultSettingsSectionLabel'}
@@ -72,72 +76,6 @@ export const SimpleCreate = ({ showValidationErrors }: { showValidationErrors: b
       <TemplatesSection title={intlTexts.detailsSectionTitle} titleHtmlFor={'detailsSectionLabel'} items={detailsSectionItems} />
     </div>
   );
-};
-
-const useDefaultSettingsItems = () => {
-  const intl = useIntl();
-  const { subscriptionId, resourceGroup, location } = useSelector((state: RootState) => ({
-    subscriptionId: state.mcpOptions.resourceDetails?.subscriptionId,
-    resourceGroup: state.mcpOptions.resourceDetails?.resourceGroup,
-    location: state.mcpOptions.resourceDetails?.location,
-  }));
-  const { data: subscription } = useSubscription(subscriptionId ?? '');
-  const { data: locationData } = useLocation(subscriptionId ?? '', location ?? '');
-
-  const intlTexts = {
-    subscriptionLabel: intl.formatMessage({
-      defaultMessage: 'Subscription',
-      id: 'hzJ613',
-      description: 'Label for the subscription field',
-    }),
-    resourceGroupLabel: intl.formatMessage({
-      defaultMessage: 'Resource group',
-      id: 'ahz1UW',
-      description: 'Label for the resource group field',
-    }),
-    regionLabel: intl.formatMessage({
-      defaultMessage: 'Region',
-      id: '9LJG/a',
-      description: 'Label for the region field',
-    }),
-    pricingLabel: intl.formatMessage({
-      defaultMessage: 'Pricing plan',
-      id: 'QgUC2q',
-      description: 'Label for the pricing field',
-    }),
-  };
-  return useMemo(() => {
-    return [
-      {
-        label: intlTexts.subscriptionLabel,
-        value: subscription?.displayName ?? '...',
-        type: 'text',
-      },
-      {
-        label: intlTexts.resourceGroupLabel,
-        value: resourceGroup,
-        type: 'text',
-      },
-      {
-        label: intlTexts.regionLabel,
-        value: locationData?.displayName ?? '...',
-        type: 'text',
-      },
-      {
-        label: intlTexts.pricingLabel,
-        value: 'Workflow Standard: 210 total ACU, 3.5 GB memory, 1 vCPU',
-        type: 'text',
-      },
-    ] as TemplatesSectionItem[];
-  }, [
-    intlTexts.pricingLabel,
-    intlTexts.regionLabel,
-    intlTexts.resourceGroupLabel,
-    intlTexts.subscriptionLabel,
-    locationData?.displayName,
-    resourceGroup,
-    subscription?.displayName,
-  ]);
 };
 
 const useDetailsSectionItems = () => {
@@ -176,25 +114,22 @@ const useDetailsSectionItems = () => {
     }),
   };
 
-  const { subscriptionId, resourceGroup, appServicePlan, storageAccount, appInsights, logicAppName, isValid } = useSelector(
-    (state: RootState) => ({
-      subscriptionId: state.mcpOptions.resourceDetails?.subscriptionId,
-      resourceGroup: state.mcpOptions.resourceDetails?.resourceGroup,
-      appServicePlan: state.resource.newLogicAppDetails?.appServicePlan ?? { id: '' },
-      storageAccount: state.resource.newLogicAppDetails?.storageAccount ?? { id: '' },
-      appInsights: state.resource.newLogicAppDetails?.appInsights ?? { id: '' },
-      logicAppName: state.resource.newLogicAppDetails?.appName ?? '',
-      isValid: state.resource.newLogicAppDetails?.isValid,
-    })
-  );
+  const { subscriptionId, appServicePlan, storageAccount, appInsights, logicAppName, isValid } = useSelector((state: RootState) => ({
+    subscriptionId: state.mcpOptions.resourceDetails?.subscriptionId,
+    appServicePlan: state.resource.newLogicAppDetails?.appServicePlan ?? { id: '', sku: '', isNew: false },
+    storageAccount: state.resource.newLogicAppDetails?.storageAccount ?? { id: '' },
+    appInsights: state.resource.newLogicAppDetails?.appInsights ?? { id: '' },
+    logicAppName: state.resource.newLogicAppDetails?.appName ?? '',
+    isValid: state.resource.newLogicAppDetails?.isValid,
+  }));
   const [appErrorMessage, setAppErrorMessage] = useState<string | undefined>(undefined);
   const handleAppNameBlur = useCallback(async () => {
-    const availabilityError = await validateAvailability(logicAppName, subscriptionId ?? '', resourceGroup ?? '');
+    const availabilityError = await validateAvailability(logicAppName, subscriptionId ?? '');
     setAppErrorMessage(availabilityError);
 
     const isNewValid = !!appServicePlan?.id && !!storageAccount?.id && !availabilityError;
     dispatch(setNewLogicAppDetails({ isValid: isNewValid }));
-  }, [subscriptionId, resourceGroup, logicAppName, appServicePlan?.id, storageAccount?.id, dispatch]);
+  }, [subscriptionId, logicAppName, appServicePlan?.id, storageAccount?.id, dispatch]);
 
   const setConfigUpdate = useCallback(
     (details: Partial<LogicAppConfigDetails>) => {
@@ -233,9 +168,9 @@ const useDetailsSectionItems = () => {
           onRenderItem: () => (
             <AppPlanSelector
               selectedResource={appServicePlan?.id}
-              setSelectedResource={(id: string) => setConfigUpdate({ appServicePlan: { id } })}
+              setSelectedResource={(id: string, sku: string) => setConfigUpdate({ appServicePlan: { id, sku } })}
               newResourceName={appServicePlan?.isNew ? getResourceNameFromId(appServicePlan.id) : undefined}
-              setNewResource={(id) => setConfigUpdate({ appServicePlan: { id, isNew: true } })}
+              setNewResource={(id) => setConfigUpdate({ appServicePlan: { id, isNew: true, sku: 'WS1' } })}
             />
           ),
         },
@@ -287,9 +222,9 @@ const useDetailsSectionItems = () => {
   );
 };
 
-const validateAvailability = async (name: string, subscriptionId: string, resourceGroup: string): Promise<string | undefined> => {
+const validateAvailability = async (name: string, subscriptionId: string): Promise<string | undefined> => {
   const result = await ResourceService().executeResourceAction(
-    `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/checknameavailability`,
+    `/subscriptions/${subscriptionId}/providers/Microsoft.Web/checknameavailability`,
     'POST',
     { 'api-version': '2018-11-01' },
     { isFQDN: true, name: `${name}.azurewebsites.net`, type: 'Site' }

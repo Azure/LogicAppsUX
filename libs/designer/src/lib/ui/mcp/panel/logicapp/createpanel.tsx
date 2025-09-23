@@ -12,10 +12,10 @@ import { clearNewLogicAppDetails } from '../../../../core/state/mcp/resourceSlic
 
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
-export const CreateAppPanel = () => {
+export const CreateAppPanel = ({ onCreateApp }: { onCreateApp: () => void }) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
-  const panelTabs: McpPanelTabProps[] = useCreateAppPanelTabs();
+  const panelTabs: McpPanelTabProps[] = useCreateAppPanelTabs(onCreateApp);
   const { selectedTabId, isOpen, panelMode } = useSelector((state: RootState) => ({
     selectedTabId: state.mcpPanel.selectedTabId,
     isOpen: state.mcpPanel?.isOpen ?? false,

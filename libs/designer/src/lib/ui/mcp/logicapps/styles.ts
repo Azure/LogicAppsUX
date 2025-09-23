@@ -1,9 +1,6 @@
 import { makeStyles, tokens } from '@fluentui/react-components';
 
 export const useCreateDetailsStyles = makeStyles({
-  description: {
-    paddingBottom: tokens.spacingVerticalL,
-  },
   container: {
     paddingLeft: tokens.spacingHorizontalM,
   },
@@ -41,5 +38,29 @@ export const useCreatePopupStyles = makeStyles({
     width: 'fit-content',
     paddingTop: tokens.spacingVerticalXS,
     paddingLeft: tokens.spacingHorizontalXXS,
+  },
+});
+
+export const useCreateReviewStyles = makeStyles({
+  container: {
+    paddingLeft: tokens.spacingHorizontalM,
+  },
+  templatesSection: {
+    paddingTop: '30px',
+  },
+  resourcesSection: {
+    paddingTop: tokens.spacingVerticalXL,
+    width: '80%',
+  },
+  resourceIcon: {
+    marginTop: '-5px',
+  },
+  resourceName: {
+    padding: '0 0 4px 10px',
+  },
+  operationProgress: {
+    width: '20px',
+    height: '20px',
+    paddingRight: '6px',
   },
 });

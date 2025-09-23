@@ -21,4 +21,5 @@ export interface McpConnectorTabProps {
 
 export interface McpCreateAppTabProps extends McpConnectorTabProps {
   tabStatusIcon?: 'error';
+  isSecondaryButtonDisabled?: boolean;
 }

@@ -6,7 +6,6 @@ import { addWorkflowsData, saveWorkflowsData, updateWorkflowParameter } from '..
 export const TemplatePanelView = {
   // Template creation panels
   QuickView: 'quickView',
-  CreateWorkflow: 'createWorkflow',
   // Configure template panels
   ConfigureWorkflows: 'configureWorkflows', //TODO: change this to AddWorkflows
   EditWorkflows: 'editWorkflows',

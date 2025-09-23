@@ -92,13 +92,18 @@ export const useStorageAccounts = (subscriptionId: string, location: string): Us
   );
 };
 
-export const useAppServicePlans = (subscriptionId: string, location: string): UseQueryResult<Resource[], unknown> => {
+export const useAppServicePlans = (subscriptionId: string, location: string): UseQueryResult<(Resource & { sku: string })[], unknown> => {
   return useQuery(
     ['mcp', 'appserviceplans', subscriptionId, location],
     async () => {
       const query = `resources | where type =~ 'microsoft.web/serverfarms' | where location =~ '${location.toLowerCase()}' | where properties.reserved == false | where properties.hyperV == false | where properties.hostingEnvironmentId == '' | project id, name, type, kind, sku | where sku.tier =~ 'WorkflowStandard'`;
       const result = await ResourceService().listResources(subscriptionId, query);
-      return result.map((item: any) => ({ id: item.id.toLowerCase(), name: item.name, displayName: `${item.name} (${item.sku.size})` }));
+      return result.map((item: any) => ({
+        id: item.id.toLowerCase(),
+        name: item.name,
+        displayName: `${item.name} (${item.sku.size})`,
+        sku: item.sku.size,
+      }));
     },
     {
       enabled: !!subscriptionId && !!location,

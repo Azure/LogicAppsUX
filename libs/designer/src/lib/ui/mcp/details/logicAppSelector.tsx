@@ -14,7 +14,13 @@ const NO_ITEM_VALUE = 'NO_ITEM_VALUE';
 
 export const LogicAppSelector = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { subscriptionId, resourceGroup, logicAppName, newLogicAppDetails } = useSelector((state: RootState) => state.resource);
+  const { subscriptionId, resourceGroup, location, logicAppName, newLogicAppDetails } = useSelector((state: RootState) => ({
+    subscriptionId: state.mcpOptions.resourceDetails?.subscriptionId,
+    resourceGroup: state.mcpOptions.resourceDetails?.resourceGroup,
+    location: state.mcpOptions.resourceDetails?.location,
+    logicAppName: state.resource.logicAppName,
+    newLogicAppDetails: state.resource.newLogicAppDetails,
+  }));
   const { data: logicApps, isLoading: isLogicAppsLoading } = useEmptyLogicApps(subscriptionId ?? '');
 
   const intl = useIntl();
@@ -64,13 +70,17 @@ export const LogicAppSelector = () => {
   const [selectedResource, setSelectedResource] = useState<string>('');
   const [searchTerm, setSearchTerm] = useState<string | undefined>('');
 
-  const controlValue = useMemo(() => (searchTerm !== undefined ? searchTerm : selectedResource) ?? '', [selectedResource, searchTerm]);
+  useEffect(() => {
+    if (equals(logicAppName, newLogicAppDetails?.appName)) {
+      setSelectedResource(getLogicAppId(subscriptionId as string, resourceGroup as string, logicAppName as string));
+    }
+  }, [logicAppName, newLogicAppDetails?.appName, subscriptionId, resourceGroup]);
 
   const resources = useMemo(() => {
     const result = newLogicAppDetails?.appName
       ? [
           {
-            id: getLogicAppId(subscriptionId, resourceGroup, newLogicAppDetails.appName),
+            id: getLogicAppId(subscriptionId as string, resourceGroup as string, newLogicAppDetails.appName),
             name: newLogicAppDetails.appName,
             displayName: `${newLogicAppDetails.appName} (new)`,
           },
@@ -98,35 +108,44 @@ export const LogicAppSelector = () => {
     return resources.filter((resource) => resource.displayName.toLowerCase().includes(searchTerm.toLowerCase()));
   }, [resources, searchTerm]);
 
+  const controlValue = useMemo(() => {
+    if (searchTerm !== undefined) {
+      return searchTerm;
+    }
+
+    const selectedResourceInfo = resources.find((r) => equals(r.id, selectedResource));
+    return selectedResourceInfo?.displayName ?? selectedResource;
+  }, [searchTerm, resources, selectedResource]);
   const onLogicAppSelect = useCallback(
     (value: string) => {
-      const app = logicApps?.find((app) => equals(app.name, value));
-      if (app) {
-        dispatch(
-          setLogicApp({
-            resourceGroup: app.resourceGroup,
-            location: app.location,
-            logicAppName: app.name,
-          })
-        );
-        setSelectedResource(app.name);
+      if (selectedResource !== value) {
+        if (newLogicAppDetails?.appName && equals(resources[0].id, value)) {
+          dispatch(
+            setLogicApp({
+              resourceGroup: resourceGroup as string,
+              location: location as string,
+              logicAppName: newLogicAppDetails.appName,
+            })
+          );
+          setSelectedResource(value);
+          return;
+        }
+
+        const app = logicApps?.find((app) => equals(app.id, value));
+        if (app) {
+          dispatch(
+            setLogicApp({
+              resourceGroup: app.resourceGroup,
+              location: app.location,
+              logicAppName: app.name,
+            })
+          );
+          setSelectedResource(value);
+        }
       }
     },
-    [dispatch, logicApps]
+    [dispatch, location, logicApps, newLogicAppDetails?.appName, resourceGroup, resources, selectedResource]
   );
-
-  useEffect(() => {
-    if (!isLogicAppsLoading) {
-      const resource = resources.find((resource) => equals(resource.name, logicAppName ?? ''))?.displayName;
-      if (!resource && !!logicAppName) {
-        onLogicAppSelect('');
-      }
-
-      if (resource !== selectedResource) {
-        setSelectedResource(resource ?? '');
-      }
-    }
-  }, [resources, logicAppName, isLogicAppsLoading, selectedResource, onLogicAppSelect]);
 
   const handleNewAppCreate = useCallback(() => {
     dispatch(openMcpPanelView({ panelView: McpPanelView.CreateLogicApp }));
@@ -161,7 +180,7 @@ export const LogicAppSelector = () => {
                 </Option>
               ) : (
                 filteredResources.map((resource) => (
-                  <Option key={resource.id} value={resource.name}>
+                  <Option key={resource.id} value={resource.id}>
                     {resource.displayName}
                   </Option>
                 ))

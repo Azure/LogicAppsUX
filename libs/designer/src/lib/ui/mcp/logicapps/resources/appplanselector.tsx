@@ -6,7 +6,11 @@ import { useSelector } from 'react-redux';
 import { useIntl } from 'react-intl';
 import { useCallback } from 'react';
 
-export const AppPlanSelector = ({ selectedResource, setSelectedResource, newResourceName, setNewResource }: ResourceSelectorProps) => {
+interface AppPlanSelectorProps extends Omit<ResourceSelectorProps, 'setSelectedResource'> {
+  setSelectedResource: (id: string, sku: string) => void;
+}
+
+export const AppPlanSelector = ({ selectedResource, setSelectedResource, newResourceName, setNewResource }: AppPlanSelectorProps) => {
   const { subscriptionId, resourceGroup, location } = useSelector((state: RootState) => ({
     subscriptionId: state.mcpOptions.resourceDetails?.subscriptionId,
     resourceGroup: state.mcpOptions.resourceDetails?.resourceGroup,
@@ -41,12 +45,19 @@ export const AppPlanSelector = ({ selectedResource, setSelectedResource, newReso
     [subscriptionId, resourceGroup]
   );
 
+  const handleResourceSelection = useCallback(
+    (id: string) => {
+      const selectedPlan = appServicePlans?.find((plan) => plan.id === id);
+      setSelectedResource(id, selectedPlan ? selectedPlan.sku : 'WS1');
+    },
+    [appServicePlans, setSelectedResource]
+  );
   return (
     <ResourceSelectionWithCreate
       resourcesList={appServicePlans ?? []}
       isLoading={isLoading}
       selectedResourceId={selectedResource}
-      onSelect={setSelectedResource}
+      onSelect={handleResourceSelection}
       onCreate={setNewResource}
       getResourceId={getResourceId}
       createPlaceholder={intlTexts.createPlaceholder}

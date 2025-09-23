@@ -3,7 +3,6 @@ import { makeStyles, tokens } from '@fluentui/react-components';
 export const useMcpDetailsStyles = makeStyles({
   container: {
     display: 'flex',
-    alignItems: 'center',
     gap: tokens.spacingHorizontalS,
   },
   labelSection: {
@@ -21,7 +20,7 @@ export const useMcpDetailsStyles = makeStyles({
     width: '100%',
   },
   linkSection: {
-    paddingTop: tokens.spacingVerticalS,
+    paddingTop: tokens.spacingVerticalXS,
     paddingLeft: tokens.spacingHorizontalXXS,
   },
 });

@@ -15,7 +15,7 @@ interface ResourceDetails extends CreateDetails {
 export interface LogicAppConfigDetails extends CreateDetails {
   isValid: boolean;
   appName: string;
-  appServicePlan: ResourceDetails;
+  appServicePlan: ResourceDetails & { sku: string };
   storageAccount: ResourceDetails;
   appInsights?: ResourceDetails;
 }

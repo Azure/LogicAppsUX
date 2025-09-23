@@ -9,7 +9,7 @@ import { McpPanelRoot } from '../panel/mcpPanelRoot';
 import { type McpServerCreateData, serializeMcpWorkflows } from '../../../core/mcp/utils/serializer';
 import { resetQueriesOnRegisterMcpServer } from '../../../core/mcp/utils/queries';
 import { LogicAppSelector } from '../details/logicAppSelector';
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, useState } from 'react';
 import type { TemplatePanelFooterProps } from '@microsoft/designer-ui';
 import { TemplatesPanelFooter } from '@microsoft/designer-ui';
 import { ListOperations } from '../operations/ListOperations';
@@ -18,6 +18,7 @@ import { DescriptionWithLink } from '../../configuretemplate/common';
 import { operationHasEmptyStaticDependencies } from '../../../core/mcp/utils/helper';
 import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import { selectConnectorId, selectOperations } from '../../../core/state/mcp/mcpselectionslice';
+import { SuccessToast } from '../logicapps/common';
 
 export type RegisterMcpServerHandler = (workflowsData: McpServerCreateData, onCompleted?: () => void) => Promise<void>;
 
@@ -133,6 +134,11 @@ export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: R
       });
     }
   }, [connection, logicAppName, operations, registerMcpServer, resourceGroup, location, subscriptionId, onRegisterCompleted]);
+
+  const [showSuccessToast, setShowSuccessToast] = useState(false);
+  const handleAppCreate = useCallback(() => {
+    setShowSuccessToast(!showSuccessToast);
+  }, [showSuccessToast]);
 
   const INTL_TEXT = {
     title: intl.formatMessage({
@@ -274,7 +280,8 @@ export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: R
 
   return (
     <div className={styles.wizardContainer}>
-      <McpPanelRoot />
+      {showSuccessToast ? <SuccessToast show={showSuccessToast} /> : null}
+      <McpPanelRoot onCreateApp={handleAppCreate} />
 
       <Text size={500} weight="bold">
         {INTL_TEXT.title}

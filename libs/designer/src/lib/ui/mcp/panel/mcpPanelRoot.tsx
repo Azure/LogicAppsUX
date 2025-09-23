@@ -5,7 +5,7 @@ import { SelectionPanel } from './connector/SelectionPanel';
 import { EditOperationPanel } from './operation/EditOperationPanel';
 import { CreateAppPanel } from './logicapp/createpanel';
 
-export const McpPanelRoot = () => {
+export const McpPanelRoot = ({ onCreateApp }: { onCreateApp: () => void }) => {
   const { isOpen, panelMode } = useSelector((state: RootState) => ({
     isOpen: state.mcpPanel?.isOpen ?? false,
     panelMode: state.mcpPanel?.currentPanelView ?? null,
@@ -22,7 +22,7 @@ export const McpPanelRoot = () => {
         panelMode === McpPanelView.UpdateOperation ||
         panelMode === McpPanelView.CreateConnection) && <SelectionPanel />}
       {panelMode === McpPanelView.EditOperation && <EditOperationPanel />}
-      {panelMode === McpPanelView.CreateLogicApp && <CreateAppPanel />}
+      {panelMode === McpPanelView.CreateLogicApp && <CreateAppPanel onCreateApp={onCreateApp} />}
     </>
   );
 };

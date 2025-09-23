@@ -4,13 +4,13 @@ import type { McpCreateAppTabProps, McpPanelTabProps } from '@microsoft/designer
 import type { IntlShape } from 'react-intl';
 import { selectPanelTab } from '../../../../../core/state/mcp/panel/mcpPanelSlice';
 import { SimpleCreateReview } from '../../../logicapps/simplecreatereview';
-import type { ArmTemplate } from '../../../../../core/mcp/utils/logicapp';
 
 export const quickReviewTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
-  templateDetails: { isValidating: boolean; template?: ArmTemplate; errorMessage?: string },
-  { isTabDisabled, previousTabId, isPrimaryButtonDisabled, onPrimaryButtonClick }: McpCreateAppTabProps
+  createButtonText: string,
+  templateDetails: { isValidating: boolean; resourcesStatus: Record<string, string>; errorInfo?: { title: string; message: string } },
+  { isTabDisabled, previousTabId, isPrimaryButtonDisabled, isSecondaryButtonDisabled, onPrimaryButtonClick }: McpCreateAppTabProps
 ): McpPanelTabProps => ({
   id: constants.MCP_PANEL_TAB_NAMES.QUICK_REVIEW,
   title: intl.formatMessage({
@@ -32,14 +32,11 @@ export const quickReviewTab = (
         onClick: () => {
           dispatch(selectPanelTab(previousTabId));
         },
+        disabled: isSecondaryButtonDisabled,
       },
       {
         type: 'navigation',
-        text: intl.formatMessage({
-          defaultMessage: 'Review + create',
-          id: 'COKUSs',
-          description: 'Button text for creating the logic app',
-        }),
+        text: createButtonText,
         onClick: () => {
           onPrimaryButtonClick?.();
         },

@@ -1,4 +1,15 @@
-import { clone, equals, guid, type Resource, ResourceService, setObjectPropertyValue } from '@microsoft/logic-apps-shared';
+import {
+  clone,
+  delay,
+  equals,
+  getIntl,
+  guid,
+  LogEntryLevel,
+  LoggerService,
+  type Resource,
+  ResourceService,
+  setObjectPropertyValue,
+} from '@microsoft/logic-apps-shared';
 import type { LogicAppConfigDetails } from '../../state/mcp/resourceSlice';
 import { getAllAppInsights, getAllWorkspaces, getAppInsightsLocations, getRegionMappings } from './queries';
 
@@ -46,6 +57,9 @@ export const validateAndCreateAppPayload = async (
   details: LogicAppResourceDetails
 ): Promise<{ isValid: boolean; errorMessage?: string; deploymentName?: string; template?: ArmTemplate }> => {
   const { subscriptionId, resourceGroup, location, appName } = details;
+
+  registerAllProviders(subscriptionId);
+
   const domainAvailability = await ResourceService().executeResourceAction(
     `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/checknameavailability`,
     'POST',
@@ -76,6 +90,211 @@ export const validateAndCreateAppPayload = async (
   return { isValid: equals(provisioningState, 'Succeeded'), deploymentName: depName, template: armTemplate };
 };
 
+export const createLogicAppFromTemplate = async (
+  deploymentName: string,
+  template: ArmTemplate,
+  subscriptionId: string,
+  resourceGroup: string
+): Promise<string> => {
+  let retryAttempts = 0;
+  let providersRegistered = await areProvidersRegistered(subscriptionId);
+
+  while (!providersRegistered && retryAttempts < 5) {
+    await delay(10 * 1000);
+    retryAttempts++;
+    providersRegistered = await areProvidersRegistered(subscriptionId);
+  }
+
+  const { id } = await ResourceService().executeResourceAction(
+    `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Resources/deployments/${deploymentName}`,
+    'PUT',
+    { 'api-version': '2022-12-01' },
+    {
+      properties: {
+        debugSetting: { detailLevel: 'none' },
+        mode: 'incremental',
+        template: template.template,
+        parameters: template.parameters,
+        validationLevel: 'Template',
+      },
+    }
+  );
+  return id;
+};
+
+export const pollForAppCreateCompletion = async (
+  deploymentUri: string,
+  resourcesToBeCreatedCount: number,
+  updateResourceStatuses: (statuses: Record<string, string>) => void
+): Promise<{ code: string; message: string } | undefined> => {
+  let resourceStatuses: Record<string, string> = {};
+  try {
+    resourceStatuses = await checkDeploymentCreateOperations(deploymentUri, updateResourceStatuses);
+    let retryAttempts = 0;
+
+    while (
+      (Object.keys(resourceStatuses).length < resourcesToBeCreatedCount || !isDeploymentCompletedForResources(resourceStatuses)) &&
+      retryAttempts < 30
+    ) {
+      await delay(10 * 1000);
+      retryAttempts++;
+      resourceStatuses = await checkDeploymentCreateOperations(deploymentUri, updateResourceStatuses);
+    }
+
+    const response = await pollForDeploymentStatus(deploymentUri);
+    return response;
+  } catch (error: any) {
+    for (const key of Object.keys(resourceStatuses)) {
+      if (equals(resourceStatuses[key], 'running')) {
+        resourceStatuses[key] = 'creating';
+      }
+    }
+
+    return {
+      code: error?.code ?? 'AppCreateFailed',
+      message:
+        error?.message ??
+        getIntl().formatMessage({
+          defaultMessage: 'An error occurred while creating the app.',
+          id: 'Jm7r7H',
+          description: 'Error message shown when app creation fails',
+        }),
+    };
+  }
+};
+
+const checkDeploymentCreateOperations = async (
+  deploymentUri: string,
+  updateResourceStatuses: (statuses: Record<string, string>) => void
+): Promise<Record<string, string>> => {
+  const response: any = await ResourceService().getResource(`${deploymentUri}/operations`, { 'api-version': '2022-12-01' });
+
+  const result = (response.value || [])
+    .filter((operation: any) => equals(operation.properties.provisioningOperation, 'Create'))
+    .reduce((result: Record<string, string>, operation: any) => {
+      const resourceType = operation.properties.targetResource?.resourceType;
+      const uiResourceType = getUIResourceType(resourceType);
+      if (uiResourceType) {
+        result[uiResourceType] = operation.properties.provisioningState?.toLowerCase();
+      }
+      return result;
+    }, {});
+
+  if ((response.value ?? []).length > 0) {
+    updateResourceStatuses(result);
+  }
+
+  return result;
+};
+
+const pollForDeploymentStatus = async (deploymentUri: string): Promise<{ code: string; message: string } | undefined> => {
+  const maxRetries = 6;
+  const retryIntervalInSeconds = 10;
+  let retryAttempts = 0;
+  let response = await checkDeploymentStatus(deploymentUri);
+
+  while (!isDeploymentCompleted(response.properties.provisioningState) && retryAttempts < maxRetries) {
+    await delay(retryIntervalInSeconds * 1000);
+    retryAttempts++;
+    response = await checkDeploymentStatus(deploymentUri);
+  }
+
+  const { properties } = response;
+  if (equals(properties.provisioningState, 'Running')) {
+    return {
+      code: 'DeploymentTimeout',
+      message: getIntl().formatMessage({
+        defaultMessage: 'The deployment is taking longer than expected. Please check the Azure portal for more details.',
+        id: 'Jm7r7H',
+        description: 'Error message shown when deployment times out',
+      }),
+    };
+  }
+
+  if (equals(properties.provisioningState, 'Failed')) {
+    const { code, message } =
+      properties.error?.details && properties.error.details.length === 1 ? properties.error.details[0] : properties.error;
+    return { code, message };
+  }
+
+  return undefined;
+};
+
+const registeredSubscriptions: Record<string, boolean> = {};
+const providers = ['Microsoft.Web', 'Microsoft.Storage', 'Microsoft.Insights', 'Microsoft.OperationalInsights'];
+
+export const areProvidersRegistered = async (subscriptionId: string): Promise<boolean> => {
+  if (registeredSubscriptions[subscriptionId]) {
+    return true;
+  }
+
+  const promises = providers.map(async (provider) => {
+    try {
+      const result = await ResourceService().getResource(`/subscriptions/${subscriptionId}/providers/${provider}`, {
+        'api-version': '2022-09-01',
+      });
+      return equals((result as any).registrationState, 'registered');
+    } catch {
+      return false;
+    }
+  });
+  const results = await Promise.all(promises);
+  const allRegistered = results.every((result) => result === true);
+  if (allRegistered) {
+    registeredSubscriptions[subscriptionId] = true;
+    return true;
+  }
+
+  const providersNotRegistered = results
+    .map((value, index) => (value ? null : providers[index]))
+    .filter((index) => index !== null) as string[];
+  registerAllProviders(subscriptionId, providersNotRegistered);
+
+  return false;
+};
+
+const registerAllProviders = (subscriptionId: string, toRegister: string[] = providers): Promise<any>[] => {
+  const registerProvider = async (provider: string): Promise<any> =>
+    ResourceService().executeResourceAction(`/subscriptions/${subscriptionId}/providers/${provider}/register`, 'POST', {
+      'api-version': '2021-04-01',
+    });
+  return toRegister.map(registerProvider);
+};
+
+const getUIResourceType = (resourceType: string): string | undefined => {
+  switch (resourceType.toLowerCase()) {
+    case 'microsoft.web/sites':
+      return 'logicapp';
+    case 'microsoft.storage/storageaccounts':
+      return 'storageaccount';
+    case 'microsoft.web/serverfarms':
+      return 'appserviceplan';
+    case 'microsoft.insights/components':
+      return 'appinsights';
+    default:
+      return undefined;
+  }
+};
+
+const checkDeploymentStatus = async (deploymentUri: string): Promise<any> => {
+  try {
+    return ResourceService().getResource(deploymentUri, { 'api-version': '2022-12-01' });
+  } catch (error: any) {
+    LoggerService().log({
+      level: LogEntryLevel.Warning,
+      area: 'MCP.LogicAppCreate.PollDeployment',
+      message: `Failed to fetch deployment status from ${deploymentUri}. Error: ${error.message || error}`,
+    });
+  }
+};
+
+const isDeploymentCompleted = (provisioningState: string): boolean =>
+  equals(provisioningState, 'failed') || equals(provisioningState, 'succeeded');
+
+const isDeploymentCompletedForResources = (resources: Record<string, string>): boolean =>
+  Object.keys(resources).some((resource) => equals(resources[resource], 'failed')) ||
+  Object.keys(resources).every((resource) => equals(resources[resource], 'succeeded'));
+
 const generateArmTemplate = async (details: LogicAppResourceDetails): Promise<ArmTemplate> => {
   const template = clone(armTemplate);
   const { subscriptionId, location, appName, appServicePlan, storageAccount, appInsights } = details;
@@ -97,8 +316,10 @@ const generateArmTemplate = async (details: LogicAppResourceDetails): Promise<Ar
   const { resourceName: storageAccountName } = parseArmId(storageAccount.id);
   template.parameters.storageAccountName.value = storageAccountName;
 
+  const storageDetails = getStorageDetails(storageAccount.id, !!storageAccount.isNew);
+  template.template.resources[0].properties.siteConfig.appSettings.push(...(storageDetails.appSettings as { name: string; value: any }[]));
+
   if (storageAccount.isNew) {
-    const storageDetails = getNewStorageDetails();
     template.template.resources[0].dependsOn?.push(storageDetails.dependsOn as string);
     template.template.resources.push(...(storageDetails.resources as ArmTemplateResource[]));
   }
@@ -332,16 +553,6 @@ const armTemplate: ArmTemplate = {
                 value: '~20',
               },
               {
-                name: 'AzureWebJobsStorage',
-                value:
-                  "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2022-05-01').keys[0].value,';EndpointSuffix=','core.windows.net')]",
-              },
-              {
-                name: 'WEBSITE_CONTENTAZUREFILECONNECTIONSTRING',
-                value:
-                  "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2022-05-01').keys[0].value,';EndpointSuffix=','core.windows.net')]",
-              },
-              {
                 name: 'WEBSITE_CONTENTSHARE',
                 value: "[concat(toLower(parameters('name')), '9570')]",
               },
@@ -404,36 +615,57 @@ const armTemplate: ArmTemplate = {
 };
 
 interface DependentResourceDetails {
+  appSettings?: { name: string; value: any }[];
   mainResource?: { path: string[]; value: any };
   dependsOn?: string;
   resources?: ArmTemplateResource[];
 }
 
-const getNewStorageDetails = (): DependentResourceDetails => ({
-  dependsOn: "[concat('Microsoft.Storage/storageAccounts/', parameters('storageAccountName'))]",
-  resources: [
+const getStorageDetails = (resourceId: string, isNew: boolean): DependentResourceDetails => {
+  const { subscriptionId, resourceGroup } = parseArmId(resourceId);
+
+  const storageConnectionString = `[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageAccountName'),';AccountKey=',listKeys(resourceId('${subscriptionId}','${resourceGroup}','Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2022-05-01').keys[0].value,';EndpointSuffix=','core.windows.net')]`;
+  const appSettings = [
     {
-      apiVersion: '2022-05-01',
-      type: 'Microsoft.Storage/storageAccounts',
-      name: "[parameters('storageAccountName')]",
-      dependsOn: [],
-      location: "[parameters('location')]",
-      tags: {},
-      kind: 'StorageV2',
-      sku: {
-        name: 'Standard_LRS',
-      },
-      properties: {
-        supportsHttpsTrafficOnly: true,
-        minimumTlsVersion: 'TLS1_2',
-        defaultToOAuthAuthentication: true,
-        allowBlobPublicAccess: false,
-        allowSharedKeyAccess: true,
-        publicNetworkAccess: 'Enabled',
-      },
+      name: 'AzureWebJobsStorage',
+      value: storageConnectionString,
     },
-  ],
-});
+    {
+      name: 'WEBSITE_CONTENTAZUREFILECONNECTIONSTRING',
+      value: storageConnectionString,
+    },
+  ];
+
+  const result = { appSettings };
+  return isNew
+    ? {
+        ...result,
+        dependsOn: "[concat('Microsoft.Storage/storageAccounts/', parameters('storageAccountName'))]",
+        resources: [
+          {
+            apiVersion: '2022-05-01',
+            type: 'Microsoft.Storage/storageAccounts',
+            name: "[parameters('storageAccountName')]",
+            dependsOn: [],
+            location: "[parameters('location')]",
+            tags: {},
+            kind: 'StorageV2',
+            sku: {
+              name: 'Standard_LRS',
+            },
+            properties: {
+              supportsHttpsTrafficOnly: true,
+              minimumTlsVersion: 'TLS1_2',
+              defaultToOAuthAuthentication: true,
+              allowBlobPublicAccess: false,
+              allowSharedKeyAccess: true,
+              publicNetworkAccess: 'Enabled',
+            },
+          },
+        ],
+      }
+    : result;
+};
 
 const getNewAppPlanDetails = (): DependentResourceDetails => ({
   dependsOn: "[concat('Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]",
@@ -544,45 +776,4 @@ const getLocationNormalized = (location: string): string => location.replaceAll(
 
 const hasPermission = async (_resourceId: string, _action?: string): Promise<boolean> => {
   return true;
-};
-
-const registeredSubscriptions: Record<string, boolean> = {};
-const providers = ['Microsoft.Web', 'Microsoft.Storage', 'Microsoft.Insights', 'Microsoft.OperationalInsights'];
-
-export const areProvidersRegistered = async (subscriptionId: string): Promise<boolean> => {
-  if (registeredSubscriptions[subscriptionId]) {
-    return true;
-  }
-
-  const promises = providers.map(async (provider) => {
-    try {
-      const result = await ResourceService().getResource(`/subscriptions/${subscriptionId}/providers/${provider}`, {
-        'api-version': '2022-09-01',
-      });
-      return equals((result as any).registrationState, 'registered');
-    } catch {
-      return false;
-    }
-  });
-  const results = await Promise.all(promises);
-  const allRegistered = results.every((result) => result === true);
-  if (allRegistered) {
-    registeredSubscriptions[subscriptionId] = true;
-    return true;
-  }
-
-  const providersNotRegistered = results
-    .map((value, index) => (value ? null : providers[index]))
-    .filter((index) => index !== null) as string[];
-  registerAllProviders(subscriptionId, providersNotRegistered);
-
-  return false;
-};
-
-const registerAllProviders = (subscriptionId: string, toRegister: string[] = providers): Promise<any>[] => {
-  const registerProvider = async (provider: string): Promise<any> =>
-    ResourceService().executeResourceAction(`/subscriptions/${subscriptionId}/providers/${provider}`, 'POST', {
-      'api-version': '2022-09-01',
-    });
-  return toRegister.map(registerProvider);
 };
