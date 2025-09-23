@@ -21,6 +21,10 @@ export const Artifact = {
   DraftParametersFile: 'parameters-draft.json',
 } as const;
 
+export const VfsArtifact = {
+  NotesFile: 'notes.json',
+} as const;
+
 export interface ArtifactProperties {
   files: {
     [Artifact.WorkflowFile]: WorkflowJson;
@@ -136,6 +140,21 @@ export interface WorkflowParameter {
   allowedValues?: any[];
   metadata?: any;
 }
+
+export type NotesData = Record<string, Note>;
+
+export type Note = {
+  content: string;
+  color: string;
+  metadata: {
+    position: {
+      x: number;
+      y: number;
+    };
+    width: number;
+    height: number;
+  };
+};
 
 export interface ConnectionReferenceModel {
   connection: {

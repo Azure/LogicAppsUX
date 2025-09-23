@@ -1,4 +1,4 @@
-import type { ArmResource } from '../../utils/src';
+import type { ArmResource, HTTP_METHODS } from '../../utils/src';
 import { AssertionErrorCode, AssertionException } from '../../utils/src';
 
 export type Resource = { id: string; name: string; displayName: string };
@@ -17,7 +17,10 @@ export interface IResourceService {
     logicAppName: string,
     filter?: (workflow: ArmResource<any>) => boolean
   ) => Promise<WorkflowResource[]>;
+  listResources: (subscriptionId: string, query: string) => Promise<ArmResource<any>[]>;
   getResource: (resourceId: string, queryParameters: Record<string, string>) => Promise<ArmResource<any>>;
+  executeResourceAction: (resourceId: string, action: HTTP_METHODS, queryParameters: Record<string, string>, content?: any) => Promise<any>;
+  executeHttpCall: (uri: string, action: HTTP_METHODS, content?: any) => Promise<any>;
 }
 
 let service: IResourceService;

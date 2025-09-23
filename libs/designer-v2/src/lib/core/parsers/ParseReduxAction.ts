@@ -6,6 +6,7 @@ import { initializeOperationMetadata, initializeDynamicDataInNodes } from '../ac
 import { getConnectionsQuery } from '../queries/connections';
 import { initializeConnectionReferences } from '../state/connection/connectionSlice';
 import { openCombineVariableModal } from '../state/modal/modalSlice';
+import { initializeNotes } from '../state/notes/notesSlice';
 import { initializeStaticResultProperties } from '../state/staticresultschema/staticresultsSlice';
 import { setCollapsedGraphIds } from '../state/workflow/workflowSlice';
 import type { RootState } from '../store';
@@ -57,7 +58,7 @@ export const initializeGraphState = createAsyncThunk<
 
       getConnectionsQuery();
 
-      const { definition, connectionReferences, parameters } = workflowDefinition;
+      const { definition, connectionReferences, parameters, notes } = workflowDefinition;
       // Check if there are sequential initialize variable actions
       const hasSequentialVars = isMultiVariableEnabled && detectSequentialInitializeVariables(definition);
       let selectedDefinition = definition;
@@ -94,6 +95,8 @@ export const initializeGraphState = createAsyncThunk<
       dispatch(initializeConnectionReferences(connectionReferences ?? {}));
       dispatch(initializeStaticResultProperties(deserializedWorkflow.staticResults ?? {}));
       updateWorkflowParameters(parameters ?? {}, dispatch);
+
+      dispatch(initializeNotes(notes ?? {}));
 
       // If host option has 'collapseGraphsByDefault' set to true, collapse all graphs
       const collapseGraphsByDefaultFlag = designerOptions?.hostOptions?.collapseGraphsByDefault;
