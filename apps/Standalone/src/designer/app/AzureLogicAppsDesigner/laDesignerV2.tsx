@@ -256,124 +256,141 @@ const DesignerEditor = () => {
     throw error ?? settingsError;
   }
 
-  const saveWorkflowFromDesigner = async (
-    workflowFromDesigner: Workflow,
-    customCode: CustomCodeFileNameMapping | undefined,
-    clearDirtyState: () => void
-  ): Promise<any> => {
-    const { definition, connectionReferences, parameters } = workflowFromDesigner;
-    const workflowToSave = {
-      ...workflow,
-      definition,
-    };
-
-    delete workflowToSave.id;
-
-    const newManagedApiConnections = {
-      ...(connectionsData?.managedApiConnections ?? {}),
-    };
-    const newServiceProviderConnections: Record<string, any> = {};
-    const newAgentConnections: Record<string, any> = {};
-
-    const referenceKeys = Object.keys(connectionReferences ?? {});
-    if (referenceKeys.length) {
-      await Promise.all(
-        referenceKeys.map(async (referenceKey) => {
-          const reference = connectionReferences[referenceKey];
-          if (isArmResourceId(reference?.connection?.id) && !newManagedApiConnections[referenceKey]) {
-            // Managed API Connection
-            const {
-              api: { id: apiId },
-              connection: { id: connectionId },
-              connectionProperties,
-            } = reference;
-            const connection = await getConnectionStandard(connectionId);
-            const userIdentity = connectionProperties?.authentication?.identity;
-            const newConnectionObj = {
-              api: { id: apiId },
-              connection: { id: connectionId },
-              authentication: {
-                type: 'ManagedServiceIdentity',
-                ...optional('identity', userIdentity),
-              },
-              connectionRuntimeUrl: connection?.properties?.connectionRuntimeUrl ?? '',
-              connectionProperties,
-            };
-            newManagedApiConnections[referenceKey] = newConnectionObj;
-          } else if (reference?.connection?.id.startsWith('/connectionProviders/agent/')) {
-            // Service Provider Connection
-            const connectionKey = reference.connection.id.split('/').splice(-1)[0];
-            // We can't apply this directly in case there is a temporary key overlap
-            // We need to move the data out to a new object, delete the old data, then apply the new data at the end
-            newAgentConnections[referenceKey] = connectionsData?.agentConnections?.[connectionKey];
-            delete connectionsData?.agentConnections?.[connectionKey];
-          } else if (reference?.connection?.id.startsWith('/serviceProviders/')) {
-            // Service Provider Connection
-            const connectionKey = reference.connection.id.split('/').splice(-1)[0];
-            // We can't apply this directly in case there is a temporary key overlap
-            // We need to move the data out to a new object, delete the old data, then apply the new data at the end
-            newServiceProviderConnections[referenceKey] = connectionsData?.serviceProviderConnections?.[connectionKey];
-            delete connectionsData?.serviceProviderConnections?.[connectionKey];
-          }
-        })
-      );
-      (connectionsData as ConnectionsData).managedApiConnections = newManagedApiConnections;
-      (connectionsData as ConnectionsData).serviceProviderConnections = {
-        ...connectionsData?.serviceProviderConnections,
-        ...newServiceProviderConnections,
+  const saveWorkflowFromDesigner = useCallback(
+    async (
+      workflowFromDesigner: Workflow,
+      customCode: CustomCodeFileNameMapping | undefined,
+      clearDirtyState: () => void,
+      autoSave?: boolean
+    ): Promise<any> => {
+      const { definition, connectionReferences, parameters } = workflowFromDesigner;
+      const workflowToSave = {
+        ...workflow,
+        definition,
       };
-      if (isAgentWorkflow(workflow?.kind ?? '')) {
-        (connectionsData as ConnectionsData).agentConnections = {
-          ...connectionsData?.agentConnections,
-          ...newAgentConnections,
-        };
 
-        // Assign MSI roles if needed
-        /**
-         *  This is currently only for Agentic workflows,
-         *    but we should work to make this generic in the future
-         *  The issue with making it generic is that we don't have a good way of getting the required definition names for any given connection reference
-         *  The required roles are listed on connection parameters which we don't have access to here,
-         *    and would take several requests to check for each connection, when most will not need it, leading to unnecessary slowdown during save
-         *  One option is to populate that info somewhere in the connection reference for use here,
-         *    but that is unavailable at authoring time when we are populating the values that require the roles
-         */
-        for (const [_refKey, agentConnection] of Object.entries(newAgentConnections)) {
-          if (agentConnection?.authentication?.type === 'ManagedServiceIdentity') {
-            const definitionNames = ['Azure AI User', 'Azure AI Administrator', 'Cognitive Services Contributor'];
-            const missingRoleAssignments = await getMissingRoleDefinitions(agentConnection?.resourceId, definitionNames);
-            const assignmentPromises = [];
-            for (const roleDefinition of missingRoleAssignments) {
-              assignmentPromises.push(RoleService().addAppRoleAssignmentForResource(agentConnection?.resourceId, roleDefinition.id));
+      delete workflowToSave.id;
+
+      const newManagedApiConnections = {
+        ...(connectionsData?.managedApiConnections ?? {}),
+      };
+      const newServiceProviderConnections: Record<string, any> = {};
+      const newAgentConnections: Record<string, any> = {};
+
+      const referenceKeys = Object.keys(connectionReferences ?? {});
+      if (referenceKeys.length) {
+        await Promise.all(
+          referenceKeys.map(async (referenceKey) => {
+            const reference = connectionReferences[referenceKey];
+            if (isArmResourceId(reference?.connection?.id) && !newManagedApiConnections[referenceKey]) {
+              // Managed API Connection
+              const {
+                api: { id: apiId },
+                connection: { id: connectionId },
+                connectionProperties,
+              } = reference;
+              const connection = await getConnectionStandard(connectionId);
+              const userIdentity = connectionProperties?.authentication?.identity;
+              const newConnectionObj = {
+                api: { id: apiId },
+                connection: { id: connectionId },
+                authentication: {
+                  type: 'ManagedServiceIdentity',
+                  ...optional('identity', userIdentity),
+                },
+                connectionRuntimeUrl: connection?.properties?.connectionRuntimeUrl ?? '',
+                connectionProperties,
+              };
+              newManagedApiConnections[referenceKey] = newConnectionObj;
+            } else if (reference?.connection?.id.startsWith('/connectionProviders/agent/')) {
+              // Service Provider Connection
+              const connectionKey = reference.connection.id.split('/').splice(-1)[0];
+              // We can't apply this directly in case there is a temporary key overlap
+              // We need to move the data out to a new object, delete the old data, then apply the new data at the end
+              newAgentConnections[referenceKey] = connectionsData?.agentConnections?.[connectionKey];
+              delete connectionsData?.agentConnections?.[connectionKey];
+            } else if (reference?.connection?.id.startsWith('/serviceProviders/')) {
+              // Service Provider Connection
+              const connectionKey = reference.connection.id.split('/').splice(-1)[0];
+              // We can't apply this directly in case there is a temporary key overlap
+              // We need to move the data out to a new object, delete the old data, then apply the new data at the end
+              newServiceProviderConnections[referenceKey] = connectionsData?.serviceProviderConnections?.[connectionKey];
+              delete connectionsData?.serviceProviderConnections?.[connectionKey];
             }
-            await Promise.all(assignmentPromises);
+          })
+        );
+        (connectionsData as ConnectionsData).managedApiConnections = newManagedApiConnections;
+        (connectionsData as ConnectionsData).serviceProviderConnections = {
+          ...connectionsData?.serviceProviderConnections,
+          ...newServiceProviderConnections,
+        };
+        if (isAgentWorkflow(workflow?.kind ?? '')) {
+          (connectionsData as ConnectionsData).agentConnections = {
+            ...connectionsData?.agentConnections,
+            ...newAgentConnections,
+          };
 
-            // Invalidate the cache for the role assignments
-            const cacheKey = [roleQueryKeys.appIdentityRoleAssignments, agentConnection?.resourceId];
-            const queryClient = getReactQueryClient();
-            queryClient.invalidateQueries(cacheKey);
+          // Assign MSI roles if needed
+          /**
+           *  This is currently only for Agentic workflows,
+           *    but we should work to make this generic in the future
+           *  The issue with making it generic is that we don't have a good way of getting the required definition names for any given connection reference
+           *  The required roles are listed on connection parameters which we don't have access to here,
+           *    and would take several requests to check for each connection, when most will not need it, leading to unnecessary slowdown during save
+           *  One option is to populate that info somewhere in the connection reference for use here,
+           *    but that is unavailable at authoring time when we are populating the values that require the roles
+           */
+          for (const [_refKey, agentConnection] of Object.entries(newAgentConnections)) {
+            if (agentConnection?.authentication?.type === 'ManagedServiceIdentity') {
+              const definitionNames = ['Azure AI User', 'Azure AI Administrator', 'Cognitive Services Contributor'];
+              const missingRoleAssignments = await getMissingRoleDefinitions(agentConnection?.resourceId, definitionNames);
+              const assignmentPromises = [];
+              for (const roleDefinition of missingRoleAssignments) {
+                assignmentPromises.push(RoleService().addAppRoleAssignmentForResource(agentConnection?.resourceId, roleDefinition.id));
+              }
+              await Promise.all(assignmentPromises);
+
+              // Invalidate the cache for the role assignments
+              const cacheKey = [roleQueryKeys.appIdentityRoleAssignments, agentConnection?.resourceId];
+              const queryClient = getReactQueryClient();
+              queryClient.invalidateQueries(cacheKey);
+            }
           }
         }
       }
-    }
 
-    const connectionsToUpdate = getConnectionsToUpdate(originalConnectionsData, connectionsData ?? {});
-    const customCodeToUpdate = await getCustomCodeToUpdate(originalCustomCodeData, customCode ?? {}, appId);
-    const parametersToUpdate = isEqual(originalParametersData, parameters) ? undefined : (parameters as ParametersData);
-    const settingsToUpdate = isEqual(settingsData?.properties, originalSettings) ? undefined : settingsData?.properties;
+      const connectionsToUpdate = getConnectionsToUpdate(originalConnectionsData, connectionsData ?? {});
+      const customCodeToUpdate = await getCustomCodeToUpdate(originalCustomCodeData, customCode ?? {}, appId);
+      const parametersToUpdate = isEqual(originalParametersData, parameters) ? undefined : (parameters as ParametersData);
+      const settingsToUpdate = isEqual(settingsData?.properties, originalSettings) ? undefined : settingsData?.properties;
 
-    await saveWorkflowStandard(
+      await saveWorkflowStandard(
+        siteResourceId,
+        [{ name: workflowName, workflow: workflowToSave }],
+        connectionsToUpdate,
+        parametersToUpdate,
+        settingsToUpdate,
+        customCodeToUpdate,
+        clearDirtyState,
+        undefined,
+        autoSave
+      );
+
+      return workflowToSave;
+    },
+    [
+      appId,
+      connectionsData,
+      originalConnectionsData,
+      originalCustomCodeData,
+      originalParametersData,
+      originalSettings,
+      settingsData?.properties,
       siteResourceId,
-      [{ name: workflowName, workflow: workflowToSave }],
-      connectionsToUpdate,
-      parametersToUpdate,
-      settingsToUpdate,
-      customCodeToUpdate,
-      clearDirtyState
-    );
-
-    return workflowToSave;
-  };
+      workflow,
+      workflowName,
+    ]
+  );
 
   const saveWorkflowFromCode = async (clearDirtyState: () => void) => {
     try {
@@ -469,6 +486,13 @@ const DesignerEditor = () => {
     }
   }, [data]);
 
+  const saveDraftWorkflow = useCallback(
+    (workflow: Workflow) => {
+      return deployArtifacts(siteResourceId, workflowName, workflow, undefined, undefined, undefined, true);
+    },
+    [siteResourceId, workflowName]
+  );
+
   // Our iframe root element is given a strange padding (not in this repo), this removes it
   useEffect(() => {
     const root = document.getElementById('root');
@@ -493,24 +517,26 @@ const DesignerEditor = () => {
 
   useEffect(() => {
     const prodWorkflow = data?.properties.files[Artifact.WorkflowFile];
+    if (customCodeLoading || isLoading) {
+      return;
+    }
+
     if (draftWorkflow) {
       setWorkflow(draftWorkflow as any);
-    } else {
-      if (prodWorkflow) {
-        // Create default draft from production if draft does not exist
-        deployArtifacts(siteResourceId, workflowName, prodWorkflow, undefined, undefined, undefined, true).then((response) => {
-          if (response.status >= 200 && response.status < 300) {
-            // Draft created successfully
-            customCodeRefetch();
-          } else {
-            setIsDraftMode(false);
-            // TODO: Handle error
-          }
-        });
-      }
-      setProdWorkflow();
+    } else if (prodWorkflow) {
+      // Create default draft from production if draft does not exist
+      saveDraftWorkflow(prodWorkflow).then((response) => {
+        if (response.status >= 200 && response.status < 300) {
+          // Draft created successfully
+          customCodeRefetch();
+        } else {
+          setIsDraftMode(false);
+          // TODO: Handle error
+          setProdWorkflow();
+        }
+      });
     }
-  }, [customCodeRefetch, data?.properties.files, draftWorkflow, setProdWorkflow, siteResourceId, workflowName]);
+  }, [customCodeLoading, customCodeRefetch, data?.properties.files, draftWorkflow, isLoading, saveDraftWorkflow, setProdWorkflow]);
 
   useEffect(() => {
     if (isDraftMode) {
@@ -603,6 +629,7 @@ const DesignerEditor = () => {
                   showCodeView={showCodeView}
                   switchWorkflowMode={switchWorkflowMode}
                   isDraftMode={isDraftMode}
+                  prodWorkflow={data?.properties.files[Artifact.WorkflowFile]}
                 />
                 {!isCodeView && (
                   <div style={{ display: 'flex', flexDirection: 'row', flexGrow: 1, height: '80%' }}>

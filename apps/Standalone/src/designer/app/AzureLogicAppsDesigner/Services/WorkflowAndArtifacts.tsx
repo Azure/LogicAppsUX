@@ -591,11 +591,19 @@ export const saveWorkflowStandard = async (
   options?: {
     skipValidation?: boolean;
     throwError?: boolean;
-  }
+  },
+  autoSaveDraft?: boolean
 ): Promise<any> => {
   const data: any = {
     files: {},
   };
+
+  if (autoSaveDraft) {
+    if (workflows.length > 0) {
+      return deployArtifacts(siteResourceId, workflows[0].name, workflows[0].workflow, connectionsData, parametersData, settings, true);
+    }
+    return;
+  }
 
   for (const { name, workflow } of workflows) {
     data.files[`${name}/workflow.json`] = workflow;

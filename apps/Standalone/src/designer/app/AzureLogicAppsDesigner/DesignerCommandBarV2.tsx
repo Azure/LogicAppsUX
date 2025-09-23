@@ -11,6 +11,7 @@ import {
   MenuTrigger,
   mergeClasses,
   Spinner,
+  Text,
   tokens,
   Toolbar,
   ToolbarButton,
@@ -45,7 +46,7 @@ import {
   downloadDocumentAsFile,
   useNodesAndDynamicDataInitialized,
 } from '@microsoft/logic-apps-designer-v2';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { environment } from '../../../environments/environment';
@@ -124,7 +125,12 @@ export const DesignerCommandBar = ({
   location: string;
   isReadOnly: boolean;
   discard: () => unknown;
-  saveWorkflow: (workflow: Workflow, customCodeData: CustomCodeFileNameMapping | undefined, clearDirtyState: () => void) => Promise<void>;
+  saveWorkflow: (
+    workflow: Workflow,
+    customCodeData: CustomCodeFileNameMapping | undefined,
+    clearDirtyState: () => void,
+    autoSave?: boolean
+  ) => Promise<void>;
   saveWorkflowFromCode: (clearDirtyState: () => void) => void;
   isDesignerView?: boolean;
   isMonitoringView?: boolean;
@@ -132,6 +138,7 @@ export const DesignerCommandBar = ({
   isDarkMode: boolean;
   isUnitTest: boolean;
   isDraftMode?: boolean;
+  prodWorkflow?: Workflow;
   enableCopilot?: () => void;
   showMonitoringView: () => void;
   showDesignerView: () => void;
@@ -139,10 +146,11 @@ export const DesignerCommandBar = ({
   switchWorkflowMode: (draftMode: boolean) => void;
 }) => {
   const styles = useStyles();
+  const [lastSavedTime, setLastSavedTime] = useState<Date>();
 
   const dispatch = useDispatch<AppDispatch>();
   const isCopilotReady = useNodesInitialized();
-  const { isLoading: isSaving, mutate: saveWorkflowMutate } = useMutation(async () => {
+  const { isLoading: isSaving, mutate: saveWorkflowMutate } = useMutation(async (autoSave?: boolean) => {
     const designerState = DesignerStore.getState();
     const serializedWorkflow = await serializeBJSWorkflow(designerState, {
       skipValidation: false,
@@ -176,10 +184,13 @@ export const DesignerCommandBar = ({
 
     const customCodeFilesWithData = getCustomCodeFilesWithData(designerState.customCode);
 
-    if (!hasParametersErrors) {
-      await saveWorkflow(serializedWorkflow, customCodeFilesWithData, () => dispatch(resetDesignerDirtyState(undefined)));
+    if (!hasParametersErrors || autoSave) {
+      await saveWorkflow(serializedWorkflow, customCodeFilesWithData, () => dispatch(resetDesignerDirtyState(undefined)), autoSave);
       if (Object.keys(serializedWorkflow?.definition?.triggers ?? {}).length > 0) {
         updateCallbackUrl(designerState, dispatch);
+      }
+      if (autoSave) {
+        setLastSavedTime(new Date());
       }
     }
   });
@@ -296,14 +307,14 @@ export const DesignerCommandBar = ({
       disabled={saveIsDisabled}
       onClick={() => {
         if (isDesignerView) {
-          saveWorkflowMutate();
+          saveWorkflowMutate(false);
         } else {
           saveWorkflowFromCode(() => dispatch(resetDesignerDirtyState(undefined)));
         }
       }}
       icon={isSaving ? <Spinner size={'extra-tiny'} /> : undefined}
     >
-      {isSaving ? 'Saving' : 'Save'}
+      {isSaving ? 'Publishing....' : 'Publish'}
     </ToolbarButton>
   );
 
@@ -315,6 +326,13 @@ export const DesignerCommandBar = ({
       disabled={isSaving || isMonitoringView || !designerIsDirty}
     />
   );
+
+  const DraftSaveNotification = () => {
+    if (isDraftMode && lastSavedTime) {
+      return <Text style={{ fontStyle: 'italic' }}>{`Draft auto-saved at: ${lastSavedTime?.toLocaleTimeString()}`}</Text>;
+    }
+    return null;
+  };
 
   const OverflowMenu = () => (
     <Menu>
@@ -391,6 +409,15 @@ export const DesignerCommandBar = ({
     </Menu>
   );
 
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (isDraftMode && !isSaving && isDesignerView) {
+        saveWorkflowMutate(true);
+      }
+    }, 30000); // Auto-save every 30 seconds
+
+    return () => clearTimeout(timeoutId);
+  }, [saveIsDisabled, isDraftMode, isSaving, isDesignerView, saveWorkflowMutate]);
   return (
     <>
       <Toolbar
@@ -403,6 +430,7 @@ export const DesignerCommandBar = ({
       >
         <ViewModeSelect />
         <div style={{ flexGrow: 1 }} />
+        <DraftSaveNotification />
         <SaveButton />
         <DiscardButton />
         <Divider vertical style={{ flexGrow: 0 }} />
