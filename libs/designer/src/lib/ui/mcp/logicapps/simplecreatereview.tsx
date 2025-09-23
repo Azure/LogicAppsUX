@@ -22,7 +22,9 @@ import { useConnectorSectionStyles } from '../wizard/styles';
 import { useMemo } from 'react';
 import { getResourceNameFromId } from '@microsoft/logic-apps-shared';
 import WorkflowIcon from '../../../common/images/templates/logicapps.svg';
-import MicrosoftIcon from '../../../common/images/templates/microsoft.svg';
+import AppServicePlanIcon from '../../../common/images/mcp/appserviceplan.svg';
+import StorageAccountIcon from '../../../common/images/mcp/storageaccount.svg';
+import ApplicationInsightsIcon from '../../../common/images/mcp/appinsights.svg';
 import { CheckmarkCircle20Regular, ErrorCircle20Regular, Warning20Regular } from '@fluentui/react-icons';
 
 export const SimpleCreateReview = ({
@@ -313,9 +315,12 @@ const getResourceIcon = (type: string) => {
     case 'logicapp':
       return WorkflowIcon;
     case 'storageaccount':
+      return StorageAccountIcon;
     case 'appserviceplan':
+      return AppServicePlanIcon;
     case 'appinsights':
+      return ApplicationInsightsIcon;
     default:
-      return MicrosoftIcon;
+      return null;
   }
 };

@@ -431,7 +431,7 @@ const _getWorkspaceResource = async (
       return { isNew: true, id: resourceId, name, resourceGroupName: defaultRgName };
     }
   } catch (error: any) {
-    if (error.response.statusCode === 404 || error.httpStatusCode === 404) {
+    if (error.response?.statusCode === 404 || error.httpStatusCode === 404) {
       try {
         const rgResource = await ResourceService().executeResourceAction(
           resourceGroupId,
@@ -772,7 +772,7 @@ const parseArmId = (id: string): { subscriptionId: string; resourceGroup: string
   };
 };
 
-const getLocationNormalized = (location: string): string => location.replaceAll(' ', '').toLowerCase();
+const getLocationNormalized = (location: string): string => location.replace(/ /g, '').toLowerCase();
 
 const hasPermission = async (_resourceId: string, _action?: string): Promise<boolean> => {
   return true;
