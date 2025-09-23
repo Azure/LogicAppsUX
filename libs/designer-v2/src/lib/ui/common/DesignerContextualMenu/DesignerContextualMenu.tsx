@@ -15,6 +15,7 @@ import { useNodeContextMenuData } from '../../../core/state/designerView/designe
 import { DeleteMenuItem, CopyMenuItem, ResubmitMenuItem, ExpandCollapseMenuItem, CollapseMenuItem } from '../../../ui/menuItems';
 import { PinMenuItem } from '../../../ui/menuItems/pinMenuItem';
 import { RunAfterMenuItem } from '../../../ui/menuItems/runAfterMenuItem';
+import { AddNoteMenuItem } from '../../../ui/menuItems/addNoteMenuItem';
 import { useOperationInfo, type AppDispatch, type RootState } from '../../../core';
 import { setShowDeleteModalNodeId } from '../../../core/state/designerView/designerViewSlice';
 import { useOperationAlternateSelectedNodeId } from '../../../core/state/panel/panelSelectors';
@@ -44,6 +45,9 @@ import { CustomMenu } from '../EdgeContextualMenu/customMenu';
 import { NodeMenuPriorities } from './Priorities';
 import type { DropdownMenuCustomNode } from '@microsoft/logic-apps-shared/src/utils/src/lib/models/dropdownMenuCustomNode';
 import { toggleCollapsedActionId } from '../../../core/state/workflow/workflowSlice';
+import { addNote } from '../../../core/state/notes/notesSlice';
+import { useReactFlow } from '@xyflow/react';
+
 
 export const DesignerContextualMenu = () => {
   const menuData = useNodeContextMenuData();
@@ -123,6 +127,18 @@ export const DesignerContextualMenu = () => {
     copyCalloutTimeout && clearTimeout(copyCalloutTimeout);
     setShowCopyCallout(false);
   }, [copyCalloutTimeout]);
+
+	const { screenToFlowPosition } = useReactFlow();
+
+	const onAddNoteClick = useCallback(() => {
+		if (menuData?.location) {
+			const position = screenToFlowPosition({
+				x: menuData.location.x,
+				y: menuData.location.y,
+			});
+			dispatch(addNote(position));
+		}
+	}, [dispatch, menuData?.location, screenToFlowPosition]);
 
   const transformMenuItems = (items: TopLevelDropdownMenuItem[]): DropdownMenuCustomNode[] => {
     return items.map((item) => ({
@@ -212,8 +228,20 @@ export const DesignerContextualMenu = () => {
     [nodeId]
   );
 
+	const canvasMenuItems = useMemo(() => {
+		return [
+			<AddNoteMenuItem onClick={onAddNoteClick} key="add-note" />,
+		]
+	}, [onAddNoteClick]);
+
   const menuItems = useMemo(() => {
+		// If no node id, show canvas menu items
+		if (!nodeId) {
+			return canvasMenuItems;
+		}
+
     const items: JSX.Element[] = [];
+
     if (metadata?.subgraphType === SUBGRAPH_TYPES.UNTIL_DO) {
       // Do-Until is a special case, we show normal action context menu items
       items.push(...actionContextMenuItems);
