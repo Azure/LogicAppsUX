@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { setLogicApp } from '../resourceSlice';
+import { setInitialData, setLogicApp } from '../resourceSlice';
 import { resetMcpState } from '../../global';
 import { initializeMcpServices, resetMcpStateOnResourceChange } from '../../../actions/bjsworkflow/mcp';
 
@@ -7,6 +7,11 @@ export interface McpOptionsState {
   servicesInitialized: boolean;
   disableConfiguration: boolean;
   reInitializeServices?: boolean;
+  resourceDetails?: {
+    subscriptionId: string;
+    resourceGroup: string;
+    location: string;
+  };
 }
 
 const initialState: McpOptionsState = {
@@ -29,6 +34,13 @@ export const mcpOptionsSlice = createSlice({
     });
     builder.addCase(setLogicApp, (state, action) => {
       state.reInitializeServices = !!action.payload?.logicAppName;
+    });
+    builder.addCase(setInitialData, (state, action) => {
+      state.resourceDetails = {
+        subscriptionId: action.payload.subscriptionId,
+        resourceGroup: action.payload.resourceGroup,
+        location: action.payload.location,
+      };
     });
   },
 });

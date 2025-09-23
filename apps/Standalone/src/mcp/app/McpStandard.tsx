@@ -113,6 +113,7 @@ export const McpStandard = () => {
       /* parametersData */ undefined,
       /* settingsProperties */ undefined,
       /* customCodeData */ undefined,
+      /* notes */ undefined,
       /* clearDirtyState */ () => {},
       { skipValidation: true, throwError: true }
     );
