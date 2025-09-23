@@ -46,7 +46,7 @@ export const useCreateReviewStyles = makeStyles({
     paddingLeft: tokens.spacingHorizontalM,
   },
   templatesSection: {
-    paddingTop: '30px',
+    paddingTop: '20px',
   },
   resourcesSection: {
     paddingTop: tokens.spacingVerticalXL,

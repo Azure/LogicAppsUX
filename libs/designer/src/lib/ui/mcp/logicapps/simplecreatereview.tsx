@@ -10,6 +10,8 @@ import {
   Image,
   tokens,
   Label,
+  MessageBar,
+  ProgressBar,
 } from '@fluentui/react-components';
 import { ErrorBar } from '../../configuretemplate/common';
 import { useIntl } from 'react-intl';
@@ -19,19 +21,25 @@ import { TemplatesSection } from '@microsoft/designer-ui';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../../core/state/mcp/store';
 import { useConnectorSectionStyles } from '../wizard/styles';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { getResourceNameFromId } from '@microsoft/logic-apps-shared';
 import WorkflowIcon from '../../../common/images/templates/logicapps.svg';
 import AppServicePlanIcon from '../../../common/images/mcp/appserviceplan.svg';
 import StorageAccountIcon from '../../../common/images/mcp/azurestorage.svg';
 import ApplicationInsightsIcon from '../../../common/images/mcp/appinsights.svg';
-import { CheckmarkCircle20Regular, ErrorCircle20Regular, Warning20Regular } from '@fluentui/react-icons';
+import { CheckmarkCircle20Regular, ErrorCircle20Regular, CircleHint20Regular } from '@fluentui/react-icons';
 
 export const SimpleCreateReview = ({
   isValidating,
+  isCreated,
   errorInfo,
   resourcesStatus,
-}: { isValidating: boolean; errorInfo?: { title: string; message: string }; resourcesStatus: Record<string, string> }) => {
+}: {
+  isValidating: boolean;
+  isCreated: boolean;
+  errorInfo?: { title: string; message: string };
+  resourcesStatus: Record<string, string>;
+}) => {
   const styles = useCreateReviewStyles();
   const intl = useIntl();
   const intlTexts = {
@@ -55,13 +63,43 @@ export const SimpleCreateReview = ({
       id: 'JCmWdL',
       description: 'Title for the default settings section',
     }),
+    createdMessage: intl.formatMessage({
+      defaultMessage: 'Standard logic app is successfully created.',
+      id: 'vJFQQc',
+      description: 'Success message shown when the logic app is created successfully',
+    }),
   };
 
   const defaultSettingsSectionItems = useDefaultSettingsItems();
 
+  const [value, setValue] = useState(0);
+  useEffect((): any => {
+    if (isCreated) {
+      const id = setInterval(() => {
+        setValue(value < 40 ? 1 + value : 0);
+      }, 250);
+      return () => {
+        clearInterval(id);
+      };
+    }
+  }, [isCreated, value]);
+
   return (
     <div className={styles.container}>
       {errorInfo ? <ErrorBar title={errorInfo.title} errorMessage={errorInfo.message} messageInNewline={true} /> : null}
+      {isCreated ? (
+        <div>
+          <MessageBar intent="success">{intlTexts.createdMessage}</MessageBar>
+          <ProgressBar max={40} value={value} />
+        </div>
+      ) : null}
+
+      <TemplatesSection
+        cssOverrides={{ sectionContainer: styles.templatesSection }}
+        title={intlTexts.defaultSettingsTitle}
+        titleHtmlFor={'defaultSettingsReviewSectionLabel'}
+        items={defaultSettingsSectionItems}
+      />
       <div className="msla-templates-section">
         <Label className="msla-templates-section-title" htmlFor={'resourcesSectionLabel'}>
           {intlTexts.resourcesSectionTitle}
@@ -75,19 +113,12 @@ export const SimpleCreateReview = ({
           )}
         </div>
       </div>
-      <TemplatesSection
-        cssOverrides={{ sectionContainer: styles.templatesSection }}
-        title={intlTexts.defaultSettingsTitle}
-        titleHtmlFor={'defaultSettingsReviewSectionLabel'}
-        items={defaultSettingsSectionItems}
-      />
     </div>
   );
 };
 
 const toolTableCellStyles = {
   border: 'none',
-  //paddingBottom: '8px',
 };
 const toolNameCellStyles = {
   paddingTop: '6px',
@@ -119,8 +150,8 @@ export const ListResources = ({ resourcesStatus }: { resourcesStatus: Record<str
       description: 'The type for storage account resource',
     }),
     appServicePlanType: intl.formatMessage({
-      defaultMessage: 'App service Plan',
-      id: 'mc/Tf/',
+      defaultMessage: 'App Service Plan',
+      id: '7N+Zcl',
       description: 'The type for app service plan resource',
     }),
     appInsightsType: intl.formatMessage({
@@ -244,8 +275,8 @@ const CreateStatus = ({ status }: { status: string }) => {
   const intl = useIntl();
   const INTL_TEXT = {
     notStarted: intl.formatMessage({
-      defaultMessage: 'Not started',
-      id: 'LTgi9u',
+      defaultMessage: 'Not created',
+      id: '2cRdSf',
       description: 'Status when the resource creation has not started',
     }),
     creatingLabel: intl.formatMessage({
@@ -254,8 +285,8 @@ const CreateStatus = ({ status }: { status: string }) => {
       description: 'Label for the creating status',
     }),
     completedLabel: intl.formatMessage({
-      defaultMessage: 'Completed',
-      id: 'WRbuQs',
+      defaultMessage: 'Created',
+      id: 'vlxkNl',
       description: 'Label for the completed status',
     }),
     failedLabel: intl.formatMessage({
@@ -273,7 +304,7 @@ const CreateStatus = ({ status }: { status: string }) => {
   const content: { icon: JSX.Element | null; label: string } = { icon: null, label: '' };
   switch (status) {
     case 'notstarted': {
-      content.icon = <Warning20Regular color={tokens.colorStatusWarningBorderActive} className={styles.operationProgress} />;
+      content.icon = <CircleHint20Regular color={tokens.colorBrandStroke1} className={styles.operationProgress} />;
       content.label = INTL_TEXT.notStarted;
       break;
     }

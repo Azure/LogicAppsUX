@@ -6,7 +6,7 @@ import type { McpPanelTabProps } from '@microsoft/designer-ui';
 import constants from '../../../../common/constants';
 import { quickBasicsTab } from './tabs/quickbasics';
 import { quickReviewTab } from './tabs/quickreview';
-import { equals, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
+import { delay, equals, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import {
   type ArmTemplate,
   createLogicAppFromTemplate,
@@ -50,6 +50,7 @@ export const useCreateAppPanelTabs = (onCreateApp: () => void): McpPanelTabProps
   const [errorInfo, setErrorInfo] = useState<{ title: string; message: string } | undefined>(undefined);
   const [isValidating, setIsValidating] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
+  const [isCreated, setIsCreated] = useState(false);
   const [templatePayload, setTemplatePayload] = useState<{ deploymentName: string; template: ArmTemplate } | undefined>(undefined);
   const [resourcesStatus, setResourcesStatus] = useState<Record<string, string>>({});
   const [createButtonText, setCreateButtonText] = useState<string>(intlTexts.createButtonText);
@@ -108,6 +109,11 @@ export const useCreateAppPanelTabs = (onCreateApp: () => void): McpPanelTabProps
   }, [dispatch, intl, intlTexts.validationErrorTitle, location, newLogicAppDetails, resourceGroup, subscriptionId]);
 
   const handleMoveToReview = useCallback(() => {
+    if (isCreated) {
+      dispatch(selectPanelTab(constants.MCP_PANEL_TAB_NAMES.QUICK_REVIEW));
+      return;
+    }
+
     setShowValidationErrors(true);
     setResourcesStatus(getResourcesToBeCreated(newLogicAppDetails));
     if (newLogicAppDetails?.isValid) {
@@ -121,7 +127,7 @@ export const useCreateAppPanelTabs = (onCreateApp: () => void): McpPanelTabProps
         error: new Error('Bug: New logic app details are invalid'),
       });
     }
-  }, [dispatch, newLogicAppDetails, validateCreatePayload]);
+  }, [dispatch, isCreated, newLogicAppDetails, validateCreatePayload]);
 
   const handleCreate = useCallback(async () => {
     setIsCreating(true);
@@ -166,6 +172,7 @@ export const useCreateAppPanelTabs = (onCreateApp: () => void): McpPanelTabProps
       setIsCreating(false);
       setCreateButtonText(intlTexts.createButtonText);
     } else {
+      setIsCreated(true);
       dispatch(
         setLogicApp({
           resourceGroup: resourceGroup as string,
@@ -174,6 +181,9 @@ export const useCreateAppPanelTabs = (onCreateApp: () => void): McpPanelTabProps
           isNew: true,
         })
       );
+
+      await delay(11000); // Delay to let the user see the created status and progress bar completion
+
       dispatch(closePanel());
       onCreateApp();
     }
@@ -214,6 +224,7 @@ export const useCreateAppPanelTabs = (onCreateApp: () => void): McpPanelTabProps
         createButtonText,
         {
           isValidating: isValidating,
+          isCreated,
           resourcesStatus,
           errorInfo,
         },
@@ -231,6 +242,7 @@ export const useCreateAppPanelTabs = (onCreateApp: () => void): McpPanelTabProps
       dispatch,
       createButtonText,
       isValidating,
+      isCreated,
       resourcesStatus,
       errorInfo,
       handleMoveToReview,
