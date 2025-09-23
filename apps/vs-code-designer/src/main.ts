@@ -110,7 +110,6 @@ export async function activate(context: vscode.ExtensionContext) {
     promptParameterizeConnections(activateContext, false);
     verifyLocalConnectionKeys(activateContext);
 
-    // TODO (ccastrotrjeo): Move to somewhere else
     await callWithTelemetryAndErrorHandling(autoStartDesignTimeSetting, async (actionContext: IActionContext) => {
       await runWithDurationTelemetry(actionContext, showStartDesignTimeMessageSetting, async () => {
         // TODO (ccastrotrejo): Need to revert validate to support container

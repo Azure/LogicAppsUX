@@ -2,7 +2,12 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { defaultExtensionBundlePathValue, runUnitTestEvent, testResultsDirectoryName } from '../../../../constants';
+import {
+  defaultExtensionBundlePathValue,
+  EXTENSION_BUNDLE_VERSION,
+  runUnitTestEvent,
+  testResultsDirectoryName,
+} from '../../../../constants';
 import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
 import { getLatestUnitTest, getTestsDirectory, getUnitTestName, pickUnitTest } from '../../../utils/unitTests';
@@ -103,10 +108,9 @@ export async function runUnitTestFromPath(context: IActionContext, unitTestPath:
         const logicAppName = path.relative(testDirectory, unitTestPath).split(path.sep)[0];
         const workflowName = path.basename(path.dirname(unitTestPath));
         const unitTestName = getUnitTestName(path.basename(unitTestPath));
-        const bundleVersionNumber = '1.138.54'; // TODO (ccastrotrejo): Need to get the value from the docker container
         const pathToExe = path.join(
           defaultExtensionBundlePathValue,
-          bundleVersionNumber,
+          EXTENSION_BUNDLE_VERSION,
           'UnitTestExecutor',
           'Microsoft.Azure.Workflows.UnitTestExecutor.exe'
         );

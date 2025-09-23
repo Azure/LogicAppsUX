@@ -78,7 +78,7 @@ export async function getFramework(context: IActionContext, workingDirectory: st
     const versions = '8';
 
     // Prioritize "LTS", then "Current", then "Preview"
-    const netVersions: string[] = ['8', '6', '3', '2', '9', '10'];
+    const netVersions: string[] = ['8', '6'];
 
     const semVersions: SemVer[] = netVersions.map((v) => semVerCoerce(v) as SemVer);
 
