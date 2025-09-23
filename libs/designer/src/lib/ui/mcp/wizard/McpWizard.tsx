@@ -2,14 +2,14 @@ import { Text, Button, MessageBar, MessageBarBody, MessageBarTitle } from '@flue
 import { Add16Regular } from '@fluentui/react-icons';
 import { useMcpWizardStyles } from './styles';
 import { useIntl } from 'react-intl';
-import { McpPanelView, openConnectorPanelView } from '../../../core/state/mcp/panel/mcpPanelSlice';
+import { McpPanelView, openMcpPanelView } from '../../../core/state/mcp/panel/mcpPanelSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../core/state/mcp/store';
 import { McpPanelRoot } from '../panel/mcpPanelRoot';
 import { type McpServerCreateData, serializeMcpWorkflows } from '../../../core/mcp/utils/serializer';
 import { resetQueriesOnRegisterMcpServer } from '../../../core/mcp/utils/queries';
 import { LogicAppSelector } from '../details/logicAppSelector';
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, useState } from 'react';
 import type { TemplatePanelFooterProps } from '@microsoft/designer-ui';
 import { TemplatesPanelFooter } from '@microsoft/designer-ui';
 import { ListOperations } from '../operations/ListOperations';
@@ -18,6 +18,7 @@ import { DescriptionWithLink } from '../../configuretemplate/common';
 import { operationHasEmptyStaticDependencies } from '../../../core/mcp/utils/helper';
 import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import { selectConnectorId, selectOperations } from '../../../core/state/mcp/mcpselectionslice';
+import { SuccessToast } from '../logicapps/common';
 
 export type RegisterMcpServerHandler = (workflowsData: McpServerCreateData, onCompleted?: () => void) => Promise<void>;
 
@@ -42,7 +43,7 @@ export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: R
 
   const handleAddConnectors = useCallback(() => {
     dispatch(
-      openConnectorPanelView({
+      openMcpPanelView({
         panelView: McpPanelView.SelectConnector,
       })
     );
@@ -89,7 +90,7 @@ export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: R
     dispatch(selectConnectorId(selectedConnectorId));
     dispatch(selectOperations(selectedOperations));
     dispatch(
-      openConnectorPanelView({
+      openMcpPanelView({
         panelView: McpPanelView.UpdateOperation,
       })
     );
@@ -133,6 +134,11 @@ export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: R
       });
     }
   }, [connection, logicAppName, operations, registerMcpServer, resourceGroup, location, subscriptionId, onRegisterCompleted]);
+
+  const [showSuccessToast, setShowSuccessToast] = useState(false);
+  const handleAppCreate = useCallback(() => {
+    setShowSuccessToast(!showSuccessToast);
+  }, [showSuccessToast]);
 
   const INTL_TEXT = {
     title: intl.formatMessage({
@@ -274,7 +280,8 @@ export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: R
 
   return (
     <div className={styles.wizardContainer}>
-      <McpPanelRoot />
+      {showSuccessToast ? <SuccessToast show={showSuccessToast} /> : null}
+      <McpPanelRoot onCreateApp={handleAppCreate} />
 
       <Text size={500} weight="bold">
         {INTL_TEXT.title}
