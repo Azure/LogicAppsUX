@@ -26,14 +26,47 @@ export function getDevContainerBasePath(): string | undefined {
   return undefined;
 }
 
-/** Checks if a .devcontainer folder exists at the given base path. */
+/**
+ * Checks if a .devcontainer folder exists at the directory that contains the .code-workspace file.
+ * We climb up ancestors (bounded) until we find a directory containing a .code-workspace file; if found, we only
+ * succeed when a .devcontainer folder is present in that same directory. If not found or .devcontainer missing, returns false.
+ */
 export function hasDevContainerFolder(basePath?: string): boolean {
   if (!basePath) {
     return false;
   }
   try {
-    const devcontainerDir = path.join(basePath, '.devcontainer');
+    const maxLevels = 5; // small bound to avoid deep traversal
+    let current = basePath;
+    for (let i = 0; i <= maxLevels; i++) {
+      if (dirHasWorkspaceFile(current)) {
+        return dirHasDevContainer(current);
+      }
+      const parent = path.dirname(current);
+      if (parent === current) {
+        break; // root
+      }
+      current = parent;
+    }
+  } catch {
+    // ignore errors, treat as not found
+  }
+  return false;
+}
+
+function dirHasDevContainer(dir: string): boolean {
+  try {
+    const devcontainerDir = path.join(dir, '.devcontainer');
     return fs.existsSync(devcontainerDir) && fs.statSync(devcontainerDir).isDirectory();
+  } catch {
+    return false;
+  }
+}
+
+function dirHasWorkspaceFile(dir: string): boolean {
+  try {
+    const entries = fs.readdirSync(dir);
+    return entries.some((e) => e.endsWith('.code-workspace') && fs.statSync(path.join(dir, e)).isFile());
   } catch {
     return false;
   }
@@ -56,7 +89,18 @@ export async function tryReopenInDevContainer(context?: IActionContext): Promise
     return false;
   }
   try {
-    await vscode.commands.executeCommand('devcontainers.reopenInContainer');
+    const workspaceFilePath = findWorkspaceFilePath(basePath);
+    if (workspaceFilePath) {
+      if (context) {
+        context.telemetry.properties.devContainerWorkspaceArg = 'true';
+      }
+      await vscode.commands.executeCommand('remote-containers.reopenInContainer', vscode.Uri.file(workspaceFilePath));
+    } else {
+      if (context) {
+        context.telemetry.properties.devContainerWorkspaceArg = 'false';
+      }
+      await vscode.commands.executeCommand('remote-containers.reopenInContainer');
+    }
     return true;
   } catch (err) {
     if (context) {
@@ -64,4 +108,47 @@ export async function tryReopenInDevContainer(context?: IActionContext): Promise
     }
     return false;
   }
+}
+
+/** Attempt to locate a .code-workspace file starting from basePath or using VS Code's current workspace reference. */
+function findWorkspaceFilePath(basePath?: string): string | undefined {
+  // If VS Code already knows the workspace file, use it first.
+  if (vscode.workspace.workspaceFile) {
+    return vscode.workspace.workspaceFile.fsPath;
+  }
+  if (!basePath) {
+    return undefined;
+  }
+  // Check current directory then walk up to 3 levels similar to detection logic.
+  const maxLevels = 3;
+  let current = basePath;
+  for (let i = 0; i <= maxLevels; i++) {
+    const wsFile = firstWorkspaceFileInDir(current);
+    if (wsFile) {
+      return wsFile;
+    }
+    const parent = path.dirname(current);
+    if (parent === current) {
+      break;
+    }
+    current = parent;
+  }
+  return undefined;
+}
+
+function firstWorkspaceFileInDir(dir: string): string | undefined {
+  try {
+    const entries = fs.readdirSync(dir);
+    for (const e of entries) {
+      if (e.endsWith('.code-workspace')) {
+        const full = path.join(dir, e);
+        if (fs.statSync(full).isFile()) {
+          return full;
+        }
+      }
+    }
+  } catch {
+    // ignore
+  }
+  return undefined;
 }

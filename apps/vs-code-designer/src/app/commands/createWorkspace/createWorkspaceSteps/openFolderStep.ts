@@ -39,7 +39,7 @@ export class OpenFolderStep extends AzureWizardExecuteStep<IProjectWizardContext
     try {
       const succeeded = await commands.executeCommand('remote-containers.openFolder', workspaceUri);
       if (!succeeded) {
-        throw new Error('devcontainers.openFolder returned falsy result');
+        throw new Error('remote-containers.openFolder returned falsy result');
       }
     } catch (_err) {
       // Fallback path: open locally then request a reopen.
