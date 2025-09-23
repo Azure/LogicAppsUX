@@ -106,7 +106,7 @@ export const useRun = (runId: string | undefined) => {
       refetchInterval: () => {
         const run = queryClient.getQueryData<Run>([runsQueriesKeys.run, runId]);
         if (run && run.properties.status === constants.FLOW_STATUS.RUNNING) {
-          return 10000;
+          return constants.RUN_POLLING_INTERVAL_IN_MS;
         }
         return false;
       },
