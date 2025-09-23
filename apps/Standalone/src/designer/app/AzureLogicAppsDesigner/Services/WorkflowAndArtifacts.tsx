@@ -1,5 +1,5 @@
 import { environment } from '../../../../environments/environment';
-import type { CallbackInfo, ConnectionsData, ParametersData, Workflow } from '../Models/Workflow';
+import type { CallbackInfo, ConnectionsData, Note, ParametersData, Workflow } from '../Models/Workflow';
 import { Artifact } from '../Models/Workflow';
 import { validateResourceId } from '../Utilities/resourceUtilities';
 import { convertDesignerWorkflowToConsumptionWorkflow } from './ConsumptionSerializationHelpers';
@@ -310,12 +310,21 @@ const fetchA2AAuthKey = async (siteResourceId: string, workflowName: string) => 
 
 // Helper function to fetch EasyAuth
 const fetchAuthentication = async (siteResourceId: string) => {
-  const response = await axios.post(`${baseUrl}${siteResourceId}/config/authsettings/list?api-version=${standardApiVersion}`, {
-    headers: {
-      Authorization: `Bearer ${environment.armToken}`,
-    },
-  });
-  return response.data;
+  try {
+    const response = await axios.post(`${baseUrl}${siteResourceId}/config/authsettings/list?api-version=${standardApiVersion}`, {
+      headers: {
+        Authorization: `Bearer ${environment.armToken}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    LoggerService().log({
+      level: LogEntryLevel.Error,
+      message: `Failed to get authentication settings: ${error}`,
+      area: 'fetchAuthentication',
+    });
+    return null;
+  }
 };
 
 // Helper function to fetch OBO (On-Behalf-Of) data
@@ -374,7 +383,7 @@ export const fetchAgentUrl = (siteResourceId: string, workflowName: string, host
       let queryParams: AgentQueryParams | undefined = undefined;
       const authentication = await fetchAuthentication(siteResourceId);
 
-      if (authentication?.properties?.enabled) {
+      if (!authentication?.properties?.enabled) {
         // Get A2A authentication key
         const a2aData = await fetchA2AAuthKey(siteResourceId, workflowName);
 
@@ -568,6 +577,24 @@ export const saveCustomCodeStandard = async (allCustomCodeFiles?: AllCustomCodeF
   }
 };
 
+export const saveNotesStandard = async (notesData?: Record<string, Note>): Promise<void> => {
+  if (!notesData) {
+    return;
+  }
+  try {
+    CustomCodeService().uploadCustomCode({ fileName: 'notes.json', fileData: JSON.stringify(notesData), fileExtension: '.json' });
+  } catch (error) {
+    const errorMessage = `Failed to save notes: ${error}`;
+    LoggerService().log({
+      level: LogEntryLevel.Error,
+      area: 'serializeNotes',
+      message: errorMessage,
+      error: error instanceof Error ? error : undefined,
+    });
+    return;
+  }
+};
+
 export const saveWorkflowStandard = async (
   siteResourceId: string,
   workflows: {
@@ -578,6 +605,7 @@ export const saveWorkflowStandard = async (
   parametersData: ParametersData | undefined,
   settings: Record<string, string> | undefined,
   customCodeData: AllCustomCodeFiles | undefined,
+  notesData: Record<string, Note> | undefined,
   clearDirtyState: () => void,
   options?: {
     skipValidation?: boolean;
@@ -622,6 +650,8 @@ export const saveWorkflowStandard = async (
     // eventually we want to move this logic to the backend to happen with deployWorkflowArtifacts
     saveCustomCodeStandard(customCodeData);
 
+    saveNotesStandard(notesData);
+
     let url = null;
     if (HybridAppUtility.isHybridLogicApp(siteResourceId)) {
       url = `${baseUrl}${HybridAppUtility.getHybridAppBaseRelativeUrl(
@@ -646,6 +676,8 @@ export const saveWorkflowStandard = async (
       return;
     }
     clearDirtyState();
+
+    return data;
   } catch (error) {
     console.log(error);
     if (options?.throwError) {

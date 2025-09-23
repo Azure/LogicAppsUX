@@ -13,7 +13,7 @@ import type {
   ProjectLanguage,
 } from '@microsoft/vscode-extension-logic-apps';
 import { TemplateCategory, TemplatePromptResult } from '@microsoft/vscode-extension-logic-apps';
-import { WorkflowNameStep } from './workflowNameStep';
+import { WorkflowNameStep } from '../../createWorkflowSteps/workflowNameStep';
 import { WorkflowType } from '../../../../../constants';
 
 export class WorkflowKindStep extends AzureWizardPromptStep<IFunctionWizardContext> {
@@ -30,6 +30,27 @@ export class WorkflowKindStep extends AzureWizardPromptStep<IFunctionWizardConte
 
   public static async create(_context: IFunctionWizardContext, options: IWorkflowStateTypeStepOptions): Promise<WorkflowKindStep> {
     return new WorkflowKindStep(options.triggerSettings, options.isProjectWizard);
+  }
+
+  public shouldPrompt(context: IFunctionWizardContext): boolean {
+    return !context.functionTemplate && context.isCodeless;
+  }
+
+  public async prompt(context: IFunctionWizardContext): Promise<void> {
+    while (!context.functionTemplate) {
+      const placeHolder: string = this.isProjectWizard
+        ? localize('selectFirstWorkflowTemplate', "Select a template for your project's first workflow")
+        : localize('selectWorkflowTemplate', 'Select a template for your workflow');
+
+      const result: IWorkflowTemplate | TemplatePromptResult = (await context.ui.showQuickPick(this.getPicks(context), { placeHolder }))
+        .data;
+
+      if (result === TemplatePromptResult.skipForNow) {
+        context.telemetry.properties.templateId = TemplatePromptResult.skipForNow;
+        break;
+      }
+      context.functionTemplate = result;
+    }
   }
 
   public async getSubWizard(context: IFunctionWizardContext): Promise<IWizardOptions<IFunctionWizardContext> | undefined> {
@@ -51,28 +72,8 @@ export class WorkflowKindStep extends AzureWizardPromptStep<IFunctionWizardConte
 
       return { promptSteps, executeSteps, title };
     }
+
     return undefined;
-  }
-
-  public async prompt(context: IFunctionWizardContext): Promise<void> {
-    while (!context.functionTemplate) {
-      const placeHolder: string = this.isProjectWizard
-        ? localize('selectFirstWorkflowTemplate', "Select a template for your project's first workflow")
-        : localize('selectWorkflowTemplate', 'Select a template for your workflow');
-
-      const result: IWorkflowTemplate | TemplatePromptResult = (await context.ui.showQuickPick(this.getPicks(context), { placeHolder }))
-        .data;
-
-      if (result === TemplatePromptResult.skipForNow) {
-        context.telemetry.properties.templateId = TemplatePromptResult.skipForNow;
-        break;
-      }
-      context.functionTemplate = result;
-    }
-  }
-
-  public shouldPrompt(context: IFunctionWizardContext): boolean {
-    return !context.functionTemplate && context.isCodeless;
   }
 
   private getPicks(context: IFunctionWizardContext): IAzureQuickPickItem<IWorkflowTemplate | TemplatePromptResult>[] {
@@ -102,10 +103,22 @@ export class WorkflowKindStep extends AzureWizardPromptStep<IFunctionWizardConte
 
     const agentic: IWorkflowTemplate = {
       id: WorkflowType.agentic,
-      name: localize('Agentic', 'Agentic workflow'),
+      name: localize('Agentic', 'Autonomous agent'),
       defaultFunctionName: 'Agentic',
       language: language,
       isHttpTrigger: true,
+      isTimerTrigger: false,
+      userPromptedSettings: [],
+      categories: [TemplateCategory.Core],
+    };
+
+    // Conversational agent
+    const agent: IWorkflowTemplate = {
+      id: WorkflowType.agent,
+      name: localize('Agent', 'Conversational agent'),
+      defaultFunctionName: 'Agent',
+      language: language,
+      isHttpTrigger: false,
       isTimerTrigger: false,
       userPromptedSettings: [],
       categories: [TemplateCategory.Core],
@@ -123,6 +136,10 @@ export class WorkflowKindStep extends AzureWizardPromptStep<IFunctionWizardConte
       {
         label: agentic.name,
         data: agentic,
+      },
+      {
+        label: agent.name,
+        data: agent,
       },
     ];
 

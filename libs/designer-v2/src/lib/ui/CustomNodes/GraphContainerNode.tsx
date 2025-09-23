@@ -13,8 +13,8 @@ import { GraphContainer } from '@microsoft/designer-ui';
 import { SUBGRAPH_TYPES, useNodeSize, useNodeLeafIndex, isNullOrUndefined, removeIdTag } from '@microsoft/logic-apps-shared';
 import { memo } from 'react';
 import type { NodeProps } from '@xyflow/react';
-import { EdgeDrawSourceHandle } from './handles/EdgeDrawSourceHandle';
-import { DefaultHandle } from './handles/DefaultHandle';
+import { EdgeDrawSourceHandle } from './components/handles/EdgeDrawSourceHandle';
+import { DefaultHandle } from './components/handles/DefaultHandle';
 
 const GraphContainerNode = ({ id }: NodeProps) => {
   const readOnly = useReadOnly();

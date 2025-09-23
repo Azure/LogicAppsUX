@@ -3,10 +3,10 @@ import { localize } from '../../../localize';
 import { addLocalFuncTelemetry, tryGetLocalFuncVersion, tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
 import { getGlobalSetting, getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
 import { OpenBehaviorStep } from '../createWorkspace/createWorkspaceSteps/openBehaviorStep';
-import { ProjectTypeStep } from '../createWorkspace/createWorkspaceSteps/projectTypeStep';
+import { ProjectTypeStep } from '../createProject/createProjectSteps/projectTypeStep';
 import { SelectPackageStep } from './cloudToLocalSteps/selectPackageStep';
 import { OpenFolderStep } from '../createWorkspace/createWorkspaceSteps/openFolderStep';
-import { LogicAppNameStep } from '../createWorkspace/createWorkspaceSteps/logicAppNameStep';
+import { LogicAppNameStep } from '../createProject/createProjectSteps/logicAppNameStep';
 import { WorkspaceNameStep } from '../createWorkspace/createWorkspaceSteps/workspaceNameStep';
 import { AzureWizard } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -54,10 +54,11 @@ export async function cloudToLocal(
     title: localize('createLogicAppWorkspaceFromPackage', 'Create new logic app workspace from package'),
     promptSteps: [
       new SelectPackageStep(),
+      // TODO(aeldridge): Can we just use WorkspaceFolderStep instead?
       new SelectFolderForNewWorkspaceStep(),
       new WorkspaceNameStep(),
       new LogicAppNameStep(),
-      new ProjectTypeStep(options.templateId, options.functionSettings, true),
+      await ProjectTypeStep.create(context, options.templateId, options.functionSettings, true),
       new WorkspaceSettingsStep(),
       new ExtractPackageStep(),
       new OpenBehaviorStep(),

@@ -2,8 +2,8 @@ import { environment } from '../../../environments/environment';
 import type { AppDispatch, RootState } from '../../state/store';
 import { changeRunId, setIsChatBotEnabled, setMonitoringView, setReadOnly, setRunHistoryEnabled } from '../../state/workflowLoadingSlice';
 import { DesignerCommandBar } from './DesignerCommandBarV2';
-import type { ConnectionAndAppSetting, ConnectionReferenceModel, ConnectionsData, ParametersData } from './Models/Workflow';
-import { Artifact } from './Models/Workflow';
+import type { ConnectionAndAppSetting, ConnectionReferenceModel, ConnectionsData, NotesData, ParametersData } from './Models/Workflow';
+import { Artifact, VfsArtifact } from './Models/Workflow';
 import type { WorkflowApp } from './Models/WorkflowApp';
 import { ArtifactService } from './Services/Artifact';
 import { ChildWorkflowService } from './Services/ChildWorkflow';
@@ -20,7 +20,6 @@ import {
   useAppSettings,
   useCurrentObjectId,
   useCurrentTenantId,
-  useRunInstanceStandard,
   useWorkflowAndArtifactsStandard,
   useWorkflowApp,
   validateWorkflowStandard,
@@ -70,6 +69,7 @@ import {
   getMissingRoleDefinitions,
   roleQueryKeys,
   isAgentWorkflow,
+  useRun,
 } from '@microsoft/logic-apps-designer-v2';
 import axios from 'axios';
 import isEqual from 'lodash.isequal';
@@ -80,6 +80,7 @@ import { useHostingPlan } from '../../state/workflowLoadingSelectors';
 import CodeViewEditor from './CodeViewV2';
 import { CustomConnectionParameterEditorService } from './Services/customConnectionParameterEditorService';
 import { CustomEditorService } from './Services/customEditorService';
+import { FloatingRunButton } from '../../../../../../libs/designer-v2/src/lib/ui/FloatingRunButton';
 
 const apiVersion = '2020-06-01';
 const httpClient = new HttpClient();
@@ -99,7 +100,6 @@ const DesignerEditor = () => {
     runId,
     appId,
     showChatBot,
-    showRunHistory,
     language,
     hostOptions,
     hostingPlan,
@@ -110,23 +110,27 @@ const DesignerEditor = () => {
   const workflowName = workflowId.split('/').splice(-1)[0];
   const siteResourceId = new ArmParser(workflowId).topmostResourceId;
   const { data: customCodeData, isLoading: customCodeLoading } = useAllCustomCodeFiles(appId, workflowName, isHybridLogicApp);
-  const { data, isLoading, isError, error } = useWorkflowAndArtifactsStandard(workflowId);
+  const { data: artifactData, isLoading: artifactsLoading, isError, error } = useWorkflowAndArtifactsStandard(workflowId);
   const { data: settingsData, isLoading: settingsLoading, isError: settingsIsError, error: settingsError } = useAppSettings(siteResourceId);
   const { data: workflowAppData, isLoading: appLoading } = useWorkflowApp(siteResourceId, useHostingPlan());
   const { data: tenantId } = useCurrentTenantId();
   const { data: objectId } = useCurrentObjectId();
   const [designerID, setDesignerID] = useState(guid());
   const [workflow, setWorkflow] = useState<Workflow>({
-    ...data?.properties.files[Artifact.WorkflowFile],
+    ...artifactData?.properties.files[Artifact.WorkflowFile],
     id: guid(),
   });
   const [isDesignerView, setIsDesignerView] = useState(true);
   const [isCodeView, setIsCodeView] = useState(false);
 
   const codeEditorRef = useRef<{ getValue: () => string | undefined; hasChanges: () => boolean }>(null);
-  const originalConnectionsData = useMemo(() => data?.properties.files[Artifact.ConnectionsFile] ?? {}, [data?.properties.files]);
+  const originalConnectionsData = useMemo(
+    () => artifactData?.properties.files[Artifact.ConnectionsFile] ?? {},
+    [artifactData?.properties.files]
+  );
   const originalCustomCodeData = useMemo(() => Object.keys(customCodeData ?? {}), [customCodeData]);
-  const parameters = useMemo(() => data?.properties.files[Artifact.ParametersFile] ?? {}, [data?.properties.files]);
+  const parameters = useMemo(() => artifactData?.properties.files[Artifact.ParametersFile] ?? {}, [artifactData?.properties.files]);
+  const notes = useMemo(() => customCodeData?.[VfsArtifact.NotesFile] ?? {}, [customCodeData]);
   const queryClient = getReactQueryClient();
   const displayCopilotChatbot = showChatBot && isDesignerView;
 
@@ -201,22 +205,22 @@ const DesignerEditor = () => {
     }
   }, []);
 
-  const { data: runInstanceData } = useRunInstanceStandard(workflowName, appId, runId);
+  const { data: runInstanceData } = useRun(runId);
 
   useEffect(() => {
     if (isMonitoringView && runInstanceData) {
       setWorkflow((previousWorkflow: Workflow) => {
         return {
           ...previousWorkflow,
-          definition: runInstanceData.properties.workflow.properties.definition,
+          definition: (runInstanceData.properties.workflow as any).properties.definition,
         };
       });
     }
   }, [isMonitoringView, runInstanceData]);
 
   useEffect(() => {
-    setWorkflow(data?.properties.files[Artifact.WorkflowFile]);
-  }, [data?.properties.files]);
+    setWorkflow(artifactData?.properties.files[Artifact.WorkflowFile]);
+  }, [artifactData?.properties.files]);
 
   // RUN HISTORY
 
@@ -241,11 +245,11 @@ const DesignerEditor = () => {
     if (isMonitoringView) {
       toggleMonitoringView();
       setWorkflow({
-        ...data?.properties.files[Artifact.WorkflowFile],
+        ...artifactData?.properties.files[Artifact.WorkflowFile],
         id: guid(),
       });
     }
-  }, [data?.properties.files, isMonitoringView, toggleMonitoringView]);
+  }, [artifactData?.properties.files, isMonitoringView, toggleMonitoringView]);
 
   const onRunSelected = useCallback(
     (runId: string) => {
@@ -254,7 +258,15 @@ const DesignerEditor = () => {
     [dispatch]
   );
 
-  if (isLoading || appLoading || settingsLoading || customCodeLoading) {
+  const onRun = useCallback(
+    (runId: string | undefined) => {
+      showMonitoringView();
+      dispatch(changeRunId(runId));
+    },
+    [dispatch, showMonitoringView]
+  );
+
+  if (artifactsLoading || appLoading || settingsLoading || customCodeLoading) {
     return <></>;
   }
 
@@ -262,6 +274,7 @@ const DesignerEditor = () => {
     ...(settingsData?.properties ?? {}),
   };
   const originalParametersData: ParametersData = clone(parameters ?? {});
+  const originalNotesData: NotesData = clone(notes ?? {});
 
   if (isError || settingsIsError) {
     throw error ?? settingsError;
@@ -271,8 +284,8 @@ const DesignerEditor = () => {
     workflowFromDesigner: Workflow,
     customCode: CustomCodeFileNameMapping | undefined,
     clearDirtyState: () => void
-  ): Promise<void> => {
-    const { definition, connectionReferences, parameters } = workflowFromDesigner;
+  ): Promise<any> => {
+    const { definition, connectionReferences, parameters, notes } = workflowFromDesigner;
     const workflowToSave = {
       ...workflow,
       definition,
@@ -372,16 +385,20 @@ const DesignerEditor = () => {
     const customCodeToUpdate = await getCustomCodeToUpdate(originalCustomCodeData, customCode ?? {}, appId);
     const parametersToUpdate = isEqual(originalParametersData, parameters) ? undefined : (parameters as ParametersData);
     const settingsToUpdate = isEqual(settingsData?.properties, originalSettings) ? undefined : settingsData?.properties;
+    const notesToUpdate = isEqual(originalNotesData, notes) ? undefined : (notes as NotesData);
 
-    return saveWorkflowStandard(
+    await saveWorkflowStandard(
       siteResourceId,
       [{ name: workflowName, workflow: workflowToSave }],
       connectionsToUpdate,
       parametersToUpdate,
       settingsToUpdate,
       customCodeToUpdate,
+      notesToUpdate,
       clearDirtyState
     );
+
+    return workflowToSave;
   };
 
   const saveWorkflowFromCode = async (clearDirtyState: () => void) => {
@@ -395,6 +412,7 @@ const DesignerEditor = () => {
         /*parameters*/ undefined,
         /*settings*/ undefined,
         /*customcode*/ undefined,
+        /*notes*/ undefined,
         clearDirtyState
       );
     } catch (error: any) {
@@ -480,7 +498,7 @@ const DesignerEditor = () => {
         options={{
           services,
           isDarkMode,
-          readOnly: isReadOnly,
+          readOnly: isReadOnly || isMonitoringView,
           isMonitoringView,
           isUnitTest,
           suppressDefaultNodeSelectFunctionality: suppressDefaultNodeSelect,
@@ -497,11 +515,12 @@ const DesignerEditor = () => {
               definition: workflow?.definition,
               connectionReferences,
               parameters,
+              notes,
               kind: workflow?.kind,
             }}
             workflowId={workflow?.id}
             customCode={customCodeData}
-            runInstance={runInstanceData}
+            runInstance={runInstanceData as any}
             appSettings={settingsData?.properties}
             isMultiVariableEnabled={hostOptions.enableMultiVariable}
           >
@@ -542,10 +561,6 @@ const DesignerEditor = () => {
                   isDesignerView={isDesignerView}
                   isCodeView={isCodeView}
                   enableCopilot={() => dispatch(setIsChatBotEnabled(!showChatBot))}
-                  selectRun={(runId: string) => {
-                    showMonitoringView();
-                    dispatch(changeRunId(runId));
-                  }}
                   saveWorkflowFromCode={saveWorkflowFromCode}
                   showMonitoringView={showMonitoringView}
                   showDesignerView={showDesignerView}
@@ -553,13 +568,15 @@ const DesignerEditor = () => {
                 />
                 {!isCodeView && (
                   <div style={{ display: 'flex', flexDirection: 'row', flexGrow: 1, height: '80%' }}>
-                    <RunHistoryPanel
-                      collapsed={!showRunHistory}
-                      onClose={() => dispatch(setRunHistoryEnabled(false))}
-                      onRunSelected={onRunSelected}
-                    />
+                    <RunHistoryPanel collapsed={!isMonitoringView} onRunSelected={onRunSelected} />
                     <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column', position: 'relative' }}>
                       <Designer />
+                      <FloatingRunButton
+                        id={workflowId}
+                        saveDraftWorkflow={saveWorkflowFromDesigner}
+                        onRun={onRun}
+                        isDarkMode={isDarkMode}
+                      />
                     </div>
                   </div>
                 )}

@@ -1,5 +1,5 @@
 import { LogicAppResolver } from './LogicAppResolver';
-import { runPostWorkflowCreateStepsFromCache } from './app/commands/createWorkflow/createCodelessWorkflow/createCodelessWorkflowSteps/workflowCreateStepBase';
+import { runPostWorkflowCreateStepsFromCache } from './app/commands/createWorkflow/createWorkflowSteps/workflowCreateStepBase';
 import { runPostExtractStepsFromCache } from './app/commands/cloudToLocal/cloudToLocalSteps/processPackageStep';
 import {
   supportedDataMapDefinitionFileExts,
@@ -29,7 +29,7 @@ import {
 } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
-import { convertToWorkspace } from './app/commands/createWorkspace/createWorkspaceSteps/convertToWorkspace';
+import { convertToWorkspace } from './app/commands/convertToWorkspace';
 import TelemetryReporter from '@vscode/extension-telemetry';
 import { getAllCustomCodeFunctionsProjects } from './app/utils/customCodeUtils';
 import { createVSCodeAzureSubscriptionProvider } from './app/utils/services/VSCodeAzureSubscriptionProvider';
@@ -81,7 +81,7 @@ export async function activate(context: vscode.ExtensionContext) {
   });
 
   ext.context = context;
-  ext.codefulEnabled = true; // flag that prevents codeful use until public preview
+  ext.codefulEnabled = false; // flag that prevents codeful use until public preview
   ext.extensionVersion = getExtensionVersion();
   ext.telemetryReporter = new TelemetryReporter(telemetryString);
   context.subscriptions.push(ext.telemetryReporter);

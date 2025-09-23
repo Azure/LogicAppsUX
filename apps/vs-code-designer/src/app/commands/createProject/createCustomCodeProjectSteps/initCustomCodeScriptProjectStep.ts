@@ -19,31 +19,6 @@ import type { TaskDefinition } from 'vscode';
 export class InitCustomCodeScriptProjectStep extends InitCustomCodeProjectStepBase {
   protected useFuncExtensionsInstall = false;
 
-  protected getTasks(): TaskDefinition[] {
-    const funcBinariesExist = binariesExist(funcDependencyName);
-    const binariesOptions = funcBinariesExist
-      ? {
-          options: {
-            env: {
-              PATH: '${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}\\NodeJs;${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}\\DotNetSDK;$env:PATH',
-            },
-          },
-        }
-      : {};
-    return [
-      {
-        label: 'func: host start',
-        type: funcBinariesExist ? 'shell' : func,
-        command: funcBinariesExist ? '${config:azureLogicAppsStandard.funcCoreToolsBinaryPath}' : hostStartCommand,
-        args: funcBinariesExist ? ['host', 'start'] : undefined,
-        ...binariesOptions,
-        problemMatcher: funcWatchProblemMatcher,
-        dependsOn: this.useFuncExtensionsInstall ? extInstallTaskName : undefined,
-        isBackground: true,
-      },
-    ];
-  }
-
   protected async executeCore(context: IProjectWizardContext): Promise<void> {
     try {
       const extensionsCsprojPath: string = path.join(context.projectPath, 'extensions.csproj');
@@ -70,5 +45,30 @@ export class InitCustomCodeScriptProjectStep extends InitCustomCodeProjectStepBa
         this.preDeployTask = extInstallTaskName;
       }
     }
+  }
+
+  protected getTasks(): TaskDefinition[] {
+    const funcBinariesExist = binariesExist(funcDependencyName);
+    const binariesOptions = funcBinariesExist
+      ? {
+          options: {
+            env: {
+              PATH: '${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}\\NodeJs;${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}\\DotNetSDK;$env:PATH',
+            },
+          },
+        }
+      : {};
+    return [
+      {
+        label: 'func: host start',
+        type: funcBinariesExist ? 'shell' : func,
+        command: funcBinariesExist ? '${config:azureLogicAppsStandard.funcCoreToolsBinaryPath}' : hostStartCommand,
+        args: funcBinariesExist ? ['host', 'start'] : undefined,
+        ...binariesOptions,
+        problemMatcher: funcWatchProblemMatcher,
+        dependsOn: this.useFuncExtensionsInstall ? extInstallTaskName : undefined,
+        isBackground: true,
+      },
+    ];
   }
 }

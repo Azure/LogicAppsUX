@@ -21,6 +21,7 @@ export const getCompressedStateFromRootState = (rootState: RootState): Uint8Arra
     tokens: rootState.tokens,
     workflow: rootState.workflow,
     workflowParameters: rootState.workflowParameters,
+    notes: rootState.notes,
   };
 
   const stringifiedPartialRootState = JSON.stringify(partialRootState);

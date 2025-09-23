@@ -16,4 +16,15 @@ export const useDesignerStyles = makeStyles({
     alignItems: 'flex-start',
     gap: '24px',
   },
+
+  vars: {
+    '--colorSelection': '#1f85ff',
+    '--colorHandoff': '#3352b9',
+  },
+  lightVars: {
+    '--colorEdge': '#b1b1b7',
+  },
+  darkVars: {
+    '--colorEdge': '#adadad',
+  },
 });

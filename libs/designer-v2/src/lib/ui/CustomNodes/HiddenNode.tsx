@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import type { NodeProps } from '@xyflow/react';
-import { DefaultHandle } from './handles/DefaultHandle';
+import { DefaultHandle } from './components/handles/DefaultHandle';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const HiddenNode = ({ id }: NodeProps) => {

@@ -23,6 +23,14 @@ export class FunctionFileStep extends AzureWizardPromptStep<IProjectWizardContex
   };
 
   /**
+   * Determines whether the prompt should be displayed.
+   * @returns {boolean} True if the prompt should be displayed, false otherwise.
+   */
+  public shouldPrompt(): boolean {
+    return true;
+  }
+
+  /**
    * Prompts to set up a function.
    * @param {IProjectWizardContext} context The project wizard context.
    */
@@ -36,14 +44,6 @@ export class FunctionFileStep extends AzureWizardPromptStep<IProjectWizardContex
     }
 
     await this.createCsFile(functionsFolderPath, context.customCodeFunctionName, context.functionAppNamespace, context.targetFramework);
-  }
-
-  /**
-   * Determines whether the prompt should be displayed.
-   * @returns {boolean} True if the prompt should be displayed, false otherwise.
-   */
-  public shouldPrompt(): boolean {
-    return true;
   }
 
   /**

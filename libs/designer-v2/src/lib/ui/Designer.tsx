@@ -1,6 +1,12 @@
 import { openPanel, useNodesInitialized } from '../core';
 import { usePreloadOperationsQuery, usePreloadConnectorsQuery } from '../core/queries/browse';
-import { useMonitoringView, useReadOnly, useHostOptions, useIsVSCode } from '../core/state/designerOptions/designerOptionsSelectors';
+import {
+  useMonitoringView,
+  useReadOnly,
+  useHostOptions,
+  useIsVSCode,
+  useIsDarkMode,
+} from '../core/state/designerOptions/designerOptionsSelectors';
 import { useIsA2AWorkflow, useWorkflowHasAgentLoop } from '../core/state/designerView/designerViewSelectors';
 import type { AppDispatch, RootState } from '../core/store';
 import Controls from './Controls';
@@ -8,7 +14,7 @@ import Minimap from './Minimap';
 import DeleteModal from './common/DeleteModal/DeleteModal';
 import { PanelRoot } from './panel/panelRoot';
 import { css, setLayerHostSelector } from '@fluentui/react';
-import { PanelLocation } from '@microsoft/designer-ui';
+import { mergeClasses, PanelLocation } from '@microsoft/designer-ui';
 import type { CustomPanelLocation } from '@microsoft/designer-ui';
 import { useEffect, useMemo, useRef } from 'react';
 import KeyboardBackendFactory, { isKeyboardDragTrigger } from 'react-dnd-accessible-backend';
@@ -51,6 +57,8 @@ export const Designer = (props: DesignerProps) => {
   const isVSCode = useIsVSCode();
   const isReadOnly = useReadOnly();
   const dispatch = useDispatch<AppDispatch>();
+
+  const isDarkMode = useIsDarkMode();
 
   const styles = useDesignerStyles();
 
@@ -133,7 +141,10 @@ export const Designer = (props: DesignerProps) => {
   return (
     <DndProvider options={DND_OPTIONS}>
       {preloadSearch ? <SearchPreloader /> : null}
-      <div className="msla-designer-canvas msla-panel-mode" ref={designerContainerRef}>
+      <div
+        ref={designerContainerRef}
+        className={mergeClasses('msla-designer-canvas', 'msla-panel-mode', styles.vars, isDarkMode ? styles.darkVars : styles.lightVars)}
+      >
         <ReactFlowProvider>
           <div style={{ flexGrow: 1 }}>
             <DesignerReactFlow canvasRef={canvasRef}>
@@ -143,8 +154,9 @@ export const Designer = (props: DesignerProps) => {
                 <Background
                   bgColor={isReadOnly ? '#80808010' : undefined}
                   color={isReadOnly ? '#00000000' : '#80808080'}
-                  size={1.5}
-                  gap={[19.9, 20.3333]} // I don't know why, but it renders not exact by default
+                  size={2}
+                  // gap={[19.9, 20.3333]} // I don't know why, but it renders not exact by default
+                  gap={[20, 20]}
                   offset={[10, 10]}
                 />
               )}

@@ -21,7 +21,7 @@ import { createLogicApp, createLogicAppAdvanced } from './createLogicApp/createL
 import { cloudToLocal } from './cloudToLocal/cloudToLocal';
 import { createWorkspace } from './createWorkspace/createWorkspace';
 import { createProject } from './createProject/createProject';
-import { createCustomCodeFunctionFromCommand } from './createCustomCodeFunction/createCustomCodeFunction';
+import { createCustomCodeFunction } from './createCustomCodeFunction/createCustomCodeFunction';
 import { createSlot } from './createSlot';
 import { createWorkflow } from './createWorkflow/createWorkflow';
 import { createNewDataMapCmd, loadDataMapFileCmd } from './dataMapper/dataMapper';
@@ -163,7 +163,7 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.loadDataMapFile, (context: IActionContext, uri: Uri) => loadDataMapFileCmd(context, uri));
   // Custom code commands
   registerCommandWithTreeNodeUnwrapping(extensionCommand.buildCustomCodeFunctionsProject, buildCustomCodeFunctionsProject);
-  registerCommand(extensionCommand.createCustomCodeFunction, createCustomCodeFunctionFromCommand);
+  registerCommand(extensionCommand.createCustomCodeFunction, createCustomCodeFunction);
   registerCommand(extensionCommand.debugLogicApp, debugLogicApp);
   registerCommand(extensionCommand.switchToDataMapperV2, switchToDataMapperV2);
 

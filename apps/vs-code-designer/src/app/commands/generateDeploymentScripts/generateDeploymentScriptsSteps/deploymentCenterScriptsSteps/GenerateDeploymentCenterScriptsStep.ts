@@ -16,6 +16,14 @@ export class GenerateDeploymentCenterScriptsStep extends AzureWizardExecuteStep<
   public priority = 250;
 
   /**
+   * Determines whether this step should be executed based on the user's input.
+   * @returns A boolean value indicating whether this step should be executed.
+   */
+  public shouldExecute(): boolean {
+    return true;
+  }
+
+  /**
    * Executes the step to generate deployment scripts for Azure Deployment Center.
    * @param context The context object for the project wizard.
    * @returns A Promise that resolves when the scripts are generated.
@@ -38,7 +46,7 @@ export class GenerateDeploymentCenterScriptsStep extends AzureWizardExecuteStep<
       .replace(/<%= location %>/g, context.resourceGroup.location)
       .replace(/<%= logicAppName %>/g, context.logicAppName)
       .replace(/<%= localLogicAppName %>/g, context.localLogicAppName)
-      .replace(/<%= uamiClientId %>/g, context.uamiClientId);
+      .replace(/<%= msiClientId %>/g, context.msiClientId);
 
     const dotDeploymentTemplateFileName = 'dotdeployment';
     const dotDeploymentTemplatePath = path.join(
@@ -85,13 +93,5 @@ export class GenerateDeploymentCenterScriptsStep extends AzureWizardExecuteStep<
         deploymentScriptPath
       )
     );
-  }
-
-  /**
-   * Determines whether this step should be executed based on the user's input.
-   * @returns A boolean value indicating whether this step should be executed.
-   */
-  public shouldExecute(): boolean {
-    return true;
   }
 }

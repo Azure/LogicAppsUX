@@ -1,3 +1,7 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
 import { dataMapperVersionSetting, defaultDataMapperVersion, extensionCommand, Platform, vscodeFolderName } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
@@ -39,11 +43,11 @@ import { switchToDataMapperV2 } from '../setDataMapperVersion';
 
 export default class DataMapperPanel {
   public panel: WebviewPanel;
-
   public dataMapVersion: number;
   public dataMapName: string;
   public dataMapStateIsDirty: boolean;
   public mapDefinitionData: MapDefinitionData | undefined;
+
   private telemetryPrefix = 'data-mapper-vscode-extension';
 
   constructor(panel: WebviewPanel, dataMapName: string) {

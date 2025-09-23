@@ -17,6 +17,7 @@ import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
  * @returns {Promise<void>} A promise that resolves when the verification is complete.
  */
 export async function verifyLocalConnectionKeys(context: IActionContext, projectPath?: string): Promise<void> {
+  const verifyConnectionKeysStartTime = Date.now();
   if (workspace.workspaceFolders && workspace.workspaceFolders.length > 0) {
     if (!projectPath) {
       const workspaceFolder = await getWorkspaceFolder(context);
@@ -60,4 +61,5 @@ export async function verifyLocalConnectionKeys(context: IActionContext, project
       throw new Error(errorMessage);
     }
   }
+  context.telemetry.measurements.verifyConnectionKeysDuration = (Date.now() - verifyConnectionKeysStartTime) / 1000;
 }

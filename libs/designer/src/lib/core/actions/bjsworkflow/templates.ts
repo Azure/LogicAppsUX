@@ -409,7 +409,7 @@ export const validateWorkflowName = async (
     return isResourceAvailable ? undefined : availabilityError;
   }
 
-  if (existingWorkflowNames.includes(workflowName)) {
+  if (existingWorkflowNames?.some((name) => equals(name, workflowName))) {
     return availabilityError;
   }
 

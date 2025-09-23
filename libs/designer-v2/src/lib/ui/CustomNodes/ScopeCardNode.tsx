@@ -1,17 +1,17 @@
 import constants from '../../common/constants';
-import { getMonitoringError } from '../../common/utilities/error';
 import { moveOperation } from '../../core/actions/bjsworkflow/move';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { setNodeContextMenuData, setShowDeleteModalNodeId } from '../../core/state/designerView/designerViewSlice';
 import {
   useBrandColor,
   useIconUri,
+  useOperationErrorInfo,
   useParameterValidationErrors,
   useTokenDependencies,
 } from '../../core/state/operation/operationSelector';
-import { useIsNodePinnedToOperationPanel, useIsNodeSelectedInOperationPanel } from '../../core/state/panel/panelSelectors';
+import { useIsNodeSelectedInOperationPanel } from '../../core/state/panel/panelSelectors';
 import { changePanelNode } from '../../core/state/panel/panelSlice';
-import { useAllOperations, useOperationQuery } from '../../core/state/selectors/actionMetadataSelector';
+import { useAllOperations, useConnectorName, useOperationInfo, useOperationQuery } from '../../core/state/selectors/actionMetadataSelector';
 import { useSettingValidationErrors } from '../../core/state/setting/settingSelector';
 import {
   useActionMetadata,
@@ -24,11 +24,8 @@ import {
   useParentRunIndex,
   useRunInstance,
   useParentNodeId,
-  useNodeDescription,
   useShouldNodeFocus,
   useRunIndex,
-  useActionTimelineRepetitionCount,
-  useTimelineRepetitionIndex,
   useIsActionInSelectedTimelineRepetition,
   useHandoffActionsForAgent,
   useFlowErrorsForNode,
@@ -45,9 +42,7 @@ import type { AppDispatch } from '../../core/store';
 import { LoopsPager } from '../common/LoopsPager/LoopsPager';
 import { getRepetitionName, getScopeRepetitionName } from '../common/LoopsPager/helper';
 import { DropZone } from '../connections/dropzone';
-import { MessageBarType } from '@fluentui/react';
 import { equals, isNullOrUndefined, removeIdTag, useNodeIndex } from '@microsoft/logic-apps-shared';
-import { ScopeCard } from '@microsoft/designer-ui';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDrag } from 'react-dnd';
@@ -58,16 +53,18 @@ import { copyScopeOperation } from '../../core/actions/bjsworkflow/copypaste';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { CopyTooltip } from '../common/DesignerContextualMenu/CopyTooltip';
 import { useNodeRepetition, useAgentRepetition, useAgentActionsRepetition } from '../../core/queries/runs';
-import { EdgeDrawTargetHandle } from './handles/EdgeDrawTargetHandle';
-import { DefaultHandle } from './handles/DefaultHandle';
-import { EdgeDrawSourceHandle } from './handles/EdgeDrawSourceHandle';
+import { EdgeDrawTargetHandle } from './components/handles/EdgeDrawTargetHandle';
+import { DefaultHandle } from './components/handles/DefaultHandle';
+import { EdgeDrawSourceHandle } from './components/handles/EdgeDrawSourceHandle';
 import { useIsA2AWorkflow } from '../../core/state/designerView/designerViewSelectors';
+import { ActionCard } from './components/card';
+import { ErrorLevel } from '../../core/state/operation/operationMetadataSlice';
 
 const ScopeCardNode = ({ id }: NodeProps) => {
   const scopeId = useMemo(() => removeIdTag(id), [id]);
-  const nodeComment = useNodeDescription(scopeId);
   const shouldFocus = useShouldNodeFocus(scopeId);
   const node = useActionMetadata(scopeId);
+  const errorInfo = useOperationErrorInfo(scopeId);
   const operationsInfo = useAllOperations();
 
   const intl = useIntl();
@@ -76,6 +73,8 @@ const ScopeCardNode = ({ id }: NodeProps) => {
   const isMonitoringView = useMonitoringView();
 
   const metadata = useNodeMetadata(scopeId);
+  const operationInfo = useOperationInfo(scopeId);
+  const connectorName = useConnectorName(operationInfo);
   const parentRunIndex = useParentRunIndex(scopeId);
   const runInstance = useRunInstance();
   const runData = useRunData(scopeId);
@@ -83,7 +82,6 @@ const ScopeCardNode = ({ id }: NodeProps) => {
   const parentRunData = useRunData(parentNodeId ?? '');
   const selfRunData = useRunData(scopeId);
   const nodesMetaData = useNodesMetadata();
-  const isPinned = useIsNodePinnedToOperationPanel(scopeId);
   const selected = useIsNodeSelectedInOperationPanel(scopeId);
   const brandColor = useBrandColor(scopeId);
   const iconUri = useIconUri(scopeId);
@@ -95,8 +93,6 @@ const ScopeCardNode = ({ id }: NodeProps) => {
   const scopeRepetitionName = useMemo(() => getScopeRepetitionName(runIndex), [runIndex]);
   const isTimelineRepetitionSelected = useIsActionInSelectedTimelineRepetition(scopeId);
   const isA2AWorkflow = useIsA2AWorkflow();
-  const timelineRepetitionIndex = useTimelineRepetitionIndex();
-  const timelineRepetitionCount = useActionTimelineRepetitionCount(scopeId, timelineRepetitionIndex);
   const repetitionName = useMemo(
     () => getRepetitionName(parentRunIndex, scopeId, nodesMetaData, operationsInfo),
     [nodesMetaData, operationsInfo, parentRunIndex, scopeId]
@@ -273,19 +269,6 @@ const ScopeCardNode = ({ id }: NodeProps) => {
     [brandColor, iconUri, opQuery.isLoading, isRepetitionFetching, isAgentRepetitionFetching, isAgentActionsRepetitionFetching]
   );
 
-  const comment = useMemo(
-    () =>
-      nodeComment
-        ? {
-            brandColor,
-            comment: nodeComment,
-            isDismissed: false,
-            isEditing: false,
-          }
-        : undefined,
-    [brandColor, nodeComment]
-  );
-
   const handoffActions = useHandoffActionsForAgent(scopeId);
   const actionCount = useMemo(() => {
     const rawCount = metadata?.actionCount ?? 0;
@@ -355,34 +338,41 @@ const ScopeCardNode = ({ id }: NodeProps) => {
   const parameterValidationErrors = useParameterValidationErrors(scopeId);
   const flowErrors = useFlowErrorsForNode(scopeId);
 
-  const { errorMessage, errorLevel } = useMemo(() => {
-    if (opQuery?.isError) {
-      return { errorMessage: intlText.opManifestErrorText, errorLevel: MessageBarType.error };
+  const { errorMessages } = useMemo(() => {
+    const allMessages: string[] = [];
+
+    if (errorInfo && errorInfo.level !== ErrorLevel.DynamicOutputs) {
+      const { message } = errorInfo;
+      allMessages.push(message);
     }
+
+    if (opQuery.isError) {
+      allMessages.push(intlText.opManifestErrorText);
+    }
+
     if (settingValidationErrors?.length > 0) {
-      return { errorMessage: intlText.settingValidationErrorText, errorLevel: MessageBarType.severeWarning };
+      allMessages.push(intlText.settingValidationErrorText);
     }
+
     if (parameterValidationErrors?.length > 0) {
-      return { errorMessage: intlText.parameterValidationErrorText, errorLevel: MessageBarType.severeWarning };
+      allMessages.push(intlText.parameterValidationErrorText);
     }
+
     if (flowErrors?.length > 0) {
-      return { errorMessage: intlText.flowErrorText, errorLevel: MessageBarType.severeWarning };
+      allMessages.push(intlText.flowErrorText);
     }
 
-    if (isMonitoringView) {
-      const { status: statusRun, error: errorRun, code: codeRun } = runData ?? {};
-      return getMonitoringError(errorRun, statusRun, codeRun);
-    }
-
-    return { errorMessage: undefined, errorLevel: undefined };
+    return { errorMessages: allMessages };
   }, [
-    opQuery?.isError,
-    intlText,
+    errorInfo,
+    opQuery.isError,
     settingValidationErrors?.length,
     parameterValidationErrors?.length,
     flowErrors?.length,
-    isMonitoringView,
-    runData,
+    intlText.opManifestErrorText,
+    intlText.settingValidationErrorText,
+    intlText.parameterValidationErrorText,
+    intlText.flowErrorText,
   ]);
 
   const renderLoopsPager = useMemo(() => {
@@ -417,32 +407,29 @@ const ScopeCardNode = ({ id }: NodeProps) => {
       <div className="msla-scope-card nopan" ref={ref as any}>
         <div ref={rootRef}>
           <EdgeDrawTargetHandle />
-          <ScopeCard
-            active={isCardActive}
-            showStatusPill={!isAgent && isMonitoringView && isCardActive}
-            timelineRepetitionCount={timelineRepetitionCount}
-            brandColor={brandColor}
-            icon={iconUri}
-            isLoading={isLoading}
-            collapsed={graphCollapsed}
-            handleCollapse={handleGraphCollapse}
-            drag={drag}
-            draggable={!readOnly}
-            dragPreview={dragPreview}
-            errorLevel={errorLevel}
-            errorMessage={errorMessage}
-            isDragging={isDragging}
+          <ActionCard
             id={scopeId}
+            active={isCardActive}
+            brandColor={brandColor}
             title={label}
-            readOnly={readOnly}
-            onClick={nodeClick}
-            onContextMenu={onContextMenu}
-            onDeleteClick={deleteClick}
-            selectionMode={selected ? 'selected' : isPinned ? 'pinned' : false}
+            icon={iconUri}
+            connectorName={connectorName?.result}
+            drag={drag}
+            dragPreview={dragPreview}
+            errorMessages={errorMessages}
+            isDragging={isDragging}
+            isLoading={isLoading}
+            isSelected={selected}
             runData={runData}
-            commentBox={comment}
+            readOnly={readOnly}
+            onContextMenu={onContextMenu}
+            onClick={nodeClick}
+            onDeleteClick={deleteClick}
             setFocus={shouldFocus}
             nodeIndex={nodeIndex}
+            isScope={true}
+            collapsed={graphCollapsed}
+            handleCollapse={handleGraphCollapse}
           />
           {showCopyCallout ? <CopyTooltip id={scopeId} targetRef={rootRef} hideTooltip={clearCopyCallout} /> : null}
           {shouldShowPager ? renderLoopsPager : null}

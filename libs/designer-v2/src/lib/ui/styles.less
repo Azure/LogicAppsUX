@@ -74,6 +74,15 @@
 
 .react-flow__node {
   transition: transform 0.1s ease-in-out, width 0.1s ease-in-out, height 0.1s ease-in-out;
+  
+	&.dragging {
+    transition: none;
+	}
+  
+	&.react-flow__node-NOTE_NODE {
+    z-index: -1 !important;
+    visibility: visible !important; // Something in react-flow is setting this to hidden when resizing
+	}
 }
 
 .react-flow__panel {
@@ -146,28 +155,29 @@
 }
 
 .react-flow__edge-path {
+	stroke: var(--colorEdge);
   stroke-width: 2 !important;
 
 	&.handoff {
-		stroke: #3352b9;
+		stroke: var(--colorHandoff);
 	}
 
   &.highlighted {
-    stroke: #1f85ff;
+    stroke: var(--colorSelection);
   }
 }
 
 .react-flow__edge {
   marker>path {
-    fill: @ms-color-edge;
+    fill: var(--colorEdge);
   }
 
 	marker.handoff>path {
-		fill: #3352b9;
+		fill: var(--colorHandoff);
 	}
 
   marker.highlighted>path {
-    fill: #1f85ff;
+    fill: var(--colorSelection);
   }
 }
 
@@ -213,28 +223,28 @@
   }
 
   .react-flow__edge-path {
-    stroke: @ms-color-edge-dark;
+		stroke: var(--colorEdge);
 
 		&.handoff {
-			stroke: #3352b9;
+			stroke: var(--colorHandoff);
 		}
 
     &.highlighted {
-      stroke: #1f85ff;
+      stroke: var(--colorSelection);
     }
   }
 
   .react-flow__edge {
     marker>path {
-      fill: @ms-color-edge-dark;
+      fill: var(--colorEdge);
     }
 
 		marker.handoff>path {
-			fill: #3352b9;
+			fill: var(--colorHandoff);
 		}
 
     marker.highlighted>path {
-      fill: #1f85ff;
+      fill: var(--colorSelection);
     }
   }
 
