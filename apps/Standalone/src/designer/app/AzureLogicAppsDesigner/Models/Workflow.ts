@@ -16,6 +16,9 @@ export const Artifact = {
   ParametersFile: 'parameters.json',
   WorkflowFile: 'workflow.json',
   HostFile: 'host.json',
+  DraftFile: 'draft.json',
+  DraftConnectionsFile: 'connections-draft.json',
+  DraftParametersFile: 'parameters-draft.json',
 } as const;
 
 export const VfsArtifact = {
