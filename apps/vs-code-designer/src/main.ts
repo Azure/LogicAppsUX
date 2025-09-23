@@ -34,6 +34,7 @@ import { createVSCodeAzureSubscriptionProvider } from './app/utils/services/VSCo
 import { logExtensionSettings, logSubscriptions, runWithDurationTelemetry } from './app/utils/telemetry';
 import { registerAzureUtilsExtensionVariables } from '@microsoft/vscode-azext-azureutils';
 import { getAzExtResourceType, getAzureResourcesExtensionApi } from '@microsoft/vscode-azureresources-api';
+import { tryReopenInDevContainer } from './app/utils/devContainer';
 
 const perfStats = {
   loadStartTime: Date.now(),
@@ -157,6 +158,9 @@ export async function activate(context: vscode.ExtensionContext) {
 
     logSubscriptions(activateContext);
     logExtensionSettings(activateContext);
+
+    // Attempt to auto-reopen in dev container (centralized utility). Adds telemetry property attemptedDevContainerReopen.
+    await tryReopenInDevContainer(activateContext);
   });
 }
 

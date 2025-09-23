@@ -7,7 +7,8 @@ import { AzureWizardExecuteStep } from '@microsoft/vscode-azext-utils';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import { OpenBehavior } from '@microsoft/vscode-extension-logic-apps';
 import * as fs from 'fs';
-import { commands, Uri, workspace } from 'vscode';
+import { commands, Uri } from 'vscode';
+import { tryReopenInDevContainer } from '../../../utils/devContainer';
 import { extensionCommand } from '../../../../constants';
 
 export class OpenFolderStep extends AzureWizardExecuteStep<IProjectWizardContext> {
@@ -19,7 +20,7 @@ export class OpenFolderStep extends AzureWizardExecuteStep<IProjectWizardContext
    * @returns A boolean value indicating whether this step should be executed.
    */
   public shouldExecute(context: IProjectWizardContext): boolean {
-    return !!context.openBehavior && context.openBehavior !== OpenBehavior.alreadyOpen && context.openBehavior !== OpenBehavior.dontOpen;
+    return !!context.openBehavior && context.openBehavior !== OpenBehavior.alreadyOpen;
   }
 
   /**
@@ -28,34 +29,22 @@ export class OpenFolderStep extends AzureWizardExecuteStep<IProjectWizardContext
    * @returns A Promise that resolves to void.
    */
   public async execute(context: IProjectWizardContext): Promise<void> {
-    const openFolders = workspace.workspaceFolders || [];
-    let workspaceUri: Uri;
-
-    // Check if .code-workspace file exists in project path
+    // Resolve the workspace URI (.code-workspace file if present, else the folder path)
     const workspaceFilePath = context.workspaceFilePath;
     context.workspaceFolder = getContainingWorkspace(workspaceFilePath);
-    if (fs.existsSync(workspaceFilePath)) {
-      workspaceUri = Uri.file(workspaceFilePath);
-    } else {
-      workspaceUri = Uri.file(context.workspacePath);
-    }
+    const workspaceUri: Uri = fs.existsSync(workspaceFilePath) ? Uri.file(workspaceFilePath) : Uri.file(context.workspacePath);
 
-    // Check if user has selected to add folder to workspace and update workspace accordingly
-    if (context.openBehavior === OpenBehavior.addToWorkspace && openFolders.length === 0) {
-      context.openBehavior = OpenBehavior.openInCurrentWindow;
-    }
-
-    if (context.openBehavior === OpenBehavior.addToWorkspace) {
-      if (!workspaceUri.path.endsWith('.code-workspace')) {
-        workspace.updateWorkspaceFolders(openFolders.length, 0, { uri: workspaceUri });
+    // Attempt to open directly in a dev container. Prefer devcontainers.openFolder if available.
+    // Fallback: open locally, then trigger reopen.
+    try {
+      const succeeded = await commands.executeCommand('remote-containers.openFolder', workspaceUri);
+      if (!succeeded) {
+        throw new Error('devcontainers.openFolder returned falsy result');
       }
-    } else {
-      // Open folder using executeCommand method of commands object with vscode.openFolder command
-      await commands.executeCommand(
-        extensionCommand.vscodeOpenFolder,
-        workspaceUri,
-        context.openBehavior === OpenBehavior.openInNewWindow /* forceNewWindow */
-      );
+    } catch (_err) {
+      // Fallback path: open locally then request a reopen.
+      await commands.executeCommand(extensionCommand.vscodeOpenFolder, workspaceUri, false);
+      await tryReopenInDevContainer(context as any);
     }
   }
 }

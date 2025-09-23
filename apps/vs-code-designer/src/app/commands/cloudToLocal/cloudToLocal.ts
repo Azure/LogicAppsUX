@@ -10,7 +10,7 @@ import { LogicAppNameStep } from '../createProject/createProjectSteps/logicAppNa
 import { WorkspaceNameStep } from '../createWorkspace/createWorkspaceSteps/workspaceNameStep';
 import { AzureWizard } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { latestGAVersion, OpenBehavior } from '@microsoft/vscode-extension-logic-apps';
+import { latestGAVersion } from '@microsoft/vscode-extension-logic-apps';
 import type { ICreateFunctionOptions, IFunctionWizardContext, ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
 import { ProcessPackageStep } from './cloudToLocalSteps/processPackageStep';
 import { SelectFolderForNewWorkspaceStep } from './cloudToLocalSteps/selectFolderForNewWorkspaceStep';
@@ -44,9 +44,7 @@ export async function cloudToLocal(
     projectPath: options.folderPath,
   });
 
-  if (options.suppressOpenFolder) {
-    wizardContext.openBehavior = OpenBehavior.dontOpen;
-  } else if (!wizardContext.openBehavior) {
+  if (!wizardContext.openBehavior) {
     wizardContext.openBehavior = getWorkspaceSetting(projectOpenBehaviorSetting);
     context.telemetry.properties.openBehaviorFromSetting = String(!!wizardContext.openBehavior);
   }

@@ -65,6 +65,6 @@ export class WorkspaceFileStep extends AzureWizardPromptStep<IProjectWizardConte
     };
 
     await fse.writeJSON(context.workspaceFilePath, workspaceData, { spaces: 2 });
-    context.openBehavior = OpenBehavior.openInCurrentWindow;
+    context.openBehavior = OpenBehavior.openInContainer;
   }
 }
