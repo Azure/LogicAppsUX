@@ -87,7 +87,7 @@ export const RunMenu = (props: {
   }
 
   return (
-    <Menu>
+    <Menu positioning={'after'}>
       <MenuTrigger disableButtonEnhancement>
         <Button icon={<MoreIcon />} appearance={'transparent'} onClick={(e) => e.stopPropagation()} />
       </MenuTrigger>
@@ -100,9 +100,11 @@ export const RunMenu = (props: {
           <MenuItem icon={<ResubmitIcon />} onClick={onResubmit}>
             {resubmitText}
           </MenuItem>
-          <MenuItem icon={<CancelIcon />} disabled={run.properties.status !== 'Running'} onClick={onCancel}>
-            {cancelText}
-          </MenuItem>
+          {run.properties.status === 'Running' ? (
+            <MenuItem icon={<CancelIcon />} onClick={onCancel}>
+              {cancelText}
+            </MenuItem>
+          ) : null}
         </MenuList>
       </MenuPopover>
     </Menu>

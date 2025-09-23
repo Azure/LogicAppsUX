@@ -985,4 +985,5 @@ export default {
     ACA_SESSION: '/serviceProviders/acasession',
     AGENT: '/connectionProviders/agent',
   },
+  RUN_POLLING_INTERVAL_IN_MS: 10000,
 };
