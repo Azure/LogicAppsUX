@@ -140,6 +140,7 @@ export const useCreateAppPanelTabs = (onCreateApp: () => void): McpPanelTabProps
       resourceGroup as string
     );
 
+    dispatch(setNewLogicAppDetails({ createStatus: 'inprogress' }));
     setResourcesStatus(
       Object.keys(resourcesStatus).reduce((acc: Record<string, string>, resource: string) => {
         acc[resource] = equals(resourcesStatus[resource], 'notstarted') ? 'running' : resourcesStatus[resource];
@@ -160,6 +161,7 @@ export const useCreateAppPanelTabs = (onCreateApp: () => void): McpPanelTabProps
     const errorDetails = await pollForAppCreateCompletion(deploymentUri as string, resourcesToBeCreated, updateResourcesStatus);
 
     if (errorDetails) {
+      dispatch(setNewLogicAppDetails({ createStatus: 'failed' }));
       setErrorInfo({ title: intlTexts.createErrorTitle, message: errorDetails.message });
       setIsCreating(false);
       setCreateButtonText(intlTexts.createButtonText);
@@ -169,6 +171,7 @@ export const useCreateAppPanelTabs = (onCreateApp: () => void): McpPanelTabProps
           resourceGroup: resourceGroup as string,
           location: location as string,
           logicAppName: newLogicAppDetails?.appName as string,
+          isNew: true,
         })
       );
       dispatch(closePanel());

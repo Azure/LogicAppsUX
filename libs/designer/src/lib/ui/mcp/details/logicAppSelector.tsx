@@ -68,7 +68,7 @@ export const LogicAppSelector = () => {
   );
 
   const [selectedResource, setSelectedResource] = useState<string>('');
-  const [searchTerm, setSearchTerm] = useState<string | undefined>('');
+  const [searchTerm, setSearchTerm] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     if (equals(logicAppName, newLogicAppDetails?.appName)) {
@@ -77,15 +77,16 @@ export const LogicAppSelector = () => {
   }, [logicAppName, newLogicAppDetails?.appName, subscriptionId, resourceGroup]);
 
   const resources = useMemo(() => {
-    const result = newLogicAppDetails?.appName
-      ? [
-          {
-            id: getLogicAppId(subscriptionId as string, resourceGroup as string, newLogicAppDetails.appName),
-            name: newLogicAppDetails.appName,
-            displayName: `${newLogicAppDetails.appName} (new)`,
-          },
-        ]
-      : [];
+    const result =
+      newLogicAppDetails?.appName && equals(newLogicAppDetails.createStatus, 'succeeded')
+        ? [
+            {
+              id: getLogicAppId(subscriptionId as string, resourceGroup as string, newLogicAppDetails.appName),
+              name: newLogicAppDetails.appName,
+              displayName: `${newLogicAppDetails.appName} (new)`,
+            },
+          ]
+        : [];
 
     result.push(
       ...(logicApps ?? [])
@@ -98,7 +99,7 @@ export const LogicAppSelector = () => {
     );
 
     return result;
-  }, [logicApps, newLogicAppDetails?.appName, resourceGroup, subscriptionId]);
+  }, [logicApps, newLogicAppDetails?.appName, newLogicAppDetails?.createStatus, resourceGroup, subscriptionId]);
 
   const filteredResources = useMemo(() => {
     if (!searchTerm?.trim()) {
@@ -116,6 +117,7 @@ export const LogicAppSelector = () => {
     const selectedResourceInfo = resources.find((r) => equals(r.id, selectedResource));
     return selectedResourceInfo?.displayName ?? selectedResource;
   }, [searchTerm, resources, selectedResource]);
+
   const onLogicAppSelect = useCallback(
     (value: string) => {
       if (selectedResource !== value) {
@@ -163,6 +165,7 @@ export const LogicAppSelector = () => {
               className={styles.combobox}
               disabled={isLogicAppsLoading}
               value={controlValue}
+              selectedOptions={selectedResource ? [selectedResource] : []}
               placeholder={isLogicAppsLoading ? intlText.LOADING : intlText.SEARCH_PLACEHOLDER}
               onOptionSelect={(_, data) => {
                 if (data.optionValue && data.optionValue !== NO_ITEM_VALUE) {

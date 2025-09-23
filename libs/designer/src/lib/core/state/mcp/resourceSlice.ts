@@ -51,11 +51,18 @@ export const resourceSlice = createSlice({
       state.resourceGroup = resourceGroup;
       state.location = location;
     },
-    setLogicApp: (state, action: PayloadAction<{ resourceGroup: string; location: string; logicAppName: string }>) => {
-      const { resourceGroup, location, logicAppName } = action.payload;
+    setLogicApp: (state, action: PayloadAction<{ resourceGroup: string; location: string; logicAppName: string; isNew?: boolean }>) => {
+      const { resourceGroup, location, logicAppName, isNew } = action.payload;
       state.resourceGroup = resourceGroup;
       state.location = location;
       state.logicAppName = logicAppName;
+
+      if (isNew) {
+        state.newLogicAppDetails = {
+          ...state.newLogicAppDetails,
+          createStatus: 'succeeded',
+        } as LogicAppConfigDetails;
+      }
     },
     setNewLogicAppDetails: (state, action: PayloadAction<Partial<LogicAppConfigDetails>>) => {
       state.newLogicAppDetails = {
