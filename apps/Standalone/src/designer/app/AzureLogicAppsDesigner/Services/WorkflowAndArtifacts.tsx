@@ -52,7 +52,7 @@ export const useWorkflowAndArtifactsStandard = (workflowId: string) => {
   return useQuery(
     ['workflowArtifactsStandard', workflowId],
     async () => {
-      const artifacts = [Artifact.ConnectionsFile, Artifact.ParametersFile];
+      const artifacts = [Artifact.ConnectionsFile, Artifact.ParametersFile, Artifact.DraftConnectionsFile, Artifact.DraftParametersFile];
       const uri = `${baseUrl}${validateResourceId(workflowId)}?api-version=${
         HybridAppUtility.isHybridLogicApp(workflowId) ? hybridApiVersion : standardApiVersion
       }&$expand=${artifacts.join(',')}`;
@@ -846,4 +846,50 @@ export const validateCloneConsumption = async (
   if (response.status !== 200) {
     return Promise.reject(response);
   }
+};
+
+export const deployArtifacts = async (
+  siteResourceId: string,
+  workflowName: string,
+  workflow: any,
+  connectionsData?: ConnectionsData,
+  parametersData?: ParametersData,
+  settings?: Record<string, string>,
+  isDraft?: boolean
+) => {
+  const data: any = {
+    files: {},
+  };
+
+  data.files[`${workflowName}/${isDraft ? Artifact.DraftFile : Artifact.WorkflowFile}`] = workflow;
+
+  if (connectionsData) {
+    data.files[isDraft ? Artifact.DraftConnectionsFile : Artifact.ConnectionsFile] = connectionsData;
+  }
+
+  if (parametersData) {
+    data.files[isDraft ? Artifact.DraftParametersFile : Artifact.ParametersFile] = parametersData;
+  }
+
+  if (settings) {
+    data.appSettings = settings;
+  }
+
+  let url = null;
+  if (HybridAppUtility.isHybridLogicApp(siteResourceId)) {
+    url = `${baseUrl}${HybridAppUtility.getHybridAppBaseRelativeUrl(
+      siteResourceId
+    )}/deployWorkflowArtifacts?api-version=${hybridApiVersion}`;
+  } else {
+    url = `${baseUrl}${siteResourceId}/deployWorkflowArtifacts?api-version=${standardApiVersion}`;
+  }
+  const response = await axios.post(url, data, {
+    headers: {
+      'If-Match': '*',
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${environment.armToken}`,
+    },
+  });
+
+  return response;
 };

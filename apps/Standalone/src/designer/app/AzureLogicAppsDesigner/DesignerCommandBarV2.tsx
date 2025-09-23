@@ -65,6 +65,10 @@ import {
   LinkRegular,
   ErrorCircleFilled,
   ErrorCircleRegular,
+  DocumentOnePageAddFilled,
+  DocumentOnePageAddRegular,
+  DocumentOnePageColumnsFilled,
+  DocumentOnePageColumnsRegular,
 } from '@fluentui/react-icons';
 
 const UndoIcon = bundleIcon(ArrowUndoFilled, ArrowUndoRegular);
@@ -73,6 +77,8 @@ const MoreHorizontalIcon = bundleIcon(MoreHorizontalFilled, MoreHorizontalRegula
 const ParametersIcon = bundleIcon(MentionBracketsFilled, MentionBracketsRegular);
 const ConnectionsIcon = bundleIcon(LinkFilled, LinkRegular);
 const ErrorsIcon = bundleIcon(ErrorCircleFilled, ErrorCircleRegular);
+const DocumentOnePageAddIcon = bundleIcon(DocumentOnePageAddFilled, DocumentOnePageAddRegular);
+const DocumentOnePageColumnsIcon = bundleIcon(DocumentOnePageColumnsFilled, DocumentOnePageColumnsRegular);
 
 const useStyles = makeStyles({
   viewModeContainer: {
@@ -107,10 +113,12 @@ export const DesignerCommandBar = ({
   isCodeView,
   isDarkMode,
   isUnitTest,
+  isDraftMode,
   enableCopilot,
   showMonitoringView,
   showDesignerView,
   showCodeView,
+  switchWorkflowMode,
 }: {
   id: string;
   location: string;
@@ -123,10 +131,12 @@ export const DesignerCommandBar = ({
   isCodeView?: boolean;
   isDarkMode: boolean;
   isUnitTest: boolean;
+  isDraftMode?: boolean;
   enableCopilot?: () => void;
   showMonitoringView: () => void;
   showDesignerView: () => void;
   showCodeView: () => void;
+  switchWorkflowMode: (draftMode: boolean) => void;
 }) => {
   const styles = useStyles();
 
@@ -313,6 +323,15 @@ export const DesignerCommandBar = ({
       </MenuTrigger>
       <MenuPopover>
         <MenuList>
+          {isDraftMode ? (
+            <MenuItem disabled={!isDesignerView} onClick={() => switchWorkflowMode(false)} icon={<DocumentOnePageAddIcon />}>
+              Switch to published version
+            </MenuItem>
+          ) : (
+            <MenuItem disabled={!isDesignerView} onClick={() => switchWorkflowMode(true)} icon={<DocumentOnePageColumnsIcon />}>
+              Switch to draft version
+            </MenuItem>
+          )}
           <MenuItem
             disabled={saveUnitTestIsDisabled}
             onClick={() => saveUnitTestMutate()}

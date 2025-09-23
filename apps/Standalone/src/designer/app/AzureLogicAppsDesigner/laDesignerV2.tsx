@@ -23,6 +23,7 @@ import {
   useWorkflowAndArtifactsStandard,
   useWorkflowApp,
   validateWorkflowStandard,
+  deployArtifacts,
 } from './Services/WorkflowAndArtifacts';
 import { ArmParser } from './Utilities/ArmParser';
 import { WorkflowUtility, addConnectionInJson, addOrUpdateAppSettings } from './Utilities/Workflow';
@@ -109,7 +110,11 @@ const DesignerEditor = () => {
   const isHybridLogicApp = hostingPlan === 'hybrid';
   const workflowName = workflowId.split('/').splice(-1)[0];
   const siteResourceId = new ArmParser(workflowId).topmostResourceId;
-  const { data: customCodeData, isLoading: customCodeLoading } = useAllCustomCodeFiles(appId, workflowName, isHybridLogicApp);
+  const {
+    data: customCodeData,
+    isLoading: customCodeLoading,
+    refetch: customCodeRefetch,
+  } = useAllCustomCodeFiles(appId, workflowName, isHybridLogicApp);
   const { data, isLoading, isError, error } = useWorkflowAndArtifactsStandard(workflowId);
   const { data: settingsData, isLoading: settingsLoading, isError: settingsIsError, error: settingsError } = useAppSettings(siteResourceId);
   const { data: workflowAppData, isLoading: appLoading } = useWorkflowApp(siteResourceId, useHostingPlan());
@@ -122,10 +127,12 @@ const DesignerEditor = () => {
   });
   const [isDesignerView, setIsDesignerView] = useState(true);
   const [isCodeView, setIsCodeView] = useState(false);
+  const [isDraftMode, setIsDraftMode] = useState(true);
 
   const codeEditorRef = useRef<{ getValue: () => string | undefined; hasChanges: () => boolean }>(null);
   const originalConnectionsData = useMemo(() => data?.properties.files[Artifact.ConnectionsFile] ?? {}, [data?.properties.files]);
   const originalCustomCodeData = useMemo(() => Object.keys(customCodeData ?? {}), [customCodeData]);
+  const draftWorkflow = useMemo(() => customCodeData?.[Artifact.DraftFile], [customCodeData]);
   const parameters = useMemo(() => data?.properties.files[Artifact.ParametersFile] ?? {}, [data?.properties.files]);
   const queryClient = getReactQueryClient();
   const displayCopilotChatbot = showChatBot && isDesignerView;
@@ -139,6 +146,10 @@ const DesignerEditor = () => {
     addConnectionInJson(connectionAndSetting, connectionsData ?? {});
     addOrUpdateAppSettings(connectionAndSetting.settings, settingsData?.properties ?? {});
   };
+
+  const switchWorkflowMode = useCallback((draftMode: boolean) => {
+    setIsDraftMode(draftMode);
+  }, []);
 
   const getConnectionConfiguration = async (connectionId: string): Promise<any> => {
     if (!connectionId) {
@@ -192,32 +203,6 @@ const DesignerEditor = () => {
     [workflow, workflowId, connectionsData, settingsData, workflowAppData, tenantId, designerID, runId, language]
   );
 
-  // Our iframe root element is given a strange padding (not in this repo), this removes it
-  useEffect(() => {
-    const root = document.getElementById('root');
-    if (root) {
-      root.style.padding = '0px';
-      root.style.overflow = 'hidden';
-    }
-  }, []);
-
-  const { data: runInstanceData } = useRun(runId);
-
-  useEffect(() => {
-    if (isMonitoringView && runInstanceData) {
-      setWorkflow((previousWorkflow: Workflow) => {
-        return {
-          ...previousWorkflow,
-          definition: (runInstanceData.properties.workflow as any).properties.definition,
-        };
-      });
-    }
-  }, [isMonitoringView, runInstanceData]);
-
-  useEffect(() => {
-    setWorkflow(data?.properties.files[Artifact.WorkflowFile]);
-  }, [data?.properties.files]);
-
   // RUN HISTORY
 
   const toggleMonitoringView = useCallback(() => {
@@ -261,10 +246,6 @@ const DesignerEditor = () => {
     },
     [dispatch, showMonitoringView]
   );
-
-  if (isLoading || appLoading || settingsLoading || customCodeLoading) {
-    return <></>;
-  }
 
   const originalSettings: Record<string, string> = {
     ...(settingsData?.properties ?? {}),
@@ -481,6 +462,70 @@ const DesignerEditor = () => {
     }
   };
 
+  const setProdWorkflow = useCallback(() => {
+    const prodWorkflow = data?.properties.files[Artifact.WorkflowFile];
+    if (prodWorkflow) {
+      setWorkflow(prodWorkflow);
+    }
+  }, [data]);
+
+  // Our iframe root element is given a strange padding (not in this repo), this removes it
+  useEffect(() => {
+    const root = document.getElementById('root');
+    if (root) {
+      root.style.padding = '0px';
+      root.style.overflow = 'hidden';
+    }
+  }, []);
+
+  const { data: runInstanceData } = useRun(runId);
+
+  useEffect(() => {
+    if (isMonitoringView && runInstanceData) {
+      setWorkflow((previousWorkflow: Workflow) => {
+        return {
+          ...previousWorkflow,
+          definition: (runInstanceData.properties.workflow as any).properties.definition,
+        };
+      });
+    }
+  }, [isMonitoringView, runInstanceData]);
+
+  useEffect(() => {
+    const prodWorkflow = data?.properties.files[Artifact.WorkflowFile];
+    if (draftWorkflow) {
+      setWorkflow(draftWorkflow as any);
+    } else {
+      if (prodWorkflow) {
+        // Create default draft from production if draft does not exist
+        deployArtifacts(siteResourceId, workflowName, prodWorkflow, undefined, undefined, undefined, true).then((response) => {
+          if (response.status >= 200 && response.status < 300) {
+            // Draft created successfully
+            customCodeRefetch();
+          } else {
+            setIsDraftMode(false);
+            // TODO: Handle error
+          }
+        });
+      }
+      setProdWorkflow();
+    }
+  }, [customCodeRefetch, data?.properties.files, draftWorkflow, setProdWorkflow, siteResourceId, workflowName]);
+
+  useEffect(() => {
+    if (isDraftMode) {
+      if (draftWorkflow) {
+        setWorkflow(draftWorkflow as any);
+      }
+    } else {
+      setProdWorkflow();
+    }
+  }, [draftWorkflow, isDraftMode, setProdWorkflow]);
+
+  if (isLoading || appLoading || settingsLoading || customCodeLoading) {
+    return <></>;
+  }
+
   return (
     <div key={designerID} style={{ height: 'inherit', width: 'inherit' }}>
       <DesignerProvider
@@ -490,7 +535,7 @@ const DesignerEditor = () => {
         options={{
           services,
           isDarkMode,
-          readOnly: isReadOnly || isMonitoringView,
+          readOnly: isReadOnly || isMonitoringView || !isDraftMode,
           isMonitoringView,
           isUnitTest,
           suppressDefaultNodeSelectFunctionality: suppressDefaultNodeSelect,
@@ -556,6 +601,8 @@ const DesignerEditor = () => {
                   showMonitoringView={showMonitoringView}
                   showDesignerView={showDesignerView}
                   showCodeView={showCodeView}
+                  switchWorkflowMode={switchWorkflowMode}
+                  isDraftMode={isDraftMode}
                 />
                 {!isCodeView && (
                   <div style={{ display: 'flex', flexDirection: 'row', flexGrow: 1, height: '80%' }}>
