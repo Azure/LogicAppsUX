@@ -41,7 +41,7 @@ export const store = configureStore({
     customCode: customCodeReducer,
     undoRedo: undoRedoReducer,
     modal: modalReducer,
-		notes: notesReducer,
+    notes: notesReducer,
     // if is in dev environment, add devSlice to store
     ...(process.env.NODE_ENV === 'development' ? { dev: devReducer } : {}),
   },

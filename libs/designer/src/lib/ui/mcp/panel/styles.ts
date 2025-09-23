@@ -10,6 +10,9 @@ export const useMcpPanelStyles = makeStyles({
     background: tokens.colorNeutralBackground1,
     flexShrink: 0,
   },
+  headerSubtitle: {
+    color: tokens.colorNeutralForeground3,
+  },
   headerContent: {
     display: 'flex',
     alignItems: 'center',

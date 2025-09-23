@@ -48,7 +48,6 @@ import { toggleCollapsedActionId } from '../../../core/state/workflow/workflowSl
 import { addNote } from '../../../core/state/notes/notesSlice';
 import { useReactFlow } from '@xyflow/react';
 
-
 export const DesignerContextualMenu = () => {
   const menuData = useNodeContextMenuData();
   const nodeId = useMemo(() => menuData?.nodeId ?? '', [menuData?.nodeId]);
@@ -128,17 +127,17 @@ export const DesignerContextualMenu = () => {
     setShowCopyCallout(false);
   }, [copyCalloutTimeout]);
 
-	const { screenToFlowPosition } = useReactFlow();
+  const { screenToFlowPosition } = useReactFlow();
 
-	const onAddNoteClick = useCallback(() => {
-		if (menuData?.location) {
-			const position = screenToFlowPosition({
-				x: menuData.location.x,
-				y: menuData.location.y,
-			});
-			dispatch(addNote(position));
-		}
-	}, [dispatch, menuData?.location, screenToFlowPosition]);
+  const onAddNoteClick = useCallback(() => {
+    if (menuData?.location) {
+      const position = screenToFlowPosition({
+        x: menuData.location.x,
+        y: menuData.location.y,
+      });
+      dispatch(addNote(position));
+    }
+  }, [dispatch, menuData?.location, screenToFlowPosition]);
 
   const transformMenuItems = (items: TopLevelDropdownMenuItem[]): DropdownMenuCustomNode[] => {
     return items.map((item) => ({
@@ -228,17 +227,15 @@ export const DesignerContextualMenu = () => {
     [nodeId]
   );
 
-	const canvasMenuItems = useMemo(() => {
-		return [
-			<AddNoteMenuItem onClick={onAddNoteClick} key="add-note" />,
-		]
-	}, [onAddNoteClick]);
+  const canvasMenuItems = useMemo(() => {
+    return [<AddNoteMenuItem onClick={onAddNoteClick} key="add-note" />];
+  }, [onAddNoteClick]);
 
   const menuItems = useMemo(() => {
-		// If no node id, show canvas menu items
-		if (!nodeId) {
-			return canvasMenuItems;
-		}
+    // If no node id, show canvas menu items
+    if (!nodeId) {
+      return canvasMenuItems;
+    }
 
     const items: JSX.Element[] = [];
 
