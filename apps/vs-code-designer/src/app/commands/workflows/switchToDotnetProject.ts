@@ -49,12 +49,7 @@ export async function switchToDotnetProjectCommand(context: IProjectWizardContex
   switchToDotnetProject(context, target);
 }
 
-export async function switchToDotnetProject(
-  context: IProjectWizardContext,
-  target: vscode.Uri,
-  localDotNetMajorVersion = '8',
-  isCodeful = false
-) {
+export async function switchToDotnetProject(context: IProjectWizardContext, target: vscode.Uri, isCodeful = false) {
   if (target === undefined || Object.keys(target).length === 0) {
     const workspaceFolder = await getWorkspaceFolder(context);
     const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
@@ -147,7 +142,7 @@ export async function switchToDotnetProject(
 
   await copyBundleProjectFiles(target);
   await updateBuildFile(context, target, dotnetVersion, isCodeful);
-  await createGlobalJsonFile(localDotNetMajorVersion, target.fsPath);
+  await createGlobalJsonFile(dotnetVersion, target.fsPath);
 
   const workspaceFolder: vscode.WorkspaceFolder | undefined = getContainingWorkspace(target.fsPath);
 

@@ -167,7 +167,7 @@ export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionW
   public async createSystemArtifacts(context: IFunctionWizardContext): Promise<void> {
     const target = vscode.Uri.file(context.projectPath);
 
-    await switchToDotnetProject(context, target, '8', true);
+    await switchToDotnetProject(context, target, true);
 
     await this.updateHostJson(context, hostFileName);
 
