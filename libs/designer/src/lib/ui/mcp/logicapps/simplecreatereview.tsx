@@ -23,7 +23,7 @@ import { useMemo } from 'react';
 import { getResourceNameFromId } from '@microsoft/logic-apps-shared';
 import WorkflowIcon from '../../../common/images/templates/logicapps.svg';
 import AppServicePlanIcon from '../../../common/images/mcp/appserviceplan.svg';
-import StorageAccountIcon from '../../../common/images/mcp/storageaccount.svg';
+import StorageAccountIcon from '../../../common/images/mcp/azurestorage.svg';
 import ApplicationInsightsIcon from '../../../common/images/mcp/appinsights.svg';
 import { CheckmarkCircle20Regular, ErrorCircle20Regular, Warning20Regular } from '@fluentui/react-icons';
 
