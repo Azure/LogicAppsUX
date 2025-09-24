@@ -70,3 +70,20 @@ workflow-designtime/
 .vscode/
 *.code-workspace`;
 };
+
+export const newGetGitIgnoreContent = () => {
+  return `
+# Azure logic apps artifacts
+bin
+obj
+appsettings.json
+local.settings.json
+__blobstorage__
+.debug
+__queuestorage__
+__azurite_db*__.json
+
+# Added folders and file patterns
+workflow-designtime/
+*.code-workspace`;
+};

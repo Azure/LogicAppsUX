@@ -152,6 +152,9 @@ export const RouteName = {
   designer: 'designer',
   dataMapper: 'dataMapper',
   unitTest: 'unitTest',
+  createWorkspace: 'createWorkspace',
+  createLogicApp: 'createLogicApp',
+  createWorkspaceStructure: 'createWorkspaceStructure',
 };
 
 export type RouteNameType = (typeof RouteName)[keyof typeof RouteName];
@@ -304,6 +307,21 @@ export interface UpdateExportPathMessage {
   command: typeof ExtensionCommand.update_export_path;
   data: {
     targetDirectory: ITargetDirectory;
+  };
+}
+
+export interface UpdateWorkspacePathMessage {
+  command: typeof ExtensionCommand.update_workspace_path;
+  data: {
+    targetDirectory: ITargetDirectory;
+  };
+}
+
+export interface ValidateWorkspacePathMessage {
+  command: typeof ExtensionCommand.validatePath;
+  data: {
+    path: any;
+    isValid: boolean;
   };
 }
 

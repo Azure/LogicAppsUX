@@ -19,6 +19,8 @@ import type {
   GetTestFeatureEnablementStatus,
   GetAvailableCustomXsltPathsMessageV2,
   ResetDesignerDirtyStateMessage,
+  UpdateWorkspacePathMessage,
+  ValidateWorkspacePathMessage,
 } from './run-service';
 import {
   changeCustomXsltPathList,
@@ -59,6 +61,7 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { WebviewApi } from 'vscode-webview';
 import { store as DesignerStore, resetDesignerDirtyState } from '@microsoft/logic-apps-designer';
+import { initializeProject, setProjectPath, setPathValidationResult } from './state/createWorkspace/createWorkspaceSlice';
 
 const vscode: WebviewApi<unknown> = acquireVsCodeApi();
 export const VSCodeContext = React.createContext(vscode);
@@ -80,7 +83,13 @@ type DataMapperMessageType =
   | GetConfigurationSettingMessage
   | GetDataMapperVersionMessage
   | GetTestFeatureEnablementStatus;
-type WorkflowMessageType = UpdateAccessTokenMessage | UpdateExportPathMessage | AddStatusMessage | SetFinalStatusMessage;
+type WorkflowMessageType =
+  | UpdateAccessTokenMessage
+  | UpdateExportPathMessage
+  | UpdateWorkspacePathMessage
+  | AddStatusMessage
+  | SetFinalStatusMessage
+  | ValidateWorkspacePathMessage;
 type MessageType = InjectValuesMessage | DesignerMessageType | DataMapperMessageType | WorkflowMessageType;
 
 export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ children }) => {
@@ -222,6 +231,29 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
         }
         break;
       }
+      case ProjectName.createWorkspace:
+      case ProjectName.createWorkspaceStructure: {
+        switch (message.command) {
+          case ExtensionCommand.validatePath: {
+            dispatch(setPathValidationResult(message.data));
+            break;
+          }
+          default:
+            throw new Error('Unknown post message received');
+        }
+        break;
+      }
+      case ProjectName.createLogicApp: {
+        switch (message.command) {
+          case ExtensionCommand.initialize_frame: {
+            dispatch(initializeProject(message.data));
+            break;
+          }
+          default:
+            throw new Error('Unknown post message received');
+        }
+        break;
+      }
       default:
         switch (message.command) {
           case ExtensionCommand.initialize_frame: {
@@ -234,6 +266,10 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
           }
           case ExtensionCommand.update_export_path: {
             dispatch(updateTargetDirectory(message.data));
+            break;
+          }
+          case ExtensionCommand.update_workspace_path: {
+            dispatch(setProjectPath(message.data));
             break;
           }
           case ExtensionCommand.add_status: {
