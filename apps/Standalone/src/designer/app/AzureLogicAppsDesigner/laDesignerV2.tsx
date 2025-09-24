@@ -193,7 +193,7 @@ const DesignerEditor = () => {
       customCodeRefetch();
       return Promise.resolve();
     }
-    return Promise.reject(`Error resetting draft workflow: ${response.statusText}`);
+    return Promise.reject(`Error resetting draft workflow: ${response.status} - ${response.statusText}`);
   }, [customCodeRefetch, prodWorkflow, saveDraftWorkflow]);
 
   const discardAllChanges = useCallback(() => {
