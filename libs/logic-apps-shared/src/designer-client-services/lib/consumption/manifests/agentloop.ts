@@ -186,7 +186,7 @@ export default {
           },
         },
       },
-      required: ['agentModelType', 'deploymentId', 'modelId', 'messages'],
+      required: ['agentModelType', 'modelId', 'messages'],
     },
     outputs: {
       type: 'object',
