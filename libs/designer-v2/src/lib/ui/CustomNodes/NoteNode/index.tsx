@@ -63,7 +63,7 @@ const NoteNode = ({ id, dragging }: NodeProps) => {
   );
 
   return (
-    <div style={{ zIndex: '-1' }}>
+    <>
       <Card
         className={mergeClasses(styles.noteCard, dragging && styles.draggingNote)}
         style={{
@@ -100,7 +100,7 @@ const NoteNode = ({ id, dragging }: NodeProps) => {
           <Button icon={<DeleteIcon />} size="small" appearance="transparent" onClick={deleteCallback} />
         </div>
       )}
-    </div>
+    </>
   );
 };
 

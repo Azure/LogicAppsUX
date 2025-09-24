@@ -23,7 +23,7 @@ import type { AppDispatch } from '../core';
 import { clearPanel, expandDiscoveryPanel } from '../core/state/panel/panelSlice';
 import { addOperationRunAfter } from '../core/actions/bjsworkflow/runafter';
 import { useClampPan, useIsA2AWorkflow } from '../core/state/designerView/designerViewSelectors';
-import { DEFAULT_NODE_SIZE } from '../core/utils/graph';
+import { DEFAULT_NODE_SIZE, DEFAULT_NOTE_SIZE } from '../core/utils/graph';
 import { DraftEdge } from './connections/draftEdge';
 import { useReadOnly } from '../core/state/designerOptions/designerOptionsSelectors';
 import { useLayout } from '../core/graphlayout';
@@ -163,6 +163,10 @@ const DesignerReactFlow = (props: any) => {
           position: nodePositions?.[id] ?? note.metadata.position,
           draggable: !isReadOnly,
           dragHandle: '.note-drag-handle',
+          measured: {
+            width: note.metadata.width ?? DEFAULT_NOTE_SIZE.width,
+            height: note.metadata.height ?? DEFAULT_NOTE_SIZE.height,
+          },
         }) as Node
     );
   }, [notes, nodePositions, isReadOnly]);
@@ -378,7 +382,9 @@ const DesignerReactFlow = (props: any) => {
           actionChanges.push(change);
         }
       }
-      dispatch(updateNodeSizes(actionChanges));
+      if (actionChanges.length > 0) {
+        dispatch(updateNodeSizes(actionChanges));
+      }
     },
     [dispatch, notes]
   );
