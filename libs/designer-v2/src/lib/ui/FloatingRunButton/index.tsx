@@ -93,7 +93,7 @@ export const FloatingRunButton = ({ id: _id, saveDraftWorkflow, onRun, isDarkMod
       // Wait 0.5 seconds, running too fast after saving causes 500 error
       await new Promise((resolve) => setTimeout(resolve, 500));
       const runResponse = await RunService().runTrigger(callbackInfo);
-      const runId = runResponse?.headers?.['x-ms-workflow-run-id'];
+      const runId = runResponse?.responseHeaders?.['x-ms-workflow-run-id'] ?? runResponse?.headers?.['x-ms-workflow-run-id'];
       onRun?.(runId);
     } catch (_error: any) {
       return;
