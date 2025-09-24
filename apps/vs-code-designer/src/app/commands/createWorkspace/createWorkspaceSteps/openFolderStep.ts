@@ -34,12 +34,20 @@ export class OpenFolderStep extends AzureWizardExecuteStep<IProjectWizardContext
     context.workspaceFolder = getContainingWorkspace(workspaceFilePath);
     const workspaceUri: Uri = fs.existsSync(workspaceFilePath) ? Uri.file(workspaceFilePath) : Uri.file(context.workspacePath);
 
-    // Attempt to open directly in a dev container. Prefer devcontainers.openFolder if available.
-    // Fallback: open locally, then trigger reopen.
+    // Attempt to open directly in a dev container. Prefer 'remote-containers.openWorkspace' when a .code-workspace file exists.
+    // Fallback: open folder then trigger reopen.
     try {
-      const succeeded = await commands.executeCommand('remote-containers.openFolder', workspaceUri);
-      if (!succeeded) {
-        throw new Error('remote-containers.openFolder returned falsy result');
+      let succeeded: unknown;
+      if (workspaceUri.fsPath.endsWith('.code-workspace')) {
+        succeeded = await commands.executeCommand('remote-containers.openWorkspace', workspaceUri);
+        if (!succeeded) {
+          throw new Error('remote-containers.openWorkspace returned falsy result');
+        }
+      } else {
+        succeeded = await commands.executeCommand('remote-containers.openFolder', workspaceUri);
+        if (!succeeded) {
+          throw new Error('remote-containers.openFolder returned falsy result');
+        }
       }
     } catch (_err) {
       // Fallback path: open locally then request a reopen.

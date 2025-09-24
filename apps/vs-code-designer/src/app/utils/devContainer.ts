@@ -89,15 +89,21 @@ export async function tryReopenInDevContainer(context?: IActionContext): Promise
     return false;
   }
   try {
-    const workspaceFilePath = findWorkspaceFilePath(basePath);
-    if (workspaceFilePath) {
+    const info = findWorkspaceFileAndRoot(basePath);
+    if (info?.workspaceFilePath) {
       if (context) {
-        context.telemetry.properties.devContainerWorkspaceArg = 'true';
+        context.telemetry.properties.devContainerWorkspaceArg = 'workspace-file';
       }
-      await vscode.commands.executeCommand('remote-containers.reopenInContainer', vscode.Uri.file(workspaceFilePath));
+      // Try opening the workspace directly in a container.
+      await vscode.commands.executeCommand('remote-containers.openWorkspace', vscode.Uri.file(info.workspaceFilePath));
+    } else if (info?.rootDir) {
+      if (context) {
+        context.telemetry.properties.devContainerWorkspaceArg = 'root-dir';
+      }
+      await vscode.commands.executeCommand('remote-containers.openFolder', vscode.Uri.file(info.rootDir));
     } else {
       if (context) {
-        context.telemetry.properties.devContainerWorkspaceArg = 'false';
+        context.telemetry.properties.devContainerWorkspaceArg = 'reopen-fallback';
       }
       await vscode.commands.executeCommand('remote-containers.reopenInContainer');
     }
@@ -111,21 +117,21 @@ export async function tryReopenInDevContainer(context?: IActionContext): Promise
 }
 
 /** Attempt to locate a .code-workspace file starting from basePath or using VS Code's current workspace reference. */
-function findWorkspaceFilePath(basePath?: string): string | undefined {
-  // If VS Code already knows the workspace file, use it first.
+function findWorkspaceFileAndRoot(basePath?: string): { workspaceFilePath: string; rootDir: string } | undefined {
+  // Prefer VS Code's current workspace file if present.
   if (vscode.workspace.workspaceFile) {
-    return vscode.workspace.workspaceFile.fsPath;
+    const ws = vscode.workspace.workspaceFile.fsPath;
+    return { workspaceFilePath: ws, rootDir: path.dirname(ws) };
   }
   if (!basePath) {
     return undefined;
   }
-  // Check current directory then walk up to 3 levels similar to detection logic.
-  const maxLevels = 3;
+  const maxLevels = 5;
   let current = basePath;
   for (let i = 0; i <= maxLevels; i++) {
     const wsFile = firstWorkspaceFileInDir(current);
     if (wsFile) {
-      return wsFile;
+      return { workspaceFilePath: wsFile, rootDir: path.dirname(wsFile) };
     }
     const parent = path.dirname(current);
     if (parent === current) {
