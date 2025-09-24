@@ -27,9 +27,10 @@ export interface FloatingRunButtonProps {
   saveDraftWorkflow: (workflowDefinition: Workflow, customCodeData: any, onSuccess: () => void) => Promise<any>;
   onRun?: (runId: string) => void;
   isDarkMode: boolean;
+  isDraftMode?: boolean;
 }
 
-export const FloatingRunButton = ({ id: _id, saveDraftWorkflow, onRun, isDarkMode }: FloatingRunButtonProps) => {
+export const FloatingRunButton = ({ id: _id, saveDraftWorkflow, onRun, isDarkMode, isDraftMode }: FloatingRunButtonProps) => {
   const intl = useIntl();
 
   const dispatch = useDispatch();
@@ -92,7 +93,7 @@ export const FloatingRunButton = ({ id: _id, saveDraftWorkflow, onRun, isDarkMod
       callbackInfo.method = method;
       // Wait 0.5 seconds, running too fast after saving causes 500 error
       await new Promise((resolve) => setTimeout(resolve, 500));
-      const runResponse = await RunService().runTrigger(callbackInfo);
+      const runResponse = await RunService().runTrigger(callbackInfo, undefined, isDraftMode);
       const runId = runResponse?.responseHeaders?.['x-ms-workflow-run-id'] ?? runResponse?.headers?.['x-ms-workflow-run-id'];
       onRun?.(runId);
     } catch (_error: any) {
