@@ -1,4 +1,5 @@
 export * from './Designer';
+export * from './DesignerTreeView/DesignerTreeView';
 export * from './ThemeObservable';
 export * from './panel';
 export * from './menuItems';

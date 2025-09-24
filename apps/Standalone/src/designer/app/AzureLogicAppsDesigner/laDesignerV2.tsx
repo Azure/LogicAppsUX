@@ -59,6 +59,7 @@ import {
   DesignerProvider,
   BJSWorkflowProvider,
   Designer,
+  DesignerTreeView,
   getReactQueryClient,
   serializeBJSWorkflow,
   store as DesignerStore,
@@ -653,14 +654,18 @@ const DesignerEditor = () => {
                   <div style={{ display: 'flex', flexDirection: 'row', flexGrow: 1, height: '80%' }}>
                     <RunHistoryPanel collapsed={!isMonitoringView} onRunSelected={onRunSelected} />
                     <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column', position: 'relative' }}>
-                      <Designer />
-                      <FloatingRunButton
-                        id={workflowId}
-                        saveDraftWorkflow={saveWorkflowFromDesigner}
-                        onRun={onRun}
-                        isDarkMode={isDarkMode}
-                      />
+											{!isMonitoringView ? (
+												<Designer />
+											) : (
+												<DesignerTreeView />
+											)}
                     </div>
+										<FloatingRunButton
+											id={workflowId}
+											saveDraftWorkflow={saveWorkflowFromDesigner}
+											onRun={onRun}
+											isDarkMode={isDarkMode}
+										/>
                   </div>
                 )}
                 {isCodeView && <CodeViewEditor ref={codeEditorRef} workflowKind={workflow?.kind} />}
