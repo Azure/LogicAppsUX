@@ -519,6 +519,7 @@ const DesignerEditor = () => {
     if (isMonitoringView && runInstanceData) {
       setWorkflow((previousWorkflow?: Workflow) => {
         if (!previousWorkflow) {
+          // Do not update the workflow if previousWorkflow is undefined; return previous value unchanged
           return previousWorkflow;
         }
         return {
