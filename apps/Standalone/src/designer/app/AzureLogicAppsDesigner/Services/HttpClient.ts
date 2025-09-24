@@ -154,7 +154,7 @@ function isArmResourceId(resourceId: string): boolean {
 function parseResponse(response: any, options: HttpRequestOptions<any>) {
   if (options?.returnHeaders) {
     return {
-      headers: response?.headers,
+      responseHeaders: response?.headers,
       ...response.data,
     };
   }
