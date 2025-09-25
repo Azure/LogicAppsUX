@@ -3,9 +3,6 @@ import { ProviderWrappedContext } from './ProviderWrappedContext';
 import type { DesignerOptionsState, ServiceOptions } from './state/designerOptions/designerOptionsInterfaces';
 import { initDesignerOptions } from './state/designerOptions/designerOptionsSlice';
 import { store } from './store';
-import { AzureThemeDark } from '@fluentui/azure-themes/lib/azure/AzureThemeDark';
-import { AzureThemeLight } from '@fluentui/azure-themes/lib/azure/AzureThemeLight';
-import { ThemeProvider } from '@fluentui/react';
 import { FluentProvider, webDarkTheme, webLightTheme } from '@fluentui/react-components';
 import type { OnErrorFn as OnIntlErrorFn } from '@formatjs/intl';
 import { IntlProvider } from '@microsoft/logic-apps-shared';
@@ -13,6 +10,7 @@ import type React from 'react';
 import { useCallback, useEffect, useMemo } from 'react';
 import { Provider as ReduxProvider, useDispatch } from 'react-redux';
 import { LayoutProvider } from './graphlayout';
+import { ThemeProvider } from '@fluentui/react';
 
 export interface DesignerProviderProps {
   key?: string;
@@ -35,7 +33,6 @@ const OptionsStateSet = ({ options, children }: any) => {
 
 export const DesignerProvider = ({ id, locale = 'en', options, children }: DesignerProviderProps) => {
   const { isDarkMode } = options;
-  const azTheme = isDarkMode ? AzureThemeDark : AzureThemeLight;
   const webTheme = isDarkMode ? webDarkTheme : webLightTheme;
   const themeName = useMemo(() => (isDarkMode ? 'dark' : 'light'), [isDarkMode]);
   const onError = useCallback<OnIntlErrorFn>((err) => {
@@ -50,7 +47,7 @@ export const DesignerProvider = ({ id, locale = 'en', options, children }: Desig
     <ReduxProvider store={store}>
       <OptionsStateSet options={options}>
         <ProviderWrappedContext.Provider value={options.services}>
-          <ThemeProvider theme={azTheme} style={{ height: 'inherit' }}>
+          <ThemeProvider style={{ height: 'inherit' }}>
             <FluentProvider theme={webTheme} style={{ height: 'inherit' }}>
               <LayoutProvider>
                 <div
