@@ -1,7 +1,5 @@
 import { templateStore } from '../state/templates/store';
 import { resetTemplatesState } from '../state/global';
-import { AzureThemeDark } from '@fluentui/azure-themes/lib/azure/AzureThemeDark';
-import { AzureThemeLight } from '@fluentui/azure-themes/lib/azure/AzureThemeLight';
 import { ThemeProvider } from '@fluentui/react';
 import type { Theme } from '@fluentui/react-components';
 import { FluentProvider, themeToTokensObject, webDarkTheme, webLightTheme } from '@fluentui/react-components';
@@ -56,10 +54,7 @@ export const TemplatesDesignerProvider = ({
 }: TemplatesDesignerProviderProps) => {
   const content = (
     <TemplatesWrappedContext.Provider value={{}}>
-      <ThemeProvider
-        theme={theme === ThemeType.Light ? AzureThemeLight : AzureThemeDark}
-        style={{ flex: '1 1 1px', display: 'flex', flexDirection: 'column' }}
-      >
+      <ThemeProvider style={{ flex: '1 1 1px', display: 'flex', flexDirection: 'column' }}>
         <FluentProvider
           theme={theme === ThemeType.Light ? extendedWebLightTheme : extendedWebDarkTheme}
           style={{ flex: '1 1 1px', display: 'flex', flexDirection: 'column' }}
