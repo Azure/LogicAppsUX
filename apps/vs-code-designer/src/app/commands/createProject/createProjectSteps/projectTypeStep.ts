@@ -16,6 +16,7 @@ import * as path from 'path';
 import { AppNamespaceStep } from '../../createProject/createCustomCodeProjectSteps/AppNamespaceStep';
 import type { AzureWizardExecuteStep, IActionContext, IWizardOptions } from '@microsoft/vscode-azext-utils';
 import { AzureWizardPromptStep, nonNullProp } from '@microsoft/vscode-azext-utils';
+import { AgentCodefulFilesStep } from './agentCodefulFilesStep';
 
 // TODO(aeldridge): Move subwizard steps here into a separate "SetupProjectStep" or subwizard of LogicAppTemplateStep
 export class ProjectTypeStep extends AzureWizardPromptStep<IProjectWizardContext> {
@@ -66,7 +67,6 @@ export class ProjectTypeStep extends AzureWizardPromptStep<IProjectWizardContext
    * @param context - Project wizard context containing user selections and settings
    */
   public async prompt(context: IProjectWizardContext): Promise<void> {
-    // Set default project type and language
     // TODO(aeldridge): Add support for non-bundle-based project creation here
     context.workflowProjectType = WorkflowProjectType.Bundle;
     context.language = ProjectLanguage.JavaScript;
@@ -84,9 +84,12 @@ export class ProjectTypeStep extends AzureWizardPromptStep<IProjectWizardContext
 
     if (context.isWorkspaceWithFunctions) {
       await this.setupCustomCodeLogicApp(context, executeSteps, promptSteps);
+    } else if (context.projectType === ProjectType.agentCodeful) {
+      await this.setupAgentCodefulLogicApp(context, executeSteps, promptSteps);
     } else {
       await this.setupLogicApp(context, executeSteps, promptSteps);
     }
+
     return { promptSteps, executeSteps };
   }
 
@@ -128,16 +131,30 @@ export class ProjectTypeStep extends AzureWizardPromptStep<IProjectWizardContext
       } else {
         context.isCodeless = true; // default to codeless workflow, disabling codeful option
       }
-      if (context.projectType !== ProjectType.agentCodeful) {
-        promptSteps.push(
-          await WorkflowKindStep.create(context, {
-            isProjectWizard: true,
-            templateId: this.templateId,
-            triggerSettings: this.functionSettings,
-          })
-        );
-      }
+      promptSteps.push(
+        await WorkflowKindStep.create(context, {
+          isProjectWizard: true,
+          templateId: this.templateId,
+          triggerSettings: this.functionSettings,
+        })
+      );
     }
+  }
+
+  /**
+   * Configures steps for custom code Logic App
+   * @param context - Project wizard context
+   * @param executeSteps - List of steps to execute
+   * @param promptSteps - List of steps to prompt
+   */
+  private async setupAgentCodefulLogicApp(
+    context: IProjectWizardContext,
+    executeSteps: AzureWizardExecuteStep<IProjectWizardContext>[],
+    promptSteps: AzureWizardPromptStep<IProjectWizardContext>[]
+  ): Promise<void> {
+    executeSteps.push(new ProjectCreateStep());
+    await addInitVSCodeSteps(context, executeSteps, false);
+    promptSteps.push(new AgentCodefulFilesStep());
   }
 
   /**

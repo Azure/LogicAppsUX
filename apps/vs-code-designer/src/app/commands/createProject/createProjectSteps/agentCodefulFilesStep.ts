@@ -15,36 +15,21 @@ import {
 } from '../../../../constants';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type { FuncVersion, IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
-import { TargetFramework, ProjectType } from '@microsoft/vscode-extension-logic-apps';
+import { TargetFramework } from '@microsoft/vscode-extension-logic-apps';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import { getDebugConfigs, updateDebugConfigs } from '../../../utils/vsCodeConfig/launch';
 import { getContainingWorkspace, isMultiRootWorkspace } from '../../../utils/workspace';
-import { tryGetLocalFuncVersion } from '../../../utils/funcCoreTools/funcVersion';
 import { getDebugConfiguration } from '../../../utils/debug';
 
 /**
  * This class represents a prompt step that allows the user to set up an Azure Function project.
  */
-export class FunctionAppFilesStep extends AzureWizardPromptStep<IProjectWizardContext> {
+export class AgentCodefulFilesStep extends AzureWizardPromptStep<IProjectWizardContext> {
   public hideStepCount = true;
-
-  private csTemplateFileName = {
-    [TargetFramework.NetFx]: 'FunctionsFileNetFx',
-    [TargetFramework.Net8]: 'FunctionsFileNet8',
-    [ProjectType.rulesEngine]: 'RulesFunctionsFile',
-  };
-
-  private csprojTemplateFileName = {
-    [TargetFramework.NetFx]: 'FunctionsProjNetFx',
-    [TargetFramework.Net8]: 'FunctionsProjNet8New',
-    [ProjectType.rulesEngine]: 'RulesFunctionsProj',
-  };
-
-  private templateFolderName = {
-    [ProjectType.customCode]: 'FunctionProjectTemplate',
-    [ProjectType.rulesEngine]: 'RuleSetProjectTemplate',
-  };
+  private templateFile = 'AgentFunctionsFile';
+  private projectFile = 'AgentFunctionsProj';
+  private templatesFolder = 'AgentCodefulProjectTemplate';
 
   /**
    * Determines whether the prompt should be displayed.
@@ -60,33 +45,16 @@ export class FunctionAppFilesStep extends AzureWizardPromptStep<IProjectWizardCo
    */
   public async prompt(context: IProjectWizardContext): Promise<void> {
     // Set the functionAppName and namespaceName properties from the context wizard
-    const functionAppName = context.functionAppName;
-    const namespace = context.functionAppNamespace;
-    const targetFramework = context.targetFramework;
     const logicAppName = context.logicAppName || 'LogicApp';
-    const funcVersion = context.version ?? (await tryGetLocalFuncVersion());
 
     // Define the functions folder path using the context property of the wizard
-    const functionFolderPath = path.join(context.workspacePath, context.functionAppName);
-    await fs.ensureDir(functionFolderPath);
-
-    // Define the type of project in the workspace
-    const projectType = context.projectType;
+    await fs.ensureDir(context.projectPath);
 
     // Create the .cs file inside the functions folder
-    await this.createCsFile(functionFolderPath, functionAppName, namespace, projectType, targetFramework);
-
-    // Create the .cs files inside the functions folders for rule code projects
-    if (projectType === ProjectType.rulesEngine) {
-      await this.createRulesFiles(functionFolderPath);
-    }
+    await this.createCsFile(context.projectPath);
 
     // Create the .csproj file inside the functions folder
-    await this.createCsprojFile(functionFolderPath, functionAppName, logicAppName, projectType, targetFramework);
-
-    // Generate the Visual Studio Code configuration files in the specified folder.
-    const isNewLogicAppProject = context.shouldCreateLogicAppProject;
-    await this.createVscodeConfigFiles(functionFolderPath, targetFramework, funcVersion, logicAppName, isNewLogicAppProject);
+    await this.createCsprojFile(context.projectPath, logicAppName);
   }
 
   /**
@@ -97,38 +65,12 @@ export class FunctionAppFilesStep extends AzureWizardPromptStep<IProjectWizardCo
    * @param projectType - The workspace projet type.
    * @param targetFramework - The target framework.
    */
-  private async createCsFile(
-    functionFolderPath: string,
-    methodName: string,
-    namespace: string,
-    projectType: ProjectType,
-    targetFramework: TargetFramework
-  ): Promise<void> {
-    let templateFile: string;
-
-    if (projectType === ProjectType.rulesEngine) {
-      templateFile = this.csTemplateFileName[ProjectType.rulesEngine];
-    } else {
-      templateFile = this.csTemplateFileName[targetFramework];
-    }
-
-    const templatePath = path.join(__dirname, assetsFolderName, this.templateFolderName[projectType], templateFile);
+  private async createCsFile(functionFolderPath: string): Promise<void> {
+    const templatePath = path.join(__dirname, assetsFolderName, this.templatesFolder, this.templateFile);
     const templateContent = await fs.readFile(templatePath, 'utf-8');
 
-    const csFilePath = path.join(functionFolderPath, `${methodName}.cs`);
-    const csFileContent = templateContent.replace(/<%= methodName %>/g, methodName).replace(/<%= namespace %>/g, namespace);
-    await fs.writeFile(csFilePath, csFileContent);
-  }
-
-  /**
-   * Creates the rules files for the project.
-   * @param {string} functionFolderPath - The path of the function folder.
-   * @returns A promise that resolves when the rules files are created.
-   */
-  private async createRulesFiles(functionFolderPath: string): Promise<void> {
-    const csTemplatePath = path.join(__dirname, assetsFolderName, 'RuleSetProjectTemplate', 'ContosoPurchase');
-    const csRuleSetPath = path.join(functionFolderPath, 'ContosoPurchase.cs');
-    await fs.copyFile(csTemplatePath, csRuleSetPath);
+    const csFilePath = path.join(functionFolderPath, 'Program.cs');
+    await fs.writeFile(csFilePath, templateContent);
   }
 
   /**
@@ -138,38 +80,13 @@ export class FunctionAppFilesStep extends AzureWizardPromptStep<IProjectWizardCo
    * @param projectType - The workspace projet type.
    * @param targetFramework - The target framework.
    */
-  private async createCsprojFile(
-    functionFolderPath: string,
-    methodName: string,
-    logicAppName: string,
-    projectType: ProjectType,
-    targetFramework: TargetFramework
-  ): Promise<void> {
-    let templateFile: string;
-
-    if (projectType === ProjectType.rulesEngine) {
-      templateFile = this.csprojTemplateFileName[ProjectType.rulesEngine];
-    } else {
-      templateFile = this.csprojTemplateFileName[targetFramework];
-    }
-
-    const templatePath = path.join(__dirname, assetsFolderName, this.templateFolderName[projectType], templateFile);
+  private async createCsprojFile(functionFolderPath: string, logicAppName: string): Promise<void> {
+    const templatePath = path.join(__dirname, assetsFolderName, this.templatesFolder, this.projectFile);
     const templateContent = await fs.readFile(templatePath, 'utf-8');
 
-    const csprojFilePath = path.join(functionFolderPath, `${methodName}.csproj`);
-    let csprojFileContent: string;
-    if (targetFramework === TargetFramework.Net8 && projectType === ProjectType.customCode) {
-      csprojFileContent = templateContent.replace(
-        /<LogicAppFolderToPublish>\$\(MSBuildProjectDirectory\)\\..\\LogicApp<\/LogicAppFolderToPublish>/g,
-        `<LogicAppFolderToPublish>$(MSBuildProjectDirectory)\\..\\${logicAppName}</LogicAppFolderToPublish>`
-      );
-    } else {
-      csprojFileContent = templateContent.replace(
-        /<LogicAppFolder>LogicApp<\/LogicAppFolder>/g,
-        `<LogicAppFolder>${logicAppName}</LogicAppFolder>`
-      );
-    }
-    await fs.writeFile(csprojFilePath, csprojFileContent);
+    const csprojFilePath = path.join(functionFolderPath, `${logicAppName}.csproj`);
+
+    await fs.writeFile(csprojFilePath, templateContent);
   }
 
   /**

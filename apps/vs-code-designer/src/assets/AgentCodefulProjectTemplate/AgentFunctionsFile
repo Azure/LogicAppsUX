@@ -2,78 +2,99 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // -----------------------------------------------------------
 
-namespace <%= namespace %>
+using System;
+using Microsoft.Azure.Workflows.Sdk.Agents;
+
+namespace AgentCodefulNamespace;
+
+
+/// <summary>
+/// Main Class.
+/// </summary>
+public class Program
 {
-    using System;
-    using Microsoft.Azure.Workflows.Sdk.Agents;
-
     /// <summary>
-    /// Workflow definition
+    /// Main Class.
     /// </summary>
-    public static class <%= methodName %>
+    public static void Main()
     {
-        /// <summary>
-        /// Initializes workflow.
-        /// </summary>
-        [WorkflowInitialization]
-        public static void InitializeCodefulWorkflows()
-        {
-            Console.WriteLine("Creating a workflow definition InitializeCodefulWorkflows net8");
+        // Configure the worker.
+        var host = new HostBuilder()
+            .ConfigureFunctionsWorkerDefaults()
+            .ConfigureServices(services => WorkflowAgentBuilderFactory.ConfigureServices(services))
+            .Build();
 
-            var workflowBuilder = WorkflowAgentBuilderFactory.CreateWorkflowAgentBuilder("newFlow");
-            var agent = new AgentBuilder
+        // Create a workflow agent builder for the "TestFlow" workflow.
+        var builder = WorkflowAgentBuilderFactory.CreateWorkflowAgentBuilder(flowName: "TestFlow");
+
+        #region agent configuration
+        var agent = new AgentBuilder
+        {
+            AgentModelType = AgentModelType.AzureOpenAI,
+            DeploymentId = "gpt-4.1",
+            AgentModelSettings = new AgentModelSettings
             {
-                AgentModelType = AgentModelType.AzureOpenAI,
-                DeploymentId = "gpt-4.1",
-                AgentModelSettings = new AgentModelSettings
+                AgentChatCompletionSettings = new AgentChatCompletionSettings
                 {
-                    AgentChatCompletionSettings = new AgentChatCompletionSettings
-                    {
-                        MaxTokens = 1000,
-                        Temperature = 0.7,
-                    },
-                    DeploymentModelProperties = new AgentDeploymentModelProperties
-                    {
-                        Format = "OpenAI",
-                        Version = "2025-04-14",
-                        Name = "gpt-4.1",
-                    }
+                    MaxTokens = 3000,
+                    Temperature = 0,
+                    FrequencyPenalty = 0.1,
+                    PresencePenalty = 0.1,
+                    TopP = 0.1,
                 },
-                Messages = new AgentPromptMessage[]
-                    {
+                DeploymentModelProperties = new AgentDeploymentModelProperties
+                {
+                    Name = "gpt-4o",
+                    Format = "OpenAI",
+                    Version = "2024-11-20"
+                }
+            },
+            Messages = new AgentPromptMessage[]
+                {
                     new AgentPromptMessage
                     {
                         Role = MessageRole.System,
-                        Content = "You are a helpful assistant that sends a message to service bus."
+                        Content = "You are an agent to get the weather. Greet the user warmly and provide the current weather conditions for their location, including temperature, weather type (e.g., sunny, cloudy, rainy), humidity, and wind speed. If a forecast is available, summarize the expected weather for the next 24 hours. Make the response clear and conversational, and suggest whether it’s a good day for outdoor activities based on the weather.\r\n\r\n"
                     }
-                    },
-                ConnectionName = "agent-2",
-            };
-            var toolBuilder = new AgentTool<MyObject>();
+                },
+            ConnectionName = "agent-2",
+        };
+        #endregion
 
-            agent.AddTool(b =>
+        #region Add tool to the agent
+        agent.AddTool(b =>
             {
-                var action = b.GetManagedConnectors().Msnweather.CurrentWeatherAsync("connectionid", location => "WA", units: b1 => "Celsius");
-                b.AddAction(action);
+                var getCurrentWeatherAction = b.GetManagedConnectors().Msnweather.CurrentWeather(
+                    connectionId: "msnweather",
+                    location: b => $"{b.Parameters.CurrentWeatherLocation}",
+                    units: b1 => "I");
+                b.AddAction(getCurrentWeatherAction);
+
             },
-            description: "Test",
-            parameters: new MyObject());
+           description: "Gets the weather",
+           parameters: new WeatherObject());
+        #endregion
 
-            workflowBuilder.AddAgent(() => agent);
-            workflowBuilder.BuildConversationalFlow();
+        builder.AddAgent(agent);
+        builder.BuildConversationalFlow();
 
-            Console.WriteLine("Workflow Template (JSON):\n" + workflowBuilder.GetFlowDefinition().Kind);
-        }
-
-        /// <summary>
-        /// My object class.
-        /// </summary>
-        public class MyObject
-        {
-            /// <summary>
-            /// x property.
-            /// </summary>
-            public int X { get; set; }
-        }
+        WorkflowAgentBuilderFactory.CreateWorkflows();
+        host.Run();
     }
+}
+
+/// <summary>
+/// Weather agent parameter class.
+/// </summary>
+public class WeatherObject
+{
+    /// <summary>
+    /// current weather location property.
+    /// </summary>
+    public string CurrentWeatherLocation { get; set; }
+
+    /// <summary>
+    /// current weather location property.
+    /// </summary>
+    public string Weatherdetails { get; set; }
 }

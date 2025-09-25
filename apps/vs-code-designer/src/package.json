@@ -54,6 +54,11 @@
         "category": "Azure Logic Apps"
       },
       {
+        "command": "azureLogicAppsStandard.openRunHistory",
+        "title": "Open run history",
+        "category": "Azure Logic Apps"
+      },
+      {
         "command": "azureLogicAppsStandard.viewContent",
         "title": "View content",
         "category": "Azure Logic Apps"
@@ -701,12 +706,17 @@
         },
         {
           "command": "azureLogicAppsStandard.openOverview",
-          "when": "resourceFilename==workflow.json || resourceExtname==.cs",
+          "when": "resourceFilename==workflow.json",
           "group": "navigation@1"
         },
         {
           "command": "azureLogicAppsStandard.openDesigner",
           "when": "resourceFilename==workflow.json",
+          "group": "navigation@3"
+        },
+        {
+          "command": "azureLogicAppsStandard.openRunHistory",
+          "when": "resourceFilename==Program.cs",
           "group": "navigation@3"
         },
         {
@@ -754,6 +764,10 @@
         {
           "command": "azureLogicAppsStandard.openDesigner",
           "when": "resourceFilename==workflow.json"
+        },
+        {
+          "command": "azureLogicAppsStandard.openRunHistory",
+          "when": "resourceFilename==Program.cs"
         },
         {
           "command": "azureLogicAppsStandard.viewContent",
