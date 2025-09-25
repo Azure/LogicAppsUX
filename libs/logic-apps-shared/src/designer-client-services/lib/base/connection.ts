@@ -70,6 +70,10 @@ export abstract class BaseConnectionService implements IConnectionService {
     return this._subscriptionLocationsWebUrl;
   }
 
+  isAgenticConsumption(connector: Connector): boolean {
+    return connector?.name === 'agent' || connector?.id === '/subscriptions/agentic/connector/agent';
+  }
+
   async getSwaggerFromConnector(connectorId: string): Promise<OpenAPIV2.Document> {
     if (!isArmResourceId(connectorId)) {
       return null as any;
@@ -106,7 +110,18 @@ export abstract class BaseConnectionService implements IConnectionService {
 
   abstract getConnector(connectorId: string, getCached?: boolean): Promise<Connector>;
 
-  async getConnection(connectionId: string): Promise<Connection> {
+  async getConnection(connectionId: string, connector?: Connector): Promise<Connection> {
+    if (!connector || this.isAgenticConsumption(connector)) {
+      return {
+        id: 'agentic-consumption-connection',
+        name: 'Agentic Consumption Connection',
+        properties: {
+          api: { id: connector?.id ?? 'agentic-consumption' },
+          displayName: 'Agentic Consumption Connection',
+        },
+      } as Connection;
+    }
+
     if (isArmResourceId(connectionId)) {
       return this.getConnectionInApiHub(connectionId);
     }
@@ -230,7 +245,11 @@ export abstract class BaseConnectionService implements IConnectionService {
     // No action needed, implementation class should override if there is any
   }
 
-  protected async testConnection(connection: Connection): Promise<void> {
+  protected async testConnection(connection: Connection, connector?: Connector): Promise<void> {
+    if (!connector || this.isAgenticConsumption(connector)) {
+      // No test needed for agentic consumption
+      return;
+    }
     let response: HttpResponse<any> | undefined = undefined;
     const testLink = connection.properties?.testLinks?.[0];
     try {

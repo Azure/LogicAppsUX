@@ -3,7 +3,6 @@ import { makeStyles, tokens } from '@fluentui/react-components';
 export const useMcpDetailsStyles = makeStyles({
   container: {
     display: 'flex',
-    alignItems: 'center',
     gap: tokens.spacingHorizontalS,
   },
   labelSection: {
@@ -19,5 +18,9 @@ export const useMcpDetailsStyles = makeStyles({
   },
   combobox: {
     width: '100%',
+  },
+  linkSection: {
+    paddingTop: tokens.spacingVerticalXS,
+    paddingLeft: tokens.spacingHorizontalXXS,
   },
 });

@@ -8,6 +8,8 @@ import {
   type ParameterInfo,
   type ConnectionReferences,
   type ConnectionsData,
+  getIntl,
+  ResourceService,
 } from '@microsoft/logic-apps-shared';
 import { getConnectorWithSwagger } from '../../queries/connections';
 import type { DependencyInfo, NodeInputs, NodeOperation, NodeOperationInputsData } from '../../state/operation/operationMetadataSlice';
@@ -179,4 +181,30 @@ export const getUnsupportedOperations = (nodeOperations: NodeOperationInputsData
 
 const getDynamicSchemaDependencies = (dependencies: Record<string, DependencyInfo>): DependencyInfo[] => {
   return Object.values(dependencies).filter((dependency) => dependency.dependencyType === 'ApiSchema');
+};
+
+export const validateNameAvailability = async (name: string, resourceIdPrefix: string, apiVersion: string): Promise<string | undefined> => {
+  const intl = getIntl();
+  const nameNotAvailableMessage = intl.formatMessage(
+    {
+      defaultMessage: 'The name {name} is already in use. Please choose a different name.',
+      id: 'I1xjeq',
+      description: 'Error message when the name is already in use',
+    },
+    { name }
+  );
+  const generalErrorMessage = intl.formatMessage({
+    defaultMessage: 'An error occurred while checking the name availability. Please try again later.',
+    id: 'vWR0op',
+    description: 'General error message for name availability check failure',
+  });
+  try {
+    await ResourceService().getResource(`${resourceIdPrefix}/${name}`, { 'api-version': apiVersion });
+    return nameNotAvailableMessage;
+  } catch (error: any) {
+    if (error?.httpStatusCode === 404 || error?.response?.status === 404) {
+      return undefined;
+    }
+    return error.message ?? generalErrorMessage;
+  }
 };

@@ -12,8 +12,10 @@ import { isUndefinedOrEmptyString } from '@microsoft/logic-apps-shared';
 import { getWorkflowResourcesInTemplate } from '../../../core';
 import { useCallback } from 'react';
 import { getCloneWorkflowName } from '../../../core/clonetostandard/utils/helper';
+import { useIntl } from 'react-intl';
 
 export const CloneResourcePicker = () => {
+  const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const {
     sourceApps,
@@ -66,6 +68,13 @@ export const CloneResourcePicker = () => {
       onLogicAppSelect={handleOnLogicAppSelect}
       onLogicAppInstanceSelect={(_value) => {}}
       showErrorMessage={runValidation}
+      hintTooltips={{
+        logicapp: intl.formatMessage({
+          defaultMessage: 'Keep or edit the default name for the destination Standard logic app.',
+          id: 'hN6rCv',
+          description: 'Description for the destination logic app',
+        }),
+      }}
     />
   );
 };

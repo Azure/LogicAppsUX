@@ -13,7 +13,7 @@ describe('debug', () => {
       it('should return launch configuration for .NET 8 custom code with v4 function runtime', () => {
         const result = getDebugConfiguration(FuncVersion.v4, 'TestLogicApp', TargetFramework.Net8);
         expect(result).toEqual({
-          name: 'Run/debug logic app with local function TestLogicApp',
+          name: 'Run/Debug logic app with local function TestLogicApp',
           type: 'logicapp',
           request: 'launch',
           funcRuntime: 'coreclr',
@@ -26,7 +26,7 @@ describe('debug', () => {
         const result = getDebugConfiguration(FuncVersion.v1, 'TestLogicApp', TargetFramework.NetFx);
 
         expect(result).toEqual({
-          name: 'Run/debug logic app with local function TestLogicApp',
+          name: 'Run/Debug logic app with local function TestLogicApp',
           type: 'logicapp',
           request: 'launch',
           funcRuntime: 'clr',
@@ -39,7 +39,7 @@ describe('debug', () => {
         const result = getDebugConfiguration(FuncVersion.v3, 'TestLogicApp', TargetFramework.NetFx);
 
         expect(result).toEqual({
-          name: 'Run/debug logic app with local function TestLogicApp',
+          name: 'Run/Debug logic app with local function TestLogicApp',
           type: 'logicapp',
           request: 'launch',
           funcRuntime: 'coreclr',
@@ -52,7 +52,7 @@ describe('debug', () => {
         const result = getDebugConfiguration(FuncVersion.v2, 'MyApp', TargetFramework.Net8);
 
         expect(result).toEqual({
-          name: 'Run/debug logic app with local function MyApp',
+          name: 'Run/Debug logic app with local function MyApp',
           type: 'logicapp',
           request: 'launch',
           funcRuntime: 'coreclr',
@@ -67,7 +67,7 @@ describe('debug', () => {
         const result = getDebugConfiguration(FuncVersion.v1, 'TestLogicApp');
 
         expect(result).toEqual({
-          name: 'Run/debug logic app TestLogicApp',
+          name: 'Run/Debug logic app TestLogicApp',
           type: 'clr',
           request: 'attach',
           processId: `\${command:${extensionCommand.pickProcess}}`,
@@ -78,7 +78,7 @@ describe('debug', () => {
         const result = getDebugConfiguration(FuncVersion.v2, 'TestLogicApp');
 
         expect(result).toEqual({
-          name: 'Run/debug logic app TestLogicApp',
+          name: 'Run/Debug logic app TestLogicApp',
           type: 'coreclr',
           request: 'attach',
           processId: `\${command:${extensionCommand.pickProcess}}`,
@@ -89,7 +89,7 @@ describe('debug', () => {
         const result = getDebugConfiguration(FuncVersion.v3, 'TestLogicApp');
 
         expect(result).toEqual({
-          name: 'Run/debug logic app TestLogicApp',
+          name: 'Run/Debug logic app TestLogicApp',
           type: 'coreclr',
           request: 'attach',
           processId: `\${command:${extensionCommand.pickProcess}}`,
@@ -100,7 +100,7 @@ describe('debug', () => {
         const result = getDebugConfiguration(FuncVersion.v4, 'MyLogicApp');
 
         expect(result).toEqual({
-          name: 'Run/debug logic app MyLogicApp',
+          name: 'Run/Debug logic app MyLogicApp',
           type: 'coreclr',
           request: 'attach',
           processId: `\${command:${extensionCommand.pickProcess}}`,
@@ -113,7 +113,7 @@ describe('debug', () => {
         const result = getDebugConfiguration(FuncVersion.v4, '', TargetFramework.Net8);
 
         expect(result).toEqual({
-          name: 'Run/debug logic app with local function ',
+          name: 'Run/Debug logic app with local function ',
           type: 'logicapp',
           request: 'launch',
           funcRuntime: 'coreclr',
@@ -126,7 +126,7 @@ describe('debug', () => {
         const result = getDebugConfiguration(FuncVersion.v3, '');
 
         expect(result).toEqual({
-          name: 'Run/debug logic app ',
+          name: 'Run/Debug logic app ',
           type: 'coreclr',
           request: 'attach',
           processId: `\${command:${extensionCommand.pickProcess}}`,
@@ -138,7 +138,7 @@ describe('debug', () => {
         const result = getDebugConfiguration(FuncVersion.v4, logicAppName);
 
         expect(result).toEqual({
-          name: `Run/debug logic app ${logicAppName}`,
+          name: `Run/Debug logic app ${logicAppName}`,
           type: 'coreclr',
           request: 'attach',
           processId: `\${command:${extensionCommand.pickProcess}}`,

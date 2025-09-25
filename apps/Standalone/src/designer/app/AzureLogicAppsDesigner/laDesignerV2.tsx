@@ -2,8 +2,8 @@ import { environment } from '../../../environments/environment';
 import type { AppDispatch, RootState } from '../../state/store';
 import { changeRunId, setIsChatBotEnabled, setMonitoringView, setReadOnly, setRunHistoryEnabled } from '../../state/workflowLoadingSlice';
 import { DesignerCommandBar } from './DesignerCommandBarV2';
-import type { ConnectionAndAppSetting, ConnectionReferenceModel, ConnectionsData, ParametersData } from './Models/Workflow';
-import { Artifact } from './Models/Workflow';
+import type { ConnectionAndAppSetting, ConnectionReferenceModel, ConnectionsData, NotesData, ParametersData } from './Models/Workflow';
+import { Artifact, VfsArtifact } from './Models/Workflow';
 import type { WorkflowApp } from './Models/WorkflowApp';
 import { ArtifactService } from './Services/Artifact';
 import { ChildWorkflowService } from './Services/ChildWorkflow';
@@ -23,6 +23,7 @@ import {
   useWorkflowAndArtifactsStandard,
   useWorkflowApp,
   validateWorkflowStandard,
+  deployArtifacts,
 } from './Services/WorkflowAndArtifacts';
 import { ArmParser } from './Utilities/ArmParser';
 import { WorkflowUtility, addConnectionInJson, addOrUpdateAppSettings } from './Utilities/Workflow';
@@ -109,36 +110,51 @@ const DesignerEditor = () => {
   const isHybridLogicApp = hostingPlan === 'hybrid';
   const workflowName = workflowId.split('/').splice(-1)[0];
   const siteResourceId = new ArmParser(workflowId).topmostResourceId;
-  const { data: customCodeData, isLoading: customCodeLoading } = useAllCustomCodeFiles(appId, workflowName, isHybridLogicApp);
-  const { data, isLoading, isError, error } = useWorkflowAndArtifactsStandard(workflowId);
+  const {
+    data: customCodeData,
+    isLoading: customCodeLoading,
+    refetch: customCodeRefetch,
+  } = useAllCustomCodeFiles(appId, workflowName, isHybridLogicApp);
+  const { data: artifactData, isLoading: artifactsLoading, isError, error } = useWorkflowAndArtifactsStandard(workflowId);
   const { data: settingsData, isLoading: settingsLoading, isError: settingsIsError, error: settingsError } = useAppSettings(siteResourceId);
   const { data: workflowAppData, isLoading: appLoading } = useWorkflowApp(siteResourceId, useHostingPlan());
   const { data: tenantId } = useCurrentTenantId();
   const { data: objectId } = useCurrentObjectId();
+
+  // State props
   const [designerID, setDesignerID] = useState(guid());
-  const [workflow, setWorkflow] = useState<Workflow>({
-    ...data?.properties.files[Artifact.WorkflowFile],
-    id: guid(),
-  });
+  const [workflow, setWorkflow] = useState<Workflow>(); // Current workflow on the designer
   const [isDesignerView, setIsDesignerView] = useState(true);
   const [isCodeView, setIsCodeView] = useState(false);
+  const [isDraftMode, setIsDraftMode] = useState(true);
 
   const codeEditorRef = useRef<{ getValue: () => string | undefined; hasChanges: () => boolean }>(null);
-  const originalConnectionsData = useMemo(() => data?.properties.files[Artifact.ConnectionsFile] ?? {}, [data?.properties.files]);
+  const originalConnectionsData = useMemo(
+    () => artifactData?.properties.files[Artifact.ConnectionsFile] ?? {},
+    [artifactData?.properties.files]
+  );
   const originalCustomCodeData = useMemo(() => Object.keys(customCodeData ?? {}), [customCodeData]);
-  const parameters = useMemo(() => data?.properties.files[Artifact.ParametersFile] ?? {}, [data?.properties.files]);
+  const prodWorkflow = useMemo(() => artifactData?.properties.files[Artifact.WorkflowFile], [artifactData?.properties.files]);
+  const draftWorkflow = useMemo(() => customCodeData?.[Artifact.DraftFile], [customCodeData]);
+  const parameters = useMemo(() => artifactData?.properties.files[Artifact.ParametersFile] ?? {}, [artifactData?.properties.files]);
+  const notes = useMemo(() => customCodeData?.[VfsArtifact.NotesFile] ?? {}, [customCodeData]);
   const queryClient = getReactQueryClient();
   const displayCopilotChatbot = showChatBot && isDesignerView;
-
   const connectionsData = useMemo(
     () => resolveConnectionsReferences(JSON.stringify(clone(originalConnectionsData ?? {})), parameters, settingsData?.properties ?? {}),
     [originalConnectionsData, parameters, settingsData?.properties]
   );
+  const connectionReferences = WorkflowUtility.convertConnectionsDataToReferences(connectionsData);
+  const { data: runInstanceData } = useRun(runId);
 
   const addConnectionDataInternal = async (connectionAndSetting: ConnectionAndAppSetting): Promise<void> => {
     addConnectionInJson(connectionAndSetting, connectionsData ?? {});
     addOrUpdateAppSettings(connectionAndSetting.settings, settingsData?.properties ?? {});
   };
+
+  const switchWorkflowMode = useCallback((draftMode: boolean) => {
+    setIsDraftMode(draftMode);
+  }, []);
 
   const getConnectionConfiguration = async (connectionId: string): Promise<any> => {
     if (!connectionId) {
@@ -162,11 +178,32 @@ const DesignerEditor = () => {
     return undefined;
   };
 
-  const connectionReferences = WorkflowUtility.convertConnectionsDataToReferences(connectionsData);
+  const saveDraftWorkflow = useCallback(
+    (workflow: Workflow) => {
+      return deployArtifacts(siteResourceId, workflowName, workflow, undefined, undefined, undefined, true);
+    },
+    [siteResourceId, workflowName]
+  );
 
-  const discardAllChanges = () => {
+  const resetDraftWorkflow = useCallback(async () => {
+    const response = await saveDraftWorkflow(prodWorkflow);
+
+    if (response.status >= 200 && response.status < 300) {
+      // Draft created successfully
+      customCodeRefetch();
+      return Promise.resolve();
+    }
+    return Promise.reject(`Error resetting draft workflow: ${response.status} - ${response.statusText}`);
+  }, [customCodeRefetch, prodWorkflow, saveDraftWorkflow]);
+
+  const discardAllChanges = useCallback(() => {
     setDesignerID(guid());
-  };
+
+    if (isDraftMode) {
+      // Need to reset draft workflow to Production workflow
+      resetDraftWorkflow();
+    }
+  }, [isDraftMode, resetDraftWorkflow]);
 
   const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowAppData?.location ?? '');
   const supportsStateful = !equals(workflow?.kind, 'stateless');
@@ -192,32 +229,6 @@ const DesignerEditor = () => {
     [workflow, workflowId, connectionsData, settingsData, workflowAppData, tenantId, designerID, runId, language]
   );
 
-  // Our iframe root element is given a strange padding (not in this repo), this removes it
-  useEffect(() => {
-    const root = document.getElementById('root');
-    if (root) {
-      root.style.padding = '0px';
-      root.style.overflow = 'hidden';
-    }
-  }, []);
-
-  const { data: runInstanceData } = useRun(runId);
-
-  useEffect(() => {
-    if (isMonitoringView && runInstanceData) {
-      setWorkflow((previousWorkflow: Workflow) => {
-        return {
-          ...previousWorkflow,
-          definition: (runInstanceData.properties.workflow as any).properties.definition,
-        };
-      });
-    }
-  }, [isMonitoringView, runInstanceData]);
-
-  useEffect(() => {
-    setWorkflow(data?.properties.files[Artifact.WorkflowFile]);
-  }, [data?.properties.files]);
-
   // RUN HISTORY
 
   const toggleMonitoringView = useCallback(() => {
@@ -241,11 +252,11 @@ const DesignerEditor = () => {
     if (isMonitoringView) {
       toggleMonitoringView();
       setWorkflow({
-        ...data?.properties.files[Artifact.WorkflowFile],
+        ...artifactData?.properties.files[Artifact.WorkflowFile],
         id: guid(),
       });
     }
-  }, [data?.properties.files, isMonitoringView, toggleMonitoringView]);
+  }, [artifactData?.properties.files, isMonitoringView, toggleMonitoringView]);
 
   const onRunSelected = useCallback(
     (runId: string) => {
@@ -262,137 +273,150 @@ const DesignerEditor = () => {
     [dispatch, showMonitoringView]
   );
 
-  if (isLoading || appLoading || settingsLoading || customCodeLoading) {
-    return <></>;
-  }
-
   const originalSettings: Record<string, string> = {
     ...(settingsData?.properties ?? {}),
   };
   const originalParametersData: ParametersData = clone(parameters ?? {});
+  const originalNotesData: NotesData = clone(notes ?? {});
 
-  if (isError || settingsIsError) {
-    throw error ?? settingsError;
-  }
-
-  const saveWorkflowFromDesigner = async (
-    workflowFromDesigner: Workflow,
-    customCode: CustomCodeFileNameMapping | undefined,
-    clearDirtyState: () => void
-  ): Promise<any> => {
-    const { definition, connectionReferences, parameters } = workflowFromDesigner;
-    const workflowToSave = {
-      ...workflow,
-      definition,
-    };
-
-    delete workflowToSave.id;
-
-    const newManagedApiConnections = {
-      ...(connectionsData?.managedApiConnections ?? {}),
-    };
-    const newServiceProviderConnections: Record<string, any> = {};
-    const newAgentConnections: Record<string, any> = {};
-
-    const referenceKeys = Object.keys(connectionReferences ?? {});
-    if (referenceKeys.length) {
-      await Promise.all(
-        referenceKeys.map(async (referenceKey) => {
-          const reference = connectionReferences[referenceKey];
-          if (isArmResourceId(reference?.connection?.id) && !newManagedApiConnections[referenceKey]) {
-            // Managed API Connection
-            const {
-              api: { id: apiId },
-              connection: { id: connectionId },
-              connectionProperties,
-            } = reference;
-            const connection = await getConnectionStandard(connectionId);
-            const userIdentity = connectionProperties?.authentication?.identity;
-            const newConnectionObj = {
-              api: { id: apiId },
-              connection: { id: connectionId },
-              authentication: {
-                type: 'ManagedServiceIdentity',
-                ...optional('identity', userIdentity),
-              },
-              connectionRuntimeUrl: connection?.properties?.connectionRuntimeUrl ?? '',
-              connectionProperties,
-            };
-            newManagedApiConnections[referenceKey] = newConnectionObj;
-          } else if (reference?.connection?.id.startsWith('/connectionProviders/agent/')) {
-            // Service Provider Connection
-            const connectionKey = reference.connection.id.split('/').splice(-1)[0];
-            // We can't apply this directly in case there is a temporary key overlap
-            // We need to move the data out to a new object, delete the old data, then apply the new data at the end
-            newAgentConnections[referenceKey] = connectionsData?.agentConnections?.[connectionKey];
-            delete connectionsData?.agentConnections?.[connectionKey];
-          } else if (reference?.connection?.id.startsWith('/serviceProviders/')) {
-            // Service Provider Connection
-            const connectionKey = reference.connection.id.split('/').splice(-1)[0];
-            // We can't apply this directly in case there is a temporary key overlap
-            // We need to move the data out to a new object, delete the old data, then apply the new data at the end
-            newServiceProviderConnections[referenceKey] = connectionsData?.serviceProviderConnections?.[connectionKey];
-            delete connectionsData?.serviceProviderConnections?.[connectionKey];
-          }
-        })
-      );
-      (connectionsData as ConnectionsData).managedApiConnections = newManagedApiConnections;
-      (connectionsData as ConnectionsData).serviceProviderConnections = {
-        ...connectionsData?.serviceProviderConnections,
-        ...newServiceProviderConnections,
+  const saveWorkflowFromDesigner = useCallback(
+    async (
+      workflowFromDesigner: Workflow,
+      customCode: CustomCodeFileNameMapping | undefined,
+      clearDirtyState: () => void,
+      autoSave?: boolean
+    ): Promise<any> => {
+      const { definition, connectionReferences, parameters, notes } = workflowFromDesigner;
+      const workflowToSave = {
+        ...workflow,
+        definition,
       };
-      if (isAgentWorkflow(workflow?.kind ?? '')) {
-        (connectionsData as ConnectionsData).agentConnections = {
-          ...connectionsData?.agentConnections,
-          ...newAgentConnections,
-        };
 
-        // Assign MSI roles if needed
-        /**
-         *  This is currently only for Agentic workflows,
-         *    but we should work to make this generic in the future
-         *  The issue with making it generic is that we don't have a good way of getting the required definition names for any given connection reference
-         *  The required roles are listed on connection parameters which we don't have access to here,
-         *    and would take several requests to check for each connection, when most will not need it, leading to unnecessary slowdown during save
-         *  One option is to populate that info somewhere in the connection reference for use here,
-         *    but that is unavailable at authoring time when we are populating the values that require the roles
-         */
-        for (const [_refKey, agentConnection] of Object.entries(newAgentConnections)) {
-          if (agentConnection?.authentication?.type === 'ManagedServiceIdentity') {
-            const definitionNames = ['Azure AI User', 'Azure AI Administrator', 'Cognitive Services Contributor'];
-            const missingRoleAssignments = await getMissingRoleDefinitions(agentConnection?.resourceId, definitionNames);
-            const assignmentPromises = [];
-            for (const roleDefinition of missingRoleAssignments) {
-              assignmentPromises.push(RoleService().addAppRoleAssignmentForResource(agentConnection?.resourceId, roleDefinition.id));
+      delete workflowToSave.id;
+
+      const newManagedApiConnections = {
+        ...(connectionsData?.managedApiConnections ?? {}),
+      };
+      const newServiceProviderConnections: Record<string, any> = {};
+      const newAgentConnections: Record<string, any> = {};
+
+      const referenceKeys = Object.keys(connectionReferences ?? {});
+      if (referenceKeys.length) {
+        await Promise.all(
+          referenceKeys.map(async (referenceKey) => {
+            const reference = connectionReferences[referenceKey];
+            if (isArmResourceId(reference?.connection?.id) && !newManagedApiConnections[referenceKey]) {
+              // Managed API Connection
+              const {
+                api: { id: apiId },
+                connection: { id: connectionId },
+                connectionProperties,
+              } = reference;
+              const connection = await getConnectionStandard(connectionId);
+              const userIdentity = connectionProperties?.authentication?.identity;
+              const newConnectionObj = {
+                api: { id: apiId },
+                connection: { id: connectionId },
+                authentication: {
+                  type: 'ManagedServiceIdentity',
+                  ...optional('identity', userIdentity),
+                },
+                connectionRuntimeUrl: connection?.properties?.connectionRuntimeUrl ?? '',
+                connectionProperties,
+              };
+              newManagedApiConnections[referenceKey] = newConnectionObj;
+            } else if (reference?.connection?.id.startsWith('/connectionProviders/agent/')) {
+              // Service Provider Connection
+              const connectionKey = reference.connection.id.split('/').splice(-1)[0];
+              // We can't apply this directly in case there is a temporary key overlap
+              // We need to move the data out to a new object, delete the old data, then apply the new data at the end
+              newAgentConnections[referenceKey] = connectionsData?.agentConnections?.[connectionKey];
+              delete connectionsData?.agentConnections?.[connectionKey];
+            } else if (reference?.connection?.id.startsWith('/serviceProviders/')) {
+              // Service Provider Connection
+              const connectionKey = reference.connection.id.split('/').splice(-1)[0];
+              // We can't apply this directly in case there is a temporary key overlap
+              // We need to move the data out to a new object, delete the old data, then apply the new data at the end
+              newServiceProviderConnections[referenceKey] = connectionsData?.serviceProviderConnections?.[connectionKey];
+              delete connectionsData?.serviceProviderConnections?.[connectionKey];
             }
-            await Promise.all(assignmentPromises);
+          })
+        );
+        (connectionsData as ConnectionsData).managedApiConnections = newManagedApiConnections;
+        (connectionsData as ConnectionsData).serviceProviderConnections = {
+          ...connectionsData?.serviceProviderConnections,
+          ...newServiceProviderConnections,
+        };
+        if (isAgentWorkflow(workflow?.kind ?? '')) {
+          (connectionsData as ConnectionsData).agentConnections = {
+            ...connectionsData?.agentConnections,
+            ...newAgentConnections,
+          };
 
-            // Invalidate the cache for the role assignments
-            const cacheKey = [roleQueryKeys.appIdentityRoleAssignments, agentConnection?.resourceId];
-            const queryClient = getReactQueryClient();
-            queryClient.invalidateQueries(cacheKey);
+          // Assign MSI roles if needed
+          /**
+           *  This is currently only for Agentic workflows,
+           *    but we should work to make this generic in the future
+           *  The issue with making it generic is that we don't have a good way of getting the required definition names for any given connection reference
+           *  The required roles are listed on connection parameters which we don't have access to here,
+           *    and would take several requests to check for each connection, when most will not need it, leading to unnecessary slowdown during save
+           *  One option is to populate that info somewhere in the connection reference for use here,
+           *    but that is unavailable at authoring time when we are populating the values that require the roles
+           */
+          for (const [_refKey, agentConnection] of Object.entries(newAgentConnections)) {
+            if (agentConnection?.authentication?.type === 'ManagedServiceIdentity') {
+              const definitionNames = ['Azure AI User', 'Azure AI Administrator', 'Cognitive Services Contributor'];
+              const missingRoleAssignments = await getMissingRoleDefinitions(agentConnection?.resourceId, definitionNames);
+              const assignmentPromises = [];
+              for (const roleDefinition of missingRoleAssignments) {
+                assignmentPromises.push(RoleService().addAppRoleAssignmentForResource(agentConnection?.resourceId, roleDefinition.id));
+              }
+              await Promise.all(assignmentPromises);
+
+              // Invalidate the cache for the role assignments
+              const cacheKey = [roleQueryKeys.appIdentityRoleAssignments, agentConnection?.resourceId];
+              const queryClient = getReactQueryClient();
+              queryClient.invalidateQueries(cacheKey);
+            }
           }
         }
       }
-    }
 
-    const connectionsToUpdate = getConnectionsToUpdate(originalConnectionsData, connectionsData ?? {});
-    const customCodeToUpdate = await getCustomCodeToUpdate(originalCustomCodeData, customCode ?? {}, appId);
-    const parametersToUpdate = isEqual(originalParametersData, parameters) ? undefined : (parameters as ParametersData);
-    const settingsToUpdate = isEqual(settingsData?.properties, originalSettings) ? undefined : settingsData?.properties;
+      const connectionsToUpdate = getConnectionsToUpdate(originalConnectionsData, connectionsData ?? {});
+      const customCodeToUpdate = await getCustomCodeToUpdate(originalCustomCodeData, customCode ?? {}, appId);
+      const parametersToUpdate = isEqual(originalParametersData, parameters) ? undefined : (parameters as ParametersData);
+      const settingsToUpdate = isEqual(settingsData?.properties, originalSettings) ? undefined : settingsData?.properties;
+      const notesToUpdate = isEqual(originalNotesData, notes) ? undefined : (notes as NotesData);
 
-    await saveWorkflowStandard(
+      await saveWorkflowStandard(
+        siteResourceId,
+        [{ name: workflowName, workflow: workflowToSave }],
+        connectionsToUpdate,
+        parametersToUpdate,
+        settingsToUpdate,
+        customCodeToUpdate,
+        notesToUpdate,
+        clearDirtyState,
+        undefined,
+        autoSave
+      );
+
+      return workflowToSave;
+    },
+    [
+      appId,
+      connectionsData,
+      originalConnectionsData,
+      originalCustomCodeData,
+      originalNotesData,
+      originalParametersData,
+      originalSettings,
+      settingsData?.properties,
       siteResourceId,
-      [{ name: workflowName, workflow: workflowToSave }],
-      connectionsToUpdate,
-      parametersToUpdate,
-      settingsToUpdate,
-      customCodeToUpdate,
-      clearDirtyState
-    );
-
-    return workflowToSave;
-  };
+      workflow,
+      workflowName,
+    ]
+  );
 
   const saveWorkflowFromCode = async (clearDirtyState: () => void) => {
     try {
@@ -405,6 +429,7 @@ const DesignerEditor = () => {
         /*parameters*/ undefined,
         /*settings*/ undefined,
         /*customcode*/ undefined,
+        /*notes*/ undefined,
         clearDirtyState
       );
     } catch (error: any) {
@@ -481,6 +506,61 @@ const DesignerEditor = () => {
     }
   };
 
+  // Our iframe root element is given a strange padding (not in this repo), this removes it
+  useEffect(() => {
+    const root = document.getElementById('root');
+    if (root) {
+      root.style.padding = '0px';
+      root.style.overflow = 'hidden';
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isMonitoringView && runInstanceData) {
+      setWorkflow((previousWorkflow?: Workflow) => {
+        if (!previousWorkflow) {
+          // Do not update the workflow if previousWorkflow is undefined; return previous value unchanged
+          return previousWorkflow;
+        }
+        return {
+          ...previousWorkflow,
+          definition: (runInstanceData.properties.workflow as any).properties.definition,
+        };
+      });
+    }
+  }, [isMonitoringView, runInstanceData]);
+
+  useEffect(() => {
+    if (customCodeLoading || artifactsLoading || !prodWorkflow) {
+      return;
+    }
+
+    if (isDraftMode) {
+      if (draftWorkflow) {
+        setWorkflow(draftWorkflow as any);
+      } else {
+        resetDraftWorkflow()
+          .then(() => {
+            // Draft created successfully
+          })
+          .catch((_error) => {
+            setIsDraftMode(false);
+            setWorkflow(prodWorkflow as any);
+          });
+      }
+    } else {
+      setWorkflow(prodWorkflow as any);
+    }
+  }, [artifactsLoading, customCodeLoading, draftWorkflow, isDraftMode, prodWorkflow, resetDraftWorkflow]);
+
+  if (isError || settingsIsError) {
+    throw error ?? settingsError;
+  }
+
+  if (artifactsLoading || appLoading || settingsLoading || customCodeLoading) {
+    return <></>;
+  }
+
   return (
     <div key={designerID} style={{ height: 'inherit', width: 'inherit' }}>
       <DesignerProvider
@@ -490,7 +570,7 @@ const DesignerEditor = () => {
         options={{
           services,
           isDarkMode,
-          readOnly: isReadOnly || isMonitoringView,
+          readOnly: isReadOnly || isMonitoringView || !isDraftMode,
           isMonitoringView,
           isUnitTest,
           suppressDefaultNodeSelectFunctionality: suppressDefaultNodeSelect,
@@ -507,6 +587,7 @@ const DesignerEditor = () => {
               definition: workflow?.definition,
               connectionReferences,
               parameters,
+              notes,
               kind: workflow?.kind,
             }}
             workflowId={workflow?.id}
@@ -556,13 +637,22 @@ const DesignerEditor = () => {
                   showMonitoringView={showMonitoringView}
                   showDesignerView={showDesignerView}
                   showCodeView={showCodeView}
+                  switchWorkflowMode={switchWorkflowMode}
+                  isDraftMode={isDraftMode}
+                  prodWorkflow={artifactData?.properties.files[Artifact.WorkflowFile]}
                 />
                 {!isCodeView && (
                   <div style={{ display: 'flex', flexDirection: 'row', flexGrow: 1, height: '80%' }}>
                     <RunHistoryPanel collapsed={!isMonitoringView} onRunSelected={onRunSelected} />
                     <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column', position: 'relative' }}>
                       <Designer />
-                      <FloatingRunButton id={workflowId} saveDraftWorkflow={saveWorkflowFromDesigner} onRun={onRun} />
+                      <FloatingRunButton
+                        id={workflowId}
+                        saveDraftWorkflow={saveWorkflowFromDesigner}
+                        onRun={onRun}
+                        isDarkMode={isDarkMode}
+                        isDraftMode={isDraftMode}
+                      />
                     </div>
                   </div>
                 )}

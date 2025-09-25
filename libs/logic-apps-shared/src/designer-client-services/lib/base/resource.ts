@@ -1,4 +1,4 @@
-import { getResourceNameFromId, getTriggerFromDefinition, type ArmResource } from '../../../utils/src';
+import { getResourceNameFromId, getTriggerFromDefinition, HTTP_METHODS, type ArmResource } from '../../../utils/src';
 import { fetchAppsByQuery, getAzureResourceRecursive } from '../common/azure';
 import type { IHttpClient } from '../httpClient';
 import type { Resource, IResourceService, LogicAppResource, WorkflowResource } from '../resource';
@@ -94,9 +94,51 @@ export class BaseResourceService implements IResourceService {
     return filter ? response.filter(filter).map(mapper) : response.map(mapper);
   }
 
+  async listResources(subscriptionId: string, query: string): Promise<ArmResource<any>[]> {
+    const { baseUrl, httpClient } = this.options;
+    const uri = `${baseUrl}/providers/Microsoft.ResourceGraph/resources?api-version=2019-04-01`;
+    return fetchAppsByQuery(httpClient, uri, query, [subscriptionId]);
+  }
+
   async getResource(resourceId: string, queryParameters: Record<string, string>): Promise<ArmResource<any>> {
     const { baseUrl, httpClient } = this.options;
     const uri = `${baseUrl}${resourceId}`;
     return httpClient.get({ uri, queryParameters });
+  }
+
+  async executeResourceAction(
+    resourceId: string,
+    action: HTTP_METHODS,
+    queryParameters: Record<string, string>,
+    content?: any
+  ): Promise<any> {
+    const { baseUrl, httpClient } = this.options;
+    const uri = `${baseUrl}${resourceId}`;
+    switch (action) {
+      case HTTP_METHODS.POST:
+        return httpClient.post({ uri, queryParameters, content });
+      case HTTP_METHODS.PUT:
+        return httpClient.put({ uri, queryParameters, content });
+      case HTTP_METHODS.DELETE:
+        return httpClient.delete({ uri, queryParameters });
+      default:
+        throw new Error(`Unsupported Resource action method: ${action}`);
+    }
+  }
+
+  async executeHttpCall(uri: string, action: HTTP_METHODS, content?: any): Promise<any> {
+    const { httpClient } = this.options;
+    switch (action) {
+      case HTTP_METHODS.POST:
+        return httpClient.post({ uri, content });
+      case HTTP_METHODS.GET:
+        return httpClient.get({ uri });
+      case HTTP_METHODS.PUT:
+        return httpClient.put({ uri, content });
+      case HTTP_METHODS.DELETE:
+        return httpClient.delete({ uri });
+      default:
+        throw new Error(`Unsupported HTTP method: ${action}`);
+    }
   }
 }

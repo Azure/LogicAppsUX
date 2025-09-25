@@ -16,7 +16,7 @@ import {
 } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 import { useConnectorSectionStyles } from '../wizard/styles';
-import { McpPanelView, openConnectorPanelView } from '../../../core/state/mcp/panel/mcpPanelSlice';
+import { McpPanelView, openMcpPanelView } from '../../../core/state/mcp/panel/mcpPanelSlice';
 import { selectConnectorId, selectOperations } from '../../../core/state/mcp/mcpselectionslice';
 import { ConnectorIconWithName } from '../../templates/connections/connector';
 import { useConnectionById } from '../../../core/queries/connections';
@@ -150,7 +150,7 @@ export const ListConnectors = ({ addConnectors, addDisabled }: { addConnectors: 
       dispatch(selectConnectorId(connectorId));
       dispatch(selectOperations(connectorOperations));
       dispatch(
-        openConnectorPanelView({
+        openMcpPanelView({
           panelView: McpPanelView.CreateConnection,
         })
       );

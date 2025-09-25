@@ -8,7 +8,6 @@ import { equals, getRecordEntry, type Connector } from '@microsoft/logic-apps-sh
 import { isBuiltInConnector, isCustomConnector } from '@microsoft/designer-ui';
 import { Text, Spinner } from '@fluentui/react-components';
 import { ALLOWED_A2A_CONNECTOR_NAMES } from '../helpers';
-import { useShouldEnableACASession } from '../hooks';
 import { ConnectorCard } from './connectorCard';
 import { selectOperationGroupId } from '../../../../core/state/panel/panelSlice';
 import type { AppDispatch } from '../../../../core';
@@ -88,7 +87,6 @@ export const ConnectorBrowse = ({
   const intl = useIntl();
   const classes = useConnectorBrowseStyles();
   const dispatch = useDispatch<AppDispatch>();
-  const shouldEnableACASession = useShouldEnableACASession();
   const isA2AWorkflow = useIsA2AWorkflow();
   const isAddingToGraph = useDiscoveryPanelRelationshipIds().graphId === 'root';
 
@@ -108,10 +106,7 @@ export const ConnectorBrowse = ({
   const { data: allConnectors, isLoading } = useAllConnectors();
 
   const isAgentConnectorAllowed = useCallback((c: Connector) => c.id !== 'connectionProviders/agent', []);
-  const isACASessionAllowed = useCallback(
-    (c: Connector) => !(shouldEnableACASession === false && c.id === '/serviceProviders/acasession'),
-    [shouldEnableACASession]
-  );
+  const isACASessionAllowed = useCallback((c: Connector) => c.id !== '/serviceProviders/acasession', []);
 
   const passesRuntimeFilter = useCallback(
     (c: Connector) => {

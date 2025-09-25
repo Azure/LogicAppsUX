@@ -61,7 +61,12 @@ export const useCloneWizardTabs = ({
       await onCloneCall(sourceApps, destinationApp);
       dispatch(setSuccessfullyCloned());
     } catch (e: any) {
-      dispatch(updateErrorMessage(e?.response?.data?.message ?? e.message));
+      dispatch(
+        updateErrorMessage({
+          errorMessage: e?.response?.data?.message ?? e?.message?.message ?? e?.message,
+          showReportErrorButton: e?.response?.status && e?.response?.status >= 500,
+        })
+      );
     }
   });
 

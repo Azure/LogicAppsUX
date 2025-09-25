@@ -6,7 +6,7 @@ import { isNullOrUndefined, type Connector } from '@microsoft/logic-apps-shared'
 import { useDiscoveryPanelIsAddingTrigger, useIsAddingAgentTool } from '../../../../core/state/panel/panelSelectors';
 import { useIsWithinAgenticLoop } from '../../../../core/state/workflow/workflowSelectors';
 import { useOperationsByConnector } from '../../../../core/queries/browse';
-import { useShouldEnableNestedAgent, useShouldEnableParseDocumentWithMetadata } from '../hooks';
+import { useShouldEnableParseDocumentWithMetadata } from '../hooks';
 import constants from '../../../../common/constants';
 import { useConnectorDetailsViewStyles } from './styles/ConnectorDetailsView.styles';
 import { OperationsAccordion } from './operationsAccordion';
@@ -21,7 +21,6 @@ export const ConnectorDetailsView = ({ connector, onOperationClick }: ConnectorD
   const isTrigger = useDiscoveryPanelIsAddingTrigger();
   const isAgentTool = useIsAddingAgentTool();
   const shouldEnableParseDocWithMetadata = useShouldEnableParseDocumentWithMetadata();
-  const shouldEnableNestedAgent = useShouldEnableNestedAgent();
 
   // Fetch operations for this connector
   const connectorId = connector?.id || '';
@@ -51,7 +50,7 @@ export const ConnectorDetailsView = ({ connector, onOperationClick }: ConnectorD
         }
 
         if (data.id === 'invokeNestedAgent') {
-          if (!shouldEnableNestedAgent || !(isWithinAgenticLoop || isAgentTool)) {
+          if (!(isWithinAgenticLoop || isAgentTool)) {
             return false;
           }
         }
@@ -62,7 +61,7 @@ export const ConnectorDetailsView = ({ connector, onOperationClick }: ConnectorD
 
         return true;
       },
-    [isAgentTool, isRoot, isWithinAgenticLoop, shouldEnableNestedAgent, shouldEnableParseDocWithMetadata]
+    [isAgentTool, isRoot, isWithinAgenticLoop, shouldEnableParseDocWithMetadata]
   );
 
   const allOperations: OperationActionData[] = useMemo(() => {

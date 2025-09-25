@@ -165,6 +165,8 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
 
   const parameters = getWorkflowParameters(filterRecord(rootState.workflowParameters.definitions, (key, _) => key !== '')) ?? {};
 
+  const notes = filterRecord(rootState.notes.notes, (key, note) => !isNullOrEmpty(note.content));
+
   const serializedWorkflow: Workflow = {
     definition: {
       ...rootState.workflow.originalDefinition,
@@ -176,6 +178,7 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
     },
     connectionReferences,
     parameters,
+    notes,
   };
 
   const workflowService = WorkflowService();

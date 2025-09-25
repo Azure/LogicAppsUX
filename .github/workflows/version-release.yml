@@ -49,11 +49,12 @@ jobs:
     outputs:
       new_version: ${{ steps.version.outputs.new_version }}
       tag_name: ${{ steps.version.outputs.tag_name }}
+    permissions: write-all
     steps:
       - name: 'Checkout Github Action'
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.AUTOMATION_PAT }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
 
       - name: Set up Node.js
@@ -145,7 +146,7 @@ jobs:
       - name: 'Create GitHub Release'
         id: create-release
         env:
-          GITHUB_TOKEN: ${{ secrets.AUTOMATION_PAT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release create ${{ steps.version.outputs.tag_name }} \
             --title "Release ${{ steps.version.outputs.tag_name }}" \
@@ -157,7 +158,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: E2ETesting
     permissions:
-      contents: read
+      contents: write
       id-token: write # for Azure login
     steps:
       - name: 'Checkout Github Action'
@@ -201,7 +202,7 @@ jobs:
 
       - name: 'Upload VSIX to Release'
         env:
-          GITHUB_TOKEN: ${{ secrets.AUTOMATION_PAT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release upload ${{ needs.create-release.outputs.tag_name }} apps/vs-code-designer/dist/*.vsix --clobber
 

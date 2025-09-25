@@ -102,6 +102,14 @@ export const useRun = (runId: string | undefined) => {
     {
       ...queryOpts,
       enabled: !!runId,
+      // If the run is running, poll for updates
+      refetchInterval: () => {
+        const run = queryClient.getQueryData<Run>([runsQueriesKeys.run, runId]);
+        if (run && run.properties.status === constants.FLOW_STATUS.RUNNING) {
+          return constants.RUN_POLLING_INTERVAL_IN_MS;
+        }
+        return false;
+      },
     }
   );
 };

@@ -376,6 +376,7 @@ export const DesignerApp = () => {
                       switchToMonitoringView();
                       setRunId(newRunId ?? '');
                     }}
+                    isDarkMode={theme === Theme.Dark}
                   />
                 </div>
               </div>

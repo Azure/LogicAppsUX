@@ -10,7 +10,7 @@ import {
   useOperationAlternateSelectedNode,
   useOperationPanelSelectedNodeId,
 } from '../../../core/state/panel/panelSelectors';
-import { expandPanel, setAlternateSelectedNode, updatePanelLocation } from '../../../core/state/panel/panelSlice';
+import { setAlternateSelectedNode, updatePanelLocation } from '../../../core/state/panel/panelSlice';
 import { useUndoRedoClickToggle } from '../../../core/state/undoRedo/undoRedoSelectors';
 import { useActionMetadata, useRunData, useRunInstance } from '../../../core/state/workflow/workflowSelectors';
 import { replaceId, setNodeDescription } from '../../../core/state/workflow/workflowSlice';
@@ -82,10 +82,6 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
 
   const collapse = useCallback(() => {
     dispatch(collapsePanel());
-  }, [dispatch]);
-
-  const expand = useCallback(() => {
-    dispatch(expandPanel());
   }, [dispatch]);
 
   const handleDeleteClick = useCallback(
@@ -169,7 +165,6 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
     dispatch(setNodeDescription({ nodeId, description: newDescription }));
   };
 
-  const togglePanel = (): void => (collapsed ? expand() : collapse());
   const dismissPanel = () => dispatch(clearPanel());
 
   const unpinAction = () => dispatch(setAlternateSelectedNode({ nodeId: '' }));
@@ -241,7 +236,6 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
     <PanelContainer
       key={undoRedoClickToggle}
       {...commonPanelProps}
-      noNodeSelected={!selectedNode}
       panelScope={PanelScope.CardLevel}
       suppressDefaultNodeSelectFunctionality={suppressDefaultNodeSelectFunctionality}
       node={selectedNodeData}
@@ -255,29 +249,26 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
       showLogicAppRun={showLogicAppRunClick}
       resubmitOperation={resubmitClick}
       onUnpinAction={unpinAction}
-      toggleCollapse={() => {
-        // Only run validation when collapsing the panel
-        if (!collapsed) {
-          Object.keys(inputs?.parameterGroups ?? {}).forEach((parameterGroup) => {
-            inputs.parameterGroups[parameterGroup].parameters.forEach((parameter: any) => {
-              const validationErrors = validateParameter(
-                parameter,
-                parameter.value,
-                /* shouldValidateUnknownParameterAsError */ undefined,
-                shouldEncodeParameterValueForOperationBasedOnMetadata(operationInfo)
-              );
-              dispatch(
-                updateParameterValidation({
-                  nodeId: selectedNode,
-                  groupId: parameterGroup,
-                  parameterId: parameter.id,
-                  validationErrors,
-                })
-              );
-            });
+      onClose={() => {
+        Object.keys(inputs?.parameterGroups ?? {}).forEach((parameterGroup) => {
+          inputs.parameterGroups[parameterGroup].parameters.forEach((parameter: any) => {
+            const validationErrors = validateParameter(
+              parameter,
+              parameter.value,
+              /* shouldValidateUnknownParameterAsError */ undefined,
+              shouldEncodeParameterValueForOperationBasedOnMetadata(operationInfo)
+            );
+            dispatch(
+              updateParameterValidation({
+                nodeId: selectedNode,
+                groupId: parameterGroup,
+                parameterId: parameter.id,
+                validationErrors,
+              })
+            );
           });
-        }
-        togglePanel();
+        });
+        collapse();
       }}
       showTriggerInfo={showTriggerInfo && !readOnly}
       isTrigger={isTrigger}
