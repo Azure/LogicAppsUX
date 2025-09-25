@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { defaultFuncPort, localSettingsFileName, stopFuncTaskPostDebugSetting } from '../../../constants';
+import { defaultFuncPort, localSettingsFileName, Platform, stopFuncTaskPostDebugSetting } from '../../../constants';
 import { getLocalSettingsJson } from '../appSettings/localSettings';
 import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
 import { getWorkspaceSetting } from '../vsCodeConfig/settings';
@@ -12,10 +12,12 @@ import { registerEvent } from '@microsoft/vscode-azext-utils';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { delay } from '../delay';
-
+import * as cp from 'child_process';
+import * as os from 'os';
 export interface IRunningFuncTask {
   startTime: number;
   processId: number;
+  childProcessId?: string[];
 }
 
 export const runningFuncTaskMap: Map<vscode.WorkspaceFolder | vscode.TaskScope, IRunningFuncTask> = new Map();
@@ -82,7 +84,18 @@ async function stopFuncTaskIfRunning(context: IActionContext, debugSession: vsco
           // Wait at least 10 seconds after the func task started before calling `terminate` since that will remove task output and we want the user to see any startup errors
           await delay(Math.max(0, runningFuncTask.startTime + 10 * 1000 - Date.now()));
 
-          if (runningFuncTaskMap.get(debugSession.workspaceFolder) === runningFuncTask) {
+          if (runningFuncTaskMap.get(debugSession.workspaceFolder).processId === runningFuncTask.processId) {
+            if (os.platform() === Platform.windows) {
+              cp.exec(`taskkill /PID ${runningFuncTask.processId} /T /F`);
+              for (const pid of runningFuncTask.childProcessId || []) {
+                if (pid) {
+                  cp.exec(`taskkill /PID ${pid} /T /F`);
+                }
+              }
+            } else {
+              cp.spawn('kill', ['-9'].concat(`${process.pid}`));
+            }
+
             funcExecution.terminate();
           }
         }
