@@ -52,15 +52,15 @@ export const CreateWorkspaceStructure: React.FC = () => {
   const isLastStep = currentStep === totalSteps - 1;
 
   const intlText = {
-    CREATE_LOGICAPP: intl.formatMessage({
-      defaultMessage: 'Create logic app',
-      id: 'xKrgfN',
+    CREATE_WORKSPACE: intl.formatMessage({
+      defaultMessage: 'Create logic app workspace',
+      id: 'eagv8j',
       description: 'Create logic app workspace text.',
     }),
     CREATE_BUTTON: intl.formatMessage({
-      defaultMessage: 'Create logic app',
-      id: 'I6GRRs',
-      description: 'Create logic app button',
+      defaultMessage: 'Create Workspace',
+      id: 'XZfauP',
+      description: 'Create workspace button',
     }),
     CREATING: intl.formatMessage({
       defaultMessage: 'Creating...',
@@ -311,7 +311,7 @@ export const CreateWorkspaceStructure: React.FC = () => {
   return (
     <div className={styles.createWorkspaceContainer}>
       <Text className={styles.createWorkspaceTitle} style={{ display: 'block' }}>
-        {intlText.CREATE_LOGICAPP}
+        {intlText.CREATE_WORKSPACE}
       </Text>
 
       {renderStepNavigation()}

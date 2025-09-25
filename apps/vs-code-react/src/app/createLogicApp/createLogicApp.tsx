@@ -54,14 +54,14 @@ export const CreateLogicApp: React.FC = () => {
 
   const intlText = {
     CREATE_LOGICAPP: intl.formatMessage({
-      defaultMessage: 'Create logic app',
-      id: 'xKrgfN',
-      description: 'Create logic app workspace text.',
+      defaultMessage: 'Create Project',
+      id: 'RmJRES',
+      description: 'Create logic app project text.',
     }),
     CREATE_BUTTON: intl.formatMessage({
-      defaultMessage: 'Create logic app',
-      id: 'I6GRRs',
-      description: 'Create logic app button',
+      defaultMessage: 'Create project',
+      id: 'u+VFmh',
+      description: 'Create logic app project button',
     }),
     CREATING: intl.formatMessage({
       defaultMessage: 'Creating...',
