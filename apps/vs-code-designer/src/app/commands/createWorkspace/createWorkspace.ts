@@ -14,6 +14,7 @@ import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { ProjectLanguage, ProjectVersion } from '@microsoft/vscode-extension-logic-apps';
 import { TargetFrameworkStep } from '../createProject/createCustomCodeProjectSteps/targetFrameworkStep';
 import { LogicAppTemplateStep } from '../createProject/createProjectSteps/logicAppTemplateStep';
+import { DevcontainerStep } from './createWorkspaceSteps/devcontainerStep';
 
 // TODO(aeldridge): TargetFrameworkStep should be in a subwizard on LogicAppTemplateStep
 export async function createWorkspace(
@@ -42,6 +43,7 @@ export async function createWorkspace(
     [
       new WorkspaceFolderStep(),
       new WorkspaceNameStep(),
+      new DevcontainerStep(),
       new LogicAppTemplateStep(),
       new TargetFrameworkStep(),
       new LogicAppNameStep(),

@@ -10,12 +10,13 @@ import { LogicAppNameStep } from '../createProject/createProjectSteps/logicAppNa
 import { WorkspaceNameStep } from '../createWorkspace/createWorkspaceSteps/workspaceNameStep';
 import { AzureWizard } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { latestGAVersion, OpenBehavior } from '@microsoft/vscode-extension-logic-apps';
+import { latestGAVersion } from '@microsoft/vscode-extension-logic-apps';
 import type { ICreateFunctionOptions, IFunctionWizardContext, ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
 import { ProcessPackageStep } from './cloudToLocalSteps/processPackageStep';
 import { SelectFolderForNewWorkspaceStep } from './cloudToLocalSteps/selectFolderForNewWorkspaceStep';
 import { ExtractPackageStep } from './cloudToLocalSteps/extractPackageStep';
 import { WorkspaceSettingsStep } from '../createWorkspace/createWorkspaceSteps/workspaceSettingsStep';
+import { DevcontainerStep } from '../createWorkspace/createWorkspaceSteps/devcontainerStep';
 
 const openFolder = true;
 
@@ -43,9 +44,7 @@ export async function cloudToLocal(
     projectPath: options.folderPath,
   });
 
-  if (options.suppressOpenFolder) {
-    wizardContext.openBehavior = OpenBehavior.dontOpen;
-  } else if (!wizardContext.openBehavior) {
+  if (!wizardContext.openBehavior) {
     wizardContext.openBehavior = getWorkspaceSetting(projectOpenBehaviorSetting);
     context.telemetry.properties.openBehaviorFromSetting = String(!!wizardContext.openBehavior);
   }
@@ -57,6 +56,7 @@ export async function cloudToLocal(
       // TODO(aeldridge): Can we just use WorkspaceFolderStep instead?
       new SelectFolderForNewWorkspaceStep(),
       new WorkspaceNameStep(),
+      new DevcontainerStep(),
       new LogicAppNameStep(),
       await ProjectTypeStep.create(context, options.templateId, options.functionSettings, true),
       new WorkspaceSettingsStep(),
