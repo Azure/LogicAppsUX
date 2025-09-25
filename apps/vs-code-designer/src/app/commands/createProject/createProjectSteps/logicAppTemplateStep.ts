@@ -22,7 +22,7 @@ export class LogicAppTemplateStep extends AzureWizardPromptStep<IProjectWizardCo
 
     const placeHolder = localize('logicAppProjectTemplatePlaceHolder', 'Select a template for your new project');
     context.projectType = (await context.ui.showQuickPick(picks, { placeHolder })).data;
-    context.isWorkspaceWithFunctions = context.projectType !== ProjectType.logicApp;
+    context.isWorkspaceWithFunctions = context.projectType === ProjectType.customCode || context.projectType === ProjectType.rulesEngine;
     if (context.projectType === ProjectType.rulesEngine) {
       context.targetFramework = TargetFramework.NetFx;
     }

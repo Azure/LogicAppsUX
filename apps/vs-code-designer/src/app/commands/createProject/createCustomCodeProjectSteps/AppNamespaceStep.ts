@@ -11,7 +11,7 @@ import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-ap
 export class AppNamespaceStep extends AzureWizardPromptStep<IProjectWizardContext> {
   public hideStepCount = true;
 
-  public shouldPrompt(_context: IProjectWizardContext): boolean {
+  public shouldPrompt(): boolean {
     return true;
   }
 
