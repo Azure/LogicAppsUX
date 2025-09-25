@@ -179,7 +179,7 @@ export const LogicAppTypeStep: React.FC = () => {
               className={styles.inputControl}
             />
           )}
-          {logicAppName && workspaceName && workspaceProjectPath.path && (
+          {logicAppName && workspaceName && workspaceProjectPath.fsPath && (
             <Text
               size={200}
               style={{

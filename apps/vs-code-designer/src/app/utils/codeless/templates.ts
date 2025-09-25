@@ -4,13 +4,6 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 import { equals } from '@microsoft/logic-apps-shared';
 
-export const getCombinedWorkflowTemplate = (methodName: string, workflowType: WorkflowType, projectType: string) => {
-  if (projectType === ProjectType.logicApp) {
-    return getCodelessWorkflowTemplate(workflowType);
-  }
-  const isStateful = workflowType === WorkflowType.stateful;
-  return getWorkflowTemplate(methodName, isStateful, projectType);
-};
 /**
  * Gets the codeless workflow template.
  * @param {ProjectType} projectType - The type of the project (regular/custom code/rules engine).

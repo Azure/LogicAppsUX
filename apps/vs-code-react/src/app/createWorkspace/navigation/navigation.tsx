@@ -73,7 +73,7 @@ export const Navigation: React.FC = () => {
   const canProceed = () => {
     switch (currentStep) {
       case 0: // Project Path
-        return workspaceProjectPath.path !== '';
+        return workspaceProjectPath.fsPath !== '';
       case 1: // Workspace Name
         return workspaceName.trim() !== '';
       case 2: // Logic App Type

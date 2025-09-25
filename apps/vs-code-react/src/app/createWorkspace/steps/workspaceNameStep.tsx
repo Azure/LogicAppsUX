@@ -7,7 +7,7 @@ import type { InputOnChangeData } from '@fluentui/react-components';
 import { useCreateWorkspaceStyles } from '../createWorkspaceStyles';
 import type { RootState } from '../../../state/store';
 import type { CreateWorkspaceState } from '../../../state/createWorkspace/createWorkspaceSlice';
-import { setProjectPathAlt, setWorkspaceName } from '../../../state/createWorkspace/createWorkspaceSlice';
+import { setProjectPath, setWorkspaceName } from '../../../state/createWorkspace/createWorkspaceSlice';
 import { useIntl } from 'react-intl';
 import { useSelector, useDispatch } from 'react-redux';
 import { VSCodeContext } from '../../../webviewCommunication';
@@ -157,7 +157,7 @@ export const WorkspaceNameStep: React.FC = () => {
   };
 
   const handleProjectPathChange = (event: React.FormEvent<HTMLInputElement>, data: InputOnChangeData) => {
-    dispatch(setProjectPathAlt(data.value));
+    dispatch(setProjectPath(data.value));
     setProjectPathError(validateProjectPath(data.value));
   };
 
@@ -200,7 +200,7 @@ export const WorkspaceNameStep: React.FC = () => {
               {intlText.BROWSE_BUTTON}
             </Button>
           </div>
-          {workspaceProjectPath.path && (
+          {workspaceProjectPath.fsPath && (
             <Text
               size={200}
               style={{
@@ -220,7 +220,7 @@ export const WorkspaceNameStep: React.FC = () => {
         <Field required validationState={workspaceNameError ? 'error' : undefined} validationMessage={workspaceNameError}>
           <Label htmlFor={workspaceNameId}>{intlText.WORKSPACE_NAME_LABEL}</Label>
           <Input id={workspaceNameId} value={workspaceName} onChange={handleWorkspaceNameChange} className={styles.inputControl} />
-          {workspaceName && workspaceProjectPath.path && (
+          {workspaceName && workspaceProjectPath.fsPath && (
             <Text
               size={200}
               style={{

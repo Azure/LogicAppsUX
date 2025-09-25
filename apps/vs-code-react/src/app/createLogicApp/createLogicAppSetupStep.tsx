@@ -8,7 +8,7 @@ import type { RootState } from '../../state/store';
 import type { CreateWorkspaceState } from '../../state/createWorkspace/createWorkspaceSlice';
 import { useCreateWorkspaceStyles } from '../createWorkspace/createWorkspaceStyles';
 import { LogicAppTypeStep } from '../createWorkspace/steps/logicAppTypeStep';
-import { WorkflowTypeStepAlt } from '../createWorkspace/steps/workflowTypeStepAlt';
+import { WorkflowTypeStep } from '../createWorkspace/steps/workflowTypeStep';
 import { DotNetFrameworkStep } from '../createWorkspace/steps/dotNetFrameworkStep';
 
 export const CreateLogicAppSetupStep: React.FC = () => {
@@ -25,7 +25,7 @@ export const CreateLogicAppSetupStep: React.FC = () => {
     <div className={styles.formSection}>
       <LogicAppTypeStep />
       <DotNetFrameworkStep />
-      {!isExistingLogicApp && <WorkflowTypeStepAlt />}
+      {!isExistingLogicApp && <WorkflowTypeStep />}
     </div>
   );
 };

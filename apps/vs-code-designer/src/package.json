@@ -404,7 +404,7 @@
           "group": "1_create@1"
         },
         {
-          "command": "azureLogicAppsStandard.createNewProject",
+          "command": "azureLogicAppsStandard.createProject",
           "group": "1_create@2",
           "when": "logicApps.hasProject"
         },
@@ -678,7 +678,7 @@
           "group": "zzz_LogicApptools@1"
         },
         {
-          "command": "azureLogicAppsStandard.createNewProject",
+          "command": "azureLogicAppsStandard.createProject",
           "when": "logicApps.hasProject && explorerResourceIsRoot == true",
           "group": "zzz_LogicApptools@1"
         },

@@ -63,18 +63,15 @@ export const createWorkspaceSlice: any = createSlice({
     setCurrentStep: (state, action: PayloadAction<number>) => {
       state.currentStep = action.payload;
     },
-    setProjectPathAlt: (state, action: PayloadAction<ITargetDirectory | string>) => {
+    setProjectPath: (state, action: PayloadAction<{ targetDirectory: ITargetDirectory } | string>) => {
       if (typeof action.payload === 'string') {
         state.workspaceProjectPath = { path: action.payload, fsPath: action.payload };
-      } else if (action.payload && typeof action.payload === 'object' && 'path' in action.payload && 'fsPath' in action.payload) {
-        state.workspaceProjectPath = action.payload;
+      } else if (action.payload && typeof action.payload === 'object') {
+        const { targetDirectory } = action.payload;
+        state.workspaceProjectPath = targetDirectory;
       } else {
         state.workspaceProjectPath = { path: '', fsPath: '' };
       }
-    },
-    setProjectPath: (state, action: PayloadAction<{ targetDirectory: ITargetDirectory }>) => {
-      const { targetDirectory } = action.payload;
-      state.workspaceProjectPath = targetDirectory;
     },
     setWorkspaceName: (state, action: PayloadAction<string>) => {
       state.workspaceName = action.payload;
@@ -141,7 +138,6 @@ export const {
   initializeProject,
   setCurrentStep,
   setProjectPath,
-  setProjectPathAlt,
   setWorkspaceName,
   setLogicAppType,
   setFunctionWorkspace,

@@ -31,7 +31,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import { newGetGitIgnoreContent, gitInit, isGitInstalled, isInsideRepo } from '../../../utils/git';
 import { writeFormattedJson } from '../../../utils/fs';
-import { getCombinedWorkflowTemplate } from '../../../utils/codeless/templates';
+import { getCodelessWorkflowTemplate } from '../../../utils/codeless/templates';
 import { CreateFunctionAppFiles } from './CreateFunctionAppFiles';
 import type {
   IFunctionWizardContext,
@@ -90,10 +90,10 @@ export async function createLogicAppAndWorkflow(
   myWebviewProjectContext: IWebviewProjectContext,
   logicAppFolderPath: string
 ): Promise<void> {
-  const codelessDefinition: StandardApp = getCombinedWorkflowTemplate(
-    myWebviewProjectContext.functionName,
+  const codelessDefinition: StandardApp = getCodelessWorkflowTemplate(
+    myWebviewProjectContext.logicAppType as ProjectType,
     myWebviewProjectContext.workflowType as WorkflowType,
-    myWebviewProjectContext.logicAppType
+    myWebviewProjectContext.functionName
   );
 
   await fse.ensureDir(logicAppFolderPath);

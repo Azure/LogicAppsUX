@@ -172,7 +172,11 @@ export function deactivate(): Promise<any> {
 }
 
 export async function updateLogicAppsContext() {
-  const workspaceFolder = await getWorkspaceFolder2();
-  const logicAppOpened = await isLogicAppProjectInRoot(workspaceFolder);
-  await vscode.commands.executeCommand('setContext', 'logicApps.hasProject', logicAppOpened);
+  if (!vscode.workspace.workspaceFolders || vscode.workspace.workspaceFolders.length === 0) {
+    await vscode.commands.executeCommand('setContext', 'logicApps.hasProject', false);
+  } else {
+    const workspaceFolder = await getWorkspaceFolder2();
+    const logicAppOpened = await isLogicAppProjectInRoot(workspaceFolder);
+    await vscode.commands.executeCommand('setContext', 'logicApps.hasProject', logicAppOpened);
+  }
 }

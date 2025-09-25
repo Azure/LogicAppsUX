@@ -234,6 +234,10 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
       case ProjectName.createWorkspace:
       case ProjectName.createWorkspaceStructure: {
         switch (message.command) {
+          case ExtensionCommand.update_workspace_path: {
+            dispatch(setProjectPath(message.data));
+            break;
+          }
           case ExtensionCommand.validatePath: {
             dispatch(setPathValidationResult(message.data));
             break;
@@ -266,10 +270,6 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
           }
           case ExtensionCommand.update_export_path: {
             dispatch(updateTargetDirectory(message.data));
-            break;
-          }
-          case ExtensionCommand.update_workspace_path: {
-            dispatch(setProjectPath(message.data));
             break;
           }
           case ExtensionCommand.add_status: {

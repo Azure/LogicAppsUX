@@ -15,7 +15,7 @@ import { useSelector, useDispatch } from 'react-redux';
 // Workflow name validation regex
 export const workflowNameValidation = /^[a-z][a-z0-9]*(?:[_-][a-z0-9]+)*$/i;
 
-export const WorkflowTypeStepAlt: React.FC = () => {
+export const WorkflowTypeStep: React.FC = () => {
   const dispatch = useDispatch();
   const intl = useIntl();
   const styles = useCreateWorkspaceStyles();
@@ -76,6 +76,16 @@ export const WorkflowTypeStepAlt: React.FC = () => {
       id: 'Bft/H3',
       description: 'Autonomous agents workflow description',
     }),
+    AGENT_TITLE: intl.formatMessage({
+      defaultMessage: 'Conversational Agents',
+      id: 'fg89hL',
+      description: 'Conversational agent workflow option',
+    }),
+    AGENT_DESCRIPTION: intl.formatMessage({
+      defaultMessage: 'Workflow that supports natural language, human interaction, and agents connected to LLMs',
+      id: '+P+nuy',
+      description: 'Conversational agents workflow description',
+    }),
   };
 
   const handleWorkflowTypeChange: DropdownProps['onOptionSelect'] = (event, data) => {
@@ -130,7 +140,9 @@ export const WorkflowTypeStepAlt: React.FC = () => {
                 ? 'Stateless'
                 : workflowType === 'Agentic-Codeless'
                   ? 'Autonomous Agents (Preview)'
-                  : ''
+                  : workflowType === 'Agent-Codeless'
+                    ? 'Conversational Agents (Preview)'
+                    : ''
           }
           selectedOptions={workflowType ? [workflowType] : []}
           onOptionSelect={handleWorkflowTypeChange}
@@ -146,6 +158,9 @@ export const WorkflowTypeStepAlt: React.FC = () => {
           <Option value="Agentic-Codeless" text="Autonomous Agents (Preview)">
             Autonomous Agents (Preview)
           </Option>
+          <Option value="Agent-Codeless" text="Conversational Agents">
+            Conversational Agents
+          </Option>
         </Dropdown>
         {workflowType && (
           <Text
@@ -159,6 +174,7 @@ export const WorkflowTypeStepAlt: React.FC = () => {
             {workflowType === 'Stateful-Codeless' && intlText.STATEFUL_DESCRIPTION}
             {workflowType === 'Stateless-Codeless' && intlText.STATELESS_DESCRIPTION}
             {workflowType === 'Agentic-Codeless' && intlText.AUTONOMOUS_DESCRIPTION}
+            {workflowType === 'Agent-Codeless' && intlText.AGENT_DESCRIPTION}
           </Text>
         )}
       </Field>

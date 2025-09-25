@@ -13,7 +13,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { CreateLogicAppSetupStep } from './createLogicAppSetupStep';
 // Import validation patterns for navigation blocking
 import { logicAppNameValidation } from '../createWorkspace/steps/logicAppTypeStep';
-import { workflowNameValidation } from '../createWorkspace/steps/workflowTypeStepAlt';
+import { workflowNameValidation } from '../createWorkspace/steps/workflowTypeStep';
 import { functionNameValidation, namespaceValidation } from '../createWorkspace/steps/dotNetFrameworkStep';
 
 export const CreateLogicApp: React.FC = () => {

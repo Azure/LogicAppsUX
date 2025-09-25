@@ -126,21 +126,21 @@ export const ReviewCreateStep: React.FC = () => {
   };
 
   const getWorkspaceFilePath = () => {
-    if (!workspaceProjectPath.path || !workspaceName) {
+    if (!workspaceProjectPath.fsPath || !workspaceName) {
       return '';
     }
     return `${workspaceProjectPath.fsPath}${separator}${workspaceName}${separator}${workspaceName}.code-workspace`;
   };
 
   const getWorkspaceFolderPath = () => {
-    if (!workspaceProjectPath.path || !workspaceName) {
+    if (!workspaceProjectPath.fsPath || !workspaceName) {
       return '';
     }
     return `${workspaceProjectPath.fsPath}${separator}${workspaceName}`;
   };
 
   const getLogicAppLocationPath = () => {
-    if (!workspaceProjectPath.path || !workspaceName || !logicAppName) {
+    if (!workspaceProjectPath.fsPath || !workspaceName || !logicAppName) {
       return '';
     }
     return `${workspaceProjectPath.fsPath}${separator}${workspaceName}${separator}${logicAppName}`;
@@ -178,6 +178,8 @@ export const ReviewCreateStep: React.FC = () => {
         return 'Stateless';
       case 'Agentic-Codeless':
         return 'Autonomous Agents (Preview)';
+      case 'Agent-Codeless':
+        return 'Conversational Agents (Preview)';
       default:
         return type || intlText.MISSING_VALUE;
     }

@@ -120,7 +120,7 @@ export const CreateWorkspaceStructure: React.FC = () => {
     switch (currentStep) {
       case 0: {
         // Project Setup - validate all required fields are present AND properly formatted
-        const workspacePathValid = workspaceProjectPath.path !== '' && pathValidationResults[workspaceProjectPath.path] === true;
+        const workspacePathValid = workspaceProjectPath.fsPath !== '' && pathValidationResults[workspaceProjectPath.fsPath] === true;
         const workspaceNameValid = workspaceName.trim() !== '' && workspaceNameValidation.test(workspaceName.trim());
 
         const baseFieldsValid = workspacePathValid && workspaceNameValid;
@@ -167,7 +167,7 @@ export const CreateWorkspaceStructure: React.FC = () => {
     switch (stepIndex) {
       case 0: {
         // Project Setup step - validate all required fields with regex validation
-        const workspacePathValid = workspaceProjectPath.path !== '' && pathValidationResults[workspaceProjectPath.path] === true;
+        const workspacePathValid = workspaceProjectPath.fsPath !== '' && pathValidationResults[workspaceProjectPath.fsPath] === true;
         const workspaceNameValid = workspaceName.trim() !== '' && workspaceNameValidation.test(workspaceName.trim());
 
         const baseFieldsValid = workspacePathValid && workspaceNameValid;
