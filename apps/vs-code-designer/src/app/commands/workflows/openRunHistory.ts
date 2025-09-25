@@ -4,27 +4,18 @@
  *--------------------------------------------------------------------------------------------*/
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { getRequestTriggerName, getTriggerName, HTTP_METHODS, isNullOrUndefined } from '@microsoft/logic-apps-shared';
-import { localSettingsFileName, managementApiPrefix, workflowAppApiVersion, workflowTenantIdKey } from '../../../constants';
+import { localSettingsFileName, managementApiPrefix, workflowTenantIdKey } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
-import { RemoteWorkflowTreeItem } from '../../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem';
+import type { RemoteWorkflowTreeItem } from '../../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem';
 import { getLocalSettingsJson } from '../../utils/appSettings/localSettings';
-import {
-  cacheWebviewPanel,
-  getStandardAppData,
-  getWorkflowManagementBaseURI,
-  removeWebviewPanelFromCache,
-  tryGetWebviewPanel,
-} from '../../utils/codeless/common';
+import { cacheWebviewPanel, getStandardAppData, removeWebviewPanelFromCache, tryGetWebviewPanel } from '../../utils/codeless/common';
 import { getLogicAppProjectRoot } from '../../utils/codeless/connection';
-import { getAuthorizationToken, getAuthorizationTokenFromNode } from '../../utils/codeless/getAuthorizationToken';
+import { getAuthorizationToken } from '../../utils/codeless/getAuthorizationToken';
 import { getWebViewHTML } from '../../utils/codeless/getWebViewHTML';
 import { sendRequest } from '../../utils/requestUtils';
 import { getWorkflowNode } from '../../utils/workspace';
 import type { IAzureConnectorsContext } from './azureConnectorWizard';
-import { openMonitoringView } from './openMonitoringView/openMonitoringView';
-import { createUnitTest } from './unitTest/createUnitTest';
-import { saveBlankUnitTest } from './unitTest/saveBlankUnitTest';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { ICallbackUrlResponse } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
@@ -57,7 +48,7 @@ export async function openRunHistory(
   if (workflowNode instanceof vscode.Uri) {
     workflowFilePath = workflowNode.fsPath;
     workflowName = basename(dirname(workflowFilePath));
-    panelName = `${vscode.workspace.name}-${workflowName}-overview`;
+    panelName = `${vscode.workspace.name}-${workflowName}-run-history`;
     workflowContent = JSON.parse(readFileSync(workflowFilePath, 'utf8'));
     baseUrl = `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}`;
     apiVersion = '2019-10-01-edge-preview';
@@ -69,20 +60,6 @@ export async function openRunHistory(
     localSettings = projectPath ? (await getLocalSettingsJson(context, join(projectPath, localSettingsFileName))).Values || {} : {};
     getAccessToken = async () => await getAuthorizationToken(localSettings[workflowTenantIdKey]);
     isWorkflowRuntimeRunning = !isNullOrUndefined(ext.workflowRuntimePort);
-  } else if (workflowNode instanceof RemoteWorkflowTreeItem) {
-    workflowName = workflowNode.name;
-    panelName = `${workflowNode.id}-${workflowName}-overview`;
-    workflowContent = workflowNode.workflowFileContent;
-    getAccessToken = async () => await getAuthorizationTokenFromNode(workflowNode);
-    baseUrl = getWorkflowManagementBaseURI(workflowNode);
-    apiVersion = workflowAppApiVersion;
-    triggerName = getTriggerName(workflowContent.definition);
-    callbackInfo = await workflowNode.getCallbackUrl(workflowNode, baseUrl, triggerName, apiVersion);
-    corsNotice = localize('CorsNotice', 'To view runs, set "*" to allowed origins in the CORS setting.');
-    isLocal = false;
-    isWorkflowRuntimeRunning = true;
-  } else {
-    throw new Error(localize('noWorkflowNode', 'No workflow node provided.'));
   }
 
   accessToken = await getAccessToken();
@@ -129,10 +106,6 @@ export async function openRunHistory(
   let interval: NodeJS.Timeout;
   panel.webview.onDidReceiveMessage(async (message) => {
     switch (message.command) {
-      case ExtensionCommand.loadRun: {
-        openMonitoringView(context, workflowNode, message.item.id, workflowFilePath);
-        break;
-      }
       case ExtensionCommand.initialize: {
         panel.webview.postMessage({
           command: ExtensionCommand.initialize_frame,
@@ -163,15 +136,6 @@ export async function openRunHistory(
             });
           }
         }, 5000);
-        break;
-      }
-
-      case ExtensionCommand.createUnitTest: {
-        await createUnitTest(context, workflowNode as vscode.Uri, message.runId);
-        break;
-      }
-      case ExtensionCommand.saveBlankUnitTest: {
-        await saveBlankUnitTest(this.context as IAzureConnectorsContext, vscode.Uri.file(this.workflowFilePath), message.definition);
         break;
       }
       default:
