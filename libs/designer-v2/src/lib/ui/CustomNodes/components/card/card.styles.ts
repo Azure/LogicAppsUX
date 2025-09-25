@@ -110,9 +110,9 @@ export const useCardStyles = makeStyles({
   },
   spinner: {
     '& > .fui-Spinner__spinner': {
-      width: '12px',
-      height: '12px',
-      margin: '2px',
+      width: '14px',
+      height: '14px',
+      margin: '3px',
     },
   },
   badgeText: {

@@ -5,7 +5,7 @@ import { useMemo, useCallback } from 'react';
 import type { XYPosition } from '@xyflow/react';
 import { MiniMap, useReactFlow } from '@xyflow/react';
 
-const nodeColorsLight: Record<WorkflowNodeType, any> = {
+const nodeColorsLight: Partial<Record<WorkflowNodeType, any>> = {
   OPERATION_NODE: { fill: '#ECECEC', stroke: '#A19F9D' },
   GRAPH_NODE: { fill: '#FFF', stroke: '#A19F9D' },
   SUBGRAPH_NODE: { fill: '#FFF', stroke: '#A19F9D' },
@@ -16,7 +16,7 @@ const nodeColorsLight: Record<WorkflowNodeType, any> = {
   COLLAPSED_NODE: { fill: '#ECECEC', stroke: '#A19F9D' },
 };
 
-const nodeColorsDark: Record<WorkflowNodeType, any> = {
+const nodeColorsDark: Partial<Record<WorkflowNodeType, any>> = {
   OPERATION_NODE: { fill: '#323130', stroke: '#8A8886' },
   GRAPH_NODE: { fill: '#252423', stroke: '#8A8886' },
   SUBGRAPH_NODE: { fill: '#252423', stroke: '#8A8886' },

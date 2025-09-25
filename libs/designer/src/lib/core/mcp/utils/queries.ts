@@ -1,4 +1,4 @@
-import { ResourceService, type LogicAppResource } from '@microsoft/logic-apps-shared';
+import { type Resource, ResourceService, type LogicAppResource, equals } from '@microsoft/logic-apps-shared';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { useAzureConnectorsLazyQuery } from '../../../core/queries/browse';
 import { useMemo } from 'react';
@@ -72,6 +72,96 @@ export const useEmptyLogicApps = (subscriptionId: string): UseQueryResult<LogicA
       enabled: !!subscriptionId,
     }
   );
+};
+
+export const useStorageAccounts = (subscriptionId: string, location: string): UseQueryResult<Resource[], unknown> => {
+  return useQuery(
+    ['mcp', 'storageaccounts', subscriptionId, location],
+    async () => {
+      const query = `resources | where type =~ 'microsoft.storage/storageaccounts' | where location =~ '${location.toLowerCase()}' | project id, name, type, kind`;
+      const result = await ResourceService().listResources(subscriptionId, query);
+      return result.map((item: any) => ({
+        id: item.id.toLowerCase(),
+        name: item.name,
+        displayName: equals(item.kind, 'StorageV2') ? `${item.name} (v2)` : `${item.name} (v1)`,
+      }));
+    },
+    {
+      enabled: !!subscriptionId && !!location,
+    }
+  );
+};
+
+export const useAppServicePlans = (subscriptionId: string, location: string): UseQueryResult<(Resource & { sku: string })[], unknown> => {
+  return useQuery(
+    ['mcp', 'appserviceplans', subscriptionId, location],
+    async () => {
+      const query = `resources | where type =~ 'microsoft.web/serverfarms' | where location =~ '${location.toLowerCase()}' | where properties.reserved == false | where properties.hyperV == false | where properties.hostingEnvironmentId == '' | project id, name, type, kind, sku | where sku.tier =~ 'WorkflowStandard'`;
+      const result = await ResourceService().listResources(subscriptionId, query);
+      return result.map((item: any) => ({
+        id: item.id.toLowerCase(),
+        name: item.name,
+        displayName: `${item.name} (${item.sku.size})`,
+        sku: item.sku.size,
+      }));
+    },
+    {
+      enabled: !!subscriptionId && !!location,
+    }
+  );
+};
+
+export const useAppInsights = (subscriptionId: string): UseQueryResult<Resource[], unknown> => {
+  return useQuery(['mcp', 'appinsights', subscriptionId], async () => getAppInsights(subscriptionId), {
+    enabled: !!subscriptionId,
+  });
+};
+
+export const getAllAppInsights = async (subscriptionId: string): Promise<Resource[]> => {
+  const queryClient = getReactQueryClient();
+  return queryClient.fetchQuery(['mcp', 'appinsights', subscriptionId], async () => getAppInsights(subscriptionId));
+};
+
+export const getAllWorkspaces = async (subscriptionId: string): Promise<(Resource & { resourceGroup: string })[]> => {
+  const queryClient = getReactQueryClient();
+  return queryClient.fetchQuery(['mcp', 'workspaces', subscriptionId], async () => {
+    const query = `resources | where type =~ 'microsoft.operationalinsights/workspaces' | project id, name, type, location, resourceGroup`;
+    return ResourceService().listResources(subscriptionId, query);
+  });
+};
+
+export const getRegionMappings = async (): Promise<Record<string, { geo: string; pairedRegions: string[]; laRegionCode: string }>> => {
+  const queryClient = getReactQueryClient();
+  return queryClient.fetchQuery(['mcp', 'regionMappings'], async () => {
+    try {
+      return ResourceService().executeHttpCall('https://appinsights.azureedge.net/portal/regionMapping.json', 'GET');
+    } catch {
+      return {};
+    }
+  });
+};
+
+export const getAppInsightsLocations = async (subscriptionId: string): Promise<string[]> => {
+  const queryClient = getReactQueryClient();
+  return queryClient.fetchQuery(['mcp', 'appInsightsLocations', subscriptionId], async () => {
+    try {
+      const result = await ResourceService().executeResourceAction(`/subscriptions/${subscriptionId}/providers/microsoft.insights`, 'GET', {
+        'api-version': '2015-05-01',
+      });
+      return result.resourceTypes
+        ? (result.resourceTypes.find((value: any) => value.resourceType === 'components')?.locations.map((location: string) => location) ??
+            [])
+        : [];
+    } catch {
+      return [];
+    }
+  });
+};
+
+const getAppInsights = async (subscriptionId: string): Promise<Resource[]> => {
+  const query = `resources | where type =~ 'microsoft.insights/components' | project id, name, type, location`;
+  const result = await ResourceService().listResources(subscriptionId, query);
+  return result.map((item: any) => ({ id: item.id.toLowerCase(), name: item.name, displayName: `${item.name} (${item.location})` }));
 };
 
 export const resetQueriesOnRegisterMcpServer = (subscriptionId: string, resourceGroup: string, logicAppName: string) => {

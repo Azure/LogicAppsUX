@@ -1,9 +1,19 @@
-import type { Connection, Edge, EdgeTypes, NodeChange, ReactFlowInstance } from '@xyflow/react';
+import type {
+  Node,
+  Connection,
+  Edge,
+  EdgeTypes,
+  NodeChange,
+  ReactFlowInstance,
+  NodeDimensionChange,
+  NodePositionChange,
+  XYPosition,
+} from '@xyflow/react';
 import { BezierEdge, ReactFlow } from '@xyflow/react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { containsIdTag, guid, removeIdTag, WORKFLOW_NODE_TYPES, type WorkflowNodeType } from '@microsoft/logic-apps-shared';
 import { useDispatch } from 'react-redux';
-import { useResizeObserver } from '@react-hookz/web';
+import { useDebouncedEffect, useResizeObserver } from '@react-hookz/web';
 import { useIntl } from 'react-intl';
 
 import { useAllAgentIds, useDisconnectedNodes, useIsGraphEmpty, useNodesMetadata } from '../core/state/workflow/workflowSelectors';
@@ -13,12 +23,15 @@ import type { AppDispatch } from '../core';
 import { clearPanel, expandDiscoveryPanel } from '../core/state/panel/panelSlice';
 import { addOperationRunAfter } from '../core/actions/bjsworkflow/runafter';
 import { useClampPan, useIsA2AWorkflow } from '../core/state/designerView/designerViewSelectors';
-import { DEFAULT_NODE_SIZE } from '../core/utils/graph';
+import { DEFAULT_NODE_SIZE, DEFAULT_NOTE_SIZE } from '../core/utils/graph';
 import { DraftEdge } from './connections/draftEdge';
 import { useReadOnly } from '../core/state/designerOptions/designerOptionsSelectors';
 import { useLayout } from '../core/graphlayout';
 import { DesignerFlowViewPadding } from '../core/utils/designerLayoutHelpers';
 import { addAgentHandoff } from '../core/actions/bjsworkflow/handoff';
+import { setNodeContextMenuData } from '../core/state/designerView/designerViewSlice';
+import { useNotes } from '../core/state/notes/notesSelectors';
+import { updateNote } from '../core/state/notes/notesSlice';
 
 import GraphNode from './CustomNodes/GraphContainerNode';
 import HiddenNode from './CustomNodes/HiddenNode';
@@ -27,6 +40,7 @@ import PlaceholderNode from './CustomNodes/PlaceholderNode';
 import CollapsedNode from './CustomNodes/CollapsedCardNode';
 import ScopeCardNode from './CustomNodes/ScopeCardNode';
 import SubgraphCardNode from './CustomNodes/SubgraphCardNode';
+import NoteNode from './CustomNodes/NoteNode';
 import ButtonEdge from './connections/edge';
 import HandoffEdge from './connections/handoffEdge';
 import HiddenEdge from './connections/hiddenEdge';
@@ -36,6 +50,9 @@ const DesignerReactFlow = (props: any) => {
 
   const dispatch = useDispatch<AppDispatch>();
   const isInitialized = useNodesInitialized();
+
+  const isReadOnly = useReadOnly();
+  const isEmpty = useIsGraphEmpty();
 
   type NodeTypesObj = Record<WorkflowNodeType, React.ComponentType<any>>;
   const nodeTypes: NodeTypesObj = {
@@ -47,6 +64,7 @@ const DesignerReactFlow = (props: any) => {
     HIDDEN_NODE: HiddenNode,
     PLACEHOLDER_NODE: PlaceholderNode,
     COLLAPSED_NODE: CollapsedNode,
+    NOTE_NODE: NoteNode,
   };
 
   const edgeTypes = {
@@ -57,7 +75,7 @@ const DesignerReactFlow = (props: any) => {
     HIDDEN_EDGE: HiddenEdge,
   } as EdgeTypes;
 
-  const [nodes, edges, flowSize] = useLayout();
+  const [actionNodes, edges, flowSize] = useLayout();
 
   const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null);
   const [containerDimensions, setContainerDimensions] = useState(canvasRef.current?.getBoundingClientRect() ?? { width: 0, height: 0 });
@@ -78,10 +96,10 @@ const DesignerReactFlow = (props: any) => {
     if (containerDimensions.width === 0 || containerDimensions.height === 0) {
       return;
     }
-    if (!hasFitViewRun.current && nodes.length > 0 && reactFlowInstance && isInitialized) {
+    if (!hasFitViewRun.current && actionNodes.length > 0 && reactFlowInstance && isInitialized) {
       requestAnimationFrame(() => {
         const defaultZoom = 1.0;
-        const topNode = nodes.reduce((top, node) => (node.position.y < top.position.y ? node : top));
+        const topNode = actionNodes.reduce((top, node) => (node.position.y < top.position.y ? node : top));
 
         const centerX = containerDimensions.width / 2;
         const topPadding = 120;
@@ -95,14 +113,7 @@ const DesignerReactFlow = (props: any) => {
         hasFitViewRun.current = true;
       });
     }
-  }, [nodes, reactFlowInstance, isInitialized, containerDimensions]);
-
-  const onNodesChange = useCallback(
-    (changes: NodeChange[]) => {
-      dispatch(updateNodeSizes(changes));
-    },
-    [dispatch]
-  );
+  }, [actionNodes, reactFlowInstance, isInitialized, containerDimensions]);
 
   const emptyWorkflowPlaceholderNodes = [
     {
@@ -115,10 +126,56 @@ const DesignerReactFlow = (props: any) => {
     },
   ];
 
-  const isReadOnly = useReadOnly();
-  const isEmpty = useIsGraphEmpty();
+  /// Position dispatch debounce (Only applicable for notes currently)
 
-  const nodesWithPlaceholder = isEmpty ? (isReadOnly ? [] : emptyWorkflowPlaceholderNodes) : nodes;
+  const [nodePositions, setNodePositions] = useState<Record<string, XYPosition> | undefined>(undefined);
+  useDebouncedEffect(
+    () => {
+      if (nodePositions && Object.keys(nodePositions).length > 0) {
+        for (const [id, position] of Object.entries(nodePositions)) {
+          dispatch(
+            updateNote({
+              id,
+              note: {
+                metadata: {
+                  position,
+                },
+              },
+            })
+          );
+        }
+        setNodePositions(undefined);
+      }
+    },
+    [dispatch, nodePositions],
+    500
+  );
+
+  /// Notes as nodes
+
+  const notes = useNotes();
+  const noteNodes: Node[] = useMemo(() => {
+    return Object.entries(notes).map(
+      ([id, note]) =>
+        ({
+          id,
+          type: WORKFLOW_NODE_TYPES.NOTE_NODE,
+          position: nodePositions?.[id] ?? note.metadata.position,
+          draggable: !isReadOnly,
+          dragHandle: '.note-drag-handle',
+          measured: {
+            width: note.metadata.width ?? DEFAULT_NOTE_SIZE.width,
+            height: note.metadata.height ?? DEFAULT_NOTE_SIZE.height,
+          },
+        }) as Node
+    );
+  }, [notes, nodePositions, isReadOnly]);
+
+  ///
+
+  const nodesWithPlaceholder = isEmpty ? (isReadOnly ? [] : emptyWorkflowPlaceholderNodes) : actionNodes;
+
+  const allNodes = [...nodesWithPlaceholder, ...noteNodes];
 
   const clampPan = useClampPan();
 
@@ -282,12 +339,98 @@ const DesignerReactFlow = (props: any) => {
     }
   }, [isDraggingConnection, dispatch]);
 
+  const onPaneContextMenu = useCallback((e: React.MouseEvent | MouseEvent) => {
+    e.preventDefault();
+    dispatch(
+      setNodeContextMenuData({
+        location: {
+          x: e.clientX,
+          y: e.clientY,
+        },
+      })
+    );
+  }, []);
+
+  // Handle node changes (position, size)
+
+  const handSizeChanges = useCallback(
+    (changes: NodeChange[]) => {
+      const validChanges = changes.filter(
+        (change) =>
+          change.type === 'dimensions' &&
+          change?.id &&
+          change?.dimensions &&
+          !Number.isNaN(change.dimensions.width) &&
+          !Number.isNaN(change.dimensions.height)
+      ) as NodeDimensionChange[];
+      if (validChanges.length === 0) {
+        return;
+      }
+      const actionChanges = [];
+      for (const change of validChanges) {
+        const note = notes?.[change.id];
+        if (note) {
+          dispatch(
+            updateNote({
+              id: change.id,
+              note: {
+                metadata: change.dimensions,
+              },
+            })
+          );
+        } else {
+          actionChanges.push(change);
+        }
+      }
+      if (actionChanges.length > 0) {
+        dispatch(updateNodeSizes(actionChanges));
+      }
+    },
+    [dispatch, notes]
+  );
+
+  const handlePositionChanges = useCallback(
+    (changes: NodeChange[]) => {
+      const validChanges = changes.filter(
+        (change) =>
+          change.type === 'position' &&
+          change?.id &&
+          change?.position &&
+          !Number.isNaN(change.position.x) &&
+          !Number.isNaN(change.position.y)
+      ) as NodePositionChange[];
+      if (validChanges.length === 0) {
+        return;
+      }
+      for (const change of validChanges) {
+        const note = notes?.[change.id];
+        if (note) {
+          setNodePositions((prev) => ({
+            ...prev,
+            [change.id]: change.position!,
+          }));
+        } else {
+          // Non-note nodes position changes are not handled currently
+        }
+      }
+    },
+    [notes]
+  );
+
+  const onNodesChange = useCallback(
+    (changes: NodeChange[]) => {
+      handSizeChanges(changes);
+      handlePositionChanges(changes);
+    },
+    [handSizeChanges, handlePositionChanges]
+  );
+
   return (
     <ReactFlow
       ref={canvasRef}
       onInit={onInit}
       nodeTypes={nodeTypes}
-      nodes={nodesWithPlaceholder}
+      nodes={allNodes}
       edges={edges}
       onNodesChange={onNodesChange}
       nodesConnectable={true}
@@ -310,6 +453,7 @@ const DesignerReactFlow = (props: any) => {
       snapGrid={[20, 20]}
       snapToGrid={true}
       onPaneClick={onPaneClick}
+      onPaneContextMenu={onPaneContextMenu}
       disableKeyboardA11y={true}
       onlyRenderVisibleElements={!userInferredTabNavigation}
       proOptions={{
