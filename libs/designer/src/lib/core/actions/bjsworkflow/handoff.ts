@@ -11,6 +11,22 @@ import { deleteGraphNode } from './delete';
 import { setSelectedPanelActiveTab } from '../../../core/state/panel/panelSlice';
 import Constants from '../../../common/constants';
 
+/**
+ * Generates a handoff tool name following the pattern: handoff_to_<agent-name>
+ * If the name exceeds 64 characters, falls back to the GUID-based pattern
+ */
+function generateHandoffToolName(targetId: string): string {
+  const preferredName = `handoff_to_${targetId}`;
+
+  if (preferredName.length <= Constants.HANDOFF_TOOL_NAME_MAX_LENGTH) {
+    return preferredName;
+  }
+
+  // Fallback to GUID-based name if preferred name is too long
+  const handoffId = `handoff_${customLengthGuid(8)}`;
+  return `${handoffId}_tool`;
+}
+
 type AddAgentHandoffPayload = {
   sourceId: string;
   targetId: string;
@@ -25,8 +41,8 @@ export const addAgentHandoff = createAsyncThunk('addAgentHandoff', async (payloa
       operationId: agentOperation.id,
     });
 
+    const newToolId = generateHandoffToolName(targetId);
     const newHandoffId = `handoff_${customLengthGuid(8)}`;
-    const newToolId = `${newHandoffId}_tool`;
 
     // Initialize subgraph manifest
     const caseManifestData = Object.values(agentManifest?.properties?.subGraphDetails ?? {}).find((data) => data.isAdditive);

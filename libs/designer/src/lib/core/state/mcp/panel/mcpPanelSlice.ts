@@ -10,6 +10,7 @@ export const McpPanelView = {
   UpdateOperation: 'updateOperation',
   CreateConnection: 'createConnection',
   EditOperation: 'editOperation',
+  CreateLogicApp: 'createLogicApp',
 } as const;
 export type ConfigPanelView = (typeof McpPanelView)[keyof typeof McpPanelView];
 
@@ -33,7 +34,7 @@ export const mcpPanelSlice = createSlice({
   name: 'mcpPanel',
   initialState,
   reducers: {
-    openConnectorPanelView: (
+    openMcpPanelView: (
       state,
       action: PayloadAction<{
         panelView: ConfigPanelView;
@@ -62,6 +63,6 @@ export const mcpPanelSlice = createSlice({
   },
 });
 
-export const { openConnectorPanelView, openOperationPanelView, selectPanelTab, closePanel } = mcpPanelSlice.actions;
+export const { openMcpPanelView, openOperationPanelView, selectPanelTab, closePanel } = mcpPanelSlice.actions;
 
 export default mcpPanelSlice.reducer;

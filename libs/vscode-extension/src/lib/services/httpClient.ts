@@ -42,7 +42,7 @@ export class HttpClient implements IHttpClient {
 
     if (options.returnHeaders) {
       return {
-        headers: response.headers,
+        responseHeaders: response.headers,
         ...response.data,
       };
     }
@@ -127,7 +127,7 @@ export class HttpClient implements IHttpClient {
     }).catch((error) => {
       return {
         status: error.response.status,
-        headers: options.returnHeaders ? error.response.headers : undefined,
+        responseHeaders: options.returnHeaders ? error.response.headers : undefined,
         ...error.response.data,
       };
     });
@@ -154,7 +154,7 @@ export class HttpClient implements IHttpClient {
 
     if (options.returnHeaders) {
       return {
-        headers: response.headers,
+        responseHeaders: response.headers,
         ...response.data,
       };
     }
@@ -209,7 +209,7 @@ function parseResponse(response: any, options: HttpRequestOptions<any>) {
 
   if (options?.returnHeaders) {
     return {
-      headers: response?.headers,
+      responseHeaders: response?.headers,
       ...responseData,
     };
   }

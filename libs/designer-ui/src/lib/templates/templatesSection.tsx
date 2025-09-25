@@ -15,7 +15,7 @@ export const TemplatesSection = ({
   children = null,
 }: TemplatesSectionProps) => {
   return (
-    <div className="msla-templates-section">
+    <div className={css('msla-templates-section', cssOverrides?.['sectionContainer'])}>
       {title ? (
         <Label className="msla-templates-section-title" required={isTitleRequired} htmlFor={titleHtmlFor}>
           {title}

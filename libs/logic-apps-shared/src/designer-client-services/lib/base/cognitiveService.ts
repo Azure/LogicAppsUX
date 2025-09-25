@@ -1,7 +1,7 @@
 import type { ICognitiveServiceService } from '../cognitiveService';
 import type { IHttpClient } from '../httpClient';
 import type { ManagedIdentity } from '../../../utils/src';
-import { ArgumentException } from '../../../utils/src';
+import { AGENT_MODEL_CONFIG, ArgumentException } from '../../../utils/src';
 import { fetchAppsByQuery, getAzureResourceRecursive } from '../common/azure';
 
 export interface BaseCognitiveServiceServiceOptions {
@@ -188,18 +188,19 @@ export class BaseCognitiveServiceService implements ICognitiveServiceService {
   async createNewDeployment(deploymentName: string, model: string, openAIResourceId: string): Promise<any> {
     const { httpClient, baseUrl } = this.options;
     const uri = `${baseUrl}${openAIResourceId}/deployments/${deploymentName}`;
+    const config = AGENT_MODEL_CONFIG[model];
     try {
       return httpClient.put({
         uri,
         queryParameters: {
-          'api-version': '2023-10-01-preview',
+          'api-version': '2024-10-01',
         },
         content: {
           properties: {
             model: {
-              name: model,
-              version: '2025-04-14',
-              format: 'OpenAI',
+              name: config?.name ?? model,
+              version: config?.version ?? '2025-04-14',
+              format: config?.format ?? 'OpenAI',
             },
             raiPolicyName: 'Microsoft.DefaultV2',
             versionUpgradeOption: 'OnceNewDefaultVersionAvailable',

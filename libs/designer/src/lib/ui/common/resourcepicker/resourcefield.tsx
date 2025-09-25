@@ -16,10 +16,11 @@ interface ResourceFieldProps {
   errorMessage?: string;
   lockField: boolean;
   renderType?: ResourceFieldRenderType;
+  hintTooltip?: string;
 }
 
 export const ResourceField = (props: ResourceFieldProps) => {
-  const { label, renderType = 'default', errorMessage } = props;
+  const { label, renderType = 'default', errorMessage, hintTooltip } = props;
 
   if (renderType === 'section') {
     return (
@@ -31,6 +32,7 @@ export const ResourceField = (props: ResourceFieldProps) => {
           required: true,
           errorMessage: errorMessage,
           onRenderItem: () => <ResourceFieldDropdown {...props} />,
+          description: hintTooltip,
         }}
       />
     );

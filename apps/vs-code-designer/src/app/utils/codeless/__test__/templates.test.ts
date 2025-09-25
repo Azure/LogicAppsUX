@@ -43,9 +43,30 @@ describe('utils/codeless/templates', () => {
     expect(isNullOrEmpty(workflowDefinition.definition.actions)).toBe(true);
   });
 
-  it('Should return an empty agentic workflow definition', () => {
+  it('Should return an agentic workflow definition with Agent action', () => {
     const workflowDefinition: StandardApp = getCodelessWorkflowTemplate(ProjectType.logicApp, WorkflowType.agentic);
-    expect(workflowDefinition.kind).toBe(WorkflowKind.agentic);
+    expect(workflowDefinition.kind).toBe(WorkflowKind.stateful);
     expect(Object.values(workflowDefinition?.definition?.actions ?? {}).some((action) => action.type === 'Agent')).toBe(true);
+    expect(workflowDefinition.definition.actions).toHaveProperty('Default_Agent');
+    expect(workflowDefinition.definition.actions?.Default_Agent.type).toBe('Agent');
+  });
+
+  it('Should return an agent workflow definition with Agent trigger and action', () => {
+    const workflowDefinition: StandardApp = getCodelessWorkflowTemplate(ProjectType.logicApp, WorkflowType.agent);
+    expect(workflowDefinition.kind).toBe(WorkflowKind.agent);
+    expect(Object.values(workflowDefinition?.definition?.actions ?? {}).some((action) => action.type === 'Agent')).toBe(true);
+    expect(workflowDefinition.definition.actions).toHaveProperty('Default_Agent');
+    expect(workflowDefinition.definition.actions?.Default_Agent.type).toBe('Agent');
+    expect(workflowDefinition.definition.triggers).toHaveProperty('When_a_new_chat_session_starts');
+    expect(workflowDefinition.definition.triggers?.When_a_new_chat_session_starts.type).toBe('Request');
+    expect(workflowDefinition.definition.triggers?.When_a_new_chat_session_starts.kind).toBe('Agent');
+    expect(workflowDefinition.definition.actions?.Default_Agent.runAfter).toHaveProperty('When_a_new_chat_session_starts');
+  });
+
+  it('Should return agentic workflow with empty triggers', () => {
+    const workflowDefinition: StandardApp = getCodelessWorkflowTemplate(ProjectType.logicApp, WorkflowType.agentic);
+    expect(workflowDefinition.kind).toBe(WorkflowKind.stateful);
+    expect(workflowDefinition.definition.triggers).toEqual({});
+    expect(workflowDefinition.definition.actions?.Default_Agent.runAfter).toEqual({});
   });
 });

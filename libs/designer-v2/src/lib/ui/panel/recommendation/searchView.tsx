@@ -9,7 +9,7 @@ import { useCallback, useEffect, useState, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { useDiscoveryPanelRelationshipIds, useIsAddingAgentTool } from '../../../core/state/panel/panelSelectors';
 import { useIsA2AWorkflow, useIsAgenticWorkflow } from '../../../core/state/designerView/designerViewSelectors';
-import { useShouldEnableACASession, useShouldEnableNestedAgent, useShouldEnableParseDocumentWithMetadata } from './hooks';
+import { useShouldEnableParseDocumentWithMetadata } from './hooks';
 import { DefaultSearchOperationsService } from './SearchOpeationsService';
 import constants from '../../../common/constants';
 import { ALLOWED_A2A_CONNECTOR_NAMES } from './helpers';
@@ -36,8 +36,6 @@ export const SearchView: FC<SearchViewProps> = ({
 }) => {
   const isAgenticWorkflow = useIsAgenticWorkflow();
   const shouldEnableParseDocWithMetadata = useShouldEnableParseDocumentWithMetadata();
-  const shouldEnableACASession = useShouldEnableACASession();
-  const shouldEnableNestedAgent = useShouldEnableNestedAgent();
   const parentGraphId = useDiscoveryPanelRelationshipIds().graphId;
   const isWithinAgenticLoop = useIsWithinAgenticLoop(parentGraphId);
   const isAgentTool = useIsAddingAgentTool();
@@ -117,9 +115,6 @@ export const SearchView: FC<SearchViewProps> = ({
       }
 
       if (equals(type, constants.NODE.TYPE.NESTED_AGENT) && id === 'invokeNestedAgent') {
-        if (!shouldEnableNestedAgent) {
-          return false;
-        }
         if (!(isWithinAgenticLoop || isAgentTool)) {
           return false;
         }
@@ -128,15 +123,14 @@ export const SearchView: FC<SearchViewProps> = ({
 
       return true;
     },
-    [isAgentTool, isAgenticWorkflow, isRoot, isWithinAgenticLoop, shouldEnableNestedAgent, passesA2AWorkflowFilter]
+    [isAgentTool, isAgenticWorkflow, isRoot, isWithinAgenticLoop, passesA2AWorkflowFilter]
   );
 
   useDebouncedEffect(
     () => {
       const searchResultsPromise = new DefaultSearchOperationsService(
         allOperations,
-        shouldEnableParseDocWithMetadata ?? false,
-        shouldEnableACASession ?? false
+        shouldEnableParseDocWithMetadata ?? false
       ).searchOperations(searchTerm, filterAgenticLoops);
 
       searchResultsPromise.then((results) => {
@@ -144,7 +138,7 @@ export const SearchView: FC<SearchViewProps> = ({
         setIsLoadingSearchResults(false);
       });
     },
-    [searchTerm, allOperations, filterAgenticLoops, shouldEnableParseDocWithMetadata, shouldEnableACASession],
+    [searchTerm, allOperations, filterAgenticLoops, shouldEnableParseDocWithMetadata],
     200
   );
 
