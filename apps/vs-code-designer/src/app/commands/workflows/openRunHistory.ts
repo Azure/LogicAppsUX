@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
-import { getRequestTriggerName, getTriggerName, HTTP_METHODS, isNullOrUndefined } from '@microsoft/logic-apps-shared';
+import { getRequestTriggerName, HTTP_METHODS, isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { localSettingsFileName, managementApiPrefix, workflowTenantIdKey } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
@@ -51,7 +51,6 @@ export async function openRunHistory(
     workflowContent = JSON.parse(readFileSync(workflowFilePath, 'utf8'));
     baseUrl = `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}`;
     apiVersion = '2019-10-01-edge-preview';
-    triggerName = getTriggerName(workflowContent.definition);
     callbackInfo = await getLocalWorkflowCallbackInfo(context, workflowContent.definition, baseUrl, workflowName, triggerName, apiVersion);
 
     const projectPath = await getLogicAppProjectRoot(context, workflowFilePath);

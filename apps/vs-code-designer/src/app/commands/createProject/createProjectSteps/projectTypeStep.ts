@@ -68,8 +68,8 @@ export class ProjectTypeStep extends AzureWizardPromptStep<IProjectWizardContext
    */
   public async prompt(context: IProjectWizardContext): Promise<void> {
     // TODO(aeldridge): Add support for non-bundle-based project creation here
-    context.workflowProjectType = WorkflowProjectType.Bundle;
-    context.language = ProjectLanguage.JavaScript;
+    context.workflowProjectType = context.projectType === ProjectType.agentCodeful ? WorkflowProjectType.Nuget : WorkflowProjectType.Bundle;
+    context.language = context.projectType === ProjectType.agentCodeful ? ProjectLanguage.CSharp : ProjectLanguage.JavaScript;
     await this.setPaths(context);
   }
 
