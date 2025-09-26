@@ -17,7 +17,7 @@ import * as os from 'os';
 export interface IRunningFuncTask {
   startTime: number;
   processId: number;
-  childProcessId?: string[];
+  childProcessId?: any[];
 }
 
 export const runningFuncTaskMap: Map<vscode.WorkspaceFolder | vscode.TaskScope, IRunningFuncTask> = new Map();
@@ -93,7 +93,7 @@ async function stopFuncTaskIfRunning(context: IActionContext, debugSession: vsco
                 }
               }
             } else {
-              cp.spawn('kill', ['-9'].concat(`${process.pid}`));
+              cp.spawn('kill', ['-9'].concat(`${runningFuncTask.processId}`));
             }
 
             funcExecution.terminate();
