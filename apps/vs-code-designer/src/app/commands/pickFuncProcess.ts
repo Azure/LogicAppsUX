@@ -225,6 +225,7 @@ async function startFuncTask(
             const response = await sendRequestWithTimeout(context, statusRequest, statusRequestTimeout, undefined);
             if (response.parsedBody.state.toLowerCase() === 'running') {
               funcTaskReadyEmitter.fire(workspaceFolder);
+              taskInfo.childProcessId = [await pickChildProcess(taskInfo), await pickFuncHostChildProcess(taskInfo)];
               return taskInfo;
             }
           } catch (error) {
@@ -360,4 +361,32 @@ function getPickProcessTimeout(context: IActionContext): number {
   context.telemetry.properties.timeoutInSeconds = timeoutInSeconds.toString();
 
   return timeoutInSeconds;
+}
+
+async function pickFuncHostChildProcess(taskInfo: IRunningFuncTask): Promise<string | undefined> {
+  const funcPid = Number(await pickChildProcess(taskInfo));
+  if (!funcPid) {
+    return undefined;
+  }
+
+  const children: OSAgnosticProcess[] =
+    process.platform === Platform.windows ? await getWindowsChildren(funcPid) : await getUnixChildren(funcPid);
+  const childRegex = /(func|dotnet)(\.exe|)?$/i;
+  let child: OSAgnosticProcess | undefined = children.reverse().find((c) => childRegex.test(c.command || ''));
+
+  // If child is null or undefined, look one level deeper in child processes
+  if (!child) {
+    for (const possibleParent of children) {
+      const childrenOfChild =
+        process.platform === Platform.windows
+          ? await getWindowsChildren(Number(possibleParent.pid))
+          : await getUnixChildren(Number(possibleParent.pid));
+
+      child = childrenOfChild.reverse().find((c) => childRegex.test(c.command || ''));
+      if (child) {
+        break;
+      }
+    }
+  }
+  return child ? child.pid.toString() : undefined;
 }
