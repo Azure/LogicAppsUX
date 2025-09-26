@@ -26,11 +26,7 @@ import {
 } from '@fluentui/react-components';
 import { INSERT_ORDERED_LIST_COMMAND, INSERT_UNORDERED_LIST_COMMAND, REMOVE_LIST_COMMAND } from '@lexical/list';
 import type { HeadingTagType } from '@lexical/rich-text';
-import { $createHeadingNode } from '@lexical/rich-text';
-import { $setBlocksType } from '@lexical/selection';
-import { $isTableSelection } from '@lexical/table';
 import type { LexicalEditor } from 'lexical';
-import { $createParagraphNode, $getSelection, $isRangeSelection } from 'lexical';
 import { useCallback, useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -54,10 +50,6 @@ export const BlockFormatDropDown = ({ editor, blockType, disabled = false }: Blo
 
   const formatParagraph = () => {
     editor.update(() => {
-      const selection = $getSelection();
-      if ($isRangeSelection(selection) || $isTableSelection(selection)) {
-        $setBlocksType(selection, () => $createParagraphNode());
-      }
       handleClick();
     });
   };
@@ -65,10 +57,6 @@ export const BlockFormatDropDown = ({ editor, blockType, disabled = false }: Blo
   const formatHeading = (headingSize: HeadingTagType) => {
     if (blockType !== headingSize) {
       editor.update(() => {
-        const selection = $getSelection();
-        if ($isRangeSelection(selection) || $isTableSelection(selection)) {
-          $setBlocksType(selection, () => $createHeadingNode(headingSize));
-        }
         handleClick();
       });
     } else {
