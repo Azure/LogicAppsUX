@@ -4,6 +4,7 @@
 
 using System;
 using Microsoft.Azure.Workflows.Sdk.Agents;
+using Microsoft.Extensions.Hosting;
 
 namespace AgentCodefulNamespace;
 
@@ -91,10 +92,10 @@ public class WeatherObject
     /// <summary>
     /// current weather location property.
     /// </summary>
-    public string CurrentWeatherLocation { get; set; }
+    public string CurrentWeatherLocation { get; set; } = string.Empty;
 
     /// <summary>
     /// current weather location property.
     /// </summary>
-    public string Weatherdetails { get; set; }
+    public string Weatherdetails { get; set; } = string.Empty;
 }
