@@ -35,7 +35,6 @@ export async function openRunHistory(
   let apiVersion: string;
   let accessToken: string;
   let getAccessToken: () => Promise<string>;
-  let isLocal: boolean;
   let callbackInfo: ICallbackUrlResponse | undefined;
   let panelName = '';
   let corsNotice: string | undefined;
@@ -43,7 +42,7 @@ export async function openRunHistory(
   let isWorkflowRuntimeRunning: boolean;
   let triggerName: string;
   const workflowNode = getWorkflowNode(node);
-  const panelGroupKey = ext.webViewKey.overview;
+  const panelGroupKey = ext.webViewKey.runHistory;
 
   if (workflowNode instanceof vscode.Uri) {
     workflowFilePath = workflowNode.fsPath;
@@ -52,7 +51,6 @@ export async function openRunHistory(
     workflowContent = JSON.parse(readFileSync(workflowFilePath, 'utf8'));
     baseUrl = `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}`;
     apiVersion = '2019-10-01-edge-preview';
-    isLocal = true;
     triggerName = getTriggerName(workflowContent.definition);
     callbackInfo = await getLocalWorkflowCallbackInfo(context, workflowContent.definition, baseUrl, workflowName, triggerName, apiVersion);
 
@@ -90,8 +88,8 @@ export async function openRunHistory(
   };
 
   const panel: vscode.WebviewPanel = vscode.window.createWebviewPanel(
-    'workflowOverview',
-    `${workflowName}-overview`,
+    'workflowRunHistory',
+    `${workflowName}-run-history`,
     vscode.ViewColumn.Active,
     options
   );
@@ -115,9 +113,9 @@ export async function openRunHistory(
             corsNotice,
             accessToken: accessToken,
             workflowProperties: workflowProps,
-            project: ProjectName.overview,
+            project: ProjectName.runHistory,
             hostVersion: ext.extensionVersion,
-            isLocal: isLocal,
+            isLocal: true,
             isWorkflowRuntimeRunning: isWorkflowRuntimeRunning,
           },
         });

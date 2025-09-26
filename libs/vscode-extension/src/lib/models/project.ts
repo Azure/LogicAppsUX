@@ -13,6 +13,7 @@ export const ProjectName = {
   designer: 'designer',
   dataMapper: 'dataMapper',
   unitTest: 'unitTest',
+  runHistory: 'runHistory',
   languageServer: 'languageServer',
 } as const;
 export type ProjectNameType = (typeof ProjectName)[keyof typeof ProjectName];
@@ -116,6 +117,7 @@ export const RouteName = {
   workflows_selection: 'workflows-selection',
   validation: 'validation',
   overview: 'overview',
+  runHistory: 'runHistory',
   summary: 'summary',
   status: 'status',
   review: 'review',
