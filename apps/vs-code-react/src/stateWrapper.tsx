@@ -35,6 +35,10 @@ export const StateWrapper: React.FC = () => {
           navigate(`/${ProjectName.unitTest}`, { replace: true });
           break;
         }
+        case ProjectName.runHistory: {
+          navigate(`/${ProjectName.runHistory}`, { replace: true });
+          break;
+        }
         case ProjectName.languageServer: {
           switch (projectState.route) {
             case RouteName.connectionView: {

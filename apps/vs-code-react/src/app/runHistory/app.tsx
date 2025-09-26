@@ -1,18 +1,11 @@
-import { QueryKeys } from '../../run-service';
-import type { RunDisplayItem } from '../../run-service';
 import type { RootState } from '../../state/store';
-import { VSCodeContext } from '../../webviewCommunication';
-import { StandardRunService } from '@microsoft/logic-apps-shared';
-import { Overview, isRunError, mapToRunItem } from '@microsoft/designer-ui';
-import type { Runs } from '@microsoft/logic-apps-shared';
-import { ExtensionCommand, HttpClient } from '@microsoft/vscode-extension-logic-apps';
-import { useCallback, useContext, useMemo } from 'react';
-import { useInfiniteQuery, useMutation } from '@tanstack/react-query';
+import { InitRunService, StandardRunService } from '@microsoft/logic-apps-shared';
+import { HttpClient } from '@microsoft/vscode-extension-logic-apps';
+import { useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import invariant from 'tiny-invariant';
-import { useIntl } from 'react-intl';
 import { useRunHistoryStyles } from './runHistoryStyles';
 import { RunHistoryPanelInstance } from '@microsoft/logic-apps-designer-v2';
+import { Dropdown, Option, useId } from '@fluentui/react-components';
 
 export interface CallbackInfo {
   method?: string;
@@ -20,18 +13,10 @@ export interface CallbackInfo {
 }
 export const RunHistoryApp = () => {
   const workflowState = useSelector((state: RootState) => state.workflow);
-  const vscode = useContext(VSCodeContext);
-  const { isWorkflowRuntimeRunning } = workflowState;
-  const intl = useIntl();
   const styles = useRunHistoryStyles();
+  const dropdownId = useId('dropdown-default');
 
-  const intlText = {
-    DEBUG_PROJECT_ERROR: intl.formatMessage({
-      defaultMessage: 'Please start the project by pressing F5 or run it through the Run and Debug view',
-      id: 'e1gQAz',
-      description: 'Debug logic app project error text',
-    }),
-  };
+  const options = ['Cat', 'Caterpillar', 'Corgi', 'Chupacabra', 'Dog', 'Ferret', 'Fish', 'Fox', 'Hamster', 'Snake'];
 
   const runService = useMemo(() => {
     const httpClient = new HttpClient({
@@ -55,103 +40,23 @@ export const RunHistoryApp = () => {
     workflowState.hostVersion,
   ]);
 
-  const loadRuns = ({ pageParam }: { pageParam?: string }) => {
-    if (pageParam) {
-      return runService.getMoreRuns(pageParam);
-    }
-    return runService.getRuns();
-  };
-
-  const { data, error, isLoading, fetchNextPage, hasNextPage, refetch, isRefetching } = useInfiniteQuery<Runs>(
-    [QueryKeys.runsData],
-    loadRuns,
-    {
-      getNextPageParam: (lastPage) => lastPage.nextLink,
-      refetchInterval: 5000, // 5 seconds refresh interval
-      refetchIntervalInBackground: false, // It will automatically refetch when window is focused
-      enabled: isWorkflowRuntimeRunning,
-    }
-  );
-
-  const runItems = useMemo(
-    () =>
-      data?.pages?.reduce<RunDisplayItem[]>((acc, val) => {
-        return acc.concat(val.runs.map(mapToRunItem));
-      }, []),
-    [data?.pages]
-  );
-
-  const {
-    mutate: runTriggerCall,
-    isLoading: runTriggerLoading,
-    error: runTriggerError,
-  } = useMutation(async () => {
-    invariant(workflowState.workflowProperties.callbackInfo, 'Run Trigger should not be runable unless callbackInfo has information');
-    await runService.runTrigger(workflowState.workflowProperties.callbackInfo as CallbackInfo);
-    return refetch();
-  });
-
-  const onVerifyRunId = useCallback(
-    (runId: string) => {
-      return runService.getRun(runId);
-    },
-    [runService]
-  );
-
-  const errorMessage = useMemo((): string | undefined => {
-    if (!isWorkflowRuntimeRunning) {
-      return intlText.DEBUG_PROJECT_ERROR;
-    }
-    let loadingErrorMessage: string | undefined;
-    let triggerErrorMessage: string | undefined;
-    if (error instanceof Error) {
-      loadingErrorMessage = error.message;
-    } else if (isRunError(error)) {
-      loadingErrorMessage = error.error.message;
-    } else if (error) {
-      loadingErrorMessage = String(error);
-    }
-
-    if (runTriggerError instanceof Error) {
-      triggerErrorMessage = runTriggerError.message;
-    } else if (isRunError(runTriggerError)) {
-      triggerErrorMessage = runTriggerError.error.message;
-    } else if (runTriggerError) {
-      triggerErrorMessage = String(runTriggerError);
-    }
-
-    return loadingErrorMessage ?? triggerErrorMessage;
-  }, [error, runTriggerError, isWorkflowRuntimeRunning, intlText.DEBUG_PROJECT_ERROR]);
+  useEffect(() => {
+    InitRunService(runService);
+  }, [runService]);
 
   return (
     <div className={styles.overviewContainer}>
+      <div>
+        <label htmlFor={dropdownId}>Best pet</label>
+        <Dropdown id={dropdownId} placeholder="Select an animal">
+          {options.map((option) => (
+            <Option key={option} disabled={option === 'Ferret'}>
+              {option}
+            </Option>
+          ))}
+        </Dropdown>
+      </div>
       <RunHistoryPanelInstance />
-      <Overview
-        corsNotice={workflowState.corsNotice}
-        errorMessage={errorMessage}
-        hasMoreRuns={hasNextPage}
-        loading={isLoading || runTriggerLoading}
-        runItems={runItems ?? []}
-        workflowProperties={workflowState.workflowProperties}
-        isRefreshing={isRefetching}
-        onLoadMoreRuns={fetchNextPage}
-        onLoadRuns={refetch}
-        onOpenRun={(run: RunDisplayItem) => {
-          vscode.postMessage({
-            command: ExtensionCommand.loadRun,
-            item: run,
-          });
-        }}
-        onRunTrigger={runTriggerCall}
-        onVerifyRunId={onVerifyRunId}
-        supportsUnitTest={workflowState.isLocal}
-        onCreateUnitTest={(run: RunDisplayItem) => {
-          vscode.postMessage({
-            command: ExtensionCommand.createUnitTest,
-            runId: run.id,
-          });
-        }}
-      />
     </div>
   );
 };
